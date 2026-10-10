@@ -1383,7 +1383,7 @@ export default function Dashboard() {
               <img
                 src="/worldpulse-logo.png"
                 alt="WorldPulse"
-                className="w-64 md:w-80 h-auto rounded-3xl"
+                className="w-64 md:w-80 h-auto"
                 style={{ filter: 'drop-shadow(0 0 40px rgba(0,150,255,0.35))' }}
               />
             </motion.div>
@@ -1676,7 +1676,7 @@ export default function Dashboard() {
           <img
             src="/worldpulse-globe.png"
             alt="WorldPulse"
-            className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover"
+            className="w-9 h-9 md:w-10 md:h-10"
             style={{ filter: 'drop-shadow(0 0 10px rgba(0,150,255,0.5))' }}
           />
           <span className="text-lg md:text-xl font-bold tracking-wide font-mono">
