@@ -37,6 +37,13 @@ describe('map runtime assets', () => {
   it('still counts page views', () => {
     expect(matches('/')).toBe(true);
     expect(matches('/merch')).toBe(true);
-    expect(matches('/api/cctv')).toBe(false);
+  });
+
+  it('lets premium data APIs enter the middleware so freemium can gate them', () => {
+    // /api/* is deliberately matched now; the middleware itself decides
+    // which API prefixes are premium vs open.
+    expect(matches('/api/cctv')).toBe(true);
+    expect(matches('/api/flights')).toBe(true);
+    expect(matches('/api/webhooks/stripe')).toBe(true);
   });
 });

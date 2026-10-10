@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plane, Satellite, Sun, AlertTriangle, Camera,
   CloudLightning, Ship, Network, Database, Ghost,
-  Flame, Tv, Radio, Mountain, Anchor, Megaphone, SlidersHorizontal
+  Flame, Tv, Radio, Mountain, Anchor, Megaphone, SlidersHorizontal, Lock
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
@@ -26,6 +26,9 @@ interface LayerPanelProps {
   on3DModeSelected?: () => void;
   /** False while the splash is up; the rail slides in when it turns true. */
   revealed?: boolean;
+  /** True when the viewer holds an active Weekly Pass. Premium layers render
+   *  with a lock and link to /premium instead of toggling. */
+  isPremiumUser?: boolean;
 }
 
 interface LayerDef {
@@ -40,6 +43,10 @@ interface LayerDef {
   /** Key of the layer this one modifies. Renders indented beneath it, and reads
    *  as inert while that parent is off — it has nothing to act on. */
   parent?: string;
+  /** Premium (Weekly Pass) layer. Free users see a lock and an upgrade prompt
+   *  instead of the toggle. Must match the PREMIUM_API_PREFIXES split in
+   *  src/middleware.ts — the API is the real gate, this is just the UI. */
+  premium?: boolean;
 }
 
 interface LayerGroupDef {
@@ -55,7 +62,7 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'OSIRIS SDK',
     icon: Network,
     layers: [
-      { key: 'sdk_sea', label: 'Maritime Lines', dataKey: 'sdk_entities' },
+      { key: 'sdk_sea', label: 'Maritime Lines', dataKey: 'sdk_entities', premium: true },
       { key: 'live_clouds', label: 'Live Clouds', description: 'NOAA satellites · lit in 3D · hourly', dataKey: '' },
     ],
   },
@@ -75,7 +82,7 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'MARITIME',
     icon: Ship,
     layers: [
-      { key: 'maritime', label: 'Maritime / Naval', dataKey: 'maritime_ships,maritime_ports,maritime_chokepoints' },
+      { key: 'maritime', label: 'Maritime / Naval', dataKey: 'maritime_ships,maritime_ports,maritime_chokepoints', premium: true },
     ],
   },
   {
@@ -96,9 +103,9 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'SURVEILLANCE',
     icon: Camera,
     layers: [
-      { key: 'cctv', label: 'CCTV Cameras', dataKey: 'cameras' },
-      { key: 'cctv_previews', label: 'Live Previews', dataKey: '', parent: 'cctv' },
-      { key: 'live_news', label: 'Live News Feeds', dataKey: 'live_feeds' },
+      { key: 'cctv', label: 'CCTV Cameras', dataKey: 'cameras', premium: true },
+      { key: 'cctv_previews', label: 'Live Previews', dataKey: '', parent: 'cctv', premium: true },
+      { key: 'live_news', label: 'Live News Feeds', dataKey: 'live_feeds', premium: true },
     ],
   },
   {
@@ -116,10 +123,10 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'THREATS & INTEL',
     icon: AlertTriangle,
     layers: [
-      { key: 'infrastructure', label: 'Nuclear Facilities', dataKey: 'infrastructure' },
-      { key: 'global_incidents', label: 'Global Incidents', dataKey: 'gdelt' },
+      { key: 'infrastructure', label: 'Nuclear Facilities', dataKey: 'infrastructure', premium: true },
+      { key: 'global_incidents', label: 'Global Incidents', dataKey: 'gdelt', premium: true },
       { key: 'alert_pins', label: 'Live Alert Pins', dataKey: 'alert_pins' },
-      { key: 'gdelt_events', label: 'GDELT Events', dataKey: 'gdelt_events' },
+      { key: 'gdelt_events', label: 'GDELT Events', dataKey: 'gdelt_events', premium: true },
     ],
   },
   {
@@ -127,8 +134,8 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'NETWORK INTEL',
     icon: Network,
     layers: [
-      { key: 'malware', label: 'Live Malware', dataKey: 'malware_threats' },
-      { key: 'cyber_attacks', label: 'Botnet C2 Servers', dataKey: 'cyber_attacks' },
+      { key: 'malware', label: 'Live Malware', dataKey: 'malware_threats', premium: true },
+      { key: 'cyber_attacks', label: 'Botnet C2 Servers', dataKey: 'cyber_attacks', premium: true },
     ],
   },
   {
@@ -136,8 +143,8 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'NET & EVENT INTEL',
     icon: Megaphone,
     layers: [
-      { key: 'cf_outages', label: 'Internet Outages', dataKey: 'cf_outages', requires: 'cloudflare' },
-      { key: 'cf_attacks', label: 'Attack Origins', dataKey: 'cf_attack_origins', requires: 'cloudflare' },
+      { key: 'cf_outages', label: 'Internet Outages', dataKey: 'cf_outages', requires: 'cloudflare', premium: true },
+      { key: 'cf_attacks', label: 'Attack Origins', dataKey: 'cf_attack_origins', requires: 'cloudflare', premium: true },
     ],
   },
   {
@@ -201,7 +208,7 @@ function SubLayerStem() {
   );
 }
 
-function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'core', setTheme, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true }: LayerPanelProps) {
+function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'core', setTheme, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false }: LayerPanelProps) {
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   /**
    * A pinned group stays open when the pointer leaves. Hover-only flyouts are
@@ -280,16 +287,21 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                 const isLayerActive = activeLayers[layer.key];
                 const count = getCount(layer.dataKey, layer.catKey);
                 const dormant = !!layer.parent && !activeLayers[layer.parent];
+                const locked = !!layer.premium && !isPremiumUser;
                 return (
                   <button
                     key={layer.key}
-                    onClick={() => toggle(layer.key)}
+                    onClick={() => { if (locked) { window.location.href = '/premium'; } else { toggle(layer.key); } }}
                     aria-pressed={!!isLayerActive}
-                    aria-label={layer.label}
+                    aria-label={locked ? `${layer.label} — premium` : layer.label}
                     className={`relative w-full flex items-center gap-3 py-2 rounded-md text-left hover:bg-white/[0.04] transition-colors ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-40' : ''}`}
                   >
                     {layer.parent && <SubLayerStem />}
-                    <ToggleSwitch active={!!isLayerActive} />
+                    {locked ? (
+                      <Lock className="w-3.5 h-3.5 flex-shrink-0 text-[var(--gold-primary)]" />
+                    ) : (
+                      <ToggleSwitch active={!!isLayerActive} />
+                    )}
                     <span className={`text-[11px] font-mono uppercase tracking-wider flex-1 transition-colors ${isLayerActive ? 'text-white/80' : 'text-white/40'}`}>
                       {layer.label}
                       {layer.description && <span className="block mt-0.5 text-[9px] normal-case tracking-normal text-white/35">{layer.description}</span>}
@@ -468,18 +480,23 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                         const isLayerActive = activeLayers[layer.key];
                         const count = getCount(layer.dataKey, layer.catKey);
                         const dormant = !!layer.parent && !activeLayers[layer.parent];
+                        const locked = !!layer.premium && !isPremiumUser;
 
                         return (
                           <button
                             key={layer.key}
-                            onClick={() => toggle(layer.key)}
+                            onClick={() => { if (locked) { window.location.href = '/premium'; } else { toggle(layer.key); } }}
                             aria-pressed={!!isLayerActive}
-                            aria-label={layer.label}
-                            title={dormant ? 'Turn the layer above on to use this' : undefined}
+                            aria-label={locked ? `${layer.label} — premium` : layer.label}
+                            title={locked ? 'Weekly Pass required' : dormant ? 'Turn the layer above on to use this' : undefined}
                             className={`relative w-full flex items-center gap-3 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-40' : ''}`}
                           >
                             {layer.parent && <SubLayerStem />}
-                            <ToggleSwitch active={!!isLayerActive} />
+                            {locked ? (
+                              <Lock className="w-3.5 h-3.5 flex-shrink-0 text-[var(--gold-primary)]" />
+                            ) : (
+                              <ToggleSwitch active={!!isLayerActive} />
+                            )}
                             <span className={`text-[11px] font-mono uppercase tracking-wider flex-1 transition-colors duration-200 ${isLayerActive ? 'text-white/70' : 'text-white/35'}`}>
                               {layer.label}
                               {layer.description && <span className="block mt-0.5 text-[9px] normal-case tracking-normal text-white/35">{layer.description}</span>}

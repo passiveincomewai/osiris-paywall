@@ -71,3 +71,7 @@ scanner_backend_backup.js
 # Local postgres credentials (sandbox dev only)
 .postgres-credentials
 .env*
+.agents/
+.claude/
+skills-lock.json
+agent/

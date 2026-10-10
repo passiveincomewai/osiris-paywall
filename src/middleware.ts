@@ -3,14 +3,31 @@ import type { NextRequest, NextFetchEvent } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 /* ------------------------------------------------------------------ */
-/* Paywall config                                                      */
+/* Freemium config                                                     */
 /* ------------------------------------------------------------------ */
-// Prefixes that require an ACTIVE weekly subscription. These pages don't
-// exist yet in the repo (the app currently lives at `/`) — the gate is
-// prefix-based, so routes are protected the moment they are added. See the
-// relocation step: move src/app/page.tsx -> src/app/dashboard/page.tsx and
-// put a marketing home at `/`.
-const PROTECTED_PREFIXES = ['/dashboard', '/map', '/osint'];
+// The map itself (/) is free for everyone, no signup — like osirisai.live.
+// These page prefixes require an ACTIVE weekly subscription (premium).
+const PROTECTED_PREFIXES = ['/map', '/osint'];
+
+// Premium data APIs: intel-grade / costly-to-serve endpoints. Free tier
+// gets the ambient layers (flights, weather, quakes, fires, satellites).
+// Everything else under /api is open (auth, checkout, webhooks, health,
+// and the free data routes).
+const PREMIUM_API_PREFIXES = [
+  '/api/cctv',
+  '/api/cyber-attacks', '/api/cyber-threats', '/api/malware',
+  '/api/gdelt', '/api/gdelt-events', '/api/live-news', '/api/news',
+  '/api/maritime',
+  '/api/infrastructure', '/api/scm-suppliers', '/api/sentinel',
+  '/api/region-dossier', '/api/entity',
+  '/api/markets', '/api/crypto', '/api/chain', '/api/oi',
+  '/api/conflicts', '/api/frontlines', '/api/country-risk',
+  '/api/osint',
+  '/api/ai',
+  '/api/cloudflare-radar', '/api/radar', '/api/arcgis', '/api/proxy-tiles',
+  '/api/scanner',
+  '/api/mcp', '/api/sdk',
+];
 
 // Auth.js v5 session cookie names (secure variant in production).
 const SESSION_COOKIE = process.env.NODE_ENV === 'production'
@@ -19,6 +36,12 @@ const SESSION_COOKIE = process.env.NODE_ENV === 'production'
 
 function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + '/')
+  );
+}
+
+function isPremiumApi(pathname: string): boolean {
+  return PREMIUM_API_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(p + '/')
   );
 }
@@ -84,12 +107,25 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 
   event.waitUntil(Promise.all([pageView, ipEvent]));
 
-  /* ---- paywall gate (JWT only — no DB round-trip on the edge) ---- */
+  /* ---- freemium gate (JWT only — no DB round-trip on the edge) ---- */
+  // Premium data APIs: 402 for non-subscribers (no redirect — these are
+  // fetched by the map client, which shows an upgrade prompt).
+  if (url.startsWith('/api/')) {
+    if (isPremiumApi(url) && !(await hasActivePass(request))) {
+      return NextResponse.json(
+        { error: 'premium_required', message: 'This intel layer requires the Weekly Premium Pass.' },
+        { status: 402 }
+      );
+    }
+    return NextResponse.next();
+  }
+
+  // Premium pages redirect to /premium like a paywall.
   if (!isProtectedPath(url)) return NextResponse.next();
 
   if (!(await hasActivePass(request))) {
     const redirect = request.nextUrl.clone();
-    redirect.pathname = '/pricing';
+    redirect.pathname = '/premium';
     redirect.search = `?from=${encodeURIComponent(url)}`;
     return NextResponse.redirect(redirect);
   }
@@ -103,11 +139,11 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
    match here and pay two umami round trips before the map could start. That is
    the same starvation that 2f375dd fixed for the CCTV routes, moved onto the
    map's critical path. Analytics wants page views; asset fetches are not one.
-   NOTE: /api/* is excluded here, so /api/webhooks/stripe never enters this
-   middleware — exempt by construction. If you later gate the data APIs
-   (/api/flights, /api/cctv, …) this matcher must be widened deliberately. */
+   NOTE: /api/* DOES enter this middleware (freemium needs it to gate premium
+   data APIs). Public API routes (auth, checkout, webhooks, health, free data)
+   pass straight through; only PREMIUM_API_PREFIXES are gated. */
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|vendor|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mjs|js|css|json|pbf|mvt|woff|woff2|ico|txt)$).*)',
+    '/((?!_next/static|_next/image|vendor|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mjs|js|css|json|pbf|mvt|woff|woff2|ico|txt)$).*)',
   ],
 }
