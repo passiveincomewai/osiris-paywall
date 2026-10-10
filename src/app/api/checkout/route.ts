@@ -2,8 +2,23 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { stripe, appUrl } from "@/lib/stripe";
+import { cookies } from "next/headers";
+import { REF_COOKIE, findAffiliateByCode } from "@/lib/affiliate/attribution";
 
 export const runtime = "nodejs";
+
+/** Resolve the referral cookie to affiliate metadata for Stripe. */
+async function affiliateMetadata(): Promise<Record<string, string>> {
+  try {
+    const code = (await cookies()).get(REF_COOKIE)?.value?.toLowerCase();
+    if (!code) return {};
+    const affiliate = await findAffiliateByCode(code);
+    if (!affiliate) return {};
+    return { affiliateProfileId: affiliate.id };
+  } catch {
+    return {};
+  }
+}
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -51,7 +66,12 @@ export async function POST(req: Request) {
     client_reference_id: userId,
     line_items: [{ price: priceId, quantity: 1 }],
     subscription_data: {
-      metadata: { userId },
+      metadata: {
+        userId,
+        // Affiliate attribution: resolved server-side from the httpOnly cookie.
+        // The webhook reads this to award commissions on paid invoices.
+        ...(await affiliateMetadata()),
+      },
       ...(trialDays > 0 ? { trial_period_days: trialDays } : {}),
     },
     // Trials must collect a card up front; Stripe charges it when the trial ends.

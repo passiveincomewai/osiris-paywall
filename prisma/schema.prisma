@@ -20,6 +20,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   subscription  Subscription?
+  affiliateProfile AffiliateProfile?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -89,4 +90,221 @@ model Subscription {
 
   @@index([status])
   @@index([currentPeriodEnd])
+}
+
+// ── WorldEye Affiliate System ──────────────────────────────────────────
+// Money flows: Stripe webhook (invoice.payment_succeeded) → Commission rows
+// (idempotent per invoice+level) → 30-day hold → available → payout request
+// → admin approval → paid. XP flows through XPEvent (idempotent per key).
+
+enum AffiliateStatus {
+  pending
+  active
+  suspended
+  banned
+}
+
+model AffiliateProfile {
+  id            String          @id @default(cuid())
+  userId        String          @unique
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  referralCode  String          @unique
+  customCode    String?         @unique
+  status        AffiliateStatus @default(pending)
+  xp            Int             @default(0)
+
+  // Network: who recruited this affiliate (affiliate→affiliate chain for L2/L3)
+  recruitedByProfileId String?
+  recruitedBy          AffiliateProfile?  @relation("RecruitChain", fields: [recruitedByProfileId], references: [id], onDelete: SetNull)
+  recruits             AffiliateProfile[] @relation("RecruitChain")
+
+  leaderboardOptOut Boolean @default(false)
+  payoutEmail       String?
+  payoutMethod      String? // "stripe_connect" | "paypal" | "manual"
+
+  clicks        ReferralClick[]
+  attributions  ReferralAttribution[] @relation("AffiliateAttributions")
+  commissions   Commission[]
+  payouts       Payout[]
+  xpEvents      XPEvent[]
+  challengeProgress ChallengeProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([recruitedByProfileId])
+}
+
+model ReferralClick {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+
+  ipHash    String
+  userAgent String? @db.VarChar(300)
+  path      String? @db.VarChar(300)
+
+  createdAt DateTime @default(now())
+
+  // Anti-abuse: one counted click per visitor-hash per affiliate per day
+  @@index([affiliateProfileId, ipHash, createdAt])
+  @@index([createdAt])
+}
+
+model ReferralAttribution {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation("AffiliateAttributions", fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+
+  // The referred end-user (one user can only ever be attributed once)
+  referredUserId String           @unique
+  clickId       String?
+  createdAt     DateTime         @default(now())
+  // 30-day attribution window (configurable)
+  expiresAt     DateTime
+  convertedAt   DateTime?
+
+  @@index([affiliateProfileId])
+}
+
+enum CommissionStatus {
+  pending    // within holding period
+  available  // holding elapsed, payable
+  requested  // included in a payout request
+  paid
+  reversed   // refunded / charged back
+}
+
+model Commission {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+
+  referredUserId   String?
+  stripeInvoiceId  String?
+  stripeCustomerId String?
+  level            Int // 1 = direct, 2/3 = overrides
+  amountCents      Int
+  currency         String            @default("usd")
+  status           CommissionStatus  @default(pending)
+  availableAt      DateTime
+  // Idempotency: one commission per invoice per level, replays safe
+  idempotencyKey   String            @unique
+
+  payoutId String?
+  payout   Payout? @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([affiliateProfileId, status])
+  @@index([stripeInvoiceId])
+}
+
+enum PayoutStatus {
+  requested
+  approved
+  processing
+  paid
+  rejected
+}
+
+model Payout {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+
+  amountCents  Int
+  currency     String       @default("usd")
+  method       String       @default("manual")
+  status       PayoutStatus @default(requested)
+  providerRef  String?
+  decidedBy    String?
+  note         String?      @db.Text
+
+  commissions Commission[]
+
+  requestedAt DateTime  @default(now())
+  decidedAt   DateTime?
+
+  @@index([affiliateProfileId, status])
+}
+
+model XPEvent {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+
+  activity String
+  xp       Int
+  // Anti-abuse: same activity for the same subject can only award once
+  idempotencyKey String @unique
+  meta           Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([affiliateProfileId, createdAt])
+}
+
+enum ChallengeKind {
+  daily
+  weekly
+  monthly
+}
+
+model Challenge {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  kind        ChallengeKind
+  title       String
+  description String        @db.Text
+  xpReward    Int
+  metric      String // "visits" | "signups" | "paying_referrals" | "revenue_cents" | "rank_up" | "tutorial"
+  target      Int
+  startsAt    DateTime
+  endsAt      DateTime
+  active      Boolean       @default(true)
+
+  progress ChallengeProgress[]
+
+  createdAt DateTime @default(now())
+
+  @@index([kind, active, endsAt])
+}
+
+model ChallengeProgress {
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+  challengeId        String
+  challenge          Challenge        @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  progress    Int       @default(0)
+  completedAt DateTime?
+
+  @@id([affiliateProfileId, challengeId])
+  @@index([challengeId])
+}
+
+// Singleton row (id = "global") holding admin-tunable program parameters.
+model AffiliateSettings {
+  id   String @id @default("global")
+  data Json
+
+  updatedAt DateTime @updatedAt
+}
+
+model AffiliateAuditLog {
+  id        String   @id @default(cuid())
+  actorUserId String?
+  action    String
+  targetType String?
+  targetId   String?
+  details    Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([targetType, targetId])
 }

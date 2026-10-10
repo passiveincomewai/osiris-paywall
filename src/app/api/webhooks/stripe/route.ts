@@ -3,6 +3,8 @@ import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import type { SubscriptionStatus } from "@prisma/client";
+import { recordCommissionsForInvoice, reverseCommissionsForInvoice } from "@/lib/affiliate/commissions";
+import { attributeUserToAffiliate, linkAttribution } from "@/lib/affiliate/attribution";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -124,8 +126,41 @@ export async function POST(req: NextRequest) {
       }
       case "invoice.payment_succeeded": {
         // Only subscription invoices renew access; ignore one-off invoices.
-        const subId = subscriptionIdFromInvoice(event.data.object as Stripe.Invoice);
-        if (subId) await subscriptionFromId(subId);
+        const invoice = event.data.object as Stripe.Invoice;
+        const invoiceId = invoice.id;
+        const subId = subscriptionIdFromInvoice(invoice);
+        if (subId && invoiceId) {
+          await subscriptionFromId(subId);
+          // Affiliate commissions: only real paid subscription invoices.
+          if (invoice.amount_paid > 0) {
+            const sub = await db.subscription.findUnique({
+              where: { stripeSubscriptionId: subId },
+              select: { userId: true },
+            });
+            const userId = sub?.userId;
+            if (userId) {
+              // Prefer the affiliate captured at checkout (subscription metadata);
+              // fall back to cookie-based attribution (no-op server-side).
+              const stripeSub = await stripe().subscriptions.retrieve(subId);
+              const affProfileId = stripeSub.metadata?.affiliateProfileId;
+              if (affProfileId) {
+                await linkAttribution(userId, affProfileId);
+              } else {
+                await attributeUserToAffiliate(userId);
+              }
+              const customerId =
+                typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id ?? "";
+              await recordCommissionsForInvoice({
+                stripeInvoiceId: invoiceId,
+                stripeCustomerId: customerId,
+                stripeSubscriptionId: subId,
+                userId,
+                amountCents: invoice.amount_paid,
+                currency: invoice.currency ?? "usd",
+              });
+            }
+          }
+        }
         break;
       }
       case "invoice.payment_failed": {
@@ -139,6 +174,27 @@ export async function POST(req: NextRequest) {
       case "customer.subscription.deleted": {
         // Event object IS the subscription — no extra API call needed.
         await syncSubscription(event.data.object as Stripe.Subscription);
+        break;
+      }
+      case "charge.refunded": {
+        // Reverse affiliate commissions tied to the refunded invoice.
+        const charge = event.data.object as Stripe.Charge;
+        // NOTE: `invoice` is not on the v18 Charge type; read it defensively
+        // at runtime (Stripe still sends it on charge events).
+        const chargeInvoice = (charge as unknown as { invoice?: string | { id?: string } | null }).invoice;
+        const invoiceId = typeof chargeInvoice === "string" ? chargeInvoice : chargeInvoice?.id;
+        if (invoiceId) await reverseCommissionsForInvoice(invoiceId, "charge.refunded");
+        break;
+      }
+      case "charge.dispute.created": {
+        const dispute = event.data.object as Stripe.Dispute;
+        const chargeId = typeof dispute.charge === "string" ? dispute.charge : dispute.charge?.id;
+        if (chargeId) {
+          const disputed = await stripe().charges.retrieve(chargeId);
+          const dInvoice = (disputed as unknown as { invoice?: string | { id?: string } | null }).invoice;
+          const invoiceId = typeof dInvoice === "string" ? dInvoice : dInvoice?.id;
+          if (invoiceId) await reverseCommissionsForInvoice(invoiceId, "charge.dispute.created");
+        }
         break;
       }
       default:
