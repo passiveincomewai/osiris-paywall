@@ -3,9 +3,9 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import "./globals.css";
 
 const SITE_URL = "https://osiris-lime.vercel.app";
-const SITE_NAME = "WorldPulse";
-const SITE_TITLE = "WorldPulse — Live 3D Globe | Flight Tracking, CCTV, Satellites & OSINT Tools";
-const SITE_DESCRIPTION = "WorldPulse is a live 3D intelligence globe: track aircraft, satellites and 36,000+ worldwide CCTV cameras free. Go Pro for the AI analyst, satellite view, global search and premium intel feeds.";
+const SITE_NAME = "WorldEye";
+const SITE_TITLE = "WorldEye — Live 3D Globe | Flight Tracking, CCTV, Satellites & OSINT Tools";
+const SITE_DESCRIPTION = "WorldEye is a live 3D intelligence globe: track aircraft, satellites and 36,000+ worldwide CCTV cameras free. Go Pro for the AI analyst, satellite view, global search and premium intel feeds.";
 
 export const viewport: Viewport = {
   themeColor: "#D4AF37",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_TITLE,
-    template: "%s | WorldPulse",
+    template: "%s | WorldEye",
   },
   description: SITE_DESCRIPTION,
   keywords: [
@@ -52,11 +52,11 @@ export const metadata: Metadata = {
     "defense stocks", "commodities tracker",
     
     // Brand
-    "worldpulse",
+    "worldeye",
   ],
-  authors: [{ name: "WorldPulse", url: SITE_URL }],
-  creator: "WorldPulse",
-  publisher: "WorldPulse",
+  authors: [{ name: "WorldEye", url: SITE_URL }],
+  creator: "WorldEye",
+  publisher: "WorldEye",
   robots: {
     index: true,
     follow: true,
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: "WorldPulse — Live 3D Intelligence Globe | Flights, CCTV, Satellites & OSINT Tools",
+    title: "WorldEye — Live 3D Intelligence Globe | Flights, CCTV, Satellites & OSINT Tools",
     description: "Track live aircraft, satellites and 36,000+ worldwide CCTV cameras on a 3D globe — free. Go Pro for the AI analyst, satellite view, global search and premium intel feeds.",
     type: "website",
     siteName: SITE_NAME,
@@ -102,14 +102,14 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "WorldPulse — Live 3D Intelligence Globe",
+        alt: "WorldEye — Live 3D Intelligence Globe",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "🛰️ WorldPulse — Live 3D Intelligence Globe | Tracking + OSINT Tools",
+    title: "🛰️ WorldEye — Live 3D Intelligence Globe | Tracking + OSINT Tools",
     description: "Track live flights, satellites & 36,000+ CCTV cameras worldwide on a 3D globe — free. Pro unlocks the AI analyst, satellite view and premium intel feeds.",
     images: [`${SITE_URL}/og-image.png`],
   },
@@ -118,7 +118,7 @@ export const metadata: Metadata = {
   other: {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
-    "apple-mobile-web-app-title": "WorldPulse",
+    "apple-mobile-web-app-title": "WorldEye",
     "mobile-web-app-capable": "yes",
     "msapplication-TileColor": "#06060C",
     "msapplication-config": "none",
@@ -129,8 +129,8 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "WorldPulse — Live 3D Intelligence Globe & OSINT Tools",
-  alternateName: ["WorldPulse"],
+  name: "WorldEye — Live 3D Intelligence Globe & OSINT Tools",
+  alternateName: ["WorldEye"],
   url: SITE_URL,
   description: SITE_DESCRIPTION,
   applicationCategory: "SecurityApplication",
@@ -167,7 +167,7 @@ const jsonLd = {
   screenshot: `${SITE_URL}/og-image.png`,
   author: {
     "@type": "Organization",
-    name: "WorldPulse",
+    name: "WorldEye",
     url: SITE_URL,
   },
 };
@@ -196,7 +196,7 @@ export default function RootLayout({
 
       </head>
       <body className="antialiased">
-        <ErrorBoundary name="WorldPulse">
+        <ErrorBoundary name="WorldEye">
           {children}
         </ErrorBoundary>
       </body>

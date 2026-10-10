@@ -61,7 +61,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // Email magic link via Resend (free tier: 100 emails/day). Needs
     // AUTH_RESEND_KEY plus a verified sender in EMAIL_FROM.
     ...(process.env.AUTH_RESEND_KEY
-      ? [Resend({ from: process.env.EMAIL_FROM ?? "WorldPulse <onboarding@resend.dev>" })]
+      ? [Resend({ from: process.env.EMAIL_FROM ?? "WorldEye <onboarding@resend.dev>" })]
       : []),
   ],
   callbacks: {

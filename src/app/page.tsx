@@ -1373,7 +1373,7 @@ export default function Dashboard() {
 
 
 
-            {/* ── WorldPulse logo ── */}
+            {/* ── WorldEye logo ── */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -1381,8 +1381,8 @@ export default function Dashboard() {
               className="relative z-[2] mb-8"
             >
               <img
-                src="/worldpulse-logo.png?v=2"
-                alt="WorldPulse"
+                src="/worldeye-logo.png?v=3"
+                alt="WorldEye"
                 className="w-64 md:w-80 h-auto"
                 style={{ filter: 'drop-shadow(0 0 40px rgba(0,150,255,0.35))' }}
               />
@@ -1648,13 +1648,13 @@ export default function Dashboard() {
         )}
       </motion.div>
 
-      {/* ── HEADER — WorldPulse brand ── */}
+      {/* ── HEADER — WorldEye brand ── */}
       <motion.div data-hud initial={{ opacity: 0, y: -20 }} animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }} transition={hudIn(0.15)} className="absolute top-4 z-[200] pointer-events-none" style={{ left: isMobile ? '16px' : '64px' }}>
         <a href="/" className="pointer-events-auto flex items-center gap-2.5">
           <img
-            src="/worldpulse-globe.png?v=2"
-            alt="WorldPulse"
-            className="w-9 h-9 md:w-10 md:h-10"
+            src="/worldeye-eye.png?v=3"
+            alt="WorldEye"
+            className="h-9 md:h-10 w-auto"
             style={{ filter: 'drop-shadow(0 0 10px rgba(0,150,255,0.5))' }}
           />
           <span className="text-lg md:text-xl font-bold tracking-wide font-mono">
