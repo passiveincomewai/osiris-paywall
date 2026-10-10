@@ -63,8 +63,8 @@ export default function CinematicHero() {
   const hintOpacity = Math.max(0, 1 - progress * 8);
 
   return (
-    <div ref={sectionRef} className="relative z-[1000]" style={{ height: `${TRACK_VH}vh` }}>
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-black">
+    <div ref={sectionRef} className="cinematic-root relative z-[1000]" style={{ height: `${TRACK_VH}vh` }}>
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-black" style={{ height: '100svh' }}>
         <video
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"

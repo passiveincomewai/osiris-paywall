@@ -170,9 +170,11 @@ html, body {
 /* ── Scrollable document pages (docs) ──
    The rules above lock the viewport for the fullscreen map. Long-form pages
    opt out by rendering .docs-root, which releases the lock without affecting
-   the map. */
+   the map. The cinematic scroll hero on / opts out with .cinematic-root. */
 html:has(.docs-root),
-html:has(.docs-root) body {
+html:has(.docs-root) body,
+html:has(.cinematic-root),
+html:has(.cinematic-root) body {
   height: auto;
   overflow-x: hidden;
   overflow-y: auto;
@@ -181,7 +183,9 @@ html:has(.docs-root) body {
 
 @media (prefers-reduced-motion: reduce) {
   html:has(.docs-root),
-  html:has(.docs-root) body { scroll-behavior: auto; }
+  html:has(.docs-root) body,
+  html:has(.cinematic-root),
+  html:has(.cinematic-root) body { scroll-behavior: auto; }
 }
 
 /* ── Docs code tokens ── */
