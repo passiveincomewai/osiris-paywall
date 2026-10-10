@@ -23,10 +23,13 @@ const PREMIUM_API_PREFIXES = [
   '/api/conflicts', '/api/frontlines', '/api/country-risk',
   '/api/osint',
   '/api/ai',
-  '/api/cloudflare-radar', '/api/radar', '/api/arcgis', '/api/proxy-tiles',
+  '/api/cloudflare-radar', '/api/radar', '/api/arcgis',
   '/api/scanner',
   '/api/mcp', '/api/sdk',
 ];
+// NOTE: /api/proxy-tiles is intentionally NOT premium — the map routes every
+// basemap request (style JSON, glyphs, sprites, vector tiles) through it.
+// Gating it turns the whole globe black.
 
 // Auth.js v5 session cookie names (secure variant in production).
 const SESSION_COOKIE = process.env.NODE_ENV === 'production'
