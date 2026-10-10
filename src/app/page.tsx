@@ -1388,28 +1388,6 @@ export default function Dashboard() {
               />
             </motion.div>
 
-            {/* ── Radar scan — visible until the camera catalogue lands ── */}
-            {camerasLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="relative z-[2] mb-6 flex flex-col items-center gap-3"
-              >
-                <motion.img
-                  src="/radar-scan.png"
-                  alt="Scanning for cameras"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-                  className="w-28 h-28 md:w-36 md:h-36 rounded-full"
-                  style={{ filter: 'drop-shadow(0 0 24px rgba(0,180,255,0.5))' }}
-                />
-                <p className="text-[11px] font-mono tracking-[0.3em] text-[#00B4FF] uppercase animate-pulse">
-                  Scanning cameras
-                </p>
-              </motion.div>
-            )}
-
             {/* ── Subtitle — typewriter reveal ── */}
             <div className="overflow-hidden mb-8 z-[2]">
               <motion.div
