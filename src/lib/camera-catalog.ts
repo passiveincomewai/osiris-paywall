@@ -8,10 +8,17 @@ export function mergeCameraCatalog<T extends { id: string | number }>(previous: 
 }
 
 /** Recover slow regions without downloading the entire worldwide list again. */
-export function loadCameraCatalog(onBatch: (cameras: CatalogCamera[]) => void, onError: () => void) {
+/** onDone fires when every region has loaded or the retry budget is spent. */
+export function loadCameraCatalog(
+  onBatch: (cameras: CatalogCamera[]) => void,
+  onError: () => void,
+  onDone?: () => void,
+) {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
   let attempts = 0;
+  let done = false;
+  const finish = () => { if (!done) { done = true; onDone?.(); } };
   const load = async (regions: string[]) => {
     attempts++;
     let remaining = regions;
@@ -33,8 +40,10 @@ export function loadCameraCatalog(onBatch: (cameras: CatalogCamera[]) => void, o
     // Three attempts total, with backoff. No endless retries against dead feeds.
     if (remaining.length && attempts < 3 && !controller.signal.aborted) {
       timer = setTimeout(() => void load(remaining), attempts * 15_000);
+    } else {
+      finish();
     }
   };
   void load(['all']);
-  return () => { controller.abort(); clearTimeout(timer); };
+  return () => { controller.abort(); clearTimeout(timer); finish(); };
 }

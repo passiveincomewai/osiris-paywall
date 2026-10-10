@@ -185,6 +185,9 @@ export default function Dashboard() {
   const [regionDossier, setRegionDossier] = useState<any>(null);
   const [dossierLoading, setDossierLoading] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  /* Radar scan: true while the camera catalogue is still loading. The splash
+     shows the radar until every region lands (or retries give up). */
+  const [camerasLoading, setCamerasLoading] = useState(true);
   const [splashStage, setSplashStage] = useState(0);
   const [mapReady, setMapReady] = useState(false);
 
@@ -453,7 +456,7 @@ export default function Dashboard() {
     sat_earth: false,
     sat_science: false,
     balloons: false,
-    cctv: false,
+    cctv: true,
     /* The live preview tiles over the camera dots — see CctvPreviews. */
     cctv_previews: false,
     live_news: true,
@@ -622,17 +625,25 @@ export default function Dashboard() {
   const [liveFeedName, setLiveFeedName] = useState('');
   const [liveFeedEmbedAllowed, setLiveFeedEmbedAllowed] = useState(true);
 
-  /* Splash: it lifts once the map has drawn its first frame. It never lifts
-     before the intro has played (about 2.2 s), and never later than 7 s, so a
-     machine that cannot start the map still reaches the platform. */
+  /* Splash: it lifts once the map has drawn its first frame AND the camera
+     catalogue lands (the radar scans until then). It never lifts before the
+     intro has played (about 2.2 s), and never later than 25 s, so a slow feed
+     never traps the user on the splash. */
   useEffect(() => {
     const timers = [
       setTimeout(() => setSplashStage(s => Math.max(s, 1)), 1100),
       setTimeout(() => setSplashStage(s => Math.max(s, 2)), 1700),
-      setTimeout(() => setShowSplash(false), 7000),
+      setTimeout(() => setShowSplash(false), 25000),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
+  /* When the camera catalogue lands, lift the splash (intro already played). */
+  useEffect(() => {
+    if (!camerasLoading) {
+      const t = setTimeout(() => setShowSplash(false), 600);
+      return () => clearTimeout(t);
+    }
+  }, [camerasLoading]);
   useEffect(() => {
     if (!mapReady || splashStage !== 2) return;
     const t = setTimeout(() => setSplashStage(3), 500);
@@ -1007,6 +1018,7 @@ export default function Dashboard() {
   const layerFetchedRef = useRef<Set<string>>(new Set());
   useEffect(() => {
     if (!activeLayers.cctv) return;
+    setCamerasLoading(true);
     return loadCameraCatalog(cameras => {
       dataRef.current = {
         ...dataRef.current,
@@ -1014,7 +1026,8 @@ export default function Dashboard() {
       };
       setDataVersion(value => value + 1);
       setBackendStatus('connected');
-    }, () => console.warn('[OSIRIS] Camera catalogue load failed; bounded retry scheduled'));
+    }, () => console.warn('[OSIRIS] Camera catalogue load failed; bounded retry scheduled'),
+    () => setCamerasLoading(false));
   }, [activeLayers.cctv]);
 
   useEffect(() => {
@@ -1374,6 +1387,28 @@ export default function Dashboard() {
                 style={{ filter: 'drop-shadow(0 0 40px rgba(0,150,255,0.35))' }}
               />
             </motion.div>
+
+            {/* ── Radar scan — visible until the camera catalogue lands ── */}
+            {camerasLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="relative z-[2] mb-6 flex flex-col items-center gap-3"
+              >
+                <motion.img
+                  src="/radar-scan.png"
+                  alt="Scanning for cameras"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                  className="w-28 h-28 md:w-36 md:h-36 rounded-full"
+                  style={{ filter: 'drop-shadow(0 0 24px rgba(0,180,255,0.5))' }}
+                />
+                <p className="text-[11px] font-mono tracking-[0.3em] text-[#00B4FF] uppercase animate-pulse">
+                  Scanning cameras
+                </p>
+              </motion.div>
+            )}
 
             {/* ── Subtitle — typewriter reveal ── */}
             <div className="overflow-hidden mb-8 z-[2]">
