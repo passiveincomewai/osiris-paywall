@@ -29,6 +29,8 @@ interface SearchBarProps {
   onDirections?: (place: PlaceLike) => void;
   /** Inside another container (the phone drawer): no frame of its own. */
   embedded?: boolean;
+  /** Search is a Weekly Pass feature. When false, an upgrade card replaces the input. */
+  isPremiumUser?: boolean;
 }
 
 /** How close to fly for each kind /api/geosearch returns. */
@@ -52,7 +54,20 @@ const parseCoords = (s: string): { lat: number; lng: number } | null => {
   return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 ? { lat, lng } : null;
 };
 
-export default function SearchBar({ onLocate, center = null, onClose, onDirections, embedded = false }: SearchBarProps) {
+export default function SearchBar({ onLocate, center = null, onClose, onDirections, embedded = false, isPremiumUser = false }: SearchBarProps) {
+  // Search is a Weekly Pass feature.
+  if (!isPremiumUser) {
+    return (
+      <div className={`flex flex-col items-center gap-3 p-6 text-center ${embedded ? '' : 'rounded-xl border border-white/10 bg-black/60 backdrop-blur-xl'}`}>
+        <Search className="w-8 h-8 text-[#D4AF37]" />
+        <p className="text-sm font-semibold text-white">Search is a Pro feature</p>
+        <p className="text-xs text-white/50 max-w-[220px]">Find any place, address or coordinates and fly there instantly.</p>
+        <a href="/pricing" className="mt-1 px-5 py-2 rounded-full bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition">
+          Upgrade to Pro
+        </a>
+      </div>
+    );
+  }
   const [value, setValue] = useState('');
   const [results, setResults] = useState<Hit[]>([]);
   const [loading, setLoading] = useState(false);
