@@ -24,16 +24,19 @@ git add -A && git commit -m "Paywall foundation: Auth.js v5 + Stripe weekly pass
 git push -u origin main              # or master, matching your default branch
 ```
 
-## 2. Provision Postgres (Neon, free tier)
+## 2. Database — Vercel Postgres (no separate signup)
 
-1. https://neon.tech → new project → copy the **pooled** connection string.
-2. It looks like:
-   `postgresql://<user>:<pass>@<host>/osiris?sslmode=require`
-3. Run the migration **from your machine** against the remote DB:
+Skip Neon entirely. Once the Vercel project exists (step 4):
+
+1. Vercel dashboard → your project → **Storage** → **Create Database** → Postgres.
+2. Vercel auto-injects `DATABASE_URL` (pooled) into your project's env — no copy-paste needed.
+3. Run the migration **from your machine** against the Vercel database. Get the connection string from Storage → `.env.local` → "Show secret" → copy `DATABASE_URL`, then:
 
 ```bash
-DATABASE_URL="<pooled-connection-string>" npx prisma migrate deploy
+DATABASE_URL="<vercel-postgres-url>" npx prisma migrate deploy
 ```
+
+The migration files live in `prisma/migrations/` in the repo, so this is a one-shot apply.
 
 ## 3. Create one OAuth app (GitHub, ~5 min)
 
@@ -57,7 +60,7 @@ first, then come back and fill in the callback URL.)
 
 | Variable | Value |
 |---|---|
-| `DATABASE_URL` | pooled Neon connection string |
+| `DATABASE_URL` | auto-injected by Vercel Postgres (step 2) |
 | `AUTH_SECRET` | `openssl rand -base64 32` |
 | `AUTH_URL` | `https://<your-app>.vercel.app` |
 | `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | from step 3 |
