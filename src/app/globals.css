@@ -170,13 +170,23 @@ html, body {
 /* ── Scrollable document pages (docs) ──
    The rules above lock the viewport for the fullscreen map. Long-form pages
    opt out by rendering .docs-root, which releases the lock without affecting
-   the map. The cinematic scroll hero on / opts out with .cinematic-root. */
+   the map. */
 html:has(.docs-root),
-html:has(.docs-root) body,
+html:has(.docs-root) body {
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* ── Cinematic scroll hero (homepage) ──
+   Same viewport-lock release, but overflow-x:clip instead of hidden:
+   `hidden` turns body into a scroll container which BREAKS position:sticky
+   for the pinned stage; `clip` clips horizontally without breaking sticky. */
 html:has(.cinematic-root),
 html:has(.cinematic-root) body {
   height: auto;
-  overflow-x: hidden;
+  overflow-x: clip;
   overflow-y: auto;
   scroll-behavior: smooth;
 }

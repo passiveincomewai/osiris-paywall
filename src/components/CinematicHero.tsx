@@ -4,6 +4,14 @@
 // to video time, eased in rAF for buttery scrubbing forward AND backward.
 // The existing app below is untouched — it sits fixed behind this section
 // and is revealed when the track scrolls away.
+//
+// Robustness notes:
+// - Progress is derived from layout inside the rAF loop (not from scroll
+//   events), so scrubbing works even if scroll events are missed or the
+//   scroller isn't window.
+// - iOS Safari won't render programmatic seeks on a video that has never
+//   played: the media pipeline is unlocked with play()->pause() on the first
+//   user gesture.
 import { useEffect, useRef, useState } from 'react';
 
 const TRACK_VH = 350;
@@ -11,7 +19,8 @@ const TRACK_VH = 350;
 export default function CinematicHero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const target = useRef(0);
+  const progressRef = useRef(0);
+  const unlocked = useRef(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -23,20 +32,28 @@ export default function CinematicHero() {
     let visible = true;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const computeTarget = () => {
-      const total = section.offsetHeight - window.innerHeight;
-      const p = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / Math.max(1, total)));
-      target.current = p * (video.duration || 10);
-      setProgress(p);
+    const unlock = () => {
+      if (unlocked.current) return;
+      unlocked.current = true;
+      video.play().then(() => video.pause()).catch(() => {});
     };
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('touchstart', unlock);
 
     const tick = () => {
+      // Derive scroll progress from live layout every frame.
+      const total = section.offsetHeight - window.innerHeight;
+      const p = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / Math.max(1, total)));
+      if (p !== progressRef.current) {
+        progressRef.current = p;
+        setProgress(p);
+      }
+      const target = p * (video.duration || 10);
       if (visible && video.readyState >= 1) {
-        const diff = target.current - video.currentTime;
+        const diff = target - video.currentTime;
         if (Math.abs(diff) > 0.0008) {
-          // Ease toward the target; snap when close. Instant if reduced motion.
           video.currentTime = reduceMotion || Math.abs(diff) < 0.04
-            ? target.current
+            ? target
             : video.currentTime + diff * 0.16;
         }
       }
@@ -46,17 +63,12 @@ export default function CinematicHero() {
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0 });
     io.observe(section);
 
-    computeTarget();
-    video.addEventListener('loadedmetadata', computeTarget);
-    window.addEventListener('scroll', computeTarget, { passive: true });
-    window.addEventListener('resize', computeTarget);
     raf = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
-      video.removeEventListener('loadedmetadata', computeTarget);
-      window.removeEventListener('scroll', computeTarget);
-      window.removeEventListener('resize', computeTarget);
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('touchstart', unlock);
     };
   }, []);
 
