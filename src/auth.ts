@@ -1,6 +1,7 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import Resend from "next-auth/providers/resend";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 
@@ -47,9 +48,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   // Providers are opt-in: a provider is only registered when its env vars
   // exist, so local dev works with a single OAuth app (or none, until set).
+  // Sign-in buttons appear automatically on the Auth.js sign-in page.
   providers: [
     ...(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET ? [GitHub] : []),
     ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET ? [Google] : []),
+    // Email magic link via Resend (free tier: 100 emails/day). Needs
+    // AUTH_RESEND_KEY plus a verified sender in EMAIL_FROM.
+    ...(process.env.AUTH_RESEND_KEY
+      ? [Resend({ from: process.env.EMAIL_FROM ?? "WorldPulse <onboarding@resend.dev>" })]
+      : []),
   ],
   callbacks: {
     async jwt({ token, user, trigger }) {
