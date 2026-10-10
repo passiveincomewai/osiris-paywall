@@ -2,11 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import type { SubscriptionStatus } from "@prisma/client";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
 function toDate(secs: number | null | undefined): Date {
   return new Date((secs ?? 0) * 1000);
+}
+
+/**
+ * Stripe API v18 moved the billing period off the subscription and onto its
+ * items. The weekly pass is always a single item, so item[0] is canonical.
+ */
+function currentPeriod(sub: Stripe.Subscription): { start: Date; end: Date } {
+  const item = sub.items.data[0];
+  return {
+    start: toDate(item?.current_period_start),
+    end: toDate(item?.current_period_end),
+  };
+}
+
+/**
+ * Stripe API v18 removed Invoice.subscription. Invoices now reference their
+ * subscription through parent.subscription_details.
+ */
+function subscriptionIdFromInvoice(invoice: Stripe.Invoice): string | null {
+  const parent = invoice.parent;
+  if (parent?.type === "subscription_details" && parent.subscription_details) {
+    const s = parent.subscription_details.subscription;
+    return typeof s === "string" ? s : s.id;
+  }
+  return null;
 }
 
 /**
@@ -16,13 +42,15 @@ function toDate(secs: number | null | undefined): Date {
  * subscription.updated/deleted, which carry no client_reference_id).
  */
 async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
-  let userId = sub.metadata?.userId;
+  // NOTE: Stripe's Metadata index signature types `.userId` as `string`
+  // (never undefined), so the widening annotation is load-bearing.
+  let userId: string | undefined = sub.metadata?.userId;
   if (!userId) {
     const row = await db.subscription.findUnique({
       where: { stripeSubscriptionId: sub.id },
       select: { userId: true },
     });
-    userId = row?.userId;
+    userId = row?.userId ?? undefined;
   }
   if (!userId) {
     console.error(`[stripe-webhook] no userId for subscription ${sub.id}; skipping`);
@@ -35,14 +63,18 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
     return;
   }
 
+  const period = currentPeriod(sub);
   const data = {
     userId,
     stripeCustomerId: customerId,
     stripeSubscriptionId: sub.id,
     stripePriceId: sub.items.data[0]?.price.id ?? "",
-    status: sub.status, // Stripe values map 1:1 onto the SubscriptionStatus enum
-    currentPeriodStart: toDate(sub.current_period_start),
-    currentPeriodEnd: toDate(sub.current_period_end),
+    // Stripe's Status union matches the Prisma SubscriptionStatus enum 1:1.
+    // A future Stripe-side status would fail loudly here rather than
+    // silently storing a wrong value.
+    status: sub.status as SubscriptionStatus,
+    currentPeriodStart: period.start,
+    currentPeriodEnd: period.end,
     cancelAtPeriodEnd: sub.cancel_at_period_end ?? false,
   };
 
@@ -91,23 +123,15 @@ export async function POST(req: NextRequest) {
         break;
       }
       case "invoice.payment_succeeded": {
-        const invoice = event.data.object as Stripe.Invoice;
-        const subId =
-          typeof invoice.subscription === "string"
-            ? invoice.subscription
-            : invoice.subscription?.id;
         // Only subscription invoices renew access; ignore one-off invoices.
+        const subId = subscriptionIdFromInvoice(event.data.object as Stripe.Invoice);
         if (subId) await subscriptionFromId(subId);
         break;
       }
       case "invoice.payment_failed": {
         // Card failed on renewal → reflect past_due immediately so the
         // paywall (via JWT refresh) locks them out at the next check.
-        const invoice = event.data.object as Stripe.Invoice;
-        const subId =
-          typeof invoice.subscription === "string"
-            ? invoice.subscription
-            : invoice.subscription?.id;
+        const subId = subscriptionIdFromInvoice(event.data.object as Stripe.Invoice);
         if (subId) await subscriptionFromId(subId);
         break;
       }

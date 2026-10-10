@@ -65,6 +65,7 @@ enum SubscriptionStatus {
   trialing
   past_due
   canceled
+  paused
   incomplete
   incomplete_expired
   unpaid
