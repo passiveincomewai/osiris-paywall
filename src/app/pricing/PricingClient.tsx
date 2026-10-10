@@ -127,7 +127,7 @@ export default function PricingPage() {
   const p = PLANS[plan];
 
   return (
-    <main className="min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+    <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       {/* Ambient gold glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
