@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, Satellite, Search, BrainCircuit,
-  ShieldCheck, Zap, Globe, Camera, Radar, Lock, ChevronDown, BadgeCheck,
+  ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus,
 } from "lucide-react";
 
 type Plan = "weekly" | "monthly" | "annual";
 
-const PLANS: Record<Plan, { price: string; per: string; note: string; save?: string; cta: string; trial?: string }> = {
-  weekly: { price: "$3.99", per: "/week", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
-  monthly: { price: "$9.99", per: "/month", note: "Billed monthly · cancel anytime", save: "Save 42%", cta: "Get Monthly Access" },
-  annual: { price: "$59.99", per: "/year", note: "3 days free, then billed annually · cancel anytime", save: "Save 71% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
+const PLANS: Record<Plan, { price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
+  weekly: { price: "$3.99", per: "/week", perDay: "$0.57", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
+  monthly: { price: "$9.99", per: "/month", perDay: "$0.33", note: "Billed monthly · cancel anytime", save: "Save 42%", cta: "Get Monthly Access" },
+  annual: { price: "$59.99", per: "/year", perDay: "$0.16", note: "3 days free, then billed annually · cancel anytime", save: "Save 71% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
 };
 
 const PRO_FEATURES = [
@@ -24,12 +24,18 @@ const PRO_FEATURES = [
   { icon: Sparkles, title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
 ];
 
-const FREE_FEATURES = [
-  { icon: Globe, title: "The 3D Globe", desc: "The full interactive map — no account, no signup." },
-  { icon: Radar, title: "Live Flight Tracking", desc: "Real-time aircraft positions and telemetry." },
-  { icon: Camera, title: "36,000+ CCTV Cameras", desc: "Worldwide public street cameras, free for everyone." },
-  { icon: Satellite, title: "Satellites & Space", desc: "Orbital tracking, passes and space situational awareness." },
-  { icon: Zap, title: "Natural Hazards", desc: "Earthquakes, wildfires and severe weather as they happen." },
+const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [
+  { feature: "Interactive 3D globe", free: true, pro: true },
+  { feature: "Live flight tracking", free: true, pro: true },
+  { feature: "36,000+ public CCTV cameras", free: true, pro: true },
+  { feature: "Satellite & space tracking", free: true, pro: true },
+  { feature: "Earthquakes, wildfires & weather", free: true, pro: true },
+  { feature: "OI AI assistant (your own API key)", free: false, pro: true },
+  { feature: "Satellite imagery view", free: false, pro: true },
+  { feature: "Global search & filters", free: false, pro: true },
+  { feature: "OSINT toolkit (nmap, DNS, WHOIS, SSL)", free: false, pro: true },
+  { feature: "Premium intel feeds (cyber, GDELT, maritime)", free: false, pro: true },
+  { feature: "Every future Pro layer", free: false, pro: true },
 ];
 
 const FAQS = [
@@ -95,8 +101,37 @@ function CheckoutButton({ plan, label }: { plan: Plan; label: string }) {
   );
 }
 
-function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
+function StickyMobileCta({ cta }: { cta: string }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 700);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ y: 90 }}
+          animate={{ y: 0 }}
+          exit={{ y: 90 }}
+          transition={{ type: "spring", stiffness: 320, damping: 30 }}
+          className="fixed bottom-0 inset-x-0 z-50 md:hidden px-4 pb-4 pt-8 bg-gradient-to-t from-black via-black/90 to-transparent pointer-events-none"
+        >
+          <button
+            onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            className="pointer-events-auto w-full py-3.5 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-[15px] tracking-wide shadow-[0_8px_32px_rgba(212,175,55,0.45)] active:scale-[0.99] transition"
+          >
+            {cta}
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {  const [open, setOpen] = useState(false);
   return (
     <div className="border border-white/10 rounded-2xl bg-white/[0.02] overflow-hidden">
       <button
@@ -150,6 +185,12 @@ export default function PricingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
+            <img
+              src="/worldeye-eye.png"
+              alt="WorldEye"
+              className="h-14 md:h-16 w-auto mx-auto mb-6"
+              style={{ filter: "drop-shadow(0 0 18px rgba(0,150,255,0.45))" }}
+            />
             <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
               <Sparkles className="w-3.5 h-3.5" /> UPGRADE TO PRO
             </p>
@@ -163,7 +204,7 @@ export default function PricingPage() {
           </motion.div>
 
           {/* Billing toggle */}
-          <div className="mt-8 md:mt-10 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur max-w-full">
+          <div className="mt-11 md:mt-13 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur max-w-full">
             {(["weekly", "monthly", "annual"] as Plan[]).map((key) => (
               <button
                 key={key}
@@ -172,6 +213,11 @@ export default function PricingPage() {
                   plan === key ? "text-black" : "text-white/55 hover:text-white"
                 }`}
               >
+                {key === "annual" && (
+                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[9px] font-bold tracking-[0.15em] bg-[#D4AF37] text-black px-2 py-0.5 rounded-full whitespace-nowrap">
+                    MOST POPULAR
+                  </span>
+                )}
                 {plan === key && (
                   <motion.span
                     layoutId="billing-pill"
@@ -220,6 +266,7 @@ export default function PricingPage() {
                 <span className="text-white/45 text-lg">{p.per}</span>
               </div>
               <p className="text-sm text-white/45 mt-2">{p.note}</p>
+              <p className="text-sm text-[#D4AF37] font-semibold mt-1.5">Just {p.perDay} a day</p>
               {p.trial && (
                 <p className="mt-3">
                   <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
@@ -259,48 +306,36 @@ export default function PricingPage() {
           </p>
         </motion.div>
 
-        {/* Free vs Pro */}
+        {/* Free vs Pro comparison */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">Free is generous. <span className="text-[#D4AF37]">Pro is the full picture.</span></h2>
-          <div className="mt-8 grid md:grid-cols-2 gap-5">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8">
-              <p className="text-sm font-semibold tracking-[0.2em] text-white/50 mb-6">FREE · FOREVER</p>
-              <ul className="space-y-4">
-                {FREE_FEATURES.map((f) => (
-                  <li key={f.title} className="flex gap-3">
-                    <f.icon className="w-5 h-5 text-white/40 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-white/80 text-sm">{f.title}</p>
-                      <p className="text-xs text-white/40">{f.desc}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <a href="/" className="mt-8 block text-center py-3 rounded-2xl border border-white/15 text-sm font-semibold text-white/70 hover:bg-white/5 transition">
-                Open the free map
-              </a>
+          <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden max-w-3xl mx-auto">
+            <div className="grid grid-cols-[1fr_64px_64px] md:grid-cols-[1fr_110px_110px] text-[11px] font-bold tracking-[0.15em] text-white/40 border-b border-white/10 bg-white/[0.02]">
+              <div className="px-5 md:px-7 py-4">FEATURE</div>
+              <div className="py-4 text-center">FREE</div>
+              <div className="py-4 text-center text-[#D4AF37]">PRO</div>
             </div>
-            <div className="rounded-3xl border border-[#D4AF37]/40 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-8 relative overflow-hidden">
-              <div className="absolute top-5 right-5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#D4AF37] text-black tracking-wider">PRO</div>
-              <p className="text-sm font-semibold tracking-[0.2em] text-[#D4AF37] mb-6">EVERYTHING IN FREE, PLUS</p>
-              <ul className="space-y-4">
-                {PRO_FEATURES.map((f) => (
-                  <li key={f.title} className="flex gap-3">
-                    <f.icon className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-white/90 text-sm">{f.title}</p>
-                      <p className="text-xs text-white/45">{f.desc}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                className="mt-8 w-full py-3 rounded-2xl bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
-              >
-                Choose Pro
-              </button>
-            </div>
+            {COMPARE_ROWS.map((r) => (
+              <div key={r.feature} className="grid grid-cols-[1fr_64px_64px] md:grid-cols-[1fr_110px_110px] border-b border-white/5 last:border-0 text-sm">
+                <div className="px-5 md:px-7 py-3.5 text-white/75">{r.feature}</div>
+                <div className="py-3.5 flex justify-center items-center">
+                  {r.free
+                    ? <Check className="w-4 h-4 text-white/35" />
+                    : <Minus className="w-4 h-4 text-white/15" />}
+                </div>
+                <div className="py-3.5 flex justify-center items-center bg-[#D4AF37]/[0.06]">
+                  <Check className="w-4 h-4 text-[#D4AF37]" strokeWidth={3} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+              className="px-8 py-3.5 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
+            >
+              Choose Pro
+            </button>
           </div>
         </div>
 
@@ -321,6 +356,7 @@ export default function PricingPage() {
           <span className="flex items-center gap-1.5"><X className="w-4 h-4 text-[#D4AF37]/70" /> No ads, no data selling</span>
         </div>
       </div>
+      <StickyMobileCta cta={p.cta} />
     </main>
   );
 }

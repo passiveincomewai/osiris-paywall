@@ -1711,7 +1711,7 @@ export default function Dashboard() {
                 href="/pricing"
                 className="px-3 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.12em]"
               >
-                PRO
+                Upgrade to PRO
               </a>
             )}
           </div>
