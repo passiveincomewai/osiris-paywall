@@ -15,7 +15,9 @@
 import { useEffect, useRef, useState } from 'react';
 
 const TRACK_VH = 350;
-const EXIT_START = 0.88; // stage starts sliding away at 88% of the track
+const EXIT_START = 0.85; // stage starts sliding away at 85% of the track
+const EXIT_END = 0.97; // fully dismissed just before the absolute bottom
+// (browsers don't always report scroll progress reaching exactly 1.0)
 
 export default function CinematicHero() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -61,7 +63,7 @@ export default function CinematicHero() {
         }
       }
       // Slide the stage up over the final stretch to reveal the app.
-      const exit = Math.min(1, Math.max(0, (p - EXIT_START) / (1 - EXIT_START)));
+      const exit = Math.min(1, Math.max(0, (p - EXIT_START) / (EXIT_END - EXIT_START)));
       stage.style.transform = `translate3d(0,${(-exit * 100).toFixed(3)}%,0)`;
       stage.style.visibility = exit >= 1 ? 'hidden' : 'visible';
       raf = requestAnimationFrame(tick);
