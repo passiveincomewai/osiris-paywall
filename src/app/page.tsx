@@ -40,8 +40,6 @@ import { selectInPolygon } from '@/lib/aoi';
 import { pickLandingCity } from '@/lib/landing-cities';
 import { diffSweep, appendEvents, type WatchBaseline, type WatchEvent } from '@/lib/watch';
 import { STORAGE_KEY, serializeShapes, deserializeShapes, shapesToGeoJSON, downloadFile } from '@/lib/aoi-export';
-const TokenPanel = dynamic(() => import('@/components/TokenPanel'));
-import SupportMenu from '@/components/SupportMenu';
 import { useOi } from '@/lib/oi/client';
 import { useAssist } from '@/lib/oi/assist/client';
 import type { Highlight, Site } from '@/lib/oi/assist/tools';
@@ -1732,13 +1730,10 @@ export default function Dashboard() {
             href="/pricing"
             className="pointer-events-auto px-3.5 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.15em] hover:brightness-110 transition shadow-[0_0_12px_rgba(212,175,55,0.4)]"
           >
-            UPGRADE TO PRO
+            Upgrade to PRO
           </a>
         )}
 
-        <TokenPanel />
-
-        <SupportMenu />
       </motion.div>
 
       {/* ── MOBILE: Compact top status ── */}
@@ -1755,8 +1750,6 @@ export default function Dashboard() {
                 PRO
               </a>
             )}
-            <TokenPanel />
-            <SupportMenu compact />
           </div>
         </motion.div>
       )}

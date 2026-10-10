@@ -5,16 +5,21 @@ import { stripe, appUrl } from "@/lib/stripe";
 
 export const runtime = "nodejs";
 
-export async function POST() {
+export async function POST(req: Request) {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) {
     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
 
-  const priceId = process.env.STRIPE_WEEKLY_PRICE_ID;
+  const { plan } = (await req.json().catch(() => ({}))) as { plan?: string };
+  const priceEnv =
+    plan === "monthly" ? "STRIPE_MONTHLY_PRICE_ID"
+    : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
+    : "STRIPE_WEEKLY_PRICE_ID";
+  const priceId = process.env[priceEnv];
   if (!priceId) {
-    return NextResponse.json({ error: "STRIPE_WEEKLY_PRICE_ID is not set" }, { status: 500 });
+    return NextResponse.json({ error: `${priceEnv} is not set` }, { status: 500 });
   }
 
   // Already holding an active pass? Send them straight in — no double charge.
@@ -40,7 +45,7 @@ export async function POST() {
     line_items: [{ price: priceId, quantity: 1 }],
     subscription_data: { metadata: { userId } },
     allow_promotion_codes: true,
-    success_url: `${appUrl()}/dashboard?checkout=success`,
+    success_url: `${appUrl()}/?checkout=success`,
     cancel_url: `${appUrl()}/pricing?checkout=cancelled`,
   });
 
