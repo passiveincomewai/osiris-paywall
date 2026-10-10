@@ -31,7 +31,13 @@ const SUBSCRIPTION_TTL_MS = 60_000;
 
 async function resolveSubscriptionStatus(userId: string): Promise<string> {
   const sub = await db.subscription.findUnique({ where: { userId } });
-  if (sub && sub.status === "active" && sub.currentPeriodEnd > new Date()) {
+  // "trialing" counts as full Pro access until the trial ends — Stripe flips
+  // the status (past_due / canceled / ...) via webhook if payment fails.
+  if (
+    sub &&
+    (sub.status === "active" || sub.status === "trialing") &&
+    sub.currentPeriodEnd > new Date()
+  ) {
     return "active";
   }
   // Anything else (past_due, canceled, expired, never subscribed) locks the gate.

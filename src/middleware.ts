@@ -57,8 +57,8 @@ async function hasActivePass(request: NextRequest): Promise<boolean> {
     cookieName: SESSION_COOKIE,
   }).catch(() => null)) as PaywallToken;
 
-  // Strict: only `active` grants access. Add 'trialing' here if you
-  // ever attach a trial to the weekly price.
+  // Strict: only `active` grants access. `trialing` is normalized to
+  // `active` in resolveSubscriptionStatus (src/auth.ts), so trial users pass.
   return !!token?.sub && token.subscriptionStatus === 'active';
 }
 

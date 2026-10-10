@@ -13,10 +13,17 @@ export async function POST(req: Request) {
   }
 
   const { plan } = (await req.json().catch(() => ({}))) as { plan?: string };
+  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual") {
+    return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
+  }
   const priceEnv =
     plan === "monthly" ? "STRIPE_MONTHLY_PRICE_ID"
     : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
     : "STRIPE_WEEKLY_PRICE_ID";
+  // Free trials: annual → 3 days, weekly → 1 day. Stripe reports these
+  // subscriptions as `trialing`, which the paywall treats as full Pro access.
+  const TRIAL_DAYS: Record<string, number> = { weekly: 1, monthly: 0, annual: 3 };
+  const trialDays = TRIAL_DAYS[plan] ?? 0;
   const priceId = process.env[priceEnv];
   if (!priceId) {
     return NextResponse.json({ error: `${priceEnv} is not set` }, { status: 500 });
@@ -43,7 +50,12 @@ export async function POST(req: Request) {
     customer: customerId,
     client_reference_id: userId,
     line_items: [{ price: priceId, quantity: 1 }],
-    subscription_data: { metadata: { userId } },
+    subscription_data: {
+      metadata: { userId },
+      ...(trialDays > 0 ? { trial_period_days: trialDays } : {}),
+    },
+    // Trials must collect a card up front; Stripe charges it when the trial ends.
+    ...(trialDays > 0 ? { payment_method_collection: "always" as const } : {}),
     allow_promotion_codes: true,
     success_url: `${appUrl()}/?checkout=success`,
     cancel_url: `${appUrl()}/pricing?checkout=cancelled`,

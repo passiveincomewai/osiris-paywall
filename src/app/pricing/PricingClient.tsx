@@ -9,10 +9,10 @@ import {
 
 type Plan = "weekly" | "monthly" | "annual";
 
-const PLANS: Record<Plan, { price: string; per: string; note: string; save?: string; cta: string }> = {
-  weekly: { price: "$3.99", per: "/week", note: "Billed weekly · cancel anytime", cta: "Get Weekly Access" },
+const PLANS: Record<Plan, { price: string; per: string; note: string; save?: string; cta: string; trial?: string }> = {
+  weekly: { price: "$3.99", per: "/week", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
   monthly: { price: "$9.99", per: "/month", note: "Billed monthly · cancel anytime", save: "Save 42%", cta: "Get Monthly Access" },
-  annual: { price: "$59.99", per: "/year", note: "Billed annually · cancel anytime", save: "Save 71% · Best value", cta: "Get Annual Access" },
+  annual: { price: "$59.99", per: "/year", note: "3 days free, then billed annually · cancel anytime", save: "Save 71% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
 };
 
 const PRO_FEATURES = [
@@ -43,7 +43,7 @@ const FAQS = [
   },
   {
     q: "Can I cancel anytime?",
-    a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or annual — and then simply stops. No retention calls, no dark patterns.",
+    a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or annual — and then simply stops. No retention calls, no dark patterns. On a free trial you're never charged during the trial: cancel before it ends and you pay nothing.",
   },
   {
     q: "What happens if I switch plans?",
@@ -220,6 +220,13 @@ export default function PricingPage() {
                 <span className="text-white/45 text-lg">{p.per}</span>
               </div>
               <p className="text-sm text-white/45 mt-2">{p.note}</p>
+              {p.trial && (
+                <p className="mt-3">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
+                    <Zap className="w-3.5 h-3.5" /> {p.trial} — card not charged yet
+                  </span>
+                </p>
+              )}
             </div>
             {p.save && (
               <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 whitespace-nowrap">
