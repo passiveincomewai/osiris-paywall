@@ -1,23 +1,25 @@
 'use client';
 // Cinematic scroll hero: a 10s video scrubbed by page scroll (Apple-style).
-// Tall scroll track (350vh) with a sticky 100vh stage; scroll progress maps
-// to video time, eased in rAF for buttery scrubbing forward AND backward.
-// The existing app below is untouched — it sits fixed behind this section
-// and is revealed when the track scrolls away.
+// A 350vh spacer provides the scroll distance; the stage itself is
+// position:fixed and driven entirely from the rAF loop (no position:sticky,
+// which proved fragile against the page's overflow rules). Scroll progress
+// maps to video time with easing (reversible), and the stage slides away
+// over the final stretch to reveal the app underneath.
 //
 // Robustness notes:
-// - Progress is derived from layout inside the rAF loop (not from scroll
-//   events), so scrubbing works even if scroll events are missed or the
-//   scroller isn't window.
+// - Progress is derived from layout inside rAF (not scroll events), so it
+//   works even if scroll events are missed or the scroller isn't window.
 // - iOS Safari won't render programmatic seeks on a video that has never
 //   played: the media pipeline is unlocked with play()->pause() on the first
 //   user gesture.
 import { useEffect, useRef, useState } from 'react';
 
 const TRACK_VH = 350;
+const EXIT_START = 0.88; // stage starts sliding away at 88% of the track
 
 export default function CinematicHero() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef(0);
   const unlocked = useRef(false);
@@ -25,11 +27,11 @@ export default function CinematicHero() {
 
   useEffect(() => {
     const video = videoRef.current;
-    const section = sectionRef.current;
-    if (!video || !section) return;
+    const track = trackRef.current;
+    const stage = stageRef.current;
+    if (!video || !track || !stage) return;
 
     let raf = 0;
-    let visible = true;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const unlock = () => {
@@ -39,17 +41,18 @@ export default function CinematicHero() {
     };
     window.addEventListener('pointerdown', unlock);
     window.addEventListener('touchstart', unlock);
+    video.load();
 
     const tick = () => {
-      // Derive scroll progress from live layout every frame.
-      const total = section.offsetHeight - window.innerHeight;
-      const p = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / Math.max(1, total)));
+      const total = track.offsetHeight - window.innerHeight;
+      const p = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / Math.max(1, total)));
       if (p !== progressRef.current) {
         progressRef.current = p;
         setProgress(p);
       }
+      // Scrub the video to the scroll position.
       const target = p * (video.duration || 10);
-      if (visible && video.readyState >= 1) {
+      if (video.readyState >= 1) {
         const diff = target - video.currentTime;
         if (Math.abs(diff) > 0.0008) {
           video.currentTime = reduceMotion || Math.abs(diff) < 0.04
@@ -57,16 +60,16 @@ export default function CinematicHero() {
             : video.currentTime + diff * 0.16;
         }
       }
+      // Slide the stage up over the final stretch to reveal the app.
+      const exit = Math.min(1, Math.max(0, (p - EXIT_START) / (1 - EXIT_START)));
+      stage.style.transform = `translate3d(0,${(-exit * 100).toFixed(3)}%,0)`;
+      stage.style.visibility = exit >= 1 ? 'hidden' : 'visible';
       raf = requestAnimationFrame(tick);
     };
-
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0 });
-    io.observe(section);
 
     raf = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(raf);
-      io.disconnect();
       window.removeEventListener('pointerdown', unlock);
       window.removeEventListener('touchstart', unlock);
     };
@@ -75,8 +78,11 @@ export default function CinematicHero() {
   const hintOpacity = Math.max(0, 1 - progress * 8);
 
   return (
-    <div ref={sectionRef} className="cinematic-root relative z-[1000]" style={{ height: `${TRACK_VH}vh` }}>
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-black" style={{ height: '100svh' }}>
+    <>
+      {/* Scroll track: empty 350vh spacer that provides the scroll distance. */}
+      <div ref={trackRef} className="cinematic-root" style={{ height: `${TRACK_VH}vh` }} />
+      {/* Pinned stage: fixed viewport, fully transform-driven. */}
+      <div ref={stageRef} className="fixed inset-0 z-[1000] bg-black overflow-hidden will-change-transform">
         <video
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"
@@ -101,6 +107,6 @@ export default function CinematicHero() {
         {/* Subtle vignette so the video blends into the page */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
       </div>
-    </div>
+    </>
   );
 }
