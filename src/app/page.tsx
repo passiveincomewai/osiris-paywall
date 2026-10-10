@@ -7,6 +7,7 @@ import { Layers, Newspaper, Search, X, Globe, MapPinned, Route, Radar, Satellite
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import IntelFeed from '@/components/IntelFeed';
+import CinematicHero from '@/components/CinematicHero';
 import ScmPanel from '@/components/ScmPanel';
 import SearchBar from '@/components/SearchBar';
 import DirectionsBar, { type RouteResult, type LiveLocation } from '@/components/DirectionsBar';
@@ -1341,6 +1342,8 @@ export default function Dashboard() {
 
 
   return (
+    <>
+    <CinematicHero />
     <main className="fixed inset-0 w-full h-full bg-[var(--bg-void)] overflow-hidden">
 
       {/* ── SPLASH ── */}
@@ -2271,5 +2274,6 @@ export default function Dashboard() {
 
 
     </main>
+    </>
   );
 }
