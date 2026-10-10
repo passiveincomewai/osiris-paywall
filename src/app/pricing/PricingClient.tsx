@@ -127,7 +127,7 @@ export default function PricingPage() {
   const p = PLANS[plan];
 
   return (
-    <main className="min-h-screen bg-[#050508] text-zinc-100 relative overflow-hidden">
+    <main className="min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       {/* Ambient gold glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
@@ -153,22 +153,22 @@ export default function PricingPage() {
             <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
               <Sparkles className="w-3.5 h-3.5" /> UPGRADE TO PRO
             </p>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+            <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
               See what the <span className="text-[#D4AF37]">free map</span> can&apos;t show you.
             </h1>
-            <p className="text-white/55 mt-5 text-lg leading-relaxed">
+            <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
               An AI analyst that works the globe for you. Satellite imagery. Global search.
               Premium intel feeds. One subscription, everything unlocked.
             </p>
           </motion.div>
 
           {/* Billing toggle */}
-          <div className="mt-10 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur">
+          <div className="mt-8 md:mt-10 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur max-w-full">
             {(["weekly", "monthly", "annual"] as Plan[]).map((key) => (
               <button
                 key={key}
                 onClick={() => setPlan(key)}
-                className={`relative px-5 md:px-7 py-2.5 rounded-xl text-sm font-semibold capitalize transition-all ${
+                className={`relative px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${
                   plan === key ? "text-black" : "text-white/55 hover:text-white"
                 }`}
               >
@@ -199,7 +199,7 @@ export default function PricingPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="mt-10 max-w-lg mx-auto rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-8 md:p-10 shadow-[0_24px_80px_rgba(212,175,55,0.12)]"
+          className="mt-8 md:mt-10 max-w-lg mx-auto rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-6 md:p-10 shadow-[0_24px_80px_rgba(212,175,55,0.12)]"
         >
           <div className="flex items-start justify-between">
             <div>

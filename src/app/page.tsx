@@ -453,9 +453,9 @@ export default function Dashboard() {
     sat_earth: false,
     sat_science: false,
     balloons: false,
-    cctv: true,
+    cctv: false,
     /* The live preview tiles over the camera dots — see CctvPreviews. */
-    cctv_previews: true,
+    cctv_previews: false,
     live_news: true,
     earthquakes: true,
     fires: false,
@@ -1424,22 +1424,6 @@ export default function Dashboard() {
                 className="absolute inset-[10px] rounded-full"
                 style={{ background: 'conic-gradient(from 0deg, transparent 0deg, rgba(212,175,55,0.15) 40deg, transparent 80deg)' }}
               />
-            </div>
-
-            {/* ── OSIRIS title — letter-by-letter stagger ── */}
-            <div className="flex items-center gap-[2px] mb-3 z-[2]">
-              {'OSIRIS'.split('').map((letter, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ delay: 0.5 + i * 0.08, duration: 0.5, ease: 'easeOut' }}
-                  className="text-4xl md:text-5xl font-bold tracking-[0.5em] font-mono"
-                  style={{ color: 'var(--text-heading)', textShadow: '0 0 30px rgba(212,175,55,0.2)' }}
-                >
-                  {letter}
-                </motion.span>
-              ))}
             </div>
 
             {/* ── Subtitle — typewriter reveal ── */}
