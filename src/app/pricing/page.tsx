@@ -1,17 +1,18 @@
-import { Radar, Satellite, Video, ShieldCheck, Zap, Check, Globe, Lock } from "lucide-react";
+import { Radar, Satellite, Video, ShieldCheck, Zap, Check, Globe, Lock, Camera } from "lucide-react";
 import PricingCheckoutButton from "./PricingCheckoutButton";
 
 const FREE_FEATURES = [
   { icon: Globe, title: "The 3D Globe", desc: "The full interactive map — no account, no signup." },
   { icon: Radar, title: "Live Flight Tracking", desc: "Real-time aircraft positions and telemetry." },
+  { icon: Camera, title: "CCTV Network", desc: "36,000+ worldwide public street cameras." },
   { icon: Satellite, title: "Satellites & Space", desc: "Orbital tracking, passes and space situational awareness." },
   { icon: Zap, title: "Natural Hazards", desc: "Earthquakes, wildfires and severe weather as they happen." },
 ];
 
 const PREMIUM_FEATURES = [
-  { icon: Video, title: "CCTV Network", desc: "36,000+ worldwide public camera feeds." },
   { icon: ShieldCheck, title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
   { icon: Zap, title: "Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking and conflict zones." },
+  { icon: Video, title: "Live News & More", desc: "Live news feeds and every future premium layer." },
 ];
 
 export const metadata = {
@@ -79,7 +80,7 @@ export default async function PricingPage({
         </p>
         <ul className="text-left text-sm text-zinc-300 mt-6 space-y-2">
           {[
-            "CCTV network, OSINT toolkit & all premium intel feeds",
+            "OSINT toolkit & all premium intel feeds",
             "Cancel anytime — access runs to period end",
             "Renews weekly automatically",
           ].map((t) => (

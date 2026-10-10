@@ -103,8 +103,8 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'SURVEILLANCE',
     icon: Camera,
     layers: [
-      { key: 'cctv', label: 'CCTV Cameras', dataKey: 'cameras', premium: true },
-      { key: 'cctv_previews', label: 'Live Previews', dataKey: '', parent: 'cctv', premium: true },
+      { key: 'cctv', label: 'CCTV Cameras', dataKey: 'cameras' },
+      { key: 'cctv_previews', label: 'Live Previews', dataKey: '', parent: 'cctv' },
       { key: 'live_news', label: 'Live News Feeds', dataKey: 'live_feeds', premium: true },
     ],
   },

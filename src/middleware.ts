@@ -14,7 +14,6 @@ const PROTECTED_PREFIXES = ['/map', '/osint'];
 // Everything else under /api is open (auth, checkout, webhooks, health,
 // and the free data routes).
 const PREMIUM_API_PREFIXES = [
-  '/api/cctv',
   '/api/cyber-attacks', '/api/cyber-threats', '/api/malware',
   '/api/gdelt', '/api/gdelt-events', '/api/live-news', '/api/news',
   '/api/maritime',
