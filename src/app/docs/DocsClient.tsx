@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { API_GROUPS, ENDPOINT_COUNT, endpointId } from './apiCatalog';
 import { Callout, Code, CodeBlock, Pre, Section } from './docsPrimitives';
 import EndpointCard from './EndpointCard';
+import SiteFooter from '@/components/SiteFooter';
 import CommandPalette, { buildPaletteItems } from './CommandPalette';
 
 const GUIDE_SECTIONS = [
@@ -781,6 +782,7 @@ mcp_servers:
           </button>
         </aside>
       </div>
+      <SiteFooter />
     </div>
   );
 }

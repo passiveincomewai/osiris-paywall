@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import SiteFooter from '@/components/SiteFooter';
 import Link from 'next/link';
 import {
   Bot, Camera, ChevronDown, ExternalLink, HardDrive, KeyRound, Map as MapIcon, MessageCircle, Search, ShieldCheck, Sparkles, UserX, EyeOff,
@@ -277,6 +278,7 @@ export default function PrivacyPage() {
           Last checked against the code on {REVIEWED}. When a feature changes what it shares, this page changes with it.
         </p>
       </div>
+      <SiteFooter />
     </main>
   );
 }

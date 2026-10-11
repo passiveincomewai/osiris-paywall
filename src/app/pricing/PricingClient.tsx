@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SiteFooter from "@/components/SiteFooter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, Satellite, Search, BrainCircuit,
@@ -357,6 +358,7 @@ export default function PricingPage() {
         </div>
       </div>
       <StickyMobileCta cta={p.cta} />
+      <SiteFooter />
     </main>
   );
 }
