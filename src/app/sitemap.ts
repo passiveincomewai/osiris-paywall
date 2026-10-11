@@ -1,6 +1,19 @@
 import type { MetadataRoute } from "next";
+import directory from "@/data/camera-directory.json";
 
-const BASE = "https://osiris-lime.vercel.app";
+const BASE = "https://worldeye.app";
+
+// Top 30 countries get dedicated pages (matches generateStaticParams in
+// src/app/cameras/countries/[country]/page.tsx).
+const COUNTRY_SLUGS: string[] = directory.countries.slice(0, 30).map((c) => c.slug);
+
+const SEO_PAGES = [
+  "/cameras/countries",
+  "/live-traffic-cameras",
+  "/world-city-webcams",
+  "/europe-live-cameras",
+  "/live-webcams",
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -27,5 +40,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/security`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
     { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    // Camera directory (sitemap-only SEO pages — not linked from site chrome).
+    { url: `${BASE}/cameras/countries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    ...SEO_PAGES.filter((p) => p !== "/cameras/countries").map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...COUNTRY_SLUGS.map((slug) => ({
+      url: `${BASE}/cameras/countries/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
   ];
 }

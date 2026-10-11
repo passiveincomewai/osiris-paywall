@@ -1,0 +1,7367 @@
+{
+ "generatedAt": "2026-10-11T08:45:55.471Z",
+ "totalCameras": 40207,
+ "countries": [
+  {
+   "name": "United States",
+   "slug": "united-states",
+   "count": 23059,
+   "areas": [
+    {
+     "name": "Georgia",
+     "count": 4330
+    },
+    {
+     "name": "Utah",
+     "count": 2082
+    },
+    {
+     "name": "Houston",
+     "count": 1158
+    },
+    {
+     "name": "Dallas",
+     "count": 845
+    },
+    {
+     "name": "Indiana",
+     "count": 703
+    },
+    {
+     "name": "Nevada",
+     "count": 652
+    },
+    {
+     "name": "Orange County",
+     "count": 589
+    },
+    {
+     "name": "Hillsborough County",
+     "count": 517
+    },
+    {
+     "name": "Broward County",
+     "count": 496
+    },
+    {
+     "name": "Fort Worth",
+     "count": 489
+    },
+    {
+     "name": "Phoenix",
+     "count": 434
+    },
+    {
+     "name": "Miami-Dade County",
+     "count": 422
+    }
+   ],
+   "samples": [
+    {
+     "name": "North Little Cottonwood Rd / Little Cottonwood Canyon Rd / SR-210 @ Little Cotto",
+     "city": "Utah",
+     "lat": 40.57186,
+     "lng": -111.77614
+    },
+    {
+     "name": "North Little Cottonwood Rd / Wasatch Blvd / 3600 E / SR-210 @ Wasatch Blvd / 890",
+     "city": "Utah",
+     "lat": 40.58925,
+     "lng": -111.79356
+    },
+    {
+     "name": "Wasatch Blvd / SR-190/SR-210 @ Big Cottonwood Canyon Rd / Fort Union Blvd / SR-1",
+     "city": "Utah",
+     "lat": 40.61965,
+     "lng": -111.78925
+    },
+    {
+     "name": "I-64: ky1-064-000-0-wb-_-cam-1 KY I-64 WB / 0.0 @ SHERMAN MINTON BR IN SIDE UPPE",
+     "city": "Indiana",
+     "lat": 38.28022,
+     "lng": -85.82384
+    },
+    {
+     "name": "North County Blvd / 1100 E, AFK / 2000 W, PLG / SR-129 @ 50 S, AFK / 1100 N, PLG",
+     "city": "Utah",
+     "lat": 40.37567,
+     "lng": -111.76914
+    },
+    {
+     "name": "I-64: ky1-064-000-0-eb-_-cam-2 KY I-64 EB/ 0.0 @ SHERMAN MINTON BR IN SIDE LOWER",
+     "city": "Indiana",
+     "lat": 38.28022,
+     "lng": -85.82384
+    },
+    {
+     "name": "I-64: ky1-064-000-1-eb-_-cam-2 KY I-64 EB / 0.1 @ SHERMAN MINTON BR CENTER LOWER",
+     "city": "Indiana",
+     "lat": 38.28015,
+     "lng": -85.82377
+    },
+    {
+     "name": "I-64: ky1-064-000-1-wb-_-cam-1 KY I-64 WB / 0.1 @ SHERMAN MINTON BY CENTER UPPER",
+     "city": "Indiana",
+     "lat": 38.28015,
+     "lng": -85.82377
+    },
+    {
+     "name": "Washington Blvd / Harrisville Rd / US-89 @ 2nd St / Washington Blvd / SR-235, OG",
+     "city": "Utah",
+     "lat": 41.259341,
+     "lng": -111.969423
+    },
+    {
+     "name": "I-64: ky1-064-000-3-eb-_-cam-2 KY I-64 EB / 0.3 @ SHERMAN MINTON BR KY LOWER DEC",
+     "city": "Indiana",
+     "lat": 38.28015,
+     "lng": -85.82377
+    }
+   ]
+  },
+  {
+   "name": "Taiwan",
+   "slug": "taiwan",
+   "count": 2779,
+   "areas": [
+    {
+     "name": "Taiwan",
+     "count": 1529
+    },
+    {
+     "name": "Taichung",
+     "count": 189
+    },
+    {
+     "name": "Taipei",
+     "count": 169
+    },
+    {
+     "name": "Taoyuan",
+     "count": 122
+    },
+    {
+     "name": "Yunlin",
+     "count": 103
+    },
+    {
+     "name": "Tainan",
+     "count": 96
+    },
+    {
+     "name": "Kaohsiung",
+     "count": 94
+    },
+    {
+     "name": "New Taipei",
+     "count": 82
+    },
+    {
+     "name": "Changhua",
+     "count": 73
+    },
+    {
+     "name": "Chiayi",
+     "count": 68
+    },
+    {
+     "name": "Hualien",
+     "count": 66
+    },
+    {
+     "name": "Nantou",
+     "count": 41
+    }
+   ],
+   "samples": [
+    {
+     "name": "台中市道路 [06035]太原路/環中東路東側(右側車流往北屯路),Taiyuan Rd/East side ofHuanzhong E.Rd (Right s",
+     "city": "Taichung",
+     "lat": 24.1631,
+     "lng": 120.7196
+    },
+    {
+     "name": "台中市道路 [07071]環中路/中央公園北側停車場(車流往中清路)Huanzhong Rd/Central Park North Parking Lot.(T",
+     "city": "Taichung",
+     "lat": 24.1969,
+     "lng": 120.6498
+    },
+    {
+     "name": "台中市道路 [03154]民權路/柳川東路(右側車流往向上路)Minquan Rd./ Liuchuan E. Rd.( Right side Traffic ",
+     "city": "Taichung",
+     "lat": 24.1414,
+     "lng": 120.6759
+    },
+    {
+     "name": "台中市道路 [02008]忠明南路/國光路(右側車流往建國路),Zhongming S Rd.//Guoguang Rd.(Right side Traffic",
+     "city": "Taichung",
+     "lat": 24.119,
+     "lng": 120.6793
+    },
+    {
+     "name": "台中市道路 [03022]五權西路/忠明南路(右側車流往美村路),Wuquan W. Rd/Zhongming S Rd (Right side Traffic",
+     "city": "Taichung",
+     "lat": 24.1401,
+     "lng": 120.6573
+    },
+    {
+     "name": "台中市道路 [07221(i)]大鵬路/中科路(右側車流往中清路) Dapeng Rd./Zhongke Rd. (Right side Traffic flo",
+     "city": "Taichung",
+     "lat": 24.1782,
+     "lng": 120.6554
+    },
+    {
+     "name": "台中市道路 [04325]中清路/五權路 (右側車流往中華路) Zhongqing Rd./Wuquan Rd. (Right side Traffic flo",
+     "city": "Taichung",
+     "lat": 24.1513,
+     "lng": 120.6772
+    },
+    {
+     "name": "台中市道路 [00184]臺灣大道/建國路(右側車流往文心路),Taiwan Blvd/ Jianguo Rd.(Right side Traffic flow",
+     "city": "Taichung",
+     "lat": 24.1377,
+     "lng": 120.6848
+    },
+    {
+     "name": "台中市道路 [08261]向上路/忠勇路(右側車流往龍井),Xiangshang Rd./Zhongyong Rd.(Right side Traffic fl",
+     "city": "Taichung",
+     "lat": 24.1476,
+     "lng": 120.6154
+    },
+    {
+     "name": "台中市道路 [12282]中興路二段/大智路(右側車流往大里方向),Zhongxing Rd./Dazhi Rd. (Right side Traffic fl",
+     "city": "Taichung",
+     "lat": 24.1198,
+     "lng": 120.6887
+    }
+   ]
+  },
+  {
+   "name": "Spain",
+   "slug": "spain",
+   "count": 1997,
+   "areas": [
+    {
+     "name": "Madrid",
+     "count": 370
+    },
+    {
+     "name": "A Coruña",
+     "count": 170
+    },
+    {
+     "name": "Valencia",
+     "count": 129
+    },
+    {
+     "name": "Málaga",
+     "count": 117
+    },
+    {
+     "name": "Zaragoza",
+     "count": 84
+    },
+    {
+     "name": "Pontevedra",
+     "count": 73
+    },
+    {
+     "name": "León",
+     "count": 68
+    },
+    {
+     "name": "Toledo",
+     "count": 67
+    },
+    {
+     "name": "Asturias",
+     "count": 66
+    },
+    {
+     "name": "Lugo",
+     "count": 62
+    },
+    {
+     "name": "Segovia",
+     "count": 48
+    },
+    {
+     "name": "Granada",
+     "count": 46
+    }
+   ],
+   "samples": [
+    {
+     "name": "Puerto del Carmen - Playa Los Pocillos",
+     "city": "Lanzarote",
+     "lat": 28.921,
+     "lng": -13.651
+    },
+    {
+     "name": "Benidorm - Playa de Levante - Alicante",
+     "city": "Benidorm",
+     "lat": 38.536,
+     "lng": -0.12
+    },
+    {
+     "name": "Benidorm - Playa de Poniente - Puerto",
+     "city": "Benidorm",
+     "lat": 38.534,
+     "lng": -0.125
+    },
+    {
+     "name": "Puerto de la Cruz - Playa San Telmo",
+     "city": "Tenerife",
+     "lat": 28.413,
+     "lng": -16.55
+    },
+    {
+     "name": "Puerto de la Cruz - Lago Martiánez",
+     "city": "Tenerife",
+     "lat": 28.415,
+     "lng": -16.546
+    },
+    {
+     "name": "Las Palmas - Playa de Las Canteras",
+     "city": "Gran Canaria",
+     "lat": 28.14,
+     "lng": -15.438
+    },
+    {
+     "name": "Sevilla - Plaza de San Francisco",
+     "city": "Sevilla",
+     "lat": 37.3891,
+     "lng": -5.9945
+    },
+    {
+     "name": "Tour en Catamarán - Port Olímpic",
+     "city": "Barcelona",
+     "lat": 41.381,
+     "lng": 2.197
+    },
+    {
+     "name": "Puerto de la Cruz - Punta Brava",
+     "city": "Tenerife",
+     "lat": 28.41,
+     "lng": -16.56
+    },
+    {
+     "name": "Santander - Playa del Sardinero",
+     "city": "Santander",
+     "lat": 43.475,
+     "lng": -3.787
+    }
+   ]
+  },
+  {
+   "name": "Austria",
+   "slug": "austria",
+   "count": 1828,
+   "areas": [
+    {
+     "name": "Austria",
+     "count": 1828
+    }
+   ],
+   "samples": [
+    {
+     "name": "A1/E57, Maribor - vzhodna obvoznica, odsek Rogoza - Slivnica (Gramoznica) - pogl",
+     "city": "Austria",
+     "lat": 46.4929,
+     "lng": 15.66901
+    },
+    {
+     "name": "A1/E57, Maribor - vzhodna obvoznica, odsek Rogoza - Slivnica (Gramoznica) - pogl",
+     "city": "Austria",
+     "lat": 46.4929,
+     "lng": 15.66899
+    },
+    {
+     "name": "A1/E57, Maribor - Ljubljana, priključek Slovenska Bistrica - sever, pogled proti",
+     "city": "Austria",
+     "lat": 46.39702,
+     "lng": 15.60056
+    },
+    {
+     "name": "A1/E57, Maribor - Ljubljana, priključek Slovenska Bistrica - sever, pogled proti",
+     "city": "Austria",
+     "lat": 46.39702,
+     "lng": 15.60056
+    },
+    {
+     "name": "A1/E57, Ljubljana - vzhodna obvoznica, priključek Lj.- ind. cona Moste, pogled p",
+     "city": "Austria",
+     "lat": 46.06304,
+     "lng": 14.57528
+    },
+    {
+     "name": "A1/E57, Ljubljana - vzhodna obvoznica, priključek Zaloška cesta, pogled proti ra",
+     "city": "Austria",
+     "lat": 46.05409,
+     "lng": 14.57405
+    },
+    {
+     "name": "A1/E61/E70, Ljubljana - Koper, odsek Razdrto - Divača (Čebulovica), pogled proti",
+     "city": "Austria",
+     "lat": 45.70214,
+     "lng": 13.99499
+    },
+    {
+     "name": "A1/E57, Maribor - vzhodna obvoznica, priključek Maribor - center, vrtljiva kamer",
+     "city": "Austria",
+     "lat": 46.51839,
+     "lng": 15.67967
+    },
+    {
+     "name": "A1/E61/E70, Ljubljana - Koper, odsek Razdrto - Divača (Čebulovica), pogled proti",
+     "city": "Austria",
+     "lat": 45.70214,
+     "lng": 13.99499
+    },
+    {
+     "name": "A02, zwischen LKW Stellplatz Arnoldstein Zollamt und Grenzübergang Arnoldstein /",
+     "city": "Austria",
+     "lat": 46.53859,
+     "lng": 13.65363
+    }
+   ]
+  },
+  {
+   "name": "Canada",
+   "slug": "canada",
+   "count": 1509,
+   "areas": [
+    {
+     "name": "Ottawa",
+     "count": 428
+    },
+    {
+     "name": "Toronto",
+     "count": 339
+    },
+    {
+     "name": "Québec (Capitale-Nationale)",
+     "count": 180
+    },
+    {
+     "name": "Montréal",
+     "count": 148
+    },
+    {
+     "name": "Bas-Saint-Laurent—Gaspésie—Îles-de-la-Madeleine",
+     "count": 71
+    },
+    {
+     "name": "Edmonton",
+     "count": 58
+    },
+    {
+     "name": "Chaudière-Appalaches",
+     "count": 46
+    },
+    {
+     "name": "Mauricie—Centre-du-Québec",
+     "count": 45
+    },
+    {
+     "name": "Saguenay—Lac-Saint-Jean",
+     "count": 36
+    },
+    {
+     "name": "Outaouais",
+     "count": 35
+    },
+    {
+     "name": "Montérégie",
+     "count": 35
+    },
+    {
+     "name": "Côte-Nord",
+     "count": 34
+    }
+   ],
+   "samples": [
+    {
+     "name": "Aut. 73 (southward) between aut. 20 and pont Risi (rivière Chaudière) in Lévis, ",
+     "city": "Chaudière-Appalaches",
+     "lat": 46.73156,
+     "lng": -71.28077
+    },
+    {
+     "name": "Boulevard Auger Sud at the intersection of route du Lac Est and at the Alma roun",
+     "city": "Saguenay—Lac-Saint-Jean",
+     "lat": 48.51522,
+     "lng": -71.61456
+    },
+    {
+     "name": "Boulevard Auger Sud at the intersection of route du Lac Est and at the Alma roun",
+     "city": "Saguenay—Lac-Saint-Jean",
+     "lat": 48.51522,
+     "lng": -71.61456
+    },
+    {
+     "name": "Aut. 55 à la hauteur de la halte routière de Saint-Étienne-des-Grès (km 204) (di",
+     "city": "Mauricie—Centre-du-Québec",
+     "lat": 46.46712,
+     "lng": -72.79116
+    },
+    {
+     "name": "Aut. 73 (northward) between pont Risi and pont Pierre-Laporte in Lévis, Saint-Ni",
+     "city": "Chaudière-Appalaches",
+     "lat": 46.7388,
+     "lng": -71.28672
+    },
+    {
+     "name": "Route 298 (northward) between Les Hauteurs-de-Rimouski et Saint-Charles-Garnier",
+     "city": "Bas-Saint-Laurent—Gaspésie—Îles-de-la-Ma",
+     "lat": 48.35399,
+     "lng": -68.06348
+    },
+    {
+     "name": "Aut. 73 (southward) at parc des Chutes-de-la-Chaudière in Lévis, Charny sector",
+     "city": "Chaudière-Appalaches",
+     "lat": 46.71688,
+     "lng": -71.28032
+    },
+    {
+     "name": "Aut. 5 (southward), between boul. Saint-Joseph and boul. des Hautes-Plaines",
+     "city": "Outaouais",
+     "lat": 45.46687,
+     "lng": -75.74389
+    },
+    {
+     "name": "Route 132, between route Marcel and rue Pierre-Thibodeau (Carleton-sur-Mer)",
+     "city": "Bas-Saint-Laurent—Gaspésie—Îles-de-la-Ma",
+     "lat": 48.11993,
+     "lng": -66.04344
+    },
+    {
+     "name": "Aut. 40 (westward) at pont Radisson (Trois-Rivières side) in Trois-Rivières",
+     "city": "Mauricie—Centre-du-Québec",
+     "lat": 46.363,
+     "lng": -72.5573
+    }
+   ]
+  },
+  {
+   "name": "Hong Kong",
+   "slug": "hong-kong",
+   "count": 1185,
+   "areas": [
+    {
+     "name": "Yuen Long",
+     "count": 170
+    },
+    {
+     "name": "Sha Tin",
+     "count": 153
+    },
+    {
+     "name": "Tsuen Wan",
+     "count": 121
+    },
+    {
+     "name": "Tuen Mun",
+     "count": 96
+    },
+    {
+     "name": "Kwun Tong",
+     "count": 90
+    },
+    {
+     "name": "North",
+     "count": 68
+    },
+    {
+     "name": "Tai Po",
+     "count": 66
+    },
+    {
+     "name": "Sham Shui Po",
+     "count": 56
+    },
+    {
+     "name": "Yau Tsim Mong",
+     "count": 52
+    },
+    {
+     "name": "Kowloon City",
+     "count": 50
+    },
+    {
+     "name": "Eastern",
+     "count": 46
+    },
+    {
+     "name": "Islands",
+     "count": 44
+    }
+   ],
+   "samples": [
+    {
+     "name": "New Clear Water Bay Road near New Clear Water Bay Road Sitting-out Area - Westbo",
+     "city": "Kwun Tong",
+     "lat": 22.334104007,
+     "lng": 114.224176505
+    },
+    {
+     "name": "New Clear Water Bay Road near New Clear Water Bay Road Sitting-out Area - Eastbo",
+     "city": "Kwun Tong",
+     "lat": 22.334140318,
+     "lng": 114.223526149
+    },
+    {
+     "name": "Tai Po Road - Tai Po Kau near Po Leung Kuk Tin Ka Ping Millennium Primary School",
+     "city": "Tai Po",
+     "lat": 22.429309541,
+     "lng": 114.196350146
+    },
+    {
+     "name": "Tai Po Road - Tai Po Kau near Po Leung Kuk Tin Ka Ping Millennium Primary School",
+     "city": "Tai Po",
+     "lat": 22.429670775,
+     "lng": 114.196223919
+    },
+    {
+     "name": "Kai Fuk Road near Kowloon Bay Vehicle Detention and Examination Centre - Westbou",
+     "city": "Kwun Tong",
+     "lat": 22.318882396,
+     "lng": 114.207797462
+    },
+    {
+     "name": "Princess Margaret Road near St. John Ambulance Brigade Kowloon Depot - Southboun",
+     "city": "Kowloon City",
+     "lat": 22.321305546,
+     "lng": 114.178262333
+    },
+    {
+     "name": "Tai Chung Kui Road near Shing Mun River Promenade Garden No. 2 - Southbound [TDS",
+     "city": "Sha Tin",
+     "lat": 22.388274251,
+     "lng": 114.201617348
+    },
+    {
+     "name": "Kwun Tong Road near Kowloon Bay St. John the Baptist Catholic Primary School - W",
+     "city": "Kwun Tong",
+     "lat": 22.32855321,
+     "lng": 114.212410232
+    },
+    {
+     "name": "Castle Peak Rd-Kwai Chung near Yip Shing Street Playground - Southbound [TDSCPRK",
+     "city": "Kwai Tsing",
+     "lat": 22.360122667,
+     "lng": 114.135369307
+    },
+    {
+     "name": "Castle Peak Rd-Ping Shan near Tong Yan San Tsuen Playground - Westbound [TDSCPRP",
+     "city": "Yuen Long",
+     "lat": 22.441288595,
+     "lng": 114.009397857
+    }
+   ]
+  },
+  {
+   "name": "Italy",
+   "slug": "italy",
+   "count": 993,
+   "areas": [
+    {
+     "name": "A1 MILANO-NAPOLI",
+     "count": 268
+    },
+    {
+     "name": "A14 BOLOGNA-TARANTO",
+     "count": 219
+    },
+    {
+     "name": "A56 TANGENZIALE DI NAPOLI",
+     "count": 57
+    },
+    {
+     "name": "A4 MILANO-BRESCIA",
+     "count": 41
+    },
+    {
+     "name": "A26 GE. VOLTRI-GRAVELL. TOCE",
+     "count": 40
+    },
+    {
+     "name": "A12 GENOVA-ROMA",
+     "count": 37
+    },
+    {
+     "name": "A16 NAPOLI-CANOSA",
+     "count": 36
+    },
+    {
+     "name": "A8 MILANO-VARESE",
+     "count": 34
+    },
+    {
+     "name": "A13 BOLOGNA-PADOVA",
+     "count": 31
+    },
+    {
+     "name": "A27 VENEZIA - BELLUNO",
+     "count": 31
+    },
+    {
+     "name": "A11 FIRENZE-PISA NORD",
+     "count": 29
+    },
+    {
+     "name": "A23 UDINE-TARVISIO",
+     "count": 27
+    }
+   ],
+   "samples": [
+    {
+     "name": "A1 km. 577,0 Bivio A01-Diramazione Roma Sud itinere nord HD",
+     "city": "A1 MILANO-NAPOLI",
+     "lat": 41.80437,
+     "lng": 12.81732
+    },
+    {
+     "name": "A14 km. 195,800 itinere su palo Galleria del Cavallo sud",
+     "city": "A14 BOLOGNA-TARANTO",
+     "lat": 43.69291,
+     "lng": 13.22443
+    },
+    {
+     "name": "A1 km. 530 Bivio A01-Diramaz. Roma Nord itinere sud HD",
+     "city": "A1 MILANO-NAPOLI",
+     "lat": 42.17004,
+     "lng": 12.61138
+    },
+    {
+     "name": "A1 km. 580,0 A01-Diramazione Roma Sud itinere nord HD",
+     "city": "A1 MILANO-NAPOLI",
+     "lat": 41.78872,
+     "lng": 12.84657
+    },
+    {
+     "name": "A13 km. 101,0 Padova Sud shelter diramazione it. sud",
+     "city": "A13 BOLOGNA-PADOVA",
+     "lat": 45.33872,
+     "lng": 11.84307
+    },
+    {
+     "name": "A1 km. 01,8 PMV Intinere Nord-All. Vdv/A1 La Quercia",
+     "city": "A1 MILANO-NAPOLI",
+     "lat": 44.28199,
+     "lng": 11.19842
+    },
+    {
+     "name": "A8 km. 12,1 Diram. Gallarate Gattico Vergiate (Va)",
+     "city": "A8 MILANO-VARESE",
+     "lat": 45.71807,
+     "lng": 8.66737
+    },
+    {
+     "name": "A14 km. 278,850 Gall. Porto S. Giorgio itinere sud",
+     "city": "A14 BOLOGNA-TARANTO",
+     "lat": 43.16765,
+     "lng": 13.79027
+    },
+    {
+     "name": "A4 km. 144,4 Allacciamento Tang. Est itinere ovest",
+     "city": "A4 MILANO-BRESCIA",
+     "lat": 45.56733,
+     "lng": 9.34314
+    },
+    {
+     "name": "A13 km. 111,3 Padova Zona Industriale itinere nord",
+     "city": "A13 BOLOGNA-PADOVA",
+     "lat": 45.37543,
+     "lng": 11.95139
+    }
+   ]
+  },
+  {
+   "name": "Japan",
+   "slug": "japan",
+   "count": 928,
+   "areas": [
+    {
+     "name": "Tokyo",
+     "count": 73
+    },
+    {
+     "name": "Osaka",
+     "count": 28
+    },
+    {
+     "name": "Sapporo",
+     "count": 15
+    },
+    {
+     "name": "Kyoto",
+     "count": 13
+    },
+    {
+     "name": "Yokohama",
+     "count": 9
+    },
+    {
+     "name": "Fukushima City",
+     "count": 7
+    },
+    {
+     "name": "Kasukabe City",
+     "count": 7
+    },
+    {
+     "name": "Hiroshima",
+     "count": 6
+    },
+    {
+     "name": "Wakayama",
+     "count": 6
+    },
+    {
+     "name": "Sanjo City",
+     "count": 6
+    },
+    {
+     "name": "Iruma City",
+     "count": 6
+    },
+    {
+     "name": "Misato City",
+     "count": 6
+    }
+   ],
+   "samples": [
+    {
+     "name": "Anamizu Town, Ishikawa Prefecture Live Camera of Wine Vineyard",
+     "city": "Anamizu",
+     "lat": 37.2310256,
+     "lng": 136.9124314
+    },
+    {
+     "name": "Ogouchi River at Shinshogata Bridge, Kitahiroshima",
+     "city": "Hiroshima City",
+     "lat": 34.60679129,
+     "lng": 132.4440278
+    },
+    {
+     "name": "国道２０号 １７２．６４２ＫＰ 白州８ (National Highway Route No.20)",
+     "city": "Hokuto City",
+     "lat": 35.8591793398663,
+     "lng": 138.283984753259
+    },
+    {
+     "name": "Nagahama: Kinomotocho Hannoura - National Route 8",
+     "city": "Nagahama",
+     "lat": 35.50476,
+     "lng": 136.183
+    },
+    {
+     "name": "国道６号 ６３．７ｋｐ 上高津高架橋 (National Highway Route No.6)",
+     "city": "Tsuchiura City",
+     "lat": 36.0781439919006,
+     "lng": 140.177724135132
+    },
+    {
+     "name": "Fukushima Ward: Fukushima - Route 49 - Nagahama",
+     "city": "Fukushima Ward",
+     "lat": 37.75,
+     "lng": 140.46778
+    },
+    {
+     "name": "Mukunashi River at Maba Bridge, East Hiroshima",
+     "city": "東広島市",
+     "lat": 34.566652,
+     "lng": 132.842787
+    },
+    {
+     "name": "Miwarahara River at Miwarahara Bridge, Miyoshi",
+     "city": "三次市",
+     "lat": 34.777673,
+     "lng": 132.911921
+    },
+    {
+     "name": "Shimanto River Mouth, Hatsuzaki, Shimanto City",
+     "city": "Shimanto",
+     "lat": 32.9308,
+     "lng": 132.999397222
+    },
+    {
+     "name": "国道５１号 清水（鹿嶋市清水） (National Highway Route No.51)",
+     "city": "Kashima City",
+     "lat": 36.004493681473,
+     "lng": 140.644010565708
+    }
+   ]
+  },
+  {
+   "name": "United Kingdom",
+   "slug": "united-kingdom",
+   "count": 899,
+   "areas": [
+    {
+     "name": "London",
+     "count": 890
+    },
+    {
+     "name": "Ammanford",
+     "count": 1
+    },
+    {
+     "name": "Broad Haven",
+     "count": 1
+    },
+    {
+     "name": "Cowes",
+     "count": 1
+    },
+    {
+     "name": "Dorchester",
+     "count": 1
+    },
+    {
+     "name": "Isle of Wight",
+     "count": 1
+    },
+    {
+     "name": "Manchester Airport",
+     "count": 1
+    },
+    {
+     "name": "Oxford Martin School",
+     "count": 1
+    },
+    {
+     "name": "Pickering",
+     "count": 1
+    },
+    {
+     "name": "Port Isaac",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "A406 North Circular Rd/Telford Rd/Bounds Green Rd",
+     "city": "London",
+     "lat": 51.6112,
+     "lng": -0.13544
+    },
+    {
+     "name": "A12 Blackwall Tunnel Nthern App/Gillender St",
+     "city": "London",
+     "lat": 51.52123,
+     "lng": -0.01031
+    },
+    {
+     "name": "Westfield Ave/International Way/Car Park A",
+     "city": "London",
+     "lat": 51.5435,
+     "lng": -0.01109
+    },
+    {
+     "name": "A3 Clapham Rd/Stockwell Rd/Landsdowne Way",
+     "city": "London",
+     "lat": 51.475,
+     "lng": -0.11953
+    },
+    {
+     "name": "Leyton Rd/Montfichet Rd/Penny Brookes St",
+     "city": "London",
+     "lat": 51.5466,
+     "lng": -0.00091
+    },
+    {
+     "name": "Montfichet Rd/Hitchcock Lane/Car Park C",
+     "city": "London",
+     "lat": 51.5446,
+     "lng": -0.00354
+    },
+    {
+     "name": "Tottenham High Road / Seven Sisters Rd",
+     "city": "London",
+     "lat": 51.5831,
+     "lng": -0.07226
+    },
+    {
+     "name": "A10 Stoke Newington Rd/Millers Terrace",
+     "city": "London",
+     "lat": 51.5512,
+     "lng": -0.075
+    },
+    {
+     "name": "Montfichet Rd/Westfield Ave/Car Park B",
+     "city": "London",
+     "lat": 51.5411,
+     "lng": -0.00528
+    },
+    {
+     "name": "A10 Stoke Newington Rd/Barretts Grove",
+     "city": "London",
+     "lat": 51.5522,
+     "lng": -0.07486
+    }
+   ]
+  },
+  {
+   "name": "Sweden",
+   "slug": "sweden",
+   "count": 886,
+   "areas": [
+    {
+     "name": "Västra Götaland",
+     "count": 361
+    },
+    {
+     "name": "Stockholm",
+     "count": 335
+    },
+    {
+     "name": "Skåne",
+     "count": 74
+    },
+    {
+     "name": "Halland",
+     "count": 43
+    },
+    {
+     "name": "Jönköping",
+     "count": 10
+    },
+    {
+     "name": "Kalmar",
+     "count": 9
+    },
+    {
+     "name": "Sweden",
+     "count": 9
+    },
+    {
+     "name": "Varberg",
+     "count": 6
+    },
+    {
+     "name": "Blekinge",
+     "count": 5
+    },
+    {
+     "name": "Kronoberg",
+     "count": 5
+    },
+    {
+     "name": "Norrbotten",
+     "count": 4
+    },
+    {
+     "name": "Uppsala",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "name": "AXIS Q1952-E Thermal Camera streaming live 24/7 from Löddeköpinge, Sweden",
+     "city": "Skåne",
+     "lat": 55.7596705,
+     "lng": 13.0073627
+    },
+    {
+     "name": "Marieholmstunneln påfart E45 Södergående nordväst",
+     "city": "Västra Götaland",
+     "lat": 57.726021,
+     "lng": 11.997966
+    },
+    {
+     "name": "SkiStar Sälen - Lindvallen Gustavbackens topp",
+     "city": "Sweden",
+     "lat": 61.1640531,
+     "lng": 13.1893988
+    },
+    {
+     "name": "Live Björkliden Hotel Fjället Lapland Resorts",
+     "city": "Norrbotten",
+     "lat": 68.4067796,
+     "lng": 18.6756725
+    },
+    {
+     "name": "Norrbyströmmen Live Fly Fishing in Home Pool",
+     "city": "Östergötland",
+     "lat": 58.5545052,
+     "lng": 15.3136348
+    },
+    {
+     "name": "MEDview - Varbergs Golfklubb - Västra Banan",
+     "city": "Halland",
+     "lat": 57.064284,
+     "lng": 12.3498985
+    },
+    {
+     "name": "Söderleden Sisjö Golfbana Västra västerut",
+     "city": "Västra Götaland",
+     "lat": 57.645672,
+     "lng": 11.963808
+    },
+    {
+     "name": "Marieholmstunneln Östra Mynning västerut",
+     "city": "Västra Götaland",
+     "lat": 57.726021,
+     "lng": 11.997966
+    },
+    {
+     "name": "Söderleden Sisjö Golfbana Västra österut",
+     "city": "Västra Götaland",
+     "lat": 57.645672,
+     "lng": 11.963808
+    },
+    {
+     "name": "Söderleden Sisjö Golfbana Östra västerut",
+     "city": "Västra Götaland",
+     "lat": 57.645511,
+     "lng": 11.970593
+    }
+   ]
+  },
+  {
+   "name": "Finland",
+   "slug": "finland",
+   "count": 818,
+   "areas": [
+    {
+     "name": "Finland",
+     "count": 813
+    },
+    {
+     "name": "Apukka",
+     "count": 1
+    },
+    {
+     "name": "Helsinki",
+     "count": 1
+    },
+    {
+     "name": "Kuopio",
+     "count": 1
+    },
+    {
+     "name": "Levi",
+     "count": 1
+    },
+    {
+     "name": "Rovaniemi",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "vt12_Lahti_Patomäki_Okeroinen_Puomi_Ramppi",
+     "city": "Finland",
+     "lat": 60.952949,
+     "lng": 25.597012
+    },
+    {
+     "name": "vt7_Vaalimaan_tunneli_suuaukko_länsi",
+     "city": "Finland",
+     "lat": 60.612111,
+     "lng": 27.787659
+    },
+    {
+     "name": "vt12_Lahti_Patomäki_Okeroinen_Puomi",
+     "city": "Finland",
+     "lat": 60.953125,
+     "lng": 25.589821
+    },
+    {
+     "name": "vt12_Lahti_Liipola_Puomi_Ramppi_Itä",
+     "city": "Finland",
+     "lat": 60.957316,
+     "lng": 25.690078
+    },
+    {
+     "name": "vt14_Savonlinna_Laitaatsalmi_silta2",
+     "city": "Finland",
+     "lat": 61.878477,
+     "lng": 28.838162
+    },
+    {
+     "name": "vt7_Vaalimaan_tunneli_suuaukko_itä",
+     "city": "Finland",
+     "lat": 60.613149,
+     "lng": 27.795851
+    },
+    {
+     "name": "st170_Virolahti_Vaahterikonkangas",
+     "city": "Finland",
+     "lat": 60.57199,
+     "lng": 27.638443
+    },
+    {
+     "name": "vt12_Tre_Rantatunneli_Armonkallio",
+     "city": "Finland",
+     "lat": 61.507146,
+     "lng": 23.772567
+    },
+    {
+     "name": "vt8_Kristiinankaupunki_Lapväärtti",
+     "city": "Finland",
+     "lat": 62.266479,
+     "lng": 21.479586
+    },
+    {
+     "name": "Tie 103 Vuosaari, Niinisaarentie",
+     "city": "Finland",
+     "lat": 60.220715,
+     "lng": 25.160012
+    }
+   ]
+  },
+  {
+   "name": "Iceland",
+   "slug": "iceland",
+   "count": 496,
+   "areas": [
+    {
+     "name": "Strandarheiði",
+     "count": 4
+    },
+    {
+     "name": "Markarfljót (Bakkafjöruvegamót)",
+     "count": 4
+    },
+    {
+     "name": "Skeiðavegamót",
+     "count": 4
+    },
+    {
+     "name": "Arnarneshæð",
+     "count": 4
+    },
+    {
+     "name": "Bústaðabrú",
+     "count": 4
+    },
+    {
+     "name": "Kleifaheiði",
+     "count": 4
+    },
+    {
+     "name": "Festarfjall",
+     "count": 4
+    },
+    {
+     "name": "Sandskeið",
+     "count": 4
+    },
+    {
+     "name": "Svínavatn",
+     "count": 4
+    },
+    {
+     "name": "Sveinatunga",
+     "count": 4
+    },
+    {
+     "name": "Blönduós",
+     "count": 4
+    },
+    {
+     "name": "Vegaskarð",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "name": "Héðinsfjarðargöng í Héðinsfirði Siglufjarðarmegin — Héðinsfjarðargöng séð niður ",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Siglufja",
+     "lat": 66.106659,
+     "lng": -18.820808
+    },
+    {
+     "name": "Héðinsfjarðargöng í Héðinsfirði Ólafsfjarðarmegin — Héðinsfjarðargöng niður á ve",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Ólafsfja",
+     "lat": 66.102076,
+     "lng": -18.812526
+    },
+    {
+     "name": "Héðinsfjarðargöng í Héðinsfirði Ólafsfjarðarmegin — Héðinsfjarðargöng séð yfir H",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Ólafsfja",
+     "lat": 66.102076,
+     "lng": -18.812526
+    },
+    {
+     "name": "Héðinsfjarðargöng í Héðinsfirði Siglufjarðarmegin — Héðinsfjarðargöng séð yfir H",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Siglufja",
+     "lat": 66.106659,
+     "lng": -18.820808
+    },
+    {
+     "name": "Bolungarvíkurgöng við Bolungarvík — Bolungarvíkurgöng séð niður að veg að Bolung",
+     "city": "Bolungarvíkurgöng við Bolungarvík",
+     "lat": 66.143108,
+     "lng": -23.222907
+    },
+    {
+     "name": "Héðinsfjarðargöng Ólafsfjarðarmegin — Héðinsfjarðargöng séð niður á veg í Ólafsf",
+     "city": "Héðinsfjarðargöng Ólafsfjarðarmegin",
+     "lat": 66.073042,
+     "lng": -18.672672
+    },
+    {
+     "name": "Héðinsfjarðargöng Siglufjarðarmegin — Héðinsfjarðargöng séð niður á veg í Sigluf",
+     "city": "Héðinsfjarðargöng Siglufjarðarmegin",
+     "lat": 66.126469,
+     "lng": -18.891003
+    },
+    {
+     "name": "Þverárfjall á Laxárdalsheiði — Þverárfjallsvegur á Laxárdalsheiði séð í norðvest",
+     "city": "Þverárfjall á Laxárdalsheiði",
+     "lat": 65.808028,
+     "lng": -19.847833
+    },
+    {
+     "name": "Þverárfjall á Laxárdalsheiði — Þverárfjallsvegur á Laxárdalsheiði séð niður á ve",
+     "city": "Þverárfjall á Laxárdalsheiði",
+     "lat": 65.808028,
+     "lng": -19.847833
+    },
+    {
+     "name": "Bolungarvíkurgöng við Hnífsdal — Bolungarvíkurgöng séð niður á veg að Hnífsdal",
+     "city": "Bolungarvíkurgöng við Hnífsdal",
+     "lat": 66.117604,
+     "lng": -23.121938
+    }
+   ]
+  },
+  {
+   "name": "Lithuania",
+   "slug": "lithuania",
+   "count": 316,
+   "areas": [
+    {
+     "name": "Vilnius",
+     "count": 4
+    },
+    {
+     "name": "Didžiulio ež.",
+     "count": 2
+    },
+    {
+     "name": "Maišiagala",
+     "count": 2
+    },
+    {
+     "name": "Medininkai",
+     "count": 2
+    },
+    {
+     "name": "Gudeliai",
+     "count": 2
+    },
+    {
+     "name": "Virinta",
+     "count": 2
+    },
+    {
+     "name": "Kalveliai",
+     "count": 2
+    },
+    {
+     "name": "Daugailiai",
+     "count": 2
+    },
+    {
+     "name": "Nausodė į",
+     "count": 2
+    },
+    {
+     "name": "Tartokas",
+     "count": 2
+    },
+    {
+     "name": "Mažeikiai",
+     "count": 2
+    },
+    {
+     "name": "Ylakiai",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Smiltynė 2254 0,59 (2254 Privažiuojamasis kelias prie II perkėlos nuo kelio Smil",
+     "city": "Smiltynė",
+     "lat": 55.68077518197468,
+     "lng": 21.12299864784623
+    },
+    {
+     "name": "Šakiai 0137027001 0,07 (0137027001 K137_030.944_01 (137 ir 140 kelių sankr.) Žie",
+     "city": "Šakiai",
+     "lat": 54.95323001978691,
+     "lng": 23.084377835720083
+    },
+    {
+     "name": "Jakai į Vilnių3 0001090004 0,166 (0001090004 A01_304.760_04 (Jakų sankr.))",
+     "city": "Jakai į Vilnių3",
+     "lat": 55.70314664397489,
+     "lng": 21.20313097295758
+    },
+    {
+     "name": "Sankryža A5-A7 vaizdas į A5 (A7 Marijampolė–Kybartai–Kaliningradas*)",
+     "city": "Sankryža A5",
+     "lat": 54.57312273853984,
+     "lng": 23.29668704094972
+    },
+    {
+     "name": "Sankryža A5-A7 vaizdas į A7 (A7 Marijampolė–Kybartai–Kaliningradas*)",
+     "city": "Sankryža A5-A7 vaizdas į",
+     "lat": 54.57312273853984,
+     "lng": 23.29668704094972
+    },
+    {
+     "name": "Antegluonis A12 139,64 (A12 Ryga*–Šiauliai–Tauragė–Kaliningradas*)",
+     "city": "Antegluonis",
+     "lat": 55.3490242569947,
+     "lng": 22.45552098818905
+    },
+    {
+     "name": "Meškuičiai A12 35,48 (A12 Ryga*–Šiauliai–Tauragė–Kaliningradas*)",
+     "city": "Meškuičiai",
+     "lat": 56.07419572897267,
+     "lng": 23.454372076132284
+    },
+    {
+     "name": "Raudsparnė A12 81,95 (A12 Ryga*–Šiauliai–Tauragė–Kaliningradas*)",
+     "city": "Raudsparnė",
+     "lat": 55.74831265357225,
+     "lng": 23.012263418369162
+    },
+    {
+     "name": "Piktupėnai A12 172,6 (A12 Ryga*–Šiauliai–Tauragė–Kaliningradas*)",
+     "city": "Piktupėnai",
+     "lat": 55.16873191128245,
+     "lng": 22.05042632035569
+    },
+    {
+     "name": "Sintautai 138 35,15 (138 Vilkaviškis–Kudirkos Naumiestis–Šakiai)",
+     "city": "Sintautai",
+     "lat": 54.88224743573785,
+     "lng": 22.98594986078173
+    }
+   ]
+  },
+  {
+   "name": "Netherlands",
+   "slug": "netherlands",
+   "count": 268,
+   "areas": [
+    {
+     "name": "Texel",
+     "count": 27
+    },
+    {
+     "name": "Harlingen",
+     "count": 13
+    },
+    {
+     "name": "Ameland",
+     "count": 8
+    },
+    {
+     "name": "Vlissingen",
+     "count": 8
+    },
+    {
+     "name": "Terschelling",
+     "count": 7
+    },
+    {
+     "name": "Rotterdam",
+     "count": 6
+    },
+    {
+     "name": "Amsterdam",
+     "count": 5
+    },
+    {
+     "name": "Hoek van Holland",
+     "count": 5
+    },
+    {
+     "name": "Amersfoort",
+     "count": 4
+    },
+    {
+     "name": "Vlaardingen",
+     "count": 4
+    },
+    {
+     "name": "Dordrecht",
+     "count": 4
+    },
+    {
+     "name": "Alkmaar",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "name": "Voetbal- en Cricketvereniging Quick",
+     "city": "Den Haag",
+     "lat": 52.079984,
+     "lng": 4.311346
+    },
+    {
+     "name": "Watersport Vereniging De Vrijbuiter",
+     "city": "Loosdrecht",
+     "lat": 52.202599,
+     "lng": 5.090563
+    },
+    {
+     "name": "Strandpaviljoen Aloha Surf and Food",
+     "city": "Scheveningen",
+     "lat": 52.106745,
+     "lng": 4.273694
+    },
+    {
+     "name": "Windsurfvereniging Almere-Centraal",
+     "city": "Almere",
+     "lat": 52.334776,
+     "lng": 5.206401
+    },
+    {
+     "name": "De Dijk van links naar rechts v.v.",
+     "city": "Volendam",
+     "lat": 52.496376,
+     "lng": 5.068274
+    },
+    {
+     "name": "Holocaust Namenmonument Nederland",
+     "city": "Amsterdam",
+     "lat": 52.365706,
+     "lng": 4.904975
+    },
+    {
+     "name": "Strand bij Reddingsbrigade Petten",
+     "city": "Petten",
+     "lat": 52.768597,
+     "lng": 4.662609
+    },
+    {
+     "name": "Vanaf Restaurant 't Platje (Oost)",
+     "city": "Vlaardingen",
+     "lat": 51.922786,
+     "lng": 4.329563
+    },
+    {
+     "name": "Vanaf Restaurant 't Platje (West)",
+     "city": "Vlaardingen",
+     "lat": 51.922786,
+     "lng": 4.329563
+    },
+    {
+     "name": "Scheldemonding vanaf de Boulevard",
+     "city": "Vlissingen",
+     "lat": 51.448093,
+     "lng": 3.569799
+    }
+   ]
+  },
+  {
+   "name": "Australia",
+   "slug": "australia",
+   "count": 250,
+   "areas": [
+    {
+     "name": "SYD_MET",
+     "count": 81
+    },
+    {
+     "name": "SYD_NORTH",
+     "count": 41
+    },
+    {
+     "name": "REG_NORTH",
+     "count": 36
+    },
+    {
+     "name": "SYD_WEST",
+     "count": 33
+    },
+    {
+     "name": "SYD_SOUTH",
+     "count": 31
+    },
+    {
+     "name": "REG_SOUTH",
+     "count": 16
+    },
+    {
+     "name": "REG_WEST",
+     "count": 9
+    },
+    {
+     "name": "Sydney West",
+     "count": 1
+    },
+    {
+     "name": "Regional North",
+     "count": 1
+    },
+    {
+     "name": "Sydney",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Kosciuszko Rd and Perisher Valley (Kosciuszko National Park)",
+     "city": "REG_SOUTH",
+     "lat": -36.404743,
+     "lng": 148.413284
+    },
+    {
+     "name": "Pacific Highway & Orlando Street (Coffs Harbour)",
+     "city": "Regional North",
+     "lat": -30.283807,
+     "lng": 153.126775
+    },
+    {
+     "name": "Hume Highway (Cumberland Highway, Liverpool)",
+     "city": "SYD_SOUTH",
+     "lat": -33.91519,
+     "lng": 150.92073
+    },
+    {
+     "name": "M4 Western Motorway (South Wentworthville)",
+     "city": "SYD_WEST",
+     "lat": -33.81629,
+     "lng": 150.963639
+    },
+    {
+     "name": "Hume Highway (Elizabeth Drive, Liverpool)",
+     "city": "SYD_SOUTH",
+     "lat": -33.91941,
+     "lng": 150.919356
+    },
+    {
+     "name": "M1 Pacific Motorway (Mooney Mooney Creek)",
+     "city": "REG_NORTH",
+     "lat": -33.433762,
+     "lng": 151.257468
+    },
+    {
+     "name": "Wentworth Avenue & Oxford Street (Sydney)",
+     "city": "SYD_MET",
+     "lat": -33.876914,
+     "lng": 151.212087
+    },
+    {
+     "name": "Warringah Road Eastbound (Frenchs Forest)",
+     "city": "SYD_NORTH",
+     "lat": -33.751592,
+     "lng": 151.226785
+    },
+    {
+     "name": "M1 Pacific Motorway (John Renshaw Drive)",
+     "city": "REG_NORTH",
+     "lat": -32.8134,
+     "lng": 151.635833
+    },
+    {
+     "name": "Homebush Bay Drive (Sydney Olympic Park)",
+     "city": "SYD_MET",
+     "lat": -33.856591,
+     "lng": 151.070956
+    }
+   ]
+  },
+  {
+   "name": "New Zealand",
+   "slug": "new-zealand",
+   "count": 249,
+   "areas": [
+    {
+     "name": "Auckland",
+     "count": 98
+    },
+    {
+     "name": "Canterbury",
+     "count": 78
+    },
+    {
+     "name": "Wellington",
+     "count": 37
+    },
+    {
+     "name": "Otago",
+     "count": 13
+    },
+    {
+     "name": "Waikato",
+     "count": 7
+    },
+    {
+     "name": "West Coast",
+     "count": 6
+    },
+    {
+     "name": "Nelson/Marlborough",
+     "count": 5
+    },
+    {
+     "name": "Manawatu-Whanganui",
+     "count": 2
+    },
+    {
+     "name": "Bay Of Plenty",
+     "count": 2
+    },
+    {
+     "name": "Hawkes Bay",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "SH1 Walter Strevens Dr Overbridge (Southbound)",
+     "city": "Auckland",
+     "lat": -37.044396,
+     "lng": 174.913045
+    },
+    {
+     "name": "SH20 Barrowcliffe Pl Overbridge (Northbound)",
+     "city": "Auckland",
+     "lat": -36.996,
+     "lng": 174.881
+    },
+    {
+     "name": "SH74 New Brighton Rd Roundabout (Southbound)",
+     "city": "Canterbury",
+     "lat": -43.500042,
+     "lng": 172.700719
+    },
+    {
+     "name": "SH20A George Bolt Mem Dr South (Northbound)",
+     "city": "Auckland",
+     "lat": -36.982,
+     "lng": 174.784
+    },
+    {
+     "name": "SH20A George Bolt Mem Dr North (Northbound)",
+     "city": "Auckland",
+     "lat": -36.973,
+     "lng": 174.789
+    },
+    {
+     "name": "SH18 Brigham Creek Interchange (Westbound)",
+     "city": "Auckland",
+     "lat": -36.8,
+     "lng": 174.638
+    },
+    {
+     "name": "SH1/SH16 Central Mwy Junction (Southbound)",
+     "city": "Auckland",
+     "lat": -36.86,
+     "lng": 174.757
+    },
+    {
+     "name": "SH1 Park Estate Rd Overbridge (Southbound)",
+     "city": "Auckland",
+     "lat": -37.085,
+     "lng": 174.936
+    },
+    {
+     "name": "SH74 QEII Dr Roundabout South (Southbound)",
+     "city": "Canterbury",
+     "lat": -43.486765,
+     "lng": 172.62878
+    },
+    {
+     "name": "SH74 QEII Dr Roundabout North (Southbound)",
+     "city": "Canterbury",
+     "lat": -43.485345,
+     "lng": 172.630821
+    }
+   ]
+  },
+  {
+   "name": "Turkey",
+   "slug": "turkey",
+   "count": 247,
+   "areas": [
+    {
+     "name": "Istanbul",
+     "count": 143
+    },
+    {
+     "name": "Arnavutkoy",
+     "count": 16
+    },
+    {
+     "name": "Selcuklu",
+     "count": 7
+    },
+    {
+     "name": "Kahramanmaras",
+     "count": 6
+    },
+    {
+     "name": "Balikesir",
+     "count": 5
+    },
+    {
+     "name": "Meram",
+     "count": 5
+    },
+    {
+     "name": "Karatay",
+     "count": 4
+    },
+    {
+     "name": "Bursa",
+     "count": 4
+    },
+    {
+     "name": "Nilufer",
+     "count": 3
+    },
+    {
+     "name": "Kas",
+     "count": 3
+    },
+    {
+     "name": "Ayvalik",
+     "count": 2
+    },
+    {
+     "name": "Elbistan",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Horozluhan Mahallesi › South-west: Konya Science Center - Ankara Caddesi",
+     "city": "Horozluhan Mahallesi",
+     "lat": 37.98999,
+     "lng": 32.59582
+    },
+    {
+     "name": "Haydarbey Mahallesi: Boğaziçi - Haydar Bey Mahallesi - Kahramanmaraş",
+     "city": "Haydarbey Mahallesi",
+     "lat": 37.58315,
+     "lng": 36.86969
+    },
+    {
+     "name": "Ihsaniye Mahallesi › South: Zafer Meydanı Konya - Alaaddin Bulvarı",
+     "city": "Ihsaniye Mahallesi",
+     "lat": 37.87211,
+     "lng": 32.49026
+    },
+    {
+     "name": "Aksemsettin Mahallesi › South-west: Fevzipaşa Caddesi",
+     "city": "Aksemsettin Mahallesi",
+     "lat": 41.01984,
+     "lng": 28.9476
+    },
+    {
+     "name": "Parsana Mahallesi › East: Konya Büyükşehir Arena",
+     "city": "Parsana Mahallesi",
+     "lat": 37.94609,
+     "lng": 32.48222
+    },
+    {
+     "name": "Sarkiye Mahallesi › North-west: Ordu Belediyesi",
+     "city": "Sarkiye Mahallesi",
+     "lat": 40.98572,
+     "lng": 37.88038
+    },
+    {
+     "name": "Medrese Mahallesi › South: Yozgat Clock Tower",
+     "city": "Medrese Mahallesi",
+     "lat": 39.83102,
+     "lng": 34.80823
+    },
+    {
+     "name": "Parachuting launch pad in Fadilli - Turkey",
+     "city": "Nilufer",
+     "lat": 40.2169975,
+     "lng": 28.9847907
+    },
+    {
+     "name": "Elbistan › North-west: Elbistan Belediyesi",
+     "city": "Elbistan",
+     "lat": 38.19562,
+     "lng": 37.19026
+    },
+    {
+     "name": "Istinye Mahallesi: Istinye State Hospital",
+     "city": "Istinye Mahallesi",
+     "lat": 41.11319,
+     "lng": 29.0594
+    }
+   ]
+  },
+  {
+   "name": "Indonesia",
+   "slug": "indonesia",
+   "count": 197,
+   "areas": [
+    {
+     "name": "Bandung",
+     "count": 43
+    },
+    {
+     "name": "Yogyakarta",
+     "count": 30
+    },
+    {
+     "name": "Sleman",
+     "count": 22
+    },
+    {
+     "name": "Gunungkidul",
+     "count": 13
+    },
+    {
+     "name": "Bantul",
+     "count": 7
+    },
+    {
+     "name": "Gresik",
+     "count": 7
+    },
+    {
+     "name": "Tangerang",
+     "count": 7
+    },
+    {
+     "name": "Batas Kelurahan",
+     "count": 7
+    },
+    {
+     "name": "Jakarta",
+     "count": 5
+    },
+    {
+     "name": "South Tangerang",
+     "count": 5
+    },
+    {
+     "name": "Krian",
+     "count": 4
+    },
+    {
+     "name": "Wonosari",
+     "count": 3
+    }
+   ],
+   "samples": [
+    {
+     "name": "Serang: Tugu Jaya Serang - Exit Tol Serang Timur - Pintu Tol Serang Timur - Jala",
+     "city": "Serang",
+     "lat": -6.11735,
+     "lng": 106.18183
+    },
+    {
+     "name": "Bandung: Riau Junction (Yogya Riau Junction) - Jalan Seram - Jalan Trunojoyo - L",
+     "city": "Bandung",
+     "lat": -6.90711,
+     "lng": 107.61306
+    },
+    {
+     "name": "Yogyakarta: Simpang Empat Munggur - Yogyakarta - Kebon Agung 1 - Jalan Ngapak - ",
+     "city": "Yogyakarta",
+     "lat": -7.77399,
+     "lng": 110.31809
+    },
+    {
+     "name": "Pogung Kidul: Janti - Prambanan - Jalan Laksda Adisucipto - Jalan Padjajaran",
+     "city": "Pogung Kidul",
+     "lat": -7.78335,
+     "lng": 110.42969
+    },
+    {
+     "name": "South Tangerang: Serpong - Balaraja Toll Road - Jakarta - Serpong Toll Road",
+     "city": "South Tangerang",
+     "lat": -6.30639,
+     "lng": 106.64265
+    },
+    {
+     "name": "Bandung: PT. Matahari Putra Prima - Gazella Toko - Naris - Jalan Kepatihan",
+     "city": "Bandung",
+     "lat": -6.92335,
+     "lng": 107.60484
+    },
+    {
+     "name": "RW 03: Rest Area Gerbang Tol Palindra - Jalan Tol Palembang - Indralaya",
+     "city": "RW 03",
+     "lat": -3.0602,
+     "lng": 104.7534
+    },
+    {
+     "name": "Batas Kelurahan: Jalan Raya Sindanglaya - Jalan A.H. Nasution",
+     "city": "Batas Kelurahan",
+     "lat": -6.90411,
+     "lng": 107.667
+    },
+    {
+     "name": "Batas Kelurahan: Jalan Terusan Jakarta - Jalan Sulaksana",
+     "city": "Batas Kelurahan",
+     "lat": -6.91295,
+     "lng": 107.64956
+    },
+    {
+     "name": "Cimahi: PnP Kosmetik - Jalan Karya - Jalan Gunung Batu",
+     "city": "Cimahi",
+     "lat": -6.89546,
+     "lng": 107.56036
+    }
+   ]
+  },
+  {
+   "name": "Vietnam",
+   "slug": "vietnam",
+   "count": 160,
+   "areas": [
+    {
+     "name": "Ho Chi Minh City",
+     "count": 85
+    },
+    {
+     "name": "Da Nang",
+     "count": 3
+    },
+    {
+     "name": "Ben Nghe Ward",
+     "count": 3
+    },
+    {
+     "name": "Phường An Đông",
+     "count": 3
+    },
+    {
+     "name": "An Phu Ward",
+     "count": 3
+    },
+    {
+     "name": "Phường Đức Nhuận",
+     "count": 2
+    },
+    {
+     "name": "Tan Phong Ward",
+     "count": 2
+    },
+    {
+     "name": "Phường Hạnh Thông",
+     "count": 2
+    },
+    {
+     "name": "Phường Hòa Hưng",
+     "count": 2
+    },
+    {
+     "name": "Da Kao Ward",
+     "count": 2
+    },
+    {
+     "name": "Vo Thi Sau Ward",
+     "count": 2
+    },
+    {
+     "name": "Ben Thanh Ward",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "An Phu Ward: Đường Xa Lộ Hà Nội - Đường Mai Chí Thọ - Xa lộ Hà Nội - Xa Lộ Hà Nộ",
+     "city": "An Phu Ward",
+     "lat": 10.80904,
+     "lng": 106.756
+    },
+    {
+     "name": "Tay Thanh Ward: Đường Lê Trọng Tấn - Đường Tân Kỳ Tân Quý - Lê Trọng Tấn",
+     "city": "Tay Thanh Ward",
+     "lat": 10.80375,
+     "lng": 106.63257
+    },
+    {
+     "name": "Co Giang Ward: Trần Hưng Đạo - Đường Trần Hưng Đạo - Nguyễn Cư Trinh",
+     "city": "Co Giang Ward",
+     "lat": 10.76494,
+     "lng": 106.69287
+    },
+    {
+     "name": "Ben Nghe Ward: Đường Lê Duẩn - Phạm Ngọc Thạch - Đường N4 - Lê Duẩn",
+     "city": "Ben Nghe Ward",
+     "lat": 10.78035,
+     "lng": 106.69842
+    },
+    {
+     "name": "Phuong Thanh Loc: Nga Tu Ga Bus Station - Đường Quốc Lộ 1",
+     "city": "Phuong Thanh Loc",
+     "lat": 10.8616,
+     "lng": 106.6786
+    },
+    {
+     "name": "Vo Thi Sau Ward: Võ Văn Tần - Đường Cách Mạng Tháng 8",
+     "city": "Vo Thi Sau Ward",
+     "lat": 10.77434,
+     "lng": 106.68808
+    },
+    {
+     "name": "Truong Tho Ward: Song Hành Xa Lộ Hà Nội - Đường Số 1",
+     "city": "Truong Tho Ward",
+     "lat": 10.82662,
+     "lng": 106.76023
+    },
+    {
+     "name": "Da Kao Ward: Đường Đinh Tiên Hoàng - Trần Quang Khải",
+     "city": "Da Kao Ward",
+     "lat": 10.79274,
+     "lng": 106.69613
+    },
+    {
+     "name": "Xa An Phu Tay: Quản Trọng Linh - Nguyễn Văn Linh",
+     "city": "Xa An Phu Tay",
+     "lat": 10.69398,
+     "lng": 106.61047
+    },
+    {
+     "name": "An Lac A Ward: Đường số 7 - Đường An Dương Vương",
+     "city": "An Lac A Ward",
+     "lat": 10.75172,
+     "lng": 106.62399
+    }
+   ]
+  },
+  {
+   "name": "Russia",
+   "slug": "russia",
+   "count": 152,
+   "areas": [
+    {
+     "name": "Sochi",
+     "count": 46
+    },
+    {
+     "name": "Междуреченск",
+     "count": 19
+    },
+    {
+     "name": "Astrakhan",
+     "count": 18
+    },
+    {
+     "name": "Moscow",
+     "count": 7
+    },
+    {
+     "name": "Мыски",
+     "count": 7
+    },
+    {
+     "name": "Novosibirsk",
+     "count": 4
+    },
+    {
+     "name": "Krasnodar",
+     "count": 3
+    },
+    {
+     "name": "Москва",
+     "count": 3
+    },
+    {
+     "name": "Khosta",
+     "count": 3
+    },
+    {
+     "name": "Adler",
+     "count": 3
+    },
+    {
+     "name": "Volgograd",
+     "count": 3
+    },
+    {
+     "name": "Nizhny Arkhyz",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Кичи-Балыкское сельское поселение › South-west: Kavkazskaya Gornaya Observatoriy",
+     "city": "Кичи-Балыкское сельское поселение",
+     "lat": 43.73397,
+     "lng": 42.66506
+    },
+    {
+     "name": "Сычёвский сельсовет › West: Gornolyzhnaya Trassa Na Belokurikhe-2, Mishina Gora",
+     "city": "Сычёвский сельсовет",
+     "lat": 51.94631,
+     "lng": 84.89153
+    },
+    {
+     "name": "сельское поселение Эльбрус › South: Gornolyzhnyy Kurort El'brus",
+     "city": "сельское поселение Эльбрус",
+     "lat": 43.29478,
+     "lng": 42.46147
+    },
+    {
+     "name": "Нижегородское сельское поселение › South-east: Reka Kurdzhips",
+     "city": "Нижегородское сельское поселение",
+     "lat": 44.22297,
+     "lng": 39.90622
+    },
+    {
+     "name": "Элекмонарское сельское поселение › North-west: Katun River",
+     "city": "Элекмонарское сельское поселение",
+     "lat": 51.46166,
+     "lng": 85.9875
+    },
+    {
+     "name": "Builders Street & Kuznetsksaya Street, Mezhdurechensk",
+     "city": "Междуреченск",
+     "lat": 53.691576303374,
+     "lng": 88.058886147494
+    },
+    {
+     "name": "Construction Site, Shakhterov Street, Mezhdurechensk",
+     "city": "Междуреченск",
+     "lat": 53.696824283823,
+     "lng": 88.046001315829
+    },
+    {
+     "name": "Communist Prospect & Komarov Street, Mezhdurechensk",
+     "city": "Междуреченск",
+     "lat": 53.689797117307,
+     "lng": 88.068430486008
+    },
+    {
+     "name": "городское поселение Камызяк: Камызяк, Тараканова, 4",
+     "city": "городское поселение Камызяк",
+     "lat": 46.11499,
+     "lng": 48.06889
+    },
+    {
+     "name": "50 Years VLKSM & Vesnennaya Street, Mezhdurechensk",
+     "city": "Междуреченск",
+     "lat": 53.687299534398,
+     "lng": 88.082269471356
+    }
+   ]
+  },
+  {
+   "name": "South Korea",
+   "slug": "south-korea",
+   "count": 138,
+   "areas": [
+    {
+     "name": "Seoul",
+     "count": 35
+    },
+    {
+     "name": "Busan",
+     "count": 17
+    },
+    {
+     "name": "Incheon",
+     "count": 11
+    },
+    {
+     "name": "Daegu",
+     "count": 9
+    },
+    {
+     "name": "Pohang",
+     "count": 8
+    },
+    {
+     "name": "Goyang",
+     "count": 8
+    },
+    {
+     "name": "Changwon",
+     "count": 7
+    },
+    {
+     "name": "Gwangju",
+     "count": 6
+    },
+    {
+     "name": "Ansan",
+     "count": 5
+    },
+    {
+     "name": "Geoje (사등면)",
+     "count": 3
+    },
+    {
+     "name": "Gimpo",
+     "count": 3
+    },
+    {
+     "name": "Sejong",
+     "count": 3
+    }
+   ],
+   "samples": [
+    {
+     "name": "Independence Gate Intersection, Unification Road",
+     "city": "Seoul",
+     "lat": 37.57242,
+     "lng": 126.96037
+    },
+    {
+     "name": "Munhak Interchange, Second Gyeonggin Expressway",
+     "city": "Incheon",
+     "lat": 37.436476,
+     "lng": 126.675618
+    },
+    {
+     "name": "Haeundae Road, Gigyeong Technical High School",
+     "city": "Busan",
+     "lat": 35.16094,
+     "lng": 129.1543
+    },
+    {
+     "name": "Yongmasan Road, Shinnaechayeok Depot, Seoul",
+     "city": "Seoul",
+     "lat": 37.61074,
+     "lng": 127.10758
+    },
+    {
+     "name": "Mail Distribution Center, Baekseok 2-dong",
+     "city": "Goyang",
+     "lat": 37.639422,
+     "lng": 126.7836647
+    },
+    {
+     "name": "Namchon Exit, Second Gyeonggin Expressway",
+     "city": "Incheon",
+     "lat": 37.434072,
+     "lng": 126.718795
+    },
+    {
+     "name": "BEXCO New Wing 2 at Olympic Intersection",
+     "city": "Busan",
+     "lat": 35.166532,
+     "lng": 129.135721
+    },
+    {
+     "name": "Korea Development Institute Intersection",
+     "city": "Sejong",
+     "lat": 36.481773,
+     "lng": 127.307818
+    },
+    {
+     "name": "Neungkok Interchange, Second Jayou Road",
+     "city": "Goyang",
+     "lat": 37.621871,
+     "lng": 126.8031139
+    },
+    {
+     "name": "Imbangeul Boulevard at Unnam 6-District",
+     "city": "Gwangju",
+     "lat": 35.179412,
+     "lng": 126.81782
+    }
+   ]
+  },
+  {
+   "name": "Poland",
+   "slug": "poland",
+   "count": 73,
+   "areas": [
+    {
+     "name": "Wejherowo",
+     "count": 8
+    },
+    {
+     "name": "Władysławowo",
+     "count": 7
+    },
+    {
+     "name": "Reda",
+     "count": 5
+    },
+    {
+     "name": "Chałupy",
+     "count": 4
+    },
+    {
+     "name": "Dębki",
+     "count": 4
+    },
+    {
+     "name": "Jastarnia",
+     "count": 4
+    },
+    {
+     "name": "Puck",
+     "count": 4
+    },
+    {
+     "name": "Gdynia",
+     "count": 3
+    },
+    {
+     "name": "Gdańsk",
+     "count": 3
+    },
+    {
+     "name": "Gniew",
+     "count": 3
+    },
+    {
+     "name": "Sopot",
+     "count": 3
+    },
+    {
+     "name": "Bolszewo",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Reda - MPCK Koksik, gniazdo sokoła platforma",
+     "city": "Reda",
+     "lat": 54.60116990780972,
+     "lng": 18.365643024444584
+    },
+    {
+     "name": "Wejherowo - OPEC, gniazdo sokoła platforma",
+     "city": "Wejherowo",
+     "lat": 54.60968334040826,
+     "lng": 18.256552219390873
+    },
+    {
+     "name": "Wejherowo - Plac Jakuba Wejhera, Fontanna",
+     "city": "Wejherowo",
+     "lat": 54.6016686,
+     "lng": 18.2396967
+    },
+    {
+     "name": "Bolszewo - Skrzyżowanie Zamostna/DW468",
+     "city": "Bolszewo",
+     "lat": 54.61055943936092,
+     "lng": 18.181536197662357
+    },
+    {
+     "name": "Tczew - GPEC, gniazdo sokoła (wnętrze)",
+     "city": "Tczew",
+     "lat": 54.08211474414523,
+     "lng": 18.74384385582091
+    },
+    {
+     "name": "Chłapowo - Bałtyk z kempingu Lazurowe",
+     "city": "Chłapowo",
+     "lat": 54.808043565519235,
+     "lng": 18.382616043090824
+    },
+    {
+     "name": "Władysławowo - Aleja Gwiazd Sportu",
+     "city": "Władysławowo",
+     "lat": 54.79970463706625,
+     "lng": 18.399116992950443
+    },
+    {
+     "name": "Reda - MPCK Koksik, gniazdo sokoła",
+     "city": "Reda",
+     "lat": 54.60124759316259,
+     "lng": 18.36521923542023
+    },
+    {
+     "name": "Wejherowo - Filharmonia Kaszubska",
+     "city": "Wejherowo",
+     "lat": 54.60262415303196,
+     "lng": 18.22790622711182
+    },
+    {
+     "name": "Wejherowo - OPEC, gniazdo sokoła",
+     "city": "Wejherowo",
+     "lat": 54.609807610910956,
+     "lng": 18.256509304046634
+    }
+   ]
+  },
+  {
+   "name": "Thailand",
+   "slug": "thailand",
+   "count": 60,
+   "areas": [
+    {
+     "name": "Ko Samui",
+     "count": 18
+    },
+    {
+     "name": "Bangkok",
+     "count": 10
+    },
+    {
+     "name": "Chachoengsao",
+     "count": 4
+    },
+    {
+     "name": "Pattaya",
+     "count": 3
+    },
+    {
+     "name": "Phuket",
+     "count": 2
+    },
+    {
+     "name": "Nakhon Si Thammarat",
+     "count": 2
+    },
+    {
+     "name": "Phichit",
+     "count": 2
+    },
+    {
+     "name": "Ko Phangan",
+     "count": 1
+    },
+    {
+     "name": "Khon Kaen",
+     "count": 1
+    },
+    {
+     "name": "Bang Lamung District",
+     "count": 1
+    },
+    {
+     "name": "Khlong Toei District",
+     "count": 1
+    },
+    {
+     "name": "Bang Kao",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Sanam Bin Subdistrict: Don Muang Toll Way - Vibhavadi Rangsit Road",
+     "city": "Sanam Bin Subdistrict",
+     "lat": 13.91464,
+     "lng": 100.59824
+    },
+    {
+     "name": "Khlong Wang Kian Bridge, Nakhon Si Thammarat",
+     "city": "Nakhon Si Thammarat",
+     "lat": 8.293251,
+     "lng": 99.375987
+    },
+    {
+     "name": "Wat Yang Khom Bridge, Nakhon Si Thammarat",
+     "city": "Nakhon Si Thammarat",
+     "lat": 8.35732,
+     "lng": 99.79578
+    },
+    {
+     "name": "Thep Khunakon and Siri Soth Road Junction",
+     "city": "Chachoengsao",
+     "lat": 13.66608199,
+     "lng": 101.0498334
+    },
+    {
+     "name": "Sri Sothorn Tat Mai Road, Chachoengsao",
+     "city": "Chachoengsao",
+     "lat": 13.681103,
+     "lng": 101.067445
+    },
+    {
+     "name": "Chaweng — Soi Green Mango (Munchies)",
+     "city": "Ko Samui",
+     "lat": 9.5071545,
+     "lng": 99.9957562
+    },
+    {
+     "name": "Municipality & Maharaj Road Junction",
+     "city": "Chachoengsao",
+     "lat": 13.692547,
+     "lng": 101.070987
+    },
+    {
+     "name": "Prachanukul to Ratchavibha Overpass",
+     "city": "Bangkok",
+     "lat": 13.8303963517079,
+     "lng": 100.539248920937
+    },
+    {
+     "name": "Sukhumvit Road Bangkok Street Buzz",
+     "city": "Khlong Toei District",
+     "lat": 13.7379774,
+     "lng": 100.5576724
+    },
+    {
+     "name": "Highway 3310, Krathumlon, Samphran",
+     "city": "Bangkok",
+     "lat": 13.7644,
+     "lng": 100.3288
+    }
+   ]
+  },
+  {
+   "name": "Norway",
+   "slug": "norway",
+   "count": 48,
+   "areas": [
+    {
+     "name": "Geiranger",
+     "count": 4
+    },
+    {
+     "name": "Harstad",
+     "count": 3
+    },
+    {
+     "name": "Bodo",
+     "count": 2
+    },
+    {
+     "name": "Kristiansund",
+     "count": 2
+    },
+    {
+     "name": "Lofoten",
+     "count": 2
+    },
+    {
+     "name": "Nordkapp",
+     "count": 2
+    },
+    {
+     "name": "Oslo",
+     "count": 2
+    },
+    {
+     "name": "Sandefjord",
+     "count": 2
+    },
+    {
+     "name": "Sor Varanger",
+     "count": 2
+    },
+    {
+     "name": "Tromso",
+     "count": 2
+    },
+    {
+     "name": "Beitostolen",
+     "count": 1
+    },
+    {
+     "name": "Bryggja",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Geirangerfjord Cruise Port - Norway",
+     "city": "Geiranger",
+     "lat": 62.1006277,
+     "lng": 7.2058959
+    },
+    {
+     "name": "Strait of Saltstraumen - Norway",
+     "city": "Bodo",
+     "lat": 67.2321407,
+     "lng": 14.6100504
+    },
+    {
+     "name": "Beitostølen Ski Area - Norway",
+     "city": "Beitostolen",
+     "lat": 61.2487161,
+     "lng": 8.9062594
+    },
+    {
+     "name": "Panorama of Harstad - Norway",
+     "city": "Harstad",
+     "lat": 68.799943,
+     "lng": 16.5440322
+    },
+    {
+     "name": "Kråkenes Lighthouse - Norway",
+     "city": "Kinn",
+     "lat": 62.0347853,
+     "lng": 4.9856425
+    },
+    {
+     "name": "Panorama of Tromsø - Norway",
+     "city": "Tromso",
+     "lat": 69.6516345,
+     "lng": 18.9558585
+    },
+    {
+     "name": "Lofoten Islands - Sørvågen",
+     "city": "Lofoten",
+     "lat": 60.5112045,
+     "lng": 5.5375292
+    },
+    {
+     "name": "Geiranger Marina - Norway",
+     "city": "Geiranger",
+     "lat": 62.1006277,
+     "lng": 7.2058959
+    },
+    {
+     "name": "Port of Harstad - Norway",
+     "city": "Harstad",
+     "lat": 68.799943,
+     "lng": 16.5440322
+    },
+    {
+     "name": "Hjørundfjorden - Norway",
+     "city": "Orsta",
+     "lat": 62.2878691,
+     "lng": 6.4439561
+    }
+   ]
+  },
+  {
+   "name": "Malta",
+   "slug": "malta",
+   "count": 42,
+   "areas": [
+    {
+     "name": "Cirkewwa",
+     "count": 5
+    },
+    {
+     "name": "Floriana",
+     "count": 5
+    },
+    {
+     "name": "Birzebbuga",
+     "count": 3
+    },
+    {
+     "name": "Gzira",
+     "count": 3
+    },
+    {
+     "name": "Mellieha",
+     "count": 3
+    },
+    {
+     "name": "Paola",
+     "count": 3
+    },
+    {
+     "name": "St Julians",
+     "count": 3
+    },
+    {
+     "name": "Xemxija",
+     "count": 3
+    },
+    {
+     "name": "Marsaxlokk",
+     "count": 2
+    },
+    {
+     "name": "Mgarr",
+     "count": 2
+    },
+    {
+     "name": "Bugibba",
+     "count": 1
+    },
+    {
+     "name": "Gharb",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Birzebbugia - Water Polo Pitch and Pretty Bay",
+     "city": "Birzebbuga",
+     "lat": 35.8269478,
+     "lng": 14.5274189
+    },
+    {
+     "name": "St. George's Beach, St. Julian's - Malta",
+     "city": "St Julians",
+     "lat": 35.9172612,
+     "lng": 14.4931084
+    },
+    {
+     "name": "Ċirkewwa - Ferry Terminal Boarding Area",
+     "city": "Cirkewwa",
+     "lat": 35.9890916,
+     "lng": 14.3290837
+    },
+    {
+     "name": "Ċirkewwa - Ferry Terminal, Bus Terminus",
+     "city": "Cirkewwa",
+     "lat": 35.9890916,
+     "lng": 14.3290837
+    },
+    {
+     "name": "Floriana - Saint Publius Parish Church",
+     "city": "Floriana",
+     "lat": 35.8923341,
+     "lng": 14.5046917
+    },
+    {
+     "name": "Għargħur - Church of St Bartholomew",
+     "city": "Gharghur",
+     "lat": 35.9238292,
+     "lng": 14.4535142
+    },
+    {
+     "name": "Birżebbuġa Beach and Pretty Bay",
+     "city": "Birzebbuga",
+     "lat": 35.8269478,
+     "lng": 14.5274189
+    },
+    {
+     "name": "Antoine de Paule Square - Paola",
+     "city": "Paola",
+     "lat": 35.8724547,
+     "lng": 14.5074018
+    },
+    {
+     "name": "Floriana - The Triton Fountain",
+     "city": "Floriana",
+     "lat": 35.8929838,
+     "lng": 14.5052716
+    },
+    {
+     "name": "Paola - Christ the King Church",
+     "city": "Paola",
+     "lat": 35.8717994,
+     "lng": 14.5073748
+    }
+   ]
+  },
+  {
+   "name": "France",
+   "slug": "france",
+   "count": 40,
+   "areas": [
+    {
+     "name": "Paris",
+     "count": 2
+    },
+    {
+     "name": "Nice",
+     "count": 2
+    },
+    {
+     "name": "Marseille",
+     "count": 1
+    },
+    {
+     "name": "Fréjus",
+     "count": 1
+    },
+    {
+     "name": "La Rochelle",
+     "count": 1
+    },
+    {
+     "name": "Royan",
+     "count": 1
+    },
+    {
+     "name": "Le Mont-Dore",
+     "count": 1
+    },
+    {
+     "name": "Sète",
+     "count": 1
+    },
+    {
+     "name": "Aix-les-Bains",
+     "count": 1
+    },
+    {
+     "name": "Porto-Vecchio",
+     "count": 1
+    },
+    {
+     "name": "Menton",
+     "count": 1
+    },
+    {
+     "name": "Beaune",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "A40 Chamonix - Mont Blanc Tunnel",
+     "city": "Chamonix",
+     "lat": 45.9237,
+     "lng": 6.8694
+    },
+    {
+     "name": "Porto-Vecchio - Plage de Folaca",
+     "city": "Porto-Vecchio",
+     "lat": 41.591,
+     "lng": 9.279
+    },
+    {
+     "name": "Le Mont-Dore - Sommet de Sancy",
+     "city": "Le Mont-Dore",
+     "lat": 45.574,
+     "lng": 2.808
+    },
+    {
+     "name": "Lac du Bourget - Aix les Bains",
+     "city": "Aix-les-Bains",
+     "lat": 45.691,
+     "lng": 5.881
+    },
+    {
+     "name": "Nice - Promenade des Anglais",
+     "city": "Nice",
+     "lat": 43.6961,
+     "lng": 7.2717
+    },
+    {
+     "name": "Royan - Plage de Pontaillac",
+     "city": "Royan",
+     "lat": 45.6284,
+     "lng": -1.0286
+    },
+    {
+     "name": "A43 Modane - Fréjus Tunnel",
+     "city": "Modane",
+     "lat": 45.194,
+     "lng": 6.658
+    },
+    {
+     "name": "Paris - Eiffel Tower Area",
+     "city": "Paris",
+     "lat": 48.8584,
+     "lng": 2.2945
+    },
+    {
+     "name": "Marseille - Les Calanques",
+     "city": "Marseille",
+     "lat": 43.21,
+     "lng": 5.43
+    },
+    {
+     "name": "A6 Villefranche-sur-Saône",
+     "city": "Villefranche",
+     "lat": 45.99,
+     "lng": 4.72
+    }
+   ]
+  },
+  {
+   "name": "Romania",
+   "slug": "romania",
+   "count": 37,
+   "areas": [
+    {
+     "name": "Brasov",
+     "count": 5
+    },
+    {
+     "name": "Predeal",
+     "count": 3
+    },
+    {
+     "name": "Bucharest",
+     "count": 2
+    },
+    {
+     "name": "Sacele",
+     "count": 2
+    },
+    {
+     "name": "Târgoviște",
+     "count": 1
+    },
+    {
+     "name": "Tei",
+     "count": 1
+    },
+    {
+     "name": "Prahova",
+     "count": 1
+    },
+    {
+     "name": "Braila",
+     "count": 1
+    },
+    {
+     "name": "Galati",
+     "count": 1
+    },
+    {
+     "name": "Ilfov",
+     "count": 1
+    },
+    {
+     "name": "Suceava",
+     "count": 1
+    },
+    {
+     "name": "Mamaia",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Bucharest › South-east: Bucharest-University-of-Economic-Studies - Piata Romana ",
+     "city": "Bucharest",
+     "lat": 44.44755,
+     "lng": 26.0977
+    },
+    {
+     "name": "Roman › South-west: Piața Roman Mușat - Bulevardul Roman Mușat",
+     "city": "Roman",
+     "lat": 46.92536,
+     "lng": 26.92972
+    },
+    {
+     "name": "Brasov: Brașov Historical Centre › South: Piața Sfatului",
+     "city": "Brasov",
+     "lat": 45.64284,
+     "lng": 25.58925
+    },
+    {
+     "name": "Aeroclubul - \"Aurel Vlaicu\" - Clinceni - Bucuresti",
+     "city": "Ilfov",
+     "lat": 44.3608319,
+     "lng": 25.9331434
+    },
+    {
+     "name": "Slanic-Moldova › South-east: Pârtia de Schi Nemira",
+     "city": "Slanic-Moldova",
+     "lat": 46.21422,
+     "lng": 26.44944
+    },
+    {
+     "name": "Aeroclubul - \"Mircea Zorileanu\" Ghimbav - Brasov",
+     "city": "Brasov",
+     "lat": 45.695749,
+     "lng": 25.529376
+    },
+    {
+     "name": "Brasov › North-east: Fiteducation - Tenis Arena",
+     "city": "Brasov",
+     "lat": 45.68452,
+     "lng": 25.58498
+    },
+    {
+     "name": "Sinaia › North-west: Telegondola Carp Cota 1400",
+     "city": "Sinaia",
+     "lat": 45.35494,
+     "lng": 25.51814
+    },
+    {
+     "name": "Parohia Sf. Francisc De Assisi Târgoviște",
+     "city": "Târgoviște",
+     "lat": 44.9336123,
+     "lng": 25.4527502
+    },
+    {
+     "name": "Clinceni › South: Bucharest / Clinceni",
+     "city": "Ordoreanu",
+     "lat": 44.35872,
+     "lng": 25.93028
+    }
+   ]
+  },
+  {
+   "name": "Brazil",
+   "slug": "brazil",
+   "count": 36,
+   "areas": [
+    {
+     "name": "Balneario Camboriu",
+     "count": 4
+    },
+    {
+     "name": "Rio De Janeiro",
+     "count": 4
+    },
+    {
+     "name": "Manaus",
+     "count": 3
+    },
+    {
+     "name": "Guaruja",
+     "count": 2
+    },
+    {
+     "name": "Porto Seguro",
+     "count": 2
+    },
+    {
+     "name": "Santa Fe Do Sul",
+     "count": 2
+    },
+    {
+     "name": "Santos",
+     "count": 2
+    },
+    {
+     "name": "Sobradinho",
+     "count": 2
+    },
+    {
+     "name": "Aparecida",
+     "count": 1
+    },
+    {
+     "name": "Balneario Rincao",
+     "count": 1
+    },
+    {
+     "name": "Boqueirao",
+     "count": 1
+    },
+    {
+     "name": "Brasilia",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Basilica of National Shrine of Our Lady Aperecida",
+     "city": "Aparecida",
+     "lat": -22.851552,
+     "lng": -45.2340924
+    },
+    {
+     "name": "Balneário Camboriú - Praia do Estaleiro",
+     "city": "Balneario Camboriu",
+     "lat": -27.0262436,
+     "lng": -48.580555
+    },
+    {
+     "name": "Praia Brava Itajaí - Balneário Camboriú",
+     "city": "Balneario Camboriu",
+     "lat": -26.9924395,
+     "lng": -48.6339782
+    },
+    {
+     "name": "Christ the Redeemer - Rio de Janeiro",
+     "city": "Rio De Janeiro",
+     "lat": -22.9519173,
+     "lng": -43.2104585
+    },
+    {
+     "name": "Balneário Camboriú - Central Beach",
+     "city": "Balneario Camboriu",
+     "lat": -26.9889277,
+     "lng": -48.62941
+    },
+    {
+     "name": "Porto Seguro - Praia de Taperapuan",
+     "city": "Porto Seguro",
+     "lat": -16.389702,
+     "lng": -39.0357387
+    },
+    {
+     "name": "Balneário Camboriú - Barra Norte",
+     "city": "Balneario Camboriu",
+     "lat": -26.9725803,
+     "lng": -48.6317045
+    },
+    {
+     "name": "Jaboatão dos Guararapes - Brazil",
+     "city": "Jaboatao Dos Guararapes",
+     "lat": -8.2038254,
+     "lng": -34.9165321
+    },
+    {
+     "name": "Santa Fé do Sul Station - Brazil",
+     "city": "Santa Fe Do Sul",
+     "lat": -20.2106188,
+     "lng": -50.9270837
+    },
+    {
+     "name": "Balneário Rincão Beach - Brazil",
+     "city": "Balneario Rincao",
+     "lat": -28.8235718,
+     "lng": -49.2241642
+    }
+   ]
+  },
+  {
+   "name": "Bulgaria",
+   "slug": "bulgaria",
+   "count": 35,
+   "areas": [
+    {
+     "name": "Dimitrovgrad",
+     "count": 3
+    },
+    {
+     "name": "Primorsko",
+     "count": 3
+    },
+    {
+     "name": "Sofia",
+     "count": 2
+    },
+    {
+     "name": "Burgas",
+     "count": 2
+    },
+    {
+     "name": "Несебър",
+     "count": 2
+    },
+    {
+     "name": "Kiten",
+     "count": 2
+    },
+    {
+     "name": "Tsarevo",
+     "count": 2
+    },
+    {
+     "name": "Буховци",
+     "count": 1
+    },
+    {
+     "name": "ж.к. Лазур",
+     "count": 1
+    },
+    {
+     "name": "Osenets",
+     "count": 1
+    },
+    {
+     "name": "Gabarevo",
+     "count": 1
+    },
+    {
+     "name": "Topola",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Institute of Agriculture in Karnobat (selection fields)",
+     "city": "Карнобат",
+     "lat": 42.6558,
+     "lng": 26.9837
+    },
+    {
+     "name": "Burgas Beach Arena Beach Sports Webcams",
+     "city": "ж.к. Лазур",
+     "lat": 42.5095648,
+     "lng": 27.4845207
+    },
+    {
+     "name": "Nesebar › South: Elegance - Beach Hotel",
+     "city": "Nesebar",
+     "lat": 42.65191,
+     "lng": 27.6928
+    },
+    {
+     "name": "Sunny Beach from the Golden Ina Hotel",
+     "city": "Несебър",
+     "lat": 42.682183,
+     "lng": 27.7090645
+    },
+    {
+     "name": "Primorsko International Folklore Fest",
+     "city": "Primorsko",
+     "lat": 42.2753374,
+     "lng": 27.7536896
+    },
+    {
+     "name": "Burgas Center (Smart Burgas HLS)",
+     "city": "Burgas",
+     "lat": 42.497,
+     "lng": 27.47
+    },
+    {
+     "name": "Dimitrovgrad Primate Street View",
+     "city": "Dimitrovgrad",
+     "lat": 42.0531724,
+     "lng": 25.5933822
+    },
+    {
+     "name": "Maritza Park Dimitrovgrad Greens",
+     "city": "Dimitrovgrad",
+     "lat": 42.063378,
+     "lng": 25.5943851
+    },
+    {
+     "name": "Scenic Kiten South Beach Shores",
+     "city": "Kiten",
+     "lat": 42.2297618,
+     "lng": 27.7762208
+    },
+    {
+     "name": "Draganovtsi Airport in Gabrovo",
+     "city": "Novakovtsi",
+     "lat": 42.9435006,
+     "lng": 25.1690258
+    }
+   ]
+  },
+  {
+   "name": "Croatia",
+   "slug": "croatia",
+   "count": 29,
+   "areas": [
+    {
+     "name": "Krk",
+     "count": 4
+    },
+    {
+     "name": "Split",
+     "count": 3
+    },
+    {
+     "name": "Mali Losinj",
+     "count": 2
+    },
+    {
+     "name": "Rabac",
+     "count": 2
+    },
+    {
+     "name": "Barban",
+     "count": 1
+    },
+    {
+     "name": "Bol",
+     "count": 1
+    },
+    {
+     "name": "Brodarica",
+     "count": 1
+    },
+    {
+     "name": "Crikvenica",
+     "count": 1
+    },
+    {
+     "name": "Donji Miholjac",
+     "count": 1
+    },
+    {
+     "name": "Karlovac",
+     "count": 1
+    },
+    {
+     "name": "Malinska",
+     "count": 1
+    },
+    {
+     "name": "Marija Bistrica",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Marian Shrine of Marija Bistrica",
+     "city": "Marija Bistrica",
+     "lat": 46.0046314,
+     "lng": 16.1192091
+    },
+    {
+     "name": "Mailáth Castle - Donji Miholjac",
+     "city": "Donji Miholjac",
+     "lat": 45.7607956,
+     "lng": 18.1652043
+    },
+    {
+     "name": "Veli Žal Beach - Mali Lošinj",
+     "city": "Mali Losinj",
+     "lat": 44.5241798,
+     "lng": 14.4584516
+    },
+    {
+     "name": "Panorama of Split - Croatia",
+     "city": "Split",
+     "lat": 43.5100342,
+     "lng": 16.43026
+    },
+    {
+     "name": "Borik Beach - Mali Lošinj",
+     "city": "Mali Losinj",
+     "lat": 44.5316056,
+     "lng": 14.4694111
+    },
+    {
+     "name": "Vodnjan - Narodni Square",
+     "city": "Vodnjan",
+     "lat": 44.9603387,
+     "lng": 13.8497802
+    },
+    {
+     "name": "Karlovac - Slunj Centar",
+     "city": "Karlovac",
+     "lat": 45.1147471,
+     "lng": 15.5857412
+    },
+    {
+     "name": "Marina Verudela - Pula",
+     "city": "Pula",
+     "lat": 44.8439612,
+     "lng": 13.8328891
+    },
+    {
+     "name": "Paradise Beach - Lopar",
+     "city": "Rab",
+     "lat": 44.7562894,
+     "lng": 14.7607367
+    },
+    {
+     "name": "Brodarica - Rezalište",
+     "city": "Brodarica",
+     "lat": 43.6806491,
+     "lng": 15.9175023
+    }
+   ]
+  },
+  {
+   "name": "Philippines",
+   "slug": "philippines",
+   "count": 25,
+   "areas": [
+    {
+     "name": "Davao Del Sur",
+     "count": 21
+    },
+    {
+     "name": "Davao City",
+     "count": 3
+    },
+    {
+     "name": "Bulusan",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Benboy's Motor Bike Shop - Agdao",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    },
+    {
+     "name": "Davao City - Leon Garcia Street",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    },
+    {
+     "name": "Agdao - Wilfredo Aquino Street",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    },
+    {
+     "name": "Streets of Davao - Philippines",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    },
+    {
+     "name": "Bulusan Volcano - Philippines",
+     "city": "Bulusan",
+     "lat": 12.749757,
+     "lng": 124.0960401
+    },
+    {
+     "name": "Davao - Lyn's Sisig Beef BBQ",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    },
+    {
+     "name": "Shops of Agdao - Philippines",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    },
+    {
+     "name": "Soliman Street Cam 1, Agdao",
+     "city": "Davao City",
+     "lat": 7.08094531839365,
+     "lng": 125.621287315824
+    },
+    {
+     "name": "Agdao - Boy Sayong Store",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    },
+    {
+     "name": "Davao - Lyn's Sisig Beef",
+     "city": "Davao Del Sur",
+     "lat": 6.6983658,
+     "lng": 125.3612135
+    }
+   ]
+  },
+  {
+   "name": "Greece",
+   "slug": "greece",
+   "count": 22,
+   "areas": [
+    {
+     "name": "Athens",
+     "count": 2
+    },
+    {
+     "name": "Rhodes",
+     "count": 2
+    },
+    {
+     "name": "Chora",
+     "count": 2
+    },
+    {
+     "name": "Κοσκινού",
+     "count": 1
+    },
+    {
+     "name": "Limnos",
+     "count": 1
+    },
+    {
+     "name": "Σύμη",
+     "count": 1
+    },
+    {
+     "name": "Αρμένιοι",
+     "count": 1
+    },
+    {
+     "name": "St. George Beach",
+     "count": 1
+    },
+    {
+     "name": "Δημοτική Ενότητα Ρόδου",
+     "count": 1
+    },
+    {
+     "name": "Oia",
+     "count": 1
+    },
+    {
+     "name": "Ιαλυσός",
+     "count": 1
+    },
+    {
+     "name": "Mithymna",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Chora › South: FarOut Hotel & Spa - Mylopotas - Far Out Village - FarOut Beach C",
+     "city": "Chora",
+     "lat": 36.71766,
+     "lng": 25.29223
+    },
+    {
+     "name": "Municipality of Ierapetra › East: Vainiá",
+     "city": "Municipality of Ierapetra",
+     "lat": 35.01514,
+     "lng": 25.73659
+    },
+    {
+     "name": "Rhodes › West: Surf and Kite Theologos",
+     "city": "Rhodes",
+     "lat": 36.38769,
+     "lng": 28.0352
+    },
+    {
+     "name": "Oia Santorini Cliffside Village",
+     "city": "Oia",
+     "lat": 36.4614167,
+     "lng": 25.3737557
+    },
+    {
+     "name": "Municipality of Chondros › West",
+     "city": "Municipality of Chondros",
+     "lat": 34.9997,
+     "lng": 25.37724
+    },
+    {
+     "name": "Akti Kanari Beachfront, Rhodes",
+     "city": "Δημοτική Ενότητα Ρόδου",
+     "lat": 36.4501742,
+     "lng": 28.2156157
+    },
+    {
+     "name": "Soufli, Macedonia and Thrace",
+     "city": "Soufli",
+     "lat": 41.19348,
+     "lng": 26.3036
+    },
+    {
+     "name": "Rodos Palladium Beach Live",
+     "city": "Κοσκινού",
+     "lat": 36.3688617,
+     "lng": 28.2208021
+    },
+    {
+     "name": "Therasia Island, Santorini",
+     "city": "Akrotiri",
+     "lat": 36.36211,
+     "lng": 25.36618
+    },
+    {
+     "name": "Flisvos Sportclub Naxos",
+     "city": "St. George Beach",
+     "lat": 37.1018,
+     "lng": 25.3731
+    }
+   ]
+  },
+  {
+   "name": "Kyrgyzstan",
+   "slug": "kyrgyzstan",
+   "count": 21,
+   "areas": [
+    {
+     "name": "Bishkek",
+     "count": 3
+    },
+    {
+     "name": "Other",
+     "count": 3
+    },
+    {
+     "name": "Cholpon-Ata",
+     "count": 2
+    },
+    {
+     "name": "Kyz Kuyo",
+     "count": 1
+    },
+    {
+     "name": "Balykchy",
+     "count": 1
+    },
+    {
+     "name": "Kyzyl-Kiya",
+     "count": 1
+    },
+    {
+     "name": "Osh",
+     "count": 1
+    },
+    {
+     "name": "Razzakov",
+     "count": 1
+    },
+    {
+     "name": "Kemin",
+     "count": 1
+    },
+    {
+     "name": "Jalal-Abad",
+     "count": 1
+    },
+    {
+     "name": "Bekitay",
+     "count": 1
+    },
+    {
+     "name": "Kök-Jar",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Bishkek › North: Ala Too Square - Paramount Kyrgyz Republic Flag - State History",
+     "city": "Bishkek",
+     "lat": 42.87411,
+     "lng": 74.60354
+    },
+    {
+     "name": "Tüp › South-west: Tyup Central Mosque - Elebaeva Street",
+     "city": "Tüp",
+     "lat": 42.73293,
+     "lng": 78.35734
+    },
+    {
+     "name": "Alamudun District › South: Kashka Suu Ski Resort",
+     "city": "",
+     "lat": 42.6424,
+     "lng": 74.52069
+    },
+    {
+     "name": "Kök-Jar › North-east: Chong-Aryk - Bishkek",
+     "city": "Kök-Jar",
+     "lat": 42.80022,
+     "lng": 74.64208
+    },
+    {
+     "name": "Kyz Kuyo › South-west: Boom Gorge",
+     "city": "Kyz Kuyo",
+     "lat": 42.64352,
+     "lng": 75.85879
+    },
+    {
+     "name": "Bishkek › South-west: Ala Arča",
+     "city": "Bishkek",
+     "lat": 42.60134,
+     "lng": 74.48271
+    },
+    {
+     "name": "Cholpon-Ata, Issyk-Kul Lake",
+     "city": "Cholpon-Ata",
+     "lat": 42.59968,
+     "lng": 76.94618
+    },
+    {
+     "name": "Bosteri › South: Issyk Kul",
+     "city": "Bosteri",
+     "lat": 42.659,
+     "lng": 77.19925
+    },
+    {
+     "name": "Alamudun District › East",
+     "city": "",
+     "lat": 42.63968,
+     "lng": 74.62808
+    },
+    {
+     "name": "Jalalbad Administration",
+     "city": "Jalal-Abad",
+     "lat": 40.9292615999453,
+     "lng": 72.9808888970878
+    }
+   ]
+  },
+  {
+   "name": "US Virgin Islands",
+   "slug": "us-virgin-islands",
+   "count": 21,
+   "areas": [
+    {
+     "name": "Christiansted",
+     "count": 4
+    },
+    {
+     "name": "Cruz Bay",
+     "count": 4
+    },
+    {
+     "name": "Saint John",
+     "count": 3
+    },
+    {
+     "name": "Frederiksted",
+     "count": 2
+    },
+    {
+     "name": "Charlotte Amalie",
+     "count": 1
+    },
+    {
+     "name": "Coral Bay",
+     "count": 1
+    },
+    {
+     "name": "East End",
+     "count": 1
+    },
+    {
+     "name": "Frank Bay",
+     "count": 1
+    },
+    {
+     "name": "Honeymoon Beach",
+     "count": 1
+    },
+    {
+     "name": "Maho Bay",
+     "count": 1
+    },
+    {
+     "name": "Peter Bay",
+     "count": 1
+    },
+    {
+     "name": "Water Island",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Panorama of Christiansted - USVI",
+     "city": "Christiansted",
+     "lat": 17.7461618,
+     "lng": -64.7025384
+    },
+    {
+     "name": "White Bay Beach - Frederiksted",
+     "city": "Frederiksted",
+     "lat": 17.7019196,
+     "lng": -64.8865353
+    },
+    {
+     "name": "Floating Taco Boat - Coral Bay",
+     "city": "Saint John",
+     "lat": 18.3356013,
+     "lng": -64.7550406
+    },
+    {
+     "name": "Charlotte Amalie - St. Thomas",
+     "city": "Charlotte Amalie",
+     "lat": 18.33822,
+     "lng": -64.9393638
+    },
+    {
+     "name": "Frank Bay - US Virgin Islands",
+     "city": "Frank Bay",
+     "lat": 18.3282875,
+     "lng": -64.7990275
+    },
+    {
+     "name": "Virgin Islands National Park",
+     "city": "Maho Bay",
+     "lat": 18.3585646,
+     "lng": -64.7473595
+    },
+    {
+     "name": "Honeymoon Beach - St. John",
+     "city": "Honeymoon Beach",
+     "lat": 18.3407872,
+     "lng": -64.7912497
+    },
+    {
+     "name": "Picture Point - Coral Bay",
+     "city": "Coral Bay",
+     "lat": 18.3425418,
+     "lng": -64.7160343
+    },
+    {
+     "name": "Frederiksted Beach - USVI",
+     "city": "Frederiksted",
+     "lat": 17.7178449,
+     "lng": -64.8841318
+    },
+    {
+     "name": "Schooner Bay - St. Croix",
+     "city": "Christiansted",
+     "lat": 17.7439481,
+     "lng": -64.7079823
+    }
+   ]
+  },
+  {
+   "name": "Malaysia",
+   "slug": "malaysia",
+   "count": 20,
+   "areas": [
+    {
+     "name": "Shah Alam",
+     "count": 3
+    },
+    {
+     "name": "Petaling",
+     "count": 2
+    },
+    {
+     "name": "Batu Caves",
+     "count": 1
+    },
+    {
+     "name": "Pelabuhan Klang",
+     "count": 1
+    },
+    {
+     "name": "Puchong",
+     "count": 1
+    },
+    {
+     "name": "Meru",
+     "count": 1
+    },
+    {
+     "name": "Bukit Jelutong",
+     "count": 1
+    },
+    {
+     "name": "Gombak",
+     "count": 1
+    },
+    {
+     "name": "Hulu langat",
+     "count": 1
+    },
+    {
+     "name": "Bestari Jaya",
+     "count": 1
+    },
+    {
+     "name": "Bukit Beruntung",
+     "count": 1
+    },
+    {
+     "name": "Sekinchan",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Kolam Takungan Banjir Saujana (Sg. Damansara)",
+     "city": "Petaling",
+     "lat": 3.109725,
+     "lng": 101.562672
+    },
+    {
+     "name": "Port Klang › North: Taman Teluk Gedung Indah",
+     "city": "Port Klang",
+     "lat": 2.98058,
+     "lng": 101.40078
+    },
+    {
+     "name": "Sg. Damansara Kebun Bunga Village",
+     "city": "Shah Alam",
+     "lat": 3.0637904,
+     "lng": 101.5532902
+    },
+    {
+     "name": "Taman Daya Meru Park, Klang Views",
+     "city": "Meru",
+     "lat": 3.1360909,
+     "lng": 101.4485738
+    },
+    {
+     "name": "Batu Caves Colorful Temple Steps",
+     "city": "Batu Caves",
+     "lat": 3.2378844,
+     "lng": 101.6840385
+    },
+    {
+     "name": "Sungai Buloh › North: Paya Jaras",
+     "city": "Sungai Buloh",
+     "lat": 3.19489,
+     "lng": 101.53367
+    },
+    {
+     "name": "Jalan Jitu Streetscape in Klang",
+     "city": "Shah Alam",
+     "lat": 3.0134884,
+     "lng": 101.5226595
+    },
+    {
+     "name": "Batang Kali: Sungai Batang Kali",
+     "city": "Batang Kali",
+     "lat": 3.46954,
+     "lng": 101.63918
+    },
+    {
+     "name": "TTDI Jaya Shah Alam Cityscape",
+     "city": "Bukit Jelutong",
+     "lat": 3.096708,
+     "lng": 101.543684
+    },
+    {
+     "name": "Bt. 15 (I.K.B.N) (Sg. Langat)",
+     "city": "Hulu langat",
+     "lat": 3.136913,
+     "lng": 101.834873
+    }
+   ]
+  },
+  {
+   "name": "Mexico",
+   "slug": "mexico",
+   "count": 20,
+   "areas": [
+    {
+     "name": "Solidaridad",
+     "count": 4
+    },
+    {
+     "name": "Mexico City",
+     "count": 2
+    },
+    {
+     "name": "Acapulco",
+     "count": 1
+    },
+    {
+     "name": "Cabo San Lucas",
+     "count": 1
+    },
+    {
+     "name": "Cozumel",
+     "count": 1
+    },
+    {
+     "name": "Loreto",
+     "count": 1
+    },
+    {
+     "name": "Oaxaca",
+     "count": 1
+    },
+    {
+     "name": "Pachuca",
+     "count": 1
+    },
+    {
+     "name": "Puerto Morelos",
+     "count": 1
+    },
+    {
+     "name": "Puerto Vallarta",
+     "count": 1
+    },
+    {
+     "name": "San Joaquin",
+     "count": 1
+    },
+    {
+     "name": "San Pedro Benito Juarez",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Panorama of Playa del Carmen - Mexico",
+     "city": "Solidaridad",
+     "lat": 18.8519751,
+     "lng": -99.266139
+    },
+    {
+     "name": "Puerto Vallarta - Los Muertos Beach",
+     "city": "Puerto Vallarta",
+     "lat": 20.5836021,
+     "lng": -105.2445081
+    },
+    {
+     "name": "Puerto Morelos - Quintana Roo",
+     "city": "Puerto Morelos",
+     "lat": 20.8552031,
+     "lng": -86.9000927
+    },
+    {
+     "name": "Zihuatanejo - Playa La Madera",
+     "city": "Zihuatanejo",
+     "lat": 17.63855,
+     "lng": -101.5515238
+    },
+    {
+     "name": "Puerto Escondido - Mexico",
+     "city": "San Pedro Mixtepec",
+     "lat": 15.8693331,
+     "lng": -97.0726428
+    },
+    {
+     "name": "Cancun - The Royal Sands",
+     "city": "Solidaridad",
+     "lat": 18.8519751,
+     "lng": -99.266139
+    },
+    {
+     "name": "Mexico - Cabo San Lucas",
+     "city": "Cabo San Lucas",
+     "lat": 22.8765607,
+     "lng": -109.8943627
+    },
+    {
+     "name": "Playa de Tulum - Mexico",
+     "city": "Tulum",
+     "lat": 20.3962333,
+     "lng": -87.3135199
+    },
+    {
+     "name": "Pachuca - Plaza Juárez",
+     "city": "Pachuca",
+     "lat": 19.5556418,
+     "lng": -99.0490344
+    },
+    {
+     "name": "Cancun - Quintana Roo",
+     "city": "Solidaridad",
+     "lat": 18.8519751,
+     "lng": -99.266139
+    }
+   ]
+  },
+  {
+   "name": "Israel",
+   "slug": "israel",
+   "count": 19,
+   "areas": [
+    {
+     "name": "Jerusalem",
+     "count": 7
+    },
+    {
+     "name": "Haifa",
+     "count": 3
+    },
+    {
+     "name": "Herzliya",
+     "count": 2
+    },
+    {
+     "name": "Tel Aviv",
+     "count": 1
+    },
+    {
+     "name": "Ashdod",
+     "count": 1
+    },
+    {
+     "name": "Tiberias",
+     "count": 1
+    },
+    {
+     "name": "מועצה אזורית גליל עליון",
+     "count": 1
+    },
+    {
+     "name": "מועצה אזורית חוף הכרמל",
+     "count": 1
+    },
+    {
+     "name": "Tel Aviv-Yafo",
+     "count": 1
+    },
+    {
+     "name": "Netanya",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "LIVE Hula Nature Reserve Bird CAM 1|Israel Nature & Parks Auth.|Charter Group of",
+     "city": "מועצה אזורית גליל עליון",
+     "lat": 33.0674266,
+     "lng": 35.6033203
+    },
+    {
+     "name": "Tel Aviv-Yafo › West: Old Jaffa - Jaffa Port",
+     "city": "Tel Aviv-Yafo",
+     "lat": 32.05541,
+     "lng": 34.75492
+    },
+    {
+     "name": "Western Wall Plaza in Jerusalem",
+     "city": "Jerusalem",
+     "lat": 31.7767618,
+     "lng": 35.2343758
+    },
+    {
+     "name": "Maagan Michael Coastal Reserve",
+     "city": "מועצה אזורית חוף הכרמל",
+     "lat": 32.5559684,
+     "lng": 34.9062151
+    },
+    {
+     "name": "Maagan Beach (Sea of Galilee)",
+     "city": "Tiberias",
+     "lat": 32.72,
+     "lng": 35.57
+    },
+    {
+     "name": "Marina North (Arena Point)",
+     "city": "Herzliya",
+     "lat": 32.161,
+     "lng": 34.788
+    },
+    {
+     "name": "Jerusalem - Temple Mount",
+     "city": "Jerusalem",
+     "lat": 31.7779499,
+     "lng": 35.2357485
+    },
+    {
+     "name": "Israel Multi-Cam (Live)",
+     "city": "Tel Aviv",
+     "lat": 32.0853,
+     "lng": 34.7818
+    },
+    {
+     "name": "Sea Scouts Zvulun Beach",
+     "city": "Herzliya",
+     "lat": 32.162,
+     "lng": 34.787
+    },
+    {
+     "name": "Western Wall, the Kotel",
+     "city": "Jerusalem",
+     "lat": 31.7767,
+     "lng": 35.2345
+    }
+   ]
+  },
+  {
+   "name": "Peru",
+   "slug": "peru",
+   "count": 18,
+   "areas": [
+    {
+     "name": "Lima",
+     "count": 5
+    },
+    {
+     "name": "Ascope Province",
+     "count": 2
+    },
+    {
+     "name": "Paracas",
+     "count": 2
+    },
+    {
+     "name": "Trujillo",
+     "count": 2
+    },
+    {
+     "name": "Cajamarca",
+     "count": 1
+    },
+    {
+     "name": "Casma",
+     "count": 1
+    },
+    {
+     "name": "Chachapoyas",
+     "count": 1
+    },
+    {
+     "name": "Chiclayo",
+     "count": 1
+    },
+    {
+     "name": "Cusco",
+     "count": 1
+    },
+    {
+     "name": "Oxapampa",
+     "count": 1
+    },
+    {
+     "name": "Tacna",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Alejandro Velasco Astete International Airport",
+     "city": "Cusco",
+     "lat": -13.5170887,
+     "lng": -71.9785356
+    },
+    {
+     "name": "Ascope - Puerto Malabrigo Chicama",
+     "city": "Ascope Province",
+     "lat": -7.9473252,
+     "lng": -79.0508497
+    },
+    {
+     "name": "Punta Hermosa - Caballeros Beach",
+     "city": "Lima",
+     "lat": -12.3326784,
+     "lng": -76.8256982
+    },
+    {
+     "name": "Cajamarca - Laguna San Nicolás",
+     "city": "Cajamarca",
+     "lat": -7.2305173,
+     "lng": -78.3390641
+    },
+    {
+     "name": "Balneario de Tortugas - Casma",
+     "city": "Casma",
+     "lat": -9.472866,
+     "lng": -78.2136837
+    },
+    {
+     "name": "Beach of Huanchaco - Trujillo",
+     "city": "Trujillo",
+     "lat": -8.0877352,
+     "lng": -79.1219097
+    },
+    {
+     "name": "Skyline of Miraflores - Lima",
+     "city": "Lima",
+     "lat": -12.0459808,
+     "lng": -77.0305912
+    },
+    {
+     "name": "Lima - Playa el Silencio",
+     "city": "Lima",
+     "lat": -12.3166184,
+     "lng": -76.8360061
+    },
+    {
+     "name": "Chachapoyas - Amazonas",
+     "city": "Chachapoyas",
+     "lat": -6.5582466,
+     "lng": -77.8143998
+    },
+    {
+     "name": "Lima - Playa Señoritas",
+     "city": "Lima",
+     "lat": -12.3252708,
+     "lng": -76.8349711
+    }
+   ]
+  },
+  {
+   "name": "Maldives",
+   "slug": "maldives",
+   "count": 16,
+   "areas": [
+    {
+     "name": "Kooddoo",
+     "count": 2
+    },
+    {
+     "name": "Kurendhoo",
+     "count": 2
+    },
+    {
+     "name": "Male",
+     "count": 2
+    },
+    {
+     "name": "Amilla Fushi",
+     "count": 1
+    },
+    {
+     "name": "Dhonakulhi Island",
+     "count": 1
+    },
+    {
+     "name": "Eh Mafushi",
+     "count": 1
+    },
+    {
+     "name": "Funamadua",
+     "count": 1
+    },
+    {
+     "name": "Hanimaadhoo",
+     "count": 1
+    },
+    {
+     "name": "Kudafolhudhoo",
+     "count": 1
+    },
+    {
+     "name": "Manadhoo",
+     "count": 1
+    },
+    {
+     "name": "Meerufenfushi",
+     "count": 1
+    },
+    {
+     "name": "Naifaru",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Naifaru: Oceanwatersport, Kuredu Island,Maldives",
+     "city": "Naifaru",
+     "lat": 5.54828,
+     "lng": 73.46515
+    },
+    {
+     "name": "Sunset Beach - Veligandu Maldives Resort Island",
+     "city": "Male",
+     "lat": 4.1779879,
+     "lng": 73.5107387
+    },
+    {
+     "name": "Mercure Maldives Kooddoo - Lagoon",
+     "city": "Kooddoo",
+     "lat": 0.7336291,
+     "lng": 73.4331453
+    },
+    {
+     "name": "Veligandu Maldives Resort Island",
+     "city": "Male",
+     "lat": 4.1779879,
+     "lng": 73.5107387
+    },
+    {
+     "name": "Maldives - Meeru Maldives Beach",
+     "city": "Meerufenfushi",
+     "lat": 4.4541718,
+     "lng": 73.7168553
+    },
+    {
+     "name": "Maldives - Nika Island Resort",
+     "city": "Kudafolhudhoo",
+     "lat": 4.1811588,
+     "lng": 72.7669264
+    },
+    {
+     "name": "Noonu › East: Velidhoo Harbor",
+     "city": "",
+     "lat": 5.66366,
+     "lng": 73.27689
+    },
+    {
+     "name": "Maldives - Dhonakulhi Island",
+     "city": "Dhonakulhi Island",
+     "lat": 6.8441728,
+     "lng": 73.0504369
+    },
+    {
+     "name": "Maldives - Robinson Maldives",
+     "city": "Funamadua",
+     "lat": 0.5337872,
+     "lng": 73.1902082
+    },
+    {
+     "name": "Maldives - Robinson Noonu",
+     "city": "Manadhoo",
+     "lat": 5.7665051,
+     "lng": 73.4111938
+    }
+   ]
+  },
+  {
+   "name": "Macau",
+   "slug": "macau",
+   "count": 14,
+   "areas": [
+    {
+     "name": "Macau",
+     "count": 14
+    }
+   ],
+   "samples": [
+    {
+     "name": "Intersection between Rua do Dr. Lourenço Pereira Marques and Travessa dos Armazé",
+     "city": "Macau",
+     "lat": 22.192,
+     "lng": 113.537
+    },
+    {
+     "name": "Intersection between Rua da Ribeira do Patane and Travessa da Guelra, leading to",
+     "city": "Macau",
+     "lat": 22.2,
+     "lng": 113.54
+    },
+    {
+     "name": "Intersection between Rua do Almirante Sérgio and Rua da Escola Náutica (leading ",
+     "city": "Macau",
+     "lat": 22.187,
+     "lng": 113.535
+    },
+    {
+     "name": "Intersection between Avenida do Coronel Mesquita and Rua de Francisco Xavier Per",
+     "city": "Macau",
+     "lat": 22.201,
+     "lng": 113.548
+    },
+    {
+     "name": "Rotunda dos Jogos da Ásia Oriental (leading to the entrance of Ponte de Sai Van)",
+     "city": "Macau",
+     "lat": 22.186,
+     "lng": 113.537
+    },
+    {
+     "name": "Intersection between Rua da Ribeira do Patane and Avenida do Demétrio Cinatti",
+     "city": "Macau",
+     "lat": 22.2,
+     "lng": 113.54
+    },
+    {
+     "name": "Intersection between Avenida do Coronel Mesquita and Avenida de Sidónio Pais",
+     "city": "Macau",
+     "lat": 22.201,
+     "lng": 113.548
+    },
+    {
+     "name": "Avenida Doutor Ma Man Kei (em direcção à Rotunda da Amizade)",
+     "city": "Macau",
+     "lat": 22.193,
+     "lng": 113.553
+    },
+    {
+     "name": "Ponte da Amizade para o Terminal Marítimo do Porto Exterior",
+     "city": "Macau",
+     "lat": 22.193,
+     "lng": 113.553
+    },
+    {
+     "name": "Lado de Macau da Ponte Macau (em direcção à Taipa)",
+     "city": "Macau",
+     "lat": 22.165,
+     "lng": 113.567
+    }
+   ]
+  },
+  {
+   "name": "Portugal",
+   "slug": "portugal",
+   "count": 14,
+   "areas": [
+    {
+     "name": "Funchal",
+     "count": 3
+    },
+    {
+     "name": "Almada",
+     "count": 2
+    },
+    {
+     "name": "Lisbon",
+     "count": 2
+    },
+    {
+     "name": "Faro",
+     "count": 1
+    },
+    {
+     "name": "Fatima",
+     "count": 1
+    },
+    {
+     "name": "Portimao",
+     "count": 1
+    },
+    {
+     "name": "Porto Moniz",
+     "count": 1
+    },
+    {
+     "name": "Sesimbra",
+     "count": 1
+    },
+    {
+     "name": "Aeroporto da Madeira",
+     "count": 1
+    },
+    {
+     "name": "Aeroporto Humberto Delgado",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Costa da Caparica - Praia de Santo António",
+     "city": "Almada",
+     "lat": 38.6831302,
+     "lng": -9.1576301
+    },
+    {
+     "name": "Costa da Caparica - Fonte da Telha Beach",
+     "city": "Almada",
+     "lat": 38.6831302,
+     "lng": -9.1576301
+    },
+    {
+     "name": "Sanctuary of Our Lady of Fátima - Fátima",
+     "city": "Fatima",
+     "lat": 39.6255498,
+     "lng": -8.6659081
+    },
+    {
+     "name": "Marina de Portimão - Portugal",
+     "city": "Portimao",
+     "lat": 37.1306889,
+     "lng": -8.5333344
+    },
+    {
+     "name": "Costa da Caparica - Portugal",
+     "city": "Lisbon",
+     "lat": 38.7077507,
+     "lng": -9.1365919
+    },
+    {
+     "name": "Funchal - Porto Santo",
+     "city": "Funchal",
+     "lat": 32.6496497,
+     "lng": -16.9086783
+    },
+    {
+     "name": "Sesimbra - Meco Beach",
+     "city": "Sesimbra",
+     "lat": 38.4436932,
+     "lng": -9.0996273
+    },
+    {
+     "name": "Madeira Airport Live",
+     "city": "Aeroporto da Madeira",
+     "lat": 32.698962,
+     "lng": -16.773031
+    },
+    {
+     "name": "Lisbon Airport Wings",
+     "city": "Aeroporto Humberto Delgado",
+     "lat": 38.780998,
+     "lng": -9.131861
+    },
+    {
+     "name": "Panorama of Lisbon",
+     "city": "Lisbon",
+     "lat": 38.7246915,
+     "lng": -9.4744739
+    }
+   ]
+  },
+  {
+   "name": "China",
+   "slug": "china",
+   "count": 13,
+   "areas": [
+    {
+     "name": "Hong Kong",
+     "count": 5
+    },
+    {
+     "name": "Qingdao",
+     "count": 1
+    },
+    {
+     "name": "Shanghai",
+     "count": 1
+    },
+    {
+     "name": "Mui Wo",
+     "count": 1
+    },
+    {
+     "name": "Tsuen Wan",
+     "count": 1
+    },
+    {
+     "name": "Nossa Senhora de Fátima",
+     "count": 1
+    },
+    {
+     "name": "São Lázaro",
+     "count": 1
+    },
+    {
+     "name": "Taipa",
+     "count": 1
+    },
+    {
+     "name": "Yuen Long",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Nossa Senhora de Fátima Northeast, Macau",
+     "city": "Nossa Senhora de Fátima",
+     "lat": 22.2094,
+     "lng": 113.56103
+    },
+    {
+     "name": "Mui Wo: Cheung Chau Windsurfing Centre",
+     "city": "Mui Wo",
+     "lat": 22.20726,
+     "lng": 114.03342
+    },
+    {
+     "name": "Central and Western, Hong Kong",
+     "city": "Hong Kong",
+     "lat": 22.27628,
+     "lng": 114.1458
+    },
+    {
+     "name": "Downtown Qingdao - China",
+     "city": "Qingdao",
+     "lat": 36.0663249,
+     "lng": 120.3777659
+    },
+    {
+     "name": "São Lázaro › South-west",
+     "city": "São Lázaro",
+     "lat": 22.20037,
+     "lng": 113.57841
+    },
+    {
+     "name": "Yuen Long › South-west",
+     "city": "Yuen Long",
+     "lat": 22.42439,
+     "lng": 113.99711
+    },
+    {
+     "name": "Tsuen Wan, Hong Kong",
+     "city": "Tsuen Wan",
+     "lat": 22.41233,
+     "lng": 114.12427
+    },
+    {
+     "name": "Skyline of Shanghai",
+     "city": "Shanghai",
+     "lat": 31.2312707,
+     "lng": 121.4700152
+    },
+    {
+     "name": "Kam Tin, Hong Kong",
+     "city": "Hong Kong",
+     "lat": 22.43156,
+     "lng": 114.11885
+    },
+    {
+     "name": "Hong Kong East",
+     "city": "Hong Kong",
+     "lat": 22.264,
+     "lng": 114.29904
+    }
+   ]
+  },
+  {
+   "name": "Chile",
+   "slug": "chile",
+   "count": 12,
+   "areas": [
+    {
+     "name": "Algarrobo",
+     "count": 3
+    },
+    {
+     "name": "San Antonio",
+     "count": 3
+    },
+    {
+     "name": "Concepcion",
+     "count": 1
+    },
+    {
+     "name": "Curepto",
+     "count": 1
+    },
+    {
+     "name": "Punta Arenas",
+     "count": 1
+    },
+    {
+     "name": "San Pedro De Atacama",
+     "count": 1
+    },
+    {
+     "name": "Santiago",
+     "count": 1
+    },
+    {
+     "name": "Valparaiso",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Atacama Large Millimeter Array - Chile",
+     "city": "San Pedro De Atacama",
+     "lat": -23.016605,
+     "lng": -67.7722687
+    },
+    {
+     "name": "San Antonio - Avenida Barros Lucos",
+     "city": "San Antonio",
+     "lat": -33.5993763,
+     "lng": -71.6136097
+    },
+    {
+     "name": "San Antonio - Avenida Llolleo",
+     "city": "San Antonio",
+     "lat": -33.6419195,
+     "lng": -71.5755793
+    },
+    {
+     "name": "Algarrobo - San Antonio",
+     "city": "Algarrobo",
+     "lat": -33.3654172,
+     "lng": -71.6691662
+    },
+    {
+     "name": "Algarrobo - Valparaiso",
+     "city": "Algarrobo",
+     "lat": -33.3599636,
+     "lng": -71.6875732
+    },
+    {
+     "name": "Chile - Punta Arenas",
+     "city": "Punta Arenas",
+     "lat": -53.1625688,
+     "lng": -70.907822
+    },
+    {
+     "name": "Panorama of Santiago",
+     "city": "Santiago",
+     "lat": -33.5209676,
+     "lng": -70.6095743
+    },
+    {
+     "name": "San Antonio - Chile",
+     "city": "San Antonio",
+     "lat": -33.5808615,
+     "lng": -71.6132377
+    },
+    {
+     "name": "Concepción - Chile",
+     "city": "Concepcion",
+     "lat": -36.8270698,
+     "lng": -73.0502064
+    },
+    {
+     "name": "Valparaíso - Chile",
+     "city": "Valparaiso",
+     "lat": -33.0139165,
+     "lng": -71.4938086
+    }
+   ]
+  },
+  {
+   "name": "South Africa",
+   "slug": "south-africa",
+   "count": 12,
+   "areas": [
+    {
+     "name": "Kwadukuza",
+     "count": 4
+    },
+    {
+     "name": "Balule Nature Reserve",
+     "count": 1
+    },
+    {
+     "name": "Cape Town",
+     "count": 1
+    },
+    {
+     "name": "Knysna",
+     "count": 1
+    },
+    {
+     "name": "Kruger National Park",
+     "count": 1
+    },
+    {
+     "name": "Manguzi",
+     "count": 1
+    },
+    {
+     "name": "Pretoria",
+     "count": 1
+    },
+    {
+     "name": "Springs",
+     "count": 1
+    },
+    {
+     "name": "Stellenbosch",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Weather in Stellenbosch - South-Africa",
+     "city": "Stellenbosch",
+     "lat": -33.9300085,
+     "lng": 18.8557258
+    },
+    {
+     "name": "Ballito - Willard Beach",
+     "city": "Kwadukuza",
+     "lat": -29.3383782,
+     "lng": 31.2881205
+    },
+    {
+     "name": "Cape Town - Zeekoevlei",
+     "city": "Cape Town",
+     "lat": -34.0620199,
+     "lng": 18.508325
+    },
+    {
+     "name": "Ballito - South Africa",
+     "city": "Kwadukuza",
+     "lat": -29.543864,
+     "lng": 31.214517
+    },
+    {
+     "name": "Pretoria - Bird Feeder",
+     "city": "Pretoria",
+     "lat": -25.7459277,
+     "lng": 28.1879101
+    },
+    {
+     "name": "Springs - South Africa",
+     "city": "Springs",
+     "lat": -26.2500305,
+     "lng": 28.4377769
+    },
+    {
+     "name": "Knysna - South Africa",
+     "city": "Knysna",
+     "lat": -34.0406024,
+     "lng": 23.0548265
+    },
+    {
+     "name": "Tembe Elephant Park",
+     "city": "Manguzi",
+     "lat": -26.988287,
+     "lng": 32.756033
+    },
+    {
+     "name": "Nkorho - Africa",
+     "city": "Kruger National Park",
+     "lat": -23.9357763,
+     "lng": 31.5083741
+    },
+    {
+     "name": "Olifants River",
+     "city": "Balule Nature Reserve",
+     "lat": -24.1873674,
+     "lng": 30.936862
+    }
+   ]
+  },
+  {
+   "name": "Kazakhstan",
+   "slug": "kazakhstan",
+   "count": 11,
+   "areas": [
+    {
+     "name": "Aktau",
+     "count": 6
+    },
+    {
+     "name": "Qotırbulaq",
+     "count": 2
+    },
+    {
+     "name": "Көктем",
+     "count": 1
+    },
+    {
+     "name": "Semipalatinsk",
+     "count": 1
+    },
+    {
+     "name": "Almaty",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Semipalatinsk › North-east: Central Plaza - Semey",
+     "city": "Semipalatinsk",
+     "lat": 50.40503,
+     "lng": 80.24918
+    },
+    {
+     "name": "Almaty › East: Almaty Television Tower - Kok Tobe",
+     "city": "Almaty",
+     "lat": 43.22573,
+     "lng": 76.94455
+    },
+    {
+     "name": "Trans-Ili Alatau Webcam Views from Almaty",
+     "city": "Көктем",
+     "lat": 43.236199,
+     "lng": 76.944809
+    },
+    {
+     "name": "Aktau - 28th Microdistrict Ring",
+     "city": "Aktau",
+     "lat": 43.625,
+     "lng": 51.165
+    },
+    {
+     "name": "Aktau - Amphitheater View B",
+     "city": "Aktau",
+     "lat": 43.6508,
+     "lng": 51.1444
+    },
+    {
+     "name": "Aktau - 13th Microdistrict",
+     "city": "Aktau",
+     "lat": 43.6315,
+     "lng": 51.1595
+    },
+    {
+     "name": "Aktau - Amphitheater Wide",
+     "city": "Aktau",
+     "lat": 43.6502,
+     "lng": 51.1438
+    },
+    {
+     "name": "Aktau - Caspian Beach 14",
+     "city": "Aktau",
+     "lat": 43.6545,
+     "lng": 51.1385
+    },
+    {
+     "name": "Qotırbulaq › North-west",
+     "city": "Qotırbulaq",
+     "lat": 43.22847,
+     "lng": 77.16424
+    },
+    {
+     "name": "Aktau - Drama Theater",
+     "city": "Aktau",
+     "lat": 43.6397,
+     "lng": 51.1521
+    }
+   ]
+  },
+  {
+   "name": "Argentina",
+   "slug": "argentina",
+   "count": 11,
+   "areas": [
+    {
+     "name": "Cipolletti",
+     "count": 2
+    },
+    {
+     "name": "San Rafael",
+     "count": 2
+    },
+    {
+     "name": "Ushuaia",
+     "count": 2
+    },
+    {
+     "name": "Buenos Aires",
+     "count": 1
+    },
+    {
+     "name": "Claromeco",
+     "count": 1
+    },
+    {
+     "name": "Monte Hermoso",
+     "count": 1
+    },
+    {
+     "name": "Necochea",
+     "count": 1
+    },
+    {
+     "name": "Tolhuin",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Panorama of Buenos Aires - Argentina",
+     "city": "Buenos Aires",
+     "lat": -34.4033426,
+     "lng": -58.6498994
+    },
+    {
+     "name": "Panorama of Cipolletti - Argentina",
+     "city": "Cipolletti",
+     "lat": -38.931342,
+     "lng": -67.9905921
+    },
+    {
+     "name": "Islas Malvinas Square - Ushuaia",
+     "city": "Ushuaia",
+     "lat": -54.8103396,
+     "lng": -68.3155412
+    },
+    {
+     "name": "Valle Grande - Atuel River",
+     "city": "San Rafael",
+     "lat": -34.6126025,
+     "lng": -68.330514
+    },
+    {
+     "name": "Tolhuin - Tierra del Fuego",
+     "city": "Tolhuin",
+     "lat": -54.5113492,
+     "lng": -67.1954004
+    },
+    {
+     "name": "Monte Hermoso - Argentina",
+     "city": "Monte Hermoso",
+     "lat": -33.0439883,
+     "lng": -60.6161859
+    },
+    {
+     "name": "Atuel Canyon - Argentina",
+     "city": "San Rafael",
+     "lat": -34.936467,
+     "lng": -68.6362616
+    },
+    {
+     "name": "Cipolletti - Argentina",
+     "city": "Cipolletti",
+     "lat": -38.9355432,
+     "lng": -67.9895816
+    },
+    {
+     "name": "Claromeco - Argentina",
+     "city": "Claromeco",
+     "lat": -38.8570401,
+     "lng": -60.0755565
+    },
+    {
+     "name": "Necochea - Argentina",
+     "city": "Necochea",
+     "lat": -32.886099,
+     "lng": -68.845498
+    }
+   ]
+  },
+  {
+   "name": "Switzerland",
+   "slug": "switzerland",
+   "count": 10,
+   "areas": [
+    {
+     "name": "Lausanne",
+     "count": 1
+    },
+    {
+     "name": "Zermatt",
+     "count": 1
+    },
+    {
+     "name": "Lugano",
+     "count": 1
+    },
+    {
+     "name": "St. Moritz",
+     "count": 1
+    },
+    {
+     "name": "Interlaken",
+     "count": 1
+    },
+    {
+     "name": "Geneva",
+     "count": 1
+    },
+    {
+     "name": "Basel",
+     "count": 1
+    },
+    {
+     "name": "Luzern",
+     "count": 1
+    },
+    {
+     "name": "Rheinfall",
+     "count": 1
+    },
+    {
+     "name": "Zürich Hauptbahnhof",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Jungfraujoch - Top of Europe",
+     "city": "Interlaken",
+     "lat": 46.5475,
+     "lng": 7.9826
+    },
+    {
+     "name": "Watervallen Schaffhausen",
+     "city": "Rheinfall",
+     "lat": 47.678362,
+     "lng": 8.614871
+    },
+    {
+     "name": "Vanaf Hotel Hecht Basel",
+     "city": "Basel",
+     "lat": 47.558108,
+     "lng": 7.587826
+    },
+    {
+     "name": "CHUV Heliport Webcam",
+     "city": "Lausanne",
+     "lat": 46.525,
+     "lng": 6.642
+    },
+    {
+     "name": "Zermatt - Matterhorn",
+     "city": "Zermatt",
+     "lat": 45.9763,
+     "lng": 7.6586
+    },
+    {
+     "name": "Zürich Hauptbahnhof",
+     "city": "Zürich Hauptbahnhof",
+     "lat": 47.378101,
+     "lng": 8.539364
+    },
+    {
+     "name": "Geneva - Jet d'Eau",
+     "city": "Geneva",
+     "lat": 46.2044,
+     "lng": 6.1432
+    },
+    {
+     "name": "St. Moritz - Lake",
+     "city": "St. Moritz",
+     "lat": 46.4908,
+     "lng": 9.8355
+    },
+    {
+     "name": "Lake Lugano",
+     "city": "Lugano",
+     "lat": 46.0037,
+     "lng": 8.9511
+    },
+    {
+     "name": "Luzern live",
+     "city": "Luzern",
+     "lat": 47.052144,
+     "lng": 8.305812
+    }
+   ]
+  },
+  {
+   "name": "Singapore",
+   "slug": "singapore",
+   "count": 9,
+   "areas": [
+    {
+     "name": "Singapore",
+     "count": 9
+    }
+   ],
+   "samples": [
+    {
+     "name": "Singapore Traffic Camera 2704",
+     "city": "Singapore",
+     "lat": 1.429588536,
+     "lng": 103.769311
+    },
+    {
+     "name": "Camera 2701",
+     "city": "Singapore",
+     "lat": 1.447023728,
+     "lng": 103.7716543
+    },
+    {
+     "name": "Camera 2702",
+     "city": "Singapore",
+     "lat": 1.445554109,
+     "lng": 103.7683397
+    },
+    {
+     "name": "Camera 2704",
+     "city": "Singapore",
+     "lat": 1.429588536,
+     "lng": 103.769311
+    },
+    {
+     "name": "Camera 4703",
+     "city": "Singapore",
+     "lat": 1.348697862,
+     "lng": 103.6350413
+    },
+    {
+     "name": "Camera 4712",
+     "city": "Singapore",
+     "lat": 1.341244001,
+     "lng": 103.6439134
+    },
+    {
+     "name": "Camera 4713",
+     "city": "Singapore",
+     "lat": 1.347645829,
+     "lng": 103.6366955
+    },
+    {
+     "name": "Camera 4798",
+     "city": "Singapore",
+     "lat": 1.25999999687243,
+     "lng": 103.823611110166
+    },
+    {
+     "name": "Camera 4799",
+     "city": "Singapore",
+     "lat": 1.26027777363278,
+     "lng": 103.823888890049
+    }
+   ]
+  },
+  {
+   "name": "Georgia",
+   "slug": "georgia",
+   "count": 9,
+   "areas": [
+    {
+     "name": "New Athos",
+     "count": 2
+    },
+    {
+     "name": "სეთურნი",
+     "count": 1
+    },
+    {
+     "name": "Adler",
+     "count": 1
+    },
+    {
+     "name": "Sukhum",
+     "count": 1
+    },
+    {
+     "name": "Batumi",
+     "count": 1
+    },
+    {
+     "name": "Риҵа",
+     "count": 1
+    },
+    {
+     "name": "Sokhumi",
+     "count": 1
+    },
+    {
+     "name": "Gali",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Vitamin Cafe Gudauri (livestream)",
+     "city": "სეთურნი",
+     "lat": 42.4901695,
+     "lng": 44.498825
+    },
+    {
+     "name": "New Athos Guest House Overlook",
+     "city": "New Athos",
+     "lat": 43.077361,
+     "lng": 40.851913
+    },
+    {
+     "name": "Tkuarchal Culture House",
+     "city": "Adler",
+     "lat": 42.8455955511176,
+     "lng": 41.6848635442255
+    },
+    {
+     "name": "Sokhumi: Pushkin Street",
+     "city": "Sokhumi",
+     "lat": 43.00183,
+     "lng": 41.02512
+    },
+    {
+     "name": "Sukhum New District",
+     "city": "Sukhum",
+     "lat": 43.011025,
+     "lng": 40.966533
+    },
+    {
+     "name": "Gali › North-east",
+     "city": "Gali",
+     "lat": 42.62682,
+     "lng": 41.73578
+    },
+    {
+     "name": "Gudauta District",
+     "city": "Риҵа",
+     "lat": 43.4717,
+     "lng": 40.53395
+    },
+    {
+     "name": "New Athos › East",
+     "city": "New Athos",
+     "lat": 43.08444,
+     "lng": 40.81194
+    },
+    {
+     "name": "Batumi North",
+     "city": "Batumi",
+     "lat": 41.62256,
+     "lng": 41.59462
+    }
+   ]
+  },
+  {
+   "name": "Ukraine",
+   "slug": "ukraine",
+   "count": 8,
+   "areas": [
+    {
+     "name": "Sudak",
+     "count": 4
+    },
+    {
+     "name": "Zaporozhye",
+     "count": 1
+    },
+    {
+     "name": "Krasnodar",
+     "count": 1
+    },
+    {
+     "name": "Novyi Svit",
+     "count": 1
+    },
+    {
+     "name": "Vinnytsia",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Noviy Svet Black Sea Coastal Panorama",
+     "city": "Novyi Svit",
+     "lat": 44.828561,
+     "lng": 34.907716
+    },
+    {
+     "name": "Vinnytsia - Panda TM Karavan Factory",
+     "city": "Vinnytsia",
+     "lat": 49.2331,
+     "lng": 28.4682
+    },
+    {
+     "name": "Sudak Oktyabrskaya Playground Scene",
+     "city": "Sudak",
+     "lat": 44.853223,
+     "lng": 34.974091
+    },
+    {
+     "name": "Sudak Rocket Beach Infrastructure",
+     "city": "Sudak",
+     "lat": 44.830519,
+     "lng": 35.029828
+    },
+    {
+     "name": "Krasnodar Residential Build Site",
+     "city": "Krasnodar",
+     "lat": 45.104903,
+     "lng": 38.955897
+    },
+    {
+     "name": "Sudak Alushtinskaya Street View",
+     "city": "Sudak",
+     "lat": 44.868098,
+     "lng": 34.963449
+    },
+    {
+     "name": "Sudak Gorsad Bus Stop Bustle",
+     "city": "Sudak",
+     "lat": 44.851516,
+     "lng": 34.976398
+    },
+    {
+     "name": "Voltage Stabilizer meter",
+     "city": "Zaporozhye",
+     "lat": 47.85,
+     "lng": 35.2833
+    }
+   ]
+  },
+  {
+   "name": "Ecuador",
+   "slug": "ecuador",
+   "count": 8,
+   "areas": [
+    {
+     "name": "Santa Elena",
+     "count": 4
+    },
+    {
+     "name": "Puerto Lopez",
+     "count": 2
+    },
+    {
+     "name": "Playas",
+     "count": 1
+    },
+    {
+     "name": "Salinas",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Playa de Ballenita - Capaes",
+     "city": "Santa Elena",
+     "lat": -2.1954593,
+     "lng": -80.5669167
+    },
+    {
+     "name": "Ecuador - Ayangue Beach",
+     "city": "Santa Elena",
+     "lat": -2.1954593,
+     "lng": -80.5669167
+    },
+    {
+     "name": "Montañita - Santa Elena",
+     "city": "Santa Elena",
+     "lat": -1.8281651,
+     "lng": -80.7529065
+    },
+    {
+     "name": "Salinas - Santa Elena",
+     "city": "Salinas",
+     "lat": -2.2612497,
+     "lng": -80.9237973
+    },
+    {
+     "name": "Las Tunas - Manabi",
+     "city": "Puerto Lopez",
+     "lat": -1.6514318,
+     "lng": -80.8208419
+    },
+    {
+     "name": "Beach of Montañita",
+     "city": "Santa Elena",
+     "lat": -1.8281651,
+     "lng": -80.7529065
+    },
+    {
+     "name": "Engabao - Ecuador",
+     "city": "Playas",
+     "lat": -2.5728972,
+     "lng": -80.4886655
+    },
+    {
+     "name": "Beach of Ayampe",
+     "city": "Puerto Lopez",
+     "lat": -1.5440814,
+     "lng": -80.744524
+    }
+   ]
+  },
+  {
+   "name": "Costa Rica",
+   "slug": "costa-rica",
+   "count": 7,
+   "areas": [
+    {
+     "name": "Moravia",
+     "count": 5
+    },
+    {
+     "name": "La Cruz",
+     "count": 1
+    },
+    {
+     "name": "Puntarenas",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Panorama of Braulio Carrillo - Costa Rica",
+     "city": "Moravia",
+     "lat": 10.0076988,
+     "lng": -84.0129504
+    },
+    {
+     "name": "Panorama of San José - Costa Rica",
+     "city": "Moravia",
+     "lat": 10.0076988,
+     "lng": -84.0129504
+    },
+    {
+     "name": "Bahia Salinas - Nandel Beach",
+     "city": "La Cruz",
+     "lat": 11.0088428,
+     "lng": -85.5518491
+    },
+    {
+     "name": "San Vicente - Costa Rica",
+     "city": "Moravia",
+     "lat": 9.9628295,
+     "lng": -84.0480084
+    },
+    {
+     "name": "Panorama of San José",
+     "city": "Moravia",
+     "lat": 10.0076988,
+     "lng": -84.0129504
+    },
+    {
+     "name": "Irazú - Costa Rica",
+     "city": "Moravia",
+     "lat": 9.9849462,
+     "lng": -84.0268987
+    },
+    {
+     "name": "Cóbano Airport",
+     "city": "Puntarenas",
+     "lat": 9.6921668,
+     "lng": -85.1022314
+    }
+   ]
+  },
+  {
+   "name": "Ireland",
+   "slug": "ireland",
+   "count": 7,
+   "areas": [
+    {
+     "name": "Dublin",
+     "count": 5
+    },
+    {
+     "name": "Dublin Port",
+     "count": 1
+    },
+    {
+     "name": "Temple Bar",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Dublin - Collins Avenue",
+     "city": "Dublin",
+     "lat": 53.3816842,
+     "lng": -6.2419382
+    },
+    {
+     "name": "Dublin - Cabra Road",
+     "city": "Dublin",
+     "lat": 53.3615035,
+     "lng": -6.2957706
+    },
+    {
+     "name": "Dublin - Temple Bar",
+     "city": "Dublin",
+     "lat": 53.3454957,
+     "lng": -6.2631139
+    },
+    {
+     "name": "Havenbeelden Dublin",
+     "city": "Dublin Port",
+     "lat": 53.35277,
+     "lng": -6.224512
+    },
+    {
+     "name": "Temple Bar Dublin",
+     "city": "Temple Bar",
+     "lat": 53.345496,
+     "lng": -6.263114
+    },
+    {
+     "name": "Port of Dublin",
+     "city": "Dublin",
+     "lat": 53.3476683,
+     "lng": -6.2348915
+    },
+    {
+     "name": "Dublin Bay",
+     "city": "Dublin",
+     "lat": 53.363045,
+     "lng": -6.1784519
+    }
+   ]
+  },
+  {
+   "name": "Hungary",
+   "slug": "hungary",
+   "count": 6,
+   "areas": [
+    {
+     "name": "Aszod",
+     "count": 1
+    },
+    {
+     "name": "Eger",
+     "count": 1
+    },
+    {
+     "name": "Orbottyan",
+     "count": 1
+    },
+    {
+     "name": "Papa",
+     "count": 1
+    },
+    {
+     "name": "Pecs",
+     "count": 1
+    },
+    {
+     "name": "Tihany",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Hungarian Storks - Őrbottyán",
+     "city": "Orbottyan",
+     "lat": 47.6827581,
+     "lng": 19.263848
+    },
+    {
+     "name": "Storks of Aszód - Hungary",
+     "city": "Aszod",
+     "lat": 47.6532732,
+     "lng": 19.4747432
+    },
+    {
+     "name": "Tihany - Lake Balaton",
+     "city": "Tihany",
+     "lat": 46.9132712,
+     "lng": 17.8882318
+    },
+    {
+     "name": "Eger - Dobó Square",
+     "city": "Eger",
+     "lat": 47.8989887,
+     "lng": 20.3743665
+    },
+    {
+     "name": "Hungary - Pápa",
+     "city": "Papa",
+     "lat": 47.3100984,
+     "lng": 17.4826577
+    },
+    {
+     "name": "Pécs - Hungary",
+     "city": "Pecs",
+     "lat": 46.0663656,
+     "lng": 18.2253315
+    }
+   ]
+  },
+  {
+   "name": "Slovenia",
+   "slug": "slovenia",
+   "count": 6,
+   "areas": [
+    {
+     "name": "Kranjska Gora",
+     "count": 5
+    },
+    {
+     "name": "Piran",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Planica Ski Slopes - Slovenia",
+     "city": "Kranjska Gora",
+     "lat": 46.4662959,
+     "lng": 13.7203785
+    },
+    {
+     "name": "Kranjaska Gora - Jasna Lake",
+     "city": "Kranjska Gora",
+     "lat": 46.4502123,
+     "lng": 13.8434055
+    },
+    {
+     "name": "Kranjska Gora - Town Center",
+     "city": "Kranjska Gora",
+     "lat": 46.4502123,
+     "lng": 13.8434055
+    },
+    {
+     "name": "Kranjska Gora - Ski slopes",
+     "city": "Kranjska Gora",
+     "lat": 46.4502123,
+     "lng": 13.8434055
+    },
+    {
+     "name": "Tartini Square - Piran",
+     "city": "Piran",
+     "lat": 45.5285342,
+     "lng": 13.5684195
+    },
+    {
+     "name": "Kransjka Gora",
+     "city": "Kranjska Gora",
+     "lat": 46.450212,
+     "lng": 13.843405
+    }
+   ]
+  },
+  {
+   "name": "Germany",
+   "slug": "germany",
+   "count": 5,
+   "areas": [
+    {
+     "name": "Berlin",
+     "count": 1
+    },
+    {
+     "name": "Munich",
+     "count": 1
+    },
+    {
+     "name": "Bremen",
+     "count": 1
+    },
+    {
+     "name": "Naumburg (Saale)",
+     "count": 1
+    },
+    {
+     "name": "Rees",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Berlin - Alexanderplatz",
+     "city": "Berlin",
+     "lat": 52.52,
+     "lng": 13.405
+    },
+    {
+     "name": "De Rijn bij Stadt Rees",
+     "city": "Rees",
+     "lat": 51.758124,
+     "lng": 6.39566
+    },
+    {
+     "name": "Munich - Marienplatz",
+     "city": "Munich",
+     "lat": 48.1351,
+     "lng": 11.582
+    },
+    {
+     "name": "Stadt Naumburg",
+     "city": "Naumburg (Saale)",
+     "lat": 51.152565,
+     "lng": 11.809919
+    },
+    {
+     "name": "Visit Bremen",
+     "city": "Bremen",
+     "lat": 53.07582,
+     "lng": 8.807165
+    }
+   ]
+  },
+  {
+   "name": "Moldova",
+   "slug": "moldova",
+   "count": 5,
+   "areas": [
+    {
+     "name": "Chișinău",
+     "count": 1
+    },
+    {
+     "name": "Soroca",
+     "count": 1
+    },
+    {
+     "name": "Bălăbanu",
+     "count": 1
+    },
+    {
+     "name": "Ialoveni",
+     "count": 1
+    },
+    {
+     "name": "Cantemir",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Chișinău (M1 km 93.8)",
+     "city": "Chișinău",
+     "lat": 47.053337,
+     "lng": 28.77734
+    },
+    {
+     "name": "Bălăbanu (M3 km 137)",
+     "city": "Bălăbanu",
+     "lat": 45.929146,
+     "lng": 28.569922
+    },
+    {
+     "name": "Ialoveni (R3 km 9.5)",
+     "city": "Ialoveni",
+     "lat": 46.961572,
+     "lng": 28.752937
+    },
+    {
+     "name": "Cantemir (R34 km 82)",
+     "city": "Cantemir",
+     "lat": 46.278412,
+     "lng": 28.191789
+    },
+    {
+     "name": "Soroca (M2 km 145)",
+     "city": "Soroca",
+     "lat": 48.11266,
+     "lng": 28.317762
+    }
+   ]
+  },
+  {
+   "name": "Dominican Republic",
+   "slug": "dominican-republic",
+   "count": 5,
+   "areas": [
+    {
+     "name": "Cabarete",
+     "count": 3
+    },
+    {
+     "name": "Guayacanes",
+     "count": 1
+    },
+    {
+     "name": "Higuey",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Playa Juan Dolio - Dominican Republic",
+     "city": "Guayacanes",
+     "lat": 18.4251283,
+     "lng": -69.4214968
+    },
+    {
+     "name": "Underwater Cam - Dominican Republic",
+     "city": "Higuey",
+     "lat": 18.6131313,
+     "lng": -68.7114484
+    },
+    {
+     "name": "Dominican Republic - Cabarete",
+     "city": "Cabarete",
+     "lat": 19.7496208,
+     "lng": -70.4139298
+    },
+    {
+     "name": "Bozo Beach - Cabarete",
+     "city": "Cabarete",
+     "lat": 19.7496208,
+     "lng": -70.4139298
+    },
+    {
+     "name": "Beach of Cabarete",
+     "city": "Cabarete",
+     "lat": 19.7496208,
+     "lng": -70.4139298
+    }
+   ]
+  },
+  {
+   "name": "Cyprus",
+   "slug": "cyprus",
+   "count": 4,
+   "areas": [
+    {
+     "name": "Larnaca",
+     "count": 2
+    },
+    {
+     "name": "Κοινότητα Τάλας",
+     "count": 1
+    },
+    {
+     "name": "Pissouri",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Larnaca seafront - Cyprus",
+     "city": "Larnaca",
+     "lat": 34.9236095,
+     "lng": 33.6236184
+    },
+    {
+     "name": "Larnaca - Cyprus",
+     "city": "Larnaca",
+     "lat": 34.9236095,
+     "lng": 33.6236184
+    },
+    {
+     "name": "Tsada, Cyprus",
+     "city": "Κοινότητα Τάλας",
+     "lat": 34.83919,
+     "lng": 32.47449
+    },
+    {
+     "name": "Pissouri",
+     "city": "Pissouri",
+     "lat": 34.67006,
+     "lng": 32.70048
+    }
+   ]
+  },
+  {
+   "name": "India",
+   "slug": "india",
+   "count": 4,
+   "areas": [
+    {
+     "name": "Mount Abu",
+     "count": 1
+    },
+    {
+     "name": "Nanded",
+     "count": 1
+    },
+    {
+     "name": "Salgaon",
+     "count": 1
+    },
+    {
+     "name": "Chennai",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Chennai: Tamil Nadu - North-North West",
+     "city": "Chennai",
+     "lat": 12.45619,
+     "lng": 80.1182
+    },
+    {
+     "name": "Nanded - Takht Sachkhand Sri Hazur",
+     "city": "Nanded",
+     "lat": 19.0942729,
+     "lng": 77.4832628
+    },
+    {
+     "name": "Tower Of Peace - Mount Abu",
+     "city": "Mount Abu",
+     "lat": 24.592433,
+     "lng": 72.7081876
+    },
+    {
+     "name": "Shanti Stambha",
+     "city": "Salgaon",
+     "lat": 24.5983,
+     "lng": 72.7083
+    }
+   ]
+  },
+  {
+   "name": "Azerbaijan",
+   "slug": "azerbaijan",
+   "count": 4,
+   "areas": [
+    {
+     "name": "Baku",
+     "count": 2
+    },
+    {
+     "name": "Kuzun",
+     "count": 1
+    },
+    {
+     "name": "Gabala",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Kuzun: Shahdag, Lift station",
+     "city": "Kuzun",
+     "lat": 41.31641,
+     "lng": 48.13811
+    },
+    {
+     "name": "Central Viewpoint",
+     "city": "Baku",
+     "lat": 41.321688,
+     "lng": 48.14841
+    },
+    {
+     "name": "Alpine Horizon",
+     "city": "Baku",
+     "lat": 41.318843,
+     "lng": 48.136746
+    }
+   ]
+  },
+  {
+   "name": "Sint Maarten",
+   "slug": "sint-maarten",
+   "count": 4,
+   "areas": [
+    {
+     "name": "Simpson Bay",
+     "count": 3
+    },
+    {
+     "name": "Philipsburg",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "St. Maarten Princess Juliana International Airport",
+     "city": "Simpson Bay",
+     "lat": 18.0408739,
+     "lng": -63.1118517
+    },
+    {
+     "name": "Philipsburg - Great Bay Beach",
+     "city": "Philipsburg",
+     "lat": 18.0222274,
+     "lng": -63.0443598
+    },
+    {
+     "name": "Maho Beach - Sint Marteen",
+     "city": "Simpson Bay",
+     "lat": 18.0396777,
+     "lng": -63.0972367
+    },
+    {
+     "name": "Simpson Bay Beach",
+     "city": "Simpson Bay",
+     "lat": 18.0382964,
+     "lng": -63.0978262
+    }
+   ]
+  },
+  {
+   "name": "Kenya",
+   "slug": "kenya",
+   "count": 4,
+   "areas": [
+    {
+     "name": "Diani Beach",
+     "count": 1
+    },
+    {
+     "name": "Nakuru",
+     "count": 1
+    },
+    {
+     "name": "Voi",
+     "count": 1
+    },
+    {
+     "name": "Watamu",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Kenya-Voi Wildlife Lodge Tsavo East National Park",
+     "city": "Voi",
+     "lat": -3.3631799,
+     "lng": 38.5952927
+    },
+    {
+     "name": "Watamu Beach - Kenya",
+     "city": "Watamu",
+     "lat": -3.3550829,
+     "lng": 40.0198076
+    },
+    {
+     "name": "Diani Beach - Kenya",
+     "city": "Diani Beach",
+     "lat": -4.3124919,
+     "lng": 39.5793598
+    },
+    {
+     "name": "Masai Mara - Kenya",
+     "city": "Nakuru",
+     "lat": -0.2802724,
+     "lng": 36.0712048
+    }
+   ]
+  },
+  {
+   "name": "Seychelles",
+   "slug": "seychelles",
+   "count": 4,
+   "areas": [
+    {
+     "name": "Takamaka",
+     "count": 2
+    },
+    {
+     "name": "Anse Etoile",
+     "count": 1
+    },
+    {
+     "name": "Beau Vallon",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Seychelles - Anse Parnel Takamaka",
+     "city": "Takamaka",
+     "lat": -4.7768202,
+     "lng": 55.5234855
+    },
+    {
+     "name": "Quincy Village - Seychelles",
+     "city": "Anse Etoile",
+     "lat": -4.5932954,
+     "lng": 55.455248
+    },
+    {
+     "name": "Beau Vallon - Seychelles",
+     "city": "Beau Vallon",
+     "lat": -4.6096262,
+     "lng": 55.438103
+    },
+    {
+     "name": "Anse Parnel Takamaka",
+     "city": "Takamaka",
+     "lat": -4.7679474,
+     "lng": 55.522495
+    }
+   ]
+  },
+  {
+   "name": "Czechia",
+   "slug": "czechia",
+   "count": 3,
+   "areas": [
+    {
+     "name": "Prague",
+     "count": 3
+    }
+   ],
+   "samples": [
+    {
+     "name": "Prague - Old Town Square",
+     "city": "Prague",
+     "lat": 50.0878,
+     "lng": 14.4205
+    },
+    {
+     "name": "Prague - Charles Bridge",
+     "city": "Prague",
+     "lat": 50.0865,
+     "lng": 14.4114
+    },
+    {
+     "name": "Prague - City View",
+     "city": "Prague",
+     "lat": 50.09,
+     "lng": 14.4
+    }
+   ]
+  },
+  {
+   "name": "Belarus",
+   "slug": "belarus",
+   "count": 3,
+   "areas": [
+    {
+     "name": "Kotlovka",
+     "count": 1
+    },
+    {
+     "name": "Kamenny Log",
+     "count": 1
+    },
+    {
+     "name": "Мінск",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Ploshcha Svabody, Minsk",
+     "city": "Мінск",
+     "lat": 53.903666,
+     "lng": 27.5560454
+    },
+    {
+     "name": "Kamenny Log (Entry)",
+     "city": "Kamenny Log",
+     "lat": 54.01,
+     "lng": 26.32
+    },
+    {
+     "name": "Kotlovka (Exit)",
+     "city": "Kotlovka",
+     "lat": 53.966,
+     "lng": 25.631
+    }
+   ]
+  },
+  {
+   "name": "Nepal",
+   "slug": "nepal",
+   "count": 3,
+   "areas": [
+    {
+     "name": "नेपाल",
+     "count": 1
+    },
+    {
+     "name": "Kathmandu",
+     "count": 1
+    },
+    {
+     "name": "Tehe",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Mountainous Scenes from the Buddha Lodge, Lukla",
+     "city": "नेपाल",
+     "lat": 27.6870433,
+     "lng": 86.7313421
+    },
+    {
+     "name": "Live Camera Axis M2026-LE-MKII",
+     "city": "Kathmandu",
+     "lat": 27.7172453,
+     "lng": 85.3239605
+    },
+    {
+     "name": "Simkot-03",
+     "city": "Tehe",
+     "lat": 29.96544,
+     "lng": 81.85494
+    }
+   ]
+  },
+  {
+   "name": "El Salvador",
+   "slug": "el-salvador",
+   "count": 3,
+   "areas": [
+    {
+     "name": "La Libertad",
+     "count": 1
+    },
+    {
+     "name": "San Miguel",
+     "count": 1
+    },
+    {
+     "name": "Tamanique",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Volcano Chaparrastique - El Salvador",
+     "city": "San Miguel",
+     "lat": 13.4320224,
+     "lng": -88.271737
+    },
+    {
+     "name": "La Libertad - El Salvador",
+     "city": "La Libertad",
+     "lat": 13.486119,
+     "lng": -89.3228383
+    },
+    {
+     "name": "Tamanique - El Salvador",
+     "city": "Tamanique",
+     "lat": 13.4929267,
+     "lng": -89.384099
+    }
+   ]
+  },
+  {
+   "name": "Albania",
+   "slug": "albania",
+   "count": 3,
+   "areas": [
+    {
+     "name": "Valona",
+     "count": 2
+    },
+    {
+     "name": "Durres",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Bestrovë - Vlorë",
+     "city": "Valona",
+     "lat": 40.5072264,
+     "lng": 19.4850517
+    },
+    {
+     "name": "Vlora - Albania",
+     "city": "Valona",
+     "lat": 40.1452184,
+     "lng": 19.644275
+    }
+   ]
+  },
+  {
+   "name": "Bosnia and Herzegovina",
+   "slug": "bosnia-and-herzegovina",
+   "count": 3,
+   "areas": [
+    {
+     "name": "Mostar",
+     "count": 1
+    },
+    {
+     "name": "Sarajevo",
+     "count": 1
+    },
+    {
+     "name": "Ugljevik",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Mostar - Bosnia and Herzegovina",
+     "city": "Mostar",
+     "lat": 43.3372636,
+     "lng": 17.8150367
+    },
+    {
+     "name": "Sarajevo - Bosnia & Herzegovina",
+     "city": "Sarajevo",
+     "lat": 43.8570713,
+     "lng": 18.4126147
+    },
+    {
+     "name": "Tutnjevac - Ugljevik",
+     "city": "Ugljevik",
+     "lat": 44.6930533,
+     "lng": 18.9945989
+    }
+   ]
+  },
+  {
+   "name": "Belgium",
+   "slug": "belgium",
+   "count": 3,
+   "areas": [
+    {
+     "name": "Lokeren",
+     "count": 1
+    },
+    {
+     "name": "Stadhuis Sint-Niklaas",
+     "count": 1
+    },
+    {
+     "name": "Zwin",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Stadhuis Sint-Niklaas",
+     "city": "Stadhuis Sint-Niklaas",
+     "lat": 51.164795,
+     "lng": 4.139022
+    },
+    {
+     "name": "Webcams Lokeren",
+     "city": "Lokeren",
+     "lat": 51.148382,
+     "lng": 3.944247
+    },
+    {
+     "name": "Zwin Natuurpark",
+     "city": "Zwin",
+     "lat": 51.358006,
+     "lng": 3.345686
+    }
+   ]
+  },
+  {
+   "name": "Serbia",
+   "slug": "serbia",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Belgrade",
+     "count": 1
+    },
+    {
+     "name": "Gradina",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Kalotina – Gradina Border (lane 1)",
+     "city": "Gradina",
+     "lat": 42.997,
+     "lng": 22.882
+    },
+    {
+     "name": "Belgrade Live Cam",
+     "city": "Belgrade",
+     "lat": 44.817,
+     "lng": 20.456
+    }
+   ]
+  },
+  {
+   "name": "North Macedonia",
+   "slug": "north-macedonia",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Deve Bair",
+     "count": 1
+    },
+    {
+     "name": "Tabanovce",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Deve Bair – Gyueshevo Border",
+     "city": "Deve Bair",
+     "lat": 42.149,
+     "lng": 22.537
+    },
+    {
+     "name": "Tabanovce – Preševo Border",
+     "city": "Tabanovce",
+     "lat": 42.232,
+     "lng": 21.718
+    }
+   ]
+  },
+  {
+   "name": "Slovakia",
+   "slug": "slovakia",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Bratislava",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Bratislava - Danube River",
+     "city": "Bratislava",
+     "lat": 48.145,
+     "lng": 17.1
+    },
+    {
+     "name": "Bratislava - Old Town",
+     "city": "Bratislava",
+     "lat": 48.1486,
+     "lng": 17.1077
+    }
+   ]
+  },
+  {
+   "name": "Oman",
+   "slug": "oman",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Muscat",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Live from AIDA - Muscat,Oman",
+     "city": "Muscat",
+     "lat": 23.5880307,
+     "lng": 58.3828717
+    },
+    {
+     "name": "Aida Beach in Muscat - Oman",
+     "city": "Muscat",
+     "lat": 23.6123628,
+     "lng": 58.5938134
+    }
+   ]
+  },
+  {
+   "name": "Egypt",
+   "slug": "egypt",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Hurghada",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Hurghada: ProCenter Tommy Friedl - Hughada - Jasmin Village",
+     "city": "Hurghada",
+     "lat": 27.10853,
+     "lng": 33.83062
+    },
+    {
+     "name": "Hurghada Red Sea Underwater Dive",
+     "city": "Hurghada",
+     "lat": 27.1835978,
+     "lng": 33.8291286
+    }
+   ]
+  },
+  {
+   "name": "Belize",
+   "slug": "belize",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Placencia",
+     "count": 1
+    },
+    {
+     "name": "The Belize Zoo",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Hummingbird Marina - Belize",
+     "city": "Placencia",
+     "lat": 16.5156113,
+     "lng": -88.3671785
+    },
+    {
+     "name": "Live stream Zoo",
+     "city": "The Belize Zoo",
+     "lat": 17.357681,
+     "lng": -88.542612
+    }
+   ]
+  },
+  {
+   "name": "Bermuda",
+   "slug": "bermuda",
+   "count": 2,
+   "areas": [
+    {
+     "name": "St George S Parish",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "St. George's Harbour - Bermuda",
+     "city": "St George S Parish",
+     "lat": 32.3722689,
+     "lng": -64.698502
+    },
+    {
+     "name": "Bermuda - Cahow",
+     "city": "St George S Parish",
+     "lat": 32.3591394,
+     "lng": -64.7045608
+    }
+   ]
+  },
+  {
+   "name": "Bolivia",
+   "slug": "bolivia",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Cochabamba",
+     "count": 1
+    },
+    {
+     "name": "Copacabana",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Cochabamba - Bolivia",
+     "city": "Cochabamba",
+     "lat": -17.3938227,
+     "lng": -66.1569255
+    },
+    {
+     "name": "Copacabana - Bolivia",
+     "city": "Copacabana",
+     "lat": -16.1677433,
+     "lng": -69.0880295
+    }
+   ]
+  },
+  {
+   "name": "Grenada",
+   "slug": "grenada",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Grand Anse Beach",
+     "count": 1
+    },
+    {
+     "name": "Springs",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Marina of Saint George's - Grenada",
+     "city": "Springs",
+     "lat": 12.0376908,
+     "lng": -61.7412394
+    },
+    {
+     "name": "Grenada - Saint George's",
+     "city": "Grand Anse Beach",
+     "lat": 12.0273617,
+     "lng": -61.756631
+    }
+   ]
+  },
+  {
+   "name": "Guadeloupe",
+   "slug": "guadeloupe",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Terre De Haut",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "Les Saintes - Terre-de-Haut",
+     "city": "Terre De Haut",
+     "lat": 15.8680707,
+     "lng": -61.5821543
+    },
+    {
+     "name": "Les Saintes - Guadeloupe",
+     "city": "Terre De Haut",
+     "lat": 15.8680707,
+     "lng": -61.5821543
+    }
+   ]
+  },
+  {
+   "name": "Honduras",
+   "slug": "honduras",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Roatan",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "name": "West End Beach - Roatán",
+     "city": "Roatan",
+     "lat": 16.3046674,
+     "lng": -86.5928644
+    },
+    {
+     "name": "West Bay",
+     "city": "Roatan",
+     "lat": 16.2751591,
+     "lng": -86.5977278
+    }
+   ]
+  },
+  {
+   "name": "Panama",
+   "slug": "panama",
+   "count": 2,
+   "areas": [
+    {
+     "name": "Chiriqui",
+     "count": 1
+    },
+    {
+     "name": "Pedasi",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Playa Las Lajas - Panama",
+     "city": "Chiriqui",
+     "lat": 8.1694854,
+     "lng": -81.8650852
+    },
+    {
+     "name": "Panama - Pedasí",
+     "city": "Pedasi",
+     "lat": 7.5310676,
+     "lng": -80.0266029
+    }
+   ]
+  },
+  {
+   "name": "Lebanon",
+   "slug": "lebanon",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Beirut",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Beirut Skyline Live",
+     "city": "Beirut",
+     "lat": 33.8938,
+     "lng": 35.5018
+    }
+   ]
+  },
+  {
+   "name": "Jordan",
+   "slug": "jordan",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Amman",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Petra - Visitor Center",
+     "city": "Amman",
+     "lat": 31.9515694,
+     "lng": 35.9239625
+    }
+   ]
+  },
+  {
+   "name": "Sri Lanka",
+   "slug": "sri-lanka",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Midigama",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Plantations Beach - Sri Lanka",
+     "city": "Midigama",
+     "lat": 5.9652216,
+     "lng": 80.3909468
+    }
+   ]
+  },
+  {
+   "name": "Christmas Island",
+   "slug": "christmas-island",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Christmas Island",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Christmas Island Aero (NE)",
+     "city": "Christmas Island",
+     "lat": -10.4509,
+     "lng": 105.6888
+    }
+   ]
+  },
+  {
+   "name": "Saudi Arabia",
+   "slug": "saudi-arabia",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Thuwal",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Bird Feeding Station- Live from KAUST",
+     "city": "Thuwal",
+     "lat": 22.313251,
+     "lng": 39.1094336
+    }
+   ]
+  },
+  {
+   "name": "Latvia",
+   "slug": "latvia",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Esplanāde",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Daugavpils Unity Square Hub",
+     "city": "Esplanāde",
+     "lat": 55.871753,
+     "lng": 26.5145838
+    }
+   ]
+  },
+  {
+   "name": "Yemen",
+   "slug": "yemen",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Other",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "LTER Zöbelboden Wildwiese, Austria",
+     "city": "",
+     "lat": 14.4409,
+     "lng": 47.8381
+    }
+   ]
+  },
+  {
+   "name": "Iran",
+   "slug": "iran",
+   "count": 1,
+   "areas": [
+    {
+     "name": "گلدره",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Pardis, Tehran Province",
+     "city": "گلدره",
+     "lat": 35.74799,
+     "lng": 51.83704
+    }
+   ]
+  },
+  {
+   "name": "Barbados",
+   "slug": "barbados",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Silver Sands",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Silver Sands",
+     "city": "Silver Sands",
+     "lat": 13.0469236,
+     "lng": -59.5206415
+    }
+   ]
+  },
+  {
+   "name": "Martinique",
+   "slug": "martinique",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Sainte Anne",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Sainte-Anne - Martinique",
+     "city": "Sainte Anne",
+     "lat": 14.4347087,
+     "lng": -60.8798131
+    }
+   ]
+  },
+  {
+   "name": "Puerto Rico",
+   "slug": "puerto-rico",
+   "count": 1,
+   "areas": [
+    {
+     "name": "San Juan",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Panorama of Puerto Rico - San Juan",
+     "city": "San Juan",
+     "lat": 18.3684261,
+     "lng": -66.0654718
+    }
+   ]
+  },
+  {
+   "name": "Uruguay",
+   "slug": "uruguay",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Punta Del Este",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Punta del Este - Uruguay",
+     "city": "Punta Del Este",
+     "lat": -34.9632342,
+     "lng": -54.9439981
+    }
+   ]
+  },
+  {
+   "name": "Venezuela",
+   "slug": "venezuela",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Margarita Island",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Margarita Island - Venezuela",
+     "city": "Margarita Island",
+     "lat": 11.0205596,
+     "lng": -63.9073984
+    }
+   ]
+  },
+  {
+   "name": "Morocco",
+   "slug": "morocco",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Imsouane",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Imsouane - Morocco",
+     "city": "Imsouane",
+     "lat": 30.841899,
+     "lng": -9.819964
+    }
+   ]
+  },
+  {
+   "name": "Senegal",
+   "slug": "senegal",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Niaga Peulh",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Lake Retba - Senegal",
+     "city": "Niaga Peulh",
+     "lat": 14.8447328,
+     "lng": -17.216659
+    }
+   ]
+  },
+  {
+   "name": "Faroe Islands",
+   "slug": "faroe-islands",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Eystur",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Syðrugøta",
+     "city": "Eystur",
+     "lat": 62.3244046,
+     "lng": -6.9417093
+    }
+   ]
+  },
+  {
+   "name": "Luxembourg",
+   "slug": "luxembourg",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Mertert",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Wasserbillig - Luxembourg",
+     "city": "Mertert",
+     "lat": 49.7143407,
+     "lng": 6.5013499
+    }
+   ]
+  },
+  {
+   "name": "San Marino",
+   "slug": "san-marino",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Citta Di San Marino",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "San Marino - Chiesanuova",
+     "city": "Citta Di San Marino",
+     "lat": 43.9176415,
+     "lng": 12.4274415
+    }
+   ]
+  },
+  {
+   "name": "Estonia",
+   "slug": "estonia",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Tallinn",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "360Pano Tallinn",
+     "city": "Tallinn",
+     "lat": 59.437242,
+     "lng": 24.757269
+    }
+   ]
+  },
+  {
+   "name": "Vatican City",
+   "slug": "vatican-city",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Piazza San Pietro",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Sint Pieterplein",
+     "city": "Piazza San Pietro",
+     "lat": 41.902235,
+     "lng": 12.457357
+    }
+   ]
+  },
+  {
+   "name": "Bonaire",
+   "slug": "bonaire",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Kralendijk",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Harbour Village (Coral Reef)",
+     "city": "Kralendijk",
+     "lat": 12.147287,
+     "lng": -68.274021
+    }
+   ]
+  },
+  {
+   "name": "Curaçao",
+   "slug": "cura-ao",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Willemstad",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "name": "Handelskade en pontjesbrug",
+     "city": "Willemstad",
+     "lat": 12.10667,
+     "lng": -68.935131
+    }
+   ]
+  }
+ ],
+ "topAreas": [
+  {
+   "name": "Georgia",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 4330
+  },
+  {
+   "name": "Utah",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 2082
+  },
+  {
+   "name": "Austria",
+   "country": "Austria",
+   "countrySlug": "austria",
+   "count": 1828
+  },
+  {
+   "name": "Taiwan",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 1529
+  },
+  {
+   "name": "Houston",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 1158
+  },
+  {
+   "name": "London",
+   "country": "United Kingdom",
+   "countrySlug": "united-kingdom",
+   "count": 890
+  },
+  {
+   "name": "Dallas",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 845
+  },
+  {
+   "name": "Finland",
+   "country": "Finland",
+   "countrySlug": "finland",
+   "count": 813
+  },
+  {
+   "name": "Indiana",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 703
+  },
+  {
+   "name": "Nevada",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 652
+  },
+  {
+   "name": "Orange County",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 589
+  },
+  {
+   "name": "Hillsborough County",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 517
+  },
+  {
+   "name": "Broward County",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 496
+  },
+  {
+   "name": "Fort Worth",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 489
+  },
+  {
+   "name": "Phoenix",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 434
+  },
+  {
+   "name": "Ottawa",
+   "country": "Canada",
+   "countrySlug": "canada",
+   "count": 428
+  },
+  {
+   "name": "Miami-Dade County",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 422
+  },
+  {
+   "name": "Madrid",
+   "country": "Spain",
+   "countrySlug": "spain",
+   "count": 370
+  },
+  {
+   "name": "Västra Götaland",
+   "country": "Sweden",
+   "countrySlug": "sweden",
+   "count": 361
+  },
+  {
+   "name": "Toronto",
+   "country": "Canada",
+   "countrySlug": "canada",
+   "count": 339
+  },
+  {
+   "name": "Stockholm",
+   "country": "Sweden",
+   "countrySlug": "sweden",
+   "count": 335
+  },
+  {
+   "name": "A1 MILANO-NAPOLI",
+   "country": "Italy",
+   "countrySlug": "italy",
+   "count": 268
+  },
+  {
+   "name": "A14 BOLOGNA-TARANTO",
+   "country": "Italy",
+   "countrySlug": "italy",
+   "count": 219
+  },
+  {
+   "name": "Taichung",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 189
+  },
+  {
+   "name": "Québec (Capitale-Nationale)",
+   "country": "Canada",
+   "countrySlug": "canada",
+   "count": 180
+  }
+ ]
+}

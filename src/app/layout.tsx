@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import ErrorBoundary from '@/components/ErrorBoundary';
 import "./globals.css";
 
-const SITE_URL = "https://osiris-lime.vercel.app";
+const SITE_URL = "https://worldeye.app";
 const SITE_NAME = "WorldEye";
 const SITE_TITLE = "WorldEye — Live 3D Globe | Flight Tracking, CCTV, Satellites & OSINT Tools";
 const SITE_DESCRIPTION = "WorldEye is a live 3D intelligence globe: track aircraft, satellites and 36,000+ worldwide CCTV cameras free. Go Pro for the AI analyst, satellite view, global search and premium intel feeds.";

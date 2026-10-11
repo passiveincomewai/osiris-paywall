@@ -216,7 +216,7 @@ export default function ResourcesClient() {
 
   const banners = useMemo(() => {
     const snippet = (alt: string) =>
-      `<a href="${link ?? "{YOUR_LINK}"}" target="_blank" rel="noopener sponsored"><img src="https://osiris-lime.vercel.app/og-image.png" alt="${alt}" width="600" style="max-width:100%;border-radius:12px" /></a>`;
+      `<a href="${link ?? "{YOUR_LINK}"}" target="_blank" rel="noopener sponsored"><img src="https://worldeye.app/og-image.png" alt="${alt}" width="600" style="max-width:100%;border-radius:12px" /></a>`;
     return [
       {
         alt: "WorldEye — see the planet live",

@@ -7,7 +7,7 @@ export const AFFILIATE_BRAND = {
   tagline: "Global intelligence, real-time.",
   // Base URL for referral links. Falls back to the app URL at runtime.
   // Affiliates get: {baseUrl}/ref/{code}
-  domain: process.env.NEXT_PUBLIC_AFFILIATE_DOMAIN || "osiris-lime.vercel.app",
+  domain: process.env.NEXT_PUBLIC_AFFILIATE_DOMAIN || "worldeye.app",
 } as const;
 
 export function referralBaseUrl(): string {
