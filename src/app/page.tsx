@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Layers, Newspaper, Search, X, Globe, MapPinned, Route, Radar, Satellite, Moon, ExternalLink, AlertTriangle, Activity, Database, Wifi, Play, Network, Crosshair, Bluetooth, Pentagon, Radio , PenLine, Orbit } from 'lucide-react';
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
+import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import IntelFeed from '@/components/IntelFeed';
 import CinematicHero from '@/components/CinematicHero';
 import ScmPanel from '@/components/ScmPanel';
@@ -29,6 +30,7 @@ const OsirisMap = dynamic(() => import('@/components/OsirisMap'), { ssr: false }
 const LayerPanel = dynamic(() => import('@/components/LayerPanel'));
 const SpaceCam = dynamic(() => import('@/components/SpaceCam'), { ssr: false });
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
+const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
 const DrawingToolbar = dynamic(() => import('@/components/DrawingToolbar'), { ssr: false });
@@ -201,6 +203,7 @@ export default function Dashboard() {
   const autoLocateCancelled = useRef(false);
 
   const [activeCamera, setActiveCamera] = useState<any>(null);
+  const [showCameraSignup, setShowCameraSignup] = useState(false);
   const [spaceWeather, setSpaceWeather] = useState<any>(null);
   const [showLayers, setShowLayers] = useState(true);
   const [showAlerts, setShowAlerts] = useState(false);
@@ -859,13 +862,26 @@ export default function Dashboard() {
   }, []);
   // Entity click handler (hoisted from JSX to comply with Rules of Hooks - Fixes #113)
   const handleEntityClick = useCallback((entity: any) => {
-    if (entity?.type === 'cctv') setActiveCamera(entity);
+    if (entity?.type === 'cctv') {
+      // Soft signup gate: active Pro subscribers get unlimited cameras.
+      // Everyone else gets a handful free, then a signup nudge — the limit
+      // itself is never shown.
+      if (!isPremiumUser) {
+        if (!cameraClickAllowed()) {
+          setShowCameraSignup(true);
+          return;
+        }
+        recordCameraClick();
+      }
+      setActiveCamera(entity);
+      return;
+    }
     if (entity?.type === 'live_news' && entity.url) {
       setLiveFeedUrl(entity.url);
       setLiveFeedName(entity.name);
       setLiveFeedEmbedAllowed(entity.embed_allowed !== false);
     }
-  }, []);
+  }, [isPremiumUser]);
 
   // ── Drawing / AOI ──
   // OsirisMap already owns the draw interaction and the polygon rendering;
@@ -2210,6 +2226,7 @@ export default function Dashboard() {
         onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })}
         besideOi={showOi && !oiTheater}
       />
+      {showCameraSignup && <CameraSignupNudge onClose={() => setShowCameraSignup(false)} />}
 
       {/* ── Entity Graph Panel ── */}
       {/* Guidance belongs over the map, where the clicking happens. */}
