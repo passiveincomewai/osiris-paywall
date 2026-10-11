@@ -18,6 +18,8 @@ model User {
   emailVerified DateTime?
   // bcrypt hash for email+password sign-in. Null for OAuth-only / magic-link users.
   passwordHash  String?
+  // Phone number collected at Pro checkout (account claim form).
+  phone         String?
   image         String?
   accounts      Account[]
   sessions      Session[]

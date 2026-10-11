@@ -86,14 +86,21 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
         user = await db.user.create({
           data: { email, name, emailVerified: new Date() },
         });
-        // Best-effort claim email — /welcome covers buyers who miss it.
+        // Best-effort claim email with a direct link — /welcome covers buyers
+        // who miss it.
         if (emailConfigured()) {
-          const claimUrl = `${appUrl()}/welcome`;
-          await sendEmail(
-            email,
-            "Your WorldEye Pro account is ready",
-            `<p>Your Pro subscription is active. Set a password to claim your account:</p><p><a href="${claimUrl}">${claimUrl}</a></p><p>You'll need the checkout session from your purchase — it's in the page Stripe sent you to right after paying.</p>`
-          ).catch((e) => console.error("[stripe-webhook] claim email failed:", e));
+          try {
+            const sessions = await stripe().checkout.sessions.list({ subscription: sub.id, limit: 1 });
+            const csId = sessions.data[0]?.id;
+            const claimUrl = csId ? `${appUrl()}/welcome?session_id=${csId}` : `${appUrl()}/welcome`;
+            await sendEmail(
+              email,
+              "Your WorldEye Pro account is ready",
+              `<p>Your Pro subscription is active. Create your account to get started:</p><p><a href="${claimUrl}">${claimUrl}</a></p>`
+            );
+          } catch (e) {
+            console.error("[stripe-webhook] claim email failed:", e);
+          }
         }
       }
       userId = user.id;

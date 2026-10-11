@@ -23,6 +23,24 @@ export function passwordError(pw: string): string | null {
   return null;
 }
 
+// Display name shown across the app (header, affiliates, leaderboard).
+export function usernameError(name: string): string | null {
+  const n = name.trim();
+  if (n.length < 2) return "Username must be at least 2 characters.";
+  if (n.length > 32) return "Username must be under 32 characters.";
+  return null;
+}
+
+// Lenient international phone check: 7–15 digits after stripping formatting.
+export function normalizePhone(phone: string): string {
+  return phone.replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "");
+}
+export function phoneError(phone: string): string | null {
+  const digits = normalizePhone(phone).replace(/\D/g, "");
+  if (digits.length < 7 || digits.length > 15) return "Enter a valid phone number.";
+  return null;
+}
+
 export async function hashPassword(pw: string): Promise<string> {
   return bcrypt.hash(pw, BCRYPT_ROUNDS);
 }

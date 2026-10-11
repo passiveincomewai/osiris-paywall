@@ -6,8 +6,8 @@ import { normalizeEmail } from "@/lib/password-auth";
 export const runtime = "nodejs";
 
 /**
- * Verify a just-completed guest checkout session and report the account
- * state, so /welcome knows whether to offer password setup or sign-in.
+ * Verify a just-completed checkout session and return the purchase email plus
+ * any existing profile details (for prefilling the account setup form).
  * The session id is unguessable and verified server-side against Stripe —
  * query params alone grant nothing.
  */
@@ -39,12 +39,12 @@ export async function GET(req: Request) {
 
   const user = await db.user.findUnique({
     where: { email },
-    select: { passwordHash: true },
+    select: { name: true, phone: true },
   });
 
   return NextResponse.json({
     email,
-    // Null user = webhook hasn't fired yet; the page retries.
-    hasPassword: user ? user.passwordHash !== null : null,
+    name: user?.name ?? null,
+    phone: user?.phone ?? null,
   });
 }
