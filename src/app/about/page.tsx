@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Globe, Eye, ShieldCheck, Users, Code2, ArrowRight } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
   title: "About WorldEye — Open Planetary Intelligence for Everyone",
   description:
-    "WorldEye is a live 3D globe of the planet: free map, flights, satellites, weather, earthquakes, wildfires and ~36,000 public CCTV cameras with no signup. Pro adds the OI AI assistant, satellite view, global search and premium intel feeds.",
+    "WorldEye is a free live 3D globe: flights, satellites, weather, quakes and ~36,000 public cameras with no signup. Pro adds the OI AI assistant and intel tools.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About WorldEye",
@@ -14,6 +16,23 @@ export const metadata: Metadata = {
       "A live 3D globe of the planet. Free forever, no signup — Pro unlocks intelligence-grade tools.",
     type: "website",
     url: "/about",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About WorldEye",
+  description:
+    "WorldEye is a free live 3D globe of the planet — flights, satellites, weather, earthquakes, wildfires and ~36,000 public cameras with no signup.",
+  url: "https://worldeye.app/about",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+  about: {
+    "@type": "Organization",
+    name: "WorldEye",
+    url: "https://worldeye.app",
+    description:
+      "A live 3D globe of the planet with a free tier for everyone and Pro intelligence tools.",
   },
 };
 
@@ -43,6 +62,7 @@ const PRINCIPLES = [
 export default function AboutPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
@@ -156,6 +176,31 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Features",
+              desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+              href: "/features",
+            },
+            {
+              label: "Use cases",
+              desc: "What researchers, travelers, storm watchers and educators do with WorldEye.",
+              href: "/use-cases",
+            },
+            {
+              label: "FAQ",
+              desc: "Is the map free? What does Pro include? Straight answers to common questions.",
+              href: "/faq",
+            },
+            {
+              label: "Contact",
+              desc: "Questions, feedback, press or partnership ideas — the inbox is open.",
+              href: "/contact",
+            },
+          ]}
+        />
 
         <p className="mt-10 text-center text-sm text-white/40">
           Want the details? Read the <Link href="/docs" className="text-[#D4AF37] hover:underline">documentation</Link> or

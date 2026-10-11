@@ -12,19 +12,31 @@ import {
   Sparkles,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Use Cases",
+  title: "Use Cases — Who Uses WorldEye | WorldEye",
   description:
-    "What people actually do with WorldEye: OSINT research and journalism, trip planning, weather and disaster watching, aviation tracking, education, and maritime monitoring — on a free live 3D globe.",
+    "How people use WorldEye's free live globe: OSINT research, trip planning, storm watching, flight tracking, classrooms and maritime monitoring — real workflows.",
   alternates: { canonical: "/use-cases" },
   openGraph: {
-    title: "WorldEye Use Cases",
+    title: "WorldEye Use Cases — Who Uses WorldEye",
     description:
       "OSINT researchers, travelers, storm watchers, aviation enthusiasts, educators and maritime watchers — what they do with WorldEye's live globe.",
     url: "/use-cases",
     type: "website",
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "WorldEye Use Cases",
+  description:
+    "What people actually do with WorldEye: OSINT research and journalism, trip planning, weather and disaster watching, aviation tracking, education, and maritime monitoring.",
+  url: "https://worldeye.app/use-cases",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
 
 type Persona = {
@@ -159,6 +171,7 @@ function PersonaCard({ persona }: { persona: Persona }) {
 export default function UseCasesPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
@@ -219,6 +232,31 @@ export default function UseCasesPage() {
             </a>
           </div>
         </section>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Features",
+              desc: "The full tour — free forever layers and the Pro intelligence toolkit.",
+              href: "/features",
+            },
+            {
+              label: "Live cameras",
+              desc: "36,000+ public cameras travelers and researchers use to verify the world.",
+              href: "/cameras",
+            },
+            {
+              label: "FAQ",
+              desc: "Is the map free? What does Pro include? The common questions, answered.",
+              href: "/faq",
+            },
+            {
+              label: "Blog",
+              desc: "Guides on OSINT, flight tracking and the public camera network.",
+              href: "/blog",
+            },
+          ]}
+        />
       </div>
 
       <SiteFooter />

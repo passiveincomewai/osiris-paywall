@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Activity, MapPin, Clock, Gauge, Newspaper, Plane, Eye, Bell, ChevronDown } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Earthquake Tracker — Earthquakes As They Happen | WorldEye",
+  title: "Live Earthquake Tracker — Quakes As They Happen | WorldEye",
   description:
-    "Track earthquakes live on a 3D globe: magnitudes, depth, location and time as they happen. Free earthquake tracker and live earthquake map — no signup, no account.",
+    "Track earthquakes live on a 3D globe: magnitude, depth, location and time as they happen. Free earthquake tracker — no signup, no account, no cost.",
   alternates: { canonical: "/earthquake-tracker" },
   openGraph: {
     title: "Live Earthquake Tracker | WorldEye",
@@ -81,9 +83,33 @@ const FAQS = [
   },
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: "WorldEye Live Earthquake Tracker",
+      description:
+        "Track earthquakes live on a 3D globe: magnitude, depth, location and time as they happen. Free earthquake tracker — no signup, no account.",
+      url: "https://worldeye.app/earthquake-tracker",
+      isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    },
+    {
+      "@type": "FAQPage",
+      url: "https://worldeye.app/earthquake-tracker",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
 export default function EarthquakeTrackerPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#ff6b35]" />
@@ -228,6 +254,31 @@ export default function EarthquakeTrackerPage() {
             </Link>
           </p>
         </div>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Flight tracker",
+              desc: "Live aircraft on the same free globe — the sky above the shaking ground.",
+              href: "/live-flight-tracker",
+            },
+            {
+              label: "Satellite tracker",
+              desc: "Thousands of satellites overhead — the ISS, Starlink and more, live.",
+              href: "/satellite-tracker",
+            },
+            {
+              label: "Live cameras",
+              desc: "36,000+ public cameras — see conditions on the ground near an event.",
+              href: "/cameras",
+            },
+            {
+              label: "FAQ",
+              desc: "Is the map free? What does Pro include? Answers to the common questions.",
+              href: "/faq",
+            },
+          ]}
+        />
       </div>
 
       <SiteFooter />

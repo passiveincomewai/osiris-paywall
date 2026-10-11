@@ -15,19 +15,31 @@ import {
   Sparkles,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Features",
+  title: "Features — Free Live Globe & Pro Tools | WorldEye",
   description:
-    "Everything WorldEye can do: a free forever live 3D globe with flight tracking, 36,000+ public CCTV cameras, satellites and natural hazards — plus Pro tools like the OI AI assistant, satellite imagery, global search, the OSINT toolkit and premium intel feeds.",
+    "All WorldEye features: a free 3D globe with flights, 36,000+ cameras, satellites and hazards — plus Pro's OI AI assistant, satellite imagery and OSINT toolkit.",
   alternates: { canonical: "/features" },
   openGraph: {
-    title: "WorldEye Features",
+    title: "WorldEye Features — Free Live Globe & Pro Tools",
     description:
       "A free live 3D globe with flights, cameras, satellites and hazards — and Pro intelligence tools: OI AI assistant, satellite view, global search, OSINT toolkit and premium intel feeds.",
     url: "/features",
     type: "website",
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "WorldEye Features",
+  description:
+    "Everything WorldEye can do: a free forever live 3D globe with flight tracking, 36,000+ public cameras, satellites and natural hazards — plus Pro intelligence tools.",
+  url: "https://worldeye.app/features",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
 
 const FREE_FEATURES = [
@@ -94,6 +106,7 @@ const PRO_FEATURES = [
 export default function FeaturesPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
@@ -204,6 +217,31 @@ export default function FeaturesPage() {
             <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Stripe-secured checkout</li>
           </ul>
         </section>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Use cases",
+              desc: "Who uses these features — researchers, travelers, storm watchers and more.",
+              href: "/use-cases",
+            },
+            {
+              label: "Live cameras",
+              desc: "36,000+ public cameras on the globe, free for everyone.",
+              href: "/cameras",
+            },
+            {
+              label: "Live flight tracker",
+              desc: "Real-time aircraft positions, altitude, speed and routes — free, no signup.",
+              href: "/live-flight-tracker",
+            },
+            {
+              label: "FAQ",
+              desc: "Is the map free? What does Pro include? Answers to the common questions.",
+              href: "/faq",
+            },
+          ]}
+        />
       </div>
 
       <SiteFooter />

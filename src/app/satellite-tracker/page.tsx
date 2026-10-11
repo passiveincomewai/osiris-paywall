@@ -15,11 +15,13 @@ import {
   Zap,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
   title: "Live Satellite Tracker — ISS, Starlink & More | WorldEye",
   description:
-    "Watch satellites live on a 3D globe. This satellite tracker shows the ISS, Starlink and thousands more with real orbit paths — a free live satellite map, no signup.",
+    "Watch satellites live on a 3D globe — the ISS, Starlink and thousands more with real orbit paths. A free live satellite map: no signup, no account, no cost.",
   alternates: { canonical: "/satellite-tracker" },
   openGraph: {
     title: "Live Satellite Tracker — ISS, Starlink & More | WorldEye",
@@ -114,9 +116,33 @@ function Faq({ q, a }: { q: string; a: string }) {
   );
 }
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: "WorldEye Live Satellite Tracker",
+      description:
+        "Watch satellites live on a 3D globe. This satellite tracker shows the ISS, Starlink and thousands more with real orbit paths — a free live satellite map, no signup.",
+      url: "https://worldeye.app/satellite-tracker",
+      isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    },
+    {
+      "@type": "FAQPage",
+      url: "https://worldeye.app/satellite-tracker",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
 export default function SatelliteTrackerPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#00E5FF]" />
@@ -271,23 +297,30 @@ export default function SatelliteTrackerPage() {
         </div>
 
         {/* Related */}
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-3 text-sm">
-          <span className="text-white/35 mr-1">Keep exploring:</span>
-          {[
-            ["Flight tracker", "/live-flight-tracker"],
-            ["Live cameras", "/cameras"],
-            ["All features", "/features"],
-            ["Blog", "/blog"],
-          ].map(([label, href]) => (
-            <Link
-              key={href}
-              href={href}
-              className="px-4 py-2 rounded-full border border-white/10 text-white/60 hover:text-white hover:border-[#D4AF37]/40 transition"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
+        <RelatedLinks
+          links={[
+            {
+              label: "Flight tracker",
+              desc: "Live aircraft below the satellites — real-time positions on the free globe.",
+              href: "/live-flight-tracker",
+            },
+            {
+              label: "Earthquake tracker",
+              desc: "Quakes as they happen — magnitude, depth and location on the live map.",
+              href: "/earthquake-tracker",
+            },
+            {
+              label: "Live cameras",
+              desc: "36,000+ public cameras — the ground view to pair with the orbital one.",
+              href: "/cameras",
+            },
+            {
+              label: "Use cases",
+              desc: "Who uses WorldEye — researchers, educators, storm watchers and more.",
+              href: "/use-cases",
+            },
+          ]}
+        />
 
         {/* Trust */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">

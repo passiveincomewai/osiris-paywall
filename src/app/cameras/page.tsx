@@ -5,11 +5,13 @@ import {
   Landmark, Mountain, Plane, TreePine, Waves, Globe, Radio, Eye,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
   title: "Live Cameras — Watch the World Live | WorldEye",
   description:
-    "Browse ~36,000 live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup. The largest public webcam network view on an earth live cam globe.",
+    "Browse ~36,000 live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free forever, no signup, no account.",
   alternates: { canonical: "/cameras" },
   openGraph: {
     title: "Live Cameras — Watch the World Live | WorldEye",
@@ -18,6 +20,16 @@ export const metadata: Metadata = {
     url: "/cameras",
     type: "website",
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "WorldEye Live Cameras",
+  description:
+    "Browse ~36,000 live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.",
+  url: "https://worldeye.app/cameras",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
 
 const CATEGORIES = [
@@ -34,6 +46,7 @@ const CATEGORIES = [
 export default function CamerasPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100">
+      <JsonLd data={jsonLd} />
       <div className="max-w-5xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">
@@ -161,6 +174,31 @@ export default function CamerasPage() {
             Watch live cameras <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Live flight tracker",
+              desc: "Real-time aircraft positions on the same free globe — the sky above the streets.",
+              href: "/live-flight-tracker",
+            },
+            {
+              label: "Satellite tracker",
+              desc: "Watch the ISS, Starlink and thousands of satellites orbit overhead.",
+              href: "/satellite-tracker",
+            },
+            {
+              label: "Earthquake tracker",
+              desc: "Quakes as they happen — magnitude, depth and location on the live map.",
+              href: "/earthquake-tracker",
+            },
+            {
+              label: "FAQ",
+              desc: "Why is a camera offline? Is the map free? Answers to the common questions.",
+              href: "/faq",
+            },
+          ]}
+        />
       </div>
       <SiteFooter />
     </main>

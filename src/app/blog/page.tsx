@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 import { POSTS } from "./posts";
 
 export const metadata = {
@@ -8,6 +9,31 @@ export const metadata = {
   description:
     "Guides and explainers from the WorldEye team: OSINT basics, live flight tracking, the public camera network, and how to read the world in real time.",
   alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "WorldEye Blog",
+    description:
+      "Guides and explainers on OSINT, flight tracking and the public camera network — the skills behind the map.",
+    url: "/blog",
+    type: "website",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "WorldEye Blog",
+  description:
+    "Guides and explainers from the WorldEye team: OSINT basics, live flight tracking, the public camera network, and how to read the world in real time.",
+  url: "https://worldeye.app/blog",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+  blogPost: POSTS.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.title,
+    description: p.seoDescription,
+    url: `https://worldeye.app/blog/${p.slug}`,
+    datePublished: p.date,
+    author: { "@type": "Organization", name: "WorldEye", url: "https://worldeye.app" },
+  })),
 };
 
 function formatDate(iso: string) {
@@ -22,6 +48,7 @@ function formatDate(iso: string) {
 export default function BlogIndex() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100">
+      <JsonLd data={jsonLd} />
       <div className="max-w-5xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">

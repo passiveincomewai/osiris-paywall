@@ -2,19 +2,30 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Sparkles, Globe } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Changelog — What's New | WorldEye",
   description:
-    "What's new on WorldEye: product updates, new features, and site improvements — the cinematic homepage, new pages, the affiliate program, and the WorldEye rebrand.",
+    "What's new on WorldEye: the WorldEye rebrand, affiliate program, camera directory, new SEO pages, account system and free trials — updates as they ship.",
   alternates: { canonical: "/changelog" },
   openGraph: {
     title: "WorldEye Changelog — What's New",
     description:
-      "Recent WorldEye updates: cinematic scroll homepage, new site pages, pricing refresh, affiliate program, and the WorldEye rebrand.",
+      "Recent WorldEye updates: WorldEye rebrand, affiliate program, camera directory, new pages, account system and free trials.",
     type: "website",
     url: "/changelog",
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "WorldEye Changelog",
+  description:
+    "A running log of WorldEye updates — new features, pages, and improvements as they ship.",
+  url: "https://worldeye.app/changelog",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
 
 const ENTRIES: {
@@ -26,11 +37,17 @@ const ENTRIES: {
     month: "October 2026",
     icon: "sparkles",
     items: [
+      "Full rebrand to WorldEye with the new eye-and-globe logo across the site, header, and link previews — now live at worldeye.app.",
+      "WorldEye affiliate program launch — gamified 3-level recurring commissions, ranks, missions, and a public leaderboard.",
+      "Camera directory launch: ~40,000 public webcams organized across 105 countries, with per-country pages and topic collections.",
+      "New SEO pages: About, Features, Live Cameras, Use Cases, FAQ, Terms, Contact, Blog, plus live flight, satellite and earthquake trackers.",
+      "Full account system — email signup with verification, password reset, and sign-in via Google, Apple, Discord, X and Facebook.",
+      "Free trials on Pro: 1 free day on weekly plans, 3 free days on annual — card collected at signup, never charged during the trial.",
+      "Guest checkout: start a trial or pay in Stripe first, claim your account after payment — no signup wall.",
+      "Stripe live mode for Pro subscriptions, with the webhook as the sole subscription write path.",
+      "Soft camera gate: 15 free camera clicks for everyone, then a gentle nudge toward Pro — cameras stay free for Pro subscribers.",
       "Cinematic scroll intro on the homepage — scroll to fly through the WorldEye emblem into the live globe.",
-      "New site pages: About, Features, Live Cameras, Use Cases, Terms of Service, Contact, and a Blog.",
       "Pricing page refresh with per-day framing, a Free-vs-Pro comparison table, and a sticky mobile buy button.",
-      "WorldEye affiliate program launch — recurring commissions, ranks, missions, and a public leaderboard.",
-      "Full rebrand to WorldEye with the new eye-and-globe logo across the site, header, and link previews.",
     ],
   },
   {
@@ -46,6 +63,7 @@ const ENTRIES: {
 export default function ChangelogPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100">
+      <JsonLd data={jsonLd} />
       <div className="max-w-3xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">

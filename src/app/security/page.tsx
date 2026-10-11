@@ -11,6 +11,7 @@ import {
   Mail,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Security — How WorldEye Protects You",
@@ -25,6 +26,28 @@ export const metadata: Metadata = {
     url: "/security",
   },
 };
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "WorldEye Security",
+  description:
+    "How WorldEye protects you — in plain language, with no inflated claims.",
+  url: "https://worldeye.app/security",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+};
+
+const PRACTICES = [
+  "Passwords are hashed with bcrypt and never stored — or logged — in plain text.",
+  "All traffic runs over HTTPS. Authentication cookies are signed, httpOnly, and scoped to the session.",
+  "Payments go exclusively through Stripe. Card numbers are entered on Stripe's checkout pages; we never see, handle, or store them.",
+  "Your OI AI API key is stored in your browser's local storage and sent only to your chosen AI provider — never to WorldEye's servers.",
+  "Public auth endpoints (signup, sign-in, password reset, email verification) are rate-limited, and sign-in never reveals whether an email is registered.",
+  "Password-reset links expire after 1 hour and are burned on use; email-verification links expire after 24 hours.",
+  "Subscription status travels in a signed session token, and the Stripe webhook is the sole write path for subscription state — checkout links and price changes can't be forged client-side.",
+  "Admin dashboards are gated by an explicit allowlist of admin email addresses.",
+  "We keep the stored data minimum: sign-in email, subscription status, and affiliate referral/payout records. No data sales, no ads, no third-party trackers on the marketing pages.",
+];
 
 const SECTIONS: {
   icon: typeof ShieldCheck;
@@ -78,6 +101,7 @@ const SECTIONS: {
 export default function SecurityPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100">
+      <JsonLd data={jsonLd} />
       <div className="max-w-3xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">
@@ -132,6 +156,26 @@ export default function SecurityPage() {
             </section>
           ))}
         </div>
+
+        {/* Security practices */}
+        <section className="mt-12 rounded-3xl border border-[#D4AF37]/25 bg-gradient-to-b from-[#D4AF37]/[0.06] to-transparent p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="w-9 h-9 rounded-xl bg-[#D4AF37]/12 border border-[#D4AF37]/25 flex items-center justify-center shrink-0">
+              <KeyRound className="w-5 h-5 text-[#D4AF37]" />
+            </span>
+            <h2 className="text-lg md:text-xl font-bold text-white/90">
+              Concrete security practices
+            </h2>
+          </div>
+          <ul className="space-y-3">
+            {PRACTICES.map((p) => (
+              <li key={p.slice(0, 40)} className="flex gap-3 text-sm md:text-base text-white/65 leading-relaxed">
+                <span aria-hidden className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#D4AF37]/70 shrink-0" />
+                {p}
+              </li>
+            ))}
+          </ul>
+        </section>
 
         {/* Links */}
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-3">

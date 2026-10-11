@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, MessageCircleQuestion } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 import FaqAccordion, { type Faq } from "./FaqClient";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions | WorldEye",
   description:
-    "Answers about WorldEye: is the map free, do you need an account, what Pro includes, how trials and billing work, and how the cameras, flight tracking and intel feeds work.",
+    "Answers about WorldEye: is the map free, do you need an account, what Pro includes, trials and billing, cameras, flight tracking, privacy and account help.",
   alternates: { canonical: "/faq" },
   openGraph: {
     title: "Frequently Asked Questions | WorldEye",
@@ -51,6 +53,14 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         q: "Is there a mobile app?",
         a: "Not yet. The website is mobile-optimized and works well in phone browsers, which is where most people use it today. A native app is on the roadmap.",
       },
+      {
+        q: "How is WorldEye different from Google Earth?",
+        a: "Google Earth is a map of the recorded past; WorldEye is a map of right now. We don't do historical imagery or 3D buildings — we fuse live streams: aircraft, satellites, weather, earthquakes, wildfires and 36,000+ public cameras, all updating in real time on one globe.",
+      },
+      {
+        q: "Does WorldEye work in my country?",
+        a: "Yes. WorldEye is a website — open it in any modern browser, anywhere in the world. Every layer is global; only camera density varies by region, since it depends on what each place publishes.",
+      },
     ],
   },
   {
@@ -83,6 +93,14 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       {
         q: "Do I need my own OpenAI key for the AI assistant?",
         a: "Yes. OI runs on your own API key (OpenAI, Anthropic, Google or OpenRouter), so usage is billed directly by the provider at cost — never marked up. Your key stays in your browser; we never see it.",
+      },
+      {
+        q: "How do I update my payment method or get receipts?",
+        a: "Everything billing-related runs through Stripe's secure customer portal: update your card, download invoices and receipts, or switch plans. For anything the portal can't do, write to us from your account email.",
+      },
+      {
+        q: "Do you offer refunds?",
+        a: "If Pro didn't work for you, write to us within a few days of being charged and we'll make it right on a case-by-case basis. The free trials exist precisely so you can evaluate before paying anything.",
       },
     ],
   },
@@ -118,11 +136,151 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
     ],
   },
+  {
+    title: "Account & privacy",
+    faqs: [
+      {
+        q: "What data does WorldEye collect?",
+        a: "For anonymous visitors: essentially nothing tied to you — no account, no tracking profile. If you subscribe to Pro or join the affiliate program, we store your sign-in email, subscription status, and (for affiliates) referral and payout records. Full details are in the privacy policy.",
+      },
+      {
+        q: "Do you sell my data or show ads?",
+        a: "No. No data sales, no ad network, no sponsored results anywhere on the site. Revenue comes from Pro subscriptions — that's the whole business model.",
+      },
+      {
+        q: "How do I delete my account?",
+        a: "Email us from your account address and we'll delete your account and its associated data. Payment records that Stripe must retain for legal reasons stay with Stripe, not us.",
+      },
+      {
+        q: "I forgot my password — how do I reset it?",
+        a: "Use the 'Forgot password' link on the sign-in page. We'll email you a reset link that expires after 1 hour and is burned once used. For security, sign-in never reveals whether an email is registered.",
+      },
+    ],
+  },
+  {
+    title: "Cameras & availability",
+    faqs: [
+      {
+        q: "Why is a camera offline?",
+        a: "Every feed is operated by a third party — a city, a transport agency, a resort, a business — streaming from their own servers. Feeds go dark when the source goes down and come back when the source does. The catalog refreshes as sources change, so the count shifts over time.",
+      },
+      {
+        q: "Can I request a camera be added or removed?",
+        a: "If you operate a public camera feed and want it included — or you own a feed listed here and want it removed — contact us with the details and we'll take care of it.",
+      },
+    ],
+  },
 ];
+
+// Plain-text mirror of GROUPS for the FAQPage JSON-LD schema (links stripped).
+const FAQ_SCHEMA: { q: string; a: string }[] = [
+  {
+    q: "Is the map really free?",
+    a: "Yes. The 3D globe, live flight tracking, 36,000+ public cameras, satellites, earthquakes, wildfires and weather are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
+  },
+  {
+    q: "Do I need an account?",
+    a: "No. Just open the site and you're looking at the planet. Accounts only exist for Pro subscribers (billing) and affiliates — never as a gate in front of the map.",
+  },
+  {
+    q: "Which browsers are supported?",
+    a: "Any modern browser: Chrome, Edge, Firefox and Safari, on desktop and mobile. The site is fully usable on phones — just open it in your mobile browser.",
+  },
+  {
+    q: "Is there a mobile app?",
+    a: "Not yet. The website is mobile-optimized and works well in phone browsers, which is where most people use it today. A native app is on the roadmap.",
+  },
+  {
+    q: "How is WorldEye different from Google Earth?",
+    a: "Google Earth is a map of the recorded past; WorldEye is a map of right now. We don't do historical imagery or 3D buildings — we fuse live streams: aircraft, satellites, weather, earthquakes, wildfires and 36,000+ public cameras, all updating in real time on one globe.",
+  },
+  {
+    q: "Does WorldEye work in my country?",
+    a: "Yes. WorldEye is a website — open it in any modern browser, anywhere in the world. Every layer is global; only camera density varies by region, since it depends on what each place publishes.",
+  },
+  {
+    q: "What does Pro include?",
+    a: "The OI AI assistant (runs on your own API key), satellite imagery view, global search and filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis), and premium intel feeds — cyber threats, GDELT events, maritime tracking and live news. Plus every future Pro layer at no extra cost.",
+  },
+  {
+    q: "How do the free trials work?",
+    a: "Weekly plans start with 1 free day, annual plans with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Anytime, in one click. Your Pro access runs until the end of the period you've paid for, then simply stops. No retention calls, no dark patterns.",
+  },
+  {
+    q: "What payment methods do you accept?",
+    a: "Major credit and debit cards through Stripe's secure checkout. Weekly is $3.99, monthly $9.99, annual $59.99.",
+  },
+  {
+    q: "Do I need my own OpenAI key for the AI assistant?",
+    a: "Yes. OI runs on your own API key (OpenAI, Anthropic, Google or OpenRouter), so usage is billed directly by the provider at cost — never marked up. Your key stays in your browser; we never see it.",
+  },
+  {
+    q: "How do I update my payment method or get receipts?",
+    a: "Everything billing-related runs through Stripe's secure customer portal: update your card, download invoices and receipts, or switch plans. For anything the portal can't do, write to us from your account email.",
+  },
+  {
+    q: "Do you offer refunds?",
+    a: "If Pro didn't work for you, write to us within a few days of being charged and we'll make it right on a case-by-case basis. The free trials exist precisely so you can evaluate before paying anything.",
+  },
+  {
+    q: "How do the cameras work?",
+    a: "WorldEye aggregates publicly available camera feeds from around the world — traffic, city streets, landmarks, nature — into one browsable layer on the map. They're third-party public sources, so individual feeds can go offline; coverage varies by region. Free for everyone.",
+  },
+  {
+    q: "How accurate is the flight tracking?",
+    a: "Positions come from ADS-B broadcasts that aircraft transmit continuously, so live coverage is genuinely real-time where receiver networks have coverage. Over oceans and remote areas, updates can be sparser.",
+  },
+  {
+    q: "What are the intel feeds?",
+    a: "Pro-only data layers: cyber threat activity, GDELT global event data, maritime vessel tracking, conflict zones and a live news feed — all plotted on the globe. The technical reference is in the documentation.",
+  },
+  {
+    q: "What data does WorldEye collect?",
+    a: "For anonymous visitors: essentially nothing tied to you — no account, no tracking profile. If you subscribe to Pro or join the affiliate program, we store your sign-in email, subscription status, and (for affiliates) referral and payout records. Full details are in the privacy policy.",
+  },
+  {
+    q: "Do you sell my data or show ads?",
+    a: "No. No data sales, no ad network, no sponsored results anywhere on the site. Revenue comes from Pro subscriptions — that's the whole business model.",
+  },
+  {
+    q: "How do I delete my account?",
+    a: "Email us from your account address and we'll delete your account and its associated data. Payment records that Stripe must retain for legal reasons stay with Stripe, not us.",
+  },
+  {
+    q: "I forgot my password — how do I reset it?",
+    a: "Use the 'Forgot password' link on the sign-in page. We'll email you a reset link that expires after 1 hour and is burned once used. For security, sign-in never reveals whether an email is registered.",
+  },
+  {
+    q: "Why is a camera offline?",
+    a: "Every feed is operated by a third party — a city, a transport agency, a resort, a business — streaming from their own servers. Feeds go dark when the source goes down and come back when the source does. The catalog refreshes as sources change, so the count shifts over time.",
+  },
+  {
+    q: "Can I request a camera be added or removed?",
+    a: "If you operate a public camera feed and want it included — or you own a feed listed here and want it removed — contact us with the details and we'll take care of it.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  name: "WorldEye Frequently Asked Questions",
+  url: "https://worldeye.app/faq",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+  mainEntity: FAQ_SCHEMA.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
 
 export default function FaqPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#D4AF37]" />
@@ -174,6 +332,31 @@ export default function FaqPage() {
             </Link>
           </div>
         </div>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Features",
+              desc: "The full tour — free forever layers and the Pro intelligence toolkit.",
+              href: "/features",
+            },
+            {
+              label: "Contact",
+              desc: "Still stuck? Questions, feedback or partnership ideas — write to us.",
+              href: "/contact",
+            },
+            {
+              label: "Changelog",
+              desc: "What's new on WorldEye — updates and launches as they ship.",
+              href: "/changelog",
+            },
+            {
+              label: "Security",
+              desc: "How WorldEye protects you — in plain language, with no inflated claims.",
+              href: "/security",
+            },
+          ]}
+        />
       </div>
 
       <SiteFooter />

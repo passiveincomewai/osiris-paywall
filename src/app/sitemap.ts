@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import directory from "@/data/camera-directory.json";
+import { POSTS } from "./blog/posts";
 
 const BASE = "https://worldeye.app";
 
@@ -15,6 +16,23 @@ const SEO_PAGES = [
   "/live-webcams",
 ];
 
+// Wave 4 (2026-10-11): sitemap-only directory pages — not linked from site chrome.
+const SEO_PAGES_WAVE4 = [
+  "/us-traffic-cameras/georgia",
+  "/us-traffic-cameras/utah",
+  "/us-traffic-cameras/texas",
+  "/us-traffic-cameras/florida",
+  "/us-traffic-cameras/indiana",
+  "/us-traffic-cameras/nevada",
+  "/city-webcams/london",
+  "/city-webcams/ottawa",
+  "/city-webcams/toronto",
+  "/city-webcams/madrid",
+  "/north-america-webcams",
+  "/asia-webcams",
+  "/oceania-webcams",
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [
@@ -26,9 +44,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/earthquake-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/pricing`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE}/blog/what-is-osint`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/blog/live-flight-tracking-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/blog/world-live-cameras`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    ...POSTS.map((p) => ({
+      url: `${BASE}/blog/${p.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/affiliates`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/affiliates/leaderboard`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
@@ -43,6 +64,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Camera directory (sitemap-only SEO pages — not linked from site chrome).
     { url: `${BASE}/cameras/countries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     ...SEO_PAGES.filter((p) => p !== "/cameras/countries").map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE4.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,

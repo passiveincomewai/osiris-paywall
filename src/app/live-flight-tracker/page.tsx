@@ -15,11 +15,13 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
   title: "Live Flight Tracker — Track Every Flight Live | WorldEye",
   description:
-    "Track flights live on a free 3D map. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost. Your free flight radar.",
+    "Track flights live on a free 3D map. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost, no account.",
   alternates: { canonical: "/live-flight-tracker" },
   openGraph: {
     title: "Live Flight Tracker — Track Every Flight Live | WorldEye",
@@ -114,9 +116,33 @@ function Faq({ q, a }: { q: string; a: string }) {
   );
 }
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: "WorldEye Live Flight Tracker",
+      description:
+        "Track flights live on a free 3D map. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost.",
+      url: "https://worldeye.app/live-flight-tracker",
+      isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    },
+    {
+      "@type": "FAQPage",
+      url: "https://worldeye.app/live-flight-tracker",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
 export default function LiveFlightTrackerPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#00E5FF]" />
@@ -262,23 +288,30 @@ export default function LiveFlightTrackerPage() {
         </div>
 
         {/* Related */}
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-3 text-sm">
-          <span className="text-white/35 mr-1">Keep exploring:</span>
-          {[
-            ["Live cameras", "/cameras"],
-            ["All features", "/features"],
-            ["Use cases", "/use-cases"],
-            ["Blog", "/blog"],
-          ].map(([label, href]) => (
-            <Link
-              key={href}
-              href={href}
-              className="px-4 py-2 rounded-full border border-white/10 text-white/60 hover:text-white hover:border-[#D4AF37]/40 transition"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
+        <RelatedLinks
+          links={[
+            {
+              label: "Satellite tracker",
+              desc: "Thousands of satellites overhead — the ISS, Starlink and more, live.",
+              href: "/satellite-tracker",
+            },
+            {
+              label: "Earthquake tracker",
+              desc: "Quakes as they happen — magnitude, depth and location on the live map.",
+              href: "/earthquake-tracker",
+            },
+            {
+              label: "Live cameras",
+              desc: "36,000+ public cameras — watch the streets below the flight paths.",
+              href: "/cameras",
+            },
+            {
+              label: "All features",
+              desc: "Everything WorldEye can do — free forever layers and Pro tools.",
+              href: "/features",
+            },
+          ]}
+        />
 
         {/* Trust */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">

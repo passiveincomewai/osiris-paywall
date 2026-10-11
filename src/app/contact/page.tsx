@@ -2,20 +2,50 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Mail, BookOpen, CreditCard, Users, ArrowRight } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Contact WorldEye",
   description:
-    "Get in touch with the WorldEye team — support, billing questions, press and partnerships. We typically reply within 1–2 business days.",
+    "Get in touch with the WorldEye team — support, billing questions, press and partnerships. Email us anytime; we typically reply within 1–2 business days.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: "Contact WorldEye",
     description:
-      "Questions, feedback or partnership ideas — reach the WorldEye team by email.",
+      "Questions, feedback or partnership ideas — reach the WorldEye team by email. We reply within 1–2 business days.",
     type: "website",
     url: "/contact",
   },
 };
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Contact WorldEye",
+  description:
+    "Get in touch with the WorldEye team — support, billing questions, press and partnerships.",
+  url: "https://worldeye.app/contact",
+  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+};
+
+const SUPPORT_FAQS = [
+  {
+    q: "How fast will I get a reply?",
+    a: "We typically reply within 1–2 business days. WorldEye is run by a small independent team, so complex technical issues can take a little longer — but every message gets read.",
+  },
+  {
+    q: "I'm having a billing problem — what should I include?",
+    a: "Write from the email address on your account and include your plan (weekly, monthly or annual) and the date of the charge. That lets us find your subscription in Stripe immediately.",
+  },
+  {
+    q: "A camera, flight or satellite layer isn't working — what now?",
+    a: "First try a hard refresh — most layers depend on live third-party feeds that can hiccup. If it's still down, tell us which layer, your browser, and roughly when it started; we'll check whether the feed itself is offline.",
+  },
+  {
+    q: "Do you offer phone or live-chat support?",
+    a: "No — email only for now. It keeps support personal and lets the whole team see and answer your message instead of a chatbot.",
+  },
+];
 
 const EMAIL = "passiveincomewai@gmail.com";
 
@@ -46,6 +76,7 @@ const CARDS = [
 export default function ContactPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
@@ -119,6 +150,27 @@ export default function ContactPage() {
                   {c.cta} <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Support FAQ */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Before you <span className="text-[#D4AF37]">write</span>
+          </h2>
+          <div className="space-y-3">
+            {SUPPORT_FAQS.map((f) => (
+              <details
+                key={f.q}
+                className="group border border-white/10 rounded-2xl bg-white/[0.02] overflow-hidden"
+              >
+                <summary className="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                  <span className="font-medium text-white/90">{f.q}</span>
+                  <span aria-hidden className="text-[#D4AF37] shrink-0 transition-transform group-open:rotate-180 text-lg leading-none">▾</span>
+                </summary>
+                <p className="px-6 pb-5 text-sm text-white/60 leading-relaxed">{f.a}</p>
+              </details>
             ))}
           </div>
         </section>

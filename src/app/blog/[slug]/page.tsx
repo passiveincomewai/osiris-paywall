@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 import { POSTS, getPost } from "../posts";
 
 export function generateStaticParams() {
@@ -13,13 +14,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = getPost(slug);
   if (!post) return {};
   return {
-    title: `${post.title} — WorldEye Blog`,
-    description: post.excerpt,
+    title: post.seoTitle,
+    description: post.seoDescription,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       type: "article",
       title: post.title,
-      description: post.excerpt,
+      description: post.seoDescription,
       url: `/blog/${post.slug}`,
     },
   };
@@ -34,6 +35,26 @@ function formatDate(iso: string) {
   });
 }
 
+// Renders [text](/path) as internal links inside post body paragraphs.
+function renderBody(text: string, keyPrefix: string) {
+  const parts = text.split(/(\[[^\]]+\]\(\/[^)]+\))/g);
+  return parts.map((part, i) => {
+    const m = /^\[([^\]]+)\]\((\/[^)]+)\)$/.exec(part);
+    if (m && m[1] && m[2]) {
+      return (
+        <Link
+          key={`${keyPrefix}-${i}`}
+          href={m[2]}
+          className="text-[#D4AF37] underline decoration-[#D4AF37]/40 underline-offset-4 hover:decoration-[#D4AF37] transition"
+        >
+          {m[1]}
+        </Link>
+      );
+    }
+    return <span key={`${keyPrefix}-${i}`}>{part}</span>;
+  });
+}
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = getPost(slug);
@@ -43,8 +64,46 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const prev = idx > 0 ? POSTS[idx - 1] : null;
   const next = idx < POSTS.length - 1 ? POSTS[idx + 1] : null;
 
+  const blogPosting = {
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.seoDescription,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { "@type": "Organization", name: "WorldEye", url: "https://worldeye.app" },
+    publisher: { "@type": "Organization", name: "WorldEye", url: "https://worldeye.app" },
+    url: `https://worldeye.app/blog/${post.slug}`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://worldeye.app/blog/${post.slug}` },
+    isPartOf: {
+      "@type": "Blog",
+      name: "WorldEye Blog",
+      url: "https://worldeye.app/blog",
+    },
+    keywords: post.tags.join(", "),
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      blogPosting,
+      ...(post.faqs && post.faqs.length > 0
+        ? [
+            {
+              "@type": "FAQPage",
+              mainEntity: post.faqs.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            },
+          ]
+        : []),
+    ],
+  };
+
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100">
+      <JsonLd data={jsonLd} />
       <article className="max-w-3xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">
@@ -85,13 +144,40 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <div className="space-y-4">
                 {s.body.map((para, j) => (
                   <p key={j} className="text-white/65 leading-relaxed text-[17px]">
-                    {para}
+                    {renderBody(para, `${i}-${j}`)}
                   </p>
                 ))}
               </div>
             </section>
           ))}
         </div>
+
+        {/* FAQ */}
+        {post.faqs && post.faqs.length > 0 && (
+          <section className="mt-14">
+            <h2 className="text-2xl font-bold tracking-tight mb-6">
+              <span className="text-[#D4AF37]">▸</span> Frequently asked questions
+            </h2>
+            <div className="space-y-3">
+              {post.faqs.map((f, i) => (
+                <details
+                  key={i}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 group"
+                >
+                  <summary className="font-semibold cursor-pointer list-none [&::-webkit-details-marker]:hidden flex justify-between items-center gap-4 hover:text-[#D4AF37] transition">
+                    {f.q}
+                    <span className="text-[#D4AF37] shrink-0 group-open:rotate-45 transition-transform text-xl leading-none">
+                      +
+                    </span>
+                  </summary>
+                  <p className="text-white/65 leading-relaxed mt-3 text-[16px]">
+                    {renderBody(f.a, `faq-${i}`)}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* CTA card */}
         <div className="mt-16 rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-8 md:p-10 text-center">
