@@ -91,8 +91,9 @@ export default function CinematicHero() {
           @media (orientation: portrait) {
             /* Portrait phones: a 16:9 frame with object-cover would show only
                ~26% of the frame width, slicing the baked-in "WorldEye" title
-               (it spans ~68% of the frame). Show the middle 75% instead so the
-               full title fits with margin, and fill the screen behind it with
+               (it spans ~43% of the frame, x 29%-72%). Show the middle 50%
+               instead — the full title fits centered with margin, and the
+               video stays big and cinematic. Fill the screen behind it with
                a blurred, darkened copy of the video — no harsh letterbox. */
             .cine-vid-bg {
               display: block;
@@ -103,7 +104,7 @@ export default function CinematicHero() {
             }
             .cine-vid {
               inset: auto; top: 50%; left: 50%;
-              width: 133.33vw; height: 75vw;
+              width: 200vw; height: 112.5vw;
               transform: translate(-50%, -50%);
               box-shadow: 0 0 120px rgba(0, 0, 0, 0.8);
             }
