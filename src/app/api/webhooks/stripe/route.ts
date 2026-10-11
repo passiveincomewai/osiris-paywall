@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/lib/db";
-import { stripe } from "@/lib/stripe";
+import { stripe, appUrl } from "@/lib/stripe";
 import type { SubscriptionStatus } from "@prisma/client";
 import { recordCommissionsForInvoice, reverseCommissionsForInvoice } from "@/lib/affiliate/commissions";
 import { attributeUserToAffiliate, linkAttribution } from "@/lib/affiliate/attribution";
+import { normalizeEmail, isValidEmail } from "@/lib/password-auth";
+import { sendEmail, emailConfigured } from "@/lib/email";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -54,15 +56,51 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
     });
     userId = row?.userId ?? undefined;
   }
-  if (!userId) {
-    console.error(`[stripe-webhook] no userId for subscription ${sub.id}; skipping`);
-    return;
-  }
 
   const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer?.id;
   if (!customerId) {
     console.error(`[stripe-webhook] no customer on subscription ${sub.id}; skipping`);
     return;
+  }
+
+  // Guest checkout: no userId anywhere yet — resolve the account from the
+  // Stripe customer's email. Paid buyers get their account auto-created
+  // (email counts as verified — they just paid with it) and claim it with
+  // a password on /welcome.
+  if (!userId) {
+    try {
+      const customer = await stripe().customers.retrieve(customerId);
+      const rawEmail =
+        typeof customer !== "string" && !customer.deleted ? customer.email : null;
+      const email = rawEmail ? normalizeEmail(rawEmail) : null;
+      if (!email || !isValidEmail(email)) {
+        console.error(`[stripe-webhook] no usable email for guest subscription ${sub.id}; skipping`);
+        return;
+      }
+      let user = await db.user.findUnique({ where: { email } });
+      if (!user) {
+        const name =
+          typeof customer !== "string" && !customer.deleted && customer.name
+            ? customer.name
+            : null;
+        user = await db.user.create({
+          data: { email, name, emailVerified: new Date() },
+        });
+        // Best-effort claim email — /welcome covers buyers who miss it.
+        if (emailConfigured()) {
+          const claimUrl = `${appUrl()}/welcome`;
+          await sendEmail(
+            email,
+            "Your WorldEye Pro account is ready",
+            `<p>Your Pro subscription is active. Set a password to claim your account:</p><p><a href="${claimUrl}">${claimUrl}</a></p><p>You'll need the checkout session from your purchase — it's in the page Stripe sent you to right after paying.</p>`
+          ).catch((e) => console.error("[stripe-webhook] claim email failed:", e));
+        }
+      }
+      userId = user.id;
+    } catch (e) {
+      console.error(`[stripe-webhook] guest user resolution failed for ${sub.id}:`, e);
+      return;
+    }
   }
 
   const period = currentPeriod(sub);

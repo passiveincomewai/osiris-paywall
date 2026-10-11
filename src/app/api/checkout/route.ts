@@ -21,11 +21,11 @@ async function affiliateMetadata(): Promise<Record<string, string>> {
 }
 
 export async function POST(req: Request) {
+  // Guest checkout: no sign-in required. The account is created (or linked)
+  // from the Stripe customer's email when the webhook fires, and the buyer
+  // claims it with a password on /welcome after paying.
   const session = await auth();
   const userId = session?.user?.id;
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
-  }
 
   const { plan } = (await req.json().catch(() => ({}))) as { plan?: string };
   if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise") {
@@ -46,15 +46,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: `${priceEnv} is not set` }, { status: 500 });
   }
 
-  // Already holding an active pass? Send them straight in — no double charge.
-  const existing = await db.subscription.findUnique({ where: { userId } });
-  if (existing?.status === "active" && existing.currentPeriodEnd > new Date()) {
-    return NextResponse.json({ url: "/dashboard" });
+  // Signed-in users already holding an active pass go straight in — no double charge.
+  let customerId: string | undefined;
+  if (userId) {
+    const existing = await db.subscription.findUnique({ where: { userId } });
+    if (existing?.status === "active" && existing.currentPeriodEnd > new Date()) {
+      return NextResponse.json({ url: "/dashboard" });
+    }
+    // Reuse the Stripe customer across resubscribes (keeps invoices tidy).
+    customerId = existing?.stripeCustomerId;
   }
-
-  // Reuse the Stripe customer across resubscribes (keeps invoices tidy).
-  let customerId = existing?.stripeCustomerId;
-  if (!customerId) {
+  if (!customerId && userId) {
     const customer = await stripe().customers.create({
       email: session.user?.email ?? undefined,
       metadata: { userId },
@@ -64,12 +66,13 @@ export async function POST(req: Request) {
 
   const checkoutSession = await stripe().checkout.sessions.create({
     mode: "subscription",
-    customer: customerId,
-    client_reference_id: userId,
+    ...(customerId ? { customer: customerId } : {}),
+    // Guests: Stripe collects the email at checkout; the webhook links it.
+    ...(userId ? { client_reference_id: userId } : {}),
     line_items: [{ price: priceId, quantity: 1 }],
     subscription_data: {
       metadata: {
-        userId,
+        ...(userId ? { userId } : { guest: "1" }),
         // Affiliate attribution: resolved server-side from the httpOnly cookie.
         // The webhook reads this to award commissions on paid invoices.
         ...(await affiliateMetadata()),
@@ -79,7 +82,10 @@ export async function POST(req: Request) {
     // Trials must collect a card up front; Stripe charges it when the trial ends.
     ...(trialDays > 0 ? { payment_method_collection: "always" as const } : {}),
     allow_promotion_codes: true,
-    success_url: `${appUrl()}/?checkout=success`,
+    // Guests land on /welcome to claim their account; members go to the app.
+    success_url: userId
+      ? `${appUrl()}/?checkout=success`
+      : `${appUrl()}/welcome?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${appUrl()}/pricing?checkout=cancelled`,
   });
 

@@ -83,10 +83,6 @@ function CheckoutButton({ plan, label }: { plan: Plan; label: string }) {
         body: JSON.stringify({ plan }),
       });
       const data = await res.json();
-      if (res.status === 401) {
-        window.location.href = `/api/auth/signin?callbackUrl=${encodeURIComponent("/pricing")}`;
-        return;
-      }
       if (!res.ok || !data.url) throw new Error(data.error || "Checkout failed");
       window.location.href = data.url;
     } catch (e) {
