@@ -6,11 +6,18 @@ import SiteFooter from "@/components/SiteFooter";
 import directory from "@/data/camera-directory.json";
 import { countryContentB, type CountryContent } from "@/data/country-content-b";
 import { countryContentC } from "@/data/country-content-c";
+import { countryContentD } from "@/data/country-content-d";
+import { countryContentE } from "@/data/country-content-e";
 
 const BASE = "https://worldeye.app";
 const TOP_N = 30;
 
-const CONTENT: Record<string, CountryContent> = { ...countryContentB, ...countryContentC };
+const CONTENT: Record<string, CountryContent> = {
+  ...countryContentB,
+  ...countryContentC,
+  ...countryContentD,
+  ...countryContentE,
+};
 
 type Country = (typeof directory.countries)[number];
 
