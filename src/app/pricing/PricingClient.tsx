@@ -137,7 +137,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {  const [open, setOpen] = 
     <div className="border border-white/10 rounded-2xl bg-white/[0.02] overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
+        className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left"
       >
         <span className="font-medium text-white/90">{q}</span>
         <ChevronDown className={`w-5 h-5 text-[#D4AF37] shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -150,7 +150,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {  const [open, setOpen] = 
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            <p className="px-6 pb-5 text-sm text-white/60 leading-relaxed">{a}</p>
+            <p className="px-4 pb-4 text-sm text-white/60 leading-relaxed">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -170,9 +170,9 @@ export default function PricingPage() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[300px] rounded-full opacity-10 blur-[100px] bg-[#00E5FF]" />
       </div>
 
-      <div className="relative max-w-5xl mx-auto px-6 py-10 md:py-16">
+      <div className="relative max-w-5xl mx-auto px-6 py-6 md:py-8">
         {/* Top bar */}
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between mb-6">
           <a href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
             <ArrowLeft className="w-4 h-4" /> Back to the map
           </a>
@@ -189,23 +189,20 @@ export default function PricingPage() {
             <img
               src="/worldeye-eye.png"
               alt="WorldEye"
-              className="h-14 md:h-16 w-auto mx-auto mb-6"
+              className="h-10 md:h-12 w-auto mx-auto mb-4"
               style={{ filter: "drop-shadow(0 0 18px rgba(0,150,255,0.45))" }}
             />
-            <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
-              <Sparkles className="w-3.5 h-3.5" /> UPGRADE TO PRO
-            </p>
-            <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
+            <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
               See what the <span className="text-[#D4AF37]">free map</span> can&apos;t show you.
             </h1>
-            <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
+            <p className="text-white/55 mt-2 text-sm md:text-base leading-relaxed px-1">
               An AI analyst that works the globe for you. Satellite imagery. Global search.
               Premium intel feeds. One subscription, everything unlocked.
             </p>
           </motion.div>
 
           {/* Billing toggle */}
-          <div className="mt-11 md:mt-13 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur max-w-full">
+          <div className="mt-6 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur max-w-full">
             {(["weekly", "monthly", "annual"] as Plan[]).map((key) => (
               <button
                 key={key}
@@ -246,7 +243,7 @@ export default function PricingPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="mt-8 md:mt-10 max-w-lg mx-auto rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-6 md:p-10 shadow-[0_24px_80px_rgba(212,175,55,0.12)]"
+          className="mt-6 max-w-md mx-auto rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-5 md:p-6 shadow-[0_24px_80px_rgba(212,175,55,0.12)]"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -259,7 +256,7 @@ export default function PricingPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2 }}
-                    className="text-6xl font-bold tracking-tight"
+                    className="text-5xl font-bold tracking-tight"
                   >
                     {p.price}
                   </motion.span>
@@ -283,23 +280,23 @@ export default function PricingPage() {
             )}
           </div>
 
-          <div className="my-7 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+          <div className="my-4 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
 
-          <ul className="space-y-3.5">
+          <ul className="space-y-2">
             {PRO_FEATURES.map((f) => (
-              <li key={f.title} className="flex gap-3">
-                <span className="mt-0.5 w-6 h-6 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center shrink-0">
-                  <Check className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <li key={f.title} className="flex items-center gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center shrink-0">
+                  <Check className="w-3 h-3 text-[#D4AF37]" />
                 </span>
-                <div>
-                  <p className="font-medium text-white/90">{f.title}</p>
-                  <p className="text-sm text-white/45">{f.desc}</p>
-                </div>
+                <p className="text-sm text-white/85">
+                  <span className="font-medium">{f.title}</span>
+                  <span className="text-white/40"> — {f.desc}</span>
+                </p>
               </li>
             ))}
           </ul>
 
-          <div className="mt-8">
+          <div className="mt-5">
             <CheckoutButton plan={plan} label={p.cta} />
           </div>
           <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-4">
@@ -308,32 +305,32 @@ export default function PricingPage() {
         </motion.div>
 
         {/* Free vs Pro comparison */}
-        <div className="mt-20">
-          <h2 className="text-2xl md:text-3xl font-bold text-center">Free is generous. <span className="text-[#D4AF37]">Pro is the full picture.</span></h2>
-          <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden max-w-3xl mx-auto">
+        <div className="mt-10">
+          <h2 className="text-xl md:text-2xl font-bold text-center">Free is generous. <span className="text-[#D4AF37]">Pro is the full picture.</span></h2>
+          <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden max-w-3xl mx-auto">
             <div className="grid grid-cols-[1fr_64px_64px] md:grid-cols-[1fr_110px_110px] text-[11px] font-bold tracking-[0.15em] text-white/40 border-b border-white/10 bg-white/[0.02]">
-              <div className="px-5 md:px-7 py-4">FEATURE</div>
-              <div className="py-4 text-center">FREE</div>
-              <div className="py-4 text-center text-[#D4AF37]">PRO</div>
+              <div className="px-5 md:px-7 py-2.5">FEATURE</div>
+              <div className="py-2.5 text-center">FREE</div>
+              <div className="py-2.5 text-center text-[#D4AF37]">PRO</div>
             </div>
             {COMPARE_ROWS.map((r) => (
               <div key={r.feature} className="grid grid-cols-[1fr_64px_64px] md:grid-cols-[1fr_110px_110px] border-b border-white/5 last:border-0 text-sm">
-                <div className="px-5 md:px-7 py-3.5 text-white/75">{r.feature}</div>
-                <div className="py-3.5 flex justify-center items-center">
+                <div className="px-5 md:px-7 py-2 text-white/75">{r.feature}</div>
+                <div className="py-2 flex justify-center items-center">
                   {r.free
                     ? <Check className="w-4 h-4 text-white/35" />
                     : <Minus className="w-4 h-4 text-white/15" />}
                 </div>
-                <div className="py-3.5 flex justify-center items-center bg-[#D4AF37]/[0.06]">
+                <div className="py-2 flex justify-center items-center bg-[#D4AF37]/[0.06]">
                   <Check className="w-4 h-4 text-[#D4AF37]" strokeWidth={3} />
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-8 text-center">
+          <div className="mt-5 text-center">
             <button
               onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-              className="px-8 py-3.5 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
+              className="px-6 py-2.5 rounded-2xl bg-[#D4AF37] text-black font-bold text-sm hover:brightness-110 transition"
             >
               Choose Pro
             </button>
@@ -341,9 +338,9 @@ export default function PricingPage() {
         </div>
 
         {/* FAQ */}
-        <div className="mt-20 max-w-2xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Questions, answered.</h2>
-          <div className="space-y-3">
+        <div className="mt-10 max-w-2xl mx-auto">
+          <h2 className="text-xl md:text-2xl font-bold text-center mb-4">Questions, answered.</h2>
+          <div className="space-y-2">
             {FAQS.map((f) => (
               <FaqItem key={f.q} q={f.q} a={f.a} />
             ))}
@@ -351,7 +348,7 @@ export default function PricingPage() {
         </div>
 
         {/* Bottom trust */}
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
           <span className="flex items-center gap-1.5"><BadgeCheck className="w-4 h-4 text-[#D4AF37]/70" /> 1-click cancellation</span>
           <span className="flex items-center gap-1.5"><Lock className="w-4 h-4 text-[#D4AF37]/70" /> Stripe-secured checkout</span>
           <span className="flex items-center gap-1.5"><X className="w-4 h-4 text-[#D4AF37]/70" /> No ads, no data selling</span>
