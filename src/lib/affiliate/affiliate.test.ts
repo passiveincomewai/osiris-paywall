@@ -89,6 +89,6 @@ describe("program defaults", () => {
 
 describe("referral links", () => {
   it("builds /ref/ links", () => {
-    expect(referralLinkFor("jameson")).toBe("https://osiris-lime.vercel.app/ref/jameson");
+    expect(referralLinkFor("jameson")).toBe("https://worldeye.app/ref/jameson");
   });
 });

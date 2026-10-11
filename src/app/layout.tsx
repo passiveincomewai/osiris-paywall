@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import ErrorBoundary from '@/components/ErrorBoundary';
+import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import "./globals.css";
 
 const SITE_URL = "https://worldeye.app";
@@ -196,6 +197,7 @@ export default function RootLayout({
 
       </head>
       <body className="antialiased">
+        <AffiliateAttributionSync />
         <ErrorBoundary name="WorldEye">
           {children}
         </ErrorBoundary>

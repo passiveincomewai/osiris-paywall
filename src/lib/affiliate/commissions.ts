@@ -114,13 +114,14 @@ export async function recordCommissionsForInvoice(invoice: PaidInvoice): Promise
   const l1Cents = Math.floor((invoice.amountCents * rank.commissionPct) / 100);
   if (await createCommissionOnce({ affiliateProfileId: l1Profile.id, referredUserId: invoice.userId, invoice, level: 1, amountCents: l1Cents })) {
     total += l1Cents;
-    // XP: first paying referral is a milestone, the rest are standard.
-    const n = await countPayingReferrals(l1Profile.id);
-    if (n <= 1) {
-      await awardXP(l1Profile.id, "first_paying_referral", { idempotencyKey: `firstpay:${invoice.userId}` });
-    } else {
+    // XP: first paid invoice is a milestone; every paid invoice after that
+    // (renewals included) earns the standard referral XP. The first award is
+    // idempotent, so renewals naturally fall through to the standard award.
+    const first = await awardXP(l1Profile.id, "first_paying_referral", { idempotencyKey: `firstpay:${invoice.userId}` });
+    if (!first.awarded) {
       await awardXP(l1Profile.id, "paying_referral", { idempotencyKey: `payref:${invoice.stripeInvoiceId}:${invoice.userId}` });
     }
+    const n = await countPayingReferrals(l1Profile.id);
     if (n === 5) await awardXP(l1Profile.id, "bonus_5_paying", { idempotencyKey: `bonus5:${l1Profile.id}` });
     if (n === 10) await awardXP(l1Profile.id, "bonus_10_paying", { idempotencyKey: `bonus10:${l1Profile.id}` });
   }
