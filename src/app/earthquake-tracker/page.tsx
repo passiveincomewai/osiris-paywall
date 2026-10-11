@@ -1,0 +1,236 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft, Activity, MapPin, Clock, Gauge, Newspaper, Plane, Eye, Bell, ChevronDown } from "lucide-react";
+import SiteFooter from "@/components/SiteFooter";
+
+export const metadata: Metadata = {
+  title: "Live Earthquake Tracker — Earthquakes As They Happen | WorldEye",
+  description:
+    "Track earthquakes live on a 3D globe: magnitudes, depth, location and time as they happen. Free earthquake tracker and live earthquake map — no signup, no account.",
+  alternates: { canonical: "/earthquake-tracker" },
+  openGraph: {
+    title: "Live Earthquake Tracker | WorldEye",
+    description:
+      "Earthquakes as they happen — magnitude, depth, location and time on a live 3D map. Free, no signup.",
+    url: "/earthquake-tracker",
+    type: "website",
+  },
+};
+
+const DATA_POINTS = [
+  {
+    icon: Gauge,
+    title: "Magnitude",
+    desc: "Every event plotted with its measured magnitude, so you can see at a glance what's minor and what's major.",
+  },
+  {
+    icon: MapPin,
+    title: "Location",
+    desc: "Precise epicenter placement on the globe — zoom from a planetary view straight down to the affected region.",
+  },
+  {
+    icon: Activity,
+    title: "Depth",
+    desc: "Focal depth for each quake, because a shallow magnitude 5 and a deep magnitude 5 are very different events.",
+  },
+  {
+    icon: Clock,
+    title: "Time",
+    desc: "When it happened, down to the minute — follow an unfolding sequence as aftershocks arrive.",
+  },
+];
+
+const USE_CASES = [
+  {
+    icon: Plane,
+    title: "Travel safety",
+    desc: "Checking in on a destination before you fly — or after you land — takes seconds. See what's shaking near where you're headed.",
+  },
+  {
+    icon: Newspaper,
+    title: "Following the news",
+    desc: "When a quake makes headlines, look at the actual data yourself: where it hit, how deep, and what followed.",
+  },
+  {
+    icon: Eye,
+    title: "Pure curiosity",
+    desc: "The planet never sits still. Watching the ring of fire light up over a week is strangely mesmerizing.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "Is the earthquake tracker free?",
+    a: "Yes — completely. The earthquake layer is part of the free map: no account, no signup, no credit card. Open the site and the quakes are already there.",
+  },
+  {
+    q: "How fast do earthquake updates arrive?",
+    a: "Events appear as the public seismic monitoring networks publish them — typically within minutes of a quake being detected and located. The map refreshes continuously while you watch.",
+  },
+  {
+    q: "What magnitude range is shown?",
+    a: "From small tremors to major events. Global networks reliably detect quakes around magnitude 4.5 and up worldwide, with smaller events picked up where regional station coverage is dense.",
+  },
+  {
+    q: "Can I get alerts for earthquakes?",
+    a: "The live map shows quakes as they happen while you have it open. For push alerts on your phone, dedicated apps from geological agencies are still the best option — WorldEye is the place to see the full picture once something happens.",
+  },
+  {
+    q: "Where does the data come from?",
+    a: "Public seismic monitoring networks — the same open feeds researchers and newsrooms use. WorldEye aggregates and visualizes them on the globe; it doesn't operate its own seismometers.",
+  },
+];
+
+export default function EarthquakeTrackerPage() {
+  return (
+    <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#ff6b35]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[300px] rounded-full opacity-10 blur-[100px] bg-[#00E5FF]" />
+      </div>
+
+      <div className="relative max-w-5xl mx-auto px-6 py-10 md:py-16">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-12">
+          <Link href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
+            <ArrowLeft className="w-4 h-4" /> Back to the map
+          </Link>
+          <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+        </div>
+
+        {/* Hero */}
+        <div className="text-center max-w-2xl mx-auto">
+          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#ff8c5a] border border-[#ff8c5a]/30 rounded-full px-4 py-1.5 mb-6">
+            <Activity className="w-3.5 h-3.5" /> LIVE SEISMIC DATA
+          </p>
+          <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
+            Earthquakes <span className="text-[#ff8c5a]">as they happen.</span>
+          </h1>
+          <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
+            A live earthquake map on a 3D globe. Every tremor plotted with its
+            magnitude, depth and location — updated continuously, free for everyone.
+          </p>
+          <div className="mt-8">
+            <Link
+              href="/"
+              className="inline-block px-8 py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+            >
+              Open live map — free, no signup
+            </Link>
+          </div>
+        </div>
+
+        {/* What you can see */}
+        <div className="mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            What you see for <span className="text-[#D4AF37]">every quake</span>
+          </h2>
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {DATA_POINTS.map((d) => (
+              <div
+                key={d.title}
+                className="rounded-3xl border border-white/10 bg-white/[0.02] p-6"
+              >
+                <d.icon className="w-6 h-6 text-[#ff8c5a] mb-4" />
+                <p className="font-semibold text-white/90 mb-2">{d.title}</p>
+                <p className="text-sm text-white/45 leading-relaxed">{d.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* How it works */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            How it <span className="text-[#D4AF37]">works</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              When the ground moves, seismometers around the world feel it within
+              seconds. Public seismic monitoring networks detect the event,
+              triangulate its location and estimate its magnitude — then publish
+              that data openly.
+            </p>
+            <p>
+              WorldEye pulls those public feeds and plots each earthquake on the
+              3D globe the moment it arrives: a marker at the epicenter, sized by
+              magnitude, with depth and timing attached. The map keeps refreshing
+              while you watch, so an unfolding aftershock sequence plays out in
+              front of you.
+            </p>
+            <p>
+              It sits alongside the rest of the free map — live flights, 36,000+
+              public cameras, satellites, wildfires and weather — so a quake never
+              appears in isolation. See the full picture, not just a dot on a list.
+            </p>
+          </div>
+        </div>
+
+        {/* Use cases */}
+        <div className="mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Why people <span className="text-[#D4AF37]">watch</span>
+          </h2>
+          <div className="mt-8 grid md:grid-cols-3 gap-5">
+            {USE_CASES.map((u) => (
+              <div
+                key={u.title}
+                className="rounded-3xl border border-white/10 bg-white/[0.02] p-8"
+              >
+                <u.icon className="w-6 h-6 text-[#D4AF37] mb-4" />
+                <p className="font-semibold text-white/90 text-lg mb-2">{u.title}</p>
+                <p className="text-sm text-white/45 leading-relaxed">{u.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Earthquake tracker <span className="text-[#D4AF37]">FAQ</span>
+          </h2>
+          <div className="space-y-3">
+            {FAQS.map((f) => (
+              <details
+                key={f.q}
+                className="border border-white/10 rounded-2xl bg-white/[0.02] overflow-hidden group"
+              >
+                <summary className="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer list-none">
+                  <span className="font-medium text-white/90">{f.q}</span>
+                  <ChevronDown className="w-5 h-5 text-[#D4AF37] shrink-0 transition-transform group-open:rotate-180" />
+                </summary>
+                <p className="px-6 pb-5 text-sm text-white/60 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+
+        {/* Closing CTA */}
+        <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10">
+          <h2 className="text-2xl md:text-3xl font-bold">
+            See what&apos;s shaking <span className="text-[#D4AF37]">right now</span>
+          </h2>
+          <p className="text-white/55 mt-3 mb-8">
+            Free forever. No account. Just the planet, live.
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-8 py-4 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
+          >
+            Open the live earthquake map
+          </Link>
+          <p className="mt-6 text-sm text-white/40">
+            Want the full intelligence toolkit?{" "}
+            <Link href="/pricing" className="text-[#D4AF37] hover:underline">
+              Explore WorldEye Pro
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      <SiteFooter />
+    </main>
+  );
+}
