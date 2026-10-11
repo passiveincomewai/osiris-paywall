@@ -87,7 +87,12 @@ export default function CinematicHero() {
       <div ref={stageRef} className="fixed inset-0 z-[1000] bg-black overflow-hidden will-change-transform">
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
+          // Landscape: full-bleed cover. Portrait phones: a 16:9 frame with
+          // object-cover would show only ~26% of the frame width (centered),
+          // slicing the baked-in "WorldEye" title. Instead, render the video
+          // at 133vw wide (middle 75% of the frame, full frame height) so the
+          // title fits with margin while staying large and cinematic.
+          className="absolute inset-0 h-full w-full object-cover portrait:inset-auto portrait:top-1/2 portrait:left-1/2 portrait:h-[75vw] portrait:w-[133.33vw] portrait:-translate-x-1/2 portrait:-translate-y-1/2"
           src="/worldeye-cinematic.mp4"
           poster="/worldeye-cinematic-poster.jpg"
           muted
@@ -98,12 +103,12 @@ export default function CinematicHero() {
         />
         {/* Scroll hint — fades as soon as you start scrolling */}
         <div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none transition-opacity duration-300"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none transition-opacity duration-300"
           style={{ opacity: hintOpacity }}
         >
-          <span className="text-[10px] font-mono tracking-[0.35em] text-cyan-200/80">SCROLL</span>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="animate-bounce">
-            <path d="M6 9l6 6 6-6" stroke="rgba(103,232,249,.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <span className="text-sm font-semibold font-mono tracking-[0.4em] text-cyan-200/90">SCROLL</span>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" className="animate-bounce">
+            <path d="M6 9l6 6 6-6" stroke="rgba(103,232,249,.95)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
         {/* Subtle vignette so the video blends into the page */}
