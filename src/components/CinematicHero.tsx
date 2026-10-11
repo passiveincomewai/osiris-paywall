@@ -85,14 +85,46 @@ export default function CinematicHero() {
       <div ref={trackRef} className="cinematic-root" style={{ height: `${TRACK_VH}vh` }} />
       {/* Pinned stage: fixed viewport, fully transform-driven. */}
       <div ref={stageRef} className="fixed inset-0 z-[1000] bg-black overflow-hidden will-change-transform">
+        <style>{`
+          .cine-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+          .cine-vid-bg { display: none; }
+          @media (orientation: portrait) {
+            /* Portrait phones: a 16:9 frame with object-cover would show only
+               ~26% of the frame width, slicing the baked-in "WorldEye" title
+               (it spans ~68% of the frame). Show the middle 75% instead so the
+               full title fits with margin, and fill the screen behind it with
+               a blurred, darkened copy of the video — no harsh letterbox. */
+            .cine-vid-bg {
+              display: block;
+              position: absolute; inset: -5%;
+              width: 110%; height: 110%;
+              object-fit: cover;
+              filter: blur(48px) brightness(0.45) saturate(1.2);
+            }
+            .cine-vid {
+              inset: auto; top: 50%; left: 50%;
+              width: 133.33vw; height: 75vw;
+              transform: translate(-50%, -50%);
+              box-shadow: 0 0 120px rgba(0, 0, 0, 0.8);
+            }
+          }
+        `}</style>
+        {/* Ambient blurred fill — portrait only, drifts in sync behind the main video */}
+        <video
+          aria-hidden
+          tabIndex={-1}
+          className="cine-vid-bg"
+          src="/worldeye-cinematic.mp4"
+          muted
+          playsInline
+          preload="auto"
+          autoPlay
+          loop
+          disablePictureInPicture
+        />
         <video
           ref={videoRef}
-          // Landscape: full-bleed cover. Portrait phones: a 16:9 frame with
-          // object-cover would show only ~26% of the frame width (centered),
-          // slicing the baked-in "WorldEye" title. Instead, render the video
-          // at 133vw wide (middle 75% of the frame, full frame height) so the
-          // title fits with margin while staying large and cinematic.
-          className="absolute inset-0 h-full w-full object-cover portrait:inset-auto portrait:top-1/2 portrait:left-1/2 portrait:h-[75vw] portrait:w-[133.33vw] portrait:-translate-x-1/2 portrait:-translate-y-1/2"
+          className="cine-vid"
           src="/worldeye-cinematic.mp4"
           poster="/worldeye-cinematic-poster.jpg"
           muted
