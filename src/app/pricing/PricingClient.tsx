@@ -8,12 +8,13 @@ import {
   ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus,
 } from "lucide-react";
 
-type Plan = "weekly" | "monthly" | "annual";
+type Plan = "weekly" | "monthly" | "annual" | "enterprise";
 
 const PLANS: Record<Plan, { price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
   weekly: { price: "$3.99", per: "/week", perDay: "$0.57", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
   monthly: { price: "$9.99", per: "/month", perDay: "$0.33", note: "Billed monthly · cancel anytime", save: "Save 42%", cta: "Get Monthly Access" },
   annual: { price: "$59.99", per: "/year", perDay: "$0.16", note: "3 days free, then billed annually · cancel anytime", save: "Save 71% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
+  enterprise: { price: "$999", per: "/year", perDay: "$2.74", note: "Billed annually · cancel anytime", cta: "Get Enterprise" },
 };
 
 const PRO_FEATURES = [
@@ -25,8 +26,14 @@ const PRO_FEATURES = [
   { icon: Sparkles, title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
 ];
 
-const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [
-  { feature: "Interactive 3D globe", free: true, pro: true },
+const ENTERPRISE_FEATURES = [
+  "Everything in Pro, for your whole team",
+  "Commercial API access for integrations",
+  "Priority support with a dedicated contact",
+  "Team onboarding and custom setup",
+];
+
+const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { feature: "Interactive 3D globe", free: true, pro: true },
   { feature: "Live flight tracking", free: true, pro: true },
   { feature: "36,000+ public CCTV cameras", free: true, pro: true },
   { feature: "Satellite & space tracking", free: true, pro: true },
@@ -303,6 +310,36 @@ export default function PricingPage() {
             <Lock className="w-3.5 h-3.5" /> Secured by Stripe · Cancel anytime · 1-click cancellation
           </p>
         </motion.div>
+
+        {/* Enterprise */}
+        <div className="mt-10 max-w-3xl mx-auto rounded-3xl border border-[#00E5FF]/25 bg-gradient-to-b from-[#00E5FF]/[0.06] to-white/[0.02] backdrop-blur-xl p-6 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex-1">
+              <p className="text-xs font-bold tracking-[0.25em] text-[#00E5FF] mb-2">ENTERPRISE</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl md:text-5xl font-bold tracking-tight">$999</span>
+                <span className="text-white/45 text-lg">/year</span>
+              </div>
+              <p className="text-sm text-white/45 mt-2">Billed annually · cancel anytime</p>
+              <ul className="mt-4 space-y-2">
+                {ENTERPRISE_FEATURES.map((f) => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-white/85">
+                    <span className="w-5 h-5 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/30 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-[#00E5FF]" />
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="md:w-64 shrink-0">
+              <CheckoutButton plan="enterprise" label="Get Enterprise" />
+              <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-3">
+                <Lock className="w-3.5 h-3.5" /> Secured by Stripe
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Free vs Pro comparison */}
         <div className="mt-10">

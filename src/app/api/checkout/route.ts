@@ -28,16 +28,18 @@ export async function POST(req: Request) {
   }
 
   const { plan } = (await req.json().catch(() => ({}))) as { plan?: string };
-  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual") {
+  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise") {
     return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   }
   const priceEnv =
     plan === "monthly" ? "STRIPE_MONTHLY_PRICE_ID"
     : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
+    : plan === "enterprise" ? "STRIPE_ENTERPRISE_PRICE_ID"
     : "STRIPE_WEEKLY_PRICE_ID";
-  // Free trials: annual → 3 days, weekly → 1 day. Stripe reports these
-  // subscriptions as `trialing`, which the paywall treats as full Pro access.
-  const TRIAL_DAYS: Record<string, number> = { weekly: 1, monthly: 0, annual: 3 };
+  // Free trials: annual → 3 days, weekly → 1 day. Enterprise has no trial.
+  // Stripe reports these subscriptions as `trialing`, which the paywall
+  // treats as full Pro access.
+  const TRIAL_DAYS: Record<string, number> = { weekly: 1, monthly: 0, annual: 3, enterprise: 0 };
   const trialDays = TRIAL_DAYS[plan] ?? 0;
   const priceId = process.env[priceEnv];
   if (!priceId) {
