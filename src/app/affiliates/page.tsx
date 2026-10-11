@@ -1,6 +1,8 @@
 // WorldEye Affiliates — public landing page (server component, no auth).
 import Link from "next/link";
 import { RankBadge, SectionTitle, Pill, StatCard, XpBar } from "@/components/affiliate/ui";
+import AffiliatePersonal from "@/components/affiliate/AffiliatePersonal";
+import EarningsCalculator from "@/components/affiliate/EarningsCalculator";
 
 const CTA = "/api/auth/signin?callbackUrl=/affiliates/dashboard";
 
@@ -44,6 +46,9 @@ function Card({ children, className = "" }: { children: React.ReactNode; classNa
 export default function AffiliatesLanding() {
   return (
     <div className="space-y-16 md:space-y-24">
+      {/* ── 0. PERSONAL (signed-in visitors) ──────────────────── */}
+      <AffiliatePersonal />
+
       {/* ── 1. HERO ─────────────────────────────────────────── */}
       <section className="relative text-center pt-6 md:pt-12">
         <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[560px] h-[280px] rounded-full blur-3xl opacity-25 pointer-events-none"
@@ -84,7 +89,7 @@ export default function AffiliatesLanding() {
         <SectionTitle kicker="Protocol" title="How it works" />
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { n: "01", t: "Share your link", d: "Get your unique referral URL — worldeye.com/ref/YOURCODE — plus QR codes and ready-made share kits for every platform.", c: "#38bdf8" },
+            { n: "01", t: "Share your link", d: "Get your unique referral URL — worldeye.app/ref/YOURCODE — plus QR codes and ready-made share kits for every platform.", c: "#38bdf8" },
             { n: "02", t: "They subscribe to Pro", d: "Anyone who signs up through your link is attributed to you for 30 days. When they buy WorldEye Pro, you earn.", c: "#22d3ee" },
             { n: "03", t: "Earn every billing cycle", d: "Commissions don't stop at the first payment — you earn on every qualifying renewal for as long as they stay subscribed.", c: "#818cf8" },
           ].map((s) => (
@@ -156,6 +161,44 @@ export default function AffiliatesLanding() {
           <p className="mt-3 text-xs text-slate-500 font-mono">
             Overrides are paid only on legitimate paid subscriptions — never for recruitment alone.
           </p>
+        </Card>
+      </section>
+
+      {/* ── 4b. EARNINGS ESTIMATOR ──────────────────────────── */}
+      <section>
+        <SectionTitle kicker="Estimator" title="What could your network pay?" />
+        <EarningsCalculator />
+      </section>
+
+      {/* ── 4c. FIRST-3 MILESTONE ────────────────────────────── */}
+      <section>
+        <Card className="relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-[300px] h-[150px] rounded-full blur-3xl opacity-15 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse,#D4AF37,transparent)" }} />
+          <div className="relative flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex-1">
+              <SectionTitle kicker="Milestone" title="Your first 3 invites" />
+              <p className="mt-3 text-slate-300 leading-relaxed max-w-xl">
+                Every affiliate starts the same way: <span className="text-white font-bold">invite 3 friends</span>.
+                Each friend who joins through your link counts toward your tracker — and the moment one of them
+                subscribes to Pro, your first <span className="text-[#22d3ee] font-bold">+500 XP</span> and recurring
+                commission land in your dashboard.
+              </p>
+              <div className="mt-4 flex items-center gap-2">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="w-10 h-10 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 flex items-center justify-center font-mono font-black text-[#D4AF37]">
+                    {n}
+                  </div>
+                ))}
+                <span className="ml-2 text-sm text-slate-400 font-mono">→ first commission</span>
+              </div>
+            </div>
+            <Link href={CTA}
+              className="shrink-0 px-8 py-4 rounded-2xl text-base font-mono font-black text-[#04121f] transition-transform hover:scale-[1.03]"
+              style={{ background: "linear-gradient(135deg,#e8c55a,#D4AF37)", boxShadow: "0 0 28px rgba(212,175,55,.45)" }}>
+              Start inviting — Free
+            </Link>
+          </div>
         </Card>
       </section>
 
