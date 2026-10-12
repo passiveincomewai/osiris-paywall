@@ -169,6 +169,47 @@ export default function CameraCountriesPage() {
           </div>
         </div>
 
+        {/* FAQ */}
+        <div className="mt-16 max-w-3xl">
+          <h2 className="text-2xl md:text-3xl font-bold">Camera directory — FAQ</h2>
+          <div className="mt-6 space-y-4">
+            {[
+              {
+                q: "Where do these cameras come from?",
+                a: "Every camera in the directory is published openly by its operator — transport agencies, cities, resorts, and businesses. WorldEye collects the public feeds into one index and plots them on the map; it does not operate its own camera network.",
+              },
+              {
+                q: "Why do some countries have thousands of cameras and others only a few?",
+                a: "It reflects what is published openly. Countries whose transport agencies publish dense highway camera networks (the US, Taiwan, the UK) dominate the counts; countries without open camera programs have whatever their cities and businesses publish.",
+              },
+              {
+                q: "Which countries have dedicated pages?",
+                a: "The 30 busiest countries each have a dedicated page with regional breakdowns, camera counts by area, and viewing tips — they are linked from the table above. The rest are listed with their busiest area.",
+              },
+              {
+                q: "How often is the directory updated?",
+                a: "The index regenerates automatically — the 'last updated' date above shows the latest build. New public feeds are picked up as their operators publish them, and dead feeds drop out.",
+              },
+              {
+                q: "Are the cameras really live?",
+                a: "The directory indexes live public feeds. Individual cameras can go offline for maintenance or be replaced by their operators, so a specific feed may occasionally be dark — but coverage is broad enough that alternatives are usually nearby.",
+              },
+              {
+                q: "Is it free to watch?",
+                a: "Yes. Every camera in the directory opens free on the WorldEye map — no account, no signup, no paywall.",
+              },
+            ].map((f) => (
+              <details key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 group">
+                <summary className="font-semibold text-white/90 cursor-pointer list-none flex items-center justify-between gap-4">
+                  {f.q}
+                  <span className="text-[#D4AF37] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+                </summary>
+                <p className="text-sm text-white/55 mt-3 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+
         {/* CTA */}
         <div className="mt-16 text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10 md:p-14">
           <h2 className="text-2xl md:text-4xl font-bold tracking-tight">

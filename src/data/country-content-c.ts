@@ -1,8 +1,8 @@
 export type CountryFaq = { q: string; a: string };
 export type CountryContent = {
-  intro: string[]; // 2-4 short paragraphs
+  intro: string[]; // 5 substantial paragraphs
   blurb: string; // meta description, 140-160 chars, unique per country
-  faqs: CountryFaq[]; // exactly 3
+  faqs: CountryFaq[]; // 6-7
 };
 
 export const countryContentC: Record<string, CountryContent> = {
@@ -11,6 +11,8 @@ export const countryContentC: Record<string, CountryContent> = {
       "New Zealand's live camera network on WorldEye runs to 249 cameras, and Auckland does the heavy lifting with 98 of them - streets, harbour views, and motorway feeds around the country's biggest city.",
       "The South Island is well represented too: Canterbury has 78 cameras and Otago 13, covering everything from Christchurch traffic to southern alpine and lake country, while Wellington adds 37 feeds around the capital's harbour and hills.",
       "Smaller clusters in Waikato, the West Coast, Nelson/Marlborough, and the Bay of Plenty round out the map - handy for checking road conditions before a drive, or just watching the weather roll in.",
+      "Auckland's 98 feeds are the workhorse of the network: motorway cameras for the commute, street feeds through the city, and harbour views that double as weather checks. If you live in Auckland, learn which motorway cameras sit on your route and check them before the morning peak.",
+      "The South Island feeds earn their keep in winter. Canterbury's 78 cameras and the West Coast alpine routes show snow, ice, and road closures as they happen — check the passes before a ski trip or a South Island drive, not after you are already on the road.",
     ],
     blurb:
       "Watch 249 live cameras across New Zealand on WorldEye - Auckland streets, Wellington harbour, and Canterbury roads, all streaming free, day and night.",
@@ -26,6 +28,18 @@ export const countryContentC: Record<string, CountryContent> = {
       {
         q: "Can I use these cameras to check New Zealand road and weather conditions?",
         a: "Yes. Many feeds cover highways, harbour approaches, and alpine routes, so they're a practical way to eyeball conditions before a trip - all free to watch.",
+      },
+      {
+        q: "Can I check Auckland motorway traffic live?",
+        a: "Yes — Auckland's 98 feeds include motorway cameras around the country's biggest city, so you can check congestion on your route before leaving.",
+      },
+      {
+        q: "Are the cameras useful for South Island winter driving?",
+        a: "Very. Canterbury's 78 cameras plus West Coast and Otago feeds cover alpine routes and passes — check snow and road conditions live before heading into the mountains.",
+      },
+      {
+        q: "Do any cameras show harbours or scenery?",
+        a: "Yes — Auckland and Wellington feeds include harbour views, and Otago covers southern lake country. They are working cameras first, but the views are a bonus.",
       },
     ],
   },
@@ -126,6 +140,8 @@ export const countryContentC: Record<string, CountryContent> = {
       "South Korea's 138 live cameras on WorldEye read like a tour of its biggest cities. Seoul leads with 35 feeds, followed by Busan (17), Incheon (11), and Daegu (9) - dense urban views, traffic corridors, and night-lit streetscapes.",
       "The network fans out across a dozen areas: Gwangju and Changwon in the south, Goyang and Gimpo near the capital, Pohang and Geoje (사등면) on the coast, and the planned city of Sejong.",
       "Coastal cameras in Busan, Pohang, and Geoje catch harbours and sea views; the Seoul and Incheon feeds are the best bet for watching the city's pulse after dark.",
+      "Seoul's 35 feeds are the densest single-city cluster: traffic corridors by day, neon streetscapes by night. Incheon adds 11 more around the airport approaches and the coast — useful if you are heading to or from the airport and want a look at road conditions first.",
+      "The southern coast is the scenic half of the network. Busan's 17 feeds catch the harbour, Pohang and Geoje watch the sea, and the planned city of Sejong plus Gwangju, Changwon, Goyang, and Gimpo fill in the urban map between.",
     ],
     blurb:
       "Stream 138 live cameras across South Korea on WorldEye - Seoul's neon streets, Busan's harbour, and coastal views, free to watch anytime, day and night.",
@@ -141,6 +157,18 @@ export const countryContentC: Record<string, CountryContent> = {
       {
         q: "Are South Korea's night city views good on these cameras?",
         a: "Very - the Seoul, Busan, and Incheon feeds stay lively after dark, with neon streetscapes and harbour lights streaming free.",
+      },
+      {
+        q: "Can I watch Seoul at night?",
+        a: "Yes — the Seoul feeds stay lively after dark with neon streetscapes, and Incheon's 11 cameras add night views around the coast and airport approaches.",
+      },
+      {
+        q: "Which coastal cities have cameras?",
+        a: "Busan (17 feeds), Pohang, and Geoje on the south and east coasts, plus Incheon on the west — harbour and sea views stream live.",
+      },
+      {
+        q: "Is there coverage outside the big cities?",
+        a: "Yes — 12 areas in all, including Gwangju, Changwon, Goyang, Gimpo, and the planned city of Sejong, not just Seoul and Busan.",
       },
     ],
   },

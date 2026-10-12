@@ -61,6 +61,21 @@ const DATA_POINTS = [
     title: "Fresh updates",
     desc: "AIS positions refresh on the order of seconds for moving vessels, so the picture you see keeps pace with reality.",
   },
+  {
+    icon: Radio,
+    title: "Vessel identity",
+    desc: "AIS broadcasts each ship's identity — name, call sign and MMSI number — so the dot on the map is a real, registered vessel, not an anonymous blip.",
+  },
+  {
+    icon: Anchor,
+    title: "Underway vs. at anchor",
+    desc: "Speed and status tell the story: a container ship making 20 knots versus one sitting at anchor outside the port, waiting for a berth. Congestion becomes visible.",
+  },
+  {
+    icon: Eye,
+    title: "Chokepoint context",
+    desc: "Straits, canals and port approaches are marked on the globe, so you can see why fifty ships are queuing in one narrow stretch of water.",
+  },
 ];
 
 const USE_CASES = [
@@ -78,6 +93,21 @@ const USE_CASES = [
     icon: Anchor,
     title: "Enthusiasts & travelers",
     desc: "Waiting on a ferry? Curious what that cruise ship is? Pull up the sea around you and see what's moving.",
+  },
+  {
+    icon: Ship,
+    title: "Maritime journalists",
+    desc: "When a shipping incident makes the news — a grounding, a collision, a blocked canal — watch the traffic around it in real time instead of waiting for the morning's satellite photo.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Supply-chain watchers",
+    desc: "Port congestion is an early signal. Ships stacking up at anchor outside major ports has preceded every recent supply crunch — the map shows the queue forming while it's still just a queue.",
+  },
+  {
+    icon: Compass,
+    title: "Sailors and cruisers",
+    desc: "Planning a passage? See what the commercial traffic is doing in the waters you'll cross. The big ships follow predictable lanes, and knowing those lanes keeps a small boat safer.",
   },
 ];
 
@@ -101,6 +131,22 @@ const FAQS = [
   {
     q: "Is this the same technology as marine-traffic websites?",
     a: "Yes, it's the same underlying data: AIS broadcasts aggregated by receiver networks. WorldEye's difference is the context — ships on the same 3D globe as flights overhead, weather systems, live cameras in ports and satellite imagery.",
+  },
+  {
+    q: "How often do vessel positions update?",
+    a: "Moving vessels typically broadcast every few seconds; anchored or slow vessels report less often. What you see keeps pace with reality closely enough to watch traffic flow — though it's a picture of traffic, not a navigation instrument.",
+  },
+  {
+    q: "Can I see a ship's cargo?",
+    a: "No. AIS broadcasts identity, position, speed, heading and destination — not what's in the holds. Cargo manifests are commercial and customs data, not part of the broadcast.",
+  },
+  {
+    q: "Why do some ships disappear from the map?",
+    a: "A vessel goes dark when it leaves receiver coverage, switches off its transponder, or has a faulty unit. Open ocean far from shipping lanes and deliberate switch-offs are the two usual reasons — the map shows what's broadcasting, nothing more.",
+  },
+  {
+    q: "Can I follow a specific named ship?",
+    a: "If you know roughly where it operates, zoom to that stretch of water and look for it among the traffic — its name, type, speed and reported destination are all part of the AIS broadcast. If it's broadcasting and within receiver coverage, you'll see it.",
   },
 ];
 
@@ -217,6 +263,14 @@ export default function ShipTrackerPage() {
               </Link>
               . The rest of the globe, including live flights and 40,000+ public
               cameras, is free for everyone with no account.
+            </p>
+            <p>
+              What AIS doesn&apos;t show matters too. Small craft, fishing boats
+              and military vessels often don&apos;t broadcast — or broadcast
+              only intermittently — so an empty stretch of water isn&apos;t proof
+              of empty water. And a vessel&apos;s reported destination is entered
+              by the crew; it&apos;s usually right and occasionally aspirational.
+              Read the traffic, not just the labels.
             </p>
           </div>
         </div>

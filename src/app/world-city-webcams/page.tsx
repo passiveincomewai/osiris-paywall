@@ -42,6 +42,22 @@ const FAQS = [
     q: "Do I need an account to watch these city webcams?",
     a: "No. Every camera on the WorldEye globe is free to watch — no account, no trial, no paywall. Open the map, zoom into the region you want, and click any camera marker.",
   },
+  {
+    q: "Which city has the most cameras?",
+    a: "The ranking shifts as the directory updates, but the top entries are dominated by US highway systems and dense Asian metros — Georgia's DOT network, Taiwan's intersection grids, and London's street cameras are perennial leaders. The table above shows the current order.",
+  },
+  {
+    q: "Can I use these to check traffic in my city?",
+    a: "If your city or state publishes open traffic cameras, they are likely indexed. Search the city on the live map — camera markers appear where feeds exist. US DOT networks give the best commute coverage.",
+  },
+  {
+    q: "Are there scenic city cameras, not just traffic?",
+    a: "Yes. Alongside the traffic grids there are plaza webcams, harbor views, and skyline feeds — especially in European and Asian cities. Use the map search to find the scenic ones among the traffic feeds.",
+  },
+  {
+    q: "How current are the camera counts?",
+    a: "The directory regenerates automatically and the page shows its last-updated date. Counts move as operators add feeds or retire old ones — the trend has been steadily upward.",
+  },
 ];
 
 const jsonLd = {

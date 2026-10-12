@@ -60,6 +60,26 @@ const FAQS = [
     q: "Where can I find cameras for a specific country?",
     a: "The camera directory lists every country with its camera count and busiest region. The 30 busiest countries have dedicated pages with full regional breakdowns — start with the country table or search any place on the live map.",
   },
+  {
+    q: "What kinds of cameras are in the directory?",
+    a: "Mostly traffic and highway cameras from transport agencies, plus city street cameras, beach and coastal feeds, ski resort and mountain cameras, harbor views, and plaza webcams. Whatever the world points a public camera at, the directory tries to index.",
+  },
+  {
+    q: "Can I check road conditions before a trip?",
+    a: "That is the most practical use. Highway and traffic cameras show congestion, crashes, weather, and road work live — check the route's cameras before leaving rather than discovering the jam from inside it.",
+  },
+  {
+    q: "Do the cameras work on mobile?",
+    a: "Yes. The live map and all camera feeds work in mobile browsers — no app download needed. Open the map, zoom to where you want to look, and tap a camera marker.",
+  },
+  {
+    q: "Why do some cameras go offline?",
+    a: "Operators maintain, move, or retire their cameras, and network outages happen. The directory re-checks feeds and drops dead ones; with tens of thousands indexed, alternatives are usually nearby.",
+  },
+  {
+    q: "Can I request cameras for my area?",
+    a: "The directory grows as public feeds are found and mapped. If your city or agency publishes open cameras, they are candidates for indexing — the fastest-growing regions are the ones publishing openly.",
+  },
 ];
 
 const jsonLd = {

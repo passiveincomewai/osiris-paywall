@@ -55,6 +55,9 @@ const STATES: Record<string, StateCfg> = {
     intro: [
       "Georgia holds the largest single-state camera index in the United States on WorldEye — 4,330 feeds, nearly all of them Georgia Department of Transportation highway cameras. The densest coverage sits over metro Atlanta: the I-75/I-85 Downtown Connector, the I-285 Perimeter loop, and the I-20 east–west corridor, with more cameras strung along I-16 toward Savannah and I-95 up the coast.",
       "Set expectations correctly: these are working road cameras, not scenic webcams. Each feed is a fixed view of lanes, ramps, or an interchange, published so drivers can check congestion, crashes, and lane closures. They are at their most useful during weekday rush hours and summer thunderstorm season, when Atlanta's low-lying interstates can flood with little warning.",
+      "The Downtown Connector is the chokepoint that defines Atlanta driving — I-75 and I-85 merge into a single stretch through the city center, and when it jams there is no quick way around it. That is why the Connector carries the heaviest camera coverage. The I-285 Perimeter is the escape valve: check a Connector camera and a Perimeter camera side by side and you can decide in seconds whether to brave downtown or loop around it.",
+      "Summer changes the calculus. Atlanta's afternoon thunderstorms are brief but violent, and the same low-lying stretches of interstate that crawl at rush hour can take on standing water in twenty minutes. The feeds show it plainly — ponding in the low lanes, spray kicking up, traffic slowing to a crawl. If the camera shows water across the roadway, wait it out; these storms usually pass fast.",
+      "Outside the metro, the index follows the long-haul corridors: I-16 running southeast toward Savannah and I-95 tracing the coast. During hurricane season those two roads become evacuation routes, and the cameras along them are how you confirm what officials are reporting — clear, moving, or already jammed.",
       "Everything here opens on the free WorldEye map — no account, no download. Zoom into Georgia, tap a camera marker near your route, and you are looking at the same view GDOT's own operators monitor.",
     ],
     stats: [
@@ -67,6 +70,9 @@ const STATES: Record<string, StateCfg> = {
       "Open the free WorldEye map in your browser — no account or download needed.",
       "Zoom to Georgia and look for camera markers along I-75, I-85, I-285, and I-20.",
       "Tap any marker to open that GDOT highway camera's live feed.",
+      "Compare parallel routes before you commit: check one camera on the Downtown Connector and one on the I-285 Perimeter to see which is moving.",
+      "On storm days, re-check the camera nearest your route right before leaving — conditions on Atlanta's low-lying interstates can change in minutes.",
+      "Never check cameras while driving. Pull over or have a passenger look, then decide your route before you roll.",
     ],
     faqTitle: "Georgia traffic cameras — FAQ",
     faqs: [
@@ -82,6 +88,26 @@ const STATES: Record<string, StateCfg> = {
         q: "Can I check Atlanta rush-hour traffic before leaving?",
         a: "Yes — that is the most common use. Open the live map, zoom to the Downtown Connector or I-285, and tap a camera near your on-ramp to see current conditions before you commit to the drive.",
       },
+      {
+        q: "When is the best time to check the cameras?",
+        a: "Weekday morning and evening rush hours are peak use, and summer thunderstorm afternoons are the other big window — a quick check before leaving can save you from driving into a flooded stretch of interstate.",
+      },
+      {
+        q: "Can the cameras show flooding on Atlanta interstates?",
+        a: "Yes. Atlanta's low-lying interstates take on standing water during heavy summer storms, and the feeds show ponding, spray, and slowed traffic clearly. If water is across the roadway, do not drive through it — wait for the storm to pass.",
+      },
+      {
+        q: "Do the cameras cover the coast and the road to Savannah?",
+        a: "Yes. The index follows I-16 toward Savannah and I-95 up the coast. During hurricane season those feeds double as evacuation-route monitors — check them before departing and re-check along the way.",
+      },
+      {
+        q: "Can I see lane closures and construction zones?",
+        a: "Lane closures show up on the feeds as coned-off lanes and narrowed traffic. The cameras are published so drivers can check exactly these conditions — look for the work-zone cameras along your corridor before a long drive.",
+      },
+      {
+        q: "Why does a feed sometimes look frozen?",
+        a: "Most GDOT feeds are still images refreshing every few seconds, not continuous video, so a quiet stretch of road can look static. If nothing is moving in the frame, that usually means traffic is light — not that the camera is broken.",
+      },
     ],
   },
   utah: {
@@ -95,6 +121,9 @@ const STATES: Record<string, StateCfg> = {
     intro: [
       "Utah's 2,082 indexed cameras are UDOT road feeds, and they cluster exactly where Utah driving gets interesting: the Cottonwood Canyon roads (SR-210 and SR-190) serving the ski resorts, the I-15 spine running the length of the Wasatch Front, and US-89 through Ogden and Logan.",
       "From November to April these cameras are essential equipment. Canyon traction laws, chain requirements, and avalanche closures on Little and Big Cottonwood are decided from views like these — check the SR-210 feeds before heading up, not after you are stuck in the turnaround queue. In summer, the same cameras show whether Parley's Canyon is crawling on a Friday afternoon.",
+      "Little Cottonwood Canyon (SR-210) is the one that closes most often — it is steep, narrow, and slides. Big Cottonwood (SR-190) is the slightly mellower sibling, but it still goes to traction restrictions on storm days. The feeds at the canyon mouths, around Wasatch Blvd, tell you the story before you commit: plows running, gates closed, or the dreaded red light at the base.",
+      "The rest of the index watches the daily grind. I-15 is the Wasatch Front's spine — Salt Lake, Ogden, Provo — and the cameras along it are how commuters check whether the drive is thirty minutes or sixty. Summer brings its own slowdowns: construction zones up and down the corridor, and Friday-afternoon canyon traffic as everyone heads for the mountains at once.",
+      "North of Salt Lake, US-89 through Ogden and up toward Logan covers the commuters the interstate misses. The Washington Blvd and Harrisville Rd feeds watch the surface-street arterials where a single crash can back traffic up for miles with no alternate route.",
       "Featured feeds below include the SR-210/Wasatch Blvd junction and the US-89 corridor through Ogden. All 2,082 cameras open free on the WorldEye map.",
     ],
     stats: [
@@ -115,6 +144,9 @@ const STATES: Record<string, StateCfg> = {
       "Launch the WorldEye map — it works on phone and desktop, free.",
       "Zoom to the Salt Lake Valley and find the camera markers up Little and Big Cottonwood Canyons.",
       "Tap a marker on SR-210 or SR-190 to see current canyon conditions before you drive up.",
+      "Check the canyon mouth first — the SR-210 @ Wasatch Blvd feed shows whether the closure is at the base or higher up, which decides whether it is worth waiting out.",
+      "On ski mornings, check before 7 a.m. Traction law calls and avalanche closures are usually decided early, and the turnaround queue forms fast once the word spreads.",
+      "For the daily commute, scan the I-15 feeds along your stretch of the Wasatch Front and the US-89 feeds around Ogden before leaving — then put the phone down and drive.",
     ],
     faqTitle: "Utah traffic cameras — FAQ",
     faqs: [
@@ -130,6 +162,26 @@ const STATES: Record<string, StateCfg> = {
         q: "Is there a cost to watch Utah's cameras?",
         a: "No. Every camera opens free on the WorldEye map with no account or signup.",
       },
+      {
+        q: "What is the difference between SR-210 and SR-190?",
+        a: "SR-210 runs up Little Cottonwood Canyon — the steep, avalanche-prone one that closes most often. SR-190 runs up Big Cottonwood Canyon, slightly mellower but still subject to traction restrictions on storm days. Both are covered in the index.",
+      },
+      {
+        q: "What are canyon traction laws?",
+        a: "When UDOT declares a traction law for the canyons, two-wheel-drive vehicles without proper winter tires or chains are turned around at the base. The canyon-mouth cameras show the checkpoint in action — check before you drive up on a storm day.",
+      },
+      {
+        q: "Can I see avalanche closures on the cameras?",
+        a: "You can see the result: closed gates, empty road, plows working, or the queue of cars turned around at the base. UDOT announces the closures; the SR-210 and SR-190 feeds show you what they look like in real time.",
+      },
+      {
+        q: "Is Parley's Canyon covered?",
+        a: "Yes. The I-80 corridor through Parley's Canyon is part of the index — check it on Friday afternoons and ski weekends, when it is the slowest stretch on the Wasatch Front.",
+      },
+      {
+        q: "Which cameras should Ogden commuters watch?",
+        a: "The US-89 corridor feeds — Washington Blvd, Harrisville Rd, and 2nd St — watch the surface arterials through Ogden. I-15 covers the freeway side. Check both before the morning commute.",
+      },
     ],
   },
   texas: {
@@ -142,8 +194,11 @@ const STATES: Record<string, StateCfg> = {
     sub: "Watch 2,492 live Texas traffic cameras across Houston, Dallas, and Fort Worth.",
     intro: [
       "Texas contributes 2,492 cameras to the WorldEye index, concentrated in three metro networks: Houston's TranStar system with 1,158 feeds, Dallas with 845, and Fort Worth with 489. Together they watch the busiest freeway mileage in the state — I-10, I-45, I-35, and the tangle of loops and tollways around the metros.",
-      "Houston's sheer count reflects TranStar, the regional traffic-management partnership that publishes one of the densest freeway camera grids in the country. In Dallas–Fort Worth the coverage follows the interstates and the managed toll lanes — exactly where commute-time decisions get made.",
+      "Houston's sheer count reflects TranStar, the regional traffic-management partnership that publishes one of the densest freeway camera grids in the country. TranStar's operators watch the same feeds you see here — the cameras exist so the region's traffic managers can spot incidents fast, and the public gets the same view. In Dallas–Fort Worth the coverage follows the interstates and the managed toll lanes — exactly where commute-time decisions get made.",
       "During hurricane season these cameras double as evacuation monitors: check I-45 north out of Houston or I-10 west before joining a contraflow. Year-round, they are the fastest way to see whether your route is moving.",
+      "The Dallas–Fort Worth side of the index is a commuter's toolkit. I-35 is the north–south spine through the metroplex, I-10 anchors the west side, and the managed toll lanes that parallel the freeways get their own decision every morning: pay for speed or ride the free lanes. The feeds along both let you make that call with your eyes open instead of guessing from a red line on a map.",
+      "Houston's grid earns its keep in the daily flood watch too. The city's flat terrain and concrete sprawl mean a fast-moving thunderstorm can put water across feeder roads and underpasses while the freeway above stays dry — the TranStar feeds show which is which before you choose your exit.",
+      "All 2,492 feeds open free on the WorldEye map. Zoom to any of the three metros, tap a marker on your route, and you are looking at the same view the traffic managers see.",
     ],
     stats: [
       { value: "2,492", label: "live cameras" },
@@ -161,6 +216,9 @@ const STATES: Record<string, StateCfg> = {
       "Head to the free WorldEye globe in your browser.",
       "Zoom to Houston, Dallas, or Fort Worth — camera markers line the freeways.",
       "Click a marker on your route to watch that freeway camera's live feed.",
+      "Check both directions, not just yours. Your side can be clear while the opposite carriageway is jammed — and on your return trip, that jammed side becomes yours.",
+      "In Dallas–Fort Worth, compare the free lanes with the managed toll lanes before deciding whether the toll is worth it. The feeds make the price-per-minute math visible.",
+      "During hurricane season, check I-45 north or I-10 west out of Houston before departing — not after you are already in the evacuation flow. And never check cameras while driving.",
     ],
     faqTitle: "Texas traffic cameras — FAQ",
     faqs: [
@@ -176,6 +234,26 @@ const STATES: Record<string, StateCfg> = {
         q: "Are the cameras live video?",
         a: "Most Texas freeway feeds refresh as images every few seconds — enough to judge whether traffic is flowing or stopped, which is what they are published for.",
       },
+      {
+        q: "What is TranStar?",
+        a: "TranStar is the Houston region's traffic-management partnership — the agency collaboration that publishes the city's 1,158-feed camera grid. Its operators monitor the same feeds to spot incidents, and the public gets the same view free.",
+      },
+      {
+        q: "Are the Dallas managed toll lanes covered?",
+        a: "Coverage in Dallas–Fort Worth follows the interstates and the managed toll lanes, so you can compare the tolled and free lanes side by side before deciding whether to pay.",
+      },
+      {
+        q: "Can I check I-35 through the Dallas–Fort Worth metroplex?",
+        a: "Yes. I-35 is the north–south spine through the metroplex and sits inside the Dallas–Fort Worth coverage — check the feeds along your stretch before the commute.",
+      },
+      {
+        q: "Do the cameras work at night?",
+        a: "Yes. Freeway cameras are lit by roadway lighting, and headlights make traffic flow easy to read after dark — a jammed freeway is obvious at any hour.",
+      },
+      {
+        q: "Can I see street flooding on Houston cameras?",
+        a: "Often. Houston's flat terrain means fast thunderstorms can flood feeder roads and underpasses while the elevated freeway stays dry. The TranStar feeds show the difference — check before choosing your exit on storm days.",
+      },
     ],
   },
   florida: {
@@ -190,6 +268,9 @@ const STATES: Record<string, StateCfg> = {
       "Florida's 1,435 indexed cameras follow the state's population: Hillsborough County (Tampa) leads with 517 feeds, Broward County adds 496, and Miami-Dade contributes 422. Coverage tracks I-4 across the peninsula, I-95 down the Atlantic coast, and the Turnpike and expressway network around Miami.",
       "Summer brings the daily thunderstorm pattern — intense, localized downpours that flood intersections and drop visibility to near zero for twenty minutes. The county camera grids are how locals check whether the storm sitting over their route has passed before heading out.",
       "From June through November the same cameras serve hurricane duty: I-95 and Florida's Turnpike are the primary evacuation arteries, and these feeds show what the road actually looks like when officials say to leave.",
+      "I-4 is the peninsula's main artery and the most temperamental drive in the index — Tampa to the interior on a single interstate that absorbs commuter traffic, tourist traffic, and every afternoon storm cell between them. The Hillsborough County feeds watch the Tampa end; check them before committing to the corridor, especially on summer afternoons when a cell can sit over one interchange and leave the next one dry.",
+      "In South Florida the story is the expressway network. Miami-Dade's 422 feeds and Broward's 496 watch I-95 and the web of toll expressways around Miami and Fort Lauderdale — the roads where a single crash at rush hour ripples across three counties. Winter is the busy season here, when seasonal visitors swell traffic and every camera earns its keep.",
+      "All 1,435 feeds open free on the WorldEye map. Zoom to Tampa, Fort Lauderdale, or Miami, tap a marker on your route, and you are seeing the same intersections the county traffic centers watch.",
     ],
     stats: [
       { value: "1,435", label: "live cameras" },
@@ -207,6 +288,9 @@ const STATES: Record<string, StateCfg> = {
       "Open the WorldEye live map — no account or download needed.",
       "Zoom to Tampa, Fort Lauderdale, or Miami and find the camera markers along the interstates.",
       "Tap any marker to open that county traffic camera's live feed.",
+      "On summer afternoons, check the camera nearest your route, wait twenty minutes, and check again. Florida's thunderstorms are intense but fast-moving — the storm over your interchange may already be gone.",
+      "During hurricane season, check I-95 or Florida's Turnpike before departing and re-check at every stop. Conditions change as the storm moves.",
+      "Check before you drive, not while driving. Have a passenger look or pull over — the feeds will still be there when you stop.",
     ],
     faqTitle: "Florida traffic cameras — FAQ",
     faqs: [
@@ -222,6 +306,26 @@ const STATES: Record<string, StateCfg> = {
         q: "Are these beach webcams?",
         a: "No — these are county traffic cameras aimed at roads and intersections. For Florida beach views, browse the scenic cameras on the main WorldEye map.",
       },
+      {
+        q: "Can I check whether an afternoon thunderstorm has flooded my route?",
+        a: "Yes — that is one of the best uses. Florida's summer storms flood intersections fast and clear fast. Check the camera on your route; if the intersection is clear and traffic is moving, the cell has passed.",
+      },
+      {
+        q: "Which roads should I watch driving across the peninsula?",
+        a: "I-4 is the covered corridor across the peninsula — check the Hillsborough County feeds before leaving Tampa. Heading down the Atlantic coast, the Broward and Miami-Dade feeds watch I-95 and the Turnpike.",
+      },
+      {
+        q: "Do the cameras cover Florida's Turnpike?",
+        a: "Yes. The Turnpike is one of the named corridors in the index, alongside I-95 and the expressway network around Miami — and it is a primary hurricane evacuation artery, so its feeds get heavy use from June through November.",
+      },
+      {
+        q: "What about the Panhandle and central Florida?",
+        a: "The index covers the three big county networks — Tampa, Broward, and Miami-Dade — which together hold all 1,435 feeds. The Panhandle and most of central Florida are not in this camera index.",
+      },
+      {
+        q: "Are the cameras useful at night?",
+        a: "Yes. The county grids watch lit interstates and expressways, and headlights make traffic flow readable after dark. Night is also when you will spot crashes and lane closures fastest.",
+      },
     ],
   },
   indiana: {
@@ -235,6 +339,9 @@ const STATES: Record<string, StateCfg> = {
     intro: [
       "Indiana's 703 cameras are INDOT highway feeds, and the signature views look south across the Ohio River: the I-64 Sherman Minton Bridge between New Albany, Indiana and Louisville, Kentucky is covered from multiple angles — upper and lower decks, both directions.",
       "Beyond the river crossing, coverage follows the freight corridors: I-65 between Indianapolis and Chicago, I-70 across the middle of the state, and I-64 running the southern tier. Winter lake-effect snow off Lake Michigan makes the northwest feeds worth checking from December through February.",
+      "The Sherman Minton is the crossing that matters most in the index because it is the I-64 crossing — the southern tier's Ohio River bridge, carrying interstate traffic that has no interest in stopping in either downtown. The featured feeds watch both decks in both directions, so you can see a backup forming on your deck before you are committed to the bridge.",
+      "The rest of the index is working freight country. I-65 is the Chicago–Indianapolis truck corridor, I-70 is the east–west artery across central Indiana, and both run heavy with commercial traffic around the clock. The cameras are how you spot the lane closures and work zones that turn those corridors into parking lots — check before a long haul, not after you are in the queue.",
+      "Winter rewrites the priorities. Lake-effect snow bands off Lake Michigan bury northwest Indiana while the southern tier stays clear, and the difference between the two can be a hundred miles of clear interstate. From December through February, check the feeds along your actual route — a statewide forecast will not tell you which corridor got hit.",
       "Featured feeds below show the Sherman Minton Bridge approaches on both decks. All 703 cameras open free on the WorldEye map.",
     ],
     stats: [
@@ -255,6 +362,9 @@ const STATES: Record<string, StateCfg> = {
       "Launch the WorldEye map — it works on phone and desktop, free.",
       "Pan to southern Indiana and find the camera markers along I-64 at the Ohio River.",
       "Select a bridge marker to watch the Sherman Minton crossing live, both decks.",
+      "Compare the upper-deck and lower-deck feeds for your direction before crossing — a backup on one deck does not always mean the other is jammed.",
+      "In winter, check the northwest feeds along I-65 before driving. Lake-effect bands are narrow; the camera on your corridor tells you more than any statewide forecast.",
+      "For long hauls on I-65 or I-70, scan a few cameras along your route for work zones and lane closures — then drive. Do not check feeds from behind the wheel.",
     ],
     faqTitle: "Indiana traffic cameras — FAQ",
     faqs: [
@@ -270,6 +380,26 @@ const STATES: Record<string, StateCfg> = {
         q: "Do Indiana cameras show winter snow conditions?",
         a: "Yes — that is one of their best uses. Lake-effect snow hits northwest Indiana hardest from December through February; check the feeds along your route before driving.",
       },
+      {
+        q: "Which bridge feed should I check before crossing?",
+        a: "Match the feed to your direction and deck: the index covers the upper and lower decks in both directions. Check the one for the way you are actually driving — congestion on the eastbound lower deck says nothing about your westbound upper-deck trip.",
+      },
+      {
+        q: "Can I see the Louisville skyline from these cameras?",
+        a: "No. These are INDOT highway cameras aimed at the bridge deck and approaches — lanes, barriers, and traffic — not scenic overlooks. They are for checking the crossing, not sightseeing.",
+      },
+      {
+        q: "Is Indianapolis covered?",
+        a: "Indianapolis sits where the covered corridors meet — I-65 runs through it between Chicago and the southern tier, and I-70 crosses it east–west. Check the feeds on whichever interstate you are taking through the city.",
+      },
+      {
+        q: "Can I check bridge traffic before commuting from Indiana to Louisville?",
+        a: "Yes — that is exactly what the Sherman Minton feeds are for. Open the live map, find the I-64 bridge markers at the Ohio River, and check your deck and direction before leaving New Albany.",
+      },
+      {
+        q: "Do the cameras show construction and lane closures?",
+        a: "Lane closures and work zones show up on the feeds as coned lanes and narrowed traffic. The freight corridors get heavy construction in summer — scan the cameras along your I-65 or I-70 route before a long drive.",
+      },
     ],
   },
   nevada: {
@@ -283,6 +413,9 @@ const STATES: Record<string, StateCfg> = {
     intro: [
       "Nevada's 652 cameras watch a state where nearly every long drive crosses open desert. Coverage concentrates on the I-15 resort corridor through Las Vegas — the busiest stretch of interstate in the state — plus I-80 through Reno and US-95 running north–south.",
       "Desert driving has its own hazards, and these cameras are how you spot them early: summer dust storms that erase visibility on I-15 near the California line, flash-flood debris after monsoon bursts, and winter chain controls over the passes west of Reno.",
+      "The I-15 corridor is really two different drives. South of Las Vegas it is the resort run — weekend traffic streaming in from California, event nights, and the long Friday-night queue at the state line. The cameras near the California line show that story plainly: brake lights stretching into the desert or a clean run, depending on the hour. North of the city the same interstate empties into open desert, where the hazard shifts from congestion to weather.",
+      "Summer is dust-storm season. When the wind picks up across the desert floor, visibility on I-15 near the California line can drop to nothing in minutes — and the corridor feeds show the wall of dust before you drive into it. Monsoon bursts do the rest: a half hour of violent rain can wash debris across low stretches of highway, and the cameras show whether the road is clear or a mess before you commit.",
+      "Winter belongs to the north. I-80 through Reno climbs into the Sierra foothills, and the passes west of the city go to chain controls when storms roll through — the feeds there are how you confirm whether the pass is open, restricted, or closed before leaving town. US-95, the north–south alternative through central Nevada, is the long lonely backup when the interstates misbehave.",
       "Las Vegas visitors use the corridor feeds differently — checking whether the Strip-area interstates are jammed before heading to the airport. All 652 feeds open free on the WorldEye map.",
     ],
     stats: [
@@ -295,6 +428,9 @@ const STATES: Record<string, StateCfg> = {
       "Head to the free WorldEye globe in your browser.",
       "Zoom to Las Vegas or Reno and find the camera markers along I-15, I-80, and US-95.",
       "Click a marker to watch that Nevada highway camera's live feed.",
+      "On windy summer days, check the I-15 feeds near the California line before departing. If the camera shows a wall of dust, delay the drive — visibility can drop to zero in minutes.",
+      "In winter, check the I-80 feeds west of Reno for chain controls before heading into the Sierra foothills. The pass cameras show whether it is open, restricted, or closed.",
+      "Heading to the airport in Las Vegas? Check the Strip-area interstate feeds first, then put the phone away — never check cameras while driving.",
     ],
     faqTitle: "Nevada traffic cameras — FAQ",
     faqs: [
@@ -309,6 +445,26 @@ const STATES: Record<string, StateCfg> = {
       {
         q: "Is I-80 to Reno covered?",
         a: "Yes. Nevada's 652-camera index includes the I-80 corridor through Reno and the mountain passes to the west, where winter chain controls apply.",
+      },
+      {
+        q: "Can I check the drive from Las Vegas toward California?",
+        a: "Yes. The I-15 corridor feeds run south toward the California line — check them for weekend resort traffic and, in summer, for dust storms that can shut down visibility with no warning.",
+      },
+      {
+        q: "What are chain controls?",
+        a: "When winter storms hit the passes west of Reno, vehicles without chains or proper winter tires are stopped or turned around. The I-80 pass cameras show whether controls are in effect — check before leaving Reno on a storm day.",
+      },
+      {
+        q: "Is US-95 covered?",
+        a: "Yes. US-95 running north–south through central Nevada is part of the 652-camera index — the long desert alternative when you want to avoid the interstate corridors.",
+      },
+      {
+        q: "What should I look for during monsoon season?",
+        a: "Flash-flood debris. A violent monsoon burst can wash rocks and mud across low stretches of desert highway in minutes. The cameras show whether the road ahead is clear or a mess — if it looks bad, wait it out.",
+      },
+      {
+        q: "When is the worst traffic around Las Vegas?",
+        a: "Friday and Sunday on the I-15 resort corridor — weekend visitors streaming in from California and back out. Event nights in the city jam the Strip-area interchanges. Check the corridor feeds before timing your drive.",
       },
     ],
   },

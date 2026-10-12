@@ -60,6 +60,22 @@ const FAQS = [
     q: "Does it work on classroom projectors and Chromebooks?",
     a: "Yes. It's a standard web app — it runs in any modern browser on Chromebooks, tablets, and teacher laptops, and projects fine for whole-class viewing. No installs, no admin rights needed.",
   },
+  {
+    q: "Can students use it for homework?",
+    a: "Yes — it runs in any browser with no account, so a teacher can assign work that needs nothing but a link: 'find three time zones where it's currently dark,' or 'track a flight from New York to London and explain why its path curves.'",
+  },
+  {
+    q: "Is the content appropriate for young students?",
+    a: "The map shows public places — streets, weather, planes — with no graphic or adult content by design. That said, breaking-news events can be distressing; preview the globe before projecting it, the same as you would any live news source.",
+  },
+  {
+    q: "Can I use it for remote teaching?",
+    a: "Share your screen on any video call and fly the class around the planet together. It works as well over screenshare as it does on the classroom projector — the globe doesn't care where the students are sitting.",
+  },
+  {
+    q: "Does it collect student data?",
+    a: "No accounts means no student data to collect. Students open the site and use it — no logins, no profiles, nothing to consent to, and nothing for a school IT department to vet.",
+  },
 ];
 
 const faqJsonLd = {
@@ -92,6 +108,26 @@ const SECTIONS = [
     icon: Camera,
     title: "Media literacy with live cameras",
     body: "Show the class a dramatic image 'from' somewhere — then open a live camera at that location and compare. Is it the same street? The same weather? The same time of day? Teaching students to check a claim against a live source is the most practical media-literacy skill they'll learn, and 40,000 cameras make the exercise endless.",
+  },
+  {
+    icon: BookOpen,
+    title: "Current events, grounded in reality",
+    body: "When the news covers a place, open it. A story about a drought means more when students can see the reservoir on a camera; a trade dispute lands differently with container ships visible in the harbor. The globe turns headlines from abstractions into places with weather, traffic and people.",
+  },
+  {
+    icon: Globe,
+    title: "Environmental science, observed",
+    body: "Watch snowpack build through the season on mountain cameras, trace a river from source to sea, or follow wildfire smoke across a continent on the weather layer. Big processes — erosion, seasons, the water cycle — stop being diagrams when students can watch them happening.",
+  },
+  {
+    icon: Telescope,
+    title: "Math and data in the wild",
+    body: "How fast is that plane actually going? How long until the ISS is overhead again? The map is full of live numbers — speeds, altitudes, coordinates — that turn into estimation problems, unit conversions and graphing exercises with real stakes instead of textbook ones.",
+  },
+  {
+    icon: Camera,
+    title: "Culture and language through place",
+    body: "A language class can walk the streets of Madrid on traffic cameras, read the shop signs, watch the evening crowds fill the plazas. Geography becomes culture when students can see how people actually use a place — the markets, the commutes, the waterfronts — instead of just where it sits on a map.",
   },
 ];
 
@@ -174,6 +210,23 @@ export default function EducatorsPage() {
               <span className="font-semibold text-white/85">Count the satellites.</span>{" "}
               Zoom out and watch the orbital layer swarm. How many pass over your
               city during one class period — and what do they do?
+            </p>
+            <p>
+              <span className="font-semibold text-white/85">Where&apos;s the weather?</span>{" "}
+              Find the biggest storm on the planet right now. Which ocean made
+              it, and where is it headed? Bonus: check a camera under it.
+            </p>
+            <p>
+              <span className="font-semibold text-white/85">How long is the flight?</span>{" "}
+              Pick two cities, find a live flight between them, and estimate its
+              arrival from the speed and remaining distance. Then watch if
+              you&apos;re right.
+            </p>
+            <p>
+              <span className="font-semibold text-white/85">Night and day.</span>{" "}
+              Find a city where the sun just rose and one where it just set. How
+              many time zones apart are they — and who&apos;s eating breakfast
+              while the other eats dinner?
             </p>
           </div>
         </section>

@@ -32,6 +32,9 @@ const INTRO = [
   "Airports are some of the most-watched places on the public camera network. Transport agencies, airport authorities and nearby businesses point live cameras at runways, terminals, approach corridors and the surrounding roads — and WorldEye's camera directory puts them on the globe so you can find the ones near any airport.",
   "People use airport webcams for very practical reasons: checking the weather over the field before a flight, watching departures climb out or arrivals line up on final, seeing whether the roads around the terminal are moving, or just enjoying the rhythm of a busy hub from across the world.",
   "On the live map, airport cameras sit in their real locations — around the airfield and along the routes that serve it — so you can pair what you see on the ground with the live flight layer overhead.",
+  "The pre-flight weather check is the standout use. Forecasts describe the airport's weather in words; a camera shows the actual sky over the field — low scud, fog banks, the leading edge of a storm line. Pilots and frequent flyers check the field camera the way sailors check the harbor: it will not replace official aviation weather, but it grounds the forecast in something you can see.",
+  "Planespotters get a different value. Approach-corridor and perimeter cameras catch arrivals on final and departures rotating — and paired with the live flight layer, you can match the aircraft overhead to the flight number, origin, and aircraft type in real time. It turns passive watching into something closer to air-traffic awareness.",
+  "Then there is the pure logistics use: terminal approach roads, parking structures, and rental-car return loops. Leaving for the airport during rush hour? A camera on the terminal roadway shows whether the departures curb is flowing or gridlocked — more actionable than any traffic app's colored line.",
 ];
 
 const HOW_TO = [
@@ -62,6 +65,22 @@ const FAQS: Faq[] = [
   {
     q: "Are these cameras operated by WorldEye?",
     a: "No. WorldEye collects and maps public feeds that their operators — transport agencies, airports, municipalities and businesses — already publish openly. It doesn't operate its own camera network.",
+  },
+  {
+    q: "Can I match planes I see on camera to flights?",
+    a: "Yes — that's one of the best combinations on the site. Turn on the live flight layer on the same map view: aircraft overhead appear with flight number, origin, destination, and aircraft type, so you can identify what the camera is showing in real time.",
+  },
+  {
+    q: "Which airports have the most camera coverage?",
+    a: "Major hubs in regions with dense public camera networks — the US, Europe, Taiwan, Japan — tend to have the most feeds around them. Search the airport on the live map and zoom in to see what's actually there.",
+  },
+  {
+    q: "Can airport cameras help me time my drive to the terminal?",
+    a: "Yes. Cameras on terminal approach roads, departures curbs, and parking structures show whether traffic is flowing or gridlocked — check them before leaving during rush hour or bad weather.",
+  },
+  {
+    q: "Do the cameras show delays or cancellations?",
+    a: "Not directly — cameras show conditions, not schedules. But a camera showing fog over the field or gridlock at the curb explains the delay board better than any status message. Pair the view with the flight layer for the full picture.",
   },
 ];
 

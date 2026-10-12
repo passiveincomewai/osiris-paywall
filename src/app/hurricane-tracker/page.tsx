@@ -49,6 +49,21 @@ const WHAT_YOU_SEE = [
     title: "Landfall ground truth",
     desc: "As a storm approaches land, switch to public cameras along the coast and watch conditions arrive in real time.",
   },
+  {
+    icon: Tornado,
+    title: "Basin-wide view",
+    desc: "The Atlantic, eastern Pacific and western Pacific on one globe — see every active tropical system at once instead of one storm at a time.",
+  },
+  {
+    icon: Wind,
+    title: "Where storms are born",
+    desc: "Storms feed on warm tropical water and die over cold water or land. Watching the basin view teaches you which stretches of ocean produce monsters — and which ones kill them.",
+  },
+  {
+    icon: Camera,
+    title: "After landfall",
+    desc: "The storm passes; the cameras stay. Flooded streets, debris fields, crews restoring power — the same coastal feeds that showed the approach now show the recovery.",
+  },
 ];
 
 const FAQS = [
@@ -71,6 +86,22 @@ const FAQS = [
   {
     q: "What's the difference between a hurricane, typhoon and cyclone?",
     a: "They're the same phenomenon — a tropical cyclone — with different regional names. Hurricanes in the Atlantic and eastern Pacific, typhoons in the northwest Pacific, cyclones in the Indian Ocean and South Pacific. WorldEye's globe treats them all the same: big rotating storms.",
+  },
+  {
+    q: "What do the hurricane categories mean?",
+    a: "The Saffir-Simpson scale rates hurricanes 1–5 by sustained wind speed — but wind is only one hazard. Storm surge and rainfall flooding kill more people than wind in most landfalls, which is why officials stress water over category.",
+  },
+  {
+    q: "How far in advance can a hurricane be predicted?",
+    a: "Formation can be anticipated days ahead when conditions align; track forecasts are typically skillful 3–5 days out and degrade beyond that. Intensity is the harder problem — rapid strengthening still surprises forecasters. Your hurricane center's official forecast is the authoritative source.",
+  },
+  {
+    q: "What is a storm surge?",
+    a: "The ocean pushed ashore by the storm's winds — a wall of water that can rise many feet above normal tide and penetrate miles inland. It's the deadliest part of most hurricanes, and the reason evacuation zones are drawn where they are.",
+  },
+  {
+    q: "Can I watch a hurricane from space?",
+    a: "The globe renders the storm's structure live from weather data feeds as it moves. For raw satellite loops of the cloud tops, meteorological agencies publish them openly — spectacular, free, and worth a look alongside the map.",
   },
 ];
 
@@ -212,6 +243,13 @@ export default function HurricaneTrackerPage() {
               you one storm; the globe shows you the season — three basins at
               different stages, trade winds feeding them all, and the whole
               machine running at once.
+            </p>
+            <p>
+              Off-season, the tropics still teach. Watch the trade winds run
+              uninterrupted for weeks, note where the convergence zone sits,
+              and you&apos;ll understand why forecasters watch specific patches
+              of ocean each spring for the season&apos;s first spin-up. By June,
+              you&apos;ll read the basin like a local.
             </p>
           </div>
         </div>

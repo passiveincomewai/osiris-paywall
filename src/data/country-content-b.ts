@@ -1,9 +1,9 @@
 export type CountryFaq = { q: string; a: string };
 
 export type CountryContent = {
-  intro: string[]; // 2-4 short paragraphs
+  intro: string[]; // 5 substantial paragraphs
   blurb: string; // meta description, 140-160 chars, unique per country
-  faqs: CountryFaq[]; // exactly 3
+  faqs: CountryFaq[]; // 6-7
 };
 
 export const countryContentB: Record<string, CountryContent> = {
@@ -12,6 +12,8 @@ export const countryContentB: Record<string, CountryContent> = {
       "The United States hosts the largest live camera network in our directory: 23,059 cameras across 12 coverage areas. Georgia alone accounts for 4,330 feeds, with Utah (2,082) and Houston (1,158) next in line.",
       "The vast majority are highway and traffic cameras. Expect interstate views like the I-64 corridor in Indiana, canyon roads along Utah's SR-210, and metro feeds from Dallas, Phoenix, and Miami-Dade County.",
       "That makes the US collection especially practical for drivers: you can check real road conditions live before heading out, and every feed is free to watch on WorldEye.",
+      "The state-level breakdown is where the network gets practical. Georgia's 4,330 feeds, Utah's 2,082, and the Houston area's 1,158 are the big three, but Dallas, Indiana, Nevada, Phoenix, and Miami-Dade County all carry heavy coverage of their own. If you drive one corridor regularly, learn its cameras.",
+      "Treat the collection as a pre-trip check, not a dashboard companion: glance at your corridor's cameras before you leave, note any crashes or closures, then drive. The feeds are free and need no account, so there is no reason not to make it part of the routine.",
     ],
     blurb:
       "Watch 23,059 live cameras across the United States on WorldEye - from Georgia and Utah highway feeds to Houston traffic cams, streaming free.",
@@ -27,6 +29,18 @@ export const countryContentB: Record<string, CountryContent> = {
       {
         q: "Are US cameras mostly traffic cameras?",
         a: "Yes - the bulk of the US feeds are highway and road cameras, like the I-64 corridor in Indiana and SR-210 in Utah, so they work well for checking real-time road conditions before a trip.",
+      },
+      {
+        q: "Can I check a specific interstate before a road trip?",
+        a: "Yes — pick the corridor: the I-64 in Indiana, SR-210 through Utah's canyons, or the metro feeds around Dallas, Phoenix, and Miami-Dade County. Find your route's cameras on the live map and check conditions before you set out.",
+      },
+      {
+        q: "Do I need an account to watch US cameras?",
+        a: "No. Every one of the 23,059 feeds is free to watch on WorldEye with no signup — open the map, zoom to your route, and tap a camera marker.",
+      },
+      {
+        q: "Are these cameras live video or still images?",
+        a: "Most highway departments publish their feeds as images refreshing every few seconds rather than smooth video. That is enough to spot congestion, crashes, or flooding on your route — which is what the network is for.",
       },
     ],
   },
@@ -126,6 +140,8 @@ export const countryContentB: Record<string, CountryContent> = {
       "Few territories are as densely covered as Hong Kong: 1,185 traffic cameras across 12 districts. Yuen Long leads with 170 feeds, ahead of Sha Tin (153) and Tsuen Wan (121).",
       "The feeds are district-level road cameras - Tai Po Road, Kwun Tong Road, Castle Peak Road - capturing the territory's famously busy streets in real time.",
       "For commuters and the curious alike, it's a live pulse of the city, from Kowloon to the New Territories. Every feed is free on WorldEye.",
+      "The district breakdown is the practical part: Yuen Long's 170 feeds and Sha Tin's 153 cover the New Territories' busiest corridors, while Tsuen Wan (121) and Tuen Mun (96) watch the western approaches. If your commute runs Tai Po Road or Kwun Tong Road, those district feeds are your daily check.",
+      "Hong Kong's traffic has a rhythm — morning and evening peaks, weekend tunnel runs, and typhoon-season downpours that flood low roads with little warning. The cameras show all of it live, so make them part of the routine before heading out, especially when a storm signal is up.",
     ],
     blurb:
       "Stream 1,185 live cameras across Hong Kong on WorldEye - district-by-district traffic feeds from Yuen Long to Sha Tin, free to watch, day and night.",
@@ -141,6 +157,18 @@ export const countryContentB: Record<string, CountryContent> = {
       {
         q: "Are Hong Kong traffic cameras useful for commuting?",
         a: "Yes - the district-level road feeds show live congestion on major routes like Tai Po Road and Kwun Tong Road, so you can check conditions before heading out.",
+      },
+      {
+        q: "Which roads can I check in Hong Kong?",
+        a: "Major corridors like Tai Po Road, Kwun Tong Road, and Castle Peak Road are covered, with district feeds from Yuen Long to Sha Tin showing the surrounding streets.",
+      },
+      {
+        q: "Are Hong Kong cameras useful during typhoons?",
+        a: "Yes — when a storm hits, the road cameras show flooding, debris, and empty-versus-gridlocked streets in real time, which is exactly when you need to decide whether to travel.",
+      },
+      {
+        q: "Do I need an account to watch?",
+        a: "No — all 1,185 Hong Kong feeds stream free on WorldEye with no signup.",
       },
     ],
   },
@@ -194,6 +222,9 @@ export const countryContentB: Record<string, CountryContent> = {
     intro: [
       "The United Kingdom's camera map is essentially London's: 890 of the country's 899 cameras sit in the capital, spread across 10 areas. Feeds cover major routes like the A406 North Circular, the A12 at the Blackwall Tunnel, and Clapham's A3.",
       "That density makes the UK collection a live traffic board for London - check a junction before you drive or watch the city move in real time, free on WorldEye.",
+      "Outside the capital the pickings are thin but real: Manchester Airport and the Isle of Wight carry the few non-London feeds. If you are flying out of Manchester or crossing to the island, those cameras are worth a look — otherwise, this collection is London's.",
+      "The London feeds cluster on the routes drivers actually use: the A406 North Circular ringing the north, the A12 feeding the Blackwall Tunnel, the A3 through Clapham. Check your junction before the school run or the evening peak — the cameras show the same congestion the traffic reports describe, live.",
+      "All 899 feeds are free on WorldEye with no account. Open the map, zoom to London, and tap a marker near your route.",
     ],
     blurb:
       "Watch 899 live cameras across the United Kingdom on WorldEye - hundreds of London traffic and street feeds, streaming live and always free to watch.",
@@ -209,6 +240,18 @@ export const countryContentB: Record<string, CountryContent> = {
       {
         q: "Can I check London traffic live?",
         a: "Yes - the feeds cover major London routes including the A406 North Circular, the A3 through Clapham, and the A12 at the Blackwall Tunnel, showing live traffic conditions.",
+      },
+      {
+        q: "What can I see outside London?",
+        a: "Very little — only a handful of feeds, including Manchester Airport and the Isle of Wight. The UK collection is effectively London's traffic camera network.",
+      },
+      {
+        q: "Can I check the Blackwall Tunnel approach live?",
+        a: "Yes — the A12 feeds at the Blackwall Tunnel show live conditions on one of London's busiest river crossings, handy before committing to the route.",
+      },
+      {
+        q: "Do I need an account?",
+        a: "No — every UK feed streams free on WorldEye, no signup required.",
       },
     ],
   },

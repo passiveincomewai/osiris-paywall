@@ -77,6 +77,26 @@ export default function NorthAmericaWebcamsPage() {
             q: "Are these all traffic cameras?",
             a: "Mostly. North America's index is dominated by DOT highway feeds and municipal traffic cameras. Scenic coastline, mountain, and city views are mixed in on the same map — use search to find them.",
           },
+          {
+            q: "Which US states have the most cameras?",
+            a: "Georgia leads by far with 4,330 DOT feeds, followed by Utah (2,082) and the Texas metros (2,492 across Houston, Dallas, and border corridors). Florida, Indiana, and Nevada round out the six states that together pass 11,000 feeds.",
+          },
+          {
+            q: "Can I check border crossing traffic?",
+            a: "Many feeds sit on border corridors and international crossings — particularly around Texas and the northern border states. Zoom to the crossing on the live map and look for camera markers on the approach roads.",
+          },
+          {
+            q: "Are the Caribbean cameras useful during hurricane season?",
+            a: "Yes — that is when the small island feeds earn their keep. The US Virgin Islands, Puerto Rico, and Dominican Republic cameras give live ground-level conditions that complement satellite imagery and forecasts.",
+          },
+          {
+            q: "What is special about Ottawa's cameras?",
+            a: "Ottawa's 428-feed municipal grid is the densest city network in the index. In winter the Queensway feeds show snow-clearing operations live — check them before a January commute.",
+          },
+          {
+            q: "Do I need an account to watch?",
+            a: "No. All 24,644 feeds across the region open free on the WorldEye map — no signup, no paywall.",
+          },
         ];
 
   return (
@@ -107,6 +127,9 @@ export default function NorthAmericaWebcamsPage() {
           "The North America index gathers 24,644 live cameras across 18 countries and territories — the largest regional collection on WorldEye. The United States dominates with 23,059 feeds, about 94% of the regional total, reflecting the country's vast state-DOT highway camera networks: Georgia alone contributes 4,330, Utah 2,082, and the Texas metros add 2,492.",
           "Canada adds 1,509 cameras — led by Ottawa's 428-feed municipal grid and Toronto's 339 — while Mexico, Central America, and the Caribbean contribute smaller but growing networks, including the US Virgin Islands, Costa Rica, the Dominican Republic, Panama, and Puerto Rico.",
           "What you will mostly find here are working road cameras: interstates, border crossings, and city arterials. They share the map with scenic feeds across the continent — everything opens free, no account needed.",
+          "The US feeds are the practical core. Georgia's 4,330 DOT cameras blanket metro Atlanta's Downtown Connector and the I-285 Perimeter; Utah's 2,082 follow the Wasatch Front and the canyon roads like SR-210; Texas spreads 2,492 across Houston, Dallas, and the border corridors. Six states — Georgia, Utah, Texas, Florida, Indiana, Nevada — account for over 11,000 feeds between them, which is why the US total dwarfs its neighbors.",
+          "Canada's 1,509 are worth a closer look than the raw number suggests. Ottawa's 428-feed grid is the densest municipal network in the index, and it earns its keep every winter — the Queensway feeds show snow-clearing operations in real time. Toronto's 339 cover the 401 corridor, the busiest highway in North America.",
+          "The Caribbean and Central American entries are small but distinctive: the US Virgin Islands (21), Mexico (20), Costa Rica (7), the Dominican Republic (5), plus Puerto Rico, Sint Maarten, Guadeloupe, Martinique, Barbados, Grenada, Bermuda, Honduras, and Curaçao. During hurricane season these island feeds become genuinely useful — a live look at conditions beats a satellite loop for ground truth.",
         ]}
       />
       <AreaTable

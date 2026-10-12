@@ -79,6 +79,26 @@ export default function AsiaWebcamsPage() {
             q: "Is my country included in this index?",
             a: "This page covers the 28 Asian entries currently in the WorldEye directory, listed in the table above. Coverage grows as new feeds are added — check the full country directory for the latest list.",
           },
+          {
+            q: "What is the best use of Taiwan's 2,779 cameras?",
+            a: "Reading congestion. Taichung, Taipei, and Taoyuan run dense intersection grids — Taiyuan Road and Zhongqing Road in Taichung are good examples — and the feeds show live vehicle flow you can use to judge traffic before setting out.",
+          },
+          {
+            q: "Can I watch Hong Kong harbor traffic?",
+            a: "Hong Kong's 1,185 feeds include harbor approaches and cross-harbor tunnel views alongside the urban traffic grid. Zoom to Victoria Harbour on the live map and look for markers near the water.",
+          },
+          {
+            q: "Do the cameras work at night?",
+            a: "Most urban and highway feeds run 24 hours — you will see lit streets and headlights rather than daylight scenes. The region spans eight time zones, so when Tokyo is dark, Istanbul still has afternoon light.",
+          },
+          {
+            q: "Are the feeds free to watch?",
+            a: "Yes. Every camera in the Asian index opens free on the WorldEye map — no account, no signup, no paywall.",
+          },
+          {
+            q: "Which countries have the smallest coverage?",
+            a: "At the tail of the table: Thailand (60), the Philippines (25), Kyrgyzstan (21), Malaysia (20), and Israel (19). Coverage expands as new public feeds are indexed.",
+          },
         ];
 
   return (
@@ -109,6 +129,9 @@ export default function AsiaWebcamsPage() {
           "Asia's index holds 5,858 cameras across 28 countries — the third-largest regional collection on WorldEye, after North America and Europe. Taiwan alone contributes 2,779 feeds, nearly half the regional total, from its dense highway and city camera networks.",
           "Hong Kong adds 1,185 cameras and Japan 928, so the top three entries account for more than four-fifths of Asian coverage. Turkey (247), Indonesia (197), Vietnam (160), and South Korea (138) form the next tier, with the remainder spread from Israel and the Gulf states through Central Asia to Southeast Asia.",
           "Coverage here ranges from dense urban traffic grids — Taipei, Hong Kong, Tokyo — to highway networks and city views across the region. This page rolls up the 28 Asian entries in the WorldEye camera index; every feed opens free on the live map.",
+          "Taiwan's 2,779 feeds are the story of the region: Taichung, Taipei, and Taoyuan run some of the densest intersection-camera grids in the index, and the feeds are genuinely useful for reading congestion — locals check the same intersections before setting out. If you have never watched an Asian traffic grid at rush hour, start here.",
+          "Hong Kong's 1,185 cameras cover one of the most vertical cities on earth — harbor approaches, cross-harbor tunnels, and the Mid-Levels escalator corridors all appear in the feed mix. Japan's 928 lean toward expressways and urban monitoring, from Tokyo's Shuto Expressway network outward.",
+          "The long tail is worth exploring too: Turkey's 247 feeds bridge Europe and Asia, Indonesia's 197 cover Jakarta's famously congested arterials, and Vietnam's 160 follow Hanoi and Ho Chi Minh City. Smaller entries — Thailand (60), the Philippines (25), Kyrgyzstan (21), Malaysia (20), Israel (19) — fill in Southeast and Central Asia. Time zones span UTC+2 to UTC+9, so there is always daylight somewhere in the region to watch.",
         ]}
       />
       <AreaTable
@@ -122,6 +145,9 @@ export default function AsiaWebcamsPage() {
           "Launch the WorldEye map — it works on phone and desktop, free.",
           "Pan across Asia and zoom into Taiwan, Hong Kong, Japan, or any listed country.",
           "Select a green camera marker to open that feed's live stream.",
+          "For traffic checks, open feeds during local rush hours — roughly 7–9 AM and 5–8 PM in each city's timezone.",
+          "Use the map search to jump straight to a city like Taipei, Hong Kong, or Tokyo instead of panning manually.",
+          "Remember the region spans UTC+2 to UTC+9: when it is night in Tokyo it is still afternoon in Istanbul — there is always daylight to watch somewhere.",
         ]}
       />
       <FaqSection

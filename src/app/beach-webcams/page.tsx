@@ -31,6 +31,9 @@ const INTRO = [
   "Coastal cameras are some of the most-watched feeds on the planet — and not just by surfers. A live beach camera shows the surf, the crowd, the cloud cover and the mood of the coast as it is right now, which is something no brochure photo or forecast icon can do.",
   "WorldEye's camera directory includes beach, boardwalk, harbor and marina feeds from coastlines around the world. They're plotted on the same globe as the weather layer, so you can watch a sunrise over the Atlantic, check the swell before a surf session, or see whether the coast you're visiting is sunny or socked in — all in one view.",
   "Every coastal feed opens free on the WorldEye map — no account, no signup. Zoom to any coastline, look for the camera markers near the water, and start watching.",
+  "For travelers, the beach camera is the antidote to the tourism brochure. That 'pristine stretch of sand' might be packed shoulder-to-shoulder at noon, or the water might be brown after a storm — the camera shows the beach as it is, not as the marketing department wishes it were. Check the day before you go, and the morning of.",
+  "For surfers, the value is the swell check. Beach-facing cameras near breaks show wave size, wind texture on the water, and how crowded the lineup is. It won't replace a dedicated surf report with period and direction data, but it answers the only question that matters at 6 AM: is it worth driving there?",
+  "And for everyone else, there is the simple pleasure of it. A beach camera at golden hour — pelicans on the pier, the light going flat gold on the water — is one of the most-watched categories on the internet for a reason. Pick a coast in the right timezone and watch the day happen somewhere else.",
 ];
 
 const CATEGORIES = [
@@ -49,6 +52,14 @@ const CATEGORIES = [
   {
     title: "Beach weather, visually",
     body: "A forecast says 'partly cloudy.' A beach camera shows you exactly how cloudy, whether the beach is packed or empty, and whether that 'chance of rain' is a drizzle or a wall of gray. Pack — or cancel — from live conditions.",
+  },
+  {
+    title: "Boardwalks and piers",
+    body: "Boardwalk and pier cameras show the human side of the coast: crowds, street performers, fishing activity, and the evening promenade. They are the best way to feel the energy of a beach town before visiting.",
+  },
+  {
+    title: "Storm watching",
+    body: "When hurricanes, typhoons, or winter storms approach a coast, beach cameras become front-row seats — waves building, skies darkening, streets emptying. During storm season these feeds turn genuinely newsworthy.",
   },
 ];
 
@@ -78,6 +89,22 @@ const FAQS = [
   {
     q: "Can I watch sunrises and sunsets on beach cameras?",
     a: "Yes. East-facing beaches catch sunrise, west-facing beaches catch sunset. Pick a coast in the right timezone, find a camera pointed at the horizon, and watch it happen live.",
+  },
+  {
+    q: "How do I find a specific beach?",
+    a: "Use the map search to jump to the beach town or coastline by name, then zoom in — camera markers cluster near the water. Boardwalk, pier, and harbor cameras are usually labeled by their location.",
+  },
+  {
+    q: "Can beach cameras help me plan a beach vacation?",
+    a: "Absolutely. Check the beach the day before and the morning of: crowds, water color, cloud cover, and whether the beach matches the brochure. It is the most honest travel preview there is.",
+  },
+  {
+    q: "Do beach cameras work during storms?",
+    a: "Often they are the most compelling feeds during storms — waves building, skies darkening. But individual cameras can go offline in severe weather when power or connectivity fails, so have a backup feed in mind.",
+  },
+  {
+    q: "Are there marina and harbor cameras too?",
+    a: "Yes. Marina and harbor feeds show boat traffic, water conditions, and fog rolling in — practical for sailors checking conditions and relaxing for everyone else.",
   },
 ];
 

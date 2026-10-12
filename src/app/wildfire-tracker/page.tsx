@@ -49,6 +49,21 @@ const WHAT_YOU_SEE = [
     title: "Cameras nearby",
     desc: "In fire country, public cameras often catch the smoke plume before the news does. Cross-reference the fire with cameras in the area.",
   },
+  {
+    icon: Eye,
+    title: "Fire behavior at a glance",
+    desc: "New detections flaring up, clusters merging into complexes, activity stalling against terrain — the map shows how fires live and move, not just where they are.",
+  },
+  {
+    icon: Wind,
+    title: "Wind-driven spread",
+    desc: "Fire follows wind. With the weather layer alongside, you can see which communities sit downwind of an active fire — and how a wind shift would change the picture.",
+  },
+  {
+    icon: Flame,
+    title: "Seasonal rhythm",
+    desc: "Fire season moves around the planet — the western US in late summer, Australia in its summer, the Mediterranean in the dry months. The globe shows the season as a global pattern, not just local news.",
+  },
 ];
 
 const FAQS = [
@@ -71,6 +86,22 @@ const FAQS = [
   {
     q: "What should I do if there's a fire near me?",
     a: "Check your local fire department, emergency management agency or emergency alert system immediately. Sign up for your area's official emergency alerts if you haven't already — that's the system that will tell you to leave, and when.",
+  },
+  {
+    q: "What causes the fires shown on the map?",
+    a: "The map shows thermal detections, not causes. Most wildfires start from lightning or human activity — the full range from unattended campfires to power lines — but determining a specific fire's cause is investigators' work, not something a satellite can see.",
+  },
+  {
+    q: "Can I see how big a fire is?",
+    a: "Thermal detections show heat, not perimeters. A cluster of detections means significant burning, but the actual burned area comes from fire agencies' mapped perimeters — check their incident pages for acres and containment figures.",
+  },
+  {
+    q: "Does the map show prescribed burns?",
+    a: "Sometimes — a prescribed burn hot enough to trigger a thermal detection looks the same from orbit as a wildfire. If a detection sits somewhere burns are planned, check local agency announcements before assuming the worst.",
+  },
+  {
+    q: "Why is there smoke but no fire shown near me?",
+    a: "Smoke travels hundreds of miles downwind of its source. If your sky is hazy but the map shows no nearby fire, zoom out and look upwind — the source is often a fire complex in another state or even another country.",
   },
 ];
 
@@ -215,6 +246,13 @@ export default function WildfireTrackerPage() {
               40,000+ public cameras share the same globe. In fire country,
               that means you can sometimes watch the smoke column from a
               roadside camera while the satellite data shows the heat source.
+            </p>
+            <p>
+              Detections have limits worth knowing. Thick cloud can hide a fire
+              from thermal instruments; a fast-moving grass fire can outrun the
+              satellite&apos;s revisit; intense industrial heat occasionally trips
+              a false positive. The map is honest about what it is — a live plot
+              of heat detections — and honest maps beat confident ones.
             </p>
           </div>
         </div>

@@ -56,6 +56,22 @@ const HIGHLIGHTS = [
     desc: "993 Italian feeds follow the great autostrade — the A1 Milano–Napoli and A14 Bologna–Taranto corridors alone account for hundreds of live views.",
   },
   {
+    title: "The UK's London grid",
+    desc: "899 UK feeds are overwhelmingly London — 890 of them watch the capital's streets, from the North Circular to the Blackwall Tunnel approaches.",
+  },
+  {
+    title: "Sweden's northern reach",
+    desc: "886 Swedish cameras stretch from Malmö up past the Arctic Circle — winter road conditions in Norrland are some of the most practical feeds in Europe.",
+  },
+  {
+    title: "Alpine passes, live",
+    desc: "Austria's Alpine pass cameras are the winter essential: check snow, chain controls, and whiteout conditions on the high routes before driving them.",
+  },
+  {
+    title: "Mediterranean coasts",
+    desc: "Spain's coastal feeds — Benidorm, Tenerife, Lanzarote — plus Italy's rivieras turn the directory into a beach-weather checker for the whole Med.",
+  },
+  {
     title: "Small states, live views",
     desc: "Even San Marino, Vatican City and the Faroe Islands have public feeds — a single camera in St. Peter's Square or on an Atlantic cliff can be the most memorable one.",
   },
@@ -73,6 +89,26 @@ const FAQS = [
   {
     q: "Are these cameras available 24 hours a day?",
     a: "Most feeds run around the clock, though individual cameras go offline for maintenance or are retired by their operators. Bigger networks like Austria's and Spain's have enough redundancy that alternatives are usually nearby.",
+  },
+  {
+    q: "Can I check Alpine road conditions in winter?",
+    a: "Yes — Austria's Alpine pass cameras are among the most practical feeds in Europe. Check snow, chain controls, and visibility on the high routes before driving them in winter.",
+  },
+  {
+    q: "Are there beach cameras in Europe?",
+    a: "Yes. Spain's coastal feeds around Benidorm, Tenerife, and Lanzarote, plus Italy's rivieras, let you check Mediterranean beach weather live before a trip.",
+  },
+  {
+    q: "What about the Nordic countries?",
+    a: "Sweden's 886 cameras stretch from Malmö past the Arctic Circle — excellent for winter road checks. The Nordics are well covered for their population size.",
+  },
+  {
+    q: "Do the cameras cover Eastern Europe?",
+    a: "Coverage is thinner east of the former Iron Curtain but growing — the directory adds public feeds as operators publish them. Check the country table for current counts.",
+  },
+  {
+    q: "Can I see famous landmarks?",
+    a: "Some feeds do cover landmarks and plazas — St. Peter's Square in Vatican City is one example. Most feeds are traffic and street cameras, so use the map search to find scenic ones.",
   },
 ];
 

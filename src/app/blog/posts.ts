@@ -70,6 +70,27 @@ export const POSTS: BlogPost[] = [
           "Start with a question, not a tool. Pick something small — where is that aircraft headed, what's the weather like at that webcam right now — and work it out from public data. That's OSINT.",
         ],
       },
+      {
+        heading: "A worked example: verifying a viral video",
+        body: [
+          "Say a video claims to show a protest in a city square last night. The OSINT workflow: first, check the metadata and run a reverse image search — is this footage recycled from an older event? Then find the square on a live webcam or satellite view and match landmarks: the same shopfronts, the same tram lines, the same mountain on the horizon.",
+          "Next, corroborate with independent sources: flight trackers showing diverted aircraft, weather data matching the video's claimed conditions, other social posts from the same location and time. No single source proves anything; three independent ones pointing the same way is strong evidence. That discipline — never trusting one data point — is the whole craft.",
+        ],
+      },
+      {
+        heading: "The toolkit, by category",
+        body: [
+          "OSINT tools cluster into a few families. Search and archives: advanced operators, the Wayback Machine, and cached pages. Network: DNS/WHOIS lookups, certificate transparency logs, BGP and ASN data. Imagery: satellite views, street-level imagery, and sun-position calculators for shadow analysis. Transport: ADS-B flight tracking and AIS ship tracking. People and companies: public registries, court records, and corporate filings.",
+          "You don't need all of them. Beginners should master one family deeply — network lookups are the highest-leverage starting point — before spreading out. Depth beats breadth: one analyst who truly understands DNS records outperforms ten who skimmed twenty tools.",
+        ],
+      },
+      {
+        heading: "Learning path and communities",
+        body: [
+          "The field has a strong practice culture: capture-the-flag challenges, weekly OSINT exercises on social media, and open casework where analysts collaborate publicly. Working through practice scenarios — geolocating a photo, tracing a domain's infrastructure — builds the pattern recognition no tutorial can give.",
+          "When you're ready to go deeper, the professional side of OSINT spans journalism, corporate security, threat intelligence, and law enforcement support. The common thread is the same beginner skill: asking a precise question and refusing to accept the first answer.",
+        ],
+      },
     ],
   },
   {
@@ -111,6 +132,27 @@ export const POSTS: BlogPost[] = [
           "Tip: zoom into a major hub and watch arrivals sequence themselves. Then cross-reference with a live airport webcam from the camera layer. Two public data sources, one picture — that's the OSINT habit in miniature.",
         ],
       },
+      {
+        heading: "Reading a track: what the data tells you",
+        body: [
+          "A flight's track tells a story if you know what to look for. A sudden altitude drop followed by a racetrack pattern near an airport means a holding pattern — usually weather or congestion at the destination. A track that diverts to an unplanned airport and stays there signals a real problem aboard.",
+          "Speed changes matter too: an airliner slowing to 180 knots far from any airport is configuring for something, and a climb that stops well below cruise altitude suggests a pressurization or performance issue. You don't need to be a pilot to read these — you just need to watch enough tracks to know what normal looks like, so abnormal stands out.",
+        ],
+      },
+      {
+        heading: "Blind spots and limitations",
+        body: [
+          "ADS-B coverage depends on ground receivers, so oceans, deserts, and polar regions have gaps — satellite ADS-B fills some, but position updates there are less frequent. Some aircraft don't broadcast at all: military flights often fly dark, and certain government and sensitive flights use privacy programs that limit what trackers display.",
+          "Altitude also reads differently than people expect: the number shown is pressure altitude, which can differ from true altitude by hundreds of feet on extreme-weather days. And 'estimated arrival' is exactly that — an estimate, recalculated continuously. Treat the data as live and approximate, not as a schedule.",
+        ],
+      },
+      {
+        heading: "Feeding the network yourself",
+        body: [
+          "The volunteer receiver network runs on cheap hardware: a small software-defined radio dongle, a modest antenna, and a single-board computer can feed ADS-B data to the public networks. A rooftop or balcony antenna in a coverage gap genuinely improves tracking for everyone — many feeders start because their own area was a blind spot.",
+          "Feeding usually earns perks on the tracking networks, like premium features or enterprise data access. It's one of the few hobbies where a $30 radio and an afternoon of setup contributes to a global public dataset used by journalists, researchers, and aviation nerds alike.",
+        ],
+      },
     ],
   },
   {
@@ -150,6 +192,34 @@ export const POSTS: BlogPost[] = [
         body: [
           "The full camera layer is free for everyone on WorldEye — no account, no signup, no paywall. Open the map, enable cameras, and click any marker to watch.",
           "If you're curious about a place, there's no better first step than looking at it live.",
+        ],
+      },
+      {
+        heading: "The geography of public cameras",
+        body: [
+          "Camera density maps almost perfectly onto open-data culture. North America dominates with tens of thousands of DOT highway feeds; Europe follows with strong national networks in Spain, Austria, and Italy. Asia's coverage clusters in Taiwan, Japan, and Hong Kong — dense urban grids in a handful of countries rather than broad continental spread.",
+          "The gaps are just as telling. Large parts of Africa, the Middle East, and Central Asia have almost no public feeds — not because nothing happens there, but because no agency publishes cameras openly. Where coverage is thin, a single harbor or plaza camera can be the only live window into an entire city.",
+        ],
+      },
+      {
+        heading: "Beyond watching: practical uses",
+        body: [
+          "The obvious uses — traffic, weather, travel planning — barely scratch the surface. Event planners check plaza cameras to scout venues. Real estate buyers look at the street outside a listing. Truckers check mountain passes. Researchers use beach cameras to study coastal erosion and wildlife feeds to monitor nesting seasons.",
+          "During disasters, public cameras become ad-hoc sensor networks. Wildfire cameras show smoke columns before official alerts; hurricane-season coastal feeds show storm surge arriving in real time. Emergency managers have learned to watch the camera layer alongside their official dashboards — the ground truth is often faster.",
+        ],
+      },
+      {
+        heading: "Privacy and the ethics of public cameras",
+        body: [
+          "Every camera in the directory is one its operator already publishes openly — transport agencies, cities, resorts, businesses. WorldEye doesn't install cameras or access private ones; it maps what's already public. Still, the aggregation itself raises questions worth taking seriously.",
+          "The line the directory holds: public infrastructure and public spaces only, presented as the operators present them. Faces and license plates in a traffic feed are incidental, not the product — the product is the road, the weather, the crowd. If you're uncomfortable being on a public camera, the conversation to have is with the operator pointing it, not the map showing it.",
+        ],
+      },
+      {
+        heading: "How to get the most out of the directory",
+        body: [
+          "The directory rewards the curious. Don't just check the famous places — the most interesting feeds are often the obscure ones: a harbor in the Faroe Islands at dawn, a mountain pass in Kyrgyzstan, a plaza in a city you've never heard of. Use the country pages to find regions, then drill into the areas with the highest counts for the densest coverage.",
+          "Time zones are your friend. When it's midnight where you are, it's midday somewhere else — the directory never sleeps. And during major events — storms, festivals, rush hours — the relevant cameras become the best live coverage on the internet, faster than any news crew can arrive.",
         ],
       },
     ],

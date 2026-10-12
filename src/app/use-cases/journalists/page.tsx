@@ -60,6 +60,26 @@ const FAQS = [
     q: "Can I use WorldEye screenshots in my publication?",
     a: "The underlying camera streams belong to their operators, not to WorldEye. Screenshots for internal verification are fine; for publication, check your outlet's policies and the camera operator's terms — and credit the source feed, not just the map.",
   },
+  {
+    q: "How do I credit a camera feed in my reporting?",
+    a: "Credit the camera's operator — the traffic department, municipality or business that publishes the stream — the same way you'd credit any source. 'Traffic camera footage via [operator]' is honest; 'WorldEye footage' misattributes where the images actually come from.",
+  },
+  {
+    q: "Can WorldEye show me what happened yesterday?",
+    a: "No — the map is live, not an archive. If you need yesterday's footage, you need the camera operator's own recordings or a third-party archive service. Screenshot and timestamp anything time-sensitive while it's happening, because the live view won't wait for you.",
+  },
+  {
+    q: "How do I handle a camera that contradicts official statements?",
+    a: "Carefully. A camera shows one fixed viewpoint; officials may have information from elsewhere. Report what the camera shows, attribute it plainly, and ask the official source to reconcile the difference — that tension is the story, not a conclusion.",
+  },
+  {
+    q: "Does WorldEye work for international stories?",
+    a: "Yes — the camera directory spans 100+ countries, and flights, satellites and disaster layers are global by nature. Coverage density varies: US and European road networks are dense, while some regions have only scattered feeds. Check what's actually covered before you promise an editor a visual.",
+  },
+  {
+    q: "Can I get alerts when something happens on a camera?",
+    a: "WorldEye doesn't push camera alerts — it's a map you watch, not a monitoring service that watches for you. For breaking news, pair it with wire services and official alert channels, then use the globe to see what the alerts are describing.",
+  },
 ];
 
 const faqJsonLd = {
@@ -92,6 +112,26 @@ const SECTIONS = [
     icon: ShieldCheck,
     title: "OSINT ethics: verify, don't dox",
     body: "The power here comes with one hard rule: verify before publishing, and never use public cameras to identify or target private individuals. The cameras watch public infrastructure, not people. Don't zoom in on identifiable faces or license plates, don't publish anyone's location from a camera, and don't treat a camera feed as proof of who someone is — it's proof of what a place looks like right now, nothing more.",
+  },
+  {
+    icon: Globe,
+    title: "Cross-reference every layer at once",
+    body: "A story rarely lives on one feed. A port explosion shows on cameras, flight diversions overhead, and the earthquake layer ruling out a quake. WorldEye stacks them on the same globe, so corroboration is one view instead of five tabs. When three independent layers agree, you have something solid; when they don't, you have the right question for your next call.",
+  },
+  {
+    icon: Newspaper,
+    title: "Background a location before you fly",
+    body: "Assigned a dateline you've never visited? Spend twenty minutes on the map before you travel: the main junctions, the government quarter, the roads in and out, what the streets look like from the traffic cameras. You'll land oriented — and you'll know immediately when a stringer's footage doesn't match the place it claims to be.",
+  },
+  {
+    icon: Eye,
+    title: "Monitor a developing story passively",
+    body: "Not every story breaks at once. Keep the globe on a second screen during elections, summits, trials and storms: cameras at key locations, flights in and out, the quake feed for aftershocks. You'll see the moment a story turns — a street filling, an airport emptying — instead of reading about it an hour later.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Protect sources, protect yourself",
+    body: "Public cameras are open to everyone, including the people you're reporting on. Don't discuss which feeds you're watching on unsecured channels, don't publish your verification methods in ways that burn them, and remember your own map browsing is as observable as anyone's. Standard digital hygiene applies to OSINT the same as everything else.",
   },
 ];
 
@@ -127,7 +167,9 @@ export default function JournalistsPage() {
             A viral video says it happened somewhere, right now. WorldEye gives you
             40,000+ live public cameras, real-time flight positions and disaster
             layers on one globe — so you can check the claim against reality before
-            you publish it.
+            you publish it. It&apos;s the fastest first check in the verification
+            toolkit: geography, weather and time-of-day don&apos;t lie, and a live
+            camera shows you all three.
           </p>
         </div>
 
@@ -154,6 +196,8 @@ export default function JournalistsPage() {
               "Compare landmarks, weather, light and activity against the footage.",
               "Check the earthquake and flight layers for corroborating context.",
               "If it matches, note the camera source and timestamp for your editor. If it doesn't, you've got a story.",
+              "Screenshot anything time-sensitive — the map is live, not an archive, and the moment passes.",
+              "Write down the camera operator and the exact time for the attribution line before you close the tab.",
             ].map((step, i) => (
               <li key={i} className="flex gap-4 items-start rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-sm flex items-center justify-center shrink-0">

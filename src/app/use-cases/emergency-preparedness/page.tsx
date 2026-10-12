@@ -61,6 +61,22 @@ const FAQS = [
     q: "Is WorldEye free to use during emergencies?",
     a: "Yes. The entire map — cameras, weather, earthquakes, wildfires, flight tracking — is free for everyone, forever, with no account. There is no emergency paywall and never will be.",
   },
+  {
+    q: "Can WorldEye replace my weather radio?",
+    a: "No. A weather radio wakes you at 3 AM; a website doesn't. Keep the radio, keep your official alert apps, and let the map be the visual layer on top of alerts that actually reach you when it matters.",
+  },
+  {
+    q: "How do I use WorldEye if the power goes out?",
+    a: "On your phone, with a charged battery and a car charger as backup. The map is a website — it needs a connection. Screenshot your key camera views and evacuation routes while you still have power, so the information survives a dead battery.",
+  },
+  {
+    q: "Does WorldEye show official evacuation zones?",
+    a: "No. Evacuation zones, shelter locations and road closures come from your county emergency management — every area draws them differently. The map shows you live conditions on the ground; officials tell you where to go.",
+  },
+  {
+    q: "Can I trust the earthquake magnitudes shown?",
+    a: "They're a fast first read from public seismic feeds — good enough for 'big or small, near or far.' For the authoritative magnitude and depth, check the USGS or your national seismic agency once their analysts have reviewed the event.",
+  },
 ];
 
 const faqJsonLd = {
@@ -93,6 +109,26 @@ const SECTIONS = [
     icon: Camera,
     title: "Evacuation routes: check road conditions",
     body: "Traffic cameras are the most practical preparedness tool in the directory. Know which feeds cover your evacuation routes now — highway interchanges, bridges, mountain passes — so that when the order comes, you can see congestion, closures and weather on the road instead of guessing.",
+  },
+  {
+    icon: Waves,
+    title: "Floods: watch the water rise",
+    body: "River gauges give you a number; a camera on the bridge shows you what the number means. During heavy rain, check cameras along creeks, underpasses and the low spots you already know flood in your area. Water over the curb on a familiar street is the most persuasive argument for leaving early — and you'll see it before the road closes.",
+  },
+  {
+    icon: Activity,
+    title: "Severe storms: know when to look away",
+    body: "The weather layer shows the supercell; ground cameras show the sky turning green and debris in the air. But when a tornado warning covers your county, the map is for afterward — shelter first, look later. After it passes, cameras tell you which roads are blocked before you drive them.",
+  },
+  {
+    icon: Megaphone,
+    title: "After the event: survey the damage",
+    body: "Once it's safe to move, cameras become your damage survey. Check the routes to work, school and family before you drive them — downed lines, flooded intersections and debris show up on traffic feeds long before official cleanup maps update.",
+  },
+  {
+    icon: Globe,
+    title: "Coordinate family across the distance",
+    body: "When the power's out and phones are jammed, a relative three states away can still open the map. Agree in advance which cameras to watch — the intersection by the house, the highway out of town — so the whole family sees the same ground truth instead of trading rumors.",
   },
 ];
 
@@ -171,6 +207,8 @@ export default function EmergencyPreparednessPage() {
               "Check the earthquake layer monthly so you know what 'normal' looks like in your region.",
               "Save your local emergency management's alert signup page — WorldEye shows you the world, alerts tell you what to do.",
               "Walk the family through the map once: kids who've seen the evacuation route on a camera recognize it under stress.",
+              "Screenshot your evacuation-route cameras while you have power — the map needs a connection, and screenshots don't.",
+              "Note which local TV stations stream their tower cameras online; that's your backup set of eyes during the event.",
             ].map((step, i) => (
               <li key={i} className="flex gap-4 items-start rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-sm flex items-center justify-center shrink-0">

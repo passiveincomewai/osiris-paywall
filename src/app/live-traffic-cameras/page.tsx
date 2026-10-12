@@ -49,6 +49,26 @@ const FAQS = [
     q: "Can I check my commute or a road trip route?",
     a: "Yes. Search for any place or zoom into your route and the nearest live feeds load around you. Many travelers check mountain passes, interstate junctions and border crossings before heading out.",
   },
+  {
+    q: "Do the cameras show live video or still images?",
+    a: "It varies by operator. Many DOT feeds refresh as still images every few seconds rather than smooth video — plenty for judging congestion or a blocked lane. Metro and tollway systems more often stream true video.",
+  },
+  {
+    q: "Can I check winter road conditions?",
+    a: "Yes — one of the best uses. Utah's canyon cameras (like SR-210 to the ski resorts), mountain pass feeds, and northern-state DOT networks show snow, plowing, and chain controls live through winter.",
+  },
+  {
+    q: "Are there cameras for my state's highways?",
+    a: "If your state DOT publishes open feeds, they are likely indexed — Georgia, Utah, Texas, Florida, Indiana, and Nevada have the densest networks. Search your interstate or city on the live map to see what's there.",
+  },
+  {
+    q: "Can truckers use these for route planning?",
+    a: "Yes. Checking interchange congestion, work zones, and weather on mountain grades before rolling saves real time. Many drivers check the major junctions along their route as part of trip planning.",
+  },
+  {
+    q: "Is there a cost or account needed?",
+    a: "No. All traffic cameras are free to watch with no account and no signup — the directory exists so anyone can check road conditions.",
+  },
 ];
 
 const jsonLd = {

@@ -31,6 +31,9 @@ const INTRO = [
   "A ski day lives or dies on conditions — and conditions change faster than any forecast update. Mountain webcams are the skier's reality check: fresh snow on the slopes, lift lines at the base, fog on the ridgeline, and the drive up the access road.",
   "WorldEye's camera directory includes mountain and resort-area feeds from ski regions around the world. They're plotted on the same globe as the weather layer, so you can check snowfall, visibility and road conditions in one view before committing to the drive.",
   "Every mountain feed opens free on the WorldEye map — no account, no signup. Zoom to the ranges, look for the camera markers, and see the mountain as it is right now.",
+  "The overnight snowfall number is only the start of the story. A resort can report six inches while the wind scoured the ridgeline bare — or report two while a sheltered bowl skis like a foot. Slope cameras show the actual surface: wind texture, groomed corduroy, tracked-out traverses, and whether the sun has hit the east-facing runs yet.",
+  "Timing matters as much as snow. Base-area cameras at 7 AM show empty parking lots and spinning lifts; at 9:30 on a powder Saturday they show the line you are about to join. The camera habit that pays off: check the night before for the storm total, check the morning of for lines and visibility, and check the access-road cameras before you leave the driveway.",
+  "Mountain weather deserves its own check because resorts sit in microclimates. Valley forecasts routinely miss ridgeline fog, summit whiteouts, and the wind holds that stop upper lifts. A summit camera pointed at the ridgeline is the most honest lift-status indicator there is — if it shows a white wall, plan for lower-mountain laps.",
 ];
 
 const CATEGORIES = [
@@ -49,6 +52,14 @@ const CATEGORIES = [
   {
     title: "The drive up",
     body: "The access road is half the battle. Traffic and road cameras along mountain corridors show chain controls, plowed lanes, and accident backups — check them before the canyon, not in it.",
+  },
+  {
+    title: "Terrain parks and base facilities",
+    body: "Park cameras show feature conditions and crowd levels for freestyle riders, while village and base-lodge feeds show the aprés scene, rental lines, and whether the deck is in the sun — useful for mixed-ability groups planning the day.",
+  },
+  {
+    title: "Backcountry and pass conditions",
+    body: "Cameras near mountain passes and backcountry access points show snowpack, wind loading on ridgelines, and road status at trailheads. They are a visual input for trip planning — always pair them with the avalanche forecast, never replace it.",
   },
 ];
 
@@ -78,6 +89,22 @@ const FAQS = [
   {
     q: "Do mountain webcams show visibility conditions?",
     a: "Yes. Summit and ridgeline cameras show fog, blowing snow and whiteout conditions as they are right now — a far better visibility check than a forecast icon.",
+  },
+  {
+    q: "When should I check the cameras — night before or morning of?",
+    a: "Both. Check the night before for the storm total and grooming, then the morning of for lift lines, visibility, and the access road. Conditions at 7 AM and 10 AM on a storm day can be completely different mountains.",
+  },
+  {
+    q: "Can cameras tell me if lifts are on wind hold?",
+    a: "Indirectly but reliably: a summit camera showing a white wall of blowing snow, or visibly empty upper-mountain chairs, usually means the upper lifts are marginal or stopped. Pair it with the resort's lift-status page for confirmation.",
+  },
+  {
+    q: "Are the access-road cameras the same as the resort cameras?",
+    a: "They are different feeds on the same map. Resort cameras watch slopes and base areas; highway and traffic cameras watch the access corridors. For a storm-day trip, check both — the mountain can be perfect while the canyon road is a mess, or vice versa.",
+  },
+  {
+    q: "Can I use mountain cameras for backcountry planning?",
+    a: "As one input among several. Cameras near passes and trailheads show snowpack and wind on ridgelines, which helps with route choice — but always pair them with the official avalanche forecast and never treat a camera as a safety clearance.",
   },
 ];
 
@@ -120,6 +147,9 @@ export default function SkiWebcamsPage() {
           "Open the free WorldEye map — no account or download needed.",
           "Zoom to the mountain ranges and look for camera markers at resorts and along access roads.",
           "Tap a slope, base-area or road marker to open that mountain camera's live feed.",
+          "Check slope cameras for snow surface and grooming, summit cameras for visibility, and base cameras for lift lines.",
+          "Before a storm-day trip, check the access-road cameras too — the canyon drive is half the battle.",
+          "Recheck the morning of: overnight totals set expectations, but the 7 AM camera shows the mountain you will actually ski.",
         ]}
       />
 

@@ -60,6 +60,22 @@ const FAQS = [
     q: "Is there a cost to use WorldEye while traveling?",
     a: "No. The whole map is free with no account — it works in a phone browser anywhere with a connection. The optional Pro plan adds intelligence tools for power users, but travelers need nothing more than the free globe.",
   },
+  {
+    q: "Can I use WorldEye without cell service abroad?",
+    a: "You need a connection — it's a live map. On hotel wifi, screenshot the camera views and routes that matter for the day ahead; the screenshots survive a dead zone even when the live feed can't.",
+  },
+  {
+    q: "How do I find cameras at my specific destination?",
+    a: "Open the map, zoom to the city, and look for the camera markers — they cluster along highways, waterfronts and city centers. The /cameras directory lists countries and regions if you want to check which areas are covered before you go.",
+  },
+  {
+    q: "Can I check ski resort conditions?",
+    a: "Where resorts or nearby mountain roads have public cameras, yes — you'll see actual snow, lift lines and parking. Not every resort is covered, so check the map for your mountain before counting on it.",
+  },
+  {
+    q: "Does it work for business travel too?",
+    a: "The same tricks apply: check traffic to the airport the morning you fly, look at your client's street to find the building entrance before the taxi drops you, and time pickups from the flight layer. Road warriors get the most out of the routine.",
+  },
 ];
 
 const faqJsonLd = {
@@ -92,6 +108,26 @@ const SECTIONS = [
     icon: Luggage,
     title: "Pack from live conditions, not averages",
     body: "A forecast says 8°C and rain. A live street camera shows you whether locals are in parkas or windbreakers — and whether the 'rain' is a drizzle or a downpour. Five minutes of camera-hopping across your destination beats guessing from a temperature number, and your suitcase will thank you.",
+  },
+  {
+    icon: Camera,
+    title: "Ski trips: check the snow before you go",
+    body: "Mountain cameras show the actual snowpack, lift lines and parking-lot chaos — not the resort's marketing powder shots. Check the pass cameras the morning you drive up: whiteout and chain controls are visible before you're stuck in them, and you can pick the resort that's actually getting snow.",
+  },
+  {
+    icon: Globe,
+    title: "Scout events and festivals",
+    body: "Heading to a festival, a match or a marathon? Open cameras around the venue in the days before: you'll see the setup going up, the crowds arriving and the traffic patterns forming. It's the difference between arriving early and arriving stuck — and you'll know which entrance is actually moving.",
+  },
+  {
+    icon: Route,
+    title: "Stay aware on unfamiliar roads",
+    body: "Driving abroad or in a new state? The camera grid rides shotgun: check the interchange before you take it, watch weather roll over the pass ahead, and confirm the border crossing isn't backed up for miles. Unfamiliar roads are safer when you've already seen them.",
+  },
+  {
+    icon: MapPin,
+    title: "Cruises and ferries, minus the guessing",
+    body: "Cruise day? With the Pro maritime layer you can watch your ship's reported position and heading — you'll know if boarding is actually on schedule before you leave the hotel. Island-hopping on ferries works the same way: see the crossing in progress instead of guessing from a timetable.",
   },
 ];
 
@@ -154,6 +190,8 @@ export default function TravelersPage() {
               "Check the weather layer along your flight path and your driving route for storms.",
               "If someone's flying in, note their flight on the tracker and plan your airport run from its live position.",
               "Save the camera views near your hotel — after a long flight, a familiar street on the map feels like home.",
+              "Screenshot the key views — hotel street, route, airport — for offline reference during the trip.",
+              "Check the cameras once more the morning you leave; conditions change overnight.",
             ].map((step, i) => (
               <li key={i} className="flex gap-4 items-start rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-sm flex items-center justify-center shrink-0">

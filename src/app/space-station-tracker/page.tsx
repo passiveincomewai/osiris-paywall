@@ -49,6 +49,21 @@ const WHAT_YOU_GET = [
     title: "Satellites alongside",
     desc: "The ISS shares the globe with thousands of tracked satellites — Starlink trains, weather satellites and more, all live.",
   },
+  {
+    icon: Eye,
+    title: "Ground track rhythm",
+    desc: "The path sweeps a sine wave across the map — steep crossings at the edges of its range, long diagonals over the equator. After a few orbits you can predict its next pass over your city by eye.",
+  },
+  {
+    icon: Moon,
+    title: "Shadow passes",
+    desc: "Watch the station dive into Earth's shadow and burst back into sunlight — the crew's sixteen daily sunrises, visible as the dot crosses the terminator line.",
+  },
+  {
+    icon: Satellite,
+    title: "The neighborhood",
+    desc: "Starlink trains, weather satellites and thousands more tracked objects share the sky. The ISS is the brightest and most famous resident, but it's far from alone up there.",
+  },
 ];
 
 const FAQS = [
@@ -71,6 +86,22 @@ const FAQS = [
   {
     q: "Why is the ISS sometimes easy to spot and sometimes not?",
     a: "Visibility depends on the station being sunlit while your sky is dark — typically the hour or two after sunset or before sunrise. In the middle of the night it flies through Earth's shadow; in daylight it's lost in the blue. Space agencies and spotter tools publish pass predictions for your exact location.",
+  },
+  {
+    q: "How many people are on the ISS right now?",
+    a: "Usually six or seven, rotating on roughly six-month missions. The exact crew changes with every launch — space agency sites carry the current roster with names, roles and mission patches.",
+  },
+  {
+    q: "What does the crew actually do all day?",
+    a: "Research, mostly: hundreds of experiments in microgravity — protein crystals, fluid physics, Earth observation — plus station maintenance and about two hours of daily exercise to fight bone and muscle loss. It's a laboratory that happens to orbit.",
+  },
+  {
+    q: "How long will the ISS keep flying?",
+    a: "NASA plans to operate the station through 2030, followed by a controlled deorbit. Its successor era — commercial stations and new international partnerships — is already being built, but for now the ISS remains the place where humans live off Earth.",
+  },
+  {
+    q: "Can I hear the ISS on a radio?",
+    a: "Yes — astronauts occasionally talk to schools and amateur radio operators, and the station's packet radio beacon is receivable with modest equipment. It's a whole hobby; look up ARISS for schedules and frequencies.",
   },
 ];
 
@@ -183,6 +214,13 @@ export default function SpaceStationTrackerPage() {
               And then the best part: stepping outside at the right minute and
               waving at a light crossing the sky — while knowing exactly where
               it is, because you just watched it get there.
+            </p>
+            <p>
+              It also quietly teaches orbital mechanics. Notice how the ground
+              track never repeats exactly — Earth turns beneath the orbit, so
+              each pass shifts west. Notice the tilted path, the compromise
+              orbit reachable from the world&apos;s launch sites. The dot is a
+              physics lesson that never ends.
             </p>
           </div>
         </div>

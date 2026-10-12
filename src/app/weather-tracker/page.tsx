@@ -50,6 +50,21 @@ const LAYERS = [
     title: "Radar-style view",
     desc: "A storm-hunter's perspective: precipitation and cloud structure visualized so you can follow a system as it develops, moves and dissipates.",
   },
+  {
+    icon: Thermometer,
+    title: "Temperature patterns",
+    desc: "Heat domes, cold snaps and the gradient between them — see temperature as a planetary pattern instead of a number on your phone.",
+  },
+  {
+    icon: CloudRain,
+    title: "Precipitation bands",
+    desc: "Where it's raining right now, from drizzle to deluge — follow rain bands across continents and watch them break against mountain ranges.",
+  },
+  {
+    icon: Wind,
+    title: "Upper-atmosphere currents",
+    desc: "The jet stream and trade winds that steer everything below them. Once you can see the currents, surface weather starts making sense.",
+  },
 ];
 
 const USE_CASES = [
@@ -67,6 +82,21 @@ const USE_CASES = [
     icon: Camera,
     title: "Ground truth",
     desc: "Pair the weather layer with 40,000+ public cameras: see the sky over a place and the street below it, side by side.",
+  },
+  {
+    icon: Wind,
+    title: "Sailors and weekend plans",
+    desc: "A weekend sail, a hike, an outdoor wedding — check what's actually moving toward you, not just the icon on the forecast. The wind field tells you when the front arrives.",
+  },
+  {
+    icon: Radar,
+    title: "Storm chasers and skywatchers",
+    desc: "Watch supercells organize and track across the plains in real time — then step outside when the sky over you starts to turn the same color.",
+  },
+  {
+    icon: CloudSun,
+    title: "Commuters and road trippers",
+    desc: "A glance at the continent before you leave tells you whether the drive is clear skies or a wall of weather — and which alternate route dodges it.",
   },
 ];
 
@@ -90,6 +120,22 @@ const FAQS = [
   {
     q: "Is this a replacement for my weather app?",
     a: "No. WorldEye shows you the planet's weather as it happens — beautiful and informative, but your local forecast from a meteorological service is still the right source for what to wear tomorrow or when to take cover.",
+  },
+  {
+    q: "Can I see past weather or future forecasts?",
+    a: "WorldEye shows the atmosphere as it is right now — a live picture, not an archive and not a forecast model. For what's coming tomorrow, your meteorological service's forecast is the right tool; for what's happening now, look at the globe.",
+  },
+  {
+    q: "Does it show the temperature where I am?",
+    a: "The layer renders temperature as a global pattern — heat and cold masses moving across the map. For the exact degrees outside your door, check a local station or forecast; for why it's hot or cold, look at the pattern.",
+  },
+  {
+    q: "Can I track a specific storm?",
+    a: "Zoom to any active system and watch it directly — its structure, its movement, and the winds steering it. During hurricane season, the hurricane tracker page goes deeper on tropical systems specifically.",
+  },
+  {
+    q: "Why does the weather look different from my weather app?",
+    a: "Your app shows a forecast for one point; the globe shows the whole atmosphere at once. They're complementary — the app tells you what to expect where you stand, the map shows you why.",
   },
 ];
 
@@ -203,6 +249,14 @@ export default function WeatherTrackerPage() {
               wildfires and tens of thousands of public cameras — so when a
               storm makes landfall, you can look at the sky <em>and</em> the
               street.
+            </p>
+            <p>
+              One habit worth building: compare the two views every day for a
+              week — the globe and the sky above you. You&apos;ll start
+              recognizing the signatures: the high, thin streaks ahead of a
+              front, the low scud racing under a storm, the clear dome of a
+              high-pressure system. Meteorology stops being vocabulary and
+              becomes pattern recognition.
             </p>
           </div>
         </div>
