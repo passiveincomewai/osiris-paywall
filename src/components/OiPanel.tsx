@@ -2,7 +2,7 @@
 /**
  * OSIRIS OI: the panel.
  *
- * Two ways to use OI, on the reader's own model key. Assist (the default)
+ * Two ways to use OI, both running on WorldEye AI — the site's own key. Assist (the default)
  * is a conversation: talk to OI and it works the map for you (flies there,
  * switches layers, finds what is live, marks it, puts it on screen, starts
  * forecasts, drives the workspace). Forecast is the prediction engine: set up
@@ -23,15 +23,15 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, History, Maximize2, Plus, X } from 'lucide-react';
-import { PROVIDERS, providerInfo } from '@/lib/oi/providers';
-import { fetchSiteAi, loadEngine, loadKey, type Engine, type OiClient, type SiteAiInfo } from '@/lib/oi/client';
+import { providerInfo } from '@/lib/oi/providers';
+import { fetchSiteAi, type Engine, type OiClient, type SiteAiInfo } from '@/lib/oi/client';
 import { resolve } from '@/lib/oi/research';
 import { T } from './oi/theme';
 import { IconButton, OiMark } from './oi/atoms';
 import { ModeSwitch, modeTint, type OiMode } from './oi/ModeSwitch';
 import { AssistView } from './oi/assist/AssistView';
 import type { AssistClient } from '@/lib/oi/assist/client';
-import { AskForm, EnginePill, EngineSheet } from './oi/engine';
+import { AskForm } from './oi/engine';
 import { Connecting, InjectBox, RunHead, UsageLine, Verdict } from './oi/run';
 import { HistoryList, RunTabs, type Tab } from './oi/lists';
 import { ObjectView } from './oi/ObjectView';
@@ -72,39 +72,28 @@ export interface OiPanelProps {
 
 export type { OiMode };
 
-/** The engine this browser last used, or OpenAI with its default model. */
-function initialEngine(): Engine {
-  const saved = loadEngine();
-  if (saved && PROVIDERS.some(p => p.id === saved.provider)) return saved;
-  return { provider: 'openai', model: providerInfo('openai').defaultModel, remember: false };
-}
-
 export default function OiPanel(props: OiPanelProps) {
   const { oi, selected, onSelect, embedded = false, theater = false } = props;
-  // Settings come from this browser's storage. The panel only renders once opened, on the client.
-  const [engine, setEngine] = useState<Engine>(initialEngine);
-  const [key, setKey] = useState(() => loadKey(initialEngine().provider));
-  // WorldEye AI: the site's own key covers the OpenAI engine for a
-  // signed-in reader, so no key of theirs is needed for that engine.
+  // WorldEye AI runs on the site's own key — there is no key or engine of
+  // the reader's to manage. The config fetch says whether the included AI
+  // is on for this deployment and this reader is signed in to it. A key or
+  // engine left in this browser's storage by an older version is ignored.
   const [siteAi, setSiteAi] = useState<SiteAiInfo | null>(null);
   useEffect(() => {
     let on = true;
     void fetchSiteAi().then(v => { if (on) setSiteAi(v); });
     return () => { on = false; };
   }, []);
-  // The engine sheet opens when asked: a first visit sees what OI does, and the Run and Send buttons ask for a key.
-  const [engineOpen, setEngineOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  // Opened from a button lower down (Run, or Assist's composer), the sheet is brought into view.
   const scroller = useRef<HTMLDivElement>(null);
-  useEffect(() => { if (engineOpen) scroller.current?.scrollTo({ top: 0, behavior: 'smooth' }); }, [engineOpen]);
   const [tab, setTab] = useState<Tab | null>(null);
   const [askTarget, setAskTarget] = useState('report');
 
   const s = oi.state;
-  const info = providerInfo(engine.provider);
-  const siteReady = Boolean(siteAi?.available && siteAi.signedIn && engine.provider === 'openai');
-  const ready = !info.needsKey || key.length > 0 || siteReady;
+  const info = providerInfo('openai');
+  // The one engine now: the site's, on the model this deployment runs.
+  const engine: Engine = { provider: 'openai', model: siteAi?.model || info.defaultModel, remember: false };
+  const ready = Boolean(siteAi?.available && siteAi.signedIn);
   const selection = s ? resolve(s, selected) : null;
   // Until someone picks a tab: the simulation while it runs, the prediction once there is one.
   const activeTab: Tab = tab ?? (s?.report ? 'report' : 'sim');
@@ -124,22 +113,22 @@ export default function OiPanel(props: OiPanelProps) {
 
   const tabs = s ? (
     <RunTabs
-      s={s} tab={activeTab} setTab={setTab} oi={oi} engine={engine} keyValue={key} ready={ready}
+      s={s} tab={activeTab} setTab={setTab} oi={oi} engine={engine} keyValue="" ready={ready}
       selected={selected} onSelect={onSelect} askTarget={askTarget} setAskTarget={setAskTarget} theater={theater}
     />
   ) : null;
 
   const assistView = (
-    <AssistView assist={props.assist} oi={oi} ready={ready} providerName={info.name} siteAi={siteAi} onKey={() => setEngineOpen(true)}
-      onSend={(text, m) => void props.assist.send(text, m, { engine, key })}
+    <AssistView assist={props.assist} oi={oi} ready={ready} providerName={info.name} siteAi={siteAi}
+      onSend={(text, m) => void props.assist.send(text, m, { engine, key: '' })}
       onLocate={props.onLocate} onOpenForecast={() => props.onMode('forecast')}
       onWorkspace={!embedded && !theater && props.onTheater ? () => props.onTheater?.(true) : undefined}
       speakOn={props.speakOn} onSpeak={props.onSpeak} autoFocus={props.autoFocus} />
   );
 
   const askForm = (
-    <AskForm ready={ready} providerName={info.name} onKey={() => setEngineOpen(true)} onRun={async (input) => {
-      const id = await oi.start(input, engine, key);
+    <AskForm ready={ready} providerName={info.name} onRun={async (input) => {
+      const id = await oi.start(input, engine, '');
       if (id) { setShowHistory(false); setTab(null); onSelect(null); }
       return Boolean(id);
     }} />
@@ -147,19 +136,12 @@ export default function OiPanel(props: OiPanelProps) {
 
   /* ── Full screen: the workspace, with or without a run ── */
   if (theater && !embedded) {
+    // No engine settings any more: a plain label saying what runs OI.
     const engineMenu = (
-      <div className="relative">
-        <EnginePill engine={engine} ready={ready} open={engineOpen} onClick={() => setEngineOpen(v => !v)} assist={props.mode === 'assist'} />
-        <AnimatePresence>
-          {engineOpen && (
-            <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}
-              className="absolute right-0 top-[calc(100%+10px)] w-[380px] max-h-[70vh] overflow-y-auto styled-scrollbar rounded-lg border border-[var(--border-primary)] shadow-[0_18px_48px_rgba(0,0,0,0.7)] z-50"
-              style={{ background: 'var(--oi-solid)' }}>
-              <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} siteAi={siteAi} onDone={() => setEngineOpen(false)} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <span className="mr-1 inline-flex items-center gap-1.5 h-7 px-2 rounded-md border border-[var(--border-secondary)] text-[9.5px] font-mono tracking-[0.12em] uppercase text-[var(--text-secondary)]" title="WorldEye AI — the site's own key">
+        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={ready ? { background: 'var(--gold-primary)' } : { boxShadow: 'inset 0 0 0 1.5px var(--gold-primary)' }} />
+        WorldEye AI
+      </span>
     );
     const askView = connecting ? <Connecting onCancel={reset} /> : (
       <>
@@ -185,7 +167,6 @@ export default function OiPanel(props: OiPanelProps) {
       {!embedded && <OiMark size={18} live={s?.status === 'running' || props.assist.busy} assist={assisting} />}
       {!embedded && <span className="hud-text text-[12px] text-[var(--text-heading)]">OI</span>}
       <div className="ml-auto flex items-center gap-0.5">
-        <EnginePill engine={engine} ready={ready} open={engineOpen} onClick={() => setEngineOpen(v => !v)} assist={assisting} />
         {!assisting && <IconButton title={showHistory ? 'Back' : 'Your predictions'} onClick={() => setShowHistory(v => !v)} active={showHistory}><History className="w-3.5 h-3.5" /></IconButton>}
         {!assisting && s && <IconButton title="New prediction" onClick={reset}><Plus className="w-3.5 h-3.5" /></IconButton>}
         {!embedded && props.onTheater && <IconButton title="Full screen: the OI workspace" onClick={() => props.onTheater?.(true)}><Maximize2 className="w-3.5 h-3.5" /></IconButton>}
@@ -201,25 +182,9 @@ export default function OiPanel(props: OiPanelProps) {
   );
 
   const body = assisting ? (
-    <>
-      <AnimatePresence initial={false}>
-        {engineOpen && (
-          <motion.div key="engine" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} className="overflow-hidden">
-            <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} siteAi={siteAi} onDone={() => setEngineOpen(false)} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {assistView}
-    </>
+    <>{assistView}</>
   ) : (
     <>
-      <AnimatePresence initial={false}>
-        {engineOpen && (
-          <motion.div key="engine" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} className="overflow-hidden">
-            <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} siteAi={siteAi} onDone={() => setEngineOpen(false)} />
-          </motion.div>
-        )}
-      </AnimatePresence>
       {errorBox}
       {showHistory ? (
         <HistoryList oi={oi} onPick={id => { setShowHistory(false); setTab(null); onSelect(null); void oi.watch(id); }} />

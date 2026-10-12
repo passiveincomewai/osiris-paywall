@@ -438,7 +438,7 @@ export function AskBox({ s, oi, engine, keyValue, ready, target, setTarget, onSe
         <option value="report" disabled={!s.report}>The report agent{!s.report ? ' (once the prediction is written)' : ''}</option>
         {cast.map(a => <option key={a.id} value={a.id}>{a.name} · {a.role}</option>)}
       </select>
-      {log.length === 0 && <Empty>Ask the report agent why the prediction landed where it did, or ask an actor what it would do if things changed. Questions run on your key.</Empty>}
+      {log.length === 0 && <Empty>Ask the report agent why the prediction landed where it did, or ask an actor what it would do if things changed. Questions run on WorldEye AI.</Empty>}
       <div aria-live="polite" className="flex flex-col gap-3">
         {log.map((m, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}

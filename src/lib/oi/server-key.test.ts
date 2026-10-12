@@ -3,7 +3,7 @@
  * site's OpenAI key may stand in for a key of the visitor's own.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { applyKeyDecision, decideKeyUse, siteAiKey, siteAiModel, siteKeyHourLimited } from './server-key';
+import { applyKeyDecision, decideKeyUse, isActiveSubscription, siteAiKey, siteAiModel, siteKeyHourLimited } from './server-key';
 import type { Credentials } from './service';
 
 const SITE = { signedIn: true, key: 'sk-site-key', model: 'gpt-5-mini' };
@@ -74,6 +74,17 @@ describe('the site key in the environment', () => {
     expect(siteAiModel()).toBe('gpt-5');
     vi.stubEnv('OPENAI_MODEL', '');
     expect(siteAiModel()).toBe('gpt-5-mini');
+  });
+});
+
+describe('isActiveSubscription — the gate the companion rides on', () => {
+  it("only the resolved 'active' passes: paid, trialing and comp all resolve to it upstream", () => {
+    expect(isActiveSubscription('active')).toBe(true);
+    // resolveSubscriptionStatus returns the raw status when it is not active:
+    // none of these may open the subscriber gate.
+    for (const s of ['none', 'trialing', 'past_due', 'canceled', 'incomplete', null, undefined, '']) {
+      expect(isActiveSubscription(s)).toBe(false);
+    }
   });
 });
 

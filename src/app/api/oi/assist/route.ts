@@ -27,8 +27,14 @@ export async function POST(req: Request) {
   // per user per hour; signed out, the resolution itself refuses.
   const resolved = await resolveRouteKey(creds);
   if (!resolved.ok) return fail(resolved.status, resolved.error, { code: resolved.code });
+  // WorldEye AI on the site's key is a subscriber feature — the same
+  // 'active' the page's Pro gate uses (paid, trialing or comp). The
+  // companion rides this route, so the fence lives here, not just in the UI.
+  if (resolved.siteUserId && !resolved.subscriptionActive) {
+    return fail(403, 'WorldEye AI is a subscriber feature. Subscribe to talk to OI on the site\'s key.', { code: 'SUBSCRIPTION_REQUIRED' });
+  }
   if (resolved.siteUserId && siteKeyHourLimited('assist', resolved.siteUserId)) {
-    return fail(429, 'You have used the included WorldEye AI a lot this hour. Give it a little while — or add your own key in OI settings to use your own quota.');
+    return fail(429, 'You have used the included WorldEye AI a lot this hour. Give it a little while.');
   }
 
   const out = await assistStep(body, resolved.creds, req.signal);

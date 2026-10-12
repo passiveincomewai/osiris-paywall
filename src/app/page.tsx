@@ -2339,8 +2339,9 @@ export default function Dashboard() {
       </div>
 
 
-      {/* ── WorldEye Companion (in-page humanoid) ── */}
-      <CompanionWidget assist={assist} />
+      {/* ── WorldEye Companion (in-page humanoid) — subscribers only:
+          signed-out and free readers never see the FAB, sheet or widget. ── */}
+      {isPremiumUser && <CompanionWidget assist={assist} />}
 
 
     </main>

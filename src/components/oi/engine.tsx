@@ -1,173 +1,17 @@
 'use client';
 /**
- * OSIRIS OI: choosing an engine (provider, key, model) and asking a question.
+ * OSIRIS OI: asking a question — the forecast form and the reader's own
+ * data. The engine is not chosen here any more: OI runs on WorldEye AI,
+ * the site's own key.
  */
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Check, ChevronDown, Database, Eye, EyeOff, FileText, KeyRound, Loader2, Upload, X } from 'lucide-react';
-import { PROVIDERS, providerInfo, type ProviderId } from '@/lib/oi/providers';
+import { ArrowRight, ChevronDown, Database, FileText, Loader2, Upload, X } from 'lucide-react';
 import { DEPTHS, PANEL_SEED_MAX, SEED_MAX, estimateCalls, seedCost, type SeedScope } from '@/lib/oi/depths';
-import { checkKey, forgetKey, loadKey, saveEngine, saveKey, type Engine, type SiteAiInfo } from '@/lib/oi/client';
 import type { Depth, Frame } from '@/lib/oi/types';
-import { FIELD, KIND_SHORT, LABEL, T, blue, gold, shortName } from './theme';
-import { Kbd, Overline, SectionTitle, Segmented, Switch, TextButton } from './atoms';
-import { ModelPicker } from './ModelPicker';
+import { FIELD, KIND_SHORT, LABEL, T, gold, shortName } from './theme';
+import { Kbd, Overline, Segmented, Switch } from './atoms';
 
-export function EnginePill({ engine, ready, open, onClick, assist = false }: { engine: Engine; ready: boolean; open: boolean; onClick: () => void; /** In Assist the pill wears Assist's blue. */ assist?: boolean }) {
-  const info = providerInfo(engine.provider);
-  const color = assist ? T.blue : T.gold;
-  const tint = assist ? blue : gold;
-  const lit = open || !ready;
-  return (
-    <button onClick={onClick} title="Model engine and key" aria-expanded={open}
-      className={`mr-1 inline-flex items-center gap-1.5 h-7 pl-2 pr-1.5 rounded-md border text-[9.5px] font-mono tracking-[0.12em] uppercase transition-colors max-w-[140px] hover:bg-[var(--hover-accent)] ${lit ? '' : 'border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-heading)]'}`}
-      style={lit ? { borderColor: tint(0.45), color: assist ? T.blue : T.goldLight } : undefined}>
-      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={ready ? { background: color, boxShadow: `0 0 6px ${tint(0.7)}` } : { boxShadow: `inset 0 0 0 1.5px ${color}` }} />
-      <span className="truncate">{ready ? shortName(info.name) : 'Add key'}</span>
-      <ChevronDown className="w-3 h-3 flex-shrink-0 transition-transform" style={{ transform: open ? 'rotate(180deg)' : undefined }} />
-    </button>
-  );
-}
-
-export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone, siteAi }: {
-  engine: Engine; setEngine: (e: Engine) => void; keyValue: string; setKey: (k: string) => void; onDone: () => void;
-  /** WorldEye AI: the site's own key, when this deployment includes one. Covers the OpenAI engine only. */
-  siteAi?: SiteAiInfo | null;
-}) {
-  const info = providerInfo(engine.provider);
-  const [reveal, setReveal] = useState(false);
-  const [models, setModels] = useState<{ id: string; name: string }[] | null>(null);
-  const [listed, setListed] = useState(false);
-  const [status, setStatus] = useState<{ kind: 'idle' | 'checking' | 'ok' | 'error'; text: string }>({ kind: 'idle', text: '' });
-
-  const pickProvider = (id: ProviderId) => {
-    const next = { ...engine, provider: id, model: providerInfo(id).defaultModel };
-    setEngine(next);
-    saveEngine(next);
-    setKey(loadKey(id));
-    setModels(null);
-    setListed(false);
-    setStatus({ kind: 'idle', text: '' });
-  };
-
-  const check = async () => {
-    setStatus({ kind: 'checking', text: '' });
-    // On the site's key there is nothing of the reader's to save.
-    if (keyValue) saveKey(engine.provider, keyValue, engine.remember);
-    const out = await checkKey(engine.provider, keyValue);
-    if ('error' in out) { setStatus({ kind: 'error', text: out.error }); return; }
-    setModels(out.models);
-    setListed(out.listed);
-    const model = out.models.some(m => m.id === engine.model) ? engine.model : out.preferred || engine.model;
-    const next = { ...engine, model };
-    setEngine(next);
-    saveEngine(next);
-    setStatus({
-      kind: 'ok',
-      text: out.siteKey
-        ? `WorldEye AI is on · ${out.models.length} model${out.models.length === 1 ? '' : 's'} available on the site's key`
-        : `Key accepted · ${out.models.length} model${out.models.length === 1 ? '' : 's'} available`,
-    });
-  };
-
-  const setModel = (model: string) => {
-    const next = { ...engine, model };
-    setEngine(next);
-    saveEngine(next);
-  };
-
-  const known = useMemo(() => info.suggested.map(id => ({ id, name: id })), [info.suggested]);
-  // The site's key covers this engine for a signed-in reader: ready with no key of theirs at all.
-  const siteCovers = Boolean(siteAi?.available && engine.provider === 'openai');
-  const siteReady = siteCovers && Boolean(siteAi?.signedIn);
-  const ready = !info.needsKey || keyValue.length > 0 || siteReady;
-
-  return (
-    <section className="px-4 py-4 border-b border-[var(--border-secondary)] flex flex-col gap-4" style={{ background: gold(0.025) }}>
-      <div>
-        <SectionTitle right={ready ? <TextButton onClick={onDone}>Done</TextButton> : undefined}>{siteCovers ? 'Engine · WorldEye AI included' : 'Engine · your own key'}</SectionTitle>
-        {siteCovers && (
-          <p className="mb-2 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
-            {siteAi?.signedIn
-              ? 'WorldEye AI is included — no key needed. Runs use the site\'s OpenAI key, within a fair-use hourly limit. You can optionally use your own OpenAI key below instead.'
-              : <>WorldEye AI is included for signed-in users. <a href="/signin?callbackUrl=/" className="underline hover:text-[var(--gold-light)]">Sign in</a> to run without a key, or add your own OpenAI key below.</>}
-          </p>
-        )}
-        <div className="grid grid-cols-3 gap-1">
-          {PROVIDERS.map(p => {
-            const on = engine.provider === p.id;
-            return (
-              <button key={p.id} onClick={() => pickProvider(p.id)} title={p.name} aria-pressed={on}
-                className={`h-8 px-1.5 rounded-md border text-[9.5px] font-mono tracking-[0.08em] uppercase truncate transition-colors ${on ? 'border-[var(--border-active)] bg-[var(--gold-primary)]/10 text-[var(--gold-light)]' : 'border-[var(--border-secondary)] bg-white/[0.02] text-[var(--text-secondary)] hover:bg-[var(--hover-accent)] hover:text-[var(--text-heading)]'}`}>
-                {shortName(p.name)}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {info.needsKey ? (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1.5">
-            <div className="relative flex-1">
-              <KeyRound className="w-3 h-3 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-              <input
-                type={reveal ? 'text' : 'password'} value={keyValue} onChange={e => { setKey(e.target.value.trim()); setStatus({ kind: 'idle', text: '' }); }}
-                placeholder={`${info.name} key  ${info.keyHint}`} autoComplete="off" spellCheck={false}
-                data-1p-ignore data-lpignore="true" aria-label={`${info.name} API key`}
-                className={`${FIELD} h-8 pl-7 pr-8 text-[11px] font-mono`}
-              />
-              <button onClick={() => setReveal(v => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-heading)]" aria-label={reveal ? 'Hide key' : 'Show key'}>
-                {reveal ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-              </button>
-            </div>
-            <button onClick={check} disabled={(!keyValue && !siteReady) || status.kind === 'checking'} className="oi-btn !h-8">
-              {status.kind === 'checking' ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Check'}
-            </button>
-          </div>
-          {status.text && (
-            <p role="status" className="text-[11px] flex items-center gap-1.5" style={{ color: status.kind === 'error' ? T.red : T.goldLight }}>
-              {status.kind === 'ok' && <Check className="w-3 h-3" />}{status.text}
-            </p>
-          )}
-          <div className="flex items-center gap-3 text-[11px]">
-            <label className="flex items-center gap-2 cursor-pointer text-[var(--text-secondary)]">
-              <Switch on={engine.remember} label="Remember the key on this device" onChange={on => {
-                const next = { ...engine, remember: on };
-                setEngine(next); saveEngine(next); saveKey(engine.provider, keyValue, on);
-              }} />
-              Remember on this device
-            </label>
-            <a href={info.keyUrl} target="_blank" rel="noopener noreferrer" className="ml-auto text-[var(--text-secondary)] hover:text-[var(--gold-light)]">Get a key ↗</a>
-            {keyValue && <button onClick={() => { forgetKey(engine.provider); setKey(''); setModels(null); setListed(false); setStatus({ kind: 'idle', text: '' }); }} className="text-[var(--text-secondary)] hover:text-[var(--alert-red)]">Forget</button>}
-          </div>
-        </div>
-      ) : (
-        <p className="text-[11.5px] leading-relaxed text-[var(--text-secondary)]">Scripted answers for trying the pipeline on a development server. No key, no cost, no real analysis.</p>
-      )}
-
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-2">
-          <Overline>Model</Overline>
-          <span className="ml-auto text-[9.5px] font-mono tracking-[0.1em] uppercase text-[var(--text-muted)]">
-            {models ? (listed ? `${models.length} on this key` : 'Known names') : info.needsKey ? 'Recommended' : ''}
-          </span>
-        </div>
-        <ModelPicker provider={engine.provider} models={models ?? known} value={engine.model} onChange={setModel}
-          suggested={info.suggested} defaultModel={info.defaultModel} listed={listed && !!models} />
-        {!models && info.needsKey && <p className="text-[10.5px] text-[var(--text-muted)]">{siteReady ? 'Check to list every model the site\'s key can use, grouped by family.' : 'Check the key to list every model it can use, grouped by family.'}</p>}
-      </div>
-
-      {info.needsKey && (
-        <p className="text-[10.5px] leading-relaxed text-[var(--text-muted)]">
-          {siteReady && !keyValue
-            ? 'Runs are billed to WorldEye\'s OpenAI account, inside a fair-use hourly limit — a prediction makes about 30 to 130 model calls, by depth. Add your own key above to use your own quota instead.'
-            : <>Your key stays in this browser{engine.remember ? '' : ' tab'} and reaches OSIRIS only inside your requests, which pass it to {info.name} for your run. It is never stored on the server or logged. A prediction makes about 30 to 130 model calls, by depth, billed to your {info.name} account.</>}
-        </p>
-      )}
-    </section>
-  );
-}
 
 const EXAMPLES: { kind: Frame['kind']; text: string }[] = [
   { kind: 'binary', text: 'Will Russia and Ukraine agree a ceasefire before 1 July 2027?' },
@@ -292,7 +136,7 @@ function YourData({ files, setFiles, paste, setPaste, scope, setScope, depth, pr
 
       <p className="text-[11px] leading-snug" style={{ color: chars ? T.text : T.mute }}>
         {chars
-          ? <>About <span className="font-mono tabular-nums" style={{ color: T.goldLight }}>+{fmtCount(cost.tokens)}</span> input tokens on your {shortName(providerName)} key, over {cost.calls} call{cost.calls === 1 ? '' : 's'}.</>
+          ? <>About <span className="font-mono tabular-nums" style={{ color: T.goldLight }}>+{fmtCount(cost.tokens)}</span> input tokens on WorldEye AI, over {cost.calls} call{cost.calls === 1 ? '' : 's'}.</>
           : 'Billed to your own key as input tokens: about one per four characters.'}
       </p>
       {chars > SEED_MAX && <p className="text-[11px] leading-snug" style={{ color: T.goldLight }}>That is {fmtCount(chars)} characters; a prediction reads the first {SEED_MAX.toLocaleString()}.</p>}
@@ -319,7 +163,7 @@ function Suggestions({ title, items, onPick }: { title: string; items: { key: st
   );
 }
 
-export function AskForm({ ready, providerName, onRun, onKey }: { ready: boolean; providerName: string; onKey: () => void; onRun: (input: { question: string; seed: string; seedScope: SeedScope; depth: Depth; useFeeds: boolean }) => Promise<boolean> }) {
+export function AskForm({ ready, providerName, onRun }: { ready: boolean; providerName: string; onRun: (input: { question: string; seed: string; seedScope: SeedScope; depth: Depth; useFeeds: boolean }) => Promise<boolean> }) {
   const [question, setQuestion] = useState('');
   const [files, setFiles] = useState<DataFile[]>([]);
   const [paste, setPaste] = useState('');
@@ -437,15 +281,13 @@ export function AskForm({ ready, providerName, onRun, onKey }: { ready: boolean;
         </button>
       ) : (
         <div className="flex flex-col gap-2.5 rounded-lg border px-3.5 py-3" style={{ borderColor: gold(0.3), background: gold(0.04) }}>
-          <p className="text-[11.5px] leading-snug text-[var(--text-secondary)]">OI runs on your own AI key. It stays in this browser, and a prediction is billed to your account: about {estimateCalls(depth, useFeeds)} model calls at this depth.</p>
-          <button onClick={onKey} className="oi-btn-primary w-full"><KeyRound className="w-4 h-4" /> Add your {shortName(providerName)} key</button>
+          <p className="text-[11.5px] leading-snug text-[var(--text-secondary)]">WorldEye AI isn't available right now — forecasts run on the site's own key for signed-in subscribers. A prediction makes about {estimateCalls(depth, useFeeds)} model calls at this depth.</p>
         </div>
       )}
 
       <p className="text-[10.5px] leading-relaxed text-[var(--text-muted)]">
         The answer takes the shape of the question: a probability, a share for each outcome, or an estimate with a range, with the path, each actor&apos;s moves and how every world ended. A simulation, not a guarantee. Method after{' '}
-        <a href="https://github.com/666ghj/MiroFish" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-[var(--gold-light)]">MiroFish</a>; also on the{' '}
-        <a href="/docs#oi" className="underline decoration-dotted underline-offset-2 hover:text-[var(--gold-light)]">API and MCP</a>.
+        <a href="https://github.com/666ghj/MiroFish" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-[var(--gold-light)]">MiroFish</a>.
       </p>
     </section>
   );

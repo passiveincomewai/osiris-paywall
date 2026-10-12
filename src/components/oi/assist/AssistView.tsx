@@ -243,7 +243,6 @@ export interface AssistViewProps {
   providerName: string;
   /** WorldEye AI: the site's included key, when this deployment has one. */
   siteAi?: SiteAiInfo | null;
-  onKey: () => void;
   onSend: (text: string, mode: Mode) => void;
   onLocate: (lat: number, lng: number, zoom?: number) => void;
   onOpenForecast: () => void;
@@ -363,24 +362,15 @@ export function AssistView(p: AssistViewProps) {
           </div>
         ) : p.siteAi?.available && !p.siteAi.signedIn ? (
           <div className="flex flex-col gap-2 rounded-2xl border px-3.5 py-3" style={{ borderColor: blue(0.25), background: blue(0.05) }}>
-            <p className="text-[11.5px] leading-snug text-[var(--text-secondary)]">WorldEye AI is included — no key needed. Sign in and I run on the site's key.</p>
-            <div className="flex items-center gap-2">
-              <a href="/signin?callbackUrl=/" className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[11.5px] font-medium transition-colors"
-                style={{ background: T.blue, color: '#04121a' }}>
-                Sign in
-              </a>
-              <button onClick={p.onKey} className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[11.5px] font-medium transition-colors border border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-heading)]">
-                <KeyRound className="w-3.5 h-3.5" /> Use your own key
-              </button>
-            </div>
+            <p className="text-[11.5px] leading-snug text-[var(--text-secondary)]">WorldEye AI is included for subscribers — no key needed. Sign in and I run on the site's key.</p>
+            <a href="/signin?callbackUrl=/" className="self-start inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[11.5px] font-medium transition-colors"
+              style={{ background: T.blue, color: '#04121a' }}>
+              Sign in
+            </a>
           </div>
         ) : (
           <div className="flex flex-col gap-2 rounded-2xl border px-3.5 py-3" style={{ borderColor: blue(0.25), background: blue(0.05) }}>
-            <p className="text-[11.5px] leading-snug text-[var(--text-secondary)]">I run on your own AI key. It stays in this browser and is only used for your requests.</p>
-            <button onClick={p.onKey} className="self-start inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[11.5px] font-medium transition-colors"
-              style={{ background: T.blue, color: '#04121a' }}>
-              <KeyRound className="w-3.5 h-3.5" /> Add your {shortName(p.providerName)} key
-            </button>
+            <p className="text-[11.5px] leading-snug text-[var(--text-secondary)]">{p.siteAi === null ? 'One moment…' : 'WorldEye AI isn\'t switched on for this deployment yet.'}</p>
           </div>
         )}
         <div className="flex items-center gap-2 text-[10.5px] text-[var(--text-muted)]">

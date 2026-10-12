@@ -42,17 +42,33 @@ export function siteAiAvailable(): boolean {
   return siteAiKey() !== null;
 }
 
-/** The signed-in visitor's id, or null. The session is the fence: no id, no site key. */
-export async function siteAiUserId(): Promise<string | null> {
+/** The signed-in visitor's session facts, or null. The session is the fence: no id, no site key. */
+async function siteAiSession(): Promise<{ userId: string; subscriptionStatus: string | null } | null> {
   try {
     // Imported on use: the auth stack (NextAuth + Prisma) stays out of
     // every module that only needs the decision matrix.
     const { auth } = await import('@/auth');
     const session = await auth();
-    return session?.user?.id ?? null;
+    const userId = session?.user?.id ?? null;
+    if (!userId) return null;
+    return { userId, subscriptionStatus: session?.user?.subscriptionStatus ?? null };
   } catch {
     return null;
   }
+}
+
+export async function siteAiUserId(): Promise<string | null> {
+  return (await siteAiSession())?.userId ?? null;
+}
+
+/**
+ * "Active" exactly as the rest of the product means it: the value
+ * resolveSubscriptionStatus (src/auth.ts) puts on the session — paid,
+ * trialing and comp free-Pro all resolve to 'active'; everything else
+ * (none, past_due, canceled, expired) does not.
+ */
+export function isActiveSubscription(status: string | null | undefined): boolean {
+  return status === 'active';
 }
 
 export type KeyDecision =
@@ -86,7 +102,7 @@ export function decideKeyUse(
         kind: 'error',
         status: 401,
         code: 'SIGN_IN_REQUIRED',
-        error: 'Sign in to use WorldEye AI — it runs on the site\'s key. Or add your own key in OI settings and use it instead.',
+        error: 'Sign in to use WorldEye AI — it runs on the site\'s key for subscribers.',
       };
     }
     // No engine chosen: the site's model, not the caller's stray default.
@@ -97,7 +113,7 @@ export function decideKeyUse(
       kind: 'error',
       status: 503,
       code: 'AI_NOT_CONFIGURED',
-      error: 'AI isn\'t configured on this deployment yet. Add your own key in OI settings to use it today.',
+      error: 'AI isn\'t configured on this deployment yet.',
     };
   }
   return { kind: 'passthrough' };
@@ -114,24 +130,28 @@ export function applyKeyDecision(creds: Credentials, decision: KeyDecision): Cre
 }
 
 export type ResolvedKey =
-  | { ok: true; creds: Credentials; siteUserId: string | null }
+  | { ok: true; creds: Credentials; siteUserId: string | null; subscriptionActive: boolean }
   | { ok: false; status: number; code: string; error: string };
 
 /**
  * The routes' one call: parse-independent resolution of a request's key.
  * A caller with their own key never touches the session or the site key.
  * `siteUserId` is set exactly when the site's key will pay, so the route
- * can apply the hourly cap to the right person.
+ * can apply the hourly cap to the right person — and `subscriptionActive`
+ * says whether that person is a subscriber, for the routes (like the
+ * companion's assist path) where WorldEye AI is a subscriber feature.
  */
 export async function resolveRouteKey(creds: Credentials): Promise<ResolvedKey> {
-  if (creds.key) return { ok: true, creds, siteUserId: null };
-  const userId = await siteAiUserId();
-  const decision = decideKeyUse(creds, { signedIn: userId !== null, key: siteAiKey(), model: siteAiModel() });
+  if (creds.key) return { ok: true, creds, siteUserId: null, subscriptionActive: true };
+  const session = await siteAiSession();
+  const decision = decideKeyUse(creds, { signedIn: session !== null, key: siteAiKey(), model: siteAiModel() });
   if (decision.kind === 'error') return { ok: false, status: decision.status, code: decision.code, error: decision.error };
+  const site = decision.kind === 'site';
   return {
     ok: true,
     creds: applyKeyDecision(creds, decision),
-    siteUserId: decision.kind === 'site' ? userId : null,
+    siteUserId: site ? (session?.userId ?? null) : null,
+    subscriptionActive: site ? isActiveSubscription(session?.subscriptionStatus) : true,
   };
 }
 

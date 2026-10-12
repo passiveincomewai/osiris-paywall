@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   const resolved = await resolveRouteKey(creds);
   if (!resolved.ok) return fail(resolved.status, resolved.error, { code: resolved.code });
   if (resolved.siteUserId && siteKeyHourLimited('runs', resolved.siteUserId)) {
-    return fail(429, 'You have started a lot of forecasts on the included WorldEye AI this hour. Give it a little while — or add your own key in OI settings to use your own quota.');
+    return fail(429, 'You have started a lot of forecasts on the included WorldEye AI this hour. Give it a little while.');
   }
 
   const started = startPrediction(body, resolved.creds, getClientIp(req));

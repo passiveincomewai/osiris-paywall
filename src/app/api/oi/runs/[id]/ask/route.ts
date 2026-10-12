@@ -32,7 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const resolved = await resolveRouteKey(withRun);
   if (!resolved.ok) return fail(resolved.status, resolved.error, { code: resolved.code });
   if (resolved.siteUserId && siteKeyHourLimited('ask', resolved.siteUserId)) {
-    return fail(429, 'You have asked a lot on the included WorldEye AI this hour. Give it a little while — or add your own key in OI settings to use your own quota.');
+    return fail(429, 'You have asked a lot on the included WorldEye AI this hour. Give it a little while.');
   }
 
   const asked = await askPrediction(run, body.target, body.message, resolved.creds, req.signal);

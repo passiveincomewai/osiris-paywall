@@ -14,8 +14,8 @@ import {
   NEUTRAL_GAZE, type GazePoint, type GazeState,
 } from "@/lib/companion/gaze";
 import { type AssistClient } from "@/lib/oi/assist/client";
-import { fetchSiteAi, loadEngine, loadKey, saveEngine, saveKey, type Engine, type SiteAiInfo } from "@/lib/oi/client";
-import { PROVIDERS, providerInfo, type ProviderId } from "@/lib/oi/providers";
+import { fetchSiteAi, type Engine, type SiteAiInfo } from "@/lib/oi/client";
+import { providerInfo } from "@/lib/oi/providers";
 
 export default function CompanionWidget({ assist }: { assist: AssistClient }) {
   const [open, setOpen] = useState(false);
@@ -24,13 +24,10 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
   const [speaking, setSpeaking] = useState(false);
   const [typed, setTyped] = useState("");
   const [err, setErr] = useState<string | null>(null);
-  const [keyInput, setKeyInput] = useState("");
-  const [provider, setProvider] = useState<ProviderId>("openai");
-  // WorldEye AI: null until /api/oi/config answers; keyTick re-reads the
-  // browser's own key after one is saved here.
+  // WorldEye AI: null until /api/oi/config answers. The companion runs on
+  // the site's key only — there is no key of the visitor's to ask for, and
+  // a key left in this browser's storage by an older version is ignored.
   const [siteAi, setSiteAi] = useState<SiteAiInfo | null>(null);
-  const [keyTick, setKeyTick] = useState(0);
-  const [forceKey, setForceKey] = useState(false);
   const energyRef = useRef(0);
   const feedRef = useRef<HTMLDivElement>(null);
 
@@ -63,13 +60,8 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
   }, [open ]);
 
   const auth = useMemo(() => {
-    // The visitor's own key, on their chosen engine, always wins.
-    const engine = loadEngine();
-    if (engine) {
-      const key = loadKey(engine.provider);
-      if (key) return { engine, key };
-    }
-    // Otherwise a signed-in visitor runs on the site's key — no key needed.
+    // The site's key, for a signed-in subscriber (the widget only renders
+    // for one). No key is read from this browser, ever.
     if (siteAi?.available && siteAi.signedIn) {
       const siteEngine: Engine = {
         provider: "openai",
@@ -79,19 +71,14 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
       return { engine: siteEngine, key: "" };
     }
     return null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [siteAi, keyTick, open]);
+  }, [siteAi, open]);
 
   /** What stands between the visitor and a conversation, if anything. */
-  const gate: "loading" | "ready" | "signin" | "key" = auth
+  const gate: "loading" | "ready" | "unavailable" = auth
     ? "ready"
-    : forceKey
-      ? "key"
-      : siteAi === null
-        ? "loading"
-        : siteAi.available && !siteAi.signedIn
-          ? "signin"
-          : "key";
+    : siteAi === null
+      ? "loading"
+      : "unavailable";
 
   // Watch the latest OI entry: when it finishes, speak its text.
   const lastSpoken = useRef<string>("");
@@ -255,16 +242,6 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
           ? "Starting camera…"
           : null;
 
-  const saveKeyNow = () => {
-    const k = keyInput.trim();
-    if (!k) return;
-    saveKey(provider, k, true);
-    saveEngine({ provider, model: "default", remember: true });
-    setKeyInput("");
-    setForceKey(false);
-    setKeyTick((t) => t + 1);
-  };
-
   return (
     <>
       {/* Floating button */}
@@ -345,23 +322,26 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
               </div>
             )}
 
-            {gate === "signin" ? (
+            {gate === "unavailable" ? (
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="relative h-44 shrink-0">
                   <HumanoidAvatar state={avatarState} energyRef={energyRef} density={0.5} gazeRef={gazeRef} className="absolute inset-0" />
                   <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-mono tracking-[0.3em] text-cyan-300/70 uppercase">
-                    sign in to talk
+                    worldEye ai
                   </div>
                 </div>
                 <div className="flex-1 flex items-center justify-center p-6">
                   <div className="w-full text-center">
-                    <p className="text-sm text-slate-200">WorldEye AI is included — no key needed.</p>
-                    <p className="mt-1 text-[12px] leading-snug text-slate-400">Sign in and the companion runs on the site's key. Your own key works too, if you would rather use it.</p>
-                    <a href="/signin?callbackUrl=/" className="mt-4 block w-full py-2.5 rounded-xl font-mono font-bold text-[#04121f]"
-                      style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Sign in</a>
-                    <button onClick={() => setForceKey(true)} className="mt-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-slate-300">
-                      Use your own API key instead
-                    </button>
+                    {siteAi && !siteAi.available ? (
+                      <p className="text-sm text-slate-400">WorldEye AI isn't switched on for this deployment yet, so the companion can't talk right now.</p>
+                    ) : (
+                      <>
+                        <p className="text-sm text-slate-200">Your session has expired.</p>
+                        <p className="mt-1 text-[12px] leading-snug text-slate-400">Sign in again to keep talking — the companion runs on the site's key, nothing to set up.</p>
+                        <a href="/signin?callbackUrl=/" className="mt-4 block w-full py-2.5 rounded-xl font-mono font-bold text-[#04121f]"
+                          style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Sign in</a>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -374,27 +354,6 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
                   </div>
                 </div>
                 <div className="flex-1" />
-              </div>
-            ) : gate === "key" ? (
-              <div className="flex-1 flex items-center justify-center p-6">
-                <div className="w-full text-center">
-                  <div className="text-3xl mb-2">👁️</div>
-                  <p className="text-sm text-slate-400">{siteAi?.available
-                    ? "Use your own key — the same one OI Assist uses. Stored only in this browser."
-                    : siteAi?.signedIn
-                      ? "WorldEye AI isn't switched on for this deployment yet — add your own key to talk to the companion. Stored only in this browser."
-                      : "Add your AI key once — the same one OI Assist uses. Stored only in this browser."}</p>
-                  <select value={provider} onChange={(e) => setProvider(e.target.value as ProviderId)}
-                    className="mt-4 w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm">
-                    {PROVIDERS.filter((p) => p.id !== "demo").map((p) => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                  <input type="password" value={keyInput} onChange={(e) => setKeyInput(e.target.value)} placeholder="API key"
-                    className="mt-2 w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60" />
-                  <button onClick={saveKeyNow} className="mt-3 w-full py-2.5 rounded-xl font-mono font-bold text-[#04121f]"
-                    style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Activate</button>
-                </div>
               </div>
             ) : (
               <>
