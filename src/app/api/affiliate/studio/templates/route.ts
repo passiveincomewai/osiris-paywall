@@ -4,6 +4,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureStudioTemplates } from "@/lib/studio/templates-seed";
+import { ensureAmbassadorTemplates } from "@/lib/studio/ambassador-seed";
 import { ensureStudioVideos } from "@/lib/studio/video-seed";
 import { TEMPLATE_CATEGORIES } from "@/lib/studio/types";
 import { requireStudioAccess } from "../../_util";
@@ -53,6 +54,7 @@ export async function GET(req: Request) {
   }
 
   await ensureStudioTemplates();
+  await ensureAmbassadorTemplates();
   await ensureStudioVideos();
 
   const { searchParams } = new URL(req.url);
@@ -67,7 +69,11 @@ export async function GET(req: Request) {
     );
   }
 
-  const rows = await findPublished();
+  // Ambassador-category templates are an ambassador perk: invisible (and
+  // unfindable by slug) to everyone else.
+  const rows = (await findPublished()).filter(
+    (t) => t.category !== "ambassador" || profile.isAmbassador,
+  );
 
   if (slug !== null) {
     const found = rows.find((t) => t.slug === slug);

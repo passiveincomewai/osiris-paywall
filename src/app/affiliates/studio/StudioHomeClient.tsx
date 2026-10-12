@@ -82,6 +82,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   feature: "Feature Graphics",
   email: "Email & Blog",
   thumbnail: "YT Thumbnails",
+  ambassador: "Ambassador",
 };
 
 export function categoryLabel(key: string): string {

@@ -10,6 +10,10 @@ import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
 import MarketingStudio from "./MarketingStudio";
 import StudioCredits from "./StudioCredits";
+import StudioCampaigns from "./StudioCampaigns";
+import StudioAmbassadors from "./StudioAmbassadors";
+import StudioDrops from "./StudioDrops";
+import StudioReport from "./StudioReport";
 import LiveRefresh from "./LiveRefresh";
 import { growthDashboardUrl } from "@/lib/growth";
 
@@ -931,6 +935,22 @@ export default async function AdminDashboardPage() {
         <Section title="Studio credits & cost controls">
           <StudioCredits />
         </Section>
+
+        <div className="mt-4">
+          <StudioReport />
+        </div>
+
+        <div className="mt-4">
+          <StudioCampaigns />
+        </div>
+
+        <div className="mt-4">
+          <StudioAmbassadors />
+        </div>
+
+        <div className="mt-4">
+          <StudioDrops />
+        </div>
       </div>
     </div>
   );

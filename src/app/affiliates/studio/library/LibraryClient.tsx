@@ -22,6 +22,7 @@ const CATEGORY_ORDER = [
   "feature",
   "email",
   "thumbnail",
+  "ambassador",
 ];
 
 const input =

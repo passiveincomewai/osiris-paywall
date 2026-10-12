@@ -5,5 +5,5 @@ export type TemplateLayer =
   | { type: "logo"; x: number; y: number; width: number }
   | { type: "coupon"; x: number; y: number; width: number; height: number };
 export interface StudioContext { profileId: string; userId: string; code: string; link: string; couponCode: string | null; discountPct: number | null; displayName: string; rankKey: string; rankName: string; xp: number; commissionPct: number }
-export const TEMPLATE_CATEGORIES = ["feed","story","reel","tiktok","short","carousel","banner","discount","feature","email","thumbnail"] as const;
+export const TEMPLATE_CATEGORIES = ["feed","story","reel","tiktok","short","carousel","banner","discount","feature","email","thumbnail","ambassador"] as const;
 export type TemplateCategory = (typeof TEMPLATE_CATEGORIES)[number];

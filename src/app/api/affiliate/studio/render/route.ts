@@ -72,6 +72,10 @@ export async function GET(req: Request) {
     },
   });
   if (!template) return NextResponse.json({ error: "Template not found" }, { status: 404 });
+  // Ambassador-category templates render only for approved ambassadors.
+  if (template.category === "ambassador" && !profile.isAmbassador) {
+    return NextResponse.json({ error: "Template not found" }, { status: 404 });
+  }
   if (!template.svgBody) {
     return NextResponse.json({ error: "Template is not renderable" }, { status: 400 });
   }

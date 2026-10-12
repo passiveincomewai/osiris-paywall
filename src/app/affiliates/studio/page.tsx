@@ -7,6 +7,7 @@ import StudioHomeClient, {
   type StudioCreationLite,
   type StudioTemplateLite,
 } from "./StudioHomeClient";
+import TodayDropCard from "./TodayDropCard";
 
 export const metadata = { title: "Marketing Studio — WorldEye Affiliates" };
 
@@ -55,7 +56,9 @@ export default async function StudioHomePage() {
 
     if (templateDelegate) {
       const rows = await templateDelegate.findMany({
-        where: { featured: true },
+        // Ambassador-category templates never appear on the shared home
+        // rail; ambassadors reach them through the library API instead.
+        where: { featured: true, category: { not: "ambassador" } },
         orderBy: [{ sortOrder: "asc" }, { title: "asc" }],
         take: 12,
         select: {
@@ -147,10 +150,13 @@ export default async function StudioHomePage() {
   }
 
   return (
-    <StudioHomeClient
-      initialFeatured={initialFeatured}
-      initialCreations={initialCreations}
-      initialTemplateCount={initialTemplateCount}
-    />
+    <>
+      <TodayDropCard />
+      <StudioHomeClient
+        initialFeatured={initialFeatured}
+        initialCreations={initialCreations}
+        initialTemplateCount={initialTemplateCount}
+      />
+    </>
   );
 }
