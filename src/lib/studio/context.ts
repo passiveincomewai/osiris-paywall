@@ -11,11 +11,14 @@ import type { StudioContext } from "./types";
 export async function buildStudioContext(profile: AffiliateProfile): Promise<StudioContext> {
   const code = profile.customCode ?? profile.referralCode;
   const link = referralLinkFor(code);
-  // No coupon/discount-code system exists (no coupon model, no Stripe
-  // promotion codes are ever created — see marketing-studio PLAN.md §a.2),
-  // so there is no valid code to render. Templates must hide discount
-  // copy when this is null rather than inventing one.
-  const couponCode: string | null = null;
+  // Tiered discount codes (src/lib/affiliate/discount.ts): the profile
+  // stores the code/pct, synced to a live Stripe promotion code by the
+  // lazy /api/affiliate/me sync. Render the coupon ONLY when Stripe has
+  // confirmed it (stripePromotionCodeId set) — a stored-but-unsynced code
+  // does not redeem at checkout yet, so templates must not advertise it.
+  const couponCode: string | null =
+    profile.discountCode && profile.stripePromotionCodeId ? profile.discountCode : null;
+  const discountPct: number | null = couponCode ? profile.discountPct : null;
 
   const user = await db.user.findUnique({
     where: { id: profile.userId },
@@ -32,6 +35,7 @@ export async function buildStudioContext(profile: AffiliateProfile): Promise<Stu
     code,
     link,
     couponCode,
+    discountPct,
     displayName,
     rankKey: rank.key,
     rankName: rank.name,

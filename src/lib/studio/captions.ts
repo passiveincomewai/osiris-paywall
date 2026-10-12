@@ -2,7 +2,7 @@
 // Platform × style × feature matrices with the affiliate's real referral
 // link injected. Copy uses verified product facts only: no income
 // claims, no "guaranteed", no fake discounts, and a coupon line appears
-// only when ctx.couponCode actually exists (it is null today).
+// only when ctx.couponCode holds a real, Stripe-synced discount code.
 //
 // Standing rules baked in:
 //  - Instagram: CTA + link at the TOP, disclosure as plain text above
@@ -175,8 +175,15 @@ export function generateCaptions(ctx: StudioContext, req: CaptionRequest): strin
       "",
       `${hook} ${body}`,
     ];
-    // Coupon line only when a real code exists — never invent a discount.
-    if (ctx.couponCode) lines.push(`Use code ${ctx.couponCode} at checkout.`);
+    // Coupon line only when a real (Stripe-synced) code exists — never
+    // invent a discount.
+    if (ctx.couponCode) {
+      lines.push(
+        ctx.discountPct != null
+          ? `Use code ${ctx.couponCode} for ${ctx.discountPct}% off your first payment.`
+          : `Use code ${ctx.couponCode} at checkout.`,
+      );
+    }
     lines.push(disclosureLine(req.platform));
     if (tags.length > 0) lines.push(tags.join(" "));
 

@@ -5,6 +5,7 @@ import { stripe, appUrl } from "@/lib/stripe";
 import type { SubscriptionStatus } from "@prisma/client";
 import { recordCommissionsForInvoice, reverseCommissionsForInvoice } from "@/lib/affiliate/commissions";
 import { attributeUserToAffiliate, linkAttribution } from "@/lib/affiliate/attribution";
+import { attributeUserToDiscountAffiliate } from "@/lib/affiliate/discount";
 import { normalizeEmail, isValidEmail } from "@/lib/password-auth";
 import { sendEmail, emailConfigured } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef } from "@/lib/growth";
@@ -201,7 +202,32 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
         if (s.mode === "subscription" && s.subscription) {
-          await subscriptionFromId(s.subscription as string);
+          const subId = s.subscription as string;
+          await subscriptionFromId(subId);
+          // Discount-code attribution fallback: if the buyer redeemed an
+          // affiliate's tiered discount code and has no stronger
+          // attribution, credit that affiliate. The link/cookie path stays
+          // primary — when the subscription carries affiliateProfileId
+          // metadata (captured at checkout from the referral cookie), the
+          // invoice handler links it and this fallback stays out of the
+          // way. linkAttribution itself is also first-write-wins.
+          const promo = (s.discounts ?? [])[0]?.promotion_code ?? null;
+          if (promo) {
+            try {
+              const subRow = await db.subscription.findUnique({
+                where: { stripeSubscriptionId: subId },
+                select: { userId: true },
+              });
+              const stripeSub = await stripe().subscriptions.retrieve(subId).catch(() => null);
+              if (subRow?.userId && !stripeSub?.metadata?.affiliateProfileId) {
+                await attributeUserToDiscountAffiliate(subRow.userId, promo);
+              }
+            } catch (e) {
+              // Attribution is best-effort here — the subscription sync
+              // above already succeeded; never fail the webhook for it.
+              console.error("[stripe-webhook] discount attribution failed:", e);
+            }
+          }
         }
         // Close any tracked cart attempt — they converted.
         await db.checkoutAttempt.updateMany({

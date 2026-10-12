@@ -7,13 +7,13 @@ import CreatorApply from "@/components/affiliate/CreatorApply";
 
 const CTA = "/api/auth/signin?callbackUrl=/affiliates/dashboard";
 
-const TIERS: { name: string; xp: string; rate: string; badge: string; color: string; perk?: string }[] = [
-  { name: "Explorer",  xp: "0 XP",       rate: "15%", badge: "🧭", color: "#38bdf8" },
-  { name: "Scout",     xp: "1,000 XP",    rate: "18%", badge: "🔭", color: "#22d3ee" },
-  { name: "Analyst",   xp: "3,000 XP",    rate: "21%", badge: "📡", color: "#818cf8" },
-  { name: "Commander", xp: "7,500 XP",    rate: "24%", badge: "🎖️", color: "#c084fc" },
-  { name: "Elite",     xp: "15,000 XP",   rate: "27%", badge: "💠", color: "#f472b6" },
-  { name: "Visionary", xp: "30,000 XP",   rate: "30%", badge: "👁️", color: "#fbbf24", perk: "👁️ Free WorldEye Pro included at this rank" },
+const TIERS: { name: string; xp: string; rate: string; code: string; badge: string; color: string; perk?: string }[] = [
+  { name: "Explorer",  xp: "0 XP",       rate: "15%", code: "5% off", badge: "🧭", color: "#38bdf8" },
+  { name: "Scout",     xp: "1,000 XP",    rate: "18%", code: "10% off", badge: "🔭", color: "#22d3ee" },
+  { name: "Analyst",   xp: "3,000 XP",    rate: "21%", code: "15% off", badge: "📡", color: "#818cf8" },
+  { name: "Commander", xp: "7,500 XP",    rate: "24%", code: "20% off", badge: "🎖️", color: "#c084fc" },
+  { name: "Elite",     xp: "15,000 XP",   rate: "27%", code: "25% off", badge: "💠", color: "#f472b6" },
+  { name: "Visionary", xp: "30,000 XP",   rate: "30%", code: "30% off", badge: "👁️", color: "#fbbf24", perk: "👁️ Free WorldEye Pro included at this rank" },
 ];
 
 const FAQS = [
@@ -130,6 +130,10 @@ export default function AffiliatesLanding() {
                   <div className="text-3xl font-black font-mono" style={{ color: t.color }}>{t.rate}</div>
                 </div>
               </div>
+              <div className="mt-3 flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+                <span className="text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">Your code</span>
+                <span className="text-sm font-mono font-bold text-emerald-300">{t.code} <span className="text-slate-400 font-normal">for your audience</span></span>
+              </div>
               {t.perk && (
                 <div className="mt-3 rounded-xl border px-3 py-2 text-xs font-mono font-bold"
                   style={{ borderColor: t.color + "55", background: t.color + "14", color: t.color }}>
@@ -142,6 +146,8 @@ export default function AffiliatesLanding() {
         <p className="mt-4 text-sm text-slate-400 font-mono">
           <span className="text-cyan-300">//</span> Earn XP from real activity to climb ranks. Commissions recur on
           qualifying subscription <span className="text-white">renewals</span> — not just the first purchase.
+          Every rank also carries a personal discount code for your audience (5% at Explorer, up to 30% at Visionary),
+          and sales made with your code count as your referrals even without your link.
           Reach <span className="text-[#fbbf24]">Visionary</span> and WorldEye Pro itself is free while you hold the rank.
         </p>
       </section>

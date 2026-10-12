@@ -113,6 +113,7 @@ function substituteTokens(
     RANK_NAME: ctx.rankName,
     COMMISSION_PCT: String(ctx.commissionPct),
     COUPON_CODE: ctx.couponCode ?? "",
+    DISCOUNT_PCT: ctx.discountPct != null ? String(ctx.discountPct) : "",
     DISCLOSURE: DISCLOSURE_TEXT,
   };
   for (const field of fields) {

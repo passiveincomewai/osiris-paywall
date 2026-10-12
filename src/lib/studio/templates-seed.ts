@@ -1,7 +1,7 @@
 /**
  * Marketing Studio — Phase 1 seed template library.
  *
- * ~37 parameterized SVG designs (52 rows including carousel slides).
+ * ~43 parameterized SVG designs (58 rows including carousel slides).
  * A server renderer token-replaces {{TOKENS}} into `svgBody`, rasterizes
  * with sharp, then composites the QR / logo layers listed in `layers`.
  *
@@ -9,8 +9,10 @@
  *  - "36,000+ live cameras in 105 countries" — never the stale 40,207 figure.
  *  - Features: live flights, satellites, weather radar, earthquakes,
  *    wildfires, camera recording, OSINT toolkit (Pro), AI analyst (Pro).
- *  - No income promises, no discount codes (none exist yet — no coupon
- *    layers are used anywhere in this seed).
+ *  - No income promises. Discount templates (category "discount") render
+ *    the affiliate's REAL tiered code via {{COUPON_CODE}} / {{DISCOUNT_PCT}}
+ *    — the coupon layer and tokens resolve only when a Stripe-synced code
+ *    exists (src/lib/affiliate/discount.ts), never an invented one.
  *
  * Seeding is idempotent and slug-keyed (the ensureChallenges() pattern):
  * re-running refreshes design fields but never overwrites an admin's
@@ -102,6 +104,14 @@ const logo = (x: number, y: number, width: number): TemplateLayer => ({
   x,
   y,
   width,
+});
+/** "USE CODE" pill — rendered only when the affiliate has a synced code. */
+const coupon = (x: number, y: number, width: number, height: number): TemplateLayer => ({
+  type: "coupon",
+  x,
+  y,
+  width,
+  height,
 });
 
 /* ------------------------------------------------------------------ */
@@ -1698,6 +1708,178 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
     featured: false,
     sortOrder: 52,
     tags: ["thumbnail", "youtube", "stat", "split"],
+  },
+
+  /* ================= DISCOUNT (6) =================
+     Tiered-code creatives. {{DISCOUNT_PCT}} and the coupon layer resolve
+     from the affiliate's real, Stripe-synced discount code; the QR layer
+     stays the referral link as everywhere else in the library. */
+  {
+    slug: "discount-story-bold",
+    title: "Discount — Bold Percent (Story)",
+    category: "discount",
+    kind: "svg",
+    format: "story_9x16",
+    width: 1080,
+    height: 1920,
+    assetUrl: null,
+    svgBody: S(1080, 1920,
+      bgRect(1080, 1920) +
+      glow(540, 820, 560) +
+      rings(540, 470, 200) +
+      badge(64, 216, "FIRST PAYMENT DEAL") +
+      T(540, 600, 80, "#ffffff", "{{HEADLINE}}", { anchor: "middle", weight: 800 }) +
+      T(540, 664, 30, "#cbd5e1", "{{SUBHEAD}}", { anchor: "middle", weight: 400 }) +
+      T(540, 800, 46, "#94a3b8", "USE MY CODE AND GET", { anchor: "middle", weight: 700, ls: 4 }) +
+      T(540, 1010, 240, "{{ACCENT}}", "{{DISCOUNT_PCT}}%", { anchor: "middle", weight: 800 }) +
+      T(540, 1096, 58, "#ffffff", "OFF YOUR FIRST PAYMENT", { anchor: "middle", weight: 800 }) +
+      qrFrame(430, 1440, 220) +
+      urlText(540, 1846, "middle", 21)),
+    editableFields: std("THE WORLD IS LIVE", "36,000+ live cameras, flights, weather and more.", "START NOW"),
+    layers: [logo(48, 64, 150), coupon(240, 1180, 600, 104), qr(430, 1440, 220)],
+    carouselGroup: null,
+    slideIndex: null,
+    featured: true,
+    sortOrder: 53,
+    tags: ["discount", "story", "code", "offer"],
+  },
+  {
+    slug: "discount-reel-cover",
+    title: "Discount — Full-Price Hook (Reel Cover)",
+    category: "discount",
+    kind: "svg",
+    format: "reel_9x16",
+    width: 1080,
+    height: 1920,
+    assetUrl: null,
+    svgBody: S(1080, 1920,
+      bgRect(1080, 1920) +
+      glow(540, 940, 580) +
+      eye(540, 430, 115) +
+      badge(64, 200, "MY VIEWER DEAL", "#f472b6") +
+      T(540, 730, 38, "{{ACCENT}}", "WORLDEYE PRO", { anchor: "middle", weight: 800, ls: 6 }) +
+      T(540, 856, 74, "#ffffff", "{{HEADLINE}}", { anchor: "middle", weight: 800 }) +
+      T(540, 1052, 190, "{{ACCENT}}", "{{DISCOUNT_PCT}}% OFF", { anchor: "middle", weight: 800 }) +
+      T(540, 1132, 30, "#cbd5e1", "{{SUBHEAD}}", { anchor: "middle", weight: 400 }) +
+      qrFrame(450, 1470, 180) +
+      urlText(540, 1800, "middle", 21)),
+    editableFields: std("STOP PAYING FULL PRICE", "My code takes it off your first payment.", "GET THE DEAL"),
+    layers: [logo(48, 64, 150), coupon(270, 1210, 540, 100), qr(450, 1470, 180)],
+    carouselGroup: null,
+    slideIndex: null,
+    featured: false,
+    sortOrder: 54,
+    tags: ["discount", "reel", "code", "hook"],
+  },
+  {
+    slug: "discount-feed-punch",
+    title: "Discount — Punch (Feed)",
+    category: "discount",
+    kind: "svg",
+    format: "feed_1x1",
+    width: 1080,
+    height: 1080,
+    assetUrl: null,
+    svgBody: S(1080, 1080,
+      bgRect(1080, 1080) +
+      glow(320, 420, 430) +
+      rings(892, 226, 118) +
+      brand(64, 84, 32) +
+      T(64, 322, 42, "{{ACCENT}}", "MY CODE, YOUR DEAL", { weight: 800, ls: 3 }) +
+      T(64, 512, 148, "#ffffff", "{{DISCOUNT_PCT}}% OFF", { weight: 800 }) +
+      T(64, 580, 34, "#ffffff", "{{HEADLINE}}", { weight: 700 }) +
+      T(64, 632, 26, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
+      qrFrame(824, 690, 170) +
+      urlText(64, 1022, "start", 19)),
+    editableFields: std("First payment, sorted.", "36,000+ live cameras on one live globe.", "CLAIM THE CODE"),
+    layers: [coupon(64, 700, 520, 96), qr(824, 690, 170)],
+    carouselGroup: null,
+    slideIndex: null,
+    featured: true,
+    sortOrder: 55,
+    tags: ["discount", "feed", "code", "offer"],
+  },
+  {
+    slug: "discount-feed-portrait-panel",
+    title: "Discount — Glass Panel (Feed 4:5)",
+    category: "discount",
+    kind: "svg",
+    format: "feed_4x5",
+    width: 1080,
+    height: 1350,
+    assetUrl: null,
+    svgBody: S(1080, 1350,
+      bgRect(1080, 1350) +
+      glow(540, 470, 480) +
+      eye(540, 330, 105) +
+      T(540, 620, 70, "#ffffff", "{{HEADLINE}}", { anchor: "middle", weight: 800 }) +
+      T(540, 682, 29, "#cbd5e1", "{{SUBHEAD}}", { anchor: "middle", weight: 400 }) +
+      glassPanel(140, 760, 800, 290, 28) +
+      T(540, 862, 40, "#94a3b8", "FIRST PAYMENT", { anchor: "middle", weight: 700, ls: 5 }) +
+      T(540, 982, 108, "{{ACCENT}}", "{{DISCOUNT_PCT}}% OFF", { anchor: "middle", weight: 800 }) +
+      qrFrame(884, 1128, 118, false) +
+      urlText(64, 1304, "start", 19)),
+    editableFields: std("GET THE GLOBE FOR LESS", "Live cameras, flights, radar — one map.", "START NOW"),
+    layers: [logo(48, 48, 150), coupon(240, 1108, 560, 100), qr(884, 1128, 118)],
+    carouselGroup: null,
+    slideIndex: null,
+    featured: false,
+    sortOrder: 56,
+    tags: ["discount", "feed", "portrait", "code"],
+  },
+  {
+    slug: "discount-banner-billboard",
+    title: "Discount — Billboard (Banner)",
+    category: "discount",
+    kind: "svg",
+    format: "banner_970x250",
+    width: 970,
+    height: 250,
+    assetUrl: null,
+    svgBody: S(970, 250,
+      bgRect(970, 250) +
+      glow(700, 125, 230) +
+      brand(30, 108, 28) +
+      T(272, 104, 27, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
+      T(272, 138, 18, "#94a3b8", "{{SUBHEAD}}", { weight: 400 }) +
+      T(272, 206, 46, "{{ACCENT}}", "{{DISCOUNT_PCT}}% OFF", { weight: 800 }) +
+      urlText(30, 232, "start", 16)),
+    editableFields: std("SEE THE WORLD LIVE", "36,000+ cameras on one globe.", "START NOW", false),
+    layers: [coupon(520, 140, 290, 62), qr(838, 60, 120)],
+    carouselGroup: null,
+    slideIndex: null,
+    featured: false,
+    sortOrder: 57,
+    tags: ["discount", "banner", "billboard", "code"],
+  },
+  {
+    slug: "discount-email-header",
+    title: "Discount — Email Header",
+    category: "discount",
+    kind: "svg",
+    format: "email_1200x600",
+    width: 1200,
+    height: 600,
+    assetUrl: null,
+    svgBody: S(1200, 600,
+      bgRect(1200, 600) +
+      glow(960, 300, 340) +
+      rings(990, 290, 140) +
+      brand(56, 96, 34) +
+      T(56, 238, 48, "#ffffff", "{{HEADLINE}}", { weight: 800 }) +
+      T(56, 288, 22, "#cbd5e1", "{{SUBHEAD}}", { weight: 400 }) +
+      T(56, 402, 84, "{{ACCENT}}", "{{DISCOUNT_PCT}}% OFF", { weight: 800 }) +
+      T(492, 402, 30, "#ffffff", "YOUR FIRST PAYMENT", { weight: 700 }) +
+      ctaPill(600, 446, 280, 62, 21) +
+      qrFrame(1014, 428, 118, false) +
+      urlText(56, 562, "start", 19)),
+    editableFields: std("YOUR FIRST MONTH, ON A DEAL", "36,000+ live cameras, flights and weather — one live globe.", "START NOW"),
+    layers: [coupon(56, 440, 440, 88), qr(1014, 428, 118)],
+    carouselGroup: null,
+    slideIndex: null,
+    featured: false,
+    sortOrder: 58,
+    tags: ["discount", "email", "header", "code"],
   },
 ];
 

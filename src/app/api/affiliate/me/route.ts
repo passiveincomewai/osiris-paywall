@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getSettings } from "@/lib/affiliate/settings";
 import { rankFor, nextRank, rankProgress } from "@/lib/affiliate/ranks";
 import { referralLinkFor } from "@/lib/affiliate/brand";
+import { ensureDiscountCode } from "@/lib/affiliate/discount";
 import { db } from "@/lib/db";
 import { requireAffiliate } from "../_util";
 
@@ -21,7 +22,14 @@ export async function GET() {
     orderBy: { createdAt: "desc" },
     select: { platform: true, handle: true, followers: true, status: true, createdAt: true, reviewedAt: true },
   });
+  // Tiered discount code: lazy sync — the code materializes / rotates to
+  // the current rank the next time the affiliate loads a surface. Never
+  // throws; without Stripe configured it reports "pending_config".
+  const discount = await ensureDiscountCode(profile).catch(() => null);
   return NextResponse.json({
+    discount: discount
+      ? { code: discount.code, pct: discount.pct, synced: discount.synced, status: discount.status }
+      : null,
     creatorApplication: creatorApp
       ? {
           ...creatorApp,

@@ -143,6 +143,15 @@ model AffiliateProfile {
   status        AffiliateStatus @default(pending)
   xp            Int             @default(0)
 
+  // Tiered audience discount code (Stripe promotion code, % off the
+  // buyer's first payment — see src/lib/affiliate/discount.ts). The code
+  // string/pct are stored even before Stripe sync so the site can show
+  // intent; stripePromotionCodeId is set only once Stripe confirms.
+  discountCode          String?   @unique
+  discountPct           Int?
+  stripePromotionCodeId String?
+  discountSyncedAt      DateTime?
+
   // Network: who recruited this affiliate (affiliate→affiliate chain for L2/L3)
   recruitedByProfileId String?
   recruitedBy          AffiliateProfile?  @relation("RecruitChain", fields: [recruitedByProfileId], references: [id], onDelete: SetNull)
@@ -474,6 +483,17 @@ model StudioCreation {
 
   @@index([affiliateProfileId, createdAt])
   @@index([renderHash])
+}
+
+// ── Tiered affiliate discount codes: one shared Stripe coupon per percent ─
+// Coupons are minted once per discount percent and reused by every
+// affiliate's personal promotion code (see src/lib/affiliate/discount.ts).
+model AffiliateDiscountCoupon {
+  pct            Int    @id
+  stripeCouponId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ── Phase 1 camera recording: user-saved cameras + clip metadata ─────────

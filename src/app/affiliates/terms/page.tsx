@@ -90,6 +90,15 @@ const SECTIONS: { n: string; title: string; body: string[] }[] = [
       "Complimentary Pro has no cash value, cannot be transferred, sold, or exchanged, and does not by itself earn commissions or XP. If a participant purchases a paid WorldEye subscription, the paid subscription takes precedence and these complimentary benefits pause for its duration.",
     ],
   },
+  {
+    n: "12",
+    title: "Discount codes",
+    body: [
+      "Every active affiliate receives a personal discount code (for example, YOURNAME20) that gives buyers a percentage off their first WorldEye subscription payment. The percentage follows the affiliate's current rank — 5% (Explorer), 10% (Scout), 15% (Analyst), 20% (Commander), 25% (Elite), 30% (Visionary). Affiliates with an approved creator application receive a floor of 20% regardless of rank. The discount applies to the first payment only, on weekly, monthly, and annual plans, and cannot be combined with other offers unless WorldEye states otherwise.",
+      "Codes follow the affiliate's current tier: when an affiliate's rank (or creator status) changes, their code rotates to the new percentage and the previous code is deactivated. Only the affiliate's current code is valid; WorldEye is not responsible for honoring retired codes shared in older content.",
+      "A purchase made with an affiliate's discount code is attributed to that affiliate for commission purposes under the standard commission rules, even if the buyer did not arrive through the affiliate's referral link — unless the buyer already carries another affiliate's attribution, which takes precedence. Redeeming your own code on your own purchase is self-referral and is prohibited under Section 5. WorldEye may deactivate any code, without notice, for fraud, abuse, misleading promotion, or violation of these terms, and commissions arising from code abuse are void.",
+    ],
+  },
 ];
 
 export default function AffiliateTerms() {

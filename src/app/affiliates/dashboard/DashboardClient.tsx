@@ -8,8 +8,9 @@ import { AreaChart } from "@/components/affiliate/charts";
 
 interface Me {
   profile: { referralCode: string; customCode: string | null; status: string; xp: number; payoutEmail: string | null; payoutMethod: string | null };
-  rank: { name: string; badge: string; color: string; glow: string; commissionPct: number; tagline: string };
-  nextRank: { name: string; minXp: number; commissionPct: number } | null;
+  rank: { name: string; badge: string; color: string; glow: string; commissionPct: number; discountPct?: number; tagline: string };
+  nextRank: { name: string; minXp: number; commissionPct: number; discountPct?: number } | null;
+  discount: { code: string; pct: number; synced: boolean; status: string } | null;
   progress: { pct: number; xpInto: number; xpNeeded: number };
   referralLink: string;
   ranks?: { key: string; name: string; minXp: number }[];
@@ -253,6 +254,38 @@ export default function DashboardClient() {
           </a>
         </div>
       </div>
+
+      {/* Discount code */}
+      {me.discount && (
+        <div className={card}>
+          <div className="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+            <div className="min-w-0">
+              <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-1">Your discount code</div>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-3xl md:text-4xl font-black font-mono tracking-wider text-white">{me.discount.code}</span>
+                <CopyButton text={me.discount.code} />
+              </div>
+              <div className="text-sm text-slate-300 mt-2">
+                Gives your audience <span className="text-white font-bold">{me.discount.pct}% off their first payment</span> — 
+                {" "}share it anywhere. Sales made with your code count as your referrals, even without your link.
+              </div>
+              <div className="text-xs text-slate-500 mt-1">
+                {me.discount.synced
+                  ? "Live at checkout now."
+                  : "Activating — your code will start redeeming at checkout shortly."}
+                {me.nextRank && typeof me.nextRank.discountPct === "number" && me.nextRank.discountPct > me.discount.pct && (
+                  <> Reach <span className="text-slate-300 font-bold">{me.nextRank.name}</span> and your code rises to {me.nextRank.discountPct}% off.</>
+                )}
+              </div>
+            </div>
+            <div className="text-center shrink-0">
+              <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase">Audience saves</div>
+              <div className="text-3xl font-bold font-mono text-emerald-300">{me.discount.pct}%</div>
+              <div className="text-[10px] text-slate-500">first payment</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

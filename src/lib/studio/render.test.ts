@@ -15,6 +15,7 @@ const ctx: StudioContext = {
   code: "testcode1",
   link: LINK,
   couponCode: null,
+  discountPct: null,
   displayName: "Test Creator",
   rankKey: "explorer",
   rankName: "Explorer",

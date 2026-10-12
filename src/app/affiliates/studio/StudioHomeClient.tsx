@@ -46,6 +46,7 @@ interface Me {
   profile: { referralCode: string; customCode: string | null; status: string; xp: number };
   rank: { name: string; badge: string; color: string; glow: string; commissionPct: number; tagline: string };
   referralLink: string;
+  discount?: { code: string; pct: number; synced: boolean; status: string } | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -291,9 +292,19 @@ export default function StudioHomeClient({
                 <div className="text-xl font-bold font-mono text-white mt-0.5">{creationsCount}</div>
               </div>
             </div>
-            <p className="text-xs text-slate-500">
-              Discount codes: not available yet — your ads never display a fake discount.
-            </p>
+            {me.discount ? (
+              <p className="text-xs text-slate-400">
+                Your discount code <span className="font-mono font-bold text-emerald-300">{me.discount.code}</span> gives
+                your audience {me.discount.pct}% off their first payment
+                {me.discount.synced
+                  ? " — it appears automatically in discount templates."
+                  : " — it's activating and will appear in discount templates once live."}
+              </p>
+            ) : (
+              <p className="text-xs text-slate-500">
+                Discount codes: not available yet — your ads never display a fake discount.
+              </p>
+            )}
           </div>
           <div className="flex flex-col items-start gap-4">
             <RankBadge name={me.rank.name} badge={me.rank.badge} color={me.rank.color} glow={me.rank.glow} size="lg" />

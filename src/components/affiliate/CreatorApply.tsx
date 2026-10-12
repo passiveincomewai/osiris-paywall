@@ -125,6 +125,7 @@ export default function CreatorApply() {
             <li>✓ Full Pro access — no card, no trial clock</li>
             <li>✓ Renewable after 12 months with a quick re-verification</li>
             <li>✓ Stacks with affiliate earnings — promote WorldEye, earn 15–30% too</li>
+            <li>✓ Approved creators also get a <span className="text-white font-bold">20% discount code</span> to share with their audience</li>
           </ul>
           <p className="mt-4 text-xs text-slate-500 leading-relaxed">
             We verify every application by hand — follower count and account ownership are checked
