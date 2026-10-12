@@ -4,8 +4,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureStudioTemplates } from "@/lib/studio/templates-seed";
+import { ensureStudioVideos } from "@/lib/studio/video-seed";
 import { TEMPLATE_CATEGORIES } from "@/lib/studio/types";
-import { activeOnly, requireAffiliate } from "../../_util";
+import { requireStudioAccess } from "../../_util";
 
 export const runtime = "nodejs";
 
@@ -46,14 +47,13 @@ function publicTemplate(t: TemplateRow) {
 }
 
 export async function GET(req: Request) {
-  const { profile, error } = await requireAffiliate();
+  const { profile, error } = await requireStudioAccess();
   if (error || !profile) {
     return error ?? NextResponse.json({ error: "Not an affiliate" }, { status: 404 });
   }
-  const blocked = activeOnly(profile);
-  if (blocked) return blocked;
 
   await ensureStudioTemplates();
+  await ensureStudioVideos();
 
   const { searchParams } = new URL(req.url);
   const slug = searchParams.get("slug");

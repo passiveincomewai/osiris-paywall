@@ -180,16 +180,25 @@ export default function CreationsClient() {
                   )}
 
                   <div className="mt-auto flex flex-wrap gap-2 pt-1">
-                    {!caption && (
-                      <a
-                        href={`/api/affiliate/studio/creations/${encodeURIComponent(c.id)}?format=png`}
-                        download
-                        className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f]"
-                        style={btnStyle}
-                      >
-                        Download PNG
-                      </a>
-                    )}
+                    {!caption &&
+                      (c.kind === "video" && slug ? (
+                        <Link
+                          href={`/affiliates/studio/video/${slug}`}
+                          className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f]"
+                          style={btnStyle}
+                        >
+                          Open in Video Studio
+                        </Link>
+                      ) : (
+                        <a
+                          href={`/api/affiliate/studio/creations/${encodeURIComponent(c.id)}?format=png`}
+                          download
+                          className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f]"
+                          style={btnStyle}
+                        >
+                          Download PNG
+                        </a>
+                      ))}
                     {slug && !caption && (
                       <Link
                         href={`/affiliates/studio/create/${slug}`}
