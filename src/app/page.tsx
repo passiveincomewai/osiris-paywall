@@ -1678,7 +1678,7 @@ export default function Dashboard() {
             className="h-9 md:h-10 w-auto"
             style={{ filter: 'drop-shadow(0 0 10px rgba(0,150,255,0.5))' }}
           />
-          <span className="text-lg md:text-xl font-bold tracking-wide font-mono">
+          <span className="text-lg md:text-xl font-wordmark tracking-wide">
             <span className="text-white">World</span><span className="text-[#0096FF]">Eye</span>
           </span>
         </Link>
