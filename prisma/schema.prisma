@@ -161,6 +161,13 @@ model AffiliateProfile {
   payoutEmail       String?
   payoutMethod      String? // "stripe_connect" | "paypal" | "manual"
 
+  // Marketing Studio Phase 4: public link-in-bio showcase opt-in (featured
+  // creations appear on /bio/[code] only when this is true) and the
+  // ambassador flag (approved AmbassadorApplication → ambassador template
+  // category + early-access treatment in the Studio).
+  showcaseEnabled Boolean @default(false)
+  isAmbassador    Boolean @default(false)
+
   clicks        ReferralClick[]
   attributions  ReferralAttribution[] @relation("AffiliateAttributions")
   commissions   Commission[]
@@ -171,6 +178,10 @@ model AffiliateProfile {
   creditAccount StudioCreditAccount?
   creditLedger  StudioCreditLedger[]
   generationJobs GenerationJob[]
+  badges        AffiliateBadge[]
+  ambassadorApplications AmbassadorApplication[]
+  campaignParticipations StudioCampaignParticipation[]
+  dropClaims    StudioDropClaim[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -465,6 +476,7 @@ model MarketingTemplate {
   updatedAt      DateTime @updatedAt
 
   creations      StudioCreation[]
+  drops          StudioDrop[]
 
   @@index([category, active, featured])
   @@index([publishAt])
@@ -489,6 +501,12 @@ model StudioCreation {
   resultText         String?  @db.Text
   resultImageBytes   Bytes?
   resultImageMime    String?
+  // Phase 5 A/B caption variants: { a: string, b: string } saved by the
+  // affiliate, which one they actually posted, and their own free-text
+  // result note. Manual honesty — no platform metrics are invented here.
+  captionVariants    Json?
+  postedVariant      String? // "a" | "b"
+  resultNote         String? @db.Text
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -545,6 +563,126 @@ model GenerationJob {
 
   @@index([profileId, createdAt])
   @@index([status, createdAt])
+}
+
+// ── Marketing Studio Phase 4: campaigns, badges, ambassadors, drops ────
+// Campaigns are admin-built posting challenges: an affiliate joins, posts
+// with the required hashtags/snippet, submits their post URL (trust-based;
+// admins spot-check via reviewStatus), and completion pays the campaign's
+// XP + credit rewards exactly once (participation.completedAt is the
+// idempotency anchor, on top of awardXP keys + a keyed ledger row).
+model StudioCampaign {
+  id          String   @id @default(cuid())
+  name        String
+  goal        String
+  description String   @db.Text
+  startsAt    DateTime
+  endsAt      DateTime
+  // Posting requirements, shown to affiliates before they join.
+  requiredHashtags       String[] @default([])
+  requiredCaptionSnippet String?
+  // Where affiliates send traffic; the kit appends the standard affiliate
+  // UTM parameters (src/lib/studio/campaigns.ts campaignLandingLink).
+  landingUrl  String
+  xpReward    Int      @default(0)
+  creditReward Int     @default(0)
+  channels    String[] @default([])
+  // Template slugs the campaign kit page renders/downloads (may be empty).
+  templateSlugs String[] @default([])
+  status      String   @default("draft") // draft | active | ended
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  participations StudioCampaignParticipation[]
+
+  @@index([status, startsAt])
+}
+
+model StudioCampaignParticipation {
+  id           String   @id @default(cuid())
+  campaignId   String
+  campaign     StudioCampaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  profileId    String
+  profile      AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  joinedAt     DateTime @default(now())
+  // Affiliate-supplied proof of posting (trust-based; admin spot-checks).
+  postUrl      String?
+  postedAt     DateTime?
+  reviewStatus String   @default("none") // none | verified | flagged
+  // Set exactly once, in the same transaction that grants the rewards.
+  completedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([campaignId, profileId])
+  @@index([profileId])
+}
+
+// Earned Studio/affiliate badges. Rows are inserted by the badge engine
+// (src/lib/studio/badges.ts), which evaluates real ledger metrics lazily
+// and awards each badge's XP through awardXP with a per-badge key.
+model AffiliateBadge {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  badgeKey  String
+  earnedAt  DateTime @default(now())
+
+  @@unique([profileId, badgeKey])
+  @@index([profileId])
+}
+
+// Ambassador program applications — same admin-queue shape as
+// CreatorApplication, but keyed to the affiliate profile (ambassadors are
+// affiliates first). Approval flips AffiliateProfile.isAmbassador.
+model AmbassadorApplication {
+  id         String    @id @default(cuid())
+  profileId  String
+  profile    AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  userId     String
+  platform   String // instagram | tiktok | youtube | x | twitch | other
+  handle     String
+  profileUrl String
+  audience   Int // self-reported follower count; verified at admin review
+  pitch      String?   @db.Text
+  status     String    @default("pending") // pending | approved | rejected
+  createdAt  DateTime  @default(now())
+  reviewedAt DateTime?
+
+  @@index([profileId])
+  @@index([status, createdAt])
+}
+
+// Daily Content Drop: one admin-published template featured per day.
+// The (drop, profile) claim row makes the once-per-day XP bonus
+// idempotent; days without a published drop simply have no row.
+model StudioDrop {
+  id         String   @id @default(cuid())
+  date       DateTime @unique @db.Date
+  templateId String?
+  template   MarketingTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  title      String
+  note       String?  @db.Text
+  xpBonus    Int      @default(25)
+  createdBy  String?
+  createdAt  DateTime @default(now())
+
+  claims     StudioDropClaim[]
+
+  @@index([date])
+}
+
+model StudioDropClaim {
+  id        String   @id @default(cuid())
+  dropId    String
+  drop      StudioDrop       @relation(fields: [dropId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([dropId, profileId])
+  @@index([profileId])
 }
 
 // ── Tiered affiliate discount codes: one shared Stripe coupon per percent ─
