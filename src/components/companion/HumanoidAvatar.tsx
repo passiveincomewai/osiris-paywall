@@ -112,12 +112,15 @@ export default function HumanoidAvatar({
   state,
   energyRef,
   className,
+  density = 1,
 }: {
   /** idle | listening | thinking | speaking */
   state: AvatarState;
   /** parent writes 0..1 audio level here; avatar pulses with it */
   energyRef: React.MutableRefObject<number>;
   className?: string;
+  /** 0..1 particle multiplier for low-power devices (default 1 = 18k) */
+  density?: number;
 }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<AvatarState>(state);
@@ -140,7 +143,7 @@ export default function HumanoidAvatar({
     const group = new THREE.Group();
     scene.add(group);
 
-    const COUNT = 18000;
+    const COUNT = Math.max(4000, Math.round(18000 * Math.min(1, Math.max(0.2, density))));
     const { pos, col, scale, rand } = buildHead(COUNT);
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));

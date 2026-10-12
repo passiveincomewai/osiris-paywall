@@ -35,6 +35,7 @@ const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge')
 const HeaderProfileMenu = dynamic(() => import('@/components/HeaderProfileMenu'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
+const CompanionWidget = dynamic(() => import('@/components/companion/CompanionWidget'), { ssr: false });
 const DrawingToolbar = dynamic(() => import('@/components/DrawingToolbar'), { ssr: false });
 const DrawHud = dynamic(() => import('@/components/DrawHud'), { ssr: false });
 // The measurement helpers are pure functions — importing them directly keeps
@@ -600,62 +601,6 @@ export default function Dashboard() {
       return { analysis: out.analysis, watch: out.watch };
     },
   }), [openFromAssist]);
-
-  /* ── Companion bridge (Phase 3): let the /companion humanoid drive this globe ──
-     Additive only: a BroadcastChannel listener that routes the companion's map
-     commands into the existing assistSite actions. No existing behavior changes. */
-  useEffect(() => {
-    let ch: BroadcastChannel | null = null;
-    try {
-      ch = new BroadcastChannel('worldeye-companion');
-      ch.onmessage = (e: MessageEvent) => {
-        const m = e.data as { kind?: string; id?: string; cmd?: string; args?: Record<string, unknown> };
-        if (!m || typeof m !== 'object') return;
-        if (m.kind === 'ping') { try { ch?.postMessage({ kind: 'hello' }); } catch {} return; }
-        if (m.kind !== 'cmd' || !m.id || !m.cmd) return;
-        const res = (ok: boolean, summary?: string, error?: string) => {
-          try { ch?.postMessage({ kind: 'res', id: m.id, ok, summary, error }); } catch {}
-        };
-        try {
-          const a = m.args ?? {};
-          const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : NaN);
-          switch (m.cmd) {
-            case 'flyTo': {
-              const lat = num(a.lat), lng = num(a.lng);
-              if (!Number.isFinite(lat) || !Number.isFinite(lng)) { res(false, undefined, 'Bad coordinates'); break; }
-              assistSite.flyTo(lat, lng, a.zoom == null ? undefined : num(a.zoom));
-              res(true, `Flying to ${lat.toFixed(2)}, ${lng.toFixed(2)}`);
-              break;
-            }
-            case 'setLayers':
-              assistSite.setLayers(
-                Array.isArray(a.on) ? (a.on as string[]) : [],
-                Array.isArray(a.off) ? (a.off as string[]) : [],
-              );
-              res(true, 'Layers updated');
-              break;
-            case 'highlight':
-              assistSite.highlight((a.h as never) ?? null);
-              res(true, 'Highlight updated');
-              break;
-            case 'openPanel':
-              assistSite.openPanel(String(a.panel ?? ''));
-              res(true, `Panel ${a.panel} opened`);
-              break;
-            case 'setView':
-              assistSite.setView(a as { projection?: 'globe' | 'mercator'; style?: 'dark' | 'satellite' });
-              res(true, 'View updated');
-              break;
-            default:
-              res(false, undefined, `Unknown companion command: ${m.cmd}`);
-          }
-        } catch (err) {
-          res(false, undefined, err instanceof Error ? err.message : 'Command failed');
-        }
-      };
-    } catch { /* BroadcastChannel unavailable: the companion simply won't link */ }
-    return () => { try { ch?.close(); } catch {} };
-  }, [assistSite]);
   const assist = useAssist({
     site: assistSite,
     startForecast: async (question, depth, auth) => {
@@ -2369,6 +2314,10 @@ export default function Dashboard() {
       <div className="desktop-only absolute bottom-[26px] right-5 z-[200] pointer-events-none text-[9px] font-mono text-[var(--text-muted)] opacity-50 tracking-widest" title="Press ? to see all keyboard shortcuts">
         Press <span className="text-[var(--gold-primary)] opacity-80">?</span> for shortcuts · <span className="text-[var(--gold-primary)] opacity-80">F</span> fullscreen · <span className="text-[var(--gold-primary)] opacity-80">R</span> reset view
       </div>
+
+
+      {/* ── WorldEye Companion (in-page humanoid) ── */}
+      <CompanionWidget assist={assist} />
 
 
     </main>
