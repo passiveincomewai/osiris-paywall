@@ -168,6 +168,9 @@ model AffiliateProfile {
   xpEvents      XPEvent[]
   challengeProgress ChallengeProgress[]
   creations     StudioCreation[]
+  creditAccount StudioCreditAccount?
+  creditLedger  StudioCreditLedger[]
+  generationJobs GenerationJob[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -478,11 +481,56 @@ model StudioCreation {
   campaignKey        String?
   params             Json
   renderHash         String
+  paidJobId          String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
   @@index([affiliateProfileId, createdAt])
   @@index([renderHash])
+}
+
+// ── Marketing Studio Phase 2: generation credits + jobs ─────────────────
+// Credits anchor to CREDIT_USD in src/lib/studio/credits-config.ts and are
+// the cost-control layer for paid generation: a GenerationJob is charged
+// before rendering (ledger debit), success keeps the debit, failure
+// auto-refunds (ledger credit + job status "refunded"). The ledger is the
+// audit trail; StudioCreditAccount.balance is its cached sum per profile.
+model StudioCreditAccount {
+  id        String           @id @default(cuid())
+  profileId String           @unique
+  profile   AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  balance   Int              @default(0)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model StudioCreditLedger {
+  id        String           @id @default(cuid())
+  profileId String
+  profile   AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  delta     Int
+  reason    String
+  jobId     String?
+  createdAt DateTime         @default(now())
+
+  @@index([profileId, createdAt])
+  @@index([profileId, reason, createdAt])
+}
+
+model GenerationJob {
+  id          String           @id @default(cuid())
+  profileId   String
+  profile     AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  kind        String
+  status      String           @default("queued")
+  creditCost  Int
+  params      Json
+  error       String?
+  createdAt   DateTime         @default(now())
+  completedAt DateTime?
+
+  @@index([profileId, createdAt])
+  @@index([status, createdAt])
 }
 
 // ── Tiered affiliate discount codes: one shared Stripe coupon per percent ─
