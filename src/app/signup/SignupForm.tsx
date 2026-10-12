@@ -3,9 +3,11 @@
 // state — the account can't sign in until the email is verified.
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { Loader2, MailCheck, AlertCircle, UserPlus } from "lucide-react";
+import { GoogleIcon } from "@/components/auth/ProviderIcons";
 
-export default function SignupForm({ callbackUrl }: { callbackUrl: string }) {
+export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl: string; googleEnabled: boolean }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -86,6 +88,23 @@ export default function SignupForm({ callbackUrl }: { callbackUrl: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-3">
+      {googleEnabled && (
+        <>
+          <button
+            type="button"
+            onClick={() => signIn("google", { callbackUrl })}
+            className="flex items-center justify-center gap-3 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white/85 hover:bg-white/[0.07] hover:border-white/20 transition active:scale-[0.99]"
+          >
+            <GoogleIcon className="w-5 h-5" />
+            Continue with Google
+          </button>
+          <div className="flex items-center gap-4 my-2">
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-white/35">or with email</span>
+            <div className="h-px flex-1 bg-white/10" />
+          </div>
+        </>
+      )}
       {error && (
         <div className="flex items-start gap-2.5 rounded-xl border border-red-400/30 bg-red-400/10 text-red-200 px-4 py-3 text-sm mb-1">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />

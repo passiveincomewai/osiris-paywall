@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+function googleConfigured(): boolean {
+  // Google only — other OAuth providers removed per owner decision 2026-10-11.
+  return !!(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET);
+}
+
 function safeCallbackUrl(raw: string | undefined): string {
   if (raw && raw.startsWith("/") && !raw.startsWith("//")) return raw;
   return "/";
@@ -22,7 +27,10 @@ export default async function SignupPage({
   const cb = sp.callbackUrl;
   return (
     <AuthShell title="Create your account" subtitle="Free forever. No credit card required.">
-      <SignupForm callbackUrl={safeCallbackUrl(Array.isArray(cb) ? cb[0] : cb)} />
+      <SignupForm
+        callbackUrl={safeCallbackUrl(Array.isArray(cb) ? cb[0] : cb)}
+        googleEnabled={googleConfigured()}
+      />
     </AuthShell>
   );
 }
