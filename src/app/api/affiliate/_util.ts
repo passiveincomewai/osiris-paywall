@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { resolveMembership } from "@/lib/studio/access";
 import type { AffiliateProfile } from "@prisma/client";
 
 type Ok = { profile: AffiliateProfile; userId: string; error?: undefined };
@@ -21,4 +22,22 @@ export function activeOnly<T extends { status: string }>(profile: T) {
     return NextResponse.json({ error: `Affiliate account is ${profile.status}` }, { status: 403 });
   }
   return null;
+}
+
+/**
+ * Studio gate: an active affiliate profile PLUS an active WorldEye
+ * membership (see src/lib/studio/access.ts). Same Ok/Err shape as
+ * requireAffiliate, so Studio routes can swap it in directly.
+ */
+export async function requireStudioAccess(): Promise<Ok | Err> {
+  const result = await requireAffiliate();
+  if (result.error) return result;
+  const { profile, userId } = result;
+  const blocked = activeOnly(profile);
+  if (blocked) return { error: blocked };
+  const member = await resolveMembership(userId);
+  if (!member) {
+    return { error: NextResponse.json({ error: "membership_required" }, { status: 403 }) };
+  }
+  return { profile, userId };
 }

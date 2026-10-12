@@ -16,7 +16,7 @@ import {
   type CaptionRequest,
 } from "@/lib/studio/captions";
 import { computeRenderHash } from "@/lib/studio/render";
-import { activeOnly, requireAffiliate } from "../../_util";
+import { requireStudioAccess } from "../../_util";
 
 export const runtime = "nodejs";
 
@@ -66,12 +66,10 @@ function normalizeToken(value: unknown): string {
 }
 
 export async function POST(req: Request) {
-  const { profile, error } = await requireAffiliate();
+  const { profile, error } = await requireStudioAccess();
   if (error || !profile) {
     return error ?? NextResponse.json({ error: "Not an affiliate" }, { status: 404 });
   }
-  const blocked = activeOnly(profile);
-  if (blocked) return blocked;
 
   const body = (await req.json().catch(() => ({}))) as {
     platform?: unknown;

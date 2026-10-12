@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getStudioGate } from "@/lib/studio/access";
+import StudioUpgradeScreen from "./StudioUpgradeScreen";
 import StudioHomeClient, {
   type StudioCreationLite,
   type StudioTemplateLite,
@@ -22,6 +24,19 @@ export const metadata = { title: "Marketing Studio — WorldEye Affiliates" };
 export default async function StudioHomePage() {
   const session = await auth();
   if (!session?.user) redirect("/api/auth/signin?callbackUrl=/affiliates/studio");
+
+  // Membership gate (Phase 2, Rule 1): active affiliates without an active
+  // membership — and non-active affiliates — see the upgrade screen instead
+  // of the Studio, and none of the server-side template/creation loading
+  // below runs. "not_affiliate" preserves the existing behavior (the client
+  // shows the join pitch).
+  const gateUserId = session.user.id;
+  if (gateUserId) {
+    const { outcome } = await getStudioGate(gateUserId);
+    if (outcome === "membership_required" || outcome === "inactive") {
+      return <StudioUpgradeScreen />;
+    }
+  }
 
   let initialFeatured: StudioTemplateLite[] = [];
   let initialCreations: StudioCreationLite[] = [];
