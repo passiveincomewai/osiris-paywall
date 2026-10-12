@@ -8,6 +8,7 @@ import directory from "@/data/camera-directory.json";
 import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
+import LiveRefresh from "./LiveRefresh";
 import { growthDashboardUrl } from "@/lib/growth";
 
 export const metadata = { title: "Admin Dashboard — WorldEye" };
@@ -68,6 +69,93 @@ function Chart({ data, labels, color, height = 140 }: { data: number[]; labels: 
       <text x={W - P} y={14} fontSize="11" fill={color} textAnchor="end" fontWeight="700">
         {fmt(data[data.length - 1] ?? 0)}
       </text>
+    </svg>
+  );
+}
+
+/**
+ * Per-visit strip plot, server-rendered: ONE dot per page view across the
+ * last 24 clock hours (UTC-aligned). Dots stack vertically inside 10-minute
+ * buckets (wrapping into extra columns when a bucket is tall) so overlapping
+ * visits stay individually visible — deliberately NOT an aggregated line.
+ * Per-hour totals render as small bars underneath, sharing the same x scale.
+ */
+function VisitStrip({ visits, startMs }: { visits: { t: number; path: string }[]; startMs: number }) {
+  const W = 1120, PADX = 8;
+  const SPAN = 24 * 3600_000, HOUR = 3600_000;
+  const BUCKETS = 144; // 10-minute buckets across 24h
+  const DOT_R = 2.6, PITCH = 6.4, ROW_CAP = 36;
+  const buckets: { t: number; path: string }[][] = Array.from({ length: BUCKETS }, () => []);
+  for (const v of visits) {
+    const i = Math.floor(((v.t - startMs) / SPAN) * BUCKETS);
+    if (i >= 0 && i < BUCKETS) buckets[i].push(v);
+  }
+  const maxStack = Math.max(1, ...buckets.map((b) => b.length));
+  const rows = Math.min(maxStack, ROW_CAP);
+  const dotAreaH = rows * PITCH + 10;
+  const LABEL_H = 16, BAR_MAX = 38, BAR_GAP = 6;
+  const H = dotAreaH + LABEL_H + BAR_GAP + BAR_MAX + 4;
+  const innerW = W - 2 * PADX;
+  const bucketW = innerW / BUCKETS;
+  const hourW = innerW / 24;
+  const barTop = dotAreaH + LABEL_H + BAR_GAP;
+  const hours = Array.from({ length: 24 }, (_, h) =>
+    buckets.slice(h * 6, h * 6 + 6).reduce((s, b) => s + b.length, 0)
+  );
+  const maxHour = Math.max(1, ...hours);
+  const hh = (t: number) => `${String(new Date(t).getUTCHours()).padStart(2, "0")}:00`;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: H }}>
+      {/* Hour gridlines + labels (UTC) */}
+      {Array.from({ length: 25 }, (_, h) => {
+        const x = PADX + h * hourW;
+        return (
+          <g key={`grid-${h}`}>
+            <line x1={x} y1={4} x2={x} y2={dotAreaH} stroke="#ffffff" strokeOpacity="0.05" />
+            {h < 24 && h % 2 === 0 && (
+              <text x={x + 3} y={dotAreaH + 12} fontSize="9" fill="#5b6b85">{hh(startMs + h * HOUR)}</text>
+            )}
+          </g>
+        );
+      })}
+      {/* One dot per visit */}
+      {buckets.map((b, bi) => {
+        const cols = Math.max(1, Math.ceil(b.length / rows));
+        return b.map((v, k) => {
+          const row = k % rows;
+          const col = Math.floor(k / rows);
+          const cx = PADX + bi * bucketW + ((col + 0.5) / cols) * bucketW;
+          const cy = dotAreaH - 4 - row * PITCH - DOT_R;
+          return (
+            <circle key={`${bi}-${k}`} cx={cx} cy={cy} r={DOT_R} fill="#37e08b" fillOpacity="0.85">
+              <title>{`${new Date(v.t).toISOString().slice(11, 19)} UTC · ${v.path}`}</title>
+            </circle>
+          );
+        });
+      })}
+      {visits.length === 0 && (
+        <text x={W / 2} y={dotAreaH / 2 + 3} fontSize="11" fill="#5b6b85" textAnchor="middle">
+          No visits in the last 24 hours
+        </text>
+      )}
+      {/* Per-hour totals */}
+      {hours.map((c, h) => {
+        const bh = (c / maxHour) * BAR_MAX;
+        const bw = hourW * 0.6;
+        const x = PADX + h * hourW + (hourW - bw) / 2;
+        return (
+          <g key={`bar-${h}`}>
+            <rect x={x} y={barTop + (BAR_MAX - bh)} width={bw} height={bh} rx="2" fill="#37e08b" fillOpacity="0.28">
+              <title>{`${hh(startMs + h * HOUR)} UTC · ${c} visits`}</title>
+            </rect>
+            {c > 0 && (
+              <text x={x + bw / 2} y={barTop + (BAR_MAX - bh) - 3} fontSize="9" fill="#5b6b85" textAnchor="middle">
+                {c}
+              </text>
+            )}
+          </g>
+        );
+      })}
     </svg>
   );
 }
@@ -291,6 +379,31 @@ export default async function AdminDashboardPage() {
     include: { user: { select: { email: true } } },
   });
 
+  // --- Live traffic ---
+  // "Live" = distinct sessions with a real page view recently. Interaction
+  // events (camera_open, globe_reached, …) are PageView rows WITH event set —
+  // they are excluded everywhere here so counts are visits, not interactions.
+  const d5min = new Date(now - 5 * 60_000), d30min = new Date(now - 30 * 60_000);
+  const [liveNow5, liveNow30] = await Promise.all([
+    db.$queryRaw<{ c: bigint }[]>`SELECT COUNT(DISTINCT "sessionId") AS c FROM "PageView" WHERE event IS NULL AND "createdAt" >= ${d5min}`.then((r) => Number(r[0]?.c ?? 0)),
+    db.$queryRaw<{ c: bigint }[]>`SELECT COUNT(DISTINCT "sessionId") AS c FROM "PageView" WHERE event IS NULL AND "createdAt" >= ${d30min}`.then((r) => Number(r[0]?.c ?? 0)),
+  ]);
+  // Per-visit graph: individual page-view rows for the last 24 clock hours
+  // (window aligned to UTC hour boundaries so the hour bars/labels are exact).
+  // Capped at the 2,000 most recent visits so a traffic spike can't bloat the
+  // page; the cap is surfaced in the UI when hit.
+  const HOUR_MS = 3600_000;
+  const plotEnd = Math.floor(now / HOUR_MS) * HOUR_MS + HOUR_MS;
+  const plotStart = plotEnd - 24 * HOUR_MS;
+  const visitRows = await db.pageView.findMany({
+    where: { createdAt: { gte: new Date(plotStart), lt: new Date(plotEnd) }, event: null },
+    orderBy: { createdAt: "desc" },
+    take: 2000,
+    select: { createdAt: true, path: true },
+  });
+  const visits = visitRows.reverse().map((v) => ({ t: v.createdAt.getTime(), path: v.path }));
+  const visitsCapped = visitRows.length >= 2000;
+
   // 30-day label axis
   const labels: string[] = [];
   for (let i = 29; i >= 0; i--) labels.push(dayKey(new Date(now - i * DAY)));
@@ -403,6 +516,41 @@ export default async function AdminDashboardPage() {
             <Link href="/" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">← Site</Link>
           </div>
         </div>
+
+        {/* Live traffic */}
+        <Section title="Live traffic">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div className="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.05] p-5">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+                </span>
+                <div className="text-[11px] font-bold tracking-[0.18em] text-emerald-100/70 uppercase">Live now</div>
+              </div>
+              <div className="mt-2 text-3xl font-extrabold text-white" style={{ textShadow: "0 0 24px #34d39944" }}>
+                {fmt(liveNow5)}
+              </div>
+              <div className="mt-1 text-xs text-white/45">sessions active in the last 5 minutes</div>
+              <LiveRefresh />
+            </div>
+            <Card label="Active · 30 min" value={fmt(liveNow30)} sub="Distinct sessions, last 30 minutes" accent="#37e08b" />
+            <Card label="Page views · 24h" value={fmt(pv24h)} sub="Rolling 24 hours" accent="#37e08b" />
+            <Card label="Unique visitors · 24h" value={fmt(uniq24h)} sub="Distinct sessions, rolling 24h" accent="#37e08b" />
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex items-baseline justify-between mb-3">
+              <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase">Every visit · last 24 hours</div>
+              <div className="text-xs text-white/40">{fmt(visits.length)} visits · one dot each · times in UTC</div>
+            </div>
+            <VisitStrip visits={visits} startMs={plotStart} />
+            <p className="text-[11px] text-white/30 mt-3">
+              One dot per page view, stacked inside 10-minute buckets so overlapping visits stay individually visible;
+              bars total each hour. Hover a dot for its exact time and page. Page views only — interaction events
+              (camera opens, globe reaches) are excluded.{visitsCapped ? " Showing the most recent 2,000 visits." : ""}
+            </p>
+          </div>
+        </Section>
 
         {/* Key metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
