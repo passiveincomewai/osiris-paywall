@@ -215,6 +215,23 @@ enum PayoutStatus {
   rejected
 }
 
+// ── In-house site analytics (page views + time on site) ──────────────────
+// Populated by <AnalyticsTracker/> via /api/analytics/track. Powers /admin.
+model PageView {
+  id         String   @id @default(cuid())
+  path       String
+  sessionId  String
+  userId     String?
+  // Seconds the page was visible, reported on page hide. Null if unknown.
+  durationSec Int?
+  referrer   String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, createdAt])
+  @@index([sessionId])
+}
+
 model Payout {
   id                 String           @id @default(cuid())
   affiliateProfileId String

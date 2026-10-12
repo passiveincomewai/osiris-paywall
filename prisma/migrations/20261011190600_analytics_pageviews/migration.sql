@@ -1,0 +1,14 @@
+-- In-house site analytics: page views + time on site (powers /admin)
+CREATE TABLE "PageView" (
+    "id" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "sessionId" TEXT NOT NULL,
+    "userId" TEXT,
+    "durationSec" INTEGER,
+    "referrer" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "PageView_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX "PageView_createdAt_idx" ON "PageView"("createdAt");
+CREATE INDEX "PageView_path_createdAt_idx" ON "PageView"("path", "createdAt");
+CREATE INDEX "PageView_sessionId_idx" ON "PageView"("sessionId");

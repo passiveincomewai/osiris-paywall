@@ -82,7 +82,22 @@ export default function SiteFooter() {
       <div className="border-t border-white/5">
         <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/30">
           <span>© 2026 WorldEye. All rights reserved.</span>
-          <span>Live data from public sources worldwide.</span>
+          <span className="flex items-center gap-4">
+            <span>Live data from public sources worldwide.</span>
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white/40 hover:text-white hover:border-white/25 transition"
+              title="Admin dashboard"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="9" rx="1" />
+                <rect x="14" y="3" width="7" height="5" rx="1" />
+                <rect x="14" y="12" width="7" height="9" rx="1" />
+                <rect x="3" y="16" width="7" height="5" rx="1" />
+              </svg>
+              Admin
+            </Link>
+          </span>
         </div>
       </div>
     </footer>
