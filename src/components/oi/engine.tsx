@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Check, ChevronDown, Database, Eye, EyeOff, FileText, KeyRound, Loader2, Upload, X } from 'lucide-react';
 import { PROVIDERS, providerInfo, type ProviderId } from '@/lib/oi/providers';
 import { DEPTHS, PANEL_SEED_MAX, SEED_MAX, estimateCalls, seedCost, type SeedScope } from '@/lib/oi/depths';
-import { checkKey, forgetKey, loadKey, saveEngine, saveKey, type Engine } from '@/lib/oi/client';
+import { checkKey, forgetKey, loadKey, saveEngine, saveKey, type Engine, type SiteAiInfo } from '@/lib/oi/client';
 import type { Depth, Frame } from '@/lib/oi/types';
 import { FIELD, KIND_SHORT, LABEL, T, blue, gold, shortName } from './theme';
 import { Kbd, Overline, SectionTitle, Segmented, Switch, TextButton } from './atoms';
@@ -29,8 +29,10 @@ export function EnginePill({ engine, ready, open, onClick, assist = false }: { e
   );
 }
 
-export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone }: {
+export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone, siteAi }: {
   engine: Engine; setEngine: (e: Engine) => void; keyValue: string; setKey: (k: string) => void; onDone: () => void;
+  /** WorldEye AI: the site's own key, when this deployment includes one. Covers the OpenAI engine only. */
+  siteAi?: SiteAiInfo | null;
 }) {
   const info = providerInfo(engine.provider);
   const [reveal, setReveal] = useState(false);
@@ -50,7 +52,8 @@ export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone }: {
 
   const check = async () => {
     setStatus({ kind: 'checking', text: '' });
-    saveKey(engine.provider, keyValue, engine.remember);
+    // On the site's key there is nothing of the reader's to save.
+    if (keyValue) saveKey(engine.provider, keyValue, engine.remember);
     const out = await checkKey(engine.provider, keyValue);
     if ('error' in out) { setStatus({ kind: 'error', text: out.error }); return; }
     setModels(out.models);
@@ -59,7 +62,12 @@ export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone }: {
     const next = { ...engine, model };
     setEngine(next);
     saveEngine(next);
-    setStatus({ kind: 'ok', text: `Key accepted · ${out.models.length} model${out.models.length === 1 ? '' : 's'} available` });
+    setStatus({
+      kind: 'ok',
+      text: out.siteKey
+        ? `WorldEye AI is on · ${out.models.length} model${out.models.length === 1 ? '' : 's'} available on the site's key`
+        : `Key accepted · ${out.models.length} model${out.models.length === 1 ? '' : 's'} available`,
+    });
   };
 
   const setModel = (model: string) => {
@@ -69,12 +77,22 @@ export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone }: {
   };
 
   const known = useMemo(() => info.suggested.map(id => ({ id, name: id })), [info.suggested]);
-  const ready = !info.needsKey || keyValue.length > 0;
+  // The site's key covers this engine for a signed-in reader: ready with no key of theirs at all.
+  const siteCovers = Boolean(siteAi?.available && engine.provider === 'openai');
+  const siteReady = siteCovers && Boolean(siteAi?.signedIn);
+  const ready = !info.needsKey || keyValue.length > 0 || siteReady;
 
   return (
     <section className="px-4 py-4 border-b border-[var(--border-secondary)] flex flex-col gap-4" style={{ background: gold(0.025) }}>
       <div>
-        <SectionTitle right={ready ? <TextButton onClick={onDone}>Done</TextButton> : undefined}>Engine · your own key</SectionTitle>
+        <SectionTitle right={ready ? <TextButton onClick={onDone}>Done</TextButton> : undefined}>{siteCovers ? 'Engine · WorldEye AI included' : 'Engine · your own key'}</SectionTitle>
+        {siteCovers && (
+          <p className="mb-2 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
+            {siteAi?.signedIn
+              ? 'WorldEye AI is included — no key needed. Runs use the site\'s OpenAI key, within a fair-use hourly limit. You can optionally use your own OpenAI key below instead.'
+              : <>WorldEye AI is included for signed-in users. <a href="/signin?callbackUrl=/" className="underline hover:text-[var(--gold-light)]">Sign in</a> to run without a key, or add your own OpenAI key below.</>}
+          </p>
+        )}
         <div className="grid grid-cols-3 gap-1">
           {PROVIDERS.map(p => {
             const on = engine.provider === p.id;
@@ -103,7 +121,7 @@ export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone }: {
                 {reveal ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
               </button>
             </div>
-            <button onClick={check} disabled={!keyValue || status.kind === 'checking'} className="oi-btn !h-8">
+            <button onClick={check} disabled={(!keyValue && !siteReady) || status.kind === 'checking'} className="oi-btn !h-8">
               {status.kind === 'checking' ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Check'}
             </button>
           </div>
@@ -137,12 +155,14 @@ export function EngineSheet({ engine, setEngine, keyValue, setKey, onDone }: {
         </div>
         <ModelPicker provider={engine.provider} models={models ?? known} value={engine.model} onChange={setModel}
           suggested={info.suggested} defaultModel={info.defaultModel} listed={listed && !!models} />
-        {!models && info.needsKey && <p className="text-[10.5px] text-[var(--text-muted)]">Check the key to list every model it can use, grouped by family.</p>}
+        {!models && info.needsKey && <p className="text-[10.5px] text-[var(--text-muted)]">{siteReady ? 'Check to list every model the site\'s key can use, grouped by family.' : 'Check the key to list every model it can use, grouped by family.'}</p>}
       </div>
 
       {info.needsKey && (
         <p className="text-[10.5px] leading-relaxed text-[var(--text-muted)]">
-          Your key stays in this browser{engine.remember ? '' : ' tab'} and reaches OSIRIS only inside your requests, which pass it to {info.name} for your run. It is never stored on the server or logged. A prediction makes about 30 to 130 model calls, by depth, billed to your {info.name} account.
+          {siteReady && !keyValue
+            ? 'Runs are billed to WorldEye\'s OpenAI account, inside a fair-use hourly limit — a prediction makes about 30 to 130 model calls, by depth. Add your own key above to use your own quota instead.'
+            : <>Your key stays in this browser{engine.remember ? '' : ' tab'} and reaches OSIRIS only inside your requests, which pass it to {info.name} for your run. It is never stored on the server or logged. A prediction makes about 30 to 130 model calls, by depth, billed to your {info.name} account.</>}
         </p>
       )}
     </section>

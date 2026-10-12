@@ -1,5 +1,7 @@
 import { getRun } from '@/lib/oi/runs';
-import { askPrediction, credentials, disabled, disabledResponse, fail, json, limited, readBody } from '@/lib/oi/service';
+import { isProviderId, type ProviderId } from '@/lib/oi/providers';
+import { resolveRouteKey, siteKeyHourLimited } from '@/lib/oi/server-key';
+import { askPrediction, credentials, disabled, disabledResponse, fail, json, limited, readBody, type Credentials } from '@/lib/oi/service';
 
 /**
  * OSIRIS OI — talk to the simulation after (or during) a run.
@@ -20,8 +22,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!body) return fail(400, 'Send a JSON body: { "target": "report", "message": "…" }.');
   const creds = credentials(req, body);
   if ('error' in creds) return fail(400, creds.error);
+  // Asking runs on the run's engine unless the caller chose another, and —
+  // with no key of their own — on the site's key under the same fences as
+  // starting the run.
+  const withRun: Credentials = {
+    ...creds,
+    provider: creds.provider ?? (isProviderId(run.state.provider) ? (run.state.provider as ProviderId) : undefined),
+  };
+  const resolved = await resolveRouteKey(withRun);
+  if (!resolved.ok) return fail(resolved.status, resolved.error, { code: resolved.code });
+  if (resolved.siteUserId && siteKeyHourLimited('ask', resolved.siteUserId)) {
+    return fail(429, 'You have asked a lot on the included WorldEye AI this hour. Give it a little while — or add your own key in OI settings to use your own quota.');
+  }
 
-  const asked = await askPrediction(run, body.target, body.message, creds, req.signal);
+  const asked = await askPrediction(run, body.target, body.message, resolved.creds, req.signal);
   if (!asked.ok) return fail(asked.status, asked.error);
   return json({ id: run.id, target: asked.target, reply: asked.reply });
 }

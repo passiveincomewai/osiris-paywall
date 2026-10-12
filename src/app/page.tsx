@@ -1876,7 +1876,7 @@ export default function Dashboard() {
           {/* OI, the strip's main tool: bigger than the rest, in the middle of it, in its own colours. */}
           <button onClick={() => { if (!isPremiumUser) { window.location.href = '/pricing'; return; } setShowOi(!showOi); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }}
             className={`relative w-11 h-11 rounded-full flex flex-col items-center justify-center gap-[3px] border transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showOi ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/70 shadow-[0_0_18px_rgba(var(--gold-rgb),0.35)]' : 'bg-[var(--gold-primary)]/[0.07] border-[var(--gold-primary)]/35 hover:bg-[var(--gold-primary)]/15 hover:border-[var(--gold-primary)]/60 hover:shadow-[0_0_14px_rgba(var(--gold-rgb),0.25)]'}`}
-            title={isPremiumUser ? "OI — talk to it and it works the map for you, or run a forecast, on your own AI key (O)" : "OI — Weekly Pass required"}
+            title={isPremiumUser ? "OI — talk to it and it works the map for you, or run a forecast (O)" : "OI — Weekly Pass required"}
             aria-label="OI" aria-expanded={showOi}>
             <OiMark size={18} live={oi.state?.status === 'running' || assist.busy} />
             <span className={`text-[7.5px] font-mono font-semibold tracking-[0.2em] leading-none pl-[0.2em] ${showOi ? 'text-[var(--gold-light)]' : 'text-[var(--gold-primary)]'}`}>OI</span>

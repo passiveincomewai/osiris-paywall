@@ -1,4 +1,5 @@
 import { ProviderError, listModels, pickModel, providerInfo } from '@/lib/oi/providers';
+import { resolveRouteKey } from '@/lib/oi/server-key';
 import { credentials, disabled, disabledResponse, fail, json, limited, readBody } from '@/lib/oi/service';
 
 /**
@@ -18,11 +19,16 @@ export async function POST(req: Request) {
   const creds = credentials(req, body);
   if ('error' in creds) return fail(400, creds.error);
   if (!creds.provider) return fail(400, 'Choose a provider.');
-  if (!creds.key && providerInfo(creds.provider).needsKey) return fail(401, 'Send the key in X-OI-Key.');
+  // No key sent: the site's key may answer for OpenAI (signed-in visitors),
+  // which is also how the panel learns the included engine works.
+  const resolved = await resolveRouteKey(creds);
+  if (!resolved.ok) return fail(resolved.status, resolved.error, { code: resolved.code });
+  const use = resolved.creds;
+  if (!use.key && providerInfo(use.provider!).needsKey) return fail(401, 'Send the key in X-OI-Key.');
 
   try {
-    const { models, listed } = await listModels(creds.provider, creds.key ?? '');
-    return json({ provider: creds.provider, ok: true, listed, models, default: pickModel(creds.provider, models) });
+    const { models, listed } = await listModels(use.provider!, use.key ?? '');
+    return json({ provider: use.provider, ok: true, listed, models, default: pickModel(use.provider!, models), site_key: Boolean(resolved.siteUserId) });
   } catch (err) {
     if (err instanceof ProviderError) {
       const status = err.code === 'auth' ? 401 : err.code === 'quota' ? 402 : err.code === 'rate' ? 429 : 502;

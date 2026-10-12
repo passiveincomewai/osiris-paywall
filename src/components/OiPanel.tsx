@@ -24,7 +24,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, History, Maximize2, Plus, X } from 'lucide-react';
 import { PROVIDERS, providerInfo } from '@/lib/oi/providers';
-import { loadEngine, loadKey, type Engine, type OiClient } from '@/lib/oi/client';
+import { fetchSiteAi, loadEngine, loadKey, type Engine, type OiClient, type SiteAiInfo } from '@/lib/oi/client';
 import { resolve } from '@/lib/oi/research';
 import { T } from './oi/theme';
 import { IconButton, OiMark } from './oi/atoms';
@@ -84,6 +84,14 @@ export default function OiPanel(props: OiPanelProps) {
   // Settings come from this browser's storage. The panel only renders once opened, on the client.
   const [engine, setEngine] = useState<Engine>(initialEngine);
   const [key, setKey] = useState(() => loadKey(initialEngine().provider));
+  // WorldEye AI: the site's own key covers the OpenAI engine for a
+  // signed-in reader, so no key of theirs is needed for that engine.
+  const [siteAi, setSiteAi] = useState<SiteAiInfo | null>(null);
+  useEffect(() => {
+    let on = true;
+    void fetchSiteAi().then(v => { if (on) setSiteAi(v); });
+    return () => { on = false; };
+  }, []);
   // The engine sheet opens when asked: a first visit sees what OI does, and the Run and Send buttons ask for a key.
   const [engineOpen, setEngineOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -95,7 +103,8 @@ export default function OiPanel(props: OiPanelProps) {
 
   const s = oi.state;
   const info = providerInfo(engine.provider);
-  const ready = !info.needsKey || key.length > 0;
+  const siteReady = Boolean(siteAi?.available && siteAi.signedIn && engine.provider === 'openai');
+  const ready = !info.needsKey || key.length > 0 || siteReady;
   const selection = s ? resolve(s, selected) : null;
   // Until someone picks a tab: the simulation while it runs, the prediction once there is one.
   const activeTab: Tab = tab ?? (s?.report ? 'report' : 'sim');
@@ -121,7 +130,7 @@ export default function OiPanel(props: OiPanelProps) {
   ) : null;
 
   const assistView = (
-    <AssistView assist={props.assist} oi={oi} ready={ready} providerName={info.name} onKey={() => setEngineOpen(true)}
+    <AssistView assist={props.assist} oi={oi} ready={ready} providerName={info.name} siteAi={siteAi} onKey={() => setEngineOpen(true)}
       onSend={(text, m) => void props.assist.send(text, m, { engine, key })}
       onLocate={props.onLocate} onOpenForecast={() => props.onMode('forecast')}
       onWorkspace={!embedded && !theater && props.onTheater ? () => props.onTheater?.(true) : undefined}
@@ -146,7 +155,7 @@ export default function OiPanel(props: OiPanelProps) {
             <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}
               className="absolute right-0 top-[calc(100%+10px)] w-[380px] max-h-[70vh] overflow-y-auto styled-scrollbar rounded-lg border border-[var(--border-primary)] shadow-[0_18px_48px_rgba(0,0,0,0.7)] z-50"
               style={{ background: 'var(--oi-solid)' }}>
-              <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} onDone={() => setEngineOpen(false)} />
+              <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} siteAi={siteAi} onDone={() => setEngineOpen(false)} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -196,7 +205,7 @@ export default function OiPanel(props: OiPanelProps) {
       <AnimatePresence initial={false}>
         {engineOpen && (
           <motion.div key="engine" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} className="overflow-hidden">
-            <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} onDone={() => setEngineOpen(false)} />
+            <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} siteAi={siteAi} onDone={() => setEngineOpen(false)} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -207,7 +216,7 @@ export default function OiPanel(props: OiPanelProps) {
       <AnimatePresence initial={false}>
         {engineOpen && (
           <motion.div key="engine" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} className="overflow-hidden">
-            <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} onDone={() => setEngineOpen(false)} />
+            <EngineSheet engine={engine} setEngine={setEngine} keyValue={key} setKey={setKey} siteAi={siteAi} onDone={() => setEngineOpen(false)} />
           </motion.div>
         )}
       </AnimatePresence>

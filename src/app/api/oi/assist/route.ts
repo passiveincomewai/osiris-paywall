@@ -1,4 +1,5 @@
 import { assistStep } from '@/lib/oi/assist/server';
+import { resolveRouteKey, siteKeyHourLimited } from '@/lib/oi/server-key';
 import { credentials, disabled, disabledResponse, fail, json, limited, readBody } from '@/lib/oi/service';
 
 /**
@@ -22,8 +23,15 @@ export async function POST(req: Request) {
   if (!body) return fail(400, 'Send a JSON body: { "messages": [...], "context": {...} }.');
   const creds = credentials(req, body);
   if ('error' in creds) return fail(400, creds.error);
+  // No key of their own: a signed-in visitor runs on the site's key, capped
+  // per user per hour; signed out, the resolution itself refuses.
+  const resolved = await resolveRouteKey(creds);
+  if (!resolved.ok) return fail(resolved.status, resolved.error, { code: resolved.code });
+  if (resolved.siteUserId && siteKeyHourLimited('assist', resolved.siteUserId)) {
+    return fail(429, 'You have used the included WorldEye AI a lot this hour. Give it a little while — or add your own key in OI settings to use your own quota.');
+  }
 
-  const out = await assistStep(body, creds, req.signal);
+  const out = await assistStep(body, resolved.creds, req.signal);
   if (!out.ok) return fail(out.status, out.error);
   return json({ step: { say: out.step.say, actions: out.step.calls, done: out.step.done }, usage: out.usage });
 }

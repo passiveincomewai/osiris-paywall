@@ -7,11 +7,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import { isRateLimited } from '@/lib/password-auth';
 import { getClientIp } from '@/lib/ssrf-guard';
 import {
   createGeminiClient,
   rotateApiKey,
   generateBriefing,
+  generateBriefingOpenAI,
+  openAiModel,
   type IntelligenceContext,
 } from '@/lib/ai-engine';
 
@@ -81,6 +85,7 @@ interface BriefingRequestBody {
 
 interface BriefingResponse {
   briefing: string;
+  model: string;
   generatedAt: string;
 }
 
@@ -121,24 +126,53 @@ export async function POST(
     );
   }
 
+  // Whose key pays — the same resolution as /api/ai/analyze: a
+  // caller-provided Gemini key wins with no account; the site's keys
+  // (environment Gemini, or the included OpenAI key) need a signed-in
+  // user inside a per-user hourly cap.
   const userKey = request.headers.get('x-gemini-key')?.trim();
-  let apiKey: string;
+  let geminiKey: string | null = null;
+  let openAi: { key: string; model: string } | null = null;
 
   if (userKey && userKey.length > 0) {
-    apiKey = userKey;
+    geminiKey = userKey;
   } else {
+    const session = await auth().catch(() => null);
+    const userId = session?.user?.id ?? null;
+    if (!userId) {
+      return NextResponse.json(
+        {
+          error: 'Sign in to use WorldEye AI, or provide your own Gemini key in the x-gemini-key header.',
+          code: 'SIGN_IN_REQUIRED',
+        },
+        { status: 401 }
+      );
+    }
+    if (isRateLimited(`ai:site:briefing:${userId}`, 10, 3_600_000)) {
+      return NextResponse.json(
+        {
+          error: 'You have used the included WorldEye AI a lot this hour. Give it a little while, or provide your own Gemini key.',
+          code: 'RATE_LIMITED',
+        },
+        { status: 429, headers: { 'Retry-After': '600' } }
+      );
+    }
     const envKeys = getEnvApiKeys();
-    if (envKeys.length === 0) {
+    const siteOpenAiKey = process.env.OPENAI_API_KEY?.trim();
+    if (envKeys.length > 0) {
+      geminiKey = rotateApiKey(envKeys);
+    } else if (siteOpenAiKey) {
+      openAi = { key: siteOpenAiKey, model: openAiModel() };
+    } else {
       return NextResponse.json(
         {
           error:
-            'No Gemini API key configured. Set GEMINI_API_KEY_1 in environment or provide a key via the settings panel.',
+            'AI isn\'t configured on this deployment. Set GEMINI_API_KEY_1 or OPENAI_API_KEY in the environment, or provide a key via the x-gemini-key header.',
           code: 'NO_API_KEY',
         },
         { status: 503 }
       );
     }
-    apiKey = rotateApiKey(envKeys);
   }
 
   let body: BriefingRequestBody;
@@ -159,12 +193,28 @@ export async function POST(
   }
 
   try {
-    const client = createGeminiClient(apiKey);
+    if (openAi) {
+      const briefing = await generateBriefingOpenAI(openAi.key, openAi.model, body.context);
+      return NextResponse.json(
+        {
+          briefing,
+          model: openAi.model,
+          generatedAt: new Date().toISOString(),
+        },
+        {
+          headers: {
+            'X-RateLimit-Remaining': String(rateCheck.remaining),
+          },
+        }
+      );
+    }
+    const client = createGeminiClient(geminiKey!);
     const briefing = await generateBriefing(client, body.context);
 
     return NextResponse.json(
       {
         briefing,
+        model: 'gemini-2.0-flash',
         generatedAt: new Date().toISOString(),
       },
       {
@@ -175,6 +225,31 @@ export async function POST(
     );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown Gemini API error';
+
+    if (message.startsWith('OPENAI_401') || message.startsWith('OPENAI_403')) {
+      return NextResponse.json(
+        { error: 'The site\'s OpenAI key was rejected. Please let us know.', code: 'INVALID_KEY' },
+        { status: 401 }
+      );
+    }
+
+    if (message.startsWith('OPENAI_429')) {
+      return NextResponse.json(
+        {
+          error: 'The site\'s OpenAI quota is exhausted for now. Try again later or provide your own key.',
+          code: 'QUOTA_EXHAUSTED',
+        },
+        { status: 429 }
+      );
+    }
+
+    if (message.startsWith('OPENAI_')) {
+      console.error('[OSIRIS AI] Briefing error:', message);
+      return NextResponse.json(
+        { error: 'Briefing generation failed. Please try again.', code: 'BRIEFING_FAILED' },
+        { status: 500 }
+      );
+    }
 
     if (message.includes('API_KEY_INVALID') || message.includes('API key not valid')) {
       return NextResponse.json(

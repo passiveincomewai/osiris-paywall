@@ -17,7 +17,7 @@ import {
   ArrowUp, ArrowUpRight, Cctv, Eraser, ExternalLink, Globe2, KeyRound, Layers, LayoutDashboard, List, Loader2, LocateFixed, MapPin, Mic, MousePointerClick, Navigation, Orbit, PanelRight,
   RotateCcw, ScanSearch, Search, Square, TrendingUp, Volume2, VolumeX, X, type LucideProps,
 } from 'lucide-react';
-import type { OiClient } from '@/lib/oi/client';
+import type { OiClient, SiteAiInfo } from '@/lib/oi/client';
 import type { ActionView, AssistClient, Entry } from '@/lib/oi/assist/client';
 import type { Mode, ToolName } from '@/lib/oi/assist/protocol';
 import type { Card } from '@/lib/oi/assist/tools';
@@ -241,6 +241,8 @@ export interface AssistViewProps {
   oi: OiClient;
   ready: boolean;
   providerName: string;
+  /** WorldEye AI: the site's included key, when this deployment has one. */
+  siteAi?: SiteAiInfo | null;
   onKey: () => void;
   onSend: (text: string, mode: Mode) => void;
   onLocate: (lat: number, lng: number, zoom?: number) => void;
@@ -358,6 +360,19 @@ export function AssistView(p: AssistViewProps) {
                 <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
               </button>
             )}
+          </div>
+        ) : p.siteAi?.available && !p.siteAi.signedIn ? (
+          <div className="flex flex-col gap-2 rounded-2xl border px-3.5 py-3" style={{ borderColor: blue(0.25), background: blue(0.05) }}>
+            <p className="text-[11.5px] leading-snug text-[var(--text-secondary)]">WorldEye AI is included — no key needed. Sign in and I run on the site's key.</p>
+            <div className="flex items-center gap-2">
+              <a href="/signin?callbackUrl=/" className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[11.5px] font-medium transition-colors"
+                style={{ background: T.blue, color: '#04121a' }}>
+                Sign in
+              </a>
+              <button onClick={p.onKey} className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[11.5px] font-medium transition-colors border border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-heading)]">
+                <KeyRound className="w-3.5 h-3.5" /> Use your own key
+              </button>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-2 rounded-2xl border px-3.5 py-3" style={{ borderColor: blue(0.25), background: blue(0.05) }}>

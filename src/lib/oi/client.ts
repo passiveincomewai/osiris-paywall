@@ -295,8 +295,8 @@ export function useOi() {
 
 export type OiClient = ReturnType<typeof useOi>;
 
-/** Checks a key by listing the models it can use. */
-export async function checkKey(provider: ProviderId, key: string): Promise<{ models: { id: string; name: string }[]; preferred: string; listed: boolean } | { error: string }> {
+/** Checks a key by listing the models it can use. With no key, the site's own key answers for a signed-in visitor. */
+export async function checkKey(provider: ProviderId, key: string): Promise<{ models: { id: string; name: string }[]; preferred: string; listed: boolean; siteKey: boolean } | { error: string }> {
   const res = await fetch('/api/oi/models', {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-oi-provider': provider, ...(key ? { 'x-oi-key': key } : {}) },
@@ -305,7 +305,27 @@ export async function checkKey(provider: ProviderId, key: string): Promise<{ mod
   if (!res) return { error: 'Could not reach OI.' };
   if (!res.ok) return { error: await errorOf(res) };
   const body = await res.json();
-  return { models: body.models ?? [], preferred: body.default ?? '', listed: body.listed !== false };
+  return { models: body.models ?? [], preferred: body.default ?? '', listed: body.listed !== false, siteKey: body.site_key === true };
+}
+
+/** WorldEye AI: whether this deployment includes the site's own key, and whether this visitor is signed in to use it. */
+export interface SiteAiInfo {
+  signedIn: boolean;
+  available: boolean;
+  /** The model site-key calls use, for showing the reader what will run. */
+  model: string;
+}
+
+export async function fetchSiteAi(): Promise<SiteAiInfo | null> {
+  const res = await fetch('/api/oi/config', { cache: 'no-store' }).catch(() => null);
+  if (!res?.ok) return null;
+  const body = await res.json().catch(() => null);
+  if (!body || typeof body.available !== 'boolean') return null;
+  return {
+    signedIn: body.signedIn === true,
+    available: body.available,
+    model: typeof body.model === 'string' ? body.model : '',
+  };
 }
 
 /** The prediction as Markdown, for export: the answer, the story, the worlds and the sources. */

@@ -154,6 +154,58 @@ export function createGeminiClient(apiKey: string): GoogleGenerativeAI {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   OpenAI — the site's own key (OPENAI_API_KEY)
+   The same analyst, on Chat Completions, for deployments whose
+   included key is OpenAI's rather than Gemini's. Output is capped
+   per request; reasoning models get a completion-token budget
+   and no temperature, which they refuse.
+   ───────────────────────────────────────────────────────────── */
+
+/** The model the site's OpenAI key answers with: OPENAI_MODEL, else the house default. */
+export function openAiModel(): string {
+  const model = process.env.OPENAI_MODEL?.trim();
+  return model || 'gpt-5-mini';
+}
+
+/** Per-request output ceiling for the /api/ai endpoints on the site's key. */
+export const OPENAI_MAX_OUTPUT_TOKENS = 3000;
+
+const openAiReasoning = (model: string): boolean => /^(?:o\d|gpt-5)/i.test(model);
+
+async function openAiChat(apiKey: string, model: string, system: string, user: string): Promise<string> {
+  const reasoning = openAiReasoning(model);
+  let res: Response;
+  try {
+    res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user },
+        ],
+        ...(reasoning
+          ? { max_completion_tokens: Math.max(OPENAI_MAX_OUTPUT_TOKENS, 4000) }
+          : { max_tokens: OPENAI_MAX_OUTPUT_TOKENS, temperature: 0.4 }),
+      }),
+    });
+  } catch {
+    throw new Error('OPENAI_NETWORK: could not reach OpenAI');
+  }
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`OPENAI_${res.status}: ${detail.slice(0, 200)}`);
+  }
+  const body = (await res.json().catch(() => null)) as { choices?: { message?: { content?: unknown } }[] } | null;
+  const content = body?.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || !content.trim()) {
+    throw new Error('OPENAI_EMPTY: the model returned no text');
+  }
+  return content;
+}
+
+/* ─────────────────────────────────────────────────────────────
    API Key Rotation — Round-robin through available keys
    ───────────────────────────────────────────────────────────── */
 
@@ -248,6 +300,26 @@ Provide your intelligence assessment based on the operational data above and the
   return response.text();
 }
 
+/** The same analysis on the site's OpenAI key. */
+export async function analyzeIntelligenceOpenAI(
+  apiKey: string,
+  model: string,
+  context: IntelligenceContext,
+  userQuery: string
+): Promise<string> {
+  const contextData = serializeContext(context);
+
+  const prompt = `## CURRENT OPERATIONAL DATA
+${contextData}
+
+## ANALYST QUERY
+${userQuery}
+
+Provide your intelligence assessment based on the operational data above and the analyst's query.`;
+
+  return openAiChat(apiKey, model, SYSTEM_PROMPT, prompt);
+}
+
 /* ─────────────────────────────────────────────────────────────
    Daily Briefing Generation
    ───────────────────────────────────────────────────────────── */
@@ -273,4 +345,22 @@ Generate the briefing now.`;
   const result = await model.generateContent(prompt);
   const response = result.response;
   return response.text();
+}
+
+/** The same briefing on the site's OpenAI key. */
+export async function generateBriefingOpenAI(
+  apiKey: string,
+  model: string,
+  context: IntelligenceContext
+): Promise<string> {
+  const contextData = serializeContext(context);
+
+  const prompt = `${BRIEFING_PROMPT}
+
+## CURRENT OPERATIONAL DATA
+${contextData}
+
+Generate the briefing now.`;
+
+  return openAiChat(apiKey, model, SYSTEM_PROMPT, prompt);
 }
