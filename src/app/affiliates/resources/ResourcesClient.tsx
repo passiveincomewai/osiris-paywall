@@ -298,6 +298,14 @@ export default function ResourcesClient() {
 
   return (
     <div className="space-y-10">
+      <div className="flex items-center gap-4">
+        <img src="/affiliate-icons/s1-affiliate-resources.png" alt="Affiliate resources" className="w-14 h-14 object-contain shrink-0"
+          style={{ filter: "drop-shadow(0 0 16px rgba(56,189,248,.45))" }} />
+        <div>
+          <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">Resources</div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Promo toolkit</h1>
+        </div>
+      </div>
       {/* 1 — Your assets */}
       <section>
         <SectionTitle kicker="Assets" title="Your assets" />
@@ -336,8 +344,14 @@ export default function ResourcesClient() {
 
       {/* 2 — Banners */}
       <section>
-        <SectionTitle kicker="Creatives" title="Banner gallery"
-          right={<span className="text-xs font-mono text-slate-500">screenshot-ready · copy the HTML to embed</span>} />
+        <div className="flex items-center gap-3 mb-4">
+          <img src="/affiliate-icons/ben-tools.png" alt="Marketing tools" className="w-11 h-11 object-contain shrink-0"
+            style={{ filter: "drop-shadow(0 0 14px rgba(56,189,248,.45))" }} />
+          <div className="flex-1">
+            <SectionTitle kicker="Creatives" title="Banner gallery"
+              right={<span className="text-xs font-mono text-slate-500">screenshot-ready · copy the HTML to embed</span>} />
+          </div>
+        </div>
         <div className="grid md:grid-cols-2 gap-4">
           {banners.map((b, i) => (
             <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
@@ -457,7 +471,11 @@ export default function ResourcesClient() {
 
       {/* 7 — Tutorial checklist */}
       <section>
-        <SectionTitle kicker="Start here" title="Promo tutorial" />
+        <div className="flex items-center gap-3 mb-4">
+          <img src="/affiliate-icons/ben-support.png" alt="Dedicated support" className="w-11 h-11 object-contain shrink-0"
+            style={{ filter: "drop-shadow(0 0 14px rgba(34,211,238,.45))" }} />
+          <div className="flex-1"><SectionTitle kicker="Start here" title="Promo tutorial" /></div>
+        </div>
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5 md:p-6">
           <ol className="space-y-4">
             <li className="flex gap-4">

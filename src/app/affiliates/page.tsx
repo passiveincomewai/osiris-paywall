@@ -87,6 +87,8 @@ export default function AffiliatesLanding() {
       {/* ── 2. HOW IT WORKS ─────────────────────────────────── */}
       <section id="how">
         <SectionTitle kicker="Protocol" title="How it works" />
+        <img src="/affiliate-icons/steps-strip.png" alt="Join, share, earn, level up"
+          className="w-full h-auto rounded-2xl border border-white/10 mb-4" />
         <div className="grid md:grid-cols-3 gap-4">
           {[
             { n: "01", t: "Share your link", d: "Get your unique referral URL — worldeye.app/ref/YOURCODE — plus QR codes and ready-made share kits for every platform.", c: "#38bdf8", icon: "/affiliate-icons/join.png" },
@@ -285,6 +287,19 @@ export default function AffiliatesLanding() {
           <p className="mt-3 text-slate-300 max-w-xl mx-auto">
             Free to join. Paid on real sales. Climb from Explorer to Visionary and turn your network into recurring income.
           </p>
+          <div className="mt-6 flex items-center justify-center gap-6 md:gap-8">
+            {[
+              ["/affiliate-icons/s1-open-everyone.png", "Open to everyone"],
+              ["/affiliate-icons/s1-trusted-secure.png", "Trusted & secure"],
+              ["/affiliate-icons/s1-global-platform.png", "Global platform"],
+            ].map(([src, label]) => (
+              <div key={label} className="flex flex-col items-center gap-1.5">
+                <img src={src} alt={label} className="w-12 h-12 md:w-14 md:h-14 object-contain"
+                  style={{ filter: "drop-shadow(0 0 12px rgba(56,189,248,.4))" }} />
+                <span className="text-[11px] font-mono text-slate-400">{label}</span>
+              </div>
+            ))}
+          </div>
           <div className="mt-7">
             <Link href={CTA}
               className="inline-block px-10 py-4 rounded-2xl text-lg font-mono font-black text-[#04121f] transition-transform hover:scale-[1.03]"

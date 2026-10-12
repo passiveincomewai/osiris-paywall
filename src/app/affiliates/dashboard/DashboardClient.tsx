@@ -161,7 +161,11 @@ export default function DashboardClient() {
 
       {/* Referral link bar */}
       <div className={card}>
-        <SectionTitle kicker="Your weapon" title="Referral link" />
+        <div className="flex items-center gap-3 mb-4">
+          <img src="/affiliate-icons/s1-referral-tracking.png" alt="Referral tracking" className="w-11 h-11 object-contain shrink-0"
+            style={{ filter: "drop-shadow(0 0 14px rgba(34,211,238,.45))" }} />
+          <div className="flex-1"><SectionTitle kicker="Your weapon" title="Referral link" /></div>
+        </div>
         <div className="flex flex-col md:flex-row gap-2">
           <input className={input} readOnly value={link} onFocus={(e) => e.target.select()} />
           <div className="flex gap-2">
@@ -251,7 +255,11 @@ export default function DashboardClient() {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Commissions */}
         <div className={card}>
-          <SectionTitle kicker="Ledger" title="Commissions" />
+          <div className="flex items-center gap-3 mb-4">
+            <img src="/affiliate-icons/s1-commission-earnings.png" alt="Commission earnings" className="w-11 h-11 object-contain shrink-0"
+              style={{ filter: "drop-shadow(0 0 14px rgba(251,191,36,.45))" }} />
+            <div className="flex-1"><SectionTitle kicker="Ledger" title="Commissions" /></div>
+          </div>
           {dash.commissions.length === 0 && <div className="text-sm text-slate-500">No commissions yet — they appear here after verified subscription payments.</div>}
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {dash.commissions.map((c) => (
