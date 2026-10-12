@@ -58,6 +58,7 @@ const SEO_PAGES_WAVE4 = [
 
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
+  "/alternatives/gods-eye-view",
   "/alternatives/liveuamap",
   "/alternatives/world-monitor",
   "/alternatives/flightradar24",
@@ -103,6 +104,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${BASE}/`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
     { url: `${BASE}/features`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/gods-eye-view`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/cameras`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE}/live-flight-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/satellite-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
