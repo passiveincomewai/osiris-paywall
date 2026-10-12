@@ -47,6 +47,7 @@ type Persona = {
   does: string;
   features: string[];
   links: { label: string; href: string }[];
+  deepDive?: { label: string; href: string };
 };
 
 const PERSONAS: Persona[] = [
@@ -61,6 +62,7 @@ const PERSONAS: Persona[] = [
       { label: "Explore Pro tools", href: "/pricing" },
       { label: "Feature tour", href: "/features" },
     ],
+    deepDive: { label: "Read the journalist's guide →", href: "/use-cases/journalists" },
   },
   {
     icon: Luggage,
@@ -73,6 +75,7 @@ const PERSONAS: Persona[] = [
       { label: "Browse live cameras", href: "/cameras" },
       { label: "Open the live map", href: "/" },
     ],
+    deepDive: { label: "Read the traveler's guide →", href: "/use-cases/travelers" },
   },
   {
     icon: CloudLightning,
@@ -85,6 +88,7 @@ const PERSONAS: Persona[] = [
       { label: "Browse live cameras", href: "/cameras" },
       { label: "Open the live map", href: "/" },
     ],
+    deepDive: { label: "Read the preparedness guide →", href: "/use-cases/emergency-preparedness" },
   },
   {
     icon: Plane,
@@ -109,6 +113,7 @@ const PERSONAS: Persona[] = [
       { label: "Open the live map", href: "/" },
       { label: "Feature tour", href: "/features" },
     ],
+    deepDive: { label: "Read the educator's guide →", href: "/use-cases/educators" },
   },
   {
     icon: Ship,
@@ -164,6 +169,16 @@ function PersonaCard({ persona }: { persona: Persona }) {
           </a>
         ))}
       </div>
+      {persona.deepDive && (
+        <a
+          href={persona.deepDive.href}
+          className={`mt-4 inline-flex items-center gap-1.5 text-sm font-bold transition group ${
+            gold ? "text-[#D4AF37]" : "text-[#00E5FF]"
+          } hover:underline`}
+        >
+          {persona.deepDive.label}
+        </a>
+      )}
     </article>
   );
 }

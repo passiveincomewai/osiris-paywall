@@ -193,6 +193,59 @@ export default function EarthquakeTrackerPage() {
           </div>
         </div>
 
+        {/* Reading the data */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Reading the <span className="text-[#D4AF37]">data</span>
+          </h2>
+          <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 space-y-5 text-white/60 leading-relaxed text-sm md:text-base">
+            <div>
+              <h3 className="font-semibold text-white/90 mb-1.5">Magnitude is logarithmic</h3>
+              <p>
+                Each whole number on the magnitude scale represents roughly 32 times more
+                energy released than the one below it. A magnitude 6 is a serious regional
+                event; a magnitude 7 releases about as much energy as the largest nuclear
+                weapons ever tested. Most of the dots you will see on any given day are
+                small — magnitude 2s and 3s that only instruments notice.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white/90 mb-1.5">Depth changes everything</h3>
+              <p>
+                A shallow magnitude 5 (under ~70 km deep) can rattle buildings and crack
+                walls near the epicenter. The same magnitude at 300+ km depth may be felt
+                as a gentle rolling hundreds of kilometers away — or not felt at all.
+                Always read magnitude and depth together.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white/90 mb-1.5">Aftershocks follow a pattern</h3>
+              <p>
+                Big quakes are followed by aftershocks — smaller quakes that decay in
+                frequency over days and weeks. Watching a sequence unfold on the map is
+                one of the clearest ways to grasp how fault systems release stress.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white/90 mb-1.5">The Ring of Fire dominates</h3>
+              <p>
+                Roughly nine out of ten earthquakes happen around the Pacific Ring of
+                Fire — Japan, Indonesia, the Andes, Alaska, New Zealand. If the map looks
+                like it is always lit up there, that is not a bug: it is plate tectonics.
+              </p>
+            </div>
+          </div>
+          <p className="mt-6 text-sm text-white/40 leading-relaxed">
+            Safety note: WorldEye shows you what is happening, but it is not an alert
+            system. For warnings and official guidance during an event, follow your
+            local geological agency and emergency services. See our{" "}
+            <Link href="/use-cases/emergency-preparedness" className="text-[#D4AF37] hover:underline">
+              emergency preparedness guide
+            </Link>{" "}
+            for how to use the map when it matters.
+          </p>
+        </div>
+
         {/* Use cases */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">
@@ -258,9 +311,14 @@ export default function EarthquakeTrackerPage() {
         <RelatedLinks
           links={[
             {
-              label: "Flight tracker",
-              desc: "Live aircraft on the same free globe — the sky above the shaking ground.",
-              href: "/live-flight-tracker",
+              label: "Wildfire tracker",
+              desc: "Active fires and smoke — the other half of the natural-hazard picture.",
+              href: "/wildfire-tracker",
+            },
+            {
+              label: "Hurricane tracker",
+              desc: "Storms and severe weather as they develop and make landfall.",
+              href: "/hurricane-tracker",
             },
             {
               label: "Satellite tracker",
@@ -271,11 +329,6 @@ export default function EarthquakeTrackerPage() {
               label: "Live cameras",
               desc: "36,000+ public cameras — see conditions on the ground near an event.",
               href: "/cameras",
-            },
-            {
-              label: "FAQ",
-              desc: "Is the map free? What does Pro include? Answers to the common questions.",
-              href: "/faq",
             },
           ]}
         />

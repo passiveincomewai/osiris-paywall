@@ -36,6 +36,17 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
       ["Affiliate Terms", "/affiliates/terms"],
     ],
   },
+  {
+    title: "Alternatives & Comparisons",
+    links: [
+      ["Compare WorldEye", "/compare"],
+      ["Liveuamap Alternative", "/alternatives/liveuamap"],
+      ["Flightradar24 Alternative", "/alternatives/flightradar24"],
+      ["Google Earth Alternative", "/alternatives/google-earth"],
+      ["Best OSINT Tools", "/best-osint-tools"],
+      ["Free OSINT Tools", "/free-osint-tools"],
+    ],
+  },
 ];
 
 export default function SiteFooter() {
@@ -54,7 +65,7 @@ export default function SiteFooter() {
           </div>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-10">
+      <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-5 gap-10">
         <div className="col-span-2 md:col-span-1">
           <Link href="/" className="flex items-center gap-2.5">
             <img

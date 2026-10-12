@@ -21,7 +21,7 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "Features — Free Live Globe & Pro Tools | WorldEye",
   description:
-    "All WorldEye features: a free 3D globe with flights, 36,000+ cameras, satellites and hazards — plus Pro's OI AI assistant, satellite imagery and OSINT toolkit.",
+    "All WorldEye features: a free 3D globe with flights, 40,000+ cameras, satellites and hazards — plus Pro's OI AI assistant, satellite imagery and OSINT toolkit.",
   alternates: { canonical: "/features" },
   openGraph: {
     title: "WorldEye Features — Free Live Globe & Pro Tools",
@@ -37,9 +37,56 @@ const jsonLd = {
   "@type": "WebPage",
   name: "WorldEye Features",
   description:
-    "Everything WorldEye can do: a free forever live 3D globe with flight tracking, 36,000+ public cameras, satellites and natural hazards — plus Pro intelligence tools.",
+    "Everything WorldEye can do: a free forever live 3D globe with flight tracking, 40,000+ public cameras, satellites and natural hazards — plus Pro intelligence tools.",
   url: "https://worldeye.app/features",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Is WorldEye really free?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. The live 3D globe — flights, satellites, weather, earthquakes, wildfires and tens of thousands of public cameras — is free forever with no signup and no credit card. Pro is an optional upgrade that funds the infrastructure.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What does WorldEye Pro add?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Pro adds the OI AI assistant (which runs on your own API key), high-resolution satellite imagery view, global search and advanced filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $3.99, monthly $9.99, annual $59.99.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need an account to use the map?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. The map works with no account at all. Accounts exist only for Pro subscribers (to manage billing) and affiliates — never as a gate in front of the free globe.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Where does WorldEye's data come from?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "From public sources: aircraft ADS-B broadcasts, satellite orbital data, public webcam networks, ship AIS transponders, and open earthquake, weather and wildfire feeds. WorldEye collects and visualizes public data — it does not hack, intercept, or buy private data.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I cancel Pro anytime?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Subscriptions are billed through Stripe and can be cancelled in one click from your account. You keep Pro access until the end of the billing period.",
+      },
+    },
+  ],
 };
 
 const FREE_FEATURES = [
@@ -47,26 +94,36 @@ const FREE_FEATURES = [
     icon: Globe,
     title: "Interactive 3D globe",
     desc: "The full interactive map — no account, no signup. Spin it, zoom it, make it yours.",
+    detail:
+      "Built on open-source mapping technology with a dark basemap designed for data. Keyboard shortcuts keep you fast: R resets to the global view, L opens the layer panel, and ? shows every shortcut. It runs in any modern browser — nothing to install.",
   },
   {
     icon: Plane,
     title: "Live flight tracking",
     desc: "Real-time aircraft positions and telemetry, rendered live on the globe.",
+    detail:
+      "Aircraft broadcast their position, altitude, speed and callsign over ADS-B, and WorldEye plots them as they fly. Click any plane for its details, filter by altitude or aircraft type, and watch arrivals stack up over any major airport.",
   },
   {
     icon: Camera,
-    title: "36,000+ public CCTV cameras",
+    title: "40,000+ public cameras",
     desc: "Worldwide public street cameras, free for everyone. See streets as they are right now.",
+    detail:
+      "The directory indexes 40,207 public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Open any feed free; Pro members get unlimited camera access for deep research sessions.",
   },
   {
     icon: Satellite,
     title: "Satellite & space tracking",
     desc: "Orbital tracking, passes and space situational awareness overhead.",
+    detail:
+      "Thousands of tracked objects orbit overhead right now. Follow the International Space Station live, watch satellite constellations sweep across the sky map, and see upcoming visible passes for your location.",
   },
   {
     icon: CloudLightning,
     title: "Earthquakes, wildfires & weather",
     desc: "Natural hazards as they happen — quakes, fires and severe weather layers.",
+    detail:
+      "Seismic events plot within minutes of detection, active wildfire perimeters and smoke show where fires are burning, and live weather layers reveal the storms behind the headlines. One globe, every hazard, as it happens.",
   },
 ];
 
@@ -75,31 +132,77 @@ const PRO_FEATURES = [
     icon: BrainCircuit,
     title: "OI AI assistant",
     desc: "Talk to the map. Forecasts, analysis and recon powered by your own API key — OpenAI, Anthropic, Google or OpenRouter. Your key stays in your browser.",
+    detail:
+      "Ask questions in plain language — 'which flights are holding over Chicago?', 'summarize quake activity this week' — and OI works the globe for you. Because it runs on your key, your queries and data never pass through our servers.",
   },
   {
     icon: Layers,
     title: "Satellite imagery view",
     desc: "High-resolution satellite imagery alongside the dark intel map.",
+    detail:
+      "Swap the dark basemap for true-color satellite imagery and inspect any location from above — coastlines, infrastructure, terrain. Essential context when a camera or news event needs ground truth.",
   },
   {
     icon: Search,
     title: "Global search & filters",
     desc: "Find any place, address or coordinates and fly there instantly.",
+    detail:
+      "Search the planet like a database: jump to coordinates, filter cameras by region, isolate aircraft by type or altitude. What takes minutes of panning happens in one keystroke.",
   },
   {
     icon: ShieldCheck,
     title: "OSINT toolkit",
     desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — right in your browser.",
+    detail:
+      "A working open-source-intelligence bench inside the map: probe a host, trace a domain's infrastructure, inspect certificates, and pivot from a location to its digital footprint without leaving the globe.",
   },
   {
     icon: Radio,
     title: "Premium intel feeds",
     desc: "Cyber threats, GDELT events, maritime tracking, conflict zones and live news.",
+    detail:
+      "Beyond the free layers: curated feeds for cyber threat activity, the GDELT global event database, enhanced maritime intelligence, conflict monitoring and live news wires — fused onto the same globe.",
   },
   {
     icon: Sparkles,
     title: "Every future layer",
     desc: "New premium feeds land in Pro first, at no extra cost.",
+    detail:
+      "The platform keeps growing — new data layers, new tools, new feeds. Pro members get all of it the moment it ships, locked into the price they signed up at.",
+  },
+];
+
+const TRACKERS = [
+  { label: "Live flight tracker", desc: "Aircraft positions, altitude, speed and routes.", href: "/live-flight-tracker" },
+  { label: "Ship tracker", desc: "Vessels at sea over AIS — ports and open ocean.", href: "/ship-tracker" },
+  { label: "Satellite tracker", desc: "Orbital tracking and ISS passes overhead.", href: "/satellite-tracker" },
+  { label: "Space station tracker", desc: "Follow the ISS live around the planet.", href: "/space-station-tracker" },
+  { label: "Earthquake tracker", desc: "Seismic events as they are detected.", href: "/earthquake-tracker" },
+  { label: "Wildfire tracker", desc: "Active fires, perimeters and smoke.", href: "/wildfire-tracker" },
+  { label: "Hurricane tracker", desc: "Storms, tracks and severe weather.", href: "/hurricane-tracker" },
+  { label: "Weather tracker", desc: "Live weather systems on the globe.", href: "/weather-tracker" },
+];
+
+const FAQS = [
+  {
+    q: "Is WorldEye really free?",
+    a: "Yes. The live 3D globe — flights, satellites, weather, earthquakes, wildfires and tens of thousands of public cameras — is free forever with no signup and no credit card. Pro is an optional upgrade that funds the infrastructure.",
+  },
+  {
+    q: "What does WorldEye Pro add?",
+    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, global search and advanced filters, an in-browser OSINT toolkit, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $3.99 · Monthly $9.99 · Annual $59.99.",
+  },
+  {
+    q: "Do I need an account to use the map?",
+    a: "No. The map works with no account at all. Accounts exist only for Pro subscribers and affiliates — never as a toll gate in front of the free globe.",
+  },
+  {
+    q: "Where does WorldEye's data come from?",
+    a: "From public sources: aircraft ADS-B broadcasts, ship AIS transponders, satellite orbital data, public webcam networks, and open earthquake, weather and wildfire feeds. WorldEye collects and visualizes public data — it doesn't hack, intercept, or buy private data.",
+  },
+  {
+    q: "Can I cancel Pro anytime?",
+    a: "Yes. Billing runs through Stripe and you can cancel in one click from your account. You keep Pro access until the end of the current billing period.",
   },
 ];
 
@@ -107,6 +210,7 @@ export default function FeaturesPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       <JsonLd data={jsonLd} />
+      <JsonLd data={faqJsonLd} />
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
@@ -146,7 +250,7 @@ export default function FeaturesPage() {
           </div>
           <p className="text-white/55 max-w-2xl mb-8">
             The core of WorldEye is open to everyone. No account, no credit card —
-            just open the map and explore.
+            just open the map and explore. Every layer below works the moment the page loads.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FREE_FEATURES.map((f) => (
@@ -156,6 +260,7 @@ export default function FeaturesPage() {
                 </span>
                 <h3 className="font-semibold text-white/90 mb-2">{f.title}</h3>
                 <p className="text-sm text-white/50 leading-relaxed">{f.desc}</p>
+                <p className="text-sm text-white/40 leading-relaxed mt-3">{f.detail}</p>
               </div>
             ))}
             <a
@@ -173,6 +278,27 @@ export default function FeaturesPage() {
           </div>
         </section>
 
+        {/* TRACKERS */}
+        <section className="mt-16 md:mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold">Live <span className="text-[#00E5FF]">trackers</span></h2>
+          <p className="text-white/55 max-w-2xl mt-4 mb-8">
+            Each data layer has its own deep-dive page — how the tracking works, what you can
+            see, and how to read it like a professional.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {TRACKERS.map((t) => (
+              <a
+                key={t.href}
+                href={t.href}
+                className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#00E5FF]/40 hover:bg-white/[0.04] transition group"
+              >
+                <p className="font-semibold text-white/90 text-sm group-hover:text-[#00E5FF] transition">{t.label}</p>
+                <p className="text-xs text-white/45 mt-1.5 leading-relaxed">{t.desc}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+
         {/* PRO */}
         <section className="mt-16 md:mt-20">
           <div className="flex items-center gap-4 mb-8">
@@ -184,7 +310,7 @@ export default function FeaturesPage() {
           <p className="text-white/55 max-w-2xl mb-8">
             For researchers, analysts and the deeply curious: an AI analyst that works
             the globe for you, satellite imagery, global search and premium intel feeds.
-            Weekly $3.99 · Monthly $9.99 · Annual $59.99.
+            Weekly $3.99 · Monthly $9.99 · Annual $59.99 — cancel anytime.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {PRO_FEATURES.map((f) => (
@@ -194,6 +320,7 @@ export default function FeaturesPage() {
                 </span>
                 <h3 className="font-semibold text-white/90 mb-2">{f.title}</h3>
                 <p className="text-sm text-white/50 leading-relaxed">{f.desc}</p>
+                <p className="text-sm text-white/40 leading-relaxed mt-3">{f.detail}</p>
               </div>
             ))}
           </div>
@@ -218,22 +345,35 @@ export default function FeaturesPage() {
           </ul>
         </section>
 
+        {/* FAQ */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">Questions, <span className="text-[#D4AF37]">answered</span></h2>
+          <div className="mt-8 space-y-4">
+            {FAQS.map((f) => (
+              <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+                <h3 className="font-semibold text-white/90">{f.q}</h3>
+                <p className="text-sm text-white/50 mt-2 leading-relaxed">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <RelatedLinks
           links={[
             {
               label: "Use cases",
-              desc: "Who uses these features — researchers, travelers, storm watchers and more.",
+              desc: "Who uses these features — journalists, researchers, travelers, storm watchers and more.",
               href: "/use-cases",
             },
             {
-              label: "Live cameras",
-              desc: "36,000+ public cameras on the globe, free for everyone.",
-              href: "/cameras",
+              label: "What is ADS-B?",
+              desc: "The technology behind live flight tracking, explained simply.",
+              href: "/what-is-ads-b",
             },
             {
-              label: "Live flight tracker",
-              desc: "Real-time aircraft positions, altitude, speed and routes — free, no signup.",
-              href: "/live-flight-tracker",
+              label: "What is AIS?",
+              desc: "How ships broadcast their positions — the tech behind the ship tracker.",
+              href: "/what-is-ais",
             },
             {
               label: "FAQ",

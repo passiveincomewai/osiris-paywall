@@ -232,6 +232,33 @@ model PageView {
   @@index([sessionId])
 }
 
+// ── Competitor comparisons (powers /compare + /compare/[slug]) ─────────
+// Researched competitor data. Public pages only render published rows.
+model Competitor {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  website       String?
+  categories    String[] // e.g. ["osint","conflict-monitoring"]
+  tagline       String?
+  description   String   @db.Text // direct-answer intro (2-3 sentences)
+  features      Json     @default("[]") // [{label, worldEye: "yes"|"partial"|"no"|"unverified", competitor: same, note?}]
+  pricing       String?  @db.Text
+  whyWorldEye   Json     @default("[]") // string[] — 4-6 verified benefits
+  competitorWins String? @db.Text // honest "where the competitor is stronger"
+  verdictWorldEye String? @db.Text // "Choose WorldEye if…"
+  verdictCompetitor String? @db.Text // "Choose X if…"
+  sources       Json     @default("[]") // [{label, url}]
+  lastReviewed  DateTime @default(now())
+  published     Boolean  @default(false)
+  seoTitle      String?
+  seoDescription String? @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([published])
+}
+
 // ── Newsletter ─────────────────────────────────────────────────────────
 // Double opt-in subscribers. Broadcasts go out via /api/admin/newsletter.
 model NewsletterSubscriber {

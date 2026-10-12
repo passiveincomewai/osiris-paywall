@@ -569,6 +569,647 @@ export const POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "ais-ship-tracking-explained",
+    title: "AIS Ship Tracking Explained: How to Follow Any Vessel Live",
+    seoTitle: "AIS Ship Tracking Explained | WorldEye Blog",
+    date: "2026-10-11",
+    excerpt:
+      "Commercial ships broadcast their identity, position, and destination for anyone to receive. Here's how AIS vessel tracking works, what the data actually tells you, and how to follow ships live for free.",
+    seoDescription:
+      "How AIS ship tracking works: what vessels broadcast, what you can see on a live map, and how to follow any ship free — explained in plain language.",
+    tags: ["maritime", "guide"],
+    sections: [
+      {
+        heading: "What AIS is and why ships broadcast it",
+        body: [
+          "AIS — the Automatic Identification System — is a tracking system that large ships use to broadcast who they are, where they are, and where they are going. It was designed for collision avoidance: in busy straits and poor visibility, every bridge needs to know what is around it. The broadcasts go out over VHF radio, which means anyone with a receiver — on shore or on another ship — can pick them up.",
+          "Because the system was built for safety rather than secrecy, the data is effectively public. Networks of shore-based receivers and satellites collect AIS broadcasts and publish them as live ship-tracking maps. That is why you can open a tracker and watch container ships queue outside ports, tankers cross oceans, and ferries hop between islands — all in real time.",
+        ],
+      },
+      {
+        heading: "What a ship's broadcast actually contains",
+        body: [
+          "Every AIS message carries the vessel's identity: its name, MMSI number (a unique nine-digit maritime ID), callsign, and ship type. Dynamic data follows — GPS position, speed over ground, course, heading, and rate of turn — updated every few seconds while underway. Static voyage data includes the destination the crew entered, the estimated time of arrival, and the draught (how deep the hull sits).",
+          "Put together, a single vessel's track tells a story: where it loaded cargo, which route it chose, how fast it is steaming, and when it expects to arrive. Analysts use exactly this to monitor supply chains, journalists to verify shipping claims, and enthusiasts to follow a favorite cruise ship across the Atlantic.",
+        ],
+      },
+      {
+        heading: "The two flavors: terrestrial and satellite AIS",
+        body: [
+          "Near coastlines, shore stations receive AIS directly — this is terrestrial AIS, and it is dense and fast-updating around busy ports. Far offshore, beyond VHF range, satellites pick up the same broadcasts from orbit. Satellite AIS has slightly slower update intervals but covers the open ocean, so a vessel is rarely truly invisible.",
+          "The practical difference for a tracker user: coastal traffic updates almost continuously, while a mid-ocean position might be minutes old. Both are more than fresh enough to follow a voyage, and the handoff between the two is seamless on a good map.",
+        ],
+      },
+      {
+        heading: "What you can do with a live ship map",
+        body: [
+          "Start with the great chokepoints: the Strait of Hormuz, Malacca, Panama, Suez, the English Channel. These narrow passages funnel a huge share of world trade, and watching them is watching the global economy breathe. Zoom into any major port — Rotterdam, Singapore, Los Angeles — and you will see anchorage queues, pilot boats, and tugs working arrivals.",
+          "Then get specific: search a vessel by name and follow its voyage. Cruise fans track their ship's progress; logistics watchers monitor whether a container ship will make its berth window; the curious can simply pick a tanker mid-Pacific and wonder what it is carrying. Click any vessel for its type, dimensions, flag, destination, and ETA.",
+        ],
+      },
+      {
+        heading: "The limits: dark ships and spoofing",
+        body: [
+          "Not every vessel appears. Small craft are not required to carry AIS, military ships often go dark, and some vessels switch their transponders off to hide sanctioned or illicit activity — so-called 'dark' ships. Their absence is itself a signal that analysts watch for.",
+          "AIS can also be spoofed: false positions broadcast deliberately, sometimes to mask a vessel's true movements. Treat AIS as a strong lead rather than gospel, especially around sanctioned regions. Cross-checking with satellite imagery or port records is standard practice in professional maritime intelligence.",
+        ],
+      },
+      {
+        heading: "Reading a port like a local",
+        body: [
+          "Ports have a rhythm, and AIS lets you learn it. Watch any major container port for a week and patterns emerge: the morning arrival rush as overnight ocean crossings make their berth windows, the midday lull, the evening departure wave. Anchorage areas — the offshore parking lots where ships wait — fill and empty with the tides of global demand. When an anchorage that normally holds five ships suddenly holds twenty, something upstream has gone wrong: a strike, a storm, a canal closure.",
+          "Learn the cast of characters too. Container ships run like buses on fixed schedules between the same ports. Tankers tramp more opportunistically, chasing cargoes. Bulk carriers move the raw stuff of civilization — grain, coal, iron ore — on routes that mirror harvest seasons and industrial demand. Ferries and cruise ships keep metronomic timetables you can set a watch by. Once you can tell these apart at a glance, the map stops being dots and starts being an economy.",
+          "Tugs, pilots, and service craft are the unsung detail: watch a pilot boat sprint out to meet an inbound container ship, or two tugs nudge a tanker sideways into its berth. These small, fast-moving contacts around every port are the hands that keep trade moving, and following one for ten minutes teaches you more about maritime logistics than any article.",
+        ],
+      },
+      {
+        heading: "Famous shipping lanes worth watching",
+        body: [
+          "Some stretches of water are worth bookmarking. The Strait of Malacca funnels a huge share of Asia's trade between the Indian and Pacific oceans — watch the traffic separation scheme keep eastbound and westbound streams apart. The Strait of Hormuz is the world's most watched chokepoint, where a large share of seaborne oil passes; tanker behavior here moves markets. The Panama Canal's approaches show ships queuing for transit slots, and the English Channel is simply the busiest strait on earth, a constant two-way river of steel.",
+          "Each has its own drama. Hormuz carries geopolitical tension in every transit. Malacca has piracy history that still shapes routing. The Red Sea and Suez route has seen recent disruption reroute traffic around Africa — visible on any AIS map as a months-long change in global flow patterns. These aren't just shipping lanes; they're the pulse points of the world economy, and they're all public.",
+          "Start with one strait and check it daily for a week. You'll begin to recognize individual regulars, notice when something is off-schedule, and understand — viscerally — how much of modern life arrives by ship. That understanding is the real payload of AIS tracking: the abstract 'global supply chain' becomes a set of vessels you can name.",
+        ],
+      },
+      {
+        heading: "Following ships on WorldEye",
+        body: [
+          "WorldEye's maritime intelligence feed plots live vessel traffic on the same 3D globe as flights, satellites, weather, and cameras — zoom to any coastline and the ships appear; click one for its identity and voyage details. It is part of the Pro tier's premium intel feeds, alongside cyber threats, GDELT events, and live news.",
+          "Pro members get the full picture: richer vessel data, longer track histories, and the ability to combine ship positions with weather layers, news wires, and the OI AI assistant — ask which vessels are converging on a strait, or when a tracked ship is expected to make port. The free map covers the skies, the streets, and the hazards; Pro adds the seas.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is it legal to track ships with AIS?",
+        a: "Yes. AIS broadcasts are unencrypted safety transmissions that vessels are required to make, and receiving them is legal. Publishing aggregated AIS data is how the entire commercial ship-tracking industry works.",
+      },
+      {
+        q: "Why do some ships disappear from the map?",
+        a: "Small vessels may not carry AIS, military ships often operate dark, and some vessels switch off transponders deliberately. Mid-ocean gaps can also occur between satellite passes — the position will refresh.",
+      },
+      {
+        q: "How accurate is a ship's reported destination?",
+        a: "Usually accurate — it is entered by the crew for port authorities — but it can be outdated or deliberately misleading. Treat destination and ETA as the crew's stated plan, not a guarantee.",
+      },
+      {
+        q: "Can I track a specific ship by name?",
+        a: "Yes. Search the vessel's name on WorldEye's map or any AIS tracker, and you will get its live position, course, speed, and voyage details as long as it is broadcasting.",
+      },
+    ],
+  },
+  {
+    slug: "how-to-read-weather-radar",
+    title: "How to Read a Weather Radar Like a Meteorologist",
+    seoTitle: "How to Read a Weather Radar | WorldEye Blog",
+    date: "2026-10-11",
+    excerpt:
+      "Those green, yellow, and red blobs actually tell a precise story — if you know the language. A practical guide to reading weather radar: reflectivity, velocity, storm structure, and the mistakes beginners make.",
+    seoDescription:
+      "Learn to read weather radar: what the colors mean, how to spot severe storms, and the beginner mistakes to avoid — a practical plain-language guide.",
+    tags: ["weather", "guide"],
+    sections: [
+      {
+        heading: "What radar actually measures",
+        body: [
+          "Weather radar does not see rain directly. It fires pulses of radio energy skyward and listens for the echo bouncing off precipitation — raindrops, snowflakes, hailstones. The stronger the echo, the heavier the precipitation. This echo strength is called reflectivity, and it is what those familiar colors represent.",
+          "Green means light precipitation, yellow moderate, red heavy, and magenta or white the most intense cores — often hail. Blue and light green at the edges are typically drizzle or the fringes of a storm. Once you internalize that the colors are a rainfall-intensity scale, every radar image becomes readable.",
+          "Modern radars add a second dimension: dual-polarization, which transmits both horizontal and vertical pulses. Because raindrops flatten as they fall while hailstones stay roundish, the difference between the two returns helps the radar distinguish rain from hail and even detect tornado debris. When an app flags a 'debris signature,' that's dual-pol data doing its quiet work behind the colors.",
+        ],
+      },
+      {
+        heading: "Reading storm structure",
+        body: [
+          "Shape matters as much as color. A round, compact red blob is usually a heavy shower or thunderstorm cell. A long line of reds and yellows is a squall line — a fast-moving wall of storms that can bring damaging straight-line winds. A curved, comma-shaped system is often a mid-latitude cyclone, the classic storm that brings a day of rain and wind.",
+          "Look for the hook: a hook echo — a curved appendage on the southwest side of a storm cell — is the classic radar signature of a rotating thunderstorm that may produce a tornado. Meteorologists watch hooks the way a doctor watches a heartbeat.",
+        ],
+      },
+      {
+        heading: "Velocity mode: seeing the wind",
+        body: [
+          "Most radar apps offer a velocity view, which shows whether precipitation is moving toward or away from the radar — usually green for inbound, red for outbound. Where bright green sits directly against bright red, the air is rotating. That couplet is the other half of tornado detection, alongside the hook echo.",
+          "Velocity also reveals gust fronts: thin lines racing ahead of a storm that mark the leading edge of cool outflow air — often where new storms erupt. If you only ever look at reflectivity, you are reading half the story.",
+        ],
+      },
+      {
+        heading: "Beginner mistakes to avoid",
+        body: [
+          "The most common error is assuming the radar shows what is happening at ground level right now. The beam tilts upward with distance, so far from the radar it may be sampling rain several kilometers up — which can evaporate before reaching the ground (virga). Light green 100 km out does not guarantee wet pavement.",
+          "Second: bright colors do not always mean severe weather. A broad shield of yellow in a winter storm is just steady snow. Severity comes from structure and context — rotation, hail cores, rapid intensification — not color alone. And ground clutter (buildings, hills) can paint false echoes near the radar; most apps filter it, but not perfectly.",
+        ],
+      },
+      {
+        heading: "Putting radar together with the big picture",
+        body: [
+          "Radar is one instrument. Pair it with satellite imagery — which shows cloud tops and storm organization from above — and surface observations like temperature and wind. A red blob on radar plus a hook on velocity plus a tornado warning polygon is a very different situation from a red blob alone on a summer afternoon.",
+          "This is where a globe view earns its keep: WorldEye layers live weather over the same map as flights, cameras, and hazards. Watch a squall line approach a city, then drop into a street camera there to see the sky darken in real time. Data becomes understanding when you can see it from multiple angles at once.",
+          "One more habit worth building: compare the radar's motion with the forecast discussion from your national weather service. Forecasters narrate what the models think the radar will do next — reading their reasoning alongside the live image teaches you to think like them. Over a season, you'll start anticipating the radar instead of just reacting to it, which is the real difference between watching weather and understanding it.",
+        ],
+      },
+      {
+        heading: "Winter radar: snow, rain, and the bright band",
+        body: [
+          "Winter storms add a twist: the radar must distinguish rain from snow, and it does so imperfectly. The classic winter signature is the 'bright band' — a ring of enhanced yellow around the radar where falling snow melts into rain. The melting flakes are large and wet, returning outsized echoes. Inside the bright band (closer to the radar, lower and warmer) is rain; outside it, snow.",
+          "Watch a winter storm's bright band migrate and you're watching the rain-snow line move in real time — the single most important detail for anyone deciding whether the morning commute will be wet or treacherous. When the bright band sits right over your town, you're in the messy transition zone: expect slush, ice, and forecasters hedging their bets.",
+          "Snow itself shows as broad, steady green and light blue — rarely the dramatic reds of summer convection. Don't mistake 'only green' for 'no problem': six hours of steady green in January is a foot of snow. Intensity scales differ by season, and winter rewards patience over drama.",
+        ],
+      },
+      {
+        heading: "Famous signatures beyond the hook",
+        body: [
+          "The hook echo gets the glory, but radar has a whole bestiary. A bow echo — a line of storms bulging forward like an archer's bow — signals powerful straight-line winds, sometimes over 100 mph; the bulge is the wind shoving the line forward. A debris ball, a tight ball of intense reflectivity within a tornado's circulation, means the tornado is lofting wreckage — confirmation that it is doing damage right now.",
+          "On the gentler end, look for lake-effect bands: narrow, intense snow bands streaming off the Great Lakes in winter, visible as finger-like projections that can bury one town while the next stays sunny. And the 'three-body scatter spike' — a thin spike of false echo behind a hail core — is the radar's way of telling you the hailstones are enormous.",
+          "Learning these signatures is like learning constellations: at first it's all blobs, then suddenly you can't unsee the structures. Each one tells you not just what is happening, but what is about to happen — which is the entire point of watching.",
+        ],
+      },
+      {
+        heading: "When to trust it — and when to get official",
+        body: [
+          "Radar is superb for the next 0–3 hours: is it raining, how hard, which direction is it moving, is it strengthening. Beyond that, you need forecast models, not radar. And when warnings are issued — tornado, flash flood, severe thunderstorm — the warning polygon from your national weather service outranks anything you interpret yourself.",
+          "Use radar to stay aware and make smart calls: delay the drive, bring the patio furniture in, keep an eye on the sky. Use official alerts to stay safe. The two work best together.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What do the colors on weather radar mean?",
+        a: "They show reflectivity — echo strength from precipitation. Green is light rain, yellow moderate, red heavy, and magenta/white the most intense cores, often hail.",
+      },
+      {
+        q: "What is a hook echo?",
+        a: "A curved appendage on a thunderstorm's radar signature indicating rotation. It is the classic visual cue meteorologists watch for possible tornado development.",
+      },
+      {
+        q: "Why does radar show rain that never reaches the ground?",
+        a: "The beam rises with distance and can sample precipitation aloft that evaporates before landing (virga). Far from the radar, light echoes don't guarantee wet ground.",
+      },
+      {
+        q: "How far ahead is radar useful?",
+        a: "About 0–3 hours for nowcasting — what's happening, how intense, where it's moving. Beyond that, forecast models take over.",
+      },
+    ],
+  },
+  {
+    slug: "wildfire-tracking-guide",
+    title: "Wildfire Tracking 101: Maps, Smoke, and Staying Safe",
+    seoTitle: "Wildfire Tracking 101: Maps & Safety | WorldEye Blog",
+    date: "2026-10-11",
+    excerpt:
+      "How wildfire maps work — perimeters, hotspots, smoke plumes — and how to use them wisely during fire season. What the data shows, what it can't, and when to trust official evacuation orders above all.",
+    seoDescription:
+      "A plain-language guide to wildfire tracking: how fire maps work, reading smoke and perimeters, and staying safe during fire season.",
+    tags: ["wildfire", "safety", "guide"],
+    sections: [
+      {
+        heading: "What a wildfire map actually shows",
+        body: [
+          "A wildfire map layers several kinds of data. Active fire perimeters — the mapped boundary of a burning fire — come from a mix of satellite heat detection, aircraft infrared mapping, and ground reports. Hotspot dots mark where satellites detected intense heat in their latest pass. Smoke plumes, visible on satellite imagery, show where the smoke is drifting and how dense it is.",
+          "Each layer updates on its own schedule: satellite hotspots refresh with each overpass (a few times daily per satellite), perimeters update when mapping aircraft fly, and smoke is effectively continuous on visible satellite. Understanding these rhythms keeps you from misreading a stale perimeter as a contained fire.",
+          "Infrared mapping deserves a mention: specialized aircraft fly fire lines at night with thermal sensors that see through smoke, producing the most accurate perimeters available. When a morning perimeter jumps significantly overnight, it usually reflects one of these infrared flights finally mapping what the smoke hid — not necessarily a sudden blowup.",
+        ],
+      },
+      {
+        heading: "Reading smoke like a local",
+        body: [
+          "Smoke tells you things the perimeter cannot. A tall, cauliflower-topped column means intense, fast-burning fire with strong convection — the kind that can create its own weather. Smoke lying flat and spreading sideways suggests the fire is smoldering or the atmosphere is stable, trapping smoke near the ground.",
+          "Watch the drift direction: it tells you which communities are about to get smoked out, often hours before official air-quality alerts update. If the column starts leaning hard and the sky downwind turns orange-brown, conditions are deteriorating — that is the moment to check evacuation information, not the moment to keep watching.",
+        ],
+      },
+      {
+        heading: "What the map can't tell you",
+        body: [
+          "Fire maps are situational awareness, not prophecy. They cannot tell you whether your specific street is safe, whether the wind will shift at 3 a.m., or whether a spot fire has jumped the line since the last satellite pass. Perimeters are always somewhat behind reality — fire does not wait for the next mapping flight.",
+          "Most importantly: no public map replaces evacuation orders. If authorities say go, go. The map is for the hours and days around the emergency — understanding what is burning, where the smoke is going, and whether the situation is growing or shrinking.",
+        ],
+      },
+      {
+        heading: "Fire season preparation that actually matters",
+        body: [
+          "Before fire season: clear defensible space around structures (the standard guidance is 30 feet of lean, clean space, more on slopes), know two evacuation routes out of your area, and pack a go-bag — documents, medications, chargers, water, N95 masks. Smoke is a health hazard long before flames are a threat; a box of N95s is the cheapest insurance there is.",
+          "During an event: track the fire's growth direction on the map, monitor air quality for your exact area, and keep your car fueled and facing out. Sign up for your county's emergency alerts — the official channel that will tell you when 'watch' becomes 'go'.",
+          "One underrated preparation: document your home before fire season — a quick video walkthrough of every room, stored in the cloud. If the worst happens, that footage becomes your insurance inventory. And talk to your neighbors now, not during an evacuation: communities with phone trees and agreed meeting points evacuate faster and account for everyone sooner.",
+        ],
+      },
+      {
+        heading: "After the fire: the second disaster",
+        body: [
+          "Burned landscapes shed water instead of absorbing it, which means the first heavy rain after a fire can trigger debris flows and flash floods in and below the burn scar — sometimes more destructive than the fire itself. If you live downhill of a recent burn, treat every storm forecast seriously for at least a season or two.",
+          "Recovery maps track burn severity, which predicts both the flood risk and how the landscape will regenerate. Watching a scar green up over the following spring on satellite imagery is one of the quieter satisfactions of following fire data long-term.",
+        ],
+      },
+      {
+        heading: "The fire behavior triangle",
+        body: [
+          "Firefighters describe wildfire behavior with a triangle: weather, fuel, and topography. Weather is the daily driver — temperature, humidity, and especially wind. A fire burning uphill in 40 mph winds is a different animal than the same fire on a calm, humid morning. This is why red-flag warnings (hot, dry, windy) matter more than any map: they describe the conditions that turn ignitions into disasters.",
+          "Fuel is what burns: grass fires move fast and cool, brush fires burn hotter, and timber fires crown through the canopy with terrifying intensity. Years of drought turn live vegetation into kindling; beetle-killed forests become standing fuel loads. Topography is the accelerator — fire races uphill (preheating the fuel above it) and slows downhill, while canyons funnel wind into blowtorch conditions.",
+          "Read any fire with the triangle: check the wind on the weather layer, consider the terrain on the satellite view, and remember the season's dryness. When all three corners align — dry fuel, steep slope, strong wind — that is when small fires become the ones with names.",
+        ],
+      },
+      {
+        heading: "Prescribed burns and good smoke",
+        body: [
+          "Not all fire on the map is bad news. Prescribed burns — fires deliberately set by land managers under controlled conditions — show up as hotspots too, and they are one of the best tools for preventing catastrophic wildfires. By burning off accumulated fuel in mild conditions, they rob future wildfires of intensity.",
+          "Indigenous communities practiced cultural burning for millennia before fire suppression became policy, and modern fire science has largely come around to their view: many Western landscapes evolved with fire and need it. The smoke from a prescribed burn in March is the reason there is less smoke from a megafire in August.",
+          "How to tell the difference on a map? Prescribed burns are small, short-lived, and often announced by agencies beforehand; they appear in cool seasons and don't grow day over day. If a hotspot appears in spring near managed forestland and stays put, check agency announcements before worrying — you may be watching prevention in action.",
+        ],
+      },
+      {
+        heading: "Following fires on WorldEye",
+        body: [
+          "WorldEye's free wildfire layer plots active fires on the same 3D globe as weather, cameras, and earthquakes — so you can see the wind driving a fire, the smoke plume, and the nearest street cameras in one view. Drop into a camera near the fire line and you are seeing what residents see.",
+          "Pair it with the weather tracker during fire season: red-flag warnings (hot, dry, windy) are when small ignitions become campaign fires. The map is free and needs no account — because during an emergency, nobody should have to sign up to see what is burning.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How current is wildfire perimeter data?",
+        a: "Perimeters update when mapping aircraft fly or new satellite analysis completes — often once or twice daily during active fires. Hotspot detections refresh with each satellite overpass. Always assume the fire has moved since the last update.",
+      },
+      {
+        q: "What should I do if a wildfire is near me?",
+        a: "Follow official evacuation orders immediately — they outrank any map. Prepare a go-bag, keep your vehicle fueled, monitor air quality, and sign up for your county's emergency alerts.",
+      },
+      {
+        q: "Why is the smoke worse at night?",
+        a: "Overnight, cooler air sinks and traps smoke near the ground (an inversion), while daytime heating mixes it upward. Smoke that seemed manageable at noon can become hazardous by midnight.",
+      },
+      {
+        q: "Can I rely on a fire map instead of evacuating?",
+        a: "No. Maps show the situation with a delay; evacuation orders are based on fire behavior predictions and firefighter judgment. If authorities say go, go.",
+      },
+    ],
+  },
+  {
+    slug: "plane-spotting-guide",
+    title: "The Complete Guide to Plane Spotting with Live Flight Data",
+    seoTitle: "Plane Spotting with Live Flight Data | WorldEye Blog",
+    date: "2026-10-11",
+    excerpt:
+      "Plane spotting used to mean a radio scanner and luck. Now live ADS-B data tells you exactly what's overhead. How to identify aircraft, find the best spotting locations, and read the sky like a pro.",
+    seoDescription:
+      "The complete plane spotting guide: using live ADS-B flight data to identify aircraft, find spotting locations, and read the sky — free.",
+    tags: ["aviation", "guide"],
+    sections: [
+      {
+        heading: "What plane spotting is in the data age",
+        body: [
+          "Plane spotting is the hobby of watching, photographing, and logging aircraft — and live flight data transformed it. Where spotters once relied on scanners, timetables, and sharp eyes, they now open a map and see every ADS-B-equipped aircraft overhead with its callsign, type, altitude, speed, and origin.",
+          "The hobby splits roughly into three flavors: photography (catching liveries and light), logging (recording registrations — the tail numbers — like birdwatching checklists), and the pure joy of watching traffic flow. Live data serves all three, and it is free.",
+          "It also has a social dimension many newcomers miss. Spotting locations develop regular communities — the same faces at the same fence every Saturday morning — and the shared language of registrations and callsigns makes strangers into acquaintances fast. Online, spotting groups trade tips on rare movements the way birders trade rarity alerts. Come for the airplanes; stay for the people who love them.",
+        ],
+      },
+      {
+        heading: "Reading an aircraft's data block",
+        body: [
+          "Every tracked aircraft carries a data block worth learning to read. The callsign (like BAW249) identifies the flight; the squawk is the transponder code air traffic control assigned. Altitude is shown in feet, speed in knots over the ground, and the aircraft type (B789, A320, C172) tells you exactly what airframe you are looking at.",
+          "The registration — N12345, G-ABCD — is the spotter's prize: it identifies the individual airframe. Two identical-looking 737s become distinct aircraft with distinct histories once you log their registrations. Many spotters keep lifetime lists of airframes seen, the way birders keep life lists.",
+          "Altitude and speed complete the picture. An aircraft at 3,000 feet doing 180 knots is on approach; the same type at 39,000 feet doing 480 knots is in cruise and probably not worth photographing. Vertical speed (climb/descent rate) tells you whether that departure will bank toward you or away. After a few sessions, you'll glance at a data block and know instantly whether to raise the camera or keep watching.",
+        ],
+      },
+      {
+        heading: "Finding the traffic",
+        body: [
+          "The best spotting is where traffic concentrates and diversifies: major international airports during the morning arrival bank, when heavies from overnight long-hauls land in waves. Cargo hubs come alive after midnight. Military bases offer the exotic stuff — tankers, transports, the occasional fighter — though much of it flies without ADS-B.",
+          "Use the map to scout before you go: watch which runways are in use (arrivals line up on final approach, visible as a neat queue on the tracker), check the wind, and position yourself under the approach path rather than at the terminal. A free tracker plus a folding chair beats an expensive airport observation deck.",
+        ],
+      },
+      {
+        heading: "Special catches: what to watch for",
+        body: [
+          "Some aircraft are worth dropping everything for. The Antonov An-124 and the late An-225's smaller cousins move outsized cargo on irregular schedules — when one files a flight plan, spotters mobilize. Government and head-of-state aircraft (Air Force One's CVC callsigns, for instance) draw crowds wherever they go.",
+          "Then there are the oddballs: firefighting air tankers during wildfire season, the 'doomsday planes' on training orbits, weather reconnaissance flights tracing lawnmower patterns through hurricanes, and ferry flights of brand-new airliners from factories. Live data turns all of these from rumors into appointments.",
+        ],
+      },
+      {
+        heading: "Photography basics for spotters",
+        body: [
+          "You do not need exotic gear to start — a basic telephoto (200mm+) and a spot under the approach path will fill your frame. Shoot with the sun behind you, use shutter priority around 1/1000s for sharp jets, and pan smoothly with the aircraft rather than chasing it.",
+          "The tracker's altitude and speed readouts help enormously: you will know whether that dot is a 777 at 3,000 feet on short final (get ready) or a 737 at 38,000 feet (enjoy the contrail). Log the registration from the data block and your photo is already captioned.",
+        ],
+      },
+      {
+        heading: "Logging and the registration rabbit hole",
+        body: [
+          "Serious spotters log registrations, and the rabbit hole goes deep. Each tail number has a history: previous operators, paint schemes, incidents, storage periods in the desert. Databases let you look up any registration and read its biography — that 747 freighter might have flown passengers for three airlines across two decades before its cargo conversion.",
+          "Logging turns random sightings into a collection. Many spotters keep counts by aircraft type, airline, or country, and the community has gentle competitions around rare catches. The first time you log a registration and discover the airframe is older than you are, you'll understand the appeal: every aircraft has a story, and the tail number is the title.",
+          "Photography and logging reinforce each other. A photo with a readable registration is a verified log entry; a log entry tells you which photos are worth chasing. Over years, a spotter's archive becomes a personal history of aviation — the liveries that came and went, the types that retired, the airports that changed.",
+        ],
+      },
+      {
+        heading: "Best times of day and year",
+        body: [
+          "Light is everything in spotting photography, and the golden hours — the first and last hour of daylight — paint aircraft in warm tones that midday sun can't match. Morning arrival banks at major hubs coincide beautifully with morning light: heavies on final approach, low sun behind you if you position on the correct side.",
+          "Seasonally, winter brings crisp air and low sun angles that make for dramatic shots, plus the occasional de-icing ballet. Summer brings thunderstorms that can produce spectacular backdrops — towering cumulus behind a climbing 777 — though they also disrupt schedules. Airshow season (roughly May through October in the northern hemisphere) concentrates the exotic traffic: warbirds, display teams, and rare visitors.",
+          "Check the tracker the night before a spotting trip: look for unusual types on tomorrow's arrivals, note the runway in use, and check sunrise direction against the approach path. Ten minutes of planning routinely makes the difference between a good morning and a great one.",
+        ],
+      },
+      {
+        heading: "Etiquette and the rules",
+        body: [
+          "Spotting is legal in most places, but it has etiquette. Do not trespass for a better angle — airport perimeters are security-sensitive, and a spotter with a long lens near a fence makes security nervous. Introduce yourself to police or airport staff if approached; most know the hobby and will leave you alone if you are clearly in a public spot.",
+          "Never share real-time positions of sensitive flights in ways that could endanger anyone, and respect that some operators — military, medical, law enforcement — have legitimate reasons to fly without broadcasting. The hobby thrives on the goodwill of airports and the public; keep it that way.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Do I need special equipment to start plane spotting?",
+        a: "No. A free live flight tracker and your eyes are enough to begin. A basic telephoto lens helps for photography, and a radio scanner is optional — ADS-B data already tells you what the scanner would.",
+      },
+      {
+        q: "What is an aircraft registration?",
+        a: "The unique tail number painted on the aircraft (N-numbers in the US, G- in the UK, etc.). Spotters log registrations the way birders log species — it identifies the individual airframe.",
+      },
+      {
+        q: "Why can't I see military aircraft on the tracker?",
+        a: "Most military flights don't broadcast ADS-B, or broadcast with limited data. Some appear; most don't. That's normal and by design.",
+      },
+      {
+        q: "Where is the best place to spot near an airport?",
+        a: "Under the final approach path during arrival banks — arrivals line up visibly on the tracker. Public parks, spotting mounds, and terminal-adjacent roads beat the terminal itself.",
+      },
+    ],
+  },
+  {
+    slug: "osint-for-journalists",
+    title: "10 Ways Journalists Use OSINT in Investigations",
+    seoTitle: "10 Ways Journalists Use OSINT | WorldEye Blog",
+    date: "2026-10-11",
+    excerpt:
+      "Modern investigations run on public data: flight tracks, ship movements, satellite imagery, and archived web pages. Ten concrete OSINT techniques journalists use — and the ethics that keep them honest.",
+    seoDescription:
+      "Ten concrete OSINT techniques journalists use in investigations — flight tracking, ship data, satellite imagery, verification — plus the ethics.",
+    tags: ["OSINT", "journalism"],
+    sections: [
+      {
+        heading: "1–2. Verify footage and photos before publishing",
+        body: [
+          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 40,000+ public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
+          "The same discipline applies to photos from conflict zones. Matching a photo's terrain to satellite imagery, checking the sun angle against the claimed time, and finding the same location on a live camera can confirm or kill a story in minutes. Getting this wrong means publishing misinformation — getting it right is what separates reporting from reposting.",
+          "Speed matters, but so does a verification workflow the whole desk follows. The best newsrooms maintain shared checklists and require two independent confirmations before airing user-generated content. Lone-wolf verification is admirable; institutional verification is reliable. Build the checklist once, and every breaking story gets faster without getting sloppier.",
+          "One final habit: keep a personal log of your verifications — what you checked, what you found, what you concluded. Over time it becomes both a portfolio of your rigor and a reference when similar claims resurface, as they always do.",
+        ],
+      },
+      {
+        heading: "3–4. Follow the flights and the ships",
+        body: [
+          "Aircraft ADS-B data has broken major stories: rendition flights, oligarch jets, deportation planes, and sanctions-busting cargo routes were all first spotted by journalists watching trackers. A tail number tied to a person of interest, followed across months of flight history, becomes a travel diary no press release will provide.",
+          "Ships tell parallel stories. AIS data reveals sanctioned oil transfers (tanker meets tanker mid-ocean, transponder goes dark), arms shipments, and the supply chains behind conflicts. The pattern to watch is the anomaly: the ship that turns off AIS near a sanctioned port, the flight that files one destination and lands at another.",
+        ],
+      },
+      {
+        heading: "5–6. Read the infrastructure",
+        body: [
+          "Every website leaves public traces: DNS records, WHOIS registration, SSL certificates, IP ranges, name servers. Journalists use these to unmask disinformation networks — fifty 'independent' news sites sharing one server and one registrant are not fifty news sites. Certificate transparency logs, which record every TLS certificate issued, are a goldmine for finding infrastructure an actor hoped would stay hidden.",
+          "Satellite imagery extends this to the physical world: construction at a remote site, the growth of a detention facility, the aftermath of a strike. Time-series imagery — comparing the same coordinates across months — turns a single image into evidence of change.",
+        ],
+      },
+      {
+        heading: "7–8. Mine the archives and the data dumps",
+        body: [
+          "The Wayback Machine is an investigative tool: deleted press releases, stealth-edited corporate pages, and vanished social profiles all live on in archives. Before interviewing anyone about their past statements, check what the archives remember.",
+          "Public datasets do the rest — court records, corporate registries, procurement databases, campaign finance filings, property records. The modern investigative journalist is as comfortable with a spreadsheet join as with a doorstep interview, and the biggest stories increasingly come from the join, not the knock.",
+        ],
+      },
+      {
+        heading: "9–10. Monitor live events and protect sources",
+        body: [
+          "When news breaks — an earthquake, a fire, a protest — live data is the newsroom's radar. Seismic feeds, wildfire perimeters, flight diversions, and street cameras near the scene give reporters ground truth before stringers arrive. Monitoring these feeds is now a standard desk skill.",
+          "Finally, the ethics that hold it together: OSINT's power cuts both ways. Do not publish personal data of private individuals, do not use these techniques to harass or stalk, and verify relentlessly before publication. The same methods that expose wrongdoing can harm the innocent — the journalist's job is to know the difference.",
+        ],
+      },
+      {
+        heading: "The public-records backbone",
+        body: [
+          "Behind every flashy technique sits unglamorous public records. Corporate registries reveal who owns what; court filings contain testimony and exhibits no interview would surface; procurement databases show who buys from whom; campaign finance records map money to influence. The journalist who can navigate a secretary of state's business search is armed for stories the press-release crowd never sees.",
+          "Property records deserve special mention: they are public, detailed, and underused. Who owns the mansion, when was it bought, for how much, through which LLC — these are answerable questions in most jurisdictions, and the answers have sunk politicians and exposed frauds. Pair an address from a flight track or a leaked document with the property registry and watch a story assemble itself.",
+          "The skill is knowing these records exist and being patient enough to pull them. None of it requires hacking or leaks — just the knowledge that the paperwork of power is, by design, public.",
+        ],
+      },
+      {
+        heading: "When OSINT isn't enough",
+        body: [
+          "Open sources have limits, and honest journalists name them. Some questions can't be answered from public data: what was said in a closed meeting, what a document nobody leaked contains, why a person made a decision. OSINT can narrow the possibilities and sharpen the questions, but it can't replace human sources for interior motives and private acts.",
+          "The best investigations pair OSINT with traditional reporting. The flight track tells you the official traveled to a city; the source tells you what the meeting was about. The satellite image shows the construction; the whistleblower explains what it's for. Treat open-source work as the scaffolding: it gets you to the right door, but sometimes you still have to knock.",
+          "And maintain the skepticism OSINT teaches. Every dataset has gaps, every image a context, every record a possible error. The journalist who verifies their own findings as ruthlessly as they'd verify a stranger's video is the one whose stories hold up.",
+        ],
+      },
+      {
+        heading: "The toolkit, in practice",
+        body: [
+          "No single tool does all of this; the craft is in combining them. A typical investigation might start with a flight track, pivot to the aircraft's registration database, check the operator's corporate records, map its infrastructure via DNS, and verify a key location on a live camera — five public sources, one story.",
+          "What distinguishes the professional is documentation: every claim needs a citable public source, every image a provenance trail. Screenshots with timestamps, archived URLs, database exports — the evidence file behind a published investigation is often larger than the story itself. When challenged (and good investigations get challenged), that file is what stands between the journalist and a retraction.",
+          "WorldEye was built for exactly this kind of pivoting: flights, ships, satellites, cameras, quakes, and weather on one globe, with an OSINT toolkit (DNS/WHOIS, network scans, SSL analysis) and an AI assistant on the Pro tier to help correlate it all. The map is free — the investigation is up to you.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is OSINT legal for journalists to use?",
+        a: "Yes — OSINT uses only publicly available information: no hacking, no unauthorized access. The legal and ethical lines are about how you use it: don't publish private personal data, don't harass, and verify before publishing.",
+      },
+      {
+        q: "What is the most important OSINT skill for reporters?",
+        a: "Verification — confirming that a photo, video, or claim is what it says it is, using metadata, reverse image search, geolocation, and live corroborating sources.",
+      },
+      {
+        q: "Can flight tracking really break news stories?",
+        a: "Repeatedly. Journalists have used ADS-B data to document rendition flights, track oligarch and official travel, and expose sanctions evasion. Aircraft movements are public by design.",
+      },
+      {
+        q: "How do journalists verify viral videos?",
+        a: "By checking metadata, reverse-searching frames for earlier publication, geolocating landmarks against satellite imagery, matching shadows and weather to the claimed time, and corroborating with live cameras at the location.",
+      },
+    ],
+  },
+  {
+    slug: "verify-breaking-news-footage",
+    title: "How to Verify Breaking News Footage with Public Cameras",
+    seoTitle: "Verify Breaking News Footage | WorldEye Blog",
+    date: "2026-10-11",
+    excerpt:
+      "A video claims to show a protest, a flood, a fire — right now, in a specific place. Here's the step-by-step process for checking it against live public cameras and other open sources before you believe or share it.",
+    seoDescription:
+      "Step-by-step: how to verify breaking news footage using live public cameras, metadata, and open sources — before you believe or share it.",
+    tags: ["OSINT", "verification", "guide"],
+    sections: [
+      {
+        heading: "Why verification matters more than speed",
+        body: [
+          "In the first hour of a breaking event, most of what circulates is wrong — old footage recaptioned, footage from a different city, or outright fabrication. Sharing it makes you part of the problem; verifying it makes you useful. The good news: the same internet that spreads misinformation hosts the tools to check it.",
+          "This isn't just a journalist's problem anymore. Group chats, neighborhood forums, and family threads all become broadcast channels during a crisis, and the people in them trust the sender more than the source. Learning verification protects your own circle first — the cousin who forwards everything, the community group that panics at rumors. A two-minute check before forwarding is a genuine civic act.",
+          "The core principle is corroboration. No single check proves a video is real, but five independent checks that all agree make fakery extraordinarily hard. Work through them in order, and most fakes collapse by step three.",
+        ],
+      },
+      {
+        heading: "Step 1: Check the metadata and the source",
+        body: [
+          "Start with the file itself. Photos and some videos carry EXIF metadata — timestamps, sometimes GPS coordinates, device information. Absence of metadata proves nothing (platforms strip it), but present metadata that contradicts the claim is damning: a 'tonight' video with a 2019 timestamp is done.",
+          "Then examine the source account. When was it created? What did it post before today? A days-old account posting its first viral video deserves more skepticism than a local journalist with years of consistent posts. Check whether the same footage appeared earlier via reverse image search on keyframes.",
+          "Also watch for the hallmarks of recycled content: mismatched aspect ratios suggesting a screen recording of an older video, watermarks from a different platform or year, and audio that doesn't match the scene (crowd noise dubbed over silent footage is a classic). Each of these is checkable in under a minute once you know to look.",
+        ],
+      },
+      {
+        heading: "Step 2: Geolocate — prove where it was filmed",
+        body: [
+          "Pick out landmarks: distinctive buildings, street signs, shop fronts, road markings, mountain profiles. Match them against satellite imagery and mapping services. Street signs and business names are the fastest wins — a single legible sign can place a video within meters.",
+          "Then check the sun. Shadows point away from the sun, and their length encodes the time of day; free sun-position calculators tell you where shadows should fall at the claimed time and place. A 'noon' video with long eastward shadows is lying about something.",
+        ],
+      },
+      {
+        heading: "Step 3: Corroborate with live cameras",
+        body: [
+          "This is where public camera networks become a verification engine. Open WorldEye's map, find live cameras near the claimed location, and compare: does the weather match (rain, clear sky, snow)? Does the light match the claimed time? Are the streets as busy — or as empty — as the footage suggests?",
+          "During major events, multiple cameras triangulate reality. If a video claims a flooded downtown but three nearby traffic cameras show dry streets, the video is from somewhere else, some other time, or both. Live cameras are hard to fake and easy to check — which is exactly why they work.",
+        ],
+      },
+      {
+        heading: "Step 4: Cross-check the event data",
+        body: [
+          "Match the claimed event against independent data feeds. An earthquake claim? Check the seismic feed for a matching magnitude, location, and time. A fire? Look for the hotspot and smoke plume. A storm? The weather layer shows whether severe weather was even present.",
+          "Also check the human layer: local news outlets, emergency service feeds, and the GDELT event database. A real major event leaves traces across many independent sources within minutes. A fabricated one leaves only the video.",
+        ],
+      },
+      {
+        heading: "Tools of the trade",
+        body: [
+          "You don't need expensive software. For reverse image search: Google Images, TinEye, and Yandex each index different corners of the web — run all three, because a frame that fails on one often hits on another. For video, extract keyframes first (many free tools do this) and search those. For metadata, command-line tools like ExifTool read everything a file still carries.",
+          "For geolocation: satellite imagery and street-level mapping for landmark matching, sun calculators for shadow analysis, and weather-history services to check whether it was actually raining there that day. For live corroboration: WorldEye's public camera network, traffic feeds, and event layers. Assemble these once into a checklist and verification becomes routine rather than heroic.",
+          "Newsrooms increasingly keep verification desks whose whole job is this pipeline. But the tools are public and the method is learnable — a careful amateur with this checklist outperforms a careless professional without one.",
+          "Build the habit on low-stakes content first: verify a travel photo's location, check a viral animal video's provenance, geolocate a movie still. Each rep makes the pipeline faster until it becomes instinct. Then, when the breaking event comes and the timeline floods, you'll be the calm one with a checklist while everyone else is sharing blind.",
+        ],
+      },
+      {
+        heading: "The psychology of fakes",
+        body: [
+          "Understanding why fakes spread helps you resist them. Breaking events create an information vacuum, and human minds abhor vacuums — we'll accept a plausible video over no information at all. Add emotional arousal (outrage, fear, awe) and critical thinking degrades precisely when it's needed most. Misinformation doesn't primarily exploit ignorance; it exploits urgency.",
+          "The antidote is procedural: decide your verification steps before the crisis, and follow them mechanically even when everyone is sharing. The few minutes it takes feel eternal during breaking news and are nothing afterward. Nobody remembers who shared first; everyone remembers who shared false.",
+          "This discipline is also what makes verification satisfying. Each confirmed detail — the sign matched, the shadows right, the cameras agreeing — is a small act of order against chaos. In an information environment designed to overwhelm, methodical checking is a form of independence.",
+        ],
+      },
+      {
+        heading: "Step 5: Decide what you actually know",
+        body: [
+          "After the checks, sort your conclusions honestly: verified (multiple independent corroborations), plausible but unconfirmed (consistent, single source), or debunked (contradicted). Most viral footage lands in the middle category — and 'unconfirmed' is a complete, respectable answer.",
+          "One more principle: preserve what you find. Save the original video, screenshot the metadata, archive the corroborating pages — because viral footage gets deleted, accounts get suspended, and live cameras move on. Your future self, or a fact-checker reviewing your work, will need the evidence trail exactly as it looked when you verified it.",
+          "If you share, share the verification, not just the video: 'filmed at this intersection, shadows match 4pm, live cameras show the same conditions.' That is how open-source verification earns trust — and how you avoid becoming the next cautionary tale in someone else's media-literacy post.",
+          "Over time, this practice changes how you consume news entirely. You'll start noticing the tells automatically — the wrong license plates for the claimed country, vegetation that doesn't match the climate, architecture from the wrong continent. Verification stops being a chore and becomes a lens.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can metadata prove a video is real?",
+        a: "It can disprove a claim (wrong timestamp, wrong location) but rarely proves authenticity alone — metadata can be edited. Use it as one check among several.",
+      },
+      {
+        q: "How do live cameras help verify footage?",
+        a: "They provide independent, hard-to-fake ground truth: current weather, light conditions, and street activity at the claimed location, comparable directly against the footage.",
+      },
+      {
+        q: "What is the fastest single verification check?",
+        a: "Reverse image search on video keyframes — it immediately reveals whether the footage circulated before, under a different caption.",
+      },
+      {
+        q: "What should I do with footage I can't verify?",
+        a: "Treat it as unconfirmed and say so if you share it. 'Unverified' is an honest answer; presenting it as fact is how misinformation spreads.",
+      },
+    ],
+  },
+  {
+    slug: "why-flights-disappear-trackers",
+    title: "Why Some Flights Don't Show Up on Trackers",
+    seoTitle: "Why Some Flights Don't Appear | WorldEye Blog",
+    date: "2026-10-11",
+    excerpt:
+      "You watch a plane fly overhead, but the tracker shows empty sky. Here's why: military operations, privacy programs, coverage gaps, and the technical limits of ADS-B — explained.",
+    seoDescription:
+      "Why do some flights vanish from trackers? Military ops, privacy programs, coverage gaps, and ADS-B limits — the full explanation.",
+    tags: ["aviation", "explainer"],
+    sections: [
+      {
+        heading: "The short answer: tracking is voluntary-ish",
+        body: [
+          "Live flight tracking works because most aircraft broadcast their position over ADS-B — but 'most' is doing a lot of work in that sentence. A meaningful minority of flights never broadcast usable data, broadcast it only intermittently, or have their data deliberately filtered before it reaches your screen. An empty patch of sky on the tracker does not mean an empty sky.",
+          "The scale surprises people: on a typical day, the trackers show the vast majority of airline flights but only a fraction of general aviation and almost none of military traffic. The sky you see on screen is heavily weighted toward scheduled commercial service — the most regulated, most equipped, least secretive segment of aviation.",
+          "The reasons fall into four buckets: the aircraft isn't equipped or isn't transmitting, the signal can't reach a receiver, the operator asked for privacy, or someone filtered the data downstream. Let's take them in turn.",
+        ],
+      },
+      {
+        heading: "Military and sensitive operations",
+        body: [
+          "Military aircraft are the biggest category of invisible traffic. Fighters, transports, tankers, and surveillance aircraft routinely fly with transponders off or in modes that don't broadcast position — operational security demands it. When they do appear, it is often partial: a callsign with no position, or a position that vanishes mid-flight.",
+          "This extends to government and law-enforcement aviation: police helicopters, border patrol, and head-of-state transport may all operate with limited or no public tracking. Their absence is policy, not a technical failure.",
+        ],
+      },
+      {
+        heading: "Privacy programs: LADD and PIA",
+        body: [
+          "In the United States, aircraft owners can request exclusion from public tracking feeds through the FAA's Limiting Aircraft Data Displayed (LADD) program. Business jets whose owners value privacy — corporations, celebrities, the merely wealthy — commonly use it. Their ADS-B signals still exist physically, but the major tracking networks filter them out.",
+          "The companion program, the Privacy ICAO Address (PIA), goes further: it assigns the aircraft a temporary, rotating transponder code so even raw receiver data can't easily be tied to the airframe. Between LADD filtering and PIA rotation, tracking a specific private jet has become genuinely difficult — which was the point.",
+        ],
+      },
+      {
+        heading: "Coverage gaps: oceans, deserts, and poles",
+        body: [
+          "ADS-B is line-of-sight VHF: a ground receiver only hears aircraft within roughly 200 nautical miles, less at low altitude. Over oceans, deserts, and polar regions, there simply aren't receivers — or enough of them. Satellite ADS-B fills much of this gap now, but update intervals are slower and low-altitude coverage remains thin.",
+          "This is why a transatlantic flight may show beautifully over land, go quiet mid-ocean, and reappear on approach. The aircraft never stopped broadcasting; nobody was listening. It is also why small general-aviation aircraft at low altitude flicker in and out near the edges of receiver coverage.",
+        ],
+      },
+      {
+        heading: "Technical reasons: old transponders and blocked data",
+        body: [
+          "Not every aircraft carries ADS-B. Older transponders (Mode A/C) reply to radar interrogations but don't broadcast GPS positions — air traffic control sees them via radar, but public trackers relying on ADS-B do not. Many vintage and smaller aircraft still fly with this older equipment.",
+          "Then there is downstream filtering: some tracking services remove certain flights at owners' request beyond the FAA programs, and some data simply fails to make it through feed pipelines. Two trackers can legitimately show different aircraft, because they ingest different receiver networks and apply different filters.",
+          "A useful mental model: think of the tracking ecosystem as a chain of volunteers — the aircraft broadcasts, hobbyist receivers listen, aggregators compile, websites display. Every link in that chain is run by different people with different policies, and any link can drop or filter a flight. The miracle is how complete the picture is, not how incomplete.",
+        ],
+      },
+      {
+        heading: "ADS-B vs MLAT vs FLARM: the alphabet soup",
+        body: [
+          "ADS-B isn't the only way aircraft positions reach trackers. MLAT (multilateration) locates older Mode S transponders — which broadcast an ID but no GPS position — by timing the signal's arrival at multiple ground receivers and triangulating. It's less precise than ADS-B and needs several receivers to hear the same aircraft, but it keeps vintage and non-equipped traffic partially visible.",
+          "FLARM is a separate system used mostly by gliders and light aircraft in Europe: a low-power collision-avoidance broadcast that some receiver networks also pick up. Seeing a glider on a tracker is usually FLARM or a similar feed, not ADS-B. Each technology has its own coverage quirks, which is why tracking sites blend several — and why their results differ.",
+          "For the user, the takeaway is simple: 'not on ADS-B' doesn't always mean 'not tracked.' The best tracking sites fuse ADS-B, MLAT, and other feeds, squeezing visibility out of every available signal. But no fusion can conjure a signal that was never transmitted.",
+          "If you're technically curious, you can even receive these signals yourself: an inexpensive software-defined radio dongle and a small antenna will pick up ADS-B directly from aircraft overhead, no internet required. Hobbyist receiver networks are built from thousands of such home setups, and contributing your own feed is how the coverage map keeps growing.",
+        ],
+      },
+      {
+        heading: "The future: space-based ADS-B",
+        body: [
+          "The biggest change in flight tracking is happening overhead: satellite constellations now receive ADS-B from orbit, closing the oceanic and polar gaps that used to swallow flights for hours. What was once 'position reports every 15 minutes over the Atlantic' is becoming near-continuous global coverage — a quiet revolution in both safety and transparency.",
+          "This cuts both ways for privacy: the same satellites that let you follow a 787 across the Pacific make it harder for anyone to fly unnoticed. Expect the cat-and-mouse game to continue — better receivers on one side, more sophisticated privacy measures on the other — with regulators gradually tightening the rules about who must broadcast and who may opt out.",
+          "For enthusiasts, the trend is unambiguously good: the sky is becoming more visible every year. The remaining dark corners — military operations, sensitive government flights — are dark for reasons that aren't changing. Everything else is steadily coming into the light.",
+        ],
+      },
+      {
+        heading: "What this means for you",
+        body: [
+          "Treat any tracker as a very good but incomplete picture — roughly speaking, commercial airline traffic is near-comprehensively covered, while military, private, and low-altitude general aviation are patchy by design. If you are plane spotting, the exciting traffic is often the traffic you can't see coming.",
+          "On WorldEye, the free flight layer shows live ADS-B traffic on the 3D globe with no account needed. What you see is real; what you don't see is a reminder that the sky still keeps some secrets — and that is part of the fascination.",
+          "Next time you spot a jet overhead with no corresponding dot on the map, you'll know the possible reasons — and that small moment of understanding is what turns a casual glance upward into a hobby.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Why did a plane disappear from the tracker mid-flight?",
+        a: "Most commonly it flew beyond receiver coverage (over ocean or remote areas), descended below reception range, or the operator's data is filtered. Military aircraft also switch off transponders routinely.",
+      },
+      {
+        q: "Can private jet owners hide from flight trackers?",
+        a: "Largely, yes in the US — the FAA's LADD program filters their aircraft from public feeds, and rotating privacy transponder codes (PIA) make raw tracking difficult.",
+      },
+      {
+        q: "Do all airliners show up on trackers?",
+        a: "Essentially yes. Commercial airliners are required to carry ADS-B in most controlled airspace and don't use privacy programs, so airline traffic is the most completely tracked category.",
+      },
+      {
+        q: "Why do two trackers show different planes?",
+        a: "They use different receiver networks, different satellite feeds, and different filtering policies — especially around privacy-program aircraft.",
+      },
+    ],
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

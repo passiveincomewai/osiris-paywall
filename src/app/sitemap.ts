@@ -16,6 +16,29 @@ const SEO_PAGES = [
   "/live-webcams",
 ];
 
+// Wave 5 (2026-10-11): sitemap-only directory pages — not linked from site chrome.
+const SEO_PAGES_WAVE5 = [
+  "/city-webcams/houston",
+  "/city-webcams/dallas",
+  "/city-webcams/tokyo",
+  "/city-webcams/sydney",
+  "/beach-webcams",
+  "/ski-webcams",
+  "/airport-webcams",
+  "/ship-tracker",
+  "/weather-tracker",
+  "/wildfire-tracker",
+  "/hurricane-tracker",
+  "/space-station-tracker",
+  "/what-is-ads-b",
+  "/what-is-ais",
+  "/earthcam-alternative",
+  "/use-cases/journalists",
+  "/use-cases/emergency-preparedness",
+  "/use-cases/travelers",
+  "/use-cases/educators",
+];
+
 // Wave 4 (2026-10-11): sitemap-only directory pages — not linked from site chrome.
 const SEO_PAGES_WAVE4 = [
   "/us-traffic-cameras/georgia",
@@ -31,6 +54,48 @@ const SEO_PAGES_WAVE4 = [
   "/north-america-webcams",
   "/asia-webcams",
   "/oceania-webcams",
+];
+
+// Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
+const SEO_PAGES_COMPARE = [
+  "/alternatives/liveuamap",
+  "/alternatives/world-monitor",
+  "/alternatives/flightradar24",
+  "/alternatives/dataminr",
+  "/alternatives/google-earth",
+  "/best-osint-tools",
+  "/best-geopolitical-monitoring-tools",
+  "/best-flight-tracking-tools",
+  "/best-global-intelligence-dashboards",
+  "/best-interactive-3d-globes",
+  "/best-conflict-monitoring-tools",
+  "/free-osint-tools",
+  "/compare",
+  "/compare/acled",
+  "/compare/adsb-exchange",
+  "/compare/airplanes-live",
+  "/compare/bellingcat-toolkit",
+  "/compare/conflictzone-io",
+  "/compare/copernicus-browser",
+  "/compare/crisis24",
+  "/compare/dataminr",
+  "/compare/deepstatemap",
+  "/compare/flightradar24",
+  "/compare/gdelt",
+  "/compare/global-threat-watch",
+  "/compare/google-earth",
+  "/compare/intelligence-x",
+  "/compare/liveuamap",
+  "/compare/maltego",
+  "/compare/marinetraffic",
+  "/compare/nasa-worldview",
+  "/compare/osint-industries",
+  "/compare/recorded-future",
+  "/compare/sentinel-hub",
+  "/compare/shadowdragon",
+  "/compare/vesselfinder",
+  "/compare/world-monitor",
+  "/compare/zoom-earth",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -70,6 +135,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE4.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE5.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_COMPARE.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,

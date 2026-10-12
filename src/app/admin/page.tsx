@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { adminEmails } from "@/lib/affiliate/admin";
 import { stripe } from "@/lib/stripe";
 import NewsletterBroadcast from "./NewsletterBroadcast";
+import CompetitorManager from "./CompetitorManager";
 
 export const metadata = { title: "Admin Dashboard — WorldEye" };
 export const dynamic = "force-dynamic";
@@ -261,6 +262,10 @@ export default async function AdminDashboardPage() {
 
         <div className="mt-4">
           <NewsletterBroadcast />
+        </div>
+
+        <div className="mt-4">
+          <CompetitorManager />
         </div>
       </div>
     </div>

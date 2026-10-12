@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
   title: "Security — How WorldEye Protects You",
@@ -36,6 +37,64 @@ const jsonLd = {
   url: "https://worldeye.app/security",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Does WorldEye sell my data?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. WorldEye does not sell data, run ads, or use third-party trackers on its pages. Revenue comes from Pro subscriptions, not from user data.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does WorldEye see my AI API key?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Your OI assistant API key is stored in your browser's local storage and sent only to your chosen AI provider. It never touches WorldEye's servers.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does WorldEye store my credit card?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. All payments are processed by Stripe. Card numbers are entered on Stripe's checkout pages — WorldEye never sees, handles, or stores them.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I report a security vulnerability?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Report it responsibly through the contact page with as much detail as you can share, and give the team a chance to fix it before any public disclosure.",
+      },
+    },
+  ],
+};
+
+const SECURITY_FAQS = [
+  {
+    q: "Does WorldEye sell my data?",
+    a: "No. No data sales, no ads, no third-party trackers. Revenue comes from Pro subscriptions.",
+  },
+  {
+    q: "Does WorldEye see my AI API key?",
+    a: "No. Your OI assistant key lives in your browser's local storage and goes only to your chosen AI provider — never to our servers.",
+  },
+  {
+    q: "Does WorldEye store my credit card?",
+    a: "No. Stripe processes all payments; card numbers never touch WorldEye's systems.",
+  },
+  {
+    q: "How do I report a security vulnerability?",
+    a: "Through the contact page, with as much detail as you can share. Please give us a chance to fix it before disclosing publicly.",
+  },
+];
 
 const PRACTICES = [
   "Passwords are hashed with bcrypt and never stored — or logged — in plain text.",
@@ -102,6 +161,7 @@ export default function SecurityPage() {
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100">
       <JsonLd data={jsonLd} />
+      <JsonLd data={faqJsonLd} />
       <div className="max-w-3xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">
@@ -192,6 +252,44 @@ export default function SecurityPage() {
             Report a security issue
           </Link>
         </div>
+
+        {/* FAQ */}
+        <section className="mt-12">
+          <h2 className="text-lg md:text-xl font-bold text-white/90 mb-5">Security questions</h2>
+          <div className="space-y-3">
+            {SECURITY_FAQS.map((f) => (
+              <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                <h3 className="font-semibold text-white/90 text-sm md:text-base">{f.q}</h3>
+                <p className="text-sm text-white/55 mt-1.5 leading-relaxed">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Privacy policy",
+              desc: "What data WorldEye collects, why, and how long it is kept.",
+              href: "/privacy",
+            },
+            {
+              label: "About WorldEye",
+              desc: "The principles behind the platform — free map, no data sales.",
+              href: "/about",
+            },
+            {
+              label: "FAQ",
+              desc: "Common questions about accounts, Pro, and the free map.",
+              href: "/faq",
+            },
+            {
+              label: "Contact",
+              desc: "Report a vulnerability or ask a security question.",
+              href: "/contact",
+            },
+          ]}
+        />
       </div>
       <SiteFooter />
     </main>

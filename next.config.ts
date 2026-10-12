@@ -39,6 +39,17 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**' },
     ],
   },
+  // Dedupe: /flightradar24-alternative (SEO batch) and /alternatives/flightradar24
+  // (comparison system) target the same intent — canonicalize on the richer page.
+  async redirects() {
+    return [
+      {
+        source: '/flightradar24-alternative',
+        destination: '/alternatives/flightradar24',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       /* The worker path carries the MapLibre version, so a given URL never

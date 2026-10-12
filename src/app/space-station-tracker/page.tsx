@@ -1,0 +1,290 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Orbit,
+  Satellite,
+  Globe2,
+  Eye,
+  Sun,
+  Moon,
+  ChevronDown,
+} from "lucide-react";
+import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import RelatedLinks from "@/components/RelatedLinks";
+
+export const metadata: Metadata = {
+  title: "ISS Tracker — Watch the Space Station Live | WorldEye",
+  description:
+    "Track the International Space Station live on a 3D globe: current position, orbit path and visibility. Free ISS tracker — no signup, no account, no cost.",
+  alternates: { canonical: "/space-station-tracker" },
+  openGraph: {
+    title: "ISS Tracker — Watch the Space Station Live | WorldEye",
+    description:
+      "The International Space Station, live on a 3D globe — position, orbit path and visibility. Free, no signup.",
+    url: "/space-station-tracker",
+    type: "website",
+  },
+};
+
+const WHAT_YOU_GET = [
+  {
+    icon: Orbit,
+    title: "Live position",
+    desc: "The station's current location over the Earth, updating in real time as it circles the planet roughly every 90 minutes.",
+  },
+  {
+    icon: Globe2,
+    title: "Full orbit path",
+    desc: "Not just a dot — the entire ground track across the globe, so you can see where it's been and where it's going next.",
+  },
+  {
+    icon: Sun,
+    title: "Day/night terminator",
+    desc: "Watch the ISS pass through sunlight and shadow. Crew sunrises come fast up there — sixteen a day, give or take.",
+  },
+  {
+    icon: Satellite,
+    title: "Satellites alongside",
+    desc: "The ISS shares the globe with thousands of tracked satellites — Starlink trains, weather satellites and more, all live.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "Is the ISS tracker free?",
+    a: "Yes — completely. Satellite tracking, including the ISS, is part of the free map: no account, no signup, no credit card. Open the site and the station is already overhead somewhere.",
+  },
+  {
+    q: "What is the International Space Station?",
+    a: "The ISS is a continuously crewed research laboratory in low Earth orbit, assembled by five space agencies and partners from more than a dozen countries. Astronauts have lived aboard it without interruption since 2000, running thousands of experiments in microgravity.",
+  },
+  {
+    q: "How high is the ISS and how fast does it go?",
+    a: "The station orbits roughly 400 km above the surface — high enough to stay above almost all of the atmosphere, low enough to reach. At about 28,000 km/h it circles the planet roughly every 90 minutes, so the crew sees about sixteen sunrises a day.",
+  },
+  {
+    q: "Can I see the ISS with my own eyes?",
+    a: "Yes, and it's one of the easiest objects in the sky to spot. Look for a bright, steady, fast-moving point of light shortly after sunset or before sunrise — no telescope needed. The globe helps you learn its rhythm: when it's passing near you, it's worth stepping outside.",
+  },
+  {
+    q: "Why is the ISS sometimes easy to spot and sometimes not?",
+    a: "Visibility depends on the station being sunlit while your sky is dark — typically the hour or two after sunset or before sunrise. In the middle of the night it flies through Earth's shadow; in daylight it's lost in the blue. Space agencies and spotter tools publish pass predictions for your exact location.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: "WorldEye ISS Space Station Tracker",
+      description:
+        "Track the International Space Station live on a 3D globe: current position, orbit path and visibility. Free ISS tracker — no signup.",
+      url: "https://worldeye.app/space-station-tracker",
+      isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    },
+    {
+      "@type": "FAQPage",
+      url: "https://worldeye.app/space-station-tracker",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
+export default function SpaceStationTrackerPage() {
+  return (
+    <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={jsonLd} />
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#7c8aff]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[300px] rounded-full opacity-10 blur-[100px] bg-[#D4AF37]" />
+      </div>
+
+      <div className="relative max-w-5xl mx-auto px-6 py-10 md:py-16">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-12">
+          <Link href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
+            <ArrowLeft className="w-4 h-4" /> Back to the map
+          </Link>
+          <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+        </div>
+
+        {/* Hero */}
+        <div className="text-center max-w-2xl mx-auto">
+          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#aab2ff] border border-[#aab2ff]/30 rounded-full px-4 py-1.5 mb-6">
+            <Orbit className="w-3.5 h-3.5" /> LIVE ORBITAL DATA
+          </p>
+          <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
+            There are people <span className="text-[#aab2ff]">up there.</span>
+          </h1>
+          <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
+            A live ISS tracker on a 3D globe. The International Space Station —
+            position, orbit path and day-night passes — free for everyone, no
+            account needed.
+          </p>
+          <div className="mt-8">
+            <Link
+              href="/"
+              className="inline-block px-8 py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+            >
+              Open live ISS tracker — free, no signup
+            </Link>
+          </div>
+        </div>
+
+        {/* What you get */}
+        <div className="mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            What the station layer <span className="text-[#D4AF37]">shows</span>
+          </h2>
+          <div className="mt-8 grid sm:grid-cols-2 gap-5">
+            {WHAT_YOU_GET.map((w) => (
+              <div
+                key={w.title}
+                className="rounded-3xl border border-white/10 bg-white/[0.02] p-7"
+              >
+                <w.icon className="w-6 h-6 text-[#aab2ff] mb-4" />
+                <p className="font-semibold text-white/90 text-lg mb-2">{w.title}</p>
+                <p className="text-sm text-white/45 leading-relaxed">{w.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Why it's fun */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Why tracking it is <span className="text-[#D4AF37]">fun</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              There is something quietly thrilling about watching a dot cross
+              the map and knowing there are people on it. The ISS is the
+              largest human-made object ever put in space — a football-field
+              of solar panels and modules with a crew of astronauts inside —
+              and it&apos;s up there right now, moving at 28,000 km/h.
+            </p>
+            <p>
+              Tracking it on the globe gives you an instinct for its rhythm:
+              the near-vertical sweeps across latitudes, the way it races over
+              the night side into sunrise, the passes that skim right over your
+              part of the world. After a while you stop seeing a dot and start
+              seeing an orbit.
+            </p>
+            <p className="flex items-start gap-3 text-white/50">
+              <Moon className="w-5 h-5 text-[#D4AF37] shrink-0 mt-1" />
+              And then the best part: stepping outside at the right minute and
+              waving at a light crossing the sky — while knowing exactly where
+              it is, because you just watched it get there.
+            </p>
+          </div>
+        </div>
+
+        {/* How to spot it */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 flex items-center justify-center gap-3">
+            <Eye className="w-7 h-7 text-[#D4AF37]" />
+            How to <span className="text-[#D4AF37]">spot it yourself</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              <strong className="text-white/90">1. Check the pass.</strong>{" "}
+              Use the globe to see when the station&apos;s ground track comes
+              near you, or check a pass-prediction tool from your space agency
+              for exact times, brightness and direction.
+            </p>
+            <p>
+              <strong className="text-white/90">2. Go out at dusk or dawn.</strong>{" "}
+              The station reflects sunlight — it&apos;s only visible while
+              it&apos;s sunlit and your sky is dark, usually within a couple
+              of hours of sunset or sunrise.
+            </p>
+            <p>
+              <strong className="text-white/90">3. Look for steady and fast.</strong>{" "}
+              Unlike aircraft, it doesn&apos;t blink. Unlike planets, it moves —
+              crossing the sky in a few minutes. Once you&apos;ve seen it, you
+              can&apos;t unsee it.
+            </p>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            ISS tracker <span className="text-[#D4AF37]">FAQ</span>
+          </h2>
+          <div className="space-y-3">
+            {FAQS.map((f) => (
+              <details
+                key={f.q}
+                className="border border-white/10 rounded-2xl bg-white/[0.02] overflow-hidden group"
+              >
+                <summary className="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer list-none">
+                  <span className="font-medium text-white/90">{f.q}</span>
+                  <ChevronDown className="w-5 h-5 text-[#D4AF37] shrink-0 transition-transform group-open:rotate-180" />
+                </summary>
+                <p className="px-6 pb-5 text-sm text-white/60 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+
+        {/* Closing CTA */}
+        <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10">
+          <h2 className="text-2xl md:text-3xl font-bold">
+            See where it is <span className="text-[#D4AF37]">right now</span>
+          </h2>
+          <p className="text-white/55 mt-3 mb-8">
+            Free forever. No account. Just the planet, live.
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-8 py-4 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
+          >
+            Open the live ISS tracker
+          </Link>
+          <p className="mt-6 text-sm text-white/40">
+            Want the full intelligence toolkit?{" "}
+            <Link href="/pricing" className="text-[#D4AF37] hover:underline">
+              Explore WorldEye Pro
+            </Link>
+          </p>
+        </div>
+
+        <RelatedLinks
+          links={[
+            {
+              label: "Satellite tracker",
+              desc: "The ISS plus Starlink and thousands more satellites — the full orbital picture.",
+              href: "/satellite-tracker",
+            },
+            {
+              label: "Flight tracker",
+              desc: "Live aircraft on the same globe — the sky below the satellites.",
+              href: "/live-flight-tracker",
+            },
+            {
+              label: "Features",
+              desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
+              href: "/features",
+            },
+            {
+              label: "FAQ",
+              desc: "Is the map free? What does Pro include? Answers to the common questions.",
+              href: "/faq",
+            },
+          ]}
+        />
+      </div>
+
+      <SiteFooter />
+    </main>
+  );
+}

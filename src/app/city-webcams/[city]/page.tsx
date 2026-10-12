@@ -222,6 +222,174 @@ const CITIES: Record<string, CityCfg> = {
       },
     ],
   },
+  houston: {
+    name: "Houston",
+    country: "United States",
+    countrySlug: "united-states",
+    count: 1158,
+    title: "Houston Live Webcams — 1158 Traffic Cameras | WorldEye",
+    blurb:
+      "Watch 1158 live Houston freeway and traffic cameras — check freeway congestion and storm conditions free on the WorldEye map. No signup needed.",
+    h1: "Houston Live Webcams",
+    sub: "Watch 1158 live Houston freeway and traffic cameras — free on the WorldEye globe.",
+    intro: [
+      "Houston's 1,158 cameras make it the third-largest metro grid in the United States index — behind Georgia's statewide network and Utah, and ahead of every other city. The grid is a working freeway-camera system covering the metro's sprawling freeway network: the corridors commuters use every day and the underpasses that flood first in a storm.",
+      "Houston is a city where the camera grid doubles as weather infrastructure. Gulf downpours can drop inches of rain in an hour, and the freeway feeds show standing water, slow-moving traffic and ponding on low sections in real time — check the cameras on your route during a storm, not after you're in it. Hurricane season makes this habit worth building year-round.",
+      "All 1,158 feeds open free on the WorldEye map. Zoom to Houston, tap a freeway marker, and you are watching the same corridors the region's traffic managers watch.",
+    ],
+    stats: [
+      { value: "1158", label: "live cameras" },
+      { value: "#3", label: "of 12 US areas" },
+      { value: "5%", label: "of US cameras" },
+    ],
+    howtoTitle: "How to check Houston freeway conditions",
+    howto: [
+      "Open the WorldEye live map — no account or download needed.",
+      "Zoom to Houston; camera markers line the metro's freeway corridors.",
+      "Tap a marker on your route to open that freeway camera's live feed.",
+    ],
+    faqTitle: "Houston webcams — FAQ",
+    faqs: [
+      {
+        q: "Are these the TranStar freeway cameras?",
+        a: "They are the same class of feed — fixed freeway and arterial cameras across the Houston metro, like the ones the region's traffic management publishes. Use them to check congestion and weather conditions before driving.",
+      },
+      {
+        q: "Can I see flooding on these cameras?",
+        a: "Yes — that is one of their best uses. During heavy rain, the freeway cameras show standing water, ponding on low sections and slow-moving traffic. Never drive through flooded roadway you see on a camera; turn around.",
+      },
+      {
+        q: "When is Houston traffic at its worst?",
+        a: "Weekday rush hours, roughly 7:00–9:00 and 16:30–19:00. Construction and rain extend both windows — check the freeway feeds before heading out.",
+      },
+    ],
+  },
+  dallas: {
+    name: "Dallas",
+    country: "United States",
+    countrySlug: "united-states",
+    count: 845,
+    title: "Dallas Live Webcams — 845 Traffic Cameras | WorldEye",
+    blurb:
+      "Watch 845 live Dallas freeway and traffic cameras — check DFW metro congestion, weather and road conditions free on the WorldEye map. No signup.",
+    h1: "Dallas Live Webcams",
+    sub: "Watch 845 live Dallas freeway and traffic cameras — free on the WorldEye globe.",
+    intro: [
+      "Dallas accounts for 845 of the 23,059 cameras indexed in the United States — the fourth-largest of 12 US areas, behind Georgia, Utah and Houston. The grid watches the Dallas–Fort Worth metro's freeway network, the corridors where the region's long commutes concentrate. Fort Worth is indexed separately with another 489 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
+      "DFW's commutes are long, its construction zones are constant, and its weather swings from ice storms to severe thunderstorms. The freeway cameras earn their keep in all three: check for ice on the elevated sections in winter, hail and high water in spring, and the ever-present construction slowdowns before you merge on.",
+      "All 845 feeds open free on the WorldEye map. Zoom to Dallas–Fort Worth, find the markers on your corridor, and check conditions before you drive.",
+    ],
+    stats: [
+      { value: "845", label: "live cameras" },
+      { value: "#4", label: "of 12 US areas" },
+      { value: "4%", label: "of US cameras" },
+    ],
+    howtoTitle: "How to check Dallas freeway conditions",
+    howto: [
+      "Open the WorldEye live map — no account or download needed.",
+      "Zoom to Dallas–Fort Worth; camera markers cover the metro's freeway corridors.",
+      "Tap a marker on your route to open that freeway camera's live feed.",
+    ],
+    faqTitle: "Dallas webcams — FAQ",
+    faqs: [
+      {
+        q: "Does this cover Fort Worth too?",
+        a: "Fort Worth is indexed as its own area with 489 feeds. This index covers the 845 Dallas-area feeds — together they give the DFW metro some of the deepest freeway coverage in the country. Zoom out on the live map to see both grids.",
+      },
+      {
+        q: "Can I check for ice on the roads in winter?",
+        a: "Yes. During ice events, the elevated freeway sections are where problems start, and the camera grid shows conditions in real time. Check before driving — bridges and overpasses freeze first.",
+      },
+      {
+        q: "When is Dallas traffic at its worst?",
+        a: "Weekday mornings 7:00–9:00 and evenings 16:30–19:00, with construction zones congested at all hours. Spring storm season can shut corridors with little warning — check the feeds first.",
+      },
+    ],
+  },
+  tokyo: {
+    name: "Tokyo",
+    country: "Japan",
+    countrySlug: "japan",
+    count: 73,
+    title: "Tokyo Live Webcams — 73 Street Cameras | WorldEye",
+    blurb:
+      "Watch 73 live Tokyo cameras — the largest camera grid in Japan — with expressway traffic and city views, free on the WorldEye map. No signup needed.",
+    h1: "Tokyo Live Webcams",
+    sub: "Watch 73 live Tokyo cameras — the largest grid in Japan — free on the WorldEye globe.",
+    intro: [
+      "Tokyo's 73 cameras make it the largest of 12 Japanese areas in the index and account for about 8% of Japan's 928 cameras. The grid is a mix of traffic and city feeds across the world's largest metro — expressways and arterial roads, with city views mixed in around the densest districts.",
+      "Tokyo's cameras double as weather watchers. Typhoon season brings sudden downpours and high winds that show up on the road feeds, and the cameras around the bay and rivers give an early read on storm conditions. In a city this dense, a quick camera check before heading out can reroute your whole day.",
+      "All 73 feeds open free on the WorldEye map. Zoom to Tokyo, tap a marker, and you are looking at the metro as it is right now.",
+    ],
+    stats: [
+      { value: "73", label: "live cameras" },
+      { value: "#1", label: "of 12 Japanese areas" },
+      { value: "8%", label: "of Japan's cameras" },
+    ],
+    howtoTitle: "How to watch Tokyo live cameras",
+    howto: [
+      "Open the WorldEye live map — no account or download needed.",
+      "Zoom to Tokyo; camera markers cover the expressways and central districts.",
+      "Tap any marker to open that Tokyo camera's live feed.",
+    ],
+    faqTitle: "Tokyo webcams — FAQ",
+    faqs: [
+      {
+        q: "Are these traffic cameras or city views?",
+        a: "Both. Tokyo's 73-camera index mixes traffic and expressway feeds with city cameras around the densest districts — check the map markers to find the view you need.",
+      },
+      {
+        q: "Can I check typhoon conditions in Tokyo?",
+        a: "Yes. During typhoon season the road and bay-area cameras show rain, wind and standing water in real time — a useful check before traveling across the metro.",
+      },
+      {
+        q: "Can I see Mount Fuji or the Skytree?",
+        a: "These are mostly road and city feeds, not scenic overlooks. For landmark views, browse the scenic cameras on the main WorldEye map.",
+      },
+    ],
+  },
+  sydney: {
+    name: "Sydney",
+    country: "Australia",
+    countrySlug: "australia",
+    count: 186,
+    title: "Sydney Live Webcams — 186 Traffic Cameras | WorldEye",
+    blurb:
+      "Watch 186 live Sydney metro traffic cameras — harbour crossings, freeways and beach routes — free on the WorldEye live map. No signup needed.",
+    h1: "Sydney Live Webcams",
+    sub: "Watch 186 live Sydney metro traffic cameras — free on the WorldEye globe.",
+    intro: [
+      "Sydney dominates Australia's camera index: 186 metro feeds across the central, north, west and south corridors — about 74% of the country's 250 cameras and the largest of 10 Australian areas. The grid watches the harbour crossings, the freeway network, and the routes that carry weekend traffic to the eastern beaches.",
+      "The harbour bridges and tunnels are the city's natural chokepoints, and the camera grid shows them as they are right now: peak-hour queues, lane closures, and the beach-route crawl on a hot summer Saturday. Sudden downpours — Sydney gets its share — show up on the road feeds before they show up on your windshield.",
+      "All 186 feeds open free on the WorldEye map. Zoom to Sydney, tap a marker on your route, and check conditions before you drive.",
+    ],
+    stats: [
+      { value: "186", label: "live cameras" },
+      { value: "#1", label: "of 10 Australian areas" },
+      { value: "74%", label: "of Australia's cameras" },
+    ],
+    howtoTitle: "How to check Sydney traffic conditions",
+    howto: [
+      "Open the WorldEye live map — no account or download needed.",
+      "Zoom to Sydney; camera markers cover the harbour crossings, freeways and beach routes.",
+      "Tap a marker on your route to open that Sydney camera's live feed.",
+    ],
+    faqTitle: "Sydney webcams — FAQ",
+    faqs: [
+      {
+        q: "Do the cameras cover the Harbour Bridge?",
+        a: "Coverage follows the metro's main corridors, including the harbour crossings and approaches. Zoom to the harbour on the live map to find the bridge and tunnel cameras.",
+      },
+      {
+        q: "Can I check beach traffic on a summer weekend?",
+        a: "Yes. The grid covers the routes to the eastern beaches, so you can see the weekend crawl before you join it — check Saturday morning before leaving.",
+      },
+      {
+        q: "When is Sydney traffic at its worst?",
+        a: "Weekday peak hours around the harbour crossings, and summer weekends on the beach routes. Check the cameras on your corridor before heading out.",
+      },
+    ],
+  },
 };
 
 const RELATED: { label: string; href: string }[] = [
@@ -229,6 +397,10 @@ const RELATED: { label: string; href: string }[] = [
   { label: "Ottawa live webcams", href: "/city-webcams/ottawa" },
   { label: "Toronto live webcams", href: "/city-webcams/toronto" },
   { label: "Madrid live webcams", href: "/city-webcams/madrid" },
+  { label: "Houston live webcams", href: "/city-webcams/houston" },
+  { label: "Dallas live webcams", href: "/city-webcams/dallas" },
+  { label: "Tokyo live webcams", href: "/city-webcams/tokyo" },
+  { label: "Sydney live webcams", href: "/city-webcams/sydney" },
   { label: "All world city webcams", href: "/world-city-webcams" },
 ];
 
