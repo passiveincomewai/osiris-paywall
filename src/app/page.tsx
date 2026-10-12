@@ -174,6 +174,23 @@ const HUD_EASE = [0.22, 1, 0.36, 1] as const;
 const hudIn = (delay: number) => ({ duration: 0.7, ease: HUD_EASE, delay });
 
 export default function Dashboard() {
+  // Ad traffic skips the cinematic hero and lands straight on the globe.
+  // Keyed ONLY off ad URL params (utm_medium=cpc/paid/etc. or skip_hero=1) —
+  // referrer alone can't distinguish paid vs organic Instagram, so organic
+  // visitors (link in bio, shares) still get the full hero experience.
+  const [skipHero] = useState(() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const medium = (q.get("utm_medium") || "").toLowerCase().trim();
+      return (
+        ["cpc", "ppc", "paid", "paid-social", "paidsocial", "ad", "ads", "display", "social-paid"].includes(medium) ||
+        q.get("skip_hero") === "1" ||
+        q.get("ad") === "1"
+      );
+    } catch {
+      return false;
+    }
+  });
   const dataRef = useRef<any>({});
   const [dataVersion, setDataVersion] = useState(0);
   const data = dataRef.current;
@@ -1361,7 +1378,7 @@ export default function Dashboard() {
 
   return (
     <>
-    <CinematicHero />
+    {!skipHero && <CinematicHero />}
     <main className="fixed inset-0 w-full h-full bg-[var(--bg-void)] overflow-hidden">
 
       {/* ── SPLASH ── */}
