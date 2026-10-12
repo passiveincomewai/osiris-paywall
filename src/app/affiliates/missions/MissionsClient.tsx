@@ -53,7 +53,10 @@ export default function MissionsClient() {
   const groups: ("daily" | "weekly" | "monthly")[] = ["daily", "weekly", "monthly"];
   return (
     <div className="space-y-10">
-      <div>
+      <div className="flex items-start gap-4">
+        <img src="/affiliate-icons/missions.png" alt="Missions" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0 mt-1"
+          style={{ filter: "drop-shadow(0 0 16px rgba(251,191,36,.45))" }} />
+        <div>
         <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase mb-2">Missions</div>
         <h1 className="text-3xl font-bold text-white mb-2">Earn XP. Climb ranks.</h1>
         <p className="text-slate-400 text-sm max-w-2xl">
@@ -63,6 +66,7 @@ export default function MissionsClient() {
         <button onClick={load} className="mt-3 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-cyan-400/60">
           Refresh progress
         </button>
+        </div>
       </div>
 
       {groups.map((g) => {

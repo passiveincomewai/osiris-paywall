@@ -89,12 +89,16 @@ export default function AffiliatesLanding() {
         <SectionTitle kicker="Protocol" title="How it works" />
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { n: "01", t: "Share your link", d: "Get your unique referral URL — worldeye.app/ref/YOURCODE — plus QR codes and ready-made share kits for every platform.", c: "#38bdf8" },
-            { n: "02", t: "They subscribe to Pro", d: "Anyone who signs up through your link is attributed to you for 30 days. When they buy WorldEye Pro, you earn.", c: "#22d3ee" },
-            { n: "03", t: "Earn every billing cycle", d: "Commissions don't stop at the first payment — you earn on every qualifying renewal for as long as they stay subscribed.", c: "#818cf8" },
+            { n: "01", t: "Share your link", d: "Get your unique referral URL — worldeye.app/ref/YOURCODE — plus QR codes and ready-made share kits for every platform.", c: "#38bdf8", icon: "/affiliate-icons/join.png" },
+            { n: "02", t: "They subscribe to Pro", d: "Anyone who signs up through your link is attributed to you for 30 days. When they buy WorldEye Pro, you earn.", c: "#22d3ee", icon: "/affiliate-icons/commission.png" },
+            { n: "03", t: "Earn every billing cycle", d: "Commissions don't stop at the first payment — you earn on every qualifying renewal for as long as they stay subscribed.", c: "#818cf8", icon: "/affiliate-icons/earnings.png" },
           ].map((s) => (
             <Card key={s.n}>
-              <div className="font-mono text-4xl font-black" style={{ color: s.c, textShadow: `0 0 20px ${s.c}66` }}>{s.n}</div>
+              <div className="flex items-start justify-between">
+                <div className="font-mono text-4xl font-black" style={{ color: s.c, textShadow: `0 0 20px ${s.c}66` }}>{s.n}</div>
+                <img src={s.icon} alt="" className="w-16 h-16 object-contain -mt-1"
+                  style={{ filter: `drop-shadow(0 0 14px ${s.c}55)` }} />
+              </div>
               <div className="mt-3 text-lg font-bold text-white">{s.t}</div>
               <div className="mt-2 text-sm text-slate-400 leading-relaxed">{s.d}</div>
             </Card>
@@ -104,7 +108,11 @@ export default function AffiliatesLanding() {
 
       {/* ── 3. COMMISSION TIERS ─────────────────────────────── */}
       <section>
-        <SectionTitle kicker="Ranks" title="Six ranks. Bigger network, bigger cut." />
+        <div className="flex items-center gap-4 mb-6">
+          <img src="/affiliate-icons/ranks.png" alt="Rank tiers" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0"
+            style={{ filter: "drop-shadow(0 0 16px rgba(192,132,252,.45))" }} />
+          <SectionTitle kicker="Ranks" title="Six ranks. Bigger network, bigger cut." />
+        </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {TIERS.map((t) => (
             <Card key={t.name}>
@@ -130,7 +138,11 @@ export default function AffiliatesLanding() {
 
       {/* ── 4. THREE-LEVEL NETWORK ──────────────────────────── */}
       <section>
-        <SectionTitle kicker="Network" title="Three-level network earnings" />
+        <div className="flex items-center gap-4 mb-6">
+          <img src="/affiliate-icons/network.png" alt="Referral network" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0"
+            style={{ filter: "drop-shadow(0 0 16px rgba(34,211,238,.45))" }} />
+          <SectionTitle kicker="Network" title="Three-level network earnings" />
+        </div>
         <div className="grid md:grid-cols-3 gap-4">
           <Card>
             <div className="font-mono text-xs tracking-[0.25em] text-[#38bdf8] uppercase">Level 1 — Direct</div>

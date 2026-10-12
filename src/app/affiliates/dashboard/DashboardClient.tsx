@@ -228,13 +228,19 @@ export default function DashboardClient() {
 
       {/* Chart */}
       <div className={card}>
-        <SectionTitle kicker="Performance" title="Earnings"
+        <div className="flex items-center gap-3 mb-4">
+          <img src="/affiliate-icons/earnings.png" alt="Earnings" className="w-11 h-11 object-contain shrink-0"
+            style={{ filter: "drop-shadow(0 0 14px rgba(56,189,248,.45))" }} />
+          <div className="flex-1">
+            <SectionTitle kicker="Performance" title="Earnings"
           right={<div className="flex gap-1">{["7", "30", "90", "all"].map((r) => (
             <button key={r} onClick={() => changeRange(r)}
               className={`px-3 py-1 rounded-lg text-xs font-mono border ${range === r ? "border-cyan-400/60 text-cyan-200 bg-cyan-400/10" : "border-white/10 text-slate-400"}`}>
               {r === "all" ? "ALL" : `${r}D`}
             </button>
           ))}</div>} />
+          </div>
+        </div>
         {dash.series.some((s) => s.cents > 0) ? (
           <AreaChart data={dash.series} />
         ) : (

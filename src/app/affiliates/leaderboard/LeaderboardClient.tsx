@@ -128,6 +128,14 @@ export default function LeaderboardClient() {
 
   return (
     <div>
+      <div className="flex items-center gap-4 mb-6">
+        <img src="/affiliate-icons/ranks.png" alt="Leaderboard" className="w-12 h-12 md:w-14 md:h-14 object-contain shrink-0"
+          style={{ filter: "drop-shadow(0 0 14px rgba(192,132,252,.45))" }} />
+        <div>
+          <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">Leaderboard</div>
+          <h1 className="text-2xl font-bold text-white">Top affiliates</h1>
+        </div>
+      </div>
       {optOut !== null && (
         <div className="mb-5 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
           <div className="text-sm text-slate-300">

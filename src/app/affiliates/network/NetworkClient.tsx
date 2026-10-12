@@ -150,6 +150,14 @@ export default function NetworkClient() {
 
   return (
     <div>
+      <div className="flex items-center gap-4 mb-6">
+        <img src="/affiliate-icons/network.png" alt="Your network" className="w-12 h-12 md:w-14 md:h-14 object-contain shrink-0"
+          style={{ filter: "drop-shadow(0 0 14px rgba(34,211,238,.45))" }} />
+        <div>
+          <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">Network</div>
+          <h1 className="text-2xl font-bold text-white">Your referral network</h1>
+        </div>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6">
         <StatCard label="Network size" value={String(stats.size)} sub="referrals across 3 levels" accent="#22d3ee" />
         <StatCard label="Paying subscribers" value={String(stats.paying)} sub="converted in your network" accent="#4ade80" />
