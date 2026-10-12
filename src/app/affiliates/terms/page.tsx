@@ -2,7 +2,7 @@
 import { SectionTitle } from "@/components/affiliate/ui";
 
 export const metadata = {
-  title: "Affiliate Terms & Conditions — WorldEye",
+  title: "Affiliate Terms & Conditions",
   description: "Terms and conditions for the WorldEye affiliate program.",
 };
 

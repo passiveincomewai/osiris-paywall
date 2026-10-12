@@ -161,7 +161,7 @@ export default function EducatorsPage() {
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
             WorldEye is a free live 3D globe — flights, satellites, weather,
-            earthquakes and 40,000+ cameras — that turns geography, earth science,
+            earthquakes and 36,000+ cameras — that turns geography, earth science,
             physics and media literacy into things students can watch happen.
           </p>
         </div>

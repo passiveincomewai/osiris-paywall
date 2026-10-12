@@ -5,14 +5,14 @@ import SiteFooter from "@/components/SiteFooter";
 import data from "@/data/camera-directory.json";
 
 export const metadata: Metadata = {
-  title: "Live Street Cameras by Country — 105 Countries | WorldEye",
+  title: "Live Street Cameras by Country — 105 Countries",
   description:
-    "Browse live street cameras across 105 countries — 40,207 public webcam feeds mapped by nation and region. Find your country and start watching.",
+    "Browse live street cameras across 105 countries — 36,000+ public webcam feeds mapped by nation and region. Find your country and start watching.",
   alternates: { canonical: "https://worldeye.app/cameras/countries" },
   openGraph: {
     title: "Live Street Cameras by Country — 105 Countries | WorldEye",
     description:
-      "40,207 live street cameras across 105 countries, mapped by nation and region. Find your country and start watching.",
+      "36,000+ live street cameras across 105 countries, mapped by nation and region. Find your country and start watching.",
     url: "https://worldeye.app/cameras/countries",
     type: "website",
   },
@@ -40,7 +40,7 @@ const jsonLd = {
   "@type": "CollectionPage",
   name: "Live Street Cameras by Country — 105 Countries",
   description:
-    "A directory of 40,207 live public street cameras across 105 countries, with per-country camera counts and top regions.",
+    "A directory of 36,000+ live public street cameras across 105 countries, with per-country camera counts and top regions.",
   url: "https://worldeye.app/cameras/countries",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
   numberOfItems: data.countries.length,

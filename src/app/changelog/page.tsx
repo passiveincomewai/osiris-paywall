@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "Changelog — What's New | WorldEye",
+  title: "Changelog — What's New",
   description:
     "What's new on WorldEye: the WorldEye rebrand, affiliate program, camera directory, new SEO pages, account system and free trials — updates as they ship.",
   alternates: { canonical: "/changelog" },

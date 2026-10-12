@@ -46,7 +46,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "United Kingdom",
     countrySlug: "united-kingdom",
     count: 890,
-    title: "London Live Webcams — 890 Street Cameras | WorldEye",
+    title: "London Live Webcams — 890 Street Cameras",
     blurb:
       "Watch 890 live London street cameras — North Circular, Blackwall Tunnel approaches and West End traffic views — free on the WorldEye map. No signup needed.",
     h1: "London Live Webcams",
@@ -127,7 +127,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "Canada",
     countrySlug: "canada",
     count: 428,
-    title: "Ottawa Live Webcams — 428 Traffic Cameras | WorldEye",
+    title: "Ottawa Live Webcams — 428 Traffic Cameras",
     blurb:
       "See 428 live Ottawa traffic cameras across Canada's capital — check downtown road conditions and winter weather free on the WorldEye map. No signup needed.",
     h1: "Ottawa Live Webcams",
@@ -195,7 +195,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "Canada",
     countrySlug: "canada",
     count: 339,
-    title: "Toronto Live Webcams — 339 Street Cameras | WorldEye",
+    title: "Toronto Live Webcams — 339 Street Cameras",
     blurb:
       "Watch 339 live Toronto street and highway cameras — check 400-series highways and downtown traffic conditions free on the WorldEye map. No signup needed.",
     h1: "Toronto Live Webcams",
@@ -263,7 +263,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "Spain",
     countrySlug: "spain",
     count: 370,
-    title: "Madrid Live Webcams — 370 Traffic Cameras | WorldEye",
+    title: "Madrid Live Webcams — 370 Traffic Cameras",
     blurb:
       "See 370 live Madrid traffic cameras — M-30 ring road, Gran Vía avenues and busy city street views — free on the WorldEye live map. No signup needed.",
     h1: "Madrid Live Webcams",
@@ -331,7 +331,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "United States",
     countrySlug: "united-states",
     count: 1158,
-    title: "Houston Live Webcams — 1158 Traffic Cameras | WorldEye",
+    title: "Houston Live Webcams — 1158 Traffic Cameras",
     blurb:
       "Watch 1158 live Houston freeway and traffic cameras — check freeway congestion and storm conditions free on the WorldEye map. No signup needed.",
     h1: "Houston Live Webcams",
@@ -399,7 +399,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "United States",
     countrySlug: "united-states",
     count: 845,
-    title: "Dallas Live Webcams — 845 Traffic Cameras | WorldEye",
+    title: "Dallas Live Webcams — 845 Traffic Cameras",
     blurb:
       "Watch 845 live Dallas freeway and traffic cameras — check DFW metro congestion, weather and road conditions free on the WorldEye map. No signup.",
     h1: "Dallas Live Webcams",
@@ -467,7 +467,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "Japan",
     countrySlug: "japan",
     count: 73,
-    title: "Tokyo Live Webcams — 73 Street Cameras | WorldEye",
+    title: "Tokyo Live Webcams — 73 Street Cameras",
     blurb:
       "Watch 73 live Tokyo cameras — the largest camera grid in Japan — with expressway traffic and city views, free on the WorldEye map. No signup needed.",
     h1: "Tokyo Live Webcams",
@@ -535,7 +535,7 @@ const CITIES: Record<string, CityCfg> = {
     country: "Australia",
     countrySlug: "australia",
     count: 186,
-    title: "Sydney Live Webcams — 186 Traffic Cameras | WorldEye",
+    title: "Sydney Live Webcams — 186 Traffic Cameras",
     blurb:
       "Watch 186 live Sydney metro traffic cameras — harbour crossings, freeways and beach routes — free on the WorldEye live map. No signup needed.",
     h1: "Sydney Live Webcams",
@@ -623,7 +623,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { city: slug } = await params;
   const c = CITIES[slug];
-  if (!c) return { title: "Not found | WorldEye" };
+  if (!c) return { title: "Not found" };
   const url = `/city-webcams/${slug}`;
   return {
     title: c.title,

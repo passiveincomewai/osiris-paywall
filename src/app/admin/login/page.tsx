@@ -6,7 +6,7 @@ import { adminEmails } from "@/lib/affiliate/admin";
 import AdminLoginForm from "./AdminLoginForm";
 
 export const metadata: Metadata = {
-  title: "Admin sign in — WorldEye",
+  title: "Admin sign in",
   description: "Restricted area. Authorized administrators only.",
   robots: { index: false, follow: false },
 };

@@ -21,7 +21,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Best Flight Tracking Tools in 2026 | WorldEye",
+  title: "Best Flight Tracking Tools in 2026",
   description:
     "The best flight tracking tools for 2026 compared: WorldEye's free 3D globe, Flightradar24, ADS-B Exchange, airplanes.live and more.",
   alternates: { canonical: "/best-flight-tracking-tools" },

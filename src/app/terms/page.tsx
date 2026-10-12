@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | WorldEye",
+  title: "Terms of Service",
   description:
     "The Terms of Service for WorldEye — subscriptions, billing, acceptable use, and the fine print for the live planetary intelligence map.",
   alternates: { canonical: "/terms" },

@@ -16,7 +16,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Weather Tracker — Storms on a 3D Globe | WorldEye",
+  title: "Live Weather Tracker — Storms on a 3D Globe",
   description:
     "Watch live weather on a 3D globe: storm systems, wind and precipitation sweeping the planet. Free weather tracker — no signup, no account, no cost.",
   alternates: { canonical: "/weather-tracker" },
@@ -81,7 +81,7 @@ const USE_CASES = [
   {
     icon: Camera,
     title: "Ground truth",
-    desc: "Pair the weather layer with 40,000+ public cameras: see the sky over a place and the street below it, side by side.",
+    desc: "Pair the weather layer with 36,000+ public cameras: see the sky over a place and the street below it, side by side.",
   },
   {
     icon: Wind,
@@ -337,7 +337,7 @@ export default function WeatherTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "40,000+ public cameras — see the sky over any place and the street below it.",
+              desc: "36,000+ public cameras — see the sky over any place and the street below it.",
               href: "/cameras",
             },
             {

@@ -21,7 +21,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Free Flightradar24 Alternatives in 2026 | WorldEye",
+  title: "Free Flightradar24 Alternatives in 2026",
   description:
     "The best free Flightradar24 alternatives compared: WorldEye's 3D globe, ADS-B Exchange, airplanes.live and more — no signup needed.",
   alternates: { canonical: "/alternatives/flightradar24" },

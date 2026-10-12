@@ -11,7 +11,7 @@ import CreatorApplications from "./CreatorApplications";
 import LiveRefresh from "./LiveRefresh";
 import { growthDashboardUrl } from "@/lib/growth";
 
-export const metadata = { title: "Admin Dashboard — WorldEye" };
+export const metadata = { title: "Admin Dashboard" };
 export const dynamic = "force-dynamic";
 
 const DAY = 86400_000;

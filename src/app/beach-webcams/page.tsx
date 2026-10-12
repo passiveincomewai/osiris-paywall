@@ -14,7 +14,7 @@ import {
 } from "@/components/directory-page";
 
 export const metadata: Metadata = {
-  title: "Beach Webcams — Live Coastal Cameras Worldwide | WorldEye",
+  title: "Beach Webcams — Live Coastal Cameras Worldwide",
   description:
     "Watch live beach webcams worldwide: surf and swell, sunrises, coastal weather and harbor views — free on the WorldEye map, no signup needed.",
   alternates: { canonical: `${BASE}/beach-webcams` },

@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import data from "@/data/camera-directory.json";
 
 export const metadata: Metadata = {
-  title: "Europe Live Cameras — 35 Countries, Watch Free | WorldEye",
+  title: "Europe Live Cameras — 35 Countries, Watch Free",
   description:
     "Watch 9,144 live cameras across 35 European countries — Spain, Italy, France, Greece and more. Free public feeds, no signup required.",
   alternates: { canonical: "https://worldeye.app/europe-live-cameras" },

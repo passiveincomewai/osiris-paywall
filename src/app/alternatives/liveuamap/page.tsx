@@ -23,7 +23,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Liveuamap Alternatives: 7 Options in 2026 | WorldEye",
+  title: "Liveuamap Alternatives: 7 Options in 2026",
   description:
     "Searching for a Liveuamap alternative? Compare 7 options for 2026, from WorldEye's free live 3D globe to DeepStateMap, ACLED and GDELT.",
   alternates: { canonical: "/alternatives/liveuamap" },

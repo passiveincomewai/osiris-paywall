@@ -18,7 +18,7 @@ import {
   PageShell,
 } from "@/components/directory-page";
 
-const TITLE = "Asia Webcams — 5,858 Live Cameras | WorldEye";
+const TITLE = "Asia Webcams — 5,858 Live Cameras";
 const BLURB =
   "Explore 5,858 live webcams across 28 Asian countries — Taiwan, Hong Kong, Japan, South Korea and more — free on the WorldEye live map. No signup needed.";
 const CANONICAL = `${BASE}/asia-webcams`;

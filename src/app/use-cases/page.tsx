@@ -17,7 +17,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Use Cases — Who Uses WorldEye | WorldEye",
+  title: "Use Cases — Who Uses WorldEye",
   description:
     "How people use WorldEye's free live globe: OSINT research, trip planning, storm watching, flight tracking, classrooms and maritime monitoring — real workflows.",
   alternates: { canonical: "/use-cases" },

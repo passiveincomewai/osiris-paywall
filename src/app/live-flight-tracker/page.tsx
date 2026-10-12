@@ -19,7 +19,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Flight Tracker — Track Every Flight Live | WorldEye",
+  title: "Live Flight Tracker — Track Every Flight Live",
   description:
     "Track flights live on a free 3D map. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost, no account.",
   alternates: { canonical: "/live-flight-tracker" },

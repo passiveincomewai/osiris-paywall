@@ -21,7 +21,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Dataminr Alternatives for Everyone | WorldEye",
+  title: "Dataminr Alternatives for Everyone",
   description:
     "Dataminr alternatives compared honestly: WorldEye's visual monitoring, GDELT's free event data, Crisis24 and more — for non-enterprise budgets.",
   alternates: { canonical: "/alternatives/dataminr" },

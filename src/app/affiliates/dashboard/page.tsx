@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import DashboardClient from "./DashboardClient";
 
-export const metadata = { title: "Affiliate Command Deck — WorldEye" };
+export const metadata = { title: "Affiliate Command Deck" };
 
 export default async function DashboardPage() {
   const session = await auth();

@@ -14,7 +14,7 @@ import {
 } from "@/components/directory-page";
 
 export const metadata: Metadata = {
-  title: "Ski Webcams — Live Mountain & Resort Cameras | WorldEye",
+  title: "Ski Webcams — Live Mountain & Resort Cameras",
   description:
     "Check live ski resort webcams before you drive up: snowfall, lift lines, visibility and mountain weather — free on the WorldEye map, no signup.",
   alternates: { canonical: `${BASE}/ski-webcams` },

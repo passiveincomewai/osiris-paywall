@@ -23,7 +23,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "7 Best OSINT Tools for 2026 (Ranked) | WorldEye",
+  title: "7 Best OSINT Tools for 2026 (Ranked)",
   description:
     "The 7 best OSINT tools for 2026, ranked with transparent criteria — from WorldEye's free visual toolkit to Maltego, Shodan and SpiderFoot.",
   alternates: { canonical: "/best-osint-tools" },

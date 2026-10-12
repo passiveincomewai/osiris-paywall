@@ -3,7 +3,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import ResetForm from "./ResetForm";
 
 export const metadata: Metadata = {
-  title: "Choose a new password — WorldEye",
+  title: "Choose a new password",
   description: "Choose a new password for your WorldEye account.",
   robots: { index: false, follow: false },
 };

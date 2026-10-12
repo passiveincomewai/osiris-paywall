@@ -19,7 +19,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Satellite Tracker — ISS, Starlink & More | WorldEye",
+  title: "Live Satellite Tracker — ISS, Starlink & More",
   description:
     "Watch satellites live on a 3D globe — the ISS, Starlink and thousands more with real orbit paths. A free live satellite map: no signup, no account, no cost.",
   alternates: { canonical: "/satellite-tracker" },

@@ -21,7 +21,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "World Monitor Alternatives in 2026 | WorldEye",
+  title: "World Monitor Alternatives in 2026",
   description:
     "Looking for a World Monitor alternative? Compare free live-world dashboards — WorldEye's 3D globe, Zoom Earth, NASA Worldview and more.",
   alternates: { canonical: "/alternatives/world-monitor" },

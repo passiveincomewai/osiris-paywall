@@ -22,7 +22,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Best Global Intelligence Dashboards 2026 | WorldEye",
+  title: "Best Global Intelligence Dashboards 2026",
   description:
     "The best global intelligence dashboards for 2026: WorldEye's free live globe, Crisis24, Dataminr, GDELT and more — compared honestly.",
   alternates: { canonical: "/best-global-intelligence-dashboards" },

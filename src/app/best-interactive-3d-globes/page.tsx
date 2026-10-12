@@ -21,7 +21,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Best Interactive 3D Globes in 2026 | WorldEye",
+  title: "Best Interactive 3D Globes in 2026",
   description:
     "The best interactive 3D globes for 2026: WorldEye's live globe, Google Earth, NASA Worldview, Zoom Earth and more — compared honestly.",
   alternates: { canonical: "/best-interactive-3d-globes" },

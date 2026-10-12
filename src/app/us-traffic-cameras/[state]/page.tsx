@@ -47,7 +47,7 @@ const STATES: Record<string, StateCfg> = {
   georgia: {
     name: "Georgia",
     count: 4330,
-    title: "Georgia Traffic Cameras — Live GA DOT Road Cams | WorldEye",
+    title: "Georgia Traffic Cameras — Live GA DOT Road Cams",
     blurb:
       "Watch 4,330 live Georgia DOT highway cameras — Atlanta's Downtown Connector, I-75, I-85 and I-20 road conditions — free on the WorldEye map.",
     h1: "Georgia Traffic Cameras",
@@ -113,7 +113,7 @@ const STATES: Record<string, StateCfg> = {
   utah: {
     name: "Utah",
     count: 2082,
-    title: "Utah Traffic Cameras — Live UDOT Road Cams | WorldEye",
+    title: "Utah Traffic Cameras — Live UDOT Road Cams",
     blurb:
       "Check 2,082 live Utah DOT road cameras — Cottonwood Canyon ski routes, I-15 corridor and Wasatch Front conditions — free on WorldEye. No signup needed.",
     h1: "Utah Traffic Cameras",
@@ -187,7 +187,7 @@ const STATES: Record<string, StateCfg> = {
   texas: {
     name: "Texas",
     count: 2492,
-    title: "Texas Traffic Cameras — Houston & Dallas Cams | WorldEye",
+    title: "Texas Traffic Cameras — Houston & Dallas Cams",
     blurb:
       "Watch 2,492 live Texas traffic cameras across Houston, Dallas and Fort Worth — check I-10, I-35 and I-45 conditions free on WorldEye. No signup needed.",
     h1: "Texas Traffic Cameras",
@@ -259,7 +259,7 @@ const STATES: Record<string, StateCfg> = {
   florida: {
     name: "Florida",
     count: 1435,
-    title: "Florida Traffic Cameras — Tampa, Broward & Miami | WorldEye",
+    title: "Florida Traffic Cameras — Tampa, Broward & Miami",
     blurb:
       "See 1,435 live Florida traffic cameras across Tampa, Broward and Miami-Dade — check I-95, I-4 and Turnpike conditions free on WorldEye. No signup needed.",
     h1: "Florida Traffic Cameras",
@@ -331,7 +331,7 @@ const STATES: Record<string, StateCfg> = {
   indiana: {
     name: "Indiana",
     count: 703,
-    title: "Indiana Traffic Cameras — Live INDOT Highway Cams | WorldEye",
+    title: "Indiana Traffic Cameras — Live INDOT Highway Cams",
     blurb:
       "Watch 703 live Indiana highway cameras — I-64, I-65 and I-70 road conditions including the Sherman Minton Bridge — free on WorldEye. No signup needed.",
     h1: "Indiana Traffic Cameras",
@@ -405,7 +405,7 @@ const STATES: Record<string, StateCfg> = {
   nevada: {
     name: "Nevada",
     count: 652,
-    title: "Nevada Traffic Cameras — Live NDOT Highway Cams | WorldEye",
+    title: "Nevada Traffic Cameras — Live NDOT Highway Cams",
     blurb:
       "Check 652 live Nevada highway cameras — Las Vegas corridors, I-15 resort traffic and I-80 desert conditions — free on the WorldEye map. No signup needed.",
     h1: "Nevada Traffic Cameras",
@@ -491,7 +491,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { state: slug } = await params;
   const s = STATES[slug];
-  if (!s) return { title: "Not found | WorldEye" };
+  if (!s) return { title: "Not found" };
   const url = `/us-traffic-cameras/${slug}`;
   return {
     title: s.title,

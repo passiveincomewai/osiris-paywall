@@ -14,7 +14,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "What Is ADS-B? How Flight Tracking Works | WorldEye",
+  title: "What Is ADS-B? How Flight Tracking Works",
   description:
     "ADS-B explained: how aircraft transponders broadcast position, altitude and speed, why the data is public, and its limits. Read, then watch it live.",
   alternates: { canonical: "/what-is-ads-b" },

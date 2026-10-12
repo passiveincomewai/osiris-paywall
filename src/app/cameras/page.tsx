@@ -9,7 +9,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Cameras — Watch the World Live | WorldEye",
+  title: "Live Cameras — Watch the World Live",
   description:
     "Browse ~36,000 live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free forever, no signup, no account.",
   alternates: { canonical: "/cameras" },

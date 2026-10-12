@@ -22,7 +22,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Best Geopolitical Monitoring Tools 2026 | WorldEye",
+  title: "Best Geopolitical Monitoring Tools 2026",
   description:
     "The best geopolitical monitoring tools for 2026 compared: WorldEye's live globe, Crisis24, ACLED, GDELT and more — free and pro picks.",
   alternates: { canonical: "/best-geopolitical-monitoring-tools" },

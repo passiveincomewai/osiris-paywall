@@ -3,7 +3,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import SignInForm, { type OAuthProvider } from "./SignInForm";
 
 export const metadata: Metadata = {
-  title: "Sign in — WorldEye",
+  title: "Sign in",
   description: "Sign in to your WorldEye account with Google or email.",
   robots: { index: false, follow: false },
 };

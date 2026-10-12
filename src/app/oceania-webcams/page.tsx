@@ -18,7 +18,7 @@ import {
   PageShell,
 } from "@/components/directory-page";
 
-const TITLE = "Oceania Webcams — 499 Live Cameras | WorldEye";
+const TITLE = "Oceania Webcams — 499 Live Cameras";
 const BLURB =
   "Watch 499 live webcams across Australia and New Zealand — Sydney motorways, NZ state highways and alpine roads — free on the WorldEye map. No signup needed.";
 const CANONICAL = `${BASE}/oceania-webcams`;

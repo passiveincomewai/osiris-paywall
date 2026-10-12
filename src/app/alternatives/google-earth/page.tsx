@@ -21,7 +21,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Google Earth Alternatives: Live Views | WorldEye",
+  title: "Google Earth Alternatives: Live Views",
   description:
     "Google Earth alternatives compared: WorldEye's live 3D globe, Zoom Earth, NASA Worldview and more — for when you need the planet right now.",
   alternates: { canonical: "/alternatives/google-earth" },

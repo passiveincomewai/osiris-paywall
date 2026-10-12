@@ -3,7 +3,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import ForgotForm from "./ForgotForm";
 
 export const metadata: Metadata = {
-  title: "Forgot password — WorldEye",
+  title: "Forgot password",
   description: "Reset your WorldEye account password.",
   robots: { index: false, follow: false },
 };

@@ -7,7 +7,7 @@ import RelatedLinks from "@/components/RelatedLinks";
 import FaqAccordion, { type Faq } from "./FaqClient";
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions | WorldEye",
+  title: "Frequently Asked Questions",
   description:
     "Answers about WorldEye: is the map free, do you need an account, what Pro includes, trials and billing, cameras, flight tracking, privacy and account help.",
   alternates: { canonical: "/faq" },

@@ -15,7 +15,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Hurricane Tracker — Live Storm Tracking | WorldEye",
+  title: "Hurricane Tracker — Live Storm Tracking",
   description:
     "Follow hurricanes live on a 3D globe: storm paths, intensity and landfall context. Free hurricane tracker — no signup. Always follow official warnings.",
   alternates: { canonical: "/hurricane-tracker" },
@@ -311,7 +311,7 @@ export default function HurricaneTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "40,000+ public cameras — watch coastal conditions as a storm nears land.",
+              desc: "36,000+ public cameras — watch coastal conditions as a storm nears land.",
               href: "/cameras",
             },
             {

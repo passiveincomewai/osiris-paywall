@@ -18,7 +18,7 @@ import {
   PageShell,
 } from "@/components/directory-page";
 
-const TITLE = "North America Webcams — 24,644 Live Cameras | WorldEye";
+const TITLE = "North America Webcams — 24,644 Live Cameras";
 const BLURB =
   "Browse 24,644 live webcams across 18 North American, Central American and Caribbean countries and territories — free on the WorldEye live map.";
 const CANONICAL = `${BASE}/north-america-webcams`;

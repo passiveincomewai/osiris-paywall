@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { adminEmails } from "@/lib/affiliate/admin";
 import AdminClient from "./AdminClient";
 
-export const metadata = { title: "Affiliate Admin — WorldEye" };
+export const metadata = { title: "Affiliate Admin" };
 
 export default async function AdminAffiliatesPage() {
   const session = await auth();

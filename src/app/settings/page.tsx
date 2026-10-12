@@ -4,7 +4,7 @@ import SettingsClient from "./SettingsClient";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Account Settings — WorldEye",
+  title: "Account Settings",
   description: "Manage your WorldEye profile, password and subscription.",
   robots: { index: false, follow: false },
 };

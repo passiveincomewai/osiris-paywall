@@ -14,7 +14,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "What Is AIS? How Ship Tracking Works | WorldEye",
+  title: "What Is AIS? How Ship Tracking Works",
   description:
     "AIS explained: how ships broadcast identity, position and course by radio, who is required to carry it, and its limits. Read, then watch vessels live.",
   alternates: { canonical: "/what-is-ais" },

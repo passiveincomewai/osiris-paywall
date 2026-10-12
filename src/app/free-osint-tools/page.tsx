@@ -24,7 +24,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "9 Free OSINT Tools That Actually Work | WorldEye",
+  title: "9 Free OSINT Tools That Actually Work",
   description:
     "9 genuinely free OSINT tools for 2026 — WorldEye's free globe, GDELT, SpiderFoot, theHarvester and more. No trials, no credit cards.",
   alternates: { canonical: "/free-osint-tools" },

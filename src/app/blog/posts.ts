@@ -158,7 +158,7 @@ export const POSTS: BlogPost[] = [
   {
     slug: "world-live-cameras",
     title: "36,000 Live Cameras: Watching the World in Real Time",
-    seoTitle: "36,000 Live Cameras: Watching the World Live | WorldEye",
+    seoTitle: "36,000 Live Cameras: Watching the World Live",
     date: "2026-10-10",
     excerpt:
       "Tens of thousands of public webcams — traffic, city squares, beaches, mountain passes — stream openly to anyone. Here's what's out there, what it's good for, and an honest note on availability.",
@@ -1015,7 +1015,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "1–2. Verify footage and photos before publishing",
         body: [
-          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 40,000+ public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
+          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 36,000+ public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
           "The same discipline applies to photos from conflict zones. Matching a photo's terrain to satellite imagery, checking the sun angle against the claimed time, and finding the same location on a live camera can confirm or kill a story in minutes. Getting this wrong means publishing misinformation — getting it right is what separates reporting from reposting.",
           "Speed matters, but so does a verification workflow the whole desk follows. The best newsrooms maintain shared checklists and require two independent confirmations before airing user-generated content. Lone-wolf verification is admirable; institutional verification is reliable. Build the checklist once, and every breaking story gets faster without getting sloppier.",
           "One final habit: keep a personal log of your verifications — what you checked, what you found, what you concluded. Over time it becomes both a portfolio of your rigor and a reference when similar claims resurface, as they always do.",

@@ -20,9 +20,9 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Features — Free Live Globe & Pro Tools | WorldEye",
+  title: "Features — Free Live Globe & Pro Tools",
   description:
-    "All WorldEye features: a free 3D globe with flights, 40,000+ cameras, satellites and hazards — plus Pro's OI AI assistant, satellite imagery and OSINT toolkit.",
+    "All WorldEye features: a free 3D globe with flights, 36,000+ cameras, satellites and hazards — plus Pro's OI AI assistant, satellite imagery and OSINT toolkit.",
   alternates: { canonical: "/features" },
   openGraph: {
     title: "WorldEye Features — Free Live Globe & Pro Tools",
@@ -38,7 +38,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "WorldEye Features",
   description:
-    "Everything WorldEye can do: a free forever live 3D globe with flight tracking, 40,000+ public cameras, satellites and natural hazards — plus Pro intelligence tools.",
+    "Everything WorldEye can do: a free forever live 3D globe with flight tracking, 36,000+ public cameras, satellites and natural hazards — plus Pro intelligence tools.",
   url: "https://worldeye.app/features",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
@@ -107,10 +107,10 @@ const FREE_FEATURES = [
   },
   {
     icon: Camera,
-    title: "40,000+ public cameras",
+    title: "36,000+ public cameras",
     desc: "Worldwide public street cameras, free for everyone. See streets as they are right now.",
     detail:
-      "The directory indexes 40,207 public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Open any feed free; Pro members get unlimited camera access for deep research sessions.",
+      "The directory indexes 36,000+ public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Open any feed free; Pro members get unlimited camera access for deep research sessions.",
   },
   {
     icon: Satellite,

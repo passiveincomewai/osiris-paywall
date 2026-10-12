@@ -30,9 +30,9 @@ export function generateStaticParams() {
 }
 
 function pageTitle(c: Country): string {
-  const t = `${c.name} Live Cameras — ${c.count.toLocaleString("en-US")} Street Cams | WorldEye`;
+  const t = `${c.name} Live Cameras — ${c.count.toLocaleString("en-US")} Street Cams`;
   if (t.length <= 60) return t;
-  return `${c.name} Live Cameras | WorldEye`;
+  return `${c.name} Live Cameras`;
 }
 
 export async function generateMetadata({
@@ -43,7 +43,7 @@ export async function generateMetadata({
   const { country: slug } = await params;
   const c = getCountry(slug);
   const content = CONTENT[slug];
-  if (!c || !content) return { title: "Not found | WorldEye" };
+  if (!c || !content) return { title: "Not found" };
   const url = `/cameras/countries/${slug}`;
   return {
     title: pageTitle(c),

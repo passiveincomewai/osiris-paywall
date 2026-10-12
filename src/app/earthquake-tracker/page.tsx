@@ -6,7 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Earthquake Tracker — Quakes As They Happen | WorldEye",
+  title: "Live Earthquake Tracker — Quakes As They Happen",
   description:
     "Track earthquakes live on a 3D globe: magnitude, depth, location and time as they happen. Free earthquake tracker — no signup, no account, no cost.",
   alternates: { canonical: "/earthquake-tracker" },

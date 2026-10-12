@@ -15,7 +15,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "ISS Tracker — Watch the Space Station Live | WorldEye",
+  title: "ISS Tracker — Watch the Space Station Live",
   description:
     "Track the International Space Station live on a 3D globe: current position, orbit path and visibility. Free ISS tracker — no signup, no account, no cost.",
   alternates: { canonical: "/space-station-tracker" },

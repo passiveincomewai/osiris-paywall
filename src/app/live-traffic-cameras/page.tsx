@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import data from "@/data/camera-directory.json";
 
 export const metadata: Metadata = {
-  title: "Live Traffic Cameras — US DOT Highway Cams | WorldEye",
+  title: "Live Traffic Cameras — US DOT Highway Cams",
   description:
     "Watch 23,059 live US traffic cameras — DOT highway feeds, interstate junctions and city streets. Free, no signup. Check road conditions in real time.",
   alternates: { canonical: "https://worldeye.app/live-traffic-cameras" },

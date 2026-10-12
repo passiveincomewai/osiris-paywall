@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import data from "@/data/camera-directory.json";
 
 export const metadata: Metadata = {
-  title: "World City Webcams — Top 25 Live City Cams | WorldEye",
+  title: "World City Webcams — Top 25 Live City Cams",
   description:
     "The 25 busiest live camera regions in the world — from Georgia to Madrid, London and Taipei. Real camera counts, free to watch, no signup.",
   alternates: { canonical: "https://worldeye.app/world-city-webcams" },

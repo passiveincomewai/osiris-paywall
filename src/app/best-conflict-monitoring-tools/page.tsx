@@ -22,7 +22,7 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Best Conflict Monitoring Tools 2026 | WorldEye",
+  title: "Best Conflict Monitoring Tools 2026",
   description:
     "The best conflict monitoring tools for 2026: Liveuamap, DeepStateMap, ACLED, WorldEye's live globe and more — compared honestly.",
   alternates: { canonical: "/best-conflict-monitoring-tools" },

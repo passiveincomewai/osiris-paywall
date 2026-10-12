@@ -3,7 +3,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import SignupForm from "./SignupForm";
 
 export const metadata: Metadata = {
-  title: "Create an account — WorldEye",
+  title: "Create an account",
   description: "Create your free WorldEye account with an email and password.",
   robots: { index: false, follow: false },
 };

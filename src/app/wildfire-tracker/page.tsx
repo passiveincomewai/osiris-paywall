@@ -15,7 +15,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Wildfire Tracker — Fire Activity Map | WorldEye",
+  title: "Live Wildfire Tracker — Fire Activity Map",
   description:
     "Track wildfire activity live on a 3D globe: active fires, smoke drift and heat detections. Free wildfire map — no signup. Safety info from official sources.",
   alternates: { canonical: "/wildfire-tracker" },
@@ -243,7 +243,7 @@ export default function WildfireTrackerPage() {
             </p>
             <p>
               And the context keeps going: earthquakes, flights, satellites and
-              40,000+ public cameras share the same globe. In fire country,
+              36,000+ public cameras share the same globe. In fire country,
               that means you can sometimes watch the smoke column from a
               roadside camera while the satellite data shows the heat source.
             </p>
@@ -343,7 +343,7 @@ export default function WildfireTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "40,000+ public cameras — watch conditions on the ground near a fire.",
+              desc: "36,000+ public cameras — watch conditions on the ground near a fire.",
               href: "/cameras",
             },
             {

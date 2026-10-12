@@ -17,7 +17,7 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Ship Tracker — Marine Vessel Tracking | WorldEye",
+  title: "Live Ship Tracker — Marine Vessel Tracking",
   description:
     "Track ships live on a 3D globe: position, speed, heading and vessel type via AIS. A free live ship tracker — no signup, no account, no cost.",
   alternates: { canonical: "/ship-tracker" },
@@ -114,7 +114,7 @@ const USE_CASES = [
 const FAQS = [
   {
     q: "Is the ship tracker free?",
-    a: "The WorldEye globe itself is free — no account, no signup. Maritime vessel tracking is part of WorldEye's premium maritime intel feed, which is included with a Pro subscription. Everything else on the map — flights, satellites, weather, quakes, wildfires and 40,000+ public cameras — is free forever.",
+    a: "The WorldEye globe itself is free — no account, no signup. Maritime vessel tracking is part of WorldEye's premium maritime intel feed, which is included with a Pro subscription. Everything else on the map — flights, satellites, weather, quakes, wildfires and 36,000+ public cameras — is free forever.",
   },
   {
     q: "How do ships show up on the map?",
@@ -261,7 +261,7 @@ export default function ShipTrackerPage() {
               <Link href="/pricing" className="text-[#D4AF37] hover:underline">
                 Pro intel toolkit
               </Link>
-              . The rest of the globe, including live flights and 40,000+ public
+              . The rest of the globe, including live flights and 36,000+ public
               cameras, is free for everyone with no account.
             </p>
             <p>

@@ -15,7 +15,7 @@ import {
 } from "@/components/directory-page";
 
 export const metadata: Metadata = {
-  title: "Airport Webcams — Watch Airports Live | WorldEye",
+  title: "Airport Webcams — Watch Airports Live",
   description:
     "Watch airport-area webcams live: runway views, approach paths and airport weather checks before you fly. Free, no signup, on the WorldEye globe.",
   alternates: { canonical: `${BASE}/airport-webcams` },
