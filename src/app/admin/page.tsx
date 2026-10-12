@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { adminEmails } from "@/lib/affiliate/admin";
 import { stripe } from "@/lib/stripe";
+import directory from "@/data/camera-directory.json";
 import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 
@@ -112,6 +113,7 @@ async function stripeRevenue() {
     const since = Math.floor((Date.now() - 30 * DAY) / 1000);
     const since7 = Math.floor((Date.now() - 7 * DAY) / 1000);
     let total30 = 0, total7 = 0, pages = 0;
+    let refunded30 = 0, refundCount30 = 0;
     const byDay: Record<string, number> = {};
     const byPlan: Record<string, number> = {};
     let startingAfter: string | undefined;
@@ -136,9 +138,19 @@ async function stripeRevenue() {
       startingAfter = page.data[page.data.length - 1]?.id;
       if (!startingAfter || pages > 50) break; // sanity cap: 5,000 invoices
     }
-    return { total30, total7, byDay, byPlan, ok: true as const };
+    // Refunds live on the Refunds API, not on Invoice in v18.
+    try {
+      const refunds = await s.refunds.list({ created: { gte: since }, limit: 100 });
+      for (const r of refunds.data) {
+        if (r.status === "succeeded") {
+          refunded30 += r.amount ?? 0;
+          refundCount30++;
+        }
+      }
+    } catch { /* refunds unavailable — leave at 0 */ }
+    return { total30, total7, byDay, byPlan, refunded30, refundCount30, ok: true as const };
   } catch {
-    return { total30: 0, total7: 0, byDay: {} as Record<string, number>, byPlan: {} as Record<string, number>, ok: false as const };
+    return { total30: 0, total7: 0, byDay: {} as Record<string, number>, byPlan: {} as Record<string, number>, refunded30: 0, refundCount30: 0, ok: false as const };
   }
 }
 
@@ -167,17 +179,21 @@ export default async function AdminDashboardPage() {
 
   const now = Date.now();
   const d1 = new Date(now - 1 * DAY), d7 = new Date(now - 7 * DAY), d30 = new Date(now - 30 * DAY);
+  const d60 = new Date(now - 60 * DAY);
   const d3future = new Date(now + 3 * DAY);
 
+  type SignupSource = { ref: string; c: bigint };
   const [
     totalUsers, users7d, users30d, unverifiedPwUsers, passwordUsers, oauthProviders,
     subs, subStatus, newSubs7d, newSubs30d, canceled30d, trialsEndingSoon, recentSubs,
+    trialCohortTotal, trialCohortPaying, pastDueSubs,
     pv24h, pv7d, pv30d, pvTotal,
     uniq24h, uniq30d, sessionAgg,
-    topPages, topReferrersRaw, recentUsers,
+    topPages, topReferrersRaw, recentUsers, signupSourcesRaw,
     dailySignupsRaw, dailyPvRaw,
     nlTotal, nlVerified, nl7d, nl30d,
     checkoutStatus, checkoutByPlan,
+    competitorCount, affiliateCount, pendingCommissions,
     rev,
   ] = await Promise.all([
     db.user.count(),
@@ -197,6 +213,14 @@ export default async function AdminDashboardPage() {
       orderBy: { createdAt: "desc" }, take: 8,
       select: { status: true, stripePriceId: true, createdAt: true, user: { select: { email: true } } },
     }),
+    // Trial cohort: subscriptions old enough that all trials (1-3d) have resolved.
+    // "Paying now" among them = trial/new-sub conversion.
+    db.subscription.count({ where: { createdAt: { gte: d60, lt: d7 } } }),
+    db.subscription.count({ where: { createdAt: { gte: d60, lt: d7 }, status: "active" } }),
+    db.subscription.findMany({
+      where: { status: "past_due" }, orderBy: { currentPeriodEnd: "asc" }, take: 10,
+      select: { stripePriceId: true, currentPeriodEnd: true, user: { select: { email: true } } },
+    }),
     db.pageView.count({ where: { createdAt: { gte: d1 } } }),
     db.pageView.count({ where: { createdAt: { gte: d7 } } }),
     db.pageView.count({ where: { createdAt: { gte: d30 } } }),
@@ -212,6 +236,24 @@ export default async function AdminDashboardPage() {
     db.pageView.groupBy({ by: ["path"], where: { createdAt: { gte: d30 } }, _count: true, orderBy: { _count: { path: "desc" } }, take: 10 }),
     db.pageView.groupBy({ by: ["referrer"], where: { createdAt: { gte: d30 }, referrer: { not: null } }, _count: true, orderBy: { _count: { referrer: "desc" } }, take: 40 }),
     db.user.findMany({ orderBy: { createdAt: "desc" }, take: 8, select: { email: true, name: true, createdAt: true, emailVerified: true } }),
+    // Signup attribution: for each user created in 30d, take their earliest
+    // pageview session, then that session's earliest referrer. sessionStorage
+    // persists through the signup flow in the same tab, so same-tab signups
+    // attribute correctly. Best-effort — cross-device returns are "direct".
+    db.$queryRaw<SignupSource[]>`
+      SELECT r.referrer AS ref, COUNT(DISTINCT s."userId") AS c
+      FROM (
+        SELECT DISTINCT ON (pv."userId") pv."userId", pv."sessionId"
+        FROM "PageView" pv
+        WHERE pv."userId" IN (SELECT u.id FROM "User" u WHERE u."createdAt" >= ${d30})
+        ORDER BY pv."userId", pv."createdAt" ASC
+      ) s
+      JOIN LATERAL (
+        SELECT pv2.referrer FROM "PageView" pv2
+        WHERE pv2."sessionId" = s."sessionId" AND pv2.referrer IS NOT NULL
+        ORDER BY pv2."createdAt" ASC LIMIT 1
+      ) r ON true
+      GROUP BY r.referrer ORDER BY c DESC LIMIT 20`,
     db.$queryRaw<{ d: string; c: bigint }[]>`SELECT TO_CHAR("createdAt", 'YYYY-MM-DD') AS d, COUNT(*) AS c FROM "User" WHERE "createdAt" >= ${d30} GROUP BY d ORDER BY d`,
     db.$queryRaw<{ d: string; c: bigint }[]>`SELECT TO_CHAR("createdAt", 'YYYY-MM-DD') AS d, COUNT(*) AS c FROM "PageView" WHERE "createdAt" >= ${d30} GROUP BY d ORDER BY d`,
     db.newsletterSubscriber.count(),
@@ -220,6 +262,9 @@ export default async function AdminDashboardPage() {
     db.newsletterSubscriber.count({ where: { createdAt: { gte: d30 } } }),
     db.checkoutAttempt.groupBy({ by: ["status"], where: { createdAt: { gte: d7 } }, _count: true }),
     db.checkoutAttempt.groupBy({ by: ["plan"], where: { createdAt: { gte: d30 } }, _count: true }),
+    db.competitor.count(),
+    db.affiliateProfile.count(),
+    db.commission.aggregate({ _sum: { amountCents: true }, where: { status: "pending" } }),
     stripeRevenue(),
   ]);
 
@@ -262,6 +307,32 @@ export default async function AdminDashboardPage() {
     refMap.set(host, (refMap.get(host) ?? 0) + r._count);
   }
   const topReferrers = [...refMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+  // --- Signup sources: normalize attributed referrers, join visitor counts ---
+  const signupSrcMap = new Map<string, number>();
+  for (const r of signupSourcesRaw) {
+    if (!r.ref) continue;
+    let host = r.ref;
+    try { host = new URL(r.ref).hostname.replace(/^www\./, ""); } catch { /* keep raw */ }
+    if (!host || host.includes("worldeye.app")) continue;
+    signupSrcMap.set(host, (signupSrcMap.get(host) ?? 0) + Number(r.c));
+  }
+  const attributedSignups = [...signupSrcMap.values()].reduce((a, b) => a + b, 0);
+  const directSignups = Math.max(0, users30d - attributedSignups);
+  const signupSources = [...signupSrcMap.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([host, signups]) => ({
+      host,
+      signups,
+      // Directional: attributed signups ÷ pageviews carrying that referrer.
+      conv: refMap.get(host) ? pct(signups, refMap.get(host)!) : "—",
+    }));
+
+  // --- Subscription economics ---
+  const trialConv = pct(trialCohortPaying, trialCohortTotal);
+  const churn30d = pct(canceled30d, payingSubs.length + canceled30d);
+  const arpu30d = payingSubs.length ? rev.total30 / payingSubs.length : 0; // cents
 
   // --- Checkout funnel (7d) ---
   const coMap = new Map(checkoutStatus.map((r) => [r.status, r._count]));
@@ -333,6 +404,47 @@ export default async function AdminDashboardPage() {
           </div>
         </Section>
 
+        {/* Acquisition */}
+        <Section title="Acquisition · last 30 days">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-3">Where signups came from</div>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-[11px] uppercase tracking-wider text-white/35">
+                  <th className="pb-2 pr-3 font-semibold">Source</th>
+                  <th className="pb-2 pr-3 font-semibold text-right">Signups</th>
+                  <th className="pb-2 font-semibold text-right">Share</th>
+                  <th className="pb-2 font-semibold text-right hidden sm:table-cell">Est. conv.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {signupSources.map((s) => (
+                  <tr key={s.host} className="border-t border-white/5">
+                    <td className="py-2 pr-3 font-mono text-cyan-200/80 truncate max-w-[220px]">{s.host}</td>
+                    <td className="py-2 pr-3 text-right text-white/70 tabular-nums">{fmt(s.signups)}</td>
+                    <td className="py-2 pr-3 text-right text-white/50 tabular-nums">{pct(s.signups, Math.max(1, attributedSignups))}</td>
+                    <td className="py-2 text-right text-white/50 tabular-nums hidden sm:table-cell">{s.conv}</td>
+                  </tr>
+                ))}
+                {directSignups > 0 && (
+                  <tr className="border-t border-white/5">
+                    <td className="py-2 pr-3 font-mono text-white/50">direct / unattributed</td>
+                    <td className="py-2 pr-3 text-right text-white/70 tabular-nums">{fmt(directSignups)}</td>
+                    <td className="py-2 pr-3 text-right text-white/50 tabular-nums">{pct(directSignups, Math.max(1, users30d))}</td>
+                    <td className="py-2 text-right text-white/30 hidden sm:table-cell">—</td>
+                  </tr>
+                )}
+                {signupSources.length === 0 && directSignups === 0 && (
+                  <tr><td className="py-4 text-white/35 text-sm" colSpan={4}>No signups in the last 30 days.</td></tr>
+                )}
+              </tbody>
+            </table>
+            <p className="text-[11px] text-white/30 mt-3">
+              Attributed via the signup session's landing referrer (same-tab signups). "Est. conv." = attributed signups ÷ pageviews from that referrer — directional, not exact.
+            </p>
+          </div>
+        </Section>
+
         {/* Charts */}
         <Section title="Trends · 30 days">
           <div className="grid md:grid-cols-3 gap-4">
@@ -369,7 +481,22 @@ export default async function AdminDashboardPage() {
               </table>
               <div className="mt-3 pt-3 border-t border-white/10 text-xs text-white/45 space-y-1">
                 <div>New subscriptions: <span className="text-white/80 font-semibold">+{fmt(newSubs7d)}</span> / 7d · <span className="text-white/80 font-semibold">+{fmt(newSubs30d)}</span> / 30d</div>
-                <div>Canceled in last 30d: <span className="text-white/80 font-semibold">{fmt(canceled30d)}</span></div>
+                <div>
+                  Trial cohort conversion: <span className="text-white/80 font-semibold">{trialConv}</span>
+                  <span className="text-white/35"> ({fmt(trialCohortPaying)} of {fmt(trialCohortTotal)} subs created 8–60d ago are paying now)</span>
+                </div>
+                <div>
+                  Churn (30d): <span className="text-white/80 font-semibold">{churn30d}</span>
+                  <span className="text-white/35"> ({fmt(canceled30d)} canceled ÷ {fmt(payingSubs.length + canceled30d)} paying base)</span>
+                </div>
+                <div>
+                  ARPU (30d): <span className="text-white/80 font-semibold">{rev.ok ? money(Math.round(arpu30d)) : "—"}</span>
+                  <span className="text-white/35"> revenue per paying subscriber</span>
+                </div>
+                {rev.ok && rev.refundCount30 > 0 && (
+                  <div>Refunds (30d): <span className="text-white/80 font-semibold">{money(rev.refunded30)}</span>
+                  <span className="text-white/35"> across {fmt(rev.refundCount30)} refund{rev.refundCount30 === 1 ? "" : "s"}</span></div>
+                )}
                 {rev.ok && Object.keys(rev.byPlan).length > 0 && (
                   <div className="pt-1">Revenue by plan (30d):{" "}
                     {Object.entries(rev.byPlan).sort((a, b) => b[1] - a[1]).map(([p, c]) => (
@@ -400,6 +527,27 @@ export default async function AdminDashboardPage() {
               </table>
             </div>
           </div>
+          {pastDueSubs.length > 0 && (
+            <div className="rounded-2xl border border-amber-400/20 bg-amber-400/[0.03] p-5 mt-4">
+              <div className="text-[11px] font-bold tracking-[0.18em] text-amber-300/80 uppercase mb-3">
+                Past due — needs attention ({pastDueSubs.length})
+              </div>
+              <table className="w-full text-sm">
+                <tbody>
+                  {pastDueSubs.map((s) => (
+                    <tr key={s.user.email} className="border-t border-white/5">
+                      <td className="py-2 pr-3 text-white/80 truncate max-w-[220px]">{s.user.email ?? "—"}</td>
+                      <td className="py-2 pr-3 text-white/50 text-xs whitespace-nowrap">{PLAN_NAMES[s.stripePriceId] ?? "Other"}</td>
+                      <td className="py-2 text-right text-white/40 text-xs whitespace-nowrap">
+                        period ends {new Date(s.currentPeriodEnd).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="text-[11px] text-white/35 mt-3">Stripe retries these automatically; reach out personally if a high-value plan sits here more than a few days.</p>
+            </div>
+          )}
         </Section>
 
         {/* Checkout funnel */}
@@ -513,6 +661,40 @@ export default async function AdminDashboardPage() {
               </p>
             </div>
           </div>
+        </Section>
+
+        {/* System health */}
+        <Section title="System health">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card
+              label="Camera catalog"
+              value={fmt(directory.totalCameras)}
+              sub={`Updated ${new Date(directory.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${directory.countries.length} countries`}
+              accent="#37e08b"
+            />
+            <Card
+              label="Competitor pages"
+              value={competitorCount > 0 ? `${competitorCount}` : "0 — seed needed"}
+              sub={competitorCount > 0 ? "DB-backed comparison pages live" : "Tap “Seed from bundled data” in Competitor Comparisons below"}
+              accent={competitorCount > 0 ? "#37e08b" : "#f87171"}
+            />
+            <Card
+              label="Affiliates"
+              value={fmt(affiliateCount)}
+              sub={`${money(pendingCommissions._sum.amountCents ?? 0)} in pending commissions`}
+              accent="#c084fc"
+            />
+            <Card
+              label="Email sender"
+              value={process.env.EMAIL_FROM ? "Custom domain" : "Test mode"}
+              sub={process.env.EMAIL_FROM ?? "onboarding@resend.dev — only delivers to your own address"}
+              accent={process.env.EMAIL_FROM ? "#37e08b" : "#f7b80c"}
+            />
+          </div>
+          <p className="text-[11px] text-white/30 mt-3">
+            Abandoned-cart reminders sent in the last 7d: <span className="text-white/60 font-semibold">{fmt(coReminded)}</span> ·
+            Checkouts expired unrecovered: <span className="text-white/60 font-semibold">{fmt(coExpired)}</span>
+          </p>
         </Section>
 
         <p className="text-[11px] text-white/30 mt-8 text-center">
