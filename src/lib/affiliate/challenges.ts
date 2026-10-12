@@ -5,7 +5,12 @@
 import { db } from "@/lib/db";
 import { awardXP } from "./xp";
 
-export type Metric = "visits" | "signups" | "paying_referrals" | "revenue_cents" | "rank_up" | "tutorial";
+export type Metric = "visits" | "signups" | "paying_referrals" | "revenue_cents" | "rank_up" | "tutorial" | "studio_creations" | "studio_videos" | "studio_days" | "campaign_joins";
+
+/** Pure helper: number of distinct UTC calendar days in `dates`. */
+export function distinctUtcDays(dates: Date[]): number {
+  return new Set(dates.map((d) => d.toISOString().slice(0, 10))).size;
+}
 
 export interface ChallengeSeed {
   slug: string;
@@ -28,6 +33,10 @@ export const SEEDED_CHALLENGES: ChallengeSeed[] = [
   { slug: "monthly-paying-10", kind: "monthly", title: "Network Effect", description: "Generate 10 paying subscribers.", xpReward: 1200, metric: "paying_referrals", target: 10, durationDays: 30 },
   { slug: "monthly-revenue-500", kind: "monthly", title: "Half Grand", description: "Reach $500 in qualifying referred subscription revenue.", xpReward: 2000, metric: "revenue_cents", target: 50000, durationDays: 30 },
   { slug: "monthly-rank-up", kind: "monthly", title: "Promotion", description: "Unlock a new affiliate rank.", xpReward: 800, metric: "rank_up", target: 1, durationDays: 30 },
+  { slug: "monthly-studio-creator", kind: "monthly", title: "Studio Creator", description: "Save 10 creations in the Studio this month", xpReward: 600, metric: "studio_creations", target: 10, durationDays: 30 },
+  { slug: "monthly-studio-days", kind: "monthly", title: "Studio Regular", description: "Create on 7 different days this month", xpReward: 500, metric: "studio_days", target: 7, durationDays: 30 },
+  { slug: "monthly-studio-video", kind: "monthly", title: "First Reel", description: "Personalize a video in the Studio", xpReward: 300, metric: "studio_videos", target: 1, durationDays: 30 },
+  { slug: "monthly-studio-campaign", kind: "monthly", title: "Campaign Starter", description: "Join a Studio campaign", xpReward: 400, metric: "campaign_joins", target: 1, durationDays: 30 },
 ];
 
 /** Ensure the current period's challenges exist (idempotent by slug+period). */
@@ -79,6 +88,28 @@ async function metricValue(affiliateProfileId: string, metric: Metric, since: Da
       return 0; // handled via XP events on rank change
     case "tutorial":
       return 0; // completed via explicit API call from Resources page
+    case "studio_creations":
+      return db.studioCreation.count({ where: { affiliateProfileId, createdAt: { gte: since } } });
+    case "studio_videos":
+      return db.generationJob.count({
+        where: {
+          profileId: affiliateProfileId,
+          kind: { in: ["video_personalize", "video_template"] },
+          status: "done",
+          createdAt: { gte: since },
+        },
+      });
+    case "studio_days": {
+      const rows = await db.studioCreation.findMany({
+        where: { affiliateProfileId, createdAt: { gte: since } },
+        select: { createdAt: true },
+      });
+      return distinctUtcDays(rows.map((r) => r.createdAt));
+    }
+    case "campaign_joins":
+      return db.studioCampaignParticipation.count({
+        where: { profileId: affiliateProfileId, joinedAt: { gte: since } },
+      });
   }
 }
 
