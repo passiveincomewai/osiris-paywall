@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { stripe, appUrl } from "@/lib/stripe";
 import type { SubscriptionStatus } from "@prisma/client";
 import { recordCommissionsForInvoice, reverseCommissionsForInvoice } from "@/lib/affiliate/commissions";
+import { creditPackPurchase } from "@/lib/studio/credits";
+import { getCreditConfig } from "@/lib/studio/credits-settings";
 import { attributeUserToAffiliate, linkAttribution } from "@/lib/affiliate/attribution";
 import { attributeUserToDiscountAffiliate } from "@/lib/affiliate/discount";
 import { normalizeEmail, isValidEmail } from "@/lib/password-auth";
@@ -201,6 +203,34 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
+        // Studio credit packs (Phase 3): one-time payment sessions whose
+        // metadata names the pack + buyer profile. The credit amount is
+        // resolved from the server-side pack config by id — never from
+        // anything the client sent — and crediting is idempotent on the
+        // checkout session id, so Stripe replays can never double-credit.
+        // Only sessions Stripe reports as actually paid are credited.
+        if (s.mode === "payment" && s.metadata?.kind === "studio_credit_pack") {
+          if (s.payment_status === "paid") {
+            const packId = s.metadata.packId ?? "";
+            const profileId = s.metadata.profileId ?? "";
+            const config = await getCreditConfig();
+            const pack = config.creditPacks.find((p) => p.id === packId);
+            if (pack && profileId) {
+              const result = await creditPackPurchase({
+                profileId,
+                credits: pack.credits,
+                idempotencyKey: `stripe_checkout_session:${s.id}`,
+              });
+              console.log(
+                `[stripe-webhook] credit pack "${pack.id}" (+${pack.credits}) for profile ${profileId}: ${result.credited ? "credited" : "already credited (replay)"}`,
+              );
+            } else {
+              console.error(
+                `[stripe-webhook] credit pack session ${s.id}: unknown pack "${packId}" or missing profile — not credited`,
+              );
+            }
+          }
+        }
         if (s.mode === "subscription" && s.subscription) {
           const subId = s.subscription as string;
           await subscriptionFromId(subId);

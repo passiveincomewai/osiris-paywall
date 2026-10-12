@@ -31,12 +31,19 @@ export async function GET() {
   });
 
   return NextResponse.json({
-    creations: creations.map((c) => ({
-      ...c,
-      templateSlug: c.template?.slug ?? null,
-      createdAt: c.createdAt.toISOString(),
-      updatedAt: c.updatedAt.toISOString(),
-    })),
+    creations: creations.map((c) => {
+      // Phase 3: AI image results live on the row as raw bytes — never
+      // serialize them into this JSON list; the client loads the image
+      // from the owner-only /creations/[id]/image route instead.
+      const { resultImageBytes, ...rest } = c;
+      return {
+        ...rest,
+        hasImage: !!resultImageBytes && resultImageBytes.length > 0,
+        templateSlug: c.template?.slug ?? null,
+        createdAt: c.createdAt.toISOString(),
+        updatedAt: c.updatedAt.toISOString(),
+      };
+    }),
   });
 }
 

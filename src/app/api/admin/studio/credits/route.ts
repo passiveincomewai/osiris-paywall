@@ -9,6 +9,7 @@ import { requireAdmin, audit } from "@/lib/affiliate/admin";
 import type { StudioCreditConfig } from "@/lib/studio/credits-config";
 import { getCreditConfig, saveCreditConfig } from "@/lib/studio/credits-settings";
 import { getCreditUsageStats } from "@/lib/studio/credits";
+import { getAiAdminStats } from "@/lib/studio/ai";
 
 export const runtime = "nodejs";
 
@@ -19,11 +20,12 @@ function forbidden(e: unknown) {
 export async function GET() {
   try { await requireAdmin(); } catch (e) { return forbidden(e); }
 
-  const [config, stats] = await Promise.all([
-    getCreditConfig(),
+  const config = await getCreditConfig();
+  const [stats, ai] = await Promise.all([
     getCreditUsageStats(),
+    getAiAdminStats(config),
   ]);
-  return NextResponse.json({ config, stats });
+  return NextResponse.json({ config, stats: { ...stats, ai } });
 }
 
 export async function PATCH(req: Request) {
