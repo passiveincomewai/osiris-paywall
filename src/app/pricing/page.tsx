@@ -1,7 +1,7 @@
 import PricingClient from "./PricingClient";
 
 export const metadata = {
-  title: "WorldEye Pro — Pricing",
+  title: "Pricing & Plans",
   description: "The map is free. Pro unlocks the AI assistant, satellite view, global search and premium intel feeds. Weekly, monthly or annual.",
 };
 
