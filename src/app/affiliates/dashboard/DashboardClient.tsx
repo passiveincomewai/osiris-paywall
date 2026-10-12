@@ -12,6 +12,11 @@ interface Me {
   nextRank: { name: string; minXp: number; commissionPct: number } | null;
   progress: { pct: number; xpInto: number; xpNeeded: number };
   referralLink: string;
+  ranks?: { key: string; name: string; minXp: number }[];
+  creatorApplication: {
+    platform: string; handle: string; followers: number; status: string;
+    createdAt: string; reviewedAt: string | null;
+  } | null;
 }
 interface Dash {
   rank: Me["rank"];
@@ -215,6 +220,37 @@ export default function DashboardClient() {
             <div className="text-3xl font-bold font-mono" style={{ color: me.rank.color }}>{me.rank.commissionPct}%</div>
             <div className="text-[10px] text-slate-500">recurring</div>
           </div>
+        </div>
+        <div className="mt-4 rounded-xl border border-[#fbbf24]/30 bg-[#fbbf24]/[0.06] px-3 py-2 text-xs font-mono text-[#fcd34d]">
+          👁️ {me.rank.name === "Visionary"
+            ? "Visionary perk active — WorldEye Pro is free on your account while you hold this rank."
+            : `Visionary perk: reach Visionary${me.ranks?.find((r) => r.key === "visionary") ? ` (${me.ranks.find((r) => r.key === "visionary")!.minXp.toLocaleString()} XP)` : ""} and WorldEye Pro is free while you hold the rank.`}
+        </div>
+      </div>
+
+      {/* Creator program */}
+      <div className={card}>
+        <div className="flex flex-col md:flex-row md:items-center gap-3 justify-between">
+          <div>
+            <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-1">Creator program</div>
+            {me.creatorApplication ? (
+              <div className="text-sm text-slate-300">
+                Application for <span className="text-white font-bold">@{me.creatorApplication.handle}</span>
+                {" "}({me.creatorApplication.platform}, {me.creatorApplication.followers.toLocaleString()} followers) —{" "}
+                {me.creatorApplication.status === "pending" && <span className="text-amber-300 font-bold">under review</span>}
+                {me.creatorApplication.status === "approved" && <span className="text-emerald-300 font-bold">approved — free Pro active</span>}
+                {me.creatorApplication.status === "rejected" && <span className="text-red-300 font-bold">not approved — you can re-apply</span>}
+              </div>
+            ) : (
+              <div className="text-sm text-slate-300">
+                Have <span className="text-white font-bold">25,000+ followers</span>? Creators get WorldEye Pro free for 12 months.
+              </div>
+            )}
+          </div>
+          <a href="/affiliates#creators"
+            className="shrink-0 px-4 py-2 rounded-xl text-xs font-mono border border-white/15 text-slate-200 hover:border-pink-400/60">
+            {me.creatorApplication ? "View application" : "Apply for free Pro"}
+          </a>
         </div>
       </div>
 

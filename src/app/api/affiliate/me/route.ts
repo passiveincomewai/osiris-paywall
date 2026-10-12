@@ -15,7 +15,20 @@ export async function GET() {
   const rank = rankFor(profile.xp, settings.ranks);
   const nxt = nextRank(profile.xp, settings.ranks);
   const code = profile.customCode ?? profile.referralCode;
+  // Latest creator free-Pro application (drives the dashboard status card).
+  const creatorApp = await db.creatorApplication.findFirst({
+    where: { userId: profile.userId },
+    orderBy: { createdAt: "desc" },
+    select: { platform: true, handle: true, followers: true, status: true, createdAt: true, reviewedAt: true },
+  });
   return NextResponse.json({
+    creatorApplication: creatorApp
+      ? {
+          ...creatorApp,
+          createdAt: creatorApp.createdAt.toISOString(),
+          reviewedAt: creatorApp.reviewedAt?.toISOString() ?? null,
+        }
+      : null,
     profile: {
       id: profile.id,
       referralCode: profile.referralCode,

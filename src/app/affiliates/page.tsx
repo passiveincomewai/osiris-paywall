@@ -3,16 +3,17 @@ import Link from "next/link";
 import { RankBadge, SectionTitle, Pill, StatCard, XpBar } from "@/components/affiliate/ui";
 import AffiliatePersonal from "@/components/affiliate/AffiliatePersonal";
 import EarningsCalculator from "@/components/affiliate/EarningsCalculator";
+import CreatorApply from "@/components/affiliate/CreatorApply";
 
 const CTA = "/api/auth/signin?callbackUrl=/affiliates/dashboard";
 
-const TIERS = [
+const TIERS: { name: string; xp: string; rate: string; badge: string; color: string; perk?: string }[] = [
   { name: "Explorer",  xp: "0 XP",       rate: "15%", badge: "🧭", color: "#38bdf8" },
   { name: "Scout",     xp: "1,000 XP",    rate: "18%", badge: "🔭", color: "#22d3ee" },
   { name: "Analyst",   xp: "3,000 XP",    rate: "21%", badge: "📡", color: "#818cf8" },
   { name: "Commander", xp: "7,500 XP",    rate: "24%", badge: "🎖️", color: "#c084fc" },
   { name: "Elite",     xp: "15,000 XP",   rate: "27%", badge: "💠", color: "#f472b6" },
-  { name: "Visionary", xp: "30,000 XP",   rate: "30%", badge: "👁️", color: "#fbbf24" },
+  { name: "Visionary", xp: "30,000 XP",   rate: "30%", badge: "👁️", color: "#fbbf24", perk: "👁️ Free WorldEye Pro included at this rank" },
 ];
 
 const FAQS = [
@@ -129,13 +130,26 @@ export default function AffiliatesLanding() {
                   <div className="text-3xl font-black font-mono" style={{ color: t.color }}>{t.rate}</div>
                 </div>
               </div>
+              {t.perk && (
+                <div className="mt-3 rounded-xl border px-3 py-2 text-xs font-mono font-bold"
+                  style={{ borderColor: t.color + "55", background: t.color + "14", color: t.color }}>
+                  {t.perk}
+                </div>
+              )}
             </Card>
           ))}
         </div>
         <p className="mt-4 text-sm text-slate-400 font-mono">
           <span className="text-cyan-300">//</span> Earn XP from real activity to climb ranks. Commissions recur on
           qualifying subscription <span className="text-white">renewals</span> — not just the first purchase.
+          Reach <span className="text-[#fbbf24]">Visionary</span> and WorldEye Pro itself is free while you hold the rank.
         </p>
+      </section>
+
+      {/* ── 3b. CREATORS: FREE PRO ──────────────────────────── */}
+      <section id="creators">
+        <SectionTitle kicker="Creators" title="Free Pro for creators" />
+        <CreatorApply />
       </section>
 
       {/* ── 4. THREE-LEVEL NETWORK ──────────────────────────── */}

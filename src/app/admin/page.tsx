@@ -7,6 +7,7 @@ import { stripe } from "@/lib/stripe";
 import directory from "@/data/camera-directory.json";
 import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
+import CreatorApplications from "./CreatorApplications";
 
 export const metadata = { title: "Admin Dashboard — WorldEye" };
 export const dynamic = "force-dynamic";
@@ -279,6 +280,15 @@ export default async function AdminDashboardPage() {
     db.commission.aggregate({ _sum: { amountCents: true }, where: { status: "pending" } }),
     stripeRevenue(),
   ]);
+
+  // Creator free-Pro review queue (pending only; actions live in the
+  // CreatorApplications client component → /api/admin/creators/[id]).
+  const pendingCreatorApps = await db.creatorApplication.findMany({
+    where: { status: "pending" },
+    orderBy: { createdAt: "asc" },
+    take: 50,
+    include: { user: { select: { email: true } } },
+  });
 
   // 30-day label axis
   const labels: string[] = [];
@@ -735,6 +745,20 @@ export default async function AdminDashboardPage() {
         <p className="text-[11px] text-white/30 mt-8 text-center">
           Views, sessions &amp; duration are first-party (no cookies, no third parties). Revenue reads live Stripe invoices (all pages, not just the first 100). MRR counts paying subscribers only, at monthly-equivalent rates.
         </p>
+
+        <div className="mt-4">
+          <CreatorApplications
+            initial={pendingCreatorApps.map((a) => ({
+              id: a.id,
+              email: a.user.email,
+              platform: a.platform,
+              handle: a.handle,
+              profileUrl: a.profileUrl,
+              followers: a.followers,
+              createdAt: a.createdAt.toISOString(),
+            }))}
+          />
+        </div>
 
         <div className="mt-4">
           <NewsletterBroadcast />

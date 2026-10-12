@@ -125,6 +125,25 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
     cancelAtPeriodEnd: sub.cancel_at_period_end ?? false,
   };
 
+  // Comp (free Pro) rows carry synthetic ids ("comp_…", see
+  // src/lib/pro/comp.ts) and sit on the same userId @unique slot. If this
+  // user now has a REAL Stripe subscription, the comp row must yield —
+  // otherwise the upsert below would try to create a second row for the
+  // user and fail on the unique constraint, stranding a paying customer.
+  // Only comp rows are ever deleted here; a real row is never touched
+  // (a second real sub for the same user keeps the existing behavior).
+  const existingForUser = await db.subscription.findUnique({
+    where: { userId },
+    select: { stripeSubscriptionId: true },
+  });
+  if (
+    existingForUser &&
+    existingForUser.stripeSubscriptionId.startsWith("comp_") &&
+    existingForUser.stripeSubscriptionId !== sub.id
+  ) {
+    await db.subscription.delete({ where: { userId } });
+  }
+
   await db.subscription.upsert({
     where: { stripeSubscriptionId: sub.id },
     create: data,

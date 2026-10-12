@@ -24,6 +24,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   subscription  Subscription?
+  creatorApplications CreatorApplication[]
   affiliateProfile AffiliateProfile?
   savedCameras  SavedCamera[]
   clipMetas     ClipMeta[]
@@ -96,6 +97,28 @@ model Subscription {
 
   @@index([status])
   @@index([currentPeriodEnd])
+}
+
+// ── Creator free-Pro program ───────────────────────────────────────────
+// Creators with 25k+ followers apply here; an admin verifies the claimed
+// audience and approves → a comp Subscription (see src/lib/pro/comp.ts)
+// grants 12 months of Pro. Follower counts are self-reported until review.
+model CreatorApplication {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  platform   String // instagram | tiktok | youtube | x | twitch | other
+  handle     String
+  profileUrl String
+  followers  Int // self-reported; verified at admin review
+  status     String    @default("pending") // pending | approved | rejected
+
+  createdAt  DateTime  @default(now())
+  reviewedAt DateTime?
+
+  @@index([userId])
+  @@index([status, createdAt])
 }
 
 // ── WorldEye Affiliate System ──────────────────────────────────────────

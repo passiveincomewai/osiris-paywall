@@ -5,6 +5,7 @@
 import { db } from "@/lib/db";
 import { getSettings } from "./settings";
 import { rankFor } from "./ranks";
+import { maybeGrantVisionaryPro } from "@/lib/pro/comp";
 
 export async function awardXP(
   affiliateProfileId: string,
@@ -49,6 +50,19 @@ export async function awardXP(
   });
 
   const rankUp = rankFor(updated.xp, settings.ranks).key !== rankFor(beforeXp, settings.ranks).key;
+
+  // Visionary perk: free WorldEye Pro at the top rank. awardXP is the single
+  // choke point for every XP source, so the check lives here. The helper is
+  // idempotent (re-grants extend the comp period), never overwrites a paid
+  // Stripe subscription, and never throws — a comp failure can't break XP.
+  if (rankFor(updated.xp, settings.ranks).key === "visionary") {
+    const prof = await db.affiliateProfile.findUnique({
+      where: { id: affiliateProfileId },
+      select: { userId: true },
+    });
+    if (prof?.userId) await maybeGrantVisionaryPro(prof.userId, updated.xp, settings.ranks);
+  }
+
   void created;
   return { awarded: true, totalXp: updated.xp, rankUp, xp: amount };
 }

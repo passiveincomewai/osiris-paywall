@@ -81,6 +81,15 @@ const SECTIONS: { n: string; title: string; body: string[] }[] = [
       "WorldEye may modify the Program — including commission rates, XP requirements, rank thresholds, challenge mechanics, attribution windows, holding periods, and payout minimums — at any time. Material changes will be communicated to affiliates in advance where reasonably possible. Continued participation after changes take effect constitutes acceptance.",
     ],
   },
+  {
+    n: "11",
+    title: "Free Pro benefits — creators & Visionary rank",
+    body: [
+      "Creator free Pro: creators with a genuine audience of at least 25,000 followers on a supported platform (Instagram, TikTok, YouTube, X, or Twitch) may apply for complimentary WorldEye Pro. Approved applications receive 12 months of Pro at no charge. Follower counts are self-reported at application and verified by WorldEye before approval; the account must be authentic, active, and owned or controlled by the applicant. After 12 months, continued complimentary access requires re-verification of eligibility. WorldEye may decline any application, and may revoke complimentary Pro at any time for fake, purchased, or botted followers, audience misrepresentation, or other abuse.",
+      "Visionary free Pro: affiliates who reach the Visionary rank receive complimentary WorldEye Pro, granted in 12-month terms, for as long as they hold Visionary rank. If an affiliate ceases to hold Visionary rank (for example, following an XP adjustment for abuse), complimentary access granted under this paragraph may be revoked at the end of its current term or immediately in cases of fraud.",
+      "Complimentary Pro has no cash value, cannot be transferred, sold, or exchanged, and does not by itself earn commissions or XP. If a participant purchases a paid WorldEye subscription, the paid subscription takes precedence and these complimentary benefits pause for its duration.",
+    ],
+  },
 ];
 
 export default function AffiliateTerms() {
