@@ -83,6 +83,33 @@ export default function SiteFooter() {
             Live planetary intelligence. The map is free for everyone — Pro funds
             the infrastructure.
           </p>
+          <div className="flex flex-wrap items-center gap-2 mt-5">
+            <Link
+              href="/signin"
+              className="inline-flex items-center px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/60 hover:text-white hover:border-white/25 transition"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#0096FF] hover:bg-[#0aa5ff] text-xs text-white font-semibold transition"
+            >
+              Sign up
+            </Link>
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/40 hover:text-white hover:border-white/25 transition"
+              title="Admin dashboard"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="9" rx="1" />
+                <rect x="14" y="3" width="7" height="5" rx="1" />
+                <rect x="14" y="12" width="7" height="9" rx="1" />
+                <rect x="3" y="16" width="7" height="5" rx="1" />
+              </svg>
+              Admin
+            </Link>
+          </div>
         </div>
         {COLUMNS.map((col) => (
           <nav key={col.title} aria-label={col.title}>
@@ -107,34 +134,7 @@ export default function SiteFooter() {
       <div className="border-t border-white/5">
         <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/30">
           <span>© 2026 WorldEye. All rights reserved.</span>
-          <span className="flex items-center gap-2">
-            <span className="hidden sm:inline">Live data from public sources worldwide.</span>
-            <Link
-              href="/signin"
-              className="inline-flex items-center px-3 py-1.5 rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/25 transition"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#0096FF] hover:bg-[#0aa5ff] text-white font-semibold transition"
-            >
-              Sign up
-            </Link>
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white/40 hover:text-white hover:border-white/25 transition"
-              title="Admin dashboard"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="9" rx="1" />
-                <rect x="14" y="3" width="7" height="5" rx="1" />
-                <rect x="14" y="12" width="7" height="9" rx="1" />
-                <rect x="3" y="16" width="7" height="5" rx="1" />
-              </svg>
-              Admin
-            </Link>
-          </span>
+          <span className="hidden sm:inline">Live data from public sources worldwide.</span>
         </div>
       </div>
     </footer>
