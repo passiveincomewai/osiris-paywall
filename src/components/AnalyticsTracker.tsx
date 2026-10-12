@@ -16,6 +16,34 @@ function sessionId(): string {
   }
 }
 
+/**
+ * First-touch UTM capture. If the landing URL carries utm_* params, persist
+ * them (30 days) in localStorage + a we_utm cookie so server routes (signup,
+ * checkout, growth webhooks) can attribute the conversion to the campaign.
+ * First touch wins: an existing capture is never overwritten.
+ */
+export function captureUtm(): Record<string, string> {
+  try {
+    const stored = localStorage.getItem("we_utm");
+    if (stored) return JSON.parse(stored) as Record<string, string>;
+    const q = new URLSearchParams(window.location.search);
+    const utm: Record<string, string> = {};
+    const s = q.get("utm_source"), m = q.get("utm_medium"), c = q.get("utm_campaign"), ct = q.get("utm_content");
+    if (s) utm.s = s.slice(0, 120);
+    if (m) utm.m = m.slice(0, 120);
+    if (c) utm.c = c.slice(0, 120);
+    if (ct) utm.ct = ct.slice(0, 120);
+    if (Object.keys(utm).length > 0) {
+      const json = JSON.stringify(utm);
+      localStorage.setItem("we_utm", json);
+      document.cookie = `we_utm=${encodeURIComponent(json)}; Max-Age=${30 * 86400}; Path=/; SameSite=Lax`;
+    }
+    return utm;
+  } catch {
+    return {};
+  }
+}
+
 /** Fire a named interaction event (e.g. "camera_open", "upgrade_gate_shown"). */
 export function trackAnalyticsEvent(event: string) {
   try {
@@ -37,10 +65,15 @@ export default function AnalyticsTracker() {
   useEffect(() => {
     const sid = sessionId();
     startRef.current = Date.now();
+    const utm = captureUtm();
     const payload = JSON.stringify({
       path,
       sessionId: sid,
       referrer: document.referrer || null,
+      utmSource: utm.s ?? null,
+      utmMedium: utm.m ?? null,
+      utmCampaign: utm.c ?? null,
+      utmContent: utm.ct ?? null,
     });
     // Page view ping (keepalive so it survives navigation)
     try {

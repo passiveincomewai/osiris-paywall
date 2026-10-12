@@ -252,12 +252,19 @@ model PageView {
   referrer   String?
   // Optional event name (e.g. "globe_reached" scroll-depth). Null = plain page view.
   event      String?
+  // First-touch UTM attribution, captured by <AnalyticsTracker/> from the
+  // landing URL. Powers campaign attribution in the Growth Engine dashboard.
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
   @@index([path, createdAt])
   @@index([sessionId])
   @@index([event, createdAt])
+  @@index([utmCampaign, createdAt])
 }
 
 // ── Competitor comparisons (powers /compare + /compare/[slug]) ─────────

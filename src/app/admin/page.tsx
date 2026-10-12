@@ -8,6 +8,7 @@ import directory from "@/data/camera-directory.json";
 import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
+import { growthDashboardUrl } from "@/lib/growth";
 
 export const metadata = { title: "Admin Dashboard — WorldEye" };
 export const dynamic = "force-dynamic";
@@ -395,6 +396,9 @@ export default async function AdminDashboardPage() {
             <p className="text-xs text-white/40 mt-1">Signed in as {email} · Data as of {generatedAt} MDT</p>
           </div>
           <div className="flex gap-3 text-sm">
+            {growthDashboardUrl() ? (
+              <a href={growthDashboardUrl()!} target="_blank" rel="noreferrer" className="px-4 py-2 rounded-lg border border-cyan-400/30 text-cyan-300 hover:text-cyan-100">Growth Engine ↗</a>
+            ) : null}
             <Link href="/admin/affiliates" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Affiliates</Link>
             <Link href="/" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">← Site</Link>
           </div>

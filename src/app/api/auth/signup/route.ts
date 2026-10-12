@@ -7,6 +7,7 @@ import {
   generateToken, isRateLimited, clientIp, VERIFY_ID_PREFIX,
 } from "@/lib/password-auth";
 import { sendEmail, emailConfigured, verificationEmail, appUrl } from "@/lib/email";
+import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
 
 export const runtime = "nodejs";
 
@@ -54,6 +55,14 @@ export async function POST(req: Request) {
 
   const passwordHash = await hashPassword(password);
   const user = await db.user.create({ data: { email, name, passwordHash } });
+
+  // Growth Engine conversion event (no-op until configured; never blocks signup).
+  void sendGrowthEvent({
+    type: "signup",
+    userRef: hashUserRef(user.id),
+    idempotencyKey: `signup:${user.id}`,
+    ...utmFromRequest(req),
+  });
 
   // Single-use verification token (24h). Old ones for this email are cleared first.
   await db.verificationToken.deleteMany({ where: { identifier: `${VERIFY_ID_PREFIX}${email}` } });

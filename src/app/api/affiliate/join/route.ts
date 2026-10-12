@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { awardXP } from "@/lib/affiliate/xp";
 import { REF_CODE_RE } from "@/lib/affiliate/attribution";
 import { audit } from "@/lib/affiliate/admin";
+import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
 
 export const runtime = "nodejs";
 
@@ -57,6 +58,14 @@ export async function POST(req: Request) {
     await awardXP(profile.id, "account_verified", { idempotencyKey: `verify:${profile.id}` });
   }
   await audit("affiliate.join", { actorUserId: userId, targetType: "AffiliateProfile", targetId: profile.id });
+
+  // Growth Engine conversion event (no-op until configured; never blocks join).
+  void sendGrowthEvent({
+    type: "affiliate_signup",
+    userRef: hashUserRef(userId),
+    idempotencyKey: `affiliate:${profile.id}`,
+    ...utmFromRequest(req),
+  });
 
   return NextResponse.json({ profile, joined: true });
 }

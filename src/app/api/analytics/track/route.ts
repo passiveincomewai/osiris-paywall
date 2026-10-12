@@ -45,12 +45,17 @@ export async function POST(req: NextRequest) {
         },
       });
     } else {
+      const utmStr = (v: unknown) => (typeof v === "string" && v.length > 0 ? v.slice(0, 120) : null);
       await db.pageView.create({
         data: {
           path,
           sessionId,
           userId,
           referrer: typeof body.referrer === "string" ? body.referrer.slice(0, 500) : null,
+          utmSource: utmStr(body.utmSource),
+          utmMedium: utmStr(body.utmMedium),
+          utmCampaign: utmStr(body.utmCampaign),
+          utmContent: utmStr(body.utmContent),
         },
       });
     }

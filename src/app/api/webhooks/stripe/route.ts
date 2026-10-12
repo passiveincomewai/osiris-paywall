@@ -7,6 +7,7 @@ import { recordCommissionsForInvoice, reverseCommissionsForInvoice } from "@/lib
 import { attributeUserToAffiliate, linkAttribution } from "@/lib/affiliate/attribution";
 import { normalizeEmail, isValidEmail } from "@/lib/password-auth";
 import { sendEmail, emailConfigured } from "@/lib/email";
+import { sendGrowthEvent, hashUserRef } from "@/lib/growth";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -242,6 +243,18 @@ export async function POST(req: NextRequest) {
                 userId,
                 amountCents: invoice.amount_paid,
                 currency: invoice.currency ?? "usd",
+              });
+              // Growth Engine conversion event (no-op until configured).
+              // Idempotency key = invoice id, so Stripe replays dedupe.
+              // UTMs are not available server-side at renewal time; campaign
+              // attribution for revenue joins via the user's signup window
+              // in the Growth Engine, traffic via PageView UTM aggregates.
+              void sendGrowthEvent({
+                type: "paid_subscription",
+                userRef: hashUserRef(userId),
+                amountCents: invoice.amount_paid,
+                currency: invoice.currency ?? "usd",
+                idempotencyKey: `invoice:${invoiceId}`,
               });
             }
           }
