@@ -58,6 +58,28 @@ function normalizeFields(raw: unknown): EditableField[] {
   return out;
 }
 
+/**
+ * Format the 402 insufficient-credits payload ({ cost, balance }) from
+ * the render / creations routes. The monthly allowance isn't in that
+ * payload, so it's read from the credits route's public config; if that
+ * lookup fails the rest of the message still renders.
+ */
+async function insufficientCreditsMessage(j: Record<string, unknown>): Promise<string> {
+  const cost = typeof j.cost === "number" ? j.cost : "?";
+  const balance = typeof j.balance === "number" ? j.balance : "?";
+  let allowance: number | string = "?";
+  try {
+    const r = await fetch("/api/affiliate/studio/credits", { cache: "no-store" });
+    if (r.ok) {
+      const cj = (await r.json().catch(() => ({}))) as {
+        config?: { monthlyAllowance?: unknown };
+      };
+      if (typeof cj.config?.monthlyAllowance === "number") allowance = cj.config.monthlyAllowance;
+    }
+  } catch { /* keep the "?" placeholder — the cost/balance facts still show */ }
+  return `Not enough Studio credits — this download costs ${cost} credit(s); your balance is ${balance}. You receive ${allowance} credits monthly with your membership.`;
+}
+
 function defaultsFor(fields: EditableField[]): Record<string, FieldValue> {
   const values: Record<string, FieldValue> = {};
   for (const f of fields) {
@@ -92,6 +114,7 @@ export default function QuickEditClient({ slug }: { slug: string }) {
   const [referralLink, setReferralLink] = useState<string | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<"png" | "jpeg" | "webp">("png");
   const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [toast, setToast] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   /* Load template (+ carousel siblings) and the referral link. */
@@ -164,9 +187,42 @@ export default function QuickEditClient({ slug }: { slug: string }) {
   const previewSrc = active
     ? renderUrl(active.slug, debouncedValues, { format: "webp", scale: 0.5, preview: true })
     : "";
-  const downloadHref = active
-    ? renderUrl(active.slug, activeValues, { format: downloadFormat, scale: 1 })
-    : "#";
+
+  /* Button-driven download: a plain anchor can't surface the credits
+   * 402, so fetch the same render URL, handle 402 explicitly, and on
+   * success hand the blob to a programmatic anchor (same filename the
+   * render route's Content-Disposition used). */
+  const downloadActive = async () => {
+    if (!active) return;
+    setDownloading(true);
+    setToast(null);
+    try {
+      const url = renderUrl(active.slug, activeValues, { format: downloadFormat, scale: 1 });
+      const r = await fetch(url);
+      if (r.status === 402) {
+        const j = (await r.json().catch(() => ({}))) as Record<string, unknown>;
+        setToast({ kind: "err", text: await insufficientCreditsMessage(j) });
+        return;
+      }
+      if (!r.ok) {
+        setToast({ kind: "err", text: "Download failed. Try again." });
+        return;
+      }
+      const blob = await r.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = `worldeye-${active.slug}.${downloadFormat}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    } catch {
+      setToast({ kind: "err", text: "Download failed. Try again." });
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const saveCreation = async (targetSlug: string, values: Record<string, FieldValue>) => {
     const target = slides.find((s) => s.slug === targetSlug);
@@ -176,6 +232,7 @@ export default function QuickEditClient({ slug }: { slug: string }) {
       body: JSON.stringify({ templateSlug: targetSlug, title: target?.title, values }),
     });
     const j = await r.json().catch(() => ({}));
+    if (r.status === 402) throw new Error(await insufficientCreditsMessage(j as Record<string, unknown>));
     if (!r.ok) throw new Error(typeof j.error === "string" ? j.error : "Save failed.");
     return j;
   };
@@ -325,9 +382,9 @@ export default function QuickEditClient({ slug }: { slug: string }) {
                 <option value="jpeg">JPEG</option>
                 <option value="webp">WebP</option>
               </select>
-              <a href={downloadHref} download className={btnPrimary + " flex-1"} style={btnStyle}>
-                Download{isCarousel ? ` slide ${activeIndex + 1}` : ""}
-              </a>
+              <button onClick={downloadActive} disabled={downloading} className={btnPrimary + " flex-1"} style={btnStyle}>
+                {downloading ? "Downloading…" : `Download${isCarousel ? ` slide ${activeIndex + 1}` : ""}`}
+              </button>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 mt-2">
               <button onClick={saveActive} disabled={saving} className={btnGhost + " flex-1"}>

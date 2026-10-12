@@ -5,9 +5,20 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isRateLimited } from "@/lib/password-auth";
 import { buildStudioContext } from "@/lib/studio/context";
-import { QrValidationError, renderTemplate, validateValues } from "@/lib/studio/render";
+import {
+  chargeForGeneration,
+  ensureMonthlyAllowance,
+  settleGenerationJob,
+} from "@/lib/studio/credits";
+import { getCreditConfig } from "@/lib/studio/credits-settings";
+import {
+  QrValidationError,
+  computeRenderHash,
+  renderTemplate,
+  validateValues,
+} from "@/lib/studio/render";
 import type { EditableField, StudioFormat, TemplateLayer } from "@/lib/studio/types";
-import { activeOnly, requireAffiliate } from "../../_util";
+import { requireStudioAccess } from "../../_util";
 
 export const runtime = "nodejs";
 
@@ -19,12 +30,12 @@ const CONTENT_TYPES: Record<StudioFormat, string> = {
 };
 
 export async function GET(req: Request) {
-  const { profile, userId, error } = await requireAffiliate();
+  // requireStudioAccess includes the active-affiliate check and the
+  // membership gate, so no separate activeOnly call is needed here.
+  const { profile, userId, error } = await requireStudioAccess();
   if (error || !profile || !userId) {
     return error ?? NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
-  const blocked = activeOnly(profile);
-  if (blocked) return blocked;
 
   if (isRateLimited(`studio-render:${userId}`, 30, 60_000)) {
     return NextResponse.json({ error: "Too many renders — try again in a minute" }, { status: 429 });
@@ -84,6 +95,43 @@ export async function GET(req: Request) {
 
   const ctx = await buildStudioContext(profile);
 
+  // ── Credits (Phase 2, Rule 2) ──────────────────────────────────────
+  // Pricing semantics: one design costs IMAGE_RENDER (config price,
+  // default 1) exactly once across all paths, keyed by renderHash.
+  // Previews (preview=1) are FREE — no job, no charge. A non-preview
+  // render whose renderHash already exists as one of this profile's
+  // saved creations was already paid for (at download or save time),
+  // so it renders free too. Otherwise charge BEFORE rendering; the job
+  // is settled "done" on success and "failed" (refunded) on any throw.
+  let paidJobId: string | null = null;
+  if (!preview) {
+    const hash = computeRenderHash(template.updatedAt.toISOString(), validated.values, ctx.code);
+    const existing = await db.studioCreation.findFirst({
+      where: { affiliateProfileId: profile.id, renderHash: hash },
+      select: { id: true },
+    });
+    if (!existing) {
+      const config = await getCreditConfig();
+      // Grant the monthly allowance first (the studio gate already
+      // proved membership) so a member's first charge of the month
+      // sees their allowance.
+      await ensureMonthlyAllowance(profile.id, true, config);
+      const charge = await chargeForGeneration({
+        profileId: profile.id,
+        kind: "image_render",
+        params: { slug, renderHash: hash },
+        config,
+      });
+      if (!charge.ok) {
+        return NextResponse.json(
+          { error: "insufficient_credits", cost: charge.cost, balance: charge.balance },
+          { status: 402 },
+        );
+      }
+      paidJobId = charge.job.id;
+    }
+  }
+
   let rendered;
   try {
     rendered = await renderTemplate({
@@ -103,11 +151,25 @@ export async function GET(req: Request) {
       scale,
     });
   } catch (e) {
+    // Any failed render refunds the charge (if one was made) BEFORE the
+    // existing error response is returned.
+    if (paidJobId) {
+      await settleGenerationJob({
+        profileId: profile.id,
+        jobId: paidJobId,
+        outcome: "failed",
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
     if (e instanceof QrValidationError) {
       return NextResponse.json({ error: "QR validation failed — download blocked" }, { status: 422 });
     }
     console.error("studio render failed", e);
     return NextResponse.json({ error: "Render failed" }, { status: 500 });
+  }
+
+  if (paidJobId) {
+    await settleGenerationJob({ profileId: profile.id, jobId: paidJobId, outcome: "done" });
   }
 
   const ext = rendered.format;

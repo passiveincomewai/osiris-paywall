@@ -3,13 +3,18 @@
 // DELETE /api/affiliate/studio/creations/[id] — delete an own creation.
 // Ownership is always scoped by the caller's profile id: another affiliate's
 // creation id reads as 404, never as a leak that it exists.
+//
+// Credits (Phase 2, Rule 2): NO charging ever happens in this route —
+// saved creations were paid at save time. Grandfathering: creation rows
+// with paidJobId null are pre-credits legacy rows, and they re-render
+// free here exactly like paid rows.
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isRateLimited } from "@/lib/password-auth";
 import { buildStudioContext } from "@/lib/studio/context";
 import { QrValidationError, renderTemplate, validateValues } from "@/lib/studio/render";
 import type { EditableField, StudioFormat, TemplateLayer } from "@/lib/studio/types";
-import { activeOnly, requireAffiliate } from "../../../_util";
+import { requireStudioAccess } from "../../../_util";
 
 export const runtime = "nodejs";
 
@@ -44,12 +49,11 @@ function coerceStoredValues(params: unknown): Record<string, string> {
 }
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { profile, userId, error } = await requireAffiliate();
+  // requireStudioAccess includes the active-affiliate + membership gate.
+  const { profile, userId, error } = await requireStudioAccess();
   if (error || !profile || !userId) {
     return error ?? NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
-  const blocked = activeOnly(profile);
-  if (blocked) return blocked;
 
   if (isRateLimited(`studio-render:${userId}`, 30, 60_000)) {
     return NextResponse.json({ error: "Too many renders — try again in a minute" }, { status: 429 });
@@ -130,12 +134,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { profile, error } = await requireAffiliate();
+  const { profile, error } = await requireStudioAccess();
   if (error || !profile) {
     return error ?? NextResponse.json({ error: "Not an affiliate" }, { status: 404 });
   }
-  const blocked = activeOnly(profile);
-  if (blocked) return blocked;
 
   const { id } = await params;
   const creation = await db.studioCreation.findFirst({
