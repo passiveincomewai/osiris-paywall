@@ -25,6 +25,7 @@ export default function CinematicHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef(0);
   const unlocked = useRef(false);
+  const globeLocked = useRef(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -66,6 +67,12 @@ export default function CinematicHero() {
       const exit = Math.min(1, Math.max(0, (p - EXIT_START) / (EXIT_END - EXIT_START)));
       stage.style.transform = `translate3d(0,${(-exit * 100).toFixed(3)}%,0)`;
       stage.style.visibility = exit >= 1 ? 'hidden' : 'visible';
+      // One-way globe lock: once the stage has fully exited the visitor is
+      // on the globe — freeze document scroll so they can't scroll back up.
+      if (exit >= 1 && !globeLocked.current) {
+        globeLocked.current = true;
+        document.documentElement.classList.add('globe-locked');
+      }
       raf = requestAnimationFrame(tick);
     };
 

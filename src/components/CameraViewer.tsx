@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle } from 'lucide-react';
+import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark } from 'lucide-react';
 import Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
 import { clearLook, registerVideo } from '@/lib/vision/store';
@@ -23,6 +23,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
   const [retryCount, setRetryCount] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
   const [currentTime, setCurrentTime] = useState<string>('');
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "signin" | "error">("idle");
 
   useEffect(() => {
     const iv = setInterval(() => {
@@ -251,6 +252,35 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                   )}
                   <button onClick={() => setFullscreen(!fullscreen)} className="hidden md:block p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--text-primary)]/20 hover:border-[var(--text-primary)] transition-all" title="Toggle fullscreen">
                     <Maximize2 className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)]" />
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setSaveState("saving");
+                      try {
+                        const r = await fetch("/api/recording/cameras", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            name: camera.name || camera.title || "Camera",
+                            cameraData: {
+                              stream_url: camera.stream_url,
+                              feed_url: camera.feed_url,
+                              external_url: camera.external_url,
+                              stream_type: camera.stream_type,
+                              lat: camera.lat,
+                              lng: camera.lng,
+                              name: camera.name || camera.title,
+                            },
+                          }),
+                        });
+                        if (r.ok) setSaveState("saved");
+                        else setSaveState(r.status === 401 ? "signin" : "error");
+                      } catch { setSaveState("error"); }
+                      setTimeout(() => setSaveState("idle"), 2500);
+                    }}
+                    className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-cyan-400/20 hover:border-cyan-400 transition-all"
+                    title={saveState === "saved" ? "Saved to My Cameras!" : saveState === "signin" ? "Sign in to save cameras" : "Save to My Cameras"}>
+                    <Bookmark className={`w-3 h-3 ${saveState === "saved" ? "text-cyan-300" : "text-[var(--text-secondary)]"}`} />
                   </button>
                   <button onClick={onClose} className="p-1.5 rounded-sm bg-red-900/30 border border-red-500/30 hover:bg-red-500/30 hover:border-red-500 transition-all ml-2">
                     <X className="w-4 h-4 md:w-3 md:h-3 text-red-400 hover:text-red-200" />

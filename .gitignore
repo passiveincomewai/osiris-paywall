@@ -75,3 +75,4 @@ scanner_backend_backup.js
 .claude/
 skills-lock.json
 agent/
+.wip/

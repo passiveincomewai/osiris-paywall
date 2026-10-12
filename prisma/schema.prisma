@@ -25,6 +25,8 @@ model User {
   sessions      Session[]
   subscription  Subscription?
   affiliateProfile AffiliateProfile?
+  savedCameras  SavedCamera[]
+  clipMetas     ClipMeta[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -388,4 +390,37 @@ model AffiliateAuditLog {
 
   @@index([createdAt])
   @@index([targetType, targetId])
+}
+
+// ── Phase 1 camera recording: user-saved cameras + clip metadata ─────────
+// Clip video blobs live in the browser's IndexedDB (device-local); only
+// metadata is stored here. No large files in the database.
+model SavedCamera {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  group      String   @default("Ungrouped")
+  // Snapshot of the resolved camera object (stream_url, feed_url, lat/lng…)
+  cameraData Json
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, group])
+}
+
+model ClipMeta {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  savedCameraId String?
+  cameraName    String
+  startedAt     DateTime
+  durationSec   Int
+  sizeBytes     Int
+  mimeType      String   @default("video/webm")
+  createdAt     DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
