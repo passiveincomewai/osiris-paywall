@@ -8,6 +8,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import HumanoidAvatar, { type AvatarState } from "./HumanoidAvatar";
 import { listenOnce, speak, stopSpeaking, sttSupported } from "@/lib/companion/voice";
+import { startWakeWordListener, wakeWordSupported, type WakeStatus } from "@/lib/companion/wake";
+import {
+  FaceSampler, faceTrackingSupported, GazeSmoother, pointerToGaze,
+  NEUTRAL_GAZE, type GazePoint, type GazeState,
+} from "@/lib/companion/gaze";
 import { type AssistClient } from "@/lib/oi/assist/client";
 import { loadEngine, loadKey, saveEngine, saveKey } from "@/lib/oi/client";
 import { PROVIDERS, type ProviderId } from "@/lib/oi/providers";
@@ -24,6 +29,26 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
   const [hasKey, setHasKey] = useState<boolean | null>(null);
   const energyRef = useRef(0);
   const feedRef = useRef<HTMLDivElement>(null);
+
+  /* ---- Phase 4: wake word + face tracking (both opt-in, default off) ---- */
+  const [showSettings, setShowSettings] = useState(false);
+  const [wakeOn, setWakeOn] = useState(false);
+  const [wakeStatus, setWakeStatus] = useState<"off" | WakeStatus>("off");
+  const [faceOn, setFaceOn] = useState(false);
+  const [faceMode, setFaceMode] = useState<"off" | "starting" | "face" | "pointer">("off");
+  const [faceNote, setFaceNote] = useState<string | null>(null);
+  const gazeRef = useRef<GazeState>({ ...NEUTRAL_GAZE });
+  const smoother = useMemo(() => new GazeSmoother(), []);
+  const faceSamplerRef = useRef<FaceSampler | null>(null);
+  const avatarWrapRef = useRef<HTMLDivElement>(null);
+
+  // Restore the two opt-in toggles (persisted locally, like the OI key).
+  useEffect(() => {
+    try {
+      setWakeOn(localStorage.getItem("osiris.companion.wakeWord") === "1");
+      setFaceOn(localStorage.getItem("osiris.companion.faceTracking") === "1");
+    } catch {}
+  }, []);
 
   const auth = useMemo(() => {
     const engine = loadEngine();
@@ -88,6 +113,115 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
     }
   }, [listening, assist.busy, speaking, sendText]);
 
+  /* Wake word: armed only while the sheet is open and the companion is
+     idle (never while a one-shot listen, a reply, or TTS is in flight —
+     two recognizers can't coexist, and it must not hear itself). A match
+     hands off to the exact same `talk()` path as tapping the mic. */
+  const wakeArmed = wakeOn && open;
+  useEffect(() => {
+    if (!wakeArmed || listening || speaking || assist.busy) return;
+    if (!wakeWordSupported()) { setWakeStatus("unsupported"); return; }
+    const handle = startWakeWordListener({
+      onWake: () => { void talk(); },
+      onStatus: (s, detail) => {
+        setWakeStatus(s);
+        if ((s === "denied" || s === "error") && detail) setErr(detail);
+      },
+    });
+    return () => { handle.stop(); };
+  }, [wakeArmed, listening, speaking, assist.busy, talk]);
+
+  /* Face tracking: start the on-device sampler when enabled + sheet open.
+     Unsupported detector or a denied camera degrades to pointer gaze —
+     labeled as such, never passed off as face tracking. */
+  useEffect(() => {
+    if (!open || !faceOn) return;
+    let cancelled = false;
+    setFaceMode("starting");
+    const enablePointer = (note: string) => {
+      if (cancelled) return;
+      setFaceMode("pointer");
+      setFaceNote(note);
+    };
+    if (!faceTrackingSupported()) {
+      enablePointer("Face detection isn't built into this browser (Chrome and Edge have it), so the companion follows your pointer instead.");
+    } else {
+      const sampler = new FaceSampler();
+      faceSamplerRef.current = sampler;
+      void sampler.start((offset: GazePoint | null) => {
+        const now = performance.now();
+        if (offset) smoother.faceSample(offset, now);
+        gazeRef.current = smoother.snapshot(now);
+      }).then((res) => {
+        if (cancelled) return;
+        if (res.ok) { setFaceMode("face"); setFaceNote(null); }
+        else if (res.reason === "denied") enablePointer("Camera access is off, so the companion follows your pointer instead.");
+        else if (res.reason === "unsupported") enablePointer("Face detection isn't available in this browser, so the companion follows your pointer instead.");
+        else enablePointer("The camera couldn't start, so the companion follows your pointer instead.");
+      });
+    }
+    return () => {
+      cancelled = true;
+      faceSamplerRef.current?.stop();
+      faceSamplerRef.current = null;
+      setFaceMode("off");
+      setFaceNote(null);
+      smoother.reset();
+      gazeRef.current = { ...NEUTRAL_GAZE };
+    };
+  }, [open, faceOn, smoother]);
+
+  /* Keep gaze presence fresh between samples so it expires on schedule. */
+  useEffect(() => {
+    if (!open || !faceOn) return;
+    const iv = setInterval(() => { gazeRef.current = smoother.snapshot(performance.now()); }, 300);
+    return () => clearInterval(iv);
+  }, [open, faceOn, smoother]);
+
+  /* Pointer gaze (fallback): avatar follows your finger/cursor over the sheet. */
+  const onSheetPointerMove = useCallback((e: { clientX: number; clientY: number }) => {
+    if (!faceOn || faceMode !== "pointer") return;
+    const rect = avatarWrapRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const now = performance.now();
+    smoother.pointerSample(pointerToGaze(e.clientX, e.clientY, rect), now);
+    gazeRef.current = smoother.snapshot(now);
+  }, [faceOn, faceMode, smoother]);
+
+  const toggleWake = () => {
+    const next = !wakeOn;
+    setWakeOn(next);
+    try { localStorage.setItem("osiris.companion.wakeWord", next ? "1" : "0"); } catch {}
+    if (!next) setWakeStatus("off");
+    else if (!wakeWordSupported()) setWakeStatus("unsupported");
+  };
+
+  const toggleFace = () => {
+    const next = !faceOn;
+    setFaceOn(next);
+    try { localStorage.setItem("osiris.companion.faceTracking", next ? "1" : "0"); } catch {}
+  };
+
+  const wakeNote = !wakeWordSupported()
+    ? "Wake word isn't supported in this browser yet."
+    : wakeStatus === "denied"
+      ? "Microphone blocked — allow mic access in your browser, then toggle off and on."
+      : wakeStatus === "error"
+        ? "Wake word keeps stopping in this browser — tap the mic instead."
+        : wakeOn
+          ? (listening || speaking || assist.busy ? "On — resumes listening when the companion is idle." : "On — listening for the wake phrase while this sheet is open.")
+          : null;
+
+  const faceStatusLine = !faceOn
+    ? null
+    : faceMode === "face"
+      ? "Live — the companion can see you and follows your gaze."
+      : faceMode === "pointer"
+        ? "Pointer following is active (not face tracking)."
+        : faceMode === "starting"
+          ? "Starting camera…"
+          : null;
+
   const saveKeyNow = () => {
     const k = keyInput.trim();
     if (!k) return;
@@ -123,6 +257,7 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
         <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center" role="dialog" aria-label="WorldEye companion">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" onClick={() => setOpen(false)} />
           <div
+            onPointerMove={onSheetPointerMove}
             className="relative w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl border border-white/10 overflow-hidden flex flex-col"
             style={{
               height: "min(78vh, 640px)",
@@ -131,9 +266,50 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
             }}>
             <div className="flex items-center justify-between px-4 pt-3 pb-1">
               <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-300/80 uppercase">Companion</div>
-              <button onClick={() => setOpen(false)} aria-label="Close"
-                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-slate-300 text-sm">✕</button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowSettings((s) => !s)} aria-label="Companion settings" aria-expanded={showSettings}
+                  className={`w-8 h-8 rounded-full border text-sm ${showSettings ? "bg-cyan-400/20 border-cyan-400/50 text-cyan-200" : "bg-white/5 border-white/10 text-slate-300"}`}>⚙</button>
+                <button onClick={() => setOpen(false)} aria-label="Close"
+                  className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-slate-300 text-sm">✕</button>
+              </div>
             </div>
+
+            {showSettings && (
+              <div className="mx-4 mb-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 space-y-3 max-h-60 overflow-y-auto shrink-0">
+                <div>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs font-semibold text-slate-200">Wake word — “Hey WorldEye”</div>
+                    <button role="switch" aria-checked={wakeOn} aria-label="Wake word" onClick={toggleWake}
+                      className={`relative w-10 h-6 rounded-full transition-colors shrink-0 ${wakeOn ? "bg-cyan-400/70" : "bg-white/15"}`}>
+                      <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${wakeOn ? "left-[18px]" : "left-0.5"}`} />
+                    </button>
+                  </div>
+                  <p className="mt-1 text-[11px] leading-snug text-slate-400">
+                    Say “Hey WorldEye”, “Hey world eye” or “OK WorldEye” to start talking hands-free.
+                    Listening runs through your browser&apos;s speech service, which processes the audio —
+                    WorldEye never receives or stores it.
+                  </p>
+                  {wakeNote && <p className="mt-1 text-[11px] font-mono text-cyan-300/80">{wakeNote}</p>}
+                </div>
+                <div>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs font-semibold text-slate-200">Face tracking</div>
+                    <button role="switch" aria-checked={faceOn} aria-label="Face tracking" onClick={toggleFace}
+                      className={`relative w-10 h-6 rounded-full transition-colors shrink-0 ${faceOn ? "bg-cyan-400/70" : "bg-white/15"}`}>
+                      <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${faceOn ? "left-[18px]" : "left-0.5"}`} />
+                    </button>
+                  </div>
+                  <p className="mt-1 text-[11px] leading-snug text-slate-400">
+                    The companion watches for you and follows your gaze. Camera frames are processed
+                    on this device and never leave it — nothing is recorded, uploaded, or stored.
+                  </p>
+                  {faceStatusLine && <p className="mt-1 text-[11px] font-mono text-cyan-300/80">{faceStatusLine}</p>}
+                  {faceOn && faceMode === "pointer" && faceNote && (
+                    <p className="mt-1 text-[11px] font-mono text-amber-300/90">{faceNote}</p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {hasKey === false ? (
               <div className="flex-1 flex items-center justify-center p-6">
@@ -154,8 +330,8 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
               </div>
             ) : (
               <>
-                <div className="relative h-44 shrink-0">
-                  <HumanoidAvatar state={avatarState} energyRef={energyRef} density={0.5} className="absolute inset-0" />
+                <div ref={avatarWrapRef} className="relative h-44 shrink-0">
+                  <HumanoidAvatar state={avatarState} energyRef={energyRef} density={0.5} gazeRef={gazeRef} className="absolute inset-0" />
                   <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-mono tracking-[0.3em] text-cyan-300/70 uppercase">
                     {listening ? "listening…" : assist.busy ? "thinking…" : speaking ? "speaking…" : "tap the mic"}
                   </div>
@@ -167,6 +343,12 @@ export default function CompanionWidget({ assist }: { assist: AssistClient }) {
                     {listening ? "◉" : "🎙"}
                   </button>
                 </div>
+                {wakeOn && wakeStatus === "listening" && !listening && !speaking && !assist.busy && (
+                  <div className="text-center text-[10px] font-mono text-cyan-300/80 pb-1" role="status">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-300 animate-pulse mr-1.5 align-middle" />
+                    wake word armed — say “Hey WorldEye”
+                  </div>
+                )}
                 {err && <div className="mx-4 mb-1 text-[11px] font-mono text-red-300 bg-red-950/60 border border-red-500/30 rounded-lg px-3 py-1">{err}</div>}
                 <div ref={feedRef} className="flex-1 overflow-y-auto px-4 py-2 space-y-2 min-h-0">
                   {assist.entries.length === 0 && (

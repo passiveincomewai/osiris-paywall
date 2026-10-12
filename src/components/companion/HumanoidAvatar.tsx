@@ -8,6 +8,7 @@
  */
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import type { GazeState } from "@/lib/companion/gaze";
 
 export type AvatarState = "idle" | "listening" | "thinking" | "speaking";
 
@@ -113,6 +114,7 @@ export default function HumanoidAvatar({
   energyRef,
   className,
   density = 1,
+  gazeRef,
 }: {
   /** idle | listening | thinking | speaking */
   state: AvatarState;
@@ -121,10 +123,19 @@ export default function HumanoidAvatar({
   className?: string;
   /** 0..1 particle multiplier for low-power devices (default 1 = 18k) */
   density?: number;
+  /**
+   * Optional (Phase 4): parent writes the current gaze state here each
+   * sample. The head subtly orients toward the gaze point and settles
+   * into an "attentive" idle while a face/pointer is present. Omit it
+   * and the avatar behaves exactly as before.
+   */
+  gazeRef?: React.MutableRefObject<GazeState>;
 }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<AvatarState>(state);
   stateRef.current = state;
+  const gazePropRef = useRef(gazeRef);
+  gazePropRef.current = gazeRef;
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -183,6 +194,7 @@ export default function HumanoidAvatar({
     let raf = 0;
     const clock = new THREE.Clock();
     let energy = 0;
+    let gazeX = 0, gazeY = 0, gazeP = 0; // eased gaze offset + presence (Phase 4)
     const animate = () => {
       raf = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
@@ -191,9 +203,17 @@ export default function HumanoidAvatar({
       mat.uniforms.uTime.value = t;
       mat.uniforms.uEnergy.value = energy;
       mat.uniforms.uState.value = stateNum[stateRef.current];
-      group.rotation.y = Math.sin(t * 0.22) * 0.28;
-      group.rotation.x = Math.sin(t * 0.17) * 0.06;
-      core.material.opacity = 0.55 + energy * 0.45 + Math.sin(t * 1.4) * 0.08;
+      // Gaze (Phase 4): ease toward the attended point. While present, the
+      // idle sway calms (attentive) and the head turns a few degrees toward
+      // the gaze point — deliberately subtle. No gaze input = original sway.
+      const g = gazePropRef.current?.current;
+      gazeX += ((g ? g.x : 0) - gazeX) * 0.06;
+      gazeY += ((g ? g.y : 0) - gazeY) * 0.06;
+      gazeP += ((g?.present ? 1 : 0) - gazeP) * 0.05;
+      const sway = 1 - gazeP * 0.55;
+      group.rotation.y = Math.sin(t * 0.22) * 0.28 * sway + gazeX * 0.2;
+      group.rotation.x = Math.sin(t * 0.17) * 0.06 * sway + gazeY * 0.11;
+      core.material.opacity = Math.min(1, 0.55 + energy * 0.45 + Math.sin(t * 1.4) * 0.08 + gazeP * 0.12);
       renderer.render(scene, camera);
     };
     animate();
