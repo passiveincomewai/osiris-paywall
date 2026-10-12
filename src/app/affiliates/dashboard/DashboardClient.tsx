@@ -5,6 +5,7 @@ import {
   StatCard, RankBadge, XpBar, SectionTitle, CopyButton, EmptyState, Pill, fmtCents,
 } from "@/components/affiliate/ui";
 import { AreaChart } from "@/components/affiliate/charts";
+import BadgesStrip from "./BadgesStrip";
 
 interface Me {
   profile: { referralCode: string; customCode: string | null; status: string; xp: number; payoutEmail: string | null; payoutMethod: string | null };
@@ -197,6 +198,9 @@ export default function DashboardClient() {
           <button onClick={saveCustomCode} className="px-3 py-2 rounded-xl text-xs font-mono border border-white/15 text-slate-200 hover:border-cyan-400/60">Claim</button>
         </div>
       </div>
+
+      {/* Studio badges (renders nothing for non-members) */}
+      <BadgesStrip />
 
       {/* Rank */}
       <div className={card}>

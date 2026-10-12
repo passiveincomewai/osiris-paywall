@@ -133,6 +133,84 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   });
 }
 
+/**
+ * PATCH /api/affiliate/studio/creations/[id] — Phase 5 A/B caption test:
+ * save the caller's two caption variants, which one they actually posted,
+ * and their free-text result note. Manual honesty: nothing here invents
+ * platform metrics. Ownership is scoped exactly like GET/DELETE above.
+ */
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { profile, error } = await requireStudioAccess();
+  if (error || !profile) {
+    return error ?? NextResponse.json({ error: "Not an affiliate" }, { status: 404 });
+  }
+
+  const { id } = await params;
+  const creation = await db.studioCreation.findFirst({
+    where: { id, affiliateProfileId: profile.id },
+    select: { id: true, affiliateProfileId: true },
+  });
+  if (!creation) return NextResponse.json({ error: "Creation not found" }, { status: 404 });
+  if (creation.affiliateProfileId !== profile.id) {
+    return NextResponse.json({ error: "Creation not found" }, { status: 404 });
+  }
+
+  const body = (await req.json().catch(() => ({}))) as {
+    captionVariants?: unknown;
+    postedVariant?: unknown;
+    resultNote?: unknown;
+  };
+
+  const data: { captionVariants?: { a: string; b: string }; postedVariant?: string | null; resultNote?: string | null } = {};
+
+  if (body.captionVariants !== undefined) {
+    const v = body.captionVariants as { a?: unknown; b?: unknown } | null;
+    if (typeof v !== "object" || v === null || Array.isArray(v)) {
+      return NextResponse.json({ error: "captionVariants must be an object with a and b" }, { status: 400 });
+    }
+    const a = v.a === undefined || v.a === null ? "" : v.a;
+    const b = v.b === undefined || v.b === null ? "" : v.b;
+    if (typeof a !== "string" || typeof b !== "string") {
+      return NextResponse.json({ error: "caption variants must be strings" }, { status: 400 });
+    }
+    if (a.length > 2000 || b.length > 2000) {
+      return NextResponse.json({ error: "caption variants must be at most 2000 characters" }, { status: 400 });
+    }
+    data.captionVariants = { a, b };
+  }
+
+  if (body.postedVariant !== undefined) {
+    if (body.postedVariant !== null && body.postedVariant !== "a" && body.postedVariant !== "b") {
+      return NextResponse.json({ error: "postedVariant must be \"a\", \"b\", or null" }, { status: 400 });
+    }
+    data.postedVariant = body.postedVariant as string | null;
+  }
+
+  if (body.resultNote !== undefined) {
+    if (body.resultNote !== null && typeof body.resultNote !== "string") {
+      return NextResponse.json({ error: "resultNote must be a string" }, { status: 400 });
+    }
+    if (typeof body.resultNote === "string" && body.resultNote.length > 2000) {
+      return NextResponse.json({ error: "resultNote must be at most 2000 characters" }, { status: 400 });
+    }
+    data.resultNote = (body.resultNote as string | null) || null;
+  }
+
+  const updated = await db.studioCreation.update({
+    where: { id: creation.id },
+    data,
+    select: { id: true, captionVariants: true, postedVariant: true, resultNote: true },
+  });
+  return NextResponse.json({
+    creation: {
+      id: updated.id,
+      captionVariants: updated.captionVariants ?? null,
+      postedVariant: updated.postedVariant ?? null,
+      resultNote: updated.resultNote ?? null,
+    },
+  });
+}
+
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { profile, error } = await requireStudioAccess();
   if (error || !profile) {

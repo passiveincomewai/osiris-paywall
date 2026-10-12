@@ -38,6 +38,7 @@ export default function LibraryClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [category, setCategory] = useState<string>("all");
+  const [format, setFormat] = useState<string>("all");
   const [q, setQ] = useState("");
 
   useEffect(() => {
@@ -76,10 +77,19 @@ export default function LibraryClient() {
     return keys;
   }, [counts]);
 
+  const formats = useMemo(() => {
+    const set = new Set<string>();
+    for (const t of templates) {
+      if (typeof t.format === "string" && t.format.trim()) set.add(t.format);
+    }
+    return [...set].sort();
+  }, [templates]);
+
   const cards = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const filtered = templates.filter((t) => {
       if (category !== "all" && t.category !== category) return false;
+      if (format !== "all" && t.format !== format) return false;
       if (!needle) return true;
       const hay = [t.title, t.category, t.kind, ...tagList(t.tags)].join(" ").toLowerCase();
       return hay.includes(needle);
@@ -103,7 +113,7 @@ export default function LibraryClient() {
       }
     }
     return ordered;
-  }, [templates, category, q]);
+  }, [templates, category, format, q]);
 
   if (loading) return <div className="text-slate-400 font-mono text-sm">Loading templates…</div>;
 
@@ -156,6 +166,35 @@ export default function LibraryClient() {
               />
             </div>
           </div>
+
+          {formats.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1 items-center">
+              <span className="text-[11px] font-mono tracking-[0.18em] text-slate-400 uppercase shrink-0">Format</span>
+              <button
+                onClick={() => setFormat("all")}
+                className={`px-3 py-1.5 rounded-lg text-sm font-mono whitespace-nowrap border transition-all ${
+                  format === "all"
+                    ? "border-cyan-400/60 text-cyan-200 bg-cyan-400/10"
+                    : "border-white/10 text-slate-400 hover:text-white"
+                }`}
+              >
+                All formats
+              </button>
+              {formats.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFormat(f)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-mono whitespace-nowrap border transition-all ${
+                    format === f
+                      ? "border-cyan-400/60 text-cyan-200 bg-cyan-400/10"
+                      : "border-white/10 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          )}
 
           {cards.length === 0 ? (
             <EmptyState

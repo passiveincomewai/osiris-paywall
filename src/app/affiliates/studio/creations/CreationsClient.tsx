@@ -18,6 +18,114 @@ import {
 const btnPrimary =
   "inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-mono text-sm font-bold text-[#04121f] transition-all";
 const btnStyle = { background: "linear-gradient(135deg,#38bdf8,#0096FF)", boxShadow: "0 0 20px rgba(0,150,255,.45)" };
+const abTextarea =
+  "w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60 placeholder:text-slate-500 min-h-20";
+
+/** Phase 5: A/B caption variants live on the creation row (not in params). */
+type CreationWithAB = StudioCreationLite & {
+  captionVariants?: { a?: string; b?: string } | null;
+  postedVariant?: string | null;
+  resultNote?: string | null;
+};
+
+/**
+ * Expandable A/B caption test: draft two caption variants, record which
+ * one you actually posted, and note the result yourself. WorldEye does
+ * not track social-platform metrics — this is your own lab notebook.
+ */
+function ABTestSection({ creation }: { creation: CreationWithAB }) {
+  const [open, setOpen] = useState(false);
+  const [a, setA] = useState(creation.captionVariants?.a ?? "");
+  const [b, setB] = useState(creation.captionVariants?.b ?? "");
+  const [posted, setPosted] = useState<"a" | "b" | "">(creation.postedVariant === "a" || creation.postedVariant === "b" ? creation.postedVariant : "");
+  const [note, setNote] = useState(creation.resultNote ?? "");
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  const save = async () => {
+    setSaving(true);
+    setMsg("");
+    try {
+      const r = await fetch(`/api/affiliate/studio/creations/${encodeURIComponent(creation.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          captionVariants: { a, b },
+          postedVariant: posted === "" ? null : posted,
+          resultNote: note.trim() ? note : null,
+        }),
+      });
+      const j = await r.json().catch(() => ({}));
+      setMsg(r.ok ? "A/B test saved." : typeof j.error === "string" ? j.error : "Couldn't save the A/B test.");
+    } catch {
+      setMsg("Couldn't save the A/B test.");
+    }
+    setSaving(false);
+  };
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-black/20 px-3 py-2.5">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between text-sm font-mono text-slate-200 hover:text-white"
+        aria-expanded={open}
+      >
+        <span>🧪 A/B caption test</span>
+        <span className="text-slate-500">{open ? "▾" : "▸"}</span>
+      </button>
+      {open && (
+        <div className="mt-3 space-y-3">
+          <div>
+            <label className="block text-[11px] font-mono tracking-[0.18em] text-slate-400 uppercase mb-1">Variant A</label>
+            <textarea className={abTextarea} maxLength={2000} value={a} onChange={(e) => setA(e.target.value)} placeholder="Caption variant A…" />
+          </div>
+          <div>
+            <label className="block text-[11px] font-mono tracking-[0.18em] text-slate-400 uppercase mb-1">Variant B</label>
+            <textarea className={abTextarea} maxLength={2000} value={b} onChange={(e) => setB(e.target.value)} placeholder="Caption variant B…" />
+          </div>
+          <fieldset>
+            <legend className="text-[11px] font-mono tracking-[0.18em] text-slate-400 uppercase mb-1">Which did you post?</legend>
+            <div className="flex gap-4 text-sm text-slate-300">
+              {(
+                [
+                  ["", "None yet"],
+                  ["a", "Variant A"],
+                  ["b", "Variant B"],
+                ] as const
+              ).map(([value, labelText]) => (
+                <label key={labelText} className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`posted-${creation.id}`}
+                    checked={posted === value}
+                    onChange={() => setPosted(value)}
+                    className="accent-cyan-400"
+                  />
+                  {labelText}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <div>
+            <label className="block text-[11px] font-mono tracking-[0.18em] text-slate-400 uppercase mb-1">Result note (your own observations)</label>
+            <textarea className={abTextarea} maxLength={2000} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. A got more saves; B drove more profile taps…" />
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => void save()}
+              disabled={saving}
+              className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f] disabled:opacity-50"
+              style={btnStyle}
+            >
+              {saving ? "Saving…" : "Save A/B test"}
+            </button>
+            {msg && <span className="text-xs text-slate-400">{msg}</span>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function kindIcon(kind: string | null | undefined, caption: boolean): string {
   if (kind && kind.startsWith("ai_")) return "✨";
@@ -214,6 +322,8 @@ export default function CreationsClient() {
                   ) : (
                     <p className="text-xs text-slate-500">Personalized with your referral link and QR code.</p>
                   )}
+
+                  <ABTestSection creation={c as CreationWithAB} />
 
                   <div className="mt-auto flex flex-wrap gap-2 pt-1">
                     {ai && c.hasImage && (

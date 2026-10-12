@@ -224,6 +224,11 @@ export default function StudioHomeClient({
       { href: "/affiliates/studio/captions", title: "Caption Generator", body: "Platform-ready captions with your link + #ad disclosure." },
       { href: "/affiliates/studio/creations", title: "My Creations", body: "Everything you've saved — download or delete anytime." },
       { href: "/affiliates/studio/credits", title: "Credits & Packs", body: "Your balance, monthly allowance, and top-up packs." },
+      { href: "/affiliates/studio/campaigns", title: "Campaigns", body: "Join a posting campaign, submit your post, claim XP + credits." },
+      { href: "/affiliates/studio/ambassador", title: "Ambassador", body: "Apply for ambassador perks — exclusive templates and early access." },
+      { href: "/affiliates/studio/analytics", title: "Analytics", body: "Creations, credits, referrals, and your public bio page." },
+      { href: "/affiliates/studio/leaderboard", title: "Leaderboard", body: "This month's Studio rankings — creations, XP, campaigns." },
+      { href: "/affiliates/studio/compliance", title: "Compliance", body: "FTC disclosure rules and the required snippet, ready to copy." },
     ],
     [],
   );
