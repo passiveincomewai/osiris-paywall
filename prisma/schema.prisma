@@ -482,6 +482,13 @@ model StudioCreation {
   params             Json
   renderHash         String
   paidJobId          String?
+  // Phase 3 (Cosmo AI): fulfilled AI results. Text results are stored
+  // verbatim; image results are stored as bytes (capped ≈2.5MB at the
+  // fulfillment endpoint — no blob storage needed at this scale) and
+  // served only to the owning affiliate via an authenticated route.
+  resultText         String?  @db.Text
+  resultImageBytes   Bytes?
+  resultImageMime    String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -511,6 +518,10 @@ model StudioCreditLedger {
   delta     Int
   reason    String
   jobId     String?
+  // External-money idempotency (Phase 3 credit packs): the Stripe
+  // checkout session id, namespaced. Unique so a replayed webhook can
+  // never double-credit a purchase.
+  idempotencyKey String?     @unique
   createdAt DateTime         @default(now())
 
   @@index([profileId, createdAt])
@@ -526,6 +537,9 @@ model GenerationJob {
   creditCost  Int
   params      Json
   error       String?
+  // Phase 3 (Cosmo AI): text result of a fulfilled AI job. Image results
+  // live on the linked StudioCreation (paidJobId) as bytes — see below.
+  resultText  String?          @db.Text
   createdAt   DateTime         @default(now())
   completedAt DateTime?
 

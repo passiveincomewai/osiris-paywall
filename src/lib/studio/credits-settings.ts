@@ -24,6 +24,9 @@ function freshDefault(): StudioCreditConfig {
     prices: { ...DEFAULT_CREDIT_CONFIG.prices },
     providerUnitCostUsd: { ...DEFAULT_CREDIT_CONFIG.providerUnitCostUsd },
     providersEnabled: { ...DEFAULT_CREDIT_CONFIG.providersEnabled },
+    monthlyAiBudgetUsd: DEFAULT_CREDIT_CONFIG.monthlyAiBudgetUsd,
+    aiUserMonthlyCapCredits: DEFAULT_CREDIT_CONFIG.aiUserMonthlyCapCredits,
+    creditPacks: DEFAULT_CREDIT_CONFIG.creditPacks.map((p) => ({ ...p })),
   };
 }
 

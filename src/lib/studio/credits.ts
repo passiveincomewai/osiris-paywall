@@ -27,6 +27,7 @@ export interface StudioCreditLedgerRow {
   delta: number;
   reason: string;
   jobId: string | null;
+  idempotencyKey: string | null;
   createdAt: Date;
 }
 
@@ -38,6 +39,7 @@ export interface GenerationJobRow {
   creditCost: number;
   params: unknown;
   error: string | null;
+  resultText: string | null;
   createdAt: Date;
   completedAt: Date | null;
 }
@@ -277,6 +279,105 @@ export async function settleGenerationJob(args: {
     }
     return updated;
   })) as GenerationJobRow;
+}
+
+// ── Credit packs (Phase 3): Stripe one-time purchases ────────────────────
+
+export type PackCreditDecision = "credit" | "already_credited";
+
+/**
+ * Pure pack-credit decision: a purchase is credited exactly once, keyed
+ * by its idempotency key (the Stripe checkout session id). If a ledger
+ * row already carries the key, the webhook is a replay — credit nothing.
+ */
+export function evaluatePackCredit(alreadyCredited: boolean): PackCreditDecision {
+  return alreadyCredited ? "already_credited" : "credit";
+}
+
+export type CreditPackPurchaseResult =
+  | { credited: true; balance: number }
+  | { credited: false; reason: "already_credited"; balance: number };
+
+/**
+ * Credit a purchased pack to the buyer's account, exactly once per
+ * `idempotencyKey`. The ledger row (reason "pack_purchase") is written in
+ * the same transaction as the balance increment, and the column's unique
+ * constraint is the backstop: a concurrent replay that loses the race
+ * reads back as already-credited instead of double-crediting. Purchased
+ * credits never expire.
+ */
+export async function creditPackPurchase(args: {
+  profileId: string;
+  credits: number;
+  idempotencyKey: string;
+}): Promise<CreditPackPurchaseResult> {
+  const { profileId, credits, idempotencyKey } = args;
+
+  const existing = (await dbAny.studioCreditLedger.findUnique({
+    where: { idempotencyKey },
+  })) as StudioCreditLedgerRow | null;
+  if (evaluatePackCredit(!!existing) === "already_credited") {
+    return {
+      credited: false,
+      reason: "already_credited",
+      balance: await getCreditBalance(profileId),
+    };
+  }
+
+  try {
+    const balance = (await dbAny.$transaction(async (tx: TxClient) => {
+      const account = (await tx.studioCreditAccount.upsert({
+        where: { profileId },
+        create: { profileId, balance: credits },
+        update: { balance: { increment: credits } },
+      })) as StudioCreditAccountRow;
+      await tx.studioCreditLedger.create({
+        data: {
+          profileId,
+          delta: credits,
+          reason: "pack_purchase",
+          idempotencyKey,
+        },
+      });
+      return account.balance;
+    })) as number;
+    return { credited: true, balance };
+  } catch (e) {
+    // Unique-constraint race (P2002): another delivery of the same
+    // webhook event credited first. That is the idempotent outcome.
+    if ((e as { code?: string })?.code === "P2002") {
+      return {
+        credited: false,
+        reason: "already_credited",
+        balance: await getCreditBalance(profileId),
+      };
+    }
+    throw e;
+  }
+}
+
+/** Recent ledger activity for the credits page (newest first). */
+export async function getCreditActivity(
+  profileId: string,
+  take = 30,
+): Promise<StudioCreditLedgerRow[]> {
+  return (await dbAny.studioCreditLedger.findMany({
+    where: { profileId },
+    orderBy: { createdAt: "desc" },
+    take,
+  })) as StudioCreditLedgerRow[];
+}
+
+/** Has this month's member allowance already been granted? */
+export async function allowanceGrantedThisMonth(
+  profileId: string,
+  now: Date = new Date(),
+): Promise<boolean> {
+  const latest = (await dbAny.studioCreditLedger.findFirst({
+    where: { profileId, reason: "monthly_allowance" },
+    orderBy: { createdAt: "desc" },
+  })) as StudioCreditLedgerRow | null;
+  return latest !== null && !allowanceDue(latest.createdAt, now);
 }
 
 // ── Admin usage stats ─────────────────────────────────────────────────────
