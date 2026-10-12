@@ -9,6 +9,7 @@ import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
 import MarketingStudio from "./MarketingStudio";
+import StudioCredits from "./StudioCredits";
 import LiveRefresh from "./LiveRefresh";
 import { growthDashboardUrl } from "@/lib/growth";
 
@@ -926,6 +927,10 @@ export default async function AdminDashboardPage() {
         <div className="mt-4">
           <MarketingStudio initial={studioTemplates.map((t) => ({ id: t.id, slug: t.slug, title: t.title, category: t.category, kind: t.kind, format: t.format, width: t.width, height: t.height, active: t.active, featured: t.featured, sortOrder: t.sortOrder, svgBody: t.svgBody, editableFields: t.editableFields, layers: t.layers, tags: t.tags, publishAt: t.publishAt?.toISOString() ?? null }))} />
         </div>
+
+        <Section title="Studio credits & cost controls">
+          <StudioCredits />
+        </Section>
       </div>
     </div>
   );
