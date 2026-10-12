@@ -17,7 +17,6 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
   {
     title: "Resources",
     links: [
-      ["Documentation", "/docs"],
       ["Use Cases", "/use-cases"],
       ["Blog", "/blog"],
       ["FAQ", "/faq"],

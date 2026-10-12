@@ -20,13 +20,6 @@ const XIcon = () => (
   </svg>
 );
 
-const DocsIcon = () => (
-  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H10a2 2 0 0 1 2 2 2 2 0 0 1 2-2h4.5A1.5 1.5 0 0 1 20 4.5v13a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 0 0-2 2 2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 17.5z"/>
-    <path d="M12 7v14"/>
-  </svg>
-);
-
 const SolanaIcon = () => (
   <svg className="w-3.5 h-3.5" viewBox="0 0 32 32" fill="none">
     <path d="M6 10h14l4 3H10l-4-3zm0 9h14l4 3H10l-4-3zm18-6H10l-4 3h14l4-3z" fill="url(#sol_grad_bar)"/>
@@ -162,13 +155,6 @@ export default function GlobalStatusBar({ revealed = true }: { revealed?: boolea
           >
             <XIcon />
           </a>
-          {/* Documentation & API reference */}
-          <Link href="/docs" prefetch title="Documentation & API Reference" aria-label="Documentation & API Reference"
-            className="h-full px-3 flex items-center gap-1.5 bg-[var(--gold-primary)]/10 text-[var(--gold-primary)]/80 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 border-r border-white/[0.04] transition-all duration-200"
-          >
-            <DocsIcon />
-            <span className="text-[9px] font-bold tracking-[0.15em] uppercase">Docs</span>
-          </Link>
           {/* Data & privacy — what leaves this instance, and when */}
           <Link href="/privacy" title="Data & Privacy" aria-label="Data and Privacy"
             className="h-full px-3 hidden sm:flex items-center text-white/40 hover:text-white hover:bg-white/[0.04] border-r border-white/[0.04] transition-all duration-200"

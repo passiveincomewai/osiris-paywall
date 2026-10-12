@@ -203,8 +203,7 @@ export default function AboutPage() {
         />
 
         <p className="mt-10 text-center text-sm text-white/40">
-          Want the details? Read the <Link href="/docs" className="text-[#D4AF37] hover:underline">documentation</Link> or
-          browse the <Link href="/blog" className="text-[#D4AF37] hover:underline">blog</Link>.
+          Want the details? Browse the <Link href="/blog" className="text-[#D4AF37] hover:underline">blog</Link>.
         </p>
       </div>
 

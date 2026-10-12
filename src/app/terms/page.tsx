@@ -199,8 +199,7 @@ export default function TermsPage() {
             <a href="mailto:passiveincomewai@gmail.com" className="text-[#D4AF37] hover:underline">
               passiveincomewai@gmail.com
             </a>
-            . Related policies: <Link href="/privacy" className="text-[#D4AF37] hover:underline">Privacy Policy</Link>
-            {" · "}<Link href="/docs" className="text-[#D4AF37] hover:underline">Documentation</Link>.
+            . Related policies: <Link href="/privacy" className="text-[#D4AF37] hover:underline">Privacy Policy</Link>.
           </p>
         </Section>
       </div>

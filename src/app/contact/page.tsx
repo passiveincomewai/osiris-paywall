@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Mail, BookOpen, CreditCard, Users, ArrowRight } from "lucide-react";
+import { ArrowLeft, Mail, CreditCard, Users, ArrowRight } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 
@@ -50,13 +50,6 @@ const SUPPORT_FAQS = [
 const EMAIL = "passiveincomewai@gmail.com";
 
 const CARDS = [
-  {
-    icon: BookOpen,
-    title: "Documentation",
-    body: "Guides, layer references and how-tos for getting the most out of the globe.",
-    href: "/docs",
-    cta: "Read the docs",
-  },
   {
     icon: CreditCard,
     title: "Billing questions",

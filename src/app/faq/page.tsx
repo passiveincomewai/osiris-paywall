@@ -129,8 +129,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
           <>
             Pro-only data layers: cyber threat activity, GDELT global event
             data, maritime vessel tracking, conflict zones and a live news feed —
-            all plotted on the globe. The technical reference is in the{" "}
-            {p("/docs", "documentation")}.
+            all plotted on the globe.
           </>
         ),
       },
@@ -315,15 +314,9 @@ export default function FaqPage() {
         <div className="mt-16 text-center rounded-3xl border border-white/10 bg-white/[0.02] p-10">
           <h2 className="text-xl md:text-2xl font-bold">Still stuck?</h2>
           <p className="text-white/55 mt-2 mb-6 text-sm">
-            Check the documentation or get in touch — we reply within 1–2 business days.
+            Get in touch — we reply within 1–2 business days.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/docs"
-              className="px-6 py-3 rounded-2xl border border-white/15 text-sm font-semibold text-white/70 hover:bg-white/5 transition"
-            >
-              Read the docs
-            </Link>
             <Link
               href="/contact"
               className="px-6 py-3 rounded-2xl bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
