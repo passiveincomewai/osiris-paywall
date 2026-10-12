@@ -1,6 +1,7 @@
 "use client";
 // Missions: daily / weekly / monthly challenges, verified server-side.
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { SectionTitle, XpBar, Pill, EmptyState } from "@/components/affiliate/ui";
 
 interface Challenge {
@@ -44,8 +45,8 @@ export default function MissionsClient() {
   if (!joined) {
     return <EmptyState title="Join the program first"
       body="Missions unlock once your free affiliate account is active."
-      cta={<a href="/affiliates/dashboard" className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f] inline-block"
-        style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Go to dashboard</a>} />;
+      cta={<Link href="/affiliates/dashboard" className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f] inline-block"
+        style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Go to dashboard</Link>} />;
   }
   if (!challenges) return <div className="text-slate-400 font-mono text-sm">Loading missions…</div>;
 

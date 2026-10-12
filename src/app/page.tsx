@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useState, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layers, Newspaper, Search, X, Globe, MapPinned, Route, Radar, Satellite, Moon, ExternalLink, AlertTriangle, Activity, Database, Wifi, Play, Network, Crosshair, Bluetooth, Pentagon, Radio , PenLine, Orbit } from 'lucide-react';
 import { type TerrainStatus } from '@/lib/map-terrain';
@@ -1670,7 +1671,7 @@ export default function Dashboard() {
 
       {/* ── HEADER — WorldEye brand ── */}
       <motion.div data-hud initial={{ opacity: 0, y: -20 }} animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }} transition={hudIn(0.15)} className="absolute top-4 z-[200] pointer-events-none" style={{ left: isMobile ? '16px' : '64px' }}>
-        <a href="/" className="pointer-events-auto flex items-center gap-2.5">
+        <Link href="/" className="pointer-events-auto flex items-center gap-2.5">
           <img
             src="/worldeye-eye.png?v=3"
             alt="WorldEye"
@@ -1680,7 +1681,7 @@ export default function Dashboard() {
           <span className="text-lg md:text-xl font-bold tracking-wide font-mono">
             <span className="text-white">World</span><span className="text-[#0096FF]">Eye</span>
           </span>
-        </a>
+        </Link>
       </motion.div>
 
       {/* ── TOP-RIGHT STATUS (desktop) ── */}
@@ -1709,12 +1710,12 @@ export default function Dashboard() {
         {isPremiumUser ? (
           <HeaderProfileMenu />
         ) : (
-          <a
+          <Link
             href="/pricing"
             className="pointer-events-auto px-3.5 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.15em] hover:brightness-110 transition shadow-[0_0_12px_rgba(212,175,55,0.4)]"
           >
             Upgrade to PRO
-          </a>
+          </Link>
         )}
 
       </motion.div>
@@ -1728,12 +1729,12 @@ export default function Dashboard() {
             {isPremiumUser ? (
               <HeaderProfileMenu />
             ) : (
-              <a
+              <Link
                 href="/pricing"
                 className="px-3 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.12em]"
               >
                 Upgrade to PRO
-              </a>
+              </Link>
             )}
           </div>
         </motion.div>

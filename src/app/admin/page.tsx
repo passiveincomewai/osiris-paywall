@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { adminEmails } from "@/lib/affiliate/admin";
@@ -109,7 +110,7 @@ async function stripeRevenue() {
 export default async function AdminDashboardPage() {
   const session = await auth();
   const email = session?.user?.email?.toLowerCase() ?? null;
-  if (!email) redirect("/signin?callbackUrl=/admin");
+  if (!email) redirect("/admin/login");
   if (!adminEmails().includes(email)) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "#050810" }}>
@@ -121,7 +122,7 @@ export default async function AdminDashboardPage() {
             Add it to the <span className="font-mono text-cyan-300">ADMIN_EMAILS</span> environment variable
             in Vercel (comma-separated) and redeploy.
           </p>
-          <a href="/" className="inline-block mt-6 text-sm text-cyan-300 hover:underline">← Back to site</a>
+          <Link href="/" className="inline-block mt-6 text-sm text-cyan-300 hover:underline">← Back to site</Link>
         </div>
       </div>
     );
@@ -185,8 +186,8 @@ export default async function AdminDashboardPage() {
             <p className="text-xs text-white/40 mt-1">Signed in as {email} · Analytics tracking live since deploy</p>
           </div>
           <div className="flex gap-3 text-sm">
-            <a href="/admin/affiliates" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Affiliates</a>
-            <a href="/" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">← Site</a>
+            <Link href="/admin/affiliates" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Affiliates</Link>
+            <Link href="/" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">← Site</Link>
           </div>
         </div>
 

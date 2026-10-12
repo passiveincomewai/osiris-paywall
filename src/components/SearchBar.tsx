@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
+import Link from 'next/link';
 import { Loader2, Navigation, Route, Search, SearchX, X } from 'lucide-react';
 import { forgetRecent, loadRecent, rememberPlace, type RecentPlace } from '@/lib/recent-places';
 import { Key, PlaceRow, type PlaceLike } from './places';
@@ -62,9 +63,9 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
         <Search className="w-8 h-8 text-[#D4AF37]" />
         <p className="text-sm font-semibold text-white">Search is a Pro feature</p>
         <p className="text-xs text-white/50 max-w-[220px]">Find any place, address or coordinates and fly there instantly.</p>
-        <a href="/pricing" className="mt-1 px-5 py-2 rounded-full bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition">
+        <Link href="/pricing" className="mt-1 px-5 py-2 rounded-full bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition">
           Upgrade to Pro
-        </a>
+        </Link>
       </div>
     );
   }
