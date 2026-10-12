@@ -23,6 +23,7 @@ export default function CinematicHero() {
   const trackRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const bgRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef(0);
   const unlocked = useRef(false);
   const globeLocked = useRef(false);
@@ -37,18 +38,38 @@ export default function CinematicHero() {
     let raf = 0;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // The hero file is heavy (8.5MB desktop / 1.9MB mobile variant), so it
+    // is NOT fetched on page load: the poster paints first, and the video
+    // starts loading the moment the visitor actually engages — a gesture,
+    // a wheel/key scroll, or the scrub loop noticing movement. Visitors who
+    // never engage never pay for the bytes.
+    let loadRequested = false;
+    const ensureLoaded = () => {
+      if (loadRequested) return;
+      loadRequested = true;
+      video.load();
+      // The ambient blurred backdrop only renders on portrait screens.
+      const bg = bgRef.current;
+      if (bg && window.matchMedia('(orientation: portrait)').matches) {
+        bg.load();
+        bg.play().catch(() => {});
+      }
+    };
     const unlock = () => {
+      ensureLoaded();
       if (unlocked.current) return;
       unlocked.current = true;
       video.play().then(() => video.pause()).catch(() => {});
     };
     window.addEventListener('pointerdown', unlock);
     window.addEventListener('touchstart', unlock);
-    video.load();
+    window.addEventListener('wheel', ensureLoaded, { passive: true });
+    window.addEventListener('keydown', ensureLoaded);
 
     const tick = () => {
       const total = track.offsetHeight - window.innerHeight;
       const p = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / Math.max(1, total)));
+      if (p > 0.002) ensureLoaded();
       if (p !== progressRef.current) {
         progressRef.current = p;
         setProgress(p);
@@ -81,6 +102,8 @@ export default function CinematicHero() {
       cancelAnimationFrame(raf);
       window.removeEventListener('pointerdown', unlock);
       window.removeEventListener('touchstart', unlock);
+      window.removeEventListener('wheel', ensureLoaded);
+      window.removeEventListener('keydown', ensureLoaded);
     };
   }, []);
 
@@ -117,30 +140,35 @@ export default function CinematicHero() {
             }
           }
         `}</style>
-        {/* Ambient blurred fill — portrait only, drifts in sync behind the main video */}
+        {/* Ambient blurred fill — portrait only, drifts in sync behind the main video.
+            Loaded lazily by the effect (portrait only) — never autoplays on load. */}
         <video
+          ref={bgRef}
           aria-hidden
           tabIndex={-1}
           className="cine-vid-bg"
-          src="/worldeye-cinematic.mp4"
           muted
           playsInline
-          preload="auto"
-          autoPlay
+          preload="none"
           loop
           disablePictureInPicture
-        />
+        >
+          <source src="/worldeye-cinematic-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
+          <source src="/worldeye-cinematic.mp4" media="(min-width: 768px)" type="video/mp4" />
+        </video>
         <video
           ref={videoRef}
           className="cine-vid"
-          src="/worldeye-cinematic.mp4"
           poster="/worldeye-cinematic-poster.jpg"
           muted
           playsInline
-          preload="auto"
+          preload="none"
           disablePictureInPicture
           aria-label="WorldEye cinematic intro — scroll to explore"
-        />
+        >
+          <source src="/worldeye-cinematic-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
+          <source src="/worldeye-cinematic.mp4" media="(min-width: 768px)" type="video/mp4" />
+        </video>
         {/* Scroll hint — fades as soon as you start scrolling */}
         <div
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none transition-opacity duration-300"
