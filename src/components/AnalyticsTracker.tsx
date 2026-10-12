@@ -16,6 +16,19 @@ function sessionId(): string {
   }
 }
 
+/** Fire a named interaction event (e.g. "camera_open", "upgrade_gate_shown"). */
+export function trackAnalyticsEvent(event: string) {
+  try {
+    const sid = sessionId();
+    fetch("/api/analytics/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: window.location.pathname, sessionId: sid, event }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {}
+}
+
 /** Lightweight first-party analytics: page view + visible seconds. Powers /admin. */
 export default function AnalyticsTracker() {
   const path = usePathname();

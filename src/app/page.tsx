@@ -8,6 +8,7 @@ import { Layers, Newspaper, Search, X, Globe, MapPinned, Route, Radar, Satellite
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
+import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import IntelFeed from '@/components/IntelFeed';
 import CinematicHero from '@/components/CinematicHero';
 import ScmPanel from '@/components/ScmPanel';
@@ -888,11 +889,13 @@ export default function Dashboard() {
       // itself is never shown.
       if (!isPremiumUser) {
         if (!cameraClickAllowed()) {
+          trackAnalyticsEvent('upgrade_gate_shown');
           setShowCameraSignup(true);
           return;
         }
         recordCameraClick();
       }
+      trackAnalyticsEvent('camera_open');
       setActiveCamera(entity);
       return;
     }
