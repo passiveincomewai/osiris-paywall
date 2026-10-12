@@ -28,11 +28,13 @@ export function captureUtm(): Record<string, string> {
     if (stored) return JSON.parse(stored) as Record<string, string>;
     const q = new URLSearchParams(window.location.search);
     const utm: Record<string, string> = {};
-    const s = q.get("utm_source"), m = q.get("utm_medium"), c = q.get("utm_campaign"), ct = q.get("utm_content");
-    if (s) utm.s = s.slice(0, 120);
-    if (m) utm.m = m.slice(0, 120);
-    if (c) utm.c = c.slice(0, 120);
-    if (ct) utm.ct = ct.slice(0, 120);
+    // Keep only the characters legitimate UTM values use; cap at 120 chars.
+    const clean = (v: string | null) => (v ? v.replace(/[^A-Za-z0-9\-_./ ]/g, "").slice(0, 120) : "");
+    const s = clean(q.get("utm_source")), m = clean(q.get("utm_medium")), c = clean(q.get("utm_campaign")), ct = clean(q.get("utm_content"));
+    if (s) utm.s = s;
+    if (m) utm.m = m;
+    if (c) utm.c = c;
+    if (ct) utm.ct = ct;
     if (Object.keys(utm).length > 0) {
       const json = JSON.stringify(utm);
       localStorage.setItem("we_utm", json);

@@ -45,7 +45,12 @@ export async function POST(req: NextRequest) {
         },
       });
     } else {
-      const utmStr = (v: unknown) => (typeof v === "string" && v.length > 0 ? v.slice(0, 120) : null);
+      const utmStr = (v: unknown) => {
+        if (typeof v !== "string") return null;
+        // Strip anything outside the characters legitimate UTM values use.
+        const cleaned = v.replace(/[^A-Za-z0-9\-_./ ]/g, "").slice(0, 120);
+        return cleaned.length > 0 ? cleaned : null;
+      };
       await db.pageView.create({
         data: {
           path,
