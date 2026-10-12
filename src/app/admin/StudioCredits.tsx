@@ -9,6 +9,18 @@
 import { useEffect, useState } from "react";
 import type { CreditKind, StudioCreditConfig } from "@/lib/studio/credits-config";
 
+interface AiAdminStats {
+  monthKey: string;
+  monthAiCredits: number;
+  monthAiUsd: number;
+  budgetUsd: number;
+  budgetUsedPct: number;
+  userCapCredits: number;
+  queueDepth: number;
+  oldestQueuedAt: string | null;
+  oldestQueuedAgeHours: number | null;
+}
+
 interface CreditUsageStats {
   monthKey: string;
   consumedByKind: Record<string, { credits: number; jobs: number }>;
@@ -22,12 +34,19 @@ interface CreditUsageStats {
     error: string | null;
     createdAt: string;
   }>;
+  ai?: AiAdminStats;
 }
 
 const KINDS: { kind: CreditKind; label: string }[] = [
   { kind: "image_render", label: "Image render" },
   { kind: "video_personalize", label: "Video personalize" },
   { kind: "video_template", label: "Video template" },
+  { kind: "ai_caption", label: "AI caption pack (Cosmo)" },
+  { kind: "ai_hooks", label: "AI hook pack (Cosmo)" },
+  { kind: "ai_script", label: "AI reel script (Cosmo)" },
+  { kind: "ai_video_ideas", label: "AI video ideas (Cosmo)" },
+  { kind: "ai_image", label: "AI image (Cosmo)" },
+  { kind: "ai_background", label: "AI background (Cosmo)" },
 ];
 
 const inputCls = "w-full rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-cyan-400/50";
@@ -138,6 +157,26 @@ export default function StudioCredits() {
                 type="number" step="1" min="0" className={inputCls}
                 value={config.monthlyAllowance}
                 onChange={(e) => setConfig({ ...config, monthlyAllowance: num(e.target.value) })}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>AI monthly budget (USD, all users)</label>
+              <input
+                type="number" step="1" min="0" className={inputCls}
+                value={config.monthlyAiBudgetUsd}
+                onChange={(e) => setConfig({ ...config, monthlyAiBudgetUsd: num(e.target.value) })}
+              />
+              <p className="text-[11px] text-white/35 mt-1">
+                Global cap on Cosmo AI orders per month, valued at the credit anchor. Cosmo fulfills in-house
+                (unit cost $0), so this caps workload, not spend.
+              </p>
+            </div>
+            <div>
+              <label className={labelCls}>AI cap per user (credits / month)</label>
+              <input
+                type="number" step="1" min="0" className={inputCls}
+                value={config.aiUserMonthlyCapCredits}
+                onChange={(e) => setConfig({ ...config, aiUserMonthlyCapCredits: num(e.target.value) })}
               />
             </div>
           </div>
@@ -270,6 +309,56 @@ export default function StudioCredits() {
                       ))}
                     </ul>
                   )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {stats?.ai && (
+            <div className="mt-6 border-t border-white/5 pt-4">
+              <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-3">
+                Cosmo AI · {stats.ai.monthKey}
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="rounded-xl border border-white/5 bg-black/20 px-3.5 py-3">
+                  <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/35">Budget used</div>
+                  <div className="text-white font-bold mt-1 tabular-nums">
+                    ${stats.ai.monthAiUsd.toFixed(2)} <span className="text-white/40 font-normal">/ ${stats.ai.budgetUsd.toFixed(2)}</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/10 mt-2 overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${Math.min(100, stats.ai.budgetUsedPct)}%`,
+                        background: stats.ai.budgetUsedPct >= 90 ? "#f87171" : "linear-gradient(90deg,#38bdf8,#0096FF)",
+                      }}
+                    />
+                  </div>
+                  <div className="text-[11px] text-white/40 mt-1.5 tabular-nums">
+                    {stats.ai.monthAiCredits.toLocaleString("en-US")} AI credits charged this month
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/5 bg-black/20 px-3.5 py-3">
+                  <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/35">Fulfillment queue</div>
+                  <div className="text-white font-bold mt-1 tabular-nums">{stats.ai.queueDepth} waiting</div>
+                  <div className="text-[11px] text-white/40 mt-1.5">
+                    {stats.ai.oldestQueuedAt
+                      ? `Oldest: ${stats.ai.oldestQueuedAgeHours}h old (auto-refunds at 7 days)`
+                      : "Queue is empty."}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/5 bg-black/20 px-3.5 py-3">
+                  <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/35">Credit packs</div>
+                  <ul className="mt-1.5 space-y-1">
+                    {config.creditPacks.map((p) => (
+                      <li key={p.id} className="text-[11px] text-white/55 font-mono">
+                        {p.name}: {p.credits} cr · ${p.priceUsd.toFixed(2)} · <span className="text-white/35">{p.priceEnv}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="text-[11px] text-white/40 mt-1.5">
+                    A pack sells only when its env var holds a Stripe price id.
+                  </div>
                 </div>
               </div>
             </div>

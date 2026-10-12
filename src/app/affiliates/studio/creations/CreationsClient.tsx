@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { CopyButton, EmptyState } from "@/components/affiliate/ui";
+import { AI_KIND_META, type AiKind } from "@/lib/studio/credits-config";
 import {
   categoryLabel,
   creationCaptionText,
   creationTemplateSlug,
   creationValues,
+  isAiCreation,
   isCaptionCreation,
   renderUrl,
   type StudioCreationLite,
@@ -18,16 +20,27 @@ const btnPrimary =
 const btnStyle = { background: "linear-gradient(135deg,#38bdf8,#0096FF)", boxShadow: "0 0 20px rgba(0,150,255,.45)" };
 
 function kindIcon(kind: string | null | undefined, caption: boolean): string {
+  if (kind && kind.startsWith("ai_")) return "✨";
   if (caption || kind === "caption") return "✍️";
   if (kind === "carousel") return "🎠";
   if (kind === "video" || kind === "reel") return "🎬";
   return "🖼️";
 }
 
+function aiKindLabel(kind: string | null | undefined): string {
+  if (kind && kind in AI_KIND_META) return AI_KIND_META[kind as AiKind].label;
+  return "AI creation";
+}
+
 function paramsSummary(c: StudioCreationLite): { key: string; value: string }[] {
   const values = creationValues(c);
   return Object.entries(values)
-    .filter(([k]) => !["caption", "captionText", "text"].includes(k))
+    // AI params carry the fulfillment spec + referral link — internal
+    // machinery, not card content. Caption-ish keys are shown as text.
+    .filter(
+      ([k]) =>
+        !["caption", "captionText", "text", "spec", "referralLink", "deliverable", "resultType", "discountCode"].includes(k),
+    )
     .slice(0, 4)
     .map(([key, v]) => ({
       key,
@@ -119,19 +132,22 @@ export default function CreationsClient() {
           {creations.map((c) => {
             const caption = isCaptionCreation(c);
             const captionText = caption ? creationCaptionText(c) : null;
+            const ai = isAiCreation(c);
             const slug = creationTemplateSlug(c);
             const summary = paramsSummary(c);
             const title =
               c.title ??
               c.template?.title ??
               (caption ? "Caption" : "Untitled creation");
-            const subtitle = caption
-              ? "Caption"
-              : c.template
-                ? `${c.template.title} · ${categoryLabel(c.template.category)}`
-                : c.kind
-                  ? c.kind
-                  : "Design";
+            const subtitle = ai
+              ? `Made by Cosmo · ${aiKindLabel(c.kind)}`
+              : caption
+                ? "Caption"
+                : c.template
+                  ? `${c.template.title} · ${categoryLabel(c.template.category)}`
+                  : c.kind
+                    ? c.kind
+                    : "Design";
             return (
               <div key={c.id} className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden flex flex-col">
                 {!caption && slug ? (
@@ -142,6 +158,17 @@ export default function CreationsClient() {
                       alt={title}
                       loading="lazy"
                       className="w-full h-full object-contain"
+                    />
+                  </div>
+                ) : null}
+                {ai && c.hasImage ? (
+                  <div className="bg-black/40 flex items-center justify-center overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/api/affiliate/studio/creations/${encodeURIComponent(c.id)}/image`}
+                      alt={title}
+                      loading="lazy"
+                      className="w-full max-h-80 object-contain"
                     />
                   </div>
                 ) : null}
@@ -157,7 +184,16 @@ export default function CreationsClient() {
                     </div>
                   </div>
 
-                  {caption && captionText ? (
+                  {ai && c.resultText ? (
+                    <div>
+                      <pre className="whitespace-pre-wrap text-sm text-slate-300 font-sans leading-relaxed rounded-xl border border-white/10 bg-black/30 p-3 max-h-64 overflow-y-auto">
+                        {c.resultText}
+                      </pre>
+                      <div className="mt-2">
+                        <CopyButton text={c.resultText} label="Copy result" />
+                      </div>
+                    </div>
+                  ) : caption && captionText ? (
                     <div>
                       <pre className="whitespace-pre-wrap text-sm text-slate-300 font-sans leading-relaxed rounded-xl border border-white/10 bg-black/30 p-3 max-h-48 overflow-y-auto">
                         {captionText}
@@ -180,7 +216,25 @@ export default function CreationsClient() {
                   )}
 
                   <div className="mt-auto flex flex-wrap gap-2 pt-1">
-                    {!caption &&
+                    {ai && c.hasImage && (
+                      <a
+                        href={`/api/affiliate/studio/creations/${encodeURIComponent(c.id)}/image`}
+                        download
+                        className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f]"
+                        style={btnStyle}
+                      >
+                        Download image
+                      </a>
+                    )}
+                    {ai && (
+                      <Link
+                        href="/affiliates/studio/ai"
+                        className="px-4 py-2 rounded-xl font-mono text-sm border border-white/15 text-slate-200 hover:border-cyan-400/60"
+                      >
+                        Order another
+                      </Link>
+                    )}
+                    {!caption && !ai &&
                       (c.kind === "video" && slug ? (
                         <Link
                           href={`/affiliates/studio/video/${slug}`}

@@ -99,6 +99,15 @@ const SECTIONS: { n: string; title: string; body: string[] }[] = [
       "A purchase made with an affiliate's discount code is attributed to that affiliate for commission purposes under the standard commission rules, even if the buyer did not arrive through the affiliate's referral link — unless the buyer already carries another affiliate's attribution, which takes precedence. Redeeming your own code on your own purchase is self-referral and is prohibited under Section 5. WorldEye may deactivate any code, without notice, for fraud, abuse, misleading promotion, or violation of these terms, and commissions arising from code abuse are void.",
     ],
   },
+  {
+    n: "13",
+    title: "Studio credits & Cosmo AI requests",
+    body: [
+      "Marketing Studio generation — template renders, video personalization, and AI requests — is paid for with Studio credits. Active members receive a monthly credit allowance, granted once per calendar month while their membership is active. The allowance is a single monthly grant: it is not multiplied, and unspent credits simply remain in the account balance.",
+      "Additional credits are sold in packs. Purchased credits are added to your account when payment completes, never expire, and have no cash value: they cannot be transferred, resold, exchanged, or redeemed for money. Purchased credits are non-refundable — with one exception: credits spent on a generation job that fails, or that WorldEye does not fulfill, are refunded to your account automatically. AI requests that remain unfulfilled for 7 days are refunded automatically.",
+      "AI content in the Studio is created to order by Cosmo, WorldEye's AI assistant. It is not generated instantly: typical turnaround is a few hours, and no specific delivery time is guaranteed. AI output is provided as-is for your marketing use; you are responsible for reviewing it before publishing and for the disclosure obligations in Section 6.",
+    ],
+  },
 ];
 
 export default function AffiliateTerms() {

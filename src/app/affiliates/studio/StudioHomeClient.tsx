@@ -38,8 +38,18 @@ export interface StudioCreationLite {
   caption?: string | null;
   captionText?: string | null;
   text?: string | null;
+  /** Phase 3 (Cosmo AI): fulfilled text result, stored on the creation. */
+  resultText?: string | null;
+  /** Phase 3: true when an AI image result is stored (bytes served via
+   *  the owner-only /creations/[id]/image route, never inlined). */
+  hasImage?: boolean;
   createdAt: string;
   template?: { slug: string; title: string; category: string; kind?: string } | null;
+}
+
+/** Cosmo AI creations carry their job kind (ai_caption, ai_image, …). */
+export function isAiCreation(c: StudioCreationLite): boolean {
+  return typeof c.kind === "string" && c.kind.startsWith("ai_");
 }
 
 interface Me {
@@ -210,8 +220,10 @@ export default function StudioHomeClient({
   const quickLinks = useMemo(
     () => [
       { href: "/affiliates/studio/library", title: "Template Library", body: "Browse every template by category and format." },
+      { href: "/affiliates/studio/ai", title: "AI by Cosmo ✨", body: "Captions, hooks, scripts, and images — crafted to order by WorldEye's AI around your link." },
       { href: "/affiliates/studio/captions", title: "Caption Generator", body: "Platform-ready captions with your link + #ad disclosure." },
       { href: "/affiliates/studio/creations", title: "My Creations", body: "Everything you've saved — download or delete anytime." },
+      { href: "/affiliates/studio/credits", title: "Credits & Packs", body: "Your balance, monthly allowance, and top-up packs." },
     ],
     [],
   );
@@ -255,6 +267,7 @@ export default function StudioHomeClient({
         </p>
         <div className="flex flex-wrap gap-3 justify-center mt-6">
           <Link href="/affiliates/studio/library" className={btnPrimary} style={btnStyle}>Create an Ad</Link>
+          <Link href="/affiliates/studio/ai" className={btnGhost}>✨ AI by Cosmo</Link>
           <Link href="/affiliates/studio/library" className={btnGhost}>Browse Templates</Link>
           <Link href="/affiliates/studio/creations" className={btnGhost}>My Creations</Link>
         </div>

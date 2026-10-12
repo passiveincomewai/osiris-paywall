@@ -14,10 +14,15 @@ import { db } from "@/lib/db";
 import {
   AI_KINDS,
   AI_KIND_META,
+  AI_PLATFORMS,
   isAiKind,
   type AiKind,
+  type AiPlatform,
   type StudioCreditConfig,
 } from "./credits-config";
+
+export { AI_PLATFORMS, AI_TONES } from "./credits-config";
+export type { AiPlatform } from "./credits-config";
 import {
   settleGenerationJob,
   type GenerationJobRow,
@@ -41,17 +46,6 @@ export const AI_IMAGE_MAX_BYTES = 2_500_000;
 
 /** Max length of a stored text result. */
 export const AI_RESULT_TEXT_MAX = 20_000;
-
-export const AI_PLATFORMS = ["Instagram", "TikTok", "YouTube", "X"] as const;
-export type AiPlatform = (typeof AI_PLATFORMS)[number];
-
-export const AI_TONES = [
-  "Bold & punchy",
-  "Friendly & curious",
-  "Educational",
-  "Hype / high-energy",
-  "Calm & premium",
-] as const;
 
 // ── Pure: request validation + the fulfillment spec ───────────────────────
 

@@ -39,6 +39,18 @@ export function isAiKind(kind: string): kind is AiKind {
   return (AI_KINDS as readonly string[]).includes(kind);
 }
 
+/** Platforms an AI request can target (order form + spec builder). */
+export const AI_PLATFORMS = ["Instagram", "TikTok", "YouTube", "X"] as const;
+export type AiPlatform = (typeof AI_PLATFORMS)[number];
+
+export const AI_TONES = [
+  "Bold & punchy",
+  "Friendly & curious",
+  "Educational",
+  "Hype / high-energy",
+  "Calm & premium",
+] as const;
+
 export interface AiKindMeta {
   label: string;
   /** What the affiliate receives, stated plainly on the order form. */
