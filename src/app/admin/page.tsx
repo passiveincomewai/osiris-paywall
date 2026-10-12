@@ -56,7 +56,10 @@ function Chart({ data, labels, color, height = 140 }: { data: number[]; labels: 
   const area = `${line} L${(W - P).toFixed(1)},${H - P} L${P},${H - P} Z`;
   const gid = `g${color.replace(/[^a-z0-9]/gi, "")}`;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height }}>
+    // h-auto (aspect-ratio from viewBox), NOT a fixed pixel height: with a
+    // fluid width + fixed height the browser letterboxes the drawing into a
+    // thin centered band on narrow screens and the chart looks empty.
+    <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full">
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={color} stopOpacity="0.45" />
@@ -111,7 +114,10 @@ function VisitStrip({ visits, startMs }: { visits: { t: number; path: string }[]
   const maxHour = Math.max(1, ...hours);
   const hh = (t: number) => `${String(new Date(t).getUTCHours()).padStart(2, "0")}:00`;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: H }}>
+    // h-auto (aspect-ratio from viewBox), NOT a fixed pixel height: with a
+    // fluid width + fixed height the browser letterboxes the drawing into a
+    // thin centered band on narrow screens and the graph looks empty.
+    <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full">
       {/* Hour gridlines + labels (UTC) */}
       {Array.from({ length: 25 }, (_, h) => {
         const x = PADX + h * hourW;
