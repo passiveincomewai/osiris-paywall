@@ -15,6 +15,7 @@ const NAV = [
   { href: "/affiliates/network", label: "Network" },
   { href: "/affiliates/leaderboard", label: "Leaderboard" },
   { href: "/affiliates/resources", label: "Resources" },
+  { href: "/affiliates/studio", label: "Marketing Studio" },
 ];
 
 export default async function AffiliatesLayout({ children }: { children: React.ReactNode }) {

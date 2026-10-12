@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
      standalone build is told to bring the two engine files along. */
   serverExternalPackages: ['ws', 'onnxruntime-web'],
   outputFileTracingIncludes: {
-    '/api/**': ['./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs', './node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm'],
+    '/api/**': ['./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs', './node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm', './src/lib/studio/fonts/files/*.ttf'],
   },
   transpilePackages: ['react-map-gl', 'mapbox-gl', 'maplibre-gl'],
   // Type errors block the build again. They were suppressed while 17 stood

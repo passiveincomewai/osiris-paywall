@@ -158,6 +158,7 @@ model AffiliateProfile {
   payouts       Payout[]
   xpEvents      XPEvent[]
   challengeProgress ChallengeProgress[]
+  creations     StudioCreation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -420,6 +421,59 @@ model AffiliateAuditLog {
 
   @@index([createdAt])
   @@index([targetType, targetId])
+}
+
+// ── Marketing Studio (Phase 1) ─────────────────────────────────────────
+// Templates are tokenized SVGs (kind=svg) rendered server-side with the
+// affiliate's real link/code injected; creations store params, not files,
+// and re-render deterministically (see src/lib/studio/).
+model MarketingTemplate {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  category       String
+  kind           String
+  format         String
+  width          Int
+  height         Int
+  svgBody        String?  @db.Text
+  assetUrl       String?
+  previewUrl     String?
+  editableFields Json
+  layers         Json?
+  carouselGroup  String?
+  slideIndex     Int?
+  featured       Boolean  @default(false)
+  active         Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  tags           String[] @default([])
+  publishAt      DateTime?
+  createdBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  creations      StudioCreation[]
+
+  @@index([category, active, featured])
+  @@index([publishAt])
+}
+
+model StudioCreation {
+  id                 String   @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+  templateId         String?
+  template           MarketingTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  title              String
+  kind               String
+  campaignKey        String?
+  params             Json
+  renderHash         String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([affiliateProfileId, createdAt])
+  @@index([renderHash])
 }
 
 // ── Phase 1 camera recording: user-saved cameras + clip metadata ─────────
