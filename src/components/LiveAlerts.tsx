@@ -413,7 +413,7 @@ function NewsCard({ item, now, open, wide, onToggle, onLocate }: {
           )}
 
           {!video && item.media?.thumb && !mediaFailed && (
-            <a href={item.link ?? undefined} target="_blank" rel="noopener noreferrer" className="relative block max-w-[560px] overflow-hidden rounded-md border border-white/5 bg-black/40">
+            <a href={item.link ?? undefined} target="_blank" rel="noopener noreferrer" aria-label={`Open ${item.source_name} post`} className="relative block max-w-[560px] overflow-hidden rounded-md border border-white/5 bg-black/40">
               {/* eslint-disable-next-line @next/next/no-img-element -- remote CDN preview, loaded only on expand */}
               <img
                 src={item.media.thumb}

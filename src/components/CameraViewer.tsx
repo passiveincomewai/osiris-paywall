@@ -240,17 +240,17 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                           setImageUrl(url);
                         }
                       }} 
-                      className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)] transition-all" title="Refresh feed"
+                      className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)] transition-all" title="Refresh feed" aria-label="Refresh feed"
                     >
                       <RefreshCw className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--gold-primary)]" />
                     </button>
                   )}
                   {camera.lat && camera.lng && (
-                    <button onClick={() => onLocate?.(camera.lat, camera.lng)} className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)] transition-all" title="Fly to location">
+                    <button onClick={() => onLocate?.(camera.lat, camera.lng)} className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)] transition-all" title="Fly to location" aria-label="Fly to location">
                       <MapPin className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--gold-primary)]" />
                     </button>
                   )}
-                  <button onClick={() => setFullscreen(!fullscreen)} className="hidden md:block p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--text-primary)]/20 hover:border-[var(--text-primary)] transition-all" title="Toggle fullscreen">
+                  <button onClick={() => setFullscreen(!fullscreen)} className="hidden md:block p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--text-primary)]/20 hover:border-[var(--text-primary)] transition-all" title="Toggle fullscreen" aria-label="Toggle fullscreen">
                     <Maximize2 className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)]" />
                   </button>
                   <button
@@ -279,10 +279,11 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                       setTimeout(() => setSaveState("idle"), 2500);
                     }}
                     className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-cyan-400/20 hover:border-cyan-400 transition-all"
-                    title={saveState === "saved" ? "Saved to My Cameras!" : saveState === "signin" ? "Sign in to save cameras" : "Save to My Cameras"}>
+                    title={saveState === "saved" ? "Saved to My Cameras!" : saveState === "signin" ? "Sign in to save cameras" : "Save to My Cameras"}
+                    aria-label={saveState === "saved" ? "Saved to My Cameras" : "Save to My Cameras"}>
                     <Bookmark className={`w-3 h-3 ${saveState === "saved" ? "text-cyan-300" : "text-[var(--text-secondary)]"}`} />
                   </button>
-                  <button onClick={onClose} className="p-1.5 rounded-sm bg-red-900/30 border border-red-500/30 hover:bg-red-500/30 hover:border-red-500 transition-all ml-2">
+                  <button onClick={onClose} aria-label="Close camera viewer" title="Close camera viewer" className="p-1.5 rounded-sm bg-red-900/30 border border-red-500/30 hover:bg-red-500/30 hover:border-red-500 transition-all ml-2">
                     <X className="w-4 h-4 md:w-3 md:h-3 text-red-400 hover:text-red-200" />
                   </button>
                 </div>

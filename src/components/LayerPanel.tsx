@@ -325,6 +325,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
           <button
             onClick={() => setStudioOpen(o => !o)}
             aria-pressed={studioOpen}
+            aria-label="Style Studio"
+            title="Style Studio"
             className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
             style={{
               background: studioOpen ? 'var(--hover-accent)' : 'transparent',
@@ -344,6 +346,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
             <span className="text-[10px] font-mono tracking-[0.2em] text-white/25 uppercase">Ghost Protocol</span>
             <button
               onClick={() => setTheme(theme === 'core' ? 'ghost' : 'core')}
+              aria-label="Ghost Protocol"
+              title="Ghost Protocol"
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
               style={{
                 background: theme === 'ghost' ? 'rgba(179, 136, 255, 0.15)' : 'transparent',
@@ -529,6 +533,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
         className="w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-500 cursor-pointer"
         style={{ background: studioOpen ? 'var(--hover-accent)' : 'transparent' }}
         title="Style Studio"
+        aria-label="Style Studio"
       >
         <SlidersHorizontal
           className="transition-all duration-500"
@@ -553,6 +558,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
             background: theme === 'ghost' ? 'rgba(179, 136, 255, 0.1)' : 'transparent',
           }}
           title="Ghost Protocol"
+          aria-label="Ghost Protocol"
         >
           <Ghost
             className="transition-all duration-500"
