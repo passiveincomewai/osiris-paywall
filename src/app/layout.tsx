@@ -137,6 +137,11 @@ const jsonLd = {
       name: "WorldEye",
       url: SITE_URL,
       logo: `${SITE_URL}/worldeye-logo.png`,
+      contactPoint: {
+        "@type": "ContactPoint",
+        email: "passiveincomewai@gmail.com",
+        contactType: "customer support",
+      },
     },
     {
       "@type": "WebSite",

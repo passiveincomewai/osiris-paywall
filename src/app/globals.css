@@ -204,6 +204,15 @@ html:has(.cinematic-root) body {
   html:has(.cinematic-root) body { scroll-behavior: auto; }
 }
 
+/* ── Homepage content shell ──
+   The server-rendered copy section under the fullscreen globe app. In flow
+   it follows the cinematic track, so scrolling past the app reveals it.
+   When the hero is skipped (paid traffic) there is no track and the
+   viewport is locked to the app — push the shell one viewport down so it
+   can never cover the globe. */
+.home-seo-shell { margin-top: 100vh; }
+html:has(.cinematic-root) .home-seo-shell { margin-top: 0; }
+
 /* ── Docs code tokens ── */
 .docs-code { color: #C9D1D9; }
 .docs-code .tok-key { color: var(--gold-primary); }

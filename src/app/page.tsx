@@ -9,26 +9,46 @@ import { type TerrainStatus } from '@/lib/map-terrain';
 import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
-import IntelFeed from '@/components/IntelFeed';
 import CinematicHero from '@/components/CinematicHero';
+import HomeSeoShell from '@/components/HomeSeoShell';
+import JsonLd from '@/components/JsonLd';
+import { HOME_FAQS } from '@/lib/home-faqs';
+
+// FAQPage structured data for the homepage — built from the same Q&A list
+// the visible HomeSeoShell renders, so the two can never drift apart.
+const homeFaqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: HOME_FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 import ScmPanel from '@/components/ScmPanel';
 import SearchBar from '@/components/SearchBar';
 import DirectionsBar, { type RouteResult, type LiveLocation } from '@/components/DirectionsBar';
-import NavigationView from '@/components/NavigationView';
-import FlightWatchPanel, { type WatchedFlight, type FlightTelemetry, type AircraftDetail, type Airport } from '@/components/FlightWatchPanel';
+import type { WatchedFlight, FlightTelemetry, AircraftDetail, Airport } from '@/components/FlightWatchPanel';
 import type { NavProgress } from '@/lib/navigation';
 import type { LiveDetection } from '@/lib/malware-intel';
 import ScaleBar from '@/components/ScaleBar';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { applySettings, loadSavedSettings } from '@/lib/style-tokens';
-import SharePanel from '@/components/SharePanel';
-import ViewPresets from '@/components/ViewPresets';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import GlobalStatusBar from '@/components/GlobalStatusBar';
 import LiveAlerts from '@/components/LiveAlerts';
-import WorldRemote from '@/components/WorldRemote';
-import ArcGISPanel from '@/components/ArcGISPanel';
 const OsirisMap = dynamic(() => import('@/components/OsirisMap'), { ssr: false });
+// Panels that only appear after a deliberate action (an active navigation
+// session, a watched flight, an opened tool) are split out of the initial
+// bundle: their chunks load on first open instead of taxing first paint and
+// the main thread for every visitor.
+const IntelFeed = dynamic(() => import('@/components/IntelFeed'));
+const NavigationView = dynamic(() => import('@/components/NavigationView'));
+const FlightWatchPanel = dynamic(() => import('@/components/FlightWatchPanel'));
+const ArcGISPanel = dynamic(() => import('@/components/ArcGISPanel'));
+const WorldRemote = dynamic(() => import('@/components/WorldRemote'));
+const SharePanel = dynamic(() => import('@/components/SharePanel'));
+const ViewPresets = dynamic(() => import('@/components/ViewPresets'));
 const LayerPanel = dynamic(() => import('@/components/LayerPanel'));
 const SpaceCam = dynamic(() => import('@/components/SpaceCam'), { ssr: false });
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
@@ -2013,7 +2033,7 @@ export default function Dashboard() {
                     <span>Open in YouTube</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
-                  <button onClick={() => setLiveFeedUrl(null)} className="text-white/70 hover:text-white transition-colors p-1">
+                  <button onClick={() => setLiveFeedUrl(null)} className="text-white/70 hover:text-white transition-colors p-1" aria-label="Close live feed" title="Close live feed">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -2137,7 +2157,7 @@ export default function Dashboard() {
                     <span className="hud-text text-[10px] text-[var(--text-primary)]">
                       {mobilePanel === 'layers' ? 'LAYERS & STATS' : mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'OSIRIS RECON' : mobilePanel === 'remote' ? 'WORLD REMOTE' : mobilePanel === 'oi' ? 'OSIRIS OI' : 'SEARCH'}
                     </span>
-                    <button onClick={() => setMobilePanel(null)} className="text-[var(--text-muted)] p-1"><X className="w-4 h-4" /></button>
+                    <button onClick={() => setMobilePanel(null)} className="text-[var(--text-muted)] p-1" aria-label="Close panel" title="Close panel"><X className="w-4 h-4" /></button>
                   </div>
                   {mobilePanel === 'layers' && (
                     <>
@@ -2220,7 +2240,7 @@ export default function Dashboard() {
           <div className="glass-panel p-5 osiris-glow">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-mono font-bold text-[var(--gold-primary)] tracking-wider">REGION DOSSIER</h2>
-              <button onClick={() => { setRegionDossier(null); setDossierLoading(false); }} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs">✕</button>
+              <button onClick={() => { setRegionDossier(null); setDossierLoading(false); }} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs" aria-label="Close dossier" title="Close dossier">✕</button>
             </div>
             {dossierLoading ? (
               <div className="text-center py-8">
@@ -2324,6 +2344,11 @@ export default function Dashboard() {
 
 
     </main>
+
+    {/* ── SEO / content shell — server-rendered copy below the app (H1, FAQ,
+        CTAs, contact). Placement handled by .home-seo-shell in globals.css. ── */}
+    <JsonLd data={homeFaqJsonLd} />
+    <HomeSeoShell />
     </>
   );
 }
