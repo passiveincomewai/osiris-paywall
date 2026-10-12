@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { adminEmails } from "@/lib/affiliate/admin";
 import { stripe } from "@/lib/stripe";
+import NewsletterBroadcast from "./NewsletterBroadcast";
 
 export const metadata = { title: "Admin Dashboard — WorldEye" };
 export const dynamic = "force-dynamic";
@@ -257,6 +258,10 @@ export default async function AdminDashboardPage() {
         <p className="text-[11px] text-white/30 mt-8 text-center">
           Views &amp; duration are first-party (no cookies, no third parties). Revenue reads live Stripe invoices.
         </p>
+
+        <div className="mt-4">
+          <NewsletterBroadcast />
+        </div>
       </div>
     </div>
   );

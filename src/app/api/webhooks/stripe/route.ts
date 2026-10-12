@@ -161,12 +161,33 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // NOTE: checkout.session.created is a real Stripe event but missing from
+    // the stripe@18.5.0 Event type union — hence the string comparison.
+    if ((event.type as string) === "checkout.session.created") {
+      const s = event.data.object as Stripe.Checkout.Session;
+      if (s.mode === "subscription") {
+        const email = s.customer_details?.email ?? s.customer_email ?? null;
+        const plan = s.metadata?.plan ?? null;
+        await db.checkoutAttempt.upsert({
+          where: { stripeSessionId: s.id },
+          create: { stripeSessionId: s.id, email, plan },
+          update: {},
+        }).catch(() => {});
+      }
+      return NextResponse.json({ received: true });
+    }
+
     switch (event.type) {
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
         if (s.mode === "subscription" && s.subscription) {
           await subscriptionFromId(s.subscription as string);
         }
+        // Close any tracked cart attempt — they converted.
+        await db.checkoutAttempt.updateMany({
+          where: { stripeSessionId: s.id },
+          data: { status: "completed" },
+        }).catch(() => {});
         break;
       }
       case "invoice.payment_succeeded": {

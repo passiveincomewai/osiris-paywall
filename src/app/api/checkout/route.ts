@@ -67,6 +67,8 @@ export async function POST(req: Request) {
   const checkoutSession = await stripe().checkout.sessions.create({
     mode: "subscription",
     ...(customerId ? { customer: customerId } : {}),
+    // Session-level metadata: read by the webhook for abandoned-cart tracking.
+    metadata: { plan },
     // Guests: Stripe collects the email at checkout; the webhook links it.
     ...(userId ? { client_reference_id: userId } : {}),
     line_items: [{ price: priceId, quantity: 1 }],

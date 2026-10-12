@@ -1,4 +1,5 @@
 import Link from "next/link";
+import NewsletterForm from "./NewsletterForm";
 
 const COLUMNS: { title: string; links: [string, string][] }[] = [
   {
@@ -40,6 +41,19 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
 export default function SiteFooter() {
   return (
     <footer className="border-t border-white/10 mt-24">
+      {/* Newsletter band */}
+      <div className="max-w-5xl mx-auto px-6 pt-12 pb-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 justify-between">
+          <div>
+            <p className="text-[11px] font-bold tracking-[0.2em] text-[#0096FF] mb-2">NEWSLETTER</p>
+            <h3 className="text-xl font-bold text-white">Intel drops, new layers, launch news.</h3>
+            <p className="text-sm text-white/45 mt-1">One email when it matters. No spam, unsubscribe anytime.</p>
+          </div>
+          <div className="w-full md:w-auto md:min-w-[340px]">
+            <NewsletterForm source="footer" />
+          </div>
+        </div>
+      </div>
       <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-10">
         <div className="col-span-2 md:col-span-1">
           <Link href="/" className="flex items-center gap-2.5">
@@ -82,8 +96,20 @@ export default function SiteFooter() {
       <div className="border-t border-white/5">
         <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/30">
           <span>© 2026 WorldEye. All rights reserved.</span>
-          <span className="flex items-center gap-4">
-            <span>Live data from public sources worldwide.</span>
+          <span className="flex items-center gap-2">
+            <span className="hidden sm:inline">Live data from public sources worldwide.</span>
+            <Link
+              href="/signin"
+              className="inline-flex items-center px-3 py-1.5 rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/25 transition"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#0096FF] hover:bg-[#0aa5ff] text-white font-semibold transition"
+            >
+              Sign up
+            </Link>
             <Link
               href="/admin"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white/40 hover:text-white hover:border-white/25 transition"

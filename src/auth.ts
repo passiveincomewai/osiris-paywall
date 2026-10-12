@@ -1,10 +1,5 @@
 import NextAuth, { type DefaultSession } from "next-auth";
-import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import Apple from "next-auth/providers/apple";
-import Discord from "next-auth/providers/discord";
-import Twitter from "next-auth/providers/twitter";
-import Facebook from "next-auth/providers/facebook";
 import Resend from "next-auth/providers/resend";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -63,19 +58,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // Magic-link "check your inbox" state renders on the sign-in page.
     verifyRequest: "/signin?check=email",
   },
-  // Providers are opt-in: a provider is only registered when its env vars
-  // exist, so local dev works with a single OAuth app (or none, until set).
-  // The custom /signin page renders a button per configured provider.
+  // Providers: Google OAuth + email magic link + email/password only.
+  // (Other OAuth providers were removed per owner decision 2026-10-11.)
   providers: [
-    ...(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET ? [GitHub] : []),
     ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET ? [Google] : []),
-    // Sign in with Apple: needs an Apple Developer account — a Services ID as
-    // AUTH_APPLE_ID and a generated client-secret JWT as AUTH_APPLE_SECRET.
-    // Callback: https://worldeye.app/api/auth/callback/apple
-    ...(process.env.AUTH_APPLE_ID && process.env.AUTH_APPLE_SECRET ? [Apple] : []),
-    ...(process.env.AUTH_DISCORD_ID && process.env.AUTH_DISCORD_SECRET ? [Discord] : []),
-    ...(process.env.AUTH_TWITTER_ID && process.env.AUTH_TWITTER_SECRET ? [Twitter] : []),
-    ...(process.env.AUTH_FACEBOOK_ID && process.env.AUTH_FACEBOOK_SECRET ? [Facebook] : []),
     // Email magic link via Resend (free tier: 100 emails/day). Needs
     // AUTH_RESEND_KEY plus a verified sender in EMAIL_FROM.
     ...(process.env.AUTH_RESEND_KEY

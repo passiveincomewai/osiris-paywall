@@ -100,3 +100,41 @@ export function resetPasswordEmail(name: string | null, resetUrl: string): { sub
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 }
+
+export function newsletterVerifyEmail(verifyUrl: string): { subject: string; html: string } {
+  return {
+    subject: "Confirm your WorldEye newsletter subscription",
+    html: shell(
+      "One more click",
+      "Confirm your subscription to the WorldEye newsletter.",
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Thanks for your interest in WorldEye. Click below to confirm your newsletter subscription — we'll send product updates, new intel layers, and launch news. No spam, unsubscribe anytime.</p>`,
+      { label: "Confirm subscription", href: verifyUrl }
+    ),
+  };
+}
+
+export function newsletterWelcomeEmail(unsubUrl: string): { subject: string; html: string } {
+  return {
+    subject: "You're on the WorldEye newsletter",
+    html: shell(
+      "You're in",
+      "Your WorldEye newsletter subscription is confirmed.",
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">You're subscribed. We'll keep you posted on new layers, features, and major launches.</p>
+       <p style="font-size:12px;color:#71717a;"><a href="${unsubUrl}" style="color:#71717a;">Unsubscribe anytime</a></p>`,
+      { label: "Explore the live map", href: appUrl("/") }
+    ),
+  };
+}
+
+export function abandonedCartEmail(plan: string, checkoutUrl: string): { subject: string; html: string } {
+  const planLabel = plan ? `WorldEye Pro (${plan})` : "WorldEye Pro";
+  return {
+    subject: "Your WorldEye Pro checkout is waiting",
+    html: shell(
+      "Still thinking it over?",
+      "Your WorldEye Pro checkout is still open.",
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">You started checking out for <strong style="color:#fff;">${escapeHtml(planLabel)}</strong> but didn't finish. Your spot is still reserved — it only takes a minute to complete.</p>`,
+      { label: "Complete my checkout", href: checkoutUrl }
+    ),
+  };
+}

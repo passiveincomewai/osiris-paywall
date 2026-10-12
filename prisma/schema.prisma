@@ -232,6 +232,36 @@ model PageView {
   @@index([sessionId])
 }
 
+// ── Newsletter ─────────────────────────────────────────────────────────
+// Double opt-in subscribers. Broadcasts go out via /api/admin/newsletter.
+model NewsletterSubscriber {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  verified    Boolean   @default(false)
+  verifyToken String?   @unique
+  unsubToken  String    @unique @default(cuid())
+  source      String?
+  createdAt   DateTime  @default(now())
+  verifiedAt  DateTime?
+
+  @@index([verified])
+}
+
+// ── Abandoned checkout tracking ────────────────────────────────────────
+// Created on Stripe checkout.session.created, closed on .completed.
+// A cron job emails "started" attempts older than 3h with no reminder yet.
+model CheckoutAttempt {
+  id              String    @id @default(cuid())
+  stripeSessionId String    @unique
+  email           String?
+  plan            String?
+  status          String    @default("started") // started | completed | reminded | expired
+  remindedAt      DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([status, createdAt])
+}
+
 model Payout {
   id                 String           @id @default(cuid())
   affiliateProfileId String

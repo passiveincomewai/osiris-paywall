@@ -4,24 +4,15 @@ import SignInForm, { type OAuthProvider } from "./SignInForm";
 
 export const metadata: Metadata = {
   title: "Sign in — WorldEye",
-  description: "Sign in to your WorldEye account with email, Google, Apple, GitHub and more.",
+  description: "Sign in to your WorldEye account with Google or email.",
   robots: { index: false, follow: false },
 };
 
 function configuredProviders(): { oauth: OAuthProvider[]; emailLink: boolean } {
   const oauth: OAuthProvider[] = [];
-  if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET)
-    oauth.push({ id: "github", label: "GitHub" });
+  // Google only — other OAuth providers removed per owner decision 2026-10-11.
   if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET)
     oauth.push({ id: "google", label: "Google" });
-  if (process.env.AUTH_APPLE_ID && process.env.AUTH_APPLE_SECRET)
-    oauth.push({ id: "apple", label: "Apple" });
-  if (process.env.AUTH_DISCORD_ID && process.env.AUTH_DISCORD_SECRET)
-    oauth.push({ id: "discord", label: "Discord" });
-  if (process.env.AUTH_TWITTER_ID && process.env.AUTH_TWITTER_SECRET)
-    oauth.push({ id: "twitter", label: "X" });
-  if (process.env.AUTH_FACEBOOK_ID && process.env.AUTH_FACEBOOK_SECRET)
-    oauth.push({ id: "facebook", label: "Facebook" });
   return { oauth, emailLink: !!process.env.AUTH_RESEND_KEY };
 }
 
