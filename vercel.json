@@ -1,1 +1,1 @@
-{"crons":[{"path":"/api/cron/abandoned-cart","schedule":"0 */4 * * *"}]}
+{"crons":[{"path":"/api/cron/abandoned-cart","schedule":"0 2 * * *"},{"path":"/api/cron/abandoned-cart","schedule":"0 14 * * *"},{"path":"/api/cron/abandoned-cart","schedule":"0 20 * * *"}]}
