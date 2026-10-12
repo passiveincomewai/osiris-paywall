@@ -2,6 +2,8 @@
 // Used for signup verification and password resets. The Auth.js magic-link
 // provider sends its own emails; this is for our account flows.
 
+import { appBaseUrl } from "./app-url";
+
 const RESEND_API = "https://api.resend.com/emails";
 
 function resendKey(): string | null {
@@ -62,10 +64,7 @@ ${cta ? `<div style="text-align:center;margin:26px 0 8px;"><a href="${cta.href}"
 }
 
 export function appUrl(path: string): string {
-  const base =
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://worldeye.app");
-  return `${base}${path}`;
+  return `${appBaseUrl()}${path}`;
 }
 
 export function verificationEmail(name: string | null, verifyUrl: string): { subject: string; html: string } {

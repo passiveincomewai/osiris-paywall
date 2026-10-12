@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/affiliate/admin";
+import { appBaseUrl } from "@/lib/app-url";
 
 export const runtime = "nodejs";
 
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
   }
 
   const from = process.env.EMAIL_FROM ?? "WorldEye <onboarding@resend.dev>";
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://worldeye.app";
+  const base = appBaseUrl();
   let sent = 0;
   // Resend batch limit: 100 per request.
   for (let i = 0; i < subs.length; i += 100) {

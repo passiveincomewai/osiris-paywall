@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Share2, Copy, Check, Link2, X, Globe, MapPin } from 'lucide-react';
+import { appBaseUrl } from '@/lib/app-url';
 
 interface SharePanelProps {
   mapView: { zoom: number; latitude: number; longitude?: number };
@@ -29,7 +30,7 @@ export default function SharePanel({ mapView, activeLayers, mouseCoords }: Share
       .join(',');
     if (layerKeys) params.set('layers', layerKeys);
 
-    const base = typeof window !== 'undefined' ? window.location.origin : 'https://osiris.vercel.app';
+    const base = typeof window !== 'undefined' ? window.location.origin : appBaseUrl();
     return `${base}/?${params.toString()}`;
   }, [mapView, activeLayers, mouseCoords]);
 
