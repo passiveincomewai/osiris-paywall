@@ -60,8 +60,36 @@ export default function AnalyticsTracker() {
       if (document.visibilityState === "hidden") reportDuration();
     });
     window.addEventListener("pagehide", reportDuration);
+
+    // Scroll-depth: fire once per session when the visitor actually reaches the globe.
+    let fired = false;
+    let observer: IntersectionObserver | null = null;
+    if (path === "/") {
+      try { fired = sessionStorage.getItem("we_globe_reached") === "1"; } catch {}
+      if (!fired) {
+        const fire = () => {
+          fired = true;
+          try { sessionStorage.setItem("we_globe_reached", "1"); } catch {}
+          fetch("/api/analytics/track", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path, sessionId: sid, event: "globe_reached" }),
+            keepalive: true,
+          }).catch(() => {});
+          observer?.disconnect();
+        };
+        const target = document.querySelector("[data-globe-section]");
+        if (target && "IntersectionObserver" in window) {
+          observer = new IntersectionObserver((entries) => {
+            if (entries.some((e) => e.isIntersecting)) fire();
+          }, { threshold: 0.15 });
+          observer.observe(target);
+        }
+      }
+    }
     return () => {
       window.removeEventListener("pagehide", reportDuration);
+      observer?.disconnect();
     };
   }, [path]);
 

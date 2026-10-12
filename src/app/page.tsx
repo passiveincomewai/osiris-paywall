@@ -1490,6 +1490,7 @@ export default function Dashboard() {
 
 
       {/* ── MAP ── */}
+      <div data-globe-section>
       <ErrorBoundary name="Map">
         <OsirisMap 
           key={osirisTheme}
@@ -1537,6 +1538,7 @@ export default function Dashboard() {
           oiHighlight={oiHighlight}
         />
       </ErrorBoundary>
+      </div>
 
       {/* ── OI: what the pointer is over on the globe ── */}
       {oiHover && !isMobile && (

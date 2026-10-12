@@ -225,11 +225,14 @@ model PageView {
   // Seconds the page was visible, reported on page hide. Null if unknown.
   durationSec Int?
   referrer   String?
+  // Optional event name (e.g. "globe_reached" scroll-depth). Null = plain page view.
+  event      String?
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
   @@index([path, createdAt])
   @@index([sessionId])
+  @@index([event, createdAt])
 }
 
 // ── Competitor comparisons (powers /compare + /compare/[slug]) ─────────

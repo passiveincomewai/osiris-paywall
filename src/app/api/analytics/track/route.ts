@@ -5,10 +5,12 @@ import { auth } from "@/auth";
 export const runtime = "nodejs";
 
 /**
- * First-party analytics ingest. Two call shapes:
+ * First-party analytics ingest. Three call shapes:
  *  { path, sessionId, referrer? }            -> new page view row
  *  { path, sessionId, durationSec }          -> attach visible seconds to the
  *                                               most recent view of this session+path
+ *  { path, sessionId, event }                -> named interaction event
+ *                                               (e.g. "globe_reached" scroll depth)
  */
 export async function POST(req: NextRequest) {
   try {
@@ -33,6 +35,15 @@ export async function POST(req: NextRequest) {
       } else {
         await db.pageView.create({ data: { path, sessionId, userId, durationSec: secs } });
       }
+    } else if (typeof body.event === "string" && body.event.length > 0) {
+      await db.pageView.create({
+        data: {
+          path,
+          sessionId,
+          userId,
+          event: body.event.slice(0, 80),
+        },
+      });
     } else {
       await db.pageView.create({
         data: {

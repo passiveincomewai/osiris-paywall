@@ -189,7 +189,7 @@ export default async function AdminDashboardPage() {
     trialCohortTotal, trialCohortPaying, pastDueSubs,
     pv24h, pv7d, pv30d, pvTotal,
     uniq24h, uniq30d, sessionAgg,
-    topPages, topReferrersRaw, recentUsers, signupSourcesRaw,
+    topPages, topReferrersRaw, recentUsers, signupSourcesRaw, globeReachedRaw,
     dailySignupsRaw, dailyPvRaw,
     nlTotal, nlVerified, nl7d, nl30d,
     checkoutStatus, checkoutByPlan,
@@ -251,6 +251,18 @@ export default async function AdminDashboardPage() {
       JOIN LATERAL (
         SELECT pv2.referrer FROM "PageView" pv2
         WHERE pv2."sessionId" = s."sessionId" AND pv2.referrer IS NOT NULL
+        ORDER BY pv2."createdAt" ASC LIMIT 1
+      ) r ON true
+      GROUP BY r.referrer ORDER BY c DESC LIMIT 20`,
+    db.$queryRaw<SignupSource[]>`
+      SELECT r.referrer AS ref, COUNT(DISTINCT g."sessionId") AS c
+      FROM (
+        SELECT DISTINCT "sessionId" FROM "PageView"
+        WHERE event = 'globe_reached' AND "createdAt" >= ${d30}
+      ) g
+      JOIN LATERAL (
+        SELECT pv2.referrer FROM "PageView" pv2
+        WHERE pv2."sessionId" = g."sessionId" AND pv2.referrer IS NOT NULL
         ORDER BY pv2."createdAt" ASC LIMIT 1
       ) r ON true
       GROUP BY r.referrer ORDER BY c DESC LIMIT 20`,
@@ -316,6 +328,15 @@ export default async function AdminDashboardPage() {
     try { host = new URL(r.ref).hostname.replace(/^www\./, ""); } catch { /* keep raw */ }
     if (!host || host.includes("worldeye.app")) continue;
     signupSrcMap.set(host, (signupSrcMap.get(host) ?? 0) + Number(r.c));
+  }
+  // --- Globe reached: sessions that scrolled past the hero to the globe ---
+  const globeMap = new Map<string, number>();
+  for (const r of globeReachedRaw) {
+    if (!r.ref) continue;
+    let host = r.ref;
+    try { host = new URL(r.ref).hostname.replace(/^www\./, ""); } catch { /* keep raw */ }
+    if (!host || host.includes("worldeye.app")) continue;
+    globeMap.set(host, (globeMap.get(host) ?? 0) + Number(r.c));
   }
   const attributedSignups = [...signupSrcMap.values()].reduce((a, b) => a + b, 0);
   const directSignups = Math.max(0, users30d - attributedSignups);
@@ -442,6 +463,20 @@ export default async function AdminDashboardPage() {
             <p className="text-[11px] text-white/30 mt-3">
               Attributed via the signup session's landing referrer (same-tab signups). "Est. conv." = attributed signups ÷ pageviews from that referrer — directional, not exact.
             </p>
+            {[...globeMap.entries()].length > 0 && (
+              <div className="mt-4 pt-3 border-t border-white/10">
+                <div className="text-[11px] font-bold tracking-[0.18em] text-white/40 uppercase mb-2">Reached the globe</div>
+                <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                  {[...globeMap.entries()].sort((a, b) => b[1] - a[1]).map(([host, c]) => (
+                    <span key={host} className="text-white/60">
+                      <span className="font-mono text-cyan-200/80">{host}</span>
+                      {" "}<span className="text-white/85 font-semibold tabular-nums">{fmt(c)}</span>
+                      <span className="text-white/35 text-xs"> sessions scrolled past the hero</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </Section>
 
