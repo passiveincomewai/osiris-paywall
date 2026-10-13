@@ -1,0 +1,73 @@
+/**
+ * Validation helpers for the analytics ingest route
+ * (src/app/api/analytics/track/route.ts).
+ *
+ * Two PageView fields exist for the Onboarding & Activation report:
+ *  - variant: the onboarding A/B experiment group. Assigned client-side
+ *    (persisted by the onboarding client), so the route can only accept it
+ *    from the payload — strictly "A" or "B", anything else becomes null.
+ *  - device: coarse device class. The client may report it; when it
+ *    doesn't (or reports garbage), the route derives it from the
+ *    User-Agent header so device filters work for every emitter,
+ *    including the plain trackAnalyticsEvent() helper.
+ */
+
+export const VARIANTS = ["A", "B"] as const;
+export type Variant = (typeof VARIANTS)[number];
+
+export const DEVICE_CLASSES = ["mobile", "tablet", "desktop"] as const;
+export type DeviceClass = (typeof DEVICE_CLASSES)[number];
+
+export function parseVariant(v: unknown): Variant | null {
+  return v === "A" || v === "B" ? v : null;
+}
+
+export function parseDevice(v: unknown): DeviceClass | null {
+  return v === "mobile" || v === "tablet" || v === "desktop" ? v : null;
+}
+
+/** Coarse device class from a User-Agent string. Null only for empty UA. */
+export function deviceClassFromUserAgent(ua: string | null | undefined): DeviceClass | null {
+  if (!ua) return null;
+  const s = ua.toLowerCase();
+  if (
+    s.includes("ipad") ||
+    s.includes("tablet") ||
+    s.includes("playbook") ||
+    s.includes("silk") ||
+    (s.includes("android") && !s.includes("mobile"))
+  ) {
+    return "tablet";
+  }
+  if (
+    s.includes("iphone") ||
+    s.includes("ipod") ||
+    s.includes("windows phone") ||
+    s.includes("mobile") ||
+    s.includes("android")
+  ) {
+    return "mobile";
+  }
+  return "desktop";
+}
+
+/**
+ * Optional event detail suffix. Named events may carry one machine-readable
+ * detail token, stored as `name:detail` in the event column:
+ *   onboarding_step_complete + detail "3"     -> "onboarding_step_complete:3"
+ *   feature_first_use        + detail "camera" -> "feature_first_use:camera"
+ * Sanitized to lowercase [a-z0-9_], max 24 chars; anything else is dropped
+ * (the bare event name is still recorded).
+ */
+export function parseEventDetail(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  const cleaned = v.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 24);
+  return cleaned.length > 0 ? cleaned : null;
+}
+
+/** Split a stored event value into { name, detail } (detail may be null). */
+export function splitEvent(raw: string): { name: string; detail: string | null } {
+  const i = raw.indexOf(":");
+  if (i < 0) return { name: raw, detail: null };
+  return { name: raw.slice(0, i), detail: raw.slice(i + 1) || null };
+}

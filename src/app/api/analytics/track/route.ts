@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
+import {
+  parseVariant,
+  parseDevice,
+  parseEventDetail,
+  deviceClassFromUserAgent,
+} from "@/lib/analytics/ingest-fields";
 
 export const runtime = "nodejs";
 
@@ -11,6 +17,13 @@ export const runtime = "nodejs";
  *                                               most recent view of this session+path
  *  { path, sessionId, event }                -> named interaction event
  *                                               (e.g. "globe_reached" scroll depth)
+ *
+ * Any shape may also carry:
+ *  variant: "A" | "B"   onboarding A/B group (client-assigned; validated)
+ *  device:  "mobile" | "tablet" | "desktop" (client-reported; validated,
+ *           else derived from the User-Agent header)
+ *  detail:  for events only — one machine token stored as `event:detail`
+ *           (e.g. onboarding step number, feature_first_use feature key)
  */
 export async function POST(req: NextRequest) {
   try {
@@ -22,6 +35,8 @@ export async function POST(req: NextRequest) {
     }
     const session = await auth().catch(() => null);
     const userId = (session?.user as { id?: string } | undefined)?.id ?? null;
+    const variant = parseVariant(body.variant);
+    const device = parseDevice(body.device) ?? deviceClassFromUserAgent(req.headers.get("user-agent"));
 
     if (typeof body.durationSec === "number") {
       const secs = Math.max(0, Math.min(86400, Math.round(body.durationSec)));
@@ -33,15 +48,19 @@ export async function POST(req: NextRequest) {
       if (latest) {
         await db.pageView.update({ where: { id: latest.id }, data: { durationSec: secs } });
       } else {
-        await db.pageView.create({ data: { path, sessionId, userId, durationSec: secs } });
+        await db.pageView.create({ data: { path, sessionId, userId, durationSec: secs, variant, device } });
       }
     } else if (typeof body.event === "string" && body.event.length > 0) {
+      const detail = parseEventDetail(body.detail);
+      const event = (detail ? `${body.event}:${detail}` : body.event).slice(0, 80);
       await db.pageView.create({
         data: {
           path,
           sessionId,
           userId,
-          event: body.event.slice(0, 80),
+          event,
+          variant,
+          device,
         },
       });
     } else {
@@ -56,6 +75,8 @@ export async function POST(req: NextRequest) {
           path,
           sessionId,
           userId,
+          variant,
+          device,
           referrer: typeof body.referrer === "string" ? body.referrer.slice(0, 500) : null,
           utmSource: utmStr(body.utmSource),
           utmMedium: utmStr(body.utmMedium),
