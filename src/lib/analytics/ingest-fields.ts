@@ -4,8 +4,10 @@
  *
  * Two PageView fields exist for the Onboarding & Activation report:
  *  - variant: the onboarding A/B experiment group. Assigned client-side
- *    (persisted by the onboarding client), so the route can only accept it
- *    from the payload — strictly "A" or "B", anything else becomes null.
+ *    by src/lib/onboarding/storage.ts, which persists it as "a"/"b" in
+ *    localStorage AND a `we_onb_group` cookie. The route accepts the
+ *    group from the payload when present, else from that cookie, and
+ *    normalizes to canonical "A"/"B" for storage. Anything else → null.
  *  - device: coarse device class. The client may report it; when it
  *    doesn't (or reports garbage), the route derives it from the
  *    User-Agent header so device filters work for every emitter,
@@ -19,7 +21,9 @@ export const DEVICE_CLASSES = ["mobile", "tablet", "desktop"] as const;
 export type DeviceClass = (typeof DEVICE_CLASSES)[number];
 
 export function parseVariant(v: unknown): Variant | null {
-  return v === "A" || v === "B" ? v : null;
+  if (v === "A" || v === "a") return "A";
+  if (v === "B" || v === "b") return "B";
+  return null;
 }
 
 export function parseDevice(v: unknown): DeviceClass | null {

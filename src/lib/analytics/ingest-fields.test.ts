@@ -8,11 +8,14 @@ import {
 } from "./ingest-fields";
 
 describe("parseVariant", () => {
-  it("accepts only A/B", () => {
+  it("accepts A/B, normalizing the client's lowercase cookie values", () => {
     expect(parseVariant("A")).toBe("A");
     expect(parseVariant("B")).toBe("B");
-    expect(parseVariant("a")).toBeNull();
+    // src/lib/onboarding/storage.ts persists the group as "a"/"b".
+    expect(parseVariant("a")).toBe("A");
+    expect(parseVariant("b")).toBe("B");
     expect(parseVariant("C")).toBeNull();
+    expect(parseVariant("ab")).toBeNull();
     expect(parseVariant(1)).toBeNull();
     expect(parseVariant(undefined)).toBeNull();
   });

@@ -19,7 +19,11 @@ export const runtime = "nodejs";
  *                                               (e.g. "globe_reached" scroll depth)
  *
  * Any shape may also carry:
- *  variant: "A" | "B"   onboarding A/B group (client-assigned; validated)
+ *  variant: "A" | "B"   onboarding A/B group (client-assigned; validated.
+ *           When the payload omits it, the route reads the `we_onb_group`
+ *           cookie persisted by src/lib/onboarding/storage.ts — the
+ *           client's trackAnalyticsEvent() sends no body variant, so the
+ *           cookie is the primary channel.)
  *  device:  "mobile" | "tablet" | "desktop" (client-reported; validated,
  *           else derived from the User-Agent header)
  *  detail:  for events only — one machine token stored as `event:detail`
@@ -35,7 +39,8 @@ export async function POST(req: NextRequest) {
     }
     const session = await auth().catch(() => null);
     const userId = (session?.user as { id?: string } | undefined)?.id ?? null;
-    const variant = parseVariant(body.variant);
+    const variant =
+      parseVariant(body.variant) ?? parseVariant(req.cookies.get("we_onb_group")?.value);
     const device = parseDevice(body.device) ?? deviceClassFromUserAgent(req.headers.get("user-agent"));
 
     if (typeof body.durationSec === "number") {
