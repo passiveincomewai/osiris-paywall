@@ -8,6 +8,7 @@ import directory from "@/data/camera-directory.json";
 import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
+import OnboardingActivation from "./OnboardingActivation";
 import MarketingStudio from "./MarketingStudio";
 import StudioCredits from "./StudioCredits";
 import StudioCampaigns from "./StudioCampaigns";
@@ -924,6 +925,10 @@ export default async function AdminDashboardPage() {
               createdAt: a.createdAt.toISOString(),
             }))}
           />
+        </div>
+
+        <div className="mt-4">
+          <OnboardingActivation />
         </div>
 
         <div className="mt-4">
