@@ -282,6 +282,14 @@ model PageView {
   utmMedium   String?
   utmCampaign String?
   utmContent  String?
+  // Onboarding A/B experiment group ("A" | "B"), stamped by the ingest
+  // route from the client payload when present. Null = not assigned /
+  // pre-onboarding traffic. Resolved per session in src/lib/analytics.
+  variant     String?
+  // Coarse device class ("mobile" | "tablet" | "desktop"), stamped by the
+  // ingest route (client-reported, else derived from the User-Agent).
+  // Null on rows written before this column existed ("unknown" in reports).
+  device      String?
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
