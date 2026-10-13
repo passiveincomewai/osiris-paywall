@@ -242,27 +242,44 @@ function OnboardingRootInner({
     [update],
   );
 
-  /* ── §1 Welcome: group B, globe ready, 3–5s of real engagement ── */
+  /* ── §1 Welcome: group B, globe ready, 3–5s of real engagement ──
+     Engagement is timestamped whenever it happens — including while the
+     visitor scrolls the intro before the globe finishes loading — and
+     the panel appears once BOTH conditions hold: globe interactive AND
+     ~3.5s elapsed since first engagement. Listeners exist only while a
+     welcome is still pending, and are removed the moment it resolves. */
+  const engagedAtRef = useRef(0);
+  const globeReadyRef = useRef(globeReady);
+  globeReadyRef.current = globeReady;
   useEffect(() => {
-    if (!globeReady || group !== "b") return;
-    if (stateRef.current.welcome !== "pending" || ui !== "none") return;
-    let engagedAt = 0;
+    if (group !== "b" || onb.welcome !== "pending") return;
     let timer: number | null = null;
-    const onEngage = () => {
-      if (engagedAt) return;
-      engagedAt = Date.now();
+    const show = () => {
+      emitOnboarding(ONB_EVENT.impression);
+      setUi("welcome");
+    };
+    const schedule = () => {
+      if (timer !== null || !engagedAtRef.current) return;
+      const wait = Math.min(3500, Math.max(400, 3500 - (Date.now() - engagedAtRef.current)));
       timer = window.setTimeout(() => {
-        if (uiRef.current === "none" && stateRef.current.welcome === "pending") {
-          emitOnboarding(ONB_EVENT.impression);
-          setUi("welcome");
+        timer = null;
+        if (globeReadyRef.current && uiRef.current === "none" && stateRef.current.welcome === "pending") {
+          show();
         }
-      }, 3500);
+        // If the globe wasn't ready yet, the effect re-runs on the
+        // globeReady flip and schedules again with the same timestamp.
+      }, wait);
+    };
+    const onEngage = () => {
+      if (!engagedAtRef.current) engagedAtRef.current = Date.now();
+      schedule();
     };
     const opts: AddEventListenerOptions = { passive: true };
     window.addEventListener("pointerdown", onEngage, opts);
     window.addEventListener("wheel", onEngage, opts);
     window.addEventListener("touchstart", onEngage, opts);
     window.addEventListener("keydown", onEngage);
+    schedule();
     return () => {
       if (timer) window.clearTimeout(timer);
       window.removeEventListener("pointerdown", onEngage);
@@ -270,7 +287,7 @@ function OnboardingRootInner({
       window.removeEventListener("touchstart", onEngage);
       window.removeEventListener("keydown", onEngage);
     };
-  }, [globeReady, group, ui]);
+  }, [globeReady, group, onb.welcome, ui]);
 
   const dismissWelcome = useCallback(() => {
     emitOnboarding(ONB_EVENT.dismiss);
