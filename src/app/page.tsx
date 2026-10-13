@@ -46,6 +46,9 @@ const OiPanel = dynamic(() => import('@/components/OiPanel'));
 // deleted; companion/** stays in the tree for a later, gated re-add.
 const DrawingToolbar = dynamic(() => import('@/components/DrawingToolbar'), { ssr: false });
 const DrawHud = dynamic(() => import('@/components/DrawHud'), { ssr: false });
+// Onboarding (Build A): lazy + client-only; renders nothing until the
+// globe signals ready, so it can never delay or disturb the map.
+const OnboardingRoot = dynamic(() => import('@/components/onboarding/OnboardingRoot'), { ssr: false });
 // The measurement helpers are pure functions — importing them directly keeps
 // them out of the lazy chunk, so a finished polygon can be measured whether or
 // not the toolbar has loaded yet.
@@ -2339,6 +2342,20 @@ export default function Dashboard() {
           Both features' code stays in the tree (components/companion/**,
           components/HomeSeoShell.tsx); they return one at a time, gated on
           proof they cannot affect the globe. ── */}
+
+      {/* ── ONBOARDING (Build A): mounted last, purely additive overlays.
+          Receives only primitive snapshots of live state; the component
+          renders nothing until the globe is ready. The map wrapper above
+          is untouched. See src/components/onboarding. ── */}
+      <OnboardingRoot
+        globeReady={mapReady && revealed}
+        isMobile={isMobile}
+        isPremium={isPremiumUser}
+        cameraId={activeCamera ? String(activeCamera.id ?? activeCamera.name ?? 'open') : null}
+        layersSig={Object.entries(activeLayers).filter(([, v]) => v).map(([k]) => k).join(',')}
+        panel={mobilePanel ?? (showOi ? 'oi' : showIntel ? 'recon' : showAlerts ? 'alerts' : showDesktopSearch ? 'search' : null)}
+        signupOpen={showCameraSignup}
+      />
 
     </main>
     </>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RecordingOnboarding from "@/components/onboarding/RecordingOnboarding";
 
 export const metadata = {
   title: "WorldEye Recording Studio — Personal Camera Recording",
@@ -38,6 +39,8 @@ export default function RecordingLayout({ children }: { children: React.ReactNod
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
+      {/* Onboarding (Build A): first-visit Recording Studio guide; client-only, renders nothing after first dismissal. */}
+      <RecordingOnboarding />
     </div>
   );
 }
