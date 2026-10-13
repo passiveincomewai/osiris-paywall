@@ -10,21 +10,6 @@ import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero from '@/components/CinematicHero';
-import HomeSeoShell from '@/components/HomeSeoShell';
-import JsonLd from '@/components/JsonLd';
-import { HOME_FAQS } from '@/lib/home-faqs';
-
-// FAQPage structured data for the homepage — built from the same Q&A list
-// the visible HomeSeoShell renders, so the two can never drift apart.
-const homeFaqJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: HOME_FAQS.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-};
 import ScmPanel from '@/components/ScmPanel';
 import SearchBar from '@/components/SearchBar';
 import DirectionsBar, { type RouteResult, type LiveLocation } from '@/components/DirectionsBar';
@@ -56,7 +41,9 @@ const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge')
 const HeaderProfileMenu = dynamic(() => import('@/components/HeaderProfileMenu'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
-const CompanionWidget = dynamic(() => import('@/components/companion/CompanionWidget'), { ssr: false });
+// RESTORE 2026-10-12: the CompanionWidget dynamic import was removed with
+// its mount below — the companion is unmounted from the homepage, not
+// deleted; companion/** stays in the tree for a later, gated re-add.
 const DrawingToolbar = dynamic(() => import('@/components/DrawingToolbar'), { ssr: false });
 const DrawHud = dynamic(() => import('@/components/DrawHud'), { ssr: false });
 // The measurement helpers are pure functions — importing them directly keeps
@@ -1530,8 +1517,15 @@ export default function Dashboard() {
 
 
 
-      {/* ── MAP ── */}
-      <div data-globe-section>
+      {/* ── MAP ──
+          The wrapper MUST be full-bleed positioned: the map container inside
+          it is absolute inset-0 with a percentage height, and inside a static
+          wrapper that percentage never resolves — the container collapses to
+          0px tall, MapLibre falls back to a 400x300 canvas, and its own
+          overflow:hidden clips that canvas away entirely (the black-globe
+          bug: app frame renders, globe invisible, worst on iOS WebViews
+          where the load-time resize rescue never lands). */}
+      <div data-globe-section className="absolute inset-0">
       <ErrorBoundary name="Map">
         <OsirisMap 
           key={osirisTheme}
@@ -2339,17 +2333,14 @@ export default function Dashboard() {
       </div>
 
 
-      {/* ── WorldEye Companion (in-page humanoid) — subscribers only:
-          signed-out and free readers never see the FAB, sheet or widget. ── */}
-      {isPremiumUser && <CompanionWidget assist={assist} />}
-
+      {/* ── RESTORE 2026-10-12: the WorldEye Companion mount and the
+          HomeSeoShell content shell (+ its FAQPage JSON-LD) were removed
+          from the homepage composition after the black-globe incident.
+          Both features' code stays in the tree (components/companion/**,
+          components/HomeSeoShell.tsx); they return one at a time, gated on
+          proof they cannot affect the globe. ── */}
 
     </main>
-
-    {/* ── SEO / content shell — server-rendered copy below the app (H1, FAQ,
-        CTAs, contact). Placement handled by .home-seo-shell in globals.css. ── */}
-    <JsonLd data={homeFaqJsonLd} />
-    <HomeSeoShell />
     </>
   );
 }
