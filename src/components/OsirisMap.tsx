@@ -1004,6 +1004,8 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     ['fl-commercial','fl-private','fl-jets','fl-military'].forEach(layer => {
       map.on('click', layer, e => {
         if (!e.features?.length) return;
+        // Onboarding first-use signal — see src/lib/onboarding (Build A).
+        try { window.dispatchEvent(new CustomEvent('we:flight-selected')); } catch { /* noop */ }
         const p = e.features[0].properties as any;
         const coords = (e.features[0].geometry as any).coordinates;
         const cs = (p.callsign||'').trim();
@@ -1186,6 +1188,8 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       satSelectedIdRef.current = p.noradId ?? null;
       layer.setSelected(idx);
       setSelectedSat({ ...p, periodMinutes: null, track: p.noradId ? 'loading' : 'unavailable' });
+      // Onboarding first-use signal — see src/lib/onboarding (Build A).
+      try { window.dispatchEvent(new CustomEvent('we:satellite-selected')); } catch { /* noop */ }
 
       // Draw the selected satellite's orbit. Fetched per click rather than
       // bundled with the catalogue: that payload is already megabytes, and an

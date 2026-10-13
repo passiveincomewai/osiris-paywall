@@ -183,6 +183,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
   return (
     <AnimatePresence>
         <motion.div
+          data-tour="camera-viewer"
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }}
