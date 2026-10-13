@@ -279,6 +279,12 @@ function OnboardingRootInner({
     window.addEventListener("wheel", onEngage, opts);
     window.addEventListener("touchstart", onEngage, opts);
     window.addEventListener("keydown", onEngage);
+    // If the visitor already scrolled deep into the intro before this
+    // lazy chunk mounted, that scroll WAS the engagement — start the
+    // clock from now rather than missing it entirely.
+    if (!engagedAtRef.current && window.scrollY > 120) {
+      engagedAtRef.current = Date.now();
+    }
     schedule();
     return () => {
       if (timer) window.clearTimeout(timer);
