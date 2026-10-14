@@ -179,8 +179,8 @@ export default function HomeSeoShell() {
           OSINT toolkit, satellite map view, global search and premium
           intelligence feeds, including cyber threats, maritime tracking and
           live news. Pro also includes the OI AI analyst, which answers
-          questions about what you are seeing; it runs on your own AI provider
-          key, billed by the provider at cost. Compare the plans on the{" "}
+          questions about what you are seeing — powered by WorldEye's built-in
+          AI, with nothing to set up. Compare the plans on the{" "}
           <Link href="/pricing" className="text-[#0096FF] hover:underline">
             pricing page
           </Link>{" "}
