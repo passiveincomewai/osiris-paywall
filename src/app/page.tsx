@@ -252,33 +252,6 @@ export default function Dashboard() {
     return () => clearTimeout(t);
   }, []);
 
-  /* Map arming: the MapLibre chunk (~300 KB wire) and its init used to start
-     the instant the page component mounted, competing with first paint and
-     hydration. The hero and splash are what a visitor sees first, so the map
-     now mounts on the first idle slot or first interaction, with a 1.5 s
-     hard cap — except ad traffic (skipHero), which lands on the globe and
-     arms immediately, exactly as before. The wrapper div (and its
-     globe_reached observer) is mounted from the start either way. */
-  const [mapArmed, setMapArmed] = useState(false);
-  useEffect(() => {
-    if (skipHero) { setMapArmed(true); return; }
-    let done = false;
-    const arm = () => { if (!done) { done = true; setMapArmed(true); } };
-    const w = window as unknown as {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    const idleId = w.requestIdleCallback ? w.requestIdleCallback(arm, { timeout: 800 }) : null;
-    const cap = setTimeout(arm, 1500);
-    const evts = ['pointerdown', 'wheel', 'touchstart', 'keydown'] as const;
-    evts.forEach((e) => window.addEventListener(e, arm, { passive: true }));
-    return () => {
-      if (idleId !== null && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
-      clearTimeout(cap);
-      evts.forEach((e) => window.removeEventListener(e, arm));
-    };
-  }, [skipHero]);
-
   const revealed = !showSplash;
   /* True once the splash has finished fading out, not merely started to. */
   const [splashGone, setSplashGone] = useState(false);
@@ -1591,8 +1564,7 @@ export default function Dashboard() {
           where the load-time resize rescue never lands). */}
       <div data-globe-section className="absolute inset-0">
       <ErrorBoundary name="Map">
-        {mapArmed && (
-        <OsirisMap
+        <OsirisMap 
           key={osirisTheme}
           data={data} 
           activeLayers={activeLayers} 
@@ -1637,7 +1609,6 @@ export default function Dashboard() {
           onOiFollow={setOiFollowing}
           oiHighlight={oiHighlight}
         />
-        )}
       </ErrorBoundary>
       </div>
 
