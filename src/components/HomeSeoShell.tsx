@@ -25,13 +25,57 @@ import FaqSection from "./landing/FaqSection";
 // the homepage's initial JS carries none of the sections' code. Section
 // order per the brief: cameras, tracking, hazards, OSINT toolkit, plans,
 // FAQ + footer.
+// Section 4 card visuals — real captures only (see OsintSection):
+// satellite = mosaic from the same public Esri World Imagery tile source
+// the in-app satellite view loads (the basemap switch itself is inside
+// the Pro surface); maritime = a frame from the app's own globe with
+// the maritime layer on; global search = the search spotlight exactly
+// as a signed-out visitor sees it. Cyber Intelligence and Camera
+// Recording keep the monogram treatment: their data/studio are behind
+// the Pro + sign-in gates, so no honest anonymous capture exists.
+const OSINT_VISUALS: Record<string, React.ReactNode> = {
+  "satellite-maps": (
+    /* eslint-disable-next-line @next/next/no-img-element -- static landing asset */
+    <img
+      src="/landing/osint-satellite.jpg"
+      alt="Satellite imagery of the San Francisco Bay Area from Esri World Imagery, the source WorldEye's satellite view uses"
+      width={800}
+      height={600}
+      loading="lazy"
+      className="absolute inset-0 w-full h-full object-cover"
+    />
+  ),
+  "maritime-tracking": (
+    /* eslint-disable-next-line @next/next/no-img-element -- static landing asset */
+    <img
+      src="/landing/osint-maritime.jpg"
+      alt="WorldEye globe over Europe, the Mediterranean and North Africa with the maritime layer on"
+      width={800}
+      height={600}
+      loading="lazy"
+      className="absolute inset-0 w-full h-full object-cover"
+    />
+  ),
+  "global-search": (
+    /* eslint-disable-next-line @next/next/no-img-element -- static landing asset */
+    <img
+      src="/landing/osint-search.jpg"
+      alt="WorldEye search open on the globe — search is a Pro feature"
+      width={800}
+      height={600}
+      loading="lazy"
+      className="absolute inset-0 w-full h-full object-cover"
+    />
+  ),
+};
+
 export default function HomeSeoShell() {
   return (
     <section aria-label="About WorldEye" className="home-seo-shell relative bg-[#06060C] text-white">
       <CamerasSection />
       <TrackingSection />
       <HazardsSection />
-      <OsintSection />
+      <OsintSection visuals={OSINT_VISUALS} />
       <PlansSection />
       <FaqSection />
       <SiteFooter
