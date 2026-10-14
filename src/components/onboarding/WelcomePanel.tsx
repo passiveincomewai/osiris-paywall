@@ -33,7 +33,7 @@ export default function WelcomePanel({
       <GlassCard className="p-5">
         <div className="flex items-center gap-3 mb-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/worldeye-eye.png" alt="" className="h-9 w-auto" />
+          <img src="/worldeye-eye.png" alt="" aria-hidden="true" className="h-9 w-auto" />
           <h2 className="text-[15px] font-semibold text-white leading-tight">
             Welcome to WorldEye 🌎
           </h2>

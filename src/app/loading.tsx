@@ -10,7 +10,7 @@ export default function Loading() {
     >
       <img
         src="/worldeye-eye.png"
-        alt=""
+        alt="WorldEye"
         width={72}
         height={72}
         className="animate-pulse"
