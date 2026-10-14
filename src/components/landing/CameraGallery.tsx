@@ -306,7 +306,7 @@ export default function CameraGallery() {
 
       <Link
         href={activeCategory.href}
-        data-landing-event="cta:cameras"
+        data-landing-event="cta_click:cameras"
         className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition"
       >
         Explore Live Cameras <ArrowRight className="w-4 h-4" aria-hidden />

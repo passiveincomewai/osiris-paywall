@@ -13,7 +13,7 @@ import HazardsDemoMount from "./HazardsDemoMount";
  */
 export default function HazardsSection() {
   return (
-    <section aria-label="Weather, wildfires and earthquakes" className="relative bg-gradient-to-b from-transparent via-[#0096FF]/[0.04] to-transparent">
+    <section aria-label="Weather, wildfires and earthquakes" data-landing-view="hazards" className="relative bg-gradient-to-b from-transparent via-[#0096FF]/[0.04] to-transparent">
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
         <SectionHeader
           eyebrow="Earth Systems"

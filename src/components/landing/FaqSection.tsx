@@ -13,7 +13,7 @@ import Reveal from "./Reveal";
  */
 export default function FaqSection() {
   return (
-    <section aria-label="Frequently asked questions" className="relative">
+    <section aria-label="Frequently asked questions" data-landing-view="faq" className="relative">
       <div className="max-w-5xl mx-auto px-6 py-16 md:py-20">
         <SectionHeader eyebrow="FAQ" title="Frequently asked questions" />
         <Reveal delay={0.1}>

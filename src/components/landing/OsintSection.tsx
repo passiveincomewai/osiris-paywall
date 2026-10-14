@@ -45,7 +45,7 @@ export const OSINT_CARDS = [
 
 export default function OsintSection({ visuals }: { visuals?: Record<string, React.ReactNode> }) {
   return (
-    <section aria-label="Professional OSINT toolkit" className="relative">
+    <section aria-label="Professional OSINT toolkit" data-landing-view="osint" className="relative">
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
         <SectionHeader
           eyebrow="Pro Toolkit"

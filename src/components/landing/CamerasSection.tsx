@@ -48,7 +48,7 @@ function StaticCategoryCards() {
 
 export default function CamerasSection() {
   return (
-    <section aria-label="Live cameras" className="relative">
+    <section aria-label="Live cameras" data-landing-view="cameras" className="relative">
       <div className="border-t border-[#D4AF37]/25 bg-gradient-to-b from-[#0096FF]/[0.07] to-transparent">
         <div className="max-w-7xl mx-auto px-6 pt-14 pb-10">
           <Reveal>

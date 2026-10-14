@@ -12,7 +12,7 @@ import PlansCards from "./PlansCards";
  */
 export default function PlansSection() {
   return (
-    <section aria-label="Free and Pro plans" className="relative bg-gradient-to-b from-transparent via-[#D4AF37]/[0.04] to-transparent">
+    <section aria-label="Free and Pro plans" data-landing-view="plans" className="relative bg-gradient-to-b from-transparent via-[#D4AF37]/[0.04] to-transparent">
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
         <SectionHeader
           eyebrow="Plans"

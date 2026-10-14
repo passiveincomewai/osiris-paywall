@@ -29,7 +29,7 @@ function StaticStage() {
 
 export default function TrackingSection() {
   return (
-    <section aria-label="Flight, satellite and maritime tracking" className="relative">
+    <section aria-label="Flight, satellite and maritime tracking" data-landing-view="tracking" className="relative">
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
         <SectionHeader
           eyebrow="Live Tracking"

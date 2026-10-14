@@ -1,4 +1,5 @@
 import SiteFooter from "./SiteFooter";
+import LandingTrackerMount from "./landing/LandingTrackerMount";
 import CamerasSection from "./landing/CamerasSection";
 import TrackingSection from "./landing/TrackingSection";
 import HazardsSection from "./landing/HazardsSection";
@@ -72,6 +73,7 @@ const OSINT_VISUALS: Record<string, React.ReactNode> = {
 export default function HomeSeoShell() {
   return (
     <section aria-label="About WorldEye" className="home-seo-shell relative bg-[#06060C] text-white">
+      <LandingTrackerMount />
       <CamerasSection />
       <TrackingSection />
       <HazardsSection />

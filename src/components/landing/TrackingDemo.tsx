@@ -278,7 +278,7 @@ export default function TrackingDemo() {
           </p>
           <Link
             href={tab.cta.href}
-            data-landing-event={`track_cta:${tab.slug}`}
+            data-landing-event={`cta_click:${tab.slug}`}
             className="mt-auto pt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition"
           >
             {tab.cta.label} →
