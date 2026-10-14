@@ -1,5 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Audiowide&display=swap');
 @import "tailwindcss";
+/* Webfonts load via <link> in the root layout <head> (parallel with this
+   stylesheet, preconnect already set up there) instead of a CSS @import,
+   which forced a serial second round-trip before first paint. */
 
 /* ═══════════════════════════════════════════════════════════════
    OSIRIS — Global Intelligence Platform Design System
