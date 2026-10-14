@@ -48,7 +48,13 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
   },
 ];
 
-export default function SiteFooter() {
+export default function SiteFooter({
+  newsletterHeadline = "Intel drops, new layers, launch news.",
+  newsletterSub = "One email when it matters. No spam, unsubscribe anytime.",
+}: {
+  newsletterHeadline?: string;
+  newsletterSub?: string;
+} = {}) {
   return (
     <footer className="border-t border-white/10 mt-24">
       {/* Newsletter band */}
@@ -56,8 +62,8 @@ export default function SiteFooter() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 justify-between">
           <div>
             <p className="text-[11px] font-bold tracking-[0.2em] text-[#0096FF] mb-2">NEWSLETTER</p>
-            <h3 className="text-xl font-bold text-white">Intel drops, new layers, launch news.</h3>
-            <p className="text-sm text-white/50 mt-1">One email when it matters. No spam, unsubscribe anytime.</p>
+            <h3 className="text-xl font-bold text-white">{newsletterHeadline}</h3>
+            <p className="text-sm text-white/50 mt-1">{newsletterSub}</p>
           </div>
           <div className="w-full md:w-auto md:min-w-[340px]">
             <NewsletterForm source="footer" />
