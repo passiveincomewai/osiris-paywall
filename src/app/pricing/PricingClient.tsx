@@ -19,7 +19,7 @@ const PLANS: Record<Plan, { price: string; per: string; perDay: string; note: st
 };
 
 const PRO_FEATURES = [
-  { icon: BrainCircuit, title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon on your own OpenAI key." },
+  { icon: BrainCircuit, title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
   { icon: Satellite, title: "Satellite View", desc: "High-resolution satellite imagery alongside the dark intel map." },
   { icon: Search, title: "Global Search & Filters", desc: "Find any place, address or coordinates and fly there instantly." },
   { icon: ShieldCheck, title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
@@ -39,7 +39,7 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { fe
   { feature: "36,000+ public CCTV cameras", free: true, pro: true },
   { feature: "Satellite & space tracking", free: true, pro: true },
   { feature: "Earthquakes, wildfires & weather", free: true, pro: true },
-  { feature: "OI AI assistant (your own API key)", free: false, pro: true },
+  { feature: "OI AI assistant (built-in AI included)", free: false, pro: true },
   { feature: "Satellite imagery view", free: false, pro: true },
   { feature: "Global search & filters", free: false, pro: true },
   { feature: "OSINT toolkit (nmap, DNS, WHOIS, SSL)", free: false, pro: true },
@@ -53,8 +53,8 @@ const FAQS = [
     a: "Yes. The 3D globe, live flights, 36,000+ street cameras, satellites and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, global search and premium intel feeds.",
   },
   {
-    q: "Do I need my own OpenAI key for the AI assistant?",
-    a: "Yes. OI runs on your own API key (OpenAI, Anthropic, Google or OpenRouter) so your usage is billed directly by the provider at cost — we never mark it up or see your key. It stays in your browser.",
+    q: "Do I need my own API key for the AI assistant?",
+    a: "No. OI is powered by WorldEye's built-in AI, with nothing to set up — no API key to bring, no separate provider account, nothing billed to you by a third party.",
   },
   {
     q: "Can I cancel anytime?",
