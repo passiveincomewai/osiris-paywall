@@ -79,7 +79,7 @@ export default function WelcomeClient() {
     <div className="min-h-screen bg-[#05070d] text-white flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8">
         <div className="flex items-center gap-3 mb-6">
-          <img src="/worldeye-eye.png" alt="WorldEye" className="h-9 w-auto" />
+          <img src="/worldeye-eye.png" alt="WorldEye" width={600} height={432} className="h-9 w-auto" />
           <span className="text-xl font-bold tracking-tight">World<span className="text-[#00E5FF]">Eye</span> <span className="text-[#D4AF37]">PRO</span></span>
         </div>
 

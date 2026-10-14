@@ -1450,6 +1450,8 @@ export default function Dashboard() {
               <img
                 src="/worldeye-logo.png?v=4"
                 alt="WorldEye"
+                width={600}
+                height={570}
                 className="w-64 md:w-80 h-auto"
                 style={{ filter: 'drop-shadow(0 0 40px rgba(0,150,255,0.35))' }}
               />
@@ -1730,6 +1732,8 @@ export default function Dashboard() {
           <img
             src="/worldeye-eye.png?v=4"
             alt="WorldEye"
+            width={600}
+            height={432}
             className="h-9 md:h-10 w-auto"
             style={{ filter: 'drop-shadow(0 0 10px rgba(0,150,255,0.5))' }}
           />

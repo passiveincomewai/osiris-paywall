@@ -193,6 +193,8 @@ export default function PricingPage() {
             <img
               src="/worldeye-eye.png"
               alt="WorldEye"
+              width={600}
+              height={432}
               className="h-10 md:h-12 w-auto mx-auto mb-4"
               style={{ filter: "drop-shadow(0 0 18px rgba(0,150,255,0.45))" }}
             />

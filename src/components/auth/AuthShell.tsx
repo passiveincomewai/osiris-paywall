@@ -32,6 +32,8 @@ export default function AuthShell({
             <img
               src="/worldeye-eye.png"
               alt="WorldEye"
+              width={600}
+              height={432}
               className="h-12 w-auto mx-auto mb-5"
               style={{ filter: "drop-shadow(0 0 18px rgba(0,150,255,0.45))" }}
             />

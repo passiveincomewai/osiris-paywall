@@ -70,6 +70,8 @@ export default function SiteFooter() {
             <img
               src="/worldeye-eye.png"
               alt="WorldEye"
+              width={600}
+              height={432}
               className="h-8 w-auto"
               style={{ filter: "drop-shadow(0 0 10px rgba(0,150,255,0.5))" }}
             />
