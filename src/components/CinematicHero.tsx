@@ -13,6 +13,7 @@
 //   played: the media pipeline is unlocked with play()->pause() on the first
 //   user gesture.
 import { useEffect, useRef, useState } from 'react';
+import { preload } from 'react-dom';
 
 const TRACK_VH = 350;
 const EXIT_START = 0.85; // stage starts sliding away at 85% of the track
@@ -20,6 +21,10 @@ const EXIT_END = 0.97; // fully dismissed just before the absolute bottom
 // (browsers don't always report scroll progress reaching exactly 1.0)
 
 export default function CinematicHero() {
+  // The poster is the hero's first paint (and its largest early content):
+  // ask for it at preload priority instead of letting it queue behind the
+  // app's JS. React hoists this into <head> during SSR.
+  preload('/worldeye-cinematic-poster.jpg', { as: 'image' });
   const trackRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
