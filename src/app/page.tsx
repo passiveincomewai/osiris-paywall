@@ -762,10 +762,15 @@ export default function Dashboard() {
     if (urlTimer.current) clearTimeout(urlTimer.current);
     urlTimer.current = setTimeout(() => {
       const active = Object.entries(activeLayers).filter(([,v]) => v).map(([k]) => k).join(',');
-      // A forecast being watched keeps its place in the address, so the address bar stays shareable.
-      const oiRun = new URLSearchParams(window.location.search).get('oi');
-      const url = `${window.location.pathname}?layers=${active}${oiRun ? `&oi=${encodeURIComponent(oiRun)}` : ''}`;
-      window.history.replaceState(null, '', url);
+      // Merge into the live query string instead of rebuilding it from
+      // scratch: the other params belong to other systems (utm_* first-touch
+      // capture, the onboarding QA overrides onb_group/onb_reset, a watched
+      // forecast's oi= keeping the address shareable) and must survive this
+      // rewrite — rebuilding dropped them all ~1.5s after the layers changed.
+      const params = new URLSearchParams(window.location.search);
+      params.set('layers', active);
+      const qs = params.toString();
+      window.history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }, 1500);
   }, [activeLayers]);
 
