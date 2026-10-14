@@ -10,6 +10,7 @@ import {
   type PreviewKind,
 } from "@/lib/camera-preview";
 import { LANDING_CATEGORIES } from "@/lib/landing-cameras";
+import { claimPlayback, releasePlayback } from "./playback";
 
 /**
  * Section 1 island — the live camera gallery.
@@ -141,9 +142,11 @@ function VideoMedia({
     const video = ref.current;
     if (!video) return;
     if (playing && !reduceMotion()) {
+      claimPlayback(video);
       video.play().catch(() => {});
     } else {
       video.pause();
+      releasePlayback(video);
     }
   }, [playing]);
 
