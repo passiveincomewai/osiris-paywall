@@ -6,8 +6,8 @@ import "./globals.css";
 
 const SITE_URL = "https://worldeye.app";
 const SITE_NAME = "WorldEye";
-const SITE_TITLE = "WorldEye — Live 3D Globe | Flight Tracking, CCTV, Satellites & OSINT Tools";
-const SITE_DESCRIPTION = "WorldEye is a live 3D intelligence globe: track aircraft, satellites and 36,000+ worldwide CCTV cameras free. Go Pro for the AI analyst, satellite view, global search and premium intel feeds.";
+const SITE_TITLE = "WorldEye — Live 3D Globe | Flights, CCTV & Satellites";
+const SITE_DESCRIPTION = "Track flights, satellites and 36,000+ live CCTV cameras on WorldEye's 3D intelligence globe — free. Go Pro for the AI analyst, satellite view and intel feeds.";
 
 export const viewport: Viewport = {
   themeColor: "#D4AF37",
