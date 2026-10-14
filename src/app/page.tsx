@@ -239,6 +239,18 @@ export default function Dashboard() {
   const [camerasLoading, setCamerasLoading] = useState(true);
   const [splashStage, setSplashStage] = useState(0);
   const [mapReady, setMapReady] = useState(false);
+  /* Data boot gate: layer feeds (satellites ~2.8 MB, the camera catalogue,
+     cables, panel feeds) used to fire at mount and fight the map chunk,
+     style and tiles for bandwidth and main thread — the globe's first frame
+     needs none of them. They start once the map signals ready; a 6 s
+     fallback keeps a failed map from ever starving the splash, which also
+     lifts on the camera catalogue. */
+  const [dataBoot, setDataBoot] = useState(false);
+  useEffect(() => { if (mapReady) setDataBoot(true); }, [mapReady]);
+  useEffect(() => {
+    const t = setTimeout(() => setDataBoot(true), 6000);
+    return () => clearTimeout(t);
+  }, []);
 
   const revealed = !showSplash;
   /* True once the splash has finished fading out, not merely started to. */
@@ -1032,6 +1044,7 @@ export default function Dashboard() {
 
   // ── PROGRESSIVE DATA LOADING (request-optimized) ──
   useEffect(() => {
+    if (!dataBoot) return;
     // Priority 1: Core feeds (always needed for panels)
     const eqUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson';
     const eqTransform = (data: any) => ({ earthquakes: (data.features || []).map((f: any) => ({ id: f.id, lat: f.geometry?.coordinates?.[1] || 0, lng: f.geometry?.coordinates?.[0] || 0, depth: f.geometry?.coordinates?.[2] || 0, magnitude: f.properties?.mag, place: f.properties?.place, time: f.properties?.time, url: f.properties?.url, tsunami: f.properties?.tsunami, type: f.properties?.type, felt: f.properties?.felt, alert: f.properties?.alert })) });
@@ -1077,11 +1090,12 @@ export default function Dashboard() {
       clearTimeout(spaceTimer);
       intervals.forEach(clearInterval);
     };
-  }, [fetchEndpoint]);
+  }, [fetchEndpoint, dataBoot]);
 
   // ── LAYER-AWARE DATA LOADING — only fetch when layer is toggled ON ──
   const layerFetchedRef = useRef<Set<string>>(new Set());
   useEffect(() => {
+    if (!dataBoot) return;
     if (!activeLayers.cctv) return;
     setCamerasLoading(true);
     return loadCameraCatalog(cameras => {
@@ -1093,9 +1107,10 @@ export default function Dashboard() {
       setBackendStatus('connected');
     }, () => console.warn('[OSIRIS] Camera catalogue load failed; bounded retry scheduled'),
     () => setCamerasLoading(false));
-  }, [activeLayers.cctv]);
+  }, [activeLayers.cctv, dataBoot]);
 
   useEffect(() => {
+    if (!dataBoot) return;
 
     // Flights
     if (activeLayers.flights || activeLayers.military || activeLayers.jets || activeLayers.private) {
@@ -1205,10 +1220,11 @@ export default function Dashboard() {
     }
 
 
-  }, [activeLayers]);
+  }, [activeLayers, dataBoot]);
 
   // ── LAYER-AWARE POLLING — only poll data for active layers ──
   useEffect(() => {
+    if (!dataBoot) return;
     const intervals: ReturnType<typeof setInterval>[] = [];
     const stopFns: (() => void)[] = [];
     if (activeLayers.flights || activeLayers.military || activeLayers.jets || activeLayers.private) {
@@ -1249,7 +1265,7 @@ export default function Dashboard() {
       }, 300000)); // 5m — a blocklist turns over in hours, not seconds
     }
     return () => { intervals.forEach(clearInterval); stopFns.forEach(stop => stop()); };
-  }, [activeLayers, fetchEndpoint]);
+  }, [activeLayers, fetchEndpoint, dataBoot]);
 
   /* ── LIVE MALWARE — pushed over SSE while the layer is on ──
      Detections arrive when URLhaus reports them rather than on a timer, so
@@ -1258,6 +1274,7 @@ export default function Dashboard() {
      progressive geolocation fill, which is why a cold server paints the map in
      batches instead of staying empty and then snapping to full. */
   useEffect(() => {
+    if (!dataBoot) return;
     if (!activeLayers.malware) return;
 
     const source = new EventSource('/api/malware/stream');
@@ -1315,7 +1332,7 @@ export default function Dashboard() {
     };
 
     return () => source.close();
-  }, [activeLayers.malware]);
+  }, [activeLayers.malware, dataBoot]);
 
   // CCTV: loaded once on layer toggle via layerFetchedRef (no viewport polling)
 
