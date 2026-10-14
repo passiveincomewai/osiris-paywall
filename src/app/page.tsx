@@ -10,6 +10,21 @@ import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero from '@/components/CinematicHero';
+import HomeSeoShell from '@/components/HomeSeoShell';
+import JsonLd from '@/components/JsonLd';
+import { HOME_FAQS } from '@/lib/home-faqs';
+
+// FAQPage structured data for the homepage — built from the same Q&A list
+// the visible HomeSeoShell renders, so the two can never drift apart.
+const homeFaqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: HOME_FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 import ScmPanel from '@/components/ScmPanel';
 import SearchBar from '@/components/SearchBar';
 import DirectionsBar, { type RouteResult, type LiveLocation } from '@/components/DirectionsBar';
@@ -2336,12 +2351,13 @@ export default function Dashboard() {
       </div>
 
 
-      {/* ── RESTORE 2026-10-12: the WorldEye Companion mount and the
-          HomeSeoShell content shell (+ its FAQPage JSON-LD) were removed
-          from the homepage composition after the black-globe incident.
-          Both features' code stays in the tree (components/companion/**,
-          components/HomeSeoShell.tsx); they return one at a time, gated on
-          proof they cannot affect the globe. ── */}
+      {/* ── RESTORE 2026-10-12 / RE-ADD 2026-10-13: the Companion mount
+          and the HomeSeoShell content shell (+ its FAQPage JSON-LD) were
+          removed from the homepage composition after the black-globe
+          incident. Re-add step 1: the shell returns (mounted after </main>
+          below), gated on iPhone-viewport globe parity. The Companion
+          (components/companion/**) stays unmounted — it returns in a
+          separate step, subscribers only. ── */}
 
       {/* ── ONBOARDING (Build A): mounted last, purely additive overlays.
           Receives only primitive snapshots of live state; the component
@@ -2358,6 +2374,11 @@ export default function Dashboard() {
       />
 
     </main>
+
+    {/* ── SEO / content shell — server-rendered copy below the app (H1, FAQ,
+        CTAs, contact). Placement handled by .home-seo-shell in globals.css. ── */}
+    <JsonLd data={homeFaqJsonLd} />
+    <HomeSeoShell />
     </>
   );
 }
