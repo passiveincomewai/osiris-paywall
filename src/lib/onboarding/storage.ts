@@ -13,10 +13,10 @@ export type OnbGroup = "a" | "b";
 export type WelcomeStatus = "pending" | "dismissed" | "tour" | "done";
 
 export interface OnbState {
-  v: 1;
+  v: 2;
   /** Welcome panel lifecycle: pending → dismissed | tour → done. */
   welcome: WelcomeStatus;
-  /** Highest tour step reached (1-6), for drop-off reporting. */
+  /** Highest tour step reached (1-4), for drop-off reporting. */
   tourStep: number;
   /** Features whose feature_first_use event has fired (once per visitor). */
   features: string[];
@@ -74,7 +74,7 @@ const defaultCookies: CookieJar = {
 
 export function defaultState(now: number = Date.now()): OnbState {
   return {
-    v: 1,
+    v: 2,
     welcome: "pending",
     tourStep: 0,
     features: [],
@@ -90,9 +90,20 @@ export function loadState(store: KeyValueStore = defaultStore): OnbState {
   try {
     const raw = store.get(STATE_KEY);
     if (!raw) return defaultState();
-    const parsed = JSON.parse(raw) as Partial<OnbState>;
-    if (parsed.v !== 1) return defaultState();
-    return { ...defaultState(), ...parsed, v: 1 };
+    const parsed = JSON.parse(raw) as Omit<Partial<OnbState>, "v"> & { v?: number };
+    if (parsed.v !== 1 && parsed.v !== 2) return defaultState();
+    // v1 → v2 migration (2026-10-14): the tour was shortened from 6 steps
+    // to 4. Everything a v1 visitor earned carries over untouched —
+    // welcome outcome, first-use features, seen micros, conversion
+    // cadence — and the only step-shaped field, the persisted high-water
+    // mark, clamps to the new final step. Live tour position is never
+    // resumed from storage (startTour always begins at step 1), so no
+    // v1 visitor can land mid-tour or behind a stuck overlay.
+    const step =
+      typeof parsed.tourStep === "number" && Number.isFinite(parsed.tourStep)
+        ? Math.min(Math.max(0, parsed.tourStep), 4)
+        : 0;
+    return { ...defaultState(), ...parsed, v: 2, tourStep: step };
   } catch {
     return defaultState();
   }

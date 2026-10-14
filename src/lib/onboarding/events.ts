@@ -10,10 +10,12 @@
  *
  *   onboarding_impression            welcome panel was shown
  *   onboarding_start                 visitor started the tour
- *   onboarding_step_complete:<1-6>   a tour step's real action succeeded
- *   onboarding_step_skip:<1-6>       visitor explicitly skipped a step
- *   onboarding_dropoff:<1-6>         visitor exited the tour mid-step
- *   onboarding_complete              tour finished (step 6)
+ *   onboarding_step_complete:<1-4>   a tour step's real action succeeded
+ *   onboarding_step_skip:<1-4>       visitor explicitly skipped a step
+ *   onboarding_dropoff:<1-4>         visitor exited the tour mid-step
+ *   onboarding_complete              tour finished (final step)
+ *   (Tour shortened 6 → 4 steps on 2026-10-14; step params 5–6 exist
+ *   only in pre-change history. Event names are unchanged.)
  *   onboarding_dismiss               welcome panel dismissed ("Explore On My Own")
  *   feature_first_use:<feature>      first-ever use of a feature, once per
  *                                    visitor per feature. Features: camera,

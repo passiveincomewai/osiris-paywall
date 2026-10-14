@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import type { TourStep } from "@/lib/onboarding/steps";
+import { TOUR_STEPS, type TourStep } from "@/lib/onboarding/steps";
 import { GlassCard, OnbButton } from "./shared";
 
 interface Rect {
@@ -103,7 +103,7 @@ export default function TourOverlay({
   onNext: () => void;
   onSkip: () => void;
   onExit: () => void;
-  /** Step 6 only: true = start exploring, false = discover Pro. */
+  /** Final step only: true = start exploring, false = discover Pro. */
   onFinish: (explore: boolean) => void;
 }) {
   const [anchors, setAnchors] = useState<{ primary: Rect | null; extras: Rect[] }>({
@@ -208,7 +208,7 @@ export default function TourOverlay({
           }}
         />
       )}
-      {/* Secondary glow rings (step 5's other tools). */}
+      {/* Secondary glow rings (the tools step's other targets). */}
       {anchors.extras.map((er, i) => (
         <div
           key={i}
@@ -250,7 +250,7 @@ export default function TourOverlay({
             <>
               <div className="flex items-center justify-between gap-3">
                 <span className="text-[9px] font-mono tracking-[0.22em] text-[var(--cyan-primary)]">
-                  STEP {step.n} OF 6
+                  STEP {step.n} OF {TOUR_STEPS.length}
                 </span>
                 <button
                   type="button"
@@ -275,7 +275,7 @@ export default function TourOverlay({
                 {isTouch ? step.bodyTouch : step.body}
               </p>
 
-              {step.n === 6 ? (
+              {step.n === TOUR_STEPS.length ? (
                 <div className="flex flex-col gap-2 mt-4">
                   <OnbButton onClick={() => onFinish(true)}>Start Exploring WorldEye</OnbButton>
                   <OnbButton variant="gold" onClick={() => onFinish(false)}>
@@ -319,4 +319,4 @@ export default function TourOverlay({
   );
 }
 
-const TOUR_STEPS_DOTS = [1, 2, 3, 4, 5, 6];
+const TOUR_STEPS_DOTS = TOUR_STEPS.map((s) => s.n);

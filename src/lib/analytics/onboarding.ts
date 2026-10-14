@@ -9,8 +9,9 @@
  * Event contract (emitted by the onboarding client, Build A):
  *   onboarding_impression / onboarding_start / onboarding_complete /
  *   onboarding_dismiss
- *   onboarding_step_complete:<1-6> / onboarding_step_skip:<1-6> /
- *   onboarding_dropoff:<1-6>
+ *   onboarding_step_complete:<n> / onboarding_step_skip:<n> /
+ *   onboarding_dropoff:<n>   (n = 1-4 since the 2026-10-14 tour
+ *   shortening; 5-6 appear only in pre-change history)
  *   feature_first_use:<camera|flight|satellite|layer|recon|search|alerts|oi|recording>
  *   conversion_shown / conversion_click_pro / conversion_dismiss
  * Pre-existing events reused: globe_reached, camera_open,
@@ -43,6 +44,12 @@ export type { OnboardingReport, OnboardingFilters } from "./onboarding-types";
 /** Minimum sessions per A/B group before comparison numbers are shown as meaningful. */
 export const MIN_VARIANT_SAMPLE = 30;
 
+/**
+ * Step rows tabulated in the report. The live tour has 4 steps (since
+ * 2026-10-14), but the table keeps all 6 historical steps so pre-change
+ * step 5–6 events in the selected range still report instead of being
+ * silently dropped; they simply read zero for post-change ranges.
+ */
 const TOUR_STEPS = 6;
 
 export interface PvRow {

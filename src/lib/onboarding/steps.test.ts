@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   TOUR_STEPS,
-  TRACK_LAYERS,
   EVENT_LAYERS,
   MICROS,
   HELP_ENTRIES,
@@ -10,9 +9,9 @@ import {
 } from "./steps";
 
 describe("TOUR_STEPS", () => {
-  it("has exactly 6 steps numbered 1..6", () => {
-    expect(TOUR_STEPS).toHaveLength(6);
-    expect(TOUR_STEPS.map((s) => s.n)).toEqual([1, 2, 3, 4, 5, 6]);
+  it("has exactly 4 steps numbered 1..4", () => {
+    expect(TOUR_STEPS).toHaveLength(4);
+    expect(TOUR_STEPS.map((s) => s.n)).toEqual([1, 2, 3, 4]);
   });
 
   it("every step has copy for mouse and touch", () => {
@@ -23,10 +22,9 @@ describe("TOUR_STEPS", () => {
     }
   });
 
-  it("action steps require a real signal; info steps are 5 and 6", () => {
-    expect(TOUR_STEPS.filter((s) => s.action !== "info").map((s) => s.n)).toEqual([1, 2, 3, 4]);
-    expect(TOUR_STEPS[4].action).toBe("info");
-    expect(TOUR_STEPS[5].action).toBe("info");
+  it("action steps require a real signal; the only info step is the last one", () => {
+    expect(TOUR_STEPS.filter((s) => s.action !== "info").map((s) => s.n)).toEqual([1, 2, 3]);
+    expect(TOUR_STEPS[3].action).toBe("info");
   });
 
   it("no copy mentions API keys or invents a camera count", () => {
@@ -49,9 +47,11 @@ describe("layer signal helpers", () => {
     expect(layersTurnedOn("", "flights")).toEqual(["flights"]);
   });
 
-  it("track and event layer sets do not overlap", () => {
-    const ev = new Set<string>(EVENT_LAYERS as unknown as string[]);
-    for (const k of TRACK_LAYERS) expect(ev.has(k)).toBe(false);
+  it("event layers are the off-by-default data layers the tour asks for", () => {
+    expect(EVENT_LAYERS).toContain("weather");
+    expect(EVENT_LAYERS).toContain("fires");
+    // Tracking layers (flights etc.) feed micro-tutorials, not a tour step.
+    expect(EVENT_LAYERS as readonly string[]).not.toContain("flights");
   });
 });
 

@@ -10,12 +10,12 @@
  *   camera-viewer  → [data-tour="camera-viewer"] (CameraViewer root)
  *
  * A tour step is marked complete ONLY when its real action signal arrives
- * (globe interaction, camera opened, object selected, layer activated) or
- * the visitor explicitly skips — see OnboardingRoot for the signal wiring.
+ * (globe interaction, camera opened, layer activated) or the visitor
+ * explicitly skips — see OnboardingRoot for the signal wiring.
  */
 
 export type AnchorId = "globe" | "layers" | "tools" | "camera-viewer";
-export type StepAction = "globe-interact" | "camera-open" | "track-select" | "event-layer" | "info";
+export type StepAction = "globe-interact" | "camera-open" | "event-layer" | "info";
 
 export interface TourStep {
   n: number;
@@ -31,64 +31,43 @@ export interface TourStep {
 export const TOUR_STEPS: TourStep[] = [
   {
     n: 1,
-    title: "Explore the Planet",
-    body: "Welcome to your live view of Earth. Drag to rotate the planet, scroll or pinch to zoom, and select locations to explore.",
-    bodyTouch: "Welcome to your live view of Earth. Drag to rotate the planet, pinch to zoom, and tap locations to explore.",
+    title: "Spin the Globe",
+    body: "Drag to rotate the planet, and scroll to zoom in on any place.",
+    bodyTouch: "Drag to rotate the planet, and pinch to zoom in on any place.",
     anchor: "globe",
     action: "globe-interact",
-    hint: "Try it now — drag the globe or zoom in.",
+    hint: "Try it now — drag the globe.",
   },
   {
     n: 2,
-    title: "Discover Live Cameras",
-    body: "Explore 36,000+ publicly available live cameras around the world, from famous landmarks to traffic and city views. The glowing dots on the globe are cameras — tap one to look through it.",
-    bodyTouch: "Explore 36,000+ publicly available live cameras around the world, from famous landmarks to traffic and city views. The glowing dots on the globe are cameras — tap one to look through it.",
+    title: "Open a Live Camera",
+    body: "The glowing dots are live cameras — 36,000+ of them, all over the world. Tap one to look through it.",
+    bodyTouch: "The glowing dots are live cameras — 36,000+ of them, all over the world. Tap one to look through it.",
     anchor: "layers",
     action: "camera-open",
-    hint: "Tap any glowing dot on the globe to open a live camera.",
+    hint: "Tap a glowing dot on the globe to open a camera.",
   },
   {
     n: 3,
-    title: "Track Aircraft & Satellites",
-    body: "Follow aircraft and satellites using live positioning data, all within your interactive globe. Open the layer panel, switch on Flights, then click any aircraft — or click one of the satellites already orbiting above the globe.",
-    bodyTouch: "Follow aircraft and satellites using live positioning data, all within your interactive globe. Open LAYERS, switch on Flights, then tap any aircraft — or tap one of the satellites already orbiting above the globe.",
-    anchor: "layers",
-    action: "track-select",
-    hint: "Turn on the Flights layer, then select an aircraft or a satellite.",
-  },
-  {
-    n: 4,
-    title: "Monitor Global Events",
-    body: "See what's happening around the world through constantly updating environmental and intelligence feeds. Earthquakes and live incidents are already on — try switching on Weather or Fires in the layer panel to watch real data appear.",
-    bodyTouch: "See what's happening around the world through constantly updating environmental and intelligence feeds. Earthquakes and live incidents are already on — try switching on Weather or Fires in LAYERS to watch real data appear.",
+    title: "Turn On a Data Layer",
+    body: "Layers put live data on the globe. Open the layer panel and switch on Weather or Fires to see it appear.",
+    bodyTouch: "Layers put live data on the globe. Open LAYERS and switch on Weather or Fires to see it appear.",
     anchor: "layers",
     action: "event-layer",
     hint: "Switch on Weather or Fires in the layer panel.",
   },
   {
-    n: 5,
-    title: "Discover Advanced Intelligence",
-    body: "Unlock powerful tools for research, intelligence discovery, and monitoring — all in one place. Live Alerts, layers and cameras are free for everyone. OI, the AI analyst, advanced site search, and the premium intel layers (marked with a lock) are part of WorldEye Pro.",
-    bodyTouch: "Unlock powerful tools for research, intelligence discovery, and monitoring — all in one place. Live Alerts, layers and cameras are free for everyone. OI, the AI analyst, advanced site search, and the premium intel layers (marked with a lock) are part of WorldEye Pro.",
+    n: 4,
+    title: "The Pro Tools",
+    body: "OI, the AI analyst, Recon and the locked intel layers are WorldEye Pro. Cameras, layers and live alerts stay free for everyone.",
+    bodyTouch: "OI, the AI analyst, Recon and the locked intel layers are WorldEye Pro. Cameras, layers and live alerts stay free for everyone.",
     anchor: "tools",
-    action: "info",
-    hint: "",
-  },
-  {
-    n: 6,
-    title: "Personalize Your Experience",
-    body: "Your world. Your intelligence dashboard. Explore the information that matters most to you — your layers and settings stay exactly as you left them.",
-    bodyTouch: "Your world. Your intelligence dashboard. Explore the information that matters most to you — your layers and settings stay exactly as you left them.",
-    anchor: "layers",
     action: "info",
     hint: "",
   },
 ];
 
-/** Layer keys that count as "tracking" activation for tour step 3. */
-export const TRACK_LAYERS = ["flights", "private", "jets", "military"] as const;
-
-/** Layer keys that count as "events" activation for tour step 4 (all off by default). */
+/** Layer keys that count as "events" activation for tour step 3 (all off by default). */
 export const EVENT_LAYERS = ["weather", "fires", "radiation", "war_alerts"] as const;
 
 /** Features that count toward the conversion moment's "≥3 distinct free features". */

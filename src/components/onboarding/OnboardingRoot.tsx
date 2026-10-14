@@ -8,7 +8,7 @@
  * which camera is open, the active-layer signature, which panel is open).
  * It owns:
  *   §1 welcome panel (group B only, after globe-ready + real engagement)
- *   §2 the 6-step tour, completed ONLY by real app signals
+ *   §2 the 4-step tour, completed ONLY by real app signals
  *   §3 contextual micro-tutorials (first-use, persisted, queued if busy)
  *   §4 the conversion card (cadence in lib/onboarding/storage.ts)
  *   §5 the persistent help button + panel (all groups)
@@ -207,7 +207,7 @@ function OnboardingRootInner({
     const n = stepRef.current;
     emitStepSkip(n);
     setTourPhase("waiting");
-    if (n < 6) {
+    if (n < TOUR_STEPS.length) {
       setTourStep(n + 1);
       update((s) => ({ ...s, tourStep: n + 1 }));
     }
@@ -223,7 +223,7 @@ function OnboardingRootInner({
     const n = stepRef.current;
     emitStepComplete(n);
     setTourPhase("waiting");
-    if (n < 6) {
+    if (n < TOUR_STEPS.length) {
       setTourStep(n + 1);
       update((s) => ({ ...s, tourStep: n + 1 }));
     }
@@ -233,7 +233,7 @@ function OnboardingRootInner({
     (explore: boolean) => {
       clearAdvance();
       emitOnboarding(ONB_EVENT.complete);
-      update((s) => ({ ...s, welcome: "done", tourStep: 6 }));
+      update((s) => ({ ...s, welcome: "done", tourStep: TOUR_STEPS.length }));
       setUi("none");
       if (!explore) {
         window.location.href = "/pricing";
@@ -324,24 +324,25 @@ function OnboardingRootInner({
     recordFeature("layer");
     if (
       uiRef.current === "tour" &&
-      stepRef.current === 4 &&
+      stepRef.current === 3 &&
       turnedOn.some((k) => (EVENT_LAYERS as readonly string[]).includes(k))
     ) {
       succeedStep();
     }
   }, [layersSig, recordFeature, succeedStep]);
 
-  /* ── Signals: flight / satellite selected (fenced OsirisMap dispatches) ── */
+  /* ── Signals: flight / satellite selected (fenced OsirisMap dispatches) ──
+     No longer a tour step (the 4-step tour dropped entity selection);
+     these still record the first-use feature + fire the micro-tutorial
+     outside the tour, exactly as before. */
   useEffect(() => {
     const onFlight = () => {
       recordFeature("flight");
-      if (uiRef.current === "tour" && stepRef.current === 3) succeedStep();
-      else maybeMicro("flight");
+      maybeMicro("flight");
     };
     const onSatellite = () => {
       recordFeature("satellite");
-      if (uiRef.current === "tour" && stepRef.current === 3) succeedStep();
-      else maybeMicro("satellite");
+      maybeMicro("satellite");
     };
     window.addEventListener("we:flight-selected", onFlight);
     window.addEventListener("we:satellite-selected", onSatellite);
@@ -349,7 +350,7 @@ function OnboardingRootInner({
       window.removeEventListener("we:flight-selected", onFlight);
       window.removeEventListener("we:satellite-selected", onSatellite);
     };
-  }, [recordFeature, succeedStep, maybeMicro]);
+  }, [recordFeature, maybeMicro]);
 
   /* ── Signals: panels opened ── */
   const prevPanelRef = useRef<string | null>(null);
