@@ -2,14 +2,15 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 import Reveal from "./Reveal";
+import PlansCards from "./PlansCards";
 
 /**
- * Section 5 — Free vs Pro. The two plan cards mount into `cards` (built
- * from the code-verified entitlement table in the design plan); the shell
- * carries the headline and the comparison-page line, which keeps the
- * shell's /gods-eye-view internal link alive.
+ * Section 5 — Free vs Pro. The two plan cards are built from the
+ * code-verified entitlement table in the design plan (see PlansCards);
+ * the shell carries the headline and the comparison-page line, which
+ * keeps the shell's /gods-eye-view internal link alive.
  */
-export default function PlansSection({ cards }: { cards?: React.ReactNode }) {
+export default function PlansSection() {
   return (
     <section aria-label="Free and Pro plans" className="relative bg-gradient-to-b from-transparent via-[#D4AF37]/[0.04] to-transparent">
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
@@ -17,11 +18,9 @@ export default function PlansSection({ cards }: { cards?: React.ReactNode }) {
           eyebrow="Plans"
           title="Free to Explore. Pro When You Want More."
         />
-        {cards && (
-          <Reveal delay={0.1} className="mt-10">
-            {cards}
-          </Reveal>
-        )}
+        <Reveal delay={0.1} className="mt-10">
+          <PlansCards />
+        </Reveal>
         <Reveal delay={0.15}>
           <p className="mt-8 text-sm md:text-base text-white/55">
             Comparing tools?{" "}
