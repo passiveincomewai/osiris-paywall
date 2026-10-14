@@ -45,7 +45,7 @@ export default function NewsletterForm({ source = "footer", compact = false }: {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
         aria-label="Email address"
-        className="flex-1 min-w-0 px-4 py-2.5 rounded-xl bg-white/5 border border-white/15 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#0096FF]/60"
+        className="flex-1 min-w-0 px-4 py-2.5 rounded-xl bg-white/5 border border-white/15 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-[#0096FF]/60"
       />
       <button
         type="submit"

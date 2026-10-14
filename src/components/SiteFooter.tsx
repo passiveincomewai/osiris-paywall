@@ -57,7 +57,7 @@ export default function SiteFooter() {
           <div>
             <p className="text-[11px] font-bold tracking-[0.2em] text-[#0096FF] mb-2">NEWSLETTER</p>
             <h3 className="text-xl font-bold text-white">Intel drops, new layers, launch news.</h3>
-            <p className="text-sm text-white/45 mt-1">One email when it matters. No spam, unsubscribe anytime.</p>
+            <p className="text-sm text-white/50 mt-1">One email when it matters. No spam, unsubscribe anytime.</p>
           </div>
           <div className="w-full md:w-auto md:min-w-[340px]">
             <NewsletterForm source="footer" />
@@ -80,7 +80,7 @@ export default function SiteFooter() {
               <span className="text-[#0096FF]">Eye</span>
             </span>
           </Link>
-          <p className="text-sm text-white/40 mt-4 leading-relaxed">
+          <p className="text-sm text-white/50 mt-4 leading-relaxed">
             Live planetary intelligence. The map is free for everyone — Pro funds
             the infrastructure.
           </p>
@@ -99,7 +99,7 @@ export default function SiteFooter() {
             </Link>
             <Link
               href="/admin"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/40 hover:text-white hover:border-white/25 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/50 hover:text-white hover:border-white/25 transition"
               title="Admin dashboard"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -114,7 +114,7 @@ export default function SiteFooter() {
         </div>
         {COLUMNS.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <p className="text-[11px] font-bold tracking-[0.2em] text-white/40 mb-4">
+            <p className="text-[11px] font-bold tracking-[0.2em] text-white/50 mb-4">
               {col.title.toUpperCase()}
             </p>
             <ul className="space-y-2.5">
@@ -133,7 +133,7 @@ export default function SiteFooter() {
         ))}
       </div>
       <div className="border-t border-white/5">
-        <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/30">
+        <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/50">
           <span>© 2026 WorldEye. All rights reserved.</span>
           <span className="hidden sm:inline">Live data from public sources worldwide.</span>
         </div>

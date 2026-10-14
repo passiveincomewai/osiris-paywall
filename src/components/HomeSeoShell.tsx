@@ -98,7 +98,7 @@ export default function HomeSeoShell() {
             loading="lazy"
             className="w-full h-auto rounded-2xl border border-white/10"
           />
-          <figcaption className="text-xs text-white/40 mt-2.5">
+          <figcaption className="text-xs text-white/50 mt-2.5">
             WorldEye opens on the living planet — every feed on the globe is live.
           </figcaption>
         </figure>
@@ -115,7 +115,7 @@ export default function HomeSeoShell() {
               Traffic, city streets, landmarks, beaches, airports and wildlife
               from public camera networks worldwide. Click a dot, watch the
               world go by. Browse the{" "}
-              <Link href="/cameras" className="text-[#0096FF] hover:underline">
+              <Link href="/cameras" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
                 live cameras
               </Link>
               .
@@ -181,11 +181,11 @@ export default function HomeSeoShell() {
           live news. Pro also includes the OI AI analyst, which answers
           questions about what you are seeing — powered by WorldEye's built-in
           AI, with nothing to set up. Compare the plans on the{" "}
-          <Link href="/pricing" className="text-[#0096FF] hover:underline">
+          <Link href="/pricing" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
             pricing page
           </Link>{" "}
           or read the full{" "}
-          <Link href="/features" className="text-[#0096FF] hover:underline">
+          <Link href="/features" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
             feature list
           </Link>
           .
@@ -211,7 +211,7 @@ export default function HomeSeoShell() {
           following events as they break. Teachers showing a class the living
           planet. If it is happening somewhere on Earth right now, WorldEye is
           how you watch it — including the hosted, no-install{" "}
-          <Link href="/gods-eye-view" className="text-[#0096FF] hover:underline">
+          <Link href="/gods-eye-view" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
             God&apos;s Eye View
           </Link>{" "}
           of the planet.
@@ -233,16 +233,16 @@ export default function HomeSeoShell() {
             Ideas, feedback, or a camera source we should add — email us at{" "}
             <a
               href="mailto:passiveincomewai@gmail.com"
-              className="text-[#0096FF] hover:underline"
+              className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]"
             >
               passiveincomewai@gmail.com
             </a>{" "}
             and we will get back to you. You can also reach us through the{" "}
-            <Link href="/contact" className="text-[#0096FF] hover:underline">
+            <Link href="/contact" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
               contact page
             </Link>{" "}
             or read more{" "}
-            <Link href="/about" className="text-[#0096FF] hover:underline">
+            <Link href="/about" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
               about WorldEye
             </Link>
             .
