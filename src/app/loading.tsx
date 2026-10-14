@@ -9,7 +9,7 @@ export default function Loading() {
       aria-label="Loading"
     >
       <img
-        src="/worldeye-eye.png"
+        src="/worldeye-eye.png?v=4"
         alt="WorldEye"
         width={72}
         height={72}

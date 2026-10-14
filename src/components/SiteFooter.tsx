@@ -68,7 +68,7 @@ export default function SiteFooter() {
         <div className="col-span-2 md:col-span-1">
           <Link href="/" className="flex items-center gap-2.5">
             <img
-              src="/worldeye-eye.png"
+              src="/worldeye-eye.png?v=4"
               alt="WorldEye"
               width={600}
               height={432}

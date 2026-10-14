@@ -2284,13 +2284,17 @@ export default function Dashboard() {
         </motion.div>
       )}
 
-      {/* ── Camera Viewer ── */}
-      <CameraViewer
-        camera={activeCamera}
-        onClose={() => setActiveCamera(null)}
-        onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })}
-        besideOi={showOi && !oiTheater}
-      />
+      {/* ── Camera Viewer ── rendered only while a camera is open: the
+          viewer returns null without one, and mounting it unconditionally
+          pulled its chunk (hls.js et al) into every initial page load. ── */}
+      {activeCamera && (
+        <CameraViewer
+          camera={activeCamera}
+          onClose={() => setActiveCamera(null)}
+          onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })}
+          besideOi={showOi && !oiTheater}
+        />
+      )}
       {showCameraSignup && <CameraSignupNudge onClose={() => setShowCameraSignup(false)} />}
 
       {/* ── Entity Graph Panel ── */}
