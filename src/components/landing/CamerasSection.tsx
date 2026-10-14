@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import GlobeHomeLink from "../GlobeHomeLink";
 import Reveal from "./Reveal";
+import CamerasGalleryMount from "./CamerasGalleryMount";
 
 /**
  * Section 1 — live cameras. Opens with the shell's header block: the
@@ -19,7 +20,33 @@ export const CAMERA_CATEGORIES = [
   { label: "Airports", href: "/airport-webcams" },
 ] as const;
 
-export default function CamerasSection({ gallery }: { gallery?: React.ReactNode }) {
+function StaticCategoryCards() {
+  return (
+    <Reveal delay={0.1} className="mt-10">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {CAMERA_CATEGORIES.map(({ label, href }) => (
+          <Link
+            key={label}
+            href={href}
+            className="group rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#0096FF]/50 hover:bg-white/[0.05] transition p-5 flex items-center gap-3"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#0096FF] shrink-0" aria-hidden />
+            <span className="font-semibold text-white">{label}</span>
+            <ArrowRight className="w-4 h-4 ml-auto text-white/30 group-hover:text-[#0096FF] transition" aria-hidden />
+          </Link>
+        ))}
+      </div>
+      <Link
+        href="/cameras"
+        className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition"
+      >
+        Explore Live Cameras <ArrowRight className="w-4 h-4" aria-hidden />
+      </Link>
+    </Reveal>
+  );
+}
+
+export default function CamerasSection() {
   return (
     <section aria-label="Live cameras" className="relative">
       <div className="border-t border-[#D4AF37]/25 bg-gradient-to-b from-[#0096FF]/[0.07] to-transparent">
@@ -56,29 +83,7 @@ export default function CamerasSection({ gallery }: { gallery?: React.ReactNode 
             </div>
           </Reveal>
 
-          {gallery ?? (
-            <Reveal delay={0.1} className="mt-10">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {CAMERA_CATEGORIES.map(({ label, href }) => (
-                  <Link
-                    key={label}
-                    href={href}
-                    className="group rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#0096FF]/50 hover:bg-white/[0.05] transition p-5 flex items-center gap-3"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-[#0096FF] shrink-0" aria-hidden />
-                    <span className="font-semibold text-white">{label}</span>
-                    <ArrowRight className="w-4 h-4 ml-auto text-white/30 group-hover:text-[#0096FF] transition" aria-hidden />
-                  </Link>
-                ))}
-              </div>
-              <Link
-                href="/cameras"
-                className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition"
-              >
-                Explore Live Cameras <ArrowRight className="w-4 h-4" aria-hidden />
-              </Link>
-            </Reveal>
-          )}
+          <CamerasGalleryMount fallback={<StaticCategoryCards />} />
         </div>
       </div>
     </section>
