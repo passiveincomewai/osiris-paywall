@@ -177,6 +177,20 @@ const LAYER_GROUPS: LayerGroupDef[] = [
   },
 ];
 
+/**
+ * The state a layer's switch DISPLAYS. A sub-layer's stored value is only a
+ * preference for when its parent runs: while the parent is off the feature
+ * renders nothing, so the switch must read OFF even though the stored value
+ * still says on (it comes back untouched when the parent is re-enabled).
+ * Deriving it in one place keeps the desktop and mobile rows from drifting
+ * apart on this — showing ON for an inert sub-layer reads as "it's running".
+ */
+export function layerShownActive(layer: Pick<LayerDef, 'key' | 'parent'>, activeLayers: any): boolean {
+  if (!activeLayers?.[layer.key]) return false;
+  if (layer.parent && !activeLayers[layer.parent]) return false;
+  return true;
+}
+
 /* ── Minimal Toggle Switch ── */
 /**
  * Presentational only. The row around it is the button, and a button inside a
@@ -302,7 +316,10 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
             </div>
             <div className="flex flex-col gap-1">
               {group.layers.map((layer) => {
-                const isLayerActive = activeLayers[layer.key];
+                /* Shown state, not stored state: a sub-layer reads OFF while
+                   its parent is off (see layerShownActive). The stored value
+                   and the click handler are untouched. */
+                const isLayerActive = layerShownActive(layer, activeLayers);
                 const count = getCount(layer.dataKey, layer.catKey);
                 const dormant = !!layer.parent && !activeLayers[layer.parent];
                 const locked = !!layer.premium && !isPremiumUser;
@@ -310,7 +327,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                   <button
                     key={layer.key}
                     onClick={() => { if (locked) { window.location.href = '/premium'; } else { toggle(layer.key); } }}
-                    aria-pressed={!!isLayerActive}
+                    aria-pressed={isLayerActive}
                     aria-label={locked ? `${layer.label} — premium` : layer.label}
                     className={`relative w-full flex items-center gap-3 py-2 rounded-md text-left hover:bg-white/[0.04] transition-colors ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-40' : ''}`}
                   >
@@ -500,7 +517,10 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                     </div>
                     <div className="flex flex-col gap-0.5">
                       {group.layers.map((layer) => {
-                        const isLayerActive = activeLayers[layer.key];
+                        /* Shown state, not stored state: a sub-layer reads OFF
+                           while its parent is off (see layerShownActive). The
+                           stored value and the click handler are untouched. */
+                        const isLayerActive = layerShownActive(layer, activeLayers);
                         const count = getCount(layer.dataKey, layer.catKey);
                         const dormant = !!layer.parent && !activeLayers[layer.parent];
                         const locked = !!layer.premium && !isPremiumUser;
@@ -509,7 +529,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                           <button
                             key={layer.key}
                             onClick={() => { if (locked) { window.location.href = '/premium'; } else { toggle(layer.key); } }}
-                            aria-pressed={!!isLayerActive}
+                            aria-pressed={isLayerActive}
                             aria-label={locked ? `${layer.label} — premium` : layer.label}
                             title={locked ? 'Weekly Pass required' : dormant ? 'Turn the layer above on to use this' : undefined}
                             className={`relative w-full flex items-center gap-3 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-40' : ''}`}
