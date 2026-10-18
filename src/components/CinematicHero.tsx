@@ -90,15 +90,24 @@ export default function CinematicHero() {
         }
       }
       // Slide the stage up over the final stretch to reveal the app.
-      const exit = Math.min(1, Math.max(0, (p - EXIT_START) / (EXIT_END - EXIT_START)));
-      stage.style.transform = `translate3d(0,${(-exit * 100).toFixed(3)}%,0)`;
-      stage.style.visibility = exit >= 1 ? 'hidden' : 'visible';
-      // One-way globe lock: once the stage has fully exited the visitor is
-      // on the globe — freeze document scroll so they can't scroll back up.
-      if (exit >= 1 && !globeLocked.current) {
+      const exitRaw = Math.min(1, Math.max(0, (p - EXIT_START) / (EXIT_END - EXIT_START)));
+      if (exitRaw >= 1 && !globeLocked.current) {
         globeLocked.current = true;
         document.documentElement.classList.add('globe-locked');
       }
+      // The dismissal is LATCHED. Progress is recomputed from live layout
+      // every frame, and its denominator (track height − innerHeight)
+      // moves when a mobile browser's chrome toggles: tapping a control
+      // near the bottom of the screen makes iOS Safari reveal its toolbar,
+      // innerHeight shrinks while the vh-sized track keeps its height, and
+      // p sags back under EXIT_END. Unlatched, that sag un-hid the stage
+      // and slid the intro back over the globe — the "layers button
+      // re-opens the scroll animation" bug. Only a deliberate scroll back
+      // into the hero proper (p < EXIT_START) releases the latch.
+      if (globeLocked.current && p < EXIT_START) globeLocked.current = false;
+      const exit = globeLocked.current ? 1 : exitRaw;
+      stage.style.transform = `translate3d(0,${(-exit * 100).toFixed(3)}%,0)`;
+      stage.style.visibility = exit >= 1 ? 'hidden' : 'visible';
       raf = requestAnimationFrame(tick);
     };
 
