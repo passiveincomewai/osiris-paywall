@@ -119,6 +119,7 @@ const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'fires', label: 'Active Fires', dataKey: 'fires' },
       { key: 'fire_perimeters', label: 'Fire Perimeters', description: 'NIFC WFIGS · ~5 min', dataKey: 'fire_perimeters' },
       { key: 'weather', label: 'Severe Weather', dataKey: 'weather_events' },
+      { key: 'hurricanes', label: 'Hurricanes', description: 'NOAA NHC · tracks & forecast cones', dataKey: 'hurricanes' },
     ],
   },
   {

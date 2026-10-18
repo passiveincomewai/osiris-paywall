@@ -439,7 +439,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -508,6 +508,31 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'fire-perim-line', type: 'line', source: 'fire-perimeters', paint: {
         'line-color': '#FF6B00', 'line-width': 1.6, 'line-opacity': 0.9,
       }});
+
+      // Hurricanes (NOAA NHC) — cone, past track, forecast track, points
+      map.addLayer({ id: 'hurricane-cone', type: 'fill', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'cone'], paint: {
+        'fill-color': '#4DD0E1', 'fill-opacity': 0.15,
+      }});
+      map.addLayer({ id: 'hurricane-cone-line', type: 'line', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'cone'], paint: {
+        'line-color': '#4DD0E1', 'line-width': 1, 'line-opacity': 0.5, 'line-dasharray': [3, 2],
+      }});
+      map.addLayer({ id: 'hurricane-past', type: 'line', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'past'], paint: {
+        'line-color': '#90A4AE', 'line-width': 1.5, 'line-opacity': 0.7, 'line-dasharray': [2, 2],
+      }});
+      map.addLayer({ id: 'hurricane-track', type: 'line', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'track'], paint: {
+        'line-color': '#00E5FF', 'line-width': 2, 'line-opacity': 0.9,
+      }});
+      map.addLayer({ id: 'hurricane-points', type: 'circle', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'point'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 2, 6, 4, 10, 6],
+        'circle-color': '#B2EBF2', 'circle-opacity': 0.9, 'circle-stroke-color': '#006064', 'circle-stroke-width': 1,
+      }});
+      map.addLayer({ id: 'hurricane-current', type: 'circle', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'current'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 5, 6, 8, 10, 12],
+        'circle-color': '#FF5252', 'circle-opacity': 0.95, 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 1.5,
+      }});
+      map.addLayer({ id: 'hurricane-label', type: 'symbol', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'current'], layout: {
+        'text-field': ['upcase', ['get', 'name']], 'text-size': 10, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.6],
+      }, paint: { 'text-color': '#FF8A80', 'text-halo-color': '#000', 'text-halo-width': 1 }});
 
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
@@ -1163,7 +1188,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
-      'fire-perim-fill','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
@@ -1266,6 +1291,53 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}°, ${coords[0].toFixed(3)}°</span></div>
         </div>
         <a href="https://firms.modaps.eosdis.nasa.gov/map/#d:24hrs;l:noaa20-viirs,viirs,modis_a,modis_t;@${coords[0]},${coords[1]},10z" target="_blank" style="${linkStyle}color:#FF6B00;border:1px solid rgba(255,107,0,0.4);background:rgba(255,107,0,0.1);">🛰️ NASA FIRMS MAP</a>
+      </div>`);
+    });
+
+    // ── Hurricanes (NOAA NHC) ──
+    const CLASS_LABEL: Record<string, string> = { HU: 'HURRICANE', TS: 'TROPICAL STORM', TD: 'TROPICAL DEPRESSION', STS: 'SUBTROPICAL STORM', SD: 'SUBTROPICAL DEPRESSION', EX: 'EXTRATROPICAL', PT: 'POST-TROPICAL', LO: 'LOW', DB: 'DISTURBANCE' };
+    const ssCategory = (kt: number | null) => kt == null ? null : kt >= 137 ? 5 : kt >= 113 ? 4 : kt >= 96 ? 3 : kt >= 83 ? 2 : kt >= 64 ? 1 : 0;
+    map.on('click', 'hurricane-current', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const cat = ssCategory(p.intensityKt != null ? Number(p.intensityKt) : null);
+      const mph = p.intensityKt != null ? Math.round(Number(p.intensityKt) * 1.151) : null;
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(255,82,82,0.35);">
+        <div style="color:#FF5252;font-size:13px;font-weight:700;margin-bottom:4px;">🌀 ${htmlEsc((p.name || 'TROPICAL CYCLONE').toUpperCase())}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${CLASS_LABEL[p.classification] || htmlEsc(p.classification || '')}${cat ? ' · CATEGORY ' + cat : ''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">MAX WINDS</span><br/><span style="color:#E8E6E0;">${p.intensityKt != null ? p.intensityKt + ' kt (' + mph + ' mph)' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">PRESSURE</span><br/><span style="color:#E8E6E0;">${p.pressureMb != null ? p.pressureMb + ' mb' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">MOVEMENT</span><br/><span style="color:#E8E6E0;">${p.movementDir != null ? p.movementDir + '° at ' + (p.movementSpeedKt ?? '—') + ' kt' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">POSITION</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(2)}°, ${coords[0].toFixed(2)}°</span></div>
+        </div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">NOAA · NATIONAL HURRICANE CENTER</div>
+      </div>`);
+    });
+    map.on('click', 'hurricane-points', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(77,208,225,0.35);">
+        <div style="color:#4DD0E1;font-size:12px;font-weight:700;margin-bottom:4px;">🌀 ${htmlEsc((p.name || 'FORECAST POINT').toUpperCase())}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">FORECAST${p.validLabel ? ' · ' + htmlEsc(p.validLabel) : ''}${p.fcstHrs != null ? ' · +' + p.fcstHrs + 'H' : ''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">MAX WINDS</span><br/><span style="color:#E8E6E0;">${p.maxWindKt != null ? p.maxWindKt + ' kt' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">GUSTS</span><br/><span style="color:#E8E6E0;">${p.gustKt != null ? p.gustKt + ' kt' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">PRESSURE</span><br/><span style="color:#E8E6E0;">${p.pressureMb != null ? p.pressureMb + ' mb' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">CATEGORY</span><br/><span style="color:#E8E6E0;">${p.category != null && p.category > 0 ? p.category : '—'}</span></div>
+        </div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">NOAA · NATIONAL HURRICANE CENTER</div>
+      </div>`);
+    });
+    map.on('click', 'hurricane-cone', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      popup(e.lngLat, `<div style="${pStyle}border:1px solid rgba(77,208,225,0.35);">
+        <div style="color:#4DD0E1;font-size:12px;font-weight:700;margin-bottom:4px;">🌀 ${htmlEsc((p.name || 'FORECAST CONE').toUpperCase())}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">FORECAST CONE OF UNCERTAINTY${p.advisory ? ' · ADVISORY ' + htmlEsc(p.advisory) : ''} — the storm center is expected to remain within this area about 2 times out of 3.</div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">NOAA · NATIONAL HURRICANE CENTER</div>
       </div>`);
     });
 
@@ -1516,7 +1588,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -2231,6 +2303,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
   useEffect(() => {
     if (!mapReady) return;
+    // Hurricane features arrive as GeoJSON from /api/hurricanes.
+    setGeo('hurricanes', (activeLayers as any).hurricanes && data.hurricane_features ? data.hurricane_features : []);
+  }, [mapReady, data.hurricane_features, (activeLayers as any).hurricanes, setGeo]);
+
+  useEffect(() => {
+    if (!mapReady) return;
     // Perimeter features arrive as GeoJSON from /api/fire-perimeters.
     setGeo('fire-perimeters', (activeLayers as any).fire_perimeters && data.fire_perimeters ? data.fire_perimeters : []);
   }, [mapReady, data.fire_perimeters, (activeLayers as any).fire_perimeters, setGeo]);
@@ -2465,6 +2543,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
     setVis(['fires-heat'], activeLayers.fires);
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
+    setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label'], (activeLayers as any).hurricanes);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);

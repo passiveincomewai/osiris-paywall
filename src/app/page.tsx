@@ -494,6 +494,7 @@ export default function Dashboard() {
     fires: false,
     fire_perimeters: false,
     weather: false,
+    hurricanes: false,
     radiation: false,
     infrastructure: false,
     global_incidents: true,
@@ -1198,6 +1199,14 @@ export default function Dashboard() {
       loadLayerOnce('fire_perimeters', '/api/fire-perimeters', d => ({ fire_perimeters: d.features ?? [] }));
     }
 
+    // NOAA NHC hurricanes — one response backs the storm count + GIS features
+    if ((activeLayers as any).hurricanes) {
+      loadLayerOnce('hurricanes', '/api/hurricanes', d => ({
+        hurricanes: d.storms ?? [],
+        hurricane_features: d.features ?? [],
+      }));
+    }
+
 
   }, [activeLayers, dataBoot]);
 
@@ -1218,6 +1227,12 @@ export default function Dashboard() {
     }
     if ((activeLayers as any).fire_perimeters) {
       intervals.push(setInterval(() => fetchEndpoint('/api/fire-perimeters', d => ({ fire_perimeters: d.features ?? [] })), 300000)); // 5m
+    }
+    if ((activeLayers as any).hurricanes) {
+      intervals.push(setInterval(() => fetchEndpoint('/api/hurricanes', d => ({
+        hurricanes: d.storms ?? [],
+        hurricane_features: d.features ?? [],
+      })), 600000)); // 10m — advisories land every 3–6h
     }
     if (activeLayers.maritime) {
       /* Ten seconds is the cadence a moving vessel needs. The other two thirds
