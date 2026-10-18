@@ -489,6 +489,7 @@ export default function Dashboard() {
     cctv: true,
     /* The live preview tiles over the camera dots — see CctvPreviews. */
     cctv_previews: false,
+    alert_cams: false,
     live_news: true,
     earthquakes: true,
     fires: false,

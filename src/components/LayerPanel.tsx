@@ -107,6 +107,7 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     layers: [
       { key: 'cctv', label: 'CCTV Cameras', dataKey: 'cameras' },
       { key: 'cctv_previews', label: 'Live Previews', dataKey: '', parent: 'cctv' },
+      { key: 'alert_cams', label: 'ALERT Fire Cameras', description: 'ALERTCalifornia · ALERTWest · live images', dataKey: '' },
       { key: 'live_news', label: 'Live News Feeds', dataKey: 'live_feeds', premium: true },
     ],
   },

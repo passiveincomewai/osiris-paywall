@@ -439,7 +439,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -539,6 +539,19 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 2, 5, 4, 9, 7],
         'circle-color': '#29B6F6', 'circle-opacity': 0.85, 'circle-stroke-color': '#01579B', 'circle-stroke-width': 0.8,
       }});
+
+      // ALERT Fire Cameras — amber, distinct from the white CCTV mesh
+      map.addLayer({ id: 'alert-glow', type: 'circle', source: 'alert-cams', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 5, 5, 8, 10, 14, 14, 20],
+        'circle-color': '#FF8F00', 'circle-opacity': 0.3, 'circle-blur': 1,
+      }});
+      map.addLayer({ id: 'alert-dots', type: 'circle', source: 'alert-cams', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 3, 5, 5, 10, 8, 14, 12],
+        'circle-color': '#FFB300', 'circle-opacity': 0.95, 'circle-stroke-color': '#4E2600', 'circle-stroke-width': 1,
+      }});
+      map.addLayer({ id: 'alert-label', type: 'symbol', source: 'alert-cams', minzoom: 9, layout: {
+        'text-field': ['get', 'name'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.4],
+      }, paint: { 'text-color': '#FFCA28', 'text-halo-color': '#000', 'text-halo-width': 1 }});
 
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
@@ -1194,7 +1207,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
-      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
@@ -1372,6 +1385,21 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           if (el && j?.name) el.textContent = '💧 ' + j.name;
         })
         .catch(() => { /* keep the site-id heading */ });
+    });
+
+    // ── ALERT Fire Cameras (ALERTCalifornia / ALERTWest) ──
+    map.on('click', 'alert-dots', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const bust = Math.floor(Date.now() / 15000);
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(255,179,0,0.35);">
+        <div style="color:#FFB300;font-size:12px;font-weight:700;margin-bottom:2px;">📷 ${htmlEsc((p.name || 'ALERT CAMERA').toUpperCase())}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.county ? p.county.toUpperCase() + ' COUNTY' : '')}${p.online ? ' · ONLINE' : ' · OFFLINE'}</div>
+        <img src="${urlSafe(p.img)}?t=${bust}" alt="Latest frame from ${htmlEsc(p.name || 'ALERT camera')}" style="width:100%;border-radius:6px;display:block;background:#000;" loading="lazy" />
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">LIVE IMAGE — REFRESHES ~15 SECONDS · ALERTCALIFORNIA / ALERTWEST NETWORK</div>
+        ${p.url ? `<a href="${urlSafe(p.url)}" target="_blank" style="${linkStyle}color:#FFB300;border:1px solid rgba(255,179,0,0.4);background:rgba(255,179,0,0.1);">🎥 CAMERA PAGE</a>` : ''}
+      </div>`);
     });
 
     // ── Fire Perimeters (NIFC WFIGS) ──
@@ -1621,7 +1649,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -2334,6 +2362,28 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setGeo('fires', activeLayers.fires && data.fires ? data.fires.map((f: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [f.lng, f.lat] }, properties: { brightness: f.brightness } })) : []);
   }, [mapReady, data.fires, activeLayers.fires, setGeo]);
 
+  // ALERT Fire Cameras — fetched in-map on toggle; server route is cached,
+  // frames themselves load straight from ALERTCalifornia in the popup.
+  useEffect(() => {
+    if (!mapReady) return;
+    if (!(activeLayers as any).alert_cams) { setGeo('alert-cams', []); return; }
+    let live = true;
+    const load = async () => {
+      try {
+        const r = await fetch('/api/alert-cameras');
+        const j = await r.json();
+        if (!live) return;
+        setGeo('alert-cams', (j.cameras ?? []).map((c: any) => ({
+          type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] },
+          properties: { id: c.id, name: c.name, county: c.county, org: c.org, img: c.img, url: c.url, online: c.online },
+        })));
+      } catch { /* keep the last good set */ }
+    };
+    load();
+    const iv = setInterval(load, 600000); // 10m — positions are fixed
+    return () => { live = false; clearInterval(iv); };
+  }, [mapReady, (activeLayers as any).alert_cams, setGeo]);
+
   // River Gauges — fetched in-map on toggle (page state stays untouched);
   // /api/river-gauges is server-cached, this just polls it while visible.
   useEffect(() => {
@@ -2600,6 +2650,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
     setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label'], (activeLayers as any).hurricanes);
     setVis(['gauge-dots'], (activeLayers as any).river_gauges);
+    setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);
