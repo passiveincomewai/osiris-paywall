@@ -44,6 +44,7 @@ import { fetchGeorgiaCameras } from './georgia';
 import { fetchNorthCarolinaCameras } from './northcarolina';
 import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
+import { fetchFaaCameras } from './faa';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
   fetchOccHarvestAfrica,
@@ -110,26 +111,46 @@ async function fetchWSDOTCameras(): Promise<any[]> {
 // ── US-WEST: Caltrans California ──
 async function fetchCaltransCameras(): Promise<any[]> {
   try {
-    const res = await stealthFetch('https://caltrans-gis.dot.ca.gov/arcgis/rest/services/CHhighway/CCTV/FeatureServer/0/query?where=1%3D1&outFields=*&f=json', { signal: AbortSignal.timeout(12000) });
-    if (!res.ok) return [];
-    const data = await res.json();
     const cams = [];
-    for (const feature of (data?.features || [])) {
-      const p = feature.attributes;
-      const lat = p.latitude;
-      const lng = p.longitude;
-      const url = p.currentImageURL;
-      if (!lat || !lng || !url) continue;
-      cams.push({
-        id: `cal-${p.OBJECTID}`,
-        lat,
-        lng,
-        name: p.locationName || 'Caltrans',
-        city: p.nearbyPlace || p.county || 'California',
-        country: 'US',
-        feed_url: url,
-        source: 'Caltrans'
+    /* The service caps one answer at its maxRecordCount (2,000) and flags
+       the overflow with exceededTransferLimit — for years that silently
+       truncated the state at exactly 2,000 of its ~2,900 cameras. Page by
+       OBJECTID until the flag clears; the cap keeps a misbehaving service
+       from paging forever. */
+    const PAGE = 2000;
+    for (let page = 0; page < 5; page++) {
+      const query = new URLSearchParams({
+        where: '1=1',
+        outFields: '*',
+        f: 'json',
+        orderByFields: 'OBJECTID',
+        resultRecordCount: String(PAGE),
+        resultOffset: String(page * PAGE),
       });
+      const res = await stealthFetch(
+        `https://caltrans-gis.dot.ca.gov/arcgis/rest/services/CHhighway/CCTV/FeatureServer/0/query?${query}`,
+        { signal: AbortSignal.timeout(12000) },
+      );
+      if (!res.ok) break;
+      const data = await res.json();
+      for (const feature of (data?.features || [])) {
+        const p = feature.attributes;
+        const lat = p.latitude;
+        const lng = p.longitude;
+        const url = p.currentImageURL;
+        if (!lat || !lng || !url) continue;
+        cams.push({
+          id: `cal-${p.OBJECTID}`,
+          lat,
+          lng,
+          name: p.locationName || 'Caltrans',
+          city: p.nearbyPlace || p.county || 'California',
+          country: 'US',
+          feed_url: url,
+          source: 'Caltrans'
+        });
+      }
+      if (!data?.exceededTransferLimit) break;
     }
     return cams;
   } catch (e) {
@@ -185,7 +206,7 @@ async function fetchCanadaCameras(): Promise<any[]> {
     subSource('Ville MTL', 'https://ville.montreal.qc.ca/circulation/sites/ville.montreal.qc.ca.circulation/files/cameras.json', 8000),
     subSource('511 Alberta', 'https://511.alberta.ca/api/v2/get/cameras', 10000),
     subSource('City of Toronto', 'https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/a3309088-5fd4-4d34-8297-77c8301840ac/resource/4a568300-c7f8-496d-b150-dff6f5dc6d4f/download/traffic-camera-list-4326.geojson', 10000),
-    subSource('DriveBC', 'https://drivebc.ca/api/webcams', 10000),
+    subSource('DriveBC', 'https://www.drivebc.ca/api/webcams/', 10000),
   ]);
 
 
@@ -310,7 +331,7 @@ async function fetchCanadaCameras(): Promise<any[]> {
         cams.push({
           id: `bc-cam-${cam.id}`, lat, lng,
           name: cam.name || cam.caption || 'BC Highway Camera', city: 'British Columbia', country: 'Canada',
-          feed_url: `https://drivebc.ca${cam.links.imageDisplay}`, source: 'DriveBC',
+          feed_url: `https://www.drivebc.ca${cam.links.imageDisplay}`, source: 'DriveBC',
         });
       }
     }
@@ -534,6 +555,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'northcarolina': fetchNorthCarolinaCameras,
   'arizona': fetchArizonaCameras,
   'texas': fetchTexasCameras,
+  'faa': fetchFaaCameras,
   'eastasia': fetchEastAsiaCameras,
   'seasia': fetchSeAsiaCameras,
   'westasia': fetchWestAsiaCameras,
@@ -861,6 +883,8 @@ function getRegionsForBounds(lat: number, lng: number, radius: number): string[]
   if (lat > 31.3 && lat < 37.1 && lng > -115.0 && lng < -109.0) regions.push('arizona');
   // Canada
   if (lat > 42 && lat < 70 && lng > -141 && lng < -52) regions.push('canada');
+  // FAA WeatherCams — airports and mountain passes across the US and Canada
+  if (lat > 17 && lat < 72 && lng > -180 && lng < -50) regions.push('faa');
   if (lat > 53.3 && lat < 53.8 && lng > -114.0 && lng < -113.2) regions.push('edmonton');
   // Europe
   const inBulgaria = lat > 41 && lat < 44.5 && lng > 22 && lng < 29.5;
