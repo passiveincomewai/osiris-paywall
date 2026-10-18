@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plane, Satellite, Sun, AlertTriangle, Camera,
   CloudLightning, Ship, Network, Database, Ghost,
-  Flame, Tv, Radio, Mountain, Anchor, Megaphone, SlidersHorizontal, Lock
+  Flame, Tv, Radio, Mountain, Anchor, Megaphone, SlidersHorizontal, Lock, Bus
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
@@ -151,6 +151,14 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     layers: [
       { key: 'cf_outages', label: 'Internet Outages', dataKey: 'cf_outages', requires: 'cloudflare', premium: true },
       { key: 'cf_attacks', label: 'Attack Origins', dataKey: 'cf_attack_origins', requires: 'cloudflare', premium: true },
+    ],
+  },
+  {
+    label: 'TRANSIT',
+    fullLabel: 'TRANSIT & MOBILITY',
+    icon: Bus,
+    layers: [
+      { key: 'gbfs', label: 'Bike & Scooter Share', description: 'GBFS · systems worldwide', dataKey: '' },
     ],
   },
   {

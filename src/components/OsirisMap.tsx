@@ -189,6 +189,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
+  // GBFS + transit layers keep their data in-map (toggle-gated fetches).
+  const gbfsSystemsRef = useRef<any[]>([]);
+  const gbfsCacheRef = useRef(new Map<string, { at: number; items: any[] }>());
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
   const alertPinsRef = useRef<AlertPinFeature[]>([]);
@@ -439,7 +442,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -552,6 +555,23 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'alert-label', type: 'symbol', source: 'alert-cams', minzoom: 9, layout: {
         'text-field': ['get', 'name'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.4],
       }, paint: { 'text-color': '#FFCA28', 'text-halo-color': '#000', 'text-halo-width': 1 }});
+
+      // GBFS micromobility — system pins, then station / vehicle dots on zoom
+      map.addLayer({ id: 'gbfs-systems', type: 'circle', source: 'gbfs', filter: ['==', ['get', 'kind'], 'system'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 3, 6, 5, 10, 8],
+        'circle-color': '#26A69A', 'circle-opacity': 0.9, 'circle-stroke-color': '#004D40', 'circle-stroke-width': 1,
+      }});
+      map.addLayer({ id: 'gbfs-label', type: 'symbol', source: 'gbfs', filter: ['==', ['get', 'kind'], 'system'], minzoom: 5, layout: {
+        'text-field': ['get', 'name'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.3],
+      }, paint: { 'text-color': '#80CBC4', 'text-halo-color': '#000', 'text-halo-width': 1 }});
+      map.addLayer({ id: 'gbfs-stations', type: 'circle', source: 'gbfs', filter: ['==', ['get', 'kind'], 'station'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 3, 12, 6, 16, 9],
+        'circle-color': '#66BB6A', 'circle-opacity': 0.95, 'circle-stroke-color': '#1B5E20', 'circle-stroke-width': 1,
+      }});
+      map.addLayer({ id: 'gbfs-vehicles', type: 'circle', source: 'gbfs', filter: ['==', ['get', 'kind'], 'vehicle'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2, 12, 5, 16, 8],
+        'circle-color': '#9CCC65', 'circle-opacity': 0.9, 'circle-stroke-color': '#33691E', 'circle-stroke-width': 1,
+      }});
 
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
@@ -1207,7 +1227,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
-      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
@@ -1399,6 +1419,48 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         <img src="${urlSafe(p.img)}?t=${bust}" alt="Latest frame from ${htmlEsc(p.name || 'ALERT camera')}" style="width:100%;border-radius:6px;display:block;background:#000;" loading="lazy" />
         <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">LIVE IMAGE — REFRESHES ~15 SECONDS · ALERTCALIFORNIA / ALERTWEST NETWORK</div>
         ${p.url ? `<a href="${urlSafe(p.url)}" target="_blank" style="${linkStyle}color:#FFB300;border:1px solid rgba(255,179,0,0.4);background:rgba(255,179,0,0.1);">🎥 CAMERA PAGE</a>` : ''}
+      </div>`);
+    });
+
+    // ── GBFS micromobility ──
+    map.on('click', 'gbfs-systems', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const zoomed = map.getZoom() >= 9.5;
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(38,166,154,0.35);">
+        <div style="color:#26A69A;font-size:12px;font-weight:700;margin-bottom:4px;">🚲 ${htmlEsc((p.name || 'SHARED MOBILITY').toUpperCase())}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.city || '')}${p.country ? ' · ' + htmlEsc(p.country) : ''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">${p.type === 'free' ? 'VEHICLES' : 'STATIONS'}</span><br/><span style="color:#E8E6E0;">${p.n ?? '—'}</span></div>
+          <div><span style="color:#5C5A54;">NETWORK</span><br/><span style="color:#E8E6E0;">${p.type === 'free' ? 'Free-floating' : 'Docked'}</span></div>
+        </div>
+        ${zoomed ? '' : '<div style="font-size:9px;color:#80CBC4;margin-bottom:4px;">Zoom in to load live bike &amp; dock availability.</div>'}
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">DATA — GBFS · MOBILITYDATA DIRECTORY</div>
+      </div>`);
+    });
+    map.on('click', 'gbfs-stations', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(102,187,106,0.35);">
+        <div style="color:#66BB6A;font-size:12px;font-weight:700;margin-bottom:4px;">🚲 ${htmlEsc((p.name || 'STATION').toUpperCase())}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.sysName || '')}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">BIKES AVAILABLE</span><br/><span style="color:#E8E6E0;">${p.bikes != null ? p.bikes : '—'}${p.ebikes != null ? ' (' + p.ebikes + ' e-bikes)' : ''}</span></div>
+          <div><span style="color:#5C5A54;">DOCKS FREE</span><br/><span style="color:#E8E6E0;">${p.docks != null ? p.docks : '—'}</span></div>
+        </div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">DATA — GBFS · ${htmlEsc((p.sysName || 'OPERATOR').toUpperCase())}</div>
+      </div>`);
+    });
+    map.on('click', 'gbfs-vehicles', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(156,204,101,0.35);">
+        <div style="color:#9CCC65;font-size:12px;font-weight:700;margin-bottom:4px;">🛴 FREE-FLOATING VEHICLE</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.sysName || '')}${p.vt ? ' · ' + htmlEsc(p.vt) : ''}</div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">DATA — GBFS · ${htmlEsc((p.sysName || 'OPERATOR').toUpperCase())}</div>
       </div>`);
     });
 
@@ -1649,7 +1711,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -2362,6 +2424,71 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setGeo('fires', activeLayers.fires && data.fires ? data.fires.map((f: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [f.lng, f.lat] }, properties: { brightness: f.brightness } })) : []);
   }, [mapReady, data.fires, activeLayers.fires, setGeo]);
 
+  // GBFS — systems snapshot on toggle; station loads follow the viewport
+  // (zoom ≥ 9.5, up to 6 nearest systems, 90 s freshness) via /api/gbfs.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    if (!(activeLayers as any).gbfs) { setGeo('gbfs', []); return; }
+    let live = true;
+    const render = () => {
+      if (!live) return;
+      const feats: any[] = gbfsSystemsRef.current.map((s: any) => ({
+        type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] },
+        properties: { kind: 'system', id: s.id, name: s.name, city: s.city, country: s.country, n: s.n, type: s.type },
+      }));
+      if (map.getZoom() >= 9.5) {
+        const b = map.getBounds();
+        for (const s of gbfsSystemsRef.current) {
+          if (s.lng < b.getWest() || s.lng > b.getEast() || s.lat < b.getSouth() || s.lat > b.getNorth()) continue;
+          const cached = gbfsCacheRef.current.get(s.id);
+          if (!cached) continue;
+          for (const it of cached.items) {
+            feats.push({
+              type: 'Feature', geometry: { type: 'Point', coordinates: [it.lng, it.lat] },
+              properties: { kind: it.kind, id: it.id, name: it.name ?? '', sysName: s.name, bikes: it.bikes ?? null, ebikes: it.ebikes ?? null, docks: it.docks ?? null, vt: it.vt ?? '' },
+            });
+          }
+        }
+      }
+      setGeo('gbfs', feats);
+    };
+    const loadVisible = async () => {
+      if (!live || map.getZoom() < 9.5 || !gbfsSystemsRef.current.length) return;
+      const b = map.getBounds();
+      const c = map.getCenter();
+      const candidates = gbfsSystemsRef.current
+        .filter((s: any) => s.lng >= b.getWest() && s.lng <= b.getEast() && s.lat >= b.getSouth() && s.lat <= b.getNorth())
+        .map((s: any) => ({ s, d: (s.lat - c.lat) ** 2 + (s.lng - c.lng) ** 2 }))
+        .sort((a: any, b2: any) => a.d - b2.d)
+        .map((x: any) => x.s)
+        .filter((s: any) => { const ch = gbfsCacheRef.current.get(s.id); return !ch || Date.now() - ch.at > 90000; })
+        .slice(0, 6);
+      await Promise.all(candidates.map(async (s: any) => {
+        try {
+          const r = await fetch(`/api/gbfs/stations?url=${encodeURIComponent(s.url)}`);
+          const j = await r.json();
+          gbfsCacheRef.current.set(s.id, { at: Date.now(), items: j.items ?? [] });
+        } catch { /* a later move retries */ }
+      }));
+      render();
+    };
+    const onMove = () => { render(); void loadVisible(); };
+    (async () => {
+      if (!gbfsSystemsRef.current.length) {
+        try {
+          const r = await fetch('/data/gbfs-systems.json');
+          const j = await r.json();
+          if (live) gbfsSystemsRef.current = j.systems ?? [];
+        } catch { /* layer stays empty */ }
+      }
+      render();
+      void loadVisible();
+    })();
+    map.on('moveend', onMove);
+    return () => { live = false; map.off('moveend', onMove); };
+  }, [mapReady, (activeLayers as any).gbfs, setGeo]);
+
   // ALERT Fire Cameras — fetched in-map on toggle; server route is cached,
   // frames themselves load straight from ALERTCalifornia in the popup.
   useEffect(() => {
@@ -2651,6 +2778,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label'], (activeLayers as any).hurricanes);
     setVis(['gauge-dots'], (activeLayers as any).river_gauges);
     setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
+    setVis(['gbfs-systems','gbfs-label','gbfs-stations','gbfs-vehicles'], (activeLayers as any).gbfs);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);

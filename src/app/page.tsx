@@ -497,6 +497,7 @@ export default function Dashboard() {
     weather: false,
     hurricanes: false,
     river_gauges: false,
+    gbfs: false,
     radiation: false,
     infrastructure: false,
     global_incidents: true,
