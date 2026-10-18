@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Plane, Gauge, ArrowUp, Radio, Crosshair, Loader2 } from 'lucide-react';
+import { X, Plane, Gauge, ArrowUp, Radio, Crosshair, Loader2, Video } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    OSIRIS — Flight Watch
@@ -200,6 +200,18 @@ function Row({ flight, telem, onRemove, onLocate, onDetail }: {
             className="p-0.5 text-[var(--text-muted)] hover:text-[var(--cyan-primary)] transition-colors"
           >
             <Crosshair className="w-3 h-3" />
+          </button>
+        )}
+        {telem && (
+          <button
+            onClick={() => (window as unknown as {
+              __weFlightFollowToggle?: (icao24: string, callsign?: string) => void;
+            }).__weFlightFollowToggle?.(flight.icao24, flight.callsign)}
+            title="Follow this aircraft — telemetry chase camera"
+            aria-label={`Follow ${flight.callsign || flight.icao24}`}
+            className="p-0.5 text-[var(--text-muted)] hover:text-[var(--gold-primary)] transition-colors"
+          >
+            <Video className="w-3 h-3" />
           </button>
         )}
         <button

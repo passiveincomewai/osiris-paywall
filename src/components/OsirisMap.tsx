@@ -22,7 +22,13 @@ import {
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
-import { FlightBlend, flightsToFeatures } from '@/lib/flights/render';
+import { FlightBlend, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
+import {
+  IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
+  followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
+  type FlightFollowState, type FollowHudData, type FollowMode, type SavedCameraState,
+} from '@/lib/flights/follow';
+import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import {
   clampIntensity, isLowPowerDevice, sensorEffectLabel, sensorFilterCss,
@@ -213,6 +219,8 @@ function escHtml(v: any): string {
   return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
+
 function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -322,6 +330,176 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     };
   }, []);
   const flightBlendRef = useRef<FlightBlend | null>(null);
+
+  // ── Aircraft follow camera (Phase 3.1, lib/flights/follow) ──
+  // The state machine and camera maths are pure (lib/flights/follow);
+  // this block owns the MapLibre side: engage/exit, the maxPitch raise
+  // (forward view pitches past the terrain manager's 60° cap), the
+  // popup/panel/Director bridge, and the per-tick drive inside the
+  // existing flight render loop — no second interval, no second position
+  // pipeline: the camera consumes the same FlightBlend output the
+  // markers draw. Interaction contract mirrors drone follow: drag
+  // releases (camera stays), the HUD's Exit restores the pre-follow view.
+  const flightFollowRef = useRef<FlightFollowState>(IDLE_FLIGHT_FOLLOW);
+  const flightFollowHudRef = useRef<FollowHudData | null>(null);
+  const flightFollowPrevMaxPitchRef = useRef<number | null>(null);
+  const [flightFollowUi, setFlightFollowUi] = useState<{ icao24: string; callsign: string; mode: FollowMode } | null>(null);
+  const [flightFollowNotice, setFlightFollowNotice] = useState<string | null>(null);
+  const flightFollowNoticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Last aircraft clicked on the globe — the Director preset's target. */
+  const [selectedFlight, setSelectedFlight] = useState<{ icao24: string; callsign: string } | null>(null);
+
+  const showFlightFollowNotice = useCallback((text: string) => {
+    setFlightFollowNotice(text);
+    if (flightFollowNoticeTimer.current) clearTimeout(flightFollowNoticeTimer.current);
+    flightFollowNoticeTimer.current = setTimeout(() => setFlightFollowNotice(null), 7000);
+  }, []);
+
+  const endFlightFollow = useCallback((opts?: { restore?: boolean; notice?: string }) => {
+    const map = mapRef.current;
+    const st = flightFollowRef.current;
+    flightFollowRef.current = IDLE_FLIGHT_FOLLOW;
+    flightFollowHudRef.current = null;
+    setFlightFollowUi(null);
+    if (st.phase === 'idle') return;
+    if (map) {
+      // Restore the pitch limit follow raised — but only if it is still
+      // the value follow set (the terrain manager may have re-claimed it).
+      if (flightFollowPrevMaxPitchRef.current != null) {
+        if (map.getMaxPitch() === FOLLOW_MAX_PITCH) map.setMaxPitch(flightFollowPrevMaxPitchRef.current);
+        flightFollowPrevMaxPitchRef.current = null;
+      }
+      if (opts?.restore && st.savedCamera) {
+        const s = st.savedCamera;
+        map.easeTo({ center: s.center, zoom: s.zoom, pitch: s.pitch, bearing: s.bearing, duration: 1400 });
+      }
+    }
+    if (opts?.notice) showFlightFollowNotice(opts.notice);
+  }, [showFlightFollowNotice]);
+
+  const engageFlightFollow = useCallback((icao24: string, callsign?: string) => {
+    const map = mapRef.current;
+    if (!map || !icao24) return;
+    const cs = (callsign || '').trim() || icao24.toUpperCase();
+    setSelectedFlight({ icao24, callsign: cs });
+    const cur = flightFollowRef.current;
+    if (cur.phase !== 'idle' && cur.target?.icao24 === icao24) return; // already riding this one
+    const c = map.getCenter();
+    const fresh: SavedCameraState = {
+      center: [c.lng, c.lat], zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing(),
+    };
+    // Switching targets mid-follow keeps the ORIGINAL pre-follow camera
+    // as the restore point — Exit should take the user back to where
+    // they started following, not to the previous aircraft.
+    const savedCamera = cur.phase !== 'idle' && cur.savedCamera ? cur.savedCamera : fresh;
+    const mode: FollowMode = cur.phase !== 'idle' ? cur.mode : 'chase';
+    if (flightFollowPrevMaxPitchRef.current == null) {
+      flightFollowPrevMaxPitchRef.current = map.getMaxPitch();
+      map.setMaxPitch(FOLLOW_MAX_PITCH);
+    }
+    flightFollowRef.current = startFollow({ icao24, callsign: cs }, savedCamera, Date.now(), mode);
+    flightFollowHudRef.current = null;
+    setFlightFollowUi({ icao24, callsign: cs, mode });
+    popupRef.current?.remove();
+  }, []);
+
+  const setFlightFollowMode = useCallback((mode: FollowMode) => {
+    const st = flightFollowRef.current;
+    if (st.phase === 'idle') return;
+    flightFollowRef.current = setFollowModeState(st, mode, Date.now());
+    setFlightFollowUi((prev) => (prev ? { ...prev, mode } : prev));
+  }, []);
+
+  // Popup buttons, Watch-panel rows and the Director preset all reach
+  // follow through this one bridge — the osirisWatchFlight pattern.
+  useEffect(() => {
+    (window as any).__weFlightFollowToggle = (icao24: string, callsign?: string) => {
+      const st = flightFollowRef.current;
+      if (st.phase !== 'idle' && st.target?.icao24 === icao24) endFlightFollow();
+      else engageFlightFollow(icao24, callsign);
+    };
+    return () => {
+      if ((window as any).__weFlightFollowToggle) delete (window as any).__weFlightFollowToggle;
+    };
+  }, [engageFlightFollow, endFlightFollow]);
+
+  // Dragging the map releases the follow (drone-follow contract): the
+  // camera stays where the user put it; only the HUD Exit restores.
+  useEffect(() => {
+    if (!flightFollowUi) return;
+    const map = mapRef.current;
+    if (!map) return;
+    const release = () => endFlightFollow();
+    map.on('dragstart', release);
+    return () => { map.off('dragstart', release); };
+  }, [flightFollowUi, endFlightFollow]);
+
+  /**
+   * One tick of the follow drive, called from the flight render loop
+   * with that loop's own blended buckets — the camera follows exactly
+   * the positions the markers show. Ends the follow (with a plain
+   * notice) when the target's layer is off or the target has been
+   * missing past the grace window.
+   */
+  const driveFlightFollow = useCallback((cur: FlightBuckets | undefined, now: number) => {
+    const map = mapRef.current;
+    const st = flightFollowRef.current;
+    if (!map || st.phase === 'idle' || !st.target) return;
+    const targetRef = st.target;
+    const hex = targetRef.icao24;
+    const layers = activeLayersRef.current as any;
+    const search: Array<[any[] | undefined, boolean]> = [
+      [cur?.commercial_flights, !!layers.flights],
+      [cur?.private_flights, !!layers.private],
+      [cur?.private_jets, !!layers.jets],
+      [cur?.military_flights, !!layers.military],
+    ];
+    let fix: any = null;
+    let bucketOn = true;
+    for (const [arr, on] of search) {
+      const hit = arr?.find((f: any) => f.icao24 === hex);
+      if (hit) { fix = hit; bucketOn = on; break; }
+    }
+    if (fix && !bucketOn) {
+      endFlightFollow({ notice: 'FLIGHT LAYER OFF — FOLLOW ENDED' });
+      return;
+    }
+    if (fix) {
+      flightFollowRef.current = noteFollowSeen(st, fix, now);
+      const s2 = flightFollowRef.current;
+      const target = followCameraTarget(s2.mode, fix, now - s2.modeSince, map.getBearing());
+      map.easeTo({
+        center: target.center, zoom: target.zoom, pitch: target.pitch, bearing: target.bearing,
+        duration: s2.phase === 'engaging' ? 1500 : 650,
+      });
+      if (s2.phase === 'engaging') flightFollowRef.current = { ...s2, phase: 'following' };
+      flightFollowHudRef.current = {
+        callsign: fix.callsign || targetRef.callsign,
+        icao24: hex,
+        lat: fix.lat,
+        lng: fix.lng,
+        alt: typeof fix.alt === 'number' ? fix.alt : null,
+        speedKnots: typeof fix.speed_knots === 'number' ? fix.speed_knots : null,
+        headingDeg: headingOf(fix, target.bearing),
+        fix: describeFix(flightBlendRef.current?.timing(now) ?? null, now),
+        missing: false,
+      };
+    } else {
+      // Not in the blended output: hold the camera, flag the HUD, and
+      // let the grace window decide whether this was a hiccup or a
+      // departure from coverage.
+      if (flightFollowHudRef.current) {
+        flightFollowHudRef.current = {
+          ...flightFollowHudRef.current,
+          missing: true,
+          fix: describeFix(flightBlendRef.current?.timing(now) ?? null, now),
+        };
+      }
+      if (followLostExpired(st, now)) {
+        endFlightFollow({ notice: `${targetRef.callsign} LEFT LIVE COVERAGE — FOLLOW ENDED` });
+      }
+    }
+  }, [endFlightFollow]);
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
   const alertPinsRef = useRef<AlertPinFeature[]>([]);
@@ -1391,6 +1569,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         const p = e.features[0].properties as any;
         const coords = (e.features[0].geometry as any).coordinates;
         const cs = (p.callsign||'').trim();
+        // The last selected aircraft is the Cinematic Director's follow
+        // target; the popup's own FOLLOW button reads the live follow
+        // state so it can offer STOP for the aircraft being ridden.
+        if (p.icao24) setSelectedFlight({ icao24: String(p.icao24), callsign: cs || String(p.icao24).toUpperCase() });
+        const followingThis = flightFollowRef.current.phase !== 'idle'
+          && flightFollowRef.current.target?.icao24 === (p.icao24 || '');
 
         // Show initial popup immediately (without route data)
         const routeLoadingId = `route-info-${Date.now()}`;
@@ -1411,6 +1595,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
             <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">IDENTIFYING AIRFRAME…</span>
           </div>
           <button onclick="window.osirisWatchFlight && window.osirisWatchFlight({ icao24: '${idSafe(p.icao24||'')}', callsign: '${idSafe(cs)}' })" style="width:100%;margin-top:8px;padding:6px 12px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.35);color:#7FE9FF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">+ WATCH THIS AIRCRAFT</button>
+          ${p.icao24 ? `<button onclick="window.__weFlightFollowToggle && window.__weFlightFollowToggle('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,180,0,0.10);border:1px solid rgba(255,180,0,0.40);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">${followingThis ? '■ STOP FOLLOWING' : '✈ FOLLOW AIRCRAFT — CHASE CAMERA'}</button>` : ''}
           <button onclick="window.__weFlightCams && window.__weFlightCams(${coords[0]}, ${coords[1]})" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">📷 CAMERAS NEAR THIS AIRCRAFT</button>
           <div id="${routeLoadingId}" style="margin-top:8px;padding:6px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
             <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">RESOLVING ROUTE…</span>
@@ -2418,12 +2603,21 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       !Array.isArray(data.military_flights)
     ) return;
     if (!flightBlendRef.current) flightBlendRef.current = new FlightBlend();
+    // Fix-age base for the follow HUD: when the FEED generated this
+    // snapshot (the /api/flights payload timestamp), so a server-cached
+    // snapshot reads honestly old instead of "just arrived". Absurd
+    // values (clock skew either way) fall back to arrival time.
+    const arrivedAt = Date.now();
+    const routeTs = Date.parse((data as any)?.timestamp ?? '');
+    const fixAt = Number.isFinite(routeTs) && routeTs <= arrivedAt + 60_000 && routeTs >= arrivedAt - 15 * 60_000
+      ? routeTs
+      : arrivedAt;
     flightBlendRef.current.push({
       commercial_flights: data.commercial_flights || [],
       private_flights: data.private_flights || [],
       private_jets: data.private_jets || [],
       military_flights: data.military_flights || [],
-    }, Date.now());
+    }, arrivedAt, fixAt);
   }, [data.commercial_flights, data.private_flights, data.private_jets, data.military_flights]);
 
   // Flight data → GeoJSON (GPU rendered). FULL sets — no decimation: every
@@ -2441,19 +2635,26 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       setGeo('private-fl', []);
       setGeo('jets', []);
       setGeo('military', []);
+      if (flightFollowRef.current.phase !== 'idle') {
+        endFlightFollow({ notice: 'FLIGHT LAYERS OFF — FOLLOW ENDED' });
+      }
       return;
     }
     const render = () => {
-      const cur = flightBlendRef.current?.current(Date.now());
+      const now = Date.now();
+      const cur = flightBlendRef.current?.current(now);
       setGeo('flights', activeLayers.flights ? flightsToFeatures(cur?.commercial_flights) : []);
       setGeo('private-fl', activeLayers.private ? flightsToFeatures(cur?.private_flights) : []);
       setGeo('jets', activeLayers.jets ? flightsToFeatures(cur?.private_jets) : []);
       setGeo('military', activeLayers.military ? flightsToFeatures(cur?.military_flights) : []);
+      // The follow camera rides THIS loop's blended output — no second
+      // interval, no second position pipeline (lib/flights/follow).
+      driveFlightFollow(cur, now);
     };
     render();
     const iv = setInterval(render, 500);
     return () => clearInterval(iv);
-  }, [mapReady, activeLayers.flights, activeLayers.private, activeLayers.jets, activeLayers.military, setGeo]);
+  }, [mapReady, activeLayers.flights, activeLayers.private, activeLayers.jets, activeLayers.military, setGeo, driveFlightFollow, endFlightFollow]);
 
   /**
    * Pull the palette out of the document whenever it can have changed.
@@ -4696,7 +4897,35 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} />}
-      {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} />}
+      {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={FLIGHT_FOLLOW_PRESETS} />}
+      {mapReady && flightFollowUi && (
+        <div
+          className="absolute left-1/2 z-[240] -translate-x-1/2 px-3"
+          style={{ bottom: `${6 + [trafficChip, droneChip, transitNotice].filter(Boolean).length * 4.5}rem` }}
+        >
+          <FlightFollowHud
+            hudRef={flightFollowHudRef}
+            target={flightFollowUi}
+            mode={flightFollowUi.mode}
+            onModeChange={setFlightFollowMode}
+            onExit={() => endFlightFollow({ restore: true })}
+          />
+        </div>
+      )}
+      {flightFollowNotice && (
+        <div
+          className="absolute left-1/2 z-[130] -translate-x-1/2 px-3 pointer-events-none"
+          style={{ bottom: `${(flightFollowUi ? 17 : 6) + [trafficChip, droneChip, transitNotice].filter(Boolean).length * 4.5}rem` }}
+        >
+          <div className="rounded-lg border border-amber-300/25 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+              <span className="text-white/90 uppercase tracking-wider">Flight Follow</span>
+              {' — '}
+              <span className="text-amber-200/90">{flightFollowNotice}</span>
+            </p>
+          </div>
+        </div>
+      )}
       {trafficChip && (
         <div
           className="absolute left-1/2 z-[120] -translate-x-1/2 px-3 pointer-events-none"

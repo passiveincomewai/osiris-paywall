@@ -30,6 +30,8 @@ interface CinematicDirectorProps {
   cameras?: any[];
   /** Presets owned by other systems (follow camera, launches) when they exist. */
   extraPresets?: CinematicPreset[];
+  /** The aircraft selected on the globe, for the Aircraft Follow action preset. */
+  followTarget?: { icao24: string; callsign?: string } | null;
 }
 
 const SPEEDS = [0.5, 1, 1.5, 2];
@@ -42,7 +44,7 @@ const iconBtnCls =
 const inputCls =
   'rounded border border-white/10 bg-white/[0.04] px-1.5 py-1 text-[10px] font-mono text-white focus:outline-none focus:border-cyan-400/50';
 
-export default function CinematicDirector({ mapRef, cameras = [], extraPresets = [] }: CinematicDirectorProps) {
+export default function CinematicDirector({ mapRef, cameras = [], extraPresets = [], followTarget = null }: CinematicDirectorProps) {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState<CinematicScene[]>(() => loadSavedScenes());
   const [draft, setDraft] = useState<CameraKeyframe[]>([]);
@@ -121,19 +123,32 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
     return {
       currentCenter: (c ? [c.lng, c.lat] : [0, 20]) as [number, number],
       cameras,
+      followTarget,
     };
     // Recomputed when the panel opens / the catalogue changes; the map
     // centre is read at press time through playPreset below as well.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameras, open]);
+  }, [cameras, open, followTarget]);
+
+  const freshCtx = () => {
+    const c = mapRef.current?.getCenter();
+    return {
+      currentCenter: (c ? [c.lng, c.lat] : ctx.currentCenter) as [number, number],
+      cameras,
+      followTarget,
+    };
+  };
 
   const playPreset = (preset: CinematicPreset) => {
-    const c = mapRef.current?.getCenter();
-    const scene = preset.build({
-      currentCenter: c ? [c.lng, c.lat] : ctx.currentCenter,
-      cameras,
-    });
+    const scene = preset.build(freshCtx());
     if (scene) playScene(scene);
+  };
+
+  /** Action presets (Aircraft Follow) drive their own live system; the
+   *  Director just hands them the current context — no scene is built or
+   *  played, so the follow camera and the scene player never fight. */
+  const runPresetAction = (preset: CinematicPreset) => {
+    preset.action?.(freshCtx());
   };
 
   const addKeyframe = () => {
@@ -221,21 +236,25 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
           <div className="text-[9px] font-mono tracking-[0.18em] text-white/35 uppercase mb-1">Presets</div>
           <div className="flex flex-col gap-1">
             {presets.map((preset) => {
-              const scene = preset.build(ctx);
+              const isAction = typeof preset.action === 'function';
+              const scene = isAction ? null : preset.build(ctx);
+              const canRun = isAction
+                ? (preset.available ? preset.available(ctx) : true)
+                : !!scene;
               return (
                 <div key={preset.id}>
                   <button
                     type="button"
-                    disabled={!scene}
-                    onClick={() => playPreset(preset)}
+                    disabled={!canRun}
+                    onClick={() => (isAction ? runPresetAction(preset) : playPreset(preset))}
                     className={`${btnCls} w-full flex items-center gap-2 text-left`}
-                    title={scene ? preset.description : preset.unavailableNote ?? preset.description}
+                    title={canRun ? preset.description : preset.unavailableNote ?? preset.description}
                   >
                     <Play className="w-3 h-3 flex-shrink-0" />
                     <span className="flex-1">{preset.label}</span>
                     {scene && <span className="text-white/35 normal-case">{Math.round(totalSceneDurationMs(scene, speed) / 1000)}s</span>}
                   </button>
-                  {!scene && preset.unavailableNote && (
+                  {!canRun && preset.unavailableNote && (
                     <p className="mt-0.5 text-[9px] text-white/35 leading-snug">{preset.unavailableNote}</p>
                   )}
                 </div>

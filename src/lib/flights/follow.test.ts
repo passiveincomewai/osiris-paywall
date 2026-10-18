@@ -16,7 +16,7 @@ import {
   stopFollow,
   type FollowFix,
 } from './follow';
-import type { FlightBlendTiming } from './render';
+import { FlightBlend, type FlightBlendTiming } from './render';
 
 const SAVED = { center: [-0.12, 51.5] as [number, number], zoom: 4, pitch: 0, bearing: 0 };
 const TARGET = { icao24: 'abc123', callsign: 'BAW117' };
@@ -176,6 +176,37 @@ describe('describeFix — fix-age derivation and interpolation honesty', () => {
   it('age never goes negative against a future-dated fix', () => {
     const d = describeFix(timing({ nextFixAt: NOW + 60_000 }), NOW);
     expect(d!.newestFixAgeS).toBe(0);
+  });
+});
+
+describe('integration — FlightBlend timing feeds describeFix (the HUD path)', () => {
+  const buckets = (n: number) => ({
+    commercial_flights: Array.from({ length: n }, (_, i) => fix({ icao24: `hex${i}` })),
+    private_flights: [],
+    private_jets: [],
+    military_flights: [],
+  });
+
+  it('mid-interval the HUD reads INTERPOLATED with the newest fix age; after the interval, EXTRAPOLATED', () => {
+    const blend = new FlightBlend();
+    blend.push(buckets(2), 1_000, 900);
+    blend.push(buckets(2), 31_000, 30_500);
+    // 15 s into the interval after the second snapshot: bracketing fixes.
+    const mid = describeFix(blend.timing(46_000), 46_000);
+    expect(mid!.kind).toBe('interpolated');
+    expect(mid!.newestFixAgeS).toBeCloseTo(15.5, 5);
+    // Well past the interval with no newer snapshot: held at the last fix.
+    const late = describeFix(blend.timing(500_000), 500_000);
+    expect(late!.kind).toBe('extrapolated');
+    expect(late!.newestFixAgeS).toBeCloseTo(469.5, 5);
+  });
+
+  it('a single snapshot dead-reckons: EXTRAPOLATED from its own fix time', () => {
+    const blend = new FlightBlend();
+    blend.push(buckets(1), 10_000, 8_000);
+    const d = describeFix(blend.timing(13_000), 13_000);
+    expect(d!.kind).toBe('extrapolated');
+    expect(d!.newestFixAgeS).toBeCloseTo(5, 5);
   });
 });
 
