@@ -64,6 +64,8 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     layers: [
       { key: 'sdk_sea', label: 'Maritime Lines', dataKey: 'sdk_entities', premium: true },
       { key: 'live_clouds', label: 'Live Clouds', description: 'NOAA satellites · lit in 3D · hourly', dataKey: '' },
+      { key: 'noaa_radar', label: 'NOAA Radar', description: 'NOAA nowCOAST · NEXRAD mosaic · ~5 min', dataKey: '' },
+      { key: 'lightning', label: 'Lightning Density', description: 'NOAA nowCOAST · LDN strike density', dataKey: '' },
     ],
   },
   {

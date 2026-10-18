@@ -509,6 +509,10 @@ export default function Dashboard() {
     /* NOAA's infrared cloud mosaic — see lib/live-clouds. Off until asked for:
        it veils everything under it. */
     live_clouds: false,
+    /* NOAA nowCOAST radar + lightning WMS overlays — see lib/noaa-radar.
+       Off until asked for, like the clouds they sit beside. */
+    noaa_radar: false,
+    lightning: false,
     terrain_3d: false,
     terrain_elevation: false,
     malware: false,

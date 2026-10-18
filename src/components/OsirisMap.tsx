@@ -6,6 +6,11 @@ import * as maplibregl from 'maplibre-gl';
 import { installTerrainTileProtocol } from '@/lib/terrain-tiles';
 import { CLOUDS_ATTRIBUTION, CLOUDS_CREDIT, CLOUDS_LAYER, frameTime } from '@/lib/live-clouds';
 import { createCloudLayer } from '@/lib/live-clouds-layer';
+import {
+  LIGHTNING_ATTRIBUTION, LIGHTNING_LAYER, LIGHTNING_SOURCE, lightningTiles,
+  RADAR_ATTRIBUTION, RADAR_LAYER, RADAR_REFRESH_MS, RADAR_SOURCE,
+  radarFrameIso, radarTiles,
+} from '@/lib/noaa-radar';
 import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
@@ -2721,6 +2726,61 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     const refresh = setInterval(() => clouds.setFrame(frameTime()), 5 * 60_000);
     return () => clearInterval(refresh);
   }, [mapReady, activeLayers.live_clouds, mapStyle]);
+
+  // NOAA Radar & Lightning — nowCOAST WMS tiles fetched by the map straight
+  // from NOAA (see lib/noaa-radar). Same discipline as the clouds: nothing
+  // exists until the layer is switched on, switching off frees the tiles,
+  // and the pair sits under the night shade, the clouds and every marker.
+  // The tile URL carries the frame time, so a refresh is a source swap.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    const defs = [
+      {
+        on: !!activeLayers.noaa_radar, source: RADAR_SOURCE, layer: RADAR_LAYER,
+        tiles: radarTiles, attribution: RADAR_ATTRIBUTION, opacity: 0.8,
+      },
+      {
+        on: !!activeLayers.lightning, source: LIGHTNING_SOURCE, layer: LIGHTNING_LAYER,
+        tiles: lightningTiles, attribution: LIGHTNING_ATTRIBUTION, opacity: 0.85,
+      },
+    ];
+    const apply = () => {
+      const frame = radarFrameIso();
+      for (const d of defs) {
+        if (!d.on) {
+          if (map.getLayer(d.layer)) map.removeLayer(d.layer);
+          if (map.getSource(d.source)) map.removeSource(d.source);
+          continue;
+        }
+        const tiles = d.tiles(frame);
+        const src = map.getSource(d.source) as any;
+        if (src && src.tiles?.[0] !== tiles[0]) {
+          // New frame: swap the tile URL so the map re-requests fresh tiles.
+          if (map.getLayer(d.layer)) map.removeLayer(d.layer);
+          map.removeSource(d.source);
+        }
+        if (!map.getSource(d.source)) {
+          map.addSource(d.source, { type: 'raster', tiles, tileSize: 256, attribution: d.attribution });
+        }
+        if (!map.getLayer(d.layer)) {
+          const before = map.getLayer(CLOUDS_LAYER)
+            ? CLOUDS_LAYER
+            : map.getLayer('day-night-fill')
+              ? 'day-night-fill'
+              : map.getStyle().layers.find(l => l.type === 'symbol')?.id;
+          map.addLayer(
+            { id: d.layer, type: 'raster', source: d.source, paint: { 'raster-opacity': d.opacity } },
+            before,
+          );
+        }
+      }
+    };
+    apply();
+    if (!defs.some(d => d.on)) return;
+    const refresh = setInterval(apply, RADAR_REFRESH_MS);
+    return () => clearInterval(refresh);
+  }, [mapReady, activeLayers.noaa_radar, activeLayers.lightning, mapStyle]);
 
   // OSIRIS OI — a prediction drawn as it happens: actors, the events of the
   // simulated worlds and arcs through the sky (see lib/oi/globe). The page feeds it
