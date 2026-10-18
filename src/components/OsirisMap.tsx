@@ -12,10 +12,10 @@ import {
   radarFrameIso, radarTiles,
 } from '@/lib/noaa-radar';
 import {
-  TRAFFIC_MIN_ZOOM, CAMERA_SEARCH_RADIUS_M, CAMERA_SEARCH_MAX,
+  TRAFFIC_MIN_ZOOM, CAMERA_SEARCH_RADIUS_M,
   targetVehicleCount, congestionBand, BAND_COLORS,
 } from '@/lib/traffic/config';
-import { buildRoadNetwork, haversineM, type RoadNetwork } from '@/lib/traffic/roads';
+import { buildRoadNetwork, type RoadNetwork } from '@/lib/traffic/roads';
 import { effectiveRatio } from '@/lib/traffic/congestion';
 import {
   createRng, reconcileVehicles, advanceVehicles, vehicleFeature, type SimVehicle,
@@ -23,6 +23,7 @@ import {
 import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
 import { FlightBlend, flightsToFeatures } from '@/lib/flights/render';
+import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
@@ -197,6 +198,13 @@ interface AlertPinFeature {
   properties: AlertPinProps;
 }
 
+/** Escape a value for interpolation into popup HTML. Module scope so the
+ *  shared nearby-cameras popup (below) can use it outside the map-init
+ *  closure, which keeps its own copy for its many existing popups. */
+function escHtml(v: any): string {
+  return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -228,7 +236,83 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const trafficNetRef = useRef<RoadNetwork | null>(null);
   const trafficVehiclesStateRef = useRef<SimVehicle[]>([]);
   const trafficFlowRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
-  const trafficNearbyRef = useRef<any[]>([]);
+  // ── Nearby cameras — ONE handoff for every "cameras near X" surface ──
+  // The search itself lives in src/lib/nearby-cameras.ts (shared with the
+  // region dossier in page.tsx); this block owns only the popup + the
+  // selection bridge. Opening a result goes through the shared
+  // onEntityClick → CameraViewer path, so the free-camera gate and every
+  // other access rule stay exactly the viewer's own.
+  const nearbyCamerasRef = useRef<any[]>([]);
+  const dataRef = useRef(data);
+  useEffect(() => { dataRef.current = data; });
+  const entityClickRef = useRef(onEntityClick);
+  useEffect(() => { entityClickRef.current = onEntityClick; });
+  const activeLayersRef = useRef(activeLayers);
+  useEffect(() => { activeLayersRef.current = activeLayers; });
+
+  const openNearbyCameras = useCallback((here: [number, number], opts: {
+    title: string;
+    honestyWithResults: string;
+    honestyEmpty: string;
+    listLead: (n: number) => string;
+    emptyText: string;
+  }) => {
+    const map = mapRef.current;
+    if (!map) return;
+    let features: any[] = [];
+    try { features = map.querySourceFeatures('cctv') as any[]; } catch { features = []; }
+    const candidates = collectCameraCandidates(features, (dataRef.current as any)?.cameras);
+    const near = findNearestCameras(candidates, here);
+    nearbyCamerasRef.current = near.map(x => x.camera);
+    const pStyle = `background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;`;
+    let html: string;
+    if (near.length) {
+      const rows = near.map((x, i) => `<button onclick="window.__weNearbyCam&&window.__weNearbyCam(${i})" style="display:block;width:100%;text-align:left;margin-top:6px;padding:7px 10px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.3);color:#BFEFFF;font-family:'JetBrains Mono',monospace;font-size:10px;border-radius:5px;cursor:pointer;">📷 ${escHtml(x.camera.name || x.camera.city || 'Camera')} · ${(x.distanceM / 1000).toFixed(2)} km</button>`).join('');
+      html = `<div style="${pStyle}border:1px solid rgba(255,255,255,0.08);"><div style="color:#E8E6E0;font-size:12px;font-weight:700;letter-spacing:0.08em;">${escHtml(opts.title)}</div><div style="color:#5C5A54;font-size:9px;margin-top:4px;letter-spacing:0.08em;">${escHtml(opts.honestyWithResults)}</div><div style="color:#B0BEC5;font-size:10px;margin-top:8px;">${escHtml(opts.listLead(near.length))}</div>${rows}</div>`;
+    } else {
+      const hint = (activeLayersRef.current as any)?.cctv ? '' : ' Turn on the CCTV Cameras layer to load the camera index.';
+      html = `<div style="${pStyle}border:1px solid rgba(255,255,255,0.08);"><div style="color:#E8E6E0;font-size:12px;font-weight:700;letter-spacing:0.08em;">${escHtml(opts.title)}</div><div style="color:#5C5A54;font-size:9px;margin-top:4px;letter-spacing:0.08em;">${escHtml(opts.honestyEmpty)}</div><div style="color:#B0BEC5;font-size:10px;margin-top:8px;line-height:1.5;">${escHtml(opts.emptyText)}${escHtml(hint)}</div></div>`;
+    }
+    popupRef.current?.remove();
+    popupRef.current = new maplibregl.Popup({ closeButton: true, maxWidth: '380px', offset: 14 }).setLngLat(here).setHTML(html).addTo(map);
+  }, []);
+  const openNearbyCamerasRef = useRef(openNearbyCameras);
+  useEffect(() => { openNearbyCamerasRef.current = openNearbyCameras; }, [openNearbyCameras]);
+
+  // Popup buttons are static HTML, so they reach React through window
+  // bridges — the same pattern as osirisWatchFlight and the drone follow
+  // toggle. __weFlightCams carries the aircraft handoff's honesty rule in
+  // its copy: these are GROUND cameras near the aircraft's position; the
+  // aircraft is not visible in them and the copy never implies otherwise.
+  useEffect(() => {
+    (window as any).__weNearbyCam = (i: number) => {
+      const cam = nearbyCamerasRef.current[i];
+      const map = mapRef.current;
+      if (!cam || !map) return;
+      popupRef.current?.remove();
+      entityClickRef.current?.({
+        type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
+        source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
+        stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+      });
+      map.flyTo({ center: [cam.lng, cam.lat], zoom: Math.max(map.getZoom(), 13), duration: 1000 });
+    };
+    (window as any).__weFlightCams = (lng: number, lat: number) => {
+      const radiusKm = (CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1);
+      const honesty = "GROUND CAMERAS NEAR THE AIRCRAFT'S CURRENT POSITION — THE AIRCRAFT IS NOT VISIBLE IN THESE FEEDS";
+      openNearbyCamerasRef.current([lng, lat], {
+        title: 'CAMERAS NEAR THIS AIRCRAFT',
+        honestyWithResults: honesty,
+        honestyEmpty: honesty,
+        listLead: (n) => `${n} live camera${n > 1 ? 's' : ''} within ${radiusKm} km of the aircraft:`,
+        emptyText: `No live cameras in the loaded index within ${radiusKm} km of this aircraft.`,
+      });
+    };
+    return () => {
+      if ((window as any).__weNearbyCam) delete (window as any).__weNearbyCam;
+      if ((window as any).__weFlightCams) delete (window as any).__weFlightCams;
+    };
+  }, []);
   const flightBlendRef = useRef<FlightBlend | null>(null);
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
@@ -1273,6 +1357,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
             <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">IDENTIFYING AIRFRAME…</span>
           </div>
           <button onclick="window.osirisWatchFlight && window.osirisWatchFlight({ icao24: '${idSafe(p.icao24||'')}', callsign: '${idSafe(cs)}' })" style="width:100%;margin-top:8px;padding:6px 12px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.35);color:#7FE9FF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">+ WATCH THIS AIRCRAFT</button>
+          <button onclick="window.__weFlightCams && window.__weFlightCams(${coords[0]}, ${coords[1]})" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">📷 CAMERAS NEAR THIS AIRCRAFT</button>
           <div id="${routeLoadingId}" style="margin-top:8px;padding:6px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
             <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">RESOLVING ROUTE…</span>
           </div>
@@ -2999,7 +3084,6 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     const rng = createRng(20261018);
     const mobileLike = typeof window !== 'undefined'
       && (window.innerWidth < 768 || (window.innerHeight < 500 && window.innerWidth < 1024));
-    const esc = (s: any): string => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     const ratioFor = (road: any) => effectiveRatio(road, new Date(), trafficFlowRef.current?.ratios);
 
     const setChip = () => {
@@ -3108,56 +3192,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     };
 
     // ── Road click → nearby REAL cameras from the globe's own catalogue ──
+    // The search + popup are the shared handoff (src/lib/nearby-cameras.ts,
+    // openNearbyCameras above) — the same one the aircraft popup and the
+    // region dossier use, so there is exactly one nearest-camera behaviour.
     const onRoadClick = (e: any) => {
       const here: [number, number] = [e.lngLat.lng, e.lngLat.lat];
       const roadName = e.features?.[0]?.properties?.name || e.features?.[0]?.properties?.ref || '';
-      const byId = new Map<string, any>();
-      try {
-        for (const f of map.querySourceFeatures('cctv') as any[]) {
-          const p = f.properties ?? {};
-          const c = (f.geometry as any)?.coordinates;
-          if (p.id != null && Array.isArray(c)) {
-            byId.set(String(p.id), {
-              id: p.id, name: p.name, city: p.city, country: p.country, source: p.source,
-              feed_url: p.feed_url, stream_url: p.stream_url, stream_type: p.stream_type,
-              external_url: p.external_url, lat: c[1], lng: c[0],
-            });
-          }
-        }
-      } catch { /* cctv source not ready */ }
-      if (!byId.size && Array.isArray((data as any)?.cameras)) {
-        for (const c of (data as any).cameras) if (c?.id != null && typeof c.lat === 'number') byId.set(String(c.id), c);
-      }
-      const near = [...byId.values()]
-        .map(c => ({ c, d: haversineM(here, [c.lng, c.lat]) }))
-        .filter(x => Number.isFinite(x.d) && x.d <= CAMERA_SEARCH_RADIUS_M)
-        .sort((a, b) => a.d - b.d)
-        .slice(0, CAMERA_SEARCH_MAX);
-      trafficNearbyRef.current = near.map(x => x.c);
-      const pStyle = `background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;`;
-      const title = roadName ? `TRAFFIC — ${esc(roadName).toUpperCase()}` : 'TRAFFIC — ROAD SEGMENT';
-      let html: string;
-      if (near.length) {
-        const rows = near.map((x, i) => `<button onclick="window.__weTrafficCam&&window.__weTrafficCam(${i})" style="display:block;width:100%;text-align:left;margin-top:6px;padding:7px 10px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.3);color:#BFEFFF;font-family:'JetBrains Mono',monospace;font-size:10px;border-radius:5px;cursor:pointer;">📷 ${esc(x.c.name || x.c.city || 'Camera')} · ${(x.d / 1000).toFixed(2)} km</button>`).join('');
-        html = `<div style="${pStyle}border:1px solid rgba(255,255,255,0.08);"><div style="color:#E8E6E0;font-size:12px;font-weight:700;letter-spacing:0.08em;">${title}</div><div style="color:#5C5A54;font-size:9px;margin-top:4px;letter-spacing:0.08em;">VEHICLES HERE ARE SIMULATED · CAMERAS BELOW ARE REAL</div><div style="color:#B0BEC5;font-size:10px;margin-top:8px;">${near.length} live camera${near.length > 1 ? 's' : ''} within ${(CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1)} km:</div>${rows}</div>`;
-      } else {
-        const hint = (activeLayers as any).cctv ? '' : ' Turn on the CCTV Cameras layer to load the camera index.';
-        html = `<div style="${pStyle}border:1px solid rgba(255,255,255,0.08);"><div style="color:#E8E6E0;font-size:12px;font-weight:700;letter-spacing:0.08em;">${title}</div><div style="color:#5C5A54;font-size:9px;margin-top:4px;letter-spacing:0.08em;">VEHICLES HERE ARE SIMULATED</div><div style="color:#B0BEC5;font-size:10px;margin-top:8px;line-height:1.5;">No live cameras in the loaded index within ${(CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1)} km of this road.${hint}</div></div>`;
-      }
-      popupRef.current?.remove();
-      popupRef.current = new maplibregl.Popup({ closeButton: true, maxWidth: '380px', offset: 14 }).setLngLat(here).setHTML(html).addTo(map);
-    };
-
-    (window as any).__weTrafficCam = (i: number) => {
-      const cam = trafficNearbyRef.current[i];
-      if (!cam) return;
-      popupRef.current?.remove();
-      onEntityClick?.({
-        type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
-        source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
-        stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+      const radiusKm = (CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1);
+      openNearbyCamerasRef.current?.(here, {
+        title: roadName ? `TRAFFIC — ${String(roadName).toUpperCase()}` : 'TRAFFIC — ROAD SEGMENT',
+        honestyWithResults: 'VEHICLES HERE ARE SIMULATED · CAMERAS BELOW ARE REAL',
+        honestyEmpty: 'VEHICLES HERE ARE SIMULATED',
+        listLead: (n) => `${n} live camera${n > 1 ? 's' : ''} within ${radiusKm} km:`,
+        emptyText: `No live cameras in the loaded index within ${radiusKm} km of this road.`,
       });
-      map.flyTo({ center: [cam.lng, cam.lat], zoom: Math.max(map.getZoom(), 13), duration: 1000 });
     };
 
     const setupTomtom = () => {

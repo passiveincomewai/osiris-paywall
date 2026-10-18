@@ -8,6 +8,8 @@ import { Layers, Newspaper, Search, X, Route, Radar, ExternalLink, AlertTriangle
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
+import { findNearestCameras } from '@/lib/nearby-cameras';
+import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero from '@/components/CinematicHero';
 import HomeSeoShell from '@/components/HomeSeoShell';
@@ -201,6 +203,7 @@ export default function Dashboard() {
   const [locationLabel, setLocationLabel] = useState('');
   const [regionDossier, setRegionDossier] = useState<any>(null);
   const [dossierLoading, setDossierLoading] = useState(false);
+  const [dossierCoords, setDossierCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [showSplash, setShowSplash] = useState(true);
   /* Radar scan: true while the camera catalogue is still loading. The splash
      shows the radar until every region lands (or retries give up). */
@@ -902,12 +905,20 @@ export default function Dashboard() {
 
   // Region dossier (double right-click)
   const handleRightClick = useCallback(async (coords: { lat: number; lng: number }) => {
-    setDossierLoading(true); setRegionDossier(null);
+    setDossierLoading(true); setRegionDossier(null); setDossierCoords(coords);
     try {
       const res = await fetch(`/api/region-dossier?lat=${coords.lat}&lng=${coords.lng}`);
       if (res.ok) setRegionDossier(await res.json());
     } catch (e) { console.warn('[OSIRIS] Suppressed error:', e instanceof Error ? e.message : e); } finally { setDossierLoading(false); }
   }, []);
+  // "Cameras near here" for the dossier — the same shared search
+  // (src/lib/nearby-cameras.ts) the traffic road-click and aircraft popups
+  // use, run over the page's loaded camera catalogue. Opening a result goes
+  // through handleEntityClick, so the free-camera gate applies unchanged.
+  const dossierNearbyCameras = useMemo(
+    () => (dossierCoords ? findNearestCameras((data as any)?.cameras ?? [], [dossierCoords.lng, dossierCoords.lat]) : []),
+    [dossierCoords, data],
+  );
   // Entity click handler (hoisted from JSX to comply with Rules of Hooks - Fixes #113)
   const handleEntityClick = useCallback((entity: any) => {
     if (entity?.type === 'cctv') {
@@ -2296,6 +2307,28 @@ export default function Dashboard() {
                 )}
                 {regionDossier.head_of_state && (<div><div className="hud-label mb-0.5">HEAD OF STATE</div><div className="text-xs text-[var(--gold-primary)]">{regionDossier.head_of_state.name}</div><div className="text-[9px] text-[var(--text-muted)]">{regionDossier.head_of_state.position}</div></div>)}
                 {regionDossier.wikipedia && (<div><div className="hud-label mb-1">INTELLIGENCE BRIEF</div><div className="flex gap-3">{regionDossier.wikipedia.thumbnail && <img src={regionDossier.wikipedia.thumbnail} alt="" className="w-14 h-14 rounded object-cover flex-shrink-0" />}<p className="text-[9px] text-[var(--text-secondary)] leading-relaxed">{regionDossier.wikipedia.extract}</p></div></div>)}
+                <div>
+                  <div className="hud-label mb-1">CAMERAS NEAR HERE</div>
+                  {dossierNearbyCameras.length > 0 ? (
+                    <div className="space-y-1">
+                      {dossierNearbyCameras.map(({ camera, distanceM }) => (
+                        <button
+                          key={String(camera.id)}
+                          onClick={() => handleEntityClick({ type: 'cctv', id: camera.id, name: camera.name, city: camera.city, country: camera.country, source: camera.source, feed_url: camera.feed_url, stream_url: camera.stream_url, stream_type: camera.stream_type, external_url: camera.external_url, lat: camera.lat, lng: camera.lng })}
+                          className="w-full text-left px-2 py-1.5 rounded border border-[var(--border-primary)] hover:border-[var(--cyan-primary)] text-[11px] text-[var(--text-primary)] transition-colors"
+                        >
+                          📷 {camera.name || camera.city || 'Camera'} · {(distanceM / 1000).toFixed(2)} km
+                        </button>
+                      ))}
+                      <p className="text-[9px] text-[var(--text-muted)]">Real feeds from the loaded WorldEye camera index — opened in the standard viewer.</p>
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-[var(--text-secondary)]">
+                      No live cameras in the loaded index within {(CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1)} km of this point.
+                      {!activeLayers.cctv && ' Turn on the CCTV Cameras layer to load the camera index.'}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </div>
