@@ -1,1 +1,112 @@
-{"categories":["conflict-monitoring","geopolitical-analytics","flight-tracking","maritime-intel"],"competitorWins":"World Monitor is genuinely stronger for dedicated defense and geopolitical analysis. Its six specialized variants (geopolitical, tech, finance, energy, commodity), 200+ mapped military bases, 26 Telegram OSINT channels, Country Instability Index, and AI strategic-posture panels go far deeper into military intelligence than WorldEye's Pro conflict feeds. Being open-source and self-hosted, it has no subscription cost and can be customized by a technical team.","description":"World Monitor (worldmonitor.app) is an open-source, self-hosted platform built for OSINT analysts, defense researchers, and journalists. It ships six specialized variants — geopolitical, tech, finance, energy, commodity, and positive-news — and combines live ADS-B aircraft tracking, AIS maritime monitoring, military base maps, Telegram OSINT channels, a Country Instability Index, and GDELT-powered news feeds. It differs from WorldEye by targeting deep defense/geopolitical analysis (you self-host the open-source code) rather than a free, no-signup consumer globe with cameras, weather, and affordable Pro extras.","features":[{"competitor":"unverified","label":"Interactive 3D globe","note":"Map library not confirmed from official docs","worldEye":"yes"},{"competitor":"yes","label":"Live aircraft tracking","note":"Live ADS-B tracking with military enrichment","worldEye":"yes"},{"competitor":"unverified","label":"Live camera network","note":"No public camera network documented","worldEye":"yes"},{"competitor":"unverified","label":"Satellite imagery","note":"Satellite imagery layer not documented","worldEye":"yes"},{"competitor":"yes","label":"Maritime vessel tracking","note":"AIS maritime monitoring merged with USNI fleet reports","worldEye":"yes"},{"competitor":"yes","label":"Conflict & geopolitical monitoring","note":"Core focus: conflict hotspots, 210+ military bases, strategic posture panels","worldEye":"partial"},{"competitor":"partial","label":"Weather & environmental overlays","note":"Earthquakes, severe weather, NASA EONET wildfire/volcano/flood events","worldEye":"yes"},{"competitor":"partial","label":"OSINT research tools","note":"Telegram OSINT channels + AI insights; no network recon tools like Nmap/WHOIS","worldEye":"yes"},{"competitor":"partial","label":"Alerts & notifications","note":"OREF rocket-alert feed integration; notification delivery not documented","worldEye":"partial"},{"competitor":"partial","label":"Free access without signup","note":"Free and open-source, but you self-host it — no hosted free tier","worldEye":"yes"},{"competitor":"unverified","label":"API access","note":"Integration options mentioned in docs, not verified","worldEye":"partial"},{"competitor":"unverified","label":"Mobile-friendly","note":"Mobile support not documented","worldEye":"yes"}],"name":"World Monitor","pricing":"Free and open-source (self-hosted); no public SaaS pricing.","published":true,"seoDescription":"Compare WorldEye vs World Monitor: free no-signup planet globe with cameras and Pro OSINT extras vs open-source self-hosted geopolitical intelligence.","seoTitle":"WorldEye vs World Monitor (2026): Free Live Globe or Open-Source Intel Platform?","slug":"world-monitor","sources":[{"label":"World Monitor platform overview docs","url":"https://github.com/lizthedeveloper/worldmonitor/blob/HEAD/docs/overview.mdx"},{"label":"World Monitor variants breakdown","url":"https://github.com/lizthedeveloper/worldmonitor/blob/HEAD/blog-site/src/content/blog/five-dashboards-one-platform-worldmonitor-variants.md"}],"tagline":"Open-source geopolitical intelligence platform with 100+ intel panels for military tracking, conflict monitoring, and AI-driven analysis.","verdictCompetitor":"Choose World Monitor if you are an OSINT analyst, defense researcher, or journalist who needs deep military and geopolitical intelligence panels and are comfortable self-hosting open-source software.","verdictWorldEye":"Choose WorldEye if you want a free, no-signup live planet globe — cameras, flights, ships, weather, quakes — plus affordable Pro OSINT extras, without hosting anything yourself.","website":"https://worldmonitor.app","whyWorldEye":["Free in your browser with zero signup — World Monitor requires you to deploy and host the open-source stack yourself.","One free globe combines ~36,000 live public cameras with live flights, ships, weather, earthquakes, and wildfires — World Monitor has no camera network.","Pro starts at $3.99/week: AI analyst assistant, OSINT recon toolkit (Nmap, DNS, WHOIS, SSL), premium cyber/GDELT/maritime/conflict intel feeds, and high-res satellite imagery.","Free live aircraft, satellite, and ship tracking with global search and advanced filters — no account, no infrastructure.","A mobile-friendly 3D globe designed for anyone to explore the planet, not just defense analysts.","WorldEye's GDELT-powered intel feeds complement World Monitor's deeper military panels — use them together."]}
+{
+ "categories": [
+  "conflict-monitoring",
+  "geopolitical-analytics",
+  "flight-tracking",
+  "maritime-intel"
+ ],
+ "competitorWins": "World Monitor is genuinely stronger for dedicated geopolitical analysis. Its six specialized variants (geopolitics, tech, finance, energy, commodity, positive news), live tracking of 13 strategic chokepoints with transit and disruption scoring, ACLED + UCDP conflict data, AI country briefs with instability scoring, and deep markets/macro coverage (FRED, IMF, BIS, Finnhub) go far beyond WorldEye's Pro intel feeds. Pro also adds a full developer platform (REST API, MCP tools, SDKs) and scheduled AI digests WorldEye doesn't offer. The core dashboard is free and the code is open source (AGPL-3.0).",
+ "description": "World Monitor (worldmonitor.app) is a free, open-source (AGPL-3.0) geopolitical intelligence dashboard by Elie Habib. It is hosted and free to open — no signup — and can also be self-hosted. It fuses 58 map layer types and 500+ feeds: ACLED and UCDP conflict data, AISStream vessel positions, OpenSky aircraft, NASA FIRMS fires, USGS earthquakes, market and macro data (FRED, IMF, BIS), live tracking of 13 strategic chokepoints, and AI-synthesized country briefs, across six dashboard variants (geopolitics, tech, finance, energy, commodity, positive news). It differs from WorldEye in shape: World Monitor is a panel dashboard built for geopolitical depth, while WorldEye is a globe-first live planet — a 3D globe with a 36,000+ public camera network that World Monitor doesn't have.",
+ "features": [
+  {
+   "competitor": "partial",
+   "label": "Interactive 3D globe",
+   "note": "Core experience is a flat map with data panels; a globe view is included",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "yes",
+   "label": "Live aircraft tracking",
+   "note": "Live ADS-B tracking with military enrichment",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "no",
+   "label": "Live camera network",
+   "note": "No public live-camera network — it tracks events, feeds and assets, not camera streams",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "partial",
+   "label": "Satellite imagery",
+   "note": "Satellite tracking and NASA FIRMS fire layers; not a high-resolution imagery browser",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "yes",
+   "label": "Maritime vessel tracking",
+   "note": "AIS maritime monitoring merged with USNI fleet reports",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "yes",
+   "label": "Conflict & geopolitical monitoring",
+   "note": "Core focus: conflict hotspots, 210+ military bases, strategic posture panels",
+   "worldEye": "partial"
+  },
+  {
+   "competitor": "partial",
+   "label": "Weather & environmental overlays",
+   "note": "Earthquakes, severe weather, NASA EONET wildfire/volcano/flood events",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "partial",
+   "label": "OSINT research tools",
+   "note": "Telegram OSINT channels + AI insights; no network recon tools like Nmap/WHOIS",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "partial",
+   "label": "Alerts & notifications",
+   "note": "OREF rocket-alert feed integration; notification delivery not documented",
+   "worldEye": "partial"
+  },
+  {
+   "competitor": "yes",
+   "label": "Free access without signup",
+   "note": "Hosted dashboard is free with no signup; self-hosting the AGPL code is optional",
+   "worldEye": "yes"
+  },
+  {
+   "competitor": "unverified",
+   "label": "API access",
+   "note": "Integration options mentioned in docs, not verified",
+   "worldEye": "partial"
+  },
+  {
+   "competitor": "unverified",
+   "label": "Mobile-friendly",
+   "note": "Mobile support not documented",
+   "worldEye": "yes"
+  }
+ ],
+ "name": "World Monitor",
+ "pricing": "World Monitor: the dashboard is free with no signup. Pro is $39.99/month ($359.99/year) and adds the WM Analyst AI chat, scenario engine, scheduled AI digests, real-time alerts and MCP/API access; Pro Business is $49.99/month and API plans run $99.99-$299.99/month (worldmonitor.app/pro, checked October 2026).",
+ "published": true,
+ "seoDescription": "Compare WorldEye vs World Monitor: free no-signup 3D globe with 36,000+ live cameras and Pro OSINT extras vs a free hosted geopolitical intelligence dashboard with deep conflict, chokepoint and markets data.",
+ "seoTitle": "WorldEye vs World Monitor (2026): Free Live Globe or Open-Source Intel Platform?",
+ "slug": "world-monitor",
+ "sources": [
+  {
+   "label": "World Monitor — official site and FAQ",
+   "url": "https://www.worldmonitor.app/"
+  },
+  {
+   "label": "World Monitor Pro — official pricing",
+   "url": "https://www.worldmonitor.app/pro"
+  }
+ ],
+ "tagline": "Free geopolitical intelligence dashboard — 58 map layers, AI country briefs, conflict and chokepoint tracking.",
+ "verdictCompetitor": "Choose World Monitor if you are an OSINT analyst, defense researcher, or journalist who wants deep geopolitical panels — conflict data, chokepoint analytics, markets and AI briefs — in a free hosted dashboard.",
+ "verdictWorldEye": "Choose WorldEye if you want a free, no-signup live planet globe — cameras, flights, ships, weather, quakes — plus affordable Pro OSINT extras, without hosting anything yourself.",
+ "website": "https://worldmonitor.app",
+ "whyWorldEye": [
+  "A globe-first experience: World Monitor is also free and hosted, but it's a dense panel dashboard built for analysts — WorldEye is the living planet itself, one 3D globe you explore.",
+  "One free globe combines ~36,000 live public cameras with live flights, ships, weather, earthquakes, and wildfires — World Monitor has no camera network.",
+  "Pro starts at $3.99/week: AI analyst assistant, OSINT recon toolkit (Nmap, DNS, WHOIS, SSL), premium cyber/GDELT/maritime/conflict intel feeds, and high-res satellite imagery.",
+  "Free live aircraft, satellite, and ship tracking with global search and advanced filters — no account, no infrastructure.",
+  "A mobile-friendly 3D globe designed for anyone to explore the planet, not just defense analysts.",
+  "WorldEye's GDELT-powered intel feeds complement World Monitor's deeper military panels — use them together."
+ ]
+}

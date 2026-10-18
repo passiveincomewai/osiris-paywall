@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best hosted alternative — no install",
     href: "/gods-eye-view",
     linkLabel: "See WorldEye's god's eye view",
-    body: "The same idea as God's Eye View — one live globe carrying cameras, flights, satellites, weather, quakes and fires — but already hosted and running. Open it in a browser: no clone, no build, no API keys for the core experience, and a camera network of 36,000+ public feeds instead of roughly 800. Free with no signup; Pro adds OSINT and intel layers.",
+    body: "The same idea as God's Eye View — one live globe carrying cameras, flights, satellites, weather, quakes and fires — but already hosted and running. Open it in a browser: no clone, no build, no API keys for the core experience, and a camera network of 36,000+ public feeds instead of roughly 4,000. Free with no signup; Pro adds OSINT and intel layers.",
   },
   {
     icon: GitBranch,
@@ -56,7 +56,7 @@ const OPTIONS = [
     tag: "Best if you want to self-host open source",
     href: "https://www.opensourcealternatives.to/item/gods-eye-view",
     linkLabel: "About the original project",
-    body: "Bilawal Sidhu and Sameh Khamis's open-source project (MIT, released August 2026) is the real thing for builders: 13 live data layers over a Cesium globe, sensor-style visual modes and a voice-controlled AI agent. The trade-offs are the setup — you install and run it yourself — and the keys: photorealistic 3D tiles need your own Google Maps API key, and the voice agent needs an OpenAI key.",
+    body: "Bilawal Sidhu and Sameh Khamis's open-source project (MIT, released August 2026) is the real thing for builders: live data layers over a Cesium globe, sensor-style visual modes and a voice-controlled AI agent. The trade-offs are the setup — you install and run it yourself — and the keys: photorealistic 3D tiles need a Cesium ion token or your own Google Maps API key, and the voice agent needs an OpenAI key.",
   },
   {
     icon: CloudSun,
@@ -136,12 +136,14 @@ export default function GodsEyeViewAlternativesPage() {
             set up, not a website you open.
           </p>
           <p>
-            Running it means cloning the repo, standing it up yourself, and
-            bringing your own keys for the best of it: the photorealistic 3D
-            tiles come from Google&apos;s Map Tiles API (testers found that
-            without a Google key, the planet stays black), and the voice AI
-            agent runs on your OpenAI key. For builders, that&apos;s the fun.
-            For everyone else, it&apos;s a wall between them and the view.
+            Running it means installing it on your own machine (a one-click
+            Pinokio installer, Docker, or a manual clone), keeping it
+            updated, and bringing your own keys for the best of it: the base
+            globe starts keyless on satellite imagery, but photorealistic 3D
+            tiles need a Cesium ion token or a Google Maps API key on your
+            account, and the voice AI agent runs on your OpenAI key. For
+            builders, that&apos;s the fun. For everyone else, it&apos;s a
+            wall between them and the view.
           </p>
         </div>
       </section>
@@ -154,12 +156,17 @@ export default function GodsEyeViewAlternativesPage() {
         </h2>
         <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
           <p>
-            Yes — that&apos;s WorldEye. It&apos;s the same concept as a live
-            website: one interactive 3D globe with live flights, satellites,
-            weather, earthquakes and wildfires, plus a public-camera network of
-            36,000+ feeds (the open-source project indexes roughly 800). No
+            Not an official one — God&apos;s Eye View ships as software, not
+            a website, and its creators don&apos;t run a hosted version.
+            WorldEye is an <span className="text-white/85 font-semibold">independent
+            alternative</span> built on the same concept: one interactive 3D
+            globe with live flights, satellites, weather, earthquakes and
+            wildfires, plus a public-camera network of 36,000+ feeds (the
+            open-source project&apos;s CCTV mesh lists roughly 4,000). No
             install, no build step, no API keys for the core globe — open the
-            page and it&apos;s already live, on phone or desktop.
+            page and it&apos;s already live, on phone or desktop. To be plain:
+            WorldEye is a separate product from a separate team, with no
+            affiliation with the God&apos;s Eye View project.
           </p>
           <p>
             The honest trade: you can&apos;t fork a website. If you want to
@@ -228,14 +235,14 @@ export default function GodsEyeViewAlternativesPage() {
           <p>
             <span className="text-white/85 font-semibold">Keys and costs.</span>{" "}
             The open-source project is free code, but its photorealistic tiles
-            bill against your Google account and its AI agent against your
-            OpenAI account. WorldEye&apos;s core globe is free with no keys at
+            run on your Cesium ion token or bill against your Google account,
+            and its AI agent bills against your OpenAI account. WorldEye&apos;s core globe is free with no keys at
             all; an optional Pro subscription ($3.99/week, $9.99/month,
             $59.99/year) unlocks the intelligence toolkit.
           </p>
           <p>
             <span className="text-white/85 font-semibold">Cameras.</span>{" "}
-            The biggest data gap: roughly 800 public cameras in the
+            The biggest data gap: roughly 4,000 public cameras in the
             open-source project&apos;s CCTV mesh versus 36,000+ live public
             feeds from 105 countries on WorldEye. If cameras are why
             you&apos;re here, it isn&apos;t close.
@@ -298,9 +305,10 @@ export default function GodsEyeViewAlternativesPage() {
           <div>
             <h3 className="text-lg font-semibold text-white/90">Is God&apos;s Eye View free?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              The code is free and open source (MIT). Running the full
-              experience isn&apos;t entirely free, though: photorealistic 3D
-              tiles use your own Google Maps API key (metered by Google), and
+              The code is free and open source (MIT), and the base globe now
+              starts with no keys at all. The full experience isn&apos;t
+              entirely free, though: photorealistic 3D tiles use a Cesium ion
+              token or your own Google Maps API key (metered by Google), and
               the voice agent uses your OpenAI key. WorldEye&apos;s core globe
               is free with no keys; Pro is optional.
             </p>
@@ -318,9 +326,10 @@ export default function GodsEyeViewAlternativesPage() {
             <h3 className="text-lg font-semibold text-white/90">Which has more cameras?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
               WorldEye, by a wide margin: 36,000+ live public cameras from 105
-              countries, versus roughly 800 in the open-source project&apos;s
-              CCTV layer. Both draw on public feeds; WorldEye&apos;s directory
-              is simply much larger.
+              countries, versus roughly 4,000 in the open-source
+              project&apos;s CCTV mesh (the figure in its README). Both draw
+              on public feeds; WorldEye&apos;s directory is simply much
+              larger.
             </p>
           </div>
         </div>

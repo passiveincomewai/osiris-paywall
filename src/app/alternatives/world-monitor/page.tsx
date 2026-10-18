@@ -49,6 +49,13 @@ const OPTIONS = [
     body: "A free live 3D globe — no signup — fusing flights, satellites, ships, weather, earthquakes, wildfires and ~36,000 public cameras on one screen. The closest thing to a single 'monitor the planet' view that costs nothing.",
   },
   {
+    icon: Radar,
+    name: "World Monitor (the original)",
+    tag: "Best for geopolitical depth",
+    href: "/compare/world-monitor",
+    body: "The product itself: Elie Habib's free, open-source (AGPL-3.0) dashboard at worldmonitor.app — 58 map layer types, 500+ feeds, ACLED and UCDP conflict data, live tracking of 13 strategic chokepoints, market data and AI country briefs, in six specialized variants. Pro ($39.99/month) adds an AI analyst, digests and API access. What it doesn't have: a live public-camera network — it's panels and data, not a camera globe.",
+  },
+  {
     icon: Satellite,
     name: "Zoom Earth",
     tag: "Best for live satellite imagery",
@@ -66,7 +73,7 @@ const OPTIONS = [
     icon: CloudSun,
     name: "Ventusky",
     tag: "Best for weather visualization",
-    href: "/live-flight-tracker",
+    href: "/compare/ventusky",
     body: "Gorgeous animated weather maps — wind, temperature, precipitation and air quality worldwide. If weather is the main thing you monitor, it's superb; it doesn't cover flights, ships or cameras.",
   },
   {
@@ -146,11 +153,24 @@ export default function WorldMonitorAlternativesPage() {
             curiosity about what&apos;s happening right now.
           </p>
           <p>
-            The catch with most of them is specialization. A conflict monitor
-            won&apos;t show you the storm over the conflict zone. A weather
-            monitor won&apos;t show the ships in the harbor. So the first
-            question in choosing an alternative isn&apos;t &ldquo;which is
-            best&rdquo; — it&apos;s &ldquo;how many layers do I need on one
+            The name usually points at one product:{" "}
+            <span className="text-white/85 font-semibold">World Monitor
+            (worldmonitor.app)</span>, a free hosted dashboard by Elie Habib,
+            open source under AGPL-3.0. It&apos;s genuinely good at its job —
+            58 map layer types fed by hundreds of sources, ACLED and UCDP
+            conflict data, live chokepoint tracking, market data and
+            AI-written country briefs, with a Pro tier ($39.99/month) adding
+            an AI analyst, scheduled digests and API access. Most people
+            searching for an alternative aren&apos;t unhappy with its data —
+            they want a different shape: a globe instead of panels, cameras
+            instead of only feeds, or a cheaper Pro tier.
+          </p>
+          <p>
+            The other catch with most monitors is specialization. A conflict
+            monitor won&apos;t show you the storm over the conflict zone. A
+            weather monitor won&apos;t show the ships in the harbor. So the
+            first question in choosing an alternative isn&apos;t &ldquo;which
+            is best&rdquo; — it&apos;s &ldquo;how many layers do I need on one
             screen?&rdquo;
           </p>
         </div>
@@ -184,7 +204,7 @@ export default function WorldMonitorAlternativesPage() {
       {/* The options */}
       <section className="mt-20">
         <h2 className="text-2xl md:text-3xl font-bold text-center">
-          Six World Monitor alternatives, <span className="text-[#0096FF]">compared</span>
+          World Monitor and its alternatives, <span className="text-[#0096FF]">compared</span>
         </h2>
         <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
           Each one&apos;s honest best-fit is noted — the right monitor is the
@@ -333,6 +353,17 @@ export default function WorldMonitorAlternativesPage() {
               assistant for deeper monitoring workflows; organizations needing
               automated vetted alerting typically pair a visual tool with a
               dedicated risk-intelligence service.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">How much does World Monitor cost?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              The dashboard itself is free — no signup, no trial clock.
+              World Monitor Pro is $39.99/month ($359.99/year) and adds the WM
+              Analyst AI chat, scenario engine, scheduled digests, alerts and
+              MCP/API access, with higher API tiers above that. WorldEye&apos;s
+              map is also free; its Pro tier is $3.99/week, $9.99/month or
+              $59.99/year.
             </p>
           </div>
           <div>

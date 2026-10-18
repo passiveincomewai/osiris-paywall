@@ -80,7 +80,7 @@ const FAQS = [
   },
   {
     q: "How is this different from the open-source project called God's Eye View?",
-    a: "God's Eye View is an open-source project you install and run yourself — powerful, and a great build-it-yourself option; its photorealistic 3D tiles need your own Google Maps API key. WorldEye is the hosted version of the same idea: already running, free in the browser, with a much larger camera network (36,000+ feeds vs roughly 800). We compare the options honestly on our God's Eye View alternatives page.",
+    a: "God's Eye View is an open-source project you install and run yourself — powerful, and a great build-it-yourself option; its photorealistic 3D tiles need a Cesium ion token or your own Google Maps API key. WorldEye is an independent hosted alternative built on the same idea — a separate product, not affiliated with the project — already running, free in the browser, with a much larger camera network (36,000+ feeds vs the project's roughly 4,000-camera CCTV mesh). We compare the options honestly on our God's Eye View alternatives page.",
   },
   {
     q: "Where does the live data come from?",
