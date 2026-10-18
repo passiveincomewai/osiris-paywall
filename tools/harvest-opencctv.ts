@@ -31,7 +31,7 @@ import { execFile } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { CameraIndex } from '../src/lib/camera-expansion/dedupe';
+import { CameraIndex, haversineM } from '../src/lib/camera-expansion/dedupe';
 import { familyEnabled, familyInfo } from '../src/lib/camera-expansion/families';
 import { normalizeOccRecord, type OccRawRecord } from '../src/lib/camera-expansion/normalize';
 import {
@@ -424,7 +424,33 @@ async function main() {
   }
   const urls = [...byUrl.keys()];
   const fresh = urls.filter(url => probeCache[url] && probeCacheFresh(probeCache[url]));
-  const toProbe = urls.filter(url => !probeCache[url] || !probeCacheFresh(probeCache[url]));
+  const toProbeStale = urls.filter(url => !probeCache[url] || !probeCacheFresh(probeCache[url]));
+  /* Probe order: round-robin across hosts (largest host first). Candidates
+     arrive family-clustered, so in list order every pool worker converges
+     on the same one or two hosts — and this sandbox's egress drops
+     connections when many are in flight to a single host (measured on
+     cctv.travelmidwest.com: 44/64 requests returned no response at 16
+     in flight, 64/64 answered at ≤4). Interleaving keeps per-host
+     in-flight counts at ~1 while the pool parallelizes across hosts.
+     Verdict criteria and the per-host start pacing are unchanged — only
+     the order feeds are visited in. */
+  const byHost = new Map<string, string[]>();
+  for (const url of toProbeStale) {
+    let host = '';
+    try { host = new URL(url).hostname; } catch { /* unparseable — probeFeed classifies it */ }
+    const list = byHost.get(host);
+    if (list) list.push(url);
+    else byHost.set(host, [url]);
+  }
+  const hostQueues = [...byHost.values()].sort((a, b) => b.length - a.length);
+  const toProbe: string[] = [];
+  for (let round = 0; ; round++) {
+    let added = false;
+    for (const queue of hostQueues) {
+      if (round < queue.length) { toProbe.push(queue[round]); added = true; }
+    }
+    if (!added) break;
+  }
   console.log(`[harvest] probing ${toProbe.length} feeds (${fresh.length} fresh in cache, ${candidates.length} candidate cameras)…`);
 
   const probeStarted = Date.now();
@@ -460,18 +486,42 @@ async function main() {
   }
   applyPlaceholderPass(probeEntries);
 
-  /* Pass 3 — verdicts, accepted set, output. */
+  /* Pass 3 — verdicts, accepted set, output. Alive candidates are
+     re-classified against baseline + everything accepted so far (the
+     dedupe library's documented second pass): two records for the same
+     physical camera that are both absent from the baseline — e.g. the
+     same city camera listed by two OpenCCTV families — must not both be
+     emitted. One exception: a url-hostpath match alone does not prove a
+     duplicate, because some providers put the camera identity in the
+     query string (NDBC buoycam.php?station=…, King County's
+     Handler.ashx?id=…) — those count as duplicates only when the matched
+     accepted record is also within 120 m. */
   const verified: CctvCamera[] = [];
+  const acceptedById = new Map<string, CctvCamera>();
   for (const candidate of candidates) {
     const stats = statsFor(candidate.family);
     const probe = probeEntries.get(candidate.camera.id)?.probe;
     if (!probe) { stats.dead++; continue; }
     if (probe.status === 'placeholder') { stats.placeholder++; continue; }
     if (probe.status !== 'alive') { stats.dead++; continue; }
+    const recheck = index.classify(candidate.camera);
+    if (recheck.cls === 'duplicate') {
+      const matched = acceptedById.get(recheck.matchedId);
+      const corroborated =
+        recheck.method !== 'url-hostpath' ||
+        !matched ||
+        haversineM(candidate.camera.lat, candidate.camera.lng, matched.lat, matched.lng) <= 120;
+      if (corroborated) {
+        if (matched) stats.intraDuplicates++;
+        else stats.duplicates[recheck.method]++;
+        continue;
+      }
+    }
     stats.verifiedNew++;
-    if (candidate.nearDistinct) stats.nearDistinct++;
+    if (candidate.nearDistinct || recheck.cls === 'near-distinct') stats.nearDistinct++;
     index.add(candidate.camera);
     acceptedIds.add(candidate.camera.id);
+    acceptedById.set(candidate.camera.id, candidate.camera);
     verified.push(candidate.camera);
   }
 
@@ -544,7 +594,14 @@ function writeGenerated(verified: CctvCamera[], report: HarvestReport) {
   lines.push(` * Verified-new in this file: ${verified.length}.`);
   lines.push(' */');
   /* All five shards are always emitted (empty when the run verified
-     nothing there) — the catalogue module imports them unconditionally. */
+     nothing there) — the catalogue module imports them unconditionally.
+     Non-empty shards are emitted as a JSON string + JSON.parse, NOT as
+     object literals: past ~3k records of heterogeneous shape, tsc fails
+     the literal with TS2590 ("union type too complex to represent") —
+     chunking the literals only moves the threshold around, because the
+     blow-up tracks the number of distinct record shapes per literal, not
+     the record count (Stage C/D full scale: 30,889 records). JSON text is
+     immune at any size and parses faster than literal evaluation. */
   for (const shard of OCC_HARVEST_SHARDS) {
     const cameras = shards.get(shard) ?? [];
     const constName = shard.replace(/(^|-)(\w)/g, (_m, _d, c: string) => c.toUpperCase()).replace(/^Occ/, 'OCC');
@@ -553,11 +610,9 @@ function writeGenerated(verified: CctvCamera[], report: HarvestReport) {
       lines.push(`export const ${constName}: CctvCamera[] = [];`);
       continue;
     }
-    lines.push(`export const ${constName}: CctvCamera[] = [`);
-    for (const camera of [...cameras].sort((a, b) => a.id.localeCompare(b.id))) {
-      lines.push(`  ${JSON.stringify(camera)},`);
-    }
-    lines.push('];');
+    const sorted = [...cameras].sort((a, b) => a.id.localeCompare(b.id));
+    lines.push(`const ${constName}_DATA = ${JSON.stringify(JSON.stringify(sorted))};`);
+    lines.push(`export const ${constName}: CctvCamera[] = JSON.parse(${constName}_DATA);`);
   }
   writeFileSync(OUT, lines.join('\n') + '\n');
   console.log(`[harvest] wrote ${verified.length} verified cameras to ${OUT}`);
