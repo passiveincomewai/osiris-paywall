@@ -499,6 +499,11 @@ export default function Dashboard() {
     river_gauges: false,
     transit: false,
     gbfs: false,
+    /* Traffic: simulated vehicles on real OSM roads — off by default,
+       vehicles + congestion overlay on once the layer itself is enabled. */
+    traffic: false,
+    traffic_vehicles: true,
+    traffic_congestion: true,
     radiation: false,
     infrastructure: false,
     global_incidents: true,

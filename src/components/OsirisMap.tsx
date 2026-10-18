@@ -11,6 +11,16 @@ import {
   RADAR_ATTRIBUTION, RADAR_LAYER, RADAR_REFRESH_MS, RADAR_SOURCE,
   radarFrameIso, radarTiles,
 } from '@/lib/noaa-radar';
+import {
+  TRAFFIC_MIN_ZOOM, CAMERA_SEARCH_RADIUS_M, CAMERA_SEARCH_MAX,
+  targetVehicleCount, congestionBand, BAND_COLORS,
+} from '@/lib/traffic/config';
+import { buildRoadNetwork, haversineM, type RoadNetwork } from '@/lib/traffic/roads';
+import { effectiveRatio } from '@/lib/traffic/congestion';
+import {
+  createRng, reconcileVehicles, advanceVehicles, vehicleFeature, type SimVehicle,
+} from '@/lib/traffic/sim';
+import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
@@ -200,6 +210,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // layer is toggled off and on again.
   const [transitNotice, setTransitNotice] = useState<string | null>(null);
   const transitNoticeDismissedRef = useRef(false);
+  // Traffic layer keeps its simulation in-map like transit/GBFS: the road
+  // network rebuilt from the basemap's own tiles, the fleet, the latest
+  // TomTom flow sample, and the honest-labeling chip (always visible
+  // while the layer is on — it carries the simulation disclaimer).
+  const [trafficChip, setTrafficChip] = useState<string | null>(null);
+  const trafficNetRef = useRef<RoadNetwork | null>(null);
+  const trafficVehiclesStateRef = useRef<SimVehicle[]>([]);
+  const trafficFlowRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
+  const trafficNearbyRef = useRef<any[]>([]);
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
   const alertPinsRef = useRef<AlertPinFeature[]>([]);
@@ -450,7 +469,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -587,6 +606,29 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-color': ['match', ['get', 'mode'],
           'bus', '#FFA726', 'tram', '#66BB6A', 'metro', '#42A5F5', 'train', '#AB47BC', 'ferry', '#26C6DA', '#B0BEC5'],
         'circle-opacity': 0.92, 'circle-stroke-color': '#000000', 'circle-stroke-width': 0.7,
+      }});
+
+      // Traffic — simulated congestion overlay on real OSM road geometry
+      // (roads extracted from the basemap's own tiles; see lib/traffic).
+      // Only drawn when TomTom flow isn't supplying the overlay itself.
+      map.addLayer({ id: 'traffic-flow', type: 'line', source: 'traffic-roads', layout: {
+        'line-cap': 'round', 'line-join': 'round', visibility: 'none',
+      }, paint: {
+        'line-color': ['match', ['get', 'band'], 'free', BAND_COLORS.free, 'slow', BAND_COLORS.slow, 'jam', BAND_COLORS.jam, BAND_COLORS.free],
+        'line-width': ['interpolate', ['linear'], ['zoom'],
+          11, ['match', ['get', 'roadClass'], 'motorway', 2.4, 'trunk', 2.2, 'primary', 1.8, 1.2],
+          14, ['match', ['get', 'roadClass'], 'motorway', 4.5, 'trunk', 4, 'primary', 3.2, 'secondary', 2.6, 1.8],
+          17, ['match', ['get', 'roadClass'], 'motorway', 8, 'trunk', 7, 'primary', 5.5, 'secondary', 4.5, 'tertiary', 3.5, 2.6]],
+        'line-opacity': 0.8,
+      }});
+      // Traffic — the simulated vehicles themselves, dots riding the roads,
+      // colored by the speed band of the road they're on.
+      map.addLayer({ id: 'traffic-vehicles', type: 'circle', source: 'traffic-vehicles', layout: {
+        visibility: 'none',
+      }, paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 2.2, 14, 3.4, 17, 5.2],
+        'circle-color': ['match', ['get', 'band'], 'free', BAND_COLORS.free, 'slow', BAND_COLORS.slow, 'jam', BAND_COLORS.jam, '#B0BEC5'],
+        'circle-opacity': 0.95, 'circle-stroke-color': '#04140A', 'circle-stroke-width': 0.8,
       }});
 
       // CCTV — outer glow ring (black/white depending on theme)
@@ -1243,7 +1285,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
-      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
@@ -2601,6 +2643,295 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     return () => { live = false; clearInterval(iv); map.off('moveend', onMove); };
   }, [mapReady, (activeLayers as any).transit, setGeo]);
 
+  // Traffic — SIMULATED vehicles on the basemap's own OSM road geometry.
+  // Roads are extracted from the CARTO `transportation` source-layer of
+  // the tiles the basemap already loaded (querySourceFeatures — no second
+  // tile source, zero extra network, no Overpass). The engine is pure
+  // (lib/traffic); this effect owns the clock, rebuild triggers, the
+  // optional TomTom flow overlay, road-click camera lookup, and the
+  // always-visible honesty chip. Vehicles are simulated — never real
+  // tracked cars — and the chip says so for as long as the layer is on.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    const on = !!(activeLayers as any).traffic;
+    const showVehicles = on && (activeLayers as any).traffic_vehicles !== false;
+    const showCongestion = on && (activeLayers as any).traffic_congestion !== false;
+    if (!on) {
+      setGeo('traffic-roads', []);
+      setGeo('traffic-vehicles', []);
+      setVis(['traffic-flow', 'traffic-vehicles'], false);
+      trafficNetRef.current = null;
+      trafficVehiclesStateRef.current = [];
+      trafficFlowRef.current = null;
+      setTrafficChip(null);
+      return;
+    }
+
+    let live = true;
+    let raf = 0;
+    let rebuildTimer: ReturnType<typeof setTimeout> | undefined;
+    let tomtomConfigured = false;
+    let tomtomAdded = false;
+    let flowError = false;
+    const rng = createRng(20261018);
+    const mobileLike = typeof window !== 'undefined'
+      && (window.innerWidth < 768 || (window.innerHeight < 500 && window.innerWidth < 1024));
+    const esc = (s: any): string => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const ratioFor = (road: any) => effectiveRatio(road, new Date(), trafficFlowRef.current?.ratios);
+
+    const setChip = () => {
+      if (!live) return;
+      if (map.getZoom() < TRAFFIC_MIN_ZOOM) {
+        setTrafficChip('VEHICLES: SIMULATED · ZOOM IN TO CITY LEVEL FOR STREET TRAFFIC');
+        return;
+      }
+      const flow = trafficFlowRef.current;
+      const congestion = !tomtomConfigured
+        ? 'SIMULATED MODEL'
+        : flowError
+          ? 'TOMTOM UNAVAILABLE · SIMULATED MODEL'
+          : flow
+            ? `TOMTOM LIVE FLOW · SAMPLED ${new Date(flow.at).toLocaleTimeString('en-US', { hour12: false })}`
+            : 'TOMTOM LIVE FLOW · SAMPLING…';
+      setTrafficChip(`VEHICLES: SIMULATED (${trafficVehiclesStateRef.current.length}) · ROADS © OPENSTREETMAP CONTRIBUTORS · CONGESTION: ${congestion}`);
+    };
+
+    const setRoadFeatures = () => {
+      const net = trafficNetRef.current;
+      if (!net) { setGeo('traffic-roads', []); return; }
+      setGeo('traffic-roads', net.roads.map(road => {
+        const ratio = ratioFor(road);
+        return {
+          type: 'Feature', geometry: { type: 'LineString', coordinates: road.coords },
+          properties: { band: congestionBand(ratio), ratio: Math.round(ratio * 100) / 100, roadClass: road.roadClass, name: road.name },
+        };
+      }));
+    };
+
+    const setVehicleFeatures = () => {
+      const net = trafficNetRef.current;
+      if (!net) { setGeo('traffic-vehicles', []); return; }
+      const feats: any[] = [];
+      for (const v of trafficVehiclesStateRef.current) {
+        const f = vehicleFeature(v, net, ratioFor);
+        if (f) { (f.properties as any).band = congestionBand((f.properties as any).ratio); feats.push(f); }
+      }
+      setGeo('traffic-vehicles', feats);
+    };
+
+    const applyVisibility = () => {
+      setVis(['traffic-vehicles'], showVehicles);
+      // Congestion overlay: TomTom's own flow lines when its source is
+      // live, otherwise our extracted roads colored by the model.
+      setVis(['traffic-flow'], showCongestion && !tomtomAdded);
+      if (tomtomAdded && map.getLayer('tomtom-flow-lines')) {
+        map.setLayoutProperty('tomtom-flow-lines', 'visibility', showCongestion ? 'visible' : 'none');
+      }
+    };
+
+    const sampleFlow = () => {
+      if (!tomtomAdded || !trafficNetRef.current) return;
+      let feats: any[] = [];
+      try { feats = map.querySourceFeatures('tomtom-flow', { sourceLayer: 'Traffic flow' }) as any[]; } catch { return; }
+      if (!feats.length) return;
+      const ratios = matchFlowToRoads(trafficNetRef.current.roads, feats as any);
+      if (ratios.size) {
+        trafficFlowRef.current = { ratios, at: Date.now() };
+        flowError = false;
+        setRoadFeatures();
+        setChip();
+      }
+    };
+
+    const rebuild = () => {
+      if (!live) return;
+      const zoom = map.getZoom();
+      if (zoom < TRAFFIC_MIN_ZOOM) {
+        trafficNetRef.current = null;
+        trafficVehiclesStateRef.current = [];
+        setGeo('traffic-roads', []);
+        setGeo('traffic-vehicles', []);
+        setChip();
+        return;
+      }
+      const b = map.getBounds();
+      const padLat = (b.getNorth() - b.getSouth()) * 0.15;
+      const padLng = (b.getEast() - b.getWest()) * 0.15;
+      let raw: any[] = [];
+      try { raw = map.querySourceFeatures('carto', { sourceLayer: 'transportation' }) as any[]; } catch { raw = []; }
+      const net = buildRoadNetwork(raw as any, zoom, {
+        west: b.getWest() - padLng, south: b.getSouth() - padLat,
+        east: b.getEast() + padLng, north: b.getNorth() + padLat,
+      });
+      // Tiles may still be loading on first activation; an empty result
+      // keeps the previous network and is retried by the periodic pass.
+      if (net.roads.length) trafficNetRef.current = net;
+      const active = trafficNetRef.current;
+      if (!active) { setChip(); return; }
+      trafficVehiclesStateRef.current = reconcileVehicles(
+        trafficVehiclesStateRef.current, active,
+        targetVehicleCount(active.totalLengthM, zoom, mobileLike), rng, ratioFor,
+      );
+      sampleFlow();
+      setRoadFeatures();
+      setVehicleFeatures();
+      applyVisibility();
+      setChip();
+    };
+
+    const scheduleRebuild = () => {
+      if (rebuildTimer) clearTimeout(rebuildTimer);
+      rebuildTimer = setTimeout(rebuild, 250);
+    };
+
+    // ── Road click → nearby REAL cameras from the globe's own catalogue ──
+    const onRoadClick = (e: any) => {
+      const here: [number, number] = [e.lngLat.lng, e.lngLat.lat];
+      const roadName = e.features?.[0]?.properties?.name || e.features?.[0]?.properties?.ref || '';
+      const byId = new Map<string, any>();
+      try {
+        for (const f of map.querySourceFeatures('cctv') as any[]) {
+          const p = f.properties ?? {};
+          const c = (f.geometry as any)?.coordinates;
+          if (p.id != null && Array.isArray(c)) {
+            byId.set(String(p.id), {
+              id: p.id, name: p.name, city: p.city, country: p.country, source: p.source,
+              feed_url: p.feed_url, stream_url: p.stream_url, stream_type: p.stream_type,
+              external_url: p.external_url, lat: c[1], lng: c[0],
+            });
+          }
+        }
+      } catch { /* cctv source not ready */ }
+      if (!byId.size && Array.isArray((data as any)?.cameras)) {
+        for (const c of (data as any).cameras) if (c?.id != null && typeof c.lat === 'number') byId.set(String(c.id), c);
+      }
+      const near = [...byId.values()]
+        .map(c => ({ c, d: haversineM(here, [c.lng, c.lat]) }))
+        .filter(x => Number.isFinite(x.d) && x.d <= CAMERA_SEARCH_RADIUS_M)
+        .sort((a, b) => a.d - b.d)
+        .slice(0, CAMERA_SEARCH_MAX);
+      trafficNearbyRef.current = near.map(x => x.c);
+      const pStyle = `background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;`;
+      const title = roadName ? `TRAFFIC — ${esc(roadName).toUpperCase()}` : 'TRAFFIC — ROAD SEGMENT';
+      let html: string;
+      if (near.length) {
+        const rows = near.map((x, i) => `<button onclick="window.__weTrafficCam&&window.__weTrafficCam(${i})" style="display:block;width:100%;text-align:left;margin-top:6px;padding:7px 10px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.3);color:#BFEFFF;font-family:'JetBrains Mono',monospace;font-size:10px;border-radius:5px;cursor:pointer;">📷 ${esc(x.c.name || x.c.city || 'Camera')} · ${(x.d / 1000).toFixed(2)} km</button>`).join('');
+        html = `<div style="${pStyle}border:1px solid rgba(255,255,255,0.08);"><div style="color:#E8E6E0;font-size:12px;font-weight:700;letter-spacing:0.08em;">${title}</div><div style="color:#5C5A54;font-size:9px;margin-top:4px;letter-spacing:0.08em;">VEHICLES HERE ARE SIMULATED · CAMERAS BELOW ARE REAL</div><div style="color:#B0BEC5;font-size:10px;margin-top:8px;">${near.length} live camera${near.length > 1 ? 's' : ''} within ${(CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1)} km:</div>${rows}</div>`;
+      } else {
+        const hint = (activeLayers as any).cctv ? '' : ' Turn on the CCTV Cameras layer to load the camera index.';
+        html = `<div style="${pStyle}border:1px solid rgba(255,255,255,0.08);"><div style="color:#E8E6E0;font-size:12px;font-weight:700;letter-spacing:0.08em;">${title}</div><div style="color:#5C5A54;font-size:9px;margin-top:4px;letter-spacing:0.08em;">VEHICLES HERE ARE SIMULATED</div><div style="color:#B0BEC5;font-size:10px;margin-top:8px;line-height:1.5;">No live cameras in the loaded index within ${(CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1)} km of this road.${hint}</div></div>`;
+      }
+      popupRef.current?.remove();
+      popupRef.current = new maplibregl.Popup({ closeButton: true, maxWidth: '380px', offset: 14 }).setLngLat(here).setHTML(html).addTo(map);
+    };
+
+    (window as any).__weTrafficCam = (i: number) => {
+      const cam = trafficNearbyRef.current[i];
+      if (!cam) return;
+      popupRef.current?.remove();
+      onEntityClick?.({
+        type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
+        source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
+        stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+      });
+      map.flyTo({ center: [cam.lng, cam.lat], zoom: Math.max(map.getZoom(), 13), duration: 1000 });
+    };
+
+    const setupTomtom = () => {
+      if (!tomtomConfigured || tomtomAdded || !live) return;
+      if (!map.getSource('tomtom-flow')) {
+        map.addSource('tomtom-flow', {
+          type: 'vector',
+          tiles: [`${window.location.origin}/api/traffic/flow/{z}/{x}/{y}`],
+          minzoom: 9, maxzoom: 19,
+        });
+        map.addLayer({ id: 'tomtom-flow-lines', type: 'line', source: 'tomtom-flow', 'source-layer': 'Traffic flow', layout: {
+          'line-cap': 'round', 'line-join': 'round', visibility: showCongestion ? 'visible' : 'none',
+        }, paint: {
+          'line-color': ['step', ['number', ['get', 'relative_speed'], ['get', 'traffic_level'], 1],
+            BAND_COLORS.jam, 0.4, BAND_COLORS.slow, 0.7, BAND_COLORS.free],
+          'line-width': ['interpolate', ['linear'], ['zoom'],
+            11, ['match', ['get', 'road_category'], 'motorway', 2.4, 'trunk', 2.2, 'primary', 1.8, 1.2],
+            14, ['match', ['get', 'road_category'], 'motorway', 4.5, 'trunk', 4, 'primary', 3.2, 'secondary', 2.6, 1.8],
+            17, ['match', ['get', 'road_category'], 'motorway', 8, 'trunk', 7, 'primary', 5.5, 'secondary', 4.5, 'tertiary', 3.5, 2.6]],
+          'line-opacity': 0.85,
+        }});
+        map.on('click', 'tomtom-flow-lines', onRoadClick);
+      }
+      tomtomAdded = true;
+      applyVisibility();
+      scheduleRebuild();
+    };
+
+    const onSourceData = (e: any) => {
+      if (e.sourceId === 'tomtom-flow' && e.isSourceLoaded) scheduleRebuild();
+      else if (e.sourceId === 'carto' && e.isSourceLoaded && !trafficNetRef.current) scheduleRebuild();
+    };
+    const onMapError = (e: any) => {
+      if (e?.sourceId === 'tomtom-flow' || /traffic\/flow/.test(String(e?.error?.message ?? ''))) {
+        if (!flowError) { flowError = true; applyVisibility(); setChip(); }
+      }
+    };
+    const onMoveEnd = () => { map.once('idle', scheduleRebuild); scheduleRebuild(); };
+
+    map.on('click', 'traffic-flow', onRoadClick);
+    map.on('sourcedata', onSourceData);
+    map.on('error', onMapError);
+    map.on('moveend', onMoveEnd);
+
+    (async () => {
+      try {
+        const r = await fetch('/api/traffic/status');
+        const j = await r.json();
+        if (live && j?.tomtom) { tomtomConfigured = true; setupTomtom(); }
+      } catch { /* no key / offline → simulated mode */ }
+      rebuild();
+      applyVisibility();
+      setChip();
+    })();
+
+    // Periodic pass: late tile arrivals, time-of-day drift, chip freshness.
+    const iv = setInterval(() => { rebuild(); setChip(); }, 20000);
+
+    let last = performance.now();
+    let lastPush = 0;
+    const tick = (nowMs: number) => {
+      if (!live) return;
+      const dt = Math.min(0.1, Math.max(0, (nowMs - last) / 1000));
+      last = nowMs;
+      const net = trafficNetRef.current;
+      if (net && trafficVehiclesStateRef.current.length) {
+        advanceVehicles(trafficVehiclesStateRef.current, net, dt, rng, ratioFor);
+        if (nowMs - lastPush >= 33) { lastPush = nowMs; setVehicleFeatures(); }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      live = false;
+      cancelAnimationFrame(raf);
+      clearInterval(iv);
+      if (rebuildTimer) clearTimeout(rebuildTimer);
+      map.off('click', 'traffic-flow', onRoadClick);
+      if (tomtomAdded) map.off('click', 'tomtom-flow-lines', onRoadClick);
+      map.off('sourcedata', onSourceData);
+      map.off('error', onMapError);
+      map.off('moveend', onMoveEnd);
+      if ((window as any).__weTrafficCam) delete (window as any).__weTrafficCam;
+      if (map.getLayer('tomtom-flow-lines')) map.removeLayer('tomtom-flow-lines');
+      if (map.getSource('tomtom-flow')) map.removeSource('tomtom-flow');
+      setGeo('traffic-roads', []);
+      setGeo('traffic-vehicles', []);
+      setVis(['traffic-flow', 'traffic-vehicles'], false);
+      trafficNetRef.current = null;
+      trafficVehiclesStateRef.current = [];
+      trafficFlowRef.current = null;
+      setTrafficChip(null);
+    };
+  }, [mapReady, (activeLayers as any).traffic, (activeLayers as any).traffic_vehicles, (activeLayers as any).traffic_congestion, setGeo, setVis]);
+
   // ALERT Fire Cameras — fetched in-map on toggle; server route is cached,
   // frames themselves load straight from ALERTCalifornia in the popup.
   useEffect(() => {
@@ -3939,6 +4270,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} />}
+      {trafficChip && (
+        <div
+          className="absolute left-1/2 z-[120] -translate-x-1/2 px-3 pointer-events-none"
+          style={{ bottom: transitNotice ? '10.5rem' : '6rem' }}
+        >
+          <div className="rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+              <span className="text-white/90 uppercase tracking-wider">Traffic</span>
+              {' — '}
+              <span className="text-white/80">{trafficChip}</span>
+            </p>
+          </div>
+        </div>
+      )}
       {transitNotice && (
         <div className="absolute left-1/2 bottom-24 z-[120] -translate-x-1/2 px-3 pointer-events-none">
           <div className="pointer-events-auto flex items-start gap-2 max-w-md rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">

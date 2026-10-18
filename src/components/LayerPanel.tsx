@@ -160,6 +160,9 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     layers: [
       { key: 'transit', label: 'Live Transit', description: 'Live buses, trains & ferries · Salt Lake City · Seattle · Denver · Boston · Austin · Minneapolis–St. Paul · Toronto area · Netherlands · Norway · Queensland', dataKey: '' },
       { key: 'gbfs', label: 'Bike & Scooter Share', description: 'GBFS · systems worldwide', dataKey: '' },
+      { key: 'traffic', label: 'Traffic', description: 'Simulated vehicles on real roads · congestion overlay · city zoom', dataKey: '' },
+      { key: 'traffic_vehicles', label: 'Simulated Vehicles', dataKey: '', parent: 'traffic' },
+      { key: 'traffic_congestion', label: 'Congestion Overlay', dataKey: '', parent: 'traffic' },
     ],
   },
   {
