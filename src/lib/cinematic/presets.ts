@@ -23,6 +23,9 @@ export interface CinematicPresetContext {
   /** The aircraft the user last selected on the globe, when one is
    *  followable (drives the Aircraft Follow action preset). */
   followTarget?: { icao24: string; callsign?: string } | null;
+  /** The launch the Space Mission preset flies to: the selected launch,
+   *  or the next upcoming one, with its pad coordinates (Phase 7). */
+  spaceTarget?: { name: string; padName?: string | null; lat: number; lon: number } | null;
 }
 
 export interface CinematicPreset {
