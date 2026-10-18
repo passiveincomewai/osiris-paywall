@@ -4,9 +4,9 @@ import { POSTS } from "./blog/posts";
 
 const BASE = "https://worldeye.app";
 
-// Top 30 countries get dedicated pages (matches generateStaticParams in
+// Top 33 countries get dedicated pages (matches generateStaticParams in
 // src/app/cameras/countries/[country]/page.tsx).
-const COUNTRY_SLUGS: string[] = directory.countries.slice(0, 30).map((c) => c.slug);
+const COUNTRY_SLUGS: string[] = directory.countries.slice(0, 33).map((c) => c.slug);
 
 const SEO_PAGES = [
   "/cameras/countries",
@@ -56,6 +56,15 @@ const SEO_PAGES_WAVE4 = [
   "/oceania-webcams",
 ];
 
+// Wave 6 (2026-10-17): sitemap-only directory pages — not linked from site chrome.
+const SEO_PAGES_WAVE6 = [
+  "/cyber-threat-map",
+  "/south-america-webcams",
+  "/city-webcams/auckland",
+  "/city-webcams/fort-worth",
+  "/us-traffic-cameras/arizona",
+];
+
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
   "/alternatives/gods-eye-view",
@@ -64,12 +73,18 @@ const SEO_PAGES_COMPARE = [
   "/alternatives/flightradar24",
   "/alternatives/dataminr",
   "/alternatives/google-earth",
+  "/alternatives/windy",
+  "/alternatives/skylinewebcams",
+  "/alternatives/zoom-earth",
   "/best-osint-tools",
   "/best-geopolitical-monitoring-tools",
   "/best-flight-tracking-tools",
   "/best-global-intelligence-dashboards",
   "/best-interactive-3d-globes",
   "/best-conflict-monitoring-tools",
+  "/best-live-webcam-sites",
+  "/best-ship-tracking-tools",
+  "/best-satellite-tracking-tools",
   "/free-osint-tools",
   "/compare",
   "/compare/acled",
@@ -82,6 +97,7 @@ const SEO_PAGES_COMPARE = [
   "/compare/dataminr",
   "/compare/deepstatemap",
   "/compare/flightradar24",
+  "/compare/flightaware",
   "/compare/gdelt",
   "/compare/global-threat-watch",
   "/compare/google-earth",
@@ -97,6 +113,12 @@ const SEO_PAGES_COMPARE = [
   "/compare/vesselfinder",
   "/compare/world-monitor",
   "/compare/zoom-earth",
+  "/compare/windy",
+  "/compare/earthcam",
+  "/compare/skylinewebcams",
+  "/compare/ventusky",
+  "/compare/explore-org",
+  "/compare/n2yo",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -142,6 +164,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE5.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE6.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
