@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { stealthFetch } from '@/lib/stealthFetch';
 import { extractAircraft } from '@/lib/flights/feeds';
+import { classifyDropReason } from '@/lib/flights/diagnostics';
 
 export const maxDuration = 60;
 
@@ -165,11 +166,13 @@ function classifyFlight(f: any) {
   const flightStr = (f.flight || '').trim().toUpperCase();
   const dbFlags = (f.dbFlags || 0);
 
-  if (modelUpper === 'TWR') return null;
+  // The only two refusals: a ground "tower" pseudo-record, or a record with
+  // no position to draw. classifyDropReason() owns the conditions so the
+  // classify loop can count the same drops for the coverage diagnostics.
+  if (classifyDropReason(f)) return null;
 
   const lat = f.lat;
   const lon = f.lon;
-  if (lat == null || lon == null) return null;
 
   const callsign = flightStr || f.hex || 'UNKNOWN';
   const altRaw = f.alt_baro;
@@ -495,10 +498,11 @@ export async function GET() {
     const jets: any[] = [];
     const military: any[] = [];
     const gpsJamming: any[] = [];
+    let droppedInvalid = 0;
 
     for (const raw of allRaw) {
       const flight = classifyFlight(raw);
-      if (!flight) continue;
+      if (!flight) { droppedInvalid++; continue; }
 
       if (typeof flight.nac_p === 'number' && flight.nac_p <= JAMMING_NACAP_THRESHOLD && !flight.grounded) {
         gpsJamming.push({ lat: flight.lat, lng: flight.lng, nac_p: flight.nac_p, callsign: flight.callsign });
@@ -530,6 +534,16 @@ export async function GET() {
         opensky:         osSnapshot.length,
         opensky_auth:    hasOpenSkyCreds(),
         opensky_age_s:   osSnapshotTime ? Math.round((Date.now() - osSnapshotTime) / 1000) : null,
+      },
+      // Exclusion bookkeeping for the admin coverage diagnostics.
+      // dropped_invalid is a genuine count from the classify loop above
+      // (tower pseudo-records + records with no position). dropped_stale is
+      // null ON PURPOSE: this route applies no staleness filter, so nothing
+      // is excluded for age and there is no honest number to report —
+      // freshness is bounded by the provider snapshot ages in `providers`.
+      diagnostics: {
+        dropped_invalid: droppedInvalid,
+        dropped_stale: null,
       },
       timestamp:          new Date().toISOString(),
     };

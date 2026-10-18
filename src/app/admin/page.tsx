@@ -9,6 +9,8 @@ import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
 import OnboardingActivation from "./OnboardingActivation";
+import FlightCoverage from "./FlightCoverage";
+import { Suspense } from "react";
 import MarketingStudio from "./MarketingStudio";
 import StudioCredits from "./StudioCredits";
 import StudioCampaigns from "./StudioCampaigns";
@@ -930,6 +932,18 @@ export default async function AdminDashboardPage() {
 
         <div className="mt-4">
           <OnboardingActivation />
+        </div>
+
+        <div className="mt-4">
+          <Suspense
+            fallback={
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm text-white/40">
+                ✈️ Flight Coverage Diagnostics — loading the current /api/flights snapshot…
+              </div>
+            }
+          >
+            <FlightCoverage />
+          </Suspense>
         </div>
 
         <div className="mt-4">
