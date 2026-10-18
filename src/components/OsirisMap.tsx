@@ -439,7 +439,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -499,6 +499,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'fires-heat', type: 'circle', source: 'fires', paint: {
         'circle-radius': ['interpolate',['linear'],['zoom'], 1,2, 5,4, 10,8],
         'circle-color': '#E65100', 'circle-opacity': 0.45, 'circle-blur': 0.5,
+      }});
+
+      // Fire Perimeters (NIFC WFIGS) — translucent fill + hot edge
+      map.addLayer({ id: 'fire-perim-fill', type: 'fill', source: 'fire-perimeters', paint: {
+        'fill-color': '#FF3D00', 'fill-opacity': 0.22,
+      }});
+      map.addLayer({ id: 'fire-perim-line', type: 'line', source: 'fire-perimeters', paint: {
+        'line-color': '#FF6B00', 'line-width': 1.6, 'line-opacity': 0.9,
       }});
 
       // CCTV — outer glow ring (black/white depending on theme)
@@ -1155,7 +1163,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
-      'gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
@@ -1258,6 +1266,22 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}°, ${coords[0].toFixed(3)}°</span></div>
         </div>
         <a href="https://firms.modaps.eosdis.nasa.gov/map/#d:24hrs;l:noaa20-viirs,viirs,modis_a,modis_t;@${coords[0]},${coords[1]},10z" target="_blank" style="${linkStyle}color:#FF6B00;border:1px solid rgba(255,107,0,0.4);background:rgba(255,107,0,0.1);">🛰️ NASA FIRMS MAP</a>
+      </div>`);
+    });
+
+    // ── Fire Perimeters (NIFC WFIGS) ──
+    map.on('click', 'fire-perim-fill', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      popup(e.lngLat, `<div style="${pStyle}border:1px solid rgba(255,107,0,0.3);">
+        <div style="color:#FF6B00;font-size:12px;font-weight:700;margin-bottom:6px;">🔥 ${htmlEsc((p.name || 'FIRE PERIMETER').toUpperCase())}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">ACRES</span><br/><span style="color:#E8E6E0;">${p.acres != null ? Number(p.acres).toLocaleString('en-US') : '—'}</span></div>
+          <div><span style="color:#5C5A54;">CONTAINED</span><br/><span style="color:#E8E6E0;">${p.contained != null ? p.contained + '%' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">STATE</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.state || '—')}</span></div>
+          <div><span style="color:#5C5A54;">UPDATED</span><br/><span style="color:#E8E6E0;">${p.updated ? formatTime(p.updated) : '—'}</span></div>
+        </div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">PERIMETER — NIFC WFIGS</div>
       </div>`);
     });
 
@@ -1492,7 +1516,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -2207,6 +2231,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
   useEffect(() => {
     if (!mapReady) return;
+    // Perimeter features arrive as GeoJSON from /api/fire-perimeters.
+    setGeo('fire-perimeters', (activeLayers as any).fire_perimeters && data.fire_perimeters ? data.fire_perimeters : []);
+  }, [mapReady, data.fire_perimeters, (activeLayers as any).fire_perimeters, setGeo]);
+
+  useEffect(() => {
+    if (!mapReady) return;
     setGeo('weather', activeLayers.weather && data.weather_events ? data.weather_events.map((w: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [w.lng, w.lat] }, properties: { title: w.title, type: w.type, icon: w.icon, severity: w.severity, source: w.source, id: w.id } })) : []);
   }, [mapReady, data.weather_events, activeLayers.weather, setGeo]);
 
@@ -2434,6 +2464,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['fl-military'], activeLayers.military);
     setVis(['cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
     setVis(['fires-heat'], activeLayers.fires);
+    setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);

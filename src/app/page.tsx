@@ -492,6 +492,7 @@ export default function Dashboard() {
     live_news: true,
     earthquakes: true,
     fires: false,
+    fire_perimeters: false,
     weather: false,
     radiation: false,
     infrastructure: false,
@@ -1192,6 +1193,11 @@ export default function Dashboard() {
       }));
     }
 
+    // NIFC WFIGS fire perimeters — polygons beside the FIRMS fire points
+    if ((activeLayers as any).fire_perimeters) {
+      loadLayerOnce('fire_perimeters', '/api/fire-perimeters', d => ({ fire_perimeters: d.features ?? [] }));
+    }
+
 
   }, [activeLayers, dataBoot]);
 
@@ -1209,6 +1215,9 @@ export default function Dashboard() {
     }
     if (activeLayers.radiation) {
       intervals.push(setInterval(() => fetchEndpoint('/api/radiation', d => ({ radiation: d.stations })), 300000)); // 5m
+    }
+    if ((activeLayers as any).fire_perimeters) {
+      intervals.push(setInterval(() => fetchEndpoint('/api/fire-perimeters', d => ({ fire_perimeters: d.features ?? [] })), 300000)); // 5m
     }
     if (activeLayers.maritime) {
       /* Ten seconds is the cadence a moving vessel needs. The other two thirds

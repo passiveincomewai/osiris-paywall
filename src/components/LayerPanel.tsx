@@ -117,6 +117,7 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     layers: [
       { key: 'earthquakes', label: 'Earthquakes', dataKey: 'earthquakes' },
       { key: 'fires', label: 'Active Fires', dataKey: 'fires' },
+      { key: 'fire_perimeters', label: 'Fire Perimeters', description: 'NIFC WFIGS · ~5 min', dataKey: 'fire_perimeters' },
       { key: 'weather', label: 'Severe Weather', dataKey: 'weather_events' },
     ],
   },
