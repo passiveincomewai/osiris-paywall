@@ -1280,6 +1280,342 @@ export const POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "best-beach-webcams",
+    title: "Best Beach Webcams to Watch Live",
+    seoTitle: "Best Beach Webcams to Watch Live | WorldEye Blog",
+    date: "2026-10-17",
+    excerpt:
+      "Surf height, crowd size, cloud cover, the color of the water at dawn — beach webcams show the coast as it really is today. A guide to the feeds worth watching and how to read them.",
+    seoDescription:
+      "From surf checks to boardwalks and quiet working harbors, beach webcams show the coast as it really is. How to read them and find great feeds.",
+    tags: ["cameras", "travel"],
+    sections: [
+      {
+        heading: "Why beaches make great webcams",
+        body: [
+          "A beach is never the same twice, which is exactly why beach webcams reward repeat visits more than almost any other kind of feed. The tide rearranges the sand and the waterline twice a day, the surf rises and falls with distant storms, and the crowd that packs the shore at noon has usually thinned to a few walkers by evening. A camera pointed at that much change never really goes stale.",
+          "That is also what makes these feeds useful rather than just pleasant. Wave height, wind, cloud cover, and crowd size are all visible at a glance, in a way no written surf report or weather summary quite manages. Start with the dedicated [beach webcams](/beach-webcams) collection if you want the coastal view, or open the wider [live camera map](/cameras) and follow any shoreline that catches your eye.",
+        ],
+      },
+      {
+        heading: "The surf check, done properly",
+        body: [
+          "For surfers, a beach webcam is a decision tool before it is entertainment. Look past the postcard view and read the water the way you would from the shore: sets rolling in at regular intervals mean organized swell, while short, choppy peaks breaking in several places at once usually mean wind swell and harder work. White water stretching far offshore tells you the surf is bigger than the gentle-looking surface suggests.",
+          "Check more than one moment, too. A single glance can catch the lull between sets and understate the surf, or catch one large set and overstate it. Watch for a couple of minutes, note whether the wind is ruffling the faces of the waves or grooming them smooth, and compare what you see with the tide — many breaks work noticeably better on a pushing tide than on a draining one.",
+        ],
+      },
+      {
+        heading: "Boardwalks, piers, and people-watching coasts",
+        body: [
+          "Some beach cameras are really town cameras that happen to face the sea. Boardwalk and pier feeds show the full rhythm of a resort coast: the early dog walkers and fishermen, the families arriving with umbrellas by mid-morning, the lunch crowds, and then the slower golden hour when the day visitors leave and the locals come back out. It is people-watching in its most relaxed form.",
+          "These are also the most practical feeds for a trip you are actually planning. A boardwalk camera at the hour you would arrive tells you how busy the place feels, whether the cafés are open, and what people are wearing — a better packing guide than any seasonal average. Watch the same pier across a few evenings before a visit and the neighborhood will already feel familiar when you get there.",
+        ],
+      },
+      {
+        heading: "Tropical water and working coasts",
+        body: [
+          "Beach webcams fall into two broad families, and they offer different pleasures. The tropical and resort feeds are about color: pale sand, water that shifts from turquoise to deep blue as the depth changes, palm shadows moving through the afternoon. They are at their best in the morning, before the wind freshens and the surface turns choppy, when the water is glassy and the colors are at their clearest.",
+          "Working coasts are less polished and often more interesting. Harbor mouths, fishing beaches, and ferry landings have boats coming and going on schedules set by tides rather than tourists, and the beach itself is a workplace — nets, crates, gulls, and weather that matters to people making a living from it. If the resort feeds are a screensaver, the working-coast feeds are a documentary that never quite repeats itself.",
+        ],
+      },
+      {
+        heading: "The dawn and dusk rhythm",
+        body: [
+          "Beaches have two performances a day, and regular viewers plan around them. Dawn brings the quietest hour: empty sand marked by the night tide, flat light turning pink and then gold, and often the calmest water of the day before the sea breeze builds. It is when the surf check is most honest and when wildlife — shorebirds working the waterline, dolphins just beyond the breakers on lucky mornings — is most likely to appear.",
+          "Dusk is the social mirror image. The heat leaves the sand, the wind often drops, and the beach refills with walkers, anglers, and people who have simply come down to watch the sun go into the water. Because the camera network spans every time zone, one of these two performances is always starting somewhere — spin the [live camera map](/cameras) westward in the evening and you can chase the light along the coasts of whole continents.",
+        ],
+      },
+      {
+        heading: "Reading a beach feed honestly",
+        body: [
+          "A few habits keep beach webcams from misleading you. Always check the timestamp first: some feeds stream true video, while others refresh a still image every minute or so, and a few go stale without making it obvious. A still image an hour old can show a sunny beach that has since filled with rain. If nothing in the frame has moved between visits — same wave, same pose, same shadow — you are looking at a photograph, not a report.",
+          "Remember the camera's limits, too. A lens flattens distance, so surf that looks small from a high pier camera may be considerably bigger at water level, and wide-angle views make crowded beaches look emptier than they are. One camera also shows one stretch of coast; conditions a mile along the shore, around a headland or across a river mouth, can be genuinely different. Treat a feed as a strong sample, not the whole beach.",
+        ],
+      },
+      {
+        heading: "How to find beach cams on the map",
+        body: [
+          "Finding good coastal feeds is mostly a matter of following the shoreline. Open the [beach webcams](/beach-webcams) page for a curated starting point, or zoom into any coast on the [live camera map](/cameras) and look for markers sitting right on the water's edge — those are the true beach, pier, and harbor views, while markers a few streets inland are usually town or traffic cameras with, at most, a glimpse of sea.",
+          "Then let geography guide you. Islands, points, and harbor towns tend to have the densest and best-kept coastal cameras, because resorts, marinas, and port authorities all have reasons to publish feeds. Save the ones you like and check them at different hours; a beach camera's character changes completely between dawn, noon, and dusk, and the feed that seemed ordinary at midday may be the one you return to every morning.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the best time of day to watch beach webcams?",
+        a: "Dawn and dusk are the most rewarding hours: the light is at its best, the water is often calmest in the morning, and the crowds are thinnest. Midday feeds are the most useful for practical checks — surf, weather, and crowd size — but the least atmospheric. Because cameras span every time zone, a dawn or dusk is always happening somewhere on the map.",
+      },
+      {
+        q: "Can I check surf conditions from a beach webcam?",
+        a: "Yes, within limits. Watch for a couple of minutes rather than glancing once: regular, widely spaced sets suggest organized swell, while choppy peaks breaking everywhere suggest wind swell. A high camera flattens distance and can make surf look smaller than it is, so treat the feed as a good estimate and check the tide as well.",
+      },
+      {
+        q: "Are beach webcam feeds really live?",
+        a: "It is a mix. Many stream video, while others refresh a still image every minute or so. Check the timestamp on the feed: if it has not updated in the last few minutes, you are looking at a recent photograph rather than a live report. Both are useful, but do not mistake one for the other when judging weather or surf.",
+      },
+      {
+        q: "Why do some beach webcams go offline?",
+        a: "Every camera is run by a third party — a resort, a marina, a town, a surf shop — and WorldEye does not control their feeds. Salt air, storms, power cuts, and maintenance are hard on coastal hardware, so beach feeds come and go. A dark camera almost always means the source itself is down, and many return within days.",
+      },
+      {
+        q: "How do I find a beach webcam for a specific place?",
+        a: "Start on the beach webcams page or zoom into the coast on the live camera map and look for markers right on the water's edge. Islands, harbor towns, and resort areas usually have the densest coverage. The camera layer is free with no signup, so you can browse the whole shoreline before choosing a feed.",
+      },
+    ],
+  },
+  {
+    slug: "best-ski-webcams",
+    title: "Best Ski Webcams to Check Before You Drive Up",
+    seoTitle: "Best Ski Webcams Before You Drive Up | WorldEye Blog",
+    date: "2026-10-17",
+    excerpt:
+      "A snow report is a summary; a summit webcam is the mountain itself. How to use summit, base, and access-road cameras to judge real snow, wind, and lift lines before you commit to the drive.",
+    seoDescription:
+      "Summit, base and access-road ski webcams show real snow, wind and lift lines before you drive up. The night-before and morning-of routine explained.",
+    tags: ["cameras", "travel"],
+    sections: [
+      {
+        heading: "Why a webcam beats the snow report",
+        body: [
+          "Snow reports are written to summarize a whole mountain in a few numbers, and mountains do not cooperate with summaries. A resort can honestly report fresh snow at the summit while the base is raining, the wind is stripping the ridge, and the one lift you actually ride is on hold. A webcam shows you the specific slope, at the specific altitude, at the specific moment you are deciding whether to drive up.",
+          "That is why experienced skiers treat cameras as instruments rather than entertainment. The [ski webcams](/ski-webcams) collection and the wider [live camera map](/cameras) put summit, base, and road feeds side by side, and reading the three together takes about two minutes. What you learn in those two minutes — real snow, real wind, real crowds — is routinely worth more than the official report's headline number.",
+        ],
+      },
+      {
+        heading: "The three cameras that matter",
+        body: [
+          "Start at the summit. The top-of-mountain camera tells you about visibility and wind: whether the ridge is in clear air or inside the cloud, whether snow is blowing horizontally off the cornice, and whether the upper lifts are even turning. A summit feed showing a whiteout and stationary chairs is the mountain telling you the top is closed in everything but name, whatever the trail report says.",
+          "Then check the base, because that is where your day actually begins. The base camera shows the snow surface you will be standing on, the state of the main lifts, and the first honest crowd reading of the day. Finally, check the access road: canyon and pass cameras along the drive show whether the road is bare, packed snow, or already backing up — the camera that saves you from a three-hour crawl behind a jackknifed truck.",
+        ],
+      },
+      {
+        heading: "Storm totals versus wind-scoured reality",
+        body: [
+          "Here is the gap every regular learns to respect: storm totals are measured, usually at a sheltered stake, while skiing happens on slopes the wind has edited. A storm that drops a generous total can still leave exposed ridges scoured down to old, hard snow, with the new snow piled into gullies, tree lines, and lee slopes instead. The report gives you the average; the camera shows you the distribution.",
+          "Read the summit feed with that in mind. Look for snow streaming off ridges and cornices, trees plastered white on one side, and fence lines either buried or standing bare — all signs of how the wind moved the snowfall around. Smooth, untracked, evenly covered slopes after a storm suggest the snow fell calmly and stayed where it landed. Both mountains report the same total; they ski completely differently.",
+        ],
+      },
+      {
+        heading: "Lift lines and the crowd picture",
+        body: [
+          "Base and mid-mountain lift cameras answer the question every weekend skier actually asks: how busy is it, really? A maze filled to the last switchback at nine in the morning tells you the day will be about queuing as much as skiing, while an empty maze under fresh snow is one of the great sights in the sport — and a reason to leave the house immediately.",
+          "Crowds also have a rhythm you can learn from the feeds. The first hour belongs to the keen, the late morning brings the main wave, and many mountains empty noticeably after lunch as day visitors tire. If a resort's cameras show lines shrinking by early afternoon and the weather is holding, the last two hours can be the best skiing of the day — a pattern you can only exploit if you are watching.",
+        ],
+      },
+      {
+        heading: "The night-before routine",
+        body: [
+          "The night before a ski day, the cameras set your expectations and your alarm clock. Check the summit feed after dark: many resorts light their snowcats, and seeing the grooming fleet working tells you the mountain is preparing a normal opening. Snow still falling hard on the night feed, with the stake camera accumulating, argues for the early alarm — fresh snow rewards the first hour and punishes hesitation.",
+          "The night check is also when you make the honest call about the drive. Look at the access-road cameras before you sleep: if the pass is already chain-controlled or the canyon is already slow in the evening, the morning will be worse, not better, and the choice becomes leaving very early, choosing a closer mountain, or not going. Deciding that at nine in the evening, calmly, beats deciding it at six in the morning in a queue of brake lights.",
+        ],
+      },
+      {
+        heading: "The morning-of routine",
+        body: [
+          "In the morning, run the three cameras again in the same order — summit, base, road — because each one can independently change the plan. Summit whiteout or lifts visibly on hold means the upper mountain is out; a base camera showing rain on the lens means the snow line is higher than the report implied; a road camera showing a standstill means the skiing, however good, is not worth the drive today.",
+          "Pay attention to the details regulars read automatically: whether patrol or lift crews are visible moving around (a good sign of a normal opening), whether the snow in front of the camera is tracked out or still smooth, and whether the timestamp is current. A frozen feed from yesterday afternoon has decided more bad ski days than any forecast. When all three cameras agree — clear summit, fresh base, moving road — you have the closest thing the sport offers to a guarantee.",
+        ],
+      },
+      {
+        heading: "How to find ski cams on the map",
+        body: [
+          "The [ski webcams](/ski-webcams) page gathers resort feeds in one place, and the [live camera map](/cameras) lets you widen the search to the passes and canyon roads around any resort — often the feeds that matter most on a storm morning. Mountain towns, lift bases, and summits each carry markers, and the lone camera high above a town is frequently the summit feed you want.",
+          "Build a small circuit for the mountains you actually ski: summit, base, and the two road cameras on your usual route, checked in a fixed order so the whole routine takes two minutes. The ski camera layer is free with no signup, like the rest of the camera map. Once the circuit is a habit, you will wonder how you ever chose a ski day from a single snowfall number and a hopeful forecast.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Which ski webcam should I check first?",
+        a: "The summit camera. It shows visibility, wind, and whether the upper lifts are turning — the factors most likely to change your plans. Then check the base for snow surface and lift lines, and finally the access-road cameras for the drive itself. The three together take about two minutes and cover the whole day.",
+      },
+      {
+        q: "Why does the mountain look worse than the reported snow total?",
+        a: "Storm totals are measured at a sheltered stake, while wind redistributes snow across the slopes — scouring exposed ridges down to hard old snow and piling the new snow into gullies and lee slopes. The report gives an average; the summit camera shows the distribution, which is what you actually ski.",
+      },
+      {
+        q: "Can ski webcams show lift lines accurately?",
+        a: "Yes — base and mid-mountain lift cameras show the maze as it is, and regular viewers learn what a full maze means in waiting time for that particular lift. Crowds follow a rhythm too: the morning wave, a late-morning peak, and often a noticeable thinning after lunch that camera watchers can time their arrival around.",
+      },
+      {
+        q: "When should I check ski webcams before a trip?",
+        a: "Twice. The night before, to read the storm's progress, watch for grooming activity, and judge the access road before setting an alarm. Then again in the morning, in summit-base-road order, because any one of the three can change the plan. Always confirm the feed's timestamp is current before trusting it.",
+      },
+      {
+        q: "What if the ski webcam I need is offline?",
+        a: "Check a neighboring camera — the base if the summit is down, the road cameras either side of a gap — and fall back on the resort's written report and the road agency's conditions for that day. Resort feeds are run by third parties and do go offline, often in the storms you most want to watch.",
+      },
+    ],
+  },
+  {
+    slug: "how-to-watch-the-iss-live",
+    title: "How to Watch the ISS Live: Passes, Cameras and Tracking",
+    seoTitle: "How to Watch the ISS Live | WorldEye Blog",
+    date: "2026-10-17",
+    excerpt:
+      "The space station is the brightest human-made object in the sky, and you can watch it with your own eyes — no telescope needed. How passes work, why dawn and dusk are magic, and what its cameras show.",
+    seoDescription:
+      "The ISS orbits Earth about 16 times a day, 400 km up. How dawn and dusk passes work, what its live cameras show, and how to track it on a map.",
+    tags: ["space", "guide"],
+    sections: [
+      {
+        heading: "A bright light that is not a star",
+        body: [
+          "On the right evening, the brightest thing in the sky after the Moon is not a planet or an aircraft — it is the International Space Station, crossing overhead as a steady, brilliant point of light. It does not blink, it does not make a sound, and it moves far faster than any airliner appears to: horizon to horizon in a few minutes, then gone. Seeing it for the first time tends to recalibrate what people think is visible from a backyard.",
+          "You need no equipment at all. The station is large, its solar arrays catch sunlight extremely well, and under the right conditions it outshines every star in the sky. What you do need is timing, because the right conditions only line up for short windows. The [space station tracker](/space-station-tracker) shows where the station is right now, and the rest of this guide explains when to look up.",
+        ],
+      },
+      {
+        heading: "Why dawn and dusk are the magic hours",
+        body: [
+          "The station has no lights of its own bright enough to matter — what you see is reflected sunlight. That single fact explains the whole hobby. For the station to be visible, it must be sunlit while your patch of ground is in darkness: the geometry of dawn and dusk. In the middle of the day it crosses a bright sky invisibly; in the middle of the night it is usually passing through Earth's shadow, dark against dark.",
+          "So visible passes cluster in the hours after sunset and before sunrise, when the sky at ground level is dark but the station, roughly 400 kilometers up, is still — or already — in full sun. The best passes are the high ones, where the station climbs well above the horizon haze and stays lit for most of its crossing. A tracker that shows upcoming passes for your location is doing exactly this geometry for you, which is why the [satellite tracker](/satellite-tracker) layer is worth checking before any evening outdoors.",
+        ],
+      },
+      {
+        heading: "The orbital basics, in plain numbers",
+        body: [
+          "The station circles Earth at roughly 400 kilometers up — high enough to be above almost all of the atmosphere, low enough that one orbit takes only about ninety minutes. That works out to around sixteen orbits a day, which is why pass predictions change completely from one evening to the next: the station's track over the ground shifts with every circuit, and your town gets its good windows in runs of several days, then not at all for a while.",
+          "Its path is also tilted, so it does not pass over the poles; it sweeps across the middle band of the planet where most people live, which is convenient. When a pass is predicted, the details that matter are simple — the time it rises, the direction it comes from, how high it will climb, and when it disappears. Disappearance is often abrupt and mid-sky: the station has flown into Earth's shadow, and the light simply switches off.",
+        ],
+      },
+      {
+        heading: "The station's own live cameras",
+        body: [
+          "Watching the station from the ground is only half the experience; the station also looks back. External cameras mounted on the ISS stream live views of Earth from orbit — the curve of the planet, cloud systems turning slowly below, coastlines and city lights sliding past, and sunrises and sunsets that arrive roughly every ninety minutes at orbital speed. The cameras are fixed, so the view changes only as the station travels, which gives the feed its calm, drifting quality.",
+          "Be ready for the gaps, because they are part of the real thing. The video link drops regularly as the station hands over between relay satellites, and during those minutes the stream shows a blank or a holding screen. Night passes show a mostly dark planet scattered with city light, and a camera may be pointed at the station's own structure rather than at Earth for a while. None of that is a fault — it is a working spacecraft, not a broadcast studio.",
+        ],
+      },
+      {
+        heading: "Tracking it on a map",
+        body: [
+          "A map makes the geometry click. On the [space station tracker](/space-station-tracker), you can watch the station's current position move in real time and see its ground track — the line tracing where it has just been and where it is heading next. Watching that line approach your continent, then your region, turns an abstract prediction into a countdown you can feel: ten minutes out, five minutes out, time to go outside.",
+          "The wider [satellite tracker](/satellite-tracker) puts the station in context among the thousands of other tracked objects in orbit — weather satellites, communications fleets, and the rest of humanity's hardware circling the same planet. On WorldEye, satellite tracking is free with no signup, alongside flights, cameras, weather, earthquakes, and wildfires on the same globe, so the station's pass can be the end of a browsing session that started with a storm or a ship.",
+        ],
+      },
+      {
+        heading: "Watching a pass well",
+        body: [
+          "The practical routine is simple. Pick a predicted pass that climbs high — the higher, the brighter and longer the show — and get outside a few minutes early so your eyes adjust and you can find the right part of the sky. Face the direction the station will rise from, keep a clear view toward where it will set, and then just wait: it appears as a faint moving point near the horizon and brightens steadily as it climbs.",
+          "Binoculars are optional and honestly a mixed blessing — they narrow your view so much that tracking a fast-moving point becomes a fumble — but they do reward a steady hand with a glimpse of structure rather than a dot. Photographers have it easier: a phone or camera on a tripod with a long exposure turns the pass into a bright arc across the stars, which is often the most satisfying souvenir of all.",
+        ],
+      },
+      {
+        heading: "What you can and cannot see",
+        body: [
+          "Honesty about limits makes the real thing better, not worse. From the ground, even on a perfect pass, the station is a point of light to the naked eye — you will not resolve its panels or modules without a serious telescope and practiced tracking, and you certainly cannot see the crew. From the station's cameras, the view is the opposite trade: a whole planet at a glance, but no detail at human scale — no streets, no crowds, no individual anything.",
+          "What you can see, reliably and for free, is still remarkable: the largest structure humans have put in orbit, crewed continuously for decades, crossing your sky on a schedule anyone can look up, while its cameras drift over oceans and continents in the other direction. Few experiences connect a backyard to orbit that directly. Once you have caught one good pass, the tracker's next prediction has a way of getting you outside again.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How often does the ISS pass over my town?",
+        a: "The station orbits about 16 times a day, but visible passes over any one place come in runs — several evenings or mornings in a row, then a gap of days or weeks — because the ground track shifts with every orbit. Check a tracker for your location rather than assuming last night's time repeats tonight.",
+      },
+      {
+        q: "Why can I only see the ISS at dawn or dusk?",
+        a: "You see the station by reflected sunlight, so it must be sunlit while the ground beneath you is dark. That geometry happens in the hours around sunrise and sunset: at midday the sky is too bright, and in the middle of the night the station is usually inside Earth's shadow, crossing dark and unlit.",
+      },
+      {
+        q: "Do I need a telescope to watch the ISS?",
+        a: "No. On a good pass the station is one of the brightest objects in the sky and is unmistakable to the naked eye — a steady, fast-moving light that does not blink. Telescopes can reveal its shape but are genuinely hard to aim at something moving that fast; binoculars are an optional middle ground.",
+      },
+      {
+        q: "What do the ISS live cameras actually show?",
+        a: "External cameras on the station stream views of Earth from roughly 400 km up: cloud systems, coastlines, city lights at night, and a sunrise or sunset about every 90 minutes. Expect regular interruptions — the video link drops during satellite handovers, and at times a camera faces the station itself rather than the planet.",
+      },
+      {
+        q: "Why does the ISS sometimes vanish in the middle of the sky?",
+        a: "Because it has flown into Earth's shadow. The light you see is reflected sunlight, and when the station passes out of the sunlit region, the reflection switches off — often abruptly, high in a dark sky. It is one of the most reliable signs you were watching the station and not an aircraft.",
+      },
+    ],
+  },
+  {
+    slug: "northern-lights-live-webcams",
+    title: "Watching the Northern Lights on Live Webcams",
+    seoTitle: "Northern Lights on Live Webcams | WorldEye Blog",
+    date: "2026-10-17",
+    excerpt:
+      "You do not have to fly to the Arctic to see the aurora — on the right night, northern webcams catch it for you. What it actually takes: darkness, clear skies, and an active sky, plus an honest look at the limits.",
+    seoDescription:
+      "Aurora watching by webcam needs dark, clear skies and geomagnetic activity. How northern road and scenic cameras can catch it, and its limits.",
+    tags: ["cameras", "guide"],
+    sections: [
+      {
+        heading: "The promise, and the honest catch",
+        body: [
+          "The idea is genuinely appealing: instead of flying to the far north and standing in the cold on the one cloudy week of the year, you open a webcam in Iceland or Lapland on a clear, active night and watch the aurora ripple over a landscape you may never visit. On the right night, that works — curtains of green light moving over snowfields and fjords, free, from your sofa.",
+          "The honest catch is that everything has to align at once, and no webcam can fix an alignment that is not there. Aurora watching by camera is a patience hobby: many nights of dark, ordinary northern sky for every night of display. This guide is about stacking the odds — knowing which cameras can catch it, when to look, and how to tell a real display from wishful thinking. Start browsing on the [live camera map](/cameras), and keep the expectations in this guide close at hand.",
+        ],
+      },
+      {
+        heading: "Three conditions, all required",
+        body: [
+          "First, darkness — real darkness. The aurora is a faint light in the sky, and it loses to streetlights, moonlight, and summer's endless northern twilight alike. A webcam in a lit town square may technically be under an active sky and show you nothing but orange sodium glow. The feeds with a chance are the ones facing away from towns: dark roads, open water, empty valleys, where the sky in the frame is genuinely black.",
+          "Second, clear skies, because aurora happens far above the clouds and a single overcast layer hides it completely — a valley camera in fog is a gray rectangle no matter how violent the geomagnetic storm overhead. Third, the activity itself: charged particles from the Sun disturbing Earth's magnetic field strongly enough to push the auroral oval down over your camera's latitude. Calm geomagnetic conditions mean no display at any camera, however dark and clear.",
+        ],
+      },
+      {
+        heading: "What the northern camera directory really is",
+        body: [
+          "Here is the part most aurora guides skip: the far north's webcams were not built for the aurora. In the WorldEye directory, Iceland indexes 496 cameras, Finland 818, Sweden 886, and Norway 48 — an unusually deep bench for such sparsely populated countries, and most of them are road, weather, harbor, and scenic cameras, published so drivers can check ice and locals can check conditions. WorldEye does not offer dedicated aurora cameras, and no honest guide should pretend these are that.",
+          "What they are is something arguably better for a patient watcher: hundreds of eyes already pointed at dark northern landscapes, running all night, every night, whether or not anyone is watching. A road camera on an empty Icelandic highway or a scenic feed over a Finnish lake cannot summon the aurora, but on a clear, dark, active night it is perfectly placed to catch it — and checking ten of them takes less time than checking one forecast. The roundup in our guide to the [best live webcams in the world](/blog/best-live-webcams-world) makes the same point about sky cameras generally: when conditions align, these ordinary feeds become extraordinary.",
+        ],
+      },
+      {
+        heading: "The best months and hours",
+        body: [
+          "Season matters more than anything else you control. The far north's summer is the aurora watcher's off-season — around the solstice, places at those latitudes barely get dark at all, and even a strong display drowns in twilight. The watching season is the dark half of the year, roughly from autumn through spring, with the deepest darkness — and therefore the longest nightly windows — in the middle of winter.",
+          "Within the night, the small hours are traditionally the richest: activity often strengthens late in the evening and into the hours after midnight, local time, which is conveniently when a watcher in a more southern time zone can check northern feeds during their own evening. That time-zone offset is a quiet advantage of webcam aurora watching — the peak hours over Finland are a reasonable hour in Britain or the American East Coast, and you are checking them from indoors, warm, with the kettle on.",
+        ],
+      },
+      {
+        heading: "Checking a feed like you mean it",
+        body: [
+          "Begin every check with the timestamp, as with any camera on the [live camera map](/cameras): a stale frame from dusk can look temptingly dark and tell you nothing about tonight. Then judge the darkness itself — a useful northern feed at midnight shows black sky, visible stars if the image is sharp enough, and snow or water that reads as dim gray rather than lit scenery. If the frame looks like a lit parking lot, town light will likely wash out a modest display even if one is happening overhead.",
+          "Next, give the sky a minute. Aurora on a webcam rarely announces itself like the photographs; look instead for a diffuse greenish glow low over the northern horizon, a faint arc that brightens and fades, or slow movement in a band you first took for thin cloud. Cameras are often more sensitive to the color than the unaided eye, so a feed can show green the locals standing under it perceive mostly as pale light. Slow change between checks is the signature — cloud moves across the frame, aurora moves within itself.",
+        ],
+      },
+      {
+        heading: "Reading activity without fooling yourself",
+        body: [
+          "Aurora forecasts speak in geomagnetic activity levels, and they are worth consulting before an evening of checking feeds: a quiet forecast means even perfect northern cameras will show perfect northern darkness, while an active one justifies working through a circuit of feeds across several countries. Activity can also surge with little warning, which is why watchers develop a circuit rather than a single favorite camera — if the oval is lit, different longitudes take turns under its brightest part as the Earth rotates.",
+          "Discipline cuts the other way, too. Most of what a hopeful watcher finds on an ordinary night is not aurora: it is cloud lit from below by a distant town, headlights sweeping a road camera, moonlit haze, or the greenish cast some cameras give a night scene. A real display rewards a second look five minutes later — stronger, structured, unmistakably in the sky rather than on the ground. Learning to say 'not tonight' quickly is what keeps the real nights special.",
+        ],
+      },
+      {
+        heading: "A realistic way to enjoy it",
+        body: [
+          "Treat aurora webcam watching as a season, not an event. During the dark months, keep a short circuit of northern feeds — a few in Iceland, a few across Finland and Sweden, one or two in Norway — and check them on clear evenings when activity is forecast, the way other people check the weather. Most checks will take two minutes and end in darkness. That is the honest base rate, and it is fine.",
+          "Then, a handful of times a season, the circuit pays off all at once: an arc already standing over a Finnish lake when you open the feed, curtains moving over an Icelandic road an hour later, the whole northern tier of the map lit in rotation. Those nights justify every quiet check before them — and unlike the flight north, the webcam version asks nothing of you but attention. The camera layer is free with no signup, so the season ticket costs exactly that: a few minutes, on the right nights, at the right end of the map.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does WorldEye have dedicated aurora cameras?",
+        a: "No. The northern cameras in the directory — Iceland with 496 cameras, Finland with 818, Sweden with 886, and Norway with 48 — are mostly road, weather, harbor, and scenic feeds run by third parties. They were not built for the aurora, but cameras facing dark landscapes are well placed to catch it on clear, dark, active nights.",
+      },
+      {
+        q: "What conditions do I need to see aurora on a webcam?",
+        a: "All three at once: real darkness at the camera's location, clear skies above it, and enough geomagnetic activity to bring the auroral oval over its latitude. Miss any one — summer twilight, a cloudy valley, a calm Sun — and even the best-placed camera will show an ordinary night sky.",
+      },
+      {
+        q: "When is the best time of year and night to look?",
+        a: "The dark half of the year, roughly autumn through spring, with the longest windows in mid-winter; northern summer's near-constant twilight makes displays effectively invisible. Within the night, activity often strengthens late in the evening and after midnight local time — which, from more southern time zones, can be a convenient evening check.",
+      },
+      {
+        q: "How can I tell real aurora from cloud or town light on a feed?",
+        a: "Check the timestamp first, then look for structure in the sky itself: a greenish arc or band that brightens, fades, and moves within itself over several minutes. Cloud lit from below moves across the frame and sits low; headlights sweep and vanish. Recheck after five minutes — a real display evolves rather than repeating identically.",
+      },
+      {
+        q: "Why did a strong aurora forecast still show nothing on the cameras?",
+        a: "A forecast describes geomagnetic activity, not local viewing conditions. Cloud over the camera, town light in the frame, a stale or offline feed, or the brightest part of the oval sitting over another longitude can each hide a real display. Try cameras in several northern countries before concluding the night is a miss.",
+      },
+    ],
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {
