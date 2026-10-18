@@ -68,6 +68,9 @@ const SEO_PAGES_WAVE6 = [
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
   "/alternatives/gods-eye-view",
+  "/alternatives/osiris",
+  "/alternatives/godsview-ai",
+  "/alternatives/war-monitor",
   "/alternatives/liveuamap",
   "/alternatives/world-monitor",
   "/alternatives/flightradar24",
@@ -119,6 +122,7 @@ const SEO_PAGES_COMPARE = [
   "/compare/ventusky",
   "/compare/explore-org",
   "/compare/n2yo",
+  "/compare/worldeye-vs-osiris",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

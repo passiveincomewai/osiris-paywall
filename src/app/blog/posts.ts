@@ -1616,6 +1616,174 @@ export const POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "live-3d-globe-without-installing",
+    title: "How to Use a Live 3D Earth Globe Without Installing Software",
+    seoTitle: "Live 3D Globe Without Installing Software | WorldEye Blog",
+    date: "2026-10-17",
+    excerpt:
+      "The viral God's Eye View globe made everyone want a live planet in the browser — but the original is software you install. Here are the no-install ways to get the same view, what to check before trusting one, and where the API keys hide.",
+    seoDescription:
+      "Want a live 3D Earth globe with no download and no setup? The hosted options compared — plus the key and freshness checks that separate a real live globe from a demo.",
+    tags: ["guide", "live globe"],
+    sections: [
+      {
+        heading: "Why 'no install' suddenly matters",
+        body: [
+          "In the summer of 2026, a project called God's Eye View went very viral: a cinematic 3D globe streaming live flights, ships, satellites, earthquakes and thousands of public cameras, all explorable by spinning the planet. Millions of people watched the videos. Then they hit the catch — God's Eye View is open-source software. To use it, you clone a repository, install it (or run it in Docker), keep it updated, and, for its best features, supply your own API keys.",
+          "That gap between 'I saw it in a video' and 'I have to run a server' is why searches for a hosted version exploded — and why a small ecosystem of no-install globes now exists. This guide walks through the real options, in the order most people should try them.",
+        ],
+      },
+      {
+        heading: "Option 1: a hosted live globe (the direct route)",
+        body: [
+          "The closest match to the viral videos is a hosted globe: the same concept, already running on someone else's infrastructure, opened with a URL. [WorldEye](/) is built exactly this way — a 3D globe carrying 36,000+ live public cameras, flights, satellites, weather radar, earthquakes and wildfires, free with no signup and no keys for the core experience. Its [God's Eye View page](/gods-eye-view) walks through what the experience includes, and the [alternatives comparison](/alternatives/gods-eye-view) puts it side by side with the original project, honestly.",
+          "GodsView AI (godsviewai.com) is another hosted answer aimed at the same searches: a 2D operations map with a 3D globe view, live flights, ships, quakes and fires, and a premium tier for watchlists and kiosk displays. Between the two, the practical differences are the camera network (WorldEye publishes 36,000+ feeds with a browsable directory; GodsView AI doesn't publish a count) and pricing transparency. We compared them in the [GodsView AI alternatives guide](/alternatives/godsview-ai).",
+        ],
+      },
+      {
+        heading: "Option 2: the big platforms, with caveats",
+        body: [
+          "Google Earth runs in a browser and is superb for exploring places in 3D — but it's a geography product, not a live one: the imagery is historical, and there are no live cameras, flights or quakes on the globe. Zoom Earth is the opposite trade: genuinely live satellite imagery and storm tracking, but no camera network and no intel layers. Both are excellent at what they do; neither is the live-planet experience the viral videos promised.",
+          "Analyst dashboards like World Monitor and War Monitor are also hosted and free, and they're covered in our [three-way comparison](/blog/gods-eye-view-vs-world-monitor-vs-worldeye) — but they're panel dashboards for reading data, not globes for exploring the planet.",
+        ],
+      },
+      {
+        heading: "Three checks before you trust a 'live' globe",
+        body: [
+          "First, freshness: open a camera or a flight and look for a timestamp or visible motion. A surprising number of 'live' maps are elegantly animated archives. Second, provenance: trustworthy globes name their feeds (public transport-agency cameras, ADS-B exchanges, USGS, NASA FIRMS). If a site won't say where its data comes from, assume the answer is 'a demo'. Third, the keys test: if a globe's photorealistic mode or AI features quietly require you to paste in a Google or OpenAI key, it's a self-hosted tool wearing a website's clothes — fine for builders, but not the no-install experience you came for.",
+          "One more, on numbers: camera counts get inflated across this niche. A directory total (every feed ever indexed, including dead ones) is not a live count. WorldEye's standing figure of 36,000+ is the verified-live number; the open-source God's Eye View README puts its own camera mesh at roughly 4,000, whatever older roundups still claim.",
+        ],
+      },
+      {
+        heading: "A sixty-second tour, once you're in",
+        body: [
+          "Start on the globe and just spin it — then zoom into a coastline and watch the camera pins appear. Open one feed (a harbor, a ski town, a Tokyo crossing) and you've felt the thing the videos sell. From there: the [camera directory](/cameras) for browsing by country, the [flight tracker](/live-flight-tracker) for the sky layer, and the satellite view for the orbital one. No account, no download, no keys — that was the whole point.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is there an official hosted version of God's Eye View?",
+        a: "No — the project ships as software on GitHub and its creators don't run a hosted version. Hosted globes like WorldEye and GodsView AI are independent products built on the same idea.",
+      },
+      {
+        q: "Do I need an API key for a hosted globe?",
+        a: "No. Hosted globes run on the provider's infrastructure and keys. API keys only enter the picture with self-hosted tools, where photorealistic tiles (Cesium ion or Google Maps) and AI voice agents run on your own accounts.",
+      },
+      {
+        q: "Can I use a live globe on my phone?",
+        a: "Yes — hosted globes are websites, so they run in a phone browser. WorldEye's map is free on mobile with no app install and no signup.",
+      },
+    ],
+  },
+  {
+    slug: "gods-eye-view-vs-world-monitor-vs-worldeye",
+    title: "God's Eye View vs World Monitor vs WorldEye: Three Ways to Watch the Planet",
+    seoTitle: "God's Eye View vs World Monitor vs WorldEye | WorldEye Blog",
+    date: "2026-10-17",
+    excerpt:
+      "One is software you build, one is a dashboard you read, one is a globe you explore. The definitive three-way comparison of the planet-watching tools everyone keeps confusing with each other — by the team behind one of them, with the receipts.",
+    seoDescription:
+      "God's Eye View vs World Monitor vs WorldEye compared on hosting, cameras, analysis depth and price — three different philosophies for watching the planet, honestly scored.",
+    tags: ["comparison", "OSINT"],
+    sections: [
+      {
+        heading: "Three products, three philosophies",
+        body: [
+          "These three get mentioned in the same breath constantly, and they barely overlap in what they are. God's Eye View is a builder's project: open-source Cesium software (MIT, by Bilawal Sidhu and Sameh Khamis) that you install and run yourself, famous for cinematic sensor-style views and a voice-controlled AI agent. World Monitor is an analyst's dashboard: a free hosted web app (AGPL-3.0, by Elie Habib) that fuses hundreds of geopolitical feeds — conflict data, chokepoints, markets, AI briefs — into panels you read. WorldEye is a watcher's globe: a hosted 3D planet whose centerpiece is a 36,000+ live camera network, with flights, satellites, weather and intel feeds layered around it.",
+          "Full disclosure, since we make one of these: this comparison is written by the WorldEye team. We checked every competitor fact against official sources in October 2026 (the God's Eye View GitHub README, worldmonitor.app and its pricing page) and we've marked the places where the other two genuinely win.",
+        ],
+      },
+      {
+        heading: "The scorecard",
+        body: [
+          "Hosting: God's Eye View — self-hosted only; World Monitor — hosted free, self-host optional; WorldEye — hosted. Cameras: God's Eye View — a CCTV mesh of roughly 4,000 public cameras (its README figure; older articles saying ~800 are out of date); World Monitor — no camera network; WorldEye — 36,000+ live feeds with a browsable directory.",
+          "Analysis depth: God's Eye View — sensor visualizations and a voice agent, aimed at spectacle; World Monitor — the clear winner, with ACLED/UCDP conflict data, 13 tracked chokepoints, macro data and AI country briefs across six dashboard variants; WorldEye — GDELT-powered intel feeds, cyber and maritime layers and an AI analyst on Pro, shallower than World Monitor's panels by design. Price: God's Eye View — free code, but photorealistic tiles and voice bill to your own API keys; World Monitor — free, Pro $39.99/month; WorldEye — free, Pro $3.99/week, $9.99/month or $59.99/year.",
+        ],
+      },
+      {
+        heading: "Where each one genuinely wins",
+        body: [
+          "God's Eye View wins the wow: nothing else looks like it, the cockpit and sensor modes are a creator's playground, and if you want to build on the code, it's MIT-licensed and yours. World Monitor wins the brief: if your morning question is 'what changed in the world overnight and why', its digests, instability scoring and chokepoint analytics are the strongest free product in this niche, full stop. WorldEye wins the window: it's the only one of the three where you can watch a specific place on Earth, live, through a real camera, thirty seconds after opening the site — and the only globe-first experience of the three.",
+        ],
+      },
+      {
+        heading: "So which should you pick?",
+        body: [
+          "Pick God's Eye View if you're a builder or creator who wants the original project and enjoys running it. Pick World Monitor if you follow geopolitics, markets or conflict professionally and want depth over imagery — see our dedicated [World Monitor comparison](/compare/world-monitor) and [alternatives guide](/alternatives/world-monitor). Pick WorldEye if you want to explore the living planet — cameras first, everything else layered on. Plenty of serious watchers keep two tabs open: the dashboard for the analysis, the globe for the picture.",
+          "Comparing just the two hosted ones? World Monitor is a reading experience; WorldEye is a looking experience. The fastest way to decide is to open both — [WorldEye's globe](/) is free with no signup, and so is World Monitor's dashboard.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye affiliated with God's Eye View or World Monitor?",
+        a: "No. WorldEye is an independent product. God's Eye View is Bilawal Sidhu and Sameh Khamis's open-source project; World Monitor is Elie Habib's. We compare them because users do — not because we're connected.",
+      },
+      {
+        q: "Which of the three is free?",
+        a: "All three, at the core: God's Eye View is free code (its premium tiles and voice run on your API keys), World Monitor's dashboard is free (Pro $39.99/month adds its AI analyst, digests and API), and WorldEye's globe is free (Pro adds intel layers).",
+      },
+      {
+        q: "Which has the most live cameras?",
+        a: "WorldEye, at 36,000+ verified-live feeds. God's Eye View's mesh is roughly 4,000 per its README. World Monitor doesn't operate a camera network.",
+      },
+    ],
+  },
+  {
+    slug: "open-source-vs-hosted-intelligence-dashboards",
+    title: "Open-Source vs Hosted Global Intelligence Dashboards: Which Fits You?",
+    seoTitle: "Open-Source vs Hosted OSINT Dashboards | WorldEye Blog",
+    date: "2026-10-17",
+    excerpt:
+      "OSIRIS, World Monitor's code and God's Eye View ask you to run the stack yourself; WorldEye, War Monitor and worldmonitor.app run it for you. What self-hosting really costs, what hosted really gives up, and a checklist for choosing.",
+    seoDescription:
+      "Self-hosted OSINT dashboards (OSIRIS, God's Eye View) vs hosted ones (WorldEye, World Monitor, War Monitor): real costs, real trade-offs, and how to choose.",
+    tags: ["OSINT", "guide"],
+    sections: [
+      {
+        heading: "The two schools of planet-watching",
+        body: [
+          "Almost every global intelligence dashboard falls into one of two schools. The open-source school — OSIRIS, God's Eye View, World Monitor's AGPL codebase — publishes the software and lets you run it: your server, your keys, your modifications. The hosted school — WorldEye, worldmonitor.app, War Monitor, GodsView AI — runs the same class of product as a website: open a URL and it's live. The features increasingly overlap; the ownership model doesn't.",
+        ],
+      },
+      {
+        heading: "What self-hosting really costs",
+        body: [
+          "Not money, mostly — time and attention. Installation is the easy part (Docker images and one-click installers like Pinokio have seen to that). The real costs come later: keeping the stack updated as upstream feeds change their formats, replacing API keys when quotas bite, and discovering the scope limits buried in READMEs — OSIRIS's maritime and conflict layers, for example, are static reference datasets rather than live feeds, which matters if you assumed otherwise. And for the flagship visual features, the meter runs on you: God's Eye View's photorealistic tiles bill against your Cesium ion or Google account, and its voice agent against your OpenAI account. Free software, metered planet.",
+          "What you get for that effort is real: the code is yours to audit and extend, your queries never leave your infrastructure, and there's no subscription that can change price or shut down. For analysts with compliance constraints, that last point can end the argument on its own.",
+        ],
+      },
+      {
+        heading: "What hosted really gives up",
+        body: [
+          "Control, in a word. You can't fork a website, add a private data layer, or inspect how a feed was processed. Your usage sits on someone else's infrastructure, under their pricing — and pricing in this niche varies wildly in transparency, from published consumer tiers (WorldEye: $3.99/week to $59.99/year; World Monitor Pro: $39.99/month) to premium tiers with no public price at all. What you get back is everything operational: the feeds are maintained, the keys are theirs, the uptime is their problem, and the product works on your phone the second you open it. Our [OSIRIS alternatives guide](/alternatives/osiris) and [head-to-head](/compare/worldeye-vs-osiris) work through one pairing in detail.",
+        ],
+      },
+      {
+        heading: "A checklist for choosing",
+        body: [
+          "Choose self-hosted if: you need the data path on your own machines; you want tools that hosted products don't offer (OSIRIS's crypto tracing and sanctions search, vulnerability scanning); you'll genuinely maintain the stack; or you want to build on the code. Choose hosted if: you want to watch rather than operate; your 'infrastructure' is a phone; you'd rather pay a published subscription than feed API meters; or the feature you need is a live one the open-source version only carries as static data.",
+          "And a hybrid worth knowing: some products live in both schools — World Monitor's dashboard is hosted free, with its AGPL code available if you later want your own instance. Trying the hosted version of an open-source tool first is the cheapest evaluation there is. The wider field is ranked in our guide to the [best global intelligence dashboards](/best-global-intelligence-dashboards) and the [free OSINT tools](/free-osint-tools) list.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is self-hosted actually free?",
+        a: "The code usually is (MIT or AGPL). Running it isn't quite: hosting, your time, and metered third-party services (map tiles, AI APIs) all cost something. Hosted products convert those into a subscription — or, for the core map on WorldEye and World Monitor, nothing at all.",
+      },
+      {
+        q: "Which open-source dashboard is strongest in 2026?",
+        a: "For analyst tooling, OSIRIS (recon, crypto tracing, Telegram OSINT). For geopolitical data, World Monitor's codebase. For cinematic visualization, God's Eye View. They're compared in our alternatives guides.",
+      },
+      {
+        q: "Can a hosted dashboard see my queries?",
+        a: "Any hosted service processes your requests on its servers — that's inherent. If your work can't tolerate that, self-hosting (or a tool whose code you can audit) is the right call.",
+      },
+    ],
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {
