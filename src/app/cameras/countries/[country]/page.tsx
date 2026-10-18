@@ -163,7 +163,10 @@ export default async function CountryPage({
         {/* Stat row */}
         <div className="mt-10 grid grid-cols-3 gap-3 max-w-2xl mx-auto text-center">
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]">{c.count.toLocaleString("en-US")}</div>
+            {/* data-country-live-cameras: on explorer-enabled pages the
+                explorer overwrites this snapshot count with its live
+                selection once loaded (see CountryCameraExplorer). */}
+            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]" data-country-live-cameras>{c.count.toLocaleString("en-US")}</div>
             <div className="text-xs text-white/45 mt-1">live cameras</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">

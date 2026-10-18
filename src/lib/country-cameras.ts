@@ -59,10 +59,29 @@ function countryKeys(config: CountryExplorerConfig): Set<string> {
   return new Set([config.country, ...config.aliases].map(k => clean(k).toLowerCase()));
 }
 
+/** Name as sources disagree on it: "Chaweng - Soi…" vs "Chaweng — Soi…". */
+function normalizedName(name: string | undefined): string {
+  return clean(name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function hasCoords(cam: CountryCamera): boolean {
+  return typeof cam.lat === 'number' && typeof cam.lng === 'number';
+}
+
+/** ~0.001° of arc — roughly 100 m on the ground. */
+const NEAR_DUPLICATE_DEG = 0.001;
+
 /**
  * Every record in the catalogue that belongs to this country, deduplicated
+ * and sorted area-then-name so the grid reads geographically. Two passes:
  * by id (region responses are concatenated, and a camera can ride in two
- * regions) and sorted area-then-name so the grid reads geographically.
+ * regions), then by near-duplicate — the same physical camera reported by
+ * two sources under punctuation-variant names ("Chaweng - Soi Green Mango"
+ * vs "Chaweng — Soi Green Mango") at effectively the same spot. Records
+ * without coordinates can only take part in the id pass.
  */
 export function selectCountryCameras(
   cameras: readonly CountryCamera[],
@@ -70,11 +89,27 @@ export function selectCountryCameras(
 ): CountryCamera[] {
   const keys = countryKeys(config);
   const seen = new Set<string>();
+  const keptNames: { name: string; cam: CountryCamera }[] = [];
   const out: CountryCamera[] = [];
   for (const cam of cameras) {
     if (!cam?.id || seen.has(cam.id)) continue;
     if (!keys.has(clean(cam.country).toLowerCase())) continue;
+    const name = normalizedName(cam.name);
+    if (
+      name &&
+      hasCoords(cam) &&
+      keptNames.some(
+        k =>
+          k.name === name &&
+          hasCoords(k.cam) &&
+          Math.hypot((k.cam.lat as number) - (cam.lat as number), (k.cam.lng as number) - (cam.lng as number)) <=
+            NEAR_DUPLICATE_DEG,
+      )
+    ) {
+      continue;
+    }
     seen.add(cam.id);
+    if (name) keptNames.push({ name, cam });
     out.push(cam);
   }
   return out.sort((a, b) => {

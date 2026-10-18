@@ -41,6 +41,51 @@ describe('selectCountryCameras', () => {
     expect(out.find(c => c.id === 'a')?.name).toBe('One');
   });
 
+  it('drops near-duplicates: same camera, punctuation-variant name, same spot', () => {
+    const out = selectCountryCameras(
+      [
+        cam({ id: 'a', name: 'Chaweng - Soi Green Mango', lat: 9.5317, lng: 100.0609 }),
+        cam({ id: 'b', name: 'Chaweng — Soi Green Mango', lat: 9.53175, lng: 100.06095 }),
+      ],
+      thailand,
+    );
+    expect(out.map(c => c.id)).toEqual(['a']);
+  });
+
+  it('keeps same-name cameras at genuinely different locations', () => {
+    const out = selectCountryCameras(
+      [
+        cam({ id: 'a', name: 'Beach Road', lat: 9.5317, lng: 100.0609 }),
+        cam({ id: 'b', name: 'Beach Road', lat: 9.6317, lng: 100.1609 }),
+      ],
+      thailand,
+    );
+    expect(out.map(c => c.id)).toEqual(['a', 'b']);
+  });
+
+  it('keeps same-name records when coordinates are missing (id dedupe only)', () => {
+    const out = selectCountryCameras(
+      [
+        cam({ id: 'a', name: 'Chaweng - Soi Green Mango' }),
+        cam({ id: 'b', name: 'Chaweng — Soi Green Mango', lat: 9.5317, lng: 100.0609 }),
+        cam({ id: 'c', name: 'Chaweng — Soi Green Mango' }),
+      ],
+      thailand,
+    );
+    expect(out.map(c => c.id)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('keeps different cameras that merely share a location', () => {
+    const out = selectCountryCameras(
+      [
+        cam({ id: 'a', name: 'Pier North', lat: 9.5317, lng: 100.0609 }),
+        cam({ id: 'b', name: 'Pier South', lat: 9.5317, lng: 100.0609 }),
+      ],
+      thailand,
+    );
+    expect(out.map(c => c.id)).toEqual(['a', 'b']);
+  });
+
   it('sorts by city, then name', () => {
     const out = selectCountryCameras(
       [
