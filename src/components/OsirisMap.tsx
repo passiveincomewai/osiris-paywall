@@ -48,6 +48,8 @@ import MapControls from '@/components/MapControls';
 import CinematicDirector from '@/components/CinematicDirector';
 import SpaceMissionsPanel from '@/components/SpaceMissionsPanel';
 import { launchStatusKind, type LaunchRecord } from '@/lib/launches/types';
+import StreetLevelViewer from '@/components/StreetLevelViewer';
+import { STREET_LEVEL_MAX_SPAN_DEG, STREET_LEVEL_MIN_ZOOM, type StreetPicture } from '@/lib/streetlevel/types';
 import { launchPadKey } from '@/lib/launches/normalize';
 import { nextLaunch } from '@/lib/launches/countdown';
 import { spaceMissionPreset } from '@/lib/launches/preset';
@@ -266,6 +268,29 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const [launchData, setLaunchData] = useState<{ upcoming: LaunchRecord[]; previous: LaunchRecord[]; stale: boolean; error: boolean } | null>(null);
   const [selectedPadKey, setSelectedPadKey] = useState<string | null>(null);
   const [selectedLaunchId, setSelectedLaunchId] = useState<string | null>(null);
+  // Street Level keeps its Panoramax picture in-map like drones: the
+  // coverage chip (always visible while the layer is on — it is what
+  // makes "no coverage here" a readable state instead of an empty map),
+  // the records behind the dots for click lookup, and the picture open
+  // in the viewer panel.
+  const [streetLevelChip, setStreetLevelChip] = useState<string | null>(null);
+  const [streetPicture, setStreetPicture] = useState<StreetPicture | null>(null);
+  const [streetPictureLoading, setStreetPictureLoading] = useState(false);
+  const streetLevelPicsRef = useRef(new Map<string, StreetPicture>());
+  // Sequence prev/next in the viewer goes through /api/streetlevel
+  // (server-cached) and glides the globe to the neighbouring photo.
+  const navigateStreetPicture = useCallback(async (id: string) => {
+    setStreetPictureLoading(true);
+    try {
+      const r = await fetch(`/api/streetlevel?picture=${encodeURIComponent(id)}`);
+      const j = await r.json();
+      if (j.picture) {
+        setStreetPicture(j.picture as StreetPicture);
+        mapRef.current?.easeTo({ center: [j.picture.lng, j.picture.lat], duration: 600 });
+      }
+    } catch { /* keep the current photo on screen */ }
+    setStreetPictureLoading(false);
+  }, []);
   const trafficNetRef = useRef<RoadNetwork | null>(null);
   const trafficVehiclesStateRef = useRef<SimVehicle[]>([]);
   const trafficFlowRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
@@ -848,7 +873,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-cctv', cameraColor, 10);
       createDroneIcon(map, 'drone-icon', '#B2FF59', 30);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay', 'street-level'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -1116,6 +1141,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'text-allow-overlap': true,
       }, paint: { 'text-color': '#FFE082', 'text-halo-color': '#000', 'text-halo-width': 1 }});
 
+      // Street Level — Panoramax photo positions (via /api/streetlevel).
+      // Teal family — no other layer owns it. Dots only ever exist at
+      // street zooms; the effect below owns loading and the chip.
+      map.addLayer({ id: 'street-level-glow', type: 'circle', source: 'street-level', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 5, 18, 10, 22, 16],
+        'circle-color': '#26C6DA', 'circle-opacity': 0.25, 'circle-blur': 1,
+      }});
+      map.addLayer({ id: 'street-level-dots', type: 'circle', source: 'street-level', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 2.5, 18, 4.5, 22, 7],
+        'circle-color': '#4DD0E1', 'circle-opacity': 0.95,
+        'circle-stroke-color': '#062A30', 'circle-stroke-width': 1.1,
+      }});
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
         'circle-radius': ['interpolate',['linear'],['zoom'], 1,5, 5,8, 10,14, 14,20],
@@ -3438,6 +3475,89 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.off('click', 'launch-pads', onPadClick);
     };
   }, [mapReady, (activeLayers as any).space_missions, setGeo]);
+  // Street Level — community street-level photos from Panoramax,
+  // proxied + cached by /api/streetlevel (lib/streetlevel). Viewport
+  // discipline per the brief: NOTHING loads below street zoom (the chip
+  // says why), and at street zoom the request is the exact viewport —
+  // the server guards the span and caches on a quantized grid. An empty
+  // result is a real provider answer and renders as the no-coverage
+  // chip; a provider failure keeps the last good dots and the chip says
+  // Panoramax did not answer. The imagery is dated community photos —
+  // never live — and the chip + viewer both say so.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    const on = !!(activeLayers as any).street_level;
+    if (!on) {
+      setGeo('street-level', []);
+      setStreetLevelChip(null);
+      setStreetPicture(null);
+      streetLevelPicsRef.current = new Map();
+      return;
+    }
+    let live = true;
+    const load = async () => {
+      if (!live) return;
+      if (map.getZoom() < STREET_LEVEL_MIN_ZOOM) {
+        setGeo('street-level', []);
+        streetLevelPicsRef.current = new Map();
+        setStreetLevelChip('ZOOM IN TO STREET LEVEL — PHOTO COVERAGE LOADS AT ZOOM 15+');
+        return;
+      }
+      const b = map.getBounds();
+      if (b.getEast() - b.getWest() > STREET_LEVEL_MAX_SPAN_DEG || b.getNorth() - b.getSouth() > STREET_LEVEL_MAX_SPAN_DEG) {
+        setGeo('street-level', []);
+        streetLevelPicsRef.current = new Map();
+        setStreetLevelChip('AREA TOO WIDE FOR STREET LEVEL — ZOOM IN');
+        return;
+      }
+      try {
+        const r = await fetch(`/api/streetlevel?bbox=${b.getWest()},${b.getSouth()},${b.getEast()},${b.getNorth()}`);
+        const j = await r.json();
+        if (!live) return;
+        if (!r.ok || j.error) {
+          setStreetLevelChip('STREET-LEVEL DATA UNAVAILABLE — PANORAMAX DID NOT ANSWER');
+          return; // keep the last good dots on screen
+        }
+        const pics: StreetPicture[] = j.pictures ?? [];
+        streetLevelPicsRef.current = new Map(pics.map((p) => [p.id, p]));
+        setGeo('street-level', pics.map((p) => ({
+          type: 'Feature', geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
+          properties: { id: p.id },
+        })));
+        if (!pics.length) {
+          setStreetLevelChip('NO STREET-LEVEL COVERAGE IN THIS AREA — PANORAMAX IS COMMUNITY-CONTRIBUTED, STRONGEST IN FRANCE');
+        } else {
+          let text = `${pics.length} STREET-LEVEL PHOTO${pics.length === 1 ? '' : 'S'} IN VIEW · PANORAMAX · COMMUNITY IMAGERY — NOT LIVE`;
+          if (j.truncated) text += ' · FIRST 300 SHOWN';
+          if (j.stale) text += ' · CACHED COPY — PANORAMAX UNREACHABLE';
+          setStreetLevelChip(text);
+        }
+      } catch {
+        if (!live) return;
+        setStreetLevelChip('STREET-LEVEL DATA UNAVAILABLE — PANORAMAX DID NOT ANSWER');
+      }
+    };
+    const onPicClick = (e: any) => {
+      const id = e.features?.[0]?.properties?.id;
+      const pic = id ? streetLevelPicsRef.current.get(id) : undefined;
+      if (pic) setStreetPicture(pic);
+    };
+    const onEnter = () => { map.getCanvas().style.cursor = 'pointer'; };
+    const onLeave = () => { map.getCanvas().style.cursor = ''; };
+    map.on('click', 'street-level-dots', onPicClick);
+    map.on('mouseenter', 'street-level-dots', onEnter);
+    map.on('mouseleave', 'street-level-dots', onLeave);
+    map.on('moveend', load);
+    void load();
+    return () => {
+      live = false;
+      map.off('click', 'street-level-dots', onPicClick);
+      map.off('mouseenter', 'street-level-dots', onEnter);
+      map.off('mouseleave', 'street-level-dots', onLeave);
+      map.off('moveend', load);
+    };
+  }, [mapReady, (activeLayers as any).street_level, setGeo]);
 
   // Traffic — SIMULATED vehicles on the basemap's own OSM road geometry.
   // Roads are extracted from the CARTO `transportation` source-layer of
@@ -5051,13 +5171,21 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           selectedLaunchId={selectedLaunchId}
           onSelectPad={setSelectedPadKey}
           onSelectLaunch={setSelectedLaunchId}
-          chipOffsetCount={[trafficChip, droneChip, transitNotice].filter(Boolean).length}
+          chipOffsetCount={[trafficChip, droneChip, transitNotice, streetLevelChip].filter(Boolean).length}
+        />
+      )}
+      {mapReady && streetPicture && (
+        <StreetLevelViewer
+          picture={streetPicture}
+          loading={streetPictureLoading}
+          onClose={() => setStreetPicture(null)}
+          onNavigate={navigateStreetPicture}
         />
       )}
       {mapReady && flightFollowUi && (
         <div
           className="absolute left-1/2 z-[240] -translate-x-1/2 px-3"
-          style={{ bottom: `${6 + [trafficChip, droneChip, transitNotice].filter(Boolean).length * 4.5}rem` }}
+          style={{ bottom: `${6 + [trafficChip, droneChip, transitNotice, streetLevelChip].filter(Boolean).length * 4.5}rem` }}
         >
           <FlightFollowHud
             hudRef={flightFollowHudRef}
@@ -5071,13 +5199,27 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       {flightFollowNotice && (
         <div
           className="absolute left-1/2 z-[130] -translate-x-1/2 px-3 pointer-events-none"
-          style={{ bottom: `${(flightFollowUi ? 17 : 6) + [trafficChip, droneChip, transitNotice].filter(Boolean).length * 4.5}rem` }}
+          style={{ bottom: `${(flightFollowUi ? 17 : 6) + [trafficChip, droneChip, transitNotice, streetLevelChip].filter(Boolean).length * 4.5}rem` }}
         >
           <div className="rounded-lg border border-amber-300/25 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
             <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
               <span className="text-white/90 uppercase tracking-wider">Flight Follow</span>
               {' — '}
               <span className="text-amber-200/90">{flightFollowNotice}</span>
+            </p>
+          </div>
+        </div>
+      )}
+      {streetLevelChip && (
+        <div
+          className="absolute left-1/2 z-[120] -translate-x-1/2 px-3 pointer-events-none"
+          style={{ bottom: `${6 + [trafficChip, droneChip, transitNotice].filter(Boolean).length * 4.5}rem` }}
+        >
+          <div className="rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+              <span className="text-white/90 uppercase tracking-wider">Street Level</span>
+              {' — '}
+              <span className="text-white/80">{streetLevelChip}</span>
             </p>
           </div>
         </div>
@@ -5128,7 +5270,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       {sensorChipText && (
         <div
           className="absolute left-1/2 z-[120] -translate-x-1/2 px-3 pointer-events-none"
-          style={{ bottom: `${6 + [trafficChip, droneChip, transitNotice].filter(Boolean).length * 4.5}rem` }}
+          style={{ bottom: `${6 + [trafficChip, droneChip, transitNotice, streetLevelChip].filter(Boolean).length * 4.5}rem` }}
         >
           <div className="pointer-events-auto flex items-start gap-2 rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
             <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">

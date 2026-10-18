@@ -515,6 +515,10 @@ export default function Dashboard() {
     /* Space Missions: LL2 launch board + pads — off by default; the data
        loads only while the layer is on (see lib/launches). */
     space_missions: false,
+    /* Street Level: Panoramax community photos — off by default; the
+       globe only queries at street zooms, never at global zoom
+       (see lib/streetlevel). */
+    street_level: false,
     balloons: false,
     cctv: true,
     /* The live preview tiles over the camera dots — see CctvPreviews. */
