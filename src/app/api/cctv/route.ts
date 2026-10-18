@@ -46,6 +46,14 @@ import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
+  fetchOccHarvestAfrica,
+  fetchOccHarvestAsiaPacific,
+  fetchOccHarvestEurope,
+  fetchOccHarvestLatinAmerica,
+  fetchOccHarvestNorthAmerica,
+  occHarvestEnabled,
+} from './opencctv-harvest';
+import {
   fetchLatamLiveCameras,
   fetchAfricaLiveCameras,
   fetchEuropeLiveCameras,
@@ -541,6 +549,21 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'public-webcams-rest': fetchRestPublicWebcams,
 };
 
+/* The OpenCCTV global harvest (camera expansion, Stage B): generated,
+   probe-verified records from licensing-cleared OpenCCTV families,
+   sharded by continent so bounds queries stay sharded. Registered only
+   when the generation produced data and the flag is on
+   (OSIRIS_CCTV_OCC_HARVEST=off) — an absent registration is a catalogue
+   without the source, indistinguishable from before it existed. */
+const OCC_HARVEST_ON = occHarvestEnabled();
+if (OCC_HARVEST_ON) {
+  RAW_REGION_FETCHERS['occ-north-america'] = fetchOccHarvestNorthAmerica;
+  RAW_REGION_FETCHERS['occ-latin-america'] = fetchOccHarvestLatinAmerica;
+  RAW_REGION_FETCHERS['occ-europe'] = fetchOccHarvestEurope;
+  RAW_REGION_FETCHERS['occ-africa'] = fetchOccHarvestAfrica;
+  RAW_REGION_FETCHERS['occ-asia-pacific'] = fetchOccHarvestAsiaPacific;
+}
+
 /**
  * Every region is served from the shared source cache.
  *
@@ -929,6 +952,17 @@ function getRegionsForBounds(lat: number, lng: number, radius: number): string[]
   if (lat > 11 && lat < 52 && lng > -124 && lng < -59) regions.push('public-webcams-americas');
   if (lat > -35 && lat < 62 && lng > 30 && lng < 152) regions.push('public-webcams-rest');
 
+  /* OpenCCTV harvest shards — boxes cover each shard's full extent (see
+     lib/camera-expansion/shards.ts); overlap with other regions is fine,
+     absence would not be: an unregistered key must never be returned. */
+  if (OCC_HARVEST_ON) {
+    if (lat > 13 && lng < -29) regions.push('occ-north-america');
+    if (lat < 15 && lng < -29) regions.push('occ-latin-america');
+    if (lat > 35 && lng > -31 && lng < 56) regions.push('occ-europe');
+    if (lat < 37 && lng > -31 && lng < 31) regions.push('occ-africa');
+    if (lng > 28) regions.push('occ-asia-pacific');
+  }
+
   return regions.length > 0 ? regions : ['uk', 'us-east']; // Default fallback
 }
 
@@ -980,6 +1014,15 @@ export async function GET(request: Request) {
     const lat = parseFloat(searchParams.get('lat') || '0');
     const lng = parseFloat(searchParams.get('lng') || '0');
     const radius = parseFloat(searchParams.get('radius') || '10');
+
+    /* Region discovery for sharded clients (camera-catalog.ts): the key
+       list is a few hundred bytes; the world payload it replaces is not. */
+    if (region === 'list') {
+      return NextResponse.json(
+        { regions: Object.keys(REGION_FETCHERS) },
+        { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' } },
+      );
+    }
 
     let regionsToFetch: string[];
 
