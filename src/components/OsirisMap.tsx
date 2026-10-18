@@ -21,6 +21,7 @@ import {
   createRng, reconcileVehicles, advanceVehicles, vehicleFeature, type SimVehicle,
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
+import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
 import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
@@ -215,6 +216,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // TomTom flow sample, and the honest-labeling chip (always visible
   // while the layer is on — it carries the simulation disclaimer).
   const [trafficChip, setTrafficChip] = useState<string | null>(null);
+  // Drone layer keeps its live picture in-map like transit: the latest
+  // /api/drones/live snapshot, the followed drone (camera follow), and
+  // the counter + coverage chip (always visible while the layer is on —
+  // it is what makes "0 detected" and "no coverage here" readable states
+  // instead of a silently empty map).
+  const [droneChip, setDroneChip] = useState<string | null>(null);
+  const droneLiveRef = useRef<{ drones: any[]; receivers: any[] }>({ drones: [], receivers: [] });
+  const droneFollowRef = useRef<string | null>(null);
   const trafficNetRef = useRef<RoadNetwork | null>(null);
   const trafficVehiclesStateRef = useRef<SimVehicle[]>([]);
   const trafficFlowRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
@@ -314,6 +323,40 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     ctx.beginPath();
     ctx.arc(size/2, size/2, size/2 - 1, 0, Math.PI * 2);
     ctx.fill();
+    map.addImage(id, { width: size, height: size, data: new Uint8Array(ctx.getImageData(0, 0, size, size).data) });
+  }, []);
+
+  /* Quadcopter glyph (top view: X arms, four rotor rings, centre body) —
+     deliberately NOT a plane silhouette: drones must never read as
+     aircraft on this map. Points "up" (north) at rotation 0 and is
+     rotated by heading via icon-rotate. */
+  const createDroneIcon = useCallback((map: maplibregl.Map, id: string, color: string, size: number) => {
+    if (map.hasImage(id)) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d')!;
+    const c = size / 2;
+    const arm = size * 0.30;
+    const rotorR = size * 0.19;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = Math.max(1.4, size * 0.055);
+    ctx.beginPath();
+    ctx.moveTo(c - arm, c - arm); ctx.lineTo(c + arm, c + arm);
+    ctx.moveTo(c + arm, c - arm); ctx.lineTo(c - arm, c + arm);
+    ctx.stroke();
+    for (const [x, y] of [[c - arm, c - arm], [c + arm, c - arm], [c - arm, c + arm], [c + arm, c + arm]]) {
+      ctx.beginPath();
+      ctx.arc(x, y, rotorR, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.arc(c, c, size * 0.13, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(c, c - size * 0.13);
+    ctx.lineTo(c, c - size * 0.30);
+    ctx.stroke();
     map.addImage(id, { width: size, height: size, data: new Uint8Array(ctx.getImageData(0, 0, size, size).data) });
   }, []);
 
@@ -468,8 +511,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-green', isGhost ? phantomPurple : '#26A69A', 10);
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
+      createDroneIcon(map, 'drone-icon', '#B2FF59', 30);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -630,6 +674,69 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-color': ['match', ['get', 'band'], 'free', BAND_COLORS.free, 'slow', BAND_COLORS.slow, 'jam', BAND_COLORS.jam, '#B0BEC5'],
         'circle-opacity': 0.95, 'circle-stroke-color': '#04140A', 'circle-stroke-width': 0.8,
       }});
+
+      // Drones — FAA airspace reference (LAANC grid ceilings + national
+      // security restrictions), proxied from FAA ArcGIS by /api/drones/airspace.
+      map.addLayer({ id: 'drone-airspace-fill', type: 'fill', source: 'drone-airspace', filter: ['==', ['get', 'kind'], 'grid'], paint: {
+        'fill-color': ['step', ['number', ['get', 'ceiling'], 400],
+          '#FF5252', 50, '#FF9800', 100, '#FFC107', 200, '#9CCC65', 400, '#558B2F'],
+        'fill-opacity': 0.16,
+      }});
+      map.addLayer({ id: 'drone-airspace-line', type: 'line', source: 'drone-airspace', filter: ['==', ['get', 'kind'], 'grid'], paint: {
+        'line-color': ['step', ['number', ['get', 'ceiling'], 400],
+          '#FF5252', 50, '#FF9800', 100, '#FFC107', 200, '#9CCC65', 400, '#558B2F'],
+        'line-width': 0.7, 'line-opacity': 0.55,
+      }});
+      map.addLayer({ id: 'drone-restriction-fill', type: 'fill', source: 'drone-airspace', filter: ['==', ['get', 'kind'], 'restriction'], paint: {
+        'fill-color': '#FF1744', 'fill-opacity': 0.28,
+      }});
+      map.addLayer({ id: 'drone-restriction-line', type: 'line', source: 'drone-airspace', filter: ['==', ['get', 'kind'], 'restriction'], paint: {
+        'line-color': '#FF1744', 'line-width': 1.4, 'line-opacity': 0.9,
+      }});
+
+      // Drones — receiver coverage (the honest map of WHERE we can see:
+      // a filled circle exists only while that receiver is reporting).
+      map.addLayer({ id: 'drone-coverage-fill', type: 'fill', source: 'drone-receivers', filter: ['==', ['get', 'kind'], 'coverage'], paint: {
+        'fill-color': '#B2FF59', 'fill-opacity': 0.05,
+      }});
+      map.addLayer({ id: 'drone-coverage-line', type: 'line', source: 'drone-receivers', filter: ['==', ['get', 'kind'], 'coverage'], paint: {
+        'line-color': '#B2FF59', 'line-width': 1, 'line-opacity': 0.4, 'line-dasharray': [3, 2],
+      }});
+      map.addLayer({ id: 'drone-rx-dots', type: 'circle', source: 'drone-receivers', filter: ['==', ['get', 'kind'], 'rx'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 3, 6, 5, 10, 7],
+        'circle-color': '#B2FF59',
+        'circle-opacity': ['case', ['boolean', ['get', 'active'], false], 0.95, 0.3],
+        'circle-stroke-color': '#1A2E05', 'circle-stroke-width': 1,
+      }});
+      map.addLayer({ id: 'drone-rx-label', type: 'symbol', source: 'drone-receivers', filter: ['==', ['get', 'kind'], 'rx'], minzoom: 7, layout: {
+        'text-field': ['get', 'name'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.4],
+      }, paint: { 'text-color': '#C5E1A5', 'text-halo-color': '#000', 'text-halo-width': 1 }});
+
+      // Drones — flight trails (short live window only; nothing historical
+      // is kept server-side beyond TRAIL_WINDOW_MS).
+      map.addLayer({ id: 'drone-trails-line', type: 'line', source: 'drone-trails', layout: {
+        'line-cap': 'round', 'line-join': 'round',
+      }, paint: {
+        'line-color': '#B2FF59', 'line-width': 1.6, 'line-opacity': 0.65,
+      }});
+
+      // Drones — the aircraft themselves: quadcopter glyph rotated by
+      // heading, over a soft glow. Lime, a hue no other layer owns.
+      map.addLayer({ id: 'drone-glow', type: 'circle', source: 'drones', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 6, 6, 10, 12, 18],
+        'circle-color': '#B2FF59', 'circle-opacity': 0.25, 'circle-blur': 1,
+      }});
+      map.addLayer({ id: 'drone-icons', type: 'symbol', source: 'drones', layout: {
+        'icon-image': 'drone-icon',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.45, 6, 0.7, 12, 1.05],
+        'icon-rotate': ['number', ['get', 'heading'], 0],
+        'icon-rotation-alignment': 'map',
+        'icon-allow-overlap': true,
+      }});
+      map.addLayer({ id: 'drone-label', type: 'symbol', source: 'drones', minzoom: 9, layout: {
+        'text-field': ['get', 'label'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.7],
+        'text-allow-overlap': false,
+      }, paint: { 'text-color': '#DCEDC8', 'text-halo-color': '#000', 'text-halo-width': 1 }});
 
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
@@ -2643,6 +2750,190 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     return () => { live = false; clearInterval(iv); map.off('moveend', onMove); };
   }, [mapReady, (activeLayers as any).transit, setGeo]);
 
+  // Live Drone Tracking — Remote ID detections from CONNECTED receivers
+  // and opted-in operators only (lib/drones). Polls /api/drones/live
+  // every 5 s: Next.js on Vercel cannot hold native WebSocket
+  // connections and the store is per-instance memory, so short-poll +
+  // shared cache is the honest transport (docs/drones.md). Nothing here
+  // is simulated: zero drones with zero receivers is the truthful day-one
+  // state, and the chip says so — including when the current viewport
+  // has no receiver coverage at all.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    const on = !!(activeLayers as any).drones;
+    const showAirspace = on && (activeLayers as any).drone_airspace !== false;
+    if (!on) {
+      setGeo('drones', []); setGeo('drone-trails', []); setGeo('drone-receivers', []); setGeo('drone-airspace', []);
+      setDroneChip(null);
+      droneFollowRef.current = null;
+      droneLiveRef.current = { drones: [], receivers: [] };
+      return;
+    }
+    let live = true;
+    const esc = (v: any): string => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const pStyle = `background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;`;
+    const openPopup = (lngLat: any, html: string) => {
+      popupRef.current?.remove();
+      popupRef.current = new maplibregl.Popup({ closeButton: true, maxWidth: '380px', offset: 14 }).setLngLat(lngLat).setHTML(html).addTo(map);
+    };
+    const fmtAgo = (ageS: number) => ageS < 5 ? 'just now' : ageS < 60 ? `${Math.floor(ageS)}s ago` : `${Math.floor(ageS / 60)}m ${Math.floor(ageS % 60)}s ago`;
+
+    const updateChip = () => {
+      if (!live) return;
+      const { drones, receivers } = droneLiveRef.current;
+      if (!receivers.length) {
+        setDroneChip('0 DETECTED · NO RECEIVERS CONNECTED — LIVE DRONES APPEAR ONLY WHERE A RECEIVER FEEDS WORLDEYE');
+        return;
+      }
+      const active = receivers.filter((r: any) => r.active).length;
+      let text = `${drones.length} DETECTED · ${active} RECEIVER${active === 1 ? '' : 'S'} ACTIVE`;
+      const b = map.getBounds();
+      const bounds: LngLatBounds = { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() };
+      if (!viewportCovered(bounds, receivers)) text += ' · NO RECEIVER COVERAGE IN THIS AREA — DRONES MAY FLY UNDETECTED';
+      if (droneFollowRef.current) text += ' · FOLLOWING — DRAG MAP TO RELEASE';
+      setDroneChip(text);
+    };
+
+    const render = () => {
+      if (!live) return;
+      const { drones, receivers } = droneLiveRef.current;
+      setGeo('drones', drones.map((d: any) => ({
+        type: 'Feature', geometry: { type: 'Point', coordinates: [d.lng, d.lat] },
+        properties: {
+          id: d.id, heading: d.headingDeg ?? 0,
+          label: d.heightAglM != null ? `${Math.round(d.heightAglM)} m` : '',
+          altMsl: d.altitudeMslM, heightAgl: d.heightAglM, speed: d.speedMps,
+          vspeed: d.verticalSpeedMps, ageS: d.ageS,
+        },
+      })));
+      setGeo('drone-trails', drones
+        .filter((d: any) => (d.trail?.length ?? 0) >= 2)
+        .map((d: any) => ({
+          type: 'Feature', geometry: { type: 'LineString', coordinates: d.trail }, properties: { id: d.id },
+        })));
+      const rxFeats: any[] = [];
+      for (const r of receivers as any[]) {
+        if (r.active) {
+          rxFeats.push({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [circlePolygon(r.lng, r.lat, r.radiusM)] }, properties: { kind: 'coverage' } });
+        }
+        rxFeats.push({ type: 'Feature', geometry: { type: 'Point', coordinates: [r.lng, r.lat] }, properties: { kind: 'rx', name: r.name, active: r.active, radiusM: r.radiusM, lastReport: r.lastReport } });
+      }
+      setGeo('drone-receivers', rxFeats);
+      const fid = droneFollowRef.current;
+      if (fid) {
+        const d = drones.find((x: any) => x.id === fid);
+        if (d) map.easeTo({ center: [d.lng, d.lat], duration: 900 });
+        else droneFollowRef.current = null; // followed drone left the sky
+      }
+      updateChip();
+    };
+
+    const load = async () => {
+      try {
+        const r = await fetch('/api/drones/live');
+        const j = await r.json();
+        if (!live) return;
+        droneLiveRef.current = { drones: j.drones ?? [], receivers: j.receivers ?? [] };
+      } catch { /* keep the last good picture */ }
+      render();
+    };
+
+    const loadAirspace = async () => {
+      if (!showAirspace) { setGeo('drone-airspace', []); return; }
+      const b = map.getBounds();
+      if (b.getEast() - b.getWest() > 3 || b.getNorth() - b.getSouth() > 3) { setGeo('drone-airspace', []); return; }
+      try {
+        const r = await fetch(`/api/drones/airspace?bbox=${b.getWest()},${b.getSouth()},${b.getEast()},${b.getNorth()}`);
+        const j = await r.json();
+        if (!live) return;
+        setGeo('drone-airspace', [...(j.grids ?? []), ...(j.restrictions ?? [])].map((f: any) => ({
+          type: 'Feature', geometry: f.geometry,
+          properties: { kind: f.kind, ceiling: f.ceilingFt, airport: f.airport, laanc: f.laanc, reason: f.reason },
+        })));
+      } catch { /* overlay keeps its last good state */ }
+    };
+
+    (window as any).__weDroneFollowToggle = (id: string) => {
+      droneFollowRef.current = droneFollowRef.current === id ? null : id;
+      popupRef.current?.remove();
+      render();
+    };
+
+    const onDroneClick = (e: any) => {
+      const p = e.features?.[0]?.properties;
+      if (!p) return;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const following = droneFollowRef.current === p.id;
+      openPopup(coords, `<div style="${pStyle}border:1px solid rgba(178,255,89,0.35);">
+        <div style="color:#B2FF59;font-size:12px;font-weight:700;letter-spacing:0.08em;">DRONE · REMOTE ID</div>
+        <div style="color:#5C5A54;font-size:9px;margin-top:2px;">SESSION ${esc(p.id)} · NOT A PERSISTENT ID</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin:8px 0;">
+          <div><span style="color:#5C5A54;">ALTITUDE (MSL)</span><br/><span style="color:#E8E6E0;">${p.altMsl != null ? Math.round(p.altMsl) + ' m' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">HEIGHT (AGL)</span><br/><span style="color:#E8E6E0;">${p.heightAgl != null ? Math.round(p.heightAgl) + ' m' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">HEADING</span><br/><span style="color:#E8E6E0;">${p.heading != null ? Math.round(p.heading) + '°' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">SPEED</span><br/><span style="color:#E8E6E0;">${p.speed != null ? Math.round(p.speed * 3.6) + ' km/h' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">VERTICAL</span><br/><span style="color:#E8E6E0;">${p.vspeed != null ? p.vspeed + ' m/s' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">LAST SEEN</span><br/><span style="color:#E8E6E0;">${fmtAgo(Number(p.ageS) || 0)}</span></div>
+        </div>
+        <button onclick="window.__weDroneFollowToggle&&window.__weDroneFollowToggle('${esc(p.id)}')" style="display:block;width:100%;padding:7px 10px;background:rgba(178,255,89,0.1);border:1px solid rgba(178,255,89,0.4);color:#DCEDC8;font-family:'JetBrains Mono',monospace;font-size:10px;border-radius:5px;cursor:pointer;">${following ? 'STOP FOLLOWING' : 'FOLLOW DRONE'}</button>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">DATA — REMOTE ID VIA CONNECTED RECEIVER · OPERATOR LOCATION IS NEVER SHOWN</div>
+      </div>`);
+    };
+
+    const onRxClick = (e: any) => {
+      const p = e.features?.[0]?.properties;
+      if (!p) return;
+      const coords = (e.features[0].geometry as any).coordinates;
+      openPopup(coords, `<div style="${pStyle}border:1px solid rgba(178,255,89,0.3);">
+        <div style="color:#B2FF59;font-size:12px;font-weight:700;letter-spacing:0.08em;">REMOTE ID RECEIVER</div>
+        <div style="font-size:10px;color:#E8E6E0;margin:4px 0 8px;">${esc(p.name || 'Receiver')}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">STATUS</span><br/><span style="color:#E8E6E0;">${p.active ? 'REPORTING' : 'QUIET'}</span></div>
+          <div><span style="color:#5C5A54;">DETECTION RADIUS</span><br/><span style="color:#E8E6E0;">${p.radiusM ? (p.radiusM / 1000).toFixed(1) + ' km' : '—'}</span></div>
+        </div>
+        <div style="font-size:9px;color:#B0BEC5;line-height:1.5;">Drones appear on this map only while a receiver like this one can hear their Remote ID broadcast. Outside every receiver's circle, drones may fly undetected.</div>
+      </div>`);
+    };
+
+    const onAirspaceClick = (e: any) => {
+      const p = e.features?.[0]?.properties;
+      if (!p) return;
+      const isGrid = p.kind === 'grid';
+      openPopup(e.lngLat, `<div style="${pStyle}border:1px solid rgba(255,193,7,0.3);">
+        <div style="color:#FFC107;font-size:12px;font-weight:700;letter-spacing:0.08em;">${isGrid ? 'FAA LAANC GRID' : 'UAS FLIGHT RESTRICTION'}</div>
+        <div style="font-size:10px;color:#E8E6E0;margin:4px 0 8px;">${esc(p.airport || (isGrid ? 'Controlled airspace' : 'Restricted area'))}</div>
+        ${isGrid
+          ? `<div style="font-size:9px;color:#B0BEC5;line-height:1.5;">Published ceiling: <span style="color:#E8E6E0;">${p.ceiling != null ? p.ceiling + ' ft AGL' : '—'}</span>${p.laanc != null ? `<br/>LAANC available: <span style="color:#E8E6E0;">${p.laanc ? 'YES' : 'NO'}</span>` : ''}<br/>The ceiling is the altitude up to which LAANC authorization is typically granted here — it is not itself an authorization.</div>`
+          : `<div style="font-size:9px;color:#B0BEC5;line-height:1.5;">${esc(p.reason || 'National security UAS flight restriction')}<br/>Do not fly here without authorization from the FAA and the facility.</div>`}
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">REFERENCE DATA — FAA UAS FACILITY MAPS / FAA ARCGIS · AUTHORIZATION VIA LAANC OR FAA DRONEZONE</div>
+      </div>`);
+    };
+
+    const onDragStart = () => { if (droneFollowRef.current) { droneFollowRef.current = null; updateChip(); } };
+    const onMoveEnd = () => { updateChip(); void loadAirspace(); };
+    map.on('click', 'drone-icons', onDroneClick);
+    map.on('click', 'drone-rx-dots', onRxClick);
+    map.on('click', 'drone-airspace-fill', onAirspaceClick);
+    map.on('click', 'drone-restriction-fill', onAirspaceClick);
+    map.on('moveend', onMoveEnd);
+    map.on('dragstart', onDragStart);
+    void load();
+    void loadAirspace();
+    const iv = setInterval(load, 5000);
+    return () => {
+      live = false;
+      clearInterval(iv);
+      map.off('click', 'drone-icons', onDroneClick);
+      map.off('click', 'drone-rx-dots', onRxClick);
+      map.off('click', 'drone-airspace-fill', onAirspaceClick);
+      map.off('click', 'drone-restriction-fill', onAirspaceClick);
+      map.off('moveend', onMoveEnd);
+      map.off('dragstart', onDragStart);
+      if ((window as any).__weDroneFollowToggle) delete (window as any).__weDroneFollowToggle;
+    };
+  }, [mapReady, (activeLayers as any).drones, (activeLayers as any).drone_airspace, setGeo]);
+
   // Traffic — SIMULATED vehicles on the basemap's own OSM road geometry.
   // Roads are extracted from the CARTO `transportation` source-layer of
   // the tiles the basemap already loaded (querySourceFeatures — no second
@@ -3223,6 +3514,8 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
     setVis(['gbfs-systems','gbfs-label','gbfs-stations','gbfs-vehicles'], (activeLayers as any).gbfs);
     setVis(['transit-dots'], (activeLayers as any).transit);
+    setVis(['drone-glow','drone-icons','drone-label','drone-trails-line','drone-coverage-fill','drone-coverage-line','drone-rx-dots','drone-rx-label'], (activeLayers as any).drones);
+    setVis(['drone-airspace-fill','drone-airspace-line','drone-restriction-fill','drone-restriction-line'], (activeLayers as any).drones && (activeLayers as any).drone_airspace !== false);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);
@@ -4280,6 +4573,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
               <span className="text-white/90 uppercase tracking-wider">Traffic</span>
               {' — '}
               <span className="text-white/80">{trafficChip}</span>
+            </p>
+          </div>
+        </div>
+      )}
+      {droneChip && (
+        <div
+          className="absolute left-1/2 z-[120] -translate-x-1/2 px-3 pointer-events-none"
+          style={{ bottom: (trafficChip || transitNotice) ? '10.5rem' : '6rem' }}
+        >
+          <div className="rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+              <span className="text-white/90 uppercase tracking-wider">Drones</span>
+              {' — '}
+              <span className="text-white/80">{droneChip}</span>
             </p>
           </div>
         </div>

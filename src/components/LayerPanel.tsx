@@ -77,6 +77,8 @@ const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'private', label: 'Private', dataKey: 'private_flights' },
       { key: 'jets', label: 'Private Jets', dataKey: 'private_jets' },
       { key: 'military', label: 'Military', dataKey: 'military_flights' },
+      { key: 'drones', label: 'Drone Tracking', description: 'Live Remote ID drones from connected receivers', dataKey: 'drones' },
+      { key: 'drone_airspace', label: 'FAA Airspace', description: 'LAANC grid ceilings + UAS restrictions (FAA)', dataKey: 'drone-airspace', parent: 'drones' },
     ],
   },
   {

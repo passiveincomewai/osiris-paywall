@@ -504,6 +504,12 @@ export default function Dashboard() {
     traffic: false,
     traffic_vehicles: true,
     traffic_congestion: true,
+    /* Drones: live Remote ID detections from connected receivers only —
+       off by default; the FAA airspace sub-layer rides along once the
+       layer itself is enabled. With no receivers connected the layer is
+       honestly empty (see lib/drones). */
+    drones: false,
+    drone_airspace: true,
     radiation: false,
     infrastructure: false,
     global_incidents: true,
