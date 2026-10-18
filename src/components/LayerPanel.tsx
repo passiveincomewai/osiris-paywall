@@ -158,7 +158,7 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'TRANSIT & MOBILITY',
     icon: Bus,
     layers: [
-      { key: 'transit', label: 'Live Transit', description: 'GTFS-Realtime · buses, trains, ferries', dataKey: '' },
+      { key: 'transit', label: 'Live Transit', description: 'Live buses, trains & ferries · Salt Lake City · Seattle · Denver · Boston · Austin · Minneapolis–St. Paul · Toronto area · Netherlands · Norway · Queensland', dataKey: '' },
       { key: 'gbfs', label: 'Bike & Scooter Share', description: 'GBFS · systems worldwide', dataKey: '' },
     ],
   },

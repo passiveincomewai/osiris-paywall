@@ -194,6 +194,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const gbfsCacheRef = useRef(new Map<string, { at: number; items: any[] }>());
   const transitAgenciesRef = useRef<any[]>([]);
   const transitVehiclesRef = useRef(new Map<string, any[]>());
+  // Coverage honesty: when Live Transit is on but the viewport holds no
+  // covered agency, the layer would otherwise be silently empty. The
+  // notice names the covered regions instead; dismissal lasts until the
+  // layer is toggled off and on again.
+  const [transitNotice, setTransitNotice] = useState<string | null>(null);
+  const transitNoticeDismissedRef = useRef(false);
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
   const alertPinsRef = useRef<AlertPinFeature[]>([]);
@@ -2526,7 +2532,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    if (!(activeLayers as any).transit) { setGeo('transit', []); return; }
+    if (!(activeLayers as any).transit) { setGeo('transit', []); setTransitNotice(null); transitNoticeDismissedRef.current = false; return; }
     let live = true;
     const render = () => {
       if (!live) return;
@@ -2557,6 +2563,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const ags = transitAgenciesRef.current
         .filter((a: any) => a.center[0] >= b.getSouth() - padLat && a.center[0] <= b.getNorth() + padLat && a.center[1] >= b.getWest() - padLng && a.center[1] <= b.getEast() + padLng)
         .slice(0, 6);
+      if (transitAgenciesRef.current.length) {
+        if (ags.length === 0) {
+          if (!transitNoticeDismissedRef.current) {
+            setTransitNotice(transitAgenciesRef.current.map((a: any) => a.region).join(' · '));
+          }
+        } else {
+          setTransitNotice(null);
+        }
+      }
       await Promise.all(ags.map(async (a: any) => {
         try {
           const r = await fetch(`/api/transit/vehicles?agency=${a.id}`);
@@ -3922,6 +3937,25 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} />}
+      {transitNotice && (
+        <div className="absolute left-1/2 bottom-24 z-[120] -translate-x-1/2 px-3 pointer-events-none">
+          <div className="pointer-events-auto flex items-start gap-2 max-w-md rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/60">
+              <span className="text-white/90 uppercase tracking-wider">Live Transit</span>
+              {' — no coverage in this area yet. Covered: '}
+              <span className="text-white/80">{transitNotice}</span>
+            </p>
+            <button
+              type="button"
+              aria-label="Dismiss transit coverage notice"
+              onClick={() => { transitNoticeDismissedRef.current = true; setTransitNotice(null); }}
+              className="shrink-0 w-5 h-5 rounded flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-colors text-sm leading-none"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
