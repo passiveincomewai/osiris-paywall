@@ -273,6 +273,15 @@ export default function Dashboard() {
   const [watchedFlights, setWatchedFlights] = useState<WatchedFlight[]>([]);
   const [aircraftAirports, setAircraftAirports] = useState<Record<string, Airport[]>>({});
 
+  // The Space Missions panel asks the page to switch the satellites layer
+  // on (the panel links out to it; it never claims a catalogued satellite
+  // is a mission's payload). Same global-bridge pattern as below.
+  useEffect(() => {
+    (window as unknown as { __weEnableSatellites?: () => void }).__weEnableSatellites = () => {
+      setActiveLayers((prev: any) => (prev.satellites ? prev : { ...prev, satellites: true }));
+    };
+  }, []);
+
   // The popup lives in raw map HTML, so it hands aircraft over through a global.
   useEffect(() => {
     (window as unknown as { osirisWatchFlight?: (f: WatchedFlight) => void }).osirisWatchFlight = (f) => {
@@ -503,6 +512,9 @@ export default function Dashboard() {
     sat_navigation: false,
     sat_earth: false,
     sat_science: false,
+    /* Space Missions: LL2 launch board + pads — off by default; the data
+       loads only while the layer is on (see lib/launches). */
+    space_missions: false,
     balloons: false,
     cctv: true,
     /* The live preview tiles over the camera dots — see CctvPreviews. */

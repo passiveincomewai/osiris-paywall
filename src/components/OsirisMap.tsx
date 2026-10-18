@@ -46,6 +46,11 @@ import SatelliteCard, { type SatelliteDetail } from '@/components/SatelliteCard'
 import CctvPreviews, { type PreviewCamera } from '@/components/CctvPreviews';
 import MapControls from '@/components/MapControls';
 import CinematicDirector from '@/components/CinematicDirector';
+import SpaceMissionsPanel from '@/components/SpaceMissionsPanel';
+import { launchStatusKind, type LaunchRecord } from '@/lib/launches/types';
+import { launchPadKey } from '@/lib/launches/normalize';
+import { nextLaunch } from '@/lib/launches/countdown';
+import { spaceMissionPreset } from '@/lib/launches/preset';
 import LiveNewsPreviews, { type PreviewFeed } from '@/components/LiveNewsPreviews';
 import { attachTerrain, type TerrainStatus } from '@/lib/map-terrain';
 
@@ -221,6 +226,11 @@ function escHtml(v: any): string {
 
 const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
 
+/** Director presets owned by other systems: Aircraft Follow (Wave 2) and
+ *  Space Mission (Phase 7 — flies to the selected/next launch's pad, and
+ *  is honestly unavailable until launch data is loaded). */
+const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
+
 function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -249,6 +259,13 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const [droneChip, setDroneChip] = useState<string | null>(null);
   const droneLiveRef = useRef<{ drones: any[]; receivers: any[] }>({ drones: [], receivers: [] });
   const droneFollowRef = useRef<string | null>(null);
+  // Space Missions keeps its LL2 board in-map like drones: the latest
+  // /api/launches payload plus the pad/launch selection the panel and the
+  // Director's Space Mission preset read. The replay drawing itself is
+  // driven by SpaceMissionsPanel through setGeo.
+  const [launchData, setLaunchData] = useState<{ upcoming: LaunchRecord[]; previous: LaunchRecord[]; stale: boolean; error: boolean } | null>(null);
+  const [selectedPadKey, setSelectedPadKey] = useState<string | null>(null);
+  const [selectedLaunchId, setSelectedLaunchId] = useState<string | null>(null);
   const trafficNetRef = useRef<RoadNetwork | null>(null);
   const trafficVehiclesStateRef = useRef<SimVehicle[]>([]);
   const trafficFlowRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
@@ -831,7 +848,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-cctv', cameraColor, 10);
       createDroneIcon(map, 'drone-icon', '#B2FF59', 30);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -1055,6 +1072,49 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'text-field': ['get', 'label'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.7],
         'text-allow-overlap': false,
       }, paint: { 'text-color': '#DCEDC8', 'text-halo-color': '#000', 'text-halo-width': 1 }});
+      // Space Missions — launch pads (LL2 via /api/launches). One marker
+      // per pad, coloured by the pad's next-launch status (or its last
+      // outcome when nothing is scheduled). Violet family — no other
+      // layer owns it; status colours reuse the panel's chips.
+      map.addLayer({ id: 'launch-pads-glow', type: 'circle', source: 'launches', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 7, 6, 11, 12, 18],
+        'circle-color': ['match', ['get', 'statusKind'],
+          'go', '#69F0AE', 'tbd', '#FFC107', 'success', '#40C4FF', 'failure', '#FF5252', '#B388FF'],
+        'circle-opacity': 0.22, 'circle-blur': 1,
+      }});
+      map.addLayer({ id: 'launch-pads', type: 'circle', source: 'launches', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 3.2, 6, 5, 12, 7.5],
+        'circle-color': ['match', ['get', 'statusKind'],
+          'go', '#69F0AE', 'tbd', '#FFC107', 'success', '#40C4FF', 'failure', '#FF5252', '#B388FF'],
+        'circle-opacity': 0.95, 'circle-stroke-color': '#0B0714', 'circle-stroke-width': 1.2,
+      }});
+      map.addLayer({ id: 'launch-pads-label', type: 'symbol', source: 'launches', minzoom: 3.5, layout: {
+        'text-field': ['get', 'label'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.6],
+        'text-allow-overlap': false,
+      }, paint: { 'text-color': '#D1C4E9', 'text-halo-color': '#000', 'text-halo-width': 1 }});
+
+      // Space Missions — replay drawing: the full reconstructed ground
+      // track (dim), the flown portion (amber), and the vehicle marker.
+      // Fed only while a replay runs; the permanent RECONSTRUCTED
+      // ESTIMATE banner is rendered by SpaceMissionsPanel.
+      map.addLayer({ id: 'launch-replay-path', type: 'line', source: 'launch-replay', filter: ['==', ['get', 'kind'], 'path'], layout: {
+        'line-cap': 'round', 'line-join': 'round',
+      }, paint: { 'line-color': '#FFB300', 'line-width': 1.2, 'line-opacity': 0.3, 'line-dasharray': [2, 2] }});
+      map.addLayer({ id: 'launch-replay-flown', type: 'line', source: 'launch-replay', filter: ['==', ['get', 'kind'], 'flown'], layout: {
+        'line-cap': 'round', 'line-join': 'round',
+      }, paint: { 'line-color': '#FFB300', 'line-width': 2.4, 'line-opacity': 0.9 }});
+      map.addLayer({ id: 'launch-replay-glow', type: 'circle', source: 'launch-replay', filter: ['==', ['get', 'kind'], 'rocket'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 8, 6, 13, 12, 20],
+        'circle-color': '#FFB300', 'circle-opacity': 0.3, 'circle-blur': 1,
+      }});
+      map.addLayer({ id: 'launch-replay-dot', type: 'circle', source: 'launch-replay', filter: ['==', ['get', 'kind'], 'rocket'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 3.5, 6, 5.5, 12, 8],
+        'circle-color': '#FFD54F', 'circle-opacity': 1, 'circle-stroke-color': '#FFF8E1', 'circle-stroke-width': 1.4,
+      }});
+      map.addLayer({ id: 'launch-replay-label', type: 'symbol', source: 'launch-replay', filter: ['==', ['get', 'kind'], 'rocket'], layout: {
+        'text-field': ['get', 'label'], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.7],
+        'text-allow-overlap': true,
+      }, paint: { 'text-color': '#FFE082', 'text-halo-color': '#000', 'text-halo-width': 1 }});
 
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
@@ -3305,6 +3365,80 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     };
   }, [mapReady, (activeLayers as any).drones, (activeLayers as any).drone_airspace, setGeo]);
 
+  // Space Missions — rocket launches from Launch Library 2, proxied and
+  // quota-cached by /api/launches (lib/launches). Pad markers render from
+  // the board; the selection lives in React state for SpaceMissionsPanel
+  // and the Director's Space Mission preset. The client polls every 5 min
+  // — the server-side cache is what protects the 15 calls/hour quota.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    const on = !!(activeLayers as any).space_missions;
+    if (!on) {
+      setGeo('launches', []);
+      setGeo('launch-replay', []);
+      setLaunchData(null);
+      setSelectedPadKey(null);
+      setSelectedLaunchId(null);
+      return;
+    }
+    let live = true;
+    const render = (upcoming: LaunchRecord[], previous: LaunchRecord[]) => {
+      const pads = new Map<string, { lat: number; lon: number; name: string; next?: LaunchRecord; last?: LaunchRecord }>();
+      const add = (l: LaunchRecord, slot: 'next' | 'last') => {
+        const key = launchPadKey(l);
+        if (!key || l.padLat === null || l.padLon === null) return;
+        let pad = pads.get(key);
+        if (!pad) { pad = { lat: l.padLat, lon: l.padLon, name: l.padName ?? 'Launch pad' }; pads.set(key, pad); }
+        if (slot === 'next' && !pad.next) pad.next = l;
+        if (slot === 'last' && !pad.last) pad.last = l;
+      };
+      upcoming.forEach((l) => add(l, 'next'));
+      previous.forEach((l) => add(l, 'last'));
+      setGeo('launches', [...pads.entries()].map(([key, pad]) => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [pad.lon, pad.lat] },
+        properties: {
+          padKey: key,
+          label: pad.name,
+          statusKind: launchStatusKind((pad.next ?? pad.last) as LaunchRecord),
+        },
+      })));
+    };
+    const load = async () => {
+      try {
+        const r = await fetch('/api/launches');
+        const j = await r.json();
+        if (!live) return;
+        if (!r.ok || j.error) {
+          setLaunchData({ upcoming: [], previous: [], stale: false, error: true });
+          return;
+        }
+        const upcoming: LaunchRecord[] = j.upcoming ?? [];
+        const previous: LaunchRecord[] = j.previous ?? [];
+        setLaunchData({ upcoming, previous, stale: !!j.stale, error: false });
+        render(upcoming, previous);
+      } catch {
+        if (!live) return;
+        setLaunchData((prev) => prev ?? { upcoming: [], previous: [], stale: false, error: true });
+      }
+    };
+    const onPadClick = (e: any) => {
+      const props = e.features?.[0]?.properties;
+      if (!props?.padKey) return;
+      setSelectedLaunchId(null);
+      setSelectedPadKey(props.padKey);
+    };
+    map.on('click', 'launch-pads', onPadClick);
+    void load();
+    const iv = setInterval(load, 300_000);
+    return () => {
+      live = false;
+      clearInterval(iv);
+      map.off('click', 'launch-pads', onPadClick);
+    };
+  }, [mapReady, (activeLayers as any).space_missions, setGeo]);
+
   // Traffic — SIMULATED vehicles on the basemap's own OSM road geometry.
   // Roads are extracted from the CARTO `transportation` source-layer of
   // the tiles the basemap already loaded (querySourceFeatures — no second
@@ -4897,7 +5031,29 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} />}
-      {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={FLIGHT_FOLLOW_PRESETS} />}
+      {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
+        if (!launchData) return null;
+        const sel = [...launchData.upcoming, ...launchData.previous].find((l) => l.id === selectedLaunchId);
+        const cand = sel ?? nextLaunch(launchData.upcoming, Date.now());
+        return cand && cand.padLat !== null && cand.padLon !== null
+          ? { name: cand.missionName ?? cand.name, padName: cand.padName, lat: cand.padLat, lon: cand.padLon }
+          : null;
+      })()} />}
+      {mapReady && !!(activeLayers as any).space_missions && (
+        <SpaceMissionsPanel
+          mapRef={mapRef}
+          setGeo={setGeo}
+          upcoming={launchData?.upcoming ?? []}
+          previous={launchData?.previous ?? []}
+          stale={!!launchData?.stale}
+          loadError={!!launchData?.error}
+          selectedPadKey={selectedPadKey}
+          selectedLaunchId={selectedLaunchId}
+          onSelectPad={setSelectedPadKey}
+          onSelectLaunch={setSelectedLaunchId}
+          chipOffsetCount={[trafficChip, droneChip, transitNotice].filter(Boolean).length}
+        />
+      )}
       {mapReady && flightFollowUi && (
         <div
           className="absolute left-1/2 z-[240] -translate-x-1/2 px-3"

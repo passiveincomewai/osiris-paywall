@@ -32,6 +32,8 @@ interface CinematicDirectorProps {
   extraPresets?: CinematicPreset[];
   /** The aircraft selected on the globe, for the Aircraft Follow action preset. */
   followTarget?: { icao24: string; callsign?: string } | null;
+  /** The launch the Space Mission preset flies to (selected or next up). */
+  spaceTarget?: { name: string; padName?: string | null; lat: number; lon: number } | null;
 }
 
 const SPEEDS = [0.5, 1, 1.5, 2];
@@ -44,7 +46,7 @@ const iconBtnCls =
 const inputCls =
   'rounded border border-white/10 bg-white/[0.04] px-1.5 py-1 text-[10px] font-mono text-white focus:outline-none focus:border-cyan-400/50';
 
-export default function CinematicDirector({ mapRef, cameras = [], extraPresets = [], followTarget = null }: CinematicDirectorProps) {
+export default function CinematicDirector({ mapRef, cameras = [], extraPresets = [], followTarget = null, spaceTarget = null }: CinematicDirectorProps) {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState<CinematicScene[]>(() => loadSavedScenes());
   const [draft, setDraft] = useState<CameraKeyframe[]>([]);
@@ -124,11 +126,12 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
       currentCenter: (c ? [c.lng, c.lat] : [0, 20]) as [number, number],
       cameras,
       followTarget,
+      spaceTarget,
     };
     // Recomputed when the panel opens / the catalogue changes; the map
     // centre is read at press time through playPreset below as well.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameras, open, followTarget]);
+  }, [cameras, open, followTarget, spaceTarget]);
 
   const freshCtx = () => {
     const c = mapRef.current?.getCenter();
@@ -136,6 +139,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
       currentCenter: (c ? [c.lng, c.lat] : ctx.currentCenter) as [number, number],
       cameras,
       followTarget,
+      spaceTarget,
     };
   };
 

@@ -105,6 +105,7 @@ const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'sat_navigation', label: 'GPS / Navigation', dataKey: 'satellites', catKey: 'navigation' },
       { key: 'sat_earth', label: 'Earth Observation', dataKey: 'satellites', catKey: 'earth_obs' },
       { key: 'sat_science', label: 'Stations / Telescopes', dataKey: 'satellites', catKey: 'science' },
+      { key: 'space_missions', label: 'Space Missions', description: 'Rocket launches & pads · Launch Library 2 · The Space Devs', dataKey: '' },
     ],
   },
   {
