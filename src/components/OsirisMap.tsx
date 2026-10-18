@@ -24,6 +24,10 @@ import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
 import { FlightBlend, flightsToFeatures } from '@/lib/flights/render';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
+import {
+  clampIntensity, isLowPowerDevice, sensorEffectLabel, sensorFilterCss,
+  thermalTableValues, THERMAL_FILTER_ID, type SensorEffectState,
+} from '@/lib/sensor-effects';
 import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
@@ -119,6 +123,9 @@ interface OsirisMapProps {
   onOiHover?: (hover: OiHover | null) => void;
   /** OI's camera started or stopped following the run. */
   onOiFollow?: (following: boolean) => void;
+  /** Simulated sensor effect (DISPLAY group) — applied to the map canvas only. */
+  sensorEffect?: SensorEffectState;
+  onSensorEffectChange?: (next: SensorEffectState) => void;
   /** What OI Assist has marked on the map: found things, named places, a searched area. */
   oiHighlight?: Highlight | null;
 }
@@ -205,7 +212,7 @@ function escHtml(v: any): string {
   return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -334,6 +341,52 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   useEffect(() => { paletteRef.current = palette; }, [palette]);
   const onReadyRef = useRef(onReady);
   useEffect(() => { onReadyRef.current = onReady; }, [onReady]);
+
+  // ── Sensor effects (SIMULATED visual effects) ──
+  // A CSS filter on the map CANVAS element only. In MapLibre's DOM the
+  // popups, controls and attribution are siblings of the canvas, so the
+  // interface stays unfiltered and readable; CameraViewer is a separate
+  // component and structurally out of reach — live camera footage is never
+  // filtered. The CRT scanline overlay sits between the canvas container
+  // and the control container: above the canvas, below controls and below
+  // any popup (popups append after it). On a low-power device (small
+  // viewport AND very few cores) the effect refuses rather than taxing the
+  // map, and the chip says so instead of silently doing nothing.
+  const [sensorRefused, setSensorRefused] = useState(false);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!mapReady || !map || !sensorEffect) return;
+    const lowPower = typeof window !== 'undefined' && isLowPowerDevice({
+      innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
+      hardwareConcurrency: typeof navigator !== 'undefined' ? navigator.hardwareConcurrency : undefined,
+    });
+    const refused = sensorEffect.mode !== 'off' && lowPower;
+    setSensorRefused(refused);
+    map.getCanvas().style.filter = refused ? '' : sensorFilterCss(sensorEffect);
+    const container = map.getContainer();
+    let overlay = container.querySelector<HTMLDivElement>('[data-we-crt-overlay]');
+    if (sensorEffect.mode === 'crt' && !refused) {
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.dataset.weCrtOverlay = '1';
+        overlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 1px, transparent 3px);';
+        container.insertBefore(overlay, container.children[1] ?? null);
+      }
+      overlay.style.display = '';
+      overlay.style.opacity = String(0.35 + 0.65 * clampIntensity(sensorEffect.intensity));
+    } else if (overlay) {
+      overlay.style.display = 'none';
+    }
+  }, [mapReady, sensorEffect]);
+
+  const sensorActive = !!sensorEffect && sensorEffect.mode !== 'off';
+  const sensorChipText = !sensorActive
+    ? null
+    : sensorRefused
+      ? 'DISABLED ON THIS DEVICE TO PROTECT MAP PERFORMANCE'
+      : `${sensorEffectLabel(sensorEffect.mode).toUpperCase()} · SIMULATED VISUAL EFFECT — NOT SENSOR DATA`;
+  const thermalTables = thermalTableValues(sensorEffect?.intensity ?? 1);
   const prevDrawnPolygonsRef = useRef<string[]>([]);
   const prevArcgisLayersRef = useRef<string[]>([]);
   const satLayerRef = useRef<ReturnType<typeof createSatelliteLayer> | null>(null);
@@ -4667,6 +4720,45 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
               {' — '}
               <span className="text-white/80">{droneChip}</span>
             </p>
+          </div>
+        </div>
+      )}
+      {sensorEffect?.mode === 'thermal' && !sensorRefused && (
+        <svg aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0 }}>
+          <defs>
+            <filter id={THERMAL_FILTER_ID} x="-5%" y="-5%" width="110%" height="110%" colorInterpolationFilters="sRGB">
+              <feColorMatrix type="matrix" values="0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0" />
+              <feComponentTransfer>
+                <feFuncR type="discrete" tableValues={thermalTables.r} />
+                <feFuncG type="discrete" tableValues={thermalTables.g} />
+                <feFuncB type="discrete" tableValues={thermalTables.b} />
+                <feFuncA type="identity" />
+              </feComponentTransfer>
+            </filter>
+          </defs>
+        </svg>
+      )}
+      {sensorChipText && (
+        <div
+          className="absolute left-1/2 z-[120] -translate-x-1/2 px-3 pointer-events-none"
+          style={{ bottom: `${6 + [trafficChip, droneChip, transitNotice].filter(Boolean).length * 4.5}rem` }}
+        >
+          <div className="pointer-events-auto flex items-start gap-2 rounded-lg border border-white/10 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+              <span className="text-white/90 uppercase tracking-wider">Sensor Effect</span>
+              {' — '}
+              <span className="text-white/80">{sensorChipText}</span>
+            </p>
+            {onSensorEffectChange && !sensorRefused && (
+              <button
+                type="button"
+                aria-label="Turn sensor effect off"
+                onClick={() => onSensorEffectChange({ mode: 'off', intensity: sensorEffect?.intensity ?? 1 })}
+                className="shrink-0 w-5 h-5 rounded flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-colors text-sm leading-none"
+              >
+                ×
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
+import { SENSOR_EFFECT_OPTIONS, type SensorEffectState } from '@/lib/sensor-effects';
 
 interface LayerPanelProps {
   data: any;
@@ -29,6 +30,10 @@ interface LayerPanelProps {
   /** True when the viewer holds an active Weekly Pass. Premium layers render
    *  with a lock and link to /premium instead of toggling. */
   isPremiumUser?: boolean;
+  /** Simulated sensor-effect state (DISPLAY group) — owned by the page,
+   *  applied by OsirisMap to the map canvas only. */
+  sensorEffect?: SensorEffectState;
+  onSensorEffectChange?: (next: SensorEffectState) => void;
 }
 
 interface LayerDef {
@@ -242,7 +247,7 @@ function SubLayerStem() {
   );
 }
 
-function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'core', setTheme, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false }: LayerPanelProps) {
+function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'core', setTheme, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false, sensorEffect, onSensorEffectChange }: LayerPanelProps) {
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   /**
    * A pinned group stays open when the pointer leaves. Hover-only flyouts are
@@ -270,6 +275,70 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
       {terrainStatus === 'error' && <button type="button" onClick={onTerrainRetry} className="mt-2 min-h-8 rounded border border-white/15 px-2 text-[var(--gold-primary)] hover:bg-white/10">Retry terrain</button>}
       <p className="mt-2 text-white/35">Nearby detail only · cached tiles</p>
       <a className="mt-1 inline-block underline underline-offset-2" href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener noreferrer">Terrain credits</a>
+    </div>
+  ) : null;
+
+  /* Sensor effects are radio-style presets, not toggles: exactly one look
+     at a time (or off). They are SIMULATED visual effects — the copy says
+     so here and an on-map tag repeats it while one is active — and they
+     apply to the map canvas only, never to camera feeds or panels. */
+  const sensorMode = sensorEffect?.mode ?? 'off';
+  const sensorBlock = onSensorEffectChange ? (
+    <div className="mt-2 rounded-lg border border-white/10 bg-white/[0.03] p-2.5">
+      <div className="text-[9px] font-mono tracking-[0.18em] text-white/35 uppercase mb-1.5">Sensor Effects — Simulated</div>
+      <div className="flex flex-col gap-0.5" role="radiogroup" aria-label="Sensor effects (simulated)">
+        {SENSOR_EFFECT_OPTIONS.map((opt) => {
+          const active = sensorMode === opt.mode;
+          return (
+            <button
+              key={opt.mode}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onSensorEffectChange({ mode: opt.mode, intensity: sensorEffect?.intensity ?? 1 })}
+              className={`w-full flex items-center gap-2.5 py-1.5 px-1 rounded-md text-left hover:bg-white/[0.05] transition-colors ${active ? 'text-white/85' : 'text-white/40'}`}
+            >
+              <span
+                aria-hidden
+                className="flex-shrink-0 w-[11px] h-[11px] rounded-full border"
+                style={{
+                  borderColor: active ? 'rgba(0,229,255,0.8)' : 'rgba(255,255,255,0.25)',
+                  background: active ? 'rgba(0,229,255,0.85)' : 'transparent',
+                  boxShadow: active ? '0 0 6px rgba(0,229,255,0.5)' : 'none',
+                }}
+              />
+              <span className="text-[11px] font-mono uppercase tracking-wider">{opt.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-1.5 text-[9px] leading-relaxed text-white/35">
+        Simulated visual effects — not real sensor data. Applied to the map only; live camera feeds and panels are never filtered.
+      </p>
+      {sensorMode !== 'off' && (
+        <>
+          <label className="mt-2 flex items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-white/40">
+            Intensity
+            <input
+              type="range"
+              min={0.2}
+              max={1}
+              step={0.05}
+              value={sensorEffect?.intensity ?? 1}
+              onChange={(e) => onSensorEffectChange({ mode: sensorMode, intensity: Number(e.target.value) })}
+              className="flex-1 accent-cyan-300"
+              aria-label="Sensor effect intensity"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => onSensorEffectChange({ mode: 'off', intensity: sensorEffect?.intensity ?? 1 })}
+            className="mt-2 min-h-8 rounded border border-white/15 px-2 text-[10px] font-mono text-[var(--gold-primary)] hover:bg-white/10"
+          >
+            RESET — EFFECT OFF
+          </button>
+        </>
+      )}
     </div>
   ) : null;
 
@@ -352,6 +421,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                 );
               })}
               {group.label === 'DISPLAY' && terrainDetails}
+              {group.label === 'DISPLAY' && sensorBlock}
             </div>
           </div>
         ))}
@@ -555,6 +625,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                         );
                       })}
                       {group.label === 'DISPLAY' && terrainDetails}
+                      {group.label === 'DISPLAY' && sensorBlock}
                     </div>
                   </motion.div>
                 )}

@@ -9,6 +9,7 @@ import { type TerrainStatus } from '@/lib/map-terrain';
 import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import { findNearestCameras } from '@/lib/nearby-cameras';
+import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero from '@/components/CinematicHero';
@@ -459,6 +460,20 @@ export default function Dashboard() {
   useEffect(() => {
     document.body.className = osirisTheme === 'core' ? '' : `theme-${osirisTheme}`;
   }, [osirisTheme]);
+
+  /* Sensor effects (DISPLAY group): simulated visual modes for the map
+     canvas only, owned here so the LayerPanel controls and OsirisMap's
+     applier share one state. Persisted like other client prefs. */
+  const [sensorEffect, setSensorEffect] = useState<SensorEffectState>(() => {
+    try {
+      const raw = localStorage.getItem('we_sensor_effect_v1');
+      if (raw) return normalizeSensorEffect(JSON.parse(raw));
+    } catch { /* storage unavailable — defaults apply */ }
+    return { ...DEFAULT_SENSOR_EFFECT };
+  });
+  useEffect(() => {
+    try { localStorage.setItem('we_sensor_effect_v1', JSON.stringify(sensorEffect)); } catch { /* ignore */ }
+  }, [sensorEffect]);
 
   /* Style Studio overrides are inline on <body>, so they survive the theme
      swap above and only need reapplying once per load. */
@@ -1631,6 +1646,8 @@ export default function Dashboard() {
           onOiHover={setOiHover}
           onOiFollow={setOiFollowing}
           oiHighlight={oiHighlight}
+          sensorEffect={sensorEffect}
+          onSensorEffectChange={setSensorEffect}
         />
       </ErrorBoundary>
       </div>
@@ -1831,7 +1848,7 @@ export default function Dashboard() {
 
 
       {/* ── NEW SIDEBAR (Root Level) ── */}
-      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} /></div>}
+      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} /></div>}
 
 
 
@@ -2215,7 +2232,7 @@ export default function Dashboard() {
                           <div><div className="hud-label" style={{fontSize:'9px'}}>NUC</div><div className="hud-value text-[10px]" style={{color:'var(--accent-nuclear)'}}>{(data.infrastructure?.length||0)}</div></div>
                         </div>
                       </div>
-                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} />
+                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} />
                       <div className="mt-8">
                         <ViewPresets onNavigate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       </div>
