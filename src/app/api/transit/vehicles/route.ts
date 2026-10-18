@@ -11,8 +11,11 @@ import { tripRouteMapFor, type TripRouteInfo } from '@/lib/transit/staticGtfs';
  * config in lib/transit/agencies), parses it server-side, and returns
  * compact JSON. Where the agency also publishes a keyless TripUpdates
  * feed, the next-stop delay is joined in by trip id. Results are cached
- * ~25 s per agency — GTFS-RT feeds republish every 10–30 s, so clients
- * polling faster than that would only re-serve the same snapshot.
+ * 12 s per agency: the fastest feeds (UTA) republish every ~15 s and the
+ * client polls on that cadence, so the TTL sits just under it — a poll
+ * can return genuinely fresh positions instead of the previous snapshot.
+ * The cache is shared across viewers, so upstream load stays bounded at
+ * one pull per agency per TTL window no matter how many clients poll.
  */
 
 export const dynamic = 'force-dynamic';
@@ -139,7 +142,7 @@ export async function GET(req: NextRequest) {
     const vehicles = await cachedSource<Vehicle>(
       `transit:${agency.id}`,
       () => fetchVehicles(agency),
-      25_000,
+      12_000,
     )();
     return NextResponse.json(
       {
@@ -150,7 +153,7 @@ export async function GET(req: NextRequest) {
         count: vehicles.length,
         updated: new Date().toISOString(),
       },
-      { headers: { 'Cache-Control': 'public, s-maxage=25, stale-while-revalidate=30' } },
+      { headers: { 'Cache-Control': 'public, s-maxage=12, stale-while-revalidate=15' } },
     );
   } catch {
     return NextResponse.json(

@@ -2528,7 +2528,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     return () => { live = false; map.off('moveend', onMove); };
   }, [mapReady, (activeLayers as any).gbfs, setGeo]);
 
-  // Live Transit — agencies load by viewport relevance, vehicles poll 30 s.
+  // Live Transit — agencies load by viewport relevance, vehicles poll 15 s
+  // (the fastest feeds, UTA, republish on that cadence; the server cache
+  // is 12 s and shared, so upstream load stays bounded).
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
@@ -2593,7 +2595,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       }
       await load();
     })();
-    const iv = setInterval(load, 30000);
+    const iv = setInterval(load, 15000);
     const onMove = () => { void load(); };
     map.on('moveend', onMove);
     return () => { live = false; clearInterval(iv); map.off('moveend', onMove); };
