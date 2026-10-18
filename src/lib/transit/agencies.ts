@@ -27,6 +27,22 @@
  * route therefore joins the agency's static GTFS (see `staticGtfsUrl`
  * + lib/transit/staticGtfs): trip → internal route_id → route_short_name
  * (the public number) with the mode taken from route_type exactly.
+ *
+ * Expansion (2026-10-18): King County Metro, Community Transit and RTD
+ * Denver verified keyless (MDB auth 0) and live. Excluded after checks:
+ *   • Valley Metro (Phoenix) — endpoint 401s without an apiKey; the key
+ *     circulating in public catalogs is the vendor's, not ours to use.
+ *   • SFMTA/Muni + BART — GTFS-RT only via 511.org (API key).
+ *   • Sound Transit — OneBusAway API requires a key.
+ *   • WMATA (DC) — api.wmata.com requires a subscription key.
+ *   • Miami-Dade — realtime served via Swiftly (goswift.ly, keyed).
+ *   • SEPTA — cataloged GTFS-RT is Swiftly-hosted (keyed); SEPTA's own
+ *     legacy realtime APIs are not GTFS-RT vehicle positions.
+ *   • LA Metro — realtime is a Swiftly pass-through (WebSocket/JSON);
+ *     no keyless GTFS-RT protobuf endpoint is published.
+ *   • DART (Dallas), NJ Transit, CTA (Chicago) — no keyless GTFS-RT
+ *     vehicle-positions feed (NJ Transit/CTA/Metra need developer
+ *     tokens for their realtime APIs).
  */
 
 export type TransitMode = 'bus' | 'tram' | 'metro' | 'train' | 'ferry' | 'transit';
@@ -73,6 +89,50 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
       { match: /^750$/, mode: 'train' },
     ],
     attribution: 'Utah Transit Authority',
+  },
+  {
+    id: 'king-county-metro',
+    name: 'King County Metro',
+    region: 'Seattle, WA',
+    center: [47.6062, -122.3321],
+    feedUrl: 'https://s3.amazonaws.com/kcm-alerts-realtime-prod/vehiclepositions.pb',
+    tripUpdatesUrl: 'https://s3.amazonaws.com/kcm-alerts-realtime-prod/tripupdates.pb',
+    // All Metro service is bus/trolleybus; route ids in this feed are
+    // internal numeric ids with no mode signal. (Link light rail is
+    // Sound Transit, whose feed needs a OneBusAway key — excluded.)
+    defaultMode: 'bus',
+    attribution: 'King County Metro',
+    mdb: 1542,
+  },
+  {
+    id: 'community-transit',
+    name: 'Community Transit',
+    region: 'Snohomish County, WA',
+    center: [47.979, -122.2015],
+    feedUrl: 'https://s3.amazonaws.com/commtrans-realtime-prod/vehiclepositions.pb',
+    tripUpdatesUrl: 'https://s3.amazonaws.com/commtrans-realtime-prod/tripupdates.pb',
+    defaultMode: 'bus',
+    attribution: 'Community Transit',
+    mdb: 1448,
+  },
+  {
+    id: 'rtd-denver',
+    name: 'RTD',
+    region: 'Denver, CO',
+    center: [39.7392, -104.9903],
+    feedUrl: 'https://www.rtd-denver.com/files/gtfs-rt/VehiclePosition.pb',
+    tripUpdatesUrl: 'https://www.rtd-denver.com/files/gtfs-rt/TripUpdate.pb',
+    defaultMode: 'bus',
+    routeModeRules: [
+      // RTD's letter routes are the rail lines: A/B/G/N are commuter
+      // rail; C/D/E/F/H/L/R/W are light rail. Everything else is bus.
+      // (Many RTD position records carry no route id at all — those
+      // stay bus, the network's dominant mode.)
+      { match: /^[ABGN]$/, mode: 'train' },
+      { match: /^[CDEFHLRW]$/, mode: 'tram' },
+    ],
+    attribution: 'Regional Transportation District (RTD)',
+    mdb: 1678,
   },
   {
     id: 'mbta',
