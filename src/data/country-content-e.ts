@@ -451,4 +451,115 @@ export const countryContentE: Record<string, CountryContent> = {
       },
     ],
   },
+  philippines: {
+    intro: [
+      "The Philippines network is small and proudly Davao-centric: 25 cameras across just 3 areas. Davao Del Sur holds 21 of them, the Davao City area adds 3 more, and a single feed at Bulusan completes the list.",
+      "The Davao feeds are street-level views named for the streets they watch: Davao City - Leon Garcia Street, Agdao - Wilfredo Aquino Street, and the Streets of Davao feed. They show everyday city life in Mindanao's largest metro - traffic, shops, and street flow as it happens.",
+      "Agdao is the district to learn first. Its feeds - Wilfredo Aquino Street, Soliman Street, and storefront views like the Shops of Agdao - cluster in one busy commercial neighborhood, so the cameras read like a walk through the district rather than a highway check.",
+      "The Bulusan feed is the outlier and the curiosity: a single camera watching Bulusan Volcano. It is the only non-Davao view in the network and the reason the Philippines entry is more than a one-city index.",
+      "There is no Manila coverage in this index - all 25 feeds sit in Davao or at Bulusan. What the network lacks in spread it makes up for in focus: one city, watched closely, plus a volcano. Every Philippine feed streams free on WorldEye.",
+    ],
+    blurb:
+      "Watch 25 live cameras across the Philippines on WorldEye - Davao City streets in Agdao and Leon Garcia plus a Bulusan Volcano watch, free live.",
+    faqs: [
+      {
+        q: "How many live cameras are there in the Philippines?",
+        a: "WorldEye lists 25 live cameras across 3 areas in the Philippines - Davao Del Sur (21), Davao City (3), and Bulusan (1).",
+      },
+      {
+        q: "Which Philippine area has the most cameras?",
+        a: "Davao Del Sur, with 21 of the 25 feeds. Together with the 3 Davao City feeds, the Davao metro holds nearly the entire network.",
+      },
+      {
+        q: "What do the Davao cameras show?",
+        a: "Street-level views named for the streets they watch - Davao City - Leon Garcia Street, Agdao - Wilfredo Aquino Street, and the Streets of Davao feed - everyday traffic and street life in the Agdao district and beyond.",
+      },
+      {
+        q: "Can I watch Bulusan Volcano live?",
+        a: "Yes - a single feed at Bulusan watches the volcano. It is the only non-Davao camera in the Philippine network.",
+      },
+      {
+        q: "Is Manila covered?",
+        a: "No. This index has no Manila feeds - coverage is Davao-centric, with 24 of the 25 cameras in the Davao area and one at Bulusan.",
+      },
+      {
+        q: "What is the Agdao district coverage like?",
+        a: "Dense for one neighborhood: Wilfredo Aquino Street, Soliman Street, and storefront feeds like the Shops of Agdao cluster there, reading like a walk through the district.",
+      },
+    ],
+  },
+  greece: {
+    intro: [
+      "Greece's 22 cameras across 12 areas are a holiday network, not a traffic grid. Athens holds just 2 feeds - the rest scatter across the islands as scenic, hotel, and beach cameras: Rhodes (2), Chora on Ios (2), and singles from Santorini to Limnos and Symi.",
+      "Rhodes is the most varied stop: the Akti Kanari Beachfront feed watches the shore, while the Rhodes West feed at Theologos is a surf and kite camera - check the wind and the water before a beach day. These are cameras you watch to preview a place, not to dodge a jam.",
+      "Chora, the main town of Ios, carries 2 feeds including the FarOut Hotel & Spa camera looking toward Mylopotas beach. Hotel and beach-club cameras like this one are the backbone of the Greek network - resort views that run all season.",
+      "Santorini's single feed is the postcard: Oia Santorini Cliffside Village, the whitewashed caldera-edge town, live in real weather rather than brochure light. Limnos, Symi, and the remaining singles fill in quieter corners of the Aegean.",
+      "Write Greece down as scenery, not surveillance: 22 feeds built for checking sea, sky, and beach conditions before a trip - or for five minutes of Aegean from your desk. All Greek feeds stream free on WorldEye.",
+    ],
+    blurb:
+      "Explore 22 live cameras across Greece on WorldEye - scenic island feeds from Oia Santorini to Rhodes beaches and Ios, free to watch, day and night.",
+    faqs: [
+      {
+        q: "How many live cameras are there in Greece?",
+        a: "WorldEye lists 22 live cameras across 12 areas in Greece.",
+      },
+      {
+        q: "Are Greek cameras traffic cameras?",
+        a: "No - this is a scenic network of hotel, beach, and island feeds, not a traffic grid. Athens has just 2 cameras; the rest watch shores, resorts, and villages across the islands.",
+      },
+      {
+        q: "Which Greek areas have the most cameras?",
+        a: "Athens, Rhodes, and Chora on Ios lead with 2 each. The remaining feeds are singles - Oia on Santorini, Limnos, Symi, and more.",
+      },
+      {
+        q: "Can I see Santorini live?",
+        a: "Yes - the Oia Santorini Cliffside Village feed shows the caldera-edge town live, in real weather rather than postcard light.",
+      },
+      {
+        q: "Can I check Rhodes beaches and surf?",
+        a: "Yes - the Akti Kanari Beachfront feed watches the shore, and the Rhodes West feed at Theologos is a surf and kite camera, handy for checking wind and water before a beach day.",
+      },
+      {
+        q: "What are the hotel cameras on Ios?",
+        a: "Chora's 2 feeds include the FarOut Hotel & Spa camera looking toward Mylopotas beach - a resort view typical of the Greek network's hotel and beach-club feeds.",
+      },
+    ],
+  },
+  kyrgyzstan: {
+    intro: [
+      "Kyrgyzstan's 21 cameras are the directory's Central Asian outpost: small and scattered across 12 areas, with most areas holding a single feed. Bishkek leads with just 3, Cholpon-Ata has 2, and the rest - Osh, Jalal-Abad, Balykchy, Kemin among them - carry 1 each.",
+      "The capital's signature feed watches Ala-Too Square, Bishkek's central flag square. It is the one urban landmark camera in the network - the place to look for the city's weather and the square's daily rhythm.",
+      "The Issyk-Kul lake feeds are the scenic heart: Cholpon-Ata, on the lake's north shore, holds 2 cameras, and Bosteri adds another shore view. Issyk-Kul is Central Asia's great alpine lake, and these feeds show its water and weather live through the summer season.",
+      "The mountains get their share: the Kashka Suu Ski Resort feed in the Alamudun District watches the slopes above Bishkek, and the Boom Gorge feed at Kyz Kuyo covers the dramatic river gorge on the road toward the lake. Ski check in winter, road and weather check the rest of the year.",
+      "Coverage is thin by design of the source feeds, not by choice - 21 cameras spread over a mountainous country means each feed stands alone. Treat the network as a set of windows: a capital square, a lake shore, a ski slope, a gorge. All Kyrgyz feeds stream free on WorldEye.",
+    ],
+    blurb:
+      "Watch 21 live cameras across Kyrgyzstan on WorldEye - Bishkek Ala-Too Square, Issyk-Kul lake shores and mountain feeds, streaming free live.",
+    faqs: [
+      {
+        q: "How many live cameras are there in Kyrgyzstan?",
+        a: "WorldEye lists 21 live cameras across 12 areas in Kyrgyzstan - a small, scattered network where most areas hold a single feed.",
+      },
+      {
+        q: "Which Kyrgyz area has the most cameras?",
+        a: "Bishkek, with 3 feeds. Cholpon-Ata follows with 2, and the remaining areas - Osh, Jalal-Abad, Balykchy, Kemin and others - carry 1 each.",
+      },
+      {
+        q: "Can I see Ala-Too Square in Bishkek live?",
+        a: "Yes - a Bishkek feed watches Ala-Too Square, the capital's central flag square and the network's signature urban view.",
+      },
+      {
+        q: "Can I watch Issyk-Kul lake live?",
+        a: "Yes - Cholpon-Ata holds 2 feeds on the lake's north shore and Bosteri adds another shore view, showing the alpine lake's water and weather live.",
+      },
+      {
+        q: "Can I check ski conditions in Kyrgyzstan?",
+        a: "Yes - the Kashka Suu Ski Resort feed in the Alamudun District, above Bishkek, shows live conditions on the slopes.",
+      },
+      {
+        q: "What is the Boom Gorge camera?",
+        a: "A feed at Kyz Kuyo watching Boom Gorge, the river gorge on the road toward Issyk-Kul - useful as a road and weather check as well as a scenic view.",
+      },
+    ],
+  },
 };

@@ -468,6 +468,76 @@ const STATES: Record<string, StateCfg> = {
       },
     ],
   },
+  arizona: {
+    name: "Arizona",
+    count: 434,
+    title: "Arizona Traffic Cameras — Live ADOT Road Cams",
+    blurb:
+      "Check 434 live Arizona traffic cameras — concentrated in the Phoenix metro on ADOT freeway feeds — free on the WorldEye map. No signup needed.",
+    h1: "Arizona Traffic Cameras",
+    sub: "Check 434 live Arizona traffic cameras — concentrated in the Phoenix metro.",
+    intro: [
+      "Arizona's 434 indexed cameras come with an honest caveat up front: every one of them sits in the Phoenix metro. These are ADOT freeway feeds covering the Valley's freeway network — the corridors Phoenix commuters use every day — not a statewide grid. If you are driving in Phoenix, this is a deep, useful network. If you are looking for Tucson, Flagstaff, or rural Arizona, this index does not have that density, and this page will not pretend otherwise.",
+      "Within the metro, the coverage is the real thing. The feeds watch the Phoenix freeway system as a working traffic network: congestion building at the peak, incidents and lane closures as they happen, and the slowdowns that ripple across the Valley when one corridor stops. ADOT publishes these cameras so drivers can check conditions before committing to a route — the same view its operators monitor.",
+      "Desert driving writes its own hazard list, and the cameras are how you spot it early. Summer monsoon season sends dust storms across the Valley that can drop freeway visibility to near zero in minutes, followed by intense downpours that flood washes and low-lying sections while the elevated lanes stay dry. The metro feeds show both — the wall of dust on the horizon and the water across the low lanes — before you drive into either.",
+      "Heat is the year-round background condition. Phoenix summers push freeway surfaces and stalled cars hard, and a breakdown in extreme heat becomes a traffic event fast — the cameras show the resulting queues and closures as they form. Winter is the Valley's easy season, but it is also visitor season, when event traffic and unfamiliar drivers swell the same corridors.",
+      "The single-area shape of this index is worth understanding rather than apologizing for. Arizona's published camera coverage concentrates where the state's driving concentrates — the Phoenix metro holds the bulk of the state's population and freeway mileage. Other regions will appear here as their feeds are published and indexed; until then, the table below lists exactly what exists: Phoenix, 434 cameras.",
+      "All 434 feeds open free on the WorldEye map — no account, no download. Zoom into Phoenix, tap a camera marker near your route, and check conditions before you roll. Never check cameras while driving; pull over or have a passenger look.",
+    ],
+    stats: [
+      { value: "434", label: "live cameras" },
+      { value: "1", label: "metro area covered" },
+      { value: "Free", label: "no account needed" },
+    ],
+    areas: [{ name: "Phoenix", count: 434 }],
+    areaTitle: "Arizona camera coverage by area",
+    areaNote:
+      "Coverage is concentrated in the Phoenix metro — all 434 indexed feeds are ADOT freeway cameras in the Valley. The rest of Arizona is not covered at this density.",
+    howtoTitle: "How to check Phoenix road conditions",
+    howto: [
+      "Open the free WorldEye map in your browser — no account or download needed.",
+      "Zoom to Phoenix and look for camera markers along the metro freeway network.",
+      "Tap any marker to open that ADOT freeway camera's live feed.",
+      "Compare the feeds on your route with the parallel corridor before committing — Valley slowdowns ripple across routes, and the cameras show which one is moving.",
+      "During monsoon season, check the feeds before departing. If a camera shows a wall of dust or water across the low lanes, delay the drive — both usually pass faster than they arrive.",
+      "Never check cameras while driving. Pull over or have a passenger look, then decide your route before you roll.",
+    ],
+    faqTitle: "Arizona traffic cameras — FAQ",
+    faqs: [
+      {
+        q: "Do these cameras cover all of Arizona?",
+        a: "No — and that is stated plainly on this page. All 434 indexed feeds are in the Phoenix metro. The index does not claim statewide density; Tucson, Flagstaff, and rural Arizona are not covered at anything like this level.",
+      },
+      {
+        q: "Which Arizona city has the most traffic cameras?",
+        a: "Phoenix — all 434 of them. Arizona's published camera coverage concentrates in the Valley, where most of the state's population and freeway mileage is.",
+      },
+      {
+        q: "What is ADOT?",
+        a: "The Arizona Department of Transportation. The 434 feeds indexed here are ADOT freeway cameras in the Phoenix metro, published so drivers can check congestion, incidents, and weather conditions before driving.",
+      },
+      {
+        q: "Can the cameras show dust storms?",
+        a: "Yes. Summer monsoon dust storms cross the Valley fast and can drop freeway visibility to near zero in minutes — the metro feeds show the dust wall before you drive into it. If a feed shows one, delay the trip.",
+      },
+      {
+        q: "Can I check for monsoon flooding on my route?",
+        a: "Yes. Intense monsoon downpours flood washes and low-lying freeway sections while elevated lanes stay dry. The feeds show water across the low lanes in real time — check your exact route during a storm, and never drive through flooded roadway.",
+      },
+      {
+        q: "Are the cameras useful outside rush hour?",
+        a: "Yes. Incidents, construction closures, and monsoon weather do not keep office hours. Event traffic in visitor season can jam the metro corridors at midday or late evening — a quick feed check is worth it before any cross-Valley drive.",
+      },
+      {
+        q: "Do the cameras work at night?",
+        a: "Yes. The metro freeway feeds are lit by roadway lighting, and headlights make traffic flow easy to read after dark — a jammed corridor is obvious at any hour.",
+      },
+      {
+        q: "When is Phoenix traffic at its worst?",
+        a: "Weekday morning and evening peaks on the metro freeway network, with monsoon afternoons in summer as the wild card — a single dust storm or downpour can stop a corridor outright. Check the feeds on your route before leaving.",
+      },
+    ],
+  },
 };
 
 const RELATED: { label: string; href: string }[] = [
@@ -477,6 +547,7 @@ const RELATED: { label: string; href: string }[] = [
   { label: "Florida traffic cameras", href: "/us-traffic-cameras/florida" },
   { label: "Indiana traffic cameras", href: "/us-traffic-cameras/indiana" },
   { label: "Nevada traffic cameras", href: "/us-traffic-cameras/nevada" },
+  { label: "Arizona traffic cameras", href: "/us-traffic-cameras/arizona" },
   { label: "All live traffic cameras", href: "/live-traffic-cameras" },
 ];
 

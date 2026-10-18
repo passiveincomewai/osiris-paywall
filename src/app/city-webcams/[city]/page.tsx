@@ -598,6 +598,152 @@ const CITIES: Record<string, CityCfg> = {
       },
     ],
   },
+  auckland: {
+    name: "Auckland",
+    country: "New Zealand",
+    countrySlug: "new-zealand",
+    count: 98,
+    title: "Auckland Live Webcams — 98 Motorway Cameras",
+    blurb:
+      "Watch 98 live Auckland motorway cameras — SH1, SH16 and SH20 interchanges and state-highway conditions — free on the WorldEye map. No signup needed.",
+    h1: "Auckland Live Webcams",
+    sub: "Watch 98 live Auckland motorway cameras — free on the WorldEye globe.",
+    intro: [
+      "Auckland's 98 cameras are NZTA motorway and state-highway feeds — the largest city cluster in New Zealand's 249-camera index, accounting for 39% of the national total. The grid follows the motorway network that carries the country's biggest city: SH1 running north–south through the isthmus, SH16 heading northwest, and SH20 and SH20A linking the city to the airport.",
+      "The featured feeds read like an Auckland commute in miniature: the SH1/SH16 Central Motorway Junction where the two motorways merge in the city centre, the SH20A George Bolt Memorial Drive cameras on the airport route, and the SH18 Brigham Creek Interchange out west. These are the same class of fixed highway feeds NZTA publishes for network monitoring.",
+      "All 98 open free on the WorldEye map. Tap any marker across the motorway network to see current conditions before you travel.",
+      "The Central Motorway Junction is the feed to watch when the centre jams. It is where SH1 and SH16 braid together through the middle of the city, and when it seizes — which it does most weekday peaks — the queues spill onto both motorways at once. The junction camera shows the merge itself, so you can see whether the problem is your direction or the other one before you commit.",
+      "The southern motorway tells the other half of the commute story. The SH1 cameras at the Walter Strevens Drive and Park Estate Road overbridges watch the long run in from the southern suburbs — the stretch where the morning peak builds earliest and clears latest. If those overbridge feeds are already queued, the whole southern corridor is having a bad morning.",
+      "The airport run deserves its own check. SH20A is the dedicated airport link, and the George Bolt Memorial Drive cameras — south and north — plus the SH20 feeds at Barrowcliffe Place show the route as it is right now. Auckland weather helps nobody: heavy rain slows the whole network at once, and the motorway cameras show the spray and the slowdown before you are sitting in it. A two-minute glance before you leave beats guessing from a traffic headline.",
+    ],
+    stats: [
+      { value: "98", label: "live cameras" },
+      { value: "#1", label: "of 10 NZ areas" },
+      { value: "39%", label: "of NZ cameras" },
+    ],
+    samples: [
+      { name: "SH1 Walter Strevens Dr Overbridge (Southbound)", city: "Auckland" },
+      { name: "SH20 Barrowcliffe Pl Overbridge (Northbound)", city: "Auckland" },
+      { name: "SH20A George Bolt Mem Dr South (Northbound)", city: "Auckland" },
+      { name: "SH20A George Bolt Mem Dr North (Northbound)", city: "Auckland" },
+      { name: "SH18 Brigham Creek Interchange (Westbound)", city: "Auckland" },
+      { name: "SH1/SH16 Central Mwy Junction (Southbound)", city: "Auckland" },
+      { name: "SH1 Park Estate Rd Overbridge (Southbound)", city: "Auckland" },
+    ],
+    sampleTitle: "Featured Auckland motorway cameras",
+    howtoTitle: "How to watch Auckland motorway cameras",
+    howto: [
+      "Open the free WorldEye map — no account or download needed.",
+      "Zoom to Auckland; camera markers cover the SH1, SH16, SH20 and SH18 motorway network.",
+      "Tap any marker to open that motorway camera's live feed.",
+      "For a city-centre trip, find the SH1/SH16 Central Motorway Junction feed — it shows the merge where both motorways jam together.",
+      "Heading to the airport, check the SH20A George Bolt Memorial Drive cameras before you leave.",
+      "In heavy rain, glance at the feeds on your route first — spray and slowdowns show up on the motorway cameras before the traffic reports do.",
+    ],
+    faqTitle: "Auckland webcams — FAQ",
+    faqs: [
+      {
+        q: "Are these the NZTA traffic cameras?",
+        a: "They are the same class of feed — fixed NZTA motorway and state-highway cameras across Auckland's network, published for traffic monitoring. Use them to check congestion and conditions before driving.",
+      },
+      {
+        q: "Can I check the airport route before leaving?",
+        a: "Yes. The SH20A George Bolt Memorial Drive cameras — the South and North feeds — watch the dedicated airport link, and the SH20 Barrowcliffe Place feed covers the connecting motorway. Check them before an airport run.",
+      },
+      {
+        q: "Which motorway has the most camera coverage?",
+        a: "SH1, the north–south spine through the isthmus, carries the featured density — from the Central Motorway Junction down to the southern overbridges at Walter Strevens Drive and Park Estate Road. SH16, SH20 and SH18 are covered as well.",
+      },
+      {
+        q: "Can I see the Central Motorway Junction live?",
+        a: "Yes. The SH1/SH16 Central Motorway Junction (Southbound) feed watches the merge where the two motorways braid through the city centre — the first place to check when the centre jams at peak hour.",
+      },
+      {
+        q: "Do the cameras show wet-weather conditions?",
+        a: "Yes. Auckland rain slows the whole motorway network at once, and the feeds show spray, standing water and the resulting slowdowns in real time. Check your route's cameras during heavy rain before leaving.",
+      },
+      {
+        q: "Is the North Shore and west covered?",
+        a: "The network follows the motorways: SH1 north through the isthmus, SH16 northwest, and SH18 — the Brigham Creek Interchange feed watches the western connection. Zoom to your corridor on the live map to find its cameras.",
+      },
+      {
+        q: "Can I see Auckland landmarks or the harbour on these cameras?",
+        a: "No. These are motorway cameras aimed at lanes and interchanges, not scenic overlooks. For harbour and skyline views, browse the scenic cameras on the main WorldEye map.",
+      },
+      {
+        q: "When is Auckland motorway traffic at its worst?",
+        a: "Weekday morning and evening peaks, when the Central Motorway Junction and the southern motorway seize first. Heavy rain makes both windows worse — a two-minute check of your route's cameras before leaving is the habit that pays off.",
+      },
+    ],
+  },
+  "fort-worth": {
+    name: "Fort Worth",
+    country: "United States",
+    countrySlug: "united-states",
+    count: 489,
+    title: "Fort Worth Live Webcams — 489 Traffic Cameras",
+    blurb:
+      "Watch 489 live Fort Worth freeway cameras — I-35W, I-20 and I-820 corridor conditions across the western DFW metro — free on WorldEye. No signup.",
+    h1: "Fort Worth Live Webcams",
+    sub: "Watch 489 live Fort Worth freeway cameras — free on the WorldEye globe.",
+    intro: [
+      "Fort Worth accounts for 489 of the 23,059 cameras indexed in the United States — the tenth-largest of 12 US areas. The grid is a TxDOT district freeway-camera network covering the western half of the Dallas–Fort Worth metroplex: the I-35W, I-20 and I-820 corridors commuters use every day. Dallas is indexed separately with another 845 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
+      "The three corridors divide the work. I-35W is the north–south spine through Fort Worth, I-20 runs the southern side of the metro, and I-820 loops the city — and between them they carry the commute, the freight, and the cross-metro trips that make DFW driving what it is. The cameras sit on those corridors, which is exactly where the incidents and slowdowns happen.",
+      "All 489 feeds open free on the WorldEye map. Zoom to Fort Worth, tap a freeway marker, and you are watching the same corridors the district's traffic managers watch.",
+      "The Dallas split matters for how you use the grid. Fort Worth's 489 feeds and Dallas's 845 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metroplex lights up. If your commute crosses between the two cities, check cameras on both sides before you leave; a clear I-35W says nothing about what waits on the Dallas side.",
+      "Ice is the Fort Worth speciality, as it is across North Texas. Ice storms glaze the elevated freeway sections and interchanges while surface streets stay merely wet — and the elevated sections are exactly what a freeway camera grid watches. When ice is forecast, the corridor cameras show the truth on I-35W and the I-820 interchanges before your windshield does.",
+      "Spring brings the severe thunderstorms — high water on low sections, sudden slowdowns around storm cells — and construction runs year-round on a network this size. The feeds show all three in real time: standing water, storm slowdowns, and the current work zones on your corridor. Check before you merge on, every season.",
+    ],
+    stats: [
+      { value: "489", label: "live cameras" },
+      { value: "#10", label: "of 12 US areas" },
+      { value: "2%", label: "of US cameras" },
+    ],
+    howtoTitle: "How to check Fort Worth freeway conditions",
+    howto: [
+      "Open the WorldEye live map — no account or download needed.",
+      "Zoom to Fort Worth; camera markers line the I-35W, I-20 and I-820 corridors.",
+      "Tap a marker on your route to open that freeway camera's live feed.",
+      "If your commute crosses the metroplex, check cameras on both the Fort Worth and Dallas sides before leaving.",
+      "When ice is forecast, check the elevated sections and interchanges — they freeze first.",
+      "In spring storms, check for standing water and slowdowns on your corridor before driving into a cell's path.",
+    ],
+    faqTitle: "Fort Worth webcams — FAQ",
+    faqs: [
+      {
+        q: "Does this page cover Dallas too?",
+        a: "Dallas is indexed as its own area with 845 feeds. This index covers Fort Worth's 489 — together they give the DFW metroplex some of the deepest freeway coverage in the country. Zoom out on the live map to see both grids side by side.",
+      },
+      {
+        q: "Are these the TxDOT freeway cameras?",
+        a: "They are the same class of feed — fixed TxDOT district freeway cameras across the Fort Worth area, published for traffic monitoring. Use them to check congestion, weather and road conditions before driving.",
+      },
+      {
+        q: "Which corridors have the most coverage?",
+        a: "The grid follows the Fort Worth area's main freeway corridors — I-35W running north–south through the city, I-20 across the southern metro, and the I-820 loop. Find the markers on your corridor on the live map.",
+      },
+      {
+        q: "Can I check for ice on the roads in winter?",
+        a: "Yes. During North Texas ice events the elevated freeway sections and interchanges glaze first, and the corridor cameras show conditions in real time. Check before driving — bridges and overpasses freeze before surface streets.",
+      },
+      {
+        q: "Do the cameras show severe thunderstorm conditions?",
+        a: "They show storms in real time — standing water on low sections, slow traffic and slowdowns around storm cells across the I-35W, I-20 and I-820 corridors. Check before driving into a storm's path.",
+      },
+      {
+        q: "Can I see construction zones on the feeds?",
+        a: "Lane closures and work zones show up on the feeds as coned lanes and narrowed traffic. DFW freeway construction moves constantly, so check your corridor the day you drive it, not last week's pattern.",
+      },
+      {
+        q: "Are the cameras live video or still images?",
+        a: "They are fixed freeway cameras of the class the district's traffic management publishes — regularly updating views of lanes and conditions, enough to judge congestion, weather and standing water on your route.",
+      },
+      {
+        q: "When is Fort Worth traffic at its worst?",
+        a: "Weekday mornings 7:00–9:00 and evenings 16:30–19:00, with construction zones congested at all hours. Ice in winter and severe thunderstorms in spring can shut corridors with little warning — check the feeds on your corridor first.",
+      },
+    ],
+  },
 };
 
 const RELATED: { label: string; href: string }[] = [
@@ -609,6 +755,8 @@ const RELATED: { label: string; href: string }[] = [
   { label: "Dallas live webcams", href: "/city-webcams/dallas" },
   { label: "Tokyo live webcams", href: "/city-webcams/tokyo" },
   { label: "Sydney live webcams", href: "/city-webcams/sydney" },
+  { label: "Auckland live webcams", href: "/city-webcams/auckland" },
+  { label: "Fort Worth live webcams", href: "/city-webcams/fort-worth" },
   { label: "All world city webcams", href: "/world-city-webcams" },
 ];
 
