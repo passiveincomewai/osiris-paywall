@@ -193,3 +193,45 @@ describe('live received-vs-rendered count proof', () => {
     240_000,
   );
 });
+
+describe('FlightBlend.timing — fix-age derivation for the follow HUD', () => {
+  it('is null before any snapshot', () => {
+    expect(new FlightBlend().timing(1_000)).toBeNull();
+  });
+
+  it('reports the pushed feed timestamp as the newest fix time', () => {
+    const blend = new FlightBlend();
+    blend.push(buckets({ commercial_flights: 3 }), 10_000, 9_400);
+    const t = blend.timing(10_000);
+    expect(t).not.toBeNull();
+    expect(t!.hasPrev).toBe(false);
+    expect(t!.nextFixAt).toBe(9_400);
+    // A lone snapshot is dead-reckoned: no bracket, alpha reads 1.
+    expect(t!.alpha).toBe(1);
+  });
+
+  it('defaults the fix time to arrival when none is supplied', () => {
+    const blend = new FlightBlend();
+    blend.push(buckets({ commercial_flights: 1 }), 42_000);
+    expect(blend.timing(42_000)!.nextFixAt).toBe(42_000);
+  });
+
+  it('rotates fix times with the snapshots and blends alpha across the interval', () => {
+    const blend = new FlightBlend();
+    blend.push(buckets({ commercial_flights: 2 }), 1_000, 900);
+    blend.push(buckets({ commercial_flights: 2 }), 31_000, 30_500);
+    const t = blend.timing(46_000);
+    expect(t!.hasPrev).toBe(true);
+    expect(t!.prevFixAt).toBe(900);
+    expect(t!.nextFixAt).toBe(30_500);
+    // Halfway through the 30 s interval that follows the second arrival.
+    expect(t!.alpha).toBeCloseTo(0.5, 5);
+  });
+
+  it('clamps alpha at 1 once the interval has fully elapsed', () => {
+    const blend = new FlightBlend();
+    blend.push(buckets({ commercial_flights: 1 }), 1_000, 900);
+    blend.push(buckets({ commercial_flights: 1 }), 31_000, 30_500);
+    expect(blend.timing(500_000)!.alpha).toBe(1);
+  });
+});

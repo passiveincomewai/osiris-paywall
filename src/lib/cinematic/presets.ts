@@ -20,6 +20,9 @@ export interface CinematicPresetContext {
   currentCenter: [number, number];
   /** The loaded camera catalogue (may be empty until the CCTV data lands). */
   cameras: Array<{ lat?: unknown; lng?: unknown; name?: unknown }>;
+  /** The aircraft the user last selected on the globe, when one is
+   *  followable (drives the Aircraft Follow action preset). */
+  followTarget?: { icao24: string; callsign?: string } | null;
 }
 
 export interface CinematicPreset {
@@ -28,8 +31,17 @@ export interface CinematicPreset {
   description: string;
   /** Build the scene, or null when this preset cannot run right now. */
   build: (ctx: CinematicPresetContext) => CinematicScene | null;
-  /** Shown when build() returns null, so the disabled control explains itself. */
+  /** Shown when the preset cannot run, so the disabled control explains itself. */
   unavailableNote?: string;
+  /**
+   * Action presets drive another live system (aircraft follow) instead
+   * of playing a keyframe scene. When `action` is set the Director runs
+   * it on press and never feeds a scene to the player; `build` is then
+   * unused and `available` decides whether the control is enabled.
+   */
+  action?: (ctx: CinematicPresetContext) => void;
+  /** For action presets: whether the action can run right now. */
+  available?: (ctx: CinematicPresetContext) => boolean;
 }
 
 /** Slow orbit: six long legs around the equator, bearing advancing with longitude. */

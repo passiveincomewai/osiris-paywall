@@ -80,19 +80,35 @@ const DEFAULT_INTERVAL_MS = 30_000; // matches the client poll cadence
  * for a given wall-clock instant. Pure bookkeeping + motion.ts maths;
  * the map layer owns the clock and calls current() on its render tick.
  */
+/** Snapshot timing, exposed so consumers (the follow camera's HUD) can
+ *  state honestly how old the telemetry under the rendered position is. */
+export interface FlightBlendTiming {
+  hasPrev: boolean;
+  /** Blend position between the bracketing snapshots, 0.001–1. */
+  alpha: number;
+  /** Generation time of the older bracketing snapshot (feed timestamp). */
+  prevFixAt: number;
+  /** Generation time of the newest snapshot (feed timestamp). */
+  nextFixAt: number;
+}
+
 export class FlightBlend {
   private prev: FlightBuckets | null = null;
   private next: FlightBuckets | null = null;
   private nextAt = 0;
+  private prevFixAt = 0;
+  private nextFixAt = 0;
   private intervalMs = DEFAULT_INTERVAL_MS;
 
   /**
    * Offer a freshly polled payload. Re-offering the identical object
    * (same array references) is a no-op, as is an all-empty payload once
    * a real snapshot is held — a transient blank response must not empty
-   * the sky between polls.
+   * the sky between polls. `fixAtMs` is when the feed generated the
+   * snapshot (the /api/flights payload timestamp); it defaults to the
+   * arrival time and is only used for fix-age reporting, never motion.
    */
-  push(buckets: FlightBuckets, now: number): void {
+  push(buckets: FlightBuckets, now: number, fixAtMs?: number): void {
     if (!buckets) return;
     const incoming: FlightBuckets = {
       commercial_flights: buckets.commercial_flights || [],
@@ -108,15 +124,39 @@ export class FlightBlend {
     }
     const incomingTotal = BUCKET_KEYS.reduce((n, k) => n + incoming[k].length, 0);
     if (incomingTotal === 0 && this.next) return;
+    const fixAt = typeof fixAtMs === 'number' && Number.isFinite(fixAtMs) ? fixAtMs : now;
     if (this.next && now > this.nextAt) {
       this.intervalMs = Math.max(
         MIN_INTERVAL_MS,
         Math.min(MAX_INTERVAL_MS, now - this.nextAt),
       );
       this.prev = this.next;
+      this.prevFixAt = this.nextFixAt;
     }
     this.next = incoming;
     this.nextAt = now;
+    this.nextFixAt = fixAt;
+  }
+
+  /** Blend position between the bracketing snapshots at `now`. With no
+   *  previous snapshot there is nothing to bracket — the lone snapshot
+   *  is being dead-reckoned, which timing() reports as alpha 1. */
+  private alphaAt(now: number): number {
+    if (!this.prev) return 1;
+    return Math.max(0.001, Math.min(1, (now - this.nextAt) / this.intervalMs));
+  }
+
+  /** Timing of the snapshot pair current() draws from, or null before
+   *  the first snapshot. Lets the follow HUD derive fix age from the
+   *  same numbers the renderer uses instead of a second clock. */
+  timing(now: number): FlightBlendTiming | null {
+    if (!this.next) return null;
+    return {
+      hasPrev: !!this.prev,
+      alpha: this.alphaAt(now),
+      prevFixAt: this.prevFixAt,
+      nextFixAt: this.nextFixAt,
+    };
   }
 
   /** The buckets to draw at wall-clock `now`. */
@@ -138,10 +178,7 @@ export class FlightBlend {
     // the arrival instant would flash the newest fixes for one tick
     // before settling back to ≈prev — so with a prev held, alpha is
     // floored a hair above zero and the glide stays continuous.
-    const alpha = Math.max(
-      0.001,
-      Math.min(1, (now - this.nextAt) / this.intervalMs),
-    );
+    const alpha = this.alphaAt(now);
     for (const k of BUCKET_KEYS) {
       out[k] = blendSnapshots(
         this.prev[k] as FlightLike[],
