@@ -439,7 +439,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -533,6 +533,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'hurricane-label', type: 'symbol', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'current'], layout: {
         'text-field': ['upcase', ['get', 'name']], 'text-size': 10, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.6],
       }, paint: { 'text-color': '#FF8A80', 'text-halo-color': '#000', 'text-halo-width': 1 }});
+
+      // River Gauges (USGS) — stream-blue dots
+      map.addLayer({ id: 'gauge-dots', type: 'circle', source: 'river-gauges', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 2, 5, 4, 9, 7],
+        'circle-color': '#29B6F6', 'circle-opacity': 0.85, 'circle-stroke-color': '#01579B', 'circle-stroke-width': 0.8,
+      }});
 
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
@@ -1188,7 +1194,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
-      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
@@ -1339,6 +1345,33 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">FORECAST CONE OF UNCERTAINTY${p.advisory ? ' · ADVISORY ' + htmlEsc(p.advisory) : ''} — the storm center is expected to remain within this area about 2 times out of 3.</div>
         <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">NOAA · NATIONAL HURRICANE CENTER</div>
       </div>`);
+    });
+
+    // ── River Gauges (USGS) ──
+    map.on('click', 'gauge-dots', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(41,182,246,0.35);">
+        <div id="gauge-name-${htmlEsc(p.id)}" style="color:#29B6F6;font-size:12px;font-weight:700;margin-bottom:4px;">💧 USGS GAUGE ${htmlEsc(p.id)}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">REAL-TIME STREAM GAUGE</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">GAGE HEIGHT</span><br/><span style="color:#E8E6E0;">${p.gh != null ? p.gh + ' ft' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">DISCHARGE</span><br/><span style="color:#E8E6E0;">${p.flow != null ? Number(p.flow).toLocaleString('en-US') + ' ft³/s' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">UPDATED</span><br/><span style="color:#E8E6E0;">${p.t ? formatTime(p.t) : '—'}</span></div>
+          <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}, ${coords[0].toFixed(3)}</span></div>
+        </div>
+        <a href="https://waterdata.usgs.gov/monitoring-location/USGS-${encodeURIComponent(p.id || '')}/" target="_blank" style="${linkStyle}color:#29B6F6;border:1px solid rgba(41,182,246,0.4);background:rgba(41,182,246,0.1);">📈 USGS GAUGE PAGE</a>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">DATA — USGS WATERDATA</div>
+      </div>`);
+      // The bulk feed carries no names — resolve this gauge's name in place.
+      fetch(`/api/river-gauges?site=${encodeURIComponent(p.id || '')}`)
+        .then(r => r.json())
+        .then(j => {
+          const el = document.getElementById(`gauge-name-${p.id}`);
+          if (el && j?.name) el.textContent = '💧 ' + j.name;
+        })
+        .catch(() => { /* keep the site-id heading */ });
     });
 
     // ── Fire Perimeters (NIFC WFIGS) ──
@@ -1588,7 +1621,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -2301,6 +2334,28 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setGeo('fires', activeLayers.fires && data.fires ? data.fires.map((f: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [f.lng, f.lat] }, properties: { brightness: f.brightness } })) : []);
   }, [mapReady, data.fires, activeLayers.fires, setGeo]);
 
+  // River Gauges — fetched in-map on toggle (page state stays untouched);
+  // /api/river-gauges is server-cached, this just polls it while visible.
+  useEffect(() => {
+    if (!mapReady) return;
+    if (!(activeLayers as any).river_gauges) { setGeo('river-gauges', []); return; }
+    let live = true;
+    const load = async () => {
+      try {
+        const r = await fetch('/api/river-gauges');
+        const j = await r.json();
+        if (!live) return;
+        setGeo('river-gauges', (j.gauges ?? []).map((g: any) => ({
+          type: 'Feature', geometry: { type: 'Point', coordinates: [g.lng, g.lat] },
+          properties: { id: g.id, gh: g.gh ?? null, flow: g.flow ?? null, t: g.t },
+        })));
+      } catch { /* keep the last good set */ }
+    };
+    load();
+    const iv = setInterval(load, 600000); // 10m
+    return () => { live = false; clearInterval(iv); };
+  }, [mapReady, (activeLayers as any).river_gauges, setGeo]);
+
   useEffect(() => {
     if (!mapReady) return;
     // Hurricane features arrive as GeoJSON from /api/hurricanes.
@@ -2544,6 +2599,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['fires-heat'], activeLayers.fires);
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
     setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label'], (activeLayers as any).hurricanes);
+    setVis(['gauge-dots'], (activeLayers as any).river_gauges);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);
