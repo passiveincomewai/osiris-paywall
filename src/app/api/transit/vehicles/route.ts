@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 import { cachedSource } from '@/lib/sourceCache';
 import { agencyById, resolveMode, type TransitAgency } from '@/lib/transit/agencies';
+import { tripRouteMapFor, type TripRouteInfo } from '@/lib/transit/staticGtfs';
 
 /**
  * OSIRIS — Live Transit vehicles: per-agency GTFS-Realtime proxy.
@@ -79,9 +80,20 @@ async function fetchVehicles(agency: TransitAgency): Promise<Vehicle[]> {
     fetchDelays(agency),
     new Promise<Map<string, number>>(resolve => setTimeout(() => resolve(new Map()), 8000)),
   ]);
-  const [msg, delays] = await Promise.all([
+  // Static trip→route resolution (UTA-style feeds with no routeId in the
+  // vehicle feed) is likewise best-effort: 10 s budget, then positions
+  // serve unresolved rather than not at all. Agencies without a
+  // staticGtfsUrl skip this entirely — their path is unchanged.
+  const tripMapPromise: Promise<Map<string, TripRouteInfo> | null> = agency.staticGtfsUrl
+    ? Promise.race([
+        tripRouteMapFor(agency.id, agency.staticGtfsUrl),
+        new Promise<null>(resolve => setTimeout(() => resolve(null), 10000)),
+      ])
+    : Promise.resolve(null);
+  const [msg, delays, tripMap] = await Promise.all([
     fetchFeed(agency.feedUrl, agency),
     delaysPromise,
+    tripMapPromise,
   ]);
   const now = Date.now();
   const vehicles: Vehicle[] = [];
@@ -92,14 +104,17 @@ async function fetchVehicles(agency: TransitAgency): Promise<Vehicle[]> {
     const ts = toSeconds(v.timestamp);
     // Feeds carry ghost vehicles long after they stop reporting.
     if (ts != null && now - ts * 1000 > STALE_MS) continue;
-    const route = v.trip?.routeId ?? '';
     const tripId = v.trip?.tripId;
+    // Feeds that omit routeId (UTA) resolve it — and an exact mode from
+    // GTFS route_type — through the static trip map when configured.
+    const mapped = tripId && tripMap ? tripMap.get(tripId) : undefined;
+    const route = v.trip?.routeId || mapped?.route || '';
     const veh: Vehicle = {
       id: String(v.vehicle?.id ?? e.id ?? ''),
       lat: Math.round(pos.latitude * 100000) / 100000,
       lng: Math.round(pos.longitude * 100000) / 100000,
       route,
-      mode: resolveMode(agency, route),
+      mode: mapped?.mode ?? resolveMode(agency, route),
     };
     if (typeof v.trip?.directionId === 'number') veh.dir = v.trip.directionId;
     if (typeof pos.bearing === 'number' && pos.bearing !== 0) veh.bearing = Math.round(pos.bearing);

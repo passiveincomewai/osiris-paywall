@@ -18,6 +18,15 @@
  * route_id wins). Rules are grounded in each feed's observed route ids.
  * Where a feed's ids carry no mode signal at all (OVapi NL), the mode is
  * 'transit' — a neutral color that claims nothing more specific.
+ *
+ * UTA (added 2026-10-18): UTA publishes NO GTFS-RT in the Mobility
+ * Database catalog and its legacy SIRI API (api.rideuta.com) is retired —
+ * but it does publish keyless GTFS-RT at apps.rideuta.com/tms/gtfs/*
+ * (registered in the Transitland Atlas DMFR, feed f-9x0-uta~rt, no auth).
+ * Quirk: the vehicle feed omits routeId entirely — only tripId. The
+ * route therefore joins the agency's static GTFS (see `staticGtfsUrl`
+ * + lib/transit/staticGtfs): trip → internal route_id → route_short_name
+ * (the public number) with the mode taken from route_type exactly.
  */
 
 export type TransitMode = 'bus' | 'tram' | 'metro' | 'train' | 'ferry' | 'transit';
@@ -31,6 +40,11 @@ export interface TransitAgency {
   feedUrl: string;
   /** GTFS-RT TripUpdates feed, when the agency publishes a keyless one. */
   tripUpdatesUrl?: string;
+  /**
+   * Static GTFS zip used to resolve tripId → route/mode for feeds whose
+   * vehicle positions omit routeId (UTA). See lib/transit/staticGtfs.
+   */
+  staticGtfsUrl?: string;
   headers?: Record<string, string>;
   defaultMode: TransitMode;
   routeModeRules?: Array<{ match: RegExp; mode: TransitMode }>;
@@ -40,6 +54,26 @@ export interface TransitAgency {
 }
 
 export const TRANSIT_AGENCIES: TransitAgency[] = [
+  {
+    id: 'uta',
+    name: 'UTA',
+    region: 'Salt Lake City, UT',
+    center: [40.7608, -111.891],
+    feedUrl: 'https://apps.rideuta.com/tms/gtfs/Vehicle',
+    tripUpdatesUrl: 'https://apps.rideuta.com/tms/gtfs/TripUpdate',
+    staticGtfsUrl: 'https://gtfsfeed.rideuta.com/GTFS.zip',
+    // The static join normally supplies route + mode (route_type-exact).
+    // defaultMode is the honest fallback if that join is unavailable;
+    // the rules below fire on resolved short names (published UTA
+    // numbering: TRAX 701/703/704, S-Line streetcar 720, FrontRunner 750).
+    defaultMode: 'transit',
+    routeModeRules: [
+      { match: /^70[134]$/, mode: 'tram' },
+      { match: /^720$/, mode: 'tram' },
+      { match: /^750$/, mode: 'train' },
+    ],
+    attribution: 'Utah Transit Authority',
+  },
   {
     id: 'mbta',
     name: 'MBTA',
