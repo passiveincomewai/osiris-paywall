@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { stealthFetch } from '@/lib/stealthFetch';
+import { extractAircraft } from '@/lib/flights/feeds';
 
 export const maxDuration = 60;
 
@@ -122,21 +123,28 @@ const JET_CRUISE_KTS = 300;
 const ADSB_MAX_DIST = 250; // nm — hard cap the provider enforces
 const ADSBFI_BASE = 'https://opendata.adsb.fi/api/v2';
 
-// adsb.fi allows roughly one request per second and soft-throttles over that by
-// returning 200 with an empty ac[] rather than 429, so a parallel fanout looks
-// like it succeeded while returning nothing. The regional sweep is paced.
+// adsb.fi's terms cap public endpoints at one request per second, and the
+// point endpoint meters far harder than /mil, so the regional sweep is paced
+// rather than fanned out in parallel.
 const ADSBFI_GAP_MS = 1100;
 
+// Point queries use adsb.fi's /v3 endpoint. The /v2 point endpoint is
+// deprecated and answers in a different response shape ({aircraft: [...],
+// resultCount}) than every other endpoint ({ac: [...], total}); this route
+// read only `ac` from it for months, so the regional sweep ingested ZERO
+// aircraft while the provider was returning hundreds per region (measured
+// 2026-10-18: London 725, Tokyo 203, NYC 71 → parsed as 0). extractAircraft()
+// accepts both shapes, and the sweep runs on /v3, the documented current API.
 // adsb.fi serves /mil but returns 400 for /ladd, /pia and /squawk/{code},
 // so the global type feeds collapse to the military one.
 async function fetchAdsbFiRegion(lat: number, lon: number): Promise<any[]> {
   try {
-    const res = await stealthFetch(`${ADSBFI_BASE}/lat/${lat}/lon/${lon}/dist/${ADSB_MAX_DIST}`, {
-      signal: AbortSignal.timeout(12000),
+    const res = await stealthFetch(`https://opendata.adsb.fi/api/v3/lat/${lat}/lon/${lon}/dist/${ADSB_MAX_DIST}`, {
+      signal: AbortSignal.timeout(8000),
     });
     if (res.ok) {
       const data = await res.json();
-      return data.ac || [];
+      return extractAircraft(data);
     }
     await res.body?.cancel();
   } catch {}
@@ -245,6 +253,21 @@ let osSnapshot: any[] = [];
 let osSnapshotTime = 0;
 let fetchPromise: Promise<any> | null = null;
 
+// The regional sweep takes ~45s wall (30 paced requests) and the route cache
+// only holds a finished payload for 90s, so without reuse nearly every cycle
+// in the no-OpenSky steady state would pay for a full sweep — and any sweep
+// that overran maxDuration would empty the layer instead of serving the last
+// good result. The last successful sweep is therefore kept and reused for
+// five minutes, the same pattern as the OpenSky snapshot above; the /mil feed
+// still refreshes every cycle, so military traffic never rides the reuse.
+let regionalSnapshot: any[] = [];
+let regionalSnapshotTime = 0;
+let regionalRegionsAnswered = 0;
+const REGIONAL_REUSE_MS = 5 * 60 * 1000;
+// Stop starting new region requests this long into a sweep, so a slow tail
+// of timeouts cannot push the route past its 60s maxDuration.
+const SWEEP_DEADLINE_MS = 40000;
+
 // Back off from OpenSky after a 429 so the daily quota can reset.
 // Re-poking a limited endpoint on every cache miss keeps the IP throttled.
 let openSkyCooldownUntil = 0;
@@ -350,7 +373,7 @@ export async function GET() {
       if (milRes.value.ok) {
         try {
           const data = await milRes.value.json();
-          ingestAc(data.ac || [], allRaw, seenHex);
+          ingestAc(extractAircraft(data), allRaw, seenHex);
         } catch (e) {
           console.warn('[OSIRIS] adsb.fi mil parse error:', e);
         }
@@ -400,19 +423,45 @@ export async function GET() {
     const openSkyWorked = osSnapshot.length > 0;
 
     // ── Phase 3: Regional sweep — last resort only ────────────────────────────
-    // Runs only when there is no OpenSky snapshot at all, never as the steady
-    // state. adsb.fi's geographic endpoint is metered far more tightly than its
-    // /mil feed and answers 200 with an empty ac[] once that budget is spent
-    // rather than 429, so sweeping it every cycle would quietly exhaust it and
-    // look like empty airspace. Paced at ~1 req/s; 30 regions ≈ 33s, inside the
-    // 60s maxDuration above.
+    // Runs only when there is no OpenSky snapshot at all. adsb.fi's point
+    // endpoint is its most-metered surface (1 req/s by its terms), so instead
+    // of re-sweeping on every cache cycle the last good sweep is reused for
+    // REGIONAL_REUSE_MS — the same snapshot pattern as OpenSky above. Paced at
+    // ~1 req/s with a hard deadline inside the 60s maxDuration.
+    let regionalIngested = 0;
     if (!openSkyWorked) {
       source = 'regional';
-      console.warn('[OSIRIS] no OpenSky snapshot — falling back to adsb.fi regional sweep');
 
-      for (const r of REGIONS) {
-        ingestAc(await fetchAdsbFiRegion(r.lat, r.lon), allRaw, seenHex);
-        await new Promise(resolve => setTimeout(resolve, ADSBFI_GAP_MS));
+      if (regionalSnapshot.length > 0 && Date.now() - regionalSnapshotTime < REGIONAL_REUSE_MS) {
+        const before = allRaw.length;
+        ingestAc(regionalSnapshot, allRaw, seenHex);
+        regionalIngested = allRaw.length - before;
+      } else {
+        console.warn('[OSIRIS] no OpenSky snapshot — falling back to adsb.fi regional sweep');
+        const sweepRaw: any[] = [];
+        const sweepSeen = new Set<string>();
+        const sweepStart = Date.now();
+        let answered = 0;
+
+        for (const r of REGIONS) {
+          if (Date.now() - sweepStart > SWEEP_DEADLINE_MS) {
+            console.warn('[OSIRIS] regional sweep hit its deadline — keeping the partial result');
+            break;
+          }
+          const regionAc = await fetchAdsbFiRegion(r.lat, r.lon);
+          if (regionAc.length > 0) answered++;
+          ingestAc(regionAc, sweepRaw, sweepSeen);
+          await new Promise(resolve => setTimeout(resolve, ADSBFI_GAP_MS));
+        }
+
+        if (sweepRaw.length > 0) {
+          regionalSnapshot = sweepRaw;
+          regionalSnapshotTime = Date.now();
+          regionalRegionsAnswered = answered;
+        }
+        const before = allRaw.length;
+        ingestAc(sweepRaw, allRaw, seenHex);
+        regionalIngested = allRaw.length - before;
       }
 
       if (allRaw.length === 0) {
@@ -461,7 +510,9 @@ export async function GET() {
       // is visible in the payload rather than silently emptying the map.
       providers: {
         adsbfi_mil:      milCount,
-        adsbfi_regional: openSkyWorked ? 0 : allRaw.length - milCount,
+        adsbfi_regional: regionalIngested,
+        adsbfi_regions:  regionalRegionsAnswered,
+        adsbfi_regional_age_s: regionalSnapshotTime ? Math.round((Date.now() - regionalSnapshotTime) / 1000) : null,
         opensky:         osSnapshot.length,
         opensky_auth:    hasOpenSkyCreds(),
         opensky_age_s:   osSnapshotTime ? Math.round((Date.now() - osSnapshotTime) / 1000) : null,
