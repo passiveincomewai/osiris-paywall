@@ -1231,7 +1231,7 @@ export default function Dashboard() {
     const intervals: ReturnType<typeof setInterval>[] = [];
     const stopFns: (() => void)[] = [];
     if (activeLayers.flights || activeLayers.military || activeLayers.jets || activeLayers.private) {
-      intervals.push(setInterval(() => fetchEndpoint('/api/flights'), 300000)); // 5 min (was 2 min)
+      intervals.push(setInterval(() => fetchEndpoint('/api/flights'), 30000)); // 30s (was 5 min — raw snapshots teleported between polls; the map now blends them, lib/flights/render)
     }
 
     if (activeLayers.balloons) {

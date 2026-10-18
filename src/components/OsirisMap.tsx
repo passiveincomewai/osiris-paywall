@@ -22,6 +22,7 @@ import {
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
+import { FlightBlend, flightsToFeatures } from '@/lib/flights/render';
 import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
@@ -228,6 +229,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const trafficVehiclesStateRef = useRef<SimVehicle[]>([]);
   const trafficFlowRef = useRef<{ ratios: Map<string, number>; at: number } | null>(null);
   const trafficNearbyRef = useRef<any[]>([]);
+  const flightBlendRef = useRef<FlightBlend | null>(null);
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
   const alertPinsRef = useRef<AlertPinFeature[]>([]);
@@ -2266,24 +2268,53 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     ids.forEach(id => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none'); });
   }, []);
 
-  // Flight data → GeoJSON (GPU rendered)
+  // Flight snapshots → blend state (lib/flights/render). A poll lands here
+  // and only updates the snapshot pair; the render loop below owns the
+  // cadence, so a data change by itself never redraws the sources.
+  useEffect(() => {
+    if (
+      !Array.isArray(data.commercial_flights) &&
+      !Array.isArray(data.private_flights) &&
+      !Array.isArray(data.private_jets) &&
+      !Array.isArray(data.military_flights)
+    ) return;
+    if (!flightBlendRef.current) flightBlendRef.current = new FlightBlend();
+    flightBlendRef.current.push({
+      commercial_flights: data.commercial_flights || [],
+      private_flights: data.private_flights || [],
+      private_jets: data.private_jets || [],
+      military_flights: data.military_flights || [],
+    }, Date.now());
+  }, [data.commercial_flights, data.private_flights, data.private_jets, data.military_flights]);
+
+  // Flight data → GeoJSON (GPU rendered). FULL sets — no decimation: every
+  // record the route classified becomes a feature (received == rendered;
+  // lib/flights/render pins that in tests). A 500ms loop interpolates
+  // between the last two 30s snapshots — render one interval behind and
+  // blend the bracketing fixes (GEV pattern, lib/flights/motion) — so
+  // aircraft glide instead of teleporting between polls. The interval is
+  // cleared when every flight layer is off and on unmount.
   useEffect(() => {
     if (!mapReady) return;
-    const toFeatures = (arr: any[], decimate: number = 1) => {
-      let filtered = arr || [];
-      if (decimate > 1) {
-        filtered = filtered.filter((_, i) => i % decimate === 0);
-      }
-      return filtered.map((f: any) => ({
-        type: 'Feature' as const, geometry: { type: 'Point' as const, coordinates: [f.lng, f.lat] },
-        properties: { callsign: f.callsign, heading: f.heading || 0, alt: f.alt, model: f.model, speed_knots: f.speed_knots, registration: f.registration, icao24: f.icao24 },
-      }));
+    const anyOn = activeLayers.flights || activeLayers.private || activeLayers.jets || activeLayers.military;
+    if (!anyOn) {
+      setGeo('flights', []);
+      setGeo('private-fl', []);
+      setGeo('jets', []);
+      setGeo('military', []);
+      return;
+    }
+    const render = () => {
+      const cur = flightBlendRef.current?.current(Date.now());
+      setGeo('flights', activeLayers.flights ? flightsToFeatures(cur?.commercial_flights) : []);
+      setGeo('private-fl', activeLayers.private ? flightsToFeatures(cur?.private_flights) : []);
+      setGeo('jets', activeLayers.jets ? flightsToFeatures(cur?.private_jets) : []);
+      setGeo('military', activeLayers.military ? flightsToFeatures(cur?.military_flights) : []);
     };
-    setGeo('flights', activeLayers.flights ? toFeatures(data.commercial_flights, 10) : []);
-    setGeo('private-fl', activeLayers.private ? toFeatures(data.private_flights, 2) : []);
-    setGeo('jets', activeLayers.jets ? toFeatures(data.private_jets, 2) : []);
-    setGeo('military', activeLayers.military ? toFeatures(data.military_flights) : []);
-  }, [mapReady, data.commercial_flights, data.private_flights, data.private_jets, data.military_flights, activeLayers.flights, activeLayers.private, activeLayers.jets, activeLayers.military]);
+    render();
+    const iv = setInterval(render, 500);
+    return () => clearInterval(iv);
+  }, [mapReady, activeLayers.flights, activeLayers.private, activeLayers.jets, activeLayers.military, setGeo]);
 
   /**
    * Pull the palette out of the document whenever it can have changed.

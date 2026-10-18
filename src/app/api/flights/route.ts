@@ -5,7 +5,7 @@ import { extractAircraft } from '@/lib/flights/feeds';
 
 export const maxDuration = 60;
 
-// 30 regions covering every major aviation corridor at 250 nm radius.
+// 35 regions covering every major aviation corridor at 250 nm radius.
 // Focused on high-density airspace: US domestic, North Atlantic, Europe,
 // Middle East hub, India, East Asia, SE Asia, Australia, South America.
 const REGIONS = [
@@ -15,6 +15,7 @@ const REGIONS = [
   { lat: 33.0,  lon: -84.0 }, // Southeast (Atlanta)
   { lat: 42.0,  lon: -88.0 }, // Midwest (Chicago)
   { lat: 30.0,  lon: -97.0 }, // Texas (Dallas/Houston)
+  { lat: 19.4,  lon: -99.1 }, // Mexico City
   { lat: 47.0,  lon:-122.0 }, // Pacific Northwest (Seattle)
   { lat: 34.0,  lon:-118.0 }, // SoCal (LA)
   { lat: 45.0,  lon: -73.0 }, // Canada East (Montreal/Toronto)
@@ -29,7 +30,7 @@ const REGIONS = [
   { lat: 52.0,  lon:  22.0 }, // Eastern Europe / Baltics
   { lat: 39.0,  lon:  35.0 }, // Turkey / Aegean
   // Middle East & South Asia
-  { lat: 25.0,  lon:  45.0 }, // Arabian Gulf (Dubai/Riyadh)
+  { lat: 25.1,  lon:  51.5 }, // Arabian Gulf (Dubai/Doha/Abu Dhabi)
   { lat: 22.0,  lon:  78.0 }, // India
   // East Asia & Pacific
   { lat: 35.0,  lon: 105.0 }, // China
@@ -37,10 +38,14 @@ const REGIONS = [
   { lat: 37.0,  lon: 127.0 }, // Korea
   { lat: 13.0,  lon: 100.0 }, // SE Asia (Bangkok)
   { lat:  1.0,  lon: 104.0 }, // Singapore / Malacca Strait
+  { lat: -6.2,  lon: 106.8 }, // Indonesia (Jakarta)
   // Australia
   { lat:-25.0,  lon: 133.0 }, // Central Australia
   { lat:-33.0,  lon: 151.0 }, // Eastern Australia (Sydney)
+  { lat:-37.0,  lon: 174.8 }, // New Zealand (Auckland)
   // Africa
+  { lat:  6.5,  lon:   3.4 }, // Nigeria (Lagos)
+  { lat: -1.3,  lon:  36.8 }, // Kenya (Nairobi)
   { lat:  0.0,  lon:  20.0 }, // Central Africa
   { lat:-26.0,  lon:  28.0 }, // South Africa
   // South America
@@ -125,8 +130,12 @@ const ADSBFI_BASE = 'https://opendata.adsb.fi/api/v2';
 
 // adsb.fi's terms cap public endpoints at one request per second, and the
 // point endpoint meters far harder than /mil, so the regional sweep is paced
-// rather than fanned out in parallel.
-const ADSBFI_GAP_MS = 1100;
+// rather than fanned out in parallel. Pacing is start-to-start: a region
+// request never STARTS less than ~1.05s after the previous one started,
+// which honours the 1 req/s cap while keeping a 35-region sweep inside
+// SWEEP_DEADLINE_MS — the old end-of-request + 1100ms gap stacked the full
+// fetch latency of every region on top of the gap (~45s at 30 regions).
+const ADSBFI_START_GAP_MS = 1050;
 
 // Point queries use adsb.fi's /v3 endpoint. The /v2 point endpoint is
 // deprecated and answers in a different response shape ({aircraft: [...],
@@ -253,7 +262,7 @@ let osSnapshot: any[] = [];
 let osSnapshotTime = 0;
 let fetchPromise: Promise<any> | null = null;
 
-// The regional sweep takes ~45s wall (30 paced requests) and the route cache
+// The regional sweep takes ~40s wall (35 paced requests) and the route cache
 // only holds a finished payload for 90s, so without reuse nearly every cycle
 // in the no-OpenSky steady state would pay for a full sweep — and any sweep
 // that overran maxDuration would empty the layer instead of serving the last
@@ -443,15 +452,20 @@ export async function GET() {
         const sweepStart = Date.now();
         let answered = 0;
 
+        let lastStart = 0;
         for (const r of REGIONS) {
           if (Date.now() - sweepStart > SWEEP_DEADLINE_MS) {
             console.warn('[OSIRIS] regional sweep hit its deadline — keeping the partial result');
             break;
           }
+          const paceWait = ADSBFI_START_GAP_MS - (Date.now() - lastStart);
+          if (lastStart && paceWait > 0) {
+            await new Promise(resolve => setTimeout(resolve, paceWait));
+          }
+          lastStart = Date.now();
           const regionAc = await fetchAdsbFiRegion(r.lat, r.lon);
           if (regionAc.length > 0) answered++;
           ingestAc(regionAc, sweepRaw, sweepSeen);
-          await new Promise(resolve => setTimeout(resolve, ADSBFI_GAP_MS));
         }
 
         if (sweepRaw.length > 0) {
