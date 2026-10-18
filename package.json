@@ -25,6 +25,7 @@
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.38.0",
     "google-libphonenumber": "^3.2.44",
+    "gtfs-realtime-bindings": "^2.2.0",
     "hls.js": "^1.6.16",
     "jsqr": "^1.4.0",
     "lightweight-charts": "^5.2.0",

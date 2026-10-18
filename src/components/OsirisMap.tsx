@@ -192,6 +192,8 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // GBFS + transit layers keep their data in-map (toggle-gated fetches).
   const gbfsSystemsRef = useRef<any[]>([]);
   const gbfsCacheRef = useRef(new Map<string, { at: number; items: any[] }>());
+  const transitAgenciesRef = useRef<any[]>([]);
+  const transitVehiclesRef = useRef(new Map<string, any[]>());
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
   const alertPinsRef = useRef<AlertPinFeature[]>([]);
@@ -442,7 +444,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -571,6 +573,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'gbfs-vehicles', type: 'circle', source: 'gbfs', filter: ['==', ['get', 'kind'], 'vehicle'], paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2, 12, 5, 16, 8],
         'circle-color': '#9CCC65', 'circle-opacity': 0.9, 'circle-stroke-color': '#33691E', 'circle-stroke-width': 1,
+      }});
+
+      // Live Transit — vehicle dots colored by mode
+      map.addLayer({ id: 'transit-dots', type: 'circle', source: 'transit', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 8, 5, 12, 8],
+        'circle-color': ['match', ['get', 'mode'],
+          'bus', '#FFA726', 'tram', '#66BB6A', 'metro', '#42A5F5', 'train', '#AB47BC', 'ferry', '#26C6DA', '#B0BEC5'],
+        'circle-opacity': 0.92, 'circle-stroke-color': '#000000', 'circle-stroke-width': 0.7,
       }});
 
       // CCTV — outer glow ring (black/white depending on theme)
@@ -1227,7 +1237,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
-      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
@@ -1461,6 +1471,29 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         <div style="color:#9CCC65;font-size:12px;font-weight:700;margin-bottom:4px;">🛴 FREE-FLOATING VEHICLE</div>
         <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.sysName || '')}${p.vt ? ' · ' + htmlEsc(p.vt) : ''}</div>
         <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">DATA — GBFS · ${htmlEsc((p.sysName || 'OPERATOR').toUpperCase())}</div>
+      </div>`);
+    });
+
+    // ── Live Transit (GTFS-Realtime) ──
+    const MODE_LABEL: Record<string, string> = { bus: 'BUS', tram: 'TRAM / LIGHT RAIL', metro: 'METRO', train: 'TRAIN', ferry: 'FERRY', transit: 'TRANSIT VEHICLE' };
+    const STATUS_LABEL: Record<number, string> = { 0: 'Approaching stop', 1: 'At stop', 2: 'In transit' };
+    map.on('click', 'transit-dots', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const delayTxt = p.delay == null ? null : p.delay >= 60 ? Math.round(p.delay / 60) + ' min late' : p.delay <= -60 ? Math.round(-p.delay / 60) + ' min early' : 'On time';
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(255,167,38,0.35);">
+        <div style="color:#FFA726;font-size:12px;font-weight:700;margin-bottom:4px;">🚌 ${MODE_LABEL[p.mode] || 'TRANSIT'}${p.route ? ' · ' + htmlEsc(p.route) : ''}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.agency || '')}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">ROUTE</span><br/><span style="color:#E8E6E0;">${p.route ? htmlEsc(p.route) : 'Not in service'}</span></div>
+          <div><span style="color:#5C5A54;">STATUS</span><br/><span style="color:#E8E6E0;">${p.status != null ? (STATUS_LABEL[p.status] || '—') : '—'}</span></div>
+          <div><span style="color:#5C5A54;">DELAY</span><br/><span style="color:#E8E6E0;">${delayTxt ?? '—'}</span></div>
+          <div><span style="color:#5C5A54;">SPEED</span><br/><span style="color:#E8E6E0;">${p.speedKmh != null ? p.speedKmh + ' km/h' : '—'}</span></div>
+          ${p.label ? `<div><span style="color:#5C5A54;">VEHICLE</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.label)}</span></div>` : ''}
+          ${p.dir != null ? `<div><span style="color:#5C5A54;">DIRECTION</span><br/><span style="color:#E8E6E0;">${p.dir}</span></div>` : ''}
+        </div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">DATA — GTFS-REALTIME · ${htmlEsc((p.attribution || p.agency || '').toUpperCase())}</div>
       </div>`);
     });
 
@@ -1711,7 +1744,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -2489,6 +2522,68 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     return () => { live = false; map.off('moveend', onMove); };
   }, [mapReady, (activeLayers as any).gbfs, setGeo]);
 
+  // Live Transit — agencies load by viewport relevance, vehicles poll 30 s.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    if (!(activeLayers as any).transit) { setGeo('transit', []); return; }
+    let live = true;
+    const render = () => {
+      if (!live) return;
+      const nowS = Date.now() / 1000;
+      const feats: any[] = [];
+      for (const [agencyId, vehicles] of transitVehiclesRef.current) {
+        const ag = transitAgenciesRef.current.find((a: any) => a.id === agencyId);
+        for (const v of vehicles as any[]) {
+          if (v.ts && nowS - v.ts > 900) continue; // silent > 15 min
+          feats.push({
+            type: 'Feature', geometry: { type: 'Point', coordinates: [v.lng, v.lat] },
+            properties: {
+              agency: ag?.name ?? agencyId, attribution: ag?.attribution ?? '',
+              route: v.route ?? '', mode: v.mode, dir: v.dir ?? null, bearing: v.bearing ?? null,
+              speedKmh: v.speedKmh ?? null, label: v.label ?? '', status: v.status ?? null,
+              occ: v.occ ?? null, delay: v.delay ?? null,
+            },
+          });
+        }
+      }
+      setGeo('transit', feats);
+    };
+    const load = async () => {
+      if (!live) return;
+      const b = map.getBounds();
+      const padLat = (b.getNorth() - b.getSouth()) * 0.75;
+      const padLng = (b.getEast() - b.getWest()) * 0.75;
+      const ags = transitAgenciesRef.current
+        .filter((a: any) => a.center[0] >= b.getSouth() - padLat && a.center[0] <= b.getNorth() + padLat && a.center[1] >= b.getWest() - padLng && a.center[1] <= b.getEast() + padLng)
+        .slice(0, 6);
+      await Promise.all(ags.map(async (a: any) => {
+        try {
+          const r = await fetch(`/api/transit/vehicles?agency=${a.id}`);
+          const j = await r.json();
+          transitVehiclesRef.current.set(a.id, j.vehicles ?? []);
+        } catch { /* keep the last good set */ }
+      }));
+      const keep = new Set(ags.map((a: any) => a.id));
+      for (const k of [...transitVehiclesRef.current.keys()]) if (!keep.has(k)) transitVehiclesRef.current.delete(k);
+      render();
+    };
+    (async () => {
+      if (!transitAgenciesRef.current.length) {
+        try {
+          const r = await fetch('/api/transit/agencies');
+          const j = await r.json();
+          if (live) transitAgenciesRef.current = j.agencies ?? [];
+        } catch { /* layer stays empty */ }
+      }
+      await load();
+    })();
+    const iv = setInterval(load, 30000);
+    const onMove = () => { void load(); };
+    map.on('moveend', onMove);
+    return () => { live = false; clearInterval(iv); map.off('moveend', onMove); };
+  }, [mapReady, (activeLayers as any).transit, setGeo]);
+
   // ALERT Fire Cameras — fetched in-map on toggle; server route is cached,
   // frames themselves load straight from ALERTCalifornia in the popup.
   useEffect(() => {
@@ -2779,6 +2874,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['gauge-dots'], (activeLayers as any).river_gauges);
     setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
     setVis(['gbfs-systems','gbfs-label','gbfs-stations','gbfs-vehicles'], (activeLayers as any).gbfs);
+    setVis(['transit-dots'], (activeLayers as any).transit);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);
