@@ -30,9 +30,20 @@ export async function GET(req: Request) {
       headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
     });
   } catch {
+    // Upstream failure is an ERROR, not an empty sky: a 200 with empty
+    // arrays here once froze a transient FAA hiccup into a cached
+    // "no grids" lie (2026-10-18). 502 + no-store, like the site's
+    // other proxied-layer routes; the grids/restrictions keys stay so
+    // clients parsing the body keep working.
     return NextResponse.json(
-      { grids: [], restrictions: [], source: 'FAA ArcGIS (unavailable)' },
-      { status: 200, headers: { 'Cache-Control': 'public, s-maxage=60' } },
+      {
+        grids: [],
+        restrictions: [],
+        truncated: false,
+        error: 'FAA airspace data temporarily unavailable',
+        source: 'FAA ArcGIS',
+      },
+      { status: 502, headers: { 'Cache-Control': 'no-store' } },
     );
   }
 }
