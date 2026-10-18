@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import CountryCameraExplorer from "@/components/CountryCameraExplorer";
+import { COUNTRY_CAMERA_EXPLORERS } from "@/lib/country-cameras";
 import directory from "@/data/camera-directory.json";
 import { countryContentB, type CountryContent } from "@/data/country-content-b";
 import { countryContentC } from "@/data/country-content-c";
@@ -101,6 +103,10 @@ export default async function CountryPage({
   const content = CONTENT[slug];
   if (!c || !content) notFound();
 
+  // Playable camera grid — present only for countries enrolled in
+  // COUNTRY_CAMERA_EXPLORERS (Thailand first; see lib/country-cameras).
+  const explorer = COUNTRY_CAMERA_EXPLORERS[slug];
+
   const canonical = `${BASE}/cameras/countries/${slug}`;
   const updated = formatDate(directory.generatedAt);
   const steps = howToFor(slug);
@@ -177,6 +183,20 @@ export default async function CountryPage({
             <p key={i}>{p}</p>
           ))}
         </div>
+
+        {/* Playable cameras — every record for this country in the live
+            catalogue, playable in the globe's own viewer without leaving
+            the page. Enrolled countries only (Thailand POC). */}
+        {explorer && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">Watch {c.name} cameras live</h2>
+            <p className="text-sm text-white/50 mb-5 max-w-3xl">
+              Every camera in the live WorldEye index for {c.name}. Search or filter by area,
+              then open any feed to watch it here — no trip to the map required.
+            </p>
+            <CountryCameraExplorer config={explorer} />
+          </section>
+        )}
 
         {/* Top areas */}
         {c.areas.length > 0 && (

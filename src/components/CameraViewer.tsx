@@ -246,8 +246,11 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                       <RefreshCw className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--gold-primary)]" />
                     </button>
                   )}
-                  {camera.lat && camera.lng && (
-                    <button onClick={() => onLocate?.(camera.lat, camera.lng)} className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)] transition-all" title="Fly to location" aria-label="Fly to location">
+                  {/* Only where a host offers somewhere to fly to (the globe).
+                      A page context has no map behind it — a button that does
+                      nothing there would be a dead control. */}
+                  {camera.lat && camera.lng && onLocate && (
+                    <button onClick={() => onLocate(camera.lat, camera.lng)} className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)] transition-all" title="Fly to location" aria-label="Fly to location">
                       <MapPin className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--gold-primary)]" />
                     </button>
                   )}
