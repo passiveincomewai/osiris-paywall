@@ -362,6 +362,11 @@ export default function FeaturesPage() {
         <RelatedLinks
           links={[
             {
+              label: "How WorldEye compares",
+              desc: "Honest head-to-heads with OSIRIS, World Monitor, God's Eye View and more — features, pricing, verdicts.",
+              href: "/compare",
+            },
+            {
               label: "Use cases",
               desc: "Who uses these features — journalists, researchers, travelers, storm watchers and more.",
               href: "/use-cases",

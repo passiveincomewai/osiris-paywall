@@ -39,6 +39,11 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
     title: "Alternatives & Comparisons",
     links: [
       ["Compare WorldEye", "/compare"],
+      ["God's Eye View Alternative", "/alternatives/gods-eye-view"],
+      ["OSIRIS Alternative", "/alternatives/osiris"],
+      ["World Monitor Alternative", "/alternatives/world-monitor"],
+      ["GodsView AI Alternative", "/alternatives/godsview-ai"],
+      ["War Monitor Alternative", "/alternatives/war-monitor"],
       ["Liveuamap Alternative", "/alternatives/liveuamap"],
       ["Flightradar24 Alternative", "/alternatives/flightradar24"],
       ["Google Earth Alternative", "/alternatives/google-earth"],

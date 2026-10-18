@@ -145,6 +145,59 @@ export default async function CompareHubPage() {
         <p className="text-xs text-white/30 mt-4">Last reviewed: October 2026. Feature details are verified per-page with sources.</p>
       </section>
 
+      {/* Head-to-head spotlights */}
+      <section className="max-w-5xl mx-auto px-6 pb-16">
+        <h2 className="text-2xl font-bold text-white text-center">Head-to-head spotlights</h2>
+        <p className="text-sm text-white/45 text-center mt-3 max-w-xl mx-auto">
+          The comparisons readers ask for most — the viral open-source
+          globes and analyst dashboards, taken one at a time.
+        </p>
+        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            {
+              title: "WorldEye vs OSIRIS",
+              desc: "Hosted 3D globe vs the self-hosted open-source OSINT platform — features, pricing, verdict.",
+              href: "/compare/worldeye-vs-osiris",
+            },
+            {
+              title: "WorldEye vs World Monitor",
+              desc: "Camera globe vs the free geopolitical dashboard with chokepoint and markets depth.",
+              href: "/compare/world-monitor",
+            },
+            {
+              title: "God's Eye View alternatives",
+              desc: "The viral Cesium globe, hosted vs self-hosted — and the ~4,000 vs 36,000+ camera question.",
+              href: "/alternatives/gods-eye-view",
+            },
+            {
+              title: "OSIRIS alternatives",
+              desc: "Run your own intel stack, or open one that's already running? Every route compared.",
+              href: "/alternatives/osiris",
+            },
+            {
+              title: "GodsView AI alternatives",
+              desc: "The hosted 'God's Eye View online' map vs the camera globe vs the open-source original.",
+              href: "/alternatives/godsview-ai",
+            },
+            {
+              title: "War Monitor alternatives",
+              desc: "Conflict dashboards, analyst toolkits and live globes for watching a war in context.",
+              href: "/alternatives/war-monitor",
+            },
+          ].map((c) => (
+            <Link
+              key={c.href}
+              href={c.href}
+              className="block rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0096FF]/40 hover:bg-white/[0.04] transition group"
+            >
+              <h3 className="font-bold text-white group-hover:text-[#7cc4ff] transition">{c.title}</h3>
+              <p className="text-sm text-white/45 mt-1.5 leading-relaxed">{c.desc}</p>
+              <span className="inline-block mt-3 text-xs font-semibold text-[#0096FF]">Read the comparison →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <SiteFooter />
     </div>
   );
