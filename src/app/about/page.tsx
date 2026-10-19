@@ -8,7 +8,7 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "About WorldEye — Open Planetary Intelligence for Everyone",
   description:
-    "WorldEye is a free live 3D globe: flights, satellites, weather, quakes and ~76,000 public cameras with no signup. Pro adds the OI AI assistant and intel tools.",
+    "WorldEye is a free live 3D globe: flights, satellites, transit, weather, quakes and 76,000+ public cameras with no signup. Pro adds the OI AI assistant and intel tools.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About WorldEye",
@@ -105,15 +105,18 @@ export default function AboutPage() {
             <p>
               A single interactive globe that fuses live data streams into one view:
               commercial and military flight positions, orbital satellite tracking,
-              weather systems, earthquake and wildfire activity, and roughly 76,000
-              publicly accessible street cameras around the world.
+              live buses and trains from 15 transit agencies, weather systems,
+              earthquake and wildfire activity, street-level photos, rocket launches
+              with live countdowns, and roughly 76,000 publicly accessible street
+              cameras around the world.
             </p>
             <p>
               The free tier is the whole map — everything listed above, with no signup
-              and no paywall. A <Link href="/pricing" className="text-[#D4AF37] hover:underline">Pro subscription</Link> adds
+              and no paywall, basic search included. A <Link href="/pricing" className="text-[#D4AF37] hover:underline">Pro subscription</Link> adds
               intelligence-grade tools on top: the OI AI assistant (which runs on your
-              own OpenAI key), high-resolution satellite imagery view, global search,
-              an in-browser OSINT toolkit, and premium intel feeds covering cyber
+              own OpenAI key), high-resolution satellite imagery view, the live traffic
+              layer, advanced search filters, an in-browser OSINT toolkit, a camera
+              recording studio with timelapse, and premium intel feeds covering cyber
               threats, GDELT events, maritime tracking and live news.
             </p>
             <p>

@@ -34,8 +34,9 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         q: "Is the map really free?",
         a: (
           <>
-            Yes. The 3D globe, live flight tracking, 76,000+ public cameras,
-            satellites, earthquakes, wildfires and weather are free forever — no
+            Yes. The 3D globe, live flight tracking, live transit, 76,000+
+            public cameras, satellites, earthquakes, wildfires, weather and
+            street-level photos are free forever — and so is basic search. No
             account, no credit card. Pro unlocks the intelligence-grade tools on
             top of it. See {p("/pricing", "pricing")} for the full breakdown.
           </>
@@ -71,16 +72,17 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         a: (
           <>
             The OI AI assistant (runs on your own API key), satellite imagery
-            view, global search and filters, the OSINT toolkit (nmap, DNS,
-            WHOIS, SSL analysis), and premium intel feeds — cyber threats, GDELT
-            events, maritime tracking and live news. Plus every future Pro layer
-            at no extra cost. Full list on the {p("/pricing", "pricing page")}.
+            view, the live traffic layer, advanced search filters, the OSINT
+            toolkit (nmap, DNS, WHOIS, SSL analysis), the camera recording
+            studio with timelapse, and premium intel feeds — cyber threats,
+            GDELT events, maritime tracking and live news. Plus every future Pro
+            layer at no extra cost. Full list on the {p("/pricing", "pricing page")}.
           </>
         ),
       },
       {
         q: "How do the free trials work?",
-        a: "Weekly plans start with 1 free day, annual plans with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+        a: "Weekly and monthly plans start with 1 free day, annual plans with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
       },
       {
         q: "Can I cancel anytime?",
@@ -122,6 +124,18 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       {
         q: "How accurate is the flight tracking?",
         a: "Positions come from ADS-B broadcasts that aircraft transmit continuously, so live coverage is genuinely real-time where receiver networks have coverage. Over oceans and remote areas, updates can be sparser.",
+      },
+      {
+        q: "Is search free?",
+        a: "Yes. Basic search is free for everyone — fly to any place, address or coordinates, no account needed. Pro adds advanced search filters for narrowing down cameras, aircraft and feeds.",
+      },
+      {
+        q: "Is the traffic layer real?",
+        a: "The congestion is real: live traffic-flow data from TomTom, drawn onto the map's roads. The vehicle dots that illustrate the flow are simulated, and the app labels them as simulated. The traffic layer is a Pro feature.",
+      },
+      {
+        q: "Can I share a camera with someone?",
+        a: "Yes. Every camera has a share button — send the link and the other person lands on the globe with that exact camera open. No account needed on either end.",
       },
       {
         q: "What are the intel feeds?",
@@ -175,7 +189,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
 const FAQ_SCHEMA: { q: string; a: string }[] = [
   {
     q: "Is the map really free?",
-    a: "Yes. The 3D globe, live flight tracking, 76,000+ public cameras, satellites, earthquakes, wildfires and weather are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
+    a: "Yes. The 3D globe, live flight tracking, live transit, 76,000+ public cameras, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
   },
   {
     q: "Do I need an account?",
@@ -199,11 +213,11 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "What does Pro include?",
-    a: "The OI AI assistant (runs on your own API key), satellite imagery view, global search and filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis), and premium intel feeds — cyber threats, GDELT events, maritime tracking and live news. Plus every future Pro layer at no extra cost.",
+    a: "The OI AI assistant (runs on your own API key), satellite imagery view, the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds — cyber threats, GDELT events, maritime tracking and live news. Plus every future Pro layer at no extra cost.",
   },
   {
     q: "How do the free trials work?",
-    a: "Weekly plans start with 1 free day, annual plans with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+    a: "Weekly and monthly plans start with 1 free day, annual plans with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
   },
   {
     q: "Can I cancel anytime?",
@@ -232,6 +246,18 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   {
     q: "How accurate is the flight tracking?",
     a: "Positions come from ADS-B broadcasts that aircraft transmit continuously, so live coverage is genuinely real-time where receiver networks have coverage. Over oceans and remote areas, updates can be sparser.",
+  },
+  {
+    q: "Is search free?",
+    a: "Yes. Basic search is free for everyone — fly to any place, address or coordinates, no account needed. Pro adds advanced search filters for narrowing down cameras, aircraft and feeds.",
+  },
+  {
+    q: "Is the traffic layer real?",
+    a: "The congestion is real: live traffic-flow data from TomTom, drawn onto the map's roads. The vehicle dots that illustrate the flow are simulated, and the app labels them as simulated. The traffic layer is a Pro feature.",
+  },
+  {
+    q: "Can I share a camera with someone?",
+    a: "Yes. Every camera has a share button — send the link and the other person lands on the globe with that exact camera open. No account needed on either end.",
   },
   {
     q: "What are the intel feeds?",

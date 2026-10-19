@@ -3,17 +3,24 @@ import Link from "next/link";
 import {
   ArrowLeft,
   BrainCircuit,
+  Bus,
   Camera,
+  Car,
   Check,
+  Clapperboard,
   CloudLightning,
   Globe,
+  Images,
   Layers,
   Plane,
+  Radar,
   Radio,
+  Rocket,
   Satellite,
   Search,
   ShieldCheck,
   Sparkles,
+  Video,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
@@ -22,12 +29,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "Features — Free Live Globe & Pro Tools",
   description:
-    "All WorldEye features: a free 3D globe with flights, 76,000+ cameras, satellites and hazards — plus Pro's OI AI assistant, satellite imagery and OSINT toolkit.",
+    "All WorldEye features: a free 3D globe with flights, 76,000+ cameras, satellites, transit and hazards — plus Pro's OI AI assistant, satellite imagery, live traffic and OSINT toolkit.",
   alternates: { canonical: "/features" },
   openGraph: {
     title: "WorldEye Features — Free Live Globe & Pro Tools",
     description:
-      "A free live 3D globe with flights, cameras, satellites and hazards — and Pro intelligence tools: OI AI assistant, satellite view, global search, OSINT toolkit and premium intel feeds.",
+      "A free live 3D globe with flights, cameras, satellites and hazards — and Pro intelligence tools: OI AI assistant, satellite view, live traffic, advanced search filters, OSINT toolkit and premium intel feeds.",
     url: "/features",
     type: "website",
   },
@@ -60,7 +67,7 @@ const faqJsonLd = {
       name: "What does WorldEye Pro add?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Pro adds the OI AI assistant (which runs on your own API key), high-resolution satellite imagery view, global search and advanced filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $3.99, monthly $9.99, annual $59.99.",
+        text: "Pro adds the OI AI assistant (which runs on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $3.99, monthly $9.99, annual $59.99.",
       },
     },
     {
@@ -103,14 +110,14 @@ const FREE_FEATURES = [
     title: "Live flight tracking",
     desc: "Real-time aircraft positions and telemetry, rendered live on the globe.",
     detail:
-      "Aircraft broadcast their position, altitude, speed and callsign over ADS-B, and WorldEye plots them as they fly. Click any plane for its details, filter by altitude or aircraft type, and watch arrivals stack up over any major airport.",
+      "Aircraft broadcast their position, altitude, speed and callsign over ADS-B, and WorldEye plots them as they fly. Click any plane for its details, follow it with chase, forward and orbit camera views, and pull up the public cameras near the aircraft. Helicopters get their own icon, so rotorcraft stand out from fixed-wing traffic.",
   },
   {
     icon: Camera,
     title: "76,000+ public cameras",
     desc: "Worldwide public street cameras, free for everyone. See streets as they are right now.",
     detail:
-      "The directory indexes 76,000+ public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Open any feed free; Pro members get unlimited camera access for deep research sessions.",
+      "The directory indexes 76,000+ public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Open any feed free, and share it with a direct link that lands the next person on the exact same camera. Pro members get unlimited camera access for deep research sessions.",
   },
   {
     icon: Satellite,
@@ -124,7 +131,42 @@ const FREE_FEATURES = [
     title: "Earthquakes, wildfires & weather",
     desc: "Natural hazards as they happen — quakes, fires and severe weather layers.",
     detail:
-      "Seismic events plot within minutes of detection, active wildfire perimeters and smoke show where fires are burning, and live weather layers reveal the storms behind the headlines. One globe, every hazard, as it happens.",
+      "Seismic events plot within minutes of detection. Wildfire perimeters show where fires are burning, backed by 1,285 ALERT wildfire cameras (the ALERTWest network) streaming live stills. Hurricane tracks and forecast cones, NOAA radar and lightning, and USGS river gauges complete the picture — one globe, every hazard, as it happens.",
+  },
+  {
+    icon: Bus,
+    title: "Live transit — buses & trains",
+    desc: "Real-time buses and trains from 15 transit agencies, moving on the globe.",
+    detail:
+      "Live vehicle positions stream in from 15 agencies — including Utah's UTA, Boston's MBTA, Denver's RTD and Seattle's King County Metro. Vehicles glide between their real GPS fixes, and clicking one shows its route, direction, next stop, delay and exactly how old its position is. Vehicles with stale positions fade instead of pretending to be live.",
+  },
+  {
+    icon: Images,
+    title: "Street-level photos",
+    desc: "Community street-level photography from Panoramax, right on the map.",
+    detail:
+      "Zoom to street level and open real photos taken at ground level — dated, credited community imagery from Panoramax (CC BY-SA). They are photographs, not live feeds, and the viewer says so plainly, with the capture date on every frame.",
+  },
+  {
+    icon: Radar,
+    title: "Drones & FAA airspace",
+    desc: "Live Remote ID drones where receivers feed WorldEye, plus FAA airspace grids.",
+    detail:
+      "Drones appear live only where a receiver is connected and feeding WorldEye — where none is, the layer says so honestly instead of inventing traffic. The FAA airspace overlay (LAANC grid ceilings and UAS restrictions) covers the US whether or not any drone is airborne.",
+  },
+  {
+    icon: Rocket,
+    title: "Space missions & launches",
+    desc: "Upcoming launches with live countdowns, and reconstructed mission replays.",
+    detail:
+      "Follow upcoming launches from Space Launch Complex 40 to Baikonur with live-ticking countdowns, and replay past missions — replays are labeled as reconstructed estimates, never dressed up as live telemetry.",
+  },
+  {
+    icon: Clapperboard,
+    title: "Sensor effects & cinematic director",
+    desc: "Simulated sensor looks and a scene director for the globe — free creative tools.",
+    detail:
+      "Night vision, thermal false-colour, monochrome and more simulated looks applied to the map only, always labeled as simulated visual effects — never sensor data. The cinematic director composes saved camera scenes of the globe and records them.",
   },
 ];
 
@@ -145,10 +187,24 @@ const PRO_FEATURES = [
   },
   {
     icon: Search,
-    title: "Global search & filters",
-    desc: "Find any place, address or coordinates and fly there instantly.",
+    title: "Advanced search filters",
+    desc: "Basic search is free for everyone — Pro adds the deep filters on top.",
     detail:
-      "Search the planet like a database: jump to coordinates, filter cameras by region, isolate aircraft by type or altitude. What takes minutes of panning happens in one keystroke.",
+      "Anyone can search the planet and fly to a place in one keystroke. Pro filters go further: narrow cameras by region and type, isolate aircraft by category or altitude, and cut straight to the exact feed or flight you need.",
+  },
+  {
+    icon: Car,
+    title: "Live traffic layer",
+    desc: "Real road congestion from TomTom, drawn onto the globe's roads.",
+    detail:
+      "Live traffic-flow data from TomTom colors the roads — green flowing, red stopped — so the jam you can see from the traffic cameras is visible on the map itself. The vehicle dots that illustrate the flow are simulated and labeled as such in the app; the congestion data underneath them is real.",
+  },
+  {
+    icon: Video,
+    title: "Camera Recording Studio & timelapse",
+    desc: "Record real clips and build timelapses from live cameras, in your browser.",
+    detail:
+      "Save your cameras, record real clips while you watch, and capture a timelapse one frame at a time from snapshot cameras — every new still, in order, playable and exportable as a video file. Captures happen while you watch and are saved on your device; nothing is recorded in the cloud.",
   },
   {
     icon: ShieldCheck,
@@ -191,7 +247,7 @@ const FAQS = [
   },
   {
     q: "What does WorldEye Pro add?",
-    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, global search and advanced filters, an in-browser OSINT toolkit, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $3.99 · Monthly $9.99 · Annual $59.99.",
+    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $3.99 · Monthly $9.99 · Annual $59.99.",
   },
   {
     q: "Do I need an account to use the map?",
@@ -236,7 +292,7 @@ export default function FeaturesPage() {
             Everything the planet is doing, <span className="text-[#D4AF37]">live</span>.
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-            A free forever live globe with flights, cameras, satellites and hazards —
+            A free forever live globe with flights, cameras, satellites, transit and hazards —
             and Pro tools for anyone who needs intelligence-grade depth.
           </p>
         </div>
@@ -251,7 +307,9 @@ export default function FeaturesPage() {
           </div>
           <p className="text-white/55 max-w-2xl mb-8">
             The core of WorldEye is open to everyone. No account, no credit card —
-            just open the map and explore. Every layer below works the moment the page loads.
+            just open the map and explore. Every layer below works the moment the page
+            loads — and basic search is free too: fly to any place, address or
+            coordinates without signing up.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FREE_FEATURES.map((f) => (
@@ -310,7 +368,8 @@ export default function FeaturesPage() {
           </div>
           <p className="text-white/55 max-w-2xl mb-8">
             For researchers, analysts and the deeply curious: an AI analyst that works
-            the globe for you, satellite imagery, global search and premium intel feeds.
+            the globe for you, satellite imagery, the live traffic layer, advanced search
+            filters and premium intel feeds.
             Weekly $3.99 · Monthly $9.99 · Annual $59.99 — cancel anytime.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -341,7 +400,7 @@ export default function FeaturesPage() {
           </div>
           <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/40">
             <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Cancel anytime</li>
-            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Free trials on weekly &amp; annual</li>
+            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Free trials — 1 day weekly &amp; monthly · 3 days annual</li>
             <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Stripe-secured checkout</li>
           </ul>
         </section>
