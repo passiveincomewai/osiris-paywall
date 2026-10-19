@@ -12,8 +12,10 @@ import { Check } from "lucide-react";
  */
 const FREE_ROWS = [
   "Interactive 3D globe",
-  "36,000+ public cameras",
+  "76,000+ public cameras",
   "Flight & satellite tracking",
+  "Basic search — fly to any place",
+  "Transit, drones, launches & street level",
   "Weather, earthquakes & fires",
   "Cameras: 15 free opens per device",
 ];
@@ -21,7 +23,8 @@ const FREE_ROWS = [
 const PRO_ROWS = [
   "Unlimited camera opens",
   "Satellite imagery view",
-  "Global search & advanced filters",
+  "Live traffic layer",
+  "Advanced search filters",
   "OSINT toolkit",
   "Premium intel layers & live feeds",
   "Camera Recording Studio",
@@ -58,7 +61,7 @@ export default function PlansCards() {
         <p className="font-mono text-sm text-white/50 mt-1.5">
           Weekly $3.99 · Monthly $9.99 · Annual $59.99
         </p>
-        <p className="text-xs text-white/40 mt-1">Free trials: 1 day on weekly · 3 days on annual</p>
+        <p className="text-xs text-white/40 mt-1">Free trials: 1 day on weekly &amp; monthly · 3 days on annual</p>
         <ul className="mt-5 space-y-2.5">
           {PRO_ROWS.map((row) => (
             <li key={row} className="flex items-baseline gap-2.5 text-sm text-white/75">

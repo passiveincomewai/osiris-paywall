@@ -5,15 +5,15 @@ import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, Check, X, Sparkles, Satellite, Search, BrainCircuit,
-  ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus,
+  ArrowLeft, Check, X, Sparkles, Satellite, BrainCircuit,
+  ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus, Car, Video,
 } from "lucide-react";
 
 type Plan = "weekly" | "monthly" | "annual" | "enterprise";
 
 const PLANS: Record<Plan, { price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
   weekly: { price: "$3.99", per: "/week", perDay: "$0.57", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
-  monthly: { price: "$9.99", per: "/month", perDay: "$0.33", note: "Billed monthly · cancel anytime", save: "Save 42%", cta: "Get Monthly Access" },
+  monthly: { price: "$9.99", per: "/month", perDay: "$0.33", note: "1 day free, then billed monthly · cancel anytime", save: "Save 42%", cta: "Start 1-Day Free Trial", trial: "1 day free" },
   annual: { price: "$59.99", per: "/year", perDay: "$0.16", note: "3 days free, then billed annually · cancel anytime", save: "Save 71% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
   enterprise: { price: "$999", per: "/year", perDay: "$2.74", note: "Billed annually · cancel anytime", cta: "Get Enterprise" },
 };
@@ -21,9 +21,10 @@ const PLANS: Record<Plan, { price: string; per: string; perDay: string; note: st
 const PRO_FEATURES = [
   { icon: BrainCircuit, title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
   { icon: Satellite, title: "Satellite View", desc: "High-resolution satellite imagery alongside the dark intel map." },
-  { icon: Search, title: "Global Search & Filters", desc: "Find any place, address or coordinates and fly there instantly." },
+  { icon: Car, title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
   { icon: ShieldCheck, title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
   { icon: Zap, title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news." },
+  { icon: Video, title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser and save the clips." },
   { icon: Sparkles, title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
 ];
 
@@ -35,22 +36,32 @@ const ENTERPRISE_FEATURES = [
 ];
 
 const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { feature: "Interactive 3D globe", free: true, pro: true },
-  { feature: "Live flight tracking", free: true, pro: true },
-  { feature: "36,000+ public CCTV cameras", free: true, pro: true },
+  { feature: "Live flight tracking & aircraft follow", free: true, pro: true },
+  { feature: "76,000+ public CCTV cameras", free: true, pro: true },
   { feature: "Satellite & space tracking", free: true, pro: true },
+  { feature: "Basic search — fly to any place", free: true, pro: true },
+  { feature: "Live transit vehicles (15 agencies)", free: true, pro: true },
+  { feature: "Drone tracking & FAA airspace", free: true, pro: true },
+  { feature: "Space launch tracking & countdowns", free: true, pro: true },
+  { feature: "Street-level photo layer", free: true, pro: true },
+  { feature: "Radar, lightning, hurricanes & fire perimeters", free: true, pro: true },
+  { feature: "River gauges & bike-share systems", free: true, pro: true },
+  { feature: "Sensor effects & cinematic director", free: true, pro: true },
   { feature: "Earthquakes, wildfires & weather", free: true, pro: true },
   { feature: "OI AI assistant (built-in AI included)", free: false, pro: true },
   { feature: "Satellite imagery view", free: false, pro: true },
-  { feature: "Global search & filters", free: false, pro: true },
+  { feature: "Live traffic layer (TomTom congestion)", free: false, pro: true },
+  { feature: "Advanced search filters", free: false, pro: true },
   { feature: "OSINT toolkit (nmap, DNS, WHOIS, SSL)", free: false, pro: true },
   { feature: "Premium intel feeds (cyber, GDELT, maritime)", free: false, pro: true },
+  { feature: "Camera Recording Studio", free: false, pro: true },
   { feature: "Every future Pro layer", free: false, pro: true },
 ];
 
 const FAQS = [
   {
     q: "Is the map really free?",
-    a: "Yes. The 3D globe, live flights, 36,000+ street cameras, satellites and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, global search and premium intel feeds.",
+    a: "Yes. The 3D globe, live flights, 76,000+ street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, the live traffic layer, advanced search filters and premium intel feeds.",
   },
   {
     q: "Do I need my own API key for the AI assistant?",
@@ -66,7 +77,7 @@ const FAQS = [
   },
   {
     q: "How is this different from osirisai.live?",
-    a: "Same open-source engine, plus the Pro tier: an AI analyst that works the map for you, satellite imagery, global search and premium intel feeds the free site doesn't gate — because there is no gate there. Here, Pro funds the infrastructure.",
+    a: "Same open-source engine, plus the Pro tier: an AI analyst that works the map for you, satellite imagery, live traffic, advanced search filters and premium intel feeds the free site doesn't gate — because there is no gate there. Here, Pro funds the infrastructure.",
   },
 ];
 
@@ -202,7 +213,7 @@ export default function PricingPage() {
               See what the <span className="text-[#D4AF37]">free map</span> can&apos;t show you.
             </h1>
             <p className="text-white/55 mt-2 text-sm md:text-base leading-relaxed px-1">
-              An AI analyst that works the globe for you. Satellite imagery. Global search.
+              An AI analyst that works the globe for you. Satellite imagery. Live traffic.
               Premium intel feeds. One subscription, everything unlocked.
             </p>
           </motion.div>
