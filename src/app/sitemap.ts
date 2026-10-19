@@ -65,6 +65,20 @@ const SEO_PAGES_WAVE6 = [
   "/us-traffic-cameras/arizona",
 ];
 
+// Wave 7 (2026-10-18): long-tail country traffic-camera hubs + live plane
+// spotting — targets in ~/workspace/worldeye-longtail-seo/PLAN.md. Cross-linked
+// from each other and from /europe-live-cameras + /asia-webcams peers.
+const SEO_PAGES_WAVE7 = [
+  "/japan-traffic-cameras",
+  "/canada-traffic-cameras",
+  "/spain-traffic-cameras",
+  "/south-korea-traffic-cameras",
+  "/germany-traffic-cameras",
+  "/norway-traffic-cameras",
+  "/sweden-traffic-cameras",
+  "/live-plane-spotting",
+];
+
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
   "/alternatives/gods-eye-view",
@@ -174,6 +188,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE6.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE7.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
