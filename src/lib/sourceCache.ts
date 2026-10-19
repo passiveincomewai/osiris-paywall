@@ -23,6 +23,55 @@ interface Entry<T> {
 
 const store = new Map<string, Entry<unknown>>();
 
+/* ── Observation registry (Stage E health) ──────────────────────────────
+ *
+ * The cache knows when it last fetched each source and whether that fetch
+ * worked; until now it kept that knowledge to itself, so a source could
+ * die quietly and the only symptom was cameras missing from the map. Every
+ * fetch outcome is now recorded here — pure bookkeeping, no behaviour
+ * change — and the camera health rollup (lib/camera-expansion/health)
+ * reads it back. Memory-only, like the cache itself: it describes what
+ * THIS process has observed since it booted.
+ */
+export interface SourceObservation {
+  key: string;
+  attempts: number;
+  successes: number;
+  failures: number;
+  /** Fetches that answered successfully but with zero records. */
+  empties: number;
+  lastAttemptAt: number | null;
+  lastSuccessAt: number | null;
+  lastFailureAt: number | null;
+  lastError: string | null;
+  /** Records returned by the most recent completed fetch. */
+  lastCount: number | null;
+  /** Most records this process has ever held for the source. */
+  highWaterCount: number;
+  /** Records installed by seedSource (a restored snapshot), if any. */
+  seededCount: number;
+}
+
+const observations = new Map<string, SourceObservation>();
+
+function observe(key: string): SourceObservation {
+  let o = observations.get(key);
+  if (!o) {
+    o = {
+      key, attempts: 0, successes: 0, failures: 0, empties: 0,
+      lastAttemptAt: null, lastSuccessAt: null, lastFailureAt: null,
+      lastError: null, lastCount: null, highWaterCount: 0, seededCount: 0,
+    };
+    observations.set(key, o);
+  }
+  return o;
+}
+
+/** Snapshot of every source this process has fetched or been seeded with. */
+export function getSourceObservations(): SourceObservation[] {
+  return [...observations.values()].map(o => ({ ...o }));
+}
+
 export const DEFAULT_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 /**
@@ -58,9 +107,22 @@ export function cachedSource<T>(
     if (entry && now < entry.expiresAt && entry.data.length > 0) return entry.data;
     if (entry?.inflight) return entry.inflight;
 
+    const obs = observe(key);
+    obs.attempts += 1;
+    obs.lastAttemptAt = Date.now();
+
     const inflight = (async () => {
       try {
         const data = await fetcher();
+        obs.lastCount = data.length;
+        if (data.length > 0) {
+          obs.successes += 1;
+          obs.lastSuccessAt = Date.now();
+          obs.lastError = null;
+          if (data.length > obs.highWaterCount) obs.highWaterCount = data.length;
+        } else {
+          obs.empties += 1;
+        }
         // An empty result is treated as a failed refresh: keep whatever we had.
         if (data.length === 0 && entry?.data.length) {
           store.set(key, { data: entry.data, expiresAt: now + ttlMs, inflight: null });
@@ -69,6 +131,9 @@ export function cachedSource<T>(
         store.set(key, { data, expiresAt: now + ttlMs, inflight: null });
         return data;
       } catch (e) {
+        obs.failures += 1;
+        obs.lastFailureAt = Date.now();
+        obs.lastError = e instanceof Error ? e.message : String(e);
         if (entry?.data.length) {
           console.warn(`[OSIRIS] ${key} refresh failed — serving ${entry.data.length} cached cameras`);
           // Retry sooner than a full TTL, but don't hammer the failing upstream.
@@ -123,10 +188,15 @@ export function seedSource<T>(key: string, data: T[], ttlMs: number = DEFAULT_TT
   const entry = store.get(key);
   if (entry?.inflight) return; // a live fetch already supersedes the snapshot
   store.set(key, { data, expiresAt: Date.now() + ttlMs, inflight: null } as Entry<unknown>);
+  const obs = observe(key);
+  obs.seededCount = data.length;
+  obs.lastCount = data.length;
+  if (data.length > obs.highWaterCount) obs.highWaterCount = data.length;
   evictIfNeeded();
 }
 
 /** Test seam — drops all cached indexes. */
 export function clearSourceCache(): void {
   store.clear();
+  observations.clear();
 }
