@@ -6,7 +6,7 @@
   "maritime-intel"
  ],
  "competitorWins": "World Monitor is genuinely stronger for dedicated geopolitical analysis. Its six specialized variants (geopolitics, tech, finance, energy, commodity, positive news), live tracking of 13 strategic chokepoints with transit and disruption scoring, ACLED + UCDP conflict data, AI country briefs with instability scoring, and deep markets/macro coverage (FRED, IMF, BIS, Finnhub) go far beyond WorldEye's Pro intel feeds. Pro also adds a full developer platform (REST API, MCP tools, SDKs) and scheduled AI digests WorldEye doesn't offer. The core dashboard is free and the code is open source (AGPL-3.0).",
- "description": "World Monitor (worldmonitor.app) is a free, open-source (AGPL-3.0) geopolitical intelligence dashboard by Elie Habib. It is hosted and free to open — no signup — and can also be self-hosted. It fuses 58 map layer types and 500+ feeds: ACLED and UCDP conflict data, AISStream vessel positions, OpenSky aircraft, NASA FIRMS fires, USGS earthquakes, market and macro data (FRED, IMF, BIS), live tracking of 13 strategic chokepoints, and AI-synthesized country briefs, across six dashboard variants (geopolitics, tech, finance, energy, commodity, positive news). It differs from WorldEye in shape: World Monitor is a panel dashboard built for geopolitical depth, while WorldEye is a globe-first live planet — a 3D globe with a 36,000+ public camera network that World Monitor doesn't have.",
+ "description": "World Monitor (worldmonitor.app) is a free, open-source (AGPL-3.0) geopolitical intelligence dashboard by Elie Habib. It is hosted and free to open — no signup — and can also be self-hosted. It fuses 58 map layer types and 500+ feeds: ACLED and UCDP conflict data, AISStream vessel positions, OpenSky aircraft, NASA FIRMS fires, USGS earthquakes, market and macro data (FRED, IMF, BIS), live tracking of 13 strategic chokepoints, and AI-synthesized country briefs, across six dashboard variants (geopolitics, tech, finance, energy, commodity, positive news). It differs from WorldEye in shape: World Monitor is a panel dashboard built for geopolitical depth, while WorldEye is a globe-first live planet — a 3D globe with a 76,000+ public camera network that World Monitor doesn't have.",
  "features": [
   {
    "competitor": "partial",
@@ -84,7 +84,7 @@
  "name": "World Monitor",
  "pricing": "World Monitor: the dashboard is free with no signup. Pro is $39.99/month ($359.99/year) and adds the WM Analyst AI chat, scenario engine, scheduled AI digests, real-time alerts and MCP/API access; Pro Business is $49.99/month and API plans run $99.99-$299.99/month (worldmonitor.app/pro, checked October 2026).",
  "published": true,
- "seoDescription": "Compare WorldEye vs World Monitor: free no-signup 3D globe with 36,000+ live cameras and Pro OSINT extras vs a free hosted geopolitical intelligence dashboard with deep conflict, chokepoint and markets data.",
+ "seoDescription": "Compare WorldEye vs World Monitor: free no-signup 3D globe with 76,000+ live cameras and Pro OSINT extras vs a free hosted geopolitical intelligence dashboard with deep conflict, chokepoint and markets data.",
  "seoTitle": "WorldEye vs World Monitor (2026): Free Live Globe or Open-Source Intel Platform?",
  "slug": "world-monitor",
  "sources": [
@@ -103,7 +103,7 @@
  "website": "https://worldmonitor.app",
  "whyWorldEye": [
   "A globe-first experience: World Monitor is also free and hosted, but it's a dense panel dashboard built for analysts — WorldEye is the living planet itself, one 3D globe you explore.",
-  "One free globe combines ~36,000 live public cameras with live flights, ships, weather, earthquakes, and wildfires — World Monitor has no camera network.",
+  "One free globe combines ~76,000 live public cameras with live flights, ships, weather, earthquakes, and wildfires — World Monitor has no camera network.",
   "Pro starts at $3.99/week: AI analyst assistant, OSINT recon toolkit (Nmap, DNS, WHOIS, SSL), premium cyber/GDELT/maritime/conflict intel feeds, and high-res satellite imagery.",
   "Free live aircraft, satellite, and ship tracking with global search and advanced filters — no account, no infrastructure.",
   "A mobile-friendly 3D globe designed for anyone to explore the planet, not just defense analysts.",

@@ -243,7 +243,7 @@ export default function WildfireTrackerPage() {
             </p>
             <p>
               And the context keeps going: earthquakes, flights, satellites and
-              36,000+ public cameras share the same globe. In fire country,
+              76,000+ public cameras share the same globe. In fire country,
               that means you can sometimes watch the smoke column from a
               roadside camera while the satellite data shows the heat source.
             </p>
@@ -343,7 +343,7 @@ export default function WildfireTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "36,000+ public cameras — watch conditions on the ground near a fire.",
+              desc: "76,000+ public cameras — watch conditions on the ground near a fire.",
               href: "/cameras",
             },
             {

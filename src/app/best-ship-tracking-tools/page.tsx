@@ -45,7 +45,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best all-in-one with maritime intel",
     href: "/ship-tracker",
-    body: "Ship tracking as one layer of a live world picture: WorldEye's Pro maritime intel feed places vessels alongside the free globe's flights, satellites, weather, earthquakes, wildfires and ~36,000 public cameras. Stated plainly — maritime is a Pro feature on WorldEye, not part of the free map. The pick when a ship's context matters as much as its position.",
+    body: "Ship tracking as one layer of a live world picture: WorldEye's Pro maritime intel feed places vessels alongside the free globe's flights, satellites, weather, earthquakes, wildfires and ~76,000 public cameras. Stated plainly — maritime is a Pro feature on WorldEye, not part of the free map. The pick when a ship's context matters as much as its position.",
   },
   {
     icon: Ship,
@@ -267,7 +267,7 @@ export default function BestShipTrackingToolsPage() {
           <p>
             WorldEye is priced differently, so here is the honest version:
             the free map — globe, flights, satellites, weather, earthquakes,
-            wildfires and ~36,000 cameras, no signup — does not include ship
+            wildfires and ~76,000 cameras, no signup — does not include ship
             tracking. Maritime intel is part of Pro (weekly $3.99, monthly
             $9.99, annual $59.99), alongside the OSINT toolkit, cyber/GDELT
             intel, satellite imagery view, global search and the AI analyst.
@@ -312,7 +312,7 @@ export default function BestShipTrackingToolsPage() {
               No — maritime vessel tracking is a WorldEye Pro feature, and we
               say so rather than burying it. The free map covers the globe,
               flights, satellites, weather, earthquakes, wildfires and
-              ~36,000 cameras with no signup; Pro adds maritime intel with
+              ~76,000 cameras with no signup; Pro adds maritime intel with
               the rest of the intelligence toolkit.
             </p>
           </div>

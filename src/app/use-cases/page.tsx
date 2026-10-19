@@ -58,7 +58,7 @@ const PERSONAS: Persona[] = [
     title: "OSINT researchers & journalists",
     who: "Investigators, analysts and reporters verifying what is really happening on the ground.",
     does: "Cross-reference live street cameras with earthquake, wildfire and weather layers to verify events as they unfold. Run DNS, WHOIS and SSL lookups with the in-browser OSINT toolkit, and follow GDELT, cyber-threat and live-news feeds for early signal.",
-    features: ["OSINT toolkit (Pro)", "36,000+ CCTV cameras", "GDELT & live news feeds"],
+    features: ["OSINT toolkit (Pro)", "76,000+ CCTV cameras", "GDELT & live news feeds"],
     links: [
       { label: "Explore Pro tools", href: "/pricing" },
       { label: "Feature tour", href: "/features" },
@@ -71,7 +71,7 @@ const PERSONAS: Persona[] = [
     title: "Travelers",
     who: "People planning trips — or armchair-exploring the planet from the couch.",
     does: "Check live street cameras at a destination before booking, watch weather systems moving across a route, and follow flights in real time. All free, no account needed.",
-    features: ["36,000+ CCTV cameras", "Weather layers", "Live flight tracking"],
+    features: ["76,000+ CCTV cameras", "Weather layers", "Live flight tracking"],
     links: [
       { label: "Browse live cameras", href: "/cameras" },
       { label: "Open the live map", href: "/" },
@@ -84,7 +84,7 @@ const PERSONAS: Persona[] = [
     title: "Weather & disaster watchers",
     who: "Storm chasers, preparedness-minded households and anyone who wants to see severe weather as it happens.",
     does: "Watch earthquakes, wildfires and severe weather light up the globe in real time, then drop into street cameras near the affected area to see conditions with their own eyes.",
-    features: ["Earthquake, wildfire & weather layers", "36,000+ CCTV cameras", "Live news feed"],
+    features: ["Earthquake, wildfire & weather layers", "76,000+ CCTV cameras", "Live news feed"],
     links: [
       { label: "Browse live cameras", href: "/cameras" },
       { label: "Open the live map", href: "/" },
@@ -258,7 +258,7 @@ export default function UseCasesPage() {
             },
             {
               label: "Live cameras",
-              desc: "36,000+ public cameras travelers and researchers use to verify the world.",
+              desc: "76,000+ public cameras travelers and researchers use to verify the world.",
               href: "/cameras",
             },
             {

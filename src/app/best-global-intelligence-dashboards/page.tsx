@@ -47,7 +47,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best free visual dashboard",
     href: "/",
-    body: "A free live 3D globe — no signup — that works as a planet-scale dashboard: flights, satellites, ships, weather, earthquakes, wildfires and ~36,000 public cameras streaming on one screen, with live-news and intel feeds on Pro. Best when your 'dashboard' needs to show the world, not just list events.",
+    body: "A free live 3D globe — no signup — that works as a planet-scale dashboard: flights, satellites, ships, weather, earthquakes, wildfires and ~76,000 public cameras streaming on one screen, with live-news and intel feeds on Pro. Best when your 'dashboard' needs to show the world, not just list events.",
   },
   {
     icon: ShieldCheck,

@@ -7,7 +7,7 @@ import JsonLd from "@/components/JsonLd";
 export const metadata: Metadata = {
   title: "WorldEye vs OSIRIS (2026): Hosted Globe or Self-Hosted OSINT Platform?",
   description:
-    "Compare WorldEye with OSIRIS: hosted 3D globe with 36,000+ cameras and Pro intel feeds vs the free open-source OSINT dashboard you host yourself. Features, pricing and verdict.",
+    "Compare WorldEye with OSIRIS: hosted 3D globe with 76,000+ cameras and Pro intel feeds vs the free open-source OSINT dashboard you host yourself. Features, pricing and verdict.",
   alternates: { canonical: "/compare/worldeye-vs-osiris" },
   openGraph: {
     title: "WorldEye vs OSIRIS (2026): Hosted Globe or Self-Hosted OSINT Platform?",
@@ -48,7 +48,7 @@ function StatusCell({ value }: { value: Status }) {
 const FEATURES: Feature[] = [
   { label: "Hosted — open a URL and it runs", worldEye: "yes", competitor: "partial", note: "OSIRIS is built to self-host (Docker/Node); a live demo is linked from its repo" },
   { label: "Interactive 3D globe", worldEye: "yes", competitor: "partial", note: "OSIRIS is a MapLibre map, 2D-first with terrain views" },
-  { label: "Live public cameras", worldEye: "yes", competitor: "yes", note: "WorldEye 36,000+ feeds; OSIRIS 17,000+ (project README figures)" },
+  { label: "Live public cameras", worldEye: "yes", competitor: "yes", note: "WorldEye 76,000+ feeds; OSIRIS 17,000+ (project README figures)" },
   { label: "Live flight tracking", worldEye: "yes", competitor: "yes", note: "Both use public ADS-B data (OSIRIS via OpenSky)" },
   { label: "Live satellite tracking", worldEye: "yes", competitor: "yes", note: "OSIRIS uses N2YO + NOAA space-weather data" },
   { label: "Live maritime vessel positions", worldEye: "yes", competitor: "no", note: "OSIRIS maritime is static reference data: 39 ports, 10 chokepoints. WorldEye's maritime intel feed is a Pro layer" },
@@ -78,7 +78,7 @@ const FAQS = [
   },
   {
     q: "Which has more live cameras?",
-    a: "WorldEye: 36,000+ live public feeds across 105 countries, with a browsable directory. OSIRIS's README lists 17,000+ cameras from transport agencies and public webcam networks.",
+    a: "WorldEye: 76,000+ live public feeds across 105 countries, with a browsable directory. OSIRIS's README lists 17,000+ cameras from transport agencies and public webcam networks.",
   },
 ];
 
@@ -97,7 +97,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "WorldEye vs OSIRIS (2026): Hosted Globe or Self-Hosted OSINT Platform?",
       description:
-        "Compare WorldEye with OSIRIS: hosted 3D globe with 36,000+ cameras and Pro intel feeds vs the free open-source OSINT dashboard you host yourself.",
+        "Compare WorldEye with OSIRIS: hosted 3D globe with 76,000+ cameras and Pro intel feeds vs the free open-source OSINT dashboard you host yourself.",
       url: "https://worldeye.app/compare/worldeye-vs-osiris",
       dateModified: "2026-10-17",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
@@ -136,7 +136,7 @@ export default function WorldEyeVsOsirisPage() {
             OSIRIS is a free, open-source OSINT dashboard you install and host
             yourself — a genuine &ldquo;Palantir alternative&rdquo; for
             technical users. WorldEye is the same live-planet idea as a hosted
-            product: a 3D globe with 36,000+ cameras, live flights, satellites
+            product: a 3D globe with 76,000+ cameras, live flights, satellites
             and intel feeds, open in your browser with nothing to run. If you
             want to watch the world, WorldEye is the faster route; if you want
             to operate your own intel stack, OSIRIS is the real thing.
@@ -236,7 +236,7 @@ export default function WorldEyeVsOsirisPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             {[
               "Nothing to install or maintain: the globe is hosted, updated and live the moment you open it — on a phone, not just a workstation.",
-              "Roughly double the camera network: 36,000+ live public feeds across 105 countries, with a directory you can browse by country and city.",
+              "More than four times the camera network: 76,000+ live public feeds across 105 countries, with a directory you can browse by country and city.",
               "Live feeds where OSIRIS carries reference data: real vessel positions and live GDELT-powered conflict/intel feeds instead of static ports and zones.",
               "The AI analyst runs on the site's key — no OpenAI account, no key management, no metered surprises on your own bill.",
             ].map((w, i) => (

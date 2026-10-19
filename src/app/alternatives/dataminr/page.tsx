@@ -46,7 +46,7 @@ const OPTIONS = [
     name: "WorldEye",
     tag: "Best accessible visual alternative",
     href: "/compare/dataminr",
-    body: "A free live 3D globe — no signup — for visual event monitoring: live news and conflict feeds on Pro, plus free layers showing flights, satellites, ships, weather, quakes and ~36,000 cameras. The pick when you want to watch events unfold yourself rather than receive enterprise alerts.",
+    body: "A free live 3D globe — no signup — for visual event monitoring: live news and conflict feeds on Pro, plus free layers showing flights, satellites, ships, weather, quakes and ~76,000 cameras. The pick when you want to watch events unfold yourself rather than receive enterprise alerts.",
   },
   {
     icon: Database,

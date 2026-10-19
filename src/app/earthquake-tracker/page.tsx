@@ -186,7 +186,7 @@ export default function EarthquakeTrackerPage() {
               front of you.
             </p>
             <p>
-              It sits alongside the rest of the free map — live flights, 36,000+
+              It sits alongside the rest of the free map — live flights, 76,000+
               public cameras, satellites, wildfires and weather — so a quake never
               appears in isolation. See the full picture, not just a dot on a list.
             </p>
@@ -327,7 +327,7 @@ export default function EarthquakeTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "36,000+ public cameras — see conditions on the ground near an event.",
+              desc: "76,000+ public cameras — see conditions on the ground near an event.",
               href: "/cameras",
             },
           ]}

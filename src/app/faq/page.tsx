@@ -34,7 +34,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         q: "Is the map really free?",
         a: (
           <>
-            Yes. The 3D globe, live flight tracking, 36,000+ public cameras,
+            Yes. The 3D globe, live flight tracking, 76,000+ public cameras,
             satellites, earthquakes, wildfires and weather are free forever — no
             account, no credit card. Pro unlocks the intelligence-grade tools on
             top of it. See {p("/pricing", "pricing")} for the full breakdown.
@@ -55,7 +55,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "How is WorldEye different from Google Earth?",
-        a: "Google Earth is a map of the recorded past; WorldEye is a map of right now. We don't do historical imagery or 3D buildings — we fuse live streams: aircraft, satellites, weather, earthquakes, wildfires and 36,000+ public cameras, all updating in real time on one globe.",
+        a: "Google Earth is a map of the recorded past; WorldEye is a map of right now. We don't do historical imagery or 3D buildings — we fuse live streams: aircraft, satellites, weather, earthquakes, wildfires and 76,000+ public cameras, all updating in real time on one globe.",
       },
       {
         q: "Does WorldEye work in my country?",
@@ -175,7 +175,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
 const FAQ_SCHEMA: { q: string; a: string }[] = [
   {
     q: "Is the map really free?",
-    a: "Yes. The 3D globe, live flight tracking, 36,000+ public cameras, satellites, earthquakes, wildfires and weather are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
+    a: "Yes. The 3D globe, live flight tracking, 76,000+ public cameras, satellites, earthquakes, wildfires and weather are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
   },
   {
     q: "Do I need an account?",
@@ -191,7 +191,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "How is WorldEye different from Google Earth?",
-    a: "Google Earth is a map of the recorded past; WorldEye is a map of right now. We don't do historical imagery or 3D buildings — we fuse live streams: aircraft, satellites, weather, earthquakes, wildfires and 36,000+ public cameras, all updating in real time on one globe.",
+    a: "Google Earth is a map of the recorded past; WorldEye is a map of right now. We don't do historical imagery or 3D buildings — we fuse live streams: aircraft, satellites, weather, earthquakes, wildfires and 76,000+ public cameras, all updating in real time on one globe.",
   },
   {
     q: "Does WorldEye work in my country?",

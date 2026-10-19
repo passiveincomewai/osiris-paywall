@@ -47,7 +47,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best free visual monitoring",
     href: "/compare/global-threat-watch",
-    body: "A free live 3D globe — no signup — for watching geopolitics unfold spatially: live news and conflict feeds on Pro, plus free layers for flights, satellites, ships, weather, earthquakes and ~36,000 ground cameras. Best when you need to see the situation, not just read about it — a military buildup, a strait closure, a capital in unrest, all in geographic context.",
+    body: "A free live 3D globe — no signup — for watching geopolitics unfold spatially: live news and conflict feeds on Pro, plus free layers for flights, satellites, ships, weather, earthquakes and ~76,000 ground cameras. Best when you need to see the situation, not just read about it — a military buildup, a strait closure, a capital in unrest, all in geographic context.",
   },
   {
     icon: ShieldCheck,

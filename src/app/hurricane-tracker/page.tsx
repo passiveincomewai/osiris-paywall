@@ -311,7 +311,7 @@ export default function HurricaneTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "36,000+ public cameras — watch coastal conditions as a storm nears land.",
+              desc: "76,000+ public cameras — watch coastal conditions as a storm nears land.",
               href: "/cameras",
             },
             {

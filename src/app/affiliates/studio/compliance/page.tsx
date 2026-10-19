@@ -50,7 +50,7 @@ const PLATFORM_NOTES: { platform: string; notes: string[] }[] = [
 const DOS = [
   "Disclose clearly and conspicuously, before your audience has to click “more”.",
   "Use the required caption snippet and hashtags on campaign posts, word for word.",
-  "Describe WorldEye honestly: 36,000+ public cameras, flights, weather and more on one 3D globe — free to explore, Pro for the advanced layers.",
+  "Describe WorldEye honestly: 76,000+ public cameras, flights, weather and more on one 3D globe — free to explore, Pro for the advanced layers.",
   "Use your own tracked link so your clicks and signups are attributed to you.",
 ];
 

@@ -16,14 +16,14 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "An EarthCam Alternative — 36,000+ Live Cams",
+  title: "An EarthCam Alternative — 76,000+ Live Cams",
   description:
-    "WorldEye: an EarthCam alternative with 36,000+ live public cameras in 105 countries on one 3D globe — free, no signup — plus flights, satellites, weather.",
+    "WorldEye: an EarthCam alternative with 76,000+ live public cameras in 105 countries on one 3D globe — free, no signup — plus flights, satellites, weather.",
   alternates: { canonical: "/earthcam-alternative" },
   openGraph: {
-    title: "An EarthCam Alternative — 36,000+ Live Cams | WorldEye",
+    title: "An EarthCam Alternative — 76,000+ Live Cams | WorldEye",
     description:
-      "36,000+ live public cameras in 105 countries on a 3D globe — free, no signup. An alternative worth trying.",
+      "76,000+ live public cameras in 105 countries on a 3D globe — free, no signup. An alternative worth trying.",
     url: "/earthcam-alternative",
     type: "website",
   },
@@ -33,7 +33,7 @@ const DIMENSIONS = [
   {
     icon: Camera,
     title: "Camera count",
-    desc: "WorldEye's directory indexes 36,000+ live public cameras across 105 countries — from US DOT highway networks to city plazas, beaches, harbors and mountain resorts. A real, countable index that keeps growing as new public feeds are found and mapped.",
+    desc: "WorldEye's directory indexes 76,000+ live public cameras across 105 countries — from US DOT highway networks to city plazas, beaches, harbors and mountain resorts. A real, countable index that keeps growing as new public feeds are found and mapped.",
   },
   {
     icon: Wallet,
@@ -55,7 +55,7 @@ const DIMENSIONS = [
 const FAQS = [
   {
     q: "Is WorldEye really free for watching cameras?",
-    a: "Yes. All 36,000+ cameras in the directory are free to watch with no account and no signup — forever. That's a standing commitment, not a trial.",
+    a: "Yes. All 76,000+ cameras in the directory are free to watch with no account and no signup — forever. That's a standing commitment, not a trial.",
   },
   {
     q: "Is EarthCam bad?",
@@ -82,7 +82,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "An EarthCam Alternative — WorldEye Live Cameras",
       description:
-        "WorldEye: an EarthCam alternative with 36,000+ live public cameras in 105 countries on one 3D globe — free, no signup.",
+        "WorldEye: an EarthCam alternative with 76,000+ live public cameras in 105 countries on one 3D globe — free, no signup.",
       url: "https://worldeye.app/earthcam-alternative",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     },
@@ -123,7 +123,7 @@ export default function EarthcamAlternativePage() {
             <Camera className="w-3.5 h-3.5" /> FREE ALTERNATIVE
           </p>
           <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-            36,000+ live cameras. <span className="text-[#00E5FF]">One globe.</span>
+            76,000+ live cameras. <span className="text-[#00E5FF]">One globe.</span>
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
             WorldEye is an alternative to webcam sites like EarthCam: tens of
@@ -249,7 +249,7 @@ export default function EarthcamAlternativePage() {
             Start <span className="text-[#D4AF37]">watching</span>
           </h2>
           <p className="text-white/55 mt-3 mb-8">
-            36,000+ cameras. One globe. Zero signup.
+            76,000+ cameras. One globe. Zero signup.
           </p>
           <Link
             href="/cameras"
@@ -270,7 +270,7 @@ export default function EarthcamAlternativePage() {
           links={[
             {
               label: "Live cameras",
-              desc: "The full camera directory — 36,000+ live public cameras in 105 countries.",
+              desc: "The full camera directory — 76,000+ live public cameras in 105 countries.",
               href: "/cameras",
             },
             {

@@ -59,7 +59,7 @@ export default function CamerasSection() {
               WorldEye — the world, live on one globe
             </h1>
             <h2 className="text-2xl md:text-3xl font-bold text-white/90 mt-6">
-              36,000+ Live Cameras. One World.
+              76,000+ Live Cameras. One World.
             </h2>
             <p className="text-base md:text-lg text-white/60 leading-relaxed mt-3 max-w-2xl">
               Explore cities, highways, mountains, beaches, and landmarks around the planet.

@@ -200,7 +200,7 @@ describe("buildAiJobParams", () => {
     if (r.ok) {
       expect(r.params.platform).toBe("TikTok");
       expect(r.params.referralLink).toBe(CTX.referralLink);
-      expect(r.params.spec).toContain("36,000+");
+      expect(r.params.spec).toContain("76,000+");
       expect(r.params.spec).toContain("exactly 10 hooks");
     }
   });

@@ -46,7 +46,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best free immersive tracker",
     href: "/compare/flightradar24",
-    body: "Live flight tracking on a free 3D globe — no signup — with the planet attached: satellites overhead, weather systems, ~36,000 ground cameras, ships and quakes on the same screen. The pick for watching the sky as part of the world, not as dots on a rectangle. The flight layer is free forever; Pro adds analyst tools, not more planes.",
+    body: "Live flight tracking on a free 3D globe — no signup — with the planet attached: satellites overhead, weather systems, ~76,000 ground cameras, ships and quakes on the same screen. The pick for watching the sky as part of the world, not as dots on a rectangle. The flight layer is free forever; Pro adds analyst tools, not more planes.",
   },
   {
     icon: Plane,

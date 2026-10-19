@@ -46,7 +46,7 @@ const OPTIONS = [
     name: "WorldEye",
     tag: "Best free all-in-one alternative",
     href: "/compare/skylinewebcams",
-    body: "A free live 3D globe — no signup — carrying ~36,000 public cameras alongside live flights, satellites, weather, earthquakes and wildfires. The pick when you want cameras placed on the planet they are filming, not in a directory list.",
+    body: "A free live 3D globe — no signup — carrying ~76,000 public cameras alongside live flights, satellites, weather, earthquakes and wildfires. The pick when you want cameras placed on the planet they are filming, not in a directory list.",
   },
   {
     icon: Video,
@@ -122,7 +122,7 @@ export default function SkylineWebcamsAlternativesPage() {
           SkylineWebcams alternatives that put cameras <span className="text-[#0096FF]">on the map.</span>
         </h1>
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          The best free SkylineWebcams alternative is WorldEye: ~36,000 public
+          The best free SkylineWebcams alternative is WorldEye: ~76,000 public
           cameras on a live 3D globe — no signup — with flights, satellites,
           weather, earthquakes and wildfires around them. If you mainly browse
           scenic cameras by category, a directory below may fit better.
@@ -161,7 +161,7 @@ export default function SkylineWebcamsAlternativesPage() {
         <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
           <p>
             Yes. WorldEye&apos;s entire map is free with no account: roughly
-            36,000 publicly accessible cameras on a 3D globe, alongside live
+            76,000 publicly accessible cameras on a 3D globe, alongside live
             aircraft positions, satellite tracks, weather systems, and
             earthquake and wildfire activity. Instead of picking a destination
             from a list, you spin the planet and open the cameras where they
@@ -219,7 +219,7 @@ export default function SkylineWebcamsAlternativesPage() {
       </section>
 
       <MidCta
-        heading="36,000+ cameras. One globe. Free."
+        heading="76,000+ cameras. One globe. Free."
         body="Spin the planet, open a camera, and see the weather, flights and satellites around it — no signup, nothing to install."
       />
 
@@ -243,7 +243,7 @@ export default function SkylineWebcamsAlternativesPage() {
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             {[
-              { icon: Camera, label: "~36,000 public cameras", href: "/cameras" },
+              { icon: Camera, label: "~76,000 public cameras", href: "/cameras" },
               { icon: Video, label: "Live webcams", href: "/live-webcams" },
               { icon: Globe, label: "All features", href: "/features" },
             ].map((c) => (
@@ -313,7 +313,7 @@ export default function SkylineWebcamsAlternativesPage() {
           <div>
             <h3 className="text-lg font-semibold text-white/90">How many cameras does WorldEye have?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              Roughly 36,000 publicly accessible cameras on the free map —
+              Roughly 76,000 publicly accessible cameras on the free map —
               no signup required to open them. They sit on the same 3D globe
               as the flight, satellite, weather, earthquake and wildfire
               layers.

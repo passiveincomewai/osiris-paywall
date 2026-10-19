@@ -46,7 +46,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best free all-in-one pick",
     href: "/compare/earthcam",
-    body: "Roughly 36,000 public cameras on a free 3D globe — no signup — with the planet attached: live flights, satellites, weather systems, earthquakes and wildfires on the same screen. The pick for exploring cameras where they actually are, instead of picking them from a list. The camera layer is free; Pro adds analyst tools, not more cameras.",
+    body: "Roughly 76,000 public cameras on a free 3D globe — no signup — with the planet attached: live flights, satellites, weather systems, earthquakes and wildfires on the same screen. The pick for exploring cameras where they actually are, instead of picking them from a list. The camera layer is free; Pro adds analyst tools, not more cameras.",
   },
   {
     icon: Video,
@@ -199,7 +199,7 @@ export default function BestLiveWebcamSitesPage() {
       </section>
 
       <MidCta
-        heading="36,000+ cameras on a globe — free, no signup"
+        heading="76,000+ cameras on a globe — free, no signup"
         body="Spin the Earth, open a camera, and see the flights, weather and satellites around it. Exploring beats browsing a list."
       />
 
@@ -288,7 +288,7 @@ export default function BestLiveWebcamSitesPage() {
             <p className="text-white/55 leading-relaxed mt-2">
               For a traditional directory: SkylineWebcams or EarthCam, both
               free. For something different: WorldEye&apos;s free 3D globe —
-              roughly 36,000 public cameras in their real places, with live
+              roughly 76,000 public cameras in their real places, with live
               flights, satellites and weather on the same screen, no signup.
             </p>
           </div>

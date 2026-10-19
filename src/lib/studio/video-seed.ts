@@ -14,7 +14,7 @@
  *    concept has no dedicated shoot, the footage is the globe cinematic
  *    and sourceNote says exactly that — no fake claims about what was
  *    filmed.
- *  - Hooks/scripts describe verified product facts only (36,000+ live
+ *  - Hooks/scripts describe verified product facts only (76,000+ live
  *    cameras in 105 countries, recording, Pro OSINT/AI/satellite).
  *
  * Layers shape for video rows: the `layers` Json column stores a single
@@ -97,7 +97,7 @@ export const SEED_VIDEOS: SeedVideo[] = [
       durationSec: 10,
       hook: "Still switching between apps just to check your cameras?",
       script:
-        "Pain-point angle: name the app-switching frustration in the hook, then let the globe cinematic carry the answer — WorldEye puts 36,000+ live cameras, flights and weather on one map instead of a folder of single-purpose apps.",
+        "Pain-point angle: name the app-switching frustration in the hook, then let the globe cinematic carry the answer — WorldEye puts 76,000+ live cameras, flights and weather on one map instead of a folder of single-purpose apps.",
       cta: "Try WorldEye.",
       sourceNote: GLOBE_CINEMATIC_NOTE,
       vertical: false,

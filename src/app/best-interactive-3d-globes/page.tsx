@@ -46,7 +46,7 @@ const GLOBES = [
     name: "WorldEye",
     tag: "Best live globe",
     href: "/compare/google-earth",
-    body: "The only free 3D globe built around live data: aircraft, satellites, ships, weather, earthquakes, wildfires and ~36,000 public cameras streaming on a spinning Earth — no signup, in the browser. Pro adds high-res satellite imagery view, the AI analyst assistant and intel feeds. If your question is 'what's happening on Earth right now,' this is the globe.",
+    body: "The only free 3D globe built around live data: aircraft, satellites, ships, weather, earthquakes, wildfires and ~76,000 public cameras streaming on a spinning Earth — no signup, in the browser. Pro adds high-res satellite imagery view, the AI analyst assistant and intel feeds. If your question is 'what's happening on Earth right now,' this is the globe.",
   },
   {
     icon: History,
@@ -226,7 +226,7 @@ export default function BestInteractive3DGlobesPage() {
             continents, the ISS and Starlink satellites sweeping overhead,
             container ships threading straits, storms spinning in the oceans,
             earthquakes as they&apos;re reported, wildfire activity — and
-            roughly 36,000 public cameras you can open for a street-level view
+            roughly 76,000 public cameras you can open for a street-level view
             of anywhere interesting. The day-night terminator sweeps the
             planet in real time.
           </p>
@@ -241,7 +241,7 @@ export default function BestInteractive3DGlobesPage() {
             {[
               { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
               { icon: Globe, label: "Live flight tracking", href: "/live-flight-tracker" },
-              { icon: Camera, label: "~36,000 public cameras", href: "/cameras" },
+              { icon: Camera, label: "~76,000 public cameras", href: "/cameras" },
               { icon: Globe2, label: "All features", href: "/features" },
             ].map((c) => (
               <Link

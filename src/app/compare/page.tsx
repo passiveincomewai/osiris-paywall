@@ -34,7 +34,7 @@ const CATEGORIES = [
 const DIFFERENTIATORS = [
   { title: "One globe, every layer", body: "Flights, satellites, ships, cameras, weather, quakes and wildfires on a single interactive 3D globe — not scattered across a dozen tabs." },
   { title: "Free with no signup", body: "The full live map costs nothing and needs no account. Most competitors paywall their best views." },
-  { title: "~36,000 live cameras", body: "The world's largest free public-camera network, browsable right on the globe." },
+  { title: "~76,000 live cameras", body: "The world's largest free public-camera network, browsable right on the globe." },
   { title: "Pro OSINT toolkit", body: "AI analyst, Nmap/DNS/WHOIS/SSL lookups and premium intel feeds (cyber, GDELT, maritime, conflict, live news)." },
 ];
 
@@ -126,7 +126,7 @@ export default async function CompareHubPage() {
               {[
                 ["Interactive 3D globe", "Yes", "Mostly 2D maps"],
                 ["Live flight tracking", "Yes", "Yes (specialists)"],
-                ["Public camera network", "~36,000 cameras", "Rarely included"],
+                ["Public camera network", "~76,000 cameras", "Rarely included"],
                 ["Satellite tracking", "Yes", "Yes (specialists)"],
                 ["Ship tracking", "Yes", "Yes (specialists)"],
                 ["Conflict monitoring", "Pro intel feeds", "Yes (specialists)"],
@@ -166,7 +166,7 @@ export default async function CompareHubPage() {
             },
             {
               title: "God's Eye View alternatives",
-              desc: "The viral Cesium globe, hosted vs self-hosted — and the ~4,000 vs 36,000+ camera question.",
+              desc: "The viral Cesium globe, hosted vs self-hosted — and the ~4,000 vs 76,000+ camera question.",
               href: "/alternatives/gods-eye-view",
             },
             {

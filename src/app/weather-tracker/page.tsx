@@ -81,7 +81,7 @@ const USE_CASES = [
   {
     icon: Camera,
     title: "Ground truth",
-    desc: "Pair the weather layer with 36,000+ public cameras: see the sky over a place and the street below it, side by side.",
+    desc: "Pair the weather layer with 76,000+ public cameras: see the sky over a place and the street below it, side by side.",
   },
   {
     icon: Wind,
@@ -337,7 +337,7 @@ export default function WeatherTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "36,000+ public cameras — see the sky over any place and the street below it.",
+              desc: "76,000+ public cameras — see the sky over any place and the street below it.",
               href: "/cameras",
             },
             {

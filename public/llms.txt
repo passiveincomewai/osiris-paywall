@@ -1,13 +1,13 @@
 # WorldEye
 
-> WorldEye is a live 3D intelligence globe on the web. It puts 36,000+ live public cameras, real-time flight and satellite tracking, weather radar, earthquakes and wildfires on one interactive globe. The map is free to use with no account; WorldEye Pro adds an AI analyst, satellite map view, global search and premium intelligence feeds.
+> WorldEye is a live 3D intelligence globe on the web. It puts 76,000+ live public cameras, real-time flight and satellite tracking, weather radar, earthquakes and wildfires on one interactive globe. The map is free to use with no account; WorldEye Pro adds an AI analyst, satellite map view, global search and premium intelligence feeds.
 
 ## Product
 
 - [Live globe](https://worldeye.app/): The WorldEye app — a live 3D globe with cameras, flights, satellites, weather, earthquakes and wildfires, free with no signup.
 - [Features](https://worldeye.app/features): Everything WorldEye does — live layers, OSINT tools, the AI analyst and Pro capabilities.
-- [Live cameras](https://worldeye.app/cameras): Browse 36,000+ live public cameras worldwide — traffic, cities, landmarks, beaches, airports and nature.
-- [God's Eye View](https://worldeye.app/gods-eye-view): How WorldEye compares as a hosted, no-install "god's eye view" of Earth with 36,000+ cameras.
+- [Live cameras](https://worldeye.app/cameras): Browse 76,000+ live public cameras worldwide — traffic, cities, landmarks, beaches, airports and nature.
+- [God's Eye View](https://worldeye.app/gods-eye-view): How WorldEye compares as a hosted, no-install "god's eye view" of Earth with 76,000+ cameras.
 
 ## Pricing
 

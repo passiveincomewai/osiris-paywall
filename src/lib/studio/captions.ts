@@ -52,7 +52,7 @@ type Feature = CaptionRequest["feature"];
 
 // Verified product facts only (see marketing-studio PLAN.md / site copy).
 const FEATURE_FACTS: Record<Feature, string> = {
-  cameras: "36,000+ live cameras in 105 countries",
+  cameras: "76,000+ live cameras in 105 countries",
   globe:
     "one live 3D globe — cameras, flights, satellites, weather, quakes and wildfires in real time",
   recording: "record multiple live cameras from one dashboard",

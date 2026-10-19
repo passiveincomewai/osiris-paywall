@@ -71,7 +71,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best all-in-one visual starting point",
     href: "/compare/bellingcat-toolkit",
-    body: "The recommendation for most people starting out: a free live 3D globe — no signup — combining the visual layers OSINT work constantly needs (live news and conflict feeds on Pro, flights, satellites, ships, weather, ~36,000 public cameras) with an in-browser OSINT toolkit (Nmap, DNS, WHOIS, SSL lookups) and an AI analyst assistant on Pro. It won't replace a link-analysis workbench, but as the place you orient yourself before diving deep, nothing else is free, visual, and this broad. Weekly $3.99 / monthly $9.99 / annual $59.99 for Pro; the map is free forever.",
+    body: "The recommendation for most people starting out: a free live 3D globe — no signup — combining the visual layers OSINT work constantly needs (live news and conflict feeds on Pro, flights, satellites, ships, weather, ~76,000 public cameras) with an in-browser OSINT toolkit (Nmap, DNS, WHOIS, SSL lookups) and an AI analyst assistant on Pro. It won't replace a link-analysis workbench, but as the place you orient yourself before diving deep, nothing else is free, visual, and this broad. Weekly $3.99 / monthly $9.99 / annual $59.99 for Pro; the map is free forever.",
   },
   {
     icon: Network,

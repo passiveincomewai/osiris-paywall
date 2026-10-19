@@ -24,12 +24,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "OSIRIS Alternatives in 2026 — Hosted Globe vs Self-Hosted OSINT",
   description:
-    "OSIRIS is a free open-source OSINT dashboard you host yourself. Compare the alternatives: WorldEye's hosted live globe (36,000+ cameras, no setup), the original project, World Monitor and LiveUAMap.",
+    "OSIRIS is a free open-source OSINT dashboard you host yourself. Compare the alternatives: WorldEye's hosted live globe (76,000+ cameras, no setup), the original project, World Monitor and LiveUAMap.",
   alternates: { canonical: "/alternatives/osiris" },
   openGraph: {
     title: "OSIRIS Alternatives in 2026 — Hosted Globe vs Self-Hosted OSINT | WorldEye",
     description:
-      "The original OSIRIS is self-hosted open source. WorldEye is the hosted route to the same live planet: a 3D globe with 36,000+ cameras, flights and satellites — free, no install.",
+      "The original OSIRIS is self-hosted open source. WorldEye is the hosted route to the same live planet: a 3D globe with 76,000+ cameras, flights and satellites — free, no install.",
     url: "/alternatives/osiris",
     type: "website",
   },
@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best hosted alternative — no install",
     href: "/compare/worldeye-vs-osiris",
     linkLabel: "WorldEye vs OSIRIS, head-to-head",
-    body: "The same idea as OSIRIS — one live map carrying cameras, flights, satellites, weather, quakes and fires — as a hosted product instead of a codebase. Open it in a browser: no Docker, no Node, no API keys for the core globe, and a camera network of 36,000+ public feeds instead of 17,000+. Free with no signup; Pro ($3.99/week, $9.99/month, $59.99/year) adds the OSINT toolkit and live intel feeds, run on our infrastructure and our keys.",
+    body: "The same idea as OSIRIS — one live map carrying cameras, flights, satellites, weather, quakes and fires — as a hosted product instead of a codebase. Open it in a browser: no Docker, no Node, no API keys for the core globe, and a camera network of 76,000+ public feeds instead of 17,000+. Free with no signup; Pro ($3.99/week, $9.99/month, $59.99/year) adds the OSINT toolkit and live intel feeds, run on our infrastructure and our keys.",
   },
   {
     icon: Code2,
@@ -80,7 +80,7 @@ const TABLE: { label: string; worldeye: string; osiris: string }[] = [
   { label: "How you run it", worldeye: "Hosted website — open the URL", osiris: "Self-hosted (Docker or Node.js); a live demo is linked from the repo" },
   { label: "Cost", worldeye: "Map free, no signup; Pro $3.99/wk, $9.99/mo, $59.99/yr", osiris: "Free open source (MIT); you pay for hosting and your own API keys" },
   { label: "Map", worldeye: "Interactive 3D globe", osiris: "MapLibre map (2D-first, terrain views)" },
-  { label: "Public cameras", worldeye: "36,000+ live feeds, browsable directory", osiris: "17,000+ cameras (project README)" },
+  { label: "Public cameras", worldeye: "76,000+ live feeds, browsable directory", osiris: "17,000+ cameras (project README)" },
   { label: "Flights / satellites", worldeye: "Live, on the globe", osiris: "Live (OpenSky aviation; N2YO satellites)" },
   { label: "Maritime", worldeye: "Live vessel positions; maritime intel feed on Pro", osiris: "Static reference data (39 ports, 10 chokepoints)" },
   { label: "Conflict data", worldeye: "Live GDELT-powered intel feeds (Pro)", osiris: "Static reference data (13 zones)" },
@@ -128,7 +128,7 @@ export default function OsirisAlternativesPage() {
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
           Looking for an OSIRIS alternative? The original is a free
           open-source OSINT dashboard you install and host yourself. If you
-          want that same live planet — 36,000+ cameras, flights, satellites,
+          want that same live planet — 76,000+ cameras, flights, satellites,
           weather — already running in your browser, that&apos;s WorldEye.
           Here&apos;s the honest breakdown of every route.
         </p>
@@ -174,7 +174,7 @@ export default function OsirisAlternativesPage() {
             your infrastructure. WorldEye is the hosted product built on the
             same concept: one interactive 3D globe with live flights,
             satellites, weather, earthquakes and wildfires, plus a
-            public-camera network of 36,000+ feeds. No install, no build
+            public-camera network of 76,000+ feeds. No install, no build
             step, no API keys for the core globe — open the page and
             it&apos;s already live, on phone or desktop.
           </p>
@@ -230,7 +230,7 @@ export default function OsirisAlternativesPage() {
 
       <MidCta
         heading="The view, without the server"
-        body="WorldEye's globe is live right now — 36,000+ cameras, flights, satellites and weather on one screen. Open it and decide in thirty seconds."
+        body="WorldEye's globe is live right now — 76,000+ cameras, flights, satellites and weather on one screen. Open it and decide in thirty seconds."
       />
 
       {/* Comparison table */}
@@ -263,7 +263,7 @@ export default function OsirisAlternativesPage() {
         <div className="flex flex-wrap gap-3 pt-6">
           {[
             { icon: Globe, label: "The hosted globe", href: "/" },
-            { icon: Camera, label: "36,000+ cameras", href: "/cameras" },
+            { icon: Camera, label: "76,000+ cameras", href: "/cameras" },
             { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
             { icon: Satellite, label: "Satellites", href: "/satellite-tracker" },
           ].map((c) => (
@@ -331,7 +331,7 @@ export default function OsirisAlternativesPage() {
           <div>
             <h3 className="text-lg font-semibold text-white/90">Which has more cameras?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              WorldEye: 36,000+ live public cameras from 105 countries,
+              WorldEye: 76,000+ live public cameras from 105 countries,
               versus 17,000+ in OSIRIS&apos;s CCTV layer (the figure in its
               README). Both draw on public feeds — transport agencies, city
               networks and public webcams; WorldEye&apos;s directory is

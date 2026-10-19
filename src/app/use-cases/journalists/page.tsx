@@ -165,7 +165,7 @@ export default function JournalistsPage() {
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
             A viral video says it happened somewhere, right now. WorldEye gives you
-            36,000+ live public cameras, real-time flight positions and disaster
+            76,000+ live public cameras, real-time flight positions and disaster
             layers on one globe — so you can check the claim against reality before
             you publish it. It&apos;s the fastest first check in the verification
             toolkit: geography, weather and time-of-day don&apos;t lie, and a live
@@ -271,7 +271,7 @@ export default function JournalistsPage() {
             },
             {
               label: "Cameras",
-              desc: "36,000+ live public webcams worldwide — the verification layer, free for everyone.",
+              desc: "76,000+ live public webcams worldwide — the verification layer, free for everyone.",
               href: "/cameras",
             },
           ]}

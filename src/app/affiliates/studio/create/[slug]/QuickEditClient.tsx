@@ -494,7 +494,7 @@ export default function QuickEditClient({ slug }: { slug: string }) {
             </div>
           )}
           <p className="text-[11px] text-slate-500 mt-5 leading-relaxed">
-            Only use claims you can back up: 36,000+ live cameras, a free globe with no signup, and Pro features
+            Only use claims you can back up: 76,000+ live cameras, a free globe with no signup, and Pro features
             as shown on worldeye.app. Always disclose your affiliate link with #ad wherever you post.
           </p>
         </div>
