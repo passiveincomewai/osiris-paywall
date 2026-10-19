@@ -276,6 +276,18 @@ let osSnapshot: any[] = [];
 let osSnapshotTime = 0;
 let fetchPromise: Promise<any> | null = null;
 
+const JAMMING_NACAP_THRESHOLD = 4;
+
+// In-flight build progress, published by the builder as it goes so GET
+// can answer a first paint from it while a cold build is still running
+// (see FIRST_PAINT_WAIT_MS). liveRaw ALIASES the builder's own array —
+// ingestAc pushes into it, so its length grows region by region with no
+// extra bookkeeping. Reset at the start of every build.
+let liveRaw: any[] = [];
+let liveMilCount = 0;
+let liveRegionsAnswered = 0;
+let liveSource = '';
+
 // The regional sweep takes ~40s wall (35 paced requests) and the route cache
 // only holds a finished payload for 90s, so without reuse nearly every cycle
 // in the no-OpenSky steady state would pay for a full sweep — and any sweep
@@ -355,6 +367,92 @@ function ingestAc(raw: any[], into: any[], seen: Set<string>) {
   }
 }
 
+/** Classify a raw record set into the four buckets + jamming points. */
+function classifyAll(allRaw: any[]) {
+  const commercial: any[] = [];
+  const privateFl: any[] = [];
+  const jets: any[] = [];
+  const military: any[] = [];
+  const gpsJamming: any[] = [];
+  let droppedInvalid = 0;
+
+  for (const raw of allRaw) {
+    const flight = classifyFlight(raw);
+    if (!flight) { droppedInvalid++; continue; }
+
+    if (typeof flight.nac_p === 'number' && flight.nac_p <= JAMMING_NACAP_THRESHOLD && !flight.grounded) {
+      gpsJamming.push({ lat: flight.lat, lng: flight.lng, nac_p: flight.nac_p, callsign: flight.callsign });
+    }
+
+    switch (flight.category) {
+      case 'military': military.push(flight); break;
+      case 'jet':      jets.push(flight);     break;
+      case 'private':  privateFl.push(flight); break;
+      default:         commercial.push(flight);
+    }
+  }
+  return { commercial, privateFl, jets, military, gpsJamming, droppedInvalid };
+}
+
+/** Assemble the response payload from classified buckets. One builder
+ *  for the completed payload and the first-paint partial, so the two
+ *  can never drift in shape. */
+function assemblePayload(
+  built: ReturnType<typeof classifyAll>,
+  total: number,
+  meta: { source: string; milCount: number; regionalIngested: number; regionsAnswered: number; partial: boolean },
+) {
+  return {
+    commercial_flights: built.commercial,
+    private_flights:    built.privateFl,
+    private_jets:       built.jets,
+    military_flights:   built.military,
+    gps_jamming:        aggregateJamming(built.gpsJamming, JAMMING_NACAP_THRESHOLD),
+    total,
+    source:             meta.source,
+    // True only for a first-paint answer built from an in-flight sweep:
+    // the buckets hold the regions swept so far, and the next poll
+    // replaces it with the completed payload.
+    partial:            meta.partial,
+    // Per-feed counts so a provider that starts answering 200 with no aircraft
+    // is visible in the payload rather than silently emptying the map.
+    providers: {
+      adsbfi_mil:      meta.milCount,
+      adsbfi_regional: meta.regionalIngested,
+      adsbfi_regions:  meta.regionsAnswered,
+      adsbfi_regional_age_s: regionalSnapshotTime ? Math.round((Date.now() - regionalSnapshotTime) / 1000) : null,
+      opensky:         osSnapshot.length,
+      opensky_auth:    hasOpenSkyCreds(),
+      opensky_age_s:   osSnapshotTime ? Math.round((Date.now() - osSnapshotTime) / 1000) : null,
+    },
+    // Exclusion bookkeeping for the admin coverage diagnostics.
+    // dropped_invalid is a genuine count from the classify loop above
+    // (tower pseudo-records + records with no position). dropped_stale is
+    // null ON PURPOSE: this route applies no staleness filter, so nothing
+    // is excluded for age and there is no honest number to report —
+    // freshness is bounded by the provider snapshot ages in `providers`.
+    diagnostics: {
+      dropped_invalid: built.droppedInvalid,
+      dropped_stale: null,
+    },
+    timestamp:          new Date().toISOString(),
+  };
+}
+
+/** First-paint payload from the in-flight build, or null when the build
+ *  has not gathered enough to be worth painting yet. */
+function buildPartialPayload(): any | null {
+  if (!liveSource || liveRaw.length < MIN_PARTIAL_AIRCRAFT) return null;
+  const regionalIngested = liveSource === 'regional' ? Math.max(0, liveRaw.length - liveMilCount) : 0;
+  return assemblePayload(classifyAll(liveRaw), liveRaw.length, {
+    source: liveSource,
+    milCount: liveMilCount,
+    regionalIngested,
+    regionsAnswered: liveRegionsAnswered,
+    partial: true,
+  });
+}
+
 export async function GET() {
   const now = Date.now();
 
@@ -364,23 +462,16 @@ export async function GET() {
     });
   }
 
-  if (fetchPromise) {
-    try {
-      const data = await fetchPromise;
-      return NextResponse.json(data, {
-        headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
-      });
-    } catch {
-      return NextResponse.json({ error: 'Failed to fetch flight data' }, { status: 500 });
-    }
-  }
-
-  const JAMMING_NACAP_THRESHOLD = 4;
-
-  fetchPromise = (async () => {
+  if (!fetchPromise) {
+    fetchPromise = (async () => {
     const allRaw: any[] = [];
     const seenHex = new Set<string>();
     let source: string;
+    // Publish progress for GET's first-paint path (see buildPartialPayload).
+    liveRaw = allRaw;
+    liveMilCount = 0;
+    liveRegionsAnswered = 0;
+    liveSource = '';
 
     // ── Phase 1 + 2 in parallel: global military feed AND OpenSky simultaneously ──
     // Running them together keeps total wall-clock time to max(mil_feed, opensky)
@@ -421,6 +512,7 @@ export async function GET() {
       }
     }
     const milCount = allRaw.length;
+    liveMilCount = milCount;
 
     // Refresh the OpenSky snapshot when one was due; otherwise the existing one
     // carries over untouched.
@@ -469,11 +561,13 @@ export async function GET() {
     let regionalIngested = 0;
     if (!openSkyWorked) {
       source = 'regional';
+      liveSource = source;
 
       if (regionalSnapshot.length > 0 && Date.now() - regionalSnapshotTime < REGIONAL_REUSE_MS) {
         const before = allRaw.length;
         ingestAc(regionalSnapshot, allRaw, seenHex);
         regionalIngested = allRaw.length - before;
+        liveRegionsAnswered = regionalRegionsAnswered;
       } else {
         console.warn('[OSIRIS] no OpenSky snapshot — falling back to adsb.fi regional sweep');
         const sweepRaw: any[] = [];
@@ -495,6 +589,10 @@ export async function GET() {
           const regionAc = await fetchAdsbFiRegion(r.lat, r.lon);
           if (regionAc.length > 0) answered++;
           ingestAc(regionAc, sweepRaw, sweepSeen);
+          // Sweep results reach allRaw only at the end of the sweep, so
+          // publish them per region for the first-paint path.
+          ingestAc(regionAc, allRaw, seenHex);
+          liveRegionsAnswered = answered;
         }
 
         if (sweepRaw.length > 0) {
@@ -516,67 +614,45 @@ export async function GET() {
       }
     } else {
       source = hasOpenSkyCreds() ? 'opensky-auth' : 'opensky-anon';
+      liveSource = source;
     }
 
-    // ── Classify ──────────────────────────────────────────────────────────────
-    const commercial: any[] = [];
-    const privateFl: any[] = [];
-    const jets: any[] = [];
-    const military: any[] = [];
-    const gpsJamming: any[] = [];
-    let droppedInvalid = 0;
-
-    for (const raw of allRaw) {
-      const flight = classifyFlight(raw);
-      if (!flight) { droppedInvalid++; continue; }
-
-      if (typeof flight.nac_p === 'number' && flight.nac_p <= JAMMING_NACAP_THRESHOLD && !flight.grounded) {
-        gpsJamming.push({ lat: flight.lat, lng: flight.lng, nac_p: flight.nac_p, callsign: flight.callsign });
-      }
-
-      switch (flight.category) {
-        case 'military': military.push(flight); break;
-        case 'jet':      jets.push(flight);     break;
-        case 'private':  privateFl.push(flight); break;
-        default:         commercial.push(flight);
-      }
-    }
-
-    return {
-      commercial_flights: commercial,
-      private_flights:    privateFl,
-      private_jets:       jets,
-      military_flights:   military,
-      gps_jamming:        aggregateJamming(gpsJamming, JAMMING_NACAP_THRESHOLD),
-      total:              allRaw.length,
+    // ── Classify + assemble (shared with the first-paint partial) ─────
+    return assemblePayload(classifyAll(allRaw), allRaw.length, {
       source,
-      // Per-feed counts so a provider that starts answering 200 with no aircraft
-      // is visible in the payload rather than silently emptying the map.
-      providers: {
-        adsbfi_mil:      milCount,
-        adsbfi_regional: regionalIngested,
-        adsbfi_regions:  regionalRegionsAnswered,
-        adsbfi_regional_age_s: regionalSnapshotTime ? Math.round((Date.now() - regionalSnapshotTime) / 1000) : null,
-        opensky:         osSnapshot.length,
-        opensky_auth:    hasOpenSkyCreds(),
-        opensky_age_s:   osSnapshotTime ? Math.round((Date.now() - osSnapshotTime) / 1000) : null,
-      },
-      // Exclusion bookkeeping for the admin coverage diagnostics.
-      // dropped_invalid is a genuine count from the classify loop above
-      // (tower pseudo-records + records with no position). dropped_stale is
-      // null ON PURPOSE: this route applies no staleness filter, so nothing
-      // is excluded for age and there is no honest number to report —
-      // freshness is bounded by the provider snapshot ages in `providers`.
-      diagnostics: {
-        dropped_invalid: droppedInvalid,
-        dropped_stale: null,
-      },
-      timestamp:          new Date().toISOString(),
-    };
-  })();
+      milCount,
+      regionalIngested,
+      regionsAnswered: regionalRegionsAnswered,
+      partial: false,
+    });
+    })();
+    // If GET answers a first-paint partial, this build finishes unwatched;
+    // the rejection handler here keeps that path from surfacing as an
+    // unhandled rejection. Awaiting callers still see the rejection.
+    fetchPromise.catch(() => {});
+  }
 
   try {
-    const data = await fetchPromise;
+    const raced = await Promise.race([
+      fetchPromise.then((data) => ({ done: true as const, data })),
+      new Promise<{ done: false }>((resolve) =>
+        setTimeout(() => resolve({ done: false }), FIRST_PAINT_WAIT_MS),
+      ),
+    ]);
+    if (!raced.done) {
+      // First paint: answer from the in-flight build rather than making
+      // the first visitor wait out a cold ~40s sweep. The build keeps
+      // running; the next poll (30s) picks up the completed payload.
+      const partial = buildPartialPayload();
+      if (partial) {
+        return NextResponse.json(partial, {
+          headers: { 'Cache-Control': 'no-store, max-age=0' },
+        });
+      }
+      // Nothing worth painting yet — wait for the real build instead of
+      // serving an empty sky.
+    }
+    const data = raced.done ? raced.data : await fetchPromise;
     cachedData = data;
     lastFetchTime = Date.now();
     fetchPromise = null;
