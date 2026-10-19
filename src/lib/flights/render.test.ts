@@ -49,7 +49,15 @@ describe('flightToFeature / flightsToFeatures', () => {
       speed_knots: 450,
       registration: 'G-TEST',
       icao24: 'abc123',
+      aircraft_category: 'plane',
     });
+  });
+
+  it('carries the route\'s helicopter tag through to the feature', () => {
+    expect(flightToFeature(flight({ aircraft_category: 'heli' })).properties.aircraft_category).toBe('heli');
+    // Anything unrecognised stays a plane — the icon never guesses a heli.
+    expect(flightToFeature(flight({ aircraft_category: 'ufo' })).properties.aircraft_category).toBe('plane');
+    expect(flightToFeature(flight({ aircraft_category: undefined })).properties.aircraft_category).toBe('plane');
   });
 
   it('defaults a missing heading to 0', () => {
@@ -139,6 +147,30 @@ describe('FlightBlend', () => {
     blend.push(buckets({ commercial_flights: 2 }), t0);
     blend.push(buckets({}), t0 + 30_000);
     expect(blend.current(t0 + 31_000).commercial_flights).toHaveLength(2);
+  });
+
+  it('treats a re-delivered snapshot (same feed timestamp, fresh JSON) as a no-op', () => {
+    const blend = new FlightBlend();
+    const t0 = 1_000_000;
+    const fixAt = t0 - 5_000; // when the feed generated the snapshot
+    blend.push(buckets({ commercial_flights: 1 }), t0, fixAt);
+    // 30 s later the client polls again; the server cache returns the SAME
+    // snapshot, re-parsed — new array references, same feed timestamp.
+    // It must not become the new bracket (that froze motion, then made the
+    // next real snapshot sprint — the stutter-step glitch).
+    const redelivered = buckets({ commercial_flights: 1 });
+    blend.push(redelivered, t0 + 30_000, fixAt);
+    const cur = blend.current(t0 + 60_000);
+    // Still the lone-snapshot path: dead reckoning advanced it a full 60 s.
+    expect(cur.commercial_flights[0].lng).toBeGreaterThan(-0.12 + 0.1);
+    // And a genuinely new snapshot (new feed timestamp) IS accepted.
+    const fresh = {
+      ...redelivered,
+      commercial_flights: redelivered.commercial_flights.map((f) => ({ ...f, lng: f.lng + 0.3 })),
+    } as FlightBuckets;
+    blend.push(fresh, t0 + 90_000, fixAt + 90_000);
+    const end = blend.current(t0 + 180_000);
+    expect(end.commercial_flights[0].lng).toBeCloseTo(-0.12 + 0.3, 3);
   });
 
   it('treats re-pushing the identical payload as a no-op', () => {

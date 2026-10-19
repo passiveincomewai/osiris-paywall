@@ -132,7 +132,7 @@ export function blendSnapshots<T extends FlightLike>(prev: T[], next: T[], alpha
       lng: wrapLng(p.lng + lngDelta * t),
       heading:
         typeof p.heading === 'number' && typeof f.heading === 'number'
-          ? Math.round(lerpAngleDeg(p.heading, f.heading, t))
+          ? lerpAngleDeg(p.heading, f.heading, t)
           : f.heading,
       alt:
         typeof p.alt === 'number' && typeof f.alt === 'number'

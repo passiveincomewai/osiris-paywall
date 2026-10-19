@@ -62,6 +62,10 @@ export function flightToFeature(f: any) {
       speed_knots: f.speed_knots,
       registration: f.registration,
       icao24: f.icao24,
+      // Drives the map's per-feature icon choice (plane vs helicopter
+      // glyph). The route tags every record; anything unrecognised
+      // renders as a plane — never guess a helicopter.
+      aircraft_category: f.aircraft_category === 'heli' ? 'heli' : 'plane',
     },
   };
 }
@@ -125,6 +129,24 @@ export class FlightBlend {
     const incomingTotal = BUCKET_KEYS.reduce((n, k) => n + incoming[k].length, 0);
     if (incomingTotal === 0 && this.next) return;
     const fixAt = typeof fixAtMs === 'number' && Number.isFinite(fixAtMs) ? fixAtMs : now;
+    // The same feed snapshot re-delivered is NOT a new bracket. The
+    // server cache (90 s TTL) outlives the client poll (30 s), so most
+    // polls re-deliver the identical payload — as freshly parsed JSON,
+    // so the reference check above cannot see it. Taking each delivery
+    // as a new snapshot made prev == next (motion froze), and when a
+    // genuinely new snapshot landed, ~90 s of travel had to blend
+    // inside one 30 s interval (aircraft sprinted). The result read as
+    // glitchy stutter-step motion. Deduping on the feed timestamp keeps
+    // the bracket spanning the true interval between distinct snapshots,
+    // so alpha sweeps it at real speed and the glide is continuous.
+    if (
+      this.next &&
+      typeof fixAtMs === 'number' &&
+      Number.isFinite(fixAtMs) &&
+      fixAt === this.nextFixAt
+    ) {
+      return;
+    }
     if (this.next && now > this.nextAt) {
       this.intervalMs = Math.max(
         MIN_INTERVAL_MS,
