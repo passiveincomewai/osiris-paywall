@@ -6,19 +6,30 @@ import { classifyDropReason } from '@/lib/flights/diagnostics';
 
 export const maxDuration = 60;
 
-// 35 regions covering every major aviation corridor at 250 nm radius.
+// 38 regions covering every major aviation corridor at 250 nm radius.
 // Focused on high-density airspace: US domestic, North Atlantic, Europe,
 // Middle East hub, India, East Asia, SE Asia, Australia, South America.
+//
+// The Mountain West / Front Range / Arizona centres (added 2026-10-19)
+// close a measured coverage HOLE: at the 250 nm provider cap, Salt Lake
+// City sat 925 km from the nearest centre (Central US), Denver 555 km,
+// Phoenix 552 km, Boise 589 km, Reno 636 km — no sweep response could
+// contain an aircraft over Utah at all (a direct adsb.fi query centred
+// on SLC returns ~50 aircraft inside Utah's bbox). Three centres put
+// every one of those metros inside a queried radius.
 const REGIONS = [
   // North America
   { lat: 39.8,  lon: -98.5 }, // Central US
   { lat: 41.0,  lon: -74.0 }, // Northeast (NYC/Boston/DC)
   { lat: 33.0,  lon: -84.0 }, // Southeast (Atlanta)
   { lat: 42.0,  lon: -88.0 }, // Midwest (Chicago)
+  { lat: 39.7,  lon:-105.0 }, // Front Range (Denver)
   { lat: 30.0,  lon: -97.0 }, // Texas (Dallas/Houston)
   { lat: 19.4,  lon: -99.1 }, // Mexico City
   { lat: 47.0,  lon:-122.0 }, // Pacific Northwest (Seattle)
   { lat: 34.0,  lon:-118.0 }, // SoCal (LA)
+  { lat: 40.8,  lon:-111.9 }, // Mountain West (Salt Lake City / Utah)
+  { lat: 33.4,  lon:-112.1 }, // Arizona (Phoenix)
   { lat: 45.0,  lon: -73.0 }, // Canada East (Montreal/Toronto)
   { lat: 49.0,  lon: -97.0 }, // Canada Prairies
   // Europe
@@ -133,7 +144,7 @@ const ADSBFI_BASE = 'https://opendata.adsb.fi/api/v2';
 // point endpoint meters far harder than /mil, so the regional sweep is paced
 // rather than fanned out in parallel. Pacing is start-to-start: a region
 // request never STARTS less than ~1.05s after the previous one started,
-// which honours the 1 req/s cap while keeping a 35-region sweep inside
+// which honours the 1 req/s cap while keeping a 38-region sweep inside
 // SWEEP_DEADLINE_MS — the old end-of-request + 1100ms gap stacked the full
 // fetch latency of every region on top of the gap (~45s at 30 regions).
 const ADSBFI_START_GAP_MS = 1050;
@@ -277,8 +288,23 @@ let regionalSnapshotTime = 0;
 let regionalRegionsAnswered = 0;
 const REGIONAL_REUSE_MS = 5 * 60 * 1000;
 // Stop starting new region requests this long into a sweep, so a slow tail
-// of timeouts cannot push the route past its 60s maxDuration.
-const SWEEP_DEADLINE_MS = 40000;
+// of timeouts cannot push the route past its 60s maxDuration. 38 regions
+// at the ~1.05s pacing floor need ~40s of starts alone, so the deadline
+// sits at 50s; callers no longer wait for it in the common case — GET
+// serves a partial payload from the in-flight sweep once enough regions
+// have answered (see FIRST_PAINT_WAIT_MS below).
+const SWEEP_DEADLINE_MS = 50000;
+
+// First paint: a cold sweep takes ~40s+, and the first visitor used to
+// wait for ALL of it before a single aircraft rendered. GET now races
+// the in-flight build against this wait; on timeout it answers from the
+// records gathered so far (military feed + the regions already swept —
+// North America is swept first, so the busiest home airspace is in) and
+// lets the build finish in the background for the next poll. A partial
+// payload is labelled (providers.adsbfi_regions < REGIONS.length,
+// `partial: true`) and never cached — the completed build replaces it.
+const FIRST_PAINT_WAIT_MS = 10000;
+const MIN_PARTIAL_AIRCRAFT = 200;
 
 // Back off from OpenSky after a 429 so the daily quota can reset.
 // Re-poking a limited endpoint on every cache miss keeps the IP throttled.

@@ -100,7 +100,7 @@ export interface FlightCoverageView {
   warnings: string[];
 }
 
-const REGIONS_TOTAL = 35; // REGIONS in src/app/api/flights/route.ts
+const REGIONS_TOTAL = 38; // REGIONS in src/app/api/flights/route.ts
 
 function len(a: unknown[] | undefined): number {
   return Array.isArray(a) ? a.length : 0;

@@ -82,8 +82,8 @@ describe('deriveFlightCoverage — regional mode (production steady state)', () 
   it('marks the sweep active in regional mode and notes partial regions', () => {
     const reg = vm.providers.find((r) => r.key === 'adsbfi_regional')!;
     expect(reg.state).toBe('ok');
-    expect(reg.detail).toContain('33/35');
-    expect(vm.warnings.some((w) => w.includes('33/35'))).toBe(true);
+    expect(reg.detail).toContain('33/38');
+    expect(vm.warnings.some((w) => w.includes('33/38'))).toBe(true);
   });
 });
 
