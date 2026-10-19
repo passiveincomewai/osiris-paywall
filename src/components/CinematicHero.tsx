@@ -20,6 +20,30 @@ const EXIT_START = 0.85; // stage starts sliding away at 85% of the track
 const EXIT_END = 0.97; // fully dismissed just before the absolute bottom
 // (browsers don't always report scroll progress reaching exactly 1.0)
 
+// ── Dismissal model (exported for tests) ──
+// Progress is a pure function of layout: how far the track's top has
+// scrolled past, over the track's scrollable range.
+export function heroTrackProgress(trackTop: number, trackHeight: number, innerHeight: number): number {
+  const total = trackHeight - innerHeight;
+  return Math.min(1, Math.max(0, -trackTop / Math.max(1, total)));
+}
+
+// How far the stage has slid away, BEFORE dismissal completes: 0 until
+// EXIT_START, then linear to 1 at EXIT_END. This is the first-visit
+// behaviour and must never change under a visitor who is still scrubbing.
+export function heroExitAmount(p: number): number {
+  return Math.min(1, Math.max(0, (p - EXIT_START) / (EXIT_END - EXIT_START)));
+}
+
+// THE RULE: dismissal is a one-way door. The moment progress completes
+// the exit, the hero is dismissed for the rest of the session — no later
+// progress value (a scroll back up, a viewport resize, a keyboard opening,
+// an in-app browser's chrome swinging) can ever clear it. Only a fresh
+// page load mounts the hero again, at the top, where it belongs.
+export function heroDismissedAfter(dismissed: boolean, p: number): boolean {
+  return dismissed || p >= EXIT_END;
+}
+
 export default function CinematicHero() {
   // The poster is the hero's first paint (and its largest early content):
   // ask for it at preload priority instead of letting it queue behind the
@@ -33,8 +57,14 @@ export default function CinematicHero() {
   const unlocked = useRef(false);
   const globeLocked = useRef(false);
   const [progress, setProgress] = useState(0);
+  // Session-permanent dismissal. Once true, the stage unmounts and can
+  // never return within this page session — see heroDismissedAfter.
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    // After dismissal the stage is unmounted (videoRef/stageRef are null)
+    // and there is nothing left to animate: no loop, no listeners.
+    if (dismissed) return;
     const video = videoRef.current;
     const track = trackRef.current;
     const stage = stageRef.current;
@@ -72,8 +102,29 @@ export default function CinematicHero() {
     window.addEventListener('keydown', ensureLoaded);
 
     const tick = () => {
-      const total = track.offsetHeight - window.innerHeight;
-      const p = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / Math.max(1, total)));
+      const p = heroTrackProgress(track.getBoundingClientRect().top, track.offsetHeight, window.innerHeight);
+      // Dismissal is checked FIRST and is a one-way door. The previous
+      // design kept the stage mounted forever and recomputed its hidden
+      // state from live layout every frame, with a latch that RELEASED
+      // when progress sagged below EXIT_START. That release is the bug
+      // Jameson kept hitting: on the globe, an in-app browser's chrome
+      // swinging (Instagram/WKWebView), a keyboard opening over the
+      // search drawer, or any large viewport/scroll swing moves the
+      // layout-derived progress far more than the small toolbar sag the
+      // latch was hardened against — progress collapsed, the latch
+      // released, and the intro slid back over the app. Now, the frame
+      // progress completes the exit, the stage UNMOUNTS and the loop
+      // stops: there is nothing left that any button, panel, resize or
+      // scroll can resurrect. The intro exists again only on a fresh
+      // page load, at the top, where it belongs.
+      if (heroDismissedAfter(globeLocked.current, p)) {
+        if (!globeLocked.current) {
+          globeLocked.current = true;
+          document.documentElement.classList.add('globe-locked');
+          setDismissed(true);
+        }
+        return; // no next frame — this loop's work is done
+      }
       if (p > 0.002) ensureLoaded();
       if (p !== progressRef.current) {
         progressRef.current = p;
@@ -90,22 +141,9 @@ export default function CinematicHero() {
         }
       }
       // Slide the stage up over the final stretch to reveal the app.
-      const exitRaw = Math.min(1, Math.max(0, (p - EXIT_START) / (EXIT_END - EXIT_START)));
-      if (exitRaw >= 1 && !globeLocked.current) {
-        globeLocked.current = true;
-        document.documentElement.classList.add('globe-locked');
-      }
-      // The dismissal is LATCHED. Progress is recomputed from live layout
-      // every frame, and its denominator (track height − innerHeight)
-      // moves when a mobile browser's chrome toggles: tapping a control
-      // near the bottom of the screen makes iOS Safari reveal its toolbar,
-      // innerHeight shrinks while the vh-sized track keeps its height, and
-      // p sags back under EXIT_END. Unlatched, that sag un-hid the stage
-      // and slid the intro back over the globe — the "layers button
-      // re-opens the scroll animation" bug. Only a deliberate scroll back
-      // into the hero proper (p < EXIT_START) releases the latch.
-      if (globeLocked.current && p < EXIT_START) globeLocked.current = false;
-      const exit = globeLocked.current ? 1 : exitRaw;
+      // (p < EXIT_END here — dismissal above owns the completed state —
+      // so exit is always < 1 and the stage is always visible mid-exit.)
+      const exit = heroExitAmount(p);
       stage.style.transform = `translate3d(0,${(-exit * 100).toFixed(3)}%,0)`;
       stage.style.visibility = exit >= 1 ? 'hidden' : 'visible';
       raf = requestAnimationFrame(tick);
@@ -119,7 +157,7 @@ export default function CinematicHero() {
       window.removeEventListener('wheel', ensureLoaded);
       window.removeEventListener('keydown', ensureLoaded);
     };
-  }, []);
+  }, [dismissed]);
 
   const hintOpacity = Math.max(0, 1 - progress * 8);
 
@@ -127,7 +165,10 @@ export default function CinematicHero() {
     <>
       {/* Scroll track: empty 350vh spacer that provides the scroll distance. */}
       <div ref={trackRef} className="cinematic-root" style={{ height: `${TRACK_VH}vh` }} />
-      {/* Pinned stage: fixed viewport, fully transform-driven. */}
+      {/* Pinned stage: fixed viewport, fully transform-driven. Rendered
+          only until dismissal — after that it is out of the DOM for the
+          rest of the session, so nothing can bring it back. */}
+      {!dismissed && (
       <div ref={stageRef} className="fixed inset-0 z-[1000] bg-black overflow-hidden will-change-transform">
         <style>{`
           .cine-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -196,6 +237,7 @@ export default function CinematicHero() {
         {/* Subtle vignette so the video blends into the page */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
       </div>
+      )}
     </>
   );
 }
