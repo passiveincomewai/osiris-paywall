@@ -2,12 +2,13 @@ import type { Metadata, Viewport } from "next";
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
+import TranslateGate from '@/components/translate/TranslateGate';
 import "./globals.css";
 
 const SITE_URL = "https://worldeye.app";
 const SITE_NAME = "WorldEye";
 const SITE_TITLE = "WorldEye — Live 3D Globe | Flights, CCTV & Satellites";
-const SITE_DESCRIPTION = "Track flights, satellites and 36,000+ live CCTV cameras on WorldEye's 3D intelligence globe — free. Go Pro for the AI analyst, satellite view and intel feeds.";
+const SITE_DESCRIPTION = "Track flights, satellites and 76,000+ live CCTV cameras on WorldEye's 3D intelligence globe — free. Go Pro for the AI analyst, satellite view and intel feeds.";
 
 export const viewport: Viewport = {
   themeColor: "#D4AF37",
@@ -222,6 +223,7 @@ export default function RootLayout({
       <body className="antialiased">
         <AffiliateAttributionSync />
         <AnalyticsTracker />
+        <TranslateGate />
         <ErrorBoundary name="WorldEye">
           {children}
         </ErrorBoundary>

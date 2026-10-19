@@ -8,6 +8,7 @@ import {
   Flame, Tv, Radio, Mountain, Anchor, Megaphone, SlidersHorizontal, Lock, Bus
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
+import { LanguageRailControl, LanguageSelect } from './translate/LanguageControl';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
 import { SENSOR_EFFECT_OPTIONS, type SensorEffectState } from '@/lib/sensor-effects';
 
@@ -467,6 +468,16 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
             </button>
           </div>
         )}
+
+        {/* MOBILE LANGUAGE — bottom of the panel, per the owner's spec.
+            Default English = translation off; choosing a language reloads
+            the site translated (see lib/translate/locale.ts). */}
+        <div className="pt-3 border-t border-white/[0.06] px-1">
+          <div className="text-[10px] font-mono tracking-[0.2em] text-white/25 uppercase mb-2">
+            Language
+          </div>
+          <LanguageSelect />
+        </div>
       </div>
     );
   }
@@ -689,6 +700,9 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
           />
         </button>
       )}
+
+      {/* Language — bottom of the rail, below Style Studio / Ghost. */}
+      <LanguageRailControl />
     </motion.div>
   );
 }
