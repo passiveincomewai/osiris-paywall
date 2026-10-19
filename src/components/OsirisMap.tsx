@@ -32,7 +32,7 @@ import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import { selectAgenciesForView } from '@/lib/transit/relevance';
 import {
-  clampIntensity, isLowPowerDevice, sensorEffectLabel, sensorFilterCss,
+  isLowPowerDevice, sensorEffectLabel, sensorEffectPlan, supportsSvgFilterReference,
   thermalTableValues, THERMAL_FILTER_ID, type SensorEffectState,
 } from '@/lib/sensor-effects';
 import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
@@ -583,12 +583,25 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       innerHeight: window.innerHeight,
       hardwareConcurrency: typeof navigator !== 'undefined' ? navigator.hardwareConcurrency : undefined,
     });
-    const refused = sensorEffect.mode !== 'off' && lowPower;
-    setSensorRefused(refused);
-    map.getCanvas().style.filter = refused ? '' : sensorFilterCss(sensorEffect);
+    const plan = sensorEffectPlan(sensorEffect, {
+      lowPower,
+      svgFilters: typeof navigator !== 'undefined' ? supportsSvgFilterReference(navigator.userAgent) : true,
+    });
+    setSensorRefused(plan.result === 'refused');
+    // Apply to the canvas CONTAINER, not the canvas element: iOS
+    // Safari/WebKit does not composite CSS filters onto a full-screen WebGL
+    // canvas (the effect silently never painted on iPhones while desktop
+    // Chrome worked), while a plain HTML element is filtered reliably by
+    // every engine. Popups, controls and attribution are siblings of the
+    // canvas container inside the map container, so the interface stays
+    // unfiltered. (globals.css already filters this same element for the
+    // map-focus dim; the inline style wins while an effect is on and is
+    // cleared back to '' when off/refused.)
+    const surface = typeof map.getCanvasContainer === 'function' ? map.getCanvasContainer() : map.getCanvas();
+    surface.style.filter = plan.filterCss;
     const container = map.getContainer();
     let overlay = container.querySelector<HTMLDivElement>('[data-we-crt-overlay]');
-    if (sensorEffect.mode === 'crt' && !refused) {
+    if (plan.crtOverlay) {
       if (!overlay) {
         overlay = document.createElement('div');
         overlay.dataset.weCrtOverlay = '1';
@@ -596,7 +609,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         container.insertBefore(overlay, container.children[1] ?? null);
       }
       overlay.style.display = '';
-      overlay.style.opacity = String(0.35 + 0.65 * clampIntensity(sensorEffect.intensity));
+      overlay.style.opacity = String(plan.crtOpacity);
     } else if (overlay) {
       overlay.style.display = 'none';
     }
