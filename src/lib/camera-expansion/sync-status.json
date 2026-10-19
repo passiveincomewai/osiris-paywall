@@ -1,0 +1,24 @@
+{
+  "lastRunAt": "2026-10-19T00:42:38.748Z",
+  "mode": "dry-run",
+  "verdict": "ok",
+  "detail": "Dry run complete \u2014 nothing written to the catalogue. reconciles, licensing gates intact, delta within tolerance.",
+  "counts": {
+    "inspected": 137080,
+    "verifiedNew": 30782,
+    "duplicates": 24647,
+    "intraDuplicates": 3784,
+    "licenseHeld": 49277,
+    "licenseExcluded": 19303,
+    "invalidFeed": 7346,
+    "invalidCoordinates": 0,
+    "dead": 1516,
+    "placeholder": 425,
+    "reconciles": true
+  },
+  "baselineTotal": 42243,
+  "occTotalAfter": 30889,
+  "reportFile": "harvest-2026-10-19T00-42-38-748Z.json",
+  "requestSatisfiedAt": "2026-10-19T00:42:40.278Z",
+  "baselineDiscipline": "flag-off"
+}

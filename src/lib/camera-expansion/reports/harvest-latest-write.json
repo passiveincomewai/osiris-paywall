@@ -1,0 +1,7221 @@
+{
+  "generatedAt": "2026-10-18T22:55:03.074Z",
+  "mode": "write",
+  "harvest": {
+    "markersTotal": 137080,
+    "idsSelected": 137080,
+    "recordsFetched": 0,
+    "recordsCached": 137080
+  },
+  "baseline": {
+    "total": 71101,
+    "source": "GET http://localhost:3100/api/cctv?region=all @ 2026-10-18T22:50:10.834Z (still 13 regions pending — largest answer kept) ∪ audit capture"
+  },
+  "families": [
+    {
+      "family": "windy",
+      "inspected": 14950,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 14950,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "state511",
+      "inspected": 13828,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 3358,
+        "url-full": 9449,
+        "url-hostpath": 0,
+        "same-location": 879,
+        "geo-name": 107
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 1,
+      "dead": 6,
+      "placeholder": 28
+    },
+    {
+      "family": "rivergojp",
+      "inspected": 10783,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 10361,
+        "url-full": 24,
+        "url-hostpath": 0,
+        "same-location": 60,
+        "geo-name": 172
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 35,
+      "dead": 2,
+      "placeholder": 129
+    },
+    {
+      "family": "twipcam",
+      "inspected": 5754,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5754,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "opentrafficcam",
+      "inspected": 4538,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4538,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "windy-providers",
+      "inspected": 4109,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 4109,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "faa-weathercams",
+      "inspected": 3281,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 3281,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "arcgis_cams",
+      "inspected": 3064,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 1871,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 941,
+        "geo-name": 68
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 157,
+      "placeholder": 27
+    },
+    {
+      "family": "castlerock",
+      "inspected": 2909,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 2079,
+        "url-full": 348,
+        "url-hostpath": 0,
+        "same-location": 335,
+        "geo-name": 119
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 25,
+      "placeholder": 3
+    },
+    {
+      "family": "trafficengland",
+      "inspected": 2372,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2372,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "txdot",
+      "inspected": 2354,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 2354,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "osm-webcams",
+      "inspected": 2236,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2236,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "digitraffic",
+      "inspected": 2198,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 4,
+        "url-full": 791,
+        "url-hostpath": 0,
+        "same-location": 1399,
+        "geo-name": 4
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dgt",
+      "inspected": 1794,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 23,
+        "url-full": 1769,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 2,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "road-info-prvs",
+      "inspected": 1785,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1785,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ndawn",
+      "inspected": 1704,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1704,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ny511",
+      "inspected": 1568,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 1352,
+        "url-full": 1,
+        "url-hostpath": 0,
+        "same-location": 115,
+        "geo-name": 84
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 16,
+      "placeholder": 0
+    },
+    {
+      "family": "virginia",
+      "inspected": 1567,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 1480,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 5,
+        "geo-name": 58
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 1,
+      "dead": 23,
+      "placeholder": 0
+    },
+    {
+      "family": "camstreamer",
+      "inspected": 1551,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1551,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "swisswebcams",
+      "inspected": 1542,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1542,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wsdot",
+      "inspected": 1535,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 1174,
+        "url-full": 7,
+        "url-hostpath": 0,
+        "same-location": 172,
+        "geo-name": 166
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 16
+    },
+    {
+      "family": "trafikverket",
+      "inspected": 1494,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 731,
+        "url-full": 747,
+        "url-hostpath": 0,
+        "same-location": 7,
+        "geo-name": 8
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 1,
+      "placeholder": 0
+    },
+    {
+      "family": "opensnow",
+      "inspected": 1300,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1300,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "alertcalifornia",
+      "inspected": 1271,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1271,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "asfinag",
+      "inspected": 1082,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 1082,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "houstontranstar",
+      "inspected": 1073,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1073,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "airportwebcams",
+      "inspected": 1048,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1048,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "drivebc",
+      "inspected": 1042,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1042,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "opendatahub",
+      "inspected": 1015,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1015,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cotrip",
+      "inspected": 1001,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 953,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 13,
+        "geo-name": 29
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 6,
+      "placeholder": 0
+    },
+    {
+      "family": "hongkong",
+      "inspected": 958,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 165,
+        "url-full": 793,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "autostrade",
+      "inspected": 954,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 21,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 888,
+        "geo-name": 45
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nycdot",
+      "inspected": 946,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 946,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hivis",
+      "inspected": 908,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 908,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tfl",
+      "inspected": 890,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 890,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "openwebcamdb",
+      "inspected": 876,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 876,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ontario",
+      "inspected": 872,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 735,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 23,
+        "geo-name": 84
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 30
+    },
+    {
+      "family": "bayerninfo",
+      "inspected": 845,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 346,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 432,
+        "geo-name": 55
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 12
+    },
+    {
+      "family": "scdot",
+      "inspected": 775,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 9,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 735,
+        "geo-name": 23
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 2,
+      "dead": 6,
+      "placeholder": 0
+    },
+    {
+      "family": "vegvesen",
+      "inspected": 709,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 698,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 4,
+        "geo-name": 7
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "vietnam-traffic",
+      "inspected": 691,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 91,
+        "url-full": 0,
+        "url-hostpath": 600,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wyoroad",
+      "inspected": 677,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 677,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "itraffic",
+      "inspected": 673,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 673,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "idokep",
+      "inspected": 668,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 668,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "skaping",
+      "inspected": 662,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 662,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "midot",
+      "inspected": 653,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 653,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "socrata",
+      "inspected": 638,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 638,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tripcheck",
+      "inspected": 628,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 4,
+        "url-full": 614,
+        "url-hostpath": 0,
+        "same-location": 3,
+        "geo-name": 4
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 3,
+      "placeholder": 0
+    },
+    {
+      "family": "algotraffic",
+      "inspected": 613,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 613,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "caltrans",
+      "inspected": 611,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 445,
+        "url-full": 22,
+        "url-hostpath": 0,
+        "same-location": 85,
+        "geo-name": 53
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 6,
+      "placeholder": 0
+    },
+    {
+      "family": "phenocam",
+      "inspected": 609,
+      "verifiedNew": 1,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 449,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 64,
+        "geo-name": 90
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 5
+    },
+    {
+      "family": "panomax",
+      "inspected": 598,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 598,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mdchart",
+      "inspected": 536,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 508,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 14,
+        "geo-name": 14
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "webcamtaxi",
+      "inspected": 533,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 533,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "myairportcams",
+      "inspected": 512,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 512,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "topis-seoul",
+      "inspected": 493,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 24,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 469,
+      "placeholder": 0
+    },
+    {
+      "family": "iceland",
+      "inspected": 478,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 478,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "alberta",
+      "inspected": 447,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 316,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 123,
+        "geo-name": 7
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 1
+    },
+    {
+      "family": "oktraffic",
+      "inspected": 445,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 152,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 290,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 3,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "webcamera-pl",
+      "inspected": 428,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 428,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "feratel",
+      "inspected": 391,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 391,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "yorkmaps",
+      "inspected": 390,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 390,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dars",
+      "inspected": 369,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 369,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "portland-or",
+      "inspected": 367,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 364,
+        "url-hostpath": 0,
+        "same-location": 2,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 1,
+      "placeholder": 0
+    },
+    {
+      "family": "busan",
+      "inspected": 354,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 333,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 2,
+        "geo-name": 19
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "informo-madrid",
+      "inspected": 354,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 354,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "netravel",
+      "inspected": 346,
+      "verifiedNew": 2,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 294,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 28,
+        "geo-name": 10
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 12
+    },
+    {
+      "family": "ibb-istanbul",
+      "inspected": 345,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 345,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sdot",
+      "inspected": 336,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 140,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 196,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "travelmidwest",
+      "inspected": 329,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 284,
+        "url-full": 11,
+        "url-hostpath": 0,
+        "same-location": 23,
+        "geo-name": 10
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 1
+    },
+    {
+      "family": "kkr",
+      "inspected": 324,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 324,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "toronto",
+      "inspected": 324,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 324,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "eismoinfo",
+      "inspected": 312,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 312,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "avamet",
+      "inspected": 310,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 310,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ottawa",
+      "inspected": 310,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 310,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "fotowebcam",
+      "inspected": 308,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 308,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "newengland",
+      "inspected": 305,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 260,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 1,
+        "geo-name": 35
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 9
+    },
+    {
+      "family": "ipcamlive-global",
+      "inspected": 269,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 269,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "arlingtonva",
+      "inspected": 268,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 268,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "bandung-pelindung",
+      "inspected": 266,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 266,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "qldtraffic",
+      "inspected": 251,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 167,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 2,
+        "geo-name": 4
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 78
+    },
+    {
+      "family": "earthcam",
+      "inspected": 244,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 244,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "usgs-ashcam",
+      "inspected": 240,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 7
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 233,
+      "placeholder": 0
+    },
+    {
+      "family": "nzta",
+      "inspected": 239,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 227,
+        "geo-name": 12
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ulsan",
+      "inspected": 232,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 195,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 3,
+        "geo-name": 34
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "incheon",
+      "inspected": 228,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 219,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 2,
+        "geo-name": 6
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 1,
+      "placeholder": 0
+    },
+    {
+      "family": "iframe-extract",
+      "inspected": 224,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 224,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "yarnet",
+      "inspected": 221,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 221,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tii-ireland",
+      "inspected": 219,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 208,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 7,
+        "geo-name": 4
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "jogjaprov",
+      "inspected": 213,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 29,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 8,
+        "geo-name": 21
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 155,
+      "placeholder": 0
+    },
+    {
+      "family": "calgary",
+      "inspected": 211,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 42,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 78,
+        "geo-name": 91
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "infoclimat",
+      "inspected": 209,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 209,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "trafficwales",
+      "inspected": 209,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 209,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "camsecure",
+      "inspected": 205,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 205,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "trafiroutes",
+      "inspected": 197,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 197,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nsw",
+      "inspected": 193,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 193,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tirol",
+      "inspected": 192,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 192,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "siata",
+      "inspected": 188,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 188,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "opentopia",
+      "inspected": 177,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 177,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "daegu",
+      "inspected": 175,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 173,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 2,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "niigata",
+      "inspected": 175,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 175,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "goyang",
+      "inspected": 173,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 8,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 3
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 162,
+      "placeholder": 0
+    },
+    {
+      "family": "nmroads",
+      "inspected": 169,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 145,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 1,
+        "geo-name": 18
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 5,
+      "placeholder": 0
+    },
+    {
+      "family": "thailand-doh",
+      "inspected": 163,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 163,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nysmesonet",
+      "inspected": 162,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 162,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sddot",
+      "inspected": 153,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 39,
+        "url-full": 6,
+        "url-hostpath": 0,
+        "same-location": 108,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sakura-live-cams",
+      "inspected": 151,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 151,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sochi-camera",
+      "inspected": 150,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 150,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "terrahd",
+      "inspected": 144,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 144,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "airservices",
+      "inspected": 141,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 141,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "pohang",
+      "inspected": 140,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 115,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 25
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "climaaovivo",
+      "inspected": 139,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 139,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "changwon",
+      "inspected": 138,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 133,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 3,
+      "dead": 2,
+      "placeholder": 0
+    },
+    {
+      "family": "ohgo",
+      "inspected": 136,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 133,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 3,
+      "placeholder": 0
+    },
+    {
+      "family": "vedetta",
+      "inspected": 136,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 136,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "njta",
+      "inspected": 135,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 135,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ridot",
+      "inspected": 134,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 1,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 133,
+      "placeholder": 0
+    },
+    {
+      "family": "tik-estonia",
+      "inspected": 130,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 130,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nexco-japan",
+      "inspected": 129,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 129,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "trafficwatch-ni",
+      "inspected": 127,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 127,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mudik",
+      "inspected": 126,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 126,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "vancouver",
+      "inspected": 123,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 107,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 16
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "gwangju",
+      "inspected": 121,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 121,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "forecastweather",
+      "inspected": 120,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 120,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "taiwan-freeway",
+      "inspected": 115,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 8,
+        "url-full": 1,
+        "url-hostpath": 101,
+        "same-location": 4,
+        "geo-name": 1
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kenyaaeroclub",
+      "inspected": 111,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 111,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "msdot",
+      "inspected": 110,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 110,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ipcamlive",
+      "inspected": 109,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 109,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nps",
+      "inspected": 108,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 67,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 26,
+        "geo-name": 6
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 4,
+      "dead": 5,
+      "placeholder": 0
+    },
+    {
+      "family": "weatherstem",
+      "inspected": 103,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 103,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dsat",
+      "inspected": 101,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 101,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "inforoutes06",
+      "inspected": 100,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 100,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wetmet",
+      "inspected": 99,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 99,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cic-tenerife",
+      "inspected": 96,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 96,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "explore-org",
+      "inspected": 95,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 95,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "boating-vic",
+      "inspected": 94,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 94,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "catalonia",
+      "inspected": 94,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 81,
+        "url-full": 0,
+        "url-hostpath": 6,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 1,
+      "placeholder": 6
+    },
+    {
+      "family": "chile-dgac",
+      "inspected": 92,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 92,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "luxembourg",
+      "inspected": 91,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 47,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 1,
+        "geo-name": 2
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 41
+    },
+    {
+      "family": "ansan",
+      "inspected": 89,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 89,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "jma-volcam",
+      "inspected": 89,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 89,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cam-aero",
+      "inspected": 79,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 79,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tv-singles",
+      "inspected": 79,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 79,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "medellin-simm",
+      "inspected": 78,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 78,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "webcam-autoroute",
+      "inspected": 78,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 78,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "small-cams-2",
+      "inspected": 77,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 77,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ndbc-buoycam",
+      "inspected": 76,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 75,
+        "url-full": 0,
+        "url-hostpath": 1,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "zdw-krakow",
+      "inspected": 75,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 75,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hdontap",
+      "inspected": 70,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 70,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kaiho",
+      "inspected": 70,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 70,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "andorra",
+      "inspected": 69,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 69,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mlit-kanto",
+      "inspected": 68,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 68,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "epic-ski",
+      "inspected": 66,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 66,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "itic",
+      "inspected": 65,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 65,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kukaj-sk",
+      "inspected": 65,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 65,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "livespotting",
+      "inspected": 65,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 65,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "rta-telecom",
+      "inspected": 65,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 65,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "gimpo",
+      "inspected": 63,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 56,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 7
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hak",
+      "inspected": 63,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 63,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nadmorski24",
+      "inspected": 63,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 63,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "verkeerscentrum",
+      "inspected": 63,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 63,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "prague-tsk",
+      "inspected": 61,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 61,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "aopa-nz",
+      "inspected": 59,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 59,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "bizkaimove",
+      "inspected": 58,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 58,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "newbrunswick",
+      "inspected": 57,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 56,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 1,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tik-lithuania",
+      "inspected": 57,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 8,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 22,
+        "geo-name": 27
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "chungju",
+      "inspected": 55,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 54,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 1
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "novascotia",
+      "inspected": 53,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 51,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 2,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "recife-cttu",
+      "inspected": 53,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 53,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "arso-si",
+      "inspected": 51,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 51,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kingcounty",
+      "inspected": 51,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 49,
+        "url-full": 0,
+        "url-hostpath": 1,
+        "same-location": 0,
+        "geo-name": 1
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "saskatchewan",
+      "inspected": 51,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 51,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "geoje",
+      "inspected": 49,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 48,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 1
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sejong",
+      "inspected": 49,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 47,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 2,
+      "placeholder": 0
+    },
+    {
+      "family": "hispacams",
+      "inspected": 48,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 48,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "newfoundland",
+      "inspected": 47,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 47,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "pocono-cams",
+      "inspected": 47,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 47,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "astrakhan",
+      "inspected": 46,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 46,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "swiss-autobahn",
+      "inspected": 45,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 45,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ccg-cameras",
+      "inspected": 44,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 44,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "oceancity",
+      "inspected": 44,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 44,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "resortcams",
+      "inspected": 44,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 44,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "pgctrip",
+      "inspected": 42,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 42,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "bantul",
+      "inspected": 41,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 41,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "inforoute05",
+      "inspected": 41,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 41,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "africam",
+      "inspected": 40,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 40,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "livecameras-gr",
+      "inspected": 40,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 40,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mazury24",
+      "inspected": 40,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 40,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "manitoba",
+      "inspected": 39,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 39,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "avistabaleares",
+      "inspected": 38,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 38,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mauritius-traffic",
+      "inspected": 38,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 38,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "vitoria-gasteiz",
+      "inspected": 38,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 38,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "biodic",
+      "inspected": 37,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 37,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wv511",
+      "inspected": 37,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 3,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 34,
+      "placeholder": 0
+    },
+    {
+      "family": "meteoswiss",
+      "inspected": 36,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 36,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dir-est",
+      "inspected": 34,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 34,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dirce",
+      "inspected": 34,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 34,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hko-webcams",
+      "inspected": 34,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 25,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 9,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mtdot",
+      "inspected": 34,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 34,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "amsbih",
+      "inspected": 33,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 33,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hdontap-wildlife",
+      "inspected": 33,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 33,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "brentwood-tn",
+      "inspected": 32,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 32,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "freecam-ro",
+      "inspected": 32,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 32,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tik-latvia",
+      "inspected": 32,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 32,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "webcoos",
+      "inspected": 32,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 32,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wowza-streamlock",
+      "inspected": 32,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 32,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "camscape-curated",
+      "inspected": 31,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 31,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "meteogalicia",
+      "inspected": 31,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 31,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "savannah-cams",
+      "inspected": 31,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 31,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "durham",
+      "inspected": 30,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 30,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "selangor-flood",
+      "inspected": 27,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 26,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 1
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tangerang",
+      "inspected": 27,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 27,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "balikesir",
+      "inspected": 26,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 26,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "iowa-mesonet",
+      "inspected": 26,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 26,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "netherlands-rws",
+      "inspected": 26,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 26,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "balticlivecam",
+      "inspected": 25,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 25,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "city-webcams",
+      "inspected": 25,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 25,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "panocloud-ski",
+      "inspected": 25,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 25,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "emsd-kamchatka",
+      "inspected": 24,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 24,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "koeln",
+      "inspected": 24,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 24,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nsw-coastal",
+      "inspected": 24,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 24,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "small-cams",
+      "inspected": 24,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 24,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "stringmeteo",
+      "inspected": 24,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 24,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "thesnowcloud",
+      "inspected": 24,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 24,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "florida-beach-cams",
+      "inspected": 23,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 23,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "meter-ac",
+      "inspected": 23,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 23,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "northyorks",
+      "inspected": 23,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 23,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "satap-sitaf",
+      "inspected": 23,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 23,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wolfnet",
+      "inspected": 23,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 23,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "gray-tv",
+      "inspected": 22,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 22,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "maineturnpike",
+      "inspected": 22,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 22,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "horizons",
+      "inspected": 21,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 21,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sweden-ski",
+      "inspected": 20,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 20,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kg-camera",
+      "inspected": 20,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 20,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "seejh",
+      "inspected": 20,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 20,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "stv",
+      "inspected": 20,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 20,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "asahan",
+      "inspected": 19,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 19,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kahramanmaras",
+      "inspected": 19,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 19,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "bondowoso",
+      "inspected": 18,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 18,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "daer-rs",
+      "inspected": 18,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 18,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dersp",
+      "inspected": 18,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 18,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tasikmalaya",
+      "inspected": 18,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 18,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hanshin-expressway",
+      "inspected": 17,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 17,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "webcamsdemexico",
+      "inspected": 17,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 17,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "xcom-aktau",
+      "inspected": 17,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 17,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ski-brownrice",
+      "inspected": 16,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 16,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "goes-satellite",
+      "inspected": 16,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 16,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hvo",
+      "inspected": 16,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 16,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tabi-cam",
+      "inspected": 16,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 16,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "czech-highways-ext",
+      "inspected": 15,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 15,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "isle-of-man",
+      "inspected": 15,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 15,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "maunakea-observatories",
+      "inspected": 15,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 15,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "numazu-snow",
+      "inspected": 15,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 15,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "oceancity-com",
+      "inspected": 15,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 15,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "pictimo",
+      "inspected": 15,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 15,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "yukon",
+      "inspected": 15,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 15,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "bihamk",
+      "inspected": 14,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 14,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "grandlyon",
+      "inspected": 14,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 14,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ineter",
+      "inspected": 14,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 14,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "belarus-customs",
+      "inspected": 13,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 13,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hakai",
+      "inspected": 13,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 13,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "intersaar-saarland",
+      "inspected": 13,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 13,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "railstream",
+      "inspected": 13,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 13,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "surf-cams",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "airlive",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cbsdenver",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cumbernauld-airport",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "inforoute-alsace",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mlit-yamagata",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "moldova-roads",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "paesaggidigitali",
+      "inspected": 12,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 12,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cairngorm",
+      "inspected": 11,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 11,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "czech-highways",
+      "inspected": 11,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 11,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "varitech-patagonia",
+      "inspected": 11,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 11,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "vvo-dresden",
+      "inspected": 11,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 11,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "fox13tampa",
+      "inspected": 10,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 10,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "geonet",
+      "inspected": 10,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 10,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "govje",
+      "inspected": 10,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 10,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "namibia-webcams",
+      "inspected": 10,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 10,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wsv-waterway",
+      "inspected": 10,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 10,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "beachcam-il",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "bkom-brno",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ipgp",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nl-port-webcams",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "novosibirsk",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "bird-cams",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "uab-bg",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "vedrid",
+      "inspected": 9,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 9,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cayman-port",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dwd-webcams",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "geilo-cams",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ibericam",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "perisher",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "singapore",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 1,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 7,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "smithsonian-zoo",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "starvisor",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nasa-worldview",
+      "inspected": 8,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 8,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "livecameras-ru",
+      "inspected": 7,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 7,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "noaa-esrl",
+      "inspected": 7,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 7,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "pei",
+      "inspected": 7,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 7,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "worldcam",
+      "inspected": 7,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 7,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cbs58",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cipolletti",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "eso-observatories",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "naodos-gr",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ovsicori",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "tallinn",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "task-gdansk",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wreg",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "zurich-airport",
+      "inspected": 6,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 6,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "chinapeak",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "eaglecrest",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kimt",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "livebeaches-yt",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "mackinac",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "panama-canal",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "portguide",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "usap",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wlbt",
+      "inspected": 5,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 5,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "aeropuerto-caracas",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "caribbean-ipcamlive",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ecan",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "fintraffic",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "himawari",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "jakarta",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 4,
+      "placeholder": 0
+    },
+    {
+      "family": "king5",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "noirlab",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "saoras",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sarao",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "usace-waterways",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "villa-gesell",
+      "inspected": 4,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 4,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "antarctic",
+      "inspected": 3,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 3,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "dolnimorava",
+      "inspected": 3,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 3,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "fws-wildlife",
+      "inspected": 3,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 3,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hillhead",
+      "inspected": 3,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 3,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "thai-drr",
+      "inspected": 3,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 1,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 2
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "ukraine-webcams",
+      "inspected": 3,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 3,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "whsv",
+      "inspected": 3,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 3,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "adelaide",
+      "inspected": 2,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "cetsp",
+      "inspected": 2,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "jp-airports",
+      "inspected": 2,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "kielcanal",
+      "inspected": 2,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "opgc",
+      "inspected": 2,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "swellmagnet",
+      "inspected": 2,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "wastateparks",
+      "inspected": 2,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 2,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "agpse-waterway",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "atv",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "awi",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nasa-epic",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "falklands",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "hatyai-climate",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "middle-east-yt",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "nbc-montana",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "pacific-ipcamlive",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "railwebcams",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "sba-bg",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "singapore-weather",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "telpin-argentina",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    },
+    {
+      "family": "uludaginfo",
+      "inspected": 1,
+      "verifiedNew": 0,
+      "nearDistinct": 0,
+      "duplicates": {
+        "id": 0,
+        "url-full": 0,
+        "url-hostpath": 0,
+        "same-location": 0,
+        "geo-name": 0
+      },
+      "intraDuplicates": 0,
+      "licenseHeld": 1,
+      "licenseExcluded": 0,
+      "invalidCoordinates": 0,
+      "invalidFeed": 0,
+      "dead": 0,
+      "placeholder": 0
+    }
+  ],
+  "totals": {
+    "family": "TOTAL",
+    "inspected": 137080,
+    "verifiedNew": 3,
+    "nearDistinct": 0,
+    "duplicates": {
+      "id": 31853,
+      "url-full": 17820,
+      "url-hostpath": 709,
+      "same-location": 7349,
+      "geo-name": 1561
+    },
+    "intraDuplicates": 0,
+    "licenseHeld": 49277,
+    "licenseExcluded": 19303,
+    "invalidCoordinates": 0,
+    "invalidFeed": 7346,
+    "dead": 1461,
+    "placeholder": 398
+  },
+  "reconciles": true,
+  "notes": [
+    "Probe verdicts from this sandbox are floors, not ceilings: hosts that block datacenter IPs read dead here and may play in a browser (audit §3.1).",
+    "near-distinct records (≤120 m from an existing camera, different name) are imported as distinct cameras and never merged into the existing record."
+  ]
+}
