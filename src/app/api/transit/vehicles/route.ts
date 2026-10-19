@@ -14,11 +14,13 @@ import { indexTripDelays, vehicleDelayAndStop, type TripDelay } from '@/lib/tran
  * feed, the delay at the vehicle's current stop is joined in by trip
  * id; where a static GTFS join is configured (UTA), route long names,
  * trip headsigns and stop names join from the same zip. Results are cached
- * 12 s per agency: the fastest feeds (UTA) republish every ~15 s and the
- * client polls on that cadence, so the TTL sits just under it — a poll
- * can return genuinely fresh positions instead of the previous snapshot.
- * The cache is shared across viewers, so upstream load stays bounded at
- * one pull per agency per TTL window no matter how many clients poll.
+ * 8 s per agency: measured feed cadence (2026-10-19) — UTA republishes
+ * ~5 s with per-vehicle GPS fixes every ~10 s, MBTA fixes ~6 s, RTD
+ * republishes and fixes every 30 s — so an 8 s TTL + the client's 10 s
+ * poll keeps fast feeds genuinely fresh, while slow feeds are bounded
+ * by their own cadence no matter what we do. The cache is shared
+ * across viewers, so upstream load stays bounded at one pull per
+ * agency per TTL window no matter how many clients poll.
  */
 
 export const dynamic = 'force-dynamic';
@@ -158,7 +160,7 @@ export async function GET(req: NextRequest) {
     const vehicles = await cachedSource<Vehicle>(
       `transit:${agency.id}`,
       () => fetchVehicles(agency),
-      12_000,
+      8_000,
     )();
     return NextResponse.json(
       {
@@ -169,7 +171,7 @@ export async function GET(req: NextRequest) {
         count: vehicles.length,
         updated: new Date().toISOString(),
       },
-      { headers: { 'Cache-Control': 'public, s-maxage=12, stale-while-revalidate=15' } },
+      { headers: { 'Cache-Control': 'public, s-maxage=8, stale-while-revalidate=10' } },
     );
   } catch {
     return NextResponse.json(

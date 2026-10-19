@@ -31,6 +31,7 @@ import {
 import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import { selectAgenciesForView } from '@/lib/transit/relevance';
+import { TransitBlend } from '@/lib/transit/motion';
 import {
   isLowPowerDevice, sensorEffectLabel, sensorEffectPlan, supportsSvgFilterReference,
   thermalTableValues, THERMAL_FILTER_ID, type SensorEffectState,
@@ -242,7 +243,10 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const gbfsSystemsRef = useRef<any[]>([]);
   const gbfsCacheRef = useRef(new Map<string, { at: number; items: any[] }>());
   const transitAgenciesRef = useRef<any[]>([]);
-  const transitVehiclesRef = useRef(new Map<string, any[]>());
+  // Snapshot-pair motion state (lib/transit/motion): polls push, the
+  // render loop samples — vehicles glide between real fixes instead
+  // of teleporting on each poll (the flights FlightBlend pattern).
+  const transitBlendRef = useRef<TransitBlend | null>(null);
   // Coverage honesty: when Live Transit is on but the viewport holds no
   // covered agency, the layer would otherwise be silently empty. The
   // notice names the covered regions instead; dismissal lasts until the
@@ -1018,12 +1022,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-color': '#9CCC65', 'circle-opacity': 0.9, 'circle-stroke-color': '#33691E', 'circle-stroke-width': 1,
       }});
 
-      // Live Transit — vehicle dots colored by mode
+      // Live Transit — vehicle dots colored by mode. Opacity is per-
+      // feature (the render loop sets `op`): a vehicle whose newest
+      // GPS fix is > 3 min old fades, so a stale dot never reads as
+      // live as a fresh one.
       map.addLayer({ id: 'transit-dots', type: 'circle', source: 'transit', paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 8, 5, 12, 8],
         'circle-color': ['match', ['get', 'mode'],
           'bus', '#FFA726', 'tram', '#66BB6A', 'metro', '#42A5F5', 'train', '#AB47BC', 'ferry', '#26C6DA', '#B0BEC5'],
-        'circle-opacity': 0.92, 'circle-stroke-color': '#000000', 'circle-stroke-width': 0.7,
+        'circle-opacity': ['coalesce', ['get', 'op'], 0.92], 'circle-stroke-color': '#000000', 'circle-stroke-width': 0.7,
       }});
 
       // Traffic — simulated congestion overlay on real OSM road geometry
@@ -3184,27 +3191,39 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     return () => { live = false; map.off('moveend', onMove); };
   }, [mapReady, (activeLayers as any).gbfs, setGeo]);
 
-  // Live Transit — agencies load by viewport relevance, vehicles poll 15 s
-  // (the fastest feeds, UTA, republish on that cadence; the server cache
-  // is 12 s and shared, so upstream load stays bounded).
+  // Live Transit — agencies load by viewport relevance; vehicles poll
+  // 10 s and render through the TransitBlend (lib/transit/motion):
+  // polls only push snapshots, a 500 ms loop samples the blend, so
+  // dots glide between the last two real fixes instead of teleporting
+  // (the flights pattern). Measured feed cadence (2026-10-19): UTA
+  // republishes ~5 s with per-vehicle GPS every ~10 s, MBTA GPS ~6 s,
+  // RTD everything every 30 s — the poll is no longer the bottleneck
+  // for the fast feeds, and slow feeds are bounded by their own
+  // cadence, which the popup's UPDATED fix age states honestly.
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    if (!(activeLayers as any).transit) { setGeo('transit', []); setTransitNotice(null); transitNoticeDismissedRef.current = false; return; }
+    if (!(activeLayers as any).transit) { setGeo('transit', []); setTransitNotice(null); transitNoticeDismissedRef.current = false; transitBlendRef.current = null; return; }
     let live = true;
+    if (!transitBlendRef.current) transitBlendRef.current = new TransitBlend();
+    const blend = transitBlendRef.current;
     const render = () => {
       if (!live) return;
-      const nowS = Date.now() / 1000;
+      const nowMs = Date.now();
+      const nowS = nowMs / 1000;
       const feats: any[] = [];
-      for (const [agencyId, vehicles] of transitVehiclesRef.current) {
+      for (const agencyId of blend.agencies()) {
         const ag = transitAgenciesRef.current.find((a: any) => a.id === agencyId);
-        for (const v of vehicles as any[]) {
+        for (const v of blend.current(agencyId, nowMs) as any[]) {
           if (v.ts && nowS - v.ts > 900) continue; // silent > 15 min
           feats.push({
             type: 'Feature', geometry: { type: 'Point', coordinates: [v.lng, v.lat] },
             properties: {
               agency: ag?.name ?? agencyId, attribution: ag?.attribution ?? '',
               vehId: v.id ?? '', ts: v.ts ?? null,
+              // Stale fixes fade (layer paint reads `op`): past 3 min
+              // the dot is visibly not-live instead of silently old.
+              op: v.ts && nowS - v.ts > 180 ? 0.4 : 0.92,
               route: v.route ?? '', routeName: v.routeName ?? '', headsign: v.headsign ?? '',
               stopName: v.stopName ?? '',
               mode: v.mode, dir: v.dir ?? null, bearing: v.bearing ?? null,
@@ -3242,11 +3261,13 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         try {
           const r = await fetch(`/api/transit/vehicles?agency=${a.id}`);
           const j = await r.json();
-          transitVehiclesRef.current.set(a.id, j.vehicles ?? []);
+          // Push only — the blend dedupes re-served fixes and the
+          // render loop owns drawing (a data change never redraws).
+          blend.push(a.id, j.vehicles ?? [], Date.now());
         } catch { /* keep the last good set */ }
       }));
       const keep = new Set(ags.map((a: any) => a.id));
-      for (const k of [...transitVehiclesRef.current.keys()]) if (!keep.has(k)) transitVehiclesRef.current.delete(k);
+      for (const k of blend.agencies()) if (!keep.has(k)) blend.forget(k);
       render();
     };
     (async () => {
@@ -3259,10 +3280,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       }
       await load();
     })();
-    const iv = setInterval(load, 15000);
+    const iv = setInterval(load, 10000);
+    const renderIv = setInterval(render, 500);
     const onMove = () => { void load(); };
     map.on('moveend', onMove);
-    return () => { live = false; clearInterval(iv); map.off('moveend', onMove); };
+    return () => { live = false; clearInterval(iv); clearInterval(renderIv); map.off('moveend', onMove); };
   }, [mapReady, (activeLayers as any).transit, setGeo]);
 
   // Live Drone Tracking — Remote ID detections from CONNECTED receivers
