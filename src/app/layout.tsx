@@ -95,7 +95,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "WorldEye — Live 3D Intelligence Globe | Flights, CCTV, Satellites & OSINT Tools",
-    description: "Track live aircraft, satellites and 36,000+ worldwide CCTV cameras on a 3D globe — free. Go Pro for the AI analyst, satellite view, global search and premium intel feeds.",
+    description: "Track live aircraft, satellites and 76,000+ worldwide CCTV cameras on a 3D globe — free. Go Pro for the AI analyst, satellite view, global search and premium intel feeds.",
     type: "website",
     siteName: SITE_NAME,
     locale: "en_US",
@@ -113,7 +113,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "🛰️ WorldEye — Live 3D Intelligence Globe | Tracking + OSINT Tools",
-    description: "Track live flights, satellites & 36,000+ CCTV cameras worldwide on a 3D globe — free. Pro unlocks the AI analyst, satellite view and premium intel feeds.",
+    description: "Track live flights, satellites & 76,000+ CCTV cameras worldwide on a 3D globe — free. Pro unlocks the AI analyst, satellite view and premium intel feeds.",
     images: [`${SITE_URL}/og-image.png`],
   },
   category: "technology",
