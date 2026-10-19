@@ -22,7 +22,7 @@ import {
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
-import { FlightBlend, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
+import { FlightBlend, flightIconImage, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
 import {
   IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
@@ -226,6 +226,69 @@ interface AlertPinFeature {
  *  closure, which keeps its own copy for its many existing popups. */
 function escHtml(v: any): string {
   return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ── Flight glyphs (v2) ───────────────────────────────────────────────
+   Canvas painters for the flight symbol layers, shared by the boot-time
+   image registration and the theme-switch recolour so the two can never
+   drift. Both draw a top view pointing "up" (north) at rotation 0; the
+   layers rotate them by heading. */
+
+/** Fixed-wing, top view: long nose taper, one swept mid wing, small
+ *  tailplane — a sleeker silhouette than the v1 dart. */
+function drawPlaneGlyph(ctx: CanvasRenderingContext2D, color: string, size: number) {
+  const cx = size / 2, cy = size / 2;
+  const x = (f: number) => cx + size * f;
+  const y = (f: number) => cy + size * f;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x(0), y(-0.46));          // nose
+  ctx.lineTo(x(0.09), y(0.02));        // fuselage → wing root (leading)
+  ctx.lineTo(x(0.44), y(0.24));        // wing tip (leading)
+  ctx.lineTo(x(0.44), y(0.31));        // wing tip (trailing)
+  ctx.lineTo(x(0.09), y(0.16));        // wing root (trailing)
+  ctx.lineTo(x(0.07), y(0.30));        // fuselage → tailplane root
+  ctx.lineTo(x(0.22), y(0.40));        // tailplane tip (leading)
+  ctx.lineTo(x(0.22), y(0.44));        // tailplane tip (trailing)
+  ctx.lineTo(x(0), y(0.38));           // tail cone
+  ctx.lineTo(x(-0.22), y(0.44));
+  ctx.lineTo(x(-0.22), y(0.40));
+  ctx.lineTo(x(-0.07), y(0.30));
+  ctx.lineTo(x(-0.09), y(0.16));
+  ctx.lineTo(x(-0.44), y(0.31));
+  ctx.lineTo(x(-0.44), y(0.24));
+  ctx.lineTo(x(-0.09), y(0.02));
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Helicopter, top view: oval fuselage, a long main-rotor bar across
+ *  the front third, and a thin tail boom ending in a tail-rotor tick.
+ *  The rotor bar is the read at small sizes — nothing like the plane's
+ *  winged wedge, so a heli never reads as a plane. */
+function drawHeliGlyph(ctx: CanvasRenderingContext2D, color: string, size: number) {
+  const c = size / 2;
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineCap = 'round';
+  // Tail boom — thin spine from the fuselage to the tail rotor.
+  ctx.fillRect(c - size * 0.022, c + size * 0.04, size * 0.044, size * 0.37);
+  // Fuselage — top-view oval, nose up.
+  ctx.beginPath();
+  ctx.ellipse(c, c - size * 0.07, size * 0.125, size * 0.20, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Tail rotor — short tick across the end of the boom.
+  ctx.lineWidth = Math.max(1, size * 0.045);
+  ctx.beginPath();
+  ctx.moveTo(c - size * 0.10, c + size * 0.42);
+  ctx.lineTo(c + size * 0.10, c + size * 0.42);
+  ctx.stroke();
+  // Main rotor — the long bar that makes it a helicopter at a glance.
+  ctx.lineWidth = Math.max(1.1, size * 0.05);
+  ctx.beginPath();
+  ctx.moveTo(c - size * 0.47, c - size * 0.10);
+  ctx.lineTo(c + size * 0.47, c - size * 0.10);
+  ctx.stroke();
 }
 
 const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
@@ -668,27 +731,24 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   }, []);
   const drawingCoordsRef = useRef<number[][]>([]);
 
-  // Create aircraft icon on canvas (for WebGL symbol layer)
+  // Create aircraft icons on canvas (for WebGL symbol layers). The glyph
+  // shapes live in drawPlaneGlyph / drawHeliGlyph (module scope), shared
+  // with the theme-switch recolour so boot and recolour can't drift.
   const createIcon = useCallback((map: maplibregl.Map, id: string, color: string, size: number) => {
     if (map.hasImage(id)) return;
     const canvas = document.createElement('canvas');
     canvas.width = size; canvas.height = size;
     const ctx = canvas.getContext('2d')!;
-    const cx = size / 2, cy = size / 2;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - size * 0.4);
-    ctx.lineTo(cx - size * 0.12, cy + size * 0.1);
-    ctx.lineTo(cx - size * 0.4, cy + size * 0.2);
-    ctx.lineTo(cx - size * 0.4, cy + size * 0.3);
-    ctx.lineTo(cx - size * 0.12, cy + size * 0.15);
-    ctx.lineTo(cx, cy + size * 0.35);
-    ctx.lineTo(cx + size * 0.12, cy + size * 0.15);
-    ctx.lineTo(cx + size * 0.4, cy + size * 0.3);
-    ctx.lineTo(cx + size * 0.4, cy + size * 0.2);
-    ctx.lineTo(cx + size * 0.12, cy + size * 0.1);
-    ctx.closePath();
-    ctx.fill();
+    drawPlaneGlyph(ctx, color, size);
+    map.addImage(id, { width: size, height: size, data: new Uint8Array(ctx.getImageData(0, 0, size, size).data) });
+  }, []);
+
+  const createHeliIcon = useCallback((map: maplibregl.Map, id: string, color: string, size: number) => {
+    if (map.hasImage(id)) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d')!;
+    drawHeliGlyph(ctx, color, size);
     map.addImage(id, { width: size, height: size, data: new Uint8Array(ctx.getImageData(0, 0, size, size).data) });
   }, []);
 
@@ -883,6 +943,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createIcon(map, 'plane-pink', flightGov, 24);    
       createIcon(map, 'plane-red', flightMil, 24);     
       createIcon(map, 'plane-grey', boot.flightUnknown, 24);
+      createHeliIcon(map, 'heli-cyan', flightCom, 24);
+      createHeliIcon(map, 'heli-green', flightPriv, 24);
+      createHeliIcon(map, 'heli-pink', flightGov, 24);
+      createHeliIcon(map, 'heli-red', flightMil, 24);
+      createHeliIcon(map, 'heli-grey', boot.flightUnknown, 24);
       createDot(map, 'dot-gold', isGhost ? phantomPurple : '#D4AF37', 8);
       createDot(map, 'dot-red', isGhost ? phantomPurple : '#D32F2F', 10);
       createDot(map, 'dot-orange', isGhost ? phantomPurple : '#E65100', 10);
@@ -1510,14 +1575,16 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
       // Flight layers (WebGL symbol — GPU rendered, handles 50K+ smooth)
       const flightLayers = [
-        { id: 'fl-commercial', src: 'flights', icon: 'plane-cyan' },
-        { id: 'fl-private', src: 'private-fl', icon: 'plane-green' },
-        { id: 'fl-jets', src: 'jets', icon: 'plane-pink' },
-        { id: 'fl-military', src: 'military', icon: 'plane-red' },
+        { id: 'fl-commercial', src: 'flights', icon: 'plane-cyan', heliIcon: 'heli-cyan' },
+        { id: 'fl-private', src: 'private-fl', icon: 'plane-green', heliIcon: 'heli-green' },
+        { id: 'fl-jets', src: 'jets', icon: 'plane-pink', heliIcon: 'heli-pink' },
+        { id: 'fl-military', src: 'military', icon: 'plane-red', heliIcon: 'heli-red' },
       ];
       flightLayers.forEach(l => {
         map.addLayer({ id: l.id, type: 'symbol', source: l.src, layout: {
-          'icon-image': l.icon, 'icon-size': ['interpolate',['linear'],['zoom'], 1,0.4, 5,0.7, 10,1],
+          // Per-feature glyph: helicopters (aircraft_category 'heli')
+          // get the rotor glyph, everything else the plane glyph.
+          'icon-image': flightIconImage(l.icon, l.heliIcon), 'icon-size': ['interpolate',['linear'],['zoom'], 1,0.4, 5,0.7, 10,1],
           'icon-rotate': ['get','heading'], 'icon-rotation-alignment': 'map', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
         }, paint: { 'icon-opacity': 0.85 }});
       });
@@ -2828,26 +2895,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       if (!mapReady || !mapRef.current) return;
       const map = mapRef.current;
 
-      const updateMapIcon = (id: string, color: string, size: number) => {
+      const updateMapIcon = (id: string, color: string, size: number, draw: (ctx: CanvasRenderingContext2D, color: string, size: number) => void = drawPlaneGlyph) => {
         if (!map.hasImage(id)) return;
         const canvas = document.createElement('canvas');
         canvas.width = size; canvas.height = size;
         const ctx = canvas.getContext('2d')!;
-        const cx = size / 2, cy = size / 2;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - size * 0.4);
-        ctx.lineTo(cx - size * 0.12, cy + size * 0.1);
-        ctx.lineTo(cx - size * 0.4, cy + size * 0.2);
-        ctx.lineTo(cx - size * 0.4, cy + size * 0.3);
-        ctx.lineTo(cx - size * 0.12, cy + size * 0.15);
-        ctx.lineTo(cx, cy + size * 0.35);
-        ctx.lineTo(cx + size * 0.12, cy + size * 0.15);
-        ctx.lineTo(cx + size * 0.4, cy + size * 0.3);
-        ctx.lineTo(cx + size * 0.4, cy + size * 0.2);
-        ctx.lineTo(cx + size * 0.12, cy + size * 0.1);
-        ctx.closePath();
-        ctx.fill();
+        draw(ctx, color, size);
         map.updateImage(id, { width: size, height: size, data: new Uint8Array(ctx.getImageData(0, 0, size, size).data) });
       };
 
@@ -2856,6 +2909,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       updateMapIcon('plane-pink', palette.flightGov, 24);
       updateMapIcon('plane-red', palette.flightMilitary, 24);
       updateMapIcon('plane-grey', palette.flightUnknown, 24);
+      updateMapIcon('heli-cyan', palette.flightCivil, 24, drawHeliGlyph);
+      updateMapIcon('heli-green', palette.flightPrivate, 24, drawHeliGlyph);
+      updateMapIcon('heli-pink', palette.flightGov, 24, drawHeliGlyph);
+      updateMapIcon('heli-red', palette.flightMilitary, 24, drawHeliGlyph);
+      updateMapIcon('heli-grey', palette.flightUnknown, 24, drawHeliGlyph);
     }, [mapReady, palette]);
 
   // OI's arcs take their three tones from the Style Studio (violet, magenta, indigo unless changed).

@@ -75,6 +75,19 @@ export function flightsToFeatures(arr: any[] | undefined): any[] {
   return (arr || []).map(flightToFeature);
 }
 
+/**
+ * The `icon-image` layout value for a flight class layer: a data
+ * expression that resolves per feature — the helicopter glyph for
+ * records the route tagged aircraft_category 'heli', the plane glyph
+ * for everything else (an unrecognised tag never becomes a helicopter).
+ * Both images must be registered on the map under the given names.
+ * Pure and unit-tested so the layer wiring can't drift from the
+ * feature contract above.
+ */
+export function flightIconImage(planeIcon: string, heliIcon: string): any {
+  return ['case', ['==', ['get', 'aircraft_category'], 'heli'], heliIcon, planeIcon];
+}
+
 const MIN_INTERVAL_MS = 4_000;
 const MAX_INTERVAL_MS = 180_000;
 const DEFAULT_INTERVAL_MS = 30_000; // matches the client poll cadence

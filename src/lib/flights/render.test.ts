@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   EMPTY_FLIGHT_BUCKETS,
   FlightBlend,
+  flightIconImage,
   flightToFeature,
   flightsToFeatures,
   type FlightBuckets,
@@ -71,6 +72,46 @@ describe('flightToFeature / flightsToFeatures', () => {
     expect(flightsToFeatures(arr)).toHaveLength(7000);
     expect(flightsToFeatures([])).toEqual([]);
     expect(flightsToFeatures(undefined)).toEqual([]);
+  });
+});
+
+describe('flightIconImage', () => {
+  // Minimal evaluator for the expression subset flightIconImage emits
+  // ('case' / '==' / 'get' / literals), so the test resolves the icon
+  // the same way MapLibre's per-feature evaluation does.
+  function evaluate(expr: any, props: Record<string, unknown>): unknown {
+    if (!Array.isArray(expr)) return expr;
+    const [op, ...rest] = expr;
+    if (op === 'get') return props[rest[0] as string];
+    if (op === '==') return evaluate(rest[0], props) === evaluate(rest[1], props);
+    if (op === 'case') {
+      for (let i = 0; i + 1 < rest.length; i += 2) {
+        if (evaluate(rest[i], props)) return evaluate(rest[i + 1], props);
+      }
+      return evaluate(rest[rest.length - 1], props);
+    }
+    throw new Error(`unsupported op ${op}`);
+  }
+
+  it('resolves a heli-tagged feature to the helicopter glyph, per class colour', () => {
+    const pairs: Array<[string, string]> = [
+      ['plane-cyan', 'heli-cyan'],
+      ['plane-green', 'heli-green'],
+      ['plane-pink', 'heli-pink'],
+      ['plane-red', 'heli-red'],
+    ];
+    for (const [planeIcon, heliIcon] of pairs) {
+      const expr = flightIconImage(planeIcon, heliIcon);
+      const heliFeature = flightToFeature(flight({ aircraft_category: 'heli' }));
+      expect(evaluate(expr, heliFeature.properties)).toBe(heliIcon);
+    }
+  });
+
+  it('resolves plane and untagged features to the plane glyph — never guesses a heli', () => {
+    const expr = flightIconImage('plane-cyan', 'heli-cyan');
+    expect(evaluate(expr, flightToFeature(flight()).properties)).toBe('plane-cyan');
+    expect(evaluate(expr, flightToFeature(flight({ aircraft_category: undefined })).properties)).toBe('plane-cyan');
+    expect(evaluate(expr, {})).toBe('plane-cyan');
   });
 });
 
