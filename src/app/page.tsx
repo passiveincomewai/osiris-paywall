@@ -8,6 +8,7 @@ import { Layers, Newspaper, Search, X, Route, Radar, ExternalLink, AlertTriangle
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
+import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
@@ -176,6 +177,10 @@ export default function Dashboard() {
   // Keyed ONLY off ad URL params (utm_medium=cpc/paid/etc. or skip_hero=1) —
   // referrer alone can't distinguish paid vs organic Instagram, so organic
   // visitors (link in bio, shares) still get the full hero experience.
+  // A camera deep link (?camera=<id>, lib/camera-share.ts) skips it too:
+  // the link names one specific camera, and the viewer that opens for it
+  // must not sit buried under the hero. A bare homepage share carries no
+  // camera param, so the hero rule above is untouched by this.
   const [skipHero] = useState(() => {
     try {
       const q = new URLSearchParams(window.location.search);
@@ -183,7 +188,8 @@ export default function Dashboard() {
       return (
         ["cpc", "ppc", "paid", "paid-social", "paidsocial", "ad", "ads", "display", "social-paid"].includes(medium) ||
         q.get("skip_hero") === "1" ||
-        q.get("ad") === "1"
+        q.get("ad") === "1" ||
+        Boolean(q.get("camera"))
       );
     } catch {
       return false;
@@ -762,6 +768,14 @@ export default function Dashboard() {
       });
     }
 
+    // A camera deep link names its destination: the catalogue must load
+    // even if a layers param switched CCTV off, and the IP auto-locate
+    // flight below must not steal the view from the linked camera.
+    if (p.get('camera')) {
+      autoLocateCancelled.current = true;
+      setActiveLayers(prev => ({ ...prev, cctv: true }));
+    }
+
     // Probe which credential-gated feeds this deployment has configured, so the
     // layer panel can hide toggles that could never return data.
     fetch('/api/cloudflare-radar?probe=1')
@@ -974,6 +988,34 @@ export default function Dashboard() {
       setLiveFeedEmbedAllowed(entity.embed_allowed !== false);
     }
   }, [isPremiumUser]);
+
+  // ── Camera deep link (?camera=<id>, lib/camera-share.ts) ──
+  // A shared link resolves against the catalogue as it loads — the world
+  // arrives in region shards, so the linked camera's region may land in a
+  // later batch than the first. Found: fly there and open it through
+  // handleEntityClick, the same gated, counted path a map click takes.
+  // Never found once the catalogue has finished loading: the id is stale,
+  // and the honest landing is the plain globe — no error, no dead viewer.
+  const sharedCameraId = useMemo(
+    () => (typeof window !== 'undefined' ? sharedCameraIdFromSearch(window.location.search) : null),
+    [],
+  );
+  const sharedCameraSettled = useRef(false);
+  useEffect(() => {
+    if (!sharedCameraId || sharedCameraSettled.current) return;
+    const cam: any = findCameraById(dataRef.current.cameras ?? [], sharedCameraId);
+    if (cam) {
+      sharedCameraSettled.current = true;
+      setFlyToLocation({ lat: cam.lat, lng: cam.lng, zoom: 12, ts: Date.now() });
+      handleEntityClick({
+        type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
+        source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
+        stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+      });
+      return;
+    }
+    if (!camerasLoading) sharedCameraSettled.current = true;
+  }, [sharedCameraId, dataVersion, camerasLoading, handleEntityClick]);
 
   // ── Drawing / AOI ──
   // OsirisMap already owns the draw interaction and the polygon rendering;

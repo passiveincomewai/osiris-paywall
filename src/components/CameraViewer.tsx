@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark } from 'lucide-react';
+import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check } from 'lucide-react';
 import Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
+import { cameraShareId, shareCamera } from '@/lib/camera-share';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
 
@@ -24,6 +25,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
   const [fullscreen, setFullscreen] = useState(false);
   const [currentTime, setCurrentTime] = useState<string>('');
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "signin" | "error">("idle");
+  const [shareState, setShareState] = useState<"idle" | "copied">("idle");
 
   useEffect(() => {
     const iv = setInterval(() => {
@@ -93,6 +95,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
     setLoading(true);
     setError(false);
     setImageUrl(null);
+    setShareState("idle");
 
     // Cleanup previous HLS instance
     if (hlsRef.current) {
@@ -449,6 +452,28 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                 </div>
               </div>
               <div className="flex gap-3">
+                {/* Share this camera: a deep link back to this exact camera
+                    on the globe (lib/camera-share.ts). Only for records that
+                    carry a catalogue id — without one the link could not
+                    resolve, so the button is not offered. */}
+                {cameraShareId(camera) && (
+                  <button
+                    onClick={async () => {
+                      const outcome = await shareCamera(camera);
+                      if (outcome === 'copied') {
+                        setShareState('copied');
+                        setTimeout(() => setShareState('idle'), 2500);
+                      }
+                    }}
+                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--gold-primary)] tracking-widest"
+                    title={shareState === 'copied' ? 'Link copied' : 'Share this camera'}
+                    aria-label={shareState === 'copied' ? 'Camera link copied' : 'Share this camera'}
+                  >
+                    {shareState === 'copied'
+                      ? <><Check className="w-2.5 h-2.5" /> LINK COPIED</>
+                      : <><Share2 className="w-2.5 h-2.5" /> SHARE</>}
+                  </button>
+                )}
                 {/* A withdrawn camera's page is a 404 — the big button is already
                     hidden for it, and this link would lead to the same dead page. */}
                 {!gone && (camera.feed_url || camera.external_url || (streamType === 'iframe' && camera.stream_url)) && (
