@@ -21,6 +21,10 @@ export interface TripRouteInfo {
   route: string;
   /** Mode derived from GTFS route_type — authoritative, not a heuristic. */
   mode: TransitMode;
+  /** route_long_name ("Blue Line", "SOUTH TEMPLE") when the feed has one. */
+  routeName?: string;
+  /** trip_headsign — the destination shown on the vehicle itself. */
+  headsign?: string;
 }
 
 /** GTFS route_type → our mode set. 0 tram, 1 subway/metro, 2 rail,
@@ -115,7 +119,7 @@ export function extractZipText(buf: Uint8Array, filename: string): string | null
   return null;
 }
 
-/** Join routes.txt + trips.txt into tripId → { route label, mode }. */
+/** Join routes.txt + trips.txt into tripId → { route label, mode, name, headsign }. */
 export function parseTripRouteMap(routesCsv: string, tripsCsv: string): Map<string, TripRouteInfo> {
   const byRoute = new Map<string, TripRouteInfo>();
   for (const r of parseCsv(routesCsv)) {
@@ -123,17 +127,79 @@ export function parseTripRouteMap(routesCsv: string, tripsCsv: string): Map<stri
     byRoute.set(r.route_id, {
       route: r.route_short_name || r.route_id,
       mode: routeTypeMode(r.route_type),
+      ...(r.route_long_name ? { routeName: r.route_long_name } : {}),
     });
   }
   const out = new Map<string, TripRouteInfo>();
   for (const t of parseCsv(tripsCsv)) {
     const info = t.route_id ? byRoute.get(t.route_id) : undefined;
-    if (t.trip_id && info) out.set(t.trip_id, info);
+    if (t.trip_id && info) {
+      out.set(t.trip_id, t.trip_headsign ? { ...info, headsign: t.trip_headsign } : info);
+    }
   }
   return out;
 }
 
-export async function loadTripRouteMap(url: string): Promise<Map<string, TripRouteInfo>> {
+/**
+ * Join stops.txt + stop_times.txt into tripId → stop names in
+ * stop_sequence order. This is what lets the popup NAME the stop a
+ * vehicle is at / heading to: UTA's realtime feeds carry only the
+ * vehicle's currentStopSequence, never a stop id (verified live
+ * 2026-10-18: 0/1,501 TripUpdate stopTimeUpdates had a stopId).
+ *
+ * stop_times.txt is the one big table in a GTFS zip (UTA: ~23 MB,
+ * ~500k rows), so it gets a dedicated line scanner instead of the
+ * object-materializing CSV reader: only the trip_id / stop_id /
+ * stop_sequence columns are read (located via the header, so column
+ * order is free). Those columns are ids and integers — they carry no
+ * quoted commas in GTFS feeds; a malformed row is skipped, never
+ * misparsed into a wrong name. Names are shared string references
+ * from the stops table, so the retained structure stays small.
+ */
+export function parseTripStopNames(stopsCsv: string, stopTimesCsv: string): Map<string, string[]> {
+  const nameByStop = new Map<string, string>();
+  for (const s of parseCsv(stopsCsv)) {
+    if (s.stop_id && s.stop_name) nameByStop.set(s.stop_id, s.stop_name);
+  }
+  const lines = stopTimesCsv.split('\n');
+  if (lines.length < 2) return new Map();
+  const head = lines[0].replace(/^\uFEFF/, '').split(',').map(h => h.trim());
+  const iTrip = head.indexOf('trip_id');
+  const iStop = head.indexOf('stop_id');
+  const iSeq = head.indexOf('stop_sequence');
+  if (iTrip < 0 || iStop < 0 || iSeq < 0) return new Map();
+  const perTrip = new Map<string, Array<[number, string]>>();
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line || line.includes('"')) continue;
+    const f = line.split(',');
+    const tripId = f[iTrip]?.trim();
+    const name = nameByStop.get(f[iStop]?.trim() ?? '');
+    const seq = Number(f[iSeq]);
+    if (!tripId || !name || !Number.isFinite(seq)) continue;
+    let arr = perTrip.get(tripId);
+    if (!arr) { arr = []; perTrip.set(tripId, arr); }
+    if (arr.length < 512) arr.push([seq, name]);
+  }
+  const out = new Map<string, string[]>();
+  for (const [tripId, arr] of perTrip) {
+    arr.sort((a, b) => a[0] - b[0]);
+    out.set(tripId, arr.map(([, name]) => name));
+  }
+  return out;
+}
+
+/** Everything the static zip gives us, parsed in one download. */
+export interface StaticGtfsData {
+  trips: Map<string, TripRouteInfo>;
+  /** tripId → stop names in stop_sequence order (empty when the zip
+   *  lacks stops.txt / stop_times.txt). */
+  stopNames: Map<string, string[]>;
+}
+
+const EMPTY_STATIC: StaticGtfsData = { trips: new Map(), stopNames: new Map() };
+
+export async function loadStaticGtfs(url: string): Promise<StaticGtfsData> {
   const res = await fetch(url, {
     headers: { 'User-Agent': 'OSIRIS-Intelligence-Platform/3.5' },
     signal: AbortSignal.timeout(60_000),
@@ -143,42 +209,55 @@ export async function loadTripRouteMap(url: string): Promise<Map<string, TripRou
   const routes = extractZipText(buf, 'routes.txt');
   const trips = extractZipText(buf, 'trips.txt');
   if (!routes || !trips) throw new Error('GTFS zip missing routes.txt/trips.txt');
-  return parseTripRouteMap(routes, trips);
+  const stops = extractZipText(buf, 'stops.txt');
+  const stopTimes = extractZipText(buf, 'stop_times.txt');
+  return {
+    trips: parseTripRouteMap(routes, trips),
+    stopNames: stops && stopTimes ? parseTripStopNames(stops, stopTimes) : new Map(),
+  };
+}
+
+export async function loadTripRouteMap(url: string): Promise<Map<string, TripRouteInfo>> {
+  return (await loadStaticGtfs(url)).trips;
 }
 
 const MAP_TTL_MS = 12 * 3600_000;
 interface MapEntry {
   at: number;
-  map: Map<string, TripRouteInfo> | null;
-  inflight: Promise<Map<string, TripRouteInfo>> | null;
+  data: StaticGtfsData | null;
+  inflight: Promise<StaticGtfsData> | null;
 }
 const mapStore = new Map<string, MapEntry>();
 
 /**
  * Cached accessor: 12 h TTL, in-flight dedup, stale-on-error (a failed
- * refresh keeps serving the last good map; a cold failure yields an
- * empty map so positions still flow, just without resolved routes).
+ * refresh keeps serving the last good data; a cold failure yields
+ * empty maps so positions still flow, just without resolved routes).
  */
-export async function tripRouteMapFor(agencyId: string, url: string): Promise<Map<string, TripRouteInfo>> {
+export async function staticGtfsFor(agencyId: string, url: string): Promise<StaticGtfsData> {
   const now = Date.now();
   let entry = mapStore.get(agencyId);
   if (!entry) {
-    entry = { at: 0, map: null, inflight: null };
+    entry = { at: 0, data: null, inflight: null };
     mapStore.set(agencyId, entry);
   }
-  if (entry.map && now - entry.at < MAP_TTL_MS) return entry.map;
+  if (entry.data && now - entry.at < MAP_TTL_MS) return entry.data;
   if (entry.inflight) return entry.inflight;
   const e = entry;
-  e.inflight = loadTripRouteMap(url)
-    .then(m => {
-      e.map = m;
+  e.inflight = loadStaticGtfs(url)
+    .then(d => {
+      e.data = d;
       e.at = Date.now();
       e.inflight = null;
-      return m;
+      return d;
     })
     .catch(() => {
       e.inflight = null;
-      return e.map ?? new Map<string, TripRouteInfo>();
+      return e.data ?? EMPTY_STATIC;
     });
   return e.inflight;
+}
+
+export async function tripRouteMapFor(agencyId: string, url: string): Promise<Map<string, TripRouteInfo>> {
+  return (await staticGtfsFor(agencyId, url)).trips;
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { deflateRawSync } from 'zlib';
-import { parseCsv, routeTypeMode, parseTripRouteMap, extractZipText } from './staticGtfs';
+import { parseCsv, routeTypeMode, parseTripRouteMap, parseTripStopNames, extractZipText } from './staticGtfs';
 
 describe('routeTypeMode', () => {
   it('maps GTFS route types to modes', () => {
@@ -34,20 +34,50 @@ const ROUTES = [
   '2328,33,3300 SOUTH,3',
 ].join('\n');
 const TRIPS = [
-  'route_id,trip_id,service_id',
-  '5907,T100,svc',
-  '41065,T200,svc',
-  '2328,T300,svc',
-  '9999,T404,svc',
+  'route_id,trip_id,service_id,trip_headsign',
+  '5907,T100,svc,Downtown',
+  '41065,T200,svc,Ogden',
+  '2328,T300,svc,',
+  '9999,T404,svc,Nowhere',
 ].join('\n');
 
 describe('parseTripRouteMap', () => {
   it('resolves public short names and exact modes from route_type', () => {
     const m = parseTripRouteMap(ROUTES, TRIPS);
-    expect(m.get('T100')).toEqual({ route: '701', mode: 'tram' });
-    expect(m.get('T200')).toEqual({ route: '750', mode: 'train' });
-    expect(m.get('T300')).toEqual({ route: '33', mode: 'bus' });
+    expect(m.get('T100')).toEqual({ route: '701', mode: 'tram', routeName: 'Blue Line', headsign: 'Downtown' });
+    expect(m.get('T200')).toEqual({ route: '750', mode: 'train', routeName: 'FrontRunner', headsign: 'Ogden' });
+    expect(m.get('T300')).toEqual({ route: '33', mode: 'bus', routeName: '3300 SOUTH' });
     expect(m.has('T404')).toBe(false); // trip on an unknown route is skipped
+  });
+});
+
+const STOPS = [
+  'stop_id,stop_name,stop_lat,stop_lon',
+  'S1,First Station,40.0,-111.9',
+  'S2,Second Station,40.1,-111.9',
+  'S3,Third Station,40.2,-111.9',
+].join('\n');
+// Deliberately out of sequence order in the file, plus one row pointing
+// at an unknown stop and one malformed row — both must be skipped.
+const STOP_TIMES = [
+  'trip_id,arrival_time,departure_time,stop_id,stop_sequence',
+  'T100,08:10:00,08:10:00,S2,2',
+  'T100,08:00:00,08:00:00,S1,1',
+  'T100,08:20:00,08:20:00,S3,3',
+  'T100,08:30:00,08:30:00,SXX,4',
+  'T200,09:00:00,09:00:00,S3,1',
+  'T200,bad,row',
+].join('\n');
+
+describe('parseTripStopNames', () => {
+  it('returns stop names per trip in stop_sequence order', () => {
+    const m = parseTripStopNames(STOPS, STOP_TIMES);
+    expect(m.get('T100')).toEqual(['First Station', 'Second Station', 'Third Station']);
+    expect(m.get('T200')).toEqual(['Third Station']);
+  });
+  it('returns an empty map when required columns are missing', () => {
+    expect(parseTripStopNames(STOPS, 'trip_id,stop_id\nT100,S1').size).toBe(0);
+    expect(parseTripStopNames(STOPS, '').size).toBe(0);
   });
 });
 

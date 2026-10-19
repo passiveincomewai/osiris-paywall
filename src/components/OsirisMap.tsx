@@ -30,6 +30,7 @@ import {
 } from '@/lib/flights/follow';
 import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
+import { selectAgenciesForView } from '@/lib/transit/relevance';
 import {
   clampIntensity, isLowPowerDevice, sensorEffectLabel, sensorFilterCss,
   thermalTableValues, THERMAL_FILTER_ID, type SensorEffectState,
@@ -2060,16 +2061,29 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const p = e.features[0].properties as any;
       const coords = (e.features[0].geometry as any).coordinates;
       const delayTxt = p.delay == null ? null : p.delay >= 60 ? Math.round(p.delay / 60) + ' min late' : p.delay <= -60 ? Math.round(-p.delay / 60) + ' min early' : 'On time';
+      // Every row below is a field the feed (or the agency's own static
+      // GTFS) actually provided — absent fields render no row at all.
+      // DIRECTION used to show the raw GTFS direction_id (an opaque
+      // 0/1 whose meaning is per-agency); the headsign destination and
+      // the compass heading carry the same information truthfully.
+      const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+      const heading = p.bearing != null ? COMPASS[Math.round(p.bearing / 45) % 8] : null;
+      const ageS = p.ts ? Math.max(0, Math.round(Date.now() / 1000 - p.ts)) : null;
+      const ageTxt = ageS == null ? null : ageS < 60 ? `${ageS}s ago` : ageS < 3600 ? `${Math.floor(ageS / 60)}m ago` : `${Math.floor(ageS / 3600)}h ago`;
+      const vehicleTxt = p.label || p.vehId || '';
       popup(coords, `<div style="${pStyle}border:1px solid rgba(255,167,38,0.35);">
         <div style="color:#FFA726;font-size:12px;font-weight:700;margin-bottom:4px;">🚌 ${MODE_LABEL[p.mode] || 'TRANSIT'}${p.route ? ' · ' + htmlEsc(p.route) : ''}</div>
-        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.agency || '')}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.agency || '')}${p.headsign ? ' · to ' + htmlEsc(p.headsign) : ''}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
-          <div><span style="color:#5C5A54;">ROUTE</span><br/><span style="color:#E8E6E0;">${p.route ? htmlEsc(p.route) : 'Not in service'}</span></div>
+          <div><span style="color:#5C5A54;">ROUTE</span><br/><span style="color:#E8E6E0;">${p.route ? htmlEsc(p.route) : 'Not in service'}</span>${p.routeName ? `<br/><span style="color:#9B978E;">${htmlEsc(p.routeName)}</span>` : ''}</div>
           <div><span style="color:#5C5A54;">STATUS</span><br/><span style="color:#E8E6E0;">${p.status != null ? (STATUS_LABEL[p.status] || '—') : '—'}</span></div>
+          ${p.headsign ? `<div><span style="color:#5C5A54;">DESTINATION</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.headsign)}</span></div>` : ''}
+          ${p.stopName ? `<div><span style="color:#5C5A54;">${p.status === 1 ? 'AT STOP' : 'NEXT STOP'}</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.stopName)}</span></div>` : ''}
           <div><span style="color:#5C5A54;">DELAY</span><br/><span style="color:#E8E6E0;">${delayTxt ?? '—'}</span></div>
           <div><span style="color:#5C5A54;">SPEED</span><br/><span style="color:#E8E6E0;">${p.speedKmh != null ? p.speedKmh + ' km/h' : '—'}</span></div>
-          ${p.label ? `<div><span style="color:#5C5A54;">VEHICLE</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.label)}</span></div>` : ''}
-          ${p.dir != null ? `<div><span style="color:#5C5A54;">DIRECTION</span><br/><span style="color:#E8E6E0;">${p.dir}</span></div>` : ''}
+          ${heading ? `<div><span style="color:#5C5A54;">HEADING</span><br/><span style="color:#E8E6E0;">${heading}</span></div>` : ''}
+          ${vehicleTxt ? `<div><span style="color:#5C5A54;">VEHICLE</span><br/><span style="color:#E8E6E0;">${htmlEsc(vehicleTxt)}</span></div>` : ''}
+          ${ageTxt ? `<div><span style="color:#5C5A54;">UPDATED</span><br/><span style="color:#E8E6E0;">${ageTxt}</span></div>` : ''}
         </div>
         <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">DATA — GTFS-REALTIME · ${htmlEsc((p.attribution || p.agency || '').toUpperCase())}</div>
       </div>`);
@@ -3165,7 +3179,10 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
             type: 'Feature', geometry: { type: 'Point', coordinates: [v.lng, v.lat] },
             properties: {
               agency: ag?.name ?? agencyId, attribution: ag?.attribution ?? '',
-              route: v.route ?? '', mode: v.mode, dir: v.dir ?? null, bearing: v.bearing ?? null,
+              vehId: v.id ?? '', ts: v.ts ?? null,
+              route: v.route ?? '', routeName: v.routeName ?? '', headsign: v.headsign ?? '',
+              stopName: v.stopName ?? '',
+              mode: v.mode, dir: v.dir ?? null, bearing: v.bearing ?? null,
               speedKmh: v.speedKmh ?? null, label: v.label ?? '', status: v.status ?? null,
               occ: v.occ ?? null, delay: v.delay ?? null,
             },
@@ -3177,11 +3194,16 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     const load = async () => {
       if (!live) return;
       const b = map.getBounds();
-      const padLat = (b.getNorth() - b.getSouth()) * 0.75;
-      const padLng = (b.getEast() - b.getWest()) * 0.75;
-      const ags = transitAgenciesRef.current
-        .filter((a: any) => a.center[0] >= b.getSouth() - padLat && a.center[0] <= b.getNorth() + padLat && a.center[1] >= b.getWest() - padLng && a.center[1] <= b.getEast() + padLng)
-        .slice(0, 6);
+      // Relevance = service-area bounds ∩ viewport (lib/transit/
+      // relevance). The old center-point test collapsed its padding
+      // as the user zoomed in, evicted the agency, and its vehicle
+      // dots vanished at street level — bounds intersection keeps an
+      // agency loaded at every zoom inside its service area.
+      const ags = selectAgenciesForView(
+        transitAgenciesRef.current,
+        { south: b.getSouth(), west: b.getWest(), north: b.getNorth(), east: b.getEast() },
+        6,
+      );
       if (transitAgenciesRef.current.length) {
         if (ags.length === 0) {
           if (!transitNoticeDismissedRef.current) {

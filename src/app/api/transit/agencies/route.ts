@@ -15,6 +15,7 @@ export async function GET() {
     name: a.name,
     region: a.region,
     center: a.center,
+    bounds: a.bounds,
     modes: [...new Set([a.defaultMode, ...(a.routeModeRules ?? []).map(r => r.mode)])],
     attribution: a.attribution,
   }));
