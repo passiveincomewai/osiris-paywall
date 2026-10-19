@@ -1167,6 +1167,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-color': '#4DD0E1', 'circle-opacity': 0.95,
         'circle-stroke-color': '#062A30', 'circle-stroke-width': 1.1,
       }});
+      // Invisible hit target. The visible marker is a 2.5–7px core inside
+      // a blurred glow up to ~16px wide, and MapLibre hit-tests a click
+      // against the painted circle of the layer the listener hangs on —
+      // so a click landing in the glow (most of what a user perceives as
+      // "the marker") silently missed the dots layer, and only a second
+      // click, recentred by double-click zoom, ever opened the viewer.
+      // This layer paints nothing and exists to be clicked: it gives the
+      // marker a hit footprint as wide as the marker looks.
+      map.addLayer({ id: 'street-level-hit', type: 'circle', source: 'street-level', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 11, 18, 14, 22, 18],
+        'circle-color': '#4DD0E1', 'circle-opacity': 0,
+      }});
       // CCTV — outer glow ring (black/white depending on theme)
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
         'circle-radius': ['interpolate',['linear'],['zoom'], 1,5, 5,8, 10,14, 14,20],
@@ -1832,7 +1844,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
-      'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots']);
+      'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots','street-level-dots','street-level-hit']);
 
     // Satellites are picked on the GPU: the pick pass runs the same vertex
     // shader as the visible one, so the target is always exactly where the
@@ -3574,20 +3586,41 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       }
     };
     const onPicClick = (e: any) => {
-      const id = e.features?.[0]?.properties?.id;
+      // Where hit circles overlap, e.features carries several pictures;
+      // the one whose position is nearest the click point is the marker
+      // the user meant.
+      const feats: any[] = e.features ?? [];
+      let best: any = null;
+      let bestD = Infinity;
+      for (const f of feats) {
+        const c = f?.geometry?.coordinates;
+        if (!Array.isArray(c)) continue;
+        const p = map.project(c as [number, number]);
+        const d = (p.x - e.point.x) ** 2 + (p.y - e.point.y) ** 2;
+        if (d < bestD) { bestD = d; best = f; }
+      }
+      const id = best?.properties?.id;
       const pic = id ? streetLevelPicsRef.current.get(id) : undefined;
       if (pic) setStreetPicture(pic);
     };
     const onEnter = () => { map.getCanvas().style.cursor = 'pointer'; };
     const onLeave = () => { map.getCanvas().style.cursor = ''; };
+    // The hit layer is registered first so the core dot's own handler —
+    // the precise hit — has the final word when a click lands on both.
+    map.on('click', 'street-level-hit', onPicClick);
     map.on('click', 'street-level-dots', onPicClick);
+    map.on('mouseenter', 'street-level-hit', onEnter);
+    map.on('mouseleave', 'street-level-hit', onLeave);
     map.on('mouseenter', 'street-level-dots', onEnter);
     map.on('mouseleave', 'street-level-dots', onLeave);
     map.on('moveend', load);
     void load();
     return () => {
       live = false;
+      map.off('click', 'street-level-hit', onPicClick);
       map.off('click', 'street-level-dots', onPicClick);
+      map.off('mouseenter', 'street-level-hit', onEnter);
+      map.off('mouseleave', 'street-level-hit', onLeave);
       map.off('mouseenter', 'street-level-dots', onEnter);
       map.off('mouseleave', 'street-level-dots', onLeave);
       map.off('moveend', load);
