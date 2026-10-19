@@ -9,8 +9,9 @@
  *
  * Frame source: GET /api/cctv/frame?id=<catalogue id> — the same
  * server-fetched still the built-in detector reads. It answers 422 for live
- * streams (they have no still frame), which is why timelapse is offered for
- * snapshot cameras only. Its X-Frame-At header says when the frame was
+ * streams (they have no still frame) and for stills it cannot fetch itself
+ * (e.g. ones served through a same-origin resolver path), which is why
+ * timelapse is offered only for snapshot cameras with a fetchable still. Its X-Frame-At header says when the frame was
  * fetched upstream; an unchanged value means the same held frame, so it is
  * never stored twice. A content hash guards the same rule when the header
  * is missing.
@@ -44,14 +45,35 @@ export function timelapseAccess(session: unknown): TimelapseAccess {
     : 'free';
 }
 
+const HTTP_URL = /^https?:\/\/[^\s]+$/i;
+
+/**
+ * Can the frame route actually fetch this camera's still? Mirrors stillOf()
+ * in lib/vision/frames.ts, which is what /api/cctv/frame serves from: the
+ * camera's feed must be a direct http(s) still, or the camera proxy wrapping
+ * one. A camera whose stills are served through a same-origin resolver path
+ * (FAA WeatherCams' /api/cctv/faa-image/<id>) has no fetchable still there —
+ * the route answers 422 — so offering capture for it would only ever fail.
+ */
+export function timelapseStillFetchable(camera: Record<string, unknown> | null | undefined): boolean {
+  const feed = typeof camera?.feed_url === 'string' ? camera.feed_url : '';
+  if (!feed) return false;
+  if (feed.startsWith('/api/cctv/proxy?')) {
+    const inner = new URLSearchParams(feed.slice(feed.indexOf('?') + 1)).get('url') ?? '';
+    return HTTP_URL.test(inner);
+  }
+  return HTTP_URL.test(feed);
+}
+
 /** Whether timelapse can run for the camera on screen, and if not, why not. */
 export function timelapseSupport(
   camera: Record<string, unknown> | null | undefined,
   streamType: string,
-): { supported: true } | { supported: false; reason: 'stream' | 'no-id' } {
+): { supported: true } | { supported: false; reason: 'stream' | 'no-id' | 'no-still' } {
   if (streamType !== 'jpg') return { supported: false, reason: 'stream' };
   const id = typeof camera?.id === 'number' ? String(camera.id) : camera?.id;
   if (typeof id !== 'string' || !id.trim()) return { supported: false, reason: 'no-id' };
+  if (!timelapseStillFetchable(camera)) return { supported: false, reason: 'no-still' };
   return { supported: true };
 }
 

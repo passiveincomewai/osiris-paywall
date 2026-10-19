@@ -37,20 +37,34 @@ describe('timelapse gate', () => {
 });
 
 describe('timelapse support', () => {
-  it('supports snapshot cameras with a catalogue id', () => {
-    expect(timelapseSupport({ id: 'faa-10915' }, 'jpg')).toEqual({ supported: true });
-    expect(timelapseSupport({ id: 42 }, 'jpg')).toEqual({ supported: true });
+  const still = 'https://cams.example.com/snap.jpg';
+
+  it('supports snapshot cameras whose still the frame route can fetch', () => {
+    expect(timelapseSupport({ id: 'udot-112731', feed_url: still }, 'jpg')).toEqual({ supported: true });
+    expect(timelapseSupport({ id: 42, feed_url: still }, 'jpg')).toEqual({ supported: true });
+    expect(
+      timelapseSupport({ id: 'x', feed_url: `/api/cctv/proxy?url=${encodeURIComponent(still)}` }, 'jpg'),
+    ).toEqual({ supported: true });
+  });
+
+  it('refuses stills the frame route cannot fetch (it answers 422 for them)', () => {
+    // FAA WeatherCams stills are served through a same-origin resolver path.
+    expect(timelapseSupport({ id: 'faa-10915', feed_url: '/api/cctv/faa-image/10915' }, 'jpg'))
+      .toEqual({ supported: false, reason: 'no-still' });
+    expect(timelapseSupport({ id: 'x' }, 'jpg')).toEqual({ supported: false, reason: 'no-still' });
+    expect(timelapseSupport({ id: 'x', feed_url: '/api/cctv/proxy?url=notaurl' }, 'jpg'))
+      .toEqual({ supported: false, reason: 'no-still' });
   });
 
   it('refuses live streams — they have no still frame to capture', () => {
     for (const t of ['hls', 'mp4', 'mjpeg', 'iframe']) {
-      expect(timelapseSupport({ id: 'x' }, t)).toEqual({ supported: false, reason: 'stream' });
+      expect(timelapseSupport({ id: 'x', feed_url: still }, t)).toEqual({ supported: false, reason: 'stream' });
     }
   });
 
   it('refuses a snapshot camera with no catalogue id (the frame route keys on it)', () => {
-    expect(timelapseSupport({ name: 'No id' }, 'jpg')).toEqual({ supported: false, reason: 'no-id' });
-    expect(timelapseSupport({ id: '  ' }, 'jpg')).toEqual({ supported: false, reason: 'no-id' });
+    expect(timelapseSupport({ name: 'No id', feed_url: still }, 'jpg')).toEqual({ supported: false, reason: 'no-id' });
+    expect(timelapseSupport({ id: '  ', feed_url: still }, 'jpg')).toEqual({ supported: false, reason: 'no-id' });
     expect(timelapseSupport(null, 'jpg')).toEqual({ supported: false, reason: 'no-id' });
   });
 });

@@ -341,10 +341,12 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
             className={btnCls}
             title={support.reason === 'stream'
               ? 'Timelapse is a snapshot-camera feature — this camera is a live video stream, which has no still pictures to collect.'
-              : 'Timelapse needs a catalogue camera — this view has no camera id to fetch stills by.'}
+              : support.reason === 'no-still'
+                ? 'Timelapse collects each new still picture a camera publishes — this camera\'s stills are served in a way the collector can\'t fetch, so it can\'t build a timelapse from them.'
+                : 'Timelapse needs a catalogue camera — this view has no camera id to fetch stills by.'}
             aria-label="Timelapse is not available for this camera"
           >
-            <Film className="w-2.5 h-2.5" /> SNAPSHOT CAMERAS ONLY
+            <Film className="w-2.5 h-2.5" /> {support.reason === 'stream' ? 'SNAPSHOT CAMERAS ONLY' : 'NOT AVAILABLE'}
           </button>
         )}
       </div>
