@@ -156,7 +156,7 @@ const BODIES: Record<Feature, string[]> = {
     "Satellite orbits, live flights, and 76,000+ street cameras — all on one free 3D map.",
   ],
   OSINT: [
-    "Go Pro and unlock the AI analyst, satellite basemap, global search, and the OSINT toolkit. Weekly, monthly, or annual plans.",
+    "Go Pro and unlock the AI analyst, satellite basemap, live traffic, advanced search filters, and the OSINT toolkit. Weekly, monthly, or annual plans.",
     "The free globe is the hook — Pro is the full intel station: AI analyst, satellite view, OSINT tools.",
     "Pro tier = AI analyst + satellite basemap + OSINT toolkit. The free map alone is worth the click.",
   ],
@@ -519,7 +519,7 @@ export default function ResourcesClient() {
         <div className="text-sm font-bold text-amber-300 mb-1">Truthful claims only</div>
         <p className="text-sm text-slate-400 leading-relaxed">
           Stick to what&apos;s real: 76,000+ live cameras, a free globe with no signup, Pro unlocks the AI analyst,
-          satellite view, global search, and the OSINT toolkit on weekly, monthly, or annual plans. Never promise
+          satellite view, live traffic, advanced search filters, and the OSINT toolkit on weekly, monthly, or annual plans. Never promise
           income, never imply recruitment alone earns anything, and always disclose your affiliate link with #ad.
         </p>
       </div>

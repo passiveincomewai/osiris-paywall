@@ -115,7 +115,8 @@ export default function CamerasPage() {
               Open the <Link href="/" className="text-[#D4AF37] hover:underline">live map</Link>,
               enable the camera layer, and click any camera marker — or zoom into a region
               and let the feeds load around you. Search any place to fly straight to its
-              nearest cameras.
+              nearest cameras, and use any camera&apos;s share link to send someone
+              straight to the same live view.
             </p>
           </div>
         </div>

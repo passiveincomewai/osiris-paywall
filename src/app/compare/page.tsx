@@ -32,7 +32,7 @@ const CATEGORIES = [
 ];
 
 const DIFFERENTIATORS = [
-  { title: "One globe, every layer", body: "Flights, satellites, ships, cameras, weather, quakes and wildfires on a single interactive 3D globe — not scattered across a dozen tabs." },
+  { title: "One globe, every layer", body: "Flights, satellites, ships, cameras, live transit, weather, quakes and wildfires on a single interactive 3D globe — not scattered across a dozen tabs." },
   { title: "Free with no signup", body: "The full live map costs nothing and needs no account. Most competitors paywall their best views." },
   { title: "~76,000 live cameras", body: "The world's largest free public-camera network, browsable right on the globe." },
   { title: "Pro OSINT toolkit", body: "AI analyst, Nmap/DNS/WHOIS/SSL lookups and premium intel feeds (cyber, GDELT, maritime, conflict, live news)." },

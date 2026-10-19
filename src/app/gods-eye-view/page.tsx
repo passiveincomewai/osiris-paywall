@@ -72,7 +72,7 @@ const FAQS = [
   },
   {
     q: "Is WorldEye's god's eye view free?",
-    a: "Yes. The globe, live cameras, flights, satellites, weather, earthquakes and wildfires are free with no account and no signup. A Pro subscription adds the intelligence toolkit — OSINT tools, maritime and cyber intel layers, satellite map view, global search and the AI analyst — and funds the infrastructure.",
+    a: "Yes. The globe, live cameras, flights, satellites, transit, weather, earthquakes and wildfires are free with no account and no signup — basic search included. A Pro subscription adds the intelligence toolkit — OSINT tools, maritime and cyber intel layers, satellite map view, the live traffic layer, advanced search filters and the AI analyst — and funds the infrastructure.",
   },
   {
     q: "Do I need to install anything?",

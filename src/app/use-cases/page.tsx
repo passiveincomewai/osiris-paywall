@@ -71,7 +71,7 @@ const PERSONAS: Persona[] = [
     title: "Travelers",
     who: "People planning trips — or armchair-exploring the planet from the couch.",
     does: "Check live street cameras at a destination before booking, watch weather systems moving across a route, and follow flights in real time. All free, no account needed.",
-    features: ["76,000+ CCTV cameras", "Weather layers", "Live flight tracking"],
+    features: ["76,000+ CCTV cameras", "Weather layers", "Live flight tracking", "Live transit & street-level photos"],
     links: [
       { label: "Browse live cameras", href: "/cameras" },
       { label: "Open the live map", href: "/" },
@@ -84,7 +84,7 @@ const PERSONAS: Persona[] = [
     title: "Weather & disaster watchers",
     who: "Storm chasers, preparedness-minded households and anyone who wants to see severe weather as it happens.",
     does: "Watch earthquakes, wildfires and severe weather light up the globe in real time, then drop into street cameras near the affected area to see conditions with their own eyes.",
-    features: ["Earthquake, wildfire & weather layers", "76,000+ CCTV cameras", "Live news feed"],
+    features: ["Earthquake, wildfire, radar & hurricane layers", "Fire perimeters & ALERT cameras", "76,000+ CCTV cameras", "Live news feed"],
     links: [
       { label: "Browse live cameras", href: "/cameras" },
       { label: "Open the live map", href: "/" },
@@ -97,7 +97,7 @@ const PERSONAS: Persona[] = [
     title: "Aviation enthusiasts",
     who: "Plane spotters and flight trackers who follow the skies.",
     does: "Follow live aircraft positions and telemetry rendered on the 3D globe — watch traffic flow over oceans, circle holding patterns and line up final approaches.",
-    features: ["Live flight tracking", "Interactive 3D globe", "Satellite view (Pro)"],
+    features: ["Live flight tracking", "Aircraft follow camera", "Interactive 3D globe", "Satellite view (Pro)"],
     links: [
       { label: "Open the live map", href: "/" },
       { label: "Go Pro", href: "/pricing" },
@@ -122,7 +122,7 @@ const PERSONAS: Persona[] = [
     title: "Maritime watchers",
     who: "Ship spotters, coastal observers and logistics watchers.",
     does: "Follow vessel traffic with the maritime tracking feed, watch straits and shipping lanes, and layer weather data over busy sea routes.",
-    features: ["Maritime tracking feed (Pro)", "Weather layers", "Global search (Pro)"],
+    features: ["Maritime tracking feed (Pro)", "Weather layers", "Advanced search filters (Pro)"],
     links: [
       { label: "Explore Pro tools", href: "/pricing" },
       { label: "Feature tour", href: "/features" },

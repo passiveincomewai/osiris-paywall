@@ -53,9 +53,11 @@ export default function TermsPage() {
           <p>
             WorldEye (&quot;we&quot;, &quot;us&quot;) provides a live planetary intelligence
             map at this website: an interactive 3D globe with free layers (flights,
-            satellites, weather, earthquakes, wildfires and public camera feeds) and
-            optional paid Pro features (AI tooling, satellite basemap, global search and
-            premium intel feeds). The free map requires no account and is available to
+            satellites, transit, weather, earthquakes, wildfires, street-level photos
+            and public camera feeds, with basic search free for everyone) and
+            optional paid Pro features (AI tooling, satellite basemap, the live
+            traffic layer, advanced search filters and premium intel feeds). The
+            free map requires no account and is available to
             everyone.
           </p>
           <p>

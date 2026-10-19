@@ -33,7 +33,7 @@ export default function CameraSignupNudge({ onClose }: { onClose: () => void }) 
         </div>
         <h2 className="text-lg font-bold tracking-tight">Unlock unlimited cameras</h2>
         <p className="text-sm text-white/55 mt-2 mb-6">
-          Upgrade to Pro for unlimited live camera access — plus the AI analyst, satellite view, global search and premium intel feeds.
+          Upgrade to Pro for unlimited live camera access — plus the AI analyst, satellite view, live traffic, advanced search filters and premium intel feeds.
         </p>
         <Link
           href="/pricing"
