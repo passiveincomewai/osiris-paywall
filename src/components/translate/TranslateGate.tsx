@@ -39,7 +39,10 @@ function installDomGuards(): void {
   guardsInstalled = true;
   try {
     const originalRemoveChild = Node.prototype.removeChild;
-    Node.prototype.removeChild = function <T extends Node>(child: T): T {
+    Node.prototype.removeChild = function <T extends Node>(
+      this: Node,
+      child: T,
+    ): T {
       if (child.parentNode !== this) {
         // The translator reparented this node; React's copy is stale.
         return child;
@@ -49,6 +52,7 @@ function installDomGuards(): void {
 
     const originalInsertBefore = Node.prototype.insertBefore;
     Node.prototype.insertBefore = function <T extends Node>(
+      this: Node,
       node: T,
       child: Node | null,
     ): T {
