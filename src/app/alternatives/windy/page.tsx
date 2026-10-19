@@ -171,7 +171,7 @@ export default function WindyAlternativesPage() {
           <p>
             The Pro tier (weekly $3.99, monthly $9.99, annual $59.99) adds
             intelligence tooling — the OSINT toolkit, maritime and cyber/GDELT
-            intel feeds, satellite imagery view, global search and the AI
+            intel feeds, satellite imagery view, advanced search filters and the AI
             analyst — but it never gates the live map. Zoom Earth, NASA
             Worldview, Ventusky and Earth Nullschool are also free for their
             specialties.
@@ -334,7 +334,7 @@ export default function WindyAlternativesPage() {
             <p className="text-white/55 leading-relaxed mt-2">
               Weekly $3.99, monthly $9.99, or annual $59.99. Pro adds the
               OSINT toolkit, maritime intel, cyber/GDELT intel, satellite
-              imagery view, global search and the AI analyst. The free map
+              imagery view, advanced search filters and the AI analyst. The free map
               stays free regardless.
             </p>
           </div>

@@ -288,7 +288,7 @@ export default function SatelliteTrackerPage() {
               WorldEye Pro
             </Link>{" "}
             adds the OI AI assistant (on your own API key), satellite imagery,
-            global search and premium intel feeds — from $3.99/week.
+            advanced search filters and premium intel feeds — from $3.99/week.
           </p>
           <Link
             href="/pricing"

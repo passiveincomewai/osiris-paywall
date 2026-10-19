@@ -30,7 +30,7 @@ import FaqSection from "./landing/FaqSection";
 // satellite = mosaic from the same public Esri World Imagery tile source
 // the in-app satellite view loads (the basemap switch itself is inside
 // the Pro surface); maritime = a frame from the app's own globe with
-// the maritime layer on; global search = the search spotlight exactly
+// the maritime layer on; search = the search spotlight exactly
 // as a signed-out visitor sees it. Cyber Intelligence and Camera
 // Recording keep the monogram treatment: their data/studio are behind
 // the Pro + sign-in gates, so no honest anonymous capture exists.

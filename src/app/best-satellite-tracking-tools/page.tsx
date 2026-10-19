@@ -257,7 +257,7 @@ export default function BestSatelliteTrackingToolsPage() {
             $9.99, annual $59.99) adds a satellite imagery view — looking at
             the Earth from orbit, a different thing from tracking orbits —
             alongside the OSINT toolkit, maritime and cyber/GDELT intel,
-            global search and the AI analyst. If all you want is to watch
+            advanced search filters and the AI analyst. If all you want is to watch
             satellites move, you never need it.
           </p>
         </div>

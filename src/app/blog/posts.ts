@@ -247,7 +247,7 @@ export const POSTS: BlogPost[] = [
         heading: "Where to find DOT cameras",
         body: [
           "In the United States, nearly every state runs a 511 traveler-information portal with a live camera map — search for your state's 511 site and you'll find it. Canada's provinces, the UK's National Highways, and most European road agencies publish similar feeds. Quality varies: some cameras stream near-live video, while others refresh a still image every minute or two.",
-          "The frustrating part is that every agency runs its own site, its own map, and its own interface. [WorldEye's live camera map](/cameras) gathers roughly 40,000 public camera streams — traffic feeds included — onto one globe, so you can trace your whole route and check the cameras along it without hunting through half a dozen DOT websites.",
+          "The frustrating part is that every agency runs its own site, its own map, and its own interface. [WorldEye's live camera map](/cameras) gathers 76,000+ public camera streams — traffic feeds included — onto one globe, so you can trace your whole route and check the cameras along it without hunting through half a dozen DOT websites.",
         ],
       },
       {
@@ -277,7 +277,7 @@ export const POSTS: BlogPost[] = [
         heading: "Five minutes that change the trip",
         body: [
           "The payoff is simple: fewer surprises, better timing, and trips you start with confidence instead of guesswork. Checking three cameras takes about five minutes, and it routinely beats a forecast's opinion of the road. Drivers who check cameras before leaving in winter report the same thing: the ten-minute check is the difference between a confident departure and a white-knuckle guess.",
-          "And if you want to go further, [WorldEye Pro](/pricing) adds [global search](/features), so you can jump straight to a named camera or a mountain pass instead of panning the map. But the free camera layer alone — [checked on the map](/cameras) before every drive — is already the best upgrade you can give your [road trips](/use-cases).",
+          "And if you want to go further, the free [search](/features) jumps straight to a named camera or a mountain pass instead of panning the map — [WorldEye Pro](/pricing) adds the live traffic layer and advanced filters on top. But the free camera layer alone — [checked on the map](/cameras) before every drive — is already the best upgrade you can give your [road trips](/use-cases).",
         ],
       },
     ],
@@ -368,7 +368,7 @@ export const POSTS: BlogPost[] = [
         heading: "How to find the good ones",
         body: [
           "The honest truth about best-webcam lists: the specific standouts change constantly, because the cameras are run by third parties and [feeds come and go](/faq). A camera that's spectacular today can be offline next month. The durable skill is knowing how to browse the network yourself.",
-          "Start on the [live camera map](/cameras) — it's free, no signup — and zoom into the places that interest you. Dense clusters usually mean a city center or a monitored highway; lone markers in the mountains are often the scenic ones. And if you enjoy this kind of browsing, the [WorldEye blog](/blog) has guides for using cameras in trip planning and road checks, while [Pro's global search](/features) jumps straight to named places when you'd rather not hunt.",
+          "Start on the [live camera map](/cameras) — it's free, no signup — and zoom into the places that interest you. Dense clusters usually mean a city center or a monitored highway; lone markers in the mountains are often the scenic ones. And if you enjoy this kind of browsing, the [WorldEye blog](/blog) has guides for using cameras in trip planning and road checks, while the free [search](/features) jumps straight to named places when you'd rather not hunt.",
         ],
       },
     ],
@@ -391,7 +391,7 @@ export const POSTS: BlogPost[] = [
       },
       {
         q: "How do I find good webcams in a specific city?",
-        a: "Open the live camera map and zoom into the city - markers cluster where cameras are densest, usually the center, the waterfront, and the high ground. Dense clusters on highways are traffic feeds; lone markers in scenic spots are often the interesting ones. If you would rather not hunt, Pro's global search jumps straight to named places.",
+        a: "Open the live camera map and zoom into the city - markers cluster where cameras are densest, usually the center, the waterfront, and the high ground. Dense clusters on highways are traffic feeds; lone markers in scenic spots are often the interesting ones. If you would rather not hunt, the free search jumps straight to named places.",
       },
     ],
   },
@@ -533,7 +533,7 @@ export const POSTS: BlogPost[] = [
         heading: "A camera-first planning checklist",
         body: [
           "Put it together: a destination camera for vibe and weather, neighborhood cameras for the hotel decision, route cameras for the drive, and a timing check for the big days. Four checks, maybe twenty minutes total, and you'll arrive knowing things the guidebooks can't tell you. Travelers who plan this way describe the same payoff: arrival feels like a return visit, not a first encounter — and the surprises that remain are the good kind. The habit compounds, too: every trip teaches you which feeds to trust, so the next plan takes half the time.",
-          "This is one of the core [use cases](/use-cases) the WorldEye map was built for — the free camera layer covers roughly 40,000 public streams with no signup. And if you'd rather jump straight to named places than pan the globe, [WorldEye Pro](/pricing) adds global search to get you there in one keystroke.",
+          "This is one of the core [use cases](/use-cases) the WorldEye map was built for — the free camera layer covers 76,000+ public streams with no signup. And if you'd rather jump straight to named places than pan the globe, the free search gets you there in one keystroke — [WorldEye Pro](/pricing) adds advanced filters for narrowing the hunt.",
         ],
       },
     ],

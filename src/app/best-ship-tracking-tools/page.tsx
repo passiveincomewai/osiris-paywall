@@ -270,7 +270,7 @@ export default function BestShipTrackingToolsPage() {
             wildfires and ~76,000 cameras, no signup — does not include ship
             tracking. Maritime intel is part of Pro (weekly $3.99, monthly
             $9.99, annual $59.99), alongside the OSINT toolkit, cyber/GDELT
-            intel, satellite imagery view, global search and the AI analyst.
+            intel, satellite imagery view, advanced search filters and the AI analyst.
             If ships are all you want, a dedicated AIS free tier may serve
             you first; if ships plus the whole live planet is the point, Pro
             is the bundle built for it.

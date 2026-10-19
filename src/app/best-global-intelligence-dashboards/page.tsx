@@ -259,7 +259,7 @@ export default function BestGlobalIntelligenceDashboardsPage() {
             layers: premium intel feeds across cyber, GDELT, maritime,
             conflict and live news; the AI analyst assistant for summarizing
             developing situations; high-resolution satellite imagery;
-            global search with advanced filters; and the in-browser OSINT
+            advanced search filters; and the in-browser OSINT
             toolkit. One subscription, all three layers on one screen.
           </p>
         </div>

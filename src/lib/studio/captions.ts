@@ -60,7 +60,7 @@ const FEATURE_FACTS: Record<Feature, string> = {
   weather: "live weather radar, earthquakes and wildfire maps",
   osint: "a free OSINT toolkit — intel layers, GDELT events, cyber and maritime feeds",
   premium:
-    "WorldEye Pro: satellite view, global search, the AI analyst and the full OSINT toolkit",
+    "WorldEye Pro: satellite view, live traffic, advanced search filters, the AI analyst and the full OSINT toolkit",
 };
 
 const HOOKS: Record<Style, string[]> = {

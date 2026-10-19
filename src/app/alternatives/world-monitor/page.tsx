@@ -194,7 +194,7 @@ export default function WorldMonitorAlternativesPage() {
           <p>
             The Pro tier (weekly $3.99, monthly $9.99, annual $59.99) adds
             intelligence tooling — the AI analyst assistant, OSINT toolkit,
-            premium intel feeds, high-res satellite imagery, and global search
+            premium intel feeds, high-res satellite imagery, and advanced search filters
             — but it never gates the live map. Zoom Earth, NASA Worldview and
             Ventusky are also free for their specialties.
           </p>
@@ -371,8 +371,8 @@ export default function WorldMonitorAlternativesPage() {
             <p className="text-white/55 leading-relaxed mt-2">
               Weekly $3.99, monthly $9.99, or annual $59.99. Pro adds the AI
               analyst assistant, OSINT toolkit, premium intel feeds,
-              high-resolution satellite imagery, and global search with advanced
-              filters. The free map stays free regardless.
+              high-resolution satellite imagery, and advanced search filters.
+              The free map stays free regardless.
             </p>
           </div>
         </div>

@@ -341,7 +341,7 @@ export default function DataminrAlternativesPage() {
             <p className="text-white/55 leading-relaxed mt-2">
               Pro adds premium intel feeds (cyber, GDELT, maritime, conflict,
               live news), the AI analyst assistant, high-resolution satellite
-              imagery, global search and the OSINT toolkit. Weekly $3.99,
+              imagery, advanced search filters and the OSINT toolkit. Weekly $3.99,
               monthly $9.99, annual $59.99 — the free globe stays free.
             </p>
           </div>

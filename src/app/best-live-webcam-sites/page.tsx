@@ -272,7 +272,7 @@ export default function BestLiveWebcamSitesPage() {
             map are free with no signup, and the optional Pro tier (weekly
             $3.99, monthly $9.99, annual $59.99) pays for intelligence tooling
             around the map — the OSINT toolkit, maritime and cyber/GDELT
-            intel, satellite imagery view, global search and the AI analyst —
+            intel, satellite imagery view, advanced search filters and the AI analyst —
             never for more cameras. Pay for a capability you can name, not
             for access to feeds that are already public.
           </p>

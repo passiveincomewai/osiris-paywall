@@ -279,8 +279,7 @@ export default function LiveuamapAlternativesPage() {
             The Pro tier adds the pieces professionals ask for: an AI analyst
             assistant that can summarize what you&apos;re looking at, premium
             intel feeds covering cyber, GDELT, maritime, conflict and live
-            news, high-resolution satellite imagery, and global search with
-            advanced filters. The free tier — the whole globe — stays free.
+            news, high-resolution satellite imagery, and advanced search filters. The free tier — the whole globe — stays free.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             {[
@@ -376,7 +375,7 @@ export default function LiveuamapAlternativesPage() {
             <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro add for conflict monitoring?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
               Pro adds live-news and conflict intel feeds, high-resolution
-              satellite imagery, the AI analyst assistant, global search, and
+              satellite imagery, the AI analyst assistant, advanced search filters, and
               the OSINT toolkit (Nmap, DNS, WHOIS, SSL). Pricing is weekly
               $3.99, monthly $9.99, or annual $59.99 — and the free map never
               gets paywalled behind it.

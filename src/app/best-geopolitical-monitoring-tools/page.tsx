@@ -257,8 +257,8 @@ export default function BestGeopoliticalMonitoringToolsPage() {
             (weekly $3.99, monthly $9.99, annual $59.99) adds the analyst
             layer: premium intel feeds spanning cyber, GDELT, maritime,
             conflict and live news; the AI analyst assistant to summarize
-            developing situations; high-resolution satellite imagery; global
-            search with advanced filters; and the in-browser OSINT toolkit
+            developing situations; high-resolution satellite imagery;
+            advanced search filters; and the in-browser OSINT toolkit
             (Nmap, DNS, WHOIS, SSL). It&apos;s the step between watching the
             world and working it.
           </p>
