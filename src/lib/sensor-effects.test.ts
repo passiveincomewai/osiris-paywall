@@ -3,7 +3,9 @@ import {
   clampIntensity,
   isLowPowerDevice,
   normalizeSensorEffect,
+  sensorEffectPlan,
   sensorFilterCss,
+  supportsSvgFilterReference,
   thermalTableValues,
 } from './sensor-effects';
 
@@ -80,5 +82,81 @@ describe('isLowPowerDevice', () => {
     expect(isLowPowerDevice({ innerWidth: 390, innerHeight: 844, hardwareConcurrency: 8 })).toBe(false);
     expect(isLowPowerDevice({ innerWidth: 1440, innerHeight: 900, hardwareConcurrency: 2 })).toBe(false);
     expect(isLowPowerDevice({ innerWidth: 390, innerHeight: 844 })).toBe(false); // cores unknown → assume capable
+  });
+});
+
+describe('supportsSvgFilterReference', () => {
+  // Regression coverage for the iOS failure: WebKit parses `filter: url(#…)`
+  // but never paints it on HTML elements, so thermal silently did nothing
+  // on iPhones. Every iOS browser is WebKit under the hood.
+  const SAFARI_IOS = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
+  const CHROME_IOS = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/126.0.6478.153 Mobile/15E148 Safari/604.1';
+  const SAFARI_MAC = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15';
+  const CHROME_DESKTOP = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
+  const CHROME_ANDROID = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36';
+  const FIREFOX = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14.5; rv:127.0) Gecko/20100101 Firefox/127.0';
+
+  it('is false for WebKit engines (Safari, and every iOS browser)', () => {
+    expect(supportsSvgFilterReference(SAFARI_IOS)).toBe(false);
+    expect(supportsSvgFilterReference(CHROME_IOS)).toBe(false);
+    expect(supportsSvgFilterReference(SAFARI_MAC)).toBe(false);
+  });
+
+  it('is true for Chromium and Firefox', () => {
+    expect(supportsSvgFilterReference(CHROME_DESKTOP)).toBe(true);
+    expect(supportsSvgFilterReference(CHROME_ANDROID)).toBe(true);
+    expect(supportsSvgFilterReference(FIREFOX)).toBe(true);
+  });
+});
+
+describe('thermal fallback (WebKit)', () => {
+  it('without SVG filter support, thermal is a visible CSS chain — never a url() reference', () => {
+    const css = sensorFilterCss({ mode: 'thermal', intensity: 1 }, { svgFilters: false });
+    expect(css).not.toContain('url(');
+    expect(css).toContain('grayscale(1)');
+    expect(css).toContain('sepia(1)');
+    expect(css.length).toBeGreaterThan(0);
+  });
+
+  it('with SVG filter support (default), thermal still rides the LUT', () => {
+    expect(sensorFilterCss({ mode: 'thermal', intensity: 1 })).toContain('url(#we-thermal-lut)');
+    expect(sensorFilterCss({ mode: 'thermal', intensity: 1 }, { svgFilters: true })).toContain('url(#we-thermal-lut)');
+  });
+});
+
+describe('sensorEffectPlan', () => {
+  it('off → clear everything', () => {
+    expect(sensorEffectPlan({ mode: 'off', intensity: 1 }, { lowPower: false, svgFilters: true }))
+      .toEqual({ result: 'off', filterCss: '', crtOverlay: false, crtOpacity: 0 });
+  });
+
+  it('low-power refuses with a cleared filter (the chip explains it)', () => {
+    const plan = sensorEffectPlan({ mode: 'night-vision', intensity: 1 }, { lowPower: true, svgFilters: true });
+    expect(plan.result).toBe('refused');
+    expect(plan.filterCss).toBe('');
+    expect(plan.crtOverlay).toBe(false);
+  });
+
+  it('a modern phone (small viewport, 6 cores) is NOT refused', () => {
+    const lowPower = isLowPowerDevice({ innerWidth: 390, innerHeight: 844, hardwareConcurrency: 6 });
+    const plan = sensorEffectPlan({ mode: 'night-vision', intensity: 1 }, { lowPower, svgFilters: false });
+    expect(plan.result).toBe('applied');
+    expect(plan.filterCss).toContain('sepia(1)');
+  });
+
+  it('thermal on WebKit applies the fallback chain, on Chromium the LUT', () => {
+    const webkit = sensorEffectPlan({ mode: 'thermal', intensity: 1 }, { lowPower: false, svgFilters: false });
+    expect(webkit.result).toBe('applied');
+    expect(webkit.filterCss).not.toContain('url(');
+    const chromium = sensorEffectPlan({ mode: 'thermal', intensity: 1 }, { lowPower: false, svgFilters: true });
+    expect(chromium.filterCss).toContain('url(#we-thermal-lut)');
+  });
+
+  it('CRT is the only mode that asks for the scanline overlay', () => {
+    const crt = sensorEffectPlan({ mode: 'crt', intensity: 0.5 }, { lowPower: false, svgFilters: true });
+    expect(crt.crtOverlay).toBe(true);
+    expect(crt.crtOpacity).toBeCloseTo(0.35 + 0.65 * 0.5);
+    const mono = sensorEffectPlan({ mode: 'monochrome', intensity: 0.5 }, { lowPower: false, svgFilters: true });
+    expect(mono.crtOverlay).toBe(false);
   });
 });

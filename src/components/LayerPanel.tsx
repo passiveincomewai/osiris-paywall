@@ -590,6 +590,11 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                       )}
                     </div>
                     <div className="flex flex-col gap-0.5">
+                      {/* Mobile only: sensor effects lead the DISPLAY group. In the
+                          bottom sheet they used to sit below every layer row — the
+                          last block of the last group in a 55vh drawer — which made
+                          them effectively undiscoverable on a phone. */}
+                      {group.label === 'DISPLAY' && sensorBlock}
                       {group.layers.map((layer) => {
                         /* Shown state, not stored state: a sub-layer reads OFF
                            while its parent is off (see layerShownActive). The
@@ -627,7 +632,6 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                         );
                       })}
                       {group.label === 'DISPLAY' && terrainDetails}
-                      {group.label === 'DISPLAY' && sensorBlock}
                     </div>
                   </motion.div>
                 )}

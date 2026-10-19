@@ -75,12 +75,31 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const f2 = (n: number) => Math.round(n * 100) / 100;
 
 /**
+ * Whether this browser engine actually APPLIES an SVG filter reference
+ * (`filter: url(#…)`) to an HTML element. WebKit — Safari on macOS/iOS and
+ * EVERY browser on iOS, since they are all WebKit under the hood — parses
+ * the declaration but paints nothing for HTML elements (SVG filter
+ * references only work on SVG elements there). Chromium and Firefox apply
+ * them. Detection is by engine tokens in the UA: a WebKit UA without a
+ * Chromium token is an engine that will silently ignore the reference.
+ */
+export function supportsSvgFilterReference(userAgent: string): boolean {
+  const ua = userAgent || '';
+  const webkit = /AppleWebKit/i.test(ua);
+  const chromium = /Chrome\/|Chromium\/|Edg\/|OPR\//i.test(ua);
+  return !(webkit && !chromium);
+}
+
+/**
  * The CSS `filter` value for a state ('' = no filter). Every numeric
  * parameter is lerped from its identity value by intensity, so intensity 0
  * is a true no-op look even with a mode selected. Thermal rides the SVG
- * lookup table instead (its intensity lives in the table values).
+ * lookup table where the engine applies SVG references; on engines that
+ * don't (WebKit — see supportsSvgFilterReference) it falls back to a
+ * heat-tint chain over luminance so the preset still visibly does
+ * something instead of silently painting nothing.
  */
-export function sensorFilterCss(state: SensorEffectState): string {
+export function sensorFilterCss(state: SensorEffectState, opts?: { svgFilters?: boolean }): string {
   const t = clampIntensity(state.intensity);
   switch (state.mode) {
     case 'off':
@@ -89,6 +108,12 @@ export function sensorFilterCss(state: SensorEffectState): string {
       // Sepia → hue-rotate into the greens → push saturation: phosphor NV.
       return `brightness(${f2(lerp(1, 1.15, t))}) contrast(${f2(lerp(1, 1.2, t))}) sepia(${f2(t)}) hue-rotate(${Math.round(lerp(0, 68, t))}deg) saturate(${f2(lerp(1, 2.6, t))})`;
     case 'thermal':
+      if (opts && opts.svgFilters === false) {
+        // WebKit fallback: luminance → hot orange/yellow tint (single-hue
+        // approximation of the false-colour ramp — still brightness-driven,
+        // still labelled false colour).
+        return `grayscale(${f2(t)}) contrast(${f2(lerp(1, 1.15, t))}) brightness(${f2(lerp(1, 1.02, t))}) sepia(${f2(t)}) hue-rotate(${Math.round(lerp(0, -24, t))}deg) saturate(${f2(lerp(1, 3.2, t))})`;
+      }
       return `url(#${THERMAL_FILTER_ID}) contrast(${f2(lerp(1, 1.08, t))})`;
     case 'monochrome':
       return `grayscale(${f2(t)}) contrast(${f2(lerp(1, 1.1, t))})`;
@@ -145,4 +170,49 @@ export function isLowPowerDevice(signals: {
   const mobileLike = signals.innerWidth < 768 || (signals.innerHeight < 500 && signals.innerWidth < 1024);
   const cores = typeof signals.hardwareConcurrency === 'number' ? signals.hardwareConcurrency : 8;
   return mobileLike && cores <= 4;
+}
+
+export type SensorApplyResult = 'off' | 'applied' | 'refused';
+
+export interface SensorEffectPlan {
+  result: SensorApplyResult;
+  /** CSS filter for the map SURFACE element ('' = clear the inline filter). */
+  filterCss: string;
+  /** Whether the CRT scanline overlay should be visible. */
+  crtOverlay: boolean;
+  /** Overlay opacity when shown (intensity-driven). */
+  crtOpacity: number;
+}
+
+/**
+ * The pure decision behind applying an effect to the DOM — kept separate
+ * from the DOM writes so the whole behaviour (refusal, thermal fallback,
+ * CRT overlay) is unit-testable without a browser.
+ *
+ * IMPORTANT — the DOM target this plan is written for is the map's canvas
+ * CONTAINER element (MapLibre's `.maplibregl-canvas-container`), NOT the
+ * <canvas> itself. Popups, controls and attribution are siblings of the
+ * canvas container inside the map container, so filtering it still leaves
+ * the interface untouched — and a plain HTML element is filtered reliably
+ * by every engine, including iOS Safari/WebKit, where a CSS filter on a
+ * full-screen WebGL canvas is not composited (the canvas is a texture
+ * layer; the original f87acef applier targeted the canvas and the effect
+ * silently never painted on iPhones while working on desktop Chrome).
+ */
+export function sensorEffectPlan(
+  state: SensorEffectState,
+  env: { lowPower: boolean; svgFilters: boolean },
+): SensorEffectPlan {
+  if (state.mode === 'off') {
+    return { result: 'off', filterCss: '', crtOverlay: false, crtOpacity: 0 };
+  }
+  if (env.lowPower) {
+    return { result: 'refused', filterCss: '', crtOverlay: false, crtOpacity: 0 };
+  }
+  return {
+    result: 'applied',
+    filterCss: sensorFilterCss(state, { svgFilters: env.svgFilters }),
+    crtOverlay: state.mode === 'crt',
+    crtOpacity: 0.35 + 0.65 * clampIntensity(state.intensity),
+  };
 }
