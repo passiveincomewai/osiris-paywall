@@ -34,7 +34,7 @@ export default function TrackingSection() {
         <SectionHeader
           eyebrow="Live Tracking"
           title="Track the Planet in Motion."
-          sub="Follow aircraft, satellites, and maritime activity from one interactive platform."
+          sub="Follow aircraft, satellites, maritime activity and live transit from one interactive platform."
         />
         <Reveal delay={0.1} className="mt-8">
           <TrackingDemoMount fallback={<StaticStage />} />

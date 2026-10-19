@@ -61,7 +61,7 @@ const OSINT_VISUALS: Record<string, React.ReactNode> = {
     /* eslint-disable-next-line @next/next/no-img-element -- static landing asset */
     <img
       src="/landing/osint-search.jpg"
-      alt="WorldEye search open on the globe — search is a Pro feature"
+      alt="WorldEye search open on the globe — basic search is free for every visitor"
       width={800}
       height={600}
       loading="lazy"

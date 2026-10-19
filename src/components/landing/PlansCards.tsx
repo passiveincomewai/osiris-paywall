@@ -28,6 +28,7 @@ const PRO_ROWS = [
   "OSINT toolkit",
   "Premium intel layers & live feeds",
   "Camera Recording Studio",
+  "Camera timelapse",
 ];
 
 export default function PlansCards() {

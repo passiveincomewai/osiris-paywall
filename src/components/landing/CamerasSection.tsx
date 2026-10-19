@@ -62,7 +62,7 @@ export default function CamerasSection() {
               76,000+ Live Cameras. One World.
             </h2>
             <p className="text-base md:text-lg text-white/60 leading-relaxed mt-3 max-w-2xl">
-              Explore cities, highways, mountains, beaches, and landmarks around the planet.
+              Explore cities, highways, mountains, beaches, and landmarks around the planet — every camera has a share link, so you can send someone straight to the exact view.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <GlobeHomeLink className="inline-flex items-center px-5 py-3 rounded-xl bg-[#0096FF] hover:bg-[#0aa5ff] text-white text-sm font-semibold transition">

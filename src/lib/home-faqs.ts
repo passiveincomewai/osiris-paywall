@@ -5,7 +5,7 @@
 export const HOME_FAQS: { q: string; a: string }[] = [
   {
     q: "Is WorldEye really free?",
-    a: "Yes. The live globe — the map, 76,000+ public cameras, flight and satellite tracking, weather radar, earthquakes and wildfires — is free to use with no account. WorldEye Pro is an optional subscription that adds the AI analyst, satellite map view, global search and premium intelligence feeds.",
+    a: "Yes. The live globe — the map, 76,000+ public cameras, flight and satellite tracking, live transit, weather radar, earthquakes, wildfires and basic search — is free to use with no account. WorldEye Pro is an optional subscription that adds the AI analyst, satellite map view, the live traffic layer, advanced search filters and premium intelligence feeds.",
   },
   {
     q: "Do I need an account to use WorldEye?",
@@ -17,7 +17,7 @@ export const HOME_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What does WorldEye Pro include, and what does it cost?",
-    a: "Pro adds the OI AI analyst, satellite map view, global site search and premium intel feeds such as cyber threats, maritime tracking and a live news feed. Plans are weekly at $3.99, monthly at $9.99 and annual at $59.99. The weekly plan starts with a 1-day free trial and the annual plan with a 3-day free trial, and you can cancel anytime in one click.",
+    a: "Pro adds the OI AI analyst, satellite map view, the live traffic layer, advanced search filters, the camera recording studio with timelapse, and premium intel feeds such as cyber threats, maritime tracking and a live news feed. Plans are weekly at $3.99, monthly at $9.99 and annual at $59.99. The weekly and monthly plans start with a 1-day free trial and the annual plan with a 3-day free trial, and you can cancel anytime in one click.",
   },
   {
     q: "Where do the live cameras come from?",

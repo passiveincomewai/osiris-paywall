@@ -25,8 +25,8 @@ export const OSINT_CARDS = [
   },
   {
     slug: "global-search",
-    title: "Global Search",
-    desc: "Search places and intel across the map.",
+    title: "Advanced Search",
+    desc: "Pro filters across places, cameras and intel — basic search is free.",
     href: "/features",
   },
   {
