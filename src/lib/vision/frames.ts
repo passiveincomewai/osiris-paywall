@@ -12,6 +12,7 @@
 import { getPayload, readSnapshot } from '@/lib/cctv-snapshot';
 import { haversine } from '@/lib/geo';
 import { safeFetch } from '@/lib/ssrf-guard';
+import { buildCatalogueHere } from './catalogue-build';
 
 export interface CatalogueCamera {
   id: string;
@@ -27,7 +28,7 @@ export interface CatalogueCamera {
   page?: string;
 }
 
-interface Index { cameras: Map<string, CatalogueCamera>; stills: CatalogueCamera[]; builtAt: number; at: number }
+interface Index { cameras: Map<string, CatalogueCamera>; stills: CatalogueCamera[]; builtAt: number; at: number; complete: boolean }
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
 const httpUrl = (v: string) => (/^https?:\/\/[^\s]+$/i.test(v) ? v : undefined);
@@ -65,33 +66,83 @@ let building: Promise<Index | null> | null = null;
 const REREAD_MS = 60_000;
 const DISK_MS = 5 * 60_000;
 
+let lastBuildAt = 0;
+/** True once this process has built the catalogue itself (see load()). */
+let builtHere = false;
+
+/**
+ * Build the catalogue in this process, at most once a minute: a cold
+ * instance pays for it once, and one whose build keeps failing is not
+ * retried on every request.
+ */
+async function buildHere(): Promise<void> {
+  if (Date.now() - lastBuildAt < REREAD_MS) return;
+  lastBuildAt = Date.now();
+  try {
+    await buildCatalogueHere();
+    builtHere = true;
+  } catch (error) {
+    console.warn('[OSIRIS] Vision could not build the camera catalogue:', error);
+  }
+}
+
 async function load(): Promise<Index | null> {
-  const payload = getPayload();
+  let payload = getPayload();
   let list: unknown[] = [];
   let builtAt = 0;
+  let complete = true;
+  if (payload && !payload.complete && builtHere) {
+    /* A cold build answers with whatever regions landed inside its budget
+       and lets the rest finish behind it. Rebuild before reading again, so
+       the late regions join this index instead of waiting for a payload
+       refresh nobody else will trigger in this process. */
+    await buildHere();
+    payload = getPayload();
+  }
   if (payload) {
     const body = JSON.parse(payload.json.toString('utf8')) as { cameras?: unknown[] };
     list = Array.isArray(body?.cameras) ? body.cameras : [];
     builtAt = payload.builtAt;
+    complete = payload.complete;
   } else {
     const saved = await readSnapshot();
-    if (!saved) return null;
-    list = Object.values(saved.regions).flat();
-    builtAt = saved.builtAt;
+    if (saved) {
+      list = Object.values(saved.regions).flat();
+      builtAt = saved.builtAt;
+    } else {
+      /* Nothing in memory and nothing on disk. On Vercel that is every
+         frame instance, permanently: the payload lives in the /api/cctv
+         function's memory, not this one's, and the disk snapshot is
+         git-ignored and never deployed — which is why the frame route
+         answered 503 "still loading" for every camera. The catalogue is
+         assembled from loaders in this repo, so build it here rather
+         than report it missing forever. */
+      await buildHere();
+      payload = getPayload();
+      if (!payload) return null;
+      const body = JSON.parse(payload.json.toString('utf8')) as { cameras?: unknown[] };
+      list = Array.isArray(body?.cameras) ? body.cameras : [];
+      builtAt = payload.builtAt;
+      complete = payload.complete;
+    }
   }
   const cameras = new Map<string, CatalogueCamera>();
   for (const raw of list) {
     const cam = cameraOf(raw);
     if (cam) cameras.set(cam.id, cam);
   }
-  return { cameras, stills: [...cameras.values()].filter(c => c.still), builtAt, at: Date.now() };
+  return { cameras, stills: [...cameras.values()].filter(c => c.still), builtAt, at: Date.now(), complete };
 }
 
 /** The camera catalogue, indexed by id. Null while it has never been built. */
 export async function catalogue(): Promise<Index | null> {
   const payload = getPayload();
   const age = index ? Date.now() - index.at : Infinity;
-  const stale = !index || (payload ? payload.builtAt !== index.builtAt && age > REREAD_MS : age > DISK_MS);
+  const stale = !index
+    || (payload ? payload.builtAt !== index.builtAt && age > REREAD_MS : age > DISK_MS)
+    /* A catalogue this process built for itself may have started partial
+       (regions still landing); keep re-reading it until it is whole. */
+    || (builtHere && !!index && !index.complete && age > REREAD_MS);
   if (!stale) return index;
   building ??= load().then(next => { if (next) index = next; return index; }).finally(() => { building = null; });
   return building;
@@ -207,6 +258,8 @@ export async function frameOf(cam: CatalogueCamera): Promise<Frame> {
 export function resetFrames() {
   index = null;
   building = null;
+  lastBuildAt = 0;
+  builtHere = false;
   held.clear();
   inflight.clear();
 }

@@ -18,6 +18,14 @@ vi.mock('@/lib/cctv-snapshot', () => ({
   readSnapshot: async () => snapshot,
 }));
 
+/* The in-process catalogue build is a seam of its own: by default it does
+   nothing (so "no catalogue anywhere" still means none), and a test can
+   make it produce the payload a real build would have. */
+let buildImpl: () => Promise<void> = async () => {};
+vi.mock('@/lib/vision/catalogue-build', () => ({
+  buildCatalogueHere: () => buildImpl(),
+}));
+
 import { cameraOf, catalogue, frameOf, resetFrames, sniffImage, stillOf, stillsNear } from './frames';
 import { GET } from '@/app/api/cctv/frame/route';
 
@@ -38,6 +46,7 @@ beforeEach(() => {
   reply = () => new Response(JPEG);
   payload = undefined;
   snapshot = null;
+  buildImpl = async () => {};
 });
 
 describe('the catalogue', () => {
@@ -64,6 +73,17 @@ describe('the catalogue', () => {
     const idx = await catalogue();
     expect(idx?.cameras.size).toBe(4);
     expect(idx?.stills.map(c => c.id)).toEqual(['madrid-a2', 'madrid-sky', 'tw-1']);
+  });
+
+  it('builds the catalogue in this process when neither a payload nor a snapshot exists', async () => {
+    /* The production failure this guards: on Vercel the frame function's
+       instance never shares memory with /api/cctv's and the disk snapshot
+       is never deployed, so both older sources are absent forever and the
+       route answered 503 for every camera. */
+    buildImpl = async () => { useCatalogue(); };
+    const idx = await catalogue();
+    expect(idx?.cameras.get('madrid-a2')?.name).toBe('A-2 km 3.29');
+    expect(idx?.cameras.size).toBe(4);
   });
 
   it('finds still cameras near a place, nearest first', async () => {

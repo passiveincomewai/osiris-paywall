@@ -13,7 +13,11 @@ import { getClientIp, isRateLimited } from '@/lib/ssrf-guard';
  * only cameras in OSIRIS's catalogue can be fetched.
  */
 export const dynamic = 'force-dynamic';
-export const maxDuration = 15;
+/* 60, not the few seconds a frame fetch needs: a cold instance may first
+   have to build the camera catalogue in this process (see
+   lib/vision/catalogue-build.ts), and that is a once-per-instance cost
+   the first request must be allowed to pay. */
+export const maxDuration = 60;
 
 const fail = (status: number, error: string) => Response.json({ error }, { status, headers: { 'Cache-Control': 'no-store' } });
 
