@@ -10,6 +10,7 @@ import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
 import OnboardingActivation from "./OnboardingActivation";
 import FlightCoverage from "./FlightCoverage";
+import CameraNetwork from "./CameraNetwork";
 import { Suspense } from "react";
 import MarketingStudio from "./MarketingStudio";
 import StudioCredits from "./StudioCredits";
@@ -943,6 +944,18 @@ export default async function AdminDashboardPage() {
             }
           >
             <FlightCoverage />
+          </Suspense>
+        </div>
+
+        <div className="mt-4">
+          <Suspense
+            fallback={
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm text-white/40">
+                📷 Camera Network — collecting this instance&apos;s catalogue and source health…
+              </div>
+            }
+          >
+            <CameraNetwork />
           </Suspense>
         </div>
 
