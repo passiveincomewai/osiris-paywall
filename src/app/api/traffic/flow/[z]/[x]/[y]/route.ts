@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   TOMTOM_PROXY_MIN_ZOOM, TOMTOM_PROXY_MAX_ZOOM, TOMTOM_TILE_TTL_MS,
 } from '@/lib/traffic/config';
+import { requestHasTrafficAccess } from '@/lib/traffic/access';
 
 /**
  * OSIRIS — TomTom Traffic Flow vector-tile proxy.
@@ -9,14 +10,20 @@ import {
  * The browser's MapLibre instance requests /api/traffic/flow/{z}/{x}/{y};
  * the TomTom key lives only in the TOMTOM_API_KEY server env var and is
  * attached here, upstream of the client. Layers of restraint, in order:
+ *   • Not a subscriber → 403 (traffic is a Pro layer; the panel lock is
+ *     the visible fence, this is the real one — and the answer is
+ *     no-store, so no cache can soften it).
  *   • No key configured → 204 (the layer runs its simulated model; the
  *     client learns this from /api/traffic/status and never adds the
  *     source in the first place — this is the belt-and-braces path).
  *   • Zoom outside the city band → 204 (bounds monthly tile spend).
  *   • Per-IP rate limit → 429 (a pan across a city is ~100 tiles; the
  *     allowance is several times that per minute).
- *   • In-instance tile cache (60 s, bounded) on top of the CDN's
- *     s-maxage=60, so a popular viewport costs one upstream pull.
+ *   • In-instance tile cache (60 s, bounded). Tile responses are
+ *     `private` since the layer became subscriber-only: a shared cache
+ *     must never serve a gated tile to a non-subscriber, so the CDN
+ *     no longer fronts this route — the instance cache still keeps a
+ *     popular viewport at one upstream pull per instance.
  *   • Upstream failure (bad key, outage) → 502 JSON; tiles simply don't
  *     render and the client falls back to the simulated model. The key
  *     never appears in any response, header, or error.
@@ -53,6 +60,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ z: s
   if (!Number.isInteger(z) || !Number.isInteger(x) || !Number.isInteger(y) || z < 0 || z > 22 || x < 0 || y < 0 || x >= 2 ** z || y >= 2 ** z) {
     return new NextResponse(null, { status: 400 });
   }
+  if (!(await requestHasTrafficAccess())) {
+    return NextResponse.json(
+      { error: 'subscription_required' },
+      { status: 403, headers: { 'Cache-Control': 'no-store' } },
+    );
+  }
   const key = process.env.TOMTOM_API_KEY;
   if (!key) return new NextResponse(null, { status: 204 });
   if (z < TOMTOM_PROXY_MIN_ZOOM || z > TOMTOM_PROXY_MAX_ZOOM) {
@@ -69,7 +82,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ z: s
   if (cached && Date.now() < cached.expiresAt) {
     return new NextResponse(cached.body, {
       status: 200,
-      headers: { 'Content-Type': cached.contentType, 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120', 'X-Traffic-Cache': 'hit' },
+      headers: { 'Content-Type': cached.contentType, 'Cache-Control': 'private, max-age=60, stale-while-revalidate=120', 'X-Traffic-Cache': 'hit' },
     });
   }
 
@@ -97,6 +110,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ z: s
   }
   return new NextResponse(body, {
     status: 200,
-    headers: { 'Content-Type': contentType, 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120', 'X-Traffic-Cache': 'miss' },
+    headers: { 'Content-Type': contentType, 'Cache-Control': 'private, max-age=60, stale-while-revalidate=120', 'X-Traffic-Cache': 'miss' },
   });
 }
