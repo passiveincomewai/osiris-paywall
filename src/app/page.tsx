@@ -708,6 +708,16 @@ export default function Dashboard() {
       .then((s) => setIsPremiumUser(s?.user?.subscriptionStatus === 'active'))
       .catch(() => {});
   }, []);
+  /* Traffic is a Pro layer: the panel shows non-subscribers a lock, and the
+     map must agree — a stored "traffic on" state (from when the layer was
+     free, or a lapsed subscription) never reaches the map for a
+     non-subscriber. The stored state itself is untouched, so the layer
+     comes back exactly as it was on subscribing. The panel keeps the raw
+     state; only the map sees this gated copy. */
+  const globeActiveLayers = useMemo(
+    () => (isPremiumUser ? activeLayers : { ...activeLayers, traffic: false, traffic_vehicles: false, traffic_congestion: false }),
+    [activeLayers, isPremiumUser],
+  );
   const [liveFeedUrl, setLiveFeedUrl] = useState<string | null>(null);
   const [liveFeedName, setLiveFeedName] = useState('');
   const [liveFeedEmbedAllowed, setLiveFeedEmbedAllowed] = useState(true);
@@ -1663,7 +1673,7 @@ export default function Dashboard() {
         <OsirisMap 
           key={osirisTheme}
           data={data} 
-          activeLayers={activeLayers} 
+          activeLayers={globeActiveLayers}
           projection={mapProjection === 'mercator' ? 'mercator' : 'globe'}
           terrainEnabled={activeLayers.terrain_elevation && mapProjection === 'globe'}
           terrainFocus={terrainFocus}

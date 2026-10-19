@@ -62,7 +62,7 @@ interface LayerGroupDef {
   layers: LayerDef[];
 }
 
-const LAYER_GROUPS: LayerGroupDef[] = [
+export const LAYER_GROUPS: LayerGroupDef[] = [
   {
     label: 'SDK',
     fullLabel: 'OSIRIS SDK',
@@ -170,9 +170,9 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     layers: [
       { key: 'transit', label: 'Live Transit', description: 'Live buses, trains & ferries · Salt Lake City · Seattle · Denver · Boston · Austin · Minneapolis–St. Paul · Toronto area · Netherlands · Norway · Queensland', dataKey: '' },
       { key: 'gbfs', label: 'Bike & Scooter Share', description: 'GBFS · systems worldwide', dataKey: '' },
-      { key: 'traffic', label: 'Traffic', description: 'Simulated vehicles on real roads · congestion overlay · city zoom', dataKey: '' },
-      { key: 'traffic_vehicles', label: 'Simulated Vehicles', dataKey: '', parent: 'traffic' },
-      { key: 'traffic_congestion', label: 'Congestion Overlay', dataKey: '', parent: 'traffic' },
+      { key: 'traffic', label: 'Traffic', description: 'Simulated vehicles on real roads · congestion overlay · city zoom', dataKey: '', premium: true },
+      { key: 'traffic_vehicles', label: 'Simulated Vehicles', dataKey: '', parent: 'traffic', premium: true },
+      { key: 'traffic_congestion', label: 'Congestion Overlay', dataKey: '', parent: 'traffic', premium: true },
     ],
   },
   {
@@ -199,6 +199,35 @@ export function layerShownActive(layer: Pick<LayerDef, 'key' | 'parent'>, active
   if (!activeLayers?.[layer.key]) return false;
   if (layer.parent && !activeLayers[layer.parent]) return false;
   return true;
+}
+
+/**
+ * A premium layer is locked for everyone who isn't a subscriber: the row
+ * shows a lock instead of a switch, and clicking it offers the upgrade
+ * (the /premium page). One definition for both panel layouts so desktop
+ * and mobile can never disagree about who is locked out.
+ */
+export function layerLocked(layer: Pick<LayerDef, 'premium'>, isPremiumUser: boolean): boolean {
+  return !!layer.premium && !isPremiumUser;
+}
+
+/**
+ * What a group's ALL / NONE switch may change. Switching a group OFF turns
+ * every layer off; switching ON skips layers locked for this viewer — the
+ * group switch must not do what the locked row itself refuses to do.
+ */
+export function groupTogglePatch(
+  layers: Pick<LayerDef, 'key' | 'premium'>[],
+  activeLayers: any,
+  isPremiumUser: boolean,
+): Record<string, boolean> {
+  const anyOn = layers.some((l) => !!activeLayers?.[l.key]);
+  const patch: Record<string, boolean> = {};
+  for (const l of layers) {
+    if (!anyOn && layerLocked(l, isPremiumUser)) continue;
+    patch[l.key] = !anyOn;
+  }
+  return patch;
 }
 
 /* ── Minimal Toggle Switch ── */
@@ -347,13 +376,9 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
 
   /** Switch a whole group at once — off if any are on, otherwise all on. */
   const toggleGroup = (layers: LayerDef[]) => {
-    const anyOn = layers.some(l => activeLayers[l.key]);
-    if (!anyOn && layers.some(l => l.key === 'terrain_elevation' || l.key === 'terrain_3d')) on3DModeSelected?.();
-    setActiveLayers((prev: any) => {
-      const next = { ...prev };
-      for (const l of layers) next[l.key] = !anyOn;
-      return next;
-    });
+    const patch = groupTogglePatch(layers, activeLayers, isPremiumUser);
+    if (patch.terrain_elevation === true || patch.terrain_3d === true) on3DModeSelected?.();
+    setActiveLayers((prev: any) => ({ ...prev, ...patch }));
   };
 
   /* Drop layers whose backing capability is not configured, then drop any group
@@ -396,7 +421,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                 const isLayerActive = layerShownActive(layer, activeLayers);
                 const count = getCount(layer.dataKey, layer.catKey);
                 const dormant = !!layer.parent && !activeLayers[layer.parent];
-                const locked = !!layer.premium && !isPremiumUser;
+                const locked = layerLocked(layer, isPremiumUser);
                 return (
                   <button
                     key={layer.key}
@@ -613,7 +638,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                         const isLayerActive = layerShownActive(layer, activeLayers);
                         const count = getCount(layer.dataKey, layer.catKey);
                         const dormant = !!layer.parent && !activeLayers[layer.parent];
-                        const locked = !!layer.premium && !isPremiumUser;
+                        const locked = layerLocked(layer, isPremiumUser);
 
                         return (
                           <button
