@@ -7,48 +7,75 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
     links: [
       ["Live Map", "/"],
       ["Features", "/features"],
+      ["Pricing", "/pricing"],
       ["Live Cameras", "/cameras"],
+      ["Cameras by Country", "/cameras/countries"],
+      ["Affiliates", "/affiliates"],
+    ],
+  },
+  {
+    title: "Trackers",
+    links: [
       ["Flight Tracker", "/live-flight-tracker"],
       ["Satellite Tracker", "/satellite-tracker"],
+      ["Ship Tracker", "/ship-tracker"],
       ["Earthquake Tracker", "/earthquake-tracker"],
-      ["Pricing", "/pricing"],
+      ["Weather Tracker", "/weather-tracker"],
+      ["Wildfire Tracker", "/wildfire-tracker"],
+      ["Hurricane Tracker", "/hurricane-tracker"],
+      ["Space Station Tracker", "/space-station-tracker"],
+      ["Cyber Threat Map", "/cyber-threat-map"],
+    ],
+  },
+  {
+    title: "Cameras",
+    links: [
+      ["Live Webcams", "/live-webcams"],
+      ["Traffic Cameras", "/live-traffic-cameras"],
+      ["City Webcams", "/world-city-webcams"],
+      ["Europe Cameras", "/europe-live-cameras"],
+      ["Beach Webcams", "/beach-webcams"],
+      ["Ski Webcams", "/ski-webcams"],
+      ["Airport Webcams", "/airport-webcams"],
+      ["Asia Webcams", "/asia-webcams"],
     ],
   },
   {
     title: "Resources",
     links: [
-      ["Use Cases", "/use-cases"],
       ["Blog", "/blog"],
+      ["Use Cases", "/use-cases"],
       ["FAQ", "/faq"],
       ["Changelog", "/changelog"],
-      ["About", "/about"],
-      ["Contact", "/contact"],
+      ["What is ADS-B?", "/what-is-ads-b"],
+      ["What is AIS?", "/what-is-ais"],
+      ["Best OSINT Tools", "/best-osint-tools"],
+      ["Free OSINT Tools", "/free-osint-tools"],
     ],
   },
   {
-    title: "Legal",
+    title: "Compare",
     links: [
-      ["Privacy Policy", "/privacy"],
-      ["Terms of Service", "/terms"],
-      ["Security", "/security"],
-      ["Affiliates", "/affiliates"],
-      ["Affiliate Terms", "/affiliates/terms"],
-    ],
-  },
-  {
-    title: "Alternatives & Comparisons",
-    links: [
-      ["Compare WorldEye", "/compare"],
+      ["All Comparisons", "/compare"],
+      ["God's Eye View", "/gods-eye-view"],
       ["God's Eye View Alternative", "/alternatives/gods-eye-view"],
       ["OSIRIS Alternative", "/alternatives/osiris"],
       ["World Monitor Alternative", "/alternatives/world-monitor"],
       ["GodsView AI Alternative", "/alternatives/godsview-ai"],
-      ["War Monitor Alternative", "/alternatives/war-monitor"],
-      ["Liveuamap Alternative", "/alternatives/liveuamap"],
       ["Flightradar24 Alternative", "/alternatives/flightradar24"],
       ["Google Earth Alternative", "/alternatives/google-earth"],
-      ["Best OSINT Tools", "/best-osint-tools"],
-      ["Free OSINT Tools", "/free-osint-tools"],
+      ["EarthCam Alternative", "/earthcam-alternative"],
+    ],
+  },
+  {
+    title: "Company & Legal",
+    links: [
+      ["About", "/about"],
+      ["Contact", "/contact"],
+      ["Privacy Policy", "/privacy"],
+      ["Terms of Service", "/terms"],
+      ["Security", "/security"],
+      ["Affiliate Terms", "/affiliates/terms"],
     ],
   },
 ];
@@ -63,7 +90,7 @@ export default function SiteFooter({
   return (
     <footer className="border-t border-white/10 mt-24">
       {/* Newsletter band */}
-      <div className="max-w-5xl mx-auto px-6 pt-12 pb-4">
+      <div className="max-w-6xl mx-auto px-6 pt-12 pb-4">
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 justify-between">
           <div>
             <p className="text-[11px] font-bold tracking-[0.2em] text-[#0096FF] mb-2">NEWSLETTER</p>
@@ -75,9 +102,11 @@ export default function SiteFooter({
           </div>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-5 gap-10">
-        <div className="col-span-2 md:col-span-1">
-          <Link href="/" className="flex items-center gap-2.5">
+
+      {/* Brand row */}
+      <div className="max-w-6xl mx-auto px-6 pt-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div className="max-w-md">
+          <Link href="/" className="inline-flex items-center gap-2.5">
             <img
               src="/worldeye-eye.png?v=4"
               alt="WorldEye"
@@ -95,40 +124,31 @@ export default function SiteFooter({
             Live planetary intelligence. The map is free for everyone — Pro funds
             the infrastructure.
           </p>
-          <div className="flex flex-wrap items-center gap-2 mt-5">
-            <Link
-              href="/signin"
-              className="inline-flex items-center px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/60 hover:text-white hover:border-white/25 transition"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#0096FF] hover:bg-[#0aa5ff] text-xs text-white font-semibold transition"
-            >
-              Sign up
-            </Link>
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/50 hover:text-white hover:border-white/25 transition"
-              title="Admin dashboard"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="9" rx="1" />
-                <rect x="14" y="3" width="7" height="5" rx="1" />
-                <rect x="14" y="12" width="7" height="9" rx="1" />
-                <rect x="3" y="16" width="7" height="5" rx="1" />
-              </svg>
-              Admin
-            </Link>
-          </div>
         </div>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            href="/signin"
+            className="inline-flex items-center px-3.5 py-2 rounded-lg border border-white/10 text-xs text-white/60 hover:text-white hover:border-white/25 transition"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="inline-flex items-center px-3.5 py-2 rounded-lg bg-[#0096FF] hover:bg-[#0aa5ff] text-xs text-white font-semibold transition"
+          >
+            Sign up
+          </Link>
+        </div>
+      </div>
+
+      {/* Link columns */}
+      <nav aria-label="Footer" className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-x-6 gap-y-10">
         {COLUMNS.map((col) => (
-          <nav key={col.title} aria-label={col.title}>
-            <p className="text-[11px] font-bold tracking-[0.2em] text-white/50 mb-4">
+          <div key={col.title}>
+            <p className="text-[11px] font-bold tracking-[0.2em] text-white/60 mb-4">
               {col.title.toUpperCase()}
             </p>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {col.links.map(([label, href]) => (
                 <li key={href + label}>
                   <Link
@@ -140,13 +160,27 @@ export default function SiteFooter({
                 </li>
               ))}
             </ul>
-          </nav>
+          </div>
         ))}
-      </div>
+      </nav>
+
+      {/* Bottom bar */}
       <div className="border-t border-white/5">
-        <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/50">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/50">
           <span>© 2026 WorldEye. All rights reserved.</span>
           <span className="hidden sm:inline">Live data from public sources worldwide.</span>
+        </div>
+        <div className="max-w-6xl mx-auto px-6 pb-6 -mt-2 text-center md:text-left text-[11px] text-white/50">
+          Built on the open-source{" "}
+          <a
+            href="https://github.com/simplifaisoul/osiris"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-white/25 underline-offset-2 hover:text-white transition"
+          >
+            OSIRIS
+          </a>{" "}
+          platform · MIT License
         </div>
       </div>
     </footer>
