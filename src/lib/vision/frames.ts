@@ -89,6 +89,24 @@ async function buildHere(): Promise<void> {
   }
 }
 
+let fastlaneModule: Promise<typeof import('./catalogue-fastlane')> | null = null;
+
+/** The fast lane (lib/vision/catalogue-fastlane), imported on demand: its
+ *  module graph is the in-repo catalogue data, which only a process that
+ *  is actually building an index should have to load. */
+function fastlaneImport() {
+  fastlaneModule ??= import('./catalogue-fastlane');
+  return fastlaneModule;
+}
+
+async function fastlaneStatics(): Promise<unknown[]> {
+  try { return await (await fastlaneImport()).fastlaneStatics(); } catch { return []; }
+}
+
+async function fastlaneFaa(): Promise<unknown[]> {
+  try { return await (await fastlaneImport()).fastlaneFaa(); } catch { return []; }
+}
+
 async function load(): Promise<Index | null> {
   let payload = getPayload();
   let list: unknown[] = [];
@@ -104,9 +122,13 @@ async function load(): Promise<Index | null> {
   }
   if (payload) {
     const body = JSON.parse(payload.json.toString('utf8')) as { cameras?: unknown[] };
-    list = Array.isArray(body?.cameras) ? body.cameras : [];
+    const served = Array.isArray(body?.cameras) ? body.cameras : [];
     builtAt = payload.builtAt;
     complete = payload.complete;
+    /* The in-repo loaders ride underneath the payload: they answer at once
+       even while the payload is still filling, and the payload's own
+       record wins wherever both hold the same camera. */
+    list = [...(await fastlaneStatics()), ...served];
   } else {
     const saved = await readSnapshot();
     if (saved) {
@@ -120,37 +142,55 @@ async function load(): Promise<Index | null> {
          answered 503 "still loading" for every camera. The catalogue is
          assembled from loaders in this repo, so build it here rather
          than report it missing forever. */
+      /* The FAA fetch starts before the build: it is the one live source
+         worth waiting for, and it gets the whole build to land in. */
+      const faaState: { list: unknown[] | null } = { list: null };
+      let faaMerged = false;
+      void fastlaneFaa().then(l => { faaState.list = l; });
       await buildHere();
       payload = getPayload();
-      if (!payload) return null;
-      const body = JSON.parse(payload.json.toString('utf8')) as { cameras?: unknown[] };
-      list = Array.isArray(body?.cameras) ? body.cameras : [];
-      builtAt = payload.builtAt;
-      complete = payload.complete;
+      const statics = await fastlaneStatics();
+      list = [...statics];
+      if (payload) {
+        const body = JSON.parse(payload.json.toString('utf8')) as { cameras?: unknown[] };
+        list.push(...(Array.isArray(body?.cameras) ? body.cameras : []));
+        builtAt = payload.builtAt;
+        complete = payload.complete;
+      } else {
+        complete = false;
+      }
+      if (faaState.list?.length) { list.push(...faaState.list); faaMerged = true; }
+      if (!payload && !statics.length && !faaState.list?.length) return null;
       /* A cold build answers with the regions that landed inside its
          budget; the rest keep fetching behind it, slowest last. Answering
          from that partial catalogue would report cameras that exist as
          missing, so the first request waits — bounded — while the build
          finishes filling. Each rebuild just re-reads the sources that
          have landed, so it is cheap; the parse is only redone when the
-         catalogue actually grew. If the deadline passes the partial
-         catalogue is served and later reads keep completing it. */
+         catalogue actually grew. The wait ends when the catalogue is
+         whole, when it stops growing (what is left is backed off or
+         hung, and this request should not wait on it), or at the
+         deadline; later reads keep completing it either way. */
       const chaseUntil = Date.now() + CHASE_MS;
+      let stalls = 0;
       while (!complete && Date.now() < chaseUntil) {
         await new Promise(resolve => setTimeout(resolve, 1500));
         try {
           await buildCatalogueHere();
         } catch { /* a failed rebuild leaves the partial catalogue in place */ }
+        if (faaState.list?.length && !faaMerged) { list.push(...faaState.list); faaMerged = true; }
         const next = getPayload();
-        if (!next) break;
-        const grew = next.total !== payload.total;
+        if (!next) { if (++stalls >= 3) break; continue; }
+        const grew = next.total !== (payload?.total ?? -1);
         payload = next;
         builtAt = next.builtAt;
         complete = next.complete;
         if (grew || complete) {
+          stalls = 0;
           const grown = JSON.parse(next.json.toString('utf8')) as { cameras?: unknown[] };
-          list = Array.isArray(grown?.cameras) ? grown.cameras : [];
-        }
+          const served = Array.isArray(grown?.cameras) ? grown.cameras : [];
+          list = [...statics, ...served, ...(faaMerged && faaState.list ? faaState.list : [])];
+        } else if (++stalls >= 3) break;
       }
       lastBuildAt = Date.now();
     }

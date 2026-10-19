@@ -26,6 +26,15 @@ vi.mock('@/lib/vision/catalogue-build', () => ({
   buildCatalogueHere: () => buildImpl(),
 }));
 
+/* The fast lane (in-repo loaders, called directly) is likewise a seam:
+   empty by default, so the payload/snapshot cases above mean what they
+   meant before it existed. */
+let staticsImpl: () => Promise<unknown[]> = async () => [];
+vi.mock('@/lib/vision/catalogue-fastlane', () => ({
+  fastlaneStatics: () => staticsImpl(),
+  fastlaneFaa: async () => [],
+}));
+
 import { cameraOf, catalogue, frameOf, resetFrames, sniffImage, stillOf, stillsNear } from './frames';
 import { GET } from '@/app/api/cctv/frame/route';
 
@@ -47,6 +56,7 @@ beforeEach(() => {
   payload = undefined;
   snapshot = null;
   buildImpl = async () => {};
+  staticsImpl = async () => [];
 });
 
 describe('the catalogue', () => {
@@ -85,6 +95,17 @@ describe('the catalogue', () => {
     expect(idx?.cameras.get('madrid-a2')?.name).toBe('A-2 km 3.29');
     expect(idx?.cameras.size).toBe(4);
   });
+
+  it('indexes the in-repo loaders directly when no payload ever appears', async () => {
+    /* The harvest shards and curated lists sit at the back of the
+       catalogue route's pooled queue, behind slow upstream fetches; the
+       frame catalogue reads those loaders itself so their cameras are
+       indexed on a cold instance at once, payload or no payload. */
+    staticsImpl = async () => CAMERAS;
+    const idx = await catalogue();
+    expect(idx?.cameras.get('madrid-a2')?.name).toBe('A-2 km 3.29');
+    expect(idx?.cameras.size).toBe(4);
+  }, 20_000);
 
   it('finds still cameras near a place, nearest first', async () => {
     useCatalogue();
