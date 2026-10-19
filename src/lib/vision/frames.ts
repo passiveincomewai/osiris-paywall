@@ -65,6 +65,9 @@ let building: Promise<Index | null> | null = null;
 /** The catalogue is re-read when it has been rebuilt, at most once a minute; from disk, every five. */
 const REREAD_MS = 60_000;
 const DISK_MS = 5 * 60_000;
+/** How long a cold instance's first catalogue read may wait for the build
+ *  it triggered to finish filling (see load()). */
+const CHASE_MS = 45_000;
 
 let lastBuildAt = 0;
 /** True once this process has built the catalogue itself (see load()). */
@@ -124,6 +127,32 @@ async function load(): Promise<Index | null> {
       list = Array.isArray(body?.cameras) ? body.cameras : [];
       builtAt = payload.builtAt;
       complete = payload.complete;
+      /* A cold build answers with the regions that landed inside its
+         budget; the rest keep fetching behind it, slowest last. Answering
+         from that partial catalogue would report cameras that exist as
+         missing, so the first request waits — bounded — while the build
+         finishes filling. Each rebuild just re-reads the sources that
+         have landed, so it is cheap; the parse is only redone when the
+         catalogue actually grew. If the deadline passes the partial
+         catalogue is served and later reads keep completing it. */
+      const chaseUntil = Date.now() + CHASE_MS;
+      while (!complete && Date.now() < chaseUntil) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+          await buildCatalogueHere();
+        } catch { /* a failed rebuild leaves the partial catalogue in place */ }
+        const next = getPayload();
+        if (!next) break;
+        const grew = next.total !== payload.total;
+        payload = next;
+        builtAt = next.builtAt;
+        complete = next.complete;
+        if (grew || complete) {
+          const grown = JSON.parse(next.json.toString('utf8')) as { cameras?: unknown[] };
+          list = Array.isArray(grown?.cameras) ? grown.cameras : [];
+        }
+      }
+      lastBuildAt = Date.now();
     }
   }
   const cameras = new Map<string, CatalogueCamera>();

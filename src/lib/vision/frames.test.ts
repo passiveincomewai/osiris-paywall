@@ -11,7 +11,7 @@ vi.mock('@/lib/ssrf-guard', async importOriginal => ({
   },
 }));
 
-let payload: { json: Buffer; builtAt: number } | undefined;
+let payload: { json: Buffer; builtAt: number; total: number; complete: boolean } | undefined;
 let snapshot: { builtAt: number; regions: Record<string, unknown[]> } | null = null;
 vi.mock('@/lib/cctv-snapshot', () => ({
   getPayload: () => payload,
@@ -38,7 +38,7 @@ const CAMERAS = [
   { id: 'bad', name: 'no coords', lat: 'x', lng: 1 },
 ];
 
-const useCatalogue = (cams: unknown[] = CAMERAS, builtAt = 1) => { payload = { json: Buffer.from(JSON.stringify({ cameras: cams })), builtAt }; };
+const useCatalogue = (cams: unknown[] = CAMERAS, builtAt = 1) => { payload = { json: Buffer.from(JSON.stringify({ cameras: cams })), builtAt, total: cams.length, complete: true }; };
 
 beforeEach(() => {
   resetFrames();
@@ -157,6 +157,14 @@ describe('GET /api/cctv/frame', () => {
     expect((await get('?id=burgas')).status).toBe(422);
     reply = () => new Response('', { status: 500 });
     expect((await get('?id=tw-1')).status).toBe(502);
+  });
+
+  it('answers 422, not 404 or 503, for an FAA camera whose still is a resolver path', async () => {
+    /* FAA records point feed_url at our own /api/cctv/faa-image resolver,
+       which stillOf cannot treat as a fetchable still — the honest answer
+       is "no still frame", and reaching it proves the id resolved. */
+    useCatalogue([{ id: 'faa-10915', name: 'Birchwood — Camera 2', city: 'Anchorage', country: 'US', source: 'FAA WeatherCams', lat: 61.15, lng: -149.85, feed_url: '/api/cctv/faa-image/10915', stream_type: 'jpg' }]);
+    expect((await get('?id=faa-10915')).status).toBe(422);
   });
 
   it('limits how fast one visitor can ask', async () => {
