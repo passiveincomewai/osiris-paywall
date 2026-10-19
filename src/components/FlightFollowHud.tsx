@@ -13,7 +13,7 @@
 // imply a live video feed from the aircraft — there isn't one.
 
 import { useEffect, useState } from 'react';
-import { Plane, X } from 'lucide-react';
+import { Lock, Plane, X } from 'lucide-react';
 import {
   FOLLOW_HONESTY_TAG,
   FOLLOW_MODES,
@@ -21,6 +21,13 @@ import {
   type FollowHudData,
   type FollowMode,
 } from '@/lib/flights/follow';
+import {
+  FLIGHT_PATH_FLOWN_LABEL,
+  FLIGHT_PATH_LOCK_LABEL,
+  FLIGHT_PATH_ROUTE_LABEL,
+  FLIGHT_PATH_ROUTE_UNAVAILABLE,
+  type FlightPathHudData,
+} from '@/lib/flights/path';
 
 interface FlightFollowHudProps {
   /** Latest follow snapshot, written by the map render loop. */
@@ -30,12 +37,17 @@ interface FlightFollowHudProps {
   onModeChange: (mode: FollowMode) => void;
   /** Exit follow and restore the pre-follow camera. */
   onExit: () => void;
+  /** Premium path snapshot (planned route + session trail), updated by
+   *  the map at poll cadence. Null hides the section entirely. */
+  path?: FlightPathHudData | null;
+  /** Upgrade affordance for the locked path section. */
+  onUpgradePath?: () => void;
 }
 
 const modeBtnCls =
   'px-2 py-1 rounded border text-[9px] font-mono uppercase tracking-wider transition-colors';
 
-export default function FlightFollowHud({ hudRef, target, mode, onModeChange, onExit }: FlightFollowHudProps) {
+export default function FlightFollowHud({ hudRef, target, mode, onModeChange, onExit, path, onUpgradePath }: FlightFollowHudProps) {
   const [snap, setSnap] = useState<FollowHudData | null>(null);
 
   useEffect(() => {
@@ -125,6 +137,75 @@ export default function FlightFollowHud({ hudRef, target, mode, onModeChange, on
           Exit — restore view
         </button>
       </div>
+
+      {path && path.access !== 'pro' && (
+        <div className="mt-2 rounded-md border border-amber-300/30 bg-amber-300/[0.06] px-2 py-1.5">
+          <div className="flex items-center gap-1.5">
+            <Lock className="w-3 h-3 text-amber-200/90 flex-shrink-0" />
+            <span className="text-[9px] font-mono font-bold tracking-[0.14em] text-amber-100">
+              {FLIGHT_PATH_LOCK_LABEL}
+            </span>
+            <button
+              type="button"
+              onClick={onUpgradePath}
+              className="ml-auto px-2 py-0.5 rounded border border-amber-300/50 text-[8.5px] font-mono uppercase tracking-wider text-amber-100 hover:bg-amber-300/15 transition-colors"
+            >
+              Upgrade
+            </button>
+          </div>
+          <p className="mt-1 text-[8.5px] font-mono leading-relaxed text-white/45">
+            See the whole flight path for the aircraft you follow — the scheduled
+            route and the track it has actually flown.
+          </p>
+        </div>
+      )}
+
+      {path && path.access === 'pro' && (
+        <div className="mt-2 rounded-md border border-white/10 bg-white/[0.03] px-2 py-1.5" data-flight-path-panel>
+          <div className="flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="inline-block w-4 flex-shrink-0 border-t-2 border-dashed border-[#FFB300]"
+            />
+            <span className="text-[8.5px] font-mono font-bold tracking-[0.14em] text-amber-100">
+              {FLIGHT_PATH_ROUTE_LABEL}
+            </span>
+            {path.routeStatus === 'found' && path.originCode && path.destinationCode ? (
+              <span className="ml-auto text-[9px] font-mono text-white/80 tabular-nums">
+                {path.originCode} → {path.destinationCode}
+                {path.progressPct != null ? ` · ${path.progressPct}%` : ''}
+              </span>
+            ) : (
+              <span className="ml-auto text-[8.5px] font-mono text-white/40">
+                {path.routeStatus === 'loading' || path.routeStatus === 'idle'
+                  ? 'RESOLVING…'
+                  : 'UNAVAILABLE'}
+              </span>
+            )}
+          </div>
+          {path.routeStatus === 'found' && path.progressPct != null && (
+            <div className="mt-1 h-[3px] rounded bg-white/10 overflow-hidden">
+              <div className="h-full bg-[#FFB300]" style={{ width: `${path.progressPct}%` }} />
+            </div>
+          )}
+          {path.routeStatus === 'unavailable' && (
+            <p className="mt-1 text-[8.5px] font-mono leading-relaxed tracking-[0.06em] text-amber-200/80">
+              {FLIGHT_PATH_ROUTE_UNAVAILABLE}
+            </p>
+          )}
+          <div className="mt-1.5 flex items-center gap-1.5">
+            <span aria-hidden className="inline-block w-4 flex-shrink-0 border-t-2 border-[#00E5FF]" />
+            <span className="text-[8.5px] font-mono font-bold tracking-[0.14em] text-cyan-100">
+              {FLIGHT_PATH_FLOWN_LABEL}
+            </span>
+            <span className="ml-auto text-[8.5px] font-mono text-white/40 tabular-nums">
+              {path.trailPoints > 0
+                ? `${path.trailPoints} FIX${path.trailPoints === 1 ? '' : 'ES'} SINCE FOLLOW STARTED`
+                : 'NO FIXES RECORDED YET'}
+            </span>
+          </div>
+        </div>
+      )}
       <p className="mt-1.5 text-[8.5px] font-mono text-white/30">
         Drag the map to release the follow and keep the camera where it is.
       </p>

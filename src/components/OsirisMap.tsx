@@ -28,6 +28,11 @@ import {
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
   type FlightFollowState, type FollowHudData, type FollowMode, type SavedCameraState,
 } from '@/lib/flights/follow';
+import {
+  beginRouteFetch, createFlightPath, flightPathAccess, flightPathFeatures, flightPathHudData,
+  noteFlightPathFix, parseFlightRouteResponse, resolveFlightPathRoute,
+  type FlightPathAccess, type FlightPathHudData, type FlightPathState,
+} from '@/lib/flights/path';
 import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import { selectAgenciesForView } from '@/lib/transit/relevance';
@@ -459,6 +464,115 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   /** Last aircraft clicked on the globe — the Director preset's target. */
   const [selectedFlight, setSelectedFlight] = useState<{ icao24: string; callsign: string } | null>(null);
 
+  // ── Premium flight path (lib/flights/path) ──
+  // While a Pro user follows an aircraft, the globe also draws its whole
+  // path: the scheduled great-circle route (ROUTE — PLANNED, from
+  // /api/flight-route) and the trail of reported fixes recorded since
+  // this follow began (FLOWN — LIVE TRACK). Follow itself stays free;
+  // only the path is gated, by the same session-JWT check the globe uses
+  // everywhere else (subscriptionStatus === 'active', trials included).
+  const flightPathRef = useRef<FlightPathState | null>(null);
+  const flightPathAccessRef = useRef<FlightPathAccess>('unknown');
+  const [flightPathAccessState, setFlightPathAccessState] = useState<FlightPathAccess>('unknown');
+  const [flightPathUi, setFlightPathUi] = useState<FlightPathHudData | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    fetch('/api/auth/session', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        if (!live) return;
+        const a = flightPathAccess(s);
+        flightPathAccessRef.current = a;
+        setFlightPathAccessState(a);
+      })
+      .catch(() => {
+        if (!live) return;
+        flightPathAccessRef.current = 'signed-out';
+        setFlightPathAccessState('signed-out');
+      });
+    return () => { live = false; };
+  }, []);
+
+  const syncFlightPathUi = useCallback(() => {
+    if (flightFollowRef.current.phase === 'idle' || !flightPathRef.current) {
+      setFlightPathUi(null);
+      return;
+    }
+    const hud = flightFollowHudRef.current;
+    setFlightPathUi(flightPathHudData(
+      flightPathRef.current,
+      flightPathAccessRef.current,
+      hud ? { lng: hud.lng, lat: hud.lat } : null,
+    ));
+  }, []);
+
+  // Access resolving (or upgrading) mid-follow: the HUD catches up here;
+  // the drive loop's fetch trigger does the rest.
+  useEffect(() => { syncFlightPathUi(); }, [flightPathAccessState, syncFlightPathUi]);
+
+  /** Push the current path state into the map's GeoJSON source, creating
+   *  source + layers on first use. Lines update on poll cadence (trail
+   *  sampling, route resolution) — never per render frame. */
+  const syncFlightPathLayer = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const SRC = 'flight-path';
+    const state = flightPathRef.current;
+    const show = !!state && flightPathAccessRef.current === 'pro';
+    const hud = flightFollowHudRef.current;
+    const features = show && state
+      ? flightPathFeatures(state, hud ? { lng: hud.lng, lat: hud.lat } : null)
+      : [];
+    const fc = { type: 'FeatureCollection' as const, features };
+    const src = map.getSource(SRC) as maplibregl.GeoJSONSource | undefined;
+    if (!src) {
+      if (!show || !map.isStyleLoaded()) return;
+      map.addSource(SRC, { type: 'geojson', data: fc as never });
+      const beforeId = map.getLayer('fl-commercial') ? 'fl-commercial' : undefined;
+      map.addLayer({
+        id: 'flight-path-route', type: 'line', source: SRC,
+        filter: ['==', ['get', 'kind'], 'route'],
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#FFB300', 'line-width': 2, 'line-opacity': 0.8, 'line-dasharray': [2, 2] },
+      }, beforeId);
+      map.addLayer({
+        id: 'flight-path-flown', type: 'line', source: SRC,
+        filter: ['==', ['get', 'kind'], 'flown'],
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#00E5FF', 'line-width': 2.5, 'line-opacity': 0.9 },
+      }, beforeId);
+      map.addLayer({
+        id: 'flight-path-endpoints', type: 'circle', source: SRC,
+        filter: ['match', ['get', 'kind'], ['origin', 'destination'], true, false],
+        paint: {
+          'circle-radius': 4.5, 'circle-color': '#FFFFFF',
+          'circle-stroke-width': 2, 'circle-stroke-color': '#FFB300',
+        },
+      }, beforeId);
+      map.addLayer({
+        id: 'flight-path-progress', type: 'circle', source: SRC,
+        filter: ['==', ['get', 'kind'], 'progress'],
+        paint: {
+          'circle-radius': 4, 'circle-color': '#00E5FF',
+          'circle-stroke-width': 1.5, 'circle-stroke-color': '#FFFFFF',
+        },
+      }, beforeId);
+      map.addLayer({
+        id: 'flight-path-endpoint-labels', type: 'symbol', source: SRC,
+        filter: ['match', ['get', 'kind'], ['origin', 'destination'], true, false],
+        layout: {
+          'text-field': ['get', 'label'], 'text-size': 10,
+          'text-font': ['Open Sans Bold'], 'text-offset': [0, 1.5],
+          'text-allow-overlap': true,
+        },
+        paint: { 'text-color': '#FFB300', 'text-halo-color': '#0C0E1A', 'text-halo-width': 1.5 },
+      }, beforeId);
+      return;
+    }
+    src.setData(fc as never);
+  }, []);
+
   const showFlightFollowNotice = useCallback((text: string) => {
     setFlightFollowNotice(text);
     if (flightFollowNoticeTimer.current) clearTimeout(flightFollowNoticeTimer.current);
@@ -471,6 +585,10 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     flightFollowRef.current = IDLE_FLIGHT_FOLLOW;
     flightFollowHudRef.current = null;
     setFlightFollowUi(null);
+    // Exiting follow clears the premium path with it.
+    flightPathRef.current = null;
+    setFlightPathUi(null);
+    syncFlightPathLayer();
     if (st.phase === 'idle') return;
     if (map) {
       // Restore the pitch limit follow raised — but only if it is still
@@ -485,7 +603,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       }
     }
     if (opts?.notice) showFlightFollowNotice(opts.notice);
-  }, [showFlightFollowNotice]);
+  }, [showFlightFollowNotice, syncFlightPathLayer]);
 
   const engageFlightFollow = useCallback((icao24: string, callsign?: string) => {
     const map = mapRef.current;
@@ -510,8 +628,13 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     flightFollowRef.current = startFollow({ icao24, callsign: cs }, savedCamera, Date.now(), mode);
     flightFollowHudRef.current = null;
     setFlightFollowUi({ icao24, callsign: cs, mode });
+    // A fresh path per followed aircraft: switching targets swaps the
+    // path (the route fetch + trail start over for the new aircraft).
+    flightPathRef.current = createFlightPath(icao24, cs);
+    syncFlightPathLayer();
+    syncFlightPathUi();
     popupRef.current?.remove();
-  }, []);
+  }, [syncFlightPathLayer, syncFlightPathUi]);
 
   const setFlightFollowMode = useCallback((mode: FollowMode) => {
     const st = flightFollowRef.current;
@@ -576,6 +699,41 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     }
     if (fix) {
       flightFollowRef.current = noteFollowSeen(st, fix, now);
+      // Premium path: resolve the scheduled route once per follow (Pro
+      // only — free users get the lock in the HUD, not the API spend),
+      // and re-create the layers if a basemap switch wiped the source.
+      const ps = flightPathRef.current;
+      if (ps && ps.icao24 === hex) {
+        if (ps.routeStatus === 'idle' && flightPathAccessRef.current === 'pro') {
+          flightPathRef.current = beginRouteFetch(ps);
+          syncFlightPathUi();
+          const routeParams = new URLSearchParams({
+            callsign: (fix.callsign || targetRef.callsign || '').replace(/\s+/g, ''),
+            icao24: hex,
+            lat: String(fix.lat),
+            lng: String(fix.lng),
+            speed: String(fix.speed_knots || 0),
+          });
+          fetch(`/api/flight-route?${routeParams}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((json) => {
+              const curPath = flightPathRef.current;
+              if (!curPath || curPath.icao24 !== hex) return; // follow moved on
+              flightPathRef.current = resolveFlightPathRoute(curPath, parseFlightRouteResponse(json));
+              syncFlightPathLayer();
+              syncFlightPathUi();
+            })
+            .catch(() => {
+              const curPath = flightPathRef.current;
+              if (!curPath || curPath.icao24 !== hex) return;
+              flightPathRef.current = resolveFlightPathRoute(curPath, null);
+              syncFlightPathLayer();
+              syncFlightPathUi();
+            });
+        } else if (flightPathAccessRef.current === 'pro' && !map.getSource('flight-path')) {
+          syncFlightPathLayer();
+        }
+      }
       const s2 = flightFollowRef.current;
       const target = followCameraTarget(s2.mode, fix, now - s2.modeSince, map.getBearing());
       map.easeTo({
@@ -609,7 +767,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         endFlightFollow({ notice: `${targetRef.callsign} LEFT LIVE COVERAGE — FOLLOW ENDED` });
       }
     }
-  }, [endFlightFollow]);
+  }, [endFlightFollow, syncFlightPathLayer, syncFlightPathUi]);
   /* The Live Alert pins currently drawn, and the opener for one of them, so
      the feed's locate button can land on a pin and open it. */
   const alertPinsRef = useRef<AlertPinFeature[]>([]);
@@ -1793,7 +1951,10 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           </div>
           <button onclick="window.osirisWatchFlight && window.osirisWatchFlight({ icao24: '${idSafe(p.icao24||'')}', callsign: '${idSafe(cs)}' })" style="width:100%;margin-top:8px;padding:6px 12px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.35);color:#7FE9FF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">+ WATCH THIS AIRCRAFT</button>
           ${p.icao24 ? `<button onclick="window.__weFlightFollowToggle && window.__weFlightFollowToggle('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,180,0,0.10);border:1px solid rgba(255,180,0,0.40);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">${followingThis ? '■ STOP FOLLOWING' : '✈ FOLLOW AIRCRAFT — CHASE CAMERA'}</button>` : ''}
-          <button onclick="window.__weFlightCams && window.__weFlightCams(${coords[0]}, ${coords[1]})" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">📷 CAMERAS NEAR THIS AIRCRAFT</button>
+${p.icao24 ? (flightPathAccessRef.current === 'pro'
+            ? `<div style="margin-top:6px;padding:6px 12px;border:1px dashed rgba(255,179,0,0.45);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;text-align:center;">✦ FLIGHT PATH — PRO · ROUTE — PLANNED + FLOWN — LIVE TRACK, DRAWN WHILE FOLLOWING</div>`
+            : `<button onclick="window.location.href='/pricing'" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">🔒 FLIGHT PATH — PRO · SEE THE WHOLE FLIGHT PATH</button>`) : ''}
+                    <button onclick="window.__weFlightCams && window.__weFlightCams(${coords[0]}, ${coords[1]})" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">📷 CAMERAS NEAR THIS AIRCRAFT</button>
           <div id="${routeLoadingId}" style="margin-top:8px;padding:6px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
             <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">RESOLVING ROUTE…</span>
           </div>
@@ -2828,7 +2989,31 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       private_jets: data.private_jets || [],
       military_flights: data.military_flights || [],
     }, arrivedAt, fixAt);
-  }, [data.commercial_flights, data.private_flights, data.private_jets, data.military_flights]);
+    // Premium path trail: sample the followed aircraft's RAW reported fix
+    // out of this snapshot — never the interpolated render output — and
+    // stamp it with the feed's own generation time (fixAt).
+    const pathState = flightPathRef.current;
+    const followState = flightFollowRef.current;
+    if (
+      pathState && followState.phase !== 'idle' &&
+      followState.target?.icao24 === pathState.icao24 &&
+      flightPathAccessRef.current === 'pro'
+    ) {
+      const buckets = [data.commercial_flights, data.private_flights, data.private_jets, data.military_flights];
+      for (const bucket of buckets) {
+        const hit = (bucket || []).find((f: any) => f.icao24 === pathState.icao24);
+        if (hit) {
+          const next = noteFlightPathFix(pathState, hit, fixAt);
+          if (next !== pathState) {
+            flightPathRef.current = next;
+            syncFlightPathLayer();
+            syncFlightPathUi();
+          }
+          break;
+        }
+      }
+    }
+  }, [data.commercial_flights, data.private_flights, data.private_jets, data.military_flights, syncFlightPathLayer, syncFlightPathUi]);
 
   // Flight data → GeoJSON (GPU rendered). FULL sets — no decimation: every
   // record the route classified becomes a feature (received == rendered;
@@ -5341,6 +5526,8 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
             mode={flightFollowUi.mode}
             onModeChange={setFlightFollowMode}
             onExit={() => endFlightFollow({ restore: true })}
+            path={flightPathUi}
+            onUpgradePath={() => { window.location.href = '/pricing'; }}
           />
         </div>
       )}
