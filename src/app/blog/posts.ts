@@ -66,7 +66,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Practicing with WorldEye",
         body: [
-          "WorldEye's free map is a practical OSINT sandbox: live flight tracking, 36,000+ public cameras, satellites, earthquakes, and weather are all viewable with no account. The OSINT toolkit — DNS/WHOIS lookups, nmap-style scans, and SSL analysis — runs right in your browser on the Pro tier.",
+          "WorldEye's free map is a practical OSINT sandbox: live flight tracking, 76,000+ public cameras, satellites, earthquakes, and weather are all viewable with no account. The OSINT toolkit — DNS/WHOIS lookups, nmap-style scans, and SSL analysis — runs right in your browser on the Pro tier.",
           "Start with a question, not a tool. Pick something small — where is that aircraft headed, what's the weather like at that webcam right now — and work it out from public data. That's OSINT.",
         ],
       },
@@ -157,8 +157,8 @@ export const POSTS: BlogPost[] = [
   },
   {
     slug: "world-live-cameras",
-    title: "36,000 Live Cameras: Watching the World in Real Time",
-    seoTitle: "36,000 Live Cameras: Watching the World Live",
+    title: "76,000 Live Cameras: Watching the World in Real Time",
+    seoTitle: "76,000 Live Cameras: Watching the World Live",
     date: "2026-10-10",
     excerpt:
       "Tens of thousands of public webcams — traffic, city squares, beaches, mountain passes — stream openly to anyone. Here's what's out there, what it's good for, and an honest note on availability.",
@@ -170,7 +170,7 @@ export const POSTS: BlogPost[] = [
         heading: "A planet-sized window",
         body: [
           "There are tens of thousands of publicly accessible live cameras worldwide: traffic cameras run by transport departments, city squares, harbors, ski resorts, beaches, and wildlife feeds. They exist to inform — about road conditions, crowds, weather — and they're open to everyone.",
-          "WorldEye aggregates roughly 36,000 of these streams onto one map. Zoom anywhere and the camera layer shows you what's actually happening there right now.",
+          "WorldEye aggregates roughly 76,000 of these streams onto one map. Zoom anywhere and the camera layer shows you what's actually happening there right now.",
         ],
       },
       {
@@ -1015,7 +1015,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "1–2. Verify footage and photos before publishing",
         body: [
-          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 36,000+ public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
+          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 76,000+ public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
           "The same discipline applies to photos from conflict zones. Matching a photo's terrain to satellite imagery, checking the sun angle against the claimed time, and finding the same location on a live camera can confirm or kill a story in minutes. Getting this wrong means publishing misinformation — getting it right is what separates reporting from reposting.",
           "Speed matters, but so does a verification workflow the whole desk follows. The best newsrooms maintain shared checklists and require two independent confirmations before airing user-generated content. Lone-wolf verification is admirable; institutional verification is reliable. Build the checklist once, and every breaking story gets faster without getting sloppier.",
           "One final habit: keep a personal log of your verifications — what you checked, what you found, what you concluded. Over time it becomes both a portfolio of your rigor and a reference when similar claims resurface, as they always do.",
@@ -1637,8 +1637,8 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Option 1: a hosted live globe (the direct route)",
         body: [
-          "The closest match to the viral videos is a hosted globe: the same concept, already running on someone else's infrastructure, opened with a URL. [WorldEye](/) is built exactly this way — a 3D globe carrying 36,000+ live public cameras, flights, satellites, weather radar, earthquakes and wildfires, free with no signup and no keys for the core experience. Its [God's Eye View page](/gods-eye-view) walks through what the experience includes, and the [alternatives comparison](/alternatives/gods-eye-view) puts it side by side with the original project, honestly.",
-          "GodsView AI (godsviewai.com) is another hosted answer aimed at the same searches: a 2D operations map with a 3D globe view, live flights, ships, quakes and fires, and a premium tier for watchlists and kiosk displays. Between the two, the practical differences are the camera network (WorldEye publishes 36,000+ feeds with a browsable directory; GodsView AI doesn't publish a count) and pricing transparency. We compared them in the [GodsView AI alternatives guide](/alternatives/godsview-ai).",
+          "The closest match to the viral videos is a hosted globe: the same concept, already running on someone else's infrastructure, opened with a URL. [WorldEye](/) is built exactly this way — a 3D globe carrying 76,000+ live public cameras, flights, satellites, weather radar, earthquakes and wildfires, free with no signup and no keys for the core experience. Its [God's Eye View page](/gods-eye-view) walks through what the experience includes, and the [alternatives comparison](/alternatives/gods-eye-view) puts it side by side with the original project, honestly.",
+          "GodsView AI (godsviewai.com) is another hosted answer aimed at the same searches: a 2D operations map with a 3D globe view, live flights, ships, quakes and fires, and a premium tier for watchlists and kiosk displays. Between the two, the practical differences are the camera network (WorldEye publishes 76,000+ feeds with a browsable directory; GodsView AI doesn't publish a count) and pricing transparency. We compared them in the [GodsView AI alternatives guide](/alternatives/godsview-ai).",
         ],
       },
       {
@@ -1652,7 +1652,7 @@ export const POSTS: BlogPost[] = [
         heading: "Three checks before you trust a 'live' globe",
         body: [
           "First, freshness: open a camera or a flight and look for a timestamp or visible motion. A surprising number of 'live' maps are elegantly animated archives. Second, provenance: trustworthy globes name their feeds (public transport-agency cameras, ADS-B exchanges, USGS, NASA FIRMS). If a site won't say where its data comes from, assume the answer is 'a demo'. Third, the keys test: if a globe's photorealistic mode or AI features quietly require you to paste in a Google or OpenAI key, it's a self-hosted tool wearing a website's clothes — fine for builders, but not the no-install experience you came for.",
-          "One more, on numbers: camera counts get inflated across this niche. A directory total (every feed ever indexed, including dead ones) is not a live count. WorldEye's standing figure of 36,000+ is the verified-live number; the open-source God's Eye View README puts its own camera mesh at roughly 4,000, whatever older roundups still claim.",
+          "One more, on numbers: camera counts get inflated across this niche. A directory total (every feed ever indexed, including dead ones) is not a live count. WorldEye's standing figure of 76,000+ is the verified-live number; the open-source God's Eye View README puts its own camera mesh at roughly 4,000, whatever older roundups still claim.",
         ],
       },
       {
@@ -1691,14 +1691,14 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Three products, three philosophies",
         body: [
-          "These three get mentioned in the same breath constantly, and they barely overlap in what they are. God's Eye View is a builder's project: open-source Cesium software (MIT, by Bilawal Sidhu and Sameh Khamis) that you install and run yourself, famous for cinematic sensor-style views and a voice-controlled AI agent. World Monitor is an analyst's dashboard: a free hosted web app (AGPL-3.0, by Elie Habib) that fuses hundreds of geopolitical feeds — conflict data, chokepoints, markets, AI briefs — into panels you read. WorldEye is a watcher's globe: a hosted 3D planet whose centerpiece is a 36,000+ live camera network, with flights, satellites, weather and intel feeds layered around it.",
+          "These three get mentioned in the same breath constantly, and they barely overlap in what they are. God's Eye View is a builder's project: open-source Cesium software (MIT, by Bilawal Sidhu and Sameh Khamis) that you install and run yourself, famous for cinematic sensor-style views and a voice-controlled AI agent. World Monitor is an analyst's dashboard: a free hosted web app (AGPL-3.0, by Elie Habib) that fuses hundreds of geopolitical feeds — conflict data, chokepoints, markets, AI briefs — into panels you read. WorldEye is a watcher's globe: a hosted 3D planet whose centerpiece is a 76,000+ live camera network, with flights, satellites, weather and intel feeds layered around it.",
           "Full disclosure, since we make one of these: this comparison is written by the WorldEye team. We checked every competitor fact against official sources in October 2026 (the God's Eye View GitHub README, worldmonitor.app and its pricing page) and we've marked the places where the other two genuinely win.",
         ],
       },
       {
         heading: "The scorecard",
         body: [
-          "Hosting: God's Eye View — self-hosted only; World Monitor — hosted free, self-host optional; WorldEye — hosted. Cameras: God's Eye View — a CCTV mesh of roughly 4,000 public cameras (its README figure; older articles saying ~800 are out of date); World Monitor — no camera network; WorldEye — 36,000+ live feeds with a browsable directory.",
+          "Hosting: God's Eye View — self-hosted only; World Monitor — hosted free, self-host optional; WorldEye — hosted. Cameras: God's Eye View — a CCTV mesh of roughly 4,000 public cameras (its README figure; older articles saying ~800 are out of date); World Monitor — no camera network; WorldEye — 76,000+ live feeds with a browsable directory.",
           "Analysis depth: God's Eye View — sensor visualizations and a voice agent, aimed at spectacle; World Monitor — the clear winner, with ACLED/UCDP conflict data, 13 tracked chokepoints, macro data and AI country briefs across six dashboard variants; WorldEye — GDELT-powered intel feeds, cyber and maritime layers and an AI analyst on Pro, shallower than World Monitor's panels by design. Price: God's Eye View — free code, but photorealistic tiles and voice bill to your own API keys; World Monitor — free, Pro $39.99/month; WorldEye — free, Pro $3.99/week, $9.99/month or $59.99/year.",
         ],
       },
@@ -1727,7 +1727,7 @@ export const POSTS: BlogPost[] = [
       },
       {
         q: "Which has the most live cameras?",
-        a: "WorldEye, at 36,000+ verified-live feeds. God's Eye View's mesh is roughly 4,000 per its README. World Monitor doesn't operate a camera network.",
+        a: "WorldEye, at 76,000+ verified-live feeds. God's Eye View's mesh is roughly 4,000 per its README. World Monitor doesn't operate a camera network.",
       },
     ],
   },
@@ -1781,6 +1781,168 @@ export const POSTS: BlogPost[] = [
       {
         q: "Can a hosted dashboard see my queries?",
         a: "Any hosted service processes your requests on its servers — that's inherent. If your work can't tolerate that, self-hosting (or a tool whose code you can audit) is the right call.",
+      },
+    ],
+  },
+  {
+    slug: "76000-live-cameras-new-layers",
+    title: "76,000+ Live Cameras: WorldEye's Biggest Expansion Yet",
+    seoTitle: "76,000+ Live Cameras & New Layers | WorldEye Blog",
+    date: "2026-10-18",
+    excerpt:
+      "WorldEye's camera network more than doubled to 76,000+ verified live feeds — and the globe gained transit, traffic, drones, launch tracking, street-level photos and more. What shipped, what it draws from, and what's honestly still empty.",
+    seoDescription:
+      "WorldEye now maps 76,000+ verified live cameras plus new transit, traffic, drone, launch and street-level layers. What shipped and where the data comes from.",
+    tags: ["cameras", "announcement"],
+    sections: [
+      {
+        heading: "The camera network more than doubled",
+        body: [
+          "WorldEye now serves 76,625 cameras, up from about 40,000 directory records — and every addition earned its place the slow way. Each new feed was playback-verified before import, deduplicated five different ways (provider ID, normalized URL, proximity, name matching and image fingerprinting), and rejected if it was dead, a placeholder, or didn't carry clear reuse rights. Feeds we couldn't clear — including a large network held back over licensing — stayed out. The standing figure of 76,000+ is the verified count, not a directory scrape.",
+          "The growth is lumpy in the way real camera networks are: +30,889 feeds from a full public-index harvest (the United States and Japan gained the most), +3,528 FAA weather cameras at airports and mountain passes, plus two quiet fixes that restored cameras we already had — a pagination bug that silently truncated California's Caltrans network, and a broken British Columbia source that had dropped DriveBC entirely.",
+        ],
+      },
+      {
+        heading: "Seven new layers on the globe",
+        body: [
+          "The map around the cameras grew at the same time. New free layers: live public transit in 15 metro systems (buses and trains with route, destination and delay), a traffic layer pairing real TomTom congestion flow with clearly labeled simulated vehicles, space launch tracking with live countdowns, street-level photography from the community-run Panoramax network, FAA drone airspace grids, NOAA weather radar with lightning, wildfire perimeters, hurricane tracks, and live river gauges.",
+          "Two honesty rules shipped with them. Anything simulated says so on screen — the traffic vehicles carry a permanent 'simulated' label, the sensor-style visual effects (night vision, thermal) say 'simulated visual effect — not sensor data', and street-level photos always show their real capture date, because a photo from 2023 is not a live feed. Anything empty says that too: the drone layer currently detects zero drones because no receiver feeds it yet, and its chip reads '0 DETECTED · NO RECEIVERS CONNECTED' rather than pretending otherwise.",
+        ],
+      },
+      {
+        heading: "Flights, fixed and followable",
+        body: [
+          "The flight layer got an audit and a repair. A data-format change at an upstream provider had silently zeroed out commercial traffic on our map; the sweep is fixed, decimation that thinned rendered aircraft is gone, and the globe now polls every 30 seconds with motion interpolation between fixes. A few thousand commercial aircraft are typically airborne on it at any moment — and any of them can now be followed: pick a plane and the camera chases, leads or orbits it with a telemetry readout that labels itself an interpolated view, not an onboard camera.",
+          "The aircraft popup also closes a loop the old map never could: 'cameras near this aircraft' lists real ground cameras around the plane's position — with the honest caveat printed right there that the aircraft itself won't be visible in them.",
+        ],
+      },
+      {
+        heading: "Where to look",
+        body: [
+          "The full network is browsable in the [camera directory](/cameras) and by [country](/cameras/countries); the complete layer list lives on the [features page](/features). If you're new here, the [guide to the world's live cameras](/blog/world-live-cameras) explains what these feeds are and what they're good for. Everything in this post is free on the map — no account needed.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Are all 76,000+ cameras live video?",
+        a: "No — and the site doesn't claim otherwise. The network mixes live video streams with frequently refreshed snapshot cameras (still frames that update on a cycle), plus FAA weather cameras. 8,800+ of the new additions are live video; the rest are verified-refreshing snapshots.",
+      },
+      {
+        q: "Why not add the other ~57,000 cameras you found?",
+        a: "Licensing. One large source's terms don't clearly permit republication, so its cameras are structurally excluded until permission exists. A smaller count we can stand behind beats a bigger one we can't.",
+      },
+      {
+        q: "Is the drone layer broken if it shows zero?",
+        a: "No — it's honest. Consumer drones broadcast Remote ID locally; no public live feed exists. The layer shows drones only where a connected receiver reports them, and says so when none do.",
+      },
+    ],
+  },
+  {
+    slug: "track-buses-trains-live-transit-map",
+    title: "How to Track Buses and Trains Live on a Map",
+    seoTitle: "Track Buses & Trains Live | WorldEye Blog",
+    date: "2026-10-18",
+    excerpt:
+      "Live transit maps are just vehicles reporting their own positions, in the open. How GTFS Realtime works, what the dots can and can't tell you, and how to follow a bus or train on WorldEye's transit layer across 15 metro systems.",
+    seoDescription:
+      "How live bus and train tracking works (GTFS Realtime), what the map can and can't tell you, and how to follow vehicles across 15 metros on WorldEye.",
+    tags: ["transit", "guide"],
+    sections: [
+      {
+        heading: "Where the dots come from",
+        body: [
+          "Most live transit maps are built on GTFS Realtime, an open format transit agencies use to publish vehicle positions as a data feed: this bus, on this trip, is here, now. Agencies publish them for their own apps, and the same feeds power third-party maps. WorldEye's [transit layer](/features) reads those public feeds directly for 15 metro systems — including Utah's UTA (TRAX light rail, FrontRunner commuter rail and buses), Boston's MBTA, Denver's RTD, Seattle's King County Metro, Austin's CapMetro and Norway's national Entur network.",
+          "Tap any vehicle and the popup shows what that agency's feed actually provides: route number and name, the destination headsign, direction, how late or early the trip is running, the vehicle ID, and how old the position fix is. If a feed doesn't publish a field, the popup leaves it out rather than guessing.",
+        ],
+      },
+      {
+        heading: "How accurate is a live bus dot?",
+        body: [
+          "Accurate to the agency's own reporting — which varies. Vehicles typically report every 15–30 seconds, so a dot is where the bus was a few seconds ago, not this instant. Between reports, WorldEye interpolates movement along the vehicle's heading so buses glide instead of teleporting, and the popup's fix-age readout ('updated Xs ago') tells you exactly how fresh the position under your finger is. Late-night and rural routes report sparsely or not at all: an empty map at 3 a.m. usually means the buses genuinely aren't running.",
+          "One quirk of the underlying data: some agencies' feeds omit the route on each vehicle and identify only the trip. WorldEye resolves those against the agency's published schedule data, so a UTA bus shows its real route number (and its correct mode — a FrontRunner train is never drawn as a bus) instead of a bare ID.",
+        ],
+      },
+      {
+        heading: "The road layer next to it: real congestion, simulated cars",
+        body: [
+          "Zoom into a city with the traffic layer on and you'll see colored roads and moving vehicles. Be precise about which is which, because WorldEye labels them differently on purpose: the congestion colors are real — live flow data from TomTom, the same class of probe data behind commercial traffic maps. The individual vehicles are simulated: a traffic model that drives plausible cars along the real road network, slowed by that real congestion data. They're useful for reading the rhythm of a road, useless for tracking a specific car — and the on-screen chip says 'VEHICLES: SIMULATED' in exactly those words.",
+          "Click a road and the map offers the ground truth instead: the nearest real traffic cameras within about a mile, watchable in the normal camera viewer.",
+        ],
+      },
+      {
+        heading: "Try it",
+        body: [
+          "Open the [globe](/), turn on the transit layer, and zoom to any covered metro — Salt Lake City, Boston, Denver, Seattle, Austin and ten more. The layer panel names the covered systems, and if you pan somewhere without coverage the map tells you that too, instead of showing a mysteriously empty city. Both the transit and traffic layers are free.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Why is my city not covered?",
+        a: "Coverage needs a public, keyless realtime feed. Some major agencies gate theirs behind developer keys or paid platforms, and a few feeds (New York's NYSDOT, Ohio's OHGO among them) require registration we can't complete for a public map. The panel lists exactly which metros are covered.",
+      },
+      {
+        q: "Can I track a specific bus to ride it?",
+        a: "For trip planning, your agency's own app is the right tool — it has stop-level predictions. WorldEye's layer is built for watching a whole network move and checking conditions, with per-vehicle route, destination and delay where the feed provides them.",
+      },
+      {
+        q: "Are the traffic vehicles real cars?",
+        a: "No. The congestion coloring is real TomTom flow data; the vehicles are a simulation driven by it. The layer says so on screen at all times.",
+      },
+    ],
+  },
+  {
+    slug: "follow-a-flight-live",
+    title: "Follow a Flight Live: Chase Cams, Telemetry and Ground Cameras",
+    seoTitle: "Follow a Flight Live on the Map | WorldEye Blog",
+    date: "2026-10-18",
+    excerpt:
+      "Pick any aircraft on the globe and ride along with it: chase, forward and orbit cameras, a telemetry readout that admits it's interpolated, and real cameras on the ground near the plane. How flight following works on WorldEye.",
+    seoDescription:
+      "How to follow a flight live on WorldEye: chase/orbit cameras, an honest interpolated-telemetry readout, and real ground cameras near the aircraft.",
+    tags: ["flights", "guide"],
+    sections: [
+      {
+        heading: "Pick a plane, any plane",
+        body: [
+          "WorldEye's [live flight tracker](/live-flight-tracker) draws a few thousand commercial aircraft at any moment (plus private, business and military traffic) from public ADS-B broadcasts — the position, altitude, speed and heading signals aircraft transmit openly. Click one and you get its identity and route where the data provides it: callsign, aircraft type, origin and destination, progress along the route. The 'follow' button is where it gets fun.",
+          "Following offers three camera modes. Chase sits behind the aircraft, Forward looks along its heading, and Orbit slowly circles it. All three are driven by the same position stream as the map markers — there's no second, secret feed — so what you see is the tracker's best current picture of where that plane is.",
+        ],
+      },
+      {
+        heading: "The honest part: it says 'interpolated' on the screen",
+        body: [
+          "ADS-B positions arrive in bursts, not a continuous stream. Between fixes, the follow camera moves the aircraft along its last known velocity — interpolation — and if fixes stop, it briefly extrapolates and then declares signal lost rather than inventing a position forever. The follow view labels itself permanently: 'TELEMETRY VIEW — NOT AN ONBOARD CAMERA · POSITION INTERPOLATED BETWEEN FIXES', with a live fix-age counter so you can see exactly how stale the picture is. If a fix is old, the screen tells you before you'd think to ask.",
+          "That label is the whole design philosophy in one line: a visualization of real data, labeled as a visualization. The plane you're watching is real; the camera is a reconstruction.",
+        ],
+      },
+      {
+        heading: "Then look down: cameras near the aircraft",
+        body: [
+          "The popup's 'cameras near this aircraft' section lists real public cameras around the plane's ground position — airport-area feeds, highway cameras under the flight path, city cameras in the overflown town — and opens them in the normal viewer. It's the closest thing to looking out the window in reverse: not the plane's view of the ground, but the ground's view of the sky the plane is crossing. (Printed honestly in the panel: the aircraft itself won't be visible in those feeds.)",
+          "The same trick works from a traffic jam: clicking a congested road offers the nearest real cameras there too. Different layers, one idea — every visualization on the globe is one click from a real camera that can confirm it.",
+        ],
+      },
+      {
+        heading: "Watching the edges: launches and satellites",
+        body: [
+          "Aircraft aren't the only things worth following off the [map](/). The space layer tracks upcoming launches with live countdowns (data from Launch Library 2) — follow a launch card and you'll get its pad, mission and a reconstructed ascent replay afterward, bannered as a reconstruction rather than telemetry. Satellite dialogs show live orbital position for thousands of tracked objects. Our [flight tracking guide](/blog/live-flight-tracking-guide) and [plane spotting guide](/blog/plane-spotting-guide) go deeper on reading all of it.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Why did the plane I was following freeze?",
+        a: "Coverage gaps are real: ADS-B depends on ground receivers, so oceanic, polar and some rural tracks thin out. The follow view shows fix age live and releases the aircraft after a grace period instead of fabricating movement.",
+      },
+      {
+        q: "Is flight following a Pro feature?",
+        a: "No. The flight layer, aircraft popups and follow cameras are free, like the rest of the live map. Pro covers the intelligence toolkit, satellite map view and recording features.",
+      },
+      {
+        q: "Can I see the plane in the ground cameras?",
+        a: "Almost certainly not — public webcams point at roads and places, not the sky, and the panel says so. What you get is the world directly underneath the flight, live.",
       },
     ],
   },
