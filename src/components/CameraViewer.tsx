@@ -8,6 +8,7 @@ import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, off
 import { cameraShareId, shareCamera } from '@/lib/camera-share';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
+import TimelapseControl from './TimelapseControl';
 
 interface CameraViewerProps {
   camera: any | null;
@@ -488,6 +489,10 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                 </a>
               </div>
             </div>
+            {/* Timelapse (Pro): collect this snapshot camera's stills while
+                watching. Inline views only — an external or offline camera
+                shows no still here to collect. */}
+            {!externalOnly && <TimelapseControl camera={camera} streamType={streamType} />}
             {/* Animated data stream bar */}
             <div className="h-[2px] w-full bg-[var(--border-primary)] overflow-hidden relative">
               <div className="absolute top-0 bottom-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_8px_var(--gold-primary)] w-1/3 animate-pulse" style={{ animation: 'progress-glow-slide 2s cubic-bezier(0.4, 0, 0.2, 1) infinite' }} />

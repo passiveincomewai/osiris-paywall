@@ -161,6 +161,9 @@ export interface TimelapseSessionMeta {
   /** Capture cadence the frames were taken at, for honest playback labelling. */
   pollMs: number;
   frameCount: number;
+  /** Dedupe ledger of the last kept frame, so a resumed capture never re-stores it. */
+  lastFrameAt: string | null;
+  lastSignature: string | null;
 }
 
 export const timelapseSessionId = (cameraId: string) => `tl:${cameraId}`;
