@@ -94,8 +94,19 @@ async function fetchTfLCameras(): Promise<any[]> {
   } catch (e) { return []; }
 }
 
-// ── US-WEST: WSDOT Washington State (~500) ──
+// ── US-WEST: WSDOT Washington State ──
+/* GATED OFF (Stage E, 2026-10-18): the endpoint below answers 404 — the
+   IIS "file or directory not found" page, in 0.6s — from the sandbox and
+   from production; the file it served has been retired, so every refresh
+   was a guaranteed miss inside us-west's budget. Washington coverage is
+   not lost with it: the OpenCCTV harvest's wsdot family carries 1,174
+   probe-verified WSDOT cameras in the harvest shards. If WSDOT
+   republishes an endpoint, set OSIRIS_CCTV_WSDOT=on to re-enable this
+   fetcher — and re-verify it before making that the default again. The
+   health rollup reports this source as "gated", never as down. */
+const WSDOT_ENABLED = process.env.OSIRIS_CCTV_WSDOT === 'on';
 async function fetchWSDOTCameras(): Promise<any[]> {
+  if (!WSDOT_ENABLED) return [];
   try {
     const res = await stealthFetch('https://data.wsdot.wa.gov/log/public/cameras.json', { signal: AbortSignal.timeout(12000) });
     if (!res.ok) return [];
@@ -712,6 +723,36 @@ function currentRegions(): RegionCameras {
     if (cameras?.length) regions[region] = cameras;
   }
   return regions;
+}
+
+/**
+ * What this instance currently holds, counted without serialising the
+ * catalogue — the Stage E health rollup reads this (the admin dashboard
+ * cannot afford to parse a 76,000-camera payload to count it). Labels are
+ * the per-feed `source` values inside composite regions: the level at
+ * which a single feed (DriveBC inside canada) can vanish while its
+ * region stays green.
+ */
+export function cctvCatalogueState(): {
+  regions: { region: string; served: number }[];
+  labels: Record<string, number>;
+  total: number;
+  occHarvestEnabled: boolean;
+} {
+  const regions: { region: string; served: number }[] = [];
+  const labels: Record<string, number> = {};
+  let total = 0;
+  for (const region of ALL_REGIONS()) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cameras = peekSource<any>(`cctv:${region}`, true) ?? [];
+    regions.push({ region, served: cameras.length });
+    total += cameras.length;
+    for (const camera of cameras) {
+      const label = String(camera.source ?? 'unknown');
+      labels[label] = (labels[label] || 0) + 1;
+    }
+  }
+  return { regions, labels, total, occHarvestEnabled: OCC_HARVEST_ON };
 }
 
 /** Serialise and compress the whole-world response once, not per request. */
