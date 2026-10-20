@@ -1,4 +1,4 @@
-import { POSTS } from "./blog/posts";
+import { POSTS } from "../blog/posts";
 import { buildNewsSitemap } from "@/lib/blog-feed";
 
 // Google News sitemap: lists only posts published in the last 48 hours
