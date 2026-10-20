@@ -34,6 +34,7 @@ const INTRO = [
   "The overnight snowfall number is only the start of the story. A resort can report six inches while the wind scoured the ridgeline bare — or report two while a sheltered bowl skis like a foot. Slope cameras show the actual surface: wind texture, groomed corduroy, tracked-out traverses, and whether the sun has hit the east-facing runs yet.",
   "Timing matters as much as snow. Base-area cameras at 7 AM show empty parking lots and spinning lifts; at 9:30 on a powder Saturday they show the line you are about to join. The camera habit that pays off: check the night before for the storm total, check the morning of for lines and visibility, and check the access-road cameras before you leave the driveway.",
   "Mountain weather deserves its own check because resorts sit in microclimates. Valley forecasts routinely miss ridgeline fog, summit whiteouts, and the wind holds that stop upper lifts. A summit camera pointed at the ridgeline is the most honest lift-status indicator there is — if it shows a white wall, plan for lower-mountain laps.",
+  "Choosing between resorts is where the camera habit pays for itself. On a storm morning, three nearby mountains can have three different days: one socked in with lifts on hold, one snowing with the road chained up, one above the clouds in the sun. Ten minutes across the slope, base and road cameras of each tells you which drive is worth it — something no single-resort report or regional forecast will ever say out loud.",
 ];
 
 const CATEGORIES = [
@@ -105,6 +106,14 @@ const FAQS = [
   {
     q: "Can I use mountain cameras for backcountry planning?",
     a: "As one input among several. Cameras near passes and trailheads show snowpack and wind on ridgelines, which helps with route choice — but always pair them with the official avalanche forecast and never treat a camera as a safety clearance.",
+  },
+  {
+    q: "Which ski regions have the most cameras?",
+    a: "Coverage follows resort and highway infrastructure: the US Rockies and Sierra, the Alps, and Japan's snow country are the densest in the directory, with access-road DOT cameras often outnumbering the resorts' own slope feeds. Search the range or the resort town on the map to see what is actually there before you rely on it.",
+  },
+  {
+    q: "Can I watch summer conditions on ski cameras?",
+    a: "Yes — most mountain feeds run year-round. In summer they show hiking weather, thunderstorms building over the ridges, wildfire smoke in bad years, and the general state of the high country. The access-road cameras stay useful in every season.",
   },
 ];
 

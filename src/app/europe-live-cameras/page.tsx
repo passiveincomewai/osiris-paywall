@@ -110,6 +110,14 @@ const FAQS = [
     q: "Can I see famous landmarks?",
     a: "Some feeds do cover landmarks and plazas — St. Peter's Square in Vatican City is one example. Most feeds are traffic and street cameras, so use the map search to find scenic ones.",
   },
+  {
+    q: "Which European networks are the most useful for drivers?",
+    a: "The national and regional road networks: motorway and alpine-pass cameras in the Alps, French and Spanish autoroute feeds, and the dense urban grids of the Netherlands and other city systems. Europe's strength is corridor coverage — the cameras sit on the routes people actually drive between cities.",
+  },
+  {
+    q: "Do European cameras work in winter darkness?",
+    a: "The road and city feeds run around the clock; in a Nordic winter that means lit streets, headlights and snow conditions rather than daylight scenery. It is still the fastest honest read on road weather — often better than the forecast icon.",
+  },
 ];
 
 const jsonLd = {

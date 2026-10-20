@@ -34,6 +34,7 @@ const INTRO = [
   "For travelers, the beach camera is the antidote to the tourism brochure. That 'pristine stretch of sand' might be packed shoulder-to-shoulder at noon, or the water might be brown after a storm — the camera shows the beach as it is, not as the marketing department wishes it were. Check the day before you go, and the morning of.",
   "For surfers, the value is the swell check. Beach-facing cameras near breaks show wave size, wind texture on the water, and how crowded the lineup is. It won't replace a dedicated surf report with period and direction data, but it answers the only question that matters at 6 AM: is it worth driving there?",
   "And for everyone else, there is the simple pleasure of it. A beach camera at golden hour — pelicans on the pier, the light going flat gold on the water — is one of the most-watched categories on the internet for a reason. Pick a coast in the right timezone and watch the day happen somewhere else.",
+  "There is a rhythm to coastal watching that regulars learn: dawn patrol for the surf check, midday for the crowd and weather read, and the storm hours when a front comes ashore and the feeds turn dramatic. Because the cameras sit on the same globe as the weather and hurricane layers, you can watch a system approach a coast on the map and then drop into the beach cameras as it arrives — the forecast and the place it is about to hit, in one session.",
 ];
 
 const CATEGORIES = [
@@ -105,6 +106,14 @@ const FAQS = [
   {
     q: "Are there marina and harbor cameras too?",
     a: "Yes. Marina and harbor feeds show boat traffic, water conditions, and fog rolling in — practical for sailors checking conditions and relaxing for everyone else.",
+  },
+  {
+    q: "Can beach cameras show rip currents or water safety conditions?",
+    a: "Partly. Cameras show surf size, whitewater patterns and how rough the water looks, which are useful signals — but they cannot certify water safety, and flags, patrols and local warnings always win. Treat the camera as a preview, and the lifeguard's call as the decision.",
+  },
+  {
+    q: "Which coasts have the most beach cameras?",
+    a: "Coverage follows public camera infrastructure: US coastlines (Florida, California, Hawaii and the Carolinas), European resorts, and parts of Australia and the Caribbean are the densest in the directory. Search any coastline on the map — the markers cluster where the cameras are.",
   },
 ];
 

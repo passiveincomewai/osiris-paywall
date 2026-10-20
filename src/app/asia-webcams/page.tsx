@@ -99,6 +99,14 @@ export default function AsiaWebcamsPage() {
             q: "Which countries have the smallest coverage?",
             a: "At the tail of the table: Thailand (60), the Philippines (25), Kyrgyzstan (21), Malaysia (20), and Israel (19). Coverage expands as new public feeds are indexed.",
           },
+          {
+            q: "Can I check monsoon or typhoon conditions on these cameras?",
+            a: "Yes — that is one of the region's strongest uses. When a typhoon approaches Taiwan, Hong Kong or Japan, the coastal and city feeds show the wind, rain and street conditions as they develop, alongside the storm on the weather layer. Individual cameras can drop offline in the worst of a storm, so check several in the area.",
+          },
+          {
+            q: "Why does Taiwan have so many more cameras than its neighbors?",
+            a: "Taiwan's transport agencies publish an unusually dense and open camera network — highway and city intersection grids that most countries keep internal. The index reflects that openness: 2,779 feeds, nearly half the Asian total.",
+          },
         ];
 
   return (

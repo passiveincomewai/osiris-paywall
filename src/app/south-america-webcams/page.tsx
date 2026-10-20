@@ -106,6 +106,14 @@ const FAQS = [
     q: "Which countries have only one or two cameras?",
     a: "Uruguay (1, at Punta del Este) and Venezuela (1, Margarita Island) have a single feed each, and Bolivia has 2. They are single windows onto those countries for now, and the counts on this page say so plainly.",
   },
+  {
+    q: "What are South American cameras best used for?",
+    a: "Reading the continent's great road systems live: the urban traffic grids of the big metros, the approaches to Andean passes, and coastal conditions in the beach cities. For travelers, the city feeds are the orientation tool — how a neighborhood actually moves before you arrive in it.",
+  },
+  {
+    q: "Why is coverage thinner than North America's?",
+    a: "It follows publishing, not population. Fewer South American road authorities stream their camera networks openly, so the index is smaller — the directory grows country by country as public feeds appear and are verified.",
+  },
 ];
 
 export default function SouthAmericaWebcamsPage() {

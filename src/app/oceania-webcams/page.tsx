@@ -89,6 +89,14 @@ export default function OceaniaWebcamsPage() {
             q: "Can I see Wellington's motorways?",
             a: "Yes. Wellington contributes 37 state-highway feeds covering its motorway approaches and interchanges — zoom to the city on the live map to find them.",
           },
+          {
+            q: "Why is Oceania's collection smaller than Asia's or Europe's?",
+            a: "It follows the public camera networks, not population. Australia and New Zealand publish dense state and motorway camera systems, but fewer distinct public networks than the US, Europe or Taiwan — so the index holds 499 feeds rather than thousands. What it lacks in size it makes up in usefulness per camera: nearly every feed is a working road camera.",
+          },
+          {
+            q: "Are these the only Oceania cameras on WorldEye?",
+            a: "This page indexes the two Oceania countries in the directory — Australia and New Zealand. Island nations in the Pacific don't currently contribute public feeds to the index; as new public networks are found and verified, the directory grows and this page's counts update with it.",
+          },
         ];
 
   return (
@@ -122,6 +130,8 @@ export default function OceaniaWebcamsPage() {
           "Sydney is the practical heart of the Australian set. The M4 Western Motorway, the M1, and the Hume Highway feeds let you read the morning build-up before you leave — Sydney's peak runs roughly 7–9 AM and 4–7 PM local time, and the motorway cameras show it forming in real time.",
           "In New Zealand, the value is winter. Auckland's 98 interchange feeds handle the commuter load, but the Canterbury (78) and South Island alpine feeds are the ones that save trips: Lewis Pass, Arthur's Pass, and the Crown Range change character in an hour when a southerly front moves through. Check the pass cameras, not the forecast icon, before crossing.",
           "Both countries sit in UTC+10 to UTC+13 (plus daylight saving), so Oceania is often the first place on the planet with daylight — handy when the rest of the index is dark. Every feed opens free on the WorldEye map, no account needed.",
+          "There is a commuter rhythm to the Australian set worth knowing: Sydney's motorway cameras are at their most useful in the peaks, roughly 7–9 AM and 4–7 PM, when the M4 and M1 feeds show the build-up forming interchange by interchange. Outside the peaks the same feeds read as a general conditions check — rain on the road, fog on the north shore approaches, an incident queue forming before it hits the traffic reports.",
+          "New Zealand's set rewards a different habit: check it before you commit to a route, not while you are on it. The alpine passes can close or chain-up in the space of a single southerly front, and the state-highway cameras at the approaches show the snow line and the queue before you are inside the decision. In summer the same cameras double as a window on some of the most watched touring roads in the Southern Hemisphere.",
         ]}
       />
       <AreaTable title="Oceania by country" rows={COUNTRIES} />

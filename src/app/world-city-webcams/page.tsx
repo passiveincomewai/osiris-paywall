@@ -59,6 +59,14 @@ const FAQS = [
     q: "How current are the camera counts?",
     a: "The directory regenerates automatically and the page shows its last-updated date. Counts move as operators add feeds or retire old ones — the trend has been steadily upward.",
   },
+  {
+    q: "What can I actually learn from a city camera before visiting?",
+    a: "More than a guidebook admits: how busy the center is at your arrival hour, whether the famous square is scaffolded or festival-packed, what people are wearing for the weather, and whether the traffic near your hotel is a gentle flow or a six-lane siege. Five minutes on the cameras is the cheapest orientation a trip can buy.",
+  },
+  {
+    q: "Why isn't my city listed?",
+    a: "The list follows the directory: a city appears when public camera feeds exist for it. If your city has no public feeds published by its road authority or municipality, there is nothing to index yet — coverage grows as operators publish more.",
+  },
 ];
 
 const jsonLd = {

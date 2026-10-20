@@ -97,6 +97,14 @@ export default function NorthAmericaWebcamsPage() {
             q: "Do I need an account to watch?",
             a: "No. All 24,644 feeds across the region open free on the WorldEye map — no signup, no paywall.",
           },
+          {
+            q: "What is the best way to find cameras along a specific highway?",
+            a: "Search the highway or the nearest city on the live map, then follow the road — DOT camera markers sit at interchanges and intervals along the corridor. For a long drive, note the two or three cameras at your decision points (the pass, the border, the city entry) and check those before you leave.",
+          },
+          {
+            q: "Why do some states have thousands of cameras and others only a few?",
+            a: "It follows each state's own publishing: some DOTs stream their entire camera network openly, others publish a subset or none. WorldEye indexes what is public, so the map is also a picture of which road authorities share their feeds — coverage grows as more networks open up.",
+          },
         ];
 
   return (
@@ -130,6 +138,7 @@ export default function NorthAmericaWebcamsPage() {
           "The US feeds are the practical core. Georgia's 4,330 DOT cameras blanket metro Atlanta's Downtown Connector and the I-285 Perimeter; Utah's 2,082 follow the Wasatch Front and the canyon roads like SR-210; Texas spreads 2,492 across Houston, Dallas, and the border corridors. Six states — Georgia, Utah, Texas, Florida, Indiana, Nevada — account for over 11,000 feeds between them, which is why the US total dwarfs its neighbors.",
           "Canada's 1,509 are worth a closer look than the raw number suggests. Ottawa's 428-feed grid is the densest municipal network in the index, and it earns its keep every winter — the Queensway feeds show snow-clearing operations in real time. Toronto's 339 cover the 401 corridor, the busiest highway in North America.",
           "The Caribbean and Central American entries are small but distinctive: the US Virgin Islands (21), Mexico (20), Costa Rica (7), the Dominican Republic (5), plus Puerto Rico, Sint Maarten, Guadeloupe, Martinique, Barbados, Grenada, Bermuda, Honduras, and Curaçao. During hurricane season these island feeds become genuinely useful — a live look at conditions beats a satellite loop for ground truth.",
+          "The working habit this index rewards is the pre-drive check. Because the feeds are the road authorities' own, they show what the road is doing before the traffic apps color it: snow accumulating on a Utah canyon road, a queue forming at a border crossing, a Georgia interstate locking up ahead of the storm. Pick your corridor, learn its two or three key cameras, and a ten-second look before you leave replaces twenty minutes of finding out the hard way.",
         ]}
       />
       <AreaTable

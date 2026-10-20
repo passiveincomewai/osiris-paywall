@@ -35,6 +35,7 @@ const INTRO = [
   "The pre-flight weather check is the standout use. Forecasts describe the airport's weather in words; a camera shows the actual sky over the field — low scud, fog banks, the leading edge of a storm line. Pilots and frequent flyers check the field camera the way sailors check the harbor: it will not replace official aviation weather, but it grounds the forecast in something you can see.",
   "Planespotters get a different value. Approach-corridor and perimeter cameras catch arrivals on final and departures rotating — and paired with the live flight layer, you can match the aircraft overhead to the flight number, origin, and aircraft type in real time. It turns passive watching into something closer to air-traffic awareness.",
   "Then there is the pure logistics use: terminal approach roads, parking structures, and rental-car return loops. Leaving for the airport during rush hour? A camera on the terminal roadway shows whether the departures curb is flowing or gridlocked — more actionable than any traffic app's colored line.",
+  "Airport cameras also reward the patient watcher. Hubs run in banks — waves of arrivals and departures — and the airfield cameras show the rhythm: the morning push queuing at the runway, the midday lull, the evening bank stacking up on final. Pair that with the flight layer and a busy airport becomes a system you can read: where the queue forms, how the weather slows it, and when it clears.",
 ];
 
 const HOW_TO = [
@@ -81,6 +82,14 @@ const FAQS: Faq[] = [
   {
     q: "Do the cameras show delays or cancellations?",
     a: "Not directly — cameras show conditions, not schedules. But a camera showing fog over the field or gridlock at the curb explains the delay board better than any status message. Pair the view with the flight layer for the full picture.",
+  },
+  {
+    q: "How do I find the cameras for a specific airport?",
+    a: "Search the airport's name or city on the live map and zoom into the airfield. Airport-area cameras cluster around terminals, approach corridors and the highway interchanges serving the airport — the dedicated airport page in the camera directory is a good starting point too.",
+  },
+  {
+    q: "Why do some airport cameras look away from the runway?",
+    a: "Because most airport-area feeds weren't installed for planespotters — they're road, parking and perimeter cameras operated by transport agencies and businesses near the field. They're still useful: terminal roadways, weather over the field and approach corridors are often exactly what travelers and spotters need.",
   },
 ];
 
