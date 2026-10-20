@@ -6,6 +6,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import { normalizeEmail, isValidEmail, verifyPassword } from "@/lib/password-auth";
 import { subscriptionStatusFromRow } from "@/lib/subscription-status";
+import { planTierForRow } from "@/lib/plan-tier";
 
 /* ------------------------------------------------------------------ */
 /* Type augmentation: the session JWT carries the paywall state so     */
@@ -16,6 +17,8 @@ declare module "next-auth" {
     user: {
       id: string;
       subscriptionStatus: string;
+      /** Plan tier (lib/plan-tier): "free" | "pro" | "vip" — annual is VIP. */
+      planTier: string;
     } & DefaultSession["user"];
   }
 }
@@ -23,6 +26,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     subscriptionStatus?: string;
+    planTier?: string;
     subscriptionCheckedAt?: number;
   }
 }
@@ -31,13 +35,23 @@ declare module "next-auth/jwt" {
 // paywall recognizing it. Sign-ins always refresh immediately.
 const SUBSCRIPTION_TTL_MS = 60_000;
 
-async function resolveSubscriptionStatus(userId: string): Promise<string> {
+/**
+ * resolveSubscriptionStatus, extended: the session's subscriptionStatus
+ * AND planTier from ONE row read. The status mapping is
+ * lib/subscription-status (pure, test-pinned): "trialing" counts as full
+ * Pro access until the trial ends — Stripe flips the status (past_due /
+ * canceled / ...) via webhook if payment fails; anything else locks the
+ * gate. The tier mapping is lib/plan-tier (the contract: annual price →
+ * vip, weekly/monthly/comp → pro, enterprise → vip).
+ */
+async function resolveSubscriptionClaims(
+  userId: string,
+): Promise<{ status: string; tier: string }> {
   const sub = await db.subscription.findUnique({ where: { userId } });
-  // The mapping itself is lib/subscription-status (pure, test-pinned):
-  // "trialing" counts as full Pro access until the trial ends — Stripe
-  // flips the status (past_due / canceled / ...) via webhook if payment
-  // fails; anything else locks the gate.
-  return subscriptionStatusFromRow(sub);
+  return {
+    status: subscriptionStatusFromRow(sub),
+    tier: planTierForRow(sub, process.env),
+  };
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -97,7 +111,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Refresh on sign-in, on explicit session update(), when the cache is
       // stale, or when the claim is missing entirely.
       if (user?.id || trigger === "update" || stale || !token.subscriptionStatus) {
-        token.subscriptionStatus = await resolveSubscriptionStatus(userId);
+        const claims = await resolveSubscriptionClaims(userId);
+        token.subscriptionStatus = claims.status;
+        token.planTier = claims.tier;
         token.subscriptionCheckedAt = now;
       }
       return token;
@@ -106,6 +122,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user && token.sub) {
         session.user.id = token.sub;
         session.user.subscriptionStatus = token.subscriptionStatus ?? "none";
+        session.user.planTier = token.planTier ?? "free";
       }
       return session;
     },
