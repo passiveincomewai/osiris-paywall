@@ -1,0 +1,76 @@
+import { describe, expect, it } from 'vitest';
+import { sliceCountryCameras } from './country-slices';
+import type { CountryCamera } from './country-cameras';
+
+const cam = (partial: Partial<CountryCamera> & { id: string }): CountryCamera => ({
+  name: partial.id,
+  country: 'Freedonia',
+  ...partial,
+});
+
+const records: CountryCamera[] = [
+  ...Array.from({ length: 60 }, (_, i) =>
+    cam({ id: `b${i}`, name: `Bigton Cam ${String(i).padStart(2, '0')}`, city: 'Bigton' }),
+  ),
+  cam({ id: 's1', name: 'Harbor Light', city: 'Smallville' }),
+  cam({ id: 's2', name: 'Harbor Dark', city: 'Smallville' }),
+  cam({ id: 'n1', name: 'Nowhere Cam' }),
+];
+
+describe('sliceCountryCameras', () => {
+  it('serves the first batch of 48 by default', () => {
+    const out = sliceCountryCameras(records, {});
+    expect(out.total).toBe(63);
+    expect(out.cameras).toHaveLength(48);
+    expect(out.offset).toBe(0);
+    expect(out.limit).toBe(48);
+  });
+
+  it('walks the whole country in batches with no overlap', () => {
+    const seen = new Set<string>();
+    for (let offset = 0; offset < 63; offset += 48) {
+      const out = sliceCountryCameras(records, { offset });
+      for (const c of out.cameras) {
+        expect(seen.has(c.id)).toBe(false);
+        seen.add(c.id);
+      }
+    }
+    expect(seen.size).toBe(63);
+  });
+
+  it('clamps limit to the stated maximum and offset at zero', () => {
+    const out = sliceCountryCameras(records, { offset: -5, limit: 5000 });
+    expect(out.offset).toBe(0);
+    expect(out.limit).toBe(96);
+  });
+
+  it('filters by city before slicing', () => {
+    const out = sliceCountryCameras(records, { city: 'Smallville' });
+    expect(out.total).toBe(2);
+    expect(out.cameras.map(c => c.id)).toEqual(['s1', 's2']);
+  });
+
+  it('searches name, city and source across the whole country', () => {
+    const withSource = records.map(c => (c.id === 'n1' ? { ...c, source: 'Harbor Authority' } : c));
+    const out = sliceCountryCameras(withSource, { query: 'harbor' });
+    expect(out.cameras.map(c => c.id)).toEqual(['s1', 's2', 'n1']);
+  });
+
+  it('combines city and query, and reports the filtered total', () => {
+    const out = sliceCountryCameras(records, { city: 'Bigton', query: 'cam 07' });
+    expect(out.total).toBe(1);
+    expect(out.cameras[0].id).toBe('b7');
+  });
+
+  it('returns the biggest cities as chips, unfiltered', () => {
+    const out = sliceCountryCameras(records, { city: 'Smallville' });
+    expect(out.cities[0]).toEqual({ name: 'Bigton', count: 60 });
+    expect(out.cities).toHaveLength(2);
+  });
+
+  it('answers an out-of-range offset with an empty slice, not an error', () => {
+    const out = sliceCountryCameras(records, { offset: 10000 });
+    expect(out.total).toBe(63);
+    expect(out.cameras).toEqual([]);
+  });
+});

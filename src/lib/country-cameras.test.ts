@@ -2,9 +2,13 @@ import { describe, expect, it } from 'vitest';
 import {
   cameraAreas,
   cameraMediaKind,
+  canonicalCountryName,
   COUNTRY_CAMERA_EXPLORERS,
+  countrySlug,
+  dedupeCountryCameras,
   filterCameras,
   selectCountryCameras,
+  sortForCountryPage,
   youtubePosterUrl,
   type CountryCamera,
 } from './country-cameras';
@@ -165,5 +169,101 @@ describe('youtubePosterUrl', () => {
   it('returns null when no video is named', () => {
     expect(youtubePosterUrl(cam({ id: '1', external_url: 'https://www.youtube.com/@chan/live' }))).toBeNull();
     expect(youtubePosterUrl(cam({ id: '2', stream_url: 'https://x/y.m3u8' }))).toBeNull();
+  });
+});
+
+describe('canonicalCountryName', () => {
+  it('merges the Thailand name and its TH code (the load-bearing alias)', () => {
+    expect(canonicalCountryName('Thailand')).toBe('Thailand');
+    expect(canonicalCountryName('TH')).toBe('Thailand');
+    expect(canonicalCountryName(' TH ')).toBe('Thailand');
+  });
+
+  it('merges code and name spellings of the same country', () => {
+    expect(canonicalCountryName('US')).toBe('United States');
+    expect(canonicalCountryName('United States')).toBe('United States');
+    expect(canonicalCountryName('GB')).toBe('United Kingdom');
+    expect(canonicalCountryName('UK')).toBe('United Kingdom');
+    expect(canonicalCountryName('CA')).toBe('Canada');
+    expect(canonicalCountryName('Canada')).toBe('Canada');
+  });
+
+  it('returns null for values that name no country', () => {
+    expect(canonicalCountryName('XX')).toBeNull();
+    expect(canonicalCountryName('Middle East')).toBeNull();
+    expect(canonicalCountryName('Unknown')).toBeNull();
+    expect(canonicalCountryName('')).toBeNull();
+    expect(canonicalCountryName(undefined)).toBeNull();
+  });
+
+  it('lets an unmapped real value stand as its own country', () => {
+    expect(canonicalCountryName('Freedonia')).toBe('Freedonia');
+  });
+});
+
+describe('countrySlug', () => {
+  it('slugifies like the other generated tiers', () => {
+    expect(countrySlug('United States')).toBe('united-states');
+    expect(countrySlug('South Korea')).toBe('south-korea');
+    expect(countrySlug('Curaçao')).toBe('curacao');
+    expect(countrySlug('US Virgin Islands')).toBe('us-virgin-islands');
+  });
+});
+
+describe('dedupeCountryCameras', () => {
+  it('dedupes by id, first record wins', () => {
+    const out = dedupeCountryCameras([
+      cam({ id: 'a', name: 'One' }),
+      cam({ id: 'a', name: 'One again' }),
+      cam({ id: 'b', name: 'Two' }),
+    ]);
+    expect(out.map(c => c.id)).toEqual(['a', 'b']);
+    expect(out[0].name).toBe('One');
+  });
+
+  it('drops near-duplicates across the whole list, not just neighbours', () => {
+    const out = dedupeCountryCameras([
+      cam({ id: 'a', name: 'Beach Rd — Cam', lat: 9.7, lng: 100.0 }),
+      cam({ id: 'x', name: 'Unrelated', lat: 13.7, lng: 100.5 }),
+      cam({ id: 'b', name: 'Beach Rd - Cam', lat: 9.7005, lng: 100.0002 }),
+    ]);
+    expect(out.map(c => c.id)).toEqual(['a', 'x']);
+  });
+
+  it('keeps same-name cameras at real distance and records without coords', () => {
+    const out = dedupeCountryCameras([
+      cam({ id: 'a', name: 'Pier Cam', lat: 9.7, lng: 100.0 }),
+      cam({ id: 'b', name: 'Pier Cam', lat: 10.7, lng: 101.0 }),
+      cam({ id: 'c', name: 'Pier Cam' }),
+      cam({ id: 'd', name: 'Pier Cam' }),
+    ]);
+    expect(out.map(c => c.id)).toEqual(['a', 'b', 'c', 'd']);
+  });
+});
+
+describe('sortForCountryPage', () => {
+  it('groups by city, biggest city first, names in order inside a city', () => {
+    const out = sortForCountryPage([
+      cam({ id: '1', name: 'Zebra', city: 'Smallville' }),
+      cam({ id: '2', name: 'Beta', city: 'Bigton' }),
+      cam({ id: '3', name: 'Alpha', city: 'Bigton' }),
+      cam({ id: '4', name: 'Gamma', city: 'Bigton' }),
+      cam({ id: '5', name: 'Mid', city: 'Midburg' }),
+    ]);
+    expect(out.map(c => c.id)).toEqual(['3', '2', '4', '5', '1']);
+  });
+
+  it('puts the no-city group last, labelled by absence', () => {
+    const out = sortForCountryPage([
+      cam({ id: '1', name: 'No place' }),
+      cam({ id: '2', name: 'Placed', city: 'Somewhere' }),
+    ]);
+    expect(out.map(c => c.id)).toEqual(['2', '1']);
+  });
+
+  it('does not mutate its input', () => {
+    const input = [cam({ id: '2', city: 'B' }), cam({ id: '1', city: 'A' })];
+    sortForCountryPage(input);
+    expect(input.map(c => c.id)).toEqual(['2', '1']);
   });
 });

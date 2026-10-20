@@ -39,6 +39,152 @@ export interface CountryExplorerConfig {
 }
 
 /**
+ * Raw catalogue `country` value → canonical country name. This is the
+ * runtime copy of the map the data generators carry (scripts/
+ * build-camera-directory.mjs, tools/build-country-pages.mjs) — the three
+ * must agree, because a camera's country page is decided by this table.
+ * The {Thailand, TH} pairing is load-bearing: Thai sources label records
+ * both ways, and dropping either halves the country's page.
+ */
+export const COUNTRY_NORMALIZE: Record<string, string> = {
+  US: 'United States', 'United States': 'United States',
+  JP: 'Japan', Japan: 'Japan',
+  TW: 'Taiwan', Taiwan: 'Taiwan',
+  UK: 'United Kingdom', GB: 'United Kingdom', 'United Kingdom': 'United Kingdom',
+  TR: 'Turkey', Turkey: 'Turkey',
+  HK: 'Hong Kong', 'Hong Kong': 'Hong Kong',
+  ID: 'Indonesia', Indonesia: 'Indonesia',
+  VN: 'Vietnam', Vietnam: 'Vietnam',
+  RU: 'Russia', Russia: 'Russia',
+  KR: 'South Korea', 'South Korea': 'South Korea',
+  TH: 'Thailand', Thailand: 'Thailand',
+  RO: 'Romania', Romania: 'Romania',
+  BG: 'Bulgaria', Bulgaria: 'Bulgaria',
+  GR: 'Greece', Greece: 'Greece',
+  MY: 'Malaysia', Malaysia: 'Malaysia', Philippines: 'Philippines', PH: 'Philippines',
+  MO: 'Macau', Macau: 'Macau',
+  IL: 'Israel', Israel: 'Israel',
+  KZ: 'Kazakhstan', Kazakhstan: 'Kazakhstan',
+  CN: 'China', China: 'China',
+  LT: 'Lithuania', Lithuania: 'Lithuania',
+  GE: 'Georgia', Georgia: 'Georgia',
+  UA: 'Ukraine', Ukraine: 'Ukraine',
+  MD: 'Moldova', Moldova: 'Moldova',
+  IN: 'India', India: 'India',
+  MV: 'Maldives', Maldives: 'Maldives',
+  CY: 'Cyprus', Cyprus: 'Cyprus',
+  EG: 'Egypt', Egypt: 'Egypt',
+  SG: 'Singapore', Singapore: 'Singapore',
+  NP: 'Nepal', Nepal: 'Nepal',
+  BY: 'Belarus', Belarus: 'Belarus',
+  AZ: 'Azerbaijan', Azerbaijan: 'Azerbaijan',
+  KG: 'Kyrgyzstan', Kyrgyzstan: 'Kyrgyzstan',
+  SA: 'Saudi Arabia', 'Saudi Arabia': 'Saudi Arabia',
+  LV: 'Latvia', Latvia: 'Latvia',
+  YE: 'Yemen', Yemen: 'Yemen',
+  IR: 'Iran', Iran: 'Iran',
+  OM: 'Oman', Oman: 'Oman',
+  CX: 'Christmas Island', 'Christmas Island': 'Christmas Island',
+  NO: 'Norway', Norway: 'Norway',
+  SE: 'Sweden', Sweden: 'Sweden',
+  FI: 'Finland', Finland: 'Finland',
+  ES: 'Spain', Spain: 'Spain',
+  AT: 'Austria', Austria: 'Austria',
+  CA: 'Canada', Canada: 'Canada',
+  IT: 'Italy', Italy: 'Italy',
+  IS: 'Iceland', Iceland: 'Iceland',
+  NL: 'Netherlands', Netherlands: 'Netherlands',
+  AU: 'Australia', Australia: 'Australia',
+  NZ: 'New Zealand', 'New Zealand': 'New Zealand',
+  PL: 'Poland', Poland: 'Poland',
+  MT: 'Malta', Malta: 'Malta',
+  FR: 'France', France: 'France',
+  BR: 'Brazil', Brazil: 'Brazil',
+  HR: 'Croatia', Croatia: 'Croatia',
+  MX: 'Mexico', Mexico: 'Mexico',
+  PE: 'Peru', Peru: 'Peru',
+  CL: 'Chile', Chile: 'Chile',
+  ZA: 'South Africa', 'South Africa': 'South Africa',
+  AR: 'Argentina', Argentina: 'Argentina',
+  CH: 'Switzerland', Switzerland: 'Switzerland',
+  PT: 'Portugal', Portugal: 'Portugal',
+  CR: 'Costa Rica', 'Costa Rica': 'Costa Rica',
+  IE: 'Ireland', Ireland: 'Ireland',
+  HU: 'Hungary', Hungary: 'Hungary',
+  SI: 'Slovenia', Slovenia: 'Slovenia',
+  DE: 'Germany', Germany: 'Germany',
+  DO: 'Dominican Republic', 'Dominican Republic': 'Dominican Republic',
+  KE: 'Kenya', Kenya: 'Kenya',
+  SC: 'Seychelles', Seychelles: 'Seychelles',
+  CZ: 'Czechia', Czechia: 'Czechia',
+  AL: 'Albania', Albania: 'Albania',
+  BA: 'Bosnia and Herzegovina', 'Bosnia and Herzegovina': 'Bosnia and Herzegovina',
+  BE: 'Belgium', Belgium: 'Belgium',
+  RS: 'Serbia', Serbia: 'Serbia',
+  MK: 'North Macedonia', 'North Macedonia': 'North Macedonia',
+  SK: 'Slovakia', Slovakia: 'Slovakia',
+  EC: 'Ecuador', Ecuador: 'Ecuador',
+  SV: 'El Salvador', 'El Salvador': 'El Salvador',
+  BZ: 'Belize', Belize: 'Belize',
+  BM: 'Bermuda', Bermuda: 'Bermuda',
+  BO: 'Bolivia', Bolivia: 'Bolivia',
+  GD: 'Grenada', Grenada: 'Grenada',
+  GP: 'Guadeloupe', Guadeloupe: 'Guadeloupe',
+  HN: 'Honduras', Honduras: 'Honduras',
+  PA: 'Panama', Panama: 'Panama',
+  LB: 'Lebanon', Lebanon: 'Lebanon',
+  JO: 'Jordan', Jordan: 'Jordan',
+  LK: 'Sri Lanka', 'Sri Lanka': 'Sri Lanka',
+  BB: 'Barbados', Barbados: 'Barbados',
+  MQ: 'Martinique', Martinique: 'Martinique',
+  UY: 'Uruguay', Uruguay: 'Uruguay',
+  VE: 'Venezuela', Venezuela: 'Venezuela',
+  MA: 'Morocco', Morocco: 'Morocco',
+  SN: 'Senegal', Senegal: 'Senegal',
+  FO: 'Faroe Islands', 'Faroe Islands': 'Faroe Islands',
+  LU: 'Luxembourg', Luxembourg: 'Luxembourg',
+  SM: 'San Marino', 'San Marino': 'San Marino',
+  EE: 'Estonia', Estonia: 'Estonia',
+  VA: 'Vatican City', 'Vatican City': 'Vatican City',
+  BQ: 'Bonaire', Bonaire: 'Bonaire',
+  CW: 'Curaçao', Curaçao: 'Curaçao',
+  PR: 'Puerto Rico', 'Puerto Rico': 'Puerto Rico',
+  SX: 'Sint Maarten', 'Sint Maarten': 'Sint Maarten',
+  'US Virgin Islands': 'US Virgin Islands',
+  TZ: 'Tanzania', Tanzania: 'Tanzania',
+  DK: 'Denmark', Denmark: 'Denmark',
+  MG: 'Madagascar', Madagascar: 'Madagascar',
+};
+
+/** Country values that name no country — records carrying one (or none)
+ *  belong to no country page; the country generator counts them as the
+ *  unattributed bucket rather than force-assigning them. */
+export const JUNK_COUNTRY_VALUES = new Set(['XX', 'Middle East', 'Unknown', '']);
+
+/**
+ * The canonical country a record belongs to, or null when its country
+ * value names no country. A value missing from COUNTRY_NORMALIZE that is
+ * not junk is its own canonical name — that fall-through is how a country
+ * the table has never seen still gets a page instead of vanishing.
+ */
+export function canonicalCountryName(raw: string | undefined): string | null {
+  const value = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (JUNK_COUNTRY_VALUES.has(value)) return null;
+  return COUNTRY_NORMALIZE[value] ?? value;
+}
+
+/** URL slug for a canonical country name (diacritics folded, as the city
+ *  generator slugifies). */
+export function countrySlug(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
  * Countries with a playable explorer on their country page. Adding a row
  * here (and nothing else) is the whole rollout for another country — see
  * worldeye-thailand-poc/TEMPLATE.md.
@@ -182,4 +328,69 @@ export function youtubePosterUrl(cam: CountryCamera): string | null {
   const url = cam.stream_url ?? '';
   const m = url.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]{6,})/i);
   return m ? `https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg` : null;
+}
+
+/**
+ * The two passes selectCountryCameras applies, for a list already known to
+ * be one country's: dedupe by id, then drop near-duplicates — the same
+ * physical camera reported by two sources under punctuation-variant names
+ * at effectively the same spot. The country generator (tools/
+ * build-country-pages.mjs) applies these at build time so a page's stated
+ * count is exactly the number of cards its grid can show; it carries its
+ * own copy of the rule, as the other generators do. Bucketed by normalized
+ * name — only same-name records can be near-duplicates — so a 40k-camera
+ * country stays linear-ish instead of quadratic.
+ */
+export function dedupeCountryCameras(cameras: readonly CountryCamera[]): CountryCamera[] {
+  const seen = new Set<string>();
+  const byName = new Map<string, CountryCamera[]>();
+  const out: CountryCamera[] = [];
+  for (const cam of cameras) {
+    if (!cam?.id || seen.has(cam.id)) continue;
+    const name = normalizedName(cam.name);
+    if (name && hasCoords(cam)) {
+      const twins = byName.get(name) ?? [];
+      if (
+        twins.some(
+          k =>
+            hasCoords(k) &&
+            Math.hypot((k.lat as number) - (cam.lat as number), (k.lng as number) - (cam.lng as number)) <=
+              NEAR_DUPLICATE_DEG,
+        )
+      ) {
+        continue;
+      }
+      twins.push(cam);
+      byName.set(name, twins);
+    }
+    seen.add(cam.id);
+    out.push(cam);
+  }
+  return out;
+}
+
+/**
+ * A country page's browsing order: cameras grouped by city, the biggest
+ * city first (alphabetical on a tie), name order inside a city. Records
+ * with no city value form one last group — the page labels it "Other
+ * locations" rather than inventing a place for them.
+ */
+export function sortForCountryPage(cameras: readonly CountryCamera[]): CountryCamera[] {
+  const sizes = new Map<string, number>();
+  for (const cam of cameras) {
+    const city = clean(cam.city);
+    if (city) sizes.set(city, (sizes.get(city) ?? 0) + 1);
+  }
+  return [...cameras].sort((a, b) => {
+    const ca = clean(a.city);
+    const cb = clean(b.city);
+    if (ca !== cb) {
+      if (!ca) return 1; // the no-city group always sorts last
+      if (!cb) return -1;
+      const bySize = (sizes.get(cb) ?? 0) - (sizes.get(ca) ?? 0);
+      if (bySize !== 0) return bySize;
+      return ca.localeCompare(cb);
+    }
+    return clean(a.name).localeCompare(clean(b.name));
+  });
 }
