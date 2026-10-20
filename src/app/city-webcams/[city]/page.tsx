@@ -802,6 +802,18 @@ const COUNTRY_PAGE_SLUGS = new Set(
 );
 
 const fmt = (n: number) => n.toLocaleString("en-US");
+// "in the United States" / "the United States' cameras" — the two
+// country names that take the definite article.
+const inCountry = (country: string) =>
+  country === "United States" || country === "United Kingdom"
+    ? `the ${country}`
+    : country;
+const ofCountry = (country: string) =>
+  country === "United States"
+    ? "the United States'"
+    : country === "United Kingdom"
+      ? "the United Kingdom's"
+      : `${country}'s`;
 // Source labels in the catalogue read like "OpenCCTV / wsdot" — the
 // harvest aggregator's prefix; the publisher is what follows it.
 const srcName = (s: string) => s.replace(/^OpenCCTV \/ /, "");
@@ -842,14 +854,14 @@ function generatedCfg(g: GenCity): CityCfg {
     h1: `${g.name} Live Webcams`,
     sub: `Watch ${fmt(g.count)} live cameras in ${g.name} — free on the WorldEye globe.`,
     intro: [
-      `${g.name} accounts for ${fmt(g.count)} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${g.country} — about ${shareLabel} of the national total. The largest share of the feeds is published by ${srcList}, and WorldEye collects them into one searchable map layer alongside its 74,229 cameras worldwide.`,
+      `${g.name} accounts for ${fmt(g.count)} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)} — about ${shareLabel} of the national total. The largest share of the feeds is published by ${srcList}, and WorldEye collects them into one searchable map layer alongside its 74,229 cameras worldwide.`,
       `Featured feeds in the index include ${joinNames(feat)} — and every camera in the list below links straight into the live globe with that feed open, so you can go from this page to a live view in one tap.`,
       mixParagraph,
       `Use the grid the way it is meant to be used: a two-minute check of the cameras on your route before you leave. What is happening on the ground — a jam, a closure, a storm moving in — shows up on these feeds as it happens, not as a forecast said it would.`,
     ],
     stats: [
       { value: fmt(g.count), label: "live cameras" },
-      { value: shareLabel, label: `of ${g.country}'s cameras` },
+      { value: shareLabel, label: `of ${ofCountry(g.country)} cameras` },
       { value: String(g.sourceCount), label: "publishing sources" },
     ],
     samples: g.samples.map((s) => ({ name: s.name, city: g.name, id: s.id })),
@@ -868,7 +880,7 @@ function generatedCfg(g: GenCity): CityCfg {
     faqs: [
       {
         q: `How many live cameras are there in ${g.name}?`,
-        a: `WorldEye indexes ${fmt(g.count)} cameras in ${g.name}, out of ${fmt(g.countryTotal)} across ${g.country}. The count comes from the live camera catalogue and moves as operators add feeds or retire old ones.`,
+        a: `WorldEye indexes ${fmt(g.count)} cameras in ${g.name}, out of ${fmt(g.countryTotal)} across ${inCountry(g.country)}. The count comes from the live camera catalogue and moves as operators add feeds or retire old ones.`,
       },
       {
         q: `Where do the ${g.name} cameras come from?`,
