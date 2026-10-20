@@ -34,7 +34,6 @@ export default function HeaderProfileMenu() {
   const [invite, setInvite] = useState<InviteStatus | null>(null);
   const [joining, setJoining] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,17 +94,6 @@ export default function HeaderProfileMenu() {
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-  }
-
-  async function openPortal() {
-    setPortalLoading(true);
-    try {
-      const res = await fetch("/api/billing/portal", { method: "POST" });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-    } finally {
-      setPortalLoading(false);
-    }
   }
 
   const pct = invite && invite.goal > 0 ? Math.min(100, (invite.invites / invite.goal) * 100) : 0;
@@ -208,14 +196,14 @@ export default function HeaderProfileMenu() {
             >
               <Settings className="w-4 h-4 text-white/40" /> Account settings
             </Link>
-            <button
-              onClick={openPortal}
-              disabled={portalLoading}
-              className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition disabled:opacity-60"
+            <Link
+              href="/settings/subscription"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
             >
               <CreditCard className="w-4 h-4 text-white/40" />
-              {portalLoading ? "Opening…" : "Manage subscription"}
-            </button>
+              Manage subscription
+            </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
               className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"

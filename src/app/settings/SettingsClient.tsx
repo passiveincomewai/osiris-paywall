@@ -49,7 +49,6 @@ export default function SettingsClient() {
   const [pwConfirm, setPwConfirm] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
   const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
-  const [portalLoading, setPortalLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -111,18 +110,6 @@ export default function SettingsClient() {
       setPwMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't update password." });
     } finally {
       setPwSaving(false);
-    }
-  }
-
-  async function openPortal() {
-    setPortalLoading(true);
-    try {
-      const res = await fetch("/api/billing/portal", { method: "POST" });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else setErr(data.error || "Couldn't open billing.");
-    } finally {
-      setPortalLoading(false);
     }
   }
 
@@ -205,10 +192,10 @@ export default function SettingsClient() {
                   <span className="text-sm text-white/55">{sub.cancelAtPeriodEnd ? "Access until" : "Renews"}</span>
                   <span className="text-sm">{new Date(sub.currentPeriodEnd).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</span>
                 </div>
-                <button onClick={openPortal} disabled={portalLoading} className={`${btnGold} mt-2 inline-flex items-center gap-2`}>
-                  <CreditCard className="w-4 h-4" /> {portalLoading ? "Opening…" : "Manage subscription"}
-                </button>
-                <p className="text-xs text-white/35">Update payment method, view invoices, or cancel — handled securely by Stripe.</p>
+                <Link href="/settings/subscription" className={`${btnGold} mt-2 inline-flex items-center gap-2`}>
+                  <CreditCard className="w-4 h-4" /> Manage subscription
+                </Link>
+                <p className="text-xs text-white/35">Switch plans right here on WorldEye — payment details and cancellation stay with Stripe.</p>
               </div>
             ) : (
               <div>
