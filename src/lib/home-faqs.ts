@@ -5,7 +5,7 @@
 export const HOME_FAQS: { q: string; a: string }[] = [
   {
     q: "Is WorldEye really free?",
-    a: "Yes. The live globe — the map, 76,000+ public cameras, flight and satellite tracking, live transit, weather radar, earthquakes, wildfires and basic search — is free to use with no account. WorldEye Pro is an optional subscription that adds the AI analyst, satellite map view, the live traffic layer, advanced search filters and premium intelligence feeds.",
+    a: "Yes. The live globe — the map, 74,229 public cameras, flight and satellite tracking, live transit, weather radar, earthquakes, wildfires and basic search — is free to use with no account. WorldEye Pro is an optional subscription that adds the AI analyst, satellite map view, the live traffic layer, advanced search filters and premium intelligence feeds.",
   },
   {
     q: "Do I need an account to use WorldEye?",
@@ -13,7 +13,7 @@ export const HOME_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "How is WorldEye different from Google Earth?",
-    a: "Google Earth shows the recorded past; WorldEye shows right now. It fuses live streams — aircraft, satellites, weather, earthquakes, wildfires and 76,000+ public cameras — onto one 3D globe that updates in real time.",
+    a: "Google Earth shows the recorded past; WorldEye shows right now. It fuses live streams — aircraft, satellites, weather, earthquakes, wildfires and 74,229 public cameras — onto one 3D globe that updates in real time.",
   },
   {
     q: "What does WorldEye Pro include, and what does it cost?",

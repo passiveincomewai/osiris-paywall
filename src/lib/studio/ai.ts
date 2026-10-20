@@ -73,7 +73,7 @@ const TONE_MAX = 80;
  * The instruction block Cosmo fulfills against. It travels inside the
  * job params so the queue is self-describing: whoever (or whatever)
  * picks the job up knows exactly what "done" means, including the
- * standing house rules — verified claims only (76,000+ cameras), and
+ * standing house rules — verified claims only (74,229 cameras), and
  * for Instagram captions the CTA-at-top + exactly-5-hashtags rule.
  */
 function buildSpec(
@@ -92,7 +92,7 @@ function buildSpec(
     discountCode
       ? `The affiliate's discount code is ${discountCode} — it is real and Stripe-confirmed; you may mention it.`
       : `The affiliate has no discount code — do NOT invent one or promise any discount.`,
-    `Only use verified WorldEye claims: 76,000+ live public cameras on one 3D globe, live flights, satellites, weather radar, earthquakes and wildfires, free to explore at worldeye.app. Never state a different camera count.`,
+    `Only use verified WorldEye claims: 74,229 live public cameras on one 3D globe, live flights, satellites, weather radar, earthquakes and wildfires, free to explore at worldeye.app. Never state a different camera count.`,
     `Include a plain affiliate disclosure (e.g. "I may earn a commission if you subscribe through my link") where the format calls for one.`,
   ];
   if (kind === "ai_caption" && input.platform === "Instagram") {

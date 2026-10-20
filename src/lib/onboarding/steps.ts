@@ -41,8 +41,8 @@ export const TOUR_STEPS: TourStep[] = [
   {
     n: 2,
     title: "Open a Live Camera",
-    body: "The glowing dots are live cameras — 76,000+ of them, all over the world. Tap one to look through it.",
-    bodyTouch: "The glowing dots are live cameras — 76,000+ of them, all over the world. Tap one to look through it.",
+    body: "The glowing dots are live cameras — 74,229 of them, all over the world. Tap one to look through it.",
+    bodyTouch: "The glowing dots are live cameras — 74,229 of them, all over the world. Tap one to look through it.",
     anchor: "layers",
     action: "camera-open",
     hint: "Tap a glowing dot on the globe to open a camera.",
@@ -189,7 +189,7 @@ export const MICROS: Record<string, MicroDef> = {
     id: "cameras-guide",
     steps: [
       {
-        title: "76,000+ live cameras",
+        title: "74,229 live cameras",
         body: "Every glowing dot on the globe is a publicly available live camera — landmarks, cities, traffic, volcanoes and more. Zoom in and the dots multiply.",
       },
       {
