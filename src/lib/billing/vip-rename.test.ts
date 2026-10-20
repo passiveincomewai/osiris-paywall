@@ -44,7 +44,7 @@ describe("picker + strip renders", () => {
   it("the checkout strip renders 'VIP Pro' — never 'VIP Pro Pro' or 'Annual Pro'", () => {
     const html = normalize(
       renderToString(
-        createElement(CheckoutPlanStrip, { summary: checkoutPlanSummary("annual") }),
+        createElement(CheckoutPlanStrip, { summary: checkoutPlanSummary("annual")! }),
       ),
     );
     expect(html).toContain("VIP Pro");
