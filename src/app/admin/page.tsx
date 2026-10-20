@@ -203,10 +203,10 @@ const PLAN_NAMES: Record<string, string> = {
   [process.env.STRIPE_ANNUAL_PRICE_ID ?? ""]: "Annual",
   [process.env.STRIPE_ENTERPRISE_PRICE_ID ?? ""]: "Enterprise",
 };
-// Monthly-revenue equivalent per plan, in cents. Weekly $3.99 → $17.29/mo,
-// Monthly $9.99, Annual $59.99/yr → $5.00/mo, Enterprise $999/yr → $83.25/mo.
+// Monthly-revenue equivalent per plan, in cents. Weekly $7.99 → $34.62/mo,
+// Monthly $13.99, Annual $74.99/yr → $6.25/mo, Enterprise $999/yr → $83.25/mo.
 const PLAN_MRR_CENTS: Record<string, number> = {
-  Weekly: 1729, Monthly: 999, Annual: 500, Enterprise: 8325,
+  Weekly: 3462, Monthly: 1399, Annual: 625, Enterprise: 8325,
 };
 
 /**

@@ -9,7 +9,7 @@ export default function EarningsCalculator() {
   const [plan, setPlan] = useState<"monthly" | "annual">("annual");
 
   // Base Explorer rank: 15% recurring. Higher ranks earn up to 30%.
-  const perRefMonthly = plan === "monthly" ? 9.99 * 0.15 : (59.99 * 0.15) / 12;
+  const perRefMonthly = plan === "monthly" ? 13.99 * 0.15 : (74.99 * 0.15) / 12;
   const monthly = refs * perRefMonthly;
   const yearly = monthly * 12;
 
@@ -51,7 +51,7 @@ export default function EarningsCalculator() {
                         : "bg-white/[0.03] border-white/10 text-slate-400 hover:bg-white/[0.06]"
                     }`}
                   >
-                    {p} · {p === "monthly" ? "$9.99/mo" : "$59.99/yr"}
+                    {p} · {p === "monthly" ? "$13.99/mo" : "$74.99/yr"}
                   </button>
                 ))}
               </div>

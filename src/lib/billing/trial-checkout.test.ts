@@ -33,21 +33,21 @@ describe("TRIAL_PLAN_OPTIONS", () => {
   it("mirrors /pricing's plan copy word for word", () => {
     const byPlan = Object.fromEntries(TRIAL_PLAN_OPTIONS.map((o) => [o.plan, o]));
     expect(byPlan.weekly).toMatchObject({
-      price: "$3.99",
+      price: "$7.99",
       per: "/week",
       note: "1 day free, then billed weekly · cancel anytime",
       cta: "Start 1-Day Free Trial",
       trialLabel: "1 day free",
     });
     expect(byPlan.monthly).toMatchObject({
-      price: "$9.99",
+      price: "$13.99",
       per: "/month",
       note: "1 day free, then billed monthly · cancel anytime",
       cta: "Start 1-Day Free Trial",
       trialLabel: "1 day free",
     });
     expect(byPlan.annual).toMatchObject({
-      price: "$59.99",
+      price: "$74.99",
       per: "/year",
       note: "3 days free, then billed annually · cancel anytime",
       cta: "Start 3-Day Free Trial",

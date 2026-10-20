@@ -13,9 +13,9 @@ import {
 type Plan = "weekly" | "monthly" | "annual" | "enterprise";
 
 const PLANS: Record<Plan, { price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
-  weekly: { price: "$3.99", per: "/week", perDay: "$0.57", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
-  monthly: { price: "$9.99", per: "/month", perDay: "$0.33", note: "1 day free, then billed monthly · cancel anytime", save: "Save 42%", cta: "Start 1-Day Free Trial", trial: "1 day free" },
-  annual: { price: "$59.99", per: "/year", perDay: "$0.16", note: "3 days free, then billed annually · cancel anytime", save: "Save 71% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
+  weekly: { price: "$7.99", per: "/week", perDay: "$1.14", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
+  monthly: { price: "$13.99", per: "/month", perDay: "$0.47", note: "1 day free, then billed monthly · cancel anytime", save: "Save 60%", cta: "Start 1-Day Free Trial", trial: "1 day free" },
+  annual: { price: "$74.99", per: "/year", perDay: "$0.21", note: "3 days free, then billed annually · cancel anytime", save: "Save 82% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
   enterprise: { price: "$999", per: "/year", perDay: "$2.74", note: "Billed annually · cancel anytime", cta: "Get Enterprise" },
 };
 

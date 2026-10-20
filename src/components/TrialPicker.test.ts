@@ -14,9 +14,9 @@ describe("TrialPicker", () => {
     for (const s of [
       "Start 1-Day Free Trial",
       "Start 3-Day Free Trial",
-      "$3.99",
-      "$9.99",
-      "$59.99",
+      "$7.99",
+      "$13.99",
+      "$74.99",
       "1 day free, then billed weekly · cancel anytime",
       "1 day free, then billed monthly · cancel anytime",
       "3 days free, then billed annually · cancel anytime",
