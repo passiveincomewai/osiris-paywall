@@ -1,10 +1,11 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { resolveRecordingTier, type PlanTier } from "@/lib/recording/tier";
 
 /** Backend Pro check for recording features. Mirrors src/auth.ts logic. */
 export async function recordingAccess(): Promise<
-  | { ok: true; userId: string; pro: true }
-  | { ok: true; userId: string; pro: false }
+  | { ok: true; userId: string; pro: true; tier: "pro" | "vip" }
+  | { ok: true; userId: string; pro: false; tier: "free" }
   | { ok: false }
 > {
   const session = await auth().catch(() => null);
@@ -16,5 +17,12 @@ export async function recordingAccess(): Promise<
     (sub.status === "active" || sub.status === "trialing") &&
     sub.currentPeriodEnd > new Date()
   );
-  return { ok: true, userId, pro };
+  const tier: PlanTier = resolveRecordingTier({
+    pro,
+    stripePriceId: sub?.stripePriceId,
+    env: process.env,
+  });
+  return pro
+    ? { ok: true, userId, pro: true, tier: tier === "vip" ? "vip" : "pro" }
+    : { ok: true, userId, pro: false, tier: "free" };
 }

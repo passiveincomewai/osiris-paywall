@@ -18,6 +18,7 @@ export async function GET() {
   ]);
   return NextResponse.json({
     pro: a.pro,
+    tier: a.tier,
     cameras,
     clips: clips._count,
     clipSeconds: clips._sum.durationSec ?? 0,
