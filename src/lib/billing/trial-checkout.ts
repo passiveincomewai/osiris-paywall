@@ -70,7 +70,10 @@ const PLAN_COPY: Record<TrialPlan, Omit<TrialPlanOption, "plan" | "trialDays">> 
     trialLabel: "1 day free",
   },
   annual: {
-    name: "Annual",
+    // The annual plan is sold as VIP Pro (a real tier — lib/plan-tier).
+    // "Annual" survives only as cadence ("billed annually"), never as
+    // the plan's name.
+    name: "VIP Pro",
     price: "$74.99",
     per: "/year",
     perDay: "$0.21",

@@ -200,13 +200,13 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 const PLAN_NAMES: Record<string, string> = {
   [process.env.STRIPE_WEEKLY_PRICE_ID ?? ""]: "Weekly",
   [process.env.STRIPE_MONTHLY_PRICE_ID ?? ""]: "Monthly",
-  [process.env.STRIPE_ANNUAL_PRICE_ID ?? ""]: "Annual",
+  [process.env.STRIPE_ANNUAL_PRICE_ID ?? ""]: "VIP Pro",
   [process.env.STRIPE_ENTERPRISE_PRICE_ID ?? ""]: "Enterprise",
 };
 // Monthly-revenue equivalent per plan, in cents. Weekly $7.99 → $34.62/mo,
-// Monthly $13.99, Annual $74.99/yr → $6.25/mo, Enterprise $999/yr → $83.25/mo.
+// Monthly $13.99, VIP Pro $74.99/yr → $6.25/mo, Enterprise $999/yr → $83.25/mo.
 const PLAN_MRR_CENTS: Record<string, number> = {
-  Weekly: 3462, Monthly: 1399, Annual: 625, Enterprise: 8325,
+  Weekly: 3462, Monthly: 1399, "VIP Pro": 625, Enterprise: 8325,
 };
 
 /**

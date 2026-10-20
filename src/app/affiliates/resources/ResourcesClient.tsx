@@ -58,7 +58,7 @@ Hey —
 
 Stumbled on WorldEye: a live 3D globe with 74,229 public cameras you can watch free. Traffic, beaches, landmarks — all live.
 
-The free map is genuinely fun. If you want more, Pro unlocks an AI analyst, satellite view, and OSINT tools, on weekly, monthly, or annual plans.
+The free map is genuinely fun. If you want more, Pro unlocks an AI analyst, satellite view, and OSINT tools, on weekly or monthly plans, or VIP Pro (billed yearly).
 
 Here's my link: {LINK}
 
@@ -99,7 +99,7 @@ const EMAILS: { subject: string; text: string }[] = [
 
 WorldEye is a live 3D globe (free) with 74,229 public cameras, flights, and satellites. I keep it open like a window to the world.
 
-Pro adds an AI analyst + satellite view if you want the full intel setup. Weekly, monthly, or annual plans.
+Pro adds an AI analyst + satellite view if you want the full intel setup. Weekly or monthly plans, or VIP Pro (billed yearly).
 
 My link: {LINK}
 
@@ -156,7 +156,7 @@ const BODIES: Record<Feature, string[]> = {
     "Satellite orbits, live flights, and 74,229 street cameras — all on one free 3D map.",
   ],
   OSINT: [
-    "Go Pro and unlock the AI analyst, satellite basemap, live traffic, advanced search filters, and the OSINT toolkit. Weekly, monthly, or annual plans.",
+    "Go Pro and unlock the AI analyst, satellite basemap, live traffic, advanced search filters, and the OSINT toolkit. Weekly or monthly plans, or VIP Pro (billed yearly).",
     "The free globe is the hook — Pro is the full intel station: AI analyst, satellite view, OSINT tools.",
     "Pro tier = AI analyst + satellite basemap + OSINT toolkit. The free map alone is worth the click.",
   ],
@@ -255,7 +255,7 @@ export default function ResourcesClient() {
             <div className="font-mono text-[10px] tracking-[0.3em] text-violet-300 mb-2">WORLDEYE PRO</div>
             <div className="text-2xl md:text-3xl font-black text-white tracking-tight">GO PRO</div>
             <div className="text-sm text-slate-300 mt-2">AI analyst · Satellite view · OSINT toolkit</div>
-            <div className="text-xs font-mono text-slate-400 mt-1">Weekly · Monthly · Annual plans</div>
+            <div className="text-xs font-mono text-slate-400 mt-1">Weekly · Monthly · VIP Pro plans</div>
           </div>
         ),
       },
@@ -519,7 +519,7 @@ export default function ResourcesClient() {
         <div className="text-sm font-bold text-amber-300 mb-1">Truthful claims only</div>
         <p className="text-sm text-slate-400 leading-relaxed">
           Stick to what&apos;s real: 74,229 live cameras, a free globe with no signup, Pro unlocks the AI analyst,
-          satellite view, live traffic, advanced search filters, and the OSINT toolkit on weekly, monthly, or annual plans. Never promise
+          satellite view, live traffic, advanced search filters, and the OSINT toolkit on weekly or monthly plans, or VIP Pro (billed yearly). Never promise
           income, never imply recruitment alone earns anything, and always disclose your affiliate link with #ad.
         </p>
       </div>

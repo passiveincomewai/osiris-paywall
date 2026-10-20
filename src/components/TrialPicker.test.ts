@@ -43,7 +43,7 @@ describe("TrialPicker", () => {
     for (const label of [
       "Start 1-Day Free Trial — Weekly $7.99/week",
       "Start 1-Day Free Trial — Monthly $13.99/month",
-      "Start 3-Day Free Trial — Annual $74.99/year",
+      "Start 3-Day Free Trial — VIP Pro $74.99/year",
     ]) {
       expect(html).toContain(`aria-label="${label}"`);
     }
@@ -76,7 +76,7 @@ describe("TrialPickerCheckout (the embedded-mode in-place checkout)", () => {
     expect(html).toContain("Back to plans");
     // The shared body: compact strip for the picked plan, the form
     // mount's loading state, the guarantee line.
-    expect(html).toContain("Annual Pro");
+    expect(html).toContain("VIP Pro");
     expect(html).toContain("$74.99");
     expect(html).toContain("Loading secure checkout…");
     expect(html).toContain(GUARANTEE_LINE);

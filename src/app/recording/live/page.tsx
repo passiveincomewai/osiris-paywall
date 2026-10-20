@@ -33,7 +33,7 @@ export default function LivePage() {
   };
 
   if (pro === null) return <div className="text-slate-400 font-mono text-sm">Loading…</div>;
-  if (!pro) return <UpgradeScreen priceLine="Recording unlocks with WorldEye Pro · Monthly $13.99 · Annual $74.99" />;
+  if (!pro) return <UpgradeScreen priceLine="Recording unlocks with WorldEye Pro · Monthly $13.99 · VIP Pro $74.99" />;
 
   const shown = (cams ?? []).slice(0, layout);
 

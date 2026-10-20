@@ -82,7 +82,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "How do the free trials work?",
-        a: "Weekly and monthly plans start with 1 free day, annual plans with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+        a: "Weekly and monthly plans start with 1 free day, VIP Pro with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
       },
       {
         q: "Can I cancel anytime?",
@@ -90,7 +90,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "What payment methods do you accept?",
-        a: "Major credit and debit cards through Stripe's secure checkout. Weekly is $7.99, monthly $13.99, annual $74.99.",
+        a: "Major credit and debit cards through Stripe's secure checkout. Weekly is $7.99, monthly $13.99, VIP Pro $74.99.",
       },
       {
         q: "Do I need my own OpenAI key for the AI assistant?",
@@ -217,7 +217,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "How do the free trials work?",
-    a: "Weekly and monthly plans start with 1 free day, annual plans with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+    a: "Weekly and monthly plans start with 1 free day, VIP Pro with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
   },
   {
     q: "Can I cancel anytime?",
@@ -225,7 +225,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "What payment methods do you accept?",
-    a: "Major credit and debit cards through Stripe's secure checkout. Weekly is $7.99, monthly $13.99, annual $74.99.",
+    a: "Major credit and debit cards through Stripe's secure checkout. Weekly is $7.99, monthly $13.99, VIP Pro $74.99.",
   },
   {
     q: "Do I need my own OpenAI key for the AI assistant?",

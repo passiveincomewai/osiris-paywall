@@ -112,8 +112,16 @@ export interface PriceDescription {
 const INTERVAL_PLAN: Record<string, string> = {
   week: "Weekly",
   month: "Monthly",
-  year: "Annual",
+  year: "Yearly",
   day: "Daily",
+};
+
+/** Plan-key → the name the plan is SOLD under (annual = VIP Pro). */
+const PLAN_DISPLAY_LABEL: Record<string, string> = {
+  weekly: "Weekly",
+  monthly: "Monthly",
+  annual: "VIP Pro",
+  enterprise: "Enterprise",
 };
 
 const INTERVAL_NOUN: Record<string, string> = {
@@ -138,7 +146,7 @@ export function describeStripePrice(
 
   const planFromEnv = price.id ? planByPriceId[price.id] : undefined;
   const planLabel = planFromEnv
-    ? `${capitalize(planFromEnv)} plan`
+    ? `${PLAN_DISPLAY_LABEL[planFromEnv] ?? capitalize(planFromEnv)} plan`
     : interval && INTERVAL_PLAN[interval]
       ? `${INTERVAL_PLAN[interval]} plan`
       : "Pro plan";

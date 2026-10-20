@@ -41,7 +41,7 @@ describe("CheckoutPlanStrip", () => {
 
   it("shows annual with its 3-day chip and per-day framing", () => {
     const html = renderStrip("annual");
-    expect(html).toContain("Annual Pro");
+    expect(html).toContain("VIP Pro");
     expect(html).toContain("$74.99");
     expect(html).toContain("/year");
     expect(html).toContain("3 days free");

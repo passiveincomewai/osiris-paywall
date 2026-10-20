@@ -48,7 +48,7 @@ describe("CheckoutSheet", () => {
 
   it("carries each plan's own strip (enterprise: no guarantee line)", () => {
     const annual = render("annual");
-    expect(annual).toContain("Annual Pro");
+    expect(annual).toContain("VIP Pro");
     expect(annual).toContain("$74.99");
     expect(annual).toContain("3 days free");
 

@@ -27,7 +27,8 @@ export function CheckoutPlanStrip({ summary }: { summary: CheckoutPlanSummary })
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-semibold text-white/90">
           {summary.name}
-          {summary.plan !== "enterprise" && " Pro"}
+          {/* "VIP Pro" already carries the Pro — never render "VIP Pro Pro". */}
+          {summary.plan !== "enterprise" && !summary.name.endsWith("Pro") && " Pro"}
           {" — "}
           {summary.price}
           <span className="text-white/45 font-normal">{summary.per}</span>

@@ -160,7 +160,7 @@ describe("WelcomeNextSteps", () => {
       ),
     );
     expect(html).toContain("WHAT HAPPENS NEXT");
-    expect(html).toContain("Annual free trial is on");
+    expect(html).toContain("VIP Pro free trial is on");
     expect(html).toContain("no charge until");
     expect(html).toContain("We email you before the first charge");
     expect(html).toContain("First charge: $74.99/year");

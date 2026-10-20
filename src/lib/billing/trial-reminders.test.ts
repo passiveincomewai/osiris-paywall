@@ -117,7 +117,7 @@ describe("describeStripePrice", () => {
       { id: "price_a", unit_amount: 7499, currency: "usd", recurring: { interval: "year", interval_count: 1 } },
       envMap,
     );
-    expect(d.planLabel).toBe("Annual plan");
+    expect(d.planLabel).toBe("VIP Pro plan");
     expect(d.chargeLabel).toBe("$74.99/year");
     expect(d.perMonthLabel).toBe("$6.25/month");
   });
@@ -181,7 +181,7 @@ describe("trialEndingEmail", () => {
   });
 
   it("adds the per-month equivalent only when one is supplied", () => {
-    const withPm = trialEndingEmail({ ...base, planLabel: "Annual plan", chargeLabel: "$74.99/year", perMonthLabel: "$6.25/month" });
+    const withPm = trialEndingEmail({ ...base, planLabel: "VIP Pro plan", chargeLabel: "$74.99/year", perMonthLabel: "$6.25/month" });
     expect(withPm.html).toContain("that's $6.25/month, billed once a year");
     expect(trialEndingEmail(base).html).not.toContain("billed once a year");
   });

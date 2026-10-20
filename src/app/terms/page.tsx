@@ -84,12 +84,12 @@ export default function TermsPage() {
           <p>
             Pro is billed on a recurring subscription: <strong className="text-white/80">weekly
             at $7.99</strong>, <strong className="text-white/80">monthly at $13.99</strong>,
-            or <strong className="text-white/80">annually at $74.99</strong>, plus any
+            or <strong className="text-white/80">VIP Pro, billed annually at $74.99</strong>, plus any
             applicable taxes. Prices are in USD unless stated otherwise at checkout.
           </p>
           <p>
             Some plans include a free trial — 1 day on the weekly plan, 3 days on the
-            annual plan. Your payment method is collected up front but isn&apos;t charged
+            VIP Pro plan. Your payment method is collected up front but isn&apos;t charged
             until the trial ends. Cancel before the trial ends and you pay nothing.
           </p>
           <p>

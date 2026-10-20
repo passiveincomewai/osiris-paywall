@@ -247,7 +247,7 @@ const FAQS = [
   },
   {
     q: "What does WorldEye Pro add?",
-    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $7.99 · Monthly $13.99 · Annual $74.99.",
+    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. VIP Pro — the yearly plan — adds camera timelapse and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
   },
   {
     q: "Do I need an account to use the map?",
@@ -390,7 +390,7 @@ export default function FeaturesPage() {
             For researchers, analysts and the deeply curious: an AI analyst that works
             the globe for you, satellite imagery, the live traffic layer, advanced search
             filters and premium intel feeds.
-            Weekly $7.99 · Monthly $13.99 · Annual $74.99 — cancel anytime.
+            Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99 — cancel anytime.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {PRO_FEATURES.map((f) => (

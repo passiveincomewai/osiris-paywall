@@ -41,7 +41,7 @@ const UNLOCKED = [
 const PLAN_NAMES: Record<string, string> = {
   weekly: "Weekly",
   monthly: "Monthly",
-  annual: "Annual",
+  annual: "VIP Pro",
   enterprise: "Enterprise",
 };
 

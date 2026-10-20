@@ -57,6 +57,24 @@ describe("assembleManageView", () => {
     expect(v.current?.priceLabel).toBe("$74.99/year");
   });
 
+  it("relations: VIP Pro is THE upgrade from Weekly/Monthly; from VIP the others are downgrades", () => {
+    const fromWeekly = assembleManageView({ dbSub: dbSub(), stripeSub: null, env: ENV });
+    expect(fromWeekly.current?.planName).toBe("Weekly");
+    expect(fromWeekly.options.find((o) => o.plan === "annual")?.name).toBe("VIP Pro");
+    expect(fromWeekly.options.find((o) => o.plan === "annual")?.relation).toBe("upgrade");
+    expect(fromWeekly.options.find((o) => o.plan === "monthly")?.relation).toBe("switch");
+
+    const fromVip = assembleManageView({
+      dbSub: dbSub({ stripePriceId: "price_annual" }),
+      stripeSub: null,
+      env: ENV,
+    });
+    expect(fromVip.current?.planName).toBe("VIP Pro");
+    expect(fromVip.options.find((o) => o.plan === "weekly")?.relation).toBe("downgrade");
+    expect(fromVip.options.find((o) => o.plan === "monthly")?.relation).toBe("downgrade");
+    expect(fromVip.options.find((o) => o.plan === "annual")?.relation).toBe("current");
+  });
+
   it("past_due is flagged honestly", () => {
     const v = assembleManageView({ dbSub: dbSub({ status: "past_due" }), stripeSub: null, env: ENV });
     expect(v.current?.pastDue).toBe(true);

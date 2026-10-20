@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 const PLAN_LABELS: Record<string, string> = {
   weekly: "Weekly",
   monthly: "Monthly",
-  annual: "Annual",
+  annual: "VIP Pro",
   enterprise: "Enterprise",
 };
 

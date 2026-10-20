@@ -18,11 +18,14 @@ import {
 
 type Plan = "weekly" | "monthly" | "annual" | "enterprise";
 
-const PLANS: Record<Plan, { price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
-  weekly: { price: "$7.99", per: "/week", perDay: "$1.14", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
-  monthly: { price: "$13.99", per: "/month", perDay: "$0.47", note: "1 day free, then billed monthly · cancel anytime", save: "Save 60%", cta: "Start 1-Day Free Trial", trial: "1 day free" },
-  annual: { price: "$74.99", per: "/year", perDay: "$0.21", note: "3 days free, then billed annually · cancel anytime", save: "Save 82% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
-  enterprise: { price: "$999", per: "/year", perDay: "$2.74", note: "Billed annually · cancel anytime", cta: "Get Enterprise" },
+const PLANS: Record<Plan, { name: string; price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
+  weekly: { name: "Weekly", price: "$7.99", per: "/week", perDay: "$1.14", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
+  monthly: { name: "Monthly", price: "$13.99", per: "/month", perDay: "$0.47", note: "1 day free, then billed monthly · cancel anytime", save: "Save 60%", cta: "Start 1-Day Free Trial", trial: "1 day free" },
+  // The annual plan is VIP Pro — a real top tier (timelapse + the intel
+  // layers are VIP-only), not just a longer billing period. "Annual"
+  // survives only as cadence ("billed annually").
+  annual: { name: "VIP Pro", price: "$74.99", per: "/year", perDay: "$0.21", note: "3 days free, then billed annually · cancel anytime", save: "Save 82% · Best value", cta: "Start 3-Day Free Trial", trial: "3 days free" },
+  enterprise: { name: "Enterprise", price: "$999", per: "/year", perDay: "$2.74", note: "Billed annually · cancel anytime", cta: "Get Enterprise" },
 };
 
 const PRO_FEATURES = [
@@ -30,42 +33,50 @@ const PRO_FEATURES = [
   { icon: Satellite, title: "Satellite View", desc: "High-resolution satellite imagery alongside the dark intel map." },
   { icon: Car, title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
   { icon: ShieldCheck, title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
-  { icon: Zap, title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news." },
   { icon: Video, title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser and save the clips." },
   { icon: Sparkles, title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
+];
+
+// VIP Pro exclusives — rendered only on the VIP Pro (annual) card. These
+// are the features the tier gates actually enforce (lib/plan-tier):
+// timelapse and the OSINT intel layers are VIP-only.
+const VIP_FEATURES = [
+  { icon: Zap, title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — VIP only." },
+  { icon: Video, title: "Camera Timelapse", desc: "Capture snapshot cameras frame by frame and export the film — VIP only." },
 ];
 
 // The enterprise offer copy lives in lib/enterprise/offer (shared with
 // the /enterprise dashboard landing state and pinned by its tests).
 
-const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { feature: "Interactive 3D globe", free: true, pro: true },
-  { feature: "Live flight tracking & aircraft follow", free: true, pro: true },
-  { feature: "74,229 public CCTV cameras", free: true, pro: true },
-  { feature: "Satellite & space tracking", free: true, pro: true },
-  { feature: "Basic search — fly to any place", free: true, pro: true },
-  { feature: "Live transit vehicles (15 agencies)", free: true, pro: true },
-  { feature: "Drone tracking & FAA airspace", free: true, pro: true },
-  { feature: "Space launch tracking & countdowns", free: true, pro: true },
-  { feature: "Street-level photo layer", free: true, pro: true },
-  { feature: "Radar, lightning, hurricanes & fire perimeters", free: true, pro: true },
-  { feature: "River gauges & bike-share systems", free: true, pro: true },
-  { feature: "Sensor effects", free: true, pro: true },
-  { feature: "Cinematic director (free for affiliates)", free: false, pro: false },
-  { feature: "Earthquakes, wildfires & weather", free: true, pro: true },
-  { feature: "OI AI assistant (built-in AI included)", free: false, pro: true },
-  { feature: "Satellite imagery view", free: false, pro: true },
-  { feature: "Live traffic layer (TomTom congestion)", free: false, pro: true },
-  { feature: "Advanced search filters", free: false, pro: true },
-  { feature: "OSINT toolkit (nmap, DNS, WHOIS, SSL)", free: false, pro: true },
-  { feature: "Premium intel feeds (cyber, GDELT, maritime)", free: false, pro: true },
-  { feature: "Camera Recording Studio", free: false, pro: true },
-  { feature: "Every future Pro layer", free: false, pro: true },
+const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean; vip: boolean }[] = [  { feature: "Interactive 3D globe", free: true, pro: true, vip: true },
+  { feature: "Live flight tracking & aircraft follow", free: true, pro: true, vip: true },
+  { feature: "74,229 public CCTV cameras", free: true, pro: true, vip: true },
+  { feature: "Satellite & space tracking", free: true, pro: true, vip: true },
+  { feature: "Basic search — fly to any place", free: true, pro: true, vip: true },
+  { feature: "Live transit vehicles (15 agencies)", free: true, pro: true, vip: true },
+  { feature: "Drone tracking & FAA airspace", free: true, pro: true, vip: true },
+  { feature: "Space launch tracking & countdowns", free: true, pro: true, vip: true },
+  { feature: "Street-level photo layer", free: true, pro: true, vip: true },
+  { feature: "Radar, lightning, hurricanes & fire perimeters", free: true, pro: true, vip: true },
+  { feature: "River gauges & bike-share systems", free: true, pro: true, vip: true },
+  { feature: "Sensor effects", free: true, pro: true, vip: true },
+  { feature: "Cinematic director (free for affiliates)", free: false, pro: false, vip: false },
+  { feature: "Earthquakes, wildfires & weather", free: true, pro: true, vip: true },
+  { feature: "OI AI assistant (built-in AI included)", free: false, pro: true, vip: true },
+  { feature: "Satellite imagery view", free: false, pro: true, vip: true },
+  { feature: "Live traffic layer (TomTom congestion)", free: false, pro: true, vip: true },
+  { feature: "Advanced search filters", free: false, pro: true, vip: true },
+  { feature: "OSINT toolkit (nmap, DNS, WHOIS, SSL)", free: false, pro: true, vip: true },
+  { feature: "Camera Recording Studio", free: false, pro: true, vip: true },
+  { feature: "Every future Pro layer", free: false, pro: true, vip: true },
+  { feature: "Premium intel feeds (cyber, GDELT, maritime, live news)", free: false, pro: false, vip: true },
+  { feature: "Camera timelapse", free: false, pro: false, vip: true },
 ];
 
 const FAQS = [
   {
     q: "Is the map really free?",
-    a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, the live traffic layer, advanced search filters and premium intel feeds.",
+    a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, the live traffic layer and advanced search filters. VIP Pro (the yearly plan) adds the premium intel feeds and camera timelapse.",
   },
   {
     q: "Do I need my own API key for the AI assistant?",
@@ -73,7 +84,7 @@ const FAQS = [
   },
   {
     q: "Can I cancel anytime?",
-    a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or annual — and then simply stops. No retention calls, no dark patterns. On a free trial you're never charged during the trial: cancel before it ends and you pay nothing.",
+    a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or yearly — and then simply stops. No retention calls, no dark patterns. On a free trial you're never charged during the trial: cancel before it ends and you pay nothing.",
   },
   {
     q: "What if I forget to cancel — can I get a refund?",
@@ -85,7 +96,7 @@ const FAQS = [
   },
   {
     q: "How is this different from osirisai.live?",
-    a: "Same open-source engine, plus the Pro tier: an AI analyst that works the map for you, satellite imagery, live traffic, advanced search filters and premium intel feeds the free site doesn't gate — because there is no gate there. Here, Pro funds the infrastructure.",
+    a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, satellite imagery, live traffic, advanced search filters and — on VIP Pro — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
   },
 ];
 
@@ -214,7 +225,7 @@ export default function PricingPage() {
             </h1>
             <p className="text-white/55 mt-2 text-sm md:text-base leading-relaxed px-1">
               An AI analyst that works the globe for you. Satellite imagery. Live traffic.
-              Premium intel feeds. One subscription, everything unlocked.
+              VIP intel feeds on the top tier. Pick your level — upgrade anytime.
             </p>
           </motion.div>
 
@@ -224,7 +235,7 @@ export default function PricingPage() {
               <button
                 key={key}
                 onClick={() => setPlan(key)}
-                className={`relative px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${
+                className={`relative px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                   plan === key ? "text-black" : "text-white/55 hover:text-white"
                 }`}
               >
@@ -241,7 +252,7 @@ export default function PricingPage() {
                   />
                 )}
                 <span className="relative flex items-center gap-2">
-                  {key}
+                  {PLANS[key].name}
                   {PLANS[key].save && (
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${plan === key ? "bg-black/20 text-black" : "bg-[#D4AF37]/15 text-[#D4AF37]"}`}>
                       {key === "annual" ? "-71%" : "-42%"}
@@ -264,7 +275,7 @@ export default function PricingPage() {
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm font-semibold tracking-[0.2em] text-[#D4AF37]">PRO</p>
+              <p className="text-sm font-semibold tracking-[0.2em] text-[#D4AF37]">{plan === "annual" ? "VIP PRO" : "PRO"}</p>
               <div className="mt-2 flex items-baseline gap-1">
                 <AnimatePresence mode="popLayout">
                   <motion.span
@@ -312,6 +323,25 @@ export default function PricingPage() {
               </li>
             ))}
           </ul>
+
+          {plan === "annual" && (
+            <>
+              <p className="mt-4 mb-2 text-xs font-bold tracking-[0.2em] text-[#D4AF37]">VIP PRO ONLY</p>
+              <ul className="space-y-2">
+                {VIP_FEATURES.map((f) => (
+                  <li key={f.title} className="flex items-center gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-[#D4AF37]/25 border border-[#D4AF37]/50 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-[#D4AF37]" />
+                    </span>
+                    <p className="text-sm text-white/85">
+                      <span className="font-medium">{f.title}</span>
+                      <span className="text-white/40"> — {f.desc}</span>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
 
           <div className="mt-5">
             <CheckoutButton plan={plan} label={p.cta} onCheckout={setSheetPlan} />
@@ -372,23 +402,29 @@ export default function PricingPage() {
 
         {/* Free vs Pro comparison */}
         <div className="mt-10">
-          <h2 className="text-xl md:text-2xl font-bold text-center">Free is generous. <span className="text-[#D4AF37]">Pro is the full picture.</span></h2>
+          <h2 className="text-xl md:text-2xl font-bold text-center">Free is generous. <span className="text-[#D4AF37]">VIP Pro is the full picture.</span></h2>
           <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden max-w-3xl mx-auto">
-            <div className="grid grid-cols-[1fr_64px_64px] md:grid-cols-[1fr_110px_110px] text-[11px] font-bold tracking-[0.15em] text-white/40 border-b border-white/10 bg-white/[0.02]">
+            <div className="grid grid-cols-[1fr_52px_52px_52px] md:grid-cols-[1fr_90px_90px_90px] text-[11px] font-bold tracking-[0.15em] text-white/40 border-b border-white/10 bg-white/[0.02]">
               <div className="px-5 md:px-7 py-2.5">FEATURE</div>
               <div className="py-2.5 text-center">FREE</div>
-              <div className="py-2.5 text-center text-[#D4AF37]">PRO</div>
+              <div className="py-2.5 text-center">PRO</div>
+              <div className="py-2.5 text-center text-[#D4AF37]">VIP PRO</div>
             </div>
             {COMPARE_ROWS.map((r) => (
-              <div key={r.feature} className="grid grid-cols-[1fr_64px_64px] md:grid-cols-[1fr_110px_110px] border-b border-white/5 last:border-0 text-sm">
+              <div key={r.feature} className="grid grid-cols-[1fr_52px_52px_52px] md:grid-cols-[1fr_90px_90px_90px] border-b border-white/5 last:border-0 text-sm">
                 <div className="px-5 md:px-7 py-2 text-white/75">{r.feature}</div>
                 <div className="py-2 flex justify-center items-center">
                   {r.free
                     ? <Check className="w-4 h-4 text-white/35" />
                     : <Minus className="w-4 h-4 text-white/15" />}
                 </div>
-                <div className="py-2 flex justify-center items-center bg-[#D4AF37]/[0.06]">
+                <div className="py-2 flex justify-center items-center">
                   {r.pro
+                    ? <Check className="w-4 h-4 text-white/60" strokeWidth={3} />
+                    : <Minus className="w-4 h-4 text-white/15" />}
+                </div>
+                <div className="py-2 flex justify-center items-center bg-[#D4AF37]/[0.06]">
+                  {r.vip
                     ? <Check className="w-4 h-4 text-[#D4AF37]" strokeWidth={3} />
                     : <Minus className="w-4 h-4 text-white/15" />}
                 </div>

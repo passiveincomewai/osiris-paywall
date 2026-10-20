@@ -65,6 +65,9 @@ export interface ManageOption {
   perDay: string;
   note: string;
   current: boolean;
+  /** Honest framing vs the current plan: VIP Pro is THE upgrade from
+   *  Weekly/Monthly; from VIP Pro the others are downgrades. */
+  relation: "current" | "upgrade" | "downgrade" | "switch";
 }
 
 export interface ManageView {
@@ -77,7 +80,7 @@ export interface ManageView {
 const PLAN_NAMES: Record<string, string> = {
   weekly: "Weekly",
   monthly: "Monthly",
-  annual: "Annual",
+  annual: "VIP Pro",
   enterprise: "Enterprise",
 };
 
@@ -97,6 +100,7 @@ export function assembleManageView(input: {
     perDay: o.perDay,
     note: o.note,
     current: false,
+    relation: "switch" as const,
   }));
   if (!dbSub) {
     return { kind: "none", current: null, options, supportEmail: SUPPORT_EMAIL };
@@ -120,6 +124,19 @@ export function assembleManageView(input: {
     pastDue: dbSub.status === "past_due",
   };
   for (const o of options) o.current = o.plan === plan;
+  // Tier framing (lib/plan-tier): annual is the vip tier, weekly/monthly
+  // are pro — an option is an upgrade iff its tier outranks the current.
+  const tierOf = (p: string | null) => (p === "annual" || p === "enterprise" ? 2 : p ? 1 : 0);
+  const currentTier = tierOf(plan);
+  for (const o of options) {
+    o.relation = o.current
+      ? "current"
+      : tierOf(o.plan) > currentTier
+        ? "upgrade"
+        : tierOf(o.plan) < currentTier
+          ? "downgrade"
+          : "switch";
+  }
 
   // Comp rows carry comp_ ids no Stripe object can have — never offer a
   // self-serve swap against them (lib/pro/comp's hard rule).

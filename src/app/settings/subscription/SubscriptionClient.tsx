@@ -151,7 +151,13 @@ export default function SubscriptionClient() {
           <section className="rounded-3xl border border-[#D4AF37]/25 bg-white/[0.03] p-6 mb-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold">
-                {view.current.planName} <span className="text-[#D4AF37]">PRO</span>
+                {view.current.planName}
+                {!view.current.planName.endsWith("Pro") && (
+                  <>
+                    {" "}
+                    <span className="text-[#D4AF37]">PRO</span>
+                  </>
+                )}
               </h2>
               <span
                 className={`text-xs font-bold uppercase tracking-wide px-2.5 py-1 rounded-full border ${
@@ -261,11 +267,19 @@ export default function SubscriptionClient() {
                       >
                         <div className="flex items-center justify-between">
                           <p className="font-bold">{o.name}</p>
-                          {o.plan === "annual" && (
+                          {o.relation === "upgrade" ? (
+                            <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
+                              Upgrade
+                            </span>
+                          ) : o.relation === "downgrade" ? (
+                            <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-white/[0.04] text-white/40 border border-white/10">
+                              Downgrade
+                            </span>
+                          ) : o.plan === "annual" ? (
                             <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
                               Best value
                             </span>
-                          )}
+                          ) : null}
                         </div>
                         <p className="text-lg font-bold mt-1">
                           {o.price}
