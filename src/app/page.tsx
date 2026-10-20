@@ -59,6 +59,7 @@ const LayerPanel = dynamic(() => import('@/components/LayerPanel'));
 const SpaceCam = dynamic(() => import('@/components/SpaceCam'), { ssr: false });
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
 const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
+const EmailCaptureCard = dynamic(() => import('@/components/EmailCaptureCard'));
 const HeaderProfileMenu = dynamic(() => import('@/components/HeaderProfileMenu'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
@@ -70,12 +71,17 @@ const DrawHud = dynamic(() => import('@/components/DrawHud'), { ssr: false });
 // Onboarding (Build A): lazy + client-only; renders nothing until the
 // globe signals ready, so it can never delay or disturb the map.
 const OnboardingRoot = dynamic(() => import('@/components/onboarding/OnboardingRoot'), { ssr: false });
+// Near You strip: globe-arrival camera suggestions (lib/near-you.ts);
+// lazy + client-only like onboarding — it renders nothing until the
+// splash has gone, so it can never delay the map.
+const NearYouStrip = dynamic(() => import('@/components/NearYouStrip'), { ssr: false });
 // The measurement helpers are pure functions — importing them directly keeps
 // them out of the lazy chunk, so a finished polygon can be measured whether or
 // not the toolbar has loaded yet.
 import { toShape, queryRing, type DrawMode, type DrawnShape, type DrawProgress, type DrawResult } from '@/lib/draw';
 import { selectInPolygon } from '@/lib/aoi';
 import { pickLandingCity } from '@/lib/landing-cities';
+import { fetchVisitorLocation, parseGeoResponse, type VisitorLocation } from '@/lib/visitor-geo';
 import { diffSweep, appendEvents, type WatchBaseline, type WatchEvent } from '@/lib/watch';
 import { STORAGE_KEY, serializeShapes, deserializeShapes, shapesToGeoJSON, downloadFile } from '@/lib/aoi-export';
 import { useOi } from '@/lib/oi/client';
@@ -238,10 +244,20 @@ export default function Dashboard() {
   /* Where the viewer is, by IP. Asked for at once; the camera flies there
      once the splash has gone. */
   const [homeLocation, setHomeLocation] = useState<{ lat: number; lng: number } | null>(null);
+  /* The same answer with its area label, for the Near You strip
+     (lib/near-you.ts). Set only when a real location resolved — the
+     landing-city fallback is a guess and is never labelled "near you". */
+  const [visitorGeo, setVisitorGeo] = useState<VisitorLocation | null>(null);
   const autoLocateCancelled = useRef(false);
 
   const [activeCamera, setActiveCamera] = useState<any>(null);
   const [showCameraSignup, setShowCameraSignup] = useState(false);
+  /** Set on this session's first successful camera open (the gated,
+   *  counted path in handleEntityClick) — mounts the once-per-device
+   *  email capture card (lib/newsletter/capture). Deliberately NOT
+   *  initialised from cameraGate's persisted count: the ask belongs to
+   *  the moment of an open in this session, not to page load. */
+  const [cameraEverOpened, setCameraEverOpened] = useState(false);
   /** Pro locks that are a lone button (OI dock/tab) open the trial picker
    *  dialog instead of bouncing to /pricing. */
   const [showTrialPicker, setShowTrialPicker] = useState(false);
@@ -817,19 +833,44 @@ export default function Dashboard() {
       setHomeLocation({ lat: city.lat, lng: city.lng });
     };
     const geoGiveUp = setTimeout(landSomewhere, 6000);
-    fetch('/api/geo', { signal: geoController.signal })
-      .then(r => r.json())
-      .then(geo => {
+    /* The legacy IP-lookup flow, unchanged: it runs only when the
+       platform headers provided nothing (off-Vercel, local dev). Its
+       answer also feeds the Near You strip, via the same parser. */
+    const legacyLocate = () => {
+      fetch('/api/geo', { signal: geoController.signal })
+        .then(r => r.json())
+        .then(geo => {
+          if (located || geoController.signal.aborted) return;
+          const loc = parseGeoResponse(geo);
+          if (loc) {
+            located = true;
+            setVisitorGeo(loc);
+            setHomeLocation({ lat: loc.lat, lng: loc.lng });
+          } else {
+            landSomewhere();
+          }
+        })
+        .catch(landSomewhere);
+    };
+    /* Platform geo headers first (lib/visitor-geo.ts, via
+       /api/geo/visitor): on Vercel the edge stamps the visitor's
+       approximate city on the request itself — no third-party lookup,
+       no waiting on an outside provider. Map and strip share this one
+       answer, so the globe never centres somewhere the strip calls
+       somewhere else. Any failure degrades to the legacy flow, and
+       from there to the landing-city pick, exactly as before. */
+    fetchVisitorLocation((input, init) => fetch(input, init), geoController.signal)
+      .then(loc => {
         if (located || geoController.signal.aborted) return;
-        if (geo.status === 'success' &&
-            Number.isFinite(geo.lat) && Number.isFinite(geo.lon) && Math.abs(geo.lat) <= 90 && Math.abs(geo.lon) <= 180) {
+        if (loc) {
           located = true;
-          setHomeLocation({ lat: geo.lat, lng: geo.lon });
+          setVisitorGeo(loc);
+          setHomeLocation({ lat: loc.lat, lng: loc.lng });
         } else {
-          landSomewhere();
+          legacyLocate();
         }
       })
-      .catch(landSomewhere);
+      .catch(() => { if (!located && !geoController.signal.aborted) legacyLocate(); });
 
     return () => {
       clearTimeout(geoGiveUp);
@@ -995,6 +1036,7 @@ export default function Dashboard() {
       }
       trackAnalyticsEvent('camera_open');
       setActiveCamera(entity);
+      setCameraEverOpened(true);
       return;
     }
     if (entity?.type === 'live_news' && entity.url) {
@@ -2496,6 +2538,9 @@ export default function Dashboard() {
         />
       )}
       {showCameraSignup && <CameraSignupNudge onClose={() => setShowCameraSignup(false)} />}
+      {/* Email capture, once per device, mounted by the session's first
+          camera open; the card self-gates on lib/newsletter/capture. */}
+      {cameraEverOpened && <EmailCaptureCard placement="camera" />}
       <TrialPickerDialog
         open={showTrialPicker}
         onClose={() => setShowTrialPicker(false)}
@@ -2554,6 +2599,17 @@ export default function Dashboard() {
 
       {/* Keyboard Shortcuts Overlay */}
       <KeyboardShortcuts />
+
+      {/* ── NEAR YOU STRIP ──
+          Globe-arrival camera suggestions (components/NearYouStrip.tsx).
+          Suppressed while a camera deep link owns the view: the link
+          names its destination, and the strip must not compete with it. */}
+      <NearYouStrip
+        active={splashGone && !sharedCameraId}
+        location={visitorGeo}
+        cameras={data.cameras ?? []}
+        catalogueSettled={!camerasLoading}
+      />
 
       {/* ── GLOBAL STATUS TICKER (bottom) ── */}
       <div data-hud><GlobalStatusBar revealed={revealed} /></div>

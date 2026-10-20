@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
 import TrialPicker from "./TrialPicker";
+import EmailCaptureCard from "./EmailCaptureCard";
 import {
   CHECKOUT_RETURN_DISMISSED_KEY,
   shouldShowCheckoutReturn,
@@ -72,6 +73,13 @@ export default function CheckoutReturnStrip() {
           </p>
           <div className="mt-4 max-w-md">
             <TrialPicker />
+          </div>
+          {/* Email capture inside the same flow (not a second element):
+              for the abandoner who isn't converting today, one honest
+              ask — retired on this device by either answer
+              (lib/newsletter/capture). */}
+          <div className="mt-5 max-w-md border-t border-white/10 pt-4">
+            <EmailCaptureCard placement="pricing" variant="inline" />
           </div>
         </div>
       </section>
