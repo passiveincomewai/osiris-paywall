@@ -79,7 +79,7 @@ describe("ensureShareCode precedence", () => {
     expect(store.get(SHARE_CODE_KEY)).toBe("weanoncode42");
     const mintCall = fetchMock.mock.calls.find((c) => c[0] === "/api/share/identity");
     expect(mintCall).toBeTruthy();
-    const body = JSON.parse((mintCall![1] as any).body);
+    const body = JSON.parse((mintCall as any)[1].body);
     expect(typeof body.deviceToken).toBe("string");
     expect(body.deviceToken.length).toBeGreaterThan(10);
   });
