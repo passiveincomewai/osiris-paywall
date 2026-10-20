@@ -129,6 +129,42 @@ describe('searchFiltersAccess', () => {
     expect(searchFiltersAccess(null)).toBe('unknown');
     expect(searchFiltersAccess('garbage')).toBe('unknown');
   });
+
+  it('own-active passes unchanged, even with a stale free planTier claim', () => {
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'active', planTier: 'free' } })).toBe('pro');
+  });
+
+  it('team grant (Workstream H): own status inactive + effective planTier pro passes', () => {
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'none', planTier: 'pro' } })).toBe('pro');
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'canceled', planTier: 'pro' } })).toBe('pro');
+  });
+
+  it('team grant (Workstream H): granted VIP passes (vip satisfies pro)', () => {
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'none', planTier: 'vip' } })).toBe('pro');
+  });
+
+  it('free still fails: inactive status with planTier free or absent (legacy)', () => {
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'none', planTier: 'free' } })).toBe('free');
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'none' } })).toBe('free');
+  });
+
+  it('an invalid planTier claim falls back to the status alone', () => {
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'none', planTier: 'gold' } })).toBe('free');
+    expect(searchFiltersAccess({ user: { subscriptionStatus: 'active', planTier: 'gold' } })).toBe('pro');
+  });
+
+  it('fail-soft: a planTier read that throws falls back to the status-only result', () => {
+    const throwingTier = (subscriptionStatus: string) => ({
+      user: {
+        subscriptionStatus,
+        get planTier(): string {
+          throw new Error('claim read failed');
+        },
+      },
+    });
+    expect(searchFiltersAccess(throwingTier('none'))).toBe('free');
+    expect(searchFiltersAccess(throwingTier('active'))).toBe('pro');
+  });
 });
 
 describe('applyCameraFilters — the gate', () => {

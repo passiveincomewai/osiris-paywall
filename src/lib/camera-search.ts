@@ -29,8 +29,19 @@
  * session.user.subscriptionStatus === 'active' (paid, trialing and comp
  * all resolve to 'active' in src/auth.ts) — the same test as the traffic
  * gate (lib/traffic/access) and the flight-path gate (lib/flights/path).
+ *
+ * Team Access (Workstream H): subscriptionStatus stays the member's
+ * OWN billing status, so a team member whose access comes from their
+ * organization's owner reads not-active there; the session's planTier
+ * is the EFFECTIVE tier (own or org-granted, resolved in the jwt in
+ * src/auth.ts), so the gate also passes when that tier satisfies "pro"
+ * via lib/plan-tier. Legacy sessions without planTier fall back to the
+ * status check alone (planTierOf's own fallback), exactly as before.
+ * Fail-soft: any error reading the tier falls back to the status-only
+ * result — it never throws the gate open or closed.
  */
 import { cameraMediaKind, type CameraMediaKind, type CountryCamera } from '@/lib/country-cameras';
+import { planTierOf, tierSatisfies } from '@/lib/plan-tier';
 
 /** The catalogue fields camera search and its filters read. */
 export interface SearchableCamera extends CountryCamera {
@@ -52,9 +63,19 @@ export function searchFiltersAccess(session: unknown): SearchFiltersAccess | 'un
   if (!session || typeof session !== 'object') return 'unknown';
   const user = (session as { user?: unknown }).user;
   if (!user || typeof user !== 'object') return 'signed-out';
-  return (user as { subscriptionStatus?: unknown }).subscriptionStatus === 'active'
-    ? 'pro'
-    : 'free';
+  // Own billing status first (unchanged for own subscribers), then the
+  // effective tier the jwt now carries for team-granted members.
+  if ((user as { subscriptionStatus?: unknown }).subscriptionStatus === 'active') return 'pro';
+  try {
+    return tierSatisfies(
+      planTierOf(session as { user?: { planTier?: unknown; subscriptionStatus?: unknown } }),
+      'pro',
+    )
+      ? 'pro'
+      : 'free';
+  } catch {
+    return 'free';
+  }
 }
 
 // ── Country facets ──────────────────────────────────────────────────
