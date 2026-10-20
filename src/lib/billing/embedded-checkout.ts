@@ -100,10 +100,23 @@ export async function runCheckoutFlow(
   deps: CheckoutFlowDeps,
 ): Promise<CheckoutFlowOutcome> {
   if (isUsablePublishableKey(publishableKey)) {
+    // Speed: Stripe.js and the session POST need each other not at all —
+    // the mount needs BOTH, so start them together and let whichever
+    // lands second gate. The old chain awaited the POST (~1.4s from a
+    // phone) before even requesting the Stripe.js script, serializing
+    // two independent waits into one long one. The .catch guard means a
+    // speculative load that ends up unused (a member {url} answer, a
+    // failed POST) can never surface as an unhandled rejection; the
+    // awaited value reproduces the old semantics exactly — a failed or
+    // null load reads as null here and falls through to hosted, exactly
+    // as it did when the load started after the POST.
+    const stripePromise: Promise<StripeJsLike | null> = Promise.resolve()
+      .then(() => deps.loadStripeImpl(publishableKey.trim()))
+      .catch(() => null);
     try {
       const res = await postCheckout(deps.fetchImpl, plan, "embedded");
       if (res.ok && typeof res.data?.clientSecret === "string") {
-        const stripeJs = await deps.loadStripeImpl(publishableKey.trim());
+        const stripeJs = await stripePromise;
         if (stripeJs) {
           const handle = await stripeJs.initEmbeddedCheckout({
             clientSecret: res.data.clientSecret,

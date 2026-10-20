@@ -101,10 +101,12 @@ describe("runCheckoutFlow", () => {
   });
 
   it("honors a {url} answer to an embedded request (already-active member)", async () => {
-    const { deps } = fakeDeps([{ ok: true, body: { url: "/dashboard" } }]);
+    const { deps, stripeJs } = fakeDeps([{ ok: true, body: { url: "/dashboard" } }]);
     const outcome = await runCheckoutFlow("weekly", "pk_live_abc", deps);
     expect(outcome).toEqual({ kind: "navigated", url: "/dashboard" });
-    expect(deps.loadStripeImpl).not.toHaveBeenCalled();
+    // Stripe.js may have been started speculatively in parallel (see the
+    // ordering pins below), but it is never USED for a {url} answer.
+    expect(stripeJs.initEmbeddedCheckout).not.toHaveBeenCalled();
     expect(deps.navigate).toHaveBeenCalledWith("/dashboard");
   });
 
@@ -150,7 +152,9 @@ describe("runCheckoutFlow", () => {
     const outcome = await runCheckoutFlow("enterprise", "pk_live_abc", deps);
     expect(outcome).toEqual({ kind: "navigated", url: HOSTED_URL });
     expect(calls).toHaveLength(2);
-    expect(deps.loadStripeImpl).not.toHaveBeenCalled();
+    // The speculative Stripe.js load started alongside the failed POST is
+    // simply never used — the hosted outcome is unchanged.
+    expect(deps.navigate).toHaveBeenCalledWith(HOSTED_URL);
   });
 
   it("surfaces the server's error when even the hosted fallback fails", async () => {
@@ -166,6 +170,105 @@ describe("runCheckoutFlow", () => {
   it("throws the generic failure when the hosted answer carries no URL", async () => {
     const { deps } = fakeDeps([{ ok: true, body: {} }]);
     await expect(runCheckoutFlow("annual", undefined, deps)).rejects.toThrow("Checkout failed");
+  });
+});
+
+describe("runCheckoutFlow — Stripe.js loads in parallel with the session POST", () => {
+  // The speed contract (2026-10-20): the mount needs the clientSecret AND
+  // Stripe.js, and neither depends on the other — so the flow must START
+  // both before awaiting either. Serializing them (the old chain) cost a
+  // full extra round trip on phone connections.
+  function deferred<T>() {
+    let resolve!: (v: T) => void;
+    let reject!: (e: unknown) => void;
+    const promise = new Promise<T>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  }
+
+  it("starts loadStripe before the session POST resolves", async () => {
+    const post = deferred<{ ok: boolean; json: () => Promise<any> }>();
+    const handle: EmbeddedCheckoutHandle = { mount: vi.fn(), destroy: vi.fn() };
+    const stripeJs = { initEmbeddedCheckout: vi.fn(async () => handle) };
+    const loadStripeImpl = vi.fn(async () => stripeJs);
+    const { deps } = fakeDeps([], {
+      fetchImpl: vi.fn(() => post.promise),
+      loadStripeImpl,
+    });
+    const started = runCheckoutFlow("weekly", "pk_live_abc", deps);
+    // Flush microtasks: the POST is still in flight, yet Stripe.js must
+    // already be loading — that overlap is the entire point.
+    await new Promise((r) => setTimeout(r, 0));
+    expect(deps.fetchImpl).toHaveBeenCalledTimes(1);
+    expect(loadStripeImpl).toHaveBeenCalledWith("pk_live_abc");
+    post.resolve({
+      ok: true,
+      json: async () => ({ clientSecret: "cs_test_123_secret_xyz" }),
+    });
+    const outcome = await started;
+    expect(outcome.kind).toBe("mounted");
+    expect(handle.mount).toHaveBeenCalledWith(deps.mountTarget);
+  });
+
+  it("waits for a slow Stripe.js after a fast POST (mount is gated on both)", async () => {
+    const js = deferred<typeof stripeJsShape>();
+    type stripeJsShape = {
+      initEmbeddedCheckout: (o: { clientSecret: string }) => Promise<EmbeddedCheckoutHandle>;
+    };
+    const handle: EmbeddedCheckoutHandle = { mount: vi.fn(), destroy: vi.fn() };
+    const stripeJs: stripeJsShape = {
+      initEmbeddedCheckout: vi.fn(async () => handle),
+    };
+    const { deps } = fakeDeps(
+      [{ ok: true, body: { clientSecret: "cs_test_123_secret_xyz" } }],
+      { loadStripeImpl: vi.fn(() => js.promise) },
+    );
+    const started = runCheckoutFlow("weekly", "pk_live_abc", deps);
+    let settled = false;
+    void started.then(() => {
+      settled = true;
+    });
+    await new Promise((r) => setTimeout(r, 10));
+    expect(settled).toBe(false);
+    js.resolve(stripeJs);
+    const outcome = await started;
+    expect(outcome.kind).toBe("mounted");
+  });
+
+  it("a rejected speculative load never escapes when the answer is a {url} navigation", async () => {
+    const { deps } = fakeDeps([{ ok: true, body: { url: "/dashboard" } }], {
+      loadStripeImpl: vi.fn(async () => {
+        throw new Error("stripe.js blocked");
+      }),
+    });
+    const outcome = await runCheckoutFlow("weekly", "pk_live_abc", deps);
+    expect(outcome).toEqual({ kind: "navigated", url: "/dashboard" });
+    // Give any stray rejection a chance to surface as unhandled; the
+    // flow's catch guard must have absorbed it (vitest fails the run on
+    // unhandled rejections, so reaching this line is the assertion).
+    await new Promise((r) => setTimeout(r, 0));
+  });
+
+  it("a rejected speculative load with a clientSecret falls back to hosted", async () => {
+    const { deps, calls } = fakeDeps(
+      [
+        { ok: true, body: { clientSecret: "cs_test_123_secret_xyz" } },
+        { ok: true, body: { url: HOSTED_URL } },
+      ],
+      {
+        loadStripeImpl: vi.fn(async () => {
+          throw new Error("stripe.js blocked");
+        }),
+      },
+    );
+    const outcome = await runCheckoutFlow("weekly", "pk_live_abc", deps);
+    expect(outcome).toEqual({ kind: "navigated", url: HOSTED_URL });
+    expect(calls.map((c) => c.body)).toEqual([
+      { plan: "weekly", ui: "embedded" },
+      { plan: "weekly" },
+    ]);
   });
 });
 

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import CheckoutClient from "./CheckoutClient";
+import StripeResourceHints from "@/components/StripeResourceHints";
 
 export const metadata: Metadata = {
   title: "Checkout — WorldEye Pro",
@@ -10,8 +11,11 @@ export const metadata: Metadata = {
 
 export default function CheckoutPage() {
   return (
-    <Suspense>
-      <CheckoutClient />
-    </Suspense>
+    <>
+      <StripeResourceHints />
+      <Suspense>
+        <CheckoutClient />
+      </Suspense>
+    </>
   );
 }

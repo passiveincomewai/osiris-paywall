@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import PricingClient from "./PricingClient";
 import CheckoutReturnStrip from "@/components/CheckoutReturnStrip";
+import StripeResourceHints from "@/components/StripeResourceHints";
 
 export const metadata = {
   title: "Pricing & Plans",
@@ -13,6 +14,9 @@ export const metadata = {
 export default function PricingPage() {
   return (
     <>
+      {/* The plan CTAs mount Stripe's embedded form in a sheet — warm
+          its connections from first paint (see StripeResourceHints). */}
+      <StripeResourceHints />
       {/* Renders only for ?checkout=cancelled arrivals (Stripe's cancel
           return) — everyone else sees the plain pricing page. */}
       <Suspense fallback={null}>
