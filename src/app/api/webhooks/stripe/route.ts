@@ -12,6 +12,9 @@ import { attributeUserToDiscountAffiliate } from "@/lib/affiliate/discount";
 import { normalizeEmail, isValidEmail } from "@/lib/password-auth";
 import { sendEmail, emailConfigured } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef } from "@/lib/growth";
+import { getTeamPricingConfig } from "@/lib/team/pricing-config";
+import { findBaseItem, reconcileOrgSeatsFromSubscription } from "@/lib/team/seats";
+import { recordTeamEvent } from "@/lib/team/analytics";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -21,14 +24,29 @@ function toDate(secs: number | null | undefined): Date {
 
 /**
  * Stripe API v18 moved the billing period off the subscription and onto its
- * items. The weekly pass is always a single item, so item[0] is canonical.
+ * items. Team Access adds a graduated SEAT item to the same subscription,
+ * so item[0] is no longer guaranteed to be the base plan: the period and
+ * the stored stripePriceId must come from the BASE item — the first item
+ * that is not a seat price / not the seat product (lib/team/seats
+ * findBaseItem). Falls back to item[0] when nothing qualifies.
  */
-function currentPeriod(sub: Stripe.Subscription): { start: Date; end: Date } {
-  const item = sub.items.data[0];
+function currentPeriod(
+  sub: Stripe.Subscription,
+  config: Awaited<ReturnType<typeof getTeamPricingConfig>>,
+): { start: Date; end: Date } {
+  const item = findBaseItem(sub, config) ?? sub.items.data[0];
   return {
     start: toDate(item?.current_period_start),
     end: toDate(item?.current_period_end),
   };
+}
+
+function basePriceId(
+  sub: Stripe.Subscription,
+  config: Awaited<ReturnType<typeof getTeamPricingConfig>>,
+): string {
+  const item = findBaseItem(sub, config) ?? sub.items.data[0];
+  return item?.price?.id ?? "";
 }
 
 /**
@@ -50,7 +68,7 @@ function subscriptionIdFromInvoice(invoice: Stripe.Invoice): string | null {
  * from subscription metadata first, then from the existing DB row (covers
  * subscription.updated/deleted, which carry no client_reference_id).
  */
-async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
+async function syncSubscription(sub: Stripe.Subscription): Promise<string | undefined> {
   // NOTE: Stripe's Metadata index signature types `.userId` as `string`
   // (never undefined), so the widening annotation is load-bearing.
   let userId: string | undefined = sub.metadata?.userId;
@@ -65,7 +83,7 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
   const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer?.id;
   if (!customerId) {
     console.error(`[stripe-webhook] no customer on subscription ${sub.id}; skipping`);
-    return;
+    return undefined;
   }
 
   // Guest checkout: no userId anywhere yet — resolve the account from the
@@ -80,7 +98,7 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
       const email = rawEmail ? normalizeEmail(rawEmail) : null;
       if (!email || !isValidEmail(email)) {
         console.error(`[stripe-webhook] no usable email for guest subscription ${sub.id}; skipping`);
-        return;
+        return undefined;
       }
       let user = await db.user.findUnique({ where: { email } });
       if (!user) {
@@ -111,16 +129,17 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
       userId = user.id;
     } catch (e) {
       console.error(`[stripe-webhook] guest user resolution failed for ${sub.id}:`, e);
-      return;
+      return undefined;
     }
   }
 
-  const period = currentPeriod(sub);
+  const teamConfig = await getTeamPricingConfig();
+  const period = currentPeriod(sub, teamConfig);
   const data = {
     userId,
     stripeCustomerId: customerId,
     stripeSubscriptionId: sub.id,
-    stripePriceId: sub.items.data[0]?.price.id ?? "",
+    stripePriceId: basePriceId(sub, teamConfig),
     // Stripe's Status union matches the Prisma SubscriptionStatus enum 1:1.
     // A future Stripe-side status would fail loudly here rather than
     // silently storing a wrong value.
@@ -154,6 +173,24 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<void> {
     create: data,
     update: data,
   });
+
+  // Team Access: if this subscriber owns an organization, reconcile its
+  // seat state from the subscription's items (webhook is the reconciler
+  // of record). Best-effort — a seat reconcile failure must not fail
+  // the subscription sync above.
+  try {
+    const org = await db.organization.findUnique({ where: { ownerId: userId } });
+    if (org) {
+      await reconcileOrgSeatsFromSubscription(
+        { id: org.id, pendingSeats: org.pendingSeats },
+        sub,
+        teamConfig,
+      );
+    }
+  } catch (e) {
+    console.error("[stripe-webhook] team seat reconcile failed:", e);
+  }
+  return userId;
 }
 
 async function subscriptionFromId(subscriptionId: string): Promise<void> {
@@ -335,10 +372,42 @@ export async function POST(req: NextRequest) {
         if (subId) await subscriptionFromId(subId);
         break;
       }
-      case "customer.subscription.updated":
-      case "customer.subscription.deleted": {
+      case "customer.subscription.updated": {
         // Event object IS the subscription — no extra API call needed.
         await syncSubscription(event.data.object as Stripe.Subscription);
+        break;
+      }
+      case "customer.subscription.deleted": {
+        const deletedSub = event.data.object as Stripe.Subscription;
+        // Capture pre-sync seat state so the cancellation event fires
+        // exactly when an org actually had seats on this subscription.
+        let seatOrg: { id: string; ownerId: string; hadSeats: boolean } | null = null;
+        try {
+          let ownerId: string | undefined = deletedSub.metadata?.userId;
+          if (!ownerId) {
+            const row = await db.subscription.findUnique({
+              where: { stripeSubscriptionId: deletedSub.id },
+              select: { userId: true },
+            });
+            ownerId = row?.userId ?? undefined;
+          }
+          if (ownerId) {
+            const org = await db.organization.findUnique({ where: { ownerId } });
+            if (org) {
+              seatOrg = {
+                id: org.id,
+                ownerId,
+                hadSeats: org.purchasedSeats > 0 || !!org.stripeSeatItemId,
+              };
+            }
+          }
+        } catch {
+          seatOrg = null;
+        }
+        await syncSubscription(deletedSub);
+        if (seatOrg?.hadSeats) {
+          await recordTeamEvent("team_subscription_canceled", seatOrg.ownerId, seatOrg.id);
+        }
         break;
       }
       case "charge.refunded": {
