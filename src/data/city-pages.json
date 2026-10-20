@@ -1,0 +1,3225 @@
+{
+ "generatedAt": "2026-10-20T05:13:42.670Z",
+ "assembledTotal": 77668,
+ "threshold": 100,
+ "cities": [
+  {
+   "slug": "seattle",
+   "name": "Seattle",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 499,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / wsdot",
+     "count": 355
+    },
+    {
+     "name": "OpenCCTV / sdot",
+     "count": 140
+    },
+    {
+     "name": "OpenCCTV / arcgis_cams",
+     "count": 4
+    }
+   ],
+   "sourceCount": 3,
+   "stills": 499,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-wsdot-1195",
+     "name": "SR 520 at MP 5.9: Bellevue Way NE (104th Ave NE)"
+    },
+    {
+     "id": "occ-wsdot-9627",
+     "name": "I-405 at MP 11.1: I-90 Interchange, NW Quadrant"
+    },
+    {
+     "id": "occ-wsdot-9586",
+     "name": "I-90 at MP 5.7: Floating Bridge, East Highrise"
+    },
+    {
+     "id": "occ-wsdot-1023",
+     "name": "I-5 at MP 159.7: S Rose St (Mid-Boeing Field)"
+    },
+    {
+     "id": "occ-wsdot-1089",
+     "name": "I-90 at MP 3.1: 18th Ave S (Near Rainier Ave)"
+    },
+    {
+     "id": "occ-sdot-CMR-0338",
+     "name": "W Marginal Way SW & Highland Pk Way SW - NEC"
+    },
+    {
+     "id": "occ-wsdot-1042",
+     "name": "I-5 at MP 183: I-405 Interchange (Alderwood)"
+    },
+    {
+     "id": "occ-wsdot-9401",
+     "name": "I-5 at MP 170.8: Lake City Way Express Lanes"
+    },
+    {
+     "id": "occ-wsdot-9549",
+     "name": "I-5 at MP 172.4: NE 103rd Express Lanes Ramp"
+    },
+    {
+     "id": "occ-wsdot-9584",
+     "name": "I-90 at MP 4.2: East Portal, Mt Baker Tunnel"
+    },
+    {
+     "id": "occ-wsdot-10042",
+     "name": "SR 525 at MP .5: Alderwood Mall Parkway, SB"
+    },
+    {
+     "id": "occ-wsdot-1070",
+     "name": "I-405 at MP 11: I-90 Interchange (Factoria)"
+    }
+   ]
+  },
+  {
+   "slug": "phoenix",
+   "name": "Phoenix",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 435,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "ADOT",
+     "count": 434
+    },
+    {
+     "name": "OpenCCTV / phenocam",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 435,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-phenocam-NEON.D14.SYCA.DP1.20002",
+     "name": "NEON Site - D14 (Desert Southwest) Sycamore Creek, Arizona - aquatic/stream-gaug"
+    },
+    {
+     "id": "adot-1284",
+     "name": "I-17 @Rock Springs Black Canyon City"
+    },
+    {
+     "id": "adot-1084",
+     "name": "SR-202 @E of Desert Foothills"
+    },
+    {
+     "id": "adot-1063",
+     "name": "SR-202 @Santan Village Pkwy"
+    },
+    {
+     "id": "adot-1187",
+     "name": "I-10 @E of Jefferson Street"
+    },
+    {
+     "id": "adot-807",
+     "name": "I-10 @Wild Horse Pass Blvd"
+    },
+    {
+     "id": "adot-808",
+     "name": "I-10 @E of Wild Horse Pass"
+    },
+    {
+     "id": "adot-848",
+     "name": "I-17 @S of Bethany Home Rd"
+    },
+    {
+     "id": "adot-895",
+     "name": "SR-51 @S of Thunderbird Rd"
+    },
+    {
+     "id": "adot-910",
+     "name": "US-60 @E of Alma School Rd"
+    },
+    {
+     "id": "adot-963",
+     "name": "SR-101 @W of Cave Creek Rd"
+    },
+    {
+     "id": "adot-965",
+     "name": "SR-101 @E of Cave Creek Rd"
+    }
+   ]
+  },
+  {
+   "slug": "stockholm",
+   "name": "Stockholm",
+   "country": "Sweden",
+   "countrySlug": "sweden",
+   "count": 350,
+   "countryTotal": 1620,
+   "sources": [
+    {
+     "name": "Trafikverket",
+     "count": 333
+    },
+    {
+     "name": "OpenCCTV / trafikverket",
+     "count": 15
+    },
+    {
+     "name": "CamStreamer",
+     "count": 2
+    }
+   ],
+   "sourceCount": 3,
+   "stills": 348,
+   "streams": 2,
+   "samples": [
+    {
+     "id": "se-tv-63",
+     "name": "Götgatan-Ringvägen mot Renstiernas gata"
+    },
+    {
+     "id": "se-tv-62",
+     "name": "Götgatan-Ringvägen mot Medborgarplatsen"
+    },
+    {
+     "id": "se-tv-94",
+     "name": "Hornsg-Långholmsg. mot Liljeholmsbadet"
+    },
+    {
+     "id": "se-tv-92",
+     "name": "Hornsg.-Långholmsg. mot Liljeholmsbron"
+    },
+    {
+     "id": "se-tv-214",
+     "name": "Odengatan-Sveavägen mot Valhallavägen"
+    },
+    {
+     "id": "se-tv-64",
+     "name": "Götgatan-Ringvägen mot Skanstullsbron"
+    },
+    {
+     "id": "se-tv-95",
+     "name": "Hornsg.-Långholmsg. mot Västerbron"
+    },
+    {
+     "id": "se-tv-93",
+     "name": "Hornsg.-Långholmsg. mot Slussen"
+    },
+    {
+     "id": "se-tv-122",
+     "name": "Betalstation Klarastrandsleden"
+    },
+    {
+     "id": "se-cs-503018648",
+     "name": "MEDview: DN-Skrapan, Stockholm"
+    },
+    {
+     "id": "se-tv-340",
+     "name": "Tpl Åbyvägen mot Södra länken"
+    },
+    {
+     "id": "se-tv-314",
+     "name": "Tpl Ropsten mot Norra Länken"
+    }
+   ]
+  },
+  {
+   "slug": "busan",
+   "name": "Busan",
+   "country": "South Korea",
+   "countrySlug": "south-korea",
+   "count": 321,
+   "countryTotal": 1615,
+   "sources": [
+    {
+     "name": "OpenCCTV / busan",
+     "count": 321
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 321,
+   "samples": [
+    {
+     "id": "occ-busan-CTV0000630",
+     "name": "Dongrae Korea Electric Power, Chungryeol-daero"
+    },
+    {
+     "id": "occ-busan-CTV0000065",
+     "name": "Busan Military Manpower Administration, Busan"
+    },
+    {
+     "id": "occ-busan-CTV0000308",
+     "name": "Haeundae Road, Gigyeong Technical High School"
+    },
+    {
+     "id": "occ-busan-CTV0000406",
+     "name": "Dalmaetgil Road, Haeundae Restaurant District"
+    },
+    {
+     "id": "occ-busan-CTV0000042",
+     "name": "South Busan Driving License Center Entrance"
+    },
+    {
+     "id": "occ-busan-CTV0000304",
+     "name": "East-West Elevated Road, Gaegeum Apartments"
+    },
+    {
+     "id": "occ-busan-CTV0000309",
+     "name": "Gwangan Coastal Road, Woo Port Intersection"
+    },
+    {
+     "id": "occ-busan-CTV2023012",
+     "name": "Jangpyeong Tunnel, Eulsukhdo direction 520m"
+    },
+    {
+     "id": "occ-busan-CTV0000198",
+     "name": "Geum Elementary School Intersection, Busan"
+    },
+    {
+     "id": "occ-busan-CTV0000403",
+     "name": "Jaebsan Road, Haeundae East Police Station"
+    },
+    {
+     "id": "occ-busan-CTV2023003",
+     "name": "Jangpyeong Tunnel, Gamcheon direction 525m"
+    },
+    {
+     "id": "occ-busan-CTV0000167",
+     "name": "Busan Science Industrial Complex Entrance"
+    }
+   ]
+  },
+  {
+   "slug": "san-antonio",
+   "name": "San Antonio",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 307,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "TxDOT",
+     "count": 307
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 307,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "txdot-SAT-IH 10 at Guadalupe Rest Area EB (MM 621)",
+     "name": "IH 10 at Guadalupe Rest Area EB (MM 621)"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Guadalupe Rest Area WB (MM 619)",
+     "name": "IH 10 at Guadalupe Rest Area WB (MM 619)"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Kerrville Rest Area WB (MM 514)",
+     "name": "IH 10 at Kerrville Rest Area WB (MM 514)"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Kerrville Rest Area EB (MM 514)",
+     "name": "IH 10 at Kerrville Rest Area EB (MM 514)"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Mountain Home - West (MM 481)",
+     "name": "IH 10 at Mountain Home - West (MM 481)"
+    },
+    {
+     "id": "txdot-SAT-Wurzbach Pkwy at Jones Maltsberger Rd",
+     "name": "Wurzbach Pkwy at Jones Maltsberger Rd"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Kerrville - East (MM 511)",
+     "name": "IH 10 at Kerrville - East (MM 511)"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Kerrville - West (MM 503)",
+     "name": "IH 10 at Kerrville - West (MM 503)"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Crossroads Park and Ride",
+     "name": "IH 10 at Crossroads Park and Ride"
+    },
+    {
+     "id": "txdot-SAT-Wurzbach Pkwy at Thousand Oaks Dr",
+     "name": "Wurzbach Pkwy at Thousand Oaks Dr"
+    },
+    {
+     "id": "txdot-SAT-Wurzbach Pkwy at Perrin Beitel Rd",
+     "name": "Wurzbach Pkwy at Perrin Beitel Rd"
+    },
+    {
+     "id": "txdot-SAT-IH 10 at Santa Clara Rd (MM 597)",
+     "name": "IH 10 at Santa Clara Rd (MM 597)"
+    }
+   ]
+  },
+  {
+   "slug": "austin",
+   "name": "Austin",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 275,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "TxDOT",
+     "count": 275
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 275,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "txdot-AUS-RM-620 @ Concordia University Dr",
+     "name": "RM-620 @ Concordia University Dr"
+    },
+    {
+     "id": "txdot-AUS-RM-620 @ Low Water Crossing Rd",
+     "name": "RM-620 @ Low Water Crossing Rd"
+    },
+    {
+     "id": "txdot-AUS-SH-130 @ N of Decker Lake Rd",
+     "name": "SH-130 @ N of Decker Lake Rd"
+    },
+    {
+     "id": "txdot-AUS-FM-734 @ Harris Branch Pkwy",
+     "name": "FM-734 @ Harris Branch Pkwy"
+    },
+    {
+     "id": "txdot-AUS-IH-35 @ N of Northwest Blvd",
+     "name": "IH-35 @ N of Northwest Blvd"
+    },
+    {
+     "id": "txdot-AUS-RM-620 @ Steiner Ranch Blvd",
+     "name": "RM-620 @ Steiner Ranch Blvd"
+    },
+    {
+     "id": "txdot-AUS-US-290 @ Monterey Oaks Blvd (5400)",
+     "name": "US-290 @ Monterey Oaks Blvd"
+    },
+    {
+     "id": "txdot-AUS-IH-35 @ S of Yarrington Rd",
+     "name": "IH-35 @ S of Yarrington Rd"
+    },
+    {
+     "id": "txdot-AUS-IH-35 @ N of Yarrington Rd",
+     "name": "IH-35 @ N of Yarrington Rd"
+    },
+    {
+     "id": "txdot-AUS-LP-1 @ Barton Springs Blvd (500) 66",
+     "name": "LP-1 @ Barton Springs Blvd"
+    },
+    {
+     "id": "txdot-AUS-LP-1 @ Scofield Ridge Pkwy 12900",
+     "name": "LP-1 @ Scofield Ridge Pkwy"
+    },
+    {
+     "id": "txdot-AUS-RM-620 @ Bullick Hollow Rd",
+     "name": "RM-620 @ Bullick Hollow Rd"
+    }
+   ]
+  },
+  {
+   "slug": "el-paso",
+   "name": "El Paso",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 261,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "TxDOT",
+     "count": 256
+    },
+    {
+     "name": "FAA WeatherCams",
+     "count": 4
+    },
+    {
+     "name": "OpenCCTV / travelmidwest",
+     "count": 1
+    }
+   ],
+   "sourceCount": 3,
+   "stills": 261,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "txdot-ELP-IH-10 @ Van Horn MM 138 Golf Course Rd",
+     "name": "IH-10 @ Van Horn MM 138 Golf Course Rd"
+    },
+    {
+     "id": "txdot-ELP-US-62/180-Montana @ Saul Kleinfeld",
+     "name": "US-62/180-Montana @ Saul Kleinfeld"
+    },
+    {
+     "id": "txdot-ELP-IH-10 @ Travel Information Center",
+     "name": "IH-10 @ Travel Information Center"
+    },
+    {
+     "id": "txdot-ELP-US-62/180-Montana @ George Dieter",
+     "name": "US-62/180-Montana @ George Dieter"
+    },
+    {
+     "id": "txdot-ELP-US-62/180-Montana @ Lee Trevino",
+     "name": "US-62/180-Montana @ Lee Trevino"
+    },
+    {
+     "id": "txdot-ELP-US-62/180-Montana @ Tierra Este",
+     "name": "US-62/180-Montana @ Tierra Este"
+    },
+    {
+     "id": "txdot-ELP-FM-659/Zaragoza @ George Deiter",
+     "name": "FM-659/Zaragoza @ George Deiter"
+    },
+    {
+     "id": "occ-tmw-IL-IL-IDOTD4_4_Woodford_SB_I-39_4073631_-8903482_1_N",
+     "name": "I-39 at US 24 (El Paso) (#4192)"
+    },
+    {
+     "id": "txdot-ELP-SH-178/Artcraft @ Upper valley",
+     "name": "SH-178/Artcraft @ Upper valley"
+    },
+    {
+     "id": "txdot-ELP-FM-659/Zaragoza @ Pebble Hills",
+     "name": "FM-659/Zaragoza @ Pebble Hills"
+    },
+    {
+     "id": "faa-12630",
+     "name": "El Paso — Camera 2 (SouthEast)"
+    },
+    {
+     "id": "faa-12632",
+     "name": "El Paso — Camera 4 (NorthWest)"
+    }
+   ]
+  },
+  {
+   "slug": "beaumont",
+   "name": "Beaumont",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 249,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "TxDOT",
+     "count": 240
+    },
+    {
+     "name": "Caltrans",
+     "count": 5
+    },
+    {
+     "name": "OpenCCTV / caltrans",
+     "count": 4
+    }
+   ],
+   "sourceCount": 3,
+   "stills": 249,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "txdot-BMT-BMT - SH-73 @ Veterans Mem Bridge - Bridge City (NWCNF)",
+     "name": "BMT - SH-73 @ Veterans Mem Bridge - Bridge City (NWCNF)"
+    },
+    {
+     "id": "txdot-BMT-BMT - SH-73 @ Veterans Mem Bridge - Bridge City (NWCSF)",
+     "name": "BMT - SH-73 @ Veterans Mem Bridge - Bridge City (NWCSF)"
+    },
+    {
+     "id": "txdot-BMT-BMT - SH-73 @ Veterans Mem Bridge - Port Arthur (SWCNF)",
+     "name": "BMT - SH-73 @ Veterans Mem Bridge - Port Arthur (SWCNF)"
+    },
+    {
+     "id": "txdot-BMT-BMT - SH-73 @ Veterans Mem Bridge - Port Arthur (SWCSF)",
+     "name": "BMT - SH-73 @ Veterans Mem Bridge - Port Arthur (SWCSF)"
+    },
+    {
+     "id": "txdot-BMT-BMT FM1442 @ Charlotte Ln/BC Elementary - Bridge City",
+     "name": "FM1442 @ Charlotte Ln/BC Elementary - Bridge City"
+    },
+    {
+     "id": "txdot-BMT-BMT - IH-10 @ Trinity River Bridge - Wallisville",
+     "name": "BMT - IH-10 @ Trinity River Bridge - Wallisville"
+    },
+    {
+     "id": "txdot-BMT-BMT - SH-12 @ SH-62 - Mauriceville - EB Traffic",
+     "name": "BMT - SH-12 @ SH-62 - Mauriceville - EB Traffic"
+    },
+    {
+     "id": "txdot-BMT-BMT - US-69 @ Wheeler - Lumberton - SB Traffic",
+     "name": "BMT - US-69 @ Wheeler - Lumberton - SB Traffic"
+    },
+    {
+     "id": "cal-2072",
+     "name": "I-10: (502) West of Highland Springs Avenue"
+    },
+    {
+     "id": "txdot-BMT-BMT FM1442 @ Ferry Dr/LaPointe St - Bridge City",
+     "name": "FM1442 @ Ferry Dr/LaPointe St - Bridge City"
+    },
+    {
+     "id": "txdot-BMT-BMT SH105 Bypass @ FM1010 (Diamond) - Cleveland",
+     "name": "SH105 Bypass @ FM1010 (Diamond) - Cleveland"
+    },
+    {
+     "id": "txdot-BMT-BMT SH321 @ SH105 Bypass/Grand Oaks - Cleveland",
+     "name": "SH321 @ SH105 Bypass/Grand Oaks - Cleveland"
+    }
+   ]
+  },
+  {
+   "slug": "calgary",
+   "name": "Calgary",
+   "country": "Canada",
+   "countrySlug": "canada",
+   "count": 233,
+   "countryTotal": 4719,
+   "sources": [
+    {
+     "name": "OpenCCTV / alberta",
+     "count": 191
+    },
+    {
+     "name": "OpenCCTV / calgary",
+     "count": 42
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 233,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-alberta-ec015299b0",
+     "name": "Stoney Trail - Harvest Hills Boulevard N (N of S INT)"
+    },
+    {
+     "id": "occ-alberta-b670505b59",
+     "name": "Macleod Trail S / 162 Avenue SE (East intersection)"
+    },
+    {
+     "id": "occ-alberta-ce38effb1b",
+     "name": "Macleod Trail S / 162 Avenue SE (West intersection)"
+    },
+    {
+     "id": "occ-alberta-2b46ff6fd5",
+     "name": "Hwy 201: Stoney Trail East to Deerfoot Trail North"
+    },
+    {
+     "id": "occ-alberta-89f57d517a",
+     "name": "Hwy 201: Deerfoot Trail South to Stoney Trail East"
+    },
+    {
+     "id": "occ-calgary-loc211",
+     "name": "Citadel Gt/Nose Hill Dr & Country Hills Bv NW (NW)"
+    },
+    {
+     "id": "occ-calgary-loc213",
+     "name": "Mckenzie Towne Bv/New Brighton Gt & 52 St SE (SE)"
+    },
+    {
+     "id": "occ-alberta-52aceae1c7",
+     "name": "Stoney Trail - Nose Hill Drive NW (W of E INT)"
+    },
+    {
+     "id": "occ-calgary-loc221",
+     "name": "Heirloom Bv/Magnolia St & Rangeview Bv SE (SE)"
+    },
+    {
+     "id": "occ-alberta-60457ea077",
+     "name": "Hwy 201: Stoney Trail South to 16 Avenue East"
+    },
+    {
+     "id": "occ-alberta-7be898a5ad",
+     "name": "Hwy 201: Stoney Trail North to 16 Avenue West"
+    },
+    {
+     "id": "occ-calgary-loc42",
+     "name": "Beddington Trail / Country Hills Blvd NW (NW)"
+    }
+   ]
+  },
+  {
+   "slug": "queens",
+   "name": "Queens",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 229,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / ny511",
+     "count": 229
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 229,
+   "samples": [
+    {
+     "id": "occ-ny511-48f9a846bc",
+     "name": "MSP between Exits M2 and M3 (South of Zeckendorf Blvd Interchange)"
+    },
+    {
+     "id": "occ-ny511-70c6b9b71a",
+     "name": "MSP between Exits M2 and M1 (Old Country Rd. Interchange)"
+    },
+    {
+     "id": "occ-ny511-dfcbc6f668",
+     "name": "Loop Pkwy. Northeast corner at Lido Blvd in Point Lookout"
+    },
+    {
+     "id": "occ-ny511-eb6a686765",
+     "name": "MSP between Exits M2 and M3 (Zeckendorf Blvd Interchange)"
+    },
+    {
+     "id": "occ-ny511-4155248cc4",
+     "name": "MSP between M5 and M4 (north of Charles Lindbergh Blvd)"
+    },
+    {
+     "id": "occ-ny511-25bc10c5d1",
+     "name": "SSP at Exit 18 - Eagle Ave / Hempstead Lake State Park"
+    },
+    {
+     "id": "occ-ny511-b80d05020f",
+     "name": "SSP between Exit 24(Merrick Ave) and Exit 25 (NY 106)"
+    },
+    {
+     "id": "occ-ny511-2ebaef28d6",
+     "name": "MSP between M7 and M6 (at Babylon Tpke. Interchange)"
+    },
+    {
+     "id": "occ-ny511-68e9cbb267",
+     "name": "MSP between M10 and M9 (at Merrick Rd. Interchange)"
+    },
+    {
+     "id": "occ-ny511-6e999fbfad",
+     "name": "SSP between Exit 21 (Nassau Rd.) and Exit 22 (MSP)"
+    },
+    {
+     "id": "occ-ny511-ed82a6d4d7",
+     "name": "NY 24 Eastbound at Belmont Park / Locustwood Blvd."
+    },
+    {
+     "id": "occ-ny511-5ae29cfc4a",
+     "name": "SSP between Exit 22 (MSP) and Exit 21 (Nassau Rd)"
+    }
+   ]
+  },
+  {
+   "slug": "taichung",
+   "name": "Taichung",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 222,
+   "countryTotal": 3268,
+   "sources": [
+    {
+     "name": "THB Highway Bureau",
+     "count": 151
+    },
+    {
+     "name": "OpenCCTV / twipcam",
+     "count": 71
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 206,
+   "streams": 16,
+   "samples": [
+    {
+     "id": "occ-twipcam-txg-000165",
+     "name": "台中市道路 [07148]中科路/中央公園遊客中心(右側車流往環中路)Zhongke Rd./Taichung Central Park (Right side"
+    },
+    {
+     "id": "occ-twipcam-txg-000343",
+     "name": "台中市道路 [07254]台灣大道/國際街(右側車流往台中車站),Taiwan Blvd/International Street. (Right side T"
+    },
+    {
+     "id": "occ-twipcam-txg-000318",
+     "name": "台中市道路 [06229]四平路/四平路568巷(右側車流往環中路) Siping Rd./Ln. 568, Siping Rd.(Right side Tra"
+    },
+    {
+     "id": "occ-twipcam-txg-000066",
+     "name": "台中市道路 [20143]中正路/豐原大道(右側車流往豐原交流道),Zhongzheng Rd/Fengyuan Blvd (Right side Traffi"
+    },
+    {
+     "id": "occ-twipcam-txg-000094",
+     "name": "台中市道路 [07091]市政北七路/惠中路(右側車流往市政路),Shizheng N. 7th Rd/Huizhong Rd (Right side Traf"
+    },
+    {
+     "id": "occ-twipcam-txg-000384",
+     "name": "台中市道路 [36296]清水區中山路/中正街(右側車流往大甲方向)Zhongshan Rd./Zhongzheng St.((Right side Traff"
+    },
+    {
+     "id": "occ-twipcam-txg-000379",
+     "name": "台中市道路 [02291]建國北路/文心南路(右側車流往東興路),Jianguo N. Rd./Wenxin S. Rd.(Right side Traffic"
+    },
+    {
+     "id": "occ-twipcam-txg-000043",
+     "name": "台中市道路 [08168]向上路/環中路 (右側車流往工業區)Xiangshang Rd/Huanzhong Rd(Right side Traffic flo"
+    },
+    {
+     "id": "occ-twipcam-txg-000026",
+     "name": "台中市道路 [03015]臺灣大道/民權路(右側車流往台中車站),Taiwan Blvd/Minquan Rd (Right side Traffic flow"
+    },
+    {
+     "id": "occ-twipcam-txg-000070",
+     "name": "台中市道路 [08132]五權西路/惠文路(右側車流往文心路),Wuquan W. Rd./Huiwen Rd. (Right side Traffic flo"
+    },
+    {
+     "id": "occ-twipcam-txg-000277",
+     "name": "台中市道路 [06192]中清路/后庄路(右側車流往文心路)Zhongqing Rd./Houzhuang Rd.(Right side Traffic flo"
+    },
+    {
+     "id": "occ-twipcam-txg-000297",
+     "name": "台中市道路 [06210]洲際路/豐樂一街(右側車流往四平路)Zhouji Rd./Fengle 1st St. (Right side Traffic flo"
+    }
+   ]
+  },
+  {
+   "slug": "istanbul",
+   "name": "Istanbul",
+   "country": "Turkey",
+   "countrySlug": "turkey",
+   "count": 222,
+   "countryTotal": 351,
+   "sources": [
+    {
+     "name": "OpenCCTV / ibb-istanbul",
+     "count": 221
+    },
+    {
+     "name": "SkylineWebcams",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 221,
+   "samples": [
+    {
+     "id": "occ-ibb-istanbul-739",
+     "name": "03045 BAKIRKÖY DEVLET HASTANESİ ÇIKIŞ"
+    },
+    {
+     "id": "occ-ibb-istanbul-757",
+     "name": "02015 AVCILAR YILDIRIM BEYAZIT CAD."
+    },
+    {
+     "id": "occ-ibb-istanbul-742",
+     "name": "11039 ALİBEYKÖY AKŞEMSETTİN BULVARI"
+    },
+    {
+     "id": "occ-ibb-istanbul-708",
+     "name": "12035 BEZMİALEM VAKIF ÜNİVERSİTESİ"
+    },
+    {
+     "id": "occ-ibb-istanbul-604",
+     "name": "11032 ALİBEYKÖY YAVUZ SELİM CD."
+    },
+    {
+     "id": "occ-ibb-istanbul-797",
+     "name": "03044 BAKIRKÖY DEVLET HASTANESİ"
+    },
+    {
+     "id": "occ-ibb-istanbul-79",
+     "name": "15 TEMMUZ ŞEHİTLER KÖP. ANADOLU"
+    },
+    {
+     "id": "occ-ibb-istanbul-1028",
+     "name": "TANTAVI TUNELI UMRANIYE GIRISI"
+    },
+    {
+     "id": "occ-ibb-istanbul-816",
+     "name": "11022 ALİBEYKÖY KARADOLAP MAH."
+    },
+    {
+     "id": "occ-ibb-istanbul-457",
+     "name": "25051 ACIBADEM ÜÇPINARLAR CD."
+    },
+    {
+     "id": "occ-ibb-istanbul-555",
+     "name": "11402 EYÜP ŞEHİTLİK İSTASYONU"
+    },
+    {
+     "id": "occ-ibb-istanbul-741",
+     "name": "02026 AMBARLI DOLUM TESİSLERİ"
+    }
+   ]
+  },
+  {
+   "slug": "incheon",
+   "name": "Incheon",
+   "country": "South Korea",
+   "countrySlug": "south-korea",
+   "count": 212,
+   "countryTotal": 1615,
+   "sources": [
+    {
+     "name": "OpenCCTV / incheon",
+     "count": 212
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 212,
+   "samples": [
+    {
+     "id": "occ-incheon-119",
+     "name": "Industrial Complex Unit 2 Intersection, Incheon"
+    },
+    {
+     "id": "occ-incheon-16",
+     "name": "Munhak Interchange, Second Gyeonggin Expressway"
+    },
+    {
+     "id": "occ-incheon-10079",
+     "name": "Bongoae Boulevard, Cheongna International City"
+    },
+    {
+     "id": "occ-incheon-20011",
+     "name": "Yonsei University International Campus, Songdo"
+    },
+    {
+     "id": "occ-incheon-11",
+     "name": "Eulwang Beach Road Intersection, Yongyoo-dong"
+    },
+    {
+     "id": "occ-incheon-10066",
+     "name": "Songdo 5-dong, Misong Elementary Intersection"
+    },
+    {
+     "id": "occ-incheon-122",
+     "name": "Namdong District Office Intersection, Incheon"
+    },
+    {
+     "id": "occ-incheon-212",
+     "name": "Hyosung Bridge Intersection, Hyosung District"
+    },
+    {
+     "id": "occ-incheon-49",
+     "name": "Bucheon District Office Intersection, Incheon"
+    },
+    {
+     "id": "occ-incheon-10060",
+     "name": "Youngjong-do, Youngjong Daero SK Gas Station"
+    },
+    {
+     "id": "occ-incheon-121",
+     "name": "Namdong Industrial Complex Entrance, Incheon"
+    },
+    {
+     "id": "occ-incheon-10069",
+     "name": "Cheongna International City, Cheongjoong Ro"
+    }
+   ]
+  },
+  {
+   "slug": "baltimore",
+   "name": "Baltimore",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 199,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / mdchart",
+     "count": 197
+    },
+    {
+     "name": "FAA WeatherCams",
+     "count": 1
+    },
+    {
+     "name": "OpenCCTV / state511",
+     "count": 1
+    }
+   ],
+   "sourceCount": 3,
+   "stills": 2,
+   "streams": 197,
+   "samples": [
+    {
+     "id": "occ-mdchart-e700b9fe004e00100055fa36c4235c0a",
+     "name": "I-95 South at Ex 55 Key Hwy, MM 54.1 (C040A On Top DMS 8839)"
+    },
+    {
+     "id": "occ-mdchart-2f009e8a00e50039004606363d235daa",
+     "name": "I-95 S of I-695 (C026) I-95 N of Kenwood Ave (MP 63.1)"
+    },
+    {
+     "id": "occ-mdchart-23011ea3006a0009004c06363d235daa",
+     "name": "I-695 O/L, Prior to I-95, Exit 33 (C025A), MP32.8"
+    },
+    {
+     "id": "occ-mdchart-2e01710d019100e300441a366e230214",
+     "name": "I-895 N of US 40 Ex 13 Pulaski Hwy (C033) MP 13.4"
+    },
+    {
+     "id": "occ-mdchart-f0005bb8c47701b8004606363d235daa",
+     "name": "I-695 N of MD 151 North Point Blvd (C056) MP 43.4"
+    },
+    {
+     "id": "occ-mdchart-1601e0b4007c00340055fa36c4235c0a",
+     "name": "I-95 N PAST EXIT 61 MM 60.0 (C042A on TRS 8082)"
+    },
+    {
+     "id": "occ-mdchart-47017d19019200e300441a366e230214",
+     "name": "I-95 FMT East Vent Bldg Roof Top (C039) MP 55.9"
+    },
+    {
+     "id": "occ-mdchart-a9008078019200e300441a366e230214",
+     "name": "I-95 at FMT, Top of South Portal (C040) MM 54.5"
+    },
+    {
+     "id": "occ-mdchart-6401c95400fb007b0054fa36c4235c0a",
+     "name": "I-95 N Prior to Exit 67 MD 43, MM 66.8 (C022C)"
+    },
+    {
+     "id": "occ-mdchart-6501794a00d9000b0068d336c4235c0a",
+     "name": "I-95 SB M.M. 71.2 ( C021-F North Bradshaw Rd.)"
+    },
+    {
+     "id": "occ-mdchart-f101757700e30039004606363d235daa",
+     "name": "I-95 N of Md 43 Whitemarsh Blvd (C022) MP 67.5"
+    },
+    {
+     "id": "occ-mdchart-52005fc1009800e20062d336c4235c0a",
+     "name": "I-70 W of Ex 82 US 40 Baltimore National Pike"
+    }
+   ]
+  },
+  {
+   "slug": "taipei",
+   "name": "Taipei",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 195,
+   "countryTotal": 3268,
+   "sources": [
+    {
+     "name": "THB Highway Bureau",
+     "count": 135
+    },
+    {
+     "name": "OpenCCTV / twipcam",
+     "count": 56
+    },
+    {
+     "name": "YouTube",
+     "count": 2
+    }
+   ],
+   "sourceCount": 5,
+   "stills": 181,
+   "streams": 14,
+   "samples": [
+    {
+     "id": "occ-twipcam-n5-n-0k-020",
+     "name": "National Freeway 5 Nangang System Interchange Km 0 Northbound"
+    },
+    {
+     "id": "occ-twipcam-n3a-w-5k-000",
+     "name": "National Freeway 3A westbound, Mucha Interchange approach"
+    },
+    {
+     "id": "occ-twipcam-tpe-000261",
+     "name": "Citizen Elevated Highway and Xining North Road, Taipei"
+    },
+    {
+     "id": "occ-twipcam-n3-n-0k-822",
+     "name": "National Freeway 3 northbound, Minquan Street, Xizhi"
+    },
+    {
+     "id": "occ-twipcam-n5-s-14k-863",
+     "name": "National Highway 5 southbound, Pinglin District"
+    },
+    {
+     "id": "occ-twipcam-tpe-000369",
+     "name": "Tingzhou Road Segment 2, Zhongzheng, Taipei"
+    },
+    {
+     "id": "occ-twipcam-n5-s-7k-535",
+     "name": "National Freeway 5, Shiding, 7K+ southbound"
+    },
+    {
+     "id": "occ-twipcam-n3a-w-2k-700",
+     "name": "National Freeway 3A, Taipei Link Westbound"
+    },
+    {
+     "id": "occ-twipcam-tpe-000266",
+     "name": "Jilong Road and Bade Road Overpass, Taipei"
+    },
+    {
+     "id": "occ-twipcam-n1-n-13k-000",
+     "name": "National Highway 1 Neihu Elevated Section"
+    },
+    {
+     "id": "occ-twipcam-tpe-000286",
+     "name": "Minsheng West Road and Yanping North Road"
+    },
+    {
+     "id": "occ-twipcam-tpe-000328",
+     "name": "Minsheng East Road & Zhongshan North Road"
+    }
+   ]
+  },
+  {
+   "slug": "osaka",
+   "name": "Osaka",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 193,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 175
+    },
+    {
+     "name": "SkylineWebcams",
+     "count": 11
+    },
+    {
+     "name": "OpenCCTV / kkr",
+     "count": 4
+    }
+   ],
+   "sourceCount": 6,
+   "stills": 191,
+   "streams": 2,
+   "samples": [
+    {
+     "id": "occ-rivergojp-222068014",
+     "name": "Yodo River above Osaka Institute of Technology"
+    },
+    {
+     "id": "occ-rivergojp-106913089",
+     "name": "Onji-gawa Flood Control Park, Higashi-Osaka"
+    },
+    {
+     "id": "occ-rivergojp-222069025",
+     "name": "Yamato River, Higashi-Yoke River Confluence"
+    },
+    {
+     "id": "occ-rivergojp-106913084",
+     "name": "Hanazono Flood Control Park, Higashi-Osaka"
+    },
+    {
+     "id": "occ-rivergojp-222069024",
+     "name": "Yamato River, Nishi-Yoke River Confluence"
+    },
+    {
+     "id": "occ-rivergojp-107183010",
+     "name": "Shogeshimogawa at New Shogeshimo Bridge"
+    },
+    {
+     "id": "occ-rivergojp-222057016",
+     "name": "East Otafuku Mountain, Kobe Higashinada"
+    },
+    {
+     "id": "occ-rivergojp-222068016",
+     "name": "Yodo River, Taishi Bridge Alert Station"
+    },
+    {
+     "id": "occ-rivergojp-222070003",
+     "name": "Inagawa River at Gunaiko Bridge, Itami"
+    },
+    {
+     "id": "occ-rivergojp-307183001",
+     "name": "Konoyo River Amagasaki Pumping Station"
+    },
+    {
+     "id": "occ-rivergojp-222057020",
+     "name": "Rokko Relay Station, Kobe Higashinada"
+    },
+    {
+     "id": "occ-rivergojp-106913124",
+     "name": "Shintadaohashi Bridge, Higashi-Osaka"
+    }
+   ]
+  },
+  {
+   "slug": "sapporo",
+   "name": "Sapporo",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 185,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 176
+    },
+    {
+     "name": "SkylineWebcams",
+     "count": 4
+    },
+    {
+     "name": "OpenCCTV / stv",
+     "count": 2
+    }
+   ],
+   "sourceCount": 6,
+   "stills": 182,
+   "streams": 3,
+   "samples": [
+    {
+     "id": "occ-rivergojp-220737156",
+     "name": "Chitose River at Minami 9-gou Drainage Pumping Station"
+    },
+    {
+     "id": "occ-rivergojp-220737158",
+     "name": "Chitose River at Minami 6-gou Drainage Pumping Station"
+    },
+    {
+     "id": "occ-rivergojp-220737085",
+     "name": "Toyohira River 6.3 km, Disaster Prevention Station"
+    },
+    {
+     "id": "occ-rivergojp-220737157",
+     "name": "Former Yubari River at Maoi Canal Drainage Station"
+    },
+    {
+     "id": "occ-rivergojp-220737144",
+     "name": "Ishikari River, Shin-Shinoshina Drainage Station"
+    },
+    {
+     "id": "occ-rivergojp-220737086",
+     "name": "Toyohira River 6.5 km, Atsubetsu Pumping Station"
+    },
+    {
+     "id": "occ-rivergojp-220737084",
+     "name": "Toyohira River 6.1 km, Garai Pumping Station"
+    },
+    {
+     "id": "occ-rivergojp-220737163",
+     "name": "Chitose River at Tomanbetsu Drainage Station"
+    },
+    {
+     "id": "occ-rivergojp-220737062",
+     "name": "Ishikari River Water Level Station, Sapporo"
+    },
+    {
+     "id": "occ-rivergojp-220737137",
+     "name": "Chitose River, Izumi Marsh Drainage Station"
+    },
+    {
+     "id": "occ-rivergojp-220737141",
+     "name": "Shinoshina River, Hachiman Drainage Station"
+    },
+    {
+     "id": "occ-rivergojp-220737164",
+     "name": "Chitose River at Nakanozuki Pumping Station"
+    }
+   ]
+  },
+  {
+   "slug": "bronx",
+   "name": "Bronx",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 172,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / ny511",
+     "count": 171
+    },
+    {
+     "name": "OpenCCTV / phenocam",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 171,
+   "samples": [
+    {
+     "id": "occ-phenocam-ldeocam",
+     "name": "Located on the Lamont-Doherty Earth Observatory, Columbia University campus in P"
+    },
+    {
+     "id": "occ-ny511-922052edc1",
+     "name": "I-287 MP 004.30 EB East of Interchange 7 (North White Plains - Taconic State Par"
+    },
+    {
+     "id": "occ-ny511-74c51c116f",
+     "name": "I-287 MP 004.00 WB at Interchange 7 (North White Plains - Taconic State Parkway)"
+    },
+    {
+     "id": "occ-ny511-8236dcd685",
+     "name": "I-87 MP 011.80 NB Between Interchange 8 (I-287) and Interchange 9 (Tarrytown)"
+    },
+    {
+     "id": "occ-ny511-01ad2db999",
+     "name": "I-287 MP 007.80 WB Just East of Interchange 9 (Hutchinson River Parkway)"
+    },
+    {
+     "id": "occ-ny511-d00fc50bfa",
+     "name": "Hutchinson River Parkway North of the Cross County Parkway at MM 8.46"
+    },
+    {
+     "id": "occ-ny511-66b2570b17",
+     "name": "I-287 MP 005.20 EB at Interchange 8 (White Plains - Westchester Ave)"
+    },
+    {
+     "id": "occ-ny511-23ab347ddb",
+     "name": "I-95 MP 000.50 NB at Interchange 9 (Hutchinson River Parkway North)"
+    },
+    {
+     "id": "occ-ny511-f1a5922359",
+     "name": "I-287 MP 003.60 EB at Interchange 6 (North White Plains - Broadway)"
+    },
+    {
+     "id": "occ-ny511-4bdd3d5abe",
+     "name": "I-95 MP 003.12 SB at Interchange 14 (Hutchinson River Parkway)"
+    },
+    {
+     "id": "occ-ny511-14f88f04c7",
+     "name": "I87 NB 249B at Exit 12 at North Palisades Center Dr MM 18.91"
+    },
+    {
+     "id": "occ-ny511-4788deed8b",
+     "name": "I87 NB 249A at Exit 12 at North Palisades Center Dr MM 18.91"
+    }
+   ]
+  },
+  {
+   "slug": "a-coruna",
+   "name": "A Coruña",
+   "country": "Spain",
+   "countrySlug": "spain",
+   "count": 170,
+   "countryTotal": 2122,
+   "sources": [
+    {
+     "name": "DGT",
+     "count": 170
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 170,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "dgt-183236",
+     "name": "VG-1.5 km 60.97 (Ascending)"
+    },
+    {
+     "id": "dgt-1296",
+     "name": "AP-9F km 19.75 (Ascending)"
+    },
+    {
+     "id": "dgt-1297",
+     "name": "AP-9F km 24.25 (Ascending)"
+    },
+    {
+     "id": "dgt-1301",
+     "name": "AP-9F km 34.15 (Ascending)"
+    },
+    {
+     "id": "dgt-160143",
+     "name": "AG-55 km 12.16 (Ascending)"
+    },
+    {
+     "id": "dgt-160155",
+     "name": "AG-64 km 31.05 (Ascending)"
+    },
+    {
+     "id": "dgt-169232",
+     "name": "AC-12 km 5.128 (Ascending)"
+    },
+    {
+     "id": "dgt-173690",
+     "name": "AP-53 km 35.06 (Ascending)"
+    },
+    {
+     "id": "dgt-179576",
+     "name": "VG-1.7 km 0.95 (Ascending)"
+    },
+    {
+     "id": "dgt-179954",
+     "name": "AG-11 km 14.55 (Ascending)"
+    },
+    {
+     "id": "dgt-179964",
+     "name": "AG-11 km 25.25 (Ascending)"
+    },
+    {
+     "id": "dgt-179965",
+     "name": "AG-11 km 26.07 (Ascending)"
+    }
+   ]
+  },
+  {
+   "slug": "ho-chi-minh-city",
+   "name": "Ho Chi Minh City",
+   "country": "Vietnam",
+   "countrySlug": "vietnam",
+   "count": 170,
+   "countryTotal": 316,
+   "sources": [
+    {
+     "name": "OpenCCTV / vietnam-traffic",
+     "count": 170
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 170,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-vietnam-hcmc-595f89323dcfc400106f28ee",
+     "name": "Quốc lộ 1 - BQB Cầu vượt Quang Trung A (hướng An Sương)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-58d7b756c1e33c00112b320d",
+     "name": "Nút giao Chợ Đệm 2 (CT Trung Lương - Bùi Thanh Khiết)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-63b65ebebfd3d90017eaa3ae",
+     "name": "Nguyễn Hữu Cảnh - Ngô Tất Tố 2 (Dạ cầu Thủ Thiêm 1)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-68ae7e997d735d00173c7445",
+     "name": "Cầu Bình Triệu (2) hướng đi lên cầu Bình Triệu 2"
+    },
+    {
+     "id": "occ-vietnam-hcmc-5d8cda6a766c880017188960",
+     "name": "Phạm Văn Đồng - Kha Vạn Cân (hướng đi Sân bay)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-56de42f611f398ec0c48127e",
+     "name": "Mai Chí Thọ - Võ Nguyên Giáp (Cát Lái cầu B)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-5d8cd886766c880017188956",
+     "name": "Phạm Văn Đồng - Hiệp Bình (hướng đi Thủ Đức)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-5d8cd767766c880017188950",
+     "name": "Phạm Văn Đồng - Nguyễn Xí (hướng đi Sân bay)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-6792f2248c5ed4001b27f4dc",
+     "name": "Quốc Lộ 1 - Độc Lập (cổng KCN Sóng Thần)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-6792f16e8c5ed4001b27f482",
+     "name": "Cao tốc LT-DG - Trạm thu phí Long Phước"
+    },
+    {
+     "id": "occ-vietnam-hcmc-68ede746230ee50017d04dcc",
+     "name": "Đại lộ Bình Dương - ngã tư chợ Đình (2)"
+    },
+    {
+     "id": "occ-vietnam-hcmc-662b571d1afb9c00172d9083",
+     "name": "Cách Mạng Tháng Tám - Phạm Văn Hai (2)"
+    }
+   ]
+  },
+  {
+   "slug": "denver",
+   "name": "Denver",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 166,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / cotrip",
+     "count": 166
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 166,
+   "samples": [
+    {
+     "id": "occ-cr-0a91c4b014",
+     "name": "C-470 MP 021.65 WB : 0.6 miles E of S University Blvd/CO 177"
+    },
+    {
+     "id": "occ-cr-376eb43109",
+     "name": "C-470 MP 017.75 EB : 0.7 miles E of S Santa Fe Dr/US 85"
+    },
+    {
+     "id": "occ-cr-ec5d36e6ee",
+     "name": "CO-88 MP 006.05 EB at NB US-285 Ramp to S Federal Blvd"
+    },
+    {
+     "id": "occ-cr-ee1806c003",
+     "name": "I-225 MP 001.40 NB at S Yosemite St and NB I-225 Ramps"
+    },
+    {
+     "id": "occ-cr-f3b35545cf",
+     "name": "I-25 MP 212.90 NB : 0.1 miles N of W 38th Ave/Park Ave"
+    },
+    {
+     "id": "occ-cr-0999a2b581",
+     "name": "I-225 MP 003.55 SB : 0.4 miles S of S Parker Rd/CO 83"
+    },
+    {
+     "id": "occ-cr-12c04ec186",
+     "name": "US 6 MP 284.00 WB : 0.1 miles E of Federal Blvd/CO 88"
+    },
+    {
+     "id": "occ-cr-6b21d41a27",
+     "name": "I-225 MP 006.35 SB : 0.7 miles S of E Mississippi Ave"
+    },
+    {
+     "id": "occ-cr-713912e5f9",
+     "name": "I-225 MP 004.25 SB : 0.3 miles N of S Parker Rd/CO 83"
+    },
+    {
+     "id": "occ-cr-79462745fd",
+     "name": "I-25 MP 200.10 SB : SB I-25 Ramp to NB I-225/DTC Blvd"
+    },
+    {
+     "id": "occ-cr-fe67352f4b",
+     "name": "I-25 MP 203.85 NB : 0.2 miles S of Colorado Blvd/CO 2"
+    },
+    {
+     "id": "occ-cr-5f678aa2bf",
+     "name": "I-25 MP 189.45 NB : 1.2 miles N of Castle Pines Pkwy"
+    }
+   ]
+  },
+  {
+   "slug": "daegu",
+   "name": "Daegu",
+   "country": "South Korea",
+   "countrySlug": "south-korea",
+   "count": 164,
+   "countryTotal": 1615,
+   "sources": [
+    {
+     "name": "OpenCCTV / daegu",
+     "count": 164
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 164,
+   "samples": [
+    {
+     "id": "occ-daegu-ch216",
+     "name": "Daecheon Underground Road Intersection, Daegu"
+    },
+    {
+     "id": "occ-daegu-ch162",
+     "name": "Seongseogondan Road and Horim Intersection"
+    },
+    {
+     "id": "occ-daegu-ch26",
+     "name": "Daegu Industrial High School Intersection"
+    },
+    {
+     "id": "occ-daegu-ch214",
+     "name": "Arboretum Entrance Intersection, Daegu"
+    },
+    {
+     "id": "occ-daegu-ch13",
+     "name": "Gongsan Water Source Three-way, Daegu"
+    },
+    {
+     "id": "occ-daegu-ch201",
+     "name": "West Daegu Industrial Complex, Daegu"
+    },
+    {
+     "id": "occ-daegu-ch212",
+     "name": "Palgeogyo Bridge Intersection, Daegu"
+    },
+    {
+     "id": "occ-daegu-ch94",
+     "name": "Hwawon Three-way Intersection, Daegu"
+    },
+    {
+     "id": "occ-daegu-ch104",
+     "name": "E-World Polaris Intersection, Daegu"
+    },
+    {
+     "id": "occ-daegu-ch160",
+     "name": "Dangsanro and Gamsimne Intersection"
+    },
+    {
+     "id": "occ-daegu-ch164",
+     "name": "Palgong Road, Pagunjae Intersection"
+    },
+    {
+     "id": "occ-daegu-ch178",
+     "name": "Susong Medical District, Alpha City"
+    }
+   ]
+  },
+  {
+   "slug": "san-diego",
+   "name": "San Diego",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 162,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "Caltrans",
+     "count": 156
+    },
+    {
+     "name": "FAA WeatherCams",
+     "count": 4
+    },
+    {
+     "name": "Public Webcam",
+     "count": 1
+    }
+   ],
+   "sourceCount": 4,
+   "stills": 162,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "cal-2463",
+     "name": "(C085) NB 15 : Just North Of Rancho Bernardo Road"
+    },
+    {
+     "id": "cal-2547",
+     "name": "(C235) I-5 : Just South Of Sorrento Valley Road 1"
+    },
+    {
+     "id": "cal-2548",
+     "name": "(C236) SR-56 : East Of Rancho Santa Fe Farms Road"
+    },
+    {
+     "id": "cal-2504",
+     "name": "(C134) SR-56 : Just East Of Carmel Country Road"
+    },
+    {
+     "id": "cal-2432",
+     "name": "(C 053) I-8 : Just East Of Mission Center Road"
+    },
+    {
+     "id": "cal-2392",
+     "name": "(C 011) I-5 : Just North Of Washington Street"
+    },
+    {
+     "id": "cal-2413",
+     "name": "(C033) SB-163 : Just South Of Clairemont Mesa"
+    },
+    {
+     "id": "cal-2393",
+     "name": "(C 012) NB 5 : Just North Of Pacific Highway"
+    },
+    {
+     "id": "cal-2458",
+     "name": "(C080) I-15 : Just South Of Camino Del Norte"
+    },
+    {
+     "id": "cal-2464",
+     "name": "(C 086 )I-15 : West Bernardo Drive / Pomerdo"
+    },
+    {
+     "id": "cal-2412",
+     "name": "(C032) SR-163 : Just South Of Balboa Avenue"
+    },
+    {
+     "id": "cal-2447",
+     "name": "(C069) I-805 : El Cajon Boulevard (On Ramp)"
+    }
+   ]
+  },
+  {
+   "slug": "rochester",
+   "name": "Rochester",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 156,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / ny511",
+     "count": 155
+    },
+    {
+     "name": "OpenCCTV / newengland",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 155,
+   "samples": [
+    {
+     "id": "occ-ny511-1a7696f461",
+     "name": "I-90 MP 365.7 EB Scottsville Service Area Truck Park 2"
+    },
+    {
+     "id": "occ-ny511-fac29038fc",
+     "name": "North Chestnut St at Andrews St & University Ave"
+    },
+    {
+     "id": "occ-ny511-7f5e38a6c8",
+     "name": "NY-590 (Sea Breeze Expy) North of Ridge Road"
+    },
+    {
+     "id": "occ-ny511-dcdf486692",
+     "name": "NY-15A at Brighton-Henrietta Town Line Road"
+    },
+    {
+     "id": "occ-ny511-14d44358b9",
+     "name": "I-490 Eastbound Ramp to NY-590 Northbound"
+    },
+    {
+     "id": "occ-ny511-395b26e8b5",
+     "name": "Goodman St at Clinton Ave / Henrietta St"
+    },
+    {
+     "id": "occ-ny511-387aaa8f48",
+     "name": "North Plymouth Ave at Morrie Silver Way"
+    },
+    {
+     "id": "occ-ny511-4c74047e09",
+     "name": "Elmwood Ave at Scottsville Rd/Genese St"
+    },
+    {
+     "id": "occ-ny511-a3de9f5d9e",
+     "name": "Broad St at Brown St / Campbell / I-490"
+    },
+    {
+     "id": "occ-ny511-a8ff2df5a2",
+     "name": "NY-104 at Irondequoit Bay Bridge (East)"
+    },
+    {
+     "id": "occ-ny511-dde46b15bc",
+     "name": "NY-104 at Irondequoit Bay Bridge (West)"
+    },
+    {
+     "id": "occ-ny511-8871a795ab",
+     "name": "Culver Rd at Clifford Ave/Empire Blvd"
+    }
+   ]
+  },
+  {
+   "slug": "washington-dc",
+   "name": "Washington, DC",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 154,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / mdchart",
+     "count": 154
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 154,
+   "samples": [
+    {
+     "id": "occ-mdchart-4e00a5cd00050075004d823633235daa",
+     "name": "New Hampshire Ave (MD 650) & Piney Branch Rd (MD 320)(CAM 116)"
+    },
+    {
+     "id": "occ-mdchart-0c0159ba01210075004d823633235daa",
+     "name": "University Blvd (MD 193) & Veirs Mill Rd (MD 586)(CAM 150)"
+    },
+    {
+     "id": "occ-mdchart-2e00aaa1002200bd004e3336c4235c0a",
+     "name": "ICC MD 200 WB W OF MD 650 NEW HAMPSHIRE AVE MM 12.9 (C218)"
+    },
+    {
+     "id": "occ-mdchart-0601b17800060075004d823633235daa",
+     "name": "Frederick Rd (MD 355) at Germantown Rd (MD 118)(CAM 118)"
+    },
+    {
+     "id": "occ-mdchart-8401296e01150075004d823633235daa",
+     "name": "Muncaster Mill Rd (MD 115) & Norbeck Rd (MD 28)(CAM 141)"
+    },
+    {
+     "id": "occ-mdchart-efff918500020075004d823633235daa",
+     "name": "East West Hwy (MD 410) at Wisconsin Ave (MD 355)(CAM 12)"
+    },
+    {
+     "id": "occ-mdchart-a800b113002300bd004e3336c4235c0a",
+     "name": "ICC MD 200 WB E OF 650 NEW HAMPSHIRE AVE MM 13.9 (C219)"
+    },
+    {
+     "id": "occ-mdchart-e000990f025f0075004d823633235daa",
+     "name": "Georgia Ave (MD 97) at University Blvd (MD 193)(CAM 55)"
+    },
+    {
+     "id": "occ-mdchart-410175d201220075004d823633235daa",
+     "name": "Forest Glen Rd (MD 192) at Georgia Ave (MD 97)(CAM 27)"
+    },
+    {
+     "id": "occ-mdchart-c7008d04025d0075004d823633235daa",
+     "name": "Bonifant Rd/Good Hope Rd at New Hampshire Ave (MD 650)"
+    },
+    {
+     "id": "occ-mdchart-1701519c02510075004d823633235daa",
+     "name": "Rockville Pk (MD 355) & Tuckerman La (North) (CAM 37)"
+    },
+    {
+     "id": "occ-mdchart-910095c5025e0075004d823633235daa",
+     "name": "Georgia Ave (MD 97) at Veirs Mill Rd (MD 586)(CAM 59)"
+    }
+   ]
+  },
+  {
+   "slug": "taoyuan",
+   "name": "Taoyuan",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 149,
+   "countryTotal": 3268,
+   "sources": [
+    {
+     "name": "THB Highway Bureau",
+     "count": 85
+    },
+    {
+     "name": "OpenCCTV / twipcam",
+     "count": 62
+    },
+    {
+     "name": "OpenCCTV / taiwan-freeway",
+     "count": 1
+    }
+   ],
+   "sourceCount": 4,
+   "stills": 137,
+   "streams": 12,
+   "samples": [
+    {
+     "id": "occ-twipcam-n1b-s-51k-195",
+     "name": "National Highway 1 Wugu-Yangmei Elevated Road 51K Southbound"
+    },
+    {
+     "id": "occ-twipcam-n1b-s-50k-022",
+     "name": "National Highway 1 Wugu-Yangmei Elevated Road 50K Southbound"
+    },
+    {
+     "id": "occ-twipcam-n1b-n-48k-043",
+     "name": "National Highway 1 Wugu-Yangmei Elevated Road KM 48+043"
+    },
+    {
+     "id": "occ-twipcam-n1b-n-47k-033",
+     "name": "National Highway 1 Wugu-Yangmei Elevated Road KM 47+033"
+    },
+    {
+     "id": "occ-twipcam-wra-002972",
+     "name": "Gueishan Bridge Station, Gueishan District, Taoyuan"
+    },
+    {
+     "id": "occ-twipcam-n2-w-12k-000",
+     "name": "National Freeway 2 Westbound, Taoyuan District"
+    },
+    {
+     "id": "occ-twipcam-n2-e-0k-000",
+     "name": "National Highway 2, Airport Branch, eastbound"
+    },
+    {
+     "id": "occ-twipcam-n2-w-10k-656",
+     "name": "National Freeway 2 Westbound, Taoyuan Circle"
+    },
+    {
+     "id": "occ-twipcam-n1-n-65k-000",
+     "name": "National Freeway 1 Pingzhen System, Taoyuan"
+    },
+    {
+     "id": "occ-twipcam-tao-000226",
+     "name": "桃園市道路 (CCTV226)中壢區 領航北路四段與大豐四街(領航北路慢車道往西北)"
+    },
+    {
+     "id": "occ-taiwan-freeway-CCTV-N1H-N-59.800-I-中豐交流道-1",
+     "name": "National Freeway 1, Zhongfeng Interchange"
+    },
+    {
+     "id": "occ-twipcam-wra-001699",
+     "name": "Zhongzheng Road Flood Monitoring, Taoyuan"
+    }
+   ]
+  },
+  {
+   "slug": "montreal",
+   "name": "Montréal",
+   "country": "Canada",
+   "countrySlug": "canada",
+   "count": 148,
+   "countryTotal": 4719,
+   "sources": [
+    {
+     "name": "Quebec 511",
+     "count": 148
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 148,
+   "samples": [
+    {
+     "id": "quebec511-3444",
+     "name": "Aut. 40 at pont de l'Île-aux-Tourtes (Sainte-Anne-de-Bellevue side)"
+    },
+    {
+     "id": "quebec511-3409",
+     "name": "Autoroute 40 (westward), at the centre of the Décarie interchange"
+    },
+    {
+     "id": "quebec511-3408",
+     "name": "Autoroute 40 (eastward), at the centre of the Décarie interchange"
+    },
+    {
+     "id": "quebec511-3402",
+     "name": "Route 138 at pont Jean-Baptiste Le Gardeur (Montréal side)"
+    },
+    {
+     "id": "quebec511-3373",
+     "name": "Aut. 20 at pont Galipeault (Sainte-Anne-de-Bellevue side)"
+    },
+    {
+     "id": "quebec511-3726",
+     "name": "Autoroute 40 (westward), west of the Décarie interchange"
+    },
+    {
+     "id": "quebec511-3727",
+     "name": "Autoroute 40 (eastward), west of the Décarie interchange"
+    },
+    {
+     "id": "quebec511-3891",
+     "name": "Aut. 15 at tunnel Notre-Dame-de-Grâce (southward side)"
+    },
+    {
+     "id": "quebec511-3336",
+     "name": "Aut. 15 at tunnel Notre-Dame-de-Grâce (northward side)"
+    },
+    {
+     "id": "quebec511-3377",
+     "name": "Route 112 (westward) at pont Victoria (Montréal side)"
+    },
+    {
+     "id": "quebec511-3378",
+     "name": "Route 112 (eastward) at pont Victoria (Montréal side)"
+    },
+    {
+     "id": "quebec511-3716",
+     "name": "Aut. 15 (northward), south of the Décarie interchange"
+    }
+   ]
+  },
+  {
+   "slug": "philadelphia",
+   "name": "Philadelphia",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 146,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / state511",
+     "count": 146
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 146,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-s511-PA-149",
+     "name": "NE Extension (I-476) NB at I-476 @ MP 19.9 (I-276/I-476 Junction)"
+    },
+    {
+     "id": "occ-s511-PA-3699",
+     "name": "Local Vine St NB at VINE ST @ MM 0.3 (EAST OF 16TH ST)"
+    },
+    {
+     "id": "occ-s511-PA-3892",
+     "name": "I-76 IN THE MEDIAN ON THE RAMP FROM I-76 EB TO US 1 NB"
+    },
+    {
+     "id": "occ-s511-PA-2929",
+     "name": "I-676 MEDIAN JUST BEFORE THE I-95 N/S SPLIT @ 3RD ST"
+    },
+    {
+     "id": "occ-s511-PA-2939",
+     "name": "I-76 @ EXIT 346B (UNIVERSITY AVE/ GRAYS FERRY) EB"
+    },
+    {
+     "id": "occ-s511-PA-3448",
+     "name": "I-76 @ MM 340.1 (WEST OF US-1/ROOSEVELT BLVD) EB"
+    },
+    {
+     "id": "occ-s511-PA-3450",
+     "name": "I-76 @ EXIT 347 (PASSYUNK AVE/PHILA. AIRPORT) EB"
+    },
+    {
+     "id": "occ-s511-PA-4274",
+     "name": "Columbus Blvd SB at DELAWARE AVE @ FRANKFORD AVE"
+    },
+    {
+     "id": "occ-s511-PA-2840",
+     "name": "PA-63 (WOODHAVEN RD) @ US-1 (ROOSEVELT BLVD) EB"
+    },
+    {
+     "id": "occ-s511-PA-3207",
+     "name": "I-95 MM 19.2 (NORTH OF WALT WHITMAN BRIDGE) NB"
+    },
+    {
+     "id": "occ-s511-PA-3221",
+     "name": "Aramingo Ave SB at ALLEGHENY AVE @ ARMINGO AVE"
+    },
+    {
+     "id": "occ-s511-PA-4317",
+     "name": "26th Street NB at PA 291/PENROSE AVE @ 26TH ST"
+    }
+   ]
+  },
+  {
+   "slug": "nashville",
+   "name": "Nashville",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 134,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / arcgis_cams",
+     "count": 133
+    },
+    {
+     "name": "OpenCCTV / phenocam",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 133,
+   "samples": [
+    {
+     "id": "occ-arcgis-TN-054fc2482c",
+     "name": "Ellington Pkwy NB @ Briley Parkway (MM 15.62 (Briley Pkwy)) (R3_040)"
+    },
+    {
+     "id": "occ-arcgis-TN-08d414baee",
+     "name": "I-65 NB s/o Old Hickory Boulavard (Brentwood) (MM 73.74) (R3_084)"
+    },
+    {
+     "id": "occ-arcgis-TN-59b6a243df",
+     "name": "I-65 NB n/o Old Hickory Boulavard (Brentwood) (MM 75.30) (R3_086)"
+    },
+    {
+     "id": "occ-arcgis-TN-697e314612",
+     "name": "I-40 EB e/o Old Hickory Boulavard (Bellevue) (MM 199.84) (R3_100)"
+    },
+    {
+     "id": "occ-arcgis-TN-8026d7cf79",
+     "name": "I-40 WB w/o Old Hickory Boulavard (Bellevue) (MM 198.82) (R3_099)"
+    },
+    {
+     "id": "occ-arcgis-TN-273b7967ce",
+     "name": "I-24 EB to I-40 WB e/o Silliman Evans Bridge (MM 49.50) (R3_004)"
+    },
+    {
+     "id": "occ-arcgis-TN-d6c8509399",
+     "name": "I-40 WB @ Old Hickory Boulavard (Hermitage) (MM 221.22) (R3_113)"
+    },
+    {
+     "id": "occ-arcgis-TN-44fed37179",
+     "name": "I-65 NB Old Hickory Boulevard (Brentwood) (MM 74.49) (R3_085)"
+    },
+    {
+     "id": "occ-arcgis-TN-e9afbceed7",
+     "name": "I-24 EB w/o Old Hickory Boulavard (North) (MM 39.25) (R3_148)"
+    },
+    {
+     "id": "occ-arcgis-TN-eebe0619bd",
+     "name": "I-65 NB @ I-24 Junction, n/o Trinity Lane (MM 88.53) (R3_012)"
+    },
+    {
+     "id": "occ-arcgis-TN-4ff598cfdf",
+     "name": "I-40 EB w /o Briley Parkway (Hermitage) (MM 215.90) (R3_106)"
+    },
+    {
+     "id": "occ-arcgis-TN-8f7380e428",
+     "name": "Briley Pkwy SB n/o Ashland City Highway (MM 22.77) (R3_126)"
+    }
+   ]
+  },
+  {
+   "slug": "tainan",
+   "name": "Tainan",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 132,
+   "countryTotal": 3268,
+   "sources": [
+    {
+     "name": "OpenCCTV / twipcam",
+     "count": 87
+    },
+    {
+     "name": "THB Highway Bureau",
+     "count": 45
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 132,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-twipcam-wra-003140",
+     "name": "Jiangjun Central Drainage, Jiangjun District, Tainan"
+    },
+    {
+     "id": "occ-twipcam-wra-001659",
+     "name": "Yongxing Suspension Bridge Pan-Tilt 2, Tainan"
+    },
+    {
+     "id": "occ-twipcam-tnn-805309",
+     "name": "Fan Zi Tian Drainage Gate, Guantian, Tainan"
+    },
+    {
+     "id": "occ-twipcam-wra-002278",
+     "name": "Jiutougang Pumping Station, Xuejia, Tainan"
+    },
+    {
+     "id": "occ-twipcam-tnn-805054",
+     "name": "Jiangjun Middle Drain Gate 1 Inner, Tainan"
+    },
+    {
+     "id": "occ-twipcam-wra-002957",
+     "name": "Kunshao Village, Jiangnan District, Tainan"
+    },
+    {
+     "id": "occ-twipcam-wra-001558",
+     "name": "Baimipu Wu Temple, North District, Tainan"
+    },
+    {
+     "id": "occ-twipcam-wra-001151",
+     "name": "Bitou Bridge Water Level, Madou District"
+    },
+    {
+     "id": "occ-twipcam-wra-003109",
+     "name": "Tianbao Bridge, Yanshui District, Tainan"
+    },
+    {
+     "id": "occ-twipcam-tnn-805002",
+     "name": "Beishi Elementary School Bridge, Tainan"
+    },
+    {
+     "id": "occ-twipcam-tnn-805004",
+     "name": "Hushan Overflow Bridge, Xinshi District"
+    },
+    {
+     "id": "occ-twipcam-tnn-805353",
+     "name": "Annan Drainage Gate 43, Yanshui, Tainan"
+    }
+   ]
+  },
+  {
+   "slug": "valencia",
+   "name": "Valencia",
+   "country": "Spain",
+   "countrySlug": "spain",
+   "count": 129,
+   "countryTotal": 2122,
+   "sources": [
+    {
+     "name": "DGT",
+     "count": 129
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 129,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "dgt-107",
+     "name": "A-3 km 296.325 (Ascending)"
+    },
+    {
+     "id": "dgt-113",
+     "name": "A-3 km 341.799 (Ascending)"
+    },
+    {
+     "id": "dgt-1475",
+     "name": "A-7 km 354.006 (Ascending)"
+    },
+    {
+     "id": "dgt-177393",
+     "name": "A-38 km 14.658 (Ascending)"
+    },
+    {
+     "id": "dgt-111",
+     "name": "A-3 km 331.75 (Ascending)"
+    },
+    {
+     "id": "dgt-139",
+     "name": "A-7 km 324.08 (Ascending)"
+    },
+    {
+     "id": "dgt-169",
+     "name": "CV-500 km 2.9 (Ascending)"
+    },
+    {
+     "id": "dgt-170",
+     "name": "CV-500 km 4.9 (Ascending)"
+    },
+    {
+     "id": "dgt-173",
+     "name": "A-7 km 391.25 (Ascending)"
+    },
+    {
+     "id": "dgt-187",
+     "name": "V-30 km 14.55 (Ascending)"
+    },
+    {
+     "id": "dgt-1352",
+     "name": "CV-365 km 0.9 (Ascending)"
+    },
+    {
+     "id": "dgt-1354",
+     "name": "N-220 km 0.15 (Ascending)"
+    }
+   ]
+  },
+  {
+   "slug": "changwon",
+   "name": "Changwon",
+   "country": "South Korea",
+   "countrySlug": "south-korea",
+   "count": 128,
+   "countryTotal": 1615,
+   "sources": [
+    {
+     "name": "OpenCCTV / changwon",
+     "count": 128
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 128,
+   "samples": [
+    {
+     "id": "occ-changwon-웅남로연덕교사거리",
+     "name": "Ungnamro Yeonduk Bridge Intersection, Changwon"
+    },
+    {
+     "id": "occ-changwon-웅천로성내소류지옆",
+     "name": "Oongcheonro Seongnae Reservoir, Changwon"
+    },
+    {
+     "id": "occ-changwon-북성초등삼거리",
+     "name": "Bukseong Elementary School Intersection"
+    },
+    {
+     "id": "occ-changwon-경찰청사거리",
+     "name": "Sangnam-ro Police Station Intersection"
+    },
+    {
+     "id": "occ-changwon-신항지앤지사거리",
+     "name": "Shinhangseo G&G Intersection, Changwon"
+    },
+    {
+     "id": "occ-changwon-한국도로공사앞",
+     "name": "Korea Expressway Corporation, Changwon"
+    },
+    {
+     "id": "occ-changwon-해안로동남주유소",
+     "name": "Haenanro Dongnam Gas Station, Changwon"
+    },
+    {
+     "id": "occ-changwon-남문웅천초교사거리",
+     "name": "Namun Woongcheon Elementary, Changwon"
+    },
+    {
+     "id": "occ-changwon-용원택지삼거리",
+     "name": "Yongwon Housing District Intersection"
+    },
+    {
+     "id": "occ-changwon-중앙시장삼거리",
+     "name": "Central Market Intersection, Changwon"
+    },
+    {
+     "id": "occ-changwon-마산세관삼거리",
+     "name": "Masan Customs Three-way Intersection"
+    },
+    {
+     "id": "occ-changwon-완월월성초교앞",
+     "name": "Wolseong Elementary School, Changwon"
+    }
+   ]
+  },
+  {
+   "slug": "kaohsiung",
+   "name": "Kaohsiung",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 122,
+   "countryTotal": 3268,
+   "sources": [
+    {
+     "name": "OpenCCTV / twipcam",
+     "count": 63
+    },
+    {
+     "name": "THB Highway Bureau",
+     "count": 58
+    },
+    {
+     "name": "YouTube",
+     "count": 1
+    }
+   ],
+   "sourceCount": 3,
+   "stills": 121,
+   "streams": 1,
+   "samples": [
+    {
+     "id": "occ-twipcam-khh-000123",
+     "name": "Lianhai Road at National Sun Yat-sen University, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-khh-000378",
+     "name": "Fishery Harbor North 3rd Road at Xinsheng Road, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-khh-000379",
+     "name": "Kaohsiung Port Elevated Road at Fishery Harbor, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-khh-000389",
+     "name": "Fishery Harbor South 1st Road at Xinsheng Road, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-khh-000386",
+     "name": "Fishery Harbor East 3rd Road at Xinsheng Road, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-khh-000384",
+     "name": "Fishery Harbor East 2nd Road at Xinsheng Road, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-wra-001651",
+     "name": "Longxiang Riverside Park Secondary Station, Pingtung"
+    },
+    {
+     "id": "occ-twipcam-khh-999141",
+     "name": "Jianguo 1st Road and Kaiyuan 1st Road, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-wra-000538",
+     "name": "水利署水資源 高雄市政府水利局 影像 (12) 鹽程區 中正四路與大勇路西南角(國際會議中心前)"
+    },
+    {
+     "id": "occ-twipcam-wra-000331",
+     "name": "Guohua 1st Street, Qianzhen District, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-khh-000046",
+     "name": "Meishu East Road and Mingcheng Road, Kaohsiung"
+    },
+    {
+     "id": "occ-twipcam-khh-999151",
+     "name": "Zhengzhong Road and Dafeng 2nd Road, Kaohsiung"
+    }
+   ]
+  },
+  {
+   "slug": "boise",
+   "name": "Boise",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 122,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "OpenCCTV / state511",
+     "count": 122
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 122,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-s511-ID-449",
+     "name": "Local Boise at Broadway & Warm Springs & Idaho Main Ave B"
+    },
+    {
+     "id": "occ-s511-ID-458",
+     "name": "Local Boise at State & Veterans Memorial Parkway & 36th"
+    },
+    {
+     "id": "occ-s511-ID-582",
+     "name": "Local Boise at Glenwood & Goddard Mountain View Drive"
+    },
+    {
+     "id": "occ-s511-ID-436",
+     "name": "Local Boise at Park Parkcenter Front Clearwater"
+    },
+    {
+     "id": "occ-s511-ID-448",
+     "name": "Local Boise at Franklin & Cole I-184 EB Ramp"
+    },
+    {
+     "id": "occ-s511-ID-498",
+     "name": "Local Boise at Broadway (US-20) & University"
+    },
+    {
+     "id": "occ-s511-ID-437",
+     "name": "Local Boise at Broadway (US-20) & Front St"
+    },
+    {
+     "id": "occ-s511-ID-442",
+     "name": "Local Boise at Capitol & Myrtle (US-20)"
+    },
+    {
+     "id": "occ-s511-ID-466",
+     "name": "Local Boise at Overland & Entertainment"
+    },
+    {
+     "id": "occ-s511-ID-538",
+     "name": "Local Boise at State & Whitewater 31st"
+    },
+    {
+     "id": "occ-s511-ID-605",
+     "name": "Local Boise at Gowen & Pleasant Valley"
+    },
+    {
+     "id": "occ-s511-ID-633",
+     "name": "Local Boise at McMillian & Maple Grove"
+    }
+   ]
+  },
+  {
+   "slug": "laredo",
+   "name": "Laredo",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 118,
+   "countryTotal": 41866,
+   "sources": [
+    {
+     "name": "TxDOT",
+     "count": 118
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 118,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "txdot-LRD-LRD-US83 @ SL517",
+     "name": "US83 @ SL517 Carrizo Springs"
+    },
+    {
+     "id": "txdot-LRD-LRD-US277 @ BU277",
+     "name": "Eagle Pass - US277 @ BU277"
+    },
+    {
+     "id": "txdot-LRD-LRD-FM1472 @ World Trade Loop",
+     "name": "FM1472 @ World Trade Loop"
+    },
+    {
+     "id": "txdot-LRD-LRD-SH359 @ Camino Nuevo",
+     "name": "LRD-SH359 @ Camino Nuevo"
+    },
+    {
+     "id": "txdot-LRD-LRD-FM3338 @ Rancho Penitas",
+     "name": "FM3338 @ Rancho Penitas"
+    },
+    {
+     "id": "txdot-LRD-LRD-LP20 @ Los Presidentes",
+     "name": "LP20 @ Los Presidentes"
+    },
+    {
+     "id": "txdot-LRD-LRD-LP20 @ Cuatro Vientos",
+     "name": "LP20 @ Cuatro Vientos"
+    },
+    {
+     "id": "txdot-LRD-LRD-SH359 at Dasaw Ln",
+     "name": "LRD-SH359 at Dasaw Ln"
+    },
+    {
+     "id": "txdot-LRD-LRD-SH359 at Chacon Creek",
+     "name": "SH359 at Chacon Creek"
+    },
+    {
+     "id": "txdot-LRD-LRD-FM375 @ Garrison",
+     "name": "LRD-FM375 @ Garrison"
+    },
+    {
+     "id": "txdot-LRD-LRD-FM1472 @ Flecha Lane",
+     "name": "FM1472 @ Flecha Lane"
+    },
+    {
+     "id": "txdot-LRD-LRD-FM1472 @ Vidal Cantu",
+     "name": "FM1472 @ Vidal Cantu"
+    }
+   ]
+  },
+  {
+   "slug": "higashimatsushima-city",
+   "name": "Higashimatsushima City",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 118,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 118
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 118,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-rivergojp-221034034",
+     "name": "Wakatari Drainage Gate, Higashimatsushima"
+    },
+    {
+     "id": "occ-rivergojp-121034088",
+     "name": "Kuratsubo River, Higashimatsushima City"
+    },
+    {
+     "id": "occ-rivergojp-221033062",
+     "name": "Abukuma River, Fujitsuka District No. 1"
+    },
+    {
+     "id": "occ-rivergojp-221033063",
+     "name": "Abukuma River, Fujitsuka District No. 2"
+    },
+    {
+     "id": "occ-rivergojp-221033064",
+     "name": "Abukuma River, Fujitsuka District No. 3"
+    },
+    {
+     "id": "occ-rivergojp-221033065",
+     "name": "Abukuma River, Fujitsuka District No. 4"
+    },
+    {
+     "id": "occ-rivergojp-221033066",
+     "name": "Abukuma River, Fujitsuka District No. 5"
+    },
+    {
+     "id": "occ-rivergojp-101025074",
+     "name": "Dekigawa River at Kamiidekigawa Bridge"
+    },
+    {
+     "id": "occ-rivergojp-221033002",
+     "name": "Natori River Bridge Downstream, Natori"
+    },
+    {
+     "id": "occ-rivergojp-121034077",
+     "name": "Shin-Kitakami River, Shikitama School"
+    },
+    {
+     "id": "occ-rivergojp-221034025",
+     "name": "Naruse Bridge Left Bank, Ono District"
+    },
+    {
+     "id": "occ-rivergojp-221034046",
+     "name": "Naruse Weir Lower Reach, Naruse River"
+    }
+   ]
+  },
+  {
+   "slug": "kasukabe-city",
+   "name": "Kasukabe City",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 118,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 117
+    },
+    {
+     "name": "OpenCCTV / road-info-prvs",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 118,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-rivergojp-302817002",
+     "name": "Mashibayashi Observation Station, Koshigaya"
+    },
+    {
+     "id": "occ-rivergojp-302817005",
+     "name": "Mino-no-miya Observation Station, Koshigaya"
+    },
+    {
+     "id": "occ-rivergojp-221259031",
+     "name": "Kurihashi Water Shock, Tone Cycling Road"
+    },
+    {
+     "id": "occ-rivergojp-221259030",
+     "name": "Edogawa River Source, Tone Cycling Road"
+    },
+    {
+     "id": "occ-rivergojp-102817041",
+     "name": "Mitani Bridge River Observation Station"
+    },
+    {
+     "id": "occ-rivergojp-121261054",
+     "name": "Kinugawa River at Tsukubamirai, Ibaraki"
+    },
+    {
+     "id": "occ-rivergojp-102817057",
+     "name": "Kawabuki Observation Station, Kasukabe"
+    },
+    {
+     "id": "occ-rivergojp-221259008",
+     "name": "Yatada River Drainage Station, Itakura"
+    },
+    {
+     "id": "occ-rivergojp-221279004",
+     "name": "Tone River at Kasukabe, Shimokichizuma"
+    },
+    {
+     "id": "occ-rivergojp-221279061",
+     "name": "Showa Drainage Pump Station, Kasukabe"
+    },
+    {
+     "id": "occ-rivergojp-102817011",
+     "name": "Kitamoto Observation Station, Saitama"
+    },
+    {
+     "id": "occ-rivergojp-221259002",
+     "name": "Omoide Bridge Retention Pond, Itakura"
+    }
+   ]
+  },
+  {
+   "slug": "malaga",
+   "name": "Málaga",
+   "country": "Spain",
+   "countrySlug": "spain",
+   "count": 117,
+   "countryTotal": 2122,
+   "sources": [
+    {
+     "name": "DGT",
+     "count": 117
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 117,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "dgt-226",
+     "name": "MA-20 km 10.217 (Ascending)"
+    },
+    {
+     "id": "dgt-167612",
+     "name": "A-357 km 64.275 (Ascending)"
+    },
+    {
+     "id": "dgt-200",
+     "name": "A-7 km 1040.95 (Ascending)"
+    },
+    {
+     "id": "dgt-218",
+     "name": "AP-7 km 997.15 (Ascending)"
+    },
+    {
+     "id": "dgt-221",
+     "name": "MA-20 km 1.592 (Ascending)"
+    },
+    {
+     "id": "dgt-223",
+     "name": "MA-20 km 6.746 (Ascending)"
+    },
+    {
+     "id": "dgt-225",
+     "name": "MA-20 km 9.551 (Ascending)"
+    },
+    {
+     "id": "dgt-228",
+     "name": "MA-20 km 10.73 (Ascending)"
+    },
+    {
+     "id": "dgt-262",
+     "name": "A-92M km 0.475 (Ascending)"
+    },
+    {
+     "id": "dgt-269",
+     "name": "A-92 km 149.25 (Ascending)"
+    },
+    {
+     "id": "dgt-273",
+     "name": "A-92 km 174.35 (Ascending)"
+    },
+    {
+     "id": "dgt-1547",
+     "name": "A-355 km 34.04 (Ascending)"
+    }
+   ]
+  },
+  {
+   "slug": "gwangju",
+   "name": "Gwangju",
+   "country": "South Korea",
+   "countrySlug": "south-korea",
+   "count": 115,
+   "countryTotal": 1615,
+   "sources": [
+    {
+     "name": "OpenCCTV / gwangju",
+     "count": 115
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 115,
+   "samples": [
+    {
+     "id": "occ-gwangju-CCTV000076",
+     "name": "Pyeongdong Industrial Complex Intersection, Gwangju"
+    },
+    {
+     "id": "occ-gwangju-CCTV000079",
+     "name": "Haenam Booyoung Apartments Intersection, Gwangju"
+    },
+    {
+     "id": "occ-gwangju-CCTV000078",
+     "name": "Songjeong Sarang Hospital Intersection, Gwangju"
+    },
+    {
+     "id": "occ-gwangju-CCTV000112",
+     "name": "Advanced Institute Science Technology, Gwangju"
+    },
+    {
+     "id": "occ-gwangju-CCTV000074",
+     "name": "Honam University Campus Intersection, Gwangju"
+    },
+    {
+     "id": "occ-gwangju-CCTV000124",
+     "name": "Gakhwa-Munheung District Entrance, Omun Road"
+    },
+    {
+     "id": "occ-gwangju-CCTV000060",
+     "name": "Hanam Boulevard at Shinga District Entrance"
+    },
+    {
+     "id": "occ-gwangju-CCTV000054",
+     "name": "Hoejai Road at Wonkwang Oriental Hospital"
+    },
+    {
+     "id": "occ-gwangju-CCTV000121",
+     "name": "Unchen Road, Geumho District Intersection"
+    },
+    {
+     "id": "occ-gwangju-CCTV000123",
+     "name": "Shin-yong Intersection, Imbangeul Street"
+    },
+    {
+     "id": "occ-gwangju-CCTV000051",
+     "name": "Imbangeul Boulevard at Unnam 6-District"
+    },
+    {
+     "id": "occ-gwangju-CCTV000053",
+     "name": "Sangmu Beodeul-ro at Gyesu Intersection"
+    }
+   ]
+  },
+  {
+   "slug": "new-taipei",
+   "name": "New Taipei",
+   "country": "Taiwan",
+   "countrySlug": "taiwan",
+   "count": 114,
+   "countryTotal": 3268,
+   "sources": [
+    {
+     "name": "OpenCCTV / twipcam",
+     "count": 61
+    },
+    {
+     "name": "THB Highway Bureau",
+     "count": 53
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 101,
+   "streams": 13,
+   "samples": [
+    {
+     "id": "occ-twipcam-nwt-000113",
+     "name": "National Highway 1, Minsheng Road Interchange, Taishan"
+    },
+    {
+     "id": "occ-twipcam-nwt-000400",
+     "name": "Yongan South Road Section 2 and Zhongyuan Road, Luzhou"
+    },
+    {
+     "id": "occ-twipcam-nwt-000086",
+     "name": "New Taipei Ring Expressway, Sanchong Chenggong Ramp"
+    },
+    {
+     "id": "occ-twipcam-nwt-000210",
+     "name": "Banqiao District, Xianmin Avenue, Nanya South Road"
+    },
+    {
+     "id": "occ-twipcam-n1a-n-29k-200",
+     "name": "National Highway 1 Nankang-Wugu Viaduct 29K North"
+    },
+    {
+     "id": "occ-twipcam-n1-n-34k-170",
+     "name": "National Freeway 1, Taishan District, New Taipei"
+    },
+    {
+     "id": "occ-twipcam-nwt-000007",
+     "name": "Zhongxing Bridge Ring Road Sanchong New Taipei"
+    },
+    {
+     "id": "occ-twipcam-nwt-000012",
+     "name": "Banqiao, Zhongshan Road and Hansheng East Road"
+    },
+    {
+     "id": "occ-twipcam-nwt-000397",
+     "name": "Jingxin Street and Anle Road 2 Lane, Zhonghe"
+    },
+    {
+     "id": "occ-twipcam-nwt-000454",
+     "name": "Zhongyuan 2nd St & Zhongyuan 5th St, Zhonghe"
+    },
+    {
+     "id": "occ-twipcam-n3-s-27k-900",
+     "name": "National Freeway 3 Southbound, Xindian Area"
+    },
+    {
+     "id": "occ-twipcam-nwt-000161",
+     "name": "Zhongshan Road and Qingshan Road, Xinzhuang"
+    }
+   ]
+  },
+  {
+   "slug": "asahikawa",
+   "name": "Asahikawa",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 114,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 114
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 114,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-rivergojp-223297123",
+     "name": "Ishikari River below Minami-Nagayama 3-chome Gate"
+    },
+    {
+     "id": "occ-rivergojp-223297071",
+     "name": "Ushishuubetsu River, Ponushivetsu Confluence"
+    },
+    {
+     "id": "occ-rivergojp-223297087",
+     "name": "Ishikari River at Kotobuki Bridge, Aibetsu"
+    },
+    {
+     "id": "occ-rivergojp-223297124",
+     "name": "Ishikari River below Nagayama 6-chome Gate"
+    },
+    {
+     "id": "occ-rivergojp-223297032",
+     "name": "Biei River Downstream Amafu Great Bridge"
+    },
+    {
+     "id": "occ-rivergojp-223297038",
+     "name": "Nagayama Shinkawa at Ushishubetsu Bridge"
+    },
+    {
+     "id": "occ-rivergojp-223297047",
+     "name": "Chuubetsu River at Midori-Higashi Bridge"
+    },
+    {
+     "id": "occ-rivergojp-223297086",
+     "name": "Ishikari River at Sakae River Confluence"
+    },
+    {
+     "id": "occ-rivergojp-223297055",
+     "name": "Gyuushubetsu River at Beihan Confluence"
+    },
+    {
+     "id": "occ-rivergojp-223297068",
+     "name": "Ushishuubetsu River, Shinsei Weir No. 2"
+    },
+    {
+     "id": "occ-rivergojp-223297089",
+     "name": "Ishikari River Ohoritsumai No. 2 Sluice"
+    },
+    {
+     "id": "occ-rivergojp-223297091",
+     "name": "Ishikari River Ohoritsumai No. 1 Sluice"
+    }
+   ]
+  },
+  {
+   "slug": "tsu-city",
+   "name": "Tsu City",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 114,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 114
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 114,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-rivergojp-106145027",
+     "name": "Sakauchiawa River at Araki Bridge, Matsusaka"
+    },
+    {
+     "id": "occ-rivergojp-106145016",
+     "name": "Horikiri River at Ipponmatsu Bridge, Suzuka"
+    },
+    {
+     "id": "occ-rivergojp-106145058",
+     "name": "Momobi River, Nishinokawa Bridge Downstream"
+    },
+    {
+     "id": "occ-rivergojp-106145029",
+     "name": "Nagusu River at Mukaede Bridge, Matsusaka"
+    },
+    {
+     "id": "occ-rivergojp-221801057",
+     "name": "Kumoidai Old River Confluence, Matsusaka"
+    },
+    {
+     "id": "occ-rivergojp-106145026",
+     "name": "Mitodo River at Tamura Bridge, Matsusaka"
+    },
+    {
+     "id": "occ-rivergojp-106145030",
+     "name": "Sasabue River at Sasabue Bridge, Akihama"
+    },
+    {
+     "id": "occ-rivergojp-106145047",
+     "name": "Momobi River, Chosenji Bridge Downstream"
+    },
+    {
+     "id": "occ-rivergojp-221801059",
+     "name": "Kumade River Disaster Prevention Station"
+    },
+    {
+     "id": "occ-rivergojp-106145048",
+     "name": "Sasabue River, Negura Bridge Downstream"
+    },
+    {
+     "id": "occ-rivergojp-106145017",
+     "name": "Naka River at Nakashima Bridge, Suzuka"
+    },
+    {
+     "id": "occ-rivergojp-221801054",
+     "name": "Maaide Observation Station, Matsusaka"
+    }
+   ]
+  },
+  {
+   "slug": "kanazawa-city",
+   "name": "Kanazawa City",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 113,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 111
+    },
+    {
+     "name": "OpenCCTV / road-info-prvs",
+     "count": 2
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 113,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-rivergojp-11701201001",
+     "name": "Yanagibashi River at Kagayaki Bridge, Kanazawa"
+    },
+    {
+     "id": "occ-rivergojp-304353071",
+     "name": "Asano River Kobashi Collapsible Weir, Kanazawa"
+    },
+    {
+     "id": "occ-rivergojp-11701201006",
+     "name": "Shijukyuhon River, Midori Bridge, Kanazawa"
+    },
+    {
+     "id": "occ-rivergojp-11701201002",
+     "name": "Kihiki River at Wakatōji Bridge, Kanazawa"
+    },
+    {
+     "id": "occ-rivergojp-304353075",
+     "name": "Baba River Spillway Intake Gate, Kanazawa"
+    },
+    {
+     "id": "occ-rivergojp-121565009",
+     "name": "Kakehashi River Left Bank Upper, Komatsu"
+    },
+    {
+     "id": "occ-rivergojp-304353019",
+     "name": "Asano River at Asano River Grand Bridge"
+    },
+    {
+     "id": "occ-rivergojp-304353027",
+     "name": "Yasuhara River at Yasuhara Grand Bridge"
+    },
+    {
+     "id": "occ-rivergojp-304353068",
+     "name": "Takahashi River Floodway Gate, Kanazawa"
+    },
+    {
+     "id": "occ-rivergojp-104353044",
+     "name": "Tsuhata River at Iwasaki Ohashi Bridge"
+    },
+    {
+     "id": "occ-rivergojp-221565012",
+     "name": "Matsu Coastline Control Zone, Kanazawa"
+    },
+    {
+     "id": "occ-rivergojp-104353048",
+     "name": "Kamoda River at Kanno Maebashi Bridge"
+    }
+   ]
+  },
+  {
+   "slug": "pohang",
+   "name": "Pohang",
+   "country": "South Korea",
+   "countrySlug": "south-korea",
+   "count": 111,
+   "countryTotal": 1615,
+   "sources": [
+    {
+     "name": "OpenCCTV / pohang",
+     "count": 110
+    },
+    {
+     "name": "SkylineWebcams",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 110,
+   "samples": [
+    {
+     "id": "occ-pohang-L370070",
+     "name": "Doosan Weave Intersection, Jangryang, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370074",
+     "name": "Byeongpo Intersection, Guryongpo, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370067",
+     "name": "Yeongil Observation Deck, Duho, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370117",
+     "name": "Jangryang Sports Center Intersection 1"
+    },
+    {
+     "id": "occ-pohang-L370078",
+     "name": "Gohyeon Gas Station, Cheongha, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370099",
+     "name": "Telephone Office Intersection, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370147",
+     "name": "Songdo Fisheries Intersection, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370020",
+     "name": "Yangdeok Sports Park, Jangryang-dong"
+    },
+    {
+     "id": "occ-pohang-L370112",
+     "name": "Steel Complex Intersection, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370071",
+     "name": "East Sea Avenue, Heunghae, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370077",
+     "name": "Songnim Elementary School, Pohang"
+    },
+    {
+     "id": "occ-pohang-L370101",
+     "name": "Mundeok West Intersection, Pohang"
+    }
+   ]
+  },
+  {
+   "slug": "vancouver",
+   "name": "Vancouver",
+   "country": "Canada",
+   "countrySlug": "canada",
+   "count": 107,
+   "countryTotal": 4719,
+   "sources": [
+    {
+     "name": "OpenCCTV / vancouver",
+     "count": 107
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 107,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-vancouver-TCM068",
+     "name": "Sawmill East Crescent and Marine Way"
+    },
+    {
+     "id": "occ-vancouver-TCM124",
+     "name": "Macdonald St and Kitsilano Diversion"
+    },
+    {
+     "id": "occ-vancouver-TCM215",
+     "name": "Granville Bridge and Howe St On Ramp"
+    },
+    {
+     "id": "occ-vancouver-TCM180",
+     "name": "Victoria Drive and SE Marine Drive"
+    },
+    {
+     "id": "occ-vancouver-TCM036",
+     "name": "Commercial Drive and E Broadway"
+    },
+    {
+     "id": "occ-vancouver-TCM141",
+     "name": "Angus Drive and SW Marine Drive"
+    },
+    {
+     "id": "occ-vancouver-TCM186",
+     "name": "Boundary Road and Henning Drive"
+    },
+    {
+     "id": "occ-vancouver-TCM190",
+     "name": "Manitoba St and SW Marine Drive"
+    },
+    {
+     "id": "occ-vancouver-TCM064",
+     "name": "SE Marine Drive and Marine Way"
+    },
+    {
+     "id": "occ-vancouver-TCM092",
+     "name": "Cornish St and SW Marine drive"
+    },
+    {
+     "id": "occ-vancouver-TCM028",
+     "name": "Cambie St and SW Marine Drive"
+    },
+    {
+     "id": "occ-vancouver-TCM126",
+     "name": "Richards St and W Hastings St"
+    }
+   ]
+  },
+  {
+   "slug": "kurume-city",
+   "name": "Kurume City",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 105,
+   "countryTotal": 10464,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 105
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 105,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-rivergojp-222816027",
+     "name": "Yamanoishita Downstream Pumping Station, Kurume"
+    },
+    {
+     "id": "occ-rivergojp-222819073",
+     "name": "Shiroharakawa Meotoi Sluice Bridge, Kanaki City"
+    },
+    {
+     "id": "occ-rivergojp-222819071",
+     "name": "Shiroharakawa Hidekurashi Bridge, Kanaki City"
+    },
+    {
+     "id": "occ-rivergojp-222816060",
+     "name": "Hiro River at Kurume West Emergency Station"
+    },
+    {
+     "id": "occ-rivergojp-222816059",
+     "name": "Homman River Confluence with Chikugo River"
+    },
+    {
+     "id": "occ-rivergojp-222819072",
+     "name": "Shiroharakawa Yashiki Bridge, Kanaki City"
+    },
+    {
+     "id": "occ-rivergojp-222816090",
+     "name": "Yabe River at Tsuruhashi Bridge Upstream"
+    },
+    {
+     "id": "occ-rivergojp-222816019",
+     "name": "Houman River Observation Station, Ogori"
+    },
+    {
+     "id": "occ-rivergojp-222816030",
+     "name": "Ukishima Drainage Pump Station, Kanzaki"
+    },
+    {
+     "id": "occ-rivergojp-222816084",
+     "name": "Yabe River at Matsubara Weir Downstream"
+    },
+    {
+     "id": "occ-rivergojp-222816085",
+     "name": "Matsubara Weir Control Station, Rooftop"
+    },
+    {
+     "id": "occ-rivergojp-14001211001",
+     "name": "Kurume River at Heisei Bridge, Chikugo"
+    }
+   ]
+  }
+ ]
+}
