@@ -152,6 +152,7 @@ export const COUNTRY_NORMALIZE: Record<string, string> = {
   SX: 'Sint Maarten', 'Sint Maarten': 'Sint Maarten',
   'US Virgin Islands': 'US Virgin Islands',
   TZ: 'Tanzania', Tanzania: 'Tanzania',
+  AM: 'Armenia', Armenia: 'Armenia',
   DK: 'Denmark', Denmark: 'Denmark',
   MG: 'Madagascar', Madagascar: 'Madagascar',
 };

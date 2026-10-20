@@ -1,0 +1,6315 @@
+{
+ "generatedAt": "2026-10-20T09:10:51.689Z",
+ "catalogueTotal": 77376,
+ "attributedTotal": 76575,
+ "unattributed": 3,
+ "droppedNearDuplicates": 798,
+ "countries": [
+  {
+   "slug": "united-states",
+   "name": "United States",
+   "count": 41355,
+   "aliases": [
+    "US",
+    "United States"
+   ],
+   "topCities": [
+    {
+     "name": "Georgia",
+     "count": 4284
+    },
+    {
+     "name": "Utah",
+     "count": 2084
+    },
+    {
+     "name": "Houston",
+     "count": 1174
+    },
+    {
+     "name": "Dallas",
+     "count": 843
+    },
+    {
+     "name": "Nevada",
+     "count": 651
+    },
+    {
+     "name": "Orange County",
+     "count": 585
+    },
+    {
+     "name": "Indiana",
+     "count": 579
+    },
+    {
+     "name": "Hillsborough County",
+     "count": 503
+    },
+    {
+     "name": "Seattle",
+     "count": 499
+    },
+    {
+     "name": "Fort Worth",
+     "count": 489
+    }
+   ],
+   "cityCount": 4429,
+   "samples": [
+    {
+     "id": "occ-phenocam-ldeocam",
+     "name": "Located on the Lamont-Doherty Earth Observatory, Columbia University campus in P",
+     "city": "Bronx"
+    },
+    {
+     "id": "occ-phenocam-norriepoint",
+     "name": "Norrie Point Environmental Center, Hudson River National Estuarine Research Rese",
+     "city": "Poughkeepsie"
+    },
+    {
+     "id": "occ-phenocam-proctor2",
+     "name": "Atmospheric monitoring station (landscape view of mixed northern hardwoods), Pro",
+     "city": "Underhill"
+    },
+    {
+     "id": "occ-phenocam-segalcr2",
+     "name": "SEGA Little Colorado River view form Black Mesa radio relay site, includes Paint",
+     "city": "Coconino County"
+    },
+    {
+     "id": "occ-phenocam-sevcreogrowth",
+     "name": "Sevilleta LTER Mean-Variance Experiment Desert Shrubland Site Out-of-Plot Creoso",
+     "city": "New Mexico"
+    },
+    {
+     "id": "occ-phenocam-rosemountnprs",
+     "name": "Native Prairie Restoration Site, Rosemount Agricultural Experiment Station, Univ",
+     "city": "Minnesota"
+    }
+   ]
+  },
+  {
+   "slug": "japan",
+   "name": "Japan",
+   "count": 10472,
+   "aliases": [
+    "JP",
+    "Japan"
+   ],
+   "topCities": [
+    {
+     "name": "Osaka",
+     "count": 194
+    },
+    {
+     "name": "Sapporo",
+     "count": 184
+    },
+    {
+     "name": "Higashimatsushima City",
+     "count": 119
+    },
+    {
+     "name": "Kasukabe City",
+     "count": 118
+    },
+    {
+     "name": "Tsu City",
+     "count": 115
+    },
+    {
+     "name": "Kanazawa City",
+     "count": 114
+    },
+    {
+     "name": "Asahikawa",
+     "count": 113
+    },
+    {
+     "name": "Tokyo",
+     "count": 112
+    },
+    {
+     "name": "Kurume City",
+     "count": 105
+    },
+    {
+     "name": "Kiyosu City",
+     "count": 96
+    }
+   ],
+   "cityCount": 958,
+   "samples": [
+    {
+     "id": "occ-rivergojp-105121109",
+     "name": "Bansuigawa & Juppatsukasamizeki Weir Confluence, Azumino",
+     "city": "松本市"
+    },
+    {
+     "id": "occ-rivergojp-108705126",
+     "name": "Kurose River at Kurose Central Bridge, Higashihiroshima",
+     "city": "Higashihiroshima City"
+    },
+    {
+     "id": "occ-rivergojp-220737158",
+     "name": "Chitose River at Minami 6-gou Drainage Pumping Station",
+     "city": "Sapporo"
+    },
+    {
+     "id": "occ-rivergojp-220737156",
+     "name": "Chitose River at Minami 9-gou Drainage Pumping Station",
+     "city": "Sapporo"
+    },
+    {
+     "id": "occ-rivergojp-121270027",
+     "name": "Lake Kasumigaura West Lobe Left Bank, Namegata North",
+     "city": "稲敷市"
+    },
+    {
+     "id": "occ-rivergojp-105121108",
+     "name": "Kurosawa River & Horimawari Weir Confluence, Azumino",
+     "city": "松本市"
+    }
+   ]
+  },
+  {
+   "slug": "canada",
+   "name": "Canada",
+   "count": 4685,
+   "aliases": [
+    "CA",
+    "Canada"
+   ],
+   "topCities": [
+    {
+     "name": "British Columbia",
+     "count": 1067
+    },
+    {
+     "name": "Ottawa",
+     "count": 444
+    },
+    {
+     "name": "Toronto",
+     "count": 413
+    },
+    {
+     "name": "Calgary",
+     "count": 233
+    },
+    {
+     "name": "Québec (Capitale-Nationale)",
+     "count": 179
+    },
+    {
+     "name": "Montréal",
+     "count": 146
+    },
+    {
+     "name": "Vancouver",
+     "count": 107
+    },
+    {
+     "name": "Bas-Saint-Laurent—Gaspésie—Îles-de-la-Madeleine",
+     "count": 71
+    },
+    {
+     "name": "Edmonton",
+     "count": 71
+    },
+    {
+     "name": "Oshawa",
+     "count": 71
+    }
+   ],
+   "cityCount": 612,
+   "samples": [
+    {
+     "id": "quebec511-4039",
+     "name": "Aut. 73 (southward) between aut. 20 and pont Risi (rivière Chaudière) in Lévis, ",
+     "city": "Chaudière-Appalaches"
+    },
+    {
+     "id": "quebec511-4105",
+     "name": "Boulevard Auger Sud at the intersection of route du Lac Est and at the Alma roun",
+     "city": "Saguenay—Lac-Saint-Jean"
+    },
+    {
+     "id": "quebec511-4104",
+     "name": "Boulevard Auger Sud at the intersection of route du Lac Est and at the Alma roun",
+     "city": "Saguenay—Lac-Saint-Jean"
+    },
+    {
+     "id": "occ-phenocam-montmegmsj",
+     "name": "Sugar maple to balsam fir, Mont Saint-Joseph from AstroLab, Parc national du Mon",
+     "city": "Notre-Dame-des-Bois"
+    },
+    {
+     "id": "quebec511-4040",
+     "name": "Aut. 73 (northward) between pont Risi and pont Pierre-Laporte in Lévis, Saint-Ni",
+     "city": "Chaudière-Appalaches"
+    },
+    {
+     "id": "quebec511-4092",
+     "name": "Aut. 55 à la hauteur de la halte routière de Saint-Étienne-des-Grès (km 204) (di",
+     "city": "Mauricie—Centre-du-Québec"
+    }
+   ]
+  },
+  {
+   "slug": "taiwan",
+   "name": "Taiwan",
+   "count": 3243,
+   "aliases": [
+    "TW",
+    "Taiwan"
+   ],
+   "topCities": [
+    {
+     "name": "Taiwan",
+     "count": 1518
+    },
+    {
+     "name": "Taichung",
+     "count": 219
+    },
+    {
+     "name": "Taipei",
+     "count": 194
+    },
+    {
+     "name": "Yunlin",
+     "count": 193
+    },
+    {
+     "name": "Taoyuan",
+     "count": 142
+    },
+    {
+     "name": "Kaohsiung",
+     "count": 125
+    },
+    {
+     "name": "Tainan",
+     "count": 121
+    },
+    {
+     "name": "New Taipei",
+     "count": 115
+    },
+    {
+     "name": "Chiayi",
+     "count": 97
+    },
+    {
+     "name": "Changhua",
+     "count": 88
+    }
+   ],
+   "cityCount": 79,
+   "samples": [
+    {
+     "id": "occ-twipcam-txg-000343",
+     "name": "台中市道路 [07254]台灣大道/國際街(右側車流往台中車站),Taiwan Blvd/International Street. (Right side T",
+     "city": "Taichung"
+    },
+    {
+     "id": "occ-twipcam-txg-000120",
+     "name": "台中市道路 [07099]臺灣大道/台74高架橋下(右側車流往台中交流道),Taiwan Blvd/Under no.74 (Right side Traffi",
+     "city": "Taichung"
+    },
+    {
+     "id": "occ-twipcam-txg-000317",
+     "name": "台中市道路 [06228]崇德十九路/豐樂一街(右側車流往崇德路) Chongde 19th Rd./Fengle 1st St. (Right side Tr",
+     "city": "Taichung"
+    },
+    {
+     "id": "occ-twipcam-txg-000399",
+     "name": "台中市道路 [14311]高鐵五路/站區二路(右側車流往高鐵東路)Gaotie 5th Rd./Zhanqu 2nd Rd.(.(Right side Traf",
+     "city": "Taichung"
+    },
+    {
+     "id": "occ-twipcam-txg-000089",
+     "name": "台中市道路 [01172]復興東一街/忠孝路(右側車流往復興路)Fuxing E. 1st Street /Zhongxiao Rd (Right side T",
+     "city": "Taichung"
+    },
+    {
+     "id": "occ-twipcam-txg-000154",
+     "name": "台中市道路 [07093]臺灣大道/惠來路(右側車流往台中交流道),Taiwan Blvd/Huilai Rd (Right side Traffic flow",
+     "city": "Taichung"
+    }
+   ]
+  },
+  {
+   "slug": "spain",
+   "name": "Spain",
+   "count": 2120,
+   "aliases": [
+    "ES",
+    "Spain"
+   ],
+   "topCities": [
+    {
+     "name": "Madrid",
+     "count": 370
+    },
+    {
+     "name": "A Coruña",
+     "count": 170
+    },
+    {
+     "name": "Valencia",
+     "count": 127
+    },
+    {
+     "name": "Málaga",
+     "count": 117
+    },
+    {
+     "name": "Zaragoza",
+     "count": 84
+    },
+    {
+     "name": "Pontevedra",
+     "count": 73
+    },
+    {
+     "name": "León",
+     "count": 68
+    },
+    {
+     "name": "Toledo",
+     "count": 67
+    },
+    {
+     "name": "Asturias",
+     "count": 66
+    },
+    {
+     "name": "Lugo",
+     "count": 62
+    }
+   ],
+   "cityCount": 129,
+   "samples": [
+    {
+     "id": "occ-phenocam-benamahomagrazalemafir",
+     "name": "Spanish fir (pinsapo) forest in Foyaga Pass, Sierra del Hinojal, Benamahoma-Graz",
+     "city": "Grazalema"
+    },
+    {
+     "id": "occ-phenocam-matamulos",
+     "name": "“Matamulos” tower, Monte La Sierra, Jaén, Spain. Pinus halepensis reforestation ",
+     "city": "Jaén"
+    },
+    {
+     "id": "occ-phenocam-pinaresunburned",
+     "name": "“Pinares de Jódar” forest tower, Jódar (Jaén province), Spain. Pinus halepensis ",
+     "city": "Jódar"
+    },
+    {
+     "id": "occ-phenocam-donanapajarera",
+     "name": "Cork oak old tree and poplars together with brackens and grasslands, Donana Nati",
+     "city": "Almonte"
+    },
+    {
+     "id": "occ-phenocam-chimba",
+     "name": "“Cruz de Chimba” tower, Monte La Sierra, Jaén, Spain. Pinus halepensis reforesta",
+     "city": "Jaén"
+    },
+    {
+     "id": "occ-phenocam-donanafuenteduque",
+     "name": "Doñana marshes from the Fuente Duque Eddy Tower installation, Doñana National Pa",
+     "city": "Almonte"
+    }
+   ]
+  },
+  {
+   "slug": "austria",
+   "name": "Austria",
+   "count": 1725,
+   "aliases": [
+    "AT",
+    "Austria"
+   ],
+   "topCities": [
+    {
+     "name": "Austria",
+     "count": 1695
+    },
+    {
+     "name": "Linz",
+     "count": 5
+    },
+    {
+     "name": "Wels",
+     "count": 4
+    },
+    {
+     "name": "Salzburg",
+     "count": 3
+    },
+    {
+     "name": "Gallneukirchen",
+     "count": 2
+    },
+    {
+     "name": "Katastralgemeinde Johnsbach",
+     "count": 2
+    },
+    {
+     "name": "Kefermarkt",
+     "count": 2
+    },
+    {
+     "name": "Altirdning",
+     "count": 1
+    },
+    {
+     "name": "Forchtenstein",
+     "count": 1
+    },
+    {
+     "name": "Garmisch-Partenkirchen",
+     "count": 1
+    }
+   ],
+   "cityCount": 19,
+   "samples": [
+    {
+     "id": "asfinag-DARS-Baza_KonjiceGramoznica_LJ",
+     "name": "A1/E57, Maribor - vzhodna obvoznica, odsek Rogoza - Slivnica (Gramoznica) - pogl",
+     "city": "Austria"
+    },
+    {
+     "id": "asfinag-DARS-Baza_KonjiceGramoznica_MB",
+     "name": "A1/E57, Maribor - vzhodna obvoznica, odsek Rogoza - Slivnica (Gramoznica) - pogl",
+     "city": "Austria"
+    },
+    {
+     "id": "asfinag-DARS-Baza_KonjiceDevina_LJ",
+     "name": "A1/E57, Maribor - Ljubljana, priključek Slovenska Bistrica - sever, pogled proti",
+     "city": "Austria"
+    },
+    {
+     "id": "asfinag-DARS-Baza_KonjiceDevina_MB",
+     "name": "A1/E57, Maribor - Ljubljana, priključek Slovenska Bistrica - sever, pogled proti",
+     "city": "Austria"
+    },
+    {
+     "id": "asfinag-DARS-GolovecK15_Zadobrova_Zaloska",
+     "name": "A1/E57, Ljubljana - vzhodna obvoznica, priključek Lj.- ind. cona Moste, pogled p",
+     "city": "Austria"
+    },
+    {
+     "id": "asfinag-DARS-GolovecK13_Zadobrova_Letaliska_5",
+     "name": "A1/E57, Ljubljana - vzhodna obvoznica, priključek Zaloška cesta, pogled proti ra",
+     "city": "Austria"
+    }
+   ]
+  },
+  {
+   "slug": "south-korea",
+   "name": "South Korea",
+   "count": 1610,
+   "aliases": [
+    "KR",
+    "South Korea"
+   ],
+   "topCities": [
+    {
+     "name": "Busan",
+     "count": 321
+    },
+    {
+     "name": "Incheon",
+     "count": 210
+    },
+    {
+     "name": "Daegu",
+     "count": 164
+    },
+    {
+     "name": "Changwon",
+     "count": 127
+    },
+    {
+     "name": "Gwangju",
+     "count": 117
+    },
+    {
+     "name": "Pohang",
+     "count": 109
+    },
+    {
+     "name": "Ansan",
+     "count": 89
+    },
+    {
+     "name": "Ulsan (남구)",
+     "count": 60
+    },
+    {
+     "name": "Seoul",
+     "count": 59
+    },
+    {
+     "name": "Gimpo",
+     "count": 54
+    }
+   ],
+   "cityCount": 41,
+   "samples": [
+    {
+     "id": "occ-chungju-21",
+     "name": "Chungju Enterprise City, POSCO Construction Intersection",
+     "city": "Chungju"
+    },
+    {
+     "id": "occ-gwangju-CCTV000076",
+     "name": "Pyeongdong Industrial Complex Intersection, Gwangju",
+     "city": "Gwangju"
+    },
+    {
+     "id": "occ-gwangju-CCTV000079",
+     "name": "Haenam Booyoung Apartments Intersection, Gwangju",
+     "city": "Gwangju"
+    },
+    {
+     "id": "occ-incheon-119",
+     "name": "Industrial Complex Unit 2 Intersection, Incheon",
+     "city": "Incheon"
+    },
+    {
+     "id": "occ-incheon-16",
+     "name": "Munhak Interchange, Second Gyeonggin Expressway",
+     "city": "Incheon"
+    },
+    {
+     "id": "occ-gwangju-CCTV000078",
+     "name": "Songjeong Sarang Hospital Intersection, Gwangju",
+     "city": "Gwangju"
+    }
+   ]
+  },
+  {
+   "slug": "sweden",
+   "name": "Sweden",
+   "count": 1569,
+   "aliases": [
+    "SE",
+    "Sweden"
+   ],
+   "topCities": [
+    {
+     "name": "Stockholm",
+     "count": 350
+    },
+    {
+     "name": "Västra Götaland",
+     "count": 317
+    },
+    {
+     "name": "Skåne",
+     "count": 74
+    },
+    {
+     "name": "Västerås",
+     "count": 61
+    },
+    {
+     "name": "Halland",
+     "count": 39
+    },
+    {
+     "name": "Växjö",
+     "count": 35
+    },
+    {
+     "name": "Sundsvall",
+     "count": 25
+    },
+    {
+     "name": "Jönköping",
+     "count": 23
+    },
+    {
+     "name": "Uppsala",
+     "count": 21
+    },
+    {
+     "name": "Gävle",
+     "count": 19
+    }
+   ],
+   "cityCount": 439,
+   "samples": [
+    {
+     "id": "se-cs-899214887",
+     "name": "AXIS Q1952-E Thermal Camera streaming live 24/7 from Löddeköpinge, Sweden",
+     "city": "Skåne"
+    },
+    {
+     "id": "occ-phenocam-vindeln2",
+     "name": "SITES Svartberget Research Station, Vindeln, Sweden",
+     "city": "Svartberget"
+    },
+    {
+     "id": "se-tv-1719",
+     "name": "Marieholmstunneln påfart E45 Södergående nordväst",
+     "city": "Västra Götaland"
+    },
+    {
+     "id": "se-cs-657399421",
+     "name": "SkiStar Sälen - Lindvallen Gustavbackens topp",
+     "city": "Sweden"
+    },
+    {
+     "id": "se-cs-27857184",
+     "name": "Live Björkliden Hotel Fjället Lapland Resorts",
+     "city": "Norrbotten"
+    },
+    {
+     "id": "se-cs-901061951",
+     "name": "Norrbyströmmen Live Fly Fishing in Home Pool",
+     "city": "Östergötland"
+    }
+   ]
+  },
+  {
+   "slug": "united-kingdom",
+   "name": "United Kingdom",
+   "count": 1403,
+   "aliases": [
+    "GB",
+    "UK",
+    "United Kingdom"
+   ],
+   "topCities": [
+    {
+     "name": "London",
+     "count": 887
+    },
+    {
+     "name": "Tyne and Wear",
+     "count": 97
+    },
+    {
+     "name": "Newcastle",
+     "count": 69
+    },
+    {
+     "name": "Durham",
+     "count": 42
+    },
+    {
+     "name": "Gateshead",
+     "count": 41
+    },
+    {
+     "name": "Sunderland",
+     "count": 40
+    },
+    {
+     "name": "Cardiff",
+     "count": 32
+    },
+    {
+     "name": "Newport",
+     "count": 25
+    },
+    {
+     "name": "Merthyr Tydfil",
+     "count": 14
+    },
+    {
+     "name": "Swansea",
+     "count": 11
+    }
+   ],
+   "cityCount": 77,
+   "samples": [
+    {
+     "id": "occ-netravel-NC_PS_003_N",
+     "name": "Newcastle - Groat Market / A186 Collingwood Street, St. Nicholas Square & St. Ni",
+     "city": "Newcastle"
+    },
+    {
+     "id": "occ-netravel-NB_A193B1",
+     "name": "Northumberland - A193 Links Road & Rotary Way / A1061 South Newsham Road / B1329",
+     "city": "Tyne and Wear"
+    },
+    {
+     "id": "occ-netravel-NT_A1058E2",
+     "name": "North Tyneside - A1058 Coast Road & Beach Road / A1108 Billy Mill Avenue / B1316",
+     "city": "Tyne and Wear"
+    },
+    {
+     "id": "occ-netravel-NT_A191A1",
+     "name": "North Tyneside - A191 Front Street & Benton Park Road / A188 Benton Road & Bento",
+     "city": "Tyne and Wear"
+    },
+    {
+     "id": "occ-netravel-MCA1Onslip",
+     "name": "Gateshead - Metrocentre / Hollinside Road / A1 J71 SB Entry Slip / St. Michael's",
+     "city": "Gateshead"
+    },
+    {
+     "id": "occ-netravel-SL_A1018E1",
+     "name": "Sunderland - A1018 North Bridge Street & Wearmouth Bridge / A183 Dame Dorothy St",
+     "city": "Sunderland"
+    }
+   ]
+  },
+  {
+   "slug": "hong-kong",
+   "name": "Hong Kong",
+   "count": 1350,
+   "aliases": [
+    "HK",
+    "Hong Kong"
+   ],
+   "topCities": [
+    {
+     "name": "Yuen Long",
+     "count": 195
+    },
+    {
+     "name": "Sha Tin",
+     "count": 166
+    },
+    {
+     "name": "Tsuen Wan",
+     "count": 138
+    },
+    {
+     "name": "Tuen Mun",
+     "count": 113
+    },
+    {
+     "name": "Kwun Tong",
+     "count": 102
+    },
+    {
+     "name": "Tai Po",
+     "count": 80
+    },
+    {
+     "name": "North",
+     "count": 75
+    },
+    {
+     "name": "Sham Shui Po",
+     "count": 65
+    },
+    {
+     "name": "Kowloon City",
+     "count": 56
+    },
+    {
+     "name": "Yau Tsim Mong",
+     "count": 54
+    }
+   ],
+   "cityCount": 29,
+   "samples": [
+    {
+     "id": "occ-hongkong-TDSTPR10008",
+     "name": "Tai Po Road - Tai Po Kau near Po Leung Kuk Tin Ka Ping Millennium Primary School",
+     "city": "Tai Po"
+    },
+    {
+     "id": "occ-hongkong-TDSTPTWR10002",
+     "name": "Tai Po Tai Wo Road near New Territories North Regional Police Headquarters - Eas",
+     "city": "Tai Po"
+    },
+    {
+     "id": "occ-hongkong-TDSNCWBR20003",
+     "name": "New Clear Water Bay Road near New Clear Water Bay Road Sitting-out Area - Westbo",
+     "city": "Kwun Tong"
+    },
+    {
+     "id": "occ-hongkong-AID01135",
+     "name": "Sha Tin Road near Hong Kong Institute of Vocational Education (Sha Tin) - Northb",
+     "city": "Sha Tin"
+    },
+    {
+     "id": "occ-hongkong-TDSTPR20001",
+     "name": "Tai Po Road - Tai Po Kau near Tai Po Kau Fresh Water Pumping Station - Northboun",
+     "city": "Tai Po"
+    },
+    {
+     "id": "occ-hongkong-TDSCPRHSK10004",
+     "name": "Castle Peak Rd-Hung Shui Kiu near Hung Shui Kiu Light Rail Stop - Northbound [TD",
+     "city": "Yuen Long"
+    }
+   ]
+  },
+  {
+   "slug": "italy",
+   "name": "Italy",
+   "count": 1030,
+   "aliases": [
+    "IT",
+    "Italy"
+   ],
+   "topCities": [
+    {
+     "name": "A1 MILANO-NAPOLI",
+     "count": 271
+    },
+    {
+     "name": "A14 BOLOGNA-TARANTO",
+     "count": 220
+    },
+    {
+     "name": "A56 TANGENZIALE DI NAPOLI",
+     "count": 60
+    },
+    {
+     "name": "A4 MILANO-BRESCIA",
+     "count": 41
+    },
+    {
+     "name": "A26 GE. VOLTRI-GRAVELL. TOCE",
+     "count": 40
+    },
+    {
+     "name": "A12 GENOVA-ROMA",
+     "count": 38
+    },
+    {
+     "name": "A16 NAPOLI-CANOSA",
+     "count": 36
+    },
+    {
+     "name": "A8 MILANO-VARESE",
+     "count": 34
+    },
+    {
+     "name": "A13 BOLOGNA-PADOVA",
+     "count": 31
+    },
+    {
+     "name": "A27 VENEZIA - BELLUNO",
+     "count": 31
+    }
+   ],
+   "cityCount": 46,
+   "samples": [
+    {
+     "id": "it-aspi-274",
+     "name": "A1 km. 577,0 Bivio A01-Diramazione Roma Sud itinere nord HD",
+     "city": "A1 MILANO-NAPOLI"
+    },
+    {
+     "id": "occ-phenocam-montebondonegrass",
+     "name": "Monte Bondone grassland FLUXNET site, Monte Bondone, Italy",
+     "city": "Bondone"
+    },
+    {
+     "id": "it-aspi-4057",
+     "name": "A14 km. 195,800 itinere su palo Galleria del Cavallo sud",
+     "city": "A14 BOLOGNA-TARANTO"
+    },
+    {
+     "id": "it-aspi-98",
+     "name": "A1 km. 530 Bivio A01-Diramaz. Roma Nord itinere sud HD",
+     "city": "A1 MILANO-NAPOLI"
+    },
+    {
+     "id": "occ-phenocam-it25matschs4",
+     "name": "LTSER IT25 - Matsch/Mazia - River catchment station S4",
+     "city": "Nauders"
+    },
+    {
+     "id": "it-aspi-122",
+     "name": "A1 km. 580,0 A01-Diramazione Roma Sud itinere nord HD",
+     "city": "A1 MILANO-NAPOLI"
+    }
+   ]
+  },
+  {
+   "slug": "finland",
+   "name": "Finland",
+   "count": 825,
+   "aliases": [
+    "FI",
+    "Finland"
+   ],
+   "topCities": [
+    {
+     "name": "Finland",
+     "count": 816
+    },
+    {
+     "name": "Apukka",
+     "count": 1
+    },
+    {
+     "name": "Helsinki",
+     "count": 1
+    },
+    {
+     "name": "Kangasala",
+     "count": 1
+    },
+    {
+     "name": "Kuopio",
+     "count": 1
+    },
+    {
+     "name": "Levi",
+     "count": 1
+    },
+    {
+     "name": "Pieksämäki",
+     "count": 1
+    },
+    {
+     "name": "Rovaniemi",
+     "count": 1
+    },
+    {
+     "name": "Siikajoki",
+     "count": 1
+    },
+    {
+     "name": "Tervola",
+     "count": 1
+    }
+   ],
+   "cityCount": 10,
+   "samples": [
+    {
+     "id": "fin-C04620",
+     "name": "vt12_Lahti_Patomäki_Okeroinen_Puomi_Ramppi",
+     "city": "Finland"
+    },
+    {
+     "id": "fin-C03656",
+     "name": "vt7_Vaalimaan_tunneli_suuaukko_länsi",
+     "city": "Finland"
+    },
+    {
+     "id": "occ-digitraffic-C03563-C0356302",
+     "name": "vt23_Pieksämäki_Siikamäki - C0356302",
+     "city": "Pieksämäki"
+    },
+    {
+     "id": "fin-C04647",
+     "name": "vt12_Lahti_Liipola_Puomi_Ramppi_Itä",
+     "city": "Finland"
+    },
+    {
+     "id": "fin-C04618",
+     "name": "vt12_Lahti_Patomäki_Okeroinen_Puomi",
+     "city": "Finland"
+    },
+    {
+     "id": "fin-C06519",
+     "name": "vt14_Savonlinna_Laitaatsalmi_silta2",
+     "city": "Finland"
+    }
+   ]
+  },
+  {
+   "slug": "norway",
+   "name": "Norway",
+   "count": 746,
+   "aliases": [
+    "NO",
+    "Norway"
+   ],
+   "topCities": [
+    {
+     "name": "Finland",
+     "count": 10
+    },
+    {
+     "name": "Oslo",
+     "count": 10
+    },
+    {
+     "name": "Stavanger",
+     "count": 10
+    },
+    {
+     "name": "Bergen",
+     "count": 8
+    },
+    {
+     "name": "Fagernes",
+     "count": 8
+    },
+    {
+     "name": "Røldal",
+     "count": 8
+    },
+    {
+     "name": "skifter",
+     "count": 8
+    },
+    {
+     "name": "Førde",
+     "count": 7
+    },
+    {
+     "name": "Hovden",
+     "count": 7
+    },
+    {
+     "name": "Kristiansand",
+     "count": 7
+    }
+   ],
+   "cityCount": 437,
+   "samples": [
+    {
+     "id": "occ-vegvesen-3000954_1",
+     "name": "Bergen travpark døgnhvileplass (E39)",
+     "city": "Døgnhvileplass"
+    },
+    {
+     "id": "sky-norge-geirangerfjord-cruise-port-norway-1951",
+     "name": "Geirangerfjord Cruise Port - Norway",
+     "city": "Geiranger"
+    },
+    {
+     "id": "occ-vegvesen-1229023_1",
+     "name": "Seljestad v/kontrollstasjon (E134)",
+     "city": "Røldal"
+    },
+    {
+     "id": "occ-vegvesen-3000616_1",
+     "name": "Bognes ferjekai til Lødingen (R85)",
+     "city": "Storjord"
+    },
+    {
+     "id": "occ-vegvesen-3001068_1",
+     "name": "Løkta (Koppardal) ferjekai (F7300)",
+     "city": "Løkta"
+    },
+    {
+     "id": "occ-vegvesen-1229026_1",
+     "name": "Haukelifjell v/Pepparstein (E134)",
+     "city": "Røldal"
+    }
+   ]
+  },
+  {
+   "slug": "iceland",
+   "name": "Iceland",
+   "count": 482,
+   "aliases": [
+    "Iceland"
+   ],
+   "topCities": [
+    {
+     "name": "Arnarneshæð",
+     "count": 4
+    },
+    {
+     "name": "Arnarnesvegur",
+     "count": 4
+    },
+    {
+     "name": "Ártúnsbrekka",
+     "count": 4
+    },
+    {
+     "name": "Blönduós",
+     "count": 4
+    },
+    {
+     "name": "Bústaðabrú",
+     "count": 4
+    },
+    {
+     "name": "Engidalur",
+     "count": 4
+    },
+    {
+     "name": "Fljót",
+     "count": 4
+    },
+    {
+     "name": "Gígjukvísl",
+     "count": 4
+    },
+    {
+     "name": "Græfur",
+     "count": 4
+    },
+    {
+     "name": "Grenivíkurvegur",
+     "count": 4
+    }
+   ],
+   "cityCount": 166,
+   "samples": [
+    {
+     "id": "is-7056-151",
+     "name": "Héðinsfjarðargöng í Héðinsfirði Siglufjarðarmegin — Héðinsfjarðargöng séð niður ",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Siglufja"
+    },
+    {
+     "id": "is-7055-149",
+     "name": "Héðinsfjarðargöng í Héðinsfirði Ólafsfjarðarmegin — Héðinsfjarðargöng niður á ve",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Ólafsfja"
+    },
+    {
+     "id": "is-7055-148",
+     "name": "Héðinsfjarðargöng í Héðinsfirði Ólafsfjarðarmegin — Héðinsfjarðargöng séð yfir H",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Ólafsfja"
+    },
+    {
+     "id": "is-7056-150",
+     "name": "Héðinsfjarðargöng í Héðinsfirði Siglufjarðarmegin — Héðinsfjarðargöng séð yfir H",
+     "city": "Héðinsfjarðargöng í Héðinsfirði Siglufja"
+    },
+    {
+     "id": "is-7052-143",
+     "name": "Bolungarvíkurgöng við Bolungarvík — Bolungarvíkurgöng séð niður að veg að Bolung",
+     "city": "Bolungarvíkurgöng við Bolungarvík"
+    },
+    {
+     "id": "is-7054-147",
+     "name": "Héðinsfjarðargöng Ólafsfjarðarmegin — Héðinsfjarðargöng séð niður á veg í Ólafsf",
+     "city": "Héðinsfjarðargöng Ólafsfjarðarmegin"
+    }
+   ]
+  },
+  {
+   "slug": "australia",
+   "name": "Australia",
+   "count": 421,
+   "aliases": [
+    "AU",
+    "Australia"
+   ],
+   "topCities": [
+    {
+     "name": "SYD_MET",
+     "count": 81
+    },
+    {
+     "name": "SYD_NORTH",
+     "count": 41
+    },
+    {
+     "name": "REG_NORTH",
+     "count": 37
+    },
+    {
+     "name": "SYD_WEST",
+     "count": 33
+    },
+    {
+     "name": "SYD_SOUTH",
+     "count": 31
+    },
+    {
+     "name": "REG_SOUTH",
+     "count": 17
+    },
+    {
+     "name": "REG_WEST",
+     "count": 9
+    },
+    {
+     "name": "Toowoomba",
+     "count": 5
+    },
+    {
+     "name": "Toowoomba City",
+     "count": 5
+    },
+    {
+     "name": "Helens Hill",
+     "count": 4
+    }
+   ],
+   "cityCount": 134,
+   "samples": [
+    {
+     "id": "occ-phenocam-wedgetail",
+     "name": "Wedgetail EC tower, subalpine grassland, Silver Plains Reserve, Interlaken, Tasm",
+     "city": ""
+    },
+    {
+     "id": "occ-qld-56",
+     "name": "Caboolture - Bruce Highway & Caboolture-Bribie Island Interchange - South",
+     "city": "Caboolture"
+    },
+    {
+     "id": "occ-qld-116",
+     "name": "Petrie - Anzac Avenue & Dayboro Road & Gympie Road Roundabout - Southwest",
+     "city": "Petrie"
+    },
+    {
+     "id": "occ-qld-64",
+     "name": "Pacific Paradise - Sunshine Motorway & David Low Way Interchange - South",
+     "city": "Pacific Paradise"
+    },
+    {
+     "id": "occ-qld-flood-229",
+     "name": "Helens Hill - Bruce Highway at Frances Creek (Haughtys Road) - South",
+     "city": "Helens Hill"
+    },
+    {
+     "id": "occ-qld-75",
+     "name": "Broadbeach Waters - Nerang-Broadbeach Road & Bermuda Street - North",
+     "city": "Nerang"
+    }
+   ]
+  },
+  {
+   "slug": "germany",
+   "name": "Germany",
+   "count": 343,
+   "aliases": [
+    "DE",
+    "Germany"
+   ],
+   "topCities": [
+    {
+     "name": "Nürnberg",
+     "count": 6
+    },
+    {
+     "name": "Günzburg",
+     "count": 4
+    },
+    {
+     "name": "Landshut",
+     "count": 4
+    },
+    {
+     "name": "Marktredwitz",
+     "count": 4
+    },
+    {
+     "name": "Ansbach",
+     "count": 3
+    },
+    {
+     "name": "Bad Tölz",
+     "count": 3
+    },
+    {
+     "name": "Bamberg",
+     "count": 3
+    },
+    {
+     "name": "Bayreuth",
+     "count": 3
+    },
+    {
+     "name": "Berlin",
+     "count": 3
+    },
+    {
+     "name": "Buchloe",
+     "count": 3
+    }
+   ],
+   "cityCount": 282,
+   "samples": [
+    {
+     "id": "occ-phenocam-ettenheim1",
+     "name": "Eddy Covariance Tower (above Canopy), Ettenheim Forest, Ettenheim, Baden-Württem",
+     "city": "Ettenheim"
+    },
+    {
+     "id": "occ-phenocam-apvexperiment",
+     "name": "Agri-Photovoltaik Field of IBG-2 near Morschenich-Alt, Forschungszentrum Juelich",
+     "city": "Forschungszentrum Juelich"
+    },
+    {
+     "id": "occ-phenocam-blumberg",
+     "name": "Randowbruch rewetted peatland flux tower, Brandenburg, NE Germany",
+     "city": "NE Germany"
+    },
+    {
+     "id": "occ-phenocam-derur",
+     "name": "DE-RuR, Rollesbroich, grasslands, north rhine westphalia, germany",
+     "city": "Simmerath"
+    },
+    {
+     "id": "occ-phenocam-gollwitz1",
+     "name": "Havel lowland drained fen flux tower, Brandenburg, Germany",
+     "city": "Potsdam"
+    },
+    {
+     "id": "occ-phenocam-tubberurb",
+     "name": "Technical University of Berlin, Urban Vegetation, Berlin.",
+     "city": "Berlin"
+    }
+   ]
+  },
+  {
+   "slug": "lithuania",
+   "name": "Lithuania",
+   "count": 326,
+   "aliases": [
+    "LT",
+    "Lithuania"
+   ],
+   "topCities": [
+    {
+     "name": "Vilnius",
+     "count": 5
+    },
+    {
+     "name": "Bukiškės",
+     "count": 2
+    },
+    {
+     "name": "Dieveniškės",
+     "count": 2
+    },
+    {
+     "name": "Dūkštas",
+     "count": 2
+    },
+    {
+     "name": "Eišiškės",
+     "count": 2
+    },
+    {
+     "name": "Kalveliai",
+     "count": 2
+    },
+    {
+     "name": "Mažeikiai",
+     "count": 2
+    },
+    {
+     "name": "Nausodė į",
+     "count": 2
+    },
+    {
+     "name": "Pamiškiai",
+     "count": 2
+    },
+    {
+     "name": "Rokiškis",
+     "count": 2
+    }
+   ],
+   "cityCount": 310,
+   "samples": [
+    {
+     "id": "occ-camstreamer-527417648-dievo-gailestingumo-sventove-the",
+     "name": "Dievo Gailestingumo Šventovė / the Shrine of Divine Mercy / adoracija / adoratio",
+     "city": "Minsk"
+    },
+    {
+     "id": "lt-607",
+     "name": "Smiltynė 2254 0,59 (2254 Privažiuojamasis kelias prie II perkėlos nuo kelio Smil",
+     "city": "Smiltynė"
+    },
+    {
+     "id": "lt-716",
+     "name": "Šakiai 0137027001 0,07 (0137027001 K137_030.944_01 (137 ir 140 kelių sankr.) Žie",
+     "city": "Šakiai"
+    },
+    {
+     "id": "lt-322",
+     "name": "Jakai į Vilnių3 0001090004 0,166 (0001090004 A01_304.760_04 (Jakų sankr.))",
+     "city": "Jakai į Vilnių3"
+    },
+    {
+     "id": "lt-425",
+     "name": "Sankryža A5-A7 vaizdas į A5 (A7 Marijampolė–Kybartai–Kaliningradas*)",
+     "city": "Sankryža A5"
+    },
+    {
+     "id": "lt-428",
+     "name": "Sankryža A5-A7 vaizdas į A7 (A7 Marijampolė–Kybartai–Kaliningradas*)",
+     "city": "Sankryža A5-A7 vaizdas į"
+    }
+   ]
+  },
+  {
+   "slug": "vietnam",
+   "name": "Vietnam",
+   "count": 324,
+   "aliases": [
+    "VN",
+    "Vietnam"
+   ],
+   "topCities": [
+    {
+     "name": "Ho Chi Minh City",
+     "count": 177
+    },
+    {
+     "name": "Ben Nghe Ward",
+     "count": 9
+    },
+    {
+     "name": "Phường An Đông",
+     "count": 5
+    },
+    {
+     "name": "Phường Bình Thạnh",
+     "count": 5
+    },
+    {
+     "name": "Phường Thạnh Mỹ Tây",
+     "count": 5
+    },
+    {
+     "name": "Phường Tân Sơn Nhất",
+     "count": 4
+    },
+    {
+     "name": "Da Nang",
+     "count": 3
+    },
+    {
+     "name": "Nguyen Cu Trinh Ward",
+     "count": 3
+    },
+    {
+     "name": "Phu My Ward",
+     "count": 3
+    },
+    {
+     "name": "Phường Chợ Lớn",
+     "count": 3
+    }
+   ],
+   "cityCount": 83,
+   "samples": [
+    {
+     "id": "occ-windy-1718386046",
+     "name": "An Phu Ward: Đường Xa Lộ Hà Nội - Đường Mai Chí Thọ - Xa lộ Hà Nội - Xa Lộ Hà Nộ",
+     "city": "An Phu Ward"
+    },
+    {
+     "id": "occ-windy-1718381531",
+     "name": "Ben Nghe Ward: Đường Nguyễn Bỉnh Khiêm - Đường Lê Duẩn - Nguyễn Bỉnh Khiêm - Đườ",
+     "city": "Ben Nghe Ward"
+    },
+    {
+     "id": "occ-windy-1718385017",
+     "name": "Phuong Tan Chanh Hiep: Đường Tô Ký - Đường Nguyễn Ảnh Thủ - Tô Ký - Nguyễn Ảnh T",
+     "city": "Phuong Tan Chanh Hiep"
+    },
+    {
+     "id": "occ-windy-1718384261",
+     "name": "Tay Thanh Ward: Đường Lê Trọng Tấn - Đường Tân Kỳ Tân Quý - Lê Trọng Tấn",
+     "city": "Tay Thanh Ward"
+    },
+    {
+     "id": "occ-windy-1718382707",
+     "name": "Pham Ngu Lao Ward: Đường Calmette - Trần Hưng Đạo - Đường Trần Hưng Đạo",
+     "city": "Pham Ngu Lao Ward"
+    },
+    {
+     "id": "occ-windy-1718382938",
+     "name": "Co Giang Ward: Trần Hưng Đạo - Đường Trần Hưng Đạo - Nguyễn Cư Trinh",
+     "city": "Co Giang Ward"
+    }
+   ]
+  },
+  {
+   "slug": "new-zealand",
+   "name": "New Zealand",
+   "count": 257,
+   "aliases": [
+    "NZ",
+    "New Zealand"
+   ],
+   "topCities": [
+    {
+     "name": "Auckland",
+     "count": 98
+    },
+    {
+     "name": "Canterbury",
+     "count": 82
+    },
+    {
+     "name": "Wellington",
+     "count": 37
+    },
+    {
+     "name": "Otago",
+     "count": 13
+    },
+    {
+     "name": "Waikato",
+     "count": 7
+    },
+    {
+     "name": "Nelson/Marlborough",
+     "count": 6
+    },
+    {
+     "name": "West Coast",
+     "count": 6
+    },
+    {
+     "name": "Bay Of Plenty",
+     "count": 2
+    },
+    {
+     "name": "Hawkes Bay",
+     "count": 2
+    },
+    {
+     "name": "Manawatu-Whanganui",
+     "count": 2
+    }
+   ],
+   "cityCount": 12,
+   "samples": [
+    {
+     "id": "occ-phenocam-laudernz01",
+     "name": "Low intensity grazed grassland, Lauder, Central Otago, New Zealand",
+     "city": "Lauder"
+    },
+    {
+     "id": "nz-739",
+     "name": "SH2/SH50/SH51 Taradale Rd Roundabout (Northbound)",
+     "city": "Hawkes Bay"
+    },
+    {
+     "id": "nz-122",
+     "name": "SH1 Walter Strevens Dr Overbridge (Southbound)",
+     "city": "Auckland"
+    },
+    {
+     "id": "nz-210",
+     "name": "SH20 Barrowcliffe Pl Overbridge (Northbound)",
+     "city": "Auckland"
+    },
+    {
+     "id": "nz-672",
+     "name": "SH74 New Brighton Rd Roundabout (Southbound)",
+     "city": "Canterbury"
+    },
+    {
+     "id": "nz-275",
+     "name": "SH20A George Bolt Mem Dr North (Northbound)",
+     "city": "Auckland"
+    }
+   ]
+  },
+  {
+   "slug": "indonesia",
+   "name": "Indonesia",
+   "count": 256,
+   "aliases": [
+    "ID",
+    "Indonesia"
+   ],
+   "topCities": [
+    {
+     "name": "Bandung",
+     "count": 89
+    },
+    {
+     "name": "Sleman",
+     "count": 14
+    },
+    {
+     "name": "Batas Kelurahan",
+     "count": 13
+    },
+    {
+     "name": "Yogyakarta",
+     "count": 13
+    },
+    {
+     "name": "Bantul",
+     "count": 10
+    },
+    {
+     "name": "Jakarta",
+     "count": 10
+    },
+    {
+     "name": "South Tangerang",
+     "count": 10
+    },
+    {
+     "name": "Tangerang",
+     "count": 9
+    },
+    {
+     "name": "Gresik",
+     "count": 7
+    },
+    {
+     "name": "Kisaran",
+     "count": 7
+    }
+   ],
+   "cityCount": 50,
+   "samples": [
+    {
+     "id": "occ-windy-1723392383",
+     "name": "Serang: Tugu Jaya Serang - Exit Tol Serang Timur - Pintu Tol Serang Timur - Jala",
+     "city": "Serang"
+    },
+    {
+     "id": "occ-windy-1721391335",
+     "name": "Bandung: Markas Kang Murad Pipit - Pengadilan Negeri Bandung Kelas 1A Khusus - K",
+     "city": "Bandung"
+    },
+    {
+     "id": "occ-windy-1722332177",
+     "name": "Pangkalan Bun: Tugu Simpang Pasar Indra Sari - Jalan H. Udan Said - Jalan Sukma ",
+     "city": "Pangkalan Bun"
+    },
+    {
+     "id": "occ-windy-1723542911",
+     "name": "Bandung: Asia Africa Monument - Taman Bdg Palestina - Jalan Asia Afrika - Jalan ",
+     "city": "Bandung"
+    },
+    {
+     "id": "occ-windy-1748014735",
+     "name": "Pogung Kidul: Jalan Palagan Tentara Pelajar - Jalan Nyi Tjondrolukito - Jalan Ri",
+     "city": "Pogung Kidul"
+    },
+    {
+     "id": "occ-windy-1748015051",
+     "name": "Yogyakarta: Jalan Arah Kota/Malioboro - Jalan Ringroad Barat - Jalan Yogyakarta ",
+     "city": "Yogyakarta"
+    }
+   ]
+  },
+  {
+   "slug": "netherlands",
+   "name": "Netherlands",
+   "count": 246,
+   "aliases": [
+    "NL",
+    "Netherlands"
+   ],
+   "topCities": [
+    {
+     "name": "Texel",
+     "count": 27
+    },
+    {
+     "name": "Harlingen",
+     "count": 13
+    },
+    {
+     "name": "Ameland",
+     "count": 8
+    },
+    {
+     "name": "Vlissingen",
+     "count": 8
+    },
+    {
+     "name": "Terschelling",
+     "count": 7
+    },
+    {
+     "name": "Rotterdam",
+     "count": 6
+    },
+    {
+     "name": "Amsterdam",
+     "count": 5
+    },
+    {
+     "name": "Hoek van Holland",
+     "count": 5
+    },
+    {
+     "name": "Alkmaar",
+     "count": 4
+    },
+    {
+     "name": "Delfzijl",
+     "count": 4
+    }
+   ],
+   "cityCount": 128,
+   "samples": [
+    {
+     "id": "occ-phenocam-utwente1",
+     "name": "Campus of University of Twente, Building de Spiegel, (Enschede, Netherlands), mi",
+     "city": "Enschede"
+    },
+    {
+     "id": "occ-phenocam-utwente2",
+     "name": "University of Twente, Building de Horst, Enschede, the Netherlands, mixed forest",
+     "city": "Enschede"
+    },
+    {
+     "id": "occ-phenocam-amtsvenn",
+     "name": "EC tower, Amtsvenn peatland, Northrhein-Westphalia, Germany",
+     "city": "Enschede"
+    },
+    {
+     "id": "pubcam-netherlands-den-haag-voetbal-en-cricketvereniging-quick",
+     "name": "Voetbal- en Cricketvereniging Quick",
+     "city": "Den Haag"
+    },
+    {
+     "id": "pubcam-netherlands-loosdrecht-watersport-vereniging-de-vrijbuiter",
+     "name": "Watersport Vereniging De Vrijbuiter",
+     "city": "Loosdrecht"
+    },
+    {
+     "id": "pubcam-netherlands-scheveningen-strandpaviljoen-aloha-surf-and-food",
+     "name": "Strandpaviljoen Aloha Surf and Food",
+     "city": "Scheveningen"
+    }
+   ]
+  },
+  {
+   "slug": "turkey",
+   "name": "Turkey",
+   "count": 235,
+   "aliases": [
+    "TR",
+    "Turkey"
+   ],
+   "topCities": [
+    {
+     "name": "Istanbul",
+     "count": 143
+    },
+    {
+     "name": "Arnavutkoy",
+     "count": 12
+    },
+    {
+     "name": "Selcuklu",
+     "count": 10
+    },
+    {
+     "name": "Kahramanmaras",
+     "count": 5
+    },
+    {
+     "name": "Balikesir",
+     "count": 4
+    },
+    {
+     "name": "Karatay",
+     "count": 4
+    },
+    {
+     "name": "Meram",
+     "count": 3
+    },
+    {
+     "name": "Nilufer",
+     "count": 3
+    },
+    {
+     "name": "Edremit",
+     "count": 2
+    },
+    {
+     "name": "Ekinozu",
+     "count": 2
+    }
+   ],
+   "cityCount": 51,
+   "samples": [
+    {
+     "id": "occ-windy-1793903740",
+     "name": "Camurlu Mahallesi › North-west: Ünye Cumhuriyet Meydanı - Saray Mosque - Hükümet",
+     "city": "Camurlu Mahallesi"
+    },
+    {
+     "id": "occ-windy-1793908006",
+     "name": "Horozluhan Mahallesi › South-west: Konya Science Center - Ankara Caddesi",
+     "city": "Horozluhan Mahallesi"
+    },
+    {
+     "id": "occ-windy-1578078670",
+     "name": "Haydarbey Mahallesi: Boğaziçi - Haydar Bey Mahallesi - Kahramanmaraş",
+     "city": "Haydarbey Mahallesi"
+    },
+    {
+     "id": "occ-windy-1793905102",
+     "name": "Musakirik Mahallesi › North-east: Kabadüz Belediyesi Çambaşı Parkı",
+     "city": "Musakirik Mahallesi"
+    },
+    {
+     "id": "occ-windy-1793909473",
+     "name": "Musakirik Mahallesi › North-east: Çambaşı Yaylası",
+     "city": "Musakirik Mahallesi"
+    },
+    {
+     "id": "occ-windy-1793904916",
+     "name": "Parsana Mahallesi › East: Konya Büyükşehir Arena",
+     "city": "Parsana Mahallesi"
+    }
+   ]
+  },
+  {
+   "slug": "ireland",
+   "name": "Ireland",
+   "count": 216,
+   "aliases": [
+    "IE",
+    "Ireland"
+   ],
+   "topCities": [
+    {
+     "name": "in Dublin",
+     "count": 100
+    },
+    {
+     "name": "in Cork",
+     "count": 20
+    },
+    {
+     "name": "6 kilometres west of the Kinnegad area",
+     "count": 6
+    },
+    {
+     "name": "Dublin",
+     "count": 5
+    },
+    {
+     "name": "near Ashbourne",
+     "count": 4
+    },
+    {
+     "name": "Cork",
+     "count": 3
+    },
+    {
+     "name": "near Dublin",
+     "count": 3
+    },
+    {
+     "name": "1 kilometer south of the Patrickswell area",
+     "count": 2
+    },
+    {
+     "name": "near Donegal",
+     "count": 2
+    },
+    {
+     "name": "near Leixlip",
+     "count": 2
+    }
+   ],
+   "cityCount": 79,
+   "samples": [
+    {
+     "id": "occ-phenocam-distilleryfields",
+     "name": "Distillery Fields, University College Cork, Ireland",
+     "city": "Cork"
+    },
+    {
+     "id": "occ-cr-1cb5c87af1",
+     "name": "M50(N) – At J10 (Ballymount) – South side",
+     "city": "in Dublin"
+    },
+    {
+     "id": "occ-cr-e5f95c431c",
+     "name": "M50(N) – 1.3Km Before J10 (Ballymount)",
+     "city": "in Dublin"
+    },
+    {
+     "id": "occ-cr-868cd2f293",
+     "name": "M50(N) 0.3km before J15 (Carrickmines)",
+     "city": "in Dublin"
+    },
+    {
+     "id": "occ-cr-2547a414fa",
+     "name": "M50(S) 1.0km before J15 (Carrickmines)",
+     "city": "in Dublin"
+    },
+    {
+     "id": "occ-cr-851cb2170f",
+     "name": "M50(N) 0.7km after J15 (Carrickmines)",
+     "city": "in Dublin"
+    }
+   ]
+  },
+  {
+   "slug": "russia",
+   "name": "Russia",
+   "count": 162,
+   "aliases": [
+    "RU",
+    "Russia"
+   ],
+   "topCities": [
+    {
+     "name": "Sochi",
+     "count": 49
+    },
+    {
+     "name": "Astrakhan",
+     "count": 20
+    },
+    {
+     "name": "Междуреченск",
+     "count": 19
+    },
+    {
+     "name": "Мыски",
+     "count": 8
+    },
+    {
+     "name": "Moscow",
+     "count": 7
+    },
+    {
+     "name": "Lazarevskoye",
+     "count": 4
+    },
+    {
+     "name": "Novosibirsk",
+     "count": 4
+    },
+    {
+     "name": "Khosta",
+     "count": 3
+    },
+    {
+     "name": "Volgograd",
+     "count": 3
+    },
+    {
+     "name": "Dolgoprudny",
+     "count": 2
+    }
+   ],
+   "cityCount": 46,
+   "samples": [
+    {
+     "id": "occ-windy-1754142007",
+     "name": "Кичи-Балыкское сельское поселение › South-west: Kavkazskaya Gornaya Observatoriy",
+     "city": "Кичи-Балыкское сельское поселение"
+    },
+    {
+     "id": "occ-windy-1740988247",
+     "name": "Сычёвский сельсовет › West: Gornolyzhnaya Trassa Na Belokurikhe-2, Mishina Gora",
+     "city": "Сычёвский сельсовет"
+    },
+    {
+     "id": "occ-windy-1747669403",
+     "name": "сельское поселение Эльбрус › South: Gornolyzhnyy Kurort El'brus",
+     "city": "сельское поселение Эльбрус"
+    },
+    {
+     "id": "occ-windy-1510493000",
+     "name": "Gelendzhik: The restaurant \"Horizont\" - Gelendzhikskaya Bukhta",
+     "city": "Gelendzhik"
+    },
+    {
+     "id": "occ-windy-1625695257",
+     "name": "городское поселение Камызяк: Камызяк, Максима Горького, 75",
+     "city": "городское поселение Камызяк"
+    },
+    {
+     "id": "occ-rta-telecom-building-shah2",
+     "name": "Construction Site, Shakhterov Street, Mezhdurechensk",
+     "city": "Междуреченск"
+    }
+   ]
+  },
+  {
+   "slug": "estonia",
+   "name": "Estonia",
+   "count": 133,
+   "aliases": [
+    "EE",
+    "Estonia"
+   ],
+   "topCities": [
+    {
+     "name": "Ääsmäe",
+     "count": 1
+    },
+    {
+     "name": "Adavere",
+     "count": 1
+    },
+    {
+     "name": "Aegviidu",
+     "count": 1
+    },
+    {
+     "name": "Ainja",
+     "count": 1
+    },
+    {
+     "name": "Aranküla",
+     "count": 1
+    },
+    {
+     "name": "Aruvalla",
+     "count": 1
+    },
+    {
+     "name": "Atsalama",
+     "count": 1
+    },
+    {
+     "name": "Audru",
+     "count": 1
+    },
+    {
+     "name": "Emumäe",
+     "count": 1
+    },
+    {
+     "name": "Enge",
+     "count": 1
+    }
+   ],
+   "cityCount": 133,
+   "samples": [
+    {
+     "id": "occ-phenocam-pitsalu",
+     "name": "Abandoned peat extraction area, Estonia",
+     "city": "Pitsalu küla"
+    },
+    {
+     "id": "occ-tik-ee-605",
+     "name": "Kuressaare Tallinna-Smuuli",
+     "city": "Kuressaare Tallinna-Smuuli"
+    },
+    {
+     "id": "occ-tik-ee-609",
+     "name": "Kuressaare Aia-Lootsi",
+     "city": "Kuressaare Aia-Lootsi"
+    },
+    {
+     "id": "pubcam-estonia-tallinn-360pano-tallinn",
+     "name": "360Pano Tallinn",
+     "city": "Tallinn"
+    },
+    {
+     "id": "occ-tik-ee-454",
+     "name": "Tallinn Astangu",
+     "city": "Tallinn Astangu"
+    },
+    {
+     "id": "occ-tik-ee-1200",
+     "name": "Laiaküla RWS10",
+     "city": "Laiaküla RWS10"
+    }
+   ]
+  },
+  {
+   "slug": "thailand",
+   "name": "Thailand",
+   "count": 118,
+   "aliases": [
+    "TH",
+    "Thailand"
+   ],
+   "topCities": [
+    {
+     "name": "Ko Samui",
+     "count": 17
+    },
+    {
+     "name": "Chachoengsao",
+     "count": 12
+    },
+    {
+     "name": "Bangkok",
+     "count": 10
+    },
+    {
+     "name": "Nakhon Sawan",
+     "count": 4
+    },
+    {
+     "name": "Pattaya",
+     "count": 4
+    },
+    {
+     "name": "Chumphon",
+     "count": 3
+    },
+    {
+     "name": "Khon Kaen",
+     "count": 3
+    },
+    {
+     "name": "Udon Thani",
+     "count": 3
+    },
+    {
+     "name": "Nan",
+     "count": 2
+    },
+    {
+     "name": "Phetchaburi",
+     "count": 2
+    }
+   ],
+   "cityCount": 65,
+   "samples": [
+    {
+     "id": "occ-windy-1793903656",
+     "name": "Udon Thani › South-east: Thongyai Road - Pajaksinlapacom Road",
+     "city": "Udon Thani"
+    },
+    {
+     "id": "occ-itic-ITICM_BMAMI0182",
+     "name": "Sri Sothorn Tat Mai & Maharaj Road Junction",
+     "city": "Chachoengsao"
+    },
+    {
+     "id": "occ-windy-1649235596",
+     "name": "Don Mueang International Airport, Bangkok",
+     "city": "Sanam Bin Subdistrict"
+    },
+    {
+     "id": "occ-itic-ITICM_BMAMI0214",
+     "name": "Central Shopping Center North, Khon Kaen",
+     "city": "Khon Kaen"
+    },
+    {
+     "id": "occ-itic-ITICM_BMAMI0146",
+     "name": "Siri Soth Cut and Maharaj Road Junction",
+     "city": "Chachoengsao"
+    },
+    {
+     "id": "occ-itic-ITICM_BMAMI0177",
+     "name": "Sri Sothorn Tat Mai Soi 5, Chachoengsao",
+     "city": "Chachoengsao"
+    }
+   ]
+  },
+  {
+   "slug": "poland",
+   "name": "Poland",
+   "count": 73,
+   "aliases": [
+    "Poland"
+   ],
+   "topCities": [
+    {
+     "name": "Wejherowo",
+     "count": 8
+    },
+    {
+     "name": "Władysławowo",
+     "count": 7
+    },
+    {
+     "name": "Reda",
+     "count": 5
+    },
+    {
+     "name": "Chałupy",
+     "count": 4
+    },
+    {
+     "name": "Dębki",
+     "count": 4
+    },
+    {
+     "name": "Jastarnia",
+     "count": 4
+    },
+    {
+     "name": "Puck",
+     "count": 4
+    },
+    {
+     "name": "Gdańsk",
+     "count": 3
+    },
+    {
+     "name": "Gdynia",
+     "count": 3
+    },
+    {
+     "name": "Gniew",
+     "count": 3
+    }
+   ],
+   "cityCount": 32,
+   "samples": [
+    {
+     "id": "pl-nadm-95",
+     "name": "Reda - MPCK Koksik, gniazdo sokoła platforma",
+     "city": "Reda"
+    },
+    {
+     "id": "pl-nadm-104",
+     "name": "Wejherowo - OPEC, gniazdo sokoła platforma",
+     "city": "Wejherowo"
+    },
+    {
+     "id": "pl-nadm-49",
+     "name": "Wejherowo - Plac Jakuba Wejhera, Fontanna",
+     "city": "Wejherowo"
+    },
+    {
+     "id": "pl-nadm-5",
+     "name": "Bolszewo - Skrzyżowanie Zamostna/DW468",
+     "city": "Bolszewo"
+    },
+    {
+     "id": "pl-nadm-110",
+     "name": "Tczew - GPEC, gniazdo sokoła (wnętrze)",
+     "city": "Tczew"
+    },
+    {
+     "id": "pl-nadm-96",
+     "name": "Chłapowo - Bałtyk z kempingu Lazurowe",
+     "city": "Chłapowo"
+    }
+   ]
+  },
+  {
+   "slug": "france",
+   "name": "France",
+   "count": 51,
+   "aliases": [
+    "FR",
+    "France"
+   ],
+   "topCities": [
+    {
+     "name": "Mulhouse",
+     "count": 5
+    },
+    {
+     "name": "La Bresse",
+     "count": 3
+    },
+    {
+     "name": "Nice",
+     "count": 2
+    },
+    {
+     "name": "Paris",
+     "count": 2
+    },
+    {
+     "name": "Aix-les-Bains",
+     "count": 1
+    },
+    {
+     "name": "Albertville",
+     "count": 1
+    },
+    {
+     "name": "Annecy",
+     "count": 1
+    },
+    {
+     "name": "Aubervilliers",
+     "count": 1
+    },
+    {
+     "name": "Auxerre",
+     "count": 1
+    },
+    {
+     "name": "Avallon",
+     "count": 1
+    }
+   ],
+   "cityCount": 43,
+   "samples": [
+    {
+     "id": "occ-phenocam-basellangeerlen",
+     "name": "The Basel Lange Erlen rural site operated by the Atmopsheric Sciences research g",
+     "city": "Mulhouse"
+    },
+    {
+     "id": "occ-phenocam-baselklingelbergstrasse",
+     "name": "The Basel Klingelbergstrasse urban site operated by the Atmopsheric Sciences res",
+     "city": "Mulhouse"
+    },
+    {
+     "id": "occ-phenocam-wuestebach2",
+     "name": "fenced clear cut 2013, Wuestebach, Monschau, North Rihne Westphalia, Germany",
+     "city": "Hellenthal"
+    },
+    {
+     "id": "occ-phenocam-sirta",
+     "name": "SIRTA Atmospheric Observatory, Palaiseau, France",
+     "city": "Palaiseau"
+    },
+    {
+     "id": "occ-phenocam-hartheim3",
+     "name": "Secondary Tower (Clearcut 2018), Germany",
+     "city": "Mulhouse"
+    },
+    {
+     "id": "occ-phenocam-hartheim1",
+     "name": "Main Tower, DE-Har, Germany (Tower Top)",
+     "city": "Mulhouse"
+    }
+   ]
+  },
+  {
+   "slug": "luxembourg",
+   "name": "Luxembourg",
+   "count": 48,
+   "aliases": [
+    "LU",
+    "Luxembourg"
+   ],
+   "topCities": [
+    {
+     "name": "Luxembourg City",
+     "count": 23
+    },
+    {
+     "name": "Dudelange",
+     "count": 7
+    },
+    {
+     "name": "Luxembourg",
+     "count": 7
+    },
+    {
+     "name": "Differdange",
+     "count": 5
+    },
+    {
+     "name": "Esch-sur-Alzette",
+     "count": 4
+    },
+    {
+     "name": "Diekirch",
+     "count": 1
+    },
+    {
+     "name": "Mertert",
+     "count": 1
+    }
+   ],
+   "cityCount": 7,
+   "samples": [
+    {
+     "id": "sky-luxembourg-wasserbillig-luxembourg-5683",
+     "name": "Wasserbillig - Luxembourg",
+     "city": "Mertert"
+    },
+    {
+     "id": "occ-cita-6006",
+     "name": "A6 - Camera 6006",
+     "city": "Luxembourg City"
+    },
+    {
+     "id": "occ-cita-147",
+     "name": "A13 - Camera 147",
+     "city": "Differdange"
+    },
+    {
+     "id": "occ-cita-164",
+     "name": "A13 - Camera 164",
+     "city": "Esch-sur-Alzette"
+    },
+    {
+     "id": "occ-cita-110",
+     "name": "A1 - Camera 110",
+     "city": "Luxembourg City"
+    },
+    {
+     "id": "occ-cita-112",
+     "name": "A1 - Camera 112",
+     "city": "Luxembourg City"
+    }
+   ]
+  },
+  {
+   "slug": "switzerland",
+   "name": "Switzerland",
+   "count": 47,
+   "aliases": [
+    "CH",
+    "Switzerland"
+   ],
+   "topCities": [
+    {
+     "name": "Basel",
+     "count": 1
+    },
+    {
+     "name": "Bivio",
+     "count": 1
+    },
+    {
+     "name": "Brugnasco",
+     "count": 1
+    },
+    {
+     "name": "Casaccia",
+     "count": 1
+    },
+    {
+     "name": "Cevio",
+     "count": 1
+    },
+    {
+     "name": "Château-d'Oex",
+     "count": 1
+    },
+    {
+     "name": "Disentis",
+     "count": 1
+    },
+    {
+     "name": "Eich",
+     "count": 1
+    },
+    {
+     "name": "Etziken",
+     "count": 1
+    },
+    {
+     "name": "Evolène / Villa",
+     "count": 1
+    }
+   ],
+   "cityCount": 47,
+   "samples": [
+    {
+     "id": "occ-phenocam-swisscanopycrane2e",
+     "name": "Swiss Canopy Crane II, Hölstein BL, Switzerland",
+     "city": "Hölstein"
+    },
+    {
+     "id": "occ-meteoswiss-GUE",
+     "name": "MeteoSwiss Gütsch, Andermatt",
+     "city": "Gütsch, Andermatt"
+    },
+    {
+     "id": "sky-ch-jungfrau",
+     "name": "Jungfraujoch - Top of Europe",
+     "city": "Interlaken"
+    },
+    {
+     "id": "occ-meteoswiss-YVN",
+     "name": "MeteoSwiss Yverdon-les-Bains",
+     "city": "Yverdon-les-Bains"
+    },
+    {
+     "id": "occ-meteoswiss-SMA",
+     "name": "MeteoSwiss Zürich / Fluntern",
+     "city": "Zürich / Fluntern"
+    },
+    {
+     "id": "occ-meteoswiss-HLS",
+     "name": "MeteoSwiss Heiligenschwendi",
+     "city": "Heiligenschwendi"
+    }
+   ]
+  },
+  {
+   "slug": "malta",
+   "name": "Malta",
+   "count": 42,
+   "aliases": [
+    "Malta"
+   ],
+   "topCities": [
+    {
+     "name": "Cirkewwa",
+     "count": 5
+    },
+    {
+     "name": "Floriana",
+     "count": 5
+    },
+    {
+     "name": "Birzebbuga",
+     "count": 3
+    },
+    {
+     "name": "Gzira",
+     "count": 3
+    },
+    {
+     "name": "Mellieha",
+     "count": 3
+    },
+    {
+     "name": "Paola",
+     "count": 3
+    },
+    {
+     "name": "St Julians",
+     "count": 3
+    },
+    {
+     "name": "Xemxija",
+     "count": 3
+    },
+    {
+     "name": "Marsaxlokk",
+     "count": 2
+    },
+    {
+     "name": "Mgarr",
+     "count": 2
+    }
+   ],
+   "cityCount": 20,
+   "samples": [
+    {
+     "id": "sky-malta-birzebbugia-water-polo-pitch-and-pretty-bay-275",
+     "name": "Birzebbugia - Water Polo Pitch and Pretty Bay",
+     "city": "Birzebbuga"
+    },
+    {
+     "id": "sky-malta-st-george-s-beach-st-julian-s-malta-265",
+     "name": "St. George's Beach, St. Julian's - Malta",
+     "city": "St Julians"
+    },
+    {
+     "id": "sky-malta-irkewwa-ferry-terminal-boarding-area-439",
+     "name": "Ċirkewwa - Ferry Terminal Boarding Area",
+     "city": "Cirkewwa"
+    },
+    {
+     "id": "sky-malta-irkewwa-ferry-terminal-bus-terminus-438",
+     "name": "Ċirkewwa - Ferry Terminal, Bus Terminus",
+     "city": "Cirkewwa"
+    },
+    {
+     "id": "sky-malta-floriana-saint-publius-parish-church-190",
+     "name": "Floriana - Saint Publius Parish Church",
+     "city": "Floriana"
+    },
+    {
+     "id": "sky-malta-g-arg-ur-church-of-st-bartholomew-1010",
+     "name": "Għargħur - Church of St Bartholomew",
+     "city": "Gharghur"
+    }
+   ]
+  },
+  {
+   "slug": "malaysia",
+   "name": "Malaysia",
+   "count": 41,
+   "aliases": [
+    "MY"
+   ],
+   "topCities": [
+    {
+     "name": "Hulu langat",
+     "count": 6
+    },
+    {
+     "name": "Petaling",
+     "count": 6
+    },
+    {
+     "name": "Hulu selangor",
+     "count": 5
+    },
+    {
+     "name": "Klang",
+     "count": 4
+    },
+    {
+     "name": "Bandar Baru Salak Tinggi",
+     "count": 2
+    },
+    {
+     "name": "Dengkil",
+     "count": 2
+    },
+    {
+     "name": "Gombak",
+     "count": 2
+    },
+    {
+     "name": "Shah Alam",
+     "count": 2
+    },
+    {
+     "name": "Sungai Buloh",
+     "count": 2
+    },
+    {
+     "name": "Baling",
+     "count": 1
+    }
+   ],
+   "cityCount": 18,
+   "samples": [
+    {
+     "id": "occ-windy-1793876397",
+     "name": "Sungai Buloh › East: Guthrie Corridor Expressway",
+     "city": "Sungai Buloh"
+    },
+    {
+     "id": "occ-selangor-flood-29",
+     "name": "Kolam Takungan Banjir R.R.I.M (Sg. Damansara)",
+     "city": "Petaling"
+    },
+    {
+     "id": "occ-selangor-flood-30",
+     "name": "Kolam Takungan Banjir Saujana (Sg. Damansara)",
+     "city": "Petaling"
+    },
+    {
+     "id": "occ-selangor-flood-16",
+     "name": "TTDI Jaya Fasa-1, Shah Alam (Sg. Air Kuning)",
+     "city": "Petaling"
+    },
+    {
+     "id": "occ-windy-1719574478",
+     "name": "Port Klang › South-west: Taman Selat Damai",
+     "city": "Port Klang"
+    },
+    {
+     "id": "occ-windy-1793900128",
+     "name": "Kapar: Jalan Benteng - Sungai Kapar Besar",
+     "city": "Kapar"
+    }
+   ]
+  },
+  {
+   "slug": "brazil",
+   "name": "Brazil",
+   "count": 38,
+   "aliases": [
+    "BR",
+    "Brazil"
+   ],
+   "topCities": [
+    {
+     "name": "Balneario Camboriu",
+     "count": 4
+    },
+    {
+     "name": "Rio De Janeiro",
+     "count": 4
+    },
+    {
+     "name": "Manaus",
+     "count": 3
+    },
+    {
+     "name": "Guaruja",
+     "count": 2
+    },
+    {
+     "name": "Itatinga",
+     "count": 2
+    },
+    {
+     "name": "Porto Seguro",
+     "count": 2
+    },
+    {
+     "name": "Santa Fe Do Sul",
+     "count": 2
+    },
+    {
+     "name": "Santos",
+     "count": 2
+    },
+    {
+     "name": "Sobradinho",
+     "count": 2
+    },
+    {
+     "name": "Aparecida",
+     "count": 1
+    }
+   ],
+   "cityCount": 24,
+   "samples": [
+    {
+     "id": "sky-brasil-basilica-of-national-shrine-of-our-lady-aperecida-1254",
+     "name": "Basilica of National Shrine of Our Lady Aperecida",
+     "city": "Aparecida"
+    },
+    {
+     "id": "occ-phenocam-eucflux",
+     "name": "Eucalyptus plantation, Sao Paulo state, Brazil",
+     "city": "Itatinga"
+    },
+    {
+     "id": "sky-brasil-balne-rio-cambori-praia-do-estaleiro-4693",
+     "name": "Balneário Camboriú - Praia do Estaleiro",
+     "city": "Balneario Camboriu"
+    },
+    {
+     "id": "sky-brasil-praia-brava-itaja-balne-rio-cambori-2731",
+     "name": "Praia Brava Itajaí - Balneário Camboriú",
+     "city": "Balneario Camboriu"
+    },
+    {
+     "id": "sky-brasil-christ-the-redeemer-rio-de-janeiro-5813",
+     "name": "Christ the Redeemer - Rio de Janeiro",
+     "city": "Rio De Janeiro"
+    },
+    {
+     "id": "sky-brasil-balne-rio-cambori-central-beach-4684",
+     "name": "Balneário Camboriú - Central Beach",
+     "city": "Balneario Camboriu"
+    }
+   ]
+  },
+  {
+   "slug": "macau",
+   "name": "Macau",
+   "count": 36,
+   "aliases": [
+    "MO"
+   ],
+   "topCities": [
+    {
+     "name": "Macau",
+     "count": 36
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-dsat-82",
+     "name": "Intersection between Avenida da Praia Grande and Avenida do Infante D. Henrique ",
+     "city": "Macau"
+    },
+    {
+     "id": "occ-dsat-99",
+     "name": "Intersecção entre Rotunda da Amizade e Avenida da Ponte da Amizade (em direcção ",
+     "city": "Macau"
+    },
+    {
+     "id": "occ-dsat-157",
+     "name": "Corredores B para a passagem fronteiriça de veículos para Zhuhai da Ilha Artific",
+     "city": "Macau"
+    },
+    {
+     "id": "occ-dsat-118",
+     "name": "Cruzamento da Avenida do Almirante Lacerda com a Avenida de Horta e Costa ( em d",
+     "city": "Macau"
+    },
+    {
+     "id": "occ-dsat-156",
+     "name": "Corredores B para a passagem fronteiriça de veículos para Macau da Ilha Artifici",
+     "city": "Macau"
+    },
+    {
+     "id": "occ-dsat-81",
+     "name": "Intersection between Avenida da Praia Grande and Avenida do Infante D. Henrique ",
+     "city": "Macau"
+    }
+   ]
+  },
+  {
+   "slug": "bulgaria",
+   "name": "Bulgaria",
+   "count": 33,
+   "aliases": [
+    "BG",
+    "Bulgaria"
+   ],
+   "topCities": [
+    {
+     "name": "Dimitrovgrad",
+     "count": 4
+    },
+    {
+     "name": "Burgas",
+     "count": 3
+    },
+    {
+     "name": "Kiten",
+     "count": 3
+    },
+    {
+     "name": "Primorsko",
+     "count": 3
+    },
+    {
+     "name": "Popovo",
+     "count": 2
+    },
+    {
+     "name": "Sofia",
+     "count": 2
+    },
+    {
+     "name": "Balchik",
+     "count": 1
+    },
+    {
+     "name": "Batovo",
+     "count": 1
+    },
+    {
+     "name": "Bosna",
+     "count": 1
+    },
+    {
+     "name": "Haskovo",
+     "count": 1
+    }
+   ],
+   "cityCount": 22,
+   "samples": [
+    {
+     "id": "occ-windy-1456735680",
+     "name": "Primorsko › West: Стенопис \"Морско дъно\"",
+     "city": "Primorsko"
+    },
+    {
+     "id": "occ-camscape-bulgaria-5",
+     "name": "Burgas Beach Arena Beach Sports Webcams",
+     "city": "ж.к. Лазур"
+    },
+    {
+     "id": "occ-camscape-bulgaria-1",
+     "name": "Sunny Beach from the Golden Ina Hotel",
+     "city": "Несебър"
+    },
+    {
+     "id": "occ-openwebcamdb-haskovo-outlook-from-dimitrovgrad",
+     "name": "Haskovo Outlook from Dimitrovgrad",
+     "city": "Dimitrovgrad"
+    },
+    {
+     "id": "occ-openwebcamdb-sozopol-santa-marina-beach-resort",
+     "name": "Sozopol Santa Marina Beach Resort",
+     "city": "Sozopol"
+    },
+    {
+     "id": "occ-openwebcamdb-dimitrovgrad-primate-street-view",
+     "name": "Dimitrovgrad Primate Street View",
+     "city": "Dimitrovgrad"
+    }
+   ]
+  },
+  {
+   "slug": "latvia",
+   "name": "Latvia",
+   "count": 33,
+   "aliases": [
+    "LV"
+   ],
+   "topCities": [
+    {
+     "name": "Ādaži",
+     "count": 1
+    },
+    {
+     "name": "Ainaži",
+     "count": 1
+    },
+    {
+     "name": "Annenieki",
+     "count": 1
+    },
+    {
+     "name": "Apšupe",
+     "count": 1
+    },
+    {
+     "name": "Bērziņi",
+     "count": 1
+    },
+    {
+     "name": "Blīdene",
+     "count": 1
+    },
+    {
+     "name": "Dalbe",
+     "count": 1
+    },
+    {
+     "name": "Dunte",
+     "count": 1
+    },
+    {
+     "name": "Durbe",
+     "count": 1
+    },
+    {
+     "name": "Esplanāde",
+     "count": 1
+    }
+   ],
+   "cityCount": 33,
+   "samples": [
+    {
+     "id": "occ-openwebcamdb-daugavpils-unity-square-hub",
+     "name": "Daugavpils Unity Square Hub",
+     "city": "Esplanāde"
+    },
+    {
+     "id": "occ-tik-lv-362",
+     "name": "Ogresgals (P80)",
+     "city": "Ogresgals"
+    },
+    {
+     "id": "occ-tik-lv-247",
+     "name": "Annenieki (A9)",
+     "city": "Annenieki"
+    },
+    {
+     "id": "occ-tik-lv-276",
+     "name": "Kalnciems (A9)",
+     "city": "Kalnciems"
+    },
+    {
+     "id": "occ-tik-lv-393",
+     "name": "Mucenieki (A4)",
+     "city": "Mucenieki"
+    },
+    {
+     "id": "occ-tik-lv-238",
+     "name": "Saulkalne (A6)",
+     "city": "Saulkalne"
+    }
+   ]
+  },
+  {
+   "slug": "romania",
+   "name": "Romania",
+   "count": 29,
+   "aliases": [
+    "RO",
+    "Romania"
+   ],
+   "topCities": [
+    {
+     "name": "Brasov",
+     "count": 3
+    },
+    {
+     "name": "Bucharest",
+     "count": 3
+    },
+    {
+     "name": "Botosani",
+     "count": 2
+    },
+    {
+     "name": "Piatra Neamt",
+     "count": 2
+    },
+    {
+     "name": "Predeal",
+     "count": 2
+    },
+    {
+     "name": "Sacele",
+     "count": 2
+    },
+    {
+     "name": "Braşov",
+     "count": 1
+    },
+    {
+     "name": "Buzau",
+     "count": 1
+    },
+    {
+     "name": "Chiajna",
+     "count": 1
+    },
+    {
+     "name": "Constanta",
+     "count": 1
+    }
+   ],
+   "cityCount": 21,
+   "samples": [
+    {
+     "id": "occ-windy-1793909045",
+     "name": "Bucharest › South-east: Bucharest-University-of-Economic-Studies - Piata Romana ",
+     "city": "Bucharest"
+    },
+    {
+     "id": "occ-windy-1793902097",
+     "name": "Bucharest › South-east: \"Bărăția\" Church - Bd. I. C. Bratianu",
+     "city": "Bucharest"
+    },
+    {
+     "id": "occ-windy-1793906292",
+     "name": "Constanta › North-east: WEGO Kiteboarding - Pocket Beach",
+     "city": "Constanta"
+    },
+    {
+     "id": "occ-windy-1793889300",
+     "name": "Jurilovca › South-west: Portul Turistic din Jurilovca",
+     "city": "Jurilovca"
+    },
+    {
+     "id": "occ-camstreamer-683553496-parohia-sf-francisc-de-assisi",
+     "name": "Parohia Sf. Francisc De Assisi Târgoviște",
+     "city": "Târgoviște"
+    },
+    {
+     "id": "occ-windy-1727652470",
+     "name": "Clinceni › South: Bucharest / Clinceni",
+     "city": "Ordoreanu"
+    }
+   ]
+  },
+  {
+   "slug": "croatia",
+   "name": "Croatia",
+   "count": 29,
+   "aliases": [
+    "Croatia"
+   ],
+   "topCities": [
+    {
+     "name": "Krk",
+     "count": 4
+    },
+    {
+     "name": "Split",
+     "count": 3
+    },
+    {
+     "name": "Mali Losinj",
+     "count": 2
+    },
+    {
+     "name": "Rabac",
+     "count": 2
+    },
+    {
+     "name": "Barban",
+     "count": 1
+    },
+    {
+     "name": "Bol",
+     "count": 1
+    },
+    {
+     "name": "Brodarica",
+     "count": 1
+    },
+    {
+     "name": "Crikvenica",
+     "count": 1
+    },
+    {
+     "name": "Donji Miholjac",
+     "count": 1
+    },
+    {
+     "name": "Hvar",
+     "count": 1
+    }
+   ],
+   "cityCount": 22,
+   "samples": [
+    {
+     "id": "sky-hrvatska-marian-shrine-of-marija-bistrica-428",
+     "name": "Marian Shrine of Marija Bistrica",
+     "city": "Marija Bistrica"
+    },
+    {
+     "id": "sky-hrvatska-mail-th-castle-donji-miholjac-5284",
+     "name": "Mailáth Castle - Donji Miholjac",
+     "city": "Donji Miholjac"
+    },
+    {
+     "id": "sky-hrvatska-veli-al-beach-mali-lo-inj-2082",
+     "name": "Veli Žal Beach - Mali Lošinj",
+     "city": "Mali Losinj"
+    },
+    {
+     "id": "sky-hrvatska-panorama-of-split-croatia-4999",
+     "name": "Panorama of Split - Croatia",
+     "city": "Split"
+    },
+    {
+     "id": "sky-hrvatska-borik-beach-mali-lo-inj-2081",
+     "name": "Borik Beach - Mali Lošinj",
+     "city": "Mali Losinj"
+    },
+    {
+     "id": "sky-hrvatska-vodnjan-narodni-square-2084",
+     "name": "Vodnjan - Narodni Square",
+     "city": "Vodnjan"
+    }
+   ]
+  },
+  {
+   "slug": "greece",
+   "name": "Greece",
+   "count": 27,
+   "aliases": [
+    "GR",
+    "Greece"
+   ],
+   "topCities": [
+    {
+     "name": "Athens",
+     "count": 2
+    },
+    {
+     "name": "Rhodes",
+     "count": 2
+    },
+    {
+     "name": "Akrotiri",
+     "count": 1
+    },
+    {
+     "name": "Alexandroupoli",
+     "count": 1
+    },
+    {
+     "name": "Chora",
+     "count": 1
+    },
+    {
+     "name": "Didymoticho",
+     "count": 1
+    },
+    {
+     "name": "Iraklia",
+     "count": 1
+    },
+    {
+     "name": "Kos",
+     "count": 1
+    },
+    {
+     "name": "Limnos",
+     "count": 1
+    },
+    {
+     "name": "Municipal Unit of Marathokabos",
+     "count": 1
+    }
+   ],
+   "cityCount": 25,
+   "samples": [
+    {
+     "id": "occ-windy-1793910271",
+     "name": "Xerokampos › South-west: Alatsolimni beach - Kavaloi",
+     "city": "Xerokampos"
+    },
+    {
+     "id": "occ-windy-1793906270",
+     "name": "Municipal Unit of Marathokabos › South-west",
+     "city": "Municipal Unit of Marathokabos"
+    },
+    {
+     "id": "occ-windy-1721715646",
+     "name": "Municipality of Ierapetra › East: Vainiá",
+     "city": "Municipality of Ierapetra"
+    },
+    {
+     "id": "occ-windy-1461747219",
+     "name": "Rhodes › West: Surf and Kite Theologos",
+     "city": "Rhodes"
+    },
+    {
+     "id": "occ-windy-1793900033",
+     "name": "Municipality of Ziros › South-west",
+     "city": "Municipality of Ziros"
+    },
+    {
+     "id": "occ-openwebcamdb-oia-santorini-cliffside-village",
+     "name": "Oia Santorini Cliffside Village",
+     "city": "Oia"
+    }
+   ]
+  },
+  {
+   "slug": "philippines",
+   "name": "Philippines",
+   "count": 27,
+   "aliases": [
+    "PH",
+    "Philippines"
+   ],
+   "topCities": [
+    {
+     "name": "Davao Del Sur",
+     "count": 21
+    },
+    {
+     "name": "Davao City",
+     "count": 4
+    },
+    {
+     "name": "Bauang",
+     "count": 1
+    },
+    {
+     "name": "Bulusan",
+     "count": 1
+    }
+   ],
+   "cityCount": 4,
+   "samples": [
+    {
+     "id": "occ-webcamtaxi-philippines-davao-region-agdao-market-bbq-area-cam",
+     "name": "Dodong Barbershop Street Cam, Agdao",
+     "city": "Davao City"
+    },
+    {
+     "id": "occ-windy-1706632696",
+     "name": "Bauang › North-west: Dolores River",
+     "city": "Bauang"
+    },
+    {
+     "id": "sky-philippines-benboy-s-motor-bike-shop-agdao-4957",
+     "name": "Benboy's Motor Bike Shop - Agdao",
+     "city": "Davao Del Sur"
+    },
+    {
+     "id": "sky-philippines-davao-city-leon-garcia-street-2909",
+     "name": "Davao City - Leon Garcia Street",
+     "city": "Davao Del Sur"
+    },
+    {
+     "id": "sky-philippines-agdao-wilfredo-aquino-street-4958",
+     "name": "Agdao - Wilfredo Aquino Street",
+     "city": "Davao Del Sur"
+    },
+    {
+     "id": "sky-philippines-streets-of-davao-philippines-5079",
+     "name": "Streets of Davao - Philippines",
+     "city": "Davao Del Sur"
+    }
+   ]
+  },
+  {
+   "slug": "kyrgyzstan",
+   "name": "Kyrgyzstan",
+   "count": 22,
+   "aliases": [
+    "KG"
+   ],
+   "topCities": [
+    {
+     "name": "Bishkek",
+     "count": 3
+    },
+    {
+     "name": "Too-Ashuu Pass",
+     "count": 2
+    },
+    {
+     "name": "Ana Kızıl",
+     "count": 1
+    },
+    {
+     "name": "Batken",
+     "count": 1
+    },
+    {
+     "name": "Bekitay",
+     "count": 1
+    },
+    {
+     "name": "Bosteri",
+     "count": 1
+    },
+    {
+     "name": "Cholpon-Ata",
+     "count": 1
+    },
+    {
+     "name": "Kadamjay",
+     "count": 1
+    },
+    {
+     "name": "Kök-Jar",
+     "count": 1
+    },
+    {
+     "name": "Kyz Kuyo",
+     "count": 1
+    }
+   ],
+   "cityCount": 16,
+   "samples": [
+    {
+     "id": "occ-windy-1793905534",
+     "name": "Bishkek › North-west: Paramount Kyrgyz Republic Flag - Chuy Avenue",
+     "city": "Bishkek"
+    },
+    {
+     "id": "occ-windy-1793905544",
+     "name": "Tüp › South-west: Tyup Central Mosque - Elebaeva Street",
+     "city": "Tüp"
+    },
+    {
+     "id": "occ-windy-1793908158",
+     "name": "Alamudun District › South: Kashka Suu Ski Resort",
+     "city": ""
+    },
+    {
+     "id": "occ-windy-1793903583",
+     "name": "Batken › South: Batken Shaary - Razakov Street",
+     "city": "Batken"
+    },
+    {
+     "id": "occ-windy-1793905536",
+     "name": "Kök-Jar › North-east: Chong-Aryk - Bishkek",
+     "city": "Kök-Jar"
+    },
+    {
+     "id": "occ-windy-1793905538",
+     "name": "Bishkek: KyrgyzTelecom - Chuy Avenue",
+     "city": "Bishkek"
+    }
+   ]
+  },
+  {
+   "slug": "mexico",
+   "name": "Mexico",
+   "count": 21,
+   "aliases": [
+    "MX",
+    "Mexico"
+   ],
+   "topCities": [
+    {
+     "name": "Solidaridad",
+     "count": 4
+    },
+    {
+     "name": "Mexico City",
+     "count": 2
+    },
+    {
+     "name": "Acapulco",
+     "count": 1
+    },
+    {
+     "name": "Cabo San Lucas",
+     "count": 1
+    },
+    {
+     "name": "Cozumel",
+     "count": 1
+    },
+    {
+     "name": "La Colorada",
+     "count": 1
+    },
+    {
+     "name": "Loreto",
+     "count": 1
+    },
+    {
+     "name": "Oaxaca",
+     "count": 1
+    },
+    {
+     "name": "Pachuca",
+     "count": 1
+    },
+    {
+     "name": "Puerto Morelos",
+     "count": 1
+    }
+   ],
+   "cityCount": 17,
+   "samples": [
+    {
+     "id": "occ-phenocam-mexchurin",
+     "name": "El Churi Private Ranch, Sonoran Desert Subtropical Shrubland, La Colorada, Sonor",
+     "city": "La Colorada"
+    },
+    {
+     "id": "sky-mexico-panorama-of-playa-del-carmen-mexico-2852",
+     "name": "Panorama of Playa del Carmen - Mexico",
+     "city": "Solidaridad"
+    },
+    {
+     "id": "sky-mexico-puerto-vallarta-los-muertos-beach-6010",
+     "name": "Puerto Vallarta - Los Muertos Beach",
+     "city": "Puerto Vallarta"
+    },
+    {
+     "id": "sky-mexico-puerto-morelos-quintana-roo-5402",
+     "name": "Puerto Morelos - Quintana Roo",
+     "city": "Puerto Morelos"
+    },
+    {
+     "id": "sky-mexico-zihuatanejo-playa-la-madera-2330",
+     "name": "Zihuatanejo - Playa La Madera",
+     "city": "Zihuatanejo"
+    },
+    {
+     "id": "sky-mexico-puerto-escondido-mexico-5789",
+     "name": "Puerto Escondido - Mexico",
+     "city": "San Pedro Mixtepec"
+    }
+   ]
+  },
+  {
+   "slug": "us-virgin-islands",
+   "name": "US Virgin Islands",
+   "count": 21,
+   "aliases": [
+    "US Virgin Islands"
+   ],
+   "topCities": [
+    {
+     "name": "Christiansted",
+     "count": 4
+    },
+    {
+     "name": "Cruz Bay",
+     "count": 4
+    },
+    {
+     "name": "Saint John",
+     "count": 3
+    },
+    {
+     "name": "Frederiksted",
+     "count": 2
+    },
+    {
+     "name": "Charlotte Amalie",
+     "count": 1
+    },
+    {
+     "name": "Coral Bay",
+     "count": 1
+    },
+    {
+     "name": "East End",
+     "count": 1
+    },
+    {
+     "name": "Frank Bay",
+     "count": 1
+    },
+    {
+     "name": "Honeymoon Beach",
+     "count": 1
+    },
+    {
+     "name": "Maho Bay",
+     "count": 1
+    }
+   ],
+   "cityCount": 12,
+   "samples": [
+    {
+     "id": "sky-us-virgin-islands-panorama-of-christiansted-usvi-3435",
+     "name": "Panorama of Christiansted - USVI",
+     "city": "Christiansted"
+    },
+    {
+     "id": "sky-us-virgin-islands-floating-taco-boat-coral-bay-5033",
+     "name": "Floating Taco Boat - Coral Bay",
+     "city": "Saint John"
+    },
+    {
+     "id": "sky-us-virgin-islands-white-bay-beach-frederiksted-1961",
+     "name": "White Bay Beach - Frederiksted",
+     "city": "Frederiksted"
+    },
+    {
+     "id": "sky-us-virgin-islands-charlotte-amalie-st-thomas-5340",
+     "name": "Charlotte Amalie - St. Thomas",
+     "city": "Charlotte Amalie"
+    },
+    {
+     "id": "sky-us-virgin-islands-frank-bay-us-virgin-islands-4223",
+     "name": "Frank Bay - US Virgin Islands",
+     "city": "Frank Bay"
+    },
+    {
+     "id": "sky-us-virgin-islands-virgin-islands-national-park-1964",
+     "name": "Virgin Islands National Park",
+     "city": "Maho Bay"
+    }
+   ]
+  },
+  {
+   "slug": "peru",
+   "name": "Peru",
+   "count": 18,
+   "aliases": [
+    "Peru"
+   ],
+   "topCities": [
+    {
+     "name": "Lima",
+     "count": 5
+    },
+    {
+     "name": "Ascope Province",
+     "count": 2
+    },
+    {
+     "name": "Paracas",
+     "count": 2
+    },
+    {
+     "name": "Trujillo",
+     "count": 2
+    },
+    {
+     "name": "Cajamarca",
+     "count": 1
+    },
+    {
+     "name": "Casma",
+     "count": 1
+    },
+    {
+     "name": "Chachapoyas",
+     "count": 1
+    },
+    {
+     "name": "Chiclayo",
+     "count": 1
+    },
+    {
+     "name": "Cusco",
+     "count": 1
+    },
+    {
+     "name": "Oxapampa",
+     "count": 1
+    }
+   ],
+   "cityCount": 11,
+   "samples": [
+    {
+     "id": "sky-peru-alejandro-velasco-astete-international-airport-4293",
+     "name": "Alejandro Velasco Astete International Airport",
+     "city": "Cusco"
+    },
+    {
+     "id": "sky-peru-ascope-puerto-malabrigo-chicama-1201",
+     "name": "Ascope - Puerto Malabrigo Chicama",
+     "city": "Ascope Province"
+    },
+    {
+     "id": "sky-peru-punta-hermosa-caballeros-beach-4039",
+     "name": "Punta Hermosa - Caballeros Beach",
+     "city": "Lima"
+    },
+    {
+     "id": "sky-peru-cajamarca-laguna-san-nicol-s-4765",
+     "name": "Cajamarca - Laguna San Nicolás",
+     "city": "Cajamarca"
+    },
+    {
+     "id": "sky-peru-beach-of-huanchaco-trujillo-5008",
+     "name": "Beach of Huanchaco - Trujillo",
+     "city": "Trujillo"
+    },
+    {
+     "id": "sky-peru-balneario-de-tortugas-casma-5399",
+     "name": "Balneario de Tortugas - Casma",
+     "city": "Casma"
+    }
+   ]
+  },
+  {
+   "slug": "israel",
+   "name": "Israel",
+   "count": 17,
+   "aliases": [
+    "IL",
+    "Israel"
+   ],
+   "topCities": [
+    {
+     "name": "Haifa",
+     "count": 5
+    },
+    {
+     "name": "Jerusalem",
+     "count": 3
+    },
+    {
+     "name": "Tel Aviv",
+     "count": 3
+    },
+    {
+     "name": "Ashdod",
+     "count": 1
+    },
+    {
+     "name": "Even Yehuda",
+     "count": 1
+    },
+    {
+     "name": "Tel Aviv-Yafo",
+     "count": 1
+    },
+    {
+     "name": "Tiberias",
+     "count": 1
+    },
+    {
+     "name": "העיר העתיקה",
+     "count": 1
+    },
+    {
+     "name": "מועצה אזורית גליל עליון",
+     "count": 1
+    }
+   ],
+   "cityCount": 9,
+   "samples": [
+    {
+     "id": "occ-camstreamer-759391847-live-hula-nature-reserve-bird-cam-2",
+     "name": "LIVE Hula Nature Reserve Bird CAM 2|Israel Nature & Parks Auth.| Charter Group o",
+     "city": "מועצה אזורית גליל עליון"
+    },
+    {
+     "id": "occ-balticlivecam-tel-aviv",
+     "name": "Marina and Beach - Tel Aviv – Marina and Gordon Beach Views",
+     "city": "Tel Aviv"
+    },
+    {
+     "id": "occ-openwebcamdb-carmel-beach-haifa-coastal-panorama",
+     "name": "Carmel Beach Haifa Coastal Panorama",
+     "city": "Haifa"
+    },
+    {
+     "id": "occ-openwebcamdb-western-wall-plaza-in-jerusalem",
+     "name": "Western Wall Plaza in Jerusalem",
+     "city": "Jerusalem"
+    },
+    {
+     "id": "occ-bcil-maagan",
+     "name": "Maagan Beach (Sea of Galilee)",
+     "city": "Tiberias"
+    },
+    {
+     "id": "occ-bcil-hilton",
+     "name": "Hilton Beach (Yamit Marina)",
+     "city": "Tel Aviv"
+    }
+   ]
+  },
+  {
+   "slug": "portugal",
+   "name": "Portugal",
+   "count": 17,
+   "aliases": [
+    "PT",
+    "Portugal"
+   ],
+   "topCities": [
+    {
+     "name": "Funchal",
+     "count": 3
+    },
+    {
+     "name": "Spain",
+     "count": 3
+    },
+    {
+     "name": "Almada",
+     "count": 2
+    },
+    {
+     "name": "Lisbon",
+     "count": 2
+    },
+    {
+     "name": "Aeroporto da Madeira",
+     "count": 1
+    },
+    {
+     "name": "Aeroporto Humberto Delgado",
+     "count": 1
+    },
+    {
+     "name": "Faro",
+     "count": 1
+    },
+    {
+     "name": "Fatima",
+     "count": 1
+    },
+    {
+     "name": "Portimao",
+     "count": 1
+    },
+    {
+     "name": "Porto Moniz",
+     "count": 1
+    }
+   ],
+   "cityCount": 11,
+   "samples": [
+    {
+     "id": "occ-phenocam-sabinar",
+     "name": "Juniper woodlands in Doñana, Spain stabilized sand dunes",
+     "city": "Spain"
+    },
+    {
+     "id": "occ-phenocam-monteblanco",
+     "name": "Casa Control Reserva Biológica de Doñana matorral",
+     "city": "Spain"
+    },
+    {
+     "id": "sky-portugal-costa-da-caparica-praia-de-santo-ant-nio-2030",
+     "name": "Costa da Caparica - Praia de Santo António",
+     "city": "Almada"
+    },
+    {
+     "id": "sky-portugal-costa-da-caparica-fonte-da-telha-beach-2029",
+     "name": "Costa da Caparica - Fonte da Telha Beach",
+     "city": "Almada"
+    },
+    {
+     "id": "sky-portugal-sanctuary-of-our-lady-of-f-tima-f-tima-2038",
+     "name": "Sanctuary of Our Lady of Fátima - Fátima",
+     "city": "Fatima"
+    },
+    {
+     "id": "occ-phenocam-juncabalejo",
+     "name": "Middle of Doñana marshes, Spain",
+     "city": "Spain"
+    }
+   ]
+  },
+  {
+   "slug": "china",
+   "name": "China",
+   "count": 16,
+   "aliases": [
+    "CN",
+    "China"
+   ],
+   "topCities": [
+    {
+     "name": "Hong Kong",
+     "count": 4
+    },
+    {
+     "name": "Qingdao",
+     "count": 1
+    },
+    {
+     "name": "Sai Kung",
+     "count": 1
+    },
+    {
+     "name": "Sanzao",
+     "count": 1
+    },
+    {
+     "name": "Shanghai",
+     "count": 1
+    },
+    {
+     "name": "Taipa",
+     "count": 1
+    },
+    {
+     "name": "Tsuen Wan",
+     "count": 1
+    },
+    {
+     "name": "Tung Chung",
+     "count": 1
+    },
+    {
+     "name": "后白镇",
+     "count": 1
+    },
+    {
+     "name": "李庄乡",
+     "count": 1
+    }
+   ],
+   "cityCount": 13,
+   "samples": [
+    {
+     "id": "occ-phenocam-jurong",
+     "name": "Jurong Observation Station (JROS), farmland, summer rice-winter wheat rotation, ",
+     "city": "后白镇"
+    },
+    {
+     "id": "occ-s511-PA-4358",
+     "name": "Business US 30 WB at US 30 BUSINESS (LANCASTER AVE) @ US 322/MANOR AVE",
+     "city": "铁列克乡 تېرەك يېزىسى / تەرەك ايىلى"
+    },
+    {
+     "id": "occ-windy-1747896021",
+     "name": "Sai Kung › South-east: Sai Kung Marine Police Base",
+     "city": "Sai Kung"
+    },
+    {
+     "id": "occ-windy-1271429097",
+     "name": "Po Toi Islands: Waglan Island (North-northwest)",
+     "city": "蒲台群島 Po Toi Islands"
+    },
+    {
+     "id": "occ-phenocam-shangqiu",
+     "name": "Main Tower, maize and wheat, Henan, China",
+     "city": "李庄乡"
+    },
+    {
+     "id": "occ-windy-1179240742",
+     "name": "Tung Chung: Hong Kong - Peng Chau",
+     "city": "Tung Chung"
+    }
+   ]
+  },
+  {
+   "slug": "maldives",
+   "name": "Maldives",
+   "count": 16,
+   "aliases": [
+    "MV",
+    "Maldives"
+   ],
+   "topCities": [
+    {
+     "name": "Kooddoo",
+     "count": 2
+    },
+    {
+     "name": "Kurendhoo",
+     "count": 2
+    },
+    {
+     "name": "Male",
+     "count": 2
+    },
+    {
+     "name": "Naifaru",
+     "count": 2
+    },
+    {
+     "name": "Amilla Fushi",
+     "count": 1
+    },
+    {
+     "name": "Dhonakulhi Island",
+     "count": 1
+    },
+    {
+     "name": "Eh Mafushi",
+     "count": 1
+    },
+    {
+     "name": "Funamadua",
+     "count": 1
+    },
+    {
+     "name": "Hanimaadhoo",
+     "count": 1
+    },
+    {
+     "name": "Kudafolhudhoo",
+     "count": 1
+    }
+   ],
+   "cityCount": 12,
+   "samples": [
+    {
+     "id": "sky-maldives-sunset-beach-veligandu-maldives-resort-island-5535",
+     "name": "Sunset Beach - Veligandu Maldives Resort Island",
+     "city": "Male"
+    },
+    {
+     "id": "occ-windy-1229546637",
+     "name": "Naifaru: Kuredu Island Resort & Spa",
+     "city": "Naifaru"
+    },
+    {
+     "id": "sky-maldives-mercure-maldives-kooddoo-lagoon-5995",
+     "name": "Mercure Maldives Kooddoo - Lagoon",
+     "city": "Kooddoo"
+    },
+    {
+     "id": "sky-maldives-veligandu-maldives-resort-island-1066",
+     "name": "Veligandu Maldives Resort Island",
+     "city": "Male"
+    },
+    {
+     "id": "sky-maldives-maldives-meeru-maldives-beach-814",
+     "name": "Maldives - Meeru Maldives Beach",
+     "city": "Meerufenfushi"
+    },
+    {
+     "id": "sky-maldives-maldives-nika-island-resort-4169",
+     "name": "Maldives - Nika Island Resort",
+     "city": "Kudafolhudhoo"
+    }
+   ]
+  },
+  {
+   "slug": "chile",
+   "name": "Chile",
+   "count": 15,
+   "aliases": [
+    "CL",
+    "Chile"
+   ],
+   "topCities": [
+    {
+     "name": "Algarrobo",
+     "count": 3
+    },
+    {
+     "name": "San Antonio",
+     "count": 3
+    },
+    {
+     "name": "Chile",
+     "count": 2
+    },
+    {
+     "name": "Concepcion",
+     "count": 1
+    },
+    {
+     "name": "Curepto",
+     "count": 1
+    },
+    {
+     "name": "La Unión",
+     "count": 1
+    },
+    {
+     "name": "Punta Arenas",
+     "count": 1
+    },
+    {
+     "name": "San Pedro De Atacama",
+     "count": 1
+    },
+    {
+     "name": "Santiago",
+     "count": 1
+    },
+    {
+     "name": "Valparaiso",
+     "count": 1
+    }
+   ],
+   "cityCount": 10,
+   "samples": [
+    {
+     "id": "sky-chile-atacama-large-millimeter-array-chile-6025",
+     "name": "Atacama Large Millimeter Array - Chile",
+     "city": "San Pedro De Atacama"
+    },
+    {
+     "id": "occ-phenocam-sendadarwinpeatland",
+     "name": "Senda Darwin Peatland, Chiloé, Chile",
+     "city": "Chile"
+    },
+    {
+     "id": "occ-phenocam-alercecosteroforest",
+     "name": "Alerce Costero National Park Forest",
+     "city": "La Unión"
+    },
+    {
+     "id": "sky-chile-san-antonio-avenida-barros-lucos-5258",
+     "name": "San Antonio - Avenida Barros Lucos",
+     "city": "San Antonio"
+    },
+    {
+     "id": "occ-phenocam-sendadarwinforest",
+     "name": "Senda Darwin Forest, Chiloé, Chile",
+     "city": "Chile"
+    },
+    {
+     "id": "sky-chile-san-antonio-avenida-llolleo-5248",
+     "name": "San Antonio - Avenida Llolleo",
+     "city": "San Antonio"
+    }
+   ]
+  },
+  {
+   "slug": "kazakhstan",
+   "name": "Kazakhstan",
+   "count": 14,
+   "aliases": [
+    "KZ"
+   ],
+   "topCities": [
+    {
+     "name": "Aktau",
+     "count": 6
+    },
+    {
+     "name": "Almaty",
+     "count": 2
+    },
+    {
+     "name": "Besqaynar",
+     "count": 1
+    },
+    {
+     "name": "Karaganda",
+     "count": 1
+    },
+    {
+     "name": "Qotırbulaq",
+     "count": 1
+    },
+    {
+     "name": "Semipalatinsk",
+     "count": 1
+    },
+    {
+     "name": "Көктем",
+     "count": 1
+    },
+    {
+     "name": "Тарханка ауылдық округі",
+     "count": 1
+    }
+   ],
+   "cityCount": 8,
+   "samples": [
+    {
+     "id": "occ-windy-1793905435",
+     "name": "Almaty › East: Almaty Television Tower - Kok Tobe",
+     "city": "Almaty"
+    },
+    {
+     "id": "occ-windy-1793901614",
+     "name": "Semipalatinsk › North-east: Central Plaza - Semey",
+     "city": "Semipalatinsk"
+    },
+    {
+     "id": "occ-windy-1477633924",
+     "name": "Almaty: Shymbulak Ski Resort Hotel - Shymbulak",
+     "city": "Almaty"
+    },
+    {
+     "id": "occ-camscape-kazakhstan-1",
+     "name": "Trans-Ili Alatau Webcam Views from Almaty",
+     "city": "Көктем"
+    },
+    {
+     "id": "occ-windy-1793908564",
+     "name": "Besqaynar: «Ugusha» Children's Center",
+     "city": "Besqaynar"
+    },
+    {
+     "id": "occ-windy-1553447463",
+     "name": "Altai Alps Ski Resort, Kazakhstan",
+     "city": "Тарханка ауылдық округі"
+    }
+   ]
+  },
+  {
+   "slug": "argentina",
+   "name": "Argentina",
+   "count": 12,
+   "aliases": [
+    "AR",
+    "Argentina"
+   ],
+   "topCities": [
+    {
+     "name": "Cipolletti",
+     "count": 2
+    },
+    {
+     "name": "San Rafael",
+     "count": 2
+    },
+    {
+     "name": "Ushuaia",
+     "count": 2
+    },
+    {
+     "name": "Buenos Aires",
+     "count": 1
+    },
+    {
+     "name": "Claromeco",
+     "count": 1
+    },
+    {
+     "name": "Monte Hermoso",
+     "count": 1
+    },
+    {
+     "name": "Necochea",
+     "count": 1
+    },
+    {
+     "name": "Puerto Williams",
+     "count": 1
+    },
+    {
+     "name": "Tolhuin",
+     "count": 1
+    }
+   ],
+   "cityCount": 9,
+   "samples": [
+    {
+     "id": "occ-phenocam-omorapeatland",
+     "name": "2 meters high tripod on an Eddy Covariance System. Located in a peatland in the ",
+     "city": "Puerto Williams"
+    },
+    {
+     "id": "sky-argentina-panorama-of-buenos-aires-argentina-5458",
+     "name": "Panorama of Buenos Aires - Argentina",
+     "city": "Buenos Aires"
+    },
+    {
+     "id": "sky-argentina-panorama-of-cipolletti-argentina-4674",
+     "name": "Panorama of Cipolletti - Argentina",
+     "city": "Cipolletti"
+    },
+    {
+     "id": "sky-argentina-islas-malvinas-square-ushuaia-2004",
+     "name": "Islas Malvinas Square - Ushuaia",
+     "city": "Ushuaia"
+    },
+    {
+     "id": "sky-argentina-valle-grande-atuel-river-5166",
+     "name": "Valle Grande - Atuel River",
+     "city": "San Rafael"
+    },
+    {
+     "id": "sky-argentina-tolhuin-tierra-del-fuego-5177",
+     "name": "Tolhuin - Tierra del Fuego",
+     "city": "Tolhuin"
+    }
+   ]
+  },
+  {
+   "slug": "south-africa",
+   "name": "South Africa",
+   "count": 12,
+   "aliases": [
+    "South Africa"
+   ],
+   "topCities": [
+    {
+     "name": "Kwadukuza",
+     "count": 4
+    },
+    {
+     "name": "Balule Nature Reserve",
+     "count": 1
+    },
+    {
+     "name": "Cape Town",
+     "count": 1
+    },
+    {
+     "name": "Knysna",
+     "count": 1
+    },
+    {
+     "name": "Kruger National Park",
+     "count": 1
+    },
+    {
+     "name": "Manguzi",
+     "count": 1
+    },
+    {
+     "name": "Pretoria",
+     "count": 1
+    },
+    {
+     "name": "Springs",
+     "count": 1
+    },
+    {
+     "name": "Stellenbosch",
+     "count": 1
+    }
+   ],
+   "cityCount": 9,
+   "samples": [
+    {
+     "id": "sky-south-africa-weather-in-stellenbosch-south-africa-5997",
+     "name": "Weather in Stellenbosch - South-Africa",
+     "city": "Stellenbosch"
+    },
+    {
+     "id": "sky-south-africa-ballito-willard-beach-1112",
+     "name": "Ballito - Willard Beach",
+     "city": "Kwadukuza"
+    },
+    {
+     "id": "sky-south-africa-ballito-south-africa-666",
+     "name": "Ballito - South Africa",
+     "city": "Kwadukuza"
+    },
+    {
+     "id": "sky-south-africa-cape-town-zeekoevlei-4040",
+     "name": "Cape Town - Zeekoevlei",
+     "city": "Cape Town"
+    },
+    {
+     "id": "sky-south-africa-pretoria-bird-feeder-1984",
+     "name": "Pretoria - Bird Feeder",
+     "city": "Pretoria"
+    },
+    {
+     "id": "sky-south-africa-springs-south-africa-5476",
+     "name": "Springs - South Africa",
+     "city": "Springs"
+    }
+   ]
+  },
+  {
+   "slug": "singapore",
+   "name": "Singapore",
+   "count": 9,
+   "aliases": [
+    "SG",
+    "Singapore"
+   ],
+   "topCities": [
+    {
+     "name": "Singapore",
+     "count": 9
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-singapore-4712",
+     "name": "Singapore Traffic Camera 4712",
+     "city": "Singapore"
+    },
+    {
+     "id": "sin-2701",
+     "name": "Camera 2701",
+     "city": "Singapore"
+    },
+    {
+     "id": "sin-2702",
+     "name": "Camera 2702",
+     "city": "Singapore"
+    },
+    {
+     "id": "sin-2704",
+     "name": "Camera 2704",
+     "city": "Singapore"
+    },
+    {
+     "id": "sin-4703",
+     "name": "Camera 4703",
+     "city": "Singapore"
+    },
+    {
+     "id": "sin-4712",
+     "name": "Camera 4712",
+     "city": "Singapore"
+    }
+   ]
+  },
+  {
+   "slug": "costa-rica",
+   "name": "Costa Rica",
+   "count": 8,
+   "aliases": [
+    "CR",
+    "Costa Rica"
+   ],
+   "topCities": [
+    {
+     "name": "Moravia",
+     "count": 5
+    },
+    {
+     "name": "Costa Rica",
+     "count": 1
+    },
+    {
+     "name": "La Cruz",
+     "count": 1
+    },
+    {
+     "name": "Puntarenas",
+     "count": 1
+    }
+   ],
+   "cityCount": 4,
+   "samples": [
+    {
+     "id": "occ-phenocam-laselva2",
+     "name": "Branch Chamber Tower, La Selva Biological Station, Costa Rica",
+     "city": "Costa Rica"
+    },
+    {
+     "id": "sky-costa-rica-panorama-of-braulio-carrillo-costa-rica-5608",
+     "name": "Panorama of Braulio Carrillo - Costa Rica",
+     "city": "Moravia"
+    },
+    {
+     "id": "sky-costa-rica-panorama-of-san-jos-costa-rica-5609",
+     "name": "Panorama of San José - Costa Rica",
+     "city": "Moravia"
+    },
+    {
+     "id": "sky-costa-rica-bahia-salinas-nandel-beach-4532",
+     "name": "Bahia Salinas - Nandel Beach",
+     "city": "La Cruz"
+    },
+    {
+     "id": "sky-costa-rica-san-vicente-costa-rica-5606",
+     "name": "San Vicente - Costa Rica",
+     "city": "Moravia"
+    },
+    {
+     "id": "sky-costa-rica-panorama-of-san-jos-5894",
+     "name": "Panorama of San José",
+     "city": "Moravia"
+    }
+   ]
+  },
+  {
+   "slug": "ecuador",
+   "name": "Ecuador",
+   "count": 8,
+   "aliases": [
+    "Ecuador"
+   ],
+   "topCities": [
+    {
+     "name": "Santa Elena",
+     "count": 4
+    },
+    {
+     "name": "Puerto Lopez",
+     "count": 2
+    },
+    {
+     "name": "Playas",
+     "count": 1
+    },
+    {
+     "name": "Salinas",
+     "count": 1
+    }
+   ],
+   "cityCount": 4,
+   "samples": [
+    {
+     "id": "sky-ecuador-playa-de-ballenita-capaes-3724",
+     "name": "Playa de Ballenita - Capaes",
+     "city": "Santa Elena"
+    },
+    {
+     "id": "sky-ecuador-ecuador-ayangue-beach-748",
+     "name": "Ecuador - Ayangue Beach",
+     "city": "Santa Elena"
+    },
+    {
+     "id": "sky-ecuador-monta-ita-santa-elena-2205",
+     "name": "Montañita - Santa Elena",
+     "city": "Santa Elena"
+    },
+    {
+     "id": "sky-ecuador-salinas-santa-elena-5700",
+     "name": "Salinas - Santa Elena",
+     "city": "Salinas"
+    },
+    {
+     "id": "sky-ecuador-beach-of-monta-ita-5706",
+     "name": "Beach of Montañita",
+     "city": "Santa Elena"
+    },
+    {
+     "id": "sky-ecuador-las-tunas-manabi-5850",
+     "name": "Las Tunas - Manabi",
+     "city": "Puerto Lopez"
+    }
+   ]
+  },
+  {
+   "slug": "slovenia",
+   "name": "Slovenia",
+   "count": 7,
+   "aliases": [
+    "SI",
+    "Slovenia"
+   ],
+   "topCities": [
+    {
+     "name": "Kranjska Gora",
+     "count": 5
+    },
+    {
+     "name": "Piran",
+     "count": 1
+    },
+    {
+     "name": "Trieste",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "occ-phenocam-slovenia2karstsecforest",
+     "name": "Secondary woodland developed on abandoned grassland (>40 years out of use), SW S",
+     "city": "Trieste"
+    },
+    {
+     "id": "sky-slovenija-planica-ski-slopes-slovenia-3677",
+     "name": "Planica Ski Slopes - Slovenia",
+     "city": "Kranjska Gora"
+    },
+    {
+     "id": "sky-slovenija-kranjaska-gora-jasna-lake-1987",
+     "name": "Kranjaska Gora - Jasna Lake",
+     "city": "Kranjska Gora"
+    },
+    {
+     "id": "sky-slovenija-kranjska-gora-town-center-4311",
+     "name": "Kranjska Gora - Town Center",
+     "city": "Kranjska Gora"
+    },
+    {
+     "id": "sky-slovenija-kranjska-gora-ski-slopes-117",
+     "name": "Kranjska Gora - Ski slopes",
+     "city": "Kranjska Gora"
+    },
+    {
+     "id": "sky-slovenija-tartini-square-piran-35",
+     "name": "Tartini Square - Piran",
+     "city": "Piran"
+    }
+   ]
+  },
+  {
+   "slug": "georgia",
+   "name": "Georgia",
+   "count": 7,
+   "aliases": [
+    "GE"
+   ],
+   "topCities": [
+    {
+     "name": "Adler",
+     "count": 1
+    },
+    {
+     "name": "Gali",
+     "count": 1
+    },
+    {
+     "name": "Sokhumi",
+     "count": 1
+    },
+    {
+     "name": "Sukhumi",
+     "count": 1
+    },
+    {
+     "name": "Tbilisi",
+     "count": 1
+    },
+    {
+     "name": "აეროპორტის",
+     "count": 1
+    },
+    {
+     "name": "სეთურნი",
+     "count": 1
+    }
+   ],
+   "cityCount": 7,
+   "samples": [
+    {
+     "id": "occ-camstreamer-907724963-vitamin-cafe-gudauri-livestream",
+     "name": "Vitamin Cafe Gudauri (livestream)",
+     "city": "სეთურნი"
+    },
+    {
+     "id": "occ-openwebcamdb-freedom-square-sukhum-abkhazia",
+     "name": "Freedom Square Sukhum Abkhazia",
+     "city": "Sukhumi"
+    },
+    {
+     "id": "occ-windy-1793900327",
+     "name": "აეროპორტის › North-west",
+     "city": "აეროპორტის"
+    },
+    {
+     "id": "occ-sochi-camera-441",
+     "name": "Gal Culture House",
+     "city": "Adler"
+    },
+    {
+     "id": "occ-windy-1793886446",
+     "name": "Gali › North-east",
+     "city": "Gali"
+    }
+   ]
+  },
+  {
+   "slug": "ukraine",
+   "name": "Ukraine",
+   "count": 7,
+   "aliases": [
+    "UA"
+   ],
+   "topCities": [
+    {
+     "name": "Sudak",
+     "count": 3
+    },
+    {
+     "name": "Kyiv",
+     "count": 1
+    },
+    {
+     "name": "Novomikhaylovsky",
+     "count": 1
+    },
+    {
+     "name": "Zaporozhye",
+     "count": 1
+    }
+   ],
+   "cityCount": 4,
+   "samples": [
+    {
+     "id": "occ-openwebcamdb-sudak-lenina-yabloneva-intersection",
+     "name": "Sudak Lenina-Yabloneva Intersection",
+     "city": "Sudak"
+    },
+    {
+     "id": "occ-openwebcamdb-sudak-rocket-beach-infrastructure",
+     "name": "Sudak Rocket Beach Infrastructure",
+     "city": "Sudak"
+    },
+    {
+     "id": "occ-openwebcamdb-maidan-nezalezhnosti-square-kyiv",
+     "name": "Maidan Nezalezhnosti Square, Kyiv",
+     "city": "Kyiv"
+    },
+    {
+     "id": "occ-openwebcamdb-black-sea-coast-at-scarlet-sails",
+     "name": "Black Sea Coast at Scarlet Sails",
+     "city": "Novomikhaylovsky"
+    },
+    {
+     "id": "occ-openwebcamdb-rocket-beach-sudak-bay-shores",
+     "name": "Rocket Beach Sudak Bay Shores",
+     "city": ""
+    },
+    {
+     "id": "occ-openwebcamdb-sudak-gorsad-bus-stop-bustle",
+     "name": "Sudak Gorsad Bus Stop Bustle",
+     "city": "Sudak"
+    }
+   ]
+  },
+  {
+   "slug": "hungary",
+   "name": "Hungary",
+   "count": 6,
+   "aliases": [
+    "Hungary"
+   ],
+   "topCities": [
+    {
+     "name": "Aszod",
+     "count": 1
+    },
+    {
+     "name": "Eger",
+     "count": 1
+    },
+    {
+     "name": "Orbottyan",
+     "count": 1
+    },
+    {
+     "name": "Papa",
+     "count": 1
+    },
+    {
+     "name": "Pecs",
+     "count": 1
+    },
+    {
+     "name": "Tihany",
+     "count": 1
+    }
+   ],
+   "cityCount": 6,
+   "samples": [
+    {
+     "id": "sky-hungary-hungarian-storks-rbotty-n-6090",
+     "name": "Hungarian Storks - Őrbottyán",
+     "city": "Orbottyan"
+    },
+    {
+     "id": "sky-hungary-storks-of-asz-d-hungary-4860",
+     "name": "Storks of Aszód - Hungary",
+     "city": "Aszod"
+    },
+    {
+     "id": "sky-hungary-tihany-lake-balaton-688",
+     "name": "Tihany - Lake Balaton",
+     "city": "Tihany"
+    },
+    {
+     "id": "sky-hungary-eger-dob-square-2142",
+     "name": "Eger - Dobó Square",
+     "city": "Eger"
+    },
+    {
+     "id": "sky-hungary-hungary-p-pa-1135",
+     "name": "Hungary - Pápa",
+     "city": "Papa"
+    },
+    {
+     "id": "sky-hungary-p-cs-hungary-4761",
+     "name": "Pécs - Hungary",
+     "city": "Pecs"
+    }
+   ]
+  },
+  {
+   "slug": "moldova",
+   "name": "Moldova",
+   "count": 6,
+   "aliases": [
+    "MD"
+   ],
+   "topCities": [
+    {
+     "name": "Bălăbanu",
+     "count": 1
+    },
+    {
+     "name": "Bălți",
+     "count": 1
+    },
+    {
+     "name": "Cantemir",
+     "count": 1
+    },
+    {
+     "name": "Chișinău",
+     "count": 1
+    },
+    {
+     "name": "Feteasca",
+     "count": 1
+    },
+    {
+     "name": "Gura Camencii",
+     "count": 1
+    }
+   ],
+   "cityCount": 6,
+   "samples": [
+    {
+     "id": "occ-windy-1760130397",
+     "name": "Feteasca › North-east: Vama Leușeni",
+     "city": "Feteasca"
+    },
+    {
+     "id": "occ-moldova-roads-M2 km 117-Gura Camencii",
+     "name": "Gura Camencii (M2 km 117)",
+     "city": "Gura Camencii"
+    },
+    {
+     "id": "occ-moldova-roads-M1 km 93.8-Chisinau",
+     "name": "Chișinău (M1 km 93.8)",
+     "city": "Chișinău"
+    },
+    {
+     "id": "occ-moldova-roads-M3 km 137-Balabanu",
+     "name": "Bălăbanu (M3 km 137)",
+     "city": "Bălăbanu"
+    },
+    {
+     "id": "occ-moldova-roads-R34 km 82-Cantemir",
+     "name": "Cantemir (R34 km 82)",
+     "city": "Cantemir"
+    },
+    {
+     "id": "occ-moldova-roads-R14 km 11-Balti",
+     "name": "Bălți (R14 km 11)",
+     "city": "Bălți"
+    }
+   ]
+  },
+  {
+   "slug": "cyprus",
+   "name": "Cyprus",
+   "count": 5,
+   "aliases": [
+    "CY",
+    "Cyprus"
+   ],
+   "topCities": [
+    {
+     "name": "Larnaca",
+     "count": 2
+    },
+    {
+     "name": "Aydınköy",
+     "count": 1
+    },
+    {
+     "name": "Pissouri",
+     "count": 1
+    },
+    {
+     "name": "Κοινότητα Ακρούντας",
+     "count": 1
+    }
+   ],
+   "cityCount": 4,
+   "samples": [
+    {
+     "id": "occ-windy-1612599638",
+     "name": "Fasoula, Limassol District",
+     "city": "Κοινότητα Ακρούντας"
+    },
+    {
+     "id": "sky-cyprus-larnaca-seafront-cyprus-4303",
+     "name": "Larnaca seafront - Cyprus",
+     "city": "Larnaca"
+    },
+    {
+     "id": "occ-ipcamlive-prastio",
+     "name": "Prastio Panoramic Webcam",
+     "city": "Aydınköy"
+    },
+    {
+     "id": "sky-cyprus-larnaca-cyprus-4306",
+     "name": "Larnaca - Cyprus",
+     "city": "Larnaca"
+    },
+    {
+     "id": "occ-windy-1736266979",
+     "name": "Pissouri",
+     "city": "Pissouri"
+    }
+   ]
+  },
+  {
+   "slug": "dominican-republic",
+   "name": "Dominican Republic",
+   "count": 5,
+   "aliases": [
+    "Dominican Republic"
+   ],
+   "topCities": [
+    {
+     "name": "Cabarete",
+     "count": 3
+    },
+    {
+     "name": "Guayacanes",
+     "count": 1
+    },
+    {
+     "name": "Higuey",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "sky-dominican-republic-playa-juan-dolio-dominican-republic-5942",
+     "name": "Playa Juan Dolio - Dominican Republic",
+     "city": "Guayacanes"
+    },
+    {
+     "id": "sky-dominican-republic-underwater-cam-dominican-republic-5014",
+     "name": "Underwater Cam - Dominican Republic",
+     "city": "Higuey"
+    },
+    {
+     "id": "sky-dominican-republic-dominican-republic-cabarete-37",
+     "name": "Dominican Republic - Cabarete",
+     "city": "Cabarete"
+    },
+    {
+     "id": "sky-dominican-republic-bozo-beach-cabarete-2208",
+     "name": "Bozo Beach - Cabarete",
+     "city": "Cabarete"
+    },
+    {
+     "id": "sky-dominican-republic-beach-of-cabarete-5865",
+     "name": "Beach of Cabarete",
+     "city": "Cabarete"
+    }
+   ]
+  },
+  {
+   "slug": "puerto-rico",
+   "name": "Puerto Rico",
+   "count": 5,
+   "aliases": [
+    "PR",
+    "Puerto Rico"
+   ],
+   "topCities": [
+    {
+     "name": "Minillas",
+     "count": 1
+    },
+    {
+     "name": "Puerto Rico - mid-tower",
+     "count": 1
+    },
+    {
+     "name": "Puerto Rico - tower top",
+     "count": 1
+    },
+    {
+     "name": "San Juan",
+     "count": 1
+    },
+    {
+     "name": "Sector Lombrices",
+     "count": 1
+    }
+   ],
+   "cityCount": 5,
+   "samples": [
+    {
+     "id": "occ-phenocam-NEON.D04.CUPE.DP1.20002",
+     "name": "NEON Site - D04 (Atlantic Neotropical) Rio Cupeyes, Puerto Rico - aquatic/stream",
+     "city": "Minillas"
+    },
+    {
+     "id": "occ-phenocam-NEON.D04.LAJA.DP1.00033",
+     "name": "NEON Site - D04 (Atlantic Neotropical) Lajas Experimental Station, Puerto Rico -",
+     "city": "Puerto Rico - tower top"
+    },
+    {
+     "id": "occ-phenocam-NEON.D04.GUAN.DP1.00042",
+     "name": "NEON Site - D04 (Atlantic Neotropical) Guanica Forest, Puerto Rico - mid-tower",
+     "city": "Puerto Rico - mid-tower"
+    },
+    {
+     "id": "occ-phenocam-NEON.D04.GUIL.DP1.20002",
+     "name": "NEON Site - D04 (Atlantic Neotropical) Rio Guilarte, Puerto Rico -",
+     "city": "Sector Lombrices"
+    },
+    {
+     "id": "sky-puerto-rico-panorama-of-puerto-rico-san-juan-5786",
+     "name": "Panorama of Puerto Rico - San Juan",
+     "city": "San Juan"
+    }
+   ]
+  },
+  {
+   "slug": "kenya",
+   "name": "Kenya",
+   "count": 5,
+   "aliases": [
+    "KE",
+    "Kenya"
+   ],
+   "topCities": [
+    {
+     "name": "Diani Beach",
+     "count": 1
+    },
+    {
+     "name": "Illeret ward",
+     "count": 1
+    },
+    {
+     "name": "Nakuru",
+     "count": 1
+    },
+    {
+     "name": "Voi",
+     "count": 1
+    },
+    {
+     "name": "Watamu",
+     "count": 1
+    }
+   ],
+   "cityCount": 5,
+   "samples": [
+    {
+     "id": "sky-kenya-kenya-voi-wildlife-lodge-tsavo-east-national-park-992",
+     "name": "Kenya-Voi Wildlife Lodge Tsavo East National Park",
+     "city": "Voi"
+    },
+    {
+     "id": "occ-phenocam-ileret",
+     "name": "Turkana Basin Institute (Ileret)",
+     "city": "Illeret ward"
+    },
+    {
+     "id": "sky-kenya-watamu-beach-kenya-572",
+     "name": "Watamu Beach - Kenya",
+     "city": "Watamu"
+    },
+    {
+     "id": "sky-kenya-diani-beach-kenya-4309",
+     "name": "Diani Beach - Kenya",
+     "city": "Diani Beach"
+    },
+    {
+     "id": "sky-kenya-masai-mara-kenya-4905",
+     "name": "Masai Mara - Kenya",
+     "city": "Nakuru"
+    }
+   ]
+  },
+  {
+   "slug": "tanzania",
+   "name": "Tanzania",
+   "count": 5,
+   "aliases": [
+    "Tanzania"
+   ],
+   "topCities": [
+    {
+     "name": "Kiwengwa",
+     "count": 2
+    },
+    {
+     "name": "Jambiani",
+     "count": 1
+    },
+    {
+     "name": "Michamvi",
+     "count": 1
+    },
+    {
+     "name": "Nungwi",
+     "count": 1
+    }
+   ],
+   "cityCount": 4,
+   "samples": [
+    {
+     "id": "sky-zanzibar-zanzibar-kiwengwa-1188",
+     "name": "Zanzibar - Kiwengwa",
+     "city": "Kiwengwa"
+    },
+    {
+     "id": "sky-zanzibar-jambiani-beach-3385",
+     "name": "Jambiani Beach",
+     "city": "Jambiani"
+    },
+    {
+     "id": "sky-zanzibar-dongwe-beach-5098",
+     "name": "Dongwe Beach",
+     "city": "Michamvi"
+    },
+    {
+     "id": "sky-zanzibar-nungwi-beach-2604",
+     "name": "Nungwi Beach",
+     "city": "Nungwi"
+    },
+    {
+     "id": "sky-zanzibar-kiwengwa-1622",
+     "name": "Kiwengwa",
+     "city": "Kiwengwa"
+    }
+   ]
+  },
+  {
+   "slug": "nepal",
+   "name": "Nepal",
+   "count": 5,
+   "aliases": [
+    "NP"
+   ],
+   "topCities": [
+    {
+     "name": "Namche Bazaar",
+     "count": 1
+    },
+    {
+     "name": "Phortse",
+     "count": 1
+    },
+    {
+     "name": "Purang",
+     "count": 1
+    },
+    {
+     "name": "Thame",
+     "count": 1
+    },
+    {
+     "name": "नाम्चे बजार",
+     "count": 1
+    }
+   ],
+   "cityCount": 5,
+   "samples": [
+    {
+     "id": "occ-camstreamer-285583297-live-streaming-from-tengboche",
+     "name": "LIVE STREAMING FROM TENGBOCHE - KHUMJUNG - NEPAL - 3867m",
+     "city": "Phortse"
+    },
+    {
+     "id": "occ-camscape-nepal-5",
+     "name": "Mountainous Views from Thame Village in the Himalayas",
+     "city": "Thame"
+    },
+    {
+     "id": "occ-camstreamer-442299289-webcam-nepal-live-streaming",
+     "name": "WEBCAM NEPAL - LIVE STREAMING - MUKTINATH, NEPAL.",
+     "city": "Purang"
+    },
+    {
+     "id": "occ-panomax-4623",
+     "name": "Hotel Everest View, Namche Bazaar",
+     "city": "Namche Bazaar"
+    },
+    {
+     "id": "occ-camscape-nepal-1",
+     "name": "Namche Bazaar Webcam",
+     "city": "नाम्चे बजार"
+    }
+   ]
+  },
+  {
+   "slug": "india",
+   "name": "India",
+   "count": 4,
+   "aliases": [
+    "IN",
+    "India"
+   ],
+   "topCities": [
+    {
+     "name": "Hyderabad",
+     "count": 1
+    },
+    {
+     "name": "Mount Abu",
+     "count": 1
+    },
+    {
+     "name": "Nanded",
+     "count": 1
+    },
+    {
+     "name": "Suja",
+     "count": 1
+    }
+   ],
+   "cityCount": 4,
+   "samples": [
+    {
+     "id": "sky-india-nanded-takht-sachkhand-sri-hazur-5943",
+     "name": "Nanded - Takht Sachkhand Sri Hazur",
+     "city": "Nanded"
+    },
+    {
+     "id": "sky-india-tower-of-peace-mount-abu-4359",
+     "name": "Tower Of Peace - Mount Abu",
+     "city": "Mount Abu"
+    },
+    {
+     "id": "occ-windy-1707102692",
+     "name": "Suja › North-east: Bir",
+     "city": "Suja"
+    },
+    {
+     "id": "occ-windy-1793908737",
+     "name": "Hyderabad",
+     "city": "Hyderabad"
+    }
+   ]
+  },
+  {
+   "slug": "sint-maarten",
+   "name": "Sint Maarten",
+   "count": 4,
+   "aliases": [
+    "Sint Maarten"
+   ],
+   "topCities": [
+    {
+     "name": "Simpson Bay",
+     "count": 3
+    },
+    {
+     "name": "Philipsburg",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "sky-sint-maarten-st-maarten-princess-juliana-international-airport-4380",
+     "name": "St. Maarten Princess Juliana International Airport",
+     "city": "Simpson Bay"
+    },
+    {
+     "id": "sky-sint-maarten-philipsburg-great-bay-beach-4798",
+     "name": "Philipsburg - Great Bay Beach",
+     "city": "Philipsburg"
+    },
+    {
+     "id": "sky-sint-maarten-maho-beach-sint-marteen-4682",
+     "name": "Maho Beach - Sint Marteen",
+     "city": "Simpson Bay"
+    },
+    {
+     "id": "sky-sint-maarten-simpson-bay-beach-5192",
+     "name": "Simpson Bay Beach",
+     "city": "Simpson Bay"
+    }
+   ]
+  },
+  {
+   "slug": "seychelles",
+   "name": "Seychelles",
+   "count": 4,
+   "aliases": [
+    "Seychelles"
+   ],
+   "topCities": [
+    {
+     "name": "Takamaka",
+     "count": 2
+    },
+    {
+     "name": "Anse Etoile",
+     "count": 1
+    },
+    {
+     "name": "Beau Vallon",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "sky-seychelles-seychelles-anse-parnel-takamaka-868",
+     "name": "Seychelles - Anse Parnel Takamaka",
+     "city": "Takamaka"
+    },
+    {
+     "id": "sky-seychelles-quincy-village-seychelles-4793",
+     "name": "Quincy Village - Seychelles",
+     "city": "Anse Etoile"
+    },
+    {
+     "id": "sky-seychelles-beau-vallon-seychelles-5",
+     "name": "Beau Vallon - Seychelles",
+     "city": "Beau Vallon"
+    },
+    {
+     "id": "sky-seychelles-anse-parnel-takamaka-1475",
+     "name": "Anse Parnel Takamaka",
+     "city": "Takamaka"
+    }
+   ]
+  },
+  {
+   "slug": "czechia",
+   "name": "Czechia",
+   "count": 3,
+   "aliases": [
+    "Czechia"
+   ],
+   "topCities": [
+    {
+     "name": "Prague",
+     "count": 3
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "cz-prague-1",
+     "name": "Prague - Old Town Square",
+     "city": "Prague"
+    },
+    {
+     "id": "cz-prague-2",
+     "name": "Prague - Charles Bridge",
+     "city": "Prague"
+    },
+    {
+     "id": "cz-prague-3",
+     "name": "Prague - City View",
+     "city": "Prague"
+    }
+   ]
+  },
+  {
+   "slug": "belize",
+   "name": "Belize",
+   "count": 3,
+   "aliases": [
+    "BZ",
+    "Belize"
+   ],
+   "topCities": [
+    {
+     "name": "Belize",
+     "count": 1
+    },
+    {
+     "name": "Placencia",
+     "count": 1
+    },
+    {
+     "name": "The Belize Zoo",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "occ-phenocam-mbayfireplot",
+     "name": "Monkey Bay Fire Effects Plot, Belize",
+     "city": "Belize"
+    },
+    {
+     "id": "sky-belize-hummingbird-marina-belize-5713",
+     "name": "Hummingbird Marina - Belize",
+     "city": "Placencia"
+    },
+    {
+     "id": "pubcam-belize-the-belize-zoo-live-stream-zoo",
+     "name": "Live stream Zoo",
+     "city": "The Belize Zoo"
+    }
+   ]
+  },
+  {
+   "slug": "el-salvador",
+   "name": "El Salvador",
+   "count": 3,
+   "aliases": [
+    "El Salvador"
+   ],
+   "topCities": [
+    {
+     "name": "La Libertad",
+     "count": 1
+    },
+    {
+     "name": "San Miguel",
+     "count": 1
+    },
+    {
+     "name": "Tamanique",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "sky-el-salvador-volcano-chaparrastique-el-salvador-5562",
+     "name": "Volcano Chaparrastique - El Salvador",
+     "city": "San Miguel"
+    },
+    {
+     "id": "sky-el-salvador-la-libertad-el-salvador-4759",
+     "name": "La Libertad - El Salvador",
+     "city": "La Libertad"
+    },
+    {
+     "id": "sky-el-salvador-tamanique-el-salvador-5345",
+     "name": "Tamanique - El Salvador",
+     "city": "Tamanique"
+    }
+   ]
+  },
+  {
+   "slug": "panama",
+   "name": "Panama",
+   "count": 3,
+   "aliases": [
+    "PA",
+    "Panama"
+   ],
+   "topCities": [
+    {
+     "name": "Chiriqui",
+     "count": 1
+    },
+    {
+     "name": "Panama",
+     "count": 1
+    },
+    {
+     "name": "Pedasi",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "occ-phenocam-barrocolorado",
+     "name": "Smithsonian Tropical Research Institute, Barro Colorado Island, Panama",
+     "city": "Panama"
+    },
+    {
+     "id": "sky-panama-playa-las-lajas-panama-5427",
+     "name": "Playa Las Lajas - Panama",
+     "city": "Chiriqui"
+    },
+    {
+     "id": "sky-panama-panama-pedas-987",
+     "name": "Panama - Pedasí",
+     "city": "Pedasi"
+    }
+   ]
+  },
+  {
+   "slug": "albania",
+   "name": "Albania",
+   "count": 3,
+   "aliases": [
+    "Albania"
+   ],
+   "topCities": [
+    {
+     "name": "Valona",
+     "count": 2
+    },
+    {
+     "name": "Durres",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "sky-albania-bestrov-vlor-4542",
+     "name": "Bestrovë - Vlorë",
+     "city": "Valona"
+    },
+    {
+     "id": "sky-albania-vlora-albania-5764",
+     "name": "Vlora - Albania",
+     "city": "Valona"
+    }
+   ]
+  },
+  {
+   "slug": "bosnia-and-herzegovina",
+   "name": "Bosnia and Herzegovina",
+   "count": 3,
+   "aliases": [
+    "Bosnia and Herzegovina"
+   ],
+   "topCities": [
+    {
+     "name": "Mostar",
+     "count": 1
+    },
+    {
+     "name": "Sarajevo",
+     "count": 1
+    },
+    {
+     "name": "Ugljevik",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "sky-bosnia-and-herzegovina-mostar-bosnia-and-herzegovina-5237",
+     "name": "Mostar - Bosnia and Herzegovina",
+     "city": "Mostar"
+    },
+    {
+     "id": "sky-bosnia-and-herzegovina-sarajevo-bosnia-herzegovina-2124",
+     "name": "Sarajevo - Bosnia & Herzegovina",
+     "city": "Sarajevo"
+    },
+    {
+     "id": "sky-bosnia-and-herzegovina-tutnjevac-ugljevik-2963",
+     "name": "Tutnjevac - Ugljevik",
+     "city": "Ugljevik"
+    }
+   ]
+  },
+  {
+   "slug": "belgium",
+   "name": "Belgium",
+   "count": 3,
+   "aliases": [
+    "Belgium"
+   ],
+   "topCities": [
+    {
+     "name": "Lokeren",
+     "count": 1
+    },
+    {
+     "name": "Stadhuis Sint-Niklaas",
+     "count": 1
+    },
+    {
+     "name": "Zwin",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "pubcam-belgium-stadhuis-sint-niklaas-stadhuis-sint-niklaas",
+     "name": "Stadhuis Sint-Niklaas",
+     "city": "Stadhuis Sint-Niklaas"
+    },
+    {
+     "id": "pubcam-belgium-lokeren-webcams-lokeren",
+     "name": "Webcams Lokeren",
+     "city": "Lokeren"
+    },
+    {
+     "id": "pubcam-belgium-zwin-zwin-natuurpark",
+     "name": "Zwin Natuurpark",
+     "city": "Zwin"
+    }
+   ]
+  },
+  {
+   "slug": "belarus",
+   "name": "Belarus",
+   "count": 3,
+   "aliases": [
+    "BY"
+   ],
+   "topCities": [
+    {
+     "name": "Grigorovshchina",
+     "count": 1
+    },
+    {
+     "name": "Kotlovka",
+     "count": 1
+    },
+    {
+     "name": "Мінск",
+     "count": 1
+    }
+   ],
+   "cityCount": 3,
+   "samples": [
+    {
+     "id": "occ-osm-8008969818",
+     "name": "Ploshcha Svabody, Minsk",
+     "city": "Мінск"
+    },
+    {
+     "id": "occ-belarus-customs-vt01",
+     "name": "Grigorovshchina (Exit)",
+     "city": "Grigorovshchina"
+    },
+    {
+     "id": "occ-belarus-customs-OSH2",
+     "name": "Kotlovka (Exit)",
+     "city": "Kotlovka"
+    }
+   ]
+  },
+  {
+   "slug": "serbia",
+   "name": "Serbia",
+   "count": 2,
+   "aliases": [
+    "Serbia"
+   ],
+   "topCities": [
+    {
+     "name": "Belgrade",
+     "count": 1
+    },
+    {
+     "name": "Gradina",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "rs-kalotina-gradina-1",
+     "name": "Kalotina – Gradina Border (lane 1)",
+     "city": "Gradina"
+    },
+    {
+     "id": "rs-belgrade-live",
+     "name": "Belgrade Live Cam",
+     "city": "Belgrade"
+    }
+   ]
+  },
+  {
+   "slug": "north-macedonia",
+   "name": "North Macedonia",
+   "count": 2,
+   "aliases": [
+    "North Macedonia"
+   ],
+   "topCities": [
+    {
+     "name": "Deve Bair",
+     "count": 1
+    },
+    {
+     "name": "Tabanovce",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "mk-deve-bair",
+     "name": "Deve Bair – Gyueshevo Border",
+     "city": "Deve Bair"
+    },
+    {
+     "id": "mk-tabanovce",
+     "name": "Tabanovce – Preševo Border",
+     "city": "Tabanovce"
+    }
+   ]
+  },
+  {
+   "slug": "slovakia",
+   "name": "Slovakia",
+   "count": 2,
+   "aliases": [
+    "Slovakia"
+   ],
+   "topCities": [
+    {
+     "name": "Bratislava",
+     "count": 2
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sk-bratislava-3",
+     "name": "Bratislava - Danube River",
+     "city": "Bratislava"
+    },
+    {
+     "id": "sk-bratislava-1",
+     "name": "Bratislava - Old Town",
+     "city": "Bratislava"
+    }
+   ]
+  },
+  {
+   "slug": "bermuda",
+   "name": "Bermuda",
+   "count": 2,
+   "aliases": [
+    "Bermuda"
+   ],
+   "topCities": [
+    {
+     "name": "St George S Parish",
+     "count": 2
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-bermuda-st-george-s-harbour-bermuda-5511",
+     "name": "St. George's Harbour - Bermuda",
+     "city": "St George S Parish"
+    },
+    {
+     "id": "sky-bermuda-bermuda-cahow-3094",
+     "name": "Bermuda - Cahow",
+     "city": "St George S Parish"
+    }
+   ]
+  },
+  {
+   "slug": "bolivia",
+   "name": "Bolivia",
+   "count": 2,
+   "aliases": [
+    "Bolivia"
+   ],
+   "topCities": [
+    {
+     "name": "Cochabamba",
+     "count": 1
+    },
+    {
+     "name": "Copacabana",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "sky-bolivia-cochabamba-bolivia-5368",
+     "name": "Cochabamba - Bolivia",
+     "city": "Cochabamba"
+    },
+    {
+     "id": "sky-bolivia-copacabana-bolivia-5394",
+     "name": "Copacabana - Bolivia",
+     "city": "Copacabana"
+    }
+   ]
+  },
+  {
+   "slug": "grenada",
+   "name": "Grenada",
+   "count": 2,
+   "aliases": [
+    "Grenada"
+   ],
+   "topCities": [
+    {
+     "name": "Grand Anse Beach",
+     "count": 1
+    },
+    {
+     "name": "Springs",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "sky-grenada-marina-of-saint-george-s-grenada-6019",
+     "name": "Marina of Saint George's - Grenada",
+     "city": "Springs"
+    },
+    {
+     "id": "sky-grenada-grenada-saint-george-s-629",
+     "name": "Grenada - Saint George's",
+     "city": "Grand Anse Beach"
+    }
+   ]
+  },
+  {
+   "slug": "guadeloupe",
+   "name": "Guadeloupe",
+   "count": 2,
+   "aliases": [
+    "Guadeloupe"
+   ],
+   "topCities": [
+    {
+     "name": "Terre De Haut",
+     "count": 2
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-guadeloupe-les-saintes-terre-de-haut-5812",
+     "name": "Les Saintes - Terre-de-Haut",
+     "city": "Terre De Haut"
+    },
+    {
+     "id": "sky-guadeloupe-les-saintes-guadeloupe-5751",
+     "name": "Les Saintes - Guadeloupe",
+     "city": "Terre De Haut"
+    }
+   ]
+  },
+  {
+   "slug": "honduras",
+   "name": "Honduras",
+   "count": 2,
+   "aliases": [
+    "Honduras"
+   ],
+   "topCities": [
+    {
+     "name": "Roatan",
+     "count": 2
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-honduras-west-end-beach-roat-n-291",
+     "name": "West End Beach - Roatán",
+     "city": "Roatan"
+    },
+    {
+     "id": "sky-honduras-west-bay-297",
+     "name": "West Bay",
+     "city": "Roatan"
+    }
+   ]
+  },
+  {
+   "slug": "denmark",
+   "name": "Denmark",
+   "count": 2,
+   "aliases": [
+    "DK"
+   ],
+   "topCities": [
+    {
+     "name": "Vejrumbro",
+     "count": 2
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-phenocam-vejrumbro",
+     "name": "Peatland - Vejrumbro, Denmark",
+     "city": "Vejrumbro"
+    },
+    {
+     "id": "occ-phenocam-vejrumbrowest",
+     "name": "Vejrumbro West",
+     "city": "Vejrumbro"
+    }
+   ]
+  },
+  {
+   "slug": "yemen",
+   "name": "Yemen",
+   "count": 2,
+   "aliases": [
+    "YE"
+   ],
+   "topCities": [],
+   "cityCount": 0,
+   "samples": [
+    {
+     "id": "occ-phenocam-zoebelboden1",
+     "name": "LTER Zöbelboden Measuring Tower, Austria",
+     "city": ""
+    },
+    {
+     "id": "occ-phenocam-zoebelboden2",
+     "name": "LTER Zöbelboden Wildwiese, Austria",
+     "city": ""
+    }
+   ]
+  },
+  {
+   "slug": "egypt",
+   "name": "Egypt",
+   "count": 2,
+   "aliases": [
+    "EG"
+   ],
+   "topCities": [
+    {
+     "name": "Dahab",
+     "count": 1
+    },
+    {
+     "name": "Hurghada",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "occ-openwebcamdb-hurghada-red-sea-underwater-dive",
+     "name": "Hurghada Red Sea Underwater Dive",
+     "city": "Hurghada"
+    },
+    {
+     "id": "occ-windy-1702557519",
+     "name": "Dahab: Na Lagunu",
+     "city": "Dahab"
+    }
+   ]
+  },
+  {
+   "slug": "azerbaijan",
+   "name": "Azerbaijan",
+   "count": 2,
+   "aliases": [
+    "AZ"
+   ],
+   "topCities": [
+    {
+     "name": "Baku",
+     "count": 1
+    },
+    {
+     "name": "Kuzun",
+     "count": 1
+    }
+   ],
+   "cityCount": 2,
+   "samples": [
+    {
+     "id": "occ-windy-1735044942",
+     "name": "Kuzun: Shahdag, Lift station",
+     "city": "Kuzun"
+    },
+    {
+     "id": "occ-panomax-7024",
+     "name": "Lake View",
+     "city": "Baku"
+    }
+   ]
+  },
+  {
+   "slug": "lebanon",
+   "name": "Lebanon",
+   "count": 1,
+   "aliases": [
+    "Lebanon"
+   ],
+   "topCities": [
+    {
+     "name": "Beirut",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "lb-beirut-skyline",
+     "name": "Beirut Skyline Live",
+     "city": "Beirut"
+    }
+   ]
+  },
+  {
+   "slug": "jordan",
+   "name": "Jordan",
+   "count": 1,
+   "aliases": [
+    "Jordan"
+   ],
+   "topCities": [
+    {
+     "name": "Amman",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-jordan-petra-visitor-center-589",
+     "name": "Petra - Visitor Center",
+     "city": "Amman"
+    }
+   ]
+  },
+  {
+   "slug": "oman",
+   "name": "Oman",
+   "count": 1,
+   "aliases": [
+    "Oman"
+   ],
+   "topCities": [
+    {
+     "name": "Muscat",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-oman-aida-beach-in-muscat-oman-5905",
+     "name": "Aida Beach in Muscat - Oman",
+     "city": "Muscat"
+    }
+   ]
+  },
+  {
+   "slug": "sri-lanka",
+   "name": "Sri Lanka",
+   "count": 1,
+   "aliases": [
+    "Sri Lanka"
+   ],
+   "topCities": [
+    {
+     "name": "Midigama",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-sri-lanka-plantations-beach-sri-lanka-3910",
+     "name": "Plantations Beach - Sri Lanka",
+     "city": "Midigama"
+    }
+   ]
+  },
+  {
+   "slug": "christmas-island",
+   "name": "Christmas Island",
+   "count": 1,
+   "aliases": [
+    "CX"
+   ],
+   "topCities": [
+    {
+     "name": "Christmas Island",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-airservices-christmas-island-aero-090",
+     "name": "Christmas Island Aero (NE)",
+     "city": "Christmas Island"
+    }
+   ]
+  },
+  {
+   "slug": "barbados",
+   "name": "Barbados",
+   "count": 1,
+   "aliases": [
+    "Barbados"
+   ],
+   "topCities": [
+    {
+     "name": "Silver Sands",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-barbados-silver-sands-1394",
+     "name": "Silver Sands",
+     "city": "Silver Sands"
+    }
+   ]
+  },
+  {
+   "slug": "martinique",
+   "name": "Martinique",
+   "count": 1,
+   "aliases": [
+    "Martinique"
+   ],
+   "topCities": [
+    {
+     "name": "Sainte Anne",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-martinique-sainte-anne-martinique-5819",
+     "name": "Sainte-Anne - Martinique",
+     "city": "Sainte Anne"
+    }
+   ]
+  },
+  {
+   "slug": "uruguay",
+   "name": "Uruguay",
+   "count": 1,
+   "aliases": [
+    "Uruguay"
+   ],
+   "topCities": [
+    {
+     "name": "Punta Del Este",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-uruguay-punta-del-este-uruguay-5453",
+     "name": "Punta del Este - Uruguay",
+     "city": "Punta Del Este"
+    }
+   ]
+  },
+  {
+   "slug": "venezuela",
+   "name": "Venezuela",
+   "count": 1,
+   "aliases": [
+    "Venezuela"
+   ],
+   "topCities": [
+    {
+     "name": "Margarita Island",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-venezuela-margarita-island-venezuela-975",
+     "name": "Margarita Island - Venezuela",
+     "city": "Margarita Island"
+    }
+   ]
+  },
+  {
+   "slug": "morocco",
+   "name": "Morocco",
+   "count": 1,
+   "aliases": [
+    "Morocco"
+   ],
+   "topCities": [
+    {
+     "name": "Imsouane",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-morocco-imsouane-morocco-5791",
+     "name": "Imsouane - Morocco",
+     "city": "Imsouane"
+    }
+   ]
+  },
+  {
+   "slug": "senegal",
+   "name": "Senegal",
+   "count": 1,
+   "aliases": [
+    "Senegal"
+   ],
+   "topCities": [
+    {
+     "name": "Niaga Peulh",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-senegal-lake-retba-senegal-5790",
+     "name": "Lake Retba - Senegal",
+     "city": "Niaga Peulh"
+    }
+   ]
+  },
+  {
+   "slug": "faroe-islands",
+   "name": "Faroe Islands",
+   "count": 1,
+   "aliases": [
+    "Faroe Islands"
+   ],
+   "topCities": [
+    {
+     "name": "Eystur",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-faroe-islands-sy-rug-ta-1285",
+     "name": "Syðrugøta",
+     "city": "Eystur"
+    }
+   ]
+  },
+  {
+   "slug": "san-marino",
+   "name": "San Marino",
+   "count": 1,
+   "aliases": [
+    "San Marino"
+   ],
+   "topCities": [
+    {
+     "name": "Citta Di San Marino",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "sky-repubblica-di-san-marino-san-marino-chiesanuova-1634",
+     "name": "San Marino - Chiesanuova",
+     "city": "Citta Di San Marino"
+    }
+   ]
+  },
+  {
+   "slug": "vatican-city",
+   "name": "Vatican City",
+   "count": 1,
+   "aliases": [
+    "Vatican City"
+   ],
+   "topCities": [
+    {
+     "name": "Piazza San Pietro",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "pubcam-vatican-city-piazza-san-pietro-sint-pieterplein",
+     "name": "Sint Pieterplein",
+     "city": "Piazza San Pietro"
+    }
+   ]
+  },
+  {
+   "slug": "bonaire",
+   "name": "Bonaire",
+   "count": 1,
+   "aliases": [
+    "Bonaire"
+   ],
+   "topCities": [
+    {
+     "name": "Kralendijk",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "pubcam-bonaire-kralendijk-harbour-village-coral-reef",
+     "name": "Harbour Village (Coral Reef)",
+     "city": "Kralendijk"
+    }
+   ]
+  },
+  {
+   "slug": "curacao",
+   "name": "Curaçao",
+   "count": 1,
+   "aliases": [
+    "Curaçao"
+   ],
+   "topCities": [
+    {
+     "name": "Willemstad",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "pubcam-curacao-willemstad-handelskade-en-pontjesbrug",
+     "name": "Handelskade en pontjesbrug",
+     "city": "Willemstad"
+    }
+   ]
+  },
+  {
+   "slug": "madagascar",
+   "name": "Madagascar",
+   "count": 1,
+   "aliases": [
+    "MG"
+   ],
+   "topCities": [
+    {
+     "name": "Mahazoarivo",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-phenocam-bezamahafaly",
+     "name": "Beza Mahafaly Special Reserve, Madagascar",
+     "city": "Mahazoarivo"
+    }
+   ]
+  },
+  {
+   "slug": "saudi-arabia",
+   "name": "Saudi Arabia",
+   "count": 1,
+   "aliases": [
+    "SA"
+   ],
+   "topCities": [
+    {
+     "name": "Thuwal",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-openwebcamdb-kaust-red-sea-underwater-realm",
+     "name": "KAUST Red Sea Underwater Realm",
+     "city": "Thuwal"
+    }
+   ]
+  },
+  {
+   "slug": "iran",
+   "name": "Iran",
+   "count": 1,
+   "aliases": [
+    "IR"
+   ],
+   "topCities": [
+    {
+     "name": "گلدره",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-windy-1678032287",
+     "name": "Pardis, Tehran Province",
+     "city": "گلدره"
+    }
+   ]
+  },
+  {
+   "slug": "armenia",
+   "name": "Armenia",
+   "count": 1,
+   "aliases": [
+    "AM"
+   ],
+   "topCities": [
+    {
+     "name": "Վերին Պտղնի",
+     "count": 1
+    }
+   ],
+   "cityCount": 1,
+   "samples": [
+    {
+     "id": "occ-worldcam-31645",
+     "name": "Yerevan - Northern Bus Station",
+     "city": "Վերին Պտղնի"
+    }
+   ]
+  }
+ ]
+}
