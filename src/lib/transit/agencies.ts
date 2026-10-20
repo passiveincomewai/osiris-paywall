@@ -66,6 +66,15 @@ export interface TransitAgency {
   feedUrl: string;
   /** GTFS-RT TripUpdates feed, when the agency publishes a keyless one. */
   tripUpdatesUrl?: string;
+  /** GTFS-RT Service Alerts feed, when the agency publishes a keyless one. */
+  alertsUrl?: string;
+  /**
+   * IANA timezone the agency's static GTFS times are expressed in
+   * (GTFS times are agency-local). Required for the routes/stops/
+   * schedule network build (lib/transit/network); only agencies with
+   * `staticGtfsUrl` get a network in v1.
+   */
+  timezone?: string;
   /**
    * Static GTFS zip used to resolve tripId → route/mode for feeds whose
    * vehicle positions omit routeId (UTA). See lib/transit/staticGtfs.
@@ -88,7 +97,13 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     bounds: [39.95, -112.75, 41.45, -111.25],
     feedUrl: 'https://apps.rideuta.com/tms/gtfs/Vehicle',
     tripUpdatesUrl: 'https://apps.rideuta.com/tms/gtfs/TripUpdate',
+    // Verified keyless live 2026-10-20: /tms/gtfs/Alert answers 200 with
+    // a real GTFS-RT protobuf (101 active alerts at check time, every
+    // one carrying routeId informed entities — the internal route ids
+    // the static feed resolves to public numbers).
+    alertsUrl: 'https://apps.rideuta.com/tms/gtfs/Alert',
     staticGtfsUrl: 'https://gtfsfeed.rideuta.com/GTFS.zip',
+    timezone: 'America/Denver',
     // The static join normally supplies route + mode (route_type-exact).
     // defaultMode is the honest fallback if that join is unavailable;
     // the rules below fire on resolved short names (published UTA
