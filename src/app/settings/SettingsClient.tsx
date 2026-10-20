@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
-  ArrowLeft, Loader2, Check, User, Lock, CreditCard, LogOut, Crown, BellRing,
+  ArrowLeft, Loader2, Check, User, Lock, CreditCard, LogOut, Crown, BellRing, Users,
 } from "lucide-react";
 
 type Profile = {
@@ -196,6 +196,12 @@ export default function SettingsClient() {
                   <CreditCard className="w-4 h-4" /> Manage subscription
                 </Link>
                 <div>
+                  <Link href="/settings/team" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition">
+                    <Users className="w-4 h-4 text-[#D4AF37]" /> Team Access
+                    <span className="px-2 py-0.5 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-[10px] font-bold tracking-wider">TEAMS</span>
+                  </Link>
+                </div>
+                <div>
                   <Link href="/settings/alerts" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition">
                     <BellRing className="w-4 h-4 text-[#D4AF37]" /> Camera alerts
                     <span className="px-2 py-0.5 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-[10px] font-bold tracking-wider">VIP PRO</span>
@@ -207,6 +213,12 @@ export default function SettingsClient() {
               <div>
                 <p className="text-sm text-white/55 mb-4">You're on the free plan. Upgrade to unlock the full intelligence toolkit.</p>
                 <Link href="/pricing" className={`${btnGold} inline-block`}>See Pro plans</Link>
+                <div className="mt-4">
+                  <Link href="/settings/team" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition">
+                    <Users className="w-4 h-4 text-[#D4AF37]" /> Team Access
+                  </Link>
+                  <p className="text-xs text-white/35 mt-1">Teams you belong to live here — creating your own team needs a paid plan.</p>
+                </div>
               </div>
             )}
           </Section>
