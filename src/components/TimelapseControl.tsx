@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Check, Download, Film, Lock, Pause, Play, Square, Trash2, X } from 'lucide-react';
+import TrialPicker from './TrialPicker';
 import {
   TIMELAPSE_MAX_FRAMES,
   TIMELAPSE_POLL_MS,
@@ -53,6 +54,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
   const cameraName: string = camera?.name || camera?.title || 'Camera';
 
   const [open, setOpen] = useState(false);
+  const [trialOpen, setTrialOpen] = useState(false);
   const [access, setAccess] = useState<TimelapseAccess>('unknown');
   const [frameCount, setFrameCount] = useState(0);
   const [recording, setRecording] = useState(false);
@@ -366,8 +368,13 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </p>
               <div className="flex gap-2 mt-0.5">
                 <a href="/api/auth/signin?callbackUrl=/" className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 transition-colors">SIGN IN</a>
-                <a href="/pricing" className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-white/5 border border-white/15 text-white hover:bg-white/10 transition-colors">SEE PRO</a>
+                <button onClick={() => setTrialOpen((v) => !v)} aria-expanded={trialOpen} className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-white/5 border border-white/15 text-white hover:bg-white/10 transition-colors">START FREE TRIAL</button>
               </div>
+              {trialOpen && (
+                <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
+                  <TrialPicker variant="compact" onClose={() => setTrialOpen(false)} />
+                </div>
+              )}
             </div>
           ) : access === 'free' ? (
             <div className="flex flex-col gap-1.5">
@@ -379,8 +386,13 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
                 Capture runs only while you watch — it is not 24/7 or cloud recording.
               </p>
               <div className="mt-0.5">
-                <a href="/pricing" className="inline-block px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 transition-colors">UNLOCK WITH PRO</a>
+                <button onClick={() => setTrialOpen((v) => !v)} aria-expanded={trialOpen} className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 transition-colors">START FREE TRIAL</button>
               </div>
+              {trialOpen && (
+                <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
+                  <TrialPicker variant="compact" onClose={() => setTrialOpen(false)} />
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col gap-2">

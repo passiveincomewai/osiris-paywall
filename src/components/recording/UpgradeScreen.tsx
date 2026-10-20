@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import TrialPicker from "@/components/TrialPicker";
 
 /** Locked-feature preview for non-Pro users (spec §14 copy). */
 export default function UpgradeScreen({ priceLine }: { priceLine: string }) {
@@ -35,13 +35,9 @@ export default function UpgradeScreen({ priceLine }: { priceLine: string }) {
           </div>
         ))}
       </div>
-      <div className="mt-8">
-        <Link href="/pricing"
-          className="inline-block px-10 py-4 rounded-2xl text-lg font-mono font-black text-[#04121f] transition-transform hover:scale-[1.03]"
-          style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)", boxShadow: "0 0 32px rgba(0,150,255,.55)" }}>
-          UNLOCK PREMIUM RECORDING
-        </Link>
-        <div className="mt-3 text-sm text-slate-400 font-mono">{priceLine}</div>
+      <div className="mt-8 max-w-md mx-auto text-left">
+        <TrialPicker />
+        <div className="mt-3 text-sm text-slate-400 font-mono text-center">{priceLine}</div>
       </div>
       <p className="mt-6 text-xs text-slate-500 max-w-xl mx-auto leading-relaxed">
         Recording captures the live stream playing in your browser and saves clips to this device.

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TrialPicker from "@/components/TrialPicker";
 
 /**
  * Membership gate screen for the Marketing Studio (Phase 2, Rule 1).
@@ -45,13 +46,15 @@ export default function StudioUpgradeScreen() {
         Already a Pro member, an approved creator, or a Visionary affiliate? You already
         qualify — this screen clears as soon as your membership is active.
       </p>
+      <div className="mt-8 max-w-md mx-auto text-left">
+        <TrialPicker />
+      </div>
       <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
         <Link
           href="/pricing"
-          className="inline-block px-8 py-3.5 rounded-2xl font-mono font-black text-[#04121f] transition-transform hover:scale-[1.03]"
-          style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)", boxShadow: "0 0 32px rgba(0,150,255,.55)" }}
+          className="inline-block px-8 py-3.5 rounded-2xl font-mono font-bold border border-white/15 text-slate-200 hover:border-cyan-400/60 transition-colors"
         >
-          See membership plans
+          Compare membership plans
         </Link>
         <Link
           href="/affiliates/dashboard"

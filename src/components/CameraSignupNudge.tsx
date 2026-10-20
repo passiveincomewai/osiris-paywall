@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { X, Crown } from "lucide-react";
+import TrialPicker from "./TrialPicker";
 
 /**
  * Pro upsell shown once a visitor without an active subscription has opened
@@ -35,15 +36,15 @@ export default function CameraSignupNudge({ onClose }: { onClose: () => void }) 
         <p className="text-sm text-white/55 mt-2 mb-6">
           Upgrade to Pro for unlimited live camera access — plus the AI analyst, satellite view, live traffic, advanced search filters and premium intel feeds.
         </p>
-        <Link
-          href="/pricing"
-          className="block w-full py-3.5 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold tracking-wide hover:brightness-110 transition"
-        >
-          Upgrade to PRO
-        </Link>
+        <div className="text-left">
+          <TrialPicker />
+        </div>
+        <p className="mt-3 text-xs text-white/35">
+          <Link href="/pricing" className="underline hover:text-white/60 transition">Compare Free vs Pro first</Link>
+        </p>
         <button
           onClick={onClose}
-          className="mt-4 text-xs text-white/35 hover:text-white/60 transition"
+          className="mt-3 text-xs text-white/35 hover:text-white/60 transition"
         >
           Maybe later
         </button>
