@@ -63,6 +63,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. The cameras are free to watch with no account and no signup. Open the map, zoom to Japan, and click any marker.",
   },
+  {
+    q: "Can I check conditions after an earthquake?",
+    a: "Yes — road and river cameras near the affected area show ground conditions directly: traffic still moving or stopped, water behaving normally or not. They are a visual supplement to official information, and during an emergency official guidance always comes first.",
+  },
+  {
+    q: "Which parts of Japan have the most cameras?",
+    a: "The network is nationwide — the river-and-road system covers prefectures from Hokkaido to Kyushu. Density follows the infrastructure: expressway corridors, flood-prone river basins and snow-country passes carry the most feeds.",
+  },
 ];
 
 const jsonLd = {
@@ -139,6 +147,33 @@ export default function JapanTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{c.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Why Japan&rsquo;s camera network looks different</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Most countries&rsquo; camera networks were built for traffic.
+              Japan&rsquo;s was built for disasters. Earthquakes, typhoons,
+              river flooding and heavy snow are governing facts of Japanese
+              infrastructure, so the state publishes cameras the way other
+              countries publish weather stations — as a public safety utility.
+              The result is a network that watches rivers and mountain roads
+              as closely as expressways, refreshed around the clock, and
+              meant to be read by anyone.
+            </p>
+            <p>
+              That origin shows in how the feeds reward checking. A river
+              camera that seems quiet in October becomes the most important
+              picture in its prefecture when a typhoon landfall pushes the
+              water up at 2 AM. A Hokkaido pass camera is a winter ritual for
+              the drivers who depend on it. And after an earthquake, the road
+              and river feeds near the epicenter are among the first honest
+              pictures of what actually happened on the ground — which is why
+              this network, more than most, is worth having on one map before
+              you need it.
+            </p>
           </div>
         </div>
 

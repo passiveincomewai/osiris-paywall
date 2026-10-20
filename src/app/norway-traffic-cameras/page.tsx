@@ -62,6 +62,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. The cameras are free to watch with no account and no signup. Open the map, zoom to Norway, and click any marker.",
   },
+  {
+    q: "What is convoy driving (kolonnekjøring) and can I see it?",
+    a: "When weather turns severe on a mountain pass, traffic may cross only in escorted convoys behind a snowplow, at set times. The approach cameras show the waiting queue and the weather that caused it — if you see a stationary line at a pass in a storm, that is often exactly what you are looking at, and the right move is to wait it out somewhere warm.",
+  },
+  {
+    q: "Can I check ferry approach roads?",
+    a: "Several fjord-road feeds cover the corridors serving ferry terminals, so you can read both the road state and the queue building at the approach. In peak summer season, that check saves real time on the classic west-coast routes.",
+  },
 ];
 
 const jsonLd = {
@@ -137,6 +145,33 @@ export default function NorwayTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{c.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Driving Norway: passes, fjords and the long dark</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              In Norway the road camera is not a traffic tool so much as a
+              weather instrument. The E6 runs the country&rsquo;s whole
+              length — Oslo to the North Cape — and in winter its northern
+              and mountain sections live or die by conditions that change
+              inside an hour. Statens vegvesen&rsquo;s feeds sit exactly
+              where the decisions are: the passes, the fjord roads, the
+              exposed coastal stretches where wind closes bridges. Some
+              mountain crossings run kolonnekjøring in bad weather — escorted
+              convoy driving behind a plow — and the approach cameras show
+              you whether the queue is forming before you are in it.
+            </p>
+            <p>
+              Season flips the use, not the value. In the dark months the
+              cameras show lit roads through the polar night — snow state,
+              ice shine, blowing drifts. In summer the same network serves
+              the touring routes: ferry approaches, the Atlantic Road
+              country, the long evening light on the fjord corridors. Either
+              way, the Norwegian rule holds: the forecast tells you the
+              region; the camera tells you the road.
+            </p>
           </div>
         </div>
 

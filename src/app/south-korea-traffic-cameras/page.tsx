@@ -62,6 +62,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. The cameras are free to watch with no account and no signup. Open the map, zoom to Korea, and click any marker.",
   },
+  {
+    q: "When is the Gyeongbu Expressway at its worst?",
+    a: "During the Seollal and Chuseok holiday migrations, when Seoul empties toward the provinces and returns — journeys that take four hours can double. The expressway feeds show the exodus in real time; if you must travel then, the cameras help you pick the least-bad departure window.",
+  },
+  {
+    q: "Can I check the drive to Incheon Airport?",
+    a: "Yes. The airport corridors from Seoul to Incheon International are covered, so you can read the bridge and expressway state before leaving for a flight — worth it during holiday peaks and bad weather.",
+  },
 ];
 
 const jsonLd = {
@@ -138,6 +146,29 @@ export default function SouthKoreaTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{c.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Korea&rsquo;s great migrations, watched live</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Twice a year, South Korea performs one of the largest regular
+              traffic events on earth: the Seollal (Lunar New Year) and
+              Chuseok holiday migrations, when tens of millions of journeys
+              pour out of Seoul toward hometowns and back. The Gyeongbu
+              Expressway — the spine from Seoul to Busan — carries the worst
+              of it, and the camera network turns a national ritual into
+              something you can watch, time and route around.
+            </p>
+            <p>
+              The rest of the year belongs to Seoul: the urban expressways
+              and Han River bridges run a daily cycle of some of the densest
+              urban traffic in Asia, and the Incheon airport corridors add
+              their own rhythm. For residents the feeds are a commute tool;
+              for everyone else, this is the clearest window in the index
+              onto how a megacity of ten million actually moves.
+            </p>
           </div>
         </div>
 

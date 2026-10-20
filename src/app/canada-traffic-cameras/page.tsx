@@ -62,6 +62,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. The cameras are free to watch with no account and no signup. Open the map, zoom to Canada, and click any marker.",
   },
+  {
+    q: "What is the single most useful Canadian camera habit?",
+    a: "The winter pass check. On the Coquihalla, Rogers Pass and the other BC and Alberta mountain corridors, conditions decide whether the drive happens at all — snow, chain-up requirements and closures all show on the feeds before you commit. The same habit serves Ontario's 401 in a lake-effect squall: look first, then leave.",
+  },
+  {
+    q: "Do the cameras replace provincial road reports?",
+    a: "No — they complement them. Ontario 511, DriveBC and the other provincial services publish the official closure and restriction notices; the cameras show you what those notices look like on the ground. During an emergency, official guidance always comes first.",
+  },
 ];
 
 const jsonLd = {
@@ -137,6 +145,33 @@ export default function CanadaTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{c.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">One country, five camera cultures</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Canada never built one national camera system — each province
+              publishes its own, for its own roads, and the differences are
+              the point. Ontario&rsquo;s network is commuter infrastructure:
+              the 401 through Toronto is the busiest highway in North
+              America, and its feeds are read like a transit board. British
+              Columbia&rsquo;s DriveBC is a mountain service, built around
+              the passes — the Coquihalla above all — where the camera is a
+              go/no-go instrument for winter driving. Alberta&rsquo;s feeds
+              serve prairie distances and chinook country; Quebec&rsquo;s
+              watch the autoroutes and the great bridges of Montreal and
+              Quebec City.
+            </p>
+            <p>
+              Stitched onto one map, they become something none of the
+              provincial sites offers alone: a single check for a trip that
+              crosses provincial lines — Vancouver to Calgary over the
+              passes, or the full 401–autoroute run from Windsor to Quebec
+              City — with the same click-to-watch habit in every province,
+              and the border-crossing approaches at both ends of the journey.
+            </p>
           </div>
         </div>
 

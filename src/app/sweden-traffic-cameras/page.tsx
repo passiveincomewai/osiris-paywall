@@ -62,6 +62,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. The cameras are free to watch with no account and no signup. Open the map, zoom to Sweden, and click any marker.",
   },
+  {
+    q: "When should I check the cameras in winter?",
+    a: "Before any long drive, and again at your halfway decision point. Swedish winter state changes with temperature as much as snowfall — a road that was merely wet at departure can glaze by evening. The corridor feeds show surface shine, snow cover and whether traffic is moving at speed or bunched and cautious.",
+  },
+  {
+    q: "Can I watch the midsummer traffic?",
+    a: "Yes — the Thursday and Friday before midsummer are among the busiest driving days of the Swedish year, and the E4/E6 feeds fill accordingly. It is both a practical check and a quietly fascinating national portrait: the whole country, on the road, at once.",
+  },
 ];
 
 const jsonLd = {
@@ -137,6 +145,32 @@ export default function SwedenTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{c.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Sweden: one spine, four seasons of reasons</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Sweden&rsquo;s network hangs on the E4 — Malmö to Stockholm
+              and on up the Gulf of Bothnia — with the E6 up the west coast
+              and the E20 across. Trafikverket&rsquo;s cameras watch the
+              junctions, the city approaches and hundreds of regional points,
+              and the Swedish calendar gives them four distinct jobs: spring
+              thaw and wet roads, the famous midsummer exodus when the whole
+              country drives to the countryside at once, autumn darkness and
+              the first ice, and the long winter when snow state is the only
+              traffic news that matters.
+            </p>
+            <p>
+              Wildlife is the variable no forecast carries: moose and deer at
+              dawn and dusk are a genuine Swedish road hazard, and while no
+              camera promises an animal, the network&rsquo;s dawn feeds give
+              you the light and weather you&rsquo;ll actually drive in.
+              Stockholm and Gothenburg commuters use the same feeds the
+              unglamorous way — a ten-second read on the ring before
+              choosing the bridge.
+            </p>
           </div>
         </div>
 

@@ -62,6 +62,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. The cameras are free to watch with no account and no signup. Open the map, zoom to Spain, and click any marker.",
   },
+  {
+    q: "When is Spanish traffic at its worst?",
+    a: "The national peaks: the start and end of August, Semana Santa, and the puente long weekends, when the radial motorways out of Madrid and the AP-7 corridor carry the holiday exodus. The DGT runs special operations on those dates — and the cameras show the peaks forming in real time, which is when checking both your route and its alternative pays off.",
+  },
+  {
+    q: "Can I check the road to the coast before a beach trip?",
+    a: "Yes. The Mediterranean corridors — the AP-7 and the autovías feeding the Costa del Sol, Costa Blanca and the Catalan coast — are well covered. A quick look at the corridor cameras on a Saturday morning tells you whether to leave now or after lunch.",
+  },
 ];
 
 const jsonLd = {
@@ -137,6 +145,30 @@ export default function SpainTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{c.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Spain moves on a calendar — the cameras show it</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Spanish traffic has national rituals. The DGT plans formal
+              operations around them — the summer operación salida and
+              retorno, when Madrid empties toward the coasts and returns;
+              Semana Santa; the long puente weekends. On those days the
+              radial motorways out of the capital and the AP-7 Mediterranean
+              corridor carry some of the heaviest leisure traffic in Europe,
+              and the camera network is how the country watches it happen.
+            </p>
+            <p>
+              The rest of the year, the network earns its keep at city scale:
+              Madrid&rsquo;s M-30 and the radial approaches, Barcelona&rsquo;s
+              rings, Valencia, the Basque and Galician networks. Meseta heat
+              in August, Atlantic rain in the north, a Friday-evening exodus
+              to the coast — the feeds show the version of Spain that the
+              holiday brochure skips, which is exactly why drivers check them
+              before joining it.
+            </p>
           </div>
         </div>
 

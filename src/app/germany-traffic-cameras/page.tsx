@@ -62,6 +62,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. The cameras are free to watch with no account and no signup. Open the map, zoom to Germany, and click any marker.",
   },
+  {
+    q: "Can the cameras help me avoid the holiday Stau?",
+    a: "They help you choose, not teleport. Check both plausible corridors before you leave — junction feeds on the alternative route will show whether it is actually moving — and re-check at your decision points. On the big changeover weekends, leaving outside the peak beats any routing trick, and the cameras will show you exactly when the peak forms.",
+  },
+  {
+    q: "Do the cameras enforce speed or record plates?",
+    a: "Not here. These are the road operators' public traffic-viewing feeds, published so drivers can check conditions. WorldEye indexes the public view only — nothing about your visit to a camera feed is shared with the operator.",
+  },
 ];
 
 const jsonLd = {
@@ -137,6 +145,35 @@ export default function GermanyTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{c.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Reading German traffic like a local</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Germany publishes fewer cameras than its neighbors — privacy
+              caution shapes the whole approach — so the 340+ feeds that are
+              public earn their keep: they sit at the Autobahn junctions and
+              corridors where the Stau actually forms. German congestion has a
+              calendar. Friday afternoons lock the corridors out of every
+              metro; the summer holiday changeovers, when one Land&rsquo;s
+              school break ends and another&rsquo;s begins, produce the
+              famous Ferienverkehr jams on the north–south routes; and the
+              permanent geography of Baustellen — roadworks — means a
+              corridor can be free at noon and stationary by two.
+            </p>
+            <p>
+              The local habit the cameras support is corridor choice. Between
+              the Rhine-Ruhr, Frankfurt, Munich and Hamburg there is usually
+              more than one plausible Autobahn route, and they rarely jam
+              identically. A two-minute look at the junction feeds before you
+              leave — and again at the border crossings toward Austria, the
+              Netherlands and Poland in holiday season — is the difference
+              between the fast route and the famous one. No general speed
+              limit on the open stretches makes the flowing sections fast;
+              it does nothing for the stationary ones.
+            </p>
           </div>
         </div>
 
