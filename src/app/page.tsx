@@ -37,6 +37,9 @@ import SearchBar from '@/components/SearchBar';
 import DirectionsBar, { type RouteResult, type LiveLocation } from '@/components/DirectionsBar';
 import type { WatchedFlight, FlightTelemetry, AircraftDetail, Airport } from '@/components/FlightWatchPanel';
 import type { NavProgress } from '@/lib/navigation';
+import {
+  classifyGeoError, currentGeoEnvironment, geoEnvironmentIssue, type GeoIssue,
+} from '@/lib/geo-position';
 import type { LiveDetection } from '@/lib/malware-intel';
 import ScaleBar from '@/components/ScaleBar';
 import { TrialPickerDialog } from '@/components/TrialPicker';
@@ -299,6 +302,11 @@ export default function Dashboard() {
   const [navSession, setNavSession] = useState<
     { route: RouteResult; label: string; key: number } | null
   >(null);
+  /** Why the navigation watch has no fix, classified by lib/geo-position.
+   *  Null while merely waiting — or once a fix has landed. */
+  const [navGeoIssue, setNavGeoIssue] = useState<GeoIssue | null>(null);
+  /** Bumped by the view's "Try again": restarts the session's watch. */
+  const [navWatchNonce, setNavWatchNonce] = useState(0);
   const [navProgress, setNavProgress] = useState<NavProgress | null>(null);
   const [watchedFlights, setWatchedFlights] = useState<WatchedFlight[]>([]);
   const [aircraftAirports, setAircraftAirports] = useState<Record<string, Airport[]>>({});
@@ -362,21 +370,29 @@ export default function Dashboard() {
   // A navigation session owns its own position watch. The planner's watch dies
   // with the planner when guidance takes over the panel, so guidance cannot
   // depend on it — without this the banner sits on "waiting for a fix" forever.
+  // Failures are classified (lib/geo-position) and handed to the view, which
+  // names the actual problem and its remedy; the previous error callback
+  // swallowed them all, and the view blamed HTTPS for every one of them.
   useEffect(() => {
     if (!navSession) return;
-    if (typeof navigator === 'undefined' || !navigator.geolocation) return;
+    const envIssue = geoEnvironmentIssue(currentGeoEnvironment());
+    if (envIssue) { setNavGeoIssue(envIssue); return; }
+    setNavGeoIssue(null);
     const id = navigator.geolocation.watchPosition(
-      (pos) => setLiveLocation({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-        accuracy: pos.coords.accuracy,
-        heading: pos.coords.heading,
-      }),
-      () => { /* the view already explains the HTTPS requirement */ },
+      (pos) => {
+        setNavGeoIssue(null);
+        setLiveLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+          heading: pos.coords.heading,
+        });
+      },
+      (err) => setNavGeoIssue(classifyGeoError(err, currentGeoEnvironment())),
       { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 },
     );
     return () => navigator.geolocation.clearWatch(id);
-  }, [navSession]);
+  }, [navSession, navWatchNonce]);
   const [showRemote, setShowRemote] = useState(false);
   const [showArcGIS, setShowArcGIS] = useState(false);
   const [arcgisLayers, setArcgisLayers] = useState<Array<{ id: string; title: string; url: string; geojson: any; color: string; visible: boolean; opacity: number }>>([]);
@@ -1973,6 +1989,8 @@ export default function Dashboard() {
               route={navSession.route}
               destinationLabel={navSession.label}
               fix={liveLocation}
+              positionIssue={liveLocation ? null : navGeoIssue}
+              onRetryPosition={() => setNavWatchNonce((n) => n + 1)}
               onProgress={setNavProgress}
               following={followUser}
               onRecenter={() => setFollowUser(true)}
@@ -2016,6 +2034,13 @@ export default function Dashboard() {
               onStartNavigation={(r, label) => {
                 setNavSession({ route: r, label, key: Date.now() });
                 setFollowUser(true);
+                // No fix yet: preview the route from its own start point
+                // until the session's watch lands a real one. The view
+                // labels this a preview — it is never drawn as the driver.
+                if (!liveLocation) {
+                  const start = r.geometry?.coordinates?.[0];
+                  if (start) setFlyToLocation({ lat: start[1], lng: start[0], zoom: 15, ts: Date.now() });
+                }
               }}
               onLocate={(lat, lng, zoom) => setFlyToLocation({ lat, lng, zoom, ts: Date.now() })}
               onClose={() => { setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }}

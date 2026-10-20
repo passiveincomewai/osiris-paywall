@@ -8,6 +8,7 @@ import {
   AlertTriangle, Loader2, type LucideIcon,
 } from 'lucide-react';
 import { loadRecent, rememberPlace, type RecentPlace } from '@/lib/recent-places';
+import { classifyGeoError, currentGeoEnvironment } from '@/lib/geo-position';
 import { PlaceRow } from './places';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -530,7 +531,7 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
     }
 
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      setLocateError('This browser has no geolocation');
+      setLocateError(classifyGeoError(null, { hasGeolocation: false }).remedy);
       return;
     }
 
@@ -546,10 +547,24 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
         setLive(loc);
         onLiveLocation?.(loc);
         setTracking(true);
+        setLocateError(null);
       },
-      () => {
-        setLocateError('Location permission denied — needs HTTPS or localhost');
-        setTracking(false);
+      (err) => {
+        // Name the actual failure (lib/geo-position) — this used to call
+        // every error a permission denial and blame HTTPS for all of them.
+        const issue = classifyGeoError(err, currentGeoEnvironment());
+        setLocateError(issue.remedy);
+        if (issue.kind === 'denied') {
+          // Denied is terminal until the operator changes the setting:
+          // stop the watch rather than leaving a dead one running.
+          if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
+          watchId.current = null;
+          setTracking(false);
+          setFollow(false);
+          onFollowChange?.(false);
+        }
+        // Timeout / unavailable are not terminal for a watch — it keeps
+        // listening and the next fix clears the message above.
       },
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 },
     );

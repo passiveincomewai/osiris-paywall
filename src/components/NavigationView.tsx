@@ -9,6 +9,7 @@ import {
   cumulativeDistances, stepPositions, computeProgress, shouldAnnounce, announcementText,
   type NavStep, type NavFix, type NavProgress,
 } from '@/lib/navigation';
+import type { GeoIssue } from '@/lib/geo-position';
 
 /* ═══════════════════════════════════════════════════════════════
    OSIRIS — Live Navigation
@@ -36,6 +37,14 @@ interface NavigationViewProps {
   following?: boolean;
   /** Re-lock the camera after the operator has looked around. */
   onRecenter?: () => void;
+  /** Why there is no fix yet, classified by lib/geo-position. Shown
+   *  only while `fix` is null; null means "still waiting, no failure
+   *  to report". Without this the view cannot tell a denied permission
+   *  from a cold GPS — it used to blame HTTPS for both. */
+  positionIssue?: GeoIssue | null;
+  /** Re-request the position (restarts the parent's watch). Offered
+   *  when the issue is one a retry can plausibly fix. */
+  onRetryPosition?: () => void;
 }
 
 function ManeuverIcon({ type, className }: { type: string; className?: string }) {
@@ -64,6 +73,7 @@ export function navDuration(s: number): string {
 
 export default function NavigationView({
   route, destinationLabel, fix, onExit, onReroute, onProgress, following, onRecenter,
+  positionIssue, onRetryPosition,
 }: NavigationViewProps) {
   const [muted, setMuted] = useState(false);
   const [rerouting, setRerouting] = useState(false);
@@ -271,10 +281,42 @@ export default function NavigationView({
       )}
 
       {!fix && (
-        <div className="glass-panel tool-glass px-4 py-2.5 flex items-center gap-2 text-[12px] text-[var(--gold-light)]">
-          <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
-          Waiting for a position fix… navigation needs HTTPS or localhost.
-        </div>
+        positionIssue ? (
+          <div className="glass-panel tool-glass px-4 py-3" role="alert">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 mt-[1px] flex-shrink-0 text-[var(--alert-orange)]" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[12.5px] font-medium leading-snug text-[var(--text-heading)]">
+                  {positionIssue.title}
+                </p>
+                <p className="mt-0.5 text-[11.5px] leading-snug text-[var(--text-secondary)]">
+                  {positionIssue.remedy}
+                </p>
+              </div>
+              {positionIssue.retryable && onRetryPosition && (
+                <button
+                  onClick={onRetryPosition}
+                  className="flex-shrink-0 h-8 px-3 rounded-lg text-[11.5px] font-medium text-[var(--gold-light)] bg-[rgba(var(--gold-rgb),0.12)] hover:bg-[rgba(var(--gold-rgb),0.22)] transition-colors"
+                >
+                  Try again
+                </button>
+              )}
+            </div>
+            <p className="mt-2 text-[10.5px] leading-snug text-[var(--text-muted)]">
+              Meanwhile this is a preview from the route’s start point — live turn-by-turn begins when your position is available.
+            </p>
+          </div>
+        ) : (
+          <div className="glass-panel tool-glass px-4 py-2.5">
+            <div className="flex items-center gap-2 text-[12px] text-[var(--gold-light)]">
+              <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
+              Waiting for a position fix…
+            </div>
+            <p className="mt-1 text-[10.5px] leading-snug text-[var(--text-muted)]">
+              Previewing the route from its start point — this is not live navigation yet.
+            </p>
+          </div>
+        )
       )}
     </div>
   );
