@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Live Plane Spotting — Watch Flights Land & Take Off | WorldEye",
     description:
-      "Follow thousands of live flights on one globe, ride a chase camera behind any aircraft, and open cameras near the plane. Free, no signup.",
+      "Follow thousands of live flights on one globe, ride a chase camera behind any aircraft, and see a real photo of the exact plane. Free, no signup.",
     url: "https://worldeye.app/live-plane-spotting",
     type: "website",
   },
@@ -39,7 +39,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "What is live plane spotting on WorldEye?",
-    a: "Instead of standing at a fence with binoculars, you watch live air traffic on a 3D globe: thousands of real flights (3,500+ aircraft on the map at a typical moment) drawn from live ADS-B data, each with its route, altitude, speed and heading. You can follow any of them with a chase camera and open real cameras near the aircraft. It is plane spotting as a map, not a video stream.",
+    a: "Instead of standing at a fence with binoculars, you watch live air traffic on a 3D globe: thousands of real flights (3,500+ aircraft on the map at a typical moment) drawn from live ADS-B data, each with its route, altitude, speed and heading. You can follow any of them with a chase camera and pull up a real photo of that exact aircraft. It is plane spotting as a map, not a video stream.",
   },
   {
     q: "Can I actually watch planes land?",
@@ -47,7 +47,7 @@ const FAQS = [
   },
   {
     q: "Which flights can I follow?",
-    a: "Any aircraft on the map — commercial airliners, private jets, cargo and military traffic that broadcasts ADS-B. Click one to see its origin, destination, progress and cameras near its current position, then follow it in chase, forward or orbit view.",
+    a: "Any aircraft on the map — commercial airliners, private jets, cargo and military traffic that broadcasts ADS-B. Click one to see its origin, destination, progress and a real photo of that exact aircraft, then follow it in chase, forward or orbit view.",
   },
   {
     q: "How live is the data?",
@@ -131,8 +131,8 @@ export default function LivePlaneSpottingPage() {
                 d: "Zoom to a major airport at peak hour and the arrivals line up like beads on a string. Each popup shows the route, aircraft type and how far out it is.",
               },
               {
-                t: "Open cameras near the plane",
-                d: "Every aircraft popup can pull up the real public cameras nearest its position — roads, cities and coastlines passing underneath, live.",
+                t: "See the actual aircraft",
+                d: "Flight panels show a real photo of the exact aircraft — the same tail number — credited to its photographer on Planespotters, alongside live altitude, speed and heading.",
               },
               {
                 t: "Check the airport itself",
