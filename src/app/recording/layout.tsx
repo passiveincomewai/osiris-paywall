@@ -10,6 +10,7 @@ const NAV = [
   { href: "/recording", label: "Overview", icon: "◈" },
   { href: "/recording/cameras", label: "My Cameras", icon: "▣" },
   { href: "/recording/live", label: "Live", icon: "●" },
+  { href: "/recording/multi", label: "Multi-record", icon: "▦" },
   { href: "/recording/clips", label: "Clips", icon: "▸" },
 ];
 

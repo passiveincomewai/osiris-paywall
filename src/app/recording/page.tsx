@@ -81,6 +81,9 @@ export default async function RecordingOverview() {
             <Link href="/recording/live" className="px-4 py-2.5 rounded-xl text-sm font-mono border border-white/20 text-slate-200 hover:bg-white/5">
               ● Open live wall
             </Link>
+            <Link href="/recording/multi" className="px-4 py-2.5 rounded-xl text-sm font-mono border border-white/20 text-slate-200 hover:bg-white/5">
+              ▦ Record up to 20 cameras
+            </Link>
             <Link href="/recording/clips" className="px-4 py-2.5 rounded-xl text-sm font-mono border border-white/20 text-slate-200 hover:bg-white/5">
               ▸ Browse clips
             </Link>
