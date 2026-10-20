@@ -169,3 +169,33 @@ export function abandonedCartEmail(plan: string, checkoutUrl: string): { subject
     ),
   };
 }
+
+export function cameraAlertEmail(input: {
+  cameraName: string;
+  condition: string;
+  observation: string;
+  /** e.g. "3:40 PM UTC" — when the checked still was captured. */
+  frameTimeLabel: string;
+  /** Signed URL of the exact still the check saw; null when unavailable. */
+  imageUrl: string | null;
+  cameraUrl: string;
+  alertsUrl: string;
+}): { subject: string; html: string } {
+  const name = escapeHtml(input.cameraName);
+  const image = input.imageUrl
+    ? `<div style="margin:18px 0;"><img src="${escapeHtml(input.imageUrl)}" alt="The camera image this alert is based on" style="width:100%;border-radius:12px;border:1px solid rgba(255,255,255,0.12);display:block;"></div>`
+    : "";
+  return {
+    subject: `Camera alert: ${input.cameraName}`,
+    html: shell(
+      "Your camera alert may have triggered",
+      `Our check of ${input.cameraName} reports: ${input.observation}`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Your VIP Pro alert watches <strong style="color:#fff;">${name}</strong> for “${escapeHtml(input.condition)}”.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Our check of the ${escapeHtml(input.frameTimeLabel)} image reports: <strong style="color:#fff;">${escapeHtml(input.observation)}</strong></p>
+       ${image}
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">This is an automated look at a single photo, not a guarantee — open the camera to see the live view and confirm for yourself.</p>
+       <p style="font-size:13px;color:#71717a;">Too many alerts? Pause or change this one under <a href="${escapeHtml(input.alertsUrl)}" style="color:#a1a1aa;">Settings → Camera alerts</a>.</p>`,
+      { label: "Open the camera", href: input.cameraUrl }
+    ),
+  };
+}
