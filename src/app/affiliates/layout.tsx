@@ -11,17 +11,17 @@ export const metadata = {
 const NAV = [
   { href: "/affiliates", label: "Program" },
   { href: "/affiliates/dashboard", label: "Dashboard" },
+  { href: "/affiliates/studio", label: "Marketing Studio" },
   { href: "/affiliates/missions", label: "Missions" },
   { href: "/affiliates/network", label: "Network" },
   { href: "/affiliates/leaderboard", label: "Leaderboard" },
   { href: "/affiliates/resources", label: "Resources" },
-  { href: "/affiliates/studio", label: "Marketing Studio" },
 ];
 
 export default async function AffiliatesLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   return (
-    <div className="min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
+    <div className="docs-root min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <AffiliateSync />
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#050810]/85 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
@@ -42,10 +42,10 @@ export default async function AffiliatesLayout({ children }: { children: React.R
           </nav>
           <div className="shrink-0">
             {session?.user ? (
-              <Link href="/affiliates/dashboard"
-                className="px-4 py-2 rounded-xl text-sm font-mono font-bold text-[#04121f]"
+              <Link href="/"
+                className="px-4 py-2 rounded-xl text-sm font-mono font-bold text-[#04121f] whitespace-nowrap"
                 style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)", boxShadow: "0 0 18px rgba(0,150,255,.4)" }}>
-                Command Deck
+                ← Back to Globe
               </Link>
             ) : (
               <Link href="/api/auth/signin?callbackUrl=/affiliates"
