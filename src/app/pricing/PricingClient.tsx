@@ -46,7 +46,8 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { fe
   { feature: "Street-level photo layer", free: true, pro: true },
   { feature: "Radar, lightning, hurricanes & fire perimeters", free: true, pro: true },
   { feature: "River gauges & bike-share systems", free: true, pro: true },
-  { feature: "Sensor effects & cinematic director", free: true, pro: true },
+  { feature: "Sensor effects", free: true, pro: true },
+  { feature: "Cinematic director (free for affiliates)", free: false, pro: false },
   { feature: "Earthquakes, wildfires & weather", free: true, pro: true },
   { feature: "OI AI assistant (built-in AI included)", free: false, pro: true },
   { feature: "Satellite imagery view", free: false, pro: true },
@@ -369,11 +370,18 @@ export default function PricingPage() {
                     : <Minus className="w-4 h-4 text-white/15" />}
                 </div>
                 <div className="py-2 flex justify-center items-center bg-[#D4AF37]/[0.06]">
-                  <Check className="w-4 h-4 text-[#D4AF37]" strokeWidth={3} />
+                  {r.pro
+                    ? <Check className="w-4 h-4 text-[#D4AF37]" strokeWidth={3} />
+                    : <Minus className="w-4 h-4 text-white/15" />}
                 </div>
               </div>
             ))}
           </div>
+          <p className="mt-3 text-center text-xs text-white/40 max-w-xl mx-auto">
+            The Cinematic Director isn&apos;t a plan feature — it&apos;s free for members of the{" "}
+            <a href="/affiliates" className="underline hover:text-white/70">affiliate program</a>{" "}
+            on any plan, Free or Pro.
+          </p>
           <div className="mt-5 text-center">
             <button
               onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}

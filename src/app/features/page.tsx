@@ -162,11 +162,11 @@ const FREE_FEATURES = [
       "Follow upcoming launches from Space Launch Complex 40 to Baikonur with live-ticking countdowns, and replay past missions — replays are labeled as reconstructed estimates, never dressed up as live telemetry.",
   },
   {
-    icon: Clapperboard,
-    title: "Sensor effects & cinematic director",
-    desc: "Simulated sensor looks and a scene director for the globe — free creative tools.",
+    icon: Sparkles,
+    title: "Sensor effects",
+    desc: "Simulated sensor looks for the globe — a free creative tool.",
     detail:
-      "Night vision, thermal false-colour, monochrome and more simulated looks applied to the map only, always labeled as simulated visual effects — never sensor data. The cinematic director composes saved camera scenes of the globe and records them.",
+      "Night vision, thermal false-colour, monochrome and more simulated looks applied to the map only, always labeled as simulated visual effects — never sensor data.",
   },
 ];
 
@@ -334,6 +334,26 @@ export default function FeaturesPage() {
                 Open the live map →
               </span>
             </a>
+          </div>
+        </section>
+
+        {/* AFFILIATE PERK */}
+        <section className="mt-10">
+          <div className="rounded-3xl border border-[#D4AF37]/25 bg-[#D4AF37]/[0.04] p-7 flex flex-col md:flex-row md:items-center gap-5">
+            <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center">
+              <Clapperboard className="w-5 h-5 text-[#D4AF37]" />
+            </span>
+            <div className="flex-1">
+              <h3 className="font-semibold text-white/90 mb-1">Cinematic director — free for affiliates</h3>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Compose keyframed camera scenes of the live globe, save them, play them back
+                and record the flight as video. The director isn&apos;t part of Free or Pro —
+                it&apos;s a perk of the affiliate program, and joining is free.
+              </p>
+            </div>
+            <Link href="/affiliates" className="text-sm font-semibold text-[#D4AF37] hover:underline whitespace-nowrap">
+              Join the affiliate program →
+            </Link>
           </div>
         </section>
 
