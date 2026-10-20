@@ -2,12 +2,20 @@
 
 const DB = "worldeye-clips";
 const STORE = "blobs";
+/**
+ * In-progress recording segments, one entry per MediaRecorder timeslice,
+ * written by the capture-session layer (lib/recording/sessions) as a
+ * recording runs — so a crash or a closed tab loses at most the segment
+ * still being captured, never the whole recording.
+ */
+const SEGMENTS = "segments";
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1);
+    const req = indexedDB.open(DB, 2);
     req.onupgradeneeded = () => {
       if (!req.result.objectStoreNames.contains(STORE)) req.result.createObjectStore(STORE);
+      if (!req.result.objectStoreNames.contains(SEGMENTS)) req.result.createObjectStore(SEGMENTS);
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -71,4 +79,65 @@ export async function idbUsageBytes(): Promise<number> {
   } catch {
     return 0;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Recording segments — appended while a capture session records.      */
+/* Keys sort lexicographically in sequence order (zero-padded seq).    */
+/* ------------------------------------------------------------------ */
+
+export const segmentKey = (sessionId: string, seq: number) =>
+  `${sessionId}:${String(seq).padStart(6, "0")}`;
+
+export async function idbPutSegment(sessionId: string, seq: number, blob: Blob): Promise<void> {
+  const db = await openDb();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(SEGMENTS, "readwrite");
+    tx.objectStore(SEGMENTS).put(blob, segmentKey(sessionId, seq));
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+}
+
+/** Every persisted segment of a session, in capture order. */
+export async function idbGetSegments(sessionId: string): Promise<Blob[]> {
+  const db = await openDb();
+  const out = await new Promise<Blob[]>((resolve, reject) => {
+    const tx = db.transaction(SEGMENTS, "readonly");
+    const req = tx.objectStore(SEGMENTS).openCursor(
+      IDBKeyRange.bound(`${sessionId}:`, `${sessionId}:\uffff`),
+    );
+    const acc: Blob[] = [];
+    req.onsuccess = () => {
+      const cur = req.result;
+      if (cur) {
+        acc.push(cur.value as Blob);
+        cur.continue();
+      } else resolve(acc);
+    };
+    req.onerror = () => reject(req.error);
+  });
+  db.close();
+  return out;
+}
+
+export async function idbDeleteSegments(sessionId: string): Promise<void> {
+  const db = await openDb();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(SEGMENTS, "readwrite");
+    const req = tx.objectStore(SEGMENTS).openCursor(
+      IDBKeyRange.bound(`${sessionId}:`, `${sessionId}:\uffff`),
+    );
+    req.onsuccess = () => {
+      const cur = req.result;
+      if (cur) {
+        cur.delete();
+        cur.continue();
+      }
+    };
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
 }

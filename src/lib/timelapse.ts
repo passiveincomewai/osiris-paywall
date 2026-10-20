@@ -4,8 +4,10 @@
  * While a Pro viewer watches a still ("jpg") camera, WorldEye can capture
  * each new snapshot the camera publishes, in order, on this device. The
  * frames are played back as a timelapse and can be rendered to a WebM file
- * the viewer keeps. Capture happens only while the viewer is open in this
- * tab — this is not 24/7 recording and nothing is stored in the cloud.
+ * the viewer keeps. The capture itself is run by the persistent session
+ * layer (lib/recording/sessions): it keeps going while the tab stays
+ * open, even with this viewer closed, and stops on its own at 24 hours.
+ * This is not 24/7 recording and nothing is stored in the cloud.
  *
  * Frame source: GET /api/cctv/frame?id=<catalogue id> — the same
  * server-fetched still the built-in detector reads. It answers 422 for live
