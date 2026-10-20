@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { stealthFetch } from '@/lib/stealthFetch';
 import { cachedSource, isStale, peekSource, seedSource } from '@/lib/sourceCache';
 import { buildPayload, clearPayload, getPayload, readSnapshot, writeSnapshot, type Payload, type RegionCameras } from '@/lib/cctv-snapshot';
+import { sparseSampleRegions } from '@/lib/cctv-sparse';
 import { createPool } from '@/lib/fetch-pool';
 
 export const maxDuration = 60;
@@ -725,6 +726,41 @@ function currentRegions(): RegionCameras {
   return regions;
 }
 
+/** Point lookup with the historical default: a point that matches
+ *  nothing still loads somewhere rather than nowhere. */
+function getRegionsForBounds(lat: number, lng: number, radius: number): string[] {
+  void radius;
+  const regions = regionsAtPoint(lat, lng);
+  return regions.length > 0 ? regions : ['uk', 'us-east']; // Default fallback
+}
+
+const normalizeLng = (lng: number) => ((lng + 540) % 360) - 180;
+
+/**
+ * Which regions a viewport needs: grid-sample the point mapping across
+ * the box and union the hits. The point boxes are coarse (whole states
+ * and countries), so a ~8° sampling step cannot slip between two
+ * neighbouring boxes without touching one of them; edges and corners
+ * are sampled exactly. Boxes crossing the antimeridian (west > east)
+ * are walked the short way round.
+ */
+export function regionsForBbox(west: number, south: number, east: number, north: number): string[] {
+  const found = new Set<string>();
+  if (![west, south, east, north].every(Number.isFinite)) return [];
+  const latSpan = Math.max(0, Math.min(180, north - south));
+  const lngSpan = east >= west ? Math.min(360, east - west) : east + 360 - west;
+  const stepsLat = Math.min(16, Math.max(1, Math.ceil(latSpan / 8)));
+  const stepsLng = Math.min(24, Math.max(1, Math.ceil(lngSpan / 8)));
+  for (let i = 0; i <= stepsLng; i++) {
+    const lng = normalizeLng(west + (lngSpan * i) / stepsLng);
+    for (let j = 0; j <= stepsLat; j++) {
+      const lat = south + (latSpan * j) / stepsLat;
+      for (const region of regionsAtPoint(lat, lng)) found.add(region);
+    }
+  }
+  return [...found];
+}
+
 /**
  * What this instance currently holds, counted without serialising the
  * catalogue — the Stage E health rollup reads this (the admin dashboard
@@ -890,8 +926,11 @@ async function collectRegions(regions: string[]): Promise<{ cameras: Record<stri
   return { cameras, pending };
 }
 
-// Determine which regions to fetch based on viewport bounds
-function getRegionsForBounds(lat: number, lng: number, radius: number): string[] {
+// Determine which regions cover one point. Returns [] when the point
+// matches nothing (open ocean, unmapped territory) — callers that need a
+// non-empty answer apply their own fallback (getRegionsForBounds below),
+// while the bbox resolver treats a miss as exactly that: no regions.
+function regionsAtPoint(lat: number, lng: number): string[] {
   const regions: string[] = [];
   // UK
   if (lat > 49 && lat < 61 && lng > -8 && lng < 2) regions.push('uk');
@@ -1028,7 +1067,7 @@ function getRegionsForBounds(lat: number, lng: number, radius: number): string[]
     if (lng > 28) regions.push('occ-asia-pacific');
   }
 
-  return regions.length > 0 ? regions : ['uk', 'us-east']; // Default fallback
+  return regions;
 }
 
 /** How old the prebuilt world payload may get before a rebuild is kicked off. */
@@ -1055,6 +1094,44 @@ function rebuildInBackground() {
  * The bytes are already serialised and gzipped, so a request costs a buffer
  * write. An unchanged catalogue answers a returning visitor with a 304.
  */
+
+/**
+ * The sparse layer's response body, memoised for a minute at a time:
+ * sampling is cheap index maths, but serialising ~2,000 records per
+ * request is not free, and the held catalogue the sample is drawn from
+ * changes on the order of minutes, not requests. A change in the held
+ * total invalidates the memo immediately.
+ */
+const SPARSE_MEMO_MS = 60_000;
+let sparseMemo: { heldTotal: number; at: number; body: Record<string, unknown> } | undefined;
+
+function sparseResponseBody(): Record<string, unknown> {
+  const held = currentRegions();
+  const heldTotal = Object.values(held).reduce((n, list) => n + list.length, 0);
+  if (sparseMemo && sparseMemo.heldTotal === heldTotal && Date.now() - sparseMemo.at < SPARSE_MEMO_MS) {
+    return sparseMemo.body;
+  }
+  const sample = sparseSampleRegions(held);
+  const sources: Record<string, number> = {};
+  for (const cam of sample.cameras) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const label = String((cam as any).source ?? 'unknown');
+    sources[label] = (sources[label] || 0) + 1;
+  }
+  const body: Record<string, unknown> = {
+    cameras: sample.cameras,
+    total: sample.cameras.length,
+    sources,
+    regions: ALL_REGIONS(),
+    pendingRegions: ALL_REGIONS().filter(region => !held[region]),
+    sparse: true,
+    catalogueTotal: sample.heldTotal,
+    timestamp: new Date().toISOString(),
+  };
+  sparseMemo = { heldTotal, at: Date.now(), body };
+  return body;
+}
+
 function servePayload(request: Request, ready: Payload) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json; charset=utf-8',
@@ -1089,12 +1166,70 @@ export async function GET(request: Request) {
       );
     }
 
+    /* Sparse worldwide layer for the globe's first paint: a few hundred
+       KB sampled from everything currently held, instead of the whole
+       catalogue. Regions this instance has not collected yet are named
+       in pendingRegions — the sample never pretends to cover them. */
+    if (searchParams.get('sparse') === '1') {
+      if (!Object.keys(currentRegions()).length) await collectRegions(ALL_REGIONS());
+      const body = sparseResponseBody();
+      const pendingRegions = body.pendingRegions as string[];
+      return NextResponse.json(body, {
+        headers: {
+          'Cache-Control': pendingRegions.length ? 'no-store, max-age=0' : 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      });
+    }
+
+    /* One camera by id, for deep links whose target may sit in a region
+       the visitor has not loaded: scan what this instance holds, and if
+       it is not there, collect (bounded, exactly as a cold default
+       request is) and scan again. A miss is an honest empty list. */
+    const wantId = searchParams.get('id');
+    if (wantId) {
+      const findHeld = (): { camera: unknown; region: string } | null => {
+        for (const [regionKey, list] of Object.entries(currentRegions())) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const hit = list.find(cam => String((cam as any).id) === wantId);
+          if (hit) return { camera: hit, region: regionKey };
+        }
+        return null;
+      };
+      let hit = findHeld();
+      if (!hit) {
+        await collectRegions(ALL_REGIONS());
+        hit = findHeld();
+      }
+      const held = currentRegions();
+      return NextResponse.json({
+        cameras: hit ? [hit.camera] : [],
+        total: hit ? 1 : 0,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sources: hit ? { [String((hit.camera as any).source ?? 'unknown')]: 1 } : {},
+        regions: hit ? [hit.region] : [],
+        pendingRegions: ALL_REGIONS().filter(region => !held[region]),
+        timestamp: new Date().toISOString(),
+      }, { headers: { 'Cache-Control': 'no-store, max-age=0' } });
+    }
+
     let regionsToFetch: string[];
 
+    /* Viewport fill: ?bbox=west,south,east,north resolves the regions
+       the box needs (regionsForBbox), and &exclude=<keys> drops the ones
+       the client already holds in full, so panning across a region
+       boundary never re-downloads the regions behind it. The response
+       names the full resolved set in resolvedRegions so the client can
+       cache the mapping and skip the request next time. */
+    let resolvedRegions: string[] | undefined;
+    const bboxParts = (searchParams.get('bbox') ?? '').split(',').map(Number);
     if (region === 'all') {
       regionsToFetch = Object.keys(REGION_FETCHERS);
     } else if (region) {
       regionsToFetch = region.split(',').filter(r => r in REGION_FETCHERS);
+    } else if (bboxParts.length === 4 && bboxParts.every(Number.isFinite)) {
+      resolvedRegions = regionsForBbox(bboxParts[0], bboxParts[1], bboxParts[2], bboxParts[3]);
+      const exclude = new Set((searchParams.get('exclude') ?? '').split(',').filter(r => r in REGION_FETCHERS));
+      regionsToFetch = resolvedRegions.filter(r => !exclude.has(r));
     } else if (lat !== 0 || lng !== 0) {
       regionsToFetch = getRegionsForBounds(lat, lng, radius);
     } else {
@@ -1148,6 +1283,7 @@ export async function GET(request: Request) {
       sources,
       regions: regionsToFetch,
       pendingRegions,
+      ...(resolvedRegions ? { resolvedRegions } : {}),
       timestamp: new Date().toISOString(),
     }, {
       headers: { 'Cache-Control': cacheControl },
