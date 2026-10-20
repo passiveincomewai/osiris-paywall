@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Building2, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import data from "@/data/camera-directory.json";
+import cityPages from "@/data/city-pages.json";
 
 export const metadata: Metadata = {
   title: "World City Webcams — Top 25 Live City Cams",
@@ -143,6 +144,54 @@ export default function WorldCityWebcamsPage() {
         <p className="text-xs text-white/35 mt-3">
           Counts reflect indexed public feeds and change as operators add or retire cameras.
         </p>
+
+        {/* City webcam pages — every /city-webcams page, so none is orphaned.
+            The generated tier comes from src/data/city-pages.json (built by
+            tools/build-city-pages.mjs from the live catalogue); the ten
+            editorial guides are hand-written in the [city] route. */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">City webcam pages</h2>
+          <p className="text-white/55 mt-3 text-sm md:text-base leading-relaxed">
+            A dedicated page for every city with a substantial camera grid —
+            real counts, the sources behind them, and featured cameras that
+            open straight into the live globe.
+          </p>
+          <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {cityPages.cities.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/city-webcams/${c.slug}`}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 hover:border-[#D4AF37]/40 transition"
+                >
+                  <span className="font-medium text-white/85">
+                    {c.name} <span className="text-white/40 font-normal">· {c.country}</span>
+                  </span>
+                  <span className="tabular-nums text-[#D4AF37] font-semibold text-sm shrink-0">
+                    {fmt(c.count)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm text-white/45 mt-6 mb-3">Editorial city guides:</p>
+          <ul className="flex flex-wrap gap-2.5">
+            {[
+              ["london", "London"], ["ottawa", "Ottawa"], ["toronto", "Toronto"],
+              ["madrid", "Madrid"], ["houston", "Houston"], ["dallas", "Dallas"],
+              ["tokyo", "Tokyo"], ["sydney", "Sydney"], ["auckland", "Auckland"],
+              ["fort-worth", "Fort Worth"],
+            ].map(([slug, name]) => (
+              <li key={slug}>
+                <Link
+                  href={`/city-webcams/${slug}`}
+                  className="inline-block rounded-full border border-white/10 px-4 py-2 text-sm text-white/70 hover:text-white hover:border-[#D4AF37]/40 transition"
+                >
+                  {name} live webcams
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {/* How to watch */}
         <div className="mt-16 rounded-2xl border border-white/10 bg-white/[0.02] p-8">
