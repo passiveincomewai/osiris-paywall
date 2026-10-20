@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import CheckoutSheet from "@/components/CheckoutSheet";
+import TeamSection from "./TeamSection";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
 import {
   ENTERPRISE_OFFER_FEATURES as ENTERPRISE_FEATURES,
@@ -399,6 +400,9 @@ export default function PricingPage() {
             </div>
           </div>
         </div>
+
+        {/* Team Access */}
+        <TeamSection />
 
         {/* Free vs Pro comparison */}
         <div className="mt-10">
