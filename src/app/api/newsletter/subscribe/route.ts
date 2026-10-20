@@ -1,37 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomBytes } from "crypto";
-import { db } from "@/lib/db";
-import { sendEmail, newsletterVerifyEmail, appUrl } from "@/lib/email";
+import { subscribeToNewsletter } from "@/lib/newsletter/subscribe";
 
 export const runtime = "nodejs";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
+// Thin HTTP shell over lib/newsletter/subscribe — the one subscribe
+// routine every surface shares (this route, the signup opt-in, the
+// /welcome claim opt-in). The outcome→response mapping is the public
+// contract the footer form and capture cards already depend on.
 export async function POST(req: NextRequest) {
   try {
     const { email, source } = await req.json().catch(() => ({}));
-    const clean = String(email ?? "").trim().toLowerCase();
-    if (!EMAIL_RE.test(clean)) {
+    const outcome = await subscribeToNewsletter(email, source);
+    if (outcome.kind === "invalid") {
       return NextResponse.json({ ok: false, error: "Enter a valid email address." }, { status: 400 });
     }
-    const verifyToken = randomBytes(24).toString("hex");
-    const existing = await db.newsletterSubscriber.findUnique({ where: { email: clean } });
-    if (existing?.verified) {
+    if (outcome.kind === "already") {
       return NextResponse.json({ ok: true, already: true });
     }
-    if (existing) {
-      await db.newsletterSubscriber.update({
-        where: { email: clean },
-        data: { verifyToken, source: String(source ?? "").slice(0, 40) || existing.source },
-      });
-    } else {
-      await db.newsletterSubscriber.create({
-        data: { email: clean, verifyToken, source: String(source ?? "").slice(0, 40) || null },
-      });
-    }
-    const { subject, html } = newsletterVerifyEmail(appUrl(`/api/newsletter/verify?token=${verifyToken}`));
-    const sent = await sendEmail(clean, subject, html);
-    return NextResponse.json({ ok: true, emailed: sent });
+    return NextResponse.json({ ok: true, emailed: outcome.emailed });
   } catch {
     return NextResponse.json({ ok: false, error: "Something went wrong. Try again." }, { status: 500 });
   }
