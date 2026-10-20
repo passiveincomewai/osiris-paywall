@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function SettingsPage() {
   return (
-    <div className="min-h-screen bg-[#05070d] text-white">
+    <div className="docs-root min-h-screen bg-[#05070d] text-white">
       <Suspense>
         <SettingsClient />
       </Suspense>
