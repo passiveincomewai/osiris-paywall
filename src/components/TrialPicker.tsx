@@ -9,8 +9,9 @@
  *
  * Copy rule: plan notes, CTAs and trial badges are /pricing's, verbatim
  * (pinned by trial-checkout.test.ts). This component adds no promises of
- * its own; the only new words are the heading and the Stripe trust line
- * /pricing itself shows under its checkout button.
+ * its own; the only new words are the heading and the trust line, which
+ * pairs /pricing's Stripe line with the 7-day first-charge money-back
+ * guarantee /pricing states under its plan card (pinned by TrialPicker.test.ts).
  */
 import { useState } from "react";
 import { Lock, X, Zap } from "lucide-react";
@@ -117,7 +118,7 @@ export default function TrialPicker({ variant = "default", onClose }: TrialPicke
         <p className={`text-red-400 ${compact ? "mt-1.5 text-[9.5px]" : "mt-2 text-[11px]"}`}>{error}</p>
       )}
       <p className={`flex items-center gap-1.5 text-white/35 ${compact ? "mt-2 text-[8.5px]" : "mt-3 text-[10px]"}`}>
-        <Lock className="w-3 h-3" /> Secured by Stripe · Cancel anytime
+        <Lock className="w-3 h-3" /> Secured by Stripe · Cancel anytime · 7-day money-back guarantee on your first charge
       </p>
     </div>
   );

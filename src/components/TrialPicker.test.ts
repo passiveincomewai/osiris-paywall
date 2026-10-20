@@ -20,7 +20,7 @@ describe("TrialPicker", () => {
       "1 day free, then billed weekly · cancel anytime",
       "1 day free, then billed monthly · cancel anytime",
       "3 days free, then billed annually · cancel anytime",
-      "Secured by Stripe · Cancel anytime",
+      "Secured by Stripe · Cancel anytime · 7-day money-back guarantee on your first charge",
     ]) {
       expect(html).toContain(s);
     }

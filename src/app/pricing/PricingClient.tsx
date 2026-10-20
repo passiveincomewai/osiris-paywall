@@ -74,6 +74,10 @@ const FAQS = [
     a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or annual — and then simply stops. No retention calls, no dark patterns. On a free trial you're never charged during the trial: cancel before it ends and you pay nothing.",
   },
   {
+    q: "What if I forget to cancel — can I get a refund?",
+    a: "We email you before your trial's first charge, so it shouldn't come as a surprise. And if it still happens: your first charge is covered by a 7-day money-back guarantee — email us at passiveincomewai@gmail.com within 7 days of the charge for a full refund, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it.",
+  },
+  {
     q: "What happens if I switch plans?",
     a: "Upgrades apply immediately with proration handled by Stripe. Downgrades take effect at the end of your current period.",
   },
@@ -316,6 +320,9 @@ export default function PricingPage() {
           <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-4">
             <Lock className="w-3.5 h-3.5" /> Secured by Stripe · Cancel anytime · 1-click cancellation
           </p>
+          <p className="flex items-center justify-center gap-2 text-xs text-white/50 mt-2 text-center">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]/80 shrink-0" /> Covered by a 7-day money-back guarantee on your first charge — email us within 7 days of the charge for a full refund, no questions asked.
+          </p>
         </motion.div>
 
         {/* Enterprise */}
@@ -401,6 +408,7 @@ export default function PricingPage() {
         {/* Bottom trust */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
           <span className="flex items-center gap-1.5"><BadgeCheck className="w-4 h-4 text-[#D4AF37]/70" /> 1-click cancellation</span>
+          <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-[#D4AF37]/70" /> 7-day money-back guarantee on your first charge</span>
           <span className="flex items-center gap-1.5"><Lock className="w-4 h-4 text-[#D4AF37]/70" /> Stripe-secured checkout</span>
           <span className="flex items-center gap-1.5"><X className="w-4 h-4 text-[#D4AF37]/70" /> No ads, no data selling</span>
         </div>
