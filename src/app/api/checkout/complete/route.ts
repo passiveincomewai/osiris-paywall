@@ -43,8 +43,18 @@ export async function GET(req: Request) {
 
   const user = await db.user.findUnique({
     where: { email },
-    select: { name: true, phone: true },
+    select: { name: true, phone: true, createdAt: true, passwordHash: true },
   });
+
+  // Did this email already have an account BEFORE this purchase? The
+  // webhook find-or-creates the buyer a few seconds after payment, so a
+  // webhook-created row postdates the checkout session's creation; a
+  // pre-existing account predates it. The welcome page uses this only to
+  // word the claim form honestly ("your purchase is already linked") —
+  // it grants nothing; claim-account re-verifies the session itself.
+  const existingAccount =
+    !!user && checkout.created > 0 && user.createdAt.getTime() <= checkout.created * 1000;
+  const hasPassword = !!user?.passwordHash;
 
   // What they actually bought, for the welcome page's completion loop:
   // a trial user has NOT been charged yet, and the page must say so —
@@ -89,5 +99,7 @@ export async function GET(req: Request) {
     plan,
     trialEndsAt,
     chargeLabel,
+    existingAccount,
+    hasPassword,
   });
 }
