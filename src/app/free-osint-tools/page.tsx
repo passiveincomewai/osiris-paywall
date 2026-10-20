@@ -281,7 +281,7 @@ export default function FreeOsintToolsPage() {
           <p>
             If none of those apply, you don&apos;t need to pay yet — and
             anyone telling you otherwise is selling. WorldEye Pro (weekly
-            $3.99, monthly $9.99, annual $59.99) is priced for the moment an
+            $7.99, monthly $13.99, annual $74.99) is priced for the moment an
             individual investigator outgrows the free globe, not as a gate in
             front of it.
           </p>
@@ -388,7 +388,7 @@ export default function FreeOsintToolsPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the map stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map stays free.",
             href: "/pricing",
           },
         ]}

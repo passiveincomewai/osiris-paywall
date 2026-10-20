@@ -254,8 +254,8 @@ export default function BestGlobalIntelligenceDashboardsPage() {
         <h2 className="text-2xl md:text-3xl font-bold">Where WorldEye Pro fits in the stack</h2>
         <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
           <p>
-            The free globe is the awareness layer. Pro (weekly $3.99, monthly
-            $9.99, annual $59.99) strengthens the detection and analysis
+            The free globe is the awareness layer. Pro (weekly $7.99, monthly
+            $13.99, annual $74.99) strengthens the detection and analysis
             layers: premium intel feeds across cyber, GDELT, maritime,
             conflict and live news; the AI analyst assistant for summarizing
             developing situations; high-resolution satellite imagery;
@@ -349,7 +349,7 @@ export default function BestGlobalIntelligenceDashboardsPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the map stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map stays free.",
             href: "/pricing",
           },
         ]}

@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best hosted alternative — no install",
     href: "/compare/worldeye-vs-osiris",
     linkLabel: "WorldEye vs OSIRIS, head-to-head",
-    body: "The same idea as OSIRIS — one live map carrying cameras, flights, satellites, weather, quakes and fires — as a hosted product instead of a codebase. Open it in a browser: no Docker, no Node, no API keys for the core globe, and a camera network of 74,229 public feeds instead of 17,000+. Free with no signup; Pro ($3.99/week, $9.99/month, $59.99/year) adds the OSINT toolkit and live intel feeds, run on our infrastructure and our keys.",
+    body: "The same idea as OSIRIS — one live map carrying cameras, flights, satellites, weather, quakes and fires — as a hosted product instead of a codebase. Open it in a browser: no Docker, no Node, no API keys for the core globe, and a camera network of 74,229 public feeds instead of 17,000+. Free with no signup; Pro ($7.99/week, $13.99/month, $74.99/year) adds the OSINT toolkit and live intel feeds, run on our infrastructure and our keys.",
   },
   {
     icon: Code2,
@@ -78,7 +78,7 @@ const OPTIONS = [
 
 const TABLE: { label: string; worldeye: string; osiris: string }[] = [
   { label: "How you run it", worldeye: "Hosted website — open the URL", osiris: "Self-hosted (Docker or Node.js); a live demo is linked from the repo" },
-  { label: "Cost", worldeye: "Map free, no signup; Pro $3.99/wk, $9.99/mo, $59.99/yr", osiris: "Free open source (MIT); you pay for hosting and your own API keys" },
+  { label: "Cost", worldeye: "Map free, no signup; Pro $7.99/wk, $13.99/mo, $74.99/yr", osiris: "Free open source (MIT); you pay for hosting and your own API keys" },
   { label: "Map", worldeye: "Interactive 3D globe", osiris: "MapLibre map (2D-first, terrain views)" },
   { label: "Public cameras", worldeye: "74,229 live feeds, browsable directory", osiris: "17,000+ cameras (project README)" },
   { label: "Flights / satellites", worldeye: "Live, on the globe", osiris: "Live (OpenSky aviation; N2YO satellites)" },
@@ -399,7 +399,7 @@ export default function OsirisAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the core globe stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the core globe stays free.",
             href: "/pricing",
           },
         ]}

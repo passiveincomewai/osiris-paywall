@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best for cameras + a real 3D globe",
     href: "/",
     linkLabel: "Open the live globe",
-    body: "A hosted 3D globe whose centerpiece is the camera network: 74,229 live public feeds across 105 countries, browsable by country and city, fused with live flights, satellites, weather radar, earthquakes and wildfires. Free with no signup; Pro ($3.99/week, $9.99/month, $59.99/year) adds an OSINT toolkit, cyber and maritime intel feeds, live news and an AI analyst — at published prices, on the site's own keys.",
+    body: "A hosted 3D globe whose centerpiece is the camera network: 74,229 live public feeds across 105 countries, browsable by country and city, fused with live flights, satellites, weather radar, earthquakes and wildfires. Free with no signup; Pro ($7.99/week, $13.99/month, $74.99/year) adds an OSINT toolkit, cyber and maritime intel feeds, live news and an AI analyst — at published prices, on the site's own keys.",
   },
   {
     icon: MonitorSmartphone,
@@ -82,7 +82,7 @@ const TABLE: { label: string; worldeye: string; godsview: string; gev: string }[
   { label: "Public cameras", worldeye: "74,229 feeds, browsable directory", godsview: "Camera search layer; no published count", gev: "~4,000 (CCTV mesh, project README)" },
   { label: "Flights / ships / quakes / fires", worldeye: "Live, free", godsview: "Live, free", gev: "Live; base layers keyless" },
   { label: "OSINT / intel tooling", worldeye: "Pro: OSINT toolkit, cyber + maritime intel, GDELT feeds, AI analyst", godsview: "Premium: watchlists, kiosk mode, heavier ops layers", gev: "Voice AI agent (your OpenAI key); sensor modes" },
-  { label: "Price", worldeye: "Free; Pro $3.99/wk, $9.99/mo, $59.99/yr", godsview: "Free map; Premium pricing not published on its site", gev: "Free code; photorealistic tiles + voice bill to your keys" },
+  { label: "Price", worldeye: "Free; Pro $7.99/wk, $13.99/mo, $74.99/yr", godsview: "Free map; Premium pricing not published on its site", gev: "Free code; photorealistic tiles + voice bill to your keys" },
   { label: "Account needed", worldeye: "No (map is open)", godsview: "No (map is open)", gev: "No (but you host it)" },
 ];
 
@@ -294,8 +294,8 @@ export default function GodsViewAiAlternativesPage() {
               Its map opens free with no account. Watchlists, kiosk mode and
               heavier operations layers sit behind a Premium tier whose
               prices aren&apos;t published on its landing page. WorldEye is
-              also free to open, and its Pro pricing is public: $3.99/week,
-              $9.99/month or $59.99/year.
+              also free to open, and its Pro pricing is public: $7.99/week,
+              $13.99/month or $74.99/year.
             </p>
           </div>
           <div>
@@ -363,7 +363,7 @@ export default function GodsViewAiAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the core globe stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the core globe stays free.",
             href: "/pricing",
           },
         ]}

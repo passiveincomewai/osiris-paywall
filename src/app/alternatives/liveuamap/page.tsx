@@ -377,7 +377,7 @@ export default function LiveuamapAlternativesPage() {
               Pro adds live-news and conflict intel feeds, high-resolution
               satellite imagery, the AI analyst assistant, advanced search filters, and
               the OSINT toolkit (Nmap, DNS, WHOIS, SSL). Pricing is weekly
-              $3.99, monthly $9.99, or annual $59.99 — and the free map never
+              $7.99, monthly $13.99, or annual $74.99 — and the free map never
               gets paywalled behind it.
             </p>
           </div>
@@ -433,7 +433,7 @@ export default function LiveuamapAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the map itself stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map itself stays free.",
             href: "/pricing",
           },
         ]}

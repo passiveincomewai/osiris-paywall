@@ -60,7 +60,7 @@ export default function PlansCards() {
         </span>
         <h3 className="text-xl font-bold text-[#D4AF37]">Pro</h3>
         <p className="font-mono text-sm text-white/50 mt-1.5">
-          Weekly $3.99 · Monthly $9.99 · Annual $59.99
+          Weekly $7.99 · Monthly $13.99 · Annual $74.99
         </p>
         <p className="text-xs text-white/40 mt-1">Free trials: 1 day on weekly &amp; monthly · 3 days on annual</p>
         <ul className="mt-5 space-y-2.5">

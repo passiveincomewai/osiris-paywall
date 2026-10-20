@@ -254,7 +254,7 @@ export default function BestGeopoliticalMonitoringToolsPage() {
         <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
           <p>
             The free globe covers visual monitoring completely. Pro
-            (weekly $3.99, monthly $9.99, annual $59.99) adds the analyst
+            (weekly $7.99, monthly $13.99, annual $74.99) adds the analyst
             layer: premium intel feeds spanning cyber, GDELT, maritime,
             conflict and live news; the AI analyst assistant to summarize
             developing situations; high-resolution satellite imagery;
@@ -350,7 +350,7 @@ export default function BestGeopoliticalMonitoringToolsPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the map stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map stays free.",
             href: "/pricing",
           },
         ]}

@@ -237,8 +237,8 @@ export default function GodsEyeViewAlternativesPage() {
             The open-source project is free code, but its photorealistic tiles
             run on your Cesium ion token or bill against your Google account,
             and its AI agent bills against your OpenAI account. WorldEye&apos;s core globe is free with no keys at
-            all; an optional Pro subscription ($3.99/week, $9.99/month,
-            $59.99/year) unlocks the intelligence toolkit.
+            all; an optional Pro subscription ($7.99/week, $13.99/month,
+            $74.99/year) unlocks the intelligence toolkit.
           </p>
           <p>
             <span className="text-white/85 font-semibold">Cameras.</span>{" "}
@@ -384,7 +384,7 @@ export default function GodsEyeViewAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the core globe stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the core globe stays free.",
             href: "/pricing",
           },
         ]}

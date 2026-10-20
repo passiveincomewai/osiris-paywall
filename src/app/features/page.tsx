@@ -67,7 +67,7 @@ const faqJsonLd = {
       name: "What does WorldEye Pro add?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Pro adds the OI AI assistant (which runs on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $3.99, monthly $9.99, annual $59.99.",
+        text: "Pro adds the OI AI assistant (which runs on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $7.99, monthly $13.99, annual $74.99.",
       },
     },
     {
@@ -247,7 +247,7 @@ const FAQS = [
   },
   {
     q: "What does WorldEye Pro add?",
-    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $3.99 · Monthly $9.99 · Annual $59.99.",
+    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $7.99 · Monthly $13.99 · Annual $74.99.",
   },
   {
     q: "Do I need an account to use the map?",
@@ -383,14 +383,14 @@ export default function FeaturesPage() {
           <div className="flex items-center gap-4 mb-8">
             <h2 className="text-2xl md:text-3xl font-bold">Pro <span className="text-[#D4AF37]">intelligence tools</span></h2>
             <span className="text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30">
-              FROM $3.99/WK
+              FROM $7.99/WK
             </span>
           </div>
           <p className="text-white/55 max-w-2xl mb-8">
             For researchers, analysts and the deeply curious: an AI analyst that works
             the globe for you, satellite imagery, the live traffic layer, advanced search
             filters and premium intel feeds.
-            Weekly $3.99 · Monthly $9.99 · Annual $59.99 — cancel anytime.
+            Weekly $7.99 · Monthly $13.99 · Annual $74.99 — cancel anytime.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {PRO_FEATURES.map((f) => (

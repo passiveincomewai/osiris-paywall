@@ -192,7 +192,7 @@ export default function WorldMonitorAlternativesPage() {
             all of them on the same spinning globe.
           </p>
           <p>
-            The Pro tier (weekly $3.99, monthly $9.99, annual $59.99) adds
+            The Pro tier (weekly $7.99, monthly $13.99, annual $74.99) adds
             intelligence tooling — the AI analyst assistant, OSINT toolkit,
             premium intel feeds, high-res satellite imagery, and advanced search filters
             — but it never gates the live map. Zoom Earth, NASA Worldview and
@@ -362,14 +362,14 @@ export default function WorldMonitorAlternativesPage() {
               World Monitor Pro is $39.99/month ($359.99/year) and adds the WM
               Analyst AI chat, scenario engine, scheduled digests, alerts and
               MCP/API access, with higher API tiers above that. WorldEye&apos;s
-              map is also free; its Pro tier is $3.99/week, $9.99/month or
-              $59.99/year.
+              map is also free; its Pro tier is $7.99/week, $13.99/month or
+              $74.99/year.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro cost?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              Weekly $3.99, monthly $9.99, or annual $59.99. Pro adds the AI
+              Weekly $7.99, monthly $13.99, or annual $74.99. Pro adds the AI
               analyst assistant, OSINT toolkit, premium intel feeds,
               high-resolution satellite imagery, and advanced search filters.
               The free map stays free regardless.
@@ -427,7 +427,7 @@ export default function WorldMonitorAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the map itself stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map itself stays free.",
             href: "/pricing",
           },
         ]}

@@ -284,7 +284,7 @@ export default function BestConflictMonitoringToolsPage() {
           <p>
             What money buys here is vetted alerting and accountability
             (Crisis24) and deeper analytic tooling (WorldEye Pro&apos;s intel
-            feeds and AI analyst at $3.99/week, $9.99/month or $59.99/year).
+            feeds and AI analyst at $7.99/week, $13.99/month or $74.99/year).
             Start free; pay when a specific workflow demands it.
           </p>
         </div>
@@ -375,7 +375,7 @@ export default function BestConflictMonitoringToolsPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the map stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map stays free.",
             href: "/pricing",
           },
         ]}

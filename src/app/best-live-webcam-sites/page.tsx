@@ -270,7 +270,7 @@ export default function BestLiveWebcamSitesPage() {
           <p>
             WorldEye&apos;s model is different: the cameras and the whole live
             map are free with no signup, and the optional Pro tier (weekly
-            $3.99, monthly $9.99, annual $59.99) pays for intelligence tooling
+            $7.99, monthly $13.99, annual $74.99) pays for intelligence tooling
             around the map — the OSINT toolkit, maritime and cyber/GDELT
             intel, satellite imagery view, advanced search filters and the AI analyst —
             never for more cameras. Pay for a capability you can name, not
@@ -362,7 +362,7 @@ export default function BestLiveWebcamSitesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the cameras stay free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the cameras stay free.",
             href: "/pricing",
           },
         ]}

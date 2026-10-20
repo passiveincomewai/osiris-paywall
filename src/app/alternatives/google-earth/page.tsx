@@ -334,7 +334,7 @@ export default function GoogleEarthAlternativesPage() {
             <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro add?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
               High-resolution satellite imagery view, the AI analyst assistant,
-              premium intel feeds, the OSINT toolkit, and advanced search filters. Weekly $3.99, monthly $9.99, annual $59.99 —
+              premium intel feeds, the OSINT toolkit, and advanced search filters. Weekly $7.99, monthly $13.99, annual $74.99 —
               the live globe itself stays free.
             </p>
           </div>
@@ -390,7 +390,7 @@ export default function GoogleEarthAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the live globe stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the live globe stays free.",
             href: "/pricing",
           },
         ]}

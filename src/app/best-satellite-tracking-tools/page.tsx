@@ -253,8 +253,8 @@ export default function BestSatelliteTrackingToolsPage() {
           </p>
           <p>
             On WorldEye specifically: tracking satellites live on the globe
-            is free, full stop. The optional Pro tier (weekly $3.99, monthly
-            $9.99, annual $59.99) adds a satellite imagery view — looking at
+            is free, full stop. The optional Pro tier (weekly $7.99, monthly
+            $13.99, annual $74.99) adds a satellite imagery view — looking at
             the Earth from orbit, a different thing from tracking orbits —
             alongside the OSINT toolkit, maritime and cyber/GDELT intel,
             advanced search filters and the AI analyst. If all you want is to watch
@@ -363,7 +363,7 @@ export default function BestSatelliteTrackingToolsPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — satellite tracking stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — satellite tracking stays free.",
             href: "/pricing",
           },
         ]}

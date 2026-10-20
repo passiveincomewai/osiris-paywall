@@ -369,7 +369,7 @@ export default function BestFlightTrackingToolsPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the flight layer stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the flight layer stays free.",
             href: "/pricing",
           },
         ]}

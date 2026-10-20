@@ -153,7 +153,7 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
               <h3 className="font-bold text-white mb-2">Pricing</h3>
               <p className="text-sm text-white/55 leading-relaxed">{c.pricing}</p>
-              <p className="text-sm text-white/55 mt-3"><span className="text-[#0096FF] font-semibold">WorldEye:</span> map free forever, no signup. Pro: $3.99/week, $9.99/month, $59.99/year.</p>
+              <p className="text-sm text-white/55 mt-3"><span className="text-[#0096FF] font-semibold">WorldEye:</span> map free forever, no signup. Pro: $7.99/week, $13.99/month, $74.99/year.</p>
             </div>
           )}
         </section>

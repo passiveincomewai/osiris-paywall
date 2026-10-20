@@ -38,7 +38,7 @@ export default async function RecordingOverview() {
       </div>
     );
   }
-  if (!a.pro) return <UpgradeScreen priceLine="WorldEye Pro · Monthly $9.99 · Annual $59.99 — cancel anytime" />;
+  if (!a.pro) return <UpgradeScreen priceLine="WorldEye Pro · Monthly $13.99 · Annual $74.99 — cancel anytime" />;
 
   const [camCount, clipAgg, recent] = await Promise.all([
     db.savedCamera.count({ where: { userId: a.userId } }),

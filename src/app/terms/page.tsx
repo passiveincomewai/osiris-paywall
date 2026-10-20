@@ -83,8 +83,8 @@ export default function TermsPage() {
         <Section n={3} title="Subscriptions, free trials & billing">
           <p>
             Pro is billed on a recurring subscription: <strong className="text-white/80">weekly
-            at $3.99</strong>, <strong className="text-white/80">monthly at $9.99</strong>,
-            or <strong className="text-white/80">annually at $59.99</strong>, plus any
+            at $7.99</strong>, <strong className="text-white/80">monthly at $13.99</strong>,
+            or <strong className="text-white/80">annually at $74.99</strong>, plus any
             applicable taxes. Prices are in USD unless stated otherwise at checkout.
           </p>
           <p>

@@ -1699,7 +1699,7 @@ export const POSTS: BlogPost[] = [
         heading: "The scorecard",
         body: [
           "Hosting: God's Eye View — self-hosted only; World Monitor — hosted free, self-host optional; WorldEye — hosted. Cameras: God's Eye View — a CCTV mesh of roughly 4,000 public cameras (its README figure; older articles saying ~800 are out of date); World Monitor — no camera network; WorldEye — 74,229 live feeds with a browsable directory.",
-          "Analysis depth: God's Eye View — sensor visualizations and a voice agent, aimed at spectacle; World Monitor — the clear winner, with ACLED/UCDP conflict data, 13 tracked chokepoints, macro data and AI country briefs across six dashboard variants; WorldEye — GDELT-powered intel feeds, cyber and maritime layers and an AI analyst on Pro, shallower than World Monitor's panels by design. Price: God's Eye View — free code, but photorealistic tiles and voice bill to your own API keys; World Monitor — free, Pro $39.99/month; WorldEye — free, Pro $3.99/week, $9.99/month or $59.99/year.",
+          "Analysis depth: God's Eye View — sensor visualizations and a voice agent, aimed at spectacle; World Monitor — the clear winner, with ACLED/UCDP conflict data, 13 tracked chokepoints, macro data and AI country briefs across six dashboard variants; WorldEye — GDELT-powered intel feeds, cyber and maritime layers and an AI analyst on Pro, shallower than World Monitor's panels by design. Price: God's Eye View — free code, but photorealistic tiles and voice bill to your own API keys; World Monitor — free, Pro $39.99/month; WorldEye — free, Pro $7.99/week, $13.99/month or $74.99/year.",
         ],
       },
       {
@@ -1758,7 +1758,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "What hosted really gives up",
         body: [
-          "Control, in a word. You can't fork a website, add a private data layer, or inspect how a feed was processed. Your usage sits on someone else's infrastructure, under their pricing — and pricing in this niche varies wildly in transparency, from published consumer tiers (WorldEye: $3.99/week to $59.99/year; World Monitor Pro: $39.99/month) to premium tiers with no public price at all. What you get back is everything operational: the feeds are maintained, the keys are theirs, the uptime is their problem, and the product works on your phone the second you open it. Our [OSIRIS alternatives guide](/alternatives/osiris) and [head-to-head](/compare/worldeye-vs-osiris) work through one pairing in detail.",
+          "Control, in a word. You can't fork a website, add a private data layer, or inspect how a feed was processed. Your usage sits on someone else's infrastructure, under their pricing — and pricing in this niche varies wildly in transparency, from published consumer tiers (WorldEye: $7.99/week to $74.99/year; World Monitor Pro: $39.99/month) to premium tiers with no public price at all. What you get back is everything operational: the feeds are maintained, the keys are theirs, the uptime is their problem, and the product works on your phone the second you open it. Our [OSIRIS alternatives guide](/alternatives/osiris) and [head-to-head](/compare/worldeye-vs-osiris) work through one pairing in detail.",
         ],
       },
       {

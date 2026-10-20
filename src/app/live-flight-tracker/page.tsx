@@ -279,7 +279,7 @@ export default function LiveFlightTrackerPage() {
               WorldEye Pro
             </Link>{" "}
             adds the OI AI assistant (on your own API key), satellite imagery,
-            advanced search filters and premium intel feeds — from $3.99/week.
+            advanced search filters and premium intel feeds — from $7.99/week.
           </p>
           <Link
             href="/pricing"

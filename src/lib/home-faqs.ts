@@ -17,7 +17,7 @@ export const HOME_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What does WorldEye Pro include, and what does it cost?",
-    a: "Pro adds the OI AI analyst, satellite map view, the live traffic layer, advanced search filters, the camera recording studio with timelapse, and premium intel feeds such as cyber threats, maritime tracking and a live news feed. Plans are weekly at $3.99, monthly at $9.99 and annual at $59.99. The weekly and monthly plans start with a 1-day free trial and the annual plan with a 3-day free trial, and you can cancel anytime in one click.",
+    a: "Pro adds the OI AI analyst, satellite map view, the live traffic layer, advanced search filters, the camera recording studio with timelapse, and premium intel feeds such as cyber threats, maritime tracking and a live news feed. Plans are weekly at $7.99, monthly at $13.99 and annual at $74.99. The weekly and monthly plans start with a 1-day free trial and the annual plan with a 3-day free trial, and you can cancel anytime in one click.",
   },
   {
     q: "Where do the live cameras come from?",

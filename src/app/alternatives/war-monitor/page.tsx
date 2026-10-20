@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best all-planet alternative — no account",
     href: "/",
     linkLabel: "Open the live globe",
-    body: "A hosted 3D globe for watching the world — conflict zones included, but not conflict-only: 74,229 live public cameras across 105 countries, live flights, ships and satellites, weather, earthquakes and wildfires, all free with no account. Pro ($3.99/week, $9.99/month, $59.99/year) adds GDELT-powered conflict and event intel, cyber and maritime feeds and live news. What it doesn't have: War Monitor's analyst toolkit — no timeline replay, no link analysis.",
+    body: "A hosted 3D globe for watching the world — conflict zones included, but not conflict-only: 74,229 live public cameras across 105 countries, live flights, ships and satellites, weather, earthquakes and wildfires, all free with no account. Pro ($7.99/week, $13.99/month, $74.99/year) adds GDELT-powered conflict and event intel, cyber and maritime feeds and live news. What it doesn't have: War Monitor's analyst toolkit — no timeline replay, no link analysis.",
   },
   {
     icon: Crosshair,
@@ -84,7 +84,7 @@ const TABLE: { label: string; worldeye: string; warmonitor: string }[] = [
   { label: "Analyst toolkit", worldeye: "OSINT lookups + AI analyst (Pro)", warmonitor: "Timeline replay, link analysis, pattern-of-life, geofence alerts" },
   { label: "Weather & hazards", worldeye: "Radar, quakes, wildfires — core free layers", warmonitor: "Earthquakes and fires among its 25+ layers" },
   { label: "Account needed", worldeye: "No — the map is open", warmonitor: "Yes — free-tier signup" },
-  { label: "Price", worldeye: "Free; Pro $3.99/wk, $9.99/mo, $59.99/yr", warmonitor: "Free tier $0; Operator upgrade (price on their site)" },
+  { label: "Price", worldeye: "Free; Pro $7.99/wk, $13.99/mo, $74.99/yr", warmonitor: "Free tier $0; Operator upgrade (price on their site)" },
 ];
 
 const jsonLd = {
@@ -280,8 +280,8 @@ export default function WarMonitorAlternativesPage() {
               It has a free tier ($0) that covers the live map, conflict
               zones, public cameras, flights, satellites and earthquakes —
               with an account signup — plus a paid Operator upgrade.
-              WorldEye&apos;s map needs no account at all; Pro is $3.99/week,
-              $9.99/month or $59.99/year.
+              WorldEye&apos;s map needs no account at all; Pro is $7.99/week,
+              $13.99/month or $74.99/year.
             </p>
           </div>
           <div>
@@ -358,7 +358,7 @@ export default function WarMonitorAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the core globe stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the core globe stays free.",
             href: "/pricing",
           },
         ]}

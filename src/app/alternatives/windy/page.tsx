@@ -169,7 +169,7 @@ export default function WindyAlternativesPage() {
             weather on the same spinning globe as everything it affects.
           </p>
           <p>
-            The Pro tier (weekly $3.99, monthly $9.99, annual $59.99) adds
+            The Pro tier (weekly $7.99, monthly $13.99, annual $74.99) adds
             intelligence tooling — the OSINT toolkit, maritime and cyber/GDELT
             intel feeds, satellite imagery view, advanced search filters and the AI
             analyst — but it never gates the live map. Zoom Earth, NASA
@@ -332,7 +332,7 @@ export default function WindyAlternativesPage() {
           <div>
             <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro cost?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              Weekly $3.99, monthly $9.99, or annual $59.99. Pro adds the
+              Weekly $7.99, monthly $13.99, or annual $74.99. Pro adds the
               OSINT toolkit, maritime intel, cyber/GDELT intel, satellite
               imagery view, advanced search filters and the AI analyst. The free map
               stays free regardless.
@@ -390,7 +390,7 @@ export default function WindyAlternativesPage() {
           },
           {
             label: "Pricing",
-            desc: "Weekly $3.99, monthly $9.99, annual $59.99 — the map itself stays free.",
+            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map itself stays free.",
             href: "/pricing",
           },
         ]}
