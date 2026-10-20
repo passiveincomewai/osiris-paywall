@@ -1020,9 +1020,20 @@ export default async function CityWebcamPage({
     },
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "Countries", item: `${BASE}/cameras/countries` },
+      { "@type": "ListItem", position: 3, name: c.h1, item: canonical },
+    ],
+  };
+
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbLd} />
       <FaqJsonLd faqs={c.faqs} />
       <Breadcrumb
         trail={[
