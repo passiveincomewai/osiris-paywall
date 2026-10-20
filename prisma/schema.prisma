@@ -31,6 +31,7 @@ model User {
   clipMetas     ClipMeta[]
   cameraCollections CameraCollection[]
   enterpriseApiKeys EnterpriseApiKey[]
+  claimedShareIdentity ShareIdentity? @relation("ShareIdentityClaim")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -255,6 +256,79 @@ model CameraBonusGrant {
   createdAt     DateTime @default(now())
 
   @@index([inviterUserId])
+}
+
+// ── Universal share identity ─────────────────────────────────────────
+// Everyone gets a personal share code — the affiliate link system,
+// opened to visitors who have no account. A signed-in user's share
+// code IS their affiliate code (AffiliateProfile.referralCode /
+// customCode — no second code is minted for them). A signed-out
+// visitor's browser holds a device token (localStorage); the server
+// mints one ShareIdentity per token. When that device later signs up
+// or logs in, the identity is CLAIMED by the account (one-time,
+// first-claim-wins: claimedByUserId is unique and never reassigned) —
+// as their affiliate referralCode if they have no profile yet, or as
+// an alias that keeps resolving to their profile. Signups recorded
+// against the code before the claim (ShareReferral) are flushed into
+// real ReferralAttribution rows at claim time, so pre-claim sharing
+// counts exactly like affiliate sharing.
+model ShareIdentity {
+  id String @id @default(cuid())
+
+  // Public share code. Same alphabet/length rules as affiliate codes
+  // (REF_CODE_RE); uniqueness against affiliate codes is enforced at
+  // mint time across both tables.
+  code String @unique
+
+  // sha256 of the device token the visitor's browser presents.
+  deviceTokenHash String @unique
+
+  claimedByUserId String?   @unique
+  claimedBy       User?     @relation("ShareIdentityClaim", fields: [claimedByUserId], references: [id], onDelete: SetNull)
+  claimedAt       DateTime?
+
+  // Mint rate limiting: hashed IP of the minting request.
+  mintIpHash String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clicks    ShareClick[]
+  referrals ShareReferral[]
+
+  @@index([mintIpHash, createdAt])
+}
+
+model ShareClick {
+  id              String        @id @default(cuid())
+  shareIdentityId String
+  shareIdentity   ShareIdentity @relation(fields: [shareIdentityId], references: [id], onDelete: Cascade)
+
+  ipHash    String
+  userAgent String? @db.VarChar(300)
+  path      String? @db.VarChar(300)
+
+  createdAt DateTime @default(now())
+
+  @@index([shareIdentityId, ipHash, createdAt])
+  @@index([createdAt])
+}
+
+model ShareReferral {
+  id              String        @id @default(cuid())
+  shareIdentityId String
+  shareIdentity   ShareIdentity @relation(fields: [shareIdentityId], references: [id], onDelete: Cascade)
+
+  // One user can only ever be share-attributed once (first code wins),
+  // mirroring ReferralAttribution.referredUserId.
+  referredUserId String   @unique
+  // Set when the identity's claim converted this pending row into a
+  // real ReferralAttribution (+ invite camera bonus) for the claimer.
+  flushedAt      DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([shareIdentityId])
 }
 
 enum CommissionStatus {
