@@ -6,7 +6,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import { normalizeEmail, isValidEmail, verifyPassword } from "@/lib/password-auth";
 import { subscriptionStatusFromRow } from "@/lib/subscription-status";
-import { planTierForRow } from "@/lib/plan-tier";
+import { planTierForRow, type PlanTier } from "@/lib/plan-tier";
+import { getEffectiveEntitlement, maxTier } from "@/lib/team/entitlement";
 
 /* ------------------------------------------------------------------ */
 /* Type augmentation: the session JWT carries the paywall state so     */
@@ -37,20 +38,46 @@ const SUBSCRIPTION_TTL_MS = 60_000;
 
 /**
  * resolveSubscriptionStatus, extended: the session's subscriptionStatus
- * AND planTier from ONE row read. The status mapping is
- * lib/subscription-status (pure, test-pinned): "trialing" counts as full
- * Pro access until the trial ends — Stripe flips the status (past_due /
- * canceled / ...) via webhook if payment fails; anything else locks the
- * gate. The tier mapping is lib/plan-tier (the contract: annual price →
- * vip, weekly/monthly/comp → pro, enterprise → vip).
+ * AND planTier. The status mapping is lib/subscription-status (pure,
+ * test-pinned): "trialing" counts as full Pro access until the trial
+ * ends — Stripe flips the status (past_due / canceled / ...) via
+ * webhook if payment fails; anything else locks the gate. The tier
+ * mapping is lib/plan-tier (the contract: annual price → vip,
+ * weekly/monthly/comp → pro, enterprise → vip).
+ *
+ * Semantics after Team Access Phase 10 (shared premium access):
+ *   - subscriptionStatus stays the member's OWN billing status, from
+ *     their own Subscription row ONLY. A team grant never changes it,
+ *     and nothing is written to the member's Subscription row.
+ *   - planTier is the EFFECTIVE tier: max(own tier, the tier granted by
+ *     each non-suspended org membership) from lib/team/entitlement's
+ *     getEffectiveEntitlement — the single source for that merge.
+ * Every gate that reads planTier (planTierOf(session), the middleware
+ * intel gate, client gates) therefore honours team grants, while
+ * billing surfaces that read subscriptionStatus see the member's own
+ * state unchanged.
+ *
+ * Fail-soft: the org lookup runs only inside this resolver, which the
+ * jwt callback already calls solely on sign-in / update / TTL expiry —
+ * no new per-request DB hit. Any error in it falls back to the own
+ * tier and never breaks sign-in or the session.
  */
 async function resolveSubscriptionClaims(
   userId: string,
 ): Promise<{ status: string; tier: string }> {
   const sub = await db.subscription.findUnique({ where: { userId } });
+  const ownTier: PlanTier = planTierForRow(sub, process.env);
+  let tier: PlanTier = ownTier;
+  try {
+    const entitlement = await getEffectiveEntitlement(userId);
+    tier = maxTier(ownTier, entitlement.effectiveTier);
+  } catch {
+    // Team-grant lookup failed — the own tier stands on its own.
+    tier = ownTier;
+  }
   return {
     status: subscriptionStatusFromRow(sub),
-    tier: planTierForRow(sub, process.env),
+    tier,
   };
 }
 

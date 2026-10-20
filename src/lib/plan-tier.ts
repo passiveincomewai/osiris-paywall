@@ -14,7 +14,10 @@
  *
  * Server-side, the tier is resolved in the Auth.js jwt callback (same
  * read + 60s TTL as subscriptionStatus) and exposed as
- * `session.user.planTier`. Client and edge code read it through
+ * `session.user.planTier`. Since Team Access Phase 10 the token's tier
+ * is the EFFECTIVE tier — max(own tier, org-granted tier via
+ * lib/team/entitlement) — while subscriptionStatus stays the member's
+ * own billing status. Client and edge code read it through
  * planTierOf(session) — never by re-deriving from price ids locally.
  *
  * Consumers: timelapse gate (lib/timelapse), the middleware intel gate,
