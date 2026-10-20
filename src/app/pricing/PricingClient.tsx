@@ -89,32 +89,24 @@ const FAQS = [
 
 function CheckoutButton({ plan, label }: { plan: Plan; label: string }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  async function startCheckout() {
+  function startCheckout() {
     setLoading(true);
-    setError(null);
-    try {
-      // The one checkout call, shared with every Pro lock surface
-      // (src/lib/billing/trial-checkout.ts) so the two can never drift.
-      window.location.href = await startPlanCheckout(plan);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Checkout failed");
-      setLoading(false);
-    }
+    // The one checkout entry, shared with every Pro lock surface
+    // (src/lib/billing/trial-checkout.ts) so the two can never drift: it
+    // lands on /checkout, which mounts the embedded form or falls back to
+    // the hosted redirect — failures surface on that page, not here.
+    startPlanCheckout(plan);
   }
 
   return (
-    <>
-      <button
-        onClick={startCheckout}
-        disabled={loading}
-        className="w-full py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 active:scale-[0.99] disabled:opacity-60 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
-      >
-        {loading ? "Opening secure checkout…" : label}
-      </button>
-      {error && <p className="text-red-400 text-sm mt-3 text-center">{error}</p>}
-    </>
+    <button
+      onClick={startCheckout}
+      disabled={loading}
+      className="w-full py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 active:scale-[0.99] disabled:opacity-60 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+    >
+      {loading ? "Opening secure checkout…" : label}
+    </button>
   );
 }
 

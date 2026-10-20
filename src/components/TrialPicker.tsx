@@ -25,7 +25,7 @@ interface TrialPickerProps {
   /** Tighter paddings/type for the layer flyout and the follow HUD. */
   variant?: "default" | "compact";
   /** Renders a close affordance for surfaces that host the picker behind
-   *  a toggle (choosing a plan needs no callback — it leaves for Stripe). */
+   *  a toggle (choosing a plan needs no callback — it leaves for checkout). */
   onClose?: () => void;
 }
 
@@ -73,17 +73,14 @@ function PlanRow({
 export default function TrialPicker({ variant = "default", onClose }: TrialPickerProps) {
   const compact = variant === "compact";
   const [busyPlan, setBusyPlan] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
-  async function pick(option: TrialPlanOption) {
+  function pick(option: TrialPlanOption) {
     setBusyPlan(option.plan);
-    setError(null);
-    try {
-      window.location.href = await startPlanCheckout(option.plan);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Checkout failed");
-      setBusyPlan(null);
-    }
+    // Lands on /checkout, which mounts the embedded form or falls back to
+    // the hosted redirect; any failure is surfaced on that page, so there
+    // is no error path to render here — the busy state rides out the
+    // navigation.
+    startPlanCheckout(option.plan);
   }
 
   return (
@@ -114,9 +111,6 @@ export default function TrialPicker({ variant = "default", onClose }: TrialPicke
           />
         ))}
       </div>
-      {error && (
-        <p className={`text-red-400 ${compact ? "mt-1.5 text-[9.5px]" : "mt-2 text-[11px]"}`}>{error}</p>
-      )}
       <p className={`flex items-center gap-1.5 text-white/35 ${compact ? "mt-2 text-[8.5px]" : "mt-3 text-[10px]"}`}>
         <Lock className="w-3 h-3" /> Secured by Stripe · Cancel anytime · 7-day money-back guarantee on your first charge
       </p>
@@ -127,7 +121,7 @@ export default function TrialPicker({ variant = "default", onClose }: TrialPicke
 /**
  * Modal host for lock surfaces that are a lone button (the OI dock/tab):
  * the button opens this, the picker lives inside. Backdrop click and the
- * close button dismiss it; choosing a plan leaves for Stripe checkout.
+ * close button dismiss it; choosing a plan leaves for the checkout page.
  */
 export function TrialPickerDialog({
   open,
