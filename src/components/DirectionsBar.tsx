@@ -8,7 +8,8 @@ import {
   AlertTriangle, Loader2, type LucideIcon,
 } from 'lucide-react';
 import { loadRecent, rememberPlace, type RecentPlace } from '@/lib/recent-places';
-import { classifyGeoError, currentGeoEnvironment } from '@/lib/geo-position';
+import { classifyGeoError, currentGeoEnvironment, requestCurrentPosition } from '@/lib/geo-position';
+import { buildSuggestionOptions, typedOverPick } from '@/lib/place-suggestions';
 import { PlaceRow } from './places';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -279,7 +280,7 @@ function RailRow({ mark, last = false, children }: { mark: ReactNode; last?: boo
 
 /** Start, stop or destination: type a place, an address or coordinates, or pick a recent one. */
 function PlaceInput({
-  value, onChange, onPick, onClear, placeholder, autoFocus, biasLat, biasLng, onLocate, locating, liveFix, recent, trailing,
+  value, onChange, onPick, onClear, placeholder, autoFocus, biasLat, biasLng, onLocate, locating, liveFix, liveFixLive, recent, trailing,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -293,8 +294,10 @@ function PlaceInput({
   /** Present only on the start field: fills it with the operator's position. */
   onLocate?: () => void;
   locating?: boolean;
-  /** When a live fix exists, every field offers it first. */
+  /** When a fix exists, every field offers it first. */
   liveFix?: { lat: number; lng: number } | null;
+  /** Whether that fix is the tracking watch's (vs a captured one-shot). */
+  liveFixLive?: boolean;
   /** Offered while the field is empty. */
   recent: RecentPlace[];
   trailing?: ReactNode;
@@ -368,10 +371,17 @@ function PlaceInput({
     setResults([]);
   };
 
-  // What the list offers: where you are (when tracked), then what was typed for, or recent places while the field is empty.
+  // What the list offers — one composition for every field
+  // (lib/place-suggestions): your position pinned first when a fix
+  // exists, then recents while the field is empty, else what was
+  // typed for.
   const empty = value.trim().length < 2;
-  const you: Place[] = liveFix ? [{ label: 'Your location', lat: liveFix.lat, lng: liveFix.lng, kind: 'current', context: 'Live position' }] : [];
-  const options: Array<Place & { recent?: boolean }> = [...you, ...(empty ? recent.map(r => ({ ...r, recent: true })) : results)];
+  const options: Array<Place & { recent?: boolean }> = buildSuggestionOptions({
+    fix: liveFix ? { lat: liveFix.lat, lng: liveFix.lng, live: !!liveFixLive } : null,
+    empty,
+    recent,
+    results,
+  });
   const at = Math.min(idx, Math.max(0, options.length - 1));
   const center = biasLat !== undefined && biasLng !== undefined ? { lat: biasLat, lng: biasLng } : null;
 
@@ -455,6 +465,10 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | null>(null);
   const [live, setLive] = useState<LiveLocation | null>(null);
+  /** The last one-shot fix (locate button, or an already-granted
+   *  permission read silently on open). Pins 'Your location' in the
+   *  fields' suggestions without claiming to be a live track. */
+  const [fix, setFix] = useState<{ lat: number; lng: number } | null>(null);
   const [tracking, setTracking] = useState(false);
   const [follow, setFollow] = useState(false);
   const [routes, setRoutes] = useState<RouteResult[]>([]);
@@ -575,55 +589,70 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
     if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
   }, []);
 
+  /** Set the origin to a position fix and re-plot from it. */
+  const applyOrigin = useCallback((lat: number, lng: number, label: string) => {
+    const place: Place = { label, lat, lng, kind: 'current' };
+    setFix({ lat, lng });
+    setFromText(label);
+    setFrom(place);
+    onLocate?.(lat, lng, 14);
+    if (to) runRoute(place, to, mode, stops(), avoid);
+  }, [to, mode, runRoute, onLocate, stops, avoid]);
+
   /**
-   * Fill the origin with wherever the operator is.
-   *
-   * Tries the browser first (precise, but needs permission and a secure
-   * context), then falls back to OSIRIS's existing IP geolocation, which needs
-   * neither — so this still does something useful when permission is denied.
+   * Fill the origin with wherever the operator is — an explicit ask,
+   * answered honestly (lib/geo-position requestCurrentPosition). A
+   * tracking fix already live is the same fix, so it is reused rather
+   * than running a second position request beside the watch. Any
+   * failure names itself (denied / unavailable / timeout / insecure /
+   * unsupported) and leaves the origin exactly as it was — no silent
+   * downgrade to a coarser location.
    */
   const useMyLocation = useCallback(async () => {
-    setLocating(true);
     setLocateError(null);
-
-    const apply = (lat: number, lng: number, label: string) => {
-      const place: Place = { label, lat, lng, kind: 'current' };
-      setFromText(label);
-      setFrom(place);
-      onLocate?.(lat, lng, 14);
-      if (to) runRoute(place, to, mode, stops(), avoid);
-    };
-
-    const browser = await new Promise<GeolocationPosition | null>((resolve) => {
-      if (typeof navigator === 'undefined' || !navigator.geolocation) return resolve(null);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolve(pos),
-        () => resolve(null),
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
-      );
-    });
-
-    if (browser) {
-      const { latitude, longitude } = browser.coords;
-      apply(latitude, longitude, 'My location');
-      setLocating(false);
-      return;
-    }
-
-    try {
-      const res = await fetch('/api/geo');
-      const d = await res.json();
-      if (d?.lat && d?.lon) {
-        apply(d.lat, d.lon, d.city ? `Near ${d.city}` : 'Approximate location');
-        setLocateError('Approximate — from network location');
-      } else {
-        setLocateError('Could not determine your location');
-      }
-    } catch {
-      setLocateError('Could not determine your location');
-    }
+    if (live) { applyOrigin(live.lat, live.lng, 'Current location'); return; }
+    setLocating(true);
+    const res = await requestCurrentPosition(
+      typeof navigator !== 'undefined' ? navigator.geolocation : null,
+    );
     setLocating(false);
-  }, [to, mode, runRoute, onLocate, stops, avoid]);
+    if (!res.ok) { setLocateError(res.issue.remedy); return; }
+    applyOrigin(res.lat, res.lng, 'Current location');
+    // A human label when the reverse geocoder can name the place —
+    // best-effort, never blocking, and only upgrading a field the
+    // operator hasn't since typed over. Failing that, the field keeps
+    // 'Current location' with the coordinates in the place itself.
+    try {
+      const r = await fetch(`/api/geo/reverse?lat=${res.lat}&lng=${res.lng}`);
+      const d = await r.json();
+      if (typeof d?.label === 'string' && d.label) {
+        setFrom((prev) => (prev?.kind === 'current' && prev.lat === res.lat && prev.lng === res.lng
+          ? { ...prev, label: d.label } : prev));
+        setFromText((prev) => (prev === 'Current location' ? d.label : prev));
+      }
+    } catch { /* the coordinates stand behind 'Current location' */ }
+  }, [live, applyOrigin]);
+
+  // Already granted? Take a silent fix on open so 'Your location'
+  // can pin the suggestion lists. Nothing is requested while the
+  // permission state is prompt or denied — asking stays the
+  // operator's tap on the locate button.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const perms = (navigator as unknown as {
+          permissions?: { query: (q: { name: string }) => Promise<{ state: string }> };
+        })?.permissions;
+        if (!perms?.query || typeof navigator === 'undefined' || !navigator.geolocation) return;
+        const status = await perms.query({ name: 'geolocation' });
+        if (cancelled || status.state !== 'granted') return;
+        const res = await requestCurrentPosition(navigator.geolocation);
+        if (!cancelled && res.ok) setFix({ lat: res.lat, lng: res.lng });
+      } catch { /* no permissions API — the locate button still asks */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const pickFrom = (p: Place) => { setFrom(p); remember(p); if (to) runRoute(p, to, mode, stops(), avoid); };
   const pickTo = (p: Place) => { setTo(p); remember(p); if (from) runRoute(from, p, mode, stops(), avoid); };
@@ -729,9 +758,23 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
         <div className="flex-1 min-w-0 flex flex-col gap-1.5">
           <RailRow mark={<StartMark />}>
             <PlaceInput
-              value={fromText} onChange={setFromText} onPick={pickFrom} onClear={() => clearEnd('from')}
+              value={fromText}
+              onChange={(v) => {
+                setFromText(v);
+                if (typedOverPick(from?.label, v)) {
+                  // Typed over the picked start: the pick no longer
+                  // stands behind the field, and the route plotted
+                  // from it goes with it (destination untouched).
+                  setFrom(null);
+                  setRoute(null);
+                  setRoutes([]);
+                  setActiveStep(null);
+                  onRoute(null);
+                }
+              }}
+              onPick={pickFrom} onClear={() => clearEnd('from')}
               placeholder="Choose a start" autoFocus={!initialTo} {...bias}
-              onLocate={useMyLocation} locating={locating} liveFix={live} recent={recent}
+              onLocate={useMyLocation} locating={locating} liveFix={live ?? fix} liveFixLive={!!live} recent={recent}
             />
           </RailRow>
           {vias.map((v, i) => (
@@ -740,7 +783,7 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
                 value={v.text}
                 onChange={(t) => setVias((prev) => prev.map((x, j) => (j === i ? { ...x, text: t } : x)))}
                 onPick={(p) => pickVia(i, p)}
-                placeholder={`Stop ${i + 1}`} {...bias} liveFix={live} recent={recent}
+                placeholder={`Stop ${i + 1}`} {...bias} liveFix={live ?? fix} liveFixLive={!!live} recent={recent}
                 trailing={(
                   <button type="button" onClick={() => removeVia(i)} aria-label={`Remove stop ${i + 1}`}
                     className="w-8 h-8 mr-0.5 rounded-md flex items-center justify-center flex-shrink-0 text-[var(--text-muted)] hover:text-[var(--alert-red)] hover:bg-[rgba(255,61,61,0.08)] transition-colors">
@@ -753,7 +796,7 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
           <RailRow mark={<EndMark />} last>
             <PlaceInput
               value={toText} onChange={setToText} onPick={pickTo} onClear={() => clearEnd('to')}
-              placeholder="Choose a destination" {...bias} liveFix={live} recent={recent}
+              placeholder="Choose a destination" {...bias} liveFix={live ?? fix} liveFixLive={!!live} recent={recent}
             />
           </RailRow>
         </div>
@@ -773,6 +816,10 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
           <SlidersHorizontal className="w-3.5 h-3.5" /> Options{avoiding ? ` · ${avoiding}` : ''}
         </button>
       </div>
+
+      {locateError && (
+        <p className="px-3 pb-2 text-[11px] leading-snug text-[var(--gold-light)] flex-shrink-0">{locateError}</p>
+      )}
 
       {/* ── how ── */}
       <div className="px-3 pb-3 flex-shrink-0">
@@ -848,7 +895,6 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
                     </span>
                   </button>
                 )}
-                {locateError && <p className="px-1 text-[11px] text-[var(--gold-light)]">{locateError}</p>}
                 {recent.length > 0 && (
                   <div>
                     <span className="block px-1 pb-1 text-[9.5px] font-mono tracking-[0.14em] uppercase text-[var(--text-muted)]">Recent places</span>

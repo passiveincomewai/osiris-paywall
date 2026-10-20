@@ -142,3 +142,45 @@ export function currentGeoEnvironment(): GeoEnvironment {
     secureContext: window.isSecureContext,
   };
 }
+
+/** The position-source surface requestCurrentPosition drives. */
+export interface GeolocationLike {
+  getCurrentPosition: Geolocation['getCurrentPosition'];
+}
+
+export type CurrentPositionResult =
+  | { ok: true; lat: number; lng: number }
+  | { ok: false; issue: GeoIssue };
+
+/**
+ * One position fix, honestly reported — the single-shot counterpart of
+ * the navigation watch, for the directions panel's "Use my location".
+ * The caller gets coordinates, or the classified issue to show. A
+ * failure is NEVER silently downgraded to a coarser location behind
+ * the caller's back: denied means denied, and the origin stays
+ * untouched until a real fix lands.
+ */
+export function requestCurrentPosition(
+  geo: GeolocationLike | null | undefined,
+  env: GeoEnvironment = currentGeoEnvironment(),
+): Promise<CurrentPositionResult> {
+  if (!geo) {
+    return Promise.resolve({
+      ok: false,
+      issue: classifyGeoError(null, { ...env, hasGeolocation: false }),
+    });
+  }
+  const envIssue = geoEnvironmentIssue(env);
+  if (envIssue) return Promise.resolve({ ok: false, issue: envIssue });
+  return new Promise((resolve) => {
+    try {
+      geo.getCurrentPosition(
+        (pos) => resolve({ ok: true, lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (err) => resolve({ ok: false, issue: classifyGeoError(err, env) }),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+      );
+    } catch {
+      resolve({ ok: false, issue: classifyGeoError(null, env) });
+    }
+  });
+}
