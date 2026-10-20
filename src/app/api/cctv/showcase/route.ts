@@ -203,7 +203,18 @@ async function catalogueById(): Promise<Map<string, CatalogueCamera> | null> {
     if (map) return map;
   }
   const snap = await fromSnapshot();
-  if (snap) return snap;
+  if (snap) {
+    /* The snapshot is not always a finished catalogue: a build this
+       process is still running writes it region by region as they land,
+       so mid-build it is partial in the same way the payload is — and
+       the payload, which is that same build's live state, is fresher.
+       Merge with the precedence used everywhere else (the live payload
+       over the snapshot, the snapshot over the in-repo records) instead
+       of letting a mid-build snapshot shadow both: read alone, it made
+       the gallery shrink below what the cold read had just served
+       until the build completed. */
+    return mergeUnder(await fromFastlane(), mergeUnder(snap, await fromPayload()));
+  }
   if (!payload) return buildColdCatalogue();
   // Partial payload: the in-repo records ride underneath it, as in frames.
   return mergeUnder(await fromFastlane(), await fromPayload());

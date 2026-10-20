@@ -90,6 +90,43 @@ describe('GET /api/cctv/showcase', () => {
     expect(builds).toBe(0);
   });
 
+  it('merges every source when a partial snapshot and a partial payload coexist', async () => {
+    /* The regression this guards: a build running in this process writes
+       the snapshot region by region while it fills, so mid-build the
+       route held a partial snapshot AND a partial payload. Reading the
+       snapshot alone shadowed the payload and the fast lane — the
+       gallery shrank below what the cold read had served (featured
+       6 → 1) until the build completed. Each source below holds one
+       manifest camera the others do not; all three must answer. */
+    const LAS_VISTAS = {
+      id: 'sky-es-las-vistas', name: 'Playa Las Vistas', city: 'Tenerife', country: 'Spain',
+      source: 'SkylineWebcams', lat: 28.05, lng: -16.72,
+      feed_url: 'https://cdn.example.com/las-vistas.jpg',
+    };
+    const AMALFI = {
+      id: 'sky-it-amalfi', name: 'Amalfi Coast - Positano', city: 'Positano', country: 'Italy',
+      source: 'SkylineWebcams', lat: 40.62, lng: 14.49,
+      feed_url: 'https://cdn.example.com/amalfi.jpg',
+    };
+    staticsImpl = async () => [TREVI];
+    snapshot = { builtAt: 5, regions: { europe: [LAS_VISTAS] } };
+    usePayload([AMALFI], false);
+    const { body } = await get();
+    expect(body.cameras.map(c => c.id)).toEqual(['sky-it-trevi', 'sky-es-las-vistas', 'sky-it-amalfi']);
+    expect(builds).toBe(0);
+  });
+
+  it('the live payload wins over the snapshot, and the snapshot over the fast lane', async () => {
+    const SNAPSHOT_TREVI = { ...TREVI, name: 'Trevi (snapshot copy)', feed_url: 'https://cdn.example.com/trevi-snap.jpg' };
+    staticsImpl = async () => [TREVI_STALE];
+    snapshot = { builtAt: 5, regions: { europe: [SNAPSHOT_TREVI] } };
+    usePayload([TREVI], false);
+    const { body } = await get();
+    expect(body.cameras).toHaveLength(1);
+    expect(body.cameras[0].name).toBe('Trevi Fountain');
+    expect(body.cameras[0].media.url).toBe('https://cdn.example.com/trevi.jpg');
+  });
+
   it('builds the catalogue in this process when neither a payload nor a snapshot exists', async () => {
     /* The production failure this guards: on Vercel the showcase
        function's instance never shares memory with /api/cctv's and the
