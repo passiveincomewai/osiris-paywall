@@ -69,6 +69,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. All traffic cameras are free to watch with no account and no signup — the directory exists so anyone can check road conditions.",
   },
+  {
+    q: "Why do states publish these cameras at all?",
+    a: "Because informed drivers make better decisions: state DOTs publish feeds so travelers can see congestion, weather and incidents for themselves and stagger or reroute trips. The publicity is the point — an empty road beside a jammed one is a policy success the cameras both cause and document.",
+  },
+  {
+    q: "Are these the same cameras the traffic apps use?",
+    a: "Often yes at the source: the feeds come from the same state DOT networks the big traffic services draw on. The difference is presentation — here you watch the camera itself on the map, alongside weather and the rest of the live picture, rather than an app's colored summary of it.",
+  },
 ];
 
 const jsonLd = {
@@ -164,6 +172,32 @@ export default function LiveTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* The pre-drive ritual */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">The pre-drive ritual</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Traffic apps tell you a road is red. A camera tells you why —
+              the jackknifed truck, the squall, the game letting out — and
+              whether the alternative the app is steering everyone else onto
+              is any better. That is why drivers who discover live DOT cameras
+              tend to build a ritual around them: pick the three or four
+              feeds at your route&rsquo;s decision points — the canyon mouth,
+              the big interchange, the bridge — and give them ten seconds
+              each before you turn the key.
+            </p>
+            <p>
+              The habit compounds in winter. Mountain-state networks like
+              Utah&rsquo;s 2,082 feeds exist because pass conditions decide
+              whole days: chain requirements, ground blizzards, a canyon
+              closed by a slide. The national picture helps too — a storm
+              system you can see on the weather layer, arriving at cameras
+              two states away an hour before it reaches yours, is a forecast
+              you can watch instead of trust.
+            </p>
           </div>
         </div>
 

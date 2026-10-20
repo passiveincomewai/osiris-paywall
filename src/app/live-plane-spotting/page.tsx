@@ -61,6 +61,14 @@ const FAQS = [
     q: "Is there a cost or account needed?",
     a: "No. Flights, the follow camera and cameras are free with no account and no signup. Open the globe and start spotting.",
   },
+  {
+    q: "Can I see military aircraft?",
+    a: "Only the ones broadcasting ADS-B publicly — some military traffic does (tankers, transports and training flights often appear), and much of it doesn't, by design. What you see is what the aircraft themselves are transmitting; WorldEye doesn't track anything that isn't broadcast.",
+  },
+  {
+    q: "Do helicopters show up?",
+    a: "Yes — rotorcraft get their own icon on the map so they stand out from fixed-wing traffic. Around cities you'll see news, police and medical helicopters working; along coasts and in the North Sea, the offshore energy traffic.",
+  },
 ];
 
 const jsonLd = {
@@ -151,6 +159,33 @@ export default function LivePlaneSpottingPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">A spotter&rsquo;s session: how regulars use it</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              Airport-fence spotting runs on local knowledge: which runway is
+              in use, when the heavies arrive, where the light is. The map
+              version has its own version of that craft. Hubs work in banks —
+              waves of arrivals and departures — and at the top of a bank the
+              approach path into Atlanta, Heathrow or Haneda delivers a
+              landing every minute or two. Pick the bank, not the airport:
+              mid-morning and early evening at the big hubs are the reliable
+              shows.
+            </p>
+            <p>
+              Cargo is the night shift&rsquo;s reward. When the passenger
+              banks sleep, the freighters move — Anchorage, Memphis,
+              Louisville and Leipzig run some of the busiest night skies on
+              the planet, and following a 747 freighter down through a dark
+              continent is a different, quieter kind of spotting. And when
+              the weather turns, the map gets dramatic: holding stacks
+              building over a hub, diversions peeling off, a storm line
+              rerouting a whole sky — the days aviation is most interesting
+              are the days it isn&rsquo;t routine.
+            </p>
           </div>
         </div>
 

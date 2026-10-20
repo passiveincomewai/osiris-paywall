@@ -80,6 +80,14 @@ const FAQS = [
     q: "Can I request cameras for my area?",
     a: "The directory grows as public feeds are found and mapped. If your city or agency publishes open cameras, they are candidates for indexing — the fastest-growing regions are the ones publishing openly.",
   },
+  {
+    q: "How is the directory kept honest?",
+    a: "Every feed is playback-verified before it is listed — a camera that doesn't actually stream doesn't get counted — and the directory re-checks and deduplicates feeds over time. The headline number is the count of cameras the globe actually serves, which is why it is exact rather than a round marketing figure.",
+  },
+  {
+    q: "What is the difference between this page and the map?",
+    a: "This page is the directory: the counts, the countries, the structure of the network. The map is the directory alive — every one of these cameras plotted where it stands, with flights, weather and the other live layers around it. Browse here to understand the network; open the map to use it.",
+  },
 ];
 
 const jsonLd = {
@@ -235,6 +243,29 @@ export default function LiveWebcamsPage() {
                 35 European countries, from Spanish plazas to Icelandic highlands.
               </p>
             </Link>
+          </div>
+        </div>
+
+        {/* How a feed earns its place */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">How a feed earns its place in the directory</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+            <p>
+              The directory is not scraped together and left to rot. A camera
+              gets listed when three things check out: the feed is genuinely
+              public — published openly by its operator for anyone to watch;
+              it actually plays, verified by loading the stream rather than
+              trusting a listing; and it isn&rsquo;t already in the directory
+              under another name or network, which matters when one agency
+              feed surfaces through five different portals.
+            </p>
+            <p>
+              That discipline is why the counts on this page mean something.
+              The number is the set of cameras the globe serves today — not
+              every webcam ever found, not a scrape of a scrape. Feeds die,
+              move and get replaced, and the directory&rsquo;s job is to keep
+              the map&rsquo;s promise: if it is plotted, it plays.
+            </p>
           </div>
         </div>
 

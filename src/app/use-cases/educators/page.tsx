@@ -129,6 +129,11 @@ const SECTIONS = [
     title: "Culture and language through place",
     body: "A language class can walk the streets of Madrid on traffic cameras, read the shop signs, watch the evening crowds fill the plazas. Geography becomes culture when students can see how people actually use a place — the markets, the commutes, the waterfronts — instead of just where it sits on a map.",
   },
+  {
+    icon: Camera,
+    title: "Time zones and the terminator, live",
+    body: "The oldest hard idea in the geography curriculum — that noon is a place, not a moment — becomes obvious on a live globe: daylight over Asia while the Americas sleep, the sunrise line crawling west, a class in Utah watching Tokyo's evening commute in their own morning. Pair the globe's day-night shading with cameras on both sides of the line and students stop memorizing time zones and start seeing them.",
+  },
 ];
 
 export default function EducatorsPage() {

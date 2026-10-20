@@ -290,6 +290,32 @@ export default function BestConflictMonitoringToolsPage() {
         </div>
       </section>
 
+      {/* Watching responsibly */}
+      <div className="mt-16">
+        <h2 className="text-2xl md:text-3xl font-bold">The responsibility that comes with watching</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+          <p>
+            Conflict monitoring uses public data, but public does not mean
+            consequence-free. Live positions, unit movements and strike
+            footage can affect people in the frame, which is why the credible
+            end of this field works to norms: verify before amplifying, delay
+            rather than broadcast tactical detail, and never treat a
+            geolocation as certain until independent evidence agrees. The
+            tools above are at their best in the hands of people who hold
+            those lines.
+          </p>
+          <p>
+            There is a second, quieter responsibility: your own diet of it.
+            A live war on a dashboard is genuinely informative and genuinely
+            corrosive in overdose — the researchers and journalists who do
+            this professionally schedule their exposure and rotate off the
+            graphic feeds. Monitor with a purpose, log off when the purpose
+            is served, and let the tools be instruments rather than a
+            window you live in front of.
+          </p>
+        </div>
+      </div>
+
       {/* Q&A */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Conflict monitoring questions, answered</h2>

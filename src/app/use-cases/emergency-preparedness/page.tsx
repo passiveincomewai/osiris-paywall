@@ -130,6 +130,11 @@ const SECTIONS = [
     title: "Coordinate family across the distance",
     body: "When the power's out and phones are jammed, a relative three states away can still open the map. Agree in advance which cameras to watch — the intersection by the house, the highway out of town — so the whole family sees the same ground truth instead of trading rumors.",
   },
+  {
+    icon: Megaphone,
+    title: "Know the limits before you need them",
+    body: "Cameras fail in disasters — power dies, networks drown, smoke blinds the lens. A feed that goes dark during a fire tells you something about the severity at that spot, but it never tells you conditions are safe. WorldEye supplements official alerts, evacuation orders and local emergency management; it never replaces them, and when the two disagree, the official word wins every time.",
+  },
 ];
 
 export default function EmergencyPreparednessPage() {

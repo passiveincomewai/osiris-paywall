@@ -45,6 +45,14 @@ const SUPPORT_FAQS = [
     q: "Do you offer phone or live-chat support?",
     a: "No — email only for now. It keeps support personal and lets the whole team see and answer your message instead of a chatbot.",
   },
+  {
+    q: "How do I claim the 7-day money-back guarantee?",
+    a: "Email us from the address on your account within 7 days of your first charge and say you want a guarantee refund — that is the whole process. Note it applies to the first charge of your first paid plan, and a refund doesn't cancel the subscription by itself; if you don't want to continue, cancel as well so it doesn't renew.",
+  },
+  {
+    q: "A camera feed is dead, wrong or mislabeled — can I report it?",
+    a: "Please do. Send the camera's name or location and what looks wrong (offline, wrong place, duplicated). The directory is playback-verified, and reports like yours are one of the ways dead and mislabeled feeds get found and fixed.",
+  },
 ];
 
 const EMAIL = "passiveincomewai@gmail.com";

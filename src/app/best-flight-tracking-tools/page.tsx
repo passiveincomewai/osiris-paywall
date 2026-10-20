@@ -284,6 +284,31 @@ export default function BestFlightTrackingToolsPage() {
         </div>
       </section>
 
+      {/* Coverage honesty */}
+      <div className="mt-16">
+        <h2 className="text-2xl md:text-3xl font-bold">A word on coverage claims</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+          <p>
+            Every tracker advertises a flights-tracked number, and every one
+            of those numbers is a snapshot of a moving target: airborne
+            traffic swings by thousands between the North Atlantic morning
+            peak and the Pacific night, and coverage depends on where the
+            volunteer receiver networks are dense. Over the US and Europe,
+            all the major trackers are strong; over oceans, central Africa
+            and parts of Asia, the maps thin out for everyone, filled in by
+            satellite ADS-B and estimates of varying honesty.
+          </p>
+          <p>
+            The practical test is your own sky. Open two trackers over your
+            home airport at a busy hour and compare what&rsquo;s actually
+            drawn — the count over your head beats any global claim. It is
+            also the test this list was built on: trackers earn their places
+            here by drawing real flights, in real places, not by winning the
+            headline-number contest.
+          </p>
+        </div>
+      </div>
+
       {/* Q&A */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Flight tracking questions, answered</h2>

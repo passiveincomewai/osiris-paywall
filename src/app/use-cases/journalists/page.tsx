@@ -133,6 +133,11 @@ const SECTIONS = [
     title: "Protect sources, protect yourself",
     body: "Public cameras are open to everyone, including the people you're reporting on. Don't discuss which feeds you're watching on unsecured channels, don't publish your verification methods in ways that burn them, and remember your own map browsing is as observable as anyone's. Standard digital hygiene applies to OSINT the same as everything else.",
   },
+  {
+    icon: ShieldCheck,
+    title: "Work the story backwards from the claim",
+    body: "Start from what is being asserted — an explosion at a named facility, a convoy on a named road, a crowd at a named square — and ask which of WorldEye's layers would show it if true: the camera nearest the location, the fire detections for anything that burned, the flight layer for anything that flew, the quake feed for anything that shook. A claim that should be visible on three layers and appears on none has told you something real. Verification is as much about the dog that didn't bark as the one that did.",
+  },
 ];
 
 export default function JournalistsPage() {

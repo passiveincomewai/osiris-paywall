@@ -265,6 +265,32 @@ export default function BestGlobalIntelligenceDashboardsPage() {
         </div>
       </section>
 
+      {/* Choosing */}
+      <div className="mt-16">
+        <h2 className="text-2xl md:text-3xl font-bold">How to choose between them</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed max-w-3xl">
+          <p>
+            Start from the decision the dashboard has to support. If you are
+            watching the world for situational awareness — what is happening,
+            where, right now — the generalist dashboards above are the field,
+            and the real differences are data breadth and how honestly each
+            one labels its feeds. If you are tracking a specific domain —
+            markets, shipping, one conflict — a specialist tool will beat a
+            generalist on depth every time, and most serious watchers end up
+            running one of each.
+          </p>
+          <p>
+            Two checks separate the credible tools from the demo-ware. First,
+            sourcing: a dashboard that names its feeds can be verified against
+            them; one that says &ldquo;proprietary AI aggregation&rdquo; and
+            nothing more is asking for trust it hasn&rsquo;t earned. Second,
+            freshness: live layers should say when they last updated, and
+            stale data should look stale. Apply those two tests and the list
+            above ranks itself for your purpose quickly.
+          </p>
+        </div>
+      </div>
+
       {/* Q&A */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Intelligence dashboard questions, answered</h2>

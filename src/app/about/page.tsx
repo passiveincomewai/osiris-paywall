@@ -126,6 +126,31 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* How it's built */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold">How the map is put together</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              WorldEye aggregates what the world already publishes openly:
+              state DOT and municipal camera networks, transport agency
+              transit feeds, public flight and satellite tracking data,
+              government weather, earthquake and wildfire services. The work
+              is in the joining — one map, one search, one click — and in the
+              verification: every camera feed is playback-checked before it
+              is listed, and dead feeds are dropped rather than padded into
+              the count. When we say 74,229 cameras, that is the number the
+              globe actually serves.
+            </p>
+            <p>
+              The same discipline applies to anything simulated. Where a
+              layer is a model rather than a measurement — a visual effect, a
+              reconstructed trajectory — the map labels it as such, on the
+              layer itself. Live means live; estimated means estimated. It is
+              the rule we would want applied to us, so it is the rule we run.
+            </p>
+          </div>
+        </section>
+
         {/* Principles */}
         <section className="mt-16 md:mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">What we stand by</h2>
