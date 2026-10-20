@@ -14,6 +14,7 @@ import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
+import { readBasemapMode, writeBasemapMode, type BasemapMode } from '@/lib/basemap-mode';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero, { heroSkippedForSearch } from '@/components/CinematicHero';
@@ -496,6 +497,11 @@ export default function Dashboard() {
   const [terrainStatus, setTerrainStatus] = useState<TerrainStatus>('idle');
   const [terrainRetry, setTerrainRetry] = useState(0);
   const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>('dark');
+  // Day/night basemap (free for everyone, persisted per device; default
+  // night = the long-standing dark look). Satellite view overrides it
+  // while active — see lib/basemap-mode for the interaction rule.
+  const [basemapMode, setBasemapMode] = useState<BasemapMode>(() => readBasemapMode());
+  useEffect(() => { writeBasemapMode(basemapMode); }, [basemapMode]);
   const [sweepData, setSweepData] = useState<any>(null);
   const [scanTargets, setScanTargets] = useState<any[]>([]);
   const [drawnPolygons, setDrawnPolygons] = useState<DrawnShape[]>([]);
@@ -1960,7 +1966,9 @@ export default function Dashboard() {
           terrainFocus={terrainFocus}
           terrainRetry={terrainRetry}
           onTerrainStatusChange={setTerrainStatus}
-          mapStyle={mapStyle === 'satellite' ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' : 'dark'} 
+          mapStyle={mapStyle === 'satellite' ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' : 'dark'}
+          basemapMode={basemapMode}
+          onBasemapModeChange={setBasemapMode}
           onEntityClick={handleEntityClick} 
           onMouseCoords={handleMouseCoords} 
           onRightClick={handleRightClick} 

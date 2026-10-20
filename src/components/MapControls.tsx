@@ -2,17 +2,21 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Minus, Plus } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Minus, Moon, Plus, Sun } from 'lucide-react';
 import type { Map as MlMap } from 'maplibre-gl';
 import { createMapCameraControls, type CameraMove } from '@/lib/map-camera-controls';
+import { nextBasemapMode, type BasemapMode } from '@/lib/basemap-mode';
 
 interface MapControlsProps {
   mapRef: React.RefObject<MlMap | null>;
   onInteract?: () => void;
+  /** Day/night basemap choice (free for everyone; the page persists it). */
+  basemapMode?: BasemapMode;
+  onBasemapModeChange?: (mode: BasemapMode) => void;
 }
 
 /** Compact zoom on phones; desktop also gets the held-pan pad. */
-export default function MapControls({ mapRef, onInteract }: MapControlsProps) {
+export default function MapControls({ mapRef, onInteract, basemapMode = 'night', onBasemapModeChange }: MapControlsProps) {
   const controller = useRef<ReturnType<typeof createMapCameraControls> | null>(null);
   const interact = useRef(onInteract);
   const [limits, setLimits] = useState({ min: false, max: false });
@@ -46,6 +50,19 @@ export default function MapControls({ mapRef, onInteract }: MapControlsProps) {
     <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: 0.4 }}
       className="absolute right-2 bottom-[112px] md:bottom-12 z-[240] pointer-events-auto" data-map-controls>
+      <div className="flex flex-col items-end gap-[6px]">
+      {onBasemapModeChange && (
+        <button type="button"
+          onClick={() => onBasemapModeChange(nextBasemapMode(basemapMode))}
+          aria-pressed={basemapMode === 'day'}
+          aria-label={basemapMode === 'day' ? 'Switch the globe to night mode' : 'Switch the globe to day mode'}
+          title={basemapMode === 'day' ? 'Night mode — dark basemap' : 'Day mode — light basemap'}
+          className="w-10 h-10 md:w-8 md:h-8 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-accent)] active:text-[var(--gold-light)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] opacity-85 hover:opacity-100 transition-opacity">
+          {basemapMode === 'day'
+            ? <Moon className="w-4 h-4" strokeWidth={1.5} />
+            : <Sun className="w-4 h-4" strokeWidth={1.5} />}
+        </button>
+      )}
       <div role="group" aria-label="Map camera controls"
         className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
         <div className="flex flex-col gap-[3px]">
@@ -61,6 +78,7 @@ export default function MapControls({ mapRef, onInteract }: MapControlsProps) {
             <Btn cell="col-start-2 row-start-3" label="Pan south" move={{ kind: 'pan', dx: 0, dy: 1 }} icon={ChevronDown} press={press} release={release} step={step} />
           </div>
         </div>
+      </div>
       </div>
     </motion.div>
   );

@@ -28,6 +28,7 @@ import {
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
   type FlightFollowState, type FollowHudData, type FollowMode, type SavedCameraState,
 } from '@/lib/flights/follow';
+import { syncDayOverlay } from '@/lib/basemap-mode';
 import {
   beginRouteFetch, createFlightPath, flightPathAccess, flightPathFeatures, flightPathHudData,
   noteFlightPathFix, parseFlightRouteResponse, resolveFlightPathRoute,
@@ -99,6 +100,9 @@ interface OsirisMapProps {
   onTerrainStatusChange?: (status: TerrainStatus) => void;
 
   mapStyle?: string;
+  /** Day/night basemap choice (persisted by the page; free for all). */
+  basemapMode?: 'night' | 'day';
+  onBasemapModeChange?: (mode: 'night' | 'day') => void;
   sweepData?: any;
   scanTargets?: any[];
   demoMode?: boolean;
@@ -303,7 +307,7 @@ const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
  *  is honestly unavailable until launch data is loaded). */
 const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -4697,6 +4701,20 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     }
   }, [mapReady, mapStyle]);
 
+  // Day / Night basemap — the light CARTO raster rides as an overlay on
+  // the exact pattern the satellite view above established (this map
+  // never setStyle-swaps; a swap would wipe the custom sources built at
+  // load). Satellite view overrides it while active; turning satellite
+  // off returns to the chosen day/night. lib/basemap-mode owns the rule.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    try {
+      syncDayOverlay(mapRef.current as never, basemapMode, mapStyle !== 'dark');
+    } catch (e) {
+      console.warn('Day overlay switch failed:', e);
+    }
+  }, [mapReady, basemapMode, mapStyle]);
+
   // Live Clouds — NOAA's satellite mosaic, hung at cloud altitude over the
   // ground; see lib/live-clouds-layer. Under the night shade and every marker.
   // On the map they also sit under the place names, as on any weather map, so
@@ -5483,7 +5501,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         />
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
-      {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} />}
+      {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} />}
       {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
         if (!launchData) return null;
         const sel = [...launchData.upcoming, ...launchData.previous].find((l) => l.id === selectedLaunchId);
