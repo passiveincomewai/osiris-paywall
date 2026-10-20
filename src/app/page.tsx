@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layers, Newspaper, Search, X, Route, Radar, ExternalLink, AlertTriangle, Activity, Database, Wifi, Play, Network, Crosshair, Bluetooth, Pentagon, Radio , PenLine, Orbit } from 'lucide-react';
 import { type TerrainStatus } from '@/lib/map-terrain';
-import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
+import { fetchCameraById, loadCameraCatalog, mergeCameraCatalog, type CameraCatalogHandle } from '@/lib/camera-catalog';
+import { applyFlightsDelta, type FlightsDelta, type FlightsPayloadLike } from '@/lib/flights/delta';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
 import { findNearestCameras } from '@/lib/nearby-cameras';
@@ -1060,6 +1061,7 @@ export default function Dashboard() {
     [],
   );
   const sharedCameraSettled = useRef(false);
+  const sharedCameraLookupTried = useRef(false);
   useEffect(() => {
     if (!sharedCameraId || sharedCameraSettled.current) return;
     const cam: any = findCameraById(dataRef.current.cameras ?? [], sharedCameraId);
@@ -1073,7 +1075,25 @@ export default function Dashboard() {
       });
       return;
     }
-    if (!camerasLoading) sharedCameraSettled.current = true;
+    if (!camerasLoading) {
+      /* The catalogue is viewport-first now, so a linked camera may sit
+         in a region this visitor never loaded. Resolve it by id from the
+         server (one small request) before calling the link stale. */
+      if (!sharedCameraLookupTried.current) {
+        sharedCameraLookupTried.current = true;
+        void fetchCameraById(sharedCameraId).then(record => {
+          if (sharedCameraSettled.current) return;
+          if (!record) { sharedCameraSettled.current = true; return; }
+          dataRef.current = {
+            ...dataRef.current,
+            cameras: mergeCameraCatalog(dataRef.current.cameras ?? [], [record]),
+          };
+          setDataVersion(value => value + 1);
+        });
+        return;
+      }
+      sharedCameraSettled.current = true;
+    }
   }, [sharedCameraId, dataVersion, camerasLoading, handleEntityClick]);
 
   // ── First-camera assist (onboarding "watch a live camera") ──
@@ -1087,11 +1107,13 @@ export default function Dashboard() {
   // the visitor keeps the plain globe, as with a stale share link.
   const [assistedCameraId, setAssistedCameraId] = useState<string | null>(null);
   const assistedCameraSettled = useRef(false);
+  const assistedCameraLookupTried = useRef(false);
   useEffect(() => {
     const onOpenCamera = (e: Event) => {
       const id = (e as CustomEvent<{ id?: unknown }>).detail?.id;
       if (typeof id === 'string' && id) {
         assistedCameraSettled.current = false;
+        assistedCameraLookupTried.current = false;
         setAssistedCameraId(id);
       }
     };
@@ -1111,7 +1133,24 @@ export default function Dashboard() {
       });
       return;
     }
-    if (!camerasLoading) assistedCameraSettled.current = true;
+    if (!camerasLoading) {
+      /* Same by-id resolution as the deep link above: the featured
+         camera's region may simply not be loaded on this visitor yet. */
+      if (!assistedCameraLookupTried.current) {
+        assistedCameraLookupTried.current = true;
+        void fetchCameraById(assistedCameraId).then(record => {
+          if (assistedCameraSettled.current) return;
+          if (!record) { assistedCameraSettled.current = true; return; }
+          dataRef.current = {
+            ...dataRef.current,
+            cameras: mergeCameraCatalog(dataRef.current.cameras ?? [], [record]),
+          };
+          setDataVersion(value => value + 1);
+        });
+        return;
+      }
+      assistedCameraSettled.current = true;
+    }
   }, [assistedCameraId, dataVersion, camerasLoading, handleEntityClick]);
 
   // ── Camera picked in search ──
@@ -1239,6 +1278,48 @@ export default function Dashboard() {
     }
   }, []);
 
+  // ── FLIGHTS — delta polls against the last applied snapshot ──
+  // The route stamps every completed payload with a token; handing the
+  // token back (?since=) earns a delta instead of the next ~2.35 MB.
+  // Full payloads (first load, stale token, server restart) replace the
+  // held snapshot wholesale, exactly as fetchEndpoint('/api/flights')
+  // did. A first-paint partial carries no token, so the poll after a
+  // partial is a full request and the completed sky replaces it. Any
+  // surprise — HTTP error, an unmergeable delta — drops the token so
+  // the following poll re-bases instead of compounding a bad state.
+  const flightsTokenRef = useRef<string | null>(null);
+  const flightsSnapshotRef = useRef<FlightsPayloadLike | null>(null);
+  const fetchFlights = useCallback(async (): Promise<boolean> => {
+    const held = flightsTokenRef.current;
+    try {
+      const res = await fetch(held ? `/api/flights?since=${encodeURIComponent(held)}` : '/api/flights', { cache: 'no-store' });
+      if (!res.ok) { flightsTokenRef.current = null; setBackendStatus('error'); return false; }
+      const json: any = await res.json();
+      if (json?.delta === true) {
+        const current = flightsSnapshotRef.current;
+        const merged = current ? applyFlightsDelta(current, json as FlightsDelta) : null;
+        if (!merged) { flightsTokenRef.current = null; return false; }
+        flightsSnapshotRef.current = merged;
+        flightsTokenRef.current = merged.token ?? null;
+        dataRef.current = { ...dataRef.current, ...merged };
+        setDataVersion(v => v + 1);
+        setBackendStatus('connected');
+        return true;
+      }
+      flightsSnapshotRef.current = json as FlightsPayloadLike;
+      flightsTokenRef.current = json?.partial ? null : (typeof json?.token === 'string' ? json.token : null);
+      dataRef.current = { ...dataRef.current, ...json };
+      setDataVersion(v => v + 1);
+      setBackendStatus('connected');
+      return true;
+    } catch (e) {
+      console.warn('[OSIRIS] Flights poll failed:', e instanceof Error ? e.message : e);
+      flightsTokenRef.current = null;
+      setBackendStatus('error');
+      return false;
+    }
+  }, []);
+
   // ── PROGRESSIVE DATA LOADING (request-optimized) ──
   useEffect(() => {
     if (!dataBoot) return;
@@ -1291,11 +1372,12 @@ export default function Dashboard() {
 
   // ── LAYER-AWARE DATA LOADING — only fetch when layer is toggled ON ──
   const layerFetchedRef = useRef<Set<string>>(new Set());
+  const cameraCatalogRef = useRef<CameraCatalogHandle | null>(null);
   useEffect(() => {
     if (!dataBoot) return;
     if (!activeLayers.cctv) return;
     setCamerasLoading(true);
-    return loadCameraCatalog(cameras => {
+    const handle = loadCameraCatalog(cameras => {
       dataRef.current = {
         ...dataRef.current,
         cameras: mergeCameraCatalog(dataRef.current.cameras ?? [], cameras),
@@ -1304,7 +1386,37 @@ export default function Dashboard() {
       setBackendStatus('connected');
     }, () => console.warn('[OSIRIS] Camera catalogue load failed; bounded retry scheduled'),
     () => setCamerasLoading(false));
+    cameraCatalogRef.current = handle;
+    return () => {
+      if (cameraCatalogRef.current === handle) cameraCatalogRef.current = null;
+      handle.cancel();
+    };
   }, [activeLayers.cctv, dataBoot]);
+
+  // ── Viewport fill — the regions in view arrive as the visitor moves ──
+  // First paint is the sparse worldwide sample (lib/camera-catalog). From
+  // zoom 3 the dots on screen should be the real regional records, so the
+  // loader fills the regions under the current bounds; below that the
+  // sample carries the planet view and a fill would mostly download
+  // regions the visitor is only passing over.
+  useEffect(() => {
+    if (!activeLayers.cctv || !mapCenter?.bounds) return;
+    if (mapView.zoom < 3) return;
+    cameraCatalogRef.current?.loadForBounds(mapCenter.bounds);
+  }, [mapCenter, mapView.zoom, activeLayers.cctv]);
+
+  // ── Search reach — opening search completes the catalogue index ──
+  // Basic camera search matches over the loaded catalogue, so a camera
+  // outside this visitor's viewport would be unfindable if loading
+  // stopped at the sparse sample. Opening search (desktop panel or the
+  // mobile sheet) fills every remaining region; results stream in as
+  // the slices land, and the fill is a one-way door — regions stay
+  // loaded for the rest of the session.
+  useEffect(() => {
+    if (showDesktopSearch || mobilePanel === 'search') {
+      cameraCatalogRef.current?.ensureFullCatalog();
+    }
+  }, [showDesktopSearch, mobilePanel]);
 
   useEffect(() => {
     if (!dataBoot) return;
@@ -1312,7 +1424,7 @@ export default function Dashboard() {
     // Flights
     if (activeLayers.flights || activeLayers.military || activeLayers.jets || activeLayers.private) {
       if (!layerFetchedRef.current.has('flights')) {
-        fetchEndpoint('/api/flights');
+        void fetchFlights();
         layerFetchedRef.current.add('flights');
       }
     }
@@ -1442,7 +1554,7 @@ export default function Dashboard() {
     const intervals: ReturnType<typeof setInterval>[] = [];
     const stopFns: (() => void)[] = [];
     if (activeLayers.flights || activeLayers.military || activeLayers.jets || activeLayers.private) {
-      intervals.push(setInterval(() => fetchEndpoint('/api/flights'), 30000)); // 30s (was 5 min — raw snapshots teleported between polls; the map now blends them, lib/flights/render)
+      intervals.push(setInterval(() => { void fetchFlights(); }, 30000)); // 30s (was 5 min — raw snapshots teleported between polls; the map now blends them, lib/flights/render)
     }
 
     if (activeLayers.balloons) {
