@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 /**
  * Section 5 cards — Free vs Pro, built strictly from the code-verified
  * entitlement table (design plan): prices and trials from /pricing's
- * own constants; the camera gate from src/lib/cameraGate.ts (15 opens
+ * own constants; the camera gate from src/lib/cameraGate.ts (5 opens
  * per device for everyone non-Pro, Pro unlimited — the Free card says
  * so plainly and never claims unlimited); Pro rows from the app's
  * gating code. No capability appears here that the code doesn't
@@ -17,7 +17,7 @@ const FREE_ROWS = [
   "Basic search — fly to any place",
   "Transit, drones, launches & street level",
   "Weather, earthquakes & fires",
-  "Cameras: 15 free opens per device",
+  "Cameras: 5 free opens per device",
 ];
 
 const PRO_ROWS = [

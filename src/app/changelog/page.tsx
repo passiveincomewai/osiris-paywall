@@ -49,7 +49,7 @@ const ENTRIES: {
       "Stripe live mode for Pro subscriptions, with the webhook as the sole subscription write path.",
       "Newsletter system with double opt-in plus abandoned-cart reminders for unfinished checkouts.",
       "Admin dashboard: users, subscriptions, page views, revenue, trials, newsletter broadcast composer, and competitor manager.",
-      "Soft camera gate: 15 free camera clicks for everyone, then a gentle nudge toward Pro — cameras stay free for Pro subscribers.",
+      "Soft camera gate: 5 free camera clicks for everyone, then a gentle nudge toward Pro — cameras stay free for Pro subscribers.",
       "Cinematic scroll intro on the homepage — scroll to fly through the WorldEye emblem into the live globe.",
       "Pricing page refresh with per-day framing, a Free-vs-Pro comparison table, and a sticky mobile buy button.",
       "Faster page navigation: internal links now use client-side routing instead of full page reloads.",
