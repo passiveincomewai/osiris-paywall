@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Minus, Moon, Plus, Sun } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Lock, Minus, Moon, Plus, Satellite, Sun } from 'lucide-react';
 import type { Map as MlMap } from 'maplibre-gl';
 import { createMapCameraControls, type CameraMove } from '@/lib/map-camera-controls';
 import { nextBasemapMode, type BasemapMode } from '@/lib/basemap-mode';
@@ -13,10 +13,15 @@ interface MapControlsProps {
   /** Day/night basemap choice (free for everyone; the page persists it). */
   basemapMode?: BasemapMode;
   onBasemapModeChange?: (mode: BasemapMode) => void;
+  /** Satellite basemap switch (Pro). Locked renders the lock badge; the
+   *  page decides what a locked click does (the TrialPicker path). */
+  satelliteOn?: boolean;
+  satelliteLocked?: boolean;
+  onSatelliteToggle?: () => void;
 }
 
 /** Compact zoom on phones; desktop also gets the held-pan pad. */
-export default function MapControls({ mapRef, onInteract, basemapMode = 'night', onBasemapModeChange }: MapControlsProps) {
+export default function MapControls({ mapRef, onInteract, basemapMode = 'night', onBasemapModeChange, satelliteOn = false, satelliteLocked = false, onSatelliteToggle }: MapControlsProps) {
   const controller = useRef<ReturnType<typeof createMapCameraControls> | null>(null);
   const interact = useRef(onInteract);
   const [limits, setLimits] = useState({ min: false, max: false });
@@ -61,6 +66,25 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'night',
           {basemapMode === 'day'
             ? <Moon className="w-4 h-4" strokeWidth={1.5} />
             : <Sun className="w-4 h-4" strokeWidth={1.5} />}
+        </button>
+      )}
+      {onSatelliteToggle && (
+        <button type="button"
+          onClick={onSatelliteToggle}
+          aria-pressed={satelliteOn}
+          aria-label={satelliteLocked && !satelliteOn
+            ? 'Satellite view — a Pro feature'
+            : satelliteOn ? 'Turn satellite view off' : 'Turn satellite view on'}
+          title={satelliteLocked && !satelliteOn
+            ? 'Satellite view — Pro'
+            : satelliteOn ? 'Satellite view on — back to the standard basemap' : 'Satellite view — real imagery basemap'}
+          className={`relative w-10 h-10 md:w-8 md:h-8 rounded-xl border bg-black/60 backdrop-blur-md shadow-lg flex items-center justify-center focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] opacity-85 hover:opacity-100 transition-opacity ${satelliteOn
+            ? 'border-[var(--gold-primary)]/50 text-[var(--gold-light)]'
+            : 'border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-accent)]'}`}>
+          <Satellite className="w-4 h-4" strokeWidth={1.5} />
+          {satelliteLocked && !satelliteOn && (
+            <Lock className="absolute -bottom-1 -right-1 w-3 h-3 text-[var(--gold-primary)]" strokeWidth={2} />
+          )}
         </button>
       )}
       <div role="group" aria-label="Map camera controls"

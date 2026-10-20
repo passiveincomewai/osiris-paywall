@@ -66,6 +66,29 @@ export function dayOverlayVisible(mode: BasemapMode, satelliteOn: boolean): bool
   return mode === 'day' && !satelliteOn;
 }
 
+/** The effective basemap the user is looking at: the persisted day/night
+ *  choice, overridden by satellite imagery while satellite view is on. */
+export type BasemapView = 'night' | 'day' | 'satellite';
+
+export function basemapView(mode: BasemapMode, satelliteOn: boolean): BasemapView {
+  return satelliteOn ? 'satellite' : mode;
+}
+
+export type SatelliteSwitchAction = 'show-trial-picker' | 'turn-on' | 'turn-off';
+
+/**
+ * What flipping the satellite switch does. Satellite view is Pro: a
+ * locked (non-Pro) user gets the standard TrialPicker path — the same
+ * one every other Pro lock in the chrome uses — never the view.
+ * Turning satellite OFF is always allowed, even for a locked user:
+ * nobody gets trapped in a view they cannot exit (the assistant's
+ * map_view tool could historically switch it on without a gate).
+ */
+export function satelliteSwitchAction(locked: boolean, satelliteOn: boolean): SatelliteSwitchAction {
+  if (satelliteOn) return 'turn-off';
+  return locked ? 'show-trial-picker' : 'turn-on';
+}
+
 /** The minimal map surface syncDayOverlay drives (MapLibre satisfies it). */
 export interface DayOverlayMap {
   getSource(id: string): unknown;

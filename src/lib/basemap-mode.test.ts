@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   readBasemapMode, writeBasemapMode, nextBasemapMode, dayOverlayVisible,
+  basemapView, satelliteSwitchAction,
   syncDayOverlay, BASEMAP_MODE_STORAGE_KEY, DAY_TILE_URL,
   type DayOverlayMap,
 } from './basemap-mode';
@@ -106,5 +107,40 @@ describe('syncDayOverlay — the satellite path’s overlay pattern', () => {
     expect(f.visibility['day-layer']).toBe('visible');
     syncDayOverlay(f.map, 'night', false);
     expect(f.visibility['day-layer']).toBe('none');
+  });
+});
+
+describe('the three-way basemap state machine (day/night × satellite)', () => {
+  it('the effective view: satellite overrides, otherwise the persisted choice shows', () => {
+    expect(basemapView('night', false)).toBe('night');
+    expect(basemapView('day', false)).toBe('day');
+    expect(basemapView('night', true)).toBe('satellite');
+    expect(basemapView('day', true)).toBe('satellite');
+  });
+
+  it('a satellite round-trip returns to the exact day/night choice underneath', () => {
+    // On from day → view is satellite; off again → day, not night.
+    expect(basemapView('day', true)).toBe('satellite');
+    expect(basemapView('day', false)).toBe('day');
+    expect(basemapView('night', true)).toBe('satellite');
+    expect(basemapView('night', false)).toBe('night');
+    // And the day overlay tracks the same machine.
+    expect(dayOverlayVisible('day', true)).toBe(false);
+    expect(dayOverlayVisible('day', false)).toBe(true);
+  });
+});
+
+describe('satelliteSwitchAction — the Pro gate on the switch', () => {
+  it('Pro users toggle freely', () => {
+    expect(satelliteSwitchAction(false, false)).toBe('turn-on');
+    expect(satelliteSwitchAction(false, true)).toBe('turn-off');
+  });
+
+  it('a locked user hitting the switch gets the TrialPicker, never the view', () => {
+    expect(satelliteSwitchAction(true, false)).toBe('show-trial-picker');
+  });
+
+  it('turning satellite OFF is always allowed — nobody is trapped in the view', () => {
+    expect(satelliteSwitchAction(true, true)).toBe('turn-off');
   });
 });

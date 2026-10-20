@@ -14,7 +14,7 @@ import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
-import { readBasemapMode, writeBasemapMode, type BasemapMode } from '@/lib/basemap-mode';
+import { readBasemapMode, writeBasemapMode, satelliteSwitchAction, type BasemapMode } from '@/lib/basemap-mode';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero, { heroSkippedForSearch } from '@/components/CinematicHero';
@@ -744,6 +744,16 @@ export default function Dashboard() {
       .then((s) => setIsPremiumUser(s?.user?.subscriptionStatus === 'active'))
       .catch(() => {});
   }, []);
+  // The satellite switch in the map chrome. Satellite view stays Pro:
+  // a non-Pro click takes the standard TrialPicker path (the same one
+  // the other chrome locks use); turning it off is always allowed and
+  // returns to the persisted day/night choice. lib/basemap-mode pins
+  // the state machine.
+  const handleSatelliteToggle = useCallback(() => {
+    const action = satelliteSwitchAction(!isPremiumUser, mapStyle === 'satellite');
+    if (action === 'show-trial-picker') { setShowTrialPicker(true); return; }
+    setMapStyle(action === 'turn-on' ? 'satellite' : 'dark');
+  }, [isPremiumUser, mapStyle]);
   /* Invite-a-friend camera bonus (lib/camera-bonus): a signed-in user's
      unspent bonus opens, fetched once at load. The server is the source
      of truth — this is only the local hint for whether a beyond-base
@@ -1969,6 +1979,9 @@ export default function Dashboard() {
           mapStyle={mapStyle === 'satellite' ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' : 'dark'}
           basemapMode={basemapMode}
           onBasemapModeChange={setBasemapMode}
+          satelliteOn={mapStyle === 'satellite'}
+          satelliteLocked={!isPremiumUser}
+          onSatelliteToggle={handleSatelliteToggle}
           onEntityClick={handleEntityClick} 
           onMouseCoords={handleMouseCoords} 
           onRightClick={handleRightClick} 
