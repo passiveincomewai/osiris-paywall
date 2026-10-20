@@ -291,6 +291,33 @@ export default function GodsEyeViewPage() {
           </div>
         </div>
 
+        {/* What it can't do */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            What the god&apos;s eye view <span className="text-[#D4AF37]">can&rsquo;t do</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              The honest limits matter as much as the spectacle. The view is
+              assembled from public data: cameras see only where their
+              operators point them, flights appear only when they broadcast,
+              and whole categories of the world — private land, unlit ocean,
+              anywhere without a published feed — stay dark. Resolution is
+              what the public feeds offer, not the zoom-forever fantasy of
+              film: you watch a street, not a license plate; a harbor, not a
+              face.
+            </p>
+            <p>
+              And the freshness varies by layer — a camera frame may be
+              seconds old, a satellite position a calculation from orbital
+              elements, a modeled effect clearly labeled as simulated. The
+              god&rsquo;s eye view is not omniscience. It is something more
+              useful in practice: the real, checkable, public picture of the
+              planet&rsquo;s moving parts, honest about its edges.
+            </p>
+          </div>
+        </div>
+
         {/* FAQ */}
         <div className="mt-20 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">

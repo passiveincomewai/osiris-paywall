@@ -141,6 +141,33 @@ export default function CamerasPage() {
           </div>
         </div>
 
+        {/* Reading the network */}
+        <div className="mt-16 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold">How to actually use 74,229 cameras</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Nobody browses seventy-four thousand cameras one at a time —
+              and you don&rsquo;t need to. The network rewards three habits.
+              First, anchor on place: search the city, corridor or coastline
+              you care about and learn its three or four decisive feeds.
+              Second, think in routes: for any regular drive there is a
+              camera at the pass, the interchange and the bridge where the
+              go/no-go decision lives. Third, pair the camera with the layer
+              above it — the storm on the weather radar, the flight on
+              approach — because a feed explains a map, and a map explains a
+              feed.
+            </p>
+            <p>
+              The directory pages exist to give that browsing a shape:
+              countries ranked by their networks, regions and themes —
+              beaches, ski fields, airports, Oceania&rsquo;s passes — and
+              the themed collections where a single purpose gathers feeds
+              from forty networks at once. Start from the shape that matches
+              your question, and the globe does the rest.
+            </p>
+          </div>
+        </div>
+
         {/* Honest note */}
         <div className="mt-20 rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-10 max-w-3xl mx-auto">
           <h2 className="text-xl font-bold">An honest note on availability</h2>
