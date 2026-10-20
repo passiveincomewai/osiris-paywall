@@ -8,6 +8,7 @@ import {
 } from "@/lib/password-auth";
 import { sendEmail, emailConfigured, verificationEmail, appUrl } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
+import { subscribeToNewsletter } from "@/lib/newsletter/subscribe";
 
 export const runtime = "nodejs";
 
@@ -80,6 +81,19 @@ export async function POST(req: Request) {
     const url = appUrl(`/api/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`);
     const { subject, html } = verificationEmail(name, url);
     emailSent = await sendEmail(email, subject, html);
+  }
+
+  // Newsletter opt-in (the signup form's unchecked-by-default checkbox):
+  // subscribe through the one existing routine — double opt-in, tagged
+  // source "signup". Strictly best-effort: an already-subscribed address
+  // is a normal outcome in there, and any failure is logged, never a
+  // failed signup.
+  if (body.newsletterOptIn === true) {
+    try {
+      await subscribeToNewsletter(email, "signup");
+    } catch (err) {
+      console.error("newsletter opt-in (signup) failed:", err);
+    }
   }
 
   return NextResponse.json({ ok: true, userId: user.id, emailSent });

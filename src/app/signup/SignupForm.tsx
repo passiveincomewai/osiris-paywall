@@ -12,6 +12,7 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<{ emailSent: boolean } | null>(null);
@@ -28,7 +29,7 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
       const r = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, newsletterOptIn }),
       });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) {
@@ -142,6 +143,17 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
           onChange={(e) => setConfirm(e.target.value)}
           placeholder="Repeat your password" className={inputCls}
         />
+      </label>
+      <label className="flex items-start gap-3 px-1 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={newsletterOptIn}
+          onChange={(e) => setNewsletterOptIn(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#D4AF37]"
+        />
+        <span className="text-sm text-white/55 leading-snug">
+          Email me WorldEye updates — new cameras, features and offers
+        </span>
       </label>
       <button
         type="submit" disabled={busy}
