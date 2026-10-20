@@ -111,6 +111,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ code
   if (resolved.kind === "claimed") {
     return affiliateLanding(req, resolved.profile, code, settings, landingUrl(req));
   }
+  // An "affiliate" result cannot occur here (checked above); narrow
+  // to the anonymous kind before touching the identity.
+  if (resolved.kind !== "anon") return NextResponse.redirect(home);
 
   // Unclaimed anonymous share code: record the visit against the
   // identity and drop the attribution cookie with the anon code.

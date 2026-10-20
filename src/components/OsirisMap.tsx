@@ -1926,6 +1926,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     };
     const pStyle = `background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;`;
     const linkStyle = `display:inline-block;margin-top:8px;padding:5px 12px;font-size:10px;letter-spacing:0.12em;text-decoration:none;border-radius:5px;font-family:'JetBrains Mono',monospace;`;
+    const shareBtnStyle = `display:inline-block;margin-top:8px;margin-left:6px;padding:5px 12px;font-size:10px;letter-spacing:0.12em;border-radius:5px;font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.06);color:#E8E6E0;border:1px solid rgba(255,255,255,0.25);cursor:pointer;`;
 
     // ── XSS PROTECTION HELPERS ──
     const htmlEsc = (s: any): string => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -1941,13 +1942,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     };
 
     // ── Flights (with FlightAware + ADS-B Exchange links + ROUTE VISUALIZATION) ──
-    ['fl-commercial','fl-private','fl-jets','fl-military'].forEach(layer => {
-      map.on('click', layer, e => {
-        if (!e.features?.length) return;
+    const showFlightPopup = (feature: any) => {
         // Onboarding first-use signal — see src/lib/onboarding (Build A).
         try { window.dispatchEvent(new CustomEvent('we:flight-selected')); } catch { /* noop */ }
-        const p = e.features[0].properties as any;
-        const coords = (e.features[0].geometry as any).coordinates;
+        const p = feature.properties as any;
+        const coords = (feature.geometry as any).coordinates;
         const cs = (p.callsign||'').trim();
         // The last selected aircraft is the Cinematic Director's follow
         // target; the popup's own FOLLOW button reads the live follow
@@ -1980,6 +1979,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           </div>
           <button onclick="window.osirisWatchFlight && window.osirisWatchFlight({ icao24: '${idSafe(p.icao24||'')}', callsign: '${idSafe(cs)}' })" style="width:100%;margin-top:8px;padding:5px 10px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.35);color:#7FE9FF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">+ WATCH THIS AIRCRAFT</button>
           ${p.icao24 ? `<button onclick="window.__weFlightFollowToggle && window.__weFlightFollowToggle('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(255,180,0,0.10);border:1px solid rgba(255,180,0,0.40);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">${followingThis ? '\u25a0 STOP FOLLOWING' : '\u2708 FOLLOW AIRCRAFT \u2014 CHASE CAMERA'}</button>` : ''}
+          ${p.icao24 ? `<button onclick="window.__weShareEntity&&window.__weShareEntity('flight','${idSafe(p.icao24||'')}')" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.25);color:#E8E6E0;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">\U0001F517 SHARE THIS FLIGHT</button>` : ''}
 ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             ? `<div style="margin-top:6px;padding:5px 10px;border:1px dashed rgba(255,179,0,0.45);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;text-align:center;">\u2726 FLIGHT PATH \u2014 PRO \u00b7 ROUTE \u2014 PLANNED + FLOWN \u2014 LIVE TRACK, DRAWN WHILE FOLLOWING</div>`
             : `<button onclick="window.location.href='/pricing#pro-card'" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">\ud83d\udd12 FLIGHT PATH \u2014 PRO \u00b7 SEE THE WHOLE FLIGHT PATH</button>`) : ''}
@@ -2082,6 +2082,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             const el = document.getElementById(routeLoadingId);
             if (el) el.innerHTML = `<span style="color:#5C5A54;font-size:9px;">ROUTE UNAVAILABLE</span>`;
           });
+    };
+    ['fl-commercial','fl-private','fl-jets','fl-military'].forEach(layer => {
+      map.on('click', layer, e => {
+        if (!e.features?.length) return;
+        showFlightPopup(e.features[0]);
       });
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
@@ -2112,10 +2117,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Earthquakes (with USGS link) ──
-    map.on('click', 'eq-circles', e => {
-      if (!e.features?.length) return;
-      const p = e.features[0].properties as any;
-      const coords = (e.features[0].geometry as any).coordinates;
+    const openQuakePopup = (feature: any) => {
+      const p = feature.properties as any;
+      const coords = (feature.geometry as any).coordinates;
       popup(coords, `<div style="${pStyle}border:1px solid rgba(255,149,0,0.3);">
         <div style="color:#FF9500;font-size:14px;font-weight:700;margin-bottom:4px;">M${p.magnitude} EARTHQUAKE</div>
         <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.place||'Unknown location')}</div>
@@ -2124,8 +2128,10 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}, ${coords[0].toFixed(3)}</span></div>
         </div>
         <a href="${p.source === 'NIGGG-BAS' ? 'https://ndc.niggg.bas.bg/' : `https://earthquake.usgs.gov/earthquakes/eventpage/${encodeURIComponent(p.id||'')}`}" target="_blank" style="${linkStyle}color:#FF9500;border:1px solid rgba(255,149,0,0.4);background:rgba(255,149,0,0.1);">📊 ${p.source === 'NIGGG-BAS' ? 'NIGGG-BAS' : 'USGS DETAILS'}</a>
+        ${p.id ? `<button onclick="window.__weShareEntity&&window.__weShareEntity('quake','${idSafe(p.id)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>` : ''}
       </div>`);
-    });
+    };
+    map.on('click', 'eq-circles', e => { if (e.features?.length) openQuakePopup(e.features[0]); });
 
     // ── Satellites (SatNOGS powered) ──
     // Layers with their own click handlers. The satellite pick defers to
@@ -2223,10 +2229,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Fires (with NASA FIRMS link) ──
-    map.on('click', 'fires-heat', e => {
-      if (!e.features?.length) return;
-      const p = e.features[0].properties as any;
-      const coords = (e.features[0].geometry as any).coordinates;
+    const openFirePopup = (feature: any) => {
+      const p = feature.properties as any;
+      const coords = (feature.geometry as any).coordinates;
       popup(coords, `<div style="${pStyle}border:1px solid rgba(255,107,0,0.3);">
         <div style="color:#FF6B00;font-size:12px;font-weight:700;margin-bottom:6px;">🔥 ACTIVE FIRE DETECTED</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
@@ -2234,16 +2239,17 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}°, ${coords[0].toFixed(3)}°</span></div>
         </div>
         <a href="https://firms.modaps.eosdis.nasa.gov/map/#d:24hrs;l:noaa20-viirs,viirs,modis_a,modis_t;@${coords[0]},${coords[1]},10z" target="_blank" style="${linkStyle}color:#FF6B00;border:1px solid rgba(255,107,0,0.4);background:rgba(255,107,0,0.1);">🛰️ NASA FIRMS MAP</a>
+        <button onclick="window.__weShareEntity&&window.__weShareEntity('fire','${coords[1].toFixed(3)},${coords[0].toFixed(3)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>
       </div>`);
-    });
+    };
+    map.on('click', 'fires-heat', e => { if (e.features?.length) openFirePopup(e.features[0]); });
 
     // ── Hurricanes (NOAA NHC) ──
     const CLASS_LABEL: Record<string, string> = { HU: 'HURRICANE', TS: 'TROPICAL STORM', TD: 'TROPICAL DEPRESSION', STS: 'SUBTROPICAL STORM', SD: 'SUBTROPICAL DEPRESSION', EX: 'EXTRATROPICAL', PT: 'POST-TROPICAL', LO: 'LOW', DB: 'DISTURBANCE' };
     const ssCategory = (kt: number | null) => kt == null ? null : kt >= 137 ? 5 : kt >= 113 ? 4 : kt >= 96 ? 3 : kt >= 83 ? 2 : kt >= 64 ? 1 : 0;
-    map.on('click', 'hurricane-current', e => {
-      if (!e.features?.length) return;
-      const p = e.features[0].properties as any;
-      const coords = (e.features[0].geometry as any).coordinates;
+    const openStormPopup = (feature: any) => {
+      const p = feature.properties as any;
+      const coords = (feature.geometry as any).coordinates;
       const cat = ssCategory(p.intensityKt != null ? Number(p.intensityKt) : null);
       const mph = p.intensityKt != null ? Math.round(Number(p.intensityKt) * 1.151) : null;
       popup(coords, `<div style="${pStyle}border:1px solid rgba(255,82,82,0.35);">
@@ -2256,8 +2262,10 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           <div><span style="color:#5C5A54;">POSITION</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(2)}°, ${coords[0].toFixed(2)}°</span></div>
         </div>
         <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">NOAA · NATIONAL HURRICANE CENTER</div>
+        ${p.stormId ? `<button onclick="window.__weShareEntity&&window.__weShareEntity('storm','${idSafe(p.stormId)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>` : ''}
       </div>`);
-    });
+    };
+    map.on('click', 'hurricane-current', e => { if (e.features?.length) openStormPopup(e.features[0]); });
     map.on('click', 'hurricane-points', e => {
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
@@ -2457,10 +2465,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     // ── GDELT 2.0 Events ──
     const QUAD_COLOR: Record<string, string> = { '1': '#00E676', '2': '#00E5FF', '3': '#FF9500', '4': '#FF3D3D' };
-    map.on('click', 'gdelt-events-dots', e => {
-      if (!e.features?.length) return;
-      const p = e.features[0].properties as any;
-      const coords = (e.features[0].geometry as any).coordinates;
+    const openGdeltEventPopup = (feature: any) => {
+      const p = feature.properties as any;
+      const coords = (feature.geometry as any).coordinates;
       const accent = QUAD_COLOR[String(p.quad)] ?? '#9B978E';
       const src = urlSafe(p.url);
       const tone = Number(p.tone);
@@ -2479,8 +2486,10 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         </div>
         <div style="margin-top:8px;font-size:9px;color:#5C5A54;">GDELT 2.0 · ${htmlEsc(String(p.date).slice(0, 16).replace('T', ' '))}Z</div>
         ${src !== '#' ? `<a href="${src}" target="_blank" rel="noopener noreferrer" style="${linkStyle}color:${accent};border:1px solid ${accent}66;background:${accent}1a;">SOURCE ARTICLE</a>` : ''}
+        <button onclick="window.__weShareEntity&&window.__weShareEntity('event','${coords[1].toFixed(3)},${coords[0].toFixed(3)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>
       </div>`);
-    });
+    };
+    map.on('click', 'gdelt-events-dots', e => { if (e.features?.length) openGdeltEventPopup(e.features[0]); });
 
     // ── Cloudflare Radar: internet outage ──
     map.on('click', 'cf-outage-dots', e => {
@@ -2535,10 +2544,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── GDELT Conflicts (with source article) ──
-    map.on('click', 'gdelt-dots', e => {
-      if (!e.features?.length) return;
-      const p = e.features[0].properties as any;
-      const coords = (e.features[0].geometry as any).coordinates;
+    const openGdacsPopup = (feature: any) => {
+      const p = feature.properties as any;
+      const coords = (feature.geometry as any).coordinates;
       
       // These are GDACS alerts and each one carries its own report URL. This
       // used to guess a Liveuamap regional war map from the coordinates
@@ -2562,14 +2570,15 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         <div style="color:${kindColor};font-size:12px;font-weight:700;margin-bottom:6px;">${kindLabel}</div>
         <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;line-height:1.4;">${htmlEsc(p.name||'Unclassified incident')}</div>
         ${src !== '#' ? `<a href="${src}" target="_blank" rel="noopener noreferrer" style="${linkStyle}flex:1;text-align:center;color:${kindColor};border:1px solid ${kindColor}66;background:${kindColor}26;display:inline-block;width:100%;box-sizing:border-box;margin-top:4px;">[ OPEN SOURCE ↗ ]</a>` : ''}
+        <button onclick="window.__weShareEntity&&window.__weShareEntity('event','${coords[1].toFixed(3)},${coords[0].toFixed(3)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>
       </div>`);
-    });
+    };
+    map.on('click', 'gdelt-dots', e => { if (e.features?.length) openGdacsPopup(e.features[0]); });
 
     // ── Global Event / Conflict Markers ──
-    map.on('click', 'conflict-icons', e => {
-      if (!e.features?.length) return;
-      const p = e.features[0].properties as any;
-      const coords = (e.features[0].geometry as any).coordinates;
+    const openConflictPopup = (feature: any) => {
+      const p = feature.properties as any;
+      const coords = (feature.geometry as any).coordinates;
       const color = p.severity === 'war' ? '#FF1744' : p.severity === 'high' ? '#FF9500' : '#FFD500';
       popup(coords, `<div style="${pStyle}border:1px solid ${color}40;">
         <div style="color:${color};font-size:12px;font-weight:700;margin-bottom:6px;">⚠️ ${htmlEsc(p.label || 'WARNING EVENT')}</div>
@@ -2579,9 +2588,72 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}°, ${coords[0].toFixed(3)}°</span></div>
         </div>
         ${p.sourceUrl ? `<a href="${urlSafe(p.sourceUrl)}" target="_blank" style="${linkStyle}flex:1;text-align:center;color:${color};border:1px solid ${color}40;background:${color}15;display:inline-block;width:100%;box-sizing:border-box;margin-top:4px;">[ OPEN SOURCE ↗ ]</a>` : ''}
+        <button onclick="window.__weShareEntity&&window.__weShareEntity('event','${coords[1].toFixed(3)},${coords[0].toFixed(3)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>
       </div>`);
-    });
+    };
+    map.on('click', 'conflict-icons', e => { if (e.features?.length) openConflictPopup(e.features[0]); });
 
+
+    // ── Shared entity deep links (lib/share) ──
+    // page.tsx resolves what it can from its own datasets and hands
+    // every kind here; the map reopens the entity's own popup from
+    // the live sources (flights and conflict markers exist only
+    // map-side). Retries briefly while sources populate; an id that
+    // never matches is stale and simply never opens — the visitor
+    // keeps the plain globe, exactly like a stale camera link.
+    const openedShareKeys = new Map<string, number>();
+    const shareCoordKey = (f: any): string | null => {
+      const c = f?.geometry?.coordinates;
+      return Array.isArray(c) ? `${Number(c[1]).toFixed(3)},${Number(c[0]).toFixed(3)}` : null;
+    };
+    const openSharedEntity = (ev: Event) => {
+      const detail: any = (ev as CustomEvent).detail ?? {};
+      const kind = String(detail.kind ?? '');
+      const id = String(detail.id ?? '');
+      if (!kind || !id) return;
+      const key = `${kind}:${id}`;
+      const attempt = (triesLeft: number) => {
+        const openedAt = openedShareKeys.get(key);
+        if (openedAt && Date.now() - openedAt < 20000) return;
+        const findIn = (source: string, pred: (f: any) => boolean) => {
+          try { return (map.querySourceFeatures(source) as any[]).find(pred); } catch { return undefined; }
+        };
+        let feature: any;
+        let opener: ((f: any) => void) | null = null;
+        let zoom = 7;
+        if (kind === 'quake') {
+          feature = findIn('earthquakes', f => String(f.properties?.id ?? '') === id);
+          opener = openQuakePopup; zoom = 7;
+        } else if (kind === 'fire') {
+          feature = findIn('fires', f => shareCoordKey(f) === id);
+          opener = openFirePopup; zoom = 9;
+        } else if (kind === 'storm') {
+          feature = findIn('hurricanes', f => f.properties?.kind === 'current' && String(f.properties?.stormId ?? '') === id);
+          opener = openStormPopup; zoom = 6;
+        } else if (kind === 'flight') {
+          for (const s of ['flights', 'military', 'jets', 'private-fl']) {
+            feature = findIn(s, f => String(f.properties?.icao24 ?? '').toLowerCase() === id);
+            if (feature) break;
+          }
+          opener = showFlightPopup; zoom = 8;
+        } else if (kind === 'event') {
+          feature = findIn('gdelt', f => shareCoordKey(f) === id); opener = openGdacsPopup;
+          if (!feature) { feature = findIn('gdelt-events', f => shareCoordKey(f) === id); opener = openGdeltEventPopup; }
+          if (!feature) { feature = findIn('conflict-zones', f => shareCoordKey(f) === id); opener = openConflictPopup; }
+          zoom = 6;
+        }
+        if (feature && opener) {
+          openedShareKeys.set(key, Date.now());
+          const c = feature.geometry?.coordinates;
+          if (Array.isArray(c)) map.flyTo({ center: c as any, zoom: Math.max(map.getZoom(), zoom), duration: 1200 });
+          opener(feature);
+          return;
+        }
+        if (triesLeft > 0) setTimeout(() => attempt(triesLeft - 1), 700);
+      };
+      attempt(6);
+    };
+    window.addEventListener('we:open-entity', openSharedEntity);
 
     // ── OSIRIS SDK link click ──
     const SDK_SOURCE_URLS: Record<string, string> = {
@@ -2985,6 +3057,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     return () => {
       sizeToContainer.disconnect();
+      window.removeEventListener('we:open-entity', openSharedEntity);
       cancelAnimationFrame(hoverFrame);
       map.remove();
       mapRef.current = null;

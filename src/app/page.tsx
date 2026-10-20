@@ -1294,17 +1294,17 @@ export default function Dashboard() {
     const d: any = dataRef.current;
     let coords: { lat: number; lng: number; zoom: number } | null = null;
     if (sharedEntity.kind === 'quake') {
-      const eq = findQuakeByShareId(d.earthquakes ?? [], sharedEntity.id);
+      const eq: any = findQuakeByShareId(d.earthquakes ?? [], sharedEntity.id);
       if (eq) coords = { lat: eq.lat, lng: eq.lng, zoom: 7 };
     } else if (sharedEntity.kind === 'fire') {
-      const f = findByCoordShareId(d.fires ?? [], sharedEntity.id);
+      const f: any = findByCoordShareId(d.fires ?? [], sharedEntity.id);
       if (f) coords = { lat: f.lat, lng: f.lng, zoom: 9 };
     } else if (sharedEntity.kind === 'storm') {
       const s = findStormFeatureByShareId(d.hurricane_features ?? [], sharedEntity.id);
       const c = (s as any)?.geometry?.coordinates;
       if (Array.isArray(c)) coords = { lat: c[1], lng: c[0], zoom: 6 };
     } else if (sharedEntity.kind === 'event') {
-      const ev = findByCoordShareId(d.gdelt ?? [], sharedEntity.id)
+      const ev: any = findByCoordShareId(d.gdelt ?? [], sharedEntity.id)
         ?? findByCoordShareId(d.gdelt_events ?? [], sharedEntity.id);
       if (ev) coords = { lat: ev.lat, lng: ev.lng, zoom: 6 };
     }
