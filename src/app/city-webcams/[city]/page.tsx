@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import directory from "@/data/camera-directory.json";
+import cityPages from "@/data/city-pages.json";
 import {
   BASE,
   formatDate,
@@ -760,8 +761,196 @@ const RELATED: { label: string; href: string }[] = [
   { label: "All world city webcams", href: "/world-city-webcams" },
 ];
 
+/* ------------------------------------------------------------------ */
+/* Generated tier — data-derived city pages.                           */
+/*                                                                     */
+/* Counts and samples come from src/data/city-pages.json, built by     */
+/* tools/build-city-pages.mjs from the assembled /api/cctv catalogue   */
+/* (see that script's header for the full derivation: union of the     */
+/* production API build and the route's local assembly snapshot,       */
+/* deduped by id, grouped by the records' own city field with the      */
+/* camera directory's country normalization; only groups of >=100      */
+/* whose city field actually names a city — states, provinces,         */
+/* counties, motorway corridors and region/district labels excluded).  */
+/* The copy below is a template parameterised by those numbers only —  */
+/* counts, country totals, feeding sources, the still/stream split     */
+/* and real sample camera names. Nothing city-specific is asserted     */
+/* that does not come from the data.                                   */
+/* ------------------------------------------------------------------ */
+
+type GenCity = {
+  slug: string;
+  name: string;
+  country: string;
+  countrySlug: string;
+  count: number;
+  countryTotal: number;
+  sources: { name: string; count: number }[];
+  sourceCount: number;
+  stills: number;
+  streams: number;
+  samples: { id: string; name: string }[];
+};
+
+const GEN_CITIES = cityPages.cities as unknown as GenCity[];
+const GEN_BY_SLUG = new Map(GEN_CITIES.map((g) => [g.slug, g]));
+
+// Country pages exist for the directory's top-33 countries (the same set
+// the sitemap emits); generated pages link there when they can.
+const COUNTRY_PAGE_SLUGS = new Set(
+  directory.countries.slice(0, 33).map((c) => c.slug),
+);
+
+const fmt = (n: number) => n.toLocaleString("en-US");
+// Source labels in the catalogue read like "OpenCCTV / wsdot" — the
+// harvest aggregator's prefix; the publisher is what follows it.
+const srcName = (s: string) => s.replace(/^OpenCCTV \/ /, "");
+
+function joinNames(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? "";
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+function generatedCfg(g: GenCity): CityCfg {
+  const share = Math.round((g.count / g.countryTotal) * 100);
+  const shareLabel = share < 1 ? "under 1%" : `${share}%`;
+  const topSources = g.sources.map((s) => srcName(s.name));
+  const srcList = joinNames(topSources);
+  const streamShare = Math.round((g.streams / g.count) * 100);
+  const feat = g.samples.slice(0, 3).map((s) => s.name);
+
+  const mixParagraph =
+    g.streams === 0
+      ? `Every camera in the ${g.name} index publishes still images that refresh at short intervals rather than continuous video. That is how the operators run them — and it is enough to judge congestion, weather and road conditions at a glance, which is what these feeds are for.`
+      : streamShare >= 50
+        ? `The index mixes live video with still-image feeds: ${fmt(g.streams)} of the ${fmt(g.count)} cameras stream video, and the rest publish still images that refresh at short intervals. Both kinds show current conditions — the stills are how most road operators publish, and they are plenty for judging congestion, weather and closures.`
+        : `Most of the index — ${fmt(g.stills)} of ${fmt(g.count)} cameras — publishes still images that refresh at short intervals, with ${fmt(g.streams)} live video streams mixed in. That is how most road operators publish, and the stills are plenty for judging congestion, weather and road conditions before you travel.`;
+
+  const mixFaq =
+    g.streams === 0
+      ? `All ${fmt(g.count)} feeds in the ${g.name} index publish still images that refresh at short intervals rather than continuous video. That is the format the operators themselves use for road monitoring, and it is enough to judge traffic, weather and road conditions.`
+      : `${fmt(g.stills)} of the ${fmt(g.count)} feeds publish still images that refresh at short intervals, and ${fmt(g.streams)} stream live video. Both show current conditions — check the featured list on this page to open either kind.`;
+
+  return {
+    name: g.name,
+    country: g.country,
+    countrySlug: g.countrySlug,
+    count: g.count,
+    title: `${g.name} Live Webcams — ${fmt(g.count)} Live Cameras`,
+    blurb: `Watch ${fmt(g.count)} live cameras in ${g.name}, ${g.country} — public feeds from ${joinNames(topSources.slice(0, 2))}, free on the WorldEye map. No signup needed.`,
+    h1: `${g.name} Live Webcams`,
+    sub: `Watch ${fmt(g.count)} live cameras in ${g.name} — free on the WorldEye globe.`,
+    intro: [
+      `${g.name} accounts for ${fmt(g.count)} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${g.country} — about ${shareLabel} of the national total. The largest share of the feeds is published by ${srcList}, and WorldEye collects them into one searchable map layer alongside its 74,229 cameras worldwide.`,
+      `Featured feeds in the index include ${joinNames(feat)} — and every camera in the list below links straight into the live globe with that feed open, so you can go from this page to a live view in one tap.`,
+      mixParagraph,
+      `Use the grid the way it is meant to be used: a two-minute check of the cameras on your route before you leave. What is happening on the ground — a jam, a closure, a storm moving in — shows up on these feeds as it happens, not as a forecast said it would.`,
+    ],
+    stats: [
+      { value: fmt(g.count), label: "live cameras" },
+      { value: shareLabel, label: `of ${g.country}'s cameras` },
+      { value: String(g.sourceCount), label: "publishing sources" },
+    ],
+    samples: g.samples.map((s) => ({ name: s.name, city: g.name, id: s.id })),
+    sampleTitle: `Featured ${g.name} cameras`,
+    howtoTitle: `How to watch ${g.name} cameras`,
+    howto: [
+      "Open the free WorldEye map — no account or download needed.",
+      `Zoom to ${g.name}; camera markers cover the areas the local networks watch.`,
+      "Tap any marker to open that camera's live feed — or pick one from the featured list on this page to jump straight to it.",
+      g.streams === 0
+        ? "The feeds refresh as still images, so glance again after a minute to watch conditions change."
+        : "Many feeds stream live video and the rest refresh as stills — either way you are seeing conditions as they are now.",
+      "Check the cameras on your route right before leaving; conditions change faster than traffic reports do.",
+    ],
+    faqTitle: `${g.name} webcams — FAQ`,
+    faqs: [
+      {
+        q: `How many live cameras are there in ${g.name}?`,
+        a: `WorldEye indexes ${fmt(g.count)} cameras in ${g.name}, out of ${fmt(g.countryTotal)} across ${g.country}. The count comes from the live camera catalogue and moves as operators add feeds or retire old ones.`,
+      },
+      {
+        q: `Where do the ${g.name} cameras come from?`,
+        a: `They are public camera feeds — the largest share is published by ${srcList}. WorldEye collects the feeds into one map layer; the cameras themselves remain the operators' own, published for public monitoring.`,
+      },
+      {
+        q: "Are the cameras live video or still images?",
+        a: mixFaq,
+      },
+      {
+        q: `Can I check traffic and weather in ${g.name}?`,
+        a: `Yes — that is the main use. The feeds show road conditions, congestion and weather as they are. Check the cameras on your route before travelling, especially in bad weather or at rush hour.`,
+      },
+      {
+        q: `How do I open a specific ${g.name} camera?`,
+        a: `Every camera in the featured list on this page links directly into the live globe with that camera already open. On the map itself, zoom to ${g.name} and tap any marker to open its feed.`,
+      },
+      {
+        q: "Do I need an account to watch?",
+        a: "No. Every camera on WorldEye is free to watch — no account, no trial, no paywall. Open the map, find your camera, and watch.",
+      },
+    ],
+  };
+}
+
+function generatedRelated(g: GenCity): { label: string; href: string }[] {
+  const siblings = GEN_CITIES.filter(
+    (o) => o.countrySlug === g.countrySlug && o.slug !== g.slug,
+  )
+    .slice(0, 3)
+    .map((o) => ({ label: `${o.name} live webcams`, href: `/city-webcams/${o.slug}` }));
+  const curatedSiblings = RELATED.filter(
+    (l) =>
+      l.href.startsWith("/city-webcams/") &&
+      CITIES[l.href.replace("/city-webcams/", "")]?.countrySlug === g.countrySlug,
+  );
+  const top = [...GEN_CITIES]
+    .filter((o) => o.slug !== g.slug && o.countrySlug !== g.countrySlug)
+    .slice(0, 3)
+    .map((o) => ({ label: `${o.name} live webcams`, href: `/city-webcams/${o.slug}` }));
+  return [
+    ...siblings,
+    ...curatedSiblings,
+    ...top,
+    { label: "All world city webcams", href: "/world-city-webcams" },
+  ];
+}
+
+type ResolvedCity = {
+  cfg: CityCfg;
+  updatedIso: string;
+  related: { label: string; href: string }[];
+  backHref: string;
+};
+
+function resolveCity(slug: string): ResolvedCity | null {
+  const curated = CITIES[slug];
+  if (curated) {
+    return {
+      cfg: curated,
+      updatedIso: directory.generatedAt,
+      related: RELATED.filter((l) => l.href !== `/city-webcams/${slug}`),
+      backHref: `/cameras/countries/${curated.countrySlug}`,
+    };
+  }
+  const g = GEN_BY_SLUG.get(slug);
+  if (!g) return null;
+  return {
+    cfg: generatedCfg(g),
+    updatedIso: cityPages.generatedAt,
+    related: generatedRelated(g),
+    backHref: COUNTRY_PAGE_SLUGS.has(g.countrySlug)
+      ? `/cameras/countries/${g.countrySlug}`
+      : "/cameras/countries",
+  };
+}
+
 export function generateStaticParams() {
-  return Object.keys(CITIES).map((city) => ({ city }));
+  return [
+    ...Object.keys(CITIES).map((city) => ({ city })),
+    ...GEN_CITIES.map((g) => ({ city: g.slug })),
+  ];
 }
 
 export async function generateMetadata({
@@ -770,8 +959,9 @@ export async function generateMetadata({
   params: Promise<{ city: string }>;
 }): Promise<Metadata> {
   const { city: slug } = await params;
-  const c = CITIES[slug];
-  if (!c) return { title: "Not found" };
+  const resolved = resolveCity(slug);
+  if (!resolved) return { title: "Not found" };
+  const c = resolved.cfg;
   const url = `/city-webcams/${slug}`;
   return {
     title: c.title,
@@ -792,11 +982,12 @@ export default async function CityWebcamPage({
   params: Promise<{ city: string }>;
 }) {
   const { city: slug } = await params;
-  const c = CITIES[slug];
-  if (!c) notFound();
+  const resolved = resolveCity(slug);
+  if (!resolved) notFound();
 
+  const c = resolved.cfg;
   const canonical = `${BASE}/city-webcams/${slug}`;
-  const updated = formatDate(directory.generatedAt);
+  const updated = formatDate(resolved.updatedIso);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -811,7 +1002,7 @@ export default async function CityWebcamPage({
         "@type": "ListItem",
         position: i + 1,
         name: s.city ? `${s.name} — ${s.city}` : s.name,
-        url: BASE,
+        url: s.id ? `${BASE}/?camera=${encodeURIComponent(s.id)}` : BASE,
       })),
     },
   };
@@ -834,10 +1025,7 @@ export default async function CityWebcamPage({
       {c.samples && <SampleGrid title={c.sampleTitle ?? "Featured live cameras"} samples={c.samples} />}
       <HowTo title={c.howtoTitle} steps={c.howto} />
       <FaqSection title={c.faqTitle} faqs={c.faqs} />
-      <RelatedLinks
-        title="More city webcam indexes"
-        links={RELATED.filter((l) => l.href !== `/city-webcams/${slug}`)}
-      />
+      <RelatedLinks title="More city webcam indexes" links={resolved.related} />
       <RelatedLinks
         title="Guides"
         links={[
@@ -845,7 +1033,7 @@ export default async function CityWebcamPage({
           { label: "Using live cameras to plan travel", href: "/blog/using-live-cameras-to-plan-travel" },
         ]}
       />
-      <CtaRow backHref={`/cameras/countries/${c.countrySlug}`} backLabel={`${c.country} cameras`} />
+      <CtaRow backHref={resolved.backHref} backLabel={`${c.country} cameras`} />
     </PageShell>
   );
 }

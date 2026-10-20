@@ -4,7 +4,7 @@ import SiteFooter from "@/components/SiteFooter";
 
 export const BASE = "https://worldeye.app";
 
-export type Sample = { name: string; city?: string };
+export type Sample = { name: string; city?: string; id?: string };
 export type AreaRow = { name: string; count: number };
 export type Faq = { q: string; a: string };
 export type RelatedLink = { label: string; href: string };
@@ -143,7 +143,10 @@ export function SampleGrid({ title, samples }: { title: string; samples: Sample[
             <div className="min-w-0">
               <div className="font-semibold text-sm truncate">{s.name}</div>
               {s.city && <div className="text-xs text-white/45">{s.city}</div>}
-              <a href={BASE} className="text-xs text-[#00E5FF] hover:underline mt-1 inline-block">
+              <a
+                href={s.id ? `${BASE}/?camera=${encodeURIComponent(s.id)}` : BASE}
+                className="text-xs text-[#00E5FF] hover:underline mt-1 inline-block"
+              >
                 View on the live map
               </a>
             </div>

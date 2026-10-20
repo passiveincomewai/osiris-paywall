@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import directory from "@/data/camera-directory.json";
+import cityPages from "@/data/city-pages.json";
 import { POSTS } from "./blog/posts";
 
 const BASE = "https://worldeye.app";
@@ -78,6 +79,13 @@ const SEO_PAGES_WAVE7 = [
   "/sweden-traffic-cameras",
   "/live-plane-spotting",
 ];
+
+// Wave 8 (2026-10-20): data-generated city webcam pages — the generated
+// tier of /city-webcams/[city], derived from src/data/city-pages.json
+// (tools/build-city-pages.mjs) so this list can never drift from the
+// pages that exist. The ten editorial cities are in Waves 4–6 above.
+// Cross-linked from /world-city-webcams and from each other.
+const SEO_PAGES_WAVE8 = cityPages.cities.map((c) => `/city-webcams/${c.slug}`);
 
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
@@ -194,6 +202,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE7.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE8.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
