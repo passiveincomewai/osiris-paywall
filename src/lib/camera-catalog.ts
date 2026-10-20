@@ -249,8 +249,8 @@ export function loadCameraCatalog(
     if (signal.aborted) return;
     const key = [bounds.west, bounds.south, bounds.east, bounds.north]
       .map(v => Math.round(v * 2) / 2).join(',');
-    let resolved = boundsCache.get(key);
-    if (resolved && resolved.every(r => fullRegions.has(r))) return;
+    const cached = boundsCache.get(key);
+    if (cached && cached.every(r => fullRegions.has(r))) return;
     try {
       const query = new URLSearchParams({
         bbox: `${bounds.west},${bounds.south},${bounds.east},${bounds.north}`,
@@ -260,11 +260,11 @@ export function loadCameraCatalog(
       if (!Array.isArray(data.cameras)) throw new Error('Invalid camera catalogue');
       if (signal.aborted) return;
       if (data.cameras.length) onBatch(data.cameras);
-      resolved = (Array.isArray(data.resolvedRegions) ? data.resolvedRegions.filter(isRegionKey)
+      const resolved: string[] = (Array.isArray(data.resolvedRegions) ? data.resolvedRegions.filter(isRegionKey)
         : Array.isArray(data.regions) ? data.regions.filter(isRegionKey) : []);
       boundsCache.set(key, resolved);
       const pending = Array.isArray(data.pendingRegions)
-        ? data.pendingRegions.filter(isRegionKey).filter((r: string) => resolved!.includes(r))
+        ? data.pendingRegions.filter(isRegionKey).filter((r: string) => resolved.includes(r))
         : [];
       /* Every resolved region the server did not call pending is
          settled for this client: fetched (cameras delivered, or the

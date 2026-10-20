@@ -7,7 +7,7 @@ import {
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
-const json = (cameras: { id: string }[], pendingRegions: string[] = [], extra: Record<string, unknown> = {}) =>
+const json = (cameras: { id: string; [key: string]: unknown }[], pendingRegions: string[] = [], extra: Record<string, unknown> = {}) =>
   Response.json({ cameras, pendingRegions, ...extra });
 const listJson = (regions: string[]) => Response.json({ regions });
 const sparseJson = (cameras: { id: string }[], pendingRegions: string[] = []) =>
