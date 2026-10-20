@@ -213,14 +213,9 @@ describe("runCheckoutFlow — Stripe.js loads in parallel with the session POST"
   });
 
   it("waits for a slow Stripe.js after a fast POST (mount is gated on both)", async () => {
-    const js = deferred<stripeJsShape>();
-    type stripeJsShape = {
-      initEmbeddedCheckout: (o: { clientSecret: string }) => Promise<EmbeddedCheckoutHandle>;
-    };
     const handle: EmbeddedCheckoutHandle = { mount: vi.fn(), destroy: vi.fn() };
-    const stripeJs: stripeJsShape = {
-      initEmbeddedCheckout: vi.fn(async () => handle),
-    };
+    const stripeJs = { initEmbeddedCheckout: vi.fn(async () => handle) };
+    const js = deferred<typeof stripeJs>();
     const { deps } = fakeDeps(
       [{ ok: true, body: { clientSecret: "cs_test_123_secret_xyz" } }],
       { loadStripeImpl: vi.fn(() => js.promise) },
