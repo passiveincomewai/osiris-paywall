@@ -22,7 +22,10 @@ const fontBody = Public_Sans({
 });
 const fontDisplay = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  // Variable weight range: with `axes` present, next/font requires the
+  // weight to be the variable axis itself, not a static list — the full
+  // 100–900 wght range (incl. the 400–700 the type scale uses) is served.
+  weight: "variable",
   axes: ["opsz"],
   display: "swap",
   variable: "--font-display",
