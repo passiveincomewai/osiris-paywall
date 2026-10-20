@@ -170,6 +170,32 @@ export function abandonedCartEmail(plan: string, checkoutUrl: string): { subject
   };
 }
 
+export function teamInviteEmail(input: {
+  orgName: string;
+  inviterName: string;
+  role: string;
+  expiresAt: Date;
+  acceptUrl: string;
+}): { subject: string; html: string } {
+  const expiresLabel = input.expiresAt.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  return {
+    subject: "You're invited to join a team on WorldEye",
+    html: shell(
+      "You've been invited",
+      `${input.inviterName} invited you to join ${input.orgName} on WorldEye.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;"><strong style="color:#fff;">${escapeHtml(input.inviterName)}</strong> invited you to join the <strong style="color:#fff;">${escapeHtml(input.orgName)}</strong> team on WorldEye as a <strong style="color:#fff;">${escapeHtml(input.role)}</strong>.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Joining gives you access to the team's shared cameras, collections and the team's plan features. This invitation expires on <strong style="color:#fff;">${escapeHtml(expiresLabel)}</strong>.</p>
+       <p style="color:#71717a;font-size:13px;">You'll need to sign in with the email address this invitation was sent to in order to accept it.</p>`,
+      { label: "Accept invitation", href: input.acceptUrl }
+    ),
+  };
+}
+
 export function cameraAlertEmail(input: {
   cameraName: string;
   condition: string;
