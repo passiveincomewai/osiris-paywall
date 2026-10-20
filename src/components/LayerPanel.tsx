@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useState } from 'react';
+import { Fragment, memo, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plane, Satellite, Sun, AlertTriangle, Camera,
@@ -8,6 +8,7 @@ import {
   Flame, Tv, Radio, Mountain, Anchor, Megaphone, SlidersHorizontal, Lock, Bus
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
+import TrialPicker from './TrialPicker';
 import { LanguageRailControl, LanguageSelect } from './translate/LanguageControl';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
 import { SENSOR_EFFECT_OPTIONS, type SensorEffectState } from '@/lib/sensor-effects';
@@ -29,7 +30,7 @@ interface LayerPanelProps {
   /** False while the splash is up; the rail slides in when it turns true. */
   revealed?: boolean;
   /** True when the viewer holds an active Weekly Pass. Premium layers render
-   *  with a lock and link to /premium instead of toggling. */
+   *  with a lock instead of toggling; clicking one opens the trial picker. */
   isPremiumUser?: boolean;
   /** Simulated sensor-effect state (DISPLAY group) — owned by the page,
    *  applied by OsirisMap to the map canvas only. */
@@ -203,9 +204,10 @@ export function layerShownActive(layer: Pick<LayerDef, 'key' | 'parent'>, active
 
 /**
  * A premium layer is locked for everyone who isn't a subscriber: the row
- * shows a lock instead of a switch, and clicking it offers the upgrade
- * (the /premium page). One definition for both panel layouts so desktop
- * and mobile can never disagree about who is locked out.
+ * shows a lock instead of a switch, and clicking it opens the trial
+ * picker (components/TrialPicker) right in the panel. One definition for
+ * both panel layouts so desktop and mobile can never disagree about who
+ * is locked out.
  */
 export function layerLocked(layer: Pick<LayerDef, 'premium'>, isPremiumUser: boolean): boolean {
   return !!layer.premium && !isPremiumUser;
@@ -288,6 +290,15 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
    */
   const [pinnedGroup, setPinnedGroup] = useState<string | null>(null);
   const [studioOpen, setStudioOpen] = useState(false);
+  /** The locked layer whose trial picker is expanded, if any. One at a
+   *  time, shared by both layouts: the picker replaces the old bounce to
+   *  /premium, so intent is answered where it showed up. On desktop the
+   *  group is also pinned — a hover flyout would close under the picker. */
+  const [trialLayerKey, setTrialLayerKey] = useState<string | null>(null);
+  const openTrialFor = (layerKey: string, groupLabel?: string) => {
+    setTrialLayerKey((cur) => (cur === layerKey ? null : layerKey));
+    if (groupLabel) setPinnedGroup(groupLabel);
+  };
 
   useEffect(() => {
     if (!pinnedGroup) return;
@@ -423,10 +434,11 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                 const dormant = !!layer.parent && !activeLayers[layer.parent];
                 const locked = layerLocked(layer, isPremiumUser);
                 return (
+                  <Fragment key={layer.key}>
                   <button
-                    key={layer.key}
-                    onClick={() => { if (locked) { window.location.href = '/premium'; } else { toggle(layer.key); } }}
+                    onClick={() => { if (locked) { openTrialFor(layer.key); } else { toggle(layer.key); } }}
                     aria-pressed={isLayerActive}
+                    aria-expanded={locked ? trialLayerKey === layer.key : undefined}
                     aria-label={locked ? `${layer.label} — premium` : layer.label}
                     className={`relative w-full flex items-center gap-3 py-2 rounded-md text-left hover:bg-white/[0.04] transition-colors ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-40' : ''}`}
                   >
@@ -446,6 +458,12 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                       </span>
                     )}
                   </button>
+                  {locked && trialLayerKey === layer.key && (
+                    <div className="mx-1 mb-1.5 rounded-lg border border-[#D4AF37]/25 bg-black/40 p-2.5">
+                      <TrialPicker variant="compact" onClose={() => setTrialLayerKey(null)} />
+                    </div>
+                  )}
+                  </Fragment>
                 );
               })}
               {group.label === 'DISPLAY' && terrainDetails}
@@ -594,7 +612,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                     animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                     exit={{ opacity: 0, x: -4, filter: 'blur(2px)' }}
                     transition={{ duration: 0.18, ease: 'easeOut' }}
-                    className="absolute left-[52px] top-1/2 -translate-y-1/2 min-w-[220px] rounded-xl p-3 z-[100] pointer-events-auto"
+                    className={`absolute left-[52px] top-1/2 -translate-y-1/2 rounded-xl p-3 z-[100] pointer-events-auto ${group.layers.some((l) => l.key === trialLayerKey) ? 'w-[300px]' : 'min-w-[220px]'}`}
                     style={{
                       background: 'rgba(0,0,0,0.6)',
                       backdropFilter: 'blur(40px) saturate(1.5)',
@@ -641,12 +659,13 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                         const locked = layerLocked(layer, isPremiumUser);
 
                         return (
+                          <Fragment key={layer.key}>
                           <button
-                            key={layer.key}
-                            onClick={() => { if (locked) { window.location.href = '/premium'; } else { toggle(layer.key); } }}
+                            onClick={() => { if (locked) { openTrialFor(layer.key, group.label); } else { toggle(layer.key); } }}
                             aria-pressed={isLayerActive}
+                            aria-expanded={locked ? trialLayerKey === layer.key : undefined}
                             aria-label={locked ? `${layer.label} — premium` : layer.label}
-                            title={locked ? 'Weekly Pass required' : dormant ? 'Turn the layer above on to use this' : undefined}
+                            title={locked ? 'Weekly Pass required — start a free trial' : dormant ? 'Turn the layer above on to use this' : undefined}
                             className={`relative w-full flex items-center gap-3 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-40' : ''}`}
                           >
                             {layer.parent && <SubLayerStem />}
@@ -665,6 +684,12 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                               </span>
                             )}
                           </button>
+                          {locked && trialLayerKey === layer.key && (
+                            <div className="mb-1 rounded-lg border border-[#D4AF37]/25 bg-black/50 p-2.5">
+                              <TrialPicker variant="compact" onClose={() => setTrialLayerKey(null)} />
+                            </div>
+                          )}
+                          </Fragment>
                         );
                       })}
                       {group.label === 'DISPLAY' && terrainDetails}
