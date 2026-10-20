@@ -13,7 +13,8 @@ export type TeamEventName =
   | "seats_downgraded"
   | "team_checkout_initiated"
   | "team_checkout_completed"
-  | "team_subscription_canceled";
+  | "team_subscription_canceled"
+  | "team_ownership_transferred";
 
 export async function recordTeamEvent(
   event: TeamEventName | string,
