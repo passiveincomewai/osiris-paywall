@@ -139,9 +139,10 @@ export default function CaptureIndicator() {
   const [nowMs, setNowMs] = useState(() => Date.now());
 
   /* A previous visit may have died mid-recording; its segments are
-     still on this device — assemble them into the clips library once. */
+     still on this device — assemble them into the clips library once.
+     Best-effort: a storage failure means no recovery note, never a crash. */
   useEffect(() => {
-    void captureSessions.recoverInterruptedClips();
+    captureSessions.recoverInterruptedClips().catch(() => {});
   }, []);
 
   useEffect(() => {

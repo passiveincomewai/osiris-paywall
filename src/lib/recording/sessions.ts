@@ -385,6 +385,12 @@ export interface CaptureSessionManager {
   stopSession: (id: string) => Promise<void>;
   getSession: (id: string) => CaptureSessionView | null;
   listSessions: () => CaptureSessionView[];
+  /** The CACHED sessions array (stable reference between changes) —
+      the only lawful getSnapshot for useSyncExternalStore. listSessions()
+      allocates a fresh array per call and must never be used as one:
+      React compares snapshots by reference, and a perpetually "changed"
+      snapshot is an infinite render loop (React error #185). */
+  getSessionsSnapshot: () => CaptureSessionView[];
   getCompleted: () => CompletedCapture | null;
   dismissCompleted: () => void;
   recoverInterruptedClips: () => Promise<void>;
@@ -769,6 +775,7 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
     stopSession,
     getSession: (id) => sessions.get(id)?.view ?? null,
     listSessions: () => [...sessions.values()].map((s) => s.view),
+    getSessionsSnapshot: () => snapshot,
     getCompleted: () => completed,
     dismissCompleted: () => {
       completed = null;
@@ -787,11 +794,13 @@ export const captureSessions: CaptureSessionManager = createCaptureSessionManage
 
 /* ------------------------------ hooks ------------------------------ */
 
+const EMPTY_SESSIONS: CaptureSessionView[] = [];
+
 export function useCaptureSessions(): CaptureSessionView[] {
   return useSyncExternalStore(
     captureSessions.subscribe,
-    () => captureSessions.listSessions(),
-    () => [],
+    captureSessions.getSessionsSnapshot,
+    () => EMPTY_SESSIONS,
   );
 }
 
