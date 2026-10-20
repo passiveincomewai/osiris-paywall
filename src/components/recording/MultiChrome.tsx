@@ -9,8 +9,10 @@ import {
   addToSelection,
   CAP_MESSAGE,
   MAX_MULTI_CAMERAS,
+  capMessage,
   multiCamKindLabel,
   type MultiCamSource,
+  type MultiTier,
 } from "@/lib/recording/multi";
 
 export function MultiSignInPrompt() {
@@ -19,7 +21,7 @@ export function MultiSignInPrompt() {
       <div className="text-4xl mb-4">🔒</div>
       <h1 className="text-2xl font-bold text-white">Sign in to record multiple cameras</h1>
       <p className="mt-3 text-sm text-slate-400 max-w-md mx-auto">
-        Multi-camera recording is a WorldEye Pro feature. Sign in first, then pick up to {MAX_MULTI_CAMERAS} cameras for your recording wall.
+        Multi-camera recording is a WorldEye Pro feature. Sign in first, then build your recording wall — up to {MAX_MULTI_CAMERAS} cameras on Pro, up to 40 on VIP Pro.
       </p>
       <Link
         href="/api/auth/signin?callbackUrl=/recording/multi"
@@ -42,6 +44,7 @@ export function MultiControlBar({
   errors,
   sessionElapsed,
   canRecord,
+  cap = MAX_MULTI_CAMERAS,
   onRecordAll,
   onStopAll,
 }: {
@@ -51,6 +54,8 @@ export function MultiControlBar({
   errors: number;
   sessionElapsed: number;
   canRecord: boolean;
+  /** The owner's tier cap — the denominator on the selection count. */
+  cap?: number;
   onRecordAll: () => void;
   onStopAll: () => void;
 }) {
@@ -71,7 +76,7 @@ export function MultiControlBar({
         </button>
       </div>
       <div className="flex items-center gap-4 text-xs font-mono text-slate-400">
-        <span><span className="text-white font-bold">{selected}</span>/{MAX_MULTI_CAMERAS} selected</span>
+        <span><span className="text-white font-bold">{selected}</span>/{cap} selected</span>
         {recording > 0 && (
           <span className="text-red-300 font-bold animate-pulse">● {recording} recording · {fmtElapsed(sessionElapsed)}</span>
         )}
@@ -96,12 +101,15 @@ export function SavedPickerRow({
   selected,
   atCap,
   notice,
+  capNotice = CAP_MESSAGE,
   onToggle,
 }: {
   cam: PickerCam;
   selected: boolean;
   atCap: boolean;
   notice: (msg: string | null) => void;
+  /** The refusal for THIS owner's tier, shown when the cap blocks a pick. */
+  capNotice?: string;
   onToggle: (id: string, currentlySelected: boolean) => void;
 }) {
   const disabled = !selected && atCap;
@@ -109,7 +117,7 @@ export function SavedPickerRow({
   return (
     <button
       onClick={() => {
-        if (disabled) { notice(CAP_MESSAGE); return; }
+        if (disabled) { notice(capNotice); return; }
         notice(null);
         onToggle(cam.id, selected);
       }}
@@ -140,7 +148,13 @@ export function SavedPickerRow({
 }
 
 /** Pure refusal text the page shows; kept here so it renders identically. */
-export function capRefusal(selection: readonly string[], id: string): string | null {
-  const r = addToSelection(selection, id);
-  return r.ok ? null : CAP_MESSAGE;
+export function capRefusal(
+  selection: readonly string[],
+  id: string,
+  cap: number = MAX_MULTI_CAMERAS,
+  tier?: MultiTier,
+): string | null {
+  const r = addToSelection(selection, id, cap);
+  if (r.ok) return null;
+  return r.reason === "cap" ? capMessage(cap, tier) : CAP_MESSAGE;
 }

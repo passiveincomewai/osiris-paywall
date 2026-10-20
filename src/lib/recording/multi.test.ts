@@ -14,6 +14,7 @@ import {
   multiGateView,
   multiStillPollMs,
   overCapIds,
+  overCapStartMessage,
   removeFromSelection,
   staggerDelayMs,
   startableSelection,
@@ -113,13 +114,22 @@ describe("tier-aware caps", () => {
     expect(startableSelection(wall, 40)).toEqual(wall);
   });
 
-  it("the still poll stretches per 20-tile wave to stay inside the frame budget", () => {
-    expect(multiStillPollMs(1)).toBe(MULTI_STILL_POLL_MS);
+  it("the still poll stretches per 20-tile wave to stay inside the frame budget", () => {    expect(multiStillPollMs(1)).toBe(MULTI_STILL_POLL_MS);
     expect(multiStillPollMs(20)).toBe(MULTI_STILL_POLL_MS);
     expect(multiStillPollMs(21)).toBe(MULTI_STILL_POLL_MS * 2);
     expect(multiStillPollMs(40)).toBe(MULTI_STILL_POLL_MS * 2);
     // 40 tiles at the stretched cadence request no faster than 20 at base.
     expect(40 / multiStillPollMs(40)).toBeLessThanOrEqual(20 / MULTI_STILL_POLL_MS + 1e-9);
+  });
+
+  it("the over-cap start message keeps the cameras and names the limit", () => {
+    expect(overCapStartMessage(1, 20, "pro")).toBe(
+      "1 camera past your 20-camera limit didn't start — it's still on your wall. VIP Pro records up to 40.",
+    );
+    expect(overCapStartMessage(12, 20, "pro")).toContain("12 cameras past your 20-camera limit");
+    expect(overCapStartMessage(3, 40, "vip")).toBe(
+      "3 cameras past your 40-camera limit didn't start — they're still on your wall.",
+    );
   });
 });
 

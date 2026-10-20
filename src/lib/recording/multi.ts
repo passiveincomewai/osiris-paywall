@@ -201,6 +201,20 @@ export function overCapIds(selection: readonly string[], cap: number): string[] 
   return selection.slice(Math.max(0, cap));
 }
 
+/**
+ * What the page says when a start is refused for the cameras past the
+ * cap: they didn't start, they were NOT removed, and (on Pro) what
+ * would raise the limit. Used for Record-all's summary and, with a
+ * count of 1, as a tile's own start-blocked reason.
+ */
+export function overCapStartMessage(count: number, cap: number, tier?: MultiTier): string {
+  const base =
+    count === 1
+      ? `1 camera past your ${cap}-camera limit didn't start — it's still on your wall.`
+      : `${count} cameras past your ${cap}-camera limit didn't start — they're still on your wall.`;
+  return tier === "pro" ? `${base} VIP Pro records up to ${MAX_MULTI_CAMERAS_VIP}.` : base;
+}
+
 /* ------------------------------------------------------------------ */
 /* Per-tile recording sessions. Each tile owns its session object; a    */
 /* failure in one is structurally incapable of touching another's.      */

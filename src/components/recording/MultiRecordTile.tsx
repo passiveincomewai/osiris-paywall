@@ -57,6 +57,7 @@ export default function MultiRecordTile({
   onEvent,
   registerControls,
   pollMs = MULTI_STILL_POLL_MS,
+  startBlockedReason = null,
 }: {
   cam: SavedCam;
   index: number;
@@ -66,6 +67,12 @@ export default function MultiRecordTile({
   registerControls: (id: string, controls: TileControls | null) => void;
   /** Snapshot poll cadence for this wall (lib/recording/multi's budget math). */
   pollMs?: number;
+  /**
+   * Why this tile may not start recording right now (e.g. it sits past
+   * the owner's tier cap on an over-long restored wall), or null when it
+   * may. The refusal surfaces on the tile; the camera is never removed.
+   */
+  startBlockedReason?: string | null;
 }) {
   const source = classifyMultiCam(cam.cameraData);
   const location = camLocationLabel(cam);
@@ -308,14 +315,30 @@ export default function MultiRecordTile({
     }
   }, [cam, fail, onEvent]);
 
+  /* Start gate: a tile past the owner's tier cap refuses with its
+     reason instead of recording. The reason arrives by prop and can
+     change as the wall is reordered, so it is read through a ref. */
+  const blockedRef = useRef<string | null>(null);
+  blockedRef.current = startBlockedReason;
+  const [blockedNote, setBlockedNote] = useState<string | null>(null);
+  const attemptStart = useCallback(() => {
+    const reason = blockedRef.current;
+    if (reason) {
+      setBlockedNote(reason);
+      return;
+    }
+    setBlockedNote(null);
+    void startRecording();
+  }, [startRecording]);
+
   /* Register Record-all / Stop-all controls with the parent. */
   useEffect(() => {
     registerControls(cam.id, {
-      start: () => void startRecording(),
+      start: attemptStart,
       stop: () => void stopRecording(),
     });
     return () => registerControls(cam.id, null);
-  }, [cam.id, registerControls, startRecording, stopRecording]);
+  }, [cam.id, registerControls, attemptStart, stopRecording]);
 
   /* Unmount: never leave a recorder running. */
   useEffect(
@@ -403,13 +426,13 @@ export default function MultiRecordTile({
                 </button>
               ) : session.phase === "error" ? (
                 <button
-                  onClick={() => void startRecording()}
+                  onClick={attemptStart}
                   className="h-8 px-3 rounded-lg bg-white/10 border border-red-400/50 text-red-200 text-xs font-mono font-bold hover:border-red-300">
                   ↻ Retry
                 </button>
               ) : (
                 <button
-                  onClick={() => void startRecording()}
+                  onClick={attemptStart}
                   disabled={saving}
                   className="h-8 px-3 rounded-lg bg-white/10 border border-white/20 text-white text-xs font-mono font-bold hover:border-red-400/70 hover:text-red-200 disabled:opacity-50">
                   ● REC
@@ -419,6 +442,16 @@ export default function MultiRecordTile({
           )}
         </div>
 
+        {blockedNote && startBlockedReason && (
+          <div className="absolute bottom-12 left-2 right-2 flex items-start justify-between gap-2 text-[11px] font-mono text-amber-200 bg-amber-950/70 border border-amber-500/30 rounded-lg px-2 py-1">
+            <span>{blockedNote}</span>
+            <button
+              onClick={() => setBlockedNote(null)}
+              className="shrink-0 text-amber-100 underline underline-offset-2">
+              dismiss
+            </button>
+          </div>
+        )}
         {stalled && recording && (
           <div className="absolute bottom-12 left-2 right-2 text-[11px] font-mono text-amber-200 bg-amber-950/70 border border-amber-500/30 rounded-lg px-2 py-1">
             Feed stalled — recording is holding the last frame.

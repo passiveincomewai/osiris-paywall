@@ -39,8 +39,7 @@ describe("MultiControlBar", () => {
     expect(html).not.toContain("recording ·");
   });
 
-  it("shows live counts, the session timer and tile errors while recording", () => {
-    const html = strip(
+  it("shows live counts, the session timer and tile errors while recording", () => {    const html = strip(
       renderToString(
         createElement(MultiControlBar, {
           ...base,
@@ -56,5 +55,13 @@ describe("MultiControlBar", () => {
     expect(html).toContain("2 recording · 01:15");
     expect(html).toContain("saving 1…");
     expect(html).toContain("1 tile needs attention");
+  });
+
+  it("shows the VIP Pro denominator when the owner's cap is 40", () => {
+    const html = strip(
+      renderToString(createElement(MultiControlBar, { ...base, selected: 32, cap: 40 })),
+    );
+    expect(html).toContain("32</span>/40 selected");
+    expect(html).not.toContain("/20 selected");
   });
 });

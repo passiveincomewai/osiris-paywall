@@ -1,8 +1,9 @@
 "use client";
 /**
- * Multi-camera recording (Pro): pick up to 20 cameras — saved ones, or
- * any from the catalogue — and record them all at once, each in its own
- * tile, each producing its own clip in the library.
+ * Multi-camera recording: pick up to your tier's cap of cameras — saved
+ * ones, or any from the catalogue — and record them all at once, each in
+ * its own tile, each producing its own clip in the library. The cap is
+ * tier-aware (Pro 20, VIP Pro 40) and enforced in lib/recording/multi.
  *
  * Honest shape of the feature: clips are captured live in this browser
  * and stored on this device. Nothing records while this tab is closed;
@@ -21,13 +22,19 @@ import {
 import type { SavedCam } from "@/components/recording/RecordableTile";
 import {
   addToSelection,
+  capMessage,
   classifyMultiCam,
   initialTileSession,
-  MAX_MULTI_CAMERAS,
+  multiCapForTier,
   multiGateView,
+  multiStillPollMs,
+  overCapIds,
+  overCapStartMessage,
   removeFromSelection,
+  startableSelection,
   summarizeBoard,
   tileReducer,
+  type MultiTier,
   type TileEvent,
   type TileSession,
 } from "@/lib/recording/multi";
@@ -43,8 +50,8 @@ const camPlace = (c: Record<string, unknown>): string =>
   [c.city, c.country].filter((x): x is string => typeof x === "string" && !!x).join(", ");
 
 export default function MultiRecordPage() {
-  const [gate, setGate] = useState<{ loaded: boolean; signedIn: boolean; pro: boolean }>({
-    loaded: false, signedIn: false, pro: false,
+  const [gate, setGate] = useState<{ loaded: boolean; signedIn: boolean; pro: boolean; tier: MultiTier }>({
+    loaded: false, signedIn: false, pro: false, tier: "pro",
   });
   const [saved, setSaved] = useState<SavedCam[] | null>(null);
   const [selection, setSelection] = useState<string[]>([]);
@@ -57,13 +64,17 @@ export default function MultiRecordPage() {
   const controlsRef = useRef(new Map<string, TileControls>());
   const selectionLoaded = useRef(false);
 
+  /* The owner's tier cap + the refusal copy that names it. */
+  const cap = multiCapForTier(gate.tier);
+  const refusal = capMessage(cap, gate.tier);
+
   /* ---------- gate + saved cameras ---------- */
   useEffect(() => {
     (async () => {
       const s = await fetch("/api/recording/status");
-      if (!s.ok) { setGate({ loaded: true, signedIn: false, pro: false }); return; }
+      if (!s.ok) { setGate({ loaded: true, signedIn: false, pro: false, tier: "pro" }); return; }
       const j = await s.json();
-      setGate({ loaded: true, signedIn: true, pro: j.pro });
+      setGate({ loaded: true, signedIn: true, pro: j.pro, tier: j.tier === "vip" ? "vip" : "pro" });
       if (j.pro) {
         const r = await fetch("/api/recording/cameras");
         if (r.ok) setSaved((await r.json()).cameras);
@@ -81,7 +92,10 @@ export default function MultiRecordPage() {
       if (Array.isArray(raw)) stored = raw.filter((x): x is string => typeof x === "string");
     } catch { /* fresh start */ }
     const valid = new Set(saved.map((c) => c.id));
-    const restored = stored.filter((id) => valid.has(id)).slice(0, MAX_MULTI_CAMERAS);
+    // The whole stored wall comes back — even one longer than the
+    // current tier's cap (a downgrade keeps its cameras; the cap only
+    // limits what may record, see startableSelection).
+    const restored = stored.filter((id) => valid.has(id));
     setSelection(restored.length ? restored : saved.slice(0, Math.min(4, saved.length)).map((c) => c.id));
   }, [saved]);
 
@@ -115,14 +129,18 @@ export default function MultiRecordPage() {
   }, [summary.earliestStart]);
 
   const recordAll = useCallback(() => {
-    // Stagger the starts so twenty captures don't all spin up in one frame.
-    selection.forEach((id, i) => {
+    // Only the first cap-many cameras (wall order) may record; anything
+    // past the cap is refused with the message, never silently skipped.
+    const over = overCapIds(selection, cap);
+    if (over.length > 0) setNotice(overCapStartMessage(over.length, cap, gate.tier));
+    // Stagger the starts so the captures don't all spin up in one frame.
+    startableSelection(selection, cap).forEach((id, i) => {
       const s = board[id];
       if (s && s.phase !== "recording" && s.phase !== "saving") {
         setTimeout(() => controlsRef.current.get(id)?.start(), i * 200);
       }
     });
-  }, [selection, board]);
+  }, [selection, board, cap, gate.tier]);
 
   const stopAll = useCallback(() => {
     for (const id of selection) controlsRef.current.get(id)?.stop();
@@ -132,11 +150,11 @@ export default function MultiRecordPage() {
   const toggleSaved = useCallback((id: string, currentlySelected: boolean) => {
     setSelection((sel) => {
       if (currentlySelected) return removeFromSelection(sel, id);
-      const r = addToSelection(sel, id);
-      if (!r.ok) { setNotice("That's the 20-camera limit — remove one to add another."); return sel; }
+      const r = addToSelection(sel, id, cap);
+      if (!r.ok) { setNotice(refusal); return sel; }
       return r.selection;
     });
-  }, []);
+  }, [cap, refusal]);
 
   const ensureCatalogue = useCallback(async () => {
     if (catalogue || catalogueBusy) return;
@@ -169,8 +187,8 @@ export default function MultiRecordPage() {
   }, [catalogue, query, saved]);
 
   const addFromCatalogue = useCallback(async (c: CatalogueCam) => {
-    if (capRefusal(selection, "__catalogue_new__")) {
-      setNotice("That's the 20-camera limit — remove one to add another.");
+    if (capRefusal(selection, "__catalogue_new__", cap, gate.tier)) {
+      setNotice(refusal);
       return;
     }
     const name = camName(c);
@@ -198,18 +216,18 @@ export default function MultiRecordPage() {
     if (lr.ok) setSaved((await lr.json()).cameras);
     if (newId) {
       setSelection((sel) => {
-        const res = addToSelection(sel, newId);
+        const res = addToSelection(sel, newId, cap);
         return res.ok ? res.selection : sel;
       });
     }
-  }, [selection]);
+  }, [selection, cap, gate.tier, refusal]);
 
   /* ---------- render ---------- */
   const view = multiGateView({ statusLoaded: gate.loaded, signedIn: gate.signedIn, pro: gate.pro });
   if (view === "loading") return <div className="text-slate-400 font-mono text-sm">Loading…</div>;
   if (view === "signin") return <MultiSignInPrompt />;
   if (view === "locked") {
-    return <UpgradeScreen priceLine="Multi-camera recording unlocks with WorldEye Pro · Monthly $13.99 · Annual $74.99" />;
+    return <UpgradeScreen priceLine="Multi-camera recording unlocks with WorldEye Pro · Monthly $13.99 · VIP Pro $74.99" />;
   }
 
   const pickerCams: PickerCam[] = (saved ?? []).map((c) => ({
@@ -222,8 +240,10 @@ export default function MultiRecordPage() {
   const selectedCams = selection
     .map((id) => (saved ?? []).find((c) => c.id === id))
     .filter((c): c is SavedCam => !!c);
-  const atCap = selection.length >= MAX_MULTI_CAMERAS;
-  const anyRecordable = selectedCams.some((c) => classifyMultiCam(c.cameraData).kind !== "unsupported");
+  const atCap = selection.length >= cap;
+  const anyRecordable = selectedCams
+    .slice(0, cap)
+    .some((c) => classifyMultiCam(c.cameraData).kind !== "unsupported");
 
   return (
     <div className="space-y-6">
@@ -231,7 +251,8 @@ export default function MultiRecordPage() {
         <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase mb-1">Premium recording</div>
         <h1 className="text-3xl font-bold text-white">Multi-camera recording</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Record up to {MAX_MULTI_CAMERAS} cameras at once. Every tile records on its own — one camera failing never stops the rest.
+          Record up to {cap} cameras at once. Every tile records on its own — one camera failing never stops the rest.
+          {gate.tier === "pro" && <> VIP Pro doubles the wall to 40.</>}
         </p>
       </div>
 
@@ -242,12 +263,20 @@ export default function MultiRecordPage() {
         errors={summary.errors}
         sessionElapsed={sessionElapsed}
         canRecord={anyRecordable}
+        cap={cap}
         onRecordAll={recordAll}
         onStopAll={stopAll}
       />
       {notice && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-950/50 px-4 py-2 text-sm font-mono text-amber-200">
           {notice}
+        </div>
+      )}
+      {selection.length > cap && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-950/50 px-4 py-2 text-sm font-mono text-amber-200">
+          Your wall holds {selection.length} cameras — more than your {cap}-camera limit. The first {cap} in
+          wall order can record; the rest stay on your wall, just not recording.
+          {gate.tier === "pro" && <> VIP Pro records up to 40.</>}
         </div>
       )}
 
@@ -270,6 +299,8 @@ export default function MultiRecordPage() {
               session={board[c.id] ?? initialTileSession}
               onEvent={onEvent}
               registerControls={registerControls}
+              pollMs={multiStillPollMs(selection.length)}
+              startBlockedReason={i >= cap ? overCapStartMessage(1, cap, gate.tier) : null}
             />
           ))}
         </div>
@@ -278,7 +309,7 @@ export default function MultiRecordPage() {
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-5">
         <div>
           <div className="text-[11px] font-mono tracking-[0.2em] text-slate-500 uppercase mb-3">
-            Your saved cameras · {selection.length}/{MAX_MULTI_CAMERAS} on the wall
+            Your saved cameras · {selection.length}/{cap} on the wall
           </div>
           {pickerCams.length === 0 ? (
             <p className="text-sm text-slate-500">
@@ -293,6 +324,7 @@ export default function MultiRecordPage() {
                   selected={selection.includes(c.id)}
                   atCap={atCap}
                   notice={setNotice}
+                  capNotice={refusal}
                   onToggle={toggleSaved}
                 />
               ))}
@@ -346,7 +378,8 @@ export default function MultiRecordPage() {
       <p className="text-[11px] text-slate-500 leading-relaxed">
         Recording captures in this browser, on this device, only while this tab stays open — it is not cloud
         recording, nothing is captured while the tab is closed, and there are no schedules. Stream cameras record
-        in real time; snapshot cameras are checked every ~15 seconds and record each newly published frame, so
+        in real time; snapshot cameras are checked every ~{Math.round(multiStillPollMs(selection.length) / 1000)} seconds
+        and record each newly published frame, so
         their clips play back with steppy motion rather than smooth video. YouTube embeds can't be recorded
         (platform restriction), and a feed whose host refuses in-browser capture will say so on its tile.
         Clips land in <span className="text-slate-300">Clips</span>, on this device, ready to play or download.
