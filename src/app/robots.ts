@@ -11,6 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/dashboard", "/premium"],
       },
     ],
-    sitemap: `${BASE}/sitemap.xml`,
+    // Main sitemap + the Google News sitemap (posts from the last 48 hours).
+    sitemap: [`${BASE}/sitemap.xml`, `${BASE}/news-sitemap.xml`],
   };
 }

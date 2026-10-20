@@ -16,14 +16,14 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Weather Tracker — Storms on a 3D Globe",
+  title: "Live Weather Radar & Storm Tracker — Weather on a 3D Globe",
   description:
-    "Watch live weather on a 3D globe: storm systems, wind and precipitation sweeping the planet. Free weather tracker — no signup, no account, no cost.",
+    "Watch live weather radar on a 3D globe: storm systems, radar, wind and precipitation sweeping the planet. Free weather tracker — no signup, no account, no cost.",
   alternates: { canonical: "/weather-tracker" },
   openGraph: {
-    title: "Live Weather Tracker | WorldEye",
+    title: "Live Weather Radar & Storm Tracker | WorldEye",
     description:
-      "Live weather on a 3D globe — storm systems, wind and precipitation, free with no signup.",
+      "Live weather radar on a 3D globe — storm systems, wind and precipitation, free with no signup.",
     url: "/weather-tracker",
     type: "website",
   },

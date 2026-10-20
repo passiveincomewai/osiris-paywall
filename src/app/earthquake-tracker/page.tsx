@@ -6,12 +6,12 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Earthquake Tracker — Quakes As They Happen",
+  title: "Live Earthquake Map & Tracker — Quakes As They Happen",
   description:
-    "Track earthquakes live on a 3D globe: magnitude, depth, location and time as they happen. Free earthquake tracker — no signup, no account, no cost.",
+    "Track earthquakes live on a 3D earthquake map: magnitude, depth, location and time as they happen. Free earthquake tracker — no signup, no account, no cost.",
   alternates: { canonical: "/earthquake-tracker" },
   openGraph: {
-    title: "Live Earthquake Tracker | WorldEye",
+    title: "Live Earthquake Map & Tracker | WorldEye",
     description:
       "Earthquakes as they happen — magnitude, depth, location and time on a live 3D map. Free, no signup.",
     url: "/earthquake-tracker",
