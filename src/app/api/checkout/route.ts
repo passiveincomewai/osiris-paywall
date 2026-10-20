@@ -28,10 +28,20 @@ export async function POST(req: Request) {
   const session = await auth();
   const userId = session?.user?.id;
 
-  const { plan } = (await req.json().catch(() => ({}))) as { plan?: string };
+  const { plan, ui } = (await req.json().catch(() => ({}))) as {
+    plan?: string;
+    ui?: string;
+  };
   if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise") {
     return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   }
+  // Embedded mode renders Stripe's form on /checkout (our domain) instead of
+  // redirecting to checkout.stripe.com. Everything that decides WHAT is
+  // bought (price, trial, metadata) is shared below — only the presentation
+  // of the session differs. Anything other than ui:"embedded" is the hosted
+  // flow exactly as before (it remains the fallback the /checkout page drops
+  // to when embedded can't run, e.g. no publishable key published yet).
+  const embedded = ui === "embedded";
   const priceEnv =
     plan === "monthly" ? "STRIPE_MONTHLY_PRICE_ID"
     : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
@@ -65,6 +75,15 @@ export async function POST(req: Request) {
     customerId = customer.id;
   }
 
+  // Where a completed checkout lands. Guests go to /welcome to claim their
+  // account (it reads ?session_id= and verifies it via /api/checkout/complete);
+  // members go to the app. Embedded checkout reaches the identical place
+  // through return_url — Stripe substitutes {CHECKOUT_SESSION_ID} the same
+  // way — so the completion/claim flow is shared, not forked.
+  const completionUrl = userId
+    ? `${appUrl()}/?checkout=success`
+    : `${appUrl()}/welcome?session_id={CHECKOUT_SESSION_ID}`;
+
   const checkoutSession = await stripe().checkout.sessions.create({
     mode: "subscription",
     ...(customerId ? { customer: customerId } : {}),
@@ -85,12 +104,25 @@ export async function POST(req: Request) {
     // Trials must collect a card up front; Stripe charges it when the trial ends.
     ...(trialDays > 0 ? { payment_method_collection: "always" as const } : {}),
     allow_promotion_codes: true,
-    // Guests land on /welcome to claim their account; members go to the app.
-    success_url: userId
-      ? `${appUrl()}/?checkout=success`
-      : `${appUrl()}/welcome?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${appUrl()}/pricing?checkout=cancelled`,
+    ...(embedded
+      ? {
+          ui_mode: "embedded" as const,
+          // Completion redirects the top page to return_url (the default
+          // redirect_on_completion is "always"; stated so it can't drift),
+          // exactly like the hosted success_url below.
+          redirect_on_completion: "always" as const,
+          return_url: completionUrl,
+        }
+      : {
+          success_url: completionUrl,
+          cancel_url: `${appUrl()}/pricing?checkout=cancelled`,
+        }),
   });
 
+  if (embedded) {
+    // The /checkout page mounts this secret with Stripe.js; an embedded
+    // session has no hosted url to redirect to.
+    return NextResponse.json({ clientSecret: checkoutSession.client_secret });
+  }
   return NextResponse.json({ url: checkoutSession.url });
 }
