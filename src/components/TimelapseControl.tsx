@@ -274,7 +274,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
   if (!camera) return null;
 
   const btnCls = 'flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--gold-primary)] tracking-widest disabled:opacity-50 disabled:cursor-not-allowed';
-  const locked = access === 'free' || access === 'signed-out';
+  const locked = access === 'free' || access === 'signed-out' || access === 'pro';
   const misses = tlSession?.misses ?? 0;
   const startedAt = tlSession?.startedAt ?? null;
 
@@ -286,12 +286,12 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
           <button
             onClick={() => setOpen((o) => !o)}
             className={btnCls}
-            title={recording ? 'Timelapse is capturing — open the panel' : 'Timelapse — a WorldEye Pro feature for snapshot cameras'}
+            title={recording ? 'Timelapse is capturing — open the panel' : 'Timelapse — a VIP Pro feature for snapshot cameras'}
             aria-label="Timelapse"
             aria-expanded={open}
           >
             {locked
-              ? <><Lock className="w-2.5 h-2.5" /> PRO</>
+              ? <><Lock className="w-2.5 h-2.5" /> VIP</>
               : recording
                 ? <><span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> {frameCount} FRAMES</>
                 : <><Film className="w-2.5 h-2.5" /> {displayFrameCount > 0 ? `${displayFrameCount} FRAMES` : 'OPEN'}</>}
@@ -319,10 +319,10 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
           ) : access === 'signed-out' ? (
             <div className="flex flex-col gap-1.5">
               <p className="text-[10px] font-mono text-white tracking-wider flex items-center gap-1.5">
-                <Lock className="w-3 h-3 text-[var(--gold-primary)]" /> TIMELAPSE IS A WORLDEYE PRO FEATURE
+                <Lock className="w-3 h-3 text-[var(--gold-primary)]" /> TIMELAPSE IS A VIP PRO FEATURE
               </p>
               <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
-                Pro viewers can collect this camera's snapshots into a timelapse and save it as a video.
+                VIP Pro viewers can collect this camera's snapshots into a timelapse and save it as a video.
                 Capture keeps running while the tab stays open — it is not 24/7 or cloud recording.
               </p>
               <div className="flex gap-2 mt-0.5">
@@ -331,14 +331,14 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </div>
               {trialOpen && (
                 <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
-                  <TrialPicker variant="compact" onClose={() => setTrialOpen(false)} />
+                  <TrialPicker variant="compact" emphasizePlan="annual" onClose={() => setTrialOpen(false)} />
                 </div>
               )}
             </div>
           ) : access === 'free' ? (
             <div className="flex flex-col gap-1.5">
               <p className="text-[10px] font-mono text-white tracking-wider flex items-center gap-1.5">
-                <Lock className="w-3 h-3 text-[var(--gold-primary)]" /> TIMELAPSE IS A WORLDEYE PRO FEATURE
+                <Lock className="w-3 h-3 text-[var(--gold-primary)]" /> TIMELAPSE IS A VIP PRO FEATURE
               </p>
               <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
                 Collect this camera's snapshots into a timelapse, play it back, and save it as a video.
@@ -349,7 +349,25 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </div>
               {trialOpen && (
                 <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
-                  <TrialPicker variant="compact" onClose={() => setTrialOpen(false)} />
+                  <TrialPicker variant="compact" emphasizePlan="annual" onClose={() => setTrialOpen(false)} />
+                </div>
+              )}
+            </div>
+          ) : access === 'pro' ? (
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[10px] font-mono text-white tracking-wider flex items-center gap-1.5">
+                <Lock className="w-3 h-3 text-[var(--gold-primary)]" /> TIMELAPSE IS A VIP PRO FEATURE
+              </p>
+              <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
+                Your Pro plan doesn't include timelapse — it's a VIP Pro extra, along with the premium
+                intel feeds. Upgrade to VIP Pro (billed annually) to unlock it here.
+              </p>
+              <div className="mt-0.5">
+                <button onClick={() => setTrialOpen((v) => !v)} aria-expanded={trialOpen} className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 transition-colors">UPGRADE TO VIP PRO</button>
+              </div>
+              {trialOpen && (
+                <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
+                  <TrialPicker variant="compact" emphasizePlan="annual" onClose={() => setTrialOpen(false)} />
                 </div>
               )}
             </div>

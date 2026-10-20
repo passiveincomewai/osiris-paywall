@@ -109,8 +109,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const stale = now - lastChecked > SUBSCRIPTION_TTL_MS;
 
       // Refresh on sign-in, on explicit session update(), when the cache is
-      // stale, or when the claim is missing entirely.
-      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus) {
+      // stale, or when either claim is missing entirely (a token minted
+      // before planTier existed must heal on its next session fetch).
+      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier) {
         const claims = await resolveSubscriptionClaims(userId);
         token.subscriptionStatus = claims.status;
         token.planTier = claims.tier;

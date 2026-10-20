@@ -1,5 +1,7 @@
+import { planTierOf } from './plan-tier';
+
 /**
- * Camera timelapse — a WorldEye Pro feature for snapshot cameras.
+ * Camera timelapse — a VIP Pro feature for snapshot cameras.
  *
  * While a Pro viewer watches a still ("jpg") camera, WorldEye can capture
  * each new snapshot the camera publishes, in order, on this device. The
@@ -29,22 +31,26 @@ export const TIMELAPSE_MAX_FRAMES = 600;
 export const TIMELAPSE_SPEEDS = [2, 5, 10, 20] as const;
 export const TIMELAPSE_DEFAULT_SPEED = 10;
 
-/** Who may capture, from the caller's session. */
-export type TimelapseAccess = 'unknown' | 'pro' | 'free' | 'signed-out';
+/** Who may capture, from the caller's session. Timelapse is a VIP Pro
+ *  feature: 'pro' means a paying Pro user who is NOT VIP — locked, with
+ *  the VIP upgrade path as the upsell. */
+export type TimelapseAccess = 'unknown' | 'vip' | 'pro' | 'free' | 'signed-out';
 
 /**
- * The gate, mirroring the Recording Studio's recordingAccess() and the
- * globe's own premium check: the session JWT carries subscriptionStatus,
- * and "active" there already counts a live trial as full Pro access
- * (see resolveSubscriptionStatus in src/auth.ts).
+ * The gate (VIP-only since the tier split, lib/plan-tier): the session
+ * carries planTier, resolved from the subscription's price id in the
+ * jwt path — a trial on the annual price is VIP from day one. Only
+ * 'vip' may capture; 'pro' is distinguished so the lock UI can sell the
+ * upgrade instead of a generic trial.
  */
 export function timelapseAccess(session: unknown): TimelapseAccess {
   if (!session || typeof session !== 'object') return 'unknown';
   const user = (session as { user?: unknown }).user;
   if (!user || typeof user !== 'object') return 'signed-out';
-  return (user as { subscriptionStatus?: unknown }).subscriptionStatus === 'active'
-    ? 'pro'
-    : 'free';
+  const tier = planTierOf(session as { user?: { planTier?: unknown; subscriptionStatus?: unknown } });
+  if (tier === 'vip') return 'vip';
+  if (tier === 'pro') return 'pro';
+  return 'free';
 }
 
 const HTTP_URL = /^https?:\/\/[^\s]+$/i;

@@ -1,26 +1,36 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { planTierOf, tierSatisfies } from '@/lib/plan-tier';
 
 /* ------------------------------------------------------------------ */
 /* Freemium config                                                     */
 /* ------------------------------------------------------------------ */
 // The map itself (/) is free for everyone, no signup — like osirisai.live.
-// These page prefixes require an ACTIVE weekly subscription (premium).
+// These page prefixes require an ACTIVE subscription (Pro or VIP).
 const PROTECTED_PREFIXES = ['/map', '/osint'];
+
+// VIP-only data APIs: the OSINT intel layers (lib/plan-tier — the annual
+// plan, sold as VIP Pro). Cyber, maritime, GDELT/conflict and live news
+// moved from Pro to VIP-only in the tier split; everything else premium
+// stays Pro.
+const VIP_API_PREFIXES = [
+  '/api/cyber-attacks', '/api/cyber-threats', '/api/malware',
+  '/api/gdelt', '/api/gdelt-events',
+  '/api/conflicts', '/api/frontlines',
+  '/api/maritime',
+  '/api/live-news', '/api/news',
+];
 
 // Premium data APIs: intel-grade / costly-to-serve endpoints. Free tier
 // gets the ambient layers (flights, weather, quakes, fires, satellites).
 // Everything else under /api is open (auth, checkout, webhooks, health,
 // and the free data routes).
 const PREMIUM_API_PREFIXES = [
-  '/api/cyber-attacks', '/api/cyber-threats', '/api/malware',
-  '/api/gdelt', '/api/gdelt-events', '/api/live-news', '/api/news',
-  '/api/maritime',
   '/api/infrastructure', '/api/scm-suppliers', '/api/sentinel',
   '/api/region-dossier', '/api/entity',
   '/api/markets', '/api/crypto', '/api/chain', '/api/oi',
-  '/api/conflicts', '/api/frontlines', '/api/country-risk',
+  '/api/country-risk',
   '/api/osint',
   '/api/ai',
   '/api/cloudflare-radar', '/api/radar', '/api/arcgis',
@@ -48,18 +58,46 @@ function isPremiumApi(pathname: string): boolean {
   );
 }
 
-type PaywallToken = { sub?: string; subscriptionStatus?: string } | null;
+function isVipApi(pathname: string): boolean {
+  return VIP_API_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + '/')
+  );
+}
 
-async function hasActivePass(request: NextRequest): Promise<boolean> {
-  const token = (await getToken({
+type PaywallToken = {
+  sub?: string;
+  subscriptionStatus?: string;
+  planTier?: string;
+} | null;
+
+/**
+ * The gate decision for a data API, from the JWT alone (pure — pinned by
+ * tests). Tier comes from lib/plan-tier's planTierOf: the token's
+ * planTier claim is authoritative; a legacy token without one can prove
+ * Pro (active status) but never VIP, so intel stays closed until the
+ * token refreshes (the jwt callback refills planTier when missing).
+ * vip ⊃ pro: a VIP token opens every Pro gate too.
+ */
+export function apiGate(pathname: string, token: PaywallToken): 'open' | 'pro' | 'vip' {
+  const tier = token?.sub ? planTierOf({ user: token }) : 'free';
+  if (isVipApi(pathname)) return tierSatisfies(tier, 'vip') ? 'open' : 'vip';
+  if (isPremiumApi(pathname)) return tierSatisfies(tier, 'pro') ? 'open' : 'pro';
+  return 'open';
+}
+
+async function readPaywallToken(request: NextRequest): Promise<PaywallToken> {
+  return (await getToken({
     req: request,
     secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
     cookieName: SESSION_COOKIE,
   }).catch(() => null)) as PaywallToken;
+}
 
-  // Strict: only `active` grants access. `trialing` is normalized to
-  // `active` in resolveSubscriptionStatus (src/auth.ts), so trial users pass.
-  return !!token?.sub && token.subscriptionStatus === 'active';
+async function hasActivePass(request: NextRequest): Promise<boolean> {
+  const token = await readPaywallToken(request);
+  // Pro or VIP (vip ⊃ pro). `trialing` is normalized to `active` in the
+  // jwt claims (src/auth.ts), so trial users pass.
+  return !!token?.sub && tierSatisfies(planTierOf({ user: token }), 'pro');
 }
 
 /* ------------------------------------------------------------------ */
@@ -76,9 +114,16 @@ export async function middleware(request: NextRequest) {
   // Premium data APIs: 402 for non-subscribers (no redirect — these are
   // fetched by the map client, which shows an upgrade prompt).
   if (url.startsWith('/api/')) {
-    if (isPremiumApi(url) && !(await hasActivePass(request))) {
+    const gate = apiGate(url, await readPaywallToken(request));
+    if (gate === 'vip') {
       return NextResponse.json(
-        { error: 'premium_required', message: 'This intel layer requires the Weekly Premium Pass.' },
+        { error: 'vip_required', message: 'This intel layer requires VIP Pro.' },
+        { status: 402 }
+      );
+    }
+    if (gate === 'pro') {
+      return NextResponse.json(
+        { error: 'premium_required', message: 'This layer requires WorldEye Pro.' },
         { status: 402 }
       );
     }

@@ -47,3 +47,64 @@ describe('map runtime assets', () => {
     expect(matches('/api/webhooks/stripe')).toBe(true);
   });
 });
+
+/* Tier-split gate pins (scope H3b): the OSINT intel layers (cyber,
+   maritime, GDELT/conflict, live news) are VIP-only; the rest of the
+   premium APIs stay Pro; vip ⊃ pro everywhere. */
+import { apiGate } from './middleware';
+
+const vip = { sub: 'u1', subscriptionStatus: 'active', planTier: 'vip' };
+const pro = { sub: 'u1', subscriptionStatus: 'active', planTier: 'pro' };
+const legacyPro = { sub: 'u1', subscriptionStatus: 'active' };
+const free = { sub: 'u1', subscriptionStatus: 'none', planTier: 'free' };
+
+describe('apiGate — intel layers are VIP-only', () => {
+  const intel = [
+    '/api/cyber-threats', '/api/cyber-attacks', '/api/malware',
+    '/api/gdelt', '/api/gdelt-events', '/api/conflicts', '/api/frontlines',
+    '/api/maritime', '/api/live-news', '/api/news',
+  ];
+
+  it('VIP opens every intel API', () => {
+    for (const p of intel) expect(apiGate(p, vip)).toBe('open');
+  });
+
+  it('Pro is denied with the VIP upsell decision (incl. legacy tokens that cannot prove VIP)', () => {
+    for (const p of intel) {
+      expect(apiGate(p, pro)).toBe('vip');
+      expect(apiGate(p, legacyPro)).toBe('vip');
+    }
+  });
+
+  it('free / signed-out are denied as before', () => {
+    for (const p of intel) {
+      expect(apiGate(p, free)).toBe('vip');
+      expect(apiGate(p, null)).toBe('vip');
+      expect(apiGate(p, {})).toBe('vip');
+    }
+  });
+
+  it('sub-paths of intel APIs are gated too', () => {
+    expect(apiGate('/api/gdelt/events', pro)).toBe('vip');
+    expect(apiGate('/api/maritime/vessels', vip)).toBe('open');
+  });
+});
+
+describe('apiGate — everything else premium stays Pro', () => {
+  const proApis = ['/api/oi', '/api/osint', '/api/ai', '/api/markets', '/api/region-dossier'];
+
+  it('Pro and VIP both open Pro APIs (vip ⊃ pro)', () => {
+    for (const p of proApis) {
+      expect(apiGate(p, pro)).toBe('open');
+      expect(apiGate(p, vip)).toBe('open');
+      expect(apiGate(p, legacyPro)).toBe('open');
+    }
+  });
+
+  it('free is denied at the Pro gate; open APIs stay open for everyone', () => {
+    for (const p of proApis) expect(apiGate(p, free)).toBe('pro');
+    expect(apiGate('/api/flights', free)).toBe('open');
+    expect(apiGate('/api/cameras/bonus', null)).toBe('open');
+    expect(apiGate('/api/checkout', null)).toBe('open');
+  });
+});

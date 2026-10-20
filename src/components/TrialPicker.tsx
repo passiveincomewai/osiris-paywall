@@ -53,22 +53,29 @@ interface TrialPickerProps {
   /** Embedded mode only: fires when the picker swaps between its plan
    *  list and the in-place checkout, so a host can widen its frame. */
   onCheckoutViewChange?: (inCheckout: boolean) => void;
+  /** Visually lifts one plan as THE pick — VIP-only locks (timelapse,
+   *  intel) pass "annual" so the VIP Pro option is the obvious path. */
+  emphasizePlan?: TrialPlan;
 }
 
 function PlanRow({
   option,
   compact,
   busy,
+  emphasized,
   onPick,
 }: {
   option: TrialPlanOption;
   compact: boolean;
   busy: boolean;
+  emphasized?: boolean;
   onPick: (o: TrialPlanOption) => void;
 }) {
   return (
     <div
-      className={`w-full rounded-xl border border-white/10 bg-white/[0.03] hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/[0.06] transition ${compact ? "px-2.5 py-2" : "px-3.5 py-3"}`}
+      className={`w-full rounded-xl border bg-white/[0.03] hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/[0.06] transition ${compact ? "px-2.5 py-2" : "px-3.5 py-3"} ${
+        emphasized ? "border-[#D4AF37]/70 ring-1 ring-[#D4AF37]/50" : "border-white/10"
+      }`}
     >
       <span className="flex items-baseline gap-2">
         <span className={`font-bold text-white ${compact ? "text-[13px]" : "text-[15px]"}`}>
@@ -78,6 +85,11 @@ function PlanRow({
         <span className={`font-mono uppercase tracking-wider text-white/50 ${compact ? "text-[9px]" : "text-[10px]"}`}>
           {option.name}
         </span>
+        {emphasized && (
+          <span className="inline-flex items-center font-bold uppercase tracking-wide rounded-full bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/50 text-[8px] px-1.5 py-0.5">
+            VIP pick
+          </span>
+        )}
         <span className={`ml-auto inline-flex items-center gap-1 font-bold uppercase tracking-wide rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30 ${compact ? "text-[8px] px-1.5 py-0.5" : "text-[9px] px-2 py-0.5"}`}>
           <Zap className={compact ? "w-2.5 h-2.5" : "w-3 h-3"} /> {option.trialLabel}
         </span>
@@ -133,6 +145,7 @@ export default function TrialPicker({
   onClose,
   mode = "navigate",
   onCheckoutViewChange,
+  emphasizePlan,
 }: TrialPickerProps) {
   const compact = variant === "compact";
   const [busyPlan, setBusyPlan] = useState<string | null>(null);
@@ -189,6 +202,7 @@ export default function TrialPicker({
             option={o}
             compact={compact}
             busy={busyPlan === o.plan}
+            emphasized={emphasizePlan === o.plan}
             onPick={pick}
           />
         ))}

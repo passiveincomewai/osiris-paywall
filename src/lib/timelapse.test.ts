@@ -16,7 +16,13 @@ import {
 } from './timelapse';
 
 describe('timelapse gate', () => {
-  it('treats an active subscription as Pro (trialing resolves to active upstream)', () => {
+  it('VIP tier may capture (annual price, incl. its trial — tier resolves upstream)', () => {
+    expect(timelapseAccess({ user: { subscriptionStatus: 'active', planTier: 'vip' } })).toBe('vip');
+  });
+
+  it('Pro tier is LOCKED with the VIP upsell state (timelapse moved to VIP-only)', () => {
+    expect(timelapseAccess({ user: { subscriptionStatus: 'active', planTier: 'pro' } })).toBe('pro');
+    // A legacy token without planTier can prove Pro but never VIP.
     expect(timelapseAccess({ user: { subscriptionStatus: 'active' } })).toBe('pro');
   });
 
