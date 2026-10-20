@@ -4,15 +4,13 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import CountryCameraExplorer from "@/components/CountryCameraExplorer";
-import { COUNTRY_CAMERA_EXPLORERS } from "@/lib/country-cameras";
-import directory from "@/data/camera-directory.json";
+import countriesIndex from "@/data/camera-countries.json";
 import { countryContentB, type CountryContent } from "@/data/country-content-b";
 import { countryContentC } from "@/data/country-content-c";
 import { countryContentD } from "@/data/country-content-d";
 import { countryContentE } from "@/data/country-content-e";
 
 const BASE = "https://worldeye.app";
-const TOP_N = 33;
 
 const CONTENT: Record<string, CountryContent> = {
   ...countryContentB,
@@ -21,20 +19,76 @@ const CONTENT: Record<string, CountryContent> = {
   ...countryContentE,
 };
 
-type Country = (typeof directory.countries)[number];
+/* Every country's counts, areas and samples come from the generated index
+   (tools/build-country-pages.mjs, derived from the served catalogue) —
+   never hand-written numbers, so a page cannot drift from the catalogue. */
+interface CountryEntry {
+  slug: string;
+  name: string;
+  count: number;
+  aliases: string[];
+  topCities: Array<{ name: string; count: number }>;
+  cityCount: number;
+  samples: Array<{ id: string; name: string; city: string }>;
+}
 
-function getCountry(slug: string): Country | undefined {
-  return directory.countries.find((c) => c.slug === slug);
+const COUNTRIES = (countriesIndex as { countries: CountryEntry[] }).countries;
+
+function getCountry(slug: string): CountryEntry | undefined {
+  return COUNTRIES.find((c) => c.slug === slug);
 }
 
 export function generateStaticParams() {
-  return directory.countries.slice(0, TOP_N).map((c) => ({ country: c.slug }));
+  return COUNTRIES.map((c) => ({ country: c.slug }));
 }
 
-function pageTitle(c: Country): string {
+function pageTitle(c: CountryEntry): string {
   const t = `${c.name} Live Cameras — ${c.count.toLocaleString("en-US")} Street Cams`;
   if (t.length <= 60) return t;
   return `${c.name} Live Cameras`;
+}
+
+/* Meta descriptions are composed from the live-derived numbers for every
+   country — the hand-written blurbs in the content files were written
+   against older snapshots and several cite counts that no longer hold. */
+function metaDescription(c: CountryEntry): string {
+  const top = c.topCities.slice(0, 3).map((a) => a.name);
+  const where = top.length > 0 ? `, including ${top.join(", ")}` : "";
+  return `Watch ${c.count.toLocaleString("en-US")} live cameras across ${c.name}${where}. Free live street, traffic, weather and city webcams on the WorldEye globe — no signup to browse.`;
+}
+
+/* For countries without hand-written content: an honest intro composed
+   from the same derived numbers (no invented colour, no guessed facts). */
+function derivedIntro(c: CountryEntry): string[] {
+  const top = c.topCities.slice(0, 4).map((a) => a.name);
+  const areasLine =
+    c.topCities.length > 0
+      ? `The largest clusters are in ${top.join(", ")}${c.cityCount > c.topCities.length ? `, with cameras spread across ${c.cityCount.toLocaleString("en-US")} named areas in total` : ""}.`
+      : "The cameras are spread across the country rather than clustered in one place.";
+  return [
+    `WorldEye's live index holds ${c.count.toLocaleString("en-US")} cameras in ${c.name} — public feeds from transport agencies, weather networks, resorts, harbours and city operators, all watchable free in the grid below and on the globe. ${areasLine}`,
+    "Every card below is the camera's actual live feed, grouped by area with the largest first. Search the whole country, filter by area, and open any camera to watch it in full. The index is rebuilt from the same catalogue that powers the WorldEye globe, so the count on this page is the count the globe serves.",
+  ];
+}
+
+function derivedFaqs(c: CountryEntry): Array<{ q: string; a: string }> {
+  const top = c.topCities[0];
+  return [
+    {
+      q: `How many live cameras are there in ${c.name} on WorldEye?`,
+      a: `${c.count.toLocaleString("en-US")} — every camera for ${c.name} in the same live catalogue that powers the WorldEye globe, listed in the grid on this page. The count is derived from the catalogue when the index is built, never estimated.`,
+    },
+    {
+      q: `Which areas of ${c.name} have the most cameras?`,
+      a: top
+        ? `${top.name} has the most, with ${top.count.toLocaleString("en-US")} cameras${c.topCities[1] ? `, followed by ${c.topCities[1].name} (${c.topCities[1].count.toLocaleString("en-US")})` : ""}. Use the area filters above the grid to browse one area at a time.`
+        : `The cameras are spread across ${c.name} rather than concentrated in one area; the grid groups them by area where the catalogue names one.`,
+    },
+    {
+      q: `Is it free to watch ${c.name} cameras?`,
+      a: "Yes — browsing the grid and opening cameras is free and needs no account. The feeds belong to their operators and public sources; a camera whose stream has gone off air shows as unavailable rather than playing a recording.",
+    },
+  ];
 }
 
 export async function generateMetadata({
@@ -44,16 +98,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country: slug } = await params;
   const c = getCountry(slug);
-  const content = CONTENT[slug];
-  if (!c || !content) return { title: "Not found" };
+  /* Unknown slug → real 404: this route does not inherit the city routes'
+     200-with-"Not found" quirk — with no directory entry there is no
+     page, and notFound() below says so. */
+  if (!c) return { title: "Not found" };
   const url = `/cameras/countries/${slug}`;
   return {
     title: pageTitle(c),
-    description: content.blurb,
+    description: metaDescription(c),
     alternates: { canonical: `${BASE}${url}` },
     openGraph: {
       title: pageTitle(c),
-      description: content.blurb,
+      description: metaDescription(c),
       url,
       type: "website",
     },
@@ -100,22 +156,21 @@ export default async function CountryPage({
 }) {
   const { country: slug } = await params;
   const c = getCountry(slug);
-  const content = CONTENT[slug];
-  if (!c || !content) notFound();
+  if (!c) notFound();
 
-  // Playable camera grid — present only for countries enrolled in
-  // COUNTRY_CAMERA_EXPLORERS (Thailand first; see lib/country-cameras).
-  const explorer = COUNTRY_CAMERA_EXPLORERS[slug];
+  const content = CONTENT[slug];
+  const intro = content?.intro ?? derivedIntro(c);
+  const faqs = content?.faqs ?? derivedFaqs(c);
 
   const canonical = `${BASE}/cameras/countries/${slug}`;
-  const updated = formatDate(directory.generatedAt);
+  const updated = formatDate((countriesIndex as { generatedAt: string }).generatedAt);
   const steps = howToFor(slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: pageTitle(c),
-    description: content.blurb,
+    description: metaDescription(c),
     url: canonical,
     mainEntity: {
       "@type": "ItemList",
@@ -124,7 +179,7 @@ export default async function CountryPage({
         "@type": "ListItem",
         position: i + 1,
         name: s.city ? `${s.name} — ${s.city}` : s.name,
-        url: BASE,
+        url: `${BASE}/?camera=${s.id}`,
       })),
     },
   };
@@ -163,14 +218,14 @@ export default async function CountryPage({
         {/* Stat row */}
         <div className="mt-10 grid grid-cols-3 gap-3 max-w-2xl mx-auto text-center">
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            {/* data-country-live-cameras: on explorer-enabled pages the
-                explorer overwrites this snapshot count with its live
-                selection once loaded (see CountryCameraExplorer). */}
+            {/* data-country-live-cameras: the explorer re-syncs this tile
+                from its first unfiltered batch total (the same generated
+                derivation) once loaded — see CountryCameraExplorer. */}
             <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]" data-country-live-cameras>{c.count.toLocaleString("en-US")}</div>
             <div className="text-xs text-white/45 mt-1">live cameras</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]">{c.areas.length}</div>
+            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]">{c.cityCount.toLocaleString("en-US")}</div>
             <div className="text-xs text-white/45 mt-1">areas covered</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
@@ -182,27 +237,26 @@ export default async function CountryPage({
 
         {/* Intro */}
         <div className="mt-10 space-y-4 text-white/70 leading-relaxed max-w-3xl mx-auto">
-          {content.intro.map((p, i) => (
+          {intro.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
 
         {/* Playable cameras — every record for this country in the live
-            catalogue, playable in the globe's own viewer without leaving
-            the page. Enrolled countries only (Thailand POC). */}
-        {explorer && (
-          <section className="mt-12">
-            <h2 className="text-xl md:text-2xl font-bold mb-2">Watch {c.name} cameras live</h2>
-            <p className="text-sm text-white/50 mb-5 max-w-3xl">
-              Every camera in the live WorldEye index for {c.name}. Search or filter by area,
-              then open any feed to watch it here — no trip to the map required.
-            </p>
-            <CountryCameraExplorer config={explorer} />
-          </section>
-        )}
+            catalogue, served in batches by /api/cctv/country/<slug> and
+            playable in the globe's own viewer without leaving the page.
+            Every country in the catalogue gets this grid. */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-2">Watch {c.name} cameras live</h2>
+          <p className="text-sm text-white/50 mb-5 max-w-3xl">
+            Every camera in the live WorldEye index for {c.name}. Search or filter by area,
+            then open any feed to watch it here — no trip to the map required.
+          </p>
+          <CountryCameraExplorer country={c.slug} countryName={c.name} />
+        </section>
 
         {/* Top areas */}
-        {c.areas.length > 0 && (
+        {c.topCities.length > 0 && (
           <section className="mt-12">
             <h2 className="text-xl md:text-2xl font-bold mb-5">Top areas in {c.name}</h2>
             <div className="rounded-2xl border border-white/10 overflow-hidden">
@@ -214,7 +268,7 @@ export default async function CountryPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {c.areas.map((a) => (
+                  {c.topCities.map((a) => (
                     <tr key={a.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
                       <td className="px-5 py-3">{a.name}</td>
                       <td className="px-5 py-3 text-right font-mono text-[#D4AF37]">{a.count.toLocaleString("en-US")}</td>
@@ -231,14 +285,14 @@ export default async function CountryPage({
           <section className="mt-12">
             <h2 className="text-xl md:text-2xl font-bold mb-5">Featured live cameras</h2>
             <ul className="grid sm:grid-cols-2 gap-3">
-              {c.samples.map((s, i) => (
-                <li key={i} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 flex items-start gap-3">
+              {c.samples.map((s) => (
+                <li key={s.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 flex items-start gap-3">
                   <MapPin className="w-4 h-4 text-[#00E5FF] shrink-0 mt-0.5" />
                   <div className="min-w-0">
                     <div className="font-semibold text-sm truncate">{s.name}</div>
                     {s.city && <div className="text-xs text-white/45">{s.city}</div>}
                     <a
-                      href={BASE}
+                      href={`${BASE}/?camera=${s.id}`}
                       className="text-xs text-[#00E5FF] hover:underline mt-1 inline-block"
                     >
                       View on the live map
@@ -269,7 +323,7 @@ export default async function CountryPage({
         <section className="mt-12">
           <h2 className="text-xl md:text-2xl font-bold mb-5">{c.name} cameras — FAQ</h2>
           <div className="space-y-3">
-            {content.faqs.map((f, i) => (
+            {faqs.map((f, i) => (
               <details
                 key={i}
                 className="group rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden"

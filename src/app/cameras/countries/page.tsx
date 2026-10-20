@@ -2,49 +2,54 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Camera, Globe, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
-import data from "@/data/camera-directory.json";
+import data from "@/data/camera-countries.json";
 
-export const metadata: Metadata = {
-  title: "Live Street Cameras by Country — 105 Countries",
-  description:
-    "Browse live street cameras across 105 countries — 74,229 public webcam feeds mapped by nation and region. Find your country and start watching.",
-  alternates: { canonical: "https://worldeye.app/cameras/countries" },
-  openGraph: {
-    title: "Live Street Cameras by Country — 105 Countries | WorldEye",
-    description:
-      "74,229 live street cameras across 105 countries, mapped by nation and region. Find your country and start watching.",
-    url: "https://worldeye.app/cameras/countries",
-    type: "website",
-  },
-};
+/* Counts come from the generated index (tools/build-country-pages.mjs,
+   derived from the served catalogue) — the numbers on this page cannot
+   drift from the catalogue the globe serves. */
+interface CountryEntry {
+  slug: string;
+  name: string;
+  count: number;
+  topCities: Array<{ name: string; count: number }>;
+}
 
-const TOP_30_SLUGS = new Set([
-  "united-states", "taiwan", "spain", "austria", "canada", "hong-kong",
-  "italy", "japan", "united-kingdom", "sweden", "finland", "iceland",
-  "lithuania", "netherlands", "australia", "new-zealand", "turkey",
-  "indonesia", "vietnam", "russia", "south-korea", "poland", "thailand",
-  "norway", "malta", "france", "romania", "brazil", "bulgaria", "croatia",
-]);
+const COUNTRIES = (data as { countries: CountryEntry[] }).countries;
+const TOTAL_CAMERAS = (data as { attributedTotal: number }).attributedTotal;
+const byName = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name));
+const largest = COUNTRIES.reduce((a, b) => (b.count > a.count ? b : a), COUNTRIES[0]);
 
 const fmt = (n: number) => n.toLocaleString("en-US");
-const generatedDate = new Date(data.generatedAt).toLocaleDateString("en-US", {
+const generatedDate = new Date(
+  (data as { generatedAt: string }).generatedAt,
+).toLocaleDateString("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
   timeZone: "UTC",
 });
-const largest = data.countries[0];
+
+export const metadata: Metadata = {
+  title: `Live Street Cameras by Country — ${COUNTRIES.length} Countries`,
+  description: `Browse live street cameras across ${COUNTRIES.length} countries — ${fmt(TOTAL_CAMERAS)} public webcam feeds mapped by nation and region. Find your country and start watching.`,
+  alternates: { canonical: "https://worldeye.app/cameras/countries" },
+  openGraph: {
+    title: `Live Street Cameras by Country — ${COUNTRIES.length} Countries | WorldEye`,
+    description: `${fmt(TOTAL_CAMERAS)} live street cameras across ${COUNTRIES.length} countries, mapped by nation and region. Find your country and start watching.`,
+    url: "https://worldeye.app/cameras/countries",
+    type: "website",
+  },
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "Live Street Cameras by Country — 105 Countries",
-  description:
-    "A directory of 74,229 live public street cameras across 105 countries, with per-country camera counts and top regions.",
+  name: `Live Street Cameras by Country — ${COUNTRIES.length} Countries`,
+  description: `A directory of ${fmt(TOTAL_CAMERAS)} live public street cameras across ${COUNTRIES.length} countries, with per-country camera counts and top regions.`,
   url: "https://worldeye.app/cameras/countries",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  numberOfItems: data.countries.length,
-  dateModified: data.generatedAt,
+  numberOfItems: COUNTRIES.length,
+  dateModified: (data as { generatedAt: string }).generatedAt,
 };
 
 export default function CameraCountriesPage() {
@@ -83,11 +88,11 @@ export default function CameraCountriesPage() {
             Live Street Cameras <span className="text-[#D4AF37]">by Country</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
-            WorldEye collects {fmt(data.totalCameras)} publicly available live street
-            cameras from {data.countries.length} countries into one directory. Every entry
+            WorldEye collects {fmt(TOTAL_CAMERAS)} publicly available live street
+            cameras from {COUNTRIES.length} countries into one directory. Every entry
             below is a camera that its operator — a transport agency, city, resort or
-            business — already publishes openly on the web. Pick a country to see where
-            its cameras cluster, then jump straight to the live map to watch them.
+            business — already publishes openly on the web. Pick a country to watch
+            its cameras live, grouped by area, or jump straight to the globe.
           </p>
         </div>
 
@@ -95,12 +100,12 @@ export default function CameraCountriesPage() {
         <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
             <Camera className="w-5 h-5 text-[#D4AF37] mb-3" />
-            <p className="text-2xl md:text-3xl font-bold">{fmt(data.totalCameras)}</p>
+            <p className="text-2xl md:text-3xl font-bold">{fmt(TOTAL_CAMERAS)}</p>
             <p className="text-sm text-white/45 mt-1">Total live cameras</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
             <Globe className="w-5 h-5 text-[#D4AF37] mb-3" />
-            <p className="text-2xl md:text-3xl font-bold">{data.countries.length}</p>
+            <p className="text-2xl md:text-3xl font-bold">{COUNTRIES.length}</p>
             <p className="text-sm text-white/45 mt-1">Countries covered</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
@@ -118,11 +123,12 @@ export default function CameraCountriesPage() {
         {/* Full table */}
         <div className="mt-14">
           <h2 className="text-2xl md:text-3xl font-bold">
-            All {data.countries.length} countries
+            All {COUNTRIES.length} countries
           </h2>
           <p className="text-white/50 mt-2 max-w-2xl text-sm md:text-base">
-            Sorted by camera count. The 30 busiest countries have dedicated pages with
-            regional breakdowns — the rest are listed with their busiest area.
+            Alphabetical, with each country&apos;s live camera count and busiest area.
+            Every country has its own page: the full camera grid for that country,
+            grouped by area, each feed live.
           </p>
           <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
             <table className="w-full text-sm md:text-base">
@@ -135,35 +141,28 @@ export default function CameraCountriesPage() {
                 </tr>
               </thead>
               <tbody>
-                {data.countries.map((c, i) => {
-                  const linked = TOP_30_SLUGS.has(c.slug);
-                  return (
-                    <tr
-                      key={c.slug}
-                      className="border-t border-white/[0.06] hover:bg-white/[0.03] transition"
-                    >
-                      <td className="px-4 md:px-6 py-3.5 text-white/35 tabular-nums">{i + 1}</td>
-                      <td className="px-4 md:px-6 py-3.5 font-medium">
-                        {linked ? (
-                          <Link
-                            href={`/cameras/countries/${c.slug}`}
-                            className="text-[#D4AF37] hover:underline"
-                          >
-                            {c.name}
-                          </Link>
-                        ) : (
-                          <span className="text-white/85">{c.name}</span>
-                        )}
-                      </td>
-                      <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
-                        {fmt(c.count)}
-                      </td>
-                      <td className="px-4 md:px-6 py-3.5 text-white/50 hidden sm:table-cell">
-                        {c.areas[0]?.name ?? "—"}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {byName.map((c, i) => (
+                  <tr
+                    key={c.slug}
+                    className="border-t border-white/[0.06] hover:bg-white/[0.03] transition"
+                  >
+                    <td className="px-4 md:px-6 py-3.5 text-white/35 tabular-nums">{i + 1}</td>
+                    <td className="px-4 md:px-6 py-3.5 font-medium">
+                      <Link
+                        href={`/cameras/countries/${c.slug}`}
+                        className="text-[#D4AF37] hover:underline"
+                      >
+                        {c.name}
+                      </Link>
+                    </td>
+                    <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
+                      {fmt(c.count)}
+                    </td>
+                    <td className="px-4 md:px-6 py-3.5 text-white/50 hidden sm:table-cell">
+                      {c.topCities[0]?.name ?? "—"}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -180,19 +179,19 @@ export default function CameraCountriesPage() {
               },
               {
                 q: "Why do some countries have thousands of cameras and others only a few?",
-                a: "It reflects what is published openly. Countries whose transport agencies publish dense highway camera networks (the US, Taiwan, the UK) dominate the counts; countries without open camera programs have whatever their cities and businesses publish.",
+                a: "It reflects what is published openly. Countries whose transport agencies publish dense highway camera networks (the US, Japan, Canada) dominate the counts; countries without open camera programs have whatever their cities and businesses publish.",
               },
               {
                 q: "Which countries have dedicated pages?",
-                a: "The 30 busiest countries each have a dedicated page with regional breakdowns, camera counts by area, and viewing tips — they are linked from the table above. The rest are listed with their busiest area.",
+                a: "All of them. Every country in the table has its own page with the complete live grid for that country — every camera, grouped by area with search and filters — linked from the table above.",
               },
               {
                 q: "How often is the directory updated?",
-                a: "The index regenerates automatically — the 'last updated' date above shows the latest build. New public feeds are picked up as their operators publish them, and dead feeds drop out.",
+                a: "The index is rebuilt from the live camera catalogue — the 'last updated' date above shows the latest build. New public feeds are picked up as their operators publish them, and dead feeds drop out.",
               },
               {
                 q: "Are the cameras really live?",
-                a: "The directory indexes live public feeds. Individual cameras can go offline for maintenance or be replaced by their operators, so a specific feed may occasionally be dark — but coverage is broad enough that alternatives are usually nearby.",
+                a: "Yes — every card on a country page is the camera's actual live feed: snapshots refresh about every 15 seconds and streams play in the card. Individual cameras can go offline for maintenance or be replaced by their operators, so a specific feed may occasionally be dark — it then shows as unavailable rather than playing a recording.",
               },
               {
                 q: "Is it free to watch?",

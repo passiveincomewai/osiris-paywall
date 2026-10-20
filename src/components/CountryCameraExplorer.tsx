@@ -1,29 +1,22 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Camera, Loader2, MapPin, PlayCircle, RefreshCw, Search } from 'lucide-react';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import { freshen, previewMedia, refreshInterval } from '@/lib/camera-preview';
 import {
-  cameraAreas,
   cameraMediaKind,
-  filterCameras,
-  selectCountryCameras,
+  clean,
   youtubePosterUrl,
+  type CameraArea,
   type CountryCamera,
-  type CountryExplorerConfig,
 } from '@/lib/country-cameras';
 
 /* The viewer (hls.js and all) loads only when a visitor actually opens a
    camera — the same lazy mount the globe uses, so a country page's initial
    bundle carries none of it. */
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'), { ssr: false });
-
-type LoadState =
-  | { status: 'loading' }
-  | { status: 'ready'; cameras: CountryCamera[] }
-  | { status: 'error' };
 
 const KIND_LABEL: Record<string, string> = {
   video: 'Live video',
@@ -32,79 +25,302 @@ const KIND_LABEL: Record<string, string> = {
   link: 'At source',
 };
 
-/**
- * A card's still preview. Snapshot feeds only: a tile that re-requests its
- * frame on the preview machinery's cadence, and only once it has scrolled
- * into view, so a 70-camera grid does not fire 70 requests on page load.
- * Video and embed cameras never autoplay in a card — they show a labelled
- * poster/placeholder and play when opened.
- */
-function CardPreview({ cam }: { cam: CountryCamera }) {
-  const kind = cameraMediaKind(cam);
-  const media = useMemo(() => previewMedia(cam), [cam]);
-  const poster = useMemo(() => youtubePosterUrl(cam), [cam]);
-  const holderRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [src, setSrc] = useState<string | null>(null);
-  const [imgFailed, setImgFailed] = useState(false);
+/** Cameras per batch — the landing gallery's grid scale, and small enough
+ *  that a batch response stays a few tens of KB even for long-named feeds. */
+const PAGE_SIZE = 48;
+/** Area chips shown; the rest are reachable through the search box. */
+const MAX_AREA_CHIPS = 24;
+/** Simultaneously decoding video cards. The map's preview tiles budget 4
+ *  (CctvPreviews MAX_VIDEO_TILES); a grid card is bigger, so the same
+ *  discipline applies — video cameras past the budget wait with their
+ *  labelled card and play as slots free up. */
+const MAX_LIVE_VIDEO_CARDS = 4;
 
+/* ── A tiny FIFO budget for live video cards ─────────────────────────────
+   Module-level because the budget is per page, not per card: a card asks
+   for a slot when it scrolls into view and gives it back when it leaves
+   or unmounts. Granting is a setState on the waiting card, so it happens
+   through the callback the card registered. */
+interface VideoWaiter {
+  granted: boolean;
+  cancelled: boolean;
+  grant: () => void;
+}
+let liveVideoSlots = 0;
+const videoQueue: VideoWaiter[] = [];
+
+function pumpVideoQueue() {
+  while (liveVideoSlots < MAX_LIVE_VIDEO_CARDS && videoQueue.length > 0) {
+    const next = videoQueue.shift() as VideoWaiter;
+    if (next.cancelled) continue;
+    next.granted = true;
+    liveVideoSlots += 1;
+    next.grant();
+  }
+}
+
+function acquireVideoSlot(grant: () => void): () => void {
+  const waiter: VideoWaiter = { granted: false, cancelled: false, grant };
+  videoQueue.push(waiter);
+  pumpVideoQueue();
+  return () => {
+    if (waiter.cancelled) return;
+    waiter.cancelled = true;
+    const i = videoQueue.indexOf(waiter);
+    if (i >= 0) videoQueue.splice(i, 1);
+    if (waiter.granted) {
+      liveVideoSlots -= 1;
+      pumpVideoQueue();
+    }
+  };
+}
+
+/** Whether an element is near the viewport — media starts only then, so a
+ *  deep grid never fires hundreds of feed requests for cards nobody has
+ *  scrolled to, and snapshot refresh pauses off-screen. */
+function useInView<T extends HTMLElement>(rootMargin = '240px') {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
   useEffect(() => {
-    const el = holderRef.current;
+    const el = ref.current;
     if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
     const io = new IntersectionObserver(
       entries => {
-        if (entries.some(e => e.isIntersecting)) {
-          setVisible(true);
-          io.disconnect();
-        }
+        for (const e of entries) setInView(e.isIntersecting);
       },
-      { rootMargin: '200px' },
+      { rootMargin },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [rootMargin]);
+  return { ref, inView };
+}
 
-  const isSnapshot = media !== null && (media.kind === 'jpg' || media.kind === 'mjpeg');
+/**
+ * A snapshot or MJPEG card: the camera's actual current frame, requested
+ * only while the card is on screen. Snapshots re-request on the preview
+ * machinery's cadence (lib/camera-preview — the same one the landing
+ * gallery and the map tiles use); MJPEG is one continuous response and is
+ * never cache-busted. The LIVE badge renders only after a frame has
+ * verifiably loaded — earned, never assumed, as on the landing page.
+ */
+function LiveImage({ cam, kind, url }: { cam: CountryCamera; kind: 'jpg' | 'mjpeg'; url: string }) {
+  const { ref, inView } = useInView<HTMLDivElement>();
+  const [src, setSrc] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const retried = useRef(false);
+
   useEffect(() => {
-    if (!visible || !isSnapshot || !media) return;
-    setSrc(freshen(media.url));
-    const iv = refreshInterval(media.kind);
-    if (!iv) return;
-    const t = setInterval(() => setSrc(freshen(media.url)), iv);
-    return () => clearInterval(t);
-  }, [visible, isSnapshot, media]);
+    if (!inView || failed) return;
+    if (!src) setSrc(kind === 'jpg' ? freshen(url) : url);
+    if (kind !== 'jpg') return;
+    const every = refreshInterval('jpg');
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const first = setTimeout(
+      () => {
+        setSrc(freshen(url));
+        interval = setInterval(() => setSrc(freshen(url)), every);
+      },
+      every + Math.random() * 2000,
+    );
+    return () => {
+      clearTimeout(first);
+      if (interval) clearInterval(interval);
+    };
+  }, [inView, kind, url, src, failed]);
 
   return (
-    <div ref={holderRef} className="relative aspect-video bg-black/70 overflow-hidden">
-      {isSnapshot && src && !imgFailed ? (
-        // eslint-disable-next-line @next/next/no-img-element
+    <div ref={ref} className="absolute inset-0">
+      {src && !failed ? (
+        // eslint-disable-next-line @next/next/no-img-element -- remote camera frames, no loader
         <img
           src={src}
           alt={cam.name}
           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
-          onError={() => setImgFailed(true)}
+          onLoad={() => setReady(true)}
+          onError={() => {
+            if (!retried.current && kind === 'jpg') {
+              retried.current = true;
+              setTimeout(() => setSrc(freshen(url)), 2500);
+            } else {
+              setFailed(true);
+            }
+          }}
+          draggable={false}
         />
-      ) : kind === 'embed' && poster ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={poster}
-          alt={cam.name}
-          loading="lazy"
+      ) : null}
+      {ready && !failed && (
+        <span className="absolute bottom-2 right-2 inline-flex items-center gap-1.5 rounded bg-black/55 px-2 py-0.5 text-[10px] font-bold tracking-widest text-white">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse motion-reduce:animate-none" aria-hidden />
+          LIVE
+        </span>
+      )}
+      {failed && <FeedUnavailable label="Live feed unavailable right now" />}
+    </div>
+  );
+}
+
+/**
+ * An HLS or MP4 card: the real stream, muted and inline, mounted only
+ * while the card is on screen AND holds one of the page's few video slots
+ * (see MAX_LIVE_VIDEO_CARDS). hls.js loads lazily, only for a card that
+ * actually plays — the same arrangement as the map's video tiles. Before
+ * its slot arrives the card shows its labelled state, never a fake frame.
+ */
+function LiveVideo({ cam, kind, url }: { cam: CountryCamera; kind: 'hls' | 'mp4'; url: string }) {
+  const { ref: holderRef, inView } = useInView<HTMLDivElement>();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasSlot, setHasSlot] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  /* MP4 clips are short and loop, so they go stale; re-pointing the
+     element on the preview cadence is what refreshes them. */
+  const [cacheBust, setCacheBust] = useState(0);
+  const onFail = useCallback(() => setFailed(true), []);
+
+  useEffect(() => {
+    if (!inView || failed) return;
+    const release = acquireVideoSlot(() => setHasSlot(true));
+    return () => {
+      release();
+      setHasSlot(false);
+    };
+  }, [inView, failed]);
+
+  const every = refreshInterval(kind);
+  useEffect(() => {
+    if (!hasSlot || !every) return;
+    const t = setInterval(() => setCacheBust(n => n + 1), every + Math.random() * 4000);
+    return () => clearInterval(t);
+  }, [hasSlot, every]);
+
+  useEffect(() => {
+    if (!hasSlot) return;
+    const el = videoRef.current;
+    if (!el) return;
+    if (kind === 'mp4') {
+      el.src = cacheBust ? freshen(url) : url;
+      el.play().catch(() => { /* autoplay refused: the loaded frame still shows */ });
+      return;
+    }
+    /* HLS: the decoder first, native playback only as the fallback — the
+       order the full viewer and the map tiles use. */
+    let cancelled = false;
+    let hls: { destroy: () => void } | null = null;
+    import('hls.js')
+      .then(({ default: Hls }) => {
+        if (cancelled || !videoRef.current) return;
+        if (!Hls.isSupported()) {
+          if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
+            videoRef.current.src = url;
+            videoRef.current.play().catch(() => {});
+          } else {
+            onFail();
+          }
+          return;
+        }
+        const instance = new Hls({ enableWorker: false, maxBufferLength: 6 });
+        hls = instance;
+        instance.on(Hls.Events.ERROR, (_e, data) => {
+          if (data.fatal) onFail();
+        });
+        instance.loadSource(url);
+        instance.attachMedia(videoRef.current);
+        videoRef.current.play().catch(() => {});
+      })
+      .catch(onFail);
+    return () => {
+      cancelled = true;
+      hls?.destroy();
+    };
+  }, [hasSlot, kind, url, cacheBust, onFail]);
+
+  return (
+    <div ref={holderRef} className="absolute inset-0">
+      {hasSlot && !failed ? (
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          loop
+          preload="metadata"
           className="absolute inset-0 w-full h-full object-cover"
-          onError={() => setImgFailed(true)}
+          onLoadedData={() => setReady(true)}
+          onError={onFail}
         />
-      ) : (
+      ) : !failed ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-b from-white/[0.04] to-black/60 text-white/35">
-          {kind === 'video' || kind === 'embed' ? (
-            <PlayCircle className="w-9 h-9" />
-          ) : (
-            <Camera className="w-9 h-9" />
-          )}
-          <span className="text-[10px] font-mono uppercase tracking-[0.2em]">
-            {kind === 'link' ? 'Listing only' : 'Tap to watch'}
-          </span>
+          <PlayCircle className="w-9 h-9" />
+          <span className="text-[10px] font-mono uppercase tracking-[0.2em]">Live video</span>
         </div>
+      ) : null}
+      {ready && !failed && (
+        <span className="absolute bottom-2 right-2 inline-flex items-center gap-1.5 rounded bg-black/55 px-2 py-0.5 text-[10px] font-bold tracking-widest text-white">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse motion-reduce:animate-none" aria-hidden />
+          LIVE
+        </span>
+      )}
+      {failed && <FeedUnavailable label="Live feed unavailable right now" />}
+    </div>
+  );
+}
+
+function FeedUnavailable({ label }: { label: string }) {
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-b from-white/[0.04] to-black/60 text-white/40 px-3 text-center">
+      <Camera className="w-8 h-8" />
+      <span className="text-[10px] font-mono uppercase tracking-[0.18em]">{label}</span>
+    </div>
+  );
+}
+
+/**
+ * A card's live media, by what the camera actually is:
+ *  - snapshot / MJPEG → its current frame, refreshing (LiveImage)
+ *  - HLS / MP4        → the stream itself, playing muted in the card (LiveVideo)
+ *  - embed (YouTube…) → the video's own poster; embeds cannot be frame-
+ *    grabbed and a wall of third-party iframes is not a grid — the live
+ *    embed itself plays in the viewer on open, labelled as such
+ *  - no playable URL   → an honest listing card; the viewer's resolver may
+ *    still find a feed at open time
+ * A feed that fails to load keeps its card with an "unavailable" state:
+ * the page's stated count is the number of cards, and silently vanishing
+ * cards would make it a lie.
+ */
+function CardPreview({ cam }: { cam: CountryCamera }) {
+  const kind = cameraMediaKind(cam);
+  const media = useMemo(() => previewMedia(cam), [cam]);
+  const poster = useMemo(() => (media ? null : youtubePosterUrl(cam)), [cam, media]);
+
+  return (
+    <div className="relative aspect-video bg-black/70 overflow-hidden">
+      {media && (media.kind === 'jpg' || media.kind === 'mjpeg') ? (
+        <LiveImage cam={cam} kind={media.kind} url={media.url} />
+      ) : media ? (
+        /* Reaching this branch means the kind is hls or mp4 — the two
+           video kinds previewMedia can return. */
+        <LiveVideo cam={cam} kind={media.kind === 'mp4' ? 'mp4' : 'hls'} url={media.url} />
+      ) : poster ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element -- the video's own poster */}
+          <img
+            src={poster}
+            alt={cam.name}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <span className="absolute bottom-2 right-2 inline-flex items-center gap-1.5 rounded bg-black/55 px-2 py-0.5 text-[10px] font-bold tracking-widest text-white">
+            <PlayCircle className="w-3 h-3" aria-hidden /> EMBED
+          </span>
+        </>
+      ) : (
+        <FeedUnavailable label={kind === 'link' ? 'Listing only' : 'Tap to watch'} />
       )}
       <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-black/70 border border-white/15 text-[10px] font-mono uppercase tracking-wider text-white/80">
         {KIND_LABEL[kind]}
@@ -134,126 +350,179 @@ function CameraCard({ cam, onOpen }: { cam: CountryCamera; onOpen: (cam: Country
   );
 }
 
-/**
- * The playable camera grid for a country page: search, area filters and a
- * card per camera in the live catalogue, each opening in the same
- * CameraViewer the globe uses. Reusable for any country — the page passes
- * the country's entry from COUNTRY_CAMERA_EXPLORERS and nothing else.
- */
-/**
- * Retry backoff for a cold catalogue, in milliseconds between attempts:
- * after a deploy each serverless instance warms its own /api/cctv catalogue
- * region by region, so an early answer can come back with regions still
- * pending — or no cameras yet — for far longer than a single 4s retry ever
- * covered. Total window ≈ 82s of waits plus fetch time (~90s).
- */
-const RETRY_DELAYS_MS = [2000, 5000, 10000, 15000, 20000, 30000];
+interface CountryBatch {
+  total: number;
+  cities: CameraArea[];
+  cameras: CountryCamera[];
+}
 
-export default function CountryCameraExplorer({ config }: { config: CountryExplorerConfig }) {
-  const [load, setLoad] = useState<LoadState>({ status: 'loading' });
+/**
+ * The playable camera grid for a country page, for ANY country in the
+ * catalogue: the records arrive in batches of 48 from
+ * /api/cctv/country/<slug> (the generated per-country data), so the
+ * United States' forty thousand cameras cost the same first paint as
+ * Thailand's hundred and eighteen. Search and area filters run server-
+ * side over the whole country; scrolling (or the button) loads the next
+ * batch until every camera is reachable. Unfiltered, the records arrive
+ * grouped by city, biggest first, and the grid draws a header where each
+ * group begins. Every card is the camera's real live feed (see
+ * CardPreview); opening one mounts the globe's own CameraViewer.
+ */
+export default function CountryCameraExplorer({
+  country,
+  countryName,
+}: {
+  country: string;
+  countryName: string;
+}) {
+  const [cameras, setCameras] = useState<CountryCamera[]>([]);
+  const [total, setTotal] = useState<number | null>(null);
+  const [cities, setCities] = useState<CameraArea[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState(false);
   const [runId, setRunId] = useState(0);
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [area, setArea] = useState<string | null>(null);
   const [active, setActive] = useState<CountryCamera | null>(null);
+  const requestRef = useRef(0);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    setLoad({ status: 'loading' });
+    const t = setTimeout(() => setDebouncedQuery(query.trim()), 300);
+    return () => clearTimeout(t);
+  }, [query]);
 
-    const wait = (ms: number) =>
-      new Promise<void>(resolve => {
-        timer = setTimeout(resolve, ms);
+  const fetchBatch = useCallback(
+    async (offset: number): Promise<CountryBatch | null> => {
+      const qs = new URLSearchParams({ offset: String(offset), limit: String(PAGE_SIZE) });
+      if (area) qs.set('city', area);
+      if (debouncedQuery) qs.set('q', debouncedQuery);
+      const r = await fetch(`/api/cctv/country/${country}?${qs.toString()}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return (await r.json()) as CountryBatch;
+    },
+    [country, area, debouncedQuery],
+  );
+
+  /* First batch for the current filter set (and on retry). */
+  useEffect(() => {
+    const req = ++requestRef.current;
+    setLoading(true);
+    setError(false);
+    setCameras([]);
+    setTotal(null);
+    fetchBatch(0)
+      .then(batch => {
+        if (requestRef.current !== req || !batch) return;
+        setCameras(batch.cameras);
+        setTotal(batch.total);
+        setCities(batch.cities);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (requestRef.current !== req) return;
+        setError(true);
+        setLoading(false);
       });
+  }, [fetchBatch, runId]);
 
-    void (async () => {
-      /* The latest selection from any attempt this run. If the schedule runs
-         out after a failure, cameras we already hold beat an error wall. */
-      let latest: CountryCamera[] = [];
-      let everSucceeded = false;
-      for (let attempt = 0; ; attempt++) {
-        let settled = false;
-        try {
-          const r = await fetch(`/api/cctv?region=${config.regions.join(',')}`);
-          if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          const data = await r.json();
-          if (cancelled) return;
-          everSucceeded = true;
-          latest = selectCountryCameras(
-            Array.isArray(data?.cameras) ? data.cameras : [],
-            config,
-          );
-          /* Settled only when this country actually has cameras and no
-             region is still pending — anything else can be a cold
-             catalogue mid-warm-up, so stay in the loop below. */
-          settled = latest.length > 0 && (data?.pendingRegions?.length ?? 0) === 0;
-        } catch {
-          /* A failed fetch stays in the loop below: with 6 scheduled
-             retries it is retried well past the 3-attempt minimum before
-             the error state can be reached. */
-          if (cancelled) return;
-        }
-        if (settled) {
-          setLoad({ status: 'ready', cameras: latest });
-          return;
-        }
-        if (attempt >= RETRY_DELAYS_MS.length) {
-          /* Schedule exhausted (≈90s): show what an earlier attempt found,
-             the honest empty state when a warm catalogue truly has none,
-             or the error state when every attempt failed. */
-          if (everSucceeded || latest.length > 0) setLoad({ status: 'ready', cameras: latest });
-          else setLoad({ status: 'error' });
-          return;
-        }
-        await wait(RETRY_DELAYS_MS[attempt]);
-        if (cancelled) return;
-      }
-    })();
+  const hasMore = total !== null && cameras.length < total;
 
-    return () => {
-      cancelled = true;
-      if (timer) clearTimeout(timer);
-    };
-  }, [config, runId]);
+  const loadMore = useCallback(() => {
+    if (loadingMore || total === null || cameras.length >= total) return;
+    const req = requestRef.current;
+    setLoadingMore(true);
+    fetchBatch(cameras.length)
+      .then(batch => {
+        if (requestRef.current !== req || !batch) return;
+        setCameras(prev => [...prev, ...batch.cameras]);
+        setTotal(batch.total);
+      })
+      .catch(() => {
+        /* A failed batch leaves the sentinel/button in place to retry. */
+      })
+      .finally(() => {
+        if (requestRef.current === req) setLoadingMore(false);
+      });
+  }, [fetchBatch, cameras.length, total, loadingMore]);
 
-  /* Hero stat sync: the country page's hero "live cameras" tile is rendered
-     from the directory snapshot, whose count goes stale between snapshot
-     rebuilds and visibly contradicts this explorer's live count on the same
-     page. Once the live selection settles, overwrite the tile (targeted by
-     the data attribute the page template carries) with the live number.
-     Tile absent → no-op. */
+  /* Load-on-scroll: the sentinel sits right after the grid. */
   useEffect(() => {
-    if (load.status !== 'ready') return;
-    const el = document.querySelector('[data-country-live-cameras]');
-    if (el) el.textContent = load.cameras.length.toLocaleString('en-US');
-  }, [load]);
+    const el = sentinelRef.current;
+    if (!el || !hasMore || loading) return;
+    if (typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      entries => {
+        if (entries.some(e => e.isIntersecting)) loadMore();
+      },
+      { rootMargin: '600px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMore, loading, loadMore]);
 
-  const cameras = load.status === 'ready' ? load.cameras : [];
-  const areas = useMemo(() => cameraAreas(cameras), [cameras]);
-  const shown = useMemo(() => filterCameras(cameras, { query, area }), [cameras, query, area]);
+  /* Hero stat sync: the page's hero count is rendered from the generated
+     index, which is rebuilt only with the catalogue; the explorer's first
+     unfiltered total is the same derivation, so keep the tile honest if
+     the two ever drift. Tile absent → no-op. */
+  useEffect(() => {
+    if (total === null || area !== null || debouncedQuery !== '') return;
+    const el = document.querySelector('[data-country-live-cameras]');
+    if (el) el.textContent = total.toLocaleString('en-US');
+  }, [total, area, debouncedQuery]);
 
   const openCamera = (cam: CountryCamera) => {
     trackAnalyticsEvent('camera_open');
     setActive(cam);
   };
 
+  const filtering = area !== null || debouncedQuery !== '';
+  const cityCounts = useMemo(() => new Map(cities.map(c => [c.name, c.count])), [cities]);
+
+  /* Group headers, only while browsing unfiltered: records arrive grouped
+     by city (biggest first), so a header belongs wherever the city value
+     changes. The count rides along when the API's chip list knows it
+     (the largest groups — the ones a visitor reaches first). */
+  const rows = useMemo(() => {
+    if (filtering) return null;
+    const out: Array<{ header: string; count?: number; key: string } | { cam: CountryCamera }> = [];
+    let lastCity: string | null = null;
+    let started = false;
+    for (const cam of cameras) {
+      const city = clean(cam.city);
+      if (!started || city !== lastCity) {
+        out.push({
+          header: city === '' ? 'Other locations' : city,
+          count: city === '' ? undefined : cityCounts.get(city),
+          key: `h:${city}`,
+        });
+        lastCity = city;
+        started = true;
+      }
+      out.push({ cam });
+    }
+    return out;
+  }, [cameras, filtering, cityCounts]);
+
   return (
     <div>
-      {/* Search */}
+      {/* Search — server-side over the whole country */}
       <div className="relative">
         <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35 pointer-events-none" />
         <input
           type="search"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          placeholder={`Search ${config.country} cameras — a beach, a road, a district…`}
-          aria-label={`Search ${config.country} cameras`}
+          placeholder={`Search ${countryName} cameras — a beach, a road, a district…`}
+          aria-label={`Search ${countryName} cameras`}
           className="w-full rounded-xl border border-white/10 bg-white/[0.03] pl-10 pr-4 py-3 text-sm placeholder:text-white/30 focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40"
         />
       </div>
 
-      {/* Area filters — real city values from the records, counts included */}
-      {areas.length > 1 && (
+      {/* Area filters — the country's real city values, biggest first */}
+      {cities.length > 1 && (
         <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" role="group" aria-label="Filter by area">
           <button
             type="button"
@@ -265,9 +534,9 @@ export default function CountryCameraExplorer({ config }: { config: CountryExplo
                 : 'border-white/15 text-white/70 hover:bg-white/5'
             }`}
           >
-            All areas · {cameras.length}
+            All areas{total !== null && !filtering ? ` · ${total}` : ''}
           </button>
-          {areas.map(a => (
+          {cities.slice(0, MAX_AREA_CHIPS).map(a => (
             <button
               key={a.name}
               type="button"
@@ -286,27 +555,21 @@ export default function CountryCameraExplorer({ config }: { config: CountryExplo
       )}
 
       {/* Count line */}
-      {load.status === 'ready' && (
+      {total !== null && !loading && (
         <p className="mt-4 text-xs text-white/40" role="status">
-          {shown.length === cameras.length
-            ? `${cameras.length} cameras in the live WorldEye index for ${config.country} — the same catalogue that powers the globe.`
-            : `Showing ${shown.length} of ${cameras.length} cameras.`}
+          {filtering
+            ? `Showing ${cameras.length} of ${total} matching cameras.`
+            : `${total} cameras in the live WorldEye index for ${countryName} — the same catalogue that powers the globe.`}
         </p>
       )}
 
       {/* Grid / states */}
-      {load.status === 'loading' ? (
+      {loading ? (
         <div className="mt-4" aria-busy="true">
-          {/* Unmissable loading signal: the section must never read as an
-              empty void while the catalogue is still warming up. This state
-              is the component's initial state, so it is part of the server
-              render — visible before hydration, not only after it. */}
           <p className="flex items-center gap-2.5 text-sm text-white/70" role="status">
             <Loader2 className="w-4 h-4 animate-spin text-[#D4AF37] shrink-0" />
             Loading live cameras…
-            <span className="text-white/35">
-              Fetching the live index for {config.country} — right after an update this can take a little while.
-            </span>
+            <span className="text-white/35">Fetching the live index for {countryName}.</span>
           </p>
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -320,7 +583,7 @@ export default function CountryCameraExplorer({ config }: { config: CountryExplo
             ))}
           </div>
         </div>
-      ) : load.status === 'error' ? (
+      ) : error ? (
         <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center">
           <p className="text-sm text-white/70">The live camera index could not be loaded.</p>
           <button
@@ -331,15 +594,13 @@ export default function CountryCameraExplorer({ config }: { config: CountryExplo
             <RefreshCw className="w-4 h-4" /> Try again
           </button>
         </div>
-      ) : shown.length === 0 ? (
+      ) : cameras.length === 0 ? (
         <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center">
           <p className="text-sm text-white/70">
-            {cameras.length === 0
-              ? `No cameras for ${config.country} are in the live index right now.`
-              : 'No cameras match that search.'}
+            {filtering ? 'No cameras match that search.' : `No cameras for ${countryName} are in the live index right now.`}
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            {cameras.length > 0 && (
+            {filtering && (
               <button
                 type="button"
                 onClick={() => {
@@ -360,18 +621,56 @@ export default function CountryCameraExplorer({ config }: { config: CountryExplo
             </button>
           </div>
         </div>
+      ) : rows ? (
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {rows.map(row =>
+            'cam' in row ? (
+              <CameraCard key={row.cam.id} cam={row.cam} onOpen={openCamera} />
+            ) : (
+              <h3
+                key={row.key}
+                className="col-span-full mt-3 first:mt-0 flex items-baseline gap-2 text-sm font-bold text-white/85"
+              >
+                <MapPin className="w-4 h-4 text-[#00E5FF] shrink-0 translate-y-0.5" />
+                {row.header}
+                {row.count !== undefined && (
+                  <span className="text-xs font-medium text-white/40">
+                    {row.count} camera{row.count === 1 ? '' : 's'}
+                  </span>
+                )}
+              </h3>
+            ),
+          )}
+        </div>
       ) : (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {shown.map(cam => (
+          {cameras.map(cam => (
             <CameraCard key={cam.id} cam={cam} onOpen={openCamera} />
           ))}
         </div>
       )}
 
+      {/* More of the country: scroll loads the next batch automatically;
+          the button is the explicit path (and the retry after a failure). */}
+      {!loading && !error && hasMore && (
+        <div ref={sentinelRef} className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={loadMore}
+            disabled={loadingMore}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/85 hover:bg-white/5 transition disabled:opacity-60"
+          >
+            {loadingMore && <Loader2 className="w-4 h-4 animate-spin" />}
+            {loadingMore ? 'Loading…' : `Load more cameras (${(total ?? 0) - cameras.length} remaining)`}
+          </button>
+        </div>
+      )}
+
       <p className="mt-4 text-[11px] text-white/30 leading-relaxed">
-        Feeds are provided by their operators and public sources; a camera whose stream has gone
-        off air shows as unavailable rather than playing a recording. Snapshot cards refresh about
-        every 15 seconds — video plays when you open a camera.
+        Every card is the camera&apos;s real live feed: snapshot cards refresh about every 15 seconds,
+        stream cards play live in the grid (a few at a time, the same budget the map tiles use) and in
+        full when you open a camera. Feeds are provided by their operators and public sources; a camera
+        whose stream has gone off air shows as unavailable rather than playing a recording.
       </p>
 
       {/* The globe's own viewer, unchanged: one active player at a time. */}

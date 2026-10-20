@@ -198,7 +198,8 @@ export const COUNTRY_CAMERA_EXPLORERS: Record<string, CountryExplorerConfig> = {
   },
 };
 
-function clean(value: string | undefined): string {
+/** Collapse whitespace and trim — the one normalization every rule below shares. */
+export function clean(value: string | undefined): string {
   return (value ?? '').replace(/\s+/g, ' ').trim();
 }
 

@@ -1,13 +1,17 @@
 import type { MetadataRoute } from "next";
 import directory from "@/data/camera-directory.json";
+import cameraCountries from "@/data/camera-countries.json";
 import cityPages from "@/data/city-pages.json";
 import { POSTS } from "./blog/posts";
 
 const BASE = "https://worldeye.app";
 
-// Top 33 countries get dedicated pages (matches generateStaticParams in
-// src/app/cameras/countries/[country]/page.tsx).
-const COUNTRY_SLUGS: string[] = directory.countries.slice(0, 33).map((c) => c.slug);
+// Every country in the catalogue has a dedicated page (matches
+// generateStaticParams in src/app/cameras/countries/[country]/page.tsx,
+// both reading the generated camera-countries index).
+const COUNTRY_SLUGS: string[] = (
+  cameraCountries as { countries: Array<{ slug: string }> }
+).countries.map((c) => c.slug);
 
 const SEO_PAGES = [
   "/cameras/countries",
