@@ -23,14 +23,60 @@ export const metadata: Metadata = {
   },
 };
 
+const CAMERA_FAQS: Array<{ q: string; a: string }> = [
+  {
+    q: "How many live cameras are on WorldEye?",
+    a: "74,229 live public cameras are served on the WorldEye globe, with browsable directory pages for 109 countries. The counts come from the same live catalogue that powers the globe, so the number on these pages is the number the globe serves.",
+  },
+  {
+    q: "Are the live cameras free to watch?",
+    a: "Yes. Every live camera on the map is free to watch — no account, no trial, no credit card. WorldEye Pro is an optional subscription for the intelligence tools (the AI analyst, satellite view, traffic layer and intel feeds); it funds the infrastructure that keeps the cameras streaming.",
+  },
+  {
+    q: "Where do the live cameras come from?",
+    a: "WorldEye aggregates publicly available camera feeds from around the world — traffic, city streets, landmarks and nature — into one browsable layer on the map. The feeds are operated by cities, transport agencies, resorts and businesses that already publish them openly on the web.",
+  },
+  {
+    q: "Why is a camera offline?",
+    a: "Because the feeds are third-party public sources, individual cameras can go offline, move, or change without notice, and coverage varies by region: some cities publish hundreds of public cameras, others publish none. A camera whose stream has gone off air shows as unavailable rather than playing a recording.",
+  },
+  {
+    q: "Can I share a camera with someone?",
+    a: "Yes. Every camera has a share button — send the link and the other person lands on the globe with that exact camera open. No account is needed on either end.",
+  },
+  {
+    q: "How do I find cameras in a specific country or city?",
+    a: "Open the live map and search any place to fly straight to its nearest cameras, or browse the directory: country pages list every camera in the live index for that country with area filters, and city pages gather a city's feeds in one place.",
+  },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: "WorldEye Live Cameras",
-  description:
-    "Browse 74,229 live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.",
-  url: "https://worldeye.app/cameras",
-  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+  "@graph": [
+    {
+      "@type": "WebPage",
+      name: "WorldEye Live Cameras",
+      description:
+        "Browse 74,229 live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.",
+      url: "https://worldeye.app/cameras",
+      isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://worldeye.app/" },
+        { "@type": "ListItem", position: 2, name: "Cameras", item: "https://worldeye.app/cameras" },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: CAMERA_FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
 };
 
 const CATEGORIES = [
@@ -186,6 +232,27 @@ export default function CamerasPage() {
             closures, weather warnings and emergencies.
           </p>
         </div>
+
+        {/* FAQ — answers mirror the FAQPage JSON-LD above */}
+        <section className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Live cameras — <span className="text-[#D4AF37]">frequently asked questions</span>
+          </h2>
+          <div className="mt-8 space-y-3">
+            {CAMERA_FAQS.map((f, i) => (
+              <details
+                key={i}
+                className="group rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden"
+              >
+                <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between gap-4 font-semibold text-sm hover:bg-white/[0.03]">
+                  {f.q}
+                  <span className="text-[#D4AF37] group-open:rotate-45 transition-transform text-xl leading-none shrink-0">+</span>
+                </summary>
+                <div className="px-5 pb-5 text-sm text-white/55 leading-relaxed">{f.a}</div>
+              </details>
+            ))}
+          </div>
+        </section>
 
         <TrialCtaSection utmSource="cameras" />
 
