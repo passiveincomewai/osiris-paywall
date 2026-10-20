@@ -9,6 +9,12 @@ import { type TerrainStatus } from '@/lib/map-terrain';
 import { fetchCameraById, loadCameraCatalog, mergeCameraCatalog, type CameraCatalogHandle } from '@/lib/camera-catalog';
 import { applyFlightsDelta, type FlightsDelta, type FlightsPayloadLike } from '@/lib/flights/delta';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
+import {
+  checkPremiumEntitlement,
+  applyAmbientEntitlement,
+  shouldRecheckEntitlement,
+  blockedCameraAction,
+} from '@/lib/premium-entitlement';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
@@ -738,12 +744,33 @@ export default function Dashboard() {
   /* Freemium: does the viewer hold an active Weekly Pass? Drives the lock
      icons on premium layers in LayerPanel. Anonymous users are never premium. */
   const [isPremiumUser, setIsPremiumUser] = useState(false);
-  useEffect(() => {
-    fetch('/api/auth/session', { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((s) => setIsPremiumUser(s?.user?.subscriptionStatus === 'active'))
-      .catch(() => {});
+  /* Entitlement self-healing (lib/premium-entitlement): this state used to
+     be set by ONE mount fetch — if it resolved before the session settled
+     (post-sign-in landing, post-checkout return) a Pro user was "free" for
+     the whole visit. Now: the mount check runs through the same helper,
+     focus/visibility re-checks heal it ambiently (throttled), results only
+     ever upgrade false→true (a failed fetch never downgrades Pro), and
+     the camera gate re-checks once at the moment of decision. */
+  const lastEntitlementCheckAt = useRef(0);
+  const refreshPremium = useCallback(async () => {
+    lastEntitlementCheckAt.current = Date.now();
+    const check = await checkPremiumEntitlement();
+    setIsPremiumUser((cur) => applyAmbientEntitlement(cur, check));
   }, []);
+  useEffect(() => { void refreshPremium(); }, [refreshPremium]);
+  useEffect(() => {
+    const heal = () => {
+      if (document.visibilityState !== 'visible') return;
+      if (!shouldRecheckEntitlement(lastEntitlementCheckAt.current, Date.now())) return;
+      void refreshPremium();
+    };
+    window.addEventListener('focus', heal);
+    document.addEventListener('visibilitychange', heal);
+    return () => {
+      window.removeEventListener('focus', heal);
+      document.removeEventListener('visibilitychange', heal);
+    };
+  }, [refreshPremium]);
   // The satellite switch in the map chrome. Satellite view stays Pro:
   // a non-Pro click takes the standard TrialPicker path (the same one
   // the other chrome locks use); turning it off is always allowed and
@@ -1084,18 +1111,33 @@ export default function Dashboard() {
     [dossierCoords, data],
   );
   // Entity click handler (hoisted from JSX to comply with Rules of Hooks - Fixes #113)
-  const handleEntityClick = useCallback((entity: any) => {
+  const handleEntityClick = useCallback(async (entity: any) => {
     if (entity?.type === 'cctv') {
       // Soft signup gate: active Pro subscribers get unlimited cameras.
       // Everyone else gets FREE_CAMERA_CLICKS free opens (lib/cameraGate),
       // then the signup nudge, which states the limit plainly.
       if (!isPremiumUser) {
         if (!cameraClickAllowed()) {
+          // Blocked — but heal before walling: the mount fetch may have
+          // raced the session and stranded a Pro user as "free". ONE
+          // fresh check at the moment of decision; if it now says Pro,
+          // the camera opens with no wall, no click consumed, no bonus
+          // spent. Still free → the paths below, unchanged.
+          lastEntitlementCheckAt.current = Date.now();
+          const check = await checkPremiumEntitlement();
+          const action = blockedCameraAction(check, cameraBonus !== null && cameraBonus > 0);
+          if (action === 'open') {
+            setIsPremiumUser(true);
+            trackAnalyticsEvent('camera_open');
+            setActiveCamera(entity);
+            setCameraEverOpened(true);
+            return;
+          }
           // Past this device's free base. A signed-in user with bonus
           // opens banked (invite-a-friend, lib/camera-bonus) gets one
           // spent server-side instead — openWithCameraBonus falls back
           // to this same nudge when the server says the bonus is gone.
-          if (cameraBonus !== null && cameraBonus > 0) {
+          if (action === 'bonus') {
             openWithCameraBonus(entity);
             return;
           }

@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import { normalizeEmail, isValidEmail, verifyPassword } from "@/lib/password-auth";
+import { subscriptionStatusFromRow } from "@/lib/subscription-status";
 
 /* ------------------------------------------------------------------ */
 /* Type augmentation: the session JWT carries the paywall state so     */
@@ -32,17 +33,11 @@ const SUBSCRIPTION_TTL_MS = 60_000;
 
 async function resolveSubscriptionStatus(userId: string): Promise<string> {
   const sub = await db.subscription.findUnique({ where: { userId } });
-  // "trialing" counts as full Pro access until the trial ends — Stripe flips
-  // the status (past_due / canceled / ...) via webhook if payment fails.
-  if (
-    sub &&
-    (sub.status === "active" || sub.status === "trialing") &&
-    sub.currentPeriodEnd > new Date()
-  ) {
-    return "active";
-  }
-  // Anything else (past_due, canceled, expired, never subscribed) locks the gate.
-  return sub?.status ?? "none";
+  // The mapping itself is lib/subscription-status (pure, test-pinned):
+  // "trialing" counts as full Pro access until the trial ends — Stripe
+  // flips the status (past_due / canceled / ...) via webhook if payment
+  // fails; anything else locks the gate.
+  return subscriptionStatusFromRow(sub);
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
