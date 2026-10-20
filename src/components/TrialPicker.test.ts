@@ -3,10 +3,14 @@
 // locked-out user actually sees — all three plans, /pricing's CTAs and
 // notes verbatim, and the dialog's closed/open states. The checkout call
 // itself is pinned in lib/billing/trial-checkout.test.ts.
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
-import TrialPicker, { TrialPickerDialog } from "./TrialPicker";
+import TrialPicker, { TrialPickerCheckout, TrialPickerDialog } from "./TrialPicker";
+import { GUARANTEE_LINE } from "./CheckoutPlanStrip";
+
+const normalize = (html: string) =>
+  html.replace(/<!-- -->/g, "").replace(/&#x27;/g, "'");
 
 describe("TrialPicker", () => {
   it("renders every plan with pricing's copy", () => {
@@ -30,6 +34,56 @@ describe("TrialPicker", () => {
     const html = renderToString(createElement(TrialPicker, { variant: "compact" }));
     expect(html).toContain("Start 1-Day Free Trial");
     expect(html).toContain("Start 3-Day Free Trial");
+  });
+
+  it("each plan's CTA is a real filled button, not a text line (C1)", () => {
+    const html = normalize(renderToString(createElement(TrialPicker)));
+    // The CTA of each plan is a <button> carrying the gold filled
+    // treatment and a ≥48px tap height, labelled with its plan.
+    for (const label of [
+      "Start 1-Day Free Trial — Weekly $7.99/week",
+      "Start 1-Day Free Trial — Monthly $13.99/month",
+      "Start 3-Day Free Trial — Annual $74.99/year",
+    ]) {
+      expect(html).toContain(`aria-label="${label}"`);
+    }
+    expect(html).toContain("bg-[#D4AF37]");
+    expect(html).toContain("min-h-[48px]");
+    // Exactly the three plan CTAs are buttons in the default render
+    // (no close affordance was passed).
+    expect(html.match(/<button/g)).toHaveLength(3);
+  });
+
+  it("embedded mode starts on the plan list — the form mounts only after a pick (C2)", () => {
+    const html = normalize(
+      renderToString(createElement(TrialPicker, { mode: "embedded" })),
+    );
+    expect(html).toContain("data-trial-picker");
+    expect(html).toContain("Start 3-Day Free Trial");
+    expect(html).not.toContain("Loading secure checkout…");
+    expect(html).not.toContain("data-trial-picker-checkout");
+  });
+});
+
+describe("TrialPickerCheckout (the embedded-mode in-place checkout)", () => {
+  it("renders a back control over the shared checkout body", () => {
+    const html = normalize(
+      renderToString(
+        createElement(TrialPickerCheckout, { plan: "annual", onBack: vi.fn() }),
+      ),
+    );
+    expect(html).toContain("data-trial-picker-checkout");
+    expect(html).toContain("Back to plans");
+    // The shared body: compact strip for the picked plan, the form
+    // mount's loading state, the guarantee line.
+    expect(html).toContain("Annual Pro");
+    expect(html).toContain("$74.99");
+    expect(html).toContain("Loading secure checkout…");
+    expect(html).toContain(GUARANTEE_LINE);
+    // Back sits before the form, so leaving is one tap from the top.
+    expect(html.indexOf("Back to plans")).toBeLessThan(
+      html.indexOf("Loading secure checkout…"),
+    );
   });
 });
 
