@@ -93,8 +93,8 @@ export default function SiteFooter({
       <div className="max-w-6xl mx-auto px-6 pt-12 pb-4">
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 justify-between">
           <div>
-            <p className="text-[11px] font-bold tracking-[0.2em] text-[#0096FF] mb-2">NEWSLETTER</p>
-            <h3 className="text-xl font-bold text-white">{newsletterHeadline}</h3>
+            <p className="font-mono text-[11px] font-medium tracking-[0.25em] text-[#0096FF] mb-2">NEWSLETTER</p>
+            <h3 className="font-display text-2xl font-medium text-white">{newsletterHeadline}</h3>
             <p className="text-sm text-white/50 mt-1">{newsletterSub}</p>
           </div>
           <div className="w-full md:w-auto md:min-w-[340px]">
@@ -145,7 +145,7 @@ export default function SiteFooter({
       <nav aria-label="Footer" className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-x-6 gap-y-10">
         {COLUMNS.map((col) => (
           <div key={col.title}>
-            <p className="text-[11px] font-bold tracking-[0.2em] text-white/60 mb-4">
+            <p className="font-mono text-[11px] font-medium tracking-[0.25em] text-white/60 mb-4">
               {col.title.toUpperCase()}
             </p>
             <ul className="space-y-3">

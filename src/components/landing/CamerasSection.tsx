@@ -52,13 +52,13 @@ export default function CamerasSection() {
       <div className="border-t border-[#D4AF37]/25 bg-gradient-to-b from-[#0096FF]/[0.07] to-transparent">
         <div className="max-w-7xl mx-auto px-6 pt-14 pb-10">
           <Reveal>
-            <p className="text-[11px] font-bold tracking-[0.25em] text-[#D4AF37]">
+            <p className="font-mono text-[11px] font-medium tracking-[0.3em] text-[#D4AF37]">
               WORLDEYE — LIVE PLANETARY INTELLIGENCE
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight mt-4">
+            <h1 className="font-display text-5xl md:text-6xl font-medium leading-[1.04] tracking-[-0.015em] mt-5">
               WorldEye — the world, live on one globe
             </h1>
-            <h2 className="text-2xl md:text-3xl font-bold text-white/90 mt-6">
+            <h2 className="font-display text-3xl md:text-4xl font-medium leading-[1.12] text-white/90 mt-7">
               74,229 Live Cameras. One World.
             </h2>
             <p className="text-base md:text-lg text-white/60 leading-relaxed mt-3 max-w-2xl">

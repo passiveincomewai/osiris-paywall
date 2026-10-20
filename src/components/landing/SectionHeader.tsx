@@ -19,12 +19,12 @@ export default function SectionHeader({
 }) {
   return (
     <Reveal>
-      <p className={`text-[11px] font-bold tracking-[0.25em] uppercase ${eyebrowClass}`}>
+      <p className={`font-mono text-[11px] font-medium tracking-[0.3em] uppercase ${eyebrowClass}`}>
         {eyebrow}
       </p>
-      <h2 className="text-3xl md:text-4xl font-bold leading-tight mt-3">{title}</h2>
+      <h2 className="font-display text-4xl md:text-5xl font-medium leading-[1.08] tracking-[-0.01em] mt-4">{title}</h2>
       {sub && (
-        <p className="text-base md:text-lg text-white/60 leading-relaxed mt-3 max-w-2xl">
+        <p className="text-base md:text-lg text-white/60 leading-relaxed mt-4 max-w-2xl">
           {sub}
         </p>
       )}

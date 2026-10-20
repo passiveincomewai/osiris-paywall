@@ -21,7 +21,7 @@ export default function FaqSection() {
             {HOME_FAQS.map((f, i) => (
               <details key={f.q} className="group border-b border-white/10" open={i === 0}>
                 <summary className="flex cursor-pointer items-center justify-between gap-4 py-4 list-none [&::-webkit-details-marker]:hidden">
-                  <h3 className="font-semibold text-white">{f.q}</h3>
+                  <h3 className="font-display text-lg font-medium text-white">{f.q}</h3>
                   <Plus
                     className="w-5 h-5 shrink-0 text-[#0096FF] transition-transform duration-300 group-open:rotate-45"
                     aria-hidden

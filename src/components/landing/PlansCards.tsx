@@ -35,7 +35,7 @@ export default function PlansCards() {
   return (
     <div className="grid gap-5 md:grid-cols-2 max-w-4xl">
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-7 flex flex-col">
-        <h3 className="text-xl font-bold text-white">Free</h3>
+        <h3 className="font-display text-2xl font-medium text-white">Free</h3>
         <p className="font-mono text-sm text-white/50 mt-1.5">$0 — no account needed</p>
         <ul className="mt-5 space-y-2.5">
           {FREE_ROWS.map((row) => (
@@ -58,7 +58,7 @@ export default function PlansCards() {
         <span className="absolute -top-3 left-6 text-[10px] font-bold tracking-widest text-[#06060C] bg-[#D4AF37] rounded px-2 py-0.5">
           MOST POPULAR
         </span>
-        <h3 className="text-xl font-bold text-[#D4AF37]">Pro</h3>
+        <h3 className="font-display text-2xl font-medium text-[#D4AF37]">Pro</h3>
         <p className="font-mono text-sm text-white/50 mt-1.5">
           Weekly $7.99 · Monthly $13.99 · Annual $74.99
         </p>
