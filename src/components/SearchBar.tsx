@@ -1,23 +1,45 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useId } from 'react';
-import { Loader2, Navigation, Route, Search, SearchX, X } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback, useId, useMemo } from 'react';
+import { Camera, ExternalLink, Loader2, Lock, Navigation, PlayCircle, Route, Search, SearchX, Video, X } from 'lucide-react';
 import { forgetRecent, loadRecent, rememberPlace, type RecentPlace } from '@/lib/recent-places';
-import { Key, PlaceRow, type PlaceLike } from './places';
+import {
+  applyCameraFilters,
+  cameraFiltersActive,
+  cameraKindLabel,
+  CAMERA_KIND_OPTIONS,
+  canonicalCountry,
+  countryFacets,
+  EMPTY_CAMERA_FILTERS,
+  matchCameras,
+  type CameraSearchFilters,
+  type SearchableCamera,
+} from '@/lib/camera-search';
+import { cameraMediaKind, type CameraMediaKind } from '@/lib/country-cameras';
+import { Highlight, Key, KindTile, PlaceRow, type PlaceLike } from './places';
 
 /* ═══════════════════════════════════════════════════════════════
    OSIRIS — Search
    A place, an address, a landmark or a pair of coordinates, and the map
-   flies there. Before anything is typed it offers where you are and where
-   you went last; each result can be handed to Directions as the destination.
-   Ctrl+F (⌘F) from anywhere, arrows and Enter to choose, Shift+Enter for
-   directions, Esc to close.
+   flies there. Cameras from the catalogue ride along: basic search
+   matches them by name, city and country over the records the page has
+   already loaded for the map — no second index, no extra request.
+   Pro's advanced filters (country / type / live feeds only) narrow the
+   camera matches; places are never filtered. Before anything is typed
+   it offers where you are and where you went last; each result can be
+   handed to Directions as the destination. Ctrl+F (⌘F) from anywhere,
+   arrows and Enter to choose, Shift+Enter for directions, Esc to close.
    ═══════════════════════════════════════════════════════════════ */
 
 interface Hit extends PlaceLike {
   /** How close to fly. */
   zoom: number;
 }
+
+/** One row of the unified result list: a place, or a camera. */
+type NavItem =
+  | { type: 'place'; hit: Hit }
+  | { type: 'camera'; cam: SearchableCamera };
 
 interface SearchBarProps {
   onLocate: (lat: number, lng: number, zoom?: number) => void;
@@ -29,6 +51,12 @@ interface SearchBarProps {
   onDirections?: (place: PlaceLike) => void;
   /** Inside another container (the phone drawer): no frame of its own. */
   embedded?: boolean;
+  /** The camera catalogue as loaded so far — camera results match over it. */
+  cameras?: readonly SearchableCamera[];
+  /** Pro (subscriptionStatus 'active', resolved by the page): unlocks the advanced filters. */
+  isPro?: boolean;
+  /** Open a camera picked from the results (the page flies there and opens the viewer). */
+  onOpenCamera?: (cam: SearchableCamera) => void;
 }
 
 /** How close to fly for each kind /api/geosearch returns. */
@@ -45,6 +73,16 @@ const ZOOM_BY_KIND: Record<string, number> = {
 
 const TRY = ['Eiffel Tower', '10 Downing Street', '35.6586, 139.7454'];
 
+/** Camera rows shown alongside the places — the rest are a filter away. */
+const CAMERA_HITS_SHOWN = 6;
+
+const KIND_ICON: Record<CameraMediaKind, typeof Video> = {
+  video: Video,
+  snapshot: Camera,
+  embed: PlayCircle,
+  link: ExternalLink,
+};
+
 const parseCoords = (s: string): { lat: number; lng: number } | null => {
   const m = s.trim().match(/^([+-]?\d+\.?\d*)[,\s]+([+-]?\d+\.?\d*)$/);
   if (!m) return null;
@@ -52,12 +90,47 @@ const parseCoords = (s: string): { lat: number; lng: number } | null => {
   return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 ? { lat, lng } : null;
 };
 
-export default function SearchBar({ onLocate, center = null, onClose, onDirections, embedded = false }: SearchBarProps) {
+/** A camera in the result list — the PlaceRow's shape, a camera's facts. */
+function CameraRow({ cam, query, on, onPick, onHover, id }: {
+  cam: SearchableCamera;
+  query: string;
+  on: boolean;
+  onPick: () => void;
+  onHover?: () => void;
+  id?: string;
+}) {
+  const kind = cameraMediaKind(cam);
+  const country = canonicalCountry(cam.country)?.label ?? '';
+  const context = [cam.city, country].filter(Boolean).join(' · ') || cam.source || '';
+  return (
+    <div id={id} role="option" aria-selected={on} onMouseEnter={onHover}
+      className={`group relative flex items-center rounded-lg transition-colors ${on ? 'bg-[rgba(var(--gold-rgb),0.08)]' : 'hover:bg-white/[0.035]'}`}>
+      {on && <span aria-hidden className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full bg-[var(--gold-primary)]" />}
+      <button type="button" onClick={onPick} tabIndex={-1}
+        className="flex-1 min-w-0 flex items-center gap-3 pl-3 pr-2 py-2 text-left">
+        <KindTile on={on} icon={KIND_ICON[kind]} />
+        <span className="flex-1 min-w-0">
+          <span className="block text-[13px] leading-snug truncate text-[var(--text-heading)]">
+            <Highlight text={cam.name} query={query} />
+          </span>
+          {context && <span className="block mt-0.5 text-[11px] leading-snug truncate text-[var(--text-muted)]">{context}</span>}
+        </span>
+        <span className="text-[9px] font-mono tracking-[0.12em] uppercase text-[var(--text-muted)] flex-shrink-0 pl-1">
+          {cameraKindLabel(kind)}
+        </span>
+      </button>
+    </div>
+  );
+}
+
+export default function SearchBar({ onLocate, center = null, onClose, onDirections, embedded = false, cameras, isPro = false, onOpenCamera }: SearchBarProps) {
   /* Basic search is free for everyone, signed in or not — /api/geosearch
      was never gated server-side, so the old Pro card here was the whole
      fence. Removing it also removes a hooks hazard: the card returned
      before the hooks below, so a session resolving mid-mount changed the
-     hook count. */
+     hook count. The advanced FILTERS below are the Pro perk: their
+     controls lock for non-Pro, and lib/camera-search makes them inert
+     for non-Pro even if the state were set some other way. */
   const [value, setValue] = useState('');
   const [results, setResults] = useState<Hit[]>([]);
   const [loading, setLoading] = useState(false);
@@ -67,6 +140,7 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
   const [recent, setRecent] = useState<RecentPlace[]>(() => (typeof window === 'undefined' ? [] : loadRecent()));
   const [locating, setLocating] = useState(false);
   const [locateNote, setLocateNote] = useState('');
+  const [filters, setFilters] = useState<CameraSearchFilters>(EMPTY_CAMERA_FILTERS);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -103,7 +177,29 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
 
   const typing = value.trim().length > 0;
   const you: Hit = { label: 'Your location', context: locateNote || 'Fly to where you are', lat: 0, lng: 0, kind: 'current', zoom: 14 };
-  const items: Hit[] = typing ? results : [you, ...recent.map(r => ({ ...r, zoom: ZOOM_BY_KIND[r.kind ?? ''] ?? 13 }))];
+
+  /* Camera matches are synchronous — the catalogue is already here — so
+     they never wait on the places round-trip. Filters apply to them and
+     only to them (access-aware: inert unless Pro). */
+  const facets = useMemo(() => countryFacets(cameras ?? []), [cameras]);
+  const matchedCameras = useMemo(
+    () => (typing ? matchCameras(cameras ?? [], value) : []),
+    [cameras, value, typing],
+  );
+  const filteredCameras = useMemo(
+    () => applyCameraFilters(matchedCameras, filters, isPro ? 'pro' : 'free'),
+    [matchedCameras, filters, isPro],
+  );
+  const cameraHits = filteredCameras.slice(0, CAMERA_HITS_SHOWN);
+  const filtersEmptiedCameras = isPro && cameraFiltersActive(filters) && matchedCameras.length > 0 && filteredCameras.length === 0;
+
+  const placeItems: Hit[] = typing ? results : [you, ...recent.map(r => ({ ...r, zoom: ZOOM_BY_KIND[r.kind ?? ''] ?? 13 }))];
+  const items: NavItem[] = typing
+    ? [
+        ...cameraHits.map((cam): NavItem => ({ type: 'camera', cam })),
+        ...results.map((hit): NavItem => ({ type: 'place', hit })),
+      ]
+    : placeItems.map((hit): NavItem => ({ type: 'place', hit }));
   const active = Math.min(selected, Math.max(0, items.length - 1));
 
   const search = useCallback((q: string) => {
@@ -177,7 +273,16 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
     setLocating(false);
   }, [onLocate, onClose]);
 
-  const go = (h: Hit) => {
+  const go = (item: NavItem) => {
+    if (item.type === 'camera') {
+      if (onOpenCamera) onOpenCamera(item.cam);
+      else onLocate(item.cam.lat, item.cam.lng, 15);
+      setValue('');
+      setResults([]);
+      onClose?.();
+      return;
+    }
+    const h = item.hit;
     if (h.kind === 'current') { void locate(); return; }
     onLocate(h.lat, h.lng, h.zoom);
     setRecent(rememberPlace({ label: h.label, context: h.context, lat: h.lat, lng: h.lng, kind: h.kind }));
@@ -186,8 +291,10 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
     onClose?.();
   };
 
-  const directions = (h: Hit) => {
-    if (!onDirections || h.kind === 'current') return;
+  const directions = (item: NavItem) => {
+    if (item.type !== 'place' || !onDirections) return;
+    const h = item.hit;
+    if (h.kind === 'current') return;
     setRecent(rememberPlace({ label: h.label, context: h.context, lat: h.lat, lng: h.lng, kind: h.kind }));
     onDirections({ label: h.label, context: h.context, lat: h.lat, lng: h.lng, kind: h.kind });
   };
@@ -202,13 +309,16 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
     if (e.key === 'ArrowUp') { e.preventDefault(); setSelected(i => Math.max(i - 1, 0)); }
     if (e.key === 'Enter') {
       e.preventDefault();
-      const h = items[active];
-      if (!h) return;
-      if (e.shiftKey) directions(h); else go(h);
+      const item = items[active];
+      if (!item) return;
+      if (e.shiftKey) directions(item); else go(item);
     }
   };
 
-  const noResults = typing && !loading && answered === value && value.trim().length >= 2 && results.length === 0;
+  const noResults = typing && !loading && answered === value && value.trim().length >= 2
+    && results.length === 0 && cameraHits.length === 0 && !filtersEmptiedCameras;
+
+  const selectClass = 'h-8 max-w-[150px] rounded-lg border border-[var(--border-primary)] bg-black/40 px-1.5 text-[11.5px] text-[var(--text-secondary)] outline-none disabled:opacity-50 disabled:cursor-not-allowed';
 
   return (
     <div ref={boxRef} className={embedded ? 'flex flex-col' : 'glass-panel tool-glass relative overflow-hidden flex flex-col max-h-[min(72vh,600px)]'}>
@@ -222,8 +332,8 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
           value={value}
           onChange={e => search(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Search places, addresses or coordinates"
-          aria-label="Search places"
+          placeholder="Search places, cameras, addresses or coordinates"
+          aria-label="Search places and cameras"
           role="combobox"
           aria-expanded={items.length > 0}
           aria-controls={listId}
@@ -245,6 +355,77 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
         {loading && !embedded && <span aria-hidden className="absolute left-0 right-0 bottom-[-1px] h-px overflow-hidden"><span className="tool-scan block h-full w-1/3" /></span>}
       </div>
 
+      {/* ── advanced filters (Pro): camera results only, never places ── */}
+      <div className={`flex-shrink-0 ${embedded ? 'pt-2.5' : 'px-4 py-2.5 border-b border-[var(--border-secondary)]'}`}>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] font-mono tracking-[0.14em] uppercase text-[var(--text-muted)] mr-0.5">Filters</span>
+          {!isPro && (
+            <span className="inline-flex items-center gap-1 h-5 px-1.5 rounded border border-[rgba(var(--gold-rgb),0.4)] text-[9px] font-mono tracking-[0.12em] text-[var(--gold-light)]">
+              <Lock className="w-3 h-3" /> PRO
+            </span>
+          )}
+          <select
+            aria-label="Filter cameras by country"
+            title={isPro ? 'Only show cameras in this country' : 'Country filter — a Pro feature'}
+            disabled={!isPro || facets.length === 0}
+            value={filters.countryKey ?? ''}
+            onChange={e => setFilters(f => ({ ...f, countryKey: e.target.value || null }))}
+            className={selectClass}
+          >
+            <option value="">All countries</option>
+            {facets.map(f => (
+              <option key={f.key} value={f.key}>{f.label} · {f.count.toLocaleString('en-US')}</option>
+            ))}
+          </select>
+          <select
+            aria-label="Filter cameras by type"
+            title={isPro ? 'Only show cameras of this type' : 'Type filter — a Pro feature'}
+            disabled={!isPro}
+            value={filters.kind ?? ''}
+            onChange={e => setFilters(f => ({ ...f, kind: (e.target.value || null) as CameraMediaKind | null }))}
+            className={selectClass}
+          >
+            <option value="">All types</option>
+            {CAMERA_KIND_OPTIONS.map(o => (
+              <option key={o.kind} value={o.kind}>{o.label}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            aria-pressed={filters.liveOnly}
+            aria-label="Only show cameras with a live feed"
+            title={isPro ? 'Hide listing-only cameras that carry no feed of their own' : 'Live feeds only — a Pro feature'}
+            disabled={!isPro}
+            onClick={() => setFilters(f => ({ ...f, liveOnly: !f.liveOnly }))}
+            className={`inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border text-[11.5px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+              filters.liveOnly
+                ? 'border-[rgba(var(--gold-rgb),0.55)] bg-[rgba(var(--gold-rgb),0.1)] text-[var(--gold-light)]'
+                : 'border-[var(--border-primary)] bg-black/40 text-[var(--text-secondary)] hover:text-[var(--text-heading)]'
+            }`}
+          >
+            <span aria-hidden className={`w-1.5 h-1.5 rounded-full ${filters.liveOnly ? 'bg-[var(--gold-primary)]' : 'bg-white/25'}`} />
+            Live feeds only
+          </button>
+          {isPro && cameraFiltersActive(filters) && (
+            <button
+              type="button"
+              onClick={() => setFilters(EMPTY_CAMERA_FILTERS)}
+              className="h-8 px-2 text-[11.5px] text-[var(--text-muted)] hover:text-[var(--text-heading)] transition-colors"
+            >
+              Clear
+            </button>
+          )}
+          {!isPro && (
+            <a href="/pricing" className="ml-auto text-[11px] text-[var(--gold-light)] hover:text-[var(--gold-primary)] transition-colors">
+              Unlock with Pro
+            </a>
+          )}
+        </div>
+        <p className="mt-1.5 text-[10.5px] leading-snug text-[var(--text-muted)]">
+          Filters narrow camera results — places are never filtered.
+        </p>
+      </div>
+
       {/* ── what to choose from ── */}
       <div className={`min-h-0 overflow-y-auto styled-scrollbar ${embedded ? 'pt-3' : 'p-2'}`}>
         {!typing && (
@@ -252,21 +433,49 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
             {recent.length ? 'Jump to' : 'Start here'}
           </span>
         )}
-        <div id={listId} role="listbox" aria-label={typing ? 'Places found' : 'Suggestions'} className="flex flex-col gap-0.5">
-          {items.map((h, i) => (
-            <PlaceRow key={`${h.kind}-${h.label}-${h.lat}-${i}`} id={`${listId}-${i}`} place={h} query={typing ? value : ''} on={i === active}
-              onPick={() => go(h)} onHover={() => setSelected(i)} from={center}
-              kindOverride={!typing && h.kind !== 'current' ? 'recent' : undefined}
-              trailing={h.kind === 'current'
-                ? (locating ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-[var(--gold-primary)]" /> : undefined)
-                : onDirections && (
-                  <button onClick={() => directions(h)} aria-label={`Directions to ${h.label}`} title="Directions (Shift+Enter)"
-                    className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${i === active ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'} border-[rgba(var(--gold-rgb),0.35)] text-[var(--gold-light)] bg-[rgba(var(--gold-rgb),0.06)] hover:bg-[rgba(var(--gold-rgb),0.16)]`}>
-                    <Route className="w-4 h-4" />
-                  </button>
-                )} />
-          ))}
+        <div id={listId} role="listbox" aria-label={typing ? 'Search results' : 'Suggestions'} className="flex flex-col gap-0.5">
+          {typing && cameraHits.length > 0 && (
+            <span className="block px-3 pt-1 pb-1.5 text-[10px] font-mono tracking-[0.14em] uppercase text-[var(--text-muted)]">
+              Cameras{filteredCameras.length > cameraHits.length ? ` — first ${cameraHits.length} of ${filteredCameras.length}` : ''}
+            </span>
+          )}
+          {items.map((item, i) => {
+            if (item.type === 'camera') {
+              return (
+                <CameraRow key={`camera-${item.cam.id}`} id={`${listId}-${i}`} cam={item.cam} query={value}
+                  on={i === active} onPick={() => go(item)} onHover={() => setSelected(i)} />
+              );
+            }
+            const h = item.hit;
+            const firstPlaceIndex = typing ? cameraHits.length : 0;
+            return (
+              <div key={`place-${h.kind}-${h.label}-${h.lat}-${i}`} className="contents">
+                {typing && results.length > 0 && i === firstPlaceIndex && cameraHits.length > 0 && (
+                  <span className="block px-3 pt-2 pb-1.5 text-[10px] font-mono tracking-[0.14em] uppercase text-[var(--text-muted)]">
+                    Places
+                  </span>
+                )}
+                <PlaceRow id={`${listId}-${i}`} place={h} query={typing ? value : ''} on={i === active}
+                  onPick={() => go(item)} onHover={() => setSelected(i)} from={center}
+                  kindOverride={!typing && h.kind !== 'current' ? 'recent' : undefined}
+                  trailing={h.kind === 'current'
+                    ? (locating ? <Loader2 className="w-4 h-4 mr-2 animate-spin text-[var(--gold-primary)]" /> : undefined)
+                    : onDirections && (
+                      <button onClick={() => directions(item)} aria-label={`Directions to ${h.label}`} title="Directions (Shift+Enter)"
+                        className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${i === active ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'} border-[rgba(var(--gold-rgb),0.35)] text-[var(--gold-light)] bg-[rgba(var(--gold-rgb),0.06)] hover:bg-[rgba(var(--gold-rgb),0.16)]`}>
+                        <Route className="w-4 h-4" />
+                      </button>
+                    )} />
+              </div>
+            );
+          })}
         </div>
+
+        {filtersEmptiedCameras && (
+          <p role="status" className="px-3 py-3 text-[12px] leading-relaxed text-[var(--text-muted)]">
+            Cameras match “{value.trim()}”, but none survive those filters — widen them to see them.
+          </p>
+        )}
 
         {!typing && recent.length > 0 && (
           <button onClick={() => { forgetRecent(); setRecent([]); setSelected(0); }}
@@ -292,9 +501,9 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
             <span className="w-11 h-11 rounded-full flex items-center justify-center border border-[var(--border-secondary)] bg-white/[0.02]">
               <SearchX className="w-5 h-5 text-[var(--text-muted)]" />
             </span>
-            <p className="mt-3 text-[13px] text-[var(--text-heading)]">No places match “{value.trim()}”</p>
+            <p className="mt-3 text-[13px] text-[var(--text-heading)]">Nothing matches “{value.trim()}”</p>
             <p className="mt-1 max-w-[320px] text-[11.5px] leading-relaxed text-[var(--text-muted)]">
-              Try a city, a street, a landmark, or coordinates such as 48.8584, 2.2945.
+              Try a city, a street, a landmark, a camera name, or coordinates such as 48.8584, 2.2945.
             </p>
           </div>
         )}

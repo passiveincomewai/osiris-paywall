@@ -190,7 +190,7 @@ const PRO_FEATURES = [
     title: "Advanced search filters",
     desc: "Basic search is free for everyone — Pro adds the deep filters on top.",
     detail:
-      "Anyone can search the planet and fly to a place in one keystroke. Pro filters go further: narrow cameras by region and type, isolate aircraft by category or altitude, and cut straight to the exact feed or flight you need.",
+      "Anyone can search the planet — places and cameras alike — and fly to a result in one keystroke. Pro filters go further: narrow the camera results by country and type, keep only cameras carrying a live feed, and cut straight to the exact feed you need.",
   },
   {
     icon: Car,

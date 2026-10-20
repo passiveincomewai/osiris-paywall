@@ -1027,6 +1027,21 @@ export default function Dashboard() {
     if (!camerasLoading) sharedCameraSettled.current = true;
   }, [sharedCameraId, dataVersion, camerasLoading, handleEntityClick]);
 
+  // ── Camera picked in search ──
+  // Same path as the deep link above: fly there, then open through
+  // handleEntityClick so the free-camera gate and counting apply exactly
+  // as they do to a map click. Search matches over the catalogue state
+  // itself (lib/camera-search) — the advanced filters are Pro's, the
+  // results are basic search's.
+  const openCameraFromSearch = useCallback((cam: any) => {
+    setFlyToLocation({ lat: cam.lat, lng: cam.lng, zoom: 12, ts: Date.now() });
+    handleEntityClick({
+      type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
+      source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
+      stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+    });
+  }, [handleEntityClick]);
+
   // ── Drawing / AOI ──
   // OsirisMap already owns the draw interaction and the polygon rendering;
   // this only turns a finished ring into a measured, named, coloured record.
@@ -1801,6 +1816,7 @@ export default function Dashboard() {
           <div data-hud className="absolute top-[92px] left-1/2 -translate-x-1/2 z-[450] w-[min(560px,calc(100vw-180px))] pointer-events-auto">
             <motion.div initial={{ opacity: 0, y: -8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} transition={{ duration: 0.16 }}>
               <SearchBar center={mapCenter} onClose={() => setShowDesktopSearch(false)} onDirections={openDirectionsTo}
+                cameras={data.cameras ?? []} isPro={isPremiumUser} onOpenCamera={openCameraFromSearch}
                 onLocate={(lat, lng, zoom) => setFlyToLocation({ lat, lng, zoom, ts: Date.now() })} />
             </motion.div>
           </div>
@@ -2315,7 +2331,7 @@ export default function Dashboard() {
                   {mobilePanel === 'intel' && <IntelFeed data={data} onLocate={(lat, lng) => { setFlyToLocation({ lat, lng, ts: Date.now() }); setMobilePanel(null); }} />}
                   {mobilePanel === 'search' && (
                     <div className="space-y-2">
-                      <SearchBar embedded center={mapCenter} onDirections={openDirectionsTo} onLocate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
+                      <SearchBar embedded center={mapCenter} onDirections={openDirectionsTo} cameras={data.cameras ?? []} isPro={isPremiumUser} onOpenCamera={(cam) => { openCameraFromSearch(cam); setMobilePanel(null); }} onLocate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       <SharePanel mapView={mapView} activeLayers={activeLayers} mouseCoords={null} />
                     </div>
                   )}
