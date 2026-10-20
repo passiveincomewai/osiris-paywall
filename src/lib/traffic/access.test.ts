@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { auth } from '@/auth';
-import { requestHasTrafficAccess, trafficAccessForStatus } from './access';
+import { requestHasTrafficAccess, trafficAccessForSession, trafficAccessForStatus } from './access';
 
 vi.mock('@/auth', () => ({ auth: vi.fn() }));
 
@@ -24,10 +24,64 @@ describe('trafficAccessForStatus', () => {
   });
 });
 
+describe('trafficAccessForSession — team grant layering (Workstream H)', () => {
+  it('own-active passes, unchanged (even with a stale free planTier claim)', () => {
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'active' } })).toBe(true);
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'active', planTier: 'free' } })).toBe(true);
+  });
+
+  it('granted member passes: own status inactive + effective planTier pro', () => {
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'none', planTier: 'pro' } })).toBe(true);
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'canceled', planTier: 'pro' } })).toBe(true);
+  });
+
+  it('granted VIP passes (vip satisfies pro)', () => {
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'none', planTier: 'vip' } })).toBe(true);
+  });
+
+  it('free still fails: inactive status with planTier free or absent (legacy)', () => {
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'none', planTier: 'free' } })).toBe(false);
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'none' } })).toBe(false);
+    expect(trafficAccessForSession({ user: {} })).toBe(false);
+    expect(trafficAccessForSession(null)).toBe(false);
+    expect(trafficAccessForSession(undefined)).toBe(false);
+  });
+
+  it('an invalid planTier claim falls back to the status alone', () => {
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'none', planTier: 'gold' } })).toBe(false);
+    expect(trafficAccessForSession({ user: { subscriptionStatus: 'active', planTier: 'gold' } })).toBe(true);
+  });
+
+  it('fail-soft: a planTier read that throws falls back to the status-only result', () => {
+    const throwingTier = (subscriptionStatus: string) => ({
+      user: {
+        subscriptionStatus,
+        get planTier(): string {
+          throw new Error('claim read failed');
+        },
+      },
+    });
+    expect(trafficAccessForSession(throwingTier('none') as any)).toBe(false);
+    expect(trafficAccessForSession(throwingTier('active') as any)).toBe(true);
+  });
+});
+
 describe('requestHasTrafficAccess', () => {
   it('grants a signed-in subscriber', async () => {
     mockAuth.mockResolvedValue({ user: { id: 'u1', subscriptionStatus: 'active' } } as any);
     await expect(requestHasTrafficAccess()).resolves.toBe(true);
+  });
+
+  it('grants a team-granted member (own status inactive, effective planTier pro/vip)', async () => {
+    mockAuth.mockResolvedValue({ user: { id: 'u1', subscriptionStatus: 'none', planTier: 'pro' } } as any);
+    await expect(requestHasTrafficAccess()).resolves.toBe(true);
+    mockAuth.mockResolvedValue({ user: { id: 'u1', subscriptionStatus: 'none', planTier: 'vip' } } as any);
+    await expect(requestHasTrafficAccess()).resolves.toBe(true);
+  });
+
+  it('denies a free member (inactive status, planTier free)', async () => {
+    mockAuth.mockResolvedValue({ user: { id: 'u1', subscriptionStatus: 'none', planTier: 'free' } } as any);
+    await expect(requestHasTrafficAccess()).resolves.toBe(false);
   });
 
   it('denies a signed-in non-subscriber', async () => {
