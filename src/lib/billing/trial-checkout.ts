@@ -11,8 +11,14 @@
  * the webhook fires, and a guest claims it on /welcome after paying.
  * That is why `trialEntryDecision` sends signed-out users straight to
  * checkout too — precisely what /pricing does with them today. There is
- * no sign-in detour and no return path to construct: checkout itself is
- * the destination, and its success URL brings the buyer back to the app.
+ * no sign-in detour.
+ *
+ * Where checkout happens: `startPlanCheckout` lands the buyer on our own
+ * /checkout page, which mounts Stripe's embedded form when a publishable
+ * key is configured and otherwise falls back to the hosted redirect this
+ * module originally performed (see lib/billing/embedded-checkout for the
+ * flow and its fallbacks). Completion still arrives via the session's
+ * success/return URL, so /welcome and the webhook see no difference.
  *
  * Trial lengths are NOT restated here: `trialDaysForPlan` (./trials) is
  * the single source the checkout route turns into `trial_period_days`.
@@ -80,11 +86,83 @@ export const TRIAL_PLAN_OPTIONS: TrialPlanOption[] = (
   trialDays: trialDaysForPlan(plan),
 }));
 
-/** The request body /api/checkout expects: the plan name, nothing else.
- *  Trial length, prices and affiliate attribution are all resolved
- *  server-side — the client cannot (and must not) restate them. */
-export function checkoutRequestBody(plan: BillingPlan): { plan: BillingPlan } {
-  return { plan };
+/**
+ * What the /checkout page shows about the plan being bought — for ALL
+ * four plans, enterprise included (it reaches checkout from /pricing even
+ * though the picker never offers it). Wording is /pricing's own: the
+ * trial plans reuse PLAN_COPY untouched; the enterprise fields mirror
+ * /pricing's PLANS.enterprise verbatim (price, per, perDay, note) and are
+ * pinned against it by trial-checkout.test.ts.
+ */
+export interface CheckoutPlanSummary {
+  plan: BillingPlan;
+  name: string;
+  price: string;
+  per: string;
+  perDay: string;
+  note: string;
+  /** Trial badge text ("1 day free"), or null when the plan has no trial. */
+  trialLabel: string | null;
+  trialDays: number;
+}
+
+function trialSummary(plan: TrialPlan): CheckoutPlanSummary {
+  const c = PLAN_COPY[plan];
+  return {
+    plan,
+    name: c.name,
+    price: c.price,
+    per: c.per,
+    perDay: c.perDay,
+    note: c.note,
+    trialLabel: c.trialLabel,
+    trialDays: trialDaysForPlan(plan),
+  };
+}
+
+export const CHECKOUT_PLAN_SUMMARIES: Record<BillingPlan, CheckoutPlanSummary> = {
+  weekly: trialSummary("weekly"),
+  monthly: trialSummary("monthly"),
+  annual: trialSummary("annual"),
+  enterprise: {
+    plan: "enterprise",
+    name: "Enterprise",
+    price: "$999",
+    per: "/year",
+    perDay: "$2.74",
+    note: "Billed annually · cancel anytime",
+    trialLabel: null,
+    trialDays: trialDaysForPlan("enterprise"),
+  },
+};
+
+/** Summary lookup that tolerates raw strings (URL params): unknown → null. */
+export function checkoutPlanSummary(plan: string | null | undefined): CheckoutPlanSummary | null {
+  if (plan === "weekly" || plan === "monthly" || plan === "annual" || plan === "enterprise") {
+    return CHECKOUT_PLAN_SUMMARIES[plan];
+  }
+  return null;
+}
+
+/** The request body /api/checkout expects. Trial length, prices and
+ *  affiliate attribution are all resolved server-side — the client cannot
+ *  (and must not) restate them. `ui: "embedded"` asks the route for a
+ *  session the /checkout page can mount on this domain (it answers with a
+ *  clientSecret); without it the route answers with the hosted url. */
+export function checkoutRequestBody(
+  plan: BillingPlan,
+  ui?: "embedded",
+): { plan: BillingPlan; ui?: "embedded" } {
+  return ui ? { plan, ui } : { plan };
+}
+
+/**
+ * The on-site checkout destination for a plan. Every buy surface lands
+ * here; the page itself decides between the embedded form and the hosted
+ * redirect, so entry points never branch on Stripe configuration.
+ */
+export function checkoutPagePath(plan: BillingPlan): string {
+  return `/checkout?plan=${plan}`;
 }
 
 export type TrialEntryDecision = { kind: "checkout"; guest: boolean };
@@ -100,27 +178,21 @@ export function trialEntryDecision(signedIn: boolean): TrialEntryDecision {
   return { kind: "checkout", guest: !signedIn };
 }
 
-type FetchLike = (input: string, init: RequestInit) => Promise<{
-  ok: boolean;
-  json: () => Promise<any>;
-}>;
-
 /**
- * Fire the checkout call /pricing's CheckoutButton has always made and
- * resolve to the Stripe URL to redirect to. Throws an Error carrying the
- * server's message (or "Checkout failed") — the same failure semantics
- * the pricing button presents today.
+ * Send a buyer to checkout for a plan: navigate to the on-site /checkout
+ * page, which mounts Stripe's embedded form when configured and falls
+ * back to the hosted redirect otherwise (lib/billing/embedded-checkout
+ * owns that decision, so it lives in exactly one place). Returns the path
+ * navigated to. The navigate step is injectable for tests; in the browser
+ * it is a full-page navigation, matching the redirect this replaced.
  */
-export async function startPlanCheckout(
+export function startPlanCheckout(
   plan: BillingPlan,
-  fetchImpl: FetchLike = fetch as unknown as FetchLike,
-): Promise<string> {
-  const res = await fetchImpl("/api/checkout", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(checkoutRequestBody(plan)),
-  });
-  const data = await res.json();
-  if (!res.ok || !data.url) throw new Error(data.error || "Checkout failed");
-  return data.url as string;
+  navigate: (path: string) => void = (path) => {
+    window.location.href = path;
+  },
+): string {
+  const path = checkoutPagePath(plan);
+  navigate(path);
+  return path;
 }

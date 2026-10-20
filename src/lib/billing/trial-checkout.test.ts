@@ -6,7 +6,10 @@
 // pricing's mouth.
 import { describe, it, expect, vi } from "vitest";
 import {
+  CHECKOUT_PLAN_SUMMARIES,
   TRIAL_PLAN_OPTIONS,
+  checkoutPagePath,
+  checkoutPlanSummary,
   checkoutRequestBody,
   startPlanCheckout,
   trialEntryDecision,
@@ -62,6 +65,59 @@ describe("checkoutRequestBody", () => {
       expect(checkoutRequestBody(plan)).toEqual({ plan });
     }
   });
+
+  it("adds ui:'embedded' only when the embedded presentation is asked for", () => {
+    for (const plan of ["weekly", "monthly", "annual", "enterprise"] as const) {
+      expect(checkoutRequestBody(plan, "embedded")).toEqual({ plan, ui: "embedded" });
+    }
+  });
+});
+
+describe("CHECKOUT_PLAN_SUMMARIES", () => {
+  it("covers all four plans, enterprise included", () => {
+    expect(Object.keys(CHECKOUT_PLAN_SUMMARIES).sort()).toEqual([
+      "annual",
+      "enterprise",
+      "monthly",
+      "weekly",
+    ]);
+  });
+
+  it("reuses the trial plans' pricing copy untouched", () => {
+    for (const option of TRIAL_PLAN_OPTIONS) {
+      const s = CHECKOUT_PLAN_SUMMARIES[option.plan];
+      expect(s).toMatchObject({
+        name: option.name,
+        price: option.price,
+        per: option.per,
+        perDay: option.perDay,
+        note: option.note,
+        trialLabel: option.trialLabel,
+        trialDays: option.trialDays,
+      });
+    }
+  });
+
+  it("mirrors /pricing's enterprise words verbatim, with no trial", () => {
+    expect(CHECKOUT_PLAN_SUMMARIES.enterprise).toEqual({
+      plan: "enterprise",
+      name: "Enterprise",
+      price: "$999",
+      per: "/year",
+      perDay: "$2.74",
+      note: "Billed annually · cancel anytime",
+      trialLabel: null,
+      trialDays: 0,
+    });
+  });
+
+  it("checkoutPlanSummary resolves known plans and rejects the rest", () => {
+    expect(checkoutPlanSummary("annual")?.price).toBe("$74.99");
+    expect(checkoutPlanSummary("enterprise")?.name).toBe("Enterprise");
+    expect(checkoutPlanSummary("daily")).toBeNull();
+    expect(checkoutPlanSummary(null)).toBeNull();
+    expect(checkoutPlanSummary(undefined)).toBeNull();
+  });
 });
 
 describe("trialEntryDecision", () => {
@@ -75,35 +131,29 @@ describe("trialEntryDecision", () => {
 });
 
 describe("startPlanCheckout", () => {
-  it("POSTs the plan to /api/checkout and resolves to the Stripe URL", async () => {
-    const fetchImpl = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({ url: "https://checkout.stripe.com/c/pay/cs_123" }),
-    }));
-    const url = await startPlanCheckout("monthly", fetchImpl);
-    expect(url).toBe("https://checkout.stripe.com/c/pay/cs_123");
-    expect(fetchImpl).toHaveBeenCalledWith("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan: "monthly" }),
-    });
+  // New contract (on-site checkout): the shared entry point no longer
+  // POSTs and redirects to Stripe itself — it lands the buyer on our
+  // /checkout page for the chosen plan, and that page owns the embedded
+  // mount + hosted fallback (lib/billing/embedded-checkout). The old
+  // POST-and-redirect tests were replaced by these navigation pins.
+  it("navigates to the on-site checkout page for the plan", () => {
+    const navigate = vi.fn();
+    const path = startPlanCheckout("monthly", navigate);
+    expect(path).toBe("/checkout?plan=monthly");
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith("/checkout?plan=monthly");
   });
 
-  it("surfaces the server's error message on a failed checkout", async () => {
-    const fetchImpl = vi.fn(async () => ({
-      ok: false,
-      json: async () => ({ error: "STRIPE_WEEKLY_PRICE_ID is not set" }),
-    }));
-    await expect(startPlanCheckout("weekly", fetchImpl)).rejects.toThrow(
-      "STRIPE_WEEKLY_PRICE_ID is not set",
-    );
+  it("routes every plan — enterprise included — through the same page", () => {
+    for (const plan of ["weekly", "monthly", "annual", "enterprise"] as const) {
+      const navigate = vi.fn();
+      expect(startPlanCheckout(plan, navigate)).toBe(`/checkout?plan=${plan}`);
+      expect(navigate).toHaveBeenCalledWith(`/checkout?plan=${plan}`);
+    }
   });
 
-  it("throws the generic failure when the response carries no URL", async () => {
-    const fetchImpl = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({}),
-    }));
-    await expect(startPlanCheckout("annual", fetchImpl)).rejects.toThrow("Checkout failed");
+  it("checkoutPagePath builds the same destination", () => {
+    expect(checkoutPagePath("annual")).toBe("/checkout?plan=annual");
+    expect(checkoutPagePath("enterprise")).toBe("/checkout?plan=enterprise");
   });
 });
