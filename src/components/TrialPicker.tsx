@@ -23,8 +23,8 @@ import {
 interface TrialPickerProps {
   /** Tighter paddings/type for the layer flyout and the follow HUD. */
   variant?: "default" | "compact";
-  /** Called after a plan is chosen? No — choosing leaves for Stripe.
-   *  This is for surfaces that host the picker behind a toggle. */
+  /** Renders a close affordance for surfaces that host the picker behind
+   *  a toggle (choosing a plan needs no callback — it leaves for Stripe). */
   onClose?: () => void;
 }
 
