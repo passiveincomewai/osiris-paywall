@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { stealthFetch } from '@/lib/stealthFetch';
 import { propagateTLE } from '@/lib/orbit';
+import { encodeSatelliteRows, type SatelliteRow } from '@/lib/satellite-payload';
 
 export const maxDuration = 60;
 
@@ -174,7 +175,11 @@ function parseTLEText(text: string): { name: string; line1: string; line2: strin
 async function fetchCelesTrakGroup(url: string): Promise<{ name: string; line1: string; line2: string }[]> {
   try {
     const res = await fetch(url, {
-      signal: AbortSignal.timeout(30000),
+      // 12s, not 30s: the caller awaits every group (allSettled), so one
+      // hanging group used to gate the whole cold build for half a minute.
+      // A group that misses the deadline is simply absent this round - the
+      // merge below backfills it from the previous cache where one exists.
+      signal: AbortSignal.timeout(12000),
       cache: 'no-store',
       headers: { 'User-Agent': 'OSIRIS/4.2 (satellite-tracker)' },
     });
@@ -188,7 +193,14 @@ async function fetchCelesTrakGroup(url: string): Promise<{ name: string; line1: 
   }
 }
 
-export async function GET() {
+/**
+ * Builds the full response body: TLE refresh (when due), SGP4 propagation
+ * of the whole catalog and v2 serialization. This is the expensive part -
+ * propagating ~19,000 satellites took ~4s and produced 2.7 MB before the
+ * diet - so GET serves it from the payload cache below instead of
+ * rebuilding it for every request.
+ */
+async function buildPayload(): Promise<{ body: string; cacheControl: string; count: number }> {
   try {
     const nowTime = Date.now();
     let allSats: any[] = globalCachedSats;
@@ -285,7 +297,7 @@ export async function GET() {
     }
 
     // No artificial cap — propagate all satellites, MapLibre handles it fine
-    const satellites = [];
+    const satellites: SatelliteRow[] = [];
     for (const sat of allSats) {
       const pos = propagateSGP4Simple(sat.line1, sat.line2);
       if (!pos) continue;
@@ -328,18 +340,84 @@ export async function GET() {
       categoryCounts[s.category] = (categoryCounts[s.category] || 0) + 1;
     }
 
-    return NextResponse.json({
-      satellites,
-      total: satellites.length,
-      category_counts: categoryCounts,
-      source,
-      raw_count: allSats.length,
-      timestamp: new Date().toISOString(),
-    }, {
-      headers: {
-        'Cache-Control': cacheControl,
-      },
-    });
+    // v2 wire format: dictionary-encoded rows + legends (see
+    // src/lib/satellite-payload.ts). The envelope fields keep their v1
+    // names and shapes - LayerPanel counts, the HUD total, the stats route
+    // and the orbit-epoch hand-off all read them.
+    const encoded = encodeSatelliteRows(satellites);
+    return {
+      body: JSON.stringify({
+        v: 2,
+        missions: encoded.missions,
+        categories: encoded.categories,
+        satellites: encoded.rows,
+        total: satellites.length,
+        category_counts: categoryCounts,
+        source,
+        raw_count: allSats.length,
+        timestamp: new Date().toISOString(),
+      }),
+      cacheControl,
+      count: satellites.length,
+    };
+  } catch (error) {
+    console.error('Satellite fetch error:', error);
+    throw error;
+  }
+}
+
+/**
+ * The computed payload, cached as a serialized string.
+ *
+ * Positions are propagated for the build moment and the body carries that
+ * epoch in `timestamp`; the client fetches the catalogue once per session
+ * and never re-polls, so a 120 s server cache (the same lifetime the CDN
+ * header already grants) changes nothing a viewer can see - it just stops
+ * every request paying ~4 s of propagation and a ~1 MB serialization.
+ * Past the TTL the stale body is served while one background rebuild runs
+ * (stale-while-revalidate), matching the Cache-Control contract. A
+ * degenerate build (<10 satellites, the broken-catalogue state that gets
+ * the no-store header) is given a zero TTL so recovery is never delayed
+ * by this cache.
+ */
+const PAYLOAD_TTL_MS = 120_000;
+let payloadCache: { body: string; cacheControl: string; builtAt: number; ttlMs: number } | null = null;
+let payloadBuildInFlight: Promise<void> | null = null;
+
+async function refreshPayloadCache(): Promise<void> {
+  const built = await buildPayload();
+  payloadCache = {
+    body: built.body,
+    cacheControl: built.cacheControl,
+    builtAt: Date.now(),
+    ttlMs: built.count < 10 ? 0 : PAYLOAD_TTL_MS,
+  };
+}
+
+function payloadResponse(entry: { body: string; cacheControl: string }): NextResponse {
+  return new NextResponse(entry.body, {
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': entry.cacheControl },
+  });
+}
+
+export async function GET() {
+  try {
+    const now = Date.now();
+    if (payloadCache && now - payloadCache.builtAt < payloadCache.ttlMs) {
+      return payloadResponse(payloadCache);
+    }
+    if (payloadCache && payloadCache.ttlMs > 0) {
+      // Stale-while-revalidate: answer from the cache now; a single
+      // background rebuild refreshes it for the next request.
+      if (!payloadBuildInFlight) {
+        payloadBuildInFlight = refreshPayloadCache()
+          .catch((err) => { console.error('Satellite payload rebuild failed:', err); })
+          .finally(() => { payloadBuildInFlight = null; });
+      }
+      return payloadResponse(payloadCache);
+    }
+    await refreshPayloadCache();
+    return payloadResponse(payloadCache!);
   } catch (error) {
     console.error('Satellite fetch error:', error);
     return NextResponse.json({ satellites: [], error: 'Failed to fetch satellite data' }, { status: 500 });
