@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { X, Crown } from "lucide-react";
 import TrialPicker from "./TrialPicker";
+import { FREE_CAMERA_CLICKS } from "@/lib/cameraGate";
 
 /**
  * Pro upsell shown once a visitor without an active subscription has opened
- * their free cameras. Deliberately says nothing about a limit or a paywall —
- * it reads as a natural upgrade moment.
+ * all of their free cameras. It says exactly that, plainly, then puts the
+ * trial picker in front of them as the primary action.
  */
 export default function CameraSignupNudge({ onClose }: { onClose: () => void }) {
   return (
@@ -34,7 +35,7 @@ export default function CameraSignupNudge({ onClose }: { onClose: () => void }) 
         </div>
         <h2 className="text-lg font-bold tracking-tight">Unlock unlimited cameras</h2>
         <p className="text-sm text-white/55 mt-2 mb-6">
-          Upgrade to Pro for unlimited live camera access — plus the AI analyst, satellite view, live traffic, advanced search filters and premium intel feeds.
+          You&apos;ve opened your {FREE_CAMERA_CLICKS} free cameras on this device. Upgrade to Pro for unlimited live camera access — plus the AI analyst, satellite view, live traffic, advanced search filters and premium intel feeds.
         </p>
         <div className="text-left">
           <TrialPicker />

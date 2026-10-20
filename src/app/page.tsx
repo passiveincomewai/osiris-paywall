@@ -983,8 +983,8 @@ export default function Dashboard() {
   const handleEntityClick = useCallback((entity: any) => {
     if (entity?.type === 'cctv') {
       // Soft signup gate: active Pro subscribers get unlimited cameras.
-      // Everyone else gets a handful free, then a signup nudge — the limit
-      // itself is never shown.
+      // Everyone else gets FREE_CAMERA_CLICKS free opens (lib/cameraGate),
+      // then the signup nudge, which states the limit plainly.
       if (!isPremiumUser) {
         if (!cameraClickAllowed()) {
           trackAnalyticsEvent('upgrade_gate_shown');

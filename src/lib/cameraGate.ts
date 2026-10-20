@@ -1,11 +1,14 @@
 // Soft signup gate for the camera layer: anonymous and non-Pro visitors can
 // open a handful of cameras before they're nudged to create a free account.
 // Pro subscribers (active subscription) are never gated. The count lives in
-// localStorage per device; the limit itself is never shown in the UI.
+// localStorage per device and counts opens (clicks), not unique cameras —
+// reopening the same camera counts again. The nudge at the wall states the
+// limit plainly; every other surface that quotes the allowance reads
+// FREE_CAMERA_CLICKS from here so the number can never drift.
 "use client";
 
 const STORAGE_KEY = "worldeye.cameraClicks";
-export const FREE_CAMERA_CLICKS = 15;
+export const FREE_CAMERA_CLICKS = 5;
 
 export function getCameraClickCount(): number {
   try {
