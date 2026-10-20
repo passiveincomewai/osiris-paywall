@@ -1,7 +1,8 @@
 "use client";
 // Dashboard badges strip: earned Studio badges as chips, plus progress
-// hints for the locked ones. The base dashboard is NOT member-gated, so
-// a 401/403 from the badges API renders nothing at all.
+// hints for the locked ones. The badges API serves any signed-in affiliate
+// (same gate as the rest of the dashboard); a 401/404 — signed out or not
+// an affiliate — renders nothing at all.
 import { useEffect, useState } from "react";
 
 interface BadgeRow {
@@ -70,7 +71,7 @@ export default function BadgesStrip() {
         <div className="mt-3 space-y-1.5">
           {locked.slice(0, 4).map((b) => (
             <div key={b.key} className="flex items-baseline justify-between gap-3 text-xs">
-              <span className="text-slate-400">
+              <span className="text-slate-400 min-w-0 break-words">
                 <span className="font-mono font-semibold text-slate-300">{b.label}</span> — {b.blurb}
               </span>
               {b.xp > 0 && <span className="font-mono text-slate-500 shrink-0">+{b.xp} XP</span>}
