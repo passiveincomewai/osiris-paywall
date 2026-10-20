@@ -5,10 +5,11 @@
  * sky barely changes between polls, so the client holds the token of
  * the last completed snapshot it applied and sends it back as
  * ?since=<token>. The server answers with a delta (see the route):
- * upserts per bucket, the identity keys that vanished, and the small
- * whole-payload fields (jamming, totals, provider health). This module
- * is the merge — pure, so the protocol can be tested end to end without
- * a map.
+ * upserts per bucket — field patches for aircraft already held, full
+ * records for new or re-bucketed ones — the identity keys that
+ * vanished, and the small whole-payload fields (jamming, totals,
+ * provider health). This module is the merge — pure, so the protocol
+ * can be tested end to end without a map.
  *
  * Invariants the merge must keep, because the render blend
  * (lib/flights/motion.ts) is built on them:
@@ -106,7 +107,16 @@ export function applyFlightsDelta(
   for (const key of delta.removed ?? []) byKey.delete(key);
   for (const bucket of FLIGHT_BUCKET_KEYS) {
     for (const record of upserts[bucket] ?? []) {
-      byKey.set(flightRecordKey(record), { bucket, record });
+      const key = flightRecordKey(record);
+      const existing = byKey.get(key);
+      /* An upsert for a held aircraft is a field patch (the server sends
+         full records only for new or re-bucketed aircraft): spread it
+         over the held record so untouched fields survive. For a full
+         record the same spread is a plain replace. */
+      byKey.set(key, {
+        bucket,
+        record: existing ? { ...existing.record, ...record } : record,
+      });
     }
   }
 
@@ -129,8 +139,9 @@ export function applyFlightsDelta(
   for (const bucket of FLIGHT_BUCKET_KEYS) {
     for (const record of upserts[bucket] ?? []) {
       const key = flightRecordKey(record);
-      if (byKey.has(key) && !placed.has(key)) {
-        next[bucket].push(record);
+      const entry = byKey.get(key);
+      if (entry && !placed.has(key)) {
+        next[bucket].push(entry.record);
         placed.add(key);
       }
     }

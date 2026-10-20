@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyFlightsDelta, flightRecordKey, type FlightsDelta, type FlightsPayloadLike } from './delta';
-import { diffFlightsSnapshots, fingerprintFlightsPayload } from '@/app/api/flights/route';
+import { diffFlightsSnapshots, fingerprintFlightsPayload, flightsRecordIndex } from '@/app/api/flights/route';
 
 /* The protocol round-trip: the server's own diff of two snapshots,
    merged by the client, must reproduce the newer snapshot exactly —
@@ -31,7 +31,8 @@ const byKey = (p: FlightsPayloadLike) => {
 
 function serverDelta(base: FlightsPayloadLike, current: FlightsPayloadLike): FlightsDelta {
   const { upserts, removed } = diffFlightsSnapshots(
-    fingerprintFlightsPayload(base), current, fingerprintFlightsPayload(current),
+    fingerprintFlightsPayload(base), flightsRecordIndex(base),
+    current, fingerprintFlightsPayload(current),
   );
   return {
     delta: true, base: 'f1', token: 'f2', upserts, removed,

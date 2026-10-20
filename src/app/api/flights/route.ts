@@ -290,9 +290,24 @@ let fetchPromise: Promise<any> | null = null;
 const FLIGHT_BUCKETS = ['commercial_flights', 'private_flights', 'private_jets', 'military_flights'] as const;
 const SNAPSHOT_RING_SIZE = 4;
 
-interface FlightsFingerprint { token: string; hashes: Map<string, string> }
+interface FlightsFingerprint {
+  token: string;
+  hashes: Map<string, string>;
+  /** The snapshot's records by identity key — a diff base must be able
+   *  to answer "which FIELDS changed", not just "that it changed". */
+  records: Map<string, { bucket: string; record: any }>;
+}
 let snapshotRing: FlightsFingerprint[] = [];
 let snapshotSeq = 0;
+
+/** Index a payload's records by identity key (see flightRecordKey). */
+export function flightsRecordIndex(data: any): Map<string, { bucket: string; record: any }> {
+  const index = new Map<string, { bucket: string; record: any }>();
+  for (const bucket of FLIGHT_BUCKETS) {
+    for (const record of data[bucket] ?? []) index.set(flightRecordKey(record), { bucket, record });
+  }
+  return index;
+}
 
 /** A flight record's identity across snapshots: its transponder code,
  *  or — for the rare records classified without one — callsign and
@@ -325,23 +340,56 @@ export function fingerprintFlightsPayload(data: any): Map<string, string> {
 function registerFlightsSnapshot(data: any): void {
   const token = `f${++snapshotSeq}`;
   data.token = token;
-  snapshotRing.push({ token, hashes: fingerprintFlightsPayload(data) });
+  snapshotRing.push({
+    token,
+    hashes: fingerprintFlightsPayload(data),
+    records: flightsRecordIndex(data),
+  });
   if (snapshotRing.length > SNAPSHOT_RING_SIZE) snapshotRing = snapshotRing.slice(-SNAPSHOT_RING_SIZE);
 }
 
-/** What changed between two fingerprinted snapshots: records new,
- *  moved or altered (per bucket, so a category change rides as an
- *  upsert into the new bucket) and the identity keys that vanished.
- *  Pure — the protocol's whole contract in one place. */
+/** What changed between two fingerprinted snapshots, per bucket, and
+ *  the identity keys that vanished. Pure — the protocol's whole
+ *  contract in one place.
+ *
+ *  An upsert for an aircraft the base already holds IN THE SAME BUCKET
+ *  is a FIELD PATCH: its identity plus only the fields whose values
+ *  changed (between 90 s snapshots that is position/altitude/heading/
+ *  speed — the static identity fields are most of a record's bytes and
+ *  sending them again would make the delta nearly the full payload).
+ *  New aircraft, and aircraft whose bucket changed, ride as full
+ *  records. A record keyed by callsign+position whose position changed
+ *  has a new key by construction: it arrives as a full record under the
+ *  new key and its old key lands in `removed`. A field that disappears
+ *  between snapshots cannot be expressed in a patch — classifyFlight
+ *  emits a fixed field set, so the case does not arise in practice. */
 export function diffFlightsSnapshots(
   baseHashes: Map<string, string>,
+  baseRecords: Map<string, { bucket: string; record: any }>,
   currentData: any,
   currentHashes: Map<string, string>,
 ): { upserts: Record<string, any[]>; removed: string[] } {
   const upserts: Record<string, any[]> = {};
   for (const bucket of FLIGHT_BUCKETS) {
-    upserts[bucket] = (currentData[bucket] ?? []).filter((record: any) =>
-      baseHashes.get(flightRecordKey(record)) !== currentHashes.get(flightRecordKey(record)));
+    upserts[bucket] = [];
+    for (const record of currentData[bucket] ?? []) {
+      const key = flightRecordKey(record);
+      if (baseHashes.get(key) === currentHashes.get(key)) continue;
+      const prev = baseRecords.get(key);
+      if (!prev || prev.bucket !== bucket) {
+        upserts[bucket].push(record);
+        continue;
+      }
+      const patch: Record<string, unknown> = { icao24: record.icao24 };
+      let changed = 0;
+      for (const field of Object.keys(record)) {
+        if (!Object.is(record[field], prev.record[field])) {
+          patch[field] = record[field];
+          changed++;
+        }
+      }
+      upserts[bucket].push(changed ? patch : record);
+    }
   }
   const removed = [...baseHashes.keys()].filter(key => !currentHashes.has(key));
   return { upserts, removed };
@@ -363,7 +411,7 @@ function flightsDeltaResponse(since: string): NextResponse | null {
   }
   const base = snapshotRing.find(entry => entry.token === since);
   if (!base) return null;
-  const { upserts, removed } = diffFlightsSnapshots(base.hashes, cachedData, current.hashes);
+  const { upserts, removed } = diffFlightsSnapshots(base.hashes, base.records, cachedData, current.hashes);
   return NextResponse.json({
     delta: true, base: since, token: current.token,
     upserts, removed,

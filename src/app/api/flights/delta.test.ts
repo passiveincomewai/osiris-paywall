@@ -16,7 +16,7 @@ vi.mock('@/lib/stealthFetch', () => ({
 
 import { stealthFetch } from '@/lib/stealthFetch';
 import {
-  GET, diffFlightsSnapshots, fingerprintFlightsPayload, flightRecordKey,
+  GET, diffFlightsSnapshots, fingerprintFlightsPayload, flightRecordKey, flightsRecordIndex,
 } from './route';
 
 const rec = (icao24: string, over: Record<string, unknown> = {}) => ({
@@ -43,10 +43,15 @@ describe('diffFlightsSnapshots (pure)', () => {
       gps_jamming: [],
     };
     const { upserts, removed } = diffFlightsSnapshots(
-      fingerprintFlightsPayload(base), current, fingerprintFlightsPayload(current),
+      fingerprintFlightsPayload(base), flightsRecordIndex(base),
+      current, fingerprintFlightsPayload(current),
     );
-    expect(upserts.commercial_flights.map(r => r.icao24)).toEqual(['aaa111']);
+    // A moved aircraft already held in its bucket rides as a field patch:
+    // identity + the changed field only, NOT the full record.
+    expect(upserts.commercial_flights).toEqual([{ icao24: 'aaa111', lat: 39.5 }]);
+    // Re-categorised and new aircraft ride as full records.
     expect(upserts.private_jets.map(r => r.icao24)).toEqual(['bbb222']);
+    expect(upserts.private_jets[0].callsign).toBe('UAL100');
     expect(upserts.military_flights.map(r => r.icao24)).toEqual(['ddd444']);
     expect(upserts.private_flights).toEqual([]);
     expect(removed).toEqual(['ccc333']);
@@ -54,7 +59,7 @@ describe('diffFlightsSnapshots (pure)', () => {
 
   it('an identical snapshot diffs to nothing', () => {
     const hashes = fingerprintFlightsPayload(base);
-    const { upserts, removed } = diffFlightsSnapshots(hashes, base, hashes);
+    const { upserts, removed } = diffFlightsSnapshots(hashes, flightsRecordIndex(base), base, hashes);
     expect(Object.values(upserts).flat()).toEqual([]);
     expect(removed).toEqual([]);
   });
