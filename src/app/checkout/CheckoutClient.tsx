@@ -1,15 +1,25 @@
 "use client";
 
 /**
- * On-site checkout: Stripe's form, mounted on worldeye.app.
+ * On-site checkout: Stripe's form, mounted on worldeye.app — form first.
  *
- * Every buy surface (pricing, the Pro-lock TrialPickers) lands here via
- * startPlanCheckout with ?plan=. This page asks POST /api/checkout for an
- * embedded session and mounts it with Stripe.js; ANY failure along that
- * path — above all the publishable key not being configured yet — falls
- * back to the hosted redirect, so checkout works exactly as it did
- * before this page existed until the key is published (the flow and its
- * fallbacks live in lib/billing/embedded-checkout and are proven there).
+ * Every buy surface EXCEPT /pricing (whose CTAs open the same form in a
+ * sheet, components/CheckoutSheet) lands here via startPlanCheckout with
+ * ?plan=. This page asks POST /api/checkout for an embedded session and
+ * mounts it with Stripe.js; ANY failure along that path — above all the
+ * publishable key not being configured yet — falls back to the hosted
+ * redirect, so checkout works exactly as it did before this page existed
+ * (the flow and its fallbacks live in lib/billing/embedded-checkout and
+ * are proven there).
+ *
+ * Layout (Jameson's mobile fix, 2026-10-20): the first version led with
+ * our framing — logo hero, big heading, a tall plan card restating the
+ * trial terms — and Stripe's form only began at the bottom edge of a
+ * phone screen, its wallet buttons below the fold. Now the DOM order is:
+ * slim top bar → compact plan strip (components/CheckoutPlanStrip) →
+ * the form → one small guarantee line → the hosted-checkout option. The
+ * form wrapper reserves its height while loading, so nothing jumps when
+ * Stripe's form (express wallet buttons at its top) mounts.
  *
  * Completion is unchanged: the session's return_url brings the buyer to
  * /welcome (guests) or the app (members), where the existing claim flow
@@ -21,69 +31,23 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
-import { ArrowLeft, Lock, ShieldCheck, Zap } from "lucide-react";
-import {
-  checkoutPlanSummary,
-  type CheckoutPlanSummary,
-} from "@/lib/billing/trial-checkout";
+import { ArrowLeft, Lock } from "lucide-react";
+import { checkoutPlanSummary } from "@/lib/billing/trial-checkout";
 import {
   checkoutPlanFromParam,
   runCheckoutFlow,
   type StripeJsLike,
 } from "@/lib/billing/embedded-checkout";
+import {
+  CheckoutGuaranteeNote,
+  CheckoutPlanStrip,
+} from "@/components/CheckoutPlanStrip";
+import HostedCheckoutLink from "@/components/HostedCheckoutLink";
 
 // Next inlines this literal access into the browser bundle at build time.
 // Unset until Jameson publishes the key in Vercel — while it's unset the
 // flow below takes the hosted fallback for every checkout.
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-
-/** The money-back line exactly as /pricing states it under its plan card. */
-const GUARANTEE_LINE =
-  "Covered by a 7-day money-back guarantee on your first charge — email us within 7 days of the charge for a full refund, no questions asked.";
-
-/**
- * The plan being bought, in /pricing's own words (the summary record is
- * built from PLAN_COPY / pricing's enterprise entry — see trial-checkout).
- * Purely presentational so the render tests can pin it.
- */
-export function CheckoutPlanSummaryCard({ summary }: { summary: CheckoutPlanSummary }) {
-  return (
-    <div className="rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-5 md:p-6">
-      <p className="text-sm font-semibold tracking-[0.2em] text-[#D4AF37]">
-        {summary.plan === "enterprise" ? "ENTERPRISE" : "PRO"}
-      </p>
-      <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-5xl font-bold tracking-tight">{summary.price}</span>
-        <span className="text-white/45 text-lg">{summary.per}</span>
-      </div>
-      <p className="text-sm text-white/45 mt-2">{summary.note}</p>
-      <p className="text-sm text-[#D4AF37] font-semibold mt-1.5">
-        Just {summary.perDay} a day
-      </p>
-      {summary.trialLabel && (
-        <p className="mt-3">
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
-            <Zap className="w-3.5 h-3.5" /> {summary.trialLabel} — card not charged yet
-          </span>
-        </p>
-      )}
-      {summary.plan === "enterprise" ? (
-        <p className="flex items-center gap-2 text-xs text-white/35 mt-4">
-          <Lock className="w-3.5 h-3.5" /> Secured by Stripe
-        </p>
-      ) : (
-        <>
-          <p className="flex items-center gap-2 text-xs text-white/35 mt-4">
-            <Lock className="w-3.5 h-3.5" /> Secured by Stripe · Cancel anytime · 1-click cancellation
-          </p>
-          <p className="flex items-center gap-2 text-xs text-white/50 mt-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]/80 shrink-0" /> {GUARANTEE_LINE}
-          </p>
-        </>
-      )}
-    </div>
-  );
-}
 
 type Phase = "starting" | "mounted" | "redirecting" | "error";
 
@@ -143,8 +107,10 @@ export default function CheckoutClient() {
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
       </div>
 
-      <div className="relative max-w-xl mx-auto px-6 py-6 md:py-8">
-        <div className="flex items-center justify-between mb-6">
+      <div className="relative max-w-xl mx-auto px-4 md:px-6 py-4 md:py-8">
+        {/* Slim top bar: the way back, and what this page is — nothing
+            else stands between the visitor and the form. */}
+        <div className="flex items-center justify-between mb-4">
           {/* Same return Stripe's cancel_url produced: the pricing page's
               cancel-recovery strip keys off ?checkout=cancelled. */}
           <Link
@@ -153,24 +119,12 @@ export default function CheckoutClient() {
           >
             <ArrowLeft className="w-4 h-4" /> Back to pricing
           </Link>
-          <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">
-            WORLDEYE PRO
+          <span className="flex items-center gap-1.5 text-xs text-white/40">
+            <Lock className="w-3.5 h-3.5" /> Secure checkout
           </span>
         </div>
 
-        <div className="text-center mb-6">
-          <img
-            src="/worldeye-eye.png"
-            alt="WorldEye"
-            width={600}
-            height={432}
-            className="h-10 w-auto mx-auto mb-3"
-            style={{ filter: "drop-shadow(0 0 18px rgba(0,150,255,0.45))" }}
-          />
-          <h1 className="text-2xl font-bold tracking-tight">Secure checkout</h1>
-        </div>
-
-        {!summary ? (
+        {!summary || !plan ? (
           <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 text-center">
             <p className="text-white/70">
               That checkout link doesn&rsquo;t name a plan.
@@ -184,23 +138,25 @@ export default function CheckoutClient() {
           </div>
         ) : (
           <>
-            <CheckoutPlanSummaryCard summary={summary} />
-            <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden">
-              {/* Stripe mounts its form here. The node stays mounted across
-                  phases so the flow's mount target is stable. */}
+            <CheckoutPlanStrip summary={summary} />
+            {/* The form. min-h reserves the space Stripe's form will
+                occupy, so the loading state never pushes the layout
+                around when the form mounts. The node stays mounted
+                across phases so the flow's mount target is stable. */}
+            <div className="relative mt-3 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden min-h-[480px]">
               <div ref={mountRef} />
               {phase === "starting" && (
-                <p className="px-6 py-10 text-center text-sm text-white/45">
+                <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/45">
                   Loading secure checkout…
                 </p>
               )}
               {phase === "redirecting" && (
-                <p className="px-6 py-10 text-center text-sm text-white/45">
+                <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/45">
                   Taking you to secure checkout…
                 </p>
               )}
               {phase === "error" && (
-                <div className="px-6 py-8 text-center">
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
                   <p className="text-red-400 text-sm">{error ?? "Checkout failed"}</p>
                   <button
                     type="button"
@@ -214,6 +170,10 @@ export default function CheckoutClient() {
                   </p>
                 </div>
               )}
+            </div>
+            <CheckoutGuaranteeNote summary={summary} />
+            <div className="mt-3 text-center">
+              <HostedCheckoutLink plan={plan} />
             </div>
           </>
         )}
