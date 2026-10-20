@@ -125,6 +125,36 @@ export function newsletterWelcomeEmail(unsubUrl: string): { subject: string; htm
   };
 }
 
+/**
+ * The one heads-up a trial user gets before the first charge: plan, the
+ * exact amount, the exact moment the trial ends, and the real cancel
+ * path. All figures arrive pre-derived from the live Stripe price
+ * (lib/billing/trial-reminders.ts) — nothing is restated here.
+ */
+export function trialEndingEmail(input: {
+  planLabel: string;
+  chargeLabel: string;
+  perMonthLabel: string | null;
+  endsOnLabel: string;
+  manageUrl: string;
+}): { subject: string; html: string } {
+  const perMonth = input.perMonthLabel
+    ? ` (that's ${escapeHtml(input.perMonthLabel)}, billed once a year)`
+    : "";
+  return {
+    subject: "Your WorldEye Pro free trial is ending",
+    html: shell(
+      "Your free trial is ending",
+      `Your WorldEye Pro trial ends on ${input.endsOnLabel}.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Your free trial of <strong style="color:#fff;">WorldEye Pro (${escapeHtml(input.planLabel)})</strong> ends on <strong style="color:#fff;">${escapeHtml(input.endsOnLabel)}</strong>.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Unless you cancel before then, your card will be charged <strong style="color:#fff;">${escapeHtml(input.chargeLabel)}</strong>${perMonth}, and your plan renews automatically until you cancel.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to keep Pro? Do nothing — it continues on its own.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to cancel? Sign in, open <strong style="color:#fff;">Settings → Manage billing</strong>, and cancel in the Stripe portal. You keep Pro until the trial ends, and you won't be charged.</p>`,
+      { label: "Manage my subscription", href: input.manageUrl }
+    ),
+  };
+}
+
 export function abandonedCartEmail(plan: string, checkoutUrl: string): { subject: string; html: string } {
   const planLabel = plan ? `WorldEye Pro (${plan})` : "WorldEye Pro";
   return {
