@@ -84,6 +84,76 @@ export function findCameraById<T extends { id: string | number }>(
   return cameras.find(cam => String(cam.id) === wanted);
 }
 
+/* ── Last-opened camera ────────────────────────────────────────────────
+ * Remembered on this device whenever the viewer opens a camera, so a
+ * visitor who leaves to check out can be offered their way straight
+ * back afterwards (the /welcome completion loop links here). It is the
+ * same deep link a share produces — no second mechanism, and the globe
+ * resolves it through the same gated path: a stale id just lands on the
+ * plain globe. Device-local only; nothing is sent anywhere. */
+
+export const LAST_CAMERA_STORAGE_KEY = 'worldeye.lastCamera';
+
+export interface LastCamera {
+  id: string;
+  name: string | null;
+}
+
+/** The slice of Web Storage this needs; injectable for tests. */
+export interface KeyValueStore {
+  getItem: (key: string) => string | null;
+  setItem: (key: string, value: string) => void;
+}
+
+function defaultStore(): KeyValueStore | null {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Record the camera the viewer just opened. Silent no-op when the
+ *  camera carries no shareable id or storage is unavailable. */
+export function rememberLastCamera(
+  camera: ShareableCamera | null | undefined,
+  store: KeyValueStore | null = defaultStore(),
+): void {
+  const id = cameraShareId(camera);
+  if (!id || !store) return;
+  try {
+    const name = camera?.name?.trim() ? camera.name.trim() : null;
+    store.setItem(LAST_CAMERA_STORAGE_KEY, JSON.stringify({ id, name }));
+  } catch {
+    /* storage full/blocked — the way back is a nicety, never an error */
+  }
+}
+
+/** Read the remembered camera back; any corruption reads as "none". */
+export function readLastCamera(
+  store: KeyValueStore | null = defaultStore(),
+): LastCamera | null {
+  if (!store) return null;
+  try {
+    const raw = store.getItem(LAST_CAMERA_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { id?: unknown; name?: unknown };
+    if (!parsed || typeof parsed.id !== 'string' || !parsed.id.trim()) return null;
+    return {
+      id: parsed.id.trim(),
+      name: typeof parsed.name === 'string' && parsed.name.trim() ? parsed.name.trim() : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Where "back to your camera" points: the deep link, or the globe root
+ *  when nothing is remembered. */
+export function lastCameraHref(last: LastCamera | null): string {
+  return last ? `/?${CAMERA_SHARE_PARAM}=${encodeURIComponent(last.id)}` : '/';
+}
+
 export type ShareOutcome = 'shared' | 'copied' | 'dismissed' | 'unavailable';
 
 /** The slice of the platform the share action needs; injectable for tests. */

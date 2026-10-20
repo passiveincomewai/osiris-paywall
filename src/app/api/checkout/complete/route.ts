@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { normalizeEmail } from "@/lib/password-auth";
+import {
+  describeStripePrice,
+  planByPriceIdFromEnv,
+} from "@/lib/billing/trial-reminders";
 
 export const runtime = "nodejs";
 
@@ -20,7 +24,7 @@ export async function GET(req: Request) {
   let checkout: Awaited<ReturnType<ReturnType<typeof stripe>["checkout"]["sessions"]["retrieve"]>>;
   try {
     checkout = await stripe().checkout.sessions.retrieve(sessionId, {
-      expand: ["customer"],
+      expand: ["customer", "subscription"],
     });
   } catch {
     return NextResponse.json({ error: "Invalid session" }, { status: 400 });
@@ -42,9 +46,48 @@ export async function GET(req: Request) {
     select: { name: true, phone: true },
   });
 
+  // What they actually bought, for the welcome page's completion loop:
+  // a trial user has NOT been charged yet, and the page must say so —
+  // when the trial ends and what the first charge will be. Derived from
+  // the live subscription/price, never restated. Any failure here just
+  // omits the fields; the claim flow itself must never break over copy.
+  let plan: string | null = checkout.metadata?.plan ?? null;
+  let trialEndsAt: string | null = null;
+  let chargeLabel: string | null = null;
+  try {
+    const sub = checkout.subscription;
+    if (sub && typeof sub !== "string") {
+      if (sub.status === "trialing" && sub.trial_end) {
+        trialEndsAt = new Date(sub.trial_end * 1000).toISOString();
+      }
+      const price = sub.items.data[0]?.price;
+      if (price) {
+        chargeLabel = describeStripePrice(
+          {
+            id: price.id,
+            unit_amount: price.unit_amount,
+            currency: price.currency,
+            recurring: price.recurring
+              ? {
+                  interval: price.recurring.interval,
+                  interval_count: price.recurring.interval_count,
+                }
+              : null,
+          },
+          planByPriceIdFromEnv(process.env),
+        ).chargeLabel;
+      }
+    }
+  } catch {
+    plan = plan ?? null;
+  }
+
   return NextResponse.json({
     email,
     name: user?.name ?? null,
     phone: user?.phone ?? null,
+    plan,
+    trialEndsAt,
+    chargeLabel,
   });
 }

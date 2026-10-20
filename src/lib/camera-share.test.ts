@@ -5,8 +5,12 @@ import {
   cameraShareText,
   cameraShareTitle,
   findCameraById,
+  lastCameraHref,
+  readLastCamera,
+  rememberLastCamera,
   shareCamera,
   sharedCameraIdFromSearch,
+  type KeyValueStore,
   type ShareEnv,
 } from './camera-share';
 
@@ -127,5 +131,53 @@ describe('share action', () => {
   it('reports unavailable when nothing can carry the link', async () => {
     expect(await shareCamera(cam, {}, BASE)).toBe('unavailable');
     expect(await shareCamera({ name: 'id-less' }, { clipboardWrite: vi.fn() }, BASE)).toBe('unavailable');
+  });
+});
+
+describe('last-opened camera memory', () => {
+  function fakeStore(): KeyValueStore & { data: Map<string, string> } {
+    const data = new Map<string, string>();
+    return {
+      data,
+      getItem: (k) => data.get(k) ?? null,
+      setItem: (k, v) => {
+        data.set(k, v);
+      },
+    };
+  }
+
+  it('round-trips the last opened camera', () => {
+    const store = fakeStore();
+    rememberLastCamera({ id: 'occ-shibuya', name: 'Shibuya Crossing' }, store);
+    expect(readLastCamera(store)).toEqual({ id: 'occ-shibuya', name: 'Shibuya Crossing' });
+  });
+
+  it('stores a null name when the record has none', () => {
+    const store = fakeStore();
+    rememberLastCamera({ id: 'faa-10915' }, store);
+    expect(readLastCamera(store)).toEqual({ id: 'faa-10915', name: null });
+  });
+
+  it('ignores cameras without a usable id and missing stores', () => {
+    const store = fakeStore();
+    rememberLastCamera({ name: 'id-less' }, store);
+    rememberLastCamera(null, store);
+    rememberLastCamera({ id: 'x' }, null);
+    expect(readLastCamera(store)).toBeNull();
+  });
+
+  it('reads corruption and absence as "no camera"', () => {
+    const store = fakeStore();
+    expect(readLastCamera(store)).toBeNull();
+    store.setItem('worldeye.lastCamera', '{not json');
+    expect(readLastCamera(store)).toBeNull();
+    store.setItem('worldeye.lastCamera', JSON.stringify({ name: 'no id' }));
+    expect(readLastCamera(store)).toBeNull();
+    expect(readLastCamera(null)).toBeNull();
+  });
+
+  it('builds the return href as the share deep link, globe root otherwise', () => {
+    expect(lastCameraHref({ id: 'occ-x/a b', name: null })).toBe('/?camera=occ-x%2Fa%20b');
+    expect(lastCameraHref(null)).toBe('/');
   });
 });

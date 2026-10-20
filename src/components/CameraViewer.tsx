@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check } from 'lucide-react';
 import Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
-import { cameraShareId, shareCamera } from '@/lib/camera-share';
+import { cameraShareId, rememberLastCamera, shareCamera } from '@/lib/camera-share';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
 import TimelapseControl from './TimelapseControl';
@@ -85,6 +85,13 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
       .catch(() => { if (live) setResolution({ key: resolveKey, embed: null, offline: false }); });
     return () => { live = false; };
   }, [resolveKey]);
+
+  // Remember the last camera opened on this device, so a visitor who
+  // leaves to check out can be offered their way straight back to it
+  // (lib/camera-share.ts — the /welcome loop reads it).
+  useEffect(() => {
+    rememberLastCamera(camera);
+  }, [camera]);
 
   const streamType = resolvedEmbed ? 'iframe' : (camera?.stream_type || 'jpg');
   const streamUrl: string | undefined = resolvedEmbed || camera?.stream_url;
