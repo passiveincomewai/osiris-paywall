@@ -13,7 +13,12 @@ export type BlogPost = {
   title: string;
   /** Short title used for the <title> tag (kept ≤60 chars with the suffix). */
   seoTitle: string;
+  /** Publication date (YYYY-MM-DD). */
   date: string;
+  /** Last genuine content revision (YYYY-MM-DD). Falls back to `date`. */
+  updated?: string;
+  /** Hero image path (defaults to the site OG image when unset). */
+  image?: string;
   excerpt: string;
   /** 140–160 char meta description. */
   seoDescription: string;
