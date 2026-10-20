@@ -73,6 +73,18 @@ const FAQS = [
     q: "Do I need to download an app?",
     a: "No. WorldEye runs in the browser on phone, tablet or desktop — the full camera directory is one tap away with nothing to install.",
   },
+  {
+    q: "What kinds of cameras are in the directory?",
+    a: "Mostly working cameras rather than postcard ones: state and provincial DOT highway networks, city intersection and traffic grids, harbor and airport approaches, plus beaches, ski resorts, mountain passes and landmarks. The mix follows public infrastructure — which is why the feeds are genuinely useful for checking roads, weather and conditions, not just sightseeing.",
+  },
+  {
+    q: "Does WorldEye carry EarthCam's own famous cameras?",
+    a: "No. EarthCam produces and hosts its own marquee feeds, and those stay on EarthCam — WorldEye doesn't rebroadcast other networks' proprietary cameras. What WorldEye offers instead is breadth: tens of thousands of public feeds from hundreds of operators, searchable on one globe.",
+  },
+  {
+    q: "Are the feeds really live?",
+    a: "They are the operators' own live feeds — many are streaming video, and some public networks (Canadian provincial cameras are the classic example) publish still images that refresh every few minutes instead. Either way, what you see is the feed as published, and individual cameras can occasionally go dark for maintenance on the operator's side.",
+  },
 ];
 
 const jsonLd = {
@@ -219,6 +231,41 @@ export default function EarthcamAlternativePage() {
                 </Link>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* Two kinds of camera network */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Two kinds of <span className="text-[#D4AF37]">camera network</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              The honest difference between EarthCam and WorldEye is
+              production versus aggregation. EarthCam has spent decades
+              building a network around cameras it installs, hosts and
+              produces itself — marquee locations, polished presentation,
+              its own apps. It is a broadcaster: fewer places, presented
+              beautifully, under one brand.
+            </p>
+            <p>
+              WorldEye is an index. Transport departments, cities, resorts,
+              ports and businesses already publish tens of thousands of live
+              feeds for their own reasons; WorldEye finds them, verifies
+              them and plots every one on a single globe — 74,229 cameras in
+              105 countries, most of them working infrastructure cameras
+              rather than scenic productions. The presentation is plainer;
+              the map is the product.
+            </p>
+            <p>
+              Which you prefer depends on what a camera is for. If you want a
+              famous view, beautifully produced, EarthCam is the classic. If
+              you want to check the pass before you drive it, watch a storm
+              reach a specific beach, or see what a city you&rsquo;ve never
+              visited looks like this morning, an index of 74,229 feeds on a
+              live globe is the tool. Plenty of people keep both — they were
+              never really the same product.
+            </p>
           </div>
         </div>
 

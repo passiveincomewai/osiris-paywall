@@ -273,6 +273,55 @@ export default function ZoomEarthAlternativesPage() {
         </div>
       </section>
 
+      {/* Switching guide */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold">Switching from Zoom Earth: your first five minutes</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            If Zoom Earth is your habit, the translation is mostly about what
+            each view was really showing you — and where the same thing lives
+            on a live globe:
+          </p>
+          <ul className="space-y-3 list-none">
+            <li>
+              <strong className="text-white/85">Storm watching.</strong>{" "}
+              Zoom Earth&rsquo;s storm view becomes WorldEye&rsquo;s weather
+              and hurricane layers — the same systems, but with the aircraft
+              routing around them and the public cameras underneath the track.
+              During a landfall, the camera in the storm is the view imagery
+              can&rsquo;t give you.
+            </li>
+            <li>
+              <strong className="text-white/85">Fire watching.</strong>{" "}
+              Satellite fire detections are on the wildfire layer (NASA FIRMS,
+              the same detection family), joined by 1,285 ALERT wildfire
+              cameras streaming live stills from fire country — orbit and
+              ground truth in one frame.
+            </li>
+            <li>
+              <strong className="text-white/85">The imagery itself.</strong>{" "}
+              The free globe&rsquo;s home view is a data basemap with live
+              satellite positions tracked overhead; Pro adds a true-color
+              satellite imagery basemap. If your need is a daily imagery
+              archive for research, keep NASA Worldview in your bookmarks —
+              nothing here replaces it.
+            </li>
+            <li>
+              <strong className="text-white/85">Everyday checking.</strong>{" "}
+              There is nothing to install and nothing to configure: open the
+              globe, search any place (basic search is free), and the layers
+              you left on are the layers you return to.
+            </li>
+          </ul>
+          <p>
+            Most switchers keep both for a week and then notice which tab they
+            actually open. Imagery for the deep dive, the globe for the living
+            picture — that division is fine, and this page won&rsquo;t pretend
+            otherwise.
+          </p>
+        </div>
+      </section>
+
       {/* How to choose */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">How to choose your Zoom Earth alternative</h2>
@@ -328,6 +377,26 @@ export default function ZoomEarthAlternativesPage() {
               OSINT toolkit, maritime intel, cyber/GDELT intel, satellite
               imagery view, advanced search filters and the AI analyst. The free map
               stays free regardless.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">Can I watch a hurricane live on WorldEye?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              Yes — that is one of the strongest reasons to switch. The
+              hurricane layer carries active storms and their tracks, the
+              weather layer shows the system around them, and the public
+              cameras near the coast show conditions on the ground as the
+              storm arrives: surf, wind and flooding as they happen, not as an
+              imagery loop. Zoom Earth shows the storm from orbit; WorldEye
+              adds the view from inside it.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">Does WorldEye work on a phone like Zoom Earth does?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              Yes. WorldEye runs in the mobile browser — no app to install —
+              with the same globe, layers and cameras as desktop, so a storm
+              check on your phone shows the same live picture as your desk.
             </p>
           </div>
         </div>

@@ -283,6 +283,52 @@ export default function GoogleEarthAlternativesPage() {
         </div>
       </section>
 
+      {/* Making the switch */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold">Making the switch from Google Earth</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            The honest starting point: WorldEye is not a clone of Google
+            Earth with live data bolted on, and two parts of your Google
+            Earth life do not transfer — your saved places and KML files, and
+            Earth&rsquo;s historical imagery archive. What does transfer is
+            the habit itself, and it maps across like this:
+          </p>
+          <ul className="space-y-3 list-none">
+            <li>
+              <strong className="text-white/85">Flying to a place.</strong>{" "}
+              The same gesture, a different engine: search any place, address
+              or coordinates and the globe flies there — basic search is free
+              with no signup. What greets you is not a static photograph but
+              the place as it is now: its weather, its traffic in the air,
+              and its public cameras on the ground.
+            </li>
+            <li>
+              <strong className="text-white/85">Dropping to street level.</strong>{" "}
+              WorldEye&rsquo;s ground truth is live cameras first — 74,229 of
+              them — plus community street-level photography from Panoramax,
+              every frame dated and credited, and labeled as photography
+              rather than a live feed. It is not Street View&rsquo;s coverage;
+              it is something Street View can&rsquo;t do at all — the street
+              as it looks this minute.
+            </li>
+            <li>
+              <strong className="text-white/85">Looking from above.</strong>{" "}
+              Pro adds a true-color satellite imagery basemap for the
+              top-down inspection Google Earth users know, while the free
+              globe tracks the satellites themselves overhead.
+            </li>
+            <li>
+              <strong className="text-white/85">Exploring for its own sake.</strong>{" "}
+              This is where switchers get hooked: a globe where things move.
+              Idle curiosity — a storm spinning up, a ship queue at a canal,
+              rush hour in a city you&rsquo;ve never visited, live on its own
+              cameras — is a different pastime from browsing an archive.
+            </li>
+          </ul>
+        </div>
+      </section>
+
       {/* How to choose */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Which live-Earth tool should you use?</h2>
@@ -336,6 +382,29 @@ export default function GoogleEarthAlternativesPage() {
               High-resolution satellite imagery view, the AI analyst assistant,
               premium intel feeds, the OSINT toolkit, and advanced search filters. Weekly $7.99, monthly $13.99, annual $74.99 —
               the live globe itself stays free.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">Does WorldEye have Street View?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              Not Google&rsquo;s Street View — nothing outside Google does.
+              WorldEye&rsquo;s street level works differently: live public
+              cameras for the present moment, and Panoramax community
+              street-level photography for ground detail, with the capture
+              date and credit on every frame. For walking a street
+              photograph-by-photograph at global coverage, Google Earth
+              remains the tool; for seeing the street live, that is the
+              globe&rsquo;s whole point.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">Can I use WorldEye offline, like Google Earth&rsquo;s cached areas?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              No — and by design. WorldEye is a live product: its flights,
+              cameras, weather and earthquakes only mean anything with a
+              connection, so there is no offline mode. If your work is
+              offline fieldwork with downloaded imagery, keep Google Earth
+              for it.
             </p>
           </div>
         </div>

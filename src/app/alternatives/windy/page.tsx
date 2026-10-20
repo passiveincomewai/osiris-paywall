@@ -280,6 +280,51 @@ export default function WindyAlternativesPage() {
         </div>
       </section>
 
+      {/* Switching guide */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold">Switching from Windy: where your habits land</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            Windy trains a specific habit — open the map, read the weather,
+            close the tab. Here is where each part of that habit lands on a
+            live globe, stated plainly, including the parts that don&rsquo;t
+            translate:
+          </p>
+          <ul className="space-y-3 list-none">
+            <li>
+              <strong className="text-white/85">The webcam layer.</strong>{" "}
+              Windy carries webcams as a side layer; WorldEye&rsquo;s camera
+              network is a core one — 74,229 public feeds on the same globe as
+              the weather, so the storm on the radar and the street it is
+              flooding are one zoom apart.
+            </li>
+            <li>
+              <strong className="text-white/85">Radar and current weather.</strong>{" "}
+              WorldEye&rsquo;s weather layer shows live systems, severe-weather
+              alerts and NOAA radar — conditions as they are now, which covers
+              the everyday &ldquo;what&rsquo;s happening out there&rdquo;
+              check most people open Windy for.
+            </li>
+            <li>
+              <strong className="text-white/85">Forecast models.</strong>{" "}
+              This part does not translate, and this page won&rsquo;t pretend
+              it does: WorldEye does not run forecast models, animate wind
+              forward in time, or offer model comparisons. If your Windy use
+              is planning a crossing, a flight or a surf session days out,
+              keep Windy for it — it is the specialist, and it is better at
+              that job.
+            </li>
+            <li>
+              <strong className="text-white/85">Everything the weather touches.</strong>{" "}
+              What the globe adds is the rest of the live picture: flights
+              climbing through the weather, satellites overhead, quakes,
+              fires and transit — the context a forecast map leaves in other
+              tabs.
+            </li>
+          </ul>
+        </div>
+      </section>
+
       {/* How to choose */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">How to choose your Windy alternative</h2>
@@ -336,6 +381,29 @@ export default function WindyAlternativesPage() {
               OSINT toolkit, maritime intel, cyber/GDELT intel, satellite
               imagery view, advanced search filters and the AI analyst. The free map
               stays free regardless.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">I use Windy for sailing and flying. Should I switch?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              For the planning itself, no — Windy&rsquo;s forecast models,
+              animated wind and marine layers are built for exactly that, and
+              WorldEye does not replicate them. What switchers in your
+              position usually do is split the job: Windy for the forecast
+              before the trip, WorldEye during it — live conditions, the
+              harbor and pass cameras, and the air and sea traffic around
+              you, all on one screen.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">Does WorldEye show wind?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              WorldEye&rsquo;s weather layer shows live weather systems,
+              severe-weather alerts and radar rather than Windy-style animated
+              wind particles stepped through a forecast. If animated wind
+              visualization is the thing you open a weather map for, Ventusky
+              and Windy remain the specialists — the options above say which
+              fits which job.
             </p>
           </div>
         </div>

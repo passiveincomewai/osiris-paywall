@@ -242,6 +242,55 @@ export default function GodsEyeViewPage() {
           </div>
         </div>
 
+        {/* Five places to start */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Five places to <span className="text-[#D4AF37]">start looking</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              A planet is a lot to take in at once. New visitors tend to fall
+              into the god&rsquo;s eye view through a specific place — so
+              start with one of these, and let the zooming begin:
+            </p>
+            <ul className="space-y-3 list-none">
+              <li>
+                <strong className="text-white/85">A Tokyo street at night.</strong>{" "}
+                Search Tokyo and open a camera in the Kabukicho district —
+                neon, crowds and crossings, live. Then pull back and notice
+                how much of the city the camera grid covers.
+              </li>
+              <li>
+                <strong className="text-white/85">A highway over the ocean.</strong>{" "}
+                The Florida Keys&rsquo; US-1 runs bridge to bridge over open
+                water, and its cameras (Mile Marker 70 is a favorite) show
+                weather and traffic in the middle of the sea.
+              </li>
+              <li>
+                <strong className="text-white/85">A mountain pass in a storm.</strong>{" "}
+                Utah&rsquo;s SR-210 up Little Cottonwood Canyon — the road to
+                Alta and Snowbird — is ringed with cameras. In winter, it is
+                the difference between guessing about avalanche country and
+                seeing it.
+              </li>
+              <li>
+                <strong className="text-white/85">Whatever is overhead.</strong>{" "}
+                Turn on the satellite layer and find the International Space
+                Station. It circles the whole planet every 93 minutes — from
+                the god&rsquo;s eye view, you can watch it cross your own sky
+                and then find the cameras underneath its path.
+              </li>
+              <li>
+                <strong className="text-white/85">Your own street.</strong>{" "}
+                The most quietly radical view: zoom to where you live. If a
+                public camera covers your commute, your beach or your pass,
+                the abstract idea of a live planet becomes personal very
+                quickly.
+              </li>
+            </ul>
+          </div>
+        </div>
+
         {/* FAQ */}
         <div className="mt-20 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
