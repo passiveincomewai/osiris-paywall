@@ -7,6 +7,7 @@ import { recordCommissionsForInvoice, reverseCommissionsForInvoice } from "@/lib
 import { creditPackPurchase } from "@/lib/studio/credits";
 import { getCreditConfig } from "@/lib/studio/credits-settings";
 import { attributeUserToAffiliate, linkAttribution } from "@/lib/affiliate/attribution";
+import { grantInviteCameraBonus } from "@/lib/camera-bonus";
 import { attributeUserToDiscountAffiliate } from "@/lib/affiliate/discount";
 import { normalizeEmail, isValidEmail } from "@/lib/password-auth";
 import { sendEmail, emailConfigured } from "@/lib/email";
@@ -289,6 +290,16 @@ export async function POST(req: NextRequest) {
                 await linkAttribution(userId, affProfileId);
               } else {
                 await attributeUserToAffiliate(userId);
+              }
+              // Invite-a-friend camera bonus: for a guest whose account
+              // this checkout created, the attribution above is their
+              // signup completing — pay the inviter's +15 camera opens.
+              // Idempotent per invitee; best-effort like the attribution
+              // itself — never fail the webhook for a bonus.
+              try {
+                await grantInviteCameraBonus(userId);
+              } catch (e) {
+                console.error("[stripe-webhook] invite camera bonus failed:", e);
               }
               const customerId =
                 typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id ?? "";

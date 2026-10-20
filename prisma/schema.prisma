@@ -26,6 +26,7 @@ model User {
   subscription  Subscription?
   creatorApplications CreatorApplication[]
   affiliateProfile AffiliateProfile?
+  cameraBonusAccount CameraBonusAccount?
   savedCameras  SavedCamera[]
   clipMetas     ClipMeta[]
   createdAt     DateTime       @default(now())
@@ -131,6 +132,10 @@ enum AffiliateStatus {
   active
   suspended
   banned
+  // Admin-removed affiliate role: blocks dashboard/Studio access and new
+  // attributions (all gates key on status === "active"); history preserved,
+  // reactivatable by setting status back to active.
+  removed
 }
 
 model AffiliateProfile {
@@ -220,6 +225,34 @@ model ReferralAttribution {
   convertedAt   DateTime?
 
   @@index([affiliateProfileId])
+}
+
+// ── Invite-a-friend camera bonus ─────────────────────────────────────
+// A signed-in user earns +15 camera opens when a friend completes
+// signup through their /ref link (i.e. a ReferralAttribution row for
+// the friend names the user's affiliate profile). The grant ledger
+// makes the award one-per-invited-account, ever; the account row is
+// the inviter's spendable balance, decremented server-side as
+// beyond-base camera opens are consumed (lib/camera-bonus.ts).
+model CameraBonusAccount {
+  userId    String   @id
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CameraBonusGrant {
+  id            String   @id @default(cuid())
+  // One grant per invited account, ever — signup retries, repeat
+  // sign-in syncs and webhook replays all hit this unique key and stop.
+  inviteeUserId String   @unique
+  inviterUserId String
+  amount        Int      @default(15)
+  createdAt     DateTime @default(now())
+
+  @@index([inviterUserId])
 }
 
 enum CommissionStatus {
