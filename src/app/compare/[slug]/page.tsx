@@ -5,6 +5,11 @@ import { Check, Minus, X, HelpCircle } from "lucide-react";
 import { db } from "@/lib/db";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import {
+  getBundledCompetitor,
+  listBundledRelated,
+  type CompetitorData,
+} from "@/lib/competitors-data";
 
 export const dynamic = "force-dynamic";
 
@@ -28,9 +33,41 @@ function StatusCell({ value }: { value: string }) {
   );
 }
 
+/** DB row first (admin-seeded); bundled research JSON as the fallback so an
+ *  unseeded environment still renders the real comparison. */
+async function loadCompetitor(slug: string): Promise<CompetitorData | null> {
+  try {
+    const row = await db.competitor.findUnique({ where: { slug, published: true } });
+    if (row) {
+      return {
+        slug: row.slug,
+        name: row.name,
+        website: row.website,
+        categories: row.categories,
+        tagline: row.tagline,
+        description: row.description,
+        features: (row.features as unknown as CompetitorData["features"]) ?? [],
+        pricing: row.pricing,
+        whyWorldEye: (row.whyWorldEye as unknown as string[]) ?? [],
+        competitorWins: row.competitorWins,
+        verdictWorldEye: row.verdictWorldEye,
+        verdictCompetitor: row.verdictCompetitor,
+        sources: (row.sources as unknown as CompetitorData["sources"]) ?? [],
+        lastReviewed: row.lastReviewed,
+        published: row.published,
+        seoTitle: row.seoTitle,
+        seoDescription: row.seoDescription,
+      };
+    }
+  } catch {
+    /* DB unreachable — fall through to the bundled copy */
+  }
+  return getBundledCompetitor(slug);
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const c = await db.competitor.findUnique({ where: { slug, published: true } });
+  const c = await loadCompetitor(slug);
   if (!c) return { title: "Comparison not found" };
   const title = c.seoTitle || `WorldEye vs ${c.name} (2026): Which Platform Is Right for You?`;
   const description = c.seoDescription || c.tagline || `Compare WorldEye with ${c.name}: features, pricing and verdict.`;
@@ -45,19 +82,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ComparePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const c = await db.competitor.findUnique({ where: { slug, published: true } });
+  const c = await loadCompetitor(slug);
   if (!c) notFound();
 
-  const features = (c.features as unknown as Feature[]) ?? [];
-  const whyWorldEye = (c.whyWorldEye as unknown as string[]) ?? [];
-  const sources = (c.sources as unknown as { label: string; url: string }[]) ?? [];
+  const features = c.features ?? [];
+  const whyWorldEye = c.whyWorldEye ?? [];
+  const sources = c.sources ?? [];
   const reviewed = new Date(c.lastReviewed).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
-  const related = await db.competitor.findMany({
-    where: { published: true, slug: { not: slug }, categories: { hasSome: c.categories } },
-    take: 4,
-    select: { slug: true, name: true },
-  });
+  let related: { slug: string; name: string }[] = [];
+  try {
+    related = await db.competitor.findMany({
+      where: { published: true, slug: { not: slug }, categories: { hasSome: c.categories } },
+      take: 4,
+      select: { slug: true, name: true },
+    });
+  } catch {
+    /* DB unreachable — related falls back below */
+  }
+  if (related.length === 0) {
+    related = listBundledRelated(slug, c.categories).map((r) => ({ slug: r.slug, name: r.name }));
+  }
 
   const title = c.seoTitle || `WorldEye vs ${c.name} (2026): Which Intelligence Platform Is Right for You?`;
   const pageUrl = `https://worldeye.app/compare/${slug}`;
@@ -209,6 +254,35 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             satellites, ships, cameras and weather on one 3D globe, WorldEye is the stronger pick. For {c.name}'s
             specialty, it remains the dedicated choice — many analysts use both.
           </p>
+        </section>
+
+        {/* How this comparison was researched */}
+        <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <h2 className="text-2xl font-bold text-white mb-4">How we researched this comparison</h2>
+          <div className="space-y-3 text-sm text-white/60 leading-relaxed">
+            <p>
+              Every row in the table above was checked against {c.name}&rsquo;s official site,
+              documentation or published pricing — the sources are listed at the bottom of this
+              page, and the comparison was last reviewed in {reviewed}. Where a capability
+              couldn&rsquo;t be confirmed from an official source, it is marked
+              &ldquo;Not verified&rdquo; rather than guessed: that means we don&rsquo;t know,
+              not that the feature doesn&rsquo;t exist.
+            </p>
+            <p>
+              WorldEye&rsquo;s own figures are counted, not estimated: the camera network is
+              the 74,229 public feeds in our live directory across 105 countries, and the
+              free/Pro split is the live product — the map, flights, satellites, weather,
+              earthquakes, wildfires and cameras are free with no signup, while the OSINT
+              toolkit, intel feeds, satellite imagery view and traffic layer sit in Pro
+              ($7.99/week, $13.99/month, $74.99/year, with free trials and a 7-day
+              money-back guarantee on the first charge).
+            </p>
+            <p>
+              Products change. If you spot a row that has gone stale — a feature {c.name} has
+              shipped, or one of ours that has moved — the honest fix is an update, and the
+              sources below show exactly what each claim rests on.
+            </p>
+          </div>
         </section>
 
         {/* Sources */}

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import CompareHub from "./CompareHub";
+import { listBundledCompetitors } from "@/lib/competitors-data";
 
 export const dynamic = "force-dynamic";
 
@@ -39,11 +40,23 @@ const DIFFERENTIATORS = [
 ];
 
 export default async function CompareHubPage() {
-  const competitors = await db.competitor.findMany({
-    where: { published: true },
-    orderBy: { name: "asc" },
-    select: { slug: true, name: true, website: true, categories: true, tagline: true, lastReviewed: true },
-  });
+  // DB first (admin-seeded); bundled research JSON fills in until seeded.
+  let competitors: { slug: string; name: string; website: string | null; categories: string[]; tagline: string | null; lastReviewed: Date }[] = [];
+  try {
+    competitors = await db.competitor.findMany({
+      where: { published: true },
+      orderBy: { name: "asc" },
+      select: { slug: true, name: true, website: true, categories: true, tagline: true, lastReviewed: true },
+    });
+  } catch {
+    /* DB unreachable — bundled fallback below */
+  }
+  if (competitors.length === 0) {
+    competitors = listBundledCompetitors().map((c) => ({
+      slug: c.slug, name: c.name, website: c.website,
+      categories: c.categories, tagline: c.tagline, lastReviewed: c.lastReviewed,
+    }));
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -101,6 +114,32 @@ export default async function CompareHubPage() {
               <p className="text-xs text-white/50 mt-2 leading-relaxed">{d.body}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* How to read these comparisons */}
+      <section className="max-w-5xl mx-auto px-6 pb-12">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <h2 className="text-xl font-bold text-white mb-3">How to read these comparisons</h2>
+          <div className="space-y-3 text-sm text-white/55 leading-relaxed">
+            <p>
+              Most of the tools compared here are specialists: a flight tracker that does
+              aviation deeply, a conflict map built around curated event reports, a weather
+              platform built on forecast models. WorldEye is the generalist — one free 3D
+              globe carrying flights, satellites, ships, live transit, weather, earthquakes,
+              wildfires and 74,229 public cameras, with an optional Pro tier for the OSINT
+              toolkit and intel feeds. Neither shape is automatically better; the right pick
+              depends on whether your work lives in one layer or moves between all of them.
+            </p>
+            <p>
+              Each comparison page checks features against the competitor&rsquo;s official
+              sources, lists those sources, states plainly where the competitor is stronger,
+              and marks anything we could not verify as &ldquo;Not verified&rdquo; instead of
+              guessing. Use the verdicts as a starting point, then open both products — the
+              WorldEye side costs nothing and needs no signup, so the honest test takes a
+              minute.
+            </p>
+          </div>
         </div>
       </section>
 
