@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
-  ArrowLeft, Loader2, Check, User, Lock, CreditCard, LogOut, Crown,
+  ArrowLeft, Loader2, Check, User, Lock, CreditCard, LogOut, Crown, BellRing,
 } from "lucide-react";
 
 type Profile = {
@@ -195,6 +195,12 @@ export default function SettingsClient() {
                 <Link href="/settings/subscription" className={`${btnGold} mt-2 inline-flex items-center gap-2`}>
                   <CreditCard className="w-4 h-4" /> Manage subscription
                 </Link>
+                <div>
+                  <Link href="/settings/alerts" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition">
+                    <BellRing className="w-4 h-4 text-[#D4AF37]" /> Camera alerts
+                    <span className="px-2 py-0.5 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-[10px] font-bold tracking-wider">VIP PRO</span>
+                  </Link>
+                </div>
                 <p className="text-xs text-white/35">Switch plans right here on WorldEye — payment details and cancellation stay with Stripe.</p>
               </div>
             ) : (
