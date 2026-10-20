@@ -32,6 +32,7 @@ model User {
   cameraCollections CameraCollection[]
   enterpriseApiKeys EnterpriseApiKey[]
   claimedShareIdentity ShareIdentity? @relation("ShareIdentityClaim")
+  alertRules AlertRule[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -905,4 +906,71 @@ model EnterpriseApiKey {
   createdAt  DateTime  @default(now())
 
   @@index([userId])
+}
+
+// ── VIP camera alerts ────────────────────────────────────────────────
+// A VIP Pro member watches up to 10 cameras with a plain-language
+// condition ("snow on the road"). A cron checker (every ~15 min) has
+// an AI look at the camera's latest still and, when the condition
+// starts matching, notifies by email + an in-app AlertEvent. Rules
+// pause (never delete) when the owner's VIP lapses.
+
+model AlertRule {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Catalogue camera id (src/app/api/cctv records) + the name as it
+  // read when the rule was made, so lists stay legible if the
+  // catalogue renames it later.
+  cameraId      String
+  cameraName    String
+  // The member's own words, e.g. "snow on the road".
+  condition     String
+
+  emailEnabled  Boolean  @default(true)
+  inAppEnabled  Boolean  @default(true)
+  active        Boolean  @default(true)
+
+  // Last completed check: "matches" | "clear" | "unknown" (unknown =
+  // no still could be fetched or read — it never alerts).
+  lastVerdict   String   @default("unknown")
+  // True once the current matching episode has been notified, so a
+  // condition that keeps matching doesn't re-alert every check.
+  matchNotified Boolean  @default(false)
+  lastCheckedAt DateTime?
+  lastAlertedAt DateTime?
+
+  events        AlertEvent[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([active, lastCheckedAt])
+}
+
+model AlertEvent {
+  id          String    @id @default(cuid())
+  ruleId      String
+  rule        AlertRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  // Denormalised owner: the inbox lists and prunes by user without a join.
+  userId      String
+
+  // Always "matches" today — an event is a notification, not a check log.
+  verdict     String    @default("matches")
+  // The AI's own words about the frame it saw (an observation, not a fact claim).
+  observation String
+  // When the checked still was captured (frame route's X-Frame-At).
+  frameAt     DateTime?
+  // The exact still the checker saw, 768px JPEG, base64. Lets the alert
+  // show its own photo instead of whatever the camera shows later.
+  imageJpeg   String?   @db.Text
+  emailSent   Boolean   @default(false)
+  readAt      DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@index([ruleId])
 }
