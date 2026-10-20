@@ -13,8 +13,7 @@ import {
 } from '@/lib/noaa-radar';
 import {
   TRAFFIC_MIN_ZOOM, CAMERA_SEARCH_RADIUS_M,
-  targetVehicleCount, congestionBand, BAND_COLORS,
-} from '@/lib/traffic/config';
+  targetVehicleCount, congestionBand, BAND_COLORS, trafficChipText, type TrafficFlowState, } from '@/lib/traffic/config';
 import { buildRoadNetwork, type RoadNetwork } from '@/lib/traffic/roads';
 import { effectiveRatio } from '@/lib/traffic/congestion';
 import {
@@ -4020,19 +4019,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     const setChip = () => {
       if (!live) return;
-      if (map.getZoom() < TRAFFIC_MIN_ZOOM) {
-        setTrafficChip('VEHICLES: SIMULATED · ZOOM IN TO CITY LEVEL FOR STREET TRAFFIC');
-        return;
-      }
-      const flow = trafficFlowRef.current;
-      const congestion = !tomtomConfigured
-        ? 'SIMULATED MODEL'
-        : flowError
-          ? 'TOMTOM UNAVAILABLE · SIMULATED MODEL'
-          : flow
-            ? `TOMTOM LIVE FLOW · SAMPLED ${new Date(flow.at).toLocaleTimeString('en-US', { hour12: false })}`
-            : 'TOMTOM LIVE FLOW · SAMPLING…';
-      setTrafficChip(`VEHICLES: SIMULATED (${trafficVehiclesStateRef.current.length}) · ROADS © OPENSTREETMAP CONTRIBUTORS · CONGESTION: ${congestion}`);
+      // The chip text is pinned in lib/traffic/config (trafficChipText):
+      // flow is live TomTom where configured; vehicles are modeled from
+      // road data in every state — the line says both, never more.
+      const flowState: TrafficFlowState = tomtomConfigured && !flowError ? 'live' : 'unavailable';
+      setTrafficChip(trafficChipText(flowState, map.getZoom() < TRAFFIC_MIN_ZOOM));
     };
 
     const setRoadFeatures = () => {
@@ -4107,9 +4098,16 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (net.roads.length) trafficNetRef.current = net;
       const active = trafficNetRef.current;
       if (!active) { setChip(); return; }
+      // Fleet density follows measured congestion: the network's
+      // length-weighted mean ratio (TomTom where matched, the class
+      // model elsewhere) scales the target — gridlock packs, 3 AM
+      // free flow thins out.
+      let weighted = 0;
+      for (const road of active.roads) weighted += ratioFor(road) * road.lengthM;
+      const meanRatio = active.totalLengthM > 0 ? weighted / active.totalLengthM : undefined;
       trafficVehiclesStateRef.current = reconcileVehicles(
         trafficVehiclesStateRef.current, active,
-        targetVehicleCount(active.totalLengthM, zoom, mobileLike), rng, ratioFor,
+        targetVehicleCount(active.totalLengthM, zoom, mobileLike, meanRatio), rng, ratioFor,
       );
       sampleFlow();
       setRoadFeatures();
@@ -4133,8 +4131,8 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       const radiusKm = (CAMERA_SEARCH_RADIUS_M / 1000).toFixed(1);
       openNearbyCamerasRef.current?.(here, {
         title: roadName ? `TRAFFIC — ${String(roadName).toUpperCase()}` : 'TRAFFIC — ROAD SEGMENT',
-        honestyWithResults: 'VEHICLES HERE ARE SIMULATED · CAMERAS BELOW ARE REAL',
-        honestyEmpty: 'VEHICLES HERE ARE SIMULATED',
+        honestyWithResults: 'VEHICLES HERE ARE MODELED FROM ROAD DATA · CAMERAS BELOW ARE REAL',
+        honestyEmpty: 'VEHICLES HERE ARE MODELED FROM ROAD DATA',
         listLead: (n) => `${n} live camera${n > 1 ? 's' : ''} within ${radiusKm} km:`,
         emptyText: `No live cameras in the loaded index within ${radiusKm} km of this road.`,
       });

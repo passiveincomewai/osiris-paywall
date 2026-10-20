@@ -14,7 +14,7 @@
 
 import { nodeKey, pointAt, type RoadNetwork, type TrafficRoad } from './roads';
 import { speedMps } from './congestion';
-import { CLASS_SPAWN_WEIGHT } from './config';
+import { CLASS_SPAWN_WEIGHT, congestionDensityWeight } from './config';
 
 /** Deterministic RNG (mulberry32) carried as plain state. */
 export interface Rng { state: number }
@@ -55,7 +55,11 @@ function spawnVehicle(network: RoadNetwork, rng: Rng, ratioFor: RatioFor): SimVe
   let total = 0;
   const cum: number[] = new Array(roads.length);
   for (let i = 0; i < roads.length; i++) {
-    total += roads[i].lengthM * CLASS_SPAWN_WEIGHT[roads[i].roadClass];
+    // Spawn weight: length × road class × how backed-up the road is.
+    // A crawling arterial accumulates vehicles; the same road at free
+    // flow carries fewer — density follows the measured congestion.
+    total += roads[i].lengthM * CLASS_SPAWN_WEIGHT[roads[i].roadClass]
+      * congestionDensityWeight(ratioFor(roads[i]));
     cum[i] = total;
   }
   const pick = nextFloat(rng) * total;

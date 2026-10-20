@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   classesForZoom, targetVehicleCount, congestionBand,
+  congestionDensityWeight, densityScaleForMeanRatio, trafficChipText,
   VEHICLE_CAP_DESKTOP, VEHICLE_CAP_MOBILE,
 } from './config';
 import {
@@ -258,5 +259,113 @@ describe('flow matching', () => {
       properties: { traffic_level: '0.55' },
     }];
     expect(matchFlowToRoads([roadOf()], flow).get(roadOf().id)).toBeCloseTo(0.55, 5);
+  });
+});
+
+describe('density follows measured congestion', () => {
+  it('density weights fall as roads run freer, within clamps', () => {
+    expect(congestionDensityWeight(0.15)).toBeGreaterThan(congestionDensityWeight(0.5));
+    expect(congestionDensityWeight(0.5)).toBeGreaterThan(congestionDensityWeight(0.95));
+    expect(congestionDensityWeight(0)).toBeLessThanOrEqual(1.45);
+    expect(congestionDensityWeight(1)).toBeGreaterThanOrEqual(0.6);
+    expect(densityScaleForMeanRatio(0.25)).toBeGreaterThan(1);
+    expect(densityScaleForMeanRatio(0.95)).toBeLessThan(0.65);
+  });
+
+  it('fleet target: gridlock packs more vehicles than the same network free-flowing', () => {
+    const neutral = targetVehicleCount(42_000, 16, false);
+    expect(targetVehicleCount(42_000, 16, false, 0.25)).toBeGreaterThan(neutral);
+    expect(targetVehicleCount(42_000, 16, false, 0.95)).toBeLessThan(neutral);
+    expect(targetVehicleCount(1e9, 16, false, 0.1)).toBe(VEHICLE_CAP_DESKTOP); // caps stay hard
+  });
+
+  it('spawning favours the crawling road over an equal free-flowing one', () => {
+    const net = buildRoadNetwork([
+      line([[0, 0], [0.01, 0]], { name: 'Jam Road' }),
+      line([[0, 0.02], [0.01, 0.02]], { name: 'Free Road' }),
+    ], 14);
+    const jam = net.roads.find(r => r.name === 'Jam Road')!;
+    const ratioFor = (road: (typeof net.roads)[number]) => (road.id === jam.id ? 0.15 : 0.95);
+    const vehicles = reconcileVehicles([], net, 60, createRng(99), ratioFor);
+    const onJam = vehicles.filter(v => v.roadId === jam.id).length;
+    expect(onJam).toBeGreaterThan(36); // weights imply ~69% on the jammed road
+  });
+});
+
+describe('vehicle speed follows the measured flow', () => {
+  it('a vehicle settles at free-flow × the ratio of the road it is on', () => {
+    const net = abNetwork();
+    const road = net.roads.find(r => r.name === 'A Street')!;
+    const settle = (ratio: number) => {
+      const v: SimVehicle = {
+        roadId: road.id, roadIndex: net.roads.indexOf(road), s: 200, dir: 1, v: 0, pace: 1,
+      };
+      const rng = createRng(4);
+      for (let i = 0; i < 240; i++) advanceVehicles([v], net, 0.25, rng, () => ratio);
+      return v.v;
+    };
+    const jammed = settle(0.12);
+    const free = settle(0.95);
+    expect(jammed).toBeCloseTo(speedMps(road, 0.12), 0);
+    expect(free).toBeCloseTo(speedMps(road, 0.95), 0);
+    expect(jammed).toBeLessThan(free * 0.2); // crawling vs flying — the data drives it
+  });
+
+  it('vehicles stay on their road polylines across junctions, turns and reversals', () => {
+    const net = abNetwork();
+    const rng = createRng(21);
+    const vehicles = reconcileVehicles([], net, 10, rng, () => 0.8);
+    const M_LNG = 111_320;
+    const M_LAT = 110_540;
+    const distToSegM = (p: [number, number], a: [number, number], b: [number, number]) => {
+      const px = p[0] * M_LNG, py = p[1] * M_LAT;
+      const ax = a[0] * M_LNG, ay = a[1] * M_LAT;
+      const bx = b[0] * M_LNG, by = b[1] * M_LAT;
+      const dx = bx - ax, dy = by - ay;
+      const len2 = dx * dx + dy * dy;
+      let t = len2 > 0 ? ((px - ax) * dx + (py - ay) * dy) / len2 : 0;
+      t = Math.max(0, Math.min(1, t));
+      return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+    };
+    for (let step = 0; step < 400; step++) {
+      advanceVehicles(vehicles, net, 0.25, rng, () => 0.8);
+      for (const v of vehicles) {
+        const f = vehicleFeature(v, net, () => 0.8)!;
+        const road = net.roads[v.roadIndex];
+        let d = Infinity;
+        for (let i = 1; i < road.coords.length; i++) {
+          d = Math.min(d, distToSegM(f.geometry.coordinates, road.coords[i - 1], road.coords[i]));
+        }
+        expect(d).toBeLessThan(1.5); // on the line, never drifting across the map
+      }
+    }
+  });
+});
+
+describe('chip copy', () => {
+  it('live flow ships the sanctioned line verbatim', () => {
+    expect(trafficChipText('live', false)).toBe('Live traffic flow · vehicles modeled from road data');
+  });
+
+  it('no state says "simulated"; every state keeps the modeled disclaimer', () => {
+    const all = [
+      trafficChipText('live', false), trafficChipText('live', true),
+      trafficChipText('unavailable', false), trafficChipText('unavailable', true),
+    ];
+    for (const t of all) {
+      expect(t.toLowerCase()).not.toContain('simulated');
+      expect(t).toContain('modeled from road data');
+    }
+  });
+
+  it('the degraded state never claims live flow', () => {
+    const t = trafficChipText('unavailable', false);
+    expect(t).toContain('live traffic flow unavailable');
+    expect(t.startsWith('Live traffic flow')).toBe(false);
+  });
+
+  it('below city zoom the chip still explains the zoom requirement', () => {
+    expect(trafficChipText('live', true)).toContain('zoom in to city level');
+    expect(trafficChipText('unavailable', true)).toContain('zoom in to city level');
   });
 });

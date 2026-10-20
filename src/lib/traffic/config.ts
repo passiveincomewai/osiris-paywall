@@ -50,12 +50,38 @@ const METRES_PER_VEHICLE = 420;
  * How many vehicles a network of this size should carry. Longer networks
  * earn more vehicles up to the hard cap; at wide zooms only arterials are
  * loaded anyway, so their total length naturally thins the fleet.
+ * `meanRatio` (the network's length-weighted mean speed ratio, when the
+ * caller knows it) scales density by measured congestion: a gridlocked
+ * network is packed, a free-flowing one at 3 AM is sparse.
  */
-export function targetVehicleCount(totalLengthM: number, zoom: number, mobile: boolean): number {
+export function targetVehicleCount(totalLengthM: number, zoom: number, mobile: boolean, meanRatio?: number): number {
   const cap = mobile ? VEHICLE_CAP_MOBILE : VEHICLE_CAP_DESKTOP;
   const zoomScale = zoom >= 14.5 ? 1 : zoom >= 13 ? 0.55 : 0.3;
-  const byLength = Math.round((totalLengthM / METRES_PER_VEHICLE) * zoomScale);
+  const density = typeof meanRatio === 'number' && Number.isFinite(meanRatio)
+    ? densityScaleForMeanRatio(meanRatio)
+    : 1;
+  const byLength = Math.round((totalLengthM / METRES_PER_VEHICLE) * zoomScale * density);
   return Math.max(0, Math.min(cap, byLength));
+}
+
+/**
+ * Fleet-density scale for a network whose mean speed ratio is
+ * `meanRatio` (1 = everything at free flow, ~0.25 = gridlock).
+ * Free-flowing networks thin out; jammed ones fill up.
+ */
+export function densityScaleForMeanRatio(meanRatio: number): number {
+  const r = Math.max(0, Math.min(1, meanRatio));
+  return Math.max(0.45, Math.min(1.35, 0.45 + (1 - r) * 0.95));
+}
+
+/**
+ * Per-road spawn weight from the road's own speed ratio: the slower a
+ * road is running, the more vehicles pile onto it. Free flow still
+ * carries traffic — just less of it.
+ */
+export function congestionDensityWeight(ratio: number): number {
+  const r = Math.max(0, Math.min(1, ratio));
+  return Math.max(0.6, Math.min(1.45, 1.6 - r));
 }
 
 /** Relative spawn weight per class — the big roads carry most of the traffic. */
@@ -93,3 +119,22 @@ export const FLOW_MATCH_RADIUS_M = 60;
 export const TOMTOM_PROXY_MIN_ZOOM = 9;
 export const TOMTOM_PROXY_MAX_ZOOM = 19;
 export const TOMTOM_TILE_TTL_MS = 60_000;
+
+// ── Chip copy ─────────────────────────────────────────────────────────
+// The one line that rides with the traffic layer. The congestion/flow
+// data is live TomTom where configured; the vehicles are always a
+// model drawn from the road data — the line says both, in those words.
+
+/** What the chip can honestly say about its flow data right now. */
+export type TrafficFlowState = 'live' | 'unavailable';
+
+export function trafficChipText(flow: TrafficFlowState, belowMinZoom: boolean): string {
+  if (belowMinZoom) {
+    return flow === 'live'
+      ? 'Live traffic flow · vehicles modeled from road data — zoom in to city level for street traffic'
+      : 'Vehicles modeled from road data — zoom in to city level for street traffic';
+  }
+  return flow === 'live'
+    ? 'Live traffic flow · vehicles modeled from road data'
+    : 'Vehicles modeled from road data · live traffic flow unavailable';
+}
