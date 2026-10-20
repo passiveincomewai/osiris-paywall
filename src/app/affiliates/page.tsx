@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { RankBadge, SectionTitle, Pill, StatCard, XpBar } from "@/components/affiliate/ui";
 import AffiliatePersonal from "@/components/affiliate/AffiliatePersonal";
+import ShareLinkBlock from "@/components/share/ShareLinkBlock";
 import EarningsCalculator from "@/components/affiliate/EarningsCalculator";
 import CreatorApply from "@/components/affiliate/CreatorApply";
 
@@ -49,6 +50,9 @@ export default function AffiliatesLanding() {
     <div className="space-y-16 md:space-y-24">
       {/* ── 0. PERSONAL (signed-in visitors) ──────────────────── */}
       <AffiliatePersonal />
+
+      {/* ── 0b. YOUR SHARE LINK (everyone — no account needed) ── */}
+      <ShareLinkBlock />
 
       {/* ── 1. HERO ─────────────────────────────────────────── */}
       <section className="relative text-center pt-6 md:pt-12">

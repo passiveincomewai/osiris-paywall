@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check } from 'lucide-react';
 import Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
-import { cameraShareId, rememberLastCamera, shareCamera } from '@/lib/camera-share';
+import { cameraShareId, cameraShareTitle, rememberLastCamera } from '@/lib/camera-share';
+import { shareEntity } from '@/lib/share/client';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
 import TimelapseControl from './TimelapseControl';
@@ -461,13 +462,19 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
               </div>
               <div className="flex gap-3">
                 {/* Share this camera: a deep link back to this exact camera
-                    on the globe (lib/camera-share.ts). Only for records that
-                    carry a catalogue id — without one the link could not
-                    resolve, so the button is not offered. */}
+                    on the globe, carrying the visitor's personal share
+                    code through /ref (lib/share — affiliate code when
+                    signed in, this device's anonymous code otherwise).
+                    Only for records that carry a catalogue id — without
+                    one the link could not resolve, so the button is not
+                    offered. */}
                 {cameraShareId(camera) && (
                   <button
                     onClick={async () => {
-                      const outcome = await shareCamera(camera);
+                      const { outcome } = await shareEntity(
+                        { kind: 'camera', id: cameraShareId(camera)! },
+                        { label: cameraShareTitle(camera) },
+                      );
                       if (outcome === 'copied') {
                         setShareState('copied');
                         setTimeout(() => setShareState('idle'), 2500);

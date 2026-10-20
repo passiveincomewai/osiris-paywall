@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { X, Plane, Gauge, ArrowUp, Radio, Crosshair, Loader2, Video } from 'lucide-react';
+import ShareButton from './share/ShareButton';
+import { flightShareId } from '@/lib/share/links';
 
 /* ═══════════════════════════════════════════════════════════════
    OSIRIS — Flight Watch
@@ -231,6 +233,16 @@ function Row({ flight, telem, onRemove, onLocate, onDetail }: {
             <Video className="w-3 h-3" />
           </button>
         )}
+        {/* Share this flight: a /?flight=<icao24> deep link carrying
+            the visitor's personal share code (lib/share). */}
+        <ShareButton
+          kind="flight"
+          id={flightShareId(flight)}
+          label={flight.callsign ? `Flight ${flight.callsign}` : undefined}
+          title={`Share ${flight.callsign || flight.icao24}`}
+          iconOnly
+          className="p-0.5 text-[var(--text-muted)] hover:text-[var(--cyan-primary)] transition-colors"
+        />
         <button
           onClick={() => onRemove(flight.icao24)}
           title="Stop watching"

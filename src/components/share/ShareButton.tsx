@@ -19,6 +19,7 @@ export default function ShareButton({
   label,
   className,
   title,
+  iconOnly = false,
 }: {
   kind: ShareEntityKind;
   id: string | null | undefined;
@@ -26,6 +27,8 @@ export default function ShareButton({
   label?: string | null;
   className?: string;
   title?: string;
+  /** Render just the icon (dense headers); feedback flips the icon. */
+  iconOnly?: boolean;
 }) {
   const [state, setState] = useState<"idle" | "busy" | "done">("idle");
 
@@ -65,11 +68,13 @@ export default function ShareButton({
     >
       {state === "done" ? (
         <>
-          <Check className="w-3 h-3 text-emerald-400" /> COPIED
+          <Check className="w-3 h-3 text-emerald-400" />
+          {!iconOnly && "COPIED"}
         </>
       ) : (
         <>
-          <Share2 className="w-3 h-3" /> SHARE
+          <Share2 className="w-3 h-3" />
+          {!iconOnly && "SHARE"}
         </>
       )}
     </button>

@@ -16,6 +16,7 @@ import {
   blockedCameraAction,
 } from '@/lib/premium-entitlement';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
+import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId } from '@/lib/share/links';
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
@@ -67,6 +68,7 @@ const FlightWatchPanel = dynamic(() => import('@/components/FlightWatchPanel'));
 const ArcGISPanel = dynamic(() => import('@/components/ArcGISPanel'));
 const WorldRemote = dynamic(() => import('@/components/WorldRemote'));
 const SharePanel = dynamic(() => import('@/components/SharePanel'));
+const ShareLinkBlock = dynamic(() => import('@/components/share/ShareLinkBlock'));
 const ViewPresets = dynamic(() => import('@/components/ViewPresets'));
 const LayerPanel = dynamic(() => import('@/components/LayerPanel'));
 const SpaceCam = dynamic(() => import('@/components/SpaceCam'), { ssr: false });
@@ -1262,6 +1264,77 @@ export default function Dashboard() {
       assistedCameraSettled.current = true;
     }
   }, [assistedCameraId, dataVersion, camerasLoading, handleEntityClick]);
+
+  // ── Entity deep links (?quake= / ?fire= / ?storm= / ?flight= / ?event=) ──
+  // The universal share links (lib/share/links.ts) — sibling of the
+  // camera deep link above. A shared entity lights its layer, flies
+  // there, and reopens through OsirisMap's own popup (we:open-entity;
+  // the map owns those popup builders and, for flights and conflict
+  // markers, the only copy of the data). An id that never resolves
+  // before the deadline is stale: the visitor keeps the plain globe,
+  // no error — the same contract as a stale camera link.
+  const sharedEntity = useMemo(
+    () => (typeof window !== 'undefined' ? entityRefFromSearch(window.location.search) : null),
+    [],
+  );
+  const sharedEntitySettled = useRef(false);
+  const sharedEntityLayerLit = useRef(false);
+  const sharedEntityDeadline = useRef(0);
+  useEffect(() => {
+    if (!sharedEntity || sharedEntity.kind === 'camera' || sharedEntitySettled.current) return;
+    if (!sharedEntityDeadline.current) sharedEntityDeadline.current = Date.now() + 12000;
+    const layerByKind: Record<string, string | undefined> = {
+      quake: 'earthquakes', fire: 'fires', storm: 'hurricanes', event: 'global_incidents',
+    };
+    const layer = layerByKind[sharedEntity.kind];
+    if (layer && !sharedEntityLayerLit.current) {
+      sharedEntityLayerLit.current = true;
+      setActiveLayers(prev => ({ ...prev, [layer]: true }));
+    }
+    const d: any = dataRef.current;
+    let coords: { lat: number; lng: number; zoom: number } | null = null;
+    if (sharedEntity.kind === 'quake') {
+      const eq = findQuakeByShareId(d.earthquakes ?? [], sharedEntity.id);
+      if (eq) coords = { lat: eq.lat, lng: eq.lng, zoom: 7 };
+    } else if (sharedEntity.kind === 'fire') {
+      const f = findByCoordShareId(d.fires ?? [], sharedEntity.id);
+      if (f) coords = { lat: f.lat, lng: f.lng, zoom: 9 };
+    } else if (sharedEntity.kind === 'storm') {
+      const s = findStormFeatureByShareId(d.hurricane_features ?? [], sharedEntity.id);
+      const c = (s as any)?.geometry?.coordinates;
+      if (Array.isArray(c)) coords = { lat: c[1], lng: c[0], zoom: 6 };
+    } else if (sharedEntity.kind === 'event') {
+      const ev = findByCoordShareId(d.gdelt ?? [], sharedEntity.id)
+        ?? findByCoordShareId(d.gdelt_events ?? [], sharedEntity.id);
+      if (ev) coords = { lat: ev.lat, lng: ev.lng, zoom: 6 };
+    }
+    if (coords) {
+      sharedEntitySettled.current = true;
+      setFlyToLocation({ lat: coords.lat, lng: coords.lng, zoom: coords.zoom, ts: Date.now() });
+      window.dispatchEvent(new CustomEvent('we:open-entity', {
+        detail: { kind: sharedEntity.kind, id: sharedEntity.id },
+      }));
+      return;
+    }
+    if (sharedEntity.kind === 'flight') {
+      // No page-side dataset exists for flights: offer it to the map
+      // on every data tick until the deadline — the map dedupes once
+      // it has opened the aircraft.
+      window.dispatchEvent(new CustomEvent('we:open-entity', {
+        detail: { kind: 'flight', id: sharedEntity.id },
+      }));
+      if (Date.now() > sharedEntityDeadline.current) sharedEntitySettled.current = true;
+      return;
+    }
+    if (Date.now() > sharedEntityDeadline.current) {
+      // Give the map one last chance (conflict markers live only in
+      // the map's data), then settle — a stale link lands plainly.
+      sharedEntitySettled.current = true;
+      window.dispatchEvent(new CustomEvent('we:open-entity', {
+        detail: { kind: sharedEntity.kind, id: sharedEntity.id },
+      }));
+    }
+  }, [sharedEntity, dataVersion]);
 
   // ── Camera picked in search ──
   // Same path as the deep link above: fly there, then open through
@@ -2695,6 +2768,7 @@ export default function Dashboard() {
                     <div className="space-y-2">
                       <SearchBar embedded center={mapCenter} onDirections={openDirectionsTo} cameras={data.cameras ?? []} isPro={isPremiumUser} onOpenCamera={(cam) => { openCameraFromSearch(cam); setMobilePanel(null); }} onLocate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       <SharePanel mapView={mapView} activeLayers={activeLayers} mouseCoords={null} />
+                      <ShareLinkBlock compact />
                     </div>
                   )}
                   {mobilePanel === 'recon' && (
