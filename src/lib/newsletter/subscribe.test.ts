@@ -8,10 +8,16 @@
 //    {emailed}, 500 on unexpected failure.
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+type CreateArg = { data: { email: string; verifyToken: string; source: string | null } };
+type UpdateArg = {
+  where: { email: string };
+  data: { verifyToken: string; source: string | null };
+};
+
 const mocks = vi.hoisted(() => ({
   findUnique: vi.fn(async () => null as unknown),
-  create: vi.fn(async () => ({})),
-  update: vi.fn(async () => ({})),
+  create: vi.fn(async (_arg: CreateArg) => ({})),
+  update: vi.fn(async (_arg: UpdateArg) => ({})),
   sendEmail: vi.fn(async () => true),
 }));
 
@@ -50,9 +56,7 @@ describe("subscribeToNewsletter", () => {
     const outcome = await subscribeToNewsletter("  New@Example.com ", "signup");
     expect(outcome).toEqual({ kind: "subscribed", emailed: true });
     expect(mocks.create).toHaveBeenCalledTimes(1);
-    const arg = mocks.create.mock.calls[0]![0] as {
-      data: { email: string; verifyToken: string; source: string | null };
-    };
+    const arg = mocks.create.mock.calls[0]![0];
     expect(arg.data.email).toBe("new@example.com");
     expect(arg.data.source).toBe("signup");
     expect(arg.data.verifyToken).toMatch(/^[0-9a-f]{48}$/);
@@ -70,7 +74,7 @@ describe("subscribeToNewsletter", () => {
     const outcome = await subscribeToNewsletter("a@b.co");
     expect(outcome.kind).toBe("subscribed");
     expect(mocks.create).not.toHaveBeenCalled();
-    const arg = mocks.update.mock.calls[0]![0] as { data: { verifyToken: string; source: string } };
+    const arg = mocks.update.mock.calls[0]![0];
     expect(arg.data.source).toBe("footer");
     expect(arg.data.verifyToken).toMatch(/^[0-9a-f]{48}$/);
   });
@@ -78,7 +82,7 @@ describe("subscribeToNewsletter", () => {
   it("updates the source on an unverified row when the caller passes one", async () => {
     mocks.findUnique.mockResolvedValue({ email: "a@b.co", verified: false, source: "footer" });
     await subscribeToNewsletter("a@b.co", "welcome-claim");
-    const arg = mocks.update.mock.calls[0]![0] as { data: { source: string } };
+    const arg = mocks.update.mock.calls[0]![0];
     expect(arg.data.source).toBe("welcome-claim");
   });
 

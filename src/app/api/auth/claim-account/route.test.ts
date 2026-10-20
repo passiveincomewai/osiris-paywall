@@ -14,7 +14,9 @@ const mocks = vi.hoisted(() => ({
   userCreate: vi.fn(async () => ({})),
   userUpdate: vi.fn(async () => ({})),
   subFindUnique: vi.fn(async () => null as unknown),
-  subCreate: vi.fn(async () => ({})),
+  subCreate: vi.fn(
+    async (_arg: { data: { email: string; verifyToken: string; source: string | null } }) => ({}),
+  ),
   subUpdate: vi.fn(async () => ({})),
   sendEmail: vi.fn(async () => true),
 }));
@@ -76,7 +78,7 @@ describe("POST /api/auth/claim-account — newsletter opt-in", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true, email: "buyer@example.com" });
     expect(mocks.subCreate).toHaveBeenCalledTimes(1);
-    const arg = mocks.subCreate.mock.calls[0]![0] as { data: { email: string; source: string } };
+    const arg = mocks.subCreate.mock.calls[0]![0];
     expect(arg.data.email).toBe("buyer@example.com");
     expect(arg.data.source).toBe("welcome-claim");
   });

@@ -13,7 +13,9 @@ const mocks = vi.hoisted(() => ({
   tokenDeleteMany: vi.fn(async () => ({})),
   tokenCreate: vi.fn(async () => ({})),
   subFindUnique: vi.fn(async () => null as unknown),
-  subCreate: vi.fn(async () => ({})),
+  subCreate: vi.fn(
+    async (_arg: { data: { email: string; verifyToken: string; source: string | null } }) => ({}),
+  ),
   subUpdate: vi.fn(async () => ({})),
   sendEmail: vi.fn(async () => true),
 }));
@@ -70,7 +72,7 @@ describe("POST /api/auth/signup — newsletter opt-in", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ ok: true, userId: "user_1" });
     expect(mocks.subCreate).toHaveBeenCalledTimes(1);
-    const arg = mocks.subCreate.mock.calls[0]![0] as { data: { email: string; source: string } };
+    const arg = mocks.subCreate.mock.calls[0]![0];
     expect(arg.data.email).toBe("ada@example.com");
     expect(arg.data.source).toBe("signup");
   });
