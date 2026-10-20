@@ -35,7 +35,7 @@ import {
 } from '@/lib/flights/path';
 import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
-import { selectAgenciesForView } from '@/lib/transit/relevance';
+import { selectAgenciesForView, agencyIntersectsView, padView } from '@/lib/transit/relevance';
 import { TransitBlend } from '@/lib/transit/motion';
 import {
   isLowPowerDevice, sensorEffectLabel, sensorEffectPlan, supportsSvgFilterReference,
@@ -54,6 +54,7 @@ import CctvPreviews, { type PreviewCamera } from '@/components/CctvPreviews';
 import MapControls from '@/components/MapControls';
 import CinematicDirector from '@/components/CinematicDirector';
 import SpaceMissionsPanel from '@/components/SpaceMissionsPanel';
+import TransitNetworkPanel from '@/components/TransitNetworkPanel';
 import { launchStatusKind, type LaunchRecord } from '@/lib/launches/types';
 import StreetLevelViewer from '@/components/StreetLevelViewer';
 import { STREET_LEVEL_MAX_SPAN_DEG, STREET_LEVEL_MIN_ZOOM, type StreetPicture } from '@/lib/streetlevel/types';
@@ -328,6 +329,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // layer is toggled off and on again.
   const [transitNotice, setTransitNotice] = useState<string | null>(null);
   const transitNoticeDismissedRef = useRef(false);
+  // Transit network (routes/stops) per agency, fetched once per session
+  // from /api/transit/network + /api/transit/stops; failures are stamped
+  // so a dead feed is retried on moveend at most once a minute, never
+  // in a hot loop, and never at the vehicles' expense.
+  const transitNetworkRef = useRef(new Map<string, { lines: any; stops: any[]; credit: string }>());
+  const transitNetworkFailRef = useRef(new Map<string, number>());
+  // The route the transit panel has selected (internal GTFS route_id);
+  // drives the highlight layer over the network lines.
+  const [transitRouteSel, setTransitRouteSel] = useState<string | null>(null);
   // Traffic layer keeps its simulation in-map like transit/GBFS: the road
   // network rebuilt from the basemap's own tiles, the fleet, the latest
   // TomTom flow sample, and the honest-labeling chip (always visible
@@ -1139,7 +1149,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-cctv', cameraColor, 10);
       createDroneIcon(map, 'drone-icon', '#B2FF59', 30);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay', 'street-level'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay', 'street-level'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -1268,6 +1278,35 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'gbfs-vehicles', type: 'circle', source: 'gbfs', filter: ['==', ['get', 'kind'], 'vehicle'], paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2, 12, 5, 16, 8],
         'circle-color': '#9CCC65', 'circle-opacity': 0.9, 'circle-stroke-color': '#33691E', 'circle-stroke-width': 1,
+      }});
+
+      // Transit NETWORK — the operational layer under the vehicles for
+      // agencies with a static GTFS (UTA in v1): route lines in the
+      // agency's own route colors (lib/transit/network, served by
+      // /api/transit/network) and stop dots, zoom-gated — thousands of
+      // stops would be noise below street level. The network effect
+      // below pushes the data; any failure leaves these sources empty
+      // and the vehicles completely unaffected.
+      map.addLayer({ id: 'transit-routes-line', type: 'line', source: 'transit-routes', layout: {
+        'line-cap': 'round', 'line-join': 'round',
+      }, paint: {
+        'line-color': ['get', 'color'],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 6, 0.8, 10, 1.6, 14, 3],
+        'line-opacity': 0.55,
+      }});
+      // The route picked in the transit panel, drawn over the network.
+      map.addLayer({ id: 'transit-route-highlight', type: 'line', source: 'transit-routes',
+        filter: ['==', ['get', 'routeId'], '__none__'], layout: {
+          'line-cap': 'round', 'line-join': 'round',
+        }, paint: {
+          'line-color': ['get', 'color'],
+          'line-width': ['interpolate', ['linear'], ['zoom'], 6, 2, 10, 3.4, 14, 5.5],
+          'line-opacity': 0.95,
+        }});
+      map.addLayer({ id: 'transit-stops-dots', type: 'circle', source: 'transit-stops', minzoom: 12.5, paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12.5, 2.5, 15, 4.5, 17, 6],
+        'circle-color': '#ECEFF1', 'circle-opacity': 0.95,
+        'circle-stroke-color': '#10222E', 'circle-stroke-width': 1.2,
       }});
 
       // Live Transit — vehicle dots colored by mode. Opacity is per-
@@ -2412,6 +2451,58 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       </div>`);
     });
 
+    // ── Transit stops (network layer) ──
+    // Arrivals come from /api/transit/stop: timetable departures
+    // upgraded by TripUpdates wherever the feed carries a fresh
+    // prediction for that trip at this stop; every row is labeled
+    // REALTIME or SCHEDULED so a timetable time never reads as live.
+    map.on('click', 'transit-stops-dots', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const stopName = p.name || 'Stop';
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(236,239,241,0.3);">
+        <div style="color:#ECEFF1;font-size:12px;font-weight:700;margin-bottom:4px;">🚏 ${htmlEsc(stopName).toUpperCase()}</div>
+        ${p.routes ? `<div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">ROUTES ${htmlEsc(p.routes)}</div>` : ''}
+        <div style="font-size:9px;color:#9B978E;">Loading next arrivals…</div>
+      </div>`);
+      const myPopup = popupRef.current;
+      (async () => {
+        try {
+          const r = await fetch(`/api/transit/stop?agency=${encodeURIComponent(p.agency || 'uta')}&id=${encodeURIComponent(p.stopId)}`);
+          const j = await r.json();
+          if (!r.ok || j.error) throw new Error(j.error || 'unavailable');
+          if (!myPopup || !myPopup.isOpen()) return;
+          const rows = (j.arrivals ?? []).map((a: any) => {
+            const when = a.inMin <= 0 ? 'Due' : a.inMin === 1 ? '1 min' : `${a.inMin} min`;
+            const basis = a.basis === 'realtime'
+              ? '<span style="color:#66BB6A;font-weight:700;">REALTIME</span>'
+              : '<span style="color:#9B978E;">SCHEDULED</span>';
+            const delay = a.delayS != null && Math.abs(a.delayS) >= 60
+              ? ` · ${a.delayS > 0 ? Math.round(a.delayS / 60) + ' min late' : Math.round(-a.delayS / 60) + ' min early'}`
+              : '';
+            return `<div style="display:flex;justify-content:space-between;gap:10px;font-size:10px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#E8E6E0;"><b>${htmlEsc(a.route)}</b> ${htmlEsc(a.headsign || '')}</span>
+              <span style="white-space:nowrap;color:#E8E6E0;">${when} <span style="color:#5C5A54;">${formatTime(a.time)}</span> ${basis}${delay}</span>
+            </div>`;
+          }).join('');
+          myPopup.setHTML(`<div style="${pStyle}border:1px solid rgba(236,239,241,0.3);">
+            <div style="color:#ECEFF1;font-size:12px;font-weight:700;margin-bottom:4px;">🚏 ${htmlEsc(j.stop?.name || stopName).toUpperCase()}</div>
+            <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${(j.stop?.routes ?? []).map((x: any) => htmlEsc(x.short)).join(' · ')}</div>
+            ${rows || '<div style="font-size:9px;color:#9B978E;">No departures in the next 3 hours.</div>'}
+            <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">${j.rt?.live ? 'REALTIME PREDICTIONS ACTIVE' : 'SHOWING TIMETABLE TIMES'} · ${htmlEsc((j.credit || 'UTA OPEN DATA').toUpperCase())}</div>
+          </div>`);
+        } catch {
+          if (myPopup && myPopup.isOpen()) {
+            myPopup.setHTML(`<div style="${pStyle}border:1px solid rgba(236,239,241,0.3);">
+              <div style="color:#ECEFF1;font-size:12px;font-weight:700;margin-bottom:4px;">🚏 ${htmlEsc(stopName).toUpperCase()}</div>
+              <div style="font-size:9px;color:#FFAB91;">Arrivals unavailable right now — the timetable service did not answer.</div>
+            </div>`);
+          }
+        }
+      })();
+    });
+
     // ── Fire Perimeters (NIFC WFIGS) ──
     map.on('click', 'fire-perim-fill', e => {
       if (!e.features?.length) return;
@@ -2723,7 +2814,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -3692,6 +3783,102 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     return () => { live = false; clearInterval(iv); clearInterval(renderIv); map.off('moveend', onMove); };
   }, [mapReady, (activeLayers as any).transit, setGeo]);
 
+  // Transit NETWORK — routes + stops for agencies whose directory entry
+  // carries a static GTFS (UTA in v1). Networks load once per session
+  // per agency, only while the agency's service area intersects the
+  // viewport (the same relevance rule as the vehicles); stops are
+  // viewport-filtered client-side and the stop layer is zoom-gated, so
+  // the full stop list never paints at globe zoom. Graceful by design:
+  // any failure leaves the network absent and the vehicles untouched,
+  // retried on a later moveend at most once a minute per agency.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    if (!(activeLayers as any).transit) {
+      setGeo('transit-routes', []);
+      setGeo('transit-stops', []);
+      setTransitRouteSel(null);
+      return;
+    }
+    let live = true;
+    const STOP_MIN_ZOOM = 12.5;
+    const apply = () => {
+      if (!live) return;
+      const b = map.getBounds();
+      const view = { south: b.getSouth(), west: b.getWest(), north: b.getNorth(), east: b.getEast() };
+      const lineFeats: any[] = [];
+      const stopFeats: any[] = [];
+      const zoom = map.getZoom();
+      for (const a of transitAgenciesRef.current as any[]) {
+        if (!a.network) continue;
+        const entry = transitNetworkRef.current.get(a.id);
+        if (!entry || !agencyIntersectsView(a, view)) continue;
+        lineFeats.push(...(entry.lines?.features ?? []));
+        if (zoom >= STOP_MIN_ZOOM) {
+          const v = padView(view, 0.1);
+          for (const s of entry.stops) {
+            if (s.lat < v.south || s.lat > v.north || s.lng < v.west || s.lng > v.east) continue;
+            stopFeats.push({
+              type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] },
+              properties: { agency: a.id, stopId: s.id, name: s.name, routes: (s.routes ?? []).join(' · ') },
+            });
+            if (stopFeats.length >= 6000) break;
+          }
+        }
+      }
+      setGeo('transit-routes', lineFeats);
+      setGeo('transit-stops', stopFeats);
+    };
+    const load = async () => {
+      if (!live) return;
+      if (!transitAgenciesRef.current.length) {
+        try {
+          const r = await fetch('/api/transit/agencies');
+          const j = await r.json();
+          if (live) transitAgenciesRef.current = j.agencies ?? [];
+        } catch { /* the vehicles effect retries the directory too */ }
+      }
+      const b = map.getBounds();
+      const view = { south: b.getSouth(), west: b.getWest(), north: b.getNorth(), east: b.getEast() };
+      const wanted = (transitAgenciesRef.current as any[])
+        .filter(a => a.network && agencyIntersectsView(a, view));
+      await Promise.all(wanted.map(async (a: any) => {
+        if (transitNetworkRef.current.has(a.id)) return;
+        if (Date.now() - (transitNetworkFailRef.current.get(a.id) ?? 0) < 60_000) return;
+        try {
+          const [nr, sr] = await Promise.all([
+            fetch(`/api/transit/network?agency=${a.id}`),
+            fetch(`/api/transit/stops?agency=${a.id}`),
+          ]);
+          if (!nr.ok || !sr.ok) throw new Error('network fetch failed');
+          const nj = await nr.json();
+          const sj = await sr.json();
+          if (!live) return;
+          transitNetworkRef.current.set(a.id, {
+            lines: nj.lines ?? { type: 'FeatureCollection', features: [] },
+            stops: sj.stops ?? [],
+            credit: nj.credit ?? '',
+          });
+        } catch {
+          transitNetworkFailRef.current.set(a.id, Date.now());
+        }
+      }));
+      apply();
+    };
+    void load();
+    const onMove = () => { void load(); };
+    map.on('moveend', onMove);
+    return () => { live = false; map.off('moveend', onMove); };
+  }, [mapReady, (activeLayers as any).transit, setGeo]);
+
+  // The transit panel's selected route rides the highlight layer.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    if (!map.getLayer('transit-route-highlight')) return;
+    map.setFilter('transit-route-highlight', ['==', ['get', 'routeId'], transitRouteSel ?? '__none__'] as any);
+  }, [mapReady, transitRouteSel]);
+
   // Live Drone Tracking — Remote ID detections from CONNECTED receivers
   // and opted-in operators only (lib/drones). Polls /api/drones/live
   // every 5 s: Next.js on Vercel cannot hold native WebSocket
@@ -4596,6 +4783,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
     setVis(['gbfs-systems','gbfs-label','gbfs-stations','gbfs-vehicles'], (activeLayers as any).gbfs);
     setVis(['transit-dots'], (activeLayers as any).transit);
+    setVis(['transit-routes-line', 'transit-route-highlight', 'transit-stops-dots'], (activeLayers as any).transit);
     setVis(['drone-glow','drone-icons','drone-label','drone-trails-line','drone-coverage-fill','drone-coverage-line','drone-rx-dots','drone-rx-label'], (activeLayers as any).drones);
     setVis(['drone-airspace-fill','drone-airspace-line','drone-restriction-fill','drone-restriction-line'], (activeLayers as any).drones && (activeLayers as any).drone_airspace !== false);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
@@ -5680,6 +5868,16 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           onSelectPad={setSelectedPadKey}
           onSelectLaunch={setSelectedLaunchId}
           chipOffsetCount={[trafficChip, droneChip, transitNotice, streetLevelChip].filter(Boolean).length}
+        />
+      )}
+      {mapReady && !!(activeLayers as any).transit && (
+        <TransitNetworkPanel
+          selectedRouteId={transitRouteSel}
+          onSelectRoute={setTransitRouteSel}
+          onFocusStop={(lat, lng) => {
+            const m = mapRef.current;
+            if (m) m.flyTo({ center: [lng, lat], zoom: Math.max(m.getZoom(), 15), essential: true });
+          }}
         />
       )}
       {mapReady && streetPicture && (

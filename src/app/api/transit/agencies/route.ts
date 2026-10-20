@@ -18,6 +18,9 @@ export async function GET() {
     bounds: a.bounds,
     modes: [...new Set([a.defaultMode, ...(a.routeModeRules ?? []).map(r => r.mode)])],
     attribution: a.attribution,
+    // True when the agency publishes a static GTFS the routes/stops/
+    // schedule network is built from (lib/transit/network; UTA in v1).
+    network: !!a.staticGtfsUrl,
   }));
   return NextResponse.json(
     { agencies, count: agencies.length },
