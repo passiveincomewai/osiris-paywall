@@ -8,6 +8,7 @@ import directory from "@/data/camera-directory.json";
 import NewsletterBroadcast from "./NewsletterBroadcast";
 import CompetitorManager from "./CompetitorManager";
 import CreatorApplications from "./CreatorApplications";
+import TeamSubscriptions from "./TeamSubscriptions";
 import OnboardingActivation from "./OnboardingActivation";
 import FlightCoverage from "./FlightCoverage";
 import CameraNetwork from "./CameraNetwork";
@@ -394,6 +395,29 @@ export default async function AdminDashboardPage() {
     take: 50,
     include: { user: { select: { email: true } } },
   });
+
+  // Team Access funnel (last 30d): PageView event counts for the
+  // TeamSubscriptions section. Client events (pricing viewed, slider)
+  // and server events (checkout, invitations) share the `event` column.
+  const teamFunnelRows = await db.pageView.groupBy({
+    by: ["event"],
+    where: {
+      event: {
+        in: [
+          "team_pricing_viewed",
+          "seat_slider_adjusted",
+          "team_checkout_initiated",
+          "team_checkout_completed",
+          "invitation_created",
+          "invitation_accepted",
+        ],
+      },
+      createdAt: { gte: d30 },
+    },
+    _count: true,
+  });
+  const teamFunnel: Record<string, number> = {};
+  for (const r of teamFunnelRows) if (r.event) teamFunnel[r.event] = r._count;
 
   const studioTemplates = await db.marketingTemplate.findMany({ orderBy: [{ category: "asc" }, { sortOrder: "asc" }, { title: "asc" }] });
 
@@ -965,6 +989,10 @@ export default async function AdminDashboardPage() {
 
         <div className="mt-4">
           <CompetitorManager />
+        </div>
+
+        <div className="mt-4">
+          <TeamSubscriptions funnel={teamFunnel} />
         </div>
 
         <div className="mt-4">
