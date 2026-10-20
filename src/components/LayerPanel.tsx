@@ -3,12 +3,13 @@
 import { Fragment, memo, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Plane, Satellite, Sun, AlertTriangle, Camera,
+  Plane, Satellite, Sun, Camera,
   CloudLightning, Ship, Network, Database, Ghost,
-  Flame, Tv, Radio, Mountain, Anchor, Megaphone, SlidersHorizontal, Lock, Bus
+  Flame, Tv, Radio, Mountain, Anchor, SlidersHorizontal, Lock, Bus, Crown
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
 import TrialPicker from './TrialPicker';
+import ProUpgradeEmbed from './ProUpgradeEmbed';
 import { LanguageRailControl, LanguageSelect } from './translate/LanguageControl';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
 import { SENSOR_EFFECT_OPTIONS, type SensorEffectState } from '@/lib/sensor-effects';
@@ -135,35 +136,14 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'river_gauges', label: 'Rivers & Floods', description: 'USGS · real-time stream gauges', dataKey: '' },
     ],
   },
-  {
-    label: 'THREAT',
-    fullLabel: 'THREATS & INTEL',
-    icon: AlertTriangle,
-    layers: [
-      { key: 'infrastructure', label: 'Nuclear Facilities', dataKey: 'infrastructure', premium: true },
-      { key: 'global_incidents', label: 'Global Incidents', dataKey: 'gdelt', premium: true },
-      { key: 'alert_pins', label: 'Live Alert Pins', dataKey: 'alert_pins' },
-      { key: 'gdelt_events', label: 'GDELT Events', dataKey: 'gdelt_events', premium: true },
-    ],
-  },
-  {
-    label: 'NETWORK',
-    fullLabel: 'NETWORK INTEL',
-    icon: Network,
-    layers: [
-      { key: 'malware', label: 'Live Malware', dataKey: 'malware_threats', premium: true },
-      { key: 'cyber_attacks', label: 'Botnet C2 Servers', dataKey: 'cyber_attacks', premium: true },
-    ],
-  },
-  {
-    label: 'NETINTEL',
-    fullLabel: 'NET & EVENT INTEL',
-    icon: Megaphone,
-    layers: [
-      { key: 'cf_outages', label: 'Internet Outages', dataKey: 'cf_outages', requires: 'cloudflare', premium: true },
-      { key: 'cf_attacks', label: 'Attack Origins', dataKey: 'cf_attack_origins', requires: 'cloudflare', premium: true },
-    ],
-  },
+  /* The intel groups (THREATS & INTEL, NETWORK INTEL, NET & EVENT INTEL)
+     are GONE from this panel on the owner's order (2026-10-20), replaced
+     in their slot by the Pro upgrade embed below. Only the panel section
+     was removed — the features, their APIs and the middleware gate all
+     remain, and the same intel stays reachable from the IntelFeed tab,
+     the OSINT toolkit and the cyber-threat-map page. One consequence to
+     know: global_incidents defaults ON in the page state, so GDELT
+     incidents still render — they just have no panel toggle any more. */
   {
     label: 'TRANSIT',
     fullLabel: 'TRANSIT & MOBILITY',
@@ -187,6 +167,18 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
     ],
   },
 ];
+
+/**
+ * The premium layers the panel's locks gate, as display labels — top-level
+ * layers only (a sub-layer rides its parent's unlock). Derived from
+ * LAYER_GROUPS so the Pro upgrade embed pitches exactly what the panel
+ * locks, never a second list that could drift from it.
+ */
+export function premiumLayerLabels(): string[] {
+  return LAYER_GROUPS.flatMap((g) =>
+    g.layers.filter((l) => l.premium && !l.parent).map((l) => l.label),
+  );
+}
 
 /**
  * The state a layer's switch DISPLAYS. A sub-layer's stored value is only a
@@ -420,7 +412,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
     return (
       <div data-tour="layers" className="flex flex-col gap-5 py-2">
         {visibleGroups.map((group) => (
-          <div key={group.label} className="flex flex-col gap-2">
+          <Fragment key={group.label}>
+          <div className="flex flex-col gap-2">
             <div className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/30 border-b border-white/[0.06] pb-1.5">
               {group.fullLabel}
             </div>
@@ -470,6 +463,12 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
               {group.label === 'DISPLAY' && sensorBlock}
             </div>
           </div>
+          {/* The Pro upgrade embed sits where the intel groups used to —
+              free viewers only; Pro users have nothing to unlock here. */}
+          {group.label === 'HAZARD' && !isPremiumUser && (
+            <ProUpgradeEmbed premiumLabels={premiumLayerLabels()} />
+          )}
+          </Fragment>
         ))}
 
         {/* MOBILE STYLE STUDIO */}
@@ -553,8 +552,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
           const isOpen = isHovered || isPinned;
 
           return (
+            <Fragment key={group.label}>
             <div
-              key={group.label}
               className="relative flex items-center justify-center"
               onMouseEnter={() => setHoveredGroup(group.label)}
               onMouseLeave={() => setHoveredGroup(null)}
@@ -698,6 +697,79 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                 )}
               </AnimatePresence>
             </div>
+            {/* The Pro upgrade embed's rail slot — where the intel groups
+                used to sit. Free viewers only; the flyout rides the same
+                hover/pin state as a group's, keyed 'PRO', and opening the
+                checkout sheet pins it so the flyout (and the sheet's
+                host) stays mounted under the sheet. */}
+            {group.label === 'HAZARD' && !isPremiumUser && (
+              <div
+                className="relative flex items-center justify-center"
+                onMouseEnter={() => setHoveredGroup('PRO')}
+                onMouseLeave={() => setHoveredGroup(null)}
+              >
+                <button
+                  onClick={() => setPinnedGroup(pinnedGroup === 'PRO' ? null : 'PRO')}
+                  aria-expanded={hoveredGroup === 'PRO' || pinnedGroup === 'PRO'}
+                  aria-label="WorldEye Pro — upgrade"
+                  title="WorldEye Pro"
+                  className="relative w-10 h-10 flex items-center justify-center cursor-pointer rounded-lg transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+                  style={{
+                    background: pinnedGroup === 'PRO'
+                      ? 'rgba(212,175,55,0.15)'
+                      : hoveredGroup === 'PRO' ? 'rgba(255,255,255,0.05)' : 'transparent',
+                  }}
+                >
+                  <Crown
+                    className="transition-all duration-300"
+                    style={{
+                      width: 16,
+                      height: 16,
+                      color: '#D4AF37',
+                      filter: 'drop-shadow(0 0 4px rgba(212,175,55,0.45))',
+                    }}
+                  />
+                </button>
+                <AnimatePresence>
+                  {(hoveredGroup === 'PRO' || pinnedGroup === 'PRO') && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -8, filter: 'blur(4px)' }}
+                      animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, x: -4, filter: 'blur(2px)' }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="absolute left-[52px] top-1/2 -translate-y-1/2 rounded-xl p-3 z-[100] pointer-events-auto w-[300px]"
+                      style={{
+                        background: 'rgba(0,0,0,0.6)',
+                        backdropFilter: 'blur(40px) saturate(1.5)',
+                        WebkitBackdropFilter: 'blur(40px) saturate(1.5)',
+                        border: '1px solid rgba(255,255,255,0.06)',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2.5 pb-1.5 border-b border-white/[0.04]">
+                        <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#D4AF37] flex-1">
+                          WorldEye Pro
+                        </span>
+                        {pinnedGroup === 'PRO' && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setPinnedGroup(null); }}
+                            aria-label="Close"
+                            className="px-1.5 py-0.5 rounded text-[10px] font-mono text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <ProUpgradeEmbed
+                        premiumLabels={premiumLayerLabels()}
+                        onSheetOpen={() => setPinnedGroup('PRO')}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+            </Fragment>
           );
         })}
       </div>

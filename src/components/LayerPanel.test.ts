@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { layerShownActive, layerLocked, groupTogglePatch, LAYER_GROUPS } from './LayerPanel';
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
+import { layerShownActive, layerLocked, groupTogglePatch, premiumLayerLabels, LAYER_GROUPS } from './LayerPanel';
+import LayerPanel from './LayerPanel';
 
 const traffic = { key: 'traffic' };
 const vehicles = { key: 'traffic_vehicles', parent: 'traffic' };
@@ -87,5 +90,68 @@ describe('groupTogglePatch', () => {
   it('switching a group OFF turns everything off, locked or not', () => {
     const patch = groupTogglePatch(group, { traffic: true }, false);
     expect(patch).toEqual({ transit: false, traffic: false, traffic_vehicles: false });
+  });
+});
+
+describe('the intel section is gone from the panel (owner order, 2026-10-20)', () => {
+  it('no group is an intel group any more', () => {
+    for (const g of LAYER_GROUPS) {
+      expect(g.label).not.toMatch(/INTEL|THREAT|NETWORK/);
+      expect(g.fullLabel).not.toMatch(/INTEL/);
+    }
+  });
+
+  it('none of the intel layer keys render in the panel', () => {
+    const keys = LAYER_GROUPS.flatMap((g) => g.layers.map((l) => l.key));
+    for (const k of [
+      'infrastructure', 'global_incidents', 'alert_pins', 'gdelt_events',
+      'malware', 'cyber_attacks', 'cf_outages', 'cf_attacks',
+    ]) {
+      expect(keys).not.toContain(k);
+    }
+  });
+
+  it('the remaining groups are untouched', () => {
+    expect(LAYER_GROUPS.map((g) => g.label)).toEqual([
+      'SDK', 'AVIATION', 'MARITIME', 'SPACE', 'SURVEIL', 'HAZARD', 'TRANSIT', 'DISPLAY',
+    ]);
+  });
+});
+
+describe('premiumLayerLabels — what the upgrade embed pitches', () => {
+  it('lists exactly the top-level premium layers the panel locks', () => {
+    expect(premiumLayerLabels()).toEqual([
+      'Maritime Lines',
+      'Maritime / Naval',
+      'Live News Feeds',
+      'Traffic',
+    ]);
+  });
+});
+
+describe('the Pro upgrade embed in the panel', () => {
+  const renderMobile = (isPremiumUser: boolean) =>
+    renderToString(
+      createElement(LayerPanel, {
+        data: {},
+        activeLayers: {},
+        setActiveLayers: () => {},
+        isMobile: true,
+        isPremiumUser,
+      }),
+    ).replace(/<!-- -->/g, '');
+
+  it('shows for a free viewer, in the intel groups’ old slot (after Hazards)', () => {
+    const html = renderMobile(false);
+    expect(html).toContain('data-pro-upgrade-embed');
+    expect(html).toContain('NATURAL HAZARDS');
+    expect(html.indexOf('NATURAL HAZARDS')).toBeLessThan(html.indexOf('data-pro-upgrade-embed'));
+    expect(html).not.toContain('THREATS &amp; INTEL');
+    expect(html).not.toContain('NETWORK INTEL');
+  });
+
+  it('never shows for a Pro user', () => {
+    const html = renderMobile(true);
+    expect(html).not.toContain('data-pro-upgrade-embed');
   });
 });
