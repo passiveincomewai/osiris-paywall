@@ -33,6 +33,10 @@ model User {
   enterpriseApiKeys EnterpriseApiKey[]
   claimedShareIdentity ShareIdentity? @relation("ShareIdentityClaim")
   alertRules AlertRule[]
+  organizationsOwned Organization[] @relation("OrgOwner")
+  organizationMembers OrganizationMember[]
+  teamInvitationsSent TeamInvitation[] @relation("InviteSender")
+  teamActivityActions TeamActivityLog[] @relation("ActivityActor")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -859,6 +863,10 @@ model CameraCollection {
   id            String   @id @default(cuid())
   userId        String
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Team Access: when set, the collection is shared with this organization
+  // (members read it per their role). Null = personal collection.
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   name          String
   // SHA-256 hex of the current feed token; null = feed link not generated
@@ -872,6 +880,7 @@ model CameraCollection {
   items         CameraCollectionItem[]
 
   @@index([userId])
+  @@index([organizationId])
 }
 
 model CameraCollectionItem {
@@ -973,4 +982,130 @@ model AlertEvent {
 
   @@index([userId, createdAt])
   @@index([ruleId])
+}
+
+// ── Team Access & Collaboration ────────────────────────────────────────
+// A paying subscriber (the owner) runs ONE Organization, buys extra seats
+// as a graduated-tier ITEM on their existing Stripe subscription, and
+// invites members who inherit the owner's plan tier while the owner's
+// subscription is active. Seat capacity is enforced transactionally:
+// active members + pending invitations never exceed purchasedSeats.
+
+model Organization {
+  id          String @id @default(cuid())
+  name        String
+  // One organization per owner (the owner's own subscription funds it).
+  ownerId     String @unique
+  owner       User   @relation("OrgOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  logoUrl     String?
+  description String?
+  // Role new invitations get when the inviter doesn't choose: member|admin.
+  defaultInviteRole  String  @default("member")
+  allowMemberInvites Boolean @default(false)
+  // Platform admin kill-switch (abuse) — separate from billing state.
+  suspended   Boolean @default(false)
+
+  // Seat billing state — reconciled ONLY by the Stripe webhook from the
+  // owner's subscription items (never written by request handlers except
+  // for the pending-downgrade bookkeeping below).
+  stripeSeatItemId  String?
+  stripeSeatPriceId String?
+  purchasedSeats    Int     @default(0)
+  // Scheduled seat reduction: applied to Stripe at pendingSeatsAt (the
+  // current period end) by the team-seats cron; capacity stays at
+  // purchasedSeats until then.
+  pendingSeats      Int?
+  pendingSeatsAt    DateTime?
+
+  members     OrganizationMember[]
+  invitations TeamInvitation[]
+  activity    TeamActivityLog[]
+  collections CameraCollection[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // owner | admin | member
+  role           String       @default("member")
+  createdAt      DateTime     @default(now())
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+}
+
+model TeamInvitation {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  // Normalized (lowercased, trimmed) invited address.
+  email          String
+  role           String       @default("member")
+  // SHA-256 hex of the acceptance token — the plaintext only ever exists
+  // in the emailed link.
+  tokenHash      String       @unique
+  invitedById    String
+  invitedBy      User         @relation("InviteSender", fields: [invitedById], references: [id], onDelete: Cascade)
+  // pending | accepted | revoked | expired
+  status         String       @default("pending")
+  expiresAt      DateTime
+  acceptedById   String?
+  acceptedAt     DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, status])
+  @@index([email])
+}
+
+model TeamActivityLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actorId        String?
+  actor          User?        @relation("ActivityActor", fields: [actorId], references: [id], onDelete: SetNull)
+  // invitation_created | invitation_accepted | member_removed | role_changed
+  // | seats_purchased | seats_downgraded | settings_changed | ...
+  type           String
+  detail         Json?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, createdAt])
+}
+
+// Singleton (id = "default") admin-editable pricing knobs. `tiers` shape:
+// { weekly: [{upTo: number|null, unitCents}], monthly: [...], annual: [...] }
+// `seatPriceIds` maps cycle → Stripe price id whose graduated tiers match
+// `tiers` at the time the price was created; when an admin changes tiers,
+// new Stripe prices are created and stored here, and only NEW seat items
+// use them (existing seat items keep their Stripe price).
+model TeamPricingConfig {
+  id               String   @id @default("default")
+  maxSeats         Int      @default(50)
+  inviteExpiryDays Int      @default(7)
+  tiers            Json
+  seatPriceIds     Json
+  updatedAt        DateTime @updatedAt
+}
+
+// Org-wide concurrent recording pool: a lease per (org, user, camera),
+// heartbeat-refreshed via expiresAt. Acquire is transactional so the
+// owner's recording cap is shared across the whole organization and can
+// never be raced past.
+model TeamRecordingLease {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  cameraKey      String
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+
+  @@unique([organizationId, userId, cameraKey])
+  @@index([organizationId, expiresAt])
 }
