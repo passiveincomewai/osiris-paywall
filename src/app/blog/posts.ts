@@ -66,7 +66,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Practicing with WorldEye",
         body: [
-          "WorldEye's free map is a practical OSINT sandbox: live flight tracking, 76,000+ public cameras, satellites, earthquakes, and weather are all viewable with no account. The OSINT toolkit — DNS/WHOIS lookups, nmap-style scans, and SSL analysis — runs right in your browser on the Pro tier.",
+          "WorldEye's free map is a practical OSINT sandbox: live flight tracking, 74,229 public cameras, satellites, earthquakes, and weather are all viewable with no account. The OSINT toolkit — DNS/WHOIS lookups, nmap-style scans, and SSL analysis — runs right in your browser on the Pro tier.",
           "Start with a question, not a tool. Pick something small — where is that aircraft headed, what's the weather like at that webcam right now — and work it out from public data. That's OSINT.",
         ],
       },
@@ -157,8 +157,8 @@ export const POSTS: BlogPost[] = [
   },
   {
     slug: "world-live-cameras",
-    title: "76,000 Live Cameras: Watching the World in Real Time",
-    seoTitle: "76,000 Live Cameras: Watching the World Live",
+    title: "74,229 Live Cameras: Watching the World in Real Time",
+    seoTitle: "74,229 Live Cameras: Watching the World Live",
     date: "2026-10-10",
     excerpt:
       "Tens of thousands of public webcams — traffic, city squares, beaches, mountain passes — stream openly to anyone. Here's what's out there, what it's good for, and an honest note on availability.",
@@ -170,7 +170,7 @@ export const POSTS: BlogPost[] = [
         heading: "A planet-sized window",
         body: [
           "There are tens of thousands of publicly accessible live cameras worldwide: traffic cameras run by transport departments, city squares, harbors, ski resorts, beaches, and wildlife feeds. They exist to inform — about road conditions, crowds, weather — and they're open to everyone.",
-          "WorldEye aggregates roughly 76,000 of these streams onto one map. Zoom anywhere and the camera layer shows you what's actually happening there right now.",
+          "WorldEye aggregates roughly 74,229 of these streams onto one map. Zoom anywhere and the camera layer shows you what's actually happening there right now.",
         ],
       },
       {
@@ -247,7 +247,7 @@ export const POSTS: BlogPost[] = [
         heading: "Where to find DOT cameras",
         body: [
           "In the United States, nearly every state runs a 511 traveler-information portal with a live camera map — search for your state's 511 site and you'll find it. Canada's provinces, the UK's National Highways, and most European road agencies publish similar feeds. Quality varies: some cameras stream near-live video, while others refresh a still image every minute or two.",
-          "The frustrating part is that every agency runs its own site, its own map, and its own interface. [WorldEye's live camera map](/cameras) gathers 76,000+ public camera streams — traffic feeds included — onto one globe, so you can trace your whole route and check the cameras along it without hunting through half a dozen DOT websites.",
+          "The frustrating part is that every agency runs its own site, its own map, and its own interface. [WorldEye's live camera map](/cameras) gathers 74,229 public camera streams — traffic feeds included — onto one globe, so you can trace your whole route and check the cameras along it without hunting through half a dozen DOT websites.",
         ],
       },
       {
@@ -533,7 +533,7 @@ export const POSTS: BlogPost[] = [
         heading: "A camera-first planning checklist",
         body: [
           "Put it together: a destination camera for vibe and weather, neighborhood cameras for the hotel decision, route cameras for the drive, and a timing check for the big days. Four checks, maybe twenty minutes total, and you'll arrive knowing things the guidebooks can't tell you. Travelers who plan this way describe the same payoff: arrival feels like a return visit, not a first encounter — and the surprises that remain are the good kind. The habit compounds, too: every trip teaches you which feeds to trust, so the next plan takes half the time.",
-          "This is one of the core [use cases](/use-cases) the WorldEye map was built for — the free camera layer covers 76,000+ public streams with no signup. And if you'd rather jump straight to named places than pan the globe, the free search gets you there in one keystroke — [WorldEye Pro](/pricing) adds advanced filters for narrowing the hunt.",
+          "This is one of the core [use cases](/use-cases) the WorldEye map was built for — the free camera layer covers 74,229 public streams with no signup. And if you'd rather jump straight to named places than pan the globe, the free search gets you there in one keystroke — [WorldEye Pro](/pricing) adds advanced filters for narrowing the hunt.",
         ],
       },
     ],
@@ -1015,7 +1015,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "1–2. Verify footage and photos before publishing",
         body: [
-          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 76,000+ public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
+          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 74,229 public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
           "The same discipline applies to photos from conflict zones. Matching a photo's terrain to satellite imagery, checking the sun angle against the claimed time, and finding the same location on a live camera can confirm or kill a story in minutes. Getting this wrong means publishing misinformation — getting it right is what separates reporting from reposting.",
           "Speed matters, but so does a verification workflow the whole desk follows. The best newsrooms maintain shared checklists and require two independent confirmations before airing user-generated content. Lone-wolf verification is admirable; institutional verification is reliable. Build the checklist once, and every breaking story gets faster without getting sloppier.",
           "One final habit: keep a personal log of your verifications — what you checked, what you found, what you concluded. Over time it becomes both a portfolio of your rigor and a reference when similar claims resurface, as they always do.",
@@ -1637,8 +1637,8 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Option 1: a hosted live globe (the direct route)",
         body: [
-          "The closest match to the viral videos is a hosted globe: the same concept, already running on someone else's infrastructure, opened with a URL. [WorldEye](/) is built exactly this way — a 3D globe carrying 76,000+ live public cameras, flights, satellites, weather radar, earthquakes and wildfires, free with no signup and no keys for the core experience. Its [God's Eye View page](/gods-eye-view) walks through what the experience includes, and the [alternatives comparison](/alternatives/gods-eye-view) puts it side by side with the original project, honestly.",
-          "GodsView AI (godsviewai.com) is another hosted answer aimed at the same searches: a 2D operations map with a 3D globe view, live flights, ships, quakes and fires, and a premium tier for watchlists and kiosk displays. Between the two, the practical differences are the camera network (WorldEye publishes 76,000+ feeds with a browsable directory; GodsView AI doesn't publish a count) and pricing transparency. We compared them in the [GodsView AI alternatives guide](/alternatives/godsview-ai).",
+          "The closest match to the viral videos is a hosted globe: the same concept, already running on someone else's infrastructure, opened with a URL. [WorldEye](/) is built exactly this way — a 3D globe carrying 74,229 live public cameras, flights, satellites, weather radar, earthquakes and wildfires, free with no signup and no keys for the core experience. Its [God's Eye View page](/gods-eye-view) walks through what the experience includes, and the [alternatives comparison](/alternatives/gods-eye-view) puts it side by side with the original project, honestly.",
+          "GodsView AI (godsviewai.com) is another hosted answer aimed at the same searches: a 2D operations map with a 3D globe view, live flights, ships, quakes and fires, and a premium tier for watchlists and kiosk displays. Between the two, the practical differences are the camera network (WorldEye publishes 74,229 feeds with a browsable directory; GodsView AI doesn't publish a count) and pricing transparency. We compared them in the [GodsView AI alternatives guide](/alternatives/godsview-ai).",
         ],
       },
       {
@@ -1652,7 +1652,7 @@ export const POSTS: BlogPost[] = [
         heading: "Three checks before you trust a 'live' globe",
         body: [
           "First, freshness: open a camera or a flight and look for a timestamp or visible motion. A surprising number of 'live' maps are elegantly animated archives. Second, provenance: trustworthy globes name their feeds (public transport-agency cameras, ADS-B exchanges, USGS, NASA FIRMS). If a site won't say where its data comes from, assume the answer is 'a demo'. Third, the keys test: if a globe's photorealistic mode or AI features quietly require you to paste in a Google or OpenAI key, it's a self-hosted tool wearing a website's clothes — fine for builders, but not the no-install experience you came for.",
-          "One more, on numbers: camera counts get inflated across this niche. A directory total (every feed ever indexed, including dead ones) is not a live count. WorldEye's standing figure of 76,000+ is the verified-live number; the open-source God's Eye View README puts its own camera mesh at roughly 4,000, whatever older roundups still claim.",
+          "One more, on numbers: camera counts get inflated across this niche. A directory total (every feed ever indexed, including dead ones) is not a live count. WorldEye's standing figure of 74,229 is the verified-live number; the open-source God's Eye View README puts its own camera mesh at roughly 4,000, whatever older roundups still claim.",
         ],
       },
       {
@@ -1691,14 +1691,14 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Three products, three philosophies",
         body: [
-          "These three get mentioned in the same breath constantly, and they barely overlap in what they are. God's Eye View is a builder's project: open-source Cesium software (MIT, by Bilawal Sidhu and Sameh Khamis) that you install and run yourself, famous for cinematic sensor-style views and a voice-controlled AI agent. World Monitor is an analyst's dashboard: a free hosted web app (AGPL-3.0, by Elie Habib) that fuses hundreds of geopolitical feeds — conflict data, chokepoints, markets, AI briefs — into panels you read. WorldEye is a watcher's globe: a hosted 3D planet whose centerpiece is a 76,000+ live camera network, with flights, satellites, weather and intel feeds layered around it.",
+          "These three get mentioned in the same breath constantly, and they barely overlap in what they are. God's Eye View is a builder's project: open-source Cesium software (MIT, by Bilawal Sidhu and Sameh Khamis) that you install and run yourself, famous for cinematic sensor-style views and a voice-controlled AI agent. World Monitor is an analyst's dashboard: a free hosted web app (AGPL-3.0, by Elie Habib) that fuses hundreds of geopolitical feeds — conflict data, chokepoints, markets, AI briefs — into panels you read. WorldEye is a watcher's globe: a hosted 3D planet whose centerpiece is a 74,229 live camera network, with flights, satellites, weather and intel feeds layered around it.",
           "Full disclosure, since we make one of these: this comparison is written by the WorldEye team. We checked every competitor fact against official sources in October 2026 (the God's Eye View GitHub README, worldmonitor.app and its pricing page) and we've marked the places where the other two genuinely win.",
         ],
       },
       {
         heading: "The scorecard",
         body: [
-          "Hosting: God's Eye View — self-hosted only; World Monitor — hosted free, self-host optional; WorldEye — hosted. Cameras: God's Eye View — a CCTV mesh of roughly 4,000 public cameras (its README figure; older articles saying ~800 are out of date); World Monitor — no camera network; WorldEye — 76,000+ live feeds with a browsable directory.",
+          "Hosting: God's Eye View — self-hosted only; World Monitor — hosted free, self-host optional; WorldEye — hosted. Cameras: God's Eye View — a CCTV mesh of roughly 4,000 public cameras (its README figure; older articles saying ~800 are out of date); World Monitor — no camera network; WorldEye — 74,229 live feeds with a browsable directory.",
           "Analysis depth: God's Eye View — sensor visualizations and a voice agent, aimed at spectacle; World Monitor — the clear winner, with ACLED/UCDP conflict data, 13 tracked chokepoints, macro data and AI country briefs across six dashboard variants; WorldEye — GDELT-powered intel feeds, cyber and maritime layers and an AI analyst on Pro, shallower than World Monitor's panels by design. Price: God's Eye View — free code, but photorealistic tiles and voice bill to your own API keys; World Monitor — free, Pro $39.99/month; WorldEye — free, Pro $3.99/week, $9.99/month or $59.99/year.",
         ],
       },
@@ -1727,7 +1727,7 @@ export const POSTS: BlogPost[] = [
       },
       {
         q: "Which has the most live cameras?",
-        a: "WorldEye, at 76,000+ verified-live feeds. God's Eye View's mesh is roughly 4,000 per its README. World Monitor doesn't operate a camera network.",
+        a: "WorldEye, at 74,229 verified-live feeds. God's Eye View's mesh is roughly 4,000 per its README. World Monitor doesn't operate a camera network.",
       },
     ],
   },
@@ -1786,19 +1786,19 @@ export const POSTS: BlogPost[] = [
   },
   {
     slug: "76000-live-cameras-new-layers",
-    title: "76,000+ Live Cameras: WorldEye's Biggest Expansion Yet",
-    seoTitle: "76,000+ Live Cameras & New Layers | WorldEye Blog",
+    title: "74,229 Live Cameras: WorldEye's Biggest Expansion Yet",
+    seoTitle: "74,229 Live Cameras & New Layers | WorldEye Blog",
     date: "2026-10-18",
     excerpt:
-      "WorldEye's camera network more than doubled to 76,000+ verified live feeds — and the globe gained transit, traffic, drones, launch tracking, street-level photos and more. What shipped, what it draws from, and what's honestly still empty.",
+      "WorldEye's camera network more than doubled to 74,229 verified live feeds — and the globe gained transit, traffic, drones, launch tracking, street-level photos and more. What shipped, what it draws from, and what's honestly still empty.",
     seoDescription:
-      "WorldEye now maps 76,000+ verified live cameras plus new transit, traffic, drone, launch and street-level layers. What shipped and where the data comes from.",
+      "WorldEye now maps 74,229 verified live cameras plus new transit, traffic, drone, launch and street-level layers. What shipped and where the data comes from.",
     tags: ["cameras", "announcement"],
     sections: [
       {
         heading: "The camera network more than doubled",
         body: [
-          "WorldEye now serves 76,625 cameras, up from about 40,000 directory records — and every addition earned its place the slow way. Each new feed was playback-verified before import, deduplicated five different ways (provider ID, normalized URL, proximity, name matching and image fingerprinting), and rejected if it was dead, a placeholder, or didn't carry clear reuse rights. Feeds we couldn't clear — including a large network held back over licensing — stayed out. The standing figure of 76,000+ is the verified count, not a directory scrape.",
+          "WorldEye now serves 74,229 cameras, up from about 40,000 directory records — and every addition earned its place the slow way. Each new feed was playback-verified before import, deduplicated five different ways (provider ID, normalized URL, proximity, name matching and image fingerprinting), and rejected if it was dead, a placeholder, or didn't carry clear reuse rights. Feeds we couldn't clear — including a large network held back over licensing — stayed out. The standing figure of 74,229 is the verified count, not a directory scrape.",
           "The growth is lumpy in the way real camera networks are: +30,889 feeds from a full public-index harvest (the United States and Japan gained the most), +3,528 FAA weather cameras at airports and mountain passes, plus two quiet fixes that restored cameras we already had — a pagination bug that silently truncated California's Caltrans network, and a broken British Columbia source that had dropped DriveBC entirely.",
         ],
       },
@@ -1825,7 +1825,7 @@ export const POSTS: BlogPost[] = [
     ],
     faqs: [
       {
-        q: "Are all 76,000+ cameras live video?",
+        q: "Are all 74,229 cameras live video?",
         a: "No — and the site doesn't claim otherwise. The network mixes live video streams with frequently refreshed snapshot cameras (still frames that update on a cycle), plus FAA weather cameras. 8,800+ of the new additions are live video; the rest are verified-refreshing snapshots.",
       },
       {

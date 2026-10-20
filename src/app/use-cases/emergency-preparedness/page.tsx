@@ -277,7 +277,7 @@ export default function EmergencyPreparednessPage() {
             },
             {
               label: "Cameras",
-              desc: "76,000+ live public webcams — check your evacuation routes and neighborhood right now.",
+              desc: "74,229 live public webcams — check your evacuation routes and neighborhood right now.",
               href: "/cameras",
             },
             {

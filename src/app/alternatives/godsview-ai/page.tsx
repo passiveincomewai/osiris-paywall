@@ -24,7 +24,7 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "GodsView AI Alternatives in 2026 — Hosted Live Globes Compared",
   description:
-    "GodsView AI is a hosted live map aimed at 'God's Eye View online' searches. Compare the alternatives: WorldEye's 3D globe with 76,000+ cameras, GodsView AI itself, and the original open-source God's Eye View.",
+    "GodsView AI is a hosted live map aimed at 'God's Eye View online' searches. Compare the alternatives: WorldEye's 3D globe with 74,229 cameras, GodsView AI itself, and the original open-source God's Eye View.",
   alternates: { canonical: "/alternatives/godsview-ai" },
   openGraph: {
     title: "GodsView AI Alternatives in 2026 — Hosted Live Globes Compared | WorldEye",
@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best for cameras + a real 3D globe",
     href: "/",
     linkLabel: "Open the live globe",
-    body: "A hosted 3D globe whose centerpiece is the camera network: 76,000+ live public feeds across 105 countries, browsable by country and city, fused with live flights, satellites, weather radar, earthquakes and wildfires. Free with no signup; Pro ($3.99/week, $9.99/month, $59.99/year) adds an OSINT toolkit, cyber and maritime intel feeds, live news and an AI analyst — at published prices, on the site's own keys.",
+    body: "A hosted 3D globe whose centerpiece is the camera network: 74,229 live public feeds across 105 countries, browsable by country and city, fused with live flights, satellites, weather radar, earthquakes and wildfires. Free with no signup; Pro ($3.99/week, $9.99/month, $59.99/year) adds an OSINT toolkit, cyber and maritime intel feeds, live news and an AI analyst — at published prices, on the site's own keys.",
   },
   {
     icon: MonitorSmartphone,
@@ -79,7 +79,7 @@ const OPTIONS = [
 const TABLE: { label: string; worldeye: string; godsview: string; gev: string }[] = [
   { label: "Runs where", worldeye: "Hosted website", godsview: "Hosted website", gev: "Your machine (install / Docker / Pinokio)" },
   { label: "3D globe", worldeye: "Yes — globe-first", godsview: "Yes, alongside a 2D ops map", gev: "Yes (Cesium)" },
-  { label: "Public cameras", worldeye: "76,000+ feeds, browsable directory", godsview: "Camera search layer; no published count", gev: "~4,000 (CCTV mesh, project README)" },
+  { label: "Public cameras", worldeye: "74,229 feeds, browsable directory", godsview: "Camera search layer; no published count", gev: "~4,000 (CCTV mesh, project README)" },
   { label: "Flights / ships / quakes / fires", worldeye: "Live, free", godsview: "Live, free", gev: "Live; base layers keyless" },
   { label: "OSINT / intel tooling", worldeye: "Pro: OSINT toolkit, cyber + maritime intel, GDELT feeds, AI analyst", godsview: "Premium: watchlists, kiosk mode, heavier ops layers", gev: "Voice AI agent (your OpenAI key); sensor modes" },
   { label: "Price", worldeye: "Free; Pro $3.99/wk, $9.99/mo, $59.99/yr", godsview: "Free map; Premium pricing not published on its site", gev: "Free code; photorealistic tiles + voice bill to your keys" },
@@ -91,7 +91,7 @@ const jsonLd = {
   "@graph": [
     webPageLd(
       "GodsView AI Alternatives in 2026 — Hosted Live Globes Compared",
-      "GodsView AI is a hosted live map aimed at 'God's Eye View online' searches. Compare the alternatives: WorldEye's 3D globe with 76,000+ cameras, GodsView AI itself, and the original open-source God's Eye View.",
+      "GodsView AI is a hosted live map aimed at 'God's Eye View online' searches. Compare the alternatives: WorldEye's 3D globe with 74,229 cameras, GodsView AI itself, and the original open-source God's Eye View.",
       "/alternatives/godsview-ai"
     ),
     itemListLd(
@@ -125,7 +125,7 @@ export default function GodsViewAiAlternativesPage() {
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
           GodsView AI is a hosted live map built for people searching
           &ldquo;God&apos;s Eye View online.&rdquo; It&apos;s a reasonable
-          answer — and so is WorldEye: a hosted 3D globe with a 76,000+
+          answer — and so is WorldEye: a hosted 3D globe with a 74,229
           camera network and published pricing. Here&apos;s how the hosted
           options (and the open-source original) actually stack up.
         </p>
@@ -196,7 +196,7 @@ export default function GodsViewAiAlternativesPage() {
 
       <MidCta
         heading="Want the globe with the cameras?"
-        body="WorldEye's map is live right now — 76,000+ public cameras, flights, satellites and weather on one 3D globe. Free, no signup."
+        body="WorldEye's map is live right now — 74,229 public cameras, flights, satellites and weather on one 3D globe. Free, no signup."
       />
 
       {/* Comparison table */}
@@ -232,7 +232,7 @@ export default function GodsViewAiAlternativesPage() {
         <div className="flex flex-wrap gap-3 pt-6">
           {[
             { icon: Globe, label: "The live globe", href: "/" },
-            { icon: Camera, label: "76,000+ cameras", href: "/cameras" },
+            { icon: Camera, label: "74,229 cameras", href: "/cameras" },
             { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
             { icon: Satellite, label: "Satellites", href: "/satellite-tracker" },
           ].map((c) => (
@@ -253,7 +253,7 @@ export default function GodsViewAiAlternativesPage() {
         <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
           <p>
             <span className="text-white/85 font-semibold">Choose WorldEye</span>{" "}
-            if the cameras are the point — a 76,000+ feed directory you can
+            if the cameras are the point — a 74,229 feed directory you can
             browse by country and city — or if you want the deeper Pro layers
             (OSINT toolkit, cyber and maritime intel, live news, AI analyst)
             at prices published on the pricing page.
@@ -301,7 +301,7 @@ export default function GodsViewAiAlternativesPage() {
           <div>
             <h3 className="text-lg font-semibold text-white/90">Which has more cameras?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              WorldEye — 76,000+ live public feeds with a browsable country
+              WorldEye — 74,229 live public feeds with a browsable country
               and city directory. GodsView AI includes cameras in its search
               but doesn&apos;t publish a network size; the open-source
               God&apos;s Eye View mesh lists roughly 4,000 cameras in its

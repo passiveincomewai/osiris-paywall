@@ -40,7 +40,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Where do these Canadian traffic cameras come from?",
-    a: "They are the public feeds published by provincial and municipal road authorities — Ontario 511, DriveBC, Alberta's road network, Quebec's cameras and city systems like Ottawa and Edmonton. WorldEye collects them into one map alongside its 76,000+ cameras worldwide, so you don't have to visit a different site for every province.",
+    a: "They are the public feeds published by provincial and municipal road authorities — Ontario 511, DriveBC, Alberta's road network, Quebec's cameras and city systems like Ottawa and Edmonton. WorldEye collects them into one map alongside its 74,229 cameras worldwide, so you don't have to visit a different site for every province.",
   },
   {
     q: "How many live cameras are there in Canada?",

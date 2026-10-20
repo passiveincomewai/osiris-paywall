@@ -46,7 +46,7 @@ const OPTIONS = [
     name: "WorldEye",
     tag: "Best live-planet alternative",
     href: "/compare/google-earth",
-    body: "A free live 3D globe — no signup — where the Earth moves: live flights, satellites, ships, weather, earthquakes, wildfires and ~76,000 public cameras. Google Earth shows you the planet's past; WorldEye shows you its present.",
+    body: "A free live 3D globe — no signup — where the Earth moves: live flights, satellites, ships, weather, earthquakes, wildfires and 74,229 public cameras. Google Earth shows you the planet's past; WorldEye shows you its present.",
   },
   {
     icon: Satellite,
@@ -249,7 +249,7 @@ export default function GoogleEarthAlternativesPage() {
             {[
               { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
               { icon: Plane, label: "Live flight tracking", href: "/live-flight-tracker" },
-              { icon: Camera, label: "~76,000 public cameras", href: "/cameras" },
+              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
               { icon: Globe, label: "All features", href: "/features" },
             ].map((c) => (
               <Link

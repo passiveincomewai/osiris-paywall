@@ -160,7 +160,7 @@ export default function TravelersPage() {
             Visit first. <span className="text-[#D4AF37]">Then go.</span>
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-            WorldEye puts 76,000+ live cameras, weather and flight tracking on one
+            WorldEye puts 74,229 live cameras, weather and flight tracking on one
             free globe — so you can preview your destination, check the roads and
             time your airport pickup before you leave home.
           </p>
@@ -255,7 +255,7 @@ export default function TravelersPage() {
             },
             {
               label: "Cameras",
-              desc: "76,000+ live public webcams worldwide — preview your destination street by street.",
+              desc: "74,229 live public webcams worldwide — preview your destination street by street.",
               href: "/cameras",
             },
             {

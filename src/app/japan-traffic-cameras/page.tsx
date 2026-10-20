@@ -41,7 +41,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Where do these Japanese traffic cameras come from?",
-    a: "Most are published by Japan's Ministry of Land, Infrastructure, Transport and Tourism (MLIT) and prefectural road offices — the same public feeds used for disaster prevention and road management, including the national river-and-road camera network. WorldEye collects them into one searchable map layer alongside its 76,000+ cameras worldwide.",
+    a: "Most are published by Japan's Ministry of Land, Infrastructure, Transport and Tourism (MLIT) and prefectural road offices — the same public feeds used for disaster prevention and road management, including the national river-and-road camera network. WorldEye collects them into one searchable map layer alongside its 74,229 cameras worldwide.",
   },
   {
     q: "How many live cameras are there in Japan?",

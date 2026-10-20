@@ -24,7 +24,7 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "War Monitor Alternatives in 2026 — Conflict Maps & Live Globes",
   description:
-    "War Monitor (warmonitor.app) is a conflict-first intelligence dashboard. Compare the alternatives: WorldEye's 3D globe with 76,000+ live cameras, War Monitor itself, LiveUAMap and World Monitor.",
+    "War Monitor (warmonitor.app) is a conflict-first intelligence dashboard. Compare the alternatives: WorldEye's 3D globe with 74,229 live cameras, War Monitor itself, LiveUAMap and World Monitor.",
   alternates: { canonical: "/alternatives/war-monitor" },
   openGraph: {
     title: "War Monitor Alternatives in 2026 — Conflict Maps & Live Globes | WorldEye",
@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best all-planet alternative — no account",
     href: "/",
     linkLabel: "Open the live globe",
-    body: "A hosted 3D globe for watching the world — conflict zones included, but not conflict-only: 76,000+ live public cameras across 105 countries, live flights, ships and satellites, weather, earthquakes and wildfires, all free with no account. Pro ($3.99/week, $9.99/month, $59.99/year) adds GDELT-powered conflict and event intel, cyber and maritime feeds and live news. What it doesn't have: War Monitor's analyst toolkit — no timeline replay, no link analysis.",
+    body: "A hosted 3D globe for watching the world — conflict zones included, but not conflict-only: 74,229 live public cameras across 105 countries, live flights, ships and satellites, weather, earthquakes and wildfires, all free with no account. Pro ($3.99/week, $9.99/month, $59.99/year) adds GDELT-powered conflict and event intel, cyber and maritime feeds and live news. What it doesn't have: War Monitor's analyst toolkit — no timeline replay, no link analysis.",
   },
   {
     icon: Crosshair,
@@ -79,7 +79,7 @@ const OPTIONS = [
 const TABLE: { label: string; worldeye: string; warmonitor: string }[] = [
   { label: "Focus", worldeye: "The whole live planet — conflict is one layer among many", warmonitor: "Conflict and military activity first" },
   { label: "3D globe", worldeye: "Yes — globe-first", warmonitor: "Map dashboard (2D operations view)" },
-  { label: "Public cameras", worldeye: "76,000+ feeds, browsable directory", warmonitor: "Public cameras included on the free tier (no published network size)" },
+  { label: "Public cameras", worldeye: "74,229 feeds, browsable directory", warmonitor: "Public cameras included on the free tier (no published network size)" },
   { label: "Conflict data", worldeye: "GDELT-powered intel feeds (Pro)", warmonitor: "ACLED + GDELT feeds, frontlines, GPS-jamming layer" },
   { label: "Analyst toolkit", worldeye: "OSINT lookups + AI analyst (Pro)", warmonitor: "Timeline replay, link analysis, pattern-of-life, geofence alerts" },
   { label: "Weather & hazards", worldeye: "Radar, quakes, wildfires — core free layers", warmonitor: "Earthquakes and fires among its 25+ layers" },
@@ -92,7 +92,7 @@ const jsonLd = {
   "@graph": [
     webPageLd(
       "War Monitor Alternatives in 2026 — Conflict Maps & Live Globes",
-      "War Monitor (warmonitor.app) is a conflict-first intelligence dashboard. Compare the alternatives: WorldEye's 3D globe with 76,000+ live cameras, War Monitor itself, LiveUAMap and World Monitor.",
+      "War Monitor (warmonitor.app) is a conflict-first intelligence dashboard. Compare the alternatives: WorldEye's 3D globe with 74,229 live cameras, War Monitor itself, LiveUAMap and World Monitor.",
       "/alternatives/war-monitor"
     ),
     itemListLd(
@@ -126,7 +126,7 @@ export default function WarMonitorAlternativesPage() {
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
           War Monitor is a conflict-first intelligence dashboard — strong on
           frontlines, feeds and analyst tools. If you want the conflicts in
-          context — on a live 3D globe with 76,000+ cameras, flights, ships
+          context — on a live 3D globe with 74,229 cameras, flights, ships
           and weather, no account needed — that&apos;s WorldEye. Here&apos;s
           the honest comparison.
         </p>
@@ -198,7 +198,7 @@ export default function WarMonitorAlternativesPage() {
 
       <MidCta
         heading="See the conflict zones — and everything around them"
-        body="WorldEye puts GDELT conflict intel on the same globe as 76,000+ live cameras, flights, ships and weather. Free, no account."
+        body="WorldEye puts GDELT conflict intel on the same globe as 74,229 live cameras, flights, ships and weather. Free, no account."
       />
 
       {/* Comparison table */}
@@ -230,7 +230,7 @@ export default function WarMonitorAlternativesPage() {
         <div className="flex flex-wrap gap-3 pt-6">
           {[
             { icon: Globe, label: "The live globe", href: "/" },
-            { icon: Camera, label: "76,000+ cameras", href: "/cameras" },
+            { icon: Camera, label: "74,229 cameras", href: "/cameras" },
             { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
             { icon: Satellite, label: "Satellites", href: "/satellite-tracker" },
           ].map((c) => (
@@ -260,7 +260,7 @@ export default function WarMonitorAlternativesPage() {
             <span className="text-white/85 font-semibold">Choose WorldEye</span>{" "}
             if you want situational awareness of the whole planet — conflicts
             visible on the same globe as the cameras, flights, ships and
-            weather around them — with no account, a browsable 76,000+
+            weather around them — with no account, a browsable 74,229
             camera directory, and a consumer Pro tier at published prices.
           </p>
           <p>

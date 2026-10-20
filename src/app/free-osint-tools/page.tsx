@@ -49,7 +49,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Free visual investigation globe",
     href: "/",
-    limit: "Free tier: the entire live map — globe, flights, satellites, ships, weather, quakes, fires, ~76,000 cameras — no signup, no paywall. OSINT toolkit and AI analyst are Pro.",
+    limit: "Free tier: the entire live map — globe, flights, satellites, ships, weather, quakes, fires, 74,229 cameras — no signup, no paywall. OSINT toolkit and AI analyst are Pro.",
     body: "Start every investigation here: orient yourself visually before running a single query. See the location, what's around it, what's moving through it — flights, satellites, ships, weather, ground cameras — all free with no account. The visual layer most free OSINT stacks are missing.",
   },
   {

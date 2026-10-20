@@ -40,7 +40,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Where do these Swedish traffic cameras come from?",
-    a: "Most are published by Trafikverket, the Swedish Transport Administration — the road cameras Sweden operates for traffic management and winter maintenance — together with municipal feeds. WorldEye collects them into one map alongside its 76,000+ cameras worldwide.",
+    a: "Most are published by Trafikverket, the Swedish Transport Administration — the road cameras Sweden operates for traffic management and winter maintenance — together with municipal feeds. WorldEye collects them into one map alongside its 74,229 cameras worldwide.",
   },
   {
     q: "How many live cameras are there in Sweden?",

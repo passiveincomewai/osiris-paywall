@@ -45,7 +45,7 @@ const OPTIONS = [
     name: "WorldEye",
     tag: "Best free all-in-one alternative",
     href: "/compare/zoom-earth",
-    body: "A free live 3D globe — no signup — fusing live flights, satellites, weather, earthquakes, wildfires and ~76,000 public cameras on one screen. The pick when you want the satellite-style view plus everything happening underneath it.",
+    body: "A free live 3D globe — no signup — fusing live flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras on one screen. The pick when you want the satellite-style view plus everything happening underneath it.",
   },
   {
     icon: Wind,
@@ -116,7 +116,7 @@ export default function ZoomEarthAlternativesPage() {
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
           The best free Zoom Earth alternative is WorldEye: a live 3D globe
           streaming flights, satellites, weather, earthquakes, wildfires and
-          ~76,000 public cameras — no signup. If your watching is mostly
+          74,229 public cameras — no signup. If your watching is mostly
           satellite imagery or forecast models, a specialist below may fit
           better.
         </p>
@@ -155,7 +155,7 @@ export default function ZoomEarthAlternativesPage() {
           <p>
             Yes. WorldEye&apos;s entire map is free with no account: a 3D globe
             carrying live aircraft positions, satellite tracks, weather
-            systems, earthquake and wildfire activity, and roughly 76,000
+            systems, earthquake and wildfire activity, and roughly 74,229
             publicly accessible cameras. Where Zoom Earth stops at the imagery,
             WorldEye keeps going down to street level — the storm from orbit
             and the camera inside it, on one screen.
@@ -236,7 +236,7 @@ export default function ZoomEarthAlternativesPage() {
           <div className="flex flex-wrap gap-3 pt-2">
             {[
               { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
-              { icon: Camera, label: "~76,000 public cameras", href: "/cameras" },
+              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
               { icon: CloudSun, label: "Weather tracker", href: "/weather-tracker" },
               { icon: Globe, label: "All features", href: "/features" },
             ].map((c) => (

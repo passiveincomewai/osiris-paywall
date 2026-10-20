@@ -19,14 +19,14 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "God's Eye View of Earth, Live — 76,000+ Cameras, Flights & Satellites",
+  title: "God's Eye View of Earth, Live — 74,229 Cameras, Flights & Satellites",
   description:
-    "WorldEye is a live god's eye view of Earth: 76,000+ public cameras, live flights, satellites, weather, earthquakes and wildfires on one 3D globe — free, no signup, nothing to install.",
+    "WorldEye is a live god's eye view of Earth: 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires on one 3D globe — free, no signup, nothing to install.",
   alternates: { canonical: "/gods-eye-view" },
   openGraph: {
-    title: "God's Eye View of Earth, Live — 76,000+ Cameras, Flights & Satellites | WorldEye",
+    title: "God's Eye View of Earth, Live — 74,229 Cameras, Flights & Satellites | WorldEye",
     description:
-      "One live 3D globe with 76,000+ public cameras, live flights, satellites, weather, earthquakes and wildfires. Free, no signup, nothing to install.",
+      "One live 3D globe with 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires. Free, no signup, nothing to install.",
     url: "/gods-eye-view",
     type: "website",
   },
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 const LAYERS = [
   {
     icon: Camera,
-    title: "76,000+ live cameras",
+    title: "74,229 live cameras",
     desc: "Public cameras from 105 countries — highways, city plazas, beaches, harbors, airports and mountain resorts — plotted where they actually stand. Click one and watch that exact spot, live.",
   },
   {
@@ -80,7 +80,7 @@ const FAQS = [
   },
   {
     q: "How is this different from the open-source project called God's Eye View?",
-    a: "God's Eye View is an open-source project you install and run yourself — powerful, and a great build-it-yourself option; its photorealistic 3D tiles need a Cesium ion token or your own Google Maps API key. WorldEye is an independent hosted alternative built on the same idea — a separate product, not affiliated with the project — already running, free in the browser, with a much larger camera network (76,000+ feeds vs the project's roughly 4,000-camera CCTV mesh). We compare the options honestly on our God's Eye View alternatives page.",
+    a: "God's Eye View is an open-source project you install and run yourself — powerful, and a great build-it-yourself option; its photorealistic 3D tiles need a Cesium ion token or your own Google Maps API key. WorldEye is an independent hosted alternative built on the same idea — a separate product, not affiliated with the project — already running, free in the browser, with a much larger camera network (74,229 feeds vs the project's roughly 4,000-camera CCTV mesh). We compare the options honestly on our God's Eye View alternatives page.",
   },
   {
     q: "Where does the live data come from?",
@@ -95,7 +95,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "God's Eye View of Earth, Live — WorldEye",
       description:
-        "WorldEye is a live god's eye view of Earth: 76,000+ public cameras, live flights, satellites, weather, earthquakes and wildfires on one 3D globe — free, no signup.",
+        "WorldEye is a live god's eye view of Earth: 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires on one 3D globe — free, no signup.",
       url: "https://worldeye.app/gods-eye-view",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     },
@@ -139,7 +139,7 @@ export default function GodsEyeViewPage() {
             A god&apos;s eye view of Earth. <span className="text-[#00E5FF]">Live.</span>
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-            WorldEye puts the whole living planet in one view: 76,000+ public
+            WorldEye puts the whole living planet in one view: 74,229 public
             cameras, live flights, satellites, weather, earthquakes and
             wildfires on a single interactive 3D globe — free, in your browser,
             with nothing to install.
@@ -227,7 +227,7 @@ export default function GodsEyeViewPage() {
             <div className="flex flex-wrap gap-3 pt-2">
               {[
                 { icon: MousePointerClick, label: "Open the globe", href: "/" },
-                { icon: Camera, label: "Browse 76,000+ cameras", href: "/cameras" },
+                { icon: Camera, label: "Browse 74,229 cameras", href: "/cameras" },
                 { icon: Layers, label: "All features", href: "/features" },
               ].map((c) => (
                 <Link
@@ -295,7 +295,7 @@ export default function GodsEyeViewPage() {
             },
             {
               label: "Live cameras",
-              desc: "The full camera directory — 76,000+ live public cameras in 105 countries.",
+              desc: "The full camera directory — 74,229 live public cameras in 105 countries.",
               href: "/cameras",
             },
             {

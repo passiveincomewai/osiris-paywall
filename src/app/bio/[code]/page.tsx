@@ -83,7 +83,7 @@ export default async function BioPage({ params }: { params: Promise<{ code: stri
             <h1 className="text-3xl font-bold text-white mt-1">{bio.name}</h1>
           </div>
           <p className="text-sm text-slate-300 leading-relaxed">
-            I share live views of Earth — 76,000+ public cameras, flights, weather and more on one 3D globe.
+            I share live views of Earth — 74,229 public cameras, flights, weather and more on one 3D globe.
           </p>
         </header>
 

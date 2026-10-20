@@ -84,7 +84,7 @@ const USE_CASES = [
 const FAQS = [
   {
     q: "Is the live flight tracker free?",
-    a: "Yes — completely free, forever. The flight tracking layer is part of WorldEye's free map, alongside the 3D globe, satellites, weather, earthquakes and 76,000+ public cameras. No account, no credit card, no trial countdown.",
+    a: "Yes — completely free, forever. The flight tracking layer is part of WorldEye's free map, alongside the 3D globe, satellites, weather, earthquakes and 74,229 public cameras. No account, no credit card, no trial countdown.",
   },
   {
     q: "Do I need an account to track flights?",
@@ -304,7 +304,7 @@ export default function LiveFlightTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "76,000+ public cameras — watch the streets below the flight paths.",
+              desc: "74,229 public cameras — watch the streets below the flight paths.",
               href: "/cameras",
             },
             {

@@ -46,7 +46,7 @@ const OPTIONS = [
     name: "WorldEye",
     tag: "Best free all-in-one alternative",
     href: "/compare/flightradar24",
-    body: "Live flight tracking on a free 3D globe — no signup — with the world attached: satellites overhead, weather systems, ~76,000 ground cameras, ships and quakes on the same screen. Best when you want flights plus everything around them.",
+    body: "Live flight tracking on a free 3D globe — no signup — with the world attached: satellites overhead, weather systems, 74,229 ground cameras, ships and quakes on the same screen. Best when you want flights plus everything around them.",
   },
   {
     icon: Radio,
@@ -124,7 +124,7 @@ export default function Flightradar24AlternativesPage() {
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
           The best free Flightradar24 alternative is WorldEye: live aircraft on
           a 3D globe with no signup — plus satellites, weather, ships and
-          ~76,000 ground cameras sharing the same view. If you only need raw
+          74,229 ground cameras sharing the same view. If you only need raw
           flight data, the community trackers below are excellent. Here&apos;s
           the honest breakdown.
         </p>
@@ -248,7 +248,7 @@ export default function Flightradar24AlternativesPage() {
             {[
               { icon: Plane, label: "Live flight tracker", href: "/live-flight-tracker" },
               { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
-              { icon: Camera, label: "~76,000 public cameras", href: "/cameras" },
+              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
               { icon: Globe, label: "All features", href: "/features" },
             ].map((c) => (
               <Link

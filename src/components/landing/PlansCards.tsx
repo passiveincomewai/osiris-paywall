@@ -12,7 +12,7 @@ import { Check } from "lucide-react";
  */
 const FREE_ROWS = [
   "Interactive 3D globe",
-  "76,000+ public cameras",
+  "74,229 public cameras",
   "Flight & satellite tracking",
   "Basic search — fly to any place",
   "Transit, drones, launches & street level",

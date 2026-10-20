@@ -8,7 +8,7 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "About WorldEye — Open Planetary Intelligence for Everyone",
   description:
-    "WorldEye is a free live 3D globe: flights, satellites, transit, weather, quakes and 76,000+ public cameras with no signup. Pro adds the OI AI assistant and intel tools.",
+    "WorldEye is a free live 3D globe: flights, satellites, transit, weather, quakes and 74,229 public cameras with no signup. Pro adds the OI AI assistant and intel tools.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About WorldEye",
@@ -24,7 +24,7 @@ const jsonLd = {
   "@type": "AboutPage",
   name: "About WorldEye",
   description:
-    "WorldEye is a free live 3D globe of the planet — flights, satellites, weather, earthquakes, wildfires and ~76,000 public cameras with no signup.",
+    "WorldEye is a free live 3D globe of the planet — flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras with no signup.",
   url: "https://worldeye.app/about",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
   about: {
@@ -40,7 +40,7 @@ const PRINCIPLES = [
   {
     icon: Globe,
     title: "The map is free forever",
-    body: "The live 3D globe — flights, satellites, weather, earthquakes, wildfires and ~76,000 public CCTV cameras — costs nothing and requires no account. That will not change.",
+    body: "The live 3D globe — flights, satellites, weather, earthquakes, wildfires and 74,229 public CCTV cameras — costs nothing and requires no account. That will not change.",
   },
   {
     icon: Eye,
@@ -107,7 +107,7 @@ export default function AboutPage() {
               commercial and military flight positions, orbital satellite tracking,
               live buses and trains from 15 transit agencies, weather systems,
               earthquake and wildfire activity, street-level photos, rocket launches
-              with live countdowns, and roughly 76,000 publicly accessible street
+              with live countdowns, and roughly 74,229 publicly accessible street
               cameras around the world.
             </p>
             <p>

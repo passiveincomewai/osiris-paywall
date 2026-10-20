@@ -48,7 +48,7 @@ const OPTIONS = [
     name: "WorldEye",
     tag: "Best all-round free alternative",
     href: "/compare/liveuamap",
-    body: "A free live 3D globe — no signup — where conflict news sits alongside the visual evidence around it: satellites overhead, aircraft in the sky, weather, and ~76,000 public cameras on the ground. Best when you want to see the event, not just read a pin about it.",
+    body: "A free live 3D globe — no signup — where conflict news sits alongside the visual evidence around it: satellites overhead, aircraft in the sky, weather, and 74,229 public cameras on the ground. Best when you want to see the event, not just read a pin about it.",
   },
   {
     icon: MapIcon,
@@ -202,7 +202,7 @@ export default function LiveuamapAlternativesPage() {
             Yes — several, including WorldEye. The entire map is free with no
             signup: an interactive 3D globe with live flight tracking, satellite
             tracking, ship positions, weather, earthquakes, wildfires, and
-            roughly 76,000 public cameras. For conflict monitoring specifically,
+            roughly 74,229 public cameras. For conflict monitoring specifically,
             the live-news layer (a Pro feed) and the free visual layers combine
             into something a pin map can&apos;t do: when a report breaks, you
             can look at the same location from orbit, from the air, and from a
@@ -285,7 +285,7 @@ export default function LiveuamapAlternativesPage() {
             {[
               { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
               { icon: Plane, label: "Live flight tracking", href: "/live-flight-tracker" },
-              { icon: Camera, label: "~76,000 public cameras", href: "/cameras" },
+              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
               { icon: Globe, label: "All features", href: "/features" },
             ].map((c) => (
               <Link

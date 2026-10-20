@@ -15,7 +15,7 @@ const CAPTIONS: { platform: string; color: string; text: string }[] = [
     platform: "Instagram",
     color: "#e879f9",
     text:
-`I found a site that lets you watch 76,000+ LIVE cameras around the world 🌍
+`I found a site that lets you watch 74,229 LIVE cameras around the world 🌍
 Traffic cams, beaches, city squares — all streaming free on a 3D globe.
 
 It's called WorldEye. The free map is honestly wild — and Pro unlocks an AI analyst + satellite view.
@@ -30,7 +30,7 @@ Link in bio 👆
     text:
 `POV: you discover you can watch the entire planet LIVE for free 🌐
 
-76,000+ cameras. Flights overhead. Satellites orbiting. All on one 3D globe.
+74,229 cameras. Flights overhead. Satellites orbiting. All on one 3D globe.
 
 WorldEye's free tier is actually insane. Link in bio if you want the Pro AI analyst.
 
@@ -40,7 +40,7 @@ WorldEye's free tier is actually insane. Link in bio if you want the Pro AI anal
     platform: "X",
     color: "#94a3b8",
     text:
-`WorldEye is a free 3D globe with 76,000+ live cameras, flight tracking, and satellites.
+`WorldEye is a free 3D globe with 74,229 live cameras, flight tracking, and satellites.
 
 Pro (weekly, monthly, or annual) adds an AI analyst, satellite basemap, and OSINT toolkit.
 
@@ -56,7 +56,7 @@ Worth a look: {LINK}
 
 Hey —
 
-Stumbled on WorldEye: a live 3D globe with 76,000+ public cameras you can watch free. Traffic, beaches, landmarks — all live.
+Stumbled on WorldEye: a live 3D globe with 74,229 public cameras you can watch free. Traffic, beaches, landmarks — all live.
 
 The free map is genuinely fun. If you want more, Pro unlocks an AI analyst, satellite view, and OSINT tools, on weekly, monthly, or annual plans.
 
@@ -72,7 +72,7 @@ const SCRIPTS: { title: string; color: string; lines: string[] }[] = [
     color: "#22d3ee",
     lines: [
       "HOOK (0–3s): “This website lets you watch the entire planet… legally.” [zoom into globe]",
-      "BEAT 1 (3–10s): “76,000+ live cameras. Beaches in Hawaii, streets in Tokyo — all live, right now.”",
+      "BEAT 1 (3–10s): “74,229 live cameras. Beaches in Hawaii, streets in Tokyo — all live, right now.”",
       "BEAT 2 (10–18s): “The map is completely free. No signup, just open it.” [click a camera]",
       "BEAT 3 (18–25s): “And Pro adds an AI analyst and satellite view if you want the full setup.”",
       "CTA (25–30s): “Link in bio. #ad — I earn a commission if you subscribe.”",
@@ -97,7 +97,7 @@ const EMAILS: { subject: string; text: string }[] = [
     text:
 `Quick one —
 
-WorldEye is a live 3D globe (free) with 76,000+ public cameras, flights, and satellites. I keep it open like a window to the world.
+WorldEye is a live 3D globe (free) with 74,229 public cameras, flights, and satellites. I keep it open like a window to the world.
 
 Pro adds an AI analyst + satellite view if you want the full intel setup. Weekly, monthly, or annual plans.
 
@@ -110,7 +110,7 @@ Disclosure: affiliate link — I earn a commission if you subscribe.`,
     text:
 `If you like watching the world happen in real time, try WorldEye.
 
-It's a free 3D globe with 76,000+ live public cameras — landmarks, highways, beaches. No signup needed for the map.
+It's a free 3D globe with 74,229 live public cameras — landmarks, highways, beaches. No signup needed for the map.
 
 There's a Pro tier (AI analyst, satellite view, OSINT toolkit) if you want more.
 
@@ -141,19 +141,19 @@ const HOOKS: Record<Tone, string[]> = {
 };
 const BODIES: Record<Feature, string[]> = {
   CCTV: [
-    "76,000+ public cameras stream live on a 3D globe — beaches, city squares, highways. The map is completely free, no signup.",
-    "Traffic cams, landmarks, beaches — 76,000+ of them, live, on one free globe. I've lost hours to this.",
-    "One free 3D globe, 76,000+ live public cameras. Pick a city, any city, and you're there.",
+    "74,229 public cameras stream live on a 3D globe — beaches, city squares, highways. The map is completely free, no signup.",
+    "Traffic cams, landmarks, beaches — 74,229 of them, live, on one free globe. I've lost hours to this.",
+    "One free 3D globe, 74,229 live public cameras. Pick a city, any city, and you're there.",
   ],
   flights: [
-    "Every aircraft overhead tracked live on the same globe — plus 76,000+ public cameras. Free to explore.",
+    "Every aircraft overhead tracked live on the same globe — plus 74,229 public cameras. Free to explore.",
     "Watch flights move in real time across a 3D Earth, then drop into a live street camera below them. Free.",
     "Live flight tracking, live cameras, live satellites — one free globe does all three.",
   ],
   satellites: [
-    "Watch satellites orbit overhead in real time on a free 3D globe, alongside 76,000+ live cameras.",
+    "Watch satellites orbit overhead in real time on a free 3D globe, alongside 74,229 live cameras.",
     "There's a free globe where you can watch satellites pass over your house. In real time. Right now.",
-    "Satellite orbits, live flights, and 76,000+ street cameras — all on one free 3D map.",
+    "Satellite orbits, live flights, and 74,229 street cameras — all on one free 3D map.",
   ],
   OSINT: [
     "Go Pro and unlock the AI analyst, satellite basemap, live traffic, advanced search filters, and the OSINT toolkit. Weekly, monthly, or annual plans.",
@@ -225,14 +225,14 @@ export default function ResourcesClient() {
             style={{ background: "radial-gradient(600px 200px at 50% 0%, #0a2a55 0%, #050b18 70%)", boxShadow: "0 0 30px rgba(0,150,255,.25)" }}>
             <div className="font-mono text-[10px] tracking-[0.3em] text-cyan-300 mb-2">WORLDEYE</div>
             <div className="text-2xl md:text-3xl font-black text-white tracking-tight">SEE THE PLANET LIVE</div>
-            <div className="text-sm text-slate-300 mt-2">76,000+ live cameras · Free 3D globe</div>
+            <div className="text-sm text-slate-300 mt-2">74,229 live cameras · Free 3D globe</div>
             <div className="mt-4 inline-block px-5 py-2 rounded-lg font-mono text-sm font-bold text-[#04121f]"
               style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Explore free →</div>
           </div>
         ),
       },
       {
-        alt: "WorldEye — 76,000+ live cameras",
+        alt: "WorldEye — 74,229 live cameras",
         el: (
           <div className="rounded-xl overflow-hidden border border-white/15 p-6 md:p-8"
             style={{ background: "#04070f" }}>
@@ -242,7 +242,7 @@ export default function ResourcesClient() {
                   style={{ boxShadow: "inset 0 0 12px rgba(0,150,255,.15)" }} />
               ))}
             </div>
-            <div className="text-xl md:text-2xl font-black text-white">76,000+ LIVE CAMERAS</div>
+            <div className="text-xl md:text-2xl font-black text-white">74,229 LIVE CAMERAS</div>
             <div className="text-sm text-slate-400 mt-1">One globe. Every street. Free.</div>
           </div>
         ),
@@ -518,7 +518,7 @@ export default function ResourcesClient() {
       <div className="rounded-2xl border border-amber-400/25 bg-amber-400/[0.05] p-5">
         <div className="text-sm font-bold text-amber-300 mb-1">Truthful claims only</div>
         <p className="text-sm text-slate-400 leading-relaxed">
-          Stick to what&apos;s real: 76,000+ live cameras, a free globe with no signup, Pro unlocks the AI analyst,
+          Stick to what&apos;s real: 74,229 live cameras, a free globe with no signup, Pro unlocks the AI analyst,
           satellite view, live traffic, advanced search filters, and the OSINT toolkit on weekly, monthly, or annual plans. Never promise
           income, never imply recruitment alone earns anything, and always disclose your affiliate link with #ad.
         </p>

@@ -5,14 +5,14 @@ import SiteFooter from "@/components/SiteFooter";
 import data from "@/data/camera-directory.json";
 
 export const metadata: Metadata = {
-  title: "Live Webcams Worldwide — 76,000+ Cams",
+  title: "Live Webcams Worldwide — 74,229 Cams",
   description:
-    "The WorldEye live webcam hub: 76,000+ public cameras in 105 countries — traffic, cities, nature and landmarks. Free forever, no signup.",
+    "The WorldEye live webcam hub: 74,229 public cameras in 105 countries — traffic, cities, nature and landmarks. Free forever, no signup.",
   alternates: { canonical: "https://worldeye.app/live-webcams" },
   openGraph: {
-    title: "Live Webcams Worldwide — 76,000+ Cams | WorldEye",
+    title: "Live Webcams Worldwide — 74,229 Cams | WorldEye",
     description:
-      "76,000+ live public webcams across 105 countries — traffic, cities, nature, landmarks. Free forever, no signup.",
+      "74,229 live public webcams across 105 countries — traffic, cities, nature, landmarks. Free forever, no signup.",
     url: "https://worldeye.app/live-webcams",
     type: "website",
   },
@@ -85,7 +85,7 @@ const FAQS = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "Live Webcams Worldwide — 76,000+ Cams",
+  name: "Live Webcams Worldwide — 74,229 Cams",
   description: `Directory of ${fmt(data.totalCameras)} live public webcams across ${data.countries.length} countries.`,
   url: "https://worldeye.app/live-webcams",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },

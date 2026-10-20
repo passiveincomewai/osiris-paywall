@@ -40,7 +40,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Where do these South Korean traffic cameras come from?",
-    a: "They are public feeds published by Korea's national expressway and road authorities and by city traffic information centers — the same camera networks Korean drivers check through national traffic portals. WorldEye collects them into one map alongside its 76,000+ cameras worldwide, with an English interface.",
+    a: "They are public feeds published by Korea's national expressway and road authorities and by city traffic information centers — the same camera networks Korean drivers check through national traffic portals. WorldEye collects them into one map alongside its 74,229 cameras worldwide, with an English interface.",
   },
   {
     q: "How many live cameras are there in South Korea?",

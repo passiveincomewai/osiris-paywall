@@ -86,7 +86,7 @@ const USE_CASES = [
 const FAQS = [
   {
     q: "Is the cyber threat map free?",
-    a: "The WorldEye globe itself is free — no account, no signup — including flights, satellites, weather, earthquakes, wildfires and 76,000+ public cameras. The Botnet C2 Servers layer is part of WorldEye Pro, the paid intel toolkit: $3.99/week, $9.99/month or $59.99/year.",
+    a: "The WorldEye globe itself is free — no account, no signup — including flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras. The Botnet C2 Servers layer is part of WorldEye Pro, the paid intel toolkit: $3.99/week, $9.99/month or $59.99/year.",
   },
   {
     q: "Where does the data come from?",
@@ -231,7 +231,7 @@ export default function CyberThreatMapPage() {
               </Link>{" "}
               ($3.99/week, $9.99/month, $59.99/year). The globe itself —
               including live flights, satellites, weather, earthquakes,
-              wildfires and 76,000+ public cameras — is free for everyone
+              wildfires and 74,229 public cameras — is free for everyone
               with no account.
             </p>
           </div>

@@ -24,12 +24,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "God's Eye View Alternatives in 2026 — Hosted vs Self-Hosted",
   description:
-    "God's Eye View is open-source software you install yourself. Compare the alternatives: WorldEye's hosted live globe (76,000+ cameras, no setup), the original project, Zoom Earth and LiveUAMap.",
+    "God's Eye View is open-source software you install yourself. Compare the alternatives: WorldEye's hosted live globe (74,229 cameras, no setup), the original project, Zoom Earth and LiveUAMap.",
   alternates: { canonical: "/alternatives/gods-eye-view" },
   openGraph: {
     title: "God's Eye View Alternatives in 2026 — Hosted vs Self-Hosted | WorldEye",
     description:
-      "The original God's Eye View is self-hosted open source. WorldEye is the same idea, already running: a live 3D globe with 76,000+ cameras, flights and satellites — free, no install.",
+      "The original God's Eye View is self-hosted open source. WorldEye is the same idea, already running: a live 3D globe with 74,229 cameras, flights and satellites — free, no install.",
     url: "/alternatives/gods-eye-view",
     type: "website",
   },
@@ -48,7 +48,7 @@ const OPTIONS = [
     tag: "Best hosted alternative — no install",
     href: "/gods-eye-view",
     linkLabel: "See WorldEye's god's eye view",
-    body: "The same idea as God's Eye View — one live globe carrying cameras, flights, satellites, weather, quakes and fires — but already hosted and running. Open it in a browser: no clone, no build, no API keys for the core experience, and a camera network of 76,000+ public feeds instead of roughly 4,000. Free with no signup; Pro adds OSINT and intel layers.",
+    body: "The same idea as God's Eye View — one live globe carrying cameras, flights, satellites, weather, quakes and fires — but already hosted and running. Open it in a browser: no clone, no build, no API keys for the core experience, and a camera network of 74,229 public feeds instead of roughly 4,000. Free with no signup; Pro adds OSINT and intel layers.",
   },
   {
     icon: GitBranch,
@@ -114,7 +114,7 @@ export default function GodsEyeViewAlternativesPage() {
         </h1>
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
           The original God&apos;s Eye View is open-source software you install
-          and run yourself. If you want that same live planet — 76,000+
+          and run yourself. If you want that same live planet — 74,229
           cameras, flights, satellites, weather — already running in your
           browser, that&apos;s WorldEye. Here&apos;s the honest breakdown of
           every route to the view.
@@ -161,7 +161,7 @@ export default function GodsEyeViewAlternativesPage() {
             WorldEye is an <span className="text-white/85 font-semibold">independent
             alternative</span> built on the same concept: one interactive 3D
             globe with live flights, satellites, weather, earthquakes and
-            wildfires, plus a public-camera network of 76,000+ feeds (the
+            wildfires, plus a public-camera network of 74,229 feeds (the
             open-source project&apos;s CCTV mesh lists roughly 4,000). No
             install, no build step, no API keys for the core globe — open the
             page and it&apos;s already live, on phone or desktop. To be plain:
@@ -219,7 +219,7 @@ export default function GodsEyeViewAlternativesPage() {
 
       <MidCta
         heading="The view, without the setup"
-        body="WorldEye's globe is live right now — 76,000+ cameras, flights, satellites and weather on one screen. Open it and decide in thirty seconds."
+        body="WorldEye's globe is live right now — 74,229 cameras, flights, satellites and weather on one screen. Open it and decide in thirty seconds."
       />
 
       {/* Hosted vs self-hosted */}
@@ -243,7 +243,7 @@ export default function GodsEyeViewAlternativesPage() {
           <p>
             <span className="text-white/85 font-semibold">Cameras.</span>{" "}
             The biggest data gap: roughly 4,000 public cameras in the
-            open-source project&apos;s CCTV mesh versus 76,000+ live public
+            open-source project&apos;s CCTV mesh versus 74,229 live public
             feeds from 105 countries on WorldEye. If cameras are why
             you&apos;re here, it isn&apos;t close.
           </p>
@@ -256,7 +256,7 @@ export default function GodsEyeViewAlternativesPage() {
           <div className="flex flex-wrap gap-3 pt-2">
             {[
               { icon: Globe, label: "The hosted globe", href: "/gods-eye-view" },
-              { icon: Camera, label: "76,000+ cameras", href: "/cameras" },
+              { icon: Camera, label: "74,229 cameras", href: "/cameras" },
               { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
               { icon: Satellite, label: "Satellites", href: "/satellite-tracker" },
             ].map((c) => (
@@ -325,7 +325,7 @@ export default function GodsEyeViewAlternativesPage() {
           <div>
             <h3 className="text-lg font-semibold text-white/90">Which has more cameras?</h3>
             <p className="text-white/55 leading-relaxed mt-2">
-              WorldEye, by a wide margin: 76,000+ live public cameras from 105
+              WorldEye, by a wide margin: 74,229 live public cameras from 105
               countries, versus roughly 4,000 in the open-source
               project&apos;s CCTV mesh (the figure in its README). Both draw
               on public feeds; WorldEye&apos;s directory is simply much

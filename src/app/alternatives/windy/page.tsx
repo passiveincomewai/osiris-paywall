@@ -45,7 +45,7 @@ const OPTIONS = [
     name: "WorldEye",
     tag: "Best free all-in-one alternative",
     href: "/compare/windy",
-    body: "A free live 3D globe — no signup — with weather systems alongside live flights, satellites, earthquakes, wildfires and ~76,000 public cameras on one screen. The pick when you want the weather in context, not on its own flat map.",
+    body: "A free live 3D globe — no signup — with weather systems alongside live flights, satellites, earthquakes, wildfires and 74,229 public cameras on one screen. The pick when you want the weather in context, not on its own flat map.",
   },
   {
     icon: Satellite,
@@ -123,7 +123,7 @@ export default function WindyAlternativesPage() {
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
           The best free Windy alternative for most people is WorldEye: a live
           3D globe streaming weather alongside flights, satellites,
-          earthquakes, wildfires and ~76,000 public cameras — no signup. If
+          earthquakes, wildfires and 74,229 public cameras — no signup. If
           your need is purely forecast models and animated wind, a weather
           specialist below may fit better.
         </p>
@@ -163,7 +163,7 @@ export default function WindyAlternativesPage() {
           <p>
             Yes. WorldEye&apos;s entire map is free with no account: a 3D globe
             carrying weather systems, live aircraft positions, satellite
-            tracks, earthquake and wildfire activity, and roughly 76,000
+            tracks, earthquake and wildfire activity, and roughly 74,229
             publicly accessible cameras. That breadth is the point — most free
             weather maps cover the forecast well, while WorldEye puts live
             weather on the same spinning globe as everything it affects.

@@ -40,7 +40,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Where do these German traffic cameras come from?",
-    a: "They are public feeds published by Germany's federal and state road authorities — the camera networks operated for Autobahn and federal-road management. German traffic cameras are famously fragmented by Land (state); WorldEye collects the openly published feeds into one map, in English, alongside its 76,000+ cameras worldwide.",
+    a: "They are public feeds published by Germany's federal and state road authorities — the camera networks operated for Autobahn and federal-road management. German traffic cameras are famously fragmented by Land (state); WorldEye collects the openly published feeds into one map, in English, alongside its 74,229 cameras worldwide.",
   },
   {
     q: "How many live cameras are there in Germany?",

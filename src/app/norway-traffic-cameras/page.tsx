@@ -40,7 +40,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Where do these Norwegian road cameras come from?",
-    a: "They are the public feeds of Statens vegvesen, the Norwegian Public Roads Administration — the cameras Norway itself uses to monitor passes, tunnels and highways. WorldEye collects them into one map alongside its 76,000+ cameras worldwide.",
+    a: "They are the public feeds of Statens vegvesen, the Norwegian Public Roads Administration — the cameras Norway itself uses to monitor passes, tunnels and highways. WorldEye collects them into one map alongside its 74,229 cameras worldwide.",
   },
   {
     q: "How many live cameras are there in Norway?",

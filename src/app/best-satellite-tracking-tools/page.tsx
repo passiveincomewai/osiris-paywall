@@ -44,7 +44,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best free all-in-one tracker",
     href: "/satellite-tracker",
-    body: "Live satellite tracking on a free 3D globe — no signup — with the planet attached: flights below, weather systems, earthquakes, wildfires and ~76,000 ground cameras on the same screen. The pick for watching orbit as part of the living world, not as dots on a chart. The satellite layer is free; Pro adds a satellite imagery view and analyst tools.",
+    body: "Live satellite tracking on a free 3D globe — no signup — with the planet attached: flights below, weather systems, earthquakes, wildfires and 74,229 ground cameras on the same screen. The pick for watching orbit as part of the living world, not as dots on a chart. The satellite layer is free; Pro adds a satellite imagery view and analyst tools.",
   },
   {
     icon: Satellite,

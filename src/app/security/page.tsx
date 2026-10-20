@@ -117,7 +117,7 @@ const SECTIONS: {
     icon: Globe,
     title: "No account, nothing to leak",
     body: [
-      "The live map — globe, flights, satellites, weather, earthquakes, wildfires, and 76,000+ public cameras — works with no account and no signup. There is no profile to breach, no password to steal, and no personal data collected just for looking around.",
+      "The live map — globe, flights, satellites, weather, earthquakes, wildfires, and 74,229 public cameras — works with no account and no signup. There is no profile to breach, no password to steal, and no personal data collected just for looking around.",
     ],
   },
   {

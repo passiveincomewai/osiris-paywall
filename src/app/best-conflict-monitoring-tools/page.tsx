@@ -54,7 +54,7 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best for visual conflict context",
     href: "/compare/liveuamap",
-    body: "A free live 3D globe — no signup — for seeing conflicts in context: live news and conflict feeds on Pro, plus free layers showing flights, satellites, ships, weather and ~76,000 ground cameras. When a report breaks, look at the location from orbit, from the air, and from the street — on one screen.",
+    body: "A free live 3D globe — no signup — for seeing conflicts in context: live news and conflict feeds on Pro, plus free layers showing flights, satellites, ships, weather and 74,229 ground cameras. When a report breaks, look at the location from orbit, from the air, and from the street — on one screen.",
   },
   {
     icon: Flame,

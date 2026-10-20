@@ -84,7 +84,7 @@ const USE_CASES = [
 const FAQS = [
   {
     q: "Is the satellite tracker free?",
-    a: "Yes — completely free, forever. Satellite tracking is part of WorldEye's free map, alongside live flights, 76,000+ public cameras, weather, earthquakes and wildfires. No account, no credit card.",
+    a: "Yes — completely free, forever. Satellite tracking is part of WorldEye's free map, alongside live flights, 74,229 public cameras, weather, earthquakes and wildfires. No account, no credit card.",
   },
   {
     q: "How does satellite tracking work?",
@@ -313,7 +313,7 @@ export default function SatelliteTrackerPage() {
             },
             {
               label: "Live cameras",
-              desc: "76,000+ public cameras — the ground view to pair with the orbital one.",
+              desc: "74,229 public cameras — the ground view to pair with the orbital one.",
               href: "/cameras",
             },
             {

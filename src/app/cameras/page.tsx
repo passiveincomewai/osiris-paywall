@@ -11,12 +11,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "Live Cameras — Watch the World Live",
   description:
-    "Browse ~76,000 live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free forever, no signup, no account.",
+    "Browse 74,229 live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free forever, no signup, no account.",
   alternates: { canonical: "/cameras" },
   openGraph: {
     title: "Live Cameras — Watch the World Live | WorldEye",
     description:
-      "76,000+ live street cameras worldwide — traffic, cities, nature, landmarks. Free on the WorldEye globe, no account needed.",
+      "74,229 live street cameras worldwide — traffic, cities, nature, landmarks. Free on the WorldEye globe, no account needed.",
     url: "/cameras",
     type: "website",
   },
@@ -27,7 +27,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "WorldEye Live Cameras",
   description:
-    "Browse ~76,000 live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.",
+    "Browse 74,229 live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.",
   url: "https://worldeye.app/cameras",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
@@ -62,7 +62,7 @@ export default function CamerasPage() {
             <Camera className="w-3.5 h-3.5" /> LIVE CAMERA NETWORK
           </p>
           <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-            76,000+ live cameras. <span className="text-[#D4AF37]">One planet.</span>
+            74,229 live cameras. <span className="text-[#D4AF37]">One planet.</span>
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
             WorldEye aggregates tens of thousands of publicly available live street cameras

@@ -37,7 +37,7 @@ const ENTERPRISE_FEATURES = [
 
 const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { feature: "Interactive 3D globe", free: true, pro: true },
   { feature: "Live flight tracking & aircraft follow", free: true, pro: true },
-  { feature: "76,000+ public CCTV cameras", free: true, pro: true },
+  { feature: "74,229 public CCTV cameras", free: true, pro: true },
   { feature: "Satellite & space tracking", free: true, pro: true },
   { feature: "Basic search — fly to any place", free: true, pro: true },
   { feature: "Live transit vehicles (15 agencies)", free: true, pro: true },
@@ -62,7 +62,7 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { fe
 const FAQS = [
   {
     q: "Is the map really free?",
-    a: "Yes. The 3D globe, live flights, 76,000+ street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, the live traffic layer, advanced search filters and premium intel feeds.",
+    a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, the live traffic layer, advanced search filters and premium intel feeds.",
   },
   {
     q: "Do I need my own API key for the AI assistant?",

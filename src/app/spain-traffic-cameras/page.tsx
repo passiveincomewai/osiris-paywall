@@ -40,7 +40,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Where do these Spanish traffic cameras come from?",
-    a: "The backbone is the DGT (Dirección General de Tráfico) national network — the public cameras Spain's traffic authority operates on autovías and autopistas — together with regional and city feeds. WorldEye collects them into one map alongside its 76,000+ cameras worldwide.",
+    a: "The backbone is the DGT (Dirección General de Tráfico) national network — the public cameras Spain's traffic authority operates on autovías and autopistas — together with regional and city feeds. WorldEye collects them into one map alongside its 74,229 cameras worldwide.",
   },
   {
     q: "How many live cameras are there in Spain?",
