@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
+import { startPlanCheckout } from "@/lib/billing/trial-checkout";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, Satellite, BrainCircuit,
@@ -90,14 +91,9 @@ function CheckoutButton({ plan, label }: { plan: Plan; label: string }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error || "Checkout failed");
-      window.location.href = data.url;
+      // The one checkout call, shared with every Pro lock surface
+      // (src/lib/billing/trial-checkout.ts) so the two can never drift.
+      window.location.href = await startPlanCheckout(plan);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Checkout failed");
       setLoading(false);
