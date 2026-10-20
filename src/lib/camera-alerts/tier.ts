@@ -20,6 +20,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { planByPriceIdFromEnv } from "@/lib/billing/trial-reminders";
+import { getEffectiveEntitlement, maxTier } from "@/lib/team/entitlement";
 
 export type PlanTier = "free" | "pro" | "vip";
 
@@ -42,7 +43,13 @@ export function tierFromSubscription(
   return plan === "annual" ? "vip" : "pro";
 }
 
-/** The tier of one user, resolved fresh from their subscription row. */
+/** The tier of one user, resolved fresh from their subscription row,
+ *  layered with any team grant (Team Access Phase 10): the effective
+ *  tier from lib/team/entitlement is the single source for the merge,
+ *  so a member of a VIP owner's org is VIP here even with no personal
+ *  subscription — for both the alert APIs (cameraAlertAccess) and the
+ *  cron checker, which resolves owners through this same function.
+ *  Fail-soft: any error in the org lookup leaves the own tier. */
 export async function getUserTier(userId: string): Promise<PlanTier> {
   const sub = await db.subscription
     .findUnique({
@@ -50,7 +57,13 @@ export async function getUserTier(userId: string): Promise<PlanTier> {
       select: { status: true, currentPeriodEnd: true, stripePriceId: true },
     })
     .catch(() => null);
-  return tierFromSubscription(sub);
+  const ownTier = tierFromSubscription(sub);
+  try {
+    const entitlement = await getEffectiveEntitlement(userId);
+    return maxTier(ownTier, entitlement.effectiveTier);
+  } catch {
+    return ownTier;
+  }
 }
 
 /**

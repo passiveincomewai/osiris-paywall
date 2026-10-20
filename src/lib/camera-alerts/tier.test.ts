@@ -1,9 +1,22 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+
+const entMocks = vi.hoisted(() => ({ getEffective: vi.fn() }));
 
 vi.mock("@/auth", () => ({ auth: vi.fn(async () => null) }));
 vi.mock("@/lib/db", () => ({ db: { subscription: { findUnique: vi.fn() } } }));
+vi.mock("@/lib/team/entitlement", () => ({
+  getEffectiveEntitlement: entMocks.getEffective,
+  // The real merge (TIER_RANK order free < pro < vip), inlined so this
+  // suite controls the entitlement module boundary completely.
+  maxTier: (a: "free" | "pro" | "vip", b: "free" | "pro" | "vip") =>
+    ({ free: 0, pro: 1, vip: 2 })[a] >= ({ free: 0, pro: 1, vip: 2 })[b] ? a : b,
+}));
 
-import { tierFromSubscription } from "./tier";
+import { db } from "@/lib/db";
+import { tierFromSubscription, getUserTier } from "./tier";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockDb = db as any;
 
 describe("tierFromSubscription — annual is VIP", () => {
   const env = {
@@ -38,5 +51,52 @@ describe("tierFromSubscription — annual is VIP", () => {
   it("the annual price is vip — paid or trialing", () => {
     expect(tierFromSubscription(sub({ stripePriceId: "price_annual" }), env, now)).toBe("vip");
     expect(tierFromSubscription(sub({ status: "trialing", stripePriceId: "price_annual" }), env, now)).toBe("vip");
+  });
+});
+
+describe("getUserTier — team grant layering (Phase 10)", () => {
+  const future = new Date(Date.now() + 30 * 86400_000);
+  const ownSub = (stripePriceId: string) => ({
+    status: "active",
+    currentPeriodEnd: future,
+    stripePriceId,
+  });
+  let savedEnv: NodeJS.ProcessEnv;
+  beforeEach(() => {
+    vi.clearAllMocks();
+    savedEnv = { ...process.env };
+    process.env.STRIPE_WEEKLY_PRICE_ID = "price_weekly";
+    process.env.STRIPE_MONTHLY_PRICE_ID = "price_monthly";
+    process.env.STRIPE_ANNUAL_PRICE_ID = "price_annual";
+    process.env.STRIPE_ENTERPRISE_PRICE_ID = "price_ent";
+    mockDb.subscription.findUnique.mockResolvedValue(null);
+    entMocks.getEffective.mockResolvedValue({ ownTier: "free", effectiveTier: "free", sources: [] });
+  });
+  afterEach(() => {
+    process.env = savedEnv;
+  });
+
+  it("a free member of a VIP org is vip (alerts unlock)", async () => {
+    entMocks.getEffective.mockResolvedValue({
+      ownTier: "free",
+      effectiveTier: "vip",
+      sources: [{ orgId: "org1", orgName: "Team", role: "member", tier: "vip" }],
+    });
+    await expect(getUserTier("u1")).resolves.toBe("vip");
+  });
+
+  it("a pro member of a VIP org is upgraded to vip; a grant never downgrades", async () => {
+    mockDb.subscription.findUnique.mockResolvedValue(ownSub("price_monthly"));
+    entMocks.getEffective.mockResolvedValue({ ownTier: "pro", effectiveTier: "vip", sources: [] });
+    await expect(getUserTier("u1")).resolves.toBe("vip");
+    entMocks.getEffective.mockResolvedValue({ ownTier: "pro", effectiveTier: "free", sources: [] });
+    await expect(getUserTier("u1")).resolves.toBe("pro");
+  });
+
+  it("fail-soft: an org-lookup error leaves the own tier", async () => {
+    entMocks.getEffective.mockRejectedValue(new Error("db down"));
+    await expect(getUserTier("u1")).resolves.toBe("free");
+    mockDb.subscription.findUnique.mockResolvedValue(ownSub("price_annual"));
+    await expect(getUserTier("u1")).resolves.toBe("vip");
   });
 });
