@@ -11,6 +11,7 @@ import {
   isRateLimited,
   clientIp,
 } from "@/lib/password-auth";
+import { subscribeToNewsletter } from "@/lib/newsletter/subscribe";
 
 export const runtime = "nodejs";
 
@@ -27,11 +28,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Too many attempts. Try again later." }, { status: 429 });
   }
 
-  const { session_id, username, phone, password } = (await req.json().catch(() => ({}))) as {
+  const { session_id, username, phone, password, newsletterOptIn } = (await req
+    .json()
+    .catch(() => ({}))) as {
     session_id?: string;
     username?: string;
     phone?: string;
     password?: string;
+    newsletterOptIn?: boolean;
   };
   if (!session_id?.startsWith("cs_")) {
     return NextResponse.json({ error: "Invalid session" }, { status: 400 });
@@ -89,6 +93,19 @@ export async function POST(req: Request) {
         emailVerified: new Date(),
       },
     });
+  }
+
+  // Newsletter opt-in (the claim form's unchecked-by-default checkbox):
+  // subscribe the purchase email through the one existing routine,
+  // tagged source "welcome-claim". Best-effort only — already-subscribed
+  // is a normal outcome in there, and any failure is logged, never a
+  // failed claim: the buyer has paid, the account work above stands.
+  if (newsletterOptIn === true) {
+    try {
+      await subscribeToNewsletter(email, "welcome-claim");
+    } catch (err) {
+      console.error("newsletter opt-in (welcome claim) failed:", err);
+    }
   }
 
   return NextResponse.json({ ok: true, email });

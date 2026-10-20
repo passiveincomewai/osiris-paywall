@@ -180,6 +180,8 @@ export function ClaimFormView({
   saving,
   onChange,
   onSubmit,
+  newsletterOptIn = false,
+  onNewsletterChange,
 }: {
   existingAccount: boolean;
   hasPassword: boolean;
@@ -189,6 +191,10 @@ export function ClaimFormView({
   saving: boolean;
   onChange: (field: keyof ClaimValues, value: string) => void;
   onSubmit: (e: FormEvent) => void;
+  /** Newsletter opt-in — optional so the view stays renderable on its
+   *  own; the live client always wires it to the claim POST. */
+  newsletterOptIn?: boolean;
+  onNewsletterChange?: (checked: boolean) => void;
 }) {
   const inputCls =
     "w-full rounded-xl bg-white/5 border px-4 py-3 text-sm outline-none focus:border-[#00E5FF]/60";
@@ -313,6 +319,19 @@ export function ClaimFormView({
         />,
       )}
 
+      <label className="flex items-start gap-3 mb-4 cursor-pointer">
+        <input
+          id="claim-newsletter"
+          type="checkbox"
+          checked={newsletterOptIn}
+          onChange={(e) => onNewsletterChange?.(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#D4AF37]"
+        />
+        <span className="text-sm text-white/55 leading-snug">
+          Email me WorldEye updates — new cameras, features and offers
+        </span>
+      </label>
+
       {serverError && (
         <p role="alert" className="text-red-400 text-sm mt-1">
           {serverError}
@@ -342,6 +361,7 @@ export default function WelcomeClient() {
   const sessionId = params.get("session_id") ?? "";
   const [state, setState] = useState<State>({ kind: "loading" });
   const [values, setValues] = useState<ClaimValues>({ username: "", phone: "", password: "", confirm: "" });
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false);
   const [errors, setErrors] = useState<ClaimErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -402,6 +422,7 @@ export default function WelcomeClient() {
           username: values.username.trim(),
           phone: values.phone,
           password: values.password,
+          newsletterOptIn,
         }),
       });
       const data = await res.json();
@@ -478,6 +499,8 @@ export default function WelcomeClient() {
               saving={saving}
               onChange={onChange}
               onSubmit={submit}
+              newsletterOptIn={newsletterOptIn}
+              onNewsletterChange={setNewsletterOptIn}
             />
           </>
         )}

@@ -147,6 +147,23 @@ describe("ClaimFormView", () => {
   });
 });
 
+describe("ClaimFormView — newsletter opt-in", () => {
+  it("renders the opt-in checkbox with its label, unchecked by default", () => {
+    const html = renderForm();
+    expect(html).toContain('id="claim-newsletter"');
+    expect(html).toContain("Email me WorldEye updates — new cameras, features and offers");
+    const checkbox = html.match(/<input[^>]*id="claim-newsletter"[^>]*>/)?.[0] ?? "";
+    expect(checkbox).toContain('type="checkbox"');
+    expect(checkbox).not.toContain("checked");
+  });
+
+  it("renders checked when the buyer has ticked it", () => {
+    const html = renderForm({ newsletterOptIn: true });
+    const checkbox = html.match(/<input[^>]*id="claim-newsletter"[^>]*>/)?.[0] ?? "";
+    expect(checkbox).toContain("checked");
+  });
+});
+
 describe("WelcomeNextSteps", () => {
   it("trial: renders trial end, reminder promise, first charge and guarantee as steps", () => {
     const html = normalize(
