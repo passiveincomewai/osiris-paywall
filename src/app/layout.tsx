@@ -3,6 +3,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import TranslateGate from '@/components/translate/TranslateGate';
+import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import "./globals.css";
 
 const SITE_URL = "https://worldeye.app";
@@ -224,6 +225,7 @@ export default function RootLayout({
         <AffiliateAttributionSync />
         <AnalyticsTracker />
         <TranslateGate />
+        <CaptureIndicator />
         <ErrorBoundary name="WorldEye">
           {children}
         </ErrorBoundary>
