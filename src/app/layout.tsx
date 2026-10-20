@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Audiowide, Fraunces, JetBrains_Mono, Public_Sans } from "next/font/google";
 import ErrorBoundary from '@/components/ErrorBoundary';
+import SilentBoundary from '@/components/SilentBoundary';
 import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import TranslateGate from '@/components/translate/TranslateGate';
@@ -257,10 +258,23 @@ export default function RootLayout({
 
       </head>
       <body className="antialiased">
-        <AffiliateAttributionSync />
-        <AnalyticsTracker />
-        <TranslateGate />
-        <CaptureIndicator />
+        {/* Global chrome: each mount gets its own SilentBoundary so a
+            failure in any one of them degrades to "that widget is
+            absent" — never a dead app. (A root-layout render loop in
+            the capture indicator took down every page on 2026-10-20
+            precisely because these mounts sat outside any boundary.) */}
+        <SilentBoundary name="AffiliateAttributionSync">
+          <AffiliateAttributionSync />
+        </SilentBoundary>
+        <SilentBoundary name="AnalyticsTracker">
+          <AnalyticsTracker />
+        </SilentBoundary>
+        <SilentBoundary name="TranslateGate">
+          <TranslateGate />
+        </SilentBoundary>
+        <SilentBoundary name="CaptureIndicator">
+          <CaptureIndicator />
+        </SilentBoundary>
         <ErrorBoundary name="WorldEye">
           {children}
         </ErrorBoundary>
