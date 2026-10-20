@@ -1374,6 +1374,7 @@ export const POSTS: BlogPost[] = [
     title: "Best Ski Webcams to Check Before You Drive Up",
     seoTitle: "Best Ski Webcams Before You Drive Up | WorldEye Blog",
     date: "2026-10-17",
+    updated: "2026-10-20",
     excerpt:
       "A snow report is a summary; a summit webcam is the mountain itself. How to use summit, base, and access-road cameras to judge real snow, wind, and lift lines before you commit to the drive.",
     seoDescription:
@@ -1427,6 +1428,7 @@ export const POSTS: BlogPost[] = [
         body: [
           "The [ski webcams](/ski-webcams) page gathers resort feeds in one place, and the [live camera map](/cameras) lets you widen the search to the passes and canyon roads around any resort — often the feeds that matter most on a storm morning. Mountain towns, lift bases, and summits each carry markers, and the lone camera high above a town is frequently the summit feed you want.",
           "Build a small circuit for the mountains you actually ski: summit, base, and the two road cameras on your usual route, checked in a fixed order so the whole routine takes two minutes. The ski camera layer is free with no signup, like the rest of the camera map. Once the circuit is a habit, you will wonder how you ever chose a ski day from a single snowfall number and a hopeful forecast.",
+          "New for this season: our [2026-27 ski season opening dates](/blog/ski-season-opening-dates-2026-27) guide lists when the major resorts in North America and the Alps plan to open — and which of their webcams to watch as opening day approaches.",
         ],
       },
     ],
@@ -1542,6 +1544,7 @@ export const POSTS: BlogPost[] = [
     title: "Watching the Northern Lights on Live Webcams",
     seoTitle: "Northern Lights on Live Webcams | WorldEye Blog",
     date: "2026-10-17",
+    updated: "2026-10-20",
     excerpt:
       "You do not have to fly to the Arctic to see the aurora — on the right night, northern webcams catch it for you. What it actually takes: darkness, clear skies, and an active sky, plus an honest look at the limits.",
     seoDescription:
@@ -1595,13 +1598,14 @@ export const POSTS: BlogPost[] = [
         body: [
           "Treat aurora webcam watching as a season, not an event. During the dark months, keep a short circuit of northern feeds — a few in Iceland, a few across Finland and Sweden, one or two in Norway — and check them on clear evenings when activity is forecast, the way other people check the weather. Most checks will take two minutes and end in darkness. That is the honest base rate, and it is fine.",
           "Then, a handful of times a season, the circuit pays off all at once: an arc already standing over a Finnish lake when you open the feed, curtains moving over an Icelandic road an hour later, the whole northern tier of the map lit in rotation. Those nights justify every quiet check before them — and unlike the flight north, the webcam version asks nothing of you but attention. The camera layer is free with no signup, so the season ticket costs exactly that: a few minutes, on the right nights, at the right end of the map.",
+          "The [northern lights webcams](/northern-lights-webcams) page gathers the aurora-belt regions in one place — Iceland, Norway, Finland, Sweden, Alaska, and Canada — with the live Kp index reading from the map, so your circuit is one click instead of a dozen bookmarks.",
         ],
       },
     ],
     faqs: [
       {
         q: "Does WorldEye have dedicated aurora cameras?",
-        a: "No. The northern cameras in the directory — Iceland with 496 cameras, Finland with 818, Sweden with 886, and Norway with 48 — are mostly road, weather, harbor, and scenic feeds run by third parties. They were not built for the aurora, but cameras facing dark landscapes are well placed to catch it on clear, dark, active nights.",
+        a: "No. The northern cameras in the directory — Iceland with 482 cameras, Finland with 825, Sweden with 1,569, and Norway with 746 — are mostly road, weather, harbor, and scenic feeds run by third parties. They were not built for the aurora, but cameras facing dark landscapes are well placed to catch it on clear, dark, active nights.",
       },
       {
         q: "What conditions do I need to see aurora on a webcam?",
@@ -1948,6 +1952,146 @@ export const POSTS: BlogPost[] = [
       {
         q: "Can I see the plane in the ground cameras?",
         a: "Almost certainly not — public webcams point at roads and places, not the sky, and the panel says so. What you get is the world directly underneath the flight, live.",
+      },
+    ],
+  },
+  {
+    slug: "watch-the-orionid-meteor-shower-live",
+    title: "Watch the Orionid Meteor Shower Live: Peak Nights, Times and Dark-Sky Cameras",
+    seoTitle: "Orionids 2026: Watch the Meteor Shower Live",
+    date: "2026-10-20",
+    excerpt:
+      "The Orionids — debris from Halley's Comet — peak on the night of October 21-22, 2026. Here's when to look, what the waxing Moon does to the show, and how dark-sky webcams let you watch from anywhere.",
+    seoDescription:
+      "The Orionid meteor shower peaks October 21-22, 2026. Best viewing times after moonset, expected rates, and how to watch live on dark-sky webcams.",
+    tags: ["space", "guide"],
+    sections: [
+      {
+        heading: "The short version",
+        body: [
+          "The Orionid meteor shower reaches its peak on the night of Wednesday, October 21 into Thursday, October 22, 2026, with the predicted maximum falling around 18:00 UTC on October 21. The shower is active for weeks — roughly October 2 to November 7 — and its peak is a broad plateau rather than a single instant, so the nights of October 20-21 and October 22-23 are also worth your time if clouds intervene.",
+          "The honest catch for 2026: a waxing gibbous Moon, roughly three-quarters lit, will wash out the fainter meteors for the first part of the night. The best window is the dark stretch after the Moon sets and before dawn — the small hours of the morning, when the radiant in Orion also climbs highest. Under genuinely dark skies the Orionids typically produce around 10 to 20 meteors per hour at peak; this year, expect the brighter ones to do most of the work.",
+        ],
+      },
+      {
+        heading: "Why this shower is Halley's Comet, live",
+        body: [
+          "Every October, Earth plows through the dust stream shed by comet 1P/Halley — the same comet that last visited the inner solar system in 1986 and returns in 2061. The grains, most smaller than a grain of sand, strike the atmosphere at about 66 kilometers per second and burn up as fast, bright streaks that often leave lingering trains.",
+          "That speed is the Orionids' signature. They are among the fastest annual meteors, and the bright ones can appear anywhere in the sky — the radiant, the point they seem to stream from, sits in the constellation Orion near the bright star Betelgeuse, which rises in the east late in the evening. Don't stare at the radiant; take in as much sky as you can and let the streaks come to you.",
+        ],
+      },
+      {
+        heading: "How to watch from outside",
+        body: [
+          "No telescope, no binoculars — meteors are a naked-eye event, and magnification only shrinks your field of view. What you need is darkness, a reclining chair, warm layers, and patience. Give your eyes 20 to 30 minutes away from bright light (including your phone) to fully adapt, then face generally east to southeast and watch a broad swath of sky.",
+          "In 2026 the Moon is the main obstacle, so plan around it: the show improves markedly once the Moon drops below the horizon in the pre-dawn hours. If your local forecast is hopeless for the peak night, remember the plateau — rates stay useful for several nights on either side, and the same dust stream also produces bright fireballs outside the maximum.",
+        ],
+      },
+      {
+        heading: "How to watch from inside: dark-sky cameras",
+        body: [
+          "If your sky is clouded out, lit up by the city, or simply on the wrong side of the planet's rotation, the camera network offers a second seat. Scattered through the [live camera directory](/cameras) are sky cameras pointed up from dark-sky sites — desert, mountain, and rural feeds where the night frame is genuinely black and the stars register. A bright Orionid crossing one of those frames is unmistakable: a fast streak, gone in a second, sometimes with a fading train.",
+          "Our [dark-sky cameras](/dark-sky-cameras) page explains how to find and judge these feeds — timestamp first, then true darkness, then patience. The trick is a circuit, not a single camera: keep several dark feeds across different longitudes in rotation, because when it's cloudy or already dawn in one place, it's midnight and clear somewhere else. The same feeds serve double duty on [aurora nights](/northern-lights-webcams), and the bright moving point that crosses the frame slowly and steadily, taking minutes rather than a second, is a satellite or the space station — the [ISS watching guide](/blog/how-to-watch-the-iss-live) explains how to tell them apart.",
+        ],
+      },
+      {
+        heading: "What you'll actually see this year",
+        body: [
+          "Set expectations like a regular, not a headline. From a suburban backyard in the post-moonset window, a realistic count is a handful of meteors per hour, with the occasional bright one worth the wait. From a truly dark rural site, the same window can deliver the classic 10 to 20 per hour, trains included. The waxing Moon means the first half of the night is mostly a write-off in 2026 — anyone promising a storm of hundreds per hour is describing a different year.",
+          "What the Orionids reliably deliver is quality over quantity: fast meteors, a meaningful share of bright fireballs, and the strange pleasure of watching debris from the most famous comet in history burn up on schedule. The next major shower, the Leonids, peaks around November 17-18, and the year's best — the Geminids — arrives December 13-14 under darker moonlight. The [dark-sky camera circuit](/dark-sky-cameras) you build this week will serve all three.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When exactly is the Orionid peak in 2026?",
+        a: "The night of October 21-22, 2026, with the predicted maximum around 18:00 UTC on October 21. The peak is broad, so the nights immediately before and after also produce good rates. Best viewing is after local moonset, in the pre-dawn hours.",
+      },
+      {
+        q: "How many meteors per hour will I see?",
+        a: "Under ideal dark skies the Orionids typically reach 10 to 20 per hour at peak. In 2026 a waxing gibbous Moon suppresses the faint meteors for much of the night, so expect fewer until the Moon sets — a handful per hour from suburbs, up to the classic rates from a dark site after moonset.",
+      },
+      {
+        q: "Where in the sky should I look?",
+        a: "Face east to southeast and take in the whole sky. The meteors radiate from Orion, near Betelgeuse, but the longest and brightest streaks appear 40 to 90 degrees away from the radiant. Don't fixate on one spot.",
+      },
+      {
+        q: "Can I watch the Orionids on a webcam?",
+        a: "Yes — dark-sky cameras in the live camera directory point up from low-light-pollution locations and catch bright meteors as fast streaks. Check the feed's timestamp, pick feeds where the night frame is genuinely dark, and rotate through several longitudes to dodge clouds and dawn.",
+      },
+      {
+        q: "Do I need a telescope or binoculars?",
+        a: "No — they hurt more than they help. Meteors appear anywhere in the sky and last under a second, so magnification only narrows your view. Eyes, a reclining chair, warm clothing, and 20 to 30 minutes of dark adaptation are the whole kit.",
+      },
+    ],
+  },
+  {
+    slug: "ski-season-opening-dates-2026-27",
+    title: "2026-27 Ski Season Opening Dates — and the Webcams Watching Them",
+    seoTitle: "Ski Season Opening Dates 2026-27 | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "The 2026-27 ski season has already started at the glacier resorts, and the big North American and Alpine openings land through November. Announced opening dates for the major resorts — plus how to watch the snow arrive on live webcams.",
+    seoDescription:
+      "2026-27 ski resort opening dates for North America and the Alps — Ruka, Sölden, Breckenridge, Vail, Park City, Whistler and more — with the live webcams to watch before each opening day.",
+    tags: ["cameras", "travel"],
+    sections: [
+      {
+        heading: "The season has already started",
+        body: [
+          "While most skiers are still thinking about it, the 2026-27 season is quietly underway. Finland's Ruka opened on October 2 using farmed snow saved from last winter, Austria's Sölden glacier followed on October 9, and Saas-Fee's glacier terrain in Switzerland has been turning since summer. Italy's Cervinia is aiming for around October 24. These glacier and snow-farming openers are the first dominoes — every week from now through late November, more of the ski map switches on.",
+          "All dates in this guide are the resorts' announced targets, and every one of them carries the same asterisk: conditions permitting. Early-season openings are snowmaking campaigns as much as weather events, which is exactly why the webcams matter — they show you the white ribbon on the ground, not the date on the press release. The [ski webcams](/ski-webcams) page gathers the resort feeds in one place.",
+        ],
+      },
+      {
+        heading: "North America: the November wave",
+        body: [
+          "Colorado fires first, as usual. Breckenridge and Copper Mountain hold the earliest fixed dates in the country — November 6 — while Keystone and Arapahoe Basin list October 'as soon as possible' and could beat everyone if the cold holds. Vail and California's Mammoth Mountain target November 13. Banff's Sunshine Village and Lake Louise project November 6 in Canada.",
+          "The Thanksgiving ramp is the real start for most skiers: Park City Mountain and Whistler Blackcomb on November 20, Steamboat on November 21, Beaver Creek and Big Sky on November 25, then Aspen Mountain, Snowmass, Sun Valley, and Telluride on November 26 itself, with Jackson Hole on November 27 and Deer Valley on December 5. By the first weekend of December, the continent's destination map is essentially open — terrain, as always, builds more slowly than the marketing.",
+        ],
+      },
+      {
+        heading: "The Alps: glaciers now, giants in late November",
+        body: [
+          "Europe's early season belongs to altitude. Beyond Sölden and Saas-Fee, Austria's glacier areas — Kitzsteinhorn, Kaunertal, Mölltal, Stubai — opened through early October, and Engelberg-Titlis started October 10. Obergurgl follows November 19, then the heavyweights arrive together: Tignes and Val Thorens on November 21, Ischgl on November 26, and a November 28 wave that includes Les 2 Alpes, Laax, Chamonix, Zugspitze, and Val d'Isère joining Tignes.",
+          "The Sölden World Cup opener on October 24-25 is the season's first televised form check, and worth watching on the resort's cameras the week before: you can see the race hill being prepared in a way no broadcast quite captures. Livigno — a 2026 Olympic venue — opens November 28 with high, cold early-season snow.",
+        ],
+      },
+      {
+        heading: "Watching opening day approach on webcams",
+        body: [
+          "The two weeks before a resort's opening are the most informative webcam window of the year. Snowmaking tells the story first: guns running on the cam mean the cold window is real and the resort is committing. Then the grooming fleet appears at night, then lift crews, then — the giveaway — the first skiers on a 'soft opening' limited run, often a day or two before the announced date.",
+          "Our guide to the [best ski webcams](/blog/best-ski-webcams) lays out the checking routine — summit for visibility and wind, base for surface and lines, access road for the drive. Applied to opening season, it answers the only question that matters about an announced date: is the mountain actually ready, and for whom? A single white ribbon with a full maze at the lift is a different product than the same ribbon on a quiet Tuesday, and the camera shows you which one you're buying.",
+        ],
+      },
+      {
+        heading: "Early-season honesty",
+        body: [
+          "Early season is a trade, and regulars make it with open eyes: limited terrain, man-made snow surfaces, and weather that can still close a mountain in October as easily as open one. What you get in return is the year's most optimistic skiing — empty slopes, cheap lodging, and the genuine pleasure of being early. The resorts that open first are also, not coincidentally, the ones whose cameras are worth keeping: high, cold, and serious about snowmaking.",
+          "One more reason to build the camera habit now: the same circuit that tracks openings in November becomes your storm-day instrument all winter, and the [road-conditions routine](/blog/checking-road-conditions-live-traffic-cameras) built around it works for every drive, ski or otherwise. And if your early-season trip runs to Lapland — Ruka has been open since October 2 — the lifts close into some of the darkest, most aurora-friendly skies in Europe; the [northern lights webcam circuit](/blog/northern-lights-live-webcams) is the evening shift of the same holiday.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does the 2026-27 ski season start?",
+        a: "It already has: Ruka in Finland opened October 2, 2026 and Sölden in Austria on October 9, with other glacier resorts following. The first major North American openings are November 6 (Breckenridge, Copper Mountain), and most destination resorts open between November 20 and Thanksgiving weekend.",
+      },
+      {
+        q: "Which ski resort opens first in North America in 2026?",
+        a: "Keystone and Arapahoe Basin in Colorado both target an October opening 'as soon as possible' and historically race for first. The earliest fixed dates belong to Breckenridge and Copper Mountain on November 6. All announced dates are conditions permitting.",
+      },
+      {
+        q: "Are announced opening dates reliable?",
+        a: "Treat them as targets, not promises. Resorts open when snowmaking and natural snow allow, and dates slip in warm autumns. The reliable check is the resort's webcam in the week before: snowmaking guns running, grooming at night, and lifts turning with crews are the signs an announced date will hold.",
+      },
+      {
+        q: "Which resorts open for Thanksgiving 2026?",
+        a: "Park City Mountain and Whistler Blackcomb (November 20), Steamboat (November 21), Beaver Creek and Big Sky (November 25), Aspen Mountain, Snowmass, Sun Valley, and Telluride (November 26), and Jackson Hole (November 27) all target the Thanksgiving window.",
+      },
+      {
+        q: "How can I check conditions before an opening-day trip?",
+        a: "Use the ski webcams: summit feeds for visibility and wind, base feeds for snow surface and lift lines, and access-road cameras for the drive. Check the night before and again in the morning, and always confirm the feed's timestamp is current before trusting it.",
       },
     ],
   },
