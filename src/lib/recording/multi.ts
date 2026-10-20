@@ -1,6 +1,6 @@
 /**
  * Multi-camera recording — the pure logic behind the Recording Studio's
- * "record up to 20 cameras" view (a WorldEye Pro feature).
+ * multi-camera recorder (a WorldEye Pro feature; VIP Pro raises the cap).
  *
  * It scales the studio's two proven single-camera mechanisms, unchanged:
  *  - stream cameras (HLS / MP4): a <video> element's captureStream() into
@@ -21,8 +21,19 @@
  */
 import { timelapseStillFetchable } from "@/lib/timelapse";
 
-/** The premium promise, enforced: at most this many cameras at once. */
+/** The Pro promise, enforced: at most this many cameras at once. */
 export const MAX_MULTI_CAMERAS = 20;
+
+/** The VIP Pro promise: the same wall, twice as wide. */
+export const MAX_MULTI_CAMERAS_VIP = 40;
+
+/** The recording tiers that carry a multi-camera cap. */
+export type MultiTier = "pro" | "vip";
+
+/** The selection cap for a tier — the one place the numbers live. */
+export function multiCapForTier(tier: MultiTier): number {
+  return tier === "vip" ? MAX_MULTI_CAMERAS_VIP : MAX_MULTI_CAMERAS;
+}
 
 /**
  * How often each snapshot tile checks for the camera's next published
@@ -33,6 +44,18 @@ export const MAX_MULTI_CAMERAS = 20;
  * staggered by index so the checks don't land in one burst.
  */
 export const MULTI_STILL_POLL_MS = 15_000;
+
+/**
+ * The still-poll cadence for a wall of `tileCount` snapshot tiles. The
+ * frame-route budget above is per visitor, not per tile, so a VIP wall
+ * of 40 polling at the Pro cadence would double it and throttle itself;
+ * past each 20-tile wave the interval stretches to keep the whole wall
+ * inside the same ~80 requests/minute the 20-cap was tuned to.
+ */
+export function multiStillPollMs(tileCount: number): number {
+  const waves = Math.max(1, Math.ceil(tileCount / MAX_MULTI_CAMERAS));
+  return MULTI_STILL_POLL_MS * waves;
+}
 
 /** Per-tile stagger inside the poll cycle, by grid position. */
 export function staggerDelayMs(index: number): number {
@@ -119,16 +142,22 @@ export function camLocationLabel(
 }
 
 /* ------------------------------------------------------------------ */
-/* Selection — the 20-camera cap lives here, not in the UI.            */
+/* Selection — the camera cap lives here, not in the UI. The cap is    */
+/* tier-aware (Pro 20, VIP Pro 40) but the mechanics are one rule: a   */
+/* selection may not grow past the cap its owner is entitled to.       */
 /* ------------------------------------------------------------------ */
 
 export type AddToSelection =
   | { ok: true; selection: string[] }
   | { ok: false; reason: "cap" | "duplicate"; selection: string[] };
 
-export function addToSelection(selection: readonly string[], id: string): AddToSelection {
+export function addToSelection(
+  selection: readonly string[],
+  id: string,
+  cap: number = MAX_MULTI_CAMERAS,
+): AddToSelection {
   if (selection.includes(id)) return { ok: false, reason: "duplicate", selection: [...selection] };
-  if (selection.length >= MAX_MULTI_CAMERAS) {
+  if (selection.length >= cap) {
     return { ok: false, reason: "cap", selection: [...selection] };
   }
   return { ok: true, selection: [...selection, id] };
@@ -138,8 +167,39 @@ export function removeFromSelection(selection: readonly string[], id: string): s
   return selection.filter((s) => s !== id);
 }
 
-/** The refusal the UI shows when the cap bites. */
-export const CAP_MESSAGE = `That's the ${MAX_MULTI_CAMERAS}-camera limit — remove one to add another.`;
+/**
+ * The refusal the UI shows when a tier's cap bites. It names the user's
+ * own limit; a Pro user also hears what VIP Pro would give them, while
+ * a VIP user at 40 just gets the plain limit, with nothing above it to
+ * sell.
+ */
+export function capMessage(cap: number, tier?: MultiTier): string {
+  if (tier === "pro") {
+    return `That's your ${cap}-camera limit — VIP Pro records up to ${MAX_MULTI_CAMERAS_VIP}. Remove one to add another.`;
+  }
+  if (tier === "vip") {
+    return `That's your ${cap}-camera limit — remove one to add another.`;
+  }
+  return `That's the ${cap}-camera limit — remove one to add another.`;
+}
+
+/** The refusal at the default (Pro) cap, for copy that predates tiers. */
+export const CAP_MESSAGE = capMessage(MAX_MULTI_CAMERAS);
+
+/**
+ * A saved selection can outlive the tier that allowed it: a VIP wall of
+ * 32 restored by someone now on Pro (cap 20) keeps all 32 — nothing is
+ * silently deleted — but only the first `cap` (in wall order) may
+ * record. These two helpers are that rule, kept pure so the page and
+ * the tests read the same split.
+ */
+export function startableSelection(selection: readonly string[], cap: number): string[] {
+  return selection.slice(0, Math.max(0, cap));
+}
+
+export function overCapIds(selection: readonly string[], cap: number): string[] {
+  return selection.slice(Math.max(0, cap));
+}
 
 /* ------------------------------------------------------------------ */
 /* Per-tile recording sessions. Each tile owns its session object; a    */

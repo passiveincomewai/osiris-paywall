@@ -56,6 +56,7 @@ export default function MultiRecordTile({
   session,
   onEvent,
   registerControls,
+  pollMs = MULTI_STILL_POLL_MS,
 }: {
   cam: SavedCam;
   index: number;
@@ -63,6 +64,8 @@ export default function MultiRecordTile({
   session: TileSession;
   onEvent: (id: string, event: TileEvent) => void;
   registerControls: (id: string, controls: TileControls | null) => void;
+  /** Snapshot poll cadence for this wall (lib/recording/multi's budget math). */
+  pollMs?: number;
 }) {
   const source = classifyMultiCam(cam.cameraData);
   const location = camLocationLabel(cam);
@@ -74,6 +77,10 @@ export default function MultiRecordTile({
   const startedAtRef = useRef<number>(0);
   const sessionRef = useRef(session);
   sessionRef.current = session;
+  // The stills loop reads the cadence through a ref so a wall growing
+  // past a tier wave slows the poll without restarting the loop.
+  const pollMsRef = useRef(pollMs);
+  pollMsRef.current = pollMs;
 
   // Snapshot-capture state.
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -209,7 +216,7 @@ export default function MultiRecordTile({
       } catch {
         if (!cancelled) setFeedError("Can't reach this camera right now");
       }
-      if (!cancelled) timer = setTimeout(tick, MULTI_STILL_POLL_MS);
+      if (!cancelled) timer = setTimeout(tick, pollMsRef.current);
     };
     timer = setTimeout(tick, staggerDelayMs(index));
     return () => {

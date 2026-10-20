@@ -1,15 +1,22 @@
 import { describe, expect, it } from "vitest";
 import {
+  CAP_MESSAGE,
   MAX_MULTI_CAMERAS,
+  MAX_MULTI_CAMERAS_VIP,
   MULTI_STILL_POLL_MS,
   addToSelection,
   assembleClipMeta,
   camLocationLabel,
+  capMessage,
   classifyMultiCam,
   initialTileSession,
+  multiCapForTier,
   multiGateView,
+  multiStillPollMs,
+  overCapIds,
   removeFromSelection,
   staggerDelayMs,
+  startableSelection,
   summarizeBoard,
   tileReducer,
   type TileSession,
@@ -51,6 +58,68 @@ describe("selection cap", () => {
     expect(staggerDelayMs(0)).toBe(0);
     expect(staggerDelayMs(19)).toBeLessThan(MULTI_STILL_POLL_MS);
     expect(staggerDelayMs(25)).toBe(staggerDelayMs(5));
+  });
+});
+
+describe("tier-aware caps", () => {
+  it("maps tiers to their caps: Pro 20, VIP Pro 40", () => {
+    expect(multiCapForTier("pro")).toBe(20);
+    expect(multiCapForTier("vip")).toBe(40);
+    expect(MAX_MULTI_CAMERAS_VIP).toBe(40);
+  });
+
+  it("a VIP selection admits exactly 40 and refuses the 41st", () => {
+    const cap = multiCapForTier("vip");
+    let sel: string[] = [];
+    for (let i = 0; i < cap; i++) {
+      const r = addToSelection(sel, `cam-${i}`, cap);
+      expect(r.ok).toBe(true);
+      sel = r.selection;
+    }
+    expect(sel).toHaveLength(40);
+    const refused = addToSelection(sel, "cam-40", cap);
+    expect(refused.ok).toBe(false);
+    if (!refused.ok) expect(refused.reason).toBe("cap");
+  });
+
+  it("the same 25-camera wall fits VIP but not Pro", () => {
+    const wall = Array.from({ length: 25 }, (_, i) => `cam-${i}`);
+    expect(addToSelection(wall, "one-more", multiCapForTier("pro")).ok).toBe(false);
+    expect(addToSelection(wall, "one-more", multiCapForTier("vip")).ok).toBe(true);
+  });
+
+  it("the refusal names the user's own limit", () => {
+    // Pro hears their limit AND what VIP Pro would give them.
+    expect(capMessage(20, "pro")).toBe(
+      "That's your 20-camera limit — VIP Pro records up to 40. Remove one to add another.",
+    );
+    // VIP at 40 gets the plain limit — nothing above it to sell.
+    expect(capMessage(40, "vip")).toBe("That's your 40-camera limit — remove one to add another.");
+    // Un-tiered callers keep the pre-tier wording.
+    expect(capMessage(20)).toBe("That's the 20-camera limit — remove one to add another.");
+    expect(CAP_MESSAGE).toBe(capMessage(MAX_MULTI_CAMERAS));
+  });
+
+  it("a downgrade keeps the whole wall but only the first cap-many may start", () => {
+    // A 32-camera VIP wall restored under Pro's cap of 20.
+    const wall = Array.from({ length: 32 }, (_, i) => `cam-${i}`);
+    expect(startableSelection(wall, 20)).toEqual(wall.slice(0, 20));
+    expect(overCapIds(wall, 20)).toEqual(wall.slice(20));
+    expect(overCapIds(wall, 20)).toHaveLength(12);
+    // Nothing is deleted: startable + over-cap reassembles the wall.
+    expect([...startableSelection(wall, 20), ...overCapIds(wall, 20)]).toEqual(wall);
+    // At or under the cap nothing is over.
+    expect(overCapIds(wall.slice(0, 20), 20)).toEqual([]);
+    expect(startableSelection(wall, 40)).toEqual(wall);
+  });
+
+  it("the still poll stretches per 20-tile wave to stay inside the frame budget", () => {
+    expect(multiStillPollMs(1)).toBe(MULTI_STILL_POLL_MS);
+    expect(multiStillPollMs(20)).toBe(MULTI_STILL_POLL_MS);
+    expect(multiStillPollMs(21)).toBe(MULTI_STILL_POLL_MS * 2);
+    expect(multiStillPollMs(40)).toBe(MULTI_STILL_POLL_MS * 2);
+    // 40 tiles at the stretched cadence request no faster than 20 at base.
+    expect(40 / multiStillPollMs(40)).toBeLessThanOrEqual(20 / MULTI_STILL_POLL_MS + 1e-9);
   });
 });
 
