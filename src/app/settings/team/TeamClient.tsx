@@ -76,10 +76,10 @@ interface Quote {
 interface BillingData {
   invoices: {
     id: string; number: string | null; status: string | null; amountPaidCents: number;
-    totalCents: number; created: string; hostedInvoiceUrl: string | null; invoicePdf: string | null;
+    totalCents: number; created: string | number; hostedInvoiceUrl: string | null; invoicePdf: string | null;
   }[];
   upcoming: { totalCents: number; seatCostCents: number; baseCents: number; periodEnd: string } | null;
-  paymentMethodHint: { brand: string; last4: string } | null;
+  paymentMethodHint: string | { brand: string; last4: string } | null;
 }
 
 interface Collection {
@@ -112,9 +112,10 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return data as T;
 }
 
-function fmtDate(iso: string | null | undefined): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
+function fmtDate(iso: string | number | null | undefined): string {
+  if (iso === null || iso === undefined || iso === "") return "—";
+  // Stripe invoice `created` arrives as epoch seconds.
+  const d = typeof iso === "number" ? new Date(iso * 1000) : new Date(iso);
   return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 }
 
@@ -360,13 +361,22 @@ function CreateTeamPanel({
     setCreating(true);
     setError(null);
     try {
-      const org = await api<{ id: string }>("/api/team/organization", {
+      const data = await api<{ id?: string; org?: { id: string } }>("/api/team/organization", {
         method: "POST",
         body: JSON.stringify({ name: name.trim() }),
       });
-      onCreated(org.id);
+      const orgId = data.org?.id ?? data.id;
+      if (orgId) onCreated(orgId);
+      else setError({ text: "Team created, but we couldn't open it — refresh the page." });
     } catch (err) {
       const e2 = err as Error & { status?: number };
+      if (e2.status === 409) {
+        // Already has a team (e.g. created in another tab) — open it.
+        try {
+          const s = await api<{ owned: OrgSummary | null }>("/api/team/state");
+          if (s.owned) { onCreated(s.owned.id); return; }
+        } catch { /* fall through to the error below */ }
+      }
       setError({ text: e2.message, status: e2.status });
     } finally {
       setCreating(false);
@@ -458,11 +468,11 @@ function OverviewTab({
   onInvite: () => void;
   onBuySeats: () => void;
 }) {
-  const [usage, setUsage] = useState<{ cap: number; inUse: number; mine: number } | null>(null);
+  const [usage, setUsage] = useState<{ cap: number; inUse: number; mine: string[] } | null>(null);
   const { org, plan, seats, totals } = detail;
 
   useEffect(() => {
-    api<{ cap: number; inUse: number; mine: number }>(`/api/team/recording/usage?orgId=${encodeURIComponent(org.id)}`)
+    api<{ cap: number; inUse: number; mine: string[] }>(`/api/team/recording/usage?orgId=${encodeURIComponent(org.id)}`)
       .then(setUsage)
       .catch(() => setUsage(null));
   }, [org.id]);
@@ -522,7 +532,7 @@ function OverviewTab({
           </div>
           <p className="text-sm text-white/60">
             Recording pool: {usage.inUse} of {usage.cap} cameras in use across your team
-            {usage.mine > 0 ? ` (${usage.mine} by you)` : ""}.
+            {usage.mine.length > 0 ? ` (${usage.mine.length} by you)` : ""}.
           </p>
           <div className="mt-3 h-2 rounded-full bg-white/[0.06] overflow-hidden">
             <div
@@ -731,10 +741,11 @@ function InvitationsTab({ detail, onChanged }: { detail: OrgDetail; onChanged: (
     setError(null);
     setResults(null);
     try {
-      const res = await api<{ email: string; ok: boolean; error?: string }[]>("/api/team/invitations", {
+      const data = await api<{ email: string; ok: boolean; error?: string }[] | { results: { email: string; ok: boolean; error?: string }[] }>("/api/team/invitations", {
         method: "POST",
         body: JSON.stringify({ orgId, emails, role }),
       });
+      const res = Array.isArray(data) ? data : data.results;
       setResults(res);
       if (res.some((r) => r.ok)) setEmailsText("");
       await load();
@@ -1283,7 +1294,10 @@ function BillingTab({
         <h3 className="font-bold mb-1">Payment method</h3>
         {billing?.paymentMethodHint ? (
           <p className="text-sm text-white/60 mb-3">
-            {billing.paymentMethodHint.brand} ending in {billing.paymentMethodHint.last4} — team seats bill to the same card as your subscription.
+            {typeof billing.paymentMethodHint === "string"
+              ? billing.paymentMethodHint
+              : `${billing.paymentMethodHint.brand} ending in ${billing.paymentMethodHint.last4}`}
+            {" "}— team seats bill to the same card as your subscription.
           </p>
         ) : (
           <p className="text-sm text-white/60 mb-3">Team seats bill to the same payment method as your subscription.</p>
