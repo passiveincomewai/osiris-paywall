@@ -330,7 +330,14 @@ export default function TeamClient() {
                 <BillingTab detail={detail} pricing={pricing} onChanged={refreshDetail} />
               )}
               {tab === "settings" && (
-                <OrgSettingsTab detail={detail} onChanged={refreshDetail} />
+                <OrgSettingsTab
+                  detail={detail}
+                  onChanged={refreshDetail}
+                  onTransferred={async () => {
+                    await loadState();
+                    await refreshDetail();
+                  }}
+                />
               )}
               {tab === "activity" && <ActivityTab orgId={detail.org.id} />}
             </>
@@ -1344,7 +1351,20 @@ function BillingTab({
 
 /* ---------------- Org Settings ---------------- */
 
-function OrgSettingsTab({ detail, onChanged }: { detail: OrgDetail; onChanged: () => void }) {
+interface TransferCandidate {
+  userId: string; name: string | null; email: string | null; role: string;
+  eligible: boolean; reason: string | null;
+}
+
+function OrgSettingsTab({
+  detail,
+  onChanged,
+  onTransferred,
+}: {
+  detail: OrgDetail;
+  onChanged: () => void;
+  onTransferred?: () => Promise<void> | void;
+}) {
   const canEdit = detail.myRole === "owner" || detail.myRole === "admin";
   const [name, setName] = useState(detail.org.name);
   const [logoUrl, setLogoUrl] = useState(detail.org.logoUrl ?? "");
@@ -1446,7 +1466,154 @@ function OrgSettingsTab({ detail, onChanged }: { detail: OrgDetail; onChanged: (
         <Link href="/settings/subscription" className="inline-block mt-3 text-sm font-semibold text-red-300 hover:underline">
           Manage or cancel subscription →
         </Link>
+
+        {detail.myRole === "owner" && (
+          <TransferOwnershipBlock
+            orgId={detail.org.id}
+            pendingSeats={detail.seats.pendingSeats}
+            onTransferred={onTransferred}
+          />
+        )}
       </section>
+    </div>
+  );
+}
+
+/* ---------------- Transfer ownership (owner only, danger zone) ---------------- */
+
+function TransferOwnershipBlock({
+  orgId,
+  pendingSeats,
+  onTransferred,
+}: {
+  orgId: string;
+  pendingSeats: number | null;
+  onTransferred?: () => Promise<void> | void;
+}) {
+  const [candidates, setCandidates] = useState<TransferCandidate[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [confirmText, setConfirmText] = useState("");
+  const [transferring, setTransferring] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    api<TransferCandidate[]>(`/api/team/organization/transfer-candidates?orgId=${encodeURIComponent(orgId)}`)
+      .then((data) => { if (!cancelled) setCandidates(data); })
+      .catch((e) => { if (!cancelled) setLoadError(e instanceof Error ? e.message : "Couldn't load team members."); });
+    return () => { cancelled = true; };
+  }, [orgId]);
+
+  const selected = candidates?.find((c) => c.userId === selectedId && c.eligible) ?? null;
+  const armed = !!selected && confirmText === "TRANSFER" && !transferring;
+
+  async function doTransfer() {
+    if (!selected) return;
+    setTransferring(true);
+    setError(null);
+    try {
+      const res = await api<{ ok: boolean; newOwnerEmail: string | null; seatsMoved: number; pendingDowngradeCancelled: boolean; targetTrialing: boolean }>(
+        "/api/team/organization/transfer",
+        {
+          method: "POST",
+          body: JSON.stringify({ orgId, newOwnerUserId: selected.userId, confirm: confirmText }),
+        },
+      );
+      setSuccess(
+        `Ownership transferred to ${res.newOwnerEmail || selected.name || "the new owner"}. ` +
+          `You are now an admin of this team.` +
+          (res.targetTrialing ? " Their plan is in its free trial, so the team seats joined the trial — no charge today." : ""),
+      );
+      setSelectedId(null);
+      setConfirmText("");
+      if (onTransferred) await onTransferred();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't transfer ownership. Nothing was changed.");
+    } finally {
+      setTransferring(false);
+    }
+  }
+
+  return (
+    <div className="mt-6 pt-5 border-t border-red-400/15">
+      <h4 className="font-bold text-red-200 mb-1">Transfer ownership</h4>
+      <p className="text-sm text-white/55">
+        Hand this team to another member. They must have their own active WorldEye plan on the same billing
+        cycle and must not already own a team.
+      </p>
+      {loadError && <p role="alert" className="text-sm text-red-400 mt-3">{loadError}</p>}
+      {success && <p className="text-sm text-emerald-300 mt-3">{success}</p>}
+      {!candidates && !loadError ? (
+        <Loader2 className="w-5 h-5 animate-spin text-white/40 mt-4" />
+      ) : candidates && candidates.length === 0 ? (
+        <p className="text-sm text-white/50 mt-3">No other members yet — invite someone first, then you can transfer ownership to them.</p>
+      ) : candidates ? (
+        <ul className="space-y-2.5 mt-4">
+          {candidates.map((c) => (
+            <li key={c.userId}>
+              <button
+                type="button"
+                disabled={!c.eligible}
+                onClick={() => setSelectedId(c.userId)}
+                className={`w-full text-left rounded-2xl border p-3.5 transition ${
+                  !c.eligible
+                    ? "border-white/5 bg-white/[0.01] opacity-50 cursor-not-allowed"
+                    : selectedId === c.userId
+                      ? "border-red-400/50 bg-red-400/[0.06]"
+                      : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+                }`}
+              >
+                <span className="flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold text-sm">{c.name || c.email || "Member"}</span>
+                  <RoleBadge role={c.role} />
+                  {selectedId === c.userId && c.eligible && (
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-red-400/15 text-red-200 border-red-400/30">
+                      Selected
+                    </span>
+                  )}
+                </span>
+                <span className="block text-xs text-white/45 break-all mt-0.5">{c.email}</span>
+                {!c.eligible && c.reason && (
+                  <span className="block text-xs text-white/50 mt-1.5">{c.reason}</span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {selected && (
+        <div className="mt-4 rounded-2xl border border-red-400/25 bg-red-400/[0.04] p-4">
+          <p className="text-sm text-white/70">
+            <strong className="text-white">This cannot be undone by you.</strong> Billing for the team seats
+            moves to {selected.name || selected.email}&apos;s subscription
+            {pendingSeats !== null
+              ? <>; your pending seat change to {pendingSeats} seats is cancelled</>
+              : <>; any pending seat downgrade you scheduled is cancelled</>}
+            ; and you become an admin of this team.
+          </p>
+          <label className={labelCls + " mt-4"}>TYPE TRANSFER TO CONFIRM</label>
+          <input
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            className={inputCls}
+            placeholder="TRANSFER"
+            autoComplete="off"
+          />
+          {error && <p role="alert" className="text-sm text-red-400 mt-3">{error}</p>}
+          <button
+            type="button"
+            onClick={doTransfer}
+            disabled={!armed}
+            className="mt-4 px-5 py-2.5 rounded-xl bg-red-500/85 text-white text-sm font-bold hover:bg-red-500 transition disabled:opacity-50 inline-flex items-center gap-2"
+          >
+            {transferring ? <><Loader2 className="w-4 h-4 animate-spin" /> Transferring…</> : `Transfer ownership to ${selected.name || selected.email || "this member"}`}
+          </button>
+        </div>
+      )}
+      {error && !selected && <p role="alert" className="text-sm text-red-400 mt-3">{error}</p>}
     </div>
   );
 }
