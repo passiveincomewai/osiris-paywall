@@ -11,6 +11,7 @@ import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
+import type { SkyLocateTarget } from '@/lib/sky-today';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
@@ -57,6 +58,7 @@ const SharePanel = dynamic(() => import('@/components/SharePanel'));
 const ViewPresets = dynamic(() => import('@/components/ViewPresets'));
 const LayerPanel = dynamic(() => import('@/components/LayerPanel'));
 const SpaceCam = dynamic(() => import('@/components/SpaceCam'), { ssr: false });
+const TodayInTheSky = dynamic(() => import('@/components/TodayInTheSky'), { ssr: false });
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
 const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
 const EmailCaptureCard = dynamic(() => import('@/components/EmailCaptureCard'));
@@ -1127,6 +1129,17 @@ export default function Dashboard() {
     });
   }, [handleEntityClick]);
 
+  // ── Today in the Sky: a panel row was picked ──
+  // Light the row's layer (launches board, satellites, storms, quakes)
+  // and fly to the subject — the same setFlyToLocation the alerts and
+  // search rows use. On mobile the panel is a sheet over the drawer
+  // stack, so any open drawer retires first.
+  const locateFromSkyPanel = useCallback((t: SkyLocateTarget) => {
+    if (t.layer) setActiveLayers(prev => ({ ...prev, [t.layer as string]: true }));
+    setFlyToLocation({ lat: t.lat, lng: t.lng, zoom: t.zoom, ts: Date.now() });
+    setMobilePanel(null);
+  }, []);
+
   // ── Drawing / AOI ──
   // OsirisMap already owns the draw interaction and the polygon rendering;
   // this only turns a finished ring into a measured, named, coloured record.
@@ -2093,6 +2106,11 @@ export default function Dashboard() {
           </AnimatePresence>
         </div>
 
+        {/* Today in the Sky — self-contained rail item (its own open state,
+            like the checkout strip): a glanceable launches/stations/storms/
+            quakes panel fed by the site's existing live data. */}
+        <TodayInTheSky placement="rail" satellites={data.satellites} satellitesAt={data.satellites_at} earthquakes={data.earthquakes} onLocate={locateFromSkyPanel} />
+
         <div className="relative group">
           <button onClick={() => { setShowDrawing(!showDrawing); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showDrawing ? 'bg-[#00E5FF]/20' : 'hover:bg-white/10'}`} title="Draw — measure areas of interest on the map" aria-label="Draw" aria-expanded={showDrawing}>
             <PenLine className={`w-4 h-4 ${showDrawing ? 'text-[#00E5FF]' : 'text-white/60'}`} />
@@ -2377,6 +2395,10 @@ export default function Dashboard() {
               })}
             </div>
           </div>
+
+          {/* Today in the Sky — floating pill + bottom sheet (mobile shape
+              of the desktop rail panel). */}
+          <TodayInTheSky placement="chip" satellites={data.satellites} satellitesAt={data.satellites_at} earthquakes={data.earthquakes} onLocate={locateFromSkyPanel} />
 
           {/* Mobile Drawer */}
           <AnimatePresence>
