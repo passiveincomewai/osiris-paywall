@@ -12,7 +12,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Map as MlMap } from 'maplibre-gl';
-import { ChevronDown, ChevronUp, Clapperboard, Play, Plus, Square, Trash2, X } from 'lucide-react';
+import Link from 'next/link';
+import { ChevronDown, ChevronUp, Clapperboard, Lock, Play, Plus, Square, Trash2, X } from 'lucide-react';
 import {
   makeScene,
   totalSceneDurationMs,
@@ -23,6 +24,7 @@ import { BUILT_IN_PRESETS, type CinematicPreset } from '@/lib/cinematic/presets'
 import { ScenePlayer, type CameraDriver } from '@/lib/cinematic/player';
 import { deleteScene, loadSavedScenes, saveSavedScenes, upsertScene } from '@/lib/cinematic/storage';
 import { downloadBlob, globeRecordingSupport, startGlobeRecorder, type GlobeRecorder } from '@/lib/cinematic/recorder';
+import { fetchDirectorAccess, type DirectorAccess } from '@/lib/cinematic/access';
 
 interface CinematicDirectorProps {
   mapRef: React.RefObject<MlMap | null>;
@@ -56,6 +58,31 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
   const [recording, setRecording] = useState(false);
   const [recordSecs, setRecordSecs] = useState(0);
   const [exportMsg, setExportMsg] = useState('');
+
+  // Affiliate gate — the director tools are a perk of the affiliate
+  // program. The decision comes from /api/affiliate/invite-status, the
+  // same session + AffiliateProfile lookup the affiliate dashboard uses
+  // (see lib/cinematic/access): an affiliate record existing = access.
+  // Until it resolves, and for everyone who hasn't joined, the tools stay
+  // locked — the panel shows the lock instead, and every action below
+  // re-checks canDirect before doing anything.
+  const [access, setAccess] = useState<DirectorAccess>('unknown');
+  const canDirect = access === 'affiliate';
+
+  useEffect(() => {
+    let live = true;
+    void fetchDirectorAccess().then((a) => { if (live) setAccess(a); });
+    return () => { live = false; };
+  }, []);
+
+  const toggleOpen = () => {
+    // A failed first check shouldn't strand an affiliate on the lock:
+    // retry whenever the panel is opened while access is still unknown.
+    if (!open && access === 'unknown') {
+      void fetchDirectorAccess().then(setAccess);
+    }
+    setOpen((o) => !o);
+  };
 
   const playerRef = useRef<ScenePlayer | null>(null);
   if (!playerRef.current) playerRef.current = new ScenePlayer();
@@ -96,6 +123,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
   useEffect(() => () => { void recorderRef.current?.stop().catch(() => {}); }, []);
 
   const playScene = useCallback((scene: CinematicScene) => {
+    if (!canDirect) return;
     const map = mapRef.current;
     if (!map || !scene.keyframes.length) return;
     stopPlayback();
@@ -118,7 +146,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
       onProgress: (index, total) => setPlaying({ name: scene.name, index, total }),
       onDone: () => setPlaying(null),
     });
-  }, [mapRef, speed, stopPlayback]);
+  }, [mapRef, speed, stopPlayback, canDirect]);
 
   const ctx = useMemo(() => {
     const c = mapRef.current?.getCenter();
@@ -144,6 +172,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
   };
 
   const playPreset = (preset: CinematicPreset) => {
+    if (!canDirect) return;
     const scene = preset.build(freshCtx());
     if (scene) playScene(scene);
   };
@@ -152,10 +181,12 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
    *  Director just hands them the current context — no scene is built or
    *  played, so the follow camera and the scene player never fight. */
   const runPresetAction = (preset: CinematicPreset) => {
+    if (!canDirect) return;
     preset.action?.(freshCtx());
   };
 
   const addKeyframe = () => {
+    if (!canDirect) return;
     const map = mapRef.current;
     if (!map) return;
     const c = map.getCenter();
@@ -195,6 +226,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
   );
 
   const startRecording = () => {
+    if (!canDirect) return;
     const map = mapRef.current;
     if (!map) return;
     setExportMsg('');
@@ -227,7 +259,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
 
   return (
     <div className="absolute right-2 bottom-[172px] md:bottom-[104px] z-[240] flex flex-col items-end gap-2 pointer-events-none" data-cinematic-director>
-      {open && (
+      {open && canDirect && (
         <div className="pointer-events-auto w-[302px] max-w-[86vw] max-h-[54vh] overflow-y-auto styled-scrollbar rounded-xl border border-[var(--border-secondary)] bg-black/70 backdrop-blur-md shadow-xl p-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-mono font-bold tracking-[0.18em] text-[var(--text-primary)]">CINEMATIC DIRECTOR</span>
@@ -398,15 +430,46 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
           {exportMsg && <p className="mt-1 text-[10px] text-amber-200/80">{exportMsg}</p>}
         </div>
       )}
+      {open && !canDirect && (
+        <div className="pointer-events-auto w-[302px] max-w-[86vw] rounded-xl border border-[var(--border-secondary)] bg-black/70 backdrop-blur-md shadow-xl p-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-mono font-bold tracking-[0.18em] text-[var(--text-primary)]">CINEMATIC DIRECTOR</span>
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close cinematic director" className={iconBtnCls}>
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+          <div className="flex items-center gap-1.5 text-[9px] font-mono tracking-[0.18em] text-white/35 uppercase mb-1">
+            <Lock className="w-3 h-3" /> Affiliates only
+          </div>
+          <p className="text-[10px] leading-relaxed text-white/60">
+            {access === 'signed-out'
+              ? 'The Cinematic Director is a free perk for members of the WorldEye affiliate program. Sign in and join the program — joining is free — and the scene builder, presets and globe recording unlock right here.'
+              : access === 'not-affiliate'
+                ? "The Cinematic Director is a free perk for members of the WorldEye affiliate program. You're signed in, but you haven't joined the program yet — joining is free and unlocks the scene builder, presets and globe recording."
+                : 'The Cinematic Director is a free perk for members of the WorldEye affiliate program. Checking your access…'}
+          </p>
+          <div className="mt-2.5 flex flex-col gap-1.5">
+            <Link href="/affiliates" className={`${btnCls} w-full flex items-center justify-center gap-1.5`}>
+              Join the affiliate program — free
+            </Link>
+            {access === 'signed-out' && (
+              <Link href="/signin" className={`${btnCls} w-full flex items-center justify-center gap-1.5`}>
+                Sign in
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggleOpen}
         aria-pressed={open}
         aria-label="Cinematic Director"
-        title="Cinematic Director — camera scenes & globe recording"
+        title={canDirect ? 'Cinematic Director — camera scenes & globe recording' : 'Cinematic Director — affiliates only'}
         className="pointer-events-auto flex items-center gap-2 px-2.5 py-2 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all opacity-85 hover:opacity-100"
       >
         <Clapperboard className="w-4 h-4" style={open || playing || recording ? { color: 'var(--gold-primary)' } : undefined} />
+        {!canDirect && access !== 'unknown' && <Lock className="w-3 h-3" />}
         <span className="text-[9px] font-mono tracking-[0.18em] hidden md:inline">
           {recording ? `REC ${recordSecs}s` : playing ? 'PLAYING' : 'DIRECTOR'}
         </span>
