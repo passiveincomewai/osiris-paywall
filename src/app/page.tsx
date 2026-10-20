@@ -1032,6 +1032,44 @@ export default function Dashboard() {
     if (!camerasLoading) sharedCameraSettled.current = true;
   }, [sharedCameraId, dataVersion, camerasLoading, handleEntityClick]);
 
+  // ── First-camera assist (onboarding "watch a live camera") ──
+  // Onboarding's welcome panel and tour camera step dispatch
+  // we:open-camera with a featured camera id (lib/onboarding/
+  // first-camera.ts — the reverse of the we:flight-selected pattern).
+  // The open resolves through the exact deep-link path above: fly there,
+  // then handleEntityClick, so the free-camera gate, the open counting
+  // and the analytics all apply as they do to a map click. An id that
+  // never resolves once the catalogue has loaded is a quiet no-op —
+  // the visitor keeps the plain globe, as with a stale share link.
+  const [assistedCameraId, setAssistedCameraId] = useState<string | null>(null);
+  const assistedCameraSettled = useRef(false);
+  useEffect(() => {
+    const onOpenCamera = (e: Event) => {
+      const id = (e as CustomEvent<{ id?: unknown }>).detail?.id;
+      if (typeof id === 'string' && id) {
+        assistedCameraSettled.current = false;
+        setAssistedCameraId(id);
+      }
+    };
+    window.addEventListener('we:open-camera', onOpenCamera);
+    return () => window.removeEventListener('we:open-camera', onOpenCamera);
+  }, []);
+  useEffect(() => {
+    if (!assistedCameraId || assistedCameraSettled.current) return;
+    const cam: any = findCameraById(dataRef.current.cameras ?? [], assistedCameraId);
+    if (cam) {
+      assistedCameraSettled.current = true;
+      setFlyToLocation({ lat: cam.lat, lng: cam.lng, zoom: 12, ts: Date.now() });
+      handleEntityClick({
+        type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
+        source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
+        stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+      });
+      return;
+    }
+    if (!camerasLoading) assistedCameraSettled.current = true;
+  }, [assistedCameraId, dataVersion, camerasLoading, handleEntityClick]);
+
   // ── Camera picked in search ──
   // Same path as the deep link above: fly there, then open through
   // handleEntityClick so the free-camera gate and counting apply exactly

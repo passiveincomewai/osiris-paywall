@@ -92,6 +92,7 @@ export default function TourOverlay({
   onSkip,
   onExit,
   onFinish,
+  onWatchCamera,
 }: {
   step: TourStep;
   /** waiting = visitor must act (or read, for info steps); success = brief celebration before auto-advance. */
@@ -105,6 +106,11 @@ export default function TourOverlay({
   onExit: () => void;
   /** Final step only: true = start exploring, false = discover Pro. */
   onFinish: (explore: boolean) => void;
+  /** Camera step only: open a featured camera for the visitor
+   *  (lib/onboarding/first-camera). The step still completes through the
+   *  real camera-opened signal — this just removes the "find a dot
+   *  yourself" hunting that most visitors never finish. */
+  onWatchCamera?: () => void;
 }) {
   const [anchors, setAnchors] = useState<{ primary: Rect | null; extras: Rect[] }>({
     primary: null,
@@ -283,6 +289,14 @@ export default function TourOverlay({
                   </OnbButton>
                 </div>
               ) : (
+                <>
+                {phase === "waiting" && step.action === "camera-open" && onWatchCamera && (
+                  <div className="mt-4">
+                    <OnbButton onClick={onWatchCamera}>
+                      ▶ Open a Featured Camera For Me
+                    </OnbButton>
+                  </div>
+                )}
                 <div className="flex items-center justify-between gap-2 mt-4">
                   <div className="flex items-center gap-2">
                     {step.n > 1 && (
@@ -310,6 +324,7 @@ export default function TourOverlay({
                     </span>
                   )}
                 </div>
+                </>
               )}
             </>
           )}

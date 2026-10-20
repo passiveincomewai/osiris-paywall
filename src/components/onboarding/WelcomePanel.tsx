@@ -8,10 +8,18 @@ export default function WelcomePanel({
   isMobile,
   onTour,
   onDismiss,
+  onWatchCamera,
+  watchLabel,
 }: {
   isMobile: boolean;
   onTour: () => void;
   onDismiss: () => void;
+  /** First-camera offer (lib/onboarding/first-camera): present only when a
+   *  featured camera is ready to open — one tap to a real live feed, the
+   *  shortest path from this panel into the product. */
+  onWatchCamera?: () => void;
+  /** Button caption for the offer, e.g. "Watch a Live Camera — Tokyo". */
+  watchLabel?: string;
 }) {
   return (
     <div
@@ -44,7 +52,12 @@ export default function WelcomePanel({
           globe.
         </p>
         <div className="flex flex-col gap-2 mt-4">
-          <OnbButton onClick={onTour}>Take a 45-Second Tour</OnbButton>
+          {onWatchCamera && (
+            <OnbButton onClick={onWatchCamera}>{watchLabel ?? "Watch a Live Camera"}</OnbButton>
+          )}
+          <OnbButton variant={onWatchCamera ? "ghost" : "primary"} onClick={onTour}>
+            Take a 45-Second Tour
+          </OnbButton>
           <OnbButton variant="ghost" onClick={onDismiss}>
             Explore On My Own
           </OnbButton>

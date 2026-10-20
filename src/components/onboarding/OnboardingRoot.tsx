@@ -41,6 +41,12 @@ import {
   type FeatureId,
 } from "@/lib/onboarding/events";
 import { EVENT_LAYERS, MICROS, TOUR_STEPS, layersTurnedOn, CONVERSION_FEATURES } from "@/lib/onboarding/steps";
+import {
+  dispatchOpenCamera,
+  fetchFirstCamera,
+  firstCameraPlace,
+  type FirstCamera,
+} from "@/lib/onboarding/first-camera";
 import { OnbStyles } from "./shared";
 import WelcomePanel from "./WelcomePanel";
 import TourOverlay from "./TourOverlay";
@@ -49,6 +55,16 @@ import ConversionCard from "./ConversionCard";
 import HelpPanel, { HelpButton } from "./HelpPanel";
 
 type UiMode = "none" | "welcome" | "tour" | "micro" | "conversion" | "help";
+
+/**
+ * How long after first engagement the welcome panel appears. This was
+ * 3.5s when the tour was designed; the measured session shape (Oct 2026:
+ * median ~2s of activity, most sessions over within ~5s) meant most
+ * group-B visitors had already left before the panel could appear.
+ * 1.2s is still earned by a real interaction — the panel never fires on
+ * load alone — it just arrives while the visitor is still here.
+ */
+const WELCOME_DELAY_MS = 1200;
 
 export interface OnboardingRootProps {
   /** Map loaded + splash lifted: the globe is interactive. */
@@ -80,6 +96,8 @@ function OnboardingRootInner({
   const [tourStep, setTourStep] = useState(1);
   const [tourPhase, setTourPhase] = useState<"waiting" | "success">("waiting");
   const [microId, setMicroId] = useState<string | null>(null);
+  const [firstCamera, setFirstCamera] = useState<FirstCamera | null>(null);
+  const firstCameraTriedRef = useRef(false);
 
   const stateRef = useRef(onb);
   stateRef.current = onb;
@@ -163,6 +181,31 @@ function OnboardingRootInner({
     pendingMicroRef.current = null;
   }, [ui, showMicro]);
 
+  /* ── First-camera offer: lazily fetch the featured camera the welcome
+     panel and the tour's camera step can open in one tap. Fetched at most
+     once per mount, only when a surface that can offer it is about to
+     show; any failure simply leaves those surfaces as they were. ── */
+  const ensureFirstCamera = useCallback(() => {
+    if (firstCameraTriedRef.current) return;
+    firstCameraTriedRef.current = true;
+    void fetchFirstCamera().then((cam) => {
+      if (cam) setFirstCamera(cam);
+    });
+  }, []);
+
+  const watchCamera = useCallback(() => {
+    if (!firstCamera) return;
+    emitOnboarding(ONB_EVENT.watchCamera);
+    dispatchOpenCamera(firstCamera.id);
+    if (uiRef.current === "welcome") {
+      // The welcome's job — get the visitor into the product — is done.
+      update((s) => ({ ...s, welcome: "done" }));
+      setUi("none");
+    }
+    // In the tour, nothing else to do here: the camera-opened signal
+    // completes step 2 through the ordinary path.
+  }, [firstCamera, update]);
+
   /* ── Tour control ── */
   const clearAdvance = () => {
     if (advanceTimer.current) {
@@ -173,12 +216,13 @@ function OnboardingRootInner({
 
   const startTour = useCallback(() => {
     clearAdvance();
+    ensureFirstCamera();
     emitOnboarding(ONB_EVENT.start);
     update((s) => ({ ...s, welcome: s.welcome === "done" ? "done" : "tour", tourStep: 1 }));
     setTourStep(1);
     setTourPhase("waiting");
     setUi("tour");
-  }, [update]);
+  }, [update, ensureFirstCamera]);
 
   const exitTour = useCallback(() => {
     clearAdvance();
@@ -242,11 +286,11 @@ function OnboardingRootInner({
     [update],
   );
 
-  /* ── §1 Welcome: group B, globe ready, 3–5s of real engagement ──
+  /* ── §1 Welcome: group B, globe ready, ~1.2s of real engagement ──
      Engagement is timestamped whenever it happens — including while the
      visitor scrolls the intro before the globe finishes loading — and
      the panel appears once BOTH conditions hold: globe interactive AND
-     ~3.5s elapsed since first engagement. Listeners exist only while a
+     WELCOME_DELAY_MS elapsed since first engagement. Listeners exist only while a
      welcome is still pending, and are removed the moment it resolves. */
   const engagedAtRef = useRef(0);
   const globeReadyRef = useRef(globeReady);
@@ -255,12 +299,13 @@ function OnboardingRootInner({
     if (group !== "b" || onb.welcome !== "pending") return;
     let timer: number | null = null;
     const show = () => {
+      ensureFirstCamera();
       emitOnboarding(ONB_EVENT.impression);
       setUi("welcome");
     };
     const schedule = () => {
       if (timer !== null || !engagedAtRef.current) return;
-      const wait = Math.min(3500, Math.max(400, 3500 - (Date.now() - engagedAtRef.current)));
+      const wait = Math.min(WELCOME_DELAY_MS, Math.max(400, WELCOME_DELAY_MS - (Date.now() - engagedAtRef.current)));
       timer = window.setTimeout(() => {
         timer = null;
         if (globeReadyRef.current && uiRef.current === "none" && stateRef.current.welcome === "pending") {
@@ -293,7 +338,7 @@ function OnboardingRootInner({
       window.removeEventListener("touchstart", onEngage);
       window.removeEventListener("keydown", onEngage);
     };
-  }, [globeReady, group, onb.welcome, ui]);
+  }, [globeReady, group, onb.welcome, ui, ensureFirstCamera]);
 
   const dismissWelcome = useCallback(() => {
     emitOnboarding(ONB_EVENT.dismiss);
@@ -451,7 +496,17 @@ function OnboardingRootInner({
         />
       )}
       {ui === "welcome" && (
-        <WelcomePanel isMobile={isMobile} onTour={startTour} onDismiss={dismissWelcome} />
+        <WelcomePanel
+          isMobile={isMobile}
+          onTour={startTour}
+          onDismiss={dismissWelcome}
+          onWatchCamera={firstCamera ? watchCamera : undefined}
+          watchLabel={
+            firstCamera
+              ? `Watch a Live Camera${firstCameraPlace(firstCamera) ? ` — ${firstCameraPlace(firstCamera)}` : ""}`
+              : undefined
+          }
+        />
       )}
       {ui === "tour" && step && (
         <TourOverlay
@@ -465,6 +520,7 @@ function OnboardingRootInner({
           onSkip={skipStep}
           onExit={exitTour}
           onFinish={finishTour}
+          onWatchCamera={firstCamera ? watchCamera : undefined}
         />
       )}
       {ui === "micro" && microId && MICROS[microId] && (

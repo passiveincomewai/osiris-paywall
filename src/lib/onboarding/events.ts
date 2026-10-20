@@ -17,6 +17,10 @@
  *   (Tour shortened 6 → 4 steps on 2026-10-14; step params 5–6 exist
  *   only in pre-change history. Event names are unchanged.)
  *   onboarding_dismiss               welcome panel dismissed ("Explore On My Own")
+ *   onboarding_watch_camera          visitor took the first-camera offer
+ *                                    (welcome panel or tour camera step) —
+ *                                    the camera_open / feature_first_use
+ *                                    signals record whether it landed
  *   feature_first_use:<feature>      first-ever use of a feature, once per
  *                                    visitor per feature. Features: camera,
  *                                    flight, satellite, layer, recon, oi,
@@ -42,6 +46,7 @@ export const ONB_EVENT = {
   dropoff: "onboarding_dropoff",
   complete: "onboarding_complete",
   dismiss: "onboarding_dismiss",
+  watchCamera: "onboarding_watch_camera",
   featureFirstUse: "feature_first_use",
   conversionShown: "conversion_shown",
   conversionClickPro: "conversion_click_pro",
