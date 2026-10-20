@@ -157,30 +157,47 @@ function Row({ flight, telem, onRemove, onLocate, onDetail }: {
 
   useEffect(() => {
     let cancelled = false;
+    let lastSig = '';
     const cs = (flight.callsign || '').replace(/\s+/g, '');
 
     // Airframe and scheduled route come from different places: the trace files
     // know what the aircraft is and where it has been, the route lookup knows
     // which airports it is booked between.
-    Promise.all([
-      fetch(`/api/aircraft?icao24=${flight.icao24}`)
-        .then((r) => (r.ok ? r.json() : null)).catch(() => null),
-      cs
-        ? fetch(`/api/flight-route?callsign=${encodeURIComponent(cs)}&icao24=${flight.icao24}`)
-            .then((r) => (r.ok ? r.json() : null)).catch(() => null)
-        : Promise.resolve(null),
-    ]).then(([ac, route]) => {
-      if (cancelled) return;
-      const base = ac && !ac.error ? (ac as AircraftDetail) : null;
-      const merged: AircraftDetail | null = base
-        ? { ...base, ...resolveEndpoints(base, route as ScheduledRoute | null) }
-        : null;
-      setDetail(merged);
-      setLoading(false);
-      onDetail(flight.icao24, merged);
-    });
+    const load = () => {
+      Promise.all([
+        fetch(`/api/aircraft?icao24=${flight.icao24}`)
+          .then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        cs
+          ? fetch(`/api/flight-route?callsign=${encodeURIComponent(cs)}&icao24=${flight.icao24}`)
+              .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+          : Promise.resolve(null),
+      ]).then(([ac, route]) => {
+        if (cancelled) return;
+        const base = ac && !ac.error ? (ac as AircraftDetail) : null;
+        const merged: AircraftDetail | null = base
+          ? { ...base, ...resolveEndpoints(base, route as ScheduledRoute | null) }
+          : null;
+        setDetail(merged);
+        setLoading(false);
+        // Only push to the map when something actually moved — the
+        // periodic re-resolve below would otherwise redraw constantly.
+        const sig = merged
+          ? `${merged.points}|${merged.track.length}|${merged.origin?.icao ?? ''}|${merged.destination?.icao ?? ''}`
+          : 'none';
+        if (sig !== lastSig) { lastSig = sig; onDetail(flight.icao24, merged); }
+      });
+    };
 
-    return () => { cancelled = true; };
+    load();
+    // The flown track and endpoints used to freeze at this first fetch
+    // for as long as the panel stayed open. Re-resolve periodically so
+    // a watched aircraft's track keeps growing; telemetry above already
+    // refreshes with the feed.
+    const iv = setInterval(() => {
+      if (typeof document === 'undefined' || document.visibilityState === 'visible') load();
+    }, 90_000);
+
+    return () => { cancelled = true; clearInterval(iv); };
   }, [flight.icao24, flight.callsign, onDetail]);
 
   return (

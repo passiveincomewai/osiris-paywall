@@ -480,6 +480,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // only the path is gated, by the same session-JWT check the globe uses
   // everywhere else (subscriptionStatus === 'active', trials included).
   const flightPathRef = useRef<FlightPathState | null>(null);
+  /** The flight popup currently open, so fresh snapshots can refresh
+   *  its readouts (lib: the snapshot effect below). Cleared on close. */
+  const openFlightPopupRef = useRef<{ icao24: string } | null>(null);
+  /** Last time the flown-track layer was re-synced mid-interval (3d). */
+  const lastPathTipSyncRef = useRef(0);
   const flightPathAccessRef = useRef<FlightPathAccess>('unknown');
   const [flightPathAccessState, setFlightPathAccessState] = useState<FlightPathAccess>('unknown');
   const [flightPathUi, setFlightPathUi] = useState<FlightPathHudData | null>(null);
@@ -746,7 +751,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const target = followCameraTarget(s2.mode, fix, now - s2.modeSince, map.getBearing());
       map.easeTo({
         center: target.center, zoom: target.zoom, pitch: target.pitch, bearing: target.bearing,
-        duration: s2.phase === 'engaging' ? 1500 : 650,
+        duration: s2.phase === 'engaging' ? 1500 : 500, // == the render tick: each ease completes as the next blended target lands (650ms perpetually restarted mid-ease and pulsed)
       });
       if (s2.phase === 'engaging') flightFollowRef.current = { ...s2, phase: 'following' };
       flightFollowHudRef.current = {
@@ -760,6 +765,19 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         fix: describeFix(flightBlendRef.current?.timing(now) ?? null, now),
         missing: false,
       };
+      // Between polls the marker glides on the blend, but the flown
+      // line is drawn from the path state — re-sync it against the
+      // fresh HUD position every couple of seconds so its tip keeps
+      // tracking the aircraft while following, not just on snapshots.
+      const psNow = flightPathRef.current;
+      if (
+        psNow && psNow.icao24 === hex &&
+        flightPathAccessRef.current === 'pro' &&
+        now - lastPathTipSyncRef.current > 2000
+      ) {
+        lastPathTipSyncRef.current = now;
+        syncFlightPathLayer();
+      }
     } else {
       // Not in the blended output: hold the camera, flag the HUD, and
       // let the grace window decide whether this was a hiccup or a
@@ -1903,9 +1921,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     reportCamera();
 
     // ── POPUP HELPER ──
-    const popup = (coords: any, html: string) => {
+    const popup = (coords: any, html: string, maxWidth = '420px') => {
       popupRef.current?.remove();
-      popupRef.current = new maplibregl.Popup({ closeButton: true, maxWidth: '420px', offset: 14 }).setLngLat(coords).setHTML(html).addTo(map);
+      popupRef.current = new maplibregl.Popup({ closeButton: true, maxWidth, offset: 14 }).setLngLat(coords).setHTML(html).addTo(map);
     };
     const pStyle = `background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;`;
     const linkStyle = `display:inline-block;margin-top:8px;padding:5px 12px;font-size:10px;letter-spacing:0.12em;text-decoration:none;border-radius:5px;font-family:'JetBrains Mono',monospace;`;
@@ -1941,37 +1959,65 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
         // Show initial popup immediately (without route data)
         const routeLoadingId = `route-info-${Date.now()}`;
-        popup(coords, `<div style="${pStyle}border:1px solid rgba(255,255,255,0.08);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <span style="color:#E8E6E0;font-size:15px;font-weight:700;letter-spacing:0.08em;">${htmlEsc(cs)}</span>
-            <span style="color:#5C5A54;font-size:10px;">${htmlEsc(p.icao24||'')}</span>
+        popup(coords, `<div style="background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:12px;font-family:'JetBrains Mono',monospace;border:1px solid rgba(255,255,255,0.08);max-height:54vh;overflow-y:auto;">
+          <div id="acphoto-${idSafe(p.icao24||'')}" style="position:relative;width:100%;aspect-ratio:2/1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;">
+            <span id="acphoto-label-${idSafe(p.icao24||'')}" style="color:#5C5A54;font-size:9px;letter-spacing:0.12em;padding:0 8px;text-align:center;">\u2708 ${htmlEsc(p.model || 'AIRCRAFT')}</span>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11px;">
-            <div><span style="color:#5C5A54;font-size:9px;">MODEL</span><br/><span style="color:#B0BEC5;">${htmlEsc(p.model||'—')}</span></div>
-            <div><span style="color:#5C5A54;font-size:9px;">ALT</span><br/><span style="color:#B0BEC5;">${p.alt?Math.round(p.alt)+'m':'—'}</span></div>
-            <div><span style="color:#5C5A54;font-size:9px;">SPEED</span><br/><span style="color:#B0BEC5;">${p.speed_knots||'—'}kt</span></div>
-            <div><span style="color:#5C5A54;font-size:9px;">HDG</span><br/><span style="color:#B0BEC5;">${Math.round(p.heading||0)}°</span></div>
-            <div><span style="color:#5C5A54;font-size:9px;">REG</span><br/><span style="color:#B0BEC5;">${htmlEsc(p.registration||'—')}</span></div>
-            <div><span style="color:#5C5A54;font-size:9px;">POS</span><br/><span style="color:#B0BEC5;">${coords[1].toFixed(2)},${coords[0].toFixed(2)}</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="color:#E8E6E0;font-size:13px;font-weight:700;letter-spacing:0.08em;">${htmlEsc(cs)}</span>
+            <span style="color:#5C5A54;font-size:9px;">${htmlEsc(p.icao24||'')}</span>
           </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:10px;">
+            <div><span style="color:#5C5A54;font-size:8px;">MODEL</span><br/><span style="color:#B0BEC5;">${htmlEsc(p.model||'\u2014')}</span></div>
+            <div><span style="color:#5C5A54;font-size:8px;">ALT</span><br/><span id="acstat-alt-${idSafe(p.icao24||'')}" style="color:#B0BEC5;">${p.alt?Math.round(p.alt)+'m':'\u2014'}</span></div>
+            <div><span style="color:#5C5A54;font-size:8px;">SPEED</span><br/><span id="acstat-spd-${idSafe(p.icao24||'')}" style="color:#B0BEC5;">${p.speed_knots?Math.round(p.speed_knots)+'kt':'\u2014'}</span></div>
+            <div><span style="color:#5C5A54;font-size:8px;">HDG</span><br/><span id="acstat-hdg-${idSafe(p.icao24||'')}" style="color:#B0BEC5;">${Math.round(p.heading||0)}\u00b0</span></div>
+            <div><span style="color:#5C5A54;font-size:8px;">REG</span><br/><span style="color:#B0BEC5;">${htmlEsc(p.registration||'\u2014')}</span></div>
+            <div><span style="color:#5C5A54;font-size:8px;">POS</span><br/><span id="acstat-pos-${idSafe(p.icao24||'')}" style="color:#B0BEC5;">${coords[1].toFixed(2)},${coords[0].toFixed(2)}</span></div>
+          </div>
+          <div id="acstat-age-${idSafe(p.icao24||'')}" style="margin-top:6px;color:#5C5A54;font-size:8px;letter-spacing:0.08em;">FROM THE LIVE FEED \u2014 VALUES UPDATE AS NEW FIXES ARRIVE</div>
           <div id="ac-${idSafe(p.icao24||'')}" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
-            <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">IDENTIFYING AIRFRAME…</span>
+            <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">IDENTIFYING AIRFRAME\u2026</span>
           </div>
-          <button onclick="window.osirisWatchFlight && window.osirisWatchFlight({ icao24: '${idSafe(p.icao24||'')}', callsign: '${idSafe(cs)}' })" style="width:100%;margin-top:8px;padding:6px 12px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.35);color:#7FE9FF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">+ WATCH THIS AIRCRAFT</button>
-          ${p.icao24 ? `<button onclick="window.__weFlightFollowToggle && window.__weFlightFollowToggle('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,180,0,0.10);border:1px solid rgba(255,180,0,0.40);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">${followingThis ? '■ STOP FOLLOWING' : '✈ FOLLOW AIRCRAFT — CHASE CAMERA'}</button>` : ''}
+          <button onclick="window.osirisWatchFlight && window.osirisWatchFlight({ icao24: '${idSafe(p.icao24||'')}', callsign: '${idSafe(cs)}' })" style="width:100%;margin-top:8px;padding:5px 10px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.35);color:#7FE9FF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">+ WATCH THIS AIRCRAFT</button>
+          ${p.icao24 ? `<button onclick="window.__weFlightFollowToggle && window.__weFlightFollowToggle('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(255,180,0,0.10);border:1px solid rgba(255,180,0,0.40);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">${followingThis ? '\u25a0 STOP FOLLOWING' : '\u2708 FOLLOW AIRCRAFT \u2014 CHASE CAMERA'}</button>` : ''}
 ${p.icao24 ? (flightPathAccessRef.current === 'pro'
-            ? `<div style="margin-top:6px;padding:6px 12px;border:1px dashed rgba(255,179,0,0.45);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;text-align:center;">✦ FLIGHT PATH — PRO · ROUTE — PLANNED + FLOWN — LIVE TRACK, DRAWN WHILE FOLLOWING</div>`
-            : `<button onclick="window.location.href='/pricing#pro-card'" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">🔒 FLIGHT PATH — PRO · SEE THE WHOLE FLIGHT PATH</button>`) : ''}
-                    <button onclick="window.__weFlightCams && window.__weFlightCams(${coords[0]}, ${coords[1]})" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">📷 CAMERAS NEAR THIS AIRCRAFT</button>
+            ? `<div style="margin-top:6px;padding:5px 10px;border:1px dashed rgba(255,179,0,0.45);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;text-align:center;">\u2726 FLIGHT PATH \u2014 PRO \u00b7 ROUTE \u2014 PLANNED + FLOWN \u2014 LIVE TRACK, DRAWN WHILE FOLLOWING</div>`
+            : `<button onclick="window.location.href='/pricing#pro-card'" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">\ud83d\udd12 FLIGHT PATH \u2014 PRO \u00b7 SEE THE WHOLE FLIGHT PATH</button>`) : ''}
           <div id="${routeLoadingId}" style="margin-top:8px;padding:6px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
-            <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">RESOLVING ROUTE…</span>
+            <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">RESOLVING ROUTE\u2026</span>
           </div>
           <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
             <a href="https://www.flightaware.com/live/flight/${encodeURIComponent(cs)}" target="_blank" style="${linkStyle}color:#78909C;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);">FLIGHTAWARE</a>
             <a href="https://globe.adsbexchange.com/?icao=${encodeURIComponent(p.icao24||'')}" target="_blank" style="${linkStyle}color:#78909C;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);">ADS-B</a>
             <a href="https://www.radarbox.com/data/flights/${encodeURIComponent(cs)}" target="_blank" style="${linkStyle}color:#78909C;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);">RADARBOX</a>
           </div>
-        </div>`);
+        </div>`, '320px');
+
+        // Track the open panel so each new feed snapshot refreshes its
+        // readouts (snapshot effect), and clear the tracking on close.
+        if (p.icao24) {
+          const hex = String(p.icao24);
+          openFlightPopupRef.current = { icao24: hex };
+          popupRef.current?.on('close', () => {
+            if (openFlightPopupRef.current?.icao24 === hex) openFlightPopupRef.current = null;
+          });
+          // Photo of this exact airframe (Planespotters — tail-specific:
+          // hex, then registration). Best-effort and async: a miss or a
+          // slow lookup leaves the labeled placeholder, never a block.
+          const photoParams = new URLSearchParams({ hex });
+          if (p.registration) photoParams.set('reg', String(p.registration));
+          fetch(`/api/aircraft-photo?${photoParams}`)
+            .then(r => (r.ok ? r.json() : null))
+            .then((ph) => {
+              const slot = document.getElementById(`acphoto-${idSafe(hex)}`);
+              if (!slot || !ph?.found) return;
+              slot.innerHTML =
+                `<img src="${urlSafe(ph.src)}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>` +
+                `<div style="position:absolute;left:0;right:0;bottom:0;padding:2px 6px;background:rgba(0,0,0,0.6);font-size:8px;color:#B0BEC5;font-family:'JetBrains Mono',monospace;">THIS AIRCRAFT \u00b7 \ud83d\udcf7 ${htmlEsc(ph.photographer)} \u00b7 <a href="${urlSafe(ph.link)}" target="_blank" rel="noopener noreferrer" style="color:#7FE9FF;">PLANESPOTTERS.NET</a></div>`;
+            })
+            .catch(() => {});
+        }
 
         // The transponder only reports a type code (often nothing at all), so
         // resolve the real manufacturer/model and registration out of band.
@@ -1986,6 +2032,8 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
               }
               const bits = [d.registration, d.typeCode, d.operator].filter(Boolean)
                 .map((x: string) => htmlEsc(String(x))).join(' · ');
+              const photoLabel = document.getElementById(`acphoto-label-${idSafe(p.icao24)}`);
+              if (photoLabel && d.model) photoLabel.textContent = `\u2708 ${d.model}`;
               el.innerHTML =
                 `<div style="color:#E8E6E0;font-size:11px;line-height:1.35;">${htmlEsc(d.model || 'Unidentified type')}</div>` +
                 (bits ? `<div style="color:#78909C;font-size:9px;margin-top:2px;">${bits}</div>` : '');
@@ -3018,6 +3066,40 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             syncFlightPathUi();
           }
           break;
+        }
+      }
+    }
+    // Aircraft panel live refresh: while a flight popup is open, its
+    // readouts take THIS snapshot's raw fix — never the blended render
+    // position; the numbers stay the reported ones and the fix's age is
+    // stated. The popup's anchor follows the blended marker instead,
+    // which is the position the user is actually looking at.
+    const openPop = openFlightPopupRef.current;
+    if (openPop && popupRef.current) {
+      const hex = openPop.icao24;
+      const safeHex = hex.replace(/[^a-zA-Z0-9_.\-]/g, '');
+      let rawFix: any = null;
+      for (const bucket of [data.commercial_flights, data.private_flights, data.private_jets, data.military_flights]) {
+        rawFix = (bucket || []).find((f: any) => f.icao24 === hex) ?? null;
+        if (rawFix) break;
+      }
+      if (rawFix) {
+        const setStat = (suffix: string, text: string) => {
+          const el = document.getElementById(`acstat-${suffix}-${safeHex}`);
+          if (el) el.textContent = text;
+        };
+        setStat('alt', rawFix.alt ? `${Math.round(rawFix.alt)}m` : '\u2014');
+        setStat('spd', rawFix.speed_knots ? `${Math.round(rawFix.speed_knots)}kt` : '\u2014');
+        setStat('hdg', `${Math.round(rawFix.heading || 0)}\u00b0`);
+        setStat('pos', `${Number(rawFix.lat).toFixed(2)},${Number(rawFix.lng).toFixed(2)}`);
+        const ageS = Math.max(0, Math.round((Date.now() - fixAt) / 1000));
+        setStat('age', `FEED FIX ${ageS}s OLD \u2014 VALUES UPDATE WITH THE FEED`);
+        const cur = flightBlendRef.current?.current(Date.now());
+        if (cur) {
+          for (const bucket of [cur.commercial_flights, cur.private_flights, cur.private_jets, cur.military_flights]) {
+            const blended = (bucket || []).find((f: any) => f.icao24 === hex);
+            if (blended) { popupRef.current.setLngLat([blended.lng, blended.lat]); break; }
+          }
         }
       }
     }
