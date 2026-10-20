@@ -5,6 +5,7 @@
 import { describe, it, expect, vi } from "vitest";
 import {
   checkoutPlanFromParam,
+  createCheckoutSessionController,
   isUsablePublishableKey,
   runCheckoutFlow,
   stripePublishableKey,
@@ -165,5 +166,86 @@ describe("runCheckoutFlow", () => {
   it("throws the generic failure when the hosted answer carries no URL", async () => {
     const { deps } = fakeDeps([{ ok: true, body: {} }]);
     await expect(runCheckoutFlow("annual", undefined, deps)).rejects.toThrow("Checkout failed");
+  });
+});
+
+describe("createCheckoutSessionController", () => {
+  // The /pricing sheet's lifecycle: open mounts a form, close destroys
+  // it, reopening creates a FRESH session — and a form that finishes
+  // mounting after the sheet closed (or after a newer open) is torn
+  // down on arrival, never leaked.
+  const EMBEDDED = { ok: true, body: { clientSecret: "cs_test_123_secret_xyz" } };
+
+  it("mounts on start and destroys on close", async () => {
+    const { deps, handle } = fakeDeps([EMBEDDED]);
+    const controller = createCheckoutSessionController();
+    const outcome = await controller.start("weekly", "pk_live_abc", deps);
+    expect(outcome.kind).toBe("mounted");
+    expect(controller.isActive()).toBe(true);
+    expect(handle.mount).toHaveBeenCalledTimes(1);
+    controller.close();
+    expect(handle.destroy).toHaveBeenCalledTimes(1);
+    expect(controller.isActive()).toBe(false);
+  });
+
+  it("creates a fresh session on reopen (a second POST, a second mount)", async () => {
+    const { deps, calls, handle } = fakeDeps([EMBEDDED, EMBEDDED]);
+    const controller = createCheckoutSessionController();
+    await controller.start("weekly", "pk_live_abc", deps);
+    controller.close();
+    await controller.start("weekly", "pk_live_abc", deps);
+    expect(calls).toHaveLength(2);
+    expect(handle.mount).toHaveBeenCalledTimes(2);
+    // First mount destroyed at close; second still live until its close.
+    expect(handle.destroy).toHaveBeenCalledTimes(1);
+    controller.close();
+    expect(handle.destroy).toHaveBeenCalledTimes(2);
+  });
+
+  it("a new start destroys the previously mounted form first", async () => {
+    const { deps, handle } = fakeDeps([EMBEDDED, EMBEDDED]);
+    const controller = createCheckoutSessionController();
+    await controller.start("weekly", "pk_live_abc", deps);
+    await controller.start("annual", "pk_live_abc", deps);
+    expect(handle.mount).toHaveBeenCalledTimes(2);
+    expect(handle.destroy).toHaveBeenCalledTimes(1);
+    expect(controller.isActive()).toBe(true);
+  });
+
+  it("destroys a form that finishes mounting after close()", async () => {
+    let resolveInit: ((h: EmbeddedCheckoutHandle) => void) | null = null;
+    const handle: EmbeddedCheckoutHandle = { mount: vi.fn(), destroy: vi.fn() };
+    const { deps } = fakeDeps([EMBEDDED], {
+      loadStripeImpl: vi.fn(async () => ({
+        initEmbeddedCheckout: vi.fn(
+          () =>
+            new Promise<EmbeddedCheckoutHandle>((resolve) => {
+              resolveInit = resolve;
+            }),
+        ),
+      })),
+    });
+    const controller = createCheckoutSessionController();
+    const started = controller.start("weekly", "pk_live_abc", deps);
+    controller.close();
+    // Let the in-flight flow reach initEmbeddedCheckout before resolving it.
+    await vi.waitFor(() => {
+      if (!resolveInit) throw new Error("init not reached yet");
+    });
+    resolveInit!(handle);
+    const outcome = await started;
+    expect(outcome.kind).toBe("mounted");
+    // The late mount was torn down on arrival; nothing stays active.
+    expect(handle.destroy).toHaveBeenCalledTimes(1);
+    expect(controller.isActive()).toBe(false);
+  });
+
+  it("passes a hosted-fallback navigation through untouched", async () => {
+    const { deps } = fakeDeps([{ ok: true, body: { url: HOSTED_URL } }]);
+    const controller = createCheckoutSessionController();
+    const outcome = await controller.start("monthly", undefined, deps);
+    expect(outcome).toEqual({ kind: "navigated", url: HOSTED_URL });
+    expect(controller.isActive()).toBe(false);
+    controller.close(); // safe no-op with nothing mounted
   });
 });

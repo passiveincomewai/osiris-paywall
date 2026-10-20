@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
-import { startPlanCheckout } from "@/lib/billing/trial-checkout";
+import CheckoutSheet from "@/components/CheckoutSheet";
+import HostedCheckoutLink from "@/components/HostedCheckoutLink";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, Satellite, BrainCircuit,
@@ -87,25 +88,21 @@ const FAQS = [
   },
 ];
 
-function CheckoutButton({ plan, label }: { plan: Plan; label: string }) {
-  const [loading, setLoading] = useState(false);
-
-  function startCheckout() {
-    setLoading(true);
-    // The one checkout entry, shared with every Pro lock surface
-    // (src/lib/billing/trial-checkout.ts) so the two can never drift: it
-    // lands on /checkout, which mounts the embedded form or falls back to
-    // the hosted redirect — failures surface on that page, not here.
-    startPlanCheckout(plan);
-  }
-
+function CheckoutButton({
+  plan,
+  label,
+  onCheckout,
+}: {
+  plan: Plan;
+  label: string;
+  onCheckout: (plan: Plan) => void;
+}) {
   return (
     <button
-      onClick={startCheckout}
-      disabled={loading}
-      className="w-full py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 active:scale-[0.99] disabled:opacity-60 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+      onClick={() => onCheckout(plan)}
+      className="w-full py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 active:scale-[0.99] transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
     >
-      {loading ? "Opening secure checkout…" : label}
+      {label}
     </button>
   );
 }
@@ -169,6 +166,15 @@ function FaqItem({ q, a }: { q: string; a: string }) {  const [open, setOpen] = 
 export default function PricingPage() {
   const [plan, setPlan] = useState<Plan>("annual");
   const p = PLANS[plan];
+  // Checkout opens IN PLACE: the plan CTAs raise the embedded form in a
+  // sheet (components/CheckoutSheet — bottom sheet on mobile, dialog on
+  // desktop) instead of navigating to /checkout. It is the same
+  // Checkout-Session machinery every lock surface reaches via
+  // startPlanCheckout → /checkout, so the two presentations can't drift;
+  // closing the sheet just returns here, and the hosted Stripe page
+  // remains one quiet link away under each CTA.
+  const [sheetPlan, setSheetPlan] = useState<Plan | null>(null);
+  const closeSheet = useCallback(() => setSheetPlan(null), []);
 
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
@@ -307,13 +313,16 @@ export default function PricingPage() {
           </ul>
 
           <div className="mt-5">
-            <CheckoutButton plan={plan} label={p.cta} />
+            <CheckoutButton plan={plan} label={p.cta} onCheckout={setSheetPlan} />
           </div>
           <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-4">
             <Lock className="w-3.5 h-3.5" /> Secured by Stripe · Cancel anytime · 1-click cancellation
           </p>
           <p className="flex items-center justify-center gap-2 text-xs text-white/50 mt-2 text-center">
             <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]/80 shrink-0" /> Covered by a 7-day money-back guarantee on your first charge — email us within 7 days of the charge for a full refund, no questions asked.
+          </p>
+          <p className="mt-3 text-center">
+            <HostedCheckoutLink plan={plan} caption={false} />
           </p>
         </motion.div>
 
@@ -339,9 +348,12 @@ export default function PricingPage() {
               </ul>
             </div>
             <div className="md:w-64 shrink-0">
-              <CheckoutButton plan="enterprise" label="Get Enterprise" />
+              <CheckoutButton plan="enterprise" label="Get Enterprise" onCheckout={setSheetPlan} />
               <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-3">
                 <Lock className="w-3.5 h-3.5" /> Secured by Stripe
+              </p>
+              <p className="mt-2 text-center">
+                <HostedCheckoutLink plan="enterprise" caption={false} />
               </p>
             </div>
           </div>
@@ -406,6 +418,7 @@ export default function PricingPage() {
         </div>
       </div>
       <StickyMobileCta cta={p.cta} />
+      <CheckoutSheet plan={sheetPlan} onClose={closeSheet} />
       <SiteFooter />
     </main>
   );

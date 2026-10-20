@@ -128,3 +128,64 @@ export async function runCheckoutFlow(
   }
   throw new Error(res.data?.error || "Checkout failed");
 }
+
+export interface CheckoutSessionController {
+  /** Run the flow for a plan, tearing down any form mounted before. */
+  start: (
+    plan: BillingPlan,
+    publishableKey: string | undefined,
+    deps: CheckoutFlowDeps,
+  ) => Promise<CheckoutFlowOutcome>;
+  /** Destroy the mounted form (if any) and invalidate in-flight starts. */
+  close: () => void;
+  /** Whether a form is currently mounted under this controller. */
+  isActive: () => boolean;
+}
+
+/**
+ * Owns one embedded form's lifecycle for surfaces that can open, close
+ * and reopen checkout without leaving the page — /pricing's checkout
+ * sheet. Guarantees the sheet's rules:
+ *  - every start creates a FRESH session (the previous form is destroyed
+ *    before the new flow runs);
+ *  - close() destroys the mounted form, so a closed sheet leaks no live
+ *    Stripe iframe;
+ *  - a start that resolves after close() (or after a newer start) has
+ *    its form destroyed on arrival instead of being kept — a generation
+ *    counter, the same guard /checkout's page effect applies inline.
+ */
+export function createCheckoutSessionController(): CheckoutSessionController {
+  let generation = 0;
+  let liveDestroy: (() => void) | null = null;
+
+  function teardown() {
+    const destroy = liveDestroy;
+    liveDestroy = null;
+    destroy?.();
+  }
+
+  return {
+    async start(plan, publishableKey, deps) {
+      const gen = ++generation;
+      teardown();
+      const outcome = await runCheckoutFlow(plan, publishableKey, deps);
+      if (outcome.kind === "mounted") {
+        if (gen !== generation) {
+          // Closed or superseded while the flow was in flight — tear the
+          // late form down rather than keeping a session nobody sees.
+          outcome.destroy();
+        } else {
+          liveDestroy = outcome.destroy;
+        }
+      }
+      return outcome;
+    },
+    close() {
+      generation++;
+      teardown();
+    },
+    isActive() {
+      return liveDestroy !== null;
+    },
+  };
+}
