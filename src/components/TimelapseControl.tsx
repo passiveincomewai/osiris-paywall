@@ -5,13 +5,9 @@ import { Check, Download, Film, Lock, Pause, Play, Square, Trash2, X } from 'luc
 import TrialPicker from './TrialPicker';
 import {
   TIMELAPSE_MAX_FRAMES,
-  TIMELAPSE_POLL_MS,
   TIMELAPSE_SPEEDS,
   TIMELAPSE_DEFAULT_SPEED,
   formatElapsed,
-  frameDecision,
-  frameSignature,
-  ledgerAfterKeep,
   timelapseAccess,
   timelapseFileName,
   timelapseSessionId,
@@ -19,21 +15,28 @@ import {
   tlDeleteSession,
   tlGetFrames,
   tlGetSession,
-  tlPutFrame,
-  tlPutSession,
-  type CaptureLedger,
   type TimelapseAccess,
-  type TimelapseSessionMeta,
 } from '@/lib/timelapse';
+import {
+  CAPTURE_PERSISTENCE_COPY,
+  captureSessions,
+  useLastCompletedCapture,
+  useTimelapseSessionFor,
+} from '@/lib/recording/sessions';
 
 /**
  * Timelapse for snapshot cameras (WorldEye Pro).
  *
- * The button lives in the camera viewer's footer; the panel it opens does
- * the work: capture each new still the camera publishes while this viewer
- * stays open, keep the frames on this device, play them back in order, and
- * render them to a WebM the viewer downloads. Nothing about it runs when
- * the tab is closed, and the copy says so — the Recording Studio's rule.
+ * The button lives in the camera viewer's footer; the panel it opens
+ * steers the capture: collect each new still the camera publishes, keep
+ * the frames on this device, play them back in order, and render them
+ * to a WebM the viewer downloads.
+ *
+ * The capture itself is NOT owned here — it runs in the persistent
+ * session layer (lib/recording/sessions), so closing this viewer (or
+ * browsing elsewhere on WorldEye) no longer stops it. It runs until
+ * stopped, or for 24 hours, and only while the tab stays open; the
+ * copy says so — the Recording Studio's rule.
  */
 
 function pickWebmMime(): string {
@@ -52,19 +55,23 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
     ? String(typeof camera.id === 'number' ? String(camera.id) : camera.id)
     : null;
   const cameraName: string = camera?.name || camera?.title || 'Camera';
+  const sessionId: string | null = cameraId ? timelapseSessionId(cameraId) : null;
+
+  // The running capture for this camera, if any — owned by the session
+  // layer, so it survives this component unmounting entirely.
+  const tlSession = useTimelapseSessionFor(cameraId);
+  const lastCompleted = useLastCompletedCapture();
+  const recording = tlSession?.phase === 'recording';
+  const frameCount = tlSession ? tlSession.frameCount : 0;
 
   const [open, setOpen] = useState(false);
   const [trialOpen, setTrialOpen] = useState(false);
   const [access, setAccess] = useState<TimelapseAccess>('unknown');
-  const [frameCount, setFrameCount] = useState(0);
-  const [recording, setRecording] = useState(false);
-  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [storedCount, setStoredCount] = useState(0);
   const [nowTick, setNowTick] = useState(0);
-  const [stopReason, setStopReason] = useState<StopReason>(null);
-  const [misses, setMisses] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
 
-  // Player
+  // Player (over frames stored on this device, running capture or not)
   const [playing, setPlaying] = useState(false);
   const [playIndex, setPlayIndex] = useState(0);
   const [speed, setSpeed] = useState<number>(TIMELAPSE_DEFAULT_SPEED);
@@ -77,13 +84,17 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
   const [saved, setSaved] = useState(false);
   const exportCancelRef = useRef(false);
 
-  // Capture internals
-  const ledgerRef = useRef<CaptureLedger>({ count: 0, lastFrameAt: null, lastSignature: null });
-  const recordingRef = useRef(false);
-  const grabbingRef = useRef(false);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const sessionIdRef = useRef<string | null>(null);
-  const metaRef = useRef<TimelapseSessionMeta | null>(null);
+  // Frames available for playback: the live count while capturing,
+  // otherwise whatever a previous capture left on this device.
+  const displayFrameCount = tlSession ? tlSession.frameCount : storedCount;
+  const stopReason: StopReason =
+    lastCompleted && sessionId && lastCompleted.sessionId === sessionId
+      ? lastCompleted.reason === 'frames-cap'
+        ? 'cap'
+        : lastCompleted.reason === 'source-ended'
+          ? 'ended'
+          : null
+      : null;
 
   /* ---------------- gate ---------------- */
   useEffect(() => {
@@ -95,112 +106,58 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
     return () => { live = false; };
   }, []);
 
-  /* ---------------- stored session for this camera ---------------- */
+  /* ------------- stored session for this camera (playback) ------------- */
   const loadStored = useCallback(async (camId: string) => {
     try {
       const meta = await tlGetSession(timelapseSessionId(camId));
-      metaRef.current = meta;
-      sessionIdRef.current = meta?.id ?? null;
-      ledgerRef.current = {
-        count: meta?.frameCount ?? 0,
-        lastFrameAt: meta?.lastFrameAt ?? null,
-        lastSignature: meta?.lastSignature ?? null,
-      };
-      setFrameCount(meta?.frameCount ?? 0);
-      setStartedAt(meta?.startedAt ?? null);
+      setStoredCount(meta?.frameCount ?? 0);
       framesRef.current = [];
       urlCacheRef.current.forEach((u) => URL.revokeObjectURL(u));
       urlCacheRef.current.clear();
       setPlayIndex(0);
       setPlaying(false);
     } catch {
-      setFrameCount(0);
+      setStoredCount(0);
     }
   }, []);
 
-  /* ---------------- capture ---------------- */
-  const stopCapture = useCallback((reason: StopReason = null) => {
-    recordingRef.current = false;
-    setRecording(false);
-    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
-    if (reason) setStopReason(reason);
-  }, []);
-
-  const grabFrame = useCallback(async () => {
-    if (!recordingRef.current || grabbingRef.current || !cameraId) return;
-    grabbingRef.current = true;
-    try {
-      const res = await fetch(`/api/cctv/frame?id=${encodeURIComponent(cameraId)}`, { cache: 'no-store' });
-      if (!recordingRef.current) return;
-      if (!res.ok) {
-        // 422: the source no longer serves a still (or never did) — stop honestly.
-        if (res.status === 422) { setNotice('This camera stopped sending still pictures, so the capture has ended.'); stopCapture('ended'); return; }
-        setMisses((m) => m + 1);
-        return;
-      }
-      const frameAt = res.headers.get('x-frame-at');
-      const blob = await res.blob();
-      const bytes = new Uint8Array(await blob.arrayBuffer());
-      const incoming = { frameAt, signature: frameSignature(bytes) };
-      const decision = frameDecision(ledgerRef.current, incoming);
-      if (decision === 'full') { stopCapture('cap'); return; }
-      if (decision === 'duplicate') { setMisses(0); return; }
-      const sessionId = sessionIdRef.current ?? timelapseSessionId(cameraId);
-      sessionIdRef.current = sessionId;
-      await tlPutFrame(sessionId, ledgerRef.current.count, blob);
-      ledgerRef.current = ledgerAfterKeep(ledgerRef.current, incoming);
-      const meta: TimelapseSessionMeta = {
-        id: sessionId,
-        cameraId,
-        cameraName,
-        startedAt: metaRef.current?.startedAt ?? Date.now(),
-        pollMs: TIMELAPSE_POLL_MS,
-        frameCount: ledgerRef.current.count,
-        lastFrameAt: ledgerRef.current.lastFrameAt,
-        lastSignature: ledgerRef.current.lastSignature,
-      };
-      metaRef.current = meta;
-      await tlPutSession(meta);
-      setFrameCount(meta.frameCount);
-      setMisses(0);
-      if (meta.frameCount >= TIMELAPSE_MAX_FRAMES) stopCapture('cap');
-    } catch {
-      if (recordingRef.current) setMisses((m) => m + 1);
-    } finally {
-      grabbingRef.current = false;
-    }
-  }, [cameraId, cameraName, stopCapture]);
-
-  const startCapture = useCallback(() => {
-    if (!cameraId || recordingRef.current) return;
-    setStopReason(null);
-    setNotice(null);
-    setSaved(false);
-    if (!metaRef.current) setStartedAt(Date.now());
-    recordingRef.current = true;
-    setRecording(true);
-    void grabFrame();
-    pollRef.current = setInterval(() => { void grabFrame(); }, TIMELAPSE_POLL_MS);
-  }, [cameraId, grabFrame]);
-
-  /* Switching cameras (or closing the viewer) ends any capture; the frames
-     already taken stay on this device under that camera's session. */
+  /* Switching cameras (or closing the viewer) does NOT end a capture —
+     the session layer keeps it running. This only re-points the panel
+     and the player at the newly shown camera. */
   useEffect(() => {
-    stopCapture();
     setOpen(false);
-    setStopReason(null);
     setNotice(null);
-    setMisses(0);
     if (cameraId) void loadStored(cameraId);
-    else { metaRef.current = null; sessionIdRef.current = null; setFrameCount(0); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraId]);
+    else setStoredCount(0);
+  }, [cameraId, loadStored]);
 
+  /* When a capture for this camera ends (stopped here, from the
+     indicator, or on its own), refresh the stored count so the player
+     below reflects the frames it just left on this device. */
+  const discardingRef = useRef(false);
+  const sessionActive = tlSession !== null;
+  useEffect(() => {
+    if (!sessionActive && cameraId && !discardingRef.current) void loadStored(cameraId);
+  }, [sessionActive, cameraId, loadStored]);
+
+  // Object URLs are the only thing this component still owns; free them.
   useEffect(() => () => {
-    recordingRef.current = false;
-    if (pollRef.current) clearInterval(pollRef.current);
     urlCacheRef.current.forEach((u) => URL.revokeObjectURL(u));
   }, []);
+
+  /* ---------------- capture steering ---------------- */
+  const startCapture = useCallback(() => {
+    if (!cameraId || recording) return;
+    setNotice(null);
+    setSaved(false);
+    void captureSessions.startTimelapse({ cameraId, cameraName }).catch(() => {
+      setNotice('The capture could not be started in this browser.');
+    });
+  }, [cameraId, cameraName, recording]);
+
+  const stopCapture = useCallback(() => {
+    if (tlSession) void captureSessions.stopSession(tlSession.id);
+  }, [tlSession]);
 
   /* Recording clock. */
   useEffect(() => {
@@ -211,16 +168,16 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
 
   /* ---------------- playback ---------------- */
   const ensureFrames = useCallback(async (): Promise<Blob[]> => {
-    if (framesRef.current.length === frameCount && frameCount > 0) return framesRef.current;
-    if (!sessionIdRef.current) return [];
-    const frames = await tlGetFrames(sessionIdRef.current, frameCount);
+    if (framesRef.current.length === displayFrameCount && displayFrameCount > 0) return framesRef.current;
+    if (!sessionId) return [];
+    const frames = await tlGetFrames(sessionId, displayFrameCount);
     framesRef.current = frames;
     return frames;
-  }, [frameCount]);
+  }, [sessionId, displayFrameCount]);
 
   useEffect(() => {
     let live = true;
-    if (!open || frameCount === 0) { setPreviewUrl(null); return; }
+    if (!open || displayFrameCount === 0) { setPreviewUrl(null); return; }
     void ensureFrames().then((frames) => {
       if (!live || frames.length === 0) return;
       const idx = Math.min(playIndex, frames.length - 1);
@@ -232,18 +189,18 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
       setPreviewUrl(url);
     });
     return () => { live = false; };
-  }, [open, playIndex, frameCount, ensureFrames]);
+  }, [open, playIndex, displayFrameCount, ensureFrames]);
 
   useEffect(() => {
     if (!playing) return;
     const iv = setInterval(() => {
       setPlayIndex((i) => {
-        if (i + 1 >= frameCount) { setPlaying(false); return i; }
+        if (i + 1 >= displayFrameCount) { setPlaying(false); return i; }
         return i + 1;
       });
     }, 1000 / speed);
     return () => clearInterval(iv);
-  }, [playing, speed, frameCount]);
+  }, [playing, speed, displayFrameCount]);
 
   /* ---------------- export ---------------- */
   const exportVideo = useCallback(async () => {
@@ -296,28 +253,30 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
   }, [ensureFrames, exporting, speed, cameraName]);
 
   const discard = useCallback(async () => {
-    stopCapture();
-    if (sessionIdRef.current) await tlDeleteSession(sessionIdRef.current).catch(() => {});
-    metaRef.current = null;
-    sessionIdRef.current = null;
-    ledgerRef.current = { count: 0, lastFrameAt: null, lastSignature: null };
-    framesRef.current = [];
-    urlCacheRef.current.forEach((u) => URL.revokeObjectURL(u));
-    urlCacheRef.current.clear();
-    setFrameCount(0);
-    setPlayIndex(0);
-    setPlaying(false);
-    setStartedAt(null);
-    setSaved(false);
-    setStopReason(null);
-    setNotice(null);
-  }, [stopCapture]);
+    discardingRef.current = true;
+    try {
+      if (tlSession) await captureSessions.stopSession(tlSession.id).catch(() => {});
+      if (sessionId) await tlDeleteSession(sessionId).catch(() => {});
+      framesRef.current = [];
+      urlCacheRef.current.forEach((u) => URL.revokeObjectURL(u));
+      urlCacheRef.current.clear();
+      setStoredCount(0);
+      setPlayIndex(0);
+      setPlaying(false);
+      setSaved(false);
+      setNotice(null);
+    } finally {
+      discardingRef.current = false;
+    }
+  }, [tlSession, sessionId]);
 
   /* ---------------- render ---------------- */
   if (!camera) return null;
 
   const btnCls = 'flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--gold-primary)] tracking-widest disabled:opacity-50 disabled:cursor-not-allowed';
   const locked = access === 'free' || access === 'signed-out';
+  const misses = tlSession?.misses ?? 0;
+  const startedAt = tlSession?.startedAt ?? null;
 
   return (
     <>
@@ -335,7 +294,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               ? <><Lock className="w-2.5 h-2.5" /> PRO</>
               : recording
                 ? <><span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> {frameCount} FRAMES</>
-                : <><Film className="w-2.5 h-2.5" /> {frameCount > 0 ? `${frameCount} FRAMES` : 'OPEN'}</>}
+                : <><Film className="w-2.5 h-2.5" /> {displayFrameCount > 0 ? `${displayFrameCount} FRAMES` : 'OPEN'}</>}
           </button>
         ) : (
           <button
@@ -364,7 +323,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </p>
               <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
                 Pro viewers can collect this camera's snapshots into a timelapse and save it as a video.
-                Capture runs only while you watch — it is not 24/7 or cloud recording.
+                Capture keeps running while the tab stays open — it is not 24/7 or cloud recording.
               </p>
               <div className="flex gap-2 mt-0.5">
                 <a href="/api/auth/signin?callbackUrl=/" className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 transition-colors">SIGN IN</a>
@@ -383,7 +342,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </p>
               <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
                 Collect this camera's snapshots into a timelapse, play it back, and save it as a video.
-                Capture runs only while you watch — it is not 24/7 or cloud recording.
+                Capture keeps running while the tab stays open — it is not 24/7 or cloud recording.
               </p>
               <div className="mt-0.5">
                 <button onClick={() => setTrialOpen((v) => !v)} aria-expanded={trialOpen} className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 transition-colors">START FREE TRIAL</button>
@@ -403,7 +362,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
                       <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                       CAPTURING — {frameCount} FRAME{frameCount === 1 ? '' : 'S'} · {startedAt ? formatElapsed((nowTick || Date.now()) - startedAt) : '0:00'}
                     </span>
-                    <button onClick={() => stopCapture()} className="flex items-center gap-1 px-2 py-1 bg-red-900/30 border border-red-500/40 text-red-300 text-[9px] font-mono tracking-widest hover:bg-red-500/25 transition-colors" aria-label="Stop timelapse capture">
+                    <button onClick={stopCapture} className="flex items-center gap-1 px-2 py-1 bg-red-900/30 border border-red-500/40 text-red-300 text-[9px] font-mono tracking-widest hover:bg-red-500/25 transition-colors" aria-label="Stop timelapse capture">
                       <Square className="w-2.5 h-2.5" /> STOP
                     </button>
                   </div>
@@ -411,18 +370,18 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
                     <p className="text-[9px] font-mono text-[var(--gold-primary)]">The camera isn't answering right now — still checking every few seconds.</p>
                   )}
                   <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
-                    Each new snapshot is added as the camera publishes it. Keep this viewer open — closing it pauses the capture. Frames save to this device only.
+                    Each new snapshot is added as the camera publishes it. {CAPTURE_PERSISTENCE_COPY} Frames save to this device only.
                   </p>
                 </>
-              ) : frameCount > 0 ? (
+              ) : displayFrameCount > 0 ? (
                 <>
                   {previewUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={previewUrl} alt={`${cameraName} — timelapse frame ${playIndex + 1} of ${frameCount}`} className="w-full aspect-video object-cover border border-white/10 bg-black" />
+                    <img src={previewUrl} alt={`${cameraName} — timelapse frame ${playIndex + 1} of ${displayFrameCount}`} className="w-full aspect-video object-cover border border-white/10 bg-black" />
                   )}
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => { if (!playing && playIndex + 1 >= frameCount) setPlayIndex(0); setPlaying((p) => !p); }}
+                      onClick={() => { if (!playing && playIndex + 1 >= displayFrameCount) setPlayIndex(0); setPlaying((p) => !p); }}
                       className="p-1.5 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-white"
                       aria-label={playing ? 'Pause timelapse' : 'Play timelapse'}
                     >
@@ -431,13 +390,13 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
                     <input
                       type="range"
                       min={0}
-                      max={Math.max(0, frameCount - 1)}
-                      value={Math.min(playIndex, frameCount - 1)}
+                      max={Math.max(0, displayFrameCount - 1)}
+                      value={Math.min(playIndex, displayFrameCount - 1)}
                       onChange={(e) => { setPlaying(false); setPlayIndex(Number(e.target.value)); }}
                       className="flex-1 accent-[var(--gold-primary)] h-1"
                       aria-label="Scrub timelapse frames"
                     />
-                    <span className="text-[9px] font-mono text-[var(--text-muted)] whitespace-nowrap">{Math.min(playIndex + 1, frameCount)} / {frameCount}</span>
+                    <span className="text-[9px] font-mono text-[var(--text-muted)] whitespace-nowrap">{Math.min(playIndex + 1, displayFrameCount)} / {displayFrameCount}</span>
                     <select
                       value={speed}
                       onChange={(e) => setSpeed(Number(e.target.value))}
@@ -468,18 +427,21 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
                   {stopReason === 'cap' && (
                     <p className="text-[9px] font-mono text-[var(--gold-primary)]">Capture stopped at the {TIMELAPSE_MAX_FRAMES}-frame limit. Save or discard it to start a new one.</p>
                   )}
-                  {frameCount < 2 && (
+                  {stopReason === 'ended' && (
+                    <p className="text-[9px] font-mono text-[var(--gold-primary)]">This camera stopped sending still pictures, so the capture has ended.</p>
+                  )}
+                  {displayFrameCount < 2 && (
                     <p className="text-[9px] font-mono text-[var(--text-muted)]">One frame so far — capture more to build the timelapse.</p>
                   )}
                   <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
-                    Frames were captured one per new snapshot while you watched, and live on this device only — clearing site data deletes them, so save the video to keep it.
+                    Frames were captured one per new snapshot while the tab stayed open, and live on this device only — clearing site data deletes them, so save the video to keep it.
                   </p>
                 </>
               ) : (
                 <>
                   <p className="text-[9px] font-mono text-[var(--text-muted)] leading-relaxed">
                     Collect every new snapshot this camera publishes, in order, and turn them into a video.
-                    Capture runs only while this viewer stays open in your tab — it is not 24/7 or cloud recording, and frames save to this device only.
+                    {` ${CAPTURE_PERSISTENCE_COPY}`} It is not 24/7 or cloud recording, and frames save to this device only.
                   </p>
                   <div>
                     <button onClick={startCapture} className="flex items-center gap-1.5 px-2.5 py-1 bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] text-[9px] font-mono font-bold tracking-widest hover:bg-[var(--gold-primary)]/25 transition-colors" aria-label="Start timelapse capture">
