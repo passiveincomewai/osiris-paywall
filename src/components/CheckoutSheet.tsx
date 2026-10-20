@@ -6,36 +6,26 @@
  * navigating to /checkout — the visitor keeps their place on the page
  * and the form's express wallet buttons lead with zero scroll.
  *
- * The session lifecycle is owned by a CheckoutSessionController
- * (lib/billing/embedded-checkout): opening creates a fresh session,
- * closing destroys the mounted form, reopening starts over with a new
- * session. Everything behind it is the same Checkout-Session machinery
- * as /checkout — webhook account claim, affiliate metadata,
+ * This component is only the sheet's chrome (backdrop, entrance,
+ * scroll lock, close). The checkout itself — plan strip, form mount,
+ * guarantee, hosted option, and the whole session lifecycle owned by a
+ * CheckoutSessionController — is components/EmbeddedCheckoutBody,
+ * shared with TrialPicker's embedded mode so the two surfaces can
+ * never drift. Everything behind it is the same Checkout-Session
+ * machinery as /checkout — webhook account claim, affiliate metadata,
  * abandoned-cart recovery, /welcome completion — nothing forks.
  *
  * Closing is NOT a Stripe cancel: the sheet closes locally and returns
  * the visitor to exactly where they were on /pricing. No navigation, no
  * ?checkout=cancelled (that param is reserved for Stripe's cancel_url,
  * which the cancel-recovery strip keys off), and the /checkout back-link
- * path fires no analytics event for this to mirror (inventoried
- * 2026-10-20: there is none).
+ * path fires no analytics event, so there is nothing to mirror.
  */
-import { useEffect, useRef, useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { checkoutPlanSummary } from "@/lib/billing/trial-checkout";
 import type { BillingPlan } from "@/lib/billing/trials";
-import {
-  createCheckoutSessionController,
-  type StripeJsLike,
-} from "@/lib/billing/embedded-checkout";
-import { CheckoutGuaranteeNote, CheckoutPlanStrip } from "./CheckoutPlanStrip";
-import HostedCheckoutLink from "./HostedCheckoutLink";
-
-// Next inlines this literal access into the browser bundle at build time.
-const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-
-type Phase = "starting" | "mounted" | "redirecting" | "error";
+import EmbeddedCheckoutBody from "./EmbeddedCheckoutBody";
 
 export default function CheckoutSheet({
   plan,
@@ -65,10 +55,6 @@ function SheetContent({
   onClose: () => void;
 }) {
   const summary = checkoutPlanSummary(plan);
-  const mountRef = useRef<HTMLDivElement | null>(null);
-  const [phase, setPhase] = useState<Phase>("starting");
-  const [error, setError] = useState<string | null>(null);
-  const [attempt, setAttempt] = useState(0);
   const [entered, setEntered] = useState(false);
 
   // Entrance transition (slide up on mobile, fade/zoom on desktop).
@@ -90,39 +76,6 @@ function SheetContent({
       document.removeEventListener("keydown", onKey);
     };
   }, [onClose]);
-
-  // The session: a fresh controller (hence a fresh Checkout Session)
-  // per mount and per retry; unmounting closes it, destroying the form.
-  useEffect(() => {
-    if (!summary) return;
-    const controller = createCheckoutSessionController();
-    let live = true;
-    setPhase("starting");
-    setError(null);
-    controller
-      .start(plan, PUBLISHABLE_KEY, {
-        fetchImpl: fetch as never,
-        loadStripeImpl: async (pk) =>
-          (await loadStripe(pk)) as unknown as StripeJsLike | null,
-        navigate: (url) => {
-          window.location.href = url;
-        },
-        mountTarget: mountRef.current,
-      })
-      .then((outcome) => {
-        if (!live) return;
-        setPhase(outcome.kind === "mounted" ? "mounted" : "redirecting");
-      })
-      .catch((e) => {
-        if (!live) return;
-        setError(e instanceof Error ? e.message : "Checkout failed");
-        setPhase("error");
-      });
-    return () => {
-      live = false;
-      controller.close();
-    };
-  }, [plan, summary, attempt]);
 
   if (!summary) return null;
 
@@ -155,42 +108,8 @@ function SheetContent({
           <X className="w-4 h-4" />
         </button>
 
-        <div className="pr-9">
-          <CheckoutPlanStrip summary={summary} />
-        </div>
-
-        {/* The form — same reserved-height wrapper as /checkout, so the
-            loading state never pushes the layout around. */}
-        <div className="relative mt-3 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden min-h-[480px]">
-          <div ref={mountRef} />
-          {phase === "starting" && (
-            <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/45">
-              Loading secure checkout…
-            </p>
-          )}
-          {phase === "redirecting" && (
-            <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/45">
-              Taking you to secure checkout…
-            </p>
-          )}
-          {phase === "error" && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-              <p className="text-red-400 text-sm">{error ?? "Checkout failed"}</p>
-              <button
-                type="button"
-                onClick={() => setAttempt((a) => a + 1)}
-                className="mt-4 px-6 py-2.5 rounded-2xl bg-[#D4AF37] text-black font-bold text-sm hover:brightness-110 transition"
-              >
-                Try again
-              </button>
-            </div>
-          )}
-        </div>
-
-        <CheckoutGuaranteeNote summary={summary} />
-        <div className="mt-3 text-center">
-          <HostedCheckoutLink plan={plan} />
-        </div>
+        {/* pr-9: clearance for the close button overlaying the strip. */}
+        <EmbeddedCheckoutBody plan={plan} stripClassName="pr-9" />
       </div>
     </div>
   );
