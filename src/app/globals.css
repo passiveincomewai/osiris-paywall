@@ -1,7 +1,8 @@
 @import "tailwindcss";
-/* Webfonts load via <link> in the root layout <head> (parallel with this
-   stylesheet, preconnect already set up there) instead of a CSS @import,
-   which forced a serial second round-trip before first paint. */
+/* Webfonts are self-hosted via next/font in the root layout (src/app/
+   layout.tsx): the font variable classes on <html> define --font-body,
+   --font-display, --font-hud and --font-wordmark there, and the tokens
+   below consume them. No runtime font requests, no CSS @import. */
 
 /* ═══════════════════════════════════════════════════════════════
    OSIRIS — Global Intelligence Platform Design System
@@ -80,9 +81,15 @@
   /* ── Hover ── */
   --hover-accent: rgba(var(--gold-rgb), 0.08);
 
-  /* ── Fonts ── */
-  --font-hud: 'JetBrains Mono', 'Courier New', monospace;
-  --font-body: 'Inter', -apple-system, sans-serif;
+  /* ── Fonts ──
+     --font-body / --font-hud / --font-display / --font-wordmark are defined
+     by the next/font variable classes on <html> (src/app/layout.tsx):
+       body     → Public Sans (humanist sans; UI + prose)
+       hud      → JetBrains Mono (data, labels, prices)
+       display  → Fraunces (landing headlines, editorial serif)
+       wordmark → Audiowide (brand wordmark only)
+     They are intentionally NOT redeclared here — a :root declaration would
+     race the generated font classes and resurrect the old stacks. */
 
   /* ── Spacing (responsive) ── */
   --panel-gap: 12px;
@@ -156,8 +163,17 @@ body.theme-ghost {
 
 /* Brand wordmark — matches the WorldEye logo lettering (Audiowide) */
 .font-wordmark {
-  font-family: 'Audiowide', 'Inter', system-ui, sans-serif;
+  font-family: var(--font-wordmark);
   font-weight: 400;
+}
+
+/* Editorial display face (Fraunces) — landing headlines and major section
+   titles only. Dense data UI (globe panels, popups, tables) stays on the
+   body face: legibility wins over branding there. Pair with medium weight
+   and tight tracking; the serif carries the character, not boldness. */
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
 }
 
 /* ── Base ── */

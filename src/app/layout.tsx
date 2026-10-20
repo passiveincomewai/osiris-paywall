@@ -1,10 +1,44 @@
 import type { Metadata, Viewport } from "next";
+import { Audiowide, Fraunces, JetBrains_Mono, Public_Sans } from "next/font/google";
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import TranslateGate from '@/components/translate/TranslateGate';
 import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import "./globals.css";
+
+/* ── Type system (self-hosted via next/font; no runtime font requests) ──
+   The variable classes land on <html> and define the CSS custom properties
+   the design tokens in globals.css point at:
+     --font-body     Public Sans — humanist UI/body face (was Inter)
+     --font-display  Fraunces — editorial serif for landing headlines
+     --font-hud      JetBrains Mono — data/labels (unchanged family)
+     --font-wordmark Audiowide — brand wordmark only (matches the logo)  */
+const fontBody = Public_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-body",
+});
+const fontDisplay = Fraunces({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  axes: ["opsz"],
+  display: "swap",
+  variable: "--font-display",
+});
+const fontHud = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-hud",
+});
+const fontWordmark = Audiowide({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-wordmark",
+});
 
 const SITE_URL = "https://worldeye.app";
 const SITE_NAME = "WorldEye";
@@ -201,14 +235,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr">
+    <html
+      lang="en"
+      dir="ltr"
+      className={`${fontBody.variable} ${fontDisplay.variable} ${fontHud.variable} ${fontWordmark.variable}`}
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Audiowide&display=swap"
-        />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
