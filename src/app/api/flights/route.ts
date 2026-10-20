@@ -276,6 +276,104 @@ let osSnapshot: any[] = [];
 let osSnapshotTime = 0;
 let fetchPromise: Promise<any> | null = null;
 
+// ── Delta polls (?since=<token>) ──────────────────────────────────────
+// Every completed payload is fingerprinted record by record and the last
+// few fingerprints are kept. A poll that carries the token of one of
+// them is answered with only what changed — upserts and removals —
+// instead of the whole sky again (~2.35 MB every 30 s per visitor, of
+// which a typical poll's worth of movement is a few percent). An
+// unchanged sky answers in a few hundred bytes. A token the ring no
+// longer holds gets the full payload, whose fresh token re-bases the
+// client. Tokens ride completed payloads only: a first-paint partial is
+// never fingerprinted and never answers a delta request, so the partial
+// invariants (≤10 s paint, labelled partial, never cached) are untouched.
+const FLIGHT_BUCKETS = ['commercial_flights', 'private_flights', 'private_jets', 'military_flights'] as const;
+const SNAPSHOT_RING_SIZE = 4;
+
+interface FlightsFingerprint { token: string; hashes: Map<string, string> }
+let snapshotRing: FlightsFingerprint[] = [];
+let snapshotSeq = 0;
+
+/** A flight record's identity across snapshots: its transponder code,
+ *  or — for the rare records classified without one — callsign and
+ *  position. The client merge (lib/flights/delta.ts) keys on the same. */
+export function flightRecordKey(record: any): string {
+  const hex = typeof record?.icao24 === 'string' ? record.icao24.trim() : '';
+  if (hex) return hex;
+  return `${record?.callsign ?? ''}|${record?.lat ?? ''}|${record?.lng ?? ''}`;
+}
+
+export function fingerprintFlightsPayload(data: any): Map<string, string> {
+  const hashes = new Map<string, string>();
+  for (const bucket of FLIGHT_BUCKETS) {
+    for (const record of data[bucket] ?? []) {
+      const serialized = `${bucket}:${JSON.stringify(record)}`;
+      let hash = 0x811c9dc5;
+      for (let i = 0; i < serialized.length; i++) {
+        hash ^= serialized.charCodeAt(i);
+        hash = Math.imul(hash, 0x01000193);
+      }
+      hashes.set(flightRecordKey(record), (hash >>> 0).toString(36));
+    }
+  }
+  return hashes;
+}
+
+/** Stamp a completed payload with its snapshot token and remember its
+ *  fingerprint. Called exactly once per build, where the payload enters
+ *  the response cache — never for a partial. */
+function registerFlightsSnapshot(data: any): void {
+  const token = `f${++snapshotSeq}`;
+  data.token = token;
+  snapshotRing.push({ token, hashes: fingerprintFlightsPayload(data) });
+  if (snapshotRing.length > SNAPSHOT_RING_SIZE) snapshotRing = snapshotRing.slice(-SNAPSHOT_RING_SIZE);
+}
+
+/** What changed between two fingerprinted snapshots: records new,
+ *  moved or altered (per bucket, so a category change rides as an
+ *  upsert into the new bucket) and the identity keys that vanished.
+ *  Pure — the protocol's whole contract in one place. */
+export function diffFlightsSnapshots(
+  baseHashes: Map<string, string>,
+  currentData: any,
+  currentHashes: Map<string, string>,
+): { upserts: Record<string, any[]>; removed: string[] } {
+  const upserts: Record<string, any[]> = {};
+  for (const bucket of FLIGHT_BUCKETS) {
+    upserts[bucket] = (currentData[bucket] ?? []).filter((record: any) =>
+      baseHashes.get(flightRecordKey(record)) !== currentHashes.get(flightRecordKey(record)));
+  }
+  const removed = [...baseHashes.keys()].filter(key => !currentHashes.has(key));
+  return { upserts, removed };
+}
+
+/** The delta answering a ?since= poll against the cached snapshot, or
+ *  null when no delta can be computed (unknown token, no snapshot yet)
+ *  and the caller should serve the full payload instead. */
+function flightsDeltaResponse(since: string): NextResponse | null {
+  const current = snapshotRing[snapshotRing.length - 1];
+  if (!current || !cachedData) return null;
+  const headers = { 'Cache-Control': 'no-store, max-age=0' };
+  if (since === current.token) {
+    return NextResponse.json({
+      delta: true, unchanged: true, base: since, token: current.token,
+      total: cachedData.total, source: cachedData.source, partial: false,
+      timestamp: cachedData.timestamp,
+    }, { headers });
+  }
+  const base = snapshotRing.find(entry => entry.token === since);
+  if (!base) return null;
+  const { upserts, removed } = diffFlightsSnapshots(base.hashes, cachedData, current.hashes);
+  return NextResponse.json({
+    delta: true, base: since, token: current.token,
+    upserts, removed,
+    gps_jamming: cachedData.gps_jamming, total: cachedData.total,
+    source: cachedData.source, providers: cachedData.providers,
+    diagnostics: cachedData.diagnostics, partial: false,
+    timestamp: cachedData.timestamp,
+  }, { headers });
+}
+
 const JAMMING_NACAP_THRESHOLD = 4;
 
 // In-flight build progress, published by the builder as it goes so GET
@@ -453,10 +551,18 @@ function buildPartialPayload(): any | null {
   });
 }
 
-export async function GET() {
+export async function GET(request?: Request) {
   const now = Date.now();
+  let since: string | null = null;
+  try { since = request ? new URL(request.url).searchParams.get('since') : null; } catch { since = null; }
 
   if (cachedData && now - lastFetchTime < CACHE_TTL) {
+    if (since) {
+      // A delta the ring can answer is a few KB at most; a token it
+      // cannot falls through to the full payload below.
+      const delta = flightsDeltaResponse(since);
+      if (delta) return delta;
+    }
     return NextResponse.json(cachedData, {
       headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
     });
@@ -656,6 +762,11 @@ export async function GET() {
     cachedData = data;
     lastFetchTime = Date.now();
     fetchPromise = null;
+    if (typeof data?.token !== 'string') registerFlightsSnapshot(data);
+    if (since) {
+      const delta = flightsDeltaResponse(since);
+      if (delta) return delta;
+    }
     return NextResponse.json(data, {
       headers: {
         'Cache-Control': data.total < 100 ? 'no-store, max-age=0' : 'public, s-maxage=30, stale-while-revalidate=60',
