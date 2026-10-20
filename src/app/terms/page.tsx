@@ -106,8 +106,21 @@ export default function TermsPage() {
             continues until the end of the period you&apos;ve already paid for.
           </p>
           <p>
-            Because Pro is a digital service delivered immediately (including during
-            free trials), payments are generally non-refundable. If you believe you were
+            Your first charge is covered by a <strong className="text-white/80">7-day
+            money-back guarantee</strong>: email us at{" "}
+            <a href="mailto:passiveincomewai@gmail.com" className="text-[#D4AF37] hover:underline">
+              passiveincomewai@gmail.com
+            </a>{" "}
+            within 7 days of your first paid charge — the charge that ends a free
+            trial, or your first charge if your plan had no trial — and we&apos;ll
+            refund it in full to your original payment method, no questions asked.
+            The guarantee covers your first charge only; renewal charges are not
+            refundable under it.
+          </p>
+          <p>
+            Apart from the guarantee above, and charges made in error, payments are
+            generally non-refundable, because Pro is a digital service delivered
+            immediately (including during free trials). If you believe you were
             charged in error, contact us at{" "}
             <a href="mailto:passiveincomewai@gmail.com" className="text-[#D4AF37] hover:underline">
               passiveincomewai@gmail.com

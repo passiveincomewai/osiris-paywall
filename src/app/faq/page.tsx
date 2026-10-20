@@ -102,7 +102,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "Do you offer refunds?",
-        a: "If Pro didn't work for you, write to us within a few days of being charged and we'll make it right on a case-by-case basis. The free trials exist precisely so you can evaluate before paying anything.",
+        a: "Yes — your first charge is covered by a 7-day money-back guarantee. Email us at passiveincomewai@gmail.com within 7 days of your first charge — the charge that ends your free trial, or your first charge if your plan had no trial — for a full refund to your original payment method, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it. We also email you before a trial's first charge, so it shouldn't come as a surprise.",
       },
     ],
   },
@@ -237,7 +237,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "Do you offer refunds?",
-    a: "If Pro didn't work for you, write to us within a few days of being charged and we'll make it right on a case-by-case basis. The free trials exist precisely so you can evaluate before paying anything.",
+    a: "Yes — your first charge is covered by a 7-day money-back guarantee. Email us at passiveincomewai@gmail.com within 7 days of your first charge — the charge that ends your free trial, or your first charge if your plan had no trial — for a full refund to your original payment method, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it. We also email you before a trial's first charge, so it shouldn't come as a surprise.",
   },
   {
     q: "How do the cameras work?",
