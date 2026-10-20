@@ -71,12 +71,25 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/(.*)',
+        source: '/((?!embed/).*)',  // everything except the enterprise embed (its own rule follows)
         headers: [
           { key: 'Content-Security-Policy', value: "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: wss: data: blob:;" },
           { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+        ],
+      },
+      {
+        // Enterprise camera embed (/embed/<feed-token>): customers paste the
+        // iframe into their own sites, so framing is open — and ONLY here.
+        // No X-Frame-Options; the CSP names frame-ancestors *. The feed
+        // token in the URL remains the credential.
+        source: '/embed/:path*',
+        headers: [
+          { key: 'Content-Security-Policy', value: "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: wss: data: blob:; frame-ancestors *" },
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-XSS-Protection', value: '1; mode=block' },
         ],
       },

@@ -5,6 +5,11 @@ import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import CheckoutSheet from "@/components/CheckoutSheet";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
+import {
+  ENTERPRISE_OFFER_FEATURES as ENTERPRISE_FEATURES,
+  ENTERPRISE_GUARANTEE_LINE,
+  ENTERPRISE_SUPPORT_LINE,
+} from "@/lib/enterprise/offer";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, Satellite, BrainCircuit,
@@ -30,12 +35,8 @@ const PRO_FEATURES = [
   { icon: Sparkles, title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
 ];
 
-const ENTERPRISE_FEATURES = [
-  "Everything in Pro, for your whole team",
-  "Commercial API access for integrations",
-  "Priority support with a dedicated contact",
-  "Team onboarding and custom setup",
-];
+// The enterprise offer copy lives in lib/enterprise/offer (shared with
+// the /enterprise dashboard landing state and pinned by its tests).
 
 const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean }[] = [  { feature: "Interactive 3D globe", free: true, pro: true },
   { feature: "Live flight tracking & aircraft follow", free: true, pro: true },
@@ -354,6 +355,16 @@ export default function PricingPage() {
               </p>
               <p className="mt-2 text-center">
                 <HostedCheckoutLink plan="enterprise" caption={false} />
+              </p>
+              <p className="flex items-start gap-2 text-xs text-white/50 mt-4">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#00E5FF]/80 shrink-0 mt-px" />
+                <span>{ENTERPRISE_GUARANTEE_LINE}</span>
+              </p>
+              <p className="text-xs text-white/40 mt-3">{ENTERPRISE_SUPPORT_LINE}</p>
+              <p className="text-xs mt-3">
+                <Link href="/enterprise" className="text-[#00E5FF] hover:underline">
+                  Already Enterprise? Open your camera feed dashboard →
+                </Link>
               </p>
             </div>
           </div>
