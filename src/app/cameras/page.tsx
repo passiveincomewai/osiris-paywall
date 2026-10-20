@@ -7,6 +7,7 @@ import {
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrialCtaSection from "@/components/TrialCtaSection";
 
 export const metadata: Metadata = {
   title: "Live Cameras — Watch the World Live",
@@ -185,6 +186,8 @@ export default function CamerasPage() {
             closures, weather warnings and emergencies.
           </p>
         </div>
+
+        <TrialCtaSection utmSource="cameras" />
 
         {/* CTA */}
         <div className="mt-20 text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10 md:p-14">

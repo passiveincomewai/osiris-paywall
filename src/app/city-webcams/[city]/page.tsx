@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import TrialCtaSection from "@/components/TrialCtaSection";
 import directory from "@/data/camera-directory.json";
 import cityPages from "@/data/city-pages.json";
 import {
@@ -1045,6 +1046,7 @@ export default async function CityWebcamPage({
           { label: "Using live cameras to plan travel", href: "/blog/using-live-cameras-to-plan-travel" },
         ]}
       />
+      <TrialCtaSection utmSource="city-webcams" />
       <CtaRow backHref={resolved.backHref} backLabel={`${c.country} cameras`} />
     </PageShell>
   );

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Camera, Globe, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import TrialCtaSection from "@/components/TrialCtaSection";
 import data from "@/data/camera-countries.json";
 
 /* Counts come from the generated index (tools/build-country-pages.mjs,
@@ -208,6 +209,8 @@ export default function CameraCountriesPage() {
             ))}
           </div>
         </div>
+
+        <TrialCtaSection utmSource="cameras-countries" />
 
         {/* CTA */}
         <div className="mt-16 text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10 md:p-14">

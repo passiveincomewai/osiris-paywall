@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Camera, CheckCircle2, Compass, Globe, ShieldCheck } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import TrialCtaSection from "@/components/TrialCtaSection";
 import data from "@/data/camera-directory.json";
 
 export const metadata: Metadata = {
@@ -287,6 +288,8 @@ export default function LiveWebcamsPage() {
             ))}
           </div>
         </div>
+
+        <TrialCtaSection utmSource="live-webcams" />
 
         {/* CTA */}
         <div className="mt-16 text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10 md:p-14">

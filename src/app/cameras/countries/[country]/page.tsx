@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import TrialCtaSection from "@/components/TrialCtaSection";
 import CountryCameraExplorer from "@/components/CountryCameraExplorer";
 import countriesIndex from "@/data/camera-countries.json";
 import { countryContentB, type CountryContent } from "@/data/country-content-b";
@@ -337,6 +338,8 @@ export default async function CountryPage({
             ))}
           </div>
         </section>
+
+        <TrialCtaSection utmSource="cameras-country" />
 
         {/* Back links */}
         <div className="mt-12 flex flex-wrap gap-3">

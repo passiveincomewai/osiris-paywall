@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Plane } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import TrialCtaSection from "@/components/TrialCtaSection";
 
 // Facts (verified against production 2026-10-18): /api/flights returned 3,700
 // aircraft on the map at once (2,864 commercial); FAA WeatherCams contribute
@@ -206,6 +207,8 @@ export default function LivePlaneSpottingPage() {
             ))}
           </div>
         </div>
+
+        <TrialCtaSection utmSource="live-plane-spotting" />
 
         <div className="mt-16 text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10 md:p-14">
           <h2 className="text-2xl md:text-4xl font-bold tracking-tight">
