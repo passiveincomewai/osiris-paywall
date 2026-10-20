@@ -11,6 +11,7 @@ const NAV = [
   { href: "/recording/cameras", label: "My Cameras", icon: "▣" },
   { href: "/recording/live", label: "Live", icon: "●" },
   { href: "/recording/multi", label: "Multi-record", icon: "▦" },
+  { href: "/recording/dashboard", label: "Dashboard", icon: "▤" },
   { href: "/recording/clips", label: "Clips", icon: "▸" },
 ];
 
