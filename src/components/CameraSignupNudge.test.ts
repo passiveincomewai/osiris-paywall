@@ -24,5 +24,11 @@ describe("CameraSignupNudge", () => {
     expect(html).toContain("Start 1-Day Free Trial");
     expect(html).toContain("Start 3-Day Free Trial");
     expect(html).not.toContain("Loading secure checkout…");
+    // The invite-a-friend section sits under the plans: the promise,
+    // its join condition, and room to scroll (the card caps its height).
+    expect(html).toContain("data-invite-friends");
+    expect(html).toContain("Invite a friend — get 15 more camera checks");
+    expect(html).toContain("not just for sending it");
+    expect(html).toContain("overflow-y-auto");
   });
 });

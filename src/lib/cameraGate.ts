@@ -10,6 +10,15 @@
 const STORAGE_KEY = "worldeye.cameraClicks";
 export const FREE_CAMERA_CLICKS = 5;
 
+/**
+ * Bonus camera opens a signed-in user earns when a friend completes
+ * signup through their invite link (server-side ledger:
+ * lib/camera-bonus.ts). Quoted by the camera-limit popup's invite
+ * section — the amount itself lives in camera-bonus-constants, shared
+ * with the server so the promise and the payout can't drift.
+ */
+export { INVITE_CAMERA_BONUS } from "./camera-bonus-constants";
+
 export function getCameraClickCount(): number {
   try {
     const n = parseInt(localStorage.getItem(STORAGE_KEY) ?? "0", 10);
@@ -33,4 +42,23 @@ export function recordCameraClick(): number {
     /* storage unavailable — the gate simply won't persist */
   }
   return next;
+}
+
+/**
+ * Whether an open at the given device count must draw on the server-side
+ * invite bonus (lib/camera-bonus) instead of the free base allowance.
+ * The base is per-device (above); the bonus is per-account and spent
+ * only through POST /api/cameras/bonus/consume — the server decides.
+ */
+export function openDrawsOnBonus(deviceClicks: number): boolean {
+  return deviceClicks >= FREE_CAMERA_CLICKS;
+}
+
+/**
+ * Opens still available to a signed-in user: whatever is left of this
+ * device's free base, plus their unspent server bonus. Signed-out users
+ * have no bonus — for them this is just the base remainder.
+ */
+export function opensRemaining(deviceClicks: number, bonusBalance: number): number {
+  return Math.max(0, FREE_CAMERA_CLICKS - deviceClicks) + Math.max(0, bonusBalance);
 }

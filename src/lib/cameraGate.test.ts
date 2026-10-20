@@ -4,6 +4,8 @@ import {
   getCameraClickCount,
   cameraClickAllowed,
   recordCameraClick,
+  openDrawsOnBonus,
+  opensRemaining,
 } from "./cameraGate";
 
 // cameraGate reads the bare `localStorage` global (per-device count). The
@@ -84,5 +86,27 @@ describe("counting (opens, not unique cameras)", () => {
     expect(cameraClickAllowed()).toBe(true);
     // recordCameraClick still reports the would-be total without throwing.
     expect(recordCameraClick()).toBe(1);
+  });
+});
+
+describe("invite-bonus allowance math (signed-in users)", () => {
+  it("opens within the base allowance never draw on the bonus", () => {
+    for (let clicks = 0; clicks < FREE_CAMERA_CLICKS; clicks++) {
+      expect(openDrawsOnBonus(clicks)).toBe(false);
+    }
+  });
+
+  it("opens at and past the base limit draw on the bonus", () => {
+    expect(openDrawsOnBonus(FREE_CAMERA_CLICKS)).toBe(true);
+    expect(openDrawsOnBonus(FREE_CAMERA_CLICKS + 10)).toBe(true);
+  });
+
+  it("remaining = base remainder + bonus, floored at zero per part", () => {
+    expect(opensRemaining(0, 0)).toBe(FREE_CAMERA_CLICKS);
+    expect(opensRemaining(3, 15)).toBe(2 + 15);
+    expect(opensRemaining(FREE_CAMERA_CLICKS, 15)).toBe(15);
+    expect(opensRemaining(FREE_CAMERA_CLICKS + 4, 15)).toBe(15);
+    expect(opensRemaining(FREE_CAMERA_CLICKS, 0)).toBe(0);
+    expect(opensRemaining(2, -5)).toBe(3);
   });
 });

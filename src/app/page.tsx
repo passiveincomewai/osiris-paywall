@@ -35,6 +35,7 @@ const homeFaqJsonLd = {
 import ScmPanel from '@/components/ScmPanel';
 import SearchBar from '@/components/SearchBar';
 import DirectionsBar, { type RouteResult, type LiveLocation } from '@/components/DirectionsBar';
+import RouteCameras from '@/components/RouteCameras';
 import type { WatchedFlight, FlightTelemetry, AircraftDetail, Airport } from '@/components/FlightWatchPanel';
 import type { NavProgress } from '@/lib/navigation';
 import {
@@ -748,6 +749,44 @@ export default function Dashboard() {
       .then((s) => setIsPremiumUser(s?.user?.subscriptionStatus === 'active'))
       .catch(() => {});
   }, []);
+  /* Invite-a-friend camera bonus (lib/camera-bonus): a signed-in user's
+     unspent bonus opens, fetched once at load. The server is the source
+     of truth — this is only the local hint for whether a beyond-base
+     open is worth asking the server to spend. null = signed out or
+     unknown, and the gate then behaves exactly as it did before the
+     bonus existed; signed-out visitors keep the plain per-device base. */
+  const [cameraBonus, setCameraBonus] = useState<number | null>(null);
+  useEffect(() => {
+    fetch('/api/cameras/bonus', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j && typeof j.balance === 'number') setCameraBonus(j.balance); })
+      .catch(() => {});
+  }, []);
+  /* A beyond-base open for a signed-in user: the server spends one
+     bonus open first, and only a yes opens the camera (recorded in
+     both ledgers — the device count and the server balance). A no —
+     bonus already spent, here or on another device — lands on the
+     same signup nudge as the plain base limit. */
+  const openWithCameraBonus = useCallback((entity: any) => {
+    fetch('/api/cameras/bonus/consume', { method: 'POST' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (j && typeof j.balance === 'number') setCameraBonus(j.balance);
+        if (j?.consumed) {
+          recordCameraClick();
+          trackAnalyticsEvent('camera_open');
+          setActiveCamera(entity);
+          setCameraEverOpened(true);
+          return;
+        }
+        trackAnalyticsEvent('upgrade_gate_shown');
+        setShowCameraSignup(true);
+      })
+      .catch(() => {
+        trackAnalyticsEvent('upgrade_gate_shown');
+        setShowCameraSignup(true);
+      });
+  }, []);
   /* Traffic is a Pro layer: the panel shows non-subscribers a lock, and the
      map must agree — a stored "traffic on" state (from when the layer was
      free, or a lapsed subscription) never reaches the map for a
@@ -1047,6 +1086,14 @@ export default function Dashboard() {
       // then the signup nudge, which states the limit plainly.
       if (!isPremiumUser) {
         if (!cameraClickAllowed()) {
+          // Past this device's free base. A signed-in user with bonus
+          // opens banked (invite-a-friend, lib/camera-bonus) gets one
+          // spent server-side instead — openWithCameraBonus falls back
+          // to this same nudge when the server says the bonus is gone.
+          if (cameraBonus !== null && cameraBonus > 0) {
+            openWithCameraBonus(entity);
+            return;
+          }
           trackAnalyticsEvent('upgrade_gate_shown');
           setShowCameraSignup(true);
           return;
@@ -1063,7 +1110,7 @@ export default function Dashboard() {
       setLiveFeedName(entity.name);
       setLiveFeedEmbedAllowed(entity.embed_allowed !== false);
     }
-  }, [isPremiumUser]);
+  }, [isPremiumUser, cameraBonus, openWithCameraBonus]);
 
   // ── Camera deep link (?camera=<id>, lib/camera-share.ts) ──
   // A shared link resolves against the catalogue as it loads — the world
@@ -2046,6 +2093,20 @@ export default function Dashboard() {
               onClose={() => { setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }}
             />
           </motion.div>
+        )}
+
+        {/* ── CAMERAS ON THIS ROUTE — live corridor feeds (Pro), under
+            the planner / guidance while a route is plotted. The panel
+            asks for the full catalogue itself; the corridor maths and
+            the gate live in lib/route-cameras + the component. ── */}
+        {(showDirections || navSession) && activeRoute?.geometry && (
+          <RouteCameras
+            geometry={activeRoute.geometry}
+            cameras={data.cameras}
+            catalogueSettled={!camerasLoading}
+            isPro={isPremiumUser}
+            onNeedCatalog={() => cameraCatalogRef.current?.ensureFullCatalog()}
+          />
         )}
       </div>
 

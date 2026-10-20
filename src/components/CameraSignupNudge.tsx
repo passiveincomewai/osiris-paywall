@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { X, Crown } from "lucide-react";
 import TrialPicker from "./TrialPicker";
+import InviteFriendsSection from "./InviteFriendsSection";
 import { FREE_CAMERA_CLICKS } from "@/lib/cameraGate";
 
 /**
@@ -55,6 +56,10 @@ export default function CameraSignupNudge({ onClose }: { onClose: () => void }) 
         <div className="text-left">
           <TrialPicker mode="embedded" onCheckoutViewChange={setInCheckout} />
         </div>
+        {/* The free way out of the wall, under the plans: invite a
+            friend, earn bonus checks when they join. Hidden while the
+            checkout owns the popup — the form leads then. */}
+        {!inCheckout && <InviteFriendsSection />}
         <p className="mt-3 text-xs text-white/35">
           <Link href="/pricing" className="underline hover:text-white/60 transition">Compare Free vs Pro first</Link>
         </p>
