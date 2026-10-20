@@ -13,10 +13,14 @@ import {
   ChevronDown,
   MousePointerClick,
   Layers,
+  ShieldCheck,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import GodsEyeLiveStrip from "@/components/GodsEyeLiveStrip";
+import GodsEyeStickyCta from "@/components/GodsEyeStickyCta";
+import { TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
 
 export const metadata: Metadata = {
   title: "God's Eye View of Earth, Live — 74,229 Cameras, Flights & Satellites",
@@ -72,7 +76,7 @@ const FAQS = [
   },
   {
     q: "Is WorldEye's god's eye view free?",
-    a: "Yes. The globe, live cameras, flights, satellites, transit, weather, earthquakes and wildfires are free with no account and no signup — basic search included. A Pro subscription adds the intelligence toolkit — OSINT tools, maritime and cyber intel layers, satellite map view, the live traffic layer, advanced search filters and the AI analyst — and funds the infrastructure.",
+    a: "Yes. The globe, live cameras, flights, satellites, transit, weather, earthquakes and wildfires are free with no account and no signup — basic search included. Paid plans add the rest: Pro unlocks the OSINT toolkit, satellite map view, the live traffic layer, advanced search filters, the AI analyst and the recording studio; VIP Pro adds the maritime and cyber intel layers, camera timelapse and camera alerts on top. Subscriptions fund the infrastructure.",
   },
   {
     q: "Do I need to install anything?",
@@ -144,14 +148,98 @@ export default function GodsEyeViewPage() {
             wildfires on a single interactive 3D globe — free, in your browser,
             with nothing to install.
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href="/"
-              className="inline-block px-8 py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+              href="/?utm_source=gods-eye-view&utm_medium=hero"
+              className="inline-block w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
             >
               Open the live globe — free
             </Link>
+            <Link
+              href="/pricing"
+              className="inline-block w-full sm:w-auto px-8 py-4 rounded-2xl border border-white/20 text-white/85 font-bold text-lg tracking-wide hover:bg-white/5 hover:border-[#D4AF37]/40 transition"
+            >
+              See plans
+            </Link>
           </div>
+          <p className="mt-4 text-xs tracking-wide text-white/40">
+            Free in your browser · No signup · Nothing to install
+          </p>
+        </div>
+
+        {/* Live proof — real cameras from the catalogue, tap to open */}
+        <GodsEyeLiveStrip />
+
+        {/* Head-to-head — verified facts only, sources in the copy */}
+        <div className="mt-20 max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            WorldEye vs <span className="text-[#D4AF37]">God&apos;s Eye View</span>
+          </h2>
+          <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
+            Two different ways to get this view. The open-source project is a
+            genuinely good build-it-yourself option; WorldEye is the same idea
+            as a hosted website. The honest differences:
+          </p>
+          <div className="mt-8 overflow-hidden rounded-3xl border border-white/10">
+            <table className="w-full table-fixed text-left text-[13px] md:text-sm">
+              <thead>
+                <tr className="bg-white/[0.04] text-white/90">
+                  <th scope="col" className="w-[24%] px-4 py-3.5 font-semibold" />
+                  <th scope="col" className="w-[38%] px-4 py-3.5 font-semibold text-[#00E5FF]">
+                    WorldEye
+                  </th>
+                  <th scope="col" className="w-[38%] px-4 py-3.5 font-semibold">
+                    God&apos;s Eye View
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="text-white/60">
+                {[
+                  {
+                    label: "Live cameras",
+                    we: "74,229 public cameras on one globe",
+                    gev: "~4,000 public cameras in its CCTV mesh",
+                  },
+                  {
+                    label: "Getting started",
+                    we: "Open it in your browser — nothing to install, no setup",
+                    gev: "An open-source project you install and run yourself (from GitHub)",
+                  },
+                  {
+                    label: "Account to start",
+                    we: "None — the free tier needs no signup",
+                    gev: "None — it starts with no account or API keys, on Esri imagery",
+                  },
+                  {
+                    label: "Keys for the extras",
+                    we: "Nothing to configure — hosted and ready",
+                    gev: "Photorealistic 3D tiles need a Cesium ion token or a Google Maps key; the voice agent needs an OpenAI key",
+                  },
+                  {
+                    label: "Price",
+                    we: "Free tier; paid plans from $7.99/week — VIP Pro is $74.99/year",
+                    gev: "Free — open source (MIT)",
+                  },
+                ].map((row) => (
+                  <tr key={row.label} className="border-t border-white/10 align-top">
+                    <th scope="row" className="px-4 py-3.5 font-semibold text-white/85">
+                      {row.label}
+                    </th>
+                    <td className="px-4 py-3.5">{row.we}</td>
+                    <td className="px-4 py-3.5">{row.gev}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-white/40 text-xs text-center mt-4">
+            Camera count for the project is from its own README. A fuller,
+            sourced comparison lives on our{" "}
+            <Link href="/alternatives/gods-eye-view" className="text-[#D4AF37] hover:underline">
+              God&apos;s Eye View alternatives
+            </Link>{" "}
+            page.
+          </p>
         </div>
 
         {/* What the term means */}
@@ -339,6 +427,51 @@ export default function GodsEyeViewPage() {
           </div>
         </div>
 
+        {/* Free trials — plan facts from the billing config, guarantee verbatim */}
+        <div className="mt-20 max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            The globe is free. <span className="text-[#D4AF37]">The locked layers aren&apos;t.</span>
+          </h2>
+          <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
+            Everything above is free with no signup. Paid plans unlock the
+            intelligence toolkit, intel layers, timelapse, camera alerts and
+            the recording studio — and every plan starts with a free trial.
+            We email you before your trial&apos;s first charge.
+          </p>
+          <div className="mt-8 grid sm:grid-cols-3 gap-4">
+            {TRIAL_PLAN_OPTIONS.map((p) => (
+              <div
+                key={p.plan}
+                className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 text-center"
+              >
+                <p className="text-xs font-semibold tracking-[0.25em] text-[#00E5FF]">
+                  {p.trialLabel.toUpperCase()}
+                </p>
+                <p className="font-display text-xl font-semibold mt-3">{p.name}</p>
+                <p className="mt-2">
+                  <span className="font-mono text-3xl font-bold">{p.price}</span>
+                  <span className="text-white/50 text-sm">{p.per}</span>
+                </p>
+                <p className="text-xs text-white/40 mt-1">about {p.perDay} a day</p>
+                <p className="text-xs text-white/50 mt-3 leading-relaxed">{p.note}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link
+              href="/pricing"
+              className="inline-block px-8 py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+            >
+              Compare plans &amp; start a free trial
+            </Link>
+            <p className="mt-5 inline-flex items-start sm:items-center gap-2 text-sm text-white/50 max-w-xl">
+              <ShieldCheck className="w-4 h-4 text-[#D4AF37]/80 shrink-0 mt-0.5 sm:mt-0" />
+              Covered by a 7-day money-back guarantee on your first charge — email us
+              within 7 days of the charge for a full refund, no questions asked.
+            </p>
+          </div>
+        </div>
+
         {/* Closing CTA */}
         <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10">
           <h2 className="text-2xl md:text-3xl font-bold">
@@ -348,7 +481,7 @@ export default function GodsEyeViewPage() {
             One globe. Every live layer. Zero signup.
           </p>
           <Link
-            href="/"
+            href="/?utm_source=gods-eye-view&utm_medium=closing"
             className="inline-block px-8 py-4 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
           >
             Open WorldEye
@@ -388,6 +521,7 @@ export default function GodsEyeViewPage() {
         />
       </div>
 
+      <GodsEyeStickyCta />
       <SiteFooter />
     </main>
   );
