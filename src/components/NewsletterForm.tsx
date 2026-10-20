@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 
-export default function NewsletterForm({ source = "footer", compact = false }: { source?: string; compact?: boolean }) {
+export default function NewsletterForm({
+  source = "footer",
+  compact = false,
+  onSuccess,
+}: {
+  source?: string;
+  compact?: boolean;
+  /** Fired once when a subscribe succeeds (including "already subscribed"). */
+  onSuccess?: () => void;
+}) {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [msg, setMsg] = useState("");
@@ -22,6 +31,7 @@ export default function NewsletterForm({ source = "footer", compact = false }: {
       if (data.ok) {
         setState("done");
         setMsg(data.already ? "You're already subscribed." : "Check your inbox to confirm your subscription.");
+        onSuccess?.();
       } else {
         setState("error");
         setMsg(data.error ?? "Something went wrong.");

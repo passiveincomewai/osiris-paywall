@@ -46,14 +46,23 @@ export function captureUtm(): Record<string, string> {
   }
 }
 
-/** Fire a named interaction event (e.g. "camera_open", "upgrade_gate_shown"). */
-export function trackAnalyticsEvent(event: string) {
+/**
+ * Fire a named interaction event (e.g. "camera_open", "upgrade_gate_shown").
+ * `detail` is one machine token ([a-z0-9_], ≤24 chars) stored as
+ * `event:detail` — see lib/analytics/ingest-fields.
+ */
+export function trackAnalyticsEvent(event: string, detail?: string) {
   try {
     const sid = sessionId();
     fetch("/api/analytics/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: window.location.pathname, sessionId: sid, event }),
+      body: JSON.stringify({
+        path: window.location.pathname,
+        sessionId: sid,
+        event,
+        ...(detail ? { detail } : {}),
+      }),
       keepalive: true,
     }).catch(() => {});
   } catch {}
