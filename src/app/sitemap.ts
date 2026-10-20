@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import directory from "@/data/camera-directory.json";
 import cameraCountries from "@/data/camera-countries.json";
 import cityPages from "@/data/city-pages.json";
 import { POSTS } from "./blog/posts";

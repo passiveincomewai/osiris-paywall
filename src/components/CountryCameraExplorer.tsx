@@ -85,8 +85,8 @@ function useInView<T extends HTMLElement>(rootMargin = '240px') {
     const el = ref.current;
     if (!el) return;
     if (typeof IntersectionObserver === 'undefined') {
-      setInView(true);
-      return;
+      const t = setTimeout(() => setInView(true), 0);
+      return () => clearTimeout(t);
     }
     const io = new IntersectionObserver(
       entries => {
@@ -110,15 +110,13 @@ function useInView<T extends HTMLElement>(rootMargin = '240px') {
  */
 function LiveImage({ cam, kind, url }: { cam: CountryCamera; kind: 'jpg' | 'mjpeg'; url: string }) {
   const { ref, inView } = useInView<HTMLDivElement>();
-  const [src, setSrc] = useState<string | null>(null);
+  const [src, setSrc] = useState<string>(() => (kind === 'jpg' ? freshen(url) : url));
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const retried = useRef(false);
 
   useEffect(() => {
-    if (!inView || failed) return;
-    if (!src) setSrc(kind === 'jpg' ? freshen(url) : url);
-    if (kind !== 'jpg') return;
+    if (!inView || failed || kind !== 'jpg') return;
     const every = refreshInterval('jpg');
     let interval: ReturnType<typeof setInterval> | undefined;
     const first = setTimeout(
@@ -132,11 +130,11 @@ function LiveImage({ cam, kind, url }: { cam: CountryCamera; kind: 'jpg' | 'mjpe
       clearTimeout(first);
       if (interval) clearInterval(interval);
     };
-  }, [inView, kind, url, src, failed]);
+  }, [inView, kind, url, failed]);
 
   return (
     <div ref={ref} className="absolute inset-0">
-      {src && !failed ? (
+      {inView && !failed ? (
         // eslint-disable-next-line @next/next/no-img-element -- remote camera frames, no loader
         <img
           src={src}
@@ -173,7 +171,7 @@ function LiveImage({ cam, kind, url }: { cam: CountryCamera; kind: 'jpg' | 'mjpe
  * actually plays — the same arrangement as the map's video tiles. Before
  * its slot arrives the card shows its labelled state, never a fake frame.
  */
-function LiveVideo({ cam, kind, url }: { cam: CountryCamera; kind: 'hls' | 'mp4'; url: string }) {
+function LiveVideo({ kind, url }: { kind: 'hls' | 'mp4'; url: string }) {
   const { ref: holderRef, inView } = useInView<HTMLDivElement>();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasSlot, setHasSlot] = useState(false);
@@ -305,7 +303,7 @@ function CardPreview({ cam }: { cam: CountryCamera }) {
       ) : media ? (
         /* Reaching this branch means the kind is hls or mp4 — the two
            video kinds previewMedia can return. */
-        <LiveVideo cam={cam} kind={media.kind === 'mp4' ? 'mp4' : 'hls'} url={media.url} />
+        <LiveVideo kind={media.kind === 'mp4' ? 'mp4' : 'hls'} url={media.url} />
       ) : poster ? (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element -- the video's own poster */}
@@ -356,6 +354,20 @@ interface CountryBatch {
   cameras: CountryCamera[];
 }
 
+/* The grid's loaded state, keyed by the filter set it belongs to: a state
+   whose key is not the current filter key is simply not shown, which is
+   what resets the grid on a filter change without an effect having to
+   clear it. Load-more appends under the same key. */
+interface GridState {
+  key: string;
+  cameras: CountryCamera[];
+  total: number | null;
+  cities: CameraArea[];
+  error: boolean;
+}
+
+const EMPTY_GRID: GridState = { key: '', cameras: [], total: null, cities: [], error: false };
+
 /**
  * The playable camera grid for a country page, for ANY country in the
  * catalogue: the records arrive in batches of 48 from
@@ -375,18 +387,13 @@ export default function CountryCameraExplorer({
   country: string;
   countryName: string;
 }) {
-  const [cameras, setCameras] = useState<CountryCamera[]>([]);
-  const [total, setTotal] = useState<number | null>(null);
-  const [cities, setCities] = useState<CameraArea[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [grid, setGrid] = useState<GridState>(EMPTY_GRID);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState(false);
   const [runId, setRunId] = useState(0);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [area, setArea] = useState<string | null>(null);
   const [active, setActive] = useState<CountryCamera | null>(null);
-  const requestRef = useRef(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -394,8 +401,13 @@ export default function CountryCameraExplorer({
     return () => clearTimeout(t);
   }, [query]);
 
+  const filterKey = `${country}|${area ?? ''}|${debouncedQuery}|${runId}`;
+  const current: GridState = grid.key === filterKey ? grid : EMPTY_GRID;
+  const loading = grid.key !== filterKey;
+  const { cameras, total, cities, error } = current;
+
   const fetchBatch = useCallback(
-    async (offset: number): Promise<CountryBatch | null> => {
+    async (offset: number): Promise<CountryBatch> => {
       const qs = new URLSearchParams({ offset: String(offset), limit: String(PAGE_SIZE) });
       if (area) qs.set('city', area);
       if (debouncedQuery) qs.set('q', debouncedQuery);
@@ -406,47 +418,43 @@ export default function CountryCameraExplorer({
     [country, area, debouncedQuery],
   );
 
-  /* First batch for the current filter set (and on retry). */
+  /* First batch for the current filter set (and on retry). State lands
+     only through the promise callbacks; while it is in flight the key
+     mismatch above is what renders as "loading". */
   useEffect(() => {
-    const req = ++requestRef.current;
-    setLoading(true);
-    setError(false);
-    setCameras([]);
-    setTotal(null);
+    let cancelled = false;
     fetchBatch(0)
       .then(batch => {
-        if (requestRef.current !== req || !batch) return;
-        setCameras(batch.cameras);
-        setTotal(batch.total);
-        setCities(batch.cities);
-        setLoading(false);
+        if (cancelled) return;
+        setGrid({ key: filterKey, cameras: batch.cameras, total: batch.total, cities: batch.cities, error: false });
       })
       .catch(() => {
-        if (requestRef.current !== req) return;
-        setError(true);
-        setLoading(false);
+        if (cancelled) return;
+        setGrid({ key: filterKey, cameras: [], total: null, cities: [], error: true });
       });
-  }, [fetchBatch, runId]);
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchBatch, filterKey]);
 
   const hasMore = total !== null && cameras.length < total;
 
   const loadMore = useCallback(() => {
     if (loadingMore || total === null || cameras.length >= total) return;
-    const req = requestRef.current;
     setLoadingMore(true);
     fetchBatch(cameras.length)
       .then(batch => {
-        if (requestRef.current !== req || !batch) return;
-        setCameras(prev => [...prev, ...batch.cameras]);
-        setTotal(batch.total);
+        setGrid(prev =>
+          prev.key === filterKey
+            ? { ...prev, cameras: [...prev.cameras, ...batch.cameras], total: batch.total }
+            : prev,
+        );
       })
       .catch(() => {
         /* A failed batch leaves the sentinel/button in place to retry. */
       })
-      .finally(() => {
-        if (requestRef.current === req) setLoadingMore(false);
-      });
-  }, [fetchBatch, cameras.length, total, loadingMore]);
+      .finally(() => setLoadingMore(false));
+  }, [fetchBatch, filterKey, cameras.length, total, loadingMore]);
 
   /* Load-on-scroll: the sentinel sits right after the grid. */
   useEffect(() => {
