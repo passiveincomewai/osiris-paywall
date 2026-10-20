@@ -19,7 +19,16 @@
 export type EntitlementCheck = "active" | "free" | "unknown";
 
 /** One fresh session read. "free" means the session definitively says
- *  not-active; any failure (network, non-200, bad JSON) is "unknown". */
+ *  not-active; any failure (network, non-200, bad JSON) is "unknown".
+ *
+ *  Team Access (Phase 10): this module has no server-side DB resolver —
+ *  its one resolution entry point is this session read, and it is wired
+ *  to the jwt change in src/auth.ts. subscriptionStatus stays the
+ *  member's OWN billing status, so a team member with no personal
+ *  subscription reads not-active there; the session's planTier is the
+ *  EFFECTIVE tier (own or org-granted), so a pro/vip planTier also
+ *  proves premium access. Legacy sessions without planTier fall back
+ *  to the status check alone, exactly as before. */
 export async function checkPremiumEntitlement(
   fetchFn: typeof fetch = fetch,
 ): Promise<EntitlementCheck> {
@@ -27,9 +36,11 @@ export async function checkPremiumEntitlement(
     const r = await fetchFn("/api/auth/session", { cache: "no-store" });
     if (!r.ok) return "unknown";
     const s = (await r.json().catch(() => null)) as {
-      user?: { subscriptionStatus?: string };
+      user?: { subscriptionStatus?: string; planTier?: string };
     } | null;
-    return s?.user?.subscriptionStatus === "active" ? "active" : "free";
+    if (s?.user?.subscriptionStatus === "active") return "active";
+    if (s?.user?.planTier === "pro" || s?.user?.planTier === "vip") return "active";
+    return "free";
   } catch {
     return "unknown";
   }

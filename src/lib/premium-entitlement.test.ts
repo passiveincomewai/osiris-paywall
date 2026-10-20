@@ -38,6 +38,16 @@ describe("checkPremiumEntitlement", () => {
       checkPremiumEntitlement(fakeFetch(async () => { throw new Error("network"); })),
     ).resolves.toBe("unknown");
   });
+
+  it("team grant (Phase 10): a pro/vip planTier is active even when the OWN status is not", async () => {
+    const tierSession = (planTier: string) => ({
+      ok: true,
+      json: async () => ({ user: { subscriptionStatus: "none", planTier } }),
+    });
+    await expect(checkPremiumEntitlement(fakeFetch(async () => tierSession("vip")))).resolves.toBe("active");
+    await expect(checkPremiumEntitlement(fakeFetch(async () => tierSession("pro")))).resolves.toBe("active");
+    await expect(checkPremiumEntitlement(fakeFetch(async () => tierSession("free")))).resolves.toBe("free");
+  });
 });
 
 describe("blocked-click decision (F1)", () => {
