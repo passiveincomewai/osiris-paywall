@@ -127,8 +127,9 @@ export function newsletterWelcomeEmail(unsubUrl: string): { subject: string; htm
 
 /**
  * The one heads-up a trial user gets before the first charge: plan, the
- * exact amount, the exact moment the trial ends, and the real cancel
- * path. All figures arrive pre-derived from the live Stripe price
+ * exact amount, the exact moment the trial ends, the real cancel path,
+ * and the 7-day first-charge money-back guarantee (Terms §4). All figures
+ * arrive pre-derived from the live Stripe price
  * (lib/billing/trial-reminders.ts) — nothing is restated here.
  */
 export function trialEndingEmail(input: {
@@ -149,7 +150,8 @@ export function trialEndingEmail(input: {
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Your free trial of <strong style="color:#fff;">WorldEye Pro (${escapeHtml(input.planLabel)})</strong> ends on <strong style="color:#fff;">${escapeHtml(input.endsOnLabel)}</strong>.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Unless you cancel before then, your card will be charged <strong style="color:#fff;">${escapeHtml(input.chargeLabel)}</strong>${perMonth}, and your plan renews automatically until you cancel.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to keep Pro? Do nothing — it continues on its own.</p>
-       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to cancel? Sign in, open <strong style="color:#fff;">Settings → Manage billing</strong>, and cancel in the Stripe portal. You keep Pro until the trial ends, and you won't be charged.</p>`,
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to cancel? Sign in, open <strong style="color:#fff;">Settings → Manage billing</strong>, and cancel in the Stripe portal. You keep Pro until the trial ends, and you won't be charged.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">And if the charge does go through, it's covered by a 7-day money-back guarantee on your first charge — email us at <a href="mailto:passiveincomewai@gmail.com" style="color:#fff;">passiveincomewai@gmail.com</a> within 7 days of the charge for a full refund, no questions asked.</p>`,
       { label: "Manage my subscription", href: input.manageUrl }
     ),
   };

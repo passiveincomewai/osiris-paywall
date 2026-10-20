@@ -162,7 +162,7 @@ export default function WelcomeClient() {
                 Your free trial is on for <span className="text-white">{state.email}</span> —{" "}
                 <span className="text-white">no charge until {trialEndLabel(state.trialEndsAt)}</span>
                 {state.chargeLabel && (
-                  <>, then {state.chargeLabel}. We&rsquo;ll email you before the first charge</>
+                  <>, then {state.chargeLabel}. We&rsquo;ll email you before the first charge — and that charge is covered by a 7-day money-back guarantee: email us within 7 days of the charge for a full refund, no questions asked</>
                 )}
                 . Create your account below — one step and you&rsquo;re in.
               </p>

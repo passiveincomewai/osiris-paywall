@@ -173,6 +173,13 @@ describe("trialEndingEmail", () => {
     expect(html).toContain("you won't be charged");
   });
 
+  it("states the 7-day first-charge money-back guarantee and the claim address", () => {
+    const { html } = trialEndingEmail(base);
+    expect(html).toContain("7-day money-back guarantee on your first charge");
+    expect(html).toContain("within 7 days of the charge for a full refund, no questions asked");
+    expect(html).toContain("passiveincomewai@gmail.com");
+  });
+
   it("adds the per-month equivalent only when one is supplied", () => {
     const withPm = trialEndingEmail({ ...base, planLabel: "Annual plan", chargeLabel: "$74.99/year", perMonthLabel: "$6.25/month" });
     expect(withPm.html).toContain("that's $6.25/month, billed once a year");
