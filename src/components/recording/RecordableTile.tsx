@@ -1,18 +1,27 @@
 "use client";
 /**
  * Phase 1 recording tile: plays a saved camera and records the live stream
- * in-browser via MediaRecorder. Real capture — no simulation.
+ * in-browser. Real capture — no simulation.
  *
- * Recordable: HLS and MP4 video streams (captureStream on the <video> element).
- * Not recordable: YouTube/external embeds (cross-origin iframes), snapshot
- * JPG feeds, offline cameras. The UI says so plainly instead of pretending.
+ * Recordable: HLS and MP4 video streams. Not recordable: YouTube/external
+ * embeds (cross-origin iframes), snapshot JPG feeds, offline cameras.
+ * The UI says so plainly instead of pretending.
  *
- * Clips are stored in the browser's IndexedDB (device-local); metadata goes
- * to /api/recording/clips (Pro-enforced server-side).
+ * The recording itself is owned by the persistent capture-session layer
+ * (lib/recording/sessions), not by this tile: it keeps running when the
+ * viewer closes or the user browses elsewhere on WorldEye, saves its
+ * segments to this device as it goes, and stops on its own at 24 hours.
+ * Finished clips land in the browser's IndexedDB clip library with
+ * metadata in /api/recording/clips (Pro-enforced server-side) — exactly
+ * where studio recordings have always landed.
  */
 import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
-import { idbPutClip } from "@/lib/recording/idb";
+import {
+  CAPTURE_PERSISTENCE_COPY,
+  captureSessions,
+  useClipSessionFor,
+} from "@/lib/recording/sessions";
 
 export type SavedCam = {
   id: string;
@@ -20,14 +29,6 @@ export type SavedCam = {
   group: string;
   cameraData: any;
 };
-
-function pickMime(): string {
-  const cands = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
-  for (const c of cands) {
-    try { if (window.MediaRecorder?.isTypeSupported(c)) return c; } catch {}
-  }
-  return "";
-}
 
 export default function RecordableTile({
   cam, pro, onClipSaved, onNeedPro, compact,
@@ -40,18 +41,20 @@ export default function RecordableTile({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
-  const recRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const startRef = useRef<number>(0);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [recording, setRecording] = useState(false);
-  const [recSecs, setRecSecs] = useState(0);
-  const [saving, setSaving] = useState(false);
+  const [starting, setStarting] = useState(false);
   const [muted, setMuted] = useState(true);
   const [clock, setClock] = useState("");
+  const [recSecs, setRecSecs] = useState(0);
+
+  // The recording session for this camera, owned by the session layer —
+  // it survives this tile unmounting.
+  const clipSession = useClipSessionFor(cam.id);
+  const recording = clipSession?.phase === "recording" || clipSession?.phase === "starting";
+  const saving = clipSession?.phase === "saving";
+  const sessionStartedAt = clipSession?.startedAt ?? null;
 
   const data = cam.cameraData ?? {};
   const streamType: string = data.stream_type || (data.stream_url?.includes(".m3u8") ? "hls" : "video");
@@ -72,6 +75,15 @@ export default function RecordableTile({
     }, 1000);
     return () => clearInterval(iv);
   }, []);
+
+  /* Recording clock, from the session's own start time. */
+  useEffect(() => {
+    if (sessionStartedAt === null) { setRecSecs(0); return; }
+    const tick = () => setRecSecs(Math.max(0, Math.floor((Date.now() - sessionStartedAt) / 1000)));
+    tick();
+    const iv = setInterval(tick, 500);
+    return () => clearInterval(iv);
+  }, [sessionStartedAt]);
 
   useEffect(() => {
     if (!playable || !videoRef.current) { setLoading(false); return; }
@@ -98,89 +110,29 @@ export default function RecordableTile({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cam.id]);
 
-  const stopTimer = () => { if (timerRef.current) clearInterval(timerRef.current); timerRef.current = null; };
-
   async function startRecording() {
     if (!pro) { onNeedPro?.(); return; }
-    if (recording || !videoRef.current || unsupportedReason) return;
-    let stream: MediaStream;
+    if (clipSession || starting || unsupportedReason || !streamUrl) return;
+    setStarting(true);
+    setError(null);
     try {
-      stream = (videoRef.current as HTMLVideoElement & { captureStream(): MediaStream }).captureStream();
-    } catch {
-      setError("This browser blocked stream capture");
-      return;
+      await captureSessions.startClip({
+        savedCameraId: cam.id,
+        cameraName: cam.name,
+        source: { kind: "video", streamUrl },
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Recording could not start");
+    } finally {
+      setStarting(false);
     }
-    if (!stream.getVideoTracks().length) { setError("No video track to record"); return; }
-    const mime = pickMime();
-    let rec: MediaRecorder;
-    try {
-      rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 2_500_000 } : undefined);
-    } catch {
-      setError("Recording not supported in this browser");
-      return;
-    }
-    chunksRef.current = [];
-    rec.ondataavailable = (e) => { if (e.data?.size) chunksRef.current.push(e.data); };
-    rec.onerror = () => { setError("Recording failed"); cleanup(); };
-    recRef.current = rec;
-    startRef.current = Date.now();
-    setRecSecs(0);
-    timerRef.current = setInterval(() => setRecSecs(Math.floor((Date.now() - startRef.current) / 1000)), 500);
-    rec.start(1000);
-    setRecording(true);
-  }
-
-  function cleanup() {
-    stopTimer();
-    setRecording(false);
-    recRef.current = null;
   }
 
   async function stopRecording() {
-    const rec = recRef.current;
-    if (!rec) return;
-    setSaving(true);
-    const done = new Promise<Blob>((resolve) => {
-      rec.onstop = () => resolve(new Blob(chunksRef.current, { type: rec.mimeType || "video/webm" }));
-    });
-    rec.stop();
-    const blob = await done;
-    cleanup();
-    const secs = Math.max(1, Math.round(blob.size > 0 ? (Date.now() - startRef.current) / 1000 : 0));
-    if (blob.size < 1024) { setError("Recording produced no data"); setSaving(false); return; }
-    const clipId = crypto.randomUUID();
-    try {
-      await idbPutClip(clipId, blob);
-      const r = await fetch("/api/recording/clips", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cameraName: cam.name,
-          savedCameraId: cam.id,
-          durationSec: secs,
-          sizeBytes: blob.size,
-          startedAt: new Date(startRef.current).toISOString(),
-          mimeType: blob.type || "video/webm",
-        }),
-      });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.error || "metadata save failed");
-      // Re-key the blob under the server clip id so library playback lines up.
-      const realId: string | undefined = j.clip?.id;
-      if (realId && realId !== clipId) {
-        await idbPutClip(realId, blob);
-        const { idbDeleteClip } = await import("@/lib/recording/idb");
-        await idbDeleteClip(clipId);
-      }
-      onClipSaved?.();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to save clip");
-      // Blob is still in IndexedDB under clipId; surface it on next load.
-    }
-    setSaving(false);
+    if (!clipSession) return;
+    await captureSessions.stopSession(clipSession.id);
+    onClipSaved?.();
   }
-
-  useEffect(() => () => { stopTimer(); try { recRef.current?.state !== "inactive" && recRef.current?.stop(); } catch {} }, []);
 
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
@@ -211,6 +163,11 @@ export default function RecordableTile({
               ● REC {fmt(recSecs)}
             </span>
           )}
+          {saving && (
+            <span className="px-2 py-0.5 rounded-full bg-cyan-500/70 text-[10px] font-mono font-bold text-white">
+              SAVING…
+            </span>
+          )}
         </div>
         <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 border border-white/15 text-[10px] font-mono text-slate-300">
           {clock}
@@ -227,7 +184,7 @@ export default function RecordableTile({
               </button>
             )}
             {playable && !unsupportedReason && (
-              recording ? (
+              recording || saving ? (
                 <button
                   onClick={stopRecording}
                   disabled={saving}
@@ -237,8 +194,9 @@ export default function RecordableTile({
               ) : (
                 <button
                   onClick={startRecording}
-                  className="h-8 px-3 rounded-lg bg-white/10 border border-white/20 text-white text-xs font-mono font-bold hover:border-red-400/70 hover:text-red-200">
-                  ● REC
+                  disabled={starting}
+                  className="h-8 px-3 rounded-lg bg-white/10 border border-white/20 text-white text-xs font-mono font-bold hover:border-red-400/70 hover:text-red-200 disabled:opacity-60">
+                  {starting ? "…" : "● REC"}
                 </button>
               )
             )}
@@ -251,12 +209,16 @@ export default function RecordableTile({
         )}
       </div>
       {!compact && (
-        <div className="px-3 py-2 flex items-center justify-between border-t border-white/5">
+        <div className="px-3 py-2 flex items-center justify-between gap-3 border-t border-white/5">
           <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">
-            {unsupportedReason ? "preview only" : pro ? "Pro recording ready" : "Pro required to record"}
+            {unsupportedReason
+              ? "preview only"
+              : recording
+                ? CAPTURE_PERSISTENCE_COPY
+                : pro ? "Pro recording ready" : "Pro required to record"}
           </span>
           {!pro && playable && !unsupportedReason && (
-            <button onClick={onNeedPro} className="text-[11px] font-mono text-cyan-300 hover:text-white underline underline-offset-2">
+            <button onClick={onNeedPro} className="shrink-0 text-[11px] font-mono text-cyan-300 hover:text-white underline underline-offset-2">
               Upgrade
             </button>
           )}
