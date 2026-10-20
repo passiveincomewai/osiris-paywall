@@ -12,9 +12,10 @@ import type { TransitMode } from './agencies';
  * (stop_times + calendar), and it is already the vehicle layer's join
  * source. UTA's ArcGIS Hub "UTA SERVICE DATA" collection (the datasets
  * Jameson supplied) is a ridership/planning publication — its routes
- * service holds 90 planning lines with boardings fields, not the ~150
- * operational routes, and its ids do not join the realtime feeds — so
- * the hub is provenance and discovery, not the operational source.
+ * service holds 90 planning lines with boardings fields, not the
+ * operational network (86 routes in the current feed, verified live
+ * 2026-10-20), and its ids do not join the realtime feeds — so the
+ * hub is provenance and discovery, not the operational source.
  * Hub terms: published data is public data, provided "as is"; the UI
  * credits "Utah Transit Authority (UTA Open Data)".
  *
