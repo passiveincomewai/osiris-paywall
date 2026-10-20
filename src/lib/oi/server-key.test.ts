@@ -3,7 +3,11 @@
  * site's OpenAI key may stand in for a key of the visitor's own.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { applyKeyDecision, decideKeyUse, isActiveSubscription, siteAiKey, siteAiModel, siteKeyHourLimited } from './server-key';
+
+const authMocks = vi.hoisted(() => ({ auth: vi.fn() }));
+vi.mock('@/auth', () => ({ auth: authMocks.auth }));
+
+import { applyKeyDecision, decideKeyUse, isActiveSubscription, resolveRouteKey, siteAiKey, siteAiModel, siteKeyHourLimited } from './server-key';
 import type { Credentials } from './service';
 
 const SITE = { signedIn: true, key: 'sk-site-key', model: 'gpt-5-mini' };
@@ -85,6 +89,79 @@ describe('isActiveSubscription — the gate the companion rides on', () => {
     for (const s of ['none', 'trialing', 'past_due', 'canceled', 'incomplete', null, undefined, '']) {
       expect(isActiveSubscription(s)).toBe(false);
     }
+  });
+
+  it('own-active passes unchanged, even with a stale free planTier claim', () => {
+    expect(isActiveSubscription('active', 'free')).toBe(true);
+    expect(isActiveSubscription('active', null)).toBe(true);
+  });
+
+  it('team grant (Workstream H): own status inactive + effective planTier pro passes', () => {
+    expect(isActiveSubscription('none', 'pro')).toBe(true);
+    expect(isActiveSubscription('canceled', 'pro')).toBe(true);
+  });
+
+  it('team grant (Workstream H): granted VIP passes (vip satisfies pro)', () => {
+    expect(isActiveSubscription('none', 'vip')).toBe(true);
+  });
+
+  it('free still fails: inactive status with planTier free, absent or invalid', () => {
+    expect(isActiveSubscription('none', 'free')).toBe(false);
+    expect(isActiveSubscription('none', null)).toBe(false);
+    expect(isActiveSubscription('none', undefined)).toBe(false);
+    expect(isActiveSubscription('none', 'gold')).toBe(false);
+    expect(isActiveSubscription('active', 'gold')).toBe(true);
+  });
+});
+
+describe('resolveRouteKey — subscriptionActive layering (Workstream H)', () => {
+  const sessionWith = (user: Record<string, unknown>) => ({ user });
+  const grantSession = (planTier: string, subscriptionStatus = 'none') =>
+    sessionWith({ id: 'u-grant', subscriptionStatus, planTier });
+
+  it('own subscriber on the site key: subscriptionActive true, unchanged', async () => {
+    vi.stubEnv('OPENAI_API_KEY', 'sk-site-key');
+    authMocks.auth.mockResolvedValue(grantSession('pro', 'active'));
+    const resolved = await resolveRouteKey(OPENAI);
+    expect(resolved).toMatchObject({ ok: true, siteUserId: 'u-grant', subscriptionActive: true });
+  });
+
+  it('granted member (own status inactive + planTier pro) is subscriptionActive on the site key', async () => {
+    vi.stubEnv('OPENAI_API_KEY', 'sk-site-key');
+    authMocks.auth.mockResolvedValue(grantSession('pro'));
+    const resolved = await resolveRouteKey(OPENAI);
+    expect(resolved).toMatchObject({ ok: true, siteUserId: 'u-grant', subscriptionActive: true });
+  });
+
+  it('granted VIP member is subscriptionActive on the site key', async () => {
+    vi.stubEnv('OPENAI_API_KEY', 'sk-site-key');
+    authMocks.auth.mockResolvedValue(grantSession('vip'));
+    const resolved = await resolveRouteKey(OPENAI);
+    expect(resolved).toMatchObject({ ok: true, siteUserId: 'u-grant', subscriptionActive: true });
+  });
+
+  it('free member on the site key stays subscriptionActive false', async () => {
+    vi.stubEnv('OPENAI_API_KEY', 'sk-site-key');
+    authMocks.auth.mockResolvedValue(grantSession('free'));
+    const resolved = await resolveRouteKey(OPENAI);
+    expect(resolved).toMatchObject({ ok: true, siteUserId: 'u-grant', subscriptionActive: false });
+    // Legacy session without a planTier claim: status alone decides.
+    authMocks.auth.mockResolvedValue(sessionWith({ id: 'u-grant', subscriptionStatus: 'none' }));
+    const legacy = await resolveRouteKey(OPENAI);
+    expect(legacy).toMatchObject({ ok: true, siteUserId: 'u-grant', subscriptionActive: false });
+  });
+
+  it('fail-soft: a session read that throws resolves to the signed-out refusal, never an open gate', async () => {
+    vi.stubEnv('OPENAI_API_KEY', 'sk-site-key');
+    authMocks.auth.mockRejectedValue(new Error('auth unavailable'));
+    const resolved = await resolveRouteKey(OPENAI);
+    expect(resolved).toMatchObject({ ok: false, status: 401, code: 'SIGN_IN_REQUIRED' });
+  });
+
+  it('a caller key never touches the session (unchanged)', async () => {
+    authMocks.auth.mockRejectedValue(new Error('auth unavailable'));
+    const resolved = await resolveRouteKey({ provider: 'openai', key: 'sk-theirs' });
+    expect(resolved).toMatchObject({ ok: true, siteUserId: null, subscriptionActive: true });
   });
 });
 

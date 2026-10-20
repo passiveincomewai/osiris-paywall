@@ -20,6 +20,7 @@
  * provider call, and never sent to a browser, a response or a log.
  */
 import { isRateLimited } from '@/lib/password-auth';
+import { planTierOf, tierSatisfies } from '../plan-tier';
 import { providerInfo, type ProviderId } from './providers';
 import type { Credentials } from './service';
 
@@ -43,7 +44,11 @@ export function siteAiAvailable(): boolean {
 }
 
 /** The signed-in visitor's session facts, or null. The session is the fence: no id, no site key. */
-async function siteAiSession(): Promise<{ userId: string; subscriptionStatus: string | null } | null> {
+async function siteAiSession(): Promise<{
+  userId: string;
+  subscriptionStatus: string | null;
+  planTier: string | null;
+} | null> {
   try {
     // Imported on use: the auth stack (NextAuth + Prisma) stays out of
     // every module that only needs the decision matrix.
@@ -51,7 +56,11 @@ async function siteAiSession(): Promise<{ userId: string; subscriptionStatus: st
     const session = await auth();
     const userId = session?.user?.id ?? null;
     if (!userId) return null;
-    return { userId, subscriptionStatus: session?.user?.subscriptionStatus ?? null };
+    return {
+      userId,
+      subscriptionStatus: session?.user?.subscriptionStatus ?? null,
+      planTier: session?.user?.planTier ?? null,
+    };
   } catch {
     return null;
   }
@@ -66,9 +75,28 @@ export async function siteAiUserId(): Promise<string | null> {
  * resolveSubscriptionStatus (src/auth.ts) puts on the session — paid,
  * trialing and comp free-Pro all resolve to 'active'; everything else
  * (none, past_due, canceled, expired) does not.
+ *
+ * Team Access (Workstream H): subscriptionStatus stays the member's
+ * OWN billing status, so a team member whose access comes from their
+ * organization's owner reads not-active there; the session's planTier
+ * is the EFFECTIVE tier (own or org-granted, resolved in the jwt in
+ * src/auth.ts), so the gate also passes when the caller supplies that
+ * tier and it satisfies "pro" via lib/plan-tier. Callers without a
+ * tier (the legacy one-argument form) get the status check alone,
+ * exactly as before. Fail-soft: any error reading the tier falls back
+ * to the status-only result — it never throws the gate open or closed.
  */
-export function isActiveSubscription(status: string | null | undefined): boolean {
-  return status === 'active';
+export function isActiveSubscription(
+  status: string | null | undefined,
+  planTier?: string | null,
+): boolean {
+  if (status === 'active') return true;
+  if (planTier == null) return false;
+  try {
+    return tierSatisfies(planTierOf({ user: { subscriptionStatus: status, planTier } }), 'pro');
+  } catch {
+    return false;
+  }
 }
 
 export type KeyDecision =
@@ -151,7 +179,9 @@ export async function resolveRouteKey(creds: Credentials): Promise<ResolvedKey> 
     ok: true,
     creds: applyKeyDecision(creds, decision),
     siteUserId: site ? (session?.userId ?? null) : null,
-    subscriptionActive: site ? isActiveSubscription(session?.subscriptionStatus) : true,
+    subscriptionActive: site
+      ? isActiveSubscription(session?.subscriptionStatus, session?.planTier)
+      : true,
   };
 }
 
