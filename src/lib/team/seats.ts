@@ -82,6 +82,7 @@ export function quoteSeatChange(input: SeatQuoteInput): SeatQuote {
     const totalMs = input.periodEnd.getTime() - input.periodStart.getTime();
     const remainingMs = input.periodEnd.getTime() - now.getTime();
     const fraction = totalMs > 0 ? Math.min(1, Math.max(0, remainingMs / totalMs)) : 0;
+    const currentCost = seatCostCents(input.tiers, input.currentSeats);
     immediateDueEstimateCents = Math.round((targetCost - currentCost) * fraction);
   }
 
