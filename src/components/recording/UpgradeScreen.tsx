@@ -8,7 +8,7 @@ export default function UpgradeScreen({ priceLine }: { priceLine: string }) {
     ["●", "Live multi-camera monitoring", "Watch saved cameras side by side."],
     ["◷", "Timeline playback", "Replay your saved clips anytime."],
     ["⤓", "Downloadable recordings", "Clips save straight to your device."],
-    ["◈", "Recording schedules", "Capture the moments that matter."],
+    ["◈", "One-tap record all", "Start every selected camera recording at once."],
     ["🔒", "Secure footage management", "Your clips stay on your device."],
   ];
   return (
