@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import PricingClient from "./PricingClient";
+import CheckoutReturnStrip from "@/components/CheckoutReturnStrip";
 
 export const metadata = {
   title: "Pricing & Plans",
@@ -9,5 +11,14 @@ export const metadata = {
 };
 
 export default function PricingPage() {
-  return <PricingClient />;
+  return (
+    <>
+      {/* Renders only for ?checkout=cancelled arrivals (Stripe's cancel
+          return) — everyone else sees the plain pricing page. */}
+      <Suspense fallback={null}>
+        <CheckoutReturnStrip />
+      </Suspense>
+      <PricingClient />
+    </>
+  );
 }
