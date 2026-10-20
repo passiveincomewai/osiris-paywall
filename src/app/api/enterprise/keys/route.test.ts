@@ -13,7 +13,10 @@ const mocks = vi.hoisted(() => ({
     keyPrefix: data.keyPrefix,
     createdAt: new Date(),
   })),
-  findFirst: vi.fn(async () => null as null | { id: string; userId: string; revokedAt: Date | null }),
+  findFirst: vi.fn(
+    async (_args: { where: { id: string; userId: string } }) =>
+      null as null | { id: string; userId: string; revokedAt: Date | null },
+  ),
   update: vi.fn(async () => ({})),
 }));
 

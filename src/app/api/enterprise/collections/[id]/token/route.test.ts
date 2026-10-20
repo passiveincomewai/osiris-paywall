@@ -6,8 +6,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   access: vi.fn(async () => ({ ok: true, userId: "owner-1", enterprise: true }) as unknown),
-  findFirst: vi.fn(async () => null as null | { id: string; userId: string }),
-  update: vi.fn(async () => ({})),
+  findFirst: vi.fn(
+    async (_args: { where: { id: string; userId: string } }) =>
+      null as null | { id: string; userId: string },
+  ),
+  update: vi.fn(
+    async (_args: { where: { id: string }; data: { feedTokenHash: string | null } }) => ({}),
+  ),
 }));
 
 vi.mock("@/lib/enterprise/access", () => ({ enterpriseAccess: mocks.access }));
@@ -48,7 +53,7 @@ describe("/api/enterprise/collections/[id]/token", () => {
       where: { id: "col-1" },
       data: { feedTokenHash: hashSecret(body.token) },
     });
-    const stored = (mocks.update.mock.calls[0] as [{ data: { feedTokenHash: string } }])[0].data.feedTokenHash;
+    const stored = mocks.update.mock.calls[0][0].data.feedTokenHash;
     expect(stored).not.toBe(body.token);
     expect(stored).toMatch(/^[0-9a-f]{64}$/);
   });

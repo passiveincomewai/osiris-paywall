@@ -14,7 +14,7 @@ const COLLECTION = {
 };
 
 const mocks = vi.hoisted(() => ({
-  byHash: vi.fn(async () => null as null | typeof COLLECTION),
+  byHash: vi.fn(async (_hash: string) => null as null | typeof COLLECTION),
   payload: vi.fn(async () => ({
     ok: true as const,
     payload: { cameras: [{ id: "fdot-1" }], excluded: [{ id: "x", name: "x", reason: "Windy" }] },

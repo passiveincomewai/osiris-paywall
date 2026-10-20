@@ -17,7 +17,9 @@ const KEY_ROW = {
 const COLLECTION = { id: "col-1", userId: "owner-1", name: "Ski cams" };
 
 const mocks = vi.hoisted(() => ({
-  findKey: vi.fn(async () => null as null | typeof KEY_ROW),
+  findKey: vi.fn(
+    async (_args: { where: { keyHash: string } }) => null as null | typeof KEY_ROW,
+  ),
   findCollection: vi.fn(async () => null as null | typeof COLLECTION),
   updateKey: vi.fn(async () => ({})),
   payload: vi.fn(async () => ({
