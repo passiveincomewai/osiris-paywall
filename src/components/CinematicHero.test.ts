@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { heroTrackProgress, heroExitAmount, heroDismissedAfter } from './CinematicHero';
+import {
+  heroTrackProgress, heroExitAmount, heroDismissedAfter,
+  CINEMATIC_HERO_ENABLED, heroSkippedForSearch,
+} from './CinematicHero';
 
 // The hero's dismissal model. The production bug (2026-10-18, Jameson's
 // iPhone): after reaching the globe, tapping bottom-nav buttons brought
@@ -87,5 +90,33 @@ describe('heroDismissedAfter — the one-way door', () => {
     // exit and dismisses immediately — same as the pre-fix latch.
     expect(heroDismissedAfter(false, 0)).toBe(false);
     expect(heroDismissedAfter(false, 1)).toBe(true);
+  });
+});
+
+describe('the kill switch — heroSkippedForSearch', () => {
+  it('ships OFF by default: the hero is parked', () => {
+    expect(CINEMATIC_HERO_ENABLED).toBe(false);
+  });
+
+  it('flag off: every visit lands on the globe, whatever the URL says', () => {
+    expect(heroSkippedForSearch('', false)).toBe(true);
+    expect(heroSkippedForSearch('?utm_source=instagram&utm_medium=social', false)).toBe(true);
+    expect(heroSkippedForSearch('?camera=CAM-1', false)).toBe(true);
+    // And via the defaulted argument — the state the site actually ships in.
+    expect(heroSkippedForSearch('')).toBe(true);
+  });
+
+  it('flag on: organic visits keep the hero', () => {
+    expect(heroSkippedForSearch('', true)).toBe(false);
+    expect(heroSkippedForSearch('?utm_source=instagram&utm_medium=social', true)).toBe(false);
+    expect(heroSkippedForSearch('?utm_medium=', true)).toBe(false);
+  });
+
+  it('flag on: ad traffic, explicit skips and camera deep links still skip', () => {
+    expect(heroSkippedForSearch('?utm_medium=cpc', true)).toBe(true);
+    expect(heroSkippedForSearch('?utm_medium=Paid-Social', true)).toBe(true);
+    expect(heroSkippedForSearch('?skip_hero=1', true)).toBe(true);
+    expect(heroSkippedForSearch('?ad=1', true)).toBe(true);
+    expect(heroSkippedForSearch('?camera=CAM-7829', true)).toBe(true);
   });
 });

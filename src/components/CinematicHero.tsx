@@ -44,6 +44,49 @@ export function heroDismissedAfter(dismissed: boolean, p: number): boolean {
   return dismissed || p >= EXIT_END;
 }
 
+// ── Kill switch (Jameson, 2026-10-20) ──
+// The scroll-scrubbed hero is parked for now: visitors land directly on
+// the globe. Nothing is deleted — flip this constant to true (or set
+// NEXT_PUBLIC_CINEMATIC_HERO=on and rebuild) and the hero returns
+// exactly as it was, one-way-door dismissal and all. While it is off,
+// the component never mounts, so the poster and video are never
+// downloaded either.
+const heroEnvOverride = process.env.NEXT_PUBLIC_CINEMATIC_HERO;
+export const CINEMATIC_HERO_ENABLED: boolean = heroEnvOverride
+  ? heroEnvOverride === 'on'
+  : false;
+
+const AD_MEDIUMS = ['cpc', 'ppc', 'paid', 'paid-social', 'paidsocial', 'ad', 'ads', 'display', 'social-paid'];
+
+/**
+ * Should this visit skip the hero and land straight on the globe?
+ *
+ * True whenever the kill switch is off. With the hero enabled, the
+ * long-standing skips still apply, keyed ONLY off URL params: paid-ad
+ * mediums and the explicit skip flags (a referrer can't distinguish
+ * paid from organic Instagram — link-in-bio and shares carry the same
+ * one — so organic visitors keep the hero), and camera deep links,
+ * whose viewer must not sit buried under the stage.
+ */
+export function heroSkippedForSearch(
+  search: string,
+  heroEnabled: boolean = CINEMATIC_HERO_ENABLED,
+): boolean {
+  if (!heroEnabled) return true;
+  try {
+    const q = new URLSearchParams(search);
+    const medium = (q.get('utm_medium') || '').toLowerCase().trim();
+    return (
+      AD_MEDIUMS.includes(medium) ||
+      q.get('skip_hero') === '1' ||
+      q.get('ad') === '1' ||
+      Boolean(q.get('camera'))
+    );
+  } catch {
+    return false;
+  }
+}
+
 export default function CinematicHero() {
   // The poster is the hero's first paint (and its largest early content):
   // ask for it at preload priority instead of letting it queue behind the

@@ -16,7 +16,7 @@ import type { SkyLocateTarget } from '@/lib/sky-today';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
-import CinematicHero from '@/components/CinematicHero';
+import CinematicHero, { heroSkippedForSearch } from '@/components/CinematicHero';
 import HomeSeoShell from '@/components/HomeSeoShell';
 import JsonLd from '@/components/JsonLd';
 import { HOME_FAQS } from '@/lib/home-faqs';
@@ -188,28 +188,17 @@ const HUD_EASE = [0.22, 1, 0.36, 1] as const;
 const hudIn = (delay: number) => ({ duration: 0.7, ease: HUD_EASE, delay });
 
 export default function Dashboard() {
-  // Ad traffic skips the cinematic hero and lands straight on the globe.
-  // Keyed ONLY off ad URL params (utm_medium=cpc/paid/etc. or skip_hero=1) —
-  // referrer alone can't distinguish paid vs organic Instagram, so organic
-  // visitors (link in bio, shares) still get the full hero experience.
-  // A camera deep link (?camera=<id>, lib/camera-share.ts) skips it too:
-  // the link names one specific camera, and the viewer that opens for it
-  // must not sit buried under the hero. A bare homepage share carries no
-  // camera param, so the hero rule above is untouched by this.
-  const [skipHero] = useState(() => {
-    try {
-      const q = new URLSearchParams(window.location.search);
-      const medium = (q.get("utm_medium") || "").toLowerCase().trim();
-      return (
-        ["cpc", "ppc", "paid", "paid-social", "paidsocial", "ad", "ads", "display", "social-paid"].includes(medium) ||
-        q.get("skip_hero") === "1" ||
-        q.get("ad") === "1" ||
-        Boolean(q.get("camera"))
-      );
-    } catch {
-      return false;
-    }
-  });
+  // Landing on the globe without the cinematic hero. Two sources of
+  // truth, both in the hero's own module (lib: components/CinematicHero):
+  // the kill switch (CINEMATIC_HERO_ENABLED — parked OFF since
+  // 2026-10-20, so the hero never mounts and its poster/video are never
+  // downloaded) and, with the hero enabled, the URL-param skips for ad
+  // traffic and camera deep links. Either way this drives the exact
+  // same gate the ad-skip always did, so globe_reached fires
+  // immediately and onboarding is unaffected.
+  const [skipHero] = useState(() =>
+    heroSkippedForSearch(typeof window !== 'undefined' ? window.location.search : ''),
+  );
   const dataRef = useRef<any>({});
   const [dataVersion, setDataVersion] = useState(0);
   const data = dataRef.current;
