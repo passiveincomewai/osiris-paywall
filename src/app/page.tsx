@@ -10,6 +10,7 @@ import { loadCameraCatalog, mergeCameraCatalog } from '@/lib/camera-catalog';
 import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
 import { findNearestCameras } from '@/lib/nearby-cameras';
+import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
@@ -36,6 +37,7 @@ import type { WatchedFlight, FlightTelemetry, AircraftDetail, Airport } from '@/
 import type { NavProgress } from '@/lib/navigation';
 import type { LiveDetection } from '@/lib/malware-intel';
 import ScaleBar from '@/components/ScaleBar';
+import { TrialPickerDialog } from '@/components/TrialPicker';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { applySettings, loadSavedSettings } from '@/lib/style-tokens';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
@@ -240,6 +242,9 @@ export default function Dashboard() {
 
   const [activeCamera, setActiveCamera] = useState<any>(null);
   const [showCameraSignup, setShowCameraSignup] = useState(false);
+  /** Pro locks that are a lone button (OI dock/tab) open the trial picker
+   *  dialog instead of bouncing to /pricing. */
+  const [showTrialPicker, setShowTrialPicker] = useState(false);
   const [spaceWeather, setSpaceWeather] = useState<any>(null);
   const [showLayers, setShowLayers] = useState(true);
   const [showAlerts, setShowAlerts] = useState(false);
@@ -1225,7 +1230,11 @@ export default function Dashboard() {
       // fetched once and never re-polled, so by the time an orbit is requested
       // these markers can be a long way out of date — the orbit route needs the
       // marker's epoch to draw a track that still passes through it.
-      fetchEndpoint('/api/satellites', d => ({ ...d, satellites_at: d.timestamp }));
+      // The route sends dictionary-encoded v2 rows (see
+      // src/lib/satellite-payload.ts); decode back to the row objects the
+      // map consumes. The decoder also accepts v1 rows, so a CDN-cached
+      // pre-diet body cannot break the layer during a deploy.
+      fetchEndpoint('/api/satellites', d => ({ ...d, satellites: decodeSatelliteRows(d), satellites_at: d.timestamp }));
       layerFetchedRef.current.add('satellites');
     }
     // Fires
@@ -2020,7 +2029,7 @@ export default function Dashboard() {
         {/* A named group: the OI panel opens inside this wrapper, and an unnamed group would light every hover style in the panel at once. */}
         <div ref={oiAnchor} className="relative group/oi">
           {/* OI, the strip's main tool: bigger than the rest, in the middle of it, in its own colours. */}
-          <button onClick={() => { if (!isPremiumUser) { window.location.href = '/pricing'; return; } setShowOi(!showOi); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }}
+          <button onClick={() => { if (!isPremiumUser) { setShowTrialPicker(true); return; } setShowOi(!showOi); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }}
             className={`relative w-11 h-11 rounded-full flex flex-col items-center justify-center gap-[3px] border transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showOi ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/70 shadow-[0_0_18px_rgba(var(--gold-rgb),0.35)]' : 'bg-[var(--gold-primary)]/[0.07] border-[var(--gold-primary)]/35 hover:bg-[var(--gold-primary)]/15 hover:border-[var(--gold-primary)]/60 hover:shadow-[0_0_14px_rgba(var(--gold-rgb),0.25)]'}`}
             title={isPremiumUser ? "OI — talk to it and it works the map for you, or run a forecast (O)" : "OI — Weekly Pass required"}
             aria-label="OI" aria-expanded={showOi}>
@@ -2272,8 +2281,9 @@ export default function Dashboard() {
                         });
                         return;
                       }
-                      // OI (OpenAI key) is a Weekly Pass feature.
-                      if (tab.id === 'oi' && !isPremiumUser) { window.location.href = '/pricing'; return; }
+                      // OI is a Weekly Pass feature: offer the trial in
+                      // place instead of bouncing to /pricing.
+                      if (tab.id === 'oi' && !isPremiumUser) { setShowTrialPicker(true); return; }
                       setMobilePanel(mobilePanel === tab.id ? null : tab.id);
                     }}
                     aria-pressed={active}
@@ -2448,6 +2458,11 @@ export default function Dashboard() {
         />
       )}
       {showCameraSignup && <CameraSignupNudge onClose={() => setShowCameraSignup(false)} />}
+      <TrialPickerDialog
+        open={showTrialPicker}
+        onClose={() => setShowTrialPicker(false)}
+        feature="OI — the AI assistant"
+      />
 
       {/* ── Entity Graph Panel ── */}
       {/* Guidance belongs over the map, where the clicking happens. */}
