@@ -20,15 +20,15 @@ const mocks = vi.hoisted(() => {
     pendingSeats: null,
     ...arg.data,
   }));
-  const txMemberUpdate = vi.fn(async () => ({}));
+  const txMemberUpdate = vi.fn(async (..._args: any[]) => ({}));
   const txMemberFindUnique = vi.fn(async () => ({ id: "m-old", role: "owner" }) as unknown);
   const txMemberCreate = vi.fn(async () => ({}));
   return {
-    orgFindUnique: vi.fn(async () => null as unknown),
+    orgFindUnique: vi.fn(async (..._args: any[]) => null as unknown),
     orgUpdate: vi.fn(async () => ({})),
     memberFindMany: vi.fn(async () => [] as unknown[]),
     memberFindUnique: vi.fn(async () => null as unknown),
-    subFindUnique: vi.fn(async () => null as unknown),
+    subFindUnique: vi.fn(async (..._args: any[]) => null as unknown),
     userFindUnique: vi.fn(async () => null as unknown),
     pricingFindUnique: vi.fn(async () => null as unknown),
     activityCreate: vi.fn(async () => ({})),
