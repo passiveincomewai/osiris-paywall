@@ -22,7 +22,7 @@ describe("TRIAL_PLAN_OPTIONS", () => {
   });
 
   it("never offers enterprise (it has no trial)", () => {
-    expect(TRIAL_PLAN_OPTIONS.some((o) => o.plan === "enterprise")).toBe(false);
+    expect(TRIAL_PLAN_OPTIONS.some((o) => (o.plan as string) === "enterprise")).toBe(false);
   });
 
   it("carries the trial lengths from the shared trial config", () => {
