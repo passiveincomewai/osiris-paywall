@@ -25,10 +25,22 @@
  * full Pro access (see resolveSubscriptionStatus in src/auth.ts). Follow
  * itself stays free — only this path display is premium.
  *
+ * Team Access (Workstream H): subscriptionStatus stays the member's
+ * OWN billing status, so a team member whose access comes from their
+ * organization's owner reads not-active there; the session's planTier
+ * is the EFFECTIVE tier (own or org-granted, resolved in the jwt in
+ * src/auth.ts), so the gate also passes when that tier satisfies "pro"
+ * via lib/plan-tier. Legacy sessions without planTier fall back to the
+ * status check alone (planTierOf's own fallback), exactly as before.
+ * Fail-soft: any error reading the tier falls back to the status-only
+ * result — it never throws the gate open or closed.
+ *
  * This module is the pure core: route parsing, trail accumulation, the
  * progress projection and the GeoJSON assembly are unit-testable without
  * a map; OsirisMap owns the fetch, the layers and the HUD wiring.
  */
+
+import { planTierOf, tierSatisfies } from '../plan-tier';
 
 /** The planned-route line's permanent label. */
 export const FLIGHT_PATH_ROUTE_LABEL = 'ROUTE — PLANNED';
@@ -48,15 +60,26 @@ export type FlightPathAccess = 'unknown' | 'pro' | 'free' | 'signed-out';
 /**
  * The gate, mirroring timelapseAccess() and the globe's own premium
  * check: the session JWT carries subscriptionStatus, and "active" there
- * already counts a live trial as full Pro access.
+ * already counts a live trial as full Pro access. Team-granted members
+ * (own status not active) pass on the session's effective planTier.
  */
 export function flightPathAccess(session: unknown): FlightPathAccess {
   if (!session || typeof session !== 'object') return 'unknown';
   const user = (session as { user?: unknown }).user;
   if (!user || typeof user !== 'object') return 'signed-out';
-  return (user as { subscriptionStatus?: unknown }).subscriptionStatus === 'active'
-    ? 'pro'
-    : 'free';
+  // Own billing status first (unchanged for own subscribers), then the
+  // effective tier the jwt now carries for team-granted members.
+  if ((user as { subscriptionStatus?: unknown }).subscriptionStatus === 'active') return 'pro';
+  try {
+    return tierSatisfies(
+      planTierOf(session as { user?: { planTier?: unknown; subscriptionStatus?: unknown } }),
+      'pro',
+    )
+      ? 'pro'
+      : 'free';
+  } catch {
+    return 'free';
+  }
 }
 
 // ── Route (planned) ───────────────────────────────────────────────────
