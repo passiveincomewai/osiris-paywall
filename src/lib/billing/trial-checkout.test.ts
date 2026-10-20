@@ -11,6 +11,7 @@ import {
   checkoutPagePath,
   checkoutPlanSummary,
   checkoutRequestBody,
+  startHostedCheckout,
   startPlanCheckout,
   trialEntryDecision,
 } from "./trial-checkout";
@@ -155,5 +156,58 @@ describe("startPlanCheckout", () => {
   it("checkoutPagePath builds the same destination", () => {
     expect(checkoutPagePath("annual")).toBe("/checkout?plan=annual");
     expect(checkoutPagePath("enterprise")).toBe("/checkout?plan=enterprise");
+  });
+});
+
+describe("startHostedCheckout", () => {
+  // The deliberate hosted option (the pricing sheet's / /checkout page's
+  // "Continue on Stripe instead" link): POSTs WITHOUT ui — the route's
+  // hosted answer — and navigates to Stripe's page. Distinct from
+  // lib/billing/embedded-checkout's automatic fallback only in that the
+  // buyer chose it.
+  const HOSTED_URL = "https://checkout.stripe.com/c/pay/cs_test_123";
+
+  function fakeFetch(step: { ok: boolean; body: any }) {
+    const calls: { url: string; body: any }[] = [];
+    const fetchImpl = vi.fn(async (input: string, init: RequestInit) => {
+      calls.push({ url: input, body: JSON.parse(String(init.body)) });
+      return { ok: step.ok, json: async () => step.body };
+    });
+    return { fetchImpl, calls };
+  }
+
+  it("POSTs the plan without ui and navigates to the hosted URL", async () => {
+    const { fetchImpl, calls } = fakeFetch({ ok: true, body: { url: HOSTED_URL } });
+    const navigate = vi.fn();
+    const url = await startHostedCheckout("annual", { fetchImpl, navigate });
+    expect(url).toBe(HOSTED_URL);
+    expect(calls).toEqual([{ url: "/api/checkout", body: { plan: "annual" } }]);
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith(HOSTED_URL);
+  });
+
+  it("routes every plan — enterprise included — through the hosted flow", async () => {
+    for (const plan of ["weekly", "monthly", "annual", "enterprise"] as const) {
+      const { fetchImpl, calls } = fakeFetch({ ok: true, body: { url: HOSTED_URL } });
+      await startHostedCheckout(plan, { fetchImpl, navigate: vi.fn() });
+      expect(calls[0].body).toEqual({ plan });
+    }
+  });
+
+  it("throws the server's error message when the POST fails", async () => {
+    const { fetchImpl } = fakeFetch({
+      ok: false,
+      body: { error: "STRIPE_WEEKLY_PRICE_ID is not set" },
+    });
+    await expect(
+      startHostedCheckout("weekly", { fetchImpl, navigate: vi.fn() }),
+    ).rejects.toThrow("STRIPE_WEEKLY_PRICE_ID is not set");
+  });
+
+  it("throws the generic failure when the answer carries no URL", async () => {
+    const { fetchImpl } = fakeFetch({ ok: true, body: {} });
+    await expect(
+      startHostedCheckout("monthly", { fetchImpl, navigate: vi.fn() }),
+    ).rejects.toThrow("Checkout failed");
   });
 });

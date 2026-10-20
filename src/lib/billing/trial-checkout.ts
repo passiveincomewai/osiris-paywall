@@ -17,8 +17,12 @@
  * /checkout page, which mounts Stripe's embedded form when a publishable
  * key is configured and otherwise falls back to the hosted redirect this
  * module originally performed (see lib/billing/embedded-checkout for the
- * flow and its fallbacks). Completion still arrives via the session's
- * success/return URL, so /welcome and the webhook see no difference.
+ * flow and its fallbacks). /pricing's plan CTAs instead open that same
+ * embedded form in place (components/CheckoutSheet) — and every surface
+ * also offers `startHostedCheckout`, the deliberate hosted option, for
+ * buyers who prefer Stripe's own page. Completion still arrives via the
+ * session's success/return URL, so /welcome and the webhook see no
+ * difference.
  *
  * Trial lengths are NOT restated here: `trialDaysForPlan` (./trials) is
  * the single source the checkout route turns into `trial_period_days`.
@@ -195,4 +199,49 @@ export function startPlanCheckout(
   const path = checkoutPagePath(plan);
   navigate(path);
   return path;
+}
+
+export interface HostedCheckoutDeps {
+  /** Injectable for tests; defaults to the global fetch. */
+  fetchImpl?: (
+    input: string,
+    init: RequestInit,
+  ) => Promise<{ ok: boolean; json: () => Promise<any> }>;
+  /** Injectable for tests; defaults to a full-page navigation. */
+  navigate?: (url: string) => void;
+}
+
+/**
+ * The hosted-checkout option (Jameson's standing ask: always keep a way
+ * to use Stripe's main checkout page too). POSTs /api/checkout WITHOUT
+ * ui:"embedded" — the route then answers with the hosted {url}, the same
+ * answer lib/billing/embedded-checkout's fallback navigates to — and
+ * navigates there. This is the explicit, user-chosen version of that
+ * fallback: it leaves worldeye.app for Stripe's page and returns via the
+ * session's success/cancel URLs, so /welcome and the webhook see no
+ * difference. Resolves with the URL navigated to; throws the server's
+ * error message when no URL comes back.
+ */
+export async function startHostedCheckout(
+  plan: BillingPlan,
+  deps: HostedCheckoutDeps = {},
+): Promise<string> {
+  const fetchImpl =
+    deps.fetchImpl ?? (fetch as unknown as NonNullable<HostedCheckoutDeps["fetchImpl"]>);
+  const navigate =
+    deps.navigate ??
+    ((url: string) => {
+      window.location.href = url;
+    });
+  const res = await fetchImpl("/api/checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(checkoutRequestBody(plan)),
+  });
+  const data = await res.json().catch(() => null);
+  if (res.ok && typeof data?.url === "string") {
+    navigate(data.url);
+    return data.url;
+  }
+  throw new Error(data?.error || "Checkout failed");
 }
