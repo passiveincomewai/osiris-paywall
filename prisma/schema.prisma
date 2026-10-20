@@ -29,6 +29,8 @@ model User {
   cameraBonusAccount CameraBonusAccount?
   savedCameras  SavedCamera[]
   clipMetas     ClipMeta[]
+  cameraCollections CameraCollection[]
+  enterpriseApiKeys EnterpriseApiKey[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -768,4 +770,65 @@ model ClipMeta {
   createdAt     DateTime @default(now())
 
   @@index([userId, createdAt])
+}
+
+// ── Enterprise camera feed ─────────────────────────────────────────────
+// Enterprise subscribers build camera collections and publish them three
+// ways off one payload: an embeddable player, a private token feed URL,
+// and (optionally) API keys. Secrets are stored ONLY as SHA-256 hashes —
+// a feed token is shown once at generation (regenerating is revocation),
+// an API key once at creation. Payloads are rights-filtered at read time
+// (src/lib/enterprise/rights.ts): only redistribution-cleared sources ship.
+
+model CameraCollection {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name          String
+  // SHA-256 hex of the current feed token; null = feed link not generated
+  // (or revoked). The plaintext token exists only in the customer's hands.
+  feedTokenHash String?  @unique
+  feedHits      Int      @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  items         CameraCollectionItem[]
+
+  @@index([userId])
+}
+
+model CameraCollectionItem {
+  id           String   @id @default(cuid())
+  collectionId String
+  collection   CameraCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  // Catalogue camera id (src/app/api/cctv records). Resolution and
+  // rights filtering happen at read time against the live catalogue.
+  cameraId     String
+  createdAt    DateTime @default(now())
+
+  @@unique([collectionId, cameraId])
+  @@index([collectionId])
+}
+
+model EnterpriseApiKey {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name       String
+  // Display prefix ("wek_" + first 8 key chars) — identifies the key in
+  // lists without revealing anything usable.
+  keyPrefix  String
+  // SHA-256 hex of the full key; the plaintext is shown once at creation.
+  keyHash    String    @unique
+  hits       Int       @default(0)
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
 }
