@@ -90,6 +90,15 @@ describe("getEffectiveEntitlement", () => {
     const e = await getEffectiveEntitlement("u1");
     expect(e.effectiveTier).toBe("vip");
   });
+
+  it("fail-soft: a failing membership lookup falls back to the own tier", async () => {
+    mockDb.subscription.findUnique.mockResolvedValue(subRow("price_monthly"));
+    mockDb.organizationMember.findMany.mockRejectedValue(new Error("db down"));
+    const e = await getEffectiveEntitlement("u1");
+    expect(e.ownTier).toBe("pro");
+    expect(e.effectiveTier).toBe("pro");
+    expect(e.sources).toEqual([]);
+  });
 });
 
 describe("recordingCapForTier / maxTier", () => {
