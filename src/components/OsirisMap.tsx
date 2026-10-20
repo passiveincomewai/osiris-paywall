@@ -1953,7 +1953,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           ${p.icao24 ? `<button onclick="window.__weFlightFollowToggle && window.__weFlightFollowToggle('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,180,0,0.10);border:1px solid rgba(255,180,0,0.40);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">${followingThis ? '■ STOP FOLLOWING' : '✈ FOLLOW AIRCRAFT — CHASE CAMERA'}</button>` : ''}
 ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             ? `<div style="margin-top:6px;padding:6px 12px;border:1px dashed rgba(255,179,0,0.45);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;text-align:center;">✦ FLIGHT PATH — PRO · ROUTE — PLANNED + FLOWN — LIVE TRACK, DRAWN WHILE FOLLOWING</div>`
-            : `<button onclick="window.location.href='/pricing'" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">🔒 FLIGHT PATH — PRO · SEE THE WHOLE FLIGHT PATH</button>`) : ''}
+            : `<button onclick="window.location.href='/pricing#pro-card'" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">🔒 FLIGHT PATH — PRO · SEE THE WHOLE FLIGHT PATH</button>`) : ''}
                     <button onclick="window.__weFlightCams && window.__weFlightCams(${coords[0]}, ${coords[1]})" style="width:100%;margin-top:6px;padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);color:#B0BEC5;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">📷 CAMERAS NEAR THIS AIRCRAFT</button>
           <div id="${routeLoadingId}" style="margin-top:8px;padding:6px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
             <span style="color:#5C5A54;font-size:9px;letter-spacing:0.1em;">RESOLVING ROUTE…</span>
@@ -5527,7 +5527,6 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             onModeChange={setFlightFollowMode}
             onExit={() => endFlightFollow({ restore: true })}
             path={flightPathUi}
-            onUpgradePath={() => { window.location.href = '/pricing'; }}
           />
         </div>
       )}

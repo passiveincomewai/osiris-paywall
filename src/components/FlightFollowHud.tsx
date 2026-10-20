@@ -14,6 +14,7 @@
 
 import { useEffect, useState } from 'react';
 import { Lock, Plane, X } from 'lucide-react';
+import TrialPicker from './TrialPicker';
 import {
   FOLLOW_HONESTY_TAG,
   FOLLOW_MODES,
@@ -40,15 +41,16 @@ interface FlightFollowHudProps {
   /** Premium path snapshot (planned route + session trail), updated by
    *  the map at poll cadence. Null hides the section entirely. */
   path?: FlightPathHudData | null;
-  /** Upgrade affordance for the locked path section. */
-  onUpgradePath?: () => void;
 }
 
 const modeBtnCls =
   'px-2 py-1 rounded border text-[9px] font-mono uppercase tracking-wider transition-colors';
 
-export default function FlightFollowHud({ hudRef, target, mode, onModeChange, onExit, path, onUpgradePath }: FlightFollowHudProps) {
+export default function FlightFollowHud({ hudRef, target, mode, onModeChange, onExit, path }: FlightFollowHudProps) {
   const [snap, setSnap] = useState<FollowHudData | null>(null);
+  /** The locked path section expands the trial picker in place rather
+   *  than navigating away from the follow to /pricing. */
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
     const read = () => setSnap(hudRef.current);
@@ -147,16 +149,22 @@ export default function FlightFollowHud({ hudRef, target, mode, onModeChange, on
             </span>
             <button
               type="button"
-              onClick={onUpgradePath}
+              onClick={() => setPickerOpen((v) => !v)}
+              aria-expanded={pickerOpen}
               className="ml-auto px-2 py-0.5 rounded border border-amber-300/50 text-[8.5px] font-mono uppercase tracking-wider text-amber-100 hover:bg-amber-300/15 transition-colors"
             >
-              Upgrade
+              Start free trial
             </button>
           </div>
           <p className="mt-1 text-[8.5px] font-mono leading-relaxed text-white/45">
             See the whole flight path for the aircraft you follow — the scheduled
             route and the track it has actually flown.
           </p>
+          {pickerOpen && (
+            <div className="mt-2 border-t border-amber-300/20 pt-2">
+              <TrialPicker variant="compact" onClose={() => setPickerOpen(false)} />
+            </div>
+          )}
         </div>
       )}
 
