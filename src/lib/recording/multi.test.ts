@@ -7,6 +7,7 @@ import {
   camLocationLabel,
   classifyMultiCam,
   initialTileSession,
+  multiGateView,
   removeFromSelection,
   staggerDelayMs,
   summarizeBoard,
@@ -126,7 +127,10 @@ describe("tile session state machine", () => {
       b: tileReducer(initialTileSession, { type: "start", at: 200 }),
     };
     const bBefore = board.b;
-    const next = { ...board, a: tileReducer(board.a, { type: "fail", reason: "codec refused" }) };
+    const next: Record<string, TileSession> = {
+      ...board,
+      a: tileReducer(board.a, { type: "fail", reason: "codec refused" }),
+    };
     expect(next.a.phase).toBe("error");
     expect(next.b).toBe(bBefore);
     expect(next.b).toMatchObject({ phase: "recording", startedAt: 200 });
@@ -139,6 +143,15 @@ describe("tile session state machine", () => {
     expect(summarizeBoard({ a: initialTileSession })).toEqual({
       recording: 0, saving: 0, errors: 0, earliestStart: null,
     });
+  });
+});
+
+describe("page gate", () => {
+  it("walks loading → signin / locked / ready on the studio's own signal", () => {
+    expect(multiGateView({ statusLoaded: false, signedIn: false, pro: false })).toBe("loading");
+    expect(multiGateView({ statusLoaded: true, signedIn: false, pro: false })).toBe("signin");
+    expect(multiGateView({ statusLoaded: true, signedIn: true, pro: false })).toBe("locked");
+    expect(multiGateView({ statusLoaded: true, signedIn: true, pro: true })).toBe("ready");
   });
 });
 

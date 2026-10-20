@@ -218,6 +218,23 @@ export function summarizeBoard(board: Readonly<Record<string, TileSession>>): Bo
 }
 
 /* ------------------------------------------------------------------ */
+/* The page gate — same signal as the rest of the studio:              */
+/* /api/recording/status answers signed-in + Pro, server-enforced.     */
+/* ------------------------------------------------------------------ */
+
+export type MultiGateView = "loading" | "signin" | "locked" | "ready";
+
+export function multiGateView(state: {
+  statusLoaded: boolean;
+  signedIn: boolean;
+  pro: boolean;
+}): MultiGateView {
+  if (!state.statusLoaded) return "loading";
+  if (!state.signedIn) return "signin";
+  return state.pro ? "ready" : "locked";
+}
+
+/* ------------------------------------------------------------------ */
 /* Finished-clip metadata — exactly the body POST /api/recording/clips */
 /* already accepts from the Live wall (no new fields needed).          */
 /* ------------------------------------------------------------------ */
