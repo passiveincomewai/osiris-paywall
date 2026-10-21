@@ -1,469 +1,319 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Globe2,
-  Globe,
-  Satellite,
-  Camera,
-  Plane,
-  History,
-  Telescope,
-} from "lucide-react";
-import {
-  IntentShell,
-  IntentBreadcrumbs,
-  ReviewedStamp,
-  HeroCtas,
-  MidCta,
-  webPageLd,
-  itemListLd,
-} from "@/components/SeoIntentLayout";
-import RelatedLinks from "@/components/RelatedLinks";
+import { Camera, Globe2, History, Plane, Satellite, Telescope } from "lucide-react";
+import AlternativePage, {
+  altMetadata,
+  type AltData,
+} from "@/components/AlternativePage";
 
-export const metadata: Metadata = {
-  title: "Google Earth Alternatives: Live Views",
+const data: AltData = {
+  name: "Google Earth",
+  path: "/alternatives/google-earth",
+  title: "Google Earth Alternative — The Same Planet, But Live",
   description:
-    "Google Earth alternatives compared: WorldEye's live 3D globe, Zoom Earth, NASA Worldview and more — for when you need the planet right now.",
-  alternates: { canonical: "/alternatives/google-earth" },
-  openGraph: {
-    title: "Google Earth Alternatives: Live Views | WorldEye",
-    description:
-      "Google Earth shows the past beautifully. These alternatives show the present: WorldEye's live globe, Zoom Earth, NASA Worldview and more.",
-    url: "/alternatives/google-earth",
-    type: "website",
+    "Google Earth shows you the world as it was — archived imagery, 3D cities, Timelapse. WorldEye is the alternative for the world as it is: a live globe with 74,229 cameras, flights, satellites and weather, free in your browser.",
+  ogTitle: "Google Earth Alternative — When You Want the Planet Live | WorldEye",
+  ogDescription:
+    "Google Earth is the definitive archive of Earth. WorldEye is its live twin: real-time cameras, flights, satellites, weather and quakes on a 3D globe. Compare them honestly.",
+  kicker: "GOOGLE EARTH ALTERNATIVES",
+  heroIcon: Globe2,
+  heroTitle: (
+    <>
+      Google Earth shows the world as it was.{" "}
+      <span className="text-[#0096FF]">WorldEye shows it now.</span>
+    </>
+  ),
+  heroLede: (
+    <>
+      Google Earth is one of the wonders of the internet — a photorealistic
+      planet you can spin, dive into and rewind through forty years of
+      imagery. What it has never been is live: its Earth is a archive of
+      photographs taken on other days. WorldEye is the alternative for the
+      present tense — a 3D globe carrying 74,229 live cameras, real-time
+      flights and satellites, moving weather, earthquakes and fires. This
+      page compares a time machine with a window.
+    </>
+  ),
+  updatedNote:
+    "Facts checked October 20, 2026 against Google Earth's public product pages and coverage of its Timelapse feature (24 million satellite images, 1984–2020). Google Earth and Earth Pro are free; no pricing is in dispute here.",
+  aboutIcon: Telescope,
+  aboutHeading: "What Google Earth is",
+  about: [
+    <>
+      Google Earth is Google&apos;s virtual globe, available on the web at
+      earth.google.com, as iOS/Android apps, and as the free Earth Pro
+      desktop application. It stitches satellite and aerial photography into
+      a seamless, photorealistic 3D planet — terrain, and in major cities,
+      full 3D buildings — layered with Street View at ground level. Its
+      Voyager programme offers guided tours and stories, its measurement and
+      KML tools serve professionals, and its search knows every address and
+      landmark on Earth.
+    </>,
+    <>
+      Its crown jewel is{" "}
+      <span className="text-white/85 font-semibold">Timelapse</span>: an
+      animation of the planet changing, built from 24 million satellite
+      images spanning 1984 to 2020 — watch cities sprawl, forests fall,
+      glaciers retreat and the Aral Sea vanish. Nothing else on the consumer
+      web does planetary memory like this. And the whole product, Earth Pro
+      included, is free.
+    </>,
+    <>
+      Who is it for? Everyone, honestly — explorers, students, travellers
+      scouting a trip, teachers, researchers, the nostalgic looking for their
+      childhood street. It is the default answer to &ldquo;show me the
+      Earth&rdquo;, and it has earned that default a hundred times over. The
+      only question it cannot answer is the one this page is about:{" "}
+      <em>what is happening there right now?</em>
+    </>,
+  ],
+  strengths: [
+    {
+      title: "Photorealistic 3D like nothing else",
+      body: "Textured 3D cities and terrain from Google's imagery pipeline — diving into Manhattan or the Alps is still unmatched as pure spectacle.",
+    },
+    {
+      title: "Timelapse: forty years of change",
+      body: "24 million images animated into planetary memory — the single best tool for seeing how a place has transformed.",
+    },
+    {
+      title: "Street View, integrated",
+      body: "Drop from orbit to street level into the largest ground-level photo library on Earth, seamlessly.",
+    },
+    {
+      title: "Completely free, everywhere",
+      body: "Web, mobile and the full Earth Pro desktop — no tiers, no trials, no catch.",
+    },
+  ],
+  gapsIcon: History,
+  gapsHeading: "The one thing Google Earth can't do: now",
+  gaps: [
+    <>
+      Every image in Google Earth is a photograph from the past. The mosaic
+      is stitched from aerial and satellite captures taken on different days
+      — months or years apart from place to place — and Google does not
+      claim otherwise. The car in &ldquo;your&rdquo; driveway is a stranger&apos;s
+      from a Tuesday in 2022. There is no live mode, no camera layer, no way
+      to see the weather over a city with your own eyes or watch its airport
+      work. When the question is present-tense, the archive is silent.
+    </>,
+    <>
+      The same is true above the ground. Google Earth has no live flights,
+      no tracked satellites moving overhead, no ships — the sky in Google
+      Earth is empty and frozen. Its weather is a static backdrop rather than
+      a system; its planet does not burn, shake or flood in real time. As a
+      result, the world&apos;s most beautiful globe is a museum: perfect,
+      motionless, and always slightly out of date.
+    </>,
+    <>
+      People searching for a Google Earth alternative usually aren&apos;t
+      disappointed with it — they&apos;ve hit that one wall. They want the
+      spin-and-dive joy aimed at the living world: live cameras in the
+      streets below, flights arcing overhead, storms actually moving. That
+      specific product is WorldEye&apos;s entire reason to exist.
+    </>,
+  ],
+  worldEyeHeading: "WorldEye: the present-tense globe",
+  worldEye: [
+    <>
+      WorldEye is a 3D globe built backwards from Google Earth&apos;s gap:
+      everything on it is happening now.{" "}
+      <span className="text-white/85 font-semibold">
+        74,229 live public cameras
+      </span>{" "}
+      — streets, beaches, volcanoes, ski slopes, harbours — searchable by{" "}
+      <Link href="/cameras" className="text-[#0096FF] hover:underline">
+        country and city
+      </Link>
+      ; live flights and tracked satellites in motion; weather, radar,
+      hurricanes, earthquakes and wildfires updating as sensors report them.
+      It is free with no signup, in the browser, phone or desktop.
+    </>,
+    <>
+      The honest trades, both directions: WorldEye&apos;s globe is not
+      photorealistic — no textured 3D cities, no Street View, no forty-year
+      Timelapse of its own (its timelapse feature builds living sequences
+      from camera feeds, a different and smaller thing). If your joy is
+      exploring the archive or swooping through a 3D Venice, Google Earth
+      remains the masterpiece. If your joy is watching the actual day unfold
+      on the actual planet — the fog on the Golden Gate right now, the
+      eruption starting, the storm making landfall — that&apos;s the window
+      WorldEye opens. Pro adds satellite map view and flight-path following;
+      VIP Pro adds intel layers, recording and camera alerts.
+    </>,
+  ],
+  worldEyePoints: [
+    {
+      title: "Live cameras instead of archived photos",
+      body: "Zoom to a city and open its streets as they are this minute — traffic moving, weather visible, life happening.",
+    },
+    {
+      title: "A sky that's actually populated",
+      body: "Thousands of live flights and tracked satellites cross the globe continuously — the present tense, rendered.",
+    },
+    {
+      title: "Weather you can watch",
+      body: "Radar, satellite view (Pro), hurricanes, quakes and fires update live — and cameras underneath confirm what the layers claim.",
+    },
+    {
+      title: "Alerts and recording",
+      body: "Watch a place over time: multi-camera recording and VIP Pro alerts that notify you, with a photo, when a feed changes.",
+    },
+  ],
+  chips: [
+    { icon: Camera, label: "74,229 live cameras", href: "/cameras" },
+    { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
+    { icon: Satellite, label: "Satellite tracker", href: "/satellite-tracker" },
+  ],
+  tableHeading: "Google Earth vs WorldEye, side by side",
+  tableIntro:
+    "A time machine vs a window. Neither is a lesser product — they are opposite answers to 'show me the Earth'.",
+  rows: [
+    { feature: "Imagery", competitor: "Archived satellite/aerial photography, stitched from many dates", worldEye: "Live camera feeds and live data layers, updated continuously" },
+    { feature: "3D", competitor: "Photorealistic 3D terrain and buildings in major cities", worldEye: "Interactive 3D globe; satellite view on Pro — not photoreal 3D cities" },
+    { feature: "Live cameras", competitor: "None — no live video anywhere in the product", worldEye: "74,229 live public cameras" },
+    { feature: "Live flights & satellites", competitor: "None — the sky is static", worldEye: "Yes — live flights and tracked satellites, free" },
+    { feature: "Weather, quakes, fires", competitor: "Static backdrop; no live hazard layers", worldEye: "Live weather, radar, hurricanes, USGS quakes, FIRMS fires" },
+    { feature: "History", competitor: "Timelapse 1984–today plus historical imagery — best in class", worldEye: "Present-focused; camera timelapse on VIP Pro" },
+    { feature: "Street-level", competitor: "Street View — the world's largest street photo library", worldEye: "Street-level imagery panel via public photo sources; live cameras are the real street view" },
+    { feature: "Price", competitor: "Free, including Earth Pro", worldEye: "Free core; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
+    { feature: "Recording & alerts", competitor: "No", worldEye: "Multi-cam recording; camera alerts on VIP Pro" },
+  ],
+  pricingHeading: "Pricing: free vs free — with an optional upgrade",
+  pricing: [
+    <>
+      Google Earth costs nothing — web, apps and Earth Pro are all free, and
+      that will not change; it is one of Google&apos;s goodwill cathedrals.
+      There is nothing to compare on price, and any page implying otherwise
+      is inventing a contest.
+    </>,
+    <>
+      WorldEye&apos;s live globe is likewise{" "}
+      <span className="text-white/85 font-semibold">
+        free with no signup
+      </span>
+      . Its paid tiers buy monitoring capability Google Earth doesn&apos;t
+      sell at any price:{" "}
+      <span className="text-white/85 font-semibold">
+        Pro ($7.99/week or $13.99/month, 1-day trials)
+      </span>{" "}
+      for satellite view, flight-path follow, the OSINT toolkit and
+      20-camera recording;{" "}
+      <span className="text-white/85 font-semibold">
+        VIP Pro ($74.99/year, 3-day trial)
+      </span>{" "}
+      for intel layers, timelapse and camera alerts — first charges covered
+      by a 7-day money-back guarantee. Full detail on the{" "}
+      <Link href="/pricing" className="text-[#0096FF] hover:underline">
+        pricing page
+      </Link>{" "}
+      and the{" "}
+      <Link href="/compare/google-earth" className="text-[#0096FF] hover:underline">
+        head-to-head
+      </Link>
+      .
+    </>,
+  ],
+  stepsHeading: "From the archive to the live planet",
+  steps: [
+    {
+      title: "Open WorldEye",
+      body: "worldeye.app — the globe loads live in your browser, no install, no account.",
+    },
+    {
+      title: "Go somewhere you know from Google Earth",
+      body: "Search your city or a famous place. The difference lands immediately: the streets below are moving.",
+    },
+    {
+      title: "Open a camera",
+      body: "Pick a feed — a beach, a volcano, a downtown crossing — and watch the present tense for a while.",
+    },
+    {
+      title: "Layer the sky",
+      body: "Turn on flights, satellites, weather and fires. Keep Google Earth for memory lane; this is your daily window.",
+    },
+  ],
+  verdictHeading: "Which one should you use?",
+  verdicts: [
+    {
+      q: "Exploring places, past and present?",
+      a: "Google Earth. Photoreal 3D, Street View and Timelapse make it the greatest atlas ever given away.",
+    },
+    {
+      q: "Watching the world as it happens?",
+      a: "WorldEye. Live cameras, live sky, live weather — the planet in the present tense.",
+    },
+    {
+      q: "Teaching or storytelling?",
+      a: "Both, in sequence: Timelapse for how a place changed, WorldEye for what it's doing today.",
+    },
+  ],
+  faqHeading: "Google Earth alternative questions, answered",
+  faqs: [
+    {
+      q: "Is Google Earth live?",
+      a: "No. Google Earth's imagery is archival — satellite and aerial photographs captured on different dates (often months or years old, varying by location) and stitched into a mosaic. It has no live cameras, live flights or real-time weather. For a live globe, WorldEye is the alternative: 74,229 live cameras and real-time data layers.",
+    },
+    {
+      q: "Can I see my house live on Google Earth?",
+      a: "No — what you see is a photograph from a past capture date, not a live feed, and Google Earth offers no live view of any address. WorldEye can't show private property either, but its 74,229 public cameras show streets, landmarks and neighbourhoods in many cities as they are right now.",
+    },
+    {
+      q: "What is the best Google Earth alternative?",
+      a: "For exploring and 3D, Google Earth itself is still the benchmark, with NASA Worldview a strong pick for scientific satellite imagery. For a live globe — cameras, flights, satellites, weather in real time — WorldEye is the alternative built for exactly that.",
+    },
+    {
+      q: "Is Google Earth free?",
+      a: "Yes — completely, including the Earth Pro desktop application, which has been free since 2015. WorldEye's live globe is also free (no signup); its optional Pro tiers add satellite view, recording, alerts and intel layers.",
+    },
+    {
+      q: "Google Earth vs WorldEye — what's the difference?",
+      a: "Time. Google Earth is the planet's archive: photorealistic imagery, 3D cities, Street View and a 40-year Timelapse, all frozen at capture dates. WorldEye is the planet's present: a 3D globe of live cameras, flights, satellites, weather, quakes and fires, updated continuously.",
+    },
+    {
+      q: "Does WorldEye have 3D buildings like Google Earth?",
+      a: "No. WorldEye's globe is a data globe — its realism is liveness, not textured 3D architecture. Google Earth's photorealistic 3D cities remain unmatched, and this page won't pretend otherwise. WorldEye's Pro satellite view gives you the orbital look; the cameras give you the street.",
+    },
+    {
+      q: "What happened to Google Earth Pro?",
+      a: "Nothing bad — Google made Earth Pro free in 2015 (it previously cost $399/year) and it remains available as a desktop application with measurement, GIS and printing tools, alongside the web and mobile versions of Google Earth.",
+    },
+  ],
+  midCta: {
+    heading: "You've seen the archive. Now see today.",
+    body: "The same spinning-planet joy, aimed at the present: live cameras, flights, satellites and storms — free in your browser.",
   },
-  twitter: {
-    card: "summary",
-    title: "Google Earth Alternatives: Live Views | WorldEye",
-    description:
-      "Google Earth alternatives for live views: WorldEye's live 3D globe, Zoom Earth, NASA Worldview and more.",
-  },
-};
-
-const OPTIONS = [
-  {
-    icon: Globe,
-    name: "WorldEye",
-    tag: "Best live-planet alternative",
-    href: "/compare/google-earth",
-    body: "A free live 3D globe — no signup — where the Earth moves: live flights, satellites, ships, weather, earthquakes, wildfires and 74,229 public cameras. Google Earth shows you the planet's past; WorldEye shows you its present.",
-  },
-  {
-    icon: Satellite,
-    name: "Zoom Earth",
-    tag: "Best for near-real-time satellite views",
-    href: "/compare/zoom-earth",
-    body: "Satellite imagery updated intraday with live storm and wildfire tracking. The closest free answer to 'what does it look like right now from space' — imagery-focused, without flight or camera layers.",
-  },
-  {
-    icon: Telescope,
-    name: "NASA Worldview",
-    tag: "Best for science-grade imagery",
-    href: "/compare/nasa-worldview",
-    body: "Daily global satellite imagery across hundreds of scientific layers, straight from NASA. Authoritative and free; a research instrument first, not a casual exploration globe.",
-  },
-  {
-    icon: Camera,
-    name: "Sentinel Hub / Copernicus Browser",
-    tag: "Best free high-res Earth observation",
-    href: "/compare/sentinel-hub",
-    body: "Free access to Europe's Copernicus Sentinel imagery with custom band combinations. Superb image quality for analysis; requires more expertise than opening a globe.",
-  },
-  {
-    icon: Plane,
-    name: "Windy / Ventusky",
-    tag: "Best for live atmospheric views",
-    href: "/weather-tracker",
-    body: "Stunning animated weather globes — wind, rain, temperature, air quality. If 'live Earth' to you means the atmosphere in motion, these are unmatched at it.",
-  },
-  {
-    icon: History,
-    name: "Google Earth itself",
-    tag: "Still best for historical imagery",
-    href: "/compare/google-earth",
-    body: "Honest inclusion: for timelapse and historical imagery — watching a city grow over decades — nothing here beats Google Earth's archive. Keep it bookmarked for the past; use a live globe for the present.",
-  },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    webPageLd(
-      "Google Earth Alternatives: Live Views",
-      "Google Earth alternatives compared: WorldEye's live 3D globe, Zoom Earth, NASA Worldview and more.",
-      "/alternatives/google-earth"
-    ),
-    itemListLd(
-      OPTIONS.map((o) => ({
-        name: o.name,
-        href: o.href,
-        description: `${o.tag}. ${o.body}`,
-      }))
-    ),
+  ctaHeading: (
+    <>
+      The world, <span className="text-[#0096FF]">as it is right now.</span>
+    </>
+  ),
+  ctaBody: "One globe, live — no install, no signup.",
+  related: [
+    {
+      label: "Google Earth vs WorldEye, head to head",
+      desc: "The dedicated comparison page.",
+      href: "/compare/google-earth",
+    },
+    {
+      label: "Best interactive 3D globes",
+      desc: "The full ranked guide — archives, live globes and everything between.",
+      href: "/best-interactive-3d-globes",
+    },
+    {
+      label: "God's Eye View alternatives",
+      desc: "The cinematic open-source globe — and its hosted alternative.",
+      href: "/alternatives/gods-eye-view",
+    },
+    {
+      label: "Live webcams",
+      desc: "Start with the cameras: 74,229 feeds, organised.",
+      href: "/live-webcams",
+    },
   ],
 };
 
-export default function GoogleEarthAlternativesPage() {
-  return (
-    <IntentShell jsonLd={jsonLd}>
-      <IntentBreadcrumbs
-        trail={[
-          { label: "Alternatives", href: "/compare" },
-          { label: "Google Earth Alternatives" },
-        ]}
-      />
+export const metadata = altMetadata(data);
 
-      {/* Hero */}
-      <div className="text-center max-w-2xl mx-auto">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#0096FF] border border-[#0096FF]/30 rounded-full px-4 py-1.5 mb-6">
-          <Globe2 className="w-3.5 h-3.5" /> ALTERNATIVES
-        </p>
-        <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-          Google Earth alternatives for <span className="text-[#0096FF]">the planet right now.</span>
-        </h1>
-        <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          Google Earth is unmatched at showing the planet&apos;s past — its
-          historical imagery archive is a treasure. But its imagery is months
-          or years old. If you want the Earth live, the best free alternative
-          is WorldEye: a 3D globe streaming flights, satellites, ships,
-          weather, quakes and cameras right now, with no signup.
-        </p>
-        <ReviewedStamp />
-        <HeroCtas />
-      </div>
-
-      {/* The core distinction */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">The past vs. the present</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            This is the entire comparison in one sentence: Google Earth is a
-            time machine, and every alternative on this page is a window.
-            Google Earth lets you scrub back through decades of satellite
-            imagery, watch glaciers retreat and cities sprawl, and drop into
-            Street View. That archive took billions of dollars to build, and
-            nothing free matches it.
-          </p>
-          <p>
-            But open Google Earth during a hurricane, a wildfire, or a
-            breaking news event and you&apos;ll see the same calm, months-old
-            imagery as always. The alternatives below trade the archive for
-            immediacy: what the planet looks like <em>today</em>, what&apos;s
-            moving across it <em>right now</em>. Different question, different
-            tool — and most curious people end up wanting both.
-          </p>
-        </div>
-      </section>
-
-      {/* Free alternative */}
-      <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-        <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <Globe className="w-7 h-7 text-[#0096FF] shrink-0" />
-          Is there a free alternative to Google Earth?
-        </h2>
-        <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Several — and WorldEye is the only free 3D globe built around
-            live data. No signup, no install: spin the Earth and watch
-            aircraft cross oceans, satellites arc overhead, storms spin up,
-            the ground shake, and public cameras show you the street level —
-            all streaming. Zoom Earth, NASA Worldview and the Copernicus
-            Browser are also free, each strongest at satellite imagery.
-          </p>
-          <p>
-            What none of them replace is Google Earth&apos;s historical
-            timelapse. If your question is &ldquo;how did this place change
-            over 20 years,&rdquo; keep Google Earth. If it&apos;s
-            &ldquo;what&apos;s happening there right now,&rdquo; a live globe
-            is the answer.
-          </p>
-        </div>
-      </section>
-
-      {/* The options */}
-      <section className="mt-20">
-        <h2 className="text-2xl md:text-3xl font-bold text-center">
-          Six Google Earth alternatives, <span className="text-[#0096FF]">compared</span>
-        </h2>
-        <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
-          Each option&apos;s honest best-fit — because &ldquo;live&rdquo; means
-          different things to different people.
-        </p>
-        <div className="mt-10 grid gap-5 max-w-4xl mx-auto">
-          {OPTIONS.map((o, i) => (
-            <div
-              key={o.name}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 md:p-8 hover:border-[#0096FF]/40 transition"
-            >
-              <div className="flex items-start gap-5">
-                <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0096FF]/10 border border-[#0096FF]/25 text-sm font-bold text-[#0096FF] shrink-0">
-                  {i + 1}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-xl font-bold">{o.name}</h3>
-                    <span className="text-xs font-semibold text-[#0096FF] bg-[#0096FF]/10 border border-[#0096FF]/25 rounded-full px-3 py-1">
-                      {o.tag}
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/50 leading-relaxed mt-3">{o.body}</p>
-                  <Link
-                    href={o.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    Compare {o.name} vs WorldEye
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <MidCta
-        heading="The Earth, live — free, no signup"
-        body="Flights, satellites, storms, quakes and cameras streaming on a 3D globe. Google Earth shows the past; come see the present."
-      />
-
-      {/* Live layers */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">What &ldquo;live&rdquo; actually looks like</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            &ldquo;Live globe&rdquo; is easy to say and worth pinning down. On
-            WorldEye it means: aircraft positions updating as they broadcast,
-            satellites tracked along their actual orbits, ships moving through
-            shipping lanes, weather systems evolving, earthquakes plotted as
-            they&apos;re reported, wildfire activity, and tens of thousands of
-            public cameras you can open for a ground-level view. It&apos;s a
-            planet with a pulse, not a photograph of one.
-          </p>
-          <p>
-            The experience difference is hard to overstate. Reading about a
-            storm is one thing; watching it spin on a globe while aircraft
-            route around it and cameras on the coastline show the surf is
-            another. That&apos;s the use case Google Earth was never built for
-            — and the reason live globes have their own growing audience.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            {[
-              { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
-              { icon: Plane, label: "Live flight tracking", href: "/live-flight-tracker" },
-              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
-              { icon: Globe, label: "All features", href: "/features" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 hover:border-[#0096FF]/40 transition"
-              >
-                <c.icon className="w-4 h-4 text-[#0096FF]" /> {c.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What Google Earth still wins */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">What Google Earth still does best</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Credit where it&apos;s due: historical imagery timelapse remains
-            Google Earth&apos;s killer feature and nobody on this list touches
-            it. Urban planning, environmental research, pure curiosity about
-            how your hometown changed — the archive wins. Street View, too,
-            has no free equivalent at its coverage.
-          </p>
-          <p>
-            The practical setup most people land on: Google Earth for the
-            past, a live globe for the present. They answer different
-            questions, and keeping both bookmarked costs nothing.
-          </p>
-        </div>
-      </section>
-
-      {/* Making the switch */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Making the switch from Google Earth</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            The honest starting point: WorldEye is not a clone of Google
-            Earth with live data bolted on, and two parts of your Google
-            Earth life do not transfer — your saved places and KML files, and
-            Earth&rsquo;s historical imagery archive. What does transfer is
-            the habit itself, and it maps across like this:
-          </p>
-          <ul className="space-y-3 list-none">
-            <li>
-              <strong className="text-white/85">Flying to a place.</strong>{" "}
-              The same gesture, a different engine: search any place, address
-              or coordinates and the globe flies there — basic search is free
-              with no signup. What greets you is not a static photograph but
-              the place as it is now: its weather, its traffic in the air,
-              and its public cameras on the ground.
-            </li>
-            <li>
-              <strong className="text-white/85">Dropping to street level.</strong>{" "}
-              WorldEye&rsquo;s ground truth is live cameras first — 74,229 of
-              them — plus community street-level photography from Panoramax,
-              every frame dated and credited, and labeled as photography
-              rather than a live feed. It is not Street View&rsquo;s coverage;
-              it is something Street View can&rsquo;t do at all — the street
-              as it looks this minute.
-            </li>
-            <li>
-              <strong className="text-white/85">Looking from above.</strong>{" "}
-              Pro adds a true-color satellite imagery basemap for the
-              top-down inspection Google Earth users know, while the free
-              globe tracks the satellites themselves overhead.
-            </li>
-            <li>
-              <strong className="text-white/85">Exploring for its own sake.</strong>{" "}
-              This is where switchers get hooked: a globe where things move.
-              Idle curiosity — a storm spinning up, a ship queue at a canal,
-              rush hour in a city you&rsquo;ve never visited, live on its own
-              cameras — is a different pastime from browsing an archive.
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* How to choose */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Which live-Earth tool should you use?</h2>
-        <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          {[
-            {
-              q: "Want everything live on one globe?",
-              a: "WorldEye. Flights, satellites, ships, weather, quakes, fires and cameras — free, no signup, in the browser.",
-            },
-            {
-              q: "Want the freshest satellite pictures?",
-              a: "Zoom Earth for quick looks, NASA Worldview or Copernicus Browser for deeper imagery work.",
-            },
-            {
-              q: "Want the past, not the present?",
-              a: "Stay with Google Earth. Its historical timelapse is genuinely irreplaceable.",
-            },
-          ].map((c) => (
-            <div key={c.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="font-semibold text-white/90 mb-2">{c.q}</p>
-              <p className="text-sm text-white/50 leading-relaxed">{c.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Q&A */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Google Earth alternative questions, answered</h2>
-        <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Is WorldEye a replacement for Google Earth?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              For live viewing, yes — and it goes further, with flights,
-              satellites, cameras and weather that Google Earth doesn&apos;t
-              stream. For historical imagery and Street View, no; Google Earth
-              remains the tool for those. Most users keep both.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Do I need to install anything?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              No. WorldEye runs entirely in the browser — phone, tablet or
-              desktop. The globe, the live layers and the cameras are one tap
-              away with nothing to download.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro add?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              High-resolution satellite imagery view, the AI analyst assistant,
-              premium intel feeds, the OSINT toolkit, and advanced search filters. Weekly $7.99, monthly $13.99, annual $74.99 —
-              the live globe itself stays free.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Does WorldEye have Street View?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Not Google&rsquo;s Street View — nothing outside Google does.
-              WorldEye&rsquo;s street level works differently: live public
-              cameras for the present moment, and Panoramax community
-              street-level photography for ground detail, with the capture
-              date and credit on every frame. For walking a street
-              photograph-by-photograph at global coverage, Google Earth
-              remains the tool; for seeing the street live, that is the
-              globe&rsquo;s whole point.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can I use WorldEye offline, like Google Earth&rsquo;s cached areas?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              No — and by design. WorldEye is a live product: its flights,
-              cameras, weather and earthquakes only mean anything with a
-              connection, so there is no offline mode. If your work is
-              offline fieldwork with downloaded imagery, keep Google Earth
-              for it.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#0096FF]/30 bg-gradient-to-b from-[#0096FF]/[0.10] to-transparent p-10">
-        <h2 className="text-2xl md:text-3xl font-bold">
-          The past is archived. <span className="text-[#0096FF]">The present is live.</span>
-        </h2>
-        <p className="text-white/55 mt-3 mb-8">
-          Spin the globe and watch the planet move — free, no signup.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-block px-8 py-4 rounded-2xl bg-[#0096FF] text-white font-bold hover:bg-[#0077d6] transition"
-          >
-            Explore WorldEye
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-block px-8 py-4 rounded-2xl border border-white/15 text-white/85 font-semibold hover:border-[#0096FF]/50 hover:bg-white/5 transition"
-          >
-            Unlock WorldEye PRO
-          </Link>
-        </div>
-        <p className="mt-6 text-sm text-white/40">
-          Want the head-to-head?{" "}
-          <Link href="/compare/google-earth" className="text-[#0096FF] hover:underline">
-            WorldEye vs Google Earth
-          </Link>
-        </p>
-      </div>
-
-      <RelatedLinks
-        links={[
-          {
-            label: "WorldEye vs Google Earth",
-            desc: "The detailed head-to-head comparison on the compare hub.",
-            href: "/compare/google-earth",
-          },
-          {
-            label: "Best interactive 3D globes",
-            desc: "Ranked 3D globes for exploring the planet in 2026.",
-            href: "/best-interactive-3d-globes",
-          },
-          {
-            label: "Features",
-            desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
-            href: "/features",
-          },
-          {
-            label: "Pricing",
-            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the live globe stays free.",
-            href: "/pricing",
-          },
-        ]}
-      />
-    </IntentShell>
-  );
+export default function Page() {
+  return <AlternativePage data={data} />;
 }

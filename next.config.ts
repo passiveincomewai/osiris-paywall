@@ -48,6 +48,13 @@ const nextConfig: NextConfig = {
         destination: '/alternatives/flightradar24',
         permanent: true,
       },
+      {
+        // The alternatives hub lives at /compare (breadcrumbs, sitemap);
+        // /alternatives itself had no page and 404'd.
+        source: '/alternatives',
+        destination: '/compare',
+        permanent: true,
+      },
     ];
   },
   async headers() {
