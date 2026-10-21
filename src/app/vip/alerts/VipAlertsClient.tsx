@@ -15,7 +15,7 @@ import {
   type IssConfig,
   type LaunchConfig,
   type QuakeConfig,
-} from "@/lib/vip/events/logic";
+} from "@/lib/vip/events/config";
 
 interface AlertsPayload {
   tier: string;

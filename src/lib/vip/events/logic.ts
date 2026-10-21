@@ -42,20 +42,16 @@ export function haversineKm(
 
 export type EventKind = "quake" | "launch" | "iss";
 
-export interface QuakeConfig {
-  minMag: number;
-}
-export interface LaunchConfig {
-  leadHours: number[];
-}
-export interface IssConfig {
-  minElevationDeg: number;
-  leadHours: number;
-}
+/* Rule config shapes + lead choices live in ./config (a pure module the
+   /vip/alerts client can import without pulling the orbit propagator
+   into the client bundle); re-exported here for server importers. */
+import { LAUNCH_LEAD_CHOICES } from "./config";
+import type { IssConfig, LaunchConfig, QuakeConfig } from "./config";
+export { LAUNCH_LEAD_CHOICES };
+export type { IssConfig, LaunchConfig, QuakeConfig };
 
 export const QUAKE_MIN_MAG = 2.5;
 export const QUAKE_MAX_MAG = 10;
-export const LAUNCH_LEAD_CHOICES = [48, 24, 6, 1];
 export const ISS_MIN_ELEVATION = 10;
 export const ISS_MAX_ELEVATION = 90;
 
