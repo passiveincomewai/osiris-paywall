@@ -23,7 +23,7 @@ interface Me {
 interface Dash {
   rank: Me["rank"];
   totals: {
-    lifetimeCents: number; availableCents: number; pendingCents: number;
+    lifetimeCents: number; availableCents: number; pendingCents: number; paidOutCents: number;
     estimatedMonthlyCents: number; activePayingReferrals: number; directReferrals: number;
     convertedReferrals: number; indirectReferrals: number; clicks: number; conversionPct: number;
   };
@@ -82,6 +82,13 @@ export default function DashboardClient() {
 
   const changeRange = async (rg: string) => { setRange(rg); setLoading(true); await loadDash(rg); setLoading(false); };
 
+  const retry = async () => {
+    setLoading(true);
+    const m = await loadMe();
+    if (m) await loadDash();
+    setLoading(false);
+  };
+
   const join = async () => {
     setMsg("Activating…");
     const { ok, j } = await api("/api/affiliate/join", { method: "POST" });
@@ -100,7 +107,7 @@ export default function DashboardClient() {
     const { ok, j } = await api("/api/affiliate/custom-code", {
       method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ code: customCode }),
     });
-    if (ok) { setMsg(`Referral code updated to /ref/${j.customCode}`); await loadMe(); }
+    if (ok) { setMsg(`Referral code updated to /ref/${j.customCode}`); setCustomCode(""); await loadMe(); }
     else setMsg(j.error ?? "Couldn't update code.");
   };
 
@@ -142,12 +149,18 @@ export default function DashboardClient() {
     );
   }
 
-  if (!me || !dash) return <EmptyState title="Couldn't load dashboard" body="Refresh the page to try again." />;
+  if (!me || !dash) return (
+    <EmptyState
+      title="Couldn't load dashboard"
+      body="Something interrupted the uplink — your data is safe. Try again."
+      cta={<button onClick={retry} className={btnPrimary} style={btnStyle}>Retry</button>}
+    />
+  );
 
   const t = dash.totals;
   const link = me.referralLink;
   const enc = encodeURIComponent(link);
-  const shareText = encodeURIComponent("Watch the planet live — 36,000+ cameras, flights, satellites. Free to explore:");
+  const shareText = encodeURIComponent("Watch the planet live — 74,229 live cameras, flights, satellites. Free to explore:");
   const shares = [
     ["X", `https://twitter.com/intent/tweet?text=${shareText}&url=${enc}`],
     ["Facebook", `https://www.facebook.com/sharer/sharer.php?u=${enc}`],
@@ -195,7 +208,8 @@ export default function DashboardClient() {
           <span className="text-xs text-slate-400 font-mono">Custom code:</span>
           <input className={input + " !w-48"} placeholder={me.profile.customCode ?? me.profile.referralCode}
             value={customCode} onChange={(e) => setCustomCode(e.target.value)} />
-          <button onClick={saveCustomCode} className="px-3 py-2 rounded-xl text-xs font-mono border border-white/15 text-slate-200 hover:border-cyan-400/60">Claim</button>
+          <button onClick={saveCustomCode} disabled={!customCode.trim()}
+            className="px-3 py-2 rounded-xl text-xs font-mono border border-white/15 text-slate-200 hover:border-cyan-400/60 disabled:opacity-50 disabled:cursor-not-allowed">Claim</button>
         </div>
       </div>
 
@@ -357,7 +371,14 @@ export default function DashboardClient() {
           <div className="text-sm text-slate-400 mb-3">
             Available: <span className="font-mono font-bold text-emerald-300">{fmtCents(t.availableCents)}</span>
             <span className="text-slate-500"> · minimum {fmtCents(dash.settings.minPayoutCents)}</span>
+            <span className="text-slate-500"> · paid out to date </span>
+            <span className="font-mono text-slate-200">{fmtCents(t.paidOutCents)}</span>
           </div>
+          {t.availableCents < dash.settings.minPayoutCents && (
+            <div className="text-xs text-amber-300/90 font-mono mb-3">
+              Earn {fmtCents(dash.settings.minPayoutCents - t.availableCents)} more in available commissions to request a payout.
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-2 mb-4">
             <input className={input} placeholder="Payout email (PayPal)" value={payoutEmail} onChange={(e) => setPayoutEmail(e.target.value)} />
             <select className={input + " sm:!w-40"} value={payoutMethod} onChange={(e) => setPayoutMethod(e.target.value)}>
@@ -365,18 +386,25 @@ export default function DashboardClient() {
               <option value="paypal">PayPal</option>
               <option value="stripe_connect">Stripe Connect</option>
             </select>
-            <button onClick={requestPayout} className={btnPrimary + " whitespace-nowrap"} style={btnStyle}
+            <button onClick={requestPayout} className={btnPrimary + " whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"} style={btnStyle}
               disabled={t.availableCents < dash.settings.minPayoutCents}>Request payout</button>
           </div>
           {dash.payouts.length === 0 && <div className="text-sm text-slate-500">No payout requests yet.</div>}
           <div className="space-y-2">
             {dash.payouts.map((p) => (
-              <div key={p.id} className="flex items-center justify-between text-sm py-2 border-b border-white/5">
-                <span className="font-mono text-white">{fmtCents(p.amountCents)}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-500 font-mono">{new Date(p.requestedAt).toLocaleDateString()}</span>
-                  <Pill color={p.status === "paid" ? "#34d399" : p.status === "rejected" ? "#f87171" : "#fbbf24"}>{p.status}</Pill>
+              <div key={p.id} className="py-2 border-b border-white/5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-mono text-white">{fmtCents(p.amountCents)}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500 font-mono">{new Date(p.requestedAt).toLocaleDateString()}</span>
+                    <Pill color={p.status === "paid" ? "#34d399" : p.status === "rejected" ? "#f87171" : "#fbbf24"}>{p.status}</Pill>
+                  </div>
                 </div>
+                {p.note && (
+                  <div className="text-xs text-slate-500 mt-1">
+                    {p.status === "rejected" ? "Reason: " : "Note: "}{p.note}
+                  </div>
+                )}
               </div>
             ))}
           </div>

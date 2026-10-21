@@ -1,394 +1,320 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Globe,
-  GitBranch,
-  CloudSun,
-  Radar,
-  Eye,
-  Camera,
-  Plane,
-  Satellite,
-} from "lucide-react";
-import {
-  IntentShell,
-  IntentBreadcrumbs,
-  ReviewedStamp,
-  HeroCtas,
-  MidCta,
-  webPageLd,
-  itemListLd,
-} from "@/components/SeoIntentLayout";
-import RelatedLinks from "@/components/RelatedLinks";
+import { Camera, Eye, GitBranch, Plane, Satellite, Unlock } from "lucide-react";
+import AlternativePage, {
+  altMetadata,
+  type AltData,
+} from "@/components/AlternativePage";
 
-export const metadata: Metadata = {
-  title: "God's Eye View Alternatives in 2026 — Hosted vs Self-Hosted",
+const data: AltData = {
+  name: "God's Eye View",
+  path: "/alternatives/gods-eye-view",
+  title: "God's Eye View Alternative — The Same Live Globe, Already Running",
   description:
-    "God's Eye View is open-source software you install yourself. Compare the alternatives: WorldEye's hosted live globe (74,229 cameras, no setup), the original project, Zoom Earth and LiveUAMap.",
-  alternates: { canonical: "/alternatives/gods-eye-view" },
-  openGraph: {
-    title: "God's Eye View Alternatives in 2026 — Hosted vs Self-Hosted | WorldEye",
-    description:
-      "The original God's Eye View is self-hosted open source. WorldEye is the same idea, already running: a live 3D globe with 74,229 cameras, flights and satellites — free, no install.",
-    url: "/alternatives/gods-eye-view",
-    type: "website",
+    "Looking for a God's Eye View alternative you don't have to install? WorldEye runs the same live-globe idea — 74,229 cameras, flights, satellites, weather — hosted in your browser, free with no signup.",
+  ogTitle: "God's Eye View Alternative — Hosted Live Globe, No Install | WorldEye",
+  ogDescription:
+    "God's Eye View is open-source software you install yourself. WorldEye is the hosted alternative: a live 3D globe with 74,229 cameras, flights and satellites — free, no setup, no API keys.",
+  kicker: "GOD'S EYE VIEW ALTERNATIVES",
+  heroIcon: Eye,
+  heroTitle: (
+    <>
+      The God&apos;s Eye View alternative that&apos;s{" "}
+      <span className="text-[#0096FF]">already running.</span>
+    </>
+  ),
+  heroLede: (
+    <>
+      God&apos;s Eye View is a brilliant open-source project — and a project is
+      exactly what it is: software you download, install and run yourself.
+      WorldEye is the same live-planet idea delivered as a website: one 3D
+      globe carrying 74,229 live cameras, flights, satellites, weather,
+      earthquakes and fires, open in your browser right now. This page
+      compares the two honestly.
+    </>
+  ),
+  updatedNote:
+    "Facts checked October 20, 2026 against the God's Eye View README on GitHub and WorldEye's live pricing page. Camera counts are each project's own published figures.",
+  aboutIcon: GitBranch,
+  aboutHeading: "What God's Eye View actually is",
+  about: [
+    <>
+      God&apos;s Eye View is an open-source spatial-intelligence globe created
+      by Bilawal Sidhu (with Sameh Khamis, at Halfpixel) and released on
+      GitHub in August 2026 after a viral YouTube series. It renders a
+      photorealistic Cesium 3D Earth and layers live public data over it:
+      aircraft, ships, satellites, earthquakes, wildfires, traffic, live
+      transit in a growing list of cities, geolocated radio, and a CCTV mesh
+      of roughly 4,000 public cameras projected into the 3D scene. On top sits
+      its signature feature — a voice-controlled AI agent, built on
+      OpenAI&apos;s Realtime API with 28 tools, that can fly the globe, query
+      layers and annotate the world while you talk to it.
+    </>,
+    <>
+      It starts keyless: Esri satellite imagery and keyless terrain carry the
+      base experience, and most data layers need no account at all. The
+      upgrades are where keys come in — photorealistic 3D tiles need a Cesium
+      ion token or your own Google Maps API key, and the voice agent runs on
+      your OpenAI key, billed to you. You install it with a one-click Pinokio
+      installer, Docker, or a manual clone, and you keep it updated yourself.
+      There is no official hosted version; the project ships as software,
+      deliberately.
+    </>,
+    <>
+      Who is it for? Builders, tinkerers and privacy-minded watchers who want
+      the code in their hands — every layer is a module you can inspect,
+      extend or replace. Its cinematic touches (a cockpit view that rides
+      inside a tracked flight, GLSL sensor looks like FLIR and night vision, a
+      scene director for capturing tours) are things no hosted site in this
+      category offers. If that sounds like your evening, you should download
+      it — it is genuinely excellent, and it is free under the MIT licence.
+    </>,
+  ],
+  strengths: [
+    {
+      title: "Open source and yours to modify",
+      body: "MIT-licensed code you can fork, extend with your own layers and run entirely on your own machine — no account, no landlord.",
+    },
+    {
+      title: "The voice agent is unique",
+      body: "Twenty-eight tools driven by natural speech — 'fly to Tokyo', 'how many flights over Texas?', sensor modes on command. Nobody else in this space ships that.",
+    },
+    {
+      title: "Cinematic sensor aesthetics",
+      body: "Cockpit view, FLIR/NVG/CRT shader looks, detection overlays and a military-style HUD give it a spy-thriller feel hosted sites don't imitate.",
+    },
+    {
+      title: "Honest data labelling",
+      body: "The project carefully marks layers as live, delayed, partial, simulated or reconstructed — a standard of candour the whole niche should copy.",
+    },
+  ],
+  gapsIcon: Unlock,
+  gapsHeading: "Why people look for an alternative anyway",
+  gaps: [
+    <>
+      The gap is not quality — it is friction. Every session with God&apos;s
+      Eye View starts with your own infrastructure: install the app, keep it
+      updated, and supply your own keys for its best features. The
+      photorealistic tiles that make its screenshots famous run on a Cesium
+      ion token or a Google Maps key on your account, and the voice agent
+      bills your OpenAI account per conversation. None of that is hidden — the
+      README is admirably plain about it — but it means the distance between
+      &ldquo;I saw the video&rdquo; and &ldquo;I am watching the planet&rdquo;
+      is an installation, not a click.
+    </>,
+    <>
+      The second gap is scale where it matters most to casual watchers:
+      cameras. The project&apos;s CCTV mesh lists roughly 4,000 public cameras
+      (a shared cap, mostly transport-agency feeds in North America and
+      Europe). That is a respectable mesh, but it is a fraction of what a
+      dedicated hosted camera network serves — and because you run the
+      software yourself, its coverage grows only when the project ships new
+      packs and you update.
+    </>,
+    <>
+      The third gap is the device in your pocket. A self-installed desktop
+      project is not something you open on your phone on a train. For a lot of
+      people the honest summary is: God&apos;s Eye View is the better{" "}
+      <em>software</em>; they are looking for the better <em>website</em>. That
+      is the exact shape of the alternative below.
+    </>,
+  ],
+  worldEyeHeading: "WorldEye: the same idea, hosted",
+  worldEye: [
+    <>
+      WorldEye takes the same concept — one live globe, many layers of public
+      data — and runs it as a hosted product at worldeye.app. There is nothing
+      to install, no keys to bring and no account needed to start: open the
+      page and the globe is already live with{" "}
+      <span className="text-white/85 font-semibold">
+        74,229 public cameras
+      </span>{" "}
+      (a catalogue of 76,625), live flights, tracked satellites, weather,
+      earthquakes, wildfires, radar and transit. To be plain about lineage:
+      WorldEye is an independent product from a separate team, not affiliated
+      with the God&apos;s Eye View project — the two share an idea, not code.
+    </>,
+    <>
+      Where the emphasis differs is depth of watching rather than depth of
+      tinkering. The camera network is the headline — searchable by{" "}
+      <Link href="/cameras" className="text-[#0096FF] hover:underline">
+        country and city
+      </Link>
+      , with categories from ski slopes to volcanoes — and around it sit the
+      tools of a monitoring product: multi-camera recording, timelapse and
+      (on VIP Pro) camera alerts that watch a feed for a condition you
+      describe and tell you when it changes. If God&apos;s Eye View is a
+      workbench, WorldEye is a window.
+    </>,
+  ],
+  worldEyePoints: [
+    {
+      title: "Zero setup, on any device",
+      body: "The globe runs in a phone or desktop browser. No installer, no Docker, no keys for the core experience — the distance from this page to the live planet is one tap.",
+    },
+    {
+      title: "A camera network ~18× larger",
+      body: "74,229 live public feeds served against roughly 4,000 in the open-source mesh — including 118 cameras in Thailand alone and country directories across 109 countries.",
+    },
+    {
+      title: "Recording, timelapse and alerts",
+      body: "Pro records up to 20 cameras at once; VIP Pro raises that to 40 and adds timelapse plus camera alerts that check feeds on an interval and notify you on change.",
+    },
+    {
+      title: "Intel layers for the analyst streak",
+      body: "Pro unlocks the OSINT toolkit and satellite view; VIP Pro adds cyber, maritime and GDELT event layers with live news — the dashboard side of the god's-eye idea.",
+    },
+  ],
+  chips: [
+    { icon: Camera, label: "74,229 cameras", href: "/cameras" },
+    { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
+    { icon: Satellite, label: "Satellites", href: "/satellite-tracker" },
+  ],
+  tableHeading: "God's Eye View vs WorldEye, side by side",
+  tableIntro:
+    "Both products deserve a fair table. Figures are each project's own published numbers, checked October 2026.",
+  rows: [
+    { feature: "How you get it", competitor: "Download and install it yourself (Pinokio, Docker or clone)", worldEye: "Open worldeye.app in any browser — nothing to install" },
+    { feature: "Price of the core", competitor: "Free and open source (MIT); premium layers bill your own API keys", worldEye: "Free with no signup; optional Pro from $7.99/week" },
+    { feature: "Live cameras", competitor: "~4,000 public cameras (project's own figure)", worldEye: "74,229 live public cameras served" },
+    { feature: "Flights & satellites", competitor: "Yes — live layers, keyless", worldEye: "Yes — live layers, free" },
+    { feature: "Weather, quakes, fires", competitor: "Yes — GFS/ECMWF, radar, cyclone tracks, keyless", worldEye: "Yes — weather, radar, quakes and fires, free" },
+    { feature: "Photorealistic 3D tiles", competitor: "Yes, with a Cesium ion token or your Google Maps key", worldEye: "3D globe with satellite view on Pro; no key needed" },
+    { feature: "Voice AI agent", competitor: "Yes — 28 tools, on your OpenAI key", worldEye: "No voice agent; an on-screen AI assistant is part of the Pro toolkit" },
+    { feature: "Recording & alerts", competitor: "Scene director for cinematic captures; no camera recording or alerts", worldEye: "Multi-camera recording (20 Pro / 40 VIP), timelapse and camera alerts on VIP Pro" },
+    { feature: "Modify the code", competitor: "Yes — that's the point of it", worldEye: "No — hosted product" },
+    { feature: "Works on your phone", competitor: "Not practically — it's a desktop install", worldEye: "Yes — the full globe in a mobile browser" },
+  ],
+  pricingHeading: "What each route actually costs",
+  pricing: [
+    <>
+      God&apos;s Eye View the software costs nothing, forever — it is
+      MIT-licensed. The honest asterisk is metered keys: photorealistic 3D
+      tiles draw on a Cesium ion plan or your Google Maps billing, and the
+      voice agent draws on your OpenAI balance. Light use can stay within
+      free allowances; heavy use is pay-as-you-go on your own accounts, plus
+      the electricity and attention of running it yourself.
+    </>,
+    <>
+      WorldEye&apos;s core globe — cameras, flights, satellites, weather,
+      quakes, fires, transit — is free with no signup and no keys. Paid tiers
+      are for the monitoring toolkit:{" "}
+      <span className="text-white/85 font-semibold">
+        $7.99/week or $13.99/month
+      </span>{" "}
+      for Pro (each with a 1-day free trial), and{" "}
+      <span className="text-white/85 font-semibold">
+        VIP Pro at $74.99/year
+      </span>{" "}
+      (3-day trial) for timelapse, intel layers, camera alerts and 40-camera
+      recording. Every first charge carries a 7-day money-back guarantee. Full
+      detail lives on the{" "}
+      <Link href="/pricing" className="text-[#0096FF] hover:underline">
+        pricing page
+      </Link>
+      .
+    </>,
+  ],
+  stepsHeading: "Switching over takes about thirty seconds",
+  steps: [
+    {
+      title: "Open the globe",
+      body: "Go to worldeye.app. No download, no installer, no account — the live planet loads in the browser, on desktop or phone.",
+    },
+    {
+      title: "Turn on your layers",
+      body: "Cameras, flights, satellites, weather, quakes and fires are all free layers on the same globe — toggle the set you used to watch in God's Eye View.",
+    },
+    {
+      title: "Dive into cameras",
+      body: "Search 74,229 feeds by place or browse the country and city directories. Your first camera opens are free, no signup asked.",
+    },
+    {
+      title: "Keep the original too, if you tinker",
+      body: "Nothing about switching is exclusive — plenty of people keep the open-source install for building and use WorldEye for watching. Both can be true.",
+    },
+  ],
+  verdictHeading: "Which one should you use?",
+  verdicts: [
+    {
+      q: "Just want to watch the world live?",
+      a: "WorldEye. It's already running — free, no signup, no keys, on any device with a browser.",
+    },
+    {
+      q: "Want to build on it or self-host?",
+      a: "The original God's Eye View. MIT-licensed, modular, documented, and made to be extended with your own layers.",
+    },
+    {
+      q: "Want the voice agent and sensor looks?",
+      a: "God's Eye View, honestly — its 28-tool voice agent and FLIR-style modes have no hosted equivalent yet.",
+    },
+  ],
+  faqHeading: "God's Eye View alternative questions, answered",
+  faqs: [
+    {
+      q: "Is there a hosted version of God's Eye View?",
+      a: "No official one — God's Eye View ships as software you install and run yourself, and its creators don't operate a hosted service. WorldEye is an independent hosted alternative built on the same live-globe concept: open worldeye.app and the globe is already running, with a much larger camera network (74,229 feeds vs roughly 4,000).",
+    },
+    {
+      q: "Is God's Eye View free?",
+      a: "The code is free and open source (MIT), and the base globe starts with no keys at all. The full experience isn't entirely free in practice: photorealistic 3D tiles use a Cesium ion token or your own Google Maps API key (metered by Google), and the voice agent uses your OpenAI key. WorldEye's core globe is free with no keys at all.",
+    },
+    {
+      q: "Can I use God's Eye View online without downloading it?",
+      a: "Not the original — it's a desktop install (Pinokio one-click, Docker, or a manual clone). If you want the same kind of live globe in a browser tab, including on your phone, a hosted alternative like WorldEye is the route.",
+    },
+    {
+      q: "Which has more cameras, God's Eye View or WorldEye?",
+      a: "WorldEye, by a wide margin: 74,229 live public cameras served, versus roughly 4,000 in God's Eye View's CCTV mesh (the figure in its own README). Both draw on public feeds — WorldEye's directory is simply much larger, spanning 109 countries.",
+    },
+    {
+      q: "Does WorldEye have the voice agent?",
+      a: "No. God's Eye View's 28-tool voice agent — flying the globe and querying layers by speech, on your OpenAI key — is genuinely unique to it. WorldEye's Pro tier includes an on-screen AI assistant within its OSINT toolkit, but it doesn't pretend to be the same thing.",
+    },
+    {
+      q: "Is WorldEye affiliated with God's Eye View?",
+      a: "No. WorldEye is a separate product from a separate team with no affiliation with Bilawal Sidhu or the God's Eye View project. The pages compare the two because they answer the same desire — seeing the whole live planet on one screen — in different ways.",
+    },
+    {
+      q: "God's Eye View vs WorldEye for watching a specific place?",
+      a: "For watching, WorldEye usually wins on friction and cameras: search a city, open a live feed in seconds, on your phone. For studying a place with custom layers, drawn annotations and cockpit flyovers, the open-source project's workbench is richer.",
+    },
+  ],
+  midCta: {
+    heading: "The view, without the setup",
+    body: "WorldEye's globe is live right now — 74,229 cameras, flights, satellites and weather on one screen. Open it and decide in thirty seconds.",
   },
-  twitter: {
-    card: "summary",
-    title: "God's Eye View Alternatives in 2026 — Hosted vs Self-Hosted | WorldEye",
-    description:
-      "Compare God's Eye View alternatives: WorldEye's hosted live globe, the original open-source project, Zoom Earth and LiveUAMap.",
-  },
-};
-
-const OPTIONS = [
-  {
-    icon: Globe,
-    name: "WorldEye",
-    tag: "Best hosted alternative — no install",
-    href: "/gods-eye-view",
-    linkLabel: "See WorldEye's god's eye view",
-    body: "The same idea as God's Eye View — one live globe carrying cameras, flights, satellites, weather, quakes and fires — but already hosted and running. Open it in a browser: no clone, no build, no API keys for the core experience, and a camera network of 74,229 public feeds instead of roughly 4,000. Free with no signup; Pro adds OSINT and intel layers.",
-  },
-  {
-    icon: GitBranch,
-    name: "God's Eye View (the original)",
-    tag: "Best if you want to self-host open source",
-    href: "https://www.opensourcealternatives.to/item/gods-eye-view",
-    linkLabel: "About the original project",
-    body: "Bilawal Sidhu and Sameh Khamis's open-source project (MIT, released August 2026) is the real thing for builders: live data layers over a Cesium globe, sensor-style visual modes and a voice-controlled AI agent. The trade-offs are the setup — you install and run it yourself — and the keys: photorealistic 3D tiles need a Cesium ion token or your own Google Maps API key, and the voice agent needs an OpenAI key.",
-  },
-  {
-    icon: CloudSun,
-    name: "Zoom Earth",
-    tag: "Best for live satellite weather imagery",
-    href: "/compare/zoom-earth",
-    linkLabel: "Compare Zoom Earth vs WorldEye",
-    body: "If your god's eye view craving is really about weather — live satellite imagery refreshed every 10–15 minutes, storm tracking, rain radar — Zoom Earth is the specialist. It doesn't do cameras, flights or satellites-as-objects; it does Earth's weather from orbit, beautifully.",
-  },
-  {
-    icon: Radar,
-    name: "LiveUAMap",
-    tag: "Best for conflict and event mapping",
-    href: "/alternatives/liveuamap",
-    linkLabel: "LiveUAMap alternatives",
-    body: "A long-running live map of conflicts and geopolitical events, built around curated event reports rather than raw sensor feeds. Pick it when the question is 'what happened where' in a war zone, not 'what does the world look like right now'.",
-  },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    webPageLd(
-      "God's Eye View Alternatives in 2026 — Hosted vs Self-Hosted",
-      "God's Eye View is open-source software you install yourself. Compare the alternatives: WorldEye's hosted live globe, the original project, Zoom Earth and LiveUAMap.",
-      "/alternatives/gods-eye-view"
-    ),
-    itemListLd(
-      OPTIONS.map((o) => ({
-        name: o.name,
-        href: o.href,
-        description: `${o.tag}. ${o.body}`,
-      }))
-    ),
+  ctaHeading: (
+    <>
+      Skip the setup. <span className="text-[#0096FF]">See the planet.</span>
+    </>
+  ),
+  ctaBody: "One click, no signup, no API keys. The globe is already spinning.",
+  related: [
+    {
+      label: "God's eye view of Earth, live",
+      desc: "The concept explained — and the live globe that delivers it, free in your browser.",
+      href: "/gods-eye-view",
+    },
+    {
+      label: "GodsView AI alternatives",
+      desc: "Another hosted take on the god's-eye globe — and how it compares.",
+      href: "/alternatives/godsview-ai",
+    },
+    {
+      label: "Best interactive 3D globes",
+      desc: "The full ranked guide to spinning the planet in 2026.",
+      href: "/best-interactive-3d-globes",
+    },
+    {
+      label: "Pricing",
+      desc: "Weekly $7.99, monthly $13.99, VIP Pro $74.99/yr — the core globe stays free.",
+      href: "/pricing",
+    },
   ],
 };
 
-export default function GodsEyeViewAlternativesPage() {
-  return (
-    <IntentShell jsonLd={jsonLd}>
-      <IntentBreadcrumbs
-        trail={[
-          { label: "Alternatives", href: "/compare" },
-          { label: "God's Eye View Alternatives" },
-        ]}
-      />
+export const metadata = altMetadata(data);
 
-      {/* Hero */}
-      <div className="text-center max-w-2xl mx-auto">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#0096FF] border border-[#0096FF]/30 rounded-full px-4 py-1.5 mb-6">
-          <Eye className="w-3.5 h-3.5" /> ALTERNATIVES
-        </p>
-        <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-          God&apos;s Eye View alternatives, <span className="text-[#0096FF]">hosted and self-hosted.</span>
-        </h1>
-        <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          The original God&apos;s Eye View is open-source software you install
-          and run yourself. If you want that same live planet — 74,229
-          cameras, flights, satellites, weather — already running in your
-          browser, that&apos;s WorldEye. Here&apos;s the honest breakdown of
-          every route to the view.
-        </p>
-        <ReviewedStamp />
-        <HeroCtas />
-      </div>
-
-      {/* The honest framing */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Why look for an alternative at all?</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            God&apos;s Eye View earned its viral moment honestly: a
-            photorealistic 3D Earth carrying live aircraft, ships, satellites,
-            earthquakes, fires and cameras, released free and open source in
-            August 2026. Nobody needs to tear it down. People look for
-            alternatives for one practical reason — it&apos;s a project you
-            set up, not a website you open.
-          </p>
-          <p>
-            Running it means installing it on your own machine (a one-click
-            Pinokio installer, Docker, or a manual clone), keeping it
-            updated, and bringing your own keys for the best of it: the base
-            globe starts keyless on satellite imagery, but photorealistic 3D
-            tiles need a Cesium ion token or a Google Maps API key on your
-            account, and the voice AI agent runs on your OpenAI key. For
-            builders, that&apos;s the fun. For everyone else, it&apos;s a
-            wall between them and the view.
-          </p>
-        </div>
-      </section>
-
-      {/* Hosted answer */}
-      <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-        <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <Globe className="w-7 h-7 text-[#0096FF] shrink-0" />
-          Is there a hosted version of God&apos;s Eye View?
-        </h2>
-        <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Not an official one — God&apos;s Eye View ships as software, not
-            a website, and its creators don&apos;t run a hosted version.
-            WorldEye is an <span className="text-white/85 font-semibold">independent
-            alternative</span> built on the same concept: one interactive 3D
-            globe with live flights, satellites, weather, earthquakes and
-            wildfires, plus a public-camera network of 74,229 feeds (the
-            open-source project&apos;s CCTV mesh lists roughly 4,000). No
-            install, no build step, no API keys for the core globe — open the
-            page and it&apos;s already live, on phone or desktop. To be plain:
-            WorldEye is a separate product from a separate team, with no
-            affiliation with the God&apos;s Eye View project.
-          </p>
-          <p>
-            The honest trade: you can&apos;t fork a website. If you want to
-            modify the code, bolt on your own layers or run the whole thing on
-            your own machine, the open-source project is the right choice and
-            it&apos;s genuinely excellent. WorldEye is for watching, not
-            tinkering.
-          </p>
-        </div>
-      </section>
-
-      {/* The options */}
-      <section className="mt-20">
-        <h2 className="text-2xl md:text-3xl font-bold text-center">
-          Four ways to get the view, <span className="text-[#0096FF]">compared</span>
-        </h2>
-        <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
-          Each option is the right answer for somebody — here&apos;s who.
-        </p>
-        <div className="mt-10 grid gap-5 max-w-4xl mx-auto">
-          {OPTIONS.map((o, i) => (
-            <div
-              key={o.name}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 md:p-8 hover:border-[#0096FF]/40 transition"
-            >
-              <div className="flex items-start gap-5">
-                <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0096FF]/10 border border-[#0096FF]/25 text-sm font-bold text-[#0096FF] shrink-0">
-                  {i + 1}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-xl font-bold">{o.name}</h3>
-                    <span className="text-xs font-semibold text-[#0096FF] bg-[#0096FF]/10 border border-[#0096FF]/25 rounded-full px-3 py-1">
-                      {o.tag}
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/50 leading-relaxed mt-3">{o.body}</p>
-                  <Link
-                    href={o.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    {o.linkLabel}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <MidCta
-        heading="The view, without the setup"
-        body="WorldEye's globe is live right now — 74,229 cameras, flights, satellites and weather on one screen. Open it and decide in thirty seconds."
-      />
-
-      {/* Hosted vs self-hosted */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Hosted vs self-hosted: what actually differs</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            <span className="text-white/85 font-semibold">Getting started.</span>{" "}
-            Self-hosted: clone, install, configure, keep it running. Hosted:
-            open a URL. If the goal is to watch the world tonight, this is the
-            whole argument.
-          </p>
-          <p>
-            <span className="text-white/85 font-semibold">Keys and costs.</span>{" "}
-            The open-source project is free code, but its photorealistic tiles
-            run on your Cesium ion token or bill against your Google account,
-            and its AI agent bills against your OpenAI account. WorldEye&apos;s core globe is free with no keys at
-            all; an optional Pro subscription ($7.99/week, $13.99/month,
-            $74.99/year) unlocks the intelligence toolkit.
-          </p>
-          <p>
-            <span className="text-white/85 font-semibold">Cameras.</span>{" "}
-            The biggest data gap: roughly 4,000 public cameras in the
-            open-source project&apos;s CCTV mesh versus 74,229 live public
-            feeds from 105 countries on WorldEye. If cameras are why
-            you&apos;re here, it isn&apos;t close.
-          </p>
-          <p>
-            <span className="text-white/85 font-semibold">Control.</span>{" "}
-            Self-hosting wins this one outright — your machine, your code,
-            your layers, sensor-style visual modes included. A hosted site
-            gives you the view, not the source.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            {[
-              { icon: Globe, label: "The hosted globe", href: "/gods-eye-view" },
-              { icon: Camera, label: "74,229 cameras", href: "/cameras" },
-              { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
-              { icon: Satellite, label: "Satellites", href: "/satellite-tracker" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 hover:border-[#0096FF]/40 transition"
-              >
-                <c.icon className="w-4 h-4 text-[#0096FF]" /> {c.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How to choose */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Which one should you use?</h2>
-        <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          {[
-            {
-              q: "Just want to watch the world live?",
-              a: "WorldEye. It's already running — free, no signup, no keys, on any device with a browser.",
-            },
-            {
-              q: "Want to build on it or self-host?",
-              a: "The original God's Eye View. MIT-licensed, well documented, and made to be extended with your own layers.",
-            },
-            {
-              q: "Mostly care about storms and satellite imagery?",
-              a: "Zoom Earth for weather from orbit — or WorldEye when you want the weather plus the cameras underneath it.",
-            },
-          ].map((c) => (
-            <div key={c.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="font-semibold text-white/90 mb-2">{c.q}</p>
-              <p className="text-sm text-white/50 leading-relaxed">{c.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Q&A */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">God&apos;s Eye View questions, answered</h2>
-        <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Is God&apos;s Eye View free?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              The code is free and open source (MIT), and the base globe now
-              starts with no keys at all. The full experience isn&apos;t
-              entirely free, though: photorealistic 3D tiles use a Cesium ion
-              token or your own Google Maps API key (metered by Google), and
-              the voice agent uses your OpenAI key. WorldEye&apos;s core globe
-              is free with no keys; Pro is optional.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can I use God&apos;s Eye View without installing it?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              The original project is software you run yourself — there&apos;s
-              no official hosted version. WorldEye is the hosted alternative:
-              the same live-globe concept at worldeye.app, in the browser, with
-              a far larger camera network.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Which has more cameras?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              WorldEye, by a wide margin: 74,229 live public cameras from 105
-              countries, versus roughly 4,000 in the open-source
-              project&apos;s CCTV mesh (the figure in its README). Both draw
-              on public feeds; WorldEye&apos;s directory is simply much
-              larger.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#0096FF]/30 bg-gradient-to-b from-[#0096FF]/[0.10] to-transparent p-10">
-        <h2 className="text-2xl md:text-3xl font-bold">
-          Skip the setup. <span className="text-[#0096FF]">See the planet.</span>
-        </h2>
-        <p className="text-white/55 mt-3 mb-8">
-          One click, no signup, no API keys. The globe is already spinning.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-block px-8 py-4 rounded-2xl bg-[#0096FF] text-white font-bold hover:bg-[#0077d6] transition"
-          >
-            Explore WorldEye
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-block px-8 py-4 rounded-2xl border border-white/15 text-white/85 font-semibold hover:border-[#0096FF]/50 hover:bg-white/5 transition"
-          >
-            Unlock WorldEye PRO
-          </Link>
-        </div>
-        <p className="mt-6 text-sm text-white/40">
-          New to the idea? Start with{" "}
-          <Link href="/gods-eye-view" className="text-[#0096FF] hover:underline">
-            what a god&apos;s eye view is
-          </Link>
-        </p>
-      </div>
-
-      <RelatedLinks
-        links={[
-          {
-            label: "God's eye view of Earth, live",
-            desc: "The concept explained — and the live globe that delivers it, free in your browser.",
-            href: "/gods-eye-view",
-          },
-          {
-            label: "An EarthCam alternative",
-            desc: "How WorldEye's aggregated camera globe compares with the classic webcam network.",
-            href: "/earthcam-alternative",
-          },
-          {
-            label: "Best interactive 3D globes",
-            desc: "The full ranked guide to spinning the planet in 2026.",
-            href: "/best-interactive-3d-globes",
-          },
-          {
-            label: "Pricing",
-            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the core globe stays free.",
-            href: "/pricing",
-          },
-        ]}
-      />
-    </IntentShell>
-  );
+export default function Page() {
+  return <AlternativePage data={data} />;
 }

@@ -47,7 +47,7 @@ export const LANDING_CATEGORIES: LandingCategory[] = [
   {
     slug: "cities",
     label: "Cities",
-    href: "/city-webcams",
+    href: "/world-city-webcams",
     cameraIds: [
       "sky-it-trevi",
       "tfl-JamCams_00001.07450",

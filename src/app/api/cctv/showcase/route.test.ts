@@ -153,7 +153,7 @@ describe('GET /api/cctv/showcase', () => {
     const cities = await get('?category=cities');
     expect(cities.body.category).toBe('cities');
     expect(cities.body.label).toBe('Cities');
-    expect(cities.body.href).toBe('/city-webcams');
+    expect(cities.body.href).toBe('/world-city-webcams');
     expect(cities.body.cameras[0]?.id).toBe('sky-it-trevi');
     const bogus = await get('?category=bogus');
     expect(bogus.body.category).toBe('featured');

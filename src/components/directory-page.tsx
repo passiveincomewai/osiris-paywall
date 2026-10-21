@@ -237,7 +237,7 @@ export function CtaRow({ backHref, backLabel }: { backHref: string; backLabel: s
 
 export function PageShell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-[#05070d] text-white">
+    <main className="docs-root min-h-screen bg-[#05070d] text-white">
       <div className="max-w-4xl mx-auto px-6 py-10 md:py-16">{children}</div>
       <SiteFooter />
     </main>

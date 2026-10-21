@@ -1,461 +1,327 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Globe,
-  Satellite,
-  CloudSun,
-  Wind,
-  Radar,
-  Camera,
-} from "lucide-react";
-import {
-  IntentShell,
-  IntentBreadcrumbs,
-  ReviewedStamp,
-  HeroCtas,
-  MidCta,
-  webPageLd,
-  itemListLd,
-} from "@/components/SeoIntentLayout";
-import RelatedLinks from "@/components/RelatedLinks";
+import { Camera, CloudSun, Radar, Satellite } from "lucide-react";
+import AlternativePage, {
+  altMetadata,
+  type AltData,
+} from "@/components/AlternativePage";
 
-export const metadata: Metadata = {
-  title: "Zoom Earth Alternatives in 2026",
+const data: AltData = {
+  name: "Zoom Earth",
+  path: "/alternatives/zoom-earth",
+  title: "Zoom Earth Alternative — Past the Satellite View, Down to the Street",
   description:
-    "Looking for a Zoom Earth alternative? Compare free live satellite and world maps — WorldEye's 3D globe, Windy, Ventusky, NASA Worldview and more.",
-  alternates: { canonical: "/alternatives/zoom-earth" },
-  openGraph: {
-    title: "Zoom Earth Alternatives in 2026 | WorldEye",
-    description:
-      "Free alternatives to Zoom Earth compared: WorldEye's live 3D globe, Windy, Ventusky, NASA Worldview, Sentinel Hub and more.",
-    url: "/alternatives/zoom-earth",
-    type: "website",
+    "Zoom Earth shows the planet from orbit, beautifully. WorldEye is the alternative that continues the zoom: live satellite tracking plus 74,229 street-level cameras under the clouds. Free, no signup.",
+  ogTitle: "Zoom Earth Alternative — From Orbit to Street Level | WorldEye",
+  ogDescription:
+    "Compare Zoom Earth vs WorldEye: near-live satellite imagery and storm tracking vs a 3D globe with live cameras, flights, satellites and weather.",
+  kicker: "ZOOM EARTH ALTERNATIVES",
+  heroIcon: Satellite,
+  heroTitle: (
+    <>
+      A Zoom Earth alternative for when you want to keep zooming —{" "}
+      <span className="text-[#0096FF]">all the way to the street.</span>
+    </>
+  ),
+  heroLede: (
+    <>
+      Zoom Earth is the most beautiful way to watch the planet&apos;s weather
+      from orbit: satellite imagery refreshing every few minutes, storms
+      spiralling in near-real time. But its zoom stops at the clouds.
+      WorldEye starts where Zoom Earth ends — a 3D globe with live tracked
+      satellites overhead and 74,229 live cameras at street level underneath,
+      plus the flights, weather and fires in between. Here is the honest
+      comparison.
+    </>
+  ),
+  updatedNote:
+    "Facts checked October 20, 2026 against Zoom Earth's site and app-store listings (imagery cadence, storm sources, Pro features and price) and WorldEye's live pricing page.",
+  aboutIcon: CloudSun,
+  aboutHeading: "What Zoom Earth is — and why it's hypnotic",
+  about: [
+    <>
+      Zoom Earth, by Neave Interactive, is a live weather-satellite map for
+      the web and iOS/Android. Its core view is geostationary imagery —
+      NOAA GOES and JMA Himawari updating roughly{" "}
+      <span className="text-white/85 font-semibold">every 10 minutes</span>,
+      EUMETSAT Meteosat every 15 — layered with twice-daily HD imagery from
+      NASA&apos;s Aqua and Terra satellites. Around that core it wraps rain
+      radar with nowcasting, tropical storm tracking fed by the NHC and
+      JTWC, wildfire detection from NASA FIRMS, and forecast maps from the
+      DWD ICON and NOAA GFS models (precipitation, wind, temperature,
+      pressure and more).
+    </>,
+    <>
+      It is free with ads.{" "}
+      <span className="text-white/85 font-semibold">Zoom Earth Pro</span> —
+      $1.99/month or $11.99/year in its app-store listings — extends forecast
+      maps to 10 days, radar nowcasting to an hour ahead, adds tropical
+      weather alerts, removes the ads and syncs your account across devices.
+      It is, by any measure, a lot of sky for twelve dollars a year.
+    </>,
+    <>
+      Who is it for? Weather watchers, storm followers, and anyone who finds
+      the breathing of the atmosphere — fronts sweeping continents, hurricanes
+      winding up — inherently worth watching. Its design is famously clean:
+      no clutter, no accounts demanded, just the planet from very high up.
+      If that high-up view is the whole of what you want, keep it. This page
+      is for when you catch yourself trying to zoom one level further.
+    </>,
+  ],
+  strengths: [
+    {
+      title: "The prettiest satellite loop anywhere",
+      body: "Geostationary imagery at 10–15 minute cadence, blended and animated with real craft. Watching a front cross a continent on Zoom Earth is a small daily pleasure.",
+    },
+    {
+      title: "Serious storm tracking",
+      body: "NHC and JTWC feeds with forecast tracks make it a hurricane-season staple — the storm view is the product's home turf.",
+    },
+    {
+      title: "Pro is genuinely cheap",
+      body: "$11.99/year for 10-day forecasts, hour-ahead nowcasting, alerts and no ads. Few subscriptions in this category ask so little.",
+    },
+    {
+      title: "Zero-friction design",
+      body: "Web and apps, no account needed to watch, an interface that gets out of the imagery's way. A masterclass in doing one thing cleanly.",
+    },
+  ],
+  gapsIcon: Camera,
+  gapsHeading: "Where the satellite view stops",
+  gaps: [
+    <>
+      The first limit is altitude. Zoom Earth&apos;s imagery is magnificent
+      and, necessarily, abstract: cloud tops and colour-coded rain. It cannot
+      show you the flooded street, the snow accumulating on the pass, the
+      harbour taking the swell — because its cameras never get closer than
+      orbit, and its pictures of the ground are minutes old by design.
+      &ldquo;Near-live&rdquo; is the honest label its cadence earns; a live
+      camera feed is a different category of now.
+    </>,
+    <>
+      The second limit is scope. Zoom Earth is weather from space — it has no
+      ground cameras, no live flight tracking, no ships or satellites as
+      tracked objects with positions and identities, no transit. When a
+      hurricane makes landfall, the story continues at ground level — closed
+      airports, diverted flights, rising water on real streets — on other
+      sites.
+    </>,
+    <>
+      The third is the free tier&apos;s ads and horizons: the free map is
+      ad-supported, and the longer forecast range, the hour-ahead nowcasting
+      and the tropical alerts are Pro features. None of that is unreasonable
+      at the price — it just means the full Zoom Earth is a subscription,
+      like everything else, and worth comparing on those terms.
+    </>,
+  ],
+  worldEyeHeading: "WorldEye: orbit, air and street on one globe",
+  worldEye: [
+    <>
+      WorldEye is a 3D globe that treats the satellite view as the top layer
+      of a descent rather than the destination. From the planet view you can
+      drop to the{" "}
+      <Link href="/satellite-tracker" className="text-[#0096FF] hover:underline">
+        live satellite tracker
+      </Link>{" "}
+      — thousands of tracked objects with live positions, free — turn on
+      weather and radar, follow a hurricane with the{" "}
+      <Link href="/hurricane-tracker" className="text-[#0096FF] hover:underline">
+        hurricane tracker
+      </Link>
+      , and keep going down to{" "}
+      <span className="text-white/85 font-semibold">
+        74,229 live cameras
+      </span>{" "}
+      at street level: the beach the storm is approaching, the airport it
+      just closed, the mountain road the snow is settling on. Flights, ships,
+      earthquakes and fires share the same view, free with no signup.
+    </>,
+    <>
+      Honesty about the trade: WorldEye does not reproduce Zoom Earth&apos;s
+      geostationary imagery loop — the 10-minute GOES/Himawari animation is
+      Zoom Earth&apos;s signature and it does it better than anyone. WorldEye
+      offers a satellite map view on Pro, which is a basemap, not that living
+      weather cinema. If your ritual is watching the atmosphere breathe from
+      orbit, Zoom Earth Pro at $11.99/year is money well spent. WorldEye is
+      the alternative for when the question moves from &ldquo;what&apos;s the
+      sky doing?&rdquo; to &ldquo;what&apos;s happening down there?&rdquo;
+    </>,
+  ],
+  worldEyePoints: [
+    {
+      title: "The last zoom level: live cameras",
+      body: "74,229 real-time feeds at street level — the ground truth underneath Zoom Earth's cloud tops, browsable by country and city.",
+    },
+    {
+      title: "Satellites as objects, not just imagery",
+      body: "A free live tracker follows thousands of satellites and the space station with positions and passes — the things taking the pictures, on the same globe.",
+    },
+    {
+      title: "Storms followed to the ground",
+      body: "Hurricane tracking plus cameras in the path, diverted flights above and alerts on the feeds you care about (VIP Pro).",
+    },
+    {
+      title: "Weather in company",
+      body: "Radar and storm layers share the screen with quakes, fires, ships and transit — the event, whole, instead of the weather alone.",
+    },
+  ],
+  chips: [
+    { icon: Satellite, label: "Satellite tracker", href: "/satellite-tracker" },
+    { icon: Radar, label: "Hurricane tracker", href: "/hurricane-tracker" },
+    { icon: Camera, label: "74,229 cameras", href: "/cameras" },
+  ],
+  tableHeading: "Zoom Earth vs WorldEye, side by side",
+  tableIntro:
+    "Orbit versus the full descent. Zoom Earth wins the imagery rows on purpose; WorldEye wins everything that happens under the clouds.",
+  rows: [
+    { feature: "Core view", competitor: "Live weather-satellite imagery", worldEye: "3D globe — map, satellite view and cameras" },
+    { feature: "Imagery cadence", competitor: "Geostationary every 10–15 min; NASA HD twice daily", worldEye: "Live camera streams and live object layers" },
+    { feature: "Ground cameras", competitor: "No", worldEye: "74,229 live public feeds" },
+    { feature: "Storm tracking", competitor: "Yes — NHC/JTWC tracks, a signature strength", worldEye: "Yes — plus cameras and flights in the storm's path" },
+    { feature: "Rain radar & nowcasting", competitor: "Yes; nowcasting to 1 hour on Pro", worldEye: "Live radar layers, free" },
+    { feature: "Wildfires", competitor: "NASA FIRMS detections", worldEye: "Fire detections plus perimeters, on the globe" },
+    { feature: "Flights, ships, satellites as objects", competitor: "No", worldEye: "Yes — all live, all free" },
+    { feature: "Ads", competitor: "Yes, on the free tier", worldEye: "No ads" },
+    { feature: "Price", competitor: "Free; Pro $1.99/mo or $11.99/yr (app listings)", worldEye: "Free; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
+    { feature: "Apps", competitor: "Native iOS/Android apps + web", worldEye: "Browser-based, phone and desktop" },
+  ],
+  pricingHeading: "Pricing: twelve dollars of sky vs a globe that goes deeper",
+  pricing: [
+    <>
+      Zoom Earth is free with ads; Pro — $1.99/month or $11.99/year in its
+      app listings — is among the cheapest subscriptions in this entire
+      category, and buys real things: 10-day forecast maps, hour-ahead radar
+      nowcasting, tropical alerts, cross-device sync, no ads. If the
+      satellite weather view is your whole interest, it&apos;s close to a
+      perfect price.
+    </>,
+    <>
+      WorldEye&apos;s globe — cameras, flights, satellites, weather, quakes,
+      fires — is{" "}
+      <span className="text-white/85 font-semibold">
+        free with no signup and no ads
+      </span>
+      . Its paid tiers buy depth below the clouds:{" "}
+      <span className="text-white/85 font-semibold">
+        Pro at $7.99/week or $13.99/month
+      </span>{" "}
+      (1-day trials) for the satellite map view, OSINT toolkit, traffic and
+      multi-camera recording;{" "}
+      <span className="text-white/85 font-semibold">
+        VIP Pro at $74.99/year
+      </span>{" "}
+      (3-day trial) for intel layers, timelapse and camera alerts. First
+      charges carry a 7-day money-back guarantee — see{" "}
+      <Link href="/pricing" className="text-[#0096FF] hover:underline">
+        pricing
+      </Link>{" "}
+      and the dedicated{" "}
+      <Link href="/compare/zoom-earth" className="text-[#0096FF] hover:underline">
+        Zoom Earth comparison
+      </Link>
+      .
+    </>,
+  ],
+  stepsHeading: "Trying the alternative takes a minute",
+  steps: [
+    {
+      title: "Open the globe",
+      body: "worldeye.app loads live immediately — no account, no app install, phone or desktop.",
+    },
+    {
+      title: "Find the weather you're watching",
+      body: "Turn on weather and radar; locate the same system you've been following on Zoom Earth — a front, a storm, a snow band.",
+    },
+    {
+      title: "Keep zooming",
+      body: "Drop to the satellite tracker, then to a live camera in the weather's path. That last level — the street, now — is the whole difference.",
+    },
+    {
+      title: "Keep Zoom Earth for the cinema",
+      body: "The geostationary loop stays unmatched for pure sky-watching, and Pro costs $11.99 a year. Running both is a rounding error.",
+    },
+  ],
+  verdictHeading: "Which one should you use?",
+  verdicts: [
+    {
+      q: "You watch the atmosphere itself?",
+      a: "Zoom Earth. The satellite loop is its art form, and Pro is nearly free. Nothing here replaces it.",
+    },
+    {
+      q: "You want to see the place, not just its sky?",
+      a: "WorldEye. Live cameras put you on the street the weather is happening to.",
+    },
+    {
+      q: "Tracking a hurricane to landfall?",
+      a: "Both: Zoom Earth for the storm's portrait from orbit, WorldEye for its arrival — cameras, closures and diversions.",
+    },
+  ],
+  faqHeading: "Zoom Earth alternative questions, answered",
+  faqs: [
+    {
+      q: "Is Zoom Earth actually live?",
+      a: "Near-live. Its geostationary imagery refreshes about every 10 minutes (GOES, Himawari) to 15 minutes (Meteosat), with NASA HD imagery twice a day — superb for weather, but a slideshow compared with a video feed. WorldEye's 74,229 cameras stream in real time.",
+    },
+    {
+      q: "Is Zoom Earth free?",
+      a: "Yes, with ads. Zoom Earth Pro ($1.99/month or $11.99/year in app-store listings) removes ads and adds 10-day forecast maps, radar nowcasting up to an hour, tropical weather alerts and cross-device sync. WorldEye is free with no ads and no signup.",
+    },
+    {
+      q: "What is the best Zoom Earth alternative?",
+      a: "It depends on the direction you want to travel. For deeper weather forecasting, Windy. For satellite imagery archives and science data, NASA Worldview. For going below the satellite view — live cameras, flights, tracked satellites, ground events — WorldEye is the alternative built for that descent.",
+    },
+    {
+      q: "Does Zoom Earth have street-level or traffic cameras?",
+      a: "No — Zoom Earth's cameras all point down from orbit. Ground cameras are WorldEye's centrepiece: 74,229 public feeds covering streets, highways, beaches, airports and landmarks, browsable by country and city.",
+    },
+    {
+      q: "Can WorldEye show satellite imagery like Zoom Earth?",
+      a: "Partly, and we'll be precise: WorldEye's Pro tier includes a satellite map view, and its free satellite tracker shows live positions of thousands of orbiting objects. What it doesn't replicate is Zoom Earth's animated geostationary weather imagery — that loop is Zoom Earth's signature, and it's better at it.",
+    },
+    {
+      q: "Zoom Earth vs WorldEye for hurricane tracking?",
+      a: "Zoom Earth gives the storm's portrait — satellite imagery and NHC/JTWC forecast tracks, beautifully presented. WorldEye follows the same storm to the ground: live cameras in the landfall zone, flights diverting around it, and alerts when a watched feed's conditions change. Hurricane season is the strongest case for using both.",
+    },
+    {
+      q: "Does Zoom Earth track flights or ships?",
+      a: "No — Zoom Earth is a weather product: satellite imagery, radar, storms and fires. Flights, AIS ships and satellites-as-objects are WorldEye layers, live and free on the same globe as its weather.",
+    },
+  ],
+  midCta: {
+    heading: "You've seen the storm from orbit. Now stand under it.",
+    body: "One more zoom level exists — a live camera on the street the weather is reaching. Free, no signup.",
   },
-  twitter: {
-    card: "summary",
-    title: "Zoom Earth Alternatives in 2026 | WorldEye",
-    description:
-      "Free Zoom Earth alternatives compared — WorldEye's live 3D globe, Windy, NASA Worldview and more.",
-  },
-};
-
-const OPTIONS = [
-  {
-    icon: Globe,
-    name: "WorldEye",
-    tag: "Best free all-in-one alternative",
-    href: "/compare/zoom-earth",
-    body: "A free live 3D globe — no signup — fusing live flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras on one screen. The pick when you want the satellite-style view plus everything happening underneath it.",
-  },
-  {
-    icon: Wind,
-    name: "Windy",
-    tag: "Best for weather-model maps",
-    href: "/compare/windy",
-    body: "Weather-model visualization at depth — wind, radar, forecast layers and a webcam layer, with a Premium subscription for heavier use. Superb for forecast work; a weather platform rather than a general live-world globe.",
-  },
-  {
-    icon: CloudSun,
-    name: "Ventusky",
-    tag: "Best for animated weather visualization",
-    href: "/compare/ventusky",
-    body: "Gorgeous animated weather maps — wind, temperature, precipitation and air quality worldwide. If animated weather is the main thing you watch, it's superb; it doesn't cover flights, satellites or cameras.",
-  },
-  {
-    icon: Radar,
-    name: "NASA Worldview",
-    tag: "Best for science-grade satellite data",
-    href: "/compare/nasa-worldview",
-    body: "NASA's own browser for daily global satellite imagery across hundreds of data layers. Authoritative and free; built for researchers, so the learning curve is steeper than a casual live map.",
-  },
-  {
-    icon: Satellite,
-    name: "Sentinel Hub / Copernicus Browser",
-    tag: "Best for free Earth-observation imagery",
-    href: "/compare/sentinel-hub",
-    body: "Free access to Copernicus Sentinel satellite imagery through ESA's browser tools. Excellent for recent high-quality imagery and analysis; an analyst's tool rather than an always-on live globe.",
-  },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    webPageLd(
-      "Zoom Earth Alternatives in 2026",
-      "Free alternatives to Zoom Earth: WorldEye's live 3D globe, Windy, Ventusky, NASA Worldview, Sentinel Hub and more.",
-      "/alternatives/zoom-earth"
-    ),
-    itemListLd(
-      OPTIONS.map((o) => ({
-        name: o.name,
-        href: o.href,
-        description: `${o.tag}. ${o.body}`,
-      }))
-    ),
+  ctaHeading: (
+    <>
+      From orbit, <span className="text-[#0096FF]">to the street.</span>
+    </>
+  ),
+  ctaBody: "Live satellites, weather and 74,229 cameras on one free 3D globe.",
+  related: [
+    {
+      label: "Zoom Earth vs WorldEye, head to head",
+      desc: "The dedicated comparison page with the full feature matrix.",
+      href: "/compare/zoom-earth",
+    },
+    {
+      label: "Windy alternatives",
+      desc: "The forecast-model master, compared the same honest way.",
+      href: "/alternatives/windy",
+    },
+    {
+      label: "Satellite tracker",
+      desc: "Thousands of satellites and the ISS, tracked live and free.",
+      href: "/satellite-tracker",
+    },
+    {
+      label: "Hurricane tracker",
+      desc: "Active storms tracked live — with cameras in the path.",
+      href: "/hurricane-tracker",
+    },
   ],
 };
 
-export default function ZoomEarthAlternativesPage() {
-  return (
-    <IntentShell jsonLd={jsonLd}>
-      <IntentBreadcrumbs
-        trail={[
-          { label: "Alternatives", href: "/compare" },
-          { label: "Zoom Earth Alternatives" },
-        ]}
-      />
+export const metadata = altMetadata(data);
 
-      {/* Hero */}
-      <div className="text-center max-w-2xl mx-auto">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#0096FF] border border-[#0096FF]/30 rounded-full px-4 py-1.5 mb-6">
-          <Satellite className="w-3.5 h-3.5" /> ALTERNATIVES
-        </p>
-        <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-          Zoom Earth alternatives that go <span className="text-[#0096FF]">beyond the imagery.</span>
-        </h1>
-        <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          The best free Zoom Earth alternative is WorldEye: a live 3D globe
-          streaming flights, satellites, weather, earthquakes, wildfires and
-          74,229 public cameras — no signup. If your watching is mostly
-          satellite imagery or forecast models, a specialist below may fit
-          better.
-        </p>
-        <ReviewedStamp />
-        <HeroCtas />
-      </div>
-
-      {/* What Zoom Earth is */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">What is Zoom Earth, exactly?</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Zoom Earth is a live satellite-imagery map: near-real-time views
-            from orbit with weather, storm and wildfire tracking layered over
-            a fluid, zoomable Earth. It made its name on immediacy — watching
-            a hurricane or a fire from space, updated frequently, in a
-            browser, for free.
-          </p>
-          <p>
-            Its focus is also its boundary. Zoom Earth shows you the planet
-            from above; it does not put aircraft, ships, ground cameras or
-            event intelligence on the same screen. So the first question in
-            choosing an alternative is &ldquo;is the view from orbit enough,
-            or do I want the live world underneath it too?&rdquo;
-          </p>
-        </div>
-      </section>
-
-      {/* Free alternative */}
-      <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-        <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <Globe className="w-7 h-7 text-[#0096FF] shrink-0" />
-          Is there a free alternative to Zoom Earth?
-        </h2>
-        <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Yes. WorldEye&apos;s entire map is free with no account: a 3D globe
-            carrying live aircraft positions, satellite tracks, weather
-            systems, earthquake and wildfire activity, and roughly 74,229
-            publicly accessible cameras. Where Zoom Earth stops at the imagery,
-            WorldEye keeps going down to street level — the storm from orbit
-            and the camera inside it, on one screen.
-          </p>
-          <p>
-            The Pro tier (weekly $7.99, monthly $13.99, annual $74.99) adds
-            intelligence tooling — the OSINT toolkit, maritime and cyber/GDELT
-            intel feeds, a dedicated satellite imagery view, advanced search filters and
-            the AI analyst — but it never gates the live map. NASA Worldview
-            and Ventusky are also free for their specialties.
-          </p>
-        </div>
-      </section>
-
-      {/* The options */}
-      <section className="mt-20">
-        <h2 className="text-2xl md:text-3xl font-bold text-center">
-          Five Zoom Earth alternatives, <span className="text-[#0096FF]">compared</span>
-        </h2>
-        <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
-          Each one&apos;s honest best-fit is noted — the right alternative is
-          the one that matches what you actually watch.
-        </p>
-        <div className="mt-10 grid gap-5 max-w-4xl mx-auto">
-          {OPTIONS.map((o, i) => (
-            <div
-              key={o.name}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 md:p-8 hover:border-[#0096FF]/40 transition"
-            >
-              <div className="flex items-start gap-5">
-                <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0096FF]/10 border border-[#0096FF]/25 text-sm font-bold text-[#0096FF] shrink-0">
-                  {i + 1}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-xl font-bold">{o.name}</h3>
-                    <span className="text-xs font-semibold text-[#0096FF] bg-[#0096FF]/10 border border-[#0096FF]/25 rounded-full px-3 py-1">
-                      {o.tag}
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/50 leading-relaxed mt-3">{o.body}</p>
-                  <Link
-                    href={o.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    Compare {o.name} vs WorldEye
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <MidCta
-        heading="One globe. Every live layer. Free."
-        body="Flights, satellites, weather, quakes, fires and cameras — streaming on a 3D globe with no signup. From orbit to street level in one zoom."
-      />
-
-      {/* Why layers */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Why imagery is only the first layer</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Satellite imagery shows you the shape of an event. Live layers
-            show you its consequences. On WorldEye you can watch a storm
-            system on the weather layer while aircraft thread around it,
-            satellites pass overhead, and public cameras show conditions where
-            it makes landfall — the full stack, in one frame, without opening
-            a second tool.
-          </p>
-          <p>
-            The 3D globe also preserves the geometry that flat imagery maps
-            flatten away: ocean crossings, the day-night terminator, orbital
-            paths arcing over the poles. For understanding where things are in
-            relation to each other, that spatial honesty matters.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            {[
-              { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
-              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
-              { icon: CloudSun, label: "Weather tracker", href: "/weather-tracker" },
-              { icon: Globe, label: "All features", href: "/features" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 hover:border-[#0096FF]/40 transition"
-              >
-                <c.icon className="w-4 h-4 text-[#0096FF]" /> {c.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Honest limits */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">When Zoom Earth or a specialist wins</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Honestly: if your whole interest is the satellite picture itself —
-            the freshest near-real-time imagery, storm imagery in particular —
-            Zoom Earth is purpose-built for exactly that and does it
-            beautifully. For publication-grade or scientific work, NASA
-            Worldview and the Copernicus Browser go far deeper still, and for
-            forecast models, Windy is the stronger tool.
-          </p>
-          <p>
-            WorldEye&apos;s bet is different: most people don&apos;t watch one
-            layer — they watch the world, and the world doesn&apos;t come in
-            separate tabs. Use the specialist for the deep dive, and the globe
-            for everything around it.
-          </p>
-        </div>
-      </section>
-
-      {/* Switching guide */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Switching from Zoom Earth: your first five minutes</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            If Zoom Earth is your habit, the translation is mostly about what
-            each view was really showing you — and where the same thing lives
-            on a live globe:
-          </p>
-          <ul className="space-y-3 list-none">
-            <li>
-              <strong className="text-white/85">Storm watching.</strong>{" "}
-              Zoom Earth&rsquo;s storm view becomes WorldEye&rsquo;s weather
-              and hurricane layers — the same systems, but with the aircraft
-              routing around them and the public cameras underneath the track.
-              During a landfall, the camera in the storm is the view imagery
-              can&rsquo;t give you.
-            </li>
-            <li>
-              <strong className="text-white/85">Fire watching.</strong>{" "}
-              Satellite fire detections are on the wildfire layer (NASA FIRMS,
-              the same detection family), joined by 1,285 ALERT wildfire
-              cameras streaming live stills from fire country — orbit and
-              ground truth in one frame.
-            </li>
-            <li>
-              <strong className="text-white/85">The imagery itself.</strong>{" "}
-              The free globe&rsquo;s home view is a data basemap with live
-              satellite positions tracked overhead; Pro adds a true-color
-              satellite imagery basemap. If your need is a daily imagery
-              archive for research, keep NASA Worldview in your bookmarks —
-              nothing here replaces it.
-            </li>
-            <li>
-              <strong className="text-white/85">Everyday checking.</strong>{" "}
-              There is nothing to install and nothing to configure: open the
-              globe, search any place (basic search is free), and the layers
-              you left on are the layers you return to.
-            </li>
-          </ul>
-          <p>
-            Most switchers keep both for a week and then notice which tab they
-            actually open. Imagery for the deep dive, the globe for the living
-            picture — that division is fine, and this page won&rsquo;t pretend
-            otherwise.
-          </p>
-        </div>
-      </section>
-
-      {/* How to choose */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">How to choose your Zoom Earth alternative</h2>
-        <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          {[
-            {
-              q: "Imagery or live world?",
-              a: "Pure satellite viewing points to Zoom Earth or NASA Worldview. Imagery plus flights, cameras and events points to a multi-layer globe.",
-            },
-            {
-              q: "Casual or analytical?",
-              a: "Casual watching is fully served by free live maps. Analysts needing raw Earth-observation data should look at the Copernicus tools.",
-            },
-            {
-              q: "Weather models too?",
-              a: "If forecast-model depth matters as much as imagery, Windy or Ventusky earns a place alongside whichever live globe you choose.",
-            },
-          ].map((c) => (
-            <div key={c.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="font-semibold text-white/90 mb-2">{c.q}</p>
-              <p className="text-sm text-white/50 leading-relaxed">{c.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Q&A */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Zoom Earth alternative questions, answered</h2>
-        <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Does WorldEye show satellite imagery?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              The free globe tracks live satellite positions overhead, and Pro
-              adds a dedicated satellite imagery view. For deep scientific
-              imagery archives, NASA Worldview and the Copernicus Browser
-              remain the specialist tools — this page says so plainly.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Do I need an account to use WorldEye?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              No. The map — globe, flights, satellites, weather, earthquakes,
-              wildfires, cameras — is free with no signup. Accounts exist only
-              for Pro subscribers and affiliates, never as a gate in front of
-              the map.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro cost?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Weekly $7.99, monthly $13.99, or annual $74.99. Pro adds the
-              OSINT toolkit, maritime intel, cyber/GDELT intel, satellite
-              imagery view, advanced search filters and the AI analyst. The free map
-              stays free regardless.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can I watch a hurricane live on WorldEye?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Yes — that is one of the strongest reasons to switch. The
-              hurricane layer carries active storms and their tracks, the
-              weather layer shows the system around them, and the public
-              cameras near the coast show conditions on the ground as the
-              storm arrives: surf, wind and flooding as they happen, not as an
-              imagery loop. Zoom Earth shows the storm from orbit; WorldEye
-              adds the view from inside it.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Does WorldEye work on a phone like Zoom Earth does?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Yes. WorldEye runs in the mobile browser — no app to install —
-              with the same globe, layers and cameras as desktop, so a storm
-              check on your phone shows the same live picture as your desk.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#0096FF]/30 bg-gradient-to-b from-[#0096FF]/[0.10] to-transparent p-10">
-        <h2 className="text-2xl md:text-3xl font-bold">
-          From orbit <span className="text-[#0096FF]">to street level.</span>
-        </h2>
-        <p className="text-white/55 mt-3 mb-8">
-          Open the globe and watch the world move — free, no signup, nothing to install.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-block px-8 py-4 rounded-2xl bg-[#0096FF] text-white font-bold hover:bg-[#0077d6] transition"
-          >
-            Explore WorldEye
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-block px-8 py-4 rounded-2xl border border-white/15 text-white/85 font-semibold hover:border-[#0096FF]/50 hover:bg-white/5 transition"
-          >
-            Unlock WorldEye PRO
-          </Link>
-        </div>
-        <p className="mt-6 text-sm text-white/40">
-          Prefer the head-to-head?{" "}
-          <Link href="/compare/zoom-earth" className="text-[#0096FF] hover:underline">
-            WorldEye vs Zoom Earth
-          </Link>
-        </p>
-      </div>
-
-      <RelatedLinks
-        links={[
-          {
-            label: "WorldEye vs Zoom Earth",
-            desc: "The detailed head-to-head comparison on the compare hub.",
-            href: "/compare/zoom-earth",
-          },
-          {
-            label: "Satellite tracker",
-            desc: "Live satellite positions on a 3D globe, free with no signup.",
-            href: "/satellite-tracker",
-          },
-          {
-            label: "Features",
-            desc: "Everything the globe can do — free layers and Pro intelligence tools.",
-            href: "/features",
-          },
-          {
-            label: "Pricing",
-            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map itself stays free.",
-            href: "/pricing",
-          },
-        ]}
-      />
-    </IntentShell>
-  );
+export default function Page() {
+  return <AlternativePage data={data} />;
 }

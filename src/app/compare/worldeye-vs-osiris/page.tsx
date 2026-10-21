@@ -115,7 +115,7 @@ const jsonLd = {
 
 export default function WorldEyeVsOsirisPage() {
   return (
-    <div className="min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
+    <div className="docs-root min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <JsonLd data={jsonLd} />
 
       <article className="max-w-4xl mx-auto px-6 pt-14 md:pt-20 pb-8">

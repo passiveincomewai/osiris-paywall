@@ -1,408 +1,326 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Plane,
-  Globe,
-  Satellite,
-  Camera,
-  Radio,
-  Radar,
-  CloudSun,
-} from "lucide-react";
-import {
-  IntentShell,
-  IntentBreadcrumbs,
-  ReviewedStamp,
-  HeroCtas,
-  MidCta,
-  webPageLd,
-  itemListLd,
-} from "@/components/SeoIntentLayout";
-import RelatedLinks from "@/components/RelatedLinks";
+import { Camera, Plane, Radio, Satellite } from "lucide-react";
+import AlternativePage, {
+  altMetadata,
+  type AltData,
+} from "@/components/AlternativePage";
 
-export const metadata: Metadata = {
-  title: "Free Flightradar24 Alternatives in 2026",
+const data: AltData = {
+  name: "Flightradar24",
+  path: "/alternatives/flightradar24",
+  title: "Flightradar24 Alternative — Live Flights Plus the Whole Planet",
   description:
-    "The best free Flightradar24 alternatives compared: WorldEye's 3D globe, ADS-B Exchange, airplanes.live and more — no signup needed.",
-  alternates: { canonical: "/alternatives/flightradar24" },
-  openGraph: {
-    title: "Free Flightradar24 Alternatives in 2026 | WorldEye",
-    description:
-      "Free flight-tracking alternatives compared — WorldEye's 3D globe with flights, cameras and satellites, plus ADS-B Exchange and airplanes.live.",
-    url: "/alternatives/flightradar24",
-    type: "website",
+    "Flightradar24 tracks flights superbly — and nothing else. WorldEye is the alternative that puts live flights on a 3D globe with 74,229 cameras, satellites, weather, quakes and ships. Free, no signup.",
+  ogTitle: "Flightradar24 Alternative — Flights, Cameras, Satellites, One Globe | WorldEye",
+  ogDescription:
+    "Compare Flightradar24 vs WorldEye: flight-depth vs a full live planet — 74,229 cameras, satellites, weather, earthquakes and more on one globe, free with no signup.",
+  kicker: "FLIGHTRADAR24 ALTERNATIVES",
+  heroIcon: Plane,
+  heroTitle: (
+    <>
+      A Flightradar24 alternative for when the flight{" "}
+      <span className="text-[#0096FF]">isn&apos;t the whole story.</span>
+    </>
+  ),
+  heroLede: (
+    <>
+      Flightradar24 is the world&apos;s favourite flight tracker, and for pure
+      aviation depth it earns that spot. But the moment your question widens —
+      what&apos;s the weather doing at the destination, what do the airport
+      cameras show, what else is moving up there — a flight-only map runs out
+      of planet. WorldEye puts live flights on a globe that also carries
+      74,229 cameras, satellites, weather, earthquakes, fires and ships. Here
+      is the honest comparison.
+    </>
+  ),
+  updatedNote:
+    "Facts checked October 20, 2026 against Flightradar24's official app listings (tier features, receiver-network size) and WorldEye's live pricing page. Flightradar24 sets its own prices per country and currency, so this page describes its tiers without printing a currency figure.",
+  aboutIcon: Plane,
+  aboutHeading: "What Flightradar24 is — and why it's loved",
+  about: [
+    <>
+      Flightradar24 is a Swedish flight-tracking service that turned ADS-B
+      data into a household habit: open the map and every airborne airliner is
+      there, moving in near-real time. Its positions come from a network it
+      describes as roughly{" "}
+      <span className="text-white/85 font-semibold">
+        50,000 ground receiver stations
+      </span>{" "}
+      — many hosted by volunteers — supplemented by multilateration (MLAT) for
+      aircraft without ADS-B and satellite-based ADS-B over the oceans. Tap any
+      aircraft and you get the flight&apos;s route, schedule, aircraft type and
+      registration; search by flight number, airline, airport or tail number.
+    </>,
+    <>
+      Its tiers are built for aviation people. The free Basic tier is
+      ad-supported with a short window of flight history.{" "}
+      <span className="text-white/85 font-semibold">Silver</span> adds 90 days
+      of history, richer aircraft details (serial number, age), flight details
+      like vertical speed and squawk, filters and alerts, and current weather
+      at 3,000+ airports.{" "}
+      <span className="text-white/85 font-semibold">Gold</span> stretches
+      history to 365 days and adds detailed live weather layers, aeronautical
+      charts, oceanic tracks, ATC boundaries and extended Mode S data. A
+      Business tier serves professional users and data customers.
+    </>,
+    <>
+      Who is it for? Plane spotters, frequent flyers tracking family,
+      aviation professionals and the simply curious — anyone whose question
+      starts and ends with aircraft. Its mobile apps are polished, its 3D view
+      and augmented-reality plane-spotting are delightful, and its playback
+      feature lets you rewind the sky. If aeroplanes are your whole hobby,
+      stop reading and keep it: this page is for the moments when they
+      aren&apos;t.
+    </>,
+  ],
+  strengths: [
+    {
+      title: "The deepest flight data for consumers",
+      body: "365 days of history on Gold, extended Mode S telemetry, oceanic tracks and ATC boundaries — no generalist globe matches its aviation archive.",
+    },
+    {
+      title: "Its own global receiver network",
+      body: "~50,000 ground stations plus MLAT and satellite ADS-B give it coverage and redundancy that aggregators of public feeds can't easily copy.",
+    },
+    {
+      title: "Superb apps and playback",
+      body: "Native iOS/Android apps, AR plane identification, airport boards and global playback — the flight-tracking craft is refined to a shine.",
+    },
+    {
+      title: "Alerts and filters that spotters love",
+      body: "Silver and up bring flight alerts, emergency squawk highlighting and rich filtering by airline, aircraft, altitude and speed.",
+    },
+  ],
+  gapsIcon: Radio,
+  gapsHeading: "Where a flight-only map runs out",
+  gaps: [
+    <>
+      The first gap is scope. Flightradar24 answers &ldquo;where is that
+      plane?&rdquo; magnificently — and nothing around it. There are no ground
+      cameras to check the weather at your destination with your own eyes, no
+      satellites-as-objects (the other traffic overhead), no ships, no
+      earthquake or wildfire context when a flight diverts, no transit. In
+      practice, following a real event — a storm diversion, an airport
+      incident — means juggling three or four other sites alongside it.
+    </>,
+    <>
+      The second gap is the free tier&apos;s ceiling. Basic is ad-supported
+      and history is short; the features casual users most often reach for —
+      alerts, deep history, weather layers — sit behind Silver or Gold. The
+      prices themselves are reasonable, but they buy depth in exactly one
+      layer of the world.
+    </>,
+    <>
+      The third gap is perspective — literally. Flightradar24 is a flat map
+      (with an optional 3D view per aircraft). Watching a long-haul arc across
+      a living 3D planet, with the terminator line and weather moving under
+      it, is a different experience, and it is the one WorldEye is built
+      around. If flights are your entry point rather than your destination,
+      that wider frame is the alternative worth trying.
+    </>,
+  ],
+  worldEyeHeading: "WorldEye: flights, in their full context",
+  worldEye: [
+    <>
+      WorldEye&apos;s{" "}
+      <Link href="/live-flight-tracker" className="text-[#0096FF] hover:underline">
+        live flight tracker
+      </Link>{" "}
+      shows worldwide air traffic on a 3D globe, free with no signup — search
+      a flight, follow an aircraft, and watch its route drawn over the planet.
+      The difference is everything sharing the screen:{" "}
+      <span className="text-white/85 font-semibold">
+        74,229 live cameras
+      </span>{" "}
+      (including airport and skyline feeds), tracked satellites passing
+      overhead, live weather and radar, earthquakes, wildfires and ships —
+      one globe, no tab-juggling.
+    </>,
+    <>
+      Honesty about the trade: WorldEye does not match Flightradar24&apos;s
+      aviation archive. There is no 365-day history search, no Mode S
+      telemetry firehose, no ATC boundary layer. If your hobby is tail-number
+      archaeology, Gold is worth its money. WorldEye is the alternative for
+      the other 90% of moments — tracking a family flight while checking the
+      destination&apos;s weather on a live camera, or watching diversions pile
+      up around a storm you can also see.
+    </>,
+  ],
+  worldEyePoints: [
+    {
+      title: "Flights plus the ground truth",
+      body: "Follow a flight, then open a live camera at its destination — 74,229 feeds including airports, cities, beaches and ski areas — without leaving the globe.",
+    },
+    {
+      title: "More of the sky than aircraft",
+      body: "Tracked satellites and the space station share the same view, with passes and positions live on the free tier.",
+    },
+    {
+      title: "Weather with eyes on it",
+      body: "Live weather, radar, hurricanes, quakes and fires sit one toggle away from the flight layer — context FR24's weather layers only partly cover.",
+    },
+    {
+      title: "Follow mode and flight paths on Pro",
+      body: "Pro adds full flight-path following (planned route vs flown track) and the satellite map view; the core tracker stays free.",
+    },
+  ],
+  chips: [
+    { icon: Plane, label: "Live flight tracker", href: "/live-flight-tracker" },
+    { icon: Camera, label: "Airport & city cameras", href: "/cameras" },
+    { icon: Satellite, label: "Satellite tracker", href: "/satellite-tracker" },
+  ],
+  tableHeading: "Flightradar24 vs WorldEye, side by side",
+  tableIntro:
+    "Flightradar24 wins the aviation-depth rows on purpose — it's a specialist. Read the table by which rows match your actual questions.",
+  rows: [
+    { feature: "Live flight tracking", competitor: "Yes — its core craft, ~50,000 receivers", worldEye: "Yes — worldwide live traffic on a 3D globe" },
+    { feature: "Flight history", competitor: "7 days free (limited); 90 days Silver; 365 days Gold", worldEye: "Live-focused; no long historical archive" },
+    { feature: "Aircraft detail depth", competitor: "Deep — registration, age, serial, Mode S telemetry on paid tiers", worldEye: "Core flight details; not a Mode S archive" },
+    { feature: "Flight alerts & filters", competitor: "Yes, on Silver and Gold", worldEye: "Basic search and follow; camera alerts on VIP Pro" },
+    { feature: "Live cameras", competitor: "No", worldEye: "74,229 live public cameras" },
+    { feature: "Satellites as objects", competitor: "No (satellite ADS-B is a data source, not a layer)", worldEye: "Yes — live satellite tracker, free" },
+    { feature: "Weather", competitor: "Airport weather free-ish; full live layers on Gold", worldEye: "Weather, radar and storm layers, free" },
+    { feature: "Ships, quakes, fires, transit", competitor: "No", worldEye: "Yes — all on the same globe, free" },
+    { feature: "Ads", competitor: "Yes on the free tier", worldEye: "No ads" },
+    { feature: "Apps", competitor: "Native iOS/Android apps", worldEye: "Browser-based, phone and desktop" },
+  ],
+  pricingHeading: "Pricing: depth in one layer vs breadth across all of them",
+  pricing: [
+    <>
+      Flightradar24&apos;s free tier is ad-supported. Silver and Gold are
+      inexpensive subscriptions priced per country and currency (shown in its
+      apps and checkout — the company does not publish one global figure), and
+      they buy genuine aviation depth: longer history, alerts, weather layers,
+      charts. A Business tier covers professional and data use.
+    </>,
+    <>
+      WorldEye&apos;s flight tracking — and the cameras, satellites, weather,
+      quakes and fires around it — is{" "}
+      <span className="text-white/85 font-semibold">
+        free with no signup
+      </span>
+      . Paid tiers add capability, not the basics:{" "}
+      <span className="text-white/85 font-semibold">
+        Pro at $7.99/week or $13.99/month
+      </span>{" "}
+      (1-day trials) for flight-path follow, satellite view, the OSINT toolkit
+      and multi-camera recording;{" "}
+      <span className="text-white/85 font-semibold">
+        VIP Pro at $74.99/year
+      </span>{" "}
+      (3-day trial) for intel layers, timelapse and camera alerts. First
+      charges carry a 7-day money-back guarantee — see{" "}
+      <Link href="/pricing" className="text-[#0096FF] hover:underline">
+        pricing
+      </Link>{" "}
+      and the dedicated{" "}
+      <Link href="/compare/flightradar24" className="text-[#0096FF] hover:underline">
+        Flightradar24 comparison
+      </Link>
+      .
+    </>,
+  ],
+  stepsHeading: "Trying the alternative takes a minute",
+  steps: [
+    {
+      title: "Open the globe",
+      body: "worldeye.app loads live traffic immediately — no account, no app install, on phone or desktop.",
+    },
+    {
+      title: "Find your flight",
+      body: "Search or tap any aircraft to follow it across the 3D globe, route drawn live. What is ADS-B? Our explainer at /what-is-ads-b covers the tech both sites share.",
+    },
+    {
+      title: "Add the context",
+      body: "Toggle cameras, weather, satellites and fires. Check your destination's live camera while the flight is still en route.",
+    },
+    {
+      title: "Keep FR24 for the archive",
+      body: "If you research historical flights, keep Gold for that. Switching costs nothing because WorldEye's tracker is free — many people run both.",
+    },
+  ],
+  verdictHeading: "Which one should you use?",
+  verdicts: [
+    {
+      q: "Serious spotter or aviation researcher?",
+      a: "Flightradar24 Gold. The 365-day archive, Mode S depth and ATC boundaries are built for you.",
+    },
+    {
+      q: "Tracking family flights and travel days?",
+      a: "WorldEye. Follow the flight and see the destination's weather and cameras on the same screen, free.",
+    },
+    {
+      q: "Curious about everything overhead?",
+      a: "WorldEye. Aircraft are one layer among satellites, ships, storms and 74,229 cameras.",
+    },
+  ],
+  faqHeading: "Flightradar24 alternative questions, answered",
+  faqs: [
+    {
+      q: "Is there a free alternative to Flightradar24?",
+      a: "Yes. WorldEye's live flight tracker is free with no signup and no ads, showing worldwide traffic on a 3D globe — and it adds cameras, satellites, weather, earthquakes and ships that Flightradar24 doesn't have. ADS-B Exchange and airplanes.live are other free flight-only options.",
+    },
+    {
+      q: "What is the best Flightradar24 alternative?",
+      a: "It depends on the job. For pure aviation depth — long history, alerts, telemetry — Flightradar24 itself is still the benchmark. For flight tracking as part of a wider live picture (cameras, weather, satellites, ground events), WorldEye is the strongest alternative. For unfiltered raw ADS-B, enthusiasts pick ADS-B Exchange.",
+    },
+    {
+      q: "Does WorldEye have flight history like Flightradar24 Gold?",
+      a: "No — and we won't pretend otherwise. Flightradar24 Gold keeps 365 days of searchable history; WorldEye is built for the live moment and flight following, not historical research. Keep a Gold subscription if the archive is your hobby.",
+    },
+    {
+      q: "Is Flightradar24 free?",
+      a: "There's a free ad-supported tier with limited history. Silver (90 days of history, alerts, airport weather) and Gold (365 days, weather layers, charts, ATC boundaries) are paid, priced by country and currency in Flightradar24's apps and checkout.",
+    },
+    {
+      q: "Can WorldEye show me the weather at my destination airport?",
+      a: "Two ways: the live weather and radar layers on the globe, and — uniquely — actual live cameras. WorldEye serves 74,229 public camera feeds including airport and city cameras, so you can look at the sky over your destination instead of just reading a forecast for it.",
+    },
+    {
+      q: "Flightradar24 vs WorldEye — which is better on a phone?",
+      a: "Flightradar24 has native apps with AR plane-spotting; WorldEye runs in the mobile browser with nothing to install, and its globe carries every layer (cameras, satellites, storms) rather than flights alone. Both are smooth; the difference is breadth, not polish.",
+    },
+    {
+      q: "Does WorldEye track military or private flights?",
+      a: "WorldEye displays the public ADS-B traffic its feeds carry. Like all public trackers, some aircraft are anonymised or absent by request of operators and regulators; Flightradar24 applies similar filtering. Neither public site shows everything that flies.",
+    },
+  ],
+  midCta: {
+    heading: "Your flight, and everything around it",
+    body: "Track the plane, check the destination camera, watch the storm it's skirting — one globe, free. Try it alongside Flightradar24 and feel the difference.",
   },
-  twitter: {
-    card: "summary",
-    title: "Free Flightradar24 Alternatives in 2026 | WorldEye",
-    description:
-      "Free Flightradar24 alternatives compared: WorldEye's 3D globe, ADS-B Exchange, airplanes.live and more.",
-  },
-};
-
-const OPTIONS = [
-  {
-    icon: Globe,
-    name: "WorldEye",
-    tag: "Best free all-in-one alternative",
-    href: "/compare/flightradar24",
-    body: "Live flight tracking on a free 3D globe — no signup — with the world attached: satellites overhead, weather systems, 74,229 ground cameras, ships and quakes on the same screen. Best when you want flights plus everything around them.",
-  },
-  {
-    icon: Radio,
-    name: "ADS-B Exchange",
-    tag: "Best unfiltered community data",
-    href: "/compare/adsb-exchange",
-    body: "Community-run, unfiltered ADS-B aggregation — the enthusiast's choice for seeing aircraft that other trackers filter out, including many military and government flights. Raw and powerful; the interface is utilitarian.",
-  },
-  {
-    icon: Radar,
-    name: "airplanes.live",
-    tag: "Best open-source tracker",
-    href: "/compare/airplanes-live",
-    body: "A free, open-source flight tracker built on community feeders. Clean, fast, and transparent about its data — a strong pick if you value open infrastructure over polished apps.",
-  },
-  {
-    icon: Plane,
-    name: "FlightAware",
-    tag: "Best for airport and airline operations",
-    href: "/live-flight-tracker",
-    body: "Long-running tracker with deep airport pages, airline fleet data and delay statistics. Strong on the operational side of aviation; its free tier is more limited than the community trackers above.",
-  },
-  {
-    icon: Satellite,
-    name: "OpenSky Network",
-    tag: "Best for researchers and developers",
-    href: "/live-flight-tracker",
-    body: "A research-driven ADS-B network with a free API and historical data for academics. Excellent if you build or study; not designed as a consumer tracking experience.",
-  },
-  {
-    icon: CloudSun,
-    name: "Plane Finder",
-    tag: "Solid mobile-first alternative",
-    href: "/live-flight-tracker",
-    body: "A long-standing tracker with polished mobile apps and 3D views. Worth a look if you primarily track from your phone — though its best features sit behind paid tiers.",
-  },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    webPageLd(
-      "Free Flightradar24 Alternatives in 2026",
-      "The best free Flightradar24 alternatives compared: WorldEye's 3D globe, ADS-B Exchange, airplanes.live and more.",
-      "/alternatives/flightradar24"
-    ),
-    itemListLd(
-      OPTIONS.map((o) => ({
-        name: o.name,
-        href: o.href,
-        description: `${o.tag}. ${o.body}`,
-      }))
-    ),
+  ctaHeading: (
+    <>
+      More than a flight map. <span className="text-[#0096FF]">The whole planet.</span>
+    </>
+  ),
+  ctaBody: "Live flights, 74,229 cameras, satellites and storms — free in your browser.",
+  related: [
+    {
+      label: "Flightradar24 vs WorldEye, head to head",
+      desc: "The dedicated comparison page with the full feature matrix.",
+      href: "/compare/flightradar24",
+    },
+    {
+      label: "Live flight tracker",
+      desc: "WorldEye's free live air-traffic globe.",
+      href: "/live-flight-tracker",
+    },
+    {
+      label: "Best flight tracking tools",
+      desc: "The ranked guide to trackers for every kind of user.",
+      href: "/best-flight-tracking-tools",
+    },
+    {
+      label: "What is ADS-B?",
+      desc: "The broadcast technology every flight tracker is built on.",
+      href: "/what-is-ads-b",
+    },
   ],
 };
 
-export default function Flightradar24AlternativesPage() {
-  return (
-    <IntentShell jsonLd={jsonLd}>
-      <IntentBreadcrumbs
-        trail={[
-          { label: "Alternatives", href: "/compare" },
-          { label: "Flightradar24 Alternatives" },
-        ]}
-      />
+export const metadata = altMetadata(data);
 
-      {/* Hero */}
-      <div className="text-center max-w-2xl mx-auto">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#0096FF] border border-[#0096FF]/30 rounded-full px-4 py-1.5 mb-6">
-          <Plane className="w-3.5 h-3.5" /> ALTERNATIVES
-        </p>
-        <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-          Free Flightradar24 alternatives <span className="text-[#0096FF]">worth your time.</span>
-        </h1>
-        <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          The best free Flightradar24 alternative is WorldEye: live aircraft on
-          a 3D globe with no signup — plus satellites, weather, ships and
-          74,229 ground cameras sharing the same view. If you only need raw
-          flight data, the community trackers below are excellent. Here&apos;s
-          the honest breakdown.
-        </p>
-        <ReviewedStamp />
-        <HeroCtas />
-      </div>
-
-      {/* The honest framing */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Why look beyond Flightradar24?</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Flightradar24 earned its reputation — deep coverage, flight
-            history, and a polished interface make it the default tracker for
-            millions. Nobody needs to tear it down. People look for
-            alternatives for practical reasons: paywalled features, required
-            accounts, filtered aircraft data, or simply wanting the sky in a
-            bigger context than a flat map of planes.
-          </p>
-          <p>
-            Here&apos;s the useful split. Almost every tracker draws on the
-            same underlying public ADS-B ecosystem, so in most regions coverage
-            is comparable — the differences are presentation, filtering policy,
-            price, and what else is on screen. Choose on those, not on a
-            promise of &ldquo;more planes.&rdquo;
-          </p>
-        </div>
-      </section>
-
-      {/* Free alternative */}
-      <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-        <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <Plane className="w-7 h-7 text-[#0096FF] shrink-0" />
-          Is there a free alternative to Flightradar24?
-        </h2>
-        <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Yes — and WorldEye is the only one that puts flights on a live 3D
-            globe with the rest of the planet attached. The flight layer is
-            free forever with no signup: watch aircraft arc across oceans, see
-            the day-night line sweep beneath them, then zoom to the destination
-            and open a nearby public camera to see the actual sky. ADS-B
-            Exchange and airplanes.live are also free and excellent if you want
-            a traditional flat-map tracker.
-          </p>
-          <p>
-            A note on honesty: for deep flight-number history, schedules, and
-            fleet databases, dedicated aviation-data services remain the
-            specialists. WorldEye&apos;s strength is the live picture — the sky
-            right now, in the context of the world right now.
-          </p>
-        </div>
-      </section>
-
-      {/* The options */}
-      <section className="mt-20">
-        <h2 className="text-2xl md:text-3xl font-bold text-center">
-          Six free Flightradar24 alternatives, <span className="text-[#0096FF]">compared</span>
-        </h2>
-        <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
-          Every option here has a genuine free tier — with each one&apos;s real
-          strength called out.
-        </p>
-        <div className="mt-10 grid gap-5 max-w-4xl mx-auto">
-          {OPTIONS.map((o, i) => (
-            <div
-              key={o.name}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 md:p-8 hover:border-[#0096FF]/40 transition"
-            >
-              <div className="flex items-start gap-5">
-                <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0096FF]/10 border border-[#0096FF]/25 text-sm font-bold text-[#0096FF] shrink-0">
-                  {i + 1}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-xl font-bold">{o.name}</h3>
-                    <span className="text-xs font-semibold text-[#0096FF] bg-[#0096FF]/10 border border-[#0096FF]/25 rounded-full px-3 py-1">
-                      {o.tag}
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/50 leading-relaxed mt-3">{o.body}</p>
-                  <Link
-                    href={o.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    Compare {o.name} vs WorldEye
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <MidCta
-        heading="Watch the sky on a globe — free, no signup"
-        body="Live aircraft on a spinning 3D Earth, with satellites, weather and cameras alongside. Open it and decide in thirty seconds."
-      />
-
-      {/* What a globe adds */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">What flight tracking looks like on a globe</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            On a flat tracker, a transatlantic flight is a line on a rectangle.
-            On WorldEye, it&apos;s an aircraft arcing over the curve of the
-            Earth, threading around the weather system you can also see
-            forming, while the destination airport&apos;s nearby cameras show
-            the actual conditions on the ground. Same data, completely
-            different understanding.
-          </p>
-          <p>
-            That context compounds: military watchers can correlate aircraft
-            with satellite passes overhead; storm chasers watch planes route
-            around cells in real time; the curious can simply spin the planet
-            and see where the sky is busiest right now. It&apos;s flight
-            tracking with the planet attached — and the whole thing runs in
-            the browser with nothing to install.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            {[
-              { icon: Plane, label: "Live flight tracker", href: "/live-flight-tracker" },
-              { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
-              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
-              { icon: Globe, label: "All features", href: "/features" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 hover:border-[#0096FF]/40 transition"
-              >
-                <c.icon className="w-4 h-4 text-[#0096FF]" /> {c.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Unfiltered data note */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">A note on unfiltered flight data</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            One genuine difference between trackers is filtering policy. Most
-            commercial trackers filter certain aircraft — military, government,
-            and private owners who request it. ADS-B Exchange built its
-            reputation on not filtering: if it broadcasts, it shows. That
-            makes it the enthusiast and researcher favorite, and it&apos;s a
-            legitimate reason to keep it bookmarked alongside any other
-            tracker.
-          </p>
-          <p>
-            WorldEye takes the opposite approach to differentiation: rather
-            than competing on who shows the most filtered dots, it competes on
-            what surrounds the dots. Both philosophies are valid — they just
-            answer different curiosities.
-          </p>
-        </div>
-      </section>
-
-      {/* How to choose */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Which flight tracker should you use?</h2>
-        <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          {[
-            {
-              q: "Just want to watch planes free?",
-              a: "WorldEye for the globe experience, airplanes.live for a clean flat map — both free, both need no account.",
-            },
-            {
-              q: "Tracking military or blocked aircraft?",
-              a: "ADS-B Exchange. Its unfiltered community data is the reason it exists, and nothing commercial matches it.",
-            },
-            {
-              q: "Need history and schedules?",
-              a: "FlightAware and Flightradar24's paid tiers. Free trackers are built for the live picture, not the archive.",
-            },
-          ].map((c) => (
-            <div key={c.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="font-semibold text-white/90 mb-2">{c.q}</p>
-              <p className="text-sm text-white/50 leading-relaxed">{c.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Q&A */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Flight tracker questions, answered</h2>
-        <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Is WorldEye really free for flight tracking?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Yes. Live flight positions are part of the free map — no account,
-              no signup, no credit card. Pro subscriptions fund the
-              infrastructure and add intelligence tools; they never gate the
-              flight layer.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Where does the flight data come from?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Like nearly every tracker, WorldEye draws on the public ADS-B
-              ecosystem — aircraft broadcasting their positions on open radio
-              frequencies, picked up by networks of receivers. Learn more on
-              our{" "}
-              <Link href="/what-is-ads-b" className="text-[#0096FF] hover:underline">
-                what is ADS-B
-              </Link>{" "}
-              explainer.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can I track a specific flight number?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              You can watch live aircraft on the globe as they broadcast. For
-              deep per-flight-number history and schedules, the specialist
-              aviation-data services are the right tools; WorldEye&apos;s
-              strength is the live sky in planetary context.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#0096FF]/30 bg-gradient-to-b from-[#0096FF]/[0.10] to-transparent p-10">
-        <h2 className="text-2xl md:text-3xl font-bold">
-          See the sky <span className="text-[#0096FF]">differently.</span>
-        </h2>
-        <p className="text-white/55 mt-3 mb-8">
-          One click, no signup. The globe is already spinning.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-block px-8 py-4 rounded-2xl bg-[#0096FF] text-white font-bold hover:bg-[#0077d6] transition"
-          >
-            Explore WorldEye
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-block px-8 py-4 rounded-2xl border border-white/15 text-white/85 font-semibold hover:border-[#0096FF]/50 hover:bg-white/5 transition"
-          >
-            Unlock WorldEye PRO
-          </Link>
-        </div>
-        <p className="mt-6 text-sm text-white/40">
-          Want the head-to-head?{" "}
-          <Link href="/compare/flightradar24" className="text-[#0096FF] hover:underline">
-            WorldEye vs Flightradar24
-          </Link>
-        </p>
-      </div>
-
-      <RelatedLinks
-        links={[
-          {
-            label: "WorldEye vs Flightradar24",
-            desc: "The detailed head-to-head comparison on the compare hub.",
-            href: "/compare/flightradar24",
-          },
-          {
-            label: "Best flight tracking tools",
-            desc: "The full ranked guide to watching the skies in 2026.",
-            href: "/best-flight-tracking-tools",
-          },
-          {
-            label: "What is ADS-B?",
-            desc: "The open radio technology behind every flight tracker, explained.",
-            href: "/what-is-ads-b",
-          },
-          {
-            label: "Pricing",
-            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the flight layer stays free.",
-            href: "/pricing",
-          },
-        ]}
-      />
-    </IntentShell>
-  );
+export default function Page() {
+  return <AlternativePage data={data} />;
 }
