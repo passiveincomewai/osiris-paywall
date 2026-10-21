@@ -9,9 +9,51 @@
 - [Live cameras](https://worldeye.app/cameras): Browse 74,229 live public cameras worldwide — traffic, cities, landmarks, beaches, airports and nature.
 - [God's Eye View](https://worldeye.app/gods-eye-view): How WorldEye compares as a hosted, no-install "god's eye view" of Earth with 74,229 cameras.
 
+## Live cameras by country
+
+WorldEye serves live camera pages for 109 countries, each with that country's real camera count, areas and playable feeds. The full index is at [Live cameras by country](https://worldeye.app/cameras/countries). Largest networks:
+
+- [United States live cameras](https://worldeye.app/cameras/countries/united-states): 41,355 live cameras
+- [Japan live cameras](https://worldeye.app/cameras/countries/japan): 10,472 live cameras
+- [Canada live cameras](https://worldeye.app/cameras/countries/canada): 4,685 live cameras
+- [Taiwan live cameras](https://worldeye.app/cameras/countries/taiwan): 3,243 live cameras
+- [Spain live cameras](https://worldeye.app/cameras/countries/spain): 2,120 live cameras
+- [Austria live cameras](https://worldeye.app/cameras/countries/austria): 1,725 live cameras
+- [South Korea live cameras](https://worldeye.app/cameras/countries/south-korea): 1,610 live cameras
+- [Sweden live cameras](https://worldeye.app/cameras/countries/sweden): 1,569 live cameras
+- [United Kingdom live cameras](https://worldeye.app/cameras/countries/united-kingdom): 1,403 live cameras
+- [Hong Kong live cameras](https://worldeye.app/cameras/countries/hong-kong): 1,350 live cameras
+- [Italy live cameras](https://worldeye.app/cameras/countries/italy): 1,030 live cameras
+- [Thailand live cameras](https://worldeye.app/cameras/countries/thailand): 118 live cameras
+- [City webcams](https://worldeye.app/city-webcams): Live cameras browsable by city, with per-city counts and featured feeds.
+- [Live traffic cameras](https://worldeye.app/live-traffic-cameras): Highway and road cameras, including per-country traffic camera guides.
+
+## Live trackers
+
+- [Live flight tracker](https://worldeye.app/live-flight-tracker): Real-time aircraft positions from ADS-B on the free globe.
+- [Live plane spotting](https://worldeye.app/live-plane-spotting): Watch aircraft movements and airport activity live.
+- [Satellite tracker](https://worldeye.app/satellite-tracker): The ISS, Starlink and thousands of satellites tracked live.
+- [Space station tracker](https://worldeye.app/space-station-tracker): Follow the International Space Station in real time.
+- [Ship tracker](https://worldeye.app/ship-tracker): Live vessel positions from AIS broadcasts.
+- [Earthquake tracker](https://worldeye.app/earthquake-tracker): Earthquakes as they happen — magnitude, depth and location.
+- [Weather tracker](https://worldeye.app/weather-tracker): Live weather radar and conditions on the globe.
+- [Wildfire tracker](https://worldeye.app/wildfire-tracker): Active wildfires from satellite detection feeds.
+- [Hurricane tracker](https://worldeye.app/hurricane-tracker): Live tropical storm and hurricane tracking.
+- [Cyber threat map](https://worldeye.app/cyber-threat-map): Live cyber threat intelligence on the map (Pro intel layer).
+
+## Comparisons and guides
+
+- [Compare](https://worldeye.app/compare): Side-by-side comparisons of WorldEye with other live-map and OSINT tools.
+- [God's Eye View alternative](https://worldeye.app/alternatives/gods-eye-view): WorldEye as a hosted alternative to the open-source God's Eye View project.
+- [World Monitor alternative](https://worldeye.app/alternatives/world-monitor): How WorldEye compares with the World Monitor dashboard.
+- [Google Earth alternative](https://worldeye.app/alternatives/google-earth): A live, real-time alternative to Google Earth's recorded imagery.
+- [Best live webcam sites](https://worldeye.app/best-live-webcam-sites): A guide to the best sites for watching live webcams worldwide.
+- [Best OSINT tools](https://worldeye.app/best-osint-tools): A guide to open-source intelligence tools, including WorldEye's free toolkit.
+- [Blog](https://worldeye.app/blog): Guides and explainers on live tracking, cameras and OSINT.
+
 ## Pricing
 
-- [Pricing](https://worldeye.app/pricing): Free globe for everyone. Pro is weekly $7.99, monthly $13.99 or annual $74.99, with free trials on the weekly (1 day) and annual (3 days) plans.
+- [Pricing](https://worldeye.app/pricing): Free globe for everyone. Pro is weekly $7.99, monthly $13.99 or annual $74.99 (VIP Pro). Free trials: 1 day on the weekly plan, 1 day on the monthly plan, and 3 days on the annual plan.
 - [FAQ](https://worldeye.app/faq): Answers about the free map, Pro, trials, billing, cameras and privacy.
 
 ## Company

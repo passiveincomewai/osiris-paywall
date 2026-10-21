@@ -169,20 +169,41 @@ export default async function CountryPage({
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: pageTitle(c),
-    description: metaDescription(c),
-    url: canonical,
-    mainEntity: {
-      "@type": "ItemList",
-      numberOfItems: c.samples.length,
-      itemListElement: c.samples.map((s, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: s.city ? `${s.name} — ${s.city}` : s.name,
-        url: `${BASE}/?camera=${s.id}`,
-      })),
-    },
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: pageTitle(c),
+        description: metaDescription(c),
+        url: canonical,
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: c.samples.length,
+          itemListElement: c.samples.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: s.city ? `${s.name} — ${s.city}` : s.name,
+            url: `${BASE}/?camera=${s.id}`,
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+          { "@type": "ListItem", position: 2, name: "Cameras", item: `${BASE}/cameras` },
+          { "@type": "ListItem", position: 3, name: "Countries", item: `${BASE}/cameras/countries` },
+          { "@type": "ListItem", position: 4, name: c.name, item: canonical },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      },
+    ],
   };
 
   return (
