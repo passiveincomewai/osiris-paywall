@@ -23,7 +23,6 @@ export async function GET(req: Request) {
   const rank = rankFor(profile.xp, settings.ranks);
   const { searchParams } = new URL(req.url);
   const range = searchParams.get("range") ?? "30";
-  const since = range === "all" ? new Date(0) : daysAgo(range === "7" ? 7 : range === "90" ? 90 : 30);
 
   const pid = profile.id;
   const [
@@ -36,7 +35,10 @@ export async function GET(req: Request) {
   ] = await Promise.all([
     db.commission.findMany({ where: { affiliateProfileId: pid }, orderBy: { createdAt: "desc" }, take: 500 }),
     db.payout.findMany({ where: { affiliateProfileId: pid }, orderBy: { requestedAt: "desc" }, take: 50 }),
-    db.referralClick.count({ where: { affiliateProfileId: pid, createdAt: { gte: since } } }),
+    // All-time on purpose: the stat row is all-time (lifetime earnings,
+    // direct referrals, conversion %), so a range-windowed click count
+    // would be internally inconsistent. The range only drives the chart.
+    db.referralClick.count({ where: { affiliateProfileId: pid } }),
     db.referralAttribution.findMany({ where: { affiliateProfileId: pid }, select: { referredUserId: true, convertedAt: true, createdAt: true } }),
     db.xPEvent.findMany({ where: { affiliateProfileId: pid }, orderBy: { createdAt: "desc" }, take: 100 }),
     db.affiliateProfile.count({ where: { recruitedByProfileId: pid } }),
@@ -48,7 +50,6 @@ export async function GET(req: Request) {
   const availableCents = sum(live.filter((c) => c.status === "available"));
   const pendingCents = sum(live.filter((c) => c.status === "pending"));
   const paidCents = sum(live.filter((c) => c.status === "paid"));
-  void paidCents;
 
   // Estimated recurring monthly: commissions from the last 90d, monthly-normalized.
   const cutoff90 = daysAgo(90);
@@ -63,8 +64,12 @@ export async function GET(req: Request) {
   const convertedRefs = attributions.filter((a) => a.convertedAt).length;
   const indirectRefs = recruits;
 
-  // Daily earnings series for the chart.
-  const days = range === "all" ? 90 : range === "7" ? 7 : range === "90" ? 90 : 30;
+  // Daily earnings series for the chart. "all" spans the affiliate's whole
+  // history (bounded to a year of daily points so the loop stays cheap);
+  // the fixed ranges span exactly their window.
+  const days = range === "all"
+    ? Math.min(366, Math.max(90, Math.ceil((Date.now() - profile.createdAt.getTime()) / 86400_000) + 1))
+    : range === "7" ? 7 : range === "90" ? 90 : 30;
   const series: { date: string; cents: number; clicks: number }[] = [];
   const clickRows = await db.referralClick.findMany({
     where: { affiliateProfileId: pid, createdAt: { gte: daysAgo(days) } },
@@ -87,6 +92,7 @@ export async function GET(req: Request) {
       lifetimeCents,
       availableCents,
       pendingCents,
+      paidOutCents: paidCents,
       estimatedMonthlyCents,
       activePayingReferrals: activePaying.size,
       directReferrals: directRefs,
