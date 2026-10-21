@@ -127,7 +127,7 @@ export function MidCta({ heading, body }: { heading: string; body: string }) {
 
 export function IntentShell({ jsonLd, children }: { jsonLd: unknown; children: ReactNode }) {
   return (
-    <main className="min-h-screen bg-[#050810] text-zinc-100 relative overflow-x-clip">
+    <main className="docs-root min-h-screen bg-[#050810] text-zinc-100 relative overflow-x-clip">
       <JsonLd data={jsonLd} />
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#0096FF]" />
