@@ -279,6 +279,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                           body: JSON.stringify({
                             name: camera.name || camera.title || "Camera",
                             cameraData: {
+                              id: camera.id,
                               stream_url: camera.stream_url,
                               feed_url: camera.feed_url,
                               external_url: camera.external_url,

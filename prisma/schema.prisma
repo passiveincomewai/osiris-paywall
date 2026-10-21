@@ -29,10 +29,16 @@ model User {
   cameraBonusAccount CameraBonusAccount?
   savedCameras  SavedCamera[]
   clipMetas     ClipMeta[]
+  clipShares    ClipShare[]
   cameraCollections CameraCollection[]
   enterpriseApiKeys EnterpriseApiKey[]
   claimedShareIdentity ShareIdentity? @relation("ShareIdentityClaim")
   alertRules AlertRule[]
+  vipPlaces VipPlace[]
+  eventAlertRules EventAlertRule[]
+  eventAlertEvents EventAlertEvent[]
+  savedViews SavedView[]
+  vipBriefPref VipBriefPref?
   organizationsOwned Organization[] @relation("OrgOwner")
   organizationMembers OrganizationMember[]
   teamInvitationsSent TeamInvitation[] @relation("InviteSender")
@@ -847,6 +853,38 @@ model ClipMeta {
   sizeBytes     Int
   mimeType      String   @default("video/webm")
   createdAt     DateTime @default(now())
+  shares        ClipShare[]
+
+  @@index([userId, createdAt])
+}
+
+// ── Public clip shares ─────────────────────────────────────────────────
+// A recording lives in the owner's browser (IndexedDB) until they share
+// it: sharing uploads the file to hosted blob storage and creates one of
+// these rows. The watch page (/watch/[slug]) is public by design; the
+// slug is the only credential. Revoking stamps revokedAt AND deletes the
+// stored file, so a revoked link is gone, not just hidden. refCode is
+// the sharer's universal share code (lib/share/identity) captured at
+// creation time — watch-page visits drop the same we_ref attribution
+// cookie a /ref/<code> visit drops.
+model ClipShare {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clipId      String
+  clip        ClipMeta  @relation(fields: [clipId], references: [id], onDelete: Cascade)
+  title       String
+  blobUrl     String
+  posterUrl   String?
+  mimeType    String    @default("video/webm")
+  sizeBytes   Int
+  durationSec Int
+  cameraName  String
+  refCode     String?
+  views       Int       @default(0)
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
 
   @@index([userId, createdAt])
 }
@@ -1108,4 +1146,156 @@ model TeamRecordingLease {
 
   @@unique([organizationId, userId, cameraKey])
   @@index([organizationId, expiresAt])
+}
+
+// ── Contact form inbox ─────────────────────────────────────────────────
+// Submissions from the public /contact form (POST /api/contact). Read and
+// managed by admins in /admin/contact. Status flow mirrors the other
+// admin-reviewed queues: "unread" → "read" → "resolved" (reopenable to
+// "unread"). Deliberately standalone: the sender is usually signed out,
+// so there is no user relation — name/email are what they typed.
+model ContactMessage {
+  id        String    @id @default(cuid())
+  name      String
+  email     String
+  // One of the values in CONTACT_TOPICS (src/lib/contact.ts).
+  topic     String    @default("general")
+  message   String
+  status    String    @default("unread")
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+}
+
+// ── VIP Pro features (event alerts, personal brief, saved views) ────────
+// Watched places are the shared substrate: a VIP member names places
+// (lat/lng + radius) once, and event alerts (quakes near a place, ISS
+// passes over it) and the personal brief read the same list.
+
+model VipPlace {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  lat       Float
+  lng       Float
+  // Watch radius for "near this place" checks (quakes, fires in briefs).
+  radiusKm  Int      @default(250)
+
+  eventAlertRules EventAlertRule[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Event alerts: the camera-alerts pattern (AlertRule/AlertEvent) extended
+// beyond cameras. A rule watches the planet, not a camera:
+//   kind "quake"  — USGS quakes at/above config.minMag, worldwide or
+//                   within the watched place's radius when placeId set.
+//   kind "launch" — Launch Library 2 liftoffs; fires once per lead
+//                   window in config.leadHours (e.g. 24h and 1h).
+//   kind "iss"    — visible ISS passes over the watched place (placeId
+//                   required), computed from the CelesTrak TLE with the
+//                   in-repo SGP4 propagator; config.minElevationDeg.
+// Rules pause (never delete) when the owner's VIP lapses — the checker
+// resolves the owner's tier at check time, exactly like camera alerts.
+
+model EventAlertRule {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  kind          String    // "quake" | "launch" | "iss"
+  placeId       String?
+  place         VipPlace? @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  // Kind-specific thresholds, validated by lib/vip/events/logic:
+  //   quake:  { minMag: number }
+  //   launch: { leadHours: number[] }
+  //   iss:    { minElevationDeg: number, leadHours: number }
+  config        Json
+
+  emailEnabled  Boolean   @default(true)
+  inAppEnabled  Boolean   @default(true)
+  active        Boolean   @default(true)
+  lastCheckedAt DateTime?
+
+  events        EventAlertEvent[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([active, kind])
+}
+
+model EventAlertEvent {
+  id          String    @id @default(cuid())
+  ruleId      String
+  rule        EventAlertRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  // Denormalised owner, same as AlertEvent: inboxes list by user.
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  kind        String    // mirrors the rule's kind
+  title       String
+  body        String
+  // Structured payload for the inbox/brief (quake mag/place, launch id,
+  // pass times) — display data only, never a second source of truth.
+  data        Json?
+  // Stable identity of the underlying event for this rule (USGS quake
+  // id, LL2 launch id + window, ISS pass start). The unique pair with
+  // ruleId is what makes re-checks idempotent.
+  dedupeKey   String
+  emailSent   Boolean   @default(false)
+  readAt      DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  @@unique([ruleId, dedupeKey])
+  @@index([userId, createdAt])
+  @@index([ruleId])
+}
+
+// Saved globe views: a named layer stack (the globe's own `layers` URL
+// keys) plus an optional camera deep link — restored in one click via
+// the globe's existing ?layers= / ?camera= URL contract. The globe has
+// no camera-position URL param, so a view is layers (+ camera), never
+// a fabricated lat/lng the globe could not honour.
+
+model SavedView {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name       String
+  // Comma-joined layer keys, validated against the globe's layer set.
+  layers     String
+  cameraId   String?
+  cameraName String?
+  sortOrder  Int      @default(0)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Personal brief preferences: the /vip/brief page itself is on-demand;
+// this row only carries the daily email digest opt-in + send watermark.
+
+model VipBriefPref {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emailEnabled Boolean   @default(false)
+  lastSentAt   DateTime?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }

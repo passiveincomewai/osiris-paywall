@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Mail, CreditCard, Users, ArrowRight } from "lucide-react";
+import { ArrowLeft, Mail, CreditCard, Users, ArrowRight, Megaphone } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import ContactForm from "@/components/contact/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact WorldEye",
@@ -53,6 +54,14 @@ const SUPPORT_FAQS = [
     q: "A camera feed is dead, wrong or mislabeled — can I report it?",
     a: "Please do. Send the camera's name or location and what looks wrong (offline, wrong place, duplicated). The directory is playback-verified, and reports like yours are one of the ways dead and mislabeled feeds get found and fixed.",
   },
+  {
+    q: "I forgot my password or can't sign in — what do I do?",
+    a: "Use the forgot-password link on the sign-in page first: it emails you a reset link that stays valid for 1 hour. If you signed up with Google, the Continue with Google button on the same page is your way back in. Only email us if both routes fail — and write from the address on the account if you can.",
+  },
+  {
+    q: "How do I cancel Pro, or close my account entirely?",
+    a: "You can cancel a subscription yourself from the Manage Subscription page in your account settings — it stays active until the end of the paid period and simply doesn't renew. Remember that a guarantee refund and a cancellation are separate steps. If you want the account itself removed, email us from the account address and we'll handle it.",
+  },
 ];
 
 const EMAIL = "passiveincomewai@gmail.com";
@@ -71,6 +80,40 @@ const CARDS = [
     body: "Earn recurring commissions sharing WorldEye. Ranks, missions and payouts.",
     href: "/affiliates",
     cta: "Become an affiliate",
+  },
+  {
+    icon: Megaphone,
+    title: "Partnerships & press",
+    body: "Camera partnerships, embeds and media inquiries — start the conversation below.",
+    href: "/contact#partnerships",
+    cta: "See partnership notes",
+  },
+];
+
+const TOPICS = [
+  {
+    title: "Account & sign-in help",
+    body: "Locked out, a verification email that never arrived, or a reset link that expired. Most of these fix themselves — try the forgot-password flow first (links stay valid for 1 hour), then write to us if you're still stuck.",
+  },
+  {
+    title: "Billing, trials & the guarantee",
+    body: "Questions about the weekly ($7.99), monthly ($13.99) or VIP Pro annual ($74.99) plans, free trials (1 day on weekly and monthly, 3 days on annual), receipts, or claiming the 7-day money-back guarantee on your first charge. This inbox is where guarantee claims are made.",
+  },
+  {
+    title: "Camera & data reports",
+    body: "A feed that's offline, mislabeled, duplicated or in the wrong place — or a flight, satellite or weather layer showing something odd. Tell us which camera or layer and what you saw; reports feed directly into the verification pass.",
+  },
+  {
+    title: "Partnerships",
+    body: "You run a resort, newsroom, tourism site, weather page or community that could use live camera views, or you have another collaboration in mind. Tell us what you run and what you'd want to show your audience.",
+  },
+  {
+    title: "Press",
+    body: "Writing about live data, open intelligence or WorldEye itself? The About page has the background and the numbers (74,229 cameras, 105 countries, a free globe with no signup). For anything else, email us.",
+  },
+  {
+    title: "Security reports",
+    body: "Found a vulnerability or something that looks wrong with account or payment security? We want to know. Read the security page for what we protect and how, then report it here with as much detail as you can share.",
   },
 ];
 
@@ -136,6 +179,38 @@ export default function ContactPage() {
           </a>
         </div>
 
+        {/* Contact form */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Send us a <span className="text-[#D4AF37]">message</span>
+          </h2>
+          <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto leading-relaxed">
+            Prefer not to open your mail app? Use the form — it lands in the
+            same inbox.
+          </p>
+          <div className="mt-8">
+            <ContactForm />
+          </div>
+        </section>
+
+        {/* What to write about */}
+        <section className="mt-16 md:mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">What to <span className="text-[#D4AF37]">write about</span></h2>
+          <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto leading-relaxed">
+            One inbox reads everything, but a clear subject line routes your
+            message to the right pair of eyes faster. Here is what lands here
+            most often — and what to include for each.
+          </p>
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {TOPICS.map((t) => (
+              <div key={t.title} className="rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+                <h3 className="font-semibold text-white/90">{t.title}</h3>
+                <p className="text-sm text-white/50 mt-2 leading-relaxed">{t.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Shortcut cards */}
         <section className="mt-16 md:mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">Might be faster</h2>
@@ -154,6 +229,67 @@ export default function ContactPage() {
                 </span>
               </Link>
             ))}
+          </div>
+        </section>
+
+        {/* How to get a useful answer fast */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold">How to get a useful answer, <span className="text-[#D4AF37]">fast</span></h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              WorldEye support is a small team reading real email — no ticket
+              bots, no script. A few details in your first message can save a
+              whole round of back-and-forth:
+            </p>
+            <ul className="space-y-3 text-sm md:text-base">
+              <li className="flex gap-3"><span aria-hidden className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#D4AF37]/70 shrink-0" /><span><strong className="text-white/85">Write from your account email.</strong> For anything billing- or account-related, the address on the account is how we find you in Stripe and in the account system. Requests from a different address have to be verified first.</span></li>
+              <li className="flex gap-3"><span aria-hidden className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#D4AF37]/70 shrink-0" /><span><strong className="text-white/85">For billing, name the plan and the date.</strong> Weekly, monthly or annual, plus roughly when the charge happened, lets us pull up the exact subscription instead of guessing.</span></li>
+              <li className="flex gap-3"><span aria-hidden className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#D4AF37]/70 shrink-0" /><span><strong className="text-white/85">For a broken layer, say what, where and when.</strong> Which layer (cameras, flights, traffic, weather), your browser and device, and when it started. Live layers depend on third-party feeds; those three facts tell us whether the feed itself is down.</span></li>
+              <li className="flex gap-3"><span aria-hidden className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#D4AF37]/70 shrink-0" /><span><strong className="text-white/85">For a camera report, name the camera.</strong> The camera&apos;s name or location as shown on the map, and what looks wrong — offline, wrong place, duplicated, mislabeled.</span></li>
+              <li className="flex gap-3"><span aria-hidden className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#D4AF37]/70 shrink-0" /><span><strong className="text-white/85">One issue per email helps.</strong> Not a rule — but a single clear thread per problem gets each one solved without anything getting lost.</span></li>
+            </ul>
+            <p>
+              And if you&apos;re claiming the 7-day money-back guarantee, the
+              whole process is: email from your account address within 7 days
+              of your first charge and say so. If you don&apos;t want the plan
+              to continue afterwards, cancel it as well — a refund on its own
+              doesn&apos;t stop a subscription from renewing.
+            </p>
+          </div>
+        </section>
+
+        {/* Partnerships & press */}
+        <section id="partnerships" className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold">Partnerships &amp; <span className="text-[#D4AF37]">press</span></h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Two kinds of partnership run through this inbox. The first is the{" "}
+              <Link href="/affiliates" className="text-[#D4AF37] hover:underline">affiliate program</Link>:
+              open to everyone, free to join, with recurring commissions of
+              15–30% by rank, a 30-day attribution window and payouts from a
+              $25 balance. Creators with 25,000 or more followers can also
+              apply there for free Pro. If your question is about joining,
+              ranks or payouts, the affiliate page answers most of it — and
+              this inbox handles the rest.
+            </p>
+            <p>
+              The second is camera partnerships: we&apos;re in conversation
+              with ski resorts, newsrooms, tourism boards and weather and
+              traffic sites about putting live camera views in front of their
+              audiences. If you run a site or a broadcast and want to talk
+              about what that could look like, write and tell us what you run,
+              where your audience is, and which views you&apos;d want to show.
+              We&apos;ll be straight with you about what exists today and
+              what&apos;s still being built.
+            </p>
+            <p>
+              For press: WorldEye is a free live 3D globe — 74,229 public
+              cameras across 105 countries, plus live flights, satellites,
+              weather, earthquakes and transit, with no signup to look around.
+              The <Link href="/about" className="text-[#D4AF37] hover:underline">About page</Link>{" "}
+              covers the story and the principles; email us for anything
+              beyond that.
+            </p>
           </div>
         </section>
 
