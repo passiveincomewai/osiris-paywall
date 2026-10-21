@@ -90,6 +90,14 @@ const SEO_PAGES_WAVE7 = [
 // Cross-linked from /world-city-webcams and from each other.
 const SEO_PAGES_WAVE8 = cityPages.cities.map((c) => `/city-webcams/${c.slug}`);
 
+// Wave 9 (2026-10-20): trends-driven niche directories — aurora, volcano and
+// dark-sky cameras (see ~/workspace/worldeye-growth/TRENDS-MAP.md).
+const SEO_PAGES_WAVE9 = [
+  "/northern-lights-webcams",
+  "/volcano-webcams",
+  "/dark-sky-cameras",
+];
+
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
   "/alternatives/gods-eye-view",
@@ -211,6 +219,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE8.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE9.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,

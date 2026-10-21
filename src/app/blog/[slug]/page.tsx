@@ -16,12 +16,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: post.seoTitle,
     description: post.seoDescription,
-    alternates: { canonical: `/blog/${post.slug}` },
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+      types: { "application/rss+xml": "/blog/feed.xml" },
+    },
     openGraph: {
       type: "article",
       title: post.title,
       description: post.seoDescription,
       url: `/blog/${post.slug}`,
+      publishedTime: post.date,
+      modifiedTime: post.updated ?? post.date,
+      authors: ["WorldEye Team"],
+      images: [{ url: post.image ?? "/og-image.png", width: 1200, height: 630 }],
     },
   };
 }
@@ -69,9 +76,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     headline: post.title,
     description: post.seoDescription,
     datePublished: post.date,
-    dateModified: post.date,
-    author: { "@type": "Organization", name: "WorldEye", url: "https://worldeye.app" },
-    publisher: { "@type": "Organization", name: "WorldEye", url: "https://worldeye.app" },
+    dateModified: post.updated ?? post.date,
+    image: `https://worldeye.app${post.image ?? "/og-image.png"}`,
+    author: { "@type": "Organization", name: "WorldEye Team", url: "https://worldeye.app/about" },
+    publisher: {
+      "@type": "Organization",
+      name: "WorldEye",
+      url: "https://worldeye.app",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://worldeye.app/worldeye-logo.png",
+        width: 600,
+        height: 570,
+      },
+    },
     url: `https://worldeye.app/blog/${post.slug}`,
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://worldeye.app/blog/${post.slug}` },
     isPartOf: {
@@ -125,9 +143,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           ))}
         </div>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">{post.title}</h1>
-        <div className="flex items-center gap-2 text-sm text-white/40 mt-5">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-white/40 mt-5">
           <CalendarDays className="w-4 h-4" />
           <time dateTime={post.date}>{formatDate(post.date)}</time>
+          {post.updated && post.updated !== post.date && (
+            <>
+              <span className="text-white/20">·</span>
+              <span>
+                Updated <time dateTime={post.updated}>{formatDate(post.updated)}</time>
+              </span>
+            </>
+          )}
           <span className="text-white/20">·</span>
           <span>WorldEye Team</span>
         </div>

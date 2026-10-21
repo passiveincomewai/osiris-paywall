@@ -13,7 +13,12 @@ export type BlogPost = {
   title: string;
   /** Short title used for the <title> tag (kept ≤60 chars with the suffix). */
   seoTitle: string;
+  /** Publication date (YYYY-MM-DD). */
   date: string;
+  /** Last genuine content revision (YYYY-MM-DD). Falls back to `date`. */
+  updated?: string;
+  /** Hero image path (defaults to the site OG image when unset). */
+  image?: string;
   excerpt: string;
   /** 140–160 char meta description. */
   seoDescription: string;
@@ -1369,6 +1374,7 @@ export const POSTS: BlogPost[] = [
     title: "Best Ski Webcams to Check Before You Drive Up",
     seoTitle: "Best Ski Webcams Before You Drive Up | WorldEye Blog",
     date: "2026-10-17",
+    updated: "2026-10-20",
     excerpt:
       "A snow report is a summary; a summit webcam is the mountain itself. How to use summit, base, and access-road cameras to judge real snow, wind, and lift lines before you commit to the drive.",
     seoDescription:
@@ -1422,6 +1428,7 @@ export const POSTS: BlogPost[] = [
         body: [
           "The [ski webcams](/ski-webcams) page gathers resort feeds in one place, and the [live camera map](/cameras) lets you widen the search to the passes and canyon roads around any resort — often the feeds that matter most on a storm morning. Mountain towns, lift bases, and summits each carry markers, and the lone camera high above a town is frequently the summit feed you want.",
           "Build a small circuit for the mountains you actually ski: summit, base, and the two road cameras on your usual route, checked in a fixed order so the whole routine takes two minutes. The ski camera layer is free with no signup, like the rest of the camera map. Once the circuit is a habit, you will wonder how you ever chose a ski day from a single snowfall number and a hopeful forecast.",
+          "New for this season: our [2026-27 ski season opening dates](/blog/ski-season-opening-dates-2026-27) guide lists when the major resorts in North America and the Alps plan to open — and which of their webcams to watch as opening day approaches.",
         ],
       },
     ],
@@ -1537,6 +1544,7 @@ export const POSTS: BlogPost[] = [
     title: "Watching the Northern Lights on Live Webcams",
     seoTitle: "Northern Lights on Live Webcams | WorldEye Blog",
     date: "2026-10-17",
+    updated: "2026-10-20",
     excerpt:
       "You do not have to fly to the Arctic to see the aurora — on the right night, northern webcams catch it for you. What it actually takes: darkness, clear skies, and an active sky, plus an honest look at the limits.",
     seoDescription:
@@ -1590,13 +1598,14 @@ export const POSTS: BlogPost[] = [
         body: [
           "Treat aurora webcam watching as a season, not an event. During the dark months, keep a short circuit of northern feeds — a few in Iceland, a few across Finland and Sweden, one or two in Norway — and check them on clear evenings when activity is forecast, the way other people check the weather. Most checks will take two minutes and end in darkness. That is the honest base rate, and it is fine.",
           "Then, a handful of times a season, the circuit pays off all at once: an arc already standing over a Finnish lake when you open the feed, curtains moving over an Icelandic road an hour later, the whole northern tier of the map lit in rotation. Those nights justify every quiet check before them — and unlike the flight north, the webcam version asks nothing of you but attention. The camera layer is free with no signup, so the season ticket costs exactly that: a few minutes, on the right nights, at the right end of the map.",
+          "The [northern lights webcams](/northern-lights-webcams) page gathers the aurora-belt regions in one place — Iceland, Norway, Finland, Sweden, Alaska, and Canada — with the live Kp index reading from the map, so your circuit is one click instead of a dozen bookmarks.",
         ],
       },
     ],
     faqs: [
       {
         q: "Does WorldEye have dedicated aurora cameras?",
-        a: "No. The northern cameras in the directory — Iceland with 496 cameras, Finland with 818, Sweden with 886, and Norway with 48 — are mostly road, weather, harbor, and scenic feeds run by third parties. They were not built for the aurora, but cameras facing dark landscapes are well placed to catch it on clear, dark, active nights.",
+        a: "No. The northern cameras in the directory — Iceland with 482 cameras, Finland with 825, Sweden with 1,569, and Norway with 746 — are mostly road, weather, harbor, and scenic feeds run by third parties. They were not built for the aurora, but cameras facing dark landscapes are well placed to catch it on clear, dark, active nights.",
       },
       {
         q: "What conditions do I need to see aurora on a webcam?",
@@ -1943,6 +1952,538 @@ export const POSTS: BlogPost[] = [
       {
         q: "Can I see the plane in the ground cameras?",
         a: "Almost certainly not — public webcams point at roads and places, not the sky, and the panel says so. What you get is the world directly underneath the flight, live.",
+      },
+    ],
+  },
+  {
+    slug: "watch-the-orionid-meteor-shower-live",
+    title: "Watch the Orionid Meteor Shower Live: Peak Nights, Times and Dark-Sky Cameras",
+    seoTitle: "Orionids 2026: Watch the Meteor Shower Live",
+    date: "2026-10-20",
+    excerpt:
+      "The Orionids — debris from Halley's Comet — peak on the night of October 21-22, 2026. Here's when to look, what the waxing Moon does to the show, and how dark-sky webcams let you watch from anywhere.",
+    seoDescription:
+      "The Orionid meteor shower peaks October 21-22, 2026. Best viewing times after moonset, expected rates, and how to watch live on dark-sky webcams.",
+    tags: ["space", "guide"],
+    sections: [
+      {
+        heading: "The short version",
+        body: [
+          "The Orionid meteor shower reaches its peak on the night of Wednesday, October 21 into Thursday, October 22, 2026, with the predicted maximum falling around 18:00 UTC on October 21. The shower is active for weeks — roughly October 2 to November 7 — and its peak is a broad plateau rather than a single instant, so the nights of October 20-21 and October 22-23 are also worth your time if clouds intervene.",
+          "The honest catch for 2026: a waxing gibbous Moon, roughly three-quarters lit, will wash out the fainter meteors for the first part of the night. The best window is the dark stretch after the Moon sets and before dawn — the small hours of the morning, when the radiant in Orion also climbs highest. Under genuinely dark skies the Orionids typically produce around 10 to 20 meteors per hour at peak; this year, expect the brighter ones to do most of the work.",
+        ],
+      },
+      {
+        heading: "Why this shower is Halley's Comet, live",
+        body: [
+          "Every October, Earth plows through the dust stream shed by comet 1P/Halley — the same comet that last visited the inner solar system in 1986 and returns in 2061. The grains, most smaller than a grain of sand, strike the atmosphere at about 66 kilometers per second and burn up as fast, bright streaks that often leave lingering trains.",
+          "That speed is the Orionids' signature. They are among the fastest annual meteors, and the bright ones can appear anywhere in the sky — the radiant, the point they seem to stream from, sits in the constellation Orion near the bright star Betelgeuse, which rises in the east late in the evening. Don't stare at the radiant; take in as much sky as you can and let the streaks come to you.",
+        ],
+      },
+      {
+        heading: "How to watch from outside",
+        body: [
+          "No telescope, no binoculars — meteors are a naked-eye event, and magnification only shrinks your field of view. What you need is darkness, a reclining chair, warm layers, and patience. Give your eyes 20 to 30 minutes away from bright light (including your phone) to fully adapt, then face generally east to southeast and watch a broad swath of sky.",
+          "In 2026 the Moon is the main obstacle, so plan around it: the show improves markedly once the Moon drops below the horizon in the pre-dawn hours. If your local forecast is hopeless for the peak night, remember the plateau — rates stay useful for several nights on either side, and the same dust stream also produces bright fireballs outside the maximum.",
+        ],
+      },
+      {
+        heading: "How to watch from inside: dark-sky cameras",
+        body: [
+          "If your sky is clouded out, lit up by the city, or simply on the wrong side of the planet's rotation, the camera network offers a second seat. Scattered through the [live camera directory](/cameras) are sky cameras pointed up from dark-sky sites — desert, mountain, and rural feeds where the night frame is genuinely black and the stars register. A bright Orionid crossing one of those frames is unmistakable: a fast streak, gone in a second, sometimes with a fading train.",
+          "Our [dark-sky cameras](/dark-sky-cameras) page explains how to find and judge these feeds — timestamp first, then true darkness, then patience. The trick is a circuit, not a single camera: keep several dark feeds across different longitudes in rotation, because when it's cloudy or already dawn in one place, it's midnight and clear somewhere else. The same feeds serve double duty on [aurora nights](/northern-lights-webcams), and the bright moving point that crosses the frame slowly and steadily, taking minutes rather than a second, is a satellite or the space station — the [ISS watching guide](/blog/how-to-watch-the-iss-live) explains how to tell them apart.",
+        ],
+      },
+      {
+        heading: "What you'll actually see this year",
+        body: [
+          "Set expectations like a regular, not a headline. From a suburban backyard in the post-moonset window, a realistic count is a handful of meteors per hour, with the occasional bright one worth the wait. From a truly dark rural site, the same window can deliver the classic 10 to 20 per hour, trains included. The waxing Moon means the first half of the night is mostly a write-off in 2026 — anyone promising a storm of hundreds per hour is describing a different year.",
+          "What the Orionids reliably deliver is quality over quantity: fast meteors, a meaningful share of bright fireballs, and the strange pleasure of watching debris from the most famous comet in history burn up on schedule. The next major shower, the Leonids, peaks around November 17-18, and the year's best — the Geminids — arrives December 13-14 under darker moonlight. The [dark-sky camera circuit](/dark-sky-cameras) you build this week will serve all three.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When exactly is the Orionid peak in 2026?",
+        a: "The night of October 21-22, 2026, with the predicted maximum around 18:00 UTC on October 21. The peak is broad, so the nights immediately before and after also produce good rates. Best viewing is after local moonset, in the pre-dawn hours.",
+      },
+      {
+        q: "How many meteors per hour will I see?",
+        a: "Under ideal dark skies the Orionids typically reach 10 to 20 per hour at peak. In 2026 a waxing gibbous Moon suppresses the faint meteors for much of the night, so expect fewer until the Moon sets — a handful per hour from suburbs, up to the classic rates from a dark site after moonset.",
+      },
+      {
+        q: "Where in the sky should I look?",
+        a: "Face east to southeast and take in the whole sky. The meteors radiate from Orion, near Betelgeuse, but the longest and brightest streaks appear 40 to 90 degrees away from the radiant. Don't fixate on one spot.",
+      },
+      {
+        q: "Can I watch the Orionids on a webcam?",
+        a: "Yes — dark-sky cameras in the live camera directory point up from low-light-pollution locations and catch bright meteors as fast streaks. Check the feed's timestamp, pick feeds where the night frame is genuinely dark, and rotate through several longitudes to dodge clouds and dawn.",
+      },
+      {
+        q: "Do I need a telescope or binoculars?",
+        a: "No — they hurt more than they help. Meteors appear anywhere in the sky and last under a second, so magnification only narrows your view. Eyes, a reclining chair, warm clothing, and 20 to 30 minutes of dark adaptation are the whole kit.",
+      },
+    ],
+  },
+  {
+    slug: "ski-season-opening-dates-2026-27",
+    title: "2026-27 Ski Season Opening Dates — and the Webcams Watching Them",
+    seoTitle: "Ski Season Opening Dates 2026-27 | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "The 2026-27 ski season has already started at the glacier resorts, and the big North American and Alpine openings land through November. Announced opening dates for the major resorts — plus how to watch the snow arrive on live webcams.",
+    seoDescription:
+      "2026-27 ski resort opening dates for North America and the Alps — Ruka, Sölden, Breckenridge, Vail, Park City, Whistler and more — with the live webcams to watch before each opening day.",
+    tags: ["cameras", "travel"],
+    sections: [
+      {
+        heading: "The season has already started",
+        body: [
+          "While most skiers are still thinking about it, the 2026-27 season is quietly underway. Finland's Ruka opened on October 2 using farmed snow saved from last winter, Austria's Sölden glacier followed on October 9, and Saas-Fee's glacier terrain in Switzerland has been turning since summer. Italy's Cervinia is aiming for around October 24. These glacier and snow-farming openers are the first dominoes — every week from now through late November, more of the ski map switches on.",
+          "All dates in this guide are the resorts' announced targets, and every one of them carries the same asterisk: conditions permitting. Early-season openings are snowmaking campaigns as much as weather events, which is exactly why the webcams matter — they show you the white ribbon on the ground, not the date on the press release. The [ski webcams](/ski-webcams) page gathers the resort feeds in one place.",
+        ],
+      },
+      {
+        heading: "North America: the November wave",
+        body: [
+          "Colorado fires first, as usual. Breckenridge and Copper Mountain hold the earliest fixed dates in the country — November 6 — while Keystone and Arapahoe Basin list October 'as soon as possible' and could beat everyone if the cold holds. Vail and California's Mammoth Mountain target November 13. Banff's Sunshine Village and Lake Louise project November 6 in Canada.",
+          "The Thanksgiving ramp is the real start for most skiers: Park City Mountain and Whistler Blackcomb on November 20, Steamboat on November 21, Beaver Creek and Big Sky on November 25, then Aspen Mountain, Snowmass, Sun Valley, and Telluride on November 26 itself, with Jackson Hole on November 27 and Deer Valley on December 5. By the first weekend of December, the continent's destination map is essentially open — terrain, as always, builds more slowly than the marketing.",
+        ],
+      },
+      {
+        heading: "The Alps: glaciers now, giants in late November",
+        body: [
+          "Europe's early season belongs to altitude. Beyond Sölden and Saas-Fee, Austria's glacier areas — Kitzsteinhorn, Kaunertal, Mölltal, Stubai — opened through early October, and Engelberg-Titlis started October 10. Obergurgl follows November 19, then the heavyweights arrive together: Tignes and Val Thorens on November 21, Ischgl on November 26, and a November 28 wave that includes Les 2 Alpes, Laax, Chamonix, Zugspitze, and Val d'Isère joining Tignes.",
+          "The Sölden World Cup opener on October 24-25 is the season's first televised form check, and worth watching on the resort's cameras the week before: you can see the race hill being prepared in a way no broadcast quite captures. Livigno — a 2026 Olympic venue — opens November 28 with high, cold early-season snow.",
+        ],
+      },
+      {
+        heading: "Watching opening day approach on webcams",
+        body: [
+          "The two weeks before a resort's opening are the most informative webcam window of the year. Snowmaking tells the story first: guns running on the cam mean the cold window is real and the resort is committing. Then the grooming fleet appears at night, then lift crews, then — the giveaway — the first skiers on a 'soft opening' limited run, often a day or two before the announced date.",
+          "Our guide to the [best ski webcams](/blog/best-ski-webcams) lays out the checking routine — summit for visibility and wind, base for surface and lines, access road for the drive. Applied to opening season, it answers the only question that matters about an announced date: is the mountain actually ready, and for whom? A single white ribbon with a full maze at the lift is a different product than the same ribbon on a quiet Tuesday, and the camera shows you which one you're buying.",
+        ],
+      },
+      {
+        heading: "Early-season honesty",
+        body: [
+          "Early season is a trade, and regulars make it with open eyes: limited terrain, man-made snow surfaces, and weather that can still close a mountain in October as easily as open one. What you get in return is the year's most optimistic skiing — empty slopes, cheap lodging, and the genuine pleasure of being early. The resorts that open first are also, not coincidentally, the ones whose cameras are worth keeping: high, cold, and serious about snowmaking.",
+          "One more reason to build the camera habit now: the same circuit that tracks openings in November becomes your storm-day instrument all winter, and the [road-conditions routine](/blog/checking-road-conditions-live-traffic-cameras) built around it works for every drive, ski or otherwise. And if your early-season trip runs to Lapland — Ruka has been open since October 2 — the lifts close into some of the darkest, most aurora-friendly skies in Europe; the [northern lights webcam circuit](/blog/northern-lights-live-webcams) is the evening shift of the same holiday.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does the 2026-27 ski season start?",
+        a: "It already has: Ruka in Finland opened October 2, 2026 and Sölden in Austria on October 9, with other glacier resorts following. The first major North American openings are November 6 (Breckenridge, Copper Mountain), and most destination resorts open between November 20 and Thanksgiving weekend.",
+      },
+      {
+        q: "Which ski resort opens first in North America in 2026?",
+        a: "Keystone and Arapahoe Basin in Colorado both target an October opening 'as soon as possible' and historically race for first. The earliest fixed dates belong to Breckenridge and Copper Mountain on November 6. All announced dates are conditions permitting.",
+      },
+      {
+        q: "Are announced opening dates reliable?",
+        a: "Treat them as targets, not promises. Resorts open when snowmaking and natural snow allow, and dates slip in warm autumns. The reliable check is the resort's webcam in the week before: snowmaking guns running, grooming at night, and lifts turning with crews are the signs an announced date will hold.",
+      },
+      {
+        q: "Which resorts open for Thanksgiving 2026?",
+        a: "Park City Mountain and Whistler Blackcomb (November 20), Steamboat (November 21), Beaver Creek and Big Sky (November 25), Aspen Mountain, Snowmass, Sun Valley, and Telluride (November 26), and Jackson Hole (November 27) all target the Thanksgiving window.",
+      },
+      {
+        q: "How can I check conditions before an opening-day trip?",
+        a: "Use the ski webcams: summit feeds for visibility and wind, base feeds for snow surface and lift lines, and access-road cameras for the drive. Check the night before and again in the morning, and always confirm the feed's timestamp is current before trusting it.",
+      },
+    ],
+  },
+  {
+    slug: "worldeye-team-access",
+    title: "Team Access Is Live: One WorldEye Plan for Your Whole Team",
+    seoTitle: "Team Access: One Plan for Your Team | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "WorldEye now works for teams. Subscribe once, invite your people by email, and everyone gets your plan's tier — with graduated seat pricing that gets cheaper as the team grows.",
+    seoDescription:
+      "Team Access is live: one owner-paid WorldEye subscription, email invitations, graduated seat pricing, and a shared recording pool for up to 51 people.",
+    tags: ["announcement", "teams"],
+    sections: [
+      {
+        heading: "Subscribe once. Invite everyone.",
+        body: [
+          "Until now, every WorldEye account was an island: one person, one subscription. Team Access changes that. Any paid plan can become a team — the owner keeps the subscription, adds seats, and invites people by email. Invited members never see a checkout and are never charged; while they're on your team, they get your plan's tier as their own effective plan.",
+          "Teams live in [Settings → Team Access](/settings/team), with tabs for members, invitations, the shared workspace, billing and an activity log. Owners and admins can invite; members just join and work. If a member already has their own WorldEye subscription, they keep whichever is better — their own plan or the team's — for as long as they're on the team.",
+        ],
+      },
+      {
+        heading: "How invitations work",
+        body: [
+          "From the team dashboard, add a person's email and send the invitation. The invite link is valid for seven days, and it's bound to that email address: the invitation can only be accepted by signing in with the invited, verified email, so a forwarded link can't hand your seat to a stranger. Accepting takes one click from the invite page, and the member's access starts immediately.",
+          "Seats are reserved the moment an invitation goes out, so a team can never invite past what it has paid for. Revoke a pending invitation and the seat returns to the pool. Remove a member and their team access ends on the spot — their own account and any personal subscription are untouched.",
+        ],
+      },
+      {
+        heading: "What seats cost",
+        body: [
+          "Seat pricing is graduated: the first seats cost the most and each band gets cheaper, on every billing cycle. On monthly plans, seats 1–5 are $11.99 each, seats 6–10 are $10.99, seats 11–20 are $9.99, seats 21–35 are $8.99, and seats 36–50 are $7.99. Weekly seats run from $6.99 down to $4.99; annual seats from $59.99 down to $39.99 per year.",
+          "A concrete example: a 12-person team on monthly pays $134.88 in seats — five at $11.99, five at $10.99, two at $9.99 — for $148.87 all-in with the owner's plan. You can add up to 50 seats, 51 people including the owner. Seat increases take effect immediately; decreases are scheduled for the end of the billing period, so nobody loses access mid-cycle because of a billing change.",
+        ],
+      },
+      {
+        heading: "Shared where it counts",
+        body: [
+          "A team that monitors together needs shared tools, not a dozen separate accounts. Camera collections can be shared with the whole organization, so the set of feeds your team watches is the same set for everyone. The recording pool is shared too: recordings draw on the owner's pool — 20 cameras at once on Pro, 40 on VIP Pro — instead of a small personal allowance per member.",
+          "Admins get an activity log of team events — invitations, joins, seat changes — so there's a record of who did what. And because the owner holds the subscription, there's exactly one bill, one renewal, and one place to change any of it. The [team section on the pricing page](/pricing) shows the full seat ladder with a calculator.",
+        ],
+      },
+      {
+        heading: "Who it's for",
+        body: [
+          "Newsrooms verifying footage across time zones. Operations teams watching the same ports, passes and depots. Research groups, classrooms, clubs of plane spotters and weather watchers. If more than one person in your world watches the same cameras, a team plan is cheaper than separate subscriptions — and simpler than passing one login around, which you no longer need to do.",
+          "Team Access is live now on every paid plan, including plans on a free trial — seats added during a trial ride the trial until it converts. Start a team from [Settings → Team Access](/settings/team).",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Do invited members need their own subscription?",
+        a: "No. The owner pays for the plan and the seats; invited members are never charged. While they're on the team, members get the owner's plan tier as their effective plan. If a member already has their own subscription, they keep whichever plan is better.",
+      },
+      {
+        q: "How many people can be on a team?",
+        a: "Up to 51: the owner plus 50 seats. Seat pricing is graduated, so larger teams pay less per seat — down to $7.99 per seat per month on monthly plans in the largest band.",
+      },
+      {
+        q: "Can anyone accept an invitation link?",
+        a: "No. An invitation can only be accepted by signing in with the exact invited, verified email address. Invitations expire after seven days, and owners can revoke a pending invitation at any time, which releases the reserved seat.",
+      },
+      {
+        q: "What is shared with the team?",
+        a: "Camera collections can be shared across the organization, and the recording pool is shared: the team records up to the owner's cap — 20 cameras on Pro, 40 on VIP Pro — in total, rather than per person.",
+      },
+    ],
+  },
+  {
+    slug: "live-cameras-by-country",
+    title: "Every Country, Live: 109 Country Pages for 74,229 Cameras",
+    seoTitle: "109 Country Camera Pages | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "The camera network now has a page for every country it covers — 109 country explorers with real local counts, from 41,355 cameras in the United States to 118 in Thailand.",
+    seoDescription:
+      "Browse WorldEye's 74,229 verified live cameras by country: 109 country pages with real local counts — 41,355 in the US, 10,472 in Japan, 118 in Thailand.",
+    tags: ["cameras", "announcement"],
+    sections: [
+      {
+        heading: "A page for every country in the network",
+        body: [
+          "WorldEye's [country index](/cameras/countries) now carries a dedicated page for each of the 109 countries in the camera network. Every page is a working explorer, not a stub: that country's cameras with a real count, a breakdown by area and city, featured feeds, and search and filters for drilling in. The globe is still the front door — the country pages are for when you already know where you want to look.",
+          "The pages exist because the network got big enough to need them. With [74,229 verified cameras](/blog/76000-live-cameras-new-layers) on the globe, 'show me Thailand' deserves a better answer than panning a map and hoping. Now it's one click: [Thailand's country page](/cameras/countries/thailand), all 118 feeds.",
+        ],
+      },
+      {
+        heading: "The counts are real — and honestly uneven",
+        body: [
+          "The United States lists 41,355 cameras. Japan lists 10,472. Thailand lists 118. Those numbers aren't a ranking of anything except openness: camera counts follow public data culture. American state transport departments publish enormous highway networks; Japan's river and road agencies publish dense public feeds; countries without open camera programs have only what their cities, resorts and businesses choose to stream.",
+          "Every count on a country page is the number of feeds we actually serve for that country — not a scrape of a directory, not a rounded marketing figure. Counts move as feeds are added and as third-party cameras go offline, and the pages move with them.",
+        ],
+      },
+      {
+        heading: "Verified feed by feed",
+        body: [
+          "Each camera in the network was playback-verified before it was listed — the feed had to actually play — and deduplicated five ways, so the same intersection can't inflate a count twice. Dead feeds and placeholders were rejected at the door.",
+          "One large camera source, roughly 57,000 feeds, is still excluded entirely because its licensing doesn't clearly allow republication; we'd rather publish a smaller number we can stand behind. The full expansion story is in [74,229 Live Cameras: WorldEye's Biggest Expansion Yet](/blog/76000-live-cameras-new-layers).",
+          "The network itself is an aggregation of public sources: state and national transport departments, the FAA's weather-camera program, provincial networks like British Columbia's DriveBC, and thousands of city, resort and business streams their operators publish openly. Nobody had to build 74,229 cameras for this map to exist — they had to be gathered, verified and kept honest, which is the work the country pages make visible.",
+        ],
+      },
+      {
+        heading: "How people use country pages",
+        body: [
+          "Trip planning is the obvious use: a country page is a pre-trip scout — Bangkok streets, Ko Samui beaches, mountain roads in the north, all before you book. Drivers use their own country's page as a road-conditions circuit; the [road-check routine](/blog/checking-road-conditions-live-traffic-cameras) works even better when your passes and bridges are one bookmark away. Newsrooms use country pages the other way — when news breaks somewhere, the page is the fastest route to ground truth in that country, live.",
+          "Country pages are also where the character of each network shows. Alpine pages are ski lifts and passes; island pages are harbors and beaches; Japan's page is rivers, roads and volcanoes in remarkable density. Browsing a few is the fastest way to understand what the public camera network actually is.",
+        ],
+      },
+      {
+        heading: "Free, like the rest of the map",
+        body: [
+          "Country pages are free with no signup, like the camera layer itself. Open the [country index](/cameras/countries), pick a country, and start watching. If a feed is dark, it's because the operator's camera is — feeds are run by third parties and [come and go](/faq); the pages refresh as the network does.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many countries have camera pages?",
+        a: "109 — every country with at least one verified public feed in the WorldEye network. Each page shows that country's camera count, its areas and cities, featured feeds, and filters for browsing them.",
+      },
+      {
+        q: "Why does the United States have 41,355 cameras but Thailand only 118?",
+        a: "Because the counts measure publication, not importance. US state transport departments publish huge open highway-camera networks, and Japan's agencies do the same for roads and rivers. Where no agency publishes openly, only city, resort and business feeds exist — so the count is smaller even though the country is no less watchable.",
+      },
+      {
+        q: "Are all of these cameras live video?",
+        a: "The network mixes live video streams with snapshot cameras that refresh on a cycle, plus agency weather cameras. Every feed — video or snapshot — was playback-verified before listing.",
+      },
+      {
+        q: "Why do country counts change over time?",
+        a: "Cameras are run by third parties — transport agencies, cities, businesses — and they go offline, move, and get replaced. New verified feeds are added in batches, so a country's count grows and occasionally shrinks. The number on the page is the count we serve today.",
+      },
+    ],
+  },
+  {
+    slug: "introducing-vip-pro",
+    title: "The Annual Plan Is Now VIP Pro",
+    seoTitle: "VIP Pro: WorldEye's Top Tier | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "Annual has been renamed VIP Pro and turned into a true top tier: camera alerts in plain language, timelapse, 40-camera recording and the intel layers. Existing annual members are already VIP.",
+    seoDescription:
+      "WorldEye's annual plan is now VIP Pro: AI camera alerts, timelapse, 40-camera recording with dashboard, and the OSINT intel layers — for $74.99 a year.",
+    tags: ["announcement", "pricing"],
+    sections: [
+      {
+        heading: "Annual grew up",
+        body: [
+          "WorldEye's annual plan has a new name — VIP Pro — and for once a rename comes with more than a name. VIP Pro is now a true top tier with capabilities the other plans don't have, priced at $74.99 a year for new subscribers, with a 3-day free trial. If you already subscribe annually, you are already VIP Pro: your tier upgraded automatically, at the price you already pay. There is nothing to click.",
+          "Pro itself is unchanged — $7.99 a week or $13.99 a month, with the OSINT toolkit, satellite map view, traffic and 20-camera recording. VIP Pro is for the people who kept asking what sits above it. Here's the answer.",
+        ],
+      },
+      {
+        heading: "Camera alerts that understand 'snow on the road'",
+        body: [
+          "VIP Pro's headline feature is camera alerts. Pick up to ten cameras, and describe the condition you care about in plain language — 'snow on the road', 'the parking lot is empty', 'a ship is docked'. About every fifteen minutes, an AI check looks at a fresh still from each camera and judges it against your words. When the condition changes, you get an alert — by email and in the app — with the photo that triggered it attached.",
+          "Two design rules keep alerts trustworthy. They fire on change, not on a schedule, so a quiet camera stays quiet. And when the AI can't tell — a dark frame, a fogged lens — the verdict is unknown, and unknown never sends an alert. A monitoring tool that cries wolf gets muted; this one would rather say nothing than guess.",
+          "The conditions are yours to write, which makes the same feature serve very different watches: road crews waiting on a pass to fill with snow, harbor watchers waiting for a berth to free up, a facilities team that wants to know when the lot fills. Ten cameras is enough to cover the views one person actually answers for — and few enough that each alert still means something when it arrives.",
+        ],
+      },
+      {
+        heading: "Timelapse, straight from the camera",
+        body: [
+          "VIP Pro adds timelapse: compress a day of weather, a tide cycle, a week of construction into seconds. Timelapses are built from frames of the camera you're watching, captured as the feed refreshes, and export as video you can keep and share. Mountain weather is the showcase use — a storm front crossing a pass, clouds pouring over a ridge — but harbor tides and city rush hours are close behind.",
+        ],
+      },
+      {
+        heading: "Forty cameras, and the layers above Pro",
+        body: [
+          "Recording doubles: VIP Pro records up to 40 cameras at once — Pro records 20 — and adds the [recording dashboard](/recording/dashboard) for managing captures across all of them. The live intel layers also live at this tier now: the cyber, maritime and GDELT incident feeds, plus live news, that turn the globe into a monitoring wall. The OSINT toolkit itself — DNS, WHOIS and network lookups — stays on Pro, as before.",
+        ],
+      },
+      {
+        heading: "The tiers, plainly",
+        body: [
+          "Free covers the globe, the cameras, flights, satellites and weather with no signup. Pro adds the toolkit, satellite view, traffic, advanced search and recording. VIP Pro adds alerts, timelapse, the intel layers and the doubled recording cap for $74.99 a year — and every first charge on any plan carries the same 7-day money-back guarantee. Compare them side by side on the [pricing page](/pricing), and manage or upgrade an existing plan from [your subscription page](/settings/subscription).",
+          "Every tier can be tried before it is bought. Weekly and monthly plans carry a 1-day free trial; VIP Pro carries a 3-day trial, so the alerts, timelapse and intel layers can run against your own cameras and your own questions before the first charge ever lands.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "I'm already an annual subscriber. What changed for me?",
+        a: "Your plan is now called VIP Pro and includes camera alerts, timelapse, 40-camera recording, the recording dashboard and the intel layers — automatically, at the price you already pay. No action is needed.",
+      },
+      {
+        q: "How much is VIP Pro?",
+        a: "$74.99 a year for new subscribers, with a 3-day free trial. Like every WorldEye plan, the first charge is covered by a 7-day money-back guarantee — email us within seven days and we refund it; that's a refund, not just a cancellation.",
+      },
+      {
+        q: "How do camera alerts decide when to notify me?",
+        a: "Roughly every 15 minutes an AI check compares a fresh still from your camera against the condition you wrote, in your words. You're notified only when the verdict changes — and never when the check can't tell, so ambiguous frames don't become false alarms. Alerts arrive by email and in the app, with the triggering photo.",
+      },
+      {
+        q: "Can I upgrade from Pro to VIP Pro?",
+        a: "Yes — from [Manage Subscription](/settings/subscription), without leaving WorldEye. The upgrade is handled on site, and VIP Pro takes effect as your plan's tier straight away.",
+      },
+    ],
+  },
+  {
+    slug: "recording-studio-upgrades",
+    title: "Recording That Keeps Rolling When You Leave the Page",
+    seoTitle: "Persistent, Multi-Camera Recording | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "WorldEye recordings now persist across the whole app: start capturing a camera, keep exploring the globe, and the recording continues — with an always-visible capture indicator and up to 40 cameras at once.",
+    seoDescription:
+      "Recording upgrades are live: persistent capture across navigation, an on-screen capture indicator, multi-camera recording — 20 on Pro, 40 on VIP Pro.",
+    tags: ["announcement", "recording"],
+    sections: [
+      {
+        heading: "The old rule: don't touch anything",
+        body: [
+          "Recording a camera used to be a hostage situation: navigate away from the camera view — to check a flight, a storm, another feed — and the capture was at risk. That made recording a feature for people willing to stare at one screen. The recording studio upgrades remove the leash. Recording sessions now persist across the app: start a capture, then go anywhere in WorldEye. The recording continues.",
+        ],
+      },
+      {
+        heading: "The capture indicator",
+        body: [
+          "You'll always know what's recording, because the app now tells you from everywhere: a capture indicator sits on screen whenever one or more recordings are active, showing live capture state. One click takes you to your sessions to review or stop them. No more wondering whether the thing you started an hour ago is still running — and no more recordings silently running that you forgot about, either. It reports both ways.",
+          "It answers the question from the other end of the day, too. Sit back down after hours away and the indicator tells you at a glance what has been capturing in the meantime and how long each session has been running — before you open a single session to check.",
+        ],
+      },
+      {
+        heading: "Many cameras, one pool",
+        body: [
+          "Recording is multi-camera now. Pro records up to 20 cameras concurrently; VIP Pro raises the pool to 40 and adds the [recording dashboard](/recording/dashboard) to manage them all in one place. For [teams](/blog/worldeye-team-access), the pool is shared across the organization — the team's captures draw on the owner's 20 or 40 — which is how a newsroom or an operations desk actually works: one wall of cameras, one pool.",
+          "Starting another camera doesn't restart the ones already running, and stopping one leaves the rest alone: each session is independent and shares only the pool limit. That independence is what makes the pool feel like a wall of recorders rather than a single fragile capture.",
+        ],
+      },
+      {
+        heading: "Built for the way people actually monitor",
+        body: [
+          "The pattern this unlocks is the monitoring pattern: pin the passes, ports and plazas you care about, start them recording in the morning, and spend your attention on the live globe instead of babysitting tabs. When something happens — a storm landing, a closure, a crowd forming — the capture is already rolling, and the timelapse tools on VIP Pro can compress the hours around it.",
+          "Reviewing is built for triage, not archaeology. Sessions are listed with their camera, start time and duration, so the morning's captures across twenty cameras read as one timeline instead of twenty files. Skim the sessions that cover the hour you care about, keep what matters, and let the rest go — the point of a recording pool is that it's ready again tomorrow.",
+          "A storm day shows why the persistence matters. Start the canyon and pass cameras before dawn, then spend the morning on the live map — radar, warnings, the storm's own feeds — while the road-level record assembles itself in the background. When the front crosses, the footage already exists. Nobody had to predict the exact minute worth recording, because all of the minutes were.",
+        ],
+      },
+      {
+        heading: "The honest mechanics",
+        body: [
+          "Recording runs in your browser session: WorldEye captures the public feeds you're entitled to watch while the app is open, across any navigation inside it. Closing the browser ends the session — the indicator's job is to make sure you always know a session is live before you do. The caps are real caps: 20 concurrent cameras on Pro, 40 on VIP Pro. See how recording fits your work on the [pricing page](/pricing).",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does recording continue if I leave the camera page?",
+        a: "Yes — that's the headline upgrade. Recordings persist across navigation anywhere inside WorldEye, and the capture indicator shows active sessions from every page. Closing the browser ends the session.",
+      },
+      {
+        q: "How many cameras can I record at the same time?",
+        a: "20 on Pro and 40 on VIP Pro. On a team plan, that pool is shared across the whole organization rather than per member.",
+      },
+      {
+        q: "How do I know a recording is running?",
+        a: "The capture indicator is visible on screen whenever any recording is active, with the session state. Click it to review or stop your sessions — VIP Pro also gathers them in the recording dashboard.",
+      },
+      {
+        q: "Is recording included in the free tier?",
+        a: "No — recording is a Pro feature, and VIP Pro doubles the cap and adds the dashboard. The free tier covers watching everything live: the globe, all 74,229 cameras, flights, satellites and weather, with no signup.",
+      },
+    ],
+  },
+  {
+    slug: "live-transit-on-worldeye",
+    title: "Live Transit Joins the Globe: Buses and Trains in Real Time",
+    seoTitle: "Live Transit on the Globe | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "The globe now carries public transit: 15 agencies streaming real-time vehicle positions and arrivals — including Utah's UTA, whose TRAX, S-Line and FrontRunner trains run on a keyless public feed.",
+    seoDescription:
+      "Live transit is on WorldEye: 15 agencies with real-time vehicle positions and arrivals, including UTA's TRAX, S-Line and FrontRunner on a keyless feed.",
+    tags: ["transit", "announcement"],
+    sections: [
+      {
+        heading: "The map learned transit — live",
+        body: [
+          "WorldEye's globe has a transit layer: real-time vehicle positions and arrivals from 15 public transit agencies, drawn on the same map as the flights, ships and cameras. These aren't schedule diagrams. The vehicles report their own positions through GTFS Realtime, the open format agencies publish for their own apps — WorldEye reads the same public feeds and puts an entire network's movement on one globe.",
+          "It is also deliberately the same data the agencies give their own riders. There is no private feed and no scraping of anyone's app: where an agency publishes realtime positions openly, the globe can carry them; where it doesn't, the map shows the gap instead of filling it with a schedule dressed up as live data.",
+        ],
+      },
+      {
+        heading: "Arrivals, not just dots",
+        body: [
+          "A moving dot tells you where a bus is; an arrival tells you what it means. The layer joins each vehicle's position with its trip updates, so a vehicle's popup carries its route, destination, how late it's running, and upcoming arrivals where the agency publishes them. Watch a corridor and you can read the network's health: gaps, bunching, a line running hot.",
+          "It also pairs with the camera layer the way transit actually works. A delayed train is a claim; the station-area and level-crossing cameras near it are evidence. Planners, journalists and the simply curious can watch a rush hour build from both sides at once — the vehicles on the map and the streets they're moving through — which is a picture no single-agency app can give you.",
+          "Staleness is handled honestly. Vehicle fixes age; when a position goes stale — roughly three minutes without an update — the display falls back to the scheduled time and labels it as scheduled. Live data is never blended silently into a guess.",
+        ],
+      },
+      {
+        heading: "Utah, running keyless",
+        body: [
+          "The home-state network is the showcase: Utah Transit Authority — TRAX light rail, the S-Line streetcar, FrontRunner commuter rail and the bus network, 86 routes and 5,425 stops — streams through UTA's public GTFS Realtime feed with no API key and no gatekeeper. It's the same feed any developer can read, which is rather the point: public transit data, published publicly, on a public map.",
+        ],
+      },
+      {
+        heading: "Fifteen systems, named",
+        body: [
+          "The layer covers UTA in Salt Lake City, Boston's MBTA, Denver's RTD, Seattle's King County Metro, Austin's CapMetro, Norway's national Entur network and more — fifteen agencies across them. The layer panel lists exactly which metros are live, and if you pan somewhere without coverage, the map says so instead of showing you a mysteriously empty city. Agencies whose feeds sit behind developer keys or paid platforms aren't in yet; the panel would rather name the gap than hide it.",
+          "The bench runs deeper than the headliners. Canada contributes a full contingent — TransLink, MiWay, York Region Transit, Durham Region Transit, Hamilton Street Railway and London Transit — alongside Community Transit in the Puget Sound region and OVapi, the open feed covering the Netherlands. Fifteen agencies, four countries' worth of networks, one layer.",
+        ],
+      },
+      {
+        heading: "Try it — and go deeper",
+        body: [
+          "The transit layer is free. Open the [globe](/), turn on transit, and zoom into any covered metro. Our [guide to tracking buses and trains live](/blog/track-buses-trains-live-transit-map) goes deeper on reading the data — fix ages, interpolation, and what a vehicle popup can and can't tell you. The full layer list lives on the [features page](/features).",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is the transit layer free?",
+        a: "Yes. Live transit — vehicle positions and arrivals across all 15 covered agencies — is part of the free map, no account needed.",
+      },
+      {
+        q: "Which cities are covered?",
+        a: "Fifteen agencies, including Salt Lake City (UTA), Boston (MBTA), Denver (RTD), Seattle (King County Metro), Austin (CapMetro) and Norway's national Entur network. The layer panel in the app names every covered metro.",
+      },
+      {
+        q: "How current are the vehicle positions?",
+        a: "Vehicles typically report every 15 to 30 seconds. Each popup shows how old the position fix is, and if data goes stale the display falls back to the scheduled time and labels it — live and scheduled are never mixed without a label.",
+      },
+      {
+        q: "Why isn't my city's transit on the map?",
+        a: "Coverage needs a public realtime feed. Some agencies gate theirs behind developer keys or paid platforms, so they can't join a public map yet. The covered list grows as feeds open up.",
+      },
+    ],
+  },
+  {
+    slug: "flight-tracking-at-full-scale",
+    title: "Thousands of Planes at Once: Flight Tracking, Fixed and Multiplied",
+    seoTitle: "Flight Tracking at Full Scale | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "A data-format change upstream and our own thinning had quietly shrunk WorldEye's sky — at one point to zero commercial aircraft. Both are fixed: the globe now renders every aircraft it receives.",
+    seoDescription:
+      "WorldEye's flight layer is fixed and multiplied: thousands of live aircraft rendered at once, plus a flight-path view with flown vs planned routing.",
+    tags: ["flights", "announcement"],
+    sections: [
+      {
+        heading: "First, the confession",
+        body: [
+          "For a while, WorldEye's flight layer was lying by omission. An upstream provider changed its data format, our sweep started missing traffic, and the renderer was thinning — decimating — the aircraft it did receive before drawing them. At the worst point, the map rendered zero commercial aircraft: an empty sky over a world full of planes. We found it by auditing received-versus-rendered counts, and we've fixed both ends of it.",
+        ],
+      },
+      {
+        heading: "Every aircraft received is now an aircraft drawn",
+        body: [
+          "The sweep and parser are repaired, and the thinning is gone entirely: received equals rendered. In a production check after the fix, the globe drew 3,040 commercial aircraft at once — and with private, business and other traffic on top, a few thousand aircraft is the normal state of the map at any moment. Positions poll every 30 seconds, with smooth motion interpolated between fixes so planes glide instead of jumping.",
+          "The difference is easiest to feel over a hub at rush hour. Arrival banks now resolve into individual aircraft sequencing themselves miles out, departures climb away in streams, and the holding patterns that weather creates draw themselves in real time instead of appearing as a sparse scatter of dots. The sky was always this busy; the map just finally admits it.",
+          "The collection sweep behind it now polls 38 regions in rotation and reads both of the upstream feed's data shapes, so a format quirk in one region can't quietly starve the whole map the way it did before. Helicopters render with their own glyph, distinct from fixed-wing aircraft, so rotary-wing work — medical, police, utility, firefighting in season — reads at a glance instead of hiding among the airliners.",
+        ],
+      },
+      {
+        heading: "New: the flight-path view",
+        body: [
+          "Pro now adds a flight-path view for any aircraft: the route drawn on the globe in two honest halves. The solid line is the track the aircraft has actually flown — recorded live positions, labeled FLOWN — LIVE TRACK. The dashed line ahead is the planned route to its destination, labeled ROUTE — PLANNED. As the flight progresses, solid eats dashed. It's the quickest read on a flight's story: on course, holding, diverting — the shape tells you before the data does.",
+          "Diversions are where it earns its keep. A planned line bending early toward an airport that was never the destination is visible the moment the aircraft turns — and the flown track behind it shows exactly where the flight's day went off script, long before the arrival boards catch up.",
+        ],
+      },
+      {
+        heading: "And you can still ride along",
+        body: [
+          "Nothing about the free layer changed for the worse: click any aircraft for its callsign, type, route and telemetry, and the follow cameras — chase, forward view, orbit — still let you ride along with any flight, labeled as the interpolated visualization it is. The [follow-a-flight guide](/blog/follow-a-flight-live) walks through it, and the [live flight tracker](/live-flight-tracker) is the layer's home.",
+          "The follow view matters more at full scale. With a few thousand aircraft up, the interesting question is rarely whether a flight exists — it is which one you're looking at: a specific departure climbing out, a delayed arrival finally turning onto final. Pick it, follow it, and the map keeps it framed while the rest of the sky streams past.",
+        ],
+      },
+      {
+        heading: "What the map still won't pretend",
+        body: [
+          "Coverage still has edges: oceanic and remote tracks thin out between receiver networks, some operators block identification, and military traffic often flies dark. A gap on the map is a coverage story, not a hidden plane, and the tracker says so. Full sky where the data exists, honest labels where it doesn't — that's the deal, now at full scale.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many aircraft does WorldEye show at once?",
+        a: "Every aircraft the data feed delivers — typically a few thousand airborne at any moment. A production check after the fix counted 3,040 commercial aircraft rendered simultaneously.",
+      },
+      {
+        q: "Why did the map used to show fewer planes?",
+        a: "Two stacked faults: an upstream data-format change cut what our sweep received, and the renderer thinned what remained before drawing. Both are fixed — the renderer now draws everything it receives, with no decimation.",
+      },
+      {
+        q: "What do the solid and dashed lines on a flight mean?",
+        a: "The solid line is the track actually flown so far, from recorded live positions. The dashed line is the planned route remaining to the destination. The flight-path view is part of Pro; the flight layer, aircraft popups and follow cameras remain free.",
+      },
+      {
+        q: "How often do positions update?",
+        a: "The globe polls every 30 seconds, and aircraft glide between fixes via motion interpolation. Over oceans and remote regions, updates arrive less frequently — those coverage gaps are real and shown as-is.",
       },
     ],
   },

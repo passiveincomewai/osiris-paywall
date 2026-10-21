@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, Rss } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import { POSTS } from "./posts";
@@ -8,7 +8,10 @@ export const metadata = {
   title: "WorldEye Blog",
   description:
     "Guides and explainers from the WorldEye team: OSINT basics, live flight tracking, the public camera network, and how to read the world in real time.",
-  alternates: { canonical: "/blog" },
+  alternates: {
+    canonical: "/blog",
+    types: { "application/rss+xml": "/blog/feed.xml" },
+  },
   openGraph: {
     title: "WorldEye Blog",
     description:
@@ -32,7 +35,8 @@ const jsonLd = {
     description: p.seoDescription,
     url: `https://worldeye.app/blog/${p.slug}`,
     datePublished: p.date,
-    author: { "@type": "Organization", name: "WorldEye", url: "https://worldeye.app" },
+    dateModified: p.updated ?? p.date,
+    author: { "@type": "Organization", name: "WorldEye Team", url: "https://worldeye.app/about" },
   })),
 };
 
@@ -67,6 +71,12 @@ export default function BlogIndex() {
             Guides and explainers on open-source intelligence, flight tracking,
             and the public camera network — the skills behind the map.
           </p>
+          <a
+            href="/blog/feed.xml"
+            className="inline-flex items-center gap-2 mt-5 text-sm font-semibold text-[#D4AF37] hover:brightness-125 transition"
+          >
+            <Rss className="w-4 h-4" /> Subscribe via RSS
+          </a>
         </div>
 
         {/* Post grid */}
