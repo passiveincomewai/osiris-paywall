@@ -12,7 +12,7 @@ import CamerasGalleryMount from "./CamerasGalleryMount";
  * does — and for crawlers — these category cards carry the section.
  */
 export const CAMERA_CATEGORIES = [
-  { label: "Cities", href: "/city-webcams" },
+  { label: "Cities", href: "/world-city-webcams" },
   { label: "Ski Resorts", href: "/ski-webcams" },
   { label: "Beaches", href: "/beach-webcams" },
   { label: "Highways", href: "/live-traffic-cameras" },
