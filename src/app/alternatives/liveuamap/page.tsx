@@ -1,443 +1,312 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Map as MapIcon,
-  Globe,
-  Eye,
-  Satellite,
-  Plane,
-  Camera,
-  Newspaper,
-  Database,
-  ShieldCheck,
-} from "lucide-react";
-import {
-  IntentShell,
-  IntentBreadcrumbs,
-  ReviewedStamp,
-  HeroCtas,
-  MidCta,
-  webPageLd,
-  itemListLd,
-} from "@/components/SeoIntentLayout";
-import RelatedLinks from "@/components/RelatedLinks";
+import { Camera, Map as MapIcon, Newspaper, Plane, Satellite } from "lucide-react";
+import AlternativePage, {
+  altMetadata,
+  type AltData,
+} from "@/components/AlternativePage";
 
-export const metadata: Metadata = {
-  title: "Liveuamap Alternatives: 7 Options in 2026",
+const data: AltData = {
+  name: "LiveUAMap",
+  path: "/alternatives/liveuamap",
+  title: "LiveUAMap Alternative — The Event Map, Plus the Live World Itself",
   description:
-    "Searching for a Liveuamap alternative? Compare 7 options for 2026, from WorldEye's free live 3D globe to DeepStateMap, ACLED and GDELT.",
-  alternates: { canonical: "/alternatives/liveuamap" },
-  openGraph: {
-    title: "Liveuamap Alternatives: 7 Options in 2026 | WorldEye",
-    description:
-      "WorldEye's free 3D globe vs DeepStateMap, ACLED, GDELT and more — honest strengths for each conflict-monitoring alternative.",
-    url: "/alternatives/liveuamap",
-    type: "website",
+    "LiveUAMap pins curated conflict reports to a map. WorldEye is the alternative that adds the living picture: 74,229 live cameras, flights, satellites, fires and storms on one globe — free, no signup, no ads.",
+  ogTitle: "LiveUAMap Alternative — Reports on a Map vs the Live Globe | WorldEye",
+  ogDescription:
+    "Compare LiveUAMap vs WorldEye: a decade of curated conflict reporting vs live cameras, aircraft, satellites and event layers on a 3D globe. Both have a place — here's the honest split.",
+  kicker: "LIVEUAMAP ALTERNATIVES",
+  heroIcon: MapIcon,
+  heroTitle: (
+    <>
+      LiveUAMap shows you the reports.{" "}
+      <span className="text-[#0096FF]">WorldEye shows you the place.</span>
+    </>
+  ),
+  heroLede: (
+    <>
+      For over a decade, LiveUAMap has been the reflex for anyone following a
+      war: open the map, read what happened where. It earned that habit. But
+      a pinned report is the beginning of a question, not the end — and the
+      end sounds like &ldquo;what does it look like there right now?&rdquo;
+      WorldEye is the alternative built for that second half: a live globe
+      with 74,229 cameras, flights, satellites, fires and storms. This page
+      compares the two without knocking either.
+    </>
+  ),
+  updatedNote:
+    "Facts checked October 20, 2026 against liveuamap.com and its official app listings. LiveUAMap's subscription removes its ads and unlocks extra map features; exact prices vary by store and region, so none is printed here.",
+  aboutIcon: Newspaper,
+  aboutHeading: "What LiveUAMap is",
+  about: [
+    <>
+      LiveUAMap — the Live Universal Awareness Map, run by Altwork — began
+      as a map of the war in Ukraine and grew into a global conflict and
+      geopolitics service. Its editors curate reports from news agencies,
+      officials and open sources, verify and geolocate them, and pin each one
+      to a 2D map with a timestamp and a source. Region feeds organise the
+      flow — Ukraine, the Middle East, Syria and beyond — across conflicts,
+      protests, disasters, weapons deployments and politics. It is, in
+      essence, a newsroom whose front page is a map.
+    </>,
+    <>
+      The service is free on the web and in its iOS/Android apps, supported
+      by advertising; a subscription (monthly, with a half-year option)
+      removes the ads and enables additional map features and regions. After
+      a decade of daily operation it has deep archives — you can scroll a
+      front line&apos;s history report by report — and a loyal audience that
+      includes journalists and researchers who cite its pins in their own
+      work.
+    </>,
+    <>
+      Who is it for? Anyone following a conflict narratively: what happened,
+      in what order, according to whom. Its curation is the product — human
+      judgement about what is credible enough to pin — and for readers who
+      think in headlines and timelines, it remains the category&apos;s
+      reference point.
+    </>,
+  ],
+  strengths: [
+    {
+      title: "A decade of editorial curation",
+      body: "Reports are selected, geolocated and sourced by people, not just aggregated — the pin means someone stood behind it.",
+    },
+    {
+      title: "Deep conflict archives",
+      body: "Years of timestamped reports let you reconstruct how a front, a protest movement or a crisis developed, day by day.",
+    },
+    {
+      title: "Region feeds that match habits",
+      body: "Ukraine, Middle East, Syria and other standing feeds meet readers where their attention already lives.",
+    },
+    {
+      title: "Fast and familiar",
+      body: "A simple 2D map that loads anywhere and reads instantly — no learning curve, which matters during breaking events.",
+    },
+  ],
+  gapsIcon: MapIcon,
+  gapsHeading: "Where the report map runs out",
+  gaps: [
+    <>
+      The first gap is that everything on LiveUAMap is secondhand — by
+      design. It can tell you a strike was reported in a city; it cannot show
+      you the city. There are no live cameras to open, no aircraft overhead,
+      no satellites, no fire detections drawn from sensors — the map is a
+      rendering of other people&apos;s reporting, and when reporting is slow,
+      wrong or silent, the map is too.
+    </>,
+    <>
+      The second gap is the experience around the reading. The free tier is
+      ad-supported — its app-store reviews frequently complain about how
+      heavy that advertising is — and the map itself is a flat, utilitarian
+      2D surface. There is no globe to explore, no recording, no way to watch
+      a place over time or be alerted when it changes. Following an event
+      means refreshing and re-reading.
+    </>,
+    <>
+      The third gap is breadth of world. LiveUAMap is a conflict-and-news
+      lens: weather systems, air traffic, shipping, earthquakes as live
+      sensor layers, the ordinary live planet — all sit outside its frame.
+      When the story is bigger than the incident list, you need a second
+      tool. That second tool is what WorldEye aims to be.
+    </>,
+  ],
+  worldEyeHeading: "WorldEye: the live world behind the reports",
+  worldEye: [
+    <>
+      WorldEye is a 3D globe carrying the planet&apos;s live public signals:
+      <span className="text-white/85 font-semibold">
+        {" "}
+        74,229 live cameras
+      </span>{" "}
+      searchable by{" "}
+      <Link href="/cameras" className="text-[#0096FF] hover:underline">
+        country and city
+      </Link>
+      , worldwide flights, tracked satellites, wildfire detections,
+      earthquakes, weather and radar — all free with no signup and no ads.
+      When LiveUAMap pins a report, WorldEye is where you go to look at the
+      place: the square, the highway, the port, as they are this minute.
+    </>,
+    <>
+      Its paid tiers add the monitoring layer. VIP Pro plots GDELT global
+      events onto the globe beside the cameras — an events-on-a-map view in
+      LiveUAMap&apos;s spirit, but fused with live imagery — and its{" "}
+      <span className="text-white/85 font-semibold">camera alerts</span>{" "}
+      watch specific feeds for conditions you describe and notify you with a
+      photo when things change. Pro and VIP Pro record up to 20 or 40 cameras
+      at once, so the place you&apos;re following becomes evidence, not just
+      impressions. Honest limit, as ever: WorldEye does not do
+      LiveUAMap&apos;s editorial curation — no newsroom stands behind each
+      pin, and for the narrative of a conflict its archive is the better
+      instrument.
+    </>,
+  ],
+  worldEyePoints: [
+    {
+      title: "Cameras where the reports point",
+      body: "74,229 feeds across 109 countries — verify a report or just witness the place, live, in seconds.",
+    },
+    {
+      title: "Events and imagery in one view",
+      body: "GDELT events (VIP Pro) plotted on the same globe as the cameras, flights, fires and storms around them.",
+    },
+    {
+      title: "No ads, no signup wall",
+      body: "The free tier is the whole globe, ad-free — open it during a breaking event without creating an account first.",
+    },
+    {
+      title: "Alerts and recording for places you follow",
+      body: "Watch a crossing, square or facility feed; get a photo notification when it changes, and record up to 40 cameras on VIP Pro.",
+    },
+  ],
+  chips: [
+    { icon: Camera, label: "Live cameras by country", href: "/cameras" },
+    { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
+    { icon: Satellite, label: "Satellite tracker", href: "/satellite-tracker" },
+  ],
+  tableHeading: "LiveUAMap vs WorldEye, side by side",
+  tableIntro:
+    "A curated news map vs a live sensor globe. They are complements more than rivals — the table shows the seam.",
+  rows: [
+    { feature: "Core idea", competitor: "Editor-curated event reports pinned to a 2D map", worldEye: "Live public signals — cameras, flights, satellites — on a 3D globe" },
+    { feature: "Price", competitor: "Free with ads; subscription removes ads and adds map features", worldEye: "Free, no ads, no signup; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
+    { feature: "Live cameras", competitor: "No", worldEye: "74,229 live public cameras" },
+    { feature: "Editorial curation & archives", competitor: "Yes — a decade of sourced, timestamped reports", worldEye: "Event layers are data feeds (GDELT on VIP Pro), not an editorial archive" },
+    { feature: "Flights & satellites", competitor: "Not layers on the map", worldEye: "Yes — live, free" },
+    { feature: "Fires, quakes, weather", competitor: "Covered as reported incidents", worldEye: "Live sensor layers — FIRMS fires, USGS quakes, radar and storms" },
+    { feature: "Recording & alerts", competitor: "Notifications for news; no camera recording or place alerts", worldEye: "Multi-cam recording; plain-language camera alerts with photos" },
+    { feature: "Platforms", competitor: "Web + iOS/Android apps", worldEye: "Web — phone and desktop browsers" },
+    { feature: "Map style", competitor: "Flat 2D map", worldEye: "Interactive 3D globe" },
+  ],
+  pricingHeading: "Pricing: ads and a subscription vs a free globe",
+  pricing: [
+    <>
+      LiveUAMap is free to read, paid for by advertising; its subscription —
+      monthly, or half-yearly at a saving — removes the ads and unlocks
+      additional map features and regions. Store pricing varies by platform
+      and country (its app listings show modest in-app purchase tiers), so
+      this page describes the shape rather than printing a figure.
+    </>,
+    <>
+      WorldEye&apos;s globe is free with no signup and no ads. The optional
+      tiers are monitoring tools:{" "}
+      <span className="text-white/85 font-semibold">
+        Pro at $7.99/week or $13.99/month
+      </span>{" "}
+      (1-day trials) and{" "}
+      <span className="text-white/85 font-semibold">
+        VIP Pro at $74.99/year
+      </span>{" "}
+      (3-day trial) with GDELT events, intel layers, camera alerts and
+      40-camera recording; first charges carry a 7-day money-back guarantee.
+      See{" "}
+      <Link href="/pricing" className="text-[#0096FF] hover:underline">
+        pricing
+      </Link>{" "}
+      and the dedicated{" "}
+      <Link href="/compare/liveuamap" className="text-[#0096FF] hover:underline">
+        comparison
+      </Link>
+      .
+    </>,
+  ],
+  stepsHeading: "Pairing the report map with the live globe",
+  steps: [
+    {
+      title: "Read the report as usual",
+      body: "LiveUAMap's pins tell you what, where and according to whom. Keep that habit — it's a good one.",
+    },
+    {
+      title: "Open WorldEye and fly to the pin",
+      body: "Search the same place on the globe. Cameras, flights, fires and weather load around it, live.",
+    },
+    {
+      title: "Look at the place",
+      body: "Open the nearest live feeds — the square, the road out, the port — and see the ground truth for yourself.",
+    },
+    {
+      title: "Set an alert if it matters",
+      body: "Following one location over days? VIP Pro camera alerts watch the feed and notify you when it changes.",
+    },
+  ],
+  verdictHeading: "Which one should you use?",
+  verdicts: [
+    {
+      q: "Following a war's narrative day by day?",
+      a: "LiveUAMap. Its curated, archived report flow is exactly that instrument.",
+    },
+    {
+      q: "Want to see the place in the report?",
+      a: "WorldEye. Cameras and live layers turn a pin into a picture, free.",
+    },
+    {
+      q: "Following a crisis seriously?",
+      a: "Both — reports for the story, the globe for the truth on the ground. They were made for different halves of the job.",
+    },
+  ],
+  faqHeading: "LiveUAMap alternative questions, answered",
+  faqs: [
+    {
+      q: "What is LiveUAMap?",
+      a: "LiveUAMap (the Live Universal Awareness Map, by Altwork) is a long-running service that pins editor-curated, sourced reports of conflicts, protests, disasters and geopolitics onto a map. It began with Ukraine coverage over a decade ago and now covers the world, free with ads on web and mobile apps, with a subscription that removes ads and adds map features.",
+    },
+    {
+      q: "Is LiveUAMap free?",
+      a: "Yes, with advertising. A subscription (monthly or half-yearly) removes ads and enables additional features and regions. WorldEye's alternative is free without ads or signup for its core globe.",
+    },
+    {
+      q: "What is the best LiveUAMap alternative?",
+      a: "For the same curated-reports model, War Monitor and DeepStateMap serve conflict watchers. For the thing LiveUAMap doesn't do — seeing places live — WorldEye is the alternative: 74,229 cameras, flights, satellites, fires and storms on a 3D globe. Most heavy users pair a report map with a live globe.",
+    },
+    {
+      q: "LiveUAMap vs WorldEye — what's the difference?",
+      a: "LiveUAMap shows you reports about places, curated by editors and pinned to a flat map with deep archives. WorldEye shows you the places themselves: live cameras, aircraft, satellites and sensor layers on a 3D globe, plus recording and camera alerts. One is a newsroom; the other is a window.",
+    },
+    {
+      q: "Does WorldEye have live cameras in Ukraine and the Middle East?",
+      a: "WorldEye's catalogue spans 109 countries and includes public feeds across Eastern Europe and the Middle East — highways, cities, border regions and landmarks where public networks publish them. Coverage follows what public camera networks make available; search the country pages to see what exists for a specific place.",
+    },
+    {
+      q: "Can I get alerts when something happens in a place I follow?",
+      a: "LiveUAMap notifies you about news. WorldEye's VIP Pro camera alerts work differently: pick a live feed, describe the change you care about in plain language, and get notified with a photo when the feed shows it. The two alert styles complement each other — headlines vs eyes.",
+    },
+  ],
+  midCta: {
+    heading: "The report is the start. See the rest live.",
+    body: "Open the globe, find the place from the headline, and look at it with your own eyes — free, no signup, no ads.",
   },
-  twitter: {
-    card: "summary",
-    title: "Liveuamap Alternatives: 7 Options in 2026 | WorldEye",
-    description:
-      "Compare 7 Liveuamap alternatives for 2026 — WorldEye's free 3D globe, DeepStateMap, ACLED, GDELT and more.",
-  },
-};
-
-const OPTIONS = [
-  {
-    icon: Eye,
-    name: "WorldEye",
-    tag: "Best all-round free alternative",
-    href: "/compare/liveuamap",
-    body: "A free live 3D globe — no signup — where conflict news sits alongside the visual evidence around it: satellites overhead, aircraft in the sky, weather, and 74,229 public cameras on the ground. Best when you want to see the event, not just read a pin about it.",
-  },
-  {
-    icon: MapIcon,
-    name: "DeepStateMap",
-    tag: "Best for Ukraine frontline detail",
-    href: "/compare/deepstatemap",
-    body: "An open-source interactive map of the Russo-Ukrainian war with frequently updated frontline positions. Nobody beats it for that one conflict — but it is that one conflict, not a global monitoring tool.",
-  },
-  {
-    icon: Database,
-    name: "ACLED",
-    tag: "Best for researchers and journalists",
-    href: "/compare/acled",
-    body: "The Armed Conflict Location & Event Data Project: structured, coded conflict-event data trusted by researchers, newsrooms and analysts. Superb for analysis and sourcing; a database first, not a live visual experience.",
-  },
-  {
-    icon: Globe,
-    name: "GDELT Project",
-    tag: "Best free event data at global scale",
-    href: "/compare/gdelt",
-    body: "Monitors the world's news media in over 100 languages and publishes enormous free event datasets. Unmatched breadth for data work — but raw, technical, and not a map you can glance at.",
-  },
-  {
-    icon: ShieldCheck,
-    name: "Crisis24",
-    tag: "Best for corporate and professional risk teams",
-    href: "/compare/crisis24",
-    body: "Integrated risk-management intelligence with vetted alerts and travel-risk coverage. Built for organizations with duty-of-care budgets; serious capability, serious price, not a casual browsing tool.",
-  },
-  {
-    icon: Newspaper,
-    name: "conflictzone.io",
-    tag: "Closest news-map format",
-    href: "/compare/conflictzone-io",
-    body: "A conflict news-mapping project in the same spirit as Liveuamap — pins and reports on a world map. If you like the format and just want a second lens, this is the most direct swap.",
-  },
-  {
-    icon: Satellite,
-    name: "Zoom Earth",
-    tag: "Best for live satellite context",
-    href: "/compare/zoom-earth",
-    body: "Near-real-time satellite imagery and storm tracking on a smooth map. It won't tell you what happened, but it shows you the ground truth — fires, storms, and terrain — as it looks right now.",
-  },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    webPageLd(
-      "Liveuamap Alternatives: 7 Options in 2026",
-      "Compare 7 Liveuamap alternatives for 2026, from WorldEye's free live 3D globe to DeepStateMap, ACLED and GDELT.",
-      "/alternatives/liveuamap"
-    ),
-    itemListLd(
-      OPTIONS.map((o) => ({
-        name: o.name,
-        href: o.href,
-        description: `${o.tag}. ${o.body}`,
-      }))
-    ),
+  ctaHeading: (
+    <>
+      Read it there. <span className="text-[#0096FF]">See it here.</span>
+    </>
+  ),
+  ctaBody: "74,229 live cameras and the live planet around every headline.",
+  related: [
+    {
+      label: "LiveUAMap vs WorldEye, head to head",
+      desc: "The dedicated comparison page.",
+      href: "/compare/liveuamap",
+    },
+    {
+      label: "War Monitor alternatives",
+      desc: "The analyst-grade conflict console, compared the same way.",
+      href: "/alternatives/war-monitor",
+    },
+    {
+      label: "Best conflict monitoring tools",
+      desc: "The ranked field for following wars and crises.",
+      href: "/best-conflict-monitoring-tools",
+    },
+    {
+      label: "Live cameras by country",
+      desc: "Find the feeds behind the headlines.",
+      href: "/cameras",
+    },
   ],
 };
 
-export default function LiveuamapAlternativesPage() {
-  return (
-    <IntentShell jsonLd={jsonLd}>
-      <IntentBreadcrumbs
-        trail={[
-          { label: "Alternatives", href: "/compare" },
-          { label: "Liveuamap Alternatives" },
-        ]}
-      />
+export const metadata = altMetadata(data);
 
-      {/* Hero */}
-      <div className="text-center max-w-2xl mx-auto">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#0096FF] border border-[#0096FF]/30 rounded-full px-4 py-1.5 mb-6">
-          <MapIcon className="w-3.5 h-3.5" /> ALTERNATIVES
-        </p>
-        <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-          Liveuamap alternatives that show you <span className="text-[#0096FF]">more than the news.</span>
-        </h1>
-        <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          The best free Liveuamap alternative is WorldEye: a live 3D globe where
-          conflicts appear in full context — live news, satellites overhead,
-          aircraft in the sky, and cameras on the ground — with no signup and no
-          paywall. The honest answer depends on your job, though: frontline
-          trackers, researchers, and professional analysts each have a different
-          best pick. This guide compares seven.
-        </p>
-        <ReviewedStamp />
-        <HeroCtas />
-      </div>
-
-      {/* What Liveuamap does */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">What does Liveuamap actually do?</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Liveuamap is a live conflict news map. It aggregates reports —
-            largely drawn from news outlets and social media — about armed
-            conflicts, protests, and crises, and drops them as pins on a world
-            map. The Ukraine and Middle East maps became reference points for
-            millions of people because the format is immediately readable: open
-            the page, see where things are happening right now.
-          </p>
-          <p>
-            That readability is its genuine strength, and this guide is not an
-            attack on it. A curated stream of conflict reports on a map is a
-            format that works, which is exactly why so many people searching for
-            alternatives still want something in the same spirit — just with
-            fewer compromises.
-          </p>
-        </div>
-      </section>
-
-      {/* Why look elsewhere */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Why look for a Liveuamap alternative?</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            The most common reasons people search for an alternative fall into
-            three buckets. First, <strong className="text-white/85">verification</strong>:
-            report-driven maps move fast, and speed trades against certainty —
-            some readers want visual or primary-source context around each pin
-            before they trust it.
-          </p>
-          <p>
-            Second, <strong className="text-white/85">scope</strong>: Liveuamap is
-            a conflict lens. If you also want to watch the weather system over
-            the region, the aircraft in its airspace, the satellites passing
-            overhead, or a live camera on the ground nearby, a single-issue map
-            can&apos;t give you that — you end up with five tabs open.
-          </p>
-          <p>
-            Third, <strong className="text-white/85">depth</strong>: researchers
-            and analysts often need structured data they can query and cite, not
-            a stream of pins. Different jobs, different tools — which is why the
-            list below is organized by what each option is actually best at.
-          </p>
-        </div>
-      </section>
-
-      {/* Free alternative */}
-      <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-        <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <Eye className="w-7 h-7 text-[#0096FF] shrink-0" />
-          Is there a free alternative to Liveuamap?
-        </h2>
-        <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Yes — several, including WorldEye. The entire map is free with no
-            signup: an interactive 3D globe with live flight tracking, satellite
-            tracking, ship positions, weather, earthquakes, wildfires, and
-            roughly 74,229 public cameras. For conflict monitoring specifically,
-            the live-news layer (a Pro feed) and the free visual layers combine
-            into something a pin map can&apos;t do: when a report breaks, you
-            can look at the same location from orbit, from the air, and from a
-            street camera, on one screen.
-          </p>
-          <p>
-            GDELT&apos;s datasets are also free, though they demand data skills
-            to use. DeepStateMap is free for its Ukraine coverage. The paid
-            options on the list (Crisis24 and WorldEye Pro) exist for
-            professional workflows — the free tier never gates the map itself.
-          </p>
-        </div>
-      </section>
-
-      {/* The seven */}
-      <section className="mt-20">
-        <h2 className="text-2xl md:text-3xl font-bold text-center">
-          Seven Liveuamap alternatives, <span className="text-[#0096FF]">compared</span>
-        </h2>
-        <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
-          Ranked by breadth of use — with each option&apos;s honest best-fit noted,
-          because the &ldquo;best&rdquo; tool is the one that matches your job.
-        </p>
-        <div className="mt-10 grid gap-5 max-w-4xl mx-auto">
-          {OPTIONS.map((o, i) => (
-            <div
-              key={o.name}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 md:p-8 hover:border-[#0096FF]/40 transition"
-            >
-              <div className="flex items-start gap-5">
-                <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0096FF]/10 border border-[#0096FF]/25 text-sm font-bold text-[#0096FF] shrink-0">
-                  {i + 1}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-xl font-bold">{o.name}</h3>
-                    <span className="text-xs font-semibold text-[#0096FF] bg-[#0096FF]/10 border border-[#0096FF]/25 rounded-full px-3 py-1">
-                      {o.tag}
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/50 leading-relaxed mt-3">{o.body}</p>
-                  <Link
-                    href={o.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    Compare {o.name} vs WorldEye
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <MidCta
-        heading="See conflicts in context — free, no signup"
-        body="Open WorldEye and spin the globe: live news, satellites, flights, weather and cameras on one screen. The map is free forever."
-      />
-
-      {/* What WorldEye adds */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">What WorldEye shows that a news map can&apos;t</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            A news map tells you something happened. WorldEye lets you look at
-            the place it happened — live. Spot a report about activity near a
-            port city, and on the same globe you can check ship traffic in the
-            harbor, aircraft in the surrounding airspace, the weather moving
-            over the area, and whether a public camera nearby shows anything on
-            the ground. That cross-layer view is the core difference between a
-            report aggregator and a visual-intelligence platform.
-          </p>
-          <p>
-            The Pro tier adds the pieces professionals ask for: an AI analyst
-            assistant that can summarize what you&apos;re looking at, premium
-            intel feeds covering cyber, GDELT, maritime, conflict and live
-            news, high-resolution satellite imagery, and advanced search filters. The free tier — the whole globe — stays free.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            {[
-              { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
-              { icon: Plane, label: "Live flight tracking", href: "/live-flight-tracker" },
-              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
-              { icon: Globe, label: "All features", href: "/features" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 hover:border-[#0096FF]/40 transition"
-              >
-                <c.icon className="w-4 h-4 text-[#0096FF]" /> {c.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Honest limits */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Where the news-map format still wins</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Honesty first: if what you want is a fast-scrolling feed of
-            conflict reports with human curation behind it, a dedicated news
-            map is still the most direct tool for that job. WorldEye is a
-            visual-intelligence platform — it gives you the sky, the orbit, the
-            sea and the street, but it doesn&apos;t try to be a newsroom.
-          </p>
-          <p>
-            Similarly, for Ukraine-specific frontline detail, DeepStateMap
-            remains the specialist; for citable research data, ACLED&apos;s
-            structured datasets are the standard; and for enterprise risk teams
-            with duty-of-care obligations, Crisis24&apos;s vetted alerting is
-            built for exactly that workflow. The right alternative is the one
-            that fits the question you&apos;re actually asking.
-          </p>
-        </div>
-      </section>
-
-      {/* How to choose */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">How to pick the right one</h2>
-        <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          {[
-            {
-              q: "Do you need it free?",
-              a: "WorldEye's map, DeepStateMap, GDELT and conflictzone.io cost nothing. ACLED has free tiers for many users; Crisis24 is enterprise-priced.",
-            },
-            {
-              q: "Reports or visuals?",
-              a: "For curated reports, stay with a news map. For seeing the event's context — sky, orbit, ground — choose a visual platform like WorldEye or Zoom Earth.",
-            },
-            {
-              q: "One conflict or the world?",
-              a: "DeepStateMap owns Ukraine coverage. For global monitoring, WorldEye, GDELT and Crisis24 cover the whole planet.",
-            },
-          ].map((c) => (
-            <div key={c.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="font-semibold text-white/90 mb-2">{c.q}</p>
-              <p className="text-sm text-white/50 leading-relaxed">{c.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Q&A */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Liveuamap alternative questions, answered</h2>
-        <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can I follow the Ukraine war live on WorldEye?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              You can monitor Ukraine on the globe — flights (where
-              broadcasting), satellites, weather, cameras, and live-news
-              context on Pro — but for frontline positions specifically,
-              DeepStateMap is the specialist. Many people use both: the
-              frontline map for the line, WorldEye for everything around it.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Does WorldEye replace Liveuamap&apos;s alert feed?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Not one-for-one. WorldEye is built for visual monitoring rather
-              than curated report aggregation. If the feed is what you value
-              most, pair WorldEye&apos;s globe with a news-map source — the
-              combination covers both the report and the visual evidence.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro add for conflict monitoring?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Pro adds live-news and conflict intel feeds, high-resolution
-              satellite imagery, the AI analyst assistant, advanced search filters, and
-              the OSINT toolkit (Nmap, DNS, WHOIS, SSL). Pricing is weekly
-              $7.99, monthly $13.99, or annual $74.99 — and the free map never
-              gets paywalled behind it.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#0096FF]/30 bg-gradient-to-b from-[#0096FF]/[0.10] to-transparent p-10">
-        <h2 className="text-2xl md:text-3xl font-bold">
-          Stop reading pins. <span className="text-[#0096FF]">Start seeing the planet.</span>
-        </h2>
-        <p className="text-white/55 mt-3 mb-8">
-          One click, no signup. Compare it against your current map in thirty seconds.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-block px-8 py-4 rounded-2xl bg-[#0096FF] text-white font-bold hover:bg-[#0077d6] transition"
-          >
-            Explore WorldEye
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-block px-8 py-4 rounded-2xl border border-white/15 text-white/85 font-semibold hover:border-[#0096FF]/50 hover:bg-white/5 transition"
-          >
-            Unlock WorldEye PRO
-          </Link>
-        </div>
-        <p className="mt-6 text-sm text-white/40">
-          Want the head-to-head?{" "}
-          <Link href="/compare/liveuamap" className="text-[#0096FF] hover:underline">
-            WorldEye vs Liveuamap
-          </Link>
-        </p>
-      </div>
-
-      <RelatedLinks
-        links={[
-          {
-            label: "WorldEye vs Liveuamap",
-            desc: "The detailed head-to-head comparison on the compare hub.",
-            href: "/compare/liveuamap",
-          },
-          {
-            label: "Best conflict monitoring tools",
-            desc: "The full ranked guide to watching conflicts unfold in 2026.",
-            href: "/best-conflict-monitoring-tools",
-          },
-          {
-            label: "Features",
-            desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
-            href: "/features",
-          },
-          {
-            label: "Pricing",
-            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map itself stays free.",
-            href: "/pricing",
-          },
-        ]}
-      />
-    </IntentShell>
-  );
+export default function Page() {
+  return <AlternativePage data={data} />;
 }
