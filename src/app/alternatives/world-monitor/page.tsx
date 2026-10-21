@@ -1,437 +1,320 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  MonitorSmartphone,
-  Globe,
-  Satellite,
-  CloudSun,
-  Camera,
-  Radar,
-  Waves,
-} from "lucide-react";
-import {
-  IntentShell,
-  IntentBreadcrumbs,
-  ReviewedStamp,
-  HeroCtas,
-  MidCta,
-  webPageLd,
-  itemListLd,
-} from "@/components/SeoIntentLayout";
-import RelatedLinks from "@/components/RelatedLinks";
+import { Camera, MonitorSmartphone, Plane, Satellite, Waves } from "lucide-react";
+import AlternativePage, {
+  altMetadata,
+  type AltData,
+} from "@/components/AlternativePage";
 
-export const metadata: Metadata = {
-  title: "World Monitor Alternatives in 2026",
+const data: AltData = {
+  name: "World Monitor",
+  path: "/alternatives/world-monitor",
+  title: "World Monitor Alternative — The Intelligence Dashboard Meets the Live Globe",
   description:
-    "Looking for a World Monitor alternative? Compare free live-world dashboards — WorldEye's 3D globe, Zoom Earth, NASA Worldview and more.",
-  alternates: { canonical: "/alternatives/world-monitor" },
-  openGraph: {
-    title: "World Monitor Alternatives in 2026 | WorldEye",
-    description:
-      "Free alternatives to world-monitor dashboards: WorldEye's live 3D globe, Zoom Earth, NASA Worldview, Ventusky and more.",
-    url: "/alternatives/world-monitor",
-    type: "website",
+    "World Monitor is a free hosted geopolitical dashboard. WorldEye is the alternative that trades its breadth of feeds for eyes on the ground: 74,229 live cameras on a 3D globe, plus flights, satellites and alerts.",
+  ogTitle: "World Monitor Alternative — Dashboard Breadth vs Live Cameras | WorldEye",
+  ogDescription:
+    "Compare World Monitor vs WorldEye honestly: 500+ feeds, markets and AI briefs vs 74,229 live cameras on a 3D globe. Both free to open — here's which fits your questions.",
+  kicker: "WORLD MONITOR ALTERNATIVES",
+  heroIcon: MonitorSmartphone,
+  heroTitle: (
+    <>
+      World Monitor tells you. <span className="text-[#0096FF]">WorldEye shows you.</span>
+    </>
+  ),
+  heroLede: (
+    <>
+      World Monitor is one of the best free intelligence dashboards ever put
+      on the web — hundreds of feeds, conflict data, markets and AI briefs in
+      a single dense console. WorldEye is the alternative for the moment a
+      dashboard row makes you ask &ldquo;but what does it actually look like
+      there?&rdquo;: a live 3D globe with 74,229 cameras you can open, flights
+      and satellites overhead, and alerts when a place changes. Both are free
+      to open. They answer different questions — this page sorts out which
+      are yours.
+    </>
+  ),
+  updatedNote:
+    "Facts checked October 20, 2026 against worldmonitor.app, its /pro page and its GitHub repository (koala73/worldmonitor). World Monitor's audience figures are its own claims and are labelled as such.",
+  aboutIcon: MonitorSmartphone,
+  aboutHeading: "What World Monitor is",
+  about: [
+    <>
+      World Monitor is a geopolitical intelligence dashboard created by Elie
+      Habib and released as open source under the AGPL-3.0 licence, with a
+      free hosted version at worldmonitor.app that needs no signup. It is a
+      firehose organised into a console: its site describes{" "}
+      <span className="text-white/85 font-semibold">
+        58 map layer types drawing on 500+ feeds from 770 providers
+      </span>{" "}
+      — ACLED and UCDP conflict data, AIS vessel tracking, OpenSky aircraft,
+      NASA FIRMS fires, USGS earthquakes, plus markets and macro data from
+      sources like FRED, the IMF and the BIS. It tracks 13 strategic
+      chokepoints, generates AI country briefs, and ships in six variants —
+      World, Tech, Finance, Commodity, Happy and Energy — each re-skinning
+      the console for a different reader.
+    </>,
+    <>
+      Its Pro tier, priced on its own site at{" "}
+      <span className="text-white/85 font-semibold">
+        $39.99/month ($359.99/year)
+      </span>{" "}
+      with Business and API tiers above it, is aimed at professionals who
+      live in the console all day. The project has real momentum — tens of
+      thousands of GitHub stars and press coverage — and it claims an audience
+      in the millions across 190+ countries (its figure, quoted here as
+      theirs).
+    </>,
+    <>
+      Who is it for? Analysts, journalists, traders and the geopolitically
+      obsessed — people who want the maximum number of signals per screen and
+      are fluent in reading them. It is a superb instrument panel. What it is
+      not is a pair of eyes: its world is rendered in data, not in pictures of
+      the place itself.
+    </>,
+  ],
+  strengths: [
+    {
+      title: "Feed breadth nobody free matches",
+      body: "500+ feeds across conflict, markets, macro, climate and infrastructure, unified into one console with 58 layer types.",
+    },
+    {
+      title: "Chokepoints and variants",
+      body: "Thirteen tracked maritime chokepoints and six purpose-built variants (Finance, Energy, Tech…) show real editorial thought about who reads it.",
+    },
+    {
+      title: "AI country briefs",
+      body: "Generated briefings compress a country's situation into a readable summary — a genuine time-saver for analysts starting their day.",
+    },
+    {
+      title: "Free, hosted and open source",
+      body: "The hosted dashboard is $0 with no signup, and the code is AGPL-3.0 if you'd rather run your own — a rare combination.",
+    },
+  ],
+  gapsIcon: Waves,
+  gapsHeading: "Where the dashboard runs out",
+  gaps: [
+    <>
+      The first gap is the absence of the ground itself. World Monitor will
+      tell you a protest is trending in a capital; it cannot show you the
+      square. There is no camera network to open — no live street, port,
+      border crossing or ski slope to verify a story with your own eyes. For
+      readers whose instinct is &ldquo;show me&rdquo;, every row of the
+      console ends in a dead end that another site has to fill.
+    </>,
+    <>
+      The second gap is shape. A dense, desktop-first console of panels and
+      tickers is powerful at a desk and punishing on a phone — and the globe
+      moment, spinning a living planet and diving to a place, is not its
+      interaction model at all. It is built to be read, not explored.
+    </>,
+    <>
+      The third gap is action. There is no recording, no timelapse and no
+      alerting tied to a place you care about — no way to say &ldquo;watch
+      this harbour and tell me when it changes&rdquo;. Monitoring, in World
+      Monitor, means a human watching the dashboard. For professionals its
+      Pro price buys more console; the watching-your-places layer simply
+      isn&apos;t its product.
+    </>,
+  ],
+  worldEyeHeading: "WorldEye: the globe with eyes",
+  worldEye: [
+    <>
+      WorldEye starts from the opposite end: a 3D globe whose first layer is
+      the visible world —{" "}
+      <span className="text-white/85 font-semibold">
+        74,229 live public cameras
+      </span>{" "}
+      searchable by{" "}
+      <Link href="/cameras" className="text-[#0096FF] hover:underline">
+        country and city
+      </Link>
+      , with live flights and tracked satellites overhead, weather, radar,
+      earthquakes, wildfires and transit in the same view. The free tier
+      needs no signup and there are no ads. Where World Monitor aggregates
+      what is <em>reported</em> about a place, WorldEye lets you look at the
+      place.
+    </>,
+    <>
+      WorldEye is not feed-less: its VIP Pro tier adds the intel layers —
+      cyber, maritime and GDELT global-event data with live news — plotted on
+      the globe rather than listed in panels, plus the action layer World
+      Monitor lacks: multi-camera recording, timelapse, and camera alerts
+      that watch a feed for a condition you describe and notify you with a
+      photo when it changes. Honest trade, stated plainly: World
+      Monitor&apos;s feed catalogue — markets, macro series, six variants —
+      is broader than WorldEye&apos;s, and analysts who need FRED data beside
+      their conflict map should keep it open. Most people run both.
+    </>,
+  ],
+  worldEyePoints: [
+    {
+      title: "74,229 cameras of ground truth",
+      body: "When a dashboard row says something happened, open the nearest live feed and see the street, port or slope yourself.",
+    },
+    {
+      title: "A globe you explore, not a console you read",
+      body: "Spin, dive and follow — flights, satellites, storms and cameras share one living 3D planet that works on a phone.",
+    },
+    {
+      title: "Alerts tied to places",
+      body: "VIP Pro camera alerts watch up to 10 feeds for plain-language conditions and notify you on change, photo attached.",
+    },
+    {
+      title: "Recording and timelapse",
+      body: "Record up to 20 cameras at once on Pro (40 on VIP Pro) and build timelapses — evidence, not just awareness.",
+    },
+  ],
+  chips: [
+    { icon: Camera, label: "74,229 cameras", href: "/cameras" },
+    { icon: Plane, label: "Live flights", href: "/live-flight-tracker" },
+    { icon: Waves, label: "Ship tracker", href: "/ship-tracker" },
+    { icon: Satellite, label: "Satellites", href: "/satellite-tracker" },
+  ],
+  tableHeading: "World Monitor vs WorldEye, side by side",
+  tableIntro:
+    "Breadth of feeds vs depth of vision. Both free to open — the table shows where each spends its strength.",
+  rows: [
+    { feature: "Form", competitor: "Dense intelligence console of panels and feeds", worldEye: "Interactive 3D globe with layered live data" },
+    { feature: "Price", competitor: "Free hosted tier; Pro $39.99/mo ($359.99/yr); API tiers above", worldEye: "Free tier; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
+    { feature: "Live cameras", competitor: "No camera network", worldEye: "74,229 live public cameras" },
+    { feature: "Data feeds", competitor: "500+ feeds / 770 providers — conflict, markets, macro, climate", worldEye: "Focused live layers: flights, satellites, weather, quakes, fires, transit; GDELT + cyber/maritime on VIP Pro" },
+    { feature: "Markets & macro data", competitor: "Yes — FRED, IMF, BIS and market feeds are a speciality", worldEye: "No markets/macro console" },
+    { feature: "AI briefs", competitor: "AI country briefs built in", worldEye: "AI assistant in the Pro toolkit; live news layer on VIP Pro" },
+    { feature: "Alerts & recording", competitor: "Dashboard watching; no place-based camera alerts or recording", worldEye: "Camera alerts, multi-cam recording, timelapse" },
+    { feature: "Open source", competitor: "Yes — AGPL-3.0, self-hostable", worldEye: "Hosted product" },
+    { feature: "Mobile experience", competitor: "Desktop-first console", worldEye: "Full globe in a mobile browser" },
+  ],
+  pricingHeading: "Pricing: two very different ideas of 'Pro'",
+  pricing: [
+    <>
+      World Monitor&apos;s hosted dashboard is free with no signup; its{" "}
+      <span className="text-white/85 font-semibold">
+        Pro is $39.99/month or $359.99/year
+      </span>
+      , Business $49.99/month, and API tiers run $99.99–$299.99/month (their
+      published /pro page, checked October 2026). That pricing is aimed at
+      professionals who use the console as a work instrument.
+    </>,
+    <>
+      WorldEye&apos;s free tier covers the whole globe and camera network.
+      <span className="text-white/85 font-semibold">
+        {" "}
+        Pro is $7.99/week or $13.99/month
+      </span>{" "}
+      (1-day trials) and{" "}
+      <span className="text-white/85 font-semibold">
+        VIP Pro is $74.99/year
+      </span>{" "}
+      (3-day trial) — less per year than two months of World Monitor Pro —
+      with a 7-day money-back guarantee on first charges. The dedicated
+      comparison is at{" "}
+      <Link href="/compare/world-monitor" className="text-[#0096FF] hover:underline">
+        WorldEye vs World Monitor
+      </Link>
+      , pricing detail at{" "}
+      <Link href="/pricing" className="text-[#0096FF] hover:underline">
+        /pricing
+      </Link>
+      .
+    </>,
+  ],
+  stepsHeading: "Adding the visual layer takes a minute",
+  steps: [
+    {
+      title: "Open the globe",
+      body: "worldeye.app — free, no signup. The same events on your dashboard are places you can now fly to.",
+    },
+    {
+      title: "Verify with a camera",
+      body: "Search the city from the headline and open a live feed — 74,229 cameras across 109 countries.",
+    },
+    {
+      title: "Watch the approaches",
+      body: "Flights, ships, satellites, fires and storms share the globe — the movement around the event, live.",
+    },
+    {
+      title: "Set an alert and walk away",
+      body: "On VIP Pro, point a camera alert at the place and get notified with a photo when it changes.",
+    },
+  ],
+  verdictHeading: "Which one should you use?",
+  verdicts: [
+    {
+      q: "Analyst who reads the world in data?",
+      a: "World Monitor. Its feed breadth, markets and briefs are the best free console in the niche.",
+    },
+    {
+      q: "Want to see the places in the headlines?",
+      a: "WorldEye. Cameras, a living globe and alerts — the visual half of situational awareness.",
+    },
+    {
+      q: "Serious about following world events?",
+      a: "Both, in two tabs — data from one, ground truth from the other. That's what most heavy users do.",
+    },
+  ],
+  faqHeading: "World Monitor alternative questions, answered",
+  faqs: [
+    {
+      q: "Is World Monitor free?",
+      a: "Yes — the hosted dashboard at worldmonitor.app is free with no signup, and the project is open source (AGPL-3.0) if you prefer to self-host. Its Pro tier is $39.99/month ($359.99/year), with Business and API tiers above that.",
+    },
+    {
+      q: "What is the best World Monitor alternative?",
+      a: "For another data console, LiveUAMap and GDELT's own tools are the names. For the thing World Monitor doesn't do — seeing places live — WorldEye is the alternative: 74,229 cameras on a 3D globe with flights, satellites and alerts. Most comparisons end with people using both.",
+    },
+    {
+      q: "Does World Monitor have live cameras?",
+      a: "No. World Monitor aggregates data feeds — conflict reports, markets, vessels, aircraft, fires — but it has no camera network to open. If you want to look at the actual street, port or border crossing, that's WorldEye's layer: 74,229 live public feeds.",
+    },
+    {
+      q: "World Monitor vs WorldEye — what's the difference?",
+      a: "World Monitor renders the world as data: 500+ feeds, 58 layer types, AI briefs, markets and macro series in a desktop console. WorldEye renders it as a place: a 3D globe with live cameras, flights, satellites, weather and event layers, plus recording and camera alerts. Breadth of signals vs depth of vision.",
+    },
+    {
+      q: "Is World Monitor open source?",
+      a: "Yes, under AGPL-3.0 (github.com/koala73/worldmonitor), and self-hosting is supported. WorldEye is a hosted product; if running your own stack is the point, World Monitor (or OSIRIS) is the honest recommendation.",
+    },
+    {
+      q: "Which is better for following a breaking crisis?",
+      a: "Start with World Monitor for the report flow — who's saying what, where, with conflict data attached. Verify and watch with WorldEye: live cameras near the location, flights and ships moving, fires and storms on the same globe, and an alert set on the place so you hear about changes without staring at a screen.",
+    },
+  ],
+  midCta: {
+    heading: "The dashboard says it. See it anyway.",
+    body: "Open the globe, find the place from the headline, and look at it live — 74,229 cameras, free, no signup.",
   },
-  twitter: {
-    card: "summary",
-    title: "World Monitor Alternatives in 2026 | WorldEye",
-    description:
-      "Free World Monitor alternatives compared — WorldEye's live 3D globe, Zoom Earth, NASA Worldview and more.",
-  },
-};
-
-const OPTIONS = [
-  {
-    icon: Globe,
-    name: "WorldEye",
-    tag: "Best free all-in-one monitor",
-    href: "/compare/world-monitor",
-    body: "A free live 3D globe — no signup — fusing flights, satellites, ships, weather, earthquakes, wildfires and 74,229 public cameras on one screen. The closest thing to a single 'monitor the planet' view that costs nothing.",
-  },
-  {
-    icon: Radar,
-    name: "World Monitor (the original)",
-    tag: "Best for geopolitical depth",
-    href: "/compare/world-monitor",
-    body: "The product itself: Elie Habib's free, open-source (AGPL-3.0) dashboard at worldmonitor.app — 58 map layer types, 500+ feeds, ACLED and UCDP conflict data, live tracking of 13 strategic chokepoints, market data and AI country briefs, in six specialized variants. Pro ($39.99/month) adds an AI analyst, digests and API access. What it doesn't have: a live public-camera network — it's panels and data, not a camera globe.",
-  },
-  {
-    icon: Satellite,
-    name: "Zoom Earth",
-    tag: "Best for live satellite imagery",
-    href: "/compare/zoom-earth",
-    body: "Near-real-time satellite views with storm and wildfire tracking on a fluid map. Beautiful and immediate for weather and terrain — but imagery only, without the flight, camera or intel layers.",
-  },
-  {
-    icon: Radar,
-    name: "NASA Worldview",
-    tag: "Best for science-grade satellite data",
-    href: "/compare/nasa-worldview",
-    body: "NASA's own browser for daily global satellite imagery across hundreds of data layers. Authoritative and free; built for researchers, so the learning curve is steeper than a casual monitor.",
-  },
-  {
-    icon: CloudSun,
-    name: "Ventusky",
-    tag: "Best for weather visualization",
-    href: "/compare/ventusky",
-    body: "Gorgeous animated weather maps — wind, temperature, precipitation and air quality worldwide. If weather is the main thing you monitor, it's superb; it doesn't cover flights, ships or cameras.",
-  },
-  {
-    icon: MonitorSmartphone,
-    name: "Liveuamap",
-    tag: "Best for conflict news monitoring",
-    href: "/compare/liveuamap",
-    body: "Live conflict and crisis news pinned to a world map. The specialist pick when the events you monitor are conflicts — narrow by design, which is also its limit.",
-  },
-  {
-    icon: Waves,
-    name: "Sentinel Hub / Copernicus Browser",
-    tag: "Best for free Earth-observation imagery",
-    href: "/compare/sentinel-hub",
-    body: "Free access to Copernicus Sentinel satellite imagery through ESA's browser tools. Excellent for recent high-quality imagery; an analyst's tool rather than an always-on live monitor.",
-  },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    webPageLd(
-      "World Monitor Alternatives in 2026",
-      "Free alternatives to world-monitor dashboards: WorldEye's live 3D globe, Zoom Earth, NASA Worldview, Ventusky and more.",
-      "/alternatives/world-monitor"
-    ),
-    itemListLd(
-      OPTIONS.map((o) => ({
-        name: o.name,
-        href: o.href,
-        description: `${o.tag}. ${o.body}`,
-      }))
-    ),
+  ctaHeading: (
+    <>
+      Data tells. <span className="text-[#0096FF]">Cameras show.</span>
+    </>
+  ),
+  ctaBody: "The live planet, visible — free in your browser.",
+  related: [
+    {
+      label: "World Monitor vs WorldEye, head to head",
+      desc: "The dedicated comparison page.",
+      href: "/compare/world-monitor",
+    },
+    {
+      label: "OSIRIS alternatives",
+      desc: "The other open-source dashboard in this family — and WorldEye's own ancestor.",
+      href: "/alternatives/osiris",
+    },
+    {
+      label: "War Monitor alternatives",
+      desc: "Conflict-first dashboards compared with the live globe.",
+      href: "/alternatives/war-monitor",
+    },
+    {
+      label: "Best global intelligence dashboards",
+      desc: "The ranked field of world-watching consoles.",
+      href: "/best-global-intelligence-dashboards",
+    },
   ],
 };
 
-export default function WorldMonitorAlternativesPage() {
-  return (
-    <IntentShell jsonLd={jsonLd}>
-      <IntentBreadcrumbs
-        trail={[
-          { label: "Alternatives", href: "/compare" },
-          { label: "World Monitor Alternatives" },
-        ]}
-      />
+export const metadata = altMetadata(data);
 
-      {/* Hero */}
-      <div className="text-center max-w-2xl mx-auto">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#0096FF] border border-[#0096FF]/30 rounded-full px-4 py-1.5 mb-6">
-          <MonitorSmartphone className="w-3.5 h-3.5" /> ALTERNATIVES
-        </p>
-        <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-          World Monitor alternatives that watch <span className="text-[#0096FF]">the whole planet.</span>
-        </h1>
-        <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          The best free World Monitor alternative is WorldEye: a live 3D globe
-          streaming flights, satellites, ships, weather, earthquakes, wildfires
-          and 74,229 public cameras — no signup, no paywall on the map. If
-          your monitoring is mostly one thing (weather, conflicts, satellite
-          imagery), a specialist below may fit better.
-        </p>
-        <ReviewedStamp />
-        <HeroCtas />
-      </div>
-
-      {/* What a world monitor is */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">What is a world monitor, exactly?</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            &ldquo;World monitor&rdquo; describes a category more than a single
-            product: dashboards and maps that stream live global events onto one
-            screen — conflicts, disasters, weather, sometimes flights or
-            shipping — so you can watch the planet without hunting across a
-            dozen tabs. People usually land on them for one of three reasons:
-            professional situational awareness, open-source research, or plain
-            curiosity about what&apos;s happening right now.
-          </p>
-          <p>
-            The name usually points at one product:{" "}
-            <span className="text-white/85 font-semibold">World Monitor
-            (worldmonitor.app)</span>, a free hosted dashboard by Elie Habib,
-            open source under AGPL-3.0. It&apos;s genuinely good at its job —
-            58 map layer types fed by hundreds of sources, ACLED and UCDP
-            conflict data, live chokepoint tracking, market data and
-            AI-written country briefs, with a Pro tier ($39.99/month) adding
-            an AI analyst, scheduled digests and API access. Most people
-            searching for an alternative aren&apos;t unhappy with its data —
-            they want a different shape: a globe instead of panels, cameras
-            instead of only feeds, or a cheaper Pro tier.
-          </p>
-          <p>
-            The other catch with most monitors is specialization. A conflict
-            monitor won&apos;t show you the storm over the conflict zone. A
-            weather monitor won&apos;t show the ships in the harbor. So the
-            first question in choosing an alternative isn&apos;t &ldquo;which
-            is best&rdquo; — it&apos;s &ldquo;how many layers do I need on one
-            screen?&rdquo;
-          </p>
-        </div>
-      </section>
-
-      {/* Free alternative */}
-      <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-        <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <Globe className="w-7 h-7 text-[#0096FF] shrink-0" />
-          Is there a free alternative to World Monitor dashboards?
-        </h2>
-        <div className="mt-5 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Yes. WorldEye&apos;s entire map is free with no account: a 3D globe
-            carrying live aircraft positions, satellite tracks, ship locations,
-            weather systems, earthquake and wildfire activity, and roughly
-            74,229 publicly accessible cameras. That breadth is the point —
-            most free monitors cover one data type well, while WorldEye puts
-            all of them on the same spinning globe.
-          </p>
-          <p>
-            The Pro tier (weekly $7.99, monthly $13.99, annual $74.99) adds
-            intelligence tooling — the AI analyst assistant, OSINT toolkit,
-            premium intel feeds, high-res satellite imagery, and advanced search filters
-            — but it never gates the live map. Zoom Earth, NASA Worldview and
-            Ventusky are also free for their specialties.
-          </p>
-        </div>
-      </section>
-
-      {/* The options */}
-      <section className="mt-20">
-        <h2 className="text-2xl md:text-3xl font-bold text-center">
-          World Monitor and its alternatives, <span className="text-[#0096FF]">compared</span>
-        </h2>
-        <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
-          Each one&apos;s honest best-fit is noted — the right monitor is the
-          one that matches what you actually watch.
-        </p>
-        <div className="mt-10 grid gap-5 max-w-4xl mx-auto">
-          {OPTIONS.map((o, i) => (
-            <div
-              key={o.name}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 md:p-8 hover:border-[#0096FF]/40 transition"
-            >
-              <div className="flex items-start gap-5">
-                <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0096FF]/10 border border-[#0096FF]/25 text-sm font-bold text-[#0096FF] shrink-0">
-                  {i + 1}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-xl font-bold">{o.name}</h3>
-                    <span className="text-xs font-semibold text-[#0096FF] bg-[#0096FF]/10 border border-[#0096FF]/25 rounded-full px-3 py-1">
-                      {o.tag}
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/50 leading-relaxed mt-3">{o.body}</p>
-                  <Link
-                    href={o.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    Compare {o.name} vs WorldEye
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <MidCta
-        heading="One globe. Every live layer. Free."
-        body="Flights, satellites, ships, weather, quakes, fires and cameras — streaming on a 3D globe with no signup. See what a real world monitor feels like."
-      />
-
-      {/* Why a globe */}
-      <section className="mt-20 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">Why a globe beats a dashboard</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Flat dashboards are built for one dataset. A globe is built for
-            context — and context is what turns data into understanding. On
-            WorldEye you can watch a typhoon spin up in the Pacific while
-            container ships reroute around it and aircraft thread the edges of
-            the storm, all in one frame. No dashboard with separate tabs for
-            weather, shipping and aviation gives you that picture, because the
-            picture only exists when the layers share a screen.
-          </p>
-          <p>
-            The 3D view also changes scale perception: ocean crossings, the
-            day-night terminator sweeping across continents, satellite
-            constellations arcing overhead — these are spatial stories, and
-            they read instantly on a globe in a way they never do in a list.
-            For situational awareness, that immediacy matters.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            {[
-              { icon: Satellite, label: "Satellite tracking", href: "/satellite-tracker" },
-              { icon: Camera, label: "74,229 public cameras", href: "/cameras" },
-              { icon: CloudSun, label: "Weather tracker", href: "/weather-tracker" },
-              { icon: Globe, label: "All features", href: "/features" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 hover:border-[#0096FF]/40 transition"
-              >
-                <c.icon className="w-4 h-4 text-[#0096FF]" /> {c.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Honest limits */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">When a specialist monitor wins</h2>
-        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
-          <p>
-            Breadth has a trade-off, and it&apos;s worth stating plainly. If
-            you need publication-grade satellite analysis, NASA Worldview and
-            the Copernicus Browser give you deeper data access than a live
-            globe. If your whole job is forecasting, Ventusky&apos;s weather
-            models go further. If it&apos;s conflict news, a curated news map
-            reads faster.
-          </p>
-          <p>
-            WorldEye&apos;s bet is different: most people don&apos;t monitor one
-            thing — they monitor the world, and the world doesn&apos;t come in
-            separate tabs. Use the specialist for the deep dive, and the globe
-            for everything around it.
-          </p>
-        </div>
-      </section>
-
-      {/* How to choose */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">How to choose your monitor</h2>
-        <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          {[
-            {
-              q: "One topic or everything?",
-              a: "Single-topic watchers (storms, conflicts, quakes) may prefer a specialist. Multi-topic watchers get more from one globe with all layers.",
-            },
-            {
-              q: "Casual or professional?",
-              a: "Casual monitoring is fully served by free tiers. Professionals needing alerts, feeds and analysis tools should look at Pro tiers or enterprise platforms.",
-            },
-            {
-              q: "Data or picture?",
-              a: "Researchers who query datasets want GDELT or NASA Worldview. People who need to see and understand fast want a visual monitor like WorldEye.",
-            },
-          ].map((c) => (
-            <div key={c.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="font-semibold text-white/90 mb-2">{c.q}</p>
-              <p className="text-sm text-white/50 leading-relaxed">{c.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Q&A */}
-      <section className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold">World Monitor questions, answered</h2>
-        <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Do I need an account to monitor the world on WorldEye?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              No. The map — globe, flights, satellites, ships, weather,
-              earthquakes, wildfires, cameras — is free with no signup. Accounts
-              exist only for Pro subscribers and affiliates, never as a gate in
-              front of the map.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can WorldEye send me alerts like a professional monitor?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              WorldEye is a visual monitoring platform, not an enterprise
-              alerting system. Pro adds premium intel feeds and the AI analyst
-              assistant for deeper monitoring workflows; organizations needing
-              automated vetted alerting typically pair a visual tool with a
-              dedicated risk-intelligence service.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">How much does World Monitor cost?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              The dashboard itself is free — no signup, no trial clock.
-              World Monitor Pro is $39.99/month ($359.99/year) and adds the WM
-              Analyst AI chat, scenario engine, scheduled digests, alerts and
-              MCP/API access, with higher API tiers above that. WorldEye&apos;s
-              map is also free; its Pro tier is $7.99/week, $13.99/month or
-              $74.99/year.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What does WorldEye Pro cost?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Weekly $7.99, monthly $13.99, or annual $74.99. Pro adds the AI
-              analyst assistant, OSINT toolkit, premium intel feeds,
-              high-resolution satellite imagery, and advanced search filters.
-              The free map stays free regardless.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#0096FF]/30 bg-gradient-to-b from-[#0096FF]/[0.10] to-transparent p-10">
-        <h2 className="text-2xl md:text-3xl font-bold">
-          The planet, live, <span className="text-[#0096FF]">on one screen.</span>
-        </h2>
-        <p className="text-white/55 mt-3 mb-8">
-          Open the globe and watch the world move — free, no signup, nothing to install.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/"
-            className="inline-block px-8 py-4 rounded-2xl bg-[#0096FF] text-white font-bold hover:bg-[#0077d6] transition"
-          >
-            Explore WorldEye
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-block px-8 py-4 rounded-2xl border border-white/15 text-white/85 font-semibold hover:border-[#0096FF]/50 hover:bg-white/5 transition"
-          >
-            Unlock WorldEye PRO
-          </Link>
-        </div>
-        <p className="mt-6 text-sm text-white/40">
-          Prefer the head-to-head?{" "}
-          <Link href="/compare/world-monitor" className="text-[#0096FF] hover:underline">
-            WorldEye vs World Monitor
-          </Link>
-        </p>
-      </div>
-
-      <RelatedLinks
-        links={[
-          {
-            label: "WorldEye vs World Monitor",
-            desc: "The detailed head-to-head comparison on the compare hub.",
-            href: "/compare/world-monitor",
-          },
-          {
-            label: "Best global intelligence dashboards",
-            desc: "Ranked dashboards for planet-scale situational awareness.",
-            href: "/best-global-intelligence-dashboards",
-          },
-          {
-            label: "Features",
-            desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
-            href: "/features",
-          },
-          {
-            label: "Pricing",
-            desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the map itself stays free.",
-            href: "/pricing",
-          },
-        ]}
-      />
-    </IntentShell>
-  );
+export default function Page() {
+  return <AlternativePage data={data} />;
 }
