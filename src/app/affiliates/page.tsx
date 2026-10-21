@@ -34,6 +34,18 @@ const FAQS = [
     q: "Is income guaranteed?",
     a: "No. Commissions are earned only from legitimate, paid WorldEye subscriptions — never from recruitment alone. Your earnings depend entirely on real customers subscribing through your referral link.",
   },
+  {
+    q: "How do the discount codes work?",
+    a: "Every rank carries a personal discount code — 5% off for your audience at Explorer, rising to 30% off at Visionary. A sale made with your code counts as your referral even if the buyer never clicked your link, so codes work in videos, podcasts and print where links don't.",
+  },
+  {
+    q: "What happens if someone I referred cancels?",
+    a: "You earn on every qualifying renewal while they stay subscribed — so a cancellation simply means the renewals (and the commissions on them) stop there.",
+  },
+  {
+    q: "Can I promote WorldEye anywhere?",
+    a: "Share your link and code wherever you have a genuine audience — social posts, videos, streams, newsletters, communities. What you can't do is manufacture activity: fake clicks, self-referrals and duplicate accounts are checked for and earn nothing, and abuse can end a comp or an account.",
+  },
 ];
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -154,6 +166,24 @@ export default function AffiliatesLanding() {
           and sales made with your code count as your referrals even without your link.
           Reach <span className="text-[#fbbf24]">Visionary</span> and WorldEye Pro itself is free while you hold the rank.
         </p>
+      </section>
+
+      {/* ── 3a. WHO IT'S FOR ───────────────────────────────── */}
+      <section>
+        <SectionTitle kicker="Fit" title="Who this program is for" />
+        <div className="grid md:grid-cols-2 gap-4">
+          {[
+            { t: "Creators & streamers", d: "You already show maps, cameras, flights or storms to an audience. WorldEye is content that films itself — and with 25,000+ followers you can apply for free Pro below, then earn 15–30% on every subscriber your link brings in." },
+            { t: "Community owners", d: "Discord servers, subreddits, weather and aviation groups, OSINT communities. Your members are exactly the people who keep a live globe open all day — give them your code and earn on the Pro upgrades." },
+            { t: "Writers & newsletter authors", d: "A link in a tools roundup or a tracking guide keeps paying: commissions recur on renewals, not just the first purchase, and your discount code works for readers who subscribe later from a different device." },
+            { t: "Anyone with an audience of one", d: "No following required. Start with the first-3-invites milestone: three friends through your link, and the moment one subscribes, your first commission and +500 XP land. Ranks climb from real activity, not from buying in." },
+          ].map((c) => (
+            <Card key={c.t}>
+              <div className="text-lg font-bold text-white">{c.t}</div>
+              <p className="mt-2 text-sm text-slate-400 leading-relaxed">{c.d}</p>
+            </Card>
+          ))}
+        </div>
       </section>
 
       {/* ── 3b. CREATORS: FREE PRO ──────────────────────────── */}
@@ -284,6 +314,86 @@ export default function AffiliatesLanding() {
             </Card>
           ))}
         </div>
+      </section>
+
+      {/* ── 6b. TRACKING & PAYOUTS, IN PLAIN TERMS ──────────── */}
+      <section>
+        <SectionTitle kicker="Mechanics" title="How tracking & payouts actually work" />
+        <Card>
+          <div className="space-y-4 text-sm md:text-base text-slate-300 leading-relaxed">
+            <p>
+              <span className="text-white font-bold">Attribution.</span>{" "}
+              When someone visits WorldEye through your link
+              (worldeye.app/ref/YOURCODE), they&apos;re attributed to you for
+              30 days — if they subscribe within that window, the sale is
+              yours, whether they buy on the first visit or come back three
+              weeks later. Your rank&apos;s discount code is a second,
+              link-free path: any sale made with your code counts as your
+              referral even without a click.
+            </p>
+            <p>
+              <span className="text-white font-bold">The dashboard.</span>{" "}
+              Everything is visible in your affiliate dashboard: referral
+              visits, conversions, XP and rank progress, missions, your
+              network levels, and every commission with its state — pending,
+              available, or paid. No spreadsheets, no asking support where a
+              sale went.
+            </p>
+            <p>
+              <span className="text-white font-bold">From sale to payout.</span>{" "}
+              A commission starts as <em>pending</em> for a 30-day holding
+              period after the subscription payment clears — that window
+              covers refunds and chargebacks, so the money you see as
+              available is money that stays. Once your available balance
+              reaches the $25 minimum, you request a payout from the
+              dashboard; requests are reviewed and processed by our team.
+              Commissions then keep recurring on every renewal for as long as
+              your referrals stay subscribed.
+            </p>
+            <p>
+              <span className="text-white font-bold">The fair-play line.</span>{" "}
+              Earnings come only from legitimate, paid subscriptions — never
+              from recruitment alone, and never from manufactured activity.
+              Fake clicks, duplicate accounts and self-referrals are checked
+              for and earn nothing. The full rules live in the{" "}
+              <Link href="/affiliates/terms" className="text-cyan-300 hover:underline">program terms</Link>.
+            </p>
+          </div>
+        </Card>
+      </section>
+
+      {/* ── 6c. YOUR FIRST REFERRALS ────────────────────────── */}
+      <section>
+        <SectionTitle kicker="Playbook" title="Getting your first referrals" />
+        <Card>
+          <div className="space-y-4 text-sm md:text-base text-slate-300 leading-relaxed">
+            <p>
+              <span className="text-white font-bold">Start where your audience already is.</span>{" "}
+              The share block at the top of this page gives you a link and a QR
+              code with no account needed; your dashboard adds ready-made
+              banners, caption templates and email scripts for every major
+              platform. Use them before you invent your own — they carry your
+              code automatically.
+            </p>
+            <p>
+              <span className="text-white font-bold">Show, don&apos;t pitch.</span>{" "}
+              The posts that convert for a live globe are demonstrations: a
+              storm rolling into a coastline on camera, a Starlink train
+              crossing your city, the view from a ski resort the morning of a
+              powder day. Record the thing happening, put your code on it,
+              and let the map do the selling.
+            </p>
+            <p>
+              <span className="text-white font-bold">Put the code where links can&apos;t go.</span>{" "}
+              Bios, video descriptions, podcast show notes, a pinned comment —
+              anywhere a viewer might subscribe later, from a different
+              device, your discount code still attributes the sale to you.
+              Then watch the dashboard: referral visits, XP and your first
+              +500 for a paying referral tell you which channel is actually
+              working.
+            </p>
+          </div>
+        </Card>
       </section>
 
       {/* ── 7. FAQ ──────────────────────────────────────────── */}

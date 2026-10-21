@@ -74,6 +74,22 @@ const faqJsonLd = {
         text: "Report it responsibly through the contact page with as much detail as you can share, and give the team a chance to fix it before any public disclosure.",
       },
     },
+    {
+      "@type": "Question",
+      name: "Is my card safe during a free trial?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes — the trial uses the same Stripe-hosted checkout as a paid plan. Your card details go to Stripe, never to WorldEye, and nothing is charged during the trial period.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What should I do if I think my account was compromised?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Reset your password immediately from the sign-in page — reset links expire after 1 hour and are burned on use. Then contact us from your account email so we can check the account with you.",
+      },
+    },
   ],
 };
 
@@ -93,6 +109,14 @@ const SECURITY_FAQS = [
   {
     q: "How do I report a security vulnerability?",
     a: "Through the contact page, with as much detail as you can share. Please give us a chance to fix it before disclosing publicly.",
+  },
+  {
+    q: "Is my card safe during a free trial?",
+    a: "Yes — trials use the same Stripe-hosted checkout as paid plans. Your card goes to Stripe, never to WorldEye, and nothing is charged during the trial.",
+  },
+  {
+    q: "What if I think my account was compromised?",
+    a: "Reset your password right away from the sign-in page (reset links expire after 1 hour and are burned on use), then contact us from your account email so we can check the account with you.",
   },
 ];
 
@@ -139,6 +163,27 @@ const SECTIONS: {
     title: "What we do store",
     body: [
       "If you subscribe to Pro or join the affiliate program, we store the minimum needed to run your account: your sign-in email, your subscription status, and (for affiliates) referral and payout records. That's it. We don't sell data, and we don't run ads.",
+    ],
+  },
+  {
+    icon: ShieldCheck,
+    title: "Security headers on every page",
+    body: [
+      "Every response from worldeye.app carries a standard set of browser security headers: HTTPS is enforced with HSTS, a content security policy restricts where scripts and connections may come from, X-Frame-Options blocks other sites from embedding our pages in iframes (clickjacking protection), and X-Content-Type-Options stops browsers from guessing at file types. None of this is visible in normal use — it exists so that other sites and network attackers have fewer ways to interfere with yours.",
+    ],
+  },
+  {
+    icon: Database,
+    title: "Recording is yours — and only when you start it",
+    body: [
+      "WorldEye does not record or archive camera feeds on its own, and nobody is building a surveillance library from your browsing. The Camera Recording Studio is a tool you operate: a recording exists only because you started it, it lives in your account's recording library, and VIP Pro camera alerts check still images against conditions you wrote, for cameras you chose. Browsing the globe records nothing about what you looked at.",
+    ],
+  },
+  {
+    icon: CreditCard,
+    title: "Trials and guest checkout",
+    body: [
+      "Free trials and guest checkout run through the same Stripe-hosted flow as regular subscriptions: your card is entered on Stripe's pages, and the subscription state on WorldEye's side can only be written by Stripe's signed webhook — not by anything your browser claims. That design means a tampered checkout page or a forged 'I paid' request cannot create a Pro account; if Stripe didn't confirm it, it didn't happen.",
     ],
   },
   {
@@ -235,6 +280,63 @@ export default function SecurityPage() {
               </li>
             ))}
           </ul>
+        </section>
+
+        {/* Your side of it */}
+        <section className="mt-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <h2 className="text-lg md:text-xl font-bold text-white/90">Protecting your own account</h2>
+          <div className="mt-4 space-y-4 text-sm md:text-base text-white/60 leading-relaxed">
+            <p>
+              Most of WorldEye needs no account at all — and an account you
+              never create can never be breached. If you do sign up, the
+              strongest protection is also the simplest: a unique password you
+              don&apos;t reuse anywhere else. WorldEye stores only a bcrypt
+              hash of it, but a password reused from a breached site defeats
+              hashing anywhere it&apos;s tried.
+            </p>
+            <p>
+              Prefer not to manage another password? Continue with Google is
+              offered on the sign-in page, which puts authentication in
+              Google&apos;s hands instead. Either way, sign-in errors never
+              reveal whether an email address is registered with us, and the
+              public auth endpoints — signup, sign-in, password reset and
+              email verification — are rate-limited against guessing and
+              enumeration.
+            </p>
+            <p>
+              If you ever forget your password, the reset link we email you
+              expires after 1 hour and stops working the moment it&apos;s
+              used; email-verification links expire after 24 hours. Treat any
+              unexpected reset email as a signal to change your password and
+              write to us through the contact page.
+            </p>
+          </div>
+        </section>
+
+        {/* Honest limits */}
+        <section className="mt-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <h2 className="text-lg md:text-xl font-bold text-white/90">What we are not</h2>
+          <div className="mt-4 space-y-4 text-sm md:text-base text-white/60 leading-relaxed">
+            <p>
+              Plain language cuts both ways, so here is the other side.
+              WorldEye is a small independent product, not a certified
+              enterprise platform: we do not hold SOC 2, ISO 27001 or similar
+              certifications, and we won&apos;t pretend otherwise. What we do
+              instead is keep the attack surface small by design — almost
+              nothing personal is collected in the first place, payments live
+              entirely inside Stripe, AI keys never leave your browser, and
+              subscription state can only be written by Stripe&apos;s webhook.
+              There is simply less here to steal than on a typical site.
+            </p>
+            <p>
+              We also can&apos;t vouch for the third-party public feeds the
+              map aggregates — camera streams, flight positions, weather and
+              news come from outside sources we don&apos;t control. Treat the
+              map as a powerful informational view of public data, not as a
+              safety-critical system, and follow official sources in an
+              emergency.
+            </p>
+          </div>
         </section>
 
         {/* Links */}

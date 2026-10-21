@@ -126,6 +126,59 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* By the numbers */}
+        <section className="mt-16 md:mt-20">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { n: "74,229", l: "live public cameras served by the globe" },
+              { n: "105", l: "countries with camera coverage" },
+              { n: "15", l: "transit agencies streaming live vehicles" },
+              { n: "$0", l: "cost to open the map — no account, no card" },
+            ].map((s) => (
+              <div key={s.l} className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 text-center">
+                <div className="text-3xl md:text-4xl font-bold text-[#D4AF37]">{s.n}</div>
+                <p className="text-sm text-white/50 mt-2 leading-relaxed">{s.l}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-center text-sm text-white/40 max-w-2xl mx-auto leading-relaxed">
+            The camera figure is the count the globe actually serves, not a
+            catalogue total: every feed is playback-verified before it is
+            listed, and feeds that stop working are dropped rather than
+            padded into the number.
+          </p>
+        </section>
+
+        {/* Who uses it */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold">Who uses WorldEye</h2>
+          <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              The audience is anyone whose work — or curiosity — starts with
+              the question <em>what is happening there, right now?</em>{" "}
+              Journalists verifying a breaking story against live cameras and
+              event feeds instead of second-hand clips. Storm watchers and
+              emergency-preparedness communities following hurricanes,
+              wildfires and earthquakes as they develop. Aviation and space
+              enthusiasts tracking flights, the ISS and launches. Educators
+              who would rather show a class the live planet than describe it.
+              Travelers checking the weather and the crowds at a destination
+              before they book. The{" "}
+              <Link href="/use-cases" className="text-[#D4AF37] hover:underline">use-case guides</Link>{" "}
+              walk through each of these in detail.
+            </p>
+            <p>
+              What they share is a preference for primary sources. A headline
+              tells you what someone concluded; a live camera, a flight track
+              and a seismic feed let you look for yourself. WorldEye is built
+              for that look — and built to be honest about its limits: feeds
+              are third-party and public, coverage varies by region, and
+              anything modeled rather than measured is labeled on the layer
+              itself.
+            </p>
+          </div>
+        </section>
+
         {/* How it's built */}
         <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold">How the map is put together</h2>
@@ -180,6 +233,74 @@ export default function AboutPage() {
             fast, live and open. If you use the map, share it, or go Pro, you&apos;re
             directly keeping it alive.
           </p>
+          <p className="mt-4 text-white/60 leading-relaxed">
+            The team works in short cycles and in the open: changes are
+            deployed, verified against the live site, and written up in the{" "}
+            <Link href="/changelog" className="text-[#D4AF37] hover:underline">changelog</Link>{" "}
+            when they ship. Being small is a constraint we lean into — there
+            is no growth team optimizing for your attention, no engagement
+            metric the map has to feed. The only number we chase is whether
+            the planet on your screen is live, accurate and honestly labeled.
+          </p>
+        </section>
+
+        {/* FAQ */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">About WorldEye — <span className="text-[#D4AF37]">questions</span></h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-white/90">Is WorldEye really free?</h3>
+              <p className="text-white/55 leading-relaxed mt-2">
+                Yes. The globe, the 74,229 cameras (with 5 free camera opens
+                per device), flights, satellites, weather, earthquakes,
+                fires, transit and basic search are free with no signup. Pro
+                ($7.99/week, $13.99/month, $74.99/year as VIP Pro) adds the
+                intelligence toolkit on top — it never puts the map itself
+                behind a paywall.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white/90">Where do the cameras come from?</h3>
+              <p className="text-white/55 leading-relaxed mt-2">
+                Publicly accessible feeds published by state and city
+                transport departments, municipalities, resorts, harbors and
+                other public operators around the world. WorldEye aggregates
+                and verifies them; it does not operate the cameras, and
+                individual feeds can go offline at the source.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white/90">Is WorldEye affiliated with God&apos;s Eye View or World Monitor?</h3>
+              <p className="text-white/55 leading-relaxed mt-2">
+                No. WorldEye is an independent product from an independent
+                team. God&apos;s Eye View is an open-source project you
+                install yourself (its camera mesh lists roughly 4,000 public
+                cameras), and World Monitor is a separate free hosted
+                dashboard. We compare ourselves to them honestly on our{" "}
+                <Link href="/compare" className="text-[#D4AF37] hover:underline">comparison pages</Link>{" "}
+                — and recommend them when they fit better.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white/90">How is WorldEye funded?</h3>
+              <p className="text-white/55 leading-relaxed mt-2">
+                Pro subscriptions and nothing else — no ads, no data sales,
+                no sponsored placements. Subscribers fund the servers and
+                data feeds; the affiliate program pays commissions only out
+                of real subscription revenue.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white/90">Can I share or embed what I see?</h3>
+              <p className="text-white/55 leading-relaxed mt-2">
+                Every camera has a share link, so you can send someone
+                straight to the exact view. For embedding or partnership
+                ideas — resorts, newsrooms, tourism and weather sites — start
+                on the <Link href="/contact" className="text-[#D4AF37] hover:underline">contact page</Link>;
+                we&apos;ll be straight with you about what exists today.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* CTA */}

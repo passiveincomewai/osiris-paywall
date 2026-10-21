@@ -234,6 +234,46 @@ export default function WhatIsAdsBPage() {
           </div>
         </div>
 
+        {/* Out/In and frequencies */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            ADS-B Out, ADS-B In — <span className="text-[#D4AF37]">and two frequencies</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Everything on this page so far is <strong className="text-white/90">ADS-B Out</strong>:
+              the aircraft broadcasting itself. There is also{" "}
+              <strong className="text-white/90">ADS-B In</strong> — receiving
+              other aircraft&apos;s broadcasts (and, in some regions,
+              ground-uplinked traffic and weather) to display them in the
+              cockpit. Out is what flight trackers feed on; In is what makes
+              the system a two-way safety tool for pilots.
+            </p>
+            <p>
+              The broadcasts ride two links. Most of the world — and all
+              airliners — use <strong className="text-white/90">1090 MHz Extended Squitter</strong>,
+              an evolution of the Mode S transponder signal. The United
+              States additionally runs <strong className="text-white/90">978 MHz UAT</strong>{" "}
+              (Universal Access Transceiver) for general-aviation aircraft
+              flying below 18,000 feet, which can also carry uplinked weather
+              and traffic. A receiver network that listens to both — as the
+              public networks feeding WorldEye do — sees the airliner at
+              cruising altitude and the training aircraft on a local circuit
+              in the same picture.
+            </p>
+            <p>
+              And when an aircraft has a Mode S transponder but no ADS-B
+              position broadcast, networks can still find it with{" "}
+              <strong className="text-white/90">multilateration (MLAT)</strong>:
+              several receivers timestamp the same signal, and the differences
+              in arrival time pin down where the signal came from. It is
+              slower and less precise than a GPS broadcast, and it needs at
+              least four receivers in range — which is why MLAT coverage
+              thins out exactly where receiver coverage does.
+            </p>
+          </div>
+        </div>
+
         {/* Limitations */}
         <div className="mt-20 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 flex items-center justify-center gap-3">
@@ -250,6 +290,33 @@ export default function WhatIsAdsBPage() {
                 <p className="text-sm text-white/50 leading-relaxed">{l.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* On WorldEye */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Reading ADS-B <span className="text-[#D4AF37]">on WorldEye</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              On the <Link href="/live-flight-tracker" className="text-[#D4AF37] hover:underline">live flight tracker</Link>,
+              every aircraft you see is this system at work: a transponder
+              broadcasting a few times a second, a receiver hearing it, and
+              the position landing on the globe within seconds. Clicking a
+              plane surfaces the broadcast&apos;s payload — callsign,
+              altitude, ground speed, heading — and where the feed provides
+              it, the route it is flying.
+            </p>
+            <p>
+              It also explains the map&apos;s quirks. A flight that freezes
+              over the mid-Atlantic has flown beyond ground-receiver range.
+              A helicopter working low over a city may flicker in and out at
+              the edge of coverage. A famous private jet that never appears
+              is filtered at the source. None of those are the map failing —
+              they are the physics and the politics of an open broadcast
+              system, visible in the data itself.
+            </p>
           </div>
         </div>
 

@@ -47,6 +47,10 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         a: "No. Just open the site and you're looking at the planet. Accounts only exist for Pro subscribers (billing) and affiliates — never as a gate in front of the map.",
       },
       {
+        q: "How many cameras can I open for free?",
+        a: "Every device gets 5 free camera opens — enough to look around and check the places you care about. Pro removes the limit entirely, with unlimited camera opens on top of the Pro tools. The globe, flights, satellites and every other free layer never count against your opens.",
+      },
+      {
         q: "Which browsers are supported?",
         a: "Any modern browser: Chrome, Edge, Firefox and Safari, on desktop and mobile. The site is fully usable on phones — just open it in your mobile browser.",
       },
@@ -73,12 +77,16 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
           <>
             The OI AI assistant (runs on your own API key), satellite imagery
             view, the live traffic layer, advanced search filters, the OSINT
-            toolkit (nmap, DNS, WHOIS, SSL analysis), the camera recording
-            studio with timelapse, and premium intel feeds — cyber threats,
-            GDELT events, maritime tracking and live news. Plus every future Pro
-            layer at no extra cost. Full list on the {p("/pricing", "pricing page")}.
+            toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording
+            studio. Plus every future Pro layer at no extra cost. VIP Pro —
+            the annual plan — adds the premium intel feeds and camera
+            timelapse on top. Full list on the {p("/pricing", "pricing page")}.
           </>
         ),
+      },
+      {
+        q: "What's the difference between Pro and VIP Pro?",
+        a: "VIP Pro is the annual plan: everything in Pro, plus the two top-tier exclusives — the premium intel feeds (cyber threats, GDELT events, maritime tracking, conflict zones and live news) and camera timelapse. The weekly and monthly plans are Pro; only the yearly plan is VIP Pro. The recording studio, OSINT toolkit and every other Pro tool come with both.",
       },
       {
         q: "How do the free trials work?",
@@ -138,10 +146,14 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         a: "Yes. Every camera has a share button — send the link and the other person lands on the globe with that exact camera open. No account needed on either end.",
       },
       {
+        q: "Can I record a camera or make a timelapse?",
+        a: "Yes. Pro's Camera Recording Studio records live camera feeds right in your browser and saves the clips. Timelapse — capturing snapshot cameras frame by frame and exporting the film — is a VIP Pro extra.",
+      },
+      {
         q: "What are the intel feeds?",
         a: (
           <>
-            Pro-only data layers: cyber threat activity, GDELT global event
+            VIP Pro-only data layers: cyber threat activity, GDELT global event
             data, maritime vessel tracking, conflict zones and a live news feed —
             all plotted on the globe.
           </>
@@ -152,6 +164,10 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
   {
     title: "Account & privacy",
     faqs: [
+      {
+        q: "How do I create an account?",
+        a: "Click Sign up and register with your email — we'll send you a verification link — or continue with Google. You only need an account to subscribe to Pro or join the affiliate program; the map itself never asks you to sign in.",
+      },
       {
         q: "What data does WorldEye collect?",
         a: "For anonymous visitors: essentially nothing tied to you — no account, no tracking profile. If you subscribe to Pro or join the affiliate program, we store your sign-in email, subscription status, and (for affiliates) referral and payout records. Full details are in the privacy policy.",
@@ -168,11 +184,29 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         q: "I forgot my password — how do I reset it?",
         a: "Use the 'Forgot password' link on the sign-in page. We'll email you a reset link that expires after 1 hour and is burned once used. For security, sign-in never reveals whether an email is registered.",
       },
+      {
+        q: "How does the affiliate program work?",
+        a: (
+          <>
+            It&apos;s free to join and open to anyone eligible — you don&apos;t
+            need to be a subscriber. Share your referral link; when someone
+            subscribes through it, you earn a recurring commission of 15–30%
+            (your rate grows with your rank) on every billing cycle while they
+            stay subscribed. Commissions clear after a 30-day holding period,
+            and payouts start once your balance reaches $25. Details on the{" "}
+            {p("/affiliates", "affiliate program page")}.
+          </>
+        ),
+      },
     ],
   },
   {
     title: "Cameras & availability",
     faqs: [
+      {
+        q: "Where do the cameras come from, and how many are there?",
+        a: "WorldEye serves 74,229 live cameras across 105 countries. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves.",
+      },
       {
         q: "Why is a camera offline?",
         a: "Every feed is operated by a third party — a city, a transport agency, a resort, a business — streaming from their own servers. Feeds go dark when the source goes down and come back when the source does. The catalog refreshes as sources change, so the count shifts over time.",
@@ -196,6 +230,10 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
     a: "No. Just open the site and you're looking at the planet. Accounts only exist for Pro subscribers (billing) and affiliates — never as a gate in front of the map.",
   },
   {
+    q: "How many cameras can I open for free?",
+    a: "Every device gets 5 free camera opens — enough to look around and check the places you care about. Pro removes the limit entirely, with unlimited camera opens on top of the Pro tools. The globe, flights, satellites and every other free layer never count against your opens.",
+  },
+  {
     q: "Which browsers are supported?",
     a: "Any modern browser: Chrome, Edge, Firefox and Safari, on desktop and mobile. The site is fully usable on phones — just open it in your mobile browser.",
   },
@@ -213,7 +251,11 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "What does Pro include?",
-    a: "The OI AI assistant (runs on your own API key), satellite imagery view, the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds — cyber threats, GDELT events, maritime tracking and live news. Plus every future Pro layer at no extra cost.",
+    a: "The OI AI assistant (runs on your own API key), satellite imagery view, the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top.",
+  },
+  {
+    q: "What's the difference between Pro and VIP Pro?",
+    a: "VIP Pro is the annual plan: everything in Pro, plus the two top-tier exclusives — the premium intel feeds (cyber threats, GDELT events, maritime tracking, conflict zones and live news) and camera timelapse. The weekly and monthly plans are Pro; only the yearly plan is VIP Pro. The recording studio, OSINT toolkit and every other Pro tool come with both.",
   },
   {
     q: "How do the free trials work?",
@@ -260,8 +302,16 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
     a: "Yes. Every camera has a share button — send the link and the other person lands on the globe with that exact camera open. No account needed on either end.",
   },
   {
+    q: "Can I record a camera or make a timelapse?",
+    a: "Yes. Pro's Camera Recording Studio records live camera feeds right in your browser and saves the clips. Timelapse — capturing snapshot cameras frame by frame and exporting the film — is a VIP Pro extra.",
+  },
+  {
     q: "What are the intel feeds?",
-    a: "Pro-only data layers: cyber threat activity, GDELT global event data, maritime vessel tracking, conflict zones and a live news feed — all plotted on the globe. The technical reference is in the documentation.",
+    a: "VIP Pro-only data layers: cyber threat activity, GDELT global event data, maritime vessel tracking, conflict zones and a live news feed — all plotted on the globe.",
+  },
+  {
+    q: "How do I create an account?",
+    a: "Click Sign up and register with your email — we'll send you a verification link — or continue with Google. You only need an account to subscribe to Pro or join the affiliate program; the map itself never asks you to sign in.",
   },
   {
     q: "What data does WorldEye collect?",
@@ -278,6 +328,14 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   {
     q: "I forgot my password — how do I reset it?",
     a: "Use the 'Forgot password' link on the sign-in page. We'll email you a reset link that expires after 1 hour and is burned once used. For security, sign-in never reveals whether an email is registered.",
+  },
+  {
+    q: "How does the affiliate program work?",
+    a: "It's free to join and open to anyone eligible — you don't need to be a subscriber. Share your referral link; when someone subscribes through it, you earn a recurring commission of 15–30% (your rate grows with your rank) on every billing cycle while they stay subscribed. Commissions clear after a 30-day holding period, and payouts start once your balance reaches $25. Details on the affiliate program page.",
+  },
+  {
+    q: "Where do the cameras come from, and how many are there?",
+    a: "WorldEye serves 74,229 live cameras across 105 countries. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves.",
   },
   {
     q: "Why is a camera offline?",
