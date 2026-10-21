@@ -59,24 +59,34 @@ describe('day × satellite selection', () => {
     expect(dayOverlayVisible('night', true)).toBe(false);
   });
 
-  it('the day tiles are the CARTO light sibling — same keyless CDN', () => {
-    expect(DAY_TILE_URL).toBe('https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png');
+  it('the day tiles are the keyless Esri street basemap — never a CARTO raster endpoint', () => {
+    // Regression guard for the 2026-10-20 live bug: CARTO stopped
+    // serving its raster basemaps keyless on 2026-09-25 — every
+    // light_all request returns an "API KEY REQUIRED" placeholder tile,
+    // which filled the map whenever the day layer showed (and when
+    // satellite view was toggled off over it). The day overlay must
+    // stay on the keyless Esri World Street Map service the satellite
+    // view's imagery already proves out.
+    expect(DAY_TILE_URL).toBe('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}');
+    expect(DAY_TILE_URL).not.toContain('cartocdn.com');
+    expect(DAY_TILE_URL).not.toContain('light_all');
   });
 });
 
 function fakeMap(existing: string[] = []) {
   const sources = new Set<string>();
+  const sourceSpecs: Record<string, any> = {};
   const layers = new Set(existing);
   const added: Array<{ layer: any; beforeId?: string }> = [];
   const visibility: Record<string, unknown> = {};
   const map: DayOverlayMap = {
     getSource: (id) => (sources.has(id) ? {} : undefined),
-    addSource: (id) => { sources.add(id); },
+    addSource: (id, spec) => { sources.add(id); sourceSpecs[id] = spec; },
     getLayer: (id) => (layers.has(id) ? {} : undefined),
     addLayer: (layer: any, beforeId?: string) => { layers.add(layer.id); added.push({ layer, beforeId }); },
     setLayoutProperty: (id, _name, value) => { visibility[id] = value; },
   };
-  return { map, added, visibility, sources, layers };
+  return { map, added, visibility, sources, layers, sourceSpecs };
 }
 
 describe('syncDayOverlay — the satellite path’s overlay pattern', () => {
@@ -89,6 +99,14 @@ describe('syncDayOverlay — the satellite path’s overlay pattern', () => {
     expect(f.added[0].layer.source).toBe('day-tiles');
     expect(f.added[0].beforeId).toBe('day-night-fill');
     expect(f.visibility['day-layer']).toBe('visible');
+  });
+
+  it('the day source spec carries the Esri street tiles + attribution', () => {
+    const f = fakeMap(['day-night-fill']);
+    syncDayOverlay(f.map, 'day', false);
+    expect(f.sourceSpecs['day-tiles'].type).toBe('raster');
+    expect(f.sourceSpecs['day-tiles'].tiles).toEqual([DAY_TILE_URL]);
+    expect(f.sourceSpecs['day-tiles'].attribution).toContain('Esri');
   });
 
   it('stacks under the satellite layer when it already exists', () => {

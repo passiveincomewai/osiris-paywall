@@ -1,29 +1,55 @@
 /**
  * OSIRIS — Day / Night basemap mode.
  *
- * The globe's standard basemap is CARTO Dark Matter ("night"). "Day"
- * mode lays CARTO's light raster basemap (Positron's light_all tiles —
- * the same provider, the same keyless CDN, proxied through
- * /api/proxy-tiles like every cartocdn request) over it as a raster
- * overlay. That is deliberately the SAME mechanism the Pro satellite
- * view uses (an ArcGIS raster overlay toggled by an effect in
- * OsirisMap): this codebase has no map.setStyle swap, because a style
- * swap would wipe the ~55 custom sources the map builds once at load.
- * An overlay leaves every custom layer exactly where it was.
+ * The globe's standard basemap is CARTO Dark Matter ("night") — a GL
+ * *vector* style, still served keyless. "Day" mode lays a light raster
+ * street basemap over it as a raster overlay. That is deliberately the
+ * SAME mechanism the Pro satellite view uses (an ArcGIS raster overlay
+ * toggled by an effect in OsirisMap): this codebase has no
+ * map.setStyle swap, because a style swap would wipe the ~55 custom
+ * sources the map builds once at load. An overlay leaves every custom
+ * layer exactly where it was.
+ *
+ * The day tiles are Esri's World Street Map — the same keyless public
+ * ArcGIS service family (and tile template shape, {z}/{y}/{x}) as the
+ * satellite view's World_Imagery, fetched direct from the browser just
+ * like the imagery. They are NOT CARTO's light_all raster tiles: since
+ * 2026-09-25 CARTO no longer serves its raster basemaps without an API
+ * key — every keyless light_all request returns an "API KEY REQUIRED"
+ * placeholder tile. That placeholder is what filled the map when the
+ * satellite view (which had been covering the day layer) was toggled
+ * off in day mode, and it is why the day toggle appeared to do nothing:
+ * the overlay switched, but the tiles it fetched were the placeholder.
+ * CARTO's vector GL styles were not keyed, so the night basemap never
+ * broke. Do not point the day overlay back at a CARTO raster endpoint
+ * without a key plan.
  *
  * Interaction rule: the day overlay and the satellite overlay stack —
  * satellite sits above day. While satellite view is on, the day layer
- * hides; turning satellite off returns to whichever of day/night the
- * user last chose. Day/night itself is free for everyone and persists
- * per device; the satellite view stays Pro and untouched.
+ * hides; flipping the sun switch in that state still updates the
+ * persisted day/night choice, and it takes visible effect the moment
+ * satellite view turns off. Turning satellite off returns to whichever
+ * of day/night the user last chose. Day/night itself is free for
+ * everyone and persists per device; the satellite view stays Pro and
+ * untouched.
  */
 
 export type BasemapMode = 'night' | 'day';
 
 export const BASEMAP_MODE_STORAGE_KEY = 'we_basemap_mode';
 
-/** CARTO light raster tiles — the light sibling of the dark style. */
-export const DAY_TILE_URL = 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+/** Esri World Street Map raster tiles — keyless public ArcGIS service,
+ *  the street sibling of the satellite view's World_Imagery. Esri tile
+ *  URLs are {z}/{y}/{x} (note the order — same as the imagery template
+ *  in OsirisMap). CARTO's light_all raster is NOT used: keyless CARTO
+ *  raster requests return "API KEY REQUIRED" placeholder tiles since
+ *  2026-09-25 (see the header note). */
+export const DAY_TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+
+/** Attribution for the day source, shown by the map's attribution
+ *  control while the day layer is visible (Esri World Street Map
+ *  credits, per Esri's tile attribution guidance). */
+export const DAY_TILE_ATTRIBUTION = 'Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community';
 
 export const DAY_SOURCE_ID = 'day-tiles';
 export const DAY_LAYER_ID = 'day-layer';
@@ -112,6 +138,7 @@ export function syncDayOverlay(map: DayOverlayMap, mode: BasemapMode, satelliteO
       tiles: [DAY_TILE_URL],
       tileSize: 256,
       maxzoom: 18,
+      attribution: DAY_TILE_ATTRIBUTION,
     });
   }
   if (!map.getLayer(DAY_LAYER_ID)) {
