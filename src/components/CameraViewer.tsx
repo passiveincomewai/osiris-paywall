@@ -10,6 +10,7 @@ import { shareEntity } from '@/lib/share/client';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
 import TimelapseControl from './TimelapseControl';
+import LiveRecordControl from './recording/LiveRecordControl';
 
 interface CameraViewerProps {
   camera: any | null;
@@ -507,6 +508,12 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                 watching. Inline views only — an external or offline camera
                 shows no still here to collect. */}
             {!externalOnly && <TimelapseControl camera={camera} streamType={streamType} />}
+            {/* Live recording (Pro): record the stream itself for stream
+                cameras. Snapshot cameras render nothing here — the
+                timelapse row above is their capture control; embeds and
+                other unrecordable feeds get a plain-words note instead
+                of a button that can't work. */}
+            {!externalOnly && <LiveRecordControl camera={camera} streamType={streamType} streamUrl={streamUrl} />}
             {/* Animated data stream bar */}
             <div className="h-[2px] w-full bg-[var(--border-primary)] overflow-hidden relative">
               <div className="absolute top-0 bottom-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_8px_var(--gold-primary)] w-1/3 animate-pulse" style={{ animation: 'progress-glow-slide 2s cubic-bezier(0.4, 0, 0.2, 1) infinite' }} />
