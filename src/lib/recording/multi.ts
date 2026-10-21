@@ -92,6 +92,24 @@ export function classifyMultiCam(data: CamData): MultiCamSource {
   if (isYouTube) {
     return { kind: "unsupported", reason: "YouTube embeds can't be recorded (platform restriction)" };
   }
+  if (streamType === "iframe") {
+    // A provider embed page: the feed plays inside the operator's own
+    // player in a cross-origin frame, and no browser API lets this page
+    // capture another origin's frame. Not "Phase 1" — not possible.
+    return {
+      kind: "unsupported",
+      reason: "This camera plays in its operator's embedded player, which browsers won't let this page record",
+    };
+  }
+  if (streamType === "mjpeg") {
+    // An MJPEG feed is a moving <img>, not a <video>: drawing it to a
+    // canvas taints the canvas without CORS, and a tainted canvas
+    // refuses captureStream. No honest generic path in the browser.
+    return {
+      kind: "unsupported",
+      reason: "MJPEG feeds show as a moving picture, not a video this browser can record",
+    };
+  }
   const isStream =
     streamType === "hls" || streamType === "video" || streamType === "mp4" ||
     /\.m3u8($|\?)/.test(streamUrl);

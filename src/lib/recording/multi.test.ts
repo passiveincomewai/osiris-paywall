@@ -167,6 +167,25 @@ describe("camera classification", () => {
     expect(classifyMultiCam({ stream_type: "jpg" }).kind).toBe("unsupported");
   });
 
+  it("marks provider embeds and MJPEG honestly unsupported, with their own reasons", () => {
+    const embed = classifyMultiCam({
+      stream_type: "iframe",
+      stream_url: "https://player.example.com/embed/abc",
+    });
+    expect(embed.kind).toBe("unsupported");
+    if (embed.kind === "unsupported") expect(embed.reason).toMatch(/embedded player/);
+    // A YouTube embed URL keeps the YouTube reason, not the generic embed one.
+    const ytEmbed = classifyMultiCam({
+      stream_type: "iframe",
+      stream_url: "https://www.youtube.com/embed/xyz",
+    });
+    expect(ytEmbed.kind).toBe("unsupported");
+    if (ytEmbed.kind === "unsupported") expect(ytEmbed.reason).toMatch(/YouTube/);
+    const mjpeg = classifyMultiCam({ stream_type: "mjpeg", stream_url: "https://x.example/mjpeg" });
+    expect(mjpeg.kind).toBe("unsupported");
+    if (mjpeg.kind === "unsupported") expect(mjpeg.reason).toMatch(/MJPEG/);
+  });
+
   it("labels locations from group, else coordinates", () => {
     expect(camLocationLabel({ group: "Ski trips", cameraData: {} })).toBe("Ski trips");
     expect(camLocationLabel({ group: "Ungrouped", cameraData: { lat: 41.123, lng: -111.9 } })).toBe("41.12, -111.90");
