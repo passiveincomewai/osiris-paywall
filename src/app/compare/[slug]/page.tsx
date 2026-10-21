@@ -129,7 +129,7 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
   const keyDiffs = features.filter((f) => f.worldEye !== f.competitor).slice(0, 4);
 
   return (
-    <div className="min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
+    <div className="docs-root min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <JsonLd data={breadcrumbLd} />
       <JsonLd data={webPageLd} />
 
