@@ -170,18 +170,6 @@ export default function SiteFooter({
           <span>© 2026 WorldEye. All rights reserved.</span>
           <span className="hidden sm:inline">Live data from public sources worldwide.</span>
         </div>
-        <div className="max-w-6xl mx-auto px-6 pb-6 -mt-2 text-center md:text-left text-[11px] text-white/50">
-          Built on the open-source{" "}
-          <a
-            href="https://github.com/simplifaisoul/osiris"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/25 underline-offset-2 hover:text-white transition"
-          >
-            OSIRIS
-          </a>{" "}
-          platform · MIT License
-        </div>
       </div>
     </footer>
   );
