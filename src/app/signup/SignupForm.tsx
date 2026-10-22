@@ -6,6 +6,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Loader2, MailCheck, AlertCircle, UserPlus } from "lucide-react";
 import { GoogleIcon } from "@/components/auth/ProviderIcons";
+import { trackMetaEvent } from "@/lib/meta-track";
 
 export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl: string; googleEnabled: boolean }) {
   const [name, setName] = useState("");
@@ -36,6 +37,12 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
         setError(data.error ?? "Couldn't create the account. Try again.");
         setBusy(false);
         return;
+      }
+      // Browser twin of the server's Conversions API CompleteRegistration
+      // — the route generated the event id and sent its copy already;
+      // firing ours with the same id lets Meta deduplicate the pair.
+      if (typeof data.metaEventId === "string") {
+        trackMetaEvent("CompleteRegistration", {}, data.metaEventId);
       }
       setDone({ emailSent: !!data.emailSent });
     } catch {

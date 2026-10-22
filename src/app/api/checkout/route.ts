@@ -5,6 +5,8 @@ import { stripe, appUrl } from "@/lib/stripe";
 import { cookies } from "next/headers";
 import { REF_COOKIE, findAffiliateByCode } from "@/lib/affiliate/attribution";
 import { trialDaysForPlan } from "@/lib/billing/trials";
+import { sendMetaEvent, metaUserDataFromRequest } from "@/lib/meta-capi";
+import { randomUUID } from "node:crypto";
 
 export const runtime = "nodejs";
 
@@ -119,10 +121,24 @@ export async function POST(req: Request) {
         }),
   });
 
+  // Meta Conversions API twin of the browser InitiateCheckout event.
+  // The id is generated here, sent with the server copy, and returned in
+  // the response so the client fires its fbq event with the SAME id and
+  // Meta deduplicates the pair. Fire-and-forget; a no-op until
+  // META_CAPI_ACCESS_TOKEN is set. Guests have no email yet — the event
+  // matches on the _fbp/_fbc cookies + IP/UA instead.
+  const metaEventId = randomUUID();
+  void sendMetaEvent({
+    eventName: "InitiateCheckout",
+    eventId: metaEventId,
+    eventSourceUrl: `${appUrl()}/pricing`,
+    userData: metaUserDataFromRequest(req, session?.user?.email),
+  });
+
   if (embedded) {
     // The /checkout page mounts this secret with Stripe.js; an embedded
     // session has no hosted url to redirect to.
-    return NextResponse.json({ clientSecret: checkoutSession.client_secret });
+    return NextResponse.json({ clientSecret: checkoutSession.client_secret, metaEventId });
   }
-  return NextResponse.json({ url: checkoutSession.url });
+  return NextResponse.json({ url: checkoutSession.url, metaEventId });
 }

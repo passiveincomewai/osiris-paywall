@@ -10,11 +10,9 @@ import Script from "next/script";
  *  navigations (the tracker). No custom events in this pass. */
 export const META_PIXEL_ID = "1785770122642831";
 
-declare global {
-  interface Window {
-    fbq?: (...args: unknown[]) => void;
-  }
-}
+// The Window.fbq typing + the conversion-event helper live in
+// lib/meta-track.ts (imported for its global augmentation).
+import "@/lib/meta-track";
 
 /** Fires PageView on client-side route changes. The base snippet already
  *  fired the initial PageView, so the first effect run is skipped. */

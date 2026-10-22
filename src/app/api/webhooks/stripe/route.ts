@@ -12,6 +12,7 @@ import { attributeUserToDiscountAffiliate } from "@/lib/affiliate/discount";
 import { normalizeEmail, isValidEmail } from "@/lib/password-auth";
 import { sendEmail, emailConfigured } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef } from "@/lib/growth";
+import { sendMetaEvent } from "@/lib/meta-capi";
 import { getTeamPricingConfig } from "@/lib/team/pricing-config";
 import { findBaseItem, reconcileOrgSeatsFromSubscription } from "@/lib/team/seats";
 import { recordTeamEvent } from "@/lib/team/analytics";
@@ -272,6 +273,46 @@ export async function POST(req: NextRequest) {
         if (s.mode === "subscription" && s.subscription) {
           const subId = s.subscription as string;
           await subscriptionFromId(subId);
+          // Meta Conversions API twins of the /welcome browser events.
+          // The event id is the checkout session id — exactly what
+          // WelcomeClient fires as the fbq eventID — so Meta
+          // deduplicates the pair. Trialing → StartTrial; paid →
+          // Purchase. Additive + fire-and-forget (sendMetaEvent no-ops
+          // without META_CAPI_ACCESS_TOKEN and never throws); the whole
+          // block is guarded so it can never fail the webhook.
+          try {
+            const subRow = await db.subscription.findUnique({
+              where: { stripeSubscriptionId: subId },
+              select: { status: true, userId: true },
+            });
+            const buyerEmail =
+              s.customer_details?.email ??
+              (subRow?.userId
+                ? (await db.user.findUnique({
+                    where: { id: subRow.userId },
+                    select: { email: true },
+                  }))?.email
+                : null);
+            if (subRow?.status === "trialing") {
+              void sendMetaEvent({
+                eventName: "StartTrial",
+                eventId: s.id,
+                eventSourceUrl: `${appUrl()}/welcome`,
+                userData: { email: buyerEmail },
+              });
+            } else if (s.payment_status === "paid") {
+              void sendMetaEvent({
+                eventName: "Purchase",
+                eventId: s.id,
+                eventSourceUrl: `${appUrl()}/welcome`,
+                userData: { email: buyerEmail },
+                value: typeof s.amount_total === "number" ? s.amount_total / 100 : undefined,
+                currency: (s.currency ?? "usd").toUpperCase(),
+              });
+            }
+          } catch (e) {
+            console.error("[stripe-webhook] meta CAPI (checkout completed) failed:", e);
+          }
           // Discount-code attribution fallback: if the buyer redeemed an
           // affiliate's tiered discount code and has no stronger
           // attribution, credit that affiliate. The link/cookie path stays
@@ -310,6 +351,14 @@ export async function POST(req: NextRequest) {
         const invoiceId = invoice.id;
         const subId = subscriptionIdFromInvoice(invoice);
         if (subId && invoiceId) {
+          // Read the pre-sync status first: a paid invoice landing on a
+          // subscription that was trialing is the trial CONVERSION —
+          // the Purchase the /welcome StartTrial was the front half of.
+          const priorStatus = (
+            await db.subscription
+              .findUnique({ where: { stripeSubscriptionId: subId }, select: { status: true } })
+              .catch(() => null)
+          )?.status;
           await subscriptionFromId(subId);
           // Affiliate commissions: only real paid subscription invoices.
           if (invoice.amount_paid > 0) {
@@ -360,6 +409,30 @@ export async function POST(req: NextRequest) {
                 currency: invoice.currency ?? "usd",
                 idempotencyKey: `invoice:${invoiceId}`,
               });
+              // Meta CAPI: trial conversion → Purchase. The event id is
+              // the invoice id: invoice events don't carry the checkout
+              // session id, and there is no browser twin at conversion
+              // time (the buyer's /welcome event was StartTrial) — this
+              // one is server-only, keyed for Stripe-replay idempotence
+              // in Meta's dedup window by its own id.
+              if (priorStatus === "trialing") {
+                try {
+                  const buyer = await db.user.findUnique({
+                    where: { id: userId },
+                    select: { email: true },
+                  });
+                  void sendMetaEvent({
+                    eventName: "Purchase",
+                    eventId: invoiceId,
+                    eventSourceUrl: `${appUrl()}/pricing`,
+                    userData: { email: buyer?.email },
+                    value: invoice.amount_paid / 100,
+                    currency: (invoice.currency ?? "usd").toUpperCase(),
+                  });
+                } catch (e) {
+                  console.error("[stripe-webhook] meta CAPI (trial conversion) failed:", e);
+                }
+              }
             }
           }
         }

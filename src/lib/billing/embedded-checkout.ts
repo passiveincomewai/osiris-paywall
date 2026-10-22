@@ -17,6 +17,7 @@
  */
 import { checkoutRequestBody } from "./trial-checkout";
 import type { BillingPlan } from "./trials";
+import { trackMetaEvent } from "@/lib/meta-track";
 
 type FetchLike = (input: string, init: RequestInit) => Promise<{
   ok: boolean;
@@ -116,6 +117,10 @@ export async function runCheckoutFlow(
     try {
       const res = await postCheckout(deps.fetchImpl, plan, "embedded");
       if (res.ok && typeof res.data?.clientSecret === "string") {
+        // Browser twin of the route's CAPI InitiateCheckout (same id).
+        if (typeof res.data?.metaEventId === "string") {
+          trackMetaEvent("InitiateCheckout", {}, res.data.metaEventId);
+        }
         const stripeJs = await stripePromise;
         if (stripeJs) {
           const handle = await stripeJs.initEmbeddedCheckout({
@@ -136,6 +141,9 @@ export async function runCheckoutFlow(
 
   const res = await postCheckout(deps.fetchImpl, plan);
   if (res.ok && typeof res.data?.url === "string") {
+    if (typeof res.data?.metaEventId === "string") {
+      trackMetaEvent("InitiateCheckout", {}, res.data.metaEventId);
+    }
     deps.navigate(res.data.url);
     return { kind: "navigated", url: res.data.url };
   }

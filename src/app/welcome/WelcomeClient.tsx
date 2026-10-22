@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { Loader2, Lock, PartyPopper, Check } from "lucide-react";
 import { readLastCamera, lastCameraHref, type LastCamera } from "@/lib/camera-share";
 import { formatTrialEnd } from "@/lib/billing/trial-reminders";
+import { trackMetaEvent } from "@/lib/meta-track";
 
 type State =
   | { kind: "loading" }
@@ -382,6 +383,16 @@ export default function WelcomeClient() {
         if (!res.ok) {
           setState({ kind: "error", message: data.error || "Couldn't verify your purchase." });
           return;
+        }
+        // Meta conversion events, keyed by the Stripe checkout session
+        // id — the Stripe webhook fires the Conversions API twins with
+        // the SAME id, so Meta deduplicates the pair. A checkout that
+        // started a trial is a StartTrial (nothing charged yet); a paid
+        // one is a Purchase. Fired once, on the verified completion.
+        if (data.trialEndsAt) {
+          trackMetaEvent("StartTrial", {}, sessionId);
+        } else {
+          trackMetaEvent("Purchase", {}, sessionId);
         }
         setState({
           kind: "form",

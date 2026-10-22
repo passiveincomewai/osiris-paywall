@@ -9,6 +9,8 @@ import {
 import { sendEmail, emailConfigured, verificationEmail, appUrl } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
 import { subscribeToNewsletter } from "@/lib/newsletter/subscribe";
+import { sendMetaEvent, metaUserDataFromRequest } from "@/lib/meta-capi";
+import { randomUUID } from "node:crypto";
 
 export const runtime = "nodejs";
 
@@ -65,6 +67,19 @@ export async function POST(req: Request) {
     ...utmFromRequest(req),
   });
 
+  // Meta Conversions API twin of the signup form's browser
+  // CompleteRegistration event. The event id is generated here and
+  // returned in the response so the form fires its fbq event with the
+  // SAME id and Meta deduplicates the pair. Fire-and-forget: a no-op
+  // until META_CAPI_ACCESS_TOKEN is set, and never blocks signup.
+  const metaEventId = randomUUID();
+  void sendMetaEvent({
+    eventName: "CompleteRegistration",
+    eventId: metaEventId,
+    eventSourceUrl: appUrl("/signup"),
+    userData: metaUserDataFromRequest(req, email),
+  });
+
   // Single-use verification token (24h). Old ones for this email are cleared first.
   await db.verificationToken.deleteMany({ where: { identifier: `${VERIFY_ID_PREFIX}${email}` } });
   const token = generateToken();
@@ -96,5 +111,5 @@ export async function POST(req: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, userId: user.id, emailSent });
+  return NextResponse.json({ ok: true, userId: user.id, emailSent, metaEventId });
 }
