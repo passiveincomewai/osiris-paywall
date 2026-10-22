@@ -13,6 +13,7 @@ import {
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import LiveStormList from "@/components/events/LiveStormList";
 
 export const metadata: Metadata = {
   title: "Hurricane Tracker — Live Storm Tracking",
@@ -170,6 +171,14 @@ export default function HurricaneTrackerPage() {
           </div>
         </div>
 
+        {/* Live active storms */}
+        <div className="mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Active storms — <span className="text-[#00E5FF]">live from NHC</span>
+          </h2>
+          <LiveStormList />
+        </div>
+
         {/* What you see */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">
@@ -303,6 +312,11 @@ export default function HurricaneTrackerPage() {
               label: "Weather tracker",
               desc: "Live wind, storms and precipitation — the full atmosphere around the tropics.",
               href: "/weather-tracker",
+            },
+            {
+              label: "Tornado tracker",
+              desc: "Live NWS tornado warnings and watches — hurricanes breed tornadoes as they come ashore.",
+              href: "/tornado-tracker",
             },
             {
               label: "Wildfire tracker",

@@ -168,6 +168,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/live-flight-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/satellite-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/earthquake-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/tornado-tracker`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
     { url: `${BASE}/pricing`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     ...POSTS.map((p) => ({

@@ -1,17 +1,31 @@
 import { POSTS } from "../blog/posts";
 import { buildNewsSitemap } from "@/lib/blog-feed";
+import { fetchEventNewsEntries } from "@/lib/events/news";
 
-// Google News sitemap: lists only posts published in the last 48 hours
-// (Google's rule for news sitemaps). Registered in robots.ts so crawlers
-// and Publisher Center can find it. When nothing is fresh it correctly
-// renders an empty urlset — new posts flow in automatically on publish.
-export const revalidate = 3600;
+// Google News sitemap: posts published in the last 48 hours (Google's
+// rule for news sitemaps) plus the same 48-hour window of breaking
+// events — significant earthquakes, active storms and reported
+// tornadoes (lib/events/news) — so a fresh event page is discoverable
+// while it is still news. Registered in robots.ts so crawlers and
+// Publisher Center can find it. Event entries are best-effort: a down
+// source never breaks the blog sitemap.
+export const revalidate = 600;
 
-export function GET() {
-  return new Response(buildNewsSitemap(POSTS, new Date()), {
+export async function GET() {
+  const now = new Date();
+  const blogXml = buildNewsSitemap(POSTS, now);
+  const eventEntries = await fetchEventNewsEntries(now).catch(() => [] as string[]);
+  const xml =
+    eventEntries.length === 0
+      ? blogXml
+      : blogXml.replace(
+          "</urlset>",
+          `${eventEntries.join("\n")}\n</urlset>`,
+        );
+  return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      "Cache-Control": "public, max-age=600, s-maxage=600",
     },
   });
 }
