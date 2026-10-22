@@ -51,6 +51,15 @@ import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
 import { fetchFaaCameras } from './faa';
 import { fetchCoastCameras } from './coastcams';
+import { fetchAlabamaCameras } from './alabama';
+import { fetchMaineCameras } from './maine';
+import { fetchArkansasCameras } from './arkansas';
+import { fetchKansasCameras } from './kansas';
+import { fetchMassachusettsCameras } from './massachusetts';
+import { fetchMississippiCameras } from './mississippi';
+import { fetchWestVirginiaCameras } from './westvirginia';
+import { fetchNewMexicoCameras } from './newmexico';
+import { fetchVermontCameras } from './vermont';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
   fetchOccHarvestAfrica,
@@ -578,6 +587,15 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'texas': fetchTexasCameras,
   'faa': fetchFaaCameras,
   'coastcams': fetchCoastCameras,
+  'alabama': fetchAlabamaCameras,
+  'maine': fetchMaineCameras,
+  'arkansas': fetchArkansasCameras,
+  'kansas': fetchKansasCameras,
+  'massachusetts': fetchMassachusettsCameras,
+  'mississippi': fetchMississippiCameras,
+  'westvirginia': fetchWestVirginiaCameras,
+  'newmexico': fetchNewMexicoCameras,
+  'vermont': fetchVermontCameras,
   'eastasia': fetchEastAsiaCameras,
   'seasia': fetchSeAsiaCameras,
   'westasia': fetchWestAsiaCameras,
@@ -979,6 +997,15 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 30.3 && lat < 35.1 && lng > -85.7 && lng < -80.8) regions.push('georgia');
   if (lat > 33.8 && lat < 36.6 && lng > -84.4 && lng < -75.4) regions.push('northcarolina');
   if (lat > 31.3 && lat < 37.1 && lng > -115.0 && lng < -109.0) regions.push('arizona');
+  if (lat > 30.1 && lat < 35.1 && lng > -88.5 && lng < -84.8) regions.push('alabama');
+  if (lat > 43.0 && lat < 47.5 && lng > -71.1 && lng < -66.9) regions.push('maine');
+  if (lat > 33.0 && lat < 36.5 && lng > -94.7 && lng < -89.6) regions.push('arkansas');
+  if (lat > 36.9 && lat < 40.1 && lng > -102.1 && lng < -94.5) regions.push('kansas');
+  if (lat > 41.2 && lat < 42.9 && lng > -73.5 && lng < -69.9) regions.push('massachusetts');
+  if (lat > 30.1 && lat < 35.1 && lng > -91.7 && lng < -88.05) regions.push('mississippi');
+  if (lat > 37.2 && lat < 40.6 && lng > -82.7 && lng < -77.7) regions.push('westvirginia');
+  if (lat > 31.3 && lat < 37.1 && lng > -109.1 && lng < -102.9) regions.push('newmexico');
+  if (lat > 42.7 && lat < 45.1 && lng > -73.5 && lng < -71.4) regions.push('vermont');
   // Canada
   if (lat > 42 && lat < 70 && lng > -141 && lng < -52) regions.push('canada');
   // FAA WeatherCams — airports and mountain passes across the US and Canada

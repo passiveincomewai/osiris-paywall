@@ -53,6 +53,8 @@ export interface Ibi511Record {
   county?: string | null;
   latLng?: { geography?: { wellKnownText?: string | null } | null } | null;
   images?: Array<{
+    /** The platform's image id (present on the rows; unused by the mappers). */
+    id?: number | null;
     description?: string | null;
     imageUrl?: string | null;
     videoUrl?: string | null;
