@@ -46,6 +46,7 @@ import { fetchNorthCarolinaCameras } from './northcarolina';
 import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
 import { fetchFaaCameras } from './faa';
+import { fetchArkansasCameras } from './arkansas';
 import { fetchKansasCameras } from './kansas';
 import { fetchMassachusettsCameras } from './massachusetts';
 import { fetchMississippiCameras } from './mississippi';
@@ -574,6 +575,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'arizona': fetchArizonaCameras,
   'texas': fetchTexasCameras,
   'faa': fetchFaaCameras,
+  'arkansas': fetchArkansasCameras,
   'kansas': fetchKansasCameras,
   'massachusetts': fetchMassachusettsCameras,
   'mississippi': fetchMississippiCameras,
@@ -973,6 +975,7 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 30.3 && lat < 35.1 && lng > -85.7 && lng < -80.8) regions.push('georgia');
   if (lat > 33.8 && lat < 36.6 && lng > -84.4 && lng < -75.4) regions.push('northcarolina');
   if (lat > 31.3 && lat < 37.1 && lng > -115.0 && lng < -109.0) regions.push('arizona');
+  if (lat > 33.0 && lat < 36.5 && lng > -94.7 && lng < -89.6) regions.push('arkansas');
   if (lat > 36.9 && lat < 40.1 && lng > -102.1 && lng < -94.5) regions.push('kansas');
   if (lat > 41.2 && lat < 42.9 && lng > -73.5 && lng < -69.9) regions.push('massachusetts');
   if (lat > 30.1 && lat < 35.1 && lng > -91.7 && lng < -88.05) regions.push('mississippi');
