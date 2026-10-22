@@ -27,6 +27,9 @@ describe("InviteFriendsSection (shell)", () => {
     expect(html).toContain("Loading your invite link…");
     // Nothing is promised as already-earned in the shell.
     expect(html).not.toContain("banked");
+    // No placeholder link in ANY pre-resolution state: the shell must
+    // never render a /ref/ URL before the server returns the real one.
+    expect(html).not.toContain("/ref/");
   });
 });
 

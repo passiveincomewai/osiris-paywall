@@ -1,31 +1,28 @@
 // POST /api/affiliate/join — activate the free affiliate program for a user.
 // Open to anyone legally eligible; no purchase required. Generates a unique
-// referral code from their name/email with collision retries.
+// RANDOM referral code with collision retries (lib/affiliate/referral-code;
+// never derived from the member's name/email — see that module for why).
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { awardXP } from "@/lib/affiliate/xp";
-import { REF_CODE_RE } from "@/lib/affiliate/attribution";
+import { mintReferralCode } from "@/lib/affiliate/referral-code";
 import { audit } from "@/lib/affiliate/admin";
 import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
 
 export const runtime = "nodejs";
 
-function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 16) || "agent";
-}
-
-async function uniqueCode(base: string): Promise<string> {
-  for (let i = 0; i < 12; i++) {
-    const candidate = i === 0 ? base : `${base}${Math.floor(100 + Math.random() * 900)}`;
-    if (!REF_CODE_RE.test(candidate)) continue;
-    const taken = await db.affiliateProfile.findFirst({
+/** A candidate is taken if any profile (either code field) or any
+ *  share identity already owns it — /ref resolves across both. */
+async function codeTaken(candidate: string): Promise<boolean> {
+  const [profile, identity] = await Promise.all([
+    db.affiliateProfile.findFirst({
       where: { OR: [{ referralCode: candidate }, { customCode: candidate }] },
       select: { id: true },
-    });
-    if (!taken) return candidate;
-  }
-  return `agent${Date.now().toString(36)}`;
+    }),
+    db.shareIdentity.findUnique({ where: { code: candidate }, select: { id: true } }),
+  ]);
+  return !!profile || !!identity;
 }
 
 export async function POST(req: Request) {
@@ -36,8 +33,15 @@ export async function POST(req: Request) {
   const existing = await db.affiliateProfile.findUnique({ where: { userId } });
   if (existing) return NextResponse.json({ profile: existing, joined: false });
 
-  const base = slugify(session.user?.name || session.user?.email?.split("@")[0] || "agent");
-  const code = await uniqueCode(base);
+  let code: string;
+  try {
+    code = await mintReferralCode(codeTaken);
+  } catch {
+    return NextResponse.json(
+      { error: "Couldn't create your link just now — try again in a moment." },
+      { status: 500 },
+    );
+  }
 
   // If this user was referred, their attribution already set recruitedBy —
   // re-apply it here in case the profile is created after attribution.
