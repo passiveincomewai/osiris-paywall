@@ -102,6 +102,14 @@ const FAQS = [
     q: "What satellites are tracked?",
     a: "Thousands — the ISS and other stations, the Starlink constellation, weather satellites, GPS and navigation satellites, science missions, rocket bodies and notable debris. Coverage follows whatever the public catalogs publish.",
   },
+  {
+    q: "Is this the same as satellite imagery of the ground?",
+    a: "No — two different things share the word satellite. This tracker shows satellites themselves as objects in orbit: where each one is right now. Satellite imagery — photographs of the ground taken from orbit — is a separate map view, and on WorldEye it's part of Pro. The tracker is free.",
+  },
+  {
+    q: "Why do some satellites travel in a line or a train?",
+    a: "Freshly launched Starlink satellites are released together and drift apart over weeks, so a recent batch crosses the sky as an evenly spaced train before settling into its working slots in the constellation. It's one of the most striking sights the tracker explains — look for a dotted line of satellites moving in single file.",
+  },
 ];
 
 function Faq({ q, a }: { q: string; a: string }) {
@@ -221,6 +229,76 @@ export default function SatelliteTrackerPage() {
           </div>
         </div>
 
+        {/* How to use */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            How to use the satellite tracker
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              <strong className="text-white/90">1. Open the map and look up.</strong>{" "}
+              The satellite layer rides on the same free globe as everything
+              else. From the full-globe view you&apos;ll see the structure of
+              modern orbit at a glance: a dense shell of objects in low Earth
+              orbit and the ring of geostationary satellites above the
+              equator.
+            </p>
+            <p>
+              <strong className="text-white/90">2. Filter by category.</strong>{" "}
+              Stations, Starlink, weather, navigation, science — narrow the
+              sky to the family you care about instead of the whole catalog.
+              Watching only stations, for instance, leaves the ISS and its
+              crewed companions crossing an otherwise quiet globe.
+            </p>
+            <p>
+              <strong className="text-white/90">3. Follow one object.</strong>{" "}
+              Select a satellite to see its orbit path drawn out — where it
+              has been and where it is headed next. For the ISS, that path is
+              a wave wrapping the planet about every 90 minutes; check when
+              the line passes over your location, then go outside at dusk and
+              watch for the brightest light in the sky.
+            </p>
+          </div>
+        </div>
+
+        {/* The orbits, explained */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            The orbits, explained
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              <strong className="text-white/90">Low Earth orbit (LEO)</strong>{" "}
+              — a few hundred to about 2,000 km up. Home to the ISS, Starlink,
+              most imaging and weather satellites. Objects here move fast,
+              circling the planet in roughly 90–120 minutes, which is why the
+              LEO shell on the map churns while everything else seems still.
+            </p>
+            <p>
+              <strong className="text-white/90">Medium Earth orbit (MEO)</strong>{" "}
+              — the navigation band, around 20,000 km up, where GPS and the
+              other positioning constellations live. Their slower, higher
+              orbits are what let a phone fix its position anywhere on Earth.
+            </p>
+            <p>
+              <strong className="text-white/90">Geostationary orbit (GEO)</strong>{" "}
+              — 35,786 km above the equator, where a satellite&apos;s orbital
+              period matches Earth&apos;s rotation and it hangs over one
+              spot. On the map these form the calm ring around the equator:
+              broadcast and weather sentinels that never move across the sky.
+            </p>
+            <p>
+              The honest caveat for all three: positions are computed from
+              public orbital data, and that data ages. A satellite that
+              maneuvered, or a rocket body tumbling toward re-entry, can sit
+              a few kilometers from its drawn position until fresh elements
+              are published. For watching the living sky, that is plenty; for
+              pointing a telescope at the exact second, cross-check the pass
+              time before you go out.
+            </p>
+          </div>
+        </div>
+
         {/* What you can see */}
         <div className="mt-20 md:mt-28">
           <h2 className="text-2xl md:text-3xl font-bold text-center">
@@ -262,6 +340,33 @@ export default function SatelliteTrackerPage() {
             Tip: pair the tracker with the live flight layer — aircraft below,
             satellites above, one globe.
           </p>
+        </div>
+
+        {/* Spotting from the ground */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Spotting satellites from the ground
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              The tracker&apos;s best party trick is sending you outside.
+              Satellites are visible when they are in sunlight while you are
+              in darkness — which makes the hour after sunset and the hour
+              before sunrise the prime windows. The satellite catches the sun
+              a few hundred kilometers up and reflects it down as a silent,
+              steady, fast-moving point of light.
+            </p>
+            <p>
+              Start with the ISS: it is the brightest object up there, bright
+              enough to see from a city center, and it crosses the whole sky
+              in about five minutes. Find a pass whose orbit path crosses your
+              location near dusk, note the direction it comes from, and look
+              up a minute early — no telescope, no app notifications, just
+              the map and the sky. Starlink trains are the second-easiest
+              catch in the weeks after a launch; later, the satellites spread
+              out, climb, and individually fade to where dark skies help.
+            </p>
+          </div>
         </div>
 
         {/* FAQ */}

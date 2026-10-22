@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
   User, Settings, CreditCard, LogOut, Map as MapIcon, LayoutDashboard,
-  Tag, Users, Copy, Check, ChevronRight, Gift,
+  Tag, Users, Copy, Check, ChevronRight, Gift, BellRing, Video, HelpCircle, Crown,
 } from "lucide-react";
 
 type SessionUser = {
@@ -173,6 +173,9 @@ export default function HeaderProfileMenu() {
             {[
               { href: "/", icon: MapIcon, label: "Live map" },
               { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+              { href: "/dashboard#alerts", icon: BellRing, label: "Camera alerts" },
+              { href: "/dashboard#recordings", icon: Video, label: "Recordings" },
+              { href: "/vip", icon: Crown, label: "VIP Pro hub" },
               { href: "/affiliates", icon: Users, label: "Affiliates" },
               { href: "/pricing", icon: Tag, label: "Plans & pricing" },
             ].map((l) => (
@@ -203,6 +206,14 @@ export default function HeaderProfileMenu() {
             >
               <CreditCard className="w-4 h-4 text-white/40" />
               Manage subscription
+            </Link>
+            <Link
+              href="/faq"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
+            >
+              <HelpCircle className="w-4 h-4 text-white/40" />
+              Help & FAQ
             </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}

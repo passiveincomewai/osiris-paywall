@@ -1956,6 +1956,428 @@ export const POSTS: BlogPost[] = [
     ],
   },
   {
+    slug: "orionid-meteor-shower-2026",
+    title: "Orionid Meteor Shower 2026: When It Peaks and How to Watch",
+    seoTitle: "Orionid Meteor Shower 2026 | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "The Orionids — dust from Halley's Comet — peak on the night of October 21–22, 2026. Here's the viewing window that beats the bright Moon, what to realistically expect, and how to check your sky is clear before you drive anywhere.",
+    seoDescription:
+      "The Orionid meteor shower peaks October 21–22, 2026. When to watch after moonset, how many meteors to expect, and how to check for clear skies first.",
+    tags: ["space", "guide"],
+    sections: [
+      {
+        heading: "A meteor shower with a famous parent",
+        body: [
+          "Every October, Earth plows through a stream of dust shed by Halley's Comet — the most famous comet in history — and the grains burn up in our atmosphere as the Orionid meteor shower. The comet itself last visited in 1986 and won't return until 2061, so for now these meteors are the closest encounter with it any of us gets. The shower is active from about October 2 to November 7, 2026, but it builds to a broad peak on the night of Wednesday, October 21 into Thursday, October 22.",
+          "Orionids are fast. The debris strikes the atmosphere at roughly 66 kilometres per second (about 41 miles per second), which makes the meteors swift and often bright, and NASA notes that some leave glowing trains that hang in the sky for several seconds. A few become fireballs — the kind of streak that makes a whole group of people gasp at once. Expect the radiant, the point the meteors appear to stream from, near the bright star Betelgeuse in the constellation Orion.",
+        ],
+      },
+      {
+        heading: "How many will you actually see?",
+        body: [
+          "Set expectations honestly and the night gets better, not worse. Under ideal conditions — a truly dark site, no Moon, the radiant high overhead — the Orionids produce around 20 meteors per hour at peak, and typical dark-sky counts run about 10 to 20 per hour. From a suburb, cut that substantially; from a city centre, you may catch only the occasional fireball. This is a patience event, not a fireworks show: the pleasure is in the quiet, the cold air, and the streaks arriving on their own schedule.",
+          "The shower's peak is a plateau rather than a spike, which is good news if clouds intervene. Activity stays worthwhile for several nights around the maximum — roughly October 20 to 24 — so a ruined peak night is not a ruined shower. Check the sky where you are on the [live map](/) before committing to a long drive, and treat a clear October 22 or 23 as a perfectly good second chance.",
+        ],
+      },
+      {
+        heading: "The 2026 problem: a bright Moon — and the workaround",
+        body: [
+          "This year's peak comes with a catch. The Moon is in its waxing gibbous phase, around 80 percent illuminated, and it will wash out the fainter meteors for the first part of the night. The full Hunter's Moon follows on October 26, so there is no escaping moonlight this week — only timing around it.",
+          "The workaround is built into the Moon's own schedule: it sets a few hours after midnight, leaving a dark window of roughly three hours before dawn. That window is when the Orionids do their best work anyway, because the radiant climbs highest in the sky in the pre-dawn hours. The practical plan for 2026 is simple: sleep early, set an alarm for after moonset, and watch from then until the sky starts to pale. If you only watch one stretch of the night, make it that one.",
+        ],
+      },
+      {
+        heading: "How to watch: NASA's advice, translated",
+        body: [
+          "You need no equipment at all — telescopes and binoculars actually hurt, because meteors cross huge areas of sky and a narrow field of view misses most of them. NASA's guidance is disarmingly low-tech: lie flat on your back, in the Northern Hemisphere with your feet pointing roughly southeast, and take in as much sky as you can. Counter-intuitively, don't stare at Orion itself. Meteors seen 45 to 90 degrees away from the radiant show longer trails and are easier to catch.",
+          "Give your eyes up to 30 minutes to fully adapt to the dark, and protect that adaptation — one glance at a bright phone screen costs you minutes of sensitivity. Dress warmer than the thermometer suggests, because you will be lying still, and bring a reclining chair or a blanket rather than standing with a cricked neck. The [space layer](/satellite-tracker) crowd has a ritual worth borrowing: while you wait between meteors, the satellites keep moving, and a bright pass of the [space station](/space-station-tracker) over a dark site is a fine intermission.",
+        ],
+      },
+      {
+        heading: "Check the sky before you chase it",
+        body: [
+          "The single biggest cause of failed meteor nights is cloud, and cloud is the one factor you can check in advance. WorldEye's [weather layer](/weather-tracker) and the public webcams near dark-sky country let you look at the actual sky conditions over your intended spot — a mountain pullout under cloud is worse than a back garden under clear sky. Our guide to [watching the northern lights on live webcams](/blog/northern-lights-live-webcams) covers the same scouting technique: pick cameras in genuinely dark places, check them after nightfall, and only then decide whether the drive is worth it.",
+          "Be honest with yourself about what the cameras are for. A webcam will almost never catch an Orionid for you — the meteors are fast, the sky is big, and a fixed camera stares at one small patch of it. The cameras tell you whether the sky is clear and dark, which is the decision that matters. The show itself is resolutely analogue: you, a blanket, and the upper atmosphere.",
+        ],
+      },
+      {
+        heading: "Photographing the shower with a phone",
+        body: [
+          "You will want a photograph, so set the terms before you go out: meteor photography is a numbers game played against a black sky. Prop the phone on a tripod or a beanbag — hand-held shots of the night sky are just blur — and use its night or long-exposure mode aimed at a wide, dark stretch of sky well away from the radiant, where trails run longest. Then take many exposures, not one. Most frames will hold nothing but stars, and that is normal; professionals discard hundreds of frames for every keeper.",
+          "What a phone realistically captures is the occasional bright fireball, and even that demands luck with timing and aim. Settle for a different trophy and you'll enjoy the night more: a long exposure of the watch party itself, Orion rising over the horizon, star trails from a time-lapse. The meteors are for your eyes. The camera is for everything around them.",
+        ],
+      },
+      {
+        heading: "If you miss the peak",
+        body: [
+          "The Orionids trail off through late October and the first week of November, so a clear night on October 23 or 24 still delivers a respectable showing, especially in that same post-moonset window. And the sky calendar keeps moving: the same Halley dust stream produces the Eta Aquariids in May, and the much stronger Geminids arrive in December. Learning the Orionids' habits — radiant, moonlight, patience — is training for all of them.",
+          "When you do catch a bright one, note the time. Comparing notes with other watchers, and with the satellite and flight traffic crossing the same sky on the [live map](/), is part of the fun: a surprising amount of what people report as strange lights turns out to be a satellite train or a high airliner catching the sun. The real meteors are faster, shorter, and better.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When exactly do the Orionids peak in 2026?",
+        a: "The peak night is October 21–22, 2026, with the best viewing in the pre-dawn hours after the bright Moon sets. The shower stays active at useful levels from about October 20 to 24, and runs at low levels from October 2 to November 7.",
+      },
+      {
+        q: "Can I watch the Orionid meteor shower on a webcam?",
+        a: "Not reliably — meteors are brief, fast, and can appear anywhere in the sky, while a webcam watches one fixed patch. Webcams are excellent for checking whether a dark location is actually cloud-free before you travel, which is how we recommend using them.",
+      },
+      {
+        q: "Do I need a telescope or binoculars?",
+        a: "No — they reduce your field of view and you'll miss most meteors. The naked eye, a reclining chair, warm clothing, and 30 minutes for your eyes to adapt are the complete kit.",
+      },
+    ],
+  },
+  {
+    slug: "hurricane-season-final-weeks-2026",
+    title: "Hurricane Season Isn't Over: Tracking the Final Weeks of 2026",
+    seoTitle: "Hurricane Season 2026: Final Weeks | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "The 2026 Atlantic season was historically quiet — then its first hurricane hit Florida in October. With weeks left until November 30 and a new system under watch off the East Coast, here's how late-season storms work and how to track them live.",
+    seoDescription:
+      "The record-quiet 2026 hurricane season still has weeks to run. How October storms form, what Invest 93L means, and how to track it all live.",
+    tags: ["weather", "hurricanes"],
+    sections: [
+      {
+        heading: "The quietest season on record — until it wasn't",
+        body: [
+          "The 2026 Atlantic hurricane season will be remembered for an absence. For more than three decades, every September produced at least one Atlantic hurricane — until this year, when the basin went through its climatological peak without a single one, the first season since 1914 to reach September 21 with no hurricane at all. A powerful El Niño cranked up the vertical wind shear over the tropical Atlantic, and shear decapitates developing storms by blowing their thunderstorms away from their low-level circulation. NOAA's August outlook called for a below-normal season — 7 to 13 named storms, 2 to 6 hurricanes — and for months even that looked generous.",
+          "Then October arrived. The season's first hurricane, Isaias, strengthened to 85 mph sustained winds as it bore down on the Gulf Coast and made landfall near Destin, Florida, on October 9 — nearly tying the record for the latest first hurricane of a season. As of October 20 there have been nine named storms. The lesson meteorologists repeat every year survived its strangest test: a quiet season is a statistic, not a promise, and it only takes one storm in the wrong place.",
+        ],
+      },
+      {
+        heading: "Why October storms form closer to home",
+        body: [
+          "Early-season and peak-season storms usually spin up far out in the tropical Atlantic and take days to cross. October is different. As the main development region cools and the pattern shifts, the favoured birthplaces move west — into the western Caribbean, the Gulf of Mexico, and the western Atlantic, sometimes out of the broad gyre of low pressure that parks over Central America. Storms born there have a short commute to land: a system can organise in the Caribbean and be a Florida problem within days.",
+          "That geography is exactly why the season's final weeks command respect even in a year like this one. The water in the Gulf and western Caribbean stays warm deep into autumn, the coastline is close, and the lead time is short. Forecasters watch these regions in October the way they watched the open Atlantic in September — which you can do too, on the [hurricane tracker](/hurricane-tracker), where active systems and their forecast paths sit on the same map as the weather and cameras below.",
+        ],
+      },
+      {
+        heading: "What an 'Invest' is, and why 93L matters now",
+        body: [
+          "The current system under the microscope is designated Invest 93L, a low-pressure area off the U.S. East Coast. 'Invest' is the National Hurricane Center's label for a disturbance it is investigating with extra data collection; the number and letter are a filing code, not a forecast. As of October 20, forecasters gave 93L a medium chance — around 40 percent over seven days in the NHC outlook — of developing into a tropical cyclone.",
+          "Whether or not it ever earns a name, 93L is already a weather story: high winds, coastal flooding, and dangerous surf are expected along portions of the East Coast over the next few days, and the National Weather Service in Melbourne warned of life-threatening rip currents along Florida's Atlantic coast through October 20. This is the part of tropical tracking the public most often misses — a storm does not need a name, a category, or even a closed circulation to hurt people. Rip currents and rough surf from a nameless low kill quietly, far from any dramatic satellite loop.",
+        ],
+      },
+      {
+        heading: "How to track the rest of the season live",
+        body: [
+          "Start with the official source and build outward. The National Hurricane Center issues advisories on active systems and a tropical weather outlook for disturbances like 93L — nothing anyone else publishes outranks it. WorldEye's [hurricane tracker](/hurricane-tracker) puts the systems on a live 3D globe alongside the [weather layer](/weather-tracker), so you can see a storm's position against the coastline it threatens rather than as an abstract cone on a flat chart. Our guide to [reading weather radar](/blog/how-to-read-weather-radar) explains how to interpret the rain bands and structure once a system gets close.",
+          "Then go to ground level. The camera network carries [Florida traffic and coastal cameras](/us-traffic-cameras/florida) and [beach webcams](/beach-webcams) all along the threatened shoreline — the same feeds locals check to see whether the surf is building, the causeway is raining sideways, or the beach has emptied. Watching a coastline you know, hour by hour, as a system approaches teaches you more about storm timelines than any single forecast graphic. What you should never do is treat a webcam as a safety instrument: if officials say evacuate, the camera's opinion is irrelevant.",
+        ],
+      },
+      {
+        heading: "The honest limits of storm tracking",
+        body: [
+          "Trackers visualise; they do not forecast. WorldEye displays storm positions and official forecast information — the meteorology comes from the NHC and national weather services, and when the map and an official warning disagree, the warning wins, every time. Intensity forecasting also remains genuinely hard: a storm's category can change faster than the advisory cycle, which is one reason Isaias's late strengthening drew so much attention.",
+          "Webcams have their own failure mode worth knowing: they die in storms. Power cuts, flooded equipment, and knocked-out networks mean the cameras closest to a landfall are often the first to go dark — the exact moment everyone wants them. Treat a frozen or black camera near a storm as information about infrastructure, not about conditions being calm. If the feed from a landfall zone goes silent, the correct conclusion is that the storm is worse than the picture, never better.",
+        ],
+      },
+      {
+        heading: "What El Niño actually did to this season",
+        body: [
+          "It is worth understanding the mechanism, because it explains both the silence and the exception. A tropical storm is a heat engine with a chimney: thunderstorms clustered around a centre of low pressure, venting upward. Vertical wind shear — winds that change speed or direction with height — tilts that chimney and blows the venting away from the centre, and a tilted engine stalls. El Niño warms the Pacific and rearranges the atmosphere's circulation in a way that reliably increases shear over the Caribbean and tropical Atlantic. Storms still tried to form all season; the atmosphere kept decapitating them.",
+          "Isaias in October shows the limits of the pattern rather than a failure of it. Shear relaxes locally and temporarily, the western Atlantic in autumn is warm and close to land, and a system that finds a pocket of calm air over hot water can organise fast. Seasonal forecasts deal in probabilities across five months and an entire ocean. Weather deals in individual storms. The gap between those two statements is precisely where late-season hurricanes live.",
+        ],
+      },
+      {
+        heading: "Six weeks left: a closing checklist",
+        body: [
+          "The season officially ends on November 30, and the remaining risk concentrates in a familiar arc: the western Caribbean, the Gulf, and the waters off Florida and the Southeast coast. If you live there, the October routine is short. Know your evacuation zone before you need it. Keep the NHC outlook bookmarked rather than relying on social-media screenshots of models. Treat surf and rip-current warnings as seriously as wind warnings — in a season like this, the water hazards have done more harm than the named storms.",
+          "And keep watching. A historically quiet season that produces a first hurricane in October and a watched Invest in late October is telling you something about how it intends to finish. The [hurricane tracker](/hurricane-tracker) stays live until the basin goes quiet for good — this year, of all years, nobody should call it early.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When does the 2026 hurricane season end?",
+        a: "The Atlantic season officially runs from June 1 to November 30, 2026. Late-season storms most often form in the western Caribbean, the Gulf of Mexico, and the western Atlantic — close to the U.S. coast, with shorter warning times.",
+      },
+      {
+        q: "What is Invest 93L?",
+        a: "An 'Invest' is a disturbance the National Hurricane Center is investigating with extra data collection. Invest 93L, off the U.S. East Coast in late October 2026, was given a medium chance of development — but its surf, rip currents, and coastal flooding were hazardous whether or not it ever became a named storm.",
+      },
+      {
+        q: "Why was the 2026 season so quiet?",
+        a: "A strong El Niño increased vertical wind shear over the tropical Atlantic, which disrupts developing storms. The basin went until October without a hurricane — the first time since 1914 it had reached September 21 without one — before Hurricane Isaias struck Florida on October 9.",
+      },
+    ],
+  },
+  {
+    slug: "fall-foliage-live-cameras",
+    title: "Peak Fall Color Is Moving South: Check It Live Before You Drive",
+    seoTitle: "Fall Foliage 2026: Check Peak Color Live | WorldEye Blog",
+    date: "2026-10-21",
+    excerpt:
+      "The 2026 foliage wave has left New England and is peaking now across the Appalachians and Mid-Atlantic. Forecast maps estimate; live cameras show you the actual trees. Here's how to check peak color before you commit to the drive.",
+    seoDescription:
+      "Fall foliage is peaking across the Appalachians and Mid-Atlantic in late October 2026. Use live webcams to check the real color before you drive.",
+    tags: ["cameras", "travel"],
+    sections: [
+      {
+        heading: "The color wave, and where it stands this week",
+        body: [
+          "Fall color moves like weather: it starts on high, cold ground in the north and rolls south and downhill over six to eight weeks. By the third week of October 2026, the front of that wave has passed through northern New England — Vermont, New Hampshire, and upstate New York peak in a typical year in the first half of the month — and the show has moved to where the forecasts said the year's best display would be: the central Appalachians. AccuWeather's fall outlook flagged vibrant color through mid-to-late October across the Berkshires, the Catskills, the Poconos, the Allegheny highlands of northwest Pennsylvania, and the highest elevations of West Virginia.",
+          "The Farmers' Almanac went further and rated the central Appalachians — Virginia through western North Carolina — its 'Best Bet' for 2026, on the strength of adequate summer rain and the cool nights and sunny days that manufacture the brightest reds and purples. Virginia's own forecasters put peak color in the western mountains around October 25, with Shenandoah National Park's Skyline Drive peaking in the second half of October and the wave reaching Northern Virginia around October 30 and the Richmond area by mid-November. In other words: if you are within driving distance of the Appalachians or the Mid-Atlantic, your peak is now or imminent. If your map says otherwise, it may be describing last year's timing.",
+        ],
+      },
+      {
+        heading: "Why forecast maps get it wrong",
+        body: [
+          "Every foliage map is a model, and models average. They blend elevation bands, typical dates, and weather so far — then paint entire counties one colour. But a county is not a forest. A south-facing slope at 3,000 feet and a sheltered valley floor ten miles away can be two weeks apart in the same county, in the same week. Forecasters themselves note that elevation peaks 10 to 14 days ahead of nearby valleys, and that color drifts south and downhill at roughly 50 to 100 miles per week — averages stacked on averages.",
+          "The weather adds its own static. Warm spells slow the turn; drought — which has stressed trees from Virginia into the Carolinas and Tennessee this year — can dull colours or strip leaves early; one windy storm can end a valley's season overnight. None of that nuance survives being flattened into a weekly map. The map tells you when to start paying attention. It cannot tell you what the trees at your trailhead look like this morning.",
+        ],
+      },
+      {
+        heading: "The live check: look at the actual trees",
+        body: [
+          "This is the gap live cameras fill. WorldEye's network carries thousands of public cameras in exactly the terrain that matters — mountain passes, park towns, overlooks, small cities in the valleys — and every one of them shows the real foliage state right now, not a climatological guess. Our guide to [using live cameras to plan travel](/blog/using-live-cameras-to-plan-travel) walks through the method; for foliage, the routine takes two minutes. Open the [live map](/), find cameras near where you plan to go, and read them the way you'd read a photograph from a friend who's already there.",
+          "Read them critically. Overcast light flattens colour and makes a peak hillside look dull; low morning or late-afternoon sun makes the same hillside glow. Check two or three cameras at different elevations rather than trusting one — the pass may be bare while the valley below it is at maximum colour, or the reverse. And remember a camera sees one stand of trees: treat it as a strong sample of its immediate area, not a verdict on the whole county. The [North America camera hubs](/north-america-webcams) and the [United States country page](/cameras/countries/united-states) are good starting points for browsing what's available in a region.",
+        ],
+      },
+      {
+        heading: "Timing your trip to the second wave",
+        body: [
+          "If you missed New England, the calendar is still generous. The late-October wave covers the southern Appalachians — the Blue Ridge and Great Smoky Mountains country of western North Carolina and eastern Tennessee — where mid-October-to-early-November is the classic window and high ridges have already turned while lower slopes finish. Central Virginia peaks around early November, and the last acts play out in mid-November in the coastal plain and the Deep South lowlands. A trip planned for the final days of October or the first weekend of November, aimed at the southern mountains, is this year's best remaining bet.",
+          "Two habits separate a great foliage trip from a frustrating one. First, aim high early and low late: within any region, start your day at elevation while that colour lasts, and save valley towns for the following weekend. Second, build the drive around verification, not hope — check the [live cameras](/live-webcams) the evening before, pick the corridor that is actually glowing, and let the trees, not the itinerary, make the final call. Foliage season rewards flexibility more than any other kind of trip.",
+        ],
+      },
+      {
+        heading: "Why some hillsides burn red and others go gold",
+        body: [
+          "Knowing what you're looking at sharpens the camera check. The yellows and oranges are carotenoids — pigments present in the leaf all summer, masked by green chlorophyll, revealed when the chlorophyll retreats as days shorten. The reds and purples are different: anthocyanins, manufactured by the tree in autumn itself, and their production needs sugar, bright light, and cool-but-not-freezing nights. That is why a sunny, crisp October makes maples blaze while a warm, grey one leaves them muddy — and why the Farmers' Almanac pinned its 'Best Bet' rating on the Appalachians' run of cool nights and sunny days this year.",
+          "Species write the local script. Sugar maples carry the famous reds and oranges, sourwood — an Appalachian specialty — turns a deep scarlet, oaks go russet and brown, and birch and poplar finish in gold. On a camera feed, that means a mixed hardwood slope reads as a patchwork rather than a single colour, and 'peak' is the moment the patchwork is fullest, not the moment everything is red. Judge the whole hillside, the way you would standing in it.",
+        ],
+      },
+      {
+        heading: "What cameras can't tell you",
+        body: [
+          "Honesty section, because it matters: WorldEye has no foliage layer, no colour index, and no peak-prediction model. The cameras are windows, not forecasts, and a window only shows you today. A hillside at 90 percent colour on Tuesday can be stripped by a storm front on Thursday. Image quality also varies across a public network — some cameras are high on a tower with a wide valley view that is perfect for this job, while others point at a parking lot with one photogenic maple. Browse a few before drawing conclusions.",
+          "There is also an etiquette to remember. These are public cameras operated by parks, towns, resorts, and road agencies for their own purposes. Watching them is exactly what they're published for — our roundup of the [world's live cameras](/blog/world-live-cameras) explains how the public network works — but the person who maintains the camera on a ranger station roof owes the internet nothing, and feeds do occasionally move or go dark mid-season. If your favourite view vanishes, find another window. The mountains are not short of them.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Where is fall foliage peaking in late October 2026?",
+        a: "Across the central and southern Appalachians and the Mid-Atlantic: the Virginia mountains around October 25, Shenandoah in the second half of October, the Blue Ridge and Smokies into early November, with the last color reaching the Deep South lowlands by mid-November.",
+      },
+      {
+        q: "Does WorldEye have a fall foliage map or peak predictor?",
+        a: "No — and we'd rather say so plainly. What WorldEye has is live cameras in the mountains and valleys themselves, so you can see the actual current color at a place instead of a model's estimate. Use forecast maps for the week to target; use cameras for the decision to drive.",
+      },
+      {
+        q: "Why did the forecast map say peak but the trees were bare?",
+        a: "Maps average whole counties and typical years. Elevation, slope aspect, drought, and a single windstorm can move a specific valley's peak by a week or more in either direction — which is exactly the gap a live camera check closes.",
+      },
+    ],
+  },
+  {
+    slug: "thanksgiving-flight-tracking-guide",
+    title: "Thanksgiving Flight Tracking: A Guide to the Busiest Travel Week of the Year",
+    seoTitle: "Thanksgiving Flight Tracking Guide | WorldEye Blog",
+    date: "2026-10-21",
+    excerpt:
+      "Thanksgiving week compresses the year's worst travel days into one long weekend — and Sunday, November 29 is set to be the busiest air travel day of 2026. Here's how to track flights, read delays, and stay calm with live data.",
+    seoDescription:
+      "Thanksgiving 2026 brings the year's busiest flying day on Sunday Nov 29. Track flights live, read delays early, and navigate the rush with real data.",
+    tags: ["aviation", "travel"],
+    sections: [
+      {
+        heading: "The shape of the week",
+        body: [
+          "Thanksgiving travel doesn't spread out — it detonates on a schedule. Thanksgiving Day itself is Thursday, November 26, 2026, and the week's pressure points are known months in advance. Wednesday, November 25 is the heaviest day on the roads and one of the worst in the airports. Sunday, November 29 is the monster: the single busiest air-travel day of the year, a pattern that has held every year since 2023. Aviation data firm Cirium expects airlines to schedule more than 3 million seats on some 22,000 flights that Sunday, and the all-time TSA screening record — roughly 3.1 million passengers — was set on the Sunday after Thanksgiving in 2025.",
+          "The flip side is just as predictable. Thanksgiving Day itself was the quietest day at U.S. airports last year, and fare data from Points Path points to Monday, November 23 as the cheapest departure day of the 2026 holiday window, with Sunday the 29th running about 40 percent more expensive than Black Friday. Whether you're flying or collecting someone who is, the week rewards people who plan around the peaks — and who watch live data when the peaks arrive anyway.",
+        ],
+      },
+      {
+        heading: "Track the plane, not the departure board",
+        body: [
+          "The single most useful habit in holiday travel is tracking the aircraft, not the flight number. A departure board tells you what the airline hopes will happen; the inbound aircraft's actual position tells you what will happen. If the plane that will operate your 6 p.m. flight is still on the ground three states away at 4 p.m., your delay exists already — the board just hasn't admitted it yet. Our walkthrough on [following a flight live](/blog/follow-a-flight-live) shows how the follow view works on WorldEye: pick the aircraft, and the camera rides with it, with altitude, speed, and track updating in real time.",
+          "Apply the same trick at the other end of the trip. Whoever is picking you up should stop refreshing an arrivals page and instead watch your actual aircraft on the [live flight tracker](/live-flight-tracker) — free, no account, works on a phone in the cell-phone lot. They'll see your descent begin before the airport's text alert fires, and they'll know the difference between 'landed' and 'at the gate,' which on Sunday the 29th can be a 30-minute difference all by itself.",
+        ],
+      },
+      {
+        heading: "Reading trouble early: hubs, holds, and weather",
+        body: [
+          "Holiday delays rarely start at your airport — they cascade from the hubs. A snow band over Chicago or a thunderstorm line over Atlanta in the morning becomes your cancelled evening connection, because aircraft and crews thread through those hubs all day. On WorldEye's globe you can watch this happen in the most literal way: zoom out and look at the flows into a hub, and you'll see holding patterns — those stacked racetrack ovals — form as arrivals outpace the airport. Our explainer on [why flights disappear from trackers](/blog/why-flights-disappear-trackers) covers the coverage gaps you'll also run into over oceans and remote regions.",
+          "Pair the sky picture with the ground picture. The [airport webcams](/airport-webcams) in the camera network show actual conditions at major fields — the ramp, the runways, the weather arriving — and the weather layer shows the system causing it. If you're driving to the airport instead, the same network's [traffic cameras](/live-traffic-cameras) and road views are the Wednesday-afternoon sanity check. Thanksgiving is the one week of the year when the whole journey — road, terminal, sky — is worth watching live, because every leg of it is running at capacity.",
+        ],
+      },
+      {
+        heading: "A playbook for the worst days",
+        body: [
+          "If you must fly on Wednesday the 25th or Sunday the 29th, behave like a tracker, not a passenger. Take the earliest flight of the day you can — the first departures use aircraft that overnighted at your airport, so they're insulated from inbound cascades. Keep your connection times honest: a 40-minute hub connection that works in October is a coin flip in Thanksgiving week. And keep your phone's tracking open during the day; the moment you see your inbound aircraft divert or enter a long hold, you can rebook from the app while everyone else is still reading the departure board.",
+          "If you're the ground crew for a traveller, your job is timing. Don't leave for the airport when their flight is 'scheduled' to land — leave when their aircraft is genuinely descending, which the tracker shows you directly. Build the Sunday-night buffer: gates are scarce, taxi lines are long, and the cell-phone lot is your friend. The data doesn't make the crowds smaller. It makes them legible — and legible crowds are the difference between a stressful Sunday and a ruined one.",
+        ],
+      },
+      {
+        heading: "The other battlefield: Wednesday's roads",
+        body: [
+          "Half of Thanksgiving travel never leaves the ground, and its peak is as reliable as the Sunday flight surge: Wednesday afternoon, when every metro area's outbound roads load at once and stay loaded into the evening. If your trip is a drive, the same live-data discipline applies on the asphalt. WorldEye's Pro tier carries a live traffic layer over the map, and the free camera network's [traffic cameras](/live-traffic-cameras) show the actual state of the passes and interstates you're about to join — not a predicted colour on a route planner, but the real brake lights, or the real empty road.",
+          "The strategic play mirrors the flyers' one: leave before the peak or after it, not into it. A Wednesday departure at midday or after dinner beats the 3-to-7 p.m. crush in most metros, and Thanksgiving morning itself is famously empty on the roads — the same lull the airports enjoy. Check the cameras on your corridor before you commit to it; on the one afternoon a year when everyone drives at once, a five-minute look at the live road is worth more than any forecast.",
+        ],
+      },
+      {
+        heading: "What tracking can't fix",
+        body: [
+          "Honest limits, as always: a tracker shows you reality faster, but it doesn't change reality. It cannot create a spare aircraft, reopen a closed runway, or shorten a security line, and an 'estimated arrival' is a live estimate that will move as the day moves. Some flights also thin out or vanish over oceanic and remote stretches where receiver coverage is sparse — that is a data gap, not a disappearance, and our [flight tracking guide](/blog/live-flight-tracking-guide) explains how ADS-B coverage works if you want the full picture.",
+          "Used well, though, live tracking is the difference between being surprised by Thanksgiving week and surfing it. The busiest travel days of the year are also the most heavily instrumented: nearly every aircraft broadcasting, every hub visible, every delay readable in the sky an hour before it reaches a departure board. This year, watch the week happen. It's the best show the calendar offers anyone stuck in it.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the busiest travel day of Thanksgiving 2026?",
+        a: "Sunday, November 29, 2026 is expected to be the busiest air-travel day of the entire year — Cirium projects over 3 million scheduled seats on about 22,000 flights. Wednesday, November 25 is the heaviest day on the roads and one of the worst at airports.",
+      },
+      {
+        q: "How can I track a family member's Thanksgiving flight for free?",
+        a: "Open the flight on WorldEye's live map and use the follow view — it rides with the aircraft and shows live position, altitude, and speed with no account or signup. It's far more reliable than an arrivals board because it tracks the actual plane.",
+      },
+      {
+        q: "Why is my flight delayed when the weather here is fine?",
+        a: "Because delays cascade from the hubs. Your aircraft or crew may be coming from a city with weather, and by the time the disruption reaches you the local sky can be clear. Tracking the inbound aircraft shows you the delay forming an hour or more before the board admits it.",
+      },
+    ],
+  },
+  {
+    slug: "how-to-watch-rocket-launches-live",
+    title: "How to Watch Rocket Launches Live in the Busiest Launch Season Ever",
+    seoTitle: "How to Watch Rocket Launches Live | WorldEye Blog",
+    date: "2026-10-21",
+    excerpt:
+      "California is about to break its annual launch record, rockets are flying weekly from Florida, and Starship's next flight targets November 8 with a first-ever double catch. Here's how launch tracking works and how to follow it all live.",
+    seoDescription:
+      "Rocket launches are flying at a record pace in late 2026. How to follow countdowns, watch liftoffs, and track what launches put into orbit.",
+    tags: ["space", "launches"],
+    sections: [
+      {
+        heading: "A record-breaking month for launch",
+        body: [
+          "If it feels like there's a rocket launch every time you look up, the numbers agree with you. California's Vandenberg Space Force Base logged its 70th launch of 2026 on October 15 — a classified Space Force mission — one short of the state's entire 2025 total. A Falcon 9 scheduled for Tuesday, October 20 ties the annual record of 71, and another set for Friday, October 23 breaks it, with Space Force officials expecting 80 or more launches from the base before the year ends. Launch from American soil has quietly become a near-daily event.",
+          "Florida is keeping pace. In the early hours of Tuesday, October 20, SpaceX's Bandwagon-5 rideshare mission was scheduled to lift off from Launch Complex 40 at Cape Canaveral in a 6:30–7:30 a.m. EDT window, carrying dozens of small satellites to orbit in a single flight — the kind of multi-payload launch that would once have been front-page news and now barely makes the crawl. And overhead, the real spectacle is queuing up: Starship's Flight 15 is targeted for November 8, and for the first time SpaceX plans to attempt catching both the Super Heavy booster and the returning Ship with the tower's chopstick arms.",
+        ],
+      },
+      {
+        heading: "The Starship storyline, briefly",
+        body: [
+          "Starship's Flight 14, on September 28, was the program's coming-of-age: the first Starship to reach orbit and the first to deploy working Starlink satellites. Flight 15 raises the stakes from reaching orbit to coming home — both halves of the largest rocket ever flown, caught out of the air by the launch tower so they can be inspected, refuelled, and flown again. SpaceX has also confirmed the sequence beyond it: at least one more Starship flight from Starbase, Texas comes first, and then the vehicle's debut from the historic Launch Complex 39A in Florida is tentatively slated for December with Flight 16.",
+          "Hold the dates loosely. Starship's schedule has already moved from late-October targets to November, and 'no earlier than' is the honest grammar of every launch calendar ever published. What is not in doubt is the direction of travel: more rockets, from more pads, carrying more satellites — and a growing fraction of the night sky's moving lights trace back to a launch manifest you can read in advance. Our guide to [watching the ISS live](/blog/how-to-watch-the-iss-live) covers the most famous of those lights; launches are how the rest of them got there.",
+        ],
+      },
+      {
+        heading: "How to follow a launch on WorldEye",
+        body: [
+          "WorldEye's space layer is built for exactly this cadence. Launch cards track upcoming missions worldwide with live countdowns — data from Launch Library 2, the community-maintained manifest the whole industry watches — and following a launch card gives you the pad, the vehicle, and the mission in one place. After a flight, the ascent is available as a replay: a reconstruction built from the mission profile, clearly bannered as a reconstruction rather than live telemetry, because pretending otherwise would be exactly the kind of fiction this site exists to avoid. The [satellite tracker](/satellite-tracker) is where launches leave their permanent mark: the objects they deploy join the public catalogues and become trackable dots on the same globe.",
+          "The full ritual for launch day looks like this. Days out, find the mission on the [live map](/) and note the window — a window, not a moment; most launches can go at any point inside it. Hours out, check the countdown and the weather at the pad with the camera network and weather layer. At liftoff, watch the official broadcast for the flight itself. Then, in the days after, find the payload: newly deployed satellites — a fresh Starlink train is the crowd favourite — appear in the satellite layer, still strung out in their deployment line before they disperse to their working orbits. Our piece on [following flights live](/blog/follow-a-flight-live) covers the same follow-the-vehicle mechanics for the sky's other traffic.",
+        ],
+      },
+      {
+        heading: "Seeing one with your own eyes",
+        body: [
+          "If you live within a few hundred miles of a coast with a launch site, you may not need a screen at all. Dawn and dusk launches are the famous ones: a rocket climbing out of Earth's shadow into sunlight can bloom into the 'space jellyfish' — an expanding, glowing plume of exhaust lit by a sun that has already set (or not yet risen) for the people watching from the ground. Predawn flights from Cape Canaveral have been seen across the Southeast and far up the coast under clear skies, and Vandenberg's evening launches put on the same show over the Pacific coast.",
+          "The practical rules are the skywatcher's usual ones: clear sky matters more than distance, a dark eastern or coastal horizon beats a bright city one, and the rocket appears later and lower than you expect — give it a full minute after the scheduled time before you conclude you missed it. Then check the [space station tracker](/space-station-tracker) while you're out there; on a clear night after a launch, the sky is rarely done performing.",
+        ],
+      },
+      {
+        heading: "The after-show: spotting the satellite train",
+        body: [
+          "A launch's most-photographed moment often comes days later and a thousand kilometres from the pad. Newly deployed satellites — above all a fresh batch of Starlinks, which Bandwagon-style rideshares and Starship's Flight 14 have made routine — begin their orbital lives strung out in a line, evenly spaced, crossing the sky like a slow string of pearls. For a few evenings they are bright enough to stop conversations, and they generate a reliable wave of 'what did I just see?' reports every single time.",
+          "Now you know what you're looking at, and you can prove it: find the launch in the [satellite tracker](/satellite-tracker), and the train's members are there in the catalogue, still in formation before they raise their orbits and disperse. It is the most satisfying verification in all of skywatching — the strange lights, identified by name, altitude, and mission, on the same globe where you watched their rocket leave.",
+        ],
+      },
+      {
+        heading: "The honest fine print",
+        body: [
+          "Launches slip. Weather, range conflicts, a balky valve, a boat in the hazard area — the manifest you read on Monday is a plan, not a promise, and Starship's move from October targets to November 8 is the current exhibit. Treat every date in this post the way the industry does: 'no earlier than,' subject to change, sometimes with an hour's notice. WorldEye's countdowns follow the same public manifest data, so they move when the manifest moves — that's a feature, but it means a countdown reaching zero is a hope, not a guarantee.",
+          "And to be precise about what the site does: WorldEye does not stream launches, and its ascent replays are labelled reconstructions, not telemetry. For the liftoff itself, the operator's official broadcast is the source. What the globe gives you is everything around the ninety seconds of fire — the countdown, the context, the pad, the payload's new orbit, and the growing constellation of objects that record launch cadence is putting over your head. In the busiest launch season in history, that context is the story.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the next Starship launch?",
+        a: "Starship Flight 15 is targeted for November 8, 2026, from Starbase, Texas, and is planned as the first attempt to catch both the Super Heavy booster and the Ship with the launch tower. Like all launch dates, it is 'no earlier than' and has already slipped once — check the live countdown before making plans around it.",
+      },
+      {
+        q: "How often do rockets launch now?",
+        a: "Often enough that records are falling in 2026: Vandenberg Space Force Base in California passed its 70th launch of the year on October 15 and was set to break the state's annual record of 71 during the week of October 20, with 80 or more expected by year's end. Florida's Cape Canaveral flies at a comparable pace.",
+      },
+      {
+        q: "Can I track a rocket after it launches?",
+        a: "The launch itself belongs to the operator's broadcast, but its payload is trackable: satellites deployed by a mission join the public catalogues and appear on WorldEye's satellite layer, and the flight's ascent is available as a clearly-labelled reconstructed replay from the launch card.",
+      },
+    ],
+  },
+  {
+    slug: "kilauea-eruption-watch-live",
+    title: "Kīlauea Erupts in Episodes: How to Watch for the Next One Live",
+    seoTitle: "Kīlauea Eruption Watch 2026 | WorldEye Blog",
+    date: "2026-10-20",
+    excerpt:
+      "Kīlauea's summit eruption has settled into a rhythm of lava-fountain episodes — the 55th threw lava 700 feet into the air on October 17, and the next is forecast for late October. Here's how the episodes work and how to watch the volcano's signals live.",
+    seoDescription:
+      "Kīlauea's episodic eruption produced 700-foot lava fountains on Oct 17, 2026, with the next episode forecast for Oct 27–Nov 6. How to follow it live.",
+    tags: ["earthquakes", "volcanoes"],
+    sections: [
+      {
+        heading: "An eruption with a rhythm",
+        body: [
+          "Since December 23, 2024, Kīlauea — one of the most active volcanoes on Earth — has been erupting from two vents inside Halemaʻumaʻu crater at its summit, within Hawaiʻi Volcanoes National Park. But this is not a continuous eruption. It runs in episodes: a few hours of spectacular lava fountaining, then an abrupt stop, then weeks of quiet while the summit slowly reinflates like a balloon. Most episodes have lasted less than 12 hours, separated by pauses of two weeks or more. Watching Kīlauea in 2026 means watching a countdown you can almost — almost — set a calendar by.",
+          "Episode 55 broke the pattern's calm. After a pause of nearly eight weeks — the previous episode ended on August 25 — and a record 39 days of intermittent lava overflows from the vents, fountaining began at 3:19 a.m. Hawaiʻi time on October 17. By 5:00 a.m. the north vent's fountain stood just over 700 feet (about 220 metres) high, feeding a broad sheet of lava across the crater floor. Then, at 9:03 a.m., it simply stopped — under six hours after it began. All of the lava stayed inside the crater, no homes were ever at risk, and the U.S. Geological Survey lowered the volcano alert level back to Advisory, aviation colour code Yellow, that same morning.",
+        ],
+      },
+      {
+        heading: "Why scientists lost their forecast — and got a rougher one back",
+        body: [
+          "For most of this eruption, the USGS Hawaiian Volcano Observatory could predict episodes within a few days, because the summit's tiltmeters told a clean story: steady inflation as magma repressurised, then a fountain, then deflation and repeat. On September 30, that story broke. A shallow intrusion of magma carved a new pathway beneath the crater and split the pressure signal the forecasts depended on; by early October the observatory stated plainly, in an official aviation notice, that forecast windows could no longer be modeled the way they had been for nearly two years.",
+          "Episode 55 was the result — essentially unforecast, after the longest and strangest run-up of the eruption. Since then, the summit has begun reinflating in the more familiar pattern, and the observatory's preliminary window for episode 56 runs from October 27 to November 6, offered with explicit uncertainty. Read that the way scientists mean it: the volcano is loading again, the timing estimate is a range of days rather than a date, and episode 55 proved this system can still improvise. Our explainer on [how earthquake tracking works](/blog/earthquake-tracking-explained) covers the seismic side of this kind of monitoring — and at Kīlauea, the earthquakes are half the story.",
+        ],
+      },
+      {
+        heading: "The signals to watch before the fountains start",
+        body: [
+          "You cannot see underground magma, but you can watch its fingerprints. The build-up to an episode writes itself across three public data streams: summit inflation on tiltmeters, swarms of small earthquakes as rock cracks and magma moves, and — in the final hours — glow and intermittent overflows at the vents. Of these, the earthquake swarm is the one any watcher can follow in real time: Kīlauea's restless periods light up the seismic record with clusters of small quakes under the summit, and they intensify as episodes approach.",
+          "The observatory also publishes daily updates and instrument readings for anyone who wants the primary sources — tilt graphs, gas emissions, thermal images — and during unrest those updates, not social media, are the rhythm to follow. HVO's messaging during the run-up to episode 55 was a model of scientific honesty: when the instrument pattern broke, they said the forecast was gone, in writing, rather than dressing up a guess. When the same scientists offer a preliminary window for episode 56, that candour is exactly why the window is worth taking seriously.",
+          "That is where WorldEye's [earthquake tracker](/earthquake-tracker) earns its place in a volcano watcher's kit. The same live globe that carries the cameras carries the quake feed: zoom to Hawaiʻi Island and the summit's seismic restlessness is right there, updating alongside everything else, next to the island's [camera views](/cameras/countries/united-states) and the [weather layer](/weather-tracker) — which matters more than it sounds, because wind direction decides where the eruption's gas and volcanic glass drift when fountaining starts. None of this replaces the observatory's instruments. It puts the public signals in one place, on one map, where patterns are easy to see forming.",
+        ],
+      },
+      {
+        heading: "Watching the eruption itself",
+        body: [
+          "When an episode fires, the definitive live view is the USGS's own: the observatory runs three summit livestream cameras aimed into Halemaʻumaʻu, and during episode 55 they carried the fountains from first glow to the abrupt end. That is the crater feed, run by the scientists, and any honest guide should point you there first for the eruption itself. WorldEye's role is the context around it — the seismicity building underneath, conditions across the island, and the rest of the living planet on the same globe, so a 3 a.m. fountain in Hawaiʻi shares a screen with the flights, weather, and cameras of everywhere else.",
+          "One scheduling truth shapes every watch: episodes are short and Hawaiʻi is far from most time zones. A sub-six-hour fountain that starts at 3:19 a.m. local time is a pre-dawn event for the U.S. mainland and a midday one for Europe — check the conversion before you decide to wait up. The pauses are part of the viewing too: between episodes, the crater floor stays hot, the vents glow and spatter, and the livestreams show a volcano visibly holding its breath. Episode 55's overflows smouldered for weeks before they became a fountain. Patience is not a compromise with this volcano; it is most of the show.",
+        ],
+      },
+      {
+        heading: "Safety and respect: the non-negotiables",
+        body: [
+          "Everything in this eruption has stayed inside Halemaʻumaʻu crater, inside a closed area of the national park, and that containment is why the public can watch it as spectacle rather than emergency. Keep it that way by keeping your distance: crater rims are unstable, the closed area is closed for reasons written in past accidents, and the hazards are not only lava. Eruptions loft Pele's hair — hair-thin strands of volcanic glass that drift for miles and irritate skin, eyes, and lungs; during episode 55, traces were considered possible in Pāhala and other Kaʻū communities southwest of the summit, downwind of the northeasterly winds. Volcanic gas does the same journey in larger quantity.",
+          "The hierarchy of information is simple and worth stating in a post that encourages watching: the USGS Hawaiian Volcano Observatory and Hawaiʻi County Civil Defense are the authorities, their alert levels govern, and a camera feed — anyone's — is a picture, not a safety assessment. If you are on the island, follow the park's guidance and the official notices. If you are watching from a couch on another continent, enjoy one of the great free shows in science: a volcano that erupts in episodes, telegraphs its intentions in earthquakes, and is being watched — by tiltmeters, by livestreams, and now by you — more closely than any volcano in history.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is Kīlauea erupting right now?",
+        a: "As of October 20, 2026, the summit eruption is paused between episodes. Episode 55 fountained on October 17; the USGS preliminary window for episode 56 is October 27 to November 6, with real uncertainty attached. The volcano alert level is Advisory (aviation code Yellow).",
+      },
+      {
+        q: "How can I watch the next Kīlauea episode live?",
+        a: "The USGS Hawaiian Volcano Observatory runs three summit livestream cameras pointed into Halemaʻumaʻu crater — that is the eruption feed. Use WorldEye's earthquake tracker to follow the summit quake swarms that build before episodes, and the island's cameras and weather layer for conditions around the park.",
+      },
+      {
+        q: "Is the eruption dangerous to nearby towns?",
+        a: "So far, no: all lava has remained inside Halemaʻumaʻu crater within the national park, and no homes are at risk from the flows. The real downwind hazards are volcanic gas and Pele's hair — fine glass strands that can irritate skin, eyes, and lungs in communities southwest of the summit.",
+      },
+    ],
+  },
+  {
     slug: "watch-the-orionid-meteor-shower-live",
     title: "Watch the Orionid Meteor Shower Live: Peak Nights, Times and Dark-Sky Cameras",
     seoTitle: "Orionids 2026: Watch the Meteor Shower Live",

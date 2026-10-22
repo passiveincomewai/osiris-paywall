@@ -102,6 +102,10 @@ const FAQS = [
     q: "Can I track military or private jets?",
     a: "If an aircraft is broadcasting ADS-B and is within receiver coverage, it appears on the map — including many private jets. Some military and sensitive flights don't broadcast or are filtered at the source, so they won't show up. What you see is whatever the public data feeds carry.",
   },
+  {
+    q: "Why did a plane disappear mid-flight?",
+    a: "Usually it left receiver coverage — over an ocean, a desert or a polar region, gaps between ground receivers are real, and an aircraft can drop off the public picture until it flies back into range. It can also mean the aircraft landed, its transponder stopped reporting, or the feed filtered it. A gap on the map is a gap in public data, not an event in the sky.",
+  },
 ];
 
 function Faq({ q, a }: { q: string; a: string }) {
@@ -217,6 +221,43 @@ export default function LiveFlightTrackerPage() {
           </div>
         </div>
 
+        {/* How to use */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            How to use the flight tracker
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              <strong className="text-white/90">1. Open the map.</strong> The
+              flight layer is part of the free globe — aircraft are drawn as
+              soon as the map loads, denser over busy airspace, thinner over
+              oceans. Zoom toward any region and individual flights resolve
+              out of the flow.
+            </p>
+            <p>
+              <strong className="text-white/90">2. Click an aircraft.</strong>{" "}
+              Selecting a plane shows what the public feed carries for it:
+              flight number or callsign, aircraft type, altitude, ground
+              speed, heading, and its origin and destination where the feed
+              provides them — with the flown path drawn across the map.
+            </p>
+            <p>
+              <strong className="text-white/90">3. Search instead of hunting.</strong>{" "}
+              Basic search is free: type a place or an airport and fly
+              straight to its airspace to see what is arriving, departing and
+              holding overhead. Pro adds advanced search filters for digging
+              through the full data set.
+            </p>
+            <p>
+              <strong className="text-white/90">4. Put the flight in context.</strong>{" "}
+              This is where a globe beats a list: the same screen carries the
+              weather systems the flight is crossing, the live cameras at its
+              destination, and the satellites passing above it. One view, no
+              tab-switching.
+            </p>
+          </div>
+        </div>
+
         {/* What you can see */}
         <div className="mt-20 md:mt-28">
           <h2 className="text-2xl md:text-3xl font-bold text-center">
@@ -255,6 +296,41 @@ export default function LiveFlightTrackerPage() {
           </div>
         </div>
 
+        {/* Reading a flight + limitations */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Reading a flight like a controller
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              <strong className="text-white/90">Altitude</strong> is reported
+              in feet above sea level; airliners cruise roughly between
+              30,000 and 42,000 feet. A steady altitude with a falling ground
+              speed usually means descent has begun.{" "}
+              <strong className="text-white/90">Ground speed</strong> is
+              speed over the ground, not through the air — a strong jet stream
+              can push an eastbound airliner past 1,000 km/h over the ground
+              while its airspeed stays ordinary.{" "}
+              <strong className="text-white/90">Heading</strong> is where the
+              nose points; the drawn path is where it has actually been, and
+              in crosswinds the two differ slightly.
+            </p>
+            <p>
+              Patterns tell stories: a neat racetrack shape is a holding
+              pattern (weather or congestion at the destination), a sudden
+              descent to a nearby airport is a diversion, and a long straight
+              line at an odd hour is usually a cargo flight — the night sky
+              belongs to freight. And the honest limits: coverage follows
+              receiver density, some flights are filtered or delayed at the
+              source, and positions over remote oceans can be minutes apart.
+              The tracker shows the public picture of the sky, which is
+              remarkably complete — but it is not a navigation or safety
+              tool, and pilots and controllers work from regulated feeds, not
+              this map.
+            </p>
+          </div>
+        </div>
+
         {/* FAQ */}
         <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
@@ -264,6 +340,35 @@ export default function LiveFlightTrackerPage() {
             {FAQS.map((f) => (
               <Faq key={f.q} q={f.q} a={f.a} />
             ))}
+          </div>
+        </div>
+
+        {/* Questions the map answers */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Questions the map answers in seconds
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              <strong className="text-white/90">“What is that plane overhead?”</strong>{" "}
+              Point the globe at your neighborhood, tap the aircraft passing
+              above you, and read its flight number, type and route — the
+              five-second version of planespotting, from your couch.
+            </p>
+            <p>
+              <strong className="text-white/90">“Is the flight I&apos;m meeting on time?”</strong>{" "}
+              Find it by route, look at where it actually is and whether it is
+              holding or descending. The map shows the aircraft&apos;s live
+              position — for gate times and official status, the airline&apos;s
+              own updates remain the source of truth.
+            </p>
+            <p>
+              <strong className="text-white/90">“What does the sky over a big event look like?”</strong>{" "}
+              Fly to any city on a headline day and watch the traffic react in
+              real time: diversions around storms, holds stacking up over a
+              hub, the cargo fleet rolling out at night. News tells you what
+              happened; the tracker lets you watch it happen.
+            </p>
           </div>
         </div>
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
   ArrowLeft, Loader2, Check, User, Lock, CreditCard, LogOut, Crown, BellRing, Users,
+  MailCheck, MailWarning, MailPlus,
 } from "lucide-react";
 
 type Profile = {
@@ -50,6 +51,19 @@ export default function SettingsClient() {
   const [pwSaving, setPwSaving] = useState(false);
   const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  // Email verification resend (current address).
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [resendMsg, setResendMsg] = useState<string | null>(null);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  // Email change: pending target + the request form + landing notice.
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [pendingMsg, setPendingMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [pendingBusy, setPendingBusy] = useState<"resend" | "cancel" | null>(null);
+  const [changeOpen, setChangeOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [changeBusy, setChangeBusy] = useState(false);
+  const [changeMsg, setChangeMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -63,8 +77,28 @@ export default function SettingsClient() {
       } else setErr("Couldn't load your profile.");
       const s = await fetch("/api/user/subscription", { cache: "no-store" });
       if (s.ok) setSub((await s.json()).subscription);
+      const ce = await fetch("/api/auth/change-email", { cache: "no-store" });
+      if (ce.ok) setPendingEmail((await ce.json()).pendingEmail ?? null);
     })();
   }, []);
+
+  // Landing from the change-email confirmation link: /settings?emailChange=…
+  useEffect(() => {
+    const flag = new URLSearchParams(window.location.search).get("emailChange");
+    if (!flag) return;
+    if (flag === "done") setNotice({ ok: true, text: "Your account email has been updated." });
+    else if (flag === "expired") setNotice({ ok: false, text: "That confirmation link expired — request a new change below." });
+    else if (flag === "taken") setNotice({ ok: false, text: "That email is now used by another account, so the change couldn't be completed." });
+    else setNotice({ ok: false, text: "That confirmation link isn't valid — request a new change below." });
+  }, []);
+
+  // Resend cooldown ticker (the endpoint is the real rate limiter; this
+  // just keeps the button from being hammered).
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
 
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -113,6 +147,89 @@ export default function SettingsClient() {
     }
   }
 
+  async function resendVerificationEmail() {
+    if (!profile?.email || resendState === "sending" || resendCooldown > 0) return;
+    setResendState("sending");
+    setResendMsg(null);
+    try {
+      // Same endpoint the sign-in / sign-up forms use. It answers
+      // { ok: true } on success (429 with its own message when the
+      // per-IP limit trips) — errors are surfaced as returned.
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: profile.email }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Couldn't send the verification email.");
+      setResendState("sent");
+      setResendMsg("Verification email sent — check your inbox for the link.");
+      setResendCooldown(60);
+    } catch (e) {
+      setResendState("error");
+      setResendMsg(e instanceof Error ? e.message : "Couldn't send the verification email.");
+      setResendCooldown(60);
+    }
+  }
+
+  async function requestEmailChange(target: string) {
+    const res = await fetch("/api/auth/change-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newEmail: target }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Couldn't start the email change.");
+    return data.pendingEmail as string;
+  }
+
+  async function submitEmailChange() {
+    const target = newEmail.trim();
+    if (!target || changeBusy) return;
+    setChangeBusy(true);
+    setChangeMsg(null);
+    try {
+      const pending = await requestEmailChange(target);
+      setPendingEmail(pending);
+      setPendingMsg({ ok: true, text: "Confirmation email sent — the change lands when you click the link in that inbox." });
+      setChangeOpen(false);
+      setNewEmail("");
+    } catch (e) {
+      setChangeMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't start the email change." });
+    } finally {
+      setChangeBusy(false);
+    }
+  }
+
+  async function resendPendingChange() {
+    if (!pendingEmail || pendingBusy) return;
+    setPendingBusy("resend");
+    setPendingMsg(null);
+    try {
+      await requestEmailChange(pendingEmail);
+      setPendingMsg({ ok: true, text: "Confirmation email re-sent." });
+    } catch (e) {
+      setPendingMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't re-send the confirmation." });
+    } finally {
+      setPendingBusy(null);
+    }
+  }
+
+  async function cancelPendingChange() {
+    if (pendingBusy) return;
+    setPendingBusy("cancel");
+    try {
+      const res = await fetch("/api/auth/change-email", { method: "DELETE" });
+      if (!res.ok) throw new Error("Couldn't cancel the pending change.");
+      setPendingEmail(null);
+      setPendingMsg(null);
+    } catch (e) {
+      setPendingMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't cancel the pending change." });
+    } finally {
+      setPendingBusy(null);
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-10 md:py-14">
       <Link href="/" className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition mb-6">
@@ -121,6 +238,7 @@ export default function SettingsClient() {
       <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">Account settings</h1>
 
       {err && <p className="mb-4 text-sm text-red-400">{err}</p>}
+      {notice && <p className={`mb-4 text-sm ${notice.ok ? "text-green-400" : "text-red-400"}`}>{notice.text}</p>}
 
       {!profile ? (
         <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-[#00E5FF]" /></div>
@@ -139,9 +257,101 @@ export default function SettingsClient() {
               <div>
                 <label className={labelCls}>EMAIL</label>
                 <input value={profile.email ?? ""} disabled className={`${inputCls} opacity-50 cursor-not-allowed`} />
-                <p className="text-xs text-white/35 mt-1.5">
-                  {profile.emailVerified ? "Verified." : "Not verified — check your inbox for the verification link."} Email changes aren't supported yet — contact support if you need one.
-                </p>
+                <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+                  {profile.emailVerified ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-green-400/30 bg-green-400/10 text-green-300 text-[11px] font-bold tracking-wider">
+                      <MailCheck className="w-3.5 h-3.5" /> EMAIL VERIFIED
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-400/30 bg-amber-400/10 text-amber-300 text-[11px] font-bold tracking-wider">
+                      <MailWarning className="w-3.5 h-3.5" /> EMAIL NOT VERIFIED
+                    </span>
+                  )}
+                  {!profile.emailVerified && (
+                    <button
+                      type="button"
+                      onClick={resendVerificationEmail}
+                      disabled={resendState === "sending" || resendCooldown > 0}
+                      className="text-xs font-semibold text-[#D4AF37] hover:brightness-110 transition disabled:opacity-60"
+                    >
+                      {resendState === "sending" ? "Sending…" : resendCooldown > 0 ? `Resend again in ${resendCooldown}s` : "Resend verification email"}
+                    </button>
+                  )}
+                </div>
+                {!profile.emailVerified && (
+                  resendMsg ? (
+                    <p className={`text-xs mt-1.5 ${resendState === "error" ? "text-red-400" : "text-green-400"}`}>{resendMsg}</p>
+                  ) : (
+                    <p className="text-xs text-white/35 mt-1.5">We emailed a verification link when you signed up — links expire 24 hours after they're sent.</p>
+                  )
+                )}
+
+                {pendingEmail ? (
+                  <div className="mt-4 rounded-xl border border-[#00E5FF]/25 bg-[#00E5FF]/5 px-4 py-3">
+                    <p className="text-sm text-white/80">
+                      Confirmation sent to <span className="font-semibold text-white">{pendingEmail}</span> — your email stays{" "}
+                      <span className="font-semibold text-white">{profile.email}</span> until you confirm the link in that inbox.
+                    </p>
+                    <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
+                      <button
+                        type="button"
+                        onClick={resendPendingChange}
+                        disabled={pendingBusy !== null}
+                        className="text-xs font-semibold text-[#D4AF37] hover:brightness-110 transition disabled:opacity-60"
+                      >
+                        {pendingBusy === "resend" ? "Sending…" : "Resend confirmation"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={cancelPendingChange}
+                        disabled={pendingBusy !== null}
+                        className="text-xs font-semibold text-white/60 hover:text-white transition disabled:opacity-60"
+                      >
+                        {pendingBusy === "cancel" ? "Cancelling…" : "Cancel change"}
+                      </button>
+                    </div>
+                    {pendingMsg && <p className={`text-xs mt-2 ${pendingMsg.ok ? "text-green-400" : "text-red-400"}`}>{pendingMsg.text}</p>}
+                  </div>
+                ) : changeOpen ? (
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <label className={labelCls}>NEW EMAIL</label>
+                      <input
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        className={inputCls}
+                        autoComplete="email"
+                        placeholder="you@example.com"
+                      />
+                    </div>
+                    <p className="text-xs text-white/35">
+                      We'll email a confirmation link to the new address. Your current email keeps working for sign-in until you confirm.
+                    </p>
+                    {changeMsg && <p className={`text-sm ${changeMsg.ok ? "text-green-400" : "text-red-400"}`}>{changeMsg.text}</p>}
+                    <div className="flex flex-wrap gap-2">
+                      <button type="button" onClick={submitEmailChange} disabled={changeBusy} className={btnGold}>
+                        {changeBusy ? "Sending…" : "Send confirmation"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setChangeOpen(false); setChangeMsg(null); }}
+                        disabled={changeBusy}
+                        className="px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition disabled:opacity-60"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setChangeOpen(true)}
+                    className="mt-3.5 inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition"
+                  >
+                    <MailPlus className="w-4 h-4 text-[#D4AF37]" /> Change email
+                  </button>
+                )}
               </div>
               <button type="submit" disabled={saving} className={btnGold}>
                 {saving ? "Saving…" : saved ? "Saved ✓" : "Save changes"}

@@ -34,6 +34,20 @@ const ENTRIES: {
   items: string[];
 }[] = [
   {
+    month: "Late October 2026",
+    icon: "sparkles",
+    items: [
+      "VIP Pro: the annual plan became a true top tier — everything in Pro plus 40-camera recording, a recording dashboard, camera alerts, and exclusive timelapse and OSINT intel layers.",
+      "Camera alerts (VIP Pro): watch up to 10 cameras with plain-language conditions like snow on the road. An AI check reads a still image about every 15 minutes and sends you the photo when something changes.",
+      "Recording grew up: Pro records up to 20 cameras at once and VIP Pro up to 40, with a dashboard that keeps your sessions and recording library in one place.",
+      "Team Access: create a team, invite members by email, and share Pro or VIP Pro access through seats — including ownership transfer when a team changes hands.",
+      "Manage Subscription moved in-house: upgrade, downgrade or open the billing portal from your WorldEye settings instead of hunting through email links.",
+      "Day map fixed: the daytime basemap now runs on keyless street tiles after the previous tile source started requiring a key — day mode works the way it always should have.",
+      "Comparison and alternatives pages expanded with deeper researched content — what each tool actually is, honest side-by-side comparisons, switching guides and real FAQs.",
+      "Free camera opens set to 5 per device (down from 15) — enough to properly explore any view; Pro removes the limit entirely.",
+    ],
+  },
+  {
     month: "October 2026",
     icon: "sparkles",
     items: [
@@ -95,6 +109,39 @@ export default function ChangelogPage() {
           improvements as they ship.
         </p>
 
+        {/* How WorldEye ships */}
+        <div className="mt-10 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            WorldEye is built by a small independent team and developed in the
+            open, in short cycles: a change is built, checked, deployed, and
+            then verified against the live site before it is called done. That
+            is why this log reads the way it does — entries are grouped by
+            month and written when something actually reaches the site, not
+            when it is merely planned. If it is listed here, it shipped.
+          </p>
+          <p>
+            Most updates fall into a few families. <strong className="text-white/85">The map itself</strong> —
+            new layers, new data sources, fixes to feeds and rendering.{" "}
+            <strong className="text-white/85">The camera network</strong> — the directory of public
+            cameras is playback-verified and re-counted as feeds are added and
+            dead ones are dropped, which is why the served count you see on
+            the site (74,229 today) is the number the globe actually delivers.{" "}
+            <strong className="text-white/85">Accounts and Pro</strong> — sign-in, subscriptions,
+            trials, teams and the affiliate program. And <strong className="text-white/85">the site
+            around the map</strong> — guides, comparisons and explainers like this page.
+          </p>
+          <p>
+            Two conventions worth knowing. First, the free map is the product:
+            entries that add Pro features sit on top of a free tier that keeps
+            the globe, cameras, flights, satellites, weather, earthquakes and
+            transit free with no signup — that split is deliberate and it is
+            not changing. Second, honesty labels travel with the features: when
+            a layer is a model or a reconstruction rather than a measurement,
+            the map says so on the layer itself, and entries here describe
+            features the same way.
+          </p>
+        </div>
+
         {/* Timeline */}
         <div className="mt-12 relative">
           <div
@@ -134,6 +181,66 @@ export default function ChangelogPage() {
                 </ul>
               </section>
             ))}
+          </div>
+        </div>
+
+        {/* Reading the log + feedback */}
+        <div className="mt-16 space-y-4 text-white/60 leading-relaxed">
+          <h2 className="text-xl md:text-2xl font-bold text-white">How to read this log</h2>
+          <p>
+            Newest first, grouped by month. An entry names the change in one
+            line — what it is and, where it matters, who it is for (everyone,
+            Pro, or VIP Pro). Small fixes ride along inside larger entries
+            rather than getting lines of their own, and purely internal work —
+            refactors, test coverage, infrastructure — appears only when it
+            changes something you can see or feel, like the day-map fix above.
+          </p>
+          <p>
+            Spotted a regression, or a layer that stopped matching what this
+            log says it does? That is exactly what the{" "}
+            <Link href="/contact" className="text-[#D4AF37] hover:underline">contact page</Link>{" "}
+            is for — tell us which layer, your browser, and roughly when it
+            started. Feature ideas are welcome at the same address; the
+            honest caveat is that a small team ships what it can verify, so
+            suggestions are read and weighed, not promised.
+          </p>
+        </div>
+
+        {/* Changelog FAQ */}
+        <div className="mt-16">
+          <h2 className="text-xl md:text-2xl font-bold text-white mb-6">Changelog questions</h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold text-white/90">Why does the camera count change between visits?</h3>
+              <p className="text-white/55 leading-relaxed mt-2 text-sm md:text-base">
+                Because the directory is alive. New public feeds are verified
+                and added; feeds that stop playing are dropped rather than
+                left in the count. The number shown on the site is always the
+                count the globe actually serves at that moment — today that is
+                74,229 cameras across 105 countries — not a marketing figure
+                frozen at launch.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white/90">A feature was announced but is not in the log yet — where is it?</h3>
+              <p className="text-white/55 leading-relaxed mt-2 text-sm md:text-base">
+                Entries are written when a change is verified live, not when
+                it is announced or merged. Work in progress, experiments that
+                were rolled back, and features still being checked against the
+                production site do not appear here. If something was announced
+                and never arrived, the log staying silent is the honest state
+                of it.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white/90">Can I get these updates by email?</h3>
+              <p className="text-white/55 leading-relaxed mt-2 text-sm md:text-base">
+                The newsletter carries the bigger releases — new layers, new
+                tiers, major expansions — rather than every line of this log.
+                You can join it from the site footer; it is double opt-in and
+                every send includes an unsubscribe link.
+              </p>
+            </div>
           </div>
         </div>
 

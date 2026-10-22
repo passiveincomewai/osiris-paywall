@@ -81,6 +81,14 @@ const FAQS = [
     q: "Where does the data come from?",
     a: "Public seismic monitoring networks — the same open feeds researchers and newsrooms use. WorldEye aggregates and visualizes them on the globe; it doesn't operate its own seismometers.",
   },
+  {
+    q: "Can earthquakes be predicted?",
+    a: "No — not by WorldEye, and not by anyone. Despite decades of research, there is no reliable method for predicting the time, place and size of an earthquake in advance. What monitoring can do — and what this map does — is detect quakes within minutes of them happening and show the sequence as it unfolds.",
+  },
+  {
+    q: "Why did a quake's magnitude change after it appeared?",
+    a: "The first published estimate is fast, not final: monitoring networks locate a quake from the earliest station reports, then refine the magnitude, depth and location as more data arrives. A revision up or down in the first hours is the system working as designed, and the map reflects the updated figures.",
+  },
 ];
 
 const jsonLd = {
@@ -244,6 +252,45 @@ export default function EarthquakeTrackerPage() {
             </Link>{" "}
             for how to use the map when it matters.
           </p>
+        </div>
+
+        {/* How to use + when it matters */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Using the tracker — <span className="text-[#D4AF37]">and when a big one appears</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Day to day, using it is simple: open the map, and the most
+              recent events are already plotted, sized by magnitude. Click
+              any marker for its depth, location and time; zoom out to see
+              which fault systems are active this week, or zoom in to see how
+              a sequence clusters along a single fault. Leave it open and it
+              keeps refreshing — an aftershock sequence plays out in front of
+              you instead of arriving as a list of headlines.
+            </p>
+            <p>
+              When a major quake appears, read it in this order:{" "}
+              <strong className="text-white/85">magnitude</strong> (how much
+              energy), <strong className="text-white/85">depth</strong> (how
+              close that energy is to the surface), and{" "}
+              <strong className="text-white/85">what is nearby</strong> — an
+              offshore magnitude 7 under empty ocean and a shallow magnitude
+              6 under a city are entirely different events. Then zoom in:
+              the same globe carries live cameras near the epicenter, so you
+              can often see conditions on the ground within minutes.
+            </p>
+            <p>
+              Two cautions belong with that power. First, early figures get
+              revised — magnitude, depth and even location are refined as
+              more stations report, so quote early numbers as preliminary.
+              Second, for anything that affects safety, official sources
+              outrank this map: tsunami warnings, evacuation orders and
+              local guidance come from geological agencies and emergency
+              services, and WorldEye is a window onto their data, never a
+              replacement for it.
+            </p>
+          </div>
         </div>
 
         {/* Use cases */}

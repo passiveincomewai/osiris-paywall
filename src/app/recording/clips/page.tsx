@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { idbGetClip, idbDeleteClip } from "@/lib/recording/idb";
+import ShareClipDialog from "@/components/recording/ShareClipDialog";
+import SharedClipsSection from "@/components/recording/SharedClipsSection";
 
 type Clip = {
   id: string;
@@ -25,6 +27,8 @@ export default function ClipsPage() {
   const [playing, setPlaying] = useState<string | null>(null);
   const [playUrl, setPlayUrl] = useState<string | null>(null);
   const [missing, setMissing] = useState<Set<string>>(new Set());
+  const [shareClip, setShareClip] = useState<Clip | null>(null);
+  const [sharesVersion, setSharesVersion] = useState(0);
 
   const load = async () => {
     const r = await fetch("/api/recording/clips");
@@ -78,6 +82,16 @@ export default function ClipsPage() {
         <p className="text-sm text-slate-400 mt-1">{clips.length} clips · stored on this device</p>
       </div>
 
+      <SharedClipsSection version={sharesVersion} />
+
+      {shareClip && (
+        <ShareClipDialog
+          clip={shareClip}
+          onClose={() => setShareClip(null)}
+          onShared={() => setSharesVersion((v) => v + 1)}
+        />
+      )}
+
       {playing && playUrl && (
         <div className="rounded-2xl border border-white/10 bg-black/60 overflow-hidden">
           <video src={playUrl} controls autoPlay className="w-full max-h-[60vh] bg-black" />
@@ -125,6 +139,11 @@ export default function ClipsPage() {
                   <button onClick={() => download(c)} disabled={gone}
                     className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-200 hover:border-cyan-400/60 disabled:opacity-40">
                     ⤓ Download
+                  </button>
+                  <button onClick={() => setShareClip(c)} disabled={gone}
+                    title={gone ? "The video file isn't on this device" : "Share with a public WorldEye watch link"}
+                    className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-200 hover:border-cyan-400/60 disabled:opacity-40">
+                    ↗ Share
                   </button>
                   <button onClick={() => del(c)}
                     className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-400 hover:border-red-400/60 hover:text-red-300">

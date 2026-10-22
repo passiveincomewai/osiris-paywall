@@ -90,6 +90,10 @@ const FAQS = [
     q: "Is AIS data delayed or filtered?",
     a: "Public feeds can carry a small delay, and some providers withhold or anonymize certain vessel types at the request of authorities or operators. What reaches a public map is a real but curated view of global traffic.",
   },
+  {
+    q: "Why did a ship disappear from the map?",
+    a: "A few ordinary reasons cover most cases: it sailed beyond shore-receiver range and hasn't been picked up by a satellite pass yet, it docked and its reporting rate dropped, or its transponder was switched off or failed. Deliberate switch-offs happen too — which is why a gap is worth noticing, but is not by itself proof of anything.",
+  },
 ];
 
 const jsonLd = {
@@ -233,6 +237,64 @@ export default function WhatIsAisPage() {
               destination, estimated time of arrival and cargo information —
               entered by the crew, and only as accurate as the last person who
               typed it in.
+            </p>
+          </div>
+        </div>
+
+        {/* Class A / B + reporting rhythm */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Two classes, <span className="text-[#D4AF37]">one rhythm</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              <strong className="text-white/90">Class A</strong> is the
+              mandated, full-power system carried by the commercial fleet:
+              it reports on both AIS channels, includes the full voyage data,
+              and transmits often. <strong className="text-white/90">Class B</strong>{" "}
+              is the simpler, lower-power variant used voluntarily by smaller
+              vessels — fishing boats, workboats, larger pleasure craft. A
+              Class B boat appears on the same map, but reports less often
+              and can be crowded out in the busiest waters.
+            </p>
+            <p>
+              How often a vessel speaks depends on what it is doing. A Class A
+              ship underway reports its dynamic data every 2 to 10 seconds —
+              faster when it is moving fast or turning — while the same ship
+              at anchor slows to a report every 3 minutes, and its static and
+              voyage details repeat on a 6-minute cycle. That rhythm is why
+              busy ports look alive on the map while an anchored fleet sits
+              almost still: the data itself breathes with the traffic.
+            </p>
+            <p>
+              The same open feed powers far more than hobbyist maps. Port
+              authorities sequence arrivals with it, logistics teams track
+              cargo ETAs, insurers and researchers reconstruct incidents and
+              trade flows, and journalists and watchdogs use it to follow
+              sanctioned fleets and illegal fishing — the public window onto
+              shipping turned out to be an accountability tool as well.
+            </p>
+          </div>
+        </div>
+
+        {/* AIS vs ADS-B */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            AIS vs <span className="text-[#D4AF37]">ADS-B</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              The two systems are siblings. Both exist for collision
+              avoidance, both broadcast identity and GPS position openly and
+              unencrypted, and both became public tracking industries because
+              receiver networks could hear them. The differences are the
+              medium and the tempo: ADS-B rides aviation radio from aircraft
+              moving at hundreds of knots, updating by the second; AIS rides
+              maritime VHF from vessels moving at tens of knots, updating by
+              the seconds-to-minutes rhythm above. On WorldEye they sit on
+              the same globe — the sky picture on the free map, the maritime
+              picture inside Pro — two halves of one idea: vehicles telling
+              the world where they are.
             </p>
           </div>
         </div>
