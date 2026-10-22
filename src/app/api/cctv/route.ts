@@ -46,6 +46,7 @@ import { fetchNorthCarolinaCameras } from './northcarolina';
 import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
 import { fetchFaaCameras } from './faa';
+import { fetchVermontCameras } from './vermont';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
   fetchOccHarvestAfrica,
@@ -568,6 +569,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'arizona': fetchArizonaCameras,
   'texas': fetchTexasCameras,
   'faa': fetchFaaCameras,
+  'vermont': fetchVermontCameras,
   'eastasia': fetchEastAsiaCameras,
   'seasia': fetchSeAsiaCameras,
   'westasia': fetchWestAsiaCameras,
@@ -961,6 +963,7 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 30.3 && lat < 35.1 && lng > -85.7 && lng < -80.8) regions.push('georgia');
   if (lat > 33.8 && lat < 36.6 && lng > -84.4 && lng < -75.4) regions.push('northcarolina');
   if (lat > 31.3 && lat < 37.1 && lng > -115.0 && lng < -109.0) regions.push('arizona');
+  if (lat > 42.7 && lat < 45.1 && lng > -73.5 && lng < -71.4) regions.push('vermont');
   // Canada
   if (lat > 42 && lat < 70 && lng > -141 && lng < -52) regions.push('canada');
   // FAA WeatherCams — airports and mountain passes across the US and Canada
