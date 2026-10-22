@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { planTierOf } from "@/lib/plan-tier";
 import {
   User, Settings, CreditCard, LogOut, Map as MapIcon, LayoutDashboard,
   Tag, Users, Copy, Check, ChevronRight, Gift, BellRing, Video, HelpCircle, Crown,
@@ -13,6 +14,7 @@ type SessionUser = {
   email?: string | null;
   image?: string | null;
   subscriptionStatus?: string;
+  planTier?: string;
 };
 
 type InviteStatus = {
@@ -98,6 +100,17 @@ export default function HeaderProfileMenu() {
 
   const pct = invite && invite.goal > 0 ? Math.min(100, (invite.invites / invite.goal) * 100) : 0;
 
+  // Truthful plan badge (lib/plan-tier contract): the tier claim is the
+  // effective tier; legacy sessions whose claim is a stale "free" while
+  // their own subscription is active are still at least Pro. This badge
+  // used to be a hardcoded "PRO" — including for free accounts, the
+  // moment this menu started rendering for them.
+  const claimedTier = planTierOf({ user });
+  const badgeTier =
+    user?.subscriptionStatus === "active" && claimedTier === "free" ? "pro" : claimedTier;
+  const badgeLabel = badgeTier === "vip" ? "VIP PRO" : badgeTier === "pro" ? "PRO" : "FREE";
+  const isFree = badgeTier === "free";
+
   return (
     <div ref={ref} className="relative pointer-events-auto">
       <button
@@ -119,12 +132,32 @@ export default function HeaderProfileMenu() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold truncate">{user?.name || "WorldEye member"}</span>
-                  <span className="text-[9px] font-black tracking-[0.12em] px-1.5 py-0.5 rounded bg-[#D4AF37] text-black">PRO</span>
+                  <span className={`text-[9px] font-black tracking-[0.12em] px-1.5 py-0.5 rounded ${isFree ? "bg-white/15 text-white/70" : "bg-[#D4AF37] text-black"}`}>{badgeLabel}</span>
                 </div>
                 <div className="text-xs text-white/45 truncate">{user?.email}</div>
               </div>
             </div>
           </div>
+
+          {/* Free-plan upgrade block — the top of the menu for free
+              accounts, so the path up is the first thing they see. */}
+          {isFree && (
+            <Link
+              href="/pricing"
+              onClick={() => setOpen(false)}
+              className="block px-4 py-3 border-b border-white/10 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 transition"
+            >
+              <span className="flex items-center gap-1.5 text-xs font-bold text-[#e8c55a]">
+                <Crown className="w-3.5 h-3.5" /> You&apos;re on the Free plan
+              </span>
+              <span className="block mt-0.5 text-[11px] leading-snug text-white/55">
+                Upgrade for the OSINT toolkit, the OI assistant, satellite view, traffic layers and camera recording.
+              </span>
+              <span className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-[#e8c55a]">
+                See plans &amp; pricing <ChevronRight className="w-3 h-3" />
+              </span>
+            </Link>
+          )}
 
           {/* Invite tracker */}
           <div className="px-4 py-3 border-b border-white/10">

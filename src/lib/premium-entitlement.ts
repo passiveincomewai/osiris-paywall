@@ -16,6 +16,8 @@
 //     explicit sign-out navigates away anyway, so nothing legitimate
 //     needs a client-side downgrade.
 
+import { planTierOf, type PlanTier } from "./plan-tier";
+
 export type EntitlementCheck = "active" | "free" | "unknown";
 
 /** One fresh session read. "free" means the session definitively says
@@ -43,6 +45,58 @@ export async function checkPremiumEntitlement(
     return "free";
   } catch {
     return "unknown";
+  }
+}
+
+export type SessionIdentityState = "anonymous" | "free" | "premium" | "unknown";
+
+export interface SessionIdentity {
+  state: SessionIdentityState;
+  /** Effective plan tier (the lib/plan-tier contract). "free" unless the
+   *  session proves pro/vip. */
+  planTier: PlanTier;
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    subscriptionStatus?: string;
+    planTier?: string;
+  };
+}
+
+/** One fresh session read for IDENTITY — who is this viewer? — the
+ *  companion to checkPremiumEntitlement's entitlement question.
+ *
+ *  The HUD bug this fixes: page.tsx rendered the account menu only for
+ *  premium viewers, so a signed-in FREE user saw the exact anonymous
+ *  chrome — no avatar, no "signed in as", nothing — and reasonably
+ *  concluded the sign-in hadn't worked and tried again. Identity and
+ *  entitlement are different questions: a free account is still an
+ *  account, and the header has to say so.
+ *
+ *  Failure semantics mirror checkPremiumEntitlement: any failed read
+ *  (network, non-200, bad JSON) is "unknown", never a claim. A session
+ *  with no user is definitively "anonymous". Premium uses the same
+ *  rule as the entitlement check (own active status OR effective
+ *  pro/vip tier), so the HUD can never disagree with the gates about
+ *  premium — only about free-vs-anonymous, which is the point. */
+export async function readSessionIdentity(
+  fetchFn: typeof fetch = fetch,
+): Promise<SessionIdentity> {
+  try {
+    const r = await fetchFn("/api/auth/session", { cache: "no-store" });
+    if (!r.ok) return { state: "unknown", planTier: "free" };
+    const s = (await r.json().catch(() => null)) as {
+      user?: SessionIdentity["user"];
+    } | null;
+    const user = s?.user;
+    if (!user) return { state: "anonymous", planTier: "free" };
+    const planTier = planTierOf(s);
+    const premium =
+      user.subscriptionStatus === "active" || planTier === "pro" || planTier === "vip";
+    return { state: premium ? "premium" : "free", planTier, user };
+  } catch {
+    return { state: "unknown", planTier: "free" };
   }
 }
 

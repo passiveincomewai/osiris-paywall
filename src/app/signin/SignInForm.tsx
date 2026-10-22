@@ -21,6 +21,11 @@ const ICONS: Record<string, (p: { className?: string }) => ReactNode> = {
 
 const ERROR_COPY: Record<string, string> = {
   verify: "That verification link is invalid or has expired. Request a new one below.",
+  // Auth.js's own error code for a failed email sign-in link (expired or
+  // already-used token). Without this key those users fell through to the
+  // generic "Something went wrong signing in." even though the remedy —
+  // request a fresh link — is the form directly below.
+  Verification: "That sign-in link is invalid or has expired. Request a new one below.",
   OAuthAccountNotLinked:
     "This email is already linked to a different sign-in method. Use the original method to sign in.",
   CredentialsSignin: "Invalid email or password.",

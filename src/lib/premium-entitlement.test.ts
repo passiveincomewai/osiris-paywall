@@ -6,6 +6,7 @@
 import { describe, it, expect, vi } from "vitest";
 import {
   checkPremiumEntitlement,
+  readSessionIdentity,
   applyAmbientEntitlement,
   shouldRecheckEntitlement,
   blockedCameraAction,
@@ -89,5 +90,51 @@ describe("shouldRecheckEntitlement (F2 throttle)", () => {
     expect(shouldRecheckEntitlement(t0, t0 + ENTITLEMENT_RECHECK_THROTTLE_MS - 1)).toBe(false);
     expect(shouldRecheckEntitlement(t0, t0 + ENTITLEMENT_RECHECK_THROTTLE_MS)).toBe(true);
     expect(shouldRecheckEntitlement(0, t0)).toBe(true);
+  });
+});
+
+describe("readSessionIdentity (signed-in visibility)", () => {
+  const sessionWith = (user: unknown) => ({
+    ok: true,
+    json: async () => (user === null ? {} : { user }),
+  });
+
+  it("no user in the session → anonymous", async () => {
+    const id = await readSessionIdentity(fakeFetch(async () => sessionWith(null)));
+    expect(id.state).toBe("anonymous");
+    expect(id.planTier).toBe("free");
+  });
+
+  it("a signed-in user with no subscription → free (an account, not a ghost)", async () => {
+    const id = await readSessionIdentity(
+      fakeFetch(async () => sessionWith({ email: "a@b.c", subscriptionStatus: "none", planTier: "free" })),
+    );
+    expect(id.state).toBe("free");
+    expect(id.planTier).toBe("free");
+    expect(id.user?.email).toBe("a@b.c");
+  });
+
+  it("an active subscription → premium, even with a stale free tier claim", async () => {
+    const id = await readSessionIdentity(
+      fakeFetch(async () => sessionWith({ email: "a@b.c", subscriptionStatus: "active", planTier: "free" })),
+    );
+    expect(id.state).toBe("premium");
+  });
+
+  it("an effective vip tier (team grant / annual) → premium with planTier vip", async () => {
+    const id = await readSessionIdentity(
+      fakeFetch(async () => sessionWith({ email: "a@b.c", subscriptionStatus: "none", planTier: "vip" })),
+    );
+    expect(id.state).toBe("premium");
+    expect(id.planTier).toBe("vip");
+  });
+
+  it("failures map to unknown — never to anonymous or a downgrade claim", async () => {
+    await expect(
+      readSessionIdentity(fakeFetch(async () => ({ ok: false, json: async () => ({}) }))),
+    ).resolves.toMatchObject({ state: "unknown" });
+    await expect(
+      readSessionIdentity(fakeFetch(async () => { throw new Error("network"); })),
+    ).resolves.toMatchObject({ state: "unknown" });
   });
 });

@@ -76,7 +76,7 @@ const TodayInTheSky = dynamic(() => import('@/components/TodayInTheSky'), { ssr:
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
 const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
 const EmailCaptureCard = dynamic(() => import('@/components/EmailCaptureCard'));
-const HeaderProfileMenu = dynamic(() => import('@/components/HeaderProfileMenu'));
+const AccountHudControl = dynamic(() => import('@/components/AccountHudControl'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
 // RESTORE 2026-10-12: the CompanionWidget dynamic import was removed with
@@ -2327,16 +2327,12 @@ export default function Dashboard() {
 
         <span className="text-[11px] font-bold tracking-[0.2em] text-[var(--text-muted)] opacity-50">{APP_VERSION}</span>
 
-        {isPremiumUser ? (
-          <HeaderProfileMenu />
-        ) : (
-          <Link
-            href="/pricing"
-            className="pointer-events-auto px-3.5 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.15em] hover:brightness-110 transition shadow-[0_0_12px_rgba(212,175,55,0.4)]"
-          >
-            Upgrade to PRO
-          </Link>
-        )}
+        {/* Identity-driven account slot (components/AccountHudControl):
+            premium → account menu; signed-in free → Upgrade pill AND the
+            account menu; anonymous → the pill alone. This used to key off
+            isPremiumUser, which made signed-in free users
+            indistinguishable from signed-out ones. */}
+        <AccountHudControl variant="desktop" />
 
       </motion.div>
 
@@ -2346,16 +2342,7 @@ export default function Dashboard() {
       {isMobile && !showDirections && !navSession && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="absolute top-3 right-3 z-[200] pointer-events-auto flex flex-col items-end gap-1.5">
           <div className="flex items-center gap-2">
-            {isPremiumUser ? (
-              <HeaderProfileMenu />
-            ) : (
-              <Link
-                href="/pricing"
-                className="px-3 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.12em]"
-              >
-                Upgrade to PRO
-              </Link>
-            )}
+            <AccountHudControl variant="mobile" />
           </div>
         </motion.div>
       )}
