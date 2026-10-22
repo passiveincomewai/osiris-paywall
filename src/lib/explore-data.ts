@@ -40,6 +40,8 @@ export interface CountryIndexEntry {
 export const COUNTRY_INDEX = (
   index as unknown as { countries: CountryIndexEntry[] }
 ).countries;
+export const CATALOGUE_GENERATED_AT = (index as unknown as { generatedAt: string })
+  .generatedAt;
 const BY_SLUG = new Map(COUNTRY_INDEX.map((c) => [c.slug, c]));
 
 export function countryEntry(slug: string): CountryIndexEntry | null {

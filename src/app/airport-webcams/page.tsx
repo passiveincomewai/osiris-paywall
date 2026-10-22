@@ -5,6 +5,7 @@ import {
   Breadcrumb,
   Hero,
   Intro,
+  AreaTable,
   HowTo,
   FaqSection,
   FaqJsonLd,
@@ -13,6 +14,9 @@ import {
   PageShell,
   type Faq,
 } from "@/components/directory-page";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import { EXPLORE_SCOPES, areasForDef, countForDef } from "@/lib/explore-data";
 
 export const metadata: Metadata = {
   title: "Airport Webcams — Watch Airports Live",
@@ -103,7 +107,18 @@ const jsonLd = {
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: BASE },
 };
 
-export default function AirportWebcamsPage() {
+export default async function AirportWebcamsPage() {
+  /* The airport set is a defined rule over the catalogue, not a hand
+     list: cameras whose name identifies an airport, airfield or
+     runway (lib/explore-scopes). The catalogue carries no structured
+     airport inventory — a camera's airport exists only as free text
+     in its name — so this page groups the set by the city each camera
+     is listed under and searches by name, rather than inventing
+     per-airport entities the data can't support. */
+  const total = await countForDef(EXPLORE_SCOPES.airport);
+  const areas = await areasForDef(EXPLORE_SCOPES.airport, 400);
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
@@ -118,7 +133,36 @@ export default function AirportWebcamsPage() {
         h1="Airport Webcams, Live"
         sub="Watch airport areas in real time — runway and airfield views, approach corridors, and the roads and weather around the world's airports."
       />
+      <DirectorySearch
+        label="airport areas"
+        options={areas}
+        placeholder="Search airport cameras by city…"
+        emptyText={(v) => `No airport areas match "${v}".`}
+        targetId="airport-explorer"
+      />
       <Intro paragraphs={INTRO} />
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">Live airport cameras</h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          {fmt(total)} cameras in the live index name an airport, airfield or runway
+          in their title — every one of them is below, as its real live feed,
+          grouped by the country and city it serves. Looking for one field in
+          particular? Type its name into the explorer&apos;s search — airport
+          names live in the camera titles themselves.
+        </p>
+        <DirectoryExplorer
+          scopeKey="airport"
+          scopeLabel="airports"
+          groupBy="country"
+          searchPlaceholder="Search airport cameras — an airport, a city, a runway…"
+          explorerId="airport-explorer"
+        />
+      </section>
+      <AreaTable
+        title="Cities with the most airport cameras"
+        rows={areas.slice(0, 12)}
+        note="Counted from the cameras above: the city each airport camera is listed under in the index."
+      />
       <HowTo title="How to watch airport cameras" steps={HOW_TO} />
       <FaqSection title="Airport webcam FAQs" faqs={FAQS} />
       <RelatedLinks

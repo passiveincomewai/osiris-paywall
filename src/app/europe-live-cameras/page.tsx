@@ -2,66 +2,61 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Landmark } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
-import data from "@/data/camera-directory.json";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  CATALOGUE_GENERATED_AT,
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+} from "@/lib/explore-data";
+
+/* Every number on this page is computed from the generated camera
+   index (camera-countries.json + the per-country records) — the same
+   catalogue the country pages and the explorer below serve. The
+   region is the country pages' own continental grouping
+   (lib/country-page-content COUNTRY_REGION). */
+const EUROPE_SLUGS = new Set(EXPLORE_SCOPES.europe.slugs as string[]);
+const europe = COUNTRY_INDEX.filter((c) => EUROPE_SLUGS.has(c.slug)).sort(
+  (a, b) => b.count - a.count,
+);
+const europeTotal = europe.reduce((s, c) => s + c.count, 0);
+const BY_SLUG = new Map(COUNTRY_INDEX.map((c) => [c.slug, c]));
+const count = (slug: string) => BY_SLUG.get(slug)?.count ?? 0;
+const fmt = (n: number) => n.toLocaleString("en-US");
 
 export const metadata: Metadata = {
-  title: "Europe Live Cameras — 35 Countries, Watch Free",
-  description:
-    "Watch 9,144 live cameras across 35 European countries — Spain, Italy, France, Greece and more. Free public feeds, no signup required.",
+  title: `Europe Live Cameras — ${europe.length} Countries, Watch Free`,
+  description: `Watch ${fmt(europeTotal)} live cameras across ${europe.length} European countries — Spain, Austria, Sweden, the UK and more. Free public feeds, no signup required.`,
   alternates: { canonical: "https://worldeye.app/europe-live-cameras" },
   openGraph: {
-    title: "Europe Live Cameras — 35 Countries, Watch Free | WorldEye",
-    description:
-      "9,144 live cameras across 35 European countries — from Spanish plazas to Alpine passes. Free, no signup.",
+    title: `Europe Live Cameras — ${europe.length} Countries, Watch Free | WorldEye`,
+    description: `${fmt(europeTotal)} live cameras across ${europe.length} European countries — from Spanish plazas to Alpine passes. Free, no signup.`,
     url: "https://worldeye.app/europe-live-cameras",
     type: "website",
   },
 };
 
-const TOP_30_SLUGS = new Set([
-  "united-states", "taiwan", "spain", "austria", "canada", "hong-kong",
-  "italy", "japan", "united-kingdom", "sweden", "finland", "iceland",
-  "lithuania", "netherlands", "australia", "new-zealand", "turkey",
-  "indonesia", "vietnam", "russia", "south-korea", "poland", "thailand",
-  "norway", "malta", "france", "romania", "brazil", "bulgaria", "croatia",
-]);
-
-const EUROPE_NAMES = [
-  "Spain", "Austria", "Italy", "United Kingdom", "Sweden", "Finland",
-  "Iceland", "Lithuania", "Netherlands", "Turkey", "Poland", "Norway",
-  "Malta", "France", "Romania", "Bulgaria", "Croatia", "Greece", "Germany",
-  "Ireland", "Portugal", "Switzerland", "Hungary", "Slovenia", "Czechia",
-  "Slovakia", "Serbia", "Belgium", "Albania", "Cyprus", "Luxembourg",
-  "Estonia", "San Marino", "Vatican City", "Faroe Islands",
-];
-
-const fmt = (n: number) => n.toLocaleString("en-US");
-const byName = new Map(data.countries.map((c) => [c.name, c]));
-const europe = EUROPE_NAMES.map((n) => byName.get(n)).filter(
-  (c): c is (typeof data.countries)[number] => Boolean(c)
-).sort((a, b) => b.count - a.count);
-const europeTotal = europe.reduce((s, c) => s + c.count, 0);
-
 const HIGHLIGHTS = [
   {
     title: "Spain leads Europe",
-    desc: "With 1,997 live cameras centered on Madrid and other cities, Spain has the densest public camera coverage on the continent — plazas, highways and coastlines.",
+    desc: `With ${fmt(count("spain"))} live cameras centered on Madrid and other cities, Spain has the densest public camera coverage on the continent — plazas, highways and coastlines.`,
   },
   {
     title: "Austria's nationwide network",
-    desc: "1,828 cameras blanket Austria from Alpine passes to Vienna streets, making it one of the most camera-dense countries per capita in the directory.",
+    desc: `${fmt(count("austria"))} cameras blanket Austria from Alpine passes to Vienna streets, making it one of the most camera-dense countries per capita in the directory.`,
   },
   {
     title: "Italy's motorway corridors",
-    desc: "993 Italian feeds follow the great autostrade — the A1 Milano–Napoli and A14 Bologna–Taranto corridors alone account for hundreds of live views.",
+    desc: `${fmt(count("italy"))} Italian feeds follow the great autostrade — the A1 Milano–Napoli and A14 Bologna–Taranto corridors alone account for hundreds of live views.`,
   },
   {
     title: "The UK's London grid",
-    desc: "899 UK feeds are overwhelmingly London — 890 of them watch the capital's streets, from the North Circular to the Blackwall Tunnel approaches.",
+    desc: `${fmt(count("united-kingdom"))} UK feeds are overwhelmingly London — the capital's own grid is the single biggest city set in Europe, watching streets from the North Circular to the Blackwall Tunnel approaches.`,
   },
   {
     title: "Sweden's northern reach",
-    desc: "886 Swedish cameras stretch from Malmö up past the Arctic Circle — winter road conditions in Norrland are some of the most practical feeds in Europe.",
+    desc: `${fmt(count("sweden"))} Swedish cameras stretch from Malmö up past the Arctic Circle — winter road conditions in Norrland are some of the most practical feeds in Europe.`,
   },
   {
     title: "Alpine passes, live",
@@ -80,7 +75,7 @@ const HIGHLIGHTS = [
 const FAQS = [
   {
     q: "Which European countries have the most live cameras?",
-    a: "Spain (1,997), Austria (1,828), Italy (993), the United Kingdom (899) and Sweden (886) lead Europe in the WorldEye directory. Together they hold the majority of the continent's 9,144 indexed public feeds.",
+    a: `Spain (${fmt(count("spain"))}), Austria (${fmt(count("austria"))}), Sweden (${fmt(count("sweden"))}), the United Kingdom (${fmt(count("united-kingdom"))}) and Italy (${fmt(count("italy"))}) lead Europe in the WorldEye directory. Together they hold a large share of the continent's ${fmt(europeTotal)} indexed public feeds.`,
   },
   {
     q: "Can I watch European city webcams without signing up?",
@@ -100,7 +95,7 @@ const FAQS = [
   },
   {
     q: "What about the Nordic countries?",
-    a: "Sweden's 886 cameras stretch from Malmö past the Arctic Circle — excellent for winter road checks. The Nordics are well covered for their population size.",
+    a: `Sweden's ${fmt(count("sweden"))} cameras stretch from Malmö past the Arctic Circle — excellent for winter road checks. The Nordics are well covered for their population size.`,
   },
   {
     q: "Do the cameras cover Eastern Europe?",
@@ -123,15 +118,17 @@ const FAQS = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "Europe Live Cameras — 35 Countries",
+  name: `Europe Live Cameras — ${europe.length} Countries`,
   description: `Directory of ${fmt(europeTotal)} live public cameras across ${europe.length} European countries.`,
   url: "https://worldeye.app/europe-live-cameras",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
   numberOfItems: europe.length,
-  dateModified: data.generatedAt,
+  dateModified: CATALOGUE_GENERATED_AT,
 };
 
-export default function EuropeLiveCamerasPage() {
+export default async function EuropeLiveCamerasPage() {
+  const areas = await areasForDef(EXPLORE_SCOPES.europe, 400);
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -161,6 +158,31 @@ export default function EuropeLiveCamerasPage() {
             publishers of open camera feeds — motorways, old towns, ski resorts and
             harbors — all watchable from one globe.
           </p>
+          <DirectorySearch
+            label="Europe"
+            options={areas}
+            placeholder="Search Europe by city…"
+            emptyText={(v) => `No cities in Europe match "${v}".`}
+            targetId="europe-explorer"
+          />
+        </div>
+
+        {/* Live explorer */}
+        <div className="mt-14">
+          <h2 className="text-2xl md:text-3xl font-bold">Watch Europe live</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base">
+            Every feed below is live right now — open a card to watch, or jump
+            from any camera to the same spot on the globe.
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="europe"
+              scopeLabel="Europe"
+              groupBy="country"
+              searchPlaceholder="Search Europe cameras — a beach, a road, a district…"
+              explorerId="europe-explorer"
+            />
+          </div>
         </div>
 
         {/* Highlights */}
@@ -179,7 +201,7 @@ export default function EuropeLiveCamerasPage() {
             {europe.length} European countries
           </h2>
           <p className="text-white/50 mt-2 text-sm md:text-base">
-            Sorted by live camera count. Countries with dedicated pages are linked.
+            Sorted by live camera count. Every country links to its own camera page.
           </p>
           <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
             <table className="w-full text-sm md:text-base">
@@ -191,28 +213,21 @@ export default function EuropeLiveCamerasPage() {
                 </tr>
               </thead>
               <tbody>
-                {europe.map((c) => {
-                  const linked = TOP_30_SLUGS.has(c.slug);
-                  return (
-                    <tr key={c.slug} className="border-t border-white/[0.06] hover:bg-white/[0.03] transition">
-                      <td className="px-4 md:px-6 py-3.5 font-medium">
-                        {linked ? (
-                          <Link href={`/cameras/countries/${c.slug}`} className="text-[#D4AF37] hover:underline">
-                            {c.name}
-                          </Link>
-                        ) : (
-                          <span className="text-white/85">{c.name}</span>
-                        )}
-                      </td>
-                      <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
-                        {fmt(c.count)}
-                      </td>
-                      <td className="px-4 md:px-6 py-3.5 text-white/50 hidden sm:table-cell">
-                        {c.areas[0]?.name ?? "—"}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {europe.map((c) => (
+                  <tr key={c.slug} className="border-t border-white/[0.06] hover:bg-white/[0.03] transition">
+                    <td className="px-4 md:px-6 py-3.5 font-medium">
+                      <Link href={`/cameras/countries/${c.slug}`} className="text-[#D4AF37] hover:underline">
+                        {c.name}
+                      </Link>
+                    </td>
+                    <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
+                      {fmt(c.count)}
+                    </td>
+                    <td className="px-4 md:px-6 py-3.5 text-white/50 hidden sm:table-cell">
+                      {c.topCities[0]?.name ?? "—"}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
