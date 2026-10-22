@@ -100,6 +100,7 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   dars: clear('DARS (Slovenian motorway operator)', AGENCY),
   bayerninfo: clear('Bavarian traffic authority (BayernInfo)', AGENCY),
   trafficwales: clear('Traffic Wales (Welsh Government)', AGENCY),
+  trafficengland: clear('National Highways (NTIS)', 'Re-examined 2026-10-22 — the Oct-18 "third-party portal" hold is refuted by primary evidence: Find a Tender notice 2025/S 000-047293 (National Highways, 8 Aug 2025) names trafficengland.com and nationalhighways.co.uk as the NTIS service\u2019s own websites (NTIS contract runs to Jan 2027), and the held records sit on Highways England\u2019s own HETC public-access tier (public.highwaystrafficcameras.co.uk/cctvpublicaccess/), live-verified HTTP 200 image/jpeg with no auth. Terms are silent on the stills — no express OGL grant for CCTV images, and no prohibition found for the public-access tier; Crown-copyright attribution to National Highways. The formal reuse channel is NTIS subscriber registration + approval — flagged in REPORT.md as the way to close the residual terms gap. Reversible via this entry + resync.'),
   'tii-ireland': clear('Transport Infrastructure Ireland', AGENCY),
   catalonia: clear('Servei Català de Trànsit', AGENCY),
   euskadi: clear('Basque Government traffic', AGENCY),
@@ -156,7 +157,6 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   feratel: conditional('Feratel', 'Commercial tourism-media platform; terms not spot-checked this stage.'),
   opensnow: conditional('OpenSnow', 'Commercial service; terms not spot-checked this stage.'),
   weatherstem: conditional('WeatherSTEM', 'Commercial/university network; terms not spot-checked this stage.'),
-  trafficengland: conditional('HighwaysTrafficCameras portal (National Highways cameras)', 'Records point at a third-party portal rather than National Highways itself; held pending direct sourcing.'),
 
   /* ── Excluded: terms known not to clear ────────────────────────────── */
   windy: excluded('Windy Webcams', 'Audit §3.4: Windy\u2019s terms grant no commercial redistribution of its catalog/feed URLs. Structural exclusion — no flag enables this family.'),
