@@ -100,6 +100,8 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   dars: clear('DARS (Slovenian motorway operator)', AGENCY),
   bayerninfo: clear('Bavarian traffic authority (BayernInfo)', AGENCY),
   trafficwales: clear('Traffic Wales (Welsh Government)', AGENCY),
+  'trafficwatch-ni': clear('TrafficWatch NI — Department for Infrastructure (DfI), via TICC Belfast', 'Public agency; DfI\u2019s own Crown Copyright page licenses the site\u2019s material for re-use free of charge in any format or medium under the Open Government Licence (conditions: attribution, no suggestion of endorsement, no misrepresentation; logos, personal data and third-party rights excluded; no carve-out for the CCTV stills). Spot-checked 2026-10-22. The image host (cctv.trafficwatchni.com) 403s without a trafficwatchni.com Referer — stills are served through the CCTV proxy and probed with that Referer; see proxy/route.ts and probe.ts.'),
+  trafficengland: clear('National Highways (NTIS)', 'Re-examined 2026-10-22 — the Oct-18 "third-party portal" hold is refuted by primary evidence: Find a Tender notice 2025/S 000-047293 (National Highways, 8 Aug 2025) names trafficengland.com and nationalhighways.co.uk as the NTIS service\u2019s own websites (NTIS contract runs to Jan 2027), and the held records sit on Highways England\u2019s own HETC public-access tier (public.highwaystrafficcameras.co.uk/cctvpublicaccess/), live-verified HTTP 200 image/jpeg with no auth. Terms are silent on the stills — no express OGL grant for CCTV images, and no prohibition found for the public-access tier; Crown-copyright attribution to National Highways. The formal reuse channel is NTIS subscriber registration + approval — flagged in REPORT.md as the way to close the residual terms gap. Reversible via this entry + resync.'),
   'tii-ireland': clear('Transport Infrastructure Ireland', AGENCY),
   catalonia: clear('Servei Català de Trànsit', AGENCY),
   euskadi: clear('Basque Government traffic', AGENCY),
@@ -156,7 +158,6 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   feratel: conditional('Feratel', 'Commercial tourism-media platform; terms not spot-checked this stage.'),
   opensnow: conditional('OpenSnow', 'Commercial service; terms not spot-checked this stage.'),
   weatherstem: conditional('WeatherSTEM', 'Commercial/university network; terms not spot-checked this stage.'),
-  trafficengland: conditional('HighwaysTrafficCameras portal (National Highways cameras)', 'Records point at a third-party portal rather than National Highways itself; held pending direct sourcing.'),
 
   /* ── Excluded: terms known not to clear ────────────────────────────── */
   windy: excluded('Windy Webcams', 'Audit §3.4: Windy\u2019s terms grant no commercial redistribution of its catalog/feed URLs. Structural exclusion — no flag enables this family.'),
@@ -164,6 +165,7 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   weatherbug: excluded('WeatherBug', 'Commercial camera network (named in the audit\u2019s pseudo-URL/excluded class).'),
   earthcam: excluded('EarthCam', 'Commercial network; its terms do not permit harvesting its catalog into a competing service.'),
   skylinewebcams: excluded('SkylineWebcams', 'Commercial aggregator; WorldEye already runs its own Skyline pipeline (world-skyline.generated.ts) under that posture instead.'),
+  hak: excluded('HAK — Hrvatski autoklub (Croatian Automobile Club)', 'Spot-checked 2026-10-22: HAK is a motoring association, not a state agency, and its Terms of Use (rev. 14 Sep 2026) \u00a7\u00a76\u201310 permit personal non-commercial use only, expressly exclude systematic/automated collection of the whole or a substantial part of the service, allow commercial use and redistribution only under prior written consent / a written agreement, and expressly prohibit scraping without prior written approval. A written-agreement path exists (\u00a7\u00a79/16) but there is no open licence — excluded until the owner obtains that agreement.'),
 };
 
 /** Slugs that can never be enabled, whatever the registry says. */

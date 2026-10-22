@@ -38,6 +38,10 @@ import { fetchEdmontonCameras } from './edmonton';
 import { fetchOregonCameras } from './oregon';
 import { fetchMichiganCameras } from './michigan';
 import { fetchIndianaCameras } from './indiana';
+import { fetchIowaCameras } from './iowa';
+import { fetchOhioCameras } from './ohio';
+import { fetchKentuckyCameras } from './kentucky';
+import { fetchSouthDakotaCameras } from './southdakota';
 import { fetchNevadaCameras } from './nevada';
 import { fetchLouisianaCameras } from './louisiana';
 import { fetchFloridaCameras } from './florida';
@@ -46,6 +50,7 @@ import { fetchNorthCarolinaCameras } from './northcarolina';
 import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
 import { fetchFaaCameras } from './faa';
+import { fetchCoastCameras } from './coastcams';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
   fetchOccHarvestAfrica,
@@ -560,6 +565,10 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'oregon': fetchOregonCameras,
   'michigan': fetchMichiganCameras,
   'indiana': fetchIndianaCameras,
+  'iowa': fetchIowaCameras,
+  'ohio': fetchOhioCameras,
+  'kentucky': fetchKentuckyCameras,
+  'southdakota': fetchSouthDakotaCameras,
   'nevada': fetchNevadaCameras,
   'louisiana': fetchLouisianaCameras,
   'florida': fetchFloridaCameras,
@@ -568,6 +577,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'arizona': fetchArizonaCameras,
   'texas': fetchTexasCameras,
   'faa': fetchFaaCameras,
+  'coastcams': fetchCoastCameras,
   'eastasia': fetchEastAsiaCameras,
   'seasia': fetchSeAsiaCameras,
   'westasia': fetchWestAsiaCameras,
@@ -952,6 +962,14 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 41.6 && lat < 48.3 && lng > -90.5 && lng < -82.1) regions.push('michigan');
   // Indiana (INDOT TrafficWise) — explicit, since us-central only covers Illinois
   if (lat > 37.7 && lat < 41.9 && lng > -88.2 && lng < -84.6) regions.push('indiana');
+  // Iowa (Iowa DOT ArcGIS) — explicit, since us-central only covers Illinois
+  if (lat > 40.3 && lat < 43.6 && lng > -96.7 && lng < -89.9) regions.push('iowa');
+  // Ohio (ODOT OHGO) — explicit, since us-east/us-central carry none of ODOT
+  if (lat > 38.3 && lat < 42.0 && lng > -85.0 && lng < -80.3) regions.push('ohio');
+  // Kentucky (KYTC GoKY + Lexington) — explicit, since us-east only reaches its eastern edge
+  if (lat > 36.4 && lat < 39.3 && lng > -89.7 && lng < -81.8) regions.push('kentucky');
+  // South Dakota (SDDOT SD511) — explicit, since us-central carries none of SDDOT
+  if (lat > 42.4 && lat < 46.0 && lng > -104.2 && lng < -96.3) regions.push('southdakota');
   // Louisiana (LADOTD 511) — explicit, since neither us-central nor us-east reaches the Gulf coast
   if (lat > 28.8 && lat < 33.1 && lng > -94.2 && lng < -88.6) regions.push('louisiana');
   /* The rest of the southern tier, all on the same IBI 511 stack. Each is
@@ -965,6 +983,8 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 42 && lat < 70 && lng > -141 && lng < -52) regions.push('canada');
   // FAA WeatherCams — airports and mountain passes across the US and Canada
   if (lat > 17 && lat < 72 && lng > -180 && lng < -50) regions.push('faa');
+  // USGS CoastCams — curated coastal stations (MA/FL/PR today), same broad US box as FAA
+  if (lat > 17 && lat < 72 && lng > -180 && lng < -50) regions.push('coastcams');
   if (lat > 53.3 && lat < 53.8 && lng > -114.0 && lng < -113.2) regions.push('edmonton');
   // Europe
   const inBulgaria = lat > 41 && lat < 44.5 && lng > 22 && lng < 29.5;

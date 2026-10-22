@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { imageType } from './route';
+import { imageType, refererFor } from './route';
 
 const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46]);
 const png = Buffer.concat([Buffer.from('\x89PNG\r\n\x1a\n', 'latin1'), Buffer.alloc(8)]);
@@ -20,5 +20,20 @@ describe('imageType', () => {
   it('leaves anything it does not recognise alone', () => {
     expect(imageType(Buffer.from('not an image'), 'text/html')).toBe('text/html');
     expect(imageType(Buffer.alloc(2), 'application/octet-stream')).toBe('application/octet-stream');
+  });
+});
+
+describe('refererFor', () => {
+  it('defaults to the target host\u2019s own origin', () => {
+    expect(refererFor('stream.inmoves.nl')).toBe('https://stream.inmoves.nl/');
+  });
+
+  it('sends no Referer to hosts that choke on one', () => {
+    expect(refererFor('thb.gov.tw')).toBeNull();
+    expect(refererFor('cctv-ss01.thb.gov.tw')).toBeNull();
+  });
+
+  it('uses the apex site for TrafficWatch NI, whose CDN rejects its own subdomain', () => {
+    expect(refererFor('cctv.trafficwatchni.com')).toBe('https://trafficwatchni.com/');
   });
 });
