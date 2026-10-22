@@ -110,6 +110,13 @@ const SEO_PAGES_WAVE9 = [
   "/dark-sky-cameras",
 ];
 
+// Wave 10 (2026-10-22): the ALERTCalifornia fire-camera network as its own
+// page — cross-linked from /wildfire-tracker (a different data source:
+// satellite detections there, cameras here).
+const SEO_PAGES_WAVE10 = [
+  "/california-fire-cameras",
+];
+
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
   "/alternatives/gods-eye-view",
@@ -247,6 +254,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE10.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
     })),
     ...SEO_PAGES_COMPARE.map((p) => ({
       url: `${BASE}${p}`,

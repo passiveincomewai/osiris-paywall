@@ -246,6 +246,11 @@ export default function WildfireTrackerPage() {
               74,229 public cameras share the same globe. In fire country,
               that means you can sometimes watch the smoke column from a
               roadside camera while the satellite data shows the heat source.
+              In California the fire-watch network has{" "}
+              <Link href="/california-fire-cameras" className="text-[#D4AF37] hover:underline">
+                its own page
+              </Link>{" "}
+              — every ALERTCalifornia camera in one grid.
             </p>
             <p>
               Detections have limits worth knowing. Thick cloud can hide a fire
@@ -331,6 +336,11 @@ export default function WildfireTrackerPage() {
 
         <RelatedLinks
           links={[
+            {
+              label: "California fire cameras",
+              desc: "Every ALERTCalifornia fire-watch camera in one live grid — the cameras that catch the smoke plume, refreshed every ~15 seconds.",
+              href: "/california-fire-cameras",
+            },
             {
               label: "Weather tracker",
               desc: "Live wind, storms and precipitation — the forces that decide where fire goes.",
