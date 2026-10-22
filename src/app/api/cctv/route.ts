@@ -60,6 +60,7 @@ import { fetchMississippiCameras } from './mississippi';
 import { fetchWestVirginiaCameras } from './westvirginia';
 import { fetchNewMexicoCameras } from './newmexico';
 import { fetchVermontCameras } from './vermont';
+import { fetchOklahomaCameras } from './oklahoma';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
   fetchOccHarvestAfrica,
@@ -596,6 +597,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'westvirginia': fetchWestVirginiaCameras,
   'newmexico': fetchNewMexicoCameras,
   'vermont': fetchVermontCameras,
+  'oklahoma': fetchOklahomaCameras,
   'eastasia': fetchEastAsiaCameras,
   'seasia': fetchSeAsiaCameras,
   'westasia': fetchWestAsiaCameras,
@@ -1006,6 +1008,7 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 37.2 && lat < 40.6 && lng > -82.7 && lng < -77.7) regions.push('westvirginia');
   if (lat > 31.3 && lat < 37.1 && lng > -109.1 && lng < -102.9) regions.push('newmexico');
   if (lat > 42.7 && lat < 45.1 && lng > -73.5 && lng < -71.4) regions.push('vermont');
+  if (lat > 33.6 && lat < 37.0 && lng > -103.0 && lng < -94.4) regions.push('oklahoma');
   // Canada
   if (lat > 42 && lat < 70 && lng > -141 && lng < -52) regions.push('canada');
   // FAA WeatherCams — airports and mountain passes across the US and Canada
