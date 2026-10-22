@@ -1,0 +1,3536 @@
+{
+ "generatedAt": "2026-10-22T07:06:25.089Z",
+ "source": "src/data/countries/united-states.json",
+ "sourceTotal": 41355,
+ "assignedTotal": 41312,
+ "unassigned": 43,
+ "states": [
+  {
+   "name": "Florida",
+   "slug": "florida",
+   "usps": "FL",
+   "count": 4935,
+   "areas": [
+    {
+     "name": "Orange County",
+     "count": 561
+    },
+    {
+     "name": "Hillsborough County",
+     "count": 502
+    },
+    {
+     "name": "Broward County",
+     "count": 477
+    },
+    {
+     "name": "Miami-Dade County",
+     "count": 421
+    },
+    {
+     "name": "Leon County",
+     "count": 262
+    },
+    {
+     "name": "Sarasota County",
+     "count": 245
+    },
+    {
+     "name": "Duval County",
+     "count": 242
+    },
+    {
+     "name": "Palm Beach County",
+     "count": 147
+    }
+   ],
+   "samples": [
+    {
+     "id": "fdot-4020",
+     "name": "Alafaya Tr. N of SR-408",
+     "city": "Orange County"
+    },
+    {
+     "id": "fdot-4021",
+     "name": "Alafaya Tr. S of SR-408",
+     "city": "Orange County"
+    },
+    {
+     "id": "fdot-997",
+     "name": "Amelia St @ Hughey Ave-SECURITY WB",
+     "city": "Orange County"
+    },
+    {
+     "id": "fdot-967",
+     "name": "Anderson @ I-4 WB",
+     "city": "Orange County"
+    },
+    {
+     "id": "fdot-4081",
+     "name": "at Old Winter Garden Rd.",
+     "city": "Orange County"
+    },
+    {
+     "id": "fdot-4011",
+     "name": "Dean Rd. N of SR-408",
+     "city": "Orange County"
+    }
+   ]
+  },
+  {
+   "name": "Texas",
+   "slug": "texas",
+   "usps": "TX",
+   "count": 4390,
+   "areas": [
+    {
+     "name": "Houston",
+     "count": 1172
+    },
+    {
+     "name": "Dallas",
+     "count": 843
+    },
+    {
+     "name": "Fort Worth",
+     "count": 489
+    },
+    {
+     "name": "San Antonio",
+     "count": 307
+    },
+    {
+     "name": "Austin",
+     "count": 275
+    },
+    {
+     "name": "El Paso",
+     "count": 253
+    },
+    {
+     "name": "Beaumont",
+     "count": 240
+    },
+    {
+     "name": "Laredo",
+     "count": 118
+    }
+   ],
+   "samples": [
+    {
+     "id": "txdot-HOU-330 @ Airhart (W)",
+     "name": "330 @ Airhart (W)",
+     "city": "Houston"
+    },
+    {
+     "id": "txdot-HOU-330 @ Baker",
+     "name": "330 @ Baker",
+     "city": "Houston"
+    },
+    {
+     "id": "txdot-HOU-330 @ Baker (E)",
+     "name": "330 @ Baker (E)",
+     "city": "Houston"
+    },
+    {
+     "id": "txdot-HOU-330 @ Bayway",
+     "name": "330 @ Bayway",
+     "city": "Houston"
+    },
+    {
+     "id": "txdot-HOU-330 @ Bayway (E)",
+     "name": "330 @ Bayway (E)",
+     "city": "Houston"
+    },
+    {
+     "id": "txdot-HOU-330 @ Bayway (W)",
+     "name": "330 @ Bayway (W)",
+     "city": "Houston"
+    }
+   ]
+  },
+  {
+   "name": "Georgia",
+   "slug": "georgia",
+   "usps": "GA",
+   "count": 4288,
+   "areas": [
+    {
+     "name": "Georgia",
+     "count": 4279
+    },
+    {
+     "name": "Valdosta",
+     "count": 3
+    },
+    {
+     "name": "Jasper County",
+     "count": 2
+    },
+    {
+     "name": "Albany",
+     "count": 1
+    },
+    {
+     "name": "Baker County",
+     "count": 1
+    },
+    {
+     "name": "Effingham County",
+     "count": 1
+    },
+    {
+     "name": "Macon County",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "gdot-11843",
+     "name": "10th St at Fowler St (Atlanta)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-11816",
+     "name": "10th St at Monroe Dr (Atlanta)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-12409",
+     "name": "14th St at Techwood Dr (Atlanta)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-16429",
+     "name": "Academy St at Haynes Bridge Rd (Alpharetta)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-16423",
+     "name": "Academy St at Park Plaza (Alpharetta)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-18028",
+     "name": "Acworth Due West Rd at Paul Samuel Rd (COBB)",
+     "city": "Georgia"
+    }
+   ]
+  },
+  {
+   "name": "California",
+   "slug": "california",
+   "usps": "CA",
+   "count": 3879,
+   "areas": [
+    {
+     "name": "San Diego",
+     "count": 162
+    },
+    {
+     "name": "Sacramento",
+     "count": 89
+    },
+    {
+     "name": "Oakland",
+     "count": 67
+    },
+    {
+     "name": "San Jose",
+     "count": 61
+    },
+    {
+     "name": "Anaheim",
+     "count": 59
+    },
+    {
+     "name": "Irvine",
+     "count": 55
+    },
+    {
+     "name": "San Bernardino",
+     "count": 50
+    },
+    {
+     "name": "Riverside",
+     "count": 48
+    }
+   ],
+   "samples": [
+    {
+     "id": "ndot-7849",
+     "name": "SR-28 @ Crystal Bay",
+     "city": "Nevada"
+    },
+    {
+     "id": "faa-12629",
+     "name": "El Paso — Camera 1 (North)",
+     "city": "El Paso"
+    },
+    {
+     "id": "faa-12630",
+     "name": "El Paso — Camera 2 (SouthEast)",
+     "city": "El Paso"
+    },
+    {
+     "id": "faa-12631",
+     "name": "El Paso — Camera 3 (South)",
+     "city": "El Paso"
+    },
+    {
+     "id": "faa-12632",
+     "name": "El Paso — Camera 4 (NorthWest)",
+     "city": "El Paso"
+    },
+    {
+     "id": "occ-caltrans-d8-I-10-1454",
+     "name": "I 10: (507) 0.2 mi W OF MALKI RD",
+     "city": "Beaumont"
+    }
+   ]
+  },
+  {
+   "name": "Utah",
+   "slug": "utah",
+   "usps": "UT",
+   "count": 2135,
+   "areas": [
+    {
+     "name": "Utah",
+     "count": 2078
+    },
+    {
+     "name": "Salt Lake City",
+     "count": 5
+    },
+    {
+     "name": "Bear River Valley Hospital",
+     "count": 4
+    },
+    {
+     "name": "Cedar City Hospital",
+     "count": 4
+    },
+    {
+     "name": "Dutch John",
+     "count": 4
+    },
+    {
+     "name": "Intermountain Medical Center",
+     "count": 4
+    },
+    {
+     "name": "Logan Regional Hospital",
+     "count": 4
+    },
+    {
+     "name": "McKay-Dee Hospital",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "id": "udot-165460",
+     "name": "100 E / Alpine Hwy / SR-74 @ 100 N, AFK",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-165047",
+     "name": "100 E / Alpine Hwy / SR-74 @ 1120 N, AFK",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-167450",
+     "name": "100 E / Alpine Hwy / SR-74 @ 300 N, AFK",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-165206",
+     "name": "100 E / Canyon Rd @ 1800 N / Murdock Dr, PLG",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-165301",
+     "name": "100 N / SR-198 @ 1000 E, PSN",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-165499",
+     "name": "100 N / SR-198 @ 600 E, PSN",
+     "city": "Utah"
+    }
+   ]
+  },
+  {
+   "name": "Virginia",
+   "slug": "virginia",
+   "usps": "VA",
+   "count": 1451,
+   "areas": [
+    {
+     "name": "Fairfax County",
+     "count": 199
+    },
+    {
+     "name": "Fairfax",
+     "count": 85
+    },
+    {
+     "name": "Prince William County",
+     "count": 81
+    },
+    {
+     "name": "Chesapeake",
+     "count": 72
+    },
+    {
+     "name": "Newport News",
+     "count": 58
+    },
+    {
+     "name": "Hampton",
+     "count": 52
+    },
+    {
+     "name": "Virginia Beach",
+     "count": 51
+    },
+    {
+     "name": "Norfolk",
+     "count": 49
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-va511-1787",
+     "name": "VA-3 / US-20 / Constitution Hwy / Germana Hwy",
+     "city": "Orange County"
+    },
+    {
+     "id": "occ-va511-4265",
+     "name": "Alban Rd. / NB / Boudinot Dr.",
+     "city": "Fairfax County"
+    },
+    {
+     "id": "occ-va511-4106",
+     "name": "Boudinot Dr. / NB / Fullerton Rd.",
+     "city": "Fairfax County"
+    },
+    {
+     "id": "occ-va511-1875",
+     "name": "Braddock Rd at Burke Station",
+     "city": "Fairfax County"
+    },
+    {
+     "id": "occ-va511-4182",
+     "name": "Braddock Rd at I-495 Ramps",
+     "city": "Fairfax County"
+    },
+    {
+     "id": "occ-va511-3569",
+     "name": "Braddock Rd at Ox Rd",
+     "city": "Fairfax County"
+    }
+   ]
+  },
+  {
+   "name": "Washington",
+   "slug": "washington",
+   "usps": "WA",
+   "count": 1447,
+   "areas": [
+    {
+     "name": "Seattle",
+     "count": 499
+    },
+    {
+     "name": "Vancouver",
+     "count": 60
+    },
+    {
+     "name": "Spokane",
+     "count": 59
+    },
+    {
+     "name": "Marysville",
+     "count": 49
+    },
+    {
+     "name": "Olympia",
+     "count": 49
+    },
+    {
+     "name": "Bellingham",
+     "count": 39
+    },
+    {
+     "name": "Longview",
+     "count": 37
+    },
+    {
+     "name": "Tacoma",
+     "count": 37
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-sdot-CMR-0001",
+     "name": "11th Ave SW & SW Spokane St",
+     "city": "Seattle"
+    },
+    {
+     "id": "occ-sdot-CMR-0225",
+     "name": "12th Ave NE & NE 50th St",
+     "city": "Seattle"
+    },
+    {
+     "id": "occ-sdot-CMR-0002",
+     "name": "12th Ave S & Boren Ave S",
+     "city": "Seattle"
+    },
+    {
+     "id": "occ-sdot-CMR-0005",
+     "name": "14th Ave NE & NE 75th St",
+     "city": "Seattle"
+    },
+    {
+     "id": "occ-sdot-CMR-0003",
+     "name": "14th Ave S & S Cloverdale St",
+     "city": "Seattle"
+    },
+    {
+     "id": "occ-sdot-CMR-0216",
+     "name": "15th Ave NE & NE 45th St",
+     "city": "Seattle"
+    }
+   ]
+  },
+  {
+   "name": "Pennsylvania",
+   "slug": "pennsylvania",
+   "usps": "PA",
+   "count": 1348,
+   "areas": [
+    {
+     "name": "Philadelphia",
+     "count": 143
+    },
+    {
+     "name": "Pittsburgh",
+     "count": 55
+    },
+    {
+     "name": "Robinson Township",
+     "count": 25
+    },
+    {
+     "name": "Bensalem Township",
+     "count": 21
+    },
+    {
+     "name": "Upper Merion Township",
+     "count": 21
+    },
+    {
+     "name": "Lower Merion Township",
+     "count": 13
+    },
+    {
+     "name": "Altoona",
+     "count": 12
+    },
+    {
+     "name": "Montgomery Township",
+     "count": 12
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-s511-PA-3944",
+     "name": "I-83 @ EXIT 8 (PA 216 GLEN ROCK) SB",
+     "city": "Baltimore"
+    },
+    {
+     "id": "occ-s511-PA-3451",
+     "name": "26th Street NB at 26TH ST TUNNEL TO I-76 WEST",
+     "city": "Philadelphia"
+    },
+    {
+     "id": "occ-s511-PA-4317",
+     "name": "26th Street NB at PA 291/PENROSE AVE @ 26TH ST",
+     "city": "Philadelphia"
+    },
+    {
+     "id": "occ-s511-PA-4276",
+     "name": "ADAMS AVE AND TACONY ST SB",
+     "city": "Philadelphia"
+    },
+    {
+     "id": "occ-s511-PA-3216",
+     "name": "ARAMINGO AVE @ ANN ST NB",
+     "city": "Philadelphia"
+    },
+    {
+     "id": "occ-s511-PA-3340",
+     "name": "ARAMINGO AVE @ SEPVIVA ST SB",
+     "city": "Philadelphia"
+    }
+   ]
+  },
+  {
+   "name": "New York",
+   "slug": "new-york",
+   "usps": "NY",
+   "count": 1337,
+   "areas": [
+    {
+     "name": "Queens",
+     "count": 229
+    },
+    {
+     "name": "Bronx",
+     "count": 172
+    },
+    {
+     "name": "Rochester",
+     "count": 155
+    },
+    {
+     "name": "Buffalo",
+     "count": 84
+    },
+    {
+     "name": "Syracuse",
+     "count": 51
+    },
+    {
+     "name": "Albany",
+     "count": 41
+    },
+    {
+     "name": "Smithtown",
+     "count": 24
+    },
+    {
+     "name": "Huntington",
+     "count": 23
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-ny511-9cec60010a",
+     "name": "907M at 102 Street",
+     "city": "Queens"
+    },
+    {
+     "id": "occ-ny511-9bc8117e1f",
+     "name": "907M at 27th Avenue",
+     "city": "Queens"
+    },
+    {
+     "id": "occ-ny511-9428bf68eb",
+     "name": "907M at 44th Avenue",
+     "city": "Queens"
+    },
+    {
+     "id": "occ-ny511-55b43ee388",
+     "name": "907M at 55th Avenue",
+     "city": "Queens"
+    },
+    {
+     "id": "occ-ny511-a6bcdbea0a",
+     "name": "907M at 64th Avenue",
+     "city": "Queens"
+    },
+    {
+     "id": "occ-ny511-9565aa16f7",
+     "name": "907M at 69th Road",
+     "city": "Queens"
+    }
+   ]
+  },
+  {
+   "name": "Minnesota",
+   "slug": "minnesota",
+   "usps": "MN",
+   "count": 1282,
+   "areas": [
+    {
+     "name": "in Minneapolis",
+     "count": 75
+    },
+    {
+     "name": "in Saint Paul",
+     "count": 45
+    },
+    {
+     "name": "in Eagan",
+     "count": 30
+    },
+    {
+     "name": "in Bloomington",
+     "count": 24
+    },
+    {
+     "name": "in Plymouth",
+     "count": 22
+    },
+    {
+     "name": "in Rochester",
+     "count": 21
+    },
+    {
+     "name": "in Maplewood",
+     "count": 20
+    },
+    {
+     "name": "in Brooklyn Park",
+     "count": 19
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-cr-3ae5336d5c",
+     "name": "I-35W N-S @ 46th St",
+     "city": "in Minneapolis"
+    },
+    {
+     "id": "occ-cr-bec4779d18",
+     "name": "I-35W NB @ 26th St",
+     "city": "in Minneapolis"
+    },
+    {
+     "id": "occ-cr-cdbc737032",
+     "name": "I-35W NB @ 31st St",
+     "city": "in Minneapolis"
+    },
+    {
+     "id": "occ-cr-6551a68d34",
+     "name": "I-35W NB @ 33rd St",
+     "city": "in Minneapolis"
+    },
+    {
+     "id": "occ-cr-4fac23e041",
+     "name": "I-35W NB @ 36th St",
+     "city": "in Minneapolis"
+    },
+    {
+     "id": "occ-cr-b7bedc3a87",
+     "name": "I-35W NB @ 38th St",
+     "city": "in Minneapolis"
+    }
+   ]
+  },
+  {
+   "name": "Oregon",
+   "slug": "oregon",
+   "usps": "OR",
+   "count": 1191,
+   "areas": [
+    {
+     "name": "CNTY",
+     "count": 240
+    },
+    {
+     "name": "City",
+     "count": 116
+    },
+    {
+     "name": "I-5",
+     "count": 109
+    },
+    {
+     "name": "I-84",
+     "count": 74
+    },
+    {
+     "name": "US26",
+     "count": 61
+    },
+    {
+     "name": "CITY",
+     "count": 46
+    },
+    {
+     "name": "US97",
+     "count": 42
+    },
+    {
+     "name": "US101",
+     "count": 28
+    }
+   ],
+   "samples": [
+    {
+     "id": "odot-645",
+     "name": "Clackamas Co - 101st at Sunnyside",
+     "city": "CNTY"
+    },
+    {
+     "id": "odot-1018",
+     "name": "Clackamas Co - 105th at Sunnyside",
+     "city": "CNTY"
+    },
+    {
+     "id": "odot-884",
+     "name": "Clackamas Co - 119th at Sunnyside",
+     "city": "CNTY"
+    },
+    {
+     "id": "odot-885",
+     "name": "Clackamas Co - 122nd at Summers Lane",
+     "city": "CNTY"
+    },
+    {
+     "id": "odot-647",
+     "name": "Clackamas Co - 122nd at Sunnyside",
+     "city": "CNTY"
+    },
+    {
+     "id": "odot-964",
+     "name": "Clackamas Co - 12th at Washington St",
+     "city": "CNTY"
+    }
+   ]
+  },
+  {
+   "name": "Colorado",
+   "slug": "colorado",
+   "usps": "CO",
+   "count": 1149,
+   "areas": [
+    {
+     "name": "Denver",
+     "count": 166
+    },
+    {
+     "name": "Lakewood",
+     "count": 59
+    },
+    {
+     "name": "Broomfield",
+     "count": 38
+    },
+    {
+     "name": "Golden",
+     "count": 36
+    },
+    {
+     "name": "Douglas County",
+     "count": 30
+    },
+    {
+     "name": "Evergreen",
+     "count": 29
+    },
+    {
+     "name": "Lafayette",
+     "count": 27
+    },
+    {
+     "name": "Monument",
+     "count": 23
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-cr-bc3f834cb1",
+     "name": "C-470 MP 017.05 EB at S Santa Fe Dr/US 85",
+     "city": "Denver"
+    },
+    {
+     "id": "occ-cr-376eb43109",
+     "name": "C-470 MP 017.75 EB : 0.7 miles E of S Santa Fe Dr/US 85",
+     "city": "Denver"
+    },
+    {
+     "id": "occ-cr-c0485f7003",
+     "name": "C-470 MP 018.00 EB : 0.5 miles W of Lucent Blvd",
+     "city": "Denver"
+    },
+    {
+     "id": "occ-cr-b8bf0a6b9d",
+     "name": "C-470 MP 018.40 WB at Lucent Blvd",
+     "city": "Denver"
+    },
+    {
+     "id": "occ-cr-88add3f20b",
+     "name": "C-470 MP 018.55 EB : 0.1 miles E of Lucent Blvd",
+     "city": "Denver"
+    },
+    {
+     "id": "occ-cr-6064957ab0",
+     "name": "C-470 MP 019.00 EB : 0.6 miles E of Lucent Blvd",
+     "city": "Denver"
+    }
+   ]
+  },
+  {
+   "name": "Alaska",
+   "slug": "alaska",
+   "usps": "AK",
+   "count": 1142,
+   "areas": [
+    {
+     "name": "Anchorage",
+     "count": 37
+    },
+    {
+     "name": "AK",
+     "count": 22
+    },
+    {
+     "name": "Kodiak",
+     "count": 16
+    },
+    {
+     "name": "Dutch Harbor",
+     "count": 12
+    },
+    {
+     "name": "Matanuska-Susitna Borough",
+     "count": 12
+    },
+    {
+     "name": "Fairbanks",
+     "count": 11
+    },
+    {
+     "name": "Lake Clark Pass",
+     "count": 10
+    },
+    {
+     "name": "Fairbanks North Star Borough",
+     "count": 9
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-s511-AK-10",
+     "name": "Parks Highway @ Hawk Lane MP 53.2 NB",
+     "city": "Houston"
+    },
+    {
+     "id": "occ-s511-AK-134",
+     "name": "Parks Hwy & Big Lake Rd",
+     "city": "Houston"
+    },
+    {
+     "id": "occ-s511-AK-115",
+     "name": "36th & New Seward Hwy",
+     "city": "Anchorage"
+    },
+    {
+     "id": "occ-s511-AK-116",
+     "name": "5th Avenue / Glenn Hwy & Airport Heights",
+     "city": "Anchorage"
+    },
+    {
+     "id": "occ-s511-AK-118",
+     "name": "5th Avenue & Reeve Blvd",
+     "city": "Anchorage"
+    },
+    {
+     "id": "faa-11299",
+     "name": "Anchorage — Camera 1 (East)",
+     "city": "Anchorage"
+    }
+   ]
+  },
+  {
+   "name": "North Carolina",
+   "slug": "north-carolina",
+   "usps": "NC",
+   "count": 1050,
+   "areas": [
+    {
+     "name": "North Carolina",
+     "count": 188
+    },
+    {
+     "name": "Mecklenburg County",
+     "count": 139
+    },
+    {
+     "name": "Guilford County",
+     "count": 98
+    },
+    {
+     "name": "Forsyth County",
+     "count": 83
+    },
+    {
+     "name": "New Hanover County",
+     "count": 42
+    },
+    {
+     "name": "Buncombe County",
+     "count": 41
+    },
+    {
+     "name": "Durham County",
+     "count": 29
+    },
+    {
+     "name": "Dare County",
+     "count": 28
+    }
+   ],
+   "samples": [
+    {
+     "id": "ncdot-5751",
+     "name": "I-40 Eastbound",
+     "city": "Orange County"
+    },
+    {
+     "id": "ncdot-5784",
+     "name": "I-40 Eastbound",
+     "city": "Orange County"
+    },
+    {
+     "id": "ncdot-5785",
+     "name": "I-40 Eastbound",
+     "city": "Orange County"
+    },
+    {
+     "id": "ncdot-5786",
+     "name": "I-40 Eastbound",
+     "city": "Orange County"
+    },
+    {
+     "id": "ncdot-5740",
+     "name": "I-40 Westbound",
+     "city": "Orange County"
+    },
+    {
+     "id": "ncdot-5762",
+     "name": "I-40 Westbound",
+     "city": "Orange County"
+    }
+   ]
+  },
+  {
+   "name": "Michigan",
+   "slug": "michigan",
+   "usps": "MI",
+   "count": 804,
+   "areas": [
+    {
+     "name": "Wayne County",
+     "count": 188
+    },
+    {
+     "name": "Oakland County",
+     "count": 115
+    },
+    {
+     "name": "Kent County",
+     "count": 88
+    },
+    {
+     "name": "Washtenaw County",
+     "count": 34
+    },
+    {
+     "name": "Macomb County",
+     "count": 27
+    },
+    {
+     "name": "St. Clair County",
+     "count": 26
+    },
+    {
+     "name": "Kalamazoo County",
+     "count": 23
+    },
+    {
+     "name": "Berrien County",
+     "count": 21
+    }
+   ],
+   "samples": [
+    {
+     "id": "mdot-1129",
+     "name": "11 Mile @ Mound NB",
+     "city": "Wayne County"
+    },
+    {
+     "id": "mdot-1128",
+     "name": "11 Mile @ Mound SB",
+     "city": "Wayne County"
+    },
+    {
+     "id": "mdot-2599",
+     "name": "Gratiot @ Randolph",
+     "city": "Wayne County"
+    },
+    {
+     "id": "mdot-3777",
+     "name": "I-275 @ 5 Mile 2",
+     "city": "Wayne County"
+    },
+    {
+     "id": "mdot-226",
+     "name": "I-275 @ 6 Mile",
+     "city": "Wayne County"
+    },
+    {
+     "id": "mdot-2207",
+     "name": "I-275 @ 7 Mile",
+     "city": "Wayne County"
+    }
+   ]
+  },
+  {
+   "name": "Nevada",
+   "slug": "nevada",
+   "usps": "NV",
+   "count": 771,
+   "areas": [
+    {
+     "name": "Nevada",
+     "count": 649
+    },
+    {
+     "name": "Elko County",
+     "count": 6
+    },
+    {
+     "name": "Bald Mtn NV",
+     "count": 4
+    },
+    {
+     "name": "Black Mtn NV",
+     "count": 4
+    },
+    {
+     "name": "Callaghan Peak",
+     "count": 4
+    },
+    {
+     "name": "Carson City",
+     "count": 4
+    },
+    {
+     "name": "Cave Mtn",
+     "count": 4
+    },
+    {
+     "name": "Deer",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "id": "udot-168044",
+     "name": "I-80 EB @ Wendover / UT MP -1.4 / NV MP 409.25, WEN",
+     "city": "Utah"
+    },
+    {
+     "id": "ndot-7571",
+     "name": "Airport Connector Grier (Tunnel)",
+     "city": "Nevada"
+    },
+    {
+     "id": "ndot-7570",
+     "name": "Airport Connector NB Grier",
+     "city": "Nevada"
+    },
+    {
+     "id": "ndot-7682",
+     "name": "Ann Rd & CC 215 SB Ramp",
+     "city": "Nevada"
+    },
+    {
+     "id": "ndot-7681",
+     "name": "Ann Rd & Commerce St",
+     "city": "Nevada"
+    },
+    {
+     "id": "ndot-7559",
+     "name": "Bermuda & George Crockett",
+     "city": "Nevada"
+    }
+   ]
+  },
+  {
+   "name": "South Carolina",
+   "slug": "south-carolina",
+   "usps": "SC",
+   "count": 751,
+   "areas": [
+    {
+     "name": "Richland County",
+     "count": 45
+    },
+    {
+     "name": "Columbia",
+     "count": 41
+    },
+    {
+     "name": "Clarendon County",
+     "count": 33
+    },
+    {
+     "name": "Lexington County",
+     "count": 33
+    },
+    {
+     "name": "Spartanburg County",
+     "count": 33
+    },
+    {
+     "name": "Cherokee County",
+     "count": 32
+    },
+    {
+     "name": "Greenville",
+     "count": 29
+    },
+    {
+     "name": "North Charleston",
+     "count": 29
+    }
+   ],
+   "samples": [
+    {
+     "id": "gdot-13325",
+     "name": "I-20 W at GA/SCLine MM 200.6 (Richmond)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-17722",
+     "name": "I-20 W before SR104 MM 200.5 (Richmond)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-12254",
+     "name": "SR 26/1st ST at CAMPBELL AVE (Savannah)",
+     "city": "Georgia"
+    },
+    {
+     "id": "gdot-12844",
+     "name": "SR 26/US 80 at JONES AVE (Savannah)",
+     "city": "Georgia"
+    },
+    {
+     "id": "occ-phenocam-cs2afforestation",
+     "name": "Climate Smart 2: Ag to Afforestation Study (Sumter, SC)",
+     "city": "Sumter County"
+    },
+    {
+     "id": "occ-s511-SC-2595",
+     "name": "I-95 N @ MM 134.3",
+     "city": "Sumter County"
+    }
+   ]
+  },
+  {
+   "name": "Arizona",
+   "slug": "arizona",
+   "usps": "AZ",
+   "count": 664,
+   "areas": [
+    {
+     "name": "Phoenix",
+     "count": 429
+    },
+    {
+     "name": "Tucson",
+     "count": 53
+    },
+    {
+     "name": "Arizona",
+     "count": 19
+    },
+    {
+     "name": "Flagstaff",
+     "count": 17
+    },
+    {
+     "name": "Nogales",
+     "count": 15
+    },
+    {
+     "name": "Prescott",
+     "count": 14
+    },
+    {
+     "name": "Holbrook",
+     "count": 10
+    },
+    {
+     "name": "Kingman",
+     "count": 10
+    }
+   ],
+   "samples": [
+    {
+     "id": "udot-167358",
+     "name": "I-15 NB @ UT/AZ State Line / MP 0.14, STG",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-167822",
+     "name": "Southern Pkwy / SR-7 @ River Rd / MP 3.76, STG",
+     "city": "Utah"
+    },
+    {
+     "id": "ndot-7623",
+     "name": "Casino Dr & Laughlin Hwy SR 163",
+     "city": "Nevada"
+    },
+    {
+     "id": "adot-764",
+     "name": "I-10 @ 51st Ave",
+     "city": "Phoenix"
+    },
+    {
+     "id": "adot-760",
+     "name": "I-10 @ 79th Ave",
+     "city": "Phoenix"
+    },
+    {
+     "id": "adot-754",
+     "name": "I-10 @107th Ave",
+     "city": "Phoenix"
+    }
+   ]
+  },
+  {
+   "name": "Illinois",
+   "slug": "illinois",
+   "usps": "IL",
+   "count": 606,
+   "areas": [
+    {
+     "name": "Peoria",
+     "count": 47
+    },
+    {
+     "name": "Chicago",
+     "count": 26
+    },
+    {
+     "name": "East Peoria",
+     "count": 23
+    },
+    {
+     "name": "Champaign",
+     "count": 20
+    },
+    {
+     "name": "Lombard",
+     "count": 19
+    },
+    {
+     "name": "Downers Grove",
+     "count": 18
+    },
+    {
+     "name": "Naperville",
+     "count": 18
+    },
+    {
+     "name": "DuPage County",
+     "count": 16
+    }
+   ],
+   "samples": [
+    {
+     "id": "indot-24304",
+     "name": "I-80 Illinois: I-80-94/0.0 INDIANA STATE LINE",
+     "city": "Indiana"
+    },
+    {
+     "id": "occ-tmw-IL-IL-IDOTD4_4_Woodford_SB_I-39_4073631_-8903482_1_N",
+     "name": "I-39 at US 24 (El Paso) (#4192)",
+     "city": "El Paso"
+    },
+    {
+     "id": "occ-arcgis-IL-IL-ISTHA_1_Lake_NWB_I-94-CASH_4243190_-8795130_1_E",
+     "name": "I-94 at Waukegan Road (East)",
+     "city": "Lake County"
+    },
+    {
+     "id": "occ-arcgis-IL-IL-ISTHA_1_Lake_NWB_I-94_4243140_-8795140_1_E",
+     "name": "TWR PL21 WB (Waukegan) Top (East)",
+     "city": "Lake County"
+    },
+    {
+     "id": "occ-tmw-IL-IL-IDOTD4_8_Madison_SB_I-55_3874793_-8990861_1_N",
+     "name": "I-55/70 @ MP 19.2",
+     "city": "Madison County"
+    },
+    {
+     "id": "occ-arcgis-IL-IL-IDOTD4_8_Madison_SWB_I-70_3870031_-8999066_1_S",
+     "name": "I-55/70 at Milepost 12.7 (South)",
+     "city": "Madison County"
+    }
+   ]
+  },
+  {
+   "name": "Indiana",
+   "slug": "indiana",
+   "usps": "IN",
+   "count": 572,
+   "areas": [
+    {
+     "name": "Indiana",
+     "count": 569
+    },
+    {
+     "name": "Mark Center",
+     "count": 2
+    },
+    {
+     "name": "Winthrop Harbor",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "indot-23868",
+     "name": "I-265: CHARLESTOWN PIKE",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-24268",
+     "name": "I-265: CHARLESTOWN RD",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-23851",
+     "name": "I-265: GRANT LINE RD",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-24267",
+     "name": "I-265: GREEN VALLEY RD",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-24595",
+     "name": "I-265: I-265/28.7 LEWIS AND CLARK BRIDGE",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-23869",
+     "name": "I-265: I-265/29.4 E OF OLD SALEM/RIVER RIDGE",
+     "city": "Indiana"
+    }
+   ]
+  },
+  {
+   "name": "Tennessee",
+   "slug": "tennessee",
+   "usps": "TN",
+   "count": 522,
+   "areas": [
+    {
+     "name": "Nashville",
+     "count": 134
+    },
+    {
+     "name": "Memphis",
+     "count": 85
+    },
+    {
+     "name": "Knoxville",
+     "count": 71
+    },
+    {
+     "name": "Chattanooga",
+     "count": 62
+    },
+    {
+     "name": "McMinn County",
+     "count": 14
+    },
+    {
+     "name": "Bradley County",
+     "count": 13
+    },
+    {
+     "name": "Haywood County",
+     "count": 10
+    },
+    {
+     "name": "Murfreesboro",
+     "count": 10
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-arcgis-TN-28bf108330",
+     "name": "2461.8 (R3_172)",
+     "city": "Nashville"
+    },
+    {
+     "id": "occ-arcgis-TN-ce4d563aea",
+     "name": "Briley Pkwy EB e/o Clarksville Pike (MM 20.31) (R3_130)",
+     "city": "Nashville"
+    },
+    {
+     "id": "occ-arcgis-TN-3c13747183",
+     "name": "Briley Pkwy EB e/o Cumberland River (MM 13.86) (R3_143)",
+     "city": "Nashville"
+    },
+    {
+     "id": "occ-arcgis-TN-3b5a929049",
+     "name": "Briley Pkwy EB e/o Galatin Pike (MM 14.24) (R3_144)",
+     "city": "Nashville"
+    },
+    {
+     "id": "occ-arcgis-TN-1c5c58c7c0",
+     "name": "Briley Pkwy EB e/o Whites Creek Pike (MM 18.65) (R3_132)",
+     "city": "Nashville"
+    },
+    {
+     "id": "occ-arcgis-TN-5cfc39d8af",
+     "name": "Briley Pkwy EB w/o Clarksville Pike (MM 21.31) (R3_128)",
+     "city": "Nashville"
+    }
+   ]
+  },
+  {
+   "name": "Missouri",
+   "slug": "missouri",
+   "usps": "MO",
+   "count": 514,
+   "areas": [
+    {
+     "name": "in Kansas City",
+     "count": 105
+    },
+    {
+     "name": "East St Louis",
+     "count": 33
+    },
+    {
+     "name": "St. Louis County",
+     "count": 32
+    },
+    {
+     "name": "St. Louis",
+     "count": 27
+    },
+    {
+     "name": "in Lee's Summit",
+     "count": 14
+    },
+    {
+     "name": "Jefferson County",
+     "count": 13
+    },
+    {
+     "name": "Maryland Heights",
+     "count": 11
+    },
+    {
+     "name": "St. Charles",
+     "count": 11
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-cr-6affb6a7a7",
+     "name": "71 hwy S @ I-470 WB",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-fa432474be",
+     "name": "71 N @ BEFORE 75th St",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-7fdef02ca1",
+     "name": "71SB @ 435WB",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-750eb964e8",
+     "name": "71SB N OF 85TH ST",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-079a2986e1",
+     "name": "I-29 N @ at 169 Hwy",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-7c234e919d",
+     "name": "I-29 N @ at 64th",
+     "city": "in Kansas City"
+    }
+   ]
+  },
+  {
+   "name": "Maryland",
+   "slug": "maryland",
+   "usps": "MD",
+   "count": 507,
+   "areas": [
+    {
+     "name": "Baltimore",
+     "count": 198
+    },
+    {
+     "name": "Wash. DC",
+     "count": 152
+    },
+    {
+     "name": "Western MD",
+     "count": 51
+    },
+    {
+     "name": "Eastern Shore",
+     "count": 42
+    },
+    {
+     "name": "Annapolis",
+     "count": 35
+    },
+    {
+     "name": "Southern MD",
+     "count": 19
+    },
+    {
+     "name": "Maryland",
+     "count": 3
+    },
+    {
+     "name": "Frederick Municipal Airport",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-mdchart-1701ea3700f9004a005dd336c4235c0a",
+     "name": "I-695 AT BALT NATL PK",
+     "city": "Baltimore"
+    },
+    {
+     "id": "occ-mdchart-2301638a0027005a005fd336c4235c0a",
+     "name": "I-695 AT COVE RD",
+     "city": "Baltimore"
+    },
+    {
+     "id": "occ-mdchart-3b0121f4017600da0058fa36c4235c0a",
+     "name": "I-695 AT DULANEY VALLEY RD",
+     "city": "Baltimore"
+    },
+    {
+     "id": "occ-mdchart-7b0177e600f7006f0062d336c4235c0a",
+     "name": "I-695 AT EASTERN AVE",
+     "city": "Baltimore"
+    },
+    {
+     "id": "occ-mdchart-e1ffe9c300a600dd005cd336c4235c0a",
+     "name": "I-695 AT EXIT 32 US 1 BELAIR RD",
+     "city": "Baltimore"
+    },
+    {
+     "id": "occ-mdchart-32011cc401660038005dd336c4235c0a",
+     "name": "I-695 AT GREENSPRING",
+     "city": "Baltimore"
+    }
+   ]
+  },
+  {
+   "name": "Wisconsin",
+   "slug": "wisconsin",
+   "usps": "WI",
+   "count": 455,
+   "areas": [
+    {
+     "name": "Milwaukee",
+     "count": 67
+    },
+    {
+     "name": "Madison",
+     "count": 27
+    },
+    {
+     "name": "Wauwatosa",
+     "count": 21
+    },
+    {
+     "name": "West Allis",
+     "count": 15
+    },
+    {
+     "name": "Brookfield",
+     "count": 14
+    },
+    {
+     "name": "Greenfield",
+     "count": 12
+    },
+    {
+     "name": "New Berlin",
+     "count": 8
+    },
+    {
+     "name": "Green Bay",
+     "count": 7
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-s511-WI-79",
+     "name": "84th St at Schlinger Ave",
+     "city": "Milwaukee"
+    },
+    {
+     "id": "occ-s511-WI-279",
+     "name": "I-41/43/894 at 19th St",
+     "city": "Milwaukee"
+    },
+    {
+     "id": "occ-s511-WI-290",
+     "name": "I-41/43/894 at 22nd St EB",
+     "city": "Milwaukee"
+    },
+    {
+     "id": "occ-s511-WI-301",
+     "name": "I-41/43/894 at 27th St",
+     "city": "Milwaukee"
+    },
+    {
+     "id": "occ-s511-WI-343",
+     "name": "I-41/43/94/894 at Mitchell Interchange",
+     "city": "Milwaukee"
+    },
+    {
+     "id": "occ-s511-WI-59",
+     "name": "I-41/94 at College Ave",
+     "city": "Milwaukee"
+    }
+   ]
+  },
+  {
+   "name": "Idaho",
+   "slug": "idaho",
+   "usps": "ID",
+   "count": 449,
+   "areas": [
+    {
+     "name": "Boise",
+     "count": 122
+    },
+    {
+     "name": "Meridian",
+     "count": 45
+    },
+    {
+     "name": "Ada County",
+     "count": 17
+    },
+    {
+     "name": "Coeur d'Alene",
+     "count": 14
+    },
+    {
+     "name": "Eagle",
+     "count": 13
+    },
+    {
+     "name": "Moscow",
+     "count": 12
+    },
+    {
+     "name": "Garden City",
+     "count": 9
+    },
+    {
+     "name": "Kootenai County",
+     "count": 8
+    }
+   ],
+   "samples": [
+    {
+     "id": "udot-164751",
+     "name": "I-15 NB @ UT/ID State Line / MP 400.59, BE",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-167657",
+     "name": "SR-42 @ Idaho State Line / MP 0.43, BE",
+     "city": "Utah"
+    },
+    {
+     "id": "udot-164386",
+     "name": "US-91 @ UT/ID State Line / MP 45.27, CA",
+     "city": "Utah"
+    },
+    {
+     "id": "occ-s511-ID-36",
+     "name": "I-184 0.4 Exit 0 To I-84W 558 WB",
+     "city": "Boise"
+    },
+    {
+     "id": "occ-s511-ID-497",
+     "name": "I-184 17th St",
+     "city": "Boise"
+    },
+    {
+     "id": "occ-s511-ID-500",
+     "name": "I-184 Chinden Blvd",
+     "city": "Boise"
+    }
+   ]
+  },
+  {
+   "name": "Louisiana",
+   "slug": "louisiana",
+   "usps": "LA",
+   "count": 332,
+   "areas": [
+    {
+     "name": "Louisiana",
+     "count": 330
+    },
+    {
+     "name": "False River Airport",
+     "count": 1
+    },
+    {
+     "name": "Monroe",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "ladotd-221",
+     "name": "HOV Ramp at General Degualle Exit",
+     "city": "Louisiana"
+    },
+    {
+     "id": "ladotd-409",
+     "name": "I-10",
+     "city": "Louisiana"
+    },
+    {
+     "id": "ladotd-365",
+     "name": "I-10 @ N. Thompson Ave. DMS",
+     "city": "Louisiana"
+    },
+    {
+     "id": "ladotd-140",
+     "name": "I-10 at 10/12 Split",
+     "city": "Louisiana"
+    },
+    {
+     "id": "ladotd-423",
+     "name": "I-10 at 4 Mile Bridge (Reserve Canal) East",
+     "city": "Louisiana"
+    },
+    {
+     "id": "ladotd-422",
+     "name": "I-10 at 4 Mile Bridge (Reserve Canal) West",
+     "city": "Louisiana"
+    }
+   ]
+  },
+  {
+   "name": "Connecticut",
+   "slug": "connecticut",
+   "usps": "CT",
+   "count": 329,
+   "areas": [
+    {
+     "name": "East Hartford",
+     "count": 22
+    },
+    {
+     "name": "Waterbury",
+     "count": 20
+    },
+    {
+     "name": "Hartford",
+     "count": 17
+    },
+    {
+     "name": "Cromwell",
+     "count": 14
+    },
+    {
+     "name": "Milford",
+     "count": 14
+    },
+    {
+     "name": "New Britain",
+     "count": 14
+    },
+    {
+     "name": "Meriden",
+     "count": 13
+    },
+    {
+     "name": "Southington",
+     "count": 13
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-s511-CT-627",
+     "name": "Madison I-95 NB Exit 61 - Rt. 79 (Durham Rd.)",
+     "city": "Madison"
+    },
+    {
+     "id": "occ-s511-CT-625",
+     "name": "Madison I-95 NB S/O Exit 61 - Willwood Ave.",
+     "city": "Madison"
+    },
+    {
+     "id": "occ-s511-CT-628",
+     "name": "Madison I-95 NB S/O Exit 62 - S/O Horse Pond Rd.",
+     "city": "Madison"
+    },
+    {
+     "id": "occ-s511-CT-629",
+     "name": "Madison I-95 SB Exit 61 - Madison Rest Area",
+     "city": "Madison"
+    },
+    {
+     "id": "occ-s511-CT-626",
+     "name": "Madison I-95 SB N/O Exit 60 - Copes Rd.",
+     "city": "Madison"
+    },
+    {
+     "id": "occ-s511-CT-486",
+     "name": "I-91 NB Middletown @ Rest Area",
+     "city": "Middletown"
+    }
+   ]
+  },
+  {
+   "name": "Nebraska",
+   "slug": "nebraska",
+   "usps": "NE",
+   "count": 320,
+   "areas": [
+    {
+     "name": "in Omaha",
+     "count": 38
+    },
+    {
+     "name": "near Papillion",
+     "count": 12
+    },
+    {
+     "name": "in Lincoln",
+     "count": 11
+    },
+    {
+     "name": "near Bellevue",
+     "count": 4
+    },
+    {
+     "name": "in Papillion",
+     "count": 3
+    },
+    {
+     "name": "near Lincoln",
+     "count": 3
+    },
+    {
+     "name": "near Nebraska City",
+     "count": 3
+    },
+    {
+     "name": "3 miles west of the Melia area",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-cr-60b3b94e72",
+     "name": "108th St in Omaha",
+     "city": "in Omaha"
+    },
+    {
+     "id": "occ-cr-68670f9c3d",
+     "name": "192nd St",
+     "city": "in Omaha"
+    },
+    {
+     "id": "occ-cr-6f46c996e4",
+     "name": "20th St",
+     "city": "in Omaha"
+    },
+    {
+     "id": "occ-cr-61ad808b7d",
+     "name": "31st St",
+     "city": "in Omaha"
+    },
+    {
+     "id": "occ-cr-dfef5c510b",
+     "name": "31st St in N Omaha",
+     "city": "in Omaha"
+    },
+    {
+     "id": "occ-cr-ab7b7868d8",
+     "name": "42nd St in Omaha",
+     "city": "in Omaha"
+    }
+   ]
+  },
+  {
+   "name": "Delaware",
+   "slug": "delaware",
+   "usps": "DE",
+   "count": 315,
+   "areas": [
+    {
+     "name": "New Castle County",
+     "count": 120
+    },
+    {
+     "name": "Sussex County",
+     "count": 49
+    },
+    {
+     "name": "Wilmington",
+     "count": 30
+    },
+    {
+     "name": "Dover",
+     "count": 24
+    },
+    {
+     "name": "Kent County",
+     "count": 19
+    },
+    {
+     "name": "Newark",
+     "count": 11
+    },
+    {
+     "name": "Middletown",
+     "count": 6
+    },
+    {
+     "name": "Milford",
+     "count": 6
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-arcgis-DE-bde3fa7118",
+     "name": "BOYDS CORNER RD @ WEST CENTRAL PARK DR",
+     "city": "New Castle County"
+    },
+    {
+     "id": "occ-arcgis-DE-01e1988401",
+     "name": "CASHO MILL RD @ SOUTH OF CSX TRACKS",
+     "city": "New Castle County"
+    },
+    {
+     "id": "occ-arcgis-DE-5a49f04dcc",
+     "name": "CENTER BLVD S @ CHRISTIANA RET",
+     "city": "New Castle County"
+    },
+    {
+     "id": "occ-arcgis-DE-84f8bf9d42",
+     "name": "CENTERVILLE RD @ BOXWOOD RD",
+     "city": "New Castle County"
+    },
+    {
+     "id": "occ-arcgis-DE-0257da4204",
+     "name": "CENTERVILLE RD @ GREENBANK RD",
+     "city": "New Castle County"
+    },
+    {
+     "id": "occ-arcgis-DE-f3d03a1934",
+     "name": "CENTERVILLE RD @ OLD CAPITOL TRAIL",
+     "city": "New Castle County"
+    }
+   ]
+  },
+  {
+   "name": "Hawaii",
+   "slug": "hawaii",
+   "usps": "HI",
+   "count": 273,
+   "areas": [
+    {
+     "name": "Honolulu County",
+     "count": 109
+    },
+    {
+     "name": "Maui",
+     "count": 20
+    },
+    {
+     "name": "Hawaii",
+     "count": 17
+    },
+    {
+     "name": "Lanai",
+     "count": 8
+    },
+    {
+     "name": "O'ahu",
+     "count": 7
+    },
+    {
+     "name": "Oaho",
+     "count": 6
+    },
+    {
+     "name": "Waimea",
+     "count": 6
+    },
+    {
+     "name": "Upolu",
+     "count": 5
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-arcgis-HI-0b770af5df",
+     "name": "ALA MOANA & ALA MOANA MAKAI EXIT",
+     "city": "Honolulu County"
+    },
+    {
+     "id": "occ-arcgis-HI-19cdfcae47",
+     "name": "ALA MOANA & ATKINSON",
+     "city": "Honolulu County"
+    },
+    {
+     "id": "occ-arcgis-HI-5e7a0e192e",
+     "name": "ALA MOANA & KALIA",
+     "city": "Honolulu County"
+    },
+    {
+     "id": "occ-arcgis-HI-6f01593cc8",
+     "name": "ALA MOANA & KAMAKEE",
+     "city": "Honolulu County"
+    },
+    {
+     "id": "occ-arcgis-HI-d5b5bf2a68",
+     "name": "ALA MOANA & PIIKOI",
+     "city": "Honolulu County"
+    },
+    {
+     "id": "occ-arcgis-HI-aceb383b35",
+     "name": "ALA MOANA & WARD",
+     "city": "Honolulu County"
+    }
+   ]
+  },
+  {
+   "name": "North Dakota",
+   "slug": "north-dakota",
+   "usps": "ND",
+   "count": 273,
+   "areas": [
+    {
+     "name": "Fargo",
+     "count": 24
+    },
+    {
+     "name": "Bismarck",
+     "count": 13
+    },
+    {
+     "name": "McKenzie County",
+     "count": 11
+    },
+    {
+     "name": "Stark County",
+     "count": 8
+    },
+    {
+     "name": "Ward County",
+     "count": 8
+    },
+    {
+     "name": "Barnes County",
+     "count": 7
+    },
+    {
+     "name": "Morton County",
+     "count": 7
+    },
+    {
+     "name": "Cass County",
+     "count": 6
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-arcgis-ND-bc9e8653c3",
+     "name": "Lake Agassiz - West (I 29 MP 3) - NDDOT",
+     "city": "Richland County"
+    },
+    {
+     "id": "occ-arcgis-ND-0c6305cacb",
+     "name": "Mooreton - North (I 29 MP 23.48) - NDDOT",
+     "city": "Richland County"
+    },
+    {
+     "id": "occ-arcgis-ND-cc3bfe465e",
+     "name": "Mooreton - West (ND 13 MP 378) - NDDOT",
+     "city": "Richland County"
+    },
+    {
+     "id": "occ-arcgis-ND-65d98385e4",
+     "name": "SD State Line SB - North (I 29 MP 1) - NDDOT",
+     "city": "Richland County"
+    },
+    {
+     "id": "occ-arcgis-ND-2a925ced26",
+     "name": "Fargo - 36th St West (I 29 MP 64.261) - NDDOT",
+     "city": "Fargo"
+    },
+    {
+     "id": "occ-arcgis-ND-a50697019a",
+     "name": "Fargo - 38th St North (I 29 MP 64.432) - NDDOT",
+     "city": "Fargo"
+    }
+   ]
+  },
+  {
+   "name": "Montana",
+   "slug": "montana",
+   "usps": "MT",
+   "count": 245,
+   "areas": [
+    {
+     "name": "West Yellowstone",
+     "count": 5
+    },
+    {
+     "name": "Baker Airport",
+     "count": 4
+    },
+    {
+     "name": "Big Sany Airport",
+     "count": 4
+    },
+    {
+     "name": "Billings Airport",
+     "count": 4
+    },
+    {
+     "name": "Bowman Field Anaconda",
+     "count": 4
+    },
+    {
+     "name": "Bozeman",
+     "count": 4
+    },
+    {
+     "name": "Bozeman Pass",
+     "count": 4
+    },
+    {
+     "name": "Butte Airport",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-s511-ID-328",
+     "name": "Local Raynolds Pass, MT",
+     "city": "Madison County"
+    },
+    {
+     "id": "faa-12971",
+     "name": "Twin Bridges — Camera 1 (North)",
+     "city": "Twin Bridges"
+    },
+    {
+     "id": "faa-12972",
+     "name": "Twin Bridges — Camera 2 (SouthEast)",
+     "city": "Twin Bridges"
+    },
+    {
+     "id": "faa-12973",
+     "name": "Twin Bridges — Camera 3 (SouthWest)",
+     "city": "Twin Bridges"
+    },
+    {
+     "id": "faa-12974",
+     "name": "Twin Bridges — Camera 4 (NorthWest)",
+     "city": "Twin Bridges"
+    },
+    {
+     "id": "occ-s511-ID-414",
+     "name": "Local Yaak, MT",
+     "city": "Lincoln County"
+    }
+   ]
+  },
+  {
+   "name": "New Mexico",
+   "slug": "new-mexico",
+   "usps": "NM",
+   "count": 191,
+   "areas": [
+    {
+     "name": "Albuquerque Area",
+     "count": 101
+    },
+    {
+     "name": "New Mexico",
+     "count": 28
+    },
+    {
+     "name": "Statewide",
+     "count": 16
+    },
+    {
+     "name": "Las Cruces",
+     "count": 11
+    },
+    {
+     "name": "Doña Ana County",
+     "count": 6
+    },
+    {
+     "name": "Santa Fe Area",
+     "count": 6
+    },
+    {
+     "name": "Hidalgo County",
+     "count": 5
+    },
+    {
+     "name": "Tesuque Peak",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "id": "txdot-ELP-SH-178/Artcraft @ Westside",
+     "name": "SH-178/Artcraft @ Westside",
+     "city": "El Paso"
+    },
+    {
+     "id": "txdot-ELP-SH-20/Doniphan @ Sunland Park",
+     "name": "SH-20/Doniphan @ Sunland Park",
+     "city": "El Paso"
+    },
+    {
+     "id": "txdot-ELP-US-54 @ State Line",
+     "name": "US-54 @ State Line",
+     "city": "El Paso"
+    },
+    {
+     "id": "occ-nmroads-Coors@Atrisco",
+     "name": "Coors @ Atrisco",
+     "city": "Albuquerque Area"
+    },
+    {
+     "id": "occ-nmroads-Coors@Glenrio",
+     "name": "Coors @ Glenrio",
+     "city": "Albuquerque Area"
+    },
+    {
+     "id": "occ-nmroads-Coors@Iliff",
+     "name": "Coors @ Iliff",
+     "city": "Albuquerque Area"
+    }
+   ]
+  },
+  {
+   "name": "Maine",
+   "slug": "maine",
+   "usps": "ME",
+   "count": 190,
+   "areas": [
+    {
+     "name": "Sanford Seacoast Reg Airport",
+     "count": 11
+    },
+    {
+     "name": "Dewitt Field Old Town Muni Airport",
+     "count": 10
+    },
+    {
+     "name": "Bangor International Airport",
+     "count": 8
+    },
+    {
+     "name": "Wiscasset Airport",
+     "count": 8
+    },
+    {
+     "name": "Waterville Robert LaFleur Airport",
+     "count": 7
+    },
+    {
+     "name": "Millinocket Municipal Airport",
+     "count": 6
+    },
+    {
+     "name": "Pittsfield Municipal Airport",
+     "count": 6
+    },
+    {
+     "name": "Houlton International Airport",
+     "count": 5
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-ne511-1271",
+     "name": "95 N MM 3.1 CCTV MTA",
+     "city": "Sanford Seacoast Reg Airport"
+    },
+    {
+     "id": "occ-ne511-1261",
+     "name": "95 NS 0.6 CCTV AX MTA",
+     "city": "Sanford Seacoast Reg Airport"
+    },
+    {
+     "id": "occ-ne511-1260",
+     "name": "95 SS 1.3 CCTV AX MTA",
+     "city": "Sanford Seacoast Reg Airport"
+    },
+    {
+     "id": "occ-ne511-2210",
+     "name": "95 SS 1.3 HLB CCTV MTA",
+     "city": "Sanford Seacoast Reg Airport"
+    },
+    {
+     "id": "occ-ne511-2188",
+     "name": "95 SS 2.4 CCTV AX MTA",
+     "city": "Sanford Seacoast Reg Airport"
+    },
+    {
+     "id": "occ-ne511-1269",
+     "name": "95 SS 2.4 CCTV MTA",
+     "city": "Sanford Seacoast Reg Airport"
+    }
+   ]
+  },
+  {
+   "name": "Kansas",
+   "slug": "kansas",
+   "usps": "KS",
+   "count": 188,
+   "areas": [
+    {
+     "name": "in Kansas City",
+     "count": 44
+    },
+    {
+     "name": "in Lenexa",
+     "count": 18
+    },
+    {
+     "name": "Overland Park",
+     "count": 18
+    },
+    {
+     "name": "in Overland Park",
+     "count": 15
+    },
+    {
+     "name": "in Olathe",
+     "count": 10
+    },
+    {
+     "name": "in Shawnee",
+     "count": 7
+    },
+    {
+     "name": "in Topeka",
+     "count": 6
+    },
+    {
+     "name": "in Bonner Springs",
+     "count": 5
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-cr-2120cde150",
+     "name": "I-35 N @ 18TH ST EXPRESSWAY",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-a8d412a53a",
+     "name": "I-35 N @ 7TH ST TRAFFICWAY",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-0c8cd88b5d",
+     "name": "I-35 N @ LAMAR AVE",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-dc804ff6b6",
+     "name": "I-35 S @ CAMBRIDGE CIR",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-7682242ed7",
+     "name": "I-35 S @ SOUTHWEST BLVD",
+     "city": "in Kansas City"
+    },
+    {
+     "id": "occ-cr-fc294b191b",
+     "name": "I-435 N @ Before Missouri River",
+     "city": "in Kansas City"
+    }
+   ]
+  },
+  {
+   "name": "Massachusetts",
+   "slug": "massachusetts",
+   "usps": "MA",
+   "count": 183,
+   "areas": [
+    {
+     "name": "in Boston",
+     "count": 32
+    },
+    {
+     "name": "Massachusetts",
+     "count": 6
+    },
+    {
+     "name": "Newburyport",
+     "count": 6
+    },
+    {
+     "name": "in Fall River",
+     "count": 5
+    },
+    {
+     "name": "Chantham",
+     "count": 4
+    },
+    {
+     "name": "in Holyoke",
+     "count": 4
+    },
+    {
+     "name": "in Plymouth",
+     "count": 4
+    },
+    {
+     "name": "in Somerville",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-cr-3ad0b83073",
+     "name": "I-90-WB-MM130.1-Brighton-East of Everett St",
+     "city": "in Boston"
+    },
+    {
+     "id": "occ-cr-762e2df22c",
+     "name": "I-93-ME-MM15.5-Boston-Ex 15B",
+     "city": "in Boston"
+    },
+    {
+     "id": "occ-cr-a6ff97149b",
+     "name": "I-93-ME-MM16.0-Boston-NB Ex 16 to HOV-E",
+     "city": "in Boston"
+    },
+    {
+     "id": "occ-cr-fa9fc82cf0",
+     "name": "I-93-ME-MM16.3-Boston-past Frontage Rd merge",
+     "city": "in Boston"
+    },
+    {
+     "id": "occ-cr-a951f76eee",
+     "name": "I-93-NB-MM13.5-Boston-b/w Ex 13B & 14 Savin Hill",
+     "city": "in Boston"
+    },
+    {
+     "id": "occ-cr-9746a487af",
+     "name": "I-93-NB-MM16.5-Boston-over Broadway Br",
+     "city": "in Boston"
+    }
+   ]
+  },
+  {
+   "name": "Oklahoma",
+   "slug": "oklahoma",
+   "usps": "OK",
+   "count": 156,
+   "areas": [
+    {
+     "name": "Oklahoma City",
+     "count": 78
+    },
+    {
+     "name": "Tulsa",
+     "count": 47
+    },
+    {
+     "name": "Norman",
+     "count": 8
+    },
+    {
+     "name": "Edmond",
+     "count": 4
+    },
+    {
+     "name": "Lawton",
+     "count": 4
+    },
+    {
+     "name": "Moore",
+     "count": 3
+    },
+    {
+     "name": "Blackwell",
+     "count": 1
+    },
+    {
+     "name": "Braman",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-ok-1294406354",
+     "name": "I-235 & 5th SE",
+     "city": "Oklahoma City"
+    },
+    {
+     "id": "occ-ok-1465894287",
+     "name": "I-235 & N13th N",
+     "city": "Oklahoma City"
+    },
+    {
+     "id": "occ-ok-1465896601",
+     "name": "I-235 & N23rd N",
+     "city": "Oklahoma City"
+    },
+    {
+     "id": "occ-ok-1465896927",
+     "name": "I-235 & N36th N",
+     "city": "Oklahoma City"
+    },
+    {
+     "id": "occ-ok-1338974465",
+     "name": "I-235 & Sheridan N",
+     "city": "Oklahoma City"
+    },
+    {
+     "id": "occ-ok-1712010103555",
+     "name": "I-240 & Douglas N",
+     "city": "Oklahoma City"
+    }
+   ]
+  },
+  {
+   "name": "New Hampshire",
+   "slug": "new-hampshire",
+   "usps": "NH",
+   "count": 152,
+   "areas": [
+    {
+     "name": "Hanover",
+     "count": 53
+    },
+    {
+     "name": "Newburyport",
+     "count": 24
+    },
+    {
+     "name": "Sanford Seacoast Reg Airport",
+     "count": 13
+    },
+    {
+     "name": "RWIS Station",
+     "count": 11
+    },
+    {
+     "name": "Portsmouth",
+     "count": 9
+    },
+    {
+     "name": "Waterville Valley",
+     "count": 5
+    },
+    {
+     "name": "Berlin Regional Airport",
+     "count": 4
+    },
+    {
+     "name": "Concord",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-ne511-1297",
+     "name": "101 W MM 23.7 - RWIS",
+     "city": "Hillsborough County"
+    },
+    {
+     "id": "occ-ne511-1300",
+     "name": "ST S MM 18.6 - RWIS",
+     "city": "Rochester"
+    },
+    {
+     "id": "occ-ne511-1841",
+     "name": "101 E 50.8 - Nashua Road",
+     "city": "Hanover"
+    },
+    {
+     "id": "occ-ne511-1842",
+     "name": "101 E 52.1 ??? NH101 / NH114",
+     "city": "Hanover"
+    },
+    {
+     "id": "occ-ne511-1341",
+     "name": "101 E MM 53.8",
+     "city": "Hanover"
+    },
+    {
+     "id": "occ-ne511-1259",
+     "name": "101 W 61.2",
+     "city": "Hanover"
+    }
+   ]
+  },
+  {
+   "name": "Ohio",
+   "slug": "ohio",
+   "usps": "OH",
+   "count": 134,
+   "areas": [
+    {
+     "name": "Franklin",
+     "count": 37
+    },
+    {
+     "name": "Cleveland",
+     "count": 14
+    },
+    {
+     "name": "Columbus",
+     "count": 11
+    },
+    {
+     "name": "Dayton",
+     "count": 7
+    },
+    {
+     "name": "Akron",
+     "count": 6
+    },
+    {
+     "name": "Campbell",
+     "count": 6
+    },
+    {
+     "name": "Cincinnati",
+     "count": 6
+    },
+    {
+     "name": "Toledo",
+     "count": 6
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-ohgo-00000000001344",
+     "name": "(City of Columbus) Ackerman Rd at Kenny Rd",
+     "city": "Franklin"
+    },
+    {
+     "id": "occ-ohgo-00000000001346",
+     "name": "(City of Columbus) Bethel Rd at Dierker Rd",
+     "city": "Franklin"
+    },
+    {
+     "id": "occ-ohgo-00000000001347",
+     "name": "(City of Columbus) Broad St at SR-315 SB",
+     "city": "Franklin"
+    },
+    {
+     "id": "occ-ohgo-00000000001304",
+     "name": "(City of Columbus) Broad St at Whitethorne Ave",
+     "city": "Franklin"
+    },
+    {
+     "id": "occ-ohgo-00000000001349",
+     "name": "(City of Columbus) Fifth Ave at Olentangy River Rd",
+     "city": "Franklin"
+    },
+    {
+     "id": "occ-ohgo-00000000001350",
+     "name": "(City of Columbus) Fishinger Blvd at Spring Mill Dr",
+     "city": "Franklin"
+    }
+   ]
+  },
+  {
+   "name": "Vermont",
+   "slug": "vermont",
+   "usps": "VT",
+   "count": 80,
+   "areas": [
+    {
+     "name": "Burlington",
+     "count": 10
+    },
+    {
+     "name": "Bennington",
+     "count": 9
+    },
+    {
+     "name": "Middlebury",
+     "count": 8
+    },
+    {
+     "name": "Rutland",
+     "count": 7
+    },
+    {
+     "name": "Stowe",
+     "count": 7
+    },
+    {
+     "name": "Ludlow",
+     "count": 5
+    },
+    {
+     "name": "Hartford",
+     "count": 4
+    },
+    {
+     "name": "Fayston",
+     "count": 3
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-ne511-966",
+     "name": "HARTFORD I-89 South",
+     "city": "Hartford"
+    },
+    {
+     "id": "occ-ne511-1030",
+     "name": "HARTFORD I-91 North",
+     "city": "Hartford"
+    },
+    {
+     "id": "occ-ne511-1848",
+     "name": "QUECHEE US-4",
+     "city": "Hartford"
+    },
+    {
+     "id": "occ-ne511-1028",
+     "name": "WILDER I-91 South",
+     "city": "Hartford"
+    },
+    {
+     "id": "occ-ne511-1017",
+     "name": "WESTMINSTER I-91 South",
+     "city": "Westminster"
+    },
+    {
+     "id": "occ-ne511-973",
+     "name": "COLCHESTER Exit 16 NB",
+     "city": "Burlington"
+    }
+   ]
+  },
+  {
+   "name": "South Dakota",
+   "slug": "south-dakota",
+   "usps": "SD",
+   "count": 73,
+   "areas": [
+    {
+     "name": "Sturgis",
+     "count": 7
+    },
+    {
+     "name": "Brookings",
+     "count": 5
+    },
+    {
+     "name": "Aberdeen Reg Airport",
+     "count": 4
+    },
+    {
+     "name": "Black Hills Airport",
+     "count": 4
+    },
+    {
+     "name": "Gregory Muni Airport",
+     "count": 4
+    },
+    {
+     "name": "Huron Reg Airport",
+     "count": 4
+    },
+    {
+     "name": "Sioux Falls",
+     "count": 4
+    },
+    {
+     "name": "Sisseton Muni Airport",
+     "count": 4
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-sddot-CSDATY-0",
+     "name": "Watertown-north of town along I-29 @ MP 179 looking north",
+     "city": "Watertown"
+    },
+    {
+     "id": "occ-sddot-CSDBK4-0",
+     "name": "Brookings-15 miles south of town along I-29 @ MP 118 looking north",
+     "city": "Brookings"
+    },
+    {
+     "id": "occ-sddot-CSDBK3-0",
+     "name": "Brookings-2 miles south of town along I-29 @ MP 133 looking north",
+     "city": "Brookings"
+    },
+    {
+     "id": "occ-sddot-CSDBK2-0",
+     "name": "Brookings-3 miles south of town along I-29 @ MP 132 looking north",
+     "city": "Brookings"
+    },
+    {
+     "id": "occ-sddot-CSDBK1-0",
+     "name": "Brookings-5 miles south of town along I-29 @ MP 130 looking north",
+     "city": "Brookings"
+    },
+    {
+     "id": "occ-sddot-CSDBK0-0",
+     "name": "Brookings-6 miles south of town along I-29 @ MP 129 looking north",
+     "city": "Brookings"
+    }
+   ]
+  },
+  {
+   "name": "New Jersey",
+   "slug": "new-jersey",
+   "usps": "NJ",
+   "count": 50,
+   "areas": [
+    {
+     "name": "Staten Island",
+     "count": 34
+    },
+    {
+     "name": "New York City",
+     "count": 4
+    },
+    {
+     "name": "Teterboro Airport",
+     "count": 4
+    },
+    {
+     "name": "Old Bridge Airport",
+     "count": 3
+    },
+    {
+     "name": "Philadelphia",
+     "count": 3
+    },
+    {
+     "name": "Port Jervis",
+     "count": 1
+    },
+    {
+     "name": "Sky Manor Airport",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-s511-PA-4271",
+     "name": "DELAWARE AVE @ ALLEGHENY AVE SB",
+     "city": "Philadelphia"
+    },
+    {
+     "id": "occ-s511-PA-4270",
+     "name": "DELAWARE AVE @ CASTOR AVE NB",
+     "city": "Philadelphia"
+    },
+    {
+     "id": "occ-s511-PA-3103",
+     "name": "S COLUMBUS BLVD @ E OREGON AVE NB",
+     "city": "Philadelphia"
+    },
+    {
+     "id": "occ-ny511-df34e4e431",
+     "name": "909C at Annadale Road",
+     "city": "Staten Island"
+    },
+    {
+     "id": "occ-ny511-ffaa917f81",
+     "name": "909C at Tyrellan Avenue",
+     "city": "Staten Island"
+    },
+    {
+     "id": "occ-ny511-bab9817998",
+     "name": "909C Bloomingdale Road",
+     "city": "Staten Island"
+    }
+   ]
+  },
+  {
+   "name": "Kentucky",
+   "slug": "kentucky",
+   "usps": "KY",
+   "count": 45,
+   "areas": [
+    {
+     "name": "Indiana",
+     "count": 9
+    },
+    {
+     "name": "Henderson",
+     "count": 4
+    },
+    {
+     "name": "Highlands",
+     "count": 4
+    },
+    {
+     "name": "Henderson County",
+     "count": 3
+    },
+    {
+     "name": "Campbell",
+     "count": 2
+    },
+    {
+     "name": "Cincinnati",
+     "count": 2
+    },
+    {
+     "name": "Franklin County",
+     "count": 2
+    },
+    {
+     "name": "Louisville",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "id": "indot-23871",
+     "name": "I-265: ky1-265-028-5-_-_-cam-1 I-265/28.5 OHIO RIVER (KY)",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-23866",
+     "name": "I-65: 10TH ST",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-23853",
+     "name": "I-65: EASTERN BLVD",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-23861",
+     "name": "I-65: LINCOLN &amp;amp; KENNEDY BRIDGES",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-24549",
+     "name": "I-65: LINCOLN &amp;amp;amp; KENNEDY BRIDGES",
+     "city": "Indiana"
+    },
+    {
+     "id": "indot-24274",
+     "name": "I-65: STANSIFER AVE",
+     "city": "Indiana"
+    }
+   ]
+  },
+  {
+   "name": "District of Columbia",
+   "slug": "district-of-columbia",
+   "usps": "DC",
+   "count": 33,
+   "areas": [
+    {
+     "name": "Arlington County",
+     "count": 30
+    },
+    {
+     "name": "Fairfax",
+     "count": 2
+    },
+    {
+     "name": "Wash. DC",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-mdchart-3501154f00350088004502366d235daa",
+     "name": "I-95/495 W.W. Brg VA",
+     "city": "Wash. DC"
+    },
+    {
+     "id": "occ-va511-4802",
+     "name": "I-395 / MM 7.7 / NB",
+     "city": "Fairfax"
+    },
+    {
+     "id": "occ-va511-4803",
+     "name": "I-395 / MM 8.0 / SB",
+     "city": "Fairfax"
+    },
+    {
+     "id": "occ-va511-3432",
+     "name": "12th St S at South Clark St",
+     "city": "Arlington County"
+    },
+    {
+     "id": "occ-va511-3384",
+     "name": "Army Navy Dr at South Eads St",
+     "city": "Arlington County"
+    },
+    {
+     "id": "occ-va511-3484",
+     "name": "Army Navy Dr at South Hayes St",
+     "city": "Arlington County"
+    }
+   ]
+  },
+  {
+   "name": "Wyoming",
+   "slug": "wyoming",
+   "usps": "WY",
+   "count": 31,
+   "areas": [
+    {
+     "name": "Hogsback",
+     "count": 4
+    },
+    {
+     "name": "Jackson Hole",
+     "count": 4
+    },
+    {
+     "name": "Lincoln County",
+     "count": 4
+    },
+    {
+     "name": "South Rim",
+     "count": 4
+    },
+    {
+     "name": "White Pine",
+     "count": 4
+    },
+    {
+     "name": "Yellowstone National Park",
+     "count": 3
+    },
+    {
+     "name": "Devils Tower National Monument",
+     "count": 2
+    },
+    {
+     "name": "Teton County",
+     "count": 2
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-s511-ID-345",
+     "name": "Raymond, WY",
+     "city": "Lincoln County"
+    },
+    {
+     "id": "occ-s511-ID-333",
+     "name": "Sage Junction, WY",
+     "city": "Lincoln County"
+    },
+    {
+     "id": "occ-s511-ID-424",
+     "name": "Salt Pass, WY",
+     "city": "Lincoln County"
+    },
+    {
+     "id": "occ-s511-ID-662",
+     "name": "Thayne, WY",
+     "city": "Lincoln County"
+    },
+    {
+     "id": "occ-s511-ID-709",
+     "name": "SH-33 WY/ID State Line",
+     "city": "Teton County"
+    },
+    {
+     "id": "occ-s511-ID-697",
+     "name": "Teton Pass, WY",
+     "city": "Teton County"
+    }
+   ]
+  },
+  {
+   "name": "West Virginia",
+   "slug": "west-virginia",
+   "usps": "WV",
+   "count": 22,
+   "areas": [
+    {
+     "name": "Bland County",
+     "count": 6
+    },
+    {
+     "name": "Mercer County",
+     "count": 4
+    },
+    {
+     "name": "Bluefield",
+     "count": 2
+    },
+    {
+     "name": "Frederick County",
+     "count": 2
+    },
+    {
+     "name": "Harpers Ferry",
+     "count": 2
+    },
+    {
+     "name": "Fayette County",
+     "count": 1
+    },
+    {
+     "name": "Granville",
+     "count": 1
+    },
+    {
+     "name": "New River Gorge National Park & Preserve",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-mdchart-b200c8ac005700170053fa36c4235c0a",
+     "name": "RWIS MD 51 AT OLDTOWN SALT DOME",
+     "city": "Western MD"
+    },
+    {
+     "id": "occ-va511-2188",
+     "name": "East River Tunnel 01-NB",
+     "city": "Bland County"
+    },
+    {
+     "id": "occ-va511-1761",
+     "name": "East River Tunnel 03-NB",
+     "city": "Bland County"
+    },
+    {
+     "id": "occ-va511-2046",
+     "name": "East River Tunnel 05-NB",
+     "city": "Bland County"
+    },
+    {
+     "id": "occ-va511-2047",
+     "name": "East River Tunnel 07-NB",
+     "city": "Bland County"
+    },
+    {
+     "id": "occ-va511-767",
+     "name": "East River Tunnel-NB Entrance",
+     "city": "Bland County"
+    }
+   ]
+  },
+  {
+   "name": "Arkansas",
+   "slug": "arkansas",
+   "usps": "AR",
+   "count": 19,
+   "areas": [
+    {
+     "name": "West Memphis",
+     "count": 5
+    },
+    {
+     "name": "Jonesboro",
+     "count": 4
+    },
+    {
+     "name": "Arkansas",
+     "count": 2
+    },
+    {
+     "name": "Craighead County",
+     "count": 2
+    },
+    {
+     "name": "Crittenden County",
+     "count": 2
+    },
+    {
+     "name": "Poinsett County",
+     "count": 2
+    },
+    {
+     "name": "Marion",
+     "count": 1
+    },
+    {
+     "name": "Mississippi County",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-arcgis-TN-a7c003e7c9",
+     "name": "I-40 / I-55 Western Jct.",
+     "city": "Crittenden County"
+    },
+    {
+     "id": "occ-arcgis-TN-cd58f5e6a2",
+     "name": "I-55 North of I-40/ I-55 western Jct.",
+     "city": "Crittenden County"
+    },
+    {
+     "id": "occ-arcgis-TN-2c57044a65",
+     "name": "I-40 @ Airport Rd.",
+     "city": "West Memphis"
+    },
+    {
+     "id": "occ-arcgis-TN-6a960acbc6",
+     "name": "I-40 @ I-40/I-55 Eastern Jct.",
+     "city": "West Memphis"
+    },
+    {
+     "id": "occ-arcgis-TN-4d61561a53",
+     "name": "I-40 West of I-55/ I-40 western Jct.",
+     "city": "West Memphis"
+    },
+    {
+     "id": "occ-arcgis-TN-62dd817f75",
+     "name": "I-40/ I-55 at Missouri St.",
+     "city": "West Memphis"
+    }
+   ]
+  },
+  {
+   "name": "Alabama",
+   "slug": "alabama",
+   "usps": "AL",
+   "count": 17,
+   "areas": [
+    {
+     "name": "Dauphin Island",
+     "count": 4
+    },
+    {
+     "name": "Huntsville International Airport",
+     "count": 4
+    },
+    {
+     "name": "Walker County",
+     "count": 4
+    },
+    {
+     "name": "Tuscaloosa",
+     "count": 2
+    },
+    {
+     "name": "Alabama - tower top",
+     "count": 1
+    },
+    {
+     "name": "Choctaw County",
+     "count": 1
+    },
+    {
+     "name": "Georgia",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "gdot-17497",
+     "name": "SR1/US27 S at VeteransPkwy MM 8 (Muscogee)",
+     "city": "Georgia"
+    },
+    {
+     "id": "faa-13205",
+     "name": "Dauphin Island — Camera 1 (North)",
+     "city": "Dauphin Island"
+    },
+    {
+     "id": "faa-13206",
+     "name": "Dauphin Island — Camera 2 (East)",
+     "city": "Dauphin Island"
+    },
+    {
+     "id": "faa-13207",
+     "name": "Dauphin Island — Camera 3 (South)",
+     "city": "Dauphin Island"
+    },
+    {
+     "id": "faa-13208",
+     "name": "Dauphin Island — Camera 4 (West)",
+     "city": "Dauphin Island"
+    },
+    {
+     "id": "faa-12443",
+     "name": "Intermodal — Camera 1 (West)",
+     "city": "Huntsville International Airport"
+    }
+   ]
+  },
+  {
+   "name": "Mississippi",
+   "slug": "mississippi",
+   "usps": "MS",
+   "count": 11,
+   "areas": [
+    {
+     "name": "Corinth",
+     "count": 4
+    },
+    {
+     "name": "UMMC Lexington",
+     "count": 4
+    },
+    {
+     "name": "Jackson",
+     "count": 3
+    }
+   ],
+   "samples": [
+    {
+     "id": "faa-13791",
+     "name": "Corinth — Camera 1 (North)",
+     "city": "Corinth"
+    },
+    {
+     "id": "faa-13792",
+     "name": "Corinth — Camera 2 (East)",
+     "city": "Corinth"
+    },
+    {
+     "id": "faa-13793",
+     "name": "Corinth — Camera 3 (South)",
+     "city": "Corinth"
+    },
+    {
+     "id": "faa-13794",
+     "name": "Corinth — Camera 4 (West)",
+     "city": "Corinth"
+    },
+    {
+     "id": "faa-12017",
+     "name": "UMMC Lexington — Camera 1 (East)",
+     "city": "UMMC Lexington"
+    },
+    {
+     "id": "faa-12018",
+     "name": "UMMC Lexington — Camera 2 (SouthEast)",
+     "city": "UMMC Lexington"
+    }
+   ]
+  },
+  {
+   "name": "Iowa",
+   "slug": "iowa",
+   "usps": "IA",
+   "count": 10,
+   "areas": [
+    {
+     "name": "Fort Dodge",
+     "count": 2
+    },
+    {
+     "name": "Hamilton County",
+     "count": 2
+    },
+    {
+     "name": "Council Bluffs",
+     "count": 1
+    },
+    {
+     "name": "Des Moines",
+     "count": 1
+    },
+    {
+     "name": "Freeman",
+     "count": 1
+    },
+    {
+     "name": "in South Sioux City",
+     "count": 1
+    },
+    {
+     "name": "Lansing",
+     "count": 1
+    },
+    {
+     "name": "near Nebraska City",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-phenocam-arscolesnorth",
+     "name": "Coles farm, north field, near Williams Iowa",
+     "city": "Hamilton County"
+    },
+    {
+     "id": "occ-phenocam-arscolessouth",
+     "name": "Coles farm, south field, near Williams Iowa",
+     "city": "Hamilton County"
+    },
+    {
+     "id": "occ-s511-WI-480",
+     "name": "IA Ferry Landing @ Lansing",
+     "city": "Lansing"
+    },
+    {
+     "id": "occ-cr-4bade588ce",
+     "name": "Ne City River Bridge",
+     "city": "near Nebraska City"
+    },
+    {
+     "id": "faa-13970",
+     "name": "Fort Dodge Regional Airport — Camera 1 (SouthWest)",
+     "city": "Fort Dodge"
+    },
+    {
+     "id": "faa-13969",
+     "name": "Fort Dodge Regional Airport — Camera 2 (West)",
+     "city": "Fort Dodge"
+    }
+   ]
+  },
+  {
+   "name": "Rhode Island",
+   "slug": "rhode-island",
+   "usps": "RI",
+   "count": 1,
+   "areas": [
+    {
+     "name": "Charlestown",
+     "count": 1
+    }
+   ],
+   "samples": [
+    {
+     "id": "occ-ridot-680",
+     "name": "95_10.8_S_CAM - Tefft Hill",
+     "city": "Charlestown"
+    }
+   ]
+  }
+ ]
+}

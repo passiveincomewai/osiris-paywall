@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import directory from "@/data/camera-directory.json";
+import {
+  getStateBySlug,
+  getUsStatesIndex,
+  type UsStateData,
+} from "@/lib/us-states";
 import {
   BASE,
   formatDate,
@@ -43,17 +47,22 @@ type StateCfg = {
   faqs: Faq[];
 };
 
-const STATES: Record<string, StateCfg> = {
+// The seven hand-written state indexes (Oct 11 set). Their counts and
+// coverage areas are NOT stored here any more — resolveState() merges
+// them with the measured data from src/data/us-states.json, so the
+// prose below can never drift from the served catalogue again.
+type EditorialCfg = Omit<StateCfg, "count" | "areas">;
+
+const STATES: Record<string, EditorialCfg> = {
   georgia: {
     name: "Georgia",
-    count: 4330,
     title: "Georgia Traffic Cameras — Live GA DOT Road Cams",
     blurb:
-      "Watch 4,330 live Georgia DOT highway cameras — Atlanta's Downtown Connector, I-75, I-85 and I-20 road conditions — free on the WorldEye map.",
+      "Watch 4,288 live Georgia DOT highway cameras — Atlanta's Downtown Connector, I-75, I-85 and I-20 road conditions — free on the WorldEye map.",
     h1: "Georgia Traffic Cameras",
-    sub: "Watch 4,330 live Georgia highway cameras — free on the WorldEye globe.",
+    sub: "Watch 4,288 live Georgia highway cameras — free on the WorldEye globe.",
     intro: [
-      "Georgia holds the largest single-state camera index in the United States on WorldEye — 4,330 feeds, nearly all of them Georgia Department of Transportation highway cameras. The densest coverage sits over metro Atlanta: the I-75/I-85 Downtown Connector, the I-285 Perimeter loop, and the I-20 east–west corridor, with more cameras strung along I-16 toward Savannah and I-95 up the coast.",
+      "Georgia holds one of the largest single-state camera indexes in the United States on WorldEye — 4,288 feeds, nearly all of them Georgia Department of Transportation highway cameras. The densest coverage sits over metro Atlanta: the I-75/I-85 Downtown Connector, the I-285 Perimeter loop, and the I-20 east–west corridor, with more cameras strung along I-16 toward Savannah and I-95 up the coast.",
       "Set expectations correctly: these are working road cameras, not scenic webcams. Each feed is a fixed view of lanes, ramps, or an interchange, published so drivers can check congestion, crashes, and lane closures. They are at their most useful during weekday rush hours and summer thunderstorm season, when Atlanta's low-lying interstates can flood with little warning.",
       "The Downtown Connector is the chokepoint that defines Atlanta driving — I-75 and I-85 merge into a single stretch through the city center, and when it jams there is no quick way around it. That is why the Connector carries the heaviest camera coverage. The I-285 Perimeter is the escape valve: check a Connector camera and a Perimeter camera side by side and you can decide in seconds whether to brave downtown or loop around it.",
       "Summer changes the calculus. Atlanta's afternoon thunderstorms are brief but violent, and the same low-lying stretches of interstate that crawl at rush hour can take on standing water in twenty minutes. The feeds show it plainly — ponding in the low lanes, spray kicking up, traffic slowing to a crawl. If the camera shows water across the roadway, wait it out; these storms usually pass fast.",
@@ -61,8 +70,8 @@ const STATES: Record<string, StateCfg> = {
       "Everything here opens on the free WorldEye map — no account, no download. Zoom into Georgia, tap a camera marker near your route, and you are looking at the same view GDOT's own operators monitor.",
     ],
     stats: [
-      { value: "4,330", label: "live cameras" },
-      { value: "#1", label: "US state camera index" },
+      { value: "4,288", label: "live cameras" },
+      { value: "#3", label: "US state camera index" },
       { value: "Free", label: "no account needed" },
     ],
     howtoTitle: "How to check Georgia road conditions",
@@ -78,7 +87,7 @@ const STATES: Record<string, StateCfg> = {
     faqs: [
       {
         q: "Are these tourist webcams showing Georgia scenery?",
-        a: "No. The 4,330 feeds indexed here are Georgia DOT highway cameras aimed at traffic — lanes, ramps, and interchanges. This page is for checking road conditions, not sightseeing.",
+        a: "No. The 4,288 feeds indexed here are Georgia DOT highway cameras aimed at traffic — lanes, ramps, and interchanges. This page is for checking road conditions, not sightseeing.",
       },
       {
         q: "Do the cameras show live video or still images?",
@@ -112,24 +121,23 @@ const STATES: Record<string, StateCfg> = {
   },
   utah: {
     name: "Utah",
-    count: 2082,
     title: "Utah Traffic Cameras — Live UDOT Road Cams",
     blurb:
-      "Check 2,082 live Utah DOT road cameras — Cottonwood Canyon ski routes, I-15 corridor and Wasatch Front conditions — free on WorldEye. No signup needed.",
+      "Check 2,135 live Utah DOT road cameras — Cottonwood Canyon ski routes, I-15 corridor and Wasatch Front conditions — free on WorldEye. No signup needed.",
     h1: "Utah Traffic Cameras",
-    sub: "Check 2,082 live Utah road cameras — canyon routes, I-15, and ski-area conditions.",
+    sub: "Check 2,135 live Utah road cameras — canyon routes, I-15, and ski-area conditions.",
     intro: [
-      "Utah's 2,082 indexed cameras are UDOT road feeds, and they cluster exactly where Utah driving gets interesting: the Cottonwood Canyon roads (SR-210 and SR-190) serving the ski resorts, the I-15 spine running the length of the Wasatch Front, and US-89 through Ogden and Logan.",
+      "Utah's 2,135 indexed cameras are UDOT road feeds, and they cluster exactly where Utah driving gets interesting: the Cottonwood Canyon roads (SR-210 and SR-190) serving the ski resorts, the I-15 spine running the length of the Wasatch Front, and US-89 through Ogden and Logan.",
       "From November to April these cameras are essential equipment. Canyon traction laws, chain requirements, and avalanche closures on Little and Big Cottonwood are decided from views like these — check the SR-210 feeds before heading up, not after you are stuck in the turnaround queue. In summer, the same cameras show whether Parley's Canyon is crawling on a Friday afternoon.",
       "Little Cottonwood Canyon (SR-210) is the one that closes most often — it is steep, narrow, and slides. Big Cottonwood (SR-190) is the slightly mellower sibling, but it still goes to traction restrictions on storm days. The feeds at the canyon mouths, around Wasatch Blvd, tell you the story before you commit: plows running, gates closed, or the dreaded red light at the base.",
       "The rest of the index watches the daily grind. I-15 is the Wasatch Front's spine — Salt Lake, Ogden, Provo — and the cameras along it are how commuters check whether the drive is thirty minutes or sixty. Summer brings its own slowdowns: construction zones up and down the corridor, and Friday-afternoon canyon traffic as everyone heads for the mountains at once.",
       "North of Salt Lake, US-89 through Ogden and up toward Logan covers the commuters the interstate misses. The Washington Blvd and Harrisville Rd feeds watch the surface-street arterials where a single crash can back traffic up for miles with no alternate route.",
-      "Featured feeds below include the SR-210/Wasatch Blvd junction and the US-89 corridor through Ogden. All 2,082 cameras open free on the WorldEye map.",
+      "Featured feeds below include the SR-210/Wasatch Blvd junction and the US-89 corridor through Ogden. All 2,135 cameras open free on the WorldEye map.",
     ],
     stats: [
-      { value: "2,082", label: "live cameras" },
+      { value: "2,135", label: "live cameras" },
       { value: "5", label: "featured canyon feeds" },
-      { value: "#2", label: "US state camera index" },
+      { value: "#5", label: "US state camera index" },
     ],
     samples: [
       { name: "North Little Cottonwood Rd / Little Cottonwood Canyon Rd / SR-210 @ Little Cotto", city: "Utah" },
@@ -186,29 +194,23 @@ const STATES: Record<string, StateCfg> = {
   },
   texas: {
     name: "Texas",
-    count: 2492,
     title: "Texas Traffic Cameras — Houston & Dallas Cams",
     blurb:
-      "Watch 2,492 live Texas traffic cameras across Houston, Dallas and Fort Worth — check I-10, I-35 and I-45 conditions free on WorldEye. No signup needed.",
+      "Watch 4,390 live Texas traffic cameras across Houston, Dallas and Fort Worth — check I-10, I-35 and I-45 conditions free on WorldEye. No signup needed.",
     h1: "Texas Traffic Cameras",
-    sub: "Watch 2,492 live Texas traffic cameras across Houston, Dallas, and Fort Worth.",
+    sub: "Watch 4,390 live Texas traffic cameras across Houston, Dallas, and Fort Worth.",
     intro: [
-      "Texas contributes 2,492 cameras to the WorldEye index, concentrated in three metro networks: Houston's TranStar system with 1,158 feeds, Dallas with 845, and Fort Worth with 489. Together they watch the busiest freeway mileage in the state — I-10, I-45, I-35, and the tangle of loops and tollways around the metros.",
+      "Texas contributes 4,390 cameras to the WorldEye index, concentrated in five metro networks: Houston's TranStar system with 1,172 feeds, Dallas with 843, Fort Worth with 489, San Antonio with 307, and Austin with 275. Together they watch the busiest freeway mileage in the state — I-10, I-45, I-35, and the tangle of loops and tollways around the metros.",
       "Houston's sheer count reflects TranStar, the regional traffic-management partnership that publishes one of the densest freeway camera grids in the country. TranStar's operators watch the same feeds you see here — the cameras exist so the region's traffic managers can spot incidents fast, and the public gets the same view. In Dallas–Fort Worth the coverage follows the interstates and the managed toll lanes — exactly where commute-time decisions get made.",
       "During hurricane season these cameras double as evacuation monitors: check I-45 north out of Houston or I-10 west before joining a contraflow. Year-round, they are the fastest way to see whether your route is moving.",
       "The Dallas–Fort Worth side of the index is a commuter's toolkit. I-35 is the north–south spine through the metroplex, I-10 anchors the west side, and the managed toll lanes that parallel the freeways get their own decision every morning: pay for speed or ride the free lanes. The feeds along both let you make that call with your eyes open instead of guessing from a red line on a map.",
       "Houston's grid earns its keep in the daily flood watch too. The city's flat terrain and concrete sprawl mean a fast-moving thunderstorm can put water across feeder roads and underpasses while the freeway above stays dry — the TranStar feeds show which is which before you choose your exit.",
-      "All 2,492 feeds open free on the WorldEye map. Zoom to any of the three metros, tap a marker on your route, and you are looking at the same view the traffic managers see.",
+      "All 4,390 feeds open free on the WorldEye map. Zoom to any of the three metros, tap a marker on your route, and you are looking at the same view the traffic managers see.",
     ],
     stats: [
-      { value: "2,492", label: "live cameras" },
-      { value: "3", label: "metro networks" },
+      { value: "4,390", label: "live cameras" },
+      { value: "5", label: "metro networks" },
       { value: "Free", label: "no account needed" },
-    ],
-    areas: [
-      { name: "Houston (TranStar)", count: 1158 },
-      { name: "Dallas", count: 845 },
-      { name: "Fort Worth", count: 489 },
     ],
     areaTitle: "Texas camera coverage by metro",
     howtoTitle: "How to check Texas freeway conditions",
@@ -224,7 +226,7 @@ const STATES: Record<string, StateCfg> = {
     faqs: [
       {
         q: "Which Texas city has the most traffic cameras?",
-        a: "Houston, by far — 1,158 feeds from the TranStar network, nearly half the state's indexed total. Dallas (845) and Fort Worth (489) make up the rest.",
+        a: "Houston, by far — 1,172 feeds from the TranStar network. Dallas (843) and Fort Worth (489) follow, with San Antonio (307) and Austin (275) behind them.",
       },
       {
         q: "Can these cameras help during a hurricane evacuation?",
@@ -236,7 +238,7 @@ const STATES: Record<string, StateCfg> = {
       },
       {
         q: "What is TranStar?",
-        a: "TranStar is the Houston region's traffic-management partnership — the agency collaboration that publishes the city's 1,158-feed camera grid. Its operators monitor the same feeds to spot incidents, and the public gets the same view free.",
+        a: "TranStar is the Houston region's traffic-management partnership — the agency collaboration that publishes the city's 1,172-feed camera grid. Its operators monitor the same feeds to spot incidents, and the public gets the same view free.",
       },
       {
         q: "Are the Dallas managed toll lanes covered?",
@@ -258,29 +260,23 @@ const STATES: Record<string, StateCfg> = {
   },
   florida: {
     name: "Florida",
-    count: 1435,
     title: "Florida Traffic Cameras — Tampa, Broward & Miami",
     blurb:
-      "See 1,435 live Florida traffic cameras across Tampa, Broward and Miami-Dade — check I-95, I-4 and Turnpike conditions free on WorldEye. No signup needed.",
+      "See 4,935 live Florida traffic cameras across Tampa, Broward and Miami-Dade — check I-95, I-4 and Turnpike conditions free on WorldEye. No signup needed.",
     h1: "Florida Traffic Cameras",
-    sub: "See 1,435 live Florida traffic cameras across Tampa, Broward, and Miami-Dade.",
+    sub: "See 4,935 live Florida traffic cameras across Tampa, Broward, and Miami-Dade.",
     intro: [
-      "Florida's 1,435 indexed cameras follow the state's population: Hillsborough County (Tampa) leads with 517 feeds, Broward County adds 496, and Miami-Dade contributes 422. Coverage tracks I-4 across the peninsula, I-95 down the Atlantic coast, and the Turnpike and expressway network around Miami.",
+      "Florida's 4,935 indexed cameras follow the state's population: Orange County (Orlando) leads with 561 feeds, Hillsborough County (Tampa) adds 502, Broward County 477, and Miami-Dade contributes 421. Coverage tracks I-4 across the peninsula, I-95 down the Atlantic coast, and the Turnpike and expressway network around Miami.",
       "Summer brings the daily thunderstorm pattern — intense, localized downpours that flood intersections and drop visibility to near zero for twenty minutes. The county camera grids are how locals check whether the storm sitting over their route has passed before heading out.",
       "From June through November the same cameras serve hurricane duty: I-95 and Florida's Turnpike are the primary evacuation arteries, and these feeds show what the road actually looks like when officials say to leave.",
       "I-4 is the peninsula's main artery and the most temperamental drive in the index — Tampa to the interior on a single interstate that absorbs commuter traffic, tourist traffic, and every afternoon storm cell between them. The Hillsborough County feeds watch the Tampa end; check them before committing to the corridor, especially on summer afternoons when a cell can sit over one interchange and leave the next one dry.",
-      "In South Florida the story is the expressway network. Miami-Dade's 422 feeds and Broward's 496 watch I-95 and the web of toll expressways around Miami and Fort Lauderdale — the roads where a single crash at rush hour ripples across three counties. Winter is the busy season here, when seasonal visitors swell traffic and every camera earns its keep.",
-      "All 1,435 feeds open free on the WorldEye map. Zoom to Tampa, Fort Lauderdale, or Miami, tap a marker on your route, and you are seeing the same intersections the county traffic centers watch.",
+      "In South Florida the story is the expressway network. Miami-Dade's 421 feeds and Broward's 477 watch I-95 and the web of toll expressways around Miami and Fort Lauderdale — the roads where a single crash at rush hour ripples across three counties. Winter is the busy season here, when seasonal visitors swell traffic and every camera earns its keep.",
+      "All 4,935 feeds open free on the WorldEye map. Zoom to Tampa, Fort Lauderdale, or Miami, tap a marker on your route, and you are seeing the same intersections the county traffic centers watch.",
     ],
     stats: [
-      { value: "1,435", label: "live cameras" },
-      { value: "3", label: "county networks" },
+      { value: "4,935", label: "live cameras" },
+      { value: "8", label: "county networks" },
       { value: "Free", label: "no account needed" },
-    ],
-    areas: [
-      { name: "Hillsborough County (Tampa)", count: 517 },
-      { name: "Broward County", count: 496 },
-      { name: "Miami-Dade County", count: 422 },
     ],
     areaTitle: "Florida camera coverage by county",
     howtoTitle: "How to check Florida road conditions",
@@ -296,7 +292,7 @@ const STATES: Record<string, StateCfg> = {
     faqs: [
       {
         q: "Which part of Florida has the most traffic cameras?",
-        a: "Tampa's Hillsborough County with 517 feeds, followed by Broward County (496) and Miami-Dade (422). Together the three counties hold all 1,435 of the state's indexed cameras.",
+        a: "Orange County (Orlando) with 561 feeds, followed by Hillsborough County (502), Broward County (477), and Miami-Dade (421). Eight county networks hold the bulk of the state's 4,935 indexed cameras.",
       },
       {
         q: "Do the cameras help during hurricane evacuations?",
@@ -320,7 +316,7 @@ const STATES: Record<string, StateCfg> = {
       },
       {
         q: "What about the Panhandle and central Florida?",
-        a: "The index covers the three big county networks — Tampa, Broward, and Miami-Dade — which together hold all 1,435 feeds. The Panhandle and most of central Florida are not in this camera index.",
+        a: "The index covers eight county networks — Orlando's Orange County, Tampa, Broward, and Miami-Dade are the biggest, with Leon (Tallahassee), Sarasota, Duval, and Palm Beach behind them — holding the bulk of the 4,935 feeds. Coverage follows the metros and the interstate corridors between them.",
       },
       {
         q: "Are the cameras useful at night?",
@@ -330,22 +326,21 @@ const STATES: Record<string, StateCfg> = {
   },
   indiana: {
     name: "Indiana",
-    count: 703,
     title: "Indiana Traffic Cameras — Live INDOT Highway Cams",
     blurb:
-      "Watch 703 live Indiana highway cameras — I-64, I-65 and I-70 road conditions including the Sherman Minton Bridge — free on WorldEye. No signup needed.",
+      "Watch 572 live Indiana highway cameras — I-64, I-65 and I-70 road conditions including the Sherman Minton Bridge — free on WorldEye. No signup needed.",
     h1: "Indiana Traffic Cameras",
-    sub: "Watch 703 live Indiana highway cameras — I-64, I-65, and I-70 road conditions.",
+    sub: "Watch 572 live Indiana highway cameras — I-64, I-65, and I-70 road conditions.",
     intro: [
-      "Indiana's 703 cameras are INDOT highway feeds, and the signature views look south across the Ohio River: the I-64 Sherman Minton Bridge between New Albany, Indiana and Louisville, Kentucky is covered from multiple angles — upper and lower decks, both directions.",
+      "Indiana's 572 cameras are INDOT highway feeds, and the signature views look south across the Ohio River: the I-64 Sherman Minton Bridge between New Albany, Indiana and Louisville, Kentucky is covered from multiple angles — upper and lower decks, both directions.",
       "Beyond the river crossing, coverage follows the freight corridors: I-65 between Indianapolis and Chicago, I-70 across the middle of the state, and I-64 running the southern tier. Winter lake-effect snow off Lake Michigan makes the northwest feeds worth checking from December through February.",
       "The Sherman Minton is the crossing that matters most in the index because it is the I-64 crossing — the southern tier's Ohio River bridge, carrying interstate traffic that has no interest in stopping in either downtown. The featured feeds watch both decks in both directions, so you can see a backup forming on your deck before you are committed to the bridge.",
       "The rest of the index is working freight country. I-65 is the Chicago–Indianapolis truck corridor, I-70 is the east–west artery across central Indiana, and both run heavy with commercial traffic around the clock. The cameras are how you spot the lane closures and work zones that turn those corridors into parking lots — check before a long haul, not after you are in the queue.",
       "Winter rewrites the priorities. Lake-effect snow bands off Lake Michigan bury northwest Indiana while the southern tier stays clear, and the difference between the two can be a hundred miles of clear interstate. From December through February, check the feeds along your actual route — a statewide forecast will not tell you which corridor got hit.",
-      "Featured feeds below show the Sherman Minton Bridge approaches on both decks. All 703 cameras open free on the WorldEye map.",
+      "Featured feeds below show the Sherman Minton Bridge approaches on both decks. All 572 cameras open free on the WorldEye map.",
     ],
     stats: [
-      { value: "703", label: "live cameras" },
+      { value: "572", label: "live cameras" },
       { value: "5", label: "featured bridge feeds" },
       { value: "I-64", label: "signature corridor" },
     ],
@@ -374,7 +369,7 @@ const STATES: Record<string, StateCfg> = {
       },
       {
         q: "Are I-65 and I-70 covered?",
-        a: "Yes. Indiana's 703-camera index follows the main freight corridors: I-65 between Indianapolis and Chicago, I-70 across central Indiana, and I-64 along the southern tier.",
+        a: "Yes. Indiana's 572-camera index follows the main freight corridors: I-65 between Indianapolis and Chicago, I-70 across central Indiana, and I-64 along the southern tier.",
       },
       {
         q: "Do Indiana cameras show winter snow conditions?",
@@ -404,22 +399,21 @@ const STATES: Record<string, StateCfg> = {
   },
   nevada: {
     name: "Nevada",
-    count: 652,
     title: "Nevada Traffic Cameras — Live NDOT Highway Cams",
     blurb:
-      "Check 652 live Nevada highway cameras — Las Vegas corridors, I-15 resort traffic and I-80 desert conditions — free on the WorldEye map. No signup needed.",
+      "Check 771 live Nevada highway cameras — Las Vegas corridors, I-15 resort traffic and I-80 desert conditions — free on the WorldEye map. No signup needed.",
     h1: "Nevada Traffic Cameras",
-    sub: "Check 652 live Nevada highway cameras — Las Vegas corridors and desert interstates.",
+    sub: "Check 771 live Nevada highway cameras — Las Vegas corridors and desert interstates.",
     intro: [
-      "Nevada's 652 cameras watch a state where nearly every long drive crosses open desert. Coverage concentrates on the I-15 resort corridor through Las Vegas — the busiest stretch of interstate in the state — plus I-80 through Reno and US-95 running north–south.",
+      "Nevada's 771 cameras watch a state where nearly every long drive crosses open desert. Coverage concentrates on the I-15 resort corridor through Las Vegas — the busiest stretch of interstate in the state — plus I-80 through Reno and US-95 running north–south.",
       "Desert driving has its own hazards, and these cameras are how you spot them early: summer dust storms that erase visibility on I-15 near the California line, flash-flood debris after monsoon bursts, and winter chain controls over the passes west of Reno.",
       "The I-15 corridor is really two different drives. South of Las Vegas it is the resort run — weekend traffic streaming in from California, event nights, and the long Friday-night queue at the state line. The cameras near the California line show that story plainly: brake lights stretching into the desert or a clean run, depending on the hour. North of the city the same interstate empties into open desert, where the hazard shifts from congestion to weather.",
       "Summer is dust-storm season. When the wind picks up across the desert floor, visibility on I-15 near the California line can drop to nothing in minutes — and the corridor feeds show the wall of dust before you drive into it. Monsoon bursts do the rest: a half hour of violent rain can wash debris across low stretches of highway, and the cameras show whether the road is clear or a mess before you commit.",
       "Winter belongs to the north. I-80 through Reno climbs into the Sierra foothills, and the passes west of the city go to chain controls when storms roll through — the feeds there are how you confirm whether the pass is open, restricted, or closed before leaving town. US-95, the north–south alternative through central Nevada, is the long lonely backup when the interstates misbehave.",
-      "Las Vegas visitors use the corridor feeds differently — checking whether the Strip-area interstates are jammed before heading to the airport. All 652 feeds open free on the WorldEye map.",
+      "Las Vegas visitors use the corridor feeds differently — checking whether the Strip-area interstates are jammed before heading to the airport. All 771 feeds open free on the WorldEye map.",
     ],
     stats: [
-      { value: "652", label: "live cameras" },
+      { value: "771", label: "live cameras" },
       { value: "I-15", label: "busiest corridor" },
       { value: "Free", label: "no account needed" },
     ],
@@ -444,7 +438,7 @@ const STATES: Record<string, StateCfg> = {
       },
       {
         q: "Is I-80 to Reno covered?",
-        a: "Yes. Nevada's 652-camera index includes the I-80 corridor through Reno and the mountain passes to the west, where winter chain controls apply.",
+        a: "Yes. Nevada's 771-camera index includes the I-80 corridor through Reno and the mountain passes to the west, where winter chain controls apply.",
       },
       {
         q: "Can I check the drive from Las Vegas toward California?",
@@ -456,7 +450,7 @@ const STATES: Record<string, StateCfg> = {
       },
       {
         q: "Is US-95 covered?",
-        a: "Yes. US-95 running north–south through central Nevada is part of the 652-camera index — the long desert alternative when you want to avoid the interstate corridors.",
+        a: "Yes. US-95 running north–south through central Nevada is part of the 771-camera index — the long desert alternative when you want to avoid the interstate corridors.",
       },
       {
         q: "What should I look for during monsoon season?",
@@ -470,29 +464,27 @@ const STATES: Record<string, StateCfg> = {
   },
   arizona: {
     name: "Arizona",
-    count: 434,
     title: "Arizona Traffic Cameras — Live ADOT Road Cams",
     blurb:
-      "Check 434 live Arizona traffic cameras — concentrated in the Phoenix metro on ADOT freeway feeds — free on the WorldEye map. No signup needed.",
+      "Check 664 live Arizona traffic cameras — anchored by the Phoenix metro's ADOT freeway feeds, with Tucson, Flagstaff and border-corridor cameras — free on the WorldEye map. No signup needed.",
     h1: "Arizona Traffic Cameras",
-    sub: "Check 434 live Arizona traffic cameras — concentrated in the Phoenix metro.",
+    sub: "Check 664 live Arizona traffic cameras — Phoenix first, with Tucson and Flagstaff covered too.",
     intro: [
-      "Arizona's 434 indexed cameras come with an honest caveat up front: every one of them sits in the Phoenix metro. These are ADOT freeway feeds covering the Valley's freeway network — the corridors Phoenix commuters use every day — not a statewide grid. If you are driving in Phoenix, this is a deep, useful network. If you are looking for Tucson, Flagstaff, or rural Arizona, this index does not have that density, and this page will not pretend otherwise.",
+      "Arizona's 664 indexed cameras come with an honest shape up front: the Phoenix metro holds the deep core — 429 ADOT freeway feeds covering the Valley's freeway network, the corridors Phoenix commuters use every day — and the rest of the state is thinner but real. Tucson adds 53 feeds, Flagstaff 17, and Nogales 15 along the border corridor. If you are driving in Phoenix, this is a deep, useful network. Outside the metros the density drops fast, and this page will not pretend otherwise.",
       "Within the metro, the coverage is the real thing. The feeds watch the Phoenix freeway system as a working traffic network: congestion building at the peak, incidents and lane closures as they happen, and the slowdowns that ripple across the Valley when one corridor stops. ADOT publishes these cameras so drivers can check conditions before committing to a route — the same view its operators monitor.",
       "Desert driving writes its own hazard list, and the cameras are how you spot it early. Summer monsoon season sends dust storms across the Valley that can drop freeway visibility to near zero in minutes, followed by intense downpours that flood washes and low-lying sections while the elevated lanes stay dry. The metro feeds show both — the wall of dust on the horizon and the water across the low lanes — before you drive into either.",
       "Heat is the year-round background condition. Phoenix summers push freeway surfaces and stalled cars hard, and a breakdown in extreme heat becomes a traffic event fast — the cameras show the resulting queues and closures as they form. Winter is the Valley's easy season, but it is also visitor season, when event traffic and unfamiliar drivers swell the same corridors.",
-      "The single-area shape of this index is worth understanding rather than apologizing for. Arizona's published camera coverage concentrates where the state's driving concentrates — the Phoenix metro holds the bulk of the state's population and freeway mileage. Other regions will appear here as their feeds are published and indexed; until then, the table below lists exactly what exists: Phoenix, 434 cameras.",
-      "All 434 feeds open free on the WorldEye map — no account, no download. Zoom into Phoenix, tap a camera marker near your route, and check conditions before you roll. Never check cameras while driving; pull over or have a passenger look.",
+      "The Phoenix-heavy shape of this index is worth understanding rather than apologizing for. Arizona's published camera coverage concentrates where the state's driving concentrates — the Phoenix metro holds the bulk of the state's population and freeway mileage. Tucson, Flagstaff, and the border corridors publish thinner networks, and the table below lists exactly what exists in each.",
+      "All 664 feeds open free on the WorldEye map — no account, no download. Zoom into Phoenix, tap a camera marker near your route, and check conditions before you roll. Never check cameras while driving; pull over or have a passenger look.",
     ],
     stats: [
-      { value: "434", label: "live cameras" },
-      { value: "1", label: "metro area covered" },
+      { value: "664", label: "live cameras" },
+      { value: "429", label: "in the Phoenix metro" },
       { value: "Free", label: "no account needed" },
     ],
-    areas: [{ name: "Phoenix", count: 434 }],
     areaTitle: "Arizona camera coverage by area",
     areaNote:
-      "Coverage is concentrated in the Phoenix metro — all 434 indexed feeds are ADOT freeway cameras in the Valley. The rest of Arizona is not covered at this density.",
+      "Coverage concentrates in the Phoenix metro — 429 of the 664 indexed feeds are ADOT freeway cameras in the Valley. Tucson (53), Flagstaff (17), and Nogales (15) are covered at lower density.",
     howtoTitle: "How to check Phoenix road conditions",
     howto: [
       "Open the free WorldEye map in your browser — no account or download needed.",
@@ -506,15 +498,15 @@ const STATES: Record<string, StateCfg> = {
     faqs: [
       {
         q: "Do these cameras cover all of Arizona?",
-        a: "No — and that is stated plainly on this page. All 434 indexed feeds are in the Phoenix metro. The index does not claim statewide density; Tucson, Flagstaff, and rural Arizona are not covered at anything like this level.",
+        a: "Not evenly — and that is stated plainly on this page. Phoenix holds 429 of the 664 indexed feeds; Tucson (53) and Flagstaff (17) have real but thinner coverage, and rural Arizona is sparse. The index does not claim uniform statewide density.",
       },
       {
         q: "Which Arizona city has the most traffic cameras?",
-        a: "Phoenix — all 434 of them. Arizona's published camera coverage concentrates in the Valley, where most of the state's population and freeway mileage is.",
+        a: "Phoenix — 429 of the 664. Arizona's published camera coverage concentrates in the Valley, where most of the state's population and freeway mileage is.",
       },
       {
         q: "What is ADOT?",
-        a: "The Arizona Department of Transportation. The 434 feeds indexed here are ADOT freeway cameras in the Phoenix metro, published so drivers can check congestion, incidents, and weather conditions before driving.",
+        a: "The Arizona Department of Transportation. The feeds indexed here are ADOT cameras — 429 in the Phoenix metro, with more in Tucson, Flagstaff, and along the border corridors — published so drivers can check congestion, incidents, and weather conditions before driving.",
       },
       {
         q: "Can the cameras show dust storms?",
@@ -540,19 +532,106 @@ const STATES: Record<string, StateCfg> = {
   },
 };
 
+const fmt = (n: number) => n.toLocaleString("en-US");
+
+// Every state's count, coverage areas and featured cameras come from
+// the generated state index (src/data/us-states.json — each camera in
+// the served US catalogue assigned to the state its coordinates fall
+// in; see src/lib/us-states.ts). Camera records carry no state field,
+// and the old hand-written counts on this page came from a stale
+// snapshot that understated Florida by 3.4× and Texas by 1.8× — the
+// editorial configs below keep their prose, but their numbers, areas
+// and samples are always the measured ones.
+function derivedConfig(d: UsStateData): StateCfg {
+  const top = d.areas.slice(0, 3);
+  const topList = top
+    .map((a) => `${a.name} (${fmt(a.count)})`)
+    .join(", ")
+    .replace(/, ([^,]*)$/, " and $1");
+  return {
+    name: d.name,
+    count: d.count,
+    title: `${d.name} Traffic Cameras — Live Road Cams`,
+    blurb: `Watch ${fmt(d.count)} live ${d.name} traffic cameras — led by ${top[0].name} with ${fmt(top[0].count)} feeds — free on the WorldEye map. No signup needed.`,
+    h1: `${d.name} Traffic Cameras`,
+    sub: `Watch ${fmt(d.count)} live ${d.name} traffic cameras — free on the WorldEye globe.`,
+    intro: [
+      `${d.name}'s ${fmt(d.count)} indexed cameras are counted from the cameras' own coordinates in the WorldEye catalogue: a feed belongs to this page when it physically sits inside ${d.name}'s borders. The coverage clusters where the driving is — ${topList} lead the index.`,
+      "These are public road cameras — state DOT, county and city networks that watch freeways, arterials and passes so drivers can check conditions before they travel. The featured feeds below are real cameras from the index, listed under their published names.",
+      "Use them the way the road agencies intend: a thirty-second check before you leave. Congestion, incidents, construction zones and weather all show up on the feeds as they happen — if your corridor is stopped, you will see it before you are sitting in it.",
+      `All ${fmt(d.count)} feeds open free on the WorldEye map — no account, no download. Find ${d.name} on the map, tap a camera marker along your route, and check the road with your own eyes — before you drive, never while driving.`,
+    ],
+    stats: [
+      { value: fmt(d.count), label: "live cameras" },
+      { value: top[0].name, label: "largest cluster" },
+      { value: "Free", label: "no account needed" },
+    ],
+    areas: d.areas,
+    areaTitle: `${d.name} camera coverage by area`,
+    samples: d.samples,
+    howtoTitle: `How to check ${d.name} road conditions`,
+    howto: [
+      "Open the free WorldEye map in your browser — no account or download needed.",
+      `Zoom to ${d.name} and look for camera markers along your route, starting near ${top[0].name}.`,
+      "Tap any marker to open that camera's live feed.",
+      "Compare the feeds on your route with the parallel corridor before committing — the cameras show which one is moving.",
+      "Never check cameras while driving. Pull over or have a passenger look, then decide your route before you roll.",
+    ],
+    faqTitle: `${d.name} traffic cameras — FAQ`,
+    faqs: [
+      {
+        q: `How many traffic cameras are in ${d.name}?`,
+        a: `${fmt(d.count)} in the WorldEye index, counted from the cameras' own coordinates — every feed on this page physically sits inside ${d.name}. The largest cluster is ${top[0].name} with ${fmt(top[0].count)} feeds.`,
+      },
+      {
+        q: `Which part of ${d.name} has the most cameras?`,
+        a: `${topList}. Coverage follows the metros and the interstate corridors between them — rural stretches are thinner, and the table on this page shows exactly what exists.`,
+      },
+      {
+        q: "Are the cameras live?",
+        a: "Yes — the feeds are the public road cameras published by transportation agencies and their partners. Each one opens on the WorldEye map at its real location.",
+      },
+      {
+        q: `How do I check ${d.name} road conditions before a drive?`,
+        a: `Open the map, zoom to your route in ${d.name}, and tap the camera markers along it. Check the destination end too — weather and congestion at the far end of a long drive are their own story.`,
+      },
+      {
+        q: "Does it cost anything?",
+        a: "No. Every feed opens free on the map — no account and no download. Check before you drive, never while driving.",
+      },
+    ],
+  };
+}
+
+function resolveState(slug: string): StateCfg | undefined {
+  const data = getStateBySlug(slug);
+  if (!data) return undefined;
+  const editorial = STATES[slug];
+  if (!editorial) return derivedConfig(data);
+  return {
+    ...editorial,
+    count: data.count,
+    stats: [
+      { value: fmt(data.count), label: "live cameras" },
+      ...editorial.stats.slice(1),
+    ],
+    areas: data.areas,
+    samples: editorial.samples ?? data.samples,
+  };
+}
+
 const RELATED: { label: string; href: string }[] = [
-  { label: "Georgia traffic cameras", href: "/us-traffic-cameras/georgia" },
-  { label: "Utah traffic cameras", href: "/us-traffic-cameras/utah" },
-  { label: "Texas traffic cameras", href: "/us-traffic-cameras/texas" },
-  { label: "Florida traffic cameras", href: "/us-traffic-cameras/florida" },
-  { label: "Indiana traffic cameras", href: "/us-traffic-cameras/indiana" },
-  { label: "Nevada traffic cameras", href: "/us-traffic-cameras/nevada" },
-  { label: "Arizona traffic cameras", href: "/us-traffic-cameras/arizona" },
+  ...getUsStatesIndex()
+    .states.slice(0, 8)
+    .map((s) => ({
+      label: `${s.name} traffic cameras`,
+      href: `/us-traffic-cameras/${s.slug}`,
+    })),
   { label: "All live traffic cameras", href: "/live-traffic-cameras" },
 ];
 
 export function generateStaticParams() {
-  return Object.keys(STATES).map((state) => ({ state }));
+  return getUsStatesIndex().states.map((s) => ({ state: s.slug }));
 }
 
 export async function generateMetadata({
@@ -561,7 +640,7 @@ export async function generateMetadata({
   params: Promise<{ state: string }>;
 }): Promise<Metadata> {
   const { state: slug } = await params;
-  const s = STATES[slug];
+  const s = resolveState(slug);
   if (!s) return { title: "Not found" };
   const url = `/us-traffic-cameras/${slug}`;
   return {
@@ -583,11 +662,11 @@ export default async function StateTrafficPage({
   params: Promise<{ state: string }>;
 }) {
   const { state: slug } = await params;
-  const s = STATES[slug];
+  const s = resolveState(slug);
   if (!s) notFound();
 
   const canonical = `${BASE}/us-traffic-cameras/${slug}`;
-  const updated = formatDate(directory.generatedAt);
+  const updated = formatDate(getUsStatesIndex().generatedAt);
   const items = s.samples ?? s.areas?.map((a) => ({ name: `${a.name} — ${a.count.toLocaleString("en-US")} cameras` })) ?? [];
 
   const jsonLd = {
