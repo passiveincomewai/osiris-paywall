@@ -4,6 +4,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import SilentBoundary from '@/components/SilentBoundary';
 import AffiliateAttributionSync from '@/components/AffiliateAttributionSync';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
+import MetaPixel from '@/components/MetaPixel';
 import TranslateGate from '@/components/translate/TranslateGate';
 import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import "./globals.css";
@@ -268,6 +269,9 @@ export default function RootLayout({
         </SilentBoundary>
         <SilentBoundary name="AnalyticsTracker">
           <AnalyticsTracker />
+        </SilentBoundary>
+        <SilentBoundary name="MetaPixel">
+          <MetaPixel />
         </SilentBoundary>
         <SilentBoundary name="TranslateGate">
           <TranslateGate />
