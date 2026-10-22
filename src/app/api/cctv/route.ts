@@ -46,6 +46,7 @@ import { fetchNorthCarolinaCameras } from './northcarolina';
 import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
 import { fetchFaaCameras } from './faa';
+import { fetchWestVirginiaCameras } from './westvirginia';
 import { fetchNewMexicoCameras } from './newmexico';
 import { fetchVermontCameras } from './vermont';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
@@ -570,6 +571,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'arizona': fetchArizonaCameras,
   'texas': fetchTexasCameras,
   'faa': fetchFaaCameras,
+  'westvirginia': fetchWestVirginiaCameras,
   'newmexico': fetchNewMexicoCameras,
   'vermont': fetchVermontCameras,
   'eastasia': fetchEastAsiaCameras,
@@ -965,6 +967,7 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 30.3 && lat < 35.1 && lng > -85.7 && lng < -80.8) regions.push('georgia');
   if (lat > 33.8 && lat < 36.6 && lng > -84.4 && lng < -75.4) regions.push('northcarolina');
   if (lat > 31.3 && lat < 37.1 && lng > -115.0 && lng < -109.0) regions.push('arizona');
+  if (lat > 37.2 && lat < 40.6 && lng > -82.7 && lng < -77.7) regions.push('westvirginia');
   if (lat > 31.3 && lat < 37.1 && lng > -109.1 && lng < -102.9) regions.push('newmexico');
   if (lat > 42.7 && lat < 45.1 && lng > -73.5 && lng < -71.4) regions.push('vermont');
   // Canada
