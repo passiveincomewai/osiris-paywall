@@ -544,21 +544,22 @@ export default async function AdminDashboardPage() {
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-4 mb-8 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">WorldEye Ops</div>
             <h1 className="text-2xl md:text-3xl font-bold text-white">Admin Dashboard</h1>
             <p className="text-xs text-white/40 mt-1">Signed in as {email} · Data as of {generatedAt} MDT</p>
           </div>
-          <div className="flex gap-3 text-sm">
+          <nav aria-label="Admin sections" className="flex gap-2 text-sm overflow-x-auto -mx-4 px-4 pb-1 lg:mx-0 lg:px-0 lg:pb-0 lg:overflow-visible">
             {growthDashboardUrl() ? (
-              <a href={growthDashboardUrl()!} target="_blank" rel="noreferrer" className="px-4 py-2 rounded-lg border border-cyan-400/30 text-cyan-300 hover:text-cyan-100">Growth Engine ↗</a>
+              <a href={growthDashboardUrl()!} target="_blank" rel="noreferrer" className="shrink-0 px-4 py-2.5 rounded-lg border border-cyan-400/30 text-cyan-300 hover:text-cyan-100">Growth Engine ↗</a>
             ) : null}
-            <Link href="/admin/affiliates" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Affiliates</Link>
-            <Link href="/admin/competitor-seo" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Competitor SEO</Link>
-            <Link href="/admin/contact" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Contact inbox</Link>
-            <Link href="/" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">← Site</Link>
-          </div>
+            <Link href="/admin/affiliates" className="shrink-0 px-4 py-2.5 rounded-lg border border-white/15 text-white/70 hover:text-white">Affiliates</Link>
+            <Link href="/admin/competitor-seo" className="shrink-0 px-4 py-2.5 rounded-lg border border-white/15 text-white/70 hover:text-white">Competitor SEO</Link>
+            <Link href="/admin/conversion" className="shrink-0 px-4 py-2.5 rounded-lg border border-white/15 text-white/70 hover:text-white">Conversion</Link>
+            <Link href="/admin/contact" className="shrink-0 px-4 py-2.5 rounded-lg border border-white/15 text-white/70 hover:text-white">Contact inbox</Link>
+            <Link href="/" className="shrink-0 px-4 py-2.5 rounded-lg border border-white/15 text-white/70 hover:text-white">← Site</Link>
+          </nav>
         </div>
 
         {/* Live traffic */}
