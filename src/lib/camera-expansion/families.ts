@@ -164,6 +164,7 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   weatherbug: excluded('WeatherBug', 'Commercial camera network (named in the audit\u2019s pseudo-URL/excluded class).'),
   earthcam: excluded('EarthCam', 'Commercial network; its terms do not permit harvesting its catalog into a competing service.'),
   skylinewebcams: excluded('SkylineWebcams', 'Commercial aggregator; WorldEye already runs its own Skyline pipeline (world-skyline.generated.ts) under that posture instead.'),
+  hak: excluded('HAK — Hrvatski autoklub (Croatian Automobile Club)', 'Spot-checked 2026-10-22: HAK is a motoring association, not a state agency, and its Terms of Use (rev. 14 Sep 2026) \u00a7\u00a76\u201310 permit personal non-commercial use only, expressly exclude systematic/automated collection of the whole or a substantial part of the service, allow commercial use and redistribution only under prior written consent / a written agreement, and expressly prohibit scraping without prior written approval. A written-agreement path exists (\u00a7\u00a79/16) but there is no open licence — excluded until the owner obtains that agreement.'),
 };
 
 /** Slugs that can never be enabled, whatever the registry says. */
