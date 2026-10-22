@@ -64,6 +64,18 @@ describe('probeFeed', () => {
     const headers = (fetcher.mock.calls[0][1] as RequestInit).headers as Record<string, string>;
     expect(headers.Range).toBe('bytes=0-2047');
   });
+
+  it('sends the TrafficWatch NI Referer its CDN demands, and no Referer elsewhere', async () => {
+    const ni = fetchReturning(JPEG, { headers: { 'content-type': 'image/jpeg' } });
+    await probeFeed('https://cctv.trafficwatchni.com/3260.jpg', 'image', ni);
+    const niHeaders = (ni.mock.calls[0][1] as RequestInit).headers as Record<string, string>;
+    expect(niHeaders.Referer).toBe('https://trafficwatchni.com/');
+
+    const other = fetchReturning(JPEG, { headers: { 'content-type': 'image/jpeg' } });
+    await probeFeed('https://cam.example.com/a.jpg', 'image', other);
+    const otherHeaders = (other.mock.calls[0][1] as RequestInit).headers as Record<string, string>;
+    expect(otherHeaders.Referer).toBeUndefined();
+  });
 });
 
 describe('applyPlaceholderPass', () => {

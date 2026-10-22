@@ -40,6 +40,27 @@ const BROWSER_UA =
 export const PROBE_TIMEOUT_MS = 8_000;
 const RANGE_BYTES = 2047;
 
+/**
+ * Hosts that refuse image requests without their own site as Referer.
+ * TrafficWatch NI's CDN 403s with no Referer, with a third-party Referer,
+ * and even with its own camera subdomain as Referer — only the apex site
+ * passes (verified 2026-10-22). Probing without it would mark every NI
+ * camera dead. Mirrors REFERER_OVERRIDES in src/app/api/cctv/proxy/route.ts
+ * (the runtime side of the same check); keep the two in step.
+ */
+const REFERER_BY_HOST: Record<string, string> = {
+  'cctv.trafficwatchni.com': 'https://trafficwatchni.com/',
+};
+
+/** The Referer a probe of this URL must carry, or null for none. */
+export function refererForUrl(url: string): string | null {
+  try {
+    return REFERER_BY_HOST[new URL(url).hostname.toLowerCase()] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** The slice of fetch the prober needs — narrow so tests can fake it. */
 export type FetchImpl = (url: string, init?: RequestInit) => Promise<Response>;
 
@@ -104,6 +125,8 @@ export async function probeFeed(
 ): Promise<ProbeResult> {
   const headers: Record<string, string> = { 'User-Agent': BROWSER_UA, Accept: '*/*' };
   if (kind === 'image' || kind === 'mjpeg' || kind === 'mp4') headers.Range = `bytes=0-${RANGE_BYTES}`;
+  const referer = refererForUrl(url);
+  if (referer) headers.Referer = referer;
 
   let res: Response;
   try {

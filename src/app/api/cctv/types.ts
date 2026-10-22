@@ -22,8 +22,11 @@ export interface CctvCamera {
  * plain http, which an https page blocks as mixed content, so the picture is
  * there in development and gone in production. The proxy re-serves it over
  * https. A host added here must also be in the proxy's own allowlist.
+ * cctv.trafficwatchni.com — TrafficWatch NI (DfI) — 403s unless the request
+ * carries a trafficwatchni.com Referer, which a browser on worldeye.app can
+ * never send; the proxy sends it instead (see proxy/route.ts).
  */
-const PROXY_IMAGE_HOSTS = ['infobanjirjps.selangor.gov.my'];
+const PROXY_IMAGE_HOSTS = ['infobanjirjps.selangor.gov.my', 'cctv.trafficwatchni.com'];
 
 /** The URL a browser can actually load this still from. */
 export function proxiedImageUrl(url: string): string {

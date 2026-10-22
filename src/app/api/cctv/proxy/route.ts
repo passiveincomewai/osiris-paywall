@@ -23,6 +23,8 @@ const ALLOWED_HOSTS = [
   'eismoinfo.lt',
   // Serves over plain http, which an https page blocks as mixed content.
   'infobanjirjps.selangor.gov.my',
+  // TrafficWatch NI (DfI) — 403 without a trafficwatchni.com Referer.
+  'cctv.trafficwatchni.com',
 ];
 
 // Taiwan Highway Bureau cameras are DigiEver encoders, and they emit a
@@ -45,6 +47,23 @@ function isAllowed(hostname: string): boolean {
 
 function sendsReferer(hostname: string): boolean {
   return !NO_REFERER_HOSTS.some(h => hostname === h || hostname.endsWith('.' + h));
+}
+
+// Hosts whose hotlink check demands a specific Referer rather than the
+// target's own origin. TrafficWatch NI's CDN accepts only the apex site as
+// Referer — the camera subdomain itself (the default below) is rejected,
+// as is any third-party origin. Verified 2026-10-22: no Referer → 403,
+// Referer https://trafficwatchni.com/ → 200, Referer
+// https://cctv.trafficwatchni.com/ → 403.
+const REFERER_OVERRIDES: Record<string, string> = {
+  'cctv.trafficwatchni.com': 'https://trafficwatchni.com/',
+};
+
+/** The Referer to send for a proxied host, or null to send none. */
+export function refererFor(hostname: string): string | null {
+  const host = hostname.toLowerCase();
+  if (!sendsReferer(host)) return null;
+  return REFERER_OVERRIDES[host] ?? `https://${host}/`;
 }
 
 /**
@@ -173,10 +192,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const host = target.hostname.toLowerCase();
-    const result = await fetchFrame(
-      target.toString(),
-      sendsReferer(host) ? `https://${target.hostname}/` : null
-    );
+    const result = await fetchFrame(target.toString(), refererFor(host));
 
     if (result.status >= 400) {
       return NextResponse.json({ error: `Upstream ${result.status}` }, { status: result.status });
