@@ -4,6 +4,7 @@ import { ArrowLeft, Activity, MapPin, Clock, Gauge, Newspaper, Plane, Eye, Bell,
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import LiveQuakeList from "@/components/events/LiveQuakeList";
 
 export const metadata: Metadata = {
   title: "Live Earthquake Map & Tracker — Quakes As They Happen",
@@ -153,6 +154,14 @@ export default function EarthquakeTrackerPage() {
               Open live map — free, no signup
             </Link>
           </div>
+        </div>
+
+        {/* Live significant quakes */}
+        <div className="mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Happening now — <span className="text-[#ff8c5a]">significant quakes</span>
+          </h2>
+          <LiveQuakeList />
         </div>
 
         {/* What you can see */}
@@ -366,6 +375,11 @@ export default function EarthquakeTrackerPage() {
               label: "Hurricane tracker",
               desc: "Storms and severe weather as they develop and make landfall.",
               href: "/hurricane-tracker",
+            },
+            {
+              label: "Tornado tracker",
+              desc: "Live NWS tornado warnings and watches, plus reported tornadoes from SPC.",
+              href: "/tornado-tracker",
             },
             {
               label: "Satellite tracker",

@@ -326,6 +326,11 @@ export default function WeatherTrackerPage() {
         <RelatedLinks
           links={[
             {
+              label: "Tornado tracker",
+              desc: "Live tornado warnings, watches and reported tornadoes — the sharp end of severe weather.",
+              href: "/tornado-tracker",
+            },
+            {
               label: "Hurricane tracker",
               desc: "Tropical storms and hurricanes as live systems — with a safety-first approach.",
               href: "/hurricane-tracker",
