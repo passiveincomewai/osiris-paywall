@@ -6,7 +6,8 @@ const mocks = vi.hoisted(() => ({
   auth: vi.fn(async () => null as { user?: { id?: string } } | null),
   findSubscription: vi.fn(async () => null as unknown),
   retrieveSub: vi.fn(async () => ({}) as unknown),
-  updateSub: vi.fn(async () => ({})),
+  updateSub: vi.fn(async () => ({}) as unknown),
+  retrievePI: vi.fn(async () => ({}) as unknown),
 }));
 
 vi.mock("@/auth", () => ({ auth: mocks.auth }));
@@ -16,6 +17,7 @@ vi.mock("@/lib/db", () => ({
 vi.mock("@/lib/stripe", () => ({
   stripe: () => ({
     subscriptions: { retrieve: mocks.retrieveSub, update: mocks.updateSub },
+    paymentIntents: { retrieve: mocks.retrievePI },
   }),
 }));
 
@@ -57,6 +59,9 @@ beforeEach(() => {
   mocks.auth.mockResolvedValue({ user: { id: "user_1" } });
   mocks.findSubscription.mockResolvedValue(ROW);
   mocks.retrieveSub.mockResolvedValue(stripeSub());
+  // Default: the swap completes with nothing pending (no charge due, or
+  // the card on file covered it).
+  mocks.updateSub.mockResolvedValue(stripeSub({ items: { data: [{ id: "si_1", price: { id: "price_annual" } }] } }));
 });
 
 afterEach(() => {
@@ -99,13 +104,43 @@ describe("POST /api/billing/switch", () => {
     expect(mocks.findSubscription).toHaveBeenCalledWith({ where: { userId: "user_1" } });
   });
 
-  it("active sub: swap with Stripe's standard proration", async () => {
+  it("active sub: swap with proration AND pending-if-incomplete, so a failed card can't flip the member past due", async () => {
     const res = await post({ plan: "annual" });
     expect(res.status).toBe(200);
     expect(mocks.updateSub).toHaveBeenCalledWith("sub_own", {
       items: [{ id: "si_1", price: "price_annual" }],
       proration_behavior: "create_prorations",
+      payment_behavior: "pending_if_incomplete",
+      expand: ["latest_invoice"],
     });
+    expect(await res.json()).toMatchObject({ ok: true, plan: "annual", state: "switched" });
+  });
+
+  it("active sub, card can't cover the prorated invoice: state payment_required with the amount + client secret, and NO claim the switch happened", async () => {
+    mocks.updateSub.mockResolvedValue({
+      ...stripeSub(),
+      pending_update: { expires_at: 1792800000 },
+      latest_invoice: {
+        id: "in_1",
+        amount_due: 6162,
+        currency: "usd",
+        hosted_invoice_url: "https://invoice.stripe.com/i/x",
+        payments: { data: [{ payment: { payment_intent: "pi_1" } }] },
+      },
+    });
+    mocks.retrievePI.mockResolvedValue({ id: "pi_1", client_secret: "pi_1_secret_x" });
+    const res = await post({ plan: "annual" });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      ok: true,
+      plan: "annual",
+      state: "payment_required",
+      amountDue: 6162,
+      currency: "usd",
+      clientSecret: "pi_1_secret_x",
+      hostedInvoiceUrl: "https://invoice.stripe.com/i/x",
+    });
+    expect(mocks.retrievePI).toHaveBeenCalledWith("pi_1");
   });
 
   it("trialing sub: trial_end preserved EXACTLY and proration off", async () => {

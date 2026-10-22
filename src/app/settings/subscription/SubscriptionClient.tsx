@@ -4,11 +4,14 @@
  * /settings/subscription — subscription management that stays on
  * WorldEye. Current plan + figures come from GET /api/billing/manage
  * (DB row + live Stripe where the DB lacks a figure); plan switches run
- * through POST /api/billing/switch and the page polls until the webhook
- * has written the new plan back — it never fakes the result. The ONLY
- * exits to Stripe are the ones Jameson kept: the small cancel button at
- * the foot (and the past-due payment-method fix), both through the
- * pre-existing portal-session flow.
+ * through POST /api/billing/switch. A switch whose prorated charge the
+ * card on file can't cover stays PENDING (old plan untouched) and is
+ * paid right here via components/InvoicePayForm; a completed switch is
+ * confirmed by polling until the webhook has written the new plan back
+ * — the page never fakes the result. The ONLY exits to Stripe are the
+ * ones Jameson kept: the small cancel button at the foot (and the
+ * past-due payment-method fix), both through the pre-existing
+ * portal-session flow.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -16,10 +19,13 @@ import { ArrowLeft, Check, Crown, Loader2 } from "lucide-react";
 import {
   switchTerms,
   fmtManageDate,
+  fmtMoney,
   type ManageView,
   type ManageOption,
+  type ManagePendingSwitch,
 } from "@/lib/billing/manage";
 import { startPlanCheckout } from "@/lib/billing/trial-checkout";
+import InvoicePayForm from "@/components/InvoicePayForm";
 
 const btnGold =
   "px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition disabled:opacity-60 inline-flex items-center justify-center gap-2";
@@ -34,6 +40,10 @@ export default function SubscriptionClient() {
   const [switchError, setSwitchError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
+  // A switch whose prorated charge still needs paying (the old plan is
+  // untouched until it is). Set from the switch response, or adopted
+  // from the manage view when Stripe already holds one pending.
+  const [paySwitch, setPaySwitch] = useState<ManagePendingSwitch | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const load = useCallback(async (): Promise<ManageView | null> => {
@@ -56,6 +66,19 @@ export default function SubscriptionClient() {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [load]);
 
+  // Adopt a switch Stripe already holds as pending (e.g. the member
+  // confirmed, the card failed, and they came back later) so the pay
+  // card is waiting for them. Clears itself once the plan has flipped.
+  useEffect(() => {
+    if (!view) return;
+    if (view.pendingSwitch) {
+      setPaySwitch((prev) => prev ?? view.pendingSwitch);
+    } else if (view.current && paySwitch && view.current.plan === paySwitch.targetPlan) {
+      setPaySwitch(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
+
   // The exact pre-existing portal flow (the old Manage button's) — now
   // only behind the cancel button and the past-due payment fix.
   async function openPortal() {
@@ -67,6 +90,26 @@ export default function SubscriptionClient() {
     } finally {
       setPortalLoading(false);
     }
+  }
+
+  // The webhook writes the new plan to the DB — poll until it lands.
+  function startPoll(target: string) {
+    setUpdating(target);
+    let tries = 0;
+    if (pollRef.current) clearInterval(pollRef.current);
+    pollRef.current = setInterval(async () => {
+      tries += 1;
+      const v = await load();
+      if (v?.current?.plan === target || tries >= 10) {
+        if (pollRef.current) clearInterval(pollRef.current);
+        setUpdating(null);
+        if (v?.current?.plan === target) {
+          setPaySwitch(null);
+        } else if (!v || v.current?.plan !== target) {
+          setSwitchError("Switch saved with Stripe — your new plan will appear here within a minute.");
+        }
+      }
+    }, 2000);
   }
 
   async function confirmSwitch() {
@@ -81,22 +124,24 @@ export default function SubscriptionClient() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Couldn't switch your plan. Nothing was changed.");
-      const target = confirming.plan;
+      const target = confirming;
       setConfirming(null);
-      setUpdating(target);
-      // The webhook writes the new plan to the DB — poll until it lands.
-      let tries = 0;
-      pollRef.current = setInterval(async () => {
-        tries += 1;
-        const v = await load();
-        if (v?.current?.plan === target || tries >= 10) {
-          if (pollRef.current) clearInterval(pollRef.current);
-          setUpdating(null);
-          if (!v || v.current?.plan !== target) {
-            setSwitchError("Switch saved with Stripe — your new plan will appear here within a minute.");
-          }
-        }
-      }, 2000);
+      if (data.state === "payment_required") {
+        // The card on file didn't cover the prorated difference. The
+        // OLD plan is still fully active — show the on-page payment
+        // form for the exact amount due; paying it completes the
+        // switch, and the poll below (onPaid) watches for the flip.
+        setPaySwitch({
+          targetPlan: target.plan,
+          targetName: target.name,
+          amountDue: data.amountDue ?? 0,
+          currency: data.currency ?? "usd",
+          clientSecret: data.clientSecret ?? null,
+          hostedUrl: data.hostedInvoiceUrl ?? null,
+        });
+        return;
+      }
+      startPoll(target.plan);
     } catch (err) {
       setSwitchError(err instanceof Error ? err.message : "Couldn't switch your plan. Nothing was changed.");
     } finally {
@@ -217,6 +262,41 @@ export default function SubscriptionClient() {
             )}
           </section>
 
+          {paySwitch && view.kind === "self-serve" && (
+            <section className="rounded-3xl border border-[#D4AF37]/40 bg-[#D4AF37]/[0.05] p-6 mb-4">
+              <h2 className="font-bold mb-1">Finish switching to {paySwitch.targetName}</h2>
+              <p className="text-sm text-white/60 mb-1">
+                Your {view.current.planName} plan is still fully active — nothing has changed yet.
+                {" "}{fmtMoney(paySwitch.amountDue, paySwitch.currency)} is due to complete the switch
+                (the new plan&rsquo;s price minus credit for the unused part of your current plan).
+                Pay it here and {paySwitch.targetName} starts immediately.
+              </p>
+              {updating ? (
+                <p className="flex items-center gap-2 text-sm text-white/60 mt-4">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Payment received — updating your plan…
+                </p>
+              ) : (
+                <div className="mt-4">
+                  <InvoicePayForm
+                    clientSecret={paySwitch.clientSecret}
+                    hostedUrl={paySwitch.hostedUrl}
+                    amountLabel={fmtMoney(paySwitch.amountDue, paySwitch.currency)}
+                    onPaid={() => paySwitch.targetPlan && startPoll(paySwitch.targetPlan)}
+                  />
+                </div>
+              )}
+              <button
+                onClick={() => setPaySwitch(null)}
+                className="text-xs text-white/40 underline underline-offset-2 hover:text-white/70 transition mt-4"
+              >
+                Not now — I&rsquo;ll finish this later
+              </button>
+              <p className="text-xs text-white/35 mt-1">
+                The switch stays saved with Stripe and this card will be here when you come back.
+              </p>
+            </section>
+          )}
+
           {(view.kind === "enterprise" || view.kind === "comp") && (
             <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
               <h2 className="font-bold mb-1">
@@ -238,7 +318,8 @@ export default function SubscriptionClient() {
             <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
               <h2 className="font-bold mb-1">Switch plan</h2>
               <p className="text-sm text-white/55 mb-5">
-                Takes effect immediately — no new checkout, no leaving the site.
+                Switch right here, without leaving the site. If a prorated difference is due today,
+                you pay it on this page — your current plan stays active until the switch completes.
               </p>
 
               {updating && (
@@ -286,6 +367,13 @@ export default function SubscriptionClient() {
                           <span className="text-sm text-white/45 font-normal">{o.per}</span>
                         </p>
                         <p className="text-xs text-[#D4AF37] font-semibold">Just {o.perDay} a day</p>
+                        {o.dueTodayCents != null && !view.current!.trialing && (
+                          <p className="text-xs text-white/45 mt-1">
+                            {o.dueTodayCents > 0
+                              ? `${fmtMoney(o.dueTodayCents)} due today if you switch`
+                              : "No charge today if you switch"}
+                          </p>
+                        )}
                         <button
                           onClick={() => { setConfirming(o); setSwitchError(null); }}
                           disabled={!!updating}
@@ -303,7 +391,7 @@ export default function SubscriptionClient() {
                     {confirming.per}?
                   </h3>
                   {(() => {
-                    const terms = switchTerms(view.current!, confirming);
+                    const terms = switchTerms(view.current!, confirming, confirming.dueTodayCents);
                     return (
                       <ul className="space-y-2 text-sm text-white/70 mb-5">
                         {[terms.effectiveLine, terms.moneyLine, terms.nextChargeLine].map((line) => (

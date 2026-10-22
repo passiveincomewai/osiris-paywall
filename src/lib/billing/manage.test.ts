@@ -6,6 +6,7 @@ import {
   assembleManageView,
   switchTerms,
   priceIdForPlan,
+  invoicePaymentIntentId,
   type ManageDbSub,
 } from "./manage";
 import { TRIAL_PLAN_OPTIONS } from "./trial-checkout";
@@ -129,13 +130,96 @@ describe("switchTerms", () => {
     expect(terms.nextChargeLine).toContain("the new plan's price");
   });
 
-  it("active: standard proration in plain terms + the next full charge date/price", () => {
+  it("active, no quote: the difference is due TODAY if the card can't be assumed — never 'next invoice'", () => {
     const v = assembleManageView({ dbSub: dbSub(), stripeSub: { status: "active", trial_end: null }, env: ENV });
     const terms = switchTerms(v.current!, annual);
     expect(terms.moneyLine).toContain("credits the unused part");
-    expect(terms.moneyLine).toContain("next invoice");
-    expect(terms.nextChargeLine).toContain("October 27, 2026");
+    expect(terms.moneyLine).not.toContain("next invoice");
+    expect(terms.moneyLine).toContain("card on file");
+    expect(terms.moneyLine).toContain("stays fully active");
     expect(terms.nextChargeLine).toContain("$74.99/year");
     expect(terms.effectiveLine).toContain("immediately");
+  });
+
+  it("active with a due-today quote: the exact amount is named, and the current plan survives a failed card", () => {
+    const v = assembleManageView({ dbSub: dbSub(), stripeSub: { status: "active", trial_end: null }, env: ENV });
+    const terms = switchTerms(v.current!, annual, 6162);
+    expect(terms.moneyLine).toContain("Due today: $61.62");
+    expect(terms.moneyLine).toContain("stays fully active");
+    expect(terms.effectiveLine).toContain("as soon as");
+  });
+
+  it("active with a zero due-today quote: no charge today", () => {
+    const v = assembleManageView({ dbSub: dbSub(), stripeSub: { status: "active", trial_end: null }, env: ENV });
+    const terms = switchTerms(v.current!, annual, 0);
+    expect(terms.moneyLine).toContain("No charge today");
+  });
+
+  it("dueTodayByPlan lands on the options (and only where quoted)", () => {
+    const v = assembleManageView({
+      dbSub: dbSub(),
+      stripeSub: { status: "active", trial_end: null },
+      env: ENV,
+      dueTodayByPlan: { annual: 6162 },
+    });
+    expect(v.options.find((o) => o.plan === "annual")?.dueTodayCents).toBe(6162);
+    expect(v.options.find((o) => o.plan === "monthly")?.dueTodayCents).toBeNull();
+  });
+
+  it("a pending switch (unpaid prorated invoice) surfaces with its target resolved from the price id", () => {
+    const v = assembleManageView({
+      dbSub: dbSub(),
+      stripeSub: {
+        status: "active",
+        trial_end: null,
+        pendingInvoice: {
+          id: "in_1",
+          amountDue: 6162,
+          currency: "usd",
+          clientSecret: "pi_1_secret_x",
+          hostedUrl: "https://invoice.stripe.com/i/x",
+          newPriceId: "price_annual",
+        },
+      },
+      env: ENV,
+    });
+    expect(v.pendingSwitch).toEqual({
+      targetPlan: "annual",
+      targetName: "VIP Pro",
+      amountDue: 6162,
+      currency: "usd",
+      clientSecret: "pi_1_secret_x",
+      hostedUrl: "https://invoice.stripe.com/i/x",
+    });
+    // The member's CURRENT plan is untouched while the switch pends.
+    expect(v.current?.plan).toBe("weekly");
+    expect(v.current?.pastDue).toBe(false);
+  });
+
+  it("no pending invoice → pendingSwitch is null", () => {
+    const v = assembleManageView({ dbSub: dbSub(), stripeSub: { status: "active", trial_end: null }, env: ENV });
+    expect(v.pendingSwitch).toBeNull();
+  });
+});
+
+describe("invoicePaymentIntentId", () => {
+  it("reads the legacy invoice.payment_intent (string or expanded)", () => {
+    expect(invoicePaymentIntentId({ payment_intent: "pi_a" })).toBe("pi_a");
+    expect(invoicePaymentIntentId({ payment_intent: { id: "pi_b" } })).toBe("pi_b");
+  });
+
+  it("reads the current invoice.payments shape", () => {
+    expect(
+      invoicePaymentIntentId({ payments: { data: [{ payment: { payment_intent: "pi_c" } }] } }),
+    ).toBe("pi_c");
+    expect(
+      invoicePaymentIntentId({ payments: { data: [{ payment: { payment_intent: { id: "pi_d" } } }] } }),
+    ).toBe("pi_d");
+  });
+
+  it("null when the invoice carries no payment intent", () => {
+    expect(invoicePaymentIntentId({})).toBeNull();
+    expect(invoicePaymentIntentId(null)).toBeNull();
+    expect(invoicePaymentIntentId({ payments: { data: [] } })).toBeNull();
   });
 });
