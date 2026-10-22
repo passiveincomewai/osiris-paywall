@@ -206,3 +206,33 @@ export async function areasForDef(
   const areas = cameraAreas(await recordsForDef(def));
   return typeof limit === 'number' ? areas.slice(0, limit) : areas;
 }
+
+/** One city's records inside one country chunk, with their centroid —
+ *  what the city pages use to decide whether the full explorer + route
+ *  finder belong on the page, and where the route finder should aim.
+ *  Null when the country isn't in the index. */
+export async function cityChunkStats(
+  countrySlug: string,
+  cityName: string,
+): Promise<{ count: number; centroid: { lat: number; lng: number } | null } | null> {
+  const def = resolveExploreDef({ country: countrySlug, city: cityName });
+  if (!def) return null;
+  const records = await recordsForDef(def);
+  const placed = records.filter(
+    (r) => typeof r.lat === 'number' && typeof r.lng === 'number',
+  );
+  if (placed.length === 0) return { count: records.length, centroid: null };
+  let lat = 0;
+  let lng = 0;
+  for (const r of placed) {
+    lat += r.lat as number;
+    lng += r.lng as number;
+  }
+  return {
+    count: records.length,
+    centroid: {
+      lat: Math.round((lat / placed.length) * 10000) / 10000,
+      lng: Math.round((lng / placed.length) * 10000) / 10000,
+    },
+  };
+}

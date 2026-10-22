@@ -55,7 +55,7 @@ export interface DirectoryExplorerProps {
   theme?: string;
   /** Human label for the scope, e.g. "Asia" or "Japan traffic". */
   scopeLabel: string;
-  groupBy?: 'city' | 'country';
+  groupBy?: 'city' | 'country' | 'none';
   searchPlaceholder: string;
   /** Anchor id the top-of-page search scrolls to. */
   explorerId?: string;
@@ -186,7 +186,7 @@ export default function DirectoryExplorer({
      grouped (by city, or by country for multi-country scopes), so a
      header belongs wherever the group value changes. */
   const rows = useMemo(() => {
-    if (filtering) return null;
+    if (filtering || groupBy === 'none') return null;
     const out: Array<{ header: string; count?: number; key: string } | { cam: CountryCamera }> = [];
     let lastGroup: string | null = null;
     let started = false;
