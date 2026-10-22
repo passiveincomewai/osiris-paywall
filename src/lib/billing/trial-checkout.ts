@@ -30,6 +30,7 @@
  * changes, change it in both places (the tests pin these strings).
  */
 import { trialDaysForPlan, type BillingPlan } from "./trials";
+import { trackMetaEvent } from "@/lib/meta-track";
 
 export type TrialPlan = Exclude<BillingPlan, "enterprise">;
 
@@ -243,6 +244,12 @@ export async function startHostedCheckout(
   });
   const data = await res.json().catch(() => null);
   if (res.ok && typeof data?.url === "string") {
+    // Browser twin of the route's Conversions API InitiateCheckout —
+    // same event id, so Meta deduplicates the pair. Fired before the
+    // navigation so it isn't lost to the page unload.
+    if (typeof data?.metaEventId === "string") {
+      trackMetaEvent("InitiateCheckout", {}, data.metaEventId);
+    }
     navigate(data.url);
     return data.url;
   }
