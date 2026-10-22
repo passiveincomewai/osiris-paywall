@@ -50,6 +50,7 @@ import { fetchNorthCarolinaCameras } from './northcarolina';
 import { fetchArizonaCameras } from './arizona';
 import { fetchTexasCameras } from './texas';
 import { fetchFaaCameras } from './faa';
+import { fetchCoastCameras } from './coastcams';
 import { fetchEastAsiaCameras, fetchSeAsiaCameras, fetchWestAsiaCameras } from './opencctv';
 import {
   fetchOccHarvestAfrica,
@@ -576,6 +577,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'arizona': fetchArizonaCameras,
   'texas': fetchTexasCameras,
   'faa': fetchFaaCameras,
+  'coastcams': fetchCoastCameras,
   'eastasia': fetchEastAsiaCameras,
   'seasia': fetchSeAsiaCameras,
   'westasia': fetchWestAsiaCameras,
@@ -981,6 +983,8 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 42 && lat < 70 && lng > -141 && lng < -52) regions.push('canada');
   // FAA WeatherCams — airports and mountain passes across the US and Canada
   if (lat > 17 && lat < 72 && lng > -180 && lng < -50) regions.push('faa');
+  // USGS CoastCams — curated coastal stations (MA/FL/PR today), same broad US box as FAA
+  if (lat > 17 && lat < 72 && lng > -180 && lng < -50) regions.push('coastcams');
   if (lat > 53.3 && lat < 53.8 && lng > -114.0 && lng < -113.2) regions.push('edmonton');
   // Europe
   const inBulgaria = lat > 41 && lat < 44.5 && lng > 22 && lng < 29.5;
