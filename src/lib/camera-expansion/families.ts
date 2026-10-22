@@ -267,8 +267,18 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   'ipcamlive-global': conditional('IPCamLive platform', 'Commercial hosting platform; terms not spot-checked this stage.'),
   feratel: conditional('Feratel', 'Commercial tourism-media platform; terms not spot-checked this stage.'),
   opensnow: conditional('OpenSnow', 'Commercial service; terms not spot-checked this stage.'),
-  weatherstem: conditional('WeatherSTEM', 'Commercial/university network; terms not spot-checked this stage.'),
   trafficengland: conditional('HighwaysTrafficCameras portal (National Highways cameras)', 'Records point at a third-party portal rather than National Highways itself; held pending direct sourcing.'),
+  opendatahub: conditional('Open Data Hub (South Tyrol) label — mostly Feratel content', 'Spot-checked 2026-10-22: 878 of 1,015 feeds sit on wtvthmb.feratel.com — the commercial Feratel platform under a misleading open-data label; held with feratel.'),
+  airportwebcams: conditional('Mixed airport webcam hosts', 'Spot-checked 2026-10-22: mixed provenance; the FAA share (298) is already covered by the CLEAR faa-weathercams family and the rest is unreviewed small-host airport cams.'),
+  myairportcams: conditional('MyAirportCams aggregator / Airservices Australia', 'Spot-checked 2026-10-22: dominant host is an aggregator viewer; the Airservices Australia share clears separately as the airservices family.'),
+  kielcanal: conditional('Kiel Canal (WSV) via Livespotting', 'Spot-checked 2026-10-22: the operator is the federal WSV (wsv-waterway is CLEAR) but these feeds sit on the commercial Livespotting CDN — held until sourced from the WSV directly.'),
+  'isle-of-man': conditional('Isle of Man Government + platform singletons', 'Spot-checked 2026-10-22: 10 of 15 feeds are IoM Government (Open Government Licence) but the family is contaminated with IPCamLive/commercial records — held until split.'),
+  'maunakea-observatories': conditional('Maunakea observatories (mixed institutes)', 'Spot-checked 2026-10-22: Gemini/Subaru/EAO are public institutes but Keck is a private non-profit — held until sourced per-observatory.'),
+  'small-cams-2': conditional('Ski Utah resort cams + USGS CoastCam subset', 'Spot-checked 2026-10-22: majority is a tourism-association aggregator of resort cams; the 13 USGS CoastCam records are federal material held inside a mixed family — split before any clearance.'),
+  'hanshin-expressway': conditional('Hanshin Expressway Co.', 'Spot-checked 2026-10-22: privatised expressway operator; its published terms reserve copyright and no camera-feed licence was found — same held posture as nexco-japan before its definitive terms check.'),
+  'satap-sitaf': conditional('SATAP / SITAF (ASTM Group motorway concessionaires)', 'Spot-checked 2026-10-22: private concessionaires; redistribution terms not cleared. Autostrade per l’Italia is a named-operator exception in this registry, not a class clearance for concessionaires.'),
+  mudik: conditional('Indonesian toll-road concessionaires via the Ministry mudik portal', 'Spot-checked 2026-10-22: no record sits on a government host — mixed commercial/state toll-operator feeds behind an aggregator portal; source directly.'),
+  'prague-tsk': conditional('Prague TSK cameras via ÚAMK portal', 'Spot-checked 2026-10-22: records point at a motoring-club portal (uamk.cz), not TSK itself — same holding pattern as trafficengland; source directly.'),
 
   /* ── Excluded: terms known not to clear ────────────────────────────── */
   windy: excluded('Windy Webcams', 'Audit §3.4: Windy\u2019s terms grant no commercial redistribution of its catalog/feed URLs. Structural exclusion — no flag enables this family.'),
@@ -276,6 +286,12 @@ export const FAMILY_REGISTRY: Record<string, FamilyInfo> = {
   weatherbug: excluded('WeatherBug', 'Commercial camera network (named in the audit\u2019s pseudo-URL/excluded class).'),
   earthcam: excluded('EarthCam', 'Commercial network; its terms do not permit harvesting its catalog into a competing service.'),
   skylinewebcams: excluded('SkylineWebcams', 'Commercial aggregator; WorldEye already runs its own Skyline pipeline (world-skyline.generated.ts) under that posture instead.'),
+  'nexco-japan': excluded('NEXCO expressway companies (Drive Traffic)', 'Spot-checked 2026-10-22: Drive Traffic terms bar copying/extraction and any third-party use of site data without explicit authorisation; NEXCO East’s Drive Plaza terms likewise forbid reproducing contents on another website or for commercial purposes.'),
+  itraffic: excluded('SANRAL i-TRAFFIC (South Africa)', 'Spot-checked 2026-10-22: SANRAL’s own terms prohibit redistribution or republication of any part of i-traffic.co.za or its content without its prior express written consent.'),
+  weatherstem: excluded('WeatherSTEM', 'Spot-checked 2026-10-22: its Media Usage Guidelines require written permission to reuse any content including camera imagery/video, state commercial usage requires a license, and forbid automated recording of live streams.'),
+  'nysmesonet': excluded('New York State Mesonet (UAlbany / RFSUNY)', 'Spot-checked 2026-10-22: its Data Access Policy requires a priori approval for web republication and states no redistribution is allowed without the express prior written consent of RFSUNY — not open data despite the public-university operator.'),
+  balticlivecam: excluded('BalticLiveCam (SIA BalticLiveCam)', 'Spot-checked 2026-10-22: its Terms of Use §3 prohibit partial or full publication, reproduction or transfer of website/stream content without the rights holder’s permission.'),
+  swisswebcams: excluded('swisswebcams.ch portal (Windy-hosted imagery)', 'Spot-checked 2026-10-22: all 1,542 feeds sit on images-webcams.windy.com — Windy catalogue data under another label; the Windy exclusion attaches to the data, not just the family name.'),
 };
 
 /** Slugs that can never be enabled, whatever the registry says. */
