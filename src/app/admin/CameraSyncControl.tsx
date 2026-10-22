@@ -60,7 +60,7 @@ export default function CameraSyncControl() {
         <button
           onClick={request}
           disabled={busy || !!state?.pending}
-          className="rounded-lg border border-cyan-300/30 bg-cyan-400/10 px-3.5 py-2 text-xs font-bold text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center min-h-10 rounded-lg border border-cyan-300/30 bg-cyan-400/10 px-3.5 py-2 text-xs font-bold text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {busy ? "Recording…" : state?.pending ? "Dry-run requested" : "Request a dry-run sync"}
         </button>

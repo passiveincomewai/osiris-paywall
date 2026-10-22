@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import type { OnboardingReport } from "@/lib/analytics/onboarding-types";
 
 const inputCls =
-  "rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400/50";
+  "rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400/50";
 const labelCls = "text-[10px] font-bold tracking-[0.16em] text-white/35 uppercase";
 
 function fmt(n: number): string {
@@ -272,7 +272,8 @@ export default function OnboardingActivation() {
 
             <div>
               <SubTitle>Session duration by onboarding status</SubTitle>
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-[430px] text-sm">
                 <tbody>
                   {report.durationsByStatus.map((d) => (
                     <tr key={d.key} className="border-b border-white/5 last:border-0">
@@ -284,7 +285,9 @@ export default function OnboardingActivation() {
                   ))}
                 </tbody>
               </table>
+              </div>
               <SubTitle>Pricing visits by status</SubTitle>
+              <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <tbody>
                   {report.pricingByStatus.map((p) => (
@@ -295,6 +298,7 @@ export default function OnboardingActivation() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
 

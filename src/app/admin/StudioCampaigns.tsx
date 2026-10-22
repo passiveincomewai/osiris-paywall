@@ -37,7 +37,7 @@ interface CampaignRow {
 }
 
 const input =
-  "w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60 placeholder:text-white/30";
+  "w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60 placeholder:text-white/30";
 const label = "block text-[11px] font-mono uppercase tracking-[0.15em] text-white/40 mb-1";
 const STATUSES = ["draft", "active", "ended"] as const;
 
@@ -252,7 +252,7 @@ export default function StudioCampaigns() {
       <button
         onClick={() => void create()}
         disabled={creating}
-        className="px-4 py-2 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+        className="inline-flex items-center min-h-10 px-4 py-2 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
         style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}
       >
         {creating ? "Creating…" : "Create campaign"}
@@ -277,7 +277,7 @@ export default function StudioCampaigns() {
                   </div>
                 </div>
                 <select
-                  className="px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-mono"
+                  className="min-h-10 px-2 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-mono"
                   value={c.status}
                   disabled={busyId === c.id}
                   onChange={(e) => void changeStatus(c.id, e.target.value)}
@@ -290,7 +290,7 @@ export default function StudioCampaigns() {
 
               {(c.participations ?? []).length > 0 && (
                 <div className="overflow-x-auto mt-3">
-                  <table className="w-full text-sm">
+                  <table className="w-full min-w-[560px] text-sm">
                     <thead>
                       <tr className="text-left text-[11px] uppercase tracking-[0.15em] text-white/35">
                         <th className="py-1.5 pr-3 font-semibold">Affiliate</th>
@@ -322,7 +322,7 @@ export default function StudioCampaigns() {
                             <button
                               onClick={() => void review(p.id, c.id, "verified")}
                               disabled={busyId === p.id}
-                              className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50 mr-2"
+                              className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50 mr-2"
                               style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}
                             >
                               Verify
@@ -330,7 +330,7 @@ export default function StudioCampaigns() {
                             <button
                               onClick={() => void review(p.id, c.id, "flagged")}
                               disabled={busyId === p.id}
-                              className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50"
+                              className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50"
                             >
                               Flag
                             </button>

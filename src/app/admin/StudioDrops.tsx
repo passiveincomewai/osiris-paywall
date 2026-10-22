@@ -19,7 +19,7 @@ interface DropRow {
 }
 
 const input =
-  "w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60 placeholder:text-white/30";
+  "w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60 placeholder:text-white/30";
 const label = "block text-[11px] font-mono uppercase tracking-[0.15em] text-white/40 mb-1";
 
 export default function StudioDrops() {
@@ -117,7 +117,7 @@ export default function StudioDrops() {
       <button
         onClick={() => void publish()}
         disabled={creating}
-        className="px-4 py-2 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+        className="inline-flex items-center min-h-10 px-4 py-2 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
         style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}
       >
         {creating ? "Publishing…" : "Publish drop"}
@@ -129,7 +129,7 @@ export default function StudioDrops() {
         <p className="text-sm text-white/40">No drops published yet — days without a drop simply have none.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[520px] text-sm">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-[0.15em] text-white/35">
                 <th className="py-2 pr-3 font-semibold">Date</th>

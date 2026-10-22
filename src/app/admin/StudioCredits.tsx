@@ -182,7 +182,7 @@ export default function StudioCredits() {
           </div>
 
           <div className="overflow-x-auto mb-4">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-[0.15em] text-white/35">
                   <th className="py-2 pr-3 font-semibold">Job kind</th>
@@ -221,7 +221,7 @@ export default function StudioCredits() {
                         type="checkbox"
                         checked={config.providersEnabled[kind]}
                         onChange={(e) => setConfig({ ...config, providersEnabled: { ...config.providersEnabled, [kind]: e.target.checked } })}
-                        className="h-4 w-4 accent-emerald-400"
+                        className="h-5 w-5 accent-emerald-400"
                       />
                     </td>
                   </tr>
@@ -236,7 +236,7 @@ export default function StudioCredits() {
                 type="checkbox"
                 checked={overrideSafety}
                 onChange={(e) => setOverrideSafety(e.target.checked)}
-                className="mt-0.5 h-4 w-4 accent-amber-400"
+                className="mt-0.5 h-5 w-5 shrink-0 accent-amber-400"
               />
               <span>
                 <span className="block text-sm font-bold text-amber-200">Safety override</span>
@@ -252,7 +252,7 @@ export default function StudioCredits() {
           <button
             onClick={save}
             disabled={saving}
-            className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+            className="inline-flex items-center min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
             style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}>
             {saving ? "Saving…" : "Save credit configuration"}
           </button>

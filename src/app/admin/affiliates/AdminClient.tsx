@@ -13,8 +13,8 @@ async function api(path: string, init?: RequestInit) {
 }
 
 const card = "rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-4 md:p-5";
-const input = "w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60";
-const btn = "px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-colors";
+const input = "w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60";
+const btn = "inline-flex items-center justify-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-colors";
 
 export default function AdminClient() {
   const [tab, setTab] = useState<Tab>("overview");
@@ -45,7 +45,7 @@ export default function AdminClient() {
       <div className="flex gap-1.5 overflow-x-auto mb-6 pb-1">
         {(["overview", "affiliates", "payouts", "ledger", "fraud", "settings", "audit"] as Tab[]).map((t) => (
           <button key={t} onClick={() => switchTab(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-mono capitalize whitespace-nowrap border transition-colors ${tab === t ? "bg-cyan-400/15 border-cyan-400/50 text-cyan-200" : "border-white/10 text-slate-400 hover:text-white"}`}>
+            className={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-mono capitalize whitespace-nowrap border transition-colors ${tab === t ? "bg-cyan-400/15 border-cyan-400/50 text-cyan-200" : "border-white/10 text-slate-400 hover:text-white"}`}>
             {t}
           </button>
         ))}

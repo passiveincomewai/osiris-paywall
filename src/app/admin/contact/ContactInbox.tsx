@@ -106,7 +106,7 @@ export default function ContactInbox({ initial }: { initial: ContactMessageView[
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
-            className={`px-3.5 py-1.5 rounded-lg border text-sm transition ${
+            className={`px-3.5 py-2.5 rounded-lg border text-sm transition ${
               filter === f.value
                 ? "border-white/40 text-white bg-white/[0.07]"
                 : "border-white/12 text-white/50 hover:text-white"
@@ -184,7 +184,7 @@ export default function ContactInbox({ initial }: { initial: ContactMessageView[
                     <div className="mt-4 flex flex-wrap gap-2">
                       <a
                         href={`mailto:${m.email}?subject=${encodeURIComponent("Re: your WorldEye message")}`}
-                        className="px-3.5 py-1.5 rounded-lg bg-cyan-400/15 border border-cyan-400/30 text-cyan-200 text-sm hover:bg-cyan-400/25 transition"
+                        className="inline-flex items-center min-h-10 px-3.5 py-2 rounded-lg bg-cyan-400/15 border border-cyan-400/30 text-cyan-200 text-sm hover:bg-cyan-400/25 transition"
                       >
                         Reply by email
                       </a>
@@ -192,7 +192,7 @@ export default function ContactInbox({ initial }: { initial: ContactMessageView[
                         <button
                           disabled={busy}
                           onClick={() => setStatus(m, "read")}
-                          className="px-3.5 py-1.5 rounded-lg border border-white/15 text-white/70 text-sm hover:text-white disabled:opacity-50 transition"
+                          className="inline-flex items-center min-h-10 px-3.5 py-2 rounded-lg border border-white/15 text-white/70 text-sm hover:text-white disabled:opacity-50 transition"
                         >
                           Mark read
                         </button>
@@ -201,7 +201,7 @@ export default function ContactInbox({ initial }: { initial: ContactMessageView[
                         <button
                           disabled={busy}
                           onClick={() => setStatus(m, "resolved")}
-                          className="px-3.5 py-1.5 rounded-lg border border-emerald-400/30 text-emerald-300 text-sm hover:bg-emerald-400/10 disabled:opacity-50 transition"
+                          className="inline-flex items-center min-h-10 px-3.5 py-2 rounded-lg border border-emerald-400/30 text-emerald-300 text-sm hover:bg-emerald-400/10 disabled:opacity-50 transition"
                         >
                           Mark resolved
                         </button>
@@ -210,7 +210,7 @@ export default function ContactInbox({ initial }: { initial: ContactMessageView[
                         <button
                           disabled={busy}
                           onClick={() => setStatus(m, "unread")}
-                          className="px-3.5 py-1.5 rounded-lg border border-white/15 text-white/70 text-sm hover:text-white disabled:opacity-50 transition"
+                          className="inline-flex items-center min-h-10 px-3.5 py-2 rounded-lg border border-white/15 text-white/70 text-sm hover:text-white disabled:opacity-50 transition"
                         >
                           Reopen as unread
                         </button>
@@ -218,7 +218,7 @@ export default function ContactInbox({ initial }: { initial: ContactMessageView[
                       <button
                         disabled={busy}
                         onClick={() => remove(m)}
-                        className="px-3.5 py-1.5 rounded-lg border border-red-400/30 text-red-300 text-sm hover:bg-red-400/10 disabled:opacity-50 transition"
+                        className="inline-flex items-center min-h-10 px-3.5 py-2 rounded-lg border border-red-400/30 text-red-300 text-sm hover:bg-red-400/10 disabled:opacity-50 transition"
                       >
                         Delete
                       </button>
