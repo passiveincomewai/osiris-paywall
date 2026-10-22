@@ -5,6 +5,8 @@ import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import CountryCameraExplorer from "@/components/CountryCameraExplorer";
+import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
+import CountryCitySearch from "@/components/CountryCitySearch";
 import countriesIndex from "@/data/camera-countries.json";
 import { countryContentB, type CountryContent } from "@/data/country-content-b";
 import { countryContentC } from "@/data/country-content-c";
@@ -20,7 +22,7 @@ import {
   roster,
   watchGuide,
 } from "@/lib/country-page-content";
-import type { CountryCamera } from "@/lib/country-cameras";
+import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
 
 const BASE = "https://worldeye.app";
 
@@ -183,6 +185,11 @@ export default async function CountryPage({
   }
   const facts = countryFacts(c, records, COUNTRIES);
   const detail = detailParagraphs(c, facts);
+  /* The search-by-city box's list: EVERY area the catalogue holds for
+     this country (from the same records the depth sections compute
+     from), biggest first — not just the explorer's top-24 chips. If the
+     records failed to load, the index's top areas are the fallback. */
+  const cityList = records.length > 0 ? cameraAreas(records) : c.topCities;
   const region = regionLinks(slug, COUNTRIES);
   const guide = watchGuide(c, facts, region);
   const fullRoster = roster(c, records);
@@ -263,6 +270,7 @@ export default async function CountryPage({
           <p className="mt-4 text-white/55">
             Watch {plural(c.count, "live camera")} across {c.name} — free on the WorldEye globe.
           </p>
+          <CountryCitySearch countryName={c.name} cities={cityList} />
         </div>
 
         {/* Stat row */}
@@ -352,12 +360,9 @@ export default async function CountryPage({
                   <div className="min-w-0">
                     <div className="font-semibold text-sm truncate">{s.name}</div>
                     {s.city && <div className="text-xs text-white/45">{s.city}</div>}
-                    <a
-                      href={`${BASE}/?camera=${s.id}`}
-                      className="text-xs text-[#00E5FF] hover:underline mt-1 inline-block"
-                    >
-                      View on the live map
-                    </a>
+                    <div className="mt-2">
+                      <ViewOnGlobeButton cameraId={s.id} cameraName={s.name} />
+                    </div>
                   </div>
                 </li>
               ))}
@@ -375,10 +380,13 @@ export default async function CountryPage({
               all {fullRoster.length} cameras, exactly as the catalogue holds them.
             </p>
             <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              {fullRoster.map((r, i) => (
-                <li key={i} className="flex items-baseline gap-2 border-b border-white/5 py-2">
-                  <span className="text-white/80">{r.name}</span>
-                  {r.city && <span className="text-xs text-white/40">{r.city}</span>}
+              {fullRoster.map((r) => (
+                <li key={r.id} className="flex items-center gap-2 border-b border-white/5 py-2">
+                  <span className="text-white/80 min-w-0 truncate">{r.name}</span>
+                  {r.city && <span className="text-xs text-white/40 shrink-0">{r.city}</span>}
+                  <span className="ml-auto shrink-0">
+                    <ViewOnGlobeButton cameraId={r.id} cameraName={r.name} />
+                  </span>
                 </li>
               ))}
             </ul>

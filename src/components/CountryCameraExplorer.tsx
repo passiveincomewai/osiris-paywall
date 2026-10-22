@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Camera, Loader2, MapPin, PlayCircle, RefreshCw, Search } from 'lucide-react';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
+import ViewOnGlobeButton from '@/components/ViewOnGlobeButton';
+import { COUNTRY_CITY_EVENT } from '@/components/CountryCitySearch';
 import { freshen, previewMedia, refreshInterval } from '@/lib/camera-preview';
 import {
   cameraMediaKind,
@@ -329,22 +331,32 @@ function CardPreview({ cam }: { cam: CountryCamera }) {
 
 function CameraCard({ cam, onOpen }: { cam: CountryCamera; onOpen: (cam: CountryCamera) => void }) {
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(cam)}
-      className="group text-left rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-[#D4AF37]/50 hover:bg-white/[0.05] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
-      aria-label={`Watch ${cam.name}`}
-    >
-      <CardPreview cam={cam} />
-      <div className="p-3.5">
-        <div className="font-semibold text-sm leading-snug line-clamp-2 min-h-[2.5em]">{cam.name}</div>
-        <div className="mt-1.5 flex items-center gap-1.5 text-xs text-white/45">
-          <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
-          <span className="truncate">{cam.city || '—'}</span>
+    /* The card is a container, not one big button: the preview + info
+       area keeps the open-in-viewer action, and the footer carries the
+       "View on globe" deep link as its sibling (a link nested inside
+       the button would be invalid HTML, and its click would open the
+       viewer instead of navigating to the globe). */
+    <div className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-[#D4AF37]/50 hover:bg-white/[0.05] transition">
+      <button
+        type="button"
+        onClick={() => onOpen(cam)}
+        className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+        aria-label={`Watch ${cam.name}`}
+      >
+        <CardPreview cam={cam} />
+        <div className="p-3.5 pb-2">
+          <div className="font-semibold text-sm leading-snug line-clamp-2 min-h-[2.5em]">{cam.name}</div>
+          <div className="mt-1.5 flex items-center gap-1.5 text-xs text-white/45">
+            <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+            <span className="truncate">{cam.city || '—'}</span>
+          </div>
+          {cam.source && <div className="mt-1 text-[11px] text-white/30 truncate">{cam.source}</div>}
         </div>
-        {cam.source && <div className="mt-1 text-[11px] text-white/30 truncate">{cam.source}</div>}
+      </button>
+      <div className="px-3.5 pb-3.5 pt-1 mt-auto">
+        <ViewOnGlobeButton cameraId={cam.id} cameraName={cam.name} />
       </div>
-    </button>
+    </div>
   );
 }
 
@@ -400,6 +412,25 @@ export default function CountryCameraExplorer({
     const t = setTimeout(() => setDebouncedQuery(query.trim()), 300);
     return () => clearTimeout(t);
   }, [query]);
+
+  /* Search-by-city (the box at the top of the country page): a picked
+     city arrives on COUNTRY_CITY_EVENT and applies itself as the area
+     filter, replacing any free-text query so the result is exactly that
+     city. The same choice rides the URL as ?city=, which is read once
+     on load so a shared link lands pre-filtered. */
+  useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get('city');
+    if (fromUrl) setArea(fromUrl);
+    const onCity = (e: Event) => {
+      const name = (e as CustomEvent<string>).detail;
+      if (!name) return;
+      setQuery('');
+      setDebouncedQuery('');
+      setArea(name);
+    };
+    window.addEventListener(COUNTRY_CITY_EVENT, onCity);
+    return () => window.removeEventListener(COUNTRY_CITY_EVENT, onCity);
+  }, []);
 
   const filterKey = `${country}|${area ?? ''}|${debouncedQuery}|${runId}`;
   const current: GridState = grid.key === filterKey ? grid : EMPTY_GRID;
@@ -515,7 +546,7 @@ export default function CountryCameraExplorer({
   }, [cameras, filtering, cityCounts]);
 
   return (
-    <div>
+    <div id="country-explorer" className="scroll-mt-6">
       {/* Search — server-side over the whole country */}
       <div className="relative">
         <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35 pointer-events-none" />
@@ -559,6 +590,21 @@ export default function CountryCameraExplorer({
               {a.name} · {a.count}
             </button>
           ))}
+          {/* A city picked in the search-by-city box is usually NOT one
+              of the chips above (they cap at the 24 biggest) — show the
+              active filter as its own chip so the visitor can see and
+              clear what the grid is filtered to. */}
+          {area && !cities.slice(0, MAX_AREA_CHIPS).some(a => a.name === area) && (
+            <button
+              type="button"
+              onClick={() => setArea(null)}
+              aria-pressed={true}
+              className="shrink-0 px-3.5 py-2 rounded-full border text-xs font-semibold transition bg-[#D4AF37] text-black border-[#D4AF37]"
+            >
+              {area}
+              {total !== null ? ` · ${total}` : ''} ✕
+            </button>
+          )}
         </div>
       )}
 
