@@ -5,6 +5,7 @@ import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import CountryCameraExplorer from "@/components/CountryCameraExplorer";
+import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
 import countriesIndex from "@/data/camera-countries.json";
 import { countryContentB, type CountryContent } from "@/data/country-content-b";
 import { countryContentC } from "@/data/country-content-c";
@@ -352,12 +353,9 @@ export default async function CountryPage({
                   <div className="min-w-0">
                     <div className="font-semibold text-sm truncate">{s.name}</div>
                     {s.city && <div className="text-xs text-white/45">{s.city}</div>}
-                    <a
-                      href={`${BASE}/?camera=${s.id}`}
-                      className="text-xs text-[#00E5FF] hover:underline mt-1 inline-block"
-                    >
-                      View on the live map
-                    </a>
+                    <div className="mt-2">
+                      <ViewOnGlobeButton cameraId={s.id} cameraName={s.name} />
+                    </div>
                   </div>
                 </li>
               ))}
@@ -375,10 +373,13 @@ export default async function CountryPage({
               all {fullRoster.length} cameras, exactly as the catalogue holds them.
             </p>
             <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              {fullRoster.map((r, i) => (
-                <li key={i} className="flex items-baseline gap-2 border-b border-white/5 py-2">
-                  <span className="text-white/80">{r.name}</span>
-                  {r.city && <span className="text-xs text-white/40">{r.city}</span>}
+              {fullRoster.map((r) => (
+                <li key={r.id} className="flex items-center gap-2 border-b border-white/5 py-2">
+                  <span className="text-white/80 min-w-0 truncate">{r.name}</span>
+                  {r.city && <span className="text-xs text-white/40 shrink-0">{r.city}</span>}
+                  <span className="ml-auto shrink-0">
+                    <ViewOnGlobeButton cameraId={r.id} cameraName={r.name} />
+                  </span>
                 </li>
               ))}
             </ul>

@@ -472,11 +472,14 @@ export function extraFaqs(
   return out;
 }
 
-/** Full roster for small countries the featured samples don't exhaust. */
+/** Full roster for small countries the featured samples don't exhaust.
+ *  Carries each record's catalogue id so a roster row can deep-link to
+ *  that exact camera on the globe (/?camera=<id>), like every other
+ *  camera listing on the page. */
 export function roster(
   entry: CountryEntryLite,
   records: CountryCamera[],
-): Array<{ name: string; city: string }> | null {
+): Array<{ id: string; name: string; city: string }> | null {
   if (records.length <= entry.samples.length || records.length > 16) return null;
-  return records.map((r) => ({ name: r.name, city: r.city ?? "" }));
+  return records.map((r) => ({ id: r.id, name: r.name, city: r.city ?? "" }));
 }
