@@ -3,32 +3,37 @@ import Link from "next/link";
 import { ArrowRight, Camera, CheckCircle2, Compass, Globe, ShieldCheck } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
-import data from "@/data/camera-directory.json";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  CATALOGUE_GENERATED_AT,
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+} from "@/lib/explore-data";
+
+/* Data source: the generated camera index (camera-countries.json +
+   the per-country records) — the same catalogue the country pages
+   and the explorer below serve. The headline total is the owner's
+   published served-camera figure; per-country counts are the
+   index's own. */
+const HEADLINE = 74229;
+const EUROPE_COUNT = (EXPLORE_SCOPES.europe.slugs as string[]).length;
 
 export const metadata: Metadata = {
   title: "Live Webcams Worldwide — 74,229 Cams",
-  description:
-    "The WorldEye live webcam hub: 74,229 public cameras in 105 countries — traffic, cities, nature and landmarks. Free forever, no signup.",
+  description: `The WorldEye live webcam hub: 74,229 public cameras in ${COUNTRY_INDEX.length} countries — traffic, cities, nature and landmarks. Free forever, no signup.`,
   alternates: { canonical: "https://worldeye.app/live-webcams" },
   openGraph: {
     title: "Live Webcams Worldwide — 74,229 Cams | WorldEye",
-    description:
-      "74,229 live public webcams across 105 countries — traffic, cities, nature, landmarks. Free forever, no signup.",
+    description: `74,229 live public webcams across ${COUNTRY_INDEX.length} countries — traffic, cities, nature, landmarks. Free forever, no signup.`,
     url: "https://worldeye.app/live-webcams",
     type: "website",
   },
 };
 
-const TOP_30_SLUGS = new Set([
-  "united-states", "taiwan", "spain", "austria", "canada", "hong-kong",
-  "italy", "japan", "united-kingdom", "sweden", "finland", "iceland",
-  "lithuania", "netherlands", "australia", "new-zealand", "turkey",
-  "indonesia", "vietnam", "russia", "south-korea", "poland", "thailand",
-  "norway", "malta", "france", "romania", "brazil", "bulgaria", "croatia",
-]);
-
 const fmt = (n: number) => n.toLocaleString("en-US");
-const top10 = data.countries.slice(0, 10);
+const top10 = [...COUNTRY_INDEX].sort((a, b) => b.count - a.count).slice(0, 10);
 
 const FEATURES = [
   {
@@ -51,7 +56,7 @@ const FEATURES = [
 const FAQS = [
   {
     q: "How many live webcams does WorldEye have?",
-    a: `The directory currently indexes ${fmt(data.totalCameras)} live public cameras across ${data.countries.length} countries — from US DOT highway systems to city squares, beaches and mountain resorts. The count grows as new public feeds are found and mapped.`,
+    a: `The directory currently serves ${fmt(HEADLINE)} live public cameras across ${COUNTRY_INDEX.length} countries — from US DOT highway systems to city squares, beaches and mountain resorts. The count grows as new public feeds are found and mapped.`,
   },
   {
     q: "Is it really free to watch?",
@@ -59,7 +64,7 @@ const FAQS = [
   },
   {
     q: "Where can I find cameras for a specific country?",
-    a: "The camera directory lists every country with its camera count and busiest region. The 30 busiest countries have dedicated pages with full regional breakdowns — start with the country table or search any place on the live map.",
+    a: "The camera directory lists every country with its camera count and busiest region, and every country now has a dedicated page with its full city breakdown — start with the country table or search any place on the live map.",
   },
   {
     q: "What kinds of cameras are in the directory?",
@@ -95,14 +100,15 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   name: "Live Webcams Worldwide — 74,229 Cams",
-  description: `Directory of ${fmt(data.totalCameras)} live public webcams across ${data.countries.length} countries.`,
+  description: `Directory of ${fmt(HEADLINE)} live public webcams across ${COUNTRY_INDEX.length} countries.`,
   url: "https://worldeye.app/live-webcams",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  numberOfItems: data.totalCameras,
-  dateModified: data.generatedAt,
+  numberOfItems: HEADLINE,
+  dateModified: CATALOGUE_GENERATED_AT,
 };
 
-export default function LiveWebcamsPage() {
+export default async function LiveWebcamsPage() {
+  const areas = await areasForDef(EXPLORE_SCOPES.all, 400);
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -123,11 +129,11 @@ export default function LiveWebcamsPage() {
             <Camera className="w-3.5 h-3.5" /> LIVE WEBCAM DIRECTORY
           </p>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-            {fmt(data.totalCameras)} Live Webcams. <span className="text-[#D4AF37]">One World.</span>
+            {fmt(HEADLINE)} Live Webcams. <span className="text-[#D4AF37]">One World.</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
-            This is the hub of the WorldEye camera directory: {fmt(data.totalCameras)}{" "}
-            publicly available live webcams from {data.countries.length} countries,
+            This is the hub of the WorldEye camera directory: {fmt(HEADLINE)}{" "}
+            publicly available live webcams from {COUNTRY_INDEX.length} countries,
             collected and mapped so you can watch the planet in real time. Highways
             and intersections, city streets and plazas, beaches, ski resorts, harbors
             and wilderness — whatever the world points a public camera at.
@@ -137,6 +143,13 @@ export default function LiveWebcamsPage() {
             statewide DOT networks to dense metro corridors. Every camera here is free
             to watch — no account, no signup, ever.
           </p>
+          <DirectorySearch
+            label="the whole directory"
+            options={areas}
+            placeholder="Search anywhere — try a city…"
+            emptyText={(v) => `No places in the directory match "${v}".`}
+            targetId="all-explorer"
+          />
         </div>
 
         {/* Why cards */}
@@ -160,7 +173,7 @@ export default function LiveWebcamsPage() {
           <p className="text-white/50 mt-2 text-sm md:text-base">
             The ten countries with the most live feeds in the directory.{" "}
             <Link href="/cameras/countries" className="text-[#D4AF37] hover:underline">
-              See all {data.countries.length} countries
+              See all {COUNTRY_INDEX.length} countries
             </Link>.
           </p>
           <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
@@ -175,13 +188,9 @@ export default function LiveWebcamsPage() {
                 {top10.map((c) => (
                   <tr key={c.slug} className="border-t border-white/[0.06] hover:bg-white/[0.03] transition">
                     <td className="px-4 md:px-6 py-3.5 font-medium">
-                      {TOP_30_SLUGS.has(c.slug) ? (
-                        <Link href={`/cameras/countries/${c.slug}`} className="text-[#D4AF37] hover:underline">
-                          {c.name}
-                        </Link>
-                      ) : (
-                        <span className="text-white/85">{c.name}</span>
-                      )}
+                      <Link href={`/cameras/countries/${c.slug}`} className="text-[#D4AF37] hover:underline">
+                        {c.name}
+                      </Link>
                     </td>
                     <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
                       {fmt(c.count)}
@@ -190,6 +199,24 @@ export default function LiveWebcamsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* Full directory, live */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Watch the directory live</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base">
+            Every camera in the index, as its real live feed — filter by place,
+            search by name, and jump from any card to the same spot on the globe.
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="all"
+              scopeLabel="the whole world"
+              groupBy="country"
+              searchPlaceholder="Search all cameras — a city, a beach, a highway…"
+              explorerId="all-explorer"
+            />
           </div>
         </div>
 
@@ -205,7 +232,7 @@ export default function LiveWebcamsPage() {
                 Cameras by country
               </h3>
               <p className="text-sm text-white/55 mt-2 leading-relaxed">
-                All {data.countries.length} countries ranked by camera count, with each
+                All {COUNTRY_INDEX.length} countries ranked by camera count, with each
                 nation's busiest region.
               </p>
             </Link>
@@ -241,7 +268,7 @@ export default function LiveWebcamsPage() {
                 Europe live cameras
               </h3>
               <p className="text-sm text-white/55 mt-2 leading-relaxed">
-                35 European countries, from Spanish plazas to Icelandic highlands.
+                {EUROPE_COUNT} European countries, from Spanish plazas to Icelandic highlands.
               </p>
             </Link>
           </div>

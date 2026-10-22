@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+  countForDef,
+} from "@/lib/explore-data";
 
 // Counts: camera-directory.json snapshot (1,997 ES cameras, 2026-10-11 — the
 // DGT national network is the backbone) plus the October 2026 harvest (+128
@@ -83,7 +91,16 @@ const jsonLd = {
   dateModified: "2026-10-18",
 };
 
-export default function SpainTrafficCamerasPage() {
+export default async function SpainTrafficCamerasPage() {
+  /* The explorer serves Spain's traffic set: cameras that are road
+     feeds by name or by road-authority source (lib/explore-scopes),
+     counted live from the served records. */
+  const trafficTotal = await countForDef(EXPLORE_SCOPES["traffic-spain"]);
+  const trafficAreas = await areasForDef(EXPLORE_SCOPES["traffic-spain"], 400);
+  const countryTotal =
+    COUNTRY_INDEX.find((c) => c.slug === "spain")?.count ?? 0;
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -118,6 +135,14 @@ export default function SpainTrafficCamerasPage() {
             account and no signup.
           </p>
         </div>
+
+        <DirectorySearch
+          label="Spain traffic areas"
+          options={trafficAreas}
+          placeholder="Search Spain traffic by area…"
+          emptyText={(v) => `No Spain traffic areas match "${v}".`}
+          targetId="spain-traffic-explorer"
+        />
 
         <div className="mt-14">
           <h2 className="text-2xl md:text-3xl font-bold">What you can check</h2>
@@ -184,6 +209,25 @@ export default function SpainTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Live Spain traffic cameras</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base max-w-3xl">
+            {fmt(trafficTotal)} of Spain&apos;s {fmt(countryTotal)} indexed cameras
+            are road feeds — named as roads or published by road authorities —
+            and every one is below, live. Search by road or city; what the
+            camera shows is the condition report.
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="traffic-spain"
+              scopeLabel="Spain traffic"
+              groupBy="city"
+              searchPlaceholder="Search Spain traffic cameras — a road, a junction, a city…"
+              explorerId="spain-traffic-explorer"
+            />
           </div>
         </div>
 

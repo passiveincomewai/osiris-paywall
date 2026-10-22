@@ -12,6 +12,9 @@ import {
   CtaRow,
   PageShell,
 } from "@/components/directory-page";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import { EXPLORE_SCOPES, areasForDef, countForDef } from "@/lib/explore-data";
 
 export const metadata: Metadata = {
   title: "Beach Webcams — Live Coastal Cameras Worldwide",
@@ -117,7 +120,15 @@ const FAQS = [
   },
 ];
 
-export default function BeachWebcamsPage() {
+export default async function BeachWebcamsPage() {
+  /* The beach set is a defined rule over the catalogue, not a hand
+     list: cameras whose name identifies a beach, coast, shore, bay,
+     pier, marina, harbour or similar (lib/explore-scopes). The counts
+     quoted here are that rule's actual yield. */
+  const total = await countForDef(EXPLORE_SCOPES.beach);
+  const areas = await areasForDef(EXPLORE_SCOPES.beach, 400);
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
@@ -133,7 +144,31 @@ export default function BeachWebcamsPage() {
         h1="Beach Webcams — Live Coastal Cameras"
         sub="Surf, sunrises, coastal weather and harbor views — live, free, no signup."
       />
+      <DirectorySearch
+        label="beach & coastal areas"
+        options={areas}
+        placeholder="Search beaches & coasts by area…"
+        emptyText={(v) => `No beach or coastal areas match "${v}".`}
+        targetId="beach-explorer"
+      />
       <Intro paragraphs={INTRO} />
+
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">Live beach &amp; coastal cameras</h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          {fmt(total)} cameras in the live index name a beach, coast, shore, bay, pier,
+          marina or harbour in their title — every one of them is below, as its real
+          live feed. Search by area, or open any card and jump to the same spot on
+          the globe.
+        </p>
+        <DirectoryExplorer
+          scopeKey="beach"
+          scopeLabel="beaches & coasts"
+          groupBy="country"
+          searchPlaceholder="Search coastal cameras — a beach, a pier, a harbour…"
+          explorerId="beach-explorer"
+        />
+      </section>
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-5">What coastal cameras show</h2>

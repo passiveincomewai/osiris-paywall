@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+  countForDef,
+} from "@/lib/explore-data";
 
 // Counts: camera-directory.json snapshot (138 KR cameras, 2026-10-11) plus the
 // October 2026 harvest (+1,499 probe-verified Korean expressway and city
@@ -83,7 +91,16 @@ const jsonLd = {
   dateModified: "2026-10-18",
 };
 
-export default function SouthKoreaTrafficCamerasPage() {
+export default async function SouthKoreaTrafficCamerasPage() {
+  /* The explorer serves South Korea's traffic set: cameras that are road
+     feeds by name or by road-authority source (lib/explore-scopes),
+     counted live from the served records. */
+  const trafficTotal = await countForDef(EXPLORE_SCOPES["traffic-south-korea"]);
+  const trafficAreas = await areasForDef(EXPLORE_SCOPES["traffic-south-korea"], 400);
+  const countryTotal =
+    COUNTRY_INDEX.find((c) => c.slug === "south-korea")?.count ?? 0;
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -119,6 +136,14 @@ export default function SouthKoreaTrafficCamerasPage() {
             account and no signup.
           </p>
         </div>
+
+        <DirectorySearch
+          label="South Korea traffic areas"
+          options={trafficAreas}
+          placeholder="Search South Korea traffic by area…"
+          emptyText={(v) => `No South Korea traffic areas match "${v}".`}
+          targetId="south-korea-traffic-explorer"
+        />
 
         <div className="mt-14">
           <h2 className="text-2xl md:text-3xl font-bold">What you can check</h2>
@@ -184,6 +209,25 @@ export default function SouthKoreaTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Live South Korea traffic cameras</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base max-w-3xl">
+            {fmt(trafficTotal)} of South Korea&apos;s {fmt(countryTotal)} indexed cameras
+            are road feeds — named as roads or published by road authorities —
+            and every one is below, live. Search by road or city; what the
+            camera shows is the condition report.
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="traffic-south-korea"
+              scopeLabel="South Korea traffic"
+              groupBy="city"
+              searchPlaceholder="Search South Korea traffic cameras — a road, a junction, a city…"
+              explorerId="south-korea-traffic-explorer"
+            />
           </div>
         </div>
 

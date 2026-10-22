@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+  countForDef,
+} from "@/lib/explore-data";
 
 // Counts: camera-directory.json snapshot (928 JP cameras, 2026-10-11) plus the
 // October 2026 OpenCCTV harvest, which added 9,829 probe-verified Japanese
@@ -84,7 +92,17 @@ const jsonLd = {
   dateModified: "2026-10-18",
 };
 
-export default function JapanTrafficCamerasPage() {
+export default async function JapanTrafficCamerasPage() {
+  /* The explorer serves Japan's traffic set: cameras that are road
+     feeds by name or by road-authority source (lib/explore-scopes).
+     Japan's full index is far larger and mostly river monitoring —
+     the lead line below says so, with both real counts. */
+  const trafficTotal = await countForDef(EXPLORE_SCOPES["traffic-japan"]);
+  const trafficAreas = await areasForDef(EXPLORE_SCOPES["traffic-japan"], 400);
+  const countryTotal =
+    COUNTRY_INDEX.find((c) => c.slug === "japan")?.count ?? 0;
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -119,6 +137,13 @@ export default function JapanTrafficCamerasPage() {
             a river in Kyushu during typhoon rain — every feed is free to watch,
             with no account and no signup.
           </p>
+          <DirectorySearch
+            label="Japan traffic areas"
+            options={trafficAreas}
+            placeholder="Search Japan traffic by area…"
+            emptyText={(v) => `No Japan traffic areas match "${v}".`}
+            targetId="japan-traffic-explorer"
+          />
         </div>
 
         <div className="mt-14">
@@ -189,6 +214,29 @@ export default function JapanTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Live Japan traffic cameras</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base max-w-3xl">
+            {fmt(trafficTotal)} of Japan&apos;s {fmt(countryTotal)} indexed cameras
+            are road feeds — named as roads or published by road authorities —
+            and every one is below, live. Japan&apos;s much larger river-monitoring
+            network lives in the full{" "}
+            <Link href="/cameras/countries/japan" className="text-[#D4AF37] hover:underline">
+              Japan camera index
+            </Link>
+            .
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="traffic-japan"
+              scopeLabel="Japan traffic"
+              groupBy="city"
+              searchPlaceholder="Search Japan traffic cameras — an expressway, a pass, a city…"
+              explorerId="japan-traffic-explorer"
+            />
           </div>
         </div>
 

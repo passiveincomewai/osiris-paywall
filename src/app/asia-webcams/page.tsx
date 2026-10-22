@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import directory from "@/data/camera-directory.json";
 import {
   BASE,
   formatDate,
@@ -17,10 +16,31 @@ import {
   CtaRow,
   PageShell,
 } from "@/components/directory-page";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  CATALOGUE_GENERATED_AT,
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+} from "@/lib/explore-data";
 
-const TITLE = "Asia Webcams — 5,858 Live Cameras";
-const BLURB =
-  "Explore 5,858 live webcams across 28 Asian countries — Taiwan, Hong Kong, Japan, South Korea and more — free on the WorldEye live map. No signup needed.";
+/* Every number on this page is computed from the generated camera
+   index (camera-countries.json + the per-country records) — the same
+   catalogue the country pages and the explorer below serve. The
+   region is the country pages' own continental grouping
+   (lib/country-page-content COUNTRY_REGION). */
+const ASIA_SLUGS = new Set(EXPLORE_SCOPES.asia.slugs as string[]);
+const ASIA = COUNTRY_INDEX.filter((c) => ASIA_SLUGS.has(c.slug)).sort(
+  (a, b) => b.count - a.count,
+);
+const TOTAL = ASIA.reduce((s, c) => s + c.count, 0);
+const BY_SLUG = new Map(ASIA.map((c) => [c.slug, c]));
+const count = (slug: string) => BY_SLUG.get(slug)?.count ?? 0;
+const fmt = (n: number) => n.toLocaleString("en-US");
+
+const TITLE = `Asia Webcams — ${fmt(TOTAL)} Live Cameras`;
+const BLURB = `Explore ${fmt(TOTAL)} live webcams across ${ASIA.length} Asian countries — Japan, Taiwan, South Korea, Hong Kong and more — free on the WorldEye live map. No signup needed.`;
 const CANONICAL = `${BASE}/asia-webcams`;
 
 export const metadata: Metadata = {
@@ -30,23 +50,11 @@ export const metadata: Metadata = {
   openGraph: { title: TITLE, description: BLURB, url: "/asia-webcams", type: "website" },
 };
 
-const TOP_COUNTRIES = [
-  { name: "Taiwan", count: 2779 },
-  { name: "Hong Kong", count: 1185 },
-  { name: "Japan", count: 928 },
-  { name: "Turkey", count: 247 },
-  { name: "Indonesia", count: 197 },
-  { name: "Vietnam", count: 160 },
-  { name: "South Korea", count: 138 },
-  { name: "Thailand", count: 60 },
-  { name: "Philippines", count: 25 },
-  { name: "Kyrgyzstan", count: 21 },
-  { name: "Malaysia", count: 20 },
-  { name: "Israel", count: 19 },
-];
+const TOP_COUNTRIES = ASIA.slice(0, 12).map((c) => ({ name: c.name, count: c.count }));
 
-export default function AsiaWebcamsPage() {
-  const updated = formatDate(directory.generatedAt);
+export default async function AsiaWebcamsPage() {
+  const updated = formatDate(CATALOGUE_GENERATED_AT);
+  const areas = await areasForDef(EXPLORE_SCOPES.asia, 400);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -67,47 +75,47 @@ export default function AsiaWebcamsPage() {
   };
 
   const FAQS = [
-          {
-            q: "Which Asian country has the most live cameras?",
-            a: "Taiwan, with 2,779 feeds — nearly half of Asia's 5,858 total. Hong Kong (1,185) and Japan (928) are next.",
-          },
-          {
-            q: "Are these traffic cameras or scenic views?",
-            a: "Both. Dense cities like Taipei, Hong Kong, and Tokyo lean toward traffic and urban monitoring feeds, while other parts of the region add highway and city views. Use the map's search to find what you want.",
-          },
-          {
-            q: "Is my country included in this index?",
-            a: "This page covers the 28 Asian entries currently in the WorldEye directory, listed in the table above. Coverage grows as new feeds are added — check the full country directory for the latest list.",
-          },
-          {
-            q: "What is the best use of Taiwan's 2,779 cameras?",
-            a: "Reading congestion. Taichung, Taipei, and Taoyuan run dense intersection grids — Taiyuan Road and Zhongqing Road in Taichung are good examples — and the feeds show live vehicle flow you can use to judge traffic before setting out.",
-          },
-          {
-            q: "Can I watch Hong Kong harbor traffic?",
-            a: "Hong Kong's 1,185 feeds include harbor approaches and cross-harbor tunnel views alongside the urban traffic grid. Zoom to Victoria Harbour on the live map and look for markers near the water.",
-          },
-          {
-            q: "Do the cameras work at night?",
-            a: "Most urban and highway feeds run 24 hours — you will see lit streets and headlights rather than daylight scenes. The region spans eight time zones, so when Tokyo is dark, Istanbul still has afternoon light.",
-          },
-          {
-            q: "Are the feeds free to watch?",
-            a: "Yes. Every camera in the Asian index opens free on the WorldEye map — no account, no signup, no paywall.",
-          },
-          {
-            q: "Which countries have the smallest coverage?",
-            a: "At the tail of the table: Thailand (60), the Philippines (25), Kyrgyzstan (21), Malaysia (20), and Israel (19). Coverage expands as new public feeds are indexed.",
-          },
-          {
-            q: "Can I check monsoon or typhoon conditions on these cameras?",
-            a: "Yes — that is one of the region's strongest uses. When a typhoon approaches Taiwan, Hong Kong or Japan, the coastal and city feeds show the wind, rain and street conditions as they develop, alongside the storm on the weather layer. Individual cameras can drop offline in the worst of a storm, so check several in the area.",
-          },
-          {
-            q: "Why does Taiwan have so many more cameras than its neighbors?",
-            a: "Taiwan's transport agencies publish an unusually dense and open camera network — highway and city intersection grids that most countries keep internal. The index reflects that openness: 2,779 feeds, nearly half the Asian total.",
-          },
-        ];
+    {
+      q: "Which Asian country has the most live cameras?",
+      a: `Japan, with ${fmt(count("japan"))} feeds — most of them the MLIT river and road monitoring networks, published openly across the country. Taiwan (${fmt(count("taiwan"))}) and South Korea (${fmt(count("south-korea"))}) are next.`,
+    },
+    {
+      q: "Are these traffic cameras or scenic views?",
+      a: "Both. Dense cities like Taipei, Hong Kong, and Busan lean toward traffic and urban monitoring feeds, Japan's network watches rivers and roads, and other parts of the region add highway and coastal views. Use the search above to find what you want.",
+    },
+    {
+      q: "Is my country included in this index?",
+      a: `This page covers the ${ASIA.length} Asian entries currently in the WorldEye directory, listed in the table below. Coverage grows as new feeds are added — check the full country directory for the latest list.`,
+    },
+    {
+      q: "What is the best use of Taiwan's cameras?",
+      a: `Reading congestion. Taiwan's ${fmt(count("taiwan"))} feeds include some of the densest intersection grids in the index — Taichung, Taipei, and Taoyuan — and the feeds show live vehicle flow you can use to judge traffic before setting out.`,
+    },
+    {
+      q: "Can I watch Hong Kong harbor traffic?",
+      a: `Hong Kong's ${fmt(count("hong-kong"))} feeds include harbor approaches and cross-harbor tunnel views alongside the urban traffic grid. Zoom to Victoria Harbour on the live map and look for markers near the water.`,
+    },
+    {
+      q: "Do the cameras work at night?",
+      a: "Most urban and highway feeds run 24 hours — you will see lit streets and headlights rather than daylight scenes. The region spans many time zones, so when Tokyo is dark, points west still have afternoon light.",
+    },
+    {
+      q: "Are the feeds free to watch?",
+      a: "Yes. Every camera in the Asian index opens free on the WorldEye map — no account, no signup, no paywall.",
+    },
+    {
+      q: "Which countries have the smallest coverage?",
+      a: `At the tail of the table: Thailand (${fmt(count("thailand"))}), Malaysia (${fmt(count("malaysia"))}), the Philippines (${fmt(count("philippines"))}), Kyrgyzstan (${fmt(count("kyrgyzstan"))}) and Israel (${fmt(count("israel"))}), down to single-camera entries like Nepal and India. Coverage expands as new public feeds are indexed.`,
+    },
+    {
+      q: "Can I check monsoon or typhoon conditions on these cameras?",
+      a: "Yes — that is one of the region's strongest uses. When a typhoon approaches Taiwan, Hong Kong or Japan, the coastal and city feeds show the wind, rain and street conditions as they develop, alongside the storm on the weather layer. Individual cameras can drop offline in the worst of a storm, so check several in the area.",
+    },
+    {
+      q: "Why does Japan have so many more cameras than its neighbors?",
+      a: "Japan's transport and river agencies publish an unusually dense and open camera network — river monitoring, expressways and urban intersections that most countries keep internal. The index reflects that openness: it is the largest national network on WorldEye.",
+    },
+  ];
 
   return (
     <PageShell>
@@ -122,49 +130,62 @@ export default function AsiaWebcamsPage() {
       />
       <Hero
         h1="Asia Live Webcams"
-        sub="Explore 5,858 live cameras across 28 Asian countries — free on the WorldEye globe."
+        sub={`Explore ${fmt(TOTAL)} live cameras across ${ASIA.length} Asian countries — free on the WorldEye globe.`}
+      />
+      <DirectorySearch
+        label="Asia"
+        options={areas}
+        placeholder="Search Asia by city…"
+        emptyText={(v) => `No cities in Asia match "${v}".`}
       />
       <StatRow
         stats={[
-          { value: "5,858", label: "live cameras" },
-          { value: "28", label: "countries" },
-          { value: "2,779", label: "cameras in Taiwan" },
+          { value: fmt(TOTAL), label: "live cameras" },
+          { value: String(ASIA.length), label: "countries" },
+          { value: fmt(count("japan")), label: "cameras in Japan" },
         ]}
       />
       <Updated date={updated} />
       <Intro
         paragraphs={[
-          "Asia's index holds 5,858 cameras across 28 countries — the third-largest regional collection on WorldEye, after North America and Europe. Taiwan alone contributes 2,779 feeds, nearly half the regional total, from its dense highway and city camera networks.",
-          "Hong Kong adds 1,185 cameras and Japan 928, so the top three entries account for more than four-fifths of Asian coverage. Turkey (247), Indonesia (197), Vietnam (160), and South Korea (138) form the next tier, with the remainder spread from Israel and the Gulf states through Central Asia to Southeast Asia.",
-          "Coverage here ranges from dense urban traffic grids — Taipei, Hong Kong, Tokyo — to highway networks and city views across the region. This page rolls up the 28 Asian entries in the WorldEye camera index; every feed opens free on the live map.",
-          "Taiwan's 2,779 feeds are the story of the region: Taichung, Taipei, and Taoyuan run some of the densest intersection-camera grids in the index, and the feeds are genuinely useful for reading congestion — locals check the same intersections before setting out. If you have never watched an Asian traffic grid at rush hour, start here.",
-          "Hong Kong's 1,185 cameras cover one of the most vertical cities on earth — harbor approaches, cross-harbor tunnels, and the Mid-Levels escalator corridors all appear in the feed mix. Japan's 928 lean toward expressways and urban monitoring, from Tokyo's Shuto Expressway network outward.",
-          "The long tail is worth exploring too: Turkey's 247 feeds bridge Europe and Asia, Indonesia's 197 cover Jakarta's famously congested arterials, and Vietnam's 160 follow Hanoi and Ho Chi Minh City. Smaller entries — Thailand (60), the Philippines (25), Kyrgyzstan (21), Malaysia (20), Israel (19) — fill in Southeast and Central Asia. Time zones span UTC+2 to UTC+9, so there is always daylight somewhere in the region to watch.",
+          `Asia's index holds ${fmt(TOTAL)} cameras across ${ASIA.length} countries. Japan alone contributes ${fmt(count("japan"))} feeds — the largest national network on WorldEye — from its open river, road and city monitoring systems.`,
+          `Taiwan adds ${fmt(count("taiwan"))}, South Korea ${fmt(count("south-korea"))} and Hong Kong ${fmt(count("hong-kong"))}, so the top four entries account for the great majority of Asian coverage. Vietnam (${fmt(count("vietnam"))}), Indonesia (${fmt(count("indonesia"))}) and Thailand (${fmt(count("thailand"))}) form the next tier, with the remainder spread from Israel and the Gulf states through Central Asia to Southeast Asia.`,
+          "Coverage here ranges from dense urban traffic grids — Taipei, Hong Kong, Busan — to highway networks, river monitoring and coastal views across the region. This page rolls up the Asian entries in the WorldEye camera index; every feed below opens free, and every card is the camera's real live feed.",
+          "Taiwan's feeds are the traffic story of the region: Taichung, Taipei, and Taoyuan run some of the densest intersection-camera grids in the index, and the feeds are genuinely useful for reading congestion — locals check the same intersections before setting out. If you have never watched an Asian traffic grid at rush hour, start here.",
+          `Hong Kong's ${fmt(count("hong-kong"))} cameras cover one of the most vertical cities on earth — harbor approaches, cross-harbor tunnels, and the Mid-Levels escalator corridors all appear in the feed mix. Japan's ${fmt(count("japan"))} lean on its river and expressway networks, watched by the agencies that manage floods and traffic alike.`,
+          "The long tail is worth exploring too: Indonesia's feeds cover Jakarta's famously congested arterials, and Vietnam's follow Hanoi and Ho Chi Minh City. Smaller entries fill in Southeast and Central Asia. Time zones span the continent, so there is always daylight somewhere in the region to watch.",
         ]}
       />
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-5">Live cameras across Asia</h2>
+        <DirectoryExplorer
+          scopeKey="asia"
+          scopeLabel="Asia"
+          groupBy="country"
+          searchPlaceholder="Search Asia cameras — a beach, a road, a district…"
+        />
+      </section>
       <AreaTable
         title="Top countries in Asia"
         rows={TOP_COUNTRIES}
-        note="Plus 16 more Asian entries in the index, totaling 5,858 cameras across 28 countries."
+        note={`Plus ${ASIA.length - TOP_COUNTRIES.length} more Asian entries in the index, totaling ${fmt(TOTAL)} cameras across ${ASIA.length} countries.`}
       />
       <HowTo
         title="How to watch Asian cameras live"
         steps={[
           "Launch the WorldEye map — it works on phone and desktop, free.",
-          "Pan across Asia and zoom into Taiwan, Hong Kong, Japan, or any listed country.",
+          "Pan across Asia and zoom into Japan, Taiwan, Hong Kong, or any listed country.",
           "Select a green camera marker to open that feed's live stream.",
           "For traffic checks, open feeds during local rush hours — roughly 7–9 AM and 5–8 PM in each city's timezone.",
-          "Use the map search to jump straight to a city like Taipei, Hong Kong, or Tokyo instead of panning manually.",
-          "Remember the region spans UTC+2 to UTC+9: when it is night in Tokyo it is still afternoon in Istanbul — there is always daylight to watch somewhere.",
+          "Use the search at the top of this page to jump straight to a city like Taipei, Hong Kong, or Tokyo instead of panning manually.",
+          "Remember the region spans many time zones: when it is night in Tokyo it is still afternoon further west — there is always daylight to watch somewhere.",
         ]}
       />
-      <FaqSection
-        title="Asia webcams — FAQ"
-        faqs={FAQS}
-      />
+      <FaqSection title="Asia webcams — FAQ" faqs={FAQS} />
       <RelatedLinks
         title="More regional webcam indexes"
         links={[
+          { label: "Europe live cameras", href: "/europe-live-cameras" },
           { label: "North America live webcams", href: "/north-america-webcams" },
           { label: "Oceania live webcams", href: "/oceania-webcams" },
           { label: "Best live webcams in the world to watch right now", href: "/blog/best-live-webcams-world" },

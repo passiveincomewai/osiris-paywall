@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import TrialCtaSection from "@/components/TrialCtaSection";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import RouteCameraFinder from "@/components/RouteCameraFinder";
+import { cityChunkStats } from "@/lib/explore-data";
 import directory from "@/data/camera-directory.json";
 import cityPages from "@/data/city-pages.json";
 import {
@@ -1002,6 +1005,17 @@ export default async function CityWebcamPage({
   const canonical = `${BASE}/city-webcams/${slug}`;
   const updated = formatDate(resolved.updatedIso);
 
+  /* The full explorer + route finder belong on the page only when the
+     served catalogue's own records back them: at least 25 cameras
+     listed under this exact city in the country's records. (Sydney's
+     page is assembled from harbour/operator feeds whose records sit
+     under other locality names, and Washington DC's from Maryland
+     CHART feeds — both keep their featured grids instead of an
+     explorer that would come back near-empty.) */
+  const chunk = await cityChunkStats(c.countrySlug, c.name);
+  const showExplorer =
+    chunk !== null && chunk.count >= 25 && chunk.centroid !== null;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -1046,6 +1060,43 @@ export default async function CityWebcamPage({
       <StatRow stats={c.stats} />
       <Updated date={updated} />
       <Intro paragraphs={c.intro} />
+      {showExplorer && chunk && chunk.centroid && (
+        <>
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-3">
+              All {c.name} cameras, live
+            </h2>
+            <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+              {fmt(chunk.count)} cameras in the live index are listed under{" "}
+              {c.name} — every one below as its real feed. Search by street,
+              road or landmark, and open any camera here or on the globe.
+            </p>
+            <DirectoryExplorer
+              country={c.countrySlug}
+              city={c.name}
+              scopeLabel={c.name}
+              groupBy="none"
+              searchPlaceholder={`Search ${c.name} cameras — a road, a junction, a landmark…`}
+            />
+          </section>
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-3">
+              Cameras along your route to {c.name}
+            </h2>
+            <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+              Driving in? Enter where you are starting from and see the live
+              cameras along the way — the feed is the road-condition check.
+            </p>
+            <RouteCameraFinder
+              defaultDestination={{
+                label: c.name,
+                lat: chunk.centroid.lat,
+                lng: chunk.centroid.lng,
+              }}
+            />
+          </section>
+        </>
+      )}
       {c.samples && <SampleGrid title={c.sampleTitle ?? "Featured live cameras"} samples={c.samples} />}
       <HowTo title={c.howtoTitle} steps={c.howto} />
       <FaqSection title={c.faqTitle} faqs={c.faqs} />

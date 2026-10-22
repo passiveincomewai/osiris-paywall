@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Building2, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
-import data from "@/data/camera-directory.json";
+import DirectorySearch from "@/components/DirectorySearch";
 import cityPages from "@/data/city-pages.json";
+import {
+  CATALOGUE_GENERATED_AT,
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  recordsForDef,
+} from "@/lib/explore-data";
 
 export const metadata: Metadata = {
   title: "World City Webcams — Top 25 Live City Cams",
@@ -19,16 +25,53 @@ export const metadata: Metadata = {
   },
 };
 
-const TOP_30_SLUGS = new Set([
-  "united-states", "taiwan", "spain", "austria", "canada", "hong-kong",
-  "italy", "japan", "united-kingdom", "sweden", "finland", "iceland",
-  "lithuania", "netherlands", "australia", "new-zealand", "turkey",
-  "indonesia", "vietnam", "russia", "south-korea", "poland", "thailand",
-  "norway", "malta", "france", "romania", "brazil", "bulgaria", "croatia",
-]);
-
 const fmt = (n: number) => n.toLocaleString("en-US");
-const areas = data.topAreas;
+
+/* The busiest camera areas on Earth, computed from the served
+   catalogue's own records (the per-country files behind the country
+   pages) — not the retired Oct-11 directory snapshot this page used
+   to read. An "area" is the city value the catalogue itself lists a
+   camera under, which is why statewide grids (Georgia, Utah) and
+   motorway corridors appear alongside true cities. */
+type DirectoryArea = { name: string; country: string; countrySlug: string; count: number };
+
+async function topAreas(): Promise<{ top: DirectoryArea[]; madrid?: DirectoryArea }> {
+  const records = await recordsForDef(EXPLORE_SCOPES.all);
+  const slugByName = new Map(COUNTRY_INDEX.map((c) => [c.name, c.slug]));
+  const byArea = new Map<string, DirectoryArea>();
+  for (const r of records) {
+    const name = (r.city ?? "").trim();
+    const country = (r.country ?? "").trim();
+    if (!name || !country) continue;
+    const key = `${country}|${name}`;
+    const cur = byArea.get(key);
+    if (cur) cur.count += 1;
+    else
+      byArea.set(key, {
+        name,
+        country,
+        countrySlug: slugByName.get(country) ?? "",
+        count: 1,
+      });
+  }
+  const all = [...byArea.values()].sort((a, b) => b.count - a.count);
+  return { top: all.slice(0, 25), madrid: all.find((a) => a.name === "Madrid") };
+}
+
+/* Every city page, for the search below — the generated tier from
+   city-pages.json plus the editorial guides, with the counts those
+   pages state (mirrors the /city-webcams hub). */
+const EDITORIAL_CITIES = [
+  { slug: "london", name: "London", count: 890 },
+  { slug: "ottawa", name: "Ottawa", count: 428 },
+  { slug: "toronto", name: "Toronto", count: 339 },
+  { slug: "madrid", name: "Madrid", count: 370 },
+  { slug: "houston", name: "Houston", count: 1158 },
+  { slug: "dallas", name: "Dallas", count: 845 },
+  { slug: "tokyo", name: "Tokyo", count: 73 },
+  { slug: "sydney", name: "Sydney", count: 186 },
+  { slug: "auckland", name: "Auckland", count: 98 },
+];
 
 const FAQS = [
   {
@@ -69,19 +112,21 @@ const FAQS = [
   },
 ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "World City Webcams — Top 25 Live City Cams",
-  description:
-    "The 25 regions and metro areas with the most live public cameras worldwide, with real camera counts.",
-  url: "https://worldeye.app/world-city-webcams",
-  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  numberOfItems: areas.length,
-  dateModified: data.generatedAt,
-};
+export default async function WorldCityWebcamsPage() {
+  const { top: areas, madrid } = await topAreas();
 
-export default function WorldCityWebcamsPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "World City Webcams — Top 25 Live City Cams",
+    description:
+      "The 25 regions and metro areas with the most live public cameras worldwide, with real camera counts.",
+    url: "https://worldeye.app/world-city-webcams",
+    isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    numberOfItems: areas.length,
+    dateModified: CATALOGUE_GENERATED_AT,
+  };
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -107,10 +152,26 @@ export default function WorldCityWebcamsPage() {
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
             Some places on the planet are watched by thousands of public cameras at
             once. These are the 25 regions, metro areas and highway corridors with the
-            most live feeds in the WorldEye directory — from Georgia's 4,330-camera
-            statewide network to Madrid's 370 street cameras. Watch any of them live,
+            most live feeds in the WorldEye directory — from Georgia's{" "}
+            {fmt(areas[0]?.count ?? 0)}-camera statewide network to Madrid's{" "}
+            {fmt(madrid?.count ?? 0)} street cameras. Watch any of them live,
             free, right now.
           </p>
+          <DirectorySearch
+            label="city pages"
+            options={[
+              ...EDITORIAL_CITIES.map((c) => ({
+                name: c.name,
+                count: c.count,
+                href: `/city-webcams/${c.slug}`,
+              })),
+              ...(cityPages.cities as unknown as { slug: string; name: string; count: number }[]).map(
+                (c) => ({ name: c.name, count: c.count, href: `/city-webcams/${c.slug}` }),
+              ),
+            ]}
+            placeholder="Jump to a city page — try Seattle, London, Busan…"
+            emptyText={(v) => `No city page matches "${v}" yet.`}
+          />
         </div>
 
         {/* Table */}
@@ -130,7 +191,7 @@ export default function WorldCityWebcamsPage() {
                   <td className="px-4 md:px-6 py-3.5 text-white/35 tabular-nums">{i + 1}</td>
                   <td className="px-4 md:px-6 py-3.5 font-medium text-white/85">{a.name}</td>
                   <td className="px-4 md:px-6 py-3.5 text-white/60">
-                    {TOP_30_SLUGS.has(a.countrySlug) ? (
+                    {a.countrySlug ? (
                       <Link
                         href={`/cameras/countries/${a.countrySlug}`}
                         className="text-[#D4AF37] hover:underline"
@@ -162,7 +223,11 @@ export default function WorldCityWebcamsPage() {
           <p className="text-white/55 mt-3 text-sm md:text-base leading-relaxed">
             A dedicated page for every city with a substantial camera grid —
             real counts, the sources behind them, and featured cameras that
-            open straight into the live globe.
+            open straight into the live globe. Prefer one searchable index?{" "}
+            <Link href="/city-webcams" className="text-[#D4AF37] hover:underline">
+              Browse the city webcam index
+            </Link>
+            .
           </p>
           <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
             {cityPages.cities.map((c) => (
@@ -187,7 +252,6 @@ export default function WorldCityWebcamsPage() {
               ["london", "London"], ["ottawa", "Ottawa"], ["toronto", "Toronto"],
               ["madrid", "Madrid"], ["houston", "Houston"], ["dallas", "Dallas"],
               ["tokyo", "Tokyo"], ["sydney", "Sydney"], ["auckland", "Auckland"],
-              ["fort-worth", "Fort Worth"],
             ].map(([slug, name]) => (
               <li key={slug}>
                 <Link

@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+  countForDef,
+} from "@/lib/explore-data";
 
 // Counts: camera-directory.json snapshot (886 SE cameras, 2026-10-11) plus
 // the October 2026 harvest (+734 probe-verified, mostly Trafikverket road
@@ -83,7 +91,16 @@ const jsonLd = {
   dateModified: "2026-10-18",
 };
 
-export default function SwedenTrafficCamerasPage() {
+export default async function SwedenTrafficCamerasPage() {
+  /* The explorer serves Sweden's traffic set: cameras that are road
+     feeds by name or by road-authority source (lib/explore-scopes),
+     counted live from the served records. */
+  const trafficTotal = await countForDef(EXPLORE_SCOPES["traffic-sweden"]);
+  const trafficAreas = await areasForDef(EXPLORE_SCOPES["traffic-sweden"], 400);
+  const countryTotal =
+    COUNTRY_INDEX.find((c) => c.slug === "sweden")?.count ?? 0;
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -118,6 +135,14 @@ export default function SwedenTrafficCamerasPage() {
             watch, with no account and no signup.
           </p>
         </div>
+
+        <DirectorySearch
+          label="Sweden traffic areas"
+          options={trafficAreas}
+          placeholder="Search Sweden traffic by area…"
+          emptyText={(v) => `No Sweden traffic areas match "${v}".`}
+          targetId="sweden-traffic-explorer"
+        />
 
         <div className="mt-14">
           <h2 className="text-2xl md:text-3xl font-bold">What you can check</h2>
@@ -186,6 +211,25 @@ export default function SwedenTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Live Sweden traffic cameras</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base max-w-3xl">
+            {fmt(trafficTotal)} of Sweden&apos;s {fmt(countryTotal)} indexed cameras
+            are road feeds — named as roads or published by road authorities —
+            and every one is below, live. Search by road or city; what the
+            camera shows is the condition report.
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="traffic-sweden"
+              scopeLabel="Sweden traffic"
+              groupBy="city"
+              searchPlaceholder="Search Sweden traffic cameras — a road, a junction, a city…"
+              explorerId="sweden-traffic-explorer"
+            />
           </div>
         </div>
 

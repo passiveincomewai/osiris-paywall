@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import {
+  COUNTRY_INDEX,
+  EXPLORE_SCOPES,
+  areasForDef,
+  countForDef,
+} from "@/lib/explore-data";
 
 // Counts: camera-directory.json snapshot (1,509 CA cameras, 2026-10-11) plus
 // the October 2026 harvest (+1,497 probe-verified: Ontario 511, DriveBC and
@@ -83,7 +91,16 @@ const jsonLd = {
   dateModified: "2026-10-18",
 };
 
-export default function CanadaTrafficCamerasPage() {
+export default async function CanadaTrafficCamerasPage() {
+  /* The explorer serves Canada's traffic set: cameras that are road
+     feeds by name or by road-authority source (lib/explore-scopes),
+     counted live from the served records. */
+  const trafficTotal = await countForDef(EXPLORE_SCOPES["traffic-canada"]);
+  const trafficAreas = await areasForDef(EXPLORE_SCOPES["traffic-canada"], 400);
+  const countryTotal =
+    COUNTRY_INDEX.find((c) => c.slug === "canada")?.count ?? 0;
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -118,6 +135,14 @@ export default function CanadaTrafficCamerasPage() {
             signup.
           </p>
         </div>
+
+        <DirectorySearch
+          label="Canada traffic areas"
+          options={trafficAreas}
+          placeholder="Search Canada traffic by area…"
+          emptyText={(v) => `No Canada traffic areas match "${v}".`}
+          targetId="canada-traffic-explorer"
+        />
 
         <div className="mt-14">
           <h2 className="text-2xl md:text-3xl font-bold">What you can check</h2>
@@ -187,6 +212,25 @@ export default function CanadaTrafficCamerasPage() {
                 <p className="text-sm text-white/55 leading-relaxed mt-2">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Live Canada traffic cameras</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base max-w-3xl">
+            {fmt(trafficTotal)} of Canada&apos;s {fmt(countryTotal)} indexed cameras
+            are road feeds — named as roads or published by road authorities —
+            and every one is below, live. Search by road or city; what the
+            camera shows is the condition report.
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="traffic-canada"
+              scopeLabel="Canada traffic"
+              groupBy="city"
+              searchPlaceholder="Search Canada traffic cameras — a road, a junction, a city…"
+              explorerId="canada-traffic-explorer"
+            />
           </div>
         </div>
 
