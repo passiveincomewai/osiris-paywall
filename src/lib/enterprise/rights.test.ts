@@ -52,7 +52,7 @@ describe("feedEligibility — OpenCCTV families ride the licensing registry", ()
   });
 
   it("excludes registry-conditional families (terms unreviewed for redistribution)", () => {
-    for (const family of ["twipcam", "nexco-japan", "ipcamlive", "osm-webcams", "camstreamer"]) {
+    for (const family of ["twipcam", "ipcamlive", "osm-webcams", "camstreamer"]) {
       const v = feedEligibility({ source: `OpenCCTV / ${family}` });
       expect(v.eligible, family).toBe(false);
       expect(v.basis).toContain("CONDITIONAL");
@@ -60,7 +60,7 @@ describe("feedEligibility — OpenCCTV families ride the licensing registry", ()
   });
 
   it("excludes registry-excluded families and anything Windy, structurally", () => {
-    for (const family of ["windy", "windy-providers", "earthcam", "skylinewebcams", "weatherbug"]) {
+    for (const family of ["windy", "windy-providers", "earthcam", "skylinewebcams", "weatherbug", "nexco-japan"]) {
       expect(isFeedEligible({ source: `OpenCCTV / ${family}` }), family).toBe(false);
     }
     expect(isFeedEligible({ source: "Windy Webcams" })).toBe(false);
