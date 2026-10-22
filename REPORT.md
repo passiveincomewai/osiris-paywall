@@ -1,177 +1,148 @@
-# Country pages: "View on globe" button + search-by-city
+# Page-pattern rollout — REPORT
 
-Branch `feature/country-globe-button`, worktree `~/workspace/worldeye-globe-button`,
-based on production master `e7c0285`. Two commits, nothing pushed or deployed:
+Branch: `feature/page-pattern-rollout` · Worktree: `~/workspace/worldeye-page-pattern`
+Base: `b72da29` (country-pages branch tip, on production `e7c0285`). **Not pushed, not deployed.**
 
-- `b55f438` — Country pages: 'View on globe' button on every camera
-- `a1994ee` — Country pages: working search-by-city at the top of every page
+Commits:
+- `feacee3` — Directory explorer foundation: scopes, explore + route-cameras APIs, shared feed card
+- `6df3d0b` — Region + theme hubs (Asia, Europe, airport, beach, live-webcams)
+- `3c8d551` — City family (new /city-webcams hub, [city] explorers + route finder, world-city recompute)
+- `7cc49a5` — Traffic family + sitemap
+- `1a430e3` — Fix missing imports in the extracted feed card (caught by the fresh tsc gate)
+- (this report's commit)
 
----
+## What the country-page treatment turned out to be, as reusable pieces
 
-## 1. "View on globe" button on every camera
+1. **A defined scope over the served catalogue** (`src/lib/explore-scopes.ts`, pure + unit-tested;
+   `src/lib/explore-data.ts`, server-side loading). A scope is a rule over the per-country records
+   (`src/data/countries/*.json`, indexed by `camera-countries.json`) — never a hand list. Pages and
+   the API resolve the same key to the same records, so a count quoted on a page is the number of
+   feeds its explorer actually serves.
+2. **`/api/cctv/explore`** — batched browsing (offset/limit/area/q) for any registry scope or a
+   country+city/theme param scope, sliced with the same semantics as the country endpoint.
+   Unknown scope/country = real 404.
+3. **The shared feed card** (`src/components/camera-feed-card.tsx`) — extracted from
+   `CountryCameraExplorer` (which now imports it): real live media, LIVE badge earned on load,
+   page-wide video budget, honest unavailable state, full-screen viewer, and a **View on globe**
+   button on every card (the `/?camera=<id>` mechanism from the base branch).
+4. **`DirectoryExplorer`** — the generalized explorer (registry or param scope, group headers by
+   city or country, area chips, server-side search, load-more, `?area=` deep links).
+   **`DirectorySearch`** — the generalized top-of-page search: filter mode (drives the page's
+   explorer) or link mode (navigates, for the city hubs). Options are always the scope's real
+   areas with real counts; the no-match state says so plainly.
+5. **`/api/cctv/route-cameras` + `RouteCameraFinder`** — start + destination (geosearch
+   autocomplete via the globe's `/api/geosearch`, routing via `/api/directions`), cameras within
+   a 1.5 km corridor of the route using `lib/route-cameras`, ordered along the route, rendered
+   as feed cards with "x km along" captions. Free on directory pages (the globe's own strip is
+   Pro-gated; the directory version is deliberately not). Renders at most 60 cards and quotes
+   the full count.
 
-### The pages
+## Scope yields (computed from the catalogue; independently re-verified 2026-10-22)
 
-The by-country live camera pages are **`/cameras/countries/[country]`** — one
-template renders all 109 country pages. Cameras appear on it in three places,
-and all three got the button:
+Catalogue: **76,575 records, 109 countries** (index counts match chunk lengths exactly).
+Asia **17,588** (25 countries) · Europe **12,057** (46) · Traffic worldwide **52,327**
+(US 34,687 · Canada 2,838 · Spain 1,969 · Sweden 1,518 · Norway 698 · Germany 326 · Japan 230 ·
+South Korea 191) · Coast/beach **1,246** · Airport **804**.
 
-1. **The explorer grid** (`CountryCameraExplorer`, used only by this page):
-   every camera in the country, batched from `/api/cctv/country/<slug>`,
-   rendered as cards that open the in-page viewer.
-2. **Featured live cameras**: the curated samples from the generated country
-   index.
-3. **Full roster**: for small countries, a name/city list of every camera.
+Traffic rule (documented on the pages and in code): a camera is "traffic" when its **name**
+matches the country pages' own traffic pattern **or** its **source** is a road authority
+(DOTs, 511 services, DGT, Trafikverket, Vegvesen, DriveBC, ASFINAG, Fintraffic, bayerninfo, … —
+enumerated from the catalogue's distinct sources). The source half is necessary: Scandinavian
+networks name cameras by place, not road, so a name-only rule gives Sweden 10 and Norway 0.
+Airport rule: name identifies an airport/airfield/runway. Coast rule: the country pages' coast
+name pattern.
 
-(The country *traffic* pages — `/canada-traffic-cameras` etc. — render no
-camera cards at all, only editorial copy and steps, so there was nothing to
-attach a button to there. `/live-webcams` is a hub with no camera listings.)
+## Per-page checklist
 
-### How the deep link works
+| Page | Before | What it got | Data source |
+| --- | --- | --- | --- |
+| `/asia-webcams` | Static copy quoting a stale snapshot (5,858 total, Taiwan-first ranking, "28 countries") | All figures computed (17,588 · 25 countries · Japan largest at 10,472); city search at top; live explorer grouped by country; FAQ/intro numbers parameterized | Camera index + `asia` scope (COUNTRY_REGION grouping) |
+| `/europe-live-cameras` | Read the retired Oct-11 `camera-directory.json` (35 countries, stale counts) | Switched to the camera index (12,057 · 46 countries); highlights/FAQ figures computed; every table row links to its country page; city search + explorer | Camera index + `europe` scope |
+| `/airport-webcams` | Editorial sections + map-only samples; no feed cards | Live explorer over the defined airport set (804) with the set's rule stated on the page; city search; top-cities table counted from the set | `airport` scope |
+| `/beach-webcams` | Editorial category cards linking out; no feed cards on the page | Live explorer over the defined coastal set (1,246) with the rule stated and its real count quoted; area search | `beach` (coast) scope |
+| `/live-webcams` | Read the retired snapshot (its H1 count disagreed with its own title) | Camera-index data throughout (owner headline 74,229 kept verbatim); full-directory live explorer; global city search; stale "35 European countries" / "105 countries" fixed (46 / 109) | Camera index + `all` scope |
+| `/city-webcams` | **Did not exist** (bare hub missing; only `[city]` children) | NEW hub: all 55 city pages (9 editorial + 46 generated) in one searchable index — 12,862 cameras, 12 countries; link-mode search; FAQ; cross-links | `city-pages.json` + the editorial counts the [city] pages state |
+| `/city-webcams/[city]` (55 pages) | Featured sample grid + editorial/generated copy; samples were text links | Samples with ids now render the shared **View on globe** button (via the SampleGrid upgrade); pages whose city has ≥25 cameras under its exact name in the served records (**53 of 55**) also gain the full live explorer (search within city) + the route finder prefilled to the city centroid | Country chunks via the explore API; gate computed per page at build |
+| `/world-city-webcams` | Top-25 table from the retired snapshot ("Georgia 4,330") | Top-25 areas recomputed from the served records (Georgia 4,284); link-mode city search; all country cells link to country pages; cross-link to the new city hub | All catalogue records, aggregated by their own city values |
+| `/live-traffic-cameras` | US-editorial page on the retired snapshot ("23,059"); no feed cards | US traffic total computed (34,687); top areas from the same set; **worldwide traffic explorer** (52,327, grouped by country); global traffic search; **route finder**; by-country link grid | `traffic` + `traffic-us` scopes |
+| `/us-traffic-cameras` | **Did not exist** (only `[state]` children) | NEW hub: US traffic explorer + area search + route finder + links to the 7 state pages | `traffic-us` scope |
+| `/us-traffic-cameras/[state]` (7 pages) | Sample grids with text links | Inherit the SampleGrid upgrade: samples with ids render the View on globe button | (unchanged data) |
+| `/japan-traffic-cameras` | **No camera cards at all** — editorial only, "10,700+" headline | Area search + live explorer of Japan's traffic set (230) with a lead line stating plainly that Japan's full index (10,472) is mostly MLIT river cameras and linking to it | `traffic-japan` scope |
+| `/canada-traffic-cameras` | No camera cards; "3,000+" headline | Search + explorer (2,838 of Canada's index are road feeds; lead line gives both counts) | `traffic-canada` scope |
+| `/spain-traffic-cameras` | No camera cards; "2,100+" | Search + explorer (1,969) | `traffic-spain` scope |
+| `/south-korea-traffic-cameras` | No camera cards; "1,600+" (the full index) | Search + explorer (191 road feeds; lead line distinguishes the two numbers) | `traffic-south-korea` scope |
+| `/sweden-traffic-cameras` | No camera cards; "1,600+" | Search + explorer (1,518 of 1,569) | `traffic-sweden` scope |
+| `/norway-traffic-cameras` | No camera cards; "740+" | Search + explorer (698 of 746) | `traffic-norway` scope |
+| `/germany-traffic-cameras` | No camera cards; "340+" | Search + explorer (326 of 343) | `traffic-germany` scope |
 
-The site already has a canonical camera deep link, documented in
-`src/lib/camera-share.ts` and used by camera share buttons, `/watch` pages,
-and the dashboard/alerts "view" links:
+Sitemap: `/city-webcams` and `/us-traffic-cameras` added to `SEO_PAGES` in `src/app/sitemap.ts`.
 
-```
-/?camera=<catalogue id>
-```
+## Entity-page decisions (honesty rule)
 
-The globe page (`src/app/page.tsx`) reads the param back
-(`sharedCameraIdFromSearch` + `findCameraById`), flies to the camera and
-opens it through the same gated path a map click takes. The new button simply
-links there by the camera's catalogue id — the same id the page already holds
-for every camera it renders (the featured samples on this very page already
-deep-linked by id, and the page's JSON-LD uses the same ids). No coordinates
-were needed and no values were invented.
+- **Airports — no per-airport pages.** The catalogue carries no airport entity: an airport exists
+  only as free text inside a camera's name/city. Building airport entities would mean inventing
+  an inventory. Instead `/airport-webcams` groups the defined set by country/city and searches by
+  name (airport names live in the titles). Same conclusion as the Oct 18 decision, re-verified
+  against the current data model. **Beaches — same**: no beach entity inventory; grouping +
+  search on the hub.
+- **Asia/Europe — no duplicated country pages.** The region pages group their explorers by
+  country and link to the existing country pages (Europe's table now links all 46).
+- **Cities — real pages already exist** (55), so the work was treatment, not creation: explorer +
+  route finder where the records back them. **Sydney** (chunk records under its exact name: 1)
+  and **Washington, DC** (0 — its page is assembled from Maryland CHART feeds listed under
+  Maryland localities) keep their featured grids; the reason is documented in the [city] page
+  code and here.
 
-### Changes
+## Route-tool placement
 
-- **`src/components/ViewOnGlobeButton.tsx` (new, shared)** — an anchor styled
-  as a compact variant of the directory pages' ghost button
-  (`border-white/15`, semibold, hover wash) with a lucide `Globe` icon, the
-  label **"View on globe"**, and a camera-named aria-label
-  (`View <camera name> on the globe`). Href: `/?camera=${encodeURIComponent(id)}`.
-- **`src/components/CountryCameraExplorer.tsx`** — the card was a single
-  `<button>` wrapping preview + info (click = open the viewer in place). It
-  is now a container `<div>` with the same chrome: the preview + info area
-  keeps the open-viewer `<button>`, and a footer carries the `ViewOnGlobeButton`
-  as its sibling, bottom-aligned via `mt-auto`. (A link nested inside the
-  card's `<button>` would be invalid HTML, and its click would have opened
-  the viewer instead of navigating.)
-- **`src/app/cameras/countries/[country]/page.tsx`** — featured samples: the
-  "View on the live map" text link is replaced by the button (same
-  destination); full roster: each row gains the button, right-aligned.
-- **`src/lib/country-page-content.ts`** — `roster()` now returns
-  `{ id, name, city }` (it previously dropped the id), so roster rows can
-  deep-link. Its only caller is the country page.
+`/live-traffic-cameras` and `/us-traffic-cameras` (no prefill), and every `/city-webcams/[city]`
+page that carries the explorer (destination prefilled to the city's camera centroid).
 
-### Not changed (deliberately)
+## Pre-existing discrepancies found (flagged, not silently "fixed")
 
-`src/components/directory-page.tsx`'s `SampleGrid` — the shared curated-samples
-grid for the region/category/city/state pages (Asia webcams, ski webcams,
-US state traffic pages, …) — uses the identical "View on the live map" text
-link. It is not part of the country page, so it was left untouched to keep
-this change scoped; giving it the same button is a one-line swap per the
-pattern in commit `b55f438` if wanted.
+- **State pages quote assembled-catalogue counts** (Georgia 4,330, Utah 2,082) while the served
+  country chunks count Georgia 4,284 / Utah 2,084. The state pages' copy was left as-is; the new
+  US hub quotes the explorer's computed numbers and notes the two can differ slightly.
+- **Traffic country pages' headline strings** ("3,000+", "1,600+", …) describe each country's
+  *full index approximately* (Japan's comment documents a 10,757 union incl. an Oct 2026 harvest;
+  the served chunk holds 10,472). Editorial copy left as-is; each page's new explorer section
+  states the exact traffic count and the exact index count side by side.
+- **Headline 74,229 vs catalogue 76,575 records** on `/live-webcams`: the headline is the owner's
+  published served-camera figure and was kept verbatim; per-country counts are the index's own
+  (the same numbers the country pages already quote).
+- **`/world-city-webcams` linked a non-existent page**: its editorial chip list included
+  Fort Worth, but `/city-webcams/fort-worth` has no curated or generated entry (it 404s).
+  The chip was removed; the link list now matches the pages that exist.
+- Sweden's editorial "1,600+" overstates its index (1,569) — left as the page's own copy,
+  flagged here.
 
----
+## Merge note — ski overlap
 
-## 2. Search-by-city at the top of every country page
-
-### What was broken
-
-The exact-city filter itself always worked — it runs server-side in
-`/api/cctv/country/<slug>` (`?city=` → `sliceCountryCameras` →
-`filterCameras`, exact match on the record's city). Verified against
-production (Japan): `city=Tokyo` → **112 cameras**.
-
-But a visitor had effectively no way to use it:
-
-- The explorer renders filter chips for only the **24 largest cities**
-  (`MAX_AREA_CHIPS`); the API itself returns at most 40
-  (`COUNTRY_CITY_CHIPS`). Japan alone has far more cities in the catalogue;
-  most cities in most countries had **no clickable path at all**.
-- The only other route was the explorer's free-text box, which is a
-  *camera* search: it substring-matches name + city + source, so a city
-  query also returns cameras that merely mention the city
-  (production: `q=tokyo` → **122** vs the exact-city **112**), and nothing
-  tells the visitor which cities exist.
-- The explorer sits mid-page (below hero, stats and intro) — there was no
-  search of any kind at the top of the page, and nothing labelled
-  "search by city" anywhere.
-
-So the feature was missing rather than the filter being broken; the fix
-exposes the existing exact filter through a real city search instead of
-bolting on a second filtering mechanism.
-
-### What was built
-
-- **`src/components/CountryCitySearch.tsx` (new)** — a search box rendered in
-  the hero of the country page (top of the page, every country, via the one
-  shared template). It is fed the country's **full** city list — every area
-  the catalogue holds for that country, biggest first — computed on the
-  server from the same records the page already loads
-  (`cameraAreas(loadCountryRecords(...))` in the page), falling back to the
-  index's `topCities` if the records fail to load. No invented cities:
-  every suggestion is a real city with its real camera count.
-  - Case-insensitive partial matching as you type; up to 8 suggestions with
-    counts; Enter picks the first match; Escape closes; a graceful
-    `No cities in <country> match "<input>".` empty state; hides itself for
-    countries with fewer than 2 cities.
-  - Styling reuses the explorer search's classes (rounded-xl, white/10
-    border, gold focus ring) and the pages' dropdown idiom.
-- **Picking a city filters the on-page directory** (the mechanism the page's
-  structure supports — see below): `CountryCitySearch` writes the choice to
-  the URL (`?city=<name>`, `history.replaceState`) and dispatches a
-  `COUNTRY_CITY_EVENT` CustomEvent. `CountryCameraExplorer` listens for it:
-  clears any free-text query, applies the city as its existing area filter,
-  and the search scrolls it into view (the explorer root is now
-  `#country-explorer`). The explorer also reads `?city=` once on load, so a
-  shared link lands pre-filtered.
-- **Active-filter chip**: a searched city is usually not among the top-24
-  chips, so the explorer now renders the active area as its own gold chip
-  (name + filtered count, click to clear) — otherwise the applied filter
-  would be invisible.
-- **`src/app/cameras/countries/[country]/page.tsx`** — computes `cityList`
-  (above) and renders `<CountryCitySearch>` under the hero line.
-
-### Why not link to the city pages
-
-`/city-webcams/<city>` pages exist only for cities that met the city-index
-thresholds, so search results would 404 or dead-end for most cities in most
-countries. The explorer's server-side city filter covers **every** city in
-the catalogue for **every** country, which is what "must work for ALL
-countries" requires; it also keeps the visitor on the page they were reading.
-
-Files for this feature: `src/components/CountryCitySearch.tsx` (new),
-`src/components/CountryCameraExplorer.tsx`, `src/app/cameras/countries/[country]/page.tsx`.
-
----
+The sibling ski build (`feature/ski-resort-pages`) is creating a similar route-cameras tool in
+parallel. This branch's version is the generic one (`RouteCameraFinder` +
+`/api/cctv/route-cameras`, corridor math from `lib/route-cameras`). At merge time, reconcile the
+two into one component/endpoint rather than shipping both; nothing in this branch depends on the
+ski work.
 
 ## Gates
 
-Box was heavily contended by sibling worktrees throughout (suite transform
-phase alone took ~28 min of wall clock); all runs were serialized against
-sibling gate runs where detectable.
-
-- **`npx tsc --noEmit`: PASS** — exit 0 on the combined tree, and exit 0
-  again on the final committed tree after the two-commit split.
-- **Full vitest suite**: 2,992 passed, 23 skipped, **2 failed — exactly the
-  two known baselines**:
-  - `src/app/api/cctv/route.test.ts` > serves an already-cached region without going upstream again
-  - `src/lib/oi/context.test.ts` > gatherContext > carries on without a source that fails
-  - One extra *file*-level failure: `src/lib/basemap-mode.test.ts` failed to
-    run with `[vitest-worker]: Timeout calling "fetch"` during module
-    transform under the load (0 tests ran, 0 tests failed). Re-run in
-    isolation it passes **16/16 in 6s**. Unrelated to this change (no basemap
-    code touched); a contention artifact of the 45-minute full run.
-- No production build was run (the brief's gates were tsc + suite; a sibling
-  worktree held the box's build capacity).
-
-## Notes
-
-- No billing, auth, or globe-rendering code was touched; the globe is only
-  ever linked *to*.
-- Untracked debris left as found: `.gate-logs/` (this run's suite log) and a
-  pre-existing `off` file in the worktree root, neither committed.
+- `npx tsc --noEmit` — **clean** (after fixing two missing imports in the extracted feed card,
+  commit `1a430e3`).
+- Full vitest — **baseline-exact**: 297 files / 3,046 tests, **3,021 passed, only the 2 known
+  baseline failures** (`src/lib/oi/context.test.ts`, `src/app/api/cctv/route.test.ts`). All new
+  tests pass (explore-scopes 13, plus country-cameras 26, route-cameras 11, country-slices 8).
+  (An earlier unattributable run summary showed a phantom third failure from a test file that
+  does not exist in this tree — suites were running concurrently across worktrees at the time;
+  the attributable re-run logged in this worktree is the result quoted here.)
+- Production build — **environment-blocked, not code-blocked.** Evidence: the first attempt ran
+  266 s — past config load and the Google Fonts fetch (fonts.googleapis times out for curl but
+  answers Node fetch, which is what Next uses) and into Turbopack compilation with no module or
+  compile error — before dying on a Turbopack cache write: `failed to write …/cache/turbopack/
+  …/00000001.sst: Operation not permitted`. Every later attempt (Turbopack and `--webpack`,
+  fresh `.next` each time) fails within seconds at the same early build-bootstrap write with
+  `EPERM: operation not permitted, write`. The same EPERM intermittently hits npm writing its
+  own log, strace writing its trace file, and git writing `index.lock`, while plain shell/Node
+  writes to the same directories succeed in the same minutes — and sibling worktrees' builds
+  failed all day (two VM restarts; overlay FS with metacopy). The build gate should be re-run
+  when the box settles; nothing in the failures points at this branch's code, and tsc + the full
+  suite are green.
