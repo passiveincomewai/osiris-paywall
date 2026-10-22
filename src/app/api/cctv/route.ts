@@ -39,6 +39,7 @@ import { fetchOregonCameras } from './oregon';
 import { fetchMichiganCameras } from './michigan';
 import { fetchIndianaCameras } from './indiana';
 import { fetchIowaCameras } from './iowa';
+import { fetchOhioCameras } from './ohio';
 import { fetchNevadaCameras } from './nevada';
 import { fetchLouisianaCameras } from './louisiana';
 import { fetchFloridaCameras } from './florida';
@@ -562,6 +563,7 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'michigan': fetchMichiganCameras,
   'indiana': fetchIndianaCameras,
   'iowa': fetchIowaCameras,
+  'ohio': fetchOhioCameras,
   'nevada': fetchNevadaCameras,
   'louisiana': fetchLouisianaCameras,
   'florida': fetchFloridaCameras,
@@ -956,6 +958,8 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 37.7 && lat < 41.9 && lng > -88.2 && lng < -84.6) regions.push('indiana');
   // Iowa (Iowa DOT ArcGIS) — explicit, since us-central only covers Illinois
   if (lat > 40.3 && lat < 43.6 && lng > -96.7 && lng < -89.9) regions.push('iowa');
+  // Ohio (ODOT OHGO) — explicit, since us-east/us-central carry none of ODOT
+  if (lat > 38.3 && lat < 42.0 && lng > -85.0 && lng < -80.3) regions.push('ohio');
   // Louisiana (LADOTD 511) — explicit, since neither us-central nor us-east reaches the Gulf coast
   if (lat > 28.8 && lat < 33.1 && lng > -94.2 && lng < -88.6) regions.push('louisiana');
   /* The rest of the southern tier, all on the same IBI 511 stack. Each is
