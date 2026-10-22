@@ -118,7 +118,7 @@ export default function CompetitorManager() {
         {reviewCount > 0 && <span className="text-amber-300"> · {reviewCount} need review (&gt;90 days)</span>}
       </p>
       <div className="mb-4">
-        <button onClick={seed} disabled={seeding} className="px-4 py-2 rounded-xl border border-white/15 text-xs text-white/70 hover:text-white hover:border-white/30 transition disabled:opacity-50">
+        <button onClick={seed} disabled={seeding} className="inline-flex items-center min-h-10 px-4 py-2 rounded-xl border border-white/15 text-xs text-white/70 hover:text-white hover:border-white/30 transition disabled:opacity-50">
           {seeding ? "Seeding…" : "Seed from bundled research data"}
         </button>
         {msg && <span className="ml-3 text-xs text-white/60">{msg}</span>}
@@ -151,8 +151,8 @@ export default function CompetitorManager() {
                 </td>
                 <td className="py-2 pr-3 text-xs text-white/40">{new Date(r.lastReviewed).toLocaleDateString()}</td>
                 <td className="py-2 text-right whitespace-nowrap">
-                  <button onClick={() => openEdit(r)} className="text-xs text-[#7cc4ff] hover:underline mr-3">Edit</button>
-                  <button onClick={() => togglePublish(r)} className="text-xs text-white/60 hover:text-white hover:underline">
+                  <button onClick={() => openEdit(r)} className="inline-block px-2 py-2.5 text-xs text-[#7cc4ff] hover:underline mr-1">Edit</button>
+                  <button onClick={() => togglePublish(r)} className="inline-block px-2 py-2.5 text-xs text-white/60 hover:text-white hover:underline">
                     {r.published ? "Unpublish" : "Publish"}
                   </button>
                 </td>
@@ -168,7 +168,7 @@ export default function CompetitorManager() {
           <div className="bg-[#0a1220] border border-white/15 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-white">Edit: {editing.name}</h3>
-              <button onClick={() => setEditing(null)} className="text-white/40 hover:text-white">✕</button>
+              <button onClick={() => setEditing(null)} aria-label="Close editor" className="p-2.5 -m-1 text-white/40 hover:text-white">✕</button>
             </div>
             <div className="space-y-3">
               {FIELDS.map((f) => (
@@ -188,7 +188,7 @@ export default function CompetitorManager() {
               ))}
             </div>
             <div className="flex items-center gap-3 mt-5">
-              <button onClick={save} disabled={saving} className="px-5 py-2.5 rounded-xl bg-[#0096FF] text-white text-sm font-semibold disabled:opacity-50">
+              <button onClick={save} disabled={saving} className="min-h-10 px-5 py-2.5 rounded-xl bg-[#0096FF] text-white text-sm font-semibold disabled:opacity-50">
                 {saving ? "Saving…" : "Save changes"}
               </button>
               {msg && <span className="text-xs text-white/60">{msg}</span>}

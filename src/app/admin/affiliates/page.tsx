@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { auth } from "@/auth";
 import { adminEmails } from "@/lib/affiliate/admin";
 import AdminClient from "./AdminClient";
+import AdminNav from "../AdminNav";
 
 export const metadata = { title: "Affiliate Admin" };
 
@@ -15,12 +15,12 @@ export default async function AdminAffiliatesPage() {
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">WorldEye Ops</div>
             <h1 className="text-2xl md:text-3xl font-bold text-white">Affiliate Command</h1>
           </div>
-          <Link href="/" className="text-sm text-slate-400 hover:text-white">← Site</Link>
+          <AdminNav active="affiliates" />
         </div>
         <AdminClient />
       </div>

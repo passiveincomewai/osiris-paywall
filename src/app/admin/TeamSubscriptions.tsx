@@ -69,7 +69,7 @@ const FUNNEL_STAGES: { event: string; label: string }[] = [
 ];
 
 const inputCls =
-  "rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400/50";
+  "rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400/50";
 const labelCls = "text-[10px] font-bold tracking-[0.16em] text-white/35 uppercase";
 
 function fmt(n: number): string {
@@ -366,7 +366,7 @@ export default function TeamSubscriptions({ funnel }: { funnel: Record<string, n
         <p className="text-sm text-white/40">{orgs.length === 0 ? "No teams yet." : "No teams match that search."}</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[780px] text-sm">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-[0.15em] text-white/35">
                 <th className="py-2 pr-3 font-semibold">Team</th>
@@ -408,8 +408,8 @@ export default function TeamSubscriptions({ funnel }: { funnel: Record<string, n
                       disabled={busyOrgId === o.id}
                       className={
                         o.suspended
-                          ? "px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
-                          : "px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50"
+                          ? "inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+                          : "inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50"
                       }
                       style={o.suspended ? { background: "linear-gradient(135deg,#6ee7b7,#34d399)" } : undefined}>
                       {o.suspended ? "Unsuspend" : "Suspend"}
@@ -507,7 +507,7 @@ export default function TeamSubscriptions({ funnel }: { funnel: Record<string, n
             <button
               onClick={saveConfig}
               disabled={!!formError || saving}
-              className="px-4 py-2 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+              className="inline-flex items-center min-h-10 px-4 py-2 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
               style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}>
               {saving ? "Saving…" : "Save pricing"}
             </button>

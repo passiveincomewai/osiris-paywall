@@ -211,7 +211,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div className="text-sm font-bold text-white">🎨 Marketing Studio — templates</div>
         <div className="flex items-center gap-3">
           <div className="text-[11px] font-mono text-white/40">
@@ -220,7 +220,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
           <button
             onClick={seed}
             disabled={seeding}
-            className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+            className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
             style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}>
             {seeding ? "Seeding…" : "Seed / refresh library"}
           </button>
@@ -232,7 +232,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
         <p className="text-sm text-white/40">No templates yet. Seed the built-in library or create one below.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-[0.15em] text-white/35">
                 <th className="py-2 pr-3 font-semibold">Title</th>
@@ -258,7 +258,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
                       <button
                         onClick={() => toggle(r.id, "active")}
                         disabled={busyId === r.id}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold disabled:opacity-50 ${r.active ? "text-[#04121f]" : "border border-white/15 text-slate-300"}`}
+                        className={`inline-flex items-center min-h-9 px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold disabled:opacity-50 ${r.active ? "text-[#04121f]" : "border border-white/15 text-slate-300"}`}
                         style={r.active ? { background: "linear-gradient(135deg,#6ee7b7,#34d399)" } : undefined}>
                         {r.active ? "Active" : "Archived"}
                       </button>
@@ -267,7 +267,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
                       <button
                         onClick={() => toggle(r.id, "featured")}
                         disabled={busyId === r.id}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold disabled:opacity-50 ${r.featured ? "text-[#04121f]" : "border border-white/15 text-slate-300"}`}
+                        className={`inline-flex items-center min-h-9 px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold disabled:opacity-50 ${r.featured ? "text-[#04121f]" : "border border-white/15 text-slate-300"}`}
                         style={r.featured ? { background: "linear-gradient(135deg,#f7b80c,#f59e0b)" } : undefined}>
                         {r.featured ? "★ Featured" : "☆ Feature"}
                       </button>
@@ -279,13 +279,13 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
                         key={`${r.id}-${r.sortOrder}`}
                         onBlur={(e) => saveSort(r.id, e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
-                        className="w-20 rounded-lg border border-white/10 bg-white/[0.04] px-2 py-1 text-sm text-white focus:outline-none focus:border-cyan-400/50"
+                        className="w-20 rounded-lg border border-white/10 bg-white/[0.04] px-2 py-2 text-sm text-white focus:outline-none focus:border-cyan-400/50"
                       />
                     </td>
                     <td className="py-2.5 text-right">
                       <button
                         onClick={() => openEditor(r)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-cyan-400/60">
+                        className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-cyan-400/60">
                         {expandedId === r.id ? "Close" : "Edit"}
                       </button>
                     </td>
@@ -324,7 +324,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
                         <button
                           onClick={() => saveEditor(r)}
                           disabled={busyId === r.id}
-                          className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+                          className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
                           style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}>
                           Save
                         </button>
@@ -341,7 +341,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
       <div className="mt-4 border-t border-white/5 pt-4">
         <button
           onClick={() => setShowCreate((s) => !s)}
-          className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-cyan-400/60">
+          className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-cyan-400/60">
           {showCreate ? "Hide create form" : "+ New template"}
         </button>
         {showCreate && (
@@ -391,7 +391,7 @@ export default function MarketingStudio({ initial }: { initial: TemplateRow[] })
             <button
               type="submit"
               disabled={creating}
-              className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
+              className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50"
               style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}>
               {creating ? "Creating…" : "Create template"}
             </button>

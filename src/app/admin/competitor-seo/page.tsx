@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { adminEmails } from "@/lib/affiliate/admin";
 import { getCompetitorSeoReport } from "@/lib/analytics/competitor-seo";
+import AdminNav from "../AdminNav";
 
 export const metadata = { title: "Competitor SEO — Admin" };
 export const dynamic = "force-dynamic";
@@ -46,7 +47,7 @@ export default async function CompetitorSeoAdminPage({
 
   return (
     <div className="min-h-screen" style={{ background: "#050810" }}>
-      <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">Competitor SEO</h1>
@@ -56,12 +57,12 @@ export default async function CompetitorSeoAdminPage({
               data; nothing is estimated.
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {PRESETS.map((d) => (
               <Link
                 key={d}
                 href={`/admin/competitor-seo?days=${d}`}
-                className={`px-3 py-1.5 rounded-lg text-sm border transition ${
+                className={`inline-flex items-center px-3 py-2.5 rounded-lg text-sm border transition ${
                   d === days
                     ? "border-cyan-400/50 text-cyan-200 bg-cyan-400/10"
                     : "border-white/15 text-white/60 hover:text-white"
@@ -70,14 +71,15 @@ export default async function CompetitorSeoAdminPage({
                 {d}d
               </Link>
             ))}
-            <Link href="/admin" className="px-3 py-1.5 rounded-lg text-sm border border-white/15 text-white/60 hover:text-white">
-              ← Admin
-            </Link>
           </div>
         </div>
 
+        <div className="mt-5">
+          <AdminNav active="competitor-seo" />
+        </div>
+
         {/* GSC status — honest not-connected state */}
-        <section className="mt-8 rounded-2xl border border-amber-400/30 bg-amber-400/[0.05] p-6">
+        <section className="mt-8 rounded-2xl border border-amber-400/30 bg-amber-400/[0.05] p-4 sm:p-6">
           <h2 className="font-bold text-amber-200">Google Search Console: not connected</h2>
           <div className="text-sm text-white/60 leading-relaxed mt-3 space-y-3">
             <p>
@@ -113,7 +115,7 @@ export default async function CompetitorSeoAdminPage({
             { label: "Reached the globe", value: pct(r.funnel.globeSessions, r.funnel.landingSessions), sub: `sitewide baseline ${pct(Math.round(r.funnel.sitewideGlobeRate * r.totalSessions), r.totalSessions)}` },
             { label: "Signups attributed to a competitor landing", value: fmt(r.signups.reduce((a, s) => a + s.count, 0)), sub: "same-session attribution (house method)" },
           ].map((c) => (
-            <div key={c.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div key={c.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
               <div className="text-[11px] font-bold tracking-[0.14em] text-white/40 uppercase">{c.label}</div>
               <div className="text-3xl font-bold text-white mt-2 tabular-nums">{c.value}</div>
               <div className="text-xs text-white/40 mt-1">{c.sub}</div>
@@ -122,7 +124,7 @@ export default async function CompetitorSeoAdminPage({
         </section>
 
         {/* Per-page table */}
-        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6">
           <h2 className="font-bold text-white">Landing pages · last {days} days</h2>
           <p className="text-xs text-white/40 mt-1">
             A session counts under the page it landed on (its first tracked
@@ -172,7 +174,7 @@ export default async function CompetitorSeoAdminPage({
 
         {/* Channels + signups */}
         <div className="mt-8 grid md:grid-cols-2 gap-4">
-          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6">
             <h2 className="font-bold text-white">How competitor-page visitors arrived</h2>
             <table className="w-full text-sm mt-4">
               <tbody>
@@ -197,7 +199,7 @@ export default async function CompetitorSeoAdminPage({
             </p>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6">
             <h2 className="font-bold text-white">Signups by landing page</h2>
             {r.signups.length > 0 ? (
               <table className="w-full text-sm mt-4">
@@ -223,7 +225,7 @@ export default async function CompetitorSeoAdminPage({
         </div>
 
         {/* Opportunities — first-party signal only, honestly labeled */}
-        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6">
           <h2 className="font-bold text-white">Opportunities</h2>
           <p className="text-xs text-white/40 mt-1 leading-relaxed">
             A real opportunities ranking needs Search Console impressions by

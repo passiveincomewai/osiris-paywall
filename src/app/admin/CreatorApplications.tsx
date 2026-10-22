@@ -60,7 +60,7 @@ export default function CreatorApplications({ initial }: { initial: CreatorAppli
         <p className="text-sm text-white/40">No pending applications. Creators apply from the “Free Pro for creators” section on /affiliates.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-[0.15em] text-white/35">
                 <th className="py-2 pr-3 font-semibold">Creator</th>
@@ -88,14 +88,14 @@ export default function CreatorApplications({ initial }: { initial: CreatorAppli
                     <button
                       onClick={() => decide(r.id, "approve")}
                       disabled={busyId === r.id}
-                      className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50 mr-2"
+                      className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50 mr-2"
                       style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}>
                       Approve + grant Pro
                     </button>
                     <button
                       onClick={() => decide(r.id, "reject")}
                       disabled={busyId === r.id}
-                      className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50">
+                      className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50">
                       Reject
                     </button>
                   </td>

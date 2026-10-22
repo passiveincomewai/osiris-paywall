@@ -9,6 +9,7 @@ import {
   type SegmentRow,
   type FunnelStage,
 } from "@/lib/conversion-analytics";
+import AdminNav from "../AdminNav";
 
 export const metadata = { title: "Conversion — Admin" };
 export const dynamic = "force-dynamic";
@@ -55,7 +56,7 @@ export default async function ConversionAdminPage({
 
   return (
     <div className="min-h-screen" style={{ background: "#050810" }}>
-      <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">WorldEye Ops</div>
@@ -66,12 +67,12 @@ export default async function ConversionAdminPage({
               and renewal, from our own tracked data and Stripe.
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {RANGES.map((rg) => (
               <Link
                 key={rg.key}
                 href={`/admin/conversion?range=${rg.key}`}
-                className={`px-3 py-1.5 rounded-lg text-sm border transition ${
+                className={`inline-flex items-center px-3 py-2.5 rounded-lg text-sm border transition ${
                   rg.key === range
                     ? "border-cyan-400/50 text-cyan-200 bg-cyan-400/10"
                     : "border-white/15 text-white/60 hover:text-white"
@@ -80,10 +81,11 @@ export default async function ConversionAdminPage({
                 {rg.label}
               </Link>
             ))}
-            <Link href="/admin" className="px-3 py-1.5 rounded-lg text-sm border border-white/15 text-white/60 hover:text-white">
-              ← Admin
-            </Link>
           </div>
+        </div>
+
+        <div className="mt-5">
+          <AdminNav active="conversion" />
         </div>
 
         {/* Owner exclusion + data honesty strip */}
@@ -138,7 +140,7 @@ export default async function ConversionAdminPage({
         </section>
 
         {/* Funnel */}
-        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6">
           <h2 className="font-bold text-white">The funnel</h2>
           <p className="text-xs text-white/40 mt-1">
             Site stages count distinct sessions; money stages count subscriptions / checkout attempts in
@@ -152,7 +154,7 @@ export default async function ConversionAdminPage({
               const widthPct = landed > 0 ? Math.max(s.count > 0 ? 1.5 : 0, (100 * s.count) / landed) : 0;
               return (
                 <div key={s.key} className={isBiggestDrop ? "rounded-xl border border-amber-400/40 bg-amber-400/[0.04] p-3 -m-1" : ""}>
-                  <div className="flex items-baseline justify-between gap-3 text-sm">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3 text-sm">
                     <div className="text-white/85 font-medium">
                       {s.label}
                       {isBiggestDrop && <span className="ml-2 text-[11px] font-bold uppercase tracking-wider text-amber-300">biggest drop-off</span>}
@@ -247,7 +249,7 @@ function SegmentTable({
   footnote: string;
 }) {
   return (
-    <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+    <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6">
       <h2 className="font-bold text-white">{title}</h2>
       <div className="overflow-x-auto mt-4">
         <table className="w-full text-sm min-w-[680px]">

@@ -117,7 +117,7 @@ export default async function CameraNetwork() {
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="text-sm font-bold text-white">📷 Camera Network — Sources, Health & Harvest Sync</div>
         <div className="text-[11px] font-mono text-white/40">
           {data ? `this instance · collected ${fmtTs(data.generatedAt)}` : ""}
@@ -214,7 +214,7 @@ export default async function CameraNetwork() {
             <div className="text-xs font-bold tracking-wide text-white/80 uppercase">
               Source health — problems first
             </div>
-            <table className="mt-2 w-full border-collapse">
+            <table className="mt-2 w-full min-w-[560px] border-collapse">
               <thead>
                 <tr className="text-left text-[10px] tracking-[0.14em] text-white/35 uppercase">
                   <th className="py-1 pr-3 font-bold">Source</th>

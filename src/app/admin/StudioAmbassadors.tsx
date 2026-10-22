@@ -80,7 +80,7 @@ export default function StudioAmbassadors() {
         <p className="text-sm text-white/40">No pending applications. Affiliates apply from the Studio&apos;s Ambassador page.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[700px] text-sm">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-[0.15em] text-white/35">
                 <th className="py-2 pr-3 font-semibold">Creator</th>
@@ -114,7 +114,7 @@ export default function StudioAmbassadors() {
                     <button
                       onClick={() => void decide(r.id, "approve")}
                       disabled={busyId === r.id}
-                      className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50 mr-2"
+                      className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-[#04121f] disabled:opacity-50 mr-2"
                       style={{ background: "linear-gradient(135deg,#6ee7b7,#34d399)" }}
                     >
                       Approve
@@ -122,7 +122,7 @@ export default function StudioAmbassadors() {
                     <button
                       onClick={() => void decide(r.id, "reject")}
                       disabled={busyId === r.id}
-                      className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50"
+                      className="inline-flex items-center min-h-10 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-red-400/60 disabled:opacity-50"
                     >
                       Reject
                     </button>

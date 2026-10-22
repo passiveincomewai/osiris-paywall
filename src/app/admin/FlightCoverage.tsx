@@ -47,7 +47,7 @@ export default async function FlightCoverage() {
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div className="text-sm font-bold text-white">✈️ Flight Coverage Diagnostics</div>
         <div className="text-[11px] font-mono text-white/40">
           {vm ? `source: ${vm.sourceRaw || "unknown"} · updated ${ageFmt(vm.lastUpdateAgeSec)}` : ""}
