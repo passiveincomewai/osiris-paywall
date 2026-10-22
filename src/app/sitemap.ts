@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import cameraCountries from "@/data/camera-countries.json";
 import cityPages from "@/data/city-pages.json";
+import usStates from "@/data/us-states.json";
 import { POSTS } from "./blog/posts";
 
 const BASE = "https://worldeye.app";
@@ -45,12 +46,6 @@ const SEO_PAGES_WAVE5 = [
 
 // Wave 4 (2026-10-11): sitemap-only directory pages — not linked from site chrome.
 const SEO_PAGES_WAVE4 = [
-  "/us-traffic-cameras/georgia",
-  "/us-traffic-cameras/utah",
-  "/us-traffic-cameras/texas",
-  "/us-traffic-cameras/florida",
-  "/us-traffic-cameras/indiana",
-  "/us-traffic-cameras/nevada",
   "/city-webcams/london",
   "/city-webcams/ottawa",
   "/city-webcams/toronto",
@@ -66,7 +61,6 @@ const SEO_PAGES_WAVE6 = [
   "/south-america-webcams",
   "/city-webcams/auckland",
   "/city-webcams/fort-worth",
-  "/us-traffic-cameras/arizona",
 ];
 
 // Wave 7 (2026-10-18): long-tail country traffic-camera hubs + live plane
@@ -89,6 +83,14 @@ const SEO_PAGES_WAVE7 = [
 // pages that exist. The ten editorial cities are in Waves 4–6 above.
 // Cross-linked from /world-city-webcams and from each other.
 const SEO_PAGES_WAVE8 = cityPages.cities.map((c) => `/city-webcams/${c.slug}`);
+
+// US state traffic pages: derived from the generated state index
+// (src/data/us-states.json — tools/build-us-states.mjs) so this list
+// can never drift from the pages that exist. The original seven state
+// URLs shipped in Waves 4–6 and are covered by this list now.
+const SEO_PAGES_STATES = (
+  usStates as { states: Array<{ slug: string }> }
+).states.map((s) => `/us-traffic-cameras/${s.slug}`);
 
 // Wave 9 (2026-10-20): trends-driven niche directories — aurora, volcano and
 // dark-sky cameras (see ~/workspace/worldeye-growth/TRENDS-MAP.md).
@@ -225,6 +227,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE9.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_STATES.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,

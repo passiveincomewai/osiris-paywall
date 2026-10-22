@@ -3,24 +3,41 @@ import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
-import data from "@/data/camera-directory.json";
+import { getUsStatesIndex } from "@/lib/us-states";
+
+// State counts are measured, not editorial: every camera in the served
+// US catalogue is assigned to the state its coordinates fall in
+// (src/lib/us-states.ts; generated index in src/data/us-states.json).
+// The old table on this page read a stale snapshot whose "state" rows
+// mixed states with metros (Houston, Dallas, Orange County) and whose
+// counts no longer matched the catalogue — Florida was listed at 1,435
+// feeds against 4,935 actually located there.
+const stateIndex = getUsStatesIndex();
+const states = stateIndex.states;
+const total = stateIndex.sourceTotal;
+const bySlug = (slug: string) => states.find((s) => s.slug === slug)!;
+const florida = bySlug("florida");
+const texas = bySlug("texas");
+const georgia = bySlug("georgia");
+const utah = bySlug("utah");
+const fmt = (n: number) => n.toLocaleString("en-US");
+const updatedLabel = new Date(stateIndex.generatedAt).toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
 
 export const metadata: Metadata = {
   title: "Live Traffic Cameras — US DOT Highway Cams",
-  description:
-    "Watch 23,059 live US traffic cameras — DOT highway feeds, interstate junctions and city streets. Free, no signup. Check road conditions in real time.",
+  description: `Watch ${fmt(total)} live US traffic cameras — DOT highway feeds, interstate junctions and city streets. Free, no signup. Check road conditions in real time.`,
   alternates: { canonical: "https://worldeye.app/live-traffic-cameras" },
   openGraph: {
     title: "Live Traffic Cameras — US DOT Highway Cams | WorldEye",
-    description:
-      "23,059 live US traffic cameras — DOT highway feeds and interstate junctions, free to watch with no signup.",
+    description: `${fmt(total)} live US traffic cameras — DOT highway feeds and interstate junctions, free to watch with no signup.`,
     url: "https://worldeye.app/live-traffic-cameras",
     type: "website",
   },
 };
-
-const us = data.countries.find((c) => c.slug === "united-states")!;
-const fmt = (n: number) => n.toLocaleString("en-US");
 
 const STEPS = [
   {
@@ -44,7 +61,7 @@ const FAQS = [
   },
   {
     q: "How many US traffic cameras can I watch?",
-    a: `WorldEye currently indexes ${fmt(us.count)} live cameras in the United States, from state highway systems like Georgia's 511 network (4,330 feeds) and Utah's UDOT cameras (2,082 feeds) to major metro corridors like Houston, Dallas and Phoenix.`,
+    a: `WorldEye currently indexes ${fmt(total)} live cameras in the United States. The densest state networks are Florida (${fmt(florida.count)} feeds), Texas (${fmt(texas.count)}) and Georgia (${fmt(georgia.count)}) — and every state, down to the smallest index, has its own page in the table above.`,
   },
   {
     q: "Can I check my commute or a road trip route?",
@@ -60,7 +77,7 @@ const FAQS = [
   },
   {
     q: "Are there cameras for my state's highways?",
-    a: "If your state DOT publishes open feeds, they are likely indexed — Georgia, Utah, Texas, Florida, Indiana, and Nevada have the densest networks. Search your interstate or city on the live map to see what's there.",
+    a: `Yes — every state has cameras in the index and its own state page: ${states[0].name}, ${states[1].name} and ${states[2].name} have the densest networks, and even the smallest state index has live feeds. Pick your state in the table above to open its index.`,
   },
   {
     q: "Can truckers use these for route planning?",
@@ -84,10 +101,10 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   name: "Live Traffic Cameras — US DOT Highway Cams",
-  description: `Directory of ${fmt(us.count)} live US traffic cameras from DOT and public sources, with per-state counts.`,
+  description: `Directory of ${fmt(total)} live US traffic cameras from DOT and public sources, with per-state counts.`,
   url: "https://worldeye.app/live-traffic-cameras",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  dateModified: data.generatedAt,
+  dateModified: stateIndex.generatedAt,
 };
 
 export default function LiveTrafficCamerasPage() {
@@ -114,41 +131,49 @@ export default function LiveTrafficCamerasPage() {
             Live US Traffic Cameras, <span className="text-[#D4AF37]">All in One Place</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
-            WorldEye tracks {fmt(us.count)} live traffic cameras across the United
+            WorldEye tracks {fmt(total)} live traffic cameras across the United
             States — state DOT highway feeds, interstate junctions, tollways and busy
             city intersections. Instead of hunting through a dozen separate agency
             websites, you see the whole road network on one globe: check congestion,
             storms and mountain passes with your own eyes before you drive.
           </p>
           <p className="text-white/55 mt-4 text-base md:text-lg leading-relaxed">
-            Georgia leads the nation with 4,330 live feeds, followed by Utah's 2,082
-            mountain and highway cameras. Every feed is free to watch — no account,
-            no signup.
+            {states[0].name} leads the nation with {fmt(states[0].count)} live feeds,
+            followed by {states[1].name}&rsquo;s {fmt(states[1].count)} highway
+            cameras. Every feed is free to watch — no account, no signup.
           </p>
         </div>
 
-        {/* Top areas table */}
+        {/* State table */}
         <div className="mt-14">
           <h2 className="text-2xl md:text-3xl font-bold">
-            Top states by traffic camera count
+            Traffic cameras by state
           </h2>
           <p className="text-white/50 mt-2 text-sm md:text-base">
-            The ten busiest areas in the directory, ranked by live feeds.
+            Every state in the index, ranked by live feeds. Select a state to open
+            its traffic camera index.
           </p>
           <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
             <table className="w-full text-sm md:text-base">
               <thead>
                 <tr className="bg-white/[0.04] text-left text-xs uppercase tracking-wider text-white/45">
-                  <th scope="col" className="px-4 md:px-6 py-4 font-semibold">State / Region</th>
+                  <th scope="col" className="px-4 md:px-6 py-4 font-semibold">State</th>
                   <th scope="col" className="px-4 md:px-6 py-4 font-semibold text-right">Live cameras</th>
                 </tr>
               </thead>
               <tbody>
-                {us.areas.slice(0, 10).map((a) => (
-                  <tr key={a.name} className="border-t border-white/[0.06] hover:bg-white/[0.03] transition">
-                    <td className="px-4 md:px-6 py-3.5 font-medium text-white/85">{a.name}</td>
+                {states.map((s) => (
+                  <tr key={s.slug} className="border-t border-white/[0.06] hover:bg-white/[0.03] transition">
+                    <td className="px-4 md:px-6 py-3.5 font-medium">
+                      <Link
+                        href={`/us-traffic-cameras/${s.slug}`}
+                        className="text-white/85 hover:text-[#D4AF37] hover:underline transition"
+                      >
+                        {s.name}
+                      </Link>
+                    </td>
                     <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-[#D4AF37] font-semibold">
-                      {fmt(a.count)}
+                      {fmt(s.count)}
                     </td>
                   </tr>
                 ))}
@@ -156,7 +181,11 @@ export default function LiveTrafficCamerasPage() {
             </table>
           </div>
           <p className="text-xs text-white/35 mt-3">
-            Counts reflect indexed public feeds as of the latest directory update and change as agencies add cameras.
+            Counts are measured from each camera&rsquo;s coordinates in the WorldEye
+            index, updated {updatedLabel} — a camera counts toward the state it
+            physically sits in. {fmt(stateIndex.unassigned)} indexed US feeds have
+            coordinates outside state boundaries and are not attributed to a state.
+            Counts change as agencies add cameras.
           </p>
         </div>
 
@@ -192,7 +221,7 @@ export default function LiveTrafficCamerasPage() {
             </p>
             <p>
               The habit compounds in winter. Mountain-state networks like
-              Utah&rsquo;s 2,082 feeds exist because pass conditions decide
+              Utah&rsquo;s {fmt(utah.count)} feeds exist because pass conditions decide
               whole days: chain requirements, ground blizzards, a canyon
               closed by a slide. The national picture helps too — a storm
               system you can see on the weather layer, arriving at cameras
