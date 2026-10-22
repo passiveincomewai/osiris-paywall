@@ -15,6 +15,8 @@ const COUNTRY_SLUGS: string[] = (
 const SEO_PAGES = [
   "/cameras/countries",
   "/live-traffic-cameras",
+  "/us-traffic-cameras",
+  "/city-webcams",
   "/world-city-webcams",
   "/europe-live-cameras",
   "/live-webcams",

@@ -3,24 +3,36 @@ import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
-import data from "@/data/camera-directory.json";
+import DirectoryExplorer from "@/components/DirectoryExplorer";
+import DirectorySearch from "@/components/DirectorySearch";
+import RouteCameraFinder from "@/components/RouteCameraFinder";
+import {
+  CATALOGUE_GENERATED_AT,
+  EXPLORE_SCOPES,
+  areasForDef,
+  countForDef,
+} from "@/lib/explore-data";
 
-export const metadata: Metadata = {
-  title: "Live Traffic Cameras — US DOT Highway Cams",
-  description:
-    "Watch 23,059 live US traffic cameras — DOT highway feeds, interstate junctions and city streets. Free, no signup. Check road conditions in real time.",
-  alternates: { canonical: "https://worldeye.app/live-traffic-cameras" },
-  openGraph: {
-    title: "Live Traffic Cameras — US DOT Highway Cams | WorldEye",
-    description:
-      "23,059 live US traffic cameras — DOT highway feeds and interstate junctions, free to watch with no signup.",
-    url: "https://worldeye.app/live-traffic-cameras",
-    type: "website",
-  },
-};
-
-const us = data.countries.find((c) => c.slug === "united-states")!;
+/* Counts on this page are computed from the served catalogue: the US
+   traffic set is the traffic rule (lib/explore-scopes — road-named
+   cameras or road-authority sources) over the US records, and the
+   explorer below serves that same rule worldwide. */
 const fmt = (n: number) => n.toLocaleString("en-US");
+
+export async function generateMetadata(): Promise<Metadata> {
+  const usTraffic = await countForDef(EXPLORE_SCOPES["traffic-us"]);
+  return {
+    title: "Live Traffic Cameras — US DOT Highway Cams",
+    description: `Watch ${fmt(usTraffic)} live US traffic cameras — DOT highway feeds, interstate junctions and city streets. Free, no signup. Check road conditions in real time.`,
+    alternates: { canonical: "https://worldeye.app/live-traffic-cameras" },
+    openGraph: {
+      title: "Live Traffic Cameras — US DOT Highway Cams | WorldEye",
+      description: `${fmt(usTraffic)} live US traffic cameras — DOT highway feeds and interstate junctions, free to watch with no signup.`,
+      url: "https://worldeye.app/live-traffic-cameras",
+      type: "website",
+    },
+  };
+}
 
 const STEPS = [
   {
@@ -44,7 +56,7 @@ const FAQS = [
   },
   {
     q: "How many US traffic cameras can I watch?",
-    a: `WorldEye currently indexes ${fmt(us.count)} live cameras in the United States, from state highway systems like Georgia's 511 network (4,330 feeds) and Utah's UDOT cameras (2,082 feeds) to major metro corridors like Houston, Dallas and Phoenix.`,
+    a: "Tens of thousands — the explorer on this page serves the whole US traffic index live. The densest networks are Georgia's 511 system (4,284 feeds) and Utah's UDOT cameras (2,084 feeds), followed by major metro corridors like Houston, Dallas and Phoenix.",
   },
   {
     q: "Can I check my commute or a road trip route?",
@@ -80,17 +92,23 @@ const FAQS = [
   },
 ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Live Traffic Cameras — US DOT Highway Cams",
-  description: `Directory of ${fmt(us.count)} live US traffic cameras from DOT and public sources, with per-state counts.`,
-  url: "https://worldeye.app/live-traffic-cameras",
-  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  dateModified: data.generatedAt,
-};
+export default async function LiveTrafficCamerasPage() {
+  const usTraffic = await countForDef(EXPLORE_SCOPES["traffic-us"]);
+  const usTopAreas = await areasForDef(EXPLORE_SCOPES["traffic-us"], 10);
+  const trafficAreas = await areasForDef(EXPLORE_SCOPES.traffic, 400);
+  const georgia = usTopAreas.find((a) => a.name === "Georgia");
+  const utah = usTopAreas.find((a) => a.name === "Utah");
 
-export default function LiveTrafficCamerasPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Live Traffic Cameras — US DOT Highway Cams",
+    description: `Directory of ${fmt(usTraffic)} live US traffic cameras from DOT and public sources, with per-state counts.`,
+    url: "https://worldeye.app/live-traffic-cameras",
+    isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    dateModified: CATALOGUE_GENERATED_AT,
+  };
+
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-zinc-100">
       <script
@@ -114,17 +132,56 @@ export default function LiveTrafficCamerasPage() {
             Live US Traffic Cameras, <span className="text-[#D4AF37]">All in One Place</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
-            WorldEye tracks {fmt(us.count)} live traffic cameras across the United
+            WorldEye tracks {fmt(usTraffic)} live traffic cameras across the United
             States — state DOT highway feeds, interstate junctions, tollways and busy
             city intersections. Instead of hunting through a dozen separate agency
             websites, you see the whole road network on one globe: check congestion,
             storms and mountain passes with your own eyes before you drive.
           </p>
           <p className="text-white/55 mt-4 text-base md:text-lg leading-relaxed">
-            Georgia leads the nation with 4,330 live feeds, followed by Utah's 2,082
-            mountain and highway cameras. Every feed is free to watch — no account,
+            Georgia leads the nation with {fmt(georgia?.count ?? 0)} live feeds, followed by Utah's{" "}
+            {fmt(utah?.count ?? 0)} mountain and highway cameras. Every feed is free to watch — no account,
             no signup.
           </p>
+          <DirectorySearch
+            label="traffic areas worldwide"
+            options={trafficAreas}
+            placeholder="Search traffic cameras by area…"
+            emptyText={(v) => `No traffic areas match "${v}".`}
+            targetId="traffic-explorer"
+          />
+        </div>
+
+        {/* Live traffic explorer */}
+        <div className="mt-14">
+          <h2 className="text-2xl md:text-3xl font-bold">Traffic cameras, live</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base">
+            The whole traffic index as live feeds — road-named cameras and
+            road-authority networks from every country in the directory. The
+            camera is the condition report: what you see is the road, now.
+          </p>
+          <div className="mt-6">
+            <DirectoryExplorer
+              scopeKey="traffic"
+              scopeLabel="traffic cameras"
+              groupBy="country"
+              searchPlaceholder="Search traffic cameras — a highway, a junction, a pass…"
+              explorerId="traffic-explorer"
+            />
+          </div>
+        </div>
+
+        {/* Route cameras */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Cameras along your route</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base max-w-3xl">
+            Enter a start and a destination and the finder lines up the live
+            cameras within 1.5 km of the driving route, in the order you will
+            pass them — the pre-drive check, automated.
+          </p>
+          <div className="mt-6">
+            <RouteCameraFinder />
+          </div>
         </div>
 
         {/* Top areas table */}
@@ -144,7 +201,7 @@ export default function LiveTrafficCamerasPage() {
                 </tr>
               </thead>
               <tbody>
-                {us.areas.slice(0, 10).map((a) => (
+                {usTopAreas.map((a) => (
                   <tr key={a.name} className="border-t border-white/[0.06] hover:bg-white/[0.03] transition">
                     <td className="px-4 md:px-6 py-3.5 font-medium text-white/85">{a.name}</td>
                     <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-[#D4AF37] font-semibold">
@@ -192,13 +249,43 @@ export default function LiveTrafficCamerasPage() {
             </p>
             <p>
               The habit compounds in winter. Mountain-state networks like
-              Utah&rsquo;s 2,082 feeds exist because pass conditions decide
+              Utah&rsquo;s {fmt(utah?.count ?? 0)} feeds exist because pass conditions decide
               whole days: chain requirements, ground blizzards, a canyon
               closed by a slide. The national picture helps too — a storm
               system you can see on the weather layer, arriving at cameras
               two states away an hour before it reaches yours, is a forecast
               you can watch instead of trust.
             </p>
+          </div>
+        </div>
+
+        {/* Traffic by country */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Traffic cameras by country</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base">
+            Dedicated traffic pages for the networks with their own character —
+            and the US index, state by state.
+          </p>
+          <div className="mt-6 grid sm:grid-cols-2 gap-4">
+            {[
+              { label: "US traffic cameras by state", href: "/us-traffic-cameras", desc: "The full US index with a page for every state network." },
+              { label: "Japan traffic cameras", href: "/japan-traffic-cameras", desc: "Expressway and road cameras across Japan." },
+              { label: "Canada traffic cameras", href: "/canada-traffic-cameras", desc: "Provincial 511 and city networks coast to coast." },
+              { label: "Spain traffic cameras", href: "/spain-traffic-cameras", desc: "DGT motorway and city feeds across Spain." },
+              { label: "South Korea traffic cameras", href: "/south-korea-traffic-cameras", desc: "Expressway and urban road cameras in Korea." },
+              { label: "Sweden traffic cameras", href: "/sweden-traffic-cameras", desc: "Trafikverket roads from Malmö to the Arctic." },
+              { label: "Norway traffic cameras", href: "/norway-traffic-cameras", desc: "Vegvesen mountain passes and fjord roads." },
+              { label: "Germany traffic cameras", href: "/germany-traffic-cameras", desc: "Autobahn and state road cameras across Germany." },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#D4AF37]/40 transition group"
+              >
+                <span className="font-semibold group-hover:text-[#D4AF37] transition">{l.label}</span>
+                <span className="block text-sm text-white/50 mt-1">{l.desc}</span>
+              </Link>
+            ))}
           </div>
         </div>
 

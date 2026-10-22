@@ -5,7 +5,6 @@ import {
   Breadcrumb,
   Hero,
   Intro,
-  AreaTable,
   HowTo,
   FaqSection,
   FaqJsonLd,
