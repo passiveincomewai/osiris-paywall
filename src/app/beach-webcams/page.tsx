@@ -148,7 +148,7 @@ export default async function BeachWebcamsPage() {
         label="beach & coastal areas"
         options={areas}
         placeholder="Search beaches & coasts by area…"
-        emptyText={(v) => `No beach or coastal areas match "${v}".`}
+        emptyText={'No beach or coastal areas match "{value}".'}
         targetId="beach-explorer"
       />
       <Intro paragraphs={INTRO} />

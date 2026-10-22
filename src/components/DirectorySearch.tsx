@@ -44,8 +44,12 @@ export default function DirectorySearch({
   label: string;
   options: DirectorySearchOption[];
   placeholder: string;
-  /** Shown when nothing matches; receives the typed value. */
-  emptyText: (value: string) => string;
+  /** Shown when nothing matches. A template string, NOT a function —
+   *  this component's parents are Server Components and functions
+   *  cannot cross the RSC boundary (the page-pattern rollout's build
+   *  gate caught exactly that on /airport-webcams). The literal token
+   *  {value} is replaced with the typed value. */
+  emptyText: string;
   targetId?: string;
 }) {
   const [value, setValue] = useState("");
@@ -134,7 +138,7 @@ export default function DirectorySearch({
               ))}
             </ul>
           ) : (
-            <p className="px-4 py-3 text-sm text-white/50">{emptyText(value.trim())}</p>
+            <p className="px-4 py-3 text-sm text-white/50">{emptyText.replace("{value}", value.trim())}</p>
           )}
         </div>
       )}

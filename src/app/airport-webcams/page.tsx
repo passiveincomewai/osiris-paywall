@@ -137,7 +137,7 @@ export default async function AirportWebcamsPage() {
         label="airport areas"
         options={areas}
         placeholder="Search airport cameras by city…"
-        emptyText={(v) => `No airport areas match "${v}".`}
+        emptyText={'No airport areas match "{value}".'}
         targetId="airport-explorer"
       />
       <Intro paragraphs={INTRO} />

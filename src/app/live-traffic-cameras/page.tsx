@@ -154,7 +154,7 @@ export default async function LiveTrafficCamerasPage() {
             label="traffic areas worldwide"
             options={trafficAreas}
             placeholder="Search traffic cameras by area…"
-            emptyText={(v) => `No traffic areas match "${v}".`}
+            emptyText={'No traffic areas match "{value}".'}
             targetId="traffic-explorer"
           />
         </div>

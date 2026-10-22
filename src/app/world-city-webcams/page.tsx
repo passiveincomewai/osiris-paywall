@@ -170,7 +170,7 @@ export default async function WorldCityWebcamsPage() {
               ),
             ]}
             placeholder="Jump to a city page — try Seattle, London, Busan…"
-            emptyText={(v) => `No city page matches "${v}" yet.`}
+            emptyText={'No city page matches "{value}" yet.'}
           />
         </div>
 

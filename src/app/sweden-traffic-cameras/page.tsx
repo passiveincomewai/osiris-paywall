@@ -140,7 +140,7 @@ export default async function SwedenTrafficCamerasPage() {
           label="Sweden traffic areas"
           options={trafficAreas}
           placeholder="Search Sweden traffic by area…"
-          emptyText={(v) => `No Sweden traffic areas match "${v}".`}
+          emptyText={'No Sweden traffic areas match "{value}".'}
           targetId="sweden-traffic-explorer"
         />
 

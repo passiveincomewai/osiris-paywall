@@ -147,7 +147,7 @@ export default async function LiveWebcamsPage() {
             label="the whole directory"
             options={areas}
             placeholder="Search anywhere — try a city…"
-            emptyText={(v) => `No places in the directory match "${v}".`}
+            emptyText={'No places in the directory match "{value}".'}
             targetId="all-explorer"
           />
         </div>

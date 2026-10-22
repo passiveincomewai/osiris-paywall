@@ -141,7 +141,7 @@ export default async function SouthKoreaTrafficCamerasPage() {
           label="South Korea traffic areas"
           options={trafficAreas}
           placeholder="Search South Korea traffic by area…"
-          emptyText={(v) => `No South Korea traffic areas match "${v}".`}
+          emptyText={'No South Korea traffic areas match "{value}".'}
           targetId="south-korea-traffic-explorer"
         />
 

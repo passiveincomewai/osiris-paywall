@@ -136,7 +136,7 @@ export default async function AsiaWebcamsPage() {
         label="Asia"
         options={areas}
         placeholder="Search Asia by city…"
-        emptyText={(v) => `No cities in Asia match "${v}".`}
+        emptyText={'No cities in Asia match "{value}".'}
       />
       <StatRow
         stats={[

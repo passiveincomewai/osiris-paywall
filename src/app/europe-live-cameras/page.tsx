@@ -162,7 +162,7 @@ export default async function EuropeLiveCamerasPage() {
             label="Europe"
             options={areas}
             placeholder="Search Europe by city…"
-            emptyText={(v) => `No cities in Europe match "${v}".`}
+            emptyText={'No cities in Europe match "{value}".'}
             targetId="europe-explorer"
           />
         </div>

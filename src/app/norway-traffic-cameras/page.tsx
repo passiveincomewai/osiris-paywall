@@ -140,7 +140,7 @@ export default async function NorwayTrafficCamerasPage() {
           label="Norway traffic areas"
           options={trafficAreas}
           placeholder="Search Norway traffic by area…"
-          emptyText={(v) => `No Norway traffic areas match "${v}".`}
+          emptyText={'No Norway traffic areas match "{value}".'}
           targetId="norway-traffic-explorer"
         />
 

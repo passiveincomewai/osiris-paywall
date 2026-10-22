@@ -141,7 +141,7 @@ export default async function JapanTrafficCamerasPage() {
             label="Japan traffic areas"
             options={trafficAreas}
             placeholder="Search Japan traffic by area…"
-            emptyText={(v) => `No Japan traffic areas match "${v}".`}
+            emptyText={'No Japan traffic areas match "{value}".'}
             targetId="japan-traffic-explorer"
           />
         </div>

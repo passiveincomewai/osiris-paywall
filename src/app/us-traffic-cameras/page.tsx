@@ -114,7 +114,7 @@ export default async function UsTrafficCamerasPage() {
             label="US traffic areas"
             options={areas}
             placeholder="Search US traffic by state or city…"
-            emptyText={(v) => `No US traffic areas match "${v}".`}
+            emptyText={'No US traffic areas match "{value}".'}
             targetId="us-traffic-explorer"
           />
         </div>

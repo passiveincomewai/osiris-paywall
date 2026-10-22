@@ -140,7 +140,7 @@ export default async function CanadaTrafficCamerasPage() {
           label="Canada traffic areas"
           options={trafficAreas}
           placeholder="Search Canada traffic by area…"
-          emptyText={(v) => `No Canada traffic areas match "${v}".`}
+          emptyText={'No Canada traffic areas match "{value}".'}
           targetId="canada-traffic-explorer"
         />
 

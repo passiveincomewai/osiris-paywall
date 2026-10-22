@@ -140,7 +140,7 @@ export default async function GermanyTrafficCamerasPage() {
           label="Germany traffic areas"
           options={trafficAreas}
           placeholder="Search Germany traffic by area…"
-          emptyText={(v) => `No Germany traffic areas match "${v}".`}
+          emptyText={'No Germany traffic areas match "{value}".'}
           targetId="germany-traffic-explorer"
         />
 

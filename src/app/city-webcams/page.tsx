@@ -137,9 +137,7 @@ export default function CityWebcamsHubPage() {
           href: `/city-webcams/${c.slug}`,
         }))}
         placeholder="Jump to a city — try Seattle, London, Busan…"
-        emptyText={(v) =>
-          `No city page matches "${v}" yet — try the globe search instead; thousands more places have cameras without a dedicated page.`
-        }
+        emptyText={'No city page matches "{value}" yet — try the globe search instead; thousands more places have cameras without a dedicated page.'}
       />
       <StatRow
         stats={[
