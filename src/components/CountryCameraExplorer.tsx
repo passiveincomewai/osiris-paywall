@@ -327,7 +327,9 @@ function CardPreview({ cam }: { cam: CountryCamera }) {
   );
 }
 
-function CameraCard({ cam, onOpen }: { cam: CountryCamera; onOpen: (cam: CountryCamera) => void }) {
+/* Exported for the ski resort pages, whose grids render the same cards
+   over resort/route selections instead of a whole country. */
+export function CameraCard({ cam, onOpen }: { cam: CountryCamera; onOpen: (cam: CountryCamera) => void }) {
   return (
     <button
       type="button"

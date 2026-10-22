@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import cameraCountries from "@/data/camera-countries.json";
 import cityPages from "@/data/city-pages.json";
+import skiResorts from "@/data/ski-resorts.json";
 import { POSTS } from "./blog/posts";
 
 const BASE = "https://worldeye.app";
@@ -11,6 +12,13 @@ const BASE = "https://worldeye.app";
 const COUNTRY_SLUGS: string[] = (
   cameraCountries as { countries: Array<{ slug: string }> }
 ).countries.map((c) => c.slug);
+
+// Every resort in the generated ski dataset has a page (matches
+// generateStaticParams in src/app/ski-webcams/[resort]/page.tsx, both
+// reading the generated ski-resorts index).
+const SKI_RESORT_SLUGS: string[] = (
+  skiResorts as { resorts: Array<{ slug: string }> }
+).resorts.map((r) => r.slug);
 
 const SEO_PAGES = [
   "/cameras/countries",
@@ -240,6 +248,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}/cameras/countries/${slug}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SKI_RESORT_SLUGS.map((slug) => ({
+      url: `${BASE}/ski-webcams/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
       priority: 0.6,
     })),
   ];
