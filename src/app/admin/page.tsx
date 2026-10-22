@@ -556,6 +556,7 @@ export default async function AdminDashboardPage() {
             ) : null}
             <Link href="/admin/affiliates" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Affiliates</Link>
             <Link href="/admin/competitor-seo" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Competitor SEO</Link>
+            <Link href="/admin/conversion" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">Conversion</Link>
             <Link href="/" className="px-4 py-2 rounded-lg border border-white/15 text-white/70 hover:text-white">← Site</Link>
           </div>
         </div>
