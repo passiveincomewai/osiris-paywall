@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { Camera, Loader2, MapPin, PlayCircle, RefreshCw, Search } from 'lucide-react';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import ViewOnGlobeButton from '@/components/ViewOnGlobeButton';
+import { COUNTRY_CITY_EVENT } from '@/components/CountryCitySearch';
 import { freshen, previewMedia, refreshInterval } from '@/lib/camera-preview';
 import {
   cameraMediaKind,
@@ -412,6 +413,25 @@ export default function CountryCameraExplorer({
     return () => clearTimeout(t);
   }, [query]);
 
+  /* Search-by-city (the box at the top of the country page): a picked
+     city arrives on COUNTRY_CITY_EVENT and applies itself as the area
+     filter, replacing any free-text query so the result is exactly that
+     city. The same choice rides the URL as ?city=, which is read once
+     on load so a shared link lands pre-filtered. */
+  useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get('city');
+    if (fromUrl) setArea(fromUrl);
+    const onCity = (e: Event) => {
+      const name = (e as CustomEvent<string>).detail;
+      if (!name) return;
+      setQuery('');
+      setDebouncedQuery('');
+      setArea(name);
+    };
+    window.addEventListener(COUNTRY_CITY_EVENT, onCity);
+    return () => window.removeEventListener(COUNTRY_CITY_EVENT, onCity);
+  }, []);
+
   const filterKey = `${country}|${area ?? ''}|${debouncedQuery}|${runId}`;
   const current: GridState = grid.key === filterKey ? grid : EMPTY_GRID;
   const loading = grid.key !== filterKey;
@@ -526,7 +546,7 @@ export default function CountryCameraExplorer({
   }, [cameras, filtering, cityCounts]);
 
   return (
-    <div>
+    <div id="country-explorer" className="scroll-mt-6">
       {/* Search — server-side over the whole country */}
       <div className="relative">
         <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35 pointer-events-none" />
@@ -570,6 +590,21 @@ export default function CountryCameraExplorer({
               {a.name} · {a.count}
             </button>
           ))}
+          {/* A city picked in the search-by-city box is usually NOT one
+              of the chips above (they cap at the 24 biggest) — show the
+              active filter as its own chip so the visitor can see and
+              clear what the grid is filtered to. */}
+          {area && !cities.slice(0, MAX_AREA_CHIPS).some(a => a.name === area) && (
+            <button
+              type="button"
+              onClick={() => setArea(null)}
+              aria-pressed={true}
+              className="shrink-0 px-3.5 py-2 rounded-full border text-xs font-semibold transition bg-[#D4AF37] text-black border-[#D4AF37]"
+            >
+              {area}
+              {total !== null ? ` · ${total}` : ''} ✕
+            </button>
+          )}
         </div>
       )}
 

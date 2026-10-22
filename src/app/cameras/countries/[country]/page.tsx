@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import CountryCameraExplorer from "@/components/CountryCameraExplorer";
 import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
+import CountryCitySearch from "@/components/CountryCitySearch";
 import countriesIndex from "@/data/camera-countries.json";
 import { countryContentB, type CountryContent } from "@/data/country-content-b";
 import { countryContentC } from "@/data/country-content-c";
@@ -21,7 +22,7 @@ import {
   roster,
   watchGuide,
 } from "@/lib/country-page-content";
-import type { CountryCamera } from "@/lib/country-cameras";
+import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
 
 const BASE = "https://worldeye.app";
 
@@ -184,6 +185,11 @@ export default async function CountryPage({
   }
   const facts = countryFacts(c, records, COUNTRIES);
   const detail = detailParagraphs(c, facts);
+  /* The search-by-city box's list: EVERY area the catalogue holds for
+     this country (from the same records the depth sections compute
+     from), biggest first — not just the explorer's top-24 chips. If the
+     records failed to load, the index's top areas are the fallback. */
+  const cityList = records.length > 0 ? cameraAreas(records) : c.topCities;
   const region = regionLinks(slug, COUNTRIES);
   const guide = watchGuide(c, facts, region);
   const fullRoster = roster(c, records);
@@ -264,6 +270,7 @@ export default async function CountryPage({
           <p className="mt-4 text-white/55">
             Watch {plural(c.count, "live camera")} across {c.name} — free on the WorldEye globe.
           </p>
+          <CountryCitySearch countryName={c.name} cities={cityList} />
         </div>
 
         {/* Stat row */}
