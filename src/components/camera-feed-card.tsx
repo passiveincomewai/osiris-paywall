@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Camera, PlayCircle } from 'lucide-react';
+import { Camera, MapPin, PlayCircle } from 'lucide-react';
 import ViewOnGlobeButton from '@/components/ViewOnGlobeButton';
 import { freshen, previewMedia, refreshInterval } from '@/lib/camera-preview';
 import {
