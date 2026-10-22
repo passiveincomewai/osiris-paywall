@@ -571,8 +571,14 @@ export default function Dashboard() {
     street_level: false,
     balloons: false,
     cctv: true,
-    /* The live preview tiles over the camera dots — see CctvPreviews. */
-    cctv_previews: false,
+    /* The live preview tiles over the camera dots — see CctvPreviews.
+       On by default, as originally shipped (#310): past zoom 13 the nearest
+       cameras in view show their live feed in a tile above the dot. It was
+       flipped off as a side effect of the 8fb4a51 perf grab-bag (2026-10-10)
+       and never restored; the owner asked for it back 2026-10-21. The
+       component bounds itself (≤8 tiles, ≤4 decoding video), and anyone who
+       does not want it can switch it off under CCTV Cameras → Live Previews. */
+    cctv_previews: true,
     alert_cams: false,
     live_news: true,
     earthquakes: true,
