@@ -162,7 +162,7 @@ export interface CountryFacts {
   countryTotal: number;
 }
 
-const THEME_DEFS: Array<{ key: string; label: string; pattern: RegExp }> = [
+export const THEME_DEFS: Array<{ key: string; label: string; pattern: RegExp }> = [
   {
     key: "traffic",
     label: "roads and traffic",

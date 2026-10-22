@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
 
 export const BASE = "https://worldeye.app";
 
@@ -143,12 +144,18 @@ export function SampleGrid({ title, samples }: { title: string; samples: Sample[
             <div className="min-w-0">
               <div className="font-semibold text-sm truncate">{s.name}</div>
               {s.city && <div className="text-xs text-white/45">{s.city}</div>}
-              <a
-                href={s.id ? `${BASE}/?camera=${encodeURIComponent(s.id)}` : BASE}
-                className="text-xs text-[#00E5FF] hover:underline mt-1 inline-block"
-              >
-                View on the live map
-              </a>
+              {s.id ? (
+                <div className="mt-1.5">
+                  <ViewOnGlobeButton cameraId={s.id} cameraName={s.name} />
+                </div>
+              ) : (
+                <a
+                  href={BASE}
+                  className="text-xs text-[#00E5FF] hover:underline mt-1 inline-block"
+                >
+                  View on the live map
+                </a>
+              )}
             </div>
           </li>
         ))}
