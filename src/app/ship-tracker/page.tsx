@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
@@ -192,6 +193,8 @@ export default function ShipTrackerPage() {
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
 
+        <BreadcrumbLd trail={[{ label: "Ship Tracker" }]} />
+
         {/* Hero */}
         <div className="text-center max-w-2xl mx-auto">
           <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#00E5FF] border border-[#00E5FF]/30 rounded-full px-4 py-1.5 mb-6">
@@ -359,6 +362,16 @@ export default function ShipTrackerPage() {
               label: "Open the map",
               desc: "The free live 3D globe — flights, weather, cameras and more, no signup.",
               href: "/",
+            },
+            {
+              label: "Live flight tracker",
+              desc: "Aircraft live on the same globe — the air picture to pair with the sea picture.",
+              href: "/live-flight-tracker",
+            },
+            {
+              label: "Best ship tracking tools",
+              desc: "The best ship tracking tools compared — AIS trackers, port data and free globes.",
+              href: "/best-ship-tracking-tools",
             },
           ]}
         />

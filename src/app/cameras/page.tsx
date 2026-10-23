@@ -188,6 +188,25 @@ export default function CamerasPage() {
           </div>
         </div>
 
+        {/* Live Camera Index card */}
+        <div className="mt-16 max-w-3xl mx-auto">
+          <Link
+            href="/live-camera-index"
+            className="group block rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.06] to-transparent p-8 md:p-10 hover:border-[#D4AF37]/60 transition"
+          >
+            <p className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">THE NUMBERS BEHIND THE NETWORK</p>
+            <h2 className="text-xl md:text-2xl font-bold mt-3 flex items-center gap-2">
+              The Live Camera Index
+              <ArrowRight className="w-5 h-5 text-[#D4AF37] group-hover:translate-x-1 transition-transform" />
+            </h2>
+            <p className="text-sm text-white/55 leading-relaxed mt-3">
+              How many live public cameras are there, and where? The Live Camera Index
+              counts the catalogue WorldEye serves — by country, city, US state network
+              and publisher — and publishes the full dataset to download and cite.
+            </p>
+          </Link>
+        </div>
+
         {/* Reading the network */}
         <div className="mt-16 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold">How to actually use 74,229 cameras</h2>

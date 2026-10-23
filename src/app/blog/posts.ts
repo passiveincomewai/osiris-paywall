@@ -2606,6 +2606,7 @@ export const POSTS: BlogPost[] = [
         body: [
           "The United States lists 41,355 cameras. Japan lists 10,472. Thailand lists 118. Those numbers aren't a ranking of anything except openness: camera counts follow public data culture. American state transport departments publish enormous highway networks; Japan's river and road agencies publish dense public feeds; countries without open camera programs have only what their cities, resorts and businesses choose to stream.",
           "Every count on a country page is the number of feeds we actually serve for that country — not a scrape of a directory, not a rounded marketing figure. Counts move as feeds are added and as third-party cameras go offline, and the pages move with them.",
+          "Those counts are now published as a citable dataset in the [Live Camera Index](/live-camera-index), which breaks the served catalogue down by country, city, US state network and publisher — with the methodology, and the downloadable data, out in the open.",
         ],
       },
       {

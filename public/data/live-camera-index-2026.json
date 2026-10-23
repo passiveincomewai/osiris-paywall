@@ -1,0 +1,1388 @@
+{
+  "name": "WorldEye Live Camera Index",
+  "edition": "October 2026",
+  "generatedAt": "2026-10-23T01:47:29.445Z",
+  "snapshot": {
+    "source": "WorldEye production catalogue API (https://worldeye.app/api/cctv?region=all)",
+    "payloadTimestamp": "2026-10-23T01:43:26.911Z",
+    "records": 84455,
+    "uniqueCameras": 83795,
+    "regions": 77,
+    "pendingRegions": [
+      "us-central",
+      "turkey",
+      "georgia",
+      "mississippi"
+    ]
+  },
+  "totals": {
+    "served": 83795,
+    "servedCountries": 113,
+    "servedUnattributed": 16,
+    "indexedRecords": 77376,
+    "indexedAttributed": 76575,
+    "indexedCountries": 109,
+    "indexedUnattributed": 3,
+    "droppedNearDuplicates": 798,
+    "distinctSources": 269
+  },
+  "countries": [
+    {
+      "name": "United States",
+      "slug": "united-states",
+      "served": 47341,
+      "indexed": 41355,
+      "sharePct": 56.5
+    },
+    {
+      "name": "Japan",
+      "slug": "japan",
+      "served": 10674,
+      "indexed": 10472,
+      "sharePct": 12.7
+    },
+    {
+      "name": "Canada",
+      "slug": "canada",
+      "served": 5068,
+      "indexed": 4685,
+      "sharePct": 6
+    },
+    {
+      "name": "Taiwan",
+      "slug": "taiwan",
+      "served": 2709,
+      "indexed": 3243,
+      "sharePct": 3.2
+    },
+    {
+      "name": "Spain",
+      "slug": "spain",
+      "served": 2571,
+      "indexed": 2120,
+      "sharePct": 3.1
+    },
+    {
+      "name": "United Kingdom",
+      "slug": "united-kingdom",
+      "served": 2062,
+      "indexed": 1403,
+      "sharePct": 2.5
+    },
+    {
+      "name": "Austria",
+      "slug": "austria",
+      "served": 1885,
+      "indexed": 1725,
+      "sharePct": 2.2
+    },
+    {
+      "name": "South Korea",
+      "slug": "south-korea",
+      "served": 1566,
+      "indexed": 1610,
+      "sharePct": 1.9
+    },
+    {
+      "name": "Hong Kong",
+      "slug": "hong-kong",
+      "served": 1202,
+      "indexed": 1350,
+      "sharePct": 1.4
+    },
+    {
+      "name": "Sweden",
+      "slug": "sweden",
+      "served": 1066,
+      "indexed": 1569,
+      "sharePct": 1.3
+    },
+    {
+      "name": "Italy",
+      "slug": "italy",
+      "served": 1021,
+      "indexed": 1030,
+      "sharePct": 1.2
+    },
+    {
+      "name": "Finland",
+      "slug": "finland",
+      "served": 824,
+      "indexed": 825,
+      "sharePct": 1
+    },
+    {
+      "name": "Norway",
+      "slug": "norway",
+      "served": 739,
+      "indexed": 746,
+      "sharePct": 0.9
+    },
+    {
+      "name": "Iceland",
+      "slug": "iceland",
+      "served": 499,
+      "indexed": 482,
+      "sharePct": 0.6
+    },
+    {
+      "name": "Australia",
+      "slug": "australia",
+      "served": 456,
+      "indexed": 421,
+      "sharePct": 0.5
+    },
+    {
+      "name": "Indonesia",
+      "slug": "indonesia",
+      "served": 413,
+      "indexed": 256,
+      "sharePct": 0.5
+    },
+    {
+      "name": "Germany",
+      "slug": "germany",
+      "served": 359,
+      "indexed": 343,
+      "sharePct": 0.4
+    },
+    {
+      "name": "Lithuania",
+      "slug": "lithuania",
+      "served": 324,
+      "indexed": 326,
+      "sharePct": 0.4
+    },
+    {
+      "name": "New Zealand",
+      "slug": "new-zealand",
+      "served": 262,
+      "indexed": 257,
+      "sharePct": 0.3
+    },
+    {
+      "name": "Netherlands",
+      "slug": "netherlands",
+      "served": 246,
+      "indexed": 246,
+      "sharePct": 0.3
+    },
+    {
+      "name": "Turkey",
+      "slug": "turkey",
+      "served": 239,
+      "indexed": 235,
+      "sharePct": 0.3
+    },
+    {
+      "name": "France",
+      "slug": "france",
+      "served": 216,
+      "indexed": 51,
+      "sharePct": 0.3
+    },
+    {
+      "name": "Ireland",
+      "slug": "ireland",
+      "served": 211,
+      "indexed": 216,
+      "sharePct": 0.3
+    },
+    {
+      "name": "Russia",
+      "slug": "russia",
+      "served": 170,
+      "indexed": 162,
+      "sharePct": 0.2
+    },
+    {
+      "name": "Vietnam",
+      "slug": "vietnam",
+      "served": 163,
+      "indexed": 324,
+      "sharePct": 0.2
+    },
+    {
+      "name": "Estonia",
+      "slug": "estonia",
+      "served": 138,
+      "indexed": 133,
+      "sharePct": 0.2
+    },
+    {
+      "name": "CO",
+      "slug": "co",
+      "served": 134,
+      "indexed": null,
+      "sharePct": 0.2
+    },
+    {
+      "name": "Poland",
+      "slug": "poland",
+      "served": 103,
+      "indexed": 73,
+      "sharePct": 0.1
+    },
+    {
+      "name": "Belgium",
+      "slug": "belgium",
+      "served": 99,
+      "indexed": 3,
+      "sharePct": 0.1
+    },
+    {
+      "name": "Brazil",
+      "slug": "brazil",
+      "served": 90,
+      "indexed": 38,
+      "sharePct": 0.1
+    },
+    {
+      "name": "Thailand",
+      "slug": "thailand",
+      "served": 65,
+      "indexed": 118,
+      "sharePct": 0.1
+    },
+    {
+      "name": "Switzerland",
+      "slug": "switzerland",
+      "served": 55,
+      "indexed": 47,
+      "sharePct": 0.1
+    },
+    {
+      "name": "AD",
+      "slug": "ad",
+      "served": 54,
+      "indexed": null,
+      "sharePct": 0.1
+    },
+    {
+      "name": "Luxembourg",
+      "slug": "luxembourg",
+      "served": 48,
+      "indexed": 48,
+      "sharePct": 0.1
+    },
+    {
+      "name": "Malta",
+      "slug": "malta",
+      "served": 42,
+      "indexed": 42,
+      "sharePct": 0.1
+    },
+    {
+      "name": "Malaysia",
+      "slug": "malaysia",
+      "served": 37,
+      "indexed": 41,
+      "sharePct": 0
+    },
+    {
+      "name": "Macau",
+      "slug": "macau",
+      "served": 34,
+      "indexed": 36,
+      "sharePct": 0
+    },
+    {
+      "name": "Romania",
+      "slug": "romania",
+      "served": 33,
+      "indexed": 29,
+      "sharePct": 0
+    },
+    {
+      "name": "Latvia",
+      "slug": "latvia",
+      "served": 32,
+      "indexed": 33,
+      "sharePct": 0
+    },
+    {
+      "name": "Bulgaria",
+      "slug": "bulgaria",
+      "served": 30,
+      "indexed": 33,
+      "sharePct": 0
+    },
+    {
+      "name": "Greece",
+      "slug": "greece",
+      "served": 30,
+      "indexed": 27,
+      "sharePct": 0
+    },
+    {
+      "name": "Croatia",
+      "slug": "croatia",
+      "served": 29,
+      "indexed": 29,
+      "sharePct": 0
+    },
+    {
+      "name": "Slovenia",
+      "slug": "slovenia",
+      "served": 29,
+      "indexed": 7,
+      "sharePct": 0
+    },
+    {
+      "name": "Philippines",
+      "slug": "philippines",
+      "served": 25,
+      "indexed": 27,
+      "sharePct": 0
+    },
+    {
+      "name": "US Virgin Islands",
+      "slug": "us-virgin-islands",
+      "served": 21,
+      "indexed": 21,
+      "sharePct": 0
+    },
+    {
+      "name": "Mexico",
+      "slug": "mexico",
+      "served": 20,
+      "indexed": 21,
+      "sharePct": 0
+    },
+    {
+      "name": "Israel",
+      "slug": "israel",
+      "served": 19,
+      "indexed": 17,
+      "sharePct": 0
+    },
+    {
+      "name": "Kyrgyzstan",
+      "slug": "kyrgyzstan",
+      "served": 19,
+      "indexed": 22,
+      "sharePct": 0
+    },
+    {
+      "name": "Peru",
+      "slug": "peru",
+      "served": 18,
+      "indexed": 18,
+      "sharePct": 0
+    },
+    {
+      "name": "Maldives",
+      "slug": "maldives",
+      "served": 16,
+      "indexed": 16,
+      "sharePct": 0
+    },
+    {
+      "name": "Chile",
+      "slug": "chile",
+      "served": 15,
+      "indexed": 15,
+      "sharePct": 0
+    },
+    {
+      "name": "Portugal",
+      "slug": "portugal",
+      "served": 14,
+      "indexed": 17,
+      "sharePct": 0
+    },
+    {
+      "name": "Czechia",
+      "slug": "czechia",
+      "served": 13,
+      "indexed": 3,
+      "sharePct": 0
+    },
+    {
+      "name": "South Africa",
+      "slug": "south-africa",
+      "served": 13,
+      "indexed": 12,
+      "sharePct": 0
+    },
+    {
+      "name": "Kazakhstan",
+      "slug": "kazakhstan",
+      "served": 12,
+      "indexed": 14,
+      "sharePct": 0
+    },
+    {
+      "name": "Argentina",
+      "slug": "argentina",
+      "served": 12,
+      "indexed": 12,
+      "sharePct": 0
+    },
+    {
+      "name": "Costa Rica",
+      "slug": "costa-rica",
+      "served": 12,
+      "indexed": 8,
+      "sharePct": 0
+    },
+    {
+      "name": "China",
+      "slug": "china",
+      "served": 11,
+      "indexed": 16,
+      "sharePct": 0
+    },
+    {
+      "name": "Ukraine",
+      "slug": "ukraine",
+      "served": 10,
+      "indexed": 7,
+      "sharePct": 0
+    },
+    {
+      "name": "Singapore",
+      "slug": "singapore",
+      "served": 9,
+      "indexed": 9,
+      "sharePct": 0
+    },
+    {
+      "name": "Moldova",
+      "slug": "moldova",
+      "served": 8,
+      "indexed": 6,
+      "sharePct": 0
+    },
+    {
+      "name": "Ecuador",
+      "slug": "ecuador",
+      "served": 8,
+      "indexed": 8,
+      "sharePct": 0
+    },
+    {
+      "name": "AQ",
+      "slug": "aq",
+      "served": 8,
+      "indexed": null,
+      "sharePct": 0
+    },
+    {
+      "name": "Georgia",
+      "slug": "georgia",
+      "served": 7,
+      "indexed": 7,
+      "sharePct": 0
+    },
+    {
+      "name": "Panama",
+      "slug": "panama",
+      "served": 6,
+      "indexed": 3,
+      "sharePct": 0
+    },
+    {
+      "name": "Hungary",
+      "slug": "hungary",
+      "served": 6,
+      "indexed": 6,
+      "sharePct": 0
+    },
+    {
+      "name": "Cyprus",
+      "slug": "cyprus",
+      "served": 5,
+      "indexed": 5,
+      "sharePct": 0
+    },
+    {
+      "name": "India",
+      "slug": "india",
+      "served": 5,
+      "indexed": 4,
+      "sharePct": 0
+    },
+    {
+      "name": "Nepal",
+      "slug": "nepal",
+      "served": 5,
+      "indexed": 5,
+      "sharePct": 0
+    },
+    {
+      "name": "Dominican Republic",
+      "slug": "dominican-republic",
+      "served": 5,
+      "indexed": 5,
+      "sharePct": 0
+    },
+    {
+      "name": "Puerto Rico",
+      "slug": "puerto-rico",
+      "served": 5,
+      "indexed": 5,
+      "sharePct": 0
+    },
+    {
+      "name": "Kenya",
+      "slug": "kenya",
+      "served": 5,
+      "indexed": 5,
+      "sharePct": 0
+    },
+    {
+      "name": "Tanzania",
+      "slug": "tanzania",
+      "served": 5,
+      "indexed": 5,
+      "sharePct": 0
+    },
+    {
+      "name": "Belarus",
+      "slug": "belarus",
+      "served": 4,
+      "indexed": 3,
+      "sharePct": 0
+    },
+    {
+      "name": "Azerbaijan",
+      "slug": "azerbaijan",
+      "served": 4,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Sint Maarten",
+      "slug": "sint-maarten",
+      "served": 4,
+      "indexed": 4,
+      "sharePct": 0
+    },
+    {
+      "name": "Seychelles",
+      "slug": "seychelles",
+      "served": 4,
+      "indexed": 4,
+      "sharePct": 0
+    },
+    {
+      "name": "Belize",
+      "slug": "belize",
+      "served": 3,
+      "indexed": 3,
+      "sharePct": 0
+    },
+    {
+      "name": "El Salvador",
+      "slug": "el-salvador",
+      "served": 3,
+      "indexed": 3,
+      "sharePct": 0
+    },
+    {
+      "name": "Albania",
+      "slug": "albania",
+      "served": 3,
+      "indexed": 3,
+      "sharePct": 0
+    },
+    {
+      "name": "Bosnia and Herzegovina",
+      "slug": "bosnia-and-herzegovina",
+      "served": 3,
+      "indexed": 3,
+      "sharePct": 0
+    },
+    {
+      "name": "KY",
+      "slug": "ky",
+      "served": 3,
+      "indexed": null,
+      "sharePct": 0
+    },
+    {
+      "name": "Lebanon",
+      "slug": "lebanon",
+      "served": 2,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Serbia",
+      "slug": "serbia",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "North Macedonia",
+      "slug": "north-macedonia",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Slovakia",
+      "slug": "slovakia",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Saudi Arabia",
+      "slug": "saudi-arabia",
+      "served": 2,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Egypt",
+      "slug": "egypt",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Bermuda",
+      "slug": "bermuda",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Bolivia",
+      "slug": "bolivia",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Grenada",
+      "slug": "grenada",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Guadeloupe",
+      "slug": "guadeloupe",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Honduras",
+      "slug": "honduras",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Denmark",
+      "slug": "denmark",
+      "served": 2,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Jordan",
+      "slug": "jordan",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Oman",
+      "slug": "oman",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Sri Lanka",
+      "slug": "sri-lanka",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Christmas Island",
+      "slug": "christmas-island",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Yemen",
+      "slug": "yemen",
+      "served": 1,
+      "indexed": 2,
+      "sharePct": 0
+    },
+    {
+      "name": "Barbados",
+      "slug": "barbados",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Martinique",
+      "slug": "martinique",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Uruguay",
+      "slug": "uruguay",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Venezuela",
+      "slug": "venezuela",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Morocco",
+      "slug": "morocco",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Senegal",
+      "slug": "senegal",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Faroe Islands",
+      "slug": "faroe-islands",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "San Marino",
+      "slug": "san-marino",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Vatican City",
+      "slug": "vatican-city",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Bonaire",
+      "slug": "bonaire",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "Curaçao",
+      "slug": "curacao",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    },
+    {
+      "name": "JE",
+      "slug": "je",
+      "served": 1,
+      "indexed": null,
+      "sharePct": 0
+    },
+    {
+      "name": "NF",
+      "slug": "nf",
+      "served": 1,
+      "indexed": null,
+      "sharePct": 0
+    },
+    {
+      "name": "Madagascar",
+      "slug": "madagascar",
+      "served": 1,
+      "indexed": 1,
+      "sharePct": 0
+    }
+  ],
+  "indexedOnlyCountries": [
+    {
+      "name": "Iran",
+      "slug": "iran",
+      "indexed": 1
+    },
+    {
+      "name": "Armenia",
+      "slug": "armenia",
+      "indexed": 1
+    }
+  ],
+  "topCities": [
+    {
+      "name": "Seattle",
+      "slug": "seattle",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 499,
+      "sourceCount": 3,
+      "topSource": "OpenCCTV / wsdot",
+      "topSourceCount": 355,
+      "stills": 499,
+      "streams": 0
+    },
+    {
+      "name": "Phoenix",
+      "slug": "phoenix",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 435,
+      "sourceCount": 2,
+      "topSource": "ADOT",
+      "topSourceCount": 434,
+      "stills": 435,
+      "streams": 0
+    },
+    {
+      "name": "Stockholm",
+      "slug": "stockholm",
+      "country": "Sweden",
+      "countrySlug": "sweden",
+      "count": 350,
+      "sourceCount": 3,
+      "topSource": "Trafikverket",
+      "topSourceCount": 333,
+      "stills": 348,
+      "streams": 2
+    },
+    {
+      "name": "Busan",
+      "slug": "busan",
+      "country": "South Korea",
+      "countrySlug": "south-korea",
+      "count": 321,
+      "sourceCount": 1,
+      "topSource": "OpenCCTV / busan",
+      "topSourceCount": 321,
+      "stills": 0,
+      "streams": 321
+    },
+    {
+      "name": "San Antonio",
+      "slug": "san-antonio",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 307,
+      "sourceCount": 1,
+      "topSource": "TxDOT",
+      "topSourceCount": 307,
+      "stills": 307,
+      "streams": 0
+    },
+    {
+      "name": "Austin",
+      "slug": "austin",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 275,
+      "sourceCount": 1,
+      "topSource": "TxDOT",
+      "topSourceCount": 275,
+      "stills": 275,
+      "streams": 0
+    },
+    {
+      "name": "El Paso",
+      "slug": "el-paso",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 261,
+      "sourceCount": 3,
+      "topSource": "TxDOT",
+      "topSourceCount": 256,
+      "stills": 261,
+      "streams": 0
+    },
+    {
+      "name": "Beaumont",
+      "slug": "beaumont",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 249,
+      "sourceCount": 3,
+      "topSource": "TxDOT",
+      "topSourceCount": 240,
+      "stills": 249,
+      "streams": 0
+    },
+    {
+      "name": "Calgary",
+      "slug": "calgary",
+      "country": "Canada",
+      "countrySlug": "canada",
+      "count": 233,
+      "sourceCount": 2,
+      "topSource": "OpenCCTV / alberta",
+      "topSourceCount": 191,
+      "stills": 233,
+      "streams": 0
+    },
+    {
+      "name": "Queens",
+      "slug": "queens",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 229,
+      "sourceCount": 1,
+      "topSource": "OpenCCTV / ny511",
+      "topSourceCount": 229,
+      "stills": 0,
+      "streams": 229
+    },
+    {
+      "name": "Taichung",
+      "slug": "taichung",
+      "country": "Taiwan",
+      "countrySlug": "taiwan",
+      "count": 222,
+      "sourceCount": 2,
+      "topSource": "THB Highway Bureau",
+      "topSourceCount": 151,
+      "stills": 206,
+      "streams": 16
+    },
+    {
+      "name": "Istanbul",
+      "slug": "istanbul",
+      "country": "Turkey",
+      "countrySlug": "turkey",
+      "count": 222,
+      "sourceCount": 2,
+      "topSource": "OpenCCTV / ibb-istanbul",
+      "topSourceCount": 221,
+      "stills": 1,
+      "streams": 221
+    },
+    {
+      "name": "Incheon",
+      "slug": "incheon",
+      "country": "South Korea",
+      "countrySlug": "south-korea",
+      "count": 212,
+      "sourceCount": 1,
+      "topSource": "OpenCCTV / incheon",
+      "topSourceCount": 212,
+      "stills": 0,
+      "streams": 212
+    },
+    {
+      "name": "Baltimore",
+      "slug": "baltimore",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 199,
+      "sourceCount": 3,
+      "topSource": "OpenCCTV / mdchart",
+      "topSourceCount": 197,
+      "stills": 2,
+      "streams": 197
+    },
+    {
+      "name": "Taipei",
+      "slug": "taipei",
+      "country": "Taiwan",
+      "countrySlug": "taiwan",
+      "count": 195,
+      "sourceCount": 5,
+      "topSource": "THB Highway Bureau",
+      "topSourceCount": 135,
+      "stills": 181,
+      "streams": 14
+    },
+    {
+      "name": "Osaka",
+      "slug": "osaka",
+      "country": "Japan",
+      "countrySlug": "japan",
+      "count": 193,
+      "sourceCount": 6,
+      "topSource": "OpenCCTV / rivergojp",
+      "topSourceCount": 175,
+      "stills": 191,
+      "streams": 2
+    },
+    {
+      "name": "Sapporo",
+      "slug": "sapporo",
+      "country": "Japan",
+      "countrySlug": "japan",
+      "count": 185,
+      "sourceCount": 6,
+      "topSource": "OpenCCTV / rivergojp",
+      "topSourceCount": 176,
+      "stills": 182,
+      "streams": 3
+    },
+    {
+      "name": "Bronx",
+      "slug": "bronx",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 172,
+      "sourceCount": 2,
+      "topSource": "OpenCCTV / ny511",
+      "topSourceCount": 171,
+      "stills": 1,
+      "streams": 171
+    },
+    {
+      "name": "A Coruña",
+      "slug": "a-coruna",
+      "country": "Spain",
+      "countrySlug": "spain",
+      "count": 170,
+      "sourceCount": 1,
+      "topSource": "DGT",
+      "topSourceCount": 170,
+      "stills": 170,
+      "streams": 0
+    },
+    {
+      "name": "Ho Chi Minh City",
+      "slug": "ho-chi-minh-city",
+      "country": "Vietnam",
+      "countrySlug": "vietnam",
+      "count": 170,
+      "sourceCount": 1,
+      "topSource": "OpenCCTV / vietnam-traffic",
+      "topSourceCount": 170,
+      "stills": 170,
+      "streams": 0
+    },
+    {
+      "name": "Denver",
+      "slug": "denver",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 166,
+      "sourceCount": 1,
+      "topSource": "OpenCCTV / cotrip",
+      "topSourceCount": 166,
+      "stills": 0,
+      "streams": 166
+    },
+    {
+      "name": "Daegu",
+      "slug": "daegu",
+      "country": "South Korea",
+      "countrySlug": "south-korea",
+      "count": 164,
+      "sourceCount": 1,
+      "topSource": "OpenCCTV / daegu",
+      "topSourceCount": 164,
+      "stills": 0,
+      "streams": 164
+    },
+    {
+      "name": "San Diego",
+      "slug": "san-diego",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 162,
+      "sourceCount": 4,
+      "topSource": "Caltrans",
+      "topSourceCount": 156,
+      "stills": 162,
+      "streams": 0
+    },
+    {
+      "name": "Rochester",
+      "slug": "rochester",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 156,
+      "sourceCount": 2,
+      "topSource": "OpenCCTV / ny511",
+      "topSourceCount": 155,
+      "stills": 1,
+      "streams": 155
+    },
+    {
+      "name": "Washington, DC",
+      "slug": "washington-dc",
+      "country": "United States",
+      "countrySlug": "united-states",
+      "count": 154,
+      "sourceCount": 1,
+      "topSource": "OpenCCTV / mdchart",
+      "topSourceCount": 154,
+      "stills": 0,
+      "streams": 154
+    }
+  ],
+  "cityIndexSize": 46,
+  "cityThreshold": 100,
+  "usStateNetworks": [
+    {
+      "state": "Florida",
+      "slug": "florida",
+      "networks": [
+        "FDOT"
+      ],
+      "cameras": 4991
+    },
+    {
+      "state": "Texas",
+      "slug": "texas",
+      "networks": [
+        "TxDOT"
+      ],
+      "cameras": 4355
+    },
+    {
+      "state": "California",
+      "slug": null,
+      "networks": [
+        "Caltrans",
+        "OpenCCTV / caltrans"
+      ],
+      "cameras": 3308
+    },
+    {
+      "state": "Utah",
+      "slug": "utah",
+      "networks": [
+        "UDOT"
+      ],
+      "cameras": 2086
+    },
+    {
+      "state": "Virginia",
+      "slug": null,
+      "networks": [
+        "OpenCCTV / virginia"
+      ],
+      "cameras": 1455
+    },
+    {
+      "state": "New York",
+      "slug": null,
+      "networks": [
+        "OpenCCTV / ny511"
+      ],
+      "cameras": 1365
+    },
+    {
+      "state": "Washington",
+      "slug": null,
+      "networks": [
+        "OpenCCTV / wsdot"
+      ],
+      "cameras": 1164
+    },
+    {
+      "state": "Oregon",
+      "slug": null,
+      "networks": [
+        "ODOT TripCheck"
+      ],
+      "cameras": 1159
+    },
+    {
+      "state": "North Carolina",
+      "slug": null,
+      "networks": [
+        "NCDOT"
+      ],
+      "cameras": 1021
+    },
+    {
+      "state": "Colorado",
+      "slug": null,
+      "networks": [
+        "OpenCCTV / cotrip"
+      ],
+      "cameras": 955
+    },
+    {
+      "state": "Michigan",
+      "slug": null,
+      "networks": [
+        "MDOT MiDrive"
+      ],
+      "cameras": 804
+    },
+    {
+      "state": "Indiana",
+      "slug": "indiana",
+      "networks": [
+        "INDOT TrafficWise"
+      ],
+      "cameras": 708
+    },
+    {
+      "state": "Nevada",
+      "slug": "nevada",
+      "networks": [
+        "NDOT"
+      ],
+      "cameras": 652
+    },
+    {
+      "state": "Arizona",
+      "slug": "arizona",
+      "networks": [
+        "ADOT"
+      ],
+      "cameras": 644
+    },
+    {
+      "state": "Maryland",
+      "slug": null,
+      "networks": [
+        "OpenCCTV / mdchart"
+      ],
+      "cameras": 457
+    },
+    {
+      "state": "Louisiana",
+      "slug": null,
+      "networks": [
+        "LADOTD"
+      ],
+      "cameras": 336
+    },
+    {
+      "state": "Ohio",
+      "slug": null,
+      "networks": [
+        "OpenCCTV / ohgo"
+      ],
+      "cameras": 133
+    }
+  ],
+  "topSources": [
+    {
+      "name": "OpenCCTV / rivergojp",
+      "count": 9791
+    },
+    {
+      "name": "FDOT",
+      "count": 4991
+    },
+    {
+      "name": "TxDOT",
+      "count": 4355
+    },
+    {
+      "name": "FAA WeatherCams",
+      "count": 3545
+    },
+    {
+      "name": "OpenCCTV / state511",
+      "count": 3233
+    },
+    {
+      "name": "Caltrans",
+      "count": 2936
+    },
+    {
+      "name": "OpenCCTV / arcgis_cams",
+      "count": 2603
+    },
+    {
+      "name": "THB Highway Bureau",
+      "count": 2163
+    },
+    {
+      "name": "UDOT",
+      "count": 2086
+    },
+    {
+      "name": "DGT",
+      "count": 1934
+    },
+    {
+      "name": "ASFINAG",
+      "count": 1833
+    },
+    {
+      "name": "OpenCCTV / castlerock",
+      "count": 1658
+    },
+    {
+      "name": "OpenCCTV / ndawn",
+      "count": 1563
+    },
+    {
+      "name": "OpenCCTV / virginia",
+      "count": 1455
+    },
+    {
+      "name": "OpenCCTV / ny511",
+      "count": 1365
+    },
+    {
+      "name": "OpenCCTV / wsdot",
+      "count": 1164
+    },
+    {
+      "name": "ODOT TripCheck",
+      "count": 1159
+    },
+    {
+      "name": "ODOT OHGO",
+      "count": 1119
+    },
+    {
+      "name": "DriveBC",
+      "count": 1067
+    },
+    {
+      "name": "NCDOT",
+      "count": 1021
+    }
+  ],
+  "formats": [
+    {
+      "name": "hls",
+      "count": 14181
+    },
+    {
+      "name": "jpg",
+      "count": 9259
+    },
+    {
+      "name": "mp4",
+      "count": 1658
+    },
+    {
+      "name": "iframe",
+      "count": 237
+    },
+    {
+      "name": "mjpeg",
+      "count": 94
+    }
+  ],
+  "formatsTypedTotal": 25429,
+  "feedKinds": {
+    "feedUrl": 69242,
+    "streamUrl": 16171,
+    "externalUrl": 9651
+  },
+  "citation": "WorldEye (2026). Live Camera Index — October 2026: 83,795 live public cameras served across 113 countries. WorldEye. https://worldeye.app/live-camera-index"
+}

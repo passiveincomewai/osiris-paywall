@@ -5,6 +5,8 @@ import SiteFooter from "@/components/SiteFooter";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
+import UpdatedStamp from "@/components/UpdatedStamp";
 import {
   CATALOGUE_GENERATED_AT,
   EXPLORE_SCOPES,
@@ -73,13 +75,36 @@ export default async function UsTrafficCamerasPage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "US Traffic Cameras — Every State DOT Network",
-    description: `Directory of ${fmt(total)} live US traffic cameras from state DOT, 511 and tollway sources.`,
-    url: "https://worldeye.app/us-traffic-cameras",
-    isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-    numberOfItems: total,
-    dateModified: CATALOGUE_GENERATED_AT,
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: "US Traffic Cameras — Every State DOT Network",
+        description: `Directory of ${fmt(total)} live US traffic cameras from state DOT, 511 and tollway sources.`,
+        url: "https://worldeye.app/us-traffic-cameras",
+        isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+        numberOfItems: total,
+        dateModified: CATALOGUE_GENERATED_AT,
+        mainEntity: {
+          "@type": "ItemList",
+          name: "State traffic camera pages",
+          numberOfItems: STATE_PAGES.length,
+          itemListElement: STATE_PAGES.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: `${s.name} traffic cameras`,
+            url: `https://worldeye.app/us-traffic-cameras/${s.slug}`,
+          })),
+        },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQS.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      },
+    ],
   };
 
   return (
@@ -95,6 +120,9 @@ export default async function UsTrafficCamerasPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Live Traffic Cameras", href: "/live-traffic-cameras" }, { label: "US Traffic Cameras" }]} />
+        <UpdatedStamp at={CATALOGUE_GENERATED_AT} label="Camera index updated" source="WorldEye camera catalogue" className="mb-8" />
 
         {/* Hero */}
         <div className="max-w-3xl">

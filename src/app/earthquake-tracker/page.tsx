@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Activity, MapPin, Clock, Gauge, Newspaper, Plane, Eye, Bell, ChevronDown } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import LiveQuakeList from "@/components/events/LiveQuakeList";
 
@@ -133,6 +134,8 @@ export default function EarthquakeTrackerPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Earthquake Tracker" }]} />
 
         {/* Hero */}
         <div className="text-center max-w-2xl mx-auto">
@@ -390,6 +393,11 @@ export default function EarthquakeTrackerPage() {
               label: "Live cameras",
               desc: "74,229 public cameras — see conditions on the ground near an event.",
               href: "/cameras",
+            },
+            {
+              label: "Volcano webcams",
+              desc: "Live cameras on volcanoes around the world — craters and eruption activity as it happens.",
+              href: "/volcano-webcams",
             },
           ]}
         />

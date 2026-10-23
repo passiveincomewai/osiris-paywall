@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS, getPost } from "../posts";
 
 export function generateStaticParams() {
@@ -130,6 +131,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE BLOG</span>
         </div>
+        <BreadcrumbLd trail={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
 
         {/* Header */}
         <div className="flex flex-wrap gap-2 mb-5">

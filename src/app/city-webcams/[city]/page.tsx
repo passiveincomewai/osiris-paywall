@@ -773,7 +773,7 @@ const RELATED: { label: string; href: string }[] = [
 /* (see that script's header for the full derivation: union of the     */
 /* production API build and the route's local assembly snapshot,       */
 /* deduped by id, grouped by the records' own city field with the      */
-/* camera directory's country normalization; only groups of >=100      */
+/* camera directory's country normalization; only groups of >=50       */
 /* whose city field actually names a city — states, provinces,         */
 /* counties, motorway corridors and region/district labels excluded).  */
 /* The copy below is a template parameterised by those numbers only —  */
@@ -858,7 +858,7 @@ function generatedCfg(g: GenCity): CityCfg {
     h1: `${g.name} Live Webcams`,
     sub: `Watch ${fmt(g.count)} live cameras in ${g.name} — free on the WorldEye globe.`,
     intro: [
-      `${g.name} accounts for ${fmt(g.count)} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)} — about ${shareLabel} of the national total. The largest share of the feeds is published by ${srcList}, and WorldEye collects them into one searchable map layer alongside its 74,229 cameras worldwide.`,
+      `There are ${fmt(g.count)} live webcams in ${g.name}, ${g.country}, on WorldEye — public feeds published by ${srcList}, all free to watch with no signup. ${g.name} accounts for about ${shareLabel} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)}, and every feed sits on the same searchable live map as WorldEye's 74,229 cameras worldwide.`,
       `Featured feeds in the index include ${joinNames(feat)} — and every camera in the list below links straight into the live globe with that feed open, so you can go from this page to a live view in one tap.`,
       mixParagraph,
       `Use the grid the way it is meant to be used: a two-minute check of the cameras on your route before you leave. What is happening on the ground — a jam, a closure, a storm moving in — shows up on these feeds as it happens, not as a forecast said it would.`,
@@ -889,6 +889,10 @@ function generatedCfg(g: GenCity): CityCfg {
       {
         q: `Where do the ${g.name} cameras come from?`,
         a: `They are public camera feeds — the largest share is published by ${srcList}. WorldEye collects the feeds into one map layer; the cameras themselves remain the operators' own, published for public monitoring.`,
+      },
+      {
+        q: `Which ${g.name} cameras can I watch right now?`,
+        a: `The featured list on this page names ${g.samples.length} of them — including ${joinNames(feat)} — and each one links straight into the live globe with that feed open. The full index holds ${fmt(g.count)} ${g.name} cameras; zoom into ${g.name} on the map to browse the rest.`,
       },
       {
         q: "Are the cameras live video or still images?",
@@ -1050,6 +1054,7 @@ export default async function CityWebcamPage({
       <JsonLd data={breadcrumbLd} />
       <FaqJsonLd faqs={c.faqs} />
       <Breadcrumb
+        schema={false}
         trail={[
           { label: "Home", href: "/" },
           { label: "Countries", href: "/cameras/countries" },

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
@@ -161,6 +162,8 @@ export default function LiveFlightTrackerPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Live Flight Tracker" }]} />
 
         {/* Hero */}
         <div className="text-center max-w-3xl mx-auto">
@@ -416,6 +419,16 @@ export default function LiveFlightTrackerPage() {
               label: "All features",
               desc: "Everything WorldEye can do — free forever layers and Pro tools.",
               href: "/features",
+            },
+            {
+              label: "Live plane spotting",
+              desc: "Airport cameras matched to the live flight layer — watch arrivals and departures on approach.",
+              href: "/live-plane-spotting",
+            },
+            {
+              label: "Ship tracker",
+              desc: "Live vessel traffic on the same globe — ports, shipping lanes and the open ocean.",
+              href: "/ship-tracker",
             },
           ]}
         />

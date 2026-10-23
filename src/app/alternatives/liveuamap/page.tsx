@@ -302,6 +302,11 @@ const data: AltData = {
       desc: "Find the feeds behind the headlines.",
       href: "/cameras",
     },
+    {
+      label: "Dataminr alternatives",
+      desc: "The alerting giant, compared the same way.",
+      href: "/alternatives/dataminr",
+    },
   ],
 };
 

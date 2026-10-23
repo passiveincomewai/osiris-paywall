@@ -38,6 +38,7 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
       ["Ski Webcams", "/ski-webcams"],
       ["Airport Webcams", "/airport-webcams"],
       ["Asia Webcams", "/asia-webcams"],
+      ["Live Camera Index", "/live-camera-index"],
     ],
   },
   {

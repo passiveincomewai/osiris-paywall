@@ -45,6 +45,16 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: COUNTRIES.length,
+    itemListElement: byName.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: `${c.name} live cameras — ${fmt(c.count)} cameras`,
+      url: `https://worldeye.app/cameras/countries/${c.slug}`,
+    })),
+  },
   name: `Live Street Cameras by Country — ${COUNTRIES.length} Countries`,
   description: `A directory of ${fmt(TOTAL_CAMERAS)} live public street cameras across ${COUNTRIES.length} countries, with per-country camera counts and top regions.`,
   url: "https://worldeye.app/cameras/countries",
@@ -59,6 +69,20 @@ export default function CameraCountriesPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://worldeye.app/" },
+              { "@type": "ListItem", position: 2, name: "Cameras", item: "https://worldeye.app/cameras" },
+              { "@type": "ListItem", position: 3, name: "Countries", item: "https://worldeye.app/cameras/countries" },
+            ],
+          }),
+        }}
       />
       <div className="max-w-6xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}

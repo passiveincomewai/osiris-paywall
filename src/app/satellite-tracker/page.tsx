@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
@@ -165,6 +166,8 @@ export default function SatelliteTrackerPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Satellite Tracker" }]} />
 
         {/* Hero */}
         <div className="text-center max-w-3xl mx-auto">
@@ -425,6 +428,16 @@ export default function SatelliteTrackerPage() {
               label: "Use cases",
               desc: "Who uses WorldEye — researchers, educators, storm watchers and more.",
               href: "/use-cases",
+            },
+            {
+              label: "Space station tracker",
+              desc: "The ISS and crewed stations — live position, altitude and speed as they orbit.",
+              href: "/space-station-tracker",
+            },
+            {
+              label: "Best satellite tracking tools",
+              desc: "The best satellite tracking tools compared — trackers, pass predictors and live globes.",
+              href: "/best-satellite-tracking-tools",
             },
           ]}
         />

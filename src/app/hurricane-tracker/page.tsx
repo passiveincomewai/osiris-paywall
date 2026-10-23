@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import LiveStormList from "@/components/events/LiveStormList";
 
@@ -147,6 +148,8 @@ export default function HurricaneTrackerPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Hurricane Tracker" }]} />
 
         {/* Hero */}
         <div className="text-center max-w-2xl mx-auto">

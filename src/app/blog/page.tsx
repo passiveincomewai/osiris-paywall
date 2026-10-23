@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, CalendarDays, Rss } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS } from "./posts";
 
 export const metadata = {
@@ -61,6 +62,7 @@ export default function BlogIndex() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE BLOG</span>
         </div>
+        <BreadcrumbLd trail={[{ label: "Blog" }]} />
 
         {/* Hero */}
         <div className="max-w-2xl">

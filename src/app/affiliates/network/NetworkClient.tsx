@@ -152,7 +152,7 @@ export default function NetworkClient() {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <img src="/affiliate-icons/network.png" alt="Your network" className="w-12 h-12 md:w-14 md:h-14 object-contain shrink-0"
+        <img src="/affiliate-icons/network.png" alt="Your network" width={256} height={256} className="w-12 h-12 md:w-14 md:h-14 object-contain shrink-0"
           style={{ filter: "drop-shadow(0 0 14px rgba(34,211,238,.45))" }} />
         <div>
           <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">Network</div>

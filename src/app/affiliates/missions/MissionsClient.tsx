@@ -55,7 +55,7 @@ export default function MissionsClient() {
   return (
     <div className="space-y-10">
       <div className="flex items-start gap-4">
-        <img src="/affiliate-icons/missions.png" alt="Missions" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0 mt-1"
+        <img src="/affiliate-icons/missions.png" alt="Missions" width={256} height={256} className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0 mt-1"
           style={{ filter: "drop-shadow(0 0 16px rgba(251,191,36,.45))" }} />
         <div>
         <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase mb-2">Missions</div>

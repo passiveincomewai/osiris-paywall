@@ -26,11 +26,20 @@
 //      cameras and only if the `city` value actually names a city.
 //      Excluded as not-a-city (the field is also used for wider areas):
 //      the country itself, US states, Canadian provinces, anything
-//      ending in " County", motorway corridors (A1 …, I-5), malformed
-//      values ("in Kansas City", "… Area", "CNTY", "City"), and the
+//      ending in " County", motorway/route corridors (A1 …, I-5,
+//      US26), malformed values ("in Kansas City", "… Area", "CNTY",
+//      "City"), camera-system/code labels ("SYD_MET", "RWIS Cameras",
+//      "WWD"), EVERY Hong Kong cluster (the field there names
+//      districts, not cities — Tai Po, Sham Shui Po, North, …), names
+//      with no Latin-letter slug (the Japanese-script duplicate
+//      "広島市" of the Hiroshima City cluster), and the
 //      region/district names in MANUAL_EXCLUDES below (Swedish län,
-//      a Taiwanese county, Québec's region label, Hong Kong districts —
-//      Hong Kong's clusters are districts, not cities).
+//      a Taiwanese county, Québec region labels, a Spanish autonomous
+//      community, Japanese prefectures whose capital has a different
+//      name, a New Zealand region, an airport's name, and US labels
+//      that merge two different same-named places into one count).
+//      THRESHOLD history: 100 until 2026-10-22, then 50 (the
+//      pages-expansion roadmap's family-2 tier drop).
 //   4. Display alias: "Wash. DC" -> "Washington, DC" (the only rename;
 //      the data's abbreviation, expanded). Japanese "… City" names are
 //      the source's own styling and are kept as-is.
@@ -47,7 +56,7 @@ import { fileURLToPath } from "url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const API = "https://worldeye.app/api/cctv?region=all";
-const THRESHOLD = 100;
+const THRESHOLD = 50;
 
 // Slugs owned by the hand-written editorial pages in
 // src/app/city-webcams/[city]/page.tsx — never generated here.
@@ -192,11 +201,21 @@ const MANUAL_EXCLUDES = new Set([
   "Tyne and Wear|United Kingdom",  // a metropolitan county
   "Yunlin|Taiwan",                 // a county
   "Québec (Capitale-Nationale)|Canada", // the region label Québec 511 uses
-  "Yuen Long|Hong Kong",           // Hong Kong districts, not cities
-  "Sha Tin|Hong Kong",
-  "Tsuen Wan|Hong Kong",
-  "Tuen Mun|Hong Kong",
-  "Kwun Tong|Hong Kong",
+  // Hong Kong districts are excluded wholesale in excludedReason —
+  // the catalogue's Hong Kong `city` values are its 18 districts.
+  // Added at the >=50 tier (2026-10-22 QA pass over the new clusters):
+  "Bas-Saint-Laurent—Gaspésie—Îles-de-la-Madeleine|Canada", // a Québec administrative region
+  "Asturias|Spain",                // an autonomous community; no city of this name (capital: Oviedo)
+  "Canterbury|New Zealand",        // a region; the city is Christchurch
+  "Shiga|Japan",                   // a prefecture; its capital is Otsu
+  "Hyogo|Japan",                   // a prefecture; its capital is Kobe
+  "Billy Bishop Toronto City|Canada", // an airport's name, not a city
+  "Jefferson|United States",       // merges Jefferson County KY with Jefferson SD and others — no single place
+  "Richmond|United States",        // merges Richmond VA with Richmond CA — no single place
+  "Franklin|United States",        // Franklin County OH (Columbus) cameras under a county label
+  "Hanover|United States",         // New Hampshire corridor cameras, not Hanover town
+  "Skåne|Sweden",                  // a län (county), like Västra Götaland above
+  "Western MD|United States",      // a region label (Western Maryland), not a city
 ]);
 const CITY_ALIASES = { "Wash. DC": "Washington, DC" };
 
@@ -250,10 +269,12 @@ function snapshotCatalog() {
 function excludedReason(city, country) {
   if (JUNK_CITIES.has(city)) return "junk value";
   if (city === country) return "country name, not a city";
+  if (country === "Hong Kong") return "a Hong Kong district, not a city";
+  if (city.includes("_") || city.endsWith(" Cameras") || /^[A-Z]{2,5}$/.test(city)) return "a camera-system/code label, not a city";
   if (city.endsWith(" County")) return "a county";
   if (country === "United States" && US_STATES.has(city)) return "a US state";
   if (country === "Canada" && CA_PROVINCES.has(city)) return "a Canadian province";
-  if (/^A\d+[\s-]/.test(city) || /^I-\d+/.test(city)) return "a motorway corridor";
+  if (/^A\d+[\s-]/.test(city) || /^I-\d+/.test(city) || /^US-?\d+/.test(city)) return "a motorway/route corridor";
   if (city.startsWith("in ") || city.endsWith(" Area")) return "malformed/area label";
   if (MANUAL_EXCLUDES.has(`${city}|${country}`)) return "region/district (manual)";
   return null;
@@ -293,6 +314,10 @@ async function main() {
     }
     const countrySlug = slugify(country);
     let slug = slugify(city);
+    if (!slug) {
+      dropped.push(`${key} (${recs.length}) — no Latin-letter slug (non-Latin duplicate of another cluster)`);
+      continue;
+    }
     if (CURATED_SLUGS.has(slug)) {
       dropped.push(`${key} (${recs.length}) — hand-written editorial page`);
       continue;

@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
+import UpdatedStamp from "@/components/UpdatedStamp";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
 import {
+  CATALOGUE_GENERATED_AT,
   COUNTRY_INDEX,
   EXPLORE_SCOPES,
   areasForDef,
@@ -82,13 +85,25 @@ const FAQS = [
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Canada Traffic Cameras — Live Highway & Road Cams",
-  description:
-    "Directory of 3,000+ live traffic and highway cameras across Canada from provincial and municipal public sources.",
-  url: "https://worldeye.app/canada-traffic-cameras",
-  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  dateModified: "2026-10-18",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+    name: "Canada Traffic Cameras — Live Highway & Road Cams",
+    description:
+      "Directory of 3,000+ live traffic and highway cameras across Canada from provincial and municipal public sources.",
+    url: "https://worldeye.app/canada-traffic-cameras",
+    isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+    dateModified: CATALOGUE_GENERATED_AT,
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
 };
 
 export default async function CanadaTrafficCamerasPage() {
@@ -114,6 +129,9 @@ export default async function CanadaTrafficCamerasPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Cameras", href: "/cameras" }, { label: "Canada Traffic Cameras" }]} />
+        <UpdatedStamp at={CATALOGUE_GENERATED_AT} label="Camera index updated" source="WorldEye camera catalogue" className="mb-8" />
 
         <div className="max-w-3xl">
           <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">

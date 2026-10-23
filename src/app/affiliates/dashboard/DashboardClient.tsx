@@ -183,7 +183,7 @@ export default function DashboardClient() {
       {/* Referral link bar */}
       <div className={card}>
         <div className="flex items-center gap-3 mb-4">
-          <img src="/affiliate-icons/s1-referral-tracking.png" alt="Referral tracking" className="w-11 h-11 object-contain shrink-0"
+          <img src="/affiliate-icons/s1-referral-tracking.png" alt="Referral tracking" width={276} height={250} className="w-11 h-11 object-contain shrink-0"
             style={{ filter: "drop-shadow(0 0 14px rgba(34,211,238,.45))" }} />
           <div className="flex-1"><SectionTitle kicker="Your weapon" title="Referral link" /></div>
         </div>
@@ -322,7 +322,7 @@ export default function DashboardClient() {
       {/* Chart */}
       <div className={card}>
         <div className="flex items-center gap-3 mb-4">
-          <img src="/affiliate-icons/earnings.png" alt="Earnings" className="w-11 h-11 object-contain shrink-0"
+          <img src="/affiliate-icons/earnings.png" alt="Earnings" width={256} height={256} className="w-11 h-11 object-contain shrink-0"
             style={{ filter: "drop-shadow(0 0 14px rgba(56,189,248,.45))" }} />
           <div className="flex-1">
             <SectionTitle kicker="Performance" title="Earnings"
@@ -345,7 +345,7 @@ export default function DashboardClient() {
         {/* Commissions */}
         <div className={card}>
           <div className="flex items-center gap-3 mb-4">
-            <img src="/affiliate-icons/s1-commission-earnings.png" alt="Commission earnings" className="w-11 h-11 object-contain shrink-0"
+            <img src="/affiliate-icons/s1-commission-earnings.png" alt="Commission earnings" width={276} height={250} className="w-11 h-11 object-contain shrink-0"
               style={{ filter: "drop-shadow(0 0 14px rgba(251,191,36,.45))" }} />
             <div className="flex-1"><SectionTitle kicker="Ledger" title="Commissions" /></div>
           </div>

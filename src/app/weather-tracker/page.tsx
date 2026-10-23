@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
@@ -180,6 +181,8 @@ export default function WeatherTrackerPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Weather Tracker" }]} />
 
         {/* Hero */}
         <div className="text-center max-w-2xl mx-auto">
@@ -349,6 +352,11 @@ export default function WeatherTrackerPage() {
               label: "Features",
               desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
               href: "/features",
+            },
+            {
+              label: "California fire cameras",
+              desc: "The ALERTCalifornia camera network — live views across California fire country.",
+              href: "/california-fire-cameras",
             },
           ]}
         />

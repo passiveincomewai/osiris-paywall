@@ -158,6 +158,7 @@ export default function NorthernLightsWebcamsPage() {
           { label: "Dark-sky cameras: meteors and the night sky", href: "/dark-sky-cameras" },
           { label: "Live webcams worldwide", href: "/live-webcams" },
           { label: "Live weather tracker", href: "/weather-tracker" },
+          { label: "Volcano webcams: eruptions on live cameras", href: "/volcano-webcams" },
         ]}
       />
 

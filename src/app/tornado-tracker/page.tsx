@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ChevronDown, Eye, Radar, ShieldAlert, Tornado } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import LiveTornadoBoard from "@/components/events/LiveTornadoBoard";
 
@@ -86,6 +87,8 @@ export default function TornadoTrackerPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Tornado Tracker" }]} />
 
         {/* Hero */}
         <div className="text-center max-w-2xl mx-auto">

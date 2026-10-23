@@ -151,7 +151,7 @@ export default function WorldEyeVsOsirisPage() {
         {/* Real interface preview */}
         <figure className="mt-12 max-w-sm mx-auto">
           <img
-            src="/seo/worldeye-live-map.png"
+            src="/seo/worldeye-live-map.webp"
             alt="The actual WorldEye interface: the live public-camera network plotted over the United States"
             width={720}
             height={1280}

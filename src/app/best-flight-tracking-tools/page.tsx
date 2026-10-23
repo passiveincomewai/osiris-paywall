@@ -397,6 +397,11 @@ export default function BestFlightTrackingToolsPage() {
             desc: "Weekly $7.99, monthly $13.99, annual $74.99 — the flight layer stays free.",
             href: "/pricing",
           },
+          {
+            label: "Flightradar24 alternative",
+            desc: "Looking beyond Flightradar24? Where a free all-in-one globe fits instead.",
+            href: "/alternatives/flightradar24",
+          },
         ]}
       />
     </IntentShell>

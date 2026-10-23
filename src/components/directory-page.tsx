@@ -45,8 +45,32 @@ export function FaqJsonLd({ faqs }: { faqs: Faq[] }) {
   );
 }
 
-export function Breadcrumb({ trail }: { trail: { label: string; href?: string }[] }) {
+export function Breadcrumb({
+  trail,
+  schema = true,
+}: {
+  trail: { label: string; href?: string }[];
+  /** Pages that emit their own BreadcrumbList pass schema={false}. */
+  schema?: boolean;
+}) {
   return (
+    <>
+      {schema && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: trail.map((t, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: t.label,
+              ...(t.href
+                ? { item: t.href.startsWith("http") ? t.href : `${BASE}${t.href}` }
+                : {}),
+            })),
+          }}
+        />
+      )}
     <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1.5 text-sm text-white/45 mb-10">
       {trail.map((t, i) => (
         <span key={i} className="flex items-center gap-1.5">
@@ -59,6 +83,7 @@ export function Breadcrumb({ trail }: { trail: { label: string; href?: string }[
         </span>
       ))}
     </nav>
+    </>
   );
 }
 

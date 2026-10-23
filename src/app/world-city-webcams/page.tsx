@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ArrowRight, Building2, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import DirectorySearch from "@/components/DirectorySearch";
+import BreadcrumbLd from "@/components/BreadcrumbLd";
+import UpdatedStamp from "@/components/UpdatedStamp";
 import cityPages from "@/data/city-pages.json";
 import {
   CATALOGUE_GENERATED_AT,
@@ -71,6 +73,7 @@ const EDITORIAL_CITIES = [
   { slug: "tokyo", name: "Tokyo", count: 73 },
   { slug: "sydney", name: "Sydney", count: 186 },
   { slug: "auckland", name: "Auckland", count: 98 },
+  { slug: "fort-worth", name: "Fort Worth", count: 489 },
 ];
 
 const FAQS = [
@@ -125,6 +128,19 @@ export default async function WorldCityWebcamsPage() {
     isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     numberOfItems: areas.length,
     dateModified: CATALOGUE_GENERATED_AT,
+    mainEntity: {
+      "@type": "ItemList",
+      name: "Top 25 live camera regions",
+      numberOfItems: areas.length,
+      itemListElement: areas.map((a, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: `${a.name}, ${a.country} — ${fmt(a.count)} cameras`,
+        ...(a.countrySlug
+          ? { url: `https://worldeye.app/cameras/countries/${a.countrySlug}` }
+          : {}),
+      })),
+    },
   };
 
   return (
@@ -140,6 +156,9 @@ export default async function WorldCityWebcamsPage() {
           </Link>
           <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
         </div>
+
+        <BreadcrumbLd trail={[{ label: "Cameras", href: "/cameras" }, { label: "World City Webcams" }]} />
+        <UpdatedStamp at={CATALOGUE_GENERATED_AT} label="Camera index updated" source="WorldEye camera catalogue" className="mb-8" />
 
         {/* Hero */}
         <div className="max-w-3xl">
@@ -252,6 +271,7 @@ export default async function WorldCityWebcamsPage() {
               ["london", "London"], ["ottawa", "Ottawa"], ["toronto", "Toronto"],
               ["madrid", "Madrid"], ["houston", "Houston"], ["dallas", "Dallas"],
               ["tokyo", "Tokyo"], ["sydney", "Sydney"], ["auckland", "Auckland"],
+              ["fort-worth", "Fort Worth"],
             ].map(([slug, name]) => (
               <li key={slug}>
                 <Link

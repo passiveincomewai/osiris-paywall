@@ -41,6 +41,7 @@ const EDITORIAL: GenCity[] = [
   { slug: "tokyo", name: "Tokyo", country: "Japan", countrySlug: "japan", count: 73 },
   { slug: "sydney", name: "Sydney", country: "Australia", countrySlug: "australia", count: 186 },
   { slug: "auckland", name: "Auckland", country: "New Zealand", countrySlug: "new-zealand", count: 98 },
+  { slug: "fort-worth", name: "Fort Worth", country: "United States", countrySlug: "united-states", count: 489 },
 ];
 
 const ALL = [...EDITORIAL, ...GEN].sort((a, b) => b.count - a.count);
@@ -149,7 +150,7 @@ export default function CityWebcamsHubPage() {
       <Intro
         paragraphs={[
           "Some cities are watched by hundreds of public cameras at once — statewide DOT grids, municipal street networks, harbour and transit feeds. This index gathers every city that has earned its own WorldEye page, with the count its page stands behind.",
-          "Nine of them are editorial guides — London's TfL-style street grid, Houston and Dallas on the Texas freeway network, Madrid, Tokyo and others — written around the feeds that matter most there. The rest are generated from the live catalogue itself: real counts, the publishing sources behind them, and featured cameras that open straight into the globe.",
+          "Ten of them are editorial guides — London's TfL-style street grid, Houston and Dallas on the Texas freeway network, Madrid, Tokyo and others — written around the feeds that matter most there. The rest are generated from the live catalogue itself: real counts, the publishing sources behind them, and featured cameras that open straight into the globe.",
           "Most city pages now carry the full treatment: every camera the catalogue lists under the city as a live, searchable explorer, and a route finder that shows the cameras along your drive in. Start with the search above, or browse the lists below.",
         ]}
       />

@@ -107,6 +107,7 @@ export default function AffiliatesLanding() {
       <section id="how">
         <SectionTitle kicker="Protocol" title="How it works" />
         <img src="/affiliate-icons/steps-strip.png" alt="Join, share, earn, level up"
+          width={1162} height={96} loading="lazy" decoding="async"
           className="w-full h-auto rounded-2xl border border-white/10 mb-4" />
         <div className="grid md:grid-cols-3 gap-4">
           {[
@@ -117,7 +118,7 @@ export default function AffiliatesLanding() {
             <Card key={s.n}>
               <div className="flex items-start justify-between">
                 <div className="font-mono text-4xl font-black" style={{ color: s.c, textShadow: `0 0 20px ${s.c}66` }}>{s.n}</div>
-                <img src={s.icon} alt="" className="w-16 h-16 object-contain -mt-1"
+                <img src={s.icon} alt="" width={256} height={256} loading="lazy" decoding="async" className="w-16 h-16 object-contain -mt-1"
                   style={{ filter: `drop-shadow(0 0 14px ${s.c}55)` }} />
               </div>
               <div className="mt-3 text-lg font-bold text-white">{s.t}</div>
@@ -130,7 +131,7 @@ export default function AffiliatesLanding() {
       {/* ── 3. COMMISSION TIERS ─────────────────────────────── */}
       <section>
         <div className="flex items-center gap-4 mb-6">
-          <img src="/affiliate-icons/ranks.png" alt="Rank tiers" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0"
+          <img src="/affiliate-icons/ranks.png" alt="Rank tiers" width={256} height={256} loading="lazy" decoding="async" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0"
             style={{ filter: "drop-shadow(0 0 16px rgba(192,132,252,.45))" }} />
           <SectionTitle kicker="Ranks" title="Six ranks. Bigger network, bigger cut." />
         </div>
@@ -198,7 +199,7 @@ export default function AffiliatesLanding() {
       {/* ── 4. THREE-LEVEL NETWORK ──────────────────────────── */}
       <section>
         <div className="flex items-center gap-4 mb-6">
-          <img src="/affiliate-icons/network.png" alt="Referral network" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0"
+          <img src="/affiliate-icons/network.png" alt="Referral network" width={256} height={256} loading="lazy" decoding="async" className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0"
             style={{ filter: "drop-shadow(0 0 16px rgba(34,211,238,.45))" }} />
           <SectionTitle kicker="Network" title="Three-level network earnings" />
         </div>
@@ -436,7 +437,7 @@ export default function AffiliatesLanding() {
               ["/affiliate-icons/s1-global-platform.png", "Global platform"],
             ].map(([src, label]) => (
               <div key={label} className="flex flex-col items-center gap-1.5">
-                <img src={src} alt={label} className="w-12 h-12 md:w-14 md:h-14 object-contain"
+                <img src={src} alt={label} width={276} height={250} loading="lazy" decoding="async" className="w-12 h-12 md:w-14 md:h-14 object-contain"
                   style={{ filter: "drop-shadow(0 0 12px rgba(56,189,248,.4))" }} />
                 <span className="text-[11px] font-mono text-slate-400">{label}</span>
               </div>

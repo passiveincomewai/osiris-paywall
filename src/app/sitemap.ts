@@ -117,6 +117,12 @@ const SEO_PAGES_WAVE10 = [
   "/california-fire-cameras",
 ];
 
+// Wave 11 (2026-10-22): the Live Camera Index — primary-data research page
+// (served/indexed camera counts by country, city, state network and
+// publisher, with a downloadable dataset). Data: src/data/live-camera-index.json
+// (tools/build-live-camera-index.mjs). Linked from /blog/live-cameras-by-country.
+const SEO_PAGES_WAVE11 = ["/live-camera-index"];
+
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
   "/alternatives/gods-eye-view",
@@ -260,6 +266,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_WAVE11.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_COMPARE.map((p) => ({
