@@ -122,11 +122,21 @@ export default function HeaderProfileMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+10px)] w-72 rounded-2xl border border-white/10 bg-[#0a0e17]/95 backdrop-blur-xl shadow-2xl overflow-hidden z-[1300]">
+        // Height is capped to the visible viewport (dvh) minus room for
+        // the header above and the mobile bottom nav below, and the
+        // contents scroll internally: on phones the full menu is taller
+        // than the screen, and with no cap the bottom items (Manage
+        // subscription, Sign out) sat off-screen and unreachable.
+        // Width is min(18rem, viewport) so it can never overflow a
+        // narrow phone sideways. Spacing tightens below sm: so the
+        // menu fits a typical phone with little or no scrolling;
+        // desktop spacing is unchanged.
+        <div className="absolute right-0 top-[calc(100%+10px)] w-[min(18rem,calc(100vw-1rem))] max-h-[calc(100dvh-9rem)] sm:max-h-[calc(100dvh-5rem)] flex flex-col rounded-2xl border border-white/10 bg-[#0a0e17]/95 backdrop-blur-xl shadow-2xl overflow-hidden z-[1300]">
+          <div className="overflow-y-auto overscroll-contain min-h-0">
           {/* User header */}
-          <div className="px-4 pt-4 pb-3 border-b border-white/10">
+          <div className="px-4 pt-3 pb-2 sm:pt-4 sm:pb-3 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-black flex items-center justify-center">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-black flex items-center justify-center">
                 {initials(user?.name, user?.email)}
               </div>
               <div className="min-w-0 flex-1">
@@ -145,7 +155,7 @@ export default function HeaderProfileMenu() {
             <Link
               href="/pricing"
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 border-b border-white/10 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 transition"
+              className="block px-4 py-2.5 sm:py-3 border-b border-white/10 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 transition"
             >
               <span className="flex items-center gap-1.5 text-xs font-bold text-[#e8c55a]">
                 <Crown className="w-3.5 h-3.5" /> You&apos;re on the Free plan
@@ -160,7 +170,7 @@ export default function HeaderProfileMenu() {
           )}
 
           {/* Invite tracker */}
-          <div className="px-4 py-3 border-b border-white/10">
+          <div className="px-4 py-2.5 sm:py-3 border-b border-white/10">
             <div className="flex items-center justify-between mb-1.5">
               <span className="flex items-center gap-1.5 text-xs font-bold text-white/80">
                 <Gift className="w-3.5 h-3.5 text-[#D4AF37]" /> Invite a friend
@@ -202,7 +212,7 @@ export default function HeaderProfileMenu() {
           </div>
 
           {/* Navigation */}
-          <div className="py-1.5 border-b border-white/10">
+          <div className="py-1 sm:py-1.5 border-b border-white/10">
             {[
               { href: "/", icon: MapIcon, label: "Live map" },
               { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -216,7 +226,7 @@ export default function HeaderProfileMenu() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
+                className="flex items-center gap-2.5 px-4 py-1.5 sm:py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
               >
                 <l.icon className="w-4 h-4 text-white/40" /> {l.label}
               </Link>
@@ -224,18 +234,18 @@ export default function HeaderProfileMenu() {
           </div>
 
           {/* Account controls */}
-          <div className="py-1.5">
+          <div className="py-1 sm:py-1.5">
             <Link
               href="/settings"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
+              className="flex items-center gap-2.5 px-4 py-1.5 sm:py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
             >
               <Settings className="w-4 h-4 text-white/40" /> Account settings
             </Link>
             <Link
               href="/settings/subscription"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
+              className="flex items-center gap-2.5 px-4 py-1.5 sm:py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
             >
               <CreditCard className="w-4 h-4 text-white/40" />
               Manage subscription
@@ -243,21 +253,22 @@ export default function HeaderProfileMenu() {
             <Link
               href="/faq"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
+              className="flex items-center gap-2.5 px-4 py-1.5 sm:py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
             >
               <HelpCircle className="w-4 h-4 text-white/40" />
               Help & FAQ
             </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
+              className="w-full flex items-center gap-2.5 px-4 py-1.5 sm:py-2 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
             >
               <LogOut className="w-4 h-4 text-white/40" /> Sign out
             </button>
           </div>
 
-          <div className="px-4 py-2 border-t border-white/10 flex items-center gap-1.5 text-[10px] text-white/30">
+          <div className="px-4 py-1.5 sm:py-2 border-t border-white/10 flex items-center gap-1.5 text-[10px] text-white/30">
             <User className="w-3 h-3" /> Signed in as {user?.email ?? "…"}
+          </div>
           </div>
         </div>
       )}
