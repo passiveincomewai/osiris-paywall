@@ -13,6 +13,8 @@ const mocks = vi.hoisted(() => ({
     client_secret: "cs_test_123_secret_xyz",
   })),
   createCustomer: vi.fn(async () => ({ id: "cus_test_1" })),
+  listCustomers: vi.fn(async () => ({ data: [] as unknown[] })),
+  listSubscriptions: vi.fn(async () => ({ data: [] as unknown[] })),
 }));
 
 vi.mock("@/auth", () => ({ auth: mocks.auth }));
@@ -22,7 +24,8 @@ vi.mock("@/lib/db", () => ({
 vi.mock("@/lib/stripe", () => ({
   stripe: () => ({
     checkout: { sessions: { create: mocks.createSession } },
-    customers: { create: mocks.createCustomer },
+    customers: { create: mocks.createCustomer, list: mocks.listCustomers },
+    subscriptions: { list: mocks.listSubscriptions },
   }),
   appUrl: () => "https://worldeye.app",
 }));
@@ -62,6 +65,8 @@ beforeEach(() => {
   vi.clearAllMocks();
   mocks.auth.mockResolvedValue(null);
   mocks.findSubscription.mockResolvedValue(null);
+  mocks.listCustomers.mockResolvedValue({ data: [] });
+  mocks.listSubscriptions.mockResolvedValue({ data: [] });
   process.env.STRIPE_WEEKLY_PRICE_ID = "price_weekly";
   process.env.STRIPE_MONTHLY_PRICE_ID = "price_monthly";
   process.env.STRIPE_ANNUAL_PRICE_ID = "price_annual";
@@ -93,10 +98,10 @@ describe("POST /api/checkout — hosted mode (unchanged)", () => {
     expect(p.return_url).toBeUndefined();
   });
 
-  it("applies the shared trial config: weekly 1, monthly 1, annual 3 days", async () => {
+  it("applies the shared trial config: weekly 3, monthly 3, annual 3 days", async () => {
     for (const [plan, days] of [
-      ["weekly", 1],
-      ["monthly", 1],
+      ["weekly", 3],
+      ["monthly", 3],
       ["annual", 3],
     ] as const) {
       vi.clearAllMocks();
@@ -138,8 +143,8 @@ describe("POST /api/checkout — embedded mode", () => {
 
   it("preserves trial days per plan in embedded mode", async () => {
     for (const [plan, days] of [
-      ["weekly", 1],
-      ["monthly", 1],
+      ["weekly", 3],
+      ["monthly", 3],
       ["annual", 3],
     ] as const) {
       vi.clearAllMocks();
@@ -186,9 +191,14 @@ describe("POST /api/checkout — shared guards", () => {
     expect((await res.json()).error).toContain("STRIPE_WEEKLY_PRICE_ID");
     expect(mocks.createSession).not.toHaveBeenCalled();
   });
+});
 
-  it("short-circuits members who already hold an active pass (both modes)", async () => {
+describe("POST /api/checkout — dedupe guard (Wave 2 F6)", () => {
+  const member = () =>
     mocks.auth.mockResolvedValue({ user: { id: "user_1", email: "a@b.c" } });
+
+  it("blocks members who already hold an active pass — 409 with the manage route (both modes)", async () => {
+    member();
     mocks.findSubscription.mockResolvedValue({
       status: "active",
       currentPeriodEnd: new Date(Date.now() + 86_400_000),
@@ -196,8 +206,72 @@ describe("POST /api/checkout — shared guards", () => {
     });
     for (const body of [{ plan: "annual" }, { plan: "annual", ui: "embedded" }]) {
       const res = await post(body);
-      expect(await res.json()).toEqual({ url: "/dashboard" });
+      expect(res.status).toBe(409);
+      const data = await res.json();
+      expect(data.code).toBe("already_subscribed");
+      expect(data.manageUrl).toBe("/settings/subscription");
+      expect(data.error).toContain("already have an active WorldEye plan");
     }
     expect(mocks.createSession).not.toHaveBeenCalled();
+  });
+
+  it("blocks members whose subscription is still trialing (the pre-F6 hole)", async () => {
+    member();
+    mocks.findSubscription.mockResolvedValue({
+      status: "trialing",
+      currentPeriodEnd: new Date(Date.now() + 86_400_000),
+      stripeCustomerId: "cus_existing",
+    });
+    const res = await post({ plan: "weekly" });
+    expect(res.status).toBe(409);
+    expect(mocks.createSession).not.toHaveBeenCalled();
+  });
+
+  it("lets a lapsed member resubscribe on their known Stripe customer", async () => {
+    member();
+    mocks.findSubscription.mockResolvedValue({
+      status: "canceled",
+      currentPeriodEnd: new Date(Date.now() - 86_400_000),
+      stripeCustomerId: "cus_existing",
+    });
+    const res = await post({ plan: "monthly" });
+    expect(res.status).toBe(200);
+    expect(createdParams().customer).toBe("cus_existing");
+    expect(mocks.createCustomer).not.toHaveBeenCalled();
+    expect(mocks.listCustomers).not.toHaveBeenCalled();
+  });
+
+  it("reuses the Stripe customer found by account email instead of creating a duplicate", async () => {
+    member();
+    mocks.listCustomers.mockResolvedValue({
+      data: [{ id: "cus_found", metadata: { userId: "user_1" } }],
+    });
+    const res = await post({ plan: "monthly" });
+    expect(res.status).toBe(200);
+    expect(mocks.listCustomers).toHaveBeenCalledWith({ email: "a@b.c", limit: 10 });
+    expect(createdParams().customer).toBe("cus_found");
+    expect(mocks.createCustomer).not.toHaveBeenCalled();
+  });
+
+  it("blocks when a live subscription exists under the account email but no DB row", async () => {
+    member();
+    mocks.listCustomers.mockResolvedValue({
+      data: [{ id: "cus_guest", metadata: {} }],
+    });
+    mocks.listSubscriptions.mockResolvedValue({ data: [{ status: "trialing" }] });
+    const res = await post({ plan: "monthly" });
+    expect(res.status).toBe(409);
+    expect((await res.json()).code).toBe("already_subscribed");
+    expect(mocks.createSession).not.toHaveBeenCalled();
+    expect(mocks.createCustomer).not.toHaveBeenCalled();
+  });
+
+  it("fails open to a fresh customer when the email lookup throws", async () => {
+    member();
+    mocks.listCustomers.mockRejectedValue(new Error("stripe down"));
+    const res = await post({ plan: "monthly" });
+    expect(res.status).toBe(200);
+    expect(mocks.createCustomer).toHaveBeenCalledTimes(1);
+    expect(createdParams().customer).toBe("cus_test_1");
   });
 });

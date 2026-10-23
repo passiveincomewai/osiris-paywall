@@ -27,7 +27,7 @@ describe("ProUpgradeEmbed", () => {
 
   it("offers the three plans with pricing's prices and trial labels", () => {
     const html = render([]);
-    for (const s of ["$7.99", "/week", "$13.99", "/month", "$74.99", "/year", "1 day free", "3 days free"]) {
+    for (const s of ["$7.99", "/week", "$13.99", "/month", "$74.99", "/year", "3 days free"]) {
       expect(html).toContain(s);
     }
   });

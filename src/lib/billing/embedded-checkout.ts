@@ -92,8 +92,10 @@ async function postCheckout(
  * hosted fallback itself fails (carrying the server's error message).
  *
  * One server answer short-circuits both modes: {url} from an embedded
- * request means "go here instead" — the route returns it for members who
- * already hold an active pass ({url:"/dashboard"}).
+ * request means "go here instead". (Members who already hold a live plan
+ * no longer receive that answer — since Wave 2 F6 the route answers
+ * them 409 with a plain-language message, which reaches the user through
+ * this flow's error throw, exactly like any other server refusal.)
  */
 export async function runCheckoutFlow(
   plan: BillingPlan,

@@ -16,13 +16,12 @@ describe("TrialPicker", () => {
   it("renders every plan with pricing's copy", () => {
     const html = renderToString(createElement(TrialPicker));
     for (const s of [
-      "Start 1-Day Free Trial",
       "Start 3-Day Free Trial",
       "$7.99",
       "$13.99",
       "$74.99",
-      "1 day free, then billed weekly · cancel anytime",
-      "1 day free, then billed monthly · cancel anytime",
+      "3 days free, then billed weekly · cancel anytime",
+      "3 days free, then billed monthly · cancel anytime",
       "3 days free, then billed annually · cancel anytime",
       "Secured by Stripe · Cancel anytime · 7-day money-back guarantee on your first charge",
     ]) {
@@ -32,7 +31,6 @@ describe("TrialPicker", () => {
 
   it("renders in the compact variant too", () => {
     const html = renderToString(createElement(TrialPicker, { variant: "compact" }));
-    expect(html).toContain("Start 1-Day Free Trial");
     expect(html).toContain("Start 3-Day Free Trial");
   });
 
@@ -41,8 +39,8 @@ describe("TrialPicker", () => {
     // The CTA of each plan is a <button> carrying the gold filled
     // treatment and a ≥48px tap height, labelled with its plan.
     for (const label of [
-      "Start 1-Day Free Trial — Weekly $7.99/week",
-      "Start 1-Day Free Trial — Monthly $13.99/month",
+      "Start 3-Day Free Trial — Weekly $7.99/week",
+      "Start 3-Day Free Trial — Monthly $13.99/month",
       "Start 3-Day Free Trial — VIP Pro $74.99/year",
     ]) {
       expect(html).toContain(`aria-label="${label}"`);

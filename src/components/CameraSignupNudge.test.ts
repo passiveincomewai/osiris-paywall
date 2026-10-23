@@ -21,7 +21,6 @@ describe("CameraSignupNudge", () => {
     expect(html).toContain("Maybe later");
     // Plan list first: all three CTAs, and no checkout form yet — the
     // embedded swap happens on a pick, in place.
-    expect(html).toContain("Start 1-Day Free Trial");
     expect(html).toContain("Start 3-Day Free Trial");
     expect(html).not.toContain("Loading secure checkout…");
     // The invite-a-friend section sits under the plans: the promise,

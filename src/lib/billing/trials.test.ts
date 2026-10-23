@@ -6,13 +6,13 @@ import { describe, it, expect } from "vitest";
 import { TRIAL_DAYS, trialDaysForPlan } from "./trials";
 
 describe("TRIAL_DAYS", () => {
-  it("grants the monthly plan a 1-day free trial", () => {
-    expect(TRIAL_DAYS.monthly).toBe(1);
-    expect(trialDaysForPlan("monthly")).toBe(1);
+  it("grants the monthly plan a 3-day free trial", () => {
+    expect(TRIAL_DAYS.monthly).toBe(3);
+    expect(trialDaysForPlan("monthly")).toBe(3);
   });
 
-  it("keeps the weekly plan at 1 day and annual at 3 days", () => {
-    expect(trialDaysForPlan("weekly")).toBe(1);
+  it("grants the weekly plan 3 days and keeps annual at 3 days", () => {
+    expect(trialDaysForPlan("weekly")).toBe(3);
     expect(trialDaysForPlan("annual")).toBe(3);
   });
 

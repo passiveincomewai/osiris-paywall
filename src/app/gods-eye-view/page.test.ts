@@ -67,8 +67,8 @@ describe("gods-eye-view page — conversion structure", () => {
 
 describe("gods-eye-view page — trial section from billing config", () => {
   it("trial durations stay pinned to the checkout config", () => {
-    expect(TRIAL_DAYS.weekly).toBe(1);
-    expect(TRIAL_DAYS.monthly).toBe(1);
+    expect(TRIAL_DAYS.weekly).toBe(3);
+    expect(TRIAL_DAYS.monthly).toBe(3);
     expect(TRIAL_DAYS.annual).toBe(3);
   });
 

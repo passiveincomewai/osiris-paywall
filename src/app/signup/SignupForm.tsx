@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { Loader2, MailCheck, AlertCircle, UserPlus } from "lucide-react";
 import { GoogleIcon } from "@/components/auth/ProviderIcons";
 import { trackMetaEvent } from "@/lib/meta-track";
+import { markPendingWelcome } from "@/lib/billing/trial-prompt";
 
 export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl: string; googleEnabled: boolean }) {
   const [name, setName] = useState("");
@@ -44,6 +45,10 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
       if (typeof data.metaEventId === "string") {
         trackMetaEvent("CompleteRegistration", {}, data.metaEventId);
       }
+      // Wave 2 F3: flag this device so the trial welcome prompt greets
+      // the new account at its first signed-in page view (after the
+      // verification link brings them back).
+      markPendingWelcome();
       setDone({ emailSent: !!data.emailSent });
     } catch {
       setError("Couldn't reach the server. Check your connection and try again.");
@@ -100,7 +105,13 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
         <>
           <button
             type="button"
-            onClick={() => signIn("google", { callbackUrl })}
+            onClick={() => {
+              // Wave 2 F3: same welcome flag as the email path — Google
+              // signups land signed-in, so the prompt greets them on
+              // arrival.
+              markPendingWelcome();
+              signIn("google", { callbackUrl });
+            }}
             className="flex items-center justify-center gap-3 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white/85 hover:bg-white/[0.07] hover:border-white/20 transition active:scale-[0.99]"
           >
             <GoogleIcon className="w-5 h-5" />

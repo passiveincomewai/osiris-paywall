@@ -1,8 +1,12 @@
 /**
  * Free-trial configuration per plan, shared by the Stripe checkout route
  * (which turns these into `trial_period_days` on the Checkout Session)
- * and its tests. Trials are Jameson's pricing decision:
- * weekly → 1 day, monthly → 1 day, annual → 3 days, enterprise → none.
+ * and its tests. Trials are Jameson's pricing decision (Conversion
+ * Wave 2, F2 — every self-serve trial is 3 days):
+ * weekly → 3 days, monthly → 3 days, annual → 3 days, enterprise → none.
+ *
+ * Changing a value here affects NEW checkout sessions only — a Stripe
+ * subscription keeps the trial length it was created with.
  *
  * Stripe reports trialing subscriptions with status `trialing`, which
  * resolveSubscriptionStatus (src/auth.ts) normalizes to `active`, so trial
@@ -12,8 +16,8 @@
 export type BillingPlan = "weekly" | "monthly" | "annual" | "enterprise";
 
 export const TRIAL_DAYS: Record<BillingPlan, number> = {
-  weekly: 1,
-  monthly: 1,
+  weekly: 3,
+  monthly: 3,
   annual: 3,
   enterprise: 0,
 };

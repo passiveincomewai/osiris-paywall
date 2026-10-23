@@ -12,6 +12,7 @@ import {
   ENTERPRISE_GUARANTEE_LINE,
   ENTERPRISE_SUPPORT_LINE,
 } from "@/lib/enterprise/offer";
+import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, Satellite, BrainCircuit,
@@ -21,8 +22,8 @@ import {
 type Plan = "weekly" | "monthly" | "annual" | "enterprise";
 
 const PLANS: Record<Plan, { name: string; price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
-  weekly: { name: "Weekly", price: "$7.99", per: "/week", perDay: "$1.14", note: "1 day free, then billed weekly · cancel anytime", cta: "Start 1-Day Free Trial", trial: "1 day free" },
-  monthly: { name: "Monthly", price: "$13.99", per: "/month", perDay: "$0.47", note: "1 day free, then billed monthly · cancel anytime", save: "Save 60%", cta: "Start 1-Day Free Trial", trial: "1 day free" },
+  weekly: { name: "Weekly", price: "$7.99", per: "/week", perDay: "$1.14", note: "3 days free, then billed weekly · cancel anytime", cta: "Start 3-Day Free Trial", trial: "3 days free" },
+  monthly: { name: "Monthly", price: "$13.99", per: "/month", perDay: "$0.47", note: "3 days free, then billed monthly · cancel anytime", save: "Save 60%", cta: "Start 3-Day Free Trial", trial: "3 days free" },
   // The annual plan is VIP Pro — a real top tier (timelapse + the intel
   // layers are VIP-only), not just a longer billing period. "Annual"
   // survives only as cadence ("billed annually").
@@ -250,7 +251,12 @@ export default function PricingPage() {
             {(["weekly", "monthly", "annual"] as Plan[]).map((key) => (
               <button
                 key={key}
-                onClick={() => setPlan(key)}
+                onClick={() => {
+                  setPlan(key);
+                  // Wave 2 F3: remember the plan this visitor is looking
+                  // at so the post-signup trial prompt can preselect it.
+                  recordLastViewedPlan(key);
+                }}
                 className={`relative px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                   plan === key ? "text-black" : "text-white/55 hover:text-white"
                 }`}

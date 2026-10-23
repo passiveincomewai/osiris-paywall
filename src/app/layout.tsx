@@ -9,6 +9,7 @@ import TranslateGate from '@/components/translate/TranslateGate';
 import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import InstallPrompt from '@/components/pwa/InstallPrompt';
 import ServiceWorkerRegister from '@/components/pwa/ServiceWorkerRegister';
+import TrialPrompt from '@/components/TrialPrompt';
 import "./globals.css";
 
 /* ── Type system (self-hosted via next/font; no runtime font requests) ──
@@ -287,6 +288,9 @@ export default function RootLayout({
         </SilentBoundary>
         <SilentBoundary name="PwaServiceWorkerRegister">
           <ServiceWorkerRegister />
+        </SilentBoundary>
+        <SilentBoundary name="TrialPrompt">
+          <TrialPrompt />
         </SilentBoundary>
         <ErrorBoundary name="WorldEye">
           {children}
