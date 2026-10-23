@@ -31,13 +31,20 @@ export type SavedCam = {
 };
 
 export default function RecordableTile({
-  cam, pro, onClipSaved, onNeedPro, compact,
+  cam, pro, onClipSaved, onNeedPro, compact, demo,
 }: {
   cam: SavedCam;
   pro: boolean;
   onClipSaved?: () => void;
   onNeedPro?: () => void;
   compact?: boolean;
+  /**
+   * Demo mode (the public Live Wall demo): the tile only ever plays.
+   * No REC control is rendered and startRecording refuses to run, so a
+   * demo tile can never reach the capture-session layer — view-only by
+   * construction, not by hiding a working button.
+   */
+  demo?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -111,6 +118,7 @@ export default function RecordableTile({
   }, [cam.id]);
 
   async function startRecording() {
+    if (demo) return;
     if (!pro) { onNeedPro?.(); return; }
     if (clipSession || starting || unsupportedReason || !streamUrl) return;
     setStarting(true);
@@ -183,7 +191,7 @@ export default function RecordableTile({
                 {muted ? "🔇" : "🔊"}
               </button>
             )}
-            {playable && !unsupportedReason && (
+            {!demo && playable && !unsupportedReason && (
               recording || saving ? (
                 <button
                   onClick={stopRecording}
@@ -211,13 +219,15 @@ export default function RecordableTile({
       {!compact && (
         <div className="px-3 py-2 flex items-center justify-between gap-3 border-t border-white/5">
           <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">
-            {unsupportedReason
-              ? "preview only"
-              : recording
-                ? CAPTURE_PERSISTENCE_COPY
-                : pro ? "Pro recording ready" : "Pro required to record"}
+            {demo
+              ? "Live demo · view only — recording is a Pro feature"
+              : unsupportedReason
+                ? "preview only"
+                : recording
+                  ? CAPTURE_PERSISTENCE_COPY
+                  : pro ? "Pro recording ready" : "Pro required to record"}
           </span>
-          {!pro && playable && !unsupportedReason && (
+          {!demo && !pro && playable && !unsupportedReason && (
             <button onClick={onNeedPro} className="shrink-0 text-[11px] font-mono text-cyan-300 hover:text-white underline underline-offset-2">
               Upgrade
             </button>

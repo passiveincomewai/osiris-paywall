@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import RecordableTile, { type SavedCam } from "@/components/recording/RecordableTile";
 import UpgradeScreen from "@/components/recording/UpgradeScreen";
+import LiveWallDemo from "@/components/recording/LiveWallDemo";
 
 const LAYOUTS = [1, 2, 4, 9] as const;
 
 export default function LivePage() {
   const [cams, setCams] = useState<SavedCam[] | null>(null);
   const [pro, setPro] = useState<boolean | null>(null);
+  const [signedOut, setSignedOut] = useState(false);
   const [layout, setLayout] = useState<number>(() => {
     try { return Number(localStorage.getItem("we_rec_layout")) || 4; } catch { return 4; }
   });
@@ -23,6 +25,13 @@ export default function LivePage() {
           const r = await fetch("/api/recording/cameras");
           if (r.ok) setCams((await r.json()).cameras);
         } else setCams([]);
+      } else {
+        /* Signed out (401): the page admits anonymous visitors, and the
+           demo below is theirs — previously this branch never resolved
+           and they sat on "Loading…" forever. */
+        setSignedOut(true);
+        setPro(false);
+        setCams([]);
       }
     })();
   }, [refreshKey]);
@@ -33,7 +42,18 @@ export default function LivePage() {
   };
 
   if (pro === null) return <div className="text-slate-400 font-mono text-sm">Loading…</div>;
-  if (!pro) return <UpgradeScreen priceLine="Recording unlocks with WorldEye Pro · Monthly $13.99 · VIP Pro $74.99" />;
+  if (!pro) {
+    /* Non-premium view: the real live demo first — actual catalogue
+       cameras streaming in the wall layout, view-only — then the same
+       upgrade screen that gated this page before. The premium wall
+       itself (saved cameras, recording, plan limits) is untouched. */
+    return (
+      <div className="space-y-12">
+        <LiveWallDemo signedIn={!signedOut} />
+        <UpgradeScreen priceLine="Recording unlocks with WorldEye Pro · Monthly $13.99 · VIP Pro $74.99" />
+      </div>
+    );
+  }
 
   const shown = (cams ?? []).slice(0, layout);
 
