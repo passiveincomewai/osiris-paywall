@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-22T21:46:26.578Z",
+  "generatedAt": "2026-10-23T00:48:59.534Z",
   "mode": "write",
   "harvest": {
     "markersTotal": 136717,
@@ -8,8 +8,8 @@
     "recordsCached": 136717
   },
   "baseline": {
-    "total": 46019,
-    "source": "GET http://localhost:3217/api/cctv?region=all @ 2026-10-22T21:46:21.880Z (still 15 regions pending — largest answer kept) ∪ audit capture"
+    "total": 48981,
+    "source": "GET http://localhost:3217/api/cctv?region=all @ 2026-10-22T23:36:53.523Z (still 23 regions pending — largest answer kept) ∪ audit capture"
   },
   "families": [
     {
@@ -115,14 +115,14 @@
     {
       "family": "arcgis_cams",
       "inspected": 3911,
-      "verifiedNew": 2630,
-      "nearDistinct": 15,
+      "verifiedNew": 2603,
+      "nearDistinct": 21,
       "duplicates": {
         "id": 0,
         "url-full": 0,
         "url-hostpath": 0,
-        "same-location": 354,
-        "geo-name": 30
+        "same-location": 374,
+        "geo-name": 37
       },
       "intraDuplicates": 737,
       "licenseHeld": 0,
@@ -155,21 +155,21 @@
     {
       "family": "castlerock",
       "inspected": 3052,
-      "verifiedNew": 2078,
-      "nearDistinct": 17,
+      "verifiedNew": 1657,
+      "nearDistinct": 5,
       "duplicates": {
         "id": 1,
-        "url-full": 347,
+        "url-full": 778,
         "url-hostpath": 0,
-        "same-location": 318,
-        "geo-name": 49
+        "same-location": 455,
+        "geo-name": 52
       },
-      "intraDuplicates": 85,
+      "intraDuplicates": 77,
       "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
-      "dead": 171,
+      "dead": 29,
       "placeholder": 3
     },
     {
@@ -195,22 +195,22 @@
     {
       "family": "trafficengland",
       "inspected": 2371,
-      "verifiedNew": 0,
-      "nearDistinct": 0,
+      "verifiedNew": 652,
+      "nearDistinct": 3,
       "duplicates": {
         "id": 0,
         "url-full": 0,
         "url-hostpath": 0,
         "same-location": 0,
-        "geo-name": 0
+        "geo-name": 1
       },
-      "intraDuplicates": 0,
-      "licenseHeld": 2371,
+      "intraDuplicates": 24,
+      "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
-      "invalidFeed": 0,
-      "dead": 0,
-      "placeholder": 0
+      "invalidFeed": 1,
+      "dead": 1667,
+      "placeholder": 26
     },
     {
       "family": "txdot",
@@ -641,8 +641,8 @@
         "id": 0,
         "url-full": 0,
         "url-hostpath": 0,
-        "same-location": 890,
-        "geo-name": 45
+        "same-location": 892,
+        "geo-name": 43
       },
       "intraDuplicates": 1,
       "licenseHeld": 0,
@@ -675,21 +675,21 @@
     {
       "family": "hivis",
       "inspected": 907,
-      "verifiedNew": 701,
+      "verifiedNew": 700,
       "nearDistinct": 2,
       "duplicates": {
         "id": 0,
         "url-full": 0,
         "url-hostpath": 0,
-        "same-location": 0,
+        "same-location": 5,
         "geo-name": 1
       },
-      "intraDuplicates": 93,
+      "intraDuplicates": 92,
       "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
-      "dead": 112,
+      "dead": 109,
       "placeholder": 0
     },
     {
@@ -955,22 +955,22 @@
     {
       "family": "algotraffic",
       "inspected": 649,
-      "verifiedNew": 505,
-      "nearDistinct": 6,
+      "verifiedNew": 6,
+      "nearDistinct": 0,
       "duplicates": {
         "id": 0,
-        "url-full": 0,
+        "url-full": 634,
         "url-hostpath": 0,
-        "same-location": 0,
-        "geo-name": 0
+        "same-location": 5,
+        "geo-name": 2
       },
-      "intraDuplicates": 37,
+      "intraDuplicates": 0,
       "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
-      "dead": 96,
-      "placeholder": 11
+      "dead": 2,
+      "placeholder": 0
     },
     {
       "family": "tripcheck",
@@ -1215,21 +1215,21 @@
     {
       "family": "oktraffic",
       "inspected": 444,
-      "verifiedNew": 152,
+      "verifiedNew": 0,
       "nearDistinct": 0,
       "duplicates": {
         "id": 0,
-        "url-full": 0,
+        "url-full": 2,
         "url-hostpath": 0,
-        "same-location": 0,
-        "geo-name": 0
+        "same-location": 425,
+        "geo-name": 14
       },
-      "intraDuplicates": 249,
+      "intraDuplicates": 0,
       "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 3,
-      "dead": 40,
+      "dead": 0,
       "placeholder": 0
     },
     {
@@ -1315,10 +1315,10 @@
     {
       "family": "busan",
       "inspected": 354,
-      "verifiedNew": 303,
+      "verifiedNew": 302,
       "nearDistinct": 9,
       "duplicates": {
-        "id": 30,
+        "id": 31,
         "url-full": 0,
         "url-hostpath": 0,
         "same-location": 0,
@@ -1515,22 +1515,22 @@
     {
       "family": "newengland",
       "inspected": 307,
-      "verifiedNew": 262,
+      "verifiedNew": 149,
       "nearDistinct": 0,
       "duplicates": {
         "id": 0,
-        "url-full": 0,
+        "url-full": 81,
         "url-hostpath": 0,
-        "same-location": 0,
-        "geo-name": 0
+        "same-location": 54,
+        "geo-name": 5
       },
-      "intraDuplicates": 35,
+      "intraDuplicates": 16,
       "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
-      "dead": 7,
-      "placeholder": 3
+      "dead": 0,
+      "placeholder": 2
     },
     {
       "family": "ottawa",
@@ -2075,21 +2075,21 @@
     {
       "family": "nmroads",
       "inspected": 171,
-      "verifiedNew": 147,
+      "verifiedNew": 0,
       "nearDistinct": 0,
       "duplicates": {
         "id": 0,
-        "url-full": 0,
+        "url-full": 171,
         "url-hostpath": 0,
         "same-location": 0,
         "geo-name": 0
       },
-      "intraDuplicates": 21,
+      "intraDuplicates": 0,
       "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
-      "dead": 3,
+      "dead": 0,
       "placeholder": 0
     },
     {
@@ -2425,11 +2425,11 @@
         "geo-name": 0
       },
       "intraDuplicates": 0,
-      "licenseHeld": 127,
+      "licenseHeld": 0,
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
-      "dead": 0,
+      "dead": 127,
       "placeholder": 0
     },
     {
@@ -3205,8 +3205,8 @@
         "geo-name": 0
       },
       "intraDuplicates": 0,
-      "licenseHeld": 62,
-      "licenseExcluded": 0,
+      "licenseHeld": 0,
+      "licenseExcluded": 62,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
       "dead": 0,
@@ -3835,11 +3835,11 @@
     {
       "family": "wv511",
       "inspected": 37,
-      "verifiedNew": 3,
+      "verifiedNew": 0,
       "nearDistinct": 0,
       "duplicates": {
         "id": 0,
-        "url-full": 0,
+        "url-full": 37,
         "url-hostpath": 0,
         "same-location": 0,
         "geo-name": 0
@@ -3849,7 +3849,7 @@
       "licenseExcluded": 0,
       "invalidCoordinates": 0,
       "invalidFeed": 0,
-      "dead": 34,
+      "dead": 0,
       "placeholder": 0
     },
     {
@@ -7056,22 +7056,22 @@
   "totals": {
     "family": "TOTAL",
     "inspected": 136717,
-    "verifiedNew": 38799,
-    "nearDistinct": 472,
+    "verifiedNew": 38087,
+    "nearDistinct": 463,
     "duplicates": {
-      "id": 1342,
-      "url-full": 16982,
+      "id": 1343,
+      "url-full": 18338,
       "url-hostpath": 1761,
-      "same-location": 9498,
-      "geo-name": 841
+      "same-location": 10146,
+      "geo-name": 871
     },
-    "intraDuplicates": 5355,
-    "licenseHeld": 26788,
-    "licenseExcluded": 21088,
+    "intraDuplicates": 5044,
+    "licenseHeld": 24228,
+    "licenseExcluded": 21150,
     "invalidCoordinates": 0,
-    "invalidFeed": 7450,
-    "dead": 6338,
-    "placeholder": 475
+    "invalidFeed": 7451,
+    "dead": 7809,
+    "placeholder": 489
   },
   "reconciles": true,
   "notes": [
