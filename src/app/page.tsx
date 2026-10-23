@@ -87,6 +87,10 @@ const DrawHud = dynamic(() => import('@/components/DrawHud'), { ssr: false });
 // Onboarding (Build A): lazy + client-only; renders nothing until the
 // globe signals ready, so it can never delay or disturb the map.
 const OnboardingRoot = dynamic(() => import('@/components/onboarding/OnboardingRoot'), { ssr: false });
+// Teaser A/B test (Conversion Wave 2, F9): lazy + client-only; renders
+// nothing unless the config flag is on and this visitor is an anonymous
+// treatment-arm visitor, so control and crawlers see today's homepage.
+const TeaserSignupCard = dynamic(() => import('@/components/TeaserSignupCard'), { ssr: false });
 // Near You strip: globe-arrival camera suggestions (lib/near-you.ts);
 // lazy + client-only like onboarding — it renders nothing until the
 // splash has gone, so it can never delay the map.
@@ -2980,6 +2984,10 @@ export default function Dashboard() {
         panel={mobilePanel ?? (showOi ? 'oi' : showIntel ? 'recon' : showAlerts ? 'alerts' : showDesktopSearch ? 'search' : null)}
         signupOpen={showCameraSignup}
       />
+
+      {/* ── TEASER A/B (Wave 2 F9): signup card over the live globe for
+          anonymous treatment-arm visitors; renders nothing otherwise. ── */}
+      <TeaserSignupCard globeReady={mapReady && revealed} isMobile={isMobile} />
 
     </main>
 
