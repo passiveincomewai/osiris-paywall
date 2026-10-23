@@ -6,6 +6,9 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import VoiceQA from "@/components/seo/VoiceQA";
+import { mergePlaceFaqs } from "@/lib/place-answers";
+import { getVoiceQuestionsByIds } from "@/lib/voice-questions";
 import RelatedLinks from "@/components/RelatedLinks";
 import TrialCtaSection from "@/components/TrialCtaSection";
 
@@ -50,6 +53,20 @@ const CAMERA_FAQS: Array<{ q: string; a: string }> = [
   },
 ];
 
+/* Canonical-dataset answers merged into this page's single FAQPage
+   (src/lib/place-answers.ts merge rule); the visible VoiceQA block below
+   renders exactly the surviving entries. */
+const HUB_VOICE = mergePlaceFaqs(
+  CAMERA_FAQS,
+  getVoiceQuestionsByIds([
+    "are-the-cameras-really-live",
+    "do-i-need-an-account",
+    "save-a-camera-for-later",
+    "what-else-can-i-track",
+  ]),
+);
+const HUB_MERGED_FAQS = HUB_VOICE.merged;
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -70,7 +87,7 @@ const jsonLd = {
     },
     {
       "@type": "FAQPage",
-      mainEntity: CAMERA_FAQS.map((f) => ({
+      mainEntity: HUB_MERGED_FAQS.map((f) => ({
         "@type": "Question",
         name: f.q,
         acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -272,6 +289,12 @@ export default function CamerasPage() {
             ))}
           </div>
         </section>
+
+        {HUB_VOICE.surviving.length > 0 && (
+          <div className="max-w-3xl mx-auto">
+            <VoiceQA entries={HUB_VOICE.surviving} />
+          </div>
+        )}
 
         <TrialCtaSection utmSource="cameras" />
 

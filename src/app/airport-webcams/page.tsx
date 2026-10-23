@@ -17,6 +17,15 @@ import {
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
 import { EXPLORE_SCOPES, areasForDef, countForDef } from "@/lib/explore-data";
+import VoiceQA from "@/components/seo/VoiceQA";
+import { voiceFaqs } from "@/lib/voice-questions";
+
+const VOICE_QA_IDS = [
+  "airport-watch-planes-land",
+  "airport-check-weather-before-flight",
+  "airport-terminal-traffic",
+  "airport-who-operates-the-cameras",
+];
 
 export const metadata: Metadata = {
   title: "Airport Webcams — Watch Airports Live",
@@ -122,7 +131,7 @@ export default async function AirportWebcamsPage() {
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <FaqJsonLd faqs={FAQS} />
+      <FaqJsonLd faqs={[...FAQS, ...voiceFaqs(VOICE_QA_IDS)]} />
       <Breadcrumb
         trail={[
           { label: "Cameras", href: "/cameras" },
@@ -165,6 +174,7 @@ export default async function AirportWebcamsPage() {
       />
       <HowTo title="How to watch airport cameras" steps={HOW_TO} />
       <FaqSection title="Airport webcam FAQs" faqs={FAQS} />
+      <VoiceQA ids={VOICE_QA_IDS} />
       <RelatedLinks
         title="More camera directories"
         links={[

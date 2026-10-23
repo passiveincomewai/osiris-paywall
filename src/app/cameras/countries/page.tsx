@@ -1,3 +1,6 @@
+import VoiceQA from "@/components/seo/VoiceQA";
+import { mergePlaceFaqs } from "@/lib/place-answers";
+import { getVoiceQuestionsByIds } from "@/lib/voice-questions";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Camera, Globe, MapPin } from "lucide-react";
@@ -42,25 +45,77 @@ export const metadata: Metadata = {
   },
 };
 
+/* The directory FAQ set (moved out of the JSX so it can merge with
+   canonical-dataset answers into the page's single FAQPage). */
+const DIRECTORY_FAQS: Array<{ q: string; a: string }> = [
+              {
+                q: "Where do these cameras come from?",
+                a: "Every camera in the directory is published openly by its operator — transport agencies, cities, resorts, and businesses. WorldEye collects the public feeds into one index and plots them on the map; it does not operate its own camera network.",
+              },
+              {
+                q: "Why do some countries have thousands of cameras and others only a few?",
+                a: "It reflects what is published openly. Countries whose transport agencies publish dense highway camera networks (the US, Japan, Canada) dominate the counts; countries without open camera programs have whatever their cities and businesses publish.",
+              },
+              {
+                q: "Which countries have dedicated pages?",
+                a: "All of them. Every country in the table has its own page with the complete live grid for that country — every camera, grouped by area with search and filters — linked from the table above.",
+              },
+              {
+                q: "How often is the directory updated?",
+                a: "The index is rebuilt from the live camera catalogue — the 'last updated' date above shows the latest build. New public feeds are picked up as their operators publish them, and dead feeds drop out.",
+              },
+              {
+                q: "Are the cameras really live?",
+                a: "Yes — every card on a country page is the camera's actual live feed: snapshots refresh about every 15 seconds and streams play in the card. Individual cameras can go offline for maintenance or be replaced by their operators, so a specific feed may occasionally be dark — it then shows as unavailable rather than playing a recording.",
+              },
+              {
+                q: "Is it free to watch?",
+                a: "Yes. Every camera in the directory opens free on the WorldEye map — no account, no signup, no paywall.",
+              },];
+
+const DIRECTORY_MERGED = mergePlaceFaqs(
+  DIRECTORY_FAQS,
+  getVoiceQuestionsByIds([
+    "how-many-cameras-in-the-us",
+    "how-many-cameras-in-japan",
+    "how-many-cameras-in-canada",
+    "how-many-cameras-in-the-uk",
+  ]),
+);
+
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  mainEntity: {
-    "@type": "ItemList",
-    numberOfItems: COUNTRIES.length,
-    itemListElement: byName.map((c, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: `${c.name} live cameras — ${fmt(c.count)} cameras`,
-      url: `https://worldeye.app/cameras/countries/${c.slug}`,
-    })),
-  },
+  // Single @graph: CollectionPage + exactly ONE FAQPage (merged set).
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: COUNTRIES.length,
+        itemListElement: byName.map((c, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: `${c.name} live cameras — ${fmt(c.count)} cameras`,
+          url: `https://worldeye.app/cameras/countries/${c.slug}`,
+        })),
+      },
   name: `Live Street Cameras by Country — ${COUNTRIES.length} Countries`,
   description: `A directory of ${fmt(TOTAL_CAMERAS)} live public street cameras across ${COUNTRIES.length} countries, with per-country camera counts and top regions.`,
   url: "https://worldeye.app/cameras/countries",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  numberOfItems: COUNTRIES.length,
-  dateModified: (data as { generatedAt: string }).generatedAt,
+      numberOfItems: COUNTRIES.length,
+      dateModified: (data as { generatedAt: string }).generatedAt,
+    },
+    {
+      "@type": "FAQPage",
+      url: "https://worldeye.app/cameras/countries",
+      mainEntity: DIRECTORY_MERGED.merged.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
 };
 
 export default function CameraCountriesPage() {
@@ -197,32 +252,7 @@ export default function CameraCountriesPage() {
         <div className="mt-16 max-w-3xl">
           <h2 className="text-2xl md:text-3xl font-bold">Camera directory — FAQ</h2>
           <div className="mt-6 space-y-4">
-            {[
-              {
-                q: "Where do these cameras come from?",
-                a: "Every camera in the directory is published openly by its operator — transport agencies, cities, resorts, and businesses. WorldEye collects the public feeds into one index and plots them on the map; it does not operate its own camera network.",
-              },
-              {
-                q: "Why do some countries have thousands of cameras and others only a few?",
-                a: "It reflects what is published openly. Countries whose transport agencies publish dense highway camera networks (the US, Japan, Canada) dominate the counts; countries without open camera programs have whatever their cities and businesses publish.",
-              },
-              {
-                q: "Which countries have dedicated pages?",
-                a: "All of them. Every country in the table has its own page with the complete live grid for that country — every camera, grouped by area with search and filters — linked from the table above.",
-              },
-              {
-                q: "How often is the directory updated?",
-                a: "The index is rebuilt from the live camera catalogue — the 'last updated' date above shows the latest build. New public feeds are picked up as their operators publish them, and dead feeds drop out.",
-              },
-              {
-                q: "Are the cameras really live?",
-                a: "Yes — every card on a country page is the camera's actual live feed: snapshots refresh about every 15 seconds and streams play in the card. Individual cameras can go offline for maintenance or be replaced by their operators, so a specific feed may occasionally be dark — it then shows as unavailable rather than playing a recording.",
-              },
-              {
-                q: "Is it free to watch?",
-                a: "Yes. Every camera in the directory opens free on the WorldEye map — no account, no signup, no paywall.",
-              },
-            ].map((f) => (
+            {DIRECTORY_FAQS.map((f) => (
               <details key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 group">
                 <summary className="font-semibold text-white/90 cursor-pointer list-none flex items-center justify-between gap-4">
                   {f.q}
@@ -233,6 +263,12 @@ export default function CameraCountriesPage() {
             ))}
           </div>
         </div>
+
+        {DIRECTORY_MERGED.surviving.length > 0 && (
+          <div className="max-w-3xl">
+            <VoiceQA entries={DIRECTORY_MERGED.surviving} />
+          </div>
+        )}
 
         <TrialCtaSection utmSource="cameras-countries" />
 

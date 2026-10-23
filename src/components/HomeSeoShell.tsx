@@ -1,6 +1,7 @@
 import SiteFooter from "./SiteFooter";
 import LandingTrackerMount from "./landing/LandingTrackerMount";
 import CamerasSection from "./landing/CamerasSection";
+import DirectAnswers from "./seo/DirectAnswers";
 import TrackingSection from "./landing/TrackingSection";
 import HazardsSection from "./landing/HazardsSection";
 import OsintSection from "./landing/OsintSection";
@@ -75,6 +76,24 @@ export default function HomeSeoShell() {
     <section aria-label="About WorldEye" className="home-seo-shell relative bg-[#06060C] text-white">
       <LandingTrackerMount />
       <CamerasSection />
+      <div className="max-w-5xl mx-auto px-6 py-12 md:py-14">
+        <DirectAnswers
+          items={[
+            {
+              q: "What is WorldEye?",
+              a: "WorldEye is a free website that puts a live 3D globe of Earth in your browser — 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires on one map. There is nothing to install and no account needed to look around. Paid plans add an AI analyst, camera recording, alerts and premium intelligence layers.",
+            },
+            {
+              q: "How many live cameras can I watch on WorldEye?",
+              a: "You can watch 74,229 live public cameras on WorldEye, plotted on one globe from 109 countries. The United States contributes the most — 41,355 cameras, largely state transportation-department networks — followed by Japan with 10,472. The mix covers highways, city streets, beaches, ski resorts, airports, harbors and nature reserves.",
+            },
+            {
+              q: "Is WorldEye free?",
+              a: "Yes — the globe, all the cameras, flight and satellite tracking, weather, earthquakes and basic search are free, and you never need an account to browse. The free plan includes 5 camera opens on the globe. Optional paid plans — Weekly at $7.99, Monthly at $13.99 and VIP Pro at $74.99 a year — remove that limit and add the AI analyst, camera recording and premium intel layers.",
+            },
+          ]}
+        />
+      </div>
       <TrackingSection />
       <HazardsSection />
       <OsintSection visuals={OSINT_VISUALS} />

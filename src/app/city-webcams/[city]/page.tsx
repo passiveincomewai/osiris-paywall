@@ -25,6 +25,8 @@ import {
   type Sample,
   type Faq,
 } from "@/components/directory-page";
+import VoiceQA from "@/components/seo/VoiceQA";
+import { cityAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 
 type CityCfg = {
   name: string;
@@ -1006,6 +1008,12 @@ export default async function CityWebcamPage({
   if (!resolved) notFound();
 
   const c = resolved.cfg;
+  /* Data-bound "Questions people ask" entries for generated-tier cities
+     (src/lib/place-answers.ts, ROLLOUT-SPEC §3 merge). Curated cities keep
+     their bespoke FAQ sets only — their numbers live in hand configs,
+     not in the generated record (§2.2 one source per surface). */
+  const genCity = CITIES[slug] ? undefined : GEN_BY_SLUG.get(slug);
+  const placeMerged = mergePlaceFaqs(c.faqs, genCity ? cityAnswers(genCity) : []);
   const canonical = `${BASE}/city-webcams/${slug}`;
   const updated = formatDate(resolved.updatedIso);
 
@@ -1052,7 +1060,7 @@ export default async function CityWebcamPage({
     <PageShell>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbLd} />
-      <FaqJsonLd faqs={c.faqs} />
+      <FaqJsonLd faqs={placeMerged.merged} />
       <Breadcrumb
         schema={false}
         trail={[
@@ -1105,6 +1113,9 @@ export default async function CityWebcamPage({
       {c.samples && <SampleGrid title={c.sampleTitle ?? "Featured live cameras"} samples={c.samples} />}
       <HowTo title={c.howtoTitle} steps={c.howto} />
       <FaqSection title={c.faqTitle} faqs={c.faqs} />
+      {placeMerged.surviving.length > 0 && (
+        <VoiceQA entries={placeMerged.surviving} />
+      )}
       <RelatedLinks title="More city webcam indexes" links={resolved.related} />
       <RelatedLinks
         title="Guides"

@@ -178,6 +178,7 @@ const jsonLd = {
       name: "WorldEye",
       url: SITE_URL,
       logo: `${SITE_URL}/worldeye-logo.png`,
+      sameAs: ["https://www.instagram.com/worldeye.app"],
       contactPoint: {
         "@type": "ContactPoint",
         email: "passiveincomewai@gmail.com",

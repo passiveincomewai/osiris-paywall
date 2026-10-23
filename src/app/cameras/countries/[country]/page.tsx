@@ -23,6 +23,8 @@ import {
   watchGuide,
 } from "@/lib/country-page-content";
 import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
+import VoiceQA from "@/components/seo/VoiceQA";
+import { countryAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 
 const BASE = "https://worldeye.app";
 
@@ -197,6 +199,10 @@ export default async function CountryPage({
   const content = CONTENT[slug];
   const intro = content?.intro ?? derivedIntro(c);
   const faqs = content?.faqs ?? [...derivedFaqs(c), ...extraFaqs(c, facts)];
+  /* Data-bound "Questions people ask" entries (src/lib/place-answers.ts,
+     ROLLOUT-SPEC §3 merge): appended to the template FAQs for the single
+     FAQPage below; the visible block renders exactly the survivors. */
+  const placeMerged = mergePlaceFaqs(faqs, countryAnswers(c));
 
   const canonical = `${BASE}/cameras/countries/${slug}`;
   const updated = formatDate((countriesIndex as { generatedAt: string }).generatedAt);
@@ -232,7 +238,7 @@ export default async function CountryPage({
       },
       {
         "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({
+        mainEntity: placeMerged.merged.map((f) => ({
           "@type": "Question",
           name: f.q,
           acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -439,6 +445,12 @@ export default async function CountryPage({
             ))}
           </div>
         </section>
+
+        {/* Questions people ask — data-bound entries, merged into the
+            single FAQPage above (survivors only, so visible == schema) */}
+        {placeMerged.surviving.length > 0 && (
+          <VoiceQA entries={placeMerged.surviving} />
+        )}
 
         {/* More cameras in the region — real sibling countries, real counts */}
         {region && region.siblings.length > 0 && (

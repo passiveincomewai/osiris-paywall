@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
+import DirectAnswers from "@/components/seo/DirectAnswers";
 import {
   CATALOGUE_GENERATED_AT,
   COUNTRY_INDEX,
@@ -88,7 +89,7 @@ const FAQS = [
   },
   {
     q: "How is the directory kept honest?",
-    a: "Every feed is playback-verified before it is listed — a camera that doesn't actually stream doesn't get counted — and the directory re-checks and deduplicates feeds over time. The headline number is the count of cameras the globe actually serves, which is why it is exact rather than a round marketing figure.",
+    a: "Every feed is checked to make sure it actually plays before it is listed — a camera that doesn't stream doesn't get counted — and the directory re-checks and deduplicates feeds over time. The headline number is the count of cameras the globe actually serves, which is why it is exact rather than a round marketing figure.",
   },
   {
     q: "What is the difference between this page and the map?",
@@ -98,13 +99,28 @@ const FAQS = [
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Live Webcams Worldwide — 74,229 Cams",
-  description: `Directory of ${fmt(HEADLINE)} live public webcams across ${COUNTRY_INDEX.length} countries.`,
-  url: "https://worldeye.app/live-webcams",
-  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  numberOfItems: HEADLINE,
-  dateModified: CATALOGUE_GENERATED_AT,
+  // Single @graph for this page: exactly ONE FAQPage, built from the
+  // same FAQS array rendered below so schema matches visible questions.
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      name: "Live Webcams Worldwide — 74,229 Cams",
+      description: `Directory of ${fmt(HEADLINE)} live public webcams across ${COUNTRY_INDEX.length} countries.`,
+      url: "https://worldeye.app/live-webcams",
+      isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+      numberOfItems: HEADLINE,
+      dateModified: CATALOGUE_GENERATED_AT,
+    },
+    {
+      "@type": "FAQPage",
+      url: "https://worldeye.app/live-webcams",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
 };
 
 export default async function LiveWebcamsPage() {
@@ -296,6 +312,26 @@ export default async function LiveWebcamsPage() {
             </p>
           </div>
         </div>
+
+        {/* Direct answers (AEO) */}
+        <DirectAnswers
+          className="mt-16"
+          headingClassName="text-xl md:text-2xl font-bold leading-snug"
+          items={[
+            {
+              q: "Can I watch live cameras for free?",
+              a: "Yes — live cameras on WorldEye are free to watch in your browser, with no account and no signup. The free plan includes 5 camera opens on the globe; the directory itself is free to browse, and optional paid plans remove the open limit.",
+            },
+            {
+              q: "Where can I watch live webcams from around the world?",
+              a: "WorldEye shows 74,229 live public webcams from 109 countries on one free interactive globe you can spin, search and zoom. Browse by country or city in the directory, or open the map and tap any camera marker — traffic, beaches, ski resorts, airports, landmarks and nature.",
+            },
+            {
+              q: "How many live cameras are there in the world?",
+              a: "Nobody publishes an exact count of every webcam on Earth, but WorldEye serves 74,229 live cameras. The United States alone accounts for 41,355 of them, largely transportation-department networks. Every feed is checked before it is listed, so the number counts cameras you can actually watch.",
+            },
+          ]}
+        />
 
         {/* FAQs */}
         <div className="mt-16">

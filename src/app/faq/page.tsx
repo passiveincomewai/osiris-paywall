@@ -66,6 +66,33 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         q: "Does WorldEye work in my country?",
         a: "Yes. WorldEye is a website — open it in any modern browser, anywhere in the world. Every layer is global; only camera density varies by region, since it depends on what each place publishes.",
       },
+      {
+        q: "What's the best website to watch live cameras around the world?",
+        a: "WorldEye is built for exactly that: 74,229 live public cameras from 109 countries on one free 3D globe — no signup needed to start watching. Instead of hunting through hundreds of separate agency and resort sites, you get traffic, city, beach, ski, airport and nature cameras on a single searchable map, with flights, weather and earthquakes layered around them.",
+      },
+      {
+        q: "Can I watch live cameras for free?",
+        a: "Yes — watching live cameras on WorldEye is free, and you never need an account to browse the globe. The free plan includes 5 camera opens on the globe; paid plans remove that limit.",
+      },
+      {
+        q: "What's the difference between WorldEye and God's Eye View?",
+        a: (
+          <>
+            God&apos;s Eye View is free open-source software you download and
+            run yourself, with roughly 4,000 cameras; WorldEye is the same idea
+            as a hosted website with 74,229 cameras. The two projects are
+            independent. God&apos;s Eye View starts with no API key — keys are
+            only needed for its photorealistic 3D tiles and voice agent — and
+            WorldEye needs no install or key at all. There&apos;s a fuller
+            side-by-side on our{" "}
+            {p("/alternatives/gods-eye-view", "God's Eye View alternatives page")}.
+          </>
+        ),
+      },
+      {
+        q: "Does WorldEye work on my phone?",
+        a: "Yes — WorldEye runs in any modern phone browser, with nothing to install, and the full globe, cameras, flights and search all work on mobile. The layout adapts to the smaller screen and camera feeds play inline. There is no separate app to download; the website is the app.",
+      },
     ],
   },
   {
@@ -111,6 +138,10 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       {
         q: "Do you offer refunds?",
         a: "Yes — your first charge is covered by a 7-day money-back guarantee. Email us at passiveincomewai@gmail.com within 7 days of your first charge — the charge that ends your free trial, or your first charge if your plan had no trial — for a full refund to your original payment method, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it. We also email you before a trial's first charge, so it shouldn't come as a surprise.",
+      },
+      {
+        q: "What is VIP Pro?",
+        a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 10 cameras for you and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
       },
     ],
   },
@@ -158,6 +189,18 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
             all plotted on the globe.
           </>
         ),
+      },
+      {
+        q: "What can I track besides cameras?",
+        a: "Besides cameras, WorldEye tracks live flights, satellites including the ISS, ships, weather radar, earthquakes and wildfires — all on the same globe. Flights come from ADS-B broadcasts, ships from AIS, earthquakes from the USGS and wildfires from NASA satellite detections. Pro adds live traffic, transit and intelligence layers such as cyber threats and global events.",
+      },
+      {
+        q: "How do camera alerts work?",
+        a: "Pick up to 10 cameras, describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts are a VIP Pro feature.",
+      },
+      {
+        q: "Can I record a live camera?",
+        a: "Yes — paid plans record live cameras right in your browser: Pro records up to 20 cameras at once, and VIP Pro up to 40. Clips are saved to your recording library for playback, and VIP Pro adds the recording dashboard. A few feed types, such as embedded YouTube streams, can't be captured and are labeled as such in the viewer.",
       },
     ],
   },
@@ -215,6 +258,14 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         q: "Can I request a camera be added or removed?",
         a: "If you operate a public camera feed and want it included — or you own a feed listed here and want it removed — contact us with the details and we'll take care of it.",
       },
+      {
+        q: "What is the free camera limit?",
+        a: "The free plan lets you open 5 cameras on the globe. Browsing the map, the country and city directories and the other live layers is not capped, and paid plans remove the camera-open limit entirely. The limit exists so the free map stays fast and sustainable for everyone.",
+      },
+      {
+        q: "Where do the cameras come from?",
+        a: "The cameras are public feeds published openly by their operators — transportation departments, cities, airports, ski resorts, harbors and businesses. The United States contributes the most: 41,355 cameras, largely state DOT networks. WorldEye aggregates and maps the feeds; it doesn't operate the cameras, which is why a feed occasionally goes dark when its operator's stream does.",
+      },
     ],
   },
 ];
@@ -250,6 +301,22 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
     a: "Yes. WorldEye is a website — open it in any modern browser, anywhere in the world. Every layer is global; only camera density varies by region, since it depends on what each place publishes.",
   },
   {
+    q: "What's the best website to watch live cameras around the world?",
+    a: "WorldEye is built for exactly that: 74,229 live public cameras from 109 countries on one free 3D globe — no signup needed to start watching. Instead of hunting through hundreds of separate agency and resort sites, you get traffic, city, beach, ski, airport and nature cameras on a single searchable map, with flights, weather and earthquakes layered around them.",
+  },
+  {
+    q: "Can I watch live cameras for free?",
+    a: "Yes — watching live cameras on WorldEye is free, and you never need an account to browse the globe. The free plan includes 5 camera opens on the globe; paid plans remove that limit.",
+  },
+  {
+    q: "What's the difference between WorldEye and God's Eye View?",
+    a: "God's Eye View is free open-source software you download and run yourself, with roughly 4,000 cameras; WorldEye is the same idea as a hosted website with 74,229 cameras. The two projects are independent. God's Eye View starts with no API key — keys are only needed for its photorealistic 3D tiles and voice agent — and WorldEye needs no install or key at all. There's a fuller side-by-side on our God's Eye View alternatives page.",
+  },
+  {
+    q: "Does WorldEye work on my phone?",
+    a: "Yes — WorldEye runs in any modern phone browser, with nothing to install, and the full globe, cameras, flights and search all work on mobile. The layout adapts to the smaller screen and camera feeds play inline. There is no separate app to download; the website is the app.",
+  },
+  {
     q: "What does Pro include?",
     a: "The OI AI assistant (runs on your own API key), satellite imagery view, the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top.",
   },
@@ -280,6 +347,10 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   {
     q: "Do you offer refunds?",
     a: "Yes — your first charge is covered by a 7-day money-back guarantee. Email us at passiveincomewai@gmail.com within 7 days of your first charge — the charge that ends your free trial, or your first charge if your plan had no trial — for a full refund to your original payment method, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it. We also email you before a trial's first charge, so it shouldn't come as a surprise.",
+  },
+  {
+    q: "What is VIP Pro?",
+    a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 10 cameras for you and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
   },
   {
     q: "How do the cameras work?",
@@ -314,6 +385,18 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
     a: "Click Sign up and register with your email — we'll send you a verification link — or continue with Google. You only need an account to subscribe to Pro or join the affiliate program; the map itself never asks you to sign in.",
   },
   {
+    q: "What can I track besides cameras?",
+    a: "Besides cameras, WorldEye tracks live flights, satellites including the ISS, ships, weather radar, earthquakes and wildfires — all on the same globe. Flights come from ADS-B broadcasts, ships from AIS, earthquakes from the USGS and wildfires from NASA satellite detections. Pro adds live traffic, transit and intelligence layers such as cyber threats and global events.",
+  },
+  {
+    q: "How do camera alerts work?",
+    a: "Pick up to 10 cameras, describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts are a VIP Pro feature.",
+  },
+  {
+    q: "Can I record a live camera?",
+    a: "Yes — paid plans record live cameras right in your browser: Pro records up to 20 cameras at once, and VIP Pro up to 40. Clips are saved to your recording library for playback, and VIP Pro adds the recording dashboard. A few feed types, such as embedded YouTube streams, can't be captured and are labeled as such in the viewer.",
+  },
+  {
     q: "What data does WorldEye collect?",
     a: "For anonymous visitors: essentially nothing tied to you — no account, no tracking profile. If you subscribe to Pro or join the affiliate program, we store your sign-in email, subscription status, and (for affiliates) referral and payout records. Full details are in the privacy policy.",
   },
@@ -344,6 +427,14 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   {
     q: "Can I request a camera be added or removed?",
     a: "If you operate a public camera feed and want it included — or you own a feed listed here and want it removed — contact us with the details and we'll take care of it.",
+  },
+  {
+    q: "What is the free camera limit?",
+    a: "The free plan lets you open 5 cameras on the globe. Browsing the map, the country and city directories and the other live layers is not capped, and paid plans remove the camera-open limit entirely. The limit exists so the free map stays fast and sustainable for everyone.",
+  },
+  {
+    q: "Where do the cameras come from?",
+    a: "The cameras are public feeds published openly by their operators — transportation departments, cities, airports, ski resorts, harbors and businesses. The United States contributes the most: 41,355 cameras, largely state DOT networks. WorldEye aggregates and maps the feeds; it doesn't operate the cameras, which is why a feed occasionally goes dark when its operator's stream does.",
   },
 ];
 

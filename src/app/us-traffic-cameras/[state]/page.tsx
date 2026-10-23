@@ -26,6 +26,8 @@ import {
   type AreaRow,
   type Faq,
 } from "@/components/directory-page";
+import VoiceQA from "@/components/seo/VoiceQA";
+import { mergePlaceFaqs, stateAnswers } from "@/lib/place-answers";
 
 type StateCfg = {
   name: string;
@@ -665,6 +667,20 @@ export default async function StateTrafficPage({
   const s = resolveState(slug);
   if (!s) notFound();
 
+  /* Data-bound "Questions people ask" entries (src/lib/place-answers.ts,
+     ROLLOUT-SPEC §3 merge), computed from the same resolved config this
+     page renders — its own count, areas and samples (§2.2). */
+  const placeMerged = mergePlaceFaqs(
+    s.faqs,
+    stateAnswers({
+      slug,
+      name: s.name,
+      count: s.count,
+      areas: s.areas ?? [],
+      samples: (s.samples ?? []).map((x) => ({ name: x.name })),
+    }),
+  );
+
   const canonical = `${BASE}/us-traffic-cameras/${slug}`;
   const updated = formatDate(getUsStatesIndex().generatedAt);
   const items = s.samples ?? s.areas?.map((a) => ({ name: `${a.name} — ${a.count.toLocaleString("en-US")} cameras` })) ?? [];
@@ -690,7 +706,7 @@ export default async function StateTrafficPage({
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <FaqJsonLd faqs={s.faqs} />
+      <FaqJsonLd faqs={placeMerged.merged} />
       <Breadcrumb
         trail={[
           { label: "Home", href: "/" },
@@ -706,6 +722,9 @@ export default async function StateTrafficPage({
       {s.samples && <SampleGrid title={s.sampleTitle ?? "Featured live cameras"} samples={s.samples} />}
       <HowTo title={s.howtoTitle} steps={s.howto} />
       <FaqSection title={s.faqTitle} faqs={s.faqs} />
+      {placeMerged.surviving.length > 0 && (
+        <VoiceQA entries={placeMerged.surviving} />
+      )}
       <RelatedLinks
         title="More US traffic camera indexes"
         links={RELATED.filter((l) => l.href !== `/us-traffic-cameras/${slug}`)}

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import DirectAnswers from "@/components/seo/DirectAnswers";
 import RelatedLinks from "@/components/RelatedLinks";
 import GodsEyeLiveStrip from "@/components/GodsEyeLiveStrip";
 import GodsEyeStickyCta from "@/components/GodsEyeStickyCta";
@@ -405,6 +406,26 @@ export default function GodsEyeViewPage() {
             </p>
           </div>
         </div>
+
+        {/* Direct answers (AEO) */}
+        <DirectAnswers
+          className="mt-20 max-w-3xl mx-auto"
+          headingClassName="text-xl md:text-2xl font-bold leading-snug"
+          items={[
+            {
+              q: "What's the difference between WorldEye and God's Eye View?",
+              a: "God's Eye View is free open-source software you install and run yourself, with roughly 4,000 cameras; WorldEye is the same idea as a hosted website with 74,229 cameras. The two are independent projects. God's Eye View starts with no API key — keys are only needed for its photorealistic 3D tiles and voice agent — while WorldEye needs no install, no key and no setup at all.",
+            },
+            {
+              q: "Do I need an API key to use a god's eye view?",
+              a: "No — WorldEye needs no API key, no install and no setup; you open the website and the live globe is already running. The open-source God's Eye View also starts keyless — its keys are only for the optional photorealistic tiles and voice agent.",
+            },
+            {
+              q: "What can I see in a god's eye view of Earth?",
+              a: "On one WorldEye globe you can see 74,229 live cameras, flights, satellites, ships, weather radar, earthquakes and wildfires, all updating in real time. Every layer sits on the same 3D Earth, so a storm, the cameras underneath it and the flights rerouting around it share a single view.",
+            },
+          ]}
+        />
 
         {/* FAQ */}
         <div className="mt-20 max-w-3xl mx-auto">

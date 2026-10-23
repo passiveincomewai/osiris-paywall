@@ -15,6 +15,15 @@ import {
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
 import { EXPLORE_SCOPES, areasForDef, countForDef } from "@/lib/explore-data";
+import VoiceQA from "@/components/seo/VoiceQA";
+import { voiceFaqs } from "@/lib/voice-questions";
+
+const VOICE_QA_IDS = [
+  "beach-check-the-surf",
+  "beach-which-beaches-live",
+  "beach-safe-to-swim",
+  "beach-watch-the-sunrise",
+];
 
 export const metadata: Metadata = {
   title: "Beach Webcams — Live Coastal Cameras Worldwide",
@@ -132,7 +141,7 @@ export default async function BeachWebcamsPage() {
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <FaqJsonLd faqs={FAQS} />
+      <FaqJsonLd faqs={[...FAQS, ...voiceFaqs(VOICE_QA_IDS)]} />
       <Breadcrumb
         trail={[
           { label: "Home", href: "/" },
@@ -195,6 +204,8 @@ export default async function BeachWebcamsPage() {
       />
 
       <FaqSection title="Beach webcams — FAQ" faqs={FAQS} />
+
+      <VoiceQA ids={VOICE_QA_IDS} />
 
       <RelatedLinks
         title="More webcam directories"

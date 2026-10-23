@@ -112,9 +112,12 @@ const SEO_PAGES_WAVE9 = [
 
 // Wave 10 (2026-10-22): the ALERTCalifornia fire-camera network as its own
 // page — cross-linked from /wildfire-tracker (a different data source:
-// satellite detections there, cameras here).
+// satellite detections there, cameras here) — plus the voice-answers hub
+// (spoken-form questions with standalone answers, built from
+// src/lib/voice-questions.ts for voice assistants and AI answer engines).
 const SEO_PAGES_WAVE10 = [
   "/california-fire-cameras",
+  "/answers",
 ];
 
 // Wave 11 (2026-10-22): the Live Camera Index — primary-data research page

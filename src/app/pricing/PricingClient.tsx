@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 import CheckoutSheet from "@/components/CheckoutSheet";
 import TeamSection from "./TeamSection";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
@@ -101,6 +102,19 @@ const FAQS = [
   },
 ];
 
+// FAQPage structured data, built from the same FAQS array the page renders
+// below so the schema can never drift from the visible questions.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  url: "https://worldeye.app/pricing",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 function CheckoutButton({
   plan,
   label,
@@ -191,6 +205,7 @@ export default function PricingPage() {
 
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+      <JsonLd data={faqJsonLd} />
       {/* Ambient gold glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />

@@ -1,3 +1,6 @@
+import VoiceQA from "@/components/seo/VoiceQA";
+import { mergePlaceFaqs } from "@/lib/place-answers";
+import { getVoiceQuestionsByIds } from "@/lib/voice-questions";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
@@ -101,14 +104,33 @@ const FAQS = [
   },
 ];
 
+/* Canonical-dataset answers merged with the page FAQs into the single
+   FAQPage below (src/lib/place-answers.ts merge rule); the visible
+   VoiceQA block renders exactly the surviving entries. */
+const VOICE_MERGED = mergePlaceFaqs(FAQS, getVoiceQuestionsByIds(["is-the-freeway-jammed", "traffic-cameras-california", "traffic-cameras-texas", "weather-on-my-road-trip"]));
+
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Live Traffic Cameras — US DOT Highway Cams",
+  // Single @graph: CollectionPage + exactly ONE FAQPage (merged set).
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      name: "Live Traffic Cameras — US DOT Highway Cams",
   description: `Directory of ${fmt(total)} live US traffic cameras from DOT and public sources, with per-state counts.`,
   url: "https://worldeye.app/live-traffic-cameras",
-  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  dateModified: stateIndex.generatedAt,
+      isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
+      dateModified: stateIndex.generatedAt,
+    },
+    {
+      "@type": "FAQPage",
+      url: "https://worldeye.app/live-traffic-cameras",
+      mainEntity: VOICE_MERGED.merged.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
 };
 
 export default async function LiveTrafficCamerasPage() {
@@ -326,6 +348,10 @@ export default async function LiveTrafficCamerasPage() {
             ))}
           </div>
         </div>
+
+        {VOICE_MERGED.surviving.length > 0 && (
+          <VoiceQA entries={VOICE_MERGED.surviving} />
+        )}
 
         <TrialCtaSection utmSource="live-traffic-cameras" />
 

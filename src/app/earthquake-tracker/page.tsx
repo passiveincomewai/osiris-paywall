@@ -1,3 +1,6 @@
+import VoiceQA from "@/components/seo/VoiceQA";
+import { mergePlaceFaqs } from "@/lib/place-answers";
+import { getVoiceQuestionsByIds } from "@/lib/voice-questions";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Activity, MapPin, Clock, Gauge, Newspaper, Plane, Eye, Bell, ChevronDown } from "lucide-react";
@@ -93,6 +96,11 @@ const FAQS = [
   },
 ];
 
+/* Canonical-dataset answers merged into this page's single FAQPage
+   (src/lib/place-answers.ts merge rule); the visible VoiceQA block
+   renders exactly the surviving entries. */
+const VOICE_MERGED = mergePlaceFaqs(FAQS, getVoiceQuestionsByIds(["see-earthquakes-as-they-happen", "where-was-the-latest-earthquake"]));
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -107,7 +115,7 @@ const jsonLd = {
     {
       "@type": "FAQPage",
       url: "https://worldeye.app/earthquake-tracker",
-      mainEntity: FAQS.map((f) => ({
+      mainEntity: VOICE_MERGED.merged.map((f) => ({
         "@type": "Question",
         name: f.q,
         acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -366,6 +374,10 @@ export default function EarthquakeTrackerPage() {
             </Link>
           </p>
         </div>
+
+        {VOICE_MERGED.surviving.length > 0 && (
+          <VoiceQA entries={VOICE_MERGED.surviving} />
+        )}
 
         <RelatedLinks
           links={[

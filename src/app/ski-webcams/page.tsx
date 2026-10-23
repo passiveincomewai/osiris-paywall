@@ -23,6 +23,15 @@ import {
   type SkiResort,
 } from "@/lib/ski-resorts";
 import type { CountryCamera } from "@/lib/country-cameras";
+import VoiceQA from "@/components/seo/VoiceQA";
+import { voiceFaqs } from "@/lib/voice-questions";
+
+const VOICE_QA_IDS = [
+  "ski-is-it-snowing-at-the-resort",
+  "ski-check-the-drive-up",
+  "ski-see-lift-lines",
+  "ski-regions-with-most-cameras",
+];
 
 export const metadata: Metadata = {
   title: "Ski Webcams — Live Mountain & Resort Cameras",
@@ -175,7 +184,7 @@ export default async function SkiWebcamsPage() {
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <FaqJsonLd faqs={FAQS} />
+      <FaqJsonLd faqs={[...FAQS, ...voiceFaqs(VOICE_QA_IDS)]} />
       <Breadcrumb
         trail={[
           { label: "Home", href: "/" },
@@ -277,6 +286,8 @@ export default async function SkiWebcamsPage() {
       />
 
       <FaqSection title="Ski webcams — FAQ" faqs={FAQS} />
+
+      <VoiceQA ids={VOICE_QA_IDS} />
 
       <RelatedLinks
         title="More webcam directories"
