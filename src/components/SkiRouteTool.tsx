@@ -1,10 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Loader2, MapPin, Navigation, Route as RouteIcon } from 'lucide-react';
 import SkiCameraGrid from '@/components/SkiCameraGrid';
 import type { CountryCamera } from '@/lib/country-cameras';
 import type { SkiResort } from '@/lib/ski-resorts';
+
+/* The result map (MapLibre) loads only when a visitor actually plans a
+   route — a resort page view that never runs the tool pays nothing. */
+const SkiRouteMap = dynamic(() => import('@/components/SkiRouteMap'), { ssr: false });
 
 /**
  * "Cameras on your route" — the drive-up tool on every resort page.
@@ -38,7 +43,15 @@ interface RouteCameraRecord extends CountryCamera {
 type ToolState =
   | { kind: 'idle' }
   | { kind: 'working'; step: string }
-  | { kind: 'done'; distanceKm: number; durationMin: number; total: number; cameras: RouteCameraRecord[] }
+  | {
+      kind: 'done';
+      distanceKm: number;
+      durationMin: number;
+      total: number;
+      cameras: RouteCameraRecord[];
+      /** The planned drive as [lng, lat] pairs — drawn on the result map. */
+      route: [number, number][];
+    }
   | { kind: 'no-route'; message: string }
   | { kind: 'error'; message: string };
 
@@ -194,6 +207,7 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
         durationMin: Math.round((dir.duration ?? 0) / 60),
         total: camJson.total,
         cameras: camJson.cameras,
+        route: coords,
       });
     } catch {
       setState({ kind: 'error', message: 'Something went wrong planning that route. Try again in a moment.' });
@@ -202,6 +216,29 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
 
   const byId = new Map<string, RouteCameraRecord>();
   if (state.kind === 'done') for (const c of state.cameras) byId.set(c.id, c);
+
+  /* The result map's inputs, memoised on the result itself: rebuilding
+     them on every render (each keystroke in the inputs above) would
+     tear the map down and rebuild it mid-edit. */
+  const mapCameras = useMemo(
+    () =>
+      state.kind === 'done'
+        ? state.cameras
+            .filter(c => typeof c.lat === 'number' && typeof c.lng === 'number')
+            .map(c => ({
+              id: c.id,
+              name: c.name,
+              lat: c.lat as number,
+              lng: c.lng as number,
+              alongKm: c.alongKm,
+            }))
+        : [],
+    [state],
+  );
+  const mapRoute = useMemo(
+    () => (state.kind === 'done' ? state.route : []),
+    [state],
+  );
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
@@ -278,16 +315,26 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
               : `${state.total} camera${state.total === 1 ? '' : 's'} along this route, in driving order:`}
           </p>
           {state.total > 0 && (
-            <div className="mt-4">
-              <SkiCameraGrid
-                cameras={state.cameras}
-                initial={12}
-                caption={cam => {
-                  const rec = byId.get(cam.id);
-                  return rec ? `${rec.alongKm.toFixed(1)} km into your drive` : null;
-                }}
-              />
-            </div>
+            <>
+              <div className="mt-4">
+                <SkiRouteMap
+                  route={mapRoute}
+                  cameras={mapCameras}
+                  start={start ?? resortPlace}
+                  destination={dest}
+                />
+              </div>
+              <div className="mt-4">
+                <SkiCameraGrid
+                  cameras={state.cameras}
+                  initial={12}
+                  caption={cam => {
+                    const rec = byId.get(cam.id);
+                    return rec ? `${rec.alongKm.toFixed(1)} km into your drive` : null;
+                  }}
+                />
+              </div>
+            </>
           )}
           <p className="mt-4 text-[11px] text-white/30 leading-relaxed">
             Route planned with OpenStreetMap data (Valhalla/OSRM — the same routing the WorldEye globe

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getSkiResort,
   haversineKm,
+  isSnowStakeCamera,
   projectOntoRoute,
   selectResortCameras,
   selectRouteCameras,
@@ -78,6 +79,31 @@ describe('selectResortCameras', () => {
       cam({ id: 'b', name: 'Base Lift', lat: 45.0105, lng: 7 }),
     ];
     expect(selectResortCameras(records, resort).resort).toHaveLength(1);
+  });
+
+  it('pins snow-stake cameras to the top of the resort grid', () => {
+    const records = [
+      cam({ id: 'slope', name: 'Base Lift', lat: 45.01, lng: 7 }),
+      cam({ id: 'stake', name: 'Test Peak Snow Stake', lat: 45.05, lng: 7 }),
+      cam({ id: 'mid', name: 'Mid Mountain', lat: 45.03, lng: 7 }),
+    ];
+    expect(selectResortCameras(records, resort).resort.map(c => c.id)).toEqual([
+      'stake',
+      'slope',
+      'mid',
+    ]);
+  });
+});
+
+describe('isSnowStakeCamera', () => {
+  it('matches the names operators give stake cameras', () => {
+    expect(isSnowStakeCamera(cam({ id: '1', name: 'Alta Snow Stake' }))).toBe(true);
+    expect(isSnowStakeCamera(cam({ id: '2', name: 'Snowstake — Mid Gad' }))).toBe(true);
+    expect(isSnowStakeCamera(cam({ id: '3', name: 'SR-210 Snow-Stake Cam' }))).toBe(true);
+  });
+  it('does not match ordinary slope or road cameras', () => {
+    expect(isSnowStakeCamera(cam({ id: '4', name: 'Base Area Looking Up' }))).toBe(false);
+    expect(isSnowStakeCamera(cam({ id: '5', name: 'Staker Road at Milepost 4' }))).toBe(false);
   });
 });
 

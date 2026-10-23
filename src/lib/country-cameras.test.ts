@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   cameraAreas,
+  cameraFeedTier,
   cameraMediaKind,
   canonicalCountryName,
   COUNTRY_CAMERA_EXPLORERS,
@@ -9,6 +10,7 @@ import {
   filterCameras,
   selectCountryCameras,
   sortForCountryPage,
+  sortWorkingFeedsFirst,
   youtubePosterUrl,
   type CountryCamera,
 } from './country-cameras';
@@ -265,5 +267,42 @@ describe('sortForCountryPage', () => {
     const input = [cam({ id: '2', city: 'B' }), cam({ id: '1', city: 'A' })];
     sortForCountryPage(input);
     expect(input.map(c => c.id)).toEqual(['2', '1']);
+  });
+});
+
+describe('cameraFeedTier / sortWorkingFeedsFirst', () => {
+  const snapshot = cam({ id: 'snap', feed_url: 'https://example.com/a.jpg' });
+  const video = cam({
+    id: 'vid',
+    stream_url: 'https://example.com/a.m3u8',
+    stream_type: 'hls',
+  });
+  const embed = cam({
+    id: 'emb',
+    stream_url: 'https://www.youtube.com/embed/abc12345',
+    stream_type: 'iframe',
+  });
+  const listing = cam({ id: 'lst', external_url: 'https://example.com/page' });
+  const brokenVideo = cam({ id: 'brk', stream_type: 'hls' });
+
+  it('tiers by what the card can actually play', () => {
+    expect(cameraFeedTier(snapshot)).toBe(0);
+    expect(cameraFeedTier(video)).toBe(0);
+    expect(cameraFeedTier(embed)).toBe(1);
+    expect(cameraFeedTier(listing)).toBe(2);
+    expect(cameraFeedTier(brokenVideo)).toBe(2);
+  });
+
+  it('sorts playable first, embeds next, listings last — stable within tiers', () => {
+    const input = [listing, embed, snapshot, brokenVideo, video];
+    expect(sortWorkingFeedsFirst(input).map(c => c.id)).toEqual([
+      'snap',
+      'vid',
+      'emb',
+      'lst',
+      'brk',
+    ]);
+    // input not mutated
+    expect(input.map(c => c.id)).toEqual(['lst', 'emb', 'snap', 'brk', 'vid']);
   });
 });

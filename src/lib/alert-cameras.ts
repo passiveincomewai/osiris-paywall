@@ -182,6 +182,10 @@ export function countyGroups(cams: AlertCam[]): CountyGroup[] {
 export function sortForGrid(cams: AlertCam[]): AlertCam[] {
   const rank = new Map(countyGroups(cams).map((g, i) => [g.key, i]));
   return [...cams].sort((a, b) => {
+    /* Working feeds first: ALERTCalifornia publishes a real online
+       flag per camera (AlertCam.online) — online cameras ahead of
+       offline ones, the county/name order preserved inside each. */
+    if (a.online !== b.online) return a.online ? -1 : 1;
     const ra = rank.get(countyKey(a.county)) ?? Number.MAX_SAFE_INTEGER;
     const rb = rank.get(countyKey(b.county)) ?? Number.MAX_SAFE_INTEGER;
     if (ra !== rb) return ra - rb;

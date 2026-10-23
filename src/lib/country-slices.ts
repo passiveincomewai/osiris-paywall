@@ -12,7 +12,13 @@
  * country, so a visitor can find one camera among forty thousand without
  * downloading forty thousand records.
  */
-import { cameraAreas, filterCameras, type CameraArea, type CountryCamera } from './country-cameras';
+import {
+  cameraAreas,
+  filterCameras,
+  sortWorkingFeedsFirst,
+  type CameraArea,
+  type CountryCamera,
+} from './country-cameras';
 
 export interface CountrySliceRequest {
   offset?: number;
@@ -48,11 +54,16 @@ export function sliceCountryCameras(
   const offset = clampInt(req.offset, 0, 0, Number.MAX_SAFE_INTEGER);
   const limit = clampInt(req.limit, COUNTRY_PAGE_SIZE, 1, MAX_COUNTRY_PAGE_SIZE);
   const filtered = filterCameras(records, { query: req.query, area: req.city ?? null });
+  /* Working feeds first (lib/country-cameras cameraFeedTier): playable
+     records ahead of embeds ahead of listings, the incoming geographic
+     order preserved inside each tier. Applied before slicing so every
+     page of the grid honours it. */
+  const ordered = sortWorkingFeedsFirst(filtered);
   return {
     total: filtered.length,
     offset,
     limit,
-    cameras: filtered.slice(offset, offset + limit),
+    cameras: ordered.slice(offset, offset + limit),
     cities: cameraAreas(records).slice(0, COUNTRY_CITY_CHIPS),
   };
 }

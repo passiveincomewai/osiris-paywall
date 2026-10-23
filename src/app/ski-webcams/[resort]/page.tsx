@@ -10,7 +10,13 @@ import SkiRouteTool from "@/components/SkiRouteTool";
 import { cameraAreas } from "@/lib/country-cameras";
 import { plural } from "@/lib/country-page-content";
 import {
+  formatArea,
+  formatElevation,
+  getSkiResortFacts,
+} from "@/lib/ski-resort-facts";
+import {
   getSkiResort,
+  isSnowStakeCamera,
   loadCountryChunk,
   selectResortCameras,
   NEARBY_RADIUS_KM,
@@ -73,6 +79,29 @@ export default async function SkiResortPage({
   if (!r) notFound();
 
   const { resort: resortCams, nearby: nearbyCams } = await loadSelection(r);
+  const facts = getSkiResortFacts(r.slug);
+  const factStats: Array<{ label: string; value: string }> = facts
+    ? [
+        facts.baseElevationM != null && {
+          label: "Base elevation",
+          value: formatElevation(facts.baseElevationM),
+        },
+        facts.summitElevationM != null && {
+          label: "Summit elevation",
+          value: formatElevation(facts.summitElevationM),
+        },
+        facts.verticalM != null && {
+          label: "Vertical drop",
+          value: formatElevation(facts.verticalM),
+        },
+        facts.skiableHectares != null && {
+          label: "Skiable terrain",
+          value: formatArea(facts.skiableHectares),
+        },
+        facts.lifts != null && { label: "Lifts", value: String(facts.lifts) },
+        facts.runs != null && { label: "Runs", value: String(facts.runs) },
+      ].filter((s): s is { label: string; value: string } => Boolean(s))
+    : [];
   const total = resortCams.length + nearbyCams.length;
   const areas = cameraAreas([...resortCams, ...nearbyCams]).slice(0, 5);
   const others = SKI_RESORTS.filter(o => o.slug !== r.slug && o.country === r.country).slice(0, 6);
@@ -186,6 +215,13 @@ export default async function SkiResortPage({
           </div>
         </div>
 
+        {/* Route tool — first on the page: the drive is the first
+            decision of a ski day, so the planner leads. */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-5">Plan the drive to {r.name}</h2>
+          <SkiRouteTool resort={r} />
+        </section>
+
         {/* Intro — composed from the camera mix the catalogue actually holds */}
         <div className="mt-10 space-y-4 text-white/70 leading-relaxed max-w-3xl mx-auto">
           <p>
@@ -200,9 +236,10 @@ export default async function SkiResortPage({
             )}
           </p>
           <p>
-            Read the page top to bottom the way you&apos;d plan the day: conditions and official alerts
-            first, then the resort cameras for snow and lift lines, then the road cameras for the drive —
-            or skip straight to the route tool and line up every camera on your own road in.
+            Read the rest of the page the way you&apos;d plan the day: conditions and official alerts,
+            then the resort cameras for snow and lift lines — snow-stake cameras lead that grid, because
+            the stake is the overnight snowfall answer — then the road cameras on the corridors around{" "}
+            {r.town}.
           </p>
         </div>
 
@@ -212,23 +249,49 @@ export default async function SkiResortPage({
           <SkiConditions resort={r} />
         </section>
 
+        {/* About the resort — hand-sourced facts for this one mountain */}
+        {facts && (factStats.length > 0 || (facts.about && facts.about.length > 0) || facts.access) && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-5">About {r.name}</h2>
+            {factStats.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-3xl">
+                {factStats.map(s => (
+                  <div key={s.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                    <div className="text-base md:text-lg font-bold text-white/90">{s.value}</div>
+                    <div className="text-xs text-white/45 mt-1">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {facts.about && facts.about.length > 0 && (
+              <div className="mt-6 space-y-4 text-white/70 leading-relaxed max-w-3xl">
+                {facts.about.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+            )}
+            {facts.access && (
+              <div className="mt-6 max-w-3xl">
+                <h3 className="font-semibold text-white/90 mb-2">Road conditions to {r.name} — the drive in</h3>
+                <p className="text-white/70 leading-relaxed">{facts.access}</p>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Resort cameras */}
         <section className="mt-12">
           <h2 className="text-xl md:text-2xl font-bold mb-2">{r.name} live cameras</h2>
           <p className="text-sm text-white/50 mb-5 max-w-3xl">
             Every camera within {RESORT_RADIUS_KM} km of the {r.name} base area, nearest first — slopes,
-            lifts, the village and the top of the access road. Open any feed to watch it in full.
+            lifts, the village and the top of the access road. Snow-stake cameras sit at the top of the
+            grid, labelled. Open any feed to watch it in full.
           </p>
           <SkiCameraGrid
             cameras={resortCams}
+            caption={cam => (isSnowStakeCamera(cam) ? "Snow stake" : null)}
             emptyNote={`No cameras within ${RESORT_RADIUS_KM} km of ${r.name} are in the live index right now — the road cameras below still cover the area.`}
           />
-        </section>
-
-        {/* Route tool */}
-        <section className="mt-12">
-          <h2 className="text-xl md:text-2xl font-bold mb-5">Plan the drive</h2>
-          <SkiRouteTool resort={r} />
         </section>
 
         {/* Nearby traffic cameras */}

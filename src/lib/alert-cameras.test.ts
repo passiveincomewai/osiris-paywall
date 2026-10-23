@@ -100,6 +100,16 @@ describe('countyGroups / sortForGrid', () => {
     // input not mutated
     expect(set.map((c) => c.id)).toEqual(['1', '2', '3', '4', '5', '6']);
   });
+
+  it('sinks offline cameras below online ones, keeping grid order inside each', () => {
+    const mixed = [
+      cam({ id: '1', name: 'B Peak', county: 'kern', online: false }),
+      cam({ id: '2', name: 'A Peak', county: 'kern', online: true }),
+      cam({ id: '3', name: 'C Peak', county: 'losangeles', online: false }),
+      cam({ id: '4', name: 'D Peak', county: 'losangeles', online: true }),
+    ];
+    expect(sortForGrid(mixed).map((c) => c.id)).toEqual(['2', '4', '1', '3']);
+  });
 });
 
 describe('filterCameras', () => {

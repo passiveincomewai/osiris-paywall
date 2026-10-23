@@ -4,6 +4,7 @@ import { cachedSource, isStale, peekSource, seedSource } from '@/lib/sourceCache
 import { buildPayload, clearPayload, getPayload, readSnapshot, writeSnapshot, type Payload, type RegionCameras } from '@/lib/cctv-snapshot';
 import { sparseSampleRegions } from '@/lib/cctv-sparse';
 import { createPool } from '@/lib/fetch-pool';
+import { findDirectoryCameraById } from '@/lib/camera-directory-lookup';
 
 export const maxDuration = 60;
 import { fetchAsfinagCameras } from './asfinag';
@@ -1247,6 +1248,31 @@ export async function GET(request: Request) {
       };
       let hit = findHeld();
       if (!hit) {
+        /* The directory, country, city and ski pages mint their deep
+           links from the static per-country chunks, whose ids the live
+           catalogue does not always carry — an upstream that renumbers
+           its inventory (UDOT, Oct 2026) strands every one of those
+           links at once, and the globe landed silently on the plain
+           globe. Resolve against the directory dataset before paying
+           for a full collect: an exact id match there is the very
+           camera the page linked to, its real feed URL included.
+           The lookup is time-boxed: the directory index builds lazily
+           over every country chunk, and a cold build must not hold
+           this answer hostage — the build keeps running in the
+           background (later lookups are instant), and on a timeout
+           this request falls through to the collect below, exactly
+           as it did before the directory resolution existed. */
+        let directoryTimer: ReturnType<typeof setTimeout> | undefined;
+        const directoryHit = await Promise.race([
+          findDirectoryCameraById(wantId).catch(() => null),
+          new Promise<null>(resolve => {
+            directoryTimer = setTimeout(() => resolve(null), 2_500);
+          }),
+        ]);
+        if (directoryTimer) clearTimeout(directoryTimer);
+        if (directoryHit) hit = { camera: directoryHit, region: 'directory' };
+      }
+      if (!hit) {
         await collectRegions(ALL_REGIONS());
         hit = findHeld();
       }
@@ -1256,7 +1282,7 @@ export async function GET(request: Request) {
         total: hit ? 1 : 0,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         sources: hit ? { [String((hit.camera as any).source ?? 'unknown')]: 1 } : {},
-        regions: hit ? [hit.region] : [],
+        regions: hit && hit.region !== 'directory' ? [hit.region] : [],
         pendingRegions: ALL_REGIONS().filter(region => !held[region]),
         timestamp: new Date().toISOString(),
       }, { headers: { 'Cache-Control': 'no-store, max-age=0' } });

@@ -12,7 +12,7 @@
  * route-cameras API share, and the server-side record loader.
  */
 import type { CountryCamera } from './country-cameras';
-import { dedupeCountryCameras } from './country-cameras';
+import { dedupeCountryCameras, sortWorkingFeedsFirst } from './country-cameras';
 import resortsData from '@/data/ski-resorts.json';
 
 export interface SkiResort {
@@ -42,6 +42,19 @@ export const NEARBY_RADIUS_KM = 40;
  * driver passes, narrow enough to leave parallel-valley cameras out.
  */
 export const ROUTE_CORRIDOR_KM = 2.5;
+
+/**
+ * A snow-stake camera: the measuring-stake feeds skiers actually plan
+ * around ("how much fell overnight?"). Matched on the camera's own
+ * name/label — operators name them plainly ("Alta Snow Stake",
+ * "Snow Stake — SR-210"). Name-only on purpose: a stake is a labelled
+ * instrument, and guessing from position would mislabel slope cams.
+ */
+const SNOW_STAKE_PATTERN = /snow[-\s]?stake/i;
+
+export function isSnowStakeCamera(cam: CountryCamera): boolean {
+  return SNOW_STAKE_PATTERN.test(cam.name ?? '');
+}
 
 export const SKI_RESORTS: SkiResort[] = (resortsData as { resorts: SkiResort[] }).resorts;
 export const SKI_DATASET_GENERATED_AT: string = (resortsData as { generatedAt: string }).generatedAt;
@@ -95,9 +108,23 @@ export function selectResortCameras(records: readonly CountryCamera[], resort: S
     if (d <= NEARBY_RADIUS_KM) placed.push({ cam, d });
   }
   placed.sort((a, b) => a.d - b.d);
+  /* Working feeds first within each list (stable — nearest-first order
+     survives inside each playability tier). */
+  const resortCams = sortWorkingFeedsFirst(
+    placed.filter(p => p.d <= RESORT_RADIUS_KM).map(p => p.cam),
+  );
+  const nearbyCams = sortWorkingFeedsFirst(
+    placed.filter(p => p.d > RESORT_RADIUS_KM).map(p => p.cam),
+  );
+  /* Snow stakes lead the resort's own grid: the stake is the overnight
+     snowfall answer, so it pins ahead of even a nearer slope cam (the
+     tier order is preserved inside the stake group and the rest). */
   return {
-    resort: placed.filter(p => p.d <= RESORT_RADIUS_KM).map(p => p.cam),
-    nearby: placed.filter(p => p.d > RESORT_RADIUS_KM).map(p => p.cam),
+    resort: [
+      ...resortCams.filter(isSnowStakeCamera),
+      ...resortCams.filter(c => !isSnowStakeCamera(c)),
+    ],
+    nearby: nearbyCams,
   };
 }
 

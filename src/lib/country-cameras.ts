@@ -10,6 +10,8 @@
  * (pure, tested) selection logic the explorer component renders from.
  */
 
+import { previewMedia } from './camera-preview';
+
 /** The fields of a catalogue record the country pages read. */
 export interface CountryCamera {
   id: string;
@@ -172,6 +174,45 @@ export function canonicalCountryName(raw: string | undefined): string | null {
   const value = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (JUNK_COUNTRY_VALUES.has(value)) return null;
   return COUNTRY_NORMALIZE[value] ?? value;
+}
+
+/* ------------------------------------------------------------------ */
+/* Working feeds first                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * How playable a record is, from the record alone — the live-status
+ * signal the catalogue data actually carries. Directory records hold
+ * no probe result or online flag, so the honest pre-render signal is
+ * what the card can attempt the moment it mounts:
+ *
+ *  0 — a directly playable feed (previewMedia resolves a jpg / mjpeg /
+ *      mp4 / hls URL): the card loads a real frame or stream.
+ *  1 — an embed (YouTube & friends): no frame to preview, but the
+ *      viewer plays it on open.
+ *  2 — a listing only: no playable URL at all. The card can show
+ *      nothing until the viewer's resolver tries at open time; a good
+ *      share of these are feeds that have gone away.
+ *
+ * The card still earns its LIVE badge at runtime (camera-feed-card) —
+ * this ranking only decides who gets seen first, never who is claimed
+ * live.
+ */
+export function cameraFeedTier(cam: CountryCamera): 0 | 1 | 2 {
+  if (previewMedia(cam)) return 0;
+  if (cameraMediaKind(cam) === 'embed') return 1;
+  return 2;
+}
+
+/**
+ * Stable working-feeds-first ordering: playable records keep their
+ * incoming order among themselves, embeds follow, listings last. The
+ * incoming order is each grid's own (distance on ski pages, city/name
+ * on country pages), so this layers on top of it rather than replacing
+ * it. Input is not mutated.
+ */
+export function sortWorkingFeedsFirst<T extends CountryCamera>(cameras: readonly T[]): T[] {
+  return [...cameras].sort((a, b) => cameraFeedTier(a) - cameraFeedTier(b));
 }
 
 /** URL slug for a canonical country name (diacritics folded, as the city
