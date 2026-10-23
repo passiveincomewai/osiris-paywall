@@ -18,6 +18,7 @@ import {
   Camera,
   Check,
   Crown,
+  Globe,
   Loader2,
   Mail,
   Pause,
@@ -28,6 +29,7 @@ import {
   X,
 } from "lucide-react";
 import TrialPicker from "@/components/TrialPicker";
+import { cameraRecordStill } from "@/lib/camera-alerts/viewer";
 
 const btnGold =
   "px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition disabled:opacity-60 inline-flex items-center justify-center gap-2";
@@ -221,11 +223,16 @@ function RulesSection({
 
   return (
     <section>
-      <div className="flex items-baseline justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <h3 className="text-base font-bold text-white">Your watched cameras</h3>
-        <span className="text-xs text-white/45">
-          {view.activeCount} of {view.maxActive} active
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-white/45">
+            {view.activeCount} of {view.maxActive} active
+          </span>
+          <Link href="/" className={btnGold}>
+            <Globe className="w-4 h-4" /> Add more from the globe
+          </Link>
+        </div>
       </div>
 
       {notice && (
@@ -233,7 +240,7 @@ function RulesSection({
       )}
 
       {view.rules.length === 0 ? (
-        <p className="text-sm text-white/50 mb-6">No cameras watched yet. Add your first one below.</p>
+        <p className="text-sm text-white/50 mb-6">No cameras watched yet. Add one below — or open any camera on the globe and tap Set alert.</p>
       ) : (
         <ul className="space-y-3 mb-6">
           {view.rules.map((r) => {
@@ -362,6 +369,7 @@ function AddRuleForm({
   setNotice: (s: string | null) => void;
 }) {
   const [catalogue, setCatalogue] = useState<CatalogueCam[] | null>(null);
+  const [catalogueFailed, setCatalogueFailed] = useState(false);
   const [query, setQuery] = useState("");
   const [picked, setPicked] = useState<CatalogueCam | null>(null);
   const [condition, setCondition] = useState("");
@@ -374,12 +382,12 @@ function AddRuleForm({
     (async () => {
       try {
         const r = await fetch("/api/cctv?sparse=1");
-        if (r.ok) {
-          const j = (await r.json()) as { cameras?: CatalogueCam[] };
-          if (Array.isArray(j.cameras)) setCatalogue(j.cameras);
-        }
+        if (!r.ok) throw new Error("sample");
+        const j = (await r.json()) as { cameras?: CatalogueCam[] };
+        if (Array.isArray(j.cameras)) setCatalogue(j.cameras);
+        else setCatalogueFailed(true);
       } catch {
-        /* the form still works by retrying on open; server validates anyway */
+        setCatalogueFailed(true);
       }
     })();
   }, []);
@@ -388,6 +396,7 @@ function AddRuleForm({
     if (!catalogue || picked || query.trim().length < 2) return [];
     const q = query.trim().toLowerCase();
     return catalogue
+      .filter((c) => cameraRecordStill(c))
       .filter((c) => `${camName(c)} ${camPlace(c)}`.toLowerCase().includes(q))
       .slice(0, 8);
   }, [catalogue, query, picked]);
@@ -458,10 +467,25 @@ function AddRuleForm({
                   ))}
                 </ul>
               )}
-              <p className="text-xs text-white/35 mt-2">
-                Search covers the quick-load camera sample; every pick is checked against the full
-                catalogue when you save, and only cameras with still photos can be watched.
-              </p>
+              {catalogueFailed ? (
+                <p className="text-xs text-amber-300 mt-2">
+                  The camera sample couldn’t load, so search is unavailable right now. You can
+                  still set an alert from the globe: open any camera and tap Set alert.
+                </p>
+              ) : !catalogue ? (
+                <p className="text-xs text-white/35 mt-2">Loading the camera sample…</p>
+              ) : query.trim().length >= 2 && results.length === 0 ? (
+                <p className="text-xs text-amber-300 mt-2">
+                  No still-photo camera in the quick sample matches that search. The sample holds
+                  about 2,000 of the full catalogue — open the camera on the globe and tap Set
+                  alert instead.
+                </p>
+              ) : (
+                <p className="text-xs text-white/35 mt-2">
+                  Search covers the quick-load camera sample, still-photo cameras only; every
+                  pick is checked against the full catalogue when you save.
+                </p>
+              )}
             </div>
           )}
 

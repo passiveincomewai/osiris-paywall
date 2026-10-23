@@ -29,6 +29,7 @@ import {
   X,
 } from "lucide-react";
 import TrialPicker from "@/components/TrialPicker";
+import { cameraRecordStill } from "@/lib/camera-alerts/viewer";
 
 const btnGold =
   "px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition disabled:opacity-60 inline-flex items-center justify-center gap-2";
@@ -371,6 +372,7 @@ function AddRuleForm({
   setNotice: (s: string | null) => void;
 }) {
   const [catalogue, setCatalogue] = useState<CatalogueCam[] | null>(null);
+  const [catalogueFailed, setCatalogueFailed] = useState(false);
   const [query, setQuery] = useState("");
   const [picked, setPicked] = useState<CatalogueCam | null>(null);
   const [condition, setCondition] = useState("");
@@ -383,12 +385,12 @@ function AddRuleForm({
     (async () => {
       try {
         const r = await fetch("/api/cctv?sparse=1");
-        if (r.ok) {
-          const j = (await r.json()) as { cameras?: CatalogueCam[] };
-          if (Array.isArray(j.cameras)) setCatalogue(j.cameras);
-        }
+        if (!r.ok) throw new Error("sample");
+        const j = (await r.json()) as { cameras?: CatalogueCam[] };
+        if (Array.isArray(j.cameras)) setCatalogue(j.cameras);
+        else setCatalogueFailed(true);
       } catch {
-        /* the form still works by retrying on open; server validates anyway */
+        setCatalogueFailed(true);
       }
     })();
   }, []);
@@ -397,6 +399,7 @@ function AddRuleForm({
     if (!catalogue || picked || query.trim().length < 2) return [];
     const q = query.trim().toLowerCase();
     return catalogue
+      .filter((c) => cameraRecordStill(c))
       .filter((c) => `${camName(c)} ${camPlace(c)}`.toLowerCase().includes(q))
       .slice(0, 8);
   }, [catalogue, query, picked]);
@@ -467,10 +470,25 @@ function AddRuleForm({
                   ))}
                 </ul>
               )}
-              <p className="text-xs text-white/35 mt-2">
-                Search covers the quick-load camera sample; every pick is checked against the full
-                catalogue when you save, and only cameras with still photos can be watched.
-              </p>
+              {catalogueFailed ? (
+                <p className="text-xs text-amber-300 mt-2">
+                  The camera sample couldn’t load, so search is unavailable right now. You can
+                  still set an alert from the globe: open any camera and tap Set alert.
+                </p>
+              ) : !catalogue ? (
+                <p className="text-xs text-white/35 mt-2">Loading the camera sample…</p>
+              ) : query.trim().length >= 2 && results.length === 0 ? (
+                <p className="text-xs text-amber-300 mt-2">
+                  No still-photo camera in the quick sample matches that search. The sample holds
+                  about 2,000 of the full catalogue — open the camera on the globe and tap Set
+                  alert instead.
+                </p>
+              ) : (
+                <p className="text-xs text-white/35 mt-2">
+                  Search covers the quick-load camera sample, still-photo cameras only; every
+                  pick is checked against the full catalogue when you save.
+                </p>
+              )}
             </div>
           )}
 

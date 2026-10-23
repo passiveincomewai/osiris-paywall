@@ -11,6 +11,7 @@ import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
 import TimelapseControl from './TimelapseControl';
 import LiveRecordControl from './recording/LiveRecordControl';
+import CameraAlertButton from './CameraAlertButton';
 
 interface CameraViewerProps {
   camera: any | null;
@@ -301,6 +302,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                     aria-label={saveState === "saved" ? "Saved to My Cameras" : "Save to My Cameras"}>
                     <Bookmark className={`w-3 h-3 ${saveState === "saved" ? "text-cyan-300" : "text-[var(--text-secondary)]"}`} />
                   </button>
+                  <CameraAlertButton camera={camera} />
                   <button onClick={onClose} aria-label="Close camera viewer" title="Close camera viewer" className="p-1.5 rounded-sm bg-red-900/30 border border-red-500/30 hover:bg-red-500/30 hover:border-red-500 transition-all ml-2">
                     <X className="w-4 h-4 md:w-3 md:h-3 text-red-400 hover:text-red-200" />
                   </button>
