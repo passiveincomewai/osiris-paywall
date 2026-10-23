@@ -7,6 +7,8 @@ import AnalyticsTracker from '@/components/AnalyticsTracker';
 import MetaPixel from '@/components/MetaPixel';
 import TranslateGate from '@/components/translate/TranslateGate';
 import CaptureIndicator from '@/components/recording/CaptureIndicator';
+import InstallPrompt from '@/components/pwa/InstallPrompt';
+import ServiceWorkerRegister from '@/components/pwa/ServiceWorkerRegister';
 import "./globals.css";
 
 /* ── Type system (self-hosted via next/font; no runtime font requests) ──
@@ -129,7 +131,7 @@ export const metadata: Metadata = {
       },
     ],
   },
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.webmanifest",
   alternates: {
     canonical: SITE_URL,
   },
@@ -279,6 +281,12 @@ export default function RootLayout({
         </SilentBoundary>
         <SilentBoundary name="CaptureIndicator">
           <CaptureIndicator />
+        </SilentBoundary>
+        <SilentBoundary name="PwaInstallPrompt">
+          <InstallPrompt />
+        </SilentBoundary>
+        <SilentBoundary name="PwaServiceWorkerRegister">
+          <ServiceWorkerRegister />
         </SilentBoundary>
         <ErrorBoundary name="WorldEye">
           {children}
