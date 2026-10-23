@@ -1,5 +1,6 @@
 import Link from "next/link";
 import NewsletterForm from "./NewsletterForm";
+import FooterAuthButtons from "./FooterAuthButtons";
 
 const COLUMNS: { title: string; links: [string, string][] }[] = [
   {
@@ -127,20 +128,7 @@ export default function SiteFooter({
             the infrastructure.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <Link
-            href="/signin"
-            className="inline-flex items-center px-3.5 py-2 rounded-lg border border-white/10 text-xs text-white/60 hover:text-white hover:border-white/25 transition"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="inline-flex items-center px-3.5 py-2 rounded-lg bg-[#0096FF] hover:bg-[#0aa5ff] text-xs text-white font-semibold transition"
-          >
-            Sign up
-          </Link>
-        </div>
+        <FooterAuthButtons />
       </div>
 
       {/* Link columns */}
