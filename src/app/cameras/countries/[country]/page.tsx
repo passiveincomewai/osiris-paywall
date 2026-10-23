@@ -25,6 +25,12 @@ import {
 import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { countryAnswers, mergePlaceFaqs } from "@/lib/place-answers";
+import { getPlaceWeather } from "@/lib/place-weather";
+import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
+
+/* Weather data is cached per location for 30 minutes in lib/weather-api;
+   ISR at the same cadence keeps the baked page from going staler. */
+export const revalidate = 1800;
 
 const BASE = "https://worldeye.app";
 
@@ -196,6 +202,30 @@ export default async function CountryPage({
   const guide = watchGuide(c, facts, region);
   const fullRoster = roster(c, records);
 
+  /* Weather / alerts / AQI for the country's largest camera city — a
+     clean no-op (null) unless WEATHERAPI_KEY and/or OPENAQ_API_KEY are
+     configured and the provider answers. A country has no single
+     weather, so the reading is explicitly for that city: the query, the
+     panel heading and the provider's own location name all say so. The
+     city's centroid (from its camera records) drives the OpenAQ
+     station lookup when available. */
+  const weatherCity = c.topCities[0]?.name ?? c.name;
+  const cityRecords = records.filter(
+    (r) => r.city === weatherCity && typeof r.lat === "number" && typeof r.lng === "number",
+  );
+  const weatherCentroid =
+    cityRecords.length > 0
+      ? {
+          lat: cityRecords.reduce((s, r) => s + (r.lat as number), 0) / cityRecords.length,
+          lng: cityRecords.reduce((s, r) => s + (r.lng as number), 0) / cityRecords.length,
+        }
+      : null;
+  const placeWeather = await getPlaceWeather({
+    query: `${weatherCity}, ${c.name}`,
+    lat: weatherCentroid?.lat ?? null,
+    lng: weatherCentroid?.lng ?? null,
+  });
+
   const content = CONTENT[slug];
   const intro = content?.intro ?? derivedIntro(c);
   const faqs = content?.faqs ?? [...derivedFaqs(c), ...extraFaqs(c, facts)];
@@ -305,6 +335,13 @@ export default async function CountryPage({
             <p key={i}>{p}</p>
           ))}
         </div>
+
+        {/* Weather for the largest camera city (see placeWeather above) */}
+        {placeWeather && (
+          <div className="max-w-3xl mx-auto">
+            <PlaceWeatherPanel data={placeWeather} placeName={weatherCity} />
+          </div>
+        )}
 
         {/* Playable cameras — every record for this country in the live
             catalogue, served in batches by /api/cctv/country/<slug> and

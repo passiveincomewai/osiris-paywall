@@ -4,6 +4,12 @@ import TrialCtaSection from "@/components/TrialCtaSection";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
 import { cityChunkStats } from "@/lib/explore-data";
+import { getPlaceWeather } from "@/lib/place-weather";
+import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
+
+/* Weather data is cached per location for 30 minutes in lib/weather-api;
+   ISR at the same cadence keeps the baked page from going staler. */
+export const revalidate = 1800;
 import directory from "@/data/camera-directory.json";
 import cityPages from "@/data/city-pages.json";
 import {
@@ -1028,6 +1034,19 @@ export default async function CityWebcamPage({
   const showExplorer =
     chunk !== null && chunk.count >= 25 && chunk.centroid !== null;
 
+  /* Weather / alerts / AQI — a clean no-op (null) unless WEATHERAPI_KEY
+     and/or OPENAQ_API_KEY are configured and the provider answers, so
+     unconfigured builds render this page exactly as before. AQI prefers
+     OpenAQ ground stations (coordinates from the camera chunk), falling
+     back to WeatherAPI's AQI. */
+  const placeWeather = await getPlaceWeather({
+    query: chunk?.centroid
+      ? `${chunk.centroid.lat},${chunk.centroid.lng}`
+      : `${c.name}, ${c.country}`,
+    lat: chunk?.centroid?.lat ?? null,
+    lng: chunk?.centroid?.lng ?? null,
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -1073,6 +1092,7 @@ export default async function CityWebcamPage({
       <StatRow stats={c.stats} />
       <Updated date={updated} />
       <Intro paragraphs={c.intro} />
+      {placeWeather && <PlaceWeatherPanel data={placeWeather} placeName={c.name} />}
       {showExplorer && chunk && chunk.centroid && (
         <>
           <section className="mt-12">

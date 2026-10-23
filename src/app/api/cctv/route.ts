@@ -28,6 +28,7 @@ import { fetchSwitzerlandCameras } from './switzerland';
 import { fetchFinlandCameras } from './finland';
 import { fetchSwedenCameras } from './sweden';
 import { fetchHongKongCameras } from './hongkong';
+import { fetchTfLCameras } from './tfl';
 import { fetchUtahCameras } from './utah';
 import { fetchIcelandCameras } from './iceland';
 import { fetchTaiwanCameras } from './taiwan';
@@ -43,6 +44,8 @@ import { fetchIowaCameras } from './iowa';
 import { fetchOhioCameras } from './ohio';
 import { fetchKentuckyCameras } from './kentucky';
 import { fetchSouthDakotaCameras } from './southdakota';
+import { fetchMontanaCameras } from './montana';
+import { fetchNycDotCameras } from './nycdot';
 import { fetchNevadaCameras } from './nevada';
 import { fetchLouisianaCameras } from './louisiana';
 import { fetchFloridaCameras } from './florida';
@@ -92,24 +95,7 @@ import {
 
 // ═══ CAMERA SOURCE DEFINITIONS ═══
 
-// ── UK: Transport for London JamCams (~900) ──
-async function fetchTfLCameras(): Promise<any[]> {
-  try {
-    const res = await stealthFetch('https://api.tfl.gov.uk/Place/Type/JamCam', { signal: AbortSignal.timeout(12000) });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return (data || []).map((cam: any) => {
-      const imgProp = cam.additionalProperties?.find((p: any) => p.key === 'imageUrl');
-      const camId = cam.id?.replace('JamCams_', '') || '';
-      return {
-        id: `tfl-${cam.id}`, lat: cam.lat, lng: cam.lon,
-        name: cam.commonName || 'London JamCam', city: 'London', country: 'UK',
-        feed_url: imgProp?.value || `https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/${camId}.jpg`,
-        source: 'TfL',
-      };
-    }).filter((c: any) => c.lat && c.lng);
-  } catch (e) { return []; }
-}
+// ── UK: Transport for London JamCams (~900) — ./tfl ──
 
 // ── US-WEST: WSDOT Washington State ──
 /* GATED OFF (Stage E, 2026-10-18): the endpoint below answers 404 — the
@@ -580,6 +566,13 @@ const RAW_REGION_FETCHERS: Record<string, RegionFetcher> = {
   'ohio': fetchOhioCameras,
   'kentucky': fetchKentuckyCameras,
   'southdakota': fetchSouthDakotaCameras,
+  'montana': fetchMontanaCameras,
+  /* NYC DOT (TMC) — module landed 2026-10-22 but GATED OFF inside
+     nycdot.ts (OSIRIS_CCTV_NYCDOT=on to enable): webcams.nyctmc.org is
+     unreachable from this environment's egress, so its 893 cameras
+     cannot be probe-verified from here and are not presented as
+     serving. See nycdot.ts header and health.ts GATED_SOURCES. */
+  'nycdot': fetchNycDotCameras,
   'nevada': fetchNevadaCameras,
   'louisiana': fetchLouisianaCameras,
   'florida': fetchFloridaCameras,
@@ -991,6 +984,10 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   if (lat > 36.4 && lat < 39.3 && lng > -89.7 && lng < -81.8) regions.push('kentucky');
   // South Dakota (SDDOT SD511) — explicit, since us-central carries none of SDDOT
   if (lat > 42.4 && lat < 46.0 && lng > -104.2 && lng < -96.3) regions.push('southdakota');
+  // Montana (MDT MT511 RWIS) — explicit, since us-west/us-central carry none of MDT
+  if (lat > 44.35 && lat < 49.01 && lng > -116.06 && lng < -104.03) regions.push('montana');
+  // NYC DOT (TMC) — explicit; the region is gated off inside nycdot.ts and answers empty until enabled
+  if (lat > 40.4 && lat < 41.0 && lng > -74.3 && lng < -73.6) regions.push('nycdot');
   // Louisiana (LADOTD 511) — explicit, since neither us-central nor us-east reaches the Gulf coast
   if (lat > 28.8 && lat < 33.1 && lng > -94.2 && lng < -88.6) regions.push('louisiana');
   /* The rest of the southern tier, all on the same IBI 511 stack. Each is
@@ -1031,7 +1028,7 @@ function regionsAtPoint(lat: number, lng: number): string[] {
   const inFrance = lat > 42.3 && lat < 51.1 && lng > -5 && lng < 8.3;
   const inSpain = lat > 27 && lat < 43.8 && lng > -18.2 && lng < 4.4;
   const inPoland = lat > 49.0 && lat < 55.0 && lng > 14.1 && lng < 24.1;
-  const inFinland = lat > 59.5 && lat < 70.1 && lng > 20 && lng < 31.6;
+  const inFinland = lat > 59.5 && lat < 70.1 && lng > 19 && lng < 31.6;
   const inLithuania = lat > 53.8 && lat < 56.5 && lng > 20.9 && lng < 26.9;
   const inIceland = lat > 63.0 && lat < 67.0 && lng > -25.0 && lng < -13.0;
   const inBalkans = inBulgaria || inGreece || inSerbia || inMacedonia || inRomania || inTurkey;

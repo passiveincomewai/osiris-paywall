@@ -85,7 +85,7 @@ const DIRECT_CLEAR: Record<string, DirectClear> = {
   ASFINAG: { upstream: "ASFINAG (Austria)", basis: REGISTRY_BASIS },
   "Autostrade per l'Italia": { upstream: "Autostrade per l'Italia", basis: REGISTRY_BASIS },
   Trafikverket: { upstream: "Swedish Transport Administration (Trafikverket)", basis: REGISTRY_BASIS },
-  Fintraffic: { upstream: "Fintraffic (Finland)", basis: REGISTRY_BASIS },
+  Fintraffic: { upstream: "Fintraffic (Finland)", basis: "Fintraffic Digitraffic open data, distributed under CC BY 4.0 (attribution to Fintraffic/Digitraffic required) — registry verdict: clear (families.ts, spot-checked 2026-10-22)." },
   "Vegagerðin": { upstream: "Icelandic Road and Coastal Administration", basis: REGISTRY_BASIS },
   "Via Lietuva": { upstream: "Via Lietuva (Lithuania)", basis: REGISTRY_BASIS },
   Rijkswaterstaat: { upstream: "Rijkswaterstaat (Netherlands)", basis: REGISTRY_BASIS },
