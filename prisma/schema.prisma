@@ -20,6 +20,11 @@ model User {
   passwordHash  String?
   // Phone number collected at Pro checkout (account claim form).
   phone         String?
+  // Lifecycle marketing opt-out (src/lib/lifecycle). Set by the
+  // unsubscribe link in marketing emails; transactional mail (trial
+  // started / trial ending) is not gated on it.
+  emailOptOut   Boolean        @default(false)
+  lifecycleEmails LifecycleEmailLog[]
   image         String?
   accounts      Account[]
   sessions      Session[]
@@ -474,6 +479,46 @@ model CheckoutAttempt {
   createdAt       DateTime  @default(now())
 
   @@index([status, createdAt])
+}
+
+// ── Lifecycle email system (src/lib/lifecycle) ────────────────────────
+// One row per lifecycle email actually sent (plus dry-run renders with
+// status "dry_run"). This log is the system's memory: the
+// (userId, template, contextKey) unique pair is the never-double-send
+// rule, and the (userId, createdAt) index backs the 48h marketing cap.
+// kind is "marketing" | "transactional" — only marketing rows count
+// toward the cap, and only marketing sends honor User.emailOptOut.
+model LifecycleEmailLog {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipientEmail String
+  template       String   // welcome_discount | interest_followup | retarget_pricing | ...
+  contextKey     String   @default("") // e.g. subscription id, attribution id, attempt id
+  kind           String   // marketing | transactional
+  subject        String
+  status         String   @default("sent") // sent | dry_run
+  createdAt      DateTime @default(now())
+
+  @@unique([userId, template, contextKey])
+  @@index([userId, createdAt])
+  @@index([recipientEmail, createdAt])
+}
+
+// ── Weekly digest send log ───────────────────────────────────────────
+// One row per (subscriber email, issue) for the "In Case You Missed It"
+// digest. The digest goes to NewsletterSubscriber rows, most of which
+// have no User account — so the send log keys on email, not userId.
+// The unique pair is the never-double-send guarantee per issue.
+// (Migration 20261022120000_lifecycle_emails — see src/lib/lifecycle.)
+model DigestSendLog {
+  id       String   @id @default(cuid())
+  email    String
+  issueKey String
+  sentAt   DateTime @default(now())
+
+  @@unique([email, issueKey])
+  @@index([issueKey])
 }
 
 model Payout {

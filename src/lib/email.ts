@@ -45,7 +45,8 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
   }
 }
 
-function shell(title: string, preheader: string, bodyHtml: string, cta: { label: string; href: string } | null): string {
+/** Exported for src/lib/lifecycle templates, which render in this same shell. */
+export function shell(title: string, preheader: string, bodyHtml: string, cta: { label: string; href: string } | null): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#050508;color:#e4e4e7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
@@ -96,7 +97,7 @@ export function resetPasswordEmail(name: string | null, resetUrl: string): { sub
   };
 }
 
-function escapeHtml(s: string): string {
+export function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 }
 

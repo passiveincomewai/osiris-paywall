@@ -1,0 +1,422 @@
+// ── Lifecycle email templates ────────────────────────────────────────
+// Rendered in the same brand shell as src/lib/email.ts' transactional
+// mail. Copy rules (site-wide honesty standard): no invented features,
+// prices or trial lengths — plan names/prices arrive pre-derived from
+// CHECKOUT_PLAN_SUMMARIES (lib/billing/trial-checkout) via the engine,
+// discount offers arrive from config.currentDiscountOffer and are
+// simply absent when no live offer exists. Marketing templates carry
+// the unsubscribe footer; transactional ones (trial started, affiliate
+// activity) do not need it and don't get it.
+
+import { shell, escapeHtml, appUrl } from "../email";
+import type { DiscountOffer } from "./config";
+
+export interface RenderedEmail {
+  subject: string;
+  html: string;
+}
+
+const P = (text: string) =>
+  `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">${text}</p>`;
+
+export function firstNameOf(name: string | null | undefined): string {
+  const first = name?.trim().split(/\s+/)[0];
+  return first && first.length > 0 ? first : "there";
+}
+
+function offerBlock(offer: DiscountOffer): string {
+  const expiry = offer.expiresAt
+    ? ` Use it by ${offer.expiresAt.toLocaleDateString("en-US", {
+        timeZone: "America/Denver",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })}.`
+    : "";
+  return `<div style="text-align:center;margin:22px 0 6px;padding:18px;border:1px dashed rgba(212,175,55,0.5);border-radius:12px;">
+<span style="font-size:12px;letter-spacing:0.14em;color:#71717a;">YOUR CODE — ${escapeHtml(offer.label.toUpperCase())}</span><br>
+<span style="font-size:26px;font-weight:800;letter-spacing:0.12em;color:#D4AF37;">${escapeHtml(offer.code)}</span>
+</div>
+<p style="font-size:13px;color:#71717a;text-align:center;">Enter the code at checkout.${expiry}</p>`;
+}
+
+function unsubscribeLine(url: string | null): string {
+  if (!url) return "";
+  return `<p style="font-size:12px;color:#52525b;margin-top:18px;">Don't want offers like this? <a href="${escapeHtml(url)}" style="color:#71717a;">Unsubscribe</a> — you'll still get essential account emails.</p>`;
+}
+
+// ── (a) Welcome + discount code ──────────────────────────────────────
+export function welcomeDiscountEmail(input: {
+  name: string | null;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">As a welcome, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong> when you're ready to upgrade:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: input.offer
+      ? "Welcome to WorldEye — a discount for your first upgrade"
+      : "Welcome to WorldEye",
+    html: shell(
+      "Welcome to WorldEye",
+      "Your account is ready — the live globe is waiting.",
+      `${P(`Hi ${first},`)}
+       ${P("Your WorldEye account is ready. The globe, live cameras, flights, satellites and weather layers are free to explore — and your account keeps your saved cameras and settings in sync.")}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open the live globe", href: appUrl("/") },
+    ),
+  };
+}
+
+// ── (b) Interest-matched follow-up (plan named from a checkout attempt) ──
+export function interestFollowupEmail(input: {
+  name: string | null;
+  /** e.g. "Monthly" — from CHECKOUT_PLAN_SUMMARIES via the engine. */
+  planName: string;
+  /** e.g. "$13.99/month". */
+  planPriceLabel: string;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If price was the hold-up, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong> for that plan:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: `Still considering WorldEye ${input.planName}?`,
+    html: shell(
+      `The ${escapeHtml(input.planName)} plan, when you're ready`,
+      `WorldEye ${input.planName} is ${input.planPriceLabel}.`,
+      `${P(`Hi ${first},`)}
+       ${P(`You started checking out the <strong style="color:#fff;">${escapeHtml(input.planName)}</strong> plan (${escapeHtml(input.planPriceLabel)}) but didn't finish. No pressure — your free account keeps working either way.`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "See plans", href: appUrl("/pricing") },
+    ),
+  };
+}
+
+// ── (c1) Retargeting: engaged with pricing, never reached checkout ──
+export function retargetPricingEmail(input: {
+  name: string | null;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong> if you'd like to try the full version for less:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: "You looked at WorldEye Pro — here's the short version",
+    html: shell(
+      "What Pro adds",
+      "The free globe stays free. Pro adds the intel toolkit.",
+      `${P(`Hi ${first},`)}
+       ${P("You spent some time on our pricing page, so here's the honest summary: the free globe, cameras, flights and weather stay free forever. <strong style=\"color:#fff;\">Pro</strong> adds the OSINT toolkit and AI assistant, satellite map view, the live traffic layer and camera recording; <strong style=\"color:#fff;\">VIP Pro</strong> adds the intel feeds, camera alerts and timelapses.")}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Compare plans", href: appUrl("/pricing") },
+    ),
+  };
+}
+
+// ── (c2) Retargeting: abandoned checkout, second touch with a code ──
+export function retargetCheckoutEmail(input: {
+  name: string | null;
+  planName: string | null;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const planBit = input.planName
+    ? ` for the <strong style="color:#fff;">${escapeHtml(input.planName)}</strong> plan`
+    : "";
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Checkout sessions expire, but this doesn't: here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong> — start a fresh checkout and enter the code:</p>${offerBlock(input.offer)}`
+    : P("Your earlier checkout session has expired, but starting a new one takes under a minute.");
+  return {
+    subject: "Your WorldEye checkout, with a discount this time",
+    html: shell(
+      "Still want Pro?",
+      "A code for the checkout you started.",
+      `${P(`Hi ${first},`)}
+       ${P(`A while back you started a checkout${planBit} and didn't finish. That's completely fine — but if you were on the fence, this might help:`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Go to pricing", href: appUrl("/pricing") },
+    ),
+  };
+}
+
+// ── (d1) Trial started (transactional) ──────────────────────────────
+const PRO_INCLUDES = [
+  "The OSINT toolkit and the OI assistant",
+  "Satellite map view and the live traffic layer",
+  "Camera recording for up to 20 cameras",
+];
+const VIP_INCLUDES = [
+  "Everything in Pro",
+  "Live intel layers — cyber, maritime and breaking events",
+  "Camera alerts (up to 10 rules) and timelapses",
+  "Camera recording for up to 40 cameras",
+];
+
+export function trialStartedEmail(input: {
+  name: string | null;
+  planName: string;
+  tier: "pro" | "vip";
+  /** Pre-rendered by the engine (formatTrialEnd), e.g. "October 25, 2026 at 3:42 PM UTC". */
+  trialEndsLabel: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const includes = input.tier === "vip" ? VIP_INCLUDES : PRO_INCLUDES;
+  const list = includes.map((i) => `<li style="margin:4px 0;">${escapeHtml(i)}</li>`).join("");
+  const ends = input.trialEndsLabel
+    ? P(`Your trial runs until <strong style="color:#fff;">${escapeHtml(input.trialEndsLabel)}</strong> — we'll email you a heads-up before any charge, and you can cancel anytime in Settings.`)
+    : P("We'll email you a heads-up before your trial ends, and you can cancel anytime in Settings.");
+  return {
+    subject: `Your WorldEye ${input.planName} trial has started`,
+    html: shell(
+      "Your trial is live",
+      `Your WorldEye ${input.planName} trial has started — everything is unlocked.`,
+      `${P(`Hi ${first},`)}
+       ${P(`Your free trial of <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong> is live. Here's what's now unlocked:`)}
+       <ul style="color:#a1a1aa;font-size:15px;line-height:1.6;padding-left:20px;">${list}</ul>
+       ${ends}`,
+      { label: "Explore with Pro unlocked", href: appUrl("/") },
+    ),
+  };
+}
+
+// ── (d2) Trial ended without converting → win-back (marketing) ──────
+export function trialEndedWinbackEmail(input: {
+  name: string | null;
+  planName: string;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If you'd like to come back, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong>:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: "Your WorldEye trial ended — your free account hasn't",
+    html: shell(
+      "Your trial ended",
+      "Pro features are off, but the free globe is still yours.",
+      `${P(`Hi ${first},`)}
+       ${P(`Your trial of <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong> has ended, so the Pro features are switched off. Nothing was charged. Your free account — the globe, cameras, flights and weather — keeps working exactly as before.`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "See plans", href: appUrl("/pricing") },
+    ),
+  };
+}
+
+// ── (e1) Affiliate: a signup via your link (transactional) ──────────
+export function affiliateSignupEmail(input: {
+  name: string | null;
+  /** The referred user's display name when known; never their email. */
+  referredName: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const who = input.referredName
+    ? `<strong style="color:#fff;">${escapeHtml(firstNameOf(input.referredName))}</strong> just signed up`
+    : "Someone just signed up";
+  return {
+    subject: "New signup through your WorldEye affiliate link",
+    html: shell(
+      "Your link is working",
+      "A new member joined WorldEye through your affiliate link.",
+      `${P(`Hi ${first},`)}
+       ${P(`${who} for WorldEye through your affiliate link. If they upgrade to a paid plan, your commission follows automatically — you can watch it land on your dashboard.`)}`,
+      { label: "Open my affiliate dashboard", href: appUrl("/affiliates") },
+    ),
+  };
+}
+
+// ── (e2) Affiliate: first commission (transactional) ────────────────
+export function affiliateFirstCommissionEmail(input: {
+  name: string | null;
+  /** Pre-formatted by the engine (formatMoney), e.g. "$4.50". */
+  amountLabel: string;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: "You earned your first WorldEye commission",
+    html: shell(
+      "First commission earned",
+      `Your first WorldEye commission — ${input.amountLabel} — has been recorded.`,
+      `${P(`Hi ${first},`)}
+       ${P(`Congratulations — your first affiliate commission of <strong style="color:#fff;">${escapeHtml(input.amountLabel)}</strong> has been recorded. It follows the standard payout hold before it becomes payable; your dashboard shows its status and your running balance.`)}`,
+      { label: "View my commissions", href: appUrl("/affiliates") },
+    ),
+  };
+}
+
+// ── Campaign blast (prepared by campaigns.ts; owner-approved sends) ──
+export function campaignEmail(input: {
+  headline: string;
+  /** Plain-text body copy from the campaign brief — escaped, never HTML. */
+  bodyText: string;
+  offer: DiscountOffer | null;
+  ctaLabel: string;
+  ctaPath: string;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const paragraphs = input.bodyText
+    .split(/\n{2,}/)
+    .map((para) => P(escapeHtml(para.trim()).replace(/\n/g, "<br>")))
+    .join("\n");
+  const offerPart = input.offer ? offerBlock(input.offer) : "";
+  return {
+    subject: input.headline,
+    html: shell(
+      escapeHtml(input.headline),
+      input.bodyText.split(/\s+/).slice(0, 12).join(" "),
+      `${paragraphs}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: input.ctaLabel, href: appUrl(input.ctaPath) },
+    ),
+  };
+}
+
+// ── (f) Region interest ──────────────────────────────────────────────
+// The numbers quoted are the user's own measured activity and the
+// catalogue's own camera count for that country — both arrive
+// pre-derived from real rows (see region.ts / engine), never invented.
+export function regionInterestEmail(input: {
+  name: string | null;
+  countryName: string;
+  countrySlug: string;
+  opens: number;
+  /** Cameras the catalogue carries for this country (camera-countries.json). */
+  countryCameraCount: number;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const country = escapeHtml(input.countryName);
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If you'd like the full picture there, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong>:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: `You've been watching ${input.countryName} — here's what Pro adds there`,
+    html: shell(
+      `Your corner of the map: ${country}`,
+      `${input.opens} camera opens in ${input.countryName} over the last two weeks.`,
+      `${P(`Hi ${first},`)}
+       ${P(`Over the last two weeks you opened <strong style="color:#fff;">${input.opens} live cameras in ${country}</strong> — more than anywhere else on your map. WorldEye carries ${input.countryCameraCount.toLocaleString("en-US")} cameras in ${country}, and here's what the paid layers add on top of them:`)}
+       ${P(`<strong style="color:#fff;">Pro</strong> adds the live traffic layer and satellite map view over ${country}, plus camera recording and the OSINT toolkit. <strong style="color:#fff;">VIP Pro</strong> adds camera alerts — set alert rules on the ${country} cameras you care about — plus timelapses and the intel feeds.`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: `Keep watching ${input.countryName}`, href: appUrl(`/cameras/countries/${input.countrySlug}`) },
+    ),
+  };
+}
+
+// ── (g) "In Case You Missed It" weekly digest ────────────────────────
+// Every section is optional and data-backed: the builder (digest.ts)
+// includes a section only when its real source returned data, and the
+// digest is not sent at all when no section has anything. Links point
+// at the live site surfaces for each item.
+export interface DigestCountryLine {
+  name: string;
+  slug: string;
+  opens: number;
+}
+export interface DigestQuakeLine {
+  magnitude: number;
+  place: string;
+  whenLabel: string;
+  url: string;
+}
+export interface DigestStormLine {
+  name: string;
+  classification: string;
+  intensityKt: number | null;
+}
+export interface DigestContent {
+  /** e.g. "October 16–22, 2026" — preformatted by the builder. */
+  weekLabel: string;
+  topCountries: DigestCountryLine[];
+  quakes: DigestQuakeLine[];
+  /** Total open wildfire events NASA EONET is tracking right now. */
+  fireCount: number;
+  fireTitles: string[];
+  storms: DigestStormLine[];
+}
+
+export function hasDigestContent(content: DigestContent): boolean {
+  return (
+    content.topCountries.length > 0 ||
+    content.quakes.length > 0 ||
+    content.fireCount > 0 ||
+    content.storms.length > 0
+  );
+}
+
+export function weeklyDigestEmail(input: {
+  content: DigestContent;
+  /** The newsletter list's own unsubscribe URL (per-subscriber token). */
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const c = input.content;
+  const sections: string[] = [];
+  if (c.topCountries.length > 0) {
+    const items = c.topCountries
+      .map(
+        (t) =>
+          `<li style="margin:6px 0;"><a href="${appUrl(`/cameras/countries/${t.slug}`)}" style="color:#D4AF37;text-decoration:none;"><strong>${escapeHtml(t.name)}</strong></a> <span style="color:#71717a;">— ${t.opens.toLocaleString("en-US")} camera opens</span></li>`,
+      )
+      .join("");
+    sections.push(
+      `<h3 style="color:#fff;font-size:16px;margin:22px 0 6px;">Most watched this week</h3><ul style="color:#a1a1aa;font-size:15px;line-height:1.6;padding-left:18px;margin:0;">${items}</ul>`,
+    );
+  }
+  if (c.quakes.length > 0) {
+    const items = c.quakes
+      .map(
+        (q) =>
+          `<li style="margin:6px 0;"><a href="${escapeHtml(q.url)}" style="color:#D4AF37;text-decoration:none;"><strong>M${q.magnitude.toFixed(1)}</strong></a> <span style="color:#a1a1aa;">${escapeHtml(q.place)}</span> <span style="color:#71717a;">— ${escapeHtml(q.whenLabel)}</span></li>`,
+      )
+      .join("");
+    sections.push(
+      `<h3 style="color:#fff;font-size:16px;margin:22px 0 6px;">Largest earthquakes</h3><ul style="color:#a1a1aa;font-size:15px;line-height:1.6;padding-left:18px;margin:0;">${items}</ul>${P(`See them on the <a href="${appUrl("/earthquake-tracker")}" style="color:#D4AF37;">live earthquake tracker</a>.`)}`,
+    );
+  }
+  if (c.fireCount > 0) {
+    const items = c.fireTitles
+      .map((t) => `<li style="margin:6px 0;">${escapeHtml(t)}</li>`)
+      .join("");
+    sections.push(
+      `<h3 style="color:#fff;font-size:16px;margin:22px 0 6px;">Wildfires being tracked</h3>${P(`NASA's EONET feed is currently tracking <strong style="color:#fff;">${c.fireCount} open wildfire events</strong> worldwide. The most recent:`)}<ul style="color:#a1a1aa;font-size:15px;line-height:1.6;padding-left:18px;margin:0;">${items}</ul>`,
+    );
+  }
+  if (c.storms.length > 0) {
+    const items = c.storms
+      .map(
+        (s) =>
+          `<li style="margin:6px 0;"><strong style="color:#fff;">${escapeHtml(s.name)}</strong> <span style="color:#a1a1aa;">— ${escapeHtml(s.classification)}${s.intensityKt != null ? `, winds ${s.intensityKt} kt` : ""}</span></li>`,
+      )
+      .join("");
+    sections.push(
+      `<h3 style="color:#fff;font-size:16px;margin:22px 0 6px;">Active tropical storms</h3><ul style="color:#a1a1aa;font-size:15px;line-height:1.6;padding-left:18px;margin:0;">${items}</ul>`,
+    );
+  }
+  return {
+    subject: "In Case You Missed It — WorldEye this week",
+    html: shell(
+      "In Case You Missed It",
+      `The week of ${c.weekLabel} on the live globe.`,
+      `${P(`Here's what the planet did this week — and what WorldEye watchers were looking at.`)}
+       ${sections.join("\n")}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open the live globe", href: appUrl("/") },
+    ),
+  };
+}
