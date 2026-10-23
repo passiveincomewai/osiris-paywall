@@ -78,6 +78,9 @@ describe("POST /api/checkout — hosted mode (unchanged)", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({
       url: "https://checkout.stripe.com/c/pay/cs_test_123",
+      // Additive (Meta CAPI wiring): the dedup event id for the
+      // browser InitiateCheckout twin — generated per session.
+      metaEventId: expect.any(String),
     });
     const p = createdParams();
     expect(p.mode).toBe("subscription");
@@ -118,7 +121,10 @@ describe("POST /api/checkout — embedded mode", () => {
     const res = await post({ plan: "weekly", ui: "embedded" });
     expect(res.status).toBe(200);
     // Embedded sessions answer with the client secret, never a hosted url.
-    expect(await res.json()).toEqual({ clientSecret: "cs_test_123_secret_xyz" });
+    expect(await res.json()).toEqual({
+      clientSecret: "cs_test_123_secret_xyz",
+      metaEventId: expect.any(String),
+    });
     const p = createdParams();
     expect(p.ui_mode).toBe("embedded");
     expect(p.redirect_on_completion).toBe("always");
