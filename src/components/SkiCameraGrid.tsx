@@ -23,15 +23,18 @@ const CameraViewer = dynamic(() => import('@/components/CameraViewer'), { ssr: f
 export default function SkiCameraGrid({
   cameras,
   initial = 24,
-  caption,
+  captions,
   emptyNote,
 }: {
   cameras: CountryCamera[];
   /** Cards rendered before "show more" — the rest mount on demand so a
    *  100-camera ring never fires 100 feed requests at first paint. */
   initial?: number;
-  /** Small line under a card's location, e.g. "12.4 km into your drive". */
-  caption?: (cam: CountryCamera) => string | null;
+  /** Small line under a card's location, keyed by camera id — e.g.
+   *  "Snow stake", or "12.4 km into your drive". A precomputed record,
+   *  not a callback: server components render this grid too, and
+   *  functions cannot cross the server/client boundary. */
+  captions?: Record<string, string>;
   emptyNote?: string;
 }) {
   const [shown, setShown] = useState(initial);
@@ -50,7 +53,7 @@ export default function SkiCameraGrid({
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {visible.map(cam => {
-          const note = caption?.(cam);
+          const note = captions?.[cam.id];
           return (
             <div key={cam.id}>
               <CameraFeedCard

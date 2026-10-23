@@ -214,8 +214,12 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
     }
   }, [start, dest, resort.countrySlug]);
 
-  const byId = new Map<string, RouteCameraRecord>();
-  if (state.kind === 'done') for (const c of state.cameras) byId.set(c.id, c);
+  /* The grid's per-camera captions ("12.4 km into your drive"), as a
+     plain record keyed by camera id — SkiCameraGrid takes data, not a
+     callback, so server-rendered grids can use it too. */
+  const routeCaptions: Record<string, string> = {};
+  if (state.kind === 'done')
+    for (const c of state.cameras) routeCaptions[c.id] = `${c.alongKm.toFixed(1)} km into your drive`;
 
   /* The result map's inputs, memoised on the result itself: rebuilding
      them on every render (each keystroke in the inputs above) would
@@ -325,14 +329,7 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
                 />
               </div>
               <div className="mt-4">
-                <SkiCameraGrid
-                  cameras={state.cameras}
-                  initial={12}
-                  caption={cam => {
-                    const rec = byId.get(cam.id);
-                    return rec ? `${rec.alongKm.toFixed(1)} km into your drive` : null;
-                  }}
-                />
+                <SkiCameraGrid cameras={state.cameras} initial={12} captions={routeCaptions} />
               </div>
             </>
           )}

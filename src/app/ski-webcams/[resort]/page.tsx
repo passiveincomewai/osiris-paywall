@@ -289,7 +289,9 @@ export default async function SkiResortPage({
           </p>
           <SkiCameraGrid
             cameras={resortCams}
-            caption={cam => (isSnowStakeCamera(cam) ? "Snow stake" : null)}
+            captions={Object.fromEntries(
+              resortCams.filter(cam => isSnowStakeCamera(cam)).map(cam => [cam.id, "Snow stake"] as const),
+            )}
             emptyNote={`No cameras within ${RESORT_RADIUS_KM} km of ${r.name} are in the live index right now — the road cameras below still cover the area.`}
           />
         </section>
