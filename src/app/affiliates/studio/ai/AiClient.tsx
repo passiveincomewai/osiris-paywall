@@ -9,6 +9,7 @@
 // "generating…" state: a queued order is simply in Cosmo's queue.
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { CopyButton, EmptyState } from "@/components/affiliate/ui";
 import {
   AI_KIND_META,
@@ -128,7 +129,7 @@ export default function AiClient() {
     <div className="space-y-6">
       <div>
         <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase mb-1">Marketing Studio</div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">AI by Cosmo ✨</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-white">AI by Cosmo <Sparkles className="inline-block w-6 h-6 text-cyan-300 align-[-3px] ml-1" /></h1>
         <p className="text-sm text-slate-400 mt-1 max-w-2xl">
           Made-to-order content for your WorldEye promotion — written and designed around your referral link.
         </p>

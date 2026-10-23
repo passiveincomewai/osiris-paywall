@@ -2,6 +2,7 @@
 // Missions: daily / weekly / monthly challenges, verified server-side.
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { SectionTitle, XpBar, Pill, EmptyState } from "@/components/affiliate/ui";
 
 interface Challenge {
@@ -86,7 +87,14 @@ export default function MissionsClient() {
                       <Pill color={kindColor[g]}>{g}</Pill>
                       <Pill color="#fbbf24">+{c.xpReward} XP</Pill>
                     </div>
-                    <div className="text-white font-bold mb-1">{done ? "✓ " : ""}{c.title}</div>
+                    <div className="text-white font-bold mb-1 flex items-center gap-2">
+                      {done && (
+                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-400/15 border border-emerald-400/40 shrink-0">
+                          <Check className="w-3 h-3 text-emerald-300" strokeWidth={3.5} />
+                        </span>
+                      )}
+                      {c.title}
+                    </div>
                     <div className="text-xs text-slate-400 mb-3">{c.description}</div>
                     <div className="flex justify-between text-xs font-mono text-slate-400 mb-1">
                       <span>{Math.min(c.progress, c.target).toLocaleString()} / {c.target.toLocaleString()}</span>

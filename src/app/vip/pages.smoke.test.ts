@@ -78,6 +78,17 @@ describe("/vip hub", () => {
     expect(html).not.toContain("These features come with VIP Pro");
   });
 
+  it("embeds a live preview of the real dashboard with a full-page link", async () => {
+    signIn("vip");
+    const html = renderToString(await VipHubPage()).replace(/<!-- -->/g, "");
+    expect(html).toContain("Your dashboard — live preview");
+    // The preview is the actual /dashboard page in a same-origin frame,
+    // not a mockup: the iframe src and the full-page link both point at it.
+    expect(html).toContain('src="/dashboard"');
+    expect(html).toContain("Open full dashboard");
+    expect(html).toContain('href="/dashboard"');
+  });
+
   it("shows the VIP lock to a signed-in Pro member", async () => {
     signIn("pro");
     const html = renderToString(await VipHubPage()).replace(/<!-- -->/g, "");
@@ -87,6 +98,10 @@ describe("/vip hub", () => {
   it("prompts sign-in when signed out", async () => {
     const html = renderToString(await VipHubPage()).replace(/<!-- -->/g, "");
     expect(html).toContain("Sign in to open your VIP hub");
+    // The dashboard preview still renders signed out — the frame shows
+    // /dashboard's own sign-in screen, and the copy says so honestly.
+    expect(html).toContain('src="/dashboard"');
+    expect(html).toContain("sign-in screen");
   });
 });
 

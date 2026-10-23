@@ -10,7 +10,8 @@ export interface RankDef {
   discountPct: number;   // audience discount % off first payment via this rank's code
   color: string;   // accent hex
   glow: string;    // glow rgba
-  badge: string;   // emoji badge (vector badges can replace later)
+  badge: string;   // legacy emoji — kept for API compatibility; the UI renders
+                   // vector RankArt (components/affiliate/graphics) keyed by rank
   tagline: string;
 }
 

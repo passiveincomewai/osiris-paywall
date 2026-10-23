@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LayoutGrid, Hexagon, Play, Diamond, type LucideIcon } from "lucide-react";
 import TrialPicker from "@/components/TrialPicker";
 
 /**
@@ -8,11 +9,11 @@ import TrialPicker from "@/components/TrialPicker";
  * active). Server component — no client hooks.
  */
 export default function StudioUpgradeScreen() {
-  const features = [
-    ["▦", "Template library", "Ready-made posts, stories, carousels, banners, and more."],
-    ["⬡", "Personalized renders", "Every design rendered with your referral link and QR code."],
-    ["▶", "Video studio", "Build short-form video creatives for your channels."],
-    ["◈", "Monthly generation credits", "A fresh allowance of Studio generations every month."],
+  const features: [LucideIcon, string, string][] = [
+    [LayoutGrid, "Template library", "Ready-made posts, stories, carousels, banners, and more."],
+    [Hexagon, "Personalized renders", "Every design rendered with your referral link and QR code."],
+    [Play, "Video studio", "Build short-form video creatives for your channels."],
+    [Diamond, "Monthly generation credits", "A fresh allowance of Studio generations every month."],
   ];
   return (
     <div className="text-center py-10">
@@ -34,9 +35,9 @@ export default function StudioUpgradeScreen() {
         membership on top of your affiliate account.
       </p>
       <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
-        {features.map(([icon, t, d]) => (
+        {features.map(([Icon, t, d]) => (
           <div key={t} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-            <div className="text-2xl">{icon}</div>
+            <Icon className="w-7 h-7 text-cyan-300" strokeWidth={1.7} />
             <div className="mt-2 text-white font-bold text-sm">{t}</div>
             <div className="mt-1 text-xs text-slate-400">{d}</div>
           </div>

@@ -1,6 +1,8 @@
 // WorldEye Affiliates — public landing page (server component, no auth).
 import Link from "next/link";
+import { Image as ImageIcon, QrCode, PenLine, Mail } from "lucide-react";
 import { RankBadge, SectionTitle, Pill, StatCard, XpBar } from "@/components/affiliate/ui";
+import { RankArt } from "@/components/affiliate/graphics";
 import AffiliatePersonal from "@/components/affiliate/AffiliatePersonal";
 import ShareLinkBlock from "@/components/share/ShareLinkBlock";
 import EarningsCalculator from "@/components/affiliate/EarningsCalculator";
@@ -8,13 +10,13 @@ import CreatorApply from "@/components/affiliate/CreatorApply";
 
 const CTA = "/api/auth/signin?callbackUrl=/affiliates/dashboard";
 
-const TIERS: { name: string; xp: string; rate: string; code: string; badge: string; color: string; perk?: string }[] = [
-  { name: "Explorer",  xp: "0 XP",       rate: "15%", code: "5% off", badge: "🧭", color: "#38bdf8" },
-  { name: "Scout",     xp: "1,000 XP",    rate: "18%", code: "10% off", badge: "🔭", color: "#22d3ee" },
-  { name: "Analyst",   xp: "3,000 XP",    rate: "21%", code: "15% off", badge: "📡", color: "#818cf8" },
-  { name: "Commander", xp: "7,500 XP",    rate: "24%", code: "20% off", badge: "🎖️", color: "#c084fc" },
-  { name: "Elite",     xp: "15,000 XP",   rate: "27%", code: "25% off", badge: "💠", color: "#f472b6" },
-  { name: "Visionary", xp: "30,000 XP",   rate: "30%", code: "30% off", badge: "👁️", color: "#fbbf24", perk: "👁️ Free WorldEye Pro included at this rank" },
+const TIERS: { name: string; xp: string; rate: string; code: string; color: string; perk?: string }[] = [
+  { name: "Explorer",  xp: "0 XP",       rate: "15%", code: "5% off", color: "#38bdf8" },
+  { name: "Scout",     xp: "1,000 XP",    rate: "18%", code: "10% off", color: "#22d3ee" },
+  { name: "Analyst",   xp: "3,000 XP",    rate: "21%", code: "15% off", color: "#818cf8" },
+  { name: "Commander", xp: "7,500 XP",    rate: "24%", code: "20% off", color: "#c084fc" },
+  { name: "Elite",     xp: "15,000 XP",   rate: "27%", code: "25% off", color: "#f472b6" },
+  { name: "Visionary", xp: "30,000 XP",   rate: "30%", code: "30% off", color: "#fbbf24", perk: "Free WorldEye Pro included at this rank" },
 ];
 
 const FAQS = [
@@ -135,7 +137,7 @@ export default function AffiliatesLanding() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {TIERS.map((t) => (
             <Card key={t.name}>
-              <RankBadge name={t.name} badge={t.badge} color={t.color} glow={t.color + "55"} />
+              <RankBadge name={t.name} color={t.color} glow={t.color + "55"} />
               <div className="mt-4 flex items-end justify-between">
                 <div>
                   <div className="text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">Required</div>
@@ -151,8 +153,9 @@ export default function AffiliatesLanding() {
                 <span className="text-sm font-mono font-bold text-emerald-300">{t.code} <span className="text-slate-400 font-normal">for your audience</span></span>
               </div>
               {t.perk && (
-                <div className="mt-3 rounded-xl border px-3 py-2 text-xs font-mono font-bold"
+                <div className="mt-3 rounded-xl border px-3 py-2 text-xs font-mono font-bold flex items-center gap-2"
                   style={{ borderColor: t.color + "55", background: t.color + "14", color: t.color }}>
+                  <RankArt rank={t.name} color={t.color} size={18} className="shrink-0" />
                   {t.perk}
                 </div>
               )}
@@ -306,9 +309,14 @@ export default function AffiliatesLanding() {
       <section>
         <SectionTitle kicker="Arsenal" title="Marketing tools, done for you" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[["🖼️", "Promo banners", "Sized for every platform"], ["📱", "QR codes", "One scan to your link"], ["✍️", "Caption templates", "Instagram, TikTok, X"], ["📧", "Email scripts", "Plug-and-play outreach"]].map(([e, t, d]) => (
+          {[
+            { Icon: ImageIcon, t: "Promo banners", d: "Sized for every platform", c: "#38bdf8" },
+            { Icon: QrCode, t: "QR codes", d: "One scan to your link", c: "#22d3ee" },
+            { Icon: PenLine, t: "Caption templates", d: "Instagram, TikTok, X", c: "#818cf8" },
+            { Icon: Mail, t: "Email scripts", d: "Plug-and-play outreach", c: "#c084fc" },
+          ].map(({ Icon, t, d, c }) => (
             <Card key={t} className="text-center">
-              <div className="text-3xl">{e}</div>
+              <Icon className="w-8 h-8 mx-auto" style={{ color: c }} strokeWidth={1.7} />
               <div className="mt-2 text-white font-bold">{t}</div>
               <div className="mt-1 text-xs text-slate-400">{d}</div>
             </Card>

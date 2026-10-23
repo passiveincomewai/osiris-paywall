@@ -2,6 +2,7 @@
 // Template library: category chips + search, carousel groups collapse to one card.
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Star } from "lucide-react";
 import { EmptyState, SectionTitle } from "@/components/affiliate/ui";
 import { categoryLabel, renderUrl, type StudioTemplateLite } from "../StudioHomeClient";
 
@@ -228,7 +229,9 @@ export default function LibraryClient() {
                       </span>
                     )}
                     {t.featured && (
-                      <span className="absolute top-2 left-2 text-amber-300 text-sm" title="Featured">★</span>
+                      <span className="absolute top-2 left-2" title="Featured">
+                        <Star className="w-4 h-4 text-amber-300" fill="currentColor" />
+                      </span>
                     )}
                   </div>
                   <div className="p-3">

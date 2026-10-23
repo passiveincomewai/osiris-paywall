@@ -6,6 +6,7 @@
 // are self-reported here and verified by an admin before approval.
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { CREATOR_PLATFORMS, CREATOR_MIN_FOLLOWERS } from "@/lib/pro/creator";
 
 interface Application {
@@ -122,10 +123,10 @@ export default function CreatorApply() {
             for 12 months</span> — every camera, layer and intel feed unlocked while you make content with it.
           </p>
           <ul className="mt-4 space-y-2 text-sm text-slate-300">
-            <li>✓ Full Pro access — no card, no trial clock</li>
-            <li>✓ Renewable after 12 months with a quick re-verification</li>
-            <li>✓ Stacks with affiliate earnings — promote WorldEye, earn 15–30% too</li>
-            <li>✓ Approved creators also get a <span className="text-white font-bold">20% discount code</span> to share with their audience</li>
+            <li className="flex gap-2"><Check className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" strokeWidth={3} /><span>Full Pro access — no card, no trial clock</span></li>
+            <li className="flex gap-2"><Check className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" strokeWidth={3} /><span>Renewable after 12 months with a quick re-verification</span></li>
+            <li className="flex gap-2"><Check className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" strokeWidth={3} /><span>Stacks with affiliate earnings — promote WorldEye, earn 15–30% too</span></li>
+            <li className="flex gap-2"><Check className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" strokeWidth={3} /><span>Approved creators also get a <span className="text-white font-bold">20% discount code</span> to share with their audience</span></li>
           </ul>
           <p className="mt-4 text-xs text-slate-500 leading-relaxed">
             We verify every application by hand — follower count and account ownership are checked

@@ -5,6 +5,7 @@
 // configured yet render as "Not on sale yet" — never a dead button.
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { EmptyState } from "@/components/affiliate/ui";
 
 const btnPrimary =
@@ -154,7 +155,7 @@ export default function CreditsClient() {
           <div className="text-[11px] font-mono tracking-[0.2em] text-slate-400 uppercase">Member allowance</div>
           <div className="text-lg font-bold text-white mt-2">
             {data.allowance.grantedThisMonth ? (
-              <>Added for {monthLabel(data.monthKey)} ✓</>
+              <>Added for {monthLabel(data.monthKey)} <Check className="w-4 h-4 inline-block align-[-2px]" strokeWidth={3} /></>
             ) : (
               <>Pending for {monthLabel(data.monthKey)}</>
             )}

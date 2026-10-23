@@ -3,6 +3,7 @@
 // verified WorldEye features with the caller's real referral link + disclosure.
 import { useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { CopyButton, SectionTitle } from "@/components/affiliate/ui";
 
 const PLATFORMS = ["Instagram", "TikTok", "X", "Facebook", "YouTube", "LinkedIn", "Pinterest"];
@@ -166,7 +167,7 @@ export default function CaptionsClient() {
                     disabled={savingIndex === i || savedIndexes.has(i)}
                     className={btnGhost}
                   >
-                    {savedIndexes.has(i) ? "✓ Saved" : savingIndex === i ? "Saving…" : "Save"}
+                    {savedIndexes.has(i) ? (<span className="inline-flex items-center gap-1"><Check className="w-3.5 h-3.5" strokeWidth={3} /> Saved</span>) : savingIndex === i ? "Saving…" : "Save"}
                   </button>
                 </div>
               </div>

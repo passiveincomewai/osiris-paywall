@@ -5,6 +5,7 @@
 // the kit is this page; templates open in the creator.)
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Square } from "lucide-react";
 import { CopyButton, EmptyState, SectionTitle } from "@/components/affiliate/ui";
 import { categoryLabel, renderUrl, type StudioTemplateLite } from "../../StudioHomeClient";
 import type { CampaignListItem, StudioCampaign } from "../CampaignsClient";
@@ -117,12 +118,12 @@ export default function KitClient({ campaignId }: { campaignId: string }) {
       <section className={card}>
         <SectionTitle kicker="Requirements" title="Posting checklist" />
         <ul className="text-sm text-slate-300 space-y-1.5 mb-3 list-none">
-          <li>☐ Post on {c.channels.length > 0 ? c.channels.join(", ") : "your channel"} before {fmtDate(c.endsAt)}.</li>
-          {c.requiredCaptionSnippet && <li>☐ Include the required caption snippet, word for word.</li>}
-          {c.requiredHashtags.length > 0 && <li>☐ Include every required hashtag.</li>}
-          <li>☐ Link to the campaign landing page using your tracked link below.</li>
-          <li>☐ Add your #ad disclosure (see the <Link href="/affiliates/studio/compliance" className="text-cyan-300 hover:underline">compliance page</Link>).</li>
-          <li>☐ Come back to the campaigns page, paste your post URL, and claim your rewards.</li>
+          <li className="flex gap-2"><Square className="w-3.5 h-3.5 mt-[3px] shrink-0 text-slate-500" /><span>Post on {c.channels.length > 0 ? c.channels.join(", ") : "your channel"} before {fmtDate(c.endsAt)}.</span></li>
+          {c.requiredCaptionSnippet && <li className="flex gap-2"><Square className="w-3.5 h-3.5 mt-[3px] shrink-0 text-slate-500" /><span>Include the required caption snippet, word for word.</span></li>}
+          {c.requiredHashtags.length > 0 && <li className="flex gap-2"><Square className="w-3.5 h-3.5 mt-[3px] shrink-0 text-slate-500" /><span>Include every required hashtag.</span></li>}
+          <li className="flex gap-2"><Square className="w-3.5 h-3.5 mt-[3px] shrink-0 text-slate-500" /><span>Link to the campaign landing page using your tracked link below.</span></li>
+          <li className="flex gap-2"><Square className="w-3.5 h-3.5 mt-[3px] shrink-0 text-slate-500" /><span>Add your #ad disclosure (see the <Link href="/affiliates/studio/compliance" className="text-cyan-300 hover:underline">compliance page</Link>).</span></li>
+          <li className="flex gap-2"><Square className="w-3.5 h-3.5 mt-[3px] shrink-0 text-slate-500" /><span>Come back to the campaigns page, paste your post URL, and claim your rewards.</span></li>
         </ul>
         {c.requiredHashtags.length > 0 && (
           <CopyRow label="Hashtags" text={c.requiredHashtags.join(" ")} copyLabel="Copy hashtags" />

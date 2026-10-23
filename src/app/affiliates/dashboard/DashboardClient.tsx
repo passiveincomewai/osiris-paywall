@@ -5,6 +5,7 @@ import {
   StatCard, RankBadge, XpBar, SectionTitle, CopyButton, EmptyState, Pill, fmtCents,
 } from "@/components/affiliate/ui";
 import { AreaChart } from "@/components/affiliate/charts";
+import { RankArt } from "@/components/affiliate/graphics";
 import BadgesStrip from "./BadgesStrip";
 
 interface Me {
@@ -240,8 +241,9 @@ export default function DashboardClient() {
             <div className="text-[10px] text-slate-500">recurring</div>
           </div>
         </div>
-        <div className="mt-4 rounded-xl border border-[#fbbf24]/30 bg-[#fbbf24]/[0.06] px-3 py-2 text-xs font-mono text-[#fcd34d]">
-          👁️ {me.rank.name === "Visionary"
+        <div className="mt-4 rounded-xl border border-[#fbbf24]/30 bg-[#fbbf24]/[0.06] px-3 py-2 text-xs font-mono text-[#fcd34d] flex items-center gap-2">
+          <RankArt rank="visionary" color="#fbbf24" size={19} className="shrink-0" />
+          {me.rank.name === "Visionary"
             ? "Visionary perk active — WorldEye Pro is free on your account while you hold this rank."
             : `Visionary perk: reach Visionary${me.ranks?.find((r) => r.key === "visionary") ? ` (${me.ranks.find((r) => r.key === "visionary")!.minXp.toLocaleString()} XP)` : ""} and WorldEye Pro is free while you hold the rank.`}
         </div>

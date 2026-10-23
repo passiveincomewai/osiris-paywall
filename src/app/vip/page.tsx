@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { planTierOf } from "@/lib/plan-tier";
 import VipShell from "@/components/vip/VipShell";
 import VipLock from "@/components/vip/VipLock";
+import DashboardPreview from "@/components/vip/DashboardPreview";
 
 export const metadata: Metadata = {
   title: "VIP Pro hub — WorldEye",
@@ -70,6 +71,8 @@ export default async function VipHubPage() {
           lapsedCopy="Your VIP Pro isn't active right now, so these features are paused — your places, rules and views are kept, and everything resumes on its own when VIP Pro is back."
         />
       )}
+
+      <DashboardPreview signedIn={!!userId} />
 
       <section>
         <h2 className="mb-3 text-xs font-mono uppercase tracking-[0.25em] text-cyan-400">

@@ -2,6 +2,10 @@
 // My Creations: saved designs + saved captions, with download and delete.
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  Sparkles, PenLine, GalleryHorizontal, Clapperboard, FlaskConical,
+  ChevronDown, ChevronRight, Image as ImageIcon, type LucideIcon,
+} from "lucide-react";
 import { CopyButton, EmptyState } from "@/components/affiliate/ui";
 import { AI_KIND_META, type AiKind } from "@/lib/studio/credits-config";
 import {
@@ -70,8 +74,8 @@ function ABTestSection({ creation }: { creation: CreationWithAB }) {
         className="w-full flex items-center justify-between text-sm font-mono text-slate-200 hover:text-white"
         aria-expanded={open}
       >
-        <span>🧪 A/B caption test</span>
-        <span className="text-slate-500">{open ? "▾" : "▸"}</span>
+        <span className="inline-flex items-center gap-2"><FlaskConical className="w-4 h-4 text-cyan-300" /> A/B caption test</span>
+        {open ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
       </button>
       {open && (
         <div className="mt-3 space-y-3">
@@ -127,12 +131,12 @@ function ABTestSection({ creation }: { creation: CreationWithAB }) {
   );
 }
 
-function kindIcon(kind: string | null | undefined, caption: boolean): string {
-  if (kind && kind.startsWith("ai_")) return "✨";
-  if (caption || kind === "caption") return "✍️";
-  if (kind === "carousel") return "🎠";
-  if (kind === "video" || kind === "reel") return "🎬";
-  return "🖼️";
+function kindIcon(kind: string | null | undefined, caption: boolean): LucideIcon {
+  if (kind && kind.startsWith("ai_")) return Sparkles;
+  if (caption || kind === "caption") return PenLine;
+  if (kind === "carousel") return GalleryHorizontal;
+  if (kind === "video" || kind === "reel") return Clapperboard;
+  return ImageIcon;
 }
 
 function aiKindLabel(kind: string | null | undefined): string {
@@ -282,7 +286,7 @@ export default function CreationsClient() {
                 ) : null}
                 <div className="p-4 flex flex-col gap-3 flex-1">
                   <div className="flex items-start gap-2.5">
-                    <span className="text-xl leading-none mt-0.5" aria-hidden>{kindIcon(c.kind, caption)}</span>
+                    {(() => { const KindIcon = kindIcon(c.kind, caption); return <KindIcon className="w-5 h-5 mt-0.5 text-slate-300 shrink-0" aria-hidden />; })()}
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-bold text-white truncate">{title}</div>
                       <div className="text-xs font-mono text-slate-400 truncate">{subtitle}</div>

@@ -3,6 +3,7 @@
 // matches the terms; the terms page is the binding document.
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Check, X } from "lucide-react";
 import { auth } from "@/auth";
 import { getStudioGate } from "@/lib/studio/access";
 import { SectionTitle } from "@/components/affiliate/ui";
@@ -123,7 +124,7 @@ export default async function StudioCompliancePage() {
           <ul className="space-y-2 text-sm text-slate-300 leading-relaxed">
             {DOS.map((d) => (
               <li key={d} className="flex gap-2">
-                <span className="text-emerald-300 shrink-0">✓</span>
+                <Check className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" strokeWidth={3} />
                 <span>{d}</span>
               </li>
             ))}
@@ -134,7 +135,7 @@ export default async function StudioCompliancePage() {
           <ul className="space-y-2 text-sm text-slate-300 leading-relaxed">
             {DONTS.map((d) => (
               <li key={d} className="flex gap-2">
-                <span className="text-red-300 shrink-0">✕</span>
+                <X className="w-4 h-4 text-red-300 shrink-0 mt-0.5" strokeWidth={3} />
                 <span>{d}</span>
               </li>
             ))}

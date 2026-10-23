@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Check, ChevronDown, ChevronRight } from "lucide-react";
 import { EmptyState, Pill, StatCard, fmtCents } from "@/components/affiliate/ui";
 
 type TreeNode = {
@@ -59,7 +60,7 @@ function NodeRow({ node }: { node: TreeNode }) {
             <span className="text-white font-semibold truncate">{node.name}</span>
             <Pill color={lv.color}>L{node.level}</Pill>
             <Pill color={isCustomer ? "#94a3b8" : "#34d399"}>{isCustomer ? "customer" : "affiliate"}</Pill>
-            {node.converted && <Pill color="#4ade80">✓ paying</Pill>}
+            {node.converted && <Pill color="#4ade80"><Check className="w-3 h-3 mr-1" strokeWidth={3.5} />paying</Pill>}
           </div>
           <div className="text-xs text-slate-400 font-mono mt-0.5">
             joined {joined} · earned <span className="text-cyan-300">{fmtCents(node.commissionsCents ?? 0)}</span>
@@ -68,10 +69,10 @@ function NodeRow({ node }: { node: TreeNode }) {
         {kids.length > 0 ? (
           <button
             onClick={() => setOpen((o) => !o)}
-            className="shrink-0 w-8 h-8 rounded-lg border border-white/15 text-cyan-300 font-mono text-sm hover:bg-white/5 transition-colors"
+            className="shrink-0 w-8 h-8 rounded-lg border border-white/15 text-cyan-300 hover:bg-white/5 transition-colors flex items-center justify-center"
             aria-label={open ? "Collapse" : "Expand"}
           >
-            {open ? "▾" : "▸"}
+            {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </button>
         ) : (
           <span className="shrink-0 text-[11px] font-mono text-slate-500 pr-1">

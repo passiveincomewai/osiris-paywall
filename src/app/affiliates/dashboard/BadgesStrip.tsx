@@ -4,6 +4,7 @@
 // (same gate as the rest of the dashboard); a 401/404 — signed out or not
 // an affiliate — renders nothing at all.
 import { useEffect, useState } from "react";
+import { MedalMark } from "@/components/affiliate/graphics";
 
 interface BadgeRow {
   key: string;
@@ -46,7 +47,10 @@ export default function BadgesStrip() {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-4 md:p-5">
       <div className="flex items-center justify-between mb-3">
-        <div className="text-sm font-bold text-white">🏅 Studio badges</div>
+        <div className="text-sm font-bold text-white flex items-center gap-2">
+          <MedalMark color="#22d3ee" size={19} />
+          Studio badges
+        </div>
         <div className="text-[11px] font-mono text-white/40">
           {earned.length} of {badges.length} earned
         </div>
@@ -57,9 +61,10 @@ export default function BadgesStrip() {
             <span
               key={b.key}
               title={b.earnedAt ? `Earned ${new Date(b.earnedAt).toLocaleDateString()}` : b.blurb}
-              className="px-3 py-1.5 rounded-full text-xs font-mono font-bold border border-cyan-400/50 text-cyan-200 bg-cyan-400/10"
+              className="px-3 py-1.5 rounded-full text-xs font-mono font-bold border border-cyan-400/50 text-cyan-200 bg-cyan-400/10 inline-flex items-center gap-1.5"
             >
-              🏅 {b.label}
+              <MedalMark color="#22d3ee" size={14} />
+              {b.label}
               {b.xp > 0 && <span className="text-cyan-400/80"> · +{b.xp} XP</span>}
             </span>
           ))}

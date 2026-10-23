@@ -7,6 +7,7 @@
 // server-side in /api/affiliate/studio/drops/claim).
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { renderUrl } from "./StudioHomeClient";
 
 interface DropTemplateLite {
@@ -110,7 +111,7 @@ export default function TodayDropCard() {
               : claimed
                 ? drop.template
                   ? "Download again"
-                  : "Claimed ✓"
+                  : (<>Claimed <Check className="w-4 h-4 inline-block align-[-2px] ml-0.5" strokeWidth={3} /></>)
                 : `Download & claim +${drop.xpBonus} XP`}
           </button>
           {drop.template ? (

@@ -2,6 +2,8 @@
 // Shared affiliate UI primitives — WorldEye command-center aesthetic:
 // dark navy glass cards, electric-blue/cyan accents, subtle glows.
 import { useState } from "react";
+import { Check } from "lucide-react";
+import { RankArt, EyeMark } from "./graphics";
 
 export function StatCard({ label, value, sub, accent = "#0096FF" }: {
   label: string; value: string; sub?: string; accent?: string;
@@ -18,14 +20,18 @@ export function StatCard({ label, value, sub, accent = "#0096FF" }: {
 }
 
 export function RankBadge({ name, badge, color, glow, size = "md" }: {
-  name: string; badge: string; color: string; glow: string; size?: "sm" | "md" | "lg";
+  // `badge` is the legacy emoji from the rank record — still accepted so
+  // existing callers/API payloads keep working, but the tile now renders
+  // the vector RankArt for the rank instead of the emoji.
+  name: string; badge?: string; color: string; glow: string; size?: "sm" | "md" | "lg";
 }) {
-  const dims = size === "lg" ? "w-20 h-20 text-4xl" : size === "sm" ? "w-10 h-10 text-xl" : "w-14 h-14 text-3xl";
+  const dims = size === "lg" ? "w-20 h-20" : size === "sm" ? "w-10 h-10" : "w-14 h-14";
+  const art = size === "lg" ? 54 : size === "sm" ? 27 : 38;
   return (
     <div className="flex items-center gap-3">
       <div className={`${dims} rounded-2xl flex items-center justify-center border`}
         style={{ borderColor: color + "66", background: `radial-gradient(circle at 35% 30%, ${color}33, rgba(5,8,16,.9))`, boxShadow: `0 0 24px ${glow}` }}>
-        <span>{badge}</span>
+        <RankArt rank={name} color={color} size={art} />
       </div>
       <div>
         <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase">Rank</div>
@@ -66,10 +72,10 @@ export function CopyButton({ text, label = "Copy link" }: { text: string; label?
         try { await navigator.clipboard.writeText(text); } catch { /* clipboard unavailable */ }
         setOk(true); setTimeout(() => setOk(false), 1800);
       }}
-      className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f] transition-all"
+      className="px-4 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f] transition-all inline-flex items-center justify-center gap-1.5"
       style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)", boxShadow: "0 0 20px rgba(0,150,255,.45)" }}
     >
-      {ok ? "✓ Copied" : label}
+      {ok ? (<><Check className="w-4 h-4" strokeWidth={3} /> Copied</>) : label}
     </button>
   );
 }
@@ -77,6 +83,9 @@ export function CopyButton({ text, label = "Copy link" }: { text: string; label?
 export function EmptyState({ title, body, cta }: { title: string; body: string; cta?: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-8 text-center">
+      <div className="flex justify-center mb-3 opacity-70">
+        <EyeMark color="#5b7a9e" size={34} />
+      </div>
       <div className="text-white font-bold mb-1">{title}</div>
       <div className="text-sm text-slate-400 mb-4">{body}</div>
       {cta}

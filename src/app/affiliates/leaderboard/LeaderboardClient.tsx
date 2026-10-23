@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { EmptyState, RankBadge, fmtCents } from "@/components/affiliate/ui";
+import { PodiumMedal } from "@/components/affiliate/graphics";
 
 type Row = {
   id: string;
@@ -31,9 +32,9 @@ const TABS: { key: BoardKey; label: string; field: string; hint: string; metric:
 ];
 
 const MEDALS = [
-  { ring: "#fbbf24", glow: "0 0 22px rgba(251,191,36,.55)", text: "#fbbf24", medal: "🥇" },
-  { ring: "#cbd5e1", glow: "0 0 18px rgba(203,213,225,.4)", text: "#cbd5e1", medal: "🥈" },
-  { ring: "#d97706", glow: "0 0 18px rgba(217,119,6,.4)", text: "#d97706", medal: "🥉" },
+  { ring: "#fbbf24", glow: "0 0 22px rgba(251,191,36,.55)", text: "#fbbf24" },
+  { ring: "#cbd5e1", glow: "0 0 18px rgba(203,213,225,.4)", text: "#cbd5e1" },
+  { ring: "#d97706", glow: "0 0 18px rgba(217,119,6,.4)", text: "#d97706" },
 ];
 
 function BoardRow({ row, pos, metric }: { row: Row; pos: number; metric: (r: Row) => string }) {
@@ -44,9 +45,9 @@ function BoardRow({ row, pos, metric }: { row: Row; pos: number; metric: (r: Row
       className="flex items-center gap-3 md:gap-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md px-3 md:px-5 py-3"
       style={m ? { borderColor: m.ring + "55", boxShadow: m.glow } : undefined}
     >
-      <div className="w-10 shrink-0 text-center">
+      <div className="w-10 shrink-0 flex items-center justify-center">
         {m ? (
-          <span className="text-2xl">{m.medal}</span>
+          <PodiumMedal place={pos + 1} color={m.text} size={31} />
         ) : (
           <span className="font-mono font-bold text-slate-400">#{pos + 1}</span>
         )}

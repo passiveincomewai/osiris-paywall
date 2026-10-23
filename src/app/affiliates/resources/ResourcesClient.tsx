@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import { Check, ChevronRight } from "lucide-react";
 import { CopyButton, SectionTitle } from "@/components/affiliate/ui";
 
 /* ------------------------------------------------------------------ */
@@ -393,7 +394,7 @@ export default function ResourcesClient() {
               <ul className="space-y-2">
                 {s.lines.map((l, i) => (
                   <li key={i} className="text-sm text-slate-300 leading-relaxed">
-                    <span className="font-mono text-cyan-400 text-xs mr-2">▸</span>{l}
+                    <ChevronRight className="inline-block w-3.5 h-3.5 text-cyan-400 mr-1.5 align-[-2px]" strokeWidth={2.5} />{l}
                   </li>
                 ))}
               </ul>
@@ -500,7 +501,7 @@ export default function ResourcesClient() {
                 <p className="text-sm text-slate-400 mt-1 mb-3">Pick a caption template above, paste your link in, and post it with #ad.</p>
                 {tutorialDone ? (
                   <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-mono font-bold border border-emerald-400/50 text-emerald-300 bg-emerald-400/10">
-                    ✓ Tutorial complete — XP awarded
+                    <Check className="w-4 h-4 mr-1.5" strokeWidth={3} /> Tutorial complete — XP awarded
                   </span>
                 ) : tutorial ? (
                   <button onClick={completeTutorial}

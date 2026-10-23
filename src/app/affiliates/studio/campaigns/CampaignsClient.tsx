@@ -3,6 +3,7 @@
 // the XP + credit rewards. Rewards are granted server-side exactly once.
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { CopyButton, EmptyState } from "@/components/affiliate/ui";
 
 export interface StudioCampaign {
@@ -222,7 +223,7 @@ export default function CampaignsClient() {
                       {busyId === c.id ? "Joining…" : "Join campaign"}
                     </button>
                   ) : completed ? (
-                    <span className="text-sm font-mono text-emerald-300">✓ Completed — rewards claimed</span>
+                    <span className="text-sm font-mono text-emerald-300 inline-flex items-center gap-1.5"><Check className="w-4 h-4" strokeWidth={3} /> Completed — rewards claimed</span>
                   ) : (
                     <span className="text-sm font-mono text-cyan-300">
                       Joined{p.reviewStatus && p.reviewStatus !== "none" ? ` · review: ${p.reviewStatus}` : ""}

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Sparkles } from "lucide-react";
 import { CopyButton, EmptyState, RankBadge, SectionTitle } from "@/components/affiliate/ui";
 
 /* ------------------------------------------------------------------ */
@@ -221,7 +222,7 @@ export default function StudioHomeClient({
   const quickLinks = useMemo(
     () => [
       { href: "/affiliates/studio/library", title: "Template Library", body: "Browse every template by category and format." },
-      { href: "/affiliates/studio/ai", title: "AI by Cosmo ✨", body: "Captions, hooks, scripts, and images — crafted to order by WorldEye's AI around your link." },
+      { href: "/affiliates/studio/ai", title: "AI by Cosmo", body: "Captions, hooks, scripts, and images — crafted to order by WorldEye's AI around your link." },
       { href: "/affiliates/studio/captions", title: "Caption Generator", body: "Platform-ready captions with your link + #ad disclosure." },
       { href: "/affiliates/studio/creations", title: "My Creations", body: "Everything you've saved — download or delete anytime." },
       { href: "/affiliates/studio/credits", title: "Credits & Packs", body: "Your balance, monthly allowance, and top-up packs." },
@@ -273,7 +274,7 @@ export default function StudioHomeClient({
         </p>
         <div className="flex flex-wrap gap-3 justify-center mt-6">
           <Link href="/affiliates/studio/library" className={btnPrimary} style={btnStyle}>Create an Ad</Link>
-          <Link href="/affiliates/studio/ai" className={btnGhost}>✨ AI by Cosmo</Link>
+          <Link href="/affiliates/studio/ai" className={btnGhost + " inline-flex items-center gap-1.5"}><Sparkles className="w-4 h-4 text-cyan-300" /> AI by Cosmo</Link>
           <Link href="/affiliates/studio/library" className={btnGhost}>Browse Templates</Link>
           <Link href="/affiliates/studio/creations" className={btnGhost}>My Creations</Link>
         </div>
@@ -333,7 +334,7 @@ export default function StudioHomeClient({
               className={btnPrimary + " disabled:opacity-50"}
               style={btnStyle}
             >
-              ✨ Generate My Next Ad
+              <Sparkles className="w-4 h-4 inline-block align-[-2px] mr-1.5" /> Generate My Next Ad
             </button>
             {featured.length === 0 && (
               <span className="text-xs text-slate-500">Featured templates are loading — browse the library meanwhile.</span>
@@ -440,7 +441,10 @@ export default function StudioHomeClient({
       <section className="grid md:grid-cols-3 gap-4">
         {quickLinks.map((q) => (
           <Link key={q.href + q.title} href={q.href} className={card + " hover:border-cyan-400/50 transition-colors block"}>
-            <div className="text-white font-bold mb-1">{q.title} →</div>
+            <div className="text-white font-bold mb-1 flex items-center gap-1.5">
+              {q.href === "/affiliates/studio/ai" && <Sparkles className="w-4 h-4 text-cyan-300 shrink-0" />}
+              {q.title} →
+            </div>
             <div className="text-sm text-slate-400">{q.body}</div>
           </Link>
         ))}
