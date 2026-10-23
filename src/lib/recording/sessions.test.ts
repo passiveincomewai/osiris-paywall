@@ -240,7 +240,7 @@ describe("timelapse sessions", () => {
 });
 
 describe("clip sessions", () => {
-  const videoSource = { kind: "video", streamUrl: "https://x.test/a.m3u8" } as const;
+  const videoSource = { kind: "video", streamUrl: "https://x.test/a.m3u8", streamType: null } as const;
 
   it("persists segments progressively and assembles the clip on stop", async () => {
     const h = makeHarness();

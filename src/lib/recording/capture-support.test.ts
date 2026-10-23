@@ -20,6 +20,16 @@ describe("liveCaptureSupported", () => {
     ).toBe(true);
   });
 
+  it("accepts the canvas-only route (iOS Safari: no element captureStream)", () => {
+    expect(
+      liveCaptureSupported({
+        MediaRecorder: function MediaRecorder() {},
+        HTMLVideoElement: { prototype: {} },
+        HTMLCanvasElement: { prototype: { captureStream: () => {} } },
+      }),
+    ).toBe(true);
+  });
+
   it("refuses when either primitive is missing", () => {
     expect(liveCaptureSupported({ HTMLVideoElement: { prototype: { captureStream: () => {} } } })).toBe(false);
     expect(liveCaptureSupported({ MediaRecorder: function MediaRecorder() {} })).toBe(false);
@@ -27,6 +37,13 @@ describe("liveCaptureSupported", () => {
       liveCaptureSupported({
         MediaRecorder: function MediaRecorder() {},
         HTMLVideoElement: { prototype: {} },
+      }),
+    ).toBe(false);
+    expect(
+      liveCaptureSupported({
+        MediaRecorder: function MediaRecorder() {},
+        HTMLVideoElement: { prototype: {} },
+        HTMLCanvasElement: { prototype: {} },
       }),
     ).toBe(false);
   });

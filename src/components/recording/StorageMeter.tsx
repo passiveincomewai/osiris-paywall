@@ -1,12 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { idbUsageBytes } from "@/lib/recording/idb";
-
-function fmt(b: number) {
-  if (b < 1024 ** 2) return `${(b / 1024).toFixed(0)} KB`;
-  if (b < 1024 ** 3) return `${(b / 1024 ** 2).toFixed(1)} MB`;
-  return `${(b / 1024 ** 3).toFixed(2)} GB`;
-}
+import { formatBytes } from "@/lib/recording/dashboard";
 
 /** Device-local clip storage meter (IndexedDB + browser quota estimate). */
 export default function StorageMeter() {
@@ -27,7 +22,7 @@ export default function StorageMeter() {
       <div className="flex items-center justify-between mb-2">
         <div className="text-[11px] font-mono tracking-[0.2em] text-slate-500 uppercase">Device clip storage</div>
         <div className="text-xs font-mono text-slate-400">
-          {used == null ? "…" : fmt(used)}{quota ? ` of ~${fmt(quota)}` : ""}
+          {used == null ? "…" : formatBytes(used)}{quota ? ` of ~${formatBytes(quota)}` : ""}
         </div>
       </div>
       <div className="h-2 rounded-full bg-white/5 overflow-hidden">

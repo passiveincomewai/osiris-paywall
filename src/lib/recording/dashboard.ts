@@ -155,10 +155,21 @@ export function sessionPhaseLabel(view: CaptureSessionView): string {
 }
 
 /** What the session has safely banked so far, in plain words. */
-export function sessionDetailLine(view: CaptureSessionView): string {
+export function sessionDetailLine(view: CaptureSessionView, nowMs: number = Date.now()): string {
   if (view.kind === "timelapse") {
     const frames = `${view.frameCount} frame${view.frameCount === 1 ? "" : "s"} kept`;
-    return view.misses > 0 ? `${frames} · ${view.misses} missed check${view.misses === 1 ? "" : "s"}` : frames;
+    if (view.misses > 0) {
+      return `${frames} · ${view.misses} missed check${view.misses === 1 ? "" : "s"}`;
+    }
+    // A capture whose camera has published nothing new in a while must
+    // say so, not sit there looking identical to a healthy recording:
+    // at DOT cadences a new picture lands every few minutes at most,
+    // so ten minutes without one is worth naming.
+    const last = view.lastFrameAt ?? null;
+    if (last && nowMs - last >= 10 * 60_000) {
+      return `${frames} · no new frame for ${Math.floor((nowMs - last) / 60_000)}m — this camera's picture hasn't changed`;
+    }
+    return frames;
   }
   return `${view.segmentCount} segment${view.segmentCount === 1 ? "" : "s"} · ${formatBytes(view.bytes)} saved so far`;
 }
@@ -170,7 +181,9 @@ export function sessionDetailLine(view: CaptureSessionView): string {
 export function formatBytes(b: number): string {
   if (b < 1024) return `${b} B`;
   if (b < 1024 ** 2) return `${(b / 1024).toFixed(1)} KB`;
-  if (b < 1024 ** 3) return `${(b / 1024 ** 2).toFixed(1)} MB`;
+  // Roll into GB before the MB figure grows a fourth digit: a quota of
+  // ~1 GB used to render as "~1000.0 MB", precision nobody can use.
+  if (b < 1000 * 1024 ** 2) return `${(b / 1024 ** 2).toFixed(1)} MB`;
   return `${(b / 1024 ** 3).toFixed(2)} GB`;
 }
 

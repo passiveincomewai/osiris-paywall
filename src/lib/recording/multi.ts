@@ -3,8 +3,11 @@
  * multi-camera recorder (a WorldEye Pro feature; VIP Pro raises the cap).
  *
  * It scales the studio's two proven single-camera mechanisms, unchanged:
- *  - stream cameras (HLS / MP4): a <video> element's captureStream() into
- *    a MediaRecorder — the RecordableTile mechanism on the Live wall;
+ *  - stream cameras (HLS / MP4): the playing video sampled onto a
+ *    canvas whose captureStream() feeds a MediaRecorder — the canvas
+ *    mechanism below, applied to the live video element (see
+ *    lib/recording/canvas-pump for why the sampling replaced direct
+ *    element capture);
  *  - snapshot cameras ("jpg"): stills fetched one at a time (the frame
  *    route, or the feed itself), deduped with the timelapse ledger, drawn
  *    onto a canvas whose captureStream() a MediaRecorder records — the
@@ -67,13 +70,28 @@ export function staggerDelayMs(index: number): number {
 /* ------------------------------------------------------------------ */
 
 export type MultiCamSource =
-  | { kind: "video"; streamUrl: string }
+  | { kind: "video"; streamUrl: string; streamType: string | null }
   | { kind: "stills"; frameId: string | null; stillUrl: string | null }
   | { kind: "unsupported"; reason: string };
 
 type CamData = Record<string, unknown> | null | undefined;
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
+
+/**
+ * Is this stream an HLS playlist? The declared type decides first:
+ * plenty of HLS is served from URLs with no `.m3u8` in them at all
+ * (extensionless CDN paths, signed URLs, the camera proxy), and those
+ * are exactly the ones that used to fail recording — the capture layer
+ * re-derived "HLS" from the URL alone, loaded the playlist as if it
+ * were a media file, and reported "Stream failed to load", while the
+ * viewer and the tiles (which honour the declared type) played the
+ * same camera fine. The extension remains as the fallback signal, as
+ * on the Live wall.
+ */
+export function streamIsHls(streamUrl: string, streamType?: string | null): boolean {
+  return streamType === "hls" || /\.m3u8($|\?)/.test(streamUrl);
+}
 
 /**
  * Route a saved camera's stored data to a capture mechanism, mirroring
@@ -115,7 +133,7 @@ export function classifyMultiCam(data: CamData): MultiCamSource {
     /\.m3u8($|\?)/.test(streamUrl);
   if (isStream) {
     return streamUrl
-      ? { kind: "video", streamUrl }
+      ? { kind: "video", streamUrl, streamType: streamType || null }
       : { kind: "unsupported", reason: "No playable stream" };
   }
   if (streamType === "jpg" || (!streamUrl && !!feedUrl)) {

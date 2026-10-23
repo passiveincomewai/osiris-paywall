@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { SavedCam } from "@/components/recording/RecordableTile";
 
-const card = "rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-4";
+const card = "rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-4 min-w-0";
 
 export default function MyCamerasPage() {
   const [cams, setCams] = useState<SavedCam[] | null>(null);
@@ -41,12 +41,12 @@ export default function MyCamerasPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
+        <div className="min-w-0">
           <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase mb-1">Library</div>
           <h1 className="text-3xl font-bold text-white">My cameras</h1>
           <p className="text-sm text-slate-400 mt-1">{cams.length} saved · save more from any camera on the main globe</p>
         </div>
-        <Link href="/" className="px-4 py-2 rounded-xl text-sm font-mono border border-white/20 text-slate-200 hover:bg-white/5">
+        <Link href="/" className="shrink-0 px-4 py-2 rounded-xl text-sm font-mono border border-white/20 text-slate-200 hover:bg-white/5">
           ＋ Find cameras on the globe
         </Link>
       </div>
@@ -70,16 +70,16 @@ export default function MyCamerasPage() {
               </button>
             ))}
           </div>
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 min-w-0">
             {shown.map((c) => (
               <div key={c.id} className={card}>
                 {editing === c.id ? (
-                  <div className="space-y-2">
+                  <div className="space-y-2 min-w-0">
                     <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Camera name"
-                      className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60" />
+                      className="w-full min-w-0 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60" />
                     <input value={group} onChange={(e) => setGroup(e.target.value)} placeholder="Group (e.g. Home, Office)"
-                      className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60" />
-                    <div className="flex gap-2">
+                      className="w-full min-w-0 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-cyan-400/60" />
+                    <div className="flex gap-2 flex-wrap">
                       <button onClick={() => save(c.id)} className="px-4 py-2 rounded-xl text-sm font-mono font-bold text-[#04121f]"
                         style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Save</button>
                       <button onClick={() => setEditing(null)} className="px-4 py-2 rounded-xl text-sm font-mono border border-white/15 text-slate-300">Cancel</button>
@@ -96,7 +96,7 @@ export default function MyCamerasPage() {
                         {c.cameraData?.stream_url ? "STREAM" : "INFO"}
                       </span>
                     </div>
-                    <div className="mt-3 flex gap-2">
+                    <div className="mt-3 flex gap-2 flex-wrap">
                       <button
                         onClick={() => { setEditing(c.id); setName(c.name); setGroup(c.group); }}
                         className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-300 hover:border-cyan-400/60">

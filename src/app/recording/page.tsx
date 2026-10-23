@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { recordingAccess } from "@/lib/recording/access";
 import { db } from "@/lib/db";
+import { formatBytes } from "@/lib/recording/dashboard";
 import UpgradeScreen from "@/components/recording/UpgradeScreen";
 import StorageMeter from "@/components/recording/StorageMeter";
+import ActiveSessionsBar from "@/components/recording/ActiveSessionsBar";
 
 export const dynamic = "force-dynamic";
 
@@ -10,17 +12,10 @@ function Stat({ label, value, sub, accent }: { label: string; value: string; sub
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5">
       <div className="text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">{label}</div>
-      <div className="mt-1 text-3xl font-black font-mono" style={{ color: accent }}>{value}</div>
+      <div className="mt-1 text-3xl font-black font-mono whitespace-nowrap" style={{ color: accent }}>{value}</div>
       <div className="mt-1 text-xs text-slate-400">{sub}</div>
     </div>
   );
-}
-
-function fmtBytes(b: number) {
-  if (b < 1024) return `${b} B`;
-  if (b < 1024 ** 2) return `${(b / 1024).toFixed(1)} KB`;
-  if (b < 1024 ** 3) return `${(b / 1024 ** 2).toFixed(1)} MB`;
-  return `${(b / 1024 ** 3).toFixed(2)} GB`;
 }
 
 export default async function RecordingOverview() {
@@ -65,8 +60,14 @@ export default async function RecordingOverview() {
         <Stat label="Saved cameras" value={String(camCount)} sub="in your monitoring wall" accent="#38bdf8" />
         <Stat label="Clips recorded" value={String(clipCount)} sub="this account" accent="#22d3ee" />
         <Stat label="Footage" value={clipSecs >= 3600 ? `${(clipSecs / 3600).toFixed(1)}h` : `${Math.round(clipSecs / 60)}m`} sub="total recorded" accent="#818cf8" />
-        <Stat label="Clip storage" value={fmtBytes(clipBytes)} sub="metadata-tracked" accent="#c084fc" />
+        <Stat label="Clip storage" value={formatBytes(clipBytes)} sub="metadata-tracked" accent="#c084fc" />
       </div>
+
+      {/* Recordings running right now live in the session store, not in
+          the saved-clip aggregates above — show them from the same
+          source the walls and the pill read, so this page can't claim
+          "nothing recording" while captures are running. */}
+      <ActiveSessionsBar />
 
       <StorageMeter />
 
@@ -103,7 +104,7 @@ export default async function RecordingOverview() {
                 <li key={c.id} className="flex items-center justify-between text-sm border-b border-white/5 pb-2">
                   <span className="text-white truncate">{c.cameraName}</span>
                   <span className="font-mono text-xs text-slate-400 whitespace-nowrap ml-3">
-                    {Math.floor(c.durationSec / 60)}:{String(c.durationSec % 60).padStart(2, "0")} · {fmtBytes(c.sizeBytes)}
+                    {Math.floor(c.durationSec / 60)}:{String(c.durationSec % 60).padStart(2, "0")} · {formatBytes(c.sizeBytes)}
                   </span>
                 </li>
               ))}

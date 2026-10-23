@@ -6,9 +6,14 @@
  * this tile is contained here and never stops the others.
  *
  * Two capture mechanisms, both the studio's proven single-camera ones:
- *  - stream cameras: the Live wall's way — a <video> element (HLS via
- *    hls.js or a direct file) whose captureStream() feeds a
- *    MediaRecorder (see RecordableTile);
+ *  - stream cameras: the Live wall's way — the shared detached stream
+ *    opener (lib/recording/canvas-pump) loads the stream in a player
+ *    the recording owns and samples it onto a capped canvas whose
+ *    captureStream() feeds a MediaRecorder. (It used to capture this
+ *    tile's own visible <video> directly, at native resolution —
+ *    the combination that froze the wall, and impossible on iOS
+ *    Safari, which has no element captureStream at all. The preview
+ *    below keeps playing independently, exactly as on the Live wall.)
  *  - snapshot cameras: the timelapse way — stills fetched one at a time
  *    (the /api/cctv/frame route, or the feed itself), deduped with the
  *    timelapse ledger, drawn onto a canvas whose captureStream() a
@@ -18,6 +23,7 @@
  * IndexedDB store + clip metadata, exactly like a Live-wall clip.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Hls from "hls.js";
 import type { SavedCam } from "./RecordableTile";
 import {
@@ -26,11 +32,15 @@ import {
   classifyMultiCam,
   multiCamKindLabel,
   staggerDelayMs,
+  streamIsHls,
   MULTI_STILL_POLL_MS,
   type TileEvent,
   type TileSession,
 } from "@/lib/recording/multi";
-import { pickRecorderMime, saveRecordedClip } from "@/lib/recording/save-clip";
+import { clipSaveErrorMessage, pickRecorderMime, saveRecordedClip } from "@/lib/recording/save-clip";
+import { openDetachedVideoStream } from "@/lib/recording/canvas-pump";
+import { fitWithin } from "@/lib/recording/capture-geometry";
+import { globeHref } from "@/lib/dashboard/dashboard";
 import {
   frameDecision,
   frameSignature,
@@ -44,10 +54,20 @@ export interface TileControls {
 }
 
 type CanvasCapture = HTMLCanvasElement & { captureStream(fps: number): MediaStream };
-type VideoCapture = HTMLVideoElement & { captureStream(): MediaStream };
 
 const fmt = (s: number) =>
   `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
+/** A still fetch bounded in time — a hung request must not stall the loop. */
+async function fetchStillBounded(url: string): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 export default function MultiRecordTile({
   cam,
@@ -88,6 +108,10 @@ export default function MultiRecordTile({
   // past a tier wave slows the poll without restarting the loop.
   const pollMsRef = useRef(pollMs);
   pollMsRef.current = pollMs;
+
+  // The detached stream a video recording runs on (its preview above
+  // is a separate, independent player).
+  const detachedRef = useRef<(() => void) | null>(null);
 
   // Snapshot-capture state.
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -130,9 +154,9 @@ export default function MultiRecordTile({
     setLoading(true);
     setFeedError(null);
     const url = source.streamUrl;
-    if (/\.m3u8($|\?)/.test(url)) {
+    if (streamIsHls(url, source.streamType)) {
       if (Hls.isSupported()) {
-        const hls = new Hls({ enableWorker: false, maxBufferLength: 20 });
+        const hls = new Hls({ enableWorker: true, maxBufferLength: 20 });
         hlsRef.current = hls;
         hls.loadSource(url);
         hls.attachMedia(v);
@@ -167,13 +191,16 @@ export default function MultiRecordTile({
     if (!canvas) return;
     const bmp = await createImageBitmap(blob).catch(() => null);
     if (!bmp) return;
-    if (canvas.width !== bmp.width || canvas.height !== bmp.height) {
-      canvas.width = bmp.width;
-      canvas.height = bmp.height;
+    // Capped like every capture canvas (a snapshot's native frame can
+    // be 1080p+; encoding it whole was part of the wall-freeze cost).
+    const size = fitWithin(bmp.width, bmp.height);
+    if (canvas.width !== size.width || canvas.height !== size.height) {
+      canvas.width = size.width;
+      canvas.height = size.height;
     }
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.drawImage(bmp, 0, 0);
+      ctx.drawImage(bmp, 0, 0, size.width, size.height);
       canvasTrackRef.current?.requestFrame?.();
     }
     bmp.close();
@@ -187,12 +214,12 @@ export default function MultiRecordTile({
 
     const fetchFrame = async (): Promise<{ blob: Blob; frameAt: string | null }> => {
       if (source.frameId) {
-        const res = await fetch(`/api/cctv/frame?id=${encodeURIComponent(source.frameId)}`);
+        const res = await fetchStillBounded(`/api/cctv/frame?id=${encodeURIComponent(source.frameId)}`);
         if (res.ok) return { blob: await res.blob(), frameAt: res.headers.get("X-Frame-At") };
         if (!source.stillUrl) throw new Error("frame route refused");
       }
       if (source.stillUrl) {
-        const res = await fetch(source.stillUrl);
+        const res = await fetchStillBounded(source.stillUrl);
         if (!res.ok) throw new Error("still fetch failed");
         return { blob: await res.blob(), frameAt: null };
       }
@@ -242,20 +269,18 @@ export default function MultiRecordTile({
 
     let stream: MediaStream;
     if (source.kind === "video") {
-      const v = videoRef.current;
-      if (!v) { fail("No video to record yet"); return; }
-      // Give a just-attached stream a brief chance to become playable.
-      if (v.readyState < 2) {
-        await new Promise((r) => setTimeout(r, 1500));
-        if (v.readyState < 2) { fail("Stream is still loading — try again in a moment"); return; }
-      }
+      // A detached stream the recording owns (the shared opener), not
+      // this tile's visible element: recording at the stream's native
+      // size straight off the preview element is what froze the wall,
+      // and on iOS Safari the element offers no capture at all.
       try {
-        stream = (v as VideoCapture).captureStream();
-      } catch {
-        fail("This browser blocked stream capture");
+        const handle = await openDetachedVideoStream(source);
+        detachedRef.current = handle.teardown;
+        stream = handle.stream;
+      } catch (e) {
+        fail(e instanceof Error ? e.message : "Stream failed to load");
         return;
       }
-      if (!stream.getVideoTracks().length) { fail("No video track to record"); return; }
     } else if (source.kind === "stills") {
       if (!lastBlobRef.current) {
         fail("No frame from this camera yet — can't start recording");
@@ -281,6 +306,8 @@ export default function MultiRecordTile({
     try {
       rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 2_500_000 } : undefined);
     } catch {
+      detachedRef.current?.();
+      detachedRef.current = null;
       fail("Recording not supported in this browser");
       return;
     }
@@ -291,7 +318,7 @@ export default function MultiRecordTile({
     startedAtRef.current = Date.now();
     rec.start(1000);
     onEvent(cam.id, { type: "start", at: startedAtRef.current });
-  }, [cam.id, pro, source.kind, drawFrame, fail, onEvent]);
+  }, [cam.id, pro, source, drawFrame, fail, onEvent]);
 
   const stopRecording = useCallback(async () => {
     const rec = recRef.current;
@@ -304,6 +331,8 @@ export default function MultiRecordTile({
     const blob = await done;
     recRef.current = null;
     canvasTrackRef.current = null;
+    detachedRef.current?.();
+    detachedRef.current = null;
     const startedAt = startedAtRef.current;
     if (blob.size < 1024) { fail("Recording produced no data"); return; }
     try {
@@ -311,7 +340,7 @@ export default function MultiRecordTile({
       await saveRecordedClip(blob, meta);
       onEvent(cam.id, { type: "saved", secs: meta.durationSec });
     } catch (e) {
-      fail(e instanceof Error ? e.message : "Failed to save clip");
+      fail(clipSaveErrorMessage(e));
     }
   }, [cam, fail, onEvent]);
 
@@ -340,12 +369,14 @@ export default function MultiRecordTile({
     return () => registerControls(cam.id, null);
   }, [cam.id, registerControls, attemptStart, stopRecording]);
 
-  /* Unmount: never leave a recorder running. */
+  /* Unmount: never leave a recorder (or its detached stream) running. */
   useEffect(
     () => () => {
       try {
         if (recRef.current && recRef.current.state !== "inactive") recRef.current.stop();
       } catch {}
+      detachedRef.current?.();
+      detachedRef.current = null;
     },
     [],
   );
@@ -359,7 +390,7 @@ export default function MultiRecordTile({
       : { text: "LIVE", cls: "bg-black/60 border border-white/15 text-white" };
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/60">
+    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/60 min-w-0">
       <div className="relative aspect-video bg-black">
         {source.kind === "video" && (
           <video ref={videoRef} className="w-full h-full object-cover" muted playsInline autoPlay />
@@ -415,6 +446,12 @@ export default function MultiRecordTile({
           <div className="min-w-0">
             <div className="text-xs font-bold text-white truncate drop-shadow">{cam.name}</div>
             {location && <div className="text-[10px] font-mono text-slate-300/80 truncate">{location}</div>}
+            <Link
+              href={globeHref(cam.cameraData)}
+              className="text-[10px] font-mono text-slate-300/90 underline underline-offset-2 hover:text-white"
+            >
+              On globe
+            </Link>
           </div>
           {source.kind !== "unsupported" && (
             <div className="shrink-0">

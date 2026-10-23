@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import RecordableTile, { type SavedCam } from "@/components/recording/RecordableTile";
 import UpgradeScreen from "@/components/recording/UpgradeScreen";
 import LiveWallDemo from "@/components/recording/LiveWallDemo";
+import ActiveSessionsBar from "@/components/recording/ActiveSessionsBar";
 
 const LAYOUTS = [1, 2, 4, 9] as const;
 
@@ -78,6 +79,10 @@ export default function LivePage() {
         </div>
       </div>
 
+      {/* Session-store recordings (globe / timelapse) for cameras not
+          shown as tiles here — visible and stoppable from the wall. */}
+      <ActiveSessionsBar excludeClipCameraIds={shown.map((c) => c.id)} />
+
       {shown.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-10 text-center">
           <div className="text-4xl mb-3">📡</div>
@@ -100,6 +105,8 @@ export default function LivePage() {
       )}
       <p className="text-[11px] text-slate-500 leading-relaxed">
         Recording captures the live stream in your browser and saves the clip to this device.
+        Stream recordings are frame samples — 10 frames a second at up to 720p — so clips play back
+        steppy rather than as full-motion video.
         YouTube embeds and snapshot-only feeds show a preview but can't be recorded.
       </p>
     </div>

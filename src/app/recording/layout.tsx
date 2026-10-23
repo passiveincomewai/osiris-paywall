@@ -17,7 +17,9 @@ const NAV = [
 
 export default function RecordingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen" style={{ background: "#050810" }}>
+    // recording-root releases the global globe viewport lock for this
+    // section (see globals.css) so these pages scroll normally.
+    <div className="recording-root min-h-screen" style={{ background: "#050810" }}>
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#050810]/85 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <Link href="/recording" className="flex items-center gap-2.5 shrink-0">
@@ -27,7 +29,7 @@ export default function RecordingLayout({ children }: { children: React.ReactNod
               <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full border border-red-400/40 text-red-300 tracking-[0.2em] font-mono">REC</span>
             </span>
           </Link>
-          <nav className="flex items-center gap-1 overflow-x-auto">
+          <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
             {NAV.map((n) => (
               <Link key={n.href} href={n.href}
                 className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">
@@ -40,7 +42,9 @@ export default function RecordingLayout({ children }: { children: React.ReactNod
           </Link>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
+      {/* pb-24: clearance for the floating capture pill (bottom-left),
+          so the last row of any page is never hidden behind it. */}
+      <main className="max-w-7xl mx-auto px-4 py-8 pb-24">{children}</main>
       {/* Onboarding (Build A): first-visit Recording Studio guide; client-only, renders nothing after first dismissal. */}
       <RecordingOnboarding />
     </div>

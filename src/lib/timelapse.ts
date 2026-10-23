@@ -194,6 +194,11 @@ export interface TimelapseSessionMeta {
   /** Dedupe ledger of the last kept frame, so a resumed capture never re-stores it. */
   lastFrameAt: string | null;
   lastSignature: string | null;
+  /** How many of the stored frames have already been rendered into a
+   *  library clip (lib/recording/sessions, on stop). A resumed capture
+   *  renders only the frames past this watermark on its next stop, so
+   *  a camera's frames never become two clips of the same pictures. */
+  clippedUpTo?: number;
 }
 
 export const timelapseSessionId = (cameraId: string) => `tl:${cameraId}`;

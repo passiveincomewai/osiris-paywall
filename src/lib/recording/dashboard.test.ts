@@ -137,6 +137,20 @@ describe("session display lines", () => {
       "1 frame kept · 2 missed checks",
     );
   });
+
+  it("a timelapse with no new frame for 10+ minutes says so honestly", () => {
+    const t0 = 1_000_000;
+    const stale = sessionView({ kind: "timelapse", frameCount: 3, lastFrameAt: t0 });
+    expect(sessionDetailLine(stale, t0 + 26 * 60_000)).toBe(
+      "3 frames kept · no new frame for 26m — this camera's picture hasn't changed",
+    );
+    // Just under the threshold it still reads as a healthy capture.
+    expect(sessionDetailLine(stale, t0 + 9 * 60_000)).toBe("3 frames kept");
+    // Misses take the line first — an unreachable camera is a different story.
+    expect(sessionDetailLine(sessionView({ kind: "timelapse", frameCount: 3, misses: 1, lastFrameAt: t0 }), t0 + 26 * 60_000)).toBe(
+      "3 frames kept · 1 missed check",
+    );
+  });
 });
 
 describe("formatting", () => {
@@ -147,5 +161,11 @@ describe("formatting", () => {
     expect(formatClock(0)).toBe("00:00");
     expect(formatClock(75)).toBe("01:15");
     expect(formatClock(3661)).toBe("1:01:01");
+  });
+
+  it("rolls megabytes into gigabytes before the figure hits 1000 MB", () => {
+    // A ~1 GB browser quota used to render as "~1000.0 MB".
+    expect(formatBytes(999 * 1024 ** 2)).toBe("999.0 MB");
+    expect(formatBytes(1000 * 1024 ** 2)).toBe("0.98 GB");
   });
 });

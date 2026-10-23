@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MultiRecordTile, { type TileControls } from "@/components/recording/MultiRecordTile";
 import UpgradeScreen from "@/components/recording/UpgradeScreen";
+import ActiveSessionsBar from "@/components/recording/ActiveSessionsBar";
 import {
   MultiControlBar,
   MultiSignInPrompt,
@@ -267,6 +268,10 @@ export default function MultiRecordPage() {
         onRecordAll={recordAll}
         onStopAll={stopAll}
       />
+      {/* Recordings started somewhere else (the globe, the dashboard)
+          live in the session store, not in this wall's tiles — surface
+          them here so they're visible and stoppable from the wall too. */}
+      <ActiveSessionsBar title="Recording now — started elsewhere" />
       {notice && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-950/50 px-4 py-2 text-sm font-mono text-amber-200">
           {notice}
@@ -377,10 +382,11 @@ export default function MultiRecordPage() {
 
       <p className="text-[11px] text-slate-500 leading-relaxed">
         Recording captures in this browser, on this device, only while this tab stays open — it is not cloud
-        recording, nothing is captured while the tab is closed, and there are no schedules. Stream cameras record
-        in real time; snapshot cameras are checked every ~{Math.round(multiStillPollMs(selection.length) / 1000)} seconds
-        and record each newly published frame, so
-        their clips play back with steppy motion rather than smooth video. YouTube embeds can't be recorded
+        recording, nothing is captured while the tab is closed, and there are no schedules. Stream cameras are
+        recorded as frame samples — 10 frames a second at up to 720p — so their clips play back steppy rather
+        than as full-motion video; snapshot cameras are checked every ~{Math.round(multiStillPollMs(selection.length) / 1000)} seconds
+        and record each newly published frame, the same way.
+        YouTube embeds can't be recorded
         (platform restriction), and a feed whose host refuses in-browser capture will say so on its tile.
         Clips land in <span className="text-slate-300">Clips</span>, on this device, ready to play or download.
       </p>

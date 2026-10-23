@@ -122,7 +122,7 @@ export function SavedPickerRow({
         onToggle(cam.id, selected);
       }}
       aria-pressed={selected}
-      className={`w-full text-left rounded-xl border p-3 transition-colors ${
+      className={`w-full min-w-0 text-left rounded-xl border p-3 transition-colors ${
         selected
           ? "border-cyan-400/60 bg-cyan-400/10"
           : disabled

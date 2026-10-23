@@ -14,7 +14,14 @@
  *  - timelapse sessions poll the frame route and persist every kept
  *    frame to the timelapse IndexedDB store as it arrives (the storage
  *    lib/timelapse already provided), so nothing is held only in
- *    memory;
+ *    memory. When a timelapse stops, its newly kept frames are also
+ *    rendered to a WebM (lib/recording/render-frames — the viewer's
+ *    own export renderer) and registered as a library clip, so a
+ *    snapshot recording shows up in the same clips lists as a live
+ *    one; the frames themselves stay in the timelapse store for the
+ *    viewer's player, and a watermark on the session meta keeps a
+ *    resumed capture's next stop from re-rendering old frames into a
+ *    duplicate clip;
  *  - clip sessions record a camera stream (a detached <video> the
  *    session owns, or a canvas fed by stills) with a MediaRecorder
  *    whose timeslice chunks are appended to the clips IndexedDB store
@@ -24,6 +31,20 @@
  *    (saveRecordedClip). A tab that dies mid-recording leaves its
  *    segments behind; the next visit assembles them (see
  *    recoverInterruptedClips).
+ *
+ * How a stream becomes a recording (the capture-mechanism fix): the
+ * detached video is sampled by the canvas pump (lib/recording/
+ * canvas-pump) at 10 fps and at most 1280×720 — the snapshot path's
+ * own canvas mechanism applied to the video element — instead of a
+ * direct full-resolution captureStream() encode, which is what froze
+ * the recording wall and what iOS Safari cannot do at all (it has no
+ * HTMLVideoElement.captureStream; that absence was the "This browser
+ * blocked stream capture" error). How the stream is loaded honours
+ * the camera's declared type (an HLS playlist whose URL has no .m3u8
+ * in it loads through hls.js or native HLS, never as a media file),
+ * and a native load is first attempted with CORS approval requested,
+ * so the canvas can read the picture on iOS; the element's own
+ * captureStream remains as the fallback where the canvas refuses.
  *
  * Lifecycle, as promised in the UI: "Keeps recording while you browse
  * WorldEye — the tab must stay open. Stops on its own at 24 hours."
@@ -40,14 +61,15 @@
  * through CaptureSessionDeps so the lifecycle is unit-testable.
  */
 import { useSyncExternalStore } from 'react';
-import Hls from 'hls.js';
 import {
+  TIMELAPSE_DEFAULT_SPEED,
   TIMELAPSE_MAX_FRAMES,
   TIMELAPSE_POLL_MS,
   frameDecision,
   frameSignature,
   ledgerAfterKeep,
   timelapseSessionId,
+  tlGetFrames,
   tlGetSession,
   tlPutFrame,
   tlPutSession,
@@ -55,14 +77,30 @@ import {
   type TimelapseSessionMeta,
 } from '@/lib/timelapse';
 import { assembleClipMeta, type ClipMetaBody, type MultiCamSource } from './multi';
-import { pickRecorderMime, saveRecordedClip } from './save-clip';
+import { clipSaveErrorMessage, pickRecorderMime, saveRecordedClip } from './save-clip';
 import { idbDeleteSegments, idbGetSegments, idbPutSegment } from './idb';
+import { openDetachedVideoStream } from './canvas-pump';
+import { RECORDING_MAX_HEIGHT, RECORDING_MAX_WIDTH, fitWithin } from './capture-geometry';
+import { renderFramesToWebm } from './render-frames';
 
 /** A capture session's hard wall-clock limit: 24 hours from its start. */
 export const CAPTURE_SESSION_MAX_MS = 24 * 60 * 60 * 1000;
 
 /** MediaRecorder timeslice: one persisted segment per this many ms. */
 export const CAPTURE_SEGMENT_MS = 5000;
+
+/**
+ * How long one frame check may take before it counts as a miss. A
+ * frame fetch with no timeout can hang forever on a stalled mobile
+ * connection — and because the poll loop latches while a grab is in
+ * flight, one hung fetch used to freeze a timelapse at whatever it
+ * had (zero new frames in 26 minutes, no error anywhere). Every poll
+ * is bounded now, so a stall becomes a miss and the loop goes on.
+ */
+export const FRAME_FETCH_TIMEOUT_MS = 12000;
+
+/** After a 429 from the frame route, wait this long before polling again. */
+export const FRAME_RATE_LIMIT_BACKOFF_MS = 30000;
 
 /** The lifecycle promise, verbatim, wherever capture is offered. */
 export const CAPTURE_PERSISTENCE_COPY =
@@ -96,6 +134,10 @@ export interface CaptureSessionView {
   bytes: number;
   /** Timelapse: consecutive polls the camera didn't answer. */
   misses: number;
+  /** Timelapse: when the last NEW frame was kept (epoch ms), if ever —
+   *  how a surface can tell "recording" from "recording but the
+   *  camera's picture hasn't changed / isn't answering". */
+  lastFrameAt?: number | null;
   /** Plain-words problem the UI should surface, if any. */
   notice: string | null;
 }
@@ -157,7 +199,7 @@ export interface CaptureSessionDeps {
   tlGet: (id: string) => Promise<TimelapseSessionMeta | null>;
   tlPutSession: (meta: TimelapseSessionMeta) => Promise<void>;
   tlPutFrame: (sessionId: string, seq: number, blob: Blob) => Promise<void>;
-  openVideoStream: (streamUrl: string) => Promise<ClipStreamHandle>;
+  openVideoStream: (source: Extract<MultiCamSource, { kind: 'video' }>) => Promise<ClipStreamHandle>;
   openStillsStream: (source: MultiCamSource) => Promise<ClipStreamHandle>;
   makeRecorder: (stream: unknown) => RecorderLike;
   putSegment: (sessionId: string, seq: number, blob: Blob) => Promise<void>;
@@ -166,6 +208,13 @@ export interface CaptureSessionDeps {
   saveClip: (blob: Blob, meta: ClipMetaBody) => Promise<string>;
   registryRead: () => ClipRegistryEntry[];
   registryWrite: (entries: ClipRegistryEntry[]) => void;
+  /** Timelapse finalize: every stored frame of the session, in order.
+   *  Optional so lifecycle tests that don't exercise the clip leg can
+   *  omit it — without it, a stopped timelapse keeps its frames only,
+   *  exactly as before. */
+  tlGetFrames?: (sessionId: string, frameCount: number) => Promise<Blob[]>;
+  /** Timelapse finalize: render frames to a clip blob at `fps`. */
+  renderFramesClip?: (frames: Blob[], fps: number) => Promise<Blob>;
 }
 
 /* ------------------------- browser defaults ------------------------ */
@@ -191,69 +240,33 @@ function browserRegistryWrite(entries: ClipRegistryEntry[]): void {
   }
 }
 
+/** A fetch bounded in time: aborts (and so rejects) after `ms`. */
+function fetchWithTimeout(url: string, ms: number, init?: RequestInit): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...init, signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
 async function browserFetchFrame(cameraId: string): Promise<FrameFetchResult> {
-  const res = await fetch(`/api/cctv/frame?id=${encodeURIComponent(cameraId)}`, {
-    cache: 'no-store',
-  });
+  const res = await fetchWithTimeout(
+    `/api/cctv/frame?id=${encodeURIComponent(cameraId)}`,
+    FRAME_FETCH_TIMEOUT_MS,
+    { cache: 'no-store' },
+  );
   if (!res.ok) return { ok: false, status: res.status };
   return { ok: true, blob: await res.blob(), frameAt: res.headers.get('x-frame-at') };
 }
 
-type VideoCaptureEl = HTMLVideoElement & { captureStream(): MediaStream };
 type CanvasCaptureEl = HTMLCanvasElement & { captureStream(fps: number): MediaStream };
 
-async function browserOpenVideoStream(streamUrl: string): Promise<ClipStreamHandle> {
-  const video = document.createElement('video') as VideoCaptureEl;
-  video.muted = true;
-  video.playsInline = true;
-  video.autoplay = true;
-  let hls: Hls | null = null;
-  const teardown = () => {
-    try { hls?.destroy(); } catch { /* already gone */ }
-    try {
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
-    } catch { /* already gone */ }
-  };
-  if (/\.m3u8($|\?)/.test(streamUrl)) {
-    if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: false, maxBufferLength: 20 });
-      hls.loadSource(streamUrl);
-      hls.attachMedia(video);
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = streamUrl;
-    } else {
-      throw new Error('HLS is not supported in this browser');
-    }
-  } else {
-    video.src = streamUrl;
-  }
-  await new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('Stream took too long to start')), 15000);
-    const ok = () => { clearTimeout(timer); resolve(); };
-    const bad = () => { clearTimeout(timer); reject(new Error('Stream failed to load')); };
-    if (video.readyState >= 2) { ok(); return; }
-    video.addEventListener('loadeddata', ok, { once: true });
-    video.addEventListener('error', bad, { once: true });
-    hls?.on(Hls.Events.ERROR, (_e, d) => { if (d.fatal) bad(); });
-  }).catch((e: unknown) => {
-    teardown();
-    throw e;
-  });
-  video.play().catch(() => {});
-  let stream: MediaStream;
-  try {
-    stream = video.captureStream();
-  } catch {
-    teardown();
-    throw new Error('This browser blocked stream capture');
-  }
-  if (!stream.getVideoTracks().length) {
-    teardown();
-    throw new Error('No video track to record');
-  }
-  return { stream, teardown };
+/* The one stream opener (lib/recording/canvas-pump): layered hls.js /
+ * native loading, canvas-pump capture with the element's own
+ * captureStream as fallback — shared with the multi-record tiles so a
+ * stream records the same way from every surface. */
+async function browserOpenVideoStream(
+  source: Extract<MultiCamSource, { kind: 'video' }>,
+): Promise<ClipStreamHandle> {
+  return openDetachedVideoStream(source);
 }
 
 async function browserOpenStillsStream(source: MultiCamSource): Promise<ClipStreamHandle> {
@@ -274,12 +287,15 @@ async function browserOpenStillsStream(source: MultiCamSource): Promise<ClipStre
 
   const fetchStill = async (): Promise<{ blob: Blob; frameAt: string | null }> => {
     if (source.frameId) {
-      const res = await fetch(`/api/cctv/frame?id=${encodeURIComponent(source.frameId)}`);
+      const res = await fetchWithTimeout(
+        `/api/cctv/frame?id=${encodeURIComponent(source.frameId)}`,
+        FRAME_FETCH_TIMEOUT_MS,
+      );
       if (res.ok) return { blob: await res.blob(), frameAt: res.headers.get('X-Frame-At') };
       if (!source.stillUrl) throw new Error('frame route refused');
     }
     if (source.stillUrl) {
-      const res = await fetch(source.stillUrl);
+      const res = await fetchWithTimeout(source.stillUrl, FRAME_FETCH_TIMEOUT_MS);
       if (!res.ok) throw new Error('still fetch failed');
       return { blob: await res.blob(), frameAt: null };
     }
@@ -299,13 +315,17 @@ async function browserOpenStillsStream(source: MultiCamSource): Promise<ClipStre
         ledger.lastSignature = next.lastSignature;
         const bmp = await createImageBitmap(blob).catch(() => null);
         if (bmp && !stopped) {
-          if (canvas.width !== bmp.width || canvas.height !== bmp.height) {
-            canvas.width = bmp.width;
-            canvas.height = bmp.height;
+          // The recording canvas is capped like every capture: a
+          // snapshot's native frame can be 1080p+, and encoding it
+          // whole was part of the wall-freeze cost.
+          const size = fitWithin(bmp.width, bmp.height);
+          if (canvas.width !== size.width || canvas.height !== size.height) {
+            canvas.width = size.width;
+            canvas.height = size.height;
           }
           const ctx = canvas.getContext('2d');
           if (ctx) {
-            ctx.drawImage(bmp, 0, 0);
+            ctx.drawImage(bmp, 0, 0, size.width, size.height);
             track?.requestFrame?.();
           }
           bmp.close();
@@ -353,6 +373,14 @@ export const browserCaptureDeps: CaptureSessionDeps = {
   saveClip: saveRecordedClip,
   registryRead: browserRegistryRead,
   registryWrite: browserRegistryWrite,
+  tlGetFrames,
+  renderFramesClip: (frames, fps) =>
+    renderFramesToWebm(frames, {
+      fps,
+      videoBitsPerSecond: 2_500_000,
+      maxWidth: RECORDING_MAX_WIDTH,
+      maxHeight: RECORDING_MAX_HEIGHT,
+    }),
 };
 
 /* ------------------------------------------------------------------ */
@@ -366,6 +394,8 @@ interface Internal {
   storedMeta: TimelapseSessionMeta | null;
   pollHandle: unknown;
   grabbing: boolean;
+  /** Poll no earlier than this (frame-route rate-limit backoff). */
+  backoffUntil: number;
   // clip
   recorder: RecorderLike | null;
   streamTeardown: (() => void) | null;
@@ -462,6 +492,7 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
 
   const grabTimelapseFrame = async (s: Internal): Promise<void> => {
     if (s.grabbing || s.finalizing || !sessions.has(s.view.id)) return;
+    if (s.backoffUntil && deps.now() < s.backoffUntil) return;
     s.grabbing = true;
     try {
       const res = await deps.fetchFrame(s.view.cameraId);
@@ -471,6 +502,17 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
           // The source no longer serves a still — end honestly, keep frames.
           setView(s, { notice: 'This camera stopped sending still pictures, so the capture has ended.' });
           await finalize(s, 'source-ended');
+          return;
+        }
+        if (res.status === 429) {
+          // The frame route budgets checks per visitor; several
+          // captures polling at once can spend it. Back off instead of
+          // hammering — and say so, rather than silently missing.
+          s.backoffUntil = deps.now() + FRAME_RATE_LIMIT_BACKOFF_MS;
+          setView(s, {
+            misses: s.view.misses + 1,
+            notice: 'Frame checks are being rate-limited — spacing them out.',
+          });
           return;
         }
         setView(s, { misses: s.view.misses + 1 });
@@ -498,10 +540,11 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
         frameCount: s.ledger.count,
         lastFrameAt: s.ledger.lastFrameAt,
         lastSignature: s.ledger.lastSignature,
+        clippedUpTo: s.storedMeta?.clippedUpTo ?? 0,
       };
       s.storedMeta = meta;
       await deps.tlPutSession(meta);
-      setView(s, { frameCount: meta.frameCount, misses: 0 });
+      setView(s, { frameCount: meta.frameCount, misses: 0, lastFrameAt: deps.now(), notice: null });
       if (meta.frameCount >= TIMELAPSE_MAX_FRAMES) await finalize(s, 'frames-cap');
     } catch {
       if (!s.finalizing && sessions.has(s.view.id)) {
@@ -529,6 +572,7 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
         segmentCount: 0,
         bytes: 0,
         misses: 0,
+        lastFrameAt: stored?.lastFrameAt ? Date.parse(stored.lastFrameAt) || null : null,
         notice: null,
       },
       ledger: {
@@ -539,6 +583,7 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
       storedMeta: stored,
       pollHandle: null,
       grabbing: false,
+      backoffUntil: 0,
       recorder: null,
       streamTeardown: null,
       seq: 0,
@@ -579,6 +624,7 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
       storedMeta: null,
       pollHandle: null,
       grabbing: false,
+      backoffUntil: 0,
       recorder: null,
       streamTeardown: null,
       seq: 0,
@@ -598,7 +644,7 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
     });
     try {
       const handle = source.kind === 'video'
-        ? await deps.openVideoStream(source.streamUrl)
+        ? await deps.openVideoStream(source)
         : await deps.openStillsStream(source);
       s.streamTeardown = handle.teardown;
       const recorder = deps.makeRecorder(handle.stream);
@@ -652,18 +698,60 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
         deps.clearInterval(s.pollHandle);
         s.pollHandle = null;
       }
+      // The frames are already safe in the timelapse store. Now the
+      // step that makes a snapshot recording a first-class recording:
+      // render the frames this run added (past the stored watermark)
+      // and register them as a library clip — the same store live
+      // clips land in, so the recording appears in the clips library,
+      // the dashboard and the overviews, and plays back there as the
+      // frame sequence it honestly is (at the player's default 10 fps).
+      setView(s, { phase: 'saving' });
+      const total = s.view.frameCount;
+      let detail = total > 0
+        ? `${total} frame${total === 1 ? '' : 's'} saved on this device`
+        : 'No frames were captured';
+      const from = s.storedMeta?.clippedUpTo ?? 0;
+      if (deps.tlGetFrames && deps.renderFramesClip && total > from) {
+        try {
+          const frames = (await deps.tlGetFrames(id, total)).slice(from);
+          if (frames.length > 0) {
+            const blob = await deps.renderFramesClip(frames, TIMELAPSE_DEFAULT_SPEED);
+            if (blob.size >= 1024) {
+              const renderMs = Math.round((frames.length / TIMELAPSE_DEFAULT_SPEED) * 1000);
+              const meta = assembleClipMeta(
+                { id: s.view.cameraId, name: cameraName },
+                s.view.startedAt,
+                s.view.startedAt + renderMs,
+                blob.size,
+                blob.type || 'video/webm',
+              );
+              await deps.saveClip(blob, meta);
+              const m: TimelapseSessionMeta = {
+                id,
+                cameraId: s.view.cameraId,
+                cameraName,
+                startedAt: s.storedMeta?.startedAt ?? s.view.startedAt,
+                pollMs: TIMELAPSE_POLL_MS,
+                frameCount: total,
+                lastFrameAt: s.ledger.lastFrameAt,
+                lastSignature: s.ledger.lastSignature,
+                clippedUpTo: total,
+              };
+              s.storedMeta = m;
+              await deps.tlPutSession(m).catch(() => {});
+              detail = `Clip saved to your clips library · ${total} frame${total === 1 ? '' : 's'} kept on this device`;
+            }
+          }
+        } catch {
+          // The frames are NOT lost — they stay in the timelapse store
+          // and the watermark stays where it was, so a later stop of a
+          // resumed capture retries the same frames.
+          detail = `${total} frame${total === 1 ? '' : 's'} saved on this device — the library clip could not be saved`;
+        }
+      }
       sessions.delete(id);
       dropTickerIfIdle();
-      setCompleted({
-        sessionId: id,
-        kind,
-        cameraName,
-        reason,
-        endedAt,
-        detail: s.view.frameCount > 0
-          ? `${s.view.frameCount} frame${s.view.frameCount === 1 ? '' : 's'} saved on this device`
-          : 'No frames were captured',
-      });
+      setCompleted({ sessionId: id, kind, cameraName, reason, endedAt, detail });
       notify();
       return;
     }
@@ -701,10 +789,14 @@ export function createCaptureSessionManager(deps: CaptureSessionDeps): CaptureSe
           detail = reason === 'max-duration'
             ? 'Stopped at the 24-hour limit — the clip is in your clips library'
             : 'Clip saved to your clips library';
-        } catch {
+        } catch (e) {
           // saveRecordedClip keeps the blob on this device even when the
-          // metadata POST fails; the recording is not lost.
-          detail = 'Clip kept on this device — its library entry could not be saved';
+          // metadata POST fails; the recording is not lost. A full
+          // device is the one failure worth naming precisely.
+          const msg = clipSaveErrorMessage(e);
+          detail = msg.startsWith("This device's clip storage is full")
+            ? msg
+            : 'Clip kept on this device — its library entry could not be saved';
         }
       } else {
         detail = 'Recording produced no data — nothing was saved';

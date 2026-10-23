@@ -215,11 +215,27 @@ html:has(.cinematic-root) body {
   scroll-behavior: smooth;
 }
 
+/* ── Recording Studio pages ──
+   Same viewport-lock release as the cinematic hero: overflow-x:clip (not
+   hidden) so the sticky studio header keeps working. Without this the
+   whole /recording section inherits the globe's locked viewport and
+   cannot scroll at all — the pages render .recording-root (see
+   src/app/recording/layout.tsx). */
+html:has(.recording-root),
+html:has(.recording-root) body {
+  height: auto;
+  overflow-x: clip;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html:has(.docs-root),
   html:has(.docs-root) body,
   html:has(.cinematic-root),
-  html:has(.cinematic-root) body { scroll-behavior: auto; }
+  html:has(.cinematic-root) body,
+  html:has(.recording-root),
+  html:has(.recording-root) body { scroll-behavior: auto; }
 }
 
 /* ── Homepage content shell ──

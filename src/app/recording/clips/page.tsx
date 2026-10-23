@@ -22,6 +22,11 @@ function fmtDur(s: number) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
+/** Download extension from the clip's real container (Safari records MP4). */
+function clipExt(mimeType: string) {
+  return mimeType.includes("mp4") ? "mp4" : "webm";
+}
+
 export default function ClipsPage() {
   const [clips, setClips] = useState<Clip[] | null>(null);
   const [playing, setPlaying] = useState<string | null>(null);
@@ -59,7 +64,7 @@ export default function ClipsPage() {
     if (!blob) return;
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `worldeye-${c.cameraName.replace(/[^a-z0-9]+/gi, "-")}-${c.id.slice(0, 6)}.webm`;
+    a.download = `worldeye-${c.cameraName.replace(/[^a-z0-9]+/gi, "-")}-${c.id.slice(0, 6)}.${clipExt(c.mimeType)}`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   };

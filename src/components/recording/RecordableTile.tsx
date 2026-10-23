@@ -16,12 +16,15 @@
  * where studio recordings have always landed.
  */
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Hls from "hls.js";
 import {
   CAPTURE_PERSISTENCE_COPY,
   captureSessions,
   useClipSessionFor,
 } from "@/lib/recording/sessions";
+import { liveCaptureSupported } from "@/lib/recording/capture-support";
+import { globeHref } from "@/lib/dashboard/dashboard";
 
 export type SavedCam = {
   id: string;
@@ -55,6 +58,7 @@ export default function RecordableTile({
   const [muted, setMuted] = useState(true);
   const [clock, setClock] = useState("");
   const [recSecs, setRecSecs] = useState(0);
+  const [browserOk, setBrowserOk] = useState<boolean | null>(null);
 
   // The recording session for this camera, owned by the session layer —
   // it survives this tile unmounting.
@@ -74,7 +78,13 @@ export default function RecordableTile({
       ? "YouTube embeds can't be recorded (platform restriction)"
       : !playable
         ? "Snapshot/image feeds can't be recorded in Phase 1"
-        : null;
+        : browserOk === false
+          ? "Recording isn't supported in this browser"
+          : null;
+
+  useEffect(() => {
+    setBrowserOk(liveCaptureSupported(typeof window === "undefined" ? null : window));
+  }, []);
 
   useEffect(() => {
     const iv = setInterval(() => {
@@ -98,7 +108,7 @@ export default function RecordableTile({
     const v = videoRef.current;
     if (/\.m3u8($|\?)/.test(streamUrl!) || streamType === "hls") {
       if (Hls.isSupported()) {
-        const hls = new Hls({ enableWorker: false, maxBufferLength: 20 });
+        const hls = new Hls({ enableWorker: true, maxBufferLength: 20 });
         hlsRef.current = hls;
         hls.loadSource(streamUrl!);
         hls.attachMedia(v);
@@ -127,7 +137,9 @@ export default function RecordableTile({
       await captureSessions.startClip({
         savedCameraId: cam.id,
         cameraName: cam.name,
-        source: { kind: "video", streamUrl },
+        // The declared type rides along: an HLS playlist whose URL has
+        // no .m3u8 in it must still load as HLS in the session player.
+        source: { kind: "video", streamUrl, streamType: streamType || null },
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Recording could not start");
@@ -145,7 +157,7 @@ export default function RecordableTile({
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/60 group">
+    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/60 group min-w-0">
       <div className="relative aspect-video bg-black">
         {playable ? (
           <video ref={videoRef} className="w-full h-full object-cover" muted={muted} playsInline autoPlay />
@@ -227,11 +239,19 @@ export default function RecordableTile({
                   ? CAPTURE_PERSISTENCE_COPY
                   : pro ? "Pro recording ready" : "Pro required to record"}
           </span>
-          {!demo && !pro && playable && !unsupportedReason && (
-            <button onClick={onNeedPro} className="shrink-0 text-[11px] font-mono text-cyan-300 hover:text-white underline underline-offset-2">
-              Upgrade
-            </button>
-          )}
+          <span className="flex items-center gap-3 shrink-0">
+            <Link
+              href={globeHref(cam.cameraData)}
+              className="text-[11px] font-mono text-slate-300 hover:text-white underline underline-offset-2"
+            >
+              On globe
+            </Link>
+            {!demo && !pro && playable && !unsupportedReason && (
+              <button onClick={onNeedPro} className="text-[11px] font-mono text-cyan-300 hover:text-white underline underline-offset-2">
+                Upgrade
+              </button>
+            )}
+          </span>
         </div>
       )}
     </div>

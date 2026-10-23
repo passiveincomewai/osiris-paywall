@@ -56,24 +56,32 @@ export async function idbDeleteClip(id: string): Promise<void> {
   db.close();
 }
 
-/** Bytes used by clip blobs in this browser (estimate). */
+/**
+ * Bytes this app is holding in the clip database: finished clip blobs
+ * AND the segments of recordings still in progress. Counting only the
+ * finished blobs made the storage meter read 0 while recordings were
+ * actively banking segments — the meter now tells the whole truth.
+ */
 export async function idbUsageBytes(): Promise<number> {
   try {
     const db = await openDb();
     let total = 0;
-    await new Promise<void>((resolve, reject) => {
-      const tx = db.transaction(STORE, "readonly");
-      const req = tx.objectStore(STORE).openCursor();
-      req.onsuccess = () => {
-        const cur = req.result;
-        if (cur) {
-          const b = cur.value as Blob;
-          total += b?.size ?? 0;
-          cur.continue();
-        } else resolve();
-      };
-      req.onerror = () => reject(req.error);
-    });
+    const sumStore = (store: string) =>
+      new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(store, "readonly");
+        const req = tx.objectStore(store).openCursor();
+        req.onsuccess = () => {
+          const cur = req.result;
+          if (cur) {
+            const b = cur.value as Blob;
+            total += b?.size ?? 0;
+            cur.continue();
+          } else resolve();
+        };
+        req.onerror = () => reject(req.error);
+      });
+    await sumStore(STORE);
+    await sumStore(SEGMENTS);
     db.close();
     return total;
   } catch {

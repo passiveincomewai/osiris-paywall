@@ -23,6 +23,7 @@ import {
   useLastCompletedCapture,
   useTimelapseSessionFor,
 } from '@/lib/recording/sessions';
+import { renderFramesToWebm } from '@/lib/recording/render-frames';
 
 /**
  * Timelapse for snapshot cameras (WorldEye Pro).
@@ -38,14 +39,6 @@ import {
  * stopped, or for 24 hours, and only while the tab stays open; the
  * copy says so — the Recording Studio's rule.
  */
-
-function pickWebmMime(): string {
-  const cands = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
-  for (const c of cands) {
-    try { if (window.MediaRecorder?.isTypeSupported(c)) return c; } catch {}
-  }
-  return '';
-}
 
 type StopReason = 'cap' | 'ended' | null;
 
@@ -210,35 +203,16 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
     setSaved(false);
     setExporting(0);
     try {
-      const first = await createImageBitmap(frames[0]);
-      const canvas = document.createElement('canvas');
-      canvas.width = first.width;
-      canvas.height = first.height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('no 2d context');
-      const stream = (canvas as HTMLCanvasElement & { captureStream(fps: number): MediaStream }).captureStream(0);
-      const track = stream.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void };
-      const mime = pickWebmMime();
-      const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 4_000_000 } : undefined);
-      const chunks: Blob[] = [];
-      rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
-      const stopped = new Promise<void>((resolve) => { rec.onstop = () => resolve(); });
-      rec.start(250);
-      const frameMs = 1000 / speed;
-      for (let i = 0; i < frames.length; i++) {
-        if (exportCancelRef.current) break;
-        const bmp = i === 0 ? first : await createImageBitmap(frames[i]);
-        ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-        if (i !== 0) bmp.close();
-        track.requestFrame?.();
-        setExporting(Math.round(((i + 1) / frames.length) * 100));
-        await new Promise((r) => setTimeout(r, frameMs));
-      }
-      first.close();
-      rec.stop();
-      await stopped;
+      // The shared frame renderer (lib/recording/render-frames) — the
+      // same one the session layer uses to file a stopped capture as a
+      // library clip. Native frame size and the export's 4 Mbps, as
+      // always; a cancel discards the partial render, as always.
+      const out = await renderFramesToWebm(frames, {
+        fps: speed,
+        onProgress: (f) => setExporting(Math.round(f * 100)),
+        isCancelled: () => exportCancelRef.current,
+      });
       if (exportCancelRef.current) return;
-      const out = new Blob(chunks, { type: mime || 'video/webm' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(out);
       a.download = timelapseFileName(cameraName);

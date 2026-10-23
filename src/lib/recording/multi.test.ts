@@ -18,6 +18,7 @@ import {
   removeFromSelection,
   staggerDelayMs,
   startableSelection,
+  streamIsHls,
   summarizeBoard,
   tileReducer,
   type TileSession,
@@ -138,10 +139,27 @@ describe("camera classification", () => {
     expect(classifyMultiCam({ stream_url: "https://x/feed.m3u8", stream_type: "hls" })).toEqual({
       kind: "video",
       streamUrl: "https://x/feed.m3u8",
+      streamType: "hls",
     });
     expect(classifyMultiCam({ stream_url: "https://x/v.mp4", stream_type: "video" }).kind).toBe("video");
     // Extension alone is enough, as on the Live wall.
     expect(classifyMultiCam({ stream_url: "https://x/feed.m3u8?tok=1" }).kind).toBe("video");
+  });
+
+  it("carries the declared stream type so HLS is decided by type, not URL shape", () => {
+    // Signed / proxied / extensionless playlist URLs: the old URL-regex
+    // detection missed these and the detached recorder failed to load
+    // streams the viewer played fine.
+    const s = classifyMultiCam({ stream_url: "https://cdn.example/live/abc123?sig=zzz", stream_type: "hls" });
+    expect(s).toEqual({
+      kind: "video",
+      streamUrl: "https://cdn.example/live/abc123?sig=zzz",
+      streamType: "hls",
+    });
+    expect(streamIsHls("https://cdn.example/live/abc123?sig=zzz", "hls")).toBe(true);
+    expect(streamIsHls("https://x/feed.m3u8?tok=1", null)).toBe(true);
+    expect(streamIsHls("https://x/v.mp4", "video")).toBe(false);
+    expect(streamIsHls("https://dot.example/cam.jpg", "jpg")).toBe(false);
   });
 
   it("routes snapshot cameras to stills, preferring the frame route when it can serve them", () => {
@@ -165,25 +183,6 @@ describe("camera classification", () => {
     expect(classifyMultiCam({}).kind).toBe("unsupported");
     expect(classifyMultiCam(null).kind).toBe("unsupported");
     expect(classifyMultiCam({ stream_type: "jpg" }).kind).toBe("unsupported");
-  });
-
-  it("marks provider embeds and MJPEG honestly unsupported, with their own reasons", () => {
-    const embed = classifyMultiCam({
-      stream_type: "iframe",
-      stream_url: "https://player.example.com/embed/abc",
-    });
-    expect(embed.kind).toBe("unsupported");
-    if (embed.kind === "unsupported") expect(embed.reason).toMatch(/embedded player/);
-    // A YouTube embed URL keeps the YouTube reason, not the generic embed one.
-    const ytEmbed = classifyMultiCam({
-      stream_type: "iframe",
-      stream_url: "https://www.youtube.com/embed/xyz",
-    });
-    expect(ytEmbed.kind).toBe("unsupported");
-    if (ytEmbed.kind === "unsupported") expect(ytEmbed.reason).toMatch(/YouTube/);
-    const mjpeg = classifyMultiCam({ stream_type: "mjpeg", stream_url: "https://x.example/mjpeg" });
-    expect(mjpeg.kind).toBe("unsupported");
-    if (mjpeg.kind === "unsupported") expect(mjpeg.reason).toMatch(/MJPEG/);
   });
 
   it("labels locations from group, else coordinates", () => {

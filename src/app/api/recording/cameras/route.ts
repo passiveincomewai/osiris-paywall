@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { recordingAccess } from "@/lib/recording/access";
 
@@ -40,6 +41,15 @@ export async function POST(req: NextRequest) {
     for (const e of existing) {
       const d = e.cameraData as Record<string, unknown>;
       if (d.stream_url === streamKey || d.feed_url === streamKey || d.external_url === streamKey) {
+        // Heal the stored snapshot with the incoming one (incoming wins):
+        // older saves can lack the catalogue id the "On globe" deep link
+        // needs, and a re-save from the viewer — which carries the id —
+        // must repair the row instead of being discarded as a duplicate.
+        const healed = { ...d, ...(cameraData as Record<string, unknown>) };
+        await db.savedCamera.update({
+          where: { id: e.id },
+          data: { cameraData: healed as Prisma.InputJsonObject },
+        });
         return NextResponse.json({ camera: { id: e.id, duplicate: true } });
       }
     }
