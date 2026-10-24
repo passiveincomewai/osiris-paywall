@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { db } from "@/lib/db";
+import { getPreferences } from "@/lib/account/preferences";
 import { sendEmail, trialEndingEmail, appUrl } from "@/lib/email";
 import {
   trialReminderDue,
@@ -61,6 +63,25 @@ export async function GET(req: NextRequest) {
             ? customer.email
             : null;
         if (!email) continue;
+        // Email-preferences center (item 16): the UserPreference row
+        // is the one opt-out store — a user who turned trial reminders
+        // off doesn't get one. The marker is still stamped so the
+        // subscription isn't re-evaluated every run.
+        const accountUser = await db.user
+          .findUnique({ where: { email: email.trim().toLowerCase() }, select: { id: true } })
+          .catch(() => null);
+        if (accountUser) {
+          const prefs = await getPreferences(accountUser.id).catch(() => null);
+          if (prefs && !prefs.emailTrialReminders) {
+            await s.subscriptions.update(sub.id, {
+              metadata: {
+                ...sub.metadata,
+                [TRIAL_REMINDER_METADATA_KEY]: new Date(now).toISOString(),
+              },
+            });
+            continue;
+          }
+        }
         const price = sub.items.data[0]?.price;
         if (!price) continue;
 

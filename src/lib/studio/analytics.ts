@@ -183,14 +183,29 @@ async function buildLeaderboardRows(now: Date): Promise<LeaderboardRow[]> {
     where: { id: { in: [...ids] } },
     select: {
       id: true,
+      userId: true,
       leaderboardOptOut: true,
       user: { select: { name: true } },
     },
   });
 
+  // Account-level privacy (settings item 18): publicProfile=false
+  // hides the user from rankings here too, not just the public board.
+  const hiddenUserIds = new Set(
+    (
+      await db.userPreference
+        .findMany({
+          where: { userId: { in: profiles.map((p) => p.userId) }, publicProfile: false },
+          select: { userId: true },
+        })
+        .catch(() => [])
+    ).map((r) => r.userId),
+  );
+
   const rows: LeaderboardRow[] = [];
   for (const p of profiles) {
     if (p.leaderboardOptOut) continue;
+    if (hiddenUserIds.has(p.userId)) continue;
     rows.push({
       profileId: p.id,
       name: p.user?.name ?? "Affiliate",

@@ -70,8 +70,35 @@ export function freshen(url: string): string {
  * stutter every 15 seconds, so they refresh far less often. HLS and MJPEG are
  * continuous streams and must never be re-pointed.
  */
+/**
+ * The signed-in user's camera-view preferences (settings item 12),
+ * seeded into localStorage (`we_camera_view`) by PreferencesProvider.
+ * Read synchronously so the shared preview machinery honours them
+ * without prop-drilling through every grid.
+ */
+export function cameraViewSeed(): { refreshSeconds: number | null; autoplay: boolean } {
+  const fallback = { refreshSeconds: null, autoplay: true };
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = window.localStorage.getItem('we_camera_view');
+    if (!raw) return fallback;
+    const v = JSON.parse(raw) as { refreshSeconds?: unknown; autoplay?: unknown };
+    return {
+      refreshSeconds: typeof v.refreshSeconds === 'number' && v.refreshSeconds >= 5 ? v.refreshSeconds : null,
+      autoplay: v.autoplay !== false,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
 export function refreshInterval(kind: PreviewKind): number {
-  if (kind === 'jpg') return 15000;
+  if (kind === 'jpg') {
+    // The user's preview-refresh preference (settings item 12)
+    // replaces the default 15s snapshot cadence in camera grids.
+    const seed = cameraViewSeed();
+    return seed.refreshSeconds ? seed.refreshSeconds * 1000 : 15000;
+  }
   if (kind === 'mp4') return 60000;
   return 0;
 }

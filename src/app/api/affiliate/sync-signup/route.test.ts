@@ -51,6 +51,9 @@ vi.mock("@/lib/db", () => ({
         ) ?? null,
       updateMany: async () => ({ count: 0 }),
     },
+    // Account-settings ship: findAffiliateByCode also consults
+    // former-code aliases after a direct miss. No aliases in fixtures.
+    referralCodeAlias: { findUnique: async () => null },
     referralAttribution: {
       findUnique: async ({ where }: any) => {
         const row = state.attributions.get(where.referredUserId);

@@ -104,6 +104,15 @@ export async function POST(req: NextRequest) {
   // visits attribute through the same we_ref mechanism as /ref/<code>.
   const ref = await getShareCodeForUser(userId).catch(() => null);
 
+  // Share default (account settings item 19): new shares start with
+  // the visibility the user picked in settings — public by default,
+  // unlisted when they chose it. They can still flip a single share
+  // afterwards; this is only the starting state.
+  const { getPreferences } = await import("@/lib/account/preferences");
+  const shareVisibility = await getPreferences(userId)
+    .then((p) => (p.shareVisibility === "unlisted" ? "unlisted" : "public"))
+    .catch(() => "public");
+
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const share = await db.clipShare.create({
@@ -119,6 +128,7 @@ export async function POST(req: NextRequest) {
           durationSec: clip.durationSec,
           cameraName: clip.cameraName,
           refCode: ref?.code ?? null,
+          visibility: shareVisibility,
         },
       });
       return NextResponse.json({ share: shareJson(share) });

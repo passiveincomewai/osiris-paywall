@@ -40,11 +40,24 @@ export async function getRefClickCookie(): Promise<string | null> {
 export async function findAffiliateByCode(code: string) {
   if (!REF_CODE_RE.test(code)) return null;
   const norm = code.toLowerCase();
-  return db.affiliateProfile.findFirst({
+  const direct = await db.affiliateProfile.findFirst({
     where: {
       OR: [{ referralCode: norm }, { customCode: norm }],
       status: "active",
     },
+    select: { id: true, userId: true, referralCode: true, customCode: true },
+  });
+  if (direct) return direct;
+  // Former custom codes (account settings: editable share link) stay
+  // live forever as aliases — a link shared before a rename still
+  // resolves, and still credits the same affiliate.
+  const alias = await db.referralCodeAlias.findUnique({
+    where: { code: norm },
+    select: { affiliateProfileId: true },
+  }).catch(() => null);
+  if (!alias) return null;
+  return db.affiliateProfile.findFirst({
+    where: { id: alias.affiliateProfileId, status: "active" },
     select: { id: true, userId: true, referralCode: true, customCode: true },
   });
 }

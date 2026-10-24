@@ -68,7 +68,24 @@ type PaywallToken = {
   sub?: string;
   subscriptionStatus?: string;
   planTier?: string;
+  totpEnabled?: boolean;
+  totpVerified?: boolean;
 } | null;
+
+/* App surfaces a 2FA-pending session may not enter until it passes
+   the step-up challenge (account settings item 2). Public/marketing
+   pages stay viewable — they expose no account data — and /auth/totp,
+   /signin and /api/auth always stay reachable. */
+const TOTP_GATED_PREFIXES = [
+  '/settings', '/dashboard', '/map', '/osint', '/recording',
+  '/affiliates', '/vip', '/premium', '/alerts',
+];
+
+function isTotpGated(pathname: string): boolean {
+  return TOTP_GATED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + '/')
+  );
+}
 
 /**
  * The gate decision for a data API, from the JWT alone (pure — pinned by
@@ -128,6 +145,20 @@ export async function middleware(request: NextRequest) {
       );
     }
     return NextResponse.next();
+  }
+
+  // 2FA step-up: a signed-in session that hasn't challenged yet is
+  // bounced to /auth/totp for app surfaces (JWT claims only — the
+  // proof-cookie flip happens in the jwt callback on session fetch,
+  // which the challenge page performs before navigating back).
+  if (isTotpGated(url)) {
+    const token = await readPaywallToken(request);
+    if (token?.sub && token.totpEnabled && !token.totpVerified) {
+      const redirect = request.nextUrl.clone();
+      redirect.pathname = '/auth/totp';
+      redirect.search = `?callbackUrl=${encodeURIComponent(url)}`;
+      return NextResponse.redirect(redirect);
+    }
   }
 
   // Premium pages redirect to /premium like a paywall.

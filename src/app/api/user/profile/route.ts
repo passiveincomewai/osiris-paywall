@@ -13,7 +13,7 @@ export async function GET() {
 
   const user = await db.user.findUnique({
     where: { id: userId },
-    select: { name: true, email: true, phone: true, passwordHash: true, emailVerified: true },
+    select: { name: true, email: true, phone: true, passwordHash: true, emailVerified: true, image: true },
   });
   if (!user) return NextResponse.json({ error: "Account not found" }, { status: 404 });
 
@@ -21,6 +21,7 @@ export async function GET() {
     name: user.name,
     email: user.email,
     phone: user.phone,
+    image: user.image,
     hasPassword: user.passwordHash !== null,
     emailVerified: user.emailVerified !== null,
   });

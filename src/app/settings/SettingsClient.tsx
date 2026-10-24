@@ -5,13 +5,15 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
   ArrowLeft, Loader2, Check, User, Lock, CreditCard, LogOut, Crown, BellRing, Users,
-  MailCheck, MailWarning, MailPlus,
+  MailCheck, MailWarning, MailPlus, Camera,
 } from "lucide-react";
+import AccountSections from "./AccountSections";
 
 type Profile = {
   name: string | null;
   email: string | null;
   phone: string | null;
+  image: string | null;
   hasPassword: boolean;
   emailVerified: boolean;
 };
@@ -64,6 +66,41 @@ export default function SettingsClient() {
   const [changeBusy, setChangeBusy] = useState(false);
   const [changeMsg, setChangeMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
+  // Avatar upload (item 1).
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [avatarMsg, setAvatarMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function uploadAvatar(file: File) {
+    setAvatarBusy(true);
+    setAvatarMsg(null);
+    try {
+      const form = new FormData();
+      form.set("file", file);
+      const res = await fetch("/api/user/avatar", { method: "POST", body: form });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Couldn't upload that image.");
+      setProfile((p) => p && { ...p, image: data.image });
+      setAvatarMsg({ ok: true, text: "Picture updated." });
+    } catch (e) {
+      setAvatarMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't upload that image." });
+    } finally {
+      setAvatarBusy(false);
+    }
+  }
+
+  async function removeAvatar() {
+    setAvatarBusy(true);
+    setAvatarMsg(null);
+    try {
+      const res = await fetch("/api/user/avatar", { method: "DELETE" });
+      if (!res.ok) throw new Error("Couldn't remove the picture.");
+      setProfile((p) => p && { ...p, image: null });
+    } catch (e) {
+      setAvatarMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't remove the picture." });
+    } finally {
+      setAvatarBusy(false);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -245,10 +282,41 @@ export default function SettingsClient() {
       ) : (
         <div className="space-y-5">
           <Section icon={User} title="Profile">
+            <div className="flex items-center gap-4 mb-5">
+              {profile.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={profile.image} alt="Your profile picture" className="w-16 h-16 rounded-full object-cover border border-white/15" />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 flex items-center justify-center text-xl font-bold text-[#D4AF37]">
+                  {(profile.name || profile.email || "?").charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 text-xs font-semibold text-white/80 hover:bg-white/5 transition cursor-pointer">
+                  <Camera className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  {avatarBusy ? "Uploading…" : profile.image ? "Change picture" : "Upload picture"}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    className="hidden"
+                    disabled={avatarBusy}
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) void uploadAvatar(f); e.target.value = ""; }}
+                  />
+                </label>
+                {profile.image && (
+                  <button type="button" onClick={removeAvatar} disabled={avatarBusy} className="block mt-2 text-xs font-semibold text-white/45 hover:text-white transition">
+                    Remove picture
+                  </button>
+                )}
+                {avatarMsg && <p className={`text-xs mt-1.5 ${avatarMsg.ok ? "text-green-400" : "text-red-400"}`}>{avatarMsg.text}</p>}
+                <p className="text-[11px] text-white/35 mt-1.5">PNG, JPEG, WebP or GIF, up to 2 MB. Shown in the header, your dashboard and leaderboards.</p>
+              </div>
+            </div>
             <form onSubmit={saveProfile} className="space-y-4">
               <div>
                 <label className={labelCls}>USERNAME</label>
                 <input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} maxLength={32} />
+                <p className="text-xs text-white/35 mt-1.5">Letters, numbers, _ or - — no spaces. This is the name shown across WorldEye.</p>
               </div>
               <div>
                 <label className={labelCls}>PHONE NUMBER</label>
@@ -442,6 +510,8 @@ export default function SettingsClient() {
               Sign out
             </button>
           </Section>
+
+          <AccountSections />
         </div>
       )}
     </div>

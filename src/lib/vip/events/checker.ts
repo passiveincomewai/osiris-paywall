@@ -81,6 +81,19 @@ async function fireEvent(
   }
   summary.eventsCreated++;
   if (rule.emailEnabled && rule.user.email) {
+    // User-level alert preferences gate the send (items 13/14):
+    // event channel + quiet hours in the user's timezone. Fail-open on
+    // a preferences error, same as the camera-alert checker.
+    let deliver = true;
+    try {
+      const { getPreferences } = await import("@/lib/account/preferences");
+      const { alertDeliveryDecision } = await import("@/lib/account/delivery");
+      const prefs = await getPreferences(rule.userId);
+      deliver = alertDeliveryDecision(prefs, "event", new Date()).email;
+    } catch {
+      deliver = true;
+    }
+    if (!deliver) return;
     const mail = eventAlertEmail({ title: draft.title, body: draft.body });
     const sent = await sendEmail(rule.user.email, mail.subject, mail.html).catch(() => false);
     if (sent) {

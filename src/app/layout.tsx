@@ -10,6 +10,8 @@ import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import InstallPrompt from '@/components/pwa/InstallPrompt';
 import ServiceWorkerRegister from '@/components/pwa/ServiceWorkerRegister';
 import TrialPrompt from '@/components/TrialPrompt';
+import PreferencesProvider from '@/components/PreferencesProvider';
+import DeviceHeartbeat from '@/components/DeviceHeartbeat';
 import "./globals.css";
 
 /* ── Type system (self-hosted via next/font; no runtime font requests) ──
@@ -292,8 +294,11 @@ export default function RootLayout({
         <SilentBoundary name="TrialPrompt">
           <TrialPrompt />
         </SilentBoundary>
+        <SilentBoundary name="DeviceHeartbeat">
+          <DeviceHeartbeat />
+        </SilentBoundary>
         <ErrorBoundary name="WorldEye">
-          {children}
+          <PreferencesProvider>{children}</PreferencesProvider>
         </ErrorBoundary>
       </body>
     </html>

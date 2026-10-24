@@ -15,7 +15,12 @@ const { authMock, redirectMock } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/auth", () => ({ auth: authMock }));
-vi.mock("next/navigation", () => ({ redirect: redirectMock }));
+vi.mock("next/navigation", () => ({
+  redirect: redirectMock,
+  // Account-settings ship: the dashboard now renders SetNamePrompt,
+  // which reads usePathname.
+  usePathname: () => "/dashboard",
+}));
 vi.mock("@/lib/camera-alerts/tier", () => ({ getUserTier: vi.fn(async () => "vip") }));
 vi.mock("@/lib/db", () => ({
   db: {

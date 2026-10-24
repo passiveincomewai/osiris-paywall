@@ -116,9 +116,14 @@ export default function HeaderProfileMenu() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Account menu"
-        className="w-8 h-8 rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-black flex items-center justify-center shadow-[0_0_12px_rgba(212,175,55,0.4)] hover:brightness-110 transition"
+        className="w-8 h-8 rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-black flex items-center justify-center shadow-[0_0_12px_rgba(212,175,55,0.4)] hover:brightness-110 transition overflow-hidden"
       >
-        {initials(user?.name, user?.email)}
+        {user?.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={user.image} alt="" className="w-full h-full object-cover" />
+        ) : (
+          initials(user?.name, user?.email)
+        )}
       </button>
 
       {open && (
@@ -136,8 +141,13 @@ export default function HeaderProfileMenu() {
           {/* User header */}
           <div className="px-4 pt-3 pb-2 sm:pt-4 sm:pb-3 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-black flex items-center justify-center">
-                {initials(user?.name, user?.email)}
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-black flex items-center justify-center overflow-hidden">
+                {user?.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={user.image} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  initials(user?.name, user?.email)
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">

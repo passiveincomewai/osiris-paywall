@@ -131,12 +131,13 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
         </div>
       )}
       <label className="grid gap-1.5">
-        <span className="text-xs font-semibold tracking-wide text-white/50 uppercase">Name</span>
+        <span className="text-xs font-semibold tracking-wide text-white/50 uppercase">Username</span>
         <input
-          type="text" autoComplete="name" value={name}
+          type="text" required autoComplete="username" value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Ada Lovelace" className={inputCls}
+          placeholder="e.g. sky_watcher7" className={inputCls}
         />
+        <span className="text-[11px] text-white/35">Required — letters, numbers, _ or -, no spaces. This is the name shown across WorldEye.</span>
       </label>
       <label className="grid gap-1.5">
         <span className="text-xs font-semibold tracking-wide text-white/50 uppercase">Email</span>

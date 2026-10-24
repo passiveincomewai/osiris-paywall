@@ -44,6 +44,10 @@ export interface AlertCheckDeps {
   tierOf: (userId: string) => Promise<PlanTier>;
   mail: (to: string, subject: string, html: string) => Promise<boolean>;
   userEmail: (userId: string) => Promise<string | null>;
+  /** Account alert preferences (items 13/14): quiet hours + channel.
+   * Optional so unit tests keep their historical behavior; the live
+   * deps always provide it, so production sends are gated. */
+  prefsOf?: (userId: string) => Promise<import("@/lib/account/preferences").Preferences>;
 }
 
 const liveDeps: AlertCheckDeps = {
@@ -55,6 +59,10 @@ const liveDeps: AlertCheckDeps = {
   userEmail: async (userId) => {
     const u = await db.user.findUnique({ where: { id: userId }, select: { email: true } }).catch(() => null);
     return u?.email ?? null;
+  },
+  prefsOf: async (userId) => {
+    const { getPreferences } = await import("@/lib/account/preferences");
+    return getPreferences(userId);
   },
 };
 
@@ -180,7 +188,22 @@ export async function runAlertChecks(
     });
 
     if (rule.emailEnabled) {
-      const to = await deps.userEmail(rule.userId).catch(() => null);
+      // User-level alert preferences gate the send (items 13/14):
+      // channel choice + quiet hours in the user's own timezone. The
+      // event is already recorded above either way — only the email
+      // is held. Fail-open on a preferences error: a settings hiccup
+      // must never silently swallow a safety-relevant alert.
+      let deliver = true;
+      if (deps.prefsOf) {
+        try {
+          const { alertDeliveryDecision } = await import("@/lib/account/delivery");
+          const prefs = await deps.prefsOf(rule.userId);
+          deliver = alertDeliveryDecision(prefs, "camera", now).email;
+        } catch {
+          deliver = true;
+        }
+      }
+      const to = deliver ? await deps.userEmail(rule.userId).catch(() => null) : null;
       if (to) {
         const { subject, html } = cameraAlertEmail({
           cameraName: rule.cameraName,

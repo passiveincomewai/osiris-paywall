@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Camera, MapPin, PlayCircle } from 'lucide-react';
 import ViewOnGlobeButton from '@/components/ViewOnGlobeButton';
-import { freshen, previewMedia, refreshInterval } from '@/lib/camera-preview';
+import { cameraViewSeed, freshen, previewMedia, refreshInterval } from '@/lib/camera-preview';
 import {
   cameraMediaKind,
   youtubePosterUrl,
@@ -187,7 +187,9 @@ function LiveVideo({ kind, url }: { kind: 'hls' | 'mp4'; url: string }) {
   const onFail = useCallback(() => setFailed(true), []);
 
   useEffect(() => {
-    if (!inView || failed) return;
+    // Autoplay off (settings item 12): never take a video slot — the
+    // card keeps its labelled still state instead of playing.
+    if (!inView || failed || !cameraViewSeed().autoplay) return;
     const release = acquireVideoSlot(() => setHasSlot(true));
     return () => {
       release();

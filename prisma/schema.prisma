@@ -48,8 +48,125 @@ model User {
   organizationMembers OrganizationMember[]
   teamInvitationsSent TeamInvitation[] @relation("InviteSender")
   teamActivityActions TeamActivityLog[] @relation("ActivityActor")
+  accountPreference UserPreference?
+  totp          UserTotp?
+  deviceSessions UserDeviceSession[]
+  signInEvents  UserSignInEvent[]
+  referralCodeAliases ReferralCodeAlias[]
+  deletionRequestedAt DateTime?
+  deletionScheduledFor DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+}
+
+// ── Account settings expansion (2026-10-22) ─────────────────────────
+// One preference row is the source of truth for user-level choices.
+// Email toggles in this row are also the lifecycle-email opt-out store:
+// senders must consult it before trial, digest, product, or affiliate
+// marketing mail. Security/device rows support the settings surfaces;
+// Auth.js itself remains JWT-based (see REPORT).
+model UserPreference {
+  id        String @id @default(cuid())
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  homeLabel String?
+  homeLat   Float?
+  homeLng   Float?
+  defaultLayers String[] @default([])
+  units     String @default("imperial") // imperial | metric
+  timezone  String?
+  clockFormat String @default("12") // 12 | 24
+  defaultMapStyle String @default("standard") // standard | tactical-dark | night-vision
+  performanceMode Boolean @default(false)
+
+  cameraGridDensity String @default("comfortable") // comfortable | compact
+  cameraPreviewRefreshSeconds Int @default(30)
+  cameraAutoplay Boolean @default(true)
+
+  quietHoursEnabled Boolean @default(false)
+  quietHoursStart String @default("22:00")
+  quietHoursEnd   String @default("07:00")
+  cameraAlertChannel String @default("email") // email | push | both | none
+  eventAlertChannel  String @default("email") // email | push | both | none
+
+  recordingClipSeconds Int @default(60)
+  recordingQuality String @default("balanced") // efficient | balanced | high
+
+  emailTrialReminders Boolean @default(true)
+  emailWeeklyDigest Boolean @default(false)
+  emailProductNews Boolean @default(true)
+  emailAffiliateUpdates Boolean @default(true)
+  digestEnabled Boolean @default(false)
+  digestRegions String[] @default([])
+  digestLastSentAt DateTime?
+
+  publicProfile Boolean @default(true)
+  shareVisibility String @default("public") // public | unlisted
+  billingEmail String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserTotp {
+  id        String @id @default(cuid())
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // AES-256-GCM encrypted base32 secret; never store the secret in plain text.
+  secretEncrypted String
+  enabledAt DateTime?
+  backupCodeHashes String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserDeviceSession {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceId  String
+  label     String
+  userAgent String? @db.VarChar(500)
+  ipHash    String?
+  approximateLocation String?
+  lastSeenAt DateTime @default(now())
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, deviceId])
+  @@index([userId, revokedAt, lastSeenAt])
+}
+
+model UserSignInEvent {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceId  String
+  deviceLabel String
+  ipHash    String?
+  approximateLocation String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, deviceId, createdAt])
+}
+
+// Every former custom referral code remains a permanent alias for the
+// same affiliate profile, so links already shared keep crediting their
+// owner after the canonical custom code changes.
+model ReferralCodeAlias {
+  id        String @id @default(cuid())
+  affiliateProfileId String
+  affiliate AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String @unique
+  createdAt DateTime @default(now())
+
+  @@index([affiliateProfileId])
+  @@index([userId])
 }
 
 model Account {
@@ -201,6 +318,7 @@ model AffiliateProfile {
   clicks        ReferralClick[]
   trackingLinks AffiliateTrackingLink[]
   notifications AffiliateNotification[]
+  codeAliases   ReferralCodeAlias[]
   attributions  ReferralAttribution[] @relation("AffiliateAttributions")
   commissions   Commission[]
   payouts       Payout[]
@@ -990,6 +1108,9 @@ model ClipShare {
   durationSec Int
   cameraName  String
   refCode     String?
+  // public = indexable/linkable normally; unlisted = reachable only by
+  // slug and excluded from indexing/public metadata surfaces.
+  visibility  String    @default("public")
   views       Int       @default(0)
   revokedAt   DateTime?
   createdAt   DateTime  @default(now())

@@ -20,6 +20,10 @@ declare module "next-auth" {
       subscriptionStatus: string;
       /** Plan tier (lib/plan-tier): "free" | "pro" | "vip" — annual is VIP. */
       planTier: string;
+      /** True when the account has 2FA on and this session hasn't
+       * passed the step-up challenge yet (item 2). Middleware bounces
+       * app surfaces to /auth/totp while this is true. */
+      totpPending?: boolean;
     } & DefaultSession["user"];
   }
 }
@@ -29,6 +33,8 @@ declare module "next-auth/jwt" {
     subscriptionStatus?: string;
     planTier?: string;
     subscriptionCheckedAt?: number;
+    totpEnabled?: boolean;
+    totpVerified?: boolean;
   }
 }
 
@@ -144,6 +150,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.planTier = claims.tier;
         token.subscriptionCheckedAt = now;
       }
+
+      // ── 2FA step-up claims (item 2) ──────────────────────────────
+      // Stamped at sign-in only (fail-soft, one DB read on the same
+      // cadence as a sign-in's subscription refresh). A session that
+      // hasn't challenged yet carries totpVerified=false; the ONLY
+      // way it flips is the HMAC proof cookie minted by
+      // /api/account/totp/challenge after a valid code — checked here
+      // on any session fetch while unverified (cheap HMAC, no DB).
+      if (user?.id || token.totpEnabled === undefined) {
+        try {
+          const row = await db.userTotp.findUnique({
+            where: { userId },
+            select: { enabledAt: true },
+          });
+          token.totpEnabled = !!row?.enabledAt;
+          token.totpVerified = !token.totpEnabled;
+        } catch {
+          // Fail-soft: a DB hiccup must never lock anyone out or break
+          // sign-in; the claims heal on the next sign-in.
+          token.totpEnabled = token.totpEnabled ?? false;
+          token.totpVerified = token.totpVerified ?? true;
+        }
+      }
+      if (token.totpEnabled && !token.totpVerified) {
+        try {
+          const { cookies } = await import("next/headers");
+          const { verifyTotpProof, TOTP_PROOF_COOKIE } = await import("@/lib/account/totp");
+          const proof = (await cookies()).get(TOTP_PROOF_COOKIE)?.value;
+          if (verifyTotpProof(proof, userId)) token.totpVerified = true;
+        } catch {
+          // No request scope (edge decode paths) — claim stays as-is.
+        }
+      }
       return token;
     },
     async session({ session, token }) {
@@ -151,6 +190,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.sub;
         session.user.subscriptionStatus = token.subscriptionStatus ?? "none";
         session.user.planTier = token.planTier ?? "free";
+        session.user.totpPending = !!(token.totpEnabled && !token.totpVerified);
       }
       return session;
     },

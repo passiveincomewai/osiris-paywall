@@ -12,17 +12,19 @@ import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
 
 export const runtime = "nodejs";
 
-/** A candidate is taken if any profile (either code field) or any
- *  share identity already owns it — /ref resolves across both. */
+/** A candidate is taken if any profile (either code field), any
+ *  former-code alias, or any share identity already owns it —
+ *  /ref resolves across all of them. */
 async function codeTaken(candidate: string): Promise<boolean> {
-  const [profile, identity] = await Promise.all([
+  const [profile, identity, alias] = await Promise.all([
     db.affiliateProfile.findFirst({
       where: { OR: [{ referralCode: candidate }, { customCode: candidate }] },
       select: { id: true },
     }),
     db.shareIdentity.findUnique({ where: { code: candidate }, select: { id: true } }),
+    db.referralCodeAlias.findUnique({ where: { code: candidate }, select: { id: true } }).catch(() => null),
   ]);
-  return !!profile || !!identity;
+  return !!profile || !!identity || !!alias;
 }
 
 export async function POST(req: Request) {

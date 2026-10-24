@@ -24,6 +24,25 @@ export async function POST(req: Request) {
     select: { id: true },
   });
   if (taken) return NextResponse.json({ error: "Code already taken" }, { status: 409 });
+  // A code another affiliate used before (and still gets credit
+  // through) is theirs forever — aliases are never recycled.
+  const aliasTaken = await db.referralCodeAlias.findUnique({
+    where: { code: norm }, select: { affiliateProfileId: true },
+  }).catch(() => null);
+  if (aliasTaken && aliasTaken.affiliateProfileId !== profile.id) {
+    return NextResponse.json({ error: "Code already taken" }, { status: 409 });
+  }
+
+  // Preserve the outgoing custom code as a permanent alias BEFORE the
+  // swap, so every link already shared keeps resolving + crediting.
+  const previous = profile.customCode;
+  if (previous && previous !== norm) {
+    await db.referralCodeAlias.upsert({
+      where: { code: previous },
+      create: { code: previous, affiliateProfileId: profile.id, userId },
+      update: {},
+    }).catch(() => {});
+  }
 
   const updated = await db.affiliateProfile.update({
     where: { id: profile.id }, data: { customCode: norm }, select: { customCode: true },

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Loader2, MapPin, RefreshCw, Search } from 'lucide-react';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
+import { usePreferences } from '@/components/PreferencesProvider';
 import { COUNTRY_CITY_EVENT } from '@/components/CountryCitySearch';
 import { CameraFeedCard, LazyCameraViewer } from '@/components/camera-feed-card';
 import { clean, type CameraArea, type CountryCamera } from '@/lib/country-cameras';
@@ -65,6 +66,16 @@ export default function CountryCameraExplorer({
   country: string;
   countryName: string;
 }) {
+  // Grid density from the account's camera-view preference (item 12).
+  // usePreferences() returns the Preferences object directly (the
+  // provider's context value is the object itself, not a wrapper).
+  const prefs = usePreferences();
+  const gridClass =
+    prefs.cameraGridDensity === 'compact'
+      ? 'grid grid-cols-2 lg:grid-cols-4 gap-3'
+      : prefs.cameraGridDensity === 'comfortable'
+        ? 'grid grid-cols-1 lg:grid-cols-2 gap-3'
+        : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3';
   const [grid, setGrid] = useState<GridState>(EMPTY_GRID);
   const [loadingMore, setLoadingMore] = useState(false);
   const [runId, setRunId] = useState(0);
@@ -408,7 +419,7 @@ export default function CountryCameraExplorer({
             Loading live cameras…
             <span className="text-white/35">Fetching the live index for {countryName}.</span>
           </p>
-          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className={`mt-3 ${gridClass}`}>
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden animate-pulse">
                 <div className="aspect-video bg-white/[0.07]" />
@@ -459,7 +470,7 @@ export default function CountryCameraExplorer({
           </div>
         </div>
       ) : rows ? (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className={`mt-4 ${gridClass}`}>
           {rows.map(row =>
             'cam' in row ? (
               <CameraFeedCard key={row.cam.id} cam={row.cam} onOpen={openCamera} />
@@ -480,7 +491,7 @@ export default function CountryCameraExplorer({
           )}
         </div>
       ) : (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className={`mt-4 ${gridClass}`}>
           {cameras.map(cam => (
             <CameraFeedCard key={cam.id} cam={cam} onOpen={openCamera} />
           ))}

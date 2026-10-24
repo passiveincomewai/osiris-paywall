@@ -197,6 +197,30 @@ export function teamInviteEmail(input: {
   };
 }
 
+/** New-device sign-in alert (account settings item 4). Sent when a
+ * device the account has never used signs in — the honest scope is
+ * "a device we haven't seen for this account", stated as such. */
+export function newDeviceEmail(input: {
+  name: string | null;
+  deviceLabel: string;
+  location: string | null;
+  whenLabel: string;
+}): { subject: string; html: string } {
+  const first = input.name?.split(" ")[0] ?? "there";
+  const where = input.location ? ` near ${escapeHtml(input.location)}` : "";
+  return {
+    subject: "New device signed in to your WorldEye account",
+    html: shell(
+      "New device sign-in",
+      `A new device (${input.deviceLabel}) signed in to your WorldEye account.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${escapeHtml(first)},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">A device we haven't seen on your account before — <strong style="color:#fff;">${escapeHtml(input.deviceLabel)}</strong>${where} — signed in on <strong style="color:#fff;">${escapeHtml(input.whenLabel)}</strong>.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If that was you, no action is needed. If it wasn't, change your password and revoke the device under <strong style="color:#fff;">Settings → Security</strong> right away.</p>`,
+      { label: "Review my devices", href: appUrl("/settings") }
+    ),
+  };
+}
+
 export function cameraAlertEmail(input: {
   cameraName: string;
   condition: string;

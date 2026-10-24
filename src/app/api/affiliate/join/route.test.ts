@@ -25,6 +25,9 @@ vi.mock("@/lib/db", () => ({
     },
     referralAttribution: { findUnique: mocks.attributionByUser },
     shareIdentity: { findUnique: mocks.identityByCode },
+    // Account-settings ship: codeTaken + findAffiliateByCode also
+    // consult former-code aliases. No aliases exist in these fixtures.
+    referralCodeAlias: { findUnique: async () => null },
   },
 }));
 vi.mock("@/lib/affiliate/xp", () => ({ awardXP: mocks.awardXP }));

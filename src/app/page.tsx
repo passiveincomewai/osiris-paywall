@@ -1029,11 +1029,58 @@ export default function Dashboard() {
       })
       .catch(() => { if (!located && !geoController.signal.aborted) legacyLocate(); });
 
+    /* Account preferences (settings items 6+7): a signed-in user's
+       saved home location beats IP geolocation, and their default
+       layers start on. PreferencesProvider seeds both into
+       localStorage on every load; returning visitors are covered
+       synchronously right here. A deep link (?camera=…) still wins —
+       autoLocateCancelled is already set in that case. An explicit
+       ?layers= URL param also wins over the saved default layers. */
+    const applyDefaultLayers = (layers: unknown) => {
+      if (!Array.isArray(layers) || layers.length === 0 || p.get('layers')) return;
+      setActiveLayers(prev => {
+        const next = { ...prev };
+        for (const k of layers) {
+          if (typeof k === 'string' && k in next) (next as any)[k] = true;
+        }
+        return next;
+      });
+    };
+    try {
+      const homeRaw = localStorage.getItem('we_home_location');
+      if (homeRaw && !autoLocateCancelled.current) {
+        const home = JSON.parse(homeRaw) as { lat?: number; lng?: number };
+        if (typeof home.lat === 'number' && typeof home.lng === 'number') {
+          located = true;
+          setHomeLocation({ lat: home.lat, lng: home.lng });
+        }
+      }
+      applyDefaultLayers(JSON.parse(localStorage.getItem('we_default_layers') ?? '[]'));
+    } catch { /* preferences are an enhancement, never a blocker */ }
+    /* First-ever load: the seed lands a moment later, announced by
+       PreferencesProvider. Honour it unless the user has already
+       taken the camera over (the cancel flag) — home flies directly,
+       since the splash fly-to has already consumed homeLocation. */
+    const onPrefsLoaded = (e: Event) => {
+      const prefs = (e as CustomEvent).detail as { homeLat?: number | null; homeLng?: number | null; defaultLayers?: string[] } | undefined;
+      if (!prefs) return;
+      applyDefaultLayers(prefs.defaultLayers);
+      if (
+        typeof prefs.homeLat === 'number' && typeof prefs.homeLng === 'number' &&
+        !autoLocateCancelled.current
+      ) {
+        located = true;
+        setFlyToLocation({ lat: prefs.homeLat, lng: prefs.homeLng, zoom: 8, duration: 3500, ts: Date.now() });
+      }
+    };
+    window.addEventListener('we:preferences-loaded', onPrefsLoaded);
+
     return () => {
       clearTimeout(geoGiveUp);
       geoController.abort();
       window.removeEventListener('pointerdown', cancelAutoLocate);
       window.removeEventListener('keydown', cancelAutoLocate);
+      window.removeEventListener('we:preferences-loaded', onPrefsLoaded);
     };
   }, []);
 

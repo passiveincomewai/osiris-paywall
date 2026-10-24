@@ -49,6 +49,12 @@ export async function generateMetadata({
   if (!share || share.revokedAt) {
     return { title: "Shared clip — WorldEye", robots: { index: false } };
   }
+  // Unlisted shares (account settings item 19): reachable by link,
+  // but no indexing and no social-card metadata — the page itself
+  // still plays for anyone holding the link.
+  if (share.visibility === "unlisted") {
+    return { title: "Shared clip — WorldEye", robots: { index: false, follow: false } };
+  }
   const description = `Watch "${share.title}" — a live-camera recording shared from WorldEye's globe of 74,229 live cameras.`;
   return {
     title: `${share.title} — WorldEye`,

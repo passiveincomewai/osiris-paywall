@@ -16,11 +16,26 @@ export async function GET() {
   monthStart.setUTCDate(1); monthStart.setUTCHours(0, 0, 0, 0);
   const weekStart = new Date(Date.now() - 7 * 86400_000);
 
-  const profiles = await db.affiliateProfile.findMany({
+  const allProfiles = await db.affiliateProfile.findMany({
     where: { status: "active", leaderboardOptOut: false },
     include: { user: { select: { name: true, image: true } } },
     take: 500,
   });
+  // Account-level privacy (settings item 18): a user who turned their
+  // public profile off is hidden from public rankings even when their
+  // affiliate-level leaderboard opt-out is off. Users with no
+  // preference row keep the default (public).
+  const hiddenUserIds = new Set(
+    (
+      await db.userPreference
+        .findMany({
+          where: { userId: { in: allProfiles.map((p) => p.userId) }, publicProfile: false },
+          select: { userId: true },
+        })
+        .catch(() => [])
+    ).map((r) => r.userId),
+  );
+  const profiles = allProfiles.filter((p) => !hiddenUserIds.has(p.userId));
   const ids = profiles.map((p) => p.id);
 
   const [monthComms, allComms, monthClicks] = await Promise.all([

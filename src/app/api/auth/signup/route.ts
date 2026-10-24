@@ -6,6 +6,7 @@ import {
   normalizeEmail, isValidEmail, passwordError, hashPassword,
   generateToken, isRateLimited, clientIp, VERIFY_ID_PREFIX,
 } from "@/lib/password-auth";
+import { usernameValidationError } from "@/lib/account/names";
 import { sendEmail, emailConfigured, verificationEmail, appUrl } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
 import { subscribeToNewsletter } from "@/lib/newsletter/subscribe";
@@ -27,11 +28,15 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const email = normalizeEmail(String(body.email ?? ""));
   const password = String(body.password ?? "");
-  const name = String(body.name ?? "").trim().slice(0, 100) || null;
+  const name = String(body.name ?? "").trim();
 
   if (!isValidEmail(email)) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
+  // A username is REQUIRED at signup (owner's rule) and must satisfy the
+  // shared validator: no spaces, letters/numbers/_/- only.
+  const nameErr = usernameValidationError(name);
+  if (nameErr) return NextResponse.json({ error: nameErr }, { status: 400 });
   const pwErr = passwordError(password);
   if (pwErr) return NextResponse.json({ error: pwErr }, { status: 400 });
 

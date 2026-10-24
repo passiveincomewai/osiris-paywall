@@ -8,6 +8,7 @@ import { getUserTier, type PlanTier } from "@/lib/camera-alerts/tier";
 import { formatClock } from "@/lib/recording/dashboard";
 import SiteFooter from "@/components/SiteFooter";
 import DashboardCameras from "@/components/dashboard/DashboardCameras";
+import SetNamePrompt from "@/components/SetNamePrompt";
 import DashboardAlerts from "@/components/dashboard/DashboardAlerts";
 import DashboardRecordings from "@/components/dashboard/DashboardRecordings";
 
@@ -138,6 +139,7 @@ export default async function DashboardPage() {
         </div>
       </header>
 
+      <SetNamePrompt />
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-12">
         {/* Member header + real quick stats */}
         <section>

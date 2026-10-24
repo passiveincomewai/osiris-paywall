@@ -23,12 +23,13 @@ export function passwordError(pw: string): string | null {
   return null;
 }
 
-// Display name shown across the app (header, affiliates, leaderboard).
+// Username shown across the app (header, affiliates, leaderboard).
+// The rules live in lib/account/names (owner's orders: required, no
+// spaces, letters/numbers/_/- only) — this stays as the shared entry
+// point existing callers already import.
+import { usernameValidationError } from "@/lib/account/names";
 export function usernameError(name: string): string | null {
-  const n = name.trim();
-  if (n.length < 2) return "Username must be at least 2 characters.";
-  if (n.length > 32) return "Username must be under 32 characters.";
-  return null;
+  return usernameValidationError(name);
 }
 
 // Lenient international phone check: 7–15 digits after stripping formatting.
