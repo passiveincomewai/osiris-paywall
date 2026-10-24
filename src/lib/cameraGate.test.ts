@@ -110,3 +110,22 @@ describe("invite-bonus allowance math (signed-in users)", () => {
     expect(opensRemaining(2, -5)).toBe(3);
   });
 });
+
+describe("ladder allowances (Wave 2 F4) — bonus draws only past the held rung", () => {
+  it("the email rung (10) keeps opens 5–9 off the bonus", () => {
+    for (let clicks = 0; clicks < 10; clicks++) {
+      expect(openDrawsOnBonus(clicks, 10)).toBe(false);
+    }
+    expect(openDrawsOnBonus(10, 10)).toBe(true);
+  });
+
+  it("the account rung (15) keeps opens 5–14 off the bonus", () => {
+    for (let clicks = 0; clicks < 15; clicks++) {
+      expect(openDrawsOnBonus(clicks, 15)).toBe(false);
+    }
+    expect(openDrawsOnBonus(15, 15)).toBe(true);
+    expect(opensRemaining(12, 15, 15)).toBe(3 + 15);
+    expect(opensRemaining(15, 15, 15)).toBe(15);
+    expect(opensRemaining(9, 0, 10)).toBe(1);
+  });
+});

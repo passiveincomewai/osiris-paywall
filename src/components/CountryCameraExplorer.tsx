@@ -1,11 +1,24 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Loader2, MapPin, RefreshCw, Search } from 'lucide-react';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import { COUNTRY_CITY_EVENT } from '@/components/CountryCitySearch';
 import { CameraFeedCard, LazyCameraViewer } from '@/components/camera-feed-card';
 import { clean, type CameraArea, type CountryCamera } from '@/lib/country-cameras';
+import { getCameraClickCount, recordCameraClick } from '@/lib/cameraGate';
+import {
+  browserLadderStorage,
+  ladderPromptFor,
+  markEmailUnlocked,
+  readLadderRecord,
+  type LadderPrompt,
+} from '@/lib/camera-ladder';
+import { readSessionIdentity, type SessionIdentity } from '@/lib/premium-entitlement';
+
+const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
+const TimedTrialPopup = dynamic(() => import('@/components/TimedTrialPopup'));
 
 /** Cameras per batch — the landing gallery's grid scale, and small enough
  *  that a batch response stays a few tens of KB even for long-named feeds. */
@@ -60,6 +73,24 @@ export default function CountryCameraExplorer({
   const [area, setArea] = useState<string | null>(null);
   const [active, setActive] = useState<CountryCamera | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  /* Wave 2 ladder (BRIEF F4): opening a camera here runs the same
+     ladder as the globe — this grid was the one feed surface the flat
+     gate never reached. Identity and the invite-bonus balance are
+     read on mount (the bonus endpoint's non-OK answer — 401 signed
+     out — reads as "no bonus", exactly as on the globe). */
+  const [identity, setIdentity] = useState<SessionIdentity | null>(null);
+  const [cameraBonus, setCameraBonus] = useState<number | null>(null);
+  const [gateRung, setGateRung] = useState<LadderPrompt>('pro');
+  const [showGate, setShowGate] = useState(false);
+  const pendingGateCamRef = useRef<CountryCamera | null>(null);
+  useEffect(() => {
+    void readSessionIdentity().then(setIdentity);
+    fetch('/api/cameras/bonus', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j && typeof j.balance === 'number') setCameraBonus(j.balance); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query.trim()), 300);
@@ -165,10 +196,109 @@ export default function CountryCameraExplorer({
     if (el) el.textContent = total.toLocaleString('en-US');
   }, [total, area, debouncedQuery]);
 
-  const openCamera = (cam: CountryCamera) => {
+  const doOpenCamera = (cam: CountryCamera) => {
     trackAnalyticsEvent('camera_open');
     setActive(cam);
   };
+
+  /* The ladder's email flag, read fresh at decision time (the record
+     is device-local; state would go stale the moment an unlock lands
+     mid-interaction, here or on the globe). */
+  const emailUnlockedNow = () =>
+    readLadderRecord(browserLadderStorage())?.emailUnlockedAt != null;
+
+  /* A beyond-allowance open for a signed-in user: the server spends
+     one invite-bonus open first (lib/camera-bonus — the globe's own
+     path); only a yes opens the camera. A no lands on the Pro rung. */
+  const openWithCameraBonus = (cam: CountryCamera) => {
+    fetch('/api/cameras/bonus/consume', { method: 'POST' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (j && typeof j.balance === 'number') setCameraBonus(j.balance);
+        if (j?.consumed) {
+          recordCameraClick();
+          doOpenCamera(cam);
+          return;
+        }
+        trackAnalyticsEvent('upgrade_gate_shown');
+        pendingGateCamRef.current = cam;
+        setGateRung('pro');
+        setShowGate(true);
+      })
+      .catch(() => {
+        trackAnalyticsEvent('upgrade_gate_shown');
+        pendingGateCamRef.current = cam;
+        setGateRung('pro');
+        setShowGate(true);
+      });
+  };
+
+  /* The gate, mirroring the globe's order exactly: premium opens
+     freely; within the rung allowance the open counts and opens; past
+     it, heal the identity once, spend a banked bonus if there is one,
+     and only then show the next rung's prompt. */
+  const openCamera = (cam: CountryCamera) => {
+    if (identity?.state === 'premium') {
+      doOpenCamera(cam);
+      return;
+    }
+    const prompt = ladderPromptFor({
+      opens: getCameraClickCount(),
+      signedIn: identity?.state === 'free',
+      emailUnlocked: emailUnlockedNow(),
+    });
+    if (prompt === null) {
+      recordCameraClick();
+      doOpenCamera(cam);
+      return;
+    }
+    pendingGateCamRef.current = cam;
+    void (async () => {
+      let id = identity;
+      if (id === null || id.state === 'unknown') {
+        id = await readSessionIdentity();
+        setIdentity(id);
+      }
+      if (id.state === 'premium') {
+        recordCameraClick();
+        doOpenCamera(cam);
+        return;
+      }
+      if (id.state === 'free' && cameraBonus !== null && cameraBonus > 0) {
+        openWithCameraBonus(cam);
+        return;
+      }
+      const rung =
+        ladderPromptFor({
+          opens: getCameraClickCount(),
+          signedIn: id.state === 'free',
+          emailUnlocked: emailUnlockedNow(),
+        }) ?? prompt;
+      setGateRung(rung);
+      if (rung === 'pro') trackAnalyticsEvent('upgrade_gate_shown');
+      setShowGate(true);
+    })();
+  };
+
+  /* Ladder email step succeeded: the +5 applies instantly (record
+     written first) and the camera the wall interrupted opens right
+     away, if the new allowance covers it. */
+  const handleLadderEmailUnlocked = useCallback(() => {
+    markEmailUnlocked(browserLadderStorage());
+    setShowGate(false);
+    const pending = pendingGateCamRef.current;
+    pendingGateCamRef.current = null;
+    if (!pending) return;
+    const still = ladderPromptFor({
+      opens: getCameraClickCount(),
+      signedIn: identity?.state === 'free',
+      emailUnlocked: true,
+    });
+    if (still === null) {
+      recordCameraClick();
+      doOpenCamera(pending);
+    }
+  }, [identity]);
 
   const filtering = area !== null || debouncedQuery !== '';
   const cityCounts = useMemo(() => new Map(cities.map(c => [c.name, c.count])), [cities]);
@@ -382,6 +512,20 @@ export default function CountryCameraExplorer({
 
       {/* The globe's own viewer, unchanged: one active player at a time. */}
       {active && <LazyCameraViewer camera={active} onClose={() => setActive(null)} />}
+
+      {/* Wave 2 ladder wall (BRIEF F4): the next rung's prompt, the
+          same component the globe shows. */}
+      {showGate && (
+        <CameraSignupNudge
+          onClose={() => setShowGate(false)}
+          rung={gateRung}
+          opensUsed={getCameraClickCount()}
+          onEmailUnlocked={handleLadderEmailUnlocked}
+        />
+      )}
+      {/* F4 timed trial popup: self-gating on lib/camera-ladder's
+          discipline; suppressed while the wall or the viewer is up. */}
+      <TimedTrialPopup surface="directory" suppressed={showGate || active !== null} />
     </div>
   );
 }

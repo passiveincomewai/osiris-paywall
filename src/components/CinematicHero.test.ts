@@ -108,8 +108,9 @@ describe('the kill switch — heroSkippedForSearch', () => {
 
   it('flag on: organic visits keep the hero', () => {
     expect(heroSkippedForSearch('', true)).toBe(false);
-    expect(heroSkippedForSearch('?utm_source=instagram&utm_medium=social', true)).toBe(false);
     expect(heroSkippedForSearch('?utm_medium=', true)).toBe(false);
+    expect(heroSkippedForSearch('?utm_source=google&utm_medium=organic', true)).toBe(false);
+    expect(heroSkippedForSearch('?utm_source=chatgpt', true)).toBe(false);
   });
 
   it('flag on: ad traffic, explicit skips and camera deep links still skip', () => {
@@ -118,5 +119,17 @@ describe('the kill switch — heroSkippedForSearch', () => {
     expect(heroSkippedForSearch('?skip_hero=1', true)).toBe(true);
     expect(heroSkippedForSearch('?ad=1', true)).toBe(true);
     expect(heroSkippedForSearch('?camera=CAM-7829', true)).toBe(true);
+  });
+
+  // Wave 2 F5 (owner order 2026-10-22): UTM-tagged Instagram arrivals
+  // take the fast lane — hero skipped, hero video never loaded. This
+  // supersedes the pre-F5 pin that kept the hero for
+  // utm_source=instagram; the tag is what makes IG arrivals
+  // distinguishable, so the referrer concern never applied to them.
+  it('flag on: Instagram fast lane — utm_source=ig / instagram skips', () => {
+    expect(heroSkippedForSearch('?utm_source=instagram&utm_medium=social', true)).toBe(true);
+    expect(heroSkippedForSearch('?utm_source=instagram', true)).toBe(true);
+    expect(heroSkippedForSearch('?utm_source=ig', true)).toBe(true);
+    expect(heroSkippedForSearch('?utm_source=IG&utm_medium=cpc', true)).toBe(true);
   });
 });

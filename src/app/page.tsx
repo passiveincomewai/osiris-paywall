@@ -8,13 +8,27 @@ import { Layers, Newspaper, Search, X, Route, Radar, ExternalLink, AlertTriangle
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { fetchCameraById, loadCameraCatalog, mergeCameraCatalog, type CameraCatalogHandle } from '@/lib/camera-catalog';
 import { applyFlightsDelta, type FlightsDelta, type FlightsPayloadLike } from '@/lib/flights/delta';
-import { cameraClickAllowed, recordCameraClick } from '@/lib/cameraGate';
+import { getCameraClickCount, recordCameraClick } from '@/lib/cameraGate';
 import {
   checkPremiumEntitlement,
   applyAmbientEntitlement,
   shouldRecheckEntitlement,
   blockedCameraAction,
+  readSessionIdentity,
+  type SessionIdentity,
 } from '@/lib/premium-entitlement';
+import {
+  browserLadderStorage,
+  browserSessionStorage,
+  ladderPromptFor,
+  markEmailUnlocked,
+  readLadderRecord,
+  readSessionFlag,
+  shareAwayShouldShow,
+  writeSessionFlag,
+  SHARE_PROMPT_SESSION_KEY,
+  type LadderPrompt,
+} from '@/lib/camera-ladder';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
 import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId } from '@/lib/share/links';
 import { findNearestCameras } from '@/lib/nearby-cameras';
@@ -76,6 +90,8 @@ const TodayInTheSky = dynamic(() => import('@/components/TodayInTheSky'), { ssr:
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
 const CameraSignupNudge = dynamic(() => import('@/components/CameraSignupNudge'));
 const EmailCaptureCard = dynamic(() => import('@/components/EmailCaptureCard'));
+const TimedTrialPopup = dynamic(() => import('@/components/TimedTrialPopup'));
+const ShareAwayPrompt = dynamic(() => import('@/components/ShareAwayPrompt'));
 const AccountHudControl = dynamic(() => import('@/components/AccountHudControl'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
@@ -261,6 +277,21 @@ export default function Dashboard() {
 
   const [activeCamera, setActiveCamera] = useState<any>(null);
   const [showCameraSignup, setShowCameraSignup] = useState(false);
+  /* Wave 2 ladder (BRIEF F4, lib/camera-ladder): which rung's prompt
+     the wall is showing; the camera the wall interrupted (re-opened
+     automatically when the email step unlocks its +5); and who the
+     session says this viewer is — the ladder's account rung is a
+     session fact, kept fresh by the same heal cadence as the
+     entitlement below. The email-unlock flag is deliberately NOT
+     state: the gate reads the ladder record fresh at decision time,
+     so an unlock that lands mid-interaction is never stale. */
+  const [gateRung, setGateRung] = useState<LadderPrompt>('pro');
+  const pendingGateCameraRef = useRef<any>(null);
+  const [sessionIdentity, setSessionIdentity] = useState<SessionIdentity | null>(null);
+  /* F11: the share-link loop-in card, and whether the timed trial
+     popup is currently up (it reports back so prompts never stack). */
+  const [showSharePrompt, setShowSharePrompt] = useState(false);
+  const [timedPopupVisible, setTimedPopupVisible] = useState(false);
   /** Set on this session's first successful camera open (the gated,
    *  counted path in handleEntityClick) — mounts the once-per-device
    *  email capture card (lib/newsletter/capture). Deliberately NOT
@@ -768,6 +799,9 @@ export default function Dashboard() {
     lastEntitlementCheckAt.current = Date.now();
     const check = await checkPremiumEntitlement();
     setIsPremiumUser((cur) => applyAmbientEntitlement(cur, check));
+    // The ladder's account rung reads the same session — keep the
+    // identity fresh on the same heal cadence.
+    void readSessionIdentity().then(setSessionIdentity);
   }, []);
   useEffect(() => { void refreshPremium(); }, [refreshPremium]);
   useEffect(() => {
@@ -824,10 +858,12 @@ export default function Dashboard() {
           return;
         }
         trackAnalyticsEvent('upgrade_gate_shown');
+        setGateRung('pro');
         setShowCameraSignup(true);
       })
       .catch(() => {
         trackAnalyticsEvent('upgrade_gate_shown');
+        setGateRung('pro');
         setShowCameraSignup(true);
       });
   }, []);
@@ -1125,18 +1161,40 @@ export default function Dashboard() {
   // Entity click handler (hoisted from JSX to comply with Rules of Hooks - Fixes #113)
   const handleEntityClick = useCallback(async (entity: any) => {
     if (entity?.type === 'cctv') {
-      // Soft signup gate: active Pro subscribers get unlimited cameras.
-      // Everyone else gets FREE_CAMERA_CLICKS free opens (lib/cameraGate),
-      // then the signup nudge, which states the limit plainly.
+      // Soft signup gate, Wave 2 ladder edition (BRIEF F4): active Pro
+      // subscribers get unlimited cameras. Everyone else climbs the
+      // ladder in lib/camera-ladder — 5 free opens, the email step
+      // unlocks 10, a free account 15 — and the nudge at each wall
+      // offers the next rung, never a jump straight to Pro.
       if (!isPremiumUser) {
-        if (!cameraClickAllowed()) {
-          // Blocked — but heal before walling: the mount fetch may have
-          // raced the session and stranded a Pro user as "free". ONE
-          // fresh check at the moment of decision; if it now says Pro,
-          // the camera opens with no wall, no click consumed, no bonus
-          // spent. Still free → the paths below, unchanged.
+        // Wave 2 ladder (BRIEF F4, lib/camera-ladder): the flat base
+        // limit is rung 1 now — this visitor's allowance depends on
+        // the email unlock (this device) and the free account (the
+        // session). The prompt, when one is due, is always the NEXT
+        // rung — never a jump straight to Pro.
+        let signedIn =
+          sessionIdentity?.state === 'free' || sessionIdentity?.state === 'premium';
+        const emailUnlocked =
+          readLadderRecord(browserLadderStorage())?.emailUnlockedAt != null;
+        const prompt = ladderPromptFor({
+          opens: getCameraClickCount(),
+          signedIn,
+          emailUnlocked,
+        });
+        if (prompt !== null) {
+          // Blocked at this rung — but heal before walling: the mount
+          // fetch may have raced the session and stranded a Pro user
+          // as "free". ONE fresh check at the moment of decision; if
+          // it now says Pro, the camera opens with no wall, no click
+          // consumed, no bonus spent. An unknown identity heals the
+          // same way before it may decide which rung's prompt shows.
           lastEntitlementCheckAt.current = Date.now();
           const check = await checkPremiumEntitlement();
+          if (check !== 'active' && (sessionIdentity === null || sessionIdentity.state === 'unknown')) {
+            const fresh = await readSessionIdentity();
+            setSessionIdentity(fresh);
+            signedIn = fresh.state === 'free' || fresh.state === 'premium';
+          }
           const action = blockedCameraAction(check, cameraBonus !== null && cameraBonus > 0);
           if (action === 'open') {
             setIsPremiumUser(true);
@@ -1145,15 +1203,24 @@ export default function Dashboard() {
             setCameraEverOpened(true);
             return;
           }
-          // Past this device's free base. A signed-in user with bonus
-          // opens banked (invite-a-friend, lib/camera-bonus) gets one
-          // spent server-side instead — openWithCameraBonus falls back
-          // to this same nudge when the server says the bonus is gone.
+          // Past this visitor's allowance. A signed-in user with
+          // bonus opens banked (invite-a-friend, lib/camera-bonus)
+          // gets one spent server-side instead — openWithCameraBonus
+          // falls back to the Pro-rung wall when the server says the
+          // bonus is gone.
           if (action === 'bonus') {
             openWithCameraBonus(entity);
             return;
           }
-          trackAnalyticsEvent('upgrade_gate_shown');
+          // Recompute with the healed identity, so a visitor who just
+          // signed in meets the prompt for the rung they actually
+          // hold. The interrupted camera is remembered: an email
+          // unlock re-opens it (see handleLadderEmailUnlocked).
+          const rung =
+            ladderPromptFor({ opens: getCameraClickCount(), signedIn, emailUnlocked }) ?? prompt;
+          pendingGateCameraRef.current = entity;
+          setGateRung(rung);
+          if (rung === 'pro') trackAnalyticsEvent('upgrade_gate_shown');
           setShowCameraSignup(true);
           return;
         }
@@ -1169,7 +1236,20 @@ export default function Dashboard() {
       setLiveFeedName(entity.name);
       setLiveFeedEmbedAllowed(entity.embed_allowed !== false);
     }
-  }, [isPremiumUser, cameraBonus, openWithCameraBonus]);
+  }, [isPremiumUser, cameraBonus, openWithCameraBonus, sessionIdentity]);
+
+  /* Ladder email step succeeded: the +5 unlock applies instantly
+     (the device-local record — written BEFORE the retry, and the
+     gate reads that record fresh, so the retry cannot see a stale
+     flag), the wall closes, and the camera it interrupted opens
+     right away — the ladder is never a dead end. */
+  const handleLadderEmailUnlocked = useCallback(() => {
+    markEmailUnlocked(browserLadderStorage());
+    setShowCameraSignup(false);
+    const pending = pendingGateCameraRef.current;
+    pendingGateCameraRef.current = null;
+    if (pending) void handleEntityClick(pending);
+  }, [handleEntityClick]);
 
   // ── Camera deep link (?camera=<id>, lib/camera-share.ts) ──
   // A shared link resolves against the catalogue as it loads — the world
@@ -1217,6 +1297,43 @@ export default function Dashboard() {
       sharedCameraSettled.current = true;
     }
   }, [sharedCameraId, dataVersion, camerasLoading, handleEntityClick]);
+
+  /* F11 share-link loop-in: when the camera a shared link opened is
+     left behind — viewer closed, or a different camera opened — the
+     visitor has started exploring on their own, and the ONE soft
+     signup prompt may show (lib/camera-ladder's shareAwayShouldShow:
+     once per session, anonymous only, never stacked, never on an
+     excluded surface). The shared view itself is never delayed or
+     interrupted: this can only fire after it was watched and left. */
+  const prevActiveCameraRef = useRef<any>(null);
+  useEffect(() => {
+    const prev = prevActiveCameraRef.current;
+    prevActiveCameraRef.current = activeCamera;
+    if (!sharedCameraId || !prev) return;
+    if (String(prev.id) !== sharedCameraId) return;
+    if (String(activeCamera?.id ?? '') === sharedCameraId) return;
+    const session = browserSessionStorage();
+    const otherPromptOpen = showCameraSignup || timedPopupVisible;
+    const should = shareAwayShouldShow({
+      arrivedViaShare: true,
+      sharedCameraOpened: true,
+      navigatedAway: true,
+      shownThisSession: readSessionFlag(session, SHARE_PROMPT_SESSION_KEY),
+      otherPromptOpen,
+      pathname: window.location.pathname,
+      signedIn: sessionIdentity?.state === 'free' || sessionIdentity?.state === 'premium',
+      premium: isPremiumUser,
+    });
+    if (should) {
+      writeSessionFlag(session, SHARE_PROMPT_SESSION_KEY);
+      trackAnalyticsEvent('share_link_prompt_shown');
+      setShowSharePrompt(true);
+    } else if (otherPromptOpen) {
+      // A stronger prompt was already up at the away-moment — the
+      // visitor was prompted; don't bank a second one for later.
+      writeSessionFlag(session, SHARE_PROMPT_SESSION_KEY);
+    }
+  }, [activeCamera, sharedCameraId, showCameraSignup, timedPopupVisible, sessionIdentity, isPremiumUser]);
 
   // ── First-camera assist (onboarding "watch a live camera") ──
   // Onboarding's welcome panel and tour camera step dispatch
@@ -2880,7 +2997,23 @@ export default function Dashboard() {
           besideOi={showOi && !oiTheater}
         />
       )}
-      {showCameraSignup && <CameraSignupNudge onClose={() => setShowCameraSignup(false)} />}
+      {showCameraSignup && (
+        <CameraSignupNudge
+          onClose={() => setShowCameraSignup(false)}
+          rung={gateRung}
+          opensUsed={getCameraClickCount()}
+          onEmailUnlocked={handleLadderEmailUnlocked}
+        />
+      )}
+      {showSharePrompt && <ShareAwayPrompt onClose={() => setShowSharePrompt(false)} />}
+      {/* F4 timed trial popup: self-gating on lib/camera-ladder's
+          discipline; suppressed while the wall, the loop-in card or
+          the camera viewer is up, so prompts never stack. */}
+      <TimedTrialPopup
+        surface="globe"
+        suppressed={showCameraSignup || showSharePrompt || activeCamera !== null}
+        onVisibilityChange={setTimedPopupVisible}
+      />
       {/* Email capture, once per device, mounted by the session's first
           camera open; the card self-gates on lib/newsletter/capture. */}
       {cameraEverOpened && <EmailCaptureCard placement="camera" />}

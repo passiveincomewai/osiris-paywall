@@ -5,6 +5,11 @@
 // reopening the same camera counts again. The nudge at the wall states the
 // limit plainly; every other surface that quotes the allowance reads
 // FREE_CAMERA_CLICKS from here so the number can never drift.
+//
+// Wave 2 (BRIEF F4): this base allowance is now rung 1 of the ladder in
+// lib/camera-ladder — email unlock raises the device allowance to 10, a
+// free account to 15. The count and its storage key are unchanged; the
+// ladder decides which allowance a given visitor is measured against.
 "use client";
 
 const STORAGE_KEY = "worldeye.cameraClicks";
@@ -46,19 +51,29 @@ export function recordCameraClick(): number {
 
 /**
  * Whether an open at the given device count must draw on the server-side
- * invite bonus (lib/camera-bonus) instead of the free base allowance.
- * The base is per-device (above); the bonus is per-account and spent
- * only through POST /api/cameras/bonus/consume — the server decides.
+ * invite bonus (lib/camera-bonus) instead of the free allowance. The
+ * allowance defaults to the anonymous base; the Wave 2 ladder
+ * (lib/camera-ladder) passes the visitor's rung allowance, so bonus
+ * opens are spent only once the rung they actually hold is used up.
+ * The bonus itself is per-account and spent only through
+ * POST /api/cameras/bonus/consume — the server decides.
  */
-export function openDrawsOnBonus(deviceClicks: number): boolean {
-  return deviceClicks >= FREE_CAMERA_CLICKS;
+export function openDrawsOnBonus(
+  deviceClicks: number,
+  allowance: number = FREE_CAMERA_CLICKS,
+): boolean {
+  return deviceClicks >= allowance;
 }
 
 /**
- * Opens still available to a signed-in user: whatever is left of this
- * device's free base, plus their unspent server bonus. Signed-out users
- * have no bonus — for them this is just the base remainder.
+ * Opens still available to a signed-in user: whatever is left of their
+ * allowance, plus their unspent server bonus. Signed-out users have no
+ * bonus — for them this is just the allowance remainder.
  */
-export function opensRemaining(deviceClicks: number, bonusBalance: number): number {
-  return Math.max(0, FREE_CAMERA_CLICKS - deviceClicks) + Math.max(0, bonusBalance);
+export function opensRemaining(
+  deviceClicks: number,
+  bonusBalance: number,
+  allowance: number = FREE_CAMERA_CLICKS,
+): number {
+  return Math.max(0, allowance - deviceClicks) + Math.max(0, bonusBalance);
 }

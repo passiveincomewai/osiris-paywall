@@ -58,6 +58,9 @@ export const CINEMATIC_HERO_ENABLED: boolean = heroEnvOverride
 
 const AD_MEDIUMS = ['cpc', 'ppc', 'paid', 'paid-social', 'paidsocial', 'ad', 'ads', 'display', 'social-paid'];
 
+/** Instagram arrivals, identified by UTM source ONLY (Wave 2 F5). */
+const INSTAGRAM_SOURCES = ['ig', 'instagram'];
+
 /**
  * Should this visit skip the hero and land straight on the globe?
  *
@@ -65,8 +68,12 @@ const AD_MEDIUMS = ['cpc', 'ppc', 'paid', 'paid-social', 'paidsocial', 'ad', 'ad
  * long-standing skips still apply, keyed ONLY off URL params: paid-ad
  * mediums and the explicit skip flags (a referrer can't distinguish
  * paid from organic Instagram — link-in-bio and shares carry the same
- * one — so organic visitors keep the hero), and camera deep links,
- * whose viewer must not sit buried under the stage.
+ * one), camera deep links, whose viewer must not sit buried under the
+ * stage — and, since Wave 2 F5 (owner order 2026-10-22), Instagram
+ * arrivals tagged utm_source=ig / instagram: those ARE distinguishable
+ * by their tag, so they land on the product fast and the 8.5MB hero
+ * video is never loaded for them. Untagged organic visits (no UTM at
+ * all) still keep the hero.
  */
 export function heroSkippedForSearch(
   search: string,
@@ -76,8 +83,10 @@ export function heroSkippedForSearch(
   try {
     const q = new URLSearchParams(search);
     const medium = (q.get('utm_medium') || '').toLowerCase().trim();
+    const source = (q.get('utm_source') || '').toLowerCase().trim();
     return (
       AD_MEDIUMS.includes(medium) ||
+      INSTAGRAM_SOURCES.includes(source) ||
       q.get('skip_hero') === '1' ||
       q.get('ad') === '1' ||
       Boolean(q.get('camera'))
