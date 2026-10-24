@@ -1,0 +1,382 @@
+{
+  "andermatt-sedrun": {
+    "domain": "andermatt.swiss",
+    "src": "/ski-logos/andermatt-sedrun.png"
+  },
+  "are": {
+    "domain": "are.se",
+    "src": "/ski-logos/are.png"
+  },
+  "aspen": {
+    "domain": "aspensnowmass.com",
+    "src": "/ski-logos/aspen.png"
+  },
+  "blue-mountain-ontario": {
+    "domain": "bluemountain.ca",
+    "src": "/ski-logos/blue-mountain-ontario.png"
+  },
+  "bogus-basin": {
+    "domain": "bogusbasin.org",
+    "src": "/ski-logos/bogus-basin.png"
+  },
+  "breckenridge": {
+    "domain": "breckenridge.com",
+    "src": "/ski-logos/breckenridge.png"
+  },
+  "brian-head": {
+    "domain": "brianhead.com",
+    "src": "/ski-logos/brian-head.png"
+  },
+  "brighton": {
+    "domain": "brightonresort.com",
+    "src": "/ski-logos/brighton.png"
+  },
+  "brundage-mountain": {
+    "domain": "brundage.com",
+    "src": "/ski-logos/brundage-mountain.png"
+  },
+  "cannon-mountain": {
+    "domain": "cannonmt.com",
+    "src": "/ski-logos/cannon-mountain.png"
+  },
+  "cerler": {
+    "domain": "cerler.com",
+    "src": "/ski-logos/cerler.png"
+  },
+  "copper-mountain": {
+    "domain": "coppercolorado.com",
+    "src": "/ski-logos/copper-mountain.png"
+  },
+  "courmayeur": {
+    "domain": "courmayeur-montblanc.com",
+    "src": "/ski-logos/courmayeur.png"
+  },
+  "cypress-mountain": {
+    "domain": "cypressmountain.com",
+    "src": "/ski-logos/cypress-mountain.png"
+  },
+  "diamond-peak": {
+    "domain": "diamondpeak.com",
+    "src": "/ski-logos/diamond-peak.png"
+  },
+  "eldora": {
+    "domain": "eldora.com",
+    "src": "/ski-logos/eldora.png"
+  },
+  "formigal": {
+    "domain": "formigal-panticosa.com",
+    "src": "/ski-logos/formigal.png"
+  },
+  "furano": {
+    "domain": "furano-kankou.com",
+    "src": "/ski-logos/furano.png"
+  },
+  "geilo": {
+    "domain": "skigeilo.no",
+    "src": "/ski-logos/geilo.png"
+  },
+  "granite-peak": {
+    "domain": "skigranitepeak.com",
+    "src": "/ski-logos/granite-peak.png"
+  },
+  "grindelwald-wengen": {
+    "domain": "grindelwald.swiss",
+    "src": "/ski-logos/grindelwald-wengen.png"
+  },
+  "hafjell": {
+    "domain": "hafjell.no",
+    "src": "/ski-logos/hafjell.png"
+  },
+  "hakuba": {
+    "domain": "hakubavalley.com",
+    "src": "/ski-logos/hakuba.png"
+  },
+  "heavenly": {
+    "domain": "skiheavenly.com",
+    "src": "/ski-logos/heavenly.png"
+  },
+  "hemsedal": {
+    "domain": "hemsedal.com",
+    "src": "/ski-logos/hemsedal.png"
+  },
+  "hoodoo": {
+    "domain": "hoodoo.com",
+    "src": "/ski-logos/hoodoo.png"
+  },
+  "ischgl": {
+    "domain": "ischgl.com",
+    "src": "/ski-logos/ischgl.png"
+  },
+  "jackson-hole": {
+    "domain": "jacksonhole.com",
+    "src": "/ski-logos/jackson-hole.png"
+  },
+  "jay-peak": {
+    "domain": "jaypeakresort.com",
+    "src": "/ski-logos/jay-peak.png"
+  },
+  "june-mountain": {
+    "domain": "junemountain.com",
+    "src": "/ski-logos/june-mountain.png"
+  },
+  "keystone": {
+    "domain": "keystoneresort.com",
+    "src": "/ski-logos/keystone.png"
+  },
+  "kicking-horse": {
+    "domain": "kickinghorseresort.com",
+    "src": "/ski-logos/kicking-horse.png"
+  },
+  "killington": {
+    "domain": "killington.com",
+    "src": "/ski-logos/killington.png"
+  },
+  "kranjska-gora": {
+    "domain": "kranjska-gora.si",
+    "src": "/ski-logos/kranjska-gora.png"
+  },
+  "kvitfjell": {
+    "domain": "kvitfjell.no",
+    "src": "/ski-logos/kvitfjell.png"
+  },
+  "lake-louise": {
+    "domain": "skilouise.com",
+    "src": "/ski-logos/lake-louise.png"
+  },
+  "le-massif": {
+    "domain": "lemassif.com",
+    "src": "/ski-logos/le-massif.png"
+  },
+  "lech-am-arlberg": {
+    "domain": "lechzuers.com",
+    "src": "/ski-logos/lech-am-arlberg.png"
+  },
+  "levi": {
+    "domain": "levi.fi",
+    "src": "/ski-logos/levi.png"
+  },
+  "loon-mountain": {
+    "domain": "loonmtn.com",
+    "src": "/ski-logos/loon-mountain.png"
+  },
+  "mammoth-mountain": {
+    "domain": "mammothmountain.com",
+    "src": "/ski-logos/mammoth-mountain.png"
+  },
+  "mayrhofen": {
+    "domain": "mayrhofen.at",
+    "src": "/ski-logos/mayrhofen.png"
+  },
+  "monarch-mountain": {
+    "domain": "skimonarch.com",
+    "src": "/ski-logos/monarch-mountain.png"
+  },
+  "mont-sainte-anne": {
+    "domain": "mont-sainte-anne.com",
+    "src": "/ski-logos/mont-sainte-anne.png"
+  },
+  "mt-bachelor": {
+    "domain": "mtbachelor.com",
+    "src": "/ski-logos/mt-bachelor.png"
+  },
+  "myoko-kogen": {
+    "domain": "myoko.jp",
+    "src": "/ski-logos/myoko-kogen.png"
+  },
+  "niseko": {
+    "domain": "niseko.ne.jp",
+    "src": "/ski-logos/niseko.png"
+  },
+  "northstar-california": {
+    "domain": "northstarcalifornia.com",
+    "src": "/ski-logos/northstar-california.png"
+  },
+  "nozawa-onsen": {
+    "domain": "nozawaski.com",
+    "src": "/ski-logos/nozawa-onsen.png"
+  },
+  "oberstdorf": {
+    "domain": "oberstdorf.de",
+    "src": "/ski-logos/oberstdorf.png"
+  },
+  "obertauern": {
+    "domain": "obertauern.com",
+    "src": "/ski-logos/obertauern.png"
+  },
+  "okemo": {
+    "domain": "okemo.com",
+    "src": "/ski-logos/okemo.png"
+  },
+  "oppdal": {
+    "domain": "oppdal.com",
+    "src": "/ski-logos/oppdal.png"
+  },
+  "palisades-tahoe": {
+    "domain": "palisadestahoe.com",
+    "src": "/ski-logos/palisades-tahoe.png"
+  },
+  "panorama-mountain": {
+    "domain": "panoramaresort.com",
+    "src": "/ski-logos/panorama-mountain.png"
+  },
+  "poiana-brasov": {
+    "domain": "poianabrasov.com",
+    "src": "/ski-logos/poiana-brasov.png"
+  },
+  "powder-mountain": {
+    "domain": "powdermountain.com",
+    "src": "/ski-logos/powder-mountain.png"
+  },
+  "pyha": {
+    "domain": "pyha.fi",
+    "src": "/ski-logos/pyha.png"
+  },
+  "queenstown": {
+    "domain": "queenstownnz.co.nz",
+    "src": "/ski-logos/queenstown.png"
+  },
+  "red-lodge-mountain": {
+    "domain": "redlodgemountain.com",
+    "src": "/ski-logos/red-lodge-mountain.png"
+  },
+  "red-mountain": {
+    "domain": "redresort.com",
+    "src": "/ski-logos/red-mountain.png"
+  },
+  "revelstoke": {
+    "domain": "revelstokemountainresort.com",
+    "src": "/ski-logos/revelstoke.png"
+  },
+  "ruka": {
+    "domain": "ruka.fi",
+    "src": "/ski-logos/ruka.png"
+  },
+  "saalbach-hinterglemm": {
+    "domain": "saalbach.com",
+    "src": "/ski-logos/saalbach-hinterglemm.png"
+  },
+  "saddleback": {
+    "domain": "saddlebackmaine.com",
+    "src": "/ski-logos/saddleback.png"
+  },
+  "salen": {
+    "domain": "salen.se",
+    "src": "/ski-logos/salen.png"
+  },
+  "schweitzer": {
+    "domain": "schweitzer.com",
+    "src": "/ski-logos/schweitzer.png"
+  },
+  "shymbulak": {
+    "domain": "shymbulak.com",
+    "src": "/ski-logos/shymbulak.png"
+  },
+  "sierra-nevada": {
+    "domain": "sierranevada.es",
+    "src": "/ski-logos/sierra-nevada.png"
+  },
+  "silverstar": {
+    "domain": "skisilverstar.com",
+    "src": "/ski-logos/silverstar.png"
+  },
+  "ski-santa-fe": {
+    "domain": "skisantafe.com",
+    "src": "/ski-logos/ski-santa-fe.png"
+  },
+  "snowbasin": {
+    "domain": "snowbasin.com",
+    "src": "/ski-logos/snowbasin.png"
+  },
+  "snowbird": {
+    "domain": "snowbird.com",
+    "src": "/ski-logos/snowbird.png"
+  },
+  "snowmass": {
+    "domain": "aspensnowmass.com",
+    "src": "/ski-logos/snowmass.png"
+  },
+  "solden": {
+    "domain": "soelden.com",
+    "src": "/ski-logos/solden.png"
+  },
+  "st-anton-am-arlberg": {
+    "domain": "stantonamarlberg.com",
+    "src": "/ski-logos/st-anton-am-arlberg.png"
+  },
+  "st-moritz": {
+    "domain": "stmoritz.com",
+    "src": "/ski-logos/st-moritz.png"
+  },
+  "steamboat": {
+    "domain": "steamboat.com",
+    "src": "/ski-logos/steamboat.png"
+  },
+  "stoneham": {
+    "domain": "ski-stoneham.com",
+    "src": "/ski-logos/stoneham.png"
+  },
+  "stowe": {
+    "domain": "stowe.com",
+    "src": "/ski-logos/stowe.png"
+  },
+  "sugar-bowl": {
+    "domain": "sugarbowl.com",
+    "src": "/ski-logos/sugar-bowl.svg"
+  },
+  "sugarbush": {
+    "domain": "sugarbush.com",
+    "src": "/ski-logos/sugarbush.png"
+  },
+  "sugarloaf": {
+    "domain": "sugarloaf.com",
+    "src": "/ski-logos/sugarloaf.png"
+  },
+  "sundance": {
+    "domain": "sundanceresort.com",
+    "src": "/ski-logos/sundance.png"
+  },
+  "sunday-river": {
+    "domain": "sundayriver.com",
+    "src": "/ski-logos/sunday-river.png"
+  },
+  "sunshine-village": {
+    "domain": "skibanff.com",
+    "src": "/ski-logos/sunshine-village.png"
+  },
+  "the-remarkables": {
+    "domain": "theremarkables.co.nz",
+    "src": "/ski-logos/the-remarkables.png"
+  },
+  "voss": {
+    "domain": "vossresort.no",
+    "src": "/ski-logos/voss.png"
+  },
+  "vuokatti": {
+    "domain": "vuokatti.fi",
+    "src": "/ski-logos/vuokatti.png"
+  },
+  "whistler-blackcomb": {
+    "domain": "whistlerblackcomb.com",
+    "src": "/ski-logos/whistler-blackcomb.png"
+  },
+  "white-pass": {
+    "domain": "skiwhitepass.com",
+    "src": "/ski-logos/white-pass.png"
+  },
+  "winter-park": {
+    "domain": "winterparkresort.com",
+    "src": "/ski-logos/winter-park.png"
+  },
+  "wolf-creek": {
+    "domain": "wolfcreekski.com",
+    "src": "/ski-logos/wolf-creek.png"
+  },
+  "yllas": {
+    "domain": "yllas.fi",
+    "src": "/ski-logos/yllas.png"
+  },
+  "zermatt": {
+    "domain": "zermatt.ch",
+    "src": "/ski-logos/zermatt.png"
+  }
+}

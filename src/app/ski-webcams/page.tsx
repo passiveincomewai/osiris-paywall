@@ -15,16 +15,23 @@ import {
   StatRow,
 } from "@/components/directory-page";
 import SkiCameraGrid from "@/components/SkiCameraGrid";
+import SkiResortDirectory from "@/components/SkiResortDirectory";
 import { plural } from "@/lib/country-page-content";
 import {
   loadCountryChunk,
   selectResortCameras,
   SKI_RESORTS,
-  type SkiResort,
 } from "@/lib/ski-resorts";
+import type { SkiResortLogoMap } from "@/lib/ski-directory";
+import skiLogosData from "@/data/ski-logos.json";
 import type { CountryCamera } from "@/lib/country-cameras";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { voiceFaqs } from "@/lib/voice-questions";
+
+/* Verified resort logos (src/data/ski-logos.json): slug → the icon
+   fetched from the resort's own official site. Resorts without an
+   entry render a monogram tile instead — never a guessed logo. */
+const SKI_LOGOS = skiLogosData as SkiResortLogoMap;
 
 const VOICE_QA_IDS = [
   "ski-is-it-snowing-at-the-resort",
@@ -163,16 +170,6 @@ async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
   return byResort;
 }
 
-function resortsByCountry(): Array<{ country: string; resorts: SkiResort[] }> {
-  const groups = new Map<string, SkiResort[]>();
-  for (const r of SKI_RESORTS) {
-    const list = groups.get(r.country) ?? [];
-    list.push(r);
-    groups.set(r.country, list);
-  }
-  return [...groups.entries()].map(([country, resorts]) => ({ country, resorts }));
-}
-
 export default async function SkiWebcamsPage() {
   const samples = await loadSamples();
   const totalCameras = SKI_RESORTS.reduce((n, r) => n + r.resortCameraCount + r.nearbyCameraCount, 0);
@@ -206,36 +203,16 @@ export default async function SkiWebcamsPage() {
       <Intro paragraphs={INTRO} />
 
       {/* Resort directory — every resort the catalogue covers, grouped
-          by country, with its counted cameras. */}
+          by country, with its counted cameras. The directory component
+          renders the full list server-side and adds search, country
+          filters and sorting on the client. */}
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-2">Ski resorts with live cameras</h2>
         <p className="text-sm text-white/50 mb-5 max-w-3xl">
           Each resort page carries its own live feeds, the traffic cameras on the roads around it,
           official weather alerts where WorldEye has them, and the route tool for your drive.
         </p>
-        {resortsByCountry().map(({ country, resorts }) => (
-          <div key={country} className="mb-8">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white/60 mb-3">{country}</h3>
-            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {resorts.map(r => (
-                <li key={r.slug}>
-                  <Link
-                    href={`/ski-webcams/${r.slug}`}
-                    className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-[#D4AF37]/50 hover:bg-white/[0.05] transition"
-                  >
-                    <span className="font-semibold text-sm">{r.name}</span>
-                    <span className="block text-xs text-white/45 mt-1">
-                      {r.town}, {r.region}
-                    </span>
-                    <span className="block text-xs text-[#D4AF37] mt-1.5">
-                      {plural(r.resortCameraCount + r.nearbyCameraCount, "live camera")}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <SkiResortDirectory resorts={SKI_RESORTS} logos={SKI_LOGOS} />
       </section>
 
       {/* Live feeds, grouped by resort — the country pages' feed cards,
