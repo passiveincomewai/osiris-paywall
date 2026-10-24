@@ -109,6 +109,7 @@ describe("POST /api/checkout — hosted mode (unchanged)", () => {
       const p = createdParams();
       expect(p.subscription_data.trial_period_days).toBe(days);
       expect(p.payment_method_collection).toBe("always");
+      expect(p.billing_address_collection).toBe("required");
     }
   });
 
@@ -118,6 +119,7 @@ describe("POST /api/checkout — hosted mode (unchanged)", () => {
     expect(p.line_items).toEqual([{ price: "price_enterprise", quantity: 1 }]);
     expect(p.subscription_data.trial_period_days).toBeUndefined();
     expect(p.payment_method_collection).toBeUndefined();
+    expect(p.billing_address_collection).toBe("required");
   });
 });
 
@@ -153,6 +155,7 @@ describe("POST /api/checkout — embedded mode", () => {
       expect(p.ui_mode).toBe("embedded");
       expect(p.subscription_data.trial_period_days).toBe(days);
       expect(p.payment_method_collection).toBe("always");
+      expect(p.billing_address_collection).toBe("required");
     }
   });
 
@@ -162,6 +165,7 @@ describe("POST /api/checkout — embedded mode", () => {
     expect(p.ui_mode).toBe("embedded");
     expect(p.subscription_data.trial_period_days).toBeUndefined();
     expect(p.payment_method_collection).toBeUndefined();
+    expect(p.billing_address_collection).toBe("required");
   });
 
   it("sends signed-in members to the app success target, not /welcome", async () => {

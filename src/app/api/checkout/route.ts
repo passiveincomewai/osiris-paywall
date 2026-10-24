@@ -143,6 +143,12 @@ export async function POST(req: Request) {
     // Trials must collect a card up front; Stripe charges it when the trial ends.
     ...(trialDays > 0 ? { payment_method_collection: "always" as const } : {}),
     allow_promotion_codes: true,
+    // Always collect the full billing address: it rides onto the saved
+    // payment method, and Stripe Radar scores the trial-ending charge with
+    // it. Without this, saved cards carry no postal signal at all
+    // (address_postal_code_check fails/absent) and legitimate conversions
+    // get blocked as highest-risk (first observed 2026-10-23).
+    billing_address_collection: "required",
     ...(embedded
       ? {
           ui_mode: "embedded" as const,
