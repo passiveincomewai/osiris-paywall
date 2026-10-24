@@ -22,13 +22,23 @@ import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { TRIAL_CTA_GUARANTEE } from "./TrialCtaSection";
 
-export default function CancelReassurance({ compact = false }: { compact?: boolean }) {
+export default function CancelReassurance({
+  compact = false,
+  guarantee = true,
+}: {
+  compact?: boolean;
+  /** Whether the money-back guarantee sentence may be appended. The
+   *  guarantee does not cover the enterprise plan — the same rule
+   *  CheckoutGuaranteeNote pins (CheckoutPlanStrip) — so hosts
+   *  rendering for a plan without a trial pass guarantee={false}. */
+  guarantee?: boolean;
+}) {
   if (compact) {
     return (
       <p className="text-[11px] leading-relaxed text-white/45">
         Cancel anytime from Settings → Subscription — one click opens Stripe&apos;s secure billing
         portal, cancellation takes effect at the end of the current period, and cancelling during a
-        free trial means you are never charged. {TRIAL_CTA_GUARANTEE}
+        free trial means you are never charged.{guarantee ? <> {TRIAL_CTA_GUARANTEE}</> : null}
       </p>
     );
   }

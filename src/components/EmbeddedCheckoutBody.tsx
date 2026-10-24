@@ -124,7 +124,7 @@ export default function EmbeddedCheckoutBody({
       </div>
 
       <CheckoutGuaranteeNote summary={summary} />
-      <CancelReassurance compact />
+      <CancelReassurance compact guarantee={Boolean(summary?.trialLabel)} />
       <div className="mt-3 text-center">
         <HostedCheckoutLink plan={plan} />
       </div>
