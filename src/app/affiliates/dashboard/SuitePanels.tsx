@@ -294,6 +294,26 @@ export function NotificationsPanel({ demoItems }: { demoItems?: NotificationItem
     void load();
   };
 
+  const [marking, setMarking] = useState<ReadonlySet<string>>(new Set());
+
+  const markOne = async (id: string) => {
+    if (demo || marking.has(id)) return;
+    setMarking((prev) => new Set(prev).add(id));
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)));
+    setUnread((u) => Math.max(0, u - 1));
+    try {
+      const { ok } = await api("/api/affiliate/notifications", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ids: [id] }),
+      });
+      if (!ok) void load();
+    } catch {
+      void load();
+    } finally {
+      setMarking((prev) => { const next = new Set(prev); next.delete(id); return next; });
+    }
+  };
+
   return (
     <div className={card}>
       <div className="flex items-center justify-between gap-3">
@@ -311,8 +331,13 @@ export function NotificationsPanel({ demoItems }: { demoItems?: NotificationItem
               {items.map((n) => (
                 <div key={n.id} className={`rounded-xl border px-3 py-2.5 ${n.read ? "border-white/5" : "border-cyan-400/30 bg-cyan-400/[0.04]"}`}>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-bold text-white">{n.title}</span>
-                    <span className="text-[10px] font-mono text-slate-500">{new Date(n.createdAt).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-white min-w-0">{n.title}</span>
+                    <span className="flex items-center gap-2 shrink-0">
+                      {!n.read && !demo && (
+                        <button onClick={() => void markOne(n.id)} disabled={marking.has(n.id)} className={btnGhost + " !px-2 !py-0.5 !text-[10px] whitespace-nowrap disabled:opacity-50"}>Mark read</button>
+                      )}
+                      <span className="text-[10px] font-mono text-slate-500">{new Date(n.createdAt).toLocaleString()}</span>
+                    </span>
                   </div>
                   <div className="text-xs text-slate-400 mt-0.5">{n.body}</div>
                 </div>
