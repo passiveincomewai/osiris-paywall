@@ -10,6 +10,11 @@ import { db } from "@/lib/db";
 import { getSettings } from "./settings";
 
 export const REF_COOKIE = "we_ref";
+// Companion cookie carrying the ReferralClick row id recorded at /ref
+// time, so a later signup attribution can name the exact click it came
+// from (ReferralAttribution.clickId) — that's what makes per-tracking-
+// link signup counts real instead of estimated.
+export const REF_CLICK_COOKIE = "we_ref_click";
 export const REF_CODE_RE = /^[a-z0-9_-]{3,32}$/i;
 
 export function hashIp(ip: string): string {
@@ -19,6 +24,14 @@ export function hashIp(ip: string): string {
 export async function getRefCookie(): Promise<string | null> {
   try {
     return (await cookies()).get(REF_COOKIE)?.value ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getRefClickCookie(): Promise<string | null> {
+  try {
+    return (await cookies()).get(REF_CLICK_COOKIE)?.value ?? null;
   } catch {
     return null;
   }
@@ -39,8 +52,11 @@ export async function findAffiliateByCode(code: string) {
 /**
  * Core link: attribute a user to an affiliate profile id. Idempotent,
  * self-referral safe. Used by the Stripe webhook (checkout metadata).
+ * `clickId` (the ReferralClick row recorded at /ref time, carried by
+ * the we_ref_click cookie) is stored when it names a click belonging to
+ * this affiliate — it powers per-tracking-link signup stats.
  */
-export async function linkAttribution(referredUserId: string, affiliateProfileId: string) {
+export async function linkAttribution(referredUserId: string, affiliateProfileId: string, clickId?: string | null) {
   const existing = await db.referralAttribution.findUnique({ where: { referredUserId } });
   if (existing) return existing;
 
@@ -51,6 +67,15 @@ export async function linkAttribution(referredUserId: string, affiliateProfileId
   if (!affiliate || affiliate.status !== "active") return null;
   if (affiliate.userId === referredUserId) return null;
 
+  let verifiedClickId: string | null = null;
+  if (clickId) {
+    const click = await db.referralClick.findUnique({
+      where: { id: clickId },
+      select: { affiliateProfileId: true },
+    }).catch(() => null);
+    if (click?.affiliateProfileId === affiliate.id) verifiedClickId = clickId;
+  }
+
   const settings = await getSettings();
   const now = new Date();
   try {
@@ -58,6 +83,7 @@ export async function linkAttribution(referredUserId: string, affiliateProfileId
       data: {
         affiliateProfileId: affiliate.id,
         referredUserId,
+        clickId: verifiedClickId,
         expiresAt: new Date(now.getTime() + settings.attributionWindowDays * 86400_000),
       },
     });
@@ -88,7 +114,7 @@ export async function attributeUserToAffiliate(referredUserId: string, refCode?:
 
   const affiliate = await findAffiliateByCode(code);
   if (!affiliate) return null;
-  return linkAttribution(referredUserId, affiliate.id);
+  return linkAttribution(referredUserId, affiliate.id, await getRefClickCookie());
 }
 
 /** Valid (unexpired) attribution for a user, if any. */

@@ -24,7 +24,7 @@ import { BUILT_IN_PRESETS, type CinematicPreset } from '@/lib/cinematic/presets'
 import { ScenePlayer, type CameraDriver } from '@/lib/cinematic/player';
 import { deleteScene, loadSavedScenes, saveSavedScenes, upsertScene } from '@/lib/cinematic/storage';
 import { downloadBlob, globeRecordingSupport, startGlobeRecorder, type GlobeRecorder } from '@/lib/cinematic/recorder';
-import { fetchDirectorAccess, type DirectorAccess } from '@/lib/cinematic/access';
+import { fetchDirectorGate, type DirectorAccess } from '@/lib/cinematic/access';
 
 interface CinematicDirectorProps {
   mapRef: React.RefObject<MlMap | null>;
@@ -59,19 +59,26 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
   const [recordSecs, setRecordSecs] = useState(0);
   const [exportMsg, setExportMsg] = useState('');
 
-  // Affiliate gate — the director tools are a perk of the affiliate
-  // program. The decision comes from /api/affiliate/invite-status, the
+  // Affiliate gate + panel switch — the director tools are a perk of the
+  // affiliate program, AND they stay off until the affiliate turns them
+  // on in the affiliate dashboard (AffiliateProfile.directorEnabled,
+  // default OFF). Both facts come from /api/affiliate/invite-status, the
   // same session + AffiliateProfile lookup the affiliate dashboard uses
-  // (see lib/cinematic/access): an affiliate record existing = access.
-  // Until it resolves, and for everyone who hasn't joined, the tools stay
-  // locked — the panel shows the lock instead, and every action below
+  // (see lib/cinematic/access). Until the gate resolves, and for everyone
+  // who hasn't joined or hasn't switched the tools on, the tools stay
+  // disabled — the panel explains why instead, and every action below
   // re-checks canDirect before doing anything.
   const [access, setAccess] = useState<DirectorAccess>('unknown');
-  const canDirect = access === 'affiliate';
+  const [directorOn, setDirectorOn] = useState(false);
+  const canDirect = access === 'affiliate' && directorOn;
 
   useEffect(() => {
     let live = true;
-    void fetchDirectorAccess().then((a) => { if (live) setAccess(a); });
+    void fetchDirectorGate().then((g) => {
+      if (!live) return;
+      setAccess(g.access);
+      setDirectorOn(g.enabled);
+    });
     return () => { live = false; };
   }, []);
 
@@ -79,7 +86,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
     // A failed first check shouldn't strand an affiliate on the lock:
     // retry whenever the panel is opened while access is still unknown.
     if (!open && access === 'unknown') {
-      void fetchDirectorAccess().then(setAccess);
+      void fetchDirectorGate().then((g) => { setAccess(g.access); setDirectorOn(g.enabled); });
     }
     setOpen((o) => !o);
   };
@@ -439,19 +446,27 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
             </button>
           </div>
           <div className="flex items-center gap-1.5 text-[9px] font-mono tracking-[0.18em] text-white/35 uppercase mb-1">
-            <Lock className="w-3 h-3" /> Affiliates only
+            <Lock className="w-3 h-3" /> {access === 'affiliate' ? 'Switched off' : 'Affiliates only'}
           </div>
           <p className="text-[10px] leading-relaxed text-white/60">
             {access === 'signed-out'
-              ? 'The Cinematic Director is a free perk for members of the WorldEye affiliate program. Sign in and join the program — joining is free — and the scene builder, presets and globe recording unlock right here.'
+              ? 'The Cinematic Director is a free perk for members of the WorldEye affiliate program. Sign in and join the program — joining is free — then switch the Director on in your affiliate dashboard and the scene builder, presets and globe recording unlock right here.'
               : access === 'not-affiliate'
-                ? "The Cinematic Director is a free perk for members of the WorldEye affiliate program. You're signed in, but you haven't joined the program yet — joining is free and unlocks the scene builder, presets and globe recording."
-                : 'The Cinematic Director is a free perk for members of the WorldEye affiliate program. Checking your access…'}
+                ? "The Cinematic Director is a free perk for members of the WorldEye affiliate program. You're signed in, but you haven't joined the program yet — joining is free. Once you're in, switch the Director on in your affiliate dashboard to unlock the scene builder, presets and globe recording."
+                : access === 'affiliate'
+                  ? "You're an affiliate — but the Cinematic Director is switched off for your account. It stays off by default; turn it on any time from the Globe tools switch in your affiliate dashboard, then reopen this panel."
+                  : 'The Cinematic Director is a free perk for members of the WorldEye affiliate program. Checking your access…'}
           </p>
           <div className="mt-2.5 flex flex-col gap-1.5">
-            <Link href="/affiliates" className={`${btnCls} w-full flex items-center justify-center gap-1.5`}>
-              Join the affiliate program — free
-            </Link>
+            {access === 'affiliate' ? (
+              <Link href="/affiliates/dashboard" className={`${btnCls} w-full flex items-center justify-center gap-1.5`}>
+                Open the affiliate dashboard
+              </Link>
+            ) : (
+              <Link href="/affiliates" className={`${btnCls} w-full flex items-center justify-center gap-1.5`}>
+                Join the affiliate program — free
+              </Link>
+            )}
             {access === 'signed-out' && (
               <Link href="/signin" className={`${btnCls} w-full flex items-center justify-center gap-1.5`}>
                 Sign in
@@ -465,7 +480,7 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
         onClick={toggleOpen}
         aria-pressed={open}
         aria-label="Cinematic Director"
-        title={canDirect ? 'Cinematic Director — camera scenes & globe recording' : 'Cinematic Director — affiliates only'}
+        title={canDirect ? 'Cinematic Director — camera scenes & globe recording' : access === 'affiliate' ? 'Cinematic Director — switched off in your affiliate dashboard' : 'Cinematic Director — affiliates only'}
         className="pointer-events-auto flex items-center gap-2 px-2.5 py-2 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all opacity-85 hover:opacity-100"
       >
         <Clapperboard className="w-4 h-4" style={open || playing || recording ? { color: 'var(--gold-primary)' } : undefined} />

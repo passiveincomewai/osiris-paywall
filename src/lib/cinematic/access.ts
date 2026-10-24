@@ -36,3 +36,39 @@ export async function fetchDirectorAccess(
     return 'unknown';
   }
 }
+
+// ── The affiliate-panel Director switch ─────────────────────────────────
+// On top of membership, the tools honour a persisted per-affiliate
+// switch (AffiliateProfile.directorEnabled, toggled in the affiliate
+// dashboard). DEFAULT OFF: the invite-status endpoint reports
+// directorEnabled:false for everyone — signed-out visitors, non-members,
+// and affiliates who never flipped the switch — and only an explicit
+// `directorEnabled: true` on a joined profile turns the tools on.
+
+export function directorEnabledFromInviteStatus(status: number, body: unknown): boolean {
+  if (status !== 200 || !body || typeof body !== 'object') return false;
+  const b = body as { joined?: unknown; directorEnabled?: unknown };
+  return b.joined === true && b.directorEnabled === true;
+}
+
+export interface DirectorGate {
+  access: DirectorAccess;
+  /** True only for an affiliate whose panel switch is ON. */
+  enabled: boolean;
+}
+
+/** Resolve membership + the panel switch in one call. */
+export async function fetchDirectorGate(
+  fetchImpl: typeof fetch = fetch,
+): Promise<DirectorGate> {
+  try {
+    const res = await fetchImpl('/api/affiliate/invite-status', { cache: 'no-store' });
+    const body = res.status === 200 ? await res.json().catch(() => null) : null;
+    return {
+      access: directorAccessFromInviteStatus(res.status, body),
+      enabled: directorEnabledFromInviteStatus(res.status, body),
+    };
+  } catch {
+    return { access: 'unknown', enabled: false };
+  }
+}

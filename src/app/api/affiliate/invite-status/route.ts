@@ -19,11 +19,11 @@ export async function GET() {
 
   const profile = await db.affiliateProfile.findUnique({
     where: { userId },
-    select: { id: true, referralCode: true, customCode: true, status: true },
+    select: { id: true, referralCode: true, customCode: true, status: true, directorEnabled: true },
   });
 
   if (!profile) {
-    return NextResponse.json({ joined: false, invites: 0, goal: INVITE_GOAL });
+    return NextResponse.json({ joined: false, invites: 0, goal: INVITE_GOAL, directorEnabled: false });
   }
 
   const invites = await db.referralAttribution.count({
@@ -38,5 +38,8 @@ export async function GET() {
     goal: INVITE_GOAL,
     referralCode: code,
     referralLink: `${appUrl()}/ref/${code}`,
+    // Cinematic Director switch (affiliate panel): the globe's director
+    // tools stay off unless the affiliate turned them on. Default false.
+    directorEnabled: profile.status === "active" ? profile.directorEnabled : false,
   });
 }

@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   directorAccessFromInviteStatus,
+  directorEnabledFromInviteStatus,
   fetchDirectorAccess,
+  fetchDirectorGate,
   type DirectorAccess,
 } from './access';
 
@@ -35,6 +37,26 @@ describe('directorAccessFromInviteStatus', () => {
     expect(directorAccessFromInviteStatus(200, null)).toBe('unknown');
     expect(directorAccessFromInviteStatus(200, 'joined')).toBe('unknown');
     expect(directorAccessFromInviteStatus(0, null)).toBe('unknown');
+  });
+});
+
+describe('directorEnabledFromInviteStatus (the affiliate-panel switch, default OFF)', () => {
+  it('only joined + directorEnabled:true turns the tools on', () => {
+    expect(directorEnabledFromInviteStatus(200, { joined: true, directorEnabled: true })).toBe(true);
+    expect(directorEnabledFromInviteStatus(200, { joined: true, directorEnabled: false })).toBe(false);
+    expect(directorEnabledFromInviteStatus(200, { joined: true })).toBe(false); // field absent → off
+    expect(directorEnabledFromInviteStatus(200, { joined: false, directorEnabled: true })).toBe(false);
+    expect(directorEnabledFromInviteStatus(401, { directorEnabled: true })).toBe(false); // anonymous → off
+    expect(directorEnabledFromInviteStatus(500, null)).toBe(false);
+  });
+
+  it('fetchDirectorGate resolves membership and the switch together', async () => {
+    const on = vi.fn(async () => ({ status: 200, json: async () => ({ joined: true, directorEnabled: true }) })) as unknown as typeof fetch;
+    expect(await fetchDirectorGate(on)).toEqual({ access: 'affiliate', enabled: true });
+    const off = vi.fn(async () => ({ status: 200, json: async () => ({ joined: true, directorEnabled: false }) })) as unknown as typeof fetch;
+    expect(await fetchDirectorGate(off)).toEqual({ access: 'affiliate', enabled: false });
+    const failing = vi.fn(async () => { throw new Error('offline'); }) as unknown as typeof fetch;
+    expect(await fetchDirectorGate(failing)).toEqual({ access: 'unknown', enabled: false });
   });
 });
 

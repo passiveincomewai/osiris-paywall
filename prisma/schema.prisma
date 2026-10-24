@@ -184,6 +184,12 @@ model AffiliateProfile {
   leaderboardOptOut Boolean @default(false)
   payoutEmail       String?
   payoutMethod      String? // "stripe_connect" | "paypal" | "manual"
+  // Personal payout threshold (cents). Null = use the program minimum.
+  // A payout can only be requested at max(program min, this value).
+  payoutThresholdCents Int?
+  // Cinematic Director tools on the globe: an affiliate-panel switch.
+  // DEFAULT OFF — the director renders only when this is true.
+  directorEnabled   Boolean @default(false)
 
   // Marketing Studio Phase 4: public link-in-bio showcase opt-in (featured
   // creations appear on /bio/[code] only when this is true) and the
@@ -193,6 +199,8 @@ model AffiliateProfile {
   isAmbassador    Boolean @default(false)
 
   clicks        ReferralClick[]
+  trackingLinks AffiliateTrackingLink[]
+  notifications AffiliateNotification[]
   attributions  ReferralAttribution[] @relation("AffiliateAttributions")
   commissions   Commission[]
   payouts       Payout[]
@@ -223,11 +231,66 @@ model ReferralClick {
   userAgent String? @db.VarChar(300)
   path      String? @db.VarChar(300)
 
+  // Tracking-link attribution (affiliate-suite): set when the visit came
+  // through one of the affiliate's labeled tracking links (?t=<slug>).
+  trackingLinkId String?
+  trackingLink   AffiliateTrackingLink? @relation(fields: [trackingLinkId], references: [id], onDelete: SetNull)
+  // Source capture going forward (null on rows written before this
+  // existed — reports label those "not tracked", never guess).
+  referrer    String? @db.VarChar(300)
+  utmSource   String? @db.VarChar(120)
+  utmMedium   String? @db.VarChar(120)
+  utmCampaign String? @db.VarChar(120)
+
   createdAt DateTime @default(now())
 
   // Anti-abuse: one counted click per visitor-hash per affiliate per day
   @@index([affiliateProfileId, ipHash, createdAt])
+  @@index([affiliateProfileId, trackingLinkId, createdAt])
   @@index([createdAt])
+}
+
+// ── Affiliate-suite: labeled tracking links + in-panel notifications ────
+// Extra share links an affiliate creates per channel (newsletter, a
+// specific video, a community). The primary referral code stays the
+// identity; a tracking link is just a labeled ?t=<slug> on top of it, so
+// per-link stats never fork attribution.
+model AffiliateTrackingLink {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+
+  label String @db.VarChar(80)
+  slug  String @db.VarChar(32) // same alphabet as referral codes
+
+  clicks ReferralClick[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([affiliateProfileId, slug])
+  @@index([affiliateProfileId, createdAt])
+}
+
+// In-dashboard notification center rows. Generated lazily from the real
+// source tables (attributions, commissions, payouts) by
+// src/lib/affiliate/notifications.ts with idempotency keys, so a
+// notification can never be duplicated by a re-sync.
+model AffiliateNotification {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliate          AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+
+  type  String // referral_signup | referral_converted | first_commission | payout_paid | payout_rejected
+  title String @db.VarChar(160)
+  body  String @db.Text
+  href  String? @db.VarChar(300)
+
+  idempotencyKey String    @unique
+  readAt         DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([affiliateProfileId, readAt, createdAt])
 }
 
 model ReferralAttribution {

@@ -37,13 +37,15 @@ const MEDALS = [
   { ring: "#d97706", glow: "0 0 18px rgba(217,119,6,.4)", text: "#d97706" },
 ];
 
-function BoardRow({ row, pos, metric }: { row: Row; pos: number; metric: (r: Row) => string }) {
+function BoardRow({ row, pos, metric, highlight }: { row: Row; pos: number; metric: (r: Row) => string; highlight?: boolean }) {
   const m = MEDALS[pos];
   const initial = (row.name || "?").trim().charAt(0).toUpperCase();
   return (
     <div
       className="flex items-center gap-3 md:gap-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md px-3 md:px-5 py-3"
-      style={m ? { borderColor: m.ring + "55", boxShadow: m.glow } : undefined}
+      style={highlight
+        ? { borderColor: "#22d3ee99", boxShadow: "0 0 22px rgba(34,211,238,.35)", background: "rgba(34,211,238,0.06)" }
+        : m ? { borderColor: m.ring + "55", boxShadow: m.glow } : undefined}
     >
       <div className="w-10 shrink-0 flex items-center justify-center">
         {m ? (
@@ -61,7 +63,7 @@ function BoardRow({ row, pos, metric }: { row: Row; pos: number; metric: (r: Row
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <div className="text-white font-semibold truncate">{row.name}</div>
+        <div className="text-white font-semibold truncate">{row.name}{highlight && <span className="ml-2 text-[10px] font-mono font-bold text-cyan-300 border border-cyan-400/50 rounded-full px-2 py-0.5 align-middle">YOU</span>}</div>
         <div className="mt-1 scale-90 origin-left">
           <RankBadge name={row.rank} badge={row.badge} color={row.rankColor} glow={row.rankColor} size="sm" />
         </div>
@@ -75,9 +77,16 @@ function BoardRow({ row, pos, metric }: { row: Row; pos: number; metric: (r: Row
   );
 }
 
+interface MineStanding {
+  optedOut: boolean;
+  monthly: { position: number; of: number; row: Row } | null;
+  allTime: { position: number; of: number; row: Row } | null;
+}
+
 export default function LeaderboardClient() {
   const [tab, setTab] = useState<BoardKey>("month");
   const [data, setData] = useState<Record<string, Row[]> | null>(null);
+  const [mine, setMine] = useState<MineStanding | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [optOut, setOptOut] = useState<boolean | null>(null); // null = not an affiliate / unknown
 
@@ -86,7 +95,9 @@ export default function LeaderboardClient() {
       try {
         const r = await fetch("/api/affiliate/leaderboard", { cache: "no-store" });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        setData(await r.json());
+        const j = await r.json();
+        setData(j);
+        if (j?.mine) setMine(j.mine as MineStanding);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load leaderboard");
       }
@@ -171,6 +182,25 @@ export default function LeaderboardClient() {
         ))}
       </div>
 
+      {mine && (
+        <div className="mb-5 rounded-2xl border border-cyan-400/30 bg-cyan-400/[0.05] px-4 py-3 text-sm text-slate-300">
+          <span className="font-semibold text-white">Your standing:</span>{" "}
+          {mine.optedOut ? (
+            <>you've opted out of the leaderboard, so you're not ranked on any board. Flip visibility back on above to be listed.</>
+          ) : (
+            <>
+              {mine.monthly
+                ? <>This month: <span className="font-mono font-bold text-cyan-300">#{mine.monthly.position}</span> of {mine.monthly.of} ({mine.monthly.row.payingReferrals ?? 0} paying referrals)</>
+                : <>This month: no paying referrals yet, so you're unranked</>}
+              {" · "}
+              {mine.allTime
+                ? <>All time: <span className="font-mono font-bold text-cyan-300">#{mine.allTime.position}</span> of {mine.allTime.of} ({fmtCents(mine.allTime.row.revenueCents ?? 0)})</>
+                : <>All time: unranked</>}
+            </>
+          )}
+        </div>
+      )}
+
       <div className="text-[11px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-3">{activeHint}</div>
 
       {error ? (
@@ -189,7 +219,8 @@ export default function LeaderboardClient() {
       ) : (
         <div className="space-y-2">
           {rows.map((r, i) => (
-            <BoardRow key={r.id} row={r} pos={i} metric={TABS.find((t) => t.key === tab)!.metric} />
+            <BoardRow key={r.id} row={r} pos={i} metric={TABS.find((t) => t.key === tab)!.metric}
+              highlight={!!mine && !mine.optedOut && ((tab === "month" && mine.monthly?.row.id === r.id) || (tab === "alltime" && mine.allTime?.row.id === r.id))} />
           ))}
         </div>
       )}

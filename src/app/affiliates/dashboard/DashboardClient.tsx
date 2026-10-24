@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import {
   StatCard, RankBadge, XpBar, SectionTitle, CopyButton, EmptyState, Pill, fmtCents,
 } from "@/components/affiliate/ui";
-import { AreaChart } from "@/components/affiliate/charts";
 import { RankArt } from "@/components/affiliate/graphics";
 import BadgesStrip from "./BadgesStrip";
+import {
+  InsightsSection, NotificationsPanel, TrackingLinksPanel, DirectorCard, HelpPanel,
+  type InsightsData,
+} from "./SuitePanels";
 
-interface Me {
-  profile: { referralCode: string; customCode: string | null; status: string; xp: number; payoutEmail: string | null; payoutMethod: string | null };
+export interface Me {
+  profile: { referralCode: string; customCode: string | null; status: string; xp: number; payoutEmail: string | null; payoutMethod: string | null; payoutThresholdCents?: number | null; directorEnabled?: boolean };
   rank: { name: string; badge: string; color: string; glow: string; commissionPct: number; discountPct?: number; tagline: string };
   nextRank: { name: string; minXp: number; commissionPct: number; discountPct?: number } | null;
   discount: { code: string; pct: number; synced: boolean; status: string } | null;
@@ -21,7 +24,7 @@ interface Me {
     createdAt: string; reviewedAt: string | null;
   } | null;
 }
-interface Dash {
+export interface Dash {
   rank: Me["rank"];
   totals: {
     lifetimeCents: number; availableCents: number; pendingCents: number; paidOutCents: number;
@@ -29,10 +32,18 @@ interface Dash {
     convertedReferrals: number; indirectReferrals: number; clicks: number; conversionPct: number;
   };
   series: { date: string; cents: number; clicks: number }[];
-  commissions: { id: string; level: number; amountCents: number; currency: string; status: string; availableAt: string; createdAt: string }[];
+  commissions: { id: string; level: number; amountCents: number; currency: string; status: string; availableAt: string; createdAt: string; plan?: string | null }[];
   payouts: { id: string; amountCents: number; status: string; method: string; requestedAt: string; decidedAt: string | null; note: string | null }[];
   xpEvents: { activity: string; xp: number; createdAt: string }[];
-  settings: { holdingPeriodDays: number; minPayoutCents: number };
+  settings: { holdingPeriodDays: number; minPayoutCents: number; payoutThresholdCents?: number | null; effectiveMinPayoutCents?: number };
+}
+
+export interface DemoBundle {
+  me: Me;
+  dash: Dash;
+  insights: InsightsData;
+  notifications: { id: string; type: string; title: string; body: string; href: string | null; read: boolean; createdAt: string }[];
+  links: { label: string; slug: string; url: string; clicks: number; signups: number }[];
 }
 
 const card = "rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-4 md:p-5";
@@ -46,42 +57,52 @@ async function api(path: string, init?: RequestInit) {
   return { ok: r.ok, status: r.status, j };
 }
 
-export default function DashboardClient() {
-  const [me, setMe] = useState<Me | null>(null);
-  const [dash, setDash] = useState<Dash | null>(null);
-  const [range, setRange] = useState("30");
+const DEMO_MSG = "You're viewing the read-only demo — join free to get this dashboard with your own numbers.";
+
+export default function DashboardClient({ demo }: { demo?: DemoBundle } = {}) {
+  const isDemo = !!demo;
+  const [me, setMe] = useState<Me | null>(demo?.me ?? null);
+  const [dash, setDash] = useState<Dash | null>(demo?.dash ?? null);
+  const range = "30"; // the dashboard payload's stat row is all-time; ranges live in InsightsSection
   const [notJoined, setNotJoined] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isDemo);
   const [qr, setQr] = useState<string | null>(null);
   const [showQr, setShowQr] = useState(false);
   const [customCode, setCustomCode] = useState("");
-  const [payoutEmail, setPayoutEmail] = useState("");
-  const [payoutMethod, setPayoutMethod] = useState("manual");
+  const [payoutEmail, setPayoutEmail] = useState(demo?.me.profile.payoutEmail ?? "");
+  const [payoutMethod, setPayoutMethod] = useState(demo?.me.profile.payoutMethod ?? "manual");
+  const [threshold, setThreshold] = useState(
+    demo?.me.profile.payoutThresholdCents ? String(demo.me.profile.payoutThresholdCents / 100) : "",
+  );
   const [msg, setMsg] = useState("");
 
   const loadMe = async () => {
+    if (isDemo) return demo!.me;
     const { ok, status, j } = await api("/api/affiliate/me");
     if (!ok && status === 404 && j.join) { setNotJoined(true); setLoading(false); return null; }
     if (!ok) { setLoading(false); return null; }
     setMe(j as Me);
     setPayoutEmail((j as Me).profile.payoutEmail ?? "");
     setPayoutMethod((j as Me).profile.payoutMethod ?? "manual");
+    const th = (j as Me).profile.payoutThresholdCents;
+    setThreshold(th ? String(th / 100) : "");
     return j as Me;
   };
   const loadDash = async (rg = range) => {
+    if (isDemo) return;
     const { ok, j } = await api(`/api/affiliate/dashboard?range=${rg}`);
     if (ok) setDash(j as Dash);
   };
 
   useEffect(() => {
+    if (isDemo) return;
     (async () => {
       const m = await loadMe();
       if (m) await loadDash();
       setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const changeRange = async (rg: string) => { setRange(rg); setLoading(true); await loadDash(rg); setLoading(false); };
 
   const retry = async () => {
     setLoading(true);
@@ -105,6 +126,7 @@ export default function DashboardClient() {
   };
 
   const saveCustomCode = async () => {
+    if (isDemo) { setMsg(DEMO_MSG); return; }
     const { ok, j } = await api("/api/affiliate/custom-code", {
       method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ code: customCode }),
     });
@@ -113,6 +135,7 @@ export default function DashboardClient() {
   };
 
   const requestPayout = async () => {
+    if (isDemo) { setMsg(DEMO_MSG); return; }
     if (!confirm(`Request payout of ${fmtCents(dash!.totals.availableCents)}?`)) return;
     const { ok, j } = await api("/api/affiliate/payouts", {
       method: "POST", headers: { "content-type": "application/json" },
@@ -120,6 +143,27 @@ export default function DashboardClient() {
     });
     if (ok) { setMsg(`Payout requested: ${fmtCents(j.payout.amountCents)}. An admin will review it.`); await loadDash(); }
     else setMsg(j.error ?? "Payout request failed.");
+  };
+
+  const saveThreshold = async () => {
+    if (isDemo) { setMsg(DEMO_MSG); return; }
+    const dollars = parseFloat(threshold);
+    const payload = threshold.trim() === "" ? { payoutThresholdCents: null } : { payoutThresholdCents: Math.round(dollars * 100) };
+    if (threshold.trim() !== "" && (!Number.isFinite(dollars) || dollars <= 0)) { setMsg("Enter a threshold amount in dollars, or leave it blank to use the program minimum."); return; }
+    const { ok, j } = await api("/api/affiliate/me", {
+      method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(payload),
+    });
+    if (ok) { setMsg(payload.payoutThresholdCents === null ? "Personal payout threshold cleared — the program minimum applies." : `Personal payout threshold set to ${fmtCents(payload.payoutThresholdCents)}.`); await loadMe(); await loadDash(); }
+    else setMsg(j.error ?? "Couldn't save the threshold.");
+  };
+
+  const toggleDirector = async (next: boolean) => {
+    if (isDemo) { setMsg(DEMO_MSG); return; }
+    const { ok, j } = await api("/api/affiliate/me", {
+      method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ directorEnabled: next }),
+    });
+    if (ok) { setMsg(next ? "Cinematic Director switched ON — the globe's Director tools now unlock for you." : "Cinematic Director switched off."); await loadMe(); }
+    else setMsg(j.error ?? "Couldn't save the Director switch.");
   };
 
   if (loading && !me) return <div className="text-slate-400 font-mono text-sm">Establishing uplink…</div>;
@@ -161,7 +205,10 @@ export default function DashboardClient() {
   const t = dash.totals;
   const link = me.referralLink;
   const enc = encodeURIComponent(link);
-  const shareText = encodeURIComponent("Watch the planet live — 74,229 live cameras, flights, satellites. Free to explore:");
+  const shareText = encodeURIComponent(
+    `Watch the planet live — 74,229 live cameras, flights, satellites. Free to explore${me.discount ? ` — and my code ${me.discount.code} takes ${me.discount.pct}% off your first Pro payment` : ""}:`,
+  );
+  const shareKit = `Watch the planet live — 74,229 live cameras, flights, satellites and storms, free to explore: ${link}${me.discount ? `\nUse my code ${me.discount.code} for ${me.discount.pct}% off your first WorldEye Pro payment.` : ""}`;
   const shares = [
     ["X", `https://twitter.com/intent/tweet?text=${shareText}&url=${enc}`],
     ["Facebook", `https://www.facebook.com/sharer/sharer.php?u=${enc}`],
@@ -169,9 +216,23 @@ export default function DashboardClient() {
     ["WhatsApp", `https://wa.me/?text=${shareText}%20${enc}`],
     ["Email", `mailto:?subject=${encodeURIComponent("WorldEye — see the planet live")}&body=${shareText}%20${enc}`],
   ];
+  const effectiveMin = dash.settings.effectiveMinPayoutCents ?? dash.settings.minPayoutCents;
 
   return (
     <div className="space-y-6">
+      {isDemo && (
+        <div className="rounded-2xl border border-pink-400/50 bg-pink-400/[0.08] px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-2 justify-between">
+          <div className="text-sm text-pink-100">
+            <span className="font-mono font-bold tracking-widest">DEMO</span> — this is the real affiliate dashboard running on
+            sample figures so you can explore every feature. The numbers are illustrative, not real earnings, and nothing here saves or sends anything.
+          </div>
+          <a href="/api/auth/signin?callbackUrl=/affiliates/dashboard"
+            className="shrink-0 px-4 py-2 rounded-xl text-sm font-mono font-bold text-[#04121f]"
+            style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>
+            Get your own dashboard — free
+          </a>
+        </div>
+      )}
       {me.profile.status !== "active" && (
         <div className={card + " border-amber-400/40"}>
           <div className="text-amber-300 font-bold">Account status: {me.profile.status}</div>
@@ -194,10 +255,11 @@ export default function DashboardClient() {
             <button onClick={toggleQr} className="px-4 py-2 rounded-xl font-mono text-sm border border-white/15 text-slate-200 hover:border-cyan-400/60">QR</button>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="flex flex-wrap items-center gap-2 mt-3">
           {shares.map(([n, u]) => (
             <a key={n} href={u} target="_blank" rel="noopener" className="px-3 py-1.5 rounded-lg text-xs font-mono border border-white/10 text-slate-300 hover:text-white hover:border-cyan-400/50">{n}</a>
           ))}
+          <CopyButton text={shareKit} label="Copy share kit (link + code)" />
         </div>
         {showQr && qr && (
           <div className="mt-4 flex items-center gap-4">
@@ -214,8 +276,33 @@ export default function DashboardClient() {
         </div>
       </div>
 
+      {/* Notifications */}
+      <NotificationsPanel demoItems={demo?.notifications} />
+
+      {/* Tracking links + UTM builder */}
+      <TrackingLinksPanel referralLink={link} demoLinks={demo?.links} />
+
       {/* Studio badges (renders nothing for non-members) */}
-      <BadgesStrip />
+      {!isDemo && <BadgesStrip />}
+
+      {/* Marketing Studio entry point */}
+      <div className={card}>
+        <div className="flex flex-col md:flex-row md:items-center gap-3 justify-between">
+          <div>
+            <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-1">Marketing Studio</div>
+            <div className="text-sm text-slate-300">
+              150+ templates personalized with your real link, discount code and QR — image &amp; video creators for
+              Reels, TikTok, Stories and carousels, a caption generator, campaign kits and a daily content drop.
+              Studio use needs an active WorldEye membership (any plan, trials included).
+            </div>
+          </div>
+          <a href="/affiliates/studio"
+            className="shrink-0 px-4 py-2 rounded-xl text-xs font-mono font-bold text-[#04121f]"
+            style={{ background: "linear-gradient(135deg,#22d3ee,#818cf8)" }}>
+            Open the Studio →
+          </a>
+        </div>
+      </div>
 
       {/* Rank */}
       <div className={card}>
@@ -319,27 +406,9 @@ export default function DashboardClient() {
         <StatCard label="Network affiliates" value={String(t.indirectReferrals)} sub="recruited by you" accent="#c084fc" />
       </div>
 
-      {/* Chart */}
-      <div className={card}>
-        <div className="flex items-center gap-3 mb-4">
-          <img src="/affiliate-icons/earnings.png" alt="Earnings" width={256} height={256} className="w-11 h-11 object-contain shrink-0"
-            style={{ filter: "drop-shadow(0 0 14px rgba(56,189,248,.45))" }} />
-          <div className="flex-1">
-            <SectionTitle kicker="Performance" title="Earnings"
-          right={<div className="flex gap-1">{["7", "30", "90", "all"].map((r) => (
-            <button key={r} onClick={() => changeRange(r)}
-              className={`px-3 py-1 rounded-lg text-xs font-mono border ${range === r ? "border-cyan-400/60 text-cyan-200 bg-cyan-400/10" : "border-white/10 text-slate-400"}`}>
-              {r === "all" ? "ALL" : `${r}D`}
-            </button>
-          ))}</div>} />
-          </div>
-        </div>
-        {dash.series.some((s) => s.cents > 0) ? (
-          <AreaChart data={dash.series} />
-        ) : (
-          <EmptyState title="No earnings yet" body="Your earnings chart will light up when referred subscriptions start billing. Share your link to get the first signal." />
-        )}
-      </div>
+      {/* Insights: range stats, earnings + clicks chart (daily/weekly/
+          monthly), funnel, retention, sources, creative, rank ladder */}
+      <InsightsSection demoData={demo?.insights} />
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Commissions */}
@@ -356,6 +425,7 @@ export default function DashboardClient() {
                 <div className="flex items-center gap-2">
                   <Pill color={c.level === 1 ? "#38bdf8" : c.level === 2 ? "#c084fc" : "#fbbf24"}>L{c.level}</Pill>
                   <span className="text-slate-400 text-xs font-mono">{new Date(c.createdAt).toLocaleDateString()}</span>
+                  {c.plan && <span className="text-slate-500 text-xs font-mono">{c.plan}</span>}
                 </div>
                 <div className="flex items-center gap-2">
                   <Pill color={c.status === "reversed" ? "#f87171" : c.status === "paid" ? "#34d399" : c.status === "available" ? "#34d399" : "#38bdf8"}>{c.status}</Pill>
@@ -372,13 +442,14 @@ export default function DashboardClient() {
           <SectionTitle kicker="Treasury" title="Payouts" />
           <div className="text-sm text-slate-400 mb-3">
             Available: <span className="font-mono font-bold text-emerald-300">{fmtCents(t.availableCents)}</span>
-            <span className="text-slate-500"> · minimum {fmtCents(dash.settings.minPayoutCents)}</span>
+            <span className="text-slate-500"> · your threshold {fmtCents(effectiveMin)}</span>
+            {dash.settings.payoutThresholdCents ? <span className="text-slate-500"> (personal, above the {fmtCents(dash.settings.minPayoutCents)} program minimum)</span> : <span className="text-slate-500"> (the program minimum)</span>}
             <span className="text-slate-500"> · paid out to date </span>
             <span className="font-mono text-slate-200">{fmtCents(t.paidOutCents)}</span>
           </div>
-          {t.availableCents < dash.settings.minPayoutCents && (
+          {t.availableCents < effectiveMin && (
             <div className="text-xs text-amber-300/90 font-mono mb-3">
-              Earn {fmtCents(dash.settings.minPayoutCents - t.availableCents)} more in available commissions to request a payout.
+              Earn {fmtCents(effectiveMin - t.availableCents)} more in available commissions to request a payout.
             </div>
           )}
           <div className="flex flex-col sm:flex-row gap-2 mb-4">
@@ -389,7 +460,18 @@ export default function DashboardClient() {
               <option value="stripe_connect">Stripe Connect</option>
             </select>
             <button onClick={requestPayout} className={btnPrimary + " whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"} style={btnStyle}
-              disabled={t.availableCents < dash.settings.minPayoutCents}>Request payout</button>
+              disabled={t.availableCents < effectiveMin}>Request payout</button>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mb-4 rounded-xl border border-white/10 bg-black/20 px-3 py-2.5">
+            <span className="text-xs text-slate-400 flex-1">
+              <span className="text-slate-200 font-bold">Personal payout threshold.</span>{" "}
+              Prefer fewer, larger payouts? Set your own minimum (never below {fmtCents(dash.settings.minPayoutCents)}). Blank = program minimum.
+            </span>
+            <div className="flex gap-2 items-center">
+              <span className="text-slate-500 font-mono text-sm">$</span>
+              <input className={input + " !w-24"} placeholder="25" inputMode="decimal" value={threshold} onChange={(e) => setThreshold(e.target.value)} />
+              <button onClick={saveThreshold} className="px-3 py-2 rounded-xl text-xs font-mono border border-white/15 text-slate-200 hover:border-cyan-400/60">Save</button>
+            </div>
           </div>
           {dash.payouts.length === 0 && <div className="text-sm text-slate-500">No payout requests yet.</div>}
           <div className="space-y-2">
@@ -413,6 +495,9 @@ export default function DashboardClient() {
         </div>
       </div>
 
+      {/* Cinematic Director switch */}
+      <DirectorCard enabled={!!me.profile.directorEnabled} onToggle={toggleDirector} demo={isDemo} />
+
       {/* XP feed */}
       <div className={card}>
         <SectionTitle kicker="Progression" title="XP activity" right={<span className="font-mono text-cyan-300 font-bold">{me.profile.xp.toLocaleString()} XP</span>} />
@@ -427,6 +512,9 @@ export default function DashboardClient() {
         </div>
         <div className="text-[11px] text-slate-500 mt-3">XP unlocks ranks and has no cash value. Anti-abuse: repeat or fake actions can't award twice.</div>
       </div>
+
+      {/* Plain-language help */}
+      <HelpPanel />
     </div>
   );
 }

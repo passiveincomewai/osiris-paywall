@@ -46,8 +46,13 @@ export async function GET() {
       leaderboardOptOut: profile.leaderboardOptOut,
       payoutEmail: profile.payoutEmail,
       payoutMethod: profile.payoutMethod,
+      payoutThresholdCents: profile.payoutThresholdCents,
+      directorEnabled: profile.directorEnabled,
       createdAt: profile.createdAt,
     },
+    // The threshold a payout request must clear: the affiliate's own
+    // threshold when set, never below the program minimum.
+    effectiveMinPayoutCents: Math.max(settings.minPayoutCents, profile.payoutThresholdCents ?? 0),
     rank,
     nextRank: nxt,
     progress: rankProgress(profile.xp, settings.ranks),
@@ -61,16 +66,34 @@ export async function PATCH(req: Request) {
   if (error || !profile) return error ?? NextResponse.json({ error: "Not an affiliate" }, { status: 404 });
   const body = (await req.json().catch(() => ({}))) as {
     leaderboardOptOut?: boolean; payoutEmail?: string; payoutMethod?: string;
+    payoutThresholdCents?: number | null; directorEnabled?: boolean;
   };
   const data: Record<string, unknown> = {};
   if (typeof body.leaderboardOptOut === "boolean") data.leaderboardOptOut = body.leaderboardOptOut;
   if (typeof body.payoutEmail === "string") data.payoutEmail = body.payoutEmail.slice(0, 120);
   if (typeof body.payoutMethod === "string") data.payoutMethod = body.payoutMethod.slice(0, 30);
+  if (typeof body.directorEnabled === "boolean") data.directorEnabled = body.directorEnabled;
+  if (body.payoutThresholdCents === null) {
+    data.payoutThresholdCents = null;
+  } else if (typeof body.payoutThresholdCents === "number" && Number.isFinite(body.payoutThresholdCents)) {
+    // Personal threshold: whole cents, never below the program minimum.
+    const settings = await getSettings();
+    const cents = Math.round(body.payoutThresholdCents);
+    if (cents < settings.minPayoutCents) {
+      return NextResponse.json(
+        { error: `Your payout threshold can't be below the $${(settings.minPayoutCents / 100).toFixed(2)} program minimum.` },
+        { status: 400 },
+      );
+    }
+    data.payoutThresholdCents = Math.min(cents, 100_000_00); // cap $100k sanity
+  }
   const updated = await db.affiliateProfile.update({ where: { id: profile.id }, data });
   void userId;
   return NextResponse.json({
     leaderboardOptOut: updated.leaderboardOptOut,
     payoutEmail: updated.payoutEmail,
     payoutMethod: updated.payoutMethod,
+    payoutThresholdCents: updated.payoutThresholdCents,
+    directorEnabled: updated.directorEnabled,
   });
 }

@@ -1,8 +1,9 @@
 "use client";
 // Campaign kit page: everything needed to post for one campaign in one
 // place — requirements checklist with copy buttons, the campaign's
-// templates, and a ready-to-paste caption starter. (No ZIP download:
-// the kit is this page; templates open in the creator.)
+// templates, and a ready-to-paste caption starter. The whole kit also
+// downloads as a ZIP (brief, caption starter, links, personalized
+// preview renders) from /api/affiliate/studio/campaigns/[id]/kit.
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Square } from "lucide-react";
@@ -113,6 +114,12 @@ export default function KitClient({ campaignId }: { campaignId: string }) {
         </p>
         <p className="text-sm font-semibold text-cyan-200 mt-3">{c.goal}</p>
         <p className="text-sm text-slate-300 leading-relaxed mt-1 whitespace-pre-wrap max-w-3xl">{c.description}</p>
+        <div className="mt-4">
+          <a href={`/api/affiliate/studio/campaigns/${campaignId}/kit`} className={btnPrimary} style={btnStyle}>
+            ⬇ Download the full kit (ZIP)
+          </a>
+          <span className="ml-3 text-xs text-slate-500">Brief, caption starter, links + personalized template renders in one file.</span>
+        </div>
       </div>
 
       <section className={card}>

@@ -22,9 +22,17 @@ export async function POST(req: Request) {
     select: { id: true, amountCents: true },
   });
   const total = available.reduce((a, c) => a + c.amountCents, 0);
-  if (total < settings.minPayoutCents) {
+  // A personal threshold (set in the dashboard) raises — never lowers —
+  // the program minimum the balance must clear.
+  const effectiveMin = Math.max(settings.minPayoutCents, profile.payoutThresholdCents ?? 0);
+  if (total < effectiveMin) {
     return NextResponse.json(
-      { error: `Minimum payout is $${(settings.minPayoutCents / 100).toFixed(2)}`, availableCents: total },
+      {
+        error: profile.payoutThresholdCents && profile.payoutThresholdCents > settings.minPayoutCents
+          ? `Your personal payout threshold is $${(effectiveMin / 100).toFixed(2)} — your available balance hasn't reached it yet.`
+          : `Minimum payout is $${(settings.minPayoutCents / 100).toFixed(2)}`,
+        availableCents: total,
+      },
       { status: 400 },
     );
   }

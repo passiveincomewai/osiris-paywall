@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { getSettings } from "@/lib/affiliate/settings";
 import { rankFor } from "@/lib/affiliate/ranks";
 import { releaseMaturedCommissions } from "@/lib/affiliate/commissions";
+import { planByPriceIdFromEnv } from "@/lib/billing/trial-reminders";
+import { CHECKOUT_PLAN_SUMMARIES, type CheckoutPlanSummary } from "@/lib/billing/trial-checkout";
 import { requireAffiliate } from "../_util";
 
 export const runtime = "nodejs";
@@ -86,6 +88,24 @@ export async function GET(req: Request) {
     series.push({ date: key, cents, clicks: dayClicks });
   }
 
+  // Plan per commission: resolved from the referred subscriber's
+  // current subscription price via the env price map. A commission whose
+  // subscriber has no resolvable plan reports null — never a guess.
+  const planByPrice = planByPriceIdFromEnv(process.env);
+  const planName = (planKey: string | undefined): string | null => {
+    if (!planKey) return null;
+    const summary = (CHECKOUT_PLAN_SUMMARIES as Record<string, CheckoutPlanSummary>)[planKey];
+    return summary?.name ?? null;
+  };
+  const commissionUserIds = [...new Set(commissions.slice(0, 100).map((c) => c.referredUserId).filter(Boolean) as string[])];
+  const commissionSubs = commissionUserIds.length
+    ? await db.subscription.findMany({
+        where: { userId: { in: commissionUserIds } },
+        select: { userId: true, stripePriceId: true },
+      })
+    : [];
+  const planByUser = new Map(commissionSubs.map((s) => [s.userId, planName(planByPrice[s.stripePriceId])]));
+
   return NextResponse.json({
     rank,
     totals: {
@@ -105,6 +125,7 @@ export async function GET(req: Request) {
     commissions: commissions.slice(0, 100).map((c) => ({
       id: c.id, level: c.level, amountCents: c.amountCents, currency: c.currency,
       status: c.status, availableAt: c.availableAt, createdAt: c.createdAt,
+      plan: c.referredUserId ? planByUser.get(c.referredUserId) ?? null : null,
     })),
     payouts: payouts.map((p) => ({
       id: p.id, amountCents: p.amountCents, status: p.status, method: p.method,
@@ -114,6 +135,8 @@ export async function GET(req: Request) {
     settings: {
       holdingPeriodDays: settings.holdingPeriodDays,
       minPayoutCents: settings.minPayoutCents,
+      payoutThresholdCents: profile.payoutThresholdCents,
+      effectiveMinPayoutCents: Math.max(settings.minPayoutCents, profile.payoutThresholdCents ?? 0),
     },
   });
 }

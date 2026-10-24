@@ -7,6 +7,7 @@ import AffiliatePersonal from "@/components/affiliate/AffiliatePersonal";
 import ShareLinkBlock from "@/components/share/ShareLinkBlock";
 import EarningsCalculator from "@/components/affiliate/EarningsCalculator";
 import CreatorApply from "@/components/affiliate/CreatorApply";
+import WhatsNew from "@/components/affiliate/WhatsNew";
 
 const CTA = "/api/auth/signin?callbackUrl=/affiliates/dashboard";
 
@@ -93,6 +94,9 @@ export default function AffiliatesLanding() {
           </Link>
           <Link href="#how" className="px-8 py-4 rounded-2xl text-lg font-mono font-bold border border-white/20 text-slate-200 hover:bg-white/5 transition-colors">
             How it works
+          </Link>
+          <Link href="/affiliates/demo" className="px-8 py-4 rounded-2xl text-lg font-mono font-bold border border-pink-400/50 text-pink-200 hover:bg-pink-400/10 transition-colors">
+            ▶ Live demo
           </Link>
         </div>
         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
@@ -404,6 +408,9 @@ export default function AffiliatesLanding() {
           </div>
         </Card>
       </section>
+
+      {/* ── 6d. WHAT'S NEW ──────────────────────────────────── */}
+      <WhatsNew />
 
       {/* ── 7. FAQ ──────────────────────────────────────────── */}
       <section>

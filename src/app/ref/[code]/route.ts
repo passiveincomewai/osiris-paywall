@@ -16,7 +16,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/affiliate/settings";
-import { REF_COOKIE, REF_CODE_RE, hashIp, findAffiliateByCode } from "@/lib/affiliate/attribution";
+import { REF_COOKIE, REF_CLICK_COOKIE, REF_CODE_RE, hashIp, findAffiliateByCode } from "@/lib/affiliate/attribution";
 import { resolveShareCode } from "@/lib/share/identity";
 import { REF_PASSTHROUGH_PARAMS } from "@/lib/share/links";
 import { awardXP } from "@/lib/affiliate/xp";
@@ -56,8 +56,25 @@ async function affiliateLanding(
   settings: Awaited<ReturnType<typeof getSettings>>,
   landing: URL,
 ) {
-  const ua = (await headers()).get("user-agent") ?? "";
+  const hdrs = await headers();
+  const ua = hdrs.get("user-agent") ?? "";
   const ipHash = hashIp(clientIp(req));
+
+  // Source capture (affiliate-suite): the tracking-link tag (?t=<slug>)
+  // and any UTM parameters / referrer the visit arrived with. Captured
+  // exactly as sent — the dashboard labels anything absent "not tracked"
+  // rather than guessing a source.
+  const sp = req.nextUrl.searchParams;
+  const tag = (sp.get("t") ?? "").toLowerCase();
+  let trackingLinkId: string | null = null;
+  if (tag && REF_CODE_RE.test(tag)) {
+    const link = await db.affiliateTrackingLink.findUnique({
+      where: { affiliateProfileId_slug: { affiliateProfileId: affiliate.id, slug: tag } },
+      select: { id: true },
+    }).catch(() => null);
+    trackingLinkId = link?.id ?? null;
+  }
+  const clean = (v: string | null, max: number) => (v ? v.slice(0, max) : null);
 
   // Record the click (dedup for XP: one counted visit per hash per day).
   const dayStart = new Date();
@@ -66,13 +83,19 @@ async function affiliateLanding(
     where: { affiliateProfileId: affiliate.id, ipHash, createdAt: { gte: dayStart } },
     select: { id: true },
   });
-  await db.referralClick.create({
+  const click = await db.referralClick.create({
     data: {
       affiliateProfileId: affiliate.id,
       ipHash,
       userAgent: ua.slice(0, 300),
       path: "/ref/" + code,
+      trackingLinkId,
+      referrer: clean(hdrs.get("referer"), 300),
+      utmSource: clean(sp.get("utm_source"), 120),
+      utmMedium: clean(sp.get("utm_medium"), 120),
+      utmCampaign: clean(sp.get("utm_campaign"), 120),
     },
+    select: { id: true },
   });
 
   if (!seen && !looksLikeBot(ua)) {
@@ -84,14 +107,18 @@ async function affiliateLanding(
 
   // Attribution cookie: httpOnly, 30-day window, root path. For an
   // alias landing the canonical code is what the cookie carries, so
-  // the standard signup attribution resolves it directly.
-  (await cookies()).set(REF_COOKIE, affiliate.customCode?.toLowerCase() ?? affiliate.referralCode, {
+  // the standard signup attribution resolves it directly. The companion
+  // click cookie names the exact click row, so a later signup can be
+  // credited to the tracking link it arrived through.
+  const cookieOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "lax" as const,
     path: "/",
     maxAge: settings.attributionWindowDays * 86400,
-  });
+  };
+  (await cookies()).set(REF_COOKIE, affiliate.customCode?.toLowerCase() ?? affiliate.referralCode, cookieOpts);
+  (await cookies()).set(REF_CLICK_COOKIE, click.id, cookieOpts);
 
   return NextResponse.redirect(landing);
 }

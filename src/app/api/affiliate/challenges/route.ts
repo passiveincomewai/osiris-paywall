@@ -10,6 +10,9 @@ export const runtime = "nodejs";
 export async function GET() {
   const { profile, error } = await requireAffiliate();
   if (error) return error;
+  // Recompute metric-based progress on read so the missions hub never
+  // shows stale numbers (previously only a POST refreshed them).
+  await refreshChallengeProgress(profile.id).catch(() => {});
   const now = new Date();
   const challenges = await db.challenge.findMany({
     where: { active: true, startsAt: { lte: now }, endsAt: { gt: now } },

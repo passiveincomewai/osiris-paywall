@@ -12,6 +12,7 @@ type TreeNode = {
   joinedAt: string;
   converted: boolean;
   commissionsCents: number;
+  lastActivityAt?: string | null;
   children: TreeNode[];
 };
 
@@ -63,7 +64,8 @@ function NodeRow({ node }: { node: TreeNode }) {
             {node.converted && <Pill color="#4ade80"><Check className="w-3 h-3 mr-1" strokeWidth={3.5} />paying</Pill>}
           </div>
           <div className="text-xs text-slate-400 font-mono mt-0.5">
-            joined {joined} · earned <span className="text-cyan-300">{fmtCents(node.commissionsCents ?? 0)}</span>
+            joined {joined} · earned you <span className="text-cyan-300">{fmtCents(node.commissionsCents ?? 0)}</span>
+            {node.lastActivityAt && <> · last sale {new Date(node.lastActivityAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</>}
           </div>
         </div>
         {kids.length > 0 ? (

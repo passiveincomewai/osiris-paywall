@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 interface Node {
   id: string; name: string | null; image: string | null;
   level: number; joinedAt: string; converted: boolean;
-  commissionsCents: number; children: Node[];
+  commissionsCents: number; lastActivityAt: string | null; children: Node[];
 }
 
 export async function GET() {
@@ -30,6 +30,7 @@ export async function GET() {
         db.commission.aggregate({
           where: { affiliateProfileId: pid, referredUserId: r.userId, status: { not: "reversed" } },
           _sum: { amountCents: true },
+          _max: { createdAt: true },
         }),
         childrenOf(r.id, level + 1),
       ]);
@@ -42,6 +43,7 @@ export async function GET() {
         joinedAt: r.createdAt.toISOString(),
         converted: !!attr?.convertedAt,
         commissionsCents: comm._sum.amountCents ?? 0,
+        lastActivityAt: comm._max.createdAt?.toISOString() ?? null,
         children: kids,
       });
     }
@@ -64,11 +66,14 @@ export async function GET() {
     const comm = await db.commission.aggregate({
       where: { affiliateProfileId: pid, referredUserId: a.referredUserId, status: { not: "reversed" } },
       _sum: { amountCents: true },
+      _max: { createdAt: true },
     });
     customers.push({
       id: `customer:${a.referredUserId}`, name: "Referred customer", image: null,
       level: 1, joinedAt: a.createdAt.toISOString(), converted: !!a.convertedAt,
-      commissionsCents: comm._sum.amountCents ?? 0, children: [],
+      commissionsCents: comm._sum.amountCents ?? 0,
+      lastActivityAt: comm._max.createdAt?.toISOString() ?? null,
+      children: [],
     });
   }
 
