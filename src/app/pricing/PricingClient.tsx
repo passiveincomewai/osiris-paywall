@@ -6,6 +6,8 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import CheckoutSheet from "@/components/CheckoutSheet";
 import TeamSection from "./TeamSection";
+import ProofCounters from "@/components/ProofCounters";
+import CancelReassurance from "@/components/CancelReassurance";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
 import {
   ENTERPRISE_OFFER_FEATURES as ENTERPRISE_FEATURES,
@@ -246,6 +248,8 @@ export default function PricingPage() {
             </p>
           </motion.div>
 
+          <ProofCounters />
+
           {/* Billing toggle */}
           <div className="mt-6 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur max-w-full">
             {(["weekly", "monthly", "annual"] as Plan[]).map((key) => (
@@ -423,6 +427,9 @@ export default function PricingPage() {
         </div>
 
         {/* Team Access */}
+        <div className="mt-10">
+          <CancelReassurance />
+        </div>
         <TeamSection />
 
         {/* Free vs Pro comparison */}

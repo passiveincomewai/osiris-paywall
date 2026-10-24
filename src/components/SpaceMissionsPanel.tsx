@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Map as MlMap } from 'maplibre-gl';
 import { ChevronLeft, Pause, Play, Rocket, Satellite, Square, X } from 'lucide-react';
+import ExportTease from './ExportTease';
 import {
   LAUNCH_SOURCE_LABEL, launchStatusKind,
   type LaunchRecord, type LaunchStatusKind,
@@ -263,6 +264,7 @@ export default function SpaceMissionsPanel({
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
+          <ExportTease surface="satellite" />
 
           {/* ── Replay transport (rides above whichever view is open) ── */}
           {replay && (

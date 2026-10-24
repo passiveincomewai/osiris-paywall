@@ -10,6 +10,7 @@ import { shareEntity } from '@/lib/share/client';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
 import TimelapseControl from './TimelapseControl';
+import AccountGatePrompt from './AccountGatePrompt';
 import LiveRecordControl from './recording/LiveRecordControl';
 import CameraAlertButton from './CameraAlertButton';
 
@@ -295,7 +296,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                         if (r.ok) setSaveState("saved");
                         else setSaveState(r.status === 401 ? "signin" : "error");
                       } catch { setSaveState("error"); }
-                      setTimeout(() => setSaveState("idle"), 2500);
+                      setTimeout(() => setSaveState("idle"), 6000);
                     }}
                     className="p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-cyan-400/20 hover:border-cyan-400 transition-all"
                     title={saveState === "saved" ? "Saved to My Cameras!" : saveState === "signin" ? "Sign in to save cameras" : "Save to My Cameras"}
@@ -310,6 +311,11 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
               </div>
             </div>
 
+          {saveState === "signin" && (
+            <div className="px-3 py-2 border-b border-white/10 bg-black/60">
+              <AccountGatePrompt compact feature="save-camera" />
+            </div>
+          )}
           {/* Camera Feed */}
           <div className={`relative bg-[#020202] ${fullscreen ? 'flex-1 overflow-hidden' : 'aspect-video max-h-[35vh] md:max-h-none'}`}>
             {/* Tactical CRT Overlay */}

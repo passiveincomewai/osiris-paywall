@@ -12,7 +12,9 @@ import TrialPicker from './TrialPicker';
 import ProUpgradeEmbed from './ProUpgradeEmbed';
 import { LanguageRailControl, LanguageSelect } from './translate/LanguageControl';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
-import { SENSOR_EFFECT_OPTIONS, type SensorEffectState } from '@/lib/sensor-effects';
+import { SENSOR_EFFECT_OPTIONS, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
+import { readSessionIdentity, type SessionIdentityState } from '@/lib/premium-entitlement';
+import AccountGatePrompt from './AccountGatePrompt';
 
 interface LayerPanelProps {
   data: any;
@@ -317,6 +319,21 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
      at a time (or off). They are SIMULATED visual effects — the copy says
      so here and an on-map tag repeats it while one is active — and they
      apply to the map canvas only, never to camera feeds or panels. */
+  /* Wave 2 F15: the exclusive themes (Tactical Dark, Night Vision)
+     are free-account features. Identity is read the house way
+     (lib/premium-entitlement). The panel fails closed while identity
+     is unknown or anonymous — selecting a gated theme shows the
+     account prompt instead of applying it; the page separately
+     coerces a persisted gated mode off for anonymous viewers. */
+  const [gateIdentity, setGateIdentity] = useState<SessionIdentityState>('unknown');
+  const [showThemeGate, setShowThemeGate] = useState(false);
+  useEffect(() => {
+    let live = true;
+    readSessionIdentity()
+      .then((id) => { if (live) setGateIdentity(id.state); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, []);
   const sensorMode = sensorEffect?.mode ?? 'off';
   const sensorBlock = onSensorEffectChange ? (
     <div className="mt-2 rounded-lg border border-white/10 bg-white/[0.03] p-2.5">
@@ -330,7 +347,14 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
               type="button"
               role="radio"
               aria-checked={active}
-              onClick={() => onSensorEffectChange({ mode: opt.mode, intensity: sensorEffect?.intensity ?? 1 })}
+              onClick={() => {
+                if (sensorModeNeedsAccount(opt.mode) && gateIdentity !== 'free' && gateIdentity !== 'premium') {
+                  setShowThemeGate(true);
+                  return;
+                }
+                setShowThemeGate(false);
+                onSensorEffectChange({ mode: opt.mode, intensity: sensorEffect?.intensity ?? 1 });
+              }}
               className={`w-full flex items-center gap-2.5 py-1.5 px-1 rounded-md text-left hover:bg-white/[0.05] transition-colors ${active ? 'text-white/85' : 'text-white/40'}`}
             >
               <span
@@ -343,10 +367,18 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                 }}
               />
               <span className="text-[11px] font-mono uppercase tracking-wider">{opt.label}</span>
+              {sensorModeNeedsAccount(opt.mode) && gateIdentity !== 'free' && gateIdentity !== 'premium' && (
+                <Lock className="w-3 h-3 ml-auto text-[#D4AF37]/80" aria-label="Free account feature" />
+              )}
             </button>
           );
         })}
       </div>
+      {showThemeGate && (
+        <div className="mt-2">
+          <AccountGatePrompt compact feature="map-theme" />
+        </div>
+      )}
       <p className="mt-1.5 text-[9px] leading-relaxed text-white/35">
         Simulated visual effects — not real sensor data. Applied to the map only; live camera feeds and panels are never filtered.
       </p>

@@ -28,6 +28,7 @@ import {
   type StripeJsLike,
 } from "@/lib/billing/embedded-checkout";
 import { CheckoutGuaranteeNote, CheckoutPlanStrip } from "./CheckoutPlanStrip";
+import CancelReassurance from "./CancelReassurance";
 import HostedCheckoutLink from "./HostedCheckoutLink";
 
 // Next inlines this literal access into the browser bundle at build time.
@@ -123,6 +124,7 @@ export default function EmbeddedCheckoutBody({
       </div>
 
       <CheckoutGuaranteeNote summary={summary} />
+      <CancelReassurance compact />
       <div className="mt-3 text-center">
         <HostedCheckoutLink plan={plan} />
       </div>

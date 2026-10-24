@@ -9,6 +9,7 @@ import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import LiveQuakeList from "@/components/events/LiveQuakeList";
+import ExportTease from "@/components/ExportTease";
 
 export const metadata: Metadata = {
   title: "Live Earthquake Map & Tracker — Quakes As They Happen",
@@ -173,6 +174,9 @@ export default function EarthquakeTrackerPage() {
             Happening now — <span className="text-[#ff8c5a]">significant quakes</span>
           </h2>
           <LiveQuakeList />
+          <div className="mt-4 flex justify-center">
+            <ExportTease surface="earthquake" />
+          </div>
         </div>
 
         {/* What you can see */}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { X, Plane, Gauge, ArrowUp, Radio, Crosshair, Loader2, Video } from 'lucide-react';
 import ShareButton from './share/ShareButton';
+import ExportTease from './ExportTease';
 import { flightShareId } from '@/lib/share/links';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -252,6 +253,9 @@ function Row({ flight, telem, onRemove, onLocate, onDetail }: {
           <X className="w-3 h-3" />
         </button>
       </header>
+      <div className="border-b border-[var(--border-secondary)]">
+        <ExportTease surface="flight" />
+      </div>
 
       <div className="px-2.5 py-2">
         {loading ? (

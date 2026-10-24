@@ -1,6 +1,7 @@
 import SiteFooter from "./SiteFooter";
 import LandingTrackerMount from "./landing/LandingTrackerMount";
 import CamerasSection from "./landing/CamerasSection";
+import SpotlightCam from "./SpotlightCam";
 import DirectAnswers from "./seo/DirectAnswers";
 import TrackingSection from "./landing/TrackingSection";
 import HazardsSection from "./landing/HazardsSection";
@@ -75,6 +76,7 @@ export default function HomeSeoShell() {
   return (
     <section aria-label="About WorldEye" className="home-seo-shell relative bg-[#06060C] text-white">
       <LandingTrackerMount />
+      <SpotlightCam />
       <CamerasSection />
       <div className="max-w-5xl mx-auto px-6 py-12 md:py-14">
         <DirectAnswers

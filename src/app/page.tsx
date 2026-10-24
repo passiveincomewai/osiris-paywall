@@ -34,7 +34,7 @@ import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormF
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
-import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, type SensorEffectState } from '@/lib/sensor-effects';
+import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
 import { readBasemapMode, writeBasemapMode, satelliteSwitchAction, type BasemapMode } from '@/lib/basemap-mode';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
@@ -568,6 +568,25 @@ export default function Dashboard() {
   useEffect(() => {
     try { localStorage.setItem('we_sensor_effect_v1', JSON.stringify(sensorEffect)); } catch { /* ignore */ }
   }, [sensorEffect]);
+
+  /* Wave 2 F15: the exclusive themes (Tactical Dark, Night Vision) are
+     free-account features. If a persisted gated mode is on file but the
+     viewer is definitively anonymous, it does not apply — coerce to off
+     for this session (the stored choice is left alone; it takes effect
+     again once the viewer signs in). An unknown read changes nothing:
+     a failed session read must never strip a member's theme. */
+  useEffect(() => {
+    if (!sensorModeNeedsAccount(sensorEffect.mode)) return;
+    let live = true;
+    readSessionIdentity()
+      .then((id) => {
+        if (live && id.state === 'anonymous') setSensorEffect({ ...DEFAULT_SENSOR_EFFECT });
+      })
+      .catch(() => {});
+    return () => { live = false; };
+    // Mount-only: the persisted mode at load is the one being gated.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* Style Studio overrides are inline on <body>, so they survive the theme
      swap above and only need reapplying once per load. */

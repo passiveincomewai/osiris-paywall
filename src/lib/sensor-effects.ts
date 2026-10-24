@@ -23,7 +23,8 @@ export type SensorEffectMode =
   | 'monochrome'
   | 'high-contrast'
   | 'crt'
-  | 'cinematic-dark';
+  | 'cinematic-dark'
+  | 'tactical-dark';
 
 export interface SensorEffectState {
   mode: SensorEffectMode;
@@ -48,6 +49,7 @@ export const SENSOR_EFFECT_OPTIONS: SensorEffectOption[] = [
   { mode: 'high-contrast', label: 'High Contrast' },
   { mode: 'crt', label: 'CRT Monitor' },
   { mode: 'cinematic-dark', label: 'Cinematic Dark' },
+  { mode: 'tactical-dark', label: 'Tactical Dark' },
 ];
 
 const MODES = new Set<SensorEffectMode>(SENSOR_EFFECT_OPTIONS.map((o) => o.mode));
@@ -123,6 +125,11 @@ export function sensorFilterCss(state: SensorEffectState, opts?: { svgFilters?: 
       return `contrast(${f2(lerp(1, 1.15, t))}) brightness(${f2(lerp(1, 1.08, t))}) saturate(${f2(lerp(1, 1.25, t))})`;
     case 'cinematic-dark':
       return `brightness(${f2(lerp(1, 0.75, t))}) contrast(${f2(lerp(1, 1.15, t))}) saturate(${f2(lerp(1, 0.8, t))})`;
+    case 'tactical-dark':
+      // Tactical Dark (Wave 2 F15 exclusive theme): deep, desaturated
+      // ops-room dark — crushed brightness, hard contrast, a slight
+      // amber lean. A simulated look, labelled like every mode here.
+      return `brightness(${f2(lerp(1, 0.88, t))}) contrast(${f2(lerp(1, 1.22, t))}) saturate(${f2(lerp(1, 0.5, t))}) sepia(${f2(lerp(0, 0.22, t))}) hue-rotate(${Math.round(lerp(0, -10, t))}deg)`;
     default:
       return '';
   }
@@ -215,4 +222,21 @@ export function sensorEffectPlan(
     crtOverlay: state.mode === 'crt',
     crtOpacity: 0.35 + 0.65 * clampIntensity(state.intensity),
   };
+}
+
+/**
+ * Wave 2 F15 — the exclusive themes. "Tactical Dark" and "Night Vision"
+ * are free-account features: signed-in users (free tier and above) may
+ * select them; anonymous visitors get the free-account prompt instead
+ * (components/LayerPanel) and a persisted gated mode does not apply
+ * for them (src/app/page.tsx coerces it off). Every other mode stays
+ * open to everyone, exactly as before.
+ */
+export const ACCOUNT_GATED_SENSOR_MODES: ReadonlySet<SensorEffectMode> = new Set([
+  'tactical-dark',
+  'night-vision',
+]);
+
+export function sensorModeNeedsAccount(mode: SensorEffectMode): boolean {
+  return ACCOUNT_GATED_SENSOR_MODES.has(mode);
 }
