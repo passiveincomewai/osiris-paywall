@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Camera, Globe, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
+import CountriesDirectory from "@/components/CountriesDirectory";
+import type { CountryDirectoryEntry } from "@/lib/country-directory";
 import data from "@/data/camera-countries.json";
 
 /* Counts come from the generated index (tools/build-country-pages.mjs,
@@ -21,6 +23,15 @@ interface CountryEntry {
 const COUNTRIES = (data as { countries: CountryEntry[] }).countries;
 const TOTAL_CAMERAS = (data as { attributedTotal: number }).attributedTotal;
 const byName = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name));
+/* The directory table's client props: only the fields the table and
+   its search need, so the serialized page payload stays slim (the
+   raw entries also carry aliases, city counts and camera samples). */
+const DIRECTORY_ENTRIES: CountryDirectoryEntry[] = COUNTRIES.map((c) => ({
+  slug: c.slug,
+  name: c.name,
+  count: c.count,
+  topCities: c.topCities,
+}));
 const largest = COUNTRIES.reduce((a, b) => (b.count > a.count ? b : a), COUNTRIES[0]);
 
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -210,42 +221,7 @@ export default function CameraCountriesPage() {
             Every country has its own page: the full camera grid for that country,
             grouped by area, each feed live.
           </p>
-          <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
-            <table className="w-full text-sm md:text-base">
-              <thead>
-                <tr className="bg-white/[0.04] text-left text-xs uppercase tracking-wider text-white/45">
-                  <th scope="col" className="px-4 md:px-6 py-4 font-semibold">#</th>
-                  <th scope="col" className="px-4 md:px-6 py-4 font-semibold">Country</th>
-                  <th scope="col" className="px-4 md:px-6 py-4 font-semibold text-right">Cameras</th>
-                  <th scope="col" className="px-4 md:px-6 py-4 font-semibold hidden sm:table-cell">Top area</th>
-                </tr>
-              </thead>
-              <tbody>
-                {byName.map((c, i) => (
-                  <tr
-                    key={c.slug}
-                    className="border-t border-white/[0.06] hover:bg-white/[0.03] transition"
-                  >
-                    <td className="px-4 md:px-6 py-3.5 text-white/35 tabular-nums">{i + 1}</td>
-                    <td className="px-4 md:px-6 py-3.5 font-medium">
-                      <Link
-                        href={`/cameras/countries/${c.slug}`}
-                        className="text-[#D4AF37] hover:underline"
-                      >
-                        {c.name}
-                      </Link>
-                    </td>
-                    <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
-                      {fmt(c.count)}
-                    </td>
-                    <td className="px-4 md:px-6 py-3.5 text-white/50 hidden sm:table-cell">
-                      {c.topCities[0]?.name ?? "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <CountriesDirectory countries={DIRECTORY_ENTRIES} />
         </div>
 
         {/* FAQ */}
