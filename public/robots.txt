@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /premium
+
+Sitemap: https://worldeye.app/sitemap.xml
+Sitemap: https://worldeye.app/news-sitemap.xml
