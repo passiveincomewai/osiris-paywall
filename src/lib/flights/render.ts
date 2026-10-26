@@ -59,6 +59,7 @@ export function flightToFeature(f: any) {
       heading: f.heading || 0,
       alt: f.alt,
       model: f.model,
+      model_name: f.model_name || '',
       speed_knots: f.speed_knots,
       registration: f.registration,
       icao24: f.icao24,

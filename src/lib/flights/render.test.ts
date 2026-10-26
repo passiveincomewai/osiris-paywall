@@ -47,6 +47,7 @@ describe('flightToFeature / flightsToFeatures', () => {
       heading: 90,
       alt: 11000,
       model: 'A320',
+      model_name: '',
       speed_knots: 450,
       registration: 'G-TEST',
       icao24: 'abc123',

@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { stealthFetch } from '@/lib/stealthFetch';
 import { extractAircraft } from '@/lib/flights/feeds';
+import { aircraftTypeName } from '@/lib/flights/type-names';
 import { classifyDropReason } from '@/lib/flights/diagnostics';
 
 export const maxDuration = 60;
@@ -236,6 +237,7 @@ function classifyFlight(f: any) {
     heading: Math.round(heading),
     speed_knots: speedKnots,
     model: f.t || 'Unknown',
+    model_name: aircraftTypeName(f.t),
     icao24: f.hex || '',
     registration: f.r || 'N/A',
     squawk: f.squawk || '',

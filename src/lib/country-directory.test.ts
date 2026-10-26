@@ -108,6 +108,17 @@ describe("countryMatchesSearch — aliases people actually type", () => {
     expect(countryMatchesSearch(nl, "holland")).toBe(true);
   });
 
+  it("city matches anchor at word starts — 'usa' must not hit JerUSAlem, BulUSAn or BUSAn", () => {
+    const israel = ENTRIES.find((c) => c.slug === "israel")!;
+    const philippines = ENTRIES.find((c) => c.slug === "philippines")!;
+    const korea = ENTRIES.find((c) => c.slug === "south-korea")!;
+    expect(countryMatchesSearch(israel, "usa")).toBe(false);
+    expect(countryMatchesSearch(philippines, "usa")).toBe(false);
+    expect(countryMatchesSearch(korea, "usa")).toBe(false);
+    const hits = filterCountries(ENTRIES, { search: "usa", region: null });
+    expect(hits.map((c) => c.slug)).toEqual(["united-states"]);
+  });
+
   it("matchedCityName names the city that matched, and only then", () => {
     expect(matchedCityName(japan, "tokyo")).toBe("Tokyo");
     expect(matchedCityName(japan, "japan")).toBeNull();

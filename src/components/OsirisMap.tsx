@@ -2085,14 +2085,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         const routeLoadingId = `route-info-${Date.now()}`;
         popup(coords, `<div style="background:rgba(12,14,26,0.95);backdrop-filter:blur(16px);border-radius:10px;padding:12px;font-family:'JetBrains Mono',monospace;border:1px solid rgba(255,255,255,0.08);max-height:54vh;overflow-y:auto;">
           <div id="acphoto-${idSafe(p.icao24||'')}" style="position:relative;width:100%;aspect-ratio:2/1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;">
-            <span id="acphoto-label-${idSafe(p.icao24||'')}" style="color:#5C5A54;font-size:9px;letter-spacing:0.12em;padding:0 8px;text-align:center;">\u2708 ${htmlEsc(p.model || 'AIRCRAFT')}</span>
+            <span id="acphoto-label-${idSafe(p.icao24||'')}" style="color:#5C5A54;font-size:9px;letter-spacing:0.12em;padding:0 8px;text-align:center;">\u2708 ${htmlEsc(p.model_name || p.model || 'AIRCRAFT')}</span>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
             <span style="color:#E8E6E0;font-size:13px;font-weight:700;letter-spacing:0.08em;">${htmlEsc(cs)}</span>
             <span style="color:#5C5A54;font-size:9px;">${htmlEsc(p.icao24||'')}</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:10px;">
-            <div><span style="color:#5C5A54;font-size:8px;">MODEL</span><br/><span style="color:#B0BEC5;">${htmlEsc(p.model||'\u2014')}</span></div>
+            <div><span style="color:#5C5A54;font-size:8px;">MODEL</span><br/><span style="color:#B0BEC5;">${htmlEsc(p.model_name || p.model||'\u2014')}</span></div>
             <div><span style="color:#5C5A54;font-size:8px;">ALT</span><br/><span id="acstat-alt-${idSafe(p.icao24||'')}" style="color:#B0BEC5;">${p.alt?Math.round(p.alt)+'m':'\u2014'}</span></div>
             <div><span style="color:#5C5A54;font-size:8px;">SPEED</span><br/><span id="acstat-spd-${idSafe(p.icao24||'')}" style="color:#B0BEC5;">${p.speed_knots?Math.round(p.speed_knots)+'kt':'\u2014'}</span></div>
             <div><span style="color:#5C5A54;font-size:8px;">HDG</span><br/><span id="acstat-hdg-${idSafe(p.icao24||'')}" style="color:#B0BEC5;">${Math.round(p.heading||0)}\u00b0</span></div>
@@ -2152,7 +2152,18 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             .then((d) => {
               const el = document.getElementById(`ac-${p.icao24}`);
               if (!el || !d || d.error) {
-                if (el) el.innerHTML = '<span style="color:#5C5A54;font-size:9px;">AIRFRAME NOT IN REGISTRY</span>';
+                // The registry missed it, but the feed itself usually
+                // knows the type code and registration — show those
+                // instead of declaring the airframe unknown.
+                if (el) {
+                  const fbName = p.model_name || p.model;
+                  const fbBits = [p.registration, p.model].filter((x: any) => x && x !== 'N/A' && x !== 'Unknown')
+                    .map((x: string) => htmlEsc(String(x))).join(' · ');
+                  el.innerHTML = fbName
+                    ? `<div style="color:#E8E6E0;font-size:11px;line-height:1.35;">${htmlEsc(fbName)}</div>` +
+                      (fbBits ? `<div style="color:#78909C;font-size:9px;margin-top:2px;">${fbBits}</div>` : '')
+                    : '<span style="color:#5C5A54;font-size:9px;">AIRFRAME NOT IN REGISTRY</span>';
+                }
                 return;
               }
               const bits = [d.registration, d.typeCode, d.operator].filter(Boolean)

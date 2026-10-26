@@ -124,6 +124,16 @@ export function foldForSearch(value: string): string {
     .replace(/[æœßðđþłø]/g, (ch) => NON_DECOMPOSING[ch] ?? ch);
 }
 
+/**
+ * City match anchored at a word start. A bare substring test made the
+ * query "usa" match Jer**usa**lem, Bul**usa**n and B**usa**n — a city
+ * only counts when the needle begins the city name or one of its words.
+ */
+function cityMatchesNeedle(foldedCity: string, needle: string): boolean {
+  if (foldedCity.startsWith(needle)) return true;
+  return foldedCity.split(/[\s\-/]+/).some((w) => w.startsWith(needle));
+}
+
 export function countryMatchesSearch(
   entry: CountryDirectoryEntry,
   search: string,
@@ -133,7 +143,7 @@ export function countryMatchesSearch(
   if (foldForSearch(entry.name).includes(needle)) return true;
   const aliases = [...(entry.aliases ?? []), ...(SEARCH_ALIASES_BY_SLUG[entry.slug] ?? [])];
   if (aliases.some((a) => foldForSearch(a).includes(needle))) return true;
-  return entry.topCities.some((city) => foldForSearch(city.name).includes(needle));
+  return entry.topCities.some((city) => cityMatchesNeedle(foldForSearch(city.name), needle));
 }
 
 /** The top city that made a search match (for the row's "via" hint), or null. */
@@ -144,7 +154,7 @@ export function matchedCityName(
   const needle = foldForSearch(search.trim());
   if (!needle) return null;
   if (foldForSearch(entry.name).includes(needle)) return null;
-  const hit = entry.topCities.find((city) => foldForSearch(city.name).includes(needle));
+  const hit = entry.topCities.find((city) => cityMatchesNeedle(foldForSearch(city.name), needle));
   return hit ? hit.name : null;
 }
 
