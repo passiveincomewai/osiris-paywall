@@ -27,14 +27,14 @@ describe("ProUpgradeEmbed", () => {
 
   it("offers the three plans with pricing's prices and trial labels", () => {
     const html = render([]);
-    for (const s of ["$7.99", "/week", "$13.99", "/month", "$74.99", "/year", "3 days free"]) {
+    for (const s of ["$7.99", "/week", "$13.99", "/month", "$74.99", "/year", "10 days free"]) {
       expect(html).toContain(s);
     }
   });
 
   it("the primary CTA is the selected plan's own (annual by default)", () => {
     const html = render([]);
-    expect(html).toContain("Start 3-Day Free Trial");
+    expect(html).toContain("Start 10-Day Free Trial");
     expect(html).toContain(HOSTED_CHECKOUT_LABEL);
     // No invented wallet-branded purchase button anywhere in the embed.
     expect(html).not.toContain("Buy with");

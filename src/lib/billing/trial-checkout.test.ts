@@ -33,7 +33,7 @@ describe("TRIAL_PLAN_OPTIONS", () => {
 
   it("carries the trial lengths from the shared trial config", () => {
     const days = Object.fromEntries(TRIAL_PLAN_OPTIONS.map((o) => [o.plan, o.trialDays]));
-    expect(days).toEqual({ weekly: 3, monthly: 3, annual: 3 });
+    expect(days).toEqual({ weekly: 10, monthly: 10, annual: 10 });
   });
 
   it("mirrors /pricing's plan copy word for word", () => {

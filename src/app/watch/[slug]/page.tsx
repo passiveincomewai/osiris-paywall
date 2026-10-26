@@ -130,10 +130,7 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
       <header className="border-b border-white/10 bg-[#050810]/85 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2.5">
-            <img src="/worldeye-eye.png" alt="WorldEye" width={600} height={432} className="h-8 w-auto" />
-            <span className="font-wordmark text-white tracking-wide">
-              World<span className="text-[#0096FF]">Eye</span>
-            </span>
+            <img src="/worldeye-header-logo.png" alt="WorldEye" width={1063} height={290} className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-3">
             <LanguageHeaderControl variant="mobile" />

@@ -16,13 +16,13 @@ describe("TrialPicker", () => {
   it("renders every plan with pricing's copy", () => {
     const html = renderToString(createElement(TrialPicker));
     for (const s of [
-      "Start 3-Day Free Trial",
+      "Start 10-Day Free Trial",
       "$7.99",
       "$13.99",
       "$74.99",
-      "3 days free, then billed weekly · cancel anytime",
-      "3 days free, then billed monthly · cancel anytime",
-      "3 days free, then billed annually · cancel anytime",
+      "10 days free, then billed weekly · cancel anytime",
+      "10 days free, then billed monthly · cancel anytime",
+      "10 days free, then billed annually · cancel anytime",
       "Secured by Stripe · Cancel anytime · 7-day money-back guarantee on your first charge",
     ]) {
       expect(html).toContain(s);
@@ -31,7 +31,7 @@ describe("TrialPicker", () => {
 
   it("renders in the compact variant too", () => {
     const html = renderToString(createElement(TrialPicker, { variant: "compact" }));
-    expect(html).toContain("Start 3-Day Free Trial");
+    expect(html).toContain("Start 10-Day Free Trial");
   });
 
   it("each plan's CTA is a real filled button, not a text line (C1)", () => {
@@ -39,9 +39,9 @@ describe("TrialPicker", () => {
     // The CTA of each plan is a <button> carrying the gold filled
     // treatment and a ≥48px tap height, labelled with its plan.
     for (const label of [
-      "Start 3-Day Free Trial — Weekly $7.99/week",
-      "Start 3-Day Free Trial — Monthly $13.99/month",
-      "Start 3-Day Free Trial — VIP Pro $74.99/year",
+      "Start 10-Day Free Trial — Weekly $7.99/week",
+      "Start 10-Day Free Trial — Monthly $13.99/month",
+      "Start 10-Day Free Trial — VIP Pro $74.99/year",
     ]) {
       expect(html).toContain(`aria-label="${label}"`);
     }
@@ -57,7 +57,7 @@ describe("TrialPicker", () => {
       renderToString(createElement(TrialPicker, { mode: "embedded" })),
     );
     expect(html).toContain("data-trial-picker");
-    expect(html).toContain("Start 3-Day Free Trial");
+    expect(html).toContain("Start 10-Day Free Trial");
     expect(html).not.toContain("Loading secure checkout…");
     expect(html).not.toContain("data-trial-picker-checkout");
   });
@@ -99,6 +99,6 @@ describe("TrialPickerDialog", () => {
     );
     expect(html).toContain("Start your free trial");
     expect(html).toContain("OI — the AI assistant");
-    expect(html).toContain("Start 3-Day Free Trial");
+    expect(html).toContain("Start 10-Day Free Trial");
   });
 });

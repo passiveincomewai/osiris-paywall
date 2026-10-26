@@ -21,7 +21,7 @@ describe("CameraSignupNudge", () => {
     expect(html).toContain("Maybe later");
     // Plan list first: all three CTAs, and no checkout form yet — the
     // embedded swap happens on a pick, in place.
-    expect(html).toContain("Start 3-Day Free Trial");
+    expect(html).toContain("Start 10-Day Free Trial");
     expect(html).not.toContain("Loading secure checkout…");
     // The invite-a-friend section sits under the plans: the promise,
     // its join condition, and room to scroll (the card caps its height).
@@ -72,7 +72,7 @@ describe("CameraSignupNudge — ladder rungs", () => {
     const html = render({ rung: "pro", opensUsed: 15 });
     expect(html).toContain("Unlock unlimited cameras");
     expect(html).toContain("You've opened your 15 free cameras");
-    expect(html).toContain("Start 3-Day Free Trial");
+    expect(html).toContain("Start 10-Day Free Trial");
     expect(html).toContain("Maybe later");
   });
 });

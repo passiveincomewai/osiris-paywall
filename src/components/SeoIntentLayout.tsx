@@ -143,9 +143,7 @@ export function IntentShell({ jsonLd, children }: { jsonLd: unknown; children: R
             <ArrowLeft className="w-4 h-4" /> Back to the map
           </Link>
           <div className="flex items-center gap-3">
-            <span className="text-[11px] font-mono tracking-[0.3em] text-[#0096FF]">
-              WORLDEYE
-            </span>
+            <Link href="/" aria-label="WorldEye — back to the live globe" className="shrink-0 inline-flex items-center"><img src="/worldeye-header-logo.png" alt="WorldEye" width={1063} height={290} className="h-6 w-auto" /></Link>
             <LanguageHeaderControl variant="mobile" />
           </div>
         </div>

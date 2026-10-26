@@ -6,7 +6,7 @@ import { describe, it, expect } from "vitest";
 import { TRIAL_DAYS, trialDaysForPlan } from "./trials";
 
 describe("TRIAL_DAYS", () => {
-  it("grants the monthly plan a 3-day free trial", () => {
+  it("grants the monthly plan a 10-day free trial", () => {
     expect(TRIAL_DAYS.monthly).toBe(10);
     expect(trialDaysForPlan("monthly")).toBe(10);
   });

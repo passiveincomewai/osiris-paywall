@@ -28,7 +28,7 @@ describe("EmbeddedCheckoutBody", () => {
 
   it("carries the guarantee line and the hosted option for trial plans", () => {
     const html = render("annual");
-    expect(html).toContain("3 days free");
+    expect(html).toContain("10 days free");
     expect(html).toContain(GUARANTEE_LINE);
     expect(html).toContain(HOSTED_CHECKOUT_LABEL);
   });

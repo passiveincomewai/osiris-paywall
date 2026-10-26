@@ -50,7 +50,7 @@ describe("CheckoutSheet", () => {
     const annual = render("annual");
     expect(annual).toContain("VIP Pro");
     expect(annual).toContain("$74.99");
-    expect(annual).toContain("3 days free");
+    expect(annual).toContain("10 days free");
 
     const enterprise = render("enterprise");
     expect(enterprise).toContain("Enterprise");

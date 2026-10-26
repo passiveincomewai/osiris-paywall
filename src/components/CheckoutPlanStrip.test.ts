@@ -32,19 +32,19 @@ describe("CheckoutPlanStrip", () => {
     expect(html).toContain("Weekly Pro");
     expect(html).toContain("$7.99");
     expect(html).toContain("/week");
-    expect(html).toContain("3 days free");
+    expect(html).toContain("10 days free");
     expect(html).toContain("Just $1.14 a day");
     // Stripe's form states the terms; our strip must not say them twice.
     expect(html).not.toContain("then billed weekly");
     expect(html).not.toContain("Secure checkout");
   });
 
-  it("shows annual with its 3-day chip and per-day framing", () => {
+  it("shows annual with its 10-day chip and per-day framing", () => {
     const html = renderStrip("annual");
     expect(html).toContain("VIP Pro");
     expect(html).toContain("$74.99");
     expect(html).toContain("/year");
-    expect(html).toContain("3 days free");
+    expect(html).toContain("10 days free");
     expect(html).toContain("Just $0.21 a day");
     expect(html).not.toContain("then billed annually");
   });
