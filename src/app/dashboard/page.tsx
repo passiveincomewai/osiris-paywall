@@ -115,12 +115,9 @@ export default async function DashboardPage() {
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/worldeye-eye.png" alt="WorldEye" width={600} height={432} className="h-8 w-auto" />
-            <span className="font-wordmark text-white tracking-wide hidden sm:inline">
-              World<span className="text-[#0096FF]">Eye</span>
-              <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full border border-cyan-400/40 text-cyan-300 tracking-[0.2em] font-mono">
-                DASHBOARD
-              </span>
+            <img src="/worldeye-header-logo.png" alt="WorldEye" width={1063} height={290} className="h-8 w-auto" />
+            <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full border border-cyan-400/40 text-cyan-300 tracking-[0.2em] font-mono hidden sm:inline">
+              DASHBOARD
             </span>
           </Link>
           <nav className="flex items-center gap-1 overflow-x-auto text-sm">

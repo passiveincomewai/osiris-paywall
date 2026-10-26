@@ -2484,17 +2484,15 @@ export default function Dashboard() {
       {/* ── HEADER — WorldEye brand ── */}
       <motion.div data-hud initial={{ opacity: 0, y: -20 }} animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }} transition={hudIn(0.15)} className="absolute top-4 z-[200] pointer-events-none" style={{ left: isMobile ? '16px' : '64px' }}>
         <Link href="/" className="pointer-events-auto flex items-center gap-2.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/worldeye-eye.png?v=4"
+            src="/worldeye-header-logo.png"
             alt="WorldEye"
-            width={600}
-            height={432}
-            className="h-9 md:h-10 w-auto"
+            width={1063}
+            height={290}
+            className="h-10 md:h-11 w-auto"
             style={{ filter: 'drop-shadow(0 0 10px rgba(0,150,255,0.5))' }}
           />
-          <span className="text-lg md:text-xl font-wordmark tracking-wide">
-            <span className="text-white">World</span><span className="text-[#0096FF]">Eye</span>
-          </span>
         </Link>
       </motion.div>
 

@@ -116,14 +116,10 @@ export default function HeaderProfileMenu() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Account menu"
-        className="w-8 h-8 rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-black flex items-center justify-center shadow-[0_0_12px_rgba(212,175,55,0.4)] hover:brightness-110 transition overflow-hidden"
+        className="flex items-center hover:brightness-110 transition"
       >
-        {user?.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={user.image} alt="" className="w-full h-full object-cover" />
-        ) : (
-          initials(user?.name, user?.email)
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/profile-icon.png" alt="" className="h-8 w-auto" />
       </button>
 
       {open && (
