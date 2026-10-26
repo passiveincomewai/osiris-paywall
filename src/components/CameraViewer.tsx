@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check } from 'lucide-react';
+import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check, Copy } from 'lucide-react';
 import type Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
 import { cameraShareId, cameraShareTitle, rememberLastCamera } from '@/lib/camera-share';
-import { shareEntity } from '@/lib/share/client';
+import { ensureShareCode, shareEntity, shareUrl } from '@/lib/share/client';
+import { buildEntityShareUrl } from '@/lib/share/links';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
+import CameraMiniMap from './CameraMiniMap';
 import TimelapseControl from './TimelapseControl';
 import AccountGatePrompt from './AccountGatePrompt';
 import LiveRecordControl from './recording/LiveRecordControl';
@@ -31,6 +33,10 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
   const [currentTime, setCurrentTime] = useState<string>('');
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "signin" | "error">("idle");
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
+  const [mapOpen, setMapOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareUrlText, setShareUrlText] = useState<string | null>(null);
+  const [shareIsNew, setShareIsNew] = useState(false);
 
   useEffect(() => {
     const iv = setInterval(() => {
@@ -97,6 +103,31 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
     rememberLastCamera(camera);
   }, [camera]);
 
+  // The share panel shows the visitor their own link for this camera.
+  // Resolve it only when the panel is first opened — the share code is
+  // minted on need, never at render (lib/share/client). A signed-out
+  // visitor's link is an anonymous device link until they activate it
+  // as an affiliate, so for them the panel also offers activation.
+  useEffect(() => {
+    if (!shareOpen || shareUrlText) return;
+    const id = cameraShareId(camera);
+    if (!id) return;
+    let live = true;
+    (async () => {
+      let signedIn = false;
+      try {
+        const s = await fetch('/api/auth/session', { cache: 'no-store' });
+        const session = await s.json().catch(() => null);
+        signedIn = Boolean(session?.user);
+      } catch { /* unreachable session reads as signed out */ }
+      const code = await ensureShareCode().catch(() => null);
+      if (!live) return;
+      setShareIsNew(!signedIn);
+      setShareUrlText(buildEntityShareUrl({ kind: 'camera', id }, code));
+    })();
+    return () => { live = false; };
+  }, [shareOpen, shareUrlText, camera]);
+
   const streamType = resolvedEmbed ? 'iframe' : (camera?.stream_type || 'jpg');
   const streamUrl: string | undefined = resolvedEmbed || camera?.stream_url;
   const view = offPlatformView({ hostedOffPlatform, resolving, resolvedEmbed, offline });
@@ -108,6 +139,10 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
     setError(false);
     setImageUrl(null);
     setShareState("idle");
+    setMapOpen(false);
+    setShareOpen(false);
+    setShareUrlText(null);
+    setShareIsNew(false);
 
     // Cleanup previous HLS instance
     if (hlsRef.current) {
@@ -437,7 +472,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
               <div className="absolute top-3 left-3 flex items-center gap-2 bg-black/80 border border-[var(--gold-primary)]/50 px-2 py-1 shadow-[0_0_10px_rgba(0,0,0,0.8)]">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]" />
                 <span className="text-[9px] font-mono text-white tracking-[0.2em]">
-                  {watchLiveUrl ? 'SNAPSHOT' : streamType === 'jpg' ? 'LIVE SAT-LINK' : 'LIVE FEED'}
+                  {watchLiveUrl || streamType === 'jpg' ? 'SNAPSHOT' : 'LIVE FEED'}
                 </span>
               </div>
             )}
@@ -467,22 +502,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
 
           {/* Advanced Tactical Footer */}
           <div className="bg-black border-t border-[var(--border-primary)] relative z-10">
-            <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5">
-              <div className="flex gap-4">
-                <div className="flex flex-col">
-                  <span className="text-[9px] text-[var(--text-muted)] font-mono tracking-widest">FEED TYPE</span>
-                  <span className="text-[9px] text-white font-mono tracking-widest uppercase">
-                    {view === 'offline' ? (gone ? 'WITHDRAWN' : 'OFFLINE') : watchLiveUrl ? 'SNAPSHOT' : externalOnly ? 'EXTERNAL' : resolvedEmbed ? 'YOUTUBE LIVE' : streamType}
-                  </span>
-                </div>
-                <div className="flex flex-col border-l border-white/10 pl-4">
-                  <span className="text-[9px] text-[var(--text-muted)] font-mono tracking-widest">STATUS</span>
-                  {/* Nothing is being received locally for an external feed — don't claim otherwise. */}
-                  <span className={`text-[9px] font-mono tracking-widest ${externalOnly ? 'text-[var(--gold-primary)]' : 'text-[var(--alert-green)]'}`}>
-                    {view === 'offline' ? (gone ? 'REMOVED BY SOURCE' : 'OFF AIR AT SOURCE') : watchLiveUrl ? 'LIVE VIDEO AT SOURCE' : externalOnly ? 'HOSTED OFF-PLATFORM' : 'ACTIVE / RECORDING'}
-                  </span>
-                </div>
-              </div>
+            <div className="flex items-center justify-end px-3 py-1.5 border-b border-white/5">
               <div className="flex gap-3">
                 {/* Share this camera: a deep link back to this exact camera
                     on the globe, carrying the visitor's personal share
@@ -492,6 +512,62 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                     one the link could not resolve, so the button is not
                     offered. */}
                 {cameraShareId(camera) && (
+                  <button
+                    onClick={() => { setShareOpen(v => !v); setMapOpen(false); }}
+                    aria-expanded={shareOpen}
+                    className="flex items-center gap-1.5 px-2.5 py-1 border transition-colors text-[9px] font-mono font-bold tracking-widest"
+                    style={shareOpen
+                      ? { borderColor: 'var(--gold-primary)', background: 'var(--gold-primary)', color: '#000' }
+                      : { borderColor: 'var(--gold-primary)', background: 'rgba(255,255,255,0.05)', color: 'var(--gold-primary)' }}
+                    title="Show your share link for this camera"
+                    aria-label="Share this camera"
+                  >
+                    <Share2 className="w-2.5 h-2.5" /> SHARE
+                  </button>
+                )}
+                <button
+                  onClick={() => { setMapOpen(v => !v); setShareOpen(false); }}
+                  aria-expanded={mapOpen}
+                  className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--cyan-primary)] tracking-widest"
+                  title="Show where this camera is, on a map here"
+                  aria-label="Show this camera on a map"
+                >
+                  <MapPin className="w-2.5 h-2.5" /> MAP TARGET
+                </button>
+              </div>
+            </div>
+            {/* Your link for this camera: the visitor's own share link
+                (affiliate code when signed in, this device's anonymous
+                code otherwise) — shown, not just copied blind — with a
+                copy button and the platform share sheet beside it. A new
+                visitor's link is anonymous until activated, so they get
+                the activation path right here. */}
+            {shareOpen && cameraShareId(camera) && (
+              <div className="border-b border-white/5 px-3 py-2">
+                <div className="text-[9px] font-mono tracking-widest text-[var(--text-muted)]">YOUR LINK FOR THIS CAMERA</div>
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="flex-1 min-w-0 truncate bg-white/5 border border-white/10 px-2 py-1.5 text-[10px] font-mono text-white" title={shareUrlText ?? undefined}>
+                    {shareUrlText ?? 'Preparing your link…'}
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (!shareUrlText) return;
+                      const outcome = await shareUrl(shareUrlText, cameraShareTitle(camera), '', {
+                        clipboardWrite: t => navigator.clipboard.writeText(t),
+                      }).catch(() => 'unavailable' as const);
+                      if (outcome === 'copied') {
+                        setShareState('copied');
+                        setTimeout(() => setShareState('idle'), 2500);
+                      }
+                    }}
+                    className="flex shrink-0 items-center gap-1.5 px-2.5 py-1.5 border transition-colors text-[9px] font-mono font-bold tracking-widest"
+                    style={{ borderColor: 'var(--gold-primary)', color: 'var(--gold-primary)', background: 'rgba(255,255,255,0.05)' }}
+                    aria-label="Copy your share link"
+                  >
+                    {shareState === 'copied'
+                      ? <><Check className="w-2.5 h-2.5" /> COPIED</>
+                      : <><Copy className="w-2.5 h-2.5" /> COPY LINK</>}
+                  </button>
                   <button
                     onClick={async () => {
                       const { outcome } = await shareEntity(
@@ -503,29 +579,30 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                         setTimeout(() => setShareState('idle'), 2500);
                       }
                     }}
-                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--gold-primary)] tracking-widest"
-                    title={shareState === 'copied' ? 'Link copied' : 'Share this camera'}
-                    aria-label={shareState === 'copied' ? 'Camera link copied' : 'Share this camera'}
+                    className="flex shrink-0 items-center gap-1.5 px-2.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono tracking-widest text-white"
+                    aria-label="Share this camera"
                   >
-                    {shareState === 'copied'
-                      ? <><Check className="w-2.5 h-2.5" /> LINK COPIED</>
-                      : <><Share2 className="w-2.5 h-2.5" /> SHARE</>}
+                    <Share2 className="w-2.5 h-2.5" /> SHARE…
                   </button>
+                </div>
+                {shareIsNew && shareUrlText && (
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-white/5 pt-2">
+                    <span className="text-[9px] font-mono tracking-wide text-[var(--text-secondary)]">
+                      NEW HERE? THIS LINK IS ANONYMOUS UNTIL YOU ACTIVATE IT — EARN RECURRING COMMISSIONS ON SIGNUPS THROUGH IT.
+                    </span>
+                    <a href="/affiliates" target="_blank" rel="noopener noreferrer"
+                      className="shrink-0 px-2.5 py-1.5 text-[9px] font-mono font-bold tracking-widest text-black transition-opacity hover:opacity-85"
+                      style={{ background: 'var(--gold-primary)' }}>
+                      ACTIVATE AFFILIATE LINK
+                    </a>
+                  </div>
                 )}
-                {/* A withdrawn camera's page is a 404 — the big button is already
-                    hidden for it, and this link would lead to the same dead page. */}
-                {!gone && (camera.feed_url || camera.external_url || (streamType === 'iframe' && camera.stream_url)) && (
-                  <a href={camera.external_url || camera.feed_url || (streamType === 'iframe' ? camera.stream_url : undefined)} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--gold-primary)] tracking-widest">
-                    <ExternalLink className="w-2.5 h-2.5" /> RAW FEED
-                  </a>
-                )}
-                <a href={`https://www.google.com/maps/@${camera.lat},${camera.lng},17z`} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--cyan-primary)] tracking-widest">
-                  <MapPin className="w-2.5 h-2.5" /> MAP TARGET
-                </a>
               </div>
-            </div>
+            )}
+            {/* Where this camera is — on a map here, not off-site. */}
+            {mapOpen && Number.isFinite(camera.lat) && Number.isFinite(camera.lng) && (
+              <CameraMiniMap lat={camera.lat} lng={camera.lng} name={camera.name} />
+            )}
             {/* Timelapse (Pro): collect this snapshot camera's stills while
                 watching. Inline views only — an external or offline camera
                 shows no still here to collect. */}
