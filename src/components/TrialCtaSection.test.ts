@@ -3,8 +3,8 @@
 //    note, trial label for all three plans) — the component never
 //    restates a price of its own;
 //  - the guarantee line is the canonical /pricing sentence, verbatim;
-//  - primary goes to /pricing, secondary opens the free globe with the
-//    page's utm_source + utm_medium=trial-cta;
+//  - each card's artwork button starts that plan's embedded checkout in
+//    place; secondary opens the free globe with the page's utm_source;
 //  - no hype mechanics: no scarcity, countdown or urgency copy.
 import { describe, it, expect } from "vitest";
 import { createElement } from "react";
@@ -32,7 +32,11 @@ describe("TrialCtaSection — facts from config", () => {
   });
 
   it("imports the config instead of restating any price", () => {
-    expect(source).toContain("TRIAL_PLAN_OPTIONS");
+    const cards = readFileSync(join(process.cwd(), "src/components/TrialCtaCards.tsx"), "utf8");
+    expect(cards).toContain("TRIAL_PLAN_OPTIONS");
+    expect(cards).not.toContain("$7.99");
+    expect(cards).not.toContain("$13.99");
+    expect(cards).not.toContain("$74.99");
     expect(source).not.toContain("$7.99");
     expect(source).not.toContain("$13.99");
     expect(source).not.toContain("$74.99");
@@ -47,9 +51,13 @@ describe("TrialCtaSection — facts from config", () => {
 });
 
 describe("TrialCtaSection — conversion structure", () => {
-  it("primary button goes to /pricing, secondary opens the globe tracked per page", () => {
-    expect(html).toContain("Compare plans & start a free trial");
-    expect(html).toContain('href="/pricing"');
+  it("each card starts its plan's embedded checkout; secondary opens the globe tracked per page", () => {
+    // The owner's trial-artwork button, one per plan, labelled from config.
+    for (const p of TRIAL_PLAN_OPTIONS) {
+      expect(html).toContain(`aria-label="${p.cta}"`);
+    }
+    expect(html).toContain("/start-trial-button.png");
+    expect(html).not.toContain('href="/pricing"');
     expect(html).toContain("Open the globe — free");
     expect(html).toContain('href="/?utm_source=cameras&utm_medium=trial-cta"');
   });

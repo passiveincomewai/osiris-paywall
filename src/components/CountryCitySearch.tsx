@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { MapPin, Search } from "lucide-react";
+import { foldForSearch } from "@/lib/country-directory";
 
 /**
  * Search-by-city for the country pages, rendered at the top of every
@@ -41,12 +42,21 @@ export default function CountryCitySearch({
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /* Case-insensitive partial match over the country's real city names,
-     biggest first (the list arrives sorted by count). */
+  /* Folded (case- and diacritic-insensitive) match over the country's
+     real city names — "zurich" finds Zürich, "gdansk" finds Gdańsk —
+     with prefix matches ranked ahead of substring matches; inside each
+     group the list's count order (biggest first) is preserved. */
   const matches = useMemo(() => {
-    const q = value.trim().toLowerCase();
+    const q = foldForSearch(value.trim());
     if (!q) return [];
-    return cities.filter((c) => c.name.toLowerCase().includes(q)).slice(0, MAX_MATCHES);
+    const prefix: CityOption[] = [];
+    const substring: CityOption[] = [];
+    for (const c of cities) {
+      const folded = foldForSearch(c.name);
+      if (folded.startsWith(q)) prefix.push(c);
+      else if (folded.includes(q)) substring.push(c);
+    }
+    return [...prefix, ...substring].slice(0, MAX_MATCHES);
   }, [value, cities]);
 
   if (cities.length < 2) return null;

@@ -20,7 +20,28 @@ export interface CountryDirectoryEntry {
   name: string;
   count: number;
   topCities: Array<{ name: string; count: number }>;
+  /** Extra names the search matches: ISO codes + alternate names from
+   *  the generated index, merged with SEARCH_ALIASES_BY_SLUG below. */
+  aliases?: string[];
 }
+
+/**
+ * Names people actually type that neither the country name nor the
+ * generated aliases cover ("USA", "Holland", "Britain"). Folded at
+ * match time, so case and punctuation variants come free.
+ */
+export const SEARCH_ALIASES_BY_SLUG: Record<string, string[]> = {
+  "united-states": ["USA", "America", "United States of America"],
+  "united-kingdom": ["Britain", "Great Britain", "England", "Scotland", "Wales"],
+  "united-arab-emirates": ["UAE", "Emirates"],
+  netherlands: ["Holland"],
+  "south-korea": ["Korea", "Republic of Korea"],
+  "north-korea": ["Korea"],
+  czechia: ["Czech Republic"],
+  russia: ["Russian Federation"],
+  vietnam: ["Viet Nam"],
+  turkey: ["Turkiye", "Türkiye"],
+};
 
 /** The directory's region keys are the site's canonical RegionKey values. */
 export type CountryRegionKey = RegionKey;
@@ -110,7 +131,21 @@ export function countryMatchesSearch(
   const needle = foldForSearch(search.trim());
   if (!needle) return true;
   if (foldForSearch(entry.name).includes(needle)) return true;
+  const aliases = [...(entry.aliases ?? []), ...(SEARCH_ALIASES_BY_SLUG[entry.slug] ?? [])];
+  if (aliases.some((a) => foldForSearch(a).includes(needle))) return true;
   return entry.topCities.some((city) => foldForSearch(city.name).includes(needle));
+}
+
+/** The top city that made a search match (for the row's "via" hint), or null. */
+export function matchedCityName(
+  entry: CountryDirectoryEntry,
+  search: string,
+): string | null {
+  const needle = foldForSearch(search.trim());
+  if (!needle) return null;
+  if (foldForSearch(entry.name).includes(needle)) return null;
+  const hit = entry.topCities.find((city) => foldForSearch(city.name).includes(needle));
+  return hit ? hit.name : null;
 }
 
 export function filterCountries(

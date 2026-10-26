@@ -19,6 +19,7 @@ interface CountryEntry {
   name: string;
   count: number;
   topCities: Array<{ name: string; count: number }>;
+  aliases: string[];
 }
 
 const COUNTRIES = (data as { countries: CountryEntry[] }).countries;
@@ -32,6 +33,7 @@ const DIRECTORY_ENTRIES: CountryDirectoryEntry[] = COUNTRIES.map((c) => ({
   name: c.name,
   count: c.count,
   topCities: c.topCities,
+  aliases: c.aliases ?? [],
 }));
 const largest = COUNTRIES.reduce((a, b) => (b.count > a.count ? b : a), COUNTRIES[0]);
 

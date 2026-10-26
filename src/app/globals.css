@@ -2658,3 +2658,47 @@ path.oi-graph-in { animation: oi-edge-in 0.9s ease-out both; }
 @media (prefers-reduced-motion: reduce) {
   .oi-graph-ping { animation: none; }
 }
+
+/* ── Start-10-Day-Free-Trial artwork button (owner's graphic) ──────────
+   Slow pulsing neon glow, a periodic shine sweep across the pill, and a
+   hover lift with a slight rightward nudge (the baked-in chevron rides
+   along). Reduced-motion visitors get a static button. */
+.trial-btn {
+  position: relative;
+  display: block;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: transform 0.35s ease;
+  animation: trial-btn-pulse 3.2s ease-in-out infinite;
+}
+.trial-btn:hover { transform: translateX(3px) scale(1.02); }
+.trial-btn:active { transform: translateX(1px) scale(0.99); }
+.trial-btn-shine {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 9999px;
+}
+.trial-btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(160, 230, 255, 0.35) 50%, transparent 60%);
+  transform: translateX(-120%);
+  animation: trial-btn-shine 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes trial-btn-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.45)) drop-shadow(0 0 18px rgba(0, 150, 255, 0.25)); }
+  50% { filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.75)) drop-shadow(0 0 30px rgba(0, 150, 255, 0.45)); }
+}
+@keyframes trial-btn-shine {
+  0%, 55% { transform: translateX(-120%); }
+  85%, 100% { transform: translateX(120%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trial-btn, .trial-btn-shine::after { animation: none; }
+}

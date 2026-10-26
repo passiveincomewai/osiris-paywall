@@ -30,9 +30,11 @@ import EmbeddedCheckoutBody from "./EmbeddedCheckoutBody";
 export default function CheckoutSheet({
   plan,
   onClose,
+  hideHostedOption = false,
 }: {
   plan: BillingPlan | null;
   onClose: () => void;
+  hideHostedOption?: boolean;
 }) {
   // A fresh SheetContent per open (keyed by an incrementing sequence),
   // so a reopened sheet never inherits the previous session's state —
@@ -44,15 +46,17 @@ export default function CheckoutSheet({
     if (plan) setSeq((s) => s + 1);
   }
   if (!plan) return null;
-  return <SheetContent key={`${seq}:${plan}`} plan={plan} onClose={onClose} />;
+  return <SheetContent key={`${seq}:${plan}`} plan={plan} onClose={onClose} hideHostedOption={hideHostedOption} />;
 }
 
 function SheetContent({
   plan,
   onClose,
+  hideHostedOption = false,
 }: {
   plan: BillingPlan;
   onClose: () => void;
+  hideHostedOption?: boolean;
 }) {
   const summary = checkoutPlanSummary(plan);
   const [entered, setEntered] = useState(false);
@@ -109,7 +113,7 @@ function SheetContent({
         </button>
 
         {/* pr-9: clearance for the close button overlaying the strip. */}
-        <EmbeddedCheckoutBody plan={plan} stripClassName="pr-9" />
+        <EmbeddedCheckoutBody plan={plan} stripClassName="pr-9" hideHostedOption={hideHostedOption} />
       </div>
     </div>
   );

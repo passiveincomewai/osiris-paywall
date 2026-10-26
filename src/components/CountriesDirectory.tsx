@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   applyCountryDirectoryQuery,
   countryRegionCounts,
   isCountryDirectoryFiltering,
+  matchedCityName,
   type CountryDirectoryEntry,
   type CountryRegionKey,
   type CountrySortKey,
@@ -62,6 +64,7 @@ export default function CountriesDirectory({
 }: {
   countries: CountryDirectoryEntry[];
 }) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [region, setRegion] = useState<CountryRegionKey | null>(null);
   const [sort, setSort] = useState<CountrySortKey>("name-asc");
@@ -172,7 +175,8 @@ export default function CountriesDirectory({
               {rows.map((c, i) => (
                 <tr
                   key={c.slug}
-                  className="border-t border-white/[0.06] hover:bg-white/[0.03] transition"
+                  onClick={() => router.push(`/cameras/countries/${c.slug}`)}
+                  className="cursor-pointer border-t border-white/[0.06] transition hover:bg-white/[0.03]"
                 >
                   <td className="px-4 md:px-6 py-3.5 text-white/35 tabular-nums">{i + 1}</td>
                   <td className="px-4 md:px-6 py-3.5 font-medium">
@@ -187,7 +191,7 @@ export default function CountriesDirectory({
                     {fmt(c.count)}
                   </td>
                   <td className="px-4 md:px-6 py-3.5 text-white/50 hidden sm:table-cell">
-                    {c.topCities[0]?.name ?? "—"}
+                    {matchedCityName(c, search) ?? c.topCities[0]?.name ?? "—"}
                   </td>
                 </tr>
               ))}

@@ -6,6 +6,7 @@ import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import CheckoutSheet from "@/components/CheckoutSheet";
+import TrialButton from "@/components/TrialButton";
 import TeamSection from "./TeamSection";
 import ProofCounters from "@/components/ProofCounters";
 import CancelReassurance from "@/components/CancelReassurance";
@@ -131,6 +132,13 @@ function CheckoutButton({
   label: string;
   onCheckout: (plan: Plan) => void;
 }) {
+  // Trial plans carry the owner's artwork button; Enterprise (no trial)
+  // keeps the gold button.
+  if (PLANS[plan].trial) {
+    return (
+      <TrialButton label={label} onClick={() => onCheckout(plan)} className="w-full" />
+    );
+  }
   return (
     <button
       onClick={() => onCheckout(plan)}

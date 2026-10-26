@@ -5,6 +5,7 @@ import {
   DIRECTORY_REGION_BY_SLUG,
   applyCountryDirectoryQuery,
   countryMatchesSearch,
+  matchedCityName,
   countryRegionCounts,
   filterCountries,
   regionForCountry,
@@ -90,6 +91,27 @@ describe("countryMatchesSearch", () => {
     expect(countryMatchesSearch(japan, "")).toBe(true);
     expect(countryMatchesSearch(japan, "   ")).toBe(true);
     expect(countryMatchesSearch(japan, "zzzz-not-a-place")).toBe(false);
+  });
+});
+
+describe("countryMatchesSearch — aliases people actually type", () => {
+  const japan = ENTRIES.find((c) => c.slug === "japan")!;
+  const us = ENTRIES.find((c) => c.slug === "united-states")!;
+  const uk = ENTRIES.find((c) => c.slug === "united-kingdom")!;
+  const nl = ENTRIES.find((c) => c.slug === "netherlands")!;
+
+  it("matches curated aliases — USA, Britain, Holland", () => {
+    expect(countryMatchesSearch(us, "USA")).toBe(true);
+    expect(countryMatchesSearch(us, "america")).toBe(true);
+    expect(countryMatchesSearch(uk, "britain")).toBe(true);
+    expect(countryMatchesSearch(uk, "england")).toBe(true);
+    expect(countryMatchesSearch(nl, "holland")).toBe(true);
+  });
+
+  it("matchedCityName names the city that matched, and only then", () => {
+    expect(matchedCityName(japan, "tokyo")).toBe("Tokyo");
+    expect(matchedCityName(japan, "japan")).toBeNull();
+    expect(matchedCityName(japan, "")).toBeNull();
   });
 });
 

@@ -47,8 +47,12 @@ type Phase = "starting" | "mounted" | "redirecting" | "error";
 export default function EmbeddedCheckoutBody({
   plan,
   stripClassName,
+  hideHostedOption = false,
 }: {
   plan: BillingPlan;
+  /** Surfaces the owner wants embedded-only (TrialCtaSection cards)
+   *  pass this: no hosted payment-link option under the form. */
+  hideHostedOption?: boolean;
   /** Extra classes on the plan-strip wrapper (a host whose close
    *  button overlays the strip's corner passes clearance here). */
   stripClassName?: string;
@@ -131,9 +135,11 @@ export default function EmbeddedCheckoutBody({
 
       <CheckoutGuaranteeNote summary={summary} />
       <CancelReassurance compact guarantee={Boolean(summary?.trialLabel)} />
-      <div className="mt-3 text-center">
-        <HostedCheckoutLink plan={plan} />
-      </div>
+      {!hideHostedOption && (
+        <div className="mt-3 text-center">
+          <HostedCheckoutLink plan={plan} />
+        </div>
+      )}
     </>
   );
 }
