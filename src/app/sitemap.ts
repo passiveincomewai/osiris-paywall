@@ -4,6 +4,7 @@ import cityPages from "@/data/city-pages.json";
 import usStates from "@/data/us-states.json";
 import skiResorts from "@/data/ski-resorts.json";
 import { POSTS } from "./blog/posts";
+import { EVENT_WALLS } from "@/data/event-walls";
 
 const BASE = "https://worldeye.app";
 
@@ -108,6 +109,7 @@ const SEO_PAGES_WAVE9 = [
   "/northern-lights-webcams",
   "/volcano-webcams",
   "/dark-sky-cameras",
+  "/sunrise-around-the-world",
 ];
 
 // Wave 10 (2026-10-22): the ALERTCalifornia fire-camera network as its own
@@ -125,6 +127,14 @@ const SEO_PAGES_WAVE10 = [
 // publisher, with a downloadable dataset). Data: src/data/live-camera-index.json
 // (tools/build-live-camera-index.mjs). Linked from /blog/live-cameras-by-country.
 const SEO_PAGES_WAVE11 = ["/live-camera-index"];
+
+// Live event walls (2026-10-24): the /live-events hub plus one page per
+// wall in src/data/event-walls.ts — derived from the same config the
+// pages' generateStaticParams reads, so the two can never drift.
+const SEO_PAGES_EVENT_WALLS = [
+  "/live-events",
+  ...EVENT_WALLS.map((w) => `/live-events/${w.slug}`),
+];
 
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
 const SEO_PAGES_COMPARE = [
@@ -275,6 +285,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_EVENT_WALLS.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_COMPARE.map((p) => ({

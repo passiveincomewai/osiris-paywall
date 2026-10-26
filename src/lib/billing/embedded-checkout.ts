@@ -16,6 +16,7 @@
  * with fakes (embedded-checkout.test.ts is the fallback proof).
  */
 import { checkoutRequestBody } from "./trial-checkout";
+import { CheckoutError, checkoutErrorFromData } from "./checkout-error";
 import type { BillingPlan } from "./trials";
 import { trackMetaEvent } from "@/lib/meta-track";
 
@@ -88,20 +89,33 @@ async function postCheckout(
 /**
  * Run checkout for a plan. Embedded first when a usable publishable key
  * exists; the hosted redirect on any embedded failure. Resolves once the
- * form is mounted or navigation has been issued; throws only when the
- * hosted fallback itself fails (carrying the server's error message).
+ * form is mounted or navigation has been issued; throws a CheckoutError
+ * (lib/billing/checkout-error) only when the hosted fallback itself is
+ * refused — carrying the server's refusal verbatim, code included.
+ *
+ * Refusals are handled as refusals, not as generic failures:
+ *  - an embedded refusal is REMEMBERED, not dropped on the fall-through
+ *    (the pre-fix flow reduced it to a failed ok-check and forgot its
+ *    error/code entirely);
+ *  - a DEFINITIVE refusal (code "already_subscribed" — the member
+ *    already holds a live plan) short-circuits before the hosted
+ *    attempt: the same guard would refuse it identically, and letting
+ *    the second answer speak risked it overwriting the first with a
+ *    message-less failure;
+ *  - when both attempts fail, the refusal that carries the server's own
+ *    words wins — the hosted one first (its answer is the freshest),
+ *    else the embedded attempt's — and the bare generic line is thrown
+ *    only when neither response carried a message at all.
  *
  * One server answer short-circuits both modes: {url} from an embedded
- * request means "go here instead". (Members who already hold a live plan
- * no longer receive that answer — since Wave 2 F6 the route answers
- * them 409 with a plain-language message, which reaches the user through
- * this flow's error throw, exactly like any other server refusal.)
+ * request means "go here instead".
  */
 export async function runCheckoutFlow(
   plan: BillingPlan,
   publishableKey: string | undefined,
   deps: CheckoutFlowDeps,
 ): Promise<CheckoutFlowOutcome> {
+  let firstRefusal: CheckoutError | null = null;
   if (isUsablePublishableKey(publishableKey)) {
     // Speed: Stripe.js and the session POST need each other not at all —
     // the mount needs BOTH, so start them together and let whichever
@@ -134,22 +148,42 @@ export async function runCheckoutFlow(
       } else if (res.ok && typeof res.data?.url === "string") {
         deps.navigate(res.data.url);
         return { kind: "navigated", url: res.data.url };
+      } else if (!res.ok) {
+        // A refusal, not a presentation failure: remember it verbatim
+        // (message + code + manage path) instead of dropping it here.
+        firstRefusal = checkoutErrorFromData(res.data);
       }
       // Every other embedded outcome falls through to hosted.
     } catch {
       // Embedded failed (network, Stripe.js, mount) — hosted is the net.
     }
+    // The definitive refusal needs no second opinion: the hosted
+    // attempt runs the same guard against the same member and would be
+    // refused identically — and its answer must never overwrite this
+    // one (a message-less 500 once erased it into "Checkout failed").
+    if (firstRefusal?.alreadySubscribed) throw firstRefusal;
   }
 
-  const res = await postCheckout(deps.fetchImpl, plan);
-  if (res.ok && typeof res.data?.url === "string") {
-    if (typeof res.data?.metaEventId === "string") {
-      trackMetaEvent("InitiateCheckout", {}, res.data.metaEventId);
-    }
-    deps.navigate(res.data.url);
-    return { kind: "navigated", url: res.data.url };
+  let hosted: { ok: boolean; data: any };
+  try {
+    hosted = await postCheckout(deps.fetchImpl, plan);
+  } catch {
+    // The hosted attempt never got an answer (transport failure): the
+    // embedded attempt's refusal, when there is one, is the most
+    // truthful failure available; otherwise the generic line.
+    throw firstRefusal ?? new CheckoutError();
   }
-  throw new Error(res.data?.error || "Checkout failed");
+  if (hosted.ok && typeof hosted.data?.url === "string") {
+    if (typeof hosted.data?.metaEventId === "string") {
+      trackMetaEvent("InitiateCheckout", {}, hosted.data.metaEventId);
+    }
+    deps.navigate(hosted.data.url);
+    return { kind: "navigated", url: hosted.data.url };
+  }
+  const hostedRefusal = checkoutErrorFromData(hosted.data);
+  throw hostedRefusal.serverMessage
+    ? hostedRefusal
+    : (firstRefusal ?? hostedRefusal);
 }
 
 export interface CheckoutSessionController {

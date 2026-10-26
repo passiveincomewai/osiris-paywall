@@ -1,8 +1,12 @@
 import { describe, it, expect } from "vitest";
 import {
   ALERT_COOLDOWN_MS,
+  CAP_MESSAGE,
   MAX_ACTIVE_ALERT_RULES,
+  MAX_ACTIVE_ALERT_RULES_PRO,
   activeCapReached,
+  alertCapForTier,
+  capMessage,
   decideAfterCheck,
   isRuleDue,
   validateChannels,
@@ -36,11 +40,34 @@ describe("validateChannels", () => {
   });
 });
 
-describe("the cap", () => {
-  it("allows up to 10 active rules and refuses the 11th", () => {
+describe("the caps", () => {
+  it("maps tiers to their active-rule caps: free 0, pro 2, vip 10", () => {
+    expect(alertCapForTier("free")).toBe(0);
+    expect(alertCapForTier("pro")).toBe(MAX_ACTIVE_ALERT_RULES_PRO);
+    expect(alertCapForTier("vip")).toBe(MAX_ACTIVE_ALERT_RULES);
+    expect(MAX_ACTIVE_ALERT_RULES_PRO).toBe(2);
+    expect(MAX_ACTIVE_ALERT_RULES).toBe(10);
+  });
+  it("allows up to the cap and refuses the next one (default cap = VIP)", () => {
     expect(activeCapReached(MAX_ACTIVE_ALERT_RULES - 1)).toBe(false);
     expect(activeCapReached(MAX_ACTIVE_ALERT_RULES)).toBe(true);
     expect(activeCapReached(MAX_ACTIVE_ALERT_RULES + 3)).toBe(true);
+  });
+  it("applies the caller's own cap when one is passed", () => {
+    expect(activeCapReached(1, 2)).toBe(false);
+    expect(activeCapReached(2, 2)).toBe(true);
+    // A downgraded VIP→Pro member holding 5 rules is over the Pro cap:
+    // creating/resuming stays refused until they're back under it.
+    expect(activeCapReached(5, 2)).toBe(true);
+    // Free (cap 0) can never create or resume.
+    expect(activeCapReached(0, 0)).toBe(true);
+  });
+  it("writes one refusal per tier, with the VIP upsell only on Pro", () => {
+    expect(capMessage(2, "pro")).toContain("your 2-camera alert limit on Pro");
+    expect(capMessage(2, "pro")).toContain("VIP Pro watches up to 10");
+    expect(capMessage(10, "vip")).toBe(CAP_MESSAGE);
+    expect(capMessage(10, "vip")).not.toContain("VIP Pro watches up to");
+    expect(capMessage(0, "free")).toContain("free plan");
   });
 });
 

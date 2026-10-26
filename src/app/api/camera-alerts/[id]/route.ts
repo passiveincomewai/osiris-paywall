@@ -7,15 +7,16 @@ export const runtime = "nodejs";
 /**
  * One alert rule: edit its condition/channels, pause or resume it,
  * delete it. Owner-only (the service answers 404 for anyone else's).
- * Pausing and deleting stay available after a VIP lapse — the lapse
- * pauses checking, it doesn't trap the member's rules.
+ * Pausing and deleting stay available after a plan lapse — the lapse
+ * pauses checking, it doesn't trap the member's rules. Resuming is
+ * gated by the caller's current tier cap (see service.updateRule).
  */
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const a = await cameraAlertAccess();
   if (!a.ok) return NextResponse.json({ error: "signin" }, { status: 401 });
   const { id } = await params;
   const body = await req.json().catch(() => ({}));
-  const result = await updateRule(a.userId, id, body as Record<string, unknown>);
+  const result = await updateRule(a.userId, id, body as Record<string, unknown>, a.tier);
   if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
   return NextResponse.json({ rule: result.value });
 }

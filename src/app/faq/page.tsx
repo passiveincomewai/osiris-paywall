@@ -141,7 +141,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "What is VIP Pro?",
-        a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 10 cameras for you and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
+        a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and roomier camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 2 cameras on Pro and up to 10 on VIP Pro, and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
       },
     ],
   },
@@ -196,7 +196,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "How do camera alerts work?",
-        a: "Pick up to 10 cameras, describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts are a VIP Pro feature.",
+        a: "Pick a camera — up to 2 on Pro, up to 10 on VIP Pro — describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts come with the paid plans: 2 cameras on Pro, 10 on VIP Pro.",
       },
       {
         q: "Can I record a live camera?",
@@ -350,7 +350,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "What is VIP Pro?",
-    a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 10 cameras for you and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
+    a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and roomier camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 2 cameras on Pro and up to 10 on VIP Pro, and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
   },
   {
     q: "How do the cameras work?",
@@ -390,7 +390,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "How do camera alerts work?",
-    a: "Pick up to 10 cameras, describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts are a VIP Pro feature.",
+    a: "Pick a camera — up to 2 on Pro, up to 10 on VIP Pro — describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts come with the paid plans: 2 cameras on Pro, 10 on VIP Pro.",
   },
   {
     q: "Can I record a live camera?",

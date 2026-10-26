@@ -287,6 +287,18 @@ export default async function LiveWebcamsPage() {
                 {EUROPE_COUNT} European countries, from Spanish plazas to Icelandic highlands.
               </p>
             </Link>
+            <Link
+              href="/sunrise-around-the-world"
+              className="rounded-2xl border border-white/10 bg-white/[0.02] p-7 hover:border-[#D4AF37]/40 transition group"
+            >
+              <h3 className="font-bold text-lg group-hover:text-[#D4AF37] transition">
+                Sunrise around the world
+              </h3>
+              <p className="text-sm text-white/55 mt-2 leading-relaxed">
+                A living page that rides the dawn line: live cameras where the sun is rising
+                right now, recomputed every minute — with a sunset mode for the dusk line.
+              </p>
+            </Link>
           </div>
         </div>
 

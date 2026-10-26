@@ -1,16 +1,55 @@
 /**
- * VIP camera alerts — the pure rules. No I/O lives here: the API routes
+ * Camera alerts — the pure rules. No I/O lives here: the API routes
  * and the cron checker both call these functions so the cap, the
  * cooldown and the alert-on-change state machine can never drift
  * between "what the UI promises" and "what the checker does".
  */
 
-/** VIP members watch up to this many cameras at once. */
+/** VIP Pro members watch up to this many cameras at once. */
 export const MAX_ACTIVE_ALERT_RULES = 10;
 
-/** The refusal a member sees when the cap is full — one string, everywhere. */
-export const CAP_MESSAGE =
-  "VIP alerts are limited to 10 active cameras — pause or remove one to add another.";
+/** Pro members watch up to this many cameras at once. */
+export const MAX_ACTIVE_ALERT_RULES_PRO = 2;
+
+/** The tiers the alert caps speak (mirrors PlanTier in ./tier). */
+export type AlertTier = "free" | "pro" | "vip";
+
+/**
+ * The single source of truth for alert eligibility: how many ACTIVE
+ * rules a tier may hold — free 0 (alerts are a paid-plan feature),
+ * Pro 2, VIP Pro 10. The routes, the service and the cron checker all
+ * read the cap from here so they can never drift apart.
+ *
+ * The cap gates CREATING and RESUMING only. Rules that already exist
+ * are never deleted or unplugged by a downgrade: a VIP→Pro member
+ * holding more than 2 rules keeps every one of them firing (the
+ * checker runs all Pro/VIP owners' rules) — they just can't create or
+ * resume another until they're back under their cap. A drop to free
+ * (cap 0) pauses checking, exactly like a lapse always has.
+ */
+export function alertCapForTier(tier: AlertTier): number {
+  if (tier === "vip") return MAX_ACTIVE_ALERT_RULES;
+  if (tier === "pro") return MAX_ACTIVE_ALERT_RULES_PRO;
+  return 0;
+}
+
+/** The refusal a member sees when their tier's cap is full — one
+ *  string shape, everywhere (mirrors recording's capMessage). */
+export function capMessage(cap: number, tier?: AlertTier): string {
+  if (tier === "pro") {
+    return `That's your ${cap}-camera alert limit on Pro — VIP Pro watches up to ${MAX_ACTIVE_ALERT_RULES}. Pause or remove one to add another.`;
+  }
+  if (tier === "vip") {
+    return `That's your ${cap}-camera alert limit on VIP Pro — pause or remove one to add another.`;
+  }
+  if (tier === "free") {
+    return "Camera alerts aren't included on the free plan — they resume when Pro or VIP Pro is back.";
+  }
+  return `That's the ${cap}-camera alert limit — pause or remove one to add another.`;
+}
+
+/** The VIP-tier refusal, kept as a named constant for existing callers. */
+export const CAP_MESSAGE = capMessage(MAX_ACTIVE_ALERT_RULES, "vip");
 
 /** A rule is re-checked at most this often. */
 export const ALERT_CHECK_INTERVAL_MS = 15 * 60_000;
@@ -58,8 +97,8 @@ export function validateChannels(input: {
 }
 
 /** Creating or resuming a rule is refused when the active count is at the cap. */
-export function activeCapReached(activeCount: number): boolean {
-  return activeCount >= MAX_ACTIVE_ALERT_RULES;
+export function activeCapReached(activeCount: number, cap: number = MAX_ACTIVE_ALERT_RULES): boolean {
+  return activeCount >= cap;
 }
 
 /** Due = active and not checked inside the current interval window. */

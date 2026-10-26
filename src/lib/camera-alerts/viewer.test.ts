@@ -103,6 +103,25 @@ describe("interpretAlertsGet (the button's gating state)", () => {
     expect(s.kind).toBe("ready");
     if (s.kind === "ready") expect(s.view.vip).toBe(false);
   });
+  it("carries the member's tier and their own cap (pro = 2)", () => {
+    const s = interpretAlertsGet(200, {
+      tier: "pro",
+      vip: false,
+      maxActive: 2,
+      activeCount: 2,
+      rules: [rule()],
+    });
+    expect(s.kind).toBe("ready");
+    if (s.kind === "ready") {
+      expect(s.view.tier).toBe("pro");
+      expect(s.view.maxActive).toBe(2);
+    }
+  });
+  it("derives the tier from the vip flag when an older payload omits it", () => {
+    const s = interpretAlertsGet(200, { vip: true, maxActive: 10, activeCount: 0, rules: [] });
+    expect(s.kind).toBe("ready");
+    if (s.kind === "ready") expect(s.view.tier).toBe("vip");
+  });
   it("malformed or failed payloads are an honest error state", () => {
     expect(interpretAlertsGet(500, {})).toEqual({ kind: "error" });
     expect(interpretAlertsGet(200, { vip: true })).toEqual({ kind: "error" });
@@ -116,11 +135,11 @@ describe("interpretCreateResult", () => {
     expect(o.kind).toBe("created");
     if (o.kind === "created") expect(o.rule.cameraId).toBe("cam-1");
   });
-  it("401 and 403 map to the sign-in and VIP states, not errors", () => {
+  it("401 and 403 map to the sign-in and plan states, not errors", () => {
     expect(interpretCreateResult(401, { error: "signin" })).toEqual({ kind: "signin" });
     expect(
-      interpretCreateResult(403, { error: "vip", message: "Camera alerts are a VIP Pro feature." }),
-    ).toEqual({ kind: "vip" });
+      interpretCreateResult(403, { error: "plan", message: "Camera alerts start with Pro." }),
+    ).toEqual({ kind: "plan" });
   });
   it("the cap refusal passes through verbatim (409)", () => {
     const o = interpretCreateResult(409, { error: CAP_MESSAGE });
