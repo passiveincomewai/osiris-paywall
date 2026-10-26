@@ -1045,6 +1045,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
    * the same photo data under the same ids. A failed load leaves the
    * glyph fallback untouched. */
   const installPhotoIcons = useCallback((map: maplibregl.Map) => {
+    // The camera eye (owner's artwork): every CCTV marker on the map.
+    void loadAircraftPhoto('/icons/camera-eye.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('camera-eye')) map.removeImage('camera-eye');
+        map.addImage('camera-eye', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 24 });
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     for (const [id, url] of Object.entries(AIRCRAFT_PHOTO_BY_ICON)) {
       void loadAircraftPhoto(url).then((img) => {
         if (!img) return;
@@ -1210,6 +1219,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       // Photo artwork swaps in over the commercial / private / jet /
       // helicopter glyph ids once loaded (glyphs stay as fallback).
       installPhotoIcons(map);
+      // Until the camera-eye photo registers (and forever, if it ever
+      // failed to load), a plain dot stands in under the same image id —
+      // installPhotoIcons replaces it the moment the photo arrives.
+      map.on('styleimagemissing', (e) => {
+        if (e.id === 'camera-eye') createDot(map, 'camera-eye', '#34d399', 48);
+      });
       createDot(map, 'dot-gold', isGhost ? phantomPurple : '#D4AF37', 8);
       createDot(map, 'dot-red', isGhost ? phantomPurple : '#D32F2F', 10);
       createDot(map, 'dot-orange', isGhost ? phantomPurple : '#E65100', 10);
@@ -1542,17 +1557,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 11, 18, 14, 22, 18],
         'circle-color': '#4DD0E1', 'circle-opacity': 0,
       }});
-      // CCTV — outer glow ring (black/white depending on theme)
+      // CCTV — outer glow disc: a soft dark ground under the eye photo so
+      // the detailed artwork stays readable over bright basemap patches.
       map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
-        'circle-radius': ['interpolate',['linear'],['zoom'], 1,5, 5,8, 10,14, 14,20],
+        'circle-radius': ['interpolate',['linear'],['zoom'], 1,7, 5,11, 10,18, 14,26],
         'circle-color': '#000000', 'circle-opacity': 0.35, 'circle-blur': 1,
       }});
-      // CCTV — main dot
-      map.addLayer({ id: 'cctv-dots', type: 'circle', source: 'cctv', paint: {
-        'circle-radius': ['interpolate',['linear'],['zoom'], 1,3, 5,5, 10,8, 14,12],
-        'circle-color': cameraColor, 'circle-opacity': 0.9,
-        'circle-stroke-width': 2.5, 'circle-stroke-color': '#000000', 'circle-stroke-opacity': 0.9,
-      }});
+      // CCTV — the owner's eye photo for every camera (was a green dot).
+      // Same layer id: click handlers, cursor wiring and visibility
+      // toggles all key off 'cctv-dots' and keep working on a symbol layer.
+      map.addLayer({ id: 'cctv-dots', type: 'symbol', source: 'cctv', layout: {
+        'icon-image': 'camera-eye',
+        'icon-size': ['interpolate',['linear'],['zoom'], 1,0.55, 5,0.7, 10,0.95, 14,1.25],
+        'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.95 }});
       // CCTV — labels at zoom 10+
       map.addLayer({ id: 'cctv-label', type: 'symbol', source: 'cctv', minzoom: 10, layout: {
         'text-field': ['get','name'], 'text-size': 9, 'text-font': ['Open Sans Regular'],
@@ -3424,12 +3442,12 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     oiGlobeRef.current?.setColors({ support: palette.oiSupport, oppose: palette.oiOppose, neutral: palette.oiNeutral });
   }, [palette.oiSupport, palette.oiOppose, palette.oiNeutral]);
 
-    /* Cameras are circles and a label, so no image to rebuild — the colour is
-       a paint property on each. */
+    /* Cameras render as the owner's eye photo (cctv-dots is a symbol layer
+       now — no circle colour to repaint); only their labels follow the
+       palette. */
     useEffect(() => {
       if (!mapReady || !mapRef.current) return;
       const map = mapRef.current;
-      if (map.getLayer('cctv-dots')) map.setPaintProperty('cctv-dots', 'circle-color', palette.cctv);
       if (map.getLayer('cctv-label')) map.setPaintProperty('cctv-label', 'text-color', palette.cctv);
     }, [mapReady, palette.cctv]);
 

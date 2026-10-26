@@ -30,6 +30,67 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "worldeye-translation-133-languages",
+    title: "WorldEye Now Translates Into 133 Languages",
+    seoTitle: "WorldEye Now Translates Into 133 Languages | WorldEye Blog",
+    date: "2026-10-26",
+    excerpt:
+      "WorldEye now translates into 133 languages. A language switch in the header of every page — the globe, all 74,229 cameras, flight and satellite tracking, guides and directories — renders the whole site in the reader's own language, free, with no account.",
+    seoDescription:
+      "WorldEye, the free live globe with 74,229 cameras, flights and satellites, now translates into 133 languages. Pick yours from the header on any page.",
+    tags: ["announcement", "product"],
+    sections: [
+      {
+        body: [
+          "WorldEye now offers translation in 133 languages. A language switch in the header of every page at worldeye.app translates the entire site — the live 3D globe, all 74,229 public cameras, real-time flight and satellite tracking, and every guide and directory page — into the reader's own language.",
+          "The feature is free and needs no account. It works the same for a first-time visitor checking a ski camera in Colorado as for a researcher reading an intelligence guide in Korean.",
+        ],
+      },
+      {
+        heading: "How to change the language on WorldEye",
+        body: [
+          "Tap the language pill in the header — it shows the current language code, such as EN — and choose from the list. The most-used languages come first: English, Español, Français, Deutsch, Português, Italiano, Japanese, Korean and Chinese. Below them, the full list names every language in its own writing, so a reader can find theirs without reading a word of English first. A search box at the top of the list filters languages by name.",
+          "The page reloads translated, and the choice is remembered across the site: move from the globe to a camera directory, the pricing page or this blog and everything stays in your language. Choosing English (EN), the first entry in the list, switches translation off and returns the original text.",
+        ],
+      },
+      {
+        heading: "Why a live globe needs 133 languages",
+        body: [
+          "WorldEye's cameras are everywhere: traffic cameras in Tokyo, ski lifts in the Alps, beaches in Brazil, volcanoes in Iceland. Most of the people who live near those cameras do not browse the web in English, and a camera's usefulness should not depend on the viewer's language.",
+          "The full list runs from Afrikaans to Zulu and includes Spanish, French, German, Portuguese, Italian, Russian, Ukrainian, Arabic, Hindi, Bengali, Indonesian, Vietnamese, Thai, Polish, Dutch, Swedish, Japanese, Korean and Chinese. Translation is provided by Google Translate and covers the site's text — menus, pages, guides and camera information. Place names and camera names stay in their original language, exactly as they appear on local signs and maps.",
+        ],
+      },
+      {
+        heading: "What WorldEye is",
+        body: [
+          "WorldEye is a free live-intelligence globe at worldeye.app. It shows 74,229 live public cameras, real-time flight tracking, satellites in orbit, earthquakes, wildfires, weather and ship traffic on one interactive 3D map, with no signup required. Paid Pro plans add an OSINT toolkit, an AI analyst, camera recording and alerts — and they translate too.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many languages does WorldEye support?",
+        a: "WorldEye supports 133 languages: the original English plus translation into 132 languages, including Spanish, French, German, Portuguese, Italian, Japanese, Korean, Chinese, Arabic, Hindi and Russian.",
+      },
+      {
+        q: "Is WorldEye free in other languages?",
+        a: "Yes. The live globe, the 74,229 cameras, flight tracking and satellite tracking are free with no account in every language, and the translation feature itself is free — it is part of the site, not a paid plan.",
+      },
+      {
+        q: "How do I change the language on WorldEye?",
+        a: "Use the language switch in the header of any page at worldeye.app. Tap the pill showing the current language code, then pick a language from the list — the page reloads translated and the choice is remembered as you move around the site.",
+      },
+      {
+        q: "How do I switch WorldEye back to English?",
+        a: "Open the language switch in the header and choose English (EN), the first entry in the list. The site reloads in the original English and stays in English until another language is chosen.",
+      },
+      {
+        q: "Does the translation cover the cameras and the map?",
+        a: "Yes. The switch sits in the header of every page — the globe, camera pages, directories, the blog and the dashboards. Interface text, menus and camera details are translated; place and camera names remain in their original language.",
+      },
+    ],
+  },
+  {
     slug: "what-is-osint",
     title: "What Is OSINT? A Beginner's Guide to Open-Source Intelligence",
     seoTitle: "What Is OSINT? Beginner's Guide | WorldEye Blog",
