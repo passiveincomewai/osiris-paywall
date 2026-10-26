@@ -73,7 +73,7 @@ const AIRPORTS: AirportWall[] = [
     title: "Chicago — O'Hare (ORD)",
     anchor: { lat: 41.975, lng: -87.908 },
     km: 10,
-    body: "O'Hare is the honest thin spot of the four hubs: the directory's cameras here are the Kennedy Expressway corridor — I-90 and I-190 — rather than a blanket around the field. Eleven public cameras within 10 km still answer the only question that matters on getaway day: is the Kennedy moving?",
+    body: "O'Hare is the honest thin spot of the five hubs: the directory's cameras here are the Kennedy Expressway corridor — I-90 and I-190 — rather than a blanket around the field. Eleven public cameras within 10 km still answer the only question that matters on getaway day: is the Kennedy moving?",
     gridCap: 24,
   },
 ];

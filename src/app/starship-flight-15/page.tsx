@@ -175,7 +175,7 @@ export default async function StarshipFlight15Page() {
           where it will be watched from.
         </p>
         <SkiCameraGrid
-          cameras={cape.slice(0, 48)}
+          cameras={cape}
           initial={12}
           emptyNote="No public cameras in the directory currently cover the Cape Canaveral area."
         />
