@@ -1054,6 +1054,17 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('camera-eye', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 24 });
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The earthquake pin (owner's artwork): every quake marker. Wider
+    // canvas footprint than the planes — the pin + ripple base is the
+    // marker, anchored at its bottom so the ripples sit on the epicentre.
+    void loadAircraftPhoto('/icons/earthquake-pin.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('earthquake-pin')) map.removeImage('earthquake-pin');
+        map.addImage('earthquake-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     for (const [id, url] of Object.entries(AIRCRAFT_PHOTO_BY_ICON)) {
       void loadAircraftPhoto(url).then((img) => {
         if (!img) return;
@@ -1236,6 +1247,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay', 'street-level'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
+      // US state + territory outlines — a bold double line (dark casing,
+      // bright core) so state borders are unmistakable while searching.
+      // Static asset generated from Census cartographic boundaries plus
+      // the vendored state rings (public/geo/us-boundaries.geojson).
+      map.addSource('us-boundaries', { type: 'geojson', data: '/geo/us-boundaries.geojson' });
+      map.addLayer({ id: 'us-boundaries-casing', type: 'line', source: 'us-boundaries', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: {
+        'line-color': '#000000', 'line-opacity': 0.55,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 1, 2.0, 5, 3.6, 10, 5.5],
+      }});
+      map.addLayer({ id: 'us-boundaries-line', type: 'line', source: 'us-boundaries', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: {
+        'line-color': '#F5F2E8', 'line-opacity': 0.92,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 1, 1.1, 5, 2.3, 10, 3.8],
+      }});
+
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
 
       // Warning icon generator (parameterized — eliminates 3x copy-paste)
@@ -1283,8 +1308,16 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'eq-circles', type: 'circle', source: 'earthquakes', paint: {
         'circle-radius': ['interpolate',['linear'],['get','magnitude'], 2.5,4, 5,12, 7,24],
         'circle-color': ['interpolate',['linear'],['get','magnitude'], 2.5,'#F9A825', 4,'#E65100', 6,'#D32F2F'],
-        'circle-opacity': 0.55, 'circle-blur': 0.3, 'circle-stroke-width': 1, 'circle-stroke-color': '#F9A825', 'circle-stroke-opacity': 0.25,
+        'circle-opacity': 0.30, 'circle-blur': 0.3, 'circle-stroke-width': 1, 'circle-stroke-color': '#F9A825', 'circle-stroke-opacity': 0.25,
       }});
+      // Earthquake pins — the owner's seismograph-pin artwork, sized by
+      // magnitude, anchored at the bottom so the ripple base lands on
+      // the epicentre. The circle above stays as the magnitude halo.
+      map.addLayer({ id: 'eq-icons', type: 'symbol', source: 'earthquakes', layout: {
+        'icon-image': 'earthquake-pin',
+        'icon-size': ['interpolate', ['linear'], ['get', 'magnitude'], 2.5, 0.45, 4.5, 0.7, 6, 1.0, 7.5, 1.35],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
       map.addLayer({ id: 'eq-label', type: 'symbol', source: 'earthquakes', filter: ['>=',['get','magnitude'],4.5], layout: {
         'text-field': ['concat','M',['to-string',['get','magnitude']]], 'text-size': 9, 'text-font': ['Open Sans Regular'], 'text-offset': [0,1.5],
       }, paint: { 'text-color': '#F9A825', 'text-halo-color': '#000', 'text-halo-width': 1 }});
@@ -1559,14 +1592,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       }});
       // CCTV — outer glow disc: a soft dark ground under the eye photo so
       // the detailed artwork stays readable over bright basemap patches.
-      map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', paint: {
+      map.addLayer({ id: 'cctv-glow', type: 'circle', source: 'cctv', minzoom: 4, paint: {
         'circle-radius': ['interpolate',['linear'],['zoom'], 1,7, 5,11, 10,18, 14,26],
         'circle-color': '#000000', 'circle-opacity': 0.35, 'circle-blur': 1,
       }});
       // CCTV — the owner's eye photo for every camera (was a green dot).
       // Same layer id: click handlers, cursor wiring and visibility
       // toggles all key off 'cctv-dots' and keep working on a symbol layer.
-      map.addLayer({ id: 'cctv-dots', type: 'symbol', source: 'cctv', layout: {
+      map.addLayer({ id: 'cctv-dots', type: 'symbol', source: 'cctv', minzoom: 4, layout: {
         'icon-image': 'camera-eye',
         'icon-size': ['interpolate',['linear'],['zoom'], 1,0.55, 5,0.7, 10,0.95, 14,1.25],
         'icon-allow-overlap': true, 'icon-ignore-placement': true,
@@ -2269,11 +2302,12 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       </div>`);
     };
     map.on('click', 'eq-circles', e => { if (e.features?.length) openQuakePopup(e.features[0]); });
+    map.on('click', 'eq-icons', e => { if (e.features?.length) openQuakePopup(e.features[0]); });
 
     // ── Satellites (SatNOGS powered) ──
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
-    const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
+    const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat',
       'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
@@ -2912,7 +2946,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -4848,7 +4882,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   // Visibility
   useEffect(() => {
     if (!mapReady) return;
-    setVis(['eq-circles','eq-label'], activeLayers.earthquakes);
+    setVis(['eq-circles','eq-label','eq-icons'], activeLayers.earthquakes);
     const anySat = activeLayers.satellites || (activeLayers as any).sat_comms || (activeLayers as any).sat_military || (activeLayers as any).sat_navigation || (activeLayers as any).sat_earth || (activeLayers as any).sat_science;
     // The circle layers stay hidden whatever the toggles say — the 3D layer
     // is the single representation, and showing both drew every satellite
