@@ -1074,6 +1074,16 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('wildfire-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The hurricane pin (owner's artwork): every active storm's
+    // current position.
+    void loadAircraftPhoto('/icons/hurricane-pin.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('hurricane-pin')) map.removeImage('hurricane-pin');
+        map.addImage('hurricane-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     for (const [id, url] of Object.entries(AIRCRAFT_PHOTO_BY_ICON)) {
       void loadAircraftPhoto(url).then((img) => {
         if (!img) return;
@@ -1374,6 +1384,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 5, 6, 8, 10, 12],
         'circle-color': '#FF5252', 'circle-opacity': 0.95, 'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 1.5,
       }});
+      // Hurricane pins — the owner's cyclone artwork on each storm's
+      // current position; the red circle stays as the centre marker
+      // under the pin tip, cone/track/points unchanged.
+      map.addLayer({ id: 'hurricane-icons', type: 'symbol', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'current'], layout: {
+        'icon-image': 'hurricane-pin',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.65, 6, 0.95, 10, 1.3],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
       map.addLayer({ id: 'hurricane-label', type: 'symbol', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'current'], layout: {
         'text-field': ['upcase', ['get', 'name']], 'text-size': 10, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.6],
       }, paint: { 'text-color': '#FF8A80', 'text-halo-color': '#000', 'text-halo-width': 1 }});
@@ -2325,7 +2343,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons',
-      'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots','street-level-dots','street-level-hit']);
@@ -2455,6 +2473,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       </div>`);
     };
     map.on('click', 'hurricane-current', e => { if (e.features?.length) openStormPopup(e.features[0]); });
+    map.on('click', 'hurricane-icons', e => { if (e.features?.length) openStormPopup(e.features[0]); });
     map.on('click', 'hurricane-points', e => {
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
@@ -2964,7 +2983,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -4924,7 +4943,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
     setVis(['fires-heat','fires-icons'], activeLayers.fires);
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
-    setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label'], (activeLayers as any).hurricanes);
+    setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label','hurricane-icons'], (activeLayers as any).hurricanes);
     setVis(['gauge-dots'], (activeLayers as any).river_gauges);
     setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
     setVis(['gbfs-systems','gbfs-label','gbfs-stations','gbfs-vehicles'], (activeLayers as any).gbfs);
