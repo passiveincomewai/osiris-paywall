@@ -304,6 +304,55 @@ function drawHeliGlyph(ctx: CanvasRenderingContext2D, color: string, size: numbe
   ctx.stroke();
 }
 
+/* ── Photo aircraft icons (owner's order, 2026-10-26) ──────────────────
+ * Top-down photo artwork replaces the vector glyphs for: commercial
+ * planes (airliner photo), private planes AND business jets (private-jet
+ * photo), and EVERY helicopter class (helicopter photo). Military and
+ * unknown-class planes keep their glyphs — no photo was supplied for
+ * them. The glyphs are still drawn first at boot as an instant fallback;
+ * the photos swap in over the same image ids when they load, and are
+ * re-applied after theme switches (photos don't recolour). Registered
+ * at 96px with pixelRatio 4 so the logical footprint stays the glyphs'
+ * 24px and the layers' icon-size interpolation is unchanged. */
+const AIRCRAFT_PHOTO_BY_ICON: Record<string, string> = {
+  'plane-cyan': '/icons/aircraft-commercial.png',
+  'plane-green': '/icons/aircraft-private.png',
+  'plane-pink': '/icons/aircraft-private.png',
+  'heli-cyan': '/icons/aircraft-heli.png',
+  'heli-green': '/icons/aircraft-heli.png',
+  'heli-pink': '/icons/aircraft-heli.png',
+  'heli-red': '/icons/aircraft-heli.png',
+  'heli-grey': '/icons/aircraft-heli.png',
+};
+const AIRCRAFT_PHOTO_PX = 96;
+const aircraftPhotoCache = new Map<string, Promise<HTMLImageElement | null>>();
+
+function loadAircraftPhoto(url: string): Promise<HTMLImageElement | null> {
+  let p = aircraftPhotoCache.get(url);
+  if (!p) {
+    p = new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+    aircraftPhotoCache.set(url, p);
+  }
+  return p;
+}
+
+function aircraftPhotoData(img: HTMLImageElement): { width: number; height: number; data: Uint8Array } {
+  const s = AIRCRAFT_PHOTO_PX;
+  const canvas = document.createElement('canvas');
+  canvas.width = s; canvas.height = s;
+  const ctx = canvas.getContext('2d')!;
+  const scale = Math.min(s / img.naturalWidth, s / img.naturalHeight);
+  const w = img.naturalWidth * scale;
+  const h = img.naturalHeight * scale;
+  ctx.drawImage(img, (s - w) / 2, (s - h) / 2, w, h);
+  return { width: s, height: s, data: new Uint8Array(ctx.getImageData(0, 0, s, s).data) };
+}
+
 const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
 
 /** Director presets owned by other systems: Aircraft Follow (Wave 2) and
@@ -991,6 +1040,23 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     map.addImage(id, { width: size, height: size, data: new Uint8Array(ctx.getImageData(0, 0, size, size).data) });
   }, []);
 
+  /* Swap the photo artwork in over the glyph image ids (see
+   * AIRCRAFT_PHOTO_BY_ICON). Safe to call repeatedly: each call re-adds
+   * the same photo data under the same ids. A failed load leaves the
+   * glyph fallback untouched. */
+  const installPhotoIcons = useCallback((map: maplibregl.Map) => {
+    for (const [id, url] of Object.entries(AIRCRAFT_PHOTO_BY_ICON)) {
+      void loadAircraftPhoto(url).then((img) => {
+        if (!img) return;
+        try {
+          const data = aircraftPhotoData(img);
+          if (map.hasImage(id)) map.removeImage(id);
+          map.addImage(id, data, { pixelRatio: AIRCRAFT_PHOTO_PX / 24 });
+        } catch { /* a later call (boot/theme) retries */ }
+      });
+    }
+  }, []);
+
   useEffect(() => {
     if (!mapRef.current) return;
     const map = mapRef.current;
@@ -1141,6 +1207,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createHeliIcon(map, 'heli-pink', flightGov, 24);
       createHeliIcon(map, 'heli-red', flightMil, 24);
       createHeliIcon(map, 'heli-grey', boot.flightUnknown, 24);
+      // Photo artwork swaps in over the commercial / private / jet /
+      // helicopter glyph ids once loaded (glyphs stay as fallback).
+      installPhotoIcons(map);
       createDot(map, 'dot-gold', isGhost ? phantomPurple : '#D4AF37', 8);
       createDot(map, 'dot-red', isGhost ? phantomPurple : '#D32F2F', 10);
       createDot(map, 'dot-orange', isGhost ? phantomPurple : '#E65100', 10);
@@ -3342,17 +3411,13 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         map.updateImage(id, { width: size, height: size, data: new Uint8Array(ctx.getImageData(0, 0, size, size).data) });
       };
 
-      updateMapIcon('plane-cyan', palette.flightCivil, 24);
-      updateMapIcon('plane-green', palette.flightPrivate, 24);
-      updateMapIcon('plane-pink', palette.flightGov, 24);
+      // Only the glyph classes recolour: military + unknown planes.
+      // Commercial / private / jet planes and every helicopter wear the
+      // photo artwork, which is re-applied instead (it doesn't recolour).
       updateMapIcon('plane-red', palette.flightMilitary, 24);
       updateMapIcon('plane-grey', palette.flightUnknown, 24);
-      updateMapIcon('heli-cyan', palette.flightCivil, 24, drawHeliGlyph);
-      updateMapIcon('heli-green', palette.flightPrivate, 24, drawHeliGlyph);
-      updateMapIcon('heli-pink', palette.flightGov, 24, drawHeliGlyph);
-      updateMapIcon('heli-red', palette.flightMilitary, 24, drawHeliGlyph);
-      updateMapIcon('heli-grey', palette.flightUnknown, 24, drawHeliGlyph);
-    }, [mapReady, palette]);
+      installPhotoIcons(map);
+    }, [mapReady, palette, installPhotoIcons]);
 
   // OI's arcs take their three tones from the Style Studio (violet, magenta, indigo unless changed).
   useEffect(() => {
