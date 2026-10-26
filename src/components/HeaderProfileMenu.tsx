@@ -38,9 +38,10 @@ function initials(name?: string | null, email?: string | null): string {
  * USER's own (session + invite-status API) — nothing is hardcoded.
  *
  * Sizing is deliberately compact (small text, tight rows, no wasted
- * gaps) so the whole menu fits a phone screen with NO internal
- * scrolling; the max-h below is a safety net for very short viewports
- * only. Name/email come from the session, the plan badge from
+ * gaps) and there is NO scroll container at all (owner's order): the
+ * whole menu is visible at once on a phone screen, and very short
+ * viewports squeeze further via max-height media variants. Name/email
+ * come from the session, the plan badge from
  * lib/plan-tier, and every row keeps its original destination/action.
  */
 export default function HeaderProfileMenu() {
@@ -126,8 +127,8 @@ export default function HeaderProfileMenu() {
 
   const card = "rounded-2xl border border-cyan-200/[0.14] bg-white/[0.03] overflow-hidden";
   const rowCls =
-    "flex items-center gap-2.5 px-3 py-[7px] text-[13px] text-white/90 hover:bg-white/5 transition";
-  const rowIcon = "w-[18px] h-[18px] text-cyan-300/80 shrink-0";
+    "flex items-center gap-2.5 px-3 py-[5px] text-[12.5px] text-white/90 hover:bg-white/5 transition";
+  const rowIcon = "w-4 h-4 text-cyan-300/80 shrink-0";
   const rowChevron = <ChevronRight className="w-4 h-4 text-cyan-200/35 ml-auto shrink-0" />;
 
   return (
@@ -142,10 +143,10 @@ export default function HeaderProfileMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+10px)] w-[min(20.5rem,calc(100vw-1rem))] max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain rounded-[1.4rem] border border-cyan-300/35 bg-gradient-to-b from-[#071a2e] to-[#030b16] shadow-[0_0_44px_rgba(0,150,255,0.30)] z-[1300] p-2.5 space-y-2.5">
+        <div className="absolute right-0 top-[calc(100%+10px)] w-[min(20.5rem,calc(100vw-1rem))] rounded-[1.4rem] border border-cyan-300/35 bg-gradient-to-b from-[#071a2e] to-[#030b16] shadow-[0_0_44px_rgba(0,150,255,0.30)] z-[1300] p-2 space-y-2 [@media(max-height:720px)]:space-y-1.5">
           {/* User card — the signed-in user's own name, email and plan. */}
-          <div className={`${card} flex items-center gap-3 px-3 py-2.5`}>
-            <div className="w-11 h-11 rounded-full ring-2 ring-cyan-300/70 bg-gradient-to-b from-slate-300 to-slate-500 text-[#0b1c2c] text-lg font-black flex items-center justify-center overflow-hidden shrink-0">
+          <div className={`${card} flex items-center gap-3 px-3 py-2`}>
+            <div className="w-9 h-9 rounded-full ring-2 ring-cyan-300/70 bg-gradient-to-b from-slate-300 to-slate-500 text-[#0b1c2c] text-base font-black flex items-center justify-center overflow-hidden shrink-0">
               {user?.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={user.image} alt="" className="w-full h-full object-cover" />
@@ -155,7 +156,7 @@ export default function HeaderProfileMenu() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-[15px] font-bold truncate">{user?.name || "WorldEye member"}</span>
+                <span className="text-sm font-bold truncate">{user?.name || "WorldEye member"}</span>
                 <span className={`text-[9px] font-black tracking-[0.12em] px-1.5 py-0.5 rounded shrink-0 ${isFree ? "bg-white/15 text-white/75" : "bg-[#D4AF37] text-black"}`}>{badgeLabel}</span>
               </div>
               <div className="text-xs text-white/50 truncate">{user?.email}</div>
@@ -167,14 +168,14 @@ export default function HeaderProfileMenu() {
             <Link
               href="/pricing"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-b from-[#D4AF37]/[0.14] to-[#D4AF37]/[0.04] px-3 py-2.5 hover:from-[#D4AF37]/[0.20] transition"
+              className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-b from-[#D4AF37]/[0.14] to-[#D4AF37]/[0.04] px-3 py-2 hover:from-[#D4AF37]/[0.20] transition"
             >
-              <span className="w-10 h-10 rounded-full border border-[#D4AF37]/70 bg-black/40 flex items-center justify-center shrink-0">
-                <Crown className="w-5 h-5 text-[#e8c55a]" />
+              <span className="w-8 h-8 rounded-full border border-[#D4AF37]/70 bg-black/40 flex items-center justify-center shrink-0">
+                <Crown className="w-4 h-4 text-[#e8c55a]" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[13px] font-bold text-[#f0d47a]">You&apos;re on the Free plan</span>
-                <span className="block mt-0.5 text-[11px] leading-snug text-white/60">
+                <span className="block text-[12.5px] font-bold text-[#f0d47a]">You&apos;re on the Free plan</span>
+                <span className="block mt-0.5 text-[10.5px] leading-snug text-white/60 [@media(max-height:720px)]:hidden">
                   Upgrade for the OSINT toolkit, the OI assistant, satellite view, traffic layers and camera recording.
                 </span>
               </span>
@@ -183,20 +184,20 @@ export default function HeaderProfileMenu() {
           )}
 
           {/* Invite tracker — the user's own referral count and link. */}
-          <div className={`${card} px-3 py-2.5`}>
+          <div className={`${card} px-3 py-2`}>
             <Link
               href="/affiliates"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2"
             >
-              <Gift className="w-[18px] h-[18px] text-cyan-300 shrink-0" />
-              <span className="text-[13px] font-bold text-white/90 flex-1">Invite a friend</span>
+              <Gift className="w-4 h-4 text-cyan-300 shrink-0" />
+              <span className="text-[12.5px] font-bold text-white/90 flex-1">Invite a friend</span>
               <span className="text-xs font-mono text-white/55">
                 {invite ? `${Math.min(invite.invites, invite.goal)}/${invite.goal}` : "–/–"}
               </span>
               <ChevronRight className="w-4 h-4 text-cyan-200/35 shrink-0" />
             </Link>
-            <div className="h-[7px] rounded-full bg-white/10 overflow-hidden my-2">
+            <div className="h-[6px] rounded-full bg-white/10 overflow-hidden my-1.5">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-[#e8c55a] to-[#D4AF37] transition-all"
                 style={{ width: `${pct}%` }}
@@ -205,7 +206,7 @@ export default function HeaderProfileMenu() {
             {invite?.joined && invite.referralLink ? (
               <button
                 onClick={copyLink}
-                className="w-full flex items-center gap-2 px-2.5 py-[7px] rounded-lg bg-black/40 border border-white/[0.13] hover:bg-black/60 transition text-left"
+                className="w-full flex items-center gap-2 px-2.5 py-[5px] rounded-lg bg-black/40 border border-white/[0.13] hover:bg-black/60 transition text-left"
               >
                 <Link2 className="w-3.5 h-3.5 text-white/45 shrink-0" />
                 <span className="flex-1 text-[11px] font-mono text-white/65 truncate">{invite.referralLink}</span>
@@ -215,7 +216,7 @@ export default function HeaderProfileMenu() {
               <button
                 onClick={joinAffiliates}
                 disabled={joining}
-                className="w-full py-[7px] rounded-lg bg-black/40 border border-white/[0.13] text-xs font-semibold text-white/80 hover:bg-black/60 transition disabled:opacity-60"
+                className="w-full py-[5px] rounded-lg bg-black/40 border border-white/[0.13] text-xs font-semibold text-white/80 hover:bg-black/60 transition disabled:opacity-60"
               >
                 {joining ? "Activating…" : "Get my invite link"}
               </button>
@@ -223,7 +224,7 @@ export default function HeaderProfileMenu() {
             <Link
               href="/affiliates"
               onClick={() => setOpen(false)}
-              className="mt-2 flex items-center gap-2 text-[12.5px] text-cyan-300 hover:text-cyan-200 transition"
+              className="mt-1.5 flex items-center gap-2 text-[12.5px] text-cyan-300 hover:text-cyan-200 transition"
             >
               <BarChart3 className="w-4 h-4 shrink-0" /> Track invites &amp; earnings
               <ChevronRight className="w-4 h-4 text-cyan-200/35 ml-auto shrink-0" />
@@ -242,7 +243,7 @@ export default function HeaderProfileMenu() {
               { href: "/pricing", icon: Tag, label: "Plans & pricing" },
             ] as { href: string; icon: typeof MapIcon; label: string; gold?: boolean }[]).map((l) => (
               <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className={rowCls}>
-                <l.icon className={l.gold ? "w-[18px] h-[18px] text-[#D4AF37] shrink-0" : rowIcon} /> {l.label}
+                <l.icon className={l.gold ? "w-4 h-4 text-[#D4AF37] shrink-0" : rowIcon} /> {l.label}
                 {rowChevron}
               </Link>
             ))}
@@ -265,9 +266,9 @@ export default function HeaderProfileMenu() {
           <div className={card}>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full flex items-center gap-2.5 px-3 py-[8px] text-[13px] font-semibold text-red-400 hover:bg-red-400/10 transition"
+              className="w-full flex items-center gap-2.5 px-3 py-[6px] text-[12.5px] font-semibold text-red-400 hover:bg-red-400/10 transition"
             >
-              <LogOut className="w-[18px] h-[18px] shrink-0" /> Sign out
+              <LogOut className="w-4 h-4 shrink-0" /> Sign out
               <ChevronRight className="w-4 h-4 text-red-400/50 ml-auto shrink-0" />
             </button>
           </div>
