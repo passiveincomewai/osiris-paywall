@@ -98,11 +98,11 @@ void main() {
   vec4 clip = projectTileFor3D(a_pos.xy, a_pos.z);
   // Shrink with distance so a dense catalogue does not turn the globe into a
   // solid sheet of dots when zoomed out.
-  float px = clamp(a_size * 260.0 / max(clip.w, 0.0001), 2.5, 16.0);
+  float px = clamp(a_size * 260.0 / max(clip.w, 0.0001), 11.0, 30.0);
   // One satellite out of nineteen thousand is invisible unless it is told to
   // stand out; the selected one gets size and a ring.
   v_hot = gl_InstanceID == u_selected ? 1.0 : 0.0;
-  px += v_hot * 9.0;
+  px += v_hot * 10.0;
   // Expand the quad in clip space. Multiplying by clip.w cancels the
   // perspective divide, so the marker keeps a constant size in pixels.
   gl_Position = clip + vec4(a_corner * px / u_viewport * 2.0 * clip.w, 0.0, 0.0);
@@ -112,18 +112,35 @@ void main() {
 
 const FRAG = `
 precision mediump float;
+uniform sampler2D u_tex;
+uniform float u_texReady;
 in vec2 v_corner;
 in vec3 v_color;
 in float v_hot;
 out vec4 fragColor;
 void main() {
-  // Round the marker off inside the quad; square satellites read as dead
-  // pixels rather than objects.
   float r = length(v_corner);
+  if (u_texReady > 0.5) {
+    // The owner's satellite photo (public/icons/satellite.png), drawn in
+    // the instance quad. t flips: the quad's +y corner is the image top.
+    vec2 uv = vec2(v_corner.x * 0.5 + 0.5, 0.5 - v_corner.y * 0.5);
+    vec4 tex = texture(u_tex, uv);
+    if (v_hot > 0.5) {
+      // Selection ring around the photo, in the disc space outside the
+      // silhouette — same read as the dot era: a ring means selected.
+      float ring = smoothstep(0.80, 0.90, r) * smoothstep(1.0, 0.95, r);
+      float a = max(tex.a, ring * 0.95);
+      if (a < 0.02) discard;
+      fragColor = vec4(mix(tex.rgb, vec3(1.0), ring * 0.4), a);
+      return;
+    }
+    if (tex.a < 0.03) discard;
+    fragColor = vec4(tex.rgb, tex.a);
+    return;
+  }
+  // Until the photo lands (or if it fails), the original dots.
   if (r > 1.0) discard;
   if (v_hot > 0.5) {
-    // A bright ring rather than a bigger blob — a blob just looks like a
-    // closer satellite, a ring reads as a selection.
     float ring = smoothstep(0.55, 0.75, r) * smoothstep(1.0, 0.85, r);
     vec3 c = mix(v_color, vec3(1.0), 0.55);
     fragColor = vec4(c, max(ring, smoothstep(0.45, 0.0, r)) * 0.95);
@@ -153,7 +170,7 @@ void main() {
   vec4 clip = projectTileFor3D(a_pos.xy, a_pos.z);
   // A little larger than the drawn marker: clicking is coarse, and a target
   // the exact size of a 3px dot is a target nobody can hit.
-  float px = clamp(a_size * 260.0 / max(clip.w, 0.0001), 2.5, 16.0) + 4.0;
+  float px = clamp(a_size * 260.0 / max(clip.w, 0.0001), 11.0, 30.0) + 4.0;
   gl_Position = clip + vec4(a_corner * px / u_viewport * 2.0 * clip.w, 0.0, 0.0);
   int id = gl_InstanceID + 1;   // 0 is reserved for 'nothing here'
   v_id = vec3(float(id & 255), float((id >> 8) & 255), float((id >> 16) & 255)) / 255.0;
@@ -166,7 +183,7 @@ flat in vec3 v_id;
 in vec2 v_corner;
 out vec4 fragColor;
 void main() {
-  if (length(v_corner) > 1.0) discard;
+  // The photo marker is a full quad, not a disc — the whole quad picks.
   fragColor = vec4(v_id, 1.0);
 }`;
 
@@ -274,6 +291,8 @@ export function createSatelliteLayer(id: string): CustomLayerInterface & {
   let pickProgram: WebGLProgram | null = null;
   let pickFbo: WebGLFramebuffer | null = null;
   let pickTex: WebGLTexture | null = null;
+  let satTexture: WebGLTexture | null = null;
+  let satTexReady = false;
   let pickDepth: WebGLRenderbuffer | null = null;
   let pickSize = { w: 0, h: 0 };
   // The projection uniforms are only handed to us during render(). A pick
@@ -397,6 +416,28 @@ export function createSatelliteLayer(id: string): CustomLayerInterface & {
         -1, -1,  1, -1,  -1, 1,
         -1,  1,  1, -1,   1, 1,
       ]), gl.STATIC_DRAW);
+      // The satellite photo marker. Loaded async; until it arrives (or if
+      // it fails) the marker program falls back to the classic dots, so
+      // the layer is never blank waiting on an image.
+      const g = gl;
+      satTexture = g.createTexture();
+      g.bindTexture(g.TEXTURE_2D, satTexture);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAG_FILTER, g.LINEAR);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.LINEAR);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE);
+      g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, 1, 1, 0, g.RGBA, g.UNSIGNED_BYTE,
+        new Uint8Array([0, 0, 0, 0]));
+      satTexReady = false;
+      const img = new Image();
+      img.onload = () => {
+        if (gl !== g || !satTexture) return;
+        g.bindTexture(g.TEXTURE_2D, satTexture);
+        g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, img);
+        satTexReady = true;
+        map?.triggerRepaint();
+      };
+      img.src = '/icons/satellite.png';
       dirty = true;
     },
 
@@ -406,6 +447,7 @@ export function createSatelliteLayer(id: string): CustomLayerInterface & {
         if (buffer) gl.deleteBuffer(buffer);
         if (quad) gl.deleteBuffer(quad);
         if (pickTex) gl.deleteTexture(pickTex);
+        if (satTexture) gl.deleteTexture(satTexture);
         if (pickDepth) gl.deleteRenderbuffer(pickDepth);
         if (pickFbo) gl.deleteFramebuffer(pickFbo);
         for (const o of orbitBuffers) gl.deleteBuffer(o.buf);
@@ -417,6 +459,8 @@ export function createSatelliteLayer(id: string): CustomLayerInterface & {
       quad = null;
       pickProgram = null;
       pickTex = null;
+      satTexture = null;
+      satTexReady = false;
       pickDepth = null;
       pickFbo = null;
       pickSize = { w: 0, h: 0 };
@@ -598,6 +642,10 @@ export function createSatelliteLayer(id: string): CustomLayerInterface & {
       const cornerLoc = bindAttributes(program);
       gl.uniform2f(gl.getUniformLocation(program, 'u_viewport'), gl.drawingBufferWidth, gl.drawingBufferHeight);
       gl.uniform1i(gl.getUniformLocation(program, 'u_selected'), selected);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, satTexture);
+      gl.uniform1i(gl.getUniformLocation(program, 'u_tex'), 0);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_texReady'), satTexReady ? 1 : 0);
 
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
