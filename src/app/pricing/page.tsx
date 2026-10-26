@@ -6,10 +6,16 @@ import JsonLd from "@/components/JsonLd";
 import { CHECKOUT_PLAN_SUMMARIES } from "@/lib/billing/trial-checkout";
 
 export const metadata = {
-  title: "Pricing & Plans",
-  description: "The map is free — globe, 74,229 cameras, flights, transit and basic search. Pro unlocks the AI assistant, satellite view, live traffic and premium intel feeds. Weekly, monthly or annual.",
+  title: "Pricing & Plans — 10-Day Free Trial on Every Plan",
+  description: "WorldEye is free: the globe, 74,229 live cameras and flight tracking. Go Pro from $7.99/week, $13.99/month or VIP Pro $74.99/year — every paid plan starts with a 10-day free trial.",
   alternates: {
     canonical: "https://worldeye.app/pricing",
+  },
+  openGraph: {
+    title: "Pricing & Plans — 10-Day Free Trial on Every Plan | WorldEye",
+    description: "The globe, 74,229 live cameras and flight tracking are free. Pro from $7.99/week or VIP Pro $74.99/year — every paid plan starts with a 10-day free trial.",
+    url: "https://worldeye.app/pricing",
+    type: "website",
   },
 };
 

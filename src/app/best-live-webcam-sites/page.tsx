@@ -23,12 +23,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "7 Best Live Webcam Sites for 2026 (Ranked)",
   description:
-    "The best live webcam sites for 2026 compared: WorldEye's free 3D globe, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more.",
+    "The best live webcam sites for 2026, ranked and compared: WorldEye's free 3D globe with 74,229 live cams, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more — coverage, price and signup compared.",
   alternates: { canonical: "/best-live-webcam-sites" },
   openGraph: {
     title: "7 Best Live Webcam Sites for 2026 (Ranked) | WorldEye",
     description:
-      "Compare the best live webcam sites for 2026 — WorldEye's free 3D globe, EarthCam, SkylineWebcams, Explore.org and more.",
+      "Compare the best live webcam sites for 2026 — WorldEye's free 3D globe with 74,229 live cams, EarthCam, SkylineWebcams, Explore.org and more.",
     url: "/best-live-webcam-sites",
     type: "website",
   },
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "7 Best Live Webcam Sites for 2026 (Ranked) | WorldEye",
     description:
-      "The best live webcam sites for 2026 compared — free picks ranked by best-fit.",
+      "The best live webcam sites for 2026 compared — free picks ranked by best-fit, led by WorldEye's 74,229 live cams on a free 3D globe.",
   },
 };
 

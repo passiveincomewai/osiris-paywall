@@ -6,7 +6,7 @@
 
 - [Live globe](https://worldeye.app/): The WorldEye app — a live 3D globe with cameras, flights, satellites, weather, earthquakes and wildfires, free with no signup.
 - [Features](https://worldeye.app/features): Everything WorldEye does — the free live layers, the OSINT toolkit, the AI analyst and what Pro and VIP Pro add.
-- [Pricing](https://worldeye.app/pricing): Free globe for everyone. Paid plans: Weekly $7.99, Monthly $13.99, annual $74.99 (VIP Pro), Enterprise $999/year. Free trials: 1 day on weekly, 1 day on monthly, 3 days on annual.
+- [Pricing](https://worldeye.app/pricing): Free globe for everyone. Paid plans: Weekly $7.99, Monthly $13.99, annual $74.99 (VIP Pro), Enterprise $999/year. Every paid plan starts with a 10-day free trial.
 
 ## Live Cameras
 

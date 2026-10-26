@@ -13,7 +13,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:live": "RUN_LIVE_TESTS=1 vitest run",
-    "vercel-build": "prisma migrate deploy && npm run build"
+    "vercel-build": "prisma migrate deploy && npm run build",
+    "seo:indexnow": "node scripts/indexnow-submit.mjs",
+    "seo:indexnow:dry": "node scripts/indexnow-submit.mjs --dry-run"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.0.0",

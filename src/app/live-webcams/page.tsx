@@ -24,11 +24,11 @@ const EUROPE_COUNT = (EXPLORE_SCOPES.europe.slugs as string[]).length;
 
 export const metadata: Metadata = {
   title: "Live Webcams Worldwide — 74,229 Cams",
-  description: `The WorldEye live webcam hub: 74,229 public cameras in ${COUNTRY_INDEX.length} countries — traffic, cities, nature and landmarks. Free forever, no signup.`,
+  description: `Watch 74,229 live cams and webcams in ${COUNTRY_INDEX.length} countries — traffic, cities, nature and landmarks — on WorldEye's live webcam hub. Free forever, no signup.`,
   alternates: { canonical: "https://worldeye.app/live-webcams" },
   openGraph: {
     title: "Live Webcams Worldwide — 74,229 Cams | WorldEye",
-    description: `74,229 live public webcams across ${COUNTRY_INDEX.length} countries — traffic, cities, nature, landmarks. Free forever, no signup.`,
+    description: `74,229 live cams and webcams across ${COUNTRY_INDEX.length} countries — traffic, cities, nature, landmarks. Free forever, no signup.`,
     url: "https://worldeye.app/live-webcams",
     type: "website",
   },
@@ -154,9 +154,10 @@ export default async function LiveWebcamsPage() {
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
             This is the hub of the WorldEye camera directory: {fmt(HEADLINE)}{" "}
             publicly available live webcams from {COUNTRY_INDEX.length} countries,
-            collected and mapped so you can watch the planet in real time. Highways
-            and intersections, city streets and plazas, beaches, ski resorts, harbors
-            and wilderness — whatever the world points a public camera at.
+            collected and mapped so you can watch the planet in real time. Live cams
+            from highways and intersections, city streets and plazas, beaches, ski
+            resorts, harbors and wilderness — whatever the world points a public
+            camera at.
           </p>
           <p className="text-white/55 mt-4 text-base md:text-lg leading-relaxed">
             The United States alone contributes {fmt(top10[0].count)} feeds, from

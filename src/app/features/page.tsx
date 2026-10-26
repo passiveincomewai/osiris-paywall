@@ -28,14 +28,14 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Features — Free Live Globe & Pro Tools",
+  title: "Features — Free Globe, 74,229 Live Cameras & Pro Tools",
   description:
-    "All WorldEye features: a free 3D globe with flights, 74,229 cameras, satellites, transit and hazards — plus Pro's OI AI assistant, satellite imagery, live traffic and OSINT toolkit.",
+    "Explore WorldEye's features: a free 3D globe with live flights, 74,229 public cameras, satellites, transit and hazards — no signup. Pro adds the OI AI assistant, satellite imagery, live traffic and the OSINT toolkit.",
   alternates: { canonical: "/features" },
   openGraph: {
-    title: "WorldEye Features — Free Live Globe & Pro Tools",
+    title: "Features — Free Globe, 74,229 Live Cameras & Pro Tools | WorldEye",
     description:
-      "A free live 3D globe with flights, cameras, satellites and hazards — and Pro intelligence tools: OI AI assistant, satellite view, live traffic, advanced search filters, OSINT toolkit and premium intel feeds.",
+      "A free live 3D globe with flights, 74,229 cameras, satellites and hazards — no signup. Pro adds the OI AI assistant, satellite view, live traffic, advanced search filters, the OSINT toolkit and premium intel feeds.",
     url: "/features",
     type: "website",
   },

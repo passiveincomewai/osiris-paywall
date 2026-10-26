@@ -54,7 +54,7 @@ const fontWordmark = Audiowide({
 const SITE_URL = "https://worldeye.app";
 const SITE_NAME = "WorldEye";
 const SITE_TITLE = "WorldEye — Live 3D Globe | Flights, CCTV & Satellites";
-const SITE_DESCRIPTION = "Track flights, satellites and 74,229 live CCTV cameras on WorldEye's 3D intelligence globe — free. Go Pro for the AI analyst, satellite view and intel feeds.";
+const SITE_DESCRIPTION = "Watch 74,229 live cams and CCTV cameras, track flights and satellites on WorldEye's free 3D intelligence globe — no signup. Go Pro for the AI analyst, satellite view and intel feeds.";
 
 export const viewport: Viewport = {
   themeColor: "#D4AF37",

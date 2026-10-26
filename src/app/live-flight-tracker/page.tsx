@@ -24,14 +24,14 @@ import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Live Flight Tracker — Track Every Flight Live",
+  title: "Live Flight Tracker — Watch Flights Live, Free",
   description:
-    "Track flights live on a free 3D map. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost, no account.",
+    "Watch flights live on a free 3D globe: real-time position, altitude, speed, aircraft type and route for flights worldwide, from live ADS-B data. No signup, no cost, no account.",
   alternates: { canonical: "/live-flight-tracker" },
   openGraph: {
-    title: "Live Flight Tracker — Track Every Flight Live | WorldEye",
+    title: "Live Flight Tracker — Watch Flights Live, Free | WorldEye",
     description:
-      "Real-time airplane tracker on a free 3D globe: position, altitude, speed and routes. No signup, no cost.",
+      "Real-time flight tracking on a free 3D globe: position, altitude, speed, aircraft type and routes, from live ADS-B data. No signup, no cost.",
     url: "/live-flight-tracker",
     type: "website",
   },

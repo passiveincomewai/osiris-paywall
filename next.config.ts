@@ -55,6 +55,33 @@ const nextConfig: NextConfig = {
         destination: '/compare',
         permanent: true,
       },
+      // Legacy short paths (SEO batch, 2026-10-26): every source below was
+      // probed live and returns 404 today; each maps to the one page that
+      // now owns the intent. These cover the classic pre-restructure and
+      // guessable URLs (auth, trackers, camera hubs) so any lingering
+      // external links or bookmarks land somewhere useful instead of 404.
+      { source: '/login', destination: '/signin', permanent: true },
+      { source: '/sign-in', destination: '/signin', permanent: true },
+      { source: '/register', destination: '/signup', permanent: true },
+      { source: '/account', destination: '/settings', permanent: true },
+      { source: '/home', destination: '/', permanent: true },
+      { source: '/globe', destination: '/', permanent: true },
+      { source: '/world-eye', destination: '/', permanent: true },
+      { source: '/osiris', destination: '/alternatives/osiris', permanent: true },
+      { source: '/flight-tracker', destination: '/live-flight-tracker', permanent: true },
+      { source: '/flights', destination: '/live-flight-tracker', permanent: true },
+      { source: '/satellites', destination: '/satellite-tracker', permanent: true },
+      { source: '/satellite', destination: '/satellite-tracker', permanent: true },
+      { source: '/ships', destination: '/ship-tracker', permanent: true },
+      { source: '/earthquakes', destination: '/earthquake-tracker', permanent: true },
+      { source: '/weather', destination: '/weather-tracker', permanent: true },
+      { source: '/live-cameras', destination: '/live-webcams', permanent: true },
+      { source: '/live', destination: '/live-webcams', permanent: true },
+      { source: '/webcams', destination: '/live-webcams', permanent: true },
+      { source: '/cctv', destination: '/cameras', permanent: true },
+      { source: '/traffic-cameras', destination: '/live-traffic-cameras', permanent: true },
+      { source: '/countries', destination: '/cameras/countries', permanent: true },
+      { source: '/cities', destination: '/city-webcams', permanent: true },
     ];
   },
   async headers() {

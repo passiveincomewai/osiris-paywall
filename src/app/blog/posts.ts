@@ -373,12 +373,12 @@ export const POSTS: BlogPost[] = [
   {
     slug: "best-live-webcams-world",
     title: "Best Live Webcams in the World to Watch Right Now",
-    seoTitle: "Best Live Webcams in the World | WorldEye Blog",
+    seoTitle: "Best Live Webcams in the World — Watch Them Free | WorldEye Blog",
     date: "2026-10-11",
     excerpt:
       "From famous city squares to mountain passes, harbors at dawn, and volcanoes — a tour of the best live webcams streaming right now, and how to find them.",
     seoDescription:
-      "A tour of the best kinds of live webcams streaming now — city squares, mountain passes, harbors, volcanoes — plus how to find the great feeds yourself.",
+      "The best live webcams in the world right now — city squares, mountain passes, harbors, volcanoes — plus how to find and watch 74,229 live cams free on WorldEye.",
     tags: ["cameras", "travel"],
     sections: [
       {

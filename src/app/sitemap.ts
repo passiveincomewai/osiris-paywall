@@ -3,6 +3,7 @@ import cameraCountries from "@/data/camera-countries.json";
 import cityPages from "@/data/city-pages.json";
 import usStates from "@/data/us-states.json";
 import skiResorts from "@/data/ski-resorts.json";
+import liveCameraIndex from "@/data/live-camera-index.json";
 import { POSTS } from "./blog/posts";
 import { EVENT_WALLS } from "@/data/event-walls";
 
@@ -129,18 +130,19 @@ const SEO_PAGES_WAVE10 = [
 const SEO_PAGES_WAVE11 = ["/live-camera-index"];
 
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
-// pattern — the NYC Marathon and the 100th Macy's Parade, the
-// Thanksgiving travel rush, and the Starship Flight 15 launch hub
-// (which stays up as the standing launch page after the flight).
+// pattern — the World Series, California king-tide flooding, first
+// snow, ski opening week, the NYC Marathon and the 100th Macy's
+// Parade, the Thanksgiving travel rush, and the Starship Flight 15
+// launch hub (which stays up as the standing launch page).
 const SEO_PAGES_EVENTS_2026 = [
-  "/nyc-marathon-2026",
-  "/macys-thanksgiving-parade-2026",
-  "/thanksgiving-travel-2026",
-  "/starship-flight-15",
   "/world-series-2026",
   "/california-flood-cams",
   "/first-snow-2026",
   "/ski-opening-week-2026",
+  "/nyc-marathon-2026",
+  "/macys-thanksgiving-parade-2026",
+  "/thanksgiving-travel-2026",
+  "/starship-flight-15",
 ];
 
 // Live event walls (2026-10-24): the /live-events hub plus one page per
@@ -212,123 +214,139 @@ const SEO_PAGES_COMPARE = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  // Honest lastmod (SEO #11, 2026-10-26): every URL used to be stamped
+  // "now" on every render, which teaches crawlers to distrust the signal.
+  // Each set is now stamped with the real date of the data or content
+  // behind it — the generating dataset's `generatedAt`, or a post's own
+  // date/revision — and sets with no honest date source in the repo omit
+  // lastModified entirely. The URL set, order, changeFrequency and
+  // priority are unchanged.
+  const catalogueDate = new Date(
+    (cameraCountries as { generatedAt: string }).generatedAt,
+  );
+  const cityPagesDate = new Date(
+    (cityPages as unknown as { generatedAt: string }).generatedAt,
+  );
+  const statesDate = new Date((usStates as { generatedAt: string }).generatedAt);
+  const skiDate = new Date((skiResorts as { generatedAt: string }).generatedAt);
+  const cameraIndexDate = new Date(
+    (liveCameraIndex as { generatedAt: string }).generatedAt,
+  );
+  const latestPostDate = new Date(
+    POSTS.reduce(
+      (max, p) => {
+        const d = p.updated ?? p.date;
+        return d > max ? d : max;
+      },
+      POSTS[0].updated ?? POSTS[0].date,
+    ),
+  );
   return [
-    { url: `${BASE}/`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
-    { url: `${BASE}/features`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE}/gods-eye-view`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE}/cameras`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: `${BASE}/live-flight-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/satellite-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/earthquake-tracker`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/tornado-tracker`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
-    { url: `${BASE}/pricing`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE}/`, lastModified: catalogueDate, changeFrequency: "daily", priority: 1.0 },
+    { url: `${BASE}/features`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/gods-eye-view`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/cameras`, lastModified: catalogueDate, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE}/live-flight-tracker`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/satellite-tracker`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/earthquake-tracker`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/tornado-tracker`, changeFrequency: "daily", priority: 0.8 },
+    { url: `${BASE}/pricing`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/blog`, lastModified: latestPostDate, changeFrequency: "weekly", priority: 0.7 },
     ...POSTS.map((p) => ({
       url: `${BASE}/blog/${p.slug}`,
-      lastModified: now,
+      lastModified: new Date(p.updated ?? p.date),
       changeFrequency: "monthly" as const,
       priority: 0.5,
     })),
-    { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/affiliates`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/affiliates/leaderboard`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
-    { url: `${BASE}/affiliates/terms`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
-    { url: `${BASE}/contact`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
-    { url: `${BASE}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/changelog`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },
-    { url: `${BASE}/security`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
-    { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/about`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/affiliates`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/affiliates/leaderboard`, changeFrequency: "daily", priority: 0.6 },
+    { url: `${BASE}/affiliates/terms`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE}/contact`, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${BASE}/faq`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/changelog`, changeFrequency: "weekly", priority: 0.5 },
+    { url: `${BASE}/security`, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${BASE}/terms`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     // Camera directory (sitemap-only SEO pages — not linked from site chrome).
-    { url: `${BASE}/cameras/countries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/cameras/countries`, lastModified: catalogueDate, changeFrequency: "monthly", priority: 0.7 },
     ...SEO_PAGES.filter((p) => p !== "/cameras/countries").map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE4.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE5.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE6.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE7.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE8.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
+      lastModified: cityPagesDate,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE9.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_STATES.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
+      lastModified: statesDate,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE10.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_WAVE11.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
+      lastModified: cameraIndexDate,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_EVENTS_2026.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_EVENT_WALLS.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_COMPARE.map((p) => ({
       url: `${BASE}${p}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...COUNTRY_SLUGS.map((slug) => ({
       url: `${BASE}/cameras/countries/${slug}`,
-      lastModified: now,
+      lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SKI_RESORT_SLUGS.map((slug) => ({
       url: `${BASE}/ski-webcams/${slug}`,
-      lastModified: now,
+      lastModified: skiDate,
       changeFrequency: "weekly" as const,
       priority: 0.6,
     })),
