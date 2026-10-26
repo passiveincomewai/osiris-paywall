@@ -1065,6 +1065,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('earthquake-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The wildfire pin (owner's artwork): every fire marker.
+    void loadAircraftPhoto('/icons/wildfire-pin.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('wildfire-pin')) map.removeImage('wildfire-pin');
+        map.addImage('wildfire-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     for (const [id, url] of Object.entries(AIRCRAFT_PHOTO_BY_ICON)) {
       void loadAircraftPhoto(url).then((img) => {
         if (!img) return;
@@ -1325,8 +1334,16 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       // Fires — burnt sienna
       map.addLayer({ id: 'fires-heat', type: 'circle', source: 'fires', paint: {
         'circle-radius': ['interpolate',['linear'],['zoom'], 1,2, 5,4, 10,8],
-        'circle-color': '#E65100', 'circle-opacity': 0.45, 'circle-blur': 0.5,
+        'circle-color': '#E65100', 'circle-opacity': 0.30, 'circle-blur': 0.5,
       }});
+      // Wildfire pins — the owner's flame-pin artwork, sized by the
+      // detection's brightness, from regional zoom up (hotspots are far
+      // too dense for pins on the world view; the heat glow carries it).
+      map.addLayer({ id: 'fires-icons', type: 'symbol', source: 'fires', minzoom: 3, layout: {
+        'icon-image': 'wildfire-pin',
+        'icon-size': ['interpolate', ['linear'], ['get', 'brightness'], 300, 0.45, 375, 0.7, 450, 0.95, 550, 1.2],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
 
       // Fire Perimeters (NIFC WFIGS) — translucent fill + hot edge
       map.addLayer({ id: 'fire-perim-fill', type: 'fill', source: 'fire-perimeters', paint: {
@@ -2307,7 +2324,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // ── Satellites (SatNOGS powered) ──
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
-    const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat',
+    const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons',
       'fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
@@ -2414,6 +2431,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       </div>`);
     };
     map.on('click', 'fires-heat', e => { if (e.features?.length) openFirePopup(e.features[0]); });
+    map.on('click', 'fires-icons', e => { if (e.features?.length) openFirePopup(e.features[0]); });
 
     // ── Hurricanes (NOAA NHC) ──
     const CLASS_LABEL: Record<string, string> = { HU: 'HURRICANE', TS: 'TROPICAL STORM', TD: 'TROPICAL DEPRESSION', STS: 'SUBTROPICAL STORM', SD: 'SUBTROPICAL DEPRESSION', EX: 'EXTRATROPICAL', PT: 'POST-TROPICAL', LO: 'LOW', DB: 'DISTURBANCE' };
@@ -2946,7 +2964,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -4904,7 +4922,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['fl-jets'], activeLayers.jets);
     setVis(['fl-military'], activeLayers.military);
     setVis(['cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
-    setVis(['fires-heat'], activeLayers.fires);
+    setVis(['fires-heat','fires-icons'], activeLayers.fires);
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
     setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label'], (activeLayers as any).hurricanes);
     setVis(['gauge-dots'], (activeLayers as any).river_gauges);
