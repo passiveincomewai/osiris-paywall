@@ -210,8 +210,6 @@ const newsTransform = (d: { news?: unknown[]; sources?: unknown[]; timestamp?: s
   alert_pins: (d.news ?? []).filter(n => (n as { place?: unknown } | null)?.place),
 });
 
-/* One version label for the splash and the header, which used to disagree. */
-const APP_VERSION = 'V5.0';
 
 /* The splash reports what has actually happened. The last stage waits for
    the map's first finished frame instead of a fixed timer. */
@@ -2156,25 +2154,13 @@ export default function Dashboard() {
             exit={{ opacity: 0, scale: 1.04 }}
             transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
             className="absolute inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden"
-            style={{ background: 'radial-gradient(ellipse at center, #0a0a14 0%, var(--bg-void) 70%)' }}
+            style={{ background: 'radial-gradient(ellipse at center, #07182b 0%, var(--bg-void) 72%)' }}
           >
             {/* ── Scanline CRT overlay ── */}
             <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(212,175,55,0.015) 2px, rgba(212,175,55,0.015) 4px)',
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(56,189,248,0.02) 2px, rgba(56,189,248,0.02) 4px)',
               animation: 'splashScanDrift 8s linear infinite',
             }} />
-
-            {/* ── Version badge — top-left ── */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="absolute top-6 left-6 z-[2] font-mono text-[11px] tracking-[0.3em] text-[var(--gold-primary)]"
-            >
-              {APP_VERSION}
-            </motion.div>
-
-
 
             {/* ── WorldEye logo ── */}
             <motion.div
@@ -2183,13 +2169,15 @@ export default function Dashboard() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="relative z-[2] mb-8"
             >
+              {/* soft halo behind the wordmark */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[135%] aspect-[2/1] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(0,150,255,0.22) 0%, transparent 65%)' }} />
               <img
-                src="/worldeye-logo.png?v=4"
+                src="/worldeye-header-logo.png"
                 alt="WorldEye"
-                width={600}
-                height={570}
-                className="w-64 md:w-80 h-auto"
-                style={{ filter: 'drop-shadow(0 0 40px rgba(0,150,255,0.35))' }}
+                width={1063}
+                height={290}
+                className="relative w-72 md:w-96 h-auto"
+                style={{ filter: 'drop-shadow(0 0 44px rgba(0,150,255,0.45))' }}
               />
             </motion.div>
 
@@ -2201,7 +2189,7 @@ export default function Dashboard() {
                 transition={{ delay: 1.2, duration: 0.8, ease: 'easeInOut' }}
                 className="overflow-hidden whitespace-nowrap"
               >
-                <p className="text-[11px] md:text-[10px] font-mono tracking-[0.5em] text-[var(--gold-primary)]" style={{ opacity: 0.8 }}>
+                <p className="text-[11px] md:text-[10px] font-mono tracking-[0.32em] md:tracking-[0.5em]" style={{ opacity: 0.85, color: '#7dd3fc' }}>
                   GLOBAL INTELLIGENCE PLATFORM
                 </p>
               </motion.div>
@@ -2210,13 +2198,13 @@ export default function Dashboard() {
             {/* ── Multi-stage progress bar ── */}
             <div className="w-64 md:w-80 z-[2]">
               {/* Thin progress track */}
-              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(212,175,55,0.1)' }}>
+              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(56,189,248,0.12)' }}>
                 <motion.div
                   initial={{ width: '0%' }}
                   animate={{ width: SPLASH_PROGRESS[splashStage] }}
                   transition={{ duration: 0.55, delay: splashStage === 0 ? 0.5 : 0, ease: 'easeInOut' }}
                   className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ background: 'linear-gradient(90deg, var(--gold-primary), var(--cyan-primary), var(--gold-primary))', boxShadow: '0 0 12px rgba(212,175,55,0.4)' }}
+                  style={{ background: 'linear-gradient(90deg, #0284c7, #38bdf8, #0284c7)', boxShadow: '0 0 14px rgba(56,189,248,0.5)' }}
                 />
               </div>
 
@@ -2241,7 +2229,7 @@ export default function Dashboard() {
             {/* ── Decorative grid lines ── */}
             <div className="absolute inset-0 pointer-events-none z-[0]" style={{ opacity: 0.03 }}>
               <div className="absolute inset-0" style={{
-                backgroundImage: 'linear-gradient(rgba(212,175,55,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.5) 1px, transparent 1px)',
+                backgroundImage: 'linear-gradient(rgba(56,189,248,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.5) 1px, transparent 1px)',
                 backgroundSize: '60px 60px',
               }} />
             </div>
@@ -2259,7 +2247,7 @@ export default function Dashboard() {
                 animate={{ opacity: 0.3 }}
                 transition={{ delay: 0.8 + i * 0.1, duration: 0.5 }}
                 className="absolute w-8 h-8 z-[2]"
-                style={{ top: pos.t, bottom: pos.b, left: pos.l, right: pos.r, borderWidth: pos.bw, borderStyle: 'solid', borderColor: 'var(--gold-primary)' }}
+                style={{ top: pos.t, bottom: pos.b, left: pos.l, right: pos.r, borderWidth: pos.bw, borderStyle: 'solid', borderColor: '#38bdf8' }}
               />
             ))}
 
@@ -2517,8 +2505,6 @@ export default function Dashboard() {
         </span>
 
         {spaceWeather && <span className="hidden lg:inline" title={spaceWeather.kp_index == null ? 'Geomagnetic Storm Index — no reading from NOAA' : `Geomagnetic Storm Index — Kp${spaceWeather.kp_index}`}>SOLAR: <span style={{ color: spaceWeather.storm_color, fontWeight: 700 }}>{spaceWeather.kp_index == null ? 'N/A' : `Kp${spaceWeather.kp_index}`}</span></span>}
-
-        <span className="text-[11px] font-bold tracking-[0.2em] text-[var(--text-muted)] opacity-50">{APP_VERSION}</span>
 
         {/* Identity-driven account slot (components/AccountHudControl):
             premium → account menu; signed-in free → Upgrade pill AND the

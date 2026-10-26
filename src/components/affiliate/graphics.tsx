@@ -1,6 +1,11 @@
-// ── Affiliate vector graphics ─────────────────────────────────────────────
-// Hand-crafted SVG artwork for the affiliate panel, replacing the emoji
-// placeholders the UI used to render. One design system throughout:
+// ── Affiliate graphics ────────────────────────────────────────────────────
+// Rank badges are the owner's photo artwork (public/ranks/rank-<key>.png,
+// keyed from his badge sheet 2026-10-26), mapped in ladder order:
+// explorer=blue orbit eye, scout=teal compass eye, analyst=purple orbit
+// eye, commander=purple star eye, elite=pink diamond, visionary=gold eye.
+// The hand-crafted SVG art below remains as the fallback for unknown
+// ranks and for the generic marks (EyeMark / MedalMark / PodiumMedal).
+// One design system throughout:
 //   · 48×48 grid, round caps/joins, 2.3-unit stroke in the rank's color
 //   · the WorldEye eye + orbit motif, opening up rank by rank
 //   · cyan family for the early ranks, gold for Visionary (per-rank colors
@@ -116,11 +121,29 @@ const RANK_ART: Record<string, (color: string) => React.ReactNode> = {
   ),
 };
 
+const RANK_IMG: Record<string, string> = {
+  explorer: "/ranks/rank-explorer.png",
+  scout: "/ranks/rank-scout.png",
+  analyst: "/ranks/rank-analyst.png",
+  commander: "/ranks/rank-commander.png",
+  elite: "/ranks/rank-elite.png",
+  visionary: "/ranks/rank-visionary.png",
+};
+
 /**
- * Vector badge for an affiliate rank. `rank` accepts the rank key or the
- * display name (case-insensitive); unknown ranks get the plain eye mark.
+ * Badge for an affiliate rank. `rank` accepts the rank key or the display
+ * name (case-insensitive). Known ranks render the owner's photo badge
+ * (contained in the size box — the artwork is wider than it is tall);
+ * unknown ranks fall back to the vector eye mark.
  */
 export function RankArt({ rank, color, size = 40, className }: ArtProps & { rank: string }) {
+  const img = RANK_IMG[rank.trim().toLowerCase()];
+  if (img) {
+    return (
+      <img src={img} width={size} height={size} alt="" aria-hidden="true" draggable={false}
+        className={className} style={{ objectFit: "contain" }} />
+    );
+  }
   const draw = RANK_ART[rank.trim().toLowerCase()] ?? null;
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} aria-hidden="true"
