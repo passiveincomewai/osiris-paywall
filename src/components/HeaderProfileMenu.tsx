@@ -127,7 +127,7 @@ export default function HeaderProfileMenu() {
 
   const card = "rounded-2xl border border-cyan-200/[0.14] bg-white/[0.03] overflow-hidden";
   const rowCls =
-    "flex items-center gap-2.5 px-3 py-[5px] text-[12.5px] text-white/90 hover:bg-white/5 transition";
+    "flex items-center gap-2.5 px-3 py-[3px] text-[12px] leading-[1.3] text-white/90 hover:bg-white/5 transition";
   const rowIcon = "w-4 h-4 text-cyan-300/80 shrink-0";
   const rowChevron = <ChevronRight className="w-4 h-4 text-cyan-200/35 ml-auto shrink-0" />;
 
@@ -143,10 +143,10 @@ export default function HeaderProfileMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+10px)] w-[min(20.5rem,calc(100vw-1rem))] rounded-[1.4rem] border border-cyan-300/35 bg-gradient-to-b from-[#071a2e] to-[#030b16] shadow-[0_0_44px_rgba(0,150,255,0.30)] z-[1300] p-2 space-y-2 [@media(max-height:720px)]:space-y-1.5">
+        <div className="absolute right-0 top-[calc(100%+10px)] w-[min(20.5rem,calc(100vw-1rem))] rounded-[1.4rem] border border-cyan-300/35 bg-gradient-to-b from-[#071a2e] to-[#030b16] shadow-[0_0_44px_rgba(0,150,255,0.30)] z-[1300] p-1.5 space-y-1.5 [@media(max-height:720px)]:space-y-1">
           {/* User card — the signed-in user's own name, email and plan. */}
-          <div className={`${card} flex items-center gap-3 px-3 py-2`}>
-            <div className="w-9 h-9 rounded-full ring-2 ring-cyan-300/70 bg-gradient-to-b from-slate-300 to-slate-500 text-[#0b1c2c] text-base font-black flex items-center justify-center overflow-hidden shrink-0">
+          <div className={`${card} flex items-center gap-3 px-3 py-1.5`}>
+            <div className="w-8 h-8 rounded-full ring-2 ring-cyan-300/70 bg-gradient-to-b from-slate-300 to-slate-500 text-[#0b1c2c] text-sm font-black flex items-center justify-center overflow-hidden shrink-0">
               {user?.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={user.image} alt="" className="w-full h-full object-cover" />
@@ -156,10 +156,10 @@ export default function HeaderProfileMenu() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold truncate">{user?.name || "WorldEye member"}</span>
+                <span className="text-[13px] font-bold truncate">{user?.name || "WorldEye member"}</span>
                 <span className={`text-[9px] font-black tracking-[0.12em] px-1.5 py-0.5 rounded shrink-0 ${isFree ? "bg-white/15 text-white/75" : "bg-[#D4AF37] text-black"}`}>{badgeLabel}</span>
               </div>
-              <div className="text-xs text-white/50 truncate">{user?.email}</div>
+              <div className="text-[11px] text-white/50 truncate">{user?.email}</div>
             </div>
           </div>
 
@@ -168,14 +168,14 @@ export default function HeaderProfileMenu() {
             <Link
               href="/pricing"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-b from-[#D4AF37]/[0.14] to-[#D4AF37]/[0.04] px-3 py-2 hover:from-[#D4AF37]/[0.20] transition"
+              className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-b from-[#D4AF37]/[0.14] to-[#D4AF37]/[0.04] px-3 py-1.5 hover:from-[#D4AF37]/[0.20] transition"
             >
-              <span className="w-8 h-8 rounded-full border border-[#D4AF37]/70 bg-black/40 flex items-center justify-center shrink-0">
-                <Crown className="w-4 h-4 text-[#e8c55a]" />
+              <span className="w-7 h-7 rounded-full border border-[#D4AF37]/70 bg-black/40 flex items-center justify-center shrink-0">
+                <Crown className="w-[14px] h-[14px] text-[#e8c55a]" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[12.5px] font-bold text-[#f0d47a]">You&apos;re on the Free plan</span>
-                <span className="block mt-0.5 text-[10.5px] leading-snug text-white/60 [@media(max-height:720px)]:hidden">
+                <span className="block text-[12px] font-bold text-[#f0d47a]">You&apos;re on the Free plan</span>
+                <span className="block mt-0.5 text-[10.5px] leading-snug text-white/60 line-clamp-2 [@media(max-height:720px)]:hidden">
                   Upgrade for the OSINT toolkit, the OI assistant, satellite view, traffic layers and camera recording.
                 </span>
               </span>
@@ -184,20 +184,20 @@ export default function HeaderProfileMenu() {
           )}
 
           {/* Invite tracker — the user's own referral count and link. */}
-          <div className={`${card} px-3 py-2`}>
+          <div className={`${card} px-3 py-1.5`}>
             <Link
               href="/affiliates"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2"
             >
               <Gift className="w-4 h-4 text-cyan-300 shrink-0" />
-              <span className="text-[12.5px] font-bold text-white/90 flex-1">Invite a friend</span>
+              <span className="text-[12px] font-bold text-white/90 flex-1">Invite a friend</span>
               <span className="text-xs font-mono text-white/55">
                 {invite ? `${Math.min(invite.invites, invite.goal)}/${invite.goal}` : "–/–"}
               </span>
               <ChevronRight className="w-4 h-4 text-cyan-200/35 shrink-0" />
             </Link>
-            <div className="h-[6px] rounded-full bg-white/10 overflow-hidden my-1.5">
+            <div className="h-[5px] rounded-full bg-white/10 overflow-hidden my-1">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-[#e8c55a] to-[#D4AF37] transition-all"
                 style={{ width: `${pct}%` }}
@@ -206,7 +206,7 @@ export default function HeaderProfileMenu() {
             {invite?.joined && invite.referralLink ? (
               <button
                 onClick={copyLink}
-                className="w-full flex items-center gap-2 px-2.5 py-[5px] rounded-lg bg-black/40 border border-white/[0.13] hover:bg-black/60 transition text-left"
+                className="w-full flex items-center gap-2 px-2.5 py-[4px] rounded-lg bg-black/40 border border-white/[0.13] hover:bg-black/60 transition text-left"
               >
                 <Link2 className="w-3.5 h-3.5 text-white/45 shrink-0" />
                 <span className="flex-1 text-[11px] font-mono text-white/65 truncate">{invite.referralLink}</span>
@@ -216,7 +216,7 @@ export default function HeaderProfileMenu() {
               <button
                 onClick={joinAffiliates}
                 disabled={joining}
-                className="w-full py-[5px] rounded-lg bg-black/40 border border-white/[0.13] text-xs font-semibold text-white/80 hover:bg-black/60 transition disabled:opacity-60"
+                className="w-full py-[4px] rounded-lg bg-black/40 border border-white/[0.13] text-[11.5px] font-semibold text-white/80 hover:bg-black/60 transition disabled:opacity-60"
               >
                 {joining ? "Activating…" : "Get my invite link"}
               </button>
@@ -224,7 +224,7 @@ export default function HeaderProfileMenu() {
             <Link
               href="/affiliates"
               onClick={() => setOpen(false)}
-              className="mt-1.5 flex items-center gap-2 text-[12.5px] text-cyan-300 hover:text-cyan-200 transition"
+              className="mt-1 flex items-center gap-2 text-[11.5px] text-cyan-300 hover:text-cyan-200 transition"
             >
               <BarChart3 className="w-4 h-4 shrink-0" /> Track invites &amp; earnings
               <ChevronRight className="w-4 h-4 text-cyan-200/35 ml-auto shrink-0" />
@@ -232,7 +232,7 @@ export default function HeaderProfileMenu() {
           </div>
 
           {/* Navigation card */}
-          <div className={`${card} py-1 divide-y divide-white/[0.05]`}>
+          <div className={`${card} py-0.5 divide-y divide-white/[0.05]`}>
             {([
               { href: "/", icon: MapIcon, label: "Live map" },
               { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -250,7 +250,7 @@ export default function HeaderProfileMenu() {
           </div>
 
           {/* Account card */}
-          <div className={`${card} py-1 divide-y divide-white/[0.05]`}>
+          <div className={`${card} py-0.5 divide-y divide-white/[0.05]`}>
             <Link href="/settings" onClick={() => setOpen(false)} className={rowCls}>
               <Settings className={rowIcon} /> Account settings {rowChevron}
             </Link>
@@ -266,7 +266,7 @@ export default function HeaderProfileMenu() {
           <div className={card}>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full flex items-center gap-2.5 px-3 py-[6px] text-[12.5px] font-semibold text-red-400 hover:bg-red-400/10 transition"
+              className="w-full flex items-center gap-2.5 px-3 py-[5px] text-[12px] font-semibold text-red-400 hover:bg-red-400/10 transition"
             >
               <LogOut className="w-4 h-4 shrink-0" /> Sign out
               <ChevronRight className="w-4 h-4 text-red-400/50 ml-auto shrink-0" />

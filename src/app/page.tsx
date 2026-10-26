@@ -2486,7 +2486,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* ── TOP-RIGHT STATUS (desktop) ── */}
-      <motion.div data-hud initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="status-bar-desktop absolute top-4 right-6 z-[200] pointer-events-none flex items-center gap-3 text-[10px] font-mono tracking-widest text-[var(--text-muted)]">
+      <motion.div data-hud initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="status-bar-desktop absolute top-4 right-6 z-[480] pointer-events-none flex items-center gap-3 text-[10px] font-mono tracking-widest text-[var(--text-muted)]">
 
         <span className="hidden lg:inline-flex items-center gap-1.5">
           <ZuluClock />
@@ -2524,7 +2524,7 @@ export default function Dashboard() {
           logo it can never collide with the account controls. Hidden
           with the same conditions as the mobile status cluster. */}
       {isMobile && !showDirections && !navSession && (
-        <div className="absolute z-[200] pointer-events-auto" style={{ top: 62, left: 16 }}>
+        <div className="absolute z-[480] pointer-events-auto" style={{ top: 62, left: 16 }}>
           <LanguageHeaderControl variant="mobile" align="left" />
         </div>
       )}
@@ -2533,7 +2533,7 @@ export default function Dashboard() {
       {/* The route planner claims the top of a phone screen; leaving this in
           place would put the support badge underneath the destination field. */}
       {isMobile && !showDirections && !navSession && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="absolute top-3 right-3 z-[200] pointer-events-auto flex flex-col items-end gap-1.5">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="absolute top-3 right-3 z-[480] pointer-events-auto flex flex-col items-end gap-1.5">
           <div className="flex items-center gap-2">
             <AccountHudControl variant="mobile" />
           </div>
