@@ -2,6 +2,7 @@
 // Page content itself stays in each page.tsx; this only standardizes chrome:
 // breadcrumbs + BreadcrumbList JSON-LD, reviewed stamp, CTAs, and the shell.
 import Link from "next/link";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import type { ReactNode } from "react";
 import { ArrowLeft, ArrowRight, CalendarCheck, ChevronRight } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
@@ -141,9 +142,12 @@ export function IntentShell({ jsonLd, children }: { jsonLd: unknown; children: R
           >
             <ArrowLeft className="w-4 h-4" /> Back to the map
           </Link>
-          <span className="text-[11px] font-mono tracking-[0.3em] text-[#0096FF]">
-            WORLDEYE
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono tracking-[0.3em] text-[#0096FF]">
+              WORLDEYE
+            </span>
+            <LanguageHeaderControl variant="mobile" />
+          </div>
         </div>
         {children}
       </div>

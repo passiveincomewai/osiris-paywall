@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
@@ -269,9 +270,12 @@ export default function SettingsClient() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10 md:py-14">
-      <Link href="/" className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition mb-6">
-        <ArrowLeft className="w-4 h-4" /> Back to the map
-      </Link>
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
+          <ArrowLeft className="w-4 h-4" /> Back to the map
+        </Link>
+        <LanguageHeaderControl variant="mobile" />
+      </div>
       <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">Account settings</h1>
 
       {err && <p className="mb-4 text-sm text-red-400">{err}</p>}

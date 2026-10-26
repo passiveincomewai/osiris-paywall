@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Landmark } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
@@ -140,7 +141,10 @@ export default async function EuropeLiveCamerasPage() {
           <Link href="/cameras/countries" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
             <Landmark className="w-4 h-4" /> Country directory
           </Link>
-          <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+            <LanguageHeaderControl variant="mobile" />
+          </div>
         </div>
 
         {/* Hero */}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
@@ -134,12 +135,15 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
               World<span className="text-[#0096FF]">Eye</span>
             </span>
           </Link>
-          <Link
-            href={globeHref}
-            className="text-sm font-mono text-slate-300 hover:text-white border border-white/15 hover:border-cyan-400/60 rounded-lg px-3 py-2"
-          >
-            ← Live globe
-          </Link>
+          <div className="flex items-center gap-3">
+            <LanguageHeaderControl variant="mobile" />
+            <Link
+              href={globeHref}
+              className="text-sm font-mono text-slate-300 hover:text-white border border-white/15 hover:border-cyan-400/60 rounded-lg px-3 py-2"
+            >
+              ← Live globe
+            </Link>
+          </div>
         </div>
       </header>
 

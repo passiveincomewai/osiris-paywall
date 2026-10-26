@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import { auth } from "@/auth";
 import AffiliateSync from "@/components/affiliate/AffiliateSync";
 
@@ -41,7 +42,8 @@ export default async function AffiliatesLayout({ children }: { children: React.R
               </Link>
             ))}
           </nav>
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-3">
+            <LanguageHeaderControl variant="mobile" />
             {session?.user ? (
               <Link href="/"
                 className="px-4 py-2 rounded-xl text-sm font-mono font-bold text-[#04121f] whitespace-nowrap"

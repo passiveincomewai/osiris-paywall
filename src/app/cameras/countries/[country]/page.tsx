@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
@@ -293,6 +294,9 @@ export default async function CountryPage({
           <Link href="/cameras/countries" className="hover:text-white transition">Countries</Link>
           <ChevronRight className="w-3.5 h-3.5" />
           <span className="text-white/80">{c.name}</span>
+          <span className="ml-auto -my-1">
+            <LanguageHeaderControl variant="mobile" />
+          </span>
         </nav>
 
         {/* Hero */}

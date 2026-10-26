@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BellRing, CreditCard, Settings, Tag, Users } from "lucide-react";
@@ -133,6 +134,7 @@ export default async function DashboardPage() {
             <Link href="/" className="px-3 py-2 rounded-lg text-slate-400 hover:text-white font-mono whitespace-nowrap transition-colors">
               ← Globe
             </Link>
+            <LanguageHeaderControl variant="mobile" />
           </nav>
         </div>
       </header>

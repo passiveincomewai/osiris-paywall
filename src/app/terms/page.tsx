@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
@@ -38,7 +39,10 @@ export default function TermsPage() {
           <Link href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
             <ArrowLeft className="w-4 h-4" /> Back to the map
           </Link>
-          <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+            <LanguageHeaderControl variant="mobile" />
+          </div>
         </div>
 
         <p className="text-xs font-semibold tracking-[0.25em] text-[#D4AF37] mb-4">LEGAL</p>

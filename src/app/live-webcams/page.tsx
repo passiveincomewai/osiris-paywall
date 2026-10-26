@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { ArrowRight, Camera, CheckCircle2, Compass, Globe, ShieldCheck } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
@@ -136,7 +137,10 @@ export default async function LiveWebcamsPage() {
           <Link href="/cameras" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
             <Camera className="w-4 h-4" /> Cameras
           </Link>
-          <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+            <LanguageHeaderControl variant="mobile" />
+          </div>
         </div>
 
         {/* Hero */}

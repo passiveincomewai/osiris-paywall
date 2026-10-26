@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import RecordingOnboarding from "@/components/onboarding/RecordingOnboarding";
 
 export const metadata = {
@@ -37,6 +38,7 @@ export default function RecordingLayout({ children }: { children: React.ReactNod
               </Link>
             ))}
           </nav>
+          <LanguageHeaderControl variant="mobile" />
           <Link href="/" className="shrink-0 text-sm text-slate-400 hover:text-white font-mono">
             ← Globe
           </Link>

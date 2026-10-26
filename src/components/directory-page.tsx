@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
@@ -82,6 +83,9 @@ export function Breadcrumb({
           )}
         </span>
       ))}
+      <span className="ml-auto -my-1">
+        <LanguageHeaderControl variant="mobile" />
+      </span>
     </nav>
     </>
   );

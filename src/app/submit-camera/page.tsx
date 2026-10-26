@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import { ArrowLeft, Video, Search, ClipboardCheck, ArrowRight } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
@@ -92,7 +93,10 @@ export default function SubmitCameraPage() {
           <Link href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
             <ArrowLeft className="w-4 h-4" /> Back to the map
           </Link>
-          <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono tracking-[0.3em] text-[#D4AF37]">WORLDEYE</span>
+            <LanguageHeaderControl variant="mobile" />
+          </div>
         </div>
 
         <div className="text-center max-w-2xl mx-auto">
