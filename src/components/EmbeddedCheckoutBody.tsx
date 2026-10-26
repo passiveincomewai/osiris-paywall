@@ -16,11 +16,8 @@
  * Completion is the session's return_url, exactly as everywhere else:
  * /welcome for guests, the app for members, the webhook does the rest.
  * Any embedded failure resolves through the controller's flow to the
- * hosted redirect; a refusal reaches the error state below as a
- * structured CheckoutError (lib/billing/checkout-error) and renders
- * through components/CheckoutErrorState — the server's own message,
- * a Manage-subscription action for members who already hold a plan
- * (never a futile retry), retry + the hosted route for the rest.
+ * hosted redirect; only a hosted failure too surfaces the error state
+ * below, with a retry that starts a brand-new session.
  */
 import { useEffect, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
@@ -32,12 +29,7 @@ import {
 } from "@/lib/billing/embedded-checkout";
 import { CheckoutGuaranteeNote, CheckoutPlanStrip } from "./CheckoutPlanStrip";
 import CancelReassurance from "./CancelReassurance";
-import CheckoutErrorState from "./CheckoutErrorState";
 import HostedCheckoutLink from "./HostedCheckoutLink";
-import {
-  toCheckoutError,
-  type CheckoutError,
-} from "@/lib/billing/checkout-error";
 
 // Next inlines this literal access into the browser bundle at build time.
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
@@ -56,7 +48,7 @@ export default function EmbeddedCheckoutBody({
   const summary = checkoutPlanSummary(plan);
   const mountRef = useRef<HTMLDivElement | null>(null);
   const [phase, setPhase] = useState<Phase>("starting");
-  const [error, setError] = useState<CheckoutError | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   // A fresh controller (hence a fresh Checkout Session) per mount and
@@ -83,7 +75,7 @@ export default function EmbeddedCheckoutBody({
       })
       .catch((e) => {
         if (!live) return;
-        setError(toCheckoutError(e));
+        setError(e instanceof Error ? e.message : "Checkout failed");
         setPhase("error");
       });
     return () => {
@@ -117,14 +109,16 @@ export default function EmbeddedCheckoutBody({
             Taking you to secure checkout…
           </p>
         )}
-        {phase === "error" && error && (
+        {phase === "error" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-            <CheckoutErrorState
-              plan={plan}
-              error={error}
-              onRetry={() => setAttempt((a) => a + 1)}
-              onError={setError}
-            />
+            <p className="text-red-400 text-sm">{error ?? "Checkout failed"}</p>
+            <button
+              type="button"
+              onClick={() => setAttempt((a) => a + 1)}
+              className="mt-4 px-6 py-2.5 rounded-2xl bg-[#D4AF37] text-black font-bold text-sm hover:brightness-110 transition"
+            >
+              Try again
+            </button>
           </div>
         )}
       </div>

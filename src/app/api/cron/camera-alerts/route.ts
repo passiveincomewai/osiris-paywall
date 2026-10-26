@@ -6,9 +6,8 @@ export const runtime = "nodejs";
 export const maxDuration = 300;
 
 /**
- * Vercel Cron (every 15 min): check camera-alert rules (Pro + VIP Pro
- * owners) against the cameras' latest stills and notify on a
- * clear→match change. Auth is
+ * Vercel Cron (every 15 min): check VIP camera-alert rules against the
+ * cameras' latest stills and notify on a clear→match change. Auth is
  * the house cron pattern: CRON_SECRET as a Bearer token (Vercel sends
  * it automatically); when the secret is unset the route still runs,
  * exactly like the trial-reminders cron.

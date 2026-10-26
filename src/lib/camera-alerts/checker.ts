@@ -1,5 +1,5 @@
 /**
- * Camera alerts — the checker. Run by /api/cron/camera-alerts
+ * VIP camera alerts — the checker. Run by /api/cron/camera-alerts
  * every ~15 minutes (vercel.json), it walks the due rules oldest-first
  * and, per rule: fetches the camera's latest still (frameForModel —
  * the same 768px frame the OI analyst gets), asks the vision checker
@@ -10,12 +10,9 @@
  *   - A missing/unreadable still is verdict 'unknown' — it NEVER alerts.
  *   - Only a clear→matches transition (or a match still pending after
  *     the cooldown) notifies; at most one alert per rule per 2 hours.
- *   - Rules whose owner has no alert plan (free — alertCapForTier 0)
- *     are skipped (paused, not deleted) — their lastCheckedAt still
- *     advances so they can't starve the queue's front. Pro and VIP
- *     owners' rules ALL run, however many they hold: the tier cap
- *     gates creating/resuming, never existing rules, so a VIP→Pro
- *     downgrade leaves every rule firing.
+ *   - Rules whose owner's VIP has lapsed are skipped (paused, not
+ *     deleted) — their lastCheckedAt still advances so they can't
+ *     starve the queue's front.
  *   - At most MAX_RULES_PER_RUN vision calls per run.
  *
  * Every external system sits behind AlertCheckDeps so tests drive the
@@ -25,7 +22,6 @@ import { db } from "@/lib/db";
 import { frameForModel } from "@/lib/vision/attach";
 import { appUrl, cameraAlertEmail, sendEmail } from "@/lib/email";
 import {
-  alertCapForTier,
   decideAfterCheck,
   isRuleDue,
   MAX_RULES_PER_RUN,
@@ -74,7 +70,7 @@ export interface AlertCheckSummary {
   considered: number;
   checked: number;
   alerted: number;
-  skippedNoPlan: number;
+  skippedNotVip: number;
   skippedNotDue: number;
 }
 
@@ -99,10 +95,10 @@ export async function runAlertChecks(
 ): Promise<AlertCheckSummary> {
   const deps: AlertCheckDeps = { ...liveDeps, ...overrides };
   const now = deps.now();
-  const summary: AlertCheckSummary = { considered: 0, checked: 0, alerted: 0, skippedNoPlan: 0, skippedNotDue: 0 };
+  const summary: AlertCheckSummary = { considered: 0, checked: 0, alerted: 0, skippedNotVip: 0, skippedNotDue: 0 };
 
   // Oldest-checked first so starved rules surface; a generous pool so
-  // not-due and no-plan skips don't eat the run's vision budget.
+  // not-due and non-VIP skips don't eat the run's vision budget.
   const candidates = (await db.alertRule.findMany({
     where: { active: true },
     orderBy: [{ lastCheckedAt: { sort: "asc", nulls: "first" } }],
@@ -126,8 +122,8 @@ export async function runAlertChecks(
       summary.skippedNotDue++;
       continue;
     }
-    if (alertCapForTier(await tierOf(rule.userId)) === 0) {
-      summary.skippedNoPlan++;
+    if ((await tierOf(rule.userId)) !== "vip") {
+      summary.skippedNotVip++;
       // Advance the stamp so a lapsed rule can't pin the queue front.
       await db.alertRule.update({ where: { id: rule.id }, data: { lastCheckedAt: now } }).catch(() => {});
       continue;

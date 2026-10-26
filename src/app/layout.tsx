@@ -12,7 +12,6 @@ import ServiceWorkerRegister from '@/components/pwa/ServiceWorkerRegister';
 import TrialPrompt from '@/components/TrialPrompt';
 import PreferencesProvider from '@/components/PreferencesProvider';
 import DeviceHeartbeat from '@/components/DeviceHeartbeat';
-import { buildEntityJsonLd } from "@/lib/seo/entity-schema";
 import "./globals.css";
 
 /* ── Type system (self-hosted via next/font; no runtime font requests) ──
@@ -158,7 +157,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "WorldEye — Live 3D Intelligence Globe | Flights, CCTV, Satellites & OSINT Tools",
+    title: "🛰️ WorldEye — Live 3D Intelligence Globe | Tracking + OSINT Tools",
     description: "Track live flights, satellites & 74,229 CCTV cameras worldwide on a 3D globe — free. Pro unlocks the AI analyst, satellite view and premium intel feeds.",
     images: [`${SITE_URL}/og-image.png`],
   },
@@ -174,10 +173,72 @@ export const metadata: Metadata = {
   },
 };
 
-// JSON-LD Structured Data — canonical brand entity graph
-// (Organization / WebSite / WebApplication), built and unit-tested
-// in @/lib/seo/entity-schema.
-const jsonLd = buildEntityJsonLd(SITE_URL, SITE_DESCRIPTION);
+// JSON-LD Structured Data
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "WorldEye",
+      url: SITE_URL,
+      logo: `${SITE_URL}/worldeye-logo.png`,
+      sameAs: ["https://www.instagram.com/worldeye.app"],
+      contactPoint: {
+        "@type": "ContactPoint",
+        email: "passiveincomewai@gmail.com",
+        contactType: "customer support",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      name: "WorldEye",
+      url: SITE_URL,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "WebApplication",
+      name: "WorldEye — Live 3D Intelligence Globe & OSINT Tools",
+      alternateName: ["WorldEye"],
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      applicationCategory: "SecurityApplication",
+      operatingSystem: "Web",
+      browserRequirements: "Requires a modern web browser",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+      },
+      featureList: [
+        "Nmap port scanning from the browser — no install required",
+        "DNS record lookup (A, AAAA, MX, NS, TXT, CNAME)",
+        "WHOIS domain registration lookup",
+        "SSL/TLS certificate transparency search",
+        "BGP routing & ASN lookup",
+        "IP geolocation & threat intelligence",
+        "Real-time flight tracking via ADS-B",
+        "Satellite tracking (including ISS)",
+        "Worldwide CCTV camera monitoring",
+        "Earthquake monitoring (USGS live feed)",
+        "Wildfire detection (NASA FIRMS satellite data)",
+        "Nuclear facility mapping (curated reference list, not a live feed)",
+        "Severe weather alerts & tracking",
+        "Cyber threat & CVE intelligence",
+        "Space weather & solar storm monitoring",
+        "GPS jamming detection",
+        "Defense & commodity market tracking",
+        "SIGINT news aggregation feed",
+        "Interactive 3D globe with day/night cycle",
+        "Region intelligence dossier reports",
+      ],
+      screenshot: `${SITE_URL}/og-image.png`,
+      author: { "@id": `${SITE_URL}/#organization` },
+    },
+  ],
+};
 
 export default function RootLayout({
   children,

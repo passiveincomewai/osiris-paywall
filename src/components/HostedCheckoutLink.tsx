@@ -10,12 +10,7 @@
  * stay on this page.
  */
 import { useState } from "react";
-import Link from "next/link";
 import { startHostedCheckout } from "@/lib/billing/trial-checkout";
-import {
-  toCheckoutError,
-  type CheckoutError,
-} from "@/lib/billing/checkout-error";
 import type { BillingPlan } from "@/lib/billing/trials";
 
 export const HOSTED_CHECKOUT_LABEL = "Continue on Stripe instead →";
@@ -32,7 +27,7 @@ export default function HostedCheckoutLink({
   caption?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<CheckoutError | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function open() {
     setBusy(true);
@@ -42,7 +37,7 @@ export default function HostedCheckoutLink({
       // Navigation to Stripe is under way; stay busy so a second tap
       // can't start a second session.
     } catch (e) {
-      setError(toCheckoutError(e));
+      setError(e instanceof Error ? e.message : "Checkout failed");
       setBusy(false);
     }
   }
@@ -63,20 +58,7 @@ export default function HostedCheckoutLink({
         </span>
       )}
       {error && (
-        <span className="block mt-1 text-[11px] leading-snug text-red-400">
-          {error.message}
-          {error.alreadySubscribed && (
-            <>
-              {" "}
-              <Link
-                href={error.managePath}
-                className="underline decoration-red-400/50 underline-offset-2 hover:text-red-300"
-              >
-                Manage subscription
-              </Link>
-            </>
-          )}
-        </span>
+        <span className="block mt-1 text-[11px] leading-snug text-red-400">{error}</span>
       )}
     </span>
   );

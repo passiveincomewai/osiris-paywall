@@ -42,12 +42,7 @@ import {
   CheckoutGuaranteeNote,
   CheckoutPlanStrip,
 } from "@/components/CheckoutPlanStrip";
-import CheckoutErrorState from "@/components/CheckoutErrorState";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
-import {
-  toCheckoutError,
-  type CheckoutError,
-} from "@/lib/billing/checkout-error";
 
 // Next inlines this literal access into the browser bundle at build time.
 // Unset until Jameson publishes the key in Vercel — while it's unset the
@@ -63,7 +58,7 @@ export default function CheckoutClient() {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const destroyRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<Phase>("starting");
-  const [error, setError] = useState<CheckoutError | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
@@ -94,7 +89,7 @@ export default function CheckoutClient() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(toCheckoutError(e));
+          setError(e instanceof Error ? e.message : "Checkout failed");
           setPhase("error");
         }
       }
@@ -160,19 +155,19 @@ export default function CheckoutClient() {
                   Taking you to secure checkout…
                 </p>
               )}
-              {phase === "error" && error && (
+              {phase === "error" && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-                  <CheckoutErrorState
-                    plan={plan}
-                    error={error}
-                    onRetry={() => setAttempt((a) => a + 1)}
-                    onError={setError}
-                  />
-                  {!error.alreadySubscribed && (
-                    <p className="mt-3 text-xs text-white/35">
-                      Still stuck? Head back to pricing and pick the plan there.
-                    </p>
-                  )}
+                  <p className="text-red-400 text-sm">{error ?? "Checkout failed"}</p>
+                  <button
+                    type="button"
+                    onClick={() => setAttempt((a) => a + 1)}
+                    className="mt-4 px-6 py-2.5 rounded-2xl bg-[#D4AF37] text-black font-bold text-sm hover:brightness-110 transition"
+                  >
+                    Try again
+                  </button>
+                  <p className="mt-3 text-xs text-white/35">
+                    Still stuck? Head back to pricing and pick the plan there.
+                  </p>
                 </div>
               )}
             </div>

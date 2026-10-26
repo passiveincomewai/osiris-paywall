@@ -9,7 +9,6 @@ import { formatClock } from "@/lib/recording/dashboard";
 import SiteFooter from "@/components/SiteFooter";
 import DashboardCameras from "@/components/dashboard/DashboardCameras";
 import SetNamePrompt from "@/components/SetNamePrompt";
-import PastDueBanner from "@/components/PastDueBanner";
 import DashboardAlerts from "@/components/dashboard/DashboardAlerts";
 import DashboardRecordings from "@/components/dashboard/DashboardRecordings";
 
@@ -142,8 +141,6 @@ export default async function DashboardPage() {
 
       <SetNamePrompt />
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-12">
-        {/* Failed-payment recovery: self-hides unless past_due. */}
-        <PastDueBanner />
         {/* Member header + real quick stats */}
         <section>
           <div className="flex items-center gap-3.5 mb-6">

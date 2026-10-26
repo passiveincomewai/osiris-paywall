@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 vi.mock("@/lib/camera-alerts/checker", () => ({
-  runAlertChecks: vi.fn(async () => ({ considered: 3, checked: 2, alerted: 1, skippedNoPlan: 0, skippedNotDue: 1 })),
+  runAlertChecks: vi.fn(async () => ({ considered: 3, checked: 2, alerted: 1, skippedNotVip: 0, skippedNotDue: 1 })),
 }));
 
 import { GET } from "./route";

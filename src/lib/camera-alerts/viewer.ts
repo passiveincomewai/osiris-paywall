@@ -1,5 +1,5 @@
 /**
- * Camera alerts — the globe camera viewer's pure helpers.
+ * VIP camera alerts — the globe camera viewer's pure helpers.
  *
  * Everything here is a pure function over the shapes the client already
  * holds (a raw catalogue record, the /api/camera-alerts payloads), so
@@ -13,11 +13,10 @@
  *    types, so none are offered.
  *  - Creation truth lives in service.ts: the camera must exist in the
  *    catalogue AND have a still (stillOf in lib/vision/frames.ts), the
- *    condition is free text (validateCondition), at most the caller's
- *    tier cap of active rules (alertCapForTier: free 0 · Pro 2 ·
- *    VIP Pro 10). These helpers mirror that contract only to pre-warn
- *    honestly — the server stays the truth and its own error strings
- *    are surfaced verbatim.
+ *    condition is free text (validateCondition), at most
+ *    MAX_ACTIVE_ALERT_RULES active rules. These helpers mirror that
+ *    contract only to pre-warn honestly — the server stays the truth
+ *    and its own error strings are surfaced verbatim.
  */
 
 /** The condition examples the settings and dashboard forms offer. */
@@ -85,12 +84,9 @@ export function ruleForCamera<T extends { cameraId: string }>(
 }
 
 export interface AlertsReadyView {
-  /** The member's tier ("free" | "pro" | "vip") — aims the upsell. */
-  tier: string;
   vip: boolean;
   rules: AlertRuleLike[];
   activeCount: number;
-  /** The member's OWN active-rule cap (0 free · 2 pro · 10 vip). */
   maxActive: number;
 }
 
@@ -108,7 +104,6 @@ export function interpretAlertsGet(status: number, body: unknown): AlertsLoadSta
   return {
     kind: "ready",
     view: {
-      tier: typeof b.tier === "string" ? b.tier : b.vip === true ? "vip" : "free",
       vip: b.vip === true,
       rules: b.rules as AlertRuleLike[],
       activeCount: typeof b.activeCount === "number" ? b.activeCount : 0,
@@ -120,13 +115,13 @@ export function interpretAlertsGet(status: number, body: unknown): AlertsLoadSta
 export type CreateOutcome =
   | { kind: "created"; rule: AlertRuleLike }
   | { kind: "signin" }
-  | { kind: "plan" }
+  | { kind: "vip" }
   | { kind: "error"; message: string };
 
 /**
  * Interpret a POST /api/camera-alerts response. The service's own error
  * strings (the cap message, the stream-without-stills refusal, …) pass
- * through verbatim; the route's machine codes (signin / plan) map to
+ * through verbatim; the route's machine codes (signin / vip) map to
  * states the panel renders as the honest upgrade path.
  */
 export function interpretCreateResult(status: number, body: unknown): CreateOutcome {
@@ -135,9 +130,9 @@ export function interpretCreateResult(status: number, body: unknown): CreateOutc
     return { kind: "created", rule: b.rule as AlertRuleLike };
   }
   if (status === 401) return { kind: "signin" };
-  if (status === 403) return { kind: "plan" };
+  if (status === 403) return { kind: "vip" };
   const msg =
-    typeof b.error === "string" && b.error && b.error !== "plan" && b.error !== "signin"
+    typeof b.error === "string" && b.error && b.error !== "vip" && b.error !== "signin"
       ? b.error
       : "Couldn't create that alert.";
   return { kind: "error", message: msg };

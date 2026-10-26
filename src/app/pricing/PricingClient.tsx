@@ -18,7 +18,7 @@ import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, Satellite, BrainCircuit,
-  ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus, Car, Video, Bell,
+  ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus, Car, Video,
 } from "lucide-react";
 
 type Plan = "weekly" | "monthly" | "annual" | "enterprise";
@@ -39,17 +39,15 @@ const PRO_FEATURES = [
   { icon: Car, title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
   { icon: ShieldCheck, title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
   { icon: Video, title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser and save the clips." },
-  { icon: Bell, title: "Camera alerts (2)", desc: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe, like snow or flooding, shows up." },
   { icon: Sparkles, title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
 ];
 
-// VIP Pro extras — rendered only on the VIP Pro (annual) card. Timelapse
-// and the OSINT intel layers are VIP-only; camera alerts appear on both
-// cards because the allowance itself is the upgrade (2 on Pro → 10 here).
+// VIP Pro exclusives — rendered only on the VIP Pro (annual) card. These
+// are the features the tier gates actually enforce (lib/plan-tier):
+// timelapse and the OSINT intel layers are VIP-only.
 const VIP_FEATURES = [
   { icon: Zap, title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — VIP only." },
   { icon: Video, title: "Camera Timelapse", desc: "Capture snapshot cameras frame by frame and export the film — VIP only." },
-  { icon: Bell, title: "Camera alerts (10)", desc: "The alert allowance raised to 10 watched cameras — Pro includes 2." },
 ];
 
 // The enterprise offer copy lives in lib/enterprise/offer (shared with
@@ -75,7 +73,6 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean; vip: boolean
   { feature: "Advanced search filters", free: false, pro: true, vip: true },
   { feature: "OSINT toolkit (nmap, DNS, WHOIS, SSL)", free: false, pro: true, vip: true },
   { feature: "Camera Recording Studio", free: false, pro: true, vip: true },
-  { feature: "Camera alerts (2 on Pro · 10 on VIP Pro)", free: false, pro: true, vip: true },
   { feature: "Every future Pro layer", free: false, pro: true, vip: true },
   { feature: "Premium intel feeds (cyber, GDELT, maritime, live news)", free: false, pro: false, vip: true },
   { feature: "Camera timelapse", free: false, pro: false, vip: true },

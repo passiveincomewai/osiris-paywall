@@ -37,7 +37,6 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
       ["Europe Cameras", "/europe-live-cameras"],
       ["Beach Webcams", "/beach-webcams"],
       ["Ski Webcams", "/ski-webcams"],
-      ["Live Events", "/live-events"],
       ["Airport Webcams", "/airport-webcams"],
       ["Asia Webcams", "/asia-webcams"],
       ["Live Camera Index", "/live-camera-index"],
@@ -116,8 +115,6 @@ export default function SiteFooter({
               alt="WorldEye"
               width={600}
               height={432}
-              loading="lazy"
-              decoding="async"
               className="h-8 w-auto"
               style={{ filter: "drop-shadow(0 0 10px rgba(0,150,255,0.5))" }}
             />

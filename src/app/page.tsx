@@ -56,7 +56,8 @@ const homeFaqJsonLd = {
 };
 import ScmPanel from '@/components/ScmPanel';
 import SearchBar from '@/components/SearchBar';
-import type { RouteResult, LiveLocation } from '@/components/DirectionsBar';
+import DirectionsBar, { type RouteResult, type LiveLocation } from '@/components/DirectionsBar';
+import RouteCameras from '@/components/RouteCameras';
 import type { WatchedFlight, FlightTelemetry, AircraftDetail, Airport } from '@/components/FlightWatchPanel';
 import type { NavProgress } from '@/lib/navigation';
 import {
@@ -64,10 +65,12 @@ import {
 } from '@/lib/geo-position';
 import type { LiveDetection } from '@/lib/malware-intel';
 import ScaleBar from '@/components/ScaleBar';
+import { TrialPickerDialog } from '@/components/TrialPicker';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { applySettings, loadSavedSettings } from '@/lib/style-tokens';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import GlobalStatusBar from '@/components/GlobalStatusBar';
+import LiveAlerts from '@/components/LiveAlerts';
 const OsirisMap = dynamic(() => import('@/components/OsirisMap'), { ssr: false });
 // Panels that only appear after a deliberate action (an active navigation
 // session, a watched flight, an opened tool) are split out of the initial
@@ -108,16 +111,6 @@ const TeaserSignupCard = dynamic(() => import('@/components/TeaserSignupCard'), 
 // lazy + client-only like onboarding — it renders nothing until the
 // splash has gone, so it can never delay the map.
 const NearYouStrip = dynamic(() => import('@/components/NearYouStrip'), { ssr: false });
-// Speed pass (#29): four more panels that only appear after a deliberate
-// action join the split set above — the route planner and its corridor
-// cameras (opened explicitly, or once a route exists), the alerts rail
-// (toggled), and the trial picker (opened by a gate action, and mounted
-// only while open below: it renders null when closed, so gating the mount
-// changes nothing visible — it is what lets the chunk actually defer).
-const DirectionsBar = dynamic(() => import('@/components/DirectionsBar'));
-const RouteCameras = dynamic(() => import('@/components/RouteCameras'));
-const LiveAlerts = dynamic(() => import('@/components/LiveAlerts'));
-const TrialPickerDialog = dynamic(() => import('@/components/TrialPicker').then((m) => m.TrialPickerDialog));
 // The measurement helpers are pure functions — importing them directly keeps
 // them out of the lazy chunk, so a finished polygon can be measured whether or
 // not the toolbar has loaded yet.
@@ -3090,13 +3083,11 @@ export default function Dashboard() {
       {/* Email capture, once per device, mounted by the session's first
           camera open; the card self-gates on lib/newsletter/capture. */}
       {cameraEverOpened && <EmailCaptureCard placement="camera" />}
-      {showTrialPicker && (
-        <TrialPickerDialog
-          open
-          onClose={() => setShowTrialPicker(false)}
-          feature="OI — the AI assistant"
-        />
-      )}
+      <TrialPickerDialog
+        open={showTrialPicker}
+        onClose={() => setShowTrialPicker(false)}
+        feature="OI — the AI assistant"
+      />
 
       {/* ── Entity Graph Panel ── */}
       {/* Guidance belongs over the map, where the clicking happens. */}

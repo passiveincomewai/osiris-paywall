@@ -10,7 +10,6 @@ import {
 } from "@/components/affiliate/ui";
 import { AreaChart } from "@/components/affiliate/charts";
 import { buildTrackedUrl } from "@/lib/affiliate/insights";
-import { PLATFORMS, PLATFORM_BY_SLUG, type PlatformDef } from "@/lib/affiliate/platforms";
 
 export interface InsightsData {
   rangeTotals: { clicks: number; signups: number; conversions: number; earnedCents: number; range: string };
@@ -356,28 +355,6 @@ export function NotificationsPanel({ demoItems }: { demoItems?: NotificationItem
 
 interface TrackingLink { id: string; label: string; slug: string; url: string; clicks: number; createdAt: string }
 
-/* Brand icon tile for a social platform — glyph and tile colour come
-   from the platforms registry (simple-icons brand marks); a platform
-   without a verified glyph falls back to its initial on the brand
-   colour. The platform name beside the tile is the accessible label. */
-function PlatformIcon({ platform }: { platform: PlatformDef }) {
-  return (
-    <span
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white"
-      style={{ backgroundColor: platform.brandHex }}
-      aria-hidden="true"
-    >
-      {platform.iconPath ? (
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" focusable="false">
-          <path d={platform.iconPath} />
-        </svg>
-      ) : (
-        <span className="text-sm font-black">{platform.label.charAt(0)}</span>
-      )}
-    </span>
-  );
-}
-
 export function TrackingLinksPanel({ referralLink, demoLinks }: { referralLink: string; demoLinks?: { label: string; slug: string; url: string; clicks: number; signups: number }[] }) {
   const demo = !!demoLinks;
   const [links, setLinks] = useState<TrackingLink[]>([]);
@@ -411,35 +388,13 @@ export function TrackingLinksPanel({ referralLink, demoLinks }: { referralLink: 
     void load();
   };
 
-  // One-click add for a platform whose starter link is missing (e.g. it
-  // was deleted, or the account predates the starter set): creates the
-  // preset label+slug through the same POST flow as the custom form.
-  const addPlatform = async (p: PlatformDef) => {
-    if (demo) { setMsg(DEMO_MSG); return; }
-    const { ok, j } = await api("/api/affiliate/links", {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ label: p.label, slug: p.slug }),
-    });
-    if (ok) { setMsg(`Created: ${j.link.url}`); void load(); }
-    else setMsg(j.error ?? "Couldn't create the link.");
-  };
-
   const built = (() => {
     try { return buildTrackedUrl(utmBase || referralLink, utm); } catch { return referralLink; }
   })();
 
-  const rows: { id?: string; label: string; slug: string; url: string; clicks: number; signups?: number }[] = demo
-    ? demoLinks!.map((l) => ({ label: l.label, slug: l.slug, url: l.url, clicks: l.clicks, signups: l.signups }))
-    : links.map((l) => ({ id: l.id, label: l.label, slug: l.slug, url: l.url, clicks: l.clicks }));
-
-  // Platform links (slug in the registry) get their own icon section;
-  // everything else is a custom link. Live only: a platform with no row
-  // yet shows an Add card — a platform URL exists only once its row does.
-  const socialRows = rows.filter((l) => PLATFORM_BY_SLUG.has(l.slug));
-  const customRows = rows.filter((l) => !PLATFORM_BY_SLUG.has(l.slug));
-  // (links.length gate: before the first load lands, `links` is empty —
-  // don't flash Add cards for platforms the affiliate may already have.)
-  const missingPlatforms = demo || links.length === 0 ? [] : PLATFORMS.filter((p) => !links.some((l) => l.slug === p.slug));
+  const rows: { id?: string; label: string; url: string; clicks: number; signups?: number }[] = demo
+    ? demoLinks!.map((l) => ({ label: l.label, url: l.url, clicks: l.clicks, signups: l.signups }))
+    : links.map((l) => ({ id: l.id, label: l.label, url: l.url, clicks: l.clicks }));
 
   return (
     <div className={card}>
@@ -454,62 +409,16 @@ export function TrackingLinksPanel({ referralLink, demoLinks }: { referralLink: 
           <span className="flex-1 min-w-0 truncate font-mono text-xs text-slate-300">{referralLink}</span>
           <CopyButton text={referralLink} label="Copy" />
         </div>
+        {rows.map((l, i) => (
+          <div key={l.id ?? i} className="flex items-center gap-2 text-sm py-1.5 border-b border-white/5">
+            <span className="text-slate-200 font-bold text-xs w-28 truncate">{l.label}</span>
+            <span className="flex-1 min-w-0 truncate font-mono text-xs text-slate-400">{l.url}</span>
+            <span className="font-mono text-xs text-slate-400">{l.clicks.toLocaleString()} clicks{l.signups !== undefined ? ` · ${l.signups} signups` : ""}</span>
+            <CopyButton text={l.url} label="Copy" />
+            {l.id && <button onClick={() => remove(l.id!)} className={btnGhost + " !border-red-400/30 !text-red-300"}>Delete</button>}
+          </div>
+        ))}
       </div>
-
-      {(socialRows.length > 0 || missingPlatforms.length > 0) && (
-        <div className="mt-5">
-          <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-1">Social platforms</div>
-          <div className="text-xs text-slate-400 mb-3">
-            Ready-made links for every platform — one per network, already tracking. Delete any you
-            don&apos;t use; the form below makes more. If you delete every link, this starter set is
-            restored on your next visit.
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {socialRows.map((l) => {
-              const p = PLATFORM_BY_SLUG.get(l.slug)!;
-              return (
-                <div key={l.id ?? l.slug} className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5">
-                  <PlatformIcon platform={p} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-white truncate">{p.label}</div>
-                    <div className="truncate font-mono text-[11px] text-slate-400">{l.url}</div>
-                    <div className="font-mono text-[11px] text-slate-500">{l.clicks.toLocaleString()} clicks{l.signups !== undefined ? ` · ${l.signups} signups` : ""}</div>
-                  </div>
-                  <CopyButton text={l.url} label="Copy" />
-                  {l.id && <button onClick={() => remove(l.id!)} className={btnGhost + " !border-red-400/30 !text-red-300"}>Delete</button>}
-                </div>
-              );
-            })}
-            {missingPlatforms.map((p) => (
-              <div key={p.slug} className="flex items-center gap-2.5 rounded-xl border border-dashed border-white/10 px-3 py-2.5">
-                <PlatformIcon platform={p} />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-white truncate">{p.label}</div>
-                  <div className="text-[11px] text-slate-500">No link yet — add it to start tracking.</div>
-                </div>
-                <button onClick={() => addPlatform(p)} className={btnGhost}>Add</button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {customRows.length > 0 && (
-        <div className="mt-5">
-          <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-2">Your links</div>
-          <div className="space-y-2">
-            {customRows.map((l, i) => (
-              <div key={l.id ?? i} className="flex items-center gap-2 text-sm py-1.5 border-b border-white/5">
-                <span className="text-slate-200 font-bold text-xs w-28 truncate">{l.label}</span>
-                <span className="flex-1 min-w-0 truncate font-mono text-xs text-slate-400">{l.url}</span>
-                <span className="font-mono text-xs text-slate-400">{l.clicks.toLocaleString()} clicks{l.signups !== undefined ? ` · ${l.signups} signups` : ""}</span>
-                <CopyButton text={l.url} label="Copy" />
-                {l.id && <button onClick={() => remove(l.id!)} className={btnGhost + " !border-red-400/30 !text-red-300"}>Delete</button>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
       <div className="flex flex-col sm:flex-row gap-2 mt-4">
         <input className={input} placeholder="Label — e.g. YouTube description" value={label} onChange={(e) => setLabel(e.target.value)} />
         <input className={input + " sm:!w-44"} placeholder="tag (optional)" value={slug} onChange={(e) => setSlug(e.target.value)} />

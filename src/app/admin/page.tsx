@@ -22,7 +22,6 @@ import StudioReport from "./StudioReport";
 import LiveRefresh from "./LiveRefresh";
 import AdminNav from "./AdminNav";
 import { growthDashboardUrl } from "@/lib/growth";
-import { PAYMENT_RECOVERY_TEMPLATE } from "@/lib/billing/dunning";
 
 export const metadata = { title: "Admin Dashboard" };
 export const dynamic = "force-dynamic";
@@ -295,7 +294,7 @@ export default async function AdminDashboardPage() {
   const [
     totalUsers, users7d, users30d, unverifiedPwUsers, passwordUsers, oauthProviders,
     subs, subStatus, newSubs7d, newSubs30d, canceled30d, trialsEndingSoon, recentSubs,
-    trialCohortTotal, trialCohortPaying, pastDueSubs, recoverySends,
+    trialCohortTotal, trialCohortPaying, pastDueSubs,
     pv24h, pv7d, pv30d, pvTotal,
     uniq24h, uniq30d, sessionAgg,
     topPages, topReferrersRaw, recentUsers, signupSourcesRaw, globeReachedRaw,
@@ -329,12 +328,6 @@ export default async function AdminDashboardPage() {
     db.subscription.findMany({
       where: { status: "past_due" }, orderBy: { currentPeriodEnd: "asc" }, take: 10,
       select: { stripePriceId: true, currentPeriodEnd: true, user: { select: { email: true } } },
-    }),
-    // Dunning: recovery emails the webhook sent automatically (one per
-    // failed invoice attempt), most recent first.
-    db.lifecycleEmailLog.findMany({
-      where: { template: PAYMENT_RECOVERY_TEMPLATE }, orderBy: { createdAt: "desc" }, take: 10,
-      select: { recipientEmail: true, contextKey: true, createdAt: true },
     }),
     db.pageView.count({ where: { createdAt: { gte: d1 }, event: null } }),
     db.pageView.count({ where: { createdAt: { gte: d7 }, event: null } }),
@@ -792,30 +785,7 @@ export default async function AdminDashboardPage() {
                 </tbody>
               </table>
               </div>
-              <p className="text-[11px] text-white/35 mt-3">Stripe retries these automatically, and a recovery email with the pay/update link now goes out on every failed attempt (log below). Reach out personally if a high-value plan sits here more than a few days.</p>
-            </div>
-          )}
-          {recoverySends.length > 0 && (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 mt-4">
-              <div className="text-[11px] font-bold tracking-[0.18em] text-white/50 uppercase mb-3">
-                Payment recovery emails — sent automatically ({recoverySends.length} recent)
-              </div>
-              <div className="overflow-x-auto">
-              <table className="w-full min-w-[430px] text-sm">
-                <tbody>
-                  {recoverySends.map((r) => (
-                    <tr key={`${r.recipientEmail}:${r.contextKey}`} className="border-t border-white/5">
-                      <td className="py-2 pr-3 text-white/80 truncate max-w-[220px]">{r.recipientEmail}</td>
-                      <td className="py-2 pr-3 text-white/50 text-xs whitespace-nowrap">invoice attempt {r.contextKey}</td>
-                      <td className="py-2 text-right text-white/40 text-xs whitespace-nowrap">
-                        {new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              </div>
-              <p className="text-[11px] text-white/35 mt-3">One email per invoice per Stripe attempt, sent by the webhook on invoice.payment_failed. Owner/test inboxes are excluded.</p>
+              <p className="text-[11px] text-white/35 mt-3">Stripe retries these automatically; reach out personally if a high-value plan sits here more than a few days.</p>
             </div>
           )}
         </Section>

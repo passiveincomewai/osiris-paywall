@@ -1,5 +1,5 @@
 /**
- * Camera alerts — the tier gate.
+ * VIP camera alerts — the tier gate.
  *
  * The tier contract (landing in the billing build): entitlement tier is
  * 'free' | 'pro' | 'vip', resolved from the subscription's price —
@@ -16,10 +16,6 @@
  *
  * "Live" mirrors resolveSubscriptionStatus in src/auth.ts: status
  * active or trialing AND currentPeriodEnd still in the future.
- *
- * What a tier may DO with alerts is not decided here — the per-tier
- * active-rule cap (free 0 · Pro 2 · VIP Pro 10) is alertCapForTier in
- * ./logic, the single source every enforcement point reads.
  */
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
@@ -83,12 +79,7 @@ export async function cameraAlertAccess(): Promise<
   return { ok: true, userId, tier: await getUserTier(userId) };
 }
 
-/**
- * Is this tier VIP Pro? Feeds the API response's `vip` flag (the UIs
- * use it to aim the upsell: Pro members at their cap are pointed at
- * VIP, free members at Pro). Alert eligibility itself is cap-based —
- * alertCapForTier in ./logic (free 0 · Pro 2 · VIP Pro 10).
- */
+/** Alerts are a VIP Pro exclusive. */
 export function isVip(tier: PlanTier): boolean {
   return tier === "vip";
 }

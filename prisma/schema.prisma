@@ -1398,46 +1398,6 @@ model ContactMessage {
   @@index([createdAt])
 }
 
-// ── Submit-a-camera intake (public /submit-camera) ─────────────────────
-// Anyone can send us a camera: operators list their own feed, everyone
-// else suggests a public one. Submissions land here for human review in
-// /admin/camera-submissions. Approval means "cleared for import" only —
-// the catalogue import itself stays a separate ops step, so an approved
-// row is NOT a promise the camera is live on the map.
-model CameraSubmission {
-  id             String @id @default(cuid())
-  // "own" = submitter operates the camera; "suggest" = a public feed
-  // they found. The declaration text differs per kind (src/lib/camera-submissions).
-  kind           String
-  cameraName     String
-  url            String // stream or page URL; http/https + SSRF host-checked at intake
-  category       String // one of CAMERA_SUBMISSION_CATEGORIES (src/lib/camera-submissions)
-  city           String
-  country        String
-  lat            Float?
-  lng            Float?
-  notes          String?
-  submitterName  String
-  submitterEmail String
-  declaration    Boolean // the ownership/permission declaration was affirmed
-
-  status           String    @default("pending") // pending | approved | rejected
-  probeStatus      String    @default("unknown") // reachable | unreachable | unknown
-  probeDetail      String?
-  probedAt         DateTime?
-  reviewerNotes    String?
-  reviewedBy       String?
-  reviewedAt       DateTime?
-  receiptEmailedAt  DateTime?
-  decisionEmailedAt DateTime?
-
-  createdAt DateTime @default(now())
-
-  @@index([status, createdAt])
-  @@index([submitterEmail])
-  @@index([createdAt])
-}
-
 // ── VIP Pro features (event alerts, personal brief, saved views) ────────
 // Watched places are the shared substrate: a VIP member names places
 // (lat/lng + radius) once, and event alerts (quakes near a place, ISS

@@ -3,12 +3,11 @@
 /**
  * /dashboard — Camera Alerts island.
  *
- * The same alerts system as /settings/alerts, surfaced on the
+ * The same VIP Pro alerts system as /settings/alerts, surfaced on the
  * dashboard: identical API (/api/camera-alerts + /[id]), identical
- * tier rules (creating follows the caller's tier cap — Pro 2 ·
- * VIP Pro 10 — enforced by the API; a lapsed member sees their
- * paused rules and the TrialPicker, exactly as in settings). Events
- * are the in-app alert inbox — photos served by the
+ * tier rules (creating is VIP-only, enforced by the API; a lapsed VIP
+ * sees their paused rules and the TrialPicker, exactly as in
+ * settings). Events are the in-app alert inbox — photos served by the
  * session-authed /api/camera-alerts/events/[id]/image route.
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -142,8 +141,7 @@ export default function DashboardAlerts() {
       <div className="flex items-center gap-2.5 mb-1">
         <h2 className="text-xl font-bold text-white">Camera alerts</h2>
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-[11px] font-bold tracking-wider">
-          <Crown className="w-3.5 h-3.5" />{" "}
-          {view?.vip ? "VIP PRO" : view?.tier === "pro" ? "PRO" : "PRO · VIP PRO"}
+          <Crown className="w-3.5 h-3.5" /> VIP PRO
         </span>
         {view && view.unreadCount > 0 && (
           <span className="px-2 py-0.5 rounded-full bg-[#D4AF37] text-black text-xs font-bold">
@@ -165,13 +163,13 @@ export default function DashboardAlerts() {
         </div>
       ) : (
         <div className="space-y-8">
-          {view.maxActive === 0 && (
+          {!view.vip && (
             <section className="rounded-2xl border border-[#D4AF37]/25 bg-white/[0.03] p-5">
-              <h3 className="font-bold mb-1.5">Camera alerts start with Pro</h3>
+              <h3 className="font-bold mb-1.5">Camera alerts are a VIP Pro feature</h3>
               <p className="text-sm text-white/55 leading-relaxed mb-5">
                 {view.rules.length > 0
-                  ? "Your plan isn't active right now, so your alerts are paused — nothing was deleted. They resume on their own when Pro or VIP Pro is back."
-                  : "Camera alerts come with the paid plans: Pro watches up to 2 cameras, and VIP Pro (the annual plan) watches up to 10. Pick a plan below to start watching."}
+                  ? "Your VIP Pro isn't active right now, so your alerts are paused — nothing was deleted. They resume on their own when VIP Pro is back."
+                  : "Camera alerts come with the VIP Pro plan (the annual plan). Pick it below and you can watch up to 10 cameras."}
               </p>
               <TrialPicker />
             </section>
@@ -312,7 +310,7 @@ function RulesSection({
         </ul>
       )}
 
-      {view.maxActive > 0 && <AddRuleForm view={view} reload={reload} setNotice={setNotice} />}
+      {view.vip && <AddRuleForm view={view} reload={reload} setNotice={setNotice} />}
     </section>
   );
 }
@@ -431,21 +429,7 @@ function AddRuleForm({
       </h4>
       {atCap ? (
         <p className="text-sm text-amber-300">
-          {view.vip ? (
-            <>
-              You have {view.maxActive} active alerts — the VIP Pro limit. Pause or remove one to
-              add another.
-            </>
-          ) : (
-            <>
-              You have {view.maxActive} active alerts — your Pro limit. Pause or remove one to add
-              another, or{" "}
-              <Link href="/pricing" className="underline underline-offset-2">
-                step up to VIP Pro for 10
-              </Link>
-              .
-            </>
-          )}
+          You have {view.maxActive} active alerts — the VIP limit. Pause or remove one to add another.
         </p>
       ) : (
         <div className="space-y-3">

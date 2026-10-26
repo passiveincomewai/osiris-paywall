@@ -12,8 +12,6 @@ import {
   type CheckoutFlowDeps,
   type EmbeddedCheckoutHandle,
 } from "./embedded-checkout";
-import { CheckoutError } from "./checkout-error";
-import { ALREADY_SUBSCRIBED_MESSAGE } from "./checkout-guard";
 
 describe("checkoutPlanFromParam", () => {
   it("accepts exactly the four billing plans", () => {
@@ -167,67 +165,6 @@ describe("runCheckoutFlow", () => {
     await expect(runCheckoutFlow("weekly", "pk_live_abc", deps)).rejects.toThrow(
       "STRIPE_WEEKLY_PRICE_ID is not set",
     );
-  });
-
-  // The refusal regressions (the owner's "Checkout failed" dead end):
-  // a member who already holds a plan must get the server's words, the
-  // already-subscribed code and the manage path — never a bare generic
-  // string with a futile retry.
-  const BLOCKED = {
-    error: ALREADY_SUBSCRIBED_MESSAGE,
-    code: "already_subscribed",
-    manageUrl: "/settings/subscription",
-  };
-
-  it("surfaces an already-subscribed refusal ONCE, structured — no doomed hosted retry", async () => {
-    const { deps, calls } = fakeDeps([{ ok: false, body: BLOCKED }]);
-    const err = await runCheckoutFlow("annual", "pk_live_abc", deps).catch((e) => e);
-    expect(err).toBeInstanceOf(CheckoutError);
-    expect(err.message).toBe(ALREADY_SUBSCRIBED_MESSAGE);
-    expect(err.code).toBe("already_subscribed");
-    expect(err.alreadySubscribed).toBe(true);
-    expect(err.managePath).toBe("/settings/subscription");
-    // The hosted attempt would run the same guard and be refused
-    // identically — it is never made.
-    expect(calls).toHaveLength(1);
-    expect(deps.navigate).not.toHaveBeenCalled();
-  });
-
-  it("surfaces an already-subscribed refusal from the keyless hosted attempt, structured", async () => {
-    const { deps, calls } = fakeDeps([{ ok: false, body: BLOCKED }]);
-    const err = await runCheckoutFlow("annual", undefined, deps).catch((e) => e);
-    expect(err).toBeInstanceOf(CheckoutError);
-    expect(err.message).toBe(ALREADY_SUBSCRIBED_MESSAGE);
-    expect(err.alreadySubscribed).toBe(true);
-    expect(err.managePath).toBe("/settings/subscription");
-    expect(calls).toHaveLength(1);
-  });
-
-  it("keeps the embedded refusal's words when the hosted fallback dies message-less", async () => {
-    // The screenshot's exact chain: a real refusal on the first POST,
-    // then a 500 whose body isn't JSON (an unhandled route exception
-    // renders as HTML, so postCheckout's json() yields null). The
-    // second answer once overwrote the first into "Checkout failed".
-    const { deps } = fakeDeps([
-      { ok: false, body: { error: "embedded unavailable" } },
-      { ok: false, body: null },
-    ]);
-    const err = await runCheckoutFlow("weekly", "pk_live_abc", deps).catch((e) => e);
-    expect(err).toBeInstanceOf(CheckoutError);
-    expect(err.message).toBe("embedded unavailable");
-  });
-
-  it("a message-less double failure still throws the generic line — structured, code-free", async () => {
-    const { deps } = fakeDeps([
-      { ok: false, body: null },
-      { ok: false, body: null },
-    ]);
-    const err = await runCheckoutFlow("weekly", "pk_live_abc", deps).catch((e) => e);
-    expect(err).toBeInstanceOf(CheckoutError);
-    expect(err.message).toBe("Checkout failed");
-    expect(err.serverMessage).toBeNull();
-    expect(err.code).toBeNull();
-    expect(err.alreadySubscribed).toBe(false);
   });
 
   it("throws the generic failure when the hosted answer carries no URL", async () => {

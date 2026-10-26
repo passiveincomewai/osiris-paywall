@@ -67,7 +67,7 @@ export default async function VipHubPage() {
       {userId && !vip && (
         <VipLock
           title="These features come with VIP Pro"
-          freshCopy="VIP Pro is the annual plan ($74.99/yr). It includes everything in Pro, plus camera alerts for up to 10 cameras (Pro includes 2), 40-camera recording, timelapse, the premium intel layers — and the three features below."
+          freshCopy="VIP Pro is the annual plan ($74.99/yr). It includes everything in Pro, plus camera alerts, 40-camera recording, timelapse, the premium intel layers — and the three features below."
           lapsedCopy="Your VIP Pro isn't active right now, so these features are paused — your places, rules and views are kept, and everything resumes on its own when VIP Pro is back."
         />
       )}

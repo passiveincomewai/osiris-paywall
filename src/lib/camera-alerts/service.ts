@@ -1,20 +1,17 @@
 /**
- * Camera alerts — the rule/event service behind /api/camera-alerts.
- * Routes stay thin: auth + tier live there; ownership, the per-tier
- * active cap (free 0 · Pro 2 · VIP Pro 10, from logic.alertCapForTier),
- * condition/channel validation and catalogue truth live here so
+ * VIP camera alerts — the rule/event service behind /api/camera-alerts.
+ * Routes stay thin: auth + tier live there; ownership, the 10-active
+ * cap, condition/channel validation and catalogue truth live here so
  * every entry point enforces them identically.
  */
 import { db } from "@/lib/db";
 import { catalogue } from "@/lib/vision/frames";
 import {
   activeCapReached,
-  alertCapForTier,
-  capMessage,
+  CAP_MESSAGE,
   MAX_ACTIVE_ALERT_RULES,
   validateChannels,
   validateCondition,
-  type AlertTier,
 } from "./logic";
 import { eventImageUrl } from "./image-token";
 
@@ -66,7 +63,6 @@ export function activeRuleCount(userId: string): Promise<number> {
 export async function createRule(
   userId: string,
   input: { cameraId?: unknown; condition?: unknown; emailEnabled?: unknown; inAppEnabled?: unknown },
-  tier: AlertTier,
 ): Promise<ServiceResult<RuleView>> {
   const cameraId = typeof input.cameraId === "string" ? input.cameraId.trim() : "";
   if (!cameraId) return fail(400, "Pick a camera to watch.");
@@ -84,8 +80,7 @@ export async function createRule(
     return fail(400, "That camera is a live stream without still images — alerts need a still photo to check, so pick another camera.");
   }
 
-  const cap = alertCapForTier(tier);
-  if (activeCapReached(await activeRuleCount(userId), cap)) return fail(409, capMessage(cap, tier));
+  if (activeCapReached(await activeRuleCount(userId))) return fail(409, CAP_MESSAGE);
 
   const row = (await db.alertRule.create({
     data: {
@@ -104,7 +99,6 @@ export async function updateRule(
   userId: string,
   id: string,
   patch: { condition?: unknown; emailEnabled?: unknown; inAppEnabled?: unknown; active?: unknown },
-  tier: AlertTier,
 ): Promise<ServiceResult<RuleView>> {
   const existing = (await db.alertRule.findFirst({ where: { id, userId } })) as RuleRow | null;
   if (!existing) return fail(404, "Alert not found.");
@@ -126,16 +120,8 @@ export async function updateRule(
   }
   if (patch.active !== undefined) {
     const active = patch.active === true;
-    // Resuming is gated by the caller's CURRENT tier cap: a member who
-    // downgraded (VIP→Pro, or lapsed to free) keeps every existing rule
-    // — pausing, editing and deleting always work — but can't grow the
-    // active set past their cap; they're refused until they're back
-    // under it. (Rules already active are never touched here.)
-    if (active && !existing.active) {
-      const cap = alertCapForTier(tier);
-      if (activeCapReached(await activeRuleCount(userId), cap)) {
-        return fail(409, capMessage(cap, tier));
-      }
+    if (active && !existing.active && activeCapReached(await activeRuleCount(userId))) {
+      return fail(409, CAP_MESSAGE);
     }
     data.active = active;
     // Resuming starts a fresh episode: the next match notifies again.
@@ -197,4 +183,4 @@ export async function markAllEventsRead(userId: string): Promise<void> {
   await db.alertEvent.updateMany({ where: { userId, readAt: null }, data: { readAt: new Date() } });
 }
 
-export { MAX_ACTIVE_ALERT_RULES, alertCapForTier };
+export { MAX_ACTIVE_ALERT_RULES };

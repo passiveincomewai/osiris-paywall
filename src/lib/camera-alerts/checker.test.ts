@@ -164,35 +164,13 @@ describe("runAlertChecks", () => {
     expect(store.rules[0].lastVerdict).toBe("unknown");
   });
 
-  it("skips rules whose owner has no alert plan (free) — paused, not deleted — and never fetches a frame", async () => {
-    store.rules = [rule()];
-    const d = deps({ tierOf: vi.fn(async () => "free" as const) });
-    const s = await runAlertChecks(d);
-    expect(s).toMatchObject({ checked: 0, skippedNoPlan: 1 });
-    expect(d.frame).not.toHaveBeenCalled();
-    expect(store.rules[0].lastCheckedAt).toEqual(NOW); // stamp advances; rule survives
-  });
-
-  it("checks a Pro owner's rules and alerts on a match", async () => {
+  it("skips rules whose owner is no longer VIP (paused, not deleted) and never fetches a frame", async () => {
     store.rules = [rule()];
     const d = deps({ tierOf: vi.fn(async () => "pro" as const) });
     const s = await runAlertChecks(d);
-    expect(s).toMatchObject({ checked: 1, alerted: 1, skippedNoPlan: 0 });
-    expect(store.events).toHaveLength(1);
-  });
-
-  it("grandfathered downgrade: a Pro owner holding more rules than the Pro cap still gets them all checked", async () => {
-    store.rules = [
-      rule(),
-      rule({ id: "rule-2", cameraId: "cam-2" }),
-      rule({ id: "rule-3", cameraId: "cam-3" }),
-    ];
-    const d = deps({
-      tierOf: vi.fn(async () => "pro" as const),
-      vision: vi.fn(async () => ({ verdict: "clear" as const, observation: "Fine." })),
-    });
-    const s = await runAlertChecks(d);
-    expect(s).toMatchObject({ checked: 3, skippedNoPlan: 0 });
+    expect(s).toMatchObject({ checked: 0, skippedNotVip: 1 });
+    expect(d.frame).not.toHaveBeenCalled();
+    expect(store.rules[0].lastCheckedAt).toEqual(NOW); // stamp advances; rule survives
   });
 
   it("skips rules checked inside the interval window", async () => {

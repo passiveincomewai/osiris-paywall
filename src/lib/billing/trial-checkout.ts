@@ -30,7 +30,6 @@
  * changes, change it in both places (the tests pin these strings).
  */
 import { trialDaysForPlan, type BillingPlan } from "./trials";
-import { checkoutErrorFromData } from "./checkout-error";
 import { trackMetaEvent } from "@/lib/meta-track";
 
 export type TrialPlan = Exclude<BillingPlan, "enterprise">;
@@ -224,11 +223,8 @@ export interface HostedCheckoutDeps {
  * navigates there. This is the explicit, user-chosen version of that
  * fallback: it leaves worldeye.app for Stripe's page and returns via the
  * session's success/cancel URLs, so /welcome and the webhook see no
- * difference. Resolves with the URL navigated to; on refusal it throws
- * a CheckoutError (lib/billing/checkout-error) carrying the server's
- * message verbatim — plus its code and manage path, so a member who
- * already holds a plan can be offered the manage action instead of a
- * bare string and a futile retry.
+ * difference. Resolves with the URL navigated to; throws the server's
+ * error message when no URL comes back.
  */
 export async function startHostedCheckout(
   plan: BillingPlan,
@@ -257,5 +253,5 @@ export async function startHostedCheckout(
     navigate(data.url);
     return data.url;
   }
-  throw checkoutErrorFromData(data);
+  throw new Error(data?.error || "Checkout failed");
 }

@@ -85,7 +85,6 @@ export type LifecycleTemplate =
   | "affiliate_signup"
   | "affiliate_first_commission"
   | "region_interest"
-  | "payment_failed_recovery"
   | "campaign";
 
 export interface SentRecord {
