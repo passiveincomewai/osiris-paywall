@@ -129,6 +129,11 @@ const SEO_PAGES_WAVE10 = [
 // (tools/build-live-camera-index.mjs). Linked from /blog/live-cameras-by-country.
 const SEO_PAGES_WAVE11 = ["/live-camera-index"];
 
+// Wave 12 (2026-10-26): Random Camera Roulette — the geography guessing
+// game at /random (a random live camera, guess the country, scored
+// reveal), built for geography-game audiences.
+const SEO_PAGES_WAVE12 = ["/random"];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -324,6 +329,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     ...SEO_PAGES_EVENTS_2026.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_WAVE12.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
