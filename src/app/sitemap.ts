@@ -128,6 +128,17 @@ const SEO_PAGES_WAVE10 = [
 // (tools/build-live-camera-index.mjs). Linked from /blog/live-cameras-by-country.
 const SEO_PAGES_WAVE11 = ["/live-camera-index"];
 
+// Trending event pages (2026-10-26): dated event hubs on the topic-hub
+// pattern — the NYC Marathon and the 100th Macy's Parade, the
+// Thanksgiving travel rush, and the Starship Flight 15 launch hub
+// (which stays up as the standing launch page after the flight).
+const SEO_PAGES_EVENTS_2026 = [
+  "/nyc-marathon-2026",
+  "/macys-thanksgiving-parade-2026",
+  "/thanksgiving-travel-2026",
+  "/starship-flight-15",
+];
+
 // Live event walls (2026-10-24): the /live-events hub plus one page per
 // wall in src/data/event-walls.ts — derived from the same config the
 // pages' generateStaticParams reads, so the two can never drift.
@@ -285,6 +296,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}${p}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_EVENTS_2026.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_EVENT_WALLS.map((p) => ({
