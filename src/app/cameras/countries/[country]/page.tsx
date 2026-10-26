@@ -24,6 +24,8 @@ import {
   watchGuide,
 } from "@/lib/country-page-content";
 import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
+import { withDerivedCities } from "@/lib/us-places";
+import { US_STATE_META } from "@/lib/us-states";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { countryAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 import { getPlaceWeather } from "@/lib/place-weather";
@@ -197,8 +199,23 @@ export default async function CountryPage({
   /* The search-by-city box's list: EVERY area the catalogue holds for
      this country (from the same records the depth sections compute
      from), biggest first — not just the explorer's top-24 chips. If the
-     records failed to load, the index's top areas are the fallback. */
-  const cityList = records.length > 0 ? cameraAreas(records) : c.topCities;
+     records failed to load, the index's top areas are the fallback.
+     For the United States the derived places are substituted first:
+     DOT feeds file thousands of cameras under the state name ("Utah"),
+     and the search must offer the real cities those cameras sit in
+     (lib/us-places). The explorer API applies the same substitution
+     server-side, so a pick here filters to the same cameras. */
+  const cityList =
+    records.length > 0
+      ? cameraAreas(slug === "united-states" ? withDerivedCities(records) : records)
+      : c.topCities;
+  /* US visitors type the state with the city ("ogden utah", "Ogden,
+     UT") — the search box accepts and strips state-name/USPS suffixes
+     only on this page. */
+  const citySearchSuffixes =
+    slug === "united-states"
+      ? US_STATE_META.flatMap((s) => [s.name, s.usps])
+      : undefined;
   const region = regionLinks(slug, COUNTRIES);
   const guide = watchGuide(c, facts, region);
   const fullRoster = roster(c, records);
@@ -310,7 +327,7 @@ export default async function CountryPage({
           <p className="mt-4 text-white/55">
             Watch {plural(c.count, "live camera")} across {c.name} — free on the WorldEye globe.
           </p>
-          <CountryCitySearch countryName={c.name} cities={cityList} />
+          <CountryCitySearch countryName={c.name} cities={cityList} searchSuffixes={citySearchSuffixes} />
         </div>
 
         {/* Stat row */}

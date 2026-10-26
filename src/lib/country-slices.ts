@@ -25,6 +25,15 @@ export interface CountrySliceRequest {
   limit?: number;
   city?: string | null;
   query?: string;
+  /**
+   * Optional derived-city resolver: when it returns a name for a
+   * record, that name replaces the record's feed city for filtering,
+   * grouping and the chip list. The country route passes one only for
+   * the United States (lib/us-places — DOT feeds that file cameras
+   * under the state name); every other country omits it and slices
+   * exactly as before.
+   */
+  placeFor?: (record: CountryCamera) => string | null;
 }
 
 export interface CountrySlice {
@@ -53,7 +62,17 @@ export function sliceCountryCameras(
 ): CountrySlice {
   const offset = clampInt(req.offset, 0, 0, Number.MAX_SAFE_INTEGER);
   const limit = clampInt(req.limit, COUNTRY_PAGE_SIZE, 1, MAX_COUNTRY_PAGE_SIZE);
-  const filtered = filterCameras(records, { query: req.query, area: req.city ?? null });
+  /* Derived cities, when a resolver is supplied, are substituted
+     before filtering so the area filter, the free-text haystack and
+     the chip list all speak in real places. Without one the input
+     array flows through untouched (same reference, same results). */
+  const resolved = req.placeFor
+    ? records.map((rec) => {
+        const place = req.placeFor!(rec);
+        return place && place !== rec.city ? { ...rec, city: place } : rec;
+      })
+    : records;
+  const filtered = filterCameras(resolved, { query: req.query, area: req.city ?? null });
   /* Working feeds first (lib/country-cameras cameraFeedTier): playable
      records ahead of embeds ahead of listings, the incoming geographic
      order preserved inside each tier. Applied before slicing so every
@@ -64,6 +83,6 @@ export function sliceCountryCameras(
     offset,
     limit,
     cameras: ordered.slice(offset, offset + limit),
-    cities: cameraAreas(records).slice(0, COUNTRY_CITY_CHIPS),
+    cities: cameraAreas(resolved).slice(0, COUNTRY_CITY_CHIPS),
   };
 }

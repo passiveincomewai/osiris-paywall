@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-22T07:06:25.089Z",
+ "generatedAt": "2026-10-26T23:10:04.169Z",
  "source": "src/data/countries/united-states.json",
  "sourceTotal": 41355,
  "assignedTotal": 41312,
@@ -156,64 +156,68 @@
    "count": 4288,
    "areas": [
     {
-     "name": "Georgia",
-     "count": 4279
+     "name": "Atlanta",
+     "count": 400
     },
     {
-     "name": "Valdosta",
-     "count": 3
+     "name": "Sandy Springs",
+     "count": 200
     },
     {
-     "name": "Jasper County",
-     "count": 2
+     "name": "Kennesaw",
+     "count": 132
     },
     {
-     "name": "Albany",
-     "count": 1
+     "name": "Lawrenceville",
+     "count": 124
     },
     {
-     "name": "Baker County",
-     "count": 1
+     "name": "Marietta",
+     "count": 111
     },
     {
-     "name": "Effingham County",
-     "count": 1
+     "name": "Brookhaven",
+     "count": 110
     },
     {
-     "name": "Macon County",
-     "count": 1
+     "name": "Smyrna",
+     "count": 109
+    },
+    {
+     "name": "Stockbridge",
+     "count": 93
     }
    ],
    "samples": [
     {
      "id": "gdot-11843",
      "name": "10th St at Fowler St (Atlanta)",
-     "city": "Georgia"
+     "city": "Atlanta"
     },
     {
      "id": "gdot-11816",
      "name": "10th St at Monroe Dr (Atlanta)",
-     "city": "Georgia"
+     "city": "Atlanta"
     },
     {
      "id": "gdot-12409",
      "name": "14th St at Techwood Dr (Atlanta)",
-     "city": "Georgia"
+     "city": "Atlanta"
     },
     {
      "id": "gdot-16429",
      "name": "Academy St at Haynes Bridge Rd (Alpharetta)",
-     "city": "Georgia"
+     "city": "Alpharetta"
     },
     {
      "id": "gdot-16423",
      "name": "Academy St at Park Plaza (Alpharetta)",
-     "city": "Georgia"
+     "city": "Alpharetta"
     },
     {
      "id": "gdot-18028",
      "name": "Acworth Due West Rd at Paul Samuel Rd (COBB)",
-     "city": "Georgia"
+     "city": "Kennesaw"
     }
    ]
   },
@@ -260,7 +264,7 @@
     {
      "id": "ndot-7849",
      "name": "SR-28 @ Crystal Bay",
-     "city": "Nevada"
+     "city": "Kings Beach"
     },
     {
      "id": "faa-12629",
@@ -296,68 +300,68 @@
    "count": 2135,
    "areas": [
     {
-     "name": "Utah",
-     "count": 2078
-    },
-    {
      "name": "Salt Lake City",
-     "count": 5
+     "count": 190
     },
     {
-     "name": "Bear River Valley Hospital",
-     "count": 4
+     "name": "Saint George",
+     "count": 115
     },
     {
-     "name": "Cedar City Hospital",
-     "count": 4
+     "name": "Provo",
+     "count": 108
     },
     {
-     "name": "Dutch John",
-     "count": 4
+     "name": "West Jordan",
+     "count": 103
     },
     {
-     "name": "Intermountain Medical Center",
-     "count": 4
+     "name": "West Valley City",
+     "count": 98
     },
     {
-     "name": "Logan Regional Hospital",
-     "count": 4
+     "name": "Lehi",
+     "count": 94
     },
     {
-     "name": "McKay-Dee Hospital",
-     "count": 4
+     "name": "Orem",
+     "count": 91
+    },
+    {
+     "name": "Ogden",
+     "count": 71
     }
    ],
    "samples": [
     {
      "id": "udot-165460",
      "name": "100 E / Alpine Hwy / SR-74 @ 100 N, AFK",
-     "city": "Utah"
+     "city": "American Fork"
     },
     {
      "id": "udot-165047",
      "name": "100 E / Alpine Hwy / SR-74 @ 1120 N, AFK",
-     "city": "Utah"
+     "city": "American Fork"
     },
     {
      "id": "udot-167450",
      "name": "100 E / Alpine Hwy / SR-74 @ 300 N, AFK",
-     "city": "Utah"
+     "city": "American Fork"
     },
     {
      "id": "udot-165206",
      "name": "100 E / Canyon Rd @ 1800 N / Murdock Dr, PLG",
-     "city": "Utah"
+     "city": "Pleasant Grove"
     },
     {
      "id": "udot-165301",
      "name": "100 N / SR-198 @ 1000 E, PSN",
-     "city": "Utah"
+     "city": "Payson"
     },
     {
      "id": "udot-165499",
      "name": "100 N / SR-198 @ 600 E, PSN",
-     "city": "Utah"
+     "city": "Payson"
     }
    ]
   },
@@ -608,12 +612,12 @@
      "count": 41
     },
     {
-     "name": "Smithtown",
-     "count": 24
+     "name": "New York City",
+     "count": 38
     },
     {
-     "name": "Huntington",
-     "count": 23
+     "name": "Smithtown",
+     "count": 24
     }
    ],
    "samples": [
@@ -944,10 +948,6 @@
    "count": 1050,
    "areas": [
     {
-     "name": "North Carolina",
-     "count": 188
-    },
-    {
      "name": "Mecklenburg County",
      "count": 139
     },
@@ -966,6 +966,10 @@
     {
      "name": "Buncombe County",
      "count": 41
+    },
+    {
+     "name": "Raleigh",
+     "count": 32
     },
     {
      "name": "Durham County",
@@ -1088,68 +1092,68 @@
    "count": 771,
    "areas": [
     {
-     "name": "Nevada",
-     "count": 649
+     "name": "Las Vegas",
+     "count": 90
     },
     {
-     "name": "Elko County",
-     "count": 6
+     "name": "Paradise",
+     "count": 82
     },
     {
-     "name": "Bald Mtn NV",
-     "count": 4
+     "name": "Reno",
+     "count": 48
     },
     {
-     "name": "Black Mtn NV",
-     "count": 4
+     "name": "Spring Valley",
+     "count": 48
     },
     {
-     "name": "Callaghan Peak",
-     "count": 4
+     "name": "Enterprise",
+     "count": 38
+    },
+    {
+     "name": "North Las Vegas",
+     "count": 36
+    },
+    {
+     "name": "Henderson",
+     "count": 34
     },
     {
      "name": "Carson City",
-     "count": 4
-    },
-    {
-     "name": "Cave Mtn",
-     "count": 4
-    },
-    {
-     "name": "Deer",
-     "count": 4
+     "count": 27
     }
    ],
    "samples": [
     {
      "id": "udot-168044",
      "name": "I-80 EB @ Wendover / UT MP -1.4 / NV MP 409.25, WEN",
-     "city": "Utah"
+     "city": "West Wendover"
     },
     {
      "id": "ndot-7571",
      "name": "Airport Connector Grier (Tunnel)",
-     "city": "Nevada"
+     "city": "Paradise"
     },
     {
      "id": "ndot-7570",
      "name": "Airport Connector NB Grier",
-     "city": "Nevada"
+     "city": "Paradise"
     },
     {
      "id": "ndot-7682",
      "name": "Ann Rd & CC 215 SB Ramp",
-     "city": "Nevada"
+     "city": "Summerlin South"
     },
     {
      "id": "ndot-7681",
      "name": "Ann Rd & Commerce St",
-     "city": "Nevada"
+     "city": "North Las Vegas"
     },
     {
      "id": "ndot-7559",
      "name": "Bermuda & George Crockett",
-     "city": "Nevada"
+     "city": "Paradise"
     }
    ]
   },
@@ -1196,22 +1200,22 @@
     {
      "id": "gdot-13325",
      "name": "I-20 W at GA/SCLine MM 200.6 (Richmond)",
-     "city": "Georgia"
+     "city": "North Augusta"
     },
     {
      "id": "gdot-17722",
      "name": "I-20 W before SR104 MM 200.5 (Richmond)",
-     "city": "Georgia"
+     "city": "North Augusta"
     },
     {
      "id": "gdot-12254",
      "name": "SR 26/1st ST at CAMPBELL AVE (Savannah)",
-     "city": "Georgia"
+     "city": "Hilton Head Island"
     },
     {
      "id": "gdot-12844",
      "name": "SR 26/US 80 at JONES AVE (Savannah)",
-     "city": "Georgia"
+     "city": "Hilton Head Island"
     },
     {
      "id": "occ-phenocam-cs2afforestation",
@@ -1240,12 +1244,8 @@
      "count": 53
     },
     {
-     "name": "Arizona",
-     "count": 19
-    },
-    {
      "name": "Flagstaff",
-     "count": 17
+     "count": 18
     },
     {
      "name": "Nogales",
@@ -1257,18 +1257,22 @@
     },
     {
      "name": "Holbrook",
-     "count": 10
+     "count": 11
     },
     {
      "name": "Kingman",
      "count": 10
+    },
+    {
+     "name": "Safford",
+     "count": 8
     }
    ],
    "samples": [
     {
      "id": "udot-167358",
      "name": "I-15 NB @ UT/AZ State Line / MP 0.14, STG",
-     "city": "Utah"
+     "city": "Beaver Dam"
     },
     {
      "id": "udot-167822",
@@ -1278,7 +1282,7 @@
     {
      "id": "ndot-7623",
      "name": "Casino Dr & Laughlin Hwy SR 163",
-     "city": "Nevada"
+     "city": "Bullhead City"
     },
     {
      "id": "adot-764",
@@ -1305,7 +1309,7 @@
    "areas": [
     {
      "name": "Peoria",
-     "count": 47
+     "count": 48
     },
     {
      "name": "Chicago",
@@ -1340,7 +1344,7 @@
     {
      "id": "indot-24304",
      "name": "I-80 Illinois: I-80-94/0.0 INDIANA STATE LINE",
-     "city": "Indiana"
+     "city": "Lansing"
     },
     {
      "id": "occ-tmw-IL-IL-IDOTD4_4_Woodford_SB_I-39_4073631_-8903482_1_N",
@@ -1376,48 +1380,68 @@
    "count": 572,
    "areas": [
     {
-     "name": "Indiana",
-     "count": 569
+     "name": "Indianapolis",
+     "count": 54
     },
     {
-     "name": "Mark Center",
-     "count": 2
+     "name": "Lawrence",
+     "count": 26
     },
     {
-     "name": "Winthrop Harbor",
-     "count": 1
+     "name": "Gary",
+     "count": 19
+    },
+    {
+     "name": "New Albany",
+     "count": 17
+    },
+    {
+     "name": "Greenwood",
+     "count": 16
+    },
+    {
+     "name": "Fort Wayne",
+     "count": 15
+    },
+    {
+     "name": "Speedway",
+     "count": 15
+    },
+    {
+     "name": "Fishers",
+     "count": 14
     }
    ],
    "samples": [
     {
      "id": "indot-23868",
      "name": "I-265: CHARLESTOWN PIKE",
-     "city": "Indiana"
+     "city": "Jeffersonville"
     },
     {
      "id": "indot-24268",
      "name": "I-265: CHARLESTOWN RD",
-     "city": "Indiana"
+     "city": "Clarksville"
     },
     {
      "id": "indot-23851",
      "name": "I-265: GRANT LINE RD",
-     "city": "Indiana"
+     "city": "New Albany"
     },
     {
      "id": "indot-24267",
      "name": "I-265: GREEN VALLEY RD",
-     "city": "Indiana"
+     "city": "New Albany"
     },
     {
      "id": "indot-24595",
      "name": "I-265: I-265/28.7 LEWIS AND CLARK BRIDGE",
-     "city": "Indiana"
+     "city": "Oak Park"
     },
     {
      "id": "indot-23869",
      "name": "I-265: I-265/29.4 E OF OLD SALEM/RIVER RIDGE",
-     "city": "Indiana"
+     "city": "Sellersburg"
     }
    ]
   },
@@ -1596,7 +1620,7 @@
      "count": 19
     },
     {
-     "name": "Maryland",
+     "name": "Greensboro",
      "count": 3
     },
     {
@@ -1752,17 +1776,17 @@
     {
      "id": "udot-164751",
      "name": "I-15 NB @ UT/ID State Line / MP 400.59, BE",
-     "city": "Utah"
+     "city": "Malad City"
     },
     {
      "id": "udot-167657",
      "name": "SR-42 @ Idaho State Line / MP 0.43, BE",
-     "city": "Utah"
+     "city": "Strevell"
     },
     {
      "id": "udot-164386",
      "name": "US-91 @ UT/ID State Line / MP 45.27, CA",
-     "city": "Utah"
+     "city": "Franklin"
     },
     {
      "id": "occ-s511-ID-36",
@@ -1788,48 +1812,68 @@
    "count": 332,
    "areas": [
     {
-     "name": "Louisiana",
-     "count": 330
+     "name": "Baton Rouge",
+     "count": 48
     },
     {
-     "name": "False River Airport",
-     "count": 1
+     "name": "New Orleans",
+     "count": 24
+    },
+    {
+     "name": "Lake Charles",
+     "count": 20
     },
     {
      "name": "Monroe",
-     "count": 1
+     "count": 18
+    },
+    {
+     "name": "Shreveport",
+     "count": 13
+    },
+    {
+     "name": "Alexandria",
+     "count": 12
+    },
+    {
+     "name": "Shenandoah",
+     "count": 12
+    },
+    {
+     "name": "Slidell",
+     "count": 12
     }
    ],
    "samples": [
     {
      "id": "ladotd-221",
      "name": "HOV Ramp at General Degualle Exit",
-     "city": "Louisiana"
+     "city": "New Orleans"
     },
     {
      "id": "ladotd-409",
      "name": "I-10",
-     "city": "Louisiana"
+     "city": "Baton Rouge"
     },
     {
      "id": "ladotd-365",
      "name": "I-10 @ N. Thompson Ave. DMS",
-     "city": "Louisiana"
+     "city": "Iowa"
     },
     {
      "id": "ladotd-140",
      "name": "I-10 at 10/12 Split",
-     "city": "Louisiana"
+     "city": "Baton Rouge"
     },
     {
      "id": "ladotd-423",
      "name": "I-10 at 4 Mile Bridge (Reserve Canal) East",
-     "city": "Louisiana"
+     "city": "Laplace"
     },
     {
      "id": "ladotd-422",
      "name": "I-10 at 4 Mile Bridge (Reserve Canal) West",
-     "city": "Louisiana"
+     "city": "Laplace"
     }
    ]
   },
@@ -2009,7 +2053,7 @@
     },
     {
      "name": "Middletown",
-     "count": 6
+     "count": 7
     },
     {
      "name": "Milford",
@@ -2064,10 +2108,6 @@
      "count": 20
     },
     {
-     "name": "Hawaii",
-     "count": 17
-    },
-    {
      "name": "Lanai",
      "count": 8
     },
@@ -2076,16 +2116,20 @@
      "count": 7
     },
     {
-     "name": "Oaho",
-     "count": 6
+     "name": "Waimea",
+     "count": 7
     },
     {
-     "name": "Waimea",
+     "name": "Oaho",
      "count": 6
     },
     {
      "name": "Upolu",
      "count": 5
+    },
+    {
+     "name": "Bradshaw",
+     "count": 4
     }
    ],
    "samples": [
@@ -2152,12 +2196,12 @@
      "count": 7
     },
     {
-     "name": "Morton County",
+     "name": "Mandan",
      "count": 7
     },
     {
-     "name": "Cass County",
-     "count": 6
+     "name": "Morton County",
+     "count": 7
     }
    ],
    "samples": [
@@ -2276,16 +2320,16 @@
      "count": 101
     },
     {
-     "name": "New Mexico",
-     "count": 28
-    },
-    {
      "name": "Statewide",
      "count": 16
     },
     {
      "name": "Las Cruces",
      "count": 11
+    },
+    {
+     "name": "Madrone",
+     "count": 7
     },
     {
      "name": "Doña Ana County",
@@ -2300,7 +2344,7 @@
      "count": 5
     },
     {
-     "name": "Tesuque Peak",
+     "name": "Agua Fria",
      "count": 4
     }
    ],
@@ -2492,16 +2536,16 @@
      "count": 32
     },
     {
-     "name": "Massachusetts",
-     "count": 6
-    },
-    {
      "name": "Newburyport",
      "count": 6
     },
     {
      "name": "in Fall River",
      "count": 5
+    },
+    {
+     "name": "Athol",
+     "count": 4
     },
     {
      "name": "Chantham",
@@ -2988,12 +3032,12 @@
    "count": 45,
    "areas": [
     {
-     "name": "Indiana",
-     "count": 9
+     "name": "Henderson",
+     "count": 7
     },
     {
-     "name": "Henderson",
-     "count": 4
+     "name": "Louisville",
+     "count": 7
     },
     {
      "name": "Highlands",
@@ -3016,7 +3060,7 @@
      "count": 2
     },
     {
-     "name": "Louisville",
+     "name": "Louisville/Jefferson County metro government",
      "count": 2
     }
    ],
@@ -3024,32 +3068,32 @@
     {
      "id": "indot-23871",
      "name": "I-265: ky1-265-028-5-_-_-cam-1 I-265/28.5 OHIO RIVER (KY)",
-     "city": "Indiana"
+     "city": "Prospect"
     },
     {
      "id": "indot-23866",
      "name": "I-65: 10TH ST",
-     "city": "Indiana"
+     "city": "Louisville"
     },
     {
      "id": "indot-23853",
      "name": "I-65: EASTERN BLVD",
-     "city": "Indiana"
+     "city": "Louisville"
     },
     {
      "id": "indot-23861",
      "name": "I-65: LINCOLN &amp;amp; KENNEDY BRIDGES",
-     "city": "Indiana"
+     "city": "Louisville"
     },
     {
      "id": "indot-24549",
      "name": "I-65: LINCOLN &amp;amp;amp; KENNEDY BRIDGES",
-     "city": "Indiana"
+     "city": "Louisville"
     },
     {
      "id": "indot-24274",
      "name": "I-65: STANSIFER AVE",
-     "city": "Indiana"
+     "city": "Louisville"
     }
    ]
   },
@@ -3264,15 +3308,15 @@
      "count": 4
     },
     {
-     "name": "Arkansas",
-     "count": 2
-    },
-    {
      "name": "Craighead County",
      "count": 2
     },
     {
      "name": "Crittenden County",
+     "count": 2
+    },
+    {
+     "name": "Humphrey",
      "count": 2
     },
     {
@@ -3352,7 +3396,7 @@
      "count": 1
     },
     {
-     "name": "Georgia",
+     "name": "Phenix City",
      "count": 1
     }
    ],
@@ -3360,7 +3404,7 @@
     {
      "id": "gdot-17497",
      "name": "SR1/US27 S at VeteransPkwy MM 8 (Muscogee)",
-     "city": "Georgia"
+     "city": "Phenix City"
     },
     {
      "id": "faa-13205",

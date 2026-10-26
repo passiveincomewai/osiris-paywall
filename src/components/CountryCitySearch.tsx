@@ -31,33 +31,75 @@ export interface CityOption {
 
 const MAX_MATCHES = 8;
 
+/**
+ * The suggestion matcher, pure for testability. Folded (case- and
+ * diacritic-insensitive) match over the country's real city names —
+ * "zurich" finds Zürich, "gdansk" finds Gdańsk — ranked prefix first,
+ * then word-start, then substring; inside each group the list's count
+ * order (biggest first) is preserved.
+ *
+ * `searchSuffixes` (the US page passes state names + USPS codes) lets
+ * a query carry its state along — "ogden utah", "Ogden, UT" — by also
+ * trying the query with a trailing suffix stripped. The bare city
+ * name is what a pick applies, never the suffixed form.
+ */
+export function matchCityOptions(
+  cities: readonly CityOption[],
+  rawValue: string,
+  searchSuffixes?: readonly string[],
+): CityOption[] {
+  const q = foldForSearch(rawValue.trim());
+  if (!q) return [];
+  const queries = [q];
+  if (searchSuffixes) {
+    for (const raw of searchSuffixes) {
+      const suf = foldForSearch(raw);
+      if (!suf || suf === q) continue;
+      for (const sep of [", ", " ", ","]) {
+        const tail = sep + suf;
+        if (q.length > tail.length && q.endsWith(tail)) {
+          const head = q.slice(0, q.length - tail.length).replace(/[,\s]+$/, "");
+          if (head && !queries.includes(head)) queries.push(head);
+        }
+      }
+    }
+  }
+  const prefix: CityOption[] = [];
+  const wordStart: CityOption[] = [];
+  const substring: CityOption[] = [];
+  for (const c of cities) {
+    const folded = foldForSearch(c.name);
+    if (queries.some((t) => folded.startsWith(t))) prefix.push(c);
+    else if (
+      queries.some((t) =>
+        folded.split(/[\s\-/]+/).some((w) => w.startsWith(t)),
+      )
+    )
+      wordStart.push(c);
+    else if (folded.includes(q)) substring.push(c);
+  }
+  return [...prefix, ...wordStart, ...substring].slice(0, MAX_MATCHES);
+}
+
 export default function CountryCitySearch({
   countryName,
   cities,
+  searchSuffixes,
 }: {
   countryName: string;
   cities: CityOption[];
+  /** Optional trailing tokens a query may carry (US: state names and
+   *  USPS codes) — see matchCityOptions. */
+  searchSuffixes?: string[];
 }) {
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /* Folded (case- and diacritic-insensitive) match over the country's
-     real city names — "zurich" finds Zürich, "gdansk" finds Gdańsk —
-     with prefix matches ranked ahead of substring matches; inside each
-     group the list's count order (biggest first) is preserved. */
-  const matches = useMemo(() => {
-    const q = foldForSearch(value.trim());
-    if (!q) return [];
-    const prefix: CityOption[] = [];
-    const substring: CityOption[] = [];
-    for (const c of cities) {
-      const folded = foldForSearch(c.name);
-      if (folded.startsWith(q)) prefix.push(c);
-      else if (folded.includes(q)) substring.push(c);
-    }
-    return [...prefix, ...substring].slice(0, MAX_MATCHES);
-  }, [value, cities]);
+  const matches = useMemo(
+    () => matchCityOptions(cities, value, searchSuffixes),
+    [value, cities, searchSuffixes],
+  );
 
   if (cities.length < 2) return null;
 

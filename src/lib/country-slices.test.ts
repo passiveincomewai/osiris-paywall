@@ -74,3 +74,47 @@ describe('sliceCountryCameras', () => {
     expect(out.cameras).toEqual([]);
   });
 });
+
+describe('sliceCountryCameras with a derived-city resolver', () => {
+  /* US-style records: the DOT feed files them under the state name;
+     the resolver (lib/us-places in production) knows two of them sit
+     in Ogden. */
+  const usRecords: CountryCamera[] = [
+    cam({ id: 'u1', name: 'Washington Blvd Cam', city: 'Utah' }),
+    cam({ id: 'u2', name: '12th Street Cam', city: 'Utah' }),
+    cam({ id: 'u3', name: 'I-15 Cam', city: 'Houston' }),
+  ];
+  const placeFor = (r: CountryCamera) => (r.id === 'u1' || r.id === 'u2' ? 'Ogden' : null);
+
+  it('groups, filters and searches by the derived city', () => {
+    const out = sliceCountryCameras(usRecords, { city: 'Ogden', placeFor });
+    expect(out.total).toBe(2);
+    expect(out.cameras.map(c => c.id)).toEqual(['u1', 'u2']);
+    expect(out.cameras[0].city).toBe('Ogden');
+
+    const chips = sliceCountryCameras(usRecords, { placeFor });
+    expect(chips.cities).toEqual([
+      { name: 'Ogden', count: 2 },
+      { name: 'Houston', count: 1 },
+    ]);
+
+    const byText = sliceCountryCameras(usRecords, { query: 'ogden', placeFor });
+    expect(byText.total).toBe(2);
+  });
+
+  it('without a resolver the same records keep their feed labels', () => {
+    const out = sliceCountryCameras(usRecords, { city: 'Ogden' });
+    expect(out.total).toBe(0);
+    const byLabel = sliceCountryCameras(usRecords, { city: 'Utah' });
+    expect(byLabel.total).toBe(2);
+    expect(byLabel.cities).toEqual([
+      { name: 'Utah', count: 2 },
+      { name: 'Houston', count: 1 },
+    ]);
+  });
+
+  it('does not mutate the input records', () => {
+    sliceCountryCameras(usRecords, { placeFor });
+    expect(usRecords[0].city).toBe('Utah');
+  });
+});

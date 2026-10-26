@@ -1,5 +1,6 @@
 import index from '@/data/camera-countries.json';
 import { sliceCountryCameras, type CountrySlice } from '@/lib/country-slices';
+import { derivedCityForCamera } from '@/lib/us-places';
 import type { CountryCamera } from '@/lib/country-cameras';
 
 /**
@@ -68,6 +69,11 @@ export async function GET(
       limit: numParam(url.searchParams.get('limit')),
       city: url.searchParams.get('city'),
       query: url.searchParams.get('q') ?? undefined,
+      // US DOT feeds file some cameras under the state name; the
+      // derived-place resolver (src/data/us-camera-places.json) lets
+      // those cameras group, filter and search under their real city.
+      // Other countries pass no resolver and slice as before.
+      placeFor: slug === 'united-states' ? derivedCityForCamera : undefined,
     });
   } catch {
     return fail(500, 'The country camera list could not be loaded');
