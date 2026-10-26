@@ -27,6 +27,7 @@ import {
   type ExploreGroupBy,
   type ExploreScope,
   type ExploreThemeKey,
+  type GeoScope,
 } from './explore-scopes';
 
 export interface CountryIndexEntry {
@@ -91,6 +92,8 @@ export interface ExploreScopeDef {
   slugs: string[] | 'all';
   theme?: ExploreThemeKey;
   city?: string;
+  /** Radius scope (event pages): records within the radius, nearest first. */
+  geo?: GeoScope;
   groupBy: ExploreGroupBy;
 }
 
@@ -103,6 +106,19 @@ function regionSlugs(region: RegionKey): string[] {
 
 function trafficCountry(slug: string, label: string): ExploreScopeDef {
   return { label, slugs: [slug], theme: 'traffic', groupBy: 'city' };
+}
+
+/** An event wall: every US catalogue record within `radiusKm` of a
+ *  named centre (a ballpark, a coastal city, a resort), nearest
+ *  first. The centre is part of the page's stated rule, so the count
+ *  a page quotes is the count its own grid serves. */
+function eventGeo(
+  label: string,
+  lat: number,
+  lng: number,
+  radiusKm: number,
+): ExploreScopeDef {
+  return { label, slugs: ['united-states'], geo: { lat, lng, radiusKm }, groupBy: 'city' };
 }
 
 export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
@@ -130,6 +146,25 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'traffic-sweden': trafficCountry('sweden', 'Sweden traffic'),
   'traffic-norway': trafficCountry('norway', 'Norway traffic'),
   'traffic-germany': trafficCountry('germany', 'Germany traffic'),
+  /* Event walls (Oct 2026) — radius scopes for the trending-event
+     pages. Each centre is the place the page names: Tropicana Field
+     for the World Series' Florida games, downtown Milwaukee for the
+     Wisconsin games, the coastal city centres for the king-tide page,
+     and the resorts' own coordinates for opening week. */
+  'event-world-series-st-petersburg': eventGeo('St. Petersburg & Tampa Bay', 27.7683, -82.6534, 25),
+  'event-world-series-milwaukee': eventGeo('Milwaukee', 43.0389, -87.9065, 25),
+  'event-ca-flood-san-francisco': eventGeo('San Francisco Bay Area', 37.7749, -122.4194, 30),
+  'event-ca-flood-los-angeles': eventGeo('the Los Angeles coast', 34.0195, -118.4912, 30),
+  'event-ca-flood-orange-county': eventGeo('Orange County', 33.6189, -117.9298, 25),
+  'event-ca-flood-san-diego': eventGeo('San Diego', 32.7157, -117.1611, 30),
+  'event-ca-flood-miami': eventGeo('Miami & South Florida', 25.7617, -80.1918, 30),
+  'event-ca-flood-charleston': eventGeo('Charleston', 32.7765, -79.9311, 30),
+  'event-first-snow-black-hills': eventGeo('Rapid City & the Black Hills', 44.0805, -103.231, 40),
+  'event-first-snow-alaska': eventGeo('Anchorage & Southcentral Alaska', 61.2181, -149.9003, 50),
+  'event-first-snow-colorado': eventGeo('Denver & the I-70 corridor', 39.7392, -104.9903, 40),
+  'event-ski-opening-arapahoe-basin': eventGeo('Arapahoe Basin', 39.6425, -105.8717, 30),
+  'event-ski-opening-winter-park': eventGeo('Winter Park', 39.8917, -105.7631, 30),
+  'event-ski-opening-keystone': eventGeo('Keystone', 39.6069, -105.9437, 30),
 };
 
 /** A scope definition from request params: either a registry key, or
@@ -174,7 +209,8 @@ const defCache = new Map<string, Promise<CountryCamera[]>>();
 
 function defKey(def: ExploreScopeDef): string {
   const slugs = def.slugs === 'all' ? 'all' : [...def.slugs].sort().join(',');
-  return `${slugs}|${def.theme ?? ''}|${def.city ?? ''}|${def.groupBy}`;
+  const geo = def.geo ? `${def.geo.lat},${def.geo.lng},${def.geo.radiusKm}` : '';
+  return `${slugs}|${def.theme ?? ''}|${def.city ?? ''}|${geo}|${def.groupBy}`;
 }
 
 /** The scope's records, theme/city-filtered and in page order. */
@@ -185,8 +221,11 @@ export function recordsForDef(def: ExploreScopeDef): Promise<CountryCamera[]> {
     pending = (async () => {
       const base =
         def.slugs === 'all' ? await loadAllRecords() : await loadUnion(def.slugs);
-      const scope: ExploreScope = { theme: def.theme, city: def.city };
-      return sortForExplore(applyScope(base, scope), def.groupBy);
+      const scope: ExploreScope = { theme: def.theme, city: def.city, geo: def.geo };
+      const scoped = applyScope(base, scope);
+      /* Geo scopes keep applyScope's nearest-first order; the grouped
+         orders are for browsing a catalogue, not a radius. */
+      return def.geo ? scoped : sortForExplore(scoped, def.groupBy);
     })();
     defCache.set(key, pending);
   }

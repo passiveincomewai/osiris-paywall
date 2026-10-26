@@ -43,7 +43,10 @@ export async function GET(request: Request) {
   let slice;
   try {
     const records = await recordsForDef(def);
-    slice = sliceExplore(records, {}, def.groupBy, {
+    /* Geo defs re-pass their radius so sliceExplore keeps the
+       nearest-first order recordsForDef produced (its grouped sort
+       would scatter it); re-applying the filter is idempotent. */
+    slice = sliceExplore(records, def.geo ? { geo: def.geo } : {}, def.groupBy, {
       offset: numParam(url.searchParams.get('offset')),
       limit: numParam(url.searchParams.get('limit')),
       city: url.searchParams.get('area'),

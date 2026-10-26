@@ -137,6 +137,10 @@ const SEO_PAGES_EVENTS_2026 = [
   "/macys-thanksgiving-parade-2026",
   "/thanksgiving-travel-2026",
   "/starship-flight-15",
+  "/world-series-2026",
+  "/california-flood-cams",
+  "/first-snow-2026",
+  "/ski-opening-week-2026",
 ];
 
 // Live event walls (2026-10-24): the /live-events hub plus one page per

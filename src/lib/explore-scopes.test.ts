@@ -153,3 +153,36 @@ describe('routeCameraResults', () => {
     expect(routeCameraResults([], null).cameras).toEqual([]);
   });
 });
+
+describe('geo scopes (event walls)', () => {
+  /* Centre on the equator; 0.01° of longitude there is ~1.11 km. */
+  const centre = { lat: 0, lng: 0, radiusKm: 25 };
+
+  it('keeps only records inside the radius, nearest first', () => {
+    const records = [
+      cam({ id: 'mid', name: 'Mid', lat: 0, lng: 0.1 }),
+      cam({ id: 'near', name: 'Near', lat: 0, lng: 0.02 }),
+      cam({ id: 'outside', name: 'Outside', lat: 0, lng: 0.5 }),
+    ];
+    const out = applyScope(records, { geo: centre });
+    expect(out.map((c) => c.id)).toEqual(['near', 'mid']);
+  });
+
+  it('drops records without coordinates', () => {
+    const records = [
+      cam({ id: 'placed', name: 'Placed', lat: 0, lng: 0.01 }),
+      cam({ id: 'unplaced', name: 'Unplaced' }),
+    ];
+    expect(applyScope(records, { geo: centre }).map((c) => c.id)).toEqual(['placed']);
+  });
+
+  it('sliceExplore preserves nearest-first order for geo scopes', () => {
+    const records = [
+      cam({ id: 'b-city', name: 'B', city: 'Zebra', lat: 0, lng: 0.1 }),
+      cam({ id: 'a-city', name: 'A', city: 'Apple', lat: 0, lng: 0.02 }),
+    ];
+    const slice = sliceExplore(records, { geo: centre }, 'city', {});
+    expect(slice.total).toBe(2);
+    expect(slice.cameras.map((c) => c.id)).toEqual(['a-city', 'b-city']);
+  });
+});

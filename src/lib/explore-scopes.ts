@@ -24,6 +24,7 @@ import {
   type CountrySliceRequest,
 } from './country-slices';
 import { clean, sortForCountryPage, type CountryCamera } from './country-cameras';
+import { haversineKm } from './ski-resorts';
 import { THEME_DEFS } from './country-page-content';
 import { findRouteCameras, ROUTE_CAMERA_CORRIDOR_M } from './route-cameras';
 
@@ -77,6 +78,17 @@ export function matchesTheme(cam: CountryCamera, theme: ExploreThemeKey): boolea
 /* Scopes                                                              */
 /* ------------------------------------------------------------------ */
 
+/** A radius around a point — the event pages' scope shape: every
+ *  record within `radiusKm` of the centre, nearest first. The centre
+ *  and radius are part of the scope's definition (a stadium, a coastal
+ *  city, a resort), so the set a page quotes is exactly the set its
+ *  grid serves. */
+export interface GeoScope {
+  lat: number;
+  lng: number;
+  radiusKm: number;
+}
+
 /** A scope over records already loaded from the catalogue chunks. The
  *  country selection itself (which chunks) happens in explore-data;
  *  everything after that is this filter. */
@@ -84,6 +96,8 @@ export interface ExploreScope {
   theme?: ExploreThemeKey;
   /** Exact city (the record's own city value, whitespace-normalised). */
   city?: string;
+  /** Radius filter; also switches the scope's order to nearest-first. */
+  geo?: GeoScope;
 }
 
 export function applyScope(
@@ -95,6 +109,18 @@ export function applyScope(
   if (scope.city) {
     const wanted = clean(scope.city);
     out = out.filter((cam) => clean(cam.city) === wanted);
+  }
+  if (scope.geo) {
+    const { lat, lng, radiusKm } = scope.geo;
+    out = out
+      .filter((cam) => typeof cam.lat === 'number' && typeof cam.lng === 'number')
+      .map((cam) => ({
+        cam,
+        d: haversineKm(lat, lng, cam.lat as number, cam.lng as number),
+      }))
+      .filter((x) => x.d <= radiusKm)
+      .sort((a, b) => a.d - b.d)
+      .map((x) => x.cam);
   }
   return out;
 }
@@ -145,7 +171,10 @@ export function sliceExplore(
   req: CountrySliceRequest,
 ): CountrySlice {
   const scoped = applyScope(records, scope);
-  const ordered = sortForExplore(scoped, groupBy);
+  /* A geo scope's order is nearest-first (applyScope already sorted
+     it); the grouped orders are for browsing a whole catalogue, not a
+     radius around a point. */
+  const ordered = scope.geo ? scoped : sortForExplore(scoped, groupBy);
   return sliceCountryCameras(ordered, req);
 }
 
