@@ -90,6 +90,7 @@ const EmailCaptureCard = dynamic(() => import('@/components/EmailCaptureCard'));
 const TimedTrialPopup = dynamic(() => import('@/components/TimedTrialPopup'));
 const ShareAwayPrompt = dynamic(() => import('@/components/ShareAwayPrompt'));
 const AccountHudControl = dynamic(() => import('@/components/AccountHudControl'));
+const LanguageHeaderControl = dynamic(() => import('@/components/translate/LanguageHeaderControl'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
 // RESTORE 2026-10-12: the CompanionWidget dynamic import was removed with
@@ -2524,6 +2525,9 @@ export default function Dashboard() {
             account menu; anonymous → the pill alone. This used to key off
             isPremiumUser, which made signed-in free users
             indistinguishable from signed-out ones. */}
+        {/* Language switch — moved to the header at the owner's order
+            (it used to live at the bottom of the Layers panel + rail). */}
+        <LanguageHeaderControl variant="desktop" />
         <AccountHudControl variant="desktop" />
 
       </motion.div>
@@ -2534,6 +2538,7 @@ export default function Dashboard() {
       {isMobile && !showDirections && !navSession && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="absolute top-3 right-3 z-[200] pointer-events-auto flex flex-col items-end gap-1.5">
           <div className="flex items-center gap-2">
+            <LanguageHeaderControl variant="mobile" />
             <AccountHudControl variant="mobile" />
           </div>
         </motion.div>

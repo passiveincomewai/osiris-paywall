@@ -10,7 +10,7 @@ import {
 import StyleStudio from './StyleStudio';
 import TrialPicker from './TrialPicker';
 import ProUpgradeEmbed from './ProUpgradeEmbed';
-import { LanguageRailControl, LanguageSelect } from './translate/LanguageControl';
+
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
 import { SENSOR_EFFECT_OPTIONS, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
 import { readSessionIdentity, type SessionIdentityState } from '@/lib/premium-entitlement';
@@ -543,15 +543,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
           </div>
         )}
 
-        {/* MOBILE LANGUAGE — bottom of the panel, per the owner's spec.
-            Default English = translation off; choosing a language reloads
-            the site translated (see lib/translate/locale.ts). */}
-        <div className="pt-3 border-t border-white/[0.06] px-1">
-          <div className="text-[10px] font-mono tracking-[0.2em] text-white/25 uppercase mb-2">
-            Language
-          </div>
-          <LanguageSelect />
-        </div>
+        {/* Language moved to the header switch (owner's order,
+            2026-10-26): components/translate/LanguageHeaderControl. */}
       </div>
     );
   }
@@ -855,8 +848,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
         </button>
       )}
 
-      {/* Language — bottom of the rail, below Style Studio / Ghost. */}
-      <LanguageRailControl />
+      {/* Language used to sit at the bottom of this rail; it moved to
+          the header switch on 2026-10-26 (owner's order). */}
     </motion.div>
   );
 }
