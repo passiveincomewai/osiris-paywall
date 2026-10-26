@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowLeft,
-  ArrowRight,
   Camera,
   CheckCircle2,
   Eye,
@@ -249,9 +248,9 @@ export default function JournalistsPage() {
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
+                className="inline-block hover:brightness-110 transition"
               >
-                Upgrade to Pro <ArrowRight className="w-4 h-4" />
+                <img src="/upgrade-to-pro.png" alt="Upgrade to Pro" width={1072} height={262} className="h-12 w-auto" draggable={false} />
               </Link>
             </div>
           </div>

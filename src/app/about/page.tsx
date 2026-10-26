@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Globe, Eye, ShieldCheck, Users, Code2, ArrowRight } from "lucide-react";
+import { ArrowLeft, Globe, Eye, ShieldCheck, Users, Code2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
@@ -315,9 +315,9 @@ export default function AboutPage() {
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
+                className="inline-block hover:brightness-110 transition"
               >
-                Upgrade to Pro <ArrowRight className="w-4 h-4" />
+                <img src="/upgrade-to-pro.png" alt="Upgrade to Pro" width={1072} height={262} className="h-12 w-auto" draggable={false} />
               </Link>
             </div>
           </div>

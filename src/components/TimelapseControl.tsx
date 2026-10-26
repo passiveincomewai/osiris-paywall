@@ -337,7 +337,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
                 intel feeds. Upgrade to VIP Pro (billed annually) to unlock it here.
               </p>
               <div className="mt-0.5">
-                <button onClick={() => setTrialOpen((v) => !v)} aria-expanded={trialOpen} className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-widest bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/25 transition-colors">UPGRADE TO VIP PRO</button>
+                <button onClick={() => setTrialOpen((v) => !v)} aria-expanded={trialOpen} aria-label="Upgrade to VIP Pro" className="inline-block hover:brightness-110 transition"><img src="/upgrade-to-pro.png" alt="Upgrade to PRO" width={1072} height={262} draggable={false} className="h-7 w-auto" /></button>
               </div>
               {trialOpen && (
                 <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">

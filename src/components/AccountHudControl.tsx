@@ -60,13 +60,21 @@ export default function AccountHudControl({
   const pill = (
     <Link
       href="/pricing"
+      aria-label="Upgrade to PRO"
       className={
         variant === "desktop"
-          ? "pointer-events-auto px-3.5 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.15em] hover:brightness-110 transition shadow-[0_0_12px_rgba(212,175,55,0.4)]"
-          : "px-3 py-1.5 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold tracking-[0.12em]"
+          ? "pointer-events-auto inline-block hover:brightness-110 transition drop-shadow-[0_0_12px_rgba(56,150,255,0.45)]"
+          : "inline-block hover:brightness-110 transition"
       }
     >
-      Upgrade to PRO
+      <img
+        src="/upgrade-to-pro.png"
+        alt="Upgrade to PRO"
+        width={1072}
+        height={262}
+        draggable={false}
+        className={variant === "desktop" ? "h-8 w-auto" : "h-7 w-auto"}
+      />
     </Link>
   );
 
