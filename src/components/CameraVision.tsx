@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, Loader2, ScanSearch, Timer, X } from 'lucide-react';
+import { Eye, Loader2, ScanSearch, X } from 'lucide-react';
 import { VEHICLES, type Detection, type Label } from '@/lib/vision/detect';
 import { countWords, describeWatch, labelWord } from '@/lib/vision/analysis';
 import { clearLook, look, sourceOf, useLook, type VisionCamera } from '@/lib/vision/store';
@@ -16,8 +16,6 @@ import { clearLook, look, sourceOf, useLook, type VisionCamera } from '@/lib/vis
  * The analysed frame is drawn with its boxes in one SVG, so the boxes sit on
  * the picture exactly whether the viewer crops it (cover) or fits it (contain).
  */
-
-const WATCH_SECONDS = 30;
 
 /** People in the platform's gold, vehicles in OI's blue, the rest in white. */
 function tone(label: Label): string {
@@ -87,11 +85,6 @@ export default function CameraVision({ camera, fit, ready }: { camera: VisionCam
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/75 border text-[9px] font-mono font-bold tracking-[0.2em] transition-colors hover:bg-[var(--gold-primary)]/20"
             style={{ borderColor: 'var(--gold-primary)', color: 'var(--gold-primary)' }} title="Count what is in view: free, on this device">
             <ScanSearch className="w-3 h-3" /> AI ANALYZE
-          </button>
-          <button onClick={() => start(WATCH_SECONDS)} aria-label={`Watch for ${WATCH_SECONDS} seconds`}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/75 border border-white/15 text-[9px] font-mono tracking-[0.2em] text-[var(--text-secondary)] transition-colors hover:text-white hover:border-white/40"
-            title={`Follow the feed for ${WATCH_SECONDS} seconds and see how it changes`}>
-            <Timer className="w-3 h-3" /> WATCH {WATCH_SECONDS}S
           </button>
         </div>
       )}

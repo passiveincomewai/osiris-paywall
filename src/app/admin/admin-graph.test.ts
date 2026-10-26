@@ -61,6 +61,7 @@ const fakeDb = {
   commission: { aggregate: async () => ({ _sum: { amountCents: null } }) },
   creatorApplication: { findMany: async () => [] },
   marketingTemplate: { findMany: async () => [] },
+  lifecycleEmailLog: { findMany: async () => [] },
   $queryRaw: async (strings: TemplateStringsArray, ..._values: any[]) => {
     const sql = strings.join("?");
     if (sql.includes("TO_CHAR") && sql.includes('"PageView"')) {

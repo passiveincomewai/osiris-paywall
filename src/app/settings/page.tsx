@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import SettingsClient from "./SettingsClient";
 import SetNamePrompt from "@/components/SetNamePrompt";
+import PastDueBanner from "@/components/PastDueBanner";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function SettingsPage() {
   return (
     <div className="docs-root min-h-screen bg-[#05070d] text-white">
       <SetNamePrompt />
+      <PastDueBanner containerClassName="mx-auto w-full max-w-2xl px-4 pt-8" />
       <Suspense>
         <SettingsClient />
       </Suspense>

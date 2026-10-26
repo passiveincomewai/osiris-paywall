@@ -50,7 +50,7 @@ vi.mock("@/lib/vision/frames", () => ({
 
 import { GET, POST } from "./route";
 import { PATCH, DELETE } from "./[id]/route";
-import { CAP_MESSAGE } from "@/lib/camera-alerts/logic";
+import { CAP_MESSAGE, capMessage } from "@/lib/camera-alerts/logic";
 
 const FUTURE = new Date("2027-10-20T12:00:00Z");
 const asUser = (tier: "vip" | "pro" | "free") => {
@@ -109,18 +109,35 @@ describe("GET /api/camera-alerts", () => {
     const body = await res.json();
     expect(body).toMatchObject({ tier: "vip", vip: true, maxActive: 10, rules: [], events: [] });
   });
+  it("reports each tier's own cap: pro 2, free 0", async () => {
+    asUser("pro");
+    expect(await (await GET()).json()).toMatchObject({ tier: "pro", vip: false, maxActive: 2 });
+    asUser("free");
+    expect(await (await GET()).json()).toMatchObject({ tier: "free", vip: false, maxActive: 0 });
+  });
 });
 
-describe("POST /api/camera-alerts — creation is VIP-only", () => {
+describe("POST /api/camera-alerts — creation follows the tier cap", () => {
   const good = { cameraId: "cam-still", condition: "snow on the road" };
-  it("401 signed out, 403 for pro and free members", async () => {
+  it("401 signed out; 403 with the plan code for free members", async () => {
     expect((await post(good)).status).toBe(401);
-    asUser("pro");
+    asUser("free");
     const res = await post(good);
     expect(res.status).toBe(403);
-    expect((await res.json()).error).toBe("vip");
-    asUser("free");
-    expect((await post(good)).status).toBe(403);
+    expect((await res.json()).error).toBe("plan");
+  });
+  it("creates for pro members, with the catalogue's own camera name, not the client's", async () => {
+    asUser("pro");
+    const res = await post({ ...good, cameraName: "Forged Name" });
+    expect(res.status).toBe(201);
+    expect((await res.json()).rule.cameraName).toBe("Server Camera Name");
+  });
+  it("refuses a pro member's 3rd active rule with the pro cap message", async () => {
+    asUser("pro");
+    mocks.activeCount = 2;
+    const res = await post(good);
+    expect(res.status).toBe(409);
+    expect((await res.json()).error).toBe(capMessage(2, "pro"));
   });
   it("creates with the catalogue's own camera name, not the client's", async () => {
     asUser("vip");
@@ -191,6 +208,40 @@ describe("PATCH/DELETE — owner-only management", () => {
   it("a lapsed (pro-tier) owner can still pause and delete — management is not trapped", async () => {
     asUser("pro");
     mocks.ruleById.set("rule-1", { ...own });
+    expect((await patch("rule-1", { active: false })).status).toBe(200);
+    expect((await del("rule-1")).status).toBe(200);
+  });
+  it("a pro owner resumes under their cap but not at it", async () => {
+    asUser("pro");
+    mocks.ruleById.set("rule-1", { ...own, active: false });
+    mocks.activeCount = 1;
+    expect((await patch("rule-1", { active: true })).status).toBe(200);
+    mocks.activeCount = 2;
+    const res = await patch("rule-1", { active: true });
+    expect(res.status).toBe(409);
+    expect((await res.json()).error).toBe(capMessage(2, "pro"));
+  });
+  it("downgraded VIP→Pro: rules are never deleted, management works over the cap, creating/resuming wait until under it", async () => {
+    asUser("pro");
+    mocks.activeCount = 5; // five active rules from the VIP days; the Pro cap is 2
+    mocks.ruleById.set("rule-1", { ...own });
+    // Creating is refused while over the cap…
+    expect((await post({ cameraId: "cam-still", condition: "snow on the road" })).status).toBe(409);
+    // …but pausing and deleting the rules they already have always work.
+    expect((await patch("rule-1", { active: false })).status).toBe(200);
+    expect((await del("rule-1")).status).toBe(200);
+    // A paused rule can't be resumed while still over the cap.
+    mocks.ruleById.set("rule-2", { ...own, id: "rule-2", active: false });
+    const res = await patch("rule-2", { active: true });
+    expect(res.status).toBe(409);
+    expect((await res.json()).error).toBe(capMessage(2, "pro"));
+  });
+  it("a lapsed-to-free owner can't resume a rule (cap 0), but can still pause and delete", async () => {
+    asUser("free");
+    mocks.ruleById.set("rule-1", { ...own, active: false });
+    const res = await patch("rule-1", { active: true });
+    expect(res.status).toBe(409);
+    expect((await res.json()).error).toBe(capMessage(0, "free"));
     expect((await patch("rule-1", { active: false })).status).toBe(200);
     expect((await del("rule-1")).status).toBe(200);
   });

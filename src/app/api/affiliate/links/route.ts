@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { REF_CODE_RE } from "@/lib/affiliate/attribution";
 import { trackingSlugFromLabel } from "@/lib/affiliate/insights";
 import { referralLinkFor } from "@/lib/affiliate/brand";
+import { seedPlatformLinksIfEmpty } from "@/lib/affiliate/platforms";
 import { requireAffiliate, activeOnly } from "../_util";
 
 export const runtime = "nodejs";
@@ -39,6 +40,11 @@ async function listWithStats(profileId: string, code: string) {
 export async function GET() {
   const { profile, error } = await requireAffiliate();
   if (error) return error;
+  // First read with zero links: materialize the ready-made platform set
+  // (one tracking link per social platform, platforms.ts). Any existing
+  // link blocks seeding, and a seeding failure must never break the
+  // list — same contract as the notification center's lazy sync.
+  await seedPlatformLinksIfEmpty(profile.id, MAX_LINKS).catch(() => {});
   const code = profile.customCode ?? profile.referralCode;
   return NextResponse.json({ links: await listWithStats(profile.id, code), max: MAX_LINKS });
 }

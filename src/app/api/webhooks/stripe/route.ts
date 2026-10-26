@@ -16,6 +16,7 @@ import { sendMetaEvent } from "@/lib/meta-capi";
 import { getTeamPricingConfig } from "@/lib/team/pricing-config";
 import { findBaseItem, reconcileOrgSeatsFromSubscription } from "@/lib/team/seats";
 import { recordTeamEvent } from "@/lib/team/analytics";
+import { sendPaymentFailedRecovery } from "@/lib/billing/dunning";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -441,8 +442,25 @@ export async function POST(req: NextRequest) {
       case "invoice.payment_failed": {
         // Card failed on renewal → reflect past_due immediately so the
         // paywall (via JWT refresh) locks them out at the next check.
-        const subId = subscriptionIdFromInvoice(event.data.object as Stripe.Invoice);
+        const invoice = event.data.object as Stripe.Invoice;
+        const subId = subscriptionIdFromInvoice(invoice);
         if (subId) await subscriptionFromId(subId);
+        // Dunning: email the customer a recovery link (the invoice's
+        // hosted page + their billing page). Best-effort — the status
+        // sync above is the critical path, so a mail failure is logged,
+        // never thrown (it must not fail the webhook delivery). The
+        // send is deduped per invoice attempt via LifecycleEmailLog, so
+        // Stripe replays can't double-send.
+        try {
+          const recovery = await sendPaymentFailedRecovery(invoice);
+          if (recovery.sent) {
+            console.log(
+              `[stripe-webhook] payment recovery email sent for invoice ${invoice.id} (attempt key ${recovery.contextKey})`,
+            );
+          }
+        } catch (e) {
+          console.error("[stripe-webhook] payment recovery email failed:", e);
+        }
         break;
       }
       case "customer.subscription.updated": {

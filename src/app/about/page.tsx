@@ -4,6 +4,7 @@ import { ArrowLeft, Globe, Eye, ShieldCheck, Users, Code2, ArrowRight } from "lu
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import { ORGANIZATION_ID, WEBSITE_ID } from "@/lib/seo/entity-schema";
 
 export const metadata: Metadata = {
   title: "About WorldEye — Open Planetary Intelligence for Everyone",
@@ -26,14 +27,8 @@ const jsonLd = {
   description:
     "WorldEye is a free live 3D globe of the planet — flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras with no signup.",
   url: "https://worldeye.app/about",
-  isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
-  about: {
-    "@type": "Organization",
-    name: "WorldEye",
-    url: "https://worldeye.app",
-    description:
-      "A live 3D globe of the planet with a free tier for everyone and Pro intelligence tools.",
-  },
+  isPartOf: { "@id": WEBSITE_ID },
+  about: { "@id": ORGANIZATION_ID },
 };
 
 const PRINCIPLES = [

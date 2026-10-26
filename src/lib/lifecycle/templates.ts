@@ -420,3 +420,38 @@ export function weeklyDigestEmail(input: {
     ),
   };
 }
+
+// ── (h) Payment failed → recovery (transactional, webhook-sent) ───────
+// Sent by the Stripe webhook on invoice.payment_failed (see
+// lib/billing/dunning.ts) — NOT by the lifecycle engine. Transactional
+// account-service mail: no unsubscribe footer, no marketing cap, but the
+// send is logged in LifecycleEmailLog under template
+// "payment_failed_recovery" with the same once-only discipline.
+export function paymentFailedRecoveryEmail(input: {
+  name: string | null;
+  /** Pre-formatted by the caller (formatMoney), e.g. "$74.99". */
+  amountLabel: string;
+  /** The invoice's Stripe-hosted page: pay + update the card on file. */
+  hostedInvoiceUrl: string;
+  /** The account billing page (/settings/subscription, absolute). */
+  accountUrl: string;
+  /** Pre-formatted next automatic retry date, or null when Stripe gave none. */
+  nextAttemptLabel: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const retry = input.nextAttemptLabel
+    ? P(`Stripe will automatically retry the charge on <strong style="color:#fff;">${escapeHtml(input.nextAttemptLabel)}</strong> — updating your payment details before then keeps everything running.`)
+    : P(`Updating your payment details now keeps everything running.`);
+  return {
+    subject: "Action needed: your WorldEye payment didn't go through",
+    html: shell(
+      "Your payment needs attention",
+      `Your WorldEye payment of ${input.amountLabel} didn't go through — update your payment details to keep your plan.`,
+      `${P(`Hi ${first},`)}
+       ${P(`We couldn't process your WorldEye subscription payment of <strong style="color:#fff;">${escapeHtml(input.amountLabel)}</strong>, so your subscription is now past due and paid features are locked until the payment goes through.`)}
+       ${retry}
+       ${P(`You can also review your plan any time on your <a href="${escapeHtml(input.accountUrl)}" style="color:#D4AF37;">billing page</a>.`)}`,
+      { label: "Update payment & pay now", href: input.hostedInvoiceUrl },
+    ),
+  };
+}

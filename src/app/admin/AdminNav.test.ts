@@ -1,5 +1,5 @@
 /* AdminNav: the shared admin section nav. Pins the contract every admin
-   page relies on — all five sections plus the site link are present, the
+   page relies on — all six sections plus the site link are present, the
    active section is marked aria-current="page" exactly once, links are
    shrink-0 pills in a horizontally scrollable row (the mobile pattern),
    and the external Growth Engine link only appears when configured. */
@@ -8,8 +8,8 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import AdminNav, { type AdminSection } from "./AdminNav";
 
-const HREFS = ["/admin", "/admin/conversion", "/admin/affiliates", "/admin/competitor-seo", "/admin/contact", "/"];
-const ACTIVES: AdminSection[] = ["dashboard", "conversion", "affiliates", "competitor-seo", "contact"];
+const HREFS = ["/admin", "/admin/conversion", "/admin/affiliates", "/admin/competitor-seo", "/admin/contact", "/admin/camera-submissions", "/"];
+const ACTIVES: AdminSection[] = ["dashboard", "conversion", "affiliates", "competitor-seo", "contact", "camera-submissions"];
 
 describe("AdminNav", () => {
   it("links every admin section from every page", () => {

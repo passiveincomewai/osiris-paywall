@@ -15,6 +15,8 @@ import {
   startPlanCheckout,
   trialEntryDecision,
 } from "./trial-checkout";
+import { CheckoutError } from "./checkout-error";
+import { ALREADY_SUBSCRIBED_MESSAGE } from "./checkout-guard";
 
 describe("TRIAL_PLAN_OPTIONS", () => {
   it("offers exactly the three trial plans, in pricing order", () => {
@@ -209,5 +211,39 @@ describe("startHostedCheckout", () => {
     await expect(
       startHostedCheckout("monthly", { fetchImpl, navigate: vi.fn() }),
     ).rejects.toThrow("Checkout failed");
+  });
+
+  it("throws a structured CheckoutError for an already-subscribed refusal", async () => {
+    const { fetchImpl } = fakeFetch({
+      ok: false,
+      body: {
+        error: ALREADY_SUBSCRIBED_MESSAGE,
+        code: "already_subscribed",
+        manageUrl: "/settings/subscription",
+      },
+    });
+    const err = await startHostedCheckout("annual", {
+      fetchImpl,
+      navigate: vi.fn(),
+    }).catch((e) => e);
+    expect(err).toBeInstanceOf(CheckoutError);
+    expect(err.message).toBe(ALREADY_SUBSCRIBED_MESSAGE);
+    expect(err.code).toBe("already_subscribed");
+    expect(err.alreadySubscribed).toBe(true);
+    expect(err.managePath).toBe("/settings/subscription");
+  });
+
+  it("throws the generic CheckoutError when the failure carries no message", async () => {
+    // A message-less failure (e.g. a 500 whose body isn't JSON — the
+    // fake's null body is what postCheckout-equivalent parsing yields).
+    const { fetchImpl } = fakeFetch({ ok: false, body: null });
+    const err = await startHostedCheckout("weekly", {
+      fetchImpl,
+      navigate: vi.fn(),
+    }).catch((e) => e);
+    expect(err).toBeInstanceOf(CheckoutError);
+    expect(err.message).toBe("Checkout failed");
+    expect(err.serverMessage).toBeNull();
+    expect(err.code).toBeNull();
   });
 });

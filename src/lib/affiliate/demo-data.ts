@@ -182,8 +182,21 @@ export function buildDemoNotifications() {
 }
 
 export function buildDemoLinks() {
+  // The ready-made platform set (slugs from the platforms registry, in
+  // registry order) plus two custom links — the demo dashboard renders
+  // the same Social platforms / Your links split as a live account.
   return [
-    { label: "YouTube description", slug: "youtube", url: "https://worldeye.app/ref/DEMO?t=youtube", clicks: 1104, signups: 39 },
+    { label: "Instagram", slug: "instagram", url: "https://worldeye.app/ref/DEMO?t=instagram", clicks: 862, signups: 27 },
+    { label: "TikTok", slug: "tiktok", url: "https://worldeye.app/ref/DEMO?t=tiktok", clicks: 743, signups: 22 },
+    { label: "YouTube", slug: "youtube", url: "https://worldeye.app/ref/DEMO?t=youtube", clicks: 1104, signups: 39 },
+    { label: "X", slug: "x-twitter", url: "https://worldeye.app/ref/DEMO?t=x-twitter", clicks: 655, signups: 18 },
+    { label: "Facebook", slug: "facebook", url: "https://worldeye.app/ref/DEMO?t=facebook", clicks: 431, signups: 12 },
+    { label: "Threads", slug: "threads", url: "https://worldeye.app/ref/DEMO?t=threads", clicks: 246, signups: 7 },
+    { label: "Twitch", slug: "twitch", url: "https://worldeye.app/ref/DEMO?t=twitch", clicks: 388, signups: 11 },
+    { label: "LinkedIn", slug: "linkedin", url: "https://worldeye.app/ref/DEMO?t=linkedin", clicks: 96, signups: 3 },
+    { label: "Pinterest", slug: "pinterest", url: "https://worldeye.app/ref/DEMO?t=pinterest", clicks: 122, signups: 4 },
+    { label: "Reddit", slug: "reddit", url: "https://worldeye.app/ref/DEMO?t=reddit", clicks: 198, signups: 6 },
     { label: "Newsletter", slug: "newsletter", url: "https://worldeye.app/ref/DEMO?t=newsletter", clicks: 598, signups: 19 },
+    { label: "Blog sidebar", slug: "blog-sidebar", url: "https://worldeye.app/ref/DEMO?t=blog-sidebar", clicks: 154, signups: 5 },
   ];
 }

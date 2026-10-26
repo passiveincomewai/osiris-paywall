@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check } from 'lucide-react';
-import Hls from 'hls.js';
+import type Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
 import { cameraShareId, cameraShareTitle, rememberLastCamera } from '@/lib/camera-share';
 import { shareEntity } from '@/lib/share/client';
@@ -121,26 +121,39 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
     }
 
     if (streamType === 'hls' && camera.stream_url) {
-      if (Hls.isSupported() && videoRef.current) {
-        const hls = new Hls({ enableWorker: false });
-        hlsRef.current = hls;
-        hls.loadSource(camera.stream_url);
-        hls.attachMedia(videoRef.current);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          setLoading(false);
-          videoRef.current?.play().catch(() => {});
-        });
-        hls.on(Hls.Events.ERROR, (event, data) => {
-          if (data.fatal) setError(true);
-        });
-      } else if (videoRef.current?.canPlayType('application/vnd.apple.mpegurl')) {
-        videoRef.current.src = camera.stream_url;
-        videoRef.current.addEventListener('loadedmetadata', () => {
-          setLoading(false);
-          videoRef.current?.play().catch(() => {});
-        });
-      }
-      return;
+      // hls.js is a decoder most cameras never need (snapshots, MJPEG, MP4
+      // and embeds dominate the catalogue), so it is imported only when an
+      // HLS feed is actually opened — the same pattern CctvPreviews uses.
+      // The decision order is unchanged: MSE support first, native HLS
+      // second. The cancelled flag covers a camera switch mid-import; the
+      // instance itself is still destroyed at the top of the next run.
+      let cancelled = false;
+      const hlsUrl = camera.stream_url;
+      import('hls.js')
+        .then(({ default: Hls }) => {
+          if (cancelled) return;
+          if (Hls.isSupported() && videoRef.current) {
+            const hls = new Hls({ enableWorker: false });
+            hlsRef.current = hls;
+            hls.loadSource(hlsUrl);
+            hls.attachMedia(videoRef.current);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              setLoading(false);
+              videoRef.current?.play().catch(() => {});
+            });
+            hls.on(Hls.Events.ERROR, (event, data) => {
+              if (data.fatal) setError(true);
+            });
+          } else if (videoRef.current?.canPlayType('application/vnd.apple.mpegurl')) {
+            videoRef.current.src = hlsUrl;
+            videoRef.current.addEventListener('loadedmetadata', () => {
+              setLoading(false);
+              videoRef.current?.play().catch(() => {});
+            });
+          }
+        })
+        .catch(() => { if (!cancelled) setError(true); });
+      return () => { cancelled = true; };
     }
 
     if (streamType === 'mjpeg' && camera.stream_url) {

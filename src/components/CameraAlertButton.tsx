@@ -1,20 +1,21 @@
 'use client';
 
 /**
- * The globe camera viewer's "Set alert" control (VIP Pro camera alerts).
+ * The globe camera viewer's "Set alert" control (camera alerts —
+ * Pro watches up to 2 cameras, VIP Pro up to 10).
  *
  * Sits in the viewer's header controls beside Save to My Cameras and
  * works for the camera on screen — including /?camera=<id> deep links,
  * which open this same viewer. One GET /api/camera-alerts per camera
  * resolves everything the control must know: signed out (401), the
- * member's tier, their existing rule for THIS camera (no duplicates),
- * and the 10-active cap. Creating posts to the same API the settings
- * page and dashboard use, so a rule made here shows up there — the
- * service stays the single truth (catalogue membership, still-photo
- * requirement, condition and channel validation, the cap), and its own
- * error strings are surfaced verbatim.
+ * member's tier and its cap, their existing rule for THIS camera (no
+ * duplicates), and the cap itself. Creating posts to the same API the
+ * settings page and dashboard use, so a rule made here shows up
+ * there — the service stays the single truth (catalogue membership,
+ * still-photo requirement, condition and channel validation, the
+ * cap), and its own error strings are surfaced verbatim.
  *
- * Gating is honest: signed-out and non-VIP members get the upgrade
+ * Gating is honest: signed-out and free members get the upgrade
  * path, never a fake-created rule; a stream-only camera (no still for
  * the checker to look at) says so up front instead of failing at save.
  */
@@ -78,6 +79,8 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
   const ready = state.kind === 'ready' ? state.view : null;
   const existing: AlertRuleLike | null = ready ? ruleForCamera(ready.rules, cameraId) : null;
   const atCap = ready ? ready.activeCount >= ready.maxActive : false;
+  /** Alerts live on the paid plans: the member's own cap (0 free · 2 pro · 10 vip). */
+  const canAlert = ready ? ready.maxActive > 0 : false;
 
   const create = async () => {
     setBusy('create');
@@ -95,7 +98,7 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
         await reload(cameraId);
       } else if (outcome.kind === 'signin') {
         setLoad({ forId: cameraId, state: { kind: 'signed-out' } });
-      } else if (outcome.kind === 'vip') {
+      } else if (outcome.kind === 'plan') {
         await reload(cameraId);
       } else {
         setNotice({ tone: 'err', text: outcome.message });
@@ -138,7 +141,7 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
         title={
           existing
             ? 'Alert set for this camera — view or remove it'
-            : 'Set alert for this camera (VIP Pro)'
+            : 'Set alert for this camera'
         }
         className={`p-1.5 rounded-sm border transition-all ${
           existing
@@ -205,12 +208,13 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
             {state.kind === 'signed-out' && (
               <div className="space-y-2.5">
                 <p className="inline-flex items-center gap-1.5 text-[11px] font-mono text-white/85">
-                  <Crown className="w-3.5 h-3.5 text-[var(--gold-primary)]" /> Camera alerts are a
-                  VIP Pro feature.
+                  <Crown className="w-3.5 h-3.5 text-[var(--gold-primary)]" /> Camera alerts come
+                  with Pro and VIP Pro.
                 </p>
                 <p className="text-[10px] font-mono text-white/50 leading-relaxed">
-                  Sign in with VIP Pro to watch this camera — we’ll email you the first time your
-                  condition shows in its photos.
+                  Sign in with a paid plan to watch this camera — Pro watches up to 2 cameras, VIP
+                  Pro up to 10 — and we’ll email you the first time your condition shows in its
+                  photos.
                 </p>
                 <a
                   href={`/api/auth/signin?callbackUrl=${encodeURIComponent(`/?camera=${cameraId}`)}`}
@@ -232,10 +236,10 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
                   {existing.emailEnabled ? 'ON' : 'OFF'} · IN-APP{' '}
                   {existing.inAppEnabled ? 'ON' : 'OFF'}
                 </p>
-                {!ready.vip && (
+                {!canAlert && (
                   <p className="text-[10px] font-mono text-amber-300/90 leading-relaxed">
-                    Your VIP Pro isn’t active right now, so this alert is paused. It resumes on its
-                    own when VIP Pro is back.
+                    Your plan isn’t active right now, so this alert is paused. It resumes on its
+                    own when Pro or VIP Pro is back.
                   </p>
                 )}
                 <div className="flex gap-2">
@@ -258,23 +262,23 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
               </div>
             )}
 
-            {ready && !existing && !ready.vip && (
+            {ready && !existing && !canAlert && (
               <div className="space-y-2.5">
                 <p className="inline-flex items-center gap-1.5 text-[11px] font-mono text-white/85">
-                  <Crown className="w-3.5 h-3.5 text-[var(--gold-primary)]" /> Camera alerts are a
-                  VIP Pro feature.
+                  <Crown className="w-3.5 h-3.5 text-[var(--gold-primary)]" /> Camera alerts start
+                  with Pro.
                 </p>
                 <p className="text-[10px] font-mono text-white/50 leading-relaxed">
-                  VIP Pro (the annual plan) can watch up to {ready.maxActive} cameras like this one
-                  and get emailed when a condition first shows.
+                  Pro can watch up to 2 cameras like this one; VIP Pro (the annual plan) raises it
+                  to 10 — and you get emailed when a condition first shows.
                 </p>
-                <Link href="/settings/alerts" className={goldBtn}>
-                  GET VIP PRO
+                <Link href="/pricing" className={goldBtn}>
+                  SEE PLANS
                 </Link>
               </div>
             )}
 
-            {ready && !existing && ready.vip && !watchable && (
+            {ready && !existing && canAlert && !watchable && (
               <div className="space-y-2.5">
                 <p className="text-[10px] font-mono text-white/60 leading-relaxed">
                   Alerts check a camera’s still photo about every 15 minutes. This camera is a live
@@ -286,19 +290,25 @@ export default function CameraAlertButton({ camera }: { camera: any | null }) {
               </div>
             )}
 
-            {ready && !existing && ready.vip && watchable && atCap && (
+            {ready && !existing && canAlert && watchable && atCap && (
               <div className="space-y-2.5">
                 <p className="text-[10px] font-mono text-amber-300/90 leading-relaxed">
-                  You’re watching {ready.maxActive} cameras — the VIP limit. Pause or remove one to
-                  add this camera.
+                  {ready.vip
+                    ? `You’re watching ${ready.maxActive} cameras — the VIP Pro limit. Pause or remove one to add this camera.`
+                    : `You’re watching ${ready.maxActive} cameras — your Pro limit. VIP Pro raises it to 10.`}
                 </p>
+                {!ready.vip && (
+                  <Link href="/pricing" className={goldBtn}>
+                    GET VIP PRO
+                  </Link>
+                )}
                 <Link href="/dashboard#alerts" className={ghostBtn}>
                   MANAGE ALERTS
                 </Link>
               </div>
             )}
 
-            {ready && !existing && ready.vip && watchable && !atCap && (
+            {ready && !existing && canAlert && watchable && !atCap && (
               <div className="space-y-2.5">
                 <span className="block text-[9px] font-mono tracking-[0.2em] text-white/45">
                   WATCH FOR
