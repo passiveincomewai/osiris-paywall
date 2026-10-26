@@ -2532,13 +2532,23 @@ export default function Dashboard() {
 
       </motion.div>
 
+      {/* ── MOBILE: language switch under the logo ──
+          In the right-hand cluster it grew the row until it overlapped
+          the WorldEye logo (owner's screenshot, 2026-10-26); under the
+          logo it can never collide with the account controls. Hidden
+          with the same conditions as the mobile status cluster. */}
+      {isMobile && !showDirections && !navSession && (
+        <div className="absolute z-[200] pointer-events-auto" style={{ top: 62, left: 16 }}>
+          <LanguageHeaderControl variant="mobile" align="left" />
+        </div>
+      )}
+
       {/* ── MOBILE: Compact top status ── */}
       {/* The route planner claims the top of a phone screen; leaving this in
           place would put the support badge underneath the destination field. */}
       {isMobile && !showDirections && !navSession && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="absolute top-3 right-3 z-[200] pointer-events-auto flex flex-col items-end gap-1.5">
           <div className="flex items-center gap-2">
-            <LanguageHeaderControl variant="mobile" />
             <AccountHudControl variant="mobile" />
           </div>
         </motion.div>

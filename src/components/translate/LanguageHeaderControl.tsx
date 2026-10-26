@@ -60,9 +60,20 @@ const FLAGS: Record<string, string> = {
   yo: "🇳🇬", zu: "🇿🇦", gu: "🇮🇳", ku: "🇮🇶",
 };
 
-export default function LanguageHeaderControl({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) {
+export default function LanguageHeaderControl({
+  variant = "desktop",
+  align = "right",
+}: {
+  variant?: "desktop" | "mobile";
+  /** Which edge the dropdown hangs from. The mobile switch sits under
+   *  the logo on the LEFT (align left); the desktop switch sits in the
+   *  right-hand status bar (align right). Getting this wrong pushed the
+   *  panel off the phone screen (owner's screenshot, 2026-10-26). */
+  align?: "left" | "right";
+}) {
   const [open, setOpen] = useState(false);
   const [locale, setLocale] = useState<string>(SOURCE_LANGUAGE.code);
+  const [query, setQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,9 +87,9 @@ export default function LanguageHeaderControl({ variant = "desktop" }: { variant
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) { setOpen(false); setQuery(""); }
     };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setOpen(false); setQuery(""); } };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -90,6 +101,7 @@ export default function LanguageHeaderControl({ variant = "desktop" }: { variant
   const choose = (code: string) => {
     setLocale(code);
     setOpen(false);
+    setQuery("");
     try {
       applyLocale(code);
     } catch {
@@ -152,17 +164,47 @@ export default function LanguageHeaderControl({ variant = "desktop" }: { variant
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] w-[264px] max-w-[calc(100vw-1rem)] rounded-2xl border border-cyan-300/30 bg-[#04182b]/[0.97] backdrop-blur-xl shadow-[0_0_36px_rgba(0,150,255,0.28)] overflow-hidden z-[1300]">
+        <div className={`absolute ${align === "left" ? "left-0" : "right-0"} top-[calc(100%+8px)] w-[min(264px,calc(100vw-2rem))] rounded-2xl border border-cyan-300/30 bg-[#04182b]/[0.97] backdrop-blur-xl shadow-[0_0_36px_rgba(0,150,255,0.28)] overflow-hidden z-[1300]`}>
           <div className="px-3 pt-2.5 pb-1.5 text-[9px] font-mono tracking-[0.25em] text-cyan-200/50 uppercase">
             Language
           </div>
+          {/* Search — matches the native name, the English name and the
+              code, so a reader can find their language in any of the
+              three. Names in the list are native (endonyms) already:
+              Español, Français, 한국어 — a reader who knows no English
+              can still find theirs. */}
+          <div className="px-3 pb-2">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search languages…"
+              aria-label="Search languages"
+              className="w-full rounded-lg border border-cyan-200/20 bg-black/40 px-2.5 py-1.5 text-[12.5px] text-white/90 placeholder:text-white/35 outline-none focus:border-cyan-300/50"
+            />
+          </div>
           <div className="max-h-[min(62vh,470px)] overflow-y-auto overscroll-contain pb-1.5">
-            {POPULAR.map(row)}
-            <div className="mx-3 my-1.5 border-t border-cyan-200/10" />
-            <div className="px-3 py-1 text-[9px] font-mono tracking-[0.25em] text-cyan-200/40 uppercase">
-              All languages
-            </div>
-            {REST.map(row)}
+            {query.trim() ? (
+              <>
+                {ALL_LANGUAGES.filter((l) => {
+                  const q = query.trim().toLowerCase();
+                  return (
+                    l.nativeName.toLowerCase().includes(q) ||
+                    l.name.toLowerCase().includes(q) ||
+                    l.code.toLowerCase().includes(q) ||
+                    displayCode(l.code).toLowerCase().includes(q)
+                  );
+                }).map(row)}
+              </>
+            ) : (
+              <>
+                {POPULAR.map(row)}
+                <div className="mx-3 my-1.5 border-t border-cyan-200/10" />
+                <div className="px-3 py-1 text-[9px] font-mono tracking-[0.25em] text-cyan-200/40 uppercase">
+                  All languages
+                </div>
+                {REST.map(row)}
+              </>
+            )}
           </div>
           <p className="px-3 py-2 border-t border-cyan-200/10 text-[9px] font-mono leading-snug text-white/30">
             Machine translation by Google Translate. Map labels and camera
