@@ -98,11 +98,11 @@ describe("POST /api/checkout — hosted mode (unchanged)", () => {
     expect(p.return_url).toBeUndefined();
   });
 
-  it("applies the shared trial config: weekly 3, monthly 3, annual 3 days", async () => {
+  it("applies the shared trial config: weekly 10, monthly 10, annual 10 days", async () => {
     for (const [plan, days] of [
-      ["weekly", 3],
-      ["monthly", 3],
-      ["annual", 3],
+      ["weekly", 10],
+      ["monthly", 10],
+      ["annual", 10],
     ] as const) {
       vi.clearAllMocks();
       await post({ plan });
@@ -145,9 +145,9 @@ describe("POST /api/checkout — embedded mode", () => {
 
   it("preserves trial days per plan in embedded mode", async () => {
     for (const [plan, days] of [
-      ["weekly", 3],
-      ["monthly", 3],
-      ["annual", 3],
+      ["weekly", 10],
+      ["monthly", 10],
+      ["annual", 10],
     ] as const) {
       vi.clearAllMocks();
       await post({ plan, ui: "embedded" });

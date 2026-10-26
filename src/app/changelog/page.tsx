@@ -59,7 +59,7 @@ const ENTRIES: {
       "Competitor comparison system: 25 researched head-to-head pages plus alternatives and best-tools guides, all linked from the footer.",
       "Second SEO wave: 20 new pages and 7 blog posts covering ship, weather, wildfire, hurricane and space-station tracking, ADS-B/AIS explainers, and city webcam guides.",
       "Full account system — email signup with verification, password reset, magic-link sign-in, and Continue with Google.",
-      "Free trials on Pro: 1 free day on weekly plans, 3 free days on annual — card collected at signup, never charged during the trial.",
+      "Free trials on Pro: 10 free days on weekly plans, 10 free days on annual — card collected at signup, never charged during the trial.",
       "Guest checkout: start a trial or pay in Stripe first, claim your account after payment — no signup wall.",
       "Stripe live mode for Pro subscriptions, with the webhook as the sole subscription write path.",
       "Newsletter system with double opt-in plus abandoned-cart reminders for unfinished checkouts.",

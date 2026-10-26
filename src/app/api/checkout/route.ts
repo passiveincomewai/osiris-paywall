@@ -55,8 +55,8 @@ export async function POST(req: Request) {
     : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
     : plan === "enterprise" ? "STRIPE_ENTERPRISE_PRICE_ID"
     : "STRIPE_WEEKLY_PRICE_ID";
-  // Free trials: weekly → 3 days, monthly → 3 days, annual → 3 days
-  // (Conversion Wave 2, F2 — every self-serve trial is 3 days).
+  // Free trials: weekly → 10 days, monthly → 10 days, annual → 10 days
+  // (Conversion Wave 2, F2 — every self-serve trial is 10 days).
   // Enterprise has no trial. Config lives in src/lib/billing/trials.ts.
   // Stripe reports these subscriptions as `trialing`, which the paywall
   // treats as full Pro access.

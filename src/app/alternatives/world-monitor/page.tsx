@@ -201,11 +201,11 @@ const data: AltData = {
         {" "}
         Pro is $7.99/week or $13.99/month
       </span>{" "}
-      (1-day trials) and{" "}
+      (10-day trials) and{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro is $74.99/year
       </span>{" "}
-      (3-day trial) — less per year than two months of World Monitor Pro —
+      (10-day trial) — less per year than two months of World Monitor Pro —
       with a 7-day money-back guarantee on first charges. The dedicated
       comparison is at{" "}
       <Link href="/compare/world-monitor" className="text-[#0096FF] hover:underline">

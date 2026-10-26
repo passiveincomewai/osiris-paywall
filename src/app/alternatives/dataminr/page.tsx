@@ -203,10 +203,10 @@ const data: AltData = {
       : the globe, cameras, flights, satellites, weather, quakes and fires are
       free with no signup.{" "}
       <span className="text-white/85 font-semibold">Pro</span> is $7.99/week or
-      $13.99/month (1-day free trials) for the OSINT toolkit, satellite view,
+      $13.99/month (10-day free trials) for the OSINT toolkit, satellite view,
       traffic and 20-camera recording.{" "}
       <span className="text-white/85 font-semibold">VIP Pro</span> is
-      $74.99/year (3-day trial) adding intel layers, timelapse, camera alerts
+      $74.99/year (10-day trial) adding intel layers, timelapse, camera alerts
       and 40-camera recording. Every first charge has a 7-day money-back
       guarantee. The head-to-head lives at{" "}
       <Link href="/compare/dataminr" className="text-[#0096FF] hover:underline">

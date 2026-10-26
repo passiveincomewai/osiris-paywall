@@ -160,7 +160,7 @@ const data: AltData = {
     },
     {
       title: "Published pricing, with trials",
-      body: "Weekly $7.99 and monthly $13.99 (1-day trials), VIP Pro $74.99/year (3-day trial), 7-day money-back on first charges — all on the public pricing page.",
+      body: "Weekly $7.99 and monthly $13.99 (10-day trials), VIP Pro $74.99/year (10-day trial), 7-day money-back on first charges — all on the public pricing page.",
     },
     {
       title: "Pro tooling beyond the map",
@@ -187,7 +187,7 @@ const data: AltData = {
     { feature: "Premium focus", competitor: "Watchlists, kiosk mode, heavier ops layers", worldEye: "OSINT toolkit + AI analyst (Pro); intel layers, timelapse, camera alerts (VIP Pro)" },
     { feature: "Kiosk / wall-display mode", competitor: "Yes, on Premium", worldEye: "No" },
     { feature: "Pricing", competitor: "Free map; Premium prices not published", worldEye: "Free; $7.99/wk, $13.99/mo, $74.99/yr — published" },
-    { feature: "Free trials", competitor: "Not stated (no published pricing)", worldEye: "1-day weekly/monthly, 3-day VIP Pro" },
+    { feature: "Free trials", competitor: "Not stated (no published pricing)", worldEye: "10-day weekly/monthly, 10-day VIP Pro" },
     { feature: "Account needed", competitor: "No — map opens free", worldEye: "No — map opens free" },
     { feature: "Ads on the free map", competitor: "Not stated on its site", worldEye: "No ads" },
   ],
@@ -207,12 +207,12 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro is $7.99/week or $13.99/month
       </span>{" "}
-      (1-day trials) for the OSINT toolkit, satellite view, traffic and
+      (10-day trials) for the OSINT toolkit, satellite view, traffic and
       recording;{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro is $74.99/year
       </span>{" "}
-      (3-day trial) for intel layers, timelapse and camera alerts. First
+      (10-day trial) for intel layers, timelapse and camera alerts. First
       charges carry a 7-day money-back guarantee — the full grid is on the{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing page

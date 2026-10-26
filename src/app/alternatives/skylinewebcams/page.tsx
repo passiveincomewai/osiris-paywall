@@ -212,11 +212,11 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (1-day trials) for recording 20 cameras, satellite view and traffic;{" "}
+      (10-day trials) for recording 20 cameras, satellite view and traffic;{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}
-      (3-day trial) for 40-camera recording, timelapse and camera alerts.
+      (10-day trial) for 40-camera recording, timelapse and camera alerts.
       First charges carry a 7-day money-back guarantee — see{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing

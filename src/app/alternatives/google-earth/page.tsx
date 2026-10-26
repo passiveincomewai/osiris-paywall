@@ -194,12 +194,12 @@ const data: AltData = {
       . Its paid tiers buy monitoring capability Google Earth doesn&apos;t
       sell at any price:{" "}
       <span className="text-white/85 font-semibold">
-        Pro ($7.99/week or $13.99/month, 1-day trials)
+        Pro ($7.99/week or $13.99/month, 10-day trials)
       </span>{" "}
       for satellite view, flight-path follow, the OSINT toolkit and
       20-camera recording;{" "}
       <span className="text-white/85 font-semibold">
-        VIP Pro ($74.99/year, 3-day trial)
+        VIP Pro ($74.99/year, 10-day trial)
       </span>{" "}
       for intel layers, timelapse and camera alerts — first charges covered
       by a 7-day money-back guarantee. Full detail on the{" "}

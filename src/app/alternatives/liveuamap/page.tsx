@@ -193,11 +193,11 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (1-day trials) and{" "}
+      (10-day trials) and{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}
-      (3-day trial) with GDELT events, intel layers, camera alerts and
+      (10-day trial) with GDELT events, intel layers, camera alerts and
       40-camera recording; first charges carry a 7-day money-back guarantee.
       See{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">

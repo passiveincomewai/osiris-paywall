@@ -201,11 +201,11 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         $7.99/week or $13.99/month
       </span>{" "}
-      for Pro (each with a 1-day free trial), and{" "}
+      for Pro (each with a 10-day free trial), and{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}
-      (3-day trial) for timelapse, intel layers, camera alerts and 40-camera
+      (10-day trial) for timelapse, intel layers, camera alerts and 40-camera
       recording. Every first charge carries a 7-day money-back guarantee. Full
       detail lives on the{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">

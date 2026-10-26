@@ -2725,7 +2725,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "Annual grew up",
         body: [
-          "WorldEye's annual plan has a new name — VIP Pro — and for once a rename comes with more than a name. VIP Pro is now a true top tier with capabilities the other plans don't have, priced at $74.99 a year for new subscribers, with a 3-day free trial. If you already subscribe annually, you are already VIP Pro: your tier upgraded automatically, at the price you already pay. There is nothing to click.",
+          "WorldEye's annual plan has a new name — VIP Pro — and for once a rename comes with more than a name. VIP Pro is now a true top tier with capabilities the other plans don't have, priced at $74.99 a year for new subscribers, with a 10-day free trial. If you already subscribe annually, you are already VIP Pro: your tier upgraded automatically, at the price you already pay. There is nothing to click.",
           "Pro itself is unchanged — $7.99 a week or $13.99 a month, with the OSINT toolkit, satellite map view, traffic and 20-camera recording. VIP Pro is for the people who kept asking what sits above it. Here's the answer.",
         ],
       },
@@ -2753,7 +2753,7 @@ export const POSTS: BlogPost[] = [
         heading: "The tiers, plainly",
         body: [
           "Free covers the globe, the cameras, flights, satellites and weather with no signup. Pro adds the toolkit, satellite view, traffic, advanced search and recording. VIP Pro adds alerts, timelapse, the intel layers and the doubled recording cap for $74.99 a year — and every first charge on any plan carries the same 7-day money-back guarantee. Compare them side by side on the [pricing page](/pricing), and manage or upgrade an existing plan from [your subscription page](/settings/subscription).",
-          "Every tier can be tried before it is bought. Weekly and monthly plans carry a 1-day free trial; VIP Pro carries a 3-day trial, so the alerts, timelapse and intel layers can run against your own cameras and your own questions before the first charge ever lands.",
+          "Every tier can be tried before it is bought. Weekly and monthly plans carry a 10-day free trial; VIP Pro carries a 10-day trial, so the alerts, timelapse and intel layers can run against your own cameras and your own questions before the first charge ever lands.",
         ],
       },
     ],
@@ -2764,7 +2764,7 @@ export const POSTS: BlogPost[] = [
       },
       {
         q: "How much is VIP Pro?",
-        a: "$74.99 a year for new subscribers, with a 3-day free trial. Like every WorldEye plan, the first charge is covered by a 7-day money-back guarantee — email us within seven days and we refund it; that's a refund, not just a cancellation.",
+        a: "$74.99 a year for new subscribers, with a 10-day free trial. Like every WorldEye plan, the first charge is covered by a 7-day money-back guarantee — email us within seven days and we refund it; that's a refund, not just a cancellation.",
       },
       {
         q: "How do camera alerts decide when to notify me?",

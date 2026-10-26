@@ -7,13 +7,13 @@ import { TRIAL_DAYS, trialDaysForPlan } from "./trials";
 
 describe("TRIAL_DAYS", () => {
   it("grants the monthly plan a 3-day free trial", () => {
-    expect(TRIAL_DAYS.monthly).toBe(3);
-    expect(trialDaysForPlan("monthly")).toBe(3);
+    expect(TRIAL_DAYS.monthly).toBe(10);
+    expect(trialDaysForPlan("monthly")).toBe(10);
   });
 
-  it("grants the weekly plan 3 days and keeps annual at 3 days", () => {
-    expect(trialDaysForPlan("weekly")).toBe(3);
-    expect(trialDaysForPlan("annual")).toBe(3);
+  it("grants the weekly plan 10 days and keeps annual at 10 days", () => {
+    expect(trialDaysForPlan("weekly")).toBe(10);
+    expect(trialDaysForPlan("annual")).toBe(10);
   });
 
   it("gives enterprise no trial", () => {

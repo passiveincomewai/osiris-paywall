@@ -193,9 +193,9 @@ const data: AltData = {
         free with no signup
       </span>
       . <span className="text-white/85 font-semibold">Pro</span> is $7.99/week
-      or $13.99/month (1-day trials);{" "}
+      or $13.99/month (10-day trials);{" "}
       <span className="text-white/85 font-semibold">VIP Pro</span> is
-      $74.99/year (3-day trial) adding GDELT events, intel layers, camera
+      $74.99/year (10-day trial) adding GDELT events, intel layers, camera
       alerts and 40-camera recording, with a 7-day money-back guarantee on
       first charges. Full detail at{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">

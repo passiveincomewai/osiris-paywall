@@ -41,23 +41,23 @@ describe("TRIAL_PLAN_OPTIONS", () => {
     expect(byPlan.weekly).toMatchObject({
       price: "$7.99",
       per: "/week",
-      note: "3 days free, then billed weekly · cancel anytime",
-      cta: "Start 3-Day Free Trial",
-      trialLabel: "3 days free",
+      note: "10 days free, then billed weekly · cancel anytime",
+      cta: "Start 10-Day Free Trial",
+      trialLabel: "10 days free",
     });
     expect(byPlan.monthly).toMatchObject({
       price: "$13.99",
       per: "/month",
-      note: "3 days free, then billed monthly · cancel anytime",
-      cta: "Start 3-Day Free Trial",
-      trialLabel: "3 days free",
+      note: "10 days free, then billed monthly · cancel anytime",
+      cta: "Start 10-Day Free Trial",
+      trialLabel: "10 days free",
     });
     expect(byPlan.annual).toMatchObject({
       price: "$74.99",
       per: "/year",
-      note: "3 days free, then billed annually · cancel anytime",
-      cta: "Start 3-Day Free Trial",
-      trialLabel: "3 days free",
+      note: "10 days free, then billed annually · cancel anytime",
+      cta: "Start 10-Day Free Trial",
+      trialLabel: "10 days free",
     });
   });
 });

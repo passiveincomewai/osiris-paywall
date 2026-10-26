@@ -62,7 +62,7 @@ export default function PlansCards() {
         <p className="font-mono text-sm text-white/50 mt-1.5">
           Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99
         </p>
-        <p className="text-xs text-white/40 mt-1">Free trials: 1 day on weekly &amp; monthly · 3 days on annual</p>
+        <p className="text-xs text-white/40 mt-1">Free trials: 10 days on weekly &amp; monthly · 10 days on annual</p>
         <ul className="mt-5 space-y-2.5">
           {PRO_ROWS.map((row) => (
             <li key={row} className="flex items-baseline gap-2.5 text-sm text-white/75">

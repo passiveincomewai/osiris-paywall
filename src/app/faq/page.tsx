@@ -118,7 +118,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "How do the free trials work?",
-        a: "Weekly and monthly plans start with 1 free day, VIP Pro with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+        a: "Weekly and monthly plans start with 10 free days, VIP Pro with 10 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
       },
       {
         q: "Can I cancel anytime?",
@@ -142,7 +142,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "What is VIP Pro?",
-        a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and roomier camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 2 cameras on Pro and up to 10 on VIP Pro, and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
+        a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and roomier camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 2 cameras on Pro and up to 10 on VIP Pro, and email you when a condition you describe shows up. VIP Pro starts with a 10-day free trial.",
       },
     ],
   },
@@ -327,7 +327,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "How do the free trials work?",
-    a: "Weekly and monthly plans start with 1 free day, VIP Pro with 3 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+    a: "Weekly and monthly plans start with 10 free days, VIP Pro with 10 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
   },
   {
     q: "Can I cancel anytime?",
@@ -351,7 +351,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "What is VIP Pro?",
-    a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and roomier camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 2 cameras on Pro and up to 10 on VIP Pro, and email you when a condition you describe shows up. VIP Pro starts with a 3-day free trial.",
+    a: "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and roomier camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 2 cameras on Pro and up to 10 on VIP Pro, and email you when a condition you describe shows up. VIP Pro starts with a 10-day free trial.",
   },
   {
     q: "How do the cameras work?",

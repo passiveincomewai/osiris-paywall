@@ -204,12 +204,12 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (1-day trials) for the satellite map view, OSINT toolkit, traffic and
+      (10-day trials) for the satellite map view, OSINT toolkit, traffic and
       multi-camera recording;{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}
-      (3-day trial) for intel layers, timelapse and camera alerts. First
+      (10-day trial) for intel layers, timelapse and camera alerts. First
       charges carry a 7-day money-back guarantee — see{" "}
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing

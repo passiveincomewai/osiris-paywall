@@ -191,11 +191,11 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (1-day trials) and{" "}
+      (10-day trials) and{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}
-      (3-day trial), each first charge covered by a 7-day money-back
+      (10-day trial), each first charge covered by a 7-day money-back
       guarantee. The dedicated head-to-head is at{" "}
       <Link href="/compare/worldeye-vs-osiris" className="text-[#0096FF] hover:underline">
         WorldEye vs OSIRIS

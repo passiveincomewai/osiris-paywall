@@ -42,11 +42,11 @@ export interface TrialPlanOption {
   price: string;
   per: string;
   perDay: string;
-  /** Verbatim from /pricing's plan card, e.g. "3 days free, then billed weekly · cancel anytime". */
+  /** Verbatim from /pricing's plan card, e.g. "10 days free, then billed weekly · cancel anytime". */
   note: string;
-  /** Verbatim CTA from /pricing's plan card, e.g. "Start 3-Day Free Trial". */
+  /** Verbatim CTA from /pricing's plan card, e.g. "Start 10-Day Free Trial". */
   cta: string;
-  /** Trial badge text from /pricing's plan card, e.g. "3 days free". */
+  /** Trial badge text from /pricing's plan card, e.g. "10 days free". */
   trialLabel: string;
   /** Resolved through trialDaysForPlan — never restated. */
   trialDays: number;
@@ -58,18 +58,18 @@ const PLAN_COPY: Record<TrialPlan, Omit<TrialPlanOption, "plan" | "trialDays">> 
     price: "$7.99",
     per: "/week",
     perDay: "$1.14",
-    note: "3 days free, then billed weekly · cancel anytime",
-    cta: "Start 3-Day Free Trial",
-    trialLabel: "3 days free",
+    note: "10 days free, then billed weekly · cancel anytime",
+    cta: "Start 10-Day Free Trial",
+    trialLabel: "10 days free",
   },
   monthly: {
     name: "Monthly",
     price: "$13.99",
     per: "/month",
     perDay: "$0.47",
-    note: "3 days free, then billed monthly · cancel anytime",
-    cta: "Start 3-Day Free Trial",
-    trialLabel: "3 days free",
+    note: "10 days free, then billed monthly · cancel anytime",
+    cta: "Start 10-Day Free Trial",
+    trialLabel: "10 days free",
   },
   annual: {
     // The annual plan is sold as VIP Pro (a real tier — lib/plan-tier).
@@ -79,9 +79,9 @@ const PLAN_COPY: Record<TrialPlan, Omit<TrialPlanOption, "plan" | "trialDays">> 
     price: "$74.99",
     per: "/year",
     perDay: "$0.21",
-    note: "3 days free, then billed annually · cancel anytime",
-    cta: "Start 3-Day Free Trial",
-    trialLabel: "3 days free",
+    note: "10 days free, then billed annually · cancel anytime",
+    cta: "Start 10-Day Free Trial",
+    trialLabel: "10 days free",
   },
 };
 
@@ -110,7 +110,7 @@ export interface CheckoutPlanSummary {
   per: string;
   perDay: string;
   note: string;
-  /** Trial badge text ("3 days free"), or null when the plan has no trial. */
+  /** Trial badge text ("10 days free"), or null when the plan has no trial. */
   trialLabel: string | null;
   trialDays: number;
 }

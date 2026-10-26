@@ -6,7 +6,7 @@
  * summary record (PLAN_COPY via lib/billing/trial-checkout), so it can
  * never drift from /pricing's words.
  *
- * It deliberately does NOT restate the trial terms in prose ("1 day
+ * It deliberately does NOT restate the trial terms in prose ("10 days
  * free, then billed weekly…"): Stripe's own summary inside the form
  * states them, and the old tall card saying them twice pushed the form
  * — wallet buttons first — below the fold on phones (Jameson's

@@ -234,7 +234,6 @@ export default function HeaderProfileMenu() {
           {/* Navigation card */}
           <div className={`${card} py-0.5 divide-y divide-white/[0.05]`}>
             {([
-              { href: "/", icon: MapIcon, label: "Live map" },
               { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
               { href: "/dashboard#alerts", icon: BellRing, label: "Camera alerts" },
               { href: "/dashboard#recordings", icon: Video, label: "Recordings" },
