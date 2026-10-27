@@ -121,6 +121,7 @@ export default function AnalyticsTracker() {
     // Scroll-depth: fire once per session when the visitor actually reaches the globe.
     let fired = false;
     let observer: IntersectionObserver | null = null;
+    let targetWaiter: MutationObserver | null = null;
     if (path === "/") {
       try { fired = sessionStorage.getItem("we_globe_reached") === "1"; } catch {}
       if (!fired) {
@@ -135,18 +136,42 @@ export default function AnalyticsTracker() {
           }).catch(() => {});
           observer?.disconnect();
         };
-        const target = document.querySelector("[data-globe-section]");
-        if (target && "IntersectionObserver" in window) {
+        const watchTarget = (target: Element) => {
+          if (!("IntersectionObserver" in window)) return;
           observer = new IntersectionObserver((entries) => {
             if (entries.some((e) => e.isIntersecting)) fire();
           }, { threshold: 0.15 });
           observer.observe(target);
+        };
+        const target = document.querySelector("[data-globe-section]");
+        if (target) {
+          watchTarget(target);
+        } else if ("MutationObserver" in window) {
+          // The globe section can mount late: during the time-boxed
+          // account gate (lib/account-gate) the root page renders the
+          // sign-up wall first, and the shell — this section included —
+          // appears only once the visitor's session passes the gate.
+          // Wait for it (bounded: 60 s) so a signed-in visitor's
+          // globe_reached still fires; a walled visitor never gets the
+          // section, so nothing fires for them.
+          let stopWait: ReturnType<typeof setTimeout> | undefined;
+          targetWaiter = new MutationObserver(() => {
+            const t = document.querySelector("[data-globe-section]");
+            if (t) {
+              targetWaiter?.disconnect();
+              if (stopWait) clearTimeout(stopWait);
+              watchTarget(t);
+            }
+          });
+          targetWaiter.observe(document.body, { childList: true, subtree: true });
+          stopWait = setTimeout(() => targetWaiter?.disconnect(), 60_000);
         }
       }
     }
     return () => {
       window.removeEventListener("pagehide", reportDuration);
       observer?.disconnect();
+      targetWaiter?.disconnect();
     };
   }, [path]);
 
