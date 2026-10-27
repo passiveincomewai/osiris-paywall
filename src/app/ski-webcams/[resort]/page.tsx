@@ -9,6 +9,9 @@ import SkiConditions from "@/components/SkiConditions";
 import SkiRouteTool from "@/components/SkiRouteTool";
 import { cameraAreas } from "@/lib/country-cameras";
 import { plural } from "@/lib/country-page-content";
+import { computePlaceBreakdown } from "@/lib/place-breakdown";
+import { haversineKm } from "@/lib/place-neighbours";
+import { AreaTable } from "@/components/directory-page";
 import {
   formatArea,
   formatElevation,
@@ -120,7 +123,23 @@ export default async function SkiResortPage({
     : [];
   const total = resortCams.length + nearbyCams.length;
   const areas = cameraAreas([...resortCams, ...nearbyCams]).slice(0, 5);
-  const others = SKI_RESORTS.filter(o => o.slug !== r.slug && o.country === r.country).slice(0, 6);
+  /* The same-country cluster (§4.4), ordered by real distance from
+     this resort instead of file order — the nearest mountains are
+     the ones a visitor here plausibly skis next. */
+  const others = SKI_RESORTS.filter(o => o.slug !== r.slug && o.country === r.country)
+    .sort((a, b) => haversineKm(r.lat, r.lng, a.lat, a.lng) - haversineKm(r.lat, r.lng, b.lat, b.lng))
+    .slice(0, 6);
+  /* Access corridors (C11, §4.4): the nearby ring's cameras grouped
+     by the road designation in each camera's own name — the C2/C6
+     corridor parser reused unchanged. This is the drive-up check in
+     table form: which corridor carries the cameras, and how many.
+     Renders only where the ring is big enough and at least two
+     corridors actually parse — a resort whose road cameras carry no
+     designations gets no table rather than a fabricated one. */
+  const nearbyBreakdown = computePlaceBreakdown(nearbyCams);
+  const showCorridors =
+    nearbyCams.length >= 10 && nearbyBreakdown.corridors.length >= 2;
+  const corridorTail = nearbyBreakdown.unnamed + nearbyBreakdown.moreCorridors;
   /* Verified official links — buttons render only for links that were
      verified against the resort's own official site (lib/ski-resort-links). */
   const links = getSkiResortLinks(r.slug);
@@ -500,6 +519,21 @@ export default async function SkiResortPage({
             emptyNote={`No cameras within ${RESORT_RADIUS_KM} km of ${r.name} are in the live index right now — the road cameras below still cover the area.`}
           />
         </section>
+
+        {/* Access corridors (C11, §4.4) — the drive-up check, grouped
+            by the road each camera watches */}
+        {showCorridors && (
+          <AreaTable
+            title={`The drive up — ${r.name}'s access corridors`}
+            rows={[
+              ...nearbyBreakdown.corridors,
+              ...(corridorTail > 0
+                ? [{ name: "All other road cameras — local streets & unnamed feeds", count: corridorTail }]
+                : []),
+            ]}
+            note={`Counts are the ${plural(nearbyCams.length, "road camera")} in the ${NEARBY_RADIUS_KM} km ring around ${r.name} — the same set the grid below serves — grouped by the road designation in each camera's own name. Find your corridor here, then watch its cameras in the grid before you leave.`}
+          />
+        )}
 
         {/* Nearby traffic cameras */}
         <section className="mt-12">
