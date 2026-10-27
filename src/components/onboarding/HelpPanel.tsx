@@ -42,7 +42,7 @@ export function HelpButton({ isMobile, onClick }: { isMobile: boolean; onClick: 
       onClick={onClick}
       aria-label="Help and tutorials"
       title="Help & tutorials"
-      className="flex items-center justify-center rounded-full border border-white/20 bg-black/45 backdrop-blur-md text-white/75 hover:text-white hover:border-[var(--cyan-primary)]/60 hover:shadow-[0_0_14px_rgba(0,229,255,0.3)] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+      className="flex items-center justify-center rounded-full hover:shadow-[0_0_14px_rgba(0,229,255,0.35)] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
       style={
         isMobile
           ? {
@@ -52,8 +52,6 @@ export function HelpButton({ isMobile, onClick }: { isMobile: boolean; onClick: 
               width: 38,
               height: 38,
               zIndex: 940,
-              fontSize: 15,
-              fontFamily: "var(--font-mono, monospace)",
             }
           : {
               position: "fixed",
@@ -62,12 +60,20 @@ export function HelpButton({ isMobile, onClick }: { isMobile: boolean; onClick: 
               width: 38,
               height: 38,
               zIndex: 940,
-              fontSize: 15,
-              fontFamily: "var(--font-mono, monospace)",
             }
       }
     >
-      ?
+      {/* The owner's medallion artwork (book + play over the globe),
+          keyed to a transparent PNG — replaces the "?" glyph. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/help-medallion.png"
+        alt=""
+        width={512}
+        height={512}
+        draggable={false}
+        className="h-full w-full rounded-full select-none pointer-events-none"
+      />
     </button>
   );
 }

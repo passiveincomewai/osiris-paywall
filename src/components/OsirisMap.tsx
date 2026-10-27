@@ -27,7 +27,7 @@ import {
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
   type FlightFollowState, type FollowHudData, type FollowMode, type SavedCameraState,
 } from '@/lib/flights/follow';
-import { syncDayOverlay } from '@/lib/basemap-mode';
+import { basemapView, syncDayOverlay, terminatorVisible, type BasemapMode } from '@/lib/basemap-mode';
 import {
   beginRouteFetch, createFlightPath, flightPathAccess, flightPathFeatures, flightPathHudData,
   noteFlightPathFix, parseFlightRouteResponse, resolveFlightPathRoute,
@@ -100,12 +100,12 @@ interface OsirisMapProps {
   onTerrainStatusChange?: (status: TerrainStatus) => void;
 
   mapStyle?: string;
-  /** Day/night basemap choice (persisted by the page; free for all). */
-  basemapMode?: 'night' | 'day';
-  onBasemapModeChange?: (mode: 'night' | 'day') => void;
-  /** Satellite basemap switch state for the map chrome (page owns it). */
+  /** Day/auto/night basemap choice (persisted by the page; free for all). */
+  basemapMode?: BasemapMode;
+  onBasemapModeChange?: (mode: BasemapMode) => void;
+  /** Satellite basemap switch state for the map chrome (page owns it).
+   *  Satellite view is free for everyone — there is no lock. */
   satelliteOn?: boolean;
-  satelliteLocked?: boolean;
   onSatelliteToggle?: () => void;
   sweepData?: any;
   scanTargets?: any[];
@@ -360,7 +360,7 @@ const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
  *  is honestly unavailable until launch data is loaded). */
 const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, satelliteLocked = false, onSatelliteToggle, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -3430,13 +3430,13 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     const update = () => {
       const src = map.getSource('day-night') as any;
       if (!src) return;
-      if (!activeLayers.day_night) { src.setData(EMPTY_FC); return; }
+      if (!terminatorVisible(basemapMode, activeLayers.day_night)) { src.setData(EMPTY_FC); return; }
       src.setData({ type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'Polygon', coordinates: [computeSolarTerminator()] }, properties: {} }] });
     };
     update();
     const iv = setInterval(update, 300000); // 5 min (was 1 min — shadow barely moves)
     return () => clearInterval(iv);
-  }, [mapReady, activeLayers.day_night]);
+  }, [mapReady, activeLayers.day_night, basemapMode]);
 
   // Helper to set GeoJSON
   const setGeo = useCallback((source: string, features: any[]) => {
@@ -5039,7 +5039,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['malware-glow','malware-dots','malware-label','malware-new-ring'], activeLayers.malware);
     setVis(['network-mesh-atmo', 'network-mesh-glow', 'network-mesh-core'], activeLayers.internet_outages || activeLayers.malware);
     setVis(['cyber-heads','cyber-labels'], (activeLayers as any).cyber_attacks);
-    setVis(['day-night-fill'], activeLayers.day_night);
+    setVis(['day-night-fill'], terminatorVisible(basemapMode, activeLayers.day_night));
     setVis(['fl-commercial'], activeLayers.flights);
     setVis(['fl-private'], activeLayers.private);
     setVis(['fl-jets'], activeLayers.jets);
@@ -5072,7 +5072,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['sdk-intel','sdk-intel-glow','sdk-intel-atmo'], activeLayers.sdk_naval !== false);
     // Sweep layers always visible when data is present (controlled by useEffect)
     setVis(['sweep-connections','sweep-pulse-ring','sweep-device-glow','sweep-device-dots','sweep-device-labels'], true);
-  }, [mapReady, activeLayers, setVis]);
+  }, [mapReady, activeLayers, setVis, basemapMode]);
 
   // IP Sweep visualization
   useEffect(() => {
@@ -5328,6 +5328,35 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     } catch (e) {
       console.warn('Day overlay switch failed:', e);
     }
+  }, [mapReady, basemapMode, mapStyle]);
+
+  // Day mode's white backdrop (owner's order, 2026-10-26): while the
+  // resolved view is DAY, the space behind the globe — the GL style's
+  // background layer, plus the map container behind the canvas — goes
+  // white; any other view restores the style's own colour. The style
+  // never swaps, so its original background is captured once, before
+  // the first override.
+  const styleBgRef = useRef<{ captured: boolean; color: unknown }>({ captured: false, color: undefined });
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current as any;
+    try {
+      const bgLayers = (map.getStyle()?.layers ?? []).filter((l: any) => l.type === 'background');
+      const rec = styleBgRef.current;
+      if (basemapView(basemapMode, mapStyle !== 'dark') === 'day') {
+        if (!rec.captured && bgLayers.length) {
+          rec.color = map.getPaintProperty(bgLayers[0].id, 'background-color');
+          rec.captured = true;
+        }
+        for (const l of bgLayers) map.setPaintProperty(l.id, 'background-color', '#ffffff');
+        map.getContainer().style.backgroundColor = '#ffffff';
+      } else {
+        if (rec.captured && rec.color !== undefined) {
+          for (const l of bgLayers) map.setPaintProperty(l.id, 'background-color', rec.color);
+        }
+        map.getContainer().style.backgroundColor = '';
+      }
+    } catch { /* style not ready yet — the next mode/style change reapplies */ }
   }, [mapReady, basemapMode, mapStyle]);
 
   // Live Clouds — NOAA's satellite mosaic, hung at cloud altitude over the
@@ -6116,7 +6145,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         />
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
-      {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} satelliteLocked={satelliteLocked} onSatelliteToggle={onSatelliteToggle} />}
+      {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} onSatelliteToggle={onSatelliteToggle} />}
       {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
         if (!launchData) return null;
         const sel = [...launchData.upcoming, ...launchData.previous].find((l) => l.id === selectedLaunchId);

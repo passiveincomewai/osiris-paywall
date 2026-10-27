@@ -1,14 +1,32 @@
 /**
- * OSIRIS — Day / Night basemap mode.
+ * OSIRIS — Day / Auto / Night basemap mode (the globe's sun–moon switch).
  *
  * The globe's standard basemap is CARTO Dark Matter ("night") — a GL
  * *vector* style, still served keyless. "Day" mode lays a light raster
  * street basemap over it as a raster overlay. That is deliberately the
- * SAME mechanism the Pro satellite view uses (an ArcGIS raster overlay
+ * SAME mechanism the satellite view uses (an ArcGIS raster overlay
  * toggled by an effect in OsirisMap): this codebase has no
  * map.setStyle swap, because a style swap would wipe the ~55 custom
  * sources the map builds once at load. An overlay leaves every custom
  * layer exactly where it was.
+ *
+ * The switch has THREE positions (owner's artwork + order, 2026-10-26):
+ *
+ *   day   (sun, knob right)  — the light Esri street overlay, and the
+ *           page background behind the globe turns WHITE (OsirisMap
+ *           drives the style's background layer + the map container).
+ *           Day is NOT the satellite view: satellite imagery is a
+ *           separate switch that overrides day/night while it is on.
+ *   auto  (half sun / half moon, knob centre) — the live solar
+ *           terminator blend: the dark basemap with the real day/night
+ *           terminator shading (OsirisMap's computeSolarTerminator)
+ *           shown, i.e. the globe as it actually is right now. AUTO is
+ *           also the fresh-load default position, and its look is the
+ *           long-standing default look: the terminator layer has always
+ *           defaulted on (page.tsx activeLayers.day_night: true).
+ *   night (moon, knob left) — the dark basemap. The terminator shading
+ *           here follows the existing "Day / Night Cycle" layer toggle,
+ *           exactly as it always has.
  *
  * The day tiles are Esri's World Street Map — the same keyless public
  * ArcGIS service family (and tile template shape, {z}/{y}/{x}) as the
@@ -27,14 +45,24 @@
  * Interaction rule: the day overlay and the satellite overlay stack —
  * satellite sits above day. While satellite view is on, the day layer
  * hides; flipping the sun switch in that state still updates the
- * persisted day/night choice, and it takes visible effect the moment
- * satellite view turns off. Turning satellite off returns to whichever
- * of day/night the user last chose. Day/night itself is free for
- * everyone and persists per device; the satellite view stays Pro and
- * untouched.
+ * persisted choice, and it takes visible effect the moment satellite
+ * view turns off. Turning satellite off returns to whichever of
+ * day/auto/night the user last chose.
+ *
+ * Satellite view is FREE FOR EVERYONE (owner's explicit order,
+ * 2026-10-26): there is no lock on the satellite basemap switch any
+ * more. That unlock covers the basemap imagery only — the satellite
+ * *tracking* layers (LayerPanel's SAT category) and every other Pro
+ * feature keep their own gates, untouched.
+ *
+ * Day/auto/night is free for everyone and persists per device.
  */
 
-export type BasemapMode = 'night' | 'day';
+export type BasemapMode = 'day' | 'auto' | 'night';
+
+/** The switch's positions, left (knob left) to right (knob right),
+ *  matching the owner's artwork: moon — half-and-half — sun. */
+export const BASEMAP_MODE_ORDER: BasemapMode[] = ['night', 'auto', 'day'];
 
 export const BASEMAP_MODE_STORAGE_KEY = 'we_basemap_mode';
 
@@ -64,13 +92,19 @@ function defaultStorage(): StorageLike | null {
   }
 }
 
-/** The persisted mode. Anything unreadable or unknown is night — the
- *  long-standing look a first-time visitor has always seen. */
+/** The persisted mode. Stored "day" and "night" are honoured exactly
+ *  (choices made before AUTO existed keep their position); anything
+ *  else — a stored "auto", nothing stored, an unreadable value — is
+ *  AUTO, the fresh-load default position (whose resolved look is the
+ *  long-standing default look: dark basemap + terminator shading). */
 export function readBasemapMode(storage: StorageLike | null = defaultStorage()): BasemapMode {
   try {
-    return storage?.getItem(BASEMAP_MODE_STORAGE_KEY) === 'day' ? 'day' : 'night';
+    const stored = storage?.getItem(BASEMAP_MODE_STORAGE_KEY);
+    if (stored === 'day') return 'day';
+    if (stored === 'night') return 'night';
+    return 'auto';
   } catch {
-    return 'night';
+    return 'auto';
   }
 }
 
@@ -78,41 +112,50 @@ export function writeBasemapMode(mode: BasemapMode, storage: StorageLike | null 
   try {
     storage?.setItem(BASEMAP_MODE_STORAGE_KEY, mode);
   } catch {
-    /* private mode / storage off — the toggle still works for the session */
+    /* private mode / storage off — the switch still works for the session */
   }
 }
 
-export function nextBasemapMode(mode: BasemapMode): BasemapMode {
-  return mode === 'day' ? 'night' : 'day';
+/** The basemap a mode resolves to for overlay + background purposes:
+ *  day shows the light basemap; auto and night both sit on the dark
+ *  basemap (auto differs from night only in the terminator rule). */
+export function resolvedBasemapMode(mode: BasemapMode): 'day' | 'night' {
+  return mode === 'day' ? 'day' : 'night';
+}
+
+/** Whether the solar terminator shading (day-night-fill) shows. AUTO is
+ *  the terminator blend view, so the shading is on there by definition;
+ *  in day and night the existing "Day / Night Cycle" layer toggle stays
+ *  sovereign, exactly as before the three-position switch existed. */
+export function terminatorVisible(mode: BasemapMode, layerToggleOn: boolean): boolean {
+  return mode === 'auto' ? true : layerToggleOn;
 }
 
 /** The day overlay shows only in day mode with satellite view off —
  *  satellite imagery overrides the standard basemap while active. */
 export function dayOverlayVisible(mode: BasemapMode, satelliteOn: boolean): boolean {
-  return mode === 'day' && !satelliteOn;
+  return resolvedBasemapMode(mode) === 'day' && !satelliteOn;
 }
 
-/** The effective basemap the user is looking at: the persisted day/night
- *  choice, overridden by satellite imagery while satellite view is on. */
+/** The effective basemap the user is looking at: the persisted choice
+ *  resolved, overridden by satellite imagery while satellite view is on. */
 export type BasemapView = 'night' | 'day' | 'satellite';
 
 export function basemapView(mode: BasemapMode, satelliteOn: boolean): BasemapView {
-  return satelliteOn ? 'satellite' : mode;
+  return satelliteOn ? 'satellite' : resolvedBasemapMode(mode);
 }
 
-export type SatelliteSwitchAction = 'show-trial-picker' | 'turn-on' | 'turn-off';
+export type SatelliteSwitchAction = 'turn-on' | 'turn-off';
 
 /**
- * What flipping the satellite switch does. Satellite view is Pro: a
- * locked (non-Pro) user gets the standard TrialPicker path — the same
- * one every other Pro lock in the chrome uses — never the view.
- * Turning satellite OFF is always allowed, even for a locked user:
- * nobody gets trapped in a view they cannot exit (the assistant's
- * map_view tool could historically switch it on without a gate).
+ * What flipping the satellite switch does. Satellite view is free for
+ * everyone (owner's order, 2026-10-26) — the switch simply toggles, for
+ * every user, with no TrialPicker detour and no lock badge. Turning
+ * satellite OFF is of course always allowed too: nobody gets trapped
+ * in a view they cannot exit.
  */
-export function satelliteSwitchAction(locked: boolean, satelliteOn: boolean): SatelliteSwitchAction {
-  if (satelliteOn) return 'turn-off';
-  return locked ? 'show-trial-picker' : 'turn-on';
+export function satelliteSwitchAction(satelliteOn: boolean): SatelliteSwitchAction {
+  return satelliteOn ? 'turn-off' : 'turn-on';
 }
 
 /** The minimal map surface syncDayOverlay drives (MapLibre satisfies it). */

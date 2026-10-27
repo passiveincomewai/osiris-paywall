@@ -546,9 +546,10 @@ export default function Dashboard() {
   const [terrainStatus, setTerrainStatus] = useState<TerrainStatus>('idle');
   const [terrainRetry, setTerrainRetry] = useState(0);
   const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>('dark');
-  // Day/night basemap (free for everyone, persisted per device; default
-  // night = the long-standing dark look). Satellite view overrides it
-  // while active — see lib/basemap-mode for the interaction rule.
+  // Day/auto/night basemap (free for everyone, persisted per device;
+  // default auto = the long-standing dark look with the live terminator
+  // shading). Satellite view overrides it while active — see
+  // lib/basemap-mode for the interaction rule.
   const [basemapMode, setBasemapMode] = useState<BasemapMode>(() => readBasemapMode());
   useEffect(() => { writeBasemapMode(basemapMode); }, [basemapMode]);
   const [sweepData, setSweepData] = useState<any>(null);
@@ -845,16 +846,14 @@ export default function Dashboard() {
       document.removeEventListener('visibilitychange', heal);
     };
   }, [refreshPremium]);
-  // The satellite switch in the map chrome. Satellite view stays Pro:
-  // a non-Pro click takes the standard TrialPicker path (the same one
-  // the other chrome locks use); turning it off is always allowed and
-  // returns to the persisted day/night choice. lib/basemap-mode pins
-  // the state machine.
+  // The satellite switch in the map chrome. Satellite view is free
+  // for everyone (owner's order, 2026-10-26): the switch simply
+  // toggles, and turning it off returns to the persisted day/auto/night
+  // choice. lib/basemap-mode pins the state machine.
   const handleSatelliteToggle = useCallback(() => {
-    const action = satelliteSwitchAction(!isPremiumUser, mapStyle === 'satellite');
-    if (action === 'show-trial-picker') { setShowTrialPicker(true); return; }
+    const action = satelliteSwitchAction(mapStyle === 'satellite');
     setMapStyle(action === 'turn-on' ? 'satellite' : 'dark');
-  }, [isPremiumUser, mapStyle]);
+  }, [mapStyle]);
   /* Invite-a-friend camera bonus (lib/camera-bonus): a signed-in user's
      unspent bonus opens, fetched once at load. The server is the source
      of truth — this is only the local hint for whether a beyond-base
@@ -2290,7 +2289,6 @@ export default function Dashboard() {
           basemapMode={basemapMode}
           onBasemapModeChange={setBasemapMode}
           satelliteOn={mapStyle === 'satellite'}
-          satelliteLocked={!isPremiumUser}
           onSatelliteToggle={handleSatelliteToggle}
           onEntityClick={handleEntityClick} 
           onMouseCoords={handleMouseCoords} 

@@ -2,26 +2,25 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Lock, Minus, Moon, Plus, Satellite, Sun } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
 import type { Map as MlMap } from 'maplibre-gl';
 import { createMapCameraControls, type CameraMove } from '@/lib/map-camera-controls';
-import { nextBasemapMode, type BasemapMode } from '@/lib/basemap-mode';
+import { type BasemapMode } from '@/lib/basemap-mode';
 
 interface MapControlsProps {
   mapRef: React.RefObject<MlMap | null>;
   onInteract?: () => void;
-  /** Day/night basemap choice (free for everyone; the page persists it). */
+  /** Day/auto/night basemap choice (free for everyone; the page persists it). */
   basemapMode?: BasemapMode;
   onBasemapModeChange?: (mode: BasemapMode) => void;
-  /** Satellite basemap switch (Pro). Locked renders the lock badge; the
-   *  page decides what a locked click does (the TrialPicker path). */
+  /** Satellite basemap switch — its own toggle, independent of the
+   *  day/night switch, and free for everyone (owner's order 2026-10-26). */
   satelliteOn?: boolean;
-  satelliteLocked?: boolean;
   onSatelliteToggle?: () => void;
 }
 
 /** Compact zoom on phones; desktop also gets the held-pan pad. */
-export default function MapControls({ mapRef, onInteract, basemapMode = 'night', onBasemapModeChange, satelliteOn = false, satelliteLocked = false, onSatelliteToggle }: MapControlsProps) {
+export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', onBasemapModeChange, satelliteOn = false, onSatelliteToggle }: MapControlsProps) {
   const controller = useRef<ReturnType<typeof createMapCameraControls> | null>(null);
   const interact = useRef(onInteract);
   const [limits, setLimits] = useState({ min: false, max: false });
@@ -57,42 +56,14 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'night',
       className="absolute right-2 bottom-[112px] md:bottom-12 z-[240] pointer-events-auto" data-map-controls>
       <div className="flex flex-col items-end gap-[6px]">
       {onBasemapModeChange && (
-        <button type="button"
-          onClick={() => onBasemapModeChange(nextBasemapMode(basemapMode))}
-          aria-pressed={basemapMode === 'day'}
-          aria-label={basemapMode === 'day' ? 'Switch the globe to night mode' : 'Switch the globe to day mode'}
-          title={basemapMode === 'day' ? 'Night mode — dark basemap' : 'Day mode — light basemap'}
-          className="w-10 h-10 md:w-8 md:h-8 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-accent)] active:text-[var(--gold-light)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] opacity-85 hover:opacity-100 transition-opacity">
-          {basemapMode === 'day'
-            ? <Moon className="w-4 h-4" strokeWidth={1.5} />
-            : <Sun className="w-4 h-4" strokeWidth={1.5} />}
-        </button>
+        <BasemapSwitch mode={basemapMode} onChange={onBasemapModeChange} />
       )}
       {onSatelliteToggle && (
-        <button type="button"
-          onClick={onSatelliteToggle}
-          aria-pressed={satelliteOn}
-          aria-label={satelliteLocked && !satelliteOn
-            ? 'Satellite view — a Pro feature'
-            : satelliteOn ? 'Turn satellite view off' : 'Turn satellite view on'}
-          title={satelliteLocked && !satelliteOn
-            ? 'Satellite view — Pro'
-            : satelliteOn ? 'Satellite view on — back to the standard basemap' : 'Satellite view — real imagery basemap'}
-          className={`relative w-10 h-10 md:w-8 md:h-8 rounded-xl border bg-black/60 backdrop-blur-md shadow-lg flex items-center justify-center focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] opacity-85 hover:opacity-100 transition-opacity ${satelliteOn
-            ? 'border-[var(--gold-primary)]/50 text-[var(--gold-light)]'
-            : 'border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-accent)]'}`}>
-          <Satellite className="w-4 h-4" strokeWidth={1.5} />
-          {satelliteLocked && !satelliteOn && (
-            <Lock className="absolute -bottom-1 -right-1 w-3 h-3 text-[var(--gold-primary)]" strokeWidth={2} />
-          )}
-        </button>
+        <SatelliteSwitch on={satelliteOn} onToggle={onSatelliteToggle} />
       )}
       <div role="group" aria-label="Map camera controls"
         className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
-        <div className="flex flex-col gap-[3px]">
-          <Btn label="Zoom in" move={{ kind: 'zoom', dir: 1 }} icon={Plus} disabled={limits.max} press={press} release={release} step={step} />
-          <Btn label="Zoom out" move={{ kind: 'zoom', dir: -1 }} icon={Minus} disabled={limits.min} press={press} release={release} step={step} />
-        </div>
+        <ZoomArtwork limits={limits} press={press} release={release} step={step} />
         <div className="desktop-only flex items-center gap-1">
           <div aria-hidden="true" className="h-12 w-px mx-1 bg-[var(--border-secondary)]" />
           <div className="grid grid-cols-3 grid-rows-3 gap-[3px]">
@@ -105,6 +76,135 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'night',
       </div>
       </div>
     </motion.div>
+  );
+}
+
+/**
+ * The day / auto / night switch — the owner's three-state artwork
+ * (public/images/basemap-switch/, cropped from his strip: moon state,
+ * half-sun/half-moon state, sun state). The three state images stack
+ * and crossfade, so the knob appears to slide as the position changes;
+ * three invisible radio zones across the pill select the position
+ * directly. Semantics live in lib/basemap-mode: day = light basemap +
+ * white background behind the globe, auto = the live solar terminator
+ * blend on the dark basemap, night = the dark basemap.
+ */
+const BASEMAP_SWITCH_STATES: Array<{
+  mode: BasemapMode;
+  img: string;
+  label: string;
+  title: string;
+}> = [
+  { mode: 'night', img: '/images/basemap-switch/switch-night.png', label: 'Night mode', title: 'Night mode — dark basemap' },
+  { mode: 'auto', img: '/images/basemap-switch/switch-auto.png', label: 'Auto — live day/night terminator', title: 'Auto — the globe as it is now, with the live day/night terminator' },
+  { mode: 'day', img: '/images/basemap-switch/switch-day.png', label: 'Day mode', title: 'Day mode — light basemap, white background' },
+];
+
+function BasemapSwitch({ mode, onChange }: { mode: BasemapMode; onChange: (mode: BasemapMode) => void }) {
+  return (
+    <div role="radiogroup" aria-label="Globe day, auto and night modes"
+      className="relative h-10 md:h-8 aspect-[398/207] shrink-0 opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] focus-within:outline focus-within:outline-1 focus-within:outline-[var(--gold-primary)] rounded-full">
+      {BASEMAP_SWITCH_STATES.map(s => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img key={s.mode} src={s.img} alt="" draggable={false} aria-hidden="true"
+          className="absolute inset-0 h-full w-full pointer-events-none select-none transition-opacity duration-300"
+          style={{ opacity: mode === s.mode ? 1 : 0 }} />
+      ))}
+      <div className="absolute inset-0 flex">
+        {BASEMAP_SWITCH_STATES.map(s => (
+          <button key={s.mode} type="button" role="radio" aria-checked={mode === s.mode}
+            aria-label={s.label} title={s.title}
+            onClick={() => onChange(s.mode)}
+            className="h-full flex-1 cursor-pointer focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] rounded-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The satellite switch — the owner's artwork family, cropped and keyed
+ * exactly like the day/auto/night switch (public/images/basemap-switch/):
+ * knob right over the sunlit Earth = ON, knob left over the night Earth
+ * = OFF, and the split knob-centre crop is the transition frame, shown
+ * briefly mid-toggle so the knob reads as sliding. One toggle button;
+ * satellite stays a separate control from the day/night switch, and it
+ * is unlocked for everyone (lib/basemap-mode).
+ */
+const SATELLITE_SWITCH_FRAMES = [
+  { frame: 'off', img: '/images/basemap-switch/sat-off.png' },
+  { frame: 'mid', img: '/images/basemap-switch/sat-mid.png' },
+  { frame: 'on', img: '/images/basemap-switch/sat-on.png' },
+] as const;
+
+type SatelliteFrame = 'on' | 'mid' | 'off';
+
+function SatelliteSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  const [frame, setFrame] = useState<SatelliteFrame>(on ? 'on' : 'off');
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) { mounted.current = true; setFrame(on ? 'on' : 'off'); return; }
+    setFrame('mid');
+    const t = setTimeout(() => setFrame(on ? 'on' : 'off'), 170);
+    return () => clearTimeout(t);
+  }, [on]);
+  return (
+    <button type="button" onClick={onToggle} aria-pressed={on}
+      aria-label={on ? 'Turn satellite view off' : 'Turn satellite view on'}
+      title={on ? 'Satellite view on — back to the standard basemap' : 'Satellite view — real imagery basemap'}
+      className="relative block h-10 md:h-8 aspect-[399/212] shrink-0 cursor-pointer opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] rounded-full">
+      {SATELLITE_SWITCH_FRAMES.map(f => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img key={f.frame} src={f.img} alt="" draggable={false} aria-hidden="true"
+          className="absolute inset-0 h-full w-full pointer-events-none select-none transition-opacity duration-150"
+          style={{ opacity: frame === f.frame ? 1 : 0 }} />
+      ))}
+    </button>
+  );
+}
+
+/**
+ * The zoom control — the owner's vertical artwork (a + globe disc over
+ * a − globe disc on a neon track), keyed to transparency at
+ * public/images/map-zoom.png. Two click zones split the pill at its
+ * middle: top = zoom in, bottom = zoom out. The zones reuse the exact
+ * press-and-hold / keyboard-step behaviour the old +/− buttons had —
+ * they drive the same map-camera-controls press/release/step handlers,
+ * so the map's zoom behaviour is unchanged; only the visuals moved.
+ * A zone at its zoom limit disables and dims, as the buttons did.
+ */
+function ZoomArtwork({ limits, press, release, step }: {
+  limits: { min: boolean; max: boolean };
+  press: (m: CameraMove) => void; release: () => void; step: (m: CameraMove) => void;
+}) {
+  return (
+    <div className="relative h-[76px] md:h-[62px] aspect-[256/599] shrink-0">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/images/map-zoom.png" alt="" draggable={false} aria-hidden="true"
+        className="absolute inset-0 h-full w-full pointer-events-none select-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]" />
+      <ZoomZone label="Zoom in" move={{ kind: 'zoom', dir: 1 }} disabled={limits.max} press={press} release={release} step={step} className="top-0" />
+      <ZoomZone label="Zoom out" move={{ kind: 'zoom', dir: -1 }} disabled={limits.min} press={press} release={release} step={step} className="bottom-0" />
+      {limits.max && <div aria-hidden="true" className="absolute top-0 inset-x-0 h-1/2 bg-black/50 pointer-events-none" />}
+      {limits.min && <div aria-hidden="true" className="absolute bottom-0 inset-x-0 h-1/2 bg-black/50 pointer-events-none" />}
+    </div>
+  );
+}
+
+function ZoomZone({ label, move, disabled = false, press, release, step, className = '' }: {
+  label: string; move: CameraMove; disabled?: boolean; className?: string;
+  press: (m: CameraMove) => void; release: () => void; step: (m: CameraMove) => void;
+}) {
+  return (
+    <button type="button" title={`${label} — hold to keep going`} aria-label={label} disabled={disabled}
+      className={`absolute inset-x-0 h-1/2 ${className} cursor-pointer disabled:cursor-default focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] touch-none select-none`}
+      onPointerDown={e => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        e.currentTarget.setPointerCapture(e.pointerId);
+        press(move);
+      }}
+      onPointerUp={release} onPointerCancel={release} onLostPointerCapture={release}
+      onClick={e => { if (e.detail === 0) step(move); }} />
   );
 }
 

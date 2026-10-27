@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
-  readBasemapMode, writeBasemapMode, nextBasemapMode, dayOverlayVisible,
-  basemapView, satelliteSwitchAction,
-  syncDayOverlay, BASEMAP_MODE_STORAGE_KEY, DAY_TILE_URL,
+  readBasemapMode, writeBasemapMode, dayOverlayVisible,
+  basemapView, resolvedBasemapMode, terminatorVisible, satelliteSwitchAction,
+  syncDayOverlay, BASEMAP_MODE_STORAGE_KEY, BASEMAP_MODE_ORDER, DAY_TILE_URL,
   type DayOverlayMap,
 } from './basemap-mode';
 
@@ -16,24 +16,25 @@ function fakeStorage(initial: Record<string, string> = {}) {
 }
 
 describe('basemap mode persistence', () => {
-  it('defaults to night when nothing is stored', () => {
-    expect(readBasemapMode(fakeStorage())).toBe('night');
-    expect(readBasemapMode(null)).toBe('night');
+  it('defaults to auto when nothing is stored — the fresh-load default position', () => {
+    expect(readBasemapMode(fakeStorage())).toBe('auto');
+    expect(readBasemapMode(null)).toBe('auto');
   });
 
-  it('reads back a stored day choice, and only day means day', () => {
+  it('reads back stored day and night choices exactly; only exact values mean them', () => {
     expect(readBasemapMode(fakeStorage({ [BASEMAP_MODE_STORAGE_KEY]: 'day' }))).toBe('day');
     expect(readBasemapMode(fakeStorage({ [BASEMAP_MODE_STORAGE_KEY]: 'night' }))).toBe('night');
-    expect(readBasemapMode(fakeStorage({ [BASEMAP_MODE_STORAGE_KEY]: 'sepia' }))).toBe('night');
+    expect(readBasemapMode(fakeStorage({ [BASEMAP_MODE_STORAGE_KEY]: 'auto' }))).toBe('auto');
+    expect(readBasemapMode(fakeStorage({ [BASEMAP_MODE_STORAGE_KEY]: 'sepia' }))).toBe('auto');
   });
 
-  it('round-trips through storage under the we_ key', () => {
+  it('round-trips every position through storage under the we_ key', () => {
     const s = fakeStorage();
-    writeBasemapMode('day', s);
-    expect(s.box[BASEMAP_MODE_STORAGE_KEY]).toBe('day');
-    expect(readBasemapMode(s)).toBe('day');
-    writeBasemapMode('night', s);
-    expect(readBasemapMode(s)).toBe('night');
+    for (const mode of ['day', 'auto', 'night'] as const) {
+      writeBasemapMode(mode, s);
+      expect(s.box[BASEMAP_MODE_STORAGE_KEY]).toBe(mode);
+      expect(readBasemapMode(s)).toBe(mode);
+    }
   });
 
   it('a throwing storage never breaks the read or the write', () => {
@@ -41,13 +42,32 @@ describe('basemap mode persistence', () => {
       getItem: () => { throw new Error('denied'); },
       setItem: () => { throw new Error('denied'); },
     };
-    expect(readBasemapMode(hostile)).toBe('night');
+    expect(readBasemapMode(hostile)).toBe('auto');
     expect(() => writeBasemapMode('day', hostile)).not.toThrow();
   });
 
-  it('toggles night → day → night', () => {
-    expect(nextBasemapMode('night')).toBe('day');
-    expect(nextBasemapMode('day')).toBe('night');
+  it('the switch positions run moon — auto — sun, left to right', () => {
+    expect(BASEMAP_MODE_ORDER).toEqual(['night', 'auto', 'day']);
+  });
+});
+
+describe('the three positions resolve honestly', () => {
+  it('only day resolves to the light basemap; auto and night sit on the dark one', () => {
+    expect(resolvedBasemapMode('day')).toBe('day');
+    expect(resolvedBasemapMode('auto')).toBe('night');
+    expect(resolvedBasemapMode('night')).toBe('night');
+  });
+
+  it('auto is the terminator blend: shading on there regardless of the layer toggle', () => {
+    expect(terminatorVisible('auto', true)).toBe(true);
+    expect(terminatorVisible('auto', false)).toBe(true);
+  });
+
+  it('in day and night the Day / Night Cycle layer toggle stays sovereign (pre-switch behaviour)', () => {
+    expect(terminatorVisible('day', true)).toBe(true);
+    expect(terminatorVisible('day', false)).toBe(false);
+    expect(terminatorVisible('night', true)).toBe(true);
+    expect(terminatorVisible('night', false)).toBe(false);
   });
 });
 
@@ -55,6 +75,8 @@ describe('day × satellite selection', () => {
   it('the day overlay shows only in day mode with satellite off', () => {
     expect(dayOverlayVisible('day', false)).toBe(true);
     expect(dayOverlayVisible('day', true)).toBe(false);   // satellite overrides
+    expect(dayOverlayVisible('auto', false)).toBe(false);
+    expect(dayOverlayVisible('auto', true)).toBe(false);
     expect(dayOverlayVisible('night', false)).toBe(false);
     expect(dayOverlayVisible('night', true)).toBe(false);
   });
@@ -126,20 +148,30 @@ describe('syncDayOverlay — the satellite path’s overlay pattern', () => {
     syncDayOverlay(f.map, 'night', false);
     expect(f.visibility['day-layer']).toBe('none');
   });
+
+  it('auto never shows the light overlay — it resolves to the dark basemap', () => {
+    const f = fakeMap(['day-night-fill']);
+    syncDayOverlay(f.map, 'auto', false);
+    expect(f.visibility['day-layer']).toBe('none');
+  });
 });
 
-describe('the three-way basemap state machine (day/night × satellite)', () => {
-  it('the effective view: satellite overrides, otherwise the persisted choice shows', () => {
+describe('the basemap state machine (day/auto/night × satellite)', () => {
+  it('the effective view: satellite overrides, otherwise the resolved choice shows', () => {
     expect(basemapView('night', false)).toBe('night');
+    expect(basemapView('auto', false)).toBe('night');
     expect(basemapView('day', false)).toBe('day');
     expect(basemapView('night', true)).toBe('satellite');
+    expect(basemapView('auto', true)).toBe('satellite');
     expect(basemapView('day', true)).toBe('satellite');
   });
 
-  it('a satellite round-trip returns to the exact day/night choice underneath', () => {
+  it('a satellite round-trip returns to the exact choice underneath', () => {
     // On from day → view is satellite; off again → day, not night.
     expect(basemapView('day', true)).toBe('satellite');
     expect(basemapView('day', false)).toBe('day');
+    expect(basemapView('auto', true)).toBe('satellite');
+    expect(basemapView('auto', false)).toBe('night');
     expect(basemapView('night', true)).toBe('satellite');
     expect(basemapView('night', false)).toBe('night');
     // And the day overlay tracks the same machine.
@@ -148,17 +180,9 @@ describe('the three-way basemap state machine (day/night × satellite)', () => {
   });
 });
 
-describe('satelliteSwitchAction — the Pro gate on the switch', () => {
-  it('Pro users toggle freely', () => {
-    expect(satelliteSwitchAction(false, false)).toBe('turn-on');
-    expect(satelliteSwitchAction(false, true)).toBe('turn-off');
-  });
-
-  it('a locked user hitting the switch gets the TrialPicker, never the view', () => {
-    expect(satelliteSwitchAction(true, false)).toBe('show-trial-picker');
-  });
-
-  it('turning satellite OFF is always allowed — nobody is trapped in the view', () => {
-    expect(satelliteSwitchAction(true, true)).toBe('turn-off');
+describe('satelliteSwitchAction — satellite view is free for everyone', () => {
+  it('the switch simply toggles, with no lock state at all', () => {
+    expect(satelliteSwitchAction(false)).toBe('turn-on');
+    expect(satelliteSwitchAction(true)).toBe('turn-off');
   });
 });

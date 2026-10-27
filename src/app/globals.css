@@ -366,6 +366,29 @@ html:has(.cinematic-root) .home-seo-shell { margin-top: 0; }
 
 .animate-osiris-pulse { animation: osiris-pulse 2s ease-in-out infinite; }
 .animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Header "Upgrade to PRO" pill — Pro gold glow (owner's order, 2026-10-26).
+   Applied in components/AccountHudControl to BOTH header render paths
+   (desktop status bar + mobile cluster). The pill is image artwork with
+   an alpha channel, so the glow is built from drop-shadow filters, which
+   follow the artwork's silhouette instead of a rectangular box. A slow
+   pulse breathes the glow; hover swaps to the hotter keyframes. Filter
+   only — no transform, no layout shift. */
+@keyframes upgrade-pill-glow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(var(--gold-rgb), 0.45)) drop-shadow(0 0 16px rgba(var(--gold-rgb), 0.28)); }
+  50% { filter: drop-shadow(0 0 10px rgba(var(--gold-rgb), 0.68)) drop-shadow(0 0 26px rgba(var(--gold-rgb), 0.42)); }
+}
+@keyframes upgrade-pill-glow-hot {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(var(--gold-rgb), 0.75)) drop-shadow(0 0 24px rgba(var(--gold-rgb), 0.45)); }
+  50% { filter: drop-shadow(0 0 14px rgba(var(--gold-rgb), 0.9)) drop-shadow(0 0 34px rgba(var(--gold-rgb), 0.55)); }
+}
+.upgrade-pill-glow { animation: upgrade-pill-glow 2.8s ease-in-out infinite; }
+.upgrade-pill-glow:hover { animation-name: upgrade-pill-glow-hot; animation-duration: 1.6s; }
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-pill-glow, .upgrade-pill-glow:hover { animation: none; }
+  .upgrade-pill-glow { filter: drop-shadow(0 0 8px rgba(var(--gold-rgb), 0.55)) drop-shadow(0 0 20px rgba(var(--gold-rgb), 0.35)); }
+  .upgrade-pill-glow:hover { filter: drop-shadow(0 0 12px rgba(var(--gold-rgb), 0.8)) drop-shadow(0 0 30px rgba(var(--gold-rgb), 0.5)); }
+}
 .animate-data-pulse { animation: data-pulse 2s ease-in-out infinite; }
 .animate-threat-flash { animation: threat-flash 1.5s ease-in-out infinite; }
 

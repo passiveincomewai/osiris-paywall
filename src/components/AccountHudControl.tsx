@@ -63,8 +63,8 @@ export default function AccountHudControl({
       aria-label="Upgrade to PRO"
       className={
         variant === "desktop"
-          ? "pointer-events-auto inline-block hover:brightness-110 transition drop-shadow-[0_0_12px_rgba(56,150,255,0.45)]"
-          : "inline-block hover:brightness-110 transition"
+          ? "upgrade-pill-glow pointer-events-auto inline-block"
+          : "upgrade-pill-glow inline-block"
       }
     >
       <img
