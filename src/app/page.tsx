@@ -1504,6 +1504,7 @@ export default function Dashboard() {
   const sharedEntitySettled = useRef(false);
   const sharedEntityLayerLit = useRef(false);
   const sharedEntityDeadline = useRef(0);
+  const [stormLinkGone, setStormLinkGone] = useState(false);
   useEffect(() => {
     if (!sharedEntity || sharedEntity.kind === 'camera' || sharedEntitySettled.current) return;
     if (!sharedEntityDeadline.current) sharedEntityDeadline.current = Date.now() + shareOpenDeadlineMs(sharedEntity.kind);
@@ -1559,6 +1560,10 @@ export default function Dashboard() {
     if (Date.now() > sharedEntityDeadline.current) {
       // Give the map one last chance (conflict markers live only in
       // the map's data), then settle — a stale link lands plainly.
+      // Storms are the one exception to silence: a shared hurricane
+      // that never resolved has almost always dissipated, and the
+      // visitor deserves to know the link wasn't ignored.
+      if (sharedEntity.kind === 'storm') setStormLinkGone(true);
       sharedEntitySettled.current = true;
       window.dispatchEvent(new CustomEvent('we:open-entity', {
         detail: { kind: sharedEntity.kind, id: sharedEntity.id },
@@ -2618,6 +2623,31 @@ export default function Dashboard() {
             onDetail={handleAircraftDetail}
           />
         </motion.div>
+      )}
+
+      {/* ── STALE STORM LINK ── a shared hurricane that never resolved
+          (it dissipated or the season rolled over). Dismissible. */}
+      {stormLinkGone && (
+        <div
+          className="absolute top-3 left-1/2 -translate-x-1/2 z-[390] pointer-events-auto w-[min(92vw,420px)]"
+          role="status"
+        >
+          <div className="flex items-start gap-2 rounded-lg border border-red-400/40 bg-black/85 px-3 py-2.5 text-[11px] leading-snug text-white/85 shadow-xl backdrop-blur">
+            <span aria-hidden="true">🌀</span>
+            <p className="flex-1">
+              That storm is no longer active, so there&apos;s nothing to open.
+              The globe is showing every live storm from NOAA NHC instead.
+            </p>
+            <button
+              type="button"
+              onClick={() => setStormLinkGone(false)}
+              aria-label="Dismiss"
+              className="shrink-0 rounded px-1 text-white/60 hover:text-white"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
       )}
 
       {/* ── SCALE BAR (desktop) ── */}

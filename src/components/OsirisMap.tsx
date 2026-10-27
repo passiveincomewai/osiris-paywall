@@ -24,6 +24,7 @@ import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/
 import { FlightBlend, flightIconImage, flightIconSize, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
 import { featureMatchesFlightShareId, FLIGHT_SHARE_OPEN_DEADLINE_MS } from '@/lib/share/links';
 import { findFlightFeatureInBuckets, flightShareCameraSettledOn, flightShareFlyToTarget } from '@/lib/share/flight-open';
+import { groupStormFeatures, stormChangeSummary, compassDirection, STORM_SIZE_MEANING, type StormGroup } from '@/lib/events/hurricanes';
 import {
   IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
@@ -1505,6 +1506,26 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'hurricane-label', type: 'symbol', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'current'], layout: {
         'text-field': ['upcase', ['get', 'name']], 'text-size': 10, 'text-font': ['Open Sans Regular'], 'text-offset': [0, 1.6],
       }, paint: { 'text-color': '#FF8A80', 'text-halo-color': '#000', 'text-halo-width': 1 }});
+      // Selected-storm highlight (share links + card selection): a
+      // pulsing ring + halo on the storm, its past track emphasised,
+      // its best-track points shown. Filters start match-nothing and
+      // are pointed at the selected storm by applyStormSelection.
+      map.addLayer({ id: 'hurricane-selected-past', type: 'line', source: 'hurricanes', filter: ['==', ['get', 'name'], '__none__'], paint: {
+        'line-color': '#FF5252', 'line-width': 3.5, 'line-opacity': 0.95,
+      }}, 'hurricane-icons');
+      map.addLayer({ id: 'hurricane-past-points', type: 'circle', source: 'hurricanes', filter: ['==', ['get', 'name'], '__none__'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 2.5, 6, 4, 10, 6],
+        'circle-color': '#FF8A80', 'circle-opacity': 0.9, 'circle-stroke-color': '#4A0E0E', 'circle-stroke-width': 1,
+      }}, 'hurricane-icons');
+      map.addLayer({ id: 'hurricane-selected-halo', type: 'circle', source: 'hurricanes', filter: ['==', ['get', 'stormId'], '__none__'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 22, 6, 34, 10, 44],
+        'circle-color': '#FF5252', 'circle-opacity': 0.13,
+      }}, 'hurricane-icons');
+      map.addLayer({ id: 'hurricane-selected-ring', type: 'circle', source: 'hurricanes', filter: ['==', ['get', 'stormId'], '__none__'], paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 16, 6, 25, 10, 34],
+        'circle-color': 'rgba(0,0,0,0)', 'circle-opacity': 0,
+        'circle-stroke-color': '#FFD54F', 'circle-stroke-width': 3, 'circle-stroke-opacity': 0.95,
+      }}, 'hurricane-icons');
 
       // River Gauges (USGS) — stream-blue dots
       map.addLayer({ id: 'gauge-dots', type: 'circle', source: 'river-gauges', paint: {
@@ -2639,24 +2660,115 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // ── Hurricanes (NOAA NHC) ──
     const CLASS_LABEL: Record<string, string> = { HU: 'HURRICANE', TS: 'TROPICAL STORM', TD: 'TROPICAL DEPRESSION', STS: 'SUBTROPICAL STORM', SD: 'SUBTROPICAL DEPRESSION', EX: 'EXTRATROPICAL', PT: 'POST-TROPICAL', LO: 'LOW', DB: 'DISTURBANCE' };
     const ssCategory = (kt: number | null) => kt == null ? null : kt >= 137 ? 5 : kt >= 113 ? 4 : kt >= 96 ? 3 : kt >= 83 ? 2 : kt >= 64 ? 1 : 0;
-    const openStormPopup = (feature: any) => {
+    // ── Storm selection state (highlight + re-center) ──
+    // The hurricanes source is the freshest storm data the client
+    // holds; both the card's origin/change sections and the re-center
+    // control read from it at click time, never from stale closures.
+    const allStormFeatures = (): any[] => {
+      try { return map.querySourceFeatures('hurricanes') as any[]; } catch { return []; }
+    };
+    const NUMERIC_STORM_PROPS = ['intensityKt', 'pressureMb', 'category', 'maxWindKt', 'gustKt', 'fcstHrs', 'radiiKt', 'neNm', 'seNm', 'swNm', 'nwNm', 'advNum', 'movementDir', 'movementSpeedKt'];
+    const stormGroupFor = (stormId: string): StormGroup | null => {
+      const feats = allStormFeatures().map((f: any) => {
+        const p = { ...(f?.properties ?? {}) };
+        for (const k of NUMERIC_STORM_PROPS) {
+          if (typeof p[k] === 'string' && p[k].trim() !== '' && Number.isFinite(Number(p[k]))) p[k] = Number(p[k]);
+        }
+        return { ...f, properties: p };
+      });
+      return groupStormFeatures(feats).find(g => g.current.stormId === stormId) ?? null;
+    };
+    let stormPulseTimer: ReturnType<typeof setInterval> | null = null;
+    const clearStormSelection = () => {
+      if (stormPulseTimer) { clearInterval(stormPulseTimer); stormPulseTimer = null; }
+      for (const id of ['hurricane-selected-ring', 'hurricane-selected-halo']) {
+        if (map.getLayer(id)) map.setFilter(id, ['==', ['get', 'stormId'], '__none__'] as any);
+      }
+      for (const id of ['hurricane-selected-past', 'hurricane-past-points']) {
+        if (map.getLayer(id)) map.setFilter(id, ['==', ['get', 'name'], '__none__'] as any);
+      }
+    };
+    const applyStormSelection = (stormId: string, name: string) => {
+      clearStormSelection();
+      // GIS features (past track / past points) key on the storm NAME
+      // as the GIS feed spells it — resolve that exact spelling here.
+      const norm = (s: string) => s.trim().toLowerCase();
+      const gisName = allStormFeatures().find(f =>
+        (f.properties?.kind === 'past' || f.properties?.kind === 'pastpoint') &&
+        norm(String(f.properties?.name ?? '')) === norm(name))?.properties?.name ?? name;
+      if (map.getLayer('hurricane-selected-ring')) map.setFilter('hurricane-selected-ring', ['all', ['==', ['get', 'kind'], 'current'], ['==', ['get', 'stormId'], stormId]] as any);
+      if (map.getLayer('hurricane-selected-halo')) map.setFilter('hurricane-selected-halo', ['all', ['==', ['get', 'kind'], 'current'], ['==', ['get', 'stormId'], stormId]] as any);
+      if (map.getLayer('hurricane-selected-past')) map.setFilter('hurricane-selected-past', ['all', ['==', ['get', 'kind'], 'past'], ['==', ['get', 'name'], gisName]] as any);
+      if (map.getLayer('hurricane-past-points')) map.setFilter('hurricane-past-points', ['all', ['==', ['get', 'kind'], 'pastpoint'], ['==', ['get', 'name'], gisName]] as any);
+      let on = true;
+      stormPulseTimer = setInterval(() => {
+        on = !on;
+        if (map.getLayer('hurricane-selected-ring')) {
+          map.setPaintProperty('hurricane-selected-ring', 'circle-stroke-opacity', on ? 0.95 : 0.3);
+        }
+      }, 850);
+    };
+    // Re-center reads the storm's CURRENT position from the source at
+    // click time — storms move, the popup's coordinates go stale.
+    (window as any).__weStormRecenter = (stormId: string) => {
+      const f = allStormFeatures().find(f => f.properties?.kind === 'current' && String(f.properties?.stormId ?? '') === stormId);
+      const c = f?.geometry?.coordinates;
+      if (Array.isArray(c)) map.flyTo({ center: c as any, zoom: Math.max(map.getZoom(), 6), duration: 1100 });
+    };
+    const openStormPopup = (feature: any, opts?: { shared?: boolean }) => {
       const p = feature.properties as any;
       const coords = (feature.geometry as any).coordinates;
       const cat = ssCategory(p.intensityKt != null ? Number(p.intensityKt) : null);
       const mph = p.intensityKt != null ? Math.round(Number(p.intensityKt) * 1.151) : null;
+      const grp = p.stormId ? stormGroupFor(String(p.stormId)) : null;
+      const sum = grp ? stormChangeSummary(grp) : null;
+      const fmtDay = (iso: string | null) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }) : null;
+      const signed = (n: number) => (n > 0 ? '+' : '') + n;
+      const secHead = (t: string) => `<div style="font-size:8px;color:#5C5A54;letter-spacing:0.14em;margin:10px 0 4px;border-top:1px solid rgba(255,255,255,0.07);padding-top:8px;">${t}</div>`;
+      const row = (label: string, value: string) => `<div><span style="color:#5C5A54;">${label}</span><br/><span style="color:#E8E6E0;">${value}</span></div>`;
+      let originHtml = '';
+      if (sum?.genesis) {
+        const day = fmtDay(sum.genesis.timeIso);
+        const trackHrs = sum.genesis.timeIso && grp?.current.lastUpdate
+          ? Math.round((Date.parse(grp.current.lastUpdate) - Date.parse(sum.genesis.timeIso)) / 3_600_000) : null;
+        originHtml = `${secHead('ORIGIN & TRACK')}<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;">
+          ${row('FORMED', `${day ? day + ' · ' : ''}${sum.genesis.lat.toFixed(1)}°, ${sum.genesis.lng.toFixed(1)}°`)}
+          ${row('BEST TRACK', `${sum.historyPoints > 0 ? sum.historyPoints + ' positions' : 'track line'}${trackHrs && trackHrs > 0 ? ' · ~' + trackHrs + 'h' : ''}`)}
+          ${row('MOVING', `${p.movementDir != null ? (compassDirection(Number(p.movementDir)) ?? p.movementDir + '°') : '—'}${p.movementSpeedKt != null ? ' at ' + p.movementSpeedKt + ' kt' : ''}`)}
+          ${row('NOW', `${coords[1].toFixed(1)}°, ${coords[0].toFixed(1)}°`)}
+        </div>`;
+      }
+      let changeHtml = '';
+      if (sum && (sum.windDeltaKt !== null || (sum.catThen !== null && sum.catNow !== null) || sum.sizeNowNm !== null)) {
+        const parts: string[] = [];
+        if (sum.windDeltaKt !== null) parts.push(row('WINDS SINCE FORMATION', `${sum.windThenKt} → ${sum.windNowKt} kt (${signed(sum.windDeltaKt)})`));
+        if (sum.catThen !== null && sum.catNow !== null && sum.catThen !== sum.catNow) parts.push(row('CATEGORY', `${sum.catThen === 0 ? 'Below Cat 1' : 'Cat ' + sum.catThen} → Cat ${sum.catNow}`));
+        if (sum.sizeNowNm !== null) parts.push(row('SIZE — 34KT WINDS REACH', `${sum.sizeThenNm !== null && sum.sizeDeltaNm !== null ? sum.sizeThenNm + ' → ' : ''}${sum.sizeNowNm} nm${sum.sizeDeltaNm ? ' (' + signed(sum.sizeDeltaNm) + ')' : ''}`));
+        changeHtml = `${secHead('WHAT CHANGED')}<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;">${parts.join('')}</div>` +
+          (sum.sizeDeltaNm !== null && sum.sizeDeltaNm > 0 ? `<div style="font-size:8.5px;color:#B8B4AA;line-height:1.5;margin-top:5px;">${STORM_SIZE_MEANING}</div>` : '');
+      }
       popup(coords, `<div style="${pStyle}border:1px solid rgba(255,82,82,0.35);">
         <div style="color:#FF5252;font-size:13px;font-weight:700;margin-bottom:4px;">🌀 ${htmlEsc((p.name || 'TROPICAL CYCLONE').toUpperCase())}</div>
         <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${CLASS_LABEL[p.classification] || htmlEsc(p.classification || '')}${cat ? ' · CATEGORY ' + cat : ''}</div>
+        ${opts?.shared ? '<div style="display:inline-block;font-size:8px;font-weight:700;letter-spacing:0.12em;color:#FFD54F;border:1px solid rgba(255,213,79,0.5);border-radius:3px;padding:2px 6px;margin-bottom:8px;">🔗 OPENED FROM A SHARED LINK</div>' : ''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
           <div><span style="color:#5C5A54;">MAX WINDS</span><br/><span style="color:#E8E6E0;">${p.intensityKt != null ? p.intensityKt + ' kt (' + mph + ' mph)' : '—'}</span></div>
           <div><span style="color:#5C5A54;">PRESSURE</span><br/><span style="color:#E8E6E0;">${p.pressureMb != null ? p.pressureMb + ' mb' : '—'}</span></div>
           <div><span style="color:#5C5A54;">MOVEMENT</span><br/><span style="color:#E8E6E0;">${p.movementDir != null ? p.movementDir + '° at ' + (p.movementSpeedKt ?? '—') + ' kt' : '—'}</span></div>
           <div><span style="color:#5C5A54;">POSITION</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(2)}°, ${coords[0].toFixed(2)}°</span></div>
         </div>
-        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">NOAA · NATIONAL HURRICANE CENTER</div>
+        ${originHtml}
+        ${changeHtml}
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">NOAA · NATIONAL HURRICANE CENTER</div>
+        ${p.stormId ? `<button onclick="window.__weStormRecenter&&window.__weStormRecenter('${idSafe(p.stormId)}')" style="${shareBtnStyle}">◎ RE-CENTER ON STORM</button>` : ''}
         ${p.stormId ? `<button onclick="window.__weShareEntity&&window.__weShareEntity('storm','${idSafe(p.stormId)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>` : ''}
       </div>`);
+      if (p.stormId) {
+        applyStormSelection(String(p.stormId), String(p.name ?? ''));
+        popupRef.current?.on('close', () => clearStormSelection());
+      }
     };
+
     map.on('click', 'hurricane-current', e => { if (e.features?.length) openStormPopup(e.features[0]); });
     map.on('click', 'hurricane-icons', e => { if (e.features?.length) openStormPopup(e.features[0]); });
     map.on('click', 'hurricane-points', e => {
@@ -3117,7 +3229,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           opener = openFirePopup; zoom = 9;
         } else if (kind === 'storm') {
           feature = findIn('hurricanes', f => f.properties?.kind === 'current' && String(f.properties?.stormId ?? '') === id);
-          opener = openStormPopup; zoom = 6;
+          opener = (f: any) => openStormPopup(f, { shared: true }); zoom = 6;
         } else if (kind === 'event') {
           feature = findIn('gdelt', f => shareCoordKey(f) === id); opener = openGdacsPopup;
           if (!feature) { feature = findIn('gdelt-events', f => shareCoordKey(f) === id); opener = openGdeltEventPopup; }
@@ -5320,7 +5432,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
     setVis(['fires-heat','fires-icons'], activeLayers.fires);
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
-    setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label','hurricane-icons'], (activeLayers as any).hurricanes);
+    setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label','hurricane-icons','hurricane-selected-past','hurricane-past-points','hurricane-selected-halo','hurricane-selected-ring'], (activeLayers as any).hurricanes);
     setVis(['gauge-dots'], (activeLayers as any).river_gauges);
     setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
     setVis(['gbfs-systems','gbfs-label','gbfs-stations','gbfs-vehicles'], (activeLayers as any).gbfs);
