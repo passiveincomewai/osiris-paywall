@@ -6,6 +6,7 @@ import skiResorts from "@/data/ski-resorts.json";
 import liveCameraIndex from "@/data/live-camera-index.json";
 import { POSTS } from "./blog/posts";
 import { EVENT_WALLS } from "@/data/event-walls";
+import { AIRPORT_PAGES } from "@/lib/airport-pages";
 
 const BASE = "https://worldeye.app";
 
@@ -151,6 +152,13 @@ const SEO_PAGES_WAVE13 = [
   "/port-webcams",
   "/city-webcams/new-york-city",
 ];
+
+// Wave 14 (2026-10-27): per-airport pages — one page per airport in
+// lib/airport-pages (51 airports, radius walls over the catalogue),
+// derived from the same data module the route's generateStaticParams
+// reads, so the two can never drift. Catalogue-driven, so they carry
+// the catalogue's date like Wave 13.
+const SEO_PAGES_WAVE14 = AIRPORT_PAGES.map((a) => `/airport-webcams/${a.slug}`);
 
 // Tools (2026-10-26): Photo Geolocation (Beta) — the free public tool
 // page at /tools/photo-geolocation.
@@ -413,6 +421,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     ...SEO_PAGES_WAVE13.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE14.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,

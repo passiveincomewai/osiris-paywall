@@ -17,6 +17,8 @@ import {
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
 import { EXPLORE_SCOPES, areasForDef, countForDef } from "@/lib/explore-data";
+import Link from "next/link";
+import { AIRPORT_PAGES } from "@/lib/airport-pages";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { voiceFaqs } from "@/lib/voice-questions";
 
@@ -172,6 +174,35 @@ export default async function AirportWebcamsPage() {
         rows={areas.slice(0, 12)}
         note="Counted from the cameras above: the city each airport camera is listed under in the index."
       />
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">One page per airport</h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          Fifty-one airports earn their own page — the ones where the
+          catalogue holds a real camera wall nearby. Each page is a radius
+          rule, stated on the page: every catalogue camera within 15 km of
+          the airport (25 km for Denver, whose field sits far out on the
+          plains), nearest first, with the live flight layer over the
+          field. Airports with only a handful of distant feeds were left
+          off rather than padded — Chicago O&apos;Hare, for all its size,
+          has just 41 catalogue cameras within 15 km.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {AIRPORT_PAGES.map((a) => (
+            <Link
+              key={a.slug}
+              href={`/airport-webcams/${a.slug}`}
+              className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 hover:bg-white/[0.06] transition"
+            >
+              <span className="block font-semibold text-sm">
+                {a.city} ({a.iata})
+              </span>
+              <span className="block text-xs text-white/45 mt-0.5">
+                {a.count} cameras within {a.radiusKm} km
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
       <HowTo title="How to watch airport cameras" steps={HOW_TO} />
       <FaqSection title="Airport webcam FAQs" faqs={FAQS} />
       <VoiceQA ids={VOICE_QA_IDS} />
