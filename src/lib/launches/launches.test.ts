@@ -2,8 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { normalizeLaunch, normalizeLaunchList, launchPadKey } from './normalize';
 import { countdownTo, nextLaunch } from './countdown';
 import {
-  buildAscentProfile, launchAzimuthDeg, orbitClassFor, positionAt,
-  profilePath, replayClockLabel, replayEligible, REPLAY_BANNER,
+  buildAscentProfile, isReplayFinished, launchAzimuthDeg, orbitClassFor, positionAt,
+  profilePath, replayClockLabel, replayEligible, replayEndS, replaySelectionStale,
+  REPLAY_BANNER, REPLAY_TAIL_S,
 } from './profile';
 import { createLaunchService, UPCOMING_TTL_MS, PREVIOUS_TTL_MS } from './server';
 import { spaceMissionPreset } from './preset';
@@ -215,6 +216,45 @@ describe('ascent profile — reconstruction maths + honesty labeling', () => {
     expect(replayClockLabel(-7)).toBe('T−00:07');
     expect(replayClockLabel(0)).toBe('T+00:00');
     expect(replayClockLabel(222)).toBe('T+03:42');
+  });
+});
+
+describe('replay session lifecycle — the banner lives and dies with the replay', () => {
+  const launch = normalizeLaunch(REAL_UPCOMING)!;
+  const p = buildAscentProfile(launch)!;
+  const padKey = launchPadKey(launch);
+
+  it('the session ends REPLAY_TAIL_S past the top of the profile', () => {
+    expect(REPLAY_TAIL_S).toBe(5);
+    expect(replayEndS(p)).toBe(p.orbit.durationS + REPLAY_TAIL_S);
+  });
+
+  it('not finished during countdown, ascent, or the coast-out tail', () => {
+    expect(isReplayFinished(p, -10)).toBe(false);
+    expect(isReplayFinished(p, 0)).toBe(false);
+    expect(isReplayFinished(p, p.orbit.durationS)).toBe(false);
+    expect(isReplayFinished(p, replayEndS(p) - 0.01)).toBe(false);
+  });
+
+  it('finished at and past the end — playback must not park there', () => {
+    expect(isReplayFinished(p, replayEndS(p))).toBe(true);
+    expect(isReplayFinished(p, replayEndS(p) + 30)).toBe(true);
+  });
+
+  it('selection: the replay’s own launch (and its pad) is not stale', () => {
+    expect(replaySelectionStale(launch.id, padKey, launch.id, padKey)).toBe(false);
+    // Launch detail reached from the board list carries no pad selection.
+    expect(replaySelectionStale(launch.id, padKey, launch.id, null)).toBe(false);
+  });
+
+  it('selection: another launch picked, or Back (selection cleared), is stale', () => {
+    expect(replaySelectionStale(launch.id, padKey, 'some-other-launch', padKey)).toBe(true);
+    expect(replaySelectionStale(launch.id, padKey, null, padKey)).toBe(true);
+    expect(replaySelectionStale(launch.id, padKey, null, null)).toBe(true);
+  });
+
+  it('selection: a different pad opened over the same launch is stale', () => {
+    expect(replaySelectionStale(launch.id, padKey, launch.id, 'pad-999')).toBe(true);
   });
 });
 

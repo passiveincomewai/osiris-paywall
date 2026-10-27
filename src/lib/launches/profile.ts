@@ -177,6 +177,44 @@ export function profilePath(profile: AscentProfile, stepS = 5): Array<[number, n
   return pts;
 }
 
+/** Seconds of coast-out past the top of the profile before playback ends. */
+export const REPLAY_TAIL_S = 5;
+
+/** The profile time at which a replay session ends. */
+export function replayEndS(profile: AscentProfile): number {
+  return profile.orbit.durationS + REPLAY_TAIL_S;
+}
+
+/**
+ * True when the playback clock has reached the end of the profile. The
+ * replay session ends there — it does not park in a finished state —
+ * so the banner (and the drawn reconstruction) is up exactly while a
+ * reconstruction is genuinely on screen, and never after.
+ */
+export function isReplayFinished(profile: AscentProfile, tS: number): boolean {
+  return tS >= replayEndS(profile);
+}
+
+/**
+ * True when the board's selection has moved away from the launch a
+ * replay belongs to: a different launch picked, the selection cleared
+ * (Back), or a different pad opened (board rows or a map pad click).
+ * The replay must end with the selection — otherwise the reconstruction
+ * on the globe (and its banner) describes a launch the board is no
+ * longer showing. A null pad selection never stales a replay: launch
+ * detail reached from the board list carries no pad selection.
+ */
+export function replaySelectionStale(
+  replayLaunchId: string,
+  replayPadKey: string | null,
+  selectedLaunchId: string | null,
+  selectedPadKey: string | null,
+): boolean {
+  if (selectedLaunchId !== replayLaunchId) return true;
+  if (selectedPadKey && replayPadKey && selectedPadKey !== replayPadKey) return true;
+  return false;
+}
+
 /** Format a replay clock: "T−00:07" counting down, "T+03:42" in ascent. */
 export function replayClockLabel(tS: number): string {
   const sign = tS < 0 ? 'T−' : 'T+';

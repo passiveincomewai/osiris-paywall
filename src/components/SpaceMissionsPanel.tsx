@@ -23,7 +23,8 @@ import {
 import { countdownTo, nextLaunch } from '@/lib/launches/countdown';
 import { launchPadKey } from '@/lib/launches/normalize';
 import {
-  buildAscentProfile, positionAt, profilePath, replayClockLabel, replayEligible,
+  buildAscentProfile, isReplayFinished, positionAt, profilePath, replayClockLabel,
+  replayEligible, replayEndS, replaySelectionStale,
   REPLAY_BANNER, REPLAY_LEAD_IN_S, REPLAY_NOTE, type AscentProfile,
 } from '@/lib/launches/profile';
 
@@ -195,16 +196,36 @@ export default function SpaceMissionsPanel({
       if (!r || !r.playing) return;
       const dt = Math.min(0.25, (t - last) / 1000);
       last = t;
-      const tS = Math.min(r.profile.orbit.durationS + 5, r.tS + dt * r.speed);
-      const nextR = { ...r, tS, playing: tS < r.profile.orbit.durationS + 5 };
+      const tS = Math.min(replayEndS(r.profile), r.tS + dt * r.speed);
+      if (isReplayFinished(r.profile, tS)) {
+        // Natural end: the session ends here — it does NOT park in a
+        // finished state. State, transport, banner and the drawn
+        // reconstruction clear together, so the honesty banner is up
+        // exactly while a reconstruction is on screen, never after.
+        stopReplay();
+        return;
+      }
+      const nextR = { ...r, tS, playing: true };
       replayRef.current = nextR;
       setReplay(nextR);
       emitFrame(nextR);
-      if (nextR.playing) raf = requestAnimationFrame(step);
+      raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [replay?.playing, replay?.launch.id, emitFrame]);
+  }, [replay?.playing, replay?.launch.id, emitFrame, stopReplay]);
+
+  // Selection moved on — another launch picked, Back to the board, or a
+  // different pad opened (board rows or a map pad click; both arrive as
+  // props): the replay belongs to the old selection, so it ends with
+  // it. Without this the reconstruction, its transport and the honesty
+  // banner outlived the selection indefinitely.
+  useEffect(() => {
+    if (!replay) return;
+    if (replaySelectionStale(replay.launch.id, launchPadKey(replay.launch), selectedLaunchId, selectedPadKey)) {
+      stopReplay();
+    }
+  }, [replay, selectedLaunchId, selectedPadKey, stopReplay]);
 
   // Grabbing the map releases the replay camera (drone/follow contract) —
   // playback continues, the banner stays, the user can re-follow.
@@ -260,7 +281,7 @@ export default function SpaceMissionsPanel({
             <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-[0.18em] text-[var(--text-primary)]">
               <Rocket className="w-3.5 h-3.5" style={{ color: '#B388FF' }} /> SPACE MISSIONS
             </span>
-            <button type="button" onClick={() => setPanelOpen(false)} aria-label="Close space missions panel" className="w-6 h-6 rounded flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors">
+            <button type="button" onClick={() => { stopReplay(); setPanelOpen(false); }} aria-label="Close space missions panel" className="w-6 h-6 rounded flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors">
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -304,7 +325,7 @@ export default function SpaceMissionsPanel({
                   onClick={() => {
                     const r = replayRef.current;
                     if (!r) return;
-                    const restarting = !r.playing && r.tS >= r.profile.orbit.durationS + 5;
+                    const restarting = !r.playing && isReplayFinished(r.profile, r.tS);
                     const nextR = { ...r, playing: !r.playing, tS: restarting ? -REPLAY_LEAD_IN_S : r.tS };
                     replayRef.current = nextR;
                     setReplay(nextR);
