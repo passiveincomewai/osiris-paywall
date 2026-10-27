@@ -5,8 +5,11 @@ import {
   findStormGroup,
   groupStormFeatures,
   ktToMph,
+  pastPointTimeIso,
   saffirSimpsonCategory,
+  stormChangeSummary,
   stormDisplayCategory,
+  STORM_SIZE_MEANING,
 } from "./hurricanes";
 
 function currentFeature(overrides: Record<string, any> = {}): any {
@@ -133,5 +136,154 @@ describe("scales and labels", () => {
     expect(compassDirection(null)).toBeNull();
     expect(ktToMph(100)).toBe(115);
     expect(ktToMph(null)).toBeNull();
+  });
+});
+
+function pastPointFeature(overrides: Record<string, any> = {}): any {
+  return {
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [-61.5, 13.5] },
+    properties: {
+      kind: "pastpoint",
+      name: "Melissa",
+      stormType: "TD",
+      basin: "AL",
+      intensityKt: 30,
+      pressureMb: 1006,
+      category: null,
+      timeIso: "2026-10-22T00:00:00Z",
+      ...overrides,
+    },
+  };
+}
+
+function radiiFeature(overrides: Record<string, any> = {}): any {
+  return {
+    type: "Feature",
+    geometry: null,
+    properties: {
+      kind: "windradii",
+      // GIS spells the id uppercase; CurrentStorms uses lowercase.
+      stormId: "AL142026",
+      radiiKt: 34,
+      neNm: 60,
+      seNm: 50,
+      swNm: 40,
+      nwNm: 45,
+      advNum: 5,
+      synopTime: "202610220000",
+      ...overrides,
+    },
+  };
+}
+
+describe("past points + wind radii grouping", () => {
+  it("sorts best-track history oldest first regardless of feed order", () => {
+    const groups = groupStormFeatures([
+      currentFeature(),
+      pastPointFeature({ timeIso: "2026-10-23T00:00:00Z", intensityKt: 55 }),
+      pastPointFeature({ timeIso: "2026-10-22T00:00:00Z", intensityKt: 30 }),
+    ]);
+    const g = groups[0];
+    expect(g.history.map((h) => h.intensityKt)).toEqual([30, 55]);
+    expect(g.history[0].lat).toBeCloseTo(13.5);
+  });
+
+  it("picks earliest/latest 34 kt radii by advisory number, ignoring other thresholds", () => {
+    const groups = groupStormFeatures([
+      currentFeature(),
+      radiiFeature({ advNum: 20, synopTime: "202610240000", neNm: 150, seNm: 120, swNm: 100, nwNm: 130 }),
+      radiiFeature({ advNum: 5 }),
+      radiiFeature({ advNum: 30, radiiKt: 64, neNm: 40, seNm: 40, swNm: 40, nwNm: 40 }),
+      radiiFeature({ stormId: "AL992026", advNum: 1, neNm: 999 }),
+    ]);
+    const g = groups[0];
+    expect(g.size34?.first.maxNm).toBe(60);
+    expect(g.size34?.latest.maxNm).toBe(150);
+    expect(g.size34?.latest.advNum).toBe(20);
+  });
+
+  it("orders radii by synoptime — the live feed stamps the CURRENT advNum on every row", () => {
+    const groups = groupStormFeatures([
+      currentFeature(),
+      // Feed order is scrambled and advNum is identical (23) on both,
+      // exactly as the live MapServer returns them.
+      radiiFeature({ advNum: 23, synopTime: "2026102400", neNm: 180, seNm: 180, swNm: 50, nwNm: 120 }),
+      radiiFeature({ advNum: 23, synopTime: "2026102200", neNm: 60, seNm: 0, swNm: 0, nwNm: 60 }),
+    ]);
+    const g = groups[0];
+    expect(g.size34?.first.maxNm).toBe(60);
+    expect(g.size34?.latest.maxNm).toBe(180);
+  });
+});
+
+describe("stormChangeSummary", () => {
+  it("computes wind, category and size change since formation from real fields", () => {
+    const groups = groupStormFeatures([
+      currentFeature({ intensityKt: 100 }),
+      gisFeature("point", { fcstHrs: 0, category: 3 }),
+      pastPointFeature({ intensityKt: 35, timeIso: "2026-10-22T00:00:00Z" }),
+      pastPointFeature({ intensityKt: 70, timeIso: "2026-10-23T00:00:00Z" }),
+      radiiFeature({ advNum: 5, neNm: 60, seNm: 50, swNm: 40, nwNm: 45 }),
+      radiiFeature({ advNum: 20, synopTime: "202610240000", neNm: 140, seNm: 110, swNm: 90, nwNm: 120 }),
+    ]);
+    const s = stormChangeSummary(groups[0]);
+    expect(s.genesis).toEqual({ lat: 13.5, lng: -61.5, timeIso: "2026-10-22T00:00:00Z" });
+    expect(s.historyPoints).toBe(2);
+    expect(s.windThenKt).toBe(35);
+    expect(s.windNowKt).toBe(100);
+    expect(s.windDeltaKt).toBe(65);
+    expect(s.catThen).toBe(0); // 35 kt derives to below Category 1
+    expect(s.catNow).toBe(3);
+    expect(s.sizeThenNm).toBe(60);
+    expect(s.sizeNowNm).toBe(140);
+    expect(s.sizeDeltaNm).toBe(80);
+    expect(STORM_SIZE_MEANING).toContain("wind field");
+  });
+
+  it("falls back to the past-track line's first vertex for genesis", () => {
+    const pastLine: any = {
+      type: "Feature",
+      geometry: { type: "LineString", coordinates: [[-60.0, 12.0], [-65.0, 15.0]] },
+      properties: { kind: "past", name: "Melissa" },
+    };
+    const groups = groupStormFeatures([currentFeature(), pastLine]);
+    const s = stormChangeSummary(groups[0]);
+    expect(s.genesis).toEqual({ lat: 12.0, lng: -60.0, timeIso: null });
+    expect(s.historyPoints).toBe(0);
+    expect(s.windDeltaKt).toBeNull();
+  });
+
+  it("leaves every change field null when the feed carries no history or radii", () => {
+    const groups = groupStormFeatures([currentFeature()]);
+    const s = stormChangeSummary(groups[0]);
+    expect(s.genesis).toBeNull();
+    expect(s.windThenKt).toBeNull();
+    expect(s.windDeltaKt).toBeNull();
+    expect(s.sizeThenNm).toBeNull();
+    expect(s.sizeNowNm).toBeNull();
+    expect(s.sizeDeltaNm).toBeNull();
+  });
+});
+
+describe("pastPointTimeIso", () => {
+  it("parses the dtg date-time-group as UTC", () => {
+    expect(pastPointTimeIso({ dtg: 202510260600 })).toBe("2025-10-26T06:00:00Z");
+    expect(pastPointTimeIso({ dtg: "202510261200" })).toBe("2025-10-26T12:00:00Z");
+    // Live feed shape: dtg arrives as a double like 2026101818.0 (YYYYMMDDHH).
+    expect(pastPointTimeIso({ dtg: 2026101818.0 })).toBe("2026-10-18T18:00:00Z");
+  });
+
+  it("falls back to year/month/day/hhmm, month as a name or a number", () => {
+    expect(pastPointTimeIso({ year: 2026, month: "Oct", day: 26, hhmm: "1800" }))
+      .toBe("2026-10-26T18:00:00Z");
+    expect(pastPointTimeIso({ year: 2026, month: 10, day: 26, hhmm: "0600" }))
+      .toBe("2026-10-26T06:00:00Z");
+  });
+
+  it("returns null rather than guessing at garbage", () => {
+    expect(pastPointTimeIso({})).toBeNull();
+    expect(pastPointTimeIso({ dtg: "soon" })).toBeNull();
+    expect(pastPointTimeIso({ year: 2026, month: "Smarch", day: 1, hhmm: "0000" })).toBeNull();
   });
 });

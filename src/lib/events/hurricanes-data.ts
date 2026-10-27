@@ -17,18 +17,23 @@
  * https://www.nhc.noaa.gov/
  */
 import { cachedSource } from "@/lib/sourceCache";
+import { pastPointTimeIso } from "@/lib/events/hurricanes";
 
 const CURRENT_STORMS = "https://www.nhc.noaa.gov/CurrentStorms.json";
 const MAPSERVER =
   "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/" +
   "NHC_tropical_weather_summary/MapServer";
 
-/** MapServer layer id → feature kind drawn on the globe. */
+/** MapServer layer id → feature kind drawn on the globe. Layer 10
+ *  (past points) and 13 (past wind radii) feed the storm card's
+ *  origin/change sections; radii are attributes-only (no geometry). */
 const GIS_LAYERS: Array<{ id: number; kind: string }> = [
   { id: 7, kind: "cone" },
   { id: 6, kind: "track" },
   { id: 11, kind: "past" },
   { id: 5, kind: "point" },
+  { id: 10, kind: "pastpoint" },
+  { id: 13, kind: "windradii" },
 ];
 
 export interface StormFeature {
@@ -80,17 +85,70 @@ async function fetchStormFeatures(): Promise<StormFeature[]> {
       // outFields stays '*': the four layers carry different schemas, and
       // asking any layer for a field it lacks fails its whole query.
       // Properties are trimmed below before anything reaches the client.
+      // Past points + wind radii are SEASON-wide layers: an unfiltered
+      // query truncates at the service's 2000-record cap in objectid
+      // order, which can cut the ACTIVE storms (they sort last). Scope
+      // those two queries to the active storms by name / id.
+      let where = "1=1";
+      if (kind === "pastpoint" || kind === "windradii") {
+        const field = kind === "pastpoint" ? "stormname" : "stormid";
+        const rawVals = storms.map((s) => (kind === "pastpoint" ? s.name : s.id));
+        const vals = [...new Set(rawVals.flatMap((v) => {
+          const t = typeof v === "string" ? v.trim() : "";
+          return t ? [t, t.toUpperCase()] : [];
+        }))];
+        if (vals.length) {
+          where = `${field} IN (${vals.map((v) => `'${v.replace(/'/g, "''")}'`).join(",")})`;
+        }
+      }
       const params = new URLSearchParams({
-        where: "1=1",
+        where,
         outFields: "*",
         outSR: "4326",
         f: "geojson",
       });
+      // Wind radii are consumed as numbers only — skip the polygons.
+      if (kind === "windradii") params.set("returnGeometry", "false");
       const fc = await fetchJson(`${MAPSERVER}/${id}/query?${params}`, 20000);
       const out: StormFeature[] = [];
       for (const f of fc.features ?? []) {
-        if (!f.geometry) continue;
         const p = f.properties ?? {};
+        if (kind === "windradii") {
+          out.push({
+            type: "Feature",
+            geometry: null,
+            properties: {
+              kind,
+              stormId: p.stormid ?? "",
+              radiiKt: p.radii != null ? Number(p.radii) : null,
+              neNm: p.ne != null ? Number(p.ne) : null,
+              seNm: p.se != null ? Number(p.se) : null,
+              swNm: p.sw != null ? Number(p.sw) : null,
+              nwNm: p.nw != null ? Number(p.nw) : null,
+              advNum: p.advnum != null ? Number(p.advnum) : null,
+              synopTime: typeof p.synoptime === "string" ? p.synoptime : null,
+            },
+          });
+          continue;
+        }
+        if (!f.geometry) continue;
+        if (kind === "pastpoint") {
+          out.push({
+            type: "Feature",
+            geometry: f.geometry,
+            properties: {
+              kind,
+              name: p.stormname ?? "",
+              stormType: p.stormtype ?? "",
+              basin: p.basin ?? "",
+              intensityKt: p.intensity != null ? Number(p.intensity) : null,
+              pressureMb: p.mslp != null ? Number(p.mslp) : null,
+              category: p.ss != null ? Number(p.ss) : null,
+              timeIso: pastPointTimeIso(p),
+            },
+          });
+          continue;
+        }
         out.push({
           type: "Feature",
           geometry: f.geometry,

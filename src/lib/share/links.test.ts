@@ -156,6 +156,25 @@ describe('flight share links — layer lighting and deadline', () => {
     expect((linksModule as any).shareOpenDeadlineMs('event')).toBe(12_000);
   });
 
+  it('gives storm links 30 s — the NHC pipeline cold load outlasts 12 s', () => {
+    expect((linksModule as any).shareOpenDeadlineMs('storm')).toBe(30_000);
+    expect((linksModule as any).STORM_SHARE_OPEN_DEADLINE_MS).toBe(30_000);
+  });
+
+  it('round-trips a storm share link: build → parse → layers → finder', () => {
+    const url = buildEntityShareUrl({ kind: 'storm', id: 'al092026' }, '', BASE);
+    const ref = entityRefFromSearch(new URL(url).search);
+    expect(ref).toEqual({ kind: 'storm', id: 'al092026' });
+    expect((linksModule as any).shareLayersForKind(ref!.kind)).toEqual(['hurricanes']);
+    const features = [
+      { properties: { stormId: 'al092026', kind: 'point' } },
+      { properties: { stormId: 'al092026', kind: 'current' } },
+    ];
+    expect(findStormFeatureByShareId(features, ref!.id)).toBe(features[1]);
+    // A dissipated storm resolves to nothing — the page then says so.
+    expect(findStormFeatureByShareId([], ref!.id)).toBeUndefined();
+  });
+
   it('matches flight features to share ids case-insensitively and only on icao24', () => {
     expect(typeof (linksModule as any).featureMatchesFlightShareId).toBe('function');
     const f = { properties: { icao24: 'A514MT' } };

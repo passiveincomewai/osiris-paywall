@@ -222,6 +222,11 @@ export function entityRefFromSearch(search: string | null | undefined): EntitySh
 
 export const SHARE_OPEN_DEADLINE_MS = 12_000;
 export const FLIGHT_SHARE_OPEN_DEADLINE_MS = 90_000;
+/** Storms ride the NHC pipeline (CurrentStorms + MapServer, server
+ *  cache 10 min): a cold first load can take longer than the generic
+ *  deadline, so a storm link gets 30 s before it settles as stale —
+ *  at which point the page says the storm is no longer active. */
+export const STORM_SHARE_OPEN_DEADLINE_MS = 30_000;
 
 /** activeLayers keys the globe lights for a shared entity of a kind. */
 export function shareLayersForKind(kind: ShareEntityKind): string[] {
@@ -237,7 +242,9 @@ export function shareLayersForKind(kind: ShareEntityKind): string[] {
 
 /** How long the globe keeps offering a shared entity to the map. */
 export function shareOpenDeadlineMs(kind: ShareEntityKind): number {
-  return kind === 'flight' ? FLIGHT_SHARE_OPEN_DEADLINE_MS : SHARE_OPEN_DEADLINE_MS;
+  if (kind === 'flight') return FLIGHT_SHARE_OPEN_DEADLINE_MS;
+  if (kind === 'storm') return STORM_SHARE_OPEN_DEADLINE_MS;
+  return SHARE_OPEN_DEADLINE_MS;
 }
 
 /** A GeoJSON flight feature is the share target when its icao24
