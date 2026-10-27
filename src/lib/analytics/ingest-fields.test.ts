@@ -3,6 +3,8 @@ import {
   parseVariant,
   parseDevice,
   parseEventDetail,
+  parseSearchDetail,
+  SEARCH_PERFORMED_EVENT,
   deviceClassFromUserAgent,
   splitEvent,
 } from "./ingest-fields";
@@ -66,5 +68,35 @@ describe("parseEventDetail + splitEvent", () => {
     expect(splitEvent("onboarding_step_complete:3")).toEqual({ name: "onboarding_step_complete", detail: "3" });
     expect(splitEvent("feature_first_use:camera")).toEqual({ name: "feature_first_use", detail: "camera" });
     expect(splitEvent("globe_reached")).toEqual({ name: "globe_reached", detail: null });
+  });
+});
+
+describe("parseSearchDetail (search_performed payload)", () => {
+  it("accepts the '<count>_<query token>' shape the client builder emits", () => {
+    expect(SEARCH_PERFORMED_EVENT).toBe("search_performed");
+    expect(parseSearchDetail("0_jamaica")).toBe("0_jamaica");
+    expect(parseSearchDetail("12_eiffel_tower")).toBe("12_eiffel_tower");
+    expect(parseSearchDetail("3_10_downing_street")).toBe("3_10_downing_street");
+    // Longer than the 24-char bare-token cap — the whole point of the exception.
+    expect(parseSearchDetail("7_a_much_longer_place_name_query_token")).toBe("7_a_much_longer_place_name_query_token");
+  });
+  it("sanitizes like parseEventDetail before validating the shape", () => {
+    expect(parseSearchDetail("12_Eiffel Tower!")).toBe("12_eiffeltower");
+    expect(parseSearchDetail("0_JAMAICA")).toBe("0_jamaica");
+  });
+  it("rejects anything that is not count + token", () => {
+    expect(parseSearchDetail("jamaica")).toBeNull();
+    expect(parseSearchDetail("_jamaica")).toBeNull();
+    expect(parseSearchDetail("x_jamaica")).toBeNull();
+    expect(parseSearchDetail("0_")).toBeNull();
+    expect(parseSearchDetail("")).toBeNull();
+    expect(parseSearchDetail(0)).toBeNull();
+    expect(parseSearchDetail(undefined)).toBeNull();
+  });
+  it("caps the detail at 60 chars so the stored event stays within 80", () => {
+    const cleaned = parseSearchDetail(`9_${"a".repeat(100)}`);
+    expect(cleaned).not.toBeNull();
+    expect(cleaned!.length).toBe(60);
+    expect(`search_performed:${cleaned}`.length).toBeLessThanOrEqual(80);
   });
 });

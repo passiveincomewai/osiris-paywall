@@ -89,3 +89,27 @@ describe("POST /api/analytics/track — onboarding stamping", () => {
     expect(created[0]).toMatchObject({ variant: null, device: "desktop", path: "/pricing" });
   });
 });
+
+describe("POST /api/analytics/track — search_performed detail", () => {
+  it("stores the structured count+query detail on the search event", async () => {
+    await POST(req({ path: "/", sessionId: "s6", event: "search_performed", detail: "0_jamaica" }));
+    expect(created[0]).toMatchObject({ event: "search_performed:0_jamaica" });
+  });
+
+  it("keeps search details longer than the 24-char bare-token cap", async () => {
+    await POST(
+      req({ path: "/", sessionId: "s6", event: "search_performed", detail: "7_a_much_longer_place_name_query_token" }),
+    );
+    expect(created[0]).toMatchObject({ event: "search_performed:7_a_much_longer_place_name_query_token" });
+  });
+
+  it("drops a malformed search detail but still records the bare event", async () => {
+    await POST(req({ path: "/", sessionId: "s6", event: "search_performed", detail: "jamaica" }));
+    expect(created[0]).toMatchObject({ event: "search_performed" });
+  });
+
+  it("leaves other events on the bare-token rule (long detail truncated to 24)", async () => {
+    await POST(req({ path: "/", sessionId: "s6", event: "feature_first_use", detail: "x".repeat(40) }));
+    expect(created[0]).toMatchObject({ event: `feature_first_use:${"x".repeat(24)}` });
+  });
+});

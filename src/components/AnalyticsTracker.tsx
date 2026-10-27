@@ -49,7 +49,9 @@ export function captureUtm(): Record<string, string> {
 /**
  * Fire a named interaction event (e.g. "camera_open", "upgrade_gate_shown").
  * `detail` is one machine token ([a-z0-9_], ≤24 chars) stored as
- * `event:detail` — see lib/analytics/ingest-fields.
+ * `event:detail` — see lib/analytics/ingest-fields. (Exception: the
+ * `search_performed` event's structured count+query token, built by
+ * lib/analytics/search-event and allowed up to 60 chars server-side.)
  */
 export function trackAnalyticsEvent(event: string, detail?: string) {
   try {

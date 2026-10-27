@@ -75,3 +75,25 @@ export function splitEvent(raw: string): { name: string; detail: string | null }
   if (i < 0) return { name: raw, detail: null };
   return { name: raw.slice(0, i), detail: raw.slice(i + 1) || null };
 }
+
+/**
+ * The one event whose detail is a small structured payload rather than a
+ * bare token: on-site search (payload built by src/lib/analytics/
+ * search-event.ts). Shape: "<resultCount>_<query token>", e.g.
+ * "0_jamaica" (zero-result) or "12_eiffel_tower". The query token is the
+ * visitor's search text normalized to the same [a-z0-9_] machine alphabet
+ * as every other detail — never the raw typed string — but at up to 55
+ * chars it preserves the actual terms zero-result mining needs, which the
+ * 24-char bare-token cap would truncate away. The 60-char ceiling keeps
+ * the stored event ("search_performed:" is 17 chars + detail) inside the
+ * event column's 80-char cap in the ingest route.
+ */
+export const SEARCH_PERFORMED_EVENT = "search_performed";
+export const SEARCH_DETAIL_MAX = 60;
+const SEARCH_DETAIL_SHAPE = /^\d{1,4}_[a-z0-9][a-z0-9_]*$/;
+
+export function parseSearchDetail(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  const cleaned = v.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, SEARCH_DETAIL_MAX);
+  return SEARCH_DETAIL_SHAPE.test(cleaned) ? cleaned : null;
+}

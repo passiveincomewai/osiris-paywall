@@ -16,6 +16,8 @@ import {
   type SearchableCamera,
 } from '@/lib/camera-search';
 import { cameraMediaKind, type CameraMediaKind } from '@/lib/country-cameras';
+import { buildSearchPerformedDetail } from '@/lib/analytics/search-event';
+import { trackAnalyticsEvent } from './AnalyticsTracker';
 import { Highlight, Key, KindTile, PlaceRow, type PlaceLike } from './places';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -273,7 +275,20 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
     setLocating(false);
   }, [onLocate, onClose]);
 
+  /* Analytics: one `search_performed` event per SUBMITTED search — a pick
+     (go/directions below) or the settled no-results state further down —
+     never per keystroke. The detail carries the result count and the
+     normalized query token (lib/analytics/search-event); it powers
+     zero-result mining, which previously had no on-site data at all. */
+  const reportSearch = () => {
+    const detail = buildSearchPerformedDetail(value, results.length + filteredCameras.length);
+    if (detail) trackAnalyticsEvent('search_performed', detail);
+  };
+
   const go = (item: NavItem) => {
+    // A pick is a submitted search — but only with a query in the box;
+    // recents and "Your location" (empty box) are not searches.
+    if (typing) reportSearch();
     if (item.type === 'camera') {
       if (onOpenCamera) onOpenCamera(item.cam);
       else onLocate(item.cam.lat, item.cam.lng, 15);
@@ -295,6 +310,7 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
     if (item.type !== 'place' || !onDirections) return;
     const h = item.hit;
     if (h.kind === 'current') return;
+    if (typing) reportSearch();
     setRecent(rememberPlace({ label: h.label, context: h.context, lat: h.lat, lng: h.lng, kind: h.kind }));
     onDirections({ label: h.label, context: h.context, lat: h.lat, lng: h.lng, kind: h.kind });
   };
@@ -317,6 +333,18 @@ export default function SearchBar({ onLocate, center = null, onClose, onDirectio
 
   const noResults = typing && !loading && answered === value && value.trim().length >= 2
     && results.length === 0 && cameraHits.length === 0 && !filtersEmptiedCameras;
+
+  /* A settled search with nothing to pick is still a submitted search —
+     and it is the zero-result mining signal. Fire once per query: the
+     ref keeps re-renders (and the open panel) from repeating it, while a
+     new query that also settles empty fires again. */
+  const zeroReportedRef = useRef('');
+  useEffect(() => {
+    if (!noResults || zeroReportedRef.current === value) return;
+    zeroReportedRef.current = value;
+    const detail = buildSearchPerformedDetail(value, 0);
+    if (detail) trackAnalyticsEvent('search_performed', detail);
+  }, [noResults, value]);
 
   const selectClass = 'h-8 max-w-[150px] rounded-lg border border-[var(--border-primary)] bg-black/40 px-1.5 text-[11.5px] text-[var(--text-secondary)] outline-none disabled:opacity-50 disabled:cursor-not-allowed';
 

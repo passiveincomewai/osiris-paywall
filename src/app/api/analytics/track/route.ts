@@ -5,6 +5,8 @@ import {
   parseVariant,
   parseDevice,
   parseEventDetail,
+  parseSearchDetail,
+  SEARCH_PERFORMED_EVENT,
   deviceClassFromUserAgent,
 } from "@/lib/analytics/ingest-fields";
 
@@ -27,7 +29,10 @@ export const runtime = "nodejs";
  *  device:  "mobile" | "tablet" | "desktop" (client-reported; validated,
  *           else derived from the User-Agent header)
  *  detail:  for events only — one machine token stored as `event:detail`
- *           (e.g. onboarding step number, feature_first_use feature key)
+ *           (e.g. onboarding step number, feature_first_use feature key).
+ *           Exception: the `search_performed` event carries a structured
+ *           "<resultCount>_<query token>" detail, validated by
+ *           parseSearchDetail (see lib/analytics/search-event.ts).
  */
 export async function POST(req: NextRequest) {
   try {
@@ -56,7 +61,10 @@ export async function POST(req: NextRequest) {
         await db.pageView.create({ data: { path, sessionId, userId, durationSec: secs, variant, device } });
       }
     } else if (typeof body.event === "string" && body.event.length > 0) {
-      const detail = parseEventDetail(body.detail);
+      const detail =
+        body.event === SEARCH_PERFORMED_EVENT
+          ? parseSearchDetail(body.detail)
+          : parseEventDetail(body.detail);
       const event = (detail ? `${body.event}:${detail}` : body.event).slice(0, 80);
       await db.pageView.create({
         data: {
