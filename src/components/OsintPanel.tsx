@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, memo } from 'react';
+import { useState, useCallback, useEffect, memo, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -9,7 +9,8 @@ import {
   ChevronDown, ChevronUp, Loader2, AlertTriangle, Server,
   Wifi, Lock, MapPin, Bug, Code, Layers, Network, Fingerprint,
   CheckCircle, XCircle, Clock, ExternalLink, Crosshair,
-  Maximize2, Minimize2, Gavel, Bitcoin, Phone, Terminal, ShieldAlert, User
+  Maximize2, Minimize2, Gavel, Bitcoin, Phone, Terminal, ShieldAlert, User,
+  Crown, Database, Users, Zap, AtSign
 } from 'lucide-react';
 import { ipToNumber, numberToIp, calculateSubnetStart, classifyDevice, assessRisk, batchFetch, ShodanInternetDBResponse, SweepDevice } from '@/lib/osint-utils';
 import ChainBrief from '@/components/ChainBrief';
@@ -18,16 +19,25 @@ import DonBotScan from '@/components/DonBotScan';
 import DigitalDonMark from '@/components/DigitalDonMark';
 
 /**
- * Tool groups. At 19 modules a flat grid forces 8px truncated labels
- * ("SUBDOMA…", "PHONE I…"); grouping keeps every label readable and makes
- * the toolkit scannable by what you are investigating.
+ * Tool categories — presentation only (owner's RECON board redesign,
+ * 2026-10-26). The five headings follow the reference board; every tool
+ * is filed under the heading it honestly belongs to:
+ *  · the old NETWORK & HOST and DOMAIN & WEB groups merge into
+ *    "Domain & Network Intel" (the board's first row);
+ *  · IP SWEEP files under "Geoint & Location Analysis" alongside the
+ *    Self Track action — both are the panel's location/network-mapping
+ *    actions (lookup targets are also geolocated from here);
+ *  · VULN SWEEP files under "Threat Intelligence" — it is a CVE
+ *    exposure check, not a network utility.
+ * No tool was added or dropped: TABS below is the full inventory, and
+ * a category can never invent a tool the panel doesn't have.
  */
 const GROUPS = [
-  { id: 'network', label: 'NETWORK & HOST', hint: 'IPs, ports, routing, hardware' },
-  { id: 'domain', label: 'DOMAIN & WEB', hint: 'DNS, certificates, site fingerprinting' },
-  { id: 'identity', label: 'IDENTITY', hint: 'People, handles, accounts' },
-  { id: 'threat', label: 'THREAT & EXPOSURE', hint: 'Reputation and breach data' },
-  { id: 'chain', label: 'BLOCKCHAIN', hint: 'Wallets, tokens and on-chain incidents' },
+  { id: 'domain', label: 'Domain & Network Intel', hint: 'IPs, ports, DNS, certificates, routing', icon: Database },
+  { id: 'identity', label: 'Identity & Profile Recon', hint: 'People, handles, accounts', icon: Users },
+  { id: 'geoint', label: 'Geoint & Location Analysis', hint: 'Subnet mapping and your own IP location', icon: MapPin },
+  { id: 'threat', label: 'Threat Intelligence', hint: 'Reputation, breaches and CVE exposure', icon: ShieldAlert },
+  { id: 'chain', label: 'Blockchain Intelligence', hint: 'Wallets, tokens and on-chain incidents', icon: Bitcoin },
 ] as const;
 
 type GroupId = (typeof GROUPS)[number]['id'];
@@ -35,6 +45,8 @@ type GroupId = (typeof GROUPS)[number]['id'];
 interface ToolDef {
   id: string;
   label: string;
+  /** Two-line tile label for the board grid ('\n' separated). */
+  tile?: string;
   icon: any;
   placeholder: string;
   color: string;
@@ -43,33 +55,109 @@ interface ToolDef {
   blurb: string;
 }
 
+/**
+ * Target-type mode chips under the scan bar (the board's bottom row).
+ * Each chip is a shortcut onto the REAL tool for that input type — the
+ * same selectTool path a tile click takes — never a parallel flow.
+ */
+const MODE_CHIPS = [
+  { id: 'quick', label: 'QUICK SCAN', icon: Zap },
+  { id: 'domain', label: 'DOMAIN', icon: Globe },
+  { id: 'ip', label: 'IP', icon: MapPin },
+  { id: 'username', label: 'USERNAME', icon: User },
+  { id: 'email', label: 'EMAIL', icon: AtSign },
+  { id: 'phone', label: 'PHONE', icon: Phone },
+] as const;
+
+type ModeChipId = (typeof MODE_CHIPS)[number]['id'];
+
+/** Which mode chip a tool belongs to — derived from state, never stored.
+ *  Tools whose input is none of the six types light no chip. */
+function modeForTool(tab: string, scanType: string): ModeChipId | null {
+  switch (tab) {
+    case 'scanner': return scanType === 'quick' ? 'quick' : 'ip';
+    case 'shodan': case 'bgp': return 'ip';
+    case 'dns': case 'whois': case 'certs': case 'ssl':
+    case 'subdomains': case 'headers': case 'tech': return 'domain';
+    case 'username': case 'github': case 'fingerprint': return 'username';
+    case 'leaks': return 'email';
+    case 'phone': return 'phone';
+    default: return null;
+  }
+}
+
+/* ── RECON board skin (owner's reference design, 2026-10-26) ─────────────
+   Deep-navy sci-fi board: neon-blue frame glow, glowing icon tiles,
+   gold premium pill. Pure presentation — every handler, state field
+   and API call in this file is unchanged from the previous skin.
+   Per-tool accent colours stay inline (they come from TABS); these
+   classes carry only the shared board chrome. */
+const RECON_STYLES = `
+  .we-recon-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 13px; border-bottom: 1px solid rgba(56,150,255,0.28); background: linear-gradient(180deg, rgba(16,64,128,0.38), rgba(4,16,31,0.05)); flex-shrink: 0; }
+  .we-recon-medallion { position: relative; width: 42px; height: 42px; flex-shrink: 0; border-radius: 9999px; border: 2px solid rgba(56,189,248,0.85); box-shadow: 0 0 14px rgba(56,189,248,0.5), inset 0 0 10px rgba(56,189,248,0.35); display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 42%, rgba(56,189,248,0.30), rgba(3,13,26,0.9) 72%); }
+  .we-recon-medallion::before { content: ''; position: absolute; left: 50%; top: -7px; width: 2px; height: calc(100% + 14px); transform: translateX(-50%); background: rgba(56,189,248,0.45); }
+  .we-recon-medallion::after { content: ''; position: absolute; top: 50%; left: -7px; height: 2px; width: calc(100% + 14px); transform: translateY(-50%); background: rgba(56,189,248,0.45); }
+  .we-recon-title { font-size: 19px; font-weight: 800; letter-spacing: 0.10em; color: #EAF6FF; text-shadow: 0 0 14px rgba(56,189,248,0.65); line-height: 1; }
+  .we-recon-premium { display: inline-flex; align-items: center; gap: 4px; padding: 2.5px 8px; border-radius: 999px; border: 1px solid rgba(255,196,0,0.75); background: rgba(255,196,0,0.10); color: #FFC400; font-size: 8.5px; font-weight: 800; letter-spacing: 0.16em; box-shadow: 0 0 10px rgba(255,196,0,0.22); white-space: nowrap; }
+  .we-recon-subtitle { font-size: 9.5px; line-height: 1.35; color: rgba(178,214,255,0.78); }
+  .we-recon-tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; padding: 9px 3px 8px; border-radius: 12px; border: 1px solid rgba(56,150,255,0.28); background: linear-gradient(180deg, rgba(21,74,140,0.30), rgba(6,24,48,0.55)); cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease; width: 100%; }
+  .we-recon-tile:hover { border-color: rgba(125,211,252,0.75); box-shadow: 0 0 14px rgba(56,189,248,0.30); }
+  .we-recon-tile-icon { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 9px; border: 1px solid; flex-shrink: 0; }
+  .we-recon-tile-label { font-size: 9px; font-weight: 600; line-height: 1.3; text-align: center; white-space: pre-line; letter-spacing: 0.02em; }
+  .we-recon-input { background: rgba(3,13,26,0.75); border: 1px solid rgba(56,150,255,0.35); border-radius: 10px; color: #EAF6FF; }
+  .we-recon-input:focus { border-color: rgba(56,189,248,0.8); box-shadow: 0 0 10px rgba(56,189,248,0.25); }
+  .we-recon-scanbar { display: flex; align-items: center; gap: 6px; padding: 5px 5px 5px 8px; border-radius: 14px; border: 1px solid rgba(56,189,248,0.55); background: rgba(3,13,26,0.85); box-shadow: 0 0 18px rgba(0,140,255,0.22), inset 0 0 14px rgba(0,110,255,0.08); }
+  .we-recon-scanbtn { background: linear-gradient(180deg, #38BDF8, #0284C7); color: #fff; font-weight: 800; font-size: 11.5px; letter-spacing: 0.12em; border-radius: 10px; padding: 8px 16px; box-shadow: 0 0 16px rgba(56,189,248,0.55); transition: filter 0.15s ease, opacity 0.15s ease; }
+  .we-recon-scanbtn:hover:not(:disabled) { filter: brightness(1.12); }
+  .we-recon-scanbtn:disabled { opacity: 0.35; box-shadow: none; }
+  .we-recon-chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px; border-radius: 9px; border: 1px solid rgba(56,150,255,0.30); background: rgba(10,40,80,0.35); color: rgba(190,220,255,0.78); font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s ease; }
+  .we-recon-chip:hover { border-color: rgba(125,211,252,0.7); color: #BAE6FD; }
+  .we-recon-chip[data-active="true"] { border-color: rgba(56,189,248,0.9); color: #7DD3FC; background: rgba(56,189,248,0.14); box-shadow: 0 0 12px rgba(56,189,248,0.30); }
+  .we-recon-card { background: rgba(3,13,26,0.66); border: 1px solid rgba(56,150,255,0.25); border-radius: 12px; }
+`;
+
+/** Neon board frame with corner rivets — shared by the compact panel
+ *  and the expanded view so both wear the same skin. */
+const RECON_FRAME_STYLE: CSSProperties = {
+  background: [
+    'radial-gradient(circle at 11px 11px, rgba(165,220,255,0.85) 1.4px, transparent 2.8px)',
+    'radial-gradient(circle at calc(100% - 11px) 11px, rgba(165,220,255,0.85) 1.4px, transparent 2.8px)',
+    'radial-gradient(circle at 11px calc(100% - 11px), rgba(165,220,255,0.85) 1.4px, transparent 2.8px)',
+    'radial-gradient(circle at calc(100% - 11px) calc(100% - 11px), rgba(165,220,255,0.85) 1.4px, transparent 2.8px)',
+    'linear-gradient(165deg, #081c38 0%, #04101f 58%, #030b18 100%)',
+  ].join(', '),
+  border: '1px solid rgba(56,150,255,0.5)',
+  boxShadow: '0 0 28px rgba(0,140,255,0.28), inset 0 0 36px rgba(0,110,255,0.07)',
+  borderRadius: 16,
+};
+
 const TABS: ToolDef[] = [
-  { id: 'scanner', label: 'PORT SCAN', icon: Radar, placeholder: 'IP or hostname', color: '#00E5FF', group: 'network', blurb: 'Open ports and running services' },
-  { id: 'vuln', label: 'VULN SWEEP', icon: Bug, placeholder: 'IP or hostname', color: '#FF3D3D', group: 'network', blurb: 'Known CVEs affecting the host' },
-  { id: 'shodan', label: 'SHODAN IOT', icon: Network, placeholder: 'IP address', color: '#FF3D3D', group: 'network', blurb: 'Internet-exposed device record' },
-  { id: 'bgp', label: 'BGP ROUTE', icon: Globe, placeholder: 'IP or ASN', color: '#00E5FF', group: 'network', blurb: 'Autonomous system and prefixes' },
-  { id: 'mac', label: 'MAC ADDR', icon: Fingerprint, placeholder: 'MAC address', color: '#FFD700', group: 'network', blurb: 'Hardware vendor lookup' },
-  { id: 'sweep', label: 'IP SWEEP', icon: Crosshair, placeholder: 'Enter IP address (e.g. 8.8.8.8)', color: '#FF3D3D', group: 'network', blurb: 'Scan an entire subnet' },
+  { id: 'scanner', label: 'PORT SCAN', icon: Radar, placeholder: 'IP or hostname', color: '#00E5FF', group: 'domain', tile: 'Port\nScan', blurb: 'Open ports and running services' },
+  { id: 'vuln', label: 'VULN SWEEP', icon: Bug, placeholder: 'IP or hostname', color: '#FF3D3D', group: 'threat', tile: 'Vuln\nSweep', blurb: 'Known CVEs affecting the host' },
+  { id: 'shodan', label: 'SHODAN IOT', icon: Network, placeholder: 'IP address', color: '#FF3D3D', group: 'domain', tile: 'Shodan\nIoT', blurb: 'Internet-exposed device record' },
+  { id: 'bgp', label: 'BGP ROUTE', icon: Globe, placeholder: 'IP or ASN', color: '#00E5FF', group: 'domain', tile: 'BGP\nRoute', blurb: 'Autonomous system and prefixes' },
+  { id: 'mac', label: 'MAC ADDR', icon: Fingerprint, placeholder: 'MAC address', color: '#FFD700', group: 'domain', tile: 'MAC\nAddress', blurb: 'Hardware vendor lookup' },
+  { id: 'sweep', label: 'IP SWEEP', icon: Crosshair, placeholder: 'Enter IP address (e.g. 8.8.8.8)', color: '#FF3D3D', group: 'geoint', tile: 'IP\nSweep', blurb: 'Scan an entire subnet' },
 
-  { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF', group: 'domain', blurb: 'All record types' },
-  { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFD700', group: 'domain', blurb: 'Registrar and ownership' },
-  { id: 'certs', label: 'CERTS', icon: Lock, placeholder: 'Domain name', color: '#E040FB', group: 'domain', blurb: 'Certificate transparency log' },
-  { id: 'ssl', label: 'SSL/TLS', icon: Shield, placeholder: 'Domain name', color: '#76FF03', group: 'domain', blurb: 'Cipher and certificate health' },
-  { id: 'subdomains', label: 'SUBDOMAINS', icon: Layers, placeholder: 'Domain to enumerate', color: '#00BCD4', group: 'domain', blurb: 'Enumerate attack surface' },
-  { id: 'headers', label: 'HEADERS', icon: Code, placeholder: 'URL to inspect', color: '#87CEEB', group: 'domain', blurb: 'Security headers audit' },
-  { id: 'tech', label: 'TECH DETECT', icon: Code, placeholder: 'URL to fingerprint', color: '#9C27B0', group: 'domain', blurb: 'Frameworks and stack' },
+  { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF', group: 'domain', tile: 'DNS\nLookup', blurb: 'All record types' },
+  { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFD700', group: 'domain', tile: 'WHOIS\nLookup', blurb: 'Registrar and ownership' },
+  { id: 'certs', label: 'CERTS', icon: Lock, placeholder: 'Domain name', color: '#E040FB', group: 'domain', tile: 'Certificates\nInfo', blurb: 'Certificate transparency log' },
+  { id: 'ssl', label: 'SSL/TLS', icon: Shield, placeholder: 'Domain name', color: '#76FF03', group: 'domain', tile: 'SSL / TLS\nAnalysis', blurb: 'Cipher and certificate health' },
+  { id: 'subdomains', label: 'SUBDOMAINS', icon: Layers, placeholder: 'Domain to enumerate', color: '#00BCD4', group: 'domain', tile: 'Subdomains\nFinder', blurb: 'Enumerate attack surface' },
+  { id: 'headers', label: 'HEADERS', icon: Code, placeholder: 'URL to inspect', color: '#87CEEB', group: 'domain', tile: 'Headers\nInspector', blurb: 'Security headers audit' },
+  { id: 'tech', label: 'TECH DETECT', icon: Code, placeholder: 'URL to fingerprint', color: '#9C27B0', group: 'domain', tile: 'Technology\nDetect', blurb: 'Frameworks and stack' },
 
-  { id: 'username', label: 'USERNAME', icon: User, placeholder: 'Username / handle to hunt', color: '#00E676', group: 'identity', blurb: 'Hunt a handle across platforms' },
-  { id: 'github', label: 'GITHUB RECON', icon: Terminal, placeholder: 'GitHub username', color: '#87CEEB', group: 'identity', blurb: 'Profile, repos and contacts' },
-  { id: 'phone', label: 'PHONE INTEL', icon: Phone, placeholder: 'Phone number (e.g. +1...)', color: '#FF9500', group: 'identity', blurb: 'Carrier, region and line type' },
-  { id: 'fingerprint', label: 'FINGERPRINT', icon: Fingerprint, placeholder: 'Username, email or phone', color: '#3B82F6', group: 'identity', blurb: 'Public profile search, streamed live' },
+  { id: 'username', label: 'USERNAME', icon: User, placeholder: 'Username / handle to hunt', color: '#00E676', group: 'identity', tile: 'Username\nSearch', blurb: 'Hunt a handle across platforms' },
+  { id: 'github', label: 'GITHUB RECON', icon: Terminal, placeholder: 'GitHub username', color: '#87CEEB', group: 'identity', tile: 'GitHub\nRecon', blurb: 'Profile, repos and contacts' },
+  { id: 'phone', label: 'PHONE INTEL', icon: Phone, placeholder: 'Phone number (e.g. +1...)', color: '#FF9500', group: 'identity', tile: 'Phone\nIntelligence', blurb: 'Carrier, region and line type' },
+  { id: 'fingerprint', label: 'FINGERPRINT', icon: Fingerprint, placeholder: 'Username, email or phone', color: '#3B82F6', group: 'identity', tile: 'Fingerprint\nSearch', blurb: 'Public profile search, streamed live' },
 
-  { id: 'threats', label: 'THREATS', icon: AlertTriangle, placeholder: 'IP, domain, or hash', color: '#FF9500', group: 'threat', blurb: 'Reputation across feeds' },
-  { id: 'leaks', label: 'DATA LEAKS', icon: ShieldAlert, placeholder: 'Email address', color: '#E040FB', group: 'threat', blurb: 'Breach exposure for an address' },
+  { id: 'threats', label: 'THREATS', icon: AlertTriangle, placeholder: 'IP, domain, or hash', color: '#FF9500', group: 'threat', tile: 'Threat\nLookup', blurb: 'Reputation across feeds' },
+  { id: 'leaks', label: 'DATA LEAKS', icon: ShieldAlert, placeholder: 'Email address', color: '#E040FB', group: 'threat', tile: 'Data Breach\nSearch', blurb: 'Breach exposure for an address' },
 
-  { id: 'crypto', label: 'CHAIN INTEL', icon: Bitcoin, placeholder: 'BTC, ETH or SOL wallet address', color: '#F7931A', group: 'chain', blurb: 'Wallet forensics and daily brief' },
+  { id: 'crypto', label: 'CHAIN INTEL', icon: Bitcoin, placeholder: 'BTC, ETH or SOL wallet address', color: '#F7931A', group: 'chain', tile: 'Chain\nIntel', blurb: 'Wallet forensics and daily brief' },
   // DigitalDon's own mark, kept monochrome by their brand rule.
-  { id: 'donbot', label: 'DONBOT', icon: DigitalDonMark, placeholder: 'Ticker, name or contract address', color: '#E8E6E0', group: 'chain', blurb: 'Token signal and holder clusters' },
+  { id: 'donbot', label: 'DONBOT', icon: DigitalDonMark, placeholder: 'Ticker, name or contract address', color: '#E8E6E0', group: 'chain', tile: 'DonBot', blurb: 'Token signal and holder clusters' },
 ];
 
 interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; }
@@ -105,6 +193,20 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
     setError('');
     setSweepResult(null);
   }, []);
+
+  /** Mode chips: land on the real tool for a target type, via the same
+   *  selectTool path a tile click takes. QUICK SCAN also arms the
+   *  port scanner's quick mode, mirroring its secondary control. */
+  const applyModeChip = useCallback((id: ModeChipId) => {
+    switch (id) {
+      case 'quick': selectTool('scanner'); setScanType('quick'); break;
+      case 'ip': selectTool('scanner'); break;
+      case 'domain': selectTool('dns'); break;
+      case 'username': selectTool('username'); break;
+      case 'email': selectTool('leaks'); break;
+      case 'phone': selectTool('phone'); break;
+    }
+  }, [selectTool]);
 
   // Escape leaves the expanded view — it covers the map, so there must be a
   // way out that isn't hunting for the button.
@@ -1071,12 +1173,12 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
   const renderToolRail = () => (
     <div className="flex flex-col h-full">
       <div className="relative p-3 pb-2 flex-shrink-0">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)]" />
+        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#7DD3FC]/60" />
         <input
           value={toolFilter}
           onChange={e => setToolFilter(e.target.value)}
           placeholder="Filter tools…"
-          className="w-full bg-[var(--bg-primary)]/60 border border-[var(--border-primary)] rounded-lg pl-8 pr-7 py-2 text-[10px] font-mono text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/40 focus:outline-none"
+          className="we-recon-input w-full pl-8 pr-7 py-2 text-[10px] font-mono placeholder:text-[#7DD3FC]/35 focus:outline-none"
         />
         {toolFilter && (
           <button onClick={() => setToolFilter('')} className="absolute right-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white">
@@ -1091,8 +1193,10 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
           if (!tools.length) return null;
           return (
             <div key={group.id} className="mb-3 last:mb-0">
-              <div className="text-[10px] font-mono tracking-[0.2em] text-[var(--text-muted)]/70 mb-1.5 pt-1">
-                {group.label}
+              <div className="flex items-center gap-2 mb-1.5 pt-1">
+                <group.icon className="w-3.5 h-3.5 text-[#38BDF8]" />
+                <span className="text-[10px] font-bold tracking-[0.18em] text-[#DCEEFF] uppercase">{group.label}</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-[rgba(56,150,255,0.4)] to-transparent" />
               </div>
               <div className="flex flex-col gap-0.5">
                 {tools.map(tab => {
@@ -1101,16 +1205,15 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
                     <button
                       key={tab.id}
                       onClick={() => selectTool(tab.id)}
-                      className="group flex items-start gap-2.5 px-2 py-1.5 rounded-lg border text-left transition-all"
+                      className="group flex items-start gap-2.5 px-2 py-2 rounded-xl border text-left transition-all hover:border-[rgba(56,150,255,0.4)]"
                       style={{
                         borderColor: active ? `${tab.color}55` : 'transparent',
                         background: active ? `${tab.color}14` : undefined,
                       }}
                     >
-                      <tab.icon
-                        className="w-4 h-4 mt-0.5 flex-shrink-0 transition-colors"
-                        style={{ color: active ? tab.color : 'var(--text-muted)' }}
-                      />
+                      <span className="flex items-center justify-center w-7 h-7 rounded-lg border flex-shrink-0 transition-colors" style={{ borderColor: `${tab.color}40`, background: `${tab.color}12`, color: active ? tab.color : 'var(--text-muted)' }}>
+                        <tab.icon className="w-3.5 h-3.5" />
+                      </span>
                       <span className="min-w-0">
                         <span
                           className="block text-[10px] font-mono font-bold tracking-wider leading-tight"
@@ -1136,7 +1239,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
         )}
       </div>
 
-      <div className="px-3 py-2 border-t border-[var(--border-secondary)] flex-shrink-0">
+      <div className="px-3 py-2 border-t border-[rgba(56,150,255,0.25)] flex-shrink-0">
         <button
           onClick={handleSelfTrack}
           disabled={loading}
@@ -1154,84 +1257,78 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
 
   const renderContent = () => (
     <div className="flex flex-col gap-2.5">
-      {/* Tool grid — omitted entirely in the expanded view, which uses the
+      <style>{RECON_STYLES}</style>
+      {/* Tool board — omitted entirely in the expanded view, which uses the
           rail instead. Hiding it with CSS would leave a second "Filter tools"
           input in the DOM competing with the rail's. */}
       {!isFullScreen && (
       <div className="flex flex-col gap-1">
-        {/* Sweep & Self Track Actions */}
-        <div className="grid grid-cols-2 gap-2">
-          {TABS.filter(t => t.id === 'sweep').map(tab => (
-            <button key={tab.id} onClick={() => { 
-                  setActiveTab(tab.id); setQuery(''); setResults(null); setError(''); setSweepResult(null); 
-                }}
-                className={`w-full py-4 rounded-lg border flex flex-col items-center justify-center gap-2 transition-all ${
-                  activeTab === tab.id ? 'bg-[var(--bg-tertiary)] border-opacity-50' : 'bg-[#0D0D0C] hover:bg-[var(--hover-accent)] border-transparent'
-                }`}
-                style={{ borderColor: activeTab === tab.id ? tab.color : 'rgba(255, 61, 61, 0.2)' }}
-              >
-                <div className="flex items-center gap-3">
-                  <tab.icon className="w-5 h-5" style={{ color: tab.color }} />
-                  <span className="font-mono font-bold tracking-[0.1em] text-[10px]" style={{ color: tab.color }}>GLOBAL SWEEP</span>
-                </div>
+        {/* Filter — the same free-text filter state as before. */}
+        <div className="relative mb-1">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-[#7DD3FC]/60" />
+          <input
+            value={toolFilter}
+            onChange={e => setToolFilter(e.target.value)}
+            placeholder="Filter tools…"
+            className="we-recon-input w-full pl-7 pr-6 py-1.5 text-[10px] font-mono placeholder:text-[#7DD3FC]/35 focus:outline-none"
+          />
+          {toolFilter && (
+            <button onClick={() => setToolFilter('')} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[#7DD3FC]/60 hover:text-white">
+              <XCircle className="w-3 h-3" />
             </button>
-          ))}
-          <button onClick={handleSelfTrack}
-            disabled={loading}
-            className={`w-full py-4 rounded-lg border flex flex-col items-center justify-center gap-2 transition-all ${loading ? 'opacity-60 cursor-wait' : 'hover:bg-[var(--hover-accent)] hover:shadow-[0_0_20px_rgba(0,230,118,0.15)]'} bg-[#0D0D0C]`}
-            style={{ borderColor: 'rgba(0, 230, 118, 0.2)' }}
-          >
-            <div className="flex items-center gap-3">
-              <LocateFixed className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} style={{ color: '#00E676' }} />
-              <span className="font-mono font-bold tracking-[0.1em] text-[10px]" style={{ color: '#00E676' }}>{loading ? 'TRACKING...' : 'SELF TRACK'}</span>
-            </div>
-          </button>
-        </div>
-        {/* Toolkit — grouped so 19 modules stay scannable, and at 4 columns
-            every label fits without truncation. */}
-        <div className="mt-2">
-          <div className="relative mb-1.5">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[var(--text-muted)]" />
-            <input
-              value={toolFilter}
-              onChange={e => setToolFilter(e.target.value)}
-              placeholder="Filter tools…"
-              className="w-full bg-[var(--bg-primary)]/60 border border-[var(--border-primary)] rounded-lg pl-7 pr-6 py-1.5 text-[10px] font-mono text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/40 focus:outline-none"
-            />
-            {toolFilter && (
-              <button onClick={() => setToolFilter('')} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white">
-                <XCircle className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-
-          {GROUPS.map(group => {
-            const tools = TABS.filter(t => t.group === group.id && t.id !== 'sweep' && matchesFilter(t));
-            if (!tools.length) return null;
-            return (
-              <div key={group.id} className="mb-2 last:mb-0">
-                <div className="text-[9px] font-mono tracking-[0.18em] text-[var(--text-muted)]/60 mb-1">{group.label}</div>
-                <div className="grid grid-cols-4 gap-1">
-                  {tools.map(tab => (
-                    <button key={tab.id} onClick={() => selectTool(tab.id)}
-                      title={tab.blurb}
-                      className={`flex flex-col items-center gap-1 px-1 py-2 rounded-lg text-[9px] font-mono tracking-wider transition-all border ${activeTab === tab.id ? 'border-opacity-40 bg-opacity-15' : 'border-transparent hover:bg-[var(--hover-accent)]'}`}
-                      style={{ borderColor: activeTab === tab.id ? tab.color : 'transparent', backgroundColor: activeTab === tab.id ? `${tab.color}15` : undefined, color: activeTab === tab.id ? tab.color : 'var(--text-muted)' }}>
-                      <tab.icon className="w-3.5 h-3.5" />
-                      <span className="leading-tight text-center w-full">{tab.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-
-          {toolFilter && !TABS.some(t => t.id !== 'sweep' && matchesFilter(t)) && (
-            <div className="text-[10px] font-mono text-[var(--text-muted)] py-2 text-center">
-              No tool matches “{toolFilter}”.
-            </div>
           )}
         </div>
+
+        {GROUPS.map(group => {
+          const tools = TABS.filter(t => t.group === group.id && matchesFilter(t));
+          const q = toolFilter.trim().toLowerCase();
+          // Self Track is an action, not a TABS tool; it lives on the board
+          // as a tile in the Geoint row (it geolocates the visitor's own IP
+          // onto the globe) and stays findable through the filter.
+          const showSelfTrack = group.id === 'geoint' && (!q || 'self track'.includes(q) || 'locate my ip'.includes(q));
+          if (!tools.length && !showSelfTrack) return null;
+          return (
+            <div key={group.id} className="mb-2 last:mb-0">
+              <div className="flex items-center gap-2 mb-1.5">
+                <group.icon className="w-3.5 h-3.5 text-[#38BDF8]" />
+                <span className="text-[10px] font-bold tracking-[0.18em] text-[#DCEEFF] uppercase">{group.label}</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-[rgba(56,150,255,0.4)] to-transparent" />
+              </div>
+              <div className="grid grid-cols-4 gap-1.5">
+                {tools.map(tab => {
+                  const active = activeTab === tab.id;
+                  return (
+                    <button key={tab.id} onClick={() => selectTool(tab.id)}
+                      title={tab.blurb}
+                      className="we-recon-tile"
+                      style={active ? { borderColor: tab.color, boxShadow: `0 0 14px ${tab.color}40, inset 0 0 14px ${tab.color}14` } : undefined}>
+                      <span className="we-recon-tile-icon" style={{ borderColor: `${tab.color}45`, background: `${tab.color}12`, color: tab.color }}>
+                        <tab.icon className="w-4 h-4" />
+                      </span>
+                      <span className="we-recon-tile-label" style={{ color: active ? tab.color : 'rgba(196,224,255,0.82)' }}>{tab.tile ?? tab.label}</span>
+                    </button>
+                  );
+                })}
+                {showSelfTrack && (
+                  <button onClick={handleSelfTrack} disabled={loading}
+                    title="Geolocate your own IP and drop it on the globe"
+                    className="we-recon-tile" style={loading ? { opacity: 0.6, cursor: 'wait' } : undefined}>
+                    <span className="we-recon-tile-icon" style={{ borderColor: 'rgba(0,230,118,0.4)', background: 'rgba(0,230,118,0.08)', color: '#00E676' }}>
+                      <LocateFixed className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                    </span>
+                    <span className="we-recon-tile-label" style={{ color: 'rgba(196,224,255,0.82)' }}>{loading ? 'Tracking…' : 'Self\nTrack'}</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
+        {toolFilter && !TABS.some(matchesFilter) && !'self track'.includes(toolFilter.trim().toLowerCase()) && (
+          <div className="text-[10px] font-mono text-[var(--text-muted)] py-2 text-center">
+            No tool matches “{toolFilter}”.
+          </div>
+        )}
       </div>
       )}
 
@@ -1241,7 +1338,9 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
       {/* So does DONBOT — the same scan as Markets → Crypto, sealed in its own frame. */}
       {activeTab === 'donbot' && <DonBotScan initial={donbotQuery} onScan={setDonbotQuery} />}
 
-      {/* Input Area */}
+      {/* Scan bar — the board's target entry. Same state and handlers as
+          before (query / runLookup / scanType / sweepCidr); only the skin
+          and the chip presentation of the secondary controls are new. */}
       {activeTab !== 'fingerprint' && activeTab !== 'donbot' && (
       <div className="flex flex-col gap-1.5">
         {/* CHAIN INTEL view switch — the brief takes no target. */}
@@ -1265,43 +1364,53 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
         )}
 
         {!(activeTab === 'crypto' && chainView === 'brief') && (
-        <div className="flex gap-1.5">
-          <div className="flex-1 relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)]" />
-            <input type="text" value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && runLookup()}
-              placeholder={currentTab?.placeholder}
-              className="w-full bg-[var(--bg-primary)]/60 border border-[var(--border-primary)] rounded-lg pl-8 pr-3 py-2.5 text-[10px] font-mono text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/40 focus:outline-none transition-colors"
-              style={{ borderColor: query ? `${currentTab?.color}40` : undefined }} />
-          </div>
+        <div className="we-recon-scanbar">
+          <Search className="w-4 h-4 text-[#7DD3FC]/70 flex-shrink-0 ml-1" />
+          <input type="text" value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && runLookup()}
+            placeholder={currentTab?.placeholder}
+            className="flex-1 min-w-0 bg-transparent py-2 text-[11px] font-mono text-[#EAF6FF] placeholder:text-[#7DD3FC]/35 focus:outline-none" />
           <button onClick={runLookup} disabled={loading || !query.trim()}
-            className="px-4 py-2 rounded-lg text-[11px] font-mono font-bold tracking-wider disabled:opacity-30 transition-all flex items-center justify-center min-w-[70px]"
-            style={{ backgroundColor: `${currentTab?.color}20`, border: `1px solid ${currentTab?.color}40`, color: currentTab?.color }}>
-            {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'SCAN'}
+            className="we-recon-scanbtn flex items-center justify-center gap-1.5 flex-shrink-0">
+            {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Crosshair className="w-3.5 h-3.5" />}
+            SCAN
           </button>
         </div>
         )}
 
-        {/* Secondary Controls */}
+        {/* Secondary controls — the port scanner's modes and the sweep's
+            subnet mask, as chips over the same state values as before. */}
         {activeTab === 'scanner' && (
-          <select value={scanType} onChange={e => setScanType(e.target.value)}
-            className="bg-[var(--bg-primary)]/60 border border-[var(--border-primary)] rounded-lg px-2 py-1.5 text-[11px] font-mono text-[var(--text-muted)] outline-none w-full">
-            <option value="quick">QUICK SCAN</option><option value="deep">DEEP SCAN</option><option value="ports">TOP 1000 PORTS</option>
-          </select>
+          <div className="flex gap-1.5">
+            {([['quick', 'QUICK SCAN'], ['deep', 'DEEP SCAN'], ['ports', 'TOP 1000 PORTS']] as const).map(([v, label]) => (
+              <button key={v} onClick={() => setScanType(v)} data-active={scanType === v}
+                className="we-recon-chip flex-1 justify-center">{label}</button>
+            ))}
+          </div>
         )}
         {activeTab === 'sweep' && (
-          <div className="flex items-center justify-between bg-[var(--bg-primary)]/60 border border-[var(--border-primary)] rounded-lg p-1">
-            <span className="text-[10px] font-mono text-[var(--text-muted)] pl-2">SUBNET MASK:</span>
-            <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] font-bold tracking-[0.14em] text-[#7DD3FC]/70 flex-shrink-0">SUBNET</span>
+            <div className="flex gap-1 flex-1">
               {[24, 25, 26, 27, 28].map(c => (
-                <button key={c} onClick={() => setSweepCidr(c)}
-                  className={`px-2 py-1 text-[11px] font-mono rounded transition-all ${
-                    sweepCidr === c ? 'bg-[#FF3D3D]/20 text-[#FF3D3D]' : 'text-[var(--text-muted)] hover:bg-[var(--bg-tertiary)]'
-                  }`}
-                >/{c}</button>
+                <button key={c} onClick={() => setSweepCidr(c)} data-active={sweepCidr === c}
+                  className="we-recon-chip flex-1 justify-center">/{c}</button>
               ))}
             </div>
           </div>
         )}
+
+        {/* Target-type mode chips (the board's bottom row) — shortcuts onto
+            the real tool for each input type; the lit chip is derived from
+            the active tool via modeForTool, never stored state. */}
+        <div className="flex flex-wrap gap-1.5">
+          {MODE_CHIPS.map(chip => (
+            <button key={chip.id} onClick={() => applyModeChip(chip.id)}
+              data-active={modeForTool(activeTab, scanType) === chip.id}
+              className="we-recon-chip justify-center" style={{ flex: '1 1 calc(33% - 6px)' }}>
+              <chip.icon className="w-3 h-3" />{chip.label}
+            </button>
+          ))}
+        </div>
       </div>
       )}
 
@@ -1326,7 +1435,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
 
       {/* Sweep Results */}
       {sweepResult && !loading && activeTab === 'sweep' && (
-        <div className="bg-[var(--bg-primary)]/40 border border-[var(--border-primary)] rounded-lg overflow-hidden max-h-[55vh] overflow-y-auto styled-scrollbar">
+        <div className="we-recon-card overflow-hidden max-h-[55vh] overflow-y-auto styled-scrollbar">
           {/* Summary */}
           <div className="p-3 border-b border-[#2A2A28]">
             <div className="flex items-center justify-between mb-3">
@@ -1534,7 +1643,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
       )}
 
       {(results || (activeTab === 'crypto' && chainView === 'brief')) && !(sweepResult && !loading) && (
-        <div className="bg-[var(--bg-primary)]/40 border border-[var(--border-primary)] rounded-lg p-3 max-h-[50vh] overflow-y-auto styled-scrollbar">
+        <div className="we-recon-card p-3 max-h-[50vh] overflow-y-auto styled-scrollbar">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-mono tracking-widest" style={{ color: currentTab?.color }}>{currentTab?.label} RESULTS</span>
             <span className="text-[9px] font-mono text-[var(--text-muted)] flex items-center gap-1"><Clock className="w-2.5 h-2.5" />{new Date().toLocaleTimeString()}</span>
@@ -1569,12 +1678,20 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
         {/* Click-away backdrop; Escape also exits. */}
         <div className="absolute inset-[-1rem] bg-black/60 backdrop-blur-sm" onClick={() => setIsFullScreen(false)} />
 
-        <div className="relative w-full h-full max-w-[1500px] glass-panel bg-[#0a0a09]/97 backdrop-blur-2xl border border-[var(--cyan-primary)]/40 rounded-xl flex flex-col overflow-hidden shadow-2xl shadow-[var(--cyan-primary)]/20">
-          <div className="flex items-center justify-between px-6 py-3.5 border-b border-[var(--border-secondary)] bg-[#111] flex-shrink-0">
+        <div className="relative w-full h-full max-w-[1500px] glass-panel backdrop-blur-2xl flex flex-col overflow-hidden shadow-2xl" style={{ ...RECON_FRAME_STYLE, borderRadius: 18 }}>
+          <div className="we-recon-header" style={{ padding: '12px 20px' }}>
             <div className="flex items-center gap-3 min-w-0">
-              <Radar className="w-5 h-5 text-[var(--cyan-primary)] flex-shrink-0" />
-              <span className="hud-text text-[16px] text-[var(--text-primary)]">OSIRIS RECON TOOLKIT</span>
-              <span className="gotham-tag gotham-tag--classified" style={{ fontSize: '9px' }}>{TABS.length} MODULES</span>
+              <span className="we-recon-medallion" aria-hidden="true">
+                <img src="/worldeye-eye.png" alt="" className="w-[26px] h-[26px] rounded-full relative" />
+              </span>
+              <span className="min-w-0">
+                <span className="flex items-center gap-2">
+                  <span className="we-recon-title">RECON</span>
+                  <span className="we-recon-premium"><Crown className="w-2.5 h-2.5" /> PREMIUM</span>
+                  <span className="text-[9px] font-mono font-bold tracking-[0.14em] text-[#7DD3FC]/70 border border-[rgba(56,150,255,0.35)] rounded-full px-2 py-0.5 whitespace-nowrap">{TABS.length} MODULES</span>
+                </span>
+                <span className="we-recon-subtitle block">Advanced reconnaissance, intelligence and analysis tools</span>
+              </span>
               {currentTab && (
                 <>
                   <span className="text-[var(--text-muted)]/40">/</span>
@@ -1594,7 +1711,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
 
           {/* Two panes: the toolkit stays visible while results use the width. */}
           <div className="flex-1 flex min-h-0">
-            <aside className="w-[260px] flex-shrink-0 border-r border-[var(--border-secondary)] bg-[#0d0d0c]/60">
+            <aside className="w-[260px] flex-shrink-0 border-r border-[rgba(56,150,255,0.25)] bg-[rgba(4,18,36,0.6)]">
               {renderToolRail()}
             </aside>
             <main className="flex-1 min-w-0 overflow-y-auto p-6 styled-scrollbar">
@@ -1621,20 +1738,27 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
   }
 
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="glass-panel flex flex-col overflow-hidden pointer-events-auto shrink-0 h-[500px] max-h-[80vh] resize-y">
-      <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-[rgba(255,255,255,0.05)] bg-[rgba(0,0,0,0.3)] hover:bg-[var(--hover-accent)] transition-colors">
-        <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-2 flex-1">
-          <Radar className="w-3.5 h-3.5 text-[var(--cyan-primary)]" />
-          <span className="hud-text text-[11px] text-[var(--text-primary)]">RECON TOOLKIT</span>
-          <span className="gotham-tag gotham-tag--info" style={{ fontSize: '9px', padding: '1px 5px' }}>{TABS.length} TOOLS</span>
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.6 }} style={RECON_FRAME_STYLE} className="glass-panel flex flex-col overflow-hidden pointer-events-auto shrink-0 h-[500px] max-h-[80vh] resize-y">
+      <div className="we-recon-header">
+        <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-3 flex-1 min-w-0 text-left" title={expanded ? 'Collapse panel' : 'Expand panel'}>
+          <span className="we-recon-medallion" aria-hidden="true">
+            <img src="/worldeye-eye.png" alt="" className="w-[26px] h-[26px] rounded-full relative" />
+          </span>
+          <span className="min-w-0">
+            <span className="flex items-center gap-2">
+              <span className="we-recon-title">RECON</span>
+              <span className="we-recon-premium"><Crown className="w-2.5 h-2.5" /> PREMIUM</span>
+            </span>
+            <span className="we-recon-subtitle block">Advanced reconnaissance, intelligence and analysis tools</span>
+          </span>
         </button>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setIsFullScreen(true)} className="p-1.5 -m-0.5 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/10 transition-colors" title="Full Screen">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <button onClick={() => setIsFullScreen(true)} className="p-1.5 rounded text-[#7DD3FC]/70 hover:text-white hover:bg-white/10 transition-colors" title="Full Screen">
              <Maximize2 className="w-3.5 h-3.5" />
           </button>
-          <div className="w-1.5 h-1.5 rounded-full bg-[var(--cyan-primary)] animate-osiris-pulse" />
-          <button onClick={() => setExpanded(!expanded)}>
-            {expanded ? <ChevronUp className="w-3.5 h-3.5 text-[var(--text-muted)]" /> : <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />}
+          <div className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-osiris-pulse" />
+          <button onClick={() => setExpanded(!expanded)} className="p-1.5 rounded text-[#7DD3FC]/70 hover:text-white hover:bg-white/10 transition-colors" title={expanded ? 'Collapse' : 'Expand'}>
+            {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
