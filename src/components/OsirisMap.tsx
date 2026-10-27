@@ -2457,8 +2457,8 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','plow-icons',
       'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
-      'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
-      'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots','street-level-dots','street-level-hit']);
+      'sdk-sea','sdk-air','sdk-intel','sdk-air-glow','sdk-intel-glow','malware-dots','cyber-heads','gdelt-events-dots',
+      'cf-outage-dots','cf-attack-dots','fl-commercial','fl-private','fl-jets','fl-military','launch-pads','alert-pin-dots','street-level-dots','street-level-hit']);
 
     // Satellites are picked on the GPU: the pick pass runs the same vertex
     // shader as the visible one, so the target is always exactly where the
