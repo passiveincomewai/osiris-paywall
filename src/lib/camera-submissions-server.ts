@@ -6,7 +6,17 @@
 
 import { validateHost, safeFetch } from "@/lib/ssrf-guard";
 import { sendEmail, shell, escapeHtml } from "@/lib/email";
-import { cameraUrlShapeError } from "@/lib/camera-submissions";
+import { db } from "@/lib/db";
+import {
+  cameraUrlShapeError,
+  type CameraSubmissionData,
+} from "@/lib/camera-submissions";
+import { loadDirectoryIndex } from "@/lib/camera-directory-lookup";
+import {
+  findCatalogueDuplicates,
+  type CatalogueEntry,
+  type DuplicateCheck,
+} from "@/lib/camera-duplicates";
 
 /**
  * Host-level URL safety: the hostname must resolve to public addresses
@@ -168,4 +178,103 @@ export async function sendCameraSubmissionDecision(
 ): Promise<boolean> {
   const { subject, html } = cameraSubmissionDecisionEmail(sub);
   return sendEmail(sub.submitterEmail, subject, html);
+}
+
+/* ── Duplicate checks (catalogue + already-submitted) ──────────────── */
+
+/**
+ * The catalogue entries the duplicate check compares against, built from
+ * the directory dataset the site itself serves (the per-country chunks
+ * behind the directory/country pages), indexed once per server instance
+ * by loadDirectoryIndex. A record contributes every address it carries —
+ * feed, stream or external page — because a duplicate can hide behind
+ * any of them.
+ */
+export async function loadCatalogueEntries(): Promise<CatalogueEntry[]> {
+  const byId = await loadDirectoryIndex();
+  const entries: CatalogueEntry[] = [];
+  for (const cam of byId.values()) {
+    const urls = [cam.feed_url, cam.stream_url, cam.external_url].filter(
+      (u): u is string => typeof u === "string" && u.length > 0,
+    );
+    entries.push({
+      id: String(cam.id),
+      name: cam.name,
+      city: cam.city ?? null,
+      country: cam.country ?? null,
+      lat: typeof cam.lat === "number" ? cam.lat : null,
+      lng: typeof cam.lng === "number" ? cam.lng : null,
+      urls,
+    });
+  }
+  return entries;
+}
+
+function toCandidate(data: CameraSubmissionData) {
+  return {
+    name: data.cameraName,
+    url: data.url,
+    city: data.city,
+    country: data.country,
+    lat: data.lat,
+    lng: data.lng,
+  };
+}
+
+/** Run the duplicate check against the published catalogue. */
+export async function checkCatalogueDuplicates(
+  data: CameraSubmissionData,
+): Promise<DuplicateCheck> {
+  const entries = await loadCatalogueEntries();
+  return findCatalogueDuplicates(entries, toCandidate(data));
+}
+
+/**
+ * The same check against submissions still waiting for review, so a
+ * camera sent twice in a review cycle is caught at intake instead of
+ * queueing twice. Only "pending" rows count: a rejected submission may
+ * legitimately be sent again corrected, and an approved one joins the
+ * catalogue, where the catalogue check takes over.
+ */
+export async function checkPendingSubmissionDuplicates(
+  data: CameraSubmissionData,
+): Promise<DuplicateCheck> {
+  const rows = await db.cameraSubmission.findMany({
+    where: { status: "pending" },
+    select: {
+      id: true,
+      cameraName: true,
+      url: true,
+      city: true,
+      country: true,
+      lat: true,
+      lng: true,
+    },
+  });
+  const entries: CatalogueEntry[] = rows.map((r) => ({
+    id: r.id,
+    name: r.cameraName,
+    city: r.city,
+    country: r.country,
+    lat: r.lat,
+    lng: r.lng,
+    urls: [r.url],
+  }));
+  return findCatalogueDuplicates(entries, toCandidate(data));
+}
+
+/**
+ * The reviewer-facing flag for a "possible" verdict, persisted on the
+ * submission row (appended to probeDetail, which the admin queue
+ * renders) so the flag survives to the human who decides. Null for
+ * every other verdict.
+ */
+export function possibleDuplicateNote(check: DuplicateCheck): string | null {
+  if (check.verdict !== "possible" || check.matches.length === 0) return null;
+  return check.matches
+    .map((m) => {
+      const place = [m.city, m.country].filter(Boolean).join(", ");
+      return `Possible duplicate of “${m.name}”${place ? ` (${place})` : ""} — ${m.reason}`;
+    })
+    .join("; ");
 }

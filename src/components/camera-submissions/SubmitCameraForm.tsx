@@ -2,10 +2,13 @@
 
 // Public submit-a-camera form for /submit-camera. Posts to
 // /api/camera-submissions, which validates, SSRF-checks the URL host,
-// stores the submission as pending for the admin review queue, and
-// emails a receipt. Success only shows after the server confirms the
-// submission was stored. The hidden "website" field is a honeypot —
-// real visitors never see it; the server silently drops filled ones.
+// duplicate-checks the catalogue and the pending queue, probes the
+// feed, stores the submission as pending for the admin review queue,
+// and emails a receipt. Success only shows after the server confirms
+// the submission was stored, and the panel lists what the automatic
+// checks actually found — the response's `checks`, never assumptions.
+// The hidden "website" field is a honeypot — real visitors never see
+// it; the server silently drops filled ones.
 import { useState } from "react";
 import {
   CAMERA_SUBMISSION_KINDS,
@@ -16,6 +19,14 @@ import {
 } from "@/lib/camera-submissions";
 
 type Phase = "idle" | "sending" | "sent" | "error";
+
+/** The intake checks the API reports on its success response. */
+interface SubmissionChecks {
+  urlSafety?: string;
+  reachability?: string;
+  duplicate?: string;
+  receiptEmailed?: boolean;
+}
 
 const inputCls =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/50 focus:bg-white/[0.05] transition";
@@ -38,6 +49,7 @@ export default function SubmitCameraForm() {
   const [website, setWebsite] = useState(""); // honeypot — must stay empty
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [checks, setChecks] = useState<SubmissionChecks | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,6 +78,7 @@ export default function SubmitCameraForm() {
       });
       const j = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(j.error ?? `Something went wrong (${res.status}).`);
+      setChecks((j.checks as SubmissionChecks) ?? null);
       setPhase("sent");
     } catch (err) {
       setPhase("error");
@@ -83,18 +96,53 @@ export default function SubmitCameraForm() {
         <div className="text-4xl mb-4" aria-hidden>📷</div>
         <h3 className="text-xl font-bold">Submission received</h3>
         <p className="text-sm text-white/55 mt-3 leading-relaxed max-w-md mx-auto">
-          Thanks — your camera is in the review queue and a receipt is on
-          its way to your email. We check every submission by hand and
-          we&apos;ll email you the decision. Approved cameras are cleared
-          for import and join the map in batches, so approval and going
-          live aren&apos;t the same moment.
+          Thanks — your camera is in the review queue. We check every
+          submission by hand and we&apos;ll email you the decision.
+          Approved cameras are cleared for import and join the map in
+          batches, so approval and going live aren&apos;t the same moment.
         </p>
+        {checks && (
+          <ul className="text-left text-sm text-white/60 mt-5 space-y-2 max-w-md mx-auto leading-relaxed">
+            <li>
+              ✓ Address check passed — the feed address points at a public host.
+            </li>
+            {checks.reachability === "reachable" && (
+              <li>✓ Reachability check passed — our probe got an answer from the feed just now.</li>
+            )}
+            {checks.reachability === "unreachable" && (
+              <li>
+                • Reachability check — the feed answered with an error just now. If the address
+                has a typo, send a corrected submission; otherwise the reviewer checks by hand.
+              </li>
+            )}
+            {checks.reachability && checks.reachability !== "reachable" && checks.reachability !== "unreachable" && (
+              <li>
+                • Reachability check inconclusive — our probe couldn&apos;t get a clean answer from the
+                feed. Some feeds refuse automated checks and are fine; the reviewer verifies by hand either way.
+              </li>
+            )}
+            {checks.duplicate === "possible" && (
+              <li>
+                • Duplicate check flagged a possible match — a similar camera may already be listed.
+                We&apos;ve flagged it for the reviewer, who&apos;ll confirm.
+              </li>
+            )}
+            {checks.duplicate === "none" && (
+              <li>✓ Duplicate check passed — no match for this camera in the catalogue.</li>
+            )}
+            {checks.receiptEmailed ? (
+              <li>✓ A receipt is on its way to your email.</li>
+            ) : (
+              <li>• We couldn&apos;t email your receipt, but your submission is in the queue.</li>
+            )}
+          </ul>
+        )}
         <button
           onClick={() => {
             setKind("suggest"); setCameraName(""); setUrl(""); setCategory("city");
             setCity(""); setCountry(""); setLat(""); setLng("");
             setSubmitterName(""); setSubmitterEmail(""); setDeclaration(false);
-            setNotes(""); setWebsite(""); setPhase("idle"); setError(null);
+            setNotes(""); setWebsite(""); setPhase("idle"); setError(null); setChecks(null);
           }}
           className="mt-6 px-6 py-2.5 rounded-xl border border-white/15 text-sm text-white/75 hover:text-white hover:border-white/30 transition"
         >

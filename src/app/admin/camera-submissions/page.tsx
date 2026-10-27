@@ -45,12 +45,25 @@ export default async function CameraSubmissionsAdminPage({
     : "pending";
   const where = filter === "all" ? {} : { status: filter };
 
-  const [rows, pending, approved, rejected] = await Promise.all([
-    db.cameraSubmission.findMany({ where, orderBy: { createdAt: "desc" }, take: PAGE_LIMIT }),
-    db.cameraSubmission.count({ where: { status: "pending" } }),
-    db.cameraSubmission.count({ where: { status: "approved" } }),
-    db.cameraSubmission.count({ where: { status: "rejected" } }),
-  ]);
+  // A failed queue read (transient database trouble) must not 500 the
+  // page: render the empty queue under a banner that says the read
+  // failed, so the operator refreshes instead of debugging a crash.
+  type Row = Awaited<ReturnType<typeof db.cameraSubmission.findMany>>[number];
+  let rows: Row[] = [];
+  let pending = 0;
+  let approved = 0;
+  let rejected = 0;
+  let queueReadFailed = false;
+  try {
+    [rows, pending, approved, rejected] = await Promise.all([
+      db.cameraSubmission.findMany({ where, orderBy: { createdAt: "desc" }, take: PAGE_LIMIT }),
+      db.cameraSubmission.count({ where: { status: "pending" } }),
+      db.cameraSubmission.count({ where: { status: "approved" } }),
+      db.cameraSubmission.count({ where: { status: "rejected" } }),
+    ]);
+  } catch {
+    queueReadFailed = true;
+  }
   const counts: Record<Filter, number> = {
     pending,
     approved,
@@ -111,6 +124,15 @@ export default async function CameraSubmissionsAdminPage({
         <div className="mb-5">
           <AdminNav active="camera-submissions" />
         </div>
+
+        {queueReadFailed && (
+          <div className="mb-8 rounded-2xl border border-amber-400/30 bg-amber-400/[0.07] p-5 text-sm leading-relaxed text-amber-100/85">
+            <strong className="text-amber-200">Couldn&apos;t read the submission queue.</strong>{" "}
+            The database read failed just now, so the counts and list below are
+            empty rather than current. Submissions are still being accepted on
+            the public form — refresh in a moment to try the read again.
+          </div>
+        )}
 
         <nav aria-label="Filter by status" className="flex gap-2 mb-8 overflow-x-auto -mx-4 px-4 pb-1">
           {FILTERS.map((f) => (

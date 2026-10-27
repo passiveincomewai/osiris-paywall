@@ -1,6 +1,11 @@
 // POST /api/camera-submissions pins:
 //  - a valid submission is stored as pending with its intake probe
-//    result, the receipt email is attempted and its send stamped;
+//    result, the receipt email is attempted and its send stamped, and
+//    the response reports the intake checks in `checks`;
+//  - an exact duplicate — of a catalogue feed or of a submission
+//    already pending — is refused 409 naming what it duplicates, and
+//    stores nothing; a possible duplicate is stored with the reviewer
+//    flag on probeDetail and reported in `checks`;
 //  - a filled honeypot gets a success-shaped answer and stores nothing;
 //  - SSRF-blocked or malformed URLs are 400s and store nothing;
 //  - the per-IP rate limit (shared helper with the contact/auth routes)
@@ -10,12 +15,23 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mocks = vi.hoisted(() => ({
   create: vi.fn(async (arg: { data: Record<string, unknown> }) => ({ id: "sub_1", ...arg.data })),
   update: vi.fn(async () => ({})),
+  findMany: vi.fn(async () => [] as unknown[]),
+  directory: new Map<string, unknown>(),
   safeFetch: vi.fn(),
   sendEmail: vi.fn(async () => true),
 }));
 
 vi.mock("@/lib/db", () => ({
-  db: { cameraSubmission: { create: mocks.create, update: mocks.update } },
+  db: {
+    cameraSubmission: {
+      create: mocks.create,
+      update: mocks.update,
+      findMany: mocks.findMany,
+    },
+  },
+}));
+vi.mock("@/lib/camera-directory-lookup", () => ({
+  loadDirectoryIndex: async () => mocks.directory,
 }));
 vi.mock("@/lib/ssrf-guard", async (importActual) => {
   const actual = (await importActual()) as Record<string, unknown>;
@@ -63,7 +79,11 @@ const GOOD = {
 beforeEach(() => {
   mocks.create.mockClear();
   mocks.update.mockClear();
+  mocks.findMany.mockReset();
+  mocks.findMany.mockImplementation(async () => []);
+  mocks.directory.clear();
   mocks.sendEmail.mockClear();
+  mocks.sendEmail.mockImplementation(async () => true);
   mocks.safeFetch.mockReset();
   mocks.safeFetch.mockImplementation(async () => new Response("frame", { status: 200 }));
 });
@@ -73,7 +93,16 @@ describe("POST /api/camera-submissions", () => {
     const res = await post(GOOD);
     expect(res.status).toBe(200);
     const j = await res.json();
-    expect(j).toEqual({ ok: true, id: "sub_1" });
+    expect(j).toEqual({
+      ok: true,
+      id: "sub_1",
+      checks: {
+        urlSafety: "passed",
+        reachability: "reachable",
+        duplicate: "none",
+        receiptEmailed: true,
+      },
+    });
     expect(mocks.create).toHaveBeenCalledTimes(1);
     expect(mocks.create.mock.calls[0][0].data).toMatchObject({
       kind: "suggest",
@@ -129,6 +158,95 @@ describe("POST /api/camera-submissions", () => {
     const res = await post(GOOD);
     expect(res.status).toBe(200);
     expect(mocks.create.mock.calls[0][0].data).toMatchObject({ probeStatus: "unknown" });
+    const j = await res.json();
+    expect(j.checks.reachability).toBe("unknown");
+    expect(j.checks.duplicate).toBe("none");
+  });
+
+  it("reports receiptEmailed false when the receipt send fails", async () => {
+    mocks.sendEmail.mockImplementation(async () => false);
+    const res = await post(GOOD);
+    expect(res.status).toBe(200);
+    const j = await res.json();
+    expect(j.checks.receiptEmailed).toBe(false);
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  it("refuses an exact catalogue duplicate with 409 naming the listed camera", async () => {
+    mocks.directory.set("cam1", {
+      id: "cam1",
+      name: "Harbor Entrance Cam",
+      city: "Friday Harbor",
+      country: "United States",
+      lat: 48.5,
+      lng: -123.0,
+      feed_url: "http://8.8.8.8/harbor.m3u8",
+    });
+    const res = await post(GOOD);
+    expect(res.status).toBe(409);
+    const j = await res.json();
+    expect(j.error).toContain("already on WorldEye as “Harbor Entrance Cam”");
+    expect(j.checks).toEqual({ urlSafety: "passed", duplicate: "exact" });
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.sendEmail).not.toHaveBeenCalled();
+  });
+
+  it("catches an exact duplicate hiding behind cosmetic URL differences", async () => {
+    mocks.directory.set("cam2", {
+      id: "cam2",
+      name: "Harbor Entrance Cam (East)",
+      city: "Friday Harbor",
+      country: "United States",
+      // A stream address (not the feed address) with another scheme, a
+      // trailing slash and a tracking parameter still exact-matches.
+      stream_url: "https://8.8.8.8/harbor.m3u8/?utm_source=partner",
+    });
+    const res = await post(GOOD);
+    expect(res.status).toBe(409);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("refuses a feed already submitted and pending review", async () => {
+    mocks.findMany.mockImplementation(async () => [
+      {
+        id: "sub_0",
+        cameraName: "Harbor Entrance Cam",
+        url: "http://8.8.8.8/harbor.m3u8",
+        city: "Friday Harbor",
+        country: "United States",
+        lat: null,
+        lng: null,
+      },
+    ]);
+    const res = await post(GOOD);
+    expect(res.status).toBe(409);
+    const j = await res.json();
+    expect(j.error).toContain("already been submitted as “Harbor Entrance Cam”");
+    expect(mocks.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { status: "pending" } }),
+    );
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.sendEmail).not.toHaveBeenCalled();
+  });
+
+  it("stores a possible duplicate with the reviewer flag on probeDetail", async () => {
+    mocks.directory.set("cam9", {
+      id: "cam9",
+      name: "Harbor Entrance Cam",
+      city: "Friday Harbor",
+      country: "United States",
+      feed_url: "http://9.9.9.9/different-feed.m3u8",
+    });
+    const res = await post(GOOD);
+    expect(res.status).toBe(200);
+    const j = await res.json();
+    expect(j.checks.duplicate).toBe("possible");
+    expect(mocks.create).toHaveBeenCalledTimes(1);
+    const stored = mocks.create.mock.calls[0][0].data;
+    expect(stored.probeStatus).toBe("reachable");
+    expect(String(stored.probeDetail)).toContain(
+      "Possible duplicate of “Harbor Entrance Cam” (Friday Harbor, United States)",
+    );
   });
 
   it("rate-limits the 6th submission from one IP within the hour", async () => {
