@@ -35,7 +35,7 @@ describe("welcomeDue", () => {
     expect(welcomeDue({ userCreatedAt: hoursAgo(47), hasLiveSubscription: false }, NOW).due).toBe(true);
   });
   it("waits out the first 15 minutes (the verify email owns minute zero)", () => {
-    expect(welcomeDue({ userCreatedAt: hoursAgo(0.1), hasLiveSubscription: false }, NOW).reason).toBe("too_young");
+    expect(welcomeDue({ userCreatedAt: hoursAgo(0.01), hasLiveSubscription: false }, NOW).reason).toBe("too_young");
   });
   it("never welcomes stale signups (first-run baseline protection)", () => {
     expect(welcomeDue({ userCreatedAt: daysAgo(3), hasLiveSubscription: false }, NOW).reason).toBe("too_old");

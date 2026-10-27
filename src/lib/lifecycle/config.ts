@@ -32,8 +32,11 @@ export const MARKETING_CAP_MAX = 1;
 export const HOUR_MS = 3600_000;
 export const DAY_MS = 24 * HOUR_MS;
 
-/** Welcome: not instantly (the verify email owns minute zero), not stale. */
-export const WELCOME_MIN_AGE_MS = 15 * 60_000;
+/** Welcome: near-instant (owner order 2026-10-27 — the coupon code
+ * should land while signup intent is hot); two minutes still lets the
+ * verify email own minute zero. The engine cron runs every 15 min, so
+ * the welcome lands within ~15 min of signup. Not stale: 48h cap. */
+export const WELCOME_MIN_AGE_MS = 2 * 60_000;
 export const WELCOME_MAX_AGE_MS = 48 * HOUR_MS;
 
 /** Interest follow-up: give them two days to convert on their own first. */
