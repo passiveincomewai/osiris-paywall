@@ -102,14 +102,27 @@ export const HELI_ICON_SCALE = 1.6;
  * The `icon-size` layout value for a flight class layer: the layers'
  * long-standing zoom ramp for planes (0.4 → 0.7 → 1.0, capped from
  * zoom 10), and the same ramp × HELI_ICON_SCALE for helicopters.
- * Pure and unit-tested with MapLibre's own expression evaluator, so
- * the layer wiring can't drift from the feature contract above.
+ *
+ * SHAPE CONSTRAINT (2026-10-26 production outage): a style property
+ * may contain only ONE zoom-based step/interpolate subexpression, so
+ * the per-category choice lives in the interpolate's stop OUTPUTS —
+ * never wrap two zoom ramps in a `case`. The case-wrapped form
+ * evaluates fine in the bare expression evaluator but MapLibre's
+ * style compiler rejects it ("Only one zoom-based "step" or
+ * "interpolate" subexpression may be used in an expression") and
+ * the layer renders nothing. render.test.ts pins this shape through
+ * the full-style validator, not just the evaluator.
  */
 export function flightIconSize(): any {
-  return [
+  const stop = (plane: number): any => [
     'case', ['==', ['get', 'aircraft_category'], 'heli'],
-    ['interpolate', ['linear'], ['zoom'], 1, 0.64, 5, 1.12, 10, HELI_ICON_SCALE],
-    ['interpolate', ['linear'], ['zoom'], 1, 0.4, 5, 0.7, 10, 1],
+    plane * HELI_ICON_SCALE, plane,
+  ];
+  return [
+    'interpolate', ['linear'], ['zoom'],
+    1, stop(0.4),
+    5, stop(0.7),
+    10, stop(1),
   ];
 }
 

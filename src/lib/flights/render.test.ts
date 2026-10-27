@@ -429,4 +429,54 @@ describe('heli rendering contract — real MapLibre evaluator over the full clie
       expect(hs).toBeGreaterThanOrEqual(ps * 1.5);
     }
   });
+
+  it('sizes an untagged feature (no aircraft_category) on the plane ramp', () => {
+    const sizeExpr = (renderModule as any).flightIconSize();
+    expect(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, {}, 1)).toBeCloseTo(0.4, 5);
+    expect(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, {}, 5)).toBeCloseTo(0.7, 5);
+    expect(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, {}, 15)).toBeCloseTo(1.0, 5);
+  });
+});
+
+describe('flight layer style validity — the property compiler, not just the expression evaluator', () => {
+  // Regression pin for the 2026-10-26 production outage: flightIconSize
+  // wrapped TWO zoom interpolates in a `case`. The plain expression
+  // evaluator (createExpression, used above) accepts that shape, but a
+  // style property may contain only ONE zoom-based step/interpolate
+  // subexpression — MapLibre's style compiler rejects it and the four
+  // flight symbol layers render nothing at all. This test runs the
+  // layers exactly as OsirisMap wires them through MapLibre's own
+  // full-style validator so the property-level rules are enforced.
+  it('the four flight layers, wired as in OsirisMap, pass MapLibre style validation', async () => {
+    const styleSpec: any = await import('@maplibre/maplibre-gl-style-spec');
+    const validateStyleMin = styleSpec.validateStyleMin;
+    expect(typeof validateStyleMin).toBe('function');
+    const layers: Array<[string, string, string, string]> = [
+      ['fl-commercial', 'flights', 'plane-cyan', 'heli-cyan'],
+      ['fl-private', 'private-fl', 'plane-green', 'heli-green'],
+      ['fl-jets', 'jets', 'plane-pink', 'heli-pink'],
+      ['fl-military', 'military', 'plane-red', 'heli-red'],
+    ];
+    const style = {
+      version: 8,
+      name: 'flight-layer-validity',
+      sources: Object.fromEntries(
+        layers.map(([, src]) => [src, { type: 'geojson', data: { type: 'FeatureCollection', features: [] } }]),
+      ),
+      layers: layers.map(([id, src, icon, heliIcon]) => ({
+        id, type: 'symbol', source: src,
+        layout: {
+          'icon-image': (renderModule as any).flightIconImage(icon, heliIcon),
+          'icon-size': (renderModule as any).flightIconSize(),
+          'icon-rotate': ['get', 'heading'],
+          'icon-rotation-alignment': 'map',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+        },
+        paint: { 'icon-opacity': 0.85 },
+      })),
+    };
+    const errors = validateStyleMin(style);
+    expect(errors.map((e: any) => e.message)).toEqual([]);
+  });
 });

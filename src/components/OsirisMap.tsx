@@ -21,7 +21,7 @@ import {
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
-import { FlightBlend, flightIconImage, flightIconSize, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
+import { FlightBlend, flightIconImage, flightIconSize, flightToFeature, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
 import { featureMatchesFlightShareId, FLIGHT_SHARE_OPEN_DEADLINE_MS } from '@/lib/share/links';
 import {
   IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
@@ -3032,6 +3032,21 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           feature = (map.querySourceFeatures(s) as any[]).find(f => featureMatchesFlightShareId(f, id));
         } catch { feature = undefined; }
         if (feature) break;
+      }
+      if (!feature) {
+        // querySourceFeatures only sees features inside the tiles the
+        // map currently renders — a shared aircraft outside the
+        // opening view (the app dives to the viewer's city on load)
+        // can never be found that way, however long the retries run.
+        // Fall back to the in-memory snapshot blend, which holds the
+        // full dataset regardless of viewport.
+        const cur = flightBlendRef.current?.current(Date.now());
+        if (cur) {
+          for (const bucket of [cur.commercial_flights, cur.private_flights, cur.private_jets, cur.military_flights]) {
+            const rec = (bucket || []).find((f: any) => featureMatchesFlightShareId({ properties: f }, id));
+            if (rec) { feature = flightToFeature(rec); break; }
+          }
+        }
       }
       if (!feature) return false;
       openedShareKeys.set(`flight:${id}`, Date.now());
