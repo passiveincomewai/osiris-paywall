@@ -22,16 +22,17 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
-  title: "Live Flight Tracker — Watch Flights Live, Free",
+  title: "Watch Flights Live — Free Flight Tracker with Satellite View",
   description:
-    "Watch flights live on a free 3D globe: real-time position, altitude, speed, aircraft type and route for flights worldwide, from live ADS-B data. No signup, no cost, no account.",
+    "Watch flights live on a free 3D globe with satellite view: real-time position, altitude, speed, aircraft type and routes from live ADS-B data — plus satellites, ships and 74,229 public cameras on the same map. Free — no signup, no account, no cost.",
   alternates: { canonical: "/live-flight-tracker" },
   openGraph: {
-    title: "Live Flight Tracker — Watch Flights Live, Free | WorldEye",
+    title: "Watch Flights Live — Free Flight Tracker with Satellite View | WorldEye",
     description:
-      "Real-time flight tracking on a free 3D globe: position, altitude, speed, aircraft type and routes, from live ADS-B data. No signup, no cost.",
+      "Real-time flight tracking on a free 3D globe: position, altitude, speed, aircraft type and routes from live ADS-B data — plus satellites, ships and 74,229 public cameras on the same map. Free — no signup.",
     url: "/live-flight-tracker",
     type: "website",
   },
@@ -137,7 +138,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "WorldEye Live Flight Tracker",
       description:
-        "Track flights live on a free 3D map. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost.",
+        "Track flights live on a free 3D map with satellite view. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost.",
       url: "https://worldeye.app/live-flight-tracker",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     },
@@ -207,6 +208,34 @@ export default function LiveFlightTrackerPage() {
             </Link>
             <span className="text-sm text-white/40">Free forever · No signup</span>
           </div>
+        </div>
+
+        {/* The one-map answer */}
+        <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#00E5FF]/25 bg-[#00E5FF]/[0.04] p-8 md:p-10">
+          <h2 className="text-xl md:text-2xl font-bold">
+            One live map for flights — and everything around them
+          </h2>
+          <p className="mt-3 text-white/60 leading-relaxed">
+            WorldEye is a free flight tracker with satellite view:{" "}
+            <Link href="/" className="text-[#00E5FF] hover:underline">
+              watch flights live
+            </Link>{" "}
+            on a 3D globe, with real-time positions from live ADS-B data. The
+            same map also carries{" "}
+            <Link href="/satellite-tracker" className="text-[#00E5FF] hover:underline">
+              live satellites
+            </Link>
+            ,{" "}
+            <Link href="/ship-tracker" className="text-[#00E5FF] hover:underline">
+              ships at sea
+            </Link>{" "}
+            and{" "}
+            <Link href="/live-webcams" className="text-[#00E5FF] hover:underline">
+              74,229 public cameras
+            </Link>{" "}
+            — flights, satellites, ships and cameras on one live map, all
+            free, with no signup and no account.
+          </p>
         </div>
 
         {/* How it works */}
@@ -398,7 +427,7 @@ export default function LiveFlightTrackerPage() {
             <Link href="/pricing" className="text-[#D4AF37] hover:underline">
               WorldEye Pro
             </Link>{" "}
-            adds the OI AI assistant (on your own API key), satellite imagery,
+            adds the OI AI assistant, live traffic,
             advanced search filters and premium intel feeds — from $7.99/week.
           </p>
           <Link
@@ -448,6 +477,8 @@ export default function LiveFlightTrackerPage() {
             },
           ]}
         />
+
+        <TrackerClusterLinks current="/live-flight-tracker" />
 
         {/* Trust */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">

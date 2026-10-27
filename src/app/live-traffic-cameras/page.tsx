@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
@@ -385,6 +386,8 @@ export default async function LiveTrafficCamerasPage() {
             Explore the full directory: <Link href="/cameras" className="text-[#D4AF37] hover:underline">live cameras</Link> · <Link href="/" className="text-[#D4AF37] hover:underline">home</Link>
           </p>
         </div>
+
+        <TrackerClusterLinks />
       </div>
       <SiteFooter />
     </main>

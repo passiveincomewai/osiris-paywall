@@ -9,6 +9,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 import LiveQuakeList from "@/components/events/LiveQuakeList";
 import ExportTease from "@/components/ExportTease";
 
@@ -421,6 +422,8 @@ export default function EarthquakeTrackerPage() {
             },
           ]}
         />
+
+        <TrackerClusterLinks current="/earthquake-tracker" />
       </div>
 
       <SiteFooter />

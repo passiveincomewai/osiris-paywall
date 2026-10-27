@@ -13,6 +13,7 @@ import {
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
   title: "What Is AIS? How Ship Tracking Works",
@@ -390,6 +391,8 @@ export default function WhatIsAisPage() {
             },
           ]}
         />
+
+        <TrackerClusterLinks />
       </div>
 
       <SiteFooter />

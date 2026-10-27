@@ -20,6 +20,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
   title: "Live Ship Tracker — Marine Vessel Tracking",
@@ -391,6 +392,8 @@ export default function ShipTrackerPage() {
             },
           ]}
         />
+
+        <TrackerClusterLinks current="/ship-tracker" />
       </div>
 
       <SiteFooter />

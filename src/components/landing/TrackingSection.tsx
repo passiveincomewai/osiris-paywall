@@ -45,7 +45,7 @@ export default function TrackingSection() {
               href="/live-flight-tracker"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0096FF] hover:bg-[#0aa5ff] text-white text-sm font-semibold transition"
             >
-              Explore Tracking <ArrowRight className="w-4 h-4" aria-hidden />
+              Live flight tracker <ArrowRight className="w-4 h-4" aria-hidden />
             </Link>
             <Link href="/satellite-tracker" className="text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition">
               Satellite tracker

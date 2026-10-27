@@ -53,8 +53,8 @@ const fontWordmark = Audiowide({
 
 const SITE_URL = "https://worldeye.app";
 const SITE_NAME = "WorldEye";
-const SITE_TITLE = "WorldEye — Live 3D Globe | Flights, CCTV & Satellites";
-const SITE_DESCRIPTION = "Watch 74,229 live cams and CCTV cameras, track flights and satellites on WorldEye's free 3D intelligence globe — no signup. Go Pro for the AI analyst, satellite view and intel feeds.";
+const SITE_TITLE = "WorldEye — Live Cams, Flights & Satellites on a 3D Globe";
+const SITE_DESCRIPTION = "Watch 74,229 live cams, track flights live and follow satellites on WorldEye's free 3D globe — no signup. Go Pro for the AI analyst, live traffic and premium intel feeds.";
 
 export const viewport: Viewport = {
   themeColor: "#D4AF37",
@@ -140,8 +140,8 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: "WorldEye — Live 3D Intelligence Globe | Flights, CCTV, Satellites & OSINT Tools",
-    description: "Track live aircraft, satellites and 74,229 worldwide CCTV cameras on a 3D globe — free. Go Pro for the AI analyst, satellite view, live traffic and premium intel feeds.",
+    title: "WorldEye — Live 3D Globe | Live Cams, Flights, Satellites & OSINT Tools",
+    description: "Watch 74,229 live cams, track live aircraft and satellites on a free 3D globe. Go Pro for the AI analyst, live traffic and premium intel feeds.",
     type: "website",
     siteName: SITE_NAME,
     locale: "en_US",
@@ -158,8 +158,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "WorldEye — Live 3D Intelligence Globe | Flights, CCTV, Satellites & OSINT Tools",
-    description: "Track live flights, satellites & 74,229 CCTV cameras worldwide on a 3D globe — free. Pro unlocks the AI analyst, satellite view and premium intel feeds.",
+    title: "WorldEye — Live 3D Globe | Live Cams, Flights, Satellites & OSINT Tools",
+    description: "Watch 74,229 live cams and track live flights and satellites on a free 3D globe. Pro adds the AI analyst, live traffic and premium intel feeds.",
     images: [`${SITE_URL}/og-image.png`],
   },
   category: "technology",

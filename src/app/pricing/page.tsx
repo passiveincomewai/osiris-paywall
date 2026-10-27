@@ -13,7 +13,7 @@ export const metadata = {
   },
   openGraph: {
     title: "Pricing & Plans — Free Trial on Every Plan | WorldEye",
-    description: "The globe, 74,229 live cameras and flight tracking are free. Pro from $7.99/week or VIP Pro $74.99/year — Weekly starts with a 3-day free trial; Monthly and VIP Pro start with 10 days free.",
+    description: "The globe, 74,229 live cameras and flight tracking are free. Go Pro from $7.99/week, $13.99/month or VIP Pro $74.99/year — Weekly starts with a 3-day free trial; Monthly and VIP Pro start with 10 days free.",
     url: "https://worldeye.app/pricing",
     type: "website",
   },

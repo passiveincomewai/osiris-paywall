@@ -42,6 +42,12 @@ function StaticCategoryCards() {
       >
         Explore Live Cameras <ArrowRight className="w-4 h-4" aria-hidden />
       </Link>
+      <Link
+        href="/live-webcams"
+        className="inline-flex items-center gap-2 mt-6 ml-6 text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition"
+      >
+        Live cams worldwide <ArrowRight className="w-4 h-4" aria-hidden />
+      </Link>
     </Reveal>
   );
 }

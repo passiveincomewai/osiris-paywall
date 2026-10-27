@@ -17,6 +17,7 @@ import {
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
   title: "ISS Tracker — Watch the Space Station Live",
@@ -336,6 +337,8 @@ export default function SpaceStationTrackerPage() {
             },
           ]}
         />
+
+        <TrackerClusterLinks current="/space-station-tracker" />
       </div>
 
       <SiteFooter />

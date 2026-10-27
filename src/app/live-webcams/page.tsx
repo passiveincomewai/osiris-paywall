@@ -23,11 +23,11 @@ const HEADLINE = 74229;
 const EUROPE_COUNT = (EXPLORE_SCOPES.europe.slugs as string[]).length;
 
 export const metadata: Metadata = {
-  title: "Live Webcams Worldwide — 74,229 Cams",
+  title: "Live Cams Worldwide — 74,229 Live Webcams",
   description: `Watch 74,229 live cams and webcams in ${COUNTRY_INDEX.length} countries — traffic, cities, nature and landmarks — on WorldEye's live webcam hub. Free forever, no signup.`,
   alternates: { canonical: "https://worldeye.app/live-webcams" },
   openGraph: {
-    title: "Live Webcams Worldwide — 74,229 Cams | WorldEye",
+    title: "Live Cams Worldwide — 74,229 Live Webcams | WorldEye",
     description: `74,229 live cams and webcams across ${COUNTRY_INDEX.length} countries — traffic, cities, nature, landmarks. Free forever, no signup.`,
     url: "https://worldeye.app/live-webcams",
     type: "website",
@@ -105,7 +105,7 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "CollectionPage",
-      name: "Live Webcams Worldwide — 74,229 Cams",
+      name: "Live Cams Worldwide — 74,229 Live Webcams",
       description: `Directory of ${fmt(HEADLINE)} live public webcams across ${COUNTRY_INDEX.length} countries.`,
       url: "https://worldeye.app/live-webcams",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
@@ -149,7 +149,7 @@ export default async function LiveWebcamsPage() {
             <Camera className="w-3.5 h-3.5" /> LIVE WEBCAM DIRECTORY
           </p>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-            {fmt(HEADLINE)} Live Webcams. <span className="text-[#D4AF37]">One World.</span>
+            Live Cams Worldwide — {fmt(HEADLINE)} live webcams. <span className="text-[#D4AF37]">One World.</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
             This is the hub of the WorldEye camera directory: {fmt(HEADLINE)}{" "}

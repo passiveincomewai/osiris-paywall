@@ -19,6 +19,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
   title: "Live Weather Radar & Storm Tracker — Weather on a 3D Globe",
@@ -376,6 +377,8 @@ export default function WeatherTrackerPage() {
             },
           ]}
         />
+
+        <TrackerClusterLinks current="/weather-tracker" />
       </div>
 
       <SiteFooter />

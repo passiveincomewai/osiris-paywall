@@ -22,6 +22,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
   title: "Live Satellite Tracker — ISS, Starlink & More",
@@ -457,6 +458,8 @@ export default function SatelliteTrackerPage() {
             },
           ]}
         />
+
+        <TrackerClusterLinks current="/satellite-tracker" />
 
         {/* Trust */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
