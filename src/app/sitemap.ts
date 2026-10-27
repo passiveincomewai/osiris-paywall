@@ -8,6 +8,8 @@ import { POSTS } from "./blog/posts";
 import { EVENT_WALLS } from "@/data/event-walls";
 import { AIRPORT_PAGES } from "@/lib/airport-pages";
 import { NATIONAL_PARKS } from "@/lib/national-parks";
+/* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
+import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 
 const BASE = "https://worldeye.app";
 
@@ -216,6 +218,19 @@ const SEO_PAGES_WAVE15 = [
   "/interstate-cameras/i-70",
   "/interstate-cameras/i-40",
 ];
+
+/* ── BEGIN border-crossings delta (separable) ──────────────────────
+   Border crossings (2026-10-27): the /border-crossings hub + one
+   page per crossing in the registry (lib/border/crossings) — CBP
+   wait times + a camera wall each. Derived from the registry so the
+   sitemap can never list a crossing the router doesn't serve. These
+   pages revalidate every 5 minutes (live wait data), hence "daily"
+   change frequency and no catalogue lastmod. */
+const SEO_PAGES_BORDER = [
+  "/border-crossings",
+  ...BORDER_CROSSINGS.map((c) => `/border-crossings/${c.slug}`),
+];
+/* ── END border-crossings delta ──────────────────────────────────── */
 
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
@@ -495,6 +510,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
+    /* ── BEGIN border-crossings delta (separable) ── */
+    ...SEO_PAGES_BORDER.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "daily" as const,
+      priority: 0.7,
+    })),
+    /* ── END border-crossings delta ── */
     ...SEO_PAGES_AMBIENT.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "weekly" as const,

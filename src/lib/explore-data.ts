@@ -133,6 +133,27 @@ function eventGeoIn(
   return { label, slugs: [slug], geo: { lat, lng, radiusKm }, groupBy: 'city' };
 }
 
+/** A border-crossing wall: every catalogue record within `radiusKm`
+ *  of the crossing point, across the chunks on both sides of the line
+ *  (the Mexican chunk holds only a handful of tourist feeds, so the
+ *  southern walls are honestly US-side sets; the rule states the
+ *  radius, not a side). Centres and radii mirror
+ *  lib/border/crossings exactly — border-pages.test.ts pins them. */
+function borderGeo(
+  label: string,
+  foreignSlug: string,
+  lat: number,
+  lng: number,
+  radiusKm: number,
+): ExploreScopeDef {
+  return {
+    label,
+    slugs: ['united-states', foreignSlug],
+    geo: { lat, lng, radiusKm },
+    groupBy: 'city',
+  };
+}
+
 export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   /* Region hubs — the country pages' own continental grouping
      (lib/country-page-content COUNTRY_REGION). */
@@ -338,6 +359,36 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'park-black-canyon': eventGeo('Black Canyon of the Gunnison National Park', 38.5746, -107.7416, 25),
   'park-shenandoah': eventGeo('Shenandoah National Park', 38.473, -78.452, 40),
   'park-olympic': eventGeo('Olympic National Park', 47.9694, -123.4968, 25),
+
+  /* Border crossings (2026-10-27) — one wall per /border-crossings
+     page. Centre + radius are the crossing registry's own numbers
+     (lib/border/crossings); the page quotes countForDef over the
+     same rule its grid serves. */
+  'border-san-ysidro': borderGeo('San Ysidro crossing, San Diego', 'mexico', 32.542, -117.03, 10),
+  'border-otay-mesa': borderGeo('Otay Mesa crossing, San Diego', 'mexico', 32.5503, -116.9728, 10),
+  'border-calexico': borderGeo('Calexico crossing, California', 'mexico', 32.6649, -115.4955, 15),
+  'border-nogales': borderGeo('Nogales crossing, Arizona', 'mexico', 31.3334, -110.9457, 10),
+  'border-el-paso': borderGeo('El Paso crossings, Texas', 'mexico', 31.7577, -106.4889, 12),
+  'border-del-rio': borderGeo('Del Rio crossing, Texas', 'mexico', 29.357, -100.92, 10),
+  'border-eagle-pass': borderGeo('Eagle Pass crossings, Texas', 'mexico', 28.707, -100.51, 10),
+  'border-laredo': borderGeo('Laredo crossings, Texas', 'mexico', 27.4966, -99.509, 12),
+  'border-hidalgo-pharr': borderGeo('Hidalgo & Pharr crossings, Texas', 'mexico', 26.0947, -98.2668, 15),
+  'border-progreso': borderGeo('Progreso crossing, Texas', 'mexico', 26.087, -97.955, 15),
+  'border-brownsville': borderGeo('Brownsville crossings, Texas', 'mexico', 25.899, -97.499, 15),
+  'border-blaine': borderGeo('Blaine crossings, Washington', 'canada', 49.0022, -122.7567, 12),
+  'border-lynden': borderGeo('Lynden crossing, Washington', 'canada', 49.0, -122.485, 12),
+  'border-sumas': borderGeo('Sumas crossing, Washington', 'canada', 49.0023, -122.2657, 12),
+  'border-pembina': borderGeo('Pembina crossing, North Dakota', 'canada', 49.0, -97.237, 10),
+  'border-international-falls': borderGeo('International Falls crossing, Minnesota', 'canada', 48.6, -93.41, 12),
+  'border-sault-ste-marie': borderGeo('Sault Ste. Marie crossing, Michigan', 'canada', 46.5067, -84.36, 25),
+  'border-port-huron': borderGeo('Port Huron crossing, Michigan', 'canada', 42.9987, -82.4235, 12),
+  'border-detroit': borderGeo('Detroit–Windsor crossings, Michigan', 'canada', 42.3119, -83.0739, 12),
+  'border-buffalo': borderGeo('Peace Bridge crossing, Buffalo', 'canada', 42.9069, -78.9056, 12),
+  'border-niagara-falls': borderGeo('Niagara Falls crossings, New York', 'canada', 43.09, -79.07, 12),
+  'border-alexandria-bay': borderGeo('Thousand Islands crossing, New York', 'canada', 44.3474, -75.9887, 10),
+  'border-champlain': borderGeo('Champlain crossing, New York', 'canada', 45.0, -73.45, 10),
+  'border-derby-line': borderGeo('Derby Line crossing, Vermont', 'canada', 45.0055, -72.11, 10),
+  'border-houlton': borderGeo('Houlton crossing, Maine', 'canada', 47.12, -67.79, 15),
 };
 
 /** A scope definition from request params: either a registry key, or
