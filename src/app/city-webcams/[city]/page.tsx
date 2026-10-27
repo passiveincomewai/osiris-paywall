@@ -3,7 +3,17 @@ import { notFound } from "next/navigation";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
-import { cityChunkStats } from "@/lib/explore-data";
+import { cityChunkStats, loadCountryChunk } from "@/lib/explore-data";
+import { clean } from "@/lib/country-cameras";
+import {
+  bboxRadiusM,
+  hasFullNeighbourSet,
+  nearestCityNeighbours,
+  neighbourLinks,
+  type CityBBox,
+  type CityPoint,
+} from "@/lib/place-neighbours";
+import { buildGeoUrl } from "@/lib/share/links";
 import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
 
@@ -930,25 +940,142 @@ function generatedCfg(g: GenCity): CityCfg {
   };
 }
 
+/** The hand-maintained RELATED entries that point at curated cities
+ *  in this city's country — deliberate editorial links, kept on both
+ *  the distance-based path and the fallback below. */
+function generatedCuratedSiblings(g: GenCity): { label: string; href: string }[] {
+  return RELATED.filter(
+    (l) =>
+      l.href.startsWith("/city-webcams/") &&
+      CITIES[l.href.replace("/city-webcams/", "")]?.countrySlug === g.countrySlug,
+  );
+}
+
 function generatedRelated(g: GenCity): { label: string; href: string }[] {
   const siblings = GEN_CITIES.filter(
     (o) => o.countrySlug === g.countrySlug && o.slug !== g.slug,
   )
     .slice(0, 3)
     .map((o) => ({ label: `${o.name} live webcams`, href: `/city-webcams/${o.slug}` }));
-  const curatedSiblings = RELATED.filter(
-    (l) =>
-      l.href.startsWith("/city-webcams/") &&
-      CITIES[l.href.replace("/city-webcams/", "")]?.countrySlug === g.countrySlug,
-  );
   const top = [...GEN_CITIES]
     .filter((o) => o.slug !== g.slug && o.countrySlug !== g.countrySlug)
     .slice(0, 3)
     .map((o) => ({ label: `${o.name} live webcams`, href: `/city-webcams/${o.slug}` }));
   return [
     ...siblings,
-    ...curatedSiblings,
+    ...generatedCuratedSiblings(g),
     ...top,
+    { label: "All world city webcams", href: "/world-city-webcams" },
+  ];
+}
+
+/* ── C4: city neighbours by distance (INTENT-AND-CLUSTERS §5.2) ─────
+ * Every city page's catalogue centroid + camera bounding box, built
+ * once per process from the same country-chunk records cityChunkStats
+ * reads — the mean of the records filed under the city's own name, so
+ * a point here is exactly the centroid the page itself quotes. US
+ * cities also carry their state (via the state-hub resolution) as the
+ * region the neighbour selection prefers. Pages whose records sit
+ * under other locality names simply have no point, and their pages
+ * degrade to the links they had. */
+interface CityPointEntry extends CityPoint {
+  bbox: CityBBox;
+}
+
+let cityPointIndexPromise: Promise<Map<string, CityPointEntry>> | null = null;
+
+function cityPointIndex(): Promise<Map<string, CityPointEntry>> {
+  if (!cityPointIndexPromise) {
+    cityPointIndexPromise = (async () => {
+      const pages = [
+        ...GEN_CITIES.map((g) => ({
+          slug: g.slug,
+          name: g.name,
+          countrySlug: g.countrySlug,
+        })),
+        ...Object.entries(CITIES).map(([slug, cfg]) => ({
+          slug,
+          name: cfg.name,
+          countrySlug: cfg.countrySlug,
+        })),
+      ];
+      const byCountry = new Map<string, typeof pages>();
+      for (const p of pages) {
+        const list = byCountry.get(p.countrySlug) ?? [];
+        list.push(p);
+        byCountry.set(p.countrySlug, list);
+      }
+      const index = new Map<string, CityPointEntry>();
+      await Promise.all(
+        [...byCountry.entries()].map(async ([countrySlug, countryPages]) => {
+          const records = await loadCountryChunk(countrySlug).catch(
+            () => null,
+          );
+          if (!records) return;
+          for (const page of countryPages) {
+            const wanted = clean(page.name);
+            let n = 0;
+            let lat = 0;
+            let lng = 0;
+            let minLat = Infinity;
+            let maxLat = -Infinity;
+            let minLng = Infinity;
+            let maxLng = -Infinity;
+            for (const r of records) {
+              if (clean(r.city) !== wanted) continue;
+              if (typeof r.lat !== "number" || typeof r.lng !== "number") {
+                continue;
+              }
+              n += 1;
+              lat += r.lat;
+              lng += r.lng;
+              if (r.lat < minLat) minLat = r.lat;
+              if (r.lat > maxLat) maxLat = r.lat;
+              if (r.lng < minLng) minLng = r.lng;
+              if (r.lng > maxLng) maxLng = r.lng;
+            }
+            if (n === 0) continue;
+            /* Same 4dp rounding cityChunkStats applies, so the index
+               point and the page's own chunk centroid agree. */
+            const centroid = {
+              lat: Math.round((lat / n) * 10000) / 10000,
+              lng: Math.round((lng / n) * 10000) / 10000,
+            };
+            const hub = stateHubForCity(countrySlug, page.name, centroid);
+            index.set(page.slug, {
+              slug: page.slug,
+              name: page.name,
+              countrySlug,
+              region: hub ? hub.name : null,
+              lat: centroid.lat,
+              lng: centroid.lng,
+              bbox: { minLat, maxLat, minLng, maxLng },
+            });
+          }
+        }),
+      );
+      return index;
+    })();
+  }
+  return cityPointIndexPromise;
+}
+
+/** A generated city's related list rebuilt from real distance: its
+ *  nearest city pages (anchors rotated by neighbourLinks), then the
+ *  curated siblings and the world index. Null when the catalogue
+ *  can't support a full neighbour set — the caller then keeps
+ *  generatedRelated() exactly as it was. */
+async function neighbourRelatedLinks(
+  g: GenCity,
+): Promise<{ label: string; href: string }[] | null> {
+  const index = await cityPointIndex();
+  const self = index.get(g.slug);
+  if (!self) return null;
+  const neighbours = nearestCityNeighbours(self, [...index.values()]);
+  if (!hasFullNeighbourSet(neighbours)) return null;
+  return [
+    ...neighbourLinks(neighbours).map(({ label, href }) => ({ label, href })),
+    ...generatedCuratedSiblings(g),
     { label: "All world city webcams", href: "/world-city-webcams" },
   ];
 }
@@ -1081,12 +1208,44 @@ export default async function CityWebcamPage({
     weather: placeWeather,
   });
   const stateHub = stateHubForCity(c.countrySlug, c.name, chunk?.centroid ?? null);
-  const relatedLinks = stateHub
-    ? [
-        { label: `${stateHub.name} traffic cameras`, href: `/us-traffic-cameras/${stateHub.slug}` },
-        ...resolved.related,
-      ]
-    : resolved.related;
+  /* C4 (§5.2): a generated city with a full set of real neighbours
+     links sideways by distance instead of file order; every other
+     page keeps its existing related list untouched. */
+  let baseRelated = resolved.related;
+  if (genCity) {
+    const byDistance = await neighbourRelatedLinks(genCity);
+    if (byDistance) baseRelated = byDistance;
+  }
+  /* C4 (§5.2): the globe deep link — the city's own camera centroid
+     framed at its camera bounding box's radius, in the geo format
+     the globe already parses (buildGeoUrl; no invented params). A
+     relative base keeps it a plain in-site link like every other
+     href on the page. No centroid on record → no link. */
+  const selfPoint = (await cityPointIndex()).get(slug);
+  const geoUrl = selfPoint
+    ? buildGeoUrl(
+        {
+          lat: selfPoint.lat,
+          lng: selfPoint.lng,
+          radiusM: bboxRadiusM(selfPoint.bbox),
+        },
+        "",
+      )
+    : null;
+  const relatedLinks = [
+    ...(stateHub
+      ? [
+          {
+            label: `${stateHub.name} traffic cameras`,
+            href: `/us-traffic-cameras/${stateHub.slug}`,
+          },
+        ]
+      : []),
+    ...baseRelated,
+    ...(geoUrl
+      ? [{ label: `Open ${c.name} on the globe`, href: geoUrl }]
+      : []),
+  ];
   const showBreakdown =
     breakdown !== null && breakdown.total >= 25 && breakdown.corridors.length >= 2;
   const breakdownTail = breakdown
