@@ -167,7 +167,7 @@ export default async function LiveTrafficCamerasPage() {
             <Car className="w-3.5 h-3.5" /> TRAFFIC NETWORK
           </p>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Live US Traffic Cameras, <span className="text-[#D4AF37]">All in One Place</span>
+            Watch US Traffic Cameras <span className="text-[#D4AF37]">Live, Right Now</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
             WorldEye tracks {fmt(total)} live traffic cameras across the United
@@ -182,6 +182,14 @@ export default async function LiveTrafficCamerasPage() {
             {states[0].name} leads the nation with {fmt(states[0].count)} live feeds,
             followed by {states[1].name}&rsquo;s {fmt(states[1].count)} highway
             cameras. Every feed is free to watch — no account, no signup.
+          </p>
+          <p className="text-white/55 mt-4 text-base md:text-lg leading-relaxed">
+            Browsing by state instead? The{" "}
+            <Link href="/us-traffic-cameras" className="text-[#D4AF37] hover:underline">
+              US traffic camera directory
+            </Link>{" "}
+            lists every state DOT network, state by state — this page is the
+            one for watching the roads themselves, live.
           </p>
           <DirectorySearch
             label="traffic areas worldwide"

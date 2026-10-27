@@ -239,8 +239,13 @@ export default async function SpainTrafficCamerasPage() {
           <p className="text-white/50 mt-2 text-sm md:text-base max-w-3xl">
             {fmt(trafficTotal)} of Spain&apos;s {fmt(countryTotal)} indexed cameras
             are road feeds — named as roads or published by road authorities —
-            and every one is below, live. Search by road or city; what the
-            camera shows is the condition report.
+            and every one is below, live. Spain&apos;s city and coastal
+            cameras live in the full{" "}
+            <Link href="/cameras/countries/spain" className="text-[#D4AF37] hover:underline">
+              Spain camera index
+            </Link>
+            . Search by road or city; what the camera shows is the condition
+            report.
           </p>
           <div className="mt-6">
             <DirectoryExplorer

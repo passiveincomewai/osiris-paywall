@@ -154,7 +154,12 @@ export default async function UsTrafficCamerasPage() {
             {fmt(total)} live traffic cameras across the United States — every state
             DOT and 511 network the directory serves, in one explorer. The biggest
             systems are {top.map((a) => `${a.name} (${fmt(a.count)})`).join(", ")} —
-            and every feed is free to watch, no account, no signup.
+            and every feed is free to watch, no account, no signup. Rather watch
+            the roads than browse the directory? The{" "}
+            <Link href="/live-traffic-cameras" className="text-[#D4AF37] hover:underline">
+              live traffic camera wall
+            </Link>{" "}
+            streams the whole network on one map.
           </p>
           <DirectorySearch
             label="US traffic areas"
