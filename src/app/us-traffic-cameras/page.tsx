@@ -14,6 +14,7 @@ import {
   areasForDef,
   countForDef,
 } from "@/lib/explore-data";
+import { getUsStatesIndex } from "@/lib/us-states";
 
 /* The US traffic index: every camera in the US records that the
    traffic rule selects (lib/explore-scopes — road-named cameras or
@@ -50,6 +51,15 @@ const STATE_PAGES = [
   { slug: "arizona", name: "Arizona", note: "ADOT cameras — Phoenix freeways, desert interstates and mountain grades." },
 ];
 
+/* Every state page in the index — the generated per-state data
+   (src/data/us-states.json via lib/us-states) that the sitemap and the
+   [state] pages are built from, sorted A–Z. The hub previously linked
+   only the 7 editorial guides above (index-recovery audit 2026-10-27);
+   the grid below gives every state page a hub link. */
+const ALL_STATES = [...getUsStatesIndex().states].sort((a, b) =>
+  a.name.localeCompare(b.name),
+);
+
 const FAQS = [
   {
     q: "What counts as a US traffic camera here?",
@@ -60,8 +70,8 @@ const FAQS = [
     a: "Georgia, by a wide margin — its 511 network is the densest single-state system in the index, concentrated on metro Atlanta's interstates. Utah is second, with a network built for canyon and mountain-pass conditions.",
   },
   {
-    q: "My state has no page — can I still watch its cameras?",
-    a: "Yes. The state pages are editorial guides for the biggest networks; the explorer above covers every US traffic camera in the catalogue regardless of state. Search by city or highway name, or open the globe and zoom to your state.",
+    q: "Does every state have its own traffic page?",
+    a: "Yes — all 51 state pages are linked from the A–Z grid on this page. Seven of them — Georgia, Utah, Texas, Florida, Indiana, Nevada and Arizona — carry full editorial guides to their networks; every state page shows that state's live camera index, its busiest camera areas and sample feeds. The explorer above covers every US traffic camera in the catalogue regardless of state.",
   },
   {
     q: "Can I check cameras along a specific drive?",
@@ -92,8 +102,8 @@ export default async function UsTrafficCamerasPage() {
         mainEntity: {
           "@type": "ItemList",
           name: "State traffic camera pages",
-          numberOfItems: STATE_PAGES.length,
-          itemListElement: STATE_PAGES.map((s, i) => ({
+          numberOfItems: ALL_STATES.length,
+          itemListElement: ALL_STATES.map((s, i) => ({
             "@type": "ListItem",
             position: i + 1,
             name: `${s.name} traffic cameras`,
@@ -205,6 +215,33 @@ export default async function UsTrafficCamerasPage() {
                   {s.name} traffic cameras
                 </span>
                 <span className="block text-sm text-white/50 mt-1">{s.note}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* All state pages — the full A–Z grid. Counts are the
+            catalogue's per-state totals from the generated index. */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Every state traffic camera page</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base">
+            All {ALL_STATES.length} state pages in the index, A–Z — the seven
+            editorial guides above are the biggest networks; every other
+            state&apos;s page leads with its live camera index.
+          </p>
+          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            {ALL_STATES.map((s) => (
+              <Link
+                key={s.slug}
+                href={`/us-traffic-cameras/${s.slug}`}
+                className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 hover:border-[#D4AF37]/40 transition group"
+              >
+                <span className="text-sm font-medium group-hover:text-[#D4AF37] transition">
+                  {s.name} traffic cameras
+                </span>
+                <span className="block text-xs text-white/40 mt-0.5">
+                  {fmt(s.count)} cameras
+                </span>
               </Link>
             ))}
           </div>

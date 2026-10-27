@@ -145,7 +145,7 @@ export default function LeaderboardClient() {
           style={{ filter: "drop-shadow(0 0 14px rgba(192,132,252,.45))" }} />
         <div>
           <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase">Leaderboard</div>
-          <h1 className="text-2xl font-bold text-white">Top affiliates</h1>
+          <h2 className="text-2xl font-bold text-white">Top affiliates</h2>
         </div>
       </div>
       {optOut !== null && (

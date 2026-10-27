@@ -9,6 +9,12 @@ import EarningsCalculator from "@/components/affiliate/EarningsCalculator";
 import CreatorApply from "@/components/affiliate/CreatorApply";
 import WhatsNew from "@/components/affiliate/WhatsNew";
 
+// Self-canonical: without this, the page inherits the root layout's
+// canonical (the homepage) and Google treats /affiliates as a copy of /.
+export const metadata = {
+  alternates: { canonical: "https://worldeye.app/affiliates" },
+};
+
 const CTA = "/api/auth/signin?callbackUrl=/affiliates/dashboard";
 
 const TIERS: { name: string; xp: string; rate: string; code: string; color: string; perk?: string }[] = [

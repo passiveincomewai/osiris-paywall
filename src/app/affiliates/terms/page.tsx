@@ -1,9 +1,10 @@
 // WorldEye Affiliate Program — Terms & Conditions (server component).
-import { SectionTitle } from "@/components/affiliate/ui";
-
 export const metadata = {
   title: "Affiliate Terms & Conditions",
   description: "Terms and conditions for the WorldEye affiliate program.",
+  // Self-canonical: without this, the page inherits the root layout's
+  // canonical (the homepage) and Google treats it as a copy of /.
+  alternates: { canonical: "https://worldeye.app/affiliates/terms" },
 };
 
 const SECTIONS: { n: string; title: string; body: string[] }[] = [
@@ -113,8 +114,23 @@ const SECTIONS: { n: string; title: string; body: string[] }[] = [
 export default function AffiliateTerms() {
   return (
     <div className="max-w-3xl mx-auto">
-      <SectionTitle kicker="Legal" title="Affiliate Terms & Conditions" />
+      {/* Real H1 (SectionTitle renders an h2): mirrors its markup/classes. */}
+      <div className="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <div className="text-[11px] font-mono tracking-[0.25em] text-cyan-400 uppercase mb-1">Legal</div>
+          <h1 className="text-xl md:text-2xl font-bold text-white">Affiliate Terms &amp; Conditions</h1>
+        </div>
+      </div>
       <p className="text-sm text-slate-400 font-mono mb-8">Last updated: October 2026</p>
+
+      <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-8">
+        These terms govern participation in the WorldEye affiliate program. They
+        cover who can join, how commissions are earned, attributed and paid out,
+        the conduct expected of affiliates, and how the program itself can
+        change. Participation is free and never requires a purchase — the
+        sections below are the complete agreement between WorldEye and its
+        affiliates.
+      </p>
 
       <div className="rounded-2xl border border-amber-400/30 bg-amber-400/[0.06] backdrop-blur-md p-5 mb-8 text-sm text-amber-100/90 leading-relaxed">
         <span className="font-mono font-bold text-amber-300">IMPORTANT — PLEASE READ: </span>
