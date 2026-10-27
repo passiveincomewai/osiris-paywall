@@ -145,6 +145,10 @@ const SEO_PAGES_WAVE13 = [
   "/city-webcams/new-york-city",
 ];
 
+// Tools (2026-10-26): Photo Geolocation (Beta) — the free public tool
+// page at /tools/photo-geolocation.
+const SEO_PAGES_TOOLS = ["/tools/photo-geolocation"];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -373,6 +377,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    ...SEO_PAGES_TOOLS.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
     })),
     ...SEO_PAGES_AMBIENT.map((p) => ({
       url: `${BASE}${p}`,

@@ -30,7 +30,7 @@ import {
   type LadderPrompt,
 } from '@/lib/camera-ladder';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
-import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId, shareLayersForKind, shareOpenDeadlineMs } from '@/lib/share/links';
+import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId, geoTargetFromSearch, shareLayersForKind, shareOpenDeadlineMs, zoomForRadiusM } from '@/lib/share/links';
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
@@ -1563,6 +1563,29 @@ export default function Dashboard() {
       }));
     }
   }, [sharedEntity, dataVersion]);
+
+  // ── Geo target deep link (?geo=<lat>,<lng>,<radiusM>) ──
+  // The Photo Geolocation tool's EXPLORE IN 3D handoff (lib/share/
+  // links.ts): a bare coordinate target, self-contained, so it
+  // resolves on arrival — light the cameras and fly there, framed to
+  // the uncertainty radius the result page showed. No entity popup:
+  // a geo result is an area to explore, not a feed to open.
+  const geoTarget = useMemo(
+    () => (typeof window !== 'undefined' ? geoTargetFromSearch(window.location.search) : null),
+    [],
+  );
+  const geoTargetSettled = useRef(false);
+  useEffect(() => {
+    if (!geoTarget || geoTargetSettled.current) return;
+    geoTargetSettled.current = true;
+    setActiveLayers(prev => ({ ...prev, cctv: true }));
+    setFlyToLocation({
+      lat: geoTarget.lat,
+      lng: geoTarget.lng,
+      zoom: zoomForRadiusM(geoTarget.radiusM, geoTarget.lat),
+      ts: Date.now(),
+    });
+  }, [geoTarget]);
 
   // ── Camera picked in search ──
   // Same path as the deep link above: fly there, then open through

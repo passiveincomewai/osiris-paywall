@@ -17,6 +17,9 @@
 
 import { appBaseUrl } from '../app-url';
 
+/** Query param for a bare coordinate target (see the geo section below). */
+export const GEO_PARAM = 'geo';
+
 export type ShareEntityKind = 'camera' | 'flight' | 'quake' | 'storm' | 'fire' | 'event';
 
 export const SHARE_PARAM_BY_KIND: Record<ShareEntityKind, string> = {
@@ -29,7 +32,70 @@ export const SHARE_PARAM_BY_KIND: Record<ShareEntityKind, string> = {
 };
 
 /** Query params the /ref landing passes through to the globe. */
-export const REF_PASSTHROUGH_PARAMS: readonly string[] = Object.values(SHARE_PARAM_BY_KIND);
+export const REF_PASSTHROUGH_PARAMS: readonly string[] = [...Object.values(SHARE_PARAM_BY_KIND), GEO_PARAM];
+
+/* ── Geo targets (/?geo=<lat>,<lng>,<radiusM>) ──────────────────────
+ * A bare coordinate target, for results that are a PLACE rather than
+ * an entity in a feed — the Photo Geolocation tool's "Explore in 3D"
+ * handoff. The coordinates are self-contained, so unlike an entity
+ * link this one never goes stale and needs no layer lit beyond the
+ * cameras the visitor came to see. The radius rides along so the
+ * globe frames the same uncertainty the result page showed. */
+
+/** The public precision floor, mirrored from lib/geolocation/candidates. */
+export const GEO_MIN_RADIUS_M = 250;
+export const GEO_MAX_RADIUS_M = 100_000;
+export const GEO_DEFAULT_RADIUS_M = 1_000;
+
+export interface GeoTarget {
+  lat: number;
+  lng: number;
+  radiusM: number;
+}
+
+/** The deep link for a coordinate target, or null when it is not one. */
+export function buildGeoUrl(target: GeoTarget, base?: string): string | null {
+  const { lat, lng } = target;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+  const radius = Number.isFinite(target.radiusM)
+    ? Math.min(GEO_MAX_RADIUS_M, Math.max(GEO_MIN_RADIUS_M, Math.round(target.radiusM)))
+    : GEO_DEFAULT_RADIUS_M;
+  const root = (base ?? defaultBase()).replace(/\/+$/, '');
+  return `${root}/?${GEO_PARAM}=${lat.toFixed(5)},${lng.toFixed(5)},${radius}`;
+}
+
+/** Read a geo target out of a query string; null when absent or malformed. */
+export function geoTargetFromSearch(search: string | null | undefined): GeoTarget | null {
+  if (!search) return null;
+  let raw: string | null;
+  try {
+    raw = new URLSearchParams(search).get(GEO_PARAM);
+  } catch {
+    return null;
+  }
+  if (!raw) return null;
+  const parts = raw.split(',').map(s => Number(s.trim()));
+  if (parts.length < 2 || parts.length > 3) return null;
+  const [lat, lng] = parts;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+  const radius = parts.length === 3 && Number.isFinite(parts[2])
+    ? Math.min(GEO_MAX_RADIUS_M, Math.max(GEO_MIN_RADIUS_M, Math.round(parts[2])))
+    : GEO_DEFAULT_RADIUS_M;
+  return { lat, lng, radiusM: radius };
+}
+
+/**
+ * Globe zoom that frames a radius: the uncertainty circle should fill
+ * most of the view, the same framing the result page's map preview
+ * uses (lib/geolocation/map-preview.ts zoomForRadius).
+ */
+export function zoomForRadiusM(radiusM: number, lat: number): number {
+  const mppNeeded = (2 * Math.max(radiusM, 25)) / (480 * 0.78);
+  const z = Math.log2((156543.03392 * Math.cos((lat * Math.PI) / 180)) / mppNeeded);
+  return Math.min(17, Math.max(3, Math.floor(z)));
+}
 
 /* ── Entity ids ───────────────────────────────────────────────────────
  * Each system's real identifier where it has one; systems that carry
