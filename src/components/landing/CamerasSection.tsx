@@ -58,12 +58,19 @@ export default function CamerasSection() {
       <div className="border-t border-[#D4AF37]/25 bg-gradient-to-b from-[#0096FF]/[0.07] to-transparent">
         <div className="max-w-7xl mx-auto px-6 pt-14 pb-10">
           <Reveal>
-            <p className="font-mono text-[11px] font-medium tracking-[0.3em] text-[#D4AF37]">
-              WORLDEYE — LIVE PLANETARY INTELLIGENCE
-            </p>
-            <h1 className="font-display text-5xl md:text-6xl font-medium leading-[1.04] tracking-[-0.015em] mt-5">
-              WorldEye — the world, live on one globe
-            </h1>
+            {/* Owner order 2026-10-27: the brand logo replaces the text
+                heading block. The H1 text stays for semantics/SEO —
+                visually hidden, with the image carrying the same words
+                as its alt. */}
+            <h1 className="sr-only">WorldEye — the world, live on one globe</h1>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/worldeye-logo.png"
+              alt="WorldEye — the world, live on one globe"
+              width={600}
+              height={570}
+              className="h-28 md:h-36 w-auto"
+            />
             <h2 className="font-display text-3xl md:text-4xl font-medium leading-[1.12] text-white/90 mt-7">
               74,229 Live Cameras. One World.
             </h2>
