@@ -60,7 +60,9 @@ export async function GET(req: NextRequest) {
         alerts: alerts.map(a => ({
           id: a.id, header: a.header,
           ...(a.description ? { description: a.description } : {}),
+          ...(a.effect ? { effect: a.effect } : {}),
           routes: a.routes,
+          periods: a.periods,
         })),
       },
       { headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300' } },

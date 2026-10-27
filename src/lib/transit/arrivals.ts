@@ -78,6 +78,9 @@ export interface Arrival {
   dir: number;
   /** The time to show: the feed's prediction, or the timetable's. */
   timeMs: number;
+  /** The timetable time (epoch ms) — always carried so the UI can
+   *  show scheduled vs predicted side by side for realtime rows. */
+  schedMs: number;
   basis: ArrivalBasis;
   /** Prediction minus schedule (seconds), when both are known. */
   delayS?: number;
@@ -134,6 +137,7 @@ export function nextArrivals(
       headsign: dep.headsign || route?.long || '',
       dir: dep.dir,
       timeMs,
+      schedMs: dep.schedMs,
       basis,
       ...(delayS !== undefined ? { delayS } : {}),
     });

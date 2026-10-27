@@ -3,6 +3,8 @@ import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 import { agencyById, type TransitAgency } from '@/lib/transit/agencies';
 import { networkFor } from '@/lib/transit/network';
 import { indexTripPredictions, nextArrivals, type TripPredictions } from '@/lib/transit/arrivals';
+import { alertsForAgency } from '@/lib/transit/alertsServer';
+import { alertsForStop } from '@/lib/transit/alerts';
 
 /**
  * OSIRIS — one stop: its routes and NEXT ARRIVALS. Arrivals are the
@@ -66,6 +68,12 @@ export async function GET(req: NextRequest) {
     const preds = await fetchPredictions(agency);
     const now = Date.now();
     const { arrivals, rtLive, rtAgeS } = nextArrivals(net, stopId, preds, now, tz);
+    /* Service alerts touching this stop (addressed to it, or to a
+     * route serving it) — best-effort: a failed alert fetch degrades
+     * to no alerts, never to a failed stop. */
+    const stopAlerts = await alertsForAgency(agency)
+      .then(all => alertsForStop(all, stopId, stop.routes))
+      .catch(() => []);
     return NextResponse.json(
       {
         agency: agency.id,
@@ -82,9 +90,14 @@ export async function GET(req: NextRequest) {
           route: a.routeShort,
           headsign: a.headsign,
           time: new Date(a.timeMs).toISOString(),
+          schedTime: new Date(a.schedMs).toISOString(),
           inMin: Math.max(0, Math.round((a.timeMs - now) / 60000)),
           basis: a.basis,
           ...(a.delayS !== undefined ? { delayS: a.delayS } : {}),
+        })),
+        alerts: stopAlerts.map(a => ({
+          id: a.id, header: a.header,
+          ...(a.effect ? { effect: a.effect } : {}),
         })),
         rt: { live: rtLive, ageS: rtAgeS },
         servedAt: new Date(now).toISOString(),

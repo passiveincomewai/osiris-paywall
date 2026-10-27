@@ -135,7 +135,47 @@ export interface AlertLike {
   cause?: string;
   effect?: string;
   routes: string[];
+  /** Internal route ids (the status board needs to know an alert
+   *  was route-scoped even when its id didn't resolve to a label). */
+  routeIds?: string[];
+  stopIds?: string[];
   periods: Array<{ startMs: number | null; endMs: number | null }>;
+}
+
+export type RouteGroupId = 'rail' | 'bus' | 'other';
+
+export interface RouteGroup<T> {
+  id: RouteGroupId;
+  label: string;
+  routes: T[];
+}
+
+const ROUTE_GROUPS: Array<{ id: RouteGroupId; label: string }> = [
+  { id: 'rail', label: 'RAIL' },
+  { id: 'bus', label: 'BUS' },
+  { id: 'other', label: 'OTHER SERVICES' },
+];
+
+/**
+ * Group route rows by GTFS type family for the Explorer's route
+ * list — rail (tram / metro / commuter rail: TRAX, FrontRunner)
+ * first, then bus (incl. BRT, which GTFS publishes as bus), then
+ * anything else. Every input row lands in exactly one group, in
+ * input order — grouping never drops or duplicates a route.
+ */
+export function groupRoutesByType<T extends { mode: string }>(routes: T[]): RouteGroup<T>[] {
+  const byId = new Map<RouteGroupId, T[]>();
+  for (const r of routes ?? []) {
+    const fam = modeFamily(r.mode);
+    const id: RouteGroupId = fam === 'rail' ? 'rail' : fam === 'bus' ? 'bus' : 'other';
+    let arr = byId.get(id);
+    if (!arr) { arr = []; byId.set(id, arr); }
+    arr.push(r);
+  }
+  return ROUTE_GROUPS.filter((g) => (byId.get(g.id)?.length ?? 0) > 0).map((g) => ({
+    ...g,
+    routes: byId.get(g.id)!,
+  }));
 }
 
 export interface AlertTone {

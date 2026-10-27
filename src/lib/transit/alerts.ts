@@ -16,6 +16,9 @@ export interface ServiceAlert {
   routes: string[];
   /** Internal route ids affected (for filtering before resolution). */
   routeIds: string[];
+  /** Stop ids the alert is addressed to directly, when the feed
+   *  names stops (an entity may carry a stop, a route, or both). */
+  stopIds: string[];
   /** Active windows (epoch ms); empty = the feed states none. */
   periods: Array<{ startMs: number | null; endMs: number | null }>;
 }
@@ -52,8 +55,10 @@ export function parseAlerts(
     const header = pickText(a.headerText);
     if (!header) continue;
     const routeIds: string[] = [];
+    const stopIds: string[] = [];
     for (const ie of a.informedEntity ?? []) {
       if (ie?.routeId && !routeIds.includes(ie.routeId)) routeIds.push(ie.routeId);
+      if (ie?.stopId && !stopIds.includes(ie.stopId)) stopIds.push(ie.stopId);
     }
     const routes = routeIds
       .map(id => shortByRouteId.get(id))
@@ -70,6 +75,7 @@ export function parseAlerts(
       ...(a.effect ? { effect: String(a.effect) } : {}),
       routes,
       routeIds,
+      stopIds,
       periods,
     });
   }
@@ -79,4 +85,15 @@ export function parseAlerts(
 /** Alerts touching one route, by public label or internal id. */
 export function alertsForRoute(alerts: ServiceAlert[], route: { id: string; short: string }): ServiceAlert[] {
   return alerts.filter(a => a.routeIds.includes(route.id) || a.routes.includes(route.short));
+}
+
+/**
+ * Alerts touching one stop: addressed to the stop itself, or to a
+ * route that serves it. `routeShorts` are the stop's public route
+ * labels (NetworkStop.routes).
+ */
+export function alertsForStop(alerts: ServiceAlert[], stopId: string, routeShorts: string[]): ServiceAlert[] {
+  return alerts.filter(
+    a => a.stopIds.includes(stopId) || a.routes.some(r => routeShorts.includes(r)),
+  );
 }

@@ -33,6 +33,8 @@ export async function GET(req: NextRequest) {
           ...(a.cause ? { cause: a.cause } : {}),
           ...(a.effect ? { effect: a.effect } : {}),
           routes: a.routes,
+          routeIds: a.routeIds,
+          stopIds: a.stopIds,
           periods: a.periods,
         })),
         count: alerts.length,
