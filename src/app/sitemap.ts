@@ -200,6 +200,12 @@ const SEO_PAGES_RESEARCH = ["/research-access", "/research/live-camera-platforms
 // its camera count (dated snapshot in src/app/partners/sources-data.ts).
 const SEO_PAGES_PARTNERS = ["/partners"];
 
+// Enterprise (2026-10-27, Top-50 #1): the $999/yr camera-feed product
+// page was an orphan — live and indexable but absent from the sitemap.
+// It is a standing product page, so it joins the sitemap with a
+// commercial priority rather than the 0.6 directory default.
+const SEO_PAGES_ENTERPRISE = ["/enterprise"];
+
 // National park hubs (2026-10-27): the /national-park-webcams hub and
 // one page per park in the src/lib/national-parks registry —
 // catalogue-driven walls, so they carry the catalogue's date like
@@ -536,6 +542,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    ...SEO_PAGES_ENTERPRISE.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
     })),
     ...SEO_PAGES_PARKS.map((p) => ({
       url: `${BASE}${p}`,

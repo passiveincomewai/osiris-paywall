@@ -27,7 +27,7 @@ import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 export const metadata: Metadata = {
   title: "Live Satellite Tracker — ISS, Starlink & More",
   description:
-    "Watch satellites live on a 3D globe — the ISS, Starlink and thousands more with real orbit paths. A free live satellite map: no signup, no account, no cost.",
+    "Free satellite tracking, live on a 3D globe — follow the ISS, Starlink and thousands more with real orbit paths. A live satellite map with no signup, no account, no cost.",
   alternates: { canonical: "/satellite-tracker" },
   openGraph: {
     title: "Live Satellite Tracker — ISS, Starlink & More | WorldEye",
@@ -110,7 +110,7 @@ const FAQS = [
   },
   {
     q: "Is this the same as satellite imagery of the ground?",
-    a: "No — two different things share the word satellite. This tracker shows satellites themselves as objects in orbit: where each one is right now. Satellite imagery — photographs of the ground taken from orbit — is a separate map view, and on WorldEye it's part of Pro. The tracker is free.",
+    a: "No — two different things share the word satellite. This tracker shows satellites themselves as objects in orbit: where each one is right now, computed from orbital data. Satellite imagery — pictures of the ground — is a different thing again: on WorldEye the satellite basemap under the globe is a free map view for everyone. Neither the tracker nor the basemap shows you live photographs from orbit; no public service does.",
   },
   {
     q: "Why do some satellites travel in a line or a train?",
@@ -217,7 +217,7 @@ export default function SatelliteTrackerPage() {
         {/* The one-map answer */}
         <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#00E5FF]/25 bg-[#00E5FF]/[0.04] p-8 md:p-10">
           <h2 className="text-xl md:text-2xl font-bold">
-            One live map for satellites — and everything around them
+            Live satellite tracking on one map — satellites, and everything around them
           </h2>
           <p className="mt-3 text-white/60 leading-relaxed">
             WorldEye&apos;s satellite tracker is free: it computes live
@@ -408,6 +408,34 @@ export default function SatelliteTrackerPage() {
           </div>
         </div>
 
+        {/* Starlink */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Track Starlink live
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Starlink is the largest single family on the map — thousands of
+              satellites in low Earth orbit, launched in batches and added to
+              the public catalog as they rise. Filter the tracker to the
+              Starlink category and the rest of the sky falls away: what is
+              left is the constellation&apos;s shell, circling the planet in
+              about 90 minutes per orbit.
+            </p>
+            <p>
+              The days after a launch are the spectacle. A fresh batch rides
+              in a tight, evenly spaced train before the satellites drift
+              apart into their working slots — on the tracker the train is
+              unmistakable, and from the ground it is the famous string of
+              lights crossing the dusk sky. Follow one satellite in the train
+              to see its orbit path, then check when that path crosses your
+              location. Like every object here, Starlink positions are
+              computed live from public orbital data — satellite tracking, not
+              a video feed from space.
+            </p>
+          </div>
+        </div>
+
         {/* FAQ */}
         <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
@@ -431,8 +459,8 @@ export default function SatelliteTrackerPage() {
             <Link href="/pricing" className="text-[#D4AF37] hover:underline">
               WorldEye Pro
             </Link>{" "}
-            adds the OI AI assistant (on your own API key), satellite imagery,
-            advanced search filters and premium intel feeds — from $7.99/week.
+            adds the OI AI assistant, the live traffic layer, advanced search
+            filters and premium intel feeds — from $7.99/week.
           </p>
           <Link
             href="/pricing"

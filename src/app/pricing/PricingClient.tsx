@@ -84,6 +84,10 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean; vip: boolean
 
 const FAQS = [
   {
+    q: "How much does WorldEye cost?",
+    a: "The map itself is free — the globe, 74,229 cameras, flights, satellites and weather, no account needed. Pro is $7.99/week (starts with a 3-day free trial), $13.99/month (10-day free trial) or VIP Pro at $74.99/year (10-day free trial). Enterprise — the camera feed API and embed for your own platform — is $999/year and has no free trial. Every paid plan can be cancelled anytime, and first charges carry a 7-day money-back guarantee.",
+  },
+  {
     q: "Is the map really free?",
     a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, the live traffic layer and advanced search filters. VIP Pro (the yearly plan) adds the premium intel feeds and camera timelapse.",
   },
@@ -253,6 +257,9 @@ export default function PricingPage() {
               className="h-10 md:h-12 w-auto mx-auto mb-4"
               style={{ filter: "drop-shadow(0 0 18px rgba(0,150,255,0.45))" }}
             />
+            <p className="text-[11px] font-mono font-medium tracking-[0.3em] text-[#D4AF37] mb-3">
+              WORLDEYE PRICING
+            </p>
             <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
               See what the <span className="text-[#D4AF37]">free map</span> can&apos;t show you.
             </h1>
