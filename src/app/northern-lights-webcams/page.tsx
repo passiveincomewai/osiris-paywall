@@ -154,6 +154,7 @@ export default function NorthernLightsWebcamsPage() {
       <RelatedLinks
         title="Keep watching the night sky"
         links={[
+          { label: "Aurora webcams: Finland, Iceland & Norway with live Kp", href: "/aurora-webcams" },
           { label: "Watching the northern lights on live webcams (guide)", href: "/blog/northern-lights-live-webcams" },
           { label: "Dark-sky cameras: meteors and the night sky", href: "/dark-sky-cameras" },
           { label: "Live webcams worldwide", href: "/live-webcams" },

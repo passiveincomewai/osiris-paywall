@@ -221,6 +221,39 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'event-vo-sakurajima': eventGeoIn('Sakurajima & Kagoshima', 'japan', 31.5936, 130.6572, 20),
   'event-vo-merapi': eventGeoIn('Mount Merapi', 'indonesia', -7.5407, 110.4457, 30),
   'event-vo-ruapehu': eventGeoIn('Mount Ruapehu', 'new-zealand', -39.28, 175.57, 50),
+  /* SEO page set #37 (Oct 2026) — the aurora hub, the New York City
+     flagship, the Japan hub and the port hub. Country walls are the
+     country's full chunk (the count a page quotes is the index's own
+     country count); city and port walls are radius scopes whose centre
+     and radius are part of each page's stated rule. The Fairbanks
+     aurora wall reuses 'event-le-fairbanks' above. Every yield is
+     reconciled against the raw chunks in
+     src/lib/seo-page-scopes.test.ts. */
+  'aurora-finland': { label: 'Finland', slugs: ['finland'], groupBy: 'city' },
+  'aurora-iceland': { label: 'Iceland', slugs: ['iceland'], groupBy: 'city' },
+  'aurora-norway': { label: 'Norway', slugs: ['norway'], groupBy: 'city' },
+  'nyc': eventGeo('New York City', 40.758, -73.9855, 25),
+  'nyc-manhattan': eventGeo('Manhattan', 40.7831, -73.9712, 6),
+  'nyc-brooklyn': eventGeo('Brooklyn', 40.6782, -73.9442, 8),
+  'nyc-queens': eventGeo('Queens', 40.7282, -73.7949, 10),
+  'nyc-bronx': eventGeo('Bronx', 40.8448, -73.8648, 7),
+  'nyc-staten-island': eventGeo('Staten Island', 40.5795, -74.1502, 8),
+  'japan': { label: 'Japan', slugs: ['japan'], groupBy: 'city' },
+  'japan-tokyo': eventGeoIn('Tokyo', 'japan', 35.6812, 139.7671, 20),
+  'japan-fuji': eventGeoIn('Mt. Fuji & the Five Lakes district', 'japan', 35.3606, 138.7274, 25),
+  'port-hong-kong': eventGeoIn('Victoria Harbour, Hong Kong', 'hong-kong', 22.293, 114.1693, 6),
+  'port-tampa': eventGeo('Tampa Bay, Florida', 27.94, -82.45, 10),
+  'port-busan': eventGeoIn('Busan, South Korea', 'south-korea', 35.1, 129.04, 10),
+  'port-seattle': eventGeo('Seattle & Elliott Bay', 47.583, -122.335, 6),
+  'port-vancouver': eventGeoIn('Vancouver, British Columbia', 'canada', 49.29, -123.09, 6),
+  'port-fort-lauderdale': eventGeo('Fort Lauderdale & Port Everglades', 26.09, -80.11, 8),
+  'port-norfolk': eventGeo('Norfolk & Hampton Roads, Virginia', 36.9, -76.33, 10),
+  'port-miami': eventGeo('Miami & PortMiami', 25.77, -80.18, 10),
+  'port-honolulu': eventGeo('Honolulu Harbor, Hawaii', 21.31, -157.87, 8),
+  'port-sydney': eventGeoIn('Sydney Harbour, Australia', 'australia', -33.86, 151.26, 10),
+  'port-new-york': eventGeo('New York Harbor', 40.68, -74.02, 10),
+  'port-long-beach': eventGeo('Long Beach & Los Angeles, California', 33.73, -118.26, 12),
+  'port-rotterdam': eventGeoIn('Rotterdam, Netherlands', 'netherlands', 51.95, 4.14, 15),
 };
 
 /** A scope definition from request params: either a registry key, or

@@ -76,6 +76,22 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
         a: "Yes — watching live cameras on WorldEye is free, and you never need an account to browse the globe. The free plan includes 5 camera opens on the globe; paid plans remove that limit.",
       },
       {
+        q: "How does the free camera ladder work?",
+        a: "You start with 5 free camera opens on any device — no account, no signup. Verify your email and you get 5 more; create a free account and the total rises to 15 opens. Browsing the globe, the country and city directories and every other free layer is never capped, and paid plans remove the camera-open limit entirely.",
+      },
+      {
+        q: "Where can I watch live webcams in New York City?",
+        a: "The New York City webcams page gathers the city's public cameras — 279 feeds within 25 km of Midtown, most of them NYSDOT's 511NY network — into a wall for the whole city plus one for each borough: Manhattan, Brooklyn, Queens, the Bronx and Staten Island. All of them are free to watch.",
+      },
+      {
+        q: "Can I watch the northern lights on a webcam for free?",
+        a: "Yes. The aurora webcams page collects the public cameras of the aurora belt — 825 in Finland, 482 in Iceland, 746 in Norway, plus Fairbanks, Alaska — next to the live Kp index, so you can see both the sky's activity and the cameras under it. They are road, weather and town feeds at aurora latitudes, not dedicated aurora cameras, and every one is free.",
+      },
+      {
+        q: "Where can I watch cruise ships and ports live?",
+        a: "The port webcams page builds a camera wall for each great harbour in the directory — Hong Kong's Victoria Harbour, Tampa Bay, Miami, Fort Lauderdale, New York Harbor and more. Pair a wall with the live ship tracker: follow a named ship on AIS as it approaches, then watch the arrival on the harbour cameras.",
+      },
+      {
         q: "What's the difference between WorldEye and God's Eye View?",
         a: (
           <>
@@ -118,7 +134,7 @@ const GROUPS: { title: string; faqs: Faq[] }[] = [
       },
       {
         q: "How do the free trials work?",
-        a: "Weekly and monthly plans start with 10 free days, VIP Pro with 10 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+        a: "Weekly starts with 3 free days; monthly and VIP Pro plans start with 10 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
       },
       {
         q: "Can I cancel anytime?",
@@ -310,6 +326,22 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
     a: "Yes — watching live cameras on WorldEye is free, and you never need an account to browse the globe. The free plan includes 5 camera opens on the globe; paid plans remove that limit.",
   },
   {
+    q: "How does the free camera ladder work?",
+    a: "You start with 5 free camera opens on any device — no account, no signup. Verify your email and you get 5 more; create a free account and the total rises to 15 opens. Browsing the globe, the country and city directories and every other free layer is never capped, and paid plans remove the camera-open limit entirely.",
+  },
+  {
+    q: "Where can I watch live webcams in New York City?",
+    a: "The New York City webcams page gathers the city's public cameras — 279 feeds within 25 km of Midtown, most of them NYSDOT's 511NY network — into a wall for the whole city plus one for each borough: Manhattan, Brooklyn, Queens, the Bronx and Staten Island. All of them are free to watch.",
+  },
+  {
+    q: "Can I watch the northern lights on a webcam for free?",
+    a: "Yes. The aurora webcams page collects the public cameras of the aurora belt — 825 in Finland, 482 in Iceland, 746 in Norway, plus Fairbanks, Alaska — next to the live Kp index, so you can see both the sky's activity and the cameras under it. They are road, weather and town feeds at aurora latitudes, not dedicated aurora cameras, and every one is free.",
+  },
+  {
+    q: "Where can I watch cruise ships and ports live?",
+    a: "The port webcams page builds a camera wall for each great harbour in the directory — Hong Kong's Victoria Harbour, Tampa Bay, Miami, Fort Lauderdale, New York Harbor and more. Pair a wall with the live ship tracker: follow a named ship on AIS as it approaches, then watch the arrival on the harbour cameras.",
+  },
+  {
     q: "What's the difference between WorldEye and God's Eye View?",
     a: "God's Eye View is free open-source software you download and run yourself, with roughly 4,000 cameras; WorldEye is the same idea as a hosted website with 74,229 cameras. The two projects are independent. God's Eye View starts with no API key — keys are only needed for its photorealistic 3D tiles and voice agent — and WorldEye needs no install or key at all. There's a fuller side-by-side on our God's Eye View alternatives page.",
   },
@@ -327,7 +359,7 @@ const FAQ_SCHEMA: { q: string; a: string }[] = [
   },
   {
     q: "How do the free trials work?",
-    a: "Weekly and monthly plans start with 10 free days, VIP Pro with 10 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
+    a: "Weekly starts with 3 free days; monthly and VIP Pro plans start with 10 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing.",
   },
   {
     q: "Can I cancel anytime?",

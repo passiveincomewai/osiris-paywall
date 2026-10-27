@@ -134,6 +134,17 @@ const SEO_PAGES_WAVE11 = ["/live-camera-index"];
 // reveal), built for geography-game audiences.
 const SEO_PAGES_WAVE12 = ["/random"];
 
+// Wave 13 (2026-10-26): SEO page set #37 — the aurora hub (Finland /
+// Iceland / Norway walls + the live Kp index), the Japan hub, the port
+// hub, and the New York City flagship under /city-webcams. All four
+// are catalogue-driven walls, so they carry the catalogue's date.
+const SEO_PAGES_WAVE13 = [
+  "/aurora-webcams",
+  "/japan-webcams",
+  "/port-webcams",
+  "/city-webcams/new-york-city",
+];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -356,6 +367,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}${p}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    })),
+    ...SEO_PAGES_WAVE13.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     ...SEO_PAGES_AMBIENT.map((p) => ({
       url: `${BASE}${p}`,

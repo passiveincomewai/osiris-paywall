@@ -98,6 +98,26 @@ const FAQS = [
   },
 ];
 
+/* Direct answers for the head queries, rendered at the top of the
+   page (SEO #37) and folded into the FAQPage schema below, so the
+   structured data matches answers a reader can actually see. The
+   free-ladder figures are the code's own (lib/account-gate.ts: 5
+   anonymous + 5 email + 5 account = 15 opens). */
+const TOP_ANSWERS = [
+  {
+    q: "What is WorldEye?",
+    a: `WorldEye is a free website that puts ${fmt(HEADLINE)} live public cameras from ${COUNTRY_INDEX.length} countries on one interactive 3D globe. Spin the globe, search any place, and tap a camera marker to watch — traffic, cities, beaches, ski resorts, airports, landmarks and nature, right in your browser, with no download.`,
+  },
+  {
+    q: "What else can I watch besides cameras?",
+    a: "The same globe carries live flights, satellites including the ISS, ships on AIS, weather radar, earthquakes and wildfires — one live map of the planet, not just a camera directory. Each tracker has its own page, and every layer is free to browse.",
+  },
+  {
+    q: "How does watching for free work — do I need an account?",
+    a: "No account is needed to start: every device gets 5 free camera opens on the globe. Verify your email and you get 5 more, and a free account brings the total to 15 opens. Browsing this directory, the map and the other live layers is never capped, and paid plans remove the camera-open limit entirely.",
+  },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   // Single @graph for this page: exactly ONE FAQPage, built from the
@@ -115,7 +135,7 @@ const jsonLd = {
     {
       "@type": "FAQPage",
       url: "https://worldeye.app/live-webcams",
-      mainEntity: FAQS.map((f) => ({
+      mainEntity: [...FAQS, ...TOP_ANSWERS].map((f) => ({
         "@type": "Question",
         name: f.q,
         acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -164,6 +184,11 @@ export default async function LiveWebcamsPage() {
             statewide DOT networks to dense metro corridors. Every camera here is free
             to watch — no account, no signup, ever.
           </p>
+          <DirectAnswers
+            className="mt-10"
+            headingClassName="text-xl md:text-2xl font-bold leading-snug"
+            items={TOP_ANSWERS}
+          />
           <DirectorySearch
             label="the whole directory"
             options={areas}
