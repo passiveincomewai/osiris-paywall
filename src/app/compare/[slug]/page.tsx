@@ -68,7 +68,7 @@ async function loadCompetitor(slug: string): Promise<CompetitorData | null> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const c = await loadCompetitor(slug);
-  if (!c) return { title: "Comparison not found" };
+  if (!c) notFound();
   const title = c.seoTitle || `WorldEye vs ${c.name} (2026): Which Platform Is Right for You?`;
   const description = c.seoDescription || c.tagline || `Compare WorldEye with ${c.name}: features, pricing and verdict.`;
   return {
