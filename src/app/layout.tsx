@@ -37,6 +37,12 @@ const fontDisplay = Fraunces({
   axes: ["opsz"],
   display: "swap",
   variable: "--font-display",
+  // Perf pass 2026-10-26: Fraunces styles only below-fold landing/footer
+  // headlines — nothing in the first paint. Preloading its variable file
+  // (~67 KB wire) taxed every page's critical path for text most visitors
+  // have not scrolled to yet. The face still loads on demand via its
+  // @font-face the moment a headline renders, with swap as before.
+  preload: false,
 });
 const fontHud = JetBrains_Mono({
   subsets: ["latin"],
@@ -49,6 +55,10 @@ const fontWordmark = Audiowide({
   weight: "400",
   display: "swap",
   variable: "--font-wordmark",
+  // Perf pass 2026-10-26: same reasoning as Fraunces — the wordmark face
+  // is not used by the globe's first paint (the splash/header wordmark is
+  // the logo image), so its file leaves the preload set and loads on use.
+  preload: false,
 });
 
 const SITE_URL = "https://worldeye.app";
@@ -82,12 +92,12 @@ export const metadata: Metadata = {
     "network reconnaissance", "recon tools", "penetration testing tools",
     "cybersecurity tools", "infosec tools", "security scanner",
     "linux OSINT tools", "kali linux tools online", "OSINT browser tools",
-    
+
     // Intelligence Platform
     "OSINT", "open source intelligence", "intelligence platform", "global intelligence",
     "geospatial intelligence", "GEOINT", "SIGINT", "real-time tracking",
     "palantir alternative", "open source palantir", "intelligence dashboard",
-    
+
     // Tracking & Data
     "flight tracker", "aircraft tracking", "ADS-B tracker", "live flight radar",
     "satellite tracking", "ISS tracker", "space station tracker",
@@ -99,7 +109,7 @@ export const metadata: Metadata = {
     "cyber threats dashboard", "CVE tracker",
     "space weather", "solar storm", "GPS jamming",
     "defense stocks", "commodities tracker",
-    
+
     // Brand
     "worldeye",
   ],
@@ -195,6 +205,15 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        {/* Perf pass 2026-10-26: the globe's style JSON, sprites, glyphs
+            and tiles all come from CARTO's basemap CDN, but the browser
+            only discovered that origin after the map chunk downloaded,
+            parsed and ran — a cold DNS+TLS handshake sat inside the
+            time-to-first-tile on every fresh visit. Warm it up front;
+            pages without a map pay one idle handshake and nothing else. */}
+        <link rel="preconnect" href="https://basemaps.cartocdn.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
 
         {/* JSON-LD Structured Data */}
         <script
