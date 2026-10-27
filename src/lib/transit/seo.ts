@@ -226,19 +226,53 @@ const MONTHS: Record<string, number> = {
  * Honest lastmod for transit URLs: the date stamped in the GTFS
  * feed_version. UTA's current version string is "2026 AUG_20261008" —
  * the trailing YYYYMMDD (the publication date) wins; otherwise a
- * leading "YYYY MMM" gives the first of that month. Unparseable →
- * null (the sitemap then omits lastModified rather than lying).
+ * leading "YYYY MMM" gives the first of that month. Metro Transit MN
+ * versions its feed with a bare Unix epoch ("1792595470" = the moment
+ * that feed build was cut) — a string of exactly ten digits is read
+ * as epoch seconds. Unparseable → null (the sitemap then omits
+ * lastModified rather than lying).
+ *
+ * Every candidate is validated before it is trusted: Date.UTC rolls
+ * out-of-range components forward instead of failing, so the epoch
+ * string's last eight digits ("92595470") once parsed as year 9259,
+ * month 54, day 70 and silently became a lastmod in the year 9263.
+ * A parsed date must round-trip (its UTC components equal the parsed
+ * components) and sit in a plausible feed-vintage window.
  */
 export function feedVersionDate(version: string | undefined): Date | null {
   if (!version) return null;
-  const tail = /(\d{4})(\d{2})(\d{2})\s*$/.exec(version);
-  if (tail) {
-    const d = new Date(Date.UTC(Number(tail[1]), Number(tail[2]) - 1, Number(tail[3])));
-    if (!Number.isNaN(d.getTime())) return d;
+  const v = version.trim();
+  // Bare epoch seconds (Metro Transit MN). Truncated to the UTC day
+  // so the family keeps one precision; the window rejects digit
+  // strings that are not plausible feed-build epochs.
+  if (/^\d{10}$/.test(v)) {
+    const d = new Date(Number(v) * 1000);
+    const year = d.getUTCFullYear();
+    const nowYear = new Date().getUTCFullYear();
+    if (year >= 2015 && year <= nowYear + 1) {
+      return new Date(Date.UTC(year, d.getUTCMonth(), d.getUTCDate()));
+    }
+    return null;
   }
-  const head = /^(\d{4})\s+([A-Z]{3})/.exec(version.trim().toUpperCase());
+  const tail = /(\d{4})(\d{2})(\d{2})\s*$/.exec(v);
+  if (tail) {
+    const y = Number(tail[1]);
+    const m = Number(tail[2]);
+    const day = Number(tail[3]);
+    const d = new Date(Date.UTC(y, m - 1, day));
+    if (
+      y >= 2000 && y <= 2100 &&
+      d.getUTCFullYear() === y && d.getUTCMonth() === m - 1 && d.getUTCDate() === day
+    ) {
+      return d;
+    }
+  }
+  const head = /^(\d{4})\s+([A-Z]{3})/.exec(v.toUpperCase());
   if (head && MONTHS[head[2]] != null) {
-    return new Date(Date.UTC(Number(head[1]), MONTHS[head[2]], 1));
+    const y = Number(head[1]);
+    if (y >= 2000 && y <= 2100) {
+      return new Date(Date.UTC(y, MONTHS[head[2]], 1));
+    }
   }
   return null;
 }

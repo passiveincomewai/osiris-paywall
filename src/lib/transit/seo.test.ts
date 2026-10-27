@@ -160,6 +160,25 @@ describe('feedVersionDate', () => {
     expect(feedVersionDate('v12')).toBeNull();
     expect(feedVersionDate(undefined)).toBeNull();
   });
+  it('reads a bare epoch-seconds version (Metro Transit MN)', () => {
+    // Live feed_info feed_version at audit time; the epoch is the
+    // feed build moment, 2026-10-21T15:11:10Z — day precision out.
+    expect(feedVersionDate('1792595470')?.toISOString()).toBe('2026-10-21T00:00:00.000Z');
+  });
+  it('never rolls overflow digits into a fantasy date', () => {
+    // The pre-hardening parser turned the epoch's last eight digits
+    // ("92595470": year 9259, month 54, day 70) into 9263-08-09 via
+    // Date.UTC rollover. Out-of-range components are now rejected.
+    expect(feedVersionDate('build 92595470')).toBeNull();
+    expect(feedVersionDate('20261340')).toBeNull();
+    expect(feedVersionDate('feed-99999999')).toBeNull();
+    expect(feedVersionDate('99991231')).toBeNull();
+  });
+  it('rejects a 10-digit date-like stamp that is not a plausible epoch', () => {
+    // "2026100812" read as epoch seconds lands in 2034 — beyond the
+    // feed-vintage window — and its tail digits fail validation too.
+    expect(feedVersionDate('2026100812')).toBeNull();
+  });
 });
 
 describe('formatGtfsClock', () => {

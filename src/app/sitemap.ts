@@ -433,13 +433,25 @@ async function transitSitemapEntries(): Promise<MetadataRoute.Sitemap> {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const transitEntries = await transitSitemapEntries();
-  // Honest lastmod (SEO #11, 2026-10-26): every URL used to be stamped
-  // "now" on every render, which teaches crawlers to distrust the signal.
-  // Each set is now stamped with the real date of the data or content
-  // behind it — the generating dataset's `generatedAt`, or a post's own
-  // date/revision — and sets with no honest date source in the repo omit
+  // Honest lastmod (SEO #11, 2026-10-26; completed by the index-recovery
+  // remainder, 2026-10-27): every URL used to be stamped "now" on every
+  // render, which teaches crawlers to distrust the signal. The rule now:
+  // an entry carries lastModified only when it equals the date of a real
+  // artefact the page's content derives from — a dataset's `generatedAt`,
+  // a post's own date/revision, the methodology page's REVISED stamp, or
+  // a GTFS feed's version date. Sets with no honest date source in the
+  // repo (static marketing, compare/alternatives — the competitor JSONs
+  // carry no date field — trackers and other live surfaces) omit
   // lastModified entirely. The URL set, order, changeFrequency and
   // priority are unchanged.
+  //
+  // The catalogue date is camera-countries.json's generatedAt: the
+  // moment tools/build-country-pages.mjs built the committed catalogue
+  // snapshot (the src/data/countries/*.json chunks every catalogue wall
+  // below renders from, via lib/explore-data). It is a data-build date,
+  // not a deploy stamp — it has not moved since 2026-10-20 despite
+  // dozens of ships, and it advances only when the snapshot is rebuilt,
+  // which is exactly when those pages' content changes.
   const catalogueDate = new Date(
     (cameraCountries as { generatedAt: string }).generatedAt,
   );
@@ -463,8 +475,59 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       POSTS[0].updated ?? POSTS[0].date,
     ),
   );
+  // Family dates for entries whose wave arrays mix them with undated
+  // pages: hubs that enumerate a dated dataset, and the catalogue
+  // walls/hubs scattered through the early waves. Keyed by path so wave
+  // membership and URL order are untouched; anything not listed here
+  // and not stamped by its own mapping below stays undated.
+  const familyLastmod = new Map<string, Date>([
+    // Hubs over the city dataset (the /city-webcams hub and the world
+    // hub both enumerate city-pages.json).
+    ["/city-webcams", cityPagesDate],
+    ["/world-city-webcams", cityPagesDate],
+    // The traffic hub enumerates the same state index its children
+    // are stamped with (src/data/us-states.json via lib/us-states).
+    ["/us-traffic-cameras", statesDate],
+    // The ski hub renders the resort dataset (lib/ski-resorts).
+    ["/ski-webcams", skiDate],
+    // Directory hubs whose walls render from the catalogue snapshot.
+    ["/live-webcams", catalogueDate],
+    ["/europe-live-cameras", catalogueDate],
+    ["/live-traffic-cameras", catalogueDate],
+    // The ten editorial cities (Waves 4–6): the same [city] route and
+    // snapshot camera walls as the generated tier — the audit found
+    // them undated while their siblings carried the batch date.
+    ["/city-webcams/london", catalogueDate],
+    ["/city-webcams/ottawa", catalogueDate],
+    ["/city-webcams/toronto", catalogueDate],
+    ["/city-webcams/madrid", catalogueDate],
+    ["/city-webcams/houston", catalogueDate],
+    ["/city-webcams/dallas", catalogueDate],
+    ["/city-webcams/tokyo", catalogueDate],
+    ["/city-webcams/sydney", catalogueDate],
+    ["/city-webcams/auckland", catalogueDate],
+    ["/city-webcams/fort-worth", catalogueDate],
+    // Wave 5's two catalogue-wall hubs (their children stamp already).
+    ["/beach-webcams", catalogueDate],
+    ["/airport-webcams", catalogueDate],
+    // Wave 7's country traffic hubs: explore-data walls like Wave 13.
+    ["/japan-traffic-cameras", catalogueDate],
+    ["/canada-traffic-cameras", catalogueDate],
+    ["/spain-traffic-cameras", catalogueDate],
+    ["/south-korea-traffic-cameras", catalogueDate],
+    ["/germany-traffic-cameras", catalogueDate],
+    ["/norway-traffic-cameras", catalogueDate],
+    ["/sweden-traffic-cameras", catalogueDate],
+  ]);
+  const withFamilyLastmod = (p: string): { lastModified?: Date } => {
+    const d = familyLastmod.get(p);
+    return d ? { lastModified: d } : {};
+  };
   return [
-    { url: `${BASE}/`, lastModified: catalogueDate, changeFrequency: "daily", priority: 1.0 },
+    // The homepage is the live globe app — its data is the runtime
+    // catalogue, not the committed snapshot — so it carries no lastmod
+    // rather than borrowing the catalogue's date.
+    { url: `${BASE}/`, changeFrequency: "daily", priority: 1.0 },
     { url: `${BASE}/features`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/gods-eye-view`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/cameras`, lastModified: catalogueDate, changeFrequency: "daily", priority: 0.9 },
@@ -494,26 +557,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/cameras/countries`, lastModified: catalogueDate, changeFrequency: "monthly", priority: 0.7 },
     ...SEO_PAGES.filter((p) => p !== "/cameras/countries").map((p) => ({
       url: `${BASE}${p}`,
+      ...withFamilyLastmod(p),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE4.map((p) => ({
       url: `${BASE}${p}`,
+      ...withFamilyLastmod(p),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE5.map((p) => ({
       url: `${BASE}${p}`,
+      ...withFamilyLastmod(p),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE6.map((p) => ({
       url: `${BASE}${p}`,
+      ...withFamilyLastmod(p),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_WAVE7.map((p) => ({
       url: `${BASE}${p}`,
+      ...withFamilyLastmod(p),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
