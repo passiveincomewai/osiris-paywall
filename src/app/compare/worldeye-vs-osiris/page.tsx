@@ -223,7 +223,7 @@ export default function WorldEyeVsOsirisPage() {
             </p>
             <p className="text-sm text-white/55 mt-3">
               <span className="text-[#0096FF] font-semibold">WorldEye:</span>{" "}
-              the map is free forever, no signup. Pro is $7.99/week (10-day
+              the map is free forever, no signup. Pro is $7.99/week (3-day
               free trial), $13.99/month, or $74.99/year (10-day free trial) —
               and runs on our infrastructure and our keys.
             </p>

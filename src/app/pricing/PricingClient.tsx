@@ -26,7 +26,7 @@ import {
 type Plan = "weekly" | "monthly" | "annual" | "enterprise";
 
 const PLANS: Record<Plan, { name: string; price: string; per: string; perDay: string; note: string; save?: string; cta: string; trial?: string }> = {
-  weekly: { name: "Weekly", price: "$7.99", per: "/week", perDay: "$1.14", note: "10 days free, then billed weekly · cancel anytime", cta: "Start 10-Day Free Trial", trial: "10 days free" },
+  weekly: { name: "Weekly", price: "$7.99", per: "/week", perDay: "$1.14", note: "3 days free, then billed weekly · cancel anytime", cta: "Start 3-Day Free Trial", trial: "3 days free" },
   monthly: { name: "Monthly", price: "$13.99", per: "/month", perDay: "$0.47", note: "10 days free, then billed monthly · cancel anytime", save: "Save 60%", cta: "Start 10-Day Free Trial", trial: "10 days free" },
   // The annual plan is VIP Pro — a real top tier (timelapse + the intel
   // layers are VIP-only), not just a longer billing period. "Annual"

@@ -33,7 +33,7 @@ describe("TRIAL_PLAN_OPTIONS", () => {
 
   it("carries the trial lengths from the shared trial config", () => {
     const days = Object.fromEntries(TRIAL_PLAN_OPTIONS.map((o) => [o.plan, o.trialDays]));
-    expect(days).toEqual({ weekly: 10, monthly: 10, annual: 10 });
+    expect(days).toEqual({ weekly: 3, monthly: 10, annual: 10 });
   });
 
   it("mirrors /pricing's plan copy word for word", () => {
@@ -41,9 +41,9 @@ describe("TRIAL_PLAN_OPTIONS", () => {
     expect(byPlan.weekly).toMatchObject({
       price: "$7.99",
       per: "/week",
-      note: "10 days free, then billed weekly · cancel anytime",
-      cta: "Start 10-Day Free Trial",
-      trialLabel: "10 days free",
+      note: "3 days free, then billed weekly · cancel anytime",
+      cta: "Start 3-Day Free Trial",
+      trialLabel: "3 days free",
     });
     expect(byPlan.monthly).toMatchObject({
       price: "$13.99",

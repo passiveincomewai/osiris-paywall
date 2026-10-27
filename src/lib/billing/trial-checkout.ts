@@ -62,9 +62,9 @@ const PLAN_COPY: Record<TrialPlan, Omit<TrialPlanOption, "plan" | "trialDays">> 
     price: "$7.99",
     per: "/week",
     perDay: "$1.14",
-    note: "10 days free, then billed weekly · cancel anytime",
-    cta: "Start 10-Day Free Trial",
-    trialLabel: "10 days free",
+    note: "3 days free, then billed weekly · cancel anytime",
+    cta: "Start 3-Day Free Trial",
+    trialLabel: "3 days free",
   },
   monthly: {
     name: "Monthly",

@@ -201,7 +201,7 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         $7.99/week or $13.99/month
       </span>{" "}
-      for Pro (each with a 10-day free trial), and{" "}
+      for Pro (3-day free trial on Weekly, 10 days on Monthly), and{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}

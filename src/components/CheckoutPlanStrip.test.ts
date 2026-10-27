@@ -32,7 +32,7 @@ describe("CheckoutPlanStrip", () => {
     expect(html).toContain("Weekly Pro");
     expect(html).toContain("$7.99");
     expect(html).toContain("/week");
-    expect(html).toContain("10 days free");
+    expect(html).toContain("3 days free");
     expect(html).toContain("Just $1.14 a day");
     // Stripe's form states the terms; our strip must not say them twice.
     expect(html).not.toContain("then billed weekly");

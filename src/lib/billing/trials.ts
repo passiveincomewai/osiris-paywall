@@ -3,8 +3,9 @@
  * (which turns these into `trial_period_days` on the Checkout Session)
  * and its tests. Trials are Jameson's pricing decision (Conversion
  * Wave 2, F2 set every self-serve trial to 3 days; his 2026-10-26 order
- * moved every self-serve plan to 10 days):
- * weekly → 10 days, monthly → 10 days, annual → 10 days, enterprise → none.
+ * moved every self-serve plan to 10 days, then the same evening he put
+ * the weekly plan back to 3 days — "we only offer 3 days for week plan"):
+ * weekly → 3 days, monthly → 10 days, annual → 10 days, enterprise → none.
  *
  * Changing a value here affects NEW checkout sessions only — a Stripe
  * subscription keeps the trial length it was created with.
@@ -17,7 +18,7 @@
 export type BillingPlan = "weekly" | "monthly" | "annual" | "enterprise" | "ambient";
 
 export const TRIAL_DAYS: Record<BillingPlan, number> = {
-  weekly: 10,
+  weekly: 3,
   monthly: 10,
   annual: 10,
   enterprise: 0,
