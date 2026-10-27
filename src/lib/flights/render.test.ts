@@ -309,3 +309,124 @@ describe('FlightBlend.timing — fix-age derivation for the follow HUD', () => {
     expect(blend.timing(500_000)!.alpha).toBe(1);
   });
 });
+
+// ── Heli legibility + real-evaluator contract (2026-10-26 bug) ─────
+// Field report: live helicopters showed NOTHING at zooms 9/15/16 while
+// planes around them rendered. The data path (route tag → delta merge →
+// blend → features) and the icon-image expression both verify — the
+// divergence is optical: the heli photo's bright core is ~9% of its
+// frame vs ~19% for the plane photos, and the layers' icon-size stops
+// growing at zoom 10 (1.0 = 24 logical px), so the heli's readable mass
+// lands at roughly half a plane's and its dark rotor vanishes against
+// the basemap. These tests evaluate the layers' layout expressions
+// with MapLibre's OWN style-spec evaluator (maplibre-gl 6.7's pinned
+// @maplibre/maplibre-gl-style-spec) — not a toy re-implementation —
+// over features built from a realistic route payload, and pin that a
+// heli feature resolves to a heli icon at a size that compensates.
+import { createExpression } from '@maplibre/maplibre-gl-style-spec';
+import * as renderModule from './render';
+import { applyFlightsDelta, type FlightsPayloadLike } from './delta';
+
+function evaluateWithMapLibre(expr: any, spec: Record<string, unknown>, props: Record<string, unknown>, zoom: number): unknown {
+  const res = (createExpression as any)(expr, spec);
+  if (res.result === 'error') throw new Error(res.value.map((e: any) => e.message).join('; '));
+  return res.value.evaluate(
+    { zoom },
+    { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [0, 0] } },
+    {},
+    null,
+    ['plane-cyan', 'heli-cyan', 'plane-green', 'heli-green', 'plane-pink', 'heli-pink', 'plane-red', 'heli-red'],
+  );
+}
+
+const ICON_SPEC = { type: 'resolvedImage', 'property-type': 'data-driven', expression: { interpolated: false, parameters: ['zoom', 'feature'] } };
+const SIZE_SPEC = { type: 'number', 'property-type': 'data-driven', expression: { interpolated: true, parameters: ['zoom', 'feature'] } };
+
+/** Records exactly as classifyFlight emits them (route.ts). */
+function routeRecord(over: Record<string, unknown> = {}) {
+  return {
+    callsign: 'BAW117', lat: 51.5, lng: -0.12, alt: 11000, heading: 90,
+    speed_knots: 450, model: 'A320', model_name: 'Airbus A320',
+    icao24: 'abc123', registration: 'G-TEST', squawk: '', airline_code: 'BAW',
+    aircraft_category: 'plane', category: 'commercial', grounded: false,
+    nac_p: 8, type: 'flight', ...over,
+  };
+}
+
+function realisticPayload(): FlightsPayloadLike {
+  return {
+    commercial_flights: [routeRecord()],
+    private_flights: [
+      routeRecord({
+        callsign: 'N514MT', model: 'B407', model_name: 'Bell 407', icao24: 'a514mt',
+        registration: 'N514MT', airline_code: '', aircraft_category: 'heli',
+        category: 'private', lat: 39.7, lng: -105.5, alt: 2800, speed_knots: 110,
+      }),
+      routeRecord({
+        callsign: 'N311PH', model: 'H135', model_name: 'Airbus H135', icao24: 'a311ph',
+        registration: 'N311PH', airline_code: '', aircraft_category: 'heli',
+        category: 'private', lat: 40.1, lng: -74.5, alt: 1500, speed_knots: 120,
+      }),
+    ],
+    private_jets: [],
+    military_flights: [routeRecord({
+      callsign: '72166', model: 'H145', model_name: 'Airbus H145', icao24: 'ae1fb5',
+      registration: '', airline_code: '', aircraft_category: 'heli',
+      category: 'military', lat: 36.2, lng: -115.1, alt: 3000, speed_knots: 130,
+    })],
+    token: 'f1',
+  };
+}
+
+describe('heli rendering contract — real MapLibre evaluator over the full client pipeline', () => {
+  it('resolves every heli in every bucket to its heli icon, planes to plane icons', () => {
+    const blend = new FlightBlend();
+    blend.push(realisticPayload(), 1_000_000, 999_000);
+    const moved = realisticPayload();
+    moved.private_flights = moved.private_flights.map((f: any) => ({ ...f, lng: f.lng + 0.05 }));
+    blend.push(moved, 1_030_000, 1_029_000);
+    const cur = blend.current(1_045_000);
+    const layers: Array<[keyof FlightBuckets, string, string]> = [
+      ['commercial_flights', 'plane-cyan', 'heli-cyan'],
+      ['private_flights', 'plane-green', 'heli-green'],
+      ['private_jets', 'plane-pink', 'heli-pink'],
+      ['military_flights', 'plane-red', 'heli-red'],
+    ];
+    for (const [bucket, planeIcon, heliIcon] of layers) {
+      for (const feature of flightsToFeatures(cur[bucket])) {
+        const resolved = evaluateWithMapLibre(renderModule.flightIconImage(planeIcon, heliIcon), ICON_SPEC, feature.properties, 9);
+        expect(resolved).toBe(feature.properties.aircraft_category === 'heli' ? heliIcon : planeIcon);
+      }
+    }
+  });
+
+  it('keeps the heli tag when a delta patch (position only) moves the aircraft', () => {
+    const held = realisticPayload();
+    const merged = applyFlightsDelta(held, {
+      delta: true, base: 'f1', token: 'f2',
+      upserts: { private_flights: [{ icao24: 'a514mt', lat: 39.8, lng: -105.4, heading: 130, alt: 2900, speed_knots: 115 }] },
+      removed: [],
+    });
+    expect(merged).not.toBeNull();
+    const heli = merged!.private_flights.find((f: any) => f.icao24 === 'a514mt');
+    const feature = flightToFeature(heli);
+    expect(feature.properties.aircraft_category).toBe('heli');
+    expect(evaluateWithMapLibre(renderModule.flightIconImage('plane-green', 'heli-green'), ICON_SPEC, feature.properties, 9)).toBe('heli-green');
+  });
+
+  it('sizes a heli feature materially larger than a plane at the same zoom (photo bright-core compensation)', () => {
+    expect(typeof (renderModule as any).flightIconSize).toBe('function');
+    const sizeExpr = (renderModule as any).flightIconSize();
+    const heliProps = flightToFeature(routeRecord({ aircraft_category: 'heli' })).properties;
+    const planeProps = flightToFeature(routeRecord({ aircraft_category: 'plane' })).properties;
+    // The plane branch must keep the layers' long-standing size stops.
+    expect(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, planeProps, 1)).toBeCloseTo(0.4, 5);
+    expect(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, planeProps, 5)).toBeCloseTo(0.7, 5);
+    expect(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, planeProps, 15)).toBeCloseTo(1.0, 5);
+    for (const zoom of [5, 9, 15]) {
+      const hs = Number(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, heliProps, zoom));
+      const ps = Number(evaluateWithMapLibre(sizeExpr, SIZE_SPEC, planeProps, zoom));
+      expect(hs).toBeGreaterThanOrEqual(ps * 1.5);
+    }
+  });
+});

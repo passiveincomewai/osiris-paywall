@@ -143,6 +143,49 @@ export function entityRefFromSearch(search: string | null | undefined): EntitySh
   return null;
 }
 
+/* ── Globe landing: layer lighting + open deadlines ─────────────────
+ * page.tsx lights the shared entity's layer(s) and offers the entity
+ * to the map until a deadline. Flights are the special case twice
+ * over: the aircraft may ride in ANY of the four flight buckets, so
+ * all four layers light (OsirisMap's render loop holds a flight
+ * source empty while its layer is off — with none lit, a flight link
+ * could never resolve, which is exactly what used to happen); and a
+ * cold /api/flights build takes ~11 s to its first partial payload
+ * and ~50 s worst case, so the shared 12 s deadline expired before
+ * the data existed. */
+
+export const SHARE_OPEN_DEADLINE_MS = 12_000;
+export const FLIGHT_SHARE_OPEN_DEADLINE_MS = 90_000;
+
+/** activeLayers keys the globe lights for a shared entity of a kind. */
+export function shareLayersForKind(kind: ShareEntityKind): string[] {
+  switch (kind) {
+    case 'flight': return ['flights', 'private', 'jets', 'military'];
+    case 'quake': return ['earthquakes'];
+    case 'fire': return ['fires'];
+    case 'storm': return ['hurricanes'];
+    case 'event': return ['global_incidents'];
+    case 'camera': return [];
+  }
+}
+
+/** How long the globe keeps offering a shared entity to the map. */
+export function shareOpenDeadlineMs(kind: ShareEntityKind): number {
+  return kind === 'flight' ? FLIGHT_SHARE_OPEN_DEADLINE_MS : SHARE_OPEN_DEADLINE_MS;
+}
+
+/** A GeoJSON flight feature is the share target when its icao24
+ *  matches the link id — case-insensitively on both sides, since the
+ *  link id is lowercased at parse while features carry the feed's
+ *  hex verbatim. */
+export function featureMatchesFlightShareId(
+  feature: { properties?: { icao24?: unknown } } | null | undefined,
+  id: string,
+): boolean {
+  const hex = typeof feature?.properties?.icao24 === 'string' ? feature.properties.icao24.trim().toLowerCase() : '';
+  return hex !== '' && hex === id.trim().toLowerCase();
+}
+
 /* ── Resolution finders (pure; used by the globe landing) ───────────── */
 
 export function findQuakeByShareId<T extends { id?: string | number | null }>(

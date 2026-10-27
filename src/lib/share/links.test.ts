@@ -124,3 +124,45 @@ describe('titles stay truthful', () => {
     expect(entityShareTitle('event', '  ')).toBe('Developing event — live on WorldEye');
   });
 });
+
+// ── Flight share-link resolution contract (2026-10-26 bug) ─────────
+// A ?flight= link could never open: page.tsx lit no flight layer for
+// the flight kind, so OsirisMap's render loop held all four flight
+// sources empty (its anyOn gate) and the map's querySourceFeatures
+// search had nothing to find — for ANY aircraft, helis included. The
+// 12 s shared deadline also expired before a cold /api/flights build
+// could land (~11 s to first partial, ~50 s worst case). These pin
+// the page-side contract the landing effect now follows.
+import * as linksModule from './links';
+
+describe('flight share links — layer lighting and deadline', () => {
+  it('lights all four flight layers for a flight link (the aircraft may ride in any bucket)', () => {
+    expect(typeof (linksModule as any).shareLayersForKind).toBe('function');
+    expect((linksModule as any).shareLayersForKind('flight')).toEqual(['flights', 'private', 'jets', 'military']);
+  });
+
+  it('keeps the other kinds lighting exactly the layer they lit before', () => {
+    expect((linksModule as any).shareLayersForKind('quake')).toEqual(['earthquakes']);
+    expect((linksModule as any).shareLayersForKind('fire')).toEqual(['fires']);
+    expect((linksModule as any).shareLayersForKind('storm')).toEqual(['hurricanes']);
+    expect((linksModule as any).shareLayersForKind('event')).toEqual(['global_incidents']);
+    expect((linksModule as any).shareLayersForKind('camera')).toEqual([]);
+  });
+
+  it('gives flight links a deadline that outlasts a cold flights build; other kinds keep 12 s', () => {
+    expect(typeof (linksModule as any).shareOpenDeadlineMs).toBe('function');
+    expect((linksModule as any).shareOpenDeadlineMs('flight')).toBeGreaterThanOrEqual(60_000);
+    expect((linksModule as any).shareOpenDeadlineMs('quake')).toBe(12_000);
+    expect((linksModule as any).shareOpenDeadlineMs('event')).toBe(12_000);
+  });
+
+  it('matches flight features to share ids case-insensitively and only on icao24', () => {
+    expect(typeof (linksModule as any).featureMatchesFlightShareId).toBe('function');
+    const f = { properties: { icao24: 'A514MT' } };
+    expect((linksModule as any).featureMatchesFlightShareId(f, 'a514mt')).toBe(true);
+    expect((linksModule as any).featureMatchesFlightShareId(f, 'A514MT')).toBe(true);
+    expect((linksModule as any).featureMatchesFlightShareId(f, 'a1373d')).toBe(false);
+    expect((linksModule as any).featureMatchesFlightShareId({ properties: {} }, 'a514mt')).toBe(false);
+    expect((linksModule as any).featureMatchesFlightShareId(null, 'a514mt')).toBe(false);
+  });
+});

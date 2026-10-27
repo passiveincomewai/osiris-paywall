@@ -89,6 +89,30 @@ export function flightIconImage(planeIcon: string, heliIcon: string): any {
   return ['case', ['==', ['get', 'aircraft_category'], 'heli'], heliIcon, planeIcon];
 }
 
+/** How much larger a helicopter marker renders than a plane at the
+ *  same zoom. The heli photo's bright core — the part that reads
+ *  against the dark basemap — is ~9% of its frame, against ~19% for
+ *  the plane photos (measured on public/icons/*.png: opaque+bright
+ *  pixel fraction), and its dark rotor blades go sub-pixel at the
+ *  layers' size cap. Scaled by this factor the heli's readable mass
+ *  lands at plane size; rotation and artwork are untouched. */
+export const HELI_ICON_SCALE = 1.6;
+
+/**
+ * The `icon-size` layout value for a flight class layer: the layers'
+ * long-standing zoom ramp for planes (0.4 → 0.7 → 1.0, capped from
+ * zoom 10), and the same ramp × HELI_ICON_SCALE for helicopters.
+ * Pure and unit-tested with MapLibre's own expression evaluator, so
+ * the layer wiring can't drift from the feature contract above.
+ */
+export function flightIconSize(): any {
+  return [
+    'case', ['==', ['get', 'aircraft_category'], 'heli'],
+    ['interpolate', ['linear'], ['zoom'], 1, 0.64, 5, 1.12, 10, HELI_ICON_SCALE],
+    ['interpolate', ['linear'], ['zoom'], 1, 0.4, 5, 0.7, 10, 1],
+  ];
+}
+
 const MIN_INTERVAL_MS = 4_000;
 const MAX_INTERVAL_MS = 180_000;
 const DEFAULT_INTERVAL_MS = 30_000; // matches the client poll cadence

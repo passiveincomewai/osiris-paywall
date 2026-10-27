@@ -21,7 +21,8 @@ import {
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
-import { FlightBlend, flightIconImage, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
+import { FlightBlend, flightIconImage, flightIconSize, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
+import { featureMatchesFlightShareId, FLIGHT_SHARE_OPEN_DEADLINE_MS } from '@/lib/share/links';
 import {
   IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
@@ -2031,7 +2032,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addLayer({ id: l.id, type: 'symbol', source: l.src, layout: {
           // Per-feature glyph: helicopters (aircraft_category 'heli')
           // get the rotor glyph, everything else the plane glyph.
-          'icon-image': flightIconImage(l.icon, l.heliIcon), 'icon-size': ['interpolate',['linear'],['zoom'], 1,0.4, 5,0.7, 10,1],
+          // Size is per-feature too: the heli photo's readable core
+          // is ~half a plane's at the same size (see flightIconSize).
+          'icon-image': flightIconImage(l.icon, l.heliIcon), 'icon-size': flightIconSize(),
           'icon-rotate': ['get','heading'], 'icon-rotation-alignment': 'map', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
         }, paint: { 'icon-opacity': 0.85 }});
       });
@@ -2932,6 +2935,40 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // never matches is stale and simply never opens — the visitor
     // keeps the plain globe, exactly like a stale camera link.
     const openedShareKeys = new Map<string, number>();
+    // Flight share links: on a cold load the aircraft's data does not
+    // exist yet (the /api/flights build takes ~11 s to its first
+    // partial, ~50 s worst case) and the flight sources only carry
+    // features while their layers are lit — page.tsx lights all four
+    // for a flight link. A fixed handful of retries over ~4 s cannot
+    // span that, so a flight request stays pending and re-attempts
+    // whenever a flight source (re)loads, until the aircraft appears
+    // or the window closes; an aircraft that landed meanwhile simply
+    // never opens — the stale-link contract.
+    let pendingFlightShare: { id: string; until: number } | null = null;
+    const FLIGHT_SHARE_SOURCES = ['flights', 'military', 'jets', 'private-fl'];
+    const attemptOpenFlight = (id: string): boolean => {
+      const openedAt = openedShareKeys.get(`flight:${id}`);
+      if (openedAt && Date.now() - openedAt < 20000) return true;
+      let feature: any;
+      for (const s of FLIGHT_SHARE_SOURCES) {
+        try {
+          feature = (map.querySourceFeatures(s) as any[]).find(f => featureMatchesFlightShareId(f, id));
+        } catch { feature = undefined; }
+        if (feature) break;
+      }
+      if (!feature) return false;
+      openedShareKeys.set(`flight:${id}`, Date.now());
+      const c = feature.geometry?.coordinates;
+      if (Array.isArray(c)) map.flyTo({ center: c as any, zoom: Math.max(map.getZoom(), 8), duration: 1200 });
+      showFlightPopup(feature);
+      return true;
+    };
+    map.on('sourcedata', (e: any) => {
+      if (!pendingFlightShare) return;
+      if (Date.now() > pendingFlightShare.until) { pendingFlightShare = null; return; }
+      if (!FLIGHT_SHARE_SOURCES.includes(e.sourceId) || !e.isSourceLoaded) return;
+      if (attemptOpenFlight(pendingFlightShare.id)) pendingFlightShare = null;
+    });
     const shareCoordKey = (f: any): string | null => {
       const c = f?.geometry?.coordinates;
       return Array.isArray(c) ? `${Number(c[1]).toFixed(3)},${Number(c[0]).toFixed(3)}` : null;
@@ -2943,6 +2980,14 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (!kind || !id) return;
       const key = `${kind}:${id}`;
       const attempt = (triesLeft: number) => {
+        if (kind === 'flight') {
+          // Not the generic retry chain: register (or refresh) the
+          // pending request — sourcedata re-attempts own the timing.
+          if (!attemptOpenFlight(id)) {
+            pendingFlightShare = { id, until: Date.now() + FLIGHT_SHARE_OPEN_DEADLINE_MS };
+          }
+          return;
+        }
         const openedAt = openedShareKeys.get(key);
         if (openedAt && Date.now() - openedAt < 20000) return;
         const findIn = (source: string, pred: (f: any) => boolean) => {
@@ -2960,12 +3005,6 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         } else if (kind === 'storm') {
           feature = findIn('hurricanes', f => f.properties?.kind === 'current' && String(f.properties?.stormId ?? '') === id);
           opener = openStormPopup; zoom = 6;
-        } else if (kind === 'flight') {
-          for (const s of ['flights', 'military', 'jets', 'private-fl']) {
-            feature = findIn(s, f => String(f.properties?.icao24 ?? '').toLowerCase() === id);
-            if (feature) break;
-          }
-          opener = showFlightPopup; zoom = 8;
         } else if (kind === 'event') {
           feature = findIn('gdelt', f => shareCoordKey(f) === id); opener = openGdacsPopup;
           if (!feature) { feature = findIn('gdelt-events', f => shareCoordKey(f) === id); opener = openGdeltEventPopup; }

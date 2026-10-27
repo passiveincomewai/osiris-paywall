@@ -30,7 +30,7 @@ import {
   type LadderPrompt,
 } from '@/lib/camera-ladder';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
-import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId } from '@/lib/share/links';
+import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId, shareLayersForKind, shareOpenDeadlineMs } from '@/lib/share/links';
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
@@ -1504,14 +1504,20 @@ export default function Dashboard() {
   const sharedEntityDeadline = useRef(0);
   useEffect(() => {
     if (!sharedEntity || sharedEntity.kind === 'camera' || sharedEntitySettled.current) return;
-    if (!sharedEntityDeadline.current) sharedEntityDeadline.current = Date.now() + 12000;
-    const layerByKind: Record<string, string | undefined> = {
-      quake: 'earthquakes', fire: 'fires', storm: 'hurricanes', event: 'global_incidents',
-    };
-    const layer = layerByKind[sharedEntity.kind];
-    if (layer && !sharedEntityLayerLit.current) {
-      sharedEntityLayerLit.current = true;
-      setActiveLayers(prev => ({ ...prev, [layer]: true }));
+    if (!sharedEntityDeadline.current) sharedEntityDeadline.current = Date.now() + shareOpenDeadlineMs(sharedEntity.kind);
+    // Flights light all four flight layers: the aircraft may ride in
+    // any bucket, and OsirisMap holds a flight source empty while its
+    // layer is off — with none lit a flight link could never resolve.
+    if (!sharedEntityLayerLit.current) {
+      const layers = shareLayersForKind(sharedEntity.kind);
+      if (layers.length) {
+        sharedEntityLayerLit.current = true;
+        setActiveLayers(prev => {
+          const next = { ...prev } as Record<string, boolean>;
+          for (const l of layers) next[l] = true;
+          return next as typeof prev;
+        });
+      }
     }
     const d: any = dataRef.current;
     let coords: { lat: number; lng: number; zoom: number } | null = null;
