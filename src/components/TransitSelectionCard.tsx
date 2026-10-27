@@ -17,6 +17,11 @@
  */
 
 import { useEffect, useState } from 'react';
+import { dispatchStopDirections } from '@/lib/transit/directions';
+import {
+  loadWatchlist, saveWatchlist, toggleWatch, isWatched, type WatchEntry,
+} from '@/lib/transit/watchlist';
+import { DelayChip } from './transit/StatusChips';
 
 export interface TransitVehicleSelection {
   kind: 'vehicle';
@@ -182,7 +187,11 @@ function VehicleBody({
   );
 }
 
-interface StopArrival { route: string; headsign?: string; inMin: number; time: string; basis: string; delayS?: number | null }
+interface StopArrival {
+  route: string; headsign?: string; inMin: number; time: string; schedTime?: string;
+  basis: 'realtime' | 'scheduled'; delayS?: number | null;
+}
+interface StopAlert { id: string; header: string; effect?: string }
 
 function StopBody({
   sel, onClose, onViewRoute, onOpenExplorer,
@@ -196,8 +205,16 @@ function StopBody({
   const [state, setState] = useState<
     | { phase: 'loading' }
     | { phase: 'error' }
-    | { phase: 'ready'; name: string; routes: string[]; arrivals: StopArrival[]; live: boolean; credit: string }
+    | { phase: 'ready'; name: string; routes: string[]; arrivals: StopArrival[]; alerts: StopAlert[]; live: boolean; credit: string }
   >({ phase: 'loading' });
+  const [watched, setWatched] = useState(false);
+
+  /* Watch-list state for this stop (device-local, lib/transit/watchlist). */
+  useEffect(() => {
+    setWatched(isWatched(loadWatchlist(), {
+      kind: 'stop', agencyId: sel.agencyId || 'uta', key: String(p.stopId ?? ''),
+    }));
+  }, [sel.agencyId, p.stopId]);
 
   useEffect(() => {
     let live = true;
@@ -212,6 +229,7 @@ function StopBody({
           name: j.stop?.name ?? p.name ?? 'Stop',
           routes: (j.stop?.routes ?? []).map((x: any) => x.short),
           arrivals: j.arrivals ?? [],
+          alerts: j.alerts ?? [],
           live: !!j.rt?.live,
           credit: j.credit ?? '',
         });
@@ -223,6 +241,24 @@ function StopBody({
 
   const name = state.phase === 'ready' ? state.name : (p.name || 'Stop');
   const routeChips = state.phase === 'ready' ? state.routes : String(p.routes ?? '').split(' · ').filter(Boolean);
+
+  /* Directions to this stop: hand the stop to the page's existing
+   * Directions planner (we:directions-to) — it seeds the rider's
+   * granted position (else the map centre) as origin, Walk as mode,
+   * and the stop as the destination pin. */
+  const onDirections = () => {
+    dispatchStopDirections({ name: String(name), lat: sel.coords[1], lng: sel.coords[0] });
+    onClose();
+  };
+  const onToggleWatch = () => {
+    const entry: WatchEntry = {
+      kind: 'stop', agencyId: sel.agencyId || 'uta', key: String(p.stopId ?? ''),
+      label: String(name), lat: sel.coords[1], lng: sel.coords[0],
+    };
+    const next = toggleWatch(loadWatchlist(), entry);
+    saveWatchlist(next);
+    setWatched(isWatched(next, entry));
+  };
   return (
     <>
       <CardHeader color="#ECEFF1" title={`🚏 ${String(name).toUpperCase()}`} onClose={onClose} />
@@ -252,22 +288,39 @@ function StopBody({
               <div className="text-[9px] font-mono text-white/45">No departures in the next 3 hours.</div>
             )}
             {state.arrivals.map((a, i) => (
-              <div key={i} className="flex justify-between gap-2.5 text-[10px] font-mono py-[3px] border-b border-white/[0.06]">
-                <span className="text-white/85 min-w-0 truncate"><b>{a.route}</b> {a.headsign ?? ''}</span>
-                <span className="whitespace-nowrap text-white/85">
-                  {a.inMin <= 0 ? 'Due' : a.inMin === 1 ? '1 min' : `${a.inMin} min`}{' '}
-                  <span className="text-white/40">{fmtClock(a.time)}</span>{' '}
-                  {a.basis === 'realtime'
-                    ? <span className="text-[#66BB6A] font-bold">REALTIME</span>
-                    : <span className="text-white/40">SCHEDULED</span>}
-                  {a.delayS != null && Math.abs(a.delayS) >= 60
-                    ? <span className="text-white/60"> · {a.delayS > 0 ? `${Math.round(a.delayS / 60)} min late` : `${Math.round(-a.delayS / 60)} min early`}</span>
-                    : null}
-                </span>
+              <div key={i} className="py-[3px] border-b border-white/[0.06]">
+                <div className="flex justify-between gap-2.5 text-[10px] font-mono">
+                  <span className="text-white/85 min-w-0 truncate"><b>{a.route}</b> {a.headsign ?? ''}</span>
+                  <span className="whitespace-nowrap text-white/85">
+                    {a.inMin <= 0 ? 'Due' : a.inMin === 1 ? '1 min' : `${a.inMin} min`}{' '}
+                    <span className="text-white/40">{fmtClock(a.time)}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <DelayChip delayS={a.delayS} basis={a.basis} />
+                  {a.basis === 'realtime' && a.schedTime && a.schedTime !== a.time && (
+                    <span className="text-[8px] font-mono text-white/35">sched {fmtClock(a.schedTime)}</span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
+          {state.alerts.length > 0 && (
+            <div className="mb-2 space-y-1">
+              {state.alerts.slice(0, 3).map((al) => (
+                <div key={al.id} className="text-[8.5px] font-mono leading-snug text-amber-200/90 bg-amber-400/[0.06] border border-amber-400/20 rounded px-1.5 py-1">
+                  ⚠ {al.header}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="flex flex-wrap gap-1.5 mb-2">
+            <button type="button" className={actionBtn} onClick={onDirections}>
+              🧭 DIRECTIONS TO THIS STOP
+            </button>
+            <button type="button" className={actionBtn} onClick={onToggleWatch} aria-pressed={watched}>
+              {watched ? '★ WATCHING' : '☆ WATCH STOP'}
+            </button>
             <button type="button" className={actionBtn} onClick={() => onOpenExplorer(sel.agencyId)}>
               TRANSIT EXPLORER ↗
             </button>

@@ -32,6 +32,7 @@ import {
   aggregateLiveRoutes,
   liveCountForRoute,
   filterByModeFamily,
+  groupRoutesByType,
   searchRoutes,
   searchStops,
   alertTone,
@@ -40,6 +41,25 @@ import {
   type LiveVehicleRow,
   type ModeFilter,
 } from '@/lib/transit/explorer';
+import {
+  routeStatusFromAlerts,
+  alertsMatchingRoute,
+  buildServiceBoard,
+  boardHasNews,
+  type RouteStatus,
+} from '@/lib/transit/status';
+import {
+  loadWatchlist,
+  saveWatchlist,
+  toggleWatch,
+  isWatched,
+  watchForAgency,
+  watchId,
+  WATCHLIST_EVENT,
+  type WatchEntry,
+} from '@/lib/transit/watchlist';
+import { dispatchStopDirections } from '@/lib/transit/directions';
+import { DelayChip, RouteStatusChip } from './transit/StatusChips';
 
 export interface TransitExplorerInit {
   agencyId?: string;
@@ -119,6 +139,11 @@ export default function TransitExplorer({
   const [selShort, setSelShort] = useState<string | null>(init.routeShort ?? null);
   const [detail, setDetail] = useState<{ route: NetRoute; directions: RouteDirection[]; alerts: AlertLike[] } | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [watchEntries, setWatchEntries] = useState<WatchEntry[]>(() => loadWatchlist());
+  const [watchArrivals, setWatchArrivals] = useState<Record<string, {
+    next: { route: string; headsign?: string; inMin: number; basis: 'realtime' | 'scheduled'; delayS?: number | null } | null;
+    alertCount: number;
+  }>>({});
   const [, setNowTick] = useState(0);
   const aliveRef = useRef(true);
   useEffect(() => { aliveRef.current = true; return () => { aliveRef.current = false; }; }, []);
@@ -218,6 +243,50 @@ export default function TransitExplorer({
     return () => { live = false; };
   }, [agencyId, alertsEnabled]);
 
+  /* Watch list: reload when another surface (the stop card) changes
+   * it, so stars never disagree between the card and the Explorer. */
+  useEffect(() => {
+    const onChange = () => setWatchEntries(loadWatchlist());
+    window.addEventListener(WATCHLIST_EVENT, onChange);
+    return () => window.removeEventListener(WATCHLIST_EVENT, onChange);
+  }, []);
+
+  /* Live status for watched stops of this agency (next departure +
+   * its delay state + alert count), refreshed while the Explorer is
+   * open. Network agencies only — the stop API needs a static GTFS. */
+  const watchedHere = useMemo(
+    () => (agencyId ? watchForAgency(watchEntries, agencyId) : []),
+    [watchEntries, agencyId],
+  );
+  useEffect(() => {
+    if (!agencyId || !agency?.network) return;
+    const stopsToPoll = watchedHere.filter((w) => w.kind === 'stop');
+    if (stopsToPoll.length === 0) return;
+    let live = true;
+    const load = async () => {
+      const out: typeof watchArrivals = {};
+      await Promise.all(stopsToPoll.map(async (w) => {
+        try {
+          const r = await fetch(`/api/transit/stop?agency=${agencyId}&id=${encodeURIComponent(w.key)}`);
+          const j = await r.json();
+          if (!r.ok || j.error) return;
+          const first = (j.arrivals ?? [])[0];
+          out[watchId(w)] = {
+            next: first
+              ? { route: first.route, headsign: first.headsign, inMin: first.inMin, basis: first.basis, delayS: first.delayS ?? null }
+              : null,
+            alertCount: (j.alerts ?? []).length,
+          };
+        } catch { /* entry keeps its last state — no fake freshness */ }
+      }));
+      if (live) setWatchArrivals((prev) => ({ ...prev, ...out }));
+    };
+    void load();
+    const iv = setInterval(load, 45000);
+    return () => { live = false; clearInterval(iv); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agencyId, agency?.network, watchedHere.map((w) => watchId(w)).join(',')]);
+
   /* Route detail (network agencies): today's service + its alerts. */
   useEffect(() => {
     if (!agencyId || !selShort || !agency?.network) { setDetail(null); return; }
@@ -265,9 +334,36 @@ export default function TransitExplorer({
     return agencies.filter((a) => a.name.toLowerCase().includes(q) || a.region.toLowerCase().includes(q));
   }, [agencies, ovQuery]);
 
+  /* Per-route service status from the agency's active alerts
+   * (lib/transit/status — effect field + route matching only). */
+  const statusByShort = useMemo(() => {
+    const map = new Map<string, RouteStatus>();
+    if (!alertsEnabled || !alerts?.supported) return map;
+    const now = Date.now();
+    for (const r of netRoutes) {
+      map.set(r.short, routeStatusFromAlerts(alertsMatchingRoute(alerts.list, r), now));
+    }
+    return map;
+  }, [alertsEnabled, alerts, netRoutes]);
+
+  /* The service-status board (detours / disruptions / system-wide),
+   * from the same alerts fetch. Network agencies only — grouping by
+   * route needs the published route index. */
+  const board = useMemo(() => {
+    if (!agency?.network || !alerts?.supported) return null;
+    return buildServiceBoard(alerts.list, netRoutes, Date.now());
+  }, [agency?.network, alerts, netRoutes]);
+
+  const detailStatus = detail ? statusByShort.get(detail.route.short) : undefined;
+
   const openRoute = (short: string) => { setSelShort(short); setTab('routes'); };
   const closeRoute = () => { setSelShort(null); setDetail(null); onSelectRoute(null); };
   const switchAgency = (id: string) => { setAgencyId(id); setSelShort(null); setDetail(null); onSelectRoute(null); };
+  const toggleWatchEntry = (entry: WatchEntry) => {
+    const next = toggleWatch(watchEntries, entry);
+    setWatchEntries(next);
+    saveWatchlist(next);
+  };
 
   const statCard = (label: string, value: string, sub: string) => (
     <div className="rounded-xl border border-cyan-300/20 bg-white/[0.03] px-3 py-2.5 min-w-0">
@@ -387,15 +483,25 @@ export default function TransitExplorer({
                     <div>
                       <div className="text-[9px] font-mono tracking-[0.18em] text-white/35 mb-1">STOPS</div>
                       {ovStopHits.map((s) => (
-                        <button
-                          key={s.id}
-                          onClick={() => onFocusStop(agency.id, s)}
-                          className="w-full flex items-center gap-2 rounded-md px-2 py-1.5 text-left hover:bg-white/[0.05]"
-                        >
-                          <span className="text-[11px] shrink-0">🚏</span>
-                          <span className="text-[10px] font-mono text-white/75 truncate flex-1">{s.name}</span>
-                          <span className="text-[8px] font-mono text-white/35">{s.routes.join(' · ')}</span>
-                        </button>
+                        <div key={s.id} className="relative">
+                          <button
+                            onClick={() => onFocusStop(agency.id, s)}
+                            className="w-full flex items-center gap-2 rounded-md px-2 py-1.5 pr-9 text-left hover:bg-white/[0.05]"
+                          >
+                            <span className="text-[11px] shrink-0">🚏</span>
+                            <span className="text-[10px] font-mono text-white/75 truncate flex-1">{s.name}</span>
+                            <span className="text-[8px] font-mono text-white/35">{s.routes.join(' · ')}</span>
+                          </button>
+                          <button
+                            type="button"
+                            aria-label={`Directions to ${s.name}`}
+                            title="Directions to this stop"
+                            onClick={() => { dispatchStopDirections({ name: s.name, lat: s.lat, lng: s.lng }); onClose(); }}
+                            className="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded flex items-center justify-center text-[11px] text-white/35 hover:text-cyan-200 hover:bg-white/10 transition-colors"
+                          >
+                            🧭
+                          </button>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -474,29 +580,54 @@ export default function TransitExplorer({
                     <div className="text-[11px] font-mono text-white/45">Loading the route network…</div>
                   )}
                   <div className="space-y-0.5">
-                    {routeList.map((r) => {
-                      const live = liveCountForRoute(vehicles, r.short);
-                      return (
-                        <button
-                          key={r.id}
-                          onClick={() => openRoute(r.short)}
-                          className="w-full flex items-center gap-2.5 rounded-lg px-2 py-2 text-left hover:bg-white/[0.05] transition-colors"
-                        >
-                          <span className="shrink-0 w-3 h-3 rounded-full border border-black/50" style={{ background: r.color }} />
-                          <span className="text-[12px] font-mono font-bold text-white/90 w-14 shrink-0">{r.short}</span>
-                          <span className="flex-1 min-w-0">
-                            <span className="block text-[10.5px] font-mono text-white/70 truncate">{r.long}</span>
-                            <span className="block text-[8.5px] font-mono text-white/35 truncate">
-                              {r.directions.map((d) => d.headsign).filter(Boolean).join(' ⇄ ') || '—'}
-                            </span>
-                          </span>
-                          <span className="text-[9px] font-mono shrink-0" style={{ color: live > 0 ? '#7EE2A8' : 'rgba(255,255,255,0.3)' }}>
-                            {live > 0 ? `● ${live} live` : '—'}
-                          </span>
-                          <span className="text-[8px] font-mono text-white/35 shrink-0">{MODE_TAG[r.mode] ?? 'TRANSIT'}</span>
-                        </button>
-                      );
-                    })}
+                    {groupRoutesByType(routeList).map((g) => (
+                      <div key={g.id} className="mb-2">
+                        <div className="text-[9px] font-mono tracking-[0.18em] text-white/35 px-1 pt-1.5 pb-1">
+                          {g.label} — {g.routes.length}
+                        </div>
+                        {g.routes.map((r) => {
+                          const live = liveCountForRoute(vehicles, r.short);
+                          const st = statusByShort.get(r.short);
+                          const starred = isWatched(watchEntries, { kind: 'route', agencyId: agency.id, key: r.short });
+                          return (
+                            <div key={r.id} className="relative">
+                              <button
+                                onClick={() => openRoute(r.short)}
+                                className="w-full flex items-center gap-2.5 rounded-lg px-2 py-2 pr-9 text-left hover:bg-white/[0.05] transition-colors"
+                              >
+                                <span className="shrink-0 w-3 h-3 rounded-full border border-black/50" style={{ background: r.color }} />
+                                <span className="text-[12px] font-mono font-bold text-white/90 w-14 shrink-0">{r.short}</span>
+                                <span className="flex-1 min-w-0">
+                                  <span className="block text-[10.5px] font-mono text-white/70 truncate">{r.long}</span>
+                                  <span className="block text-[8.5px] font-mono text-white/35 truncate">
+                                    {r.directions.length > 0
+                                      ? r.directions.map((d) => d.headsign).filter(Boolean).join(' ⇄ ') || '—'
+                                      : 'Not in the current feed — no scheduled service'}
+                                  </span>
+                                </span>
+                                {st && st.status !== 'normal' && <RouteStatusChip status={st} />}
+                                <span className="text-[9px] font-mono shrink-0" style={{ color: live > 0 ? '#7EE2A8' : 'rgba(255,255,255,0.3)' }}>
+                                  {live > 0 ? `● ${live} live` : '—'}
+                                </span>
+                                <span className="text-[8px] font-mono text-white/35 shrink-0">{MODE_TAG[r.mode] ?? 'TRANSIT'}</span>
+                              </button>
+                              <button
+                                type="button"
+                                aria-label={starred ? `Stop watching route ${r.short}` : `Watch route ${r.short}`}
+                                aria-pressed={starred}
+                                onClick={() => toggleWatchEntry({
+                                  kind: 'route', agencyId: agency.id, key: r.short,
+                                  label: `${r.short} · ${r.long}`,
+                                })}
+                                className={`absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded flex items-center justify-center text-[12px] transition-colors ${starred ? 'text-amber-300' : 'text-white/30 hover:text-white/70'}`}
+                              >
+                                {starred ? '★' : '☆'}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
                     {network?.phase === 'ready' && routeList.length === 0 && (
                       <div className="text-[10px] font-mono text-white/45 px-1 py-2">No routes match.</div>
                     )}
@@ -548,6 +679,7 @@ export default function TransitExplorer({
                         <span className="text-[17px] font-mono font-bold text-white">{detail.route.short}</span>
                         <span className="text-[12px] font-mono text-white/60">{detail.route.long}</span>
                         <span className="text-[8px] font-mono rounded px-1.5 py-0.5 bg-white/10 text-white/60">{MODE_TAG[detail.route.mode] ?? 'TRANSIT'}</span>
+                        {detailStatus && <RouteStatusChip status={detailStatus} />}
                       </div>
                       <div className="text-[10px] font-mono text-white/45 mb-3">
                         {selLiveVehicles.length > 0
@@ -568,7 +700,38 @@ export default function TransitExplorer({
                         >
                           VIEW ON MAP
                         </button>
+                        <button
+                          type="button"
+                          aria-pressed={isWatched(watchEntries, { kind: 'route', agencyId: agency.id, key: detail.route.short })}
+                          onClick={() => toggleWatchEntry({
+                            kind: 'route', agencyId: agency.id, key: detail.route.short,
+                            label: `${detail.route.short} · ${detail.route.long}`,
+                          })}
+                          className="px-2.5 py-1.5 rounded-md border border-white/15 bg-white/[0.04] text-[9px] font-mono tracking-wider text-white/70 hover:bg-white/[0.09] transition-colors"
+                        >
+                          {isWatched(watchEntries, { kind: 'route', agencyId: agency.id, key: detail.route.short }) ? '★ WATCHING' : '☆ WATCH ROUTE'}
+                        </button>
                       </div>
+                      {detail.directions.length === 0 && (
+                        <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3 mb-4">
+                          <div className="text-[10.5px] font-mono font-bold text-white/80">No service in the current feed</div>
+                          <p className="mt-1 text-[9.5px] font-mono text-white/50 leading-relaxed">
+                            {agency.name} publishes route {detail.route.short} in its route index, but the current
+                            GTFS feed carries no trips for it — so there is no stop list or timetable to show.
+                            Routes in this state are usually seasonal (this one runs for the ski season).
+                          </p>
+                          {detail.route.url && (
+                            <a
+                              href={detail.route.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-block mt-2 text-[9px] font-mono text-cyan-200/80 hover:text-cyan-100 underline underline-offset-2"
+                            >
+                              {agency.name}'s page for route {detail.route.short} ↗
+                            </a>
+                          )}
+                        </div>
+                      )}
                       {detail.directions.map((d) => (
                         <div key={d.dir} className="mb-4">
                           <div className="text-[11px] font-mono font-bold text-white/85">→ {d.headsign || detail.route.long}</div>
@@ -578,14 +741,24 @@ export default function TransitExplorer({
                           </div>
                           <div className="max-h-52 overflow-y-auto styled-scrollbar rounded-lg border border-white/[0.06]">
                             {d.stops.map((s, i) => (
-                              <button
-                                key={`${d.dir}-${s.id}`}
-                                onClick={() => onFocusStop(agency.id, { id: s.id, name: s.name, lat: s.lat, lng: s.lng, routes: [detail.route.short] })}
-                                className="w-full flex items-baseline gap-2 px-2.5 py-1.5 text-left hover:bg-white/[0.05] transition-colors"
-                              >
-                                <span className="text-[8px] font-mono text-white/30 w-5 shrink-0 text-right">{i + 1}</span>
-                                <span className="text-[10px] font-mono text-white/70 truncate">{s.name}</span>
-                              </button>
+                              <div key={`${d.dir}-${s.id}`} className="relative">
+                                <button
+                                  onClick={() => onFocusStop(agency.id, { id: s.id, name: s.name, lat: s.lat, lng: s.lng, routes: [detail.route.short] })}
+                                  className="w-full flex items-baseline gap-2 px-2.5 py-1.5 pr-9 text-left hover:bg-white/[0.05] transition-colors"
+                                >
+                                  <span className="text-[8px] font-mono text-white/30 w-5 shrink-0 text-right">{i + 1}</span>
+                                  <span className="text-[10px] font-mono text-white/70 truncate">{s.name}</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  aria-label={`Directions to ${s.name}`}
+                                  title="Directions to this stop"
+                                  onClick={() => { dispatchStopDirections({ name: s.name, lat: s.lat, lng: s.lng }); onClose(); }}
+                                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded flex items-center justify-center text-[11px] text-white/35 hover:text-cyan-200 hover:bg-white/10 transition-colors"
+                                >
+                                  🧭
+                                </button>
+                              </div>
                             ))}
                           </div>
                         </div>
@@ -605,6 +778,14 @@ export default function TransitExplorer({
                   <div className="flex items-center gap-2.5 flex-wrap mb-1.5">
                     <span className="text-[17px] font-mono font-bold text-white">{selShort}</span>
                     <span className="text-[10px] font-mono text-white/45">live route — {agency.name}</span>
+                    <button
+                      type="button"
+                      aria-pressed={isWatched(watchEntries, { kind: 'route', agencyId: agency.id, key: selShort })}
+                      onClick={() => toggleWatchEntry({ kind: 'route', agencyId: agency.id, key: selShort, label: selShort })}
+                      className="px-2 py-1 rounded-md border border-white/15 bg-white/[0.04] text-[8.5px] font-mono tracking-wider text-white/70 hover:bg-white/[0.09] transition-colors"
+                    >
+                      {isWatched(watchEntries, { kind: 'route', agencyId: agency.id, key: selShort }) ? '★ WATCHING' : '☆ WATCH ROUTE'}
+                    </button>
                   </div>
                   <div className="text-[10px] font-mono text-white/45 mb-3">
                     {selLiveVehicles.length} vehicle{selLiveVehicles.length === 1 ? '' : 's'} reporting on this route right now.
@@ -622,6 +803,150 @@ export default function TransitExplorer({
 
           {agency && tab === 'alerts' && (
             <div className="space-y-2">
+              {/* ── Watched stops & routes (device-local watch list) ── */}
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 mb-1">
+                <div className="text-[9px] font-mono tracking-[0.18em] text-white/40 mb-1">YOUR WATCHED STOPS &amp; ROUTES</div>
+                <div className="text-[8.5px] font-mono text-white/35 leading-relaxed mb-2">
+                  Saved on this device. Status below is live while you're here — alerts are in-app only;
+                  WorldEye doesn't send push notifications for transit yet.
+                </div>
+                {watchedHere.length === 0 && (
+                  <div className="text-[10px] font-mono text-white/45">
+                    Nothing watched yet — tap ☆ on a route, or ☆ WATCH STOP on a stop card.
+                  </div>
+                )}
+                <div className="space-y-1">
+                  {watchedHere.map((w) => {
+                    const wid = watchId(w);
+                    if (w.kind === 'stop') {
+                      const live = watchArrivals[wid];
+                      return (
+                        <div key={wid} className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-white/[0.04]">
+                          <span className="text-[11px] shrink-0">🚏</span>
+                          <span className="flex-1 min-w-0">
+                            <span className="block text-[10.5px] font-mono text-white/80 truncate">{w.label}</span>
+                            <span className="flex items-center gap-1.5 text-[8.5px] font-mono text-white/40">
+                              {!agency.network
+                                ? 'live status needs a published network'
+                                : !live
+                                  ? 'checking…'
+                                  : live.next
+                                    ? <><span className="truncate">Next: <b className="text-white/70">{live.next.route}</b> {live.next.headsign ?? ''} · {live.next.inMin <= 0 ? 'Due' : `${live.next.inMin} min`}</span><DelayChip delayS={live.next.delayS} basis={live.next.basis} /></>
+                                    : 'No departures in the next 3 hours'}
+                              {live && live.alertCount > 0 && <span className="text-amber-300">⚠ {live.alertCount}</span>}
+                            </span>
+                          </span>
+                          {w.lat != null && w.lng != null && (
+                            <button
+                              type="button"
+                              onClick={() => onFocusStop(agency.id, { id: w.key, name: w.label, lat: w.lat!, lng: w.lng!, routes: [] })}
+                              className="shrink-0 px-2 py-1 rounded-md border border-white/15 text-[8.5px] font-mono text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                            >
+                              VIEW
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            aria-label={`Stop watching ${w.label}`}
+                            onClick={() => toggleWatchEntry(w)}
+                            className="shrink-0 w-6 h-6 rounded flex items-center justify-center text-[12px] text-amber-300 hover:bg-white/10 transition-colors"
+                          >
+                            ★
+                          </button>
+                        </div>
+                      );
+                    }
+                    const st = statusByShort.get(w.key);
+                    const liveN = liveCountForRoute(vehicles, w.key);
+                    return (
+                      <div key={wid} className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-white/[0.04]">
+                        <span className="text-[11px] shrink-0">🚌</span>
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-[10.5px] font-mono text-white/80 truncate">{w.label}</span>
+                          <span className="flex items-center gap-1.5 text-[8.5px] font-mono text-white/40">
+                            <span>{liveN > 0 ? `${liveN} vehicle${liveN === 1 ? '' : 's'} live` : 'nothing reporting right now'}</span>
+                            {st && st.alerts.length > 0 && <span className="text-amber-300">⚠ {st.alerts.length} alert{st.alerts.length === 1 ? '' : 's'}</span>}
+                          </span>
+                        </span>
+                        {st && <RouteStatusChip status={st} />}
+                        <button
+                          type="button"
+                          onClick={() => openRoute(w.key)}
+                          className="shrink-0 px-2 py-1 rounded-md border border-white/15 text-[8.5px] font-mono text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          OPEN
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Stop watching ${w.label}`}
+                          onClick={() => toggleWatchEntry(w)}
+                          className="shrink-0 w-6 h-6 rounded flex items-center justify-center text-[12px] text-amber-300 hover:bg-white/10 transition-colors"
+                        >
+                          ★
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ── Service status board (owner's ask: detours, disruptions, system-wide) ── */}
+              {alertsEnabled && board && (
+                <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.03] p-3 mb-1">
+                  <div className="text-[9px] font-mono tracking-[0.18em] text-cyan-200/60 mb-2">
+                    {agency.name} SERVICE STATUS — RIGHT NOW
+                  </div>
+                  {!boardHasNews(board) && (
+                    <div className="text-[10.5px] font-mono text-white/60">
+                      No detours or disruptions reported right now.
+                      <span className="block text-[8.5px] text-white/35 mt-0.5">Routes not listed here are running normally.</span>
+                    </div>
+                  )}
+                  {board.detour.length > 0 && (
+                    <div className="mb-2">
+                      <div className="text-[8.5px] font-mono tracking-[0.14em] text-amber-300/80 mb-1">ON DETOUR</div>
+                      <div className="flex flex-wrap gap-1">
+                        {board.detour.map((b) => (
+                          <button
+                            key={b.route.id}
+                            onClick={() => openRoute(b.route.short)}
+                            className="text-[9px] font-mono font-bold rounded px-1.5 py-0.5 bg-amber-400/15 text-amber-200 hover:bg-amber-400/25 transition-colors"
+                          >
+                            {b.route.short}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {board.disrupted.length > 0 && (
+                    <div className="mb-2">
+                      <div className="text-[8.5px] font-mono tracking-[0.14em] text-red-300/80 mb-1">DISRUPTED</div>
+                      <div className="space-y-1">
+                        {board.disrupted.map((b) => (
+                          <button
+                            key={b.route.id}
+                            onClick={() => openRoute(b.route.short)}
+                            className="w-full flex items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-white/[0.05]"
+                          >
+                            <span className="text-[10px] font-mono font-bold text-white/85 w-12 shrink-0">{b.route.short}</span>
+                            <RouteStatusChip status={b.status} />
+                            <span className="text-[8.5px] font-mono text-white/40 truncate">{b.status.alerts[0]?.header}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {board.systemWide.length > 0 && (
+                    <div>
+                      <div className="text-[8.5px] font-mono tracking-[0.14em] text-white/45 mb-1">SYSTEM-WIDE</div>
+                      {board.systemWide.map((a, i) => (
+                        <div key={`${a.header}-${i}`} className="text-[9.5px] font-mono text-white/60 leading-snug py-0.5">• {a.header}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {!alertsEnabled && (
                 <div className="text-[11px] font-mono text-white/50 leading-relaxed">
                   Service Alerts are switched off in Layers → Transit &amp; Mobility → LIVE TRANSIT NETWORK.
@@ -717,10 +1042,12 @@ function VehicleList({
               <span className="block text-[10.5px] font-mono text-white/80 truncate">
                 {v.label || v.id}{v.headsign ? ` · to ${v.headsign}` : ''}
               </span>
-              <span className="block text-[8.5px] font-mono text-white/35 truncate">
-                {v.stopName ? `Next: ${v.stopName} · ` : ''}
-                {v.delay == null ? 'no delay data' : v.delay >= 60 ? `${Math.round(v.delay / 60)} min late` : v.delay <= -60 ? `${Math.round(-v.delay / 60)} min early` : 'on time'}
-                {v.speedKmh != null ? ` · ${v.speedKmh} km/h` : ''}
+              <span className="flex items-center gap-1.5 text-[8.5px] font-mono text-white/35 truncate">
+                {v.stopName ? <span className="truncate">Next: {v.stopName}</span> : null}
+                {v.delay == null
+                  ? <span>no delay data</span>
+                  : <DelayChip delayS={v.delay} basis="realtime" />}
+                {v.speedKmh != null ? <span>· {v.speedKmh} km/h</span> : null}
               </span>
             </span>
             <button

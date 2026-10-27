@@ -90,6 +90,12 @@ interface DirectionsBarProps {
   onStartNavigation?: (route: RouteResult, destinationLabel: string) => void;
   /** A destination to open with, handed over from Search ("Directions to here"). */
   initialTo?: Place | null;
+  /** An origin to open with — e.g. a transit stop hand-off seeds the
+   *  rider's granted position fix (or the map centre) so the walk to
+   *  the stop plots immediately instead of opening half-empty. */
+  initialFrom?: Place | null;
+  /** A travel mode to open with (a stop hand-off opens on Walk). */
+  initialMode?: string;
   /** Inside the merged Search & Route panel: no frame or title header
    *  of its own (the panel supplies both, plus the close). The header's
    *  functional controls — live badge, track and follow toggles — stay,
@@ -458,12 +464,12 @@ function IconBtn({ children, label, onClick, on, className = '' }: { children: R
   );
 }
 
-export default function DirectionsBar({ onRoute, onLocate, onClose, center = null, onLiveLocation, onActiveSegment, onFollowChange, onStartNavigation, initialTo = null, embedded = false }: DirectionsBarProps) {
-  const [fromText, setFromText] = useState('');
+export default function DirectionsBar({ onRoute, onLocate, onClose, center = null, onLiveLocation, onActiveSegment, onFollowChange, onStartNavigation, initialTo = null, initialFrom = null, initialMode, embedded = false }: DirectionsBarProps) {
+  const [fromText, setFromText] = useState(initialFrom?.label ?? '');
   const [toText, setToText] = useState(initialTo?.label ?? '');
-  const [from, setFrom] = useState<Place | null>(null);
+  const [from, setFrom] = useState<Place | null>(initialFrom);
   const [to, setTo] = useState<Place | null>(initialTo);
-  const [mode, setMode] = useState<string>('auto');
+  const [mode, setMode] = useState<string>(initialMode ?? 'auto');
   const [route, setRoute] = useState<RouteResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -536,6 +542,20 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
     () => vias.map((v) => v.place).filter((p): p is Place => p !== null),
     [vias],
   );
+
+  /* A hand-off that arrives with BOTH ends set (a transit stop:
+   * origin + stop destination) plots its route on open — the rider
+   * asked for directions, not for a form. Once only: later edits
+   * re-plot through the pick handlers as usual. */
+  const seededRunRef = useRef(false);
+  useEffect(() => {
+    if (seededRunRef.current) return;
+    seededRunRef.current = true;
+    if (initialFrom && initialTo) {
+      void runRoute(initialFrom, initialTo, initialMode ?? 'auto');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /** Continuous position updates — the moving dot, not a one-shot fix. */
   const toggleTracking = useCallback(() => {

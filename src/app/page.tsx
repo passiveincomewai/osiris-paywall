@@ -62,8 +62,11 @@ import type { RouteResult, LiveLocation } from '@/components/DirectionsBar';
 import type { WatchedFlight, FlightTelemetry, AircraftDetail, Airport } from '@/components/FlightWatchPanel';
 import type { NavProgress } from '@/lib/navigation';
 import {
-  classifyGeoError, currentGeoEnvironment, geoEnvironmentIssue, type GeoIssue,
+  classifyGeoError, currentGeoEnvironment, geoEnvironmentIssue, requestCurrentPosition, type GeoIssue,
 } from '@/lib/geo-position';
+import {
+  pickOrigin, STOP_DIRECTIONS_EVENT, type StopDirectionsDetail,
+} from '@/lib/transit/directions';
 import type { LiveDetection } from '@/lib/malware-intel';
 import ScaleBar from '@/components/ScaleBar';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -330,7 +333,13 @@ export default function Dashboard() {
   const [showDesktopSearch, setShowDesktopSearch] = useState(false);
   const [showDirections, setShowDirections] = useState(false);
   // A destination Search hands to Directions ("Directions to here"); its stamp remounts the planner with it.
-  const [routeTarget, setRouteTarget] = useState<{ label: string; context?: string; lat: number; lng: number; kind?: string; ts: number } | null>(null);
+  // A transit stop hand-off additionally seeds an origin + the walking mode.
+  const [routeTarget, setRouteTarget] = useState<{
+    label: string; context?: string; lat: number; lng: number; kind?: string;
+    from?: { label: string; lat: number; lng: number; kind?: string } | null;
+    mode?: string;
+    ts: number;
+  } | null>(null);
   const [activeRoute, setActiveRoute] = useState<
     (RouteResult & {
       from: { lat: number; lng: number };
@@ -1167,6 +1176,45 @@ export default function Dashboard() {
     setShowDirections(true);
     setFlyToLocation({ lat: p.lat, lng: p.lng, zoom: 14, ts: Date.now() });
   }, []);
+
+  /* From the transit surfaces: "Directions to this stop" (the stop
+   * card / Transit Explorer dispatch we:directions-to — see
+   * lib/transit/directions). The stop becomes the destination, the
+   * mode is Walk, and the origin is the rider's own position when
+   * geolocation permission is ALREADY granted (a silent fix — this
+   * hand-off never prompts; asking stays the planner's locate
+   * button), else the map centre. */
+  useEffect(() => {
+    const onDirectionsToStop = async (e: Event) => {
+      const d = (e as CustomEvent<StopDirectionsDetail>).detail;
+      if (!d || !Number.isFinite(d.lat) || !Number.isFinite(d.lng)) return;
+      let geoFix: { label: string; lat: number; lng: number; kind: string } | null = null;
+      try {
+        const perms = (navigator as unknown as {
+          permissions?: { query: (q: { name: string }) => Promise<{ state: string }> };
+        })?.permissions;
+        if (perms?.query && typeof navigator !== 'undefined' && navigator.geolocation) {
+          const st = await perms.query({ name: 'geolocation' });
+          if (st.state === 'granted') {
+            const res = await requestCurrentPosition(navigator.geolocation);
+            if (res.ok) geoFix = { label: 'Current location', lat: res.lat, lng: res.lng, kind: 'current' };
+          }
+        }
+      } catch { /* no permissions API — the map-centre fallback stands */ }
+      const from = pickOrigin(geoFix, mapCenter ? { lat: mapCenter.lat, lng: mapCenter.lng } : null);
+      setRouteTarget({
+        label: d.label, lat: d.lat, lng: d.lng, kind: 'stop',
+        from, mode: d.mode ?? 'pedestrian', ts: Date.now(),
+      });
+      setActiveRoute(null);
+      setShowDesktopSearch(false);
+      setMobilePanel(null);
+      setShowDirections(true);
+      setFlyToLocation({ lat: d.lat, lng: d.lng, zoom: 15, ts: Date.now() });
+    };
+    window.addEventListener(STOP_DIRECTIONS_EVENT, onDirectionsToStop);
+    return () => window.removeEventListener(STOP_DIRECTIONS_EVENT, onDirectionsToStop);
+  }, [mapCenter]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -2521,6 +2569,8 @@ export default function Dashboard() {
                     <DirectionsBar embedded
                       key={routeTarget?.ts ?? 'plan'}
                       initialTo={routeTarget}
+                      initialFrom={routeTarget?.from ?? null}
+                      initialMode={routeTarget?.mode}
                       center={mapCenter ? { lat: mapCenter.lat, lng: mapCenter.lng } : null}
                       onRoute={(r) => setActiveRoute(r)}
                       onLiveLocation={setLiveLocation}
@@ -2560,6 +2610,8 @@ export default function Dashboard() {
             <DirectionsBar
               key={routeTarget?.ts ?? 'plan'}
               initialTo={routeTarget}
+              initialFrom={routeTarget?.from ?? null}
+              initialMode={routeTarget?.mode}
               center={mapCenter ? { lat: mapCenter.lat, lng: mapCenter.lng } : null}
               onRoute={(r) => setActiveRoute(r)}
               onLiveLocation={setLiveLocation}
