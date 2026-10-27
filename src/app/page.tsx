@@ -17,7 +17,6 @@ import {
   readSessionIdentity,
   type SessionIdentity,
 } from '@/lib/premium-entitlement';
-import { ACCOUNT_GATE_UNTIL, accountGateActive } from '@/lib/account-gate';
 import {
   browserLadderStorage,
   browserSessionStorage,
@@ -41,7 +40,6 @@ import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero, { heroSkippedForSearch } from '@/components/CinematicHero';
 import HomeSeoShell from '@/components/HomeSeoShell';
-import GlobeAccountGate from '@/components/GlobeAccountGate';
 import JsonLd from '@/components/JsonLd';
 import { HOME_FAQS } from '@/lib/home-faqs';
 
@@ -2261,53 +2259,6 @@ export default function Dashboard() {
 
     dataRef.current = { ...dataRef.current, sdk_entities: sdkEntities };
   }, [dataVersion, activeLayers.sdk_sea, activeLayers.sdk_air, activeLayers.sdk_naval]);
-
-  /* ── Time-boxed globe account gate (owner-ordered conversion test,
-     2026-10-27; lib/account-gate) ───────────────────────────────────
-     While the window runs, a definitively signed-out visitor gets the
-     sign-up wall (components/GlobeAccountGate) instead of this shell.
-     The gate state is known synchronously (a pure time check), but the
-     session is not: sessionIdentity starts null and resolves via the
-     mount read inside refreshPremium above. Until it resolves, the
-     wall's checking state renders — never the map — so there is no
-     flash of the globe for a visitor who turns out to be signed out.
-     Only "anonymous" is walled: free and premium identities pass, and
-     "unknown" (a failed session read) passes too — a network hiccup
-     must not lock a member out of the globe. A timer lifts the gate
-     live at ACCOUNT_GATE_UNTIL, so an already-open tab needs no
-     reload when the test window closes. This is the ONLY place the
-     gate is consulted: embeds, /ambient, content pages and the API
-     are untouched, and because the walled return never renders
-     [data-globe-section], the AnalyticsTracker's globe_reached event
-     cannot fire for walled visitors. */
-  const [gateActive, setGateActive] = useState(() => accountGateActive());
-  useEffect(() => {
-    if (!gateActive) return;
-    const ms = ACCOUNT_GATE_UNTIL.getTime() - Date.now();
-    if (ms <= 0) { setGateActive(false); return; }
-    const t = setTimeout(() => setGateActive(false), ms);
-    return () => clearTimeout(t);
-  }, [gateActive]);
-  const gateWalled = gateActive && sessionIdentity?.state === 'anonymous';
-  const gateChecking = gateActive && sessionIdentity === null;
-  const gateEventFired = useRef(false);
-  useEffect(() => {
-    if (!gateWalled || gateEventFired.current) return;
-    gateEventFired.current = true;
-    // The existing wall-impression event (the camera ladder walls fire
-    // it too), with this gate named as its detail token.
-    trackAnalyticsEvent('upgrade_gate_shown', 'globe_gate');
-  }, [gateWalled]);
-
-  if (gateWalled || gateChecking) {
-    return (
-      <>
-        <GlobeAccountGate checking={gateChecking} />
-        <JsonLd data={homeFaqJsonLd} />
-        <HomeSeoShell />
-      </>
-    );
-  }
 
   return (
     <>

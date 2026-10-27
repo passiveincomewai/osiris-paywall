@@ -61,30 +61,3 @@ export function gateAuthHref(kind: "signup" | "signin", callbackPath?: string | 
 export function identityIsGated(state: string): boolean {
   return state === "anonymous";
 }
-
-/**
- * ── Time-boxed whole-globe account gate (owner-ordered conversion
- * test, 2026-10-27) ──────────────────────────────────────────────────
- *
- * For eight hours the globe itself — the app shell at "/" — asks every
- * signed-out visitor to create a free account first. This is a TEST
- * with a hard stop, not a permanent policy: ACCOUNT_GATE_UNTIL is the
- * exact moment the gate lifts, baked into code so no deploy is needed
- * to end it, and the root page also re-checks live so an already-open
- * tab lifts the wall the moment the window closes.
- *
- * The gate decision lives ONLY at the root page (src/app/page.tsx),
- * which renders components/GlobeAccountGate instead of the shell.
- * Nothing else consults this: /embed/*, /embed-camera, /ambient, the
- * directory/content pages and every /api/* route serve exactly as
- * before. Only the definitively-anonymous identity is gated — the
- * identityIsGated rule above: a failed session read ("unknown") never
- * locks anyone out.
- */
-export const ACCOUNT_GATE_UNTIL = new Date("2026-10-27T15:23:00.000Z");
-
-/** True while the time-boxed globe gate is running. `now` is
- *  injectable for tests; production callers pass nothing. */
-export function accountGateActive(now: Date = new Date()): boolean {
-  return now.getTime() < ACCOUNT_GATE_UNTIL.getTime();
-}
