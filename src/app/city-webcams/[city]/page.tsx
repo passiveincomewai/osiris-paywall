@@ -1075,7 +1075,10 @@ async function neighbourRelatedLinks(
   const neighbours = nearestCityNeighbours(self, [...index.values()]);
   if (!hasFullNeighbourSet(neighbours)) return null;
   return [
-    ...neighbourLinks(neighbours).map(({ label, href }) => ({ label, href })),
+    ...neighbourLinks(neighbours).map(({ label, href, distanceKm }) => ({
+      label: `${label} (${Math.round(distanceKm)} km)`,
+      href,
+    })),
     ...generatedCuratedSiblings(g),
     { label: "All world city webcams", href: "/world-city-webcams" },
   ];
