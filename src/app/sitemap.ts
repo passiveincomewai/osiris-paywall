@@ -193,7 +193,7 @@ const SEO_PAGES_EMBED = ["/embed-camera"];
 // Research & education access (2026-10-27): the documented routes to
 // public-camera metadata — the Enterprise feed/API under the rights
 // registry, the terms framework, and how researchers request access.
-const SEO_PAGES_RESEARCH = ["/research-access"];
+const SEO_PAGES_RESEARCH = ["/research-access", "/research/live-camera-platforms-compared"];
 
 // Partners (2026-10-27): the partner & data-source directory — an
 // invitation-only partners tier plus every catalogue source label with
