@@ -14,7 +14,7 @@ import {
 import {
   TRAFFIC_MIN_ZOOM, CAMERA_SEARCH_RADIUS_M,
   targetVehicleCount, congestionBand, BAND_COLORS, trafficChipText, type TrafficFlowState, } from '@/lib/traffic/config';
-import { buildRoadNetwork, type RoadNetwork } from '@/lib/traffic/roads';
+import { adaptBasemapRoadFeatures, buildRoadNetwork, type RoadNetwork } from '@/lib/traffic/roads';
 import { effectiveRatio } from '@/lib/traffic/congestion';
 import {
   createRng, reconcileVehicles, advanceVehicles, vehicleFeature, type SimVehicle,
@@ -4636,6 +4636,23 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       && (window.innerWidth < 768 || (window.innerHeight < 500 && window.innerWidth < 1024));
     const ratioFor = (road: any) => effectiveRatio(road, new Date(), trafficFlowRef.current?.ratios);
 
+    // Where the basemap keeps its roads. CARTO's current dark-matter
+    // style is Protomaps-based: source `protomaps`, source-layer
+    // `roads` (properties translated by adaptBasemapRoadFeatures). The
+    // legacy OpenMapTiles pairing (`carto` / `transportation`) is kept
+    // as a fallback so an upstream style change in either direction
+    // degrades to "whichever source actually exists" instead of the
+    // silent empty extraction that killed this layer: querying a
+    // missing source throws into rebuild's catch and reads as "no
+    // roads in view" forever.
+    const roadSourceCandidates = [
+      { source: 'protomaps', sourceLayer: 'roads' },
+      { source: 'carto', sourceLayer: 'transportation' },
+    ];
+    const roadSource = roadSourceCandidates.find((c) => {
+      try { return !!map.getSource(c.source); } catch { return false; }
+    }) ?? roadSourceCandidates[0];
+
     const setChip = () => {
       if (!live) return;
       // The chip text is pinned in lib/traffic/config (trafficChipText):
@@ -4707,8 +4724,8 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       const padLat = (b.getNorth() - b.getSouth()) * 0.15;
       const padLng = (b.getEast() - b.getWest()) * 0.15;
       let raw: any[] = [];
-      try { raw = map.querySourceFeatures('carto', { sourceLayer: 'transportation' }) as any[]; } catch { raw = []; }
-      const net = buildRoadNetwork(raw as any, zoom, {
+      try { raw = map.querySourceFeatures(roadSource.source, { sourceLayer: roadSource.sourceLayer }) as any[]; } catch { raw = []; }
+      const net = buildRoadNetwork(adaptBasemapRoadFeatures(raw as any), zoom, {
         west: b.getWest() - padLng, south: b.getSouth() - padLat,
         east: b.getEast() + padLng, north: b.getNorth() + padLat,
       });
@@ -4785,7 +4802,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     const onSourceData = (e: any) => {
       if (e.sourceId === 'tomtom-flow' && e.isSourceLoaded) scheduleRebuild();
-      else if (e.sourceId === 'carto' && e.isSourceLoaded && !trafficNetRef.current) scheduleRebuild();
+      else if (e.sourceId === roadSource.source && e.isSourceLoaded && !trafficNetRef.current) scheduleRebuild();
     };
     const onMapError = (e: any) => {
       if (e?.sourceId === 'tomtom-flow' || /traffic\/flow/.test(String(e?.error?.message ?? ''))) {

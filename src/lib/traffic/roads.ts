@@ -101,6 +101,60 @@ function cleanCoords(raw: unknown): [number, number][] | null {
 }
 
 /**
+ * Basemap schema adapter — the seam that broke the traffic layer.
+ *
+ * CARTO migrated the dark-matter basemap to its Protomaps-based
+ * carto.streets v2 tiles: the vector source is now `protomaps` (the map
+ * component resolves it there), the road layer is `roads`, and the road
+ * class lives in `kind_detail` (coarse group in `kind`) instead of the
+ * OpenMapTiles `class`. The OSM `service=*` value (parking_aisle,
+ * driveway…) rides in `service`. A feature in the legacy OpenMapTiles
+ * shape (`class` present) passes through untouched, so this is safe
+ * against either tile build; a Protomaps feature is translated into
+ * the shape buildRoadNetwork has always consumed; anything that is not
+ * a drivable road class (rail, paths, runways…) is dropped here.
+ */
+const PROTOMAPS_DETAIL_CLASS: Record<string, RoadClass> = {
+  motorway: 'motorway', motorway_link: 'motorway',
+  trunk: 'trunk', trunk_link: 'trunk',
+  primary: 'primary', primary_link: 'primary',
+  secondary: 'secondary', secondary_link: 'secondary',
+  tertiary: 'tertiary', tertiary_link: 'tertiary',
+  unclassified: 'minor', residential: 'minor', living_street: 'minor',
+  service: 'service',
+};
+
+/** Coarse-group fallback for the rare feature with no `kind_detail`. */
+const PROTOMAPS_KIND_CLASS: Record<string, RoadClass> = {
+  major_road: 'primary',
+  minor_road: 'minor',
+};
+
+export function adaptBasemapRoadFeatures(features: RawRoadFeature[]): RawRoadFeature[] {
+  const out: RawRoadFeature[] = [];
+  for (const f of features) {
+    if (!f?.geometry) continue;
+    const props = f.properties ?? {};
+    if (typeof props.class === 'string') { out.push(f); continue; }
+    const detail = typeof props.kind_detail === 'string' ? props.kind_detail : '';
+    const kind = typeof props.kind === 'string' ? props.kind : '';
+    const cls = PROTOMAPS_DETAIL_CLASS[detail] ?? PROTOMAPS_KIND_CLASS[kind];
+    if (!cls) continue;
+    out.push({
+      geometry: f.geometry,
+      properties: {
+        ...props,
+        class: cls,
+        // The service-road exclusions in buildRoadNetwork read
+        // `subclass`; in this schema the OSM service value is `service`.
+        subclass: typeof props.service === 'string' ? props.service : (props.subclass ?? ''),
+      },
+    });
+  }
+  return out;
+}
+
+/**
  * Build the network for one viewport extraction.
  * `features` are raw source features (LineString or MultiLineString);
  * `bounds` (padded viewport) keeps roads that merely clip a tile buffer out.
