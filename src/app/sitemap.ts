@@ -409,11 +409,16 @@ async function transitSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const out: MetadataRoute.Sitemap = [
     { url: `${BASE}/transit`, changeFrequency: "weekly", priority: 0.7 },
   ];
+  const seen = new Set<string>(["/transit"]);
   for (const agency of seoAgencies()) {
     try {
       const d = await agencySeoData(agency);
       const feedDate = feedVersionDate(d.net.feedVersion) ?? undefined;
       for (const e of transitPathsForAgency(agency, d.net, d.slugs)) {
+        // A state hub is emitted once per agency in it (batch 2 put
+        // two agencies in Washington); a sitemap must not repeat a URL.
+        if (seen.has(e.path)) continue;
+        seen.add(e.path);
         out.push({
           url: `${BASE}${e.path}`,
           ...(feedDate ? { lastModified: feedDate } : {}),

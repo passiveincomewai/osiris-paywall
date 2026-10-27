@@ -124,6 +124,14 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     bounds: [47.05, -122.55, 47.8, -121.05],
     feedUrl: 'https://s3.amazonaws.com/kcm-alerts-realtime-prod/vehiclepositions.pb',
     tripUpdatesUrl: 'https://s3.amazonaws.com/kcm-alerts-realtime-prod/tripupdates.pb',
+    // Static wired 2026-10-27 (batch 2): feed FAL26-161.2 (2026-09-28 →
+    // 2027-03-26), parser-measured 142 routes / 6,265 stops / 32,635
+    // trips. The zip is multi-operator (agency.txt: Metro Transit,
+    // City of Seattle, Sound Transit, Solid Ground) — Seattle streetcar
+    // + Sound Transit routes ride along under this entry, as served.
+    // http on purpose: the https endpoint fails (adjudication §5).
+    staticGtfsUrl: 'http://metro.kingcounty.gov/GTFS/google_transit.zip',
+    timezone: 'America/Los_Angeles',
     // All Metro service is bus/trolleybus; route ids in this feed are
     // internal numeric ids with no mode signal. (Link light rail is
     // Sound Transit, whose feed needs a OneBusAway key — excluded.)
@@ -139,6 +147,11 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     bounds: [47.7, -122.5, 48.35, -121.6],
     feedUrl: 'https://s3.amazonaws.com/commtrans-realtime-prod/vehiclepositions.pb',
     tripUpdatesUrl: 'https://s3.amazonaws.com/commtrans-realtime-prod/tripupdates.pb',
+    // Static wired 2026-10-27 (batch 2): feed 20261002-20261211,
+    // parser-measured 39 routes / 1,768 stops / 9,832 trips (the zip
+    // also carries Sound Transit's Snohomish County routes).
+    staticGtfsUrl: 'https://www.communitytransit.org/docs/default-source/open-data/gtfs/current.zip',
+    timezone: 'America/Los_Angeles',
     defaultMode: 'bus',
     attribution: 'Community Transit',
     mdb: 1448,
@@ -151,6 +164,11 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     bounds: [39.3, -105.4, 40.3, -104.5],
     feedUrl: 'https://www.rtd-denver.com/files/gtfs-rt/VehiclePosition.pb',
     tripUpdatesUrl: 'https://www.rtd-denver.com/files/gtfs-rt/TripUpdate.pb',
+    // Static wired 2026-10-27 (batch 2): feed
+    // Sep26-37303-16-17-20261023-150015 (2026-09-27 → 2027-01-02),
+    // parser-measured 130 routes / 8,162 stops / 21,814 trips.
+    staticGtfsUrl: 'https://www.rtd-denver.com/files/gtfs/google_transit.zip',
+    timezone: 'America/Denver',
     defaultMode: 'bus',
     routeModeRules: [
       // RTD's letter routes are the rail lines: A/B/G/N are commuter
@@ -171,6 +189,13 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     bounds: [41.85, -71.75, 42.95, -70.45],
     feedUrl: 'https://cdn.mbta.com/realtime/VehiclePositions.pb',
     tripUpdatesUrl: 'https://cdn.mbta.com/realtime/TripUpdates.pb',
+    // Static wired 2026-10-27 (batch 2): feed "Fall 2026, version D"
+    // (2026-10-14 → 2026-12-12), parser-measured 404 routes / 10,292
+    // stops / 105,295 trips — incl. commuter rail, ferries and the
+    // Cape Cod Regional Transit Authority routes inside the same zip;
+    // 373 of 404 routes carry trips in this vintage.
+    staticGtfsUrl: 'https://cdn.mbta.com/MBTA_GTFS.zip',
+    timezone: 'America/New_York',
     defaultMode: 'bus',
     routeModeRules: [
       { match: /^CR-/, mode: 'train' },
@@ -188,6 +213,12 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     center: [30.2672, -97.7431],
     bounds: [29.95, -98.1, 30.7, -97.35],
     feedUrl: 'https://data.texas.gov/download/eiei-9rpf/application%2Foctet-stream',
+    // Static wired 2026-10-27 (batch 2): feed 261007_1345 (2026-10-07
+    // → 2027-01-09), parser-measured 70 routes / 2,346 stops / 24,830
+    // trips. This is the r4v4-vz24 Socrata dataset — NOT the eiei-9rpf
+    // realtime dataset above (adjudication §5: do not conflate).
+    staticGtfsUrl: 'https://data.texas.gov/download/r4v4-vz24/application/zip',
+    timezone: 'America/Chicago',
     defaultMode: 'bus',
     routeModeRules: [
       // Route 550 is the MetroRail Red Line; every other CapMetro route is bus.
@@ -203,6 +234,12 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     center: [44.9778, -93.265],
     bounds: [44.7, -93.8, 45.3, -92.75],
     feedUrl: 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb',
+    // Static wired 2026-10-27 (batch 2): feed 1792595470 (2026-10-24 →
+    // 2026-12-11), parser-measured 126 routes / 8,328 stops / 38,641
+    // trips. Multi-operator zip (agency.txt also carries Maple Grove,
+    // Plymouth, SouthWest Transit, U of M and MAC airport services).
+    staticGtfsUrl: 'https://svc.metrotransit.org/mtgtfs/gtfs.zip',
+    timezone: 'America/Chicago',
     defaultMode: 'bus',
     routeModeRules: [
       // 901 Blue Line / 902 Green Line are light rail; 92x/90x BRT lines are buses.
@@ -269,6 +306,11 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     center: [43.2557, -79.8711],
     bounds: [43.1, -80.2, 43.45, -79.55],
     feedUrl: 'https://opendata.hamilton.ca/GTFS-RT/GTFS_VehiclePositions.pb',
+    // Static wired 2026-10-27 (batch 2): feed "2026 Fall_20261001"
+    // (2026-09-06 → 2026-12-26), parser-measured 41 routes / 2,353
+    // stops / 14,205 trips.
+    staticGtfsUrl: 'https://opendata.hamilton.ca/GTFS-Static/google_transit.zip',
+    timezone: 'America/Toronto',
     defaultMode: 'bus',
     attribution: 'City of Hamilton',
     mdb: 1458,
@@ -280,6 +322,12 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     center: [43.9, -78.86],
     bounds: [43.65, -79.2, 44.2, -78.45],
     feedUrl: 'https://drtonline.durhamregiontransit.com/gtfsrealtime/VehiclePositions',
+    // Static wired 2026-10-27 (batch 2) at the CURRENT host — the old
+    // drtonline path 403s (adjudication §5). The zip carries no
+    // feed_info.txt, so there is no feed version to cite; parser-
+    // measured 38 routes / 1,906 stops / 4,120 trips.
+    staticGtfsUrl: 'https://maps.durham.ca/OpenDataGTFS/GTFS_Durham_TXT.zip',
+    timezone: 'America/Toronto',
     defaultMode: 'bus',
     attribution: 'Durham Region Transit',
     mdb: 1466,
@@ -291,6 +339,11 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     center: [42.9849, -81.2453],
     bounds: [42.8, -81.5, 43.15, -80.95],
     feedUrl: 'http://gtfs.ltconline.ca/Vehicle/VehiclePositions.pb',
+    // Static wired 2026-10-27 (batch 2): feed "2026 September
+    // (D)_20261021" (2026-10-19 → 2026-11-28), parser-measured
+    // 38 routes / 1,955 stops / 8,705 trips.
+    staticGtfsUrl: 'http://www.londontransit.ca/gtfsfeed/google_transit.zip',
+    timezone: 'America/Toronto',
     defaultMode: 'bus',
     attribution: 'London Transit Commission',
     mdb: 1561,
@@ -302,6 +355,16 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     center: [43.589, -79.6441],
     bounds: [43.4, -79.9, 43.8, -79.45],
     feedUrl: 'https://www.miapp.ca/GTFS_RT/Vehicle/VehiclePositions.pb',
+    // Static wired 2026-10-27 (batch 2) after the terms read-through
+    // the adjudication required: the City of Mississauga Terms of Use
+    // (linked from its MiWay developer-download page) grant a
+    // worldwide royalty-free licence to use/modify/distribute; credit
+    // is encouraged, not required — the attribution below is the
+    // credit. No City logos, no implied endorsement. Feed version "2"
+    // (2026-09-22 → 2026-12-20), parser-measured 67 routes / 4,079
+    // stops / 26,293 trips.
+    staticGtfsUrl: 'https://www.miapp.ca/GTFS/google_transit.zip',
+    timezone: 'America/Toronto',
     defaultMode: 'bus',
     attribution: 'MiWay / City of Mississauga',
     mdb: 1612,
@@ -313,6 +376,11 @@ export const TRANSIT_AGENCIES: TransitAgency[] = [
     center: [43.8828, -79.4403],
     bounds: [43.65, -79.8, 44.4, -79.05],
     feedUrl: 'http://rtu.york.ca/gtfsrealtime/VehiclePositions',
+    // Static wired 2026-10-27 (batch 2): feed
+    // 2026.09.06_September_20260810 (2026-09-06 → 2026-10-31),
+    // parser-measured 125 routes / 4,825 stops / 13,006 trips.
+    staticGtfsUrl: 'https://www.yrt.ca/google/google_transit.zip',
+    timezone: 'America/Toronto',
     defaultMode: 'bus',
     attribution: 'York Region Transit',
     mdb: 1750,

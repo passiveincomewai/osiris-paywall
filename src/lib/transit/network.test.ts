@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  parseNetwork, parseGtfsTime, thinLine, activeServiceIds, departuresForStop,
+  parseNetwork, parseGtfsTime, parseStopTimes, thinLine, activeServiceIds, departuresForStop,
   routeDaySummary, ymdInZone, zonedMidnightMs, type TransitNetwork,
 } from './network';
 
@@ -124,6 +124,46 @@ describe('parseNetwork', () => {
     // S1 has 4 points with two ~4 m apart → thinned to 3.
     expect(d0?.line.length).toBe(3);
     expect(d0?.line[0]).toEqual([-111, 40]);
+  });
+});
+
+describe('parseStopTimes quoted rows', () => {
+  // King County Metro's stop_times quotes EVERY row (an empty ""
+  // stop_headsign); a skip-quoted-lines rule dropped 100% of its
+  // calls and with them all 32,635 trips (found wiring batch 2,
+  // 2026-10-27). The columns read are ids/integers/clock times, so a
+  // quote-aware split must recover the rows without misalignment.
+  const QUOTED = [
+    'trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type',
+    'T1,07:45:00,07:45:00,42010,1,"",,',
+    'T1,07:48:00,07:48:00,1370,2,"Downtown, Seattle",,',
+    'T1,07:54:00,07:54:00,1557,3,"",,',
+  ].join('\n');
+  it('parses rows whose only quotes are empty fields', () => {
+    const byTrip = parseStopTimes(QUOTED);
+    expect(byTrip.get('T1')?.map(c => c.stopId)).toEqual(['42010', '1370', '1557']);
+    expect(byTrip.get('T1')?.[0].depSec).toBe(7 * 3600 + 45 * 60);
+  });
+  it('a quoted comma in an unread column does not shift the read columns', () => {
+    const byTrip = parseStopTimes(QUOTED);
+    const second = byTrip.get('T1')?.[1];
+    expect(second?.stopId).toBe('1370');
+    expect(second?.seq).toBe(2);
+    expect(second?.arrSec).toBe(7 * 3600 + 48 * 60);
+  });
+  it('a full network still assembles when every stop_times row is quoted', () => {
+    const net = parseNetwork({
+      routes: ROUTES, shapes: SHAPES, stops: STOPS, trips: TRIPS,
+      stopTimes: [
+        'trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign',
+        'T1,08:00:00,08:00:00,A,1,""',
+        'T1,08:10:00,08:10:00,B,2,""',
+        'T1,08:20:00,08:20:00,C,3,""',
+      ].join('\n'),
+      calendar: CALENDAR, calendarDates: CALENDAR_DATES,
+    });
+    expect(net.trips.map(t => t.id)).toEqual(['T1']);
+    expect(net.directions.get('R1')?.[0].stopIds).toEqual(['A', 'B', 'C']);
   });
 });
 

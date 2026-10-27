@@ -187,10 +187,43 @@ export function parseShapes(csv: string): Map<string, [number, number][]> {
   return done;
 }
 
+/**
+ * Split one CSV line, honouring double-quoted fields (a quoted field may
+ * contain commas; "" is an escaped quote). Single-line only — a quoted
+ * field with an embedded newline still misaligns, but the columns
+ * parseStopTimes reads (ids, integers, clock times) never carry one.
+ * Quote-free lines take the plain split fast path, unchanged.
+ */
+function splitCsvLine(line: string): string[] {
+  if (!line.includes('"')) return line.split(',');
+  const out: string[] = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (line[i + 1] === '"') { cur += '"'; i++; }
+        else inQuotes = false;
+      } else cur += ch;
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      out.push(cur); cur = '';
+    } else cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+
 /** stop_times.txt → tripId → its calls in sequence order. Line scanner:
  *  stop_times is the big table (UTA ~467k rows); only the five columns
- *  read here, located via the header. Quoted rows are skipped, never
- *  misparsed (the columns read are ids, integers and clock times). */
+ *  read here, located via the header. Rows are split quote-aware:
+ *  feeds like King County Metro quote every row (empty "" headsigns)
+ *  and an earlier skip-quoted-lines rule dropped 100% of their calls —
+ *  and with them every trip. The columns read are ids, integers and
+ *  clock times, which never contain quoted commas, so a quote-aware
+ *  single-line split cannot misalign them. */
 export function parseStopTimes(csv: string): Map<string, NetTripStop[]> {
   const lines = csv.split('\n');
   const byTrip = new Map<string, NetTripStop[]>();
@@ -204,8 +237,8 @@ export function parseStopTimes(csv: string): Map<string, NetTripStop[]> {
   if (iTrip < 0 || iStop < 0 || iSeq < 0 || (iArr < 0 && iDep < 0)) return byTrip;
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
-    if (!line || line.includes('"')) continue;
-    const f = line.split(',');
+    if (!line) continue;
+    const f = splitCsvLine(line);
     const tripId = f[iTrip]?.trim();
     const stopId = f[iStop]?.trim();
     const seq = Number(f[iSeq]);
