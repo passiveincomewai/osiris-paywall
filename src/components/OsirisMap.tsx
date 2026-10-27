@@ -1093,6 +1093,22 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('maritime-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The weather-hazard pins (owner's artwork): tornado warnings,
+    // severe storms and tsunami alerts in the weather-events source.
+    for (const [id, url] of Object.entries({
+      'tornado-pin': '/icons/tornado-pin.png',
+      'lightning-pin': '/icons/lightning-pin.png',
+      'tsunami-pin': '/icons/tsunami-pin.png',
+    })) {
+      void loadAircraftPhoto(url).then((img) => {
+        if (!img) return;
+        try {
+          const data = aircraftPhotoData(img);
+          if (map.hasImage(id)) map.removeImage(id);
+          map.addImage(id, data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
+        } catch { /* a later call (boot/theme) retries */ }
+      });
+    }
     for (const [id, url] of Object.entries(AIRCRAFT_PHOTO_BY_ICON)) {
       void loadAircraftPhoto(url).then((img) => {
         if (!img) return;
@@ -1790,6 +1806,26 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-opacity': 0.75,
         'circle-stroke-width': 1.5, 'circle-stroke-color': '#7E57C2', 'circle-stroke-opacity': 0.35,
       }});
+      // Weather-hazard pins — the owner's artwork matched to the
+      // alert type the feeds already carry: NWS event names verbatim
+      // ("Tornado Warning", "Severe Thunderstorm Warning", "Tsunami
+      // Warning") plus EONET's "Severe Storm". The purple dot stays
+      // beneath each pin.
+      map.addLayer({ id: 'weather-tsunami-icons', type: 'symbol', source: 'weather', filter: ['in', 'Tsunami', ['get', 'type']], layout: {
+        'icon-image': 'tsunami-pin',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.6, 6, 0.9, 10, 1.25],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
+      map.addLayer({ id: 'weather-storm-icons', type: 'symbol', source: 'weather', filter: ['any', ['in', 'Thunderstorm', ['get', 'type']], ['==', ['get', 'type'], 'Severe Storm']], layout: {
+        'icon-image': 'lightning-pin',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.6, 6, 0.9, 10, 1.25],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
+      map.addLayer({ id: 'weather-tornado-icons', type: 'symbol', source: 'weather', filter: ['in', 'Tornado', ['get', 'type']], layout: {
+        'icon-image': 'tornado-pin',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.6, 6, 0.9, 10, 1.25],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
       map.addLayer({ id: 'weather-label', type: 'symbol', source: 'weather', layout: {
         'text-field': ['get','title'], 'text-size': 9, 'text-font': ['Open Sans Regular'],
         'text-offset': [0, 2], 'text-max-width': 14, 'text-allow-overlap': false,
@@ -2360,7 +2396,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons',
-      'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots','street-level-dots','street-level-hit']);
@@ -3000,7 +3036,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -3127,7 +3163,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Weather Events (NASA EONET + NOAA/NWS + GDACS) ──
-    map.on('click', 'weather-dots', e => {
+    const onWeatherClick = (e: any) => {
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
       const coords = (e.features[0].geometry as any).coordinates;
@@ -3143,7 +3179,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           ${p.source ? `<a href="${p.source}" target="_blank" style="${linkStyle}color:#E040FB;border:1px solid rgba(224,64,251,0.4);background:rgba(224,64,251,0.1);">📡 SOURCE</a>` : ''}
         </div>
       </div>`);
-    });
+    };
+    map.on('click', 'weather-dots', onWeatherClick);
+    map.on('click', 'weather-tsunami-icons', onWeatherClick);
+    map.on('click', 'weather-storm-icons', onWeatherClick);
+    map.on('click', 'weather-tornado-icons', onWeatherClick);
 
     // ── Nuclear Infrastructure ──
     map.on('click', 'infra-dots', e => {
@@ -4970,7 +5010,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['transit-routes-line', 'transit-route-highlight', 'transit-stops-dots'], (activeLayers as any).transit);
     setVis(['drone-glow','drone-icons','drone-label','drone-trails-line','drone-coverage-fill','drone-coverage-line','drone-rx-dots','drone-rx-label'], (activeLayers as any).drones);
     setVis(['drone-airspace-fill','drone-airspace-line','drone-restriction-fill','drone-restriction-line'], (activeLayers as any).drones && (activeLayers as any).drone_airspace !== false);
-    setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
+    setVis(['weather-glow','weather-dots','weather-label','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label','maritime-icons'], activeLayers.maritime);
     setVis(['choke-glow','choke-dots','choke-label'], activeLayers.maritime);
