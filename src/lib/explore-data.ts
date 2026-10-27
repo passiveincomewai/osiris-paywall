@@ -311,6 +311,33 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'airport-lhr': eventGeoIn('London airport (LHR)', 'united-kingdom', 51.47, -0.4543, 15),
   'airport-rno': eventGeo('Reno airport (RNO)', 39.4991, -119.7681, 15),
   'airport-den': eventGeo('Denver airport (DEN)', 39.8561, -104.6737, 25),
+  /* National park walls (Oct 2026) — one radius wall per US national
+     park the catalogue can honestly back. Registry, copy, counts
+     reconciliation and the gap list live in src/lib/national-parks.ts
+     (+ .test.ts). Each centre is the point the park page names: the
+     park's own ground, its entrance, or its gateway settlement. */
+  'park-yellowstone': eventGeo('Yellowstone National Park', 44.73, -110.55, 55),
+  'park-grand-canyon': eventGeo('Grand Canyon National Park', 36.0619, -112.1077, 25),
+  'park-yosemite': eventGeo('Yosemite National Park', 37.7459, -119.5932, 15),
+  'park-rocky-mountain': eventGeo('Rocky Mountain National Park', 40.3428, -105.6881, 15),
+  'park-redwood': eventGeo('Redwood National and State Parks', 41.4, -124.03, 45),
+  'park-haleakala': eventGeo('Haleakalā National Park', 20.701, -156.173, 15),
+  'park-acadia': eventGeo('Acadia National Park', 44.3386, -68.2733, 15),
+  'park-denali': eventGeo('Denali National Park entrance district', 63.728, -148.887, 25),
+  'park-glacier-bay': eventGeo('Gustavus, Glacier Bay gateway', 58.413, -135.727, 10),
+  'park-isle-royale': eventGeo('Isle Royale National Park', 48.12, -88.55, 15),
+  'park-crater-lake': eventGeo('Crater Lake National Park', 42.9446, -122.109, 25),
+  'park-mount-rainier': eventGeo('Mount Rainier National Park', 46.786, -121.735, 25),
+  'park-grand-teton': eventGeo('Grand Teton National Park', 43.6073, -110.7374, 15),
+  'park-kenai-fjords': eventGeo('Seward, Kenai Fjords gateway', 60.104, -149.442, 15),
+  'park-virgin-islands': eventGeoIn('Virgin Islands National Park', 'us-virgin-islands', 18.342, -64.768, 15),
+  'park-hawaii-volcanoes': eventGeo('Hawaiʻi Volcanoes National Park', 19.4069, -155.2834, 30),
+  'park-zion': eventGeo('Zion National Park', 37.2982, -113.0263, 25),
+  'park-arches': eventGeo('Arches National Park', 38.7331, -109.5925, 25),
+  'park-bryce-canyon': eventGeo('Bryce Canyon National Park', 37.6284, -112.1676, 25),
+  'park-black-canyon': eventGeo('Black Canyon of the Gunnison National Park', 38.5746, -107.7416, 25),
+  'park-shenandoah': eventGeo('Shenandoah National Park', 38.473, -78.452, 40),
+  'park-olympic': eventGeo('Olympic National Park', 47.9694, -123.4968, 25),
 };
 
 /** A scope definition from request params: either a registry key, or

@@ -7,6 +7,7 @@ import liveCameraIndex from "@/data/live-camera-index.json";
 import { POSTS } from "./blog/posts";
 import { EVENT_WALLS } from "@/data/event-walls";
 import { AIRPORT_PAGES } from "@/lib/airport-pages";
+import { NATIONAL_PARKS } from "@/lib/national-parks";
 
 const BASE = "https://worldeye.app";
 
@@ -190,6 +191,15 @@ const SEO_PAGES_RESEARCH = ["/research-access"];
 // invitation-only partners tier plus every catalogue source label with
 // its camera count (dated snapshot in src/app/partners/sources-data.ts).
 const SEO_PAGES_PARTNERS = ["/partners"];
+
+// National park hubs (2026-10-27): the /national-park-webcams hub and
+// one page per park in the src/lib/national-parks registry —
+// catalogue-driven walls, so they carry the catalogue's date like
+// Wave 13.
+const SEO_PAGES_PARKS = [
+  "/national-park-webcams",
+  ...NATIONAL_PARKS.map((p) => `/national-park-webcams/${p.slug}`),
+];
 
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
@@ -454,6 +464,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...SEO_PAGES_PARTNERS.map((p) => ({
       url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_PARKS.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
