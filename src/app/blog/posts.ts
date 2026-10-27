@@ -30,6 +30,223 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "kilauea-episode-56-watch-live",
+    title: "Kīlauea Episode 56: How to Watch the Next Eruption Episode Live",
+    seoTitle: "Kīlauea Episode 56: How to Watch Live | WorldEye Blog",
+    date: "2026-10-27",
+    excerpt:
+      "Kīlauea is paused — but the USGS Hawaiian Volcano Observatory's October 26 update puts the Episode 56 fountaining window at October 31 – November 6. How the episode pattern works, which cameras actually show the crater, and how to be watching when it starts.",
+    seoDescription:
+      "Kīlauea Episode 56 is expected Oct 31–Nov 6, 2026 (USGS). How the episode pattern works, which webcams show Halemaʻumaʻu, and how to watch the eruption live.",
+    tags: ["volcanoes", "hawaii", "live cams", "events"],
+    sections: [
+      {
+        body: [
+          "Kīlauea is quiet right now — and that is exactly why this week matters. The summit eruption inside Halemaʻumaʻu crater has run in episodes since December 23, 2024: a burst of lava fountaining, then a pause while the summit recharges. Episode 55 ended on October 17, 2026, its fountains having reached about 720 feet. The USGS Hawaiian Volcano Observatory's daily update of October 26 reports summit re-inflation plateauing, and puts the forecast window for Episode 56 at October 31 – November 6.",
+          "Read that the way the observatory means it: an expected window, not a scheduled start. The volcano alert level is ADVISORY, the aviation color code YELLOW, and windows move with the mountain. What you can do is be ready — know the pattern, know which cameras matter, and know where the authoritative word comes from. That is this guide.",
+        ],
+      },
+      {
+        heading: "An eruption in episodes",
+        body: [
+          "This eruption does not flow continuously. Pressure rebuilds beneath the summit — measured as ground inflation — until magma reaches the vents in Halemaʻumaʻu and fountaining begins: jets of lava hundreds of feet high that build the crater floor episode by episode. Then discharge outruns supply, the fountains die, and the cycle resets. Episodes have run hours to days, separated by pauses of days to weeks.",
+          "We have been following the pattern through the autumn in our [Kīlauea eruption watch](/blog/kilauea-eruption-watch-live), and Episode 55 fit it precisely: strong fountains, a clean stop on October 17, and a summit that immediately began re-inflating. The plateau the observatory reported on October 26 is part of the same rhythm — it is why the forecast is a window across a week rather than a date on a calendar.",
+        ],
+      },
+      {
+        heading: "Which cameras to watch",
+        body: [
+          "Start with the canonical view: the USGS observatory's own summit webcams, set on the caldera rim looking into Halemaʻumaʻu. When fountaining resumes, those are the frames the world watches — the observatory operates them, positions them, and interprets what they show in its daily updates.",
+          "Around that crater view, our [volcano webcams](/volcano-webcams) page gathers the wider island: 17 public cameras within 50 km of Kīlauea's summit, spanning rim-road, coastal and research-tower feeds, including the Holei Pali and Pāhala camera groups. The crater cameras tell you the eruption has started; the island wall tells you what it looks like from the roads, the coast and the communities around Hawaiʻi Volcanoes National Park — and it is the view that stays useful between episodes, when the summit is dark but the mountain is not done.",
+          "One viewing tip worth the lost sleep: fountaining episodes are at their most spectacular after dark, when the lava's glow lights the plume and the crater walls. If the window opens and an episode starts in daylight, keep a camera open into the Hawaiian evening — the same fountains, transformed.",
+        ],
+      },
+      {
+        heading: "Read the mountain between episodes",
+        body: [
+          "The cameras show the surface; the instruments show the intent. Swarms of small earthquakes under the summit, ground inflation and volcanic tremor precede and accompany fountaining episodes — they are the signals the observatory's forecast windows are built from. WorldEye's [earthquake tracker](/earthquake-tracker) plots that seismicity live, and our explainer on [how earthquake tracking works](/blog/earthquake-tracking-explained) covers how to read magnitude and depth without fooling yourself.",
+          "Watching the two together is the difference between waiting and understanding: a tightening swarm under the summit during the forecast window is the mountain clearing its throat. It is still not a promise — only the observatory calls the eruption — but it is the closest thing to a starting gun a volcano gives.",
+        ],
+      },
+      {
+        heading: "Before you conclude anything from one frame",
+        body: [
+          "Eruption status belongs to the observatory, not to any camera directory — including ours. A dark crater frame can mean a pause, a vog-covered lens, or a camera outage; a glowing frame can be a new episode or residual heat in the crater lake of lava left by the last one. Confirm with the [USGS Kīlauea page](https://www.usgs.gov/volcanoes/kilauea) and its daily updates before repeating anything as fact.",
+          "And if you are going in person: Hawaiʻi Volcanoes National Park manages access, closures and viewing areas, and conditions near an active vent change faster than any website. Follow park guidance on the day, stay on designated overlooks, and let the webcams do the close-ups. The fountains will be hundreds of feet tall; the screen in your pocket is the best seat that requires nothing of the mountain.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is Kīlauea Episode 56 expected?",
+        a: "The USGS Hawaiian Volcano Observatory's daily update of October 26, 2026 puts the forecast window for Episode 56 fountaining at October 31 – November 6, 2026. It is an expected window, not a scheduled time — the eruption is paused after Episode 55 (October 17), summit re-inflation has plateaued, and the alert level is ADVISORY / aviation color code YELLOW.",
+      },
+      {
+        q: "Is Kīlauea erupting right now?",
+        a: "As of the October 26, 2026 observatory update, the summit eruption is paused: Episode 55 ended on October 17 and no fountaining is underway. The eruption itself — episodic activity at Halemaʻumaʻu since December 23, 2024 — is ongoing, which is why a next episode is forecast rather than a new eruption announced.",
+      },
+      {
+        q: "Why do Kīlauea's forecast windows keep moving?",
+        a: "Because the forecast is read from the mountain's instruments — inflation, earthquake swarms and tremor — not from a timetable. When recharge slows or the summit's plumbing changes, the window shifts. A window that moves is the system working: the observatory updates it daily rather than defending an old guess.",
+      },
+      {
+        q: "What is the best camera for watching the eruption?",
+        a: "For the crater itself, the USGS observatory's summit webcams are the canonical view — they are positioned on the caldera rim for exactly this. For the island around the crater, WorldEye's volcano webcams page gathers 17 public cameras within 50 km of the summit, including rim-road, coastal and research-tower feeds.",
+      },
+    ],
+  },
+  {
+    slug: "best-free-flight-trackers-2026",
+    title: "Best Free Flight Trackers in 2026 — Including the Ones That Don't Hide Military Jets",
+    seoTitle: "Best Free Flight Trackers in 2026 | WorldEye Blog",
+    date: "2026-10-26",
+    excerpt:
+      "Ask which flight tracker is best and the answers split on a question nobody mentions: what does each tracker hide? An honest comparison of Flightradar24, FlightAware, ADS-B Exchange and WorldEye — including who shows blocked and military traffic, and who cannot.",
+    seoDescription:
+      "The best free flight trackers in 2026, compared honestly: Flightradar24, FlightAware, ADS-B Exchange and WorldEye — and which hide blocked or military jets.",
+    tags: ["aviation", "flight tracking", "comparison"],
+    sections: [
+      {
+        body: [
+          "The question surfaces constantly in aviation forums, usually from someone who lives under a flight path: which flight tracker is actually the best — and why do the free apps hide the military planes? It is a better question than most comparison articles deserve, because the honest answer is that 'best' depends on what a tracker chooses to show you, and every tracker chooses differently.",
+          "So this comparison is organized around the thing the forum asker actually wanted: seeing everything that is up there. We will cover the big names, what each one filters, what each one is genuinely best at — including ours, with its limits stated plainly.",
+        ],
+      },
+      {
+        heading: "First, understand the three ways a plane goes missing",
+        body: [
+          "Almost every tracked aircraft is broadcasting ADS-B: its position, altitude, speed and identity, free for anyone with a receiver to hear. When a plane is absent from a tracker, one of three things happened. It is not broadcasting — some military aircraft and a shrinking number of older aircraft fly without ADS-B, and no website on Earth can show them. It is blocked at the owner's request — programs like the FAA's LADD and PIA let private operators ask that their aircraft not be publicly displayed. Or the tracker itself filters — honoring those block lists, or holding back data behind a subscription.",
+          "That distinction is the whole game. A tracker that honors block lists will hide a celebrity's jet even while it broadcasts happily. A tracker built on unfiltered community feeds shows it. We break down each mechanism in [why flights disappear from trackers](/blog/why-flights-disappear-trackers) — required reading before judging any of the tools below.",
+        ],
+      },
+      {
+        heading: "Flightradar24: the biggest net",
+        body: [
+          "Flightradar24 runs the largest public receiver network, fed by thousands of volunteer ground stations, and its free tier is where most people start: a live map, aircraft photos, and basic flight data in a polished app. The limits arrive quickly, though — history, weather layers and richer aircraft data sit behind its subscription tiers, and it honors owner blocking: request that your jet be hidden and it disappears from the map.",
+          "Choose it if you want the densest coverage and the slickest consumer app, and you do not mind that blocked aircraft stay blocked.",
+        ],
+      },
+      {
+        heading: "FlightAware: the operations brain",
+        body: [
+          "FlightAware leans toward flight status over plane spotting: schedules, delays, gate information and arrival predictions, with particular depth in the United States. Its map is good; its data products are better. Like Flightradar24, it is a commercial service that honors blocking requests, so the military-and-billionaires question gets the same answer — what owners and authorities ask to be hidden stays hidden.",
+          "Choose it if your real question is 'will this specific flight land on time' rather than 'what is everything in my sky.'",
+        ],
+      },
+      {
+        heading: "ADS-B Exchange: the unfiltered one",
+        body: [
+          "ADS-B Exchange grew out of the hobbyist feeder community with a founding principle the others do not share: do not filter. Its map shows what its receivers hear, including aircraft whose owners have asked other services to hide them — which is precisely why it is the name that comes up in every forum thread about military traffic. Military aircraft that broadcast in the clear show up here; the interface is plainer than the commercial apps, and it looks like what it is: an instrument, not a product.",
+          "The honest caveat applies to it too: an aircraft that does not broadcast, or broadcasts in a military-only mode, is invisible here as everywhere. Unfiltered is not the same as omniscient.",
+        ],
+      },
+      {
+        heading: "WorldEye: the tracker that is also a planet",
+        body: [
+          "WorldEye's flight layer sits on a free 3D globe alongside 74,229 live cameras, satellites, weather, earthquakes and ships — the question it answers is not just 'what is that plane' but 'what is happening around it.' Our own [live flight tracker](/live-flight-tracker) states the policy in its FAQ: if an aircraft is broadcasting ADS-B and is within receiver coverage, it appears on the map, including many private jets; some military and sensitive flights do not broadcast or are filtered at the source, and what you see is whatever the public data feeds carry.",
+          "That makes WorldEye weaker than the specialists in some ways — no gate predictions, no deep historical archive — and different in kind in another: the same screen that shows your overhead jet shows the destination's airport cameras, the storm it is skirting, and the satellites crossing above it. Start with our [live flight tracking guide](/blog/live-flight-tracking-guide) if you want the full tour of what the flight layer shows.",
+        ],
+      },
+      {
+        heading: "The verdict, by what you actually want",
+        body: [
+          "If you want the most polished all-round app and the densest coverage, Flightradar24 is the default for a reason. If you track specific flights for pickups, work trips and delays, FlightAware earns its keep. If your question is the forum question — show me the military traffic and the jets everyone else hides — ADS-B Exchange is the honest answer, with WorldEye's free globe close behind for anything broadcasting in public feeds. And if you want flights as one layer of a living planet rather than the whole product, that is the thing we built.",
+          "One last honesty note, because the forum threads rarely include it: when a military jet truly does not want to be seen, it switches its transponder off, and then it is invisible to every tracker on this list and every one that will ever exist. The sky everyone can watch is the sky that broadcasts. Choose the tracker that hides the least of it.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Why can't I see military planes on most flight trackers?",
+        a: "Two reasons. Many military aircraft do not broadcast ADS-B at all, or broadcast in restricted modes. Those that do broadcast can still be filtered: commercial trackers honor owner and authority blocking requests, while unfiltered community trackers like ADS-B Exchange show whatever their receivers hear.",
+      },
+      {
+        q: "Which free flight tracker shows blocked private jets?",
+        a: "Trackers built on unfiltered feeds — ADS-B Exchange is the best known — display aircraft whose owners asked commercial services to hide them, as long as the aircraft is broadcasting. WorldEye likewise shows whatever the public data feeds carry, including many private jets.",
+      },
+      {
+        q: "Is it legal to track military and private aircraft?",
+        a: "Receiving ADS-B is legal: the broadcasts are unencrypted transmissions aircraft make for safety, and listening to them is how every public tracker works. What no one can legally or technically do is see an aircraft that is not broadcasting.",
+      },
+      {
+        q: "Can any tracker show a plane with its transponder off?",
+        a: "No. Public flight tracking is built entirely on what aircraft broadcast. A transponder-off aircraft appears on military and air-traffic radar, but that data is not public — every tracker, free or paid, goes blind at exactly the same point.",
+      },
+    ],
+  },
+  {
+    slug: "what-plane-is-flying-overhead",
+    title: "What Plane Is Flying Overhead? How to Identify It in Under a Minute",
+    seoTitle: "What Plane Is Flying Overhead? | WorldEye Blog",
+    date: "2026-10-26",
+    excerpt:
+      "You hear it before you see it: a jet crossing your neighborhood with no name. Here is the one-minute method for identifying any plane overhead — the live map, the data card, and how to read the sky when your phone is inside.",
+    seoDescription:
+      "What plane is flying overhead right now? The one-minute method: open a live flight map, read the data card, and identify any aircraft by sight and sound.",
+    tags: ["aviation", "guide", "flight tracking"],
+    sections: [
+      {
+        body: [
+          "It is the most natural question in the sky-watching world: a jet rumbles over your house, you look up, and you wonder — what is that, where is it going, and why is it so low today? Ten years ago the honest answer was a shrug. Today the aircraft itself is answering you, broadcasting its identity, altitude and speed several times a second. You just need a map that listens.",
+          "Here is the whole method up front: open a [live flight tracker](/live-flight-tracker), let it center on your location, and tap the aircraft nearest you. The card that opens is the plane's own broadcast, decoded. The rest of this guide is how to read that card like a spotter — and what to do when the sky shows you a plane the map does not.",
+        ],
+      },
+      {
+        heading: "Step one: point the map at your house",
+        body: [
+          "Aircraft equipped with ADS-B — which is nearly everything flying in controlled airspace — transmit their GPS position, altitude, speed and identity continuously. Receiver networks collect those broadcasts and draw them on maps like WorldEye's free globe, where flights sit alongside [live cameras](/cameras), satellites and weather on the same map. No account, no install: the tracker runs in the browser on your phone.",
+          "Stand where you can see the plane, open the map, and find the icon closest to your position moving in the same direction. In a busy corridor there may be several candidates; altitude separates them. A plane that looks big and sounds close is usually below 10,000 feet — on approach, departure, or a low training flight. The tiny silent jet writing a contrail is at cruise, typically 31,000 to 43,000 feet, and far higher than it appears.",
+        ],
+      },
+      {
+        heading: "Step two: read the data card",
+        body: [
+          "Tap the aircraft and you get its data block. The fields worth learning: the callsign (an airline code plus flight number, like BAW249, or a registration for private aircraft), the type code (B789 is a Boeing 787-9, A320 an Airbus A320, C172 a Cessna 172), altitude in feet, ground speed in knots, and usually the route — departure and destination airports.",
+          "That is the answer to the original question in full: not just 'a plane' but this specific flight, on this route, at this height. Spotters log the registration — the tail number — the way birders log species; our [plane spotting guide](/blog/plane-spotting-guide) goes deeper on reading data blocks and building a log. And if the same jet crosses your house every evening around six, it is almost certainly the same scheduled flight: airline routes repeat daily, which makes your sky a timetable you can learn.",
+        ],
+      },
+      {
+        heading: "No phone handy? Read the sky itself",
+        body: [
+          "You can narrow it down with eyes and ears alone. Sound lags: a jet at cruise altitude is roughly 30 seconds of sound-travel away, so the roar seems to trail well behind the aircraft — look ahead of the noise, not at it. Size and pace help too: a slow, low, loud pass is a propeller aircraft or a jet on approach; a fast, silent speck trailing a contrail is at cruise.",
+          "At night, read the lights: red on the left wingtip, green on the right, and a steady white light tell you the direction of travel, while flashing strobes mark it as an aircraft rather than a satellite. None of this names the flight — but combined with the time and heading, it lets you find the same aircraft on the map when you get back inside.",
+        ],
+      },
+      {
+        heading: "When the map shows nothing",
+        body: [
+          "Sometimes you can see a plane the tracker cannot. A few aircraft still fly without ADS-B, some military and sensitive flights do not broadcast or are filtered at the source, and receiver coverage thins over oceans and remote terrain. We wrote a full explainer on [why flights disappear from trackers](/blog/why-flights-disappear-trackers) — blocking programs, coverage gaps and switched-off transponders each leave a different kind of hole.",
+          "The other common gap is timing: if you check the map five minutes after the plane passed, it may have left your screen area but not the sky. Pan along its heading, or search the route if you know it. And remember that the map is live while your window view is a few seconds of light and sound behind the broadcast — close enough for everything except splitting two jets stacked in a holding pattern.",
+        ],
+      },
+      {
+        heading: "Make it a habit",
+        body: [
+          "The overhead question gets more satisfying the more you ask it. The freighters come at night, the training circuits repeat on calm mornings, and seasonal routes appear and vanish with the timetables. Keep the [live flight tracking guide](/blog/live-flight-tracking-guide) bookmarked next to the tracker — and if you would rather watch from the sofa, the same globe runs full-screen in any modern browser, no app store involved, as we covered in [using the live 3D globe without installing anything](/blog/live-3d-globe-without-installing).",
+          "Next time the windows rattle, you will know: which flight, which aircraft, how high, how fast, and where it lands tonight. The sky was always labeled. Now you have the legend.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How can I tell what plane is flying over my house right now?",
+        a: "Open a live flight tracker, center it on your location, and tap the nearest aircraft icon. Its data card shows the callsign, aircraft type, altitude, speed and route — all broadcast by the plane itself via ADS-B.",
+      },
+      {
+        q: "Why does the sound lag behind the plane?",
+        a: "A cruising jet is 9–13 km above you, and sound takes roughly 30 seconds to travel that far — longer on the slant from a plane off to the side. The noise you hear left the aircraft half a minute ago, so the jet has moved well ahead of its own roar.",
+      },
+      {
+        q: "Why can I see a plane that is not on the tracker?",
+        a: "It may not be broadcasting ADS-B, it may be filtered at the source (some military and blocked private flights), or it may be outside receiver coverage — over oceans and remote areas especially. Most airliners in controlled airspace do appear.",
+      },
+      {
+        q: "What do aircraft type codes like B789 and A320 mean?",
+        a: "They are shorthand for the exact model: B789 is a Boeing 787-9, A320 an Airbus A320, C172 a Cessna 172. The tracker shows the code; any aviation reference — or a quick search of the code — expands it to the full aircraft name.",
+      },
+    ],
+  },
+  {
     slug: "worldeye-ambient-mode",
     title: "WorldEye Ambient: Slow TV From 74,229 Live Cameras",
     seoTitle: "WorldEye Ambient: Slow TV From Live Cameras | WorldEye Blog",
