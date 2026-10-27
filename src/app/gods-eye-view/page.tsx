@@ -25,12 +25,12 @@ import GodsEyeStickyCta from "@/components/GodsEyeStickyCta";
 import { TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
 
 export const metadata: Metadata = {
-  title: "God's Eye View of Earth, Live — 74,229 Cameras, Flights & Satellites",
+  title: "God's Eye View of Earth — Live 3D Globe, 74,229 Cameras (Free, No Install)",
   description:
-    "WorldEye is a live god's eye view of Earth: 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires on one 3D globe — free, no signup, nothing to install.",
+    "A god's eye view of Earth, live in your browser: 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires on one 3D globe. WorldEye is the hosted way to get this view — free, no signup, no install, no API key.",
   alternates: { canonical: "/gods-eye-view" },
   openGraph: {
-    title: "God's Eye View of Earth, Live — 74,229 Cameras, Flights & Satellites | WorldEye",
+    title: "God's Eye View of Earth — Live 3D Globe, 74,229 Cameras (Free, No Install) | WorldEye",
     description:
       "One live 3D globe with 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires. Free, no signup, nothing to install.",
     url: "/gods-eye-view",

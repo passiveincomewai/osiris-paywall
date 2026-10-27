@@ -9,6 +9,11 @@ import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import CountriesDirectory from "@/components/CountriesDirectory";
 import type { CountryDirectoryEntry } from "@/lib/country-directory";
+import {
+  COUNTRY_REGION,
+  REGION_HUB,
+  type RegionKey,
+} from "@/lib/country-page-content";
 import data from "@/data/camera-countries.json";
 
 /* Counts come from the generated index (tools/build-country-pages.mjs,
@@ -36,6 +41,28 @@ const DIRECTORY_ENTRIES: CountryDirectoryEntry[] = COUNTRIES.map((c) => ({
   aliases: c.aliases ?? [],
 }));
 const largest = COUNTRIES.reduce((a, b) => (b.count > a.count ? b : a), COUNTRIES[0]);
+
+/* Regional rollups, grouped by the country pages' own continental
+   grouping (COUNTRY_REGION) and linked to the hub each region
+   actually has (REGION_HUB — Africa has no hub yet, so it is not
+   offered one). Counts are summed from the same directory entries
+   the table below renders, so the strip can never disagree with it. */
+const REGION_CARDS = (Object.keys(REGION_HUB) as RegionKey[])
+  .map((key) => {
+    const hub = REGION_HUB[key];
+    if (!hub) return null;
+    const members = COUNTRIES.filter((c) => COUNTRY_REGION[c.slug] === key);
+    if (members.length === 0) return null;
+    return {
+      key,
+      href: hub.href,
+      label: hub.label,
+      countries: members.length,
+      cameras: members.reduce((s, c) => s + c.count, 0),
+    };
+  })
+  .filter((x): x is NonNullable<typeof x> => x !== null)
+  .sort((a, b) => b.cameras - a.cameras);
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 const generatedDate = new Date(
@@ -214,6 +241,31 @@ export default function CameraCountriesPage() {
             <p className="w-5 h-5 mb-3 text-[#D4AF37] font-bold text-lg">↻</p>
             <p className="text-lg md:text-xl font-bold">{generatedDate}</p>
             <p className="text-sm text-white/45 mt-1">Directory last updated</p>
+          </div>
+        </div>
+
+        {/* Regional hubs */}
+        <div className="mt-14">
+          <h2 className="text-2xl md:text-3xl font-bold">Browse by region</h2>
+          <p className="text-white/50 mt-2 max-w-2xl text-sm md:text-base">
+            Each region has its own hub — the continent&apos;s cameras rolled
+            up with its top countries, busiest cities and live explorer.
+          </p>
+          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {REGION_CARDS.map((r) => (
+              <Link
+                key={r.key}
+                href={r.href}
+                className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-[#D4AF37]/40 hover:bg-white/[0.04] transition group"
+              >
+                <p className="font-semibold text-white/90 group-hover:text-[#D4AF37] transition">
+                  {r.label}
+                </p>
+                <p className="text-sm text-white/45 mt-1.5">
+                  {r.countries} countries · {fmt(r.cameras)} live cameras
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
 

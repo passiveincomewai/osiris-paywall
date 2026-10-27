@@ -1190,19 +1190,20 @@ export const POSTS: BlogPost[] = [
   {
     slug: "best-live-webcams-world",
     title: "Best Live Webcams in the World to Watch Right Now",
-    seoTitle: "Best Live Webcams in the World — Watch Them Free | WorldEye Blog",
+    seoTitle: "Best Live Cams in the World — Watch the Best Live Webcams Free | WorldEye Blog",
     date: "2026-10-11",
     excerpt:
-      "From famous city squares to mountain passes, harbors at dawn, and volcanoes — a tour of the best live webcams streaming right now, and how to find them.",
+      "From famous city squares to mountain passes, harbors at dawn, and volcanoes — a tour of the best live cams streaming right now, and how to find the live webcams worth your time.",
     seoDescription:
-      "The best live webcams in the world right now — city squares, mountain passes, harbors, volcanoes — plus how to find and watch 74,229 live cams free on WorldEye.",
+      "Best live cams in the world: the live webcams worth watching right now — city squares, mountain passes, harbors, volcanoes — and how to find 74,229 live cams free on WorldEye.",
     tags: ["cameras", "travel"],
     sections: [
       {
         heading: "City centers, live",
         body: [
+          "The best live cams are the ones worth checking even if you never leave home — feeds with movement, weather and a sense of place, streaming right now from every continent. This is a tour of them: what makes a live cam worth watching, and where the great ones cluster.",
           "Some cameras have become landmarks in their own right: the great public squares, the harbor fronts, the intersections the whole world recognizes. Watching them is less about information and more about presence — a plaza filling up for the evening, commuters streaming across a bridge at rush hour, rain sweeping across a boulevard you walked last summer.",
-          "Coverage is densest where people are: the United States, Spain, Austria, Taiwan, Canada, and Japan all have deep camera networks, which is why any tour of the world's webcams naturally passes through all of them. Open the [live camera map](/cameras), zoom into any major city, and the markers cluster exactly where you'd hope — the centers, the waterfronts, the high ground with the view.",
+          "Coverage is densest where people are: the United States, Spain, Austria, Taiwan, Canada, and Japan all have deep camera networks, which is why any tour of the world's webcams naturally passes through all of them. Open the [live cams map](/cameras), zoom into any major city, and the markers cluster exactly where you'd hope — the centers, the waterfronts, the high ground with the view. For the always-on companion tour, [live cams around the world](/blog/world-live-cameras) watches the same network one time zone at a time.",
         ],
       },
       {
@@ -1223,13 +1224,13 @@ export const POSTS: BlogPost[] = [
         heading: "Coasts, surf, and harbors",
         body: [
           "Beach and surf cameras are the trip-planning workhorses: wave height, crowd size, cloud cover, all visible at a glance. Harbor cameras are quieter and stranger — ferries docking in the blue hour, fishing boats heading out before dawn, container ships sliding past like slow architecture. If you've never watched a working port wake up, it's worth doing once.",
-          "Coastal feeds are also honest weather instruments. Whitecaps building offshore, fog banks rolling over a headland, a squall line visible an hour before it arrives — the ocean telegraphs its intentions, and the cameras catch every word.",
+          "Coastal feeds are also honest weather instruments. Whitecaps building offshore, fog banks rolling over a headland, a squall line visible an hour before it arrives — the ocean telegraphs its intentions, and the cameras catch every word. Our dedicated roundup of the [best beach webcams](/blog/best-beach-webcams) collects the surf and shoreline feeds worth bookmarking.",
         ],
       },
       {
         heading: "Mountains, volcanoes, and the night sky",
         body: [
-          "Ski resorts run some of the best-maintained cameras anywhere — summit views, lift lines, fresh snowfall measured against a fence post. Volcano cameras are rarer and more gripping: a handful of famous peaks stream around the clock, and on an active night the feed is unforgettable. Then there are the sky cameras, pointed up from dark-sky sites, catching meteors and the aurora when conditions align.",
+          "Ski resorts run some of the best-maintained cameras anywhere — summit views, lift lines, fresh snowfall measured against a fence post. The [best ski webcams](/blog/best-ski-webcams) guide collects the resort feeds skiers actually check before driving up. Volcano cameras are rarer and more gripping: a handful of famous peaks stream around the clock, and on an active night the feed is unforgettable. Then there are the sky cameras, pointed up from dark-sky sites, catching meteors and the aurora when conditions align.",
           "These are the feeds that remind you what the network really is: thousands of independent operators, each pointing a lens at something they care about, all visible from one map.",
         ],
       },
@@ -1251,7 +1252,7 @@ export const POSTS: BlogPost[] = [
         heading: "How to find the good ones",
         body: [
           "The honest truth about best-webcam lists: the specific standouts change constantly, because the cameras are run by third parties and [feeds come and go](/faq). A camera that's spectacular today can be offline next month. The durable skill is knowing how to browse the network yourself.",
-          "Start on the [live camera map](/cameras) — it's free, no signup — and zoom into the places that interest you. Dense clusters usually mean a city center or a monitored highway; lone markers in the mountains are often the scenic ones. And if you enjoy this kind of browsing, the [WorldEye blog](/blog) has guides for using cameras in trip planning and road checks, while the free [search](/features) jumps straight to named places when you'd rather not hunt.",
+          "Start on the [live cams map](/cameras) — it's free, no signup — and zoom into the places that interest you. Dense clusters usually mean a city center or a monitored highway; lone markers in the mountains are often the scenic ones. And if you enjoy this kind of browsing, the [WorldEye blog](/blog) has guides for using cameras in trip planning and road checks, while the free [search](/features) jumps straight to named places when you'd rather not hunt. Prefer to compare the platforms first? Our ranked take on the [best live webcam sites](/best-live-webcam-sites) puts the major networks side by side.",
         ],
       },
     ],

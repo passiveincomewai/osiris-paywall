@@ -50,7 +50,29 @@ export const metadata: Metadata = {
   openGraph: { title: TITLE, description: BLURB, url: "/asia-webcams", type: "website" },
 };
 
-const TOP_COUNTRIES = ASIA.slice(0, 12).map((c) => ({ name: c.name, count: c.count }));
+/* The hub's country rows link to the country pages — the same
+   server-rendered links the (indexed) Europe hub renders. Before
+   this, the rows were plain text and the only paths down to the
+   Asian country pages were the client-side explorer and the
+   country directory. */
+const TOP_COUNTRIES = ASIA.slice(0, 12).map((c) => ({
+  name: c.name,
+  count: c.count,
+  href: `/cameras/countries/${c.slug}`,
+}));
+
+/* The region's biggest city indexes, linked from the hub: the
+   curated Tokyo page plus the largest generated Asian city pages
+   (counts from city-pages.json via the catalogue — Busan 319,
+   Osaka 229, Taichung 188, Taipei 165, Istanbul 236). */
+const FEATURED_CITIES = [
+  { label: "Tokyo live webcams", href: "/city-webcams/tokyo" },
+  { label: "Busan live webcams", href: "/city-webcams/busan" },
+  { label: "Osaka live webcams", href: "/city-webcams/osaka" },
+  { label: "Istanbul live webcams", href: "/city-webcams/istanbul" },
+  { label: "Taichung live webcams", href: "/city-webcams/taichung" },
+  { label: "Taipei live webcams", href: "/city-webcams/taipei" },
+];
 
 export default async function AsiaWebcamsPage() {
   const updated = formatDate(CATALOGUE_GENERATED_AT);
@@ -69,7 +91,7 @@ export default async function AsiaWebcamsPage() {
         "@type": "ListItem",
         position: i + 1,
         name: `${c.name} — ${c.count.toLocaleString("en-US")} cameras`,
-        url: BASE,
+        url: `${BASE}${c.href}`,
       })),
     },
   };
@@ -182,6 +204,7 @@ export default async function AsiaWebcamsPage() {
         ]}
       />
       <FaqSection title="Asia webcams — FAQ" faqs={FAQS} />
+      <RelatedLinks title="Featured Asian city indexes" links={FEATURED_CITIES} />
       <RelatedLinks
         title="More regional webcam indexes"
         links={[

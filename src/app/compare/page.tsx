@@ -32,6 +32,22 @@ const CATEGORIES = [
   { id: "geopolitical-analytics", label: "Geopolitical analytics" },
 ];
 
+/* The ranked category guides that group these head-to-heads — the
+   hub links them so the roundup family is reachable from the hub,
+   not only from each other's footers. */
+const GUIDES = [
+  { title: "Best live webcam sites", desc: "The webcam networks ranked — directories, scenic specialists and the live globe.", href: "/best-live-webcam-sites" },
+  { title: "Best interactive 3D globes", desc: "Live globes, imagery globes and science globes, compared on what each actually shows.", href: "/best-interactive-3d-globes" },
+  { title: "Best global intelligence dashboards", desc: "Planet-scale awareness platforms — visual globes, alerting engines and open data.", href: "/best-global-intelligence-dashboards" },
+  { title: "Best geopolitical monitoring tools", desc: "Tools for tracking a fast-moving world, ranked by best fit.", href: "/best-geopolitical-monitoring-tools" },
+  { title: "Best conflict monitoring tools", desc: "Conflict dashboards and event maps, compared honestly.", href: "/best-conflict-monitoring-tools" },
+  { title: "Best OSINT tools", desc: "The ranked OSINT toolkit guide — free and paid, with honest limits.", href: "/best-osint-tools" },
+  { title: "Free OSINT tools", desc: "Nine genuinely free OSINT tools that actually work — no trials, no credit cards.", href: "/free-osint-tools" },
+  { title: "Best flight tracking tools", desc: "Flight trackers compared — coverage, blocked aircraft and pricing.", href: "/best-flight-tracking-tools" },
+  { title: "Best ship tracking tools", desc: "AIS vessel trackers and maritime platforms, side by side.", href: "/best-ship-tracking-tools" },
+  { title: "Best satellite tracking tools", desc: "Satellite and ISS trackers compared — live positions, passes and imagery.", href: "/best-satellite-tracking-tools" },
+];
+
 const DIFFERENTIATORS = [
   { title: "One globe, every layer", body: "Flights, satellites, ships, cameras, live transit, weather, quakes and wildfires on a single interactive 3D globe — not scattered across a dozen tabs." },
   { title: "Free with no signup", body: "The full live map costs nothing and needs no account. Most competitors paywall their best views." },
@@ -74,11 +90,27 @@ export default async function CompareHubPage() {
       { "@type": "ListItem", position: 2, name: "Compare", item: "https://worldeye.app/compare" },
     ],
   };
+  /* Every comparison child, enumerated server-side from the same
+     list the cards render — the hub's ItemList is the children's
+     canonical table of contents for crawlers. */
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "WorldEye comparisons",
+    numberOfItems: competitors.length,
+    itemListElement: competitors.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: `WorldEye vs ${c.name}`,
+      url: `https://worldeye.app/compare/${c.slug}`,
+    })),
+  };
 
   return (
     <div className="docs-root min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbLd} />
+      <JsonLd data={itemListLd} />
 
       {/* Hero */}
       <header className="max-w-5xl mx-auto px-6 pt-16 md:pt-24 pb-10 text-center">
@@ -242,6 +274,28 @@ export default async function CompareHubPage() {
               <h3 className="font-bold text-white group-hover:text-[#7cc4ff] transition">{c.title}</h3>
               <p className="text-sm text-white/45 mt-1.5 leading-relaxed">{c.desc}</p>
               <span className="inline-block mt-3 text-xs font-semibold text-[#0096FF]">Read the comparison →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Ranked guides */}
+      <section className="max-w-5xl mx-auto px-6 pb-16">
+        <h2 className="text-2xl font-bold text-white text-center">Ranked guides</h2>
+        <p className="text-sm text-white/45 text-center mt-3 max-w-xl mx-auto">
+          The category rankings behind the head-to-heads — every guide
+          ranks by genuine best-fit and states each pick&apos;s limits.
+        </p>
+        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {GUIDES.map((g) => (
+            <Link
+              key={g.href}
+              href={g.href}
+              className="block rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0096FF]/40 hover:bg-white/[0.04] transition group"
+            >
+              <h3 className="font-bold text-white group-hover:text-[#7cc4ff] transition">{g.title}</h3>
+              <p className="text-sm text-white/45 mt-1.5 leading-relaxed">{g.desc}</p>
+              <span className="inline-block mt-3 text-xs font-semibold text-[#0096FF]">Read the guide →</span>
             </Link>
           ))}
         </div>

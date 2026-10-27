@@ -436,13 +436,13 @@ const CITIES: Record<string, CityCfg> = {
     country: "United States",
     countrySlug: "united-states",
     count: 845,
-    title: "Dallas Live Webcams — 845 Traffic Cameras",
+    title: "Dallas Live Traffic Cameras & CCTV — 845 Freeway Feeds",
     blurb:
-      "Watch 845 live Dallas freeway and traffic cameras — check DFW metro congestion, weather and road conditions free on the WorldEye map. No signup.",
+      "Watch 845 live Dallas CCTV and freeway traffic cameras — check DFW metro congestion, weather and road conditions free on the WorldEye map. No signup.",
     h1: "Dallas Live Webcams",
-    sub: "Watch 845 live Dallas freeway and traffic cameras — free on the WorldEye globe.",
+    sub: "Watch 845 live Dallas CCTV and freeway traffic cameras — free on the WorldEye globe.",
     intro: [
-      "Dallas accounts for 845 of the 23,059 cameras indexed in the United States — the fourth-largest of 12 US areas, behind Georgia, Utah and Houston. The grid watches the Dallas–Fort Worth metro's freeway network, the corridors where the region's long commutes concentrate. Fort Worth is indexed separately with another 489 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
+      "Dallas accounts for 845 of the 23,059 cameras indexed in the United States — the fourth-largest of 12 US areas, behind Georgia, Utah and Houston. The grid watches the Dallas–Fort Worth metro's freeway network, the corridors where the region's long commutes concentrate. Fort Worth is indexed separately with another 489 feeds, so the DFW metro's combined coverage is among the deepest in the country. These are the metro's public traffic CCTV cameras — the fixed road feeds drivers across North Texas check before they merge on.",
       "DFW's commutes are long, its construction zones are constant, and its weather swings from ice storms to severe thunderstorms. The freeway cameras earn their keep in all three: check for ice on the elevated sections in winter, hail and high water in spring, and the ever-present construction slowdowns before you merge on.",
       "All 845 feeds open free on the WorldEye map. Zoom to Dallas–Fort Worth, find the markers on your corridor, and check conditions before you drive.",
       "The Fort Worth split matters for how you use the grid. Dallas's 845 feeds and Fort Worth's 489 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metro's freeway network lights up. If your commute crosses between the two, check cameras on both sides of the metroplex.",
@@ -497,6 +497,10 @@ const CITIES: Record<string, CityCfg> = {
         q: "What is the best pre-drive routine?",
         a: "Check the cameras on your corridor for three things: construction closures, weather on the elevated sections, and the general rush-hour state. Two minutes before leaving covers all three.",
       },
+      {
+        q: "Are these the Dallas CCTV traffic cameras?",
+        a: "Yes. The feeds are the fixed public traffic cameras — the CCTV class of road camera — that TxDOT publishes for the Dallas district's freeway network. 'Traffic cameras' and 'CCTV' are two names for the same feeds here: cameras mounted on the freeways so drivers can check congestion, weather and closures before travelling.",
+      },
     ],
   },
   tokyo: {
@@ -504,9 +508,9 @@ const CITIES: Record<string, CityCfg> = {
     country: "Japan",
     countrySlug: "japan",
     count: 73,
-    title: "Tokyo Live Webcams — 73 Street Cameras",
+    title: "Tokyo Live Webcam — 73 Live Cameras in Tokyo, Japan",
     blurb:
-      "Watch 73 live Tokyo cameras — the largest camera grid in Japan — with expressway traffic and city views, free on the WorldEye map. No signup needed.",
+      "Watch Tokyo live: 73 live cameras across Japan's capital — expressway traffic and city views from the largest camera grid in Japan — free on the WorldEye map. No signup needed.",
     h1: "Tokyo Live Webcams",
     sub: "Watch 73 live Tokyo cameras — the largest grid in Japan — free on the WorldEye globe.",
     intro: [
@@ -564,6 +568,10 @@ const CITIES: Record<string, CityCfg> = {
       {
         q: "Can I see seasonal views like cherry blossoms?",
         a: "These are mainly road and city feeds, not scenic overlooks. For seasonal and landmark views, browse the scenic cameras on the main WorldEye map.",
+      },
+      {
+        q: "Is there a live camera I can watch in Tokyo, Japan?",
+        a: "Yes — 73 of them. This page is Tokyo's live camera index: expressway and arterial traffic feeds plus city cameras across the densest districts, all free on the WorldEye map. For the rest of the country, the Japan webcams hub covers the national network city by city.",
       },
     ],
   },
@@ -718,11 +726,11 @@ const CITIES: Record<string, CityCfg> = {
     country: "United States",
     countrySlug: "united-states",
     count: 489,
-    title: "Fort Worth Live Webcams — 489 Traffic Cameras",
+    title: "Fort Worth Live Traffic Cameras & CCTV — 489 Freeway Feeds",
     blurb:
-      "Watch 489 live Fort Worth freeway cameras — I-35W, I-20 and I-820 corridor conditions across the western DFW metro — free on WorldEye. No signup.",
+      "Watch 489 live Fort Worth CCTV and freeway traffic cameras — I-35W, I-20 and I-820 corridor conditions across the western DFW metro — free on WorldEye. No signup.",
     h1: "Fort Worth Live Webcams",
-    sub: "Watch 489 live Fort Worth freeway cameras — free on the WorldEye globe.",
+    sub: "Watch 489 live Fort Worth CCTV and freeway cameras — free on the WorldEye globe.",
     intro: [
       "Fort Worth accounts for 489 of the 23,059 cameras indexed in the United States — the tenth-largest of 12 US areas. The grid is a TxDOT district freeway-camera network covering the western half of the Dallas–Fort Worth metroplex: the I-35W, I-20 and I-820 corridors commuters use every day. Dallas is indexed separately with another 845 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
       "The three corridors divide the work. I-35W is the north–south spine through Fort Worth, I-20 runs the southern side of the metro, and I-820 loops the city — and between them they carry the commute, the freight, and the cross-metro trips that make DFW driving what it is. The cameras sit on those corridors, which is exactly where the incidents and slowdowns happen.",
@@ -754,6 +762,10 @@ const CITIES: Record<string, CityCfg> = {
       {
         q: "Are these the TxDOT freeway cameras?",
         a: "They are the same class of feed — fixed TxDOT district freeway cameras across the Fort Worth area, published for traffic monitoring. Use them to check congestion, weather and road conditions before driving.",
+      },
+      {
+        q: "Are these CCTV cameras?",
+        a: "Yes — fixed public traffic CCTV of the class TxDOT publishes for monitoring, watched here on the I-35W, I-20 and I-820 corridors. 'Traffic cameras' and 'CCTV' are two names for the same feeds.",
       },
       {
         q: "Which corridors have the most coverage?",
@@ -860,6 +872,77 @@ function joinNames(names: string[]): string {
   return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 }
 
+/* Per-city overrides for the generated tier (Top-50 Batch 2). The
+   generated JSON stays pure data (counts, sources, samples); the few
+   generated cities whose search demand needs a hand-set title, blurb
+   or H1 qualifier get it here, in code, next to the curated tier.
+   Every override is a function of the city's own generated record, so
+   counts and names always come from the data — an override can never
+   freeze a stale number. crossLinks render in the page's related list
+   ahead of the distance neighbours, so a disambiguation link survives
+   the C4 neighbour replacement. */
+type GenOverride = {
+  title?: (g: GenCity) => string;
+  blurb?: (g: GenCity) => string;
+  sub?: (g: GenCity) => string;
+  h1?: string;
+  crossLinks?: { label: string; href: string }[];
+};
+
+const GEN_OVERRIDES: Record<string, GenOverride> = {
+  /* #17: the Vancouver pair share one H1 today ("Vancouver Live
+     Webcams") across two real cities — Vancouver, BC (107 cameras,
+     catalogue centroid 49.25,-123.10) and Vancouver, WA (66 WSDOT
+     cameras, centroid 45.69,-122.61). Qualified H1/title plus a
+     cross-link each way; no merge, both pages stay. */
+  vancouver: {
+    title: (g) => `Vancouver, BC Live Webcams — ${fmt(g.count)} City Cameras`,
+    blurb: (g) =>
+      `Watch ${fmt(g.count)} live cameras in Vancouver, British Columbia — city street and traffic feeds around Granville Bridge, Kitsilano and Marine Drive — free on the WorldEye map. No signup needed.`,
+    sub: (g) =>
+      `Watch ${fmt(g.count)} live cameras in Vancouver, British Columbia — free on the WorldEye globe.`,
+    h1: "Vancouver, BC Live Webcams",
+    crossLinks: [
+      {
+        label: "Vancouver, Washington live webcams",
+        href: "/city-webcams/vancouver-united-states",
+      },
+    ],
+  },
+  "vancouver-united-states": {
+    title: (g) =>
+      `Vancouver, WA Live Webcams — ${fmt(g.count)} WSDOT Traffic Cameras`,
+    blurb: (g) =>
+      `Watch ${fmt(g.count)} live WSDOT traffic cameras in Vancouver, Washington — I-5, I-205 and SR 500 corridor feeds — free on the WorldEye map. No signup needed.`,
+    sub: (g) =>
+      `Watch ${fmt(g.count)} live traffic cameras in Vancouver, Washington — free on the WorldEye globe.`,
+    h1: "Vancouver, Washington Live Webcams",
+    crossLinks: [
+      { label: "Vancouver, BC live webcams", href: "/city-webcams/vancouver" },
+    ],
+  },
+  /* #20: Montréal's generated copy never names what its own data
+     says — 148 Québec 511 feeds, every one a live stream, all on the
+     autoroute network (Décarie interchange, A-40/A-20/A-15 samples). */
+  montreal: {
+    title: (g) =>
+      `Montréal Live Webcams — ${fmt(g.count)} Autoroute & Traffic Cameras`,
+    blurb: (g) =>
+      `Watch ${fmt(g.count)} live Montréal traffic cameras — Québec 511 autoroute feeds across the Décarie interchange, Autoroutes 40, 20 and 15 and the island's bridge approaches — free on the WorldEye map. No signup needed.`,
+    sub: (g) =>
+      `Watch ${fmt(g.count)} live Montréal autoroute and traffic cameras — free on the WorldEye globe.`,
+  },
+  /* #25: snippet-only play (title/meta). The page's content was just
+     refreshed by the C2 template ship; only the title and the meta
+     description (blurb) change. Road names are the page's own
+     featured samples (LP20, SH 359, FM1472 @ World Trade Loop). */
+  laredo: {
+    title: (g) => `Laredo Live Webcams — ${fmt(g.count)} TxDOT Traffic Cameras`,
+    blurb: (g) =>
+      `Watch ${fmt(g.count)} live Laredo traffic cameras — TxDOT feeds on Loop 20, SH 359 and FM 1472 toward the World Trade Bridge corridor — free on the WorldEye map. No signup needed.`,
+  },
+};
+
 function generatedCfg(g: GenCity): CityCfg {
   const share = Math.round((g.count / g.countryTotal) * 100);
   const shareLabel = share < 1 ? "under 1%" : `${share}%`;
@@ -880,7 +963,7 @@ function generatedCfg(g: GenCity): CityCfg {
       ? `All ${fmt(g.count)} feeds in the ${g.name} index publish still images that refresh at short intervals rather than continuous video. That is the format the operators themselves use for road monitoring, and it is enough to judge traffic, weather and road conditions.`
       : `${fmt(g.stills)} of the ${fmt(g.count)} feeds publish still images that refresh at short intervals, and ${fmt(g.streams)} stream live video. Both show current conditions — check the featured list on this page to open either kind.`;
 
-  return {
+  const cfg: CityCfg = {
     name: g.name,
     country: g.country,
     countrySlug: g.countrySlug,
@@ -944,6 +1027,14 @@ function generatedCfg(g: GenCity): CityCfg {
       },
     ],
   };
+  const ov = GEN_OVERRIDES[g.slug];
+  if (ov) {
+    if (ov.title) cfg.title = ov.title(g);
+    if (ov.blurb) cfg.blurb = ov.blurb(g);
+    if (ov.sub) cfg.sub = ov.sub(g);
+    if (ov.h1) cfg.h1 = ov.h1;
+  }
+  return cfg;
 }
 
 /** The hand-maintained RELATED entries that point at curated cities
@@ -1260,6 +1351,11 @@ export default async function CityWebcamPage({
           },
         ]
       : []),
+    /* Per-city override cross-links (GEN_OVERRIDES) sit ahead of the
+       related list itself, so a same-name disambiguation link (the
+       Vancouver pair) is present whichever related list — file-order
+       or C4 distance neighbours — the page ends up with. */
+    ...(genCity ? (GEN_OVERRIDES[slug]?.crossLinks ?? []) : []),
     ...baseRelated,
     ...(geoUrl
       ? [{ label: `Open ${c.name} on the globe`, href: geoUrl }]

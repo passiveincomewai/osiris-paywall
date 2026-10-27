@@ -377,6 +377,16 @@ export default function FreeOsintToolsPage() {
             href: "/best-osint-tools",
           },
           {
+            label: "What is OSINT?",
+            desc: "The beginner's guide the toolkit builds on — methods, ethics and first investigations.",
+            href: "/blog/what-is-osint",
+          },
+          {
+            label: "Best global intelligence dashboards",
+            desc: "The dashboard layer of the stack — planet-scale awareness platforms, ranked.",
+            href: "/best-global-intelligence-dashboards",
+          },
+          {
             label: "Features",
             desc: "The OSINT toolkit, AI analyst and intel feeds in detail.",
             href: "/features",

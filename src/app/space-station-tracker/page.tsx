@@ -20,14 +20,14 @@ import RelatedLinks from "@/components/RelatedLinks";
 import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
-  title: "ISS Tracker — Watch the Space Station Live",
+  title: "ISS Live — Track the Space Station on a 3D Globe (Free)",
   description:
-    "Track the International Space Station live on a 3D globe: current position, orbit path and visibility. Free ISS tracker — no signup, no account, no cost.",
+    "ISS live: track the International Space Station on a 3D globe — where it is right now, its orbit path, and when it crosses your sky. Free space station tracker — no signup, no account, no cost.",
   alternates: { canonical: "/space-station-tracker" },
   openGraph: {
-    title: "ISS Tracker — Watch the Space Station Live | WorldEye",
+    title: "ISS Live — Track the Space Station on a 3D Globe (Free) | WorldEye",
     description:
-      "The International Space Station, live on a 3D globe — position, orbit path and visibility. Free, no signup.",
+      "The International Space Station, live on a 3D globe — current position, orbit path and visibility. Free, no signup.",
     url: "/space-station-tracker",
     type: "website",
   },
@@ -91,6 +91,10 @@ const FAQS = [
   {
     q: "Why is the ISS sometimes easy to spot and sometimes not?",
     a: "Visibility depends on the station being sunlit while your sky is dark — typically the hour or two after sunset or before sunrise. In the middle of the night it flies through Earth's shadow; in daylight it's lost in the blue. Space agencies and spotter tools publish pass predictions for your exact location.",
+  },
+  {
+    q: "When can I see the space station from where I live?",
+    a: "Watch for a pass in the hour or two after sunset or before sunrise, when the station is still sunlit against a dark sky. Follow its ground track on the globe above: when the track crosses your area inside one of those twilight windows, step outside and look up — a bright, steady point moving fast, crossing the whole sky in a few minutes.",
   },
   {
     q: "How many people are on the ISS right now?",

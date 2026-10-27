@@ -27,14 +27,14 @@ import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Features — Free Globe, 74,229 Live Cameras & Pro Tools",
+  title: "Features: Live 3D Globe, 74,229 Cameras, Flight Tracking & OSINT Tools",
   description:
-    "Explore WorldEye's features: a free 3D globe with live flights, 74,229 public cameras, satellites, transit and hazards — no signup. Pro adds the OI AI assistant, satellite imagery, live traffic and the OSINT toolkit.",
+    "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, satellite imagery, live traffic and the OSINT toolkit. Feature by feature, free vs Pro.",
   alternates: { canonical: "/features" },
   openGraph: {
-    title: "Features — Free Globe, 74,229 Live Cameras & Pro Tools | WorldEye",
+    title: "Features: Live 3D Globe, 74,229 Cameras, Flight Tracking & OSINT Tools | WorldEye",
     description:
-      "A free live 3D globe with flights, 74,229 cameras, satellites and hazards — no signup. Pro adds the OI AI assistant, satellite view, live traffic, advanced search filters, the OSINT toolkit and premium intel feeds.",
+      "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, satellite imagery, live traffic and the OSINT toolkit.",
     url: "/features",
     type: "website",
   },
@@ -289,7 +289,9 @@ export default function FeaturesPage() {
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
             A free forever live globe with flights, cameras, satellites, transit and hazards —
-            and Pro tools for anyone who needs intelligence-grade depth.
+            and Pro tools for anyone who needs intelligence-grade depth. Every feature, free
+            and Pro, is listed below — so you can check exactly what WorldEye can do before
+            you ever open the map.
           </p>
         </div>
 

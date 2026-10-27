@@ -21,20 +21,20 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Best Interactive 3D Globes in 2026",
+  title: "Best Interactive Globes in 2026 — 3D Globes Compared (Live & Free)",
   description:
-    "The best interactive 3D globes for 2026: WorldEye's live globe, Google Earth, NASA Worldview, Zoom Earth and more — compared honestly.",
+    "Looking for an interactive globe? The best 3D globes for 2026 compared — WorldEye's live globe, Google Earth, NASA Worldview, Zoom Earth and more — on what is live, what is free, and what you can actually see.",
   alternates: { canonical: "/best-interactive-3d-globes" },
   openGraph: {
-    title: "Best Interactive 3D Globes in 2026 | WorldEye",
+    title: "Best Interactive Globes in 2026 — 3D Globes Compared (Live & Free) | WorldEye",
     description:
-      "Compare the best 3D globes for exploring Earth — WorldEye's live globe, Google Earth, NASA Worldview, Zoom Earth and more.",
+      "Compare the best interactive 3D globes for exploring Earth — WorldEye's live globe, Google Earth, NASA Worldview, Zoom Earth and more.",
     url: "/best-interactive-3d-globes",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Best Interactive 3D Globes in 2026 | WorldEye",
+    title: "Best Interactive Globes in 2026 — 3D Globes Compared (Live & Free) | WorldEye",
     description:
       "The best interactive 3D globes for 2026 compared — live, imagery and exploration picks.",
   },
@@ -89,7 +89,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     webPageLd(
-      "Best Interactive 3D Globes in 2026",
+      "Best Interactive Globes in 2026 — 3D Globes Compared (Live & Free)",
       "The best interactive 3D globes for 2026: WorldEye's live globe, Google Earth, NASA Worldview, Zoom Earth and more.",
       "/best-interactive-3d-globes"
     ),

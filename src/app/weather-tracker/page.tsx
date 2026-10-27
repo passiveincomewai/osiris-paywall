@@ -22,14 +22,14 @@ import RelatedLinks from "@/components/RelatedLinks";
 import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 
 export const metadata: Metadata = {
-  title: "Live Weather Radar & Storm Tracker — Weather on a 3D Globe",
+  title: "Live Weather Tracker — Radar, Storms & 74,229 Cameras on One Globe",
   description:
-    "Watch live weather radar on a 3D globe: storm systems, radar, wind and precipitation sweeping the planet. Free weather tracker — no signup, no account, no cost.",
+    "Track live weather on a 3D globe — radar, storm systems, wind and precipitation — then look inside the weather with 74,229 public cameras on the same map. Free weather tracker — no signup, no account, no cost.",
   alternates: { canonical: "/weather-tracker" },
   openGraph: {
-    title: "Live Weather Radar & Storm Tracker | WorldEye",
+    title: "Live Weather Tracker — Radar, Storms & 74,229 Cameras on One Globe | WorldEye",
     description:
-      "Live weather radar on a 3D globe — storm systems, wind and precipitation, free with no signup.",
+      "Live weather on a 3D globe — radar, storm systems and wind, with 74,229 public cameras inside the weather on the same map. Free with no signup.",
     url: "/weather-tracker",
     type: "website",
   },
@@ -157,7 +157,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "WorldEye Live Weather Tracker",
       description:
-        "Watch live weather on a 3D globe: storm systems, wind and precipitation sweeping the planet. Free weather tracker — no signup.",
+        "Track live weather on a 3D globe — radar, storm systems, wind and precipitation — with 74,229 public cameras inside the weather on the same map. Free weather tracker — no signup.",
       url: "https://worldeye.app/weather-tracker",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     },

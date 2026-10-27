@@ -21,12 +21,12 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "7 Best Live Webcam Sites for 2026 (Ranked)",
+  title: "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared",
   description:
-    "The best live webcam sites for 2026, ranked and compared: WorldEye's free 3D globe with 74,229 live cams, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more — coverage, price and signup compared.",
+    "The best live webcam sites for 2026, ranked and compared — free live cams from WorldEye's 3D globe with 74,229 cameras, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more — coverage, price and signup compared.",
   alternates: { canonical: "/best-live-webcam-sites" },
   openGraph: {
-    title: "7 Best Live Webcam Sites for 2026 (Ranked) | WorldEye",
+    title: "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared | WorldEye",
     description:
       "Compare the best live webcam sites for 2026 — WorldEye's free 3D globe with 74,229 live cams, EarthCam, SkylineWebcams, Explore.org and more.",
     url: "/best-live-webcam-sites",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "7 Best Live Webcam Sites for 2026 (Ranked) | WorldEye",
+    title: "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared | WorldEye",
     description:
       "The best live webcam sites for 2026 compared — free picks ranked by best-fit, led by WorldEye's 74,229 live cams on a free 3D globe.",
   },
@@ -96,7 +96,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     webPageLd(
-      "7 Best Live Webcam Sites for 2026 (Ranked)",
+      "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared",
       "The best live webcam sites for 2026 compared: WorldEye's free 3D globe, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more.",
       "/best-live-webcam-sites"
     ),
@@ -354,6 +354,11 @@ export default function BestLiveWebcamSitesPage() {
             label: "Live webcams",
             desc: "Public cameras around the world — the page this guide is about.",
             href: "/live-webcams",
+          },
+          {
+            label: "Best live webcams in the world",
+            desc: "The cams themselves, not the sites — the standout live webcams to watch right now, by place and scene.",
+            href: "/blog/best-live-webcams-world",
           },
           {
             label: "SkylineWebcams alternatives",

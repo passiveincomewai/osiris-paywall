@@ -116,6 +116,19 @@ const jsonLd = {
     "Live public webcams around airports: runway views, approach paths and airport weather checks before you fly.",
   url: `${BASE}/airport-webcams`,
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: BASE },
+  /* The hub's children, enumerated from the same AIRPORT_PAGES data
+     the link grid below renders — the hub carried no ItemList while
+     its sibling directory hubs (countries, Asia) did. */
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: AIRPORT_PAGES.length,
+    itemListElement: AIRPORT_PAGES.map((a, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: `${a.city} (${a.iata}) airport webcams`,
+      url: `${BASE}/airport-webcams/${a.slug}`,
+    })),
+  },
 };
 
 export default async function AirportWebcamsPage() {

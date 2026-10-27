@@ -17,7 +17,7 @@ import { Crosshair, ShieldCheck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Where Was This Photo Taken? How to Find a Photo's Location",
   description:
-    "How to find where a photo was taken: check the EXIF GPS hidden in the file, understand why apps strip it, and read the clues in the scene when they do — or let WorldEye's free tool do it with the evidence shown.",
+    "How to find where a photo was taken: check the EXIF GPS hidden in the file, understand why apps strip it, and read the clues in the scene when they do — or use WorldEye's free AI-assisted photo finder, which shows its evidence.",
   alternates: { canonical: `${BASE}/where-was-this-photo-taken` },
   openGraph: {
     title: "Where Was This Photo Taken? How to Find a Photo's Location",
@@ -77,6 +77,14 @@ const FAQS = [
   {
     q: "Is the photo geolocation tool free?",
     a: "Yes — it is a free beta with no signup. There is a limit of 3 analyses per day per visitor to keep it sustainable, and your photo is processed in memory and never stored, so there is nothing to delete afterwards.",
+  },
+  {
+    q: "Is there an AI photo finder that can locate a picture?",
+    a: "Yes — that is effectively what the free tool on this site is, and it is the honest version of one. An AI vision pass extracts the clues in the photo (signs, landmarks, plate styles, driving side) without naming the answer itself; the named places are then checked against OpenStreetMap, and every candidate is ranked with the evidence for and against it. Tools in this category are searched for as an \u201CAI photo finder\u201D or \u201CAI location finder\u201D — the difference that matters is whether the tool shows its working. This one does, and it says \u201Ccouldn't determine\u201D rather than guessing.",
+  },
+  {
+    q: "Can I tell when a photo was taken, as well as where?",
+    a: "Often, yes. The same EXIF block that can carry GPS usually carries the date and time the shutter fired, and it appears in the same details panel on your phone or computer. Two cautions: the timestamp is the device's own clock, so a wrong timezone or an unset clock shifts it; and the apps that strip location usually strip the time too. A screenshot carries only the time the screenshot itself was made.",
   },
 ];
 
