@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   SKY_COPY,
   compass16,
+  countTrackedObjects,
+  countdownClock,
+  fmtCount,
   fmtLatLng,
   relativeAgo,
   shapeLaunches,
@@ -10,6 +13,7 @@ import {
   shapeStorms,
   type SkyLaunches,
 } from './sky-today';
+import { countdownTo } from './launches/countdown';
 import type { LaunchRecord } from './launches/types';
 import type { SatelliteRow } from './satellite-payload';
 
@@ -240,6 +244,53 @@ describe('shapeQuakes', () => {
   it('is empty for an empty or missing feed', () => {
     expect(shapeQuakes([], NOW)).toEqual({ strongest: null, count: 0, strongCount: 0 });
     expect(shapeQuakes(undefined, NOW).strongest).toBeNull();
+  });
+});
+
+describe('countdownClock', () => {
+  it('ticks to the shaped next launch’s NET, split into H:M:S parts', () => {
+    const next = launch({ id: 'next', net: iso(NOW + 2 * H + 61_000) });
+    const r = okLaunches(shapeLaunches({ upcoming: [next], previous: [] }, NOW));
+    expect(r.next?.id).toBe('next');
+    expect(countdownClock(r.next!.countdown)).toEqual({
+      sign: 'T−', days: 0, hours: 2, minutes: 1, seconds: 1,
+    });
+  });
+
+  it('carries whole days separately from the H:M:S digits', () => {
+    const clock = countdownClock(countdownTo(iso(NOW + 50 * H + 120_000), 'Minute', NOW));
+    expect(clock).toEqual({ sign: 'T−', days: 2, hours: 2, minutes: 2, seconds: 0 });
+  });
+
+  it('keeps ticking as T+ for the first hour after NET', () => {
+    const clock = countdownClock(countdownTo(iso(NOW - 7 * 60_000), 'Minute', NOW));
+    expect(clock).toEqual({ sign: 'T+', days: 0, hours: 0, minutes: 7, seconds: 0 });
+  });
+
+  it('refuses approximate NETs and missing NETs — no fake ticking seconds', () => {
+    const fuzzy = launch({ id: 'fuzzy', net: iso(NOW + 30 * H), netPrecision: 'Day' });
+    const r = okLaunches(shapeLaunches({ upcoming: [fuzzy], previous: [] }, NOW));
+    expect(countdownClock(r.next!.countdown)).toBeNull();
+    expect(countdownClock(countdownTo(null, null, NOW))).toBeNull();
+  });
+});
+
+describe('countTrackedObjects + fmtCount', () => {
+  it('counts the loaded payload rows — the route total is the row count', () => {
+    expect(countTrackedObjects([sat({}), sat({}), sat({})])).toBe(3);
+    expect(countTrackedObjects([])).toBe(0);
+  });
+
+  it('is null (a dash, never a guess) until the payload loads', () => {
+    expect(countTrackedObjects(null)).toBeNull();
+    expect(countTrackedObjects(undefined)).toBeNull();
+    expect(fmtCount(null)).toBe('——');
+  });
+
+  it('groups thousands for the stat cards', () => {
+    expect(fmtCount(19204)).toBe('19,204');
+    expect(fmtCount(0)).toBe('0');
+    expect(fmtCount(7)).toBe('7');
   });
 });
 

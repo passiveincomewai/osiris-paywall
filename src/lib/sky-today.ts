@@ -52,6 +52,7 @@ export const SKY_COPY = {
   stormsError: 'Storm data unavailable',
   stormsLoading: 'Loading storm data…',
   quakesEmpty: 'No earthquakes M2.5+ in the last 24 hours',
+  quakesLoading: 'Loading earthquake data…',
   watchCamera: 'WATCH A LIVE CAMERA',
   sources: 'Launch Library 2 · NOAA NHC · USGS',
 } as const;
@@ -185,6 +186,37 @@ export function shapeLaunches(payload: unknown, nowMs: number): SkyLaunches {
   return { kind: 'ok', next, more, recent, stale: p.stale === true };
 }
 
+/* ── Countdown clock (the launches stat card's H : M : S digits) ──── */
+
+export interface SkyCountdownClock {
+  /** "T−" counting down to NET, "T+" once it has passed. */
+  sign: 'T−' | 'T+';
+  /** Whole days in the remaining time (the clock digits stay H:M:S). */
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+/**
+ * Split a Countdown into the H:M:S digits the panel's countdown card
+ * ticks. Returns null when there is nothing honest to tick: no NET at
+ * all, or an approximate NET — LL2's precision is coarser than the
+ * minute there, so the card shows the NET date instead of fake ticking
+ * seconds, exactly as the mission board does.
+ */
+export function countdownClock(c: Countdown): SkyCountdownClock | null {
+  if (c.approximate || c.secondsToNet === null) return null;
+  const abs = Math.abs(c.secondsToNet);
+  return {
+    sign: c.sign,
+    days: Math.floor(abs / 86_400),
+    hours: Math.floor((abs % 86_400) / 3_600),
+    minutes: Math.floor((abs % 3_600) / 60),
+    seconds: abs % 60,
+  };
+}
+
 /* ── Stations (from the satellites layer's own rows) ──────────────── */
 
 export interface SkyStationRow {
@@ -225,6 +257,18 @@ export function shapeStations(rows: SatelliteRow[] | null | undefined): SkyStati
     };
   };
   return [pick(isIss), pick(isCss)].filter((s): s is SkyStationRow => s !== null);
+}
+
+/**
+ * How many objects the loaded satellites payload tracks. The route's
+ * own envelope total is `satellites.length` and page.tsx decodes every
+ * row it serves, so the row count IS the payload total — the same
+ * number the HUD and LayerPanel show, never a second estimate. Null
+ * until the payload has loaded: the stat card shows a dash rather than
+ * a guessed figure.
+ */
+export function countTrackedObjects(rows: SatelliteRow[] | null | undefined): number | null {
+  return Array.isArray(rows) ? rows.length : null;
 }
 
 /* ── Storms (NOAA NHC) ─────────────────────────────────────────────── */
@@ -392,6 +436,11 @@ export function shapeQuakes(
 }
 
 /* ── Formatting (pure; the locale-aware dates live in the component) ── */
+
+/** Grouped stat-card count ("19,204"); the em-dash pair until it is known. */
+export function fmtCount(n: number | null): string {
+  return n === null ? '——' : n.toLocaleString('en-US');
+}
 
 /** "12.34° N · 45.68° W" — a sub-satellite point, hemisphere-labelled. */
 export function fmtLatLng(lat: number, lng: number): string {
