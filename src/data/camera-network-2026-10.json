@@ -1,0 +1,1408 @@
+{
+ "name": "WorldEye Camera Network Report",
+ "edition": "October 2026",
+ "generatedAt": "2026-10-27T06:02:57.248Z",
+ "dataSources": {
+  "countryFiles": 109,
+  "attributionFileGeneratedAt": "2026-10-20T09:10:51.689Z",
+  "usStatesFileGeneratedAt": "2026-10-26T23:10:04.169Z"
+ },
+ "headlineLiveCameras": 74229,
+ "catalogue": {
+  "totalRecords": 76575,
+  "indexedRecords": 77376,
+  "attributedTotal": 76575,
+  "unattributed": 3,
+  "droppedNearDuplicates": 798,
+  "countries": 109,
+  "distinctSources": 190,
+  "recordsWithCity": 76521,
+  "invalidCoords": 0,
+  "duplicateIdsInCountryFiles": 0
+ },
+ "countries": [
+  {
+   "slug": "united-states",
+   "name": "United States",
+   "count": 41355,
+   "sharePct": 54
+  },
+  {
+   "slug": "japan",
+   "name": "Japan",
+   "count": 10472,
+   "sharePct": 13.7
+  },
+  {
+   "slug": "canada",
+   "name": "Canada",
+   "count": 4685,
+   "sharePct": 6.1
+  },
+  {
+   "slug": "taiwan",
+   "name": "Taiwan",
+   "count": 3243,
+   "sharePct": 4.2
+  },
+  {
+   "slug": "spain",
+   "name": "Spain",
+   "count": 2120,
+   "sharePct": 2.8
+  },
+  {
+   "slug": "austria",
+   "name": "Austria",
+   "count": 1725,
+   "sharePct": 2.3
+  },
+  {
+   "slug": "south-korea",
+   "name": "South Korea",
+   "count": 1610,
+   "sharePct": 2.1
+  },
+  {
+   "slug": "sweden",
+   "name": "Sweden",
+   "count": 1569,
+   "sharePct": 2
+  },
+  {
+   "slug": "united-kingdom",
+   "name": "United Kingdom",
+   "count": 1403,
+   "sharePct": 1.8
+  },
+  {
+   "slug": "hong-kong",
+   "name": "Hong Kong",
+   "count": 1350,
+   "sharePct": 1.8
+  },
+  {
+   "slug": "italy",
+   "name": "Italy",
+   "count": 1030,
+   "sharePct": 1.3
+  },
+  {
+   "slug": "finland",
+   "name": "Finland",
+   "count": 825,
+   "sharePct": 1.1
+  },
+  {
+   "slug": "norway",
+   "name": "Norway",
+   "count": 746,
+   "sharePct": 1
+  },
+  {
+   "slug": "iceland",
+   "name": "Iceland",
+   "count": 482,
+   "sharePct": 0.6
+  },
+  {
+   "slug": "australia",
+   "name": "Australia",
+   "count": 421,
+   "sharePct": 0.5
+  },
+  {
+   "slug": "germany",
+   "name": "Germany",
+   "count": 343,
+   "sharePct": 0.4
+  },
+  {
+   "slug": "lithuania",
+   "name": "Lithuania",
+   "count": 326,
+   "sharePct": 0.4
+  },
+  {
+   "slug": "vietnam",
+   "name": "Vietnam",
+   "count": 324,
+   "sharePct": 0.4
+  },
+  {
+   "slug": "new-zealand",
+   "name": "New Zealand",
+   "count": 257,
+   "sharePct": 0.3
+  },
+  {
+   "slug": "indonesia",
+   "name": "Indonesia",
+   "count": 256,
+   "sharePct": 0.3
+  },
+  {
+   "slug": "netherlands",
+   "name": "Netherlands",
+   "count": 246,
+   "sharePct": 0.3
+  },
+  {
+   "slug": "turkey",
+   "name": "Turkey",
+   "count": 235,
+   "sharePct": 0.3
+  },
+  {
+   "slug": "ireland",
+   "name": "Ireland",
+   "count": 216,
+   "sharePct": 0.3
+  },
+  {
+   "slug": "russia",
+   "name": "Russia",
+   "count": 162,
+   "sharePct": 0.2
+  },
+  {
+   "slug": "estonia",
+   "name": "Estonia",
+   "count": 133,
+   "sharePct": 0.2
+  },
+  {
+   "slug": "thailand",
+   "name": "Thailand",
+   "count": 118,
+   "sharePct": 0.2
+  },
+  {
+   "slug": "poland",
+   "name": "Poland",
+   "count": 73,
+   "sharePct": 0.1
+  },
+  {
+   "slug": "france",
+   "name": "France",
+   "count": 51,
+   "sharePct": 0.1
+  },
+  {
+   "slug": "luxembourg",
+   "name": "Luxembourg",
+   "count": 48,
+   "sharePct": 0.1
+  },
+  {
+   "slug": "switzerland",
+   "name": "Switzerland",
+   "count": 47,
+   "sharePct": 0.1
+  },
+  {
+   "slug": "malta",
+   "name": "Malta",
+   "count": 42,
+   "sharePct": 0.1
+  },
+  {
+   "slug": "malaysia",
+   "name": "Malaysia",
+   "count": 41,
+   "sharePct": 0.1
+  },
+  {
+   "slug": "brazil",
+   "name": "Brazil",
+   "count": 38,
+   "sharePct": 0
+  },
+  {
+   "slug": "macau",
+   "name": "Macau",
+   "count": 36,
+   "sharePct": 0
+  },
+  {
+   "slug": "bulgaria",
+   "name": "Bulgaria",
+   "count": 33,
+   "sharePct": 0
+  },
+  {
+   "slug": "latvia",
+   "name": "Latvia",
+   "count": 33,
+   "sharePct": 0
+  },
+  {
+   "slug": "croatia",
+   "name": "Croatia",
+   "count": 29,
+   "sharePct": 0
+  },
+  {
+   "slug": "romania",
+   "name": "Romania",
+   "count": 29,
+   "sharePct": 0
+  },
+  {
+   "slug": "greece",
+   "name": "Greece",
+   "count": 27,
+   "sharePct": 0
+  },
+  {
+   "slug": "philippines",
+   "name": "Philippines",
+   "count": 27,
+   "sharePct": 0
+  },
+  {
+   "slug": "kyrgyzstan",
+   "name": "Kyrgyzstan",
+   "count": 22,
+   "sharePct": 0
+  },
+  {
+   "slug": "mexico",
+   "name": "Mexico",
+   "count": 21,
+   "sharePct": 0
+  },
+  {
+   "slug": "us-virgin-islands",
+   "name": "US Virgin Islands",
+   "count": 21,
+   "sharePct": 0
+  },
+  {
+   "slug": "peru",
+   "name": "Peru",
+   "count": 18,
+   "sharePct": 0
+  },
+  {
+   "slug": "israel",
+   "name": "Israel",
+   "count": 17,
+   "sharePct": 0
+  },
+  {
+   "slug": "portugal",
+   "name": "Portugal",
+   "count": 17,
+   "sharePct": 0
+  },
+  {
+   "slug": "china",
+   "name": "China",
+   "count": 16,
+   "sharePct": 0
+  },
+  {
+   "slug": "maldives",
+   "name": "Maldives",
+   "count": 16,
+   "sharePct": 0
+  },
+  {
+   "slug": "chile",
+   "name": "Chile",
+   "count": 15,
+   "sharePct": 0
+  },
+  {
+   "slug": "kazakhstan",
+   "name": "Kazakhstan",
+   "count": 14,
+   "sharePct": 0
+  },
+  {
+   "slug": "argentina",
+   "name": "Argentina",
+   "count": 12,
+   "sharePct": 0
+  },
+  {
+   "slug": "south-africa",
+   "name": "South Africa",
+   "count": 12,
+   "sharePct": 0
+  },
+  {
+   "slug": "singapore",
+   "name": "Singapore",
+   "count": 9,
+   "sharePct": 0
+  },
+  {
+   "slug": "costa-rica",
+   "name": "Costa Rica",
+   "count": 8,
+   "sharePct": 0
+  },
+  {
+   "slug": "ecuador",
+   "name": "Ecuador",
+   "count": 8,
+   "sharePct": 0
+  },
+  {
+   "slug": "georgia",
+   "name": "Georgia",
+   "count": 7,
+   "sharePct": 0
+  },
+  {
+   "slug": "slovenia",
+   "name": "Slovenia",
+   "count": 7,
+   "sharePct": 0
+  },
+  {
+   "slug": "ukraine",
+   "name": "Ukraine",
+   "count": 7,
+   "sharePct": 0
+  },
+  {
+   "slug": "hungary",
+   "name": "Hungary",
+   "count": 6,
+   "sharePct": 0
+  },
+  {
+   "slug": "moldova",
+   "name": "Moldova",
+   "count": 6,
+   "sharePct": 0
+  },
+  {
+   "slug": "cyprus",
+   "name": "Cyprus",
+   "count": 5,
+   "sharePct": 0
+  },
+  {
+   "slug": "dominican-republic",
+   "name": "Dominican Republic",
+   "count": 5,
+   "sharePct": 0
+  },
+  {
+   "slug": "kenya",
+   "name": "Kenya",
+   "count": 5,
+   "sharePct": 0
+  },
+  {
+   "slug": "nepal",
+   "name": "Nepal",
+   "count": 5,
+   "sharePct": 0
+  },
+  {
+   "slug": "puerto-rico",
+   "name": "Puerto Rico",
+   "count": 5,
+   "sharePct": 0
+  },
+  {
+   "slug": "tanzania",
+   "name": "Tanzania",
+   "count": 5,
+   "sharePct": 0
+  },
+  {
+   "slug": "india",
+   "name": "India",
+   "count": 4,
+   "sharePct": 0
+  },
+  {
+   "slug": "seychelles",
+   "name": "Seychelles",
+   "count": 4,
+   "sharePct": 0
+  },
+  {
+   "slug": "sint-maarten",
+   "name": "Sint Maarten",
+   "count": 4,
+   "sharePct": 0
+  },
+  {
+   "slug": "albania",
+   "name": "Albania",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "belarus",
+   "name": "Belarus",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "belgium",
+   "name": "Belgium",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "belize",
+   "name": "Belize",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "bosnia-and-herzegovina",
+   "name": "Bosnia and Herzegovina",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "czechia",
+   "name": "Czechia",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "el-salvador",
+   "name": "El Salvador",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "panama",
+   "name": "Panama",
+   "count": 3,
+   "sharePct": 0
+  },
+  {
+   "slug": "azerbaijan",
+   "name": "Azerbaijan",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "bermuda",
+   "name": "Bermuda",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "bolivia",
+   "name": "Bolivia",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "denmark",
+   "name": "Denmark",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "egypt",
+   "name": "Egypt",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "grenada",
+   "name": "Grenada",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "guadeloupe",
+   "name": "Guadeloupe",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "honduras",
+   "name": "Honduras",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "north-macedonia",
+   "name": "North Macedonia",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "serbia",
+   "name": "Serbia",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "slovakia",
+   "name": "Slovakia",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "yemen",
+   "name": "Yemen",
+   "count": 2,
+   "sharePct": 0
+  },
+  {
+   "slug": "armenia",
+   "name": "Armenia",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "barbados",
+   "name": "Barbados",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "bonaire",
+   "name": "Bonaire",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "christmas-island",
+   "name": "Christmas Island",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "curacao",
+   "name": "Curaçao",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "faroe-islands",
+   "name": "Faroe Islands",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "iran",
+   "name": "Iran",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "jordan",
+   "name": "Jordan",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "lebanon",
+   "name": "Lebanon",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "madagascar",
+   "name": "Madagascar",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "martinique",
+   "name": "Martinique",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "morocco",
+   "name": "Morocco",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "oman",
+   "name": "Oman",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "san-marino",
+   "name": "San Marino",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "saudi-arabia",
+   "name": "Saudi Arabia",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "senegal",
+   "name": "Senegal",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "sri-lanka",
+   "name": "Sri Lanka",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "uruguay",
+   "name": "Uruguay",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "vatican-city",
+   "name": "Vatican City",
+   "count": 1,
+   "sharePct": 0
+  },
+  {
+   "slug": "venezuela",
+   "name": "Venezuela",
+   "count": 1,
+   "sharePct": 0
+  }
+ ],
+ "topCountries": [
+  {
+   "slug": "united-states",
+   "name": "United States",
+   "count": 41355,
+   "sharePct": 54
+  },
+  {
+   "slug": "japan",
+   "name": "Japan",
+   "count": 10472,
+   "sharePct": 13.7
+  },
+  {
+   "slug": "canada",
+   "name": "Canada",
+   "count": 4685,
+   "sharePct": 6.1
+  },
+  {
+   "slug": "taiwan",
+   "name": "Taiwan",
+   "count": 3243,
+   "sharePct": 4.2
+  },
+  {
+   "slug": "spain",
+   "name": "Spain",
+   "count": 2120,
+   "sharePct": 2.8
+  },
+  {
+   "slug": "austria",
+   "name": "Austria",
+   "count": 1725,
+   "sharePct": 2.3
+  },
+  {
+   "slug": "south-korea",
+   "name": "South Korea",
+   "count": 1610,
+   "sharePct": 2.1
+  },
+  {
+   "slug": "sweden",
+   "name": "Sweden",
+   "count": 1569,
+   "sharePct": 2
+  },
+  {
+   "slug": "united-kingdom",
+   "name": "United Kingdom",
+   "count": 1403,
+   "sharePct": 1.8
+  },
+  {
+   "slug": "hong-kong",
+   "name": "Hong Kong",
+   "count": 1350,
+   "sharePct": 1.8
+  },
+  {
+   "slug": "italy",
+   "name": "Italy",
+   "count": 1030,
+   "sharePct": 1.3
+  },
+  {
+   "slug": "finland",
+   "name": "Finland",
+   "count": 825,
+   "sharePct": 1.1
+  },
+  {
+   "slug": "norway",
+   "name": "Norway",
+   "count": 746,
+   "sharePct": 1
+  },
+  {
+   "slug": "iceland",
+   "name": "Iceland",
+   "count": 482,
+   "sharePct": 0.6
+  },
+  {
+   "slug": "australia",
+   "name": "Australia",
+   "count": 421,
+   "sharePct": 0.5
+  }
+ ],
+ "concentration": {
+  "top1SharePct": 54,
+  "top3SharePct": 73.8,
+  "top10SharePct": 90.8,
+  "countriesAtLeast1000": 11,
+  "countriesAtLeast100": 26,
+  "medianCountryRecords": 8
+ },
+ "longTail": {
+  "threshold": 10,
+  "countryCount": 57,
+  "combinedRecords": 168,
+  "countries": [
+   {
+    "name": "Singapore",
+    "slug": "singapore",
+    "count": 9
+   },
+   {
+    "name": "Costa Rica",
+    "slug": "costa-rica",
+    "count": 8
+   },
+   {
+    "name": "Ecuador",
+    "slug": "ecuador",
+    "count": 8
+   },
+   {
+    "name": "Georgia",
+    "slug": "georgia",
+    "count": 7
+   },
+   {
+    "name": "Slovenia",
+    "slug": "slovenia",
+    "count": 7
+   },
+   {
+    "name": "Ukraine",
+    "slug": "ukraine",
+    "count": 7
+   },
+   {
+    "name": "Hungary",
+    "slug": "hungary",
+    "count": 6
+   },
+   {
+    "name": "Moldova",
+    "slug": "moldova",
+    "count": 6
+   },
+   {
+    "name": "Cyprus",
+    "slug": "cyprus",
+    "count": 5
+   },
+   {
+    "name": "Dominican Republic",
+    "slug": "dominican-republic",
+    "count": 5
+   },
+   {
+    "name": "Kenya",
+    "slug": "kenya",
+    "count": 5
+   },
+   {
+    "name": "Nepal",
+    "slug": "nepal",
+    "count": 5
+   },
+   {
+    "name": "Puerto Rico",
+    "slug": "puerto-rico",
+    "count": 5
+   },
+   {
+    "name": "Tanzania",
+    "slug": "tanzania",
+    "count": 5
+   },
+   {
+    "name": "India",
+    "slug": "india",
+    "count": 4
+   },
+   {
+    "name": "Seychelles",
+    "slug": "seychelles",
+    "count": 4
+   },
+   {
+    "name": "Sint Maarten",
+    "slug": "sint-maarten",
+    "count": 4
+   },
+   {
+    "name": "Albania",
+    "slug": "albania",
+    "count": 3
+   },
+   {
+    "name": "Belarus",
+    "slug": "belarus",
+    "count": 3
+   },
+   {
+    "name": "Belgium",
+    "slug": "belgium",
+    "count": 3
+   },
+   {
+    "name": "Belize",
+    "slug": "belize",
+    "count": 3
+   },
+   {
+    "name": "Bosnia and Herzegovina",
+    "slug": "bosnia-and-herzegovina",
+    "count": 3
+   },
+   {
+    "name": "Czechia",
+    "slug": "czechia",
+    "count": 3
+   },
+   {
+    "name": "El Salvador",
+    "slug": "el-salvador",
+    "count": 3
+   },
+   {
+    "name": "Panama",
+    "slug": "panama",
+    "count": 3
+   },
+   {
+    "name": "Azerbaijan",
+    "slug": "azerbaijan",
+    "count": 2
+   },
+   {
+    "name": "Bermuda",
+    "slug": "bermuda",
+    "count": 2
+   },
+   {
+    "name": "Bolivia",
+    "slug": "bolivia",
+    "count": 2
+   },
+   {
+    "name": "Denmark",
+    "slug": "denmark",
+    "count": 2
+   },
+   {
+    "name": "Egypt",
+    "slug": "egypt",
+    "count": 2
+   },
+   {
+    "name": "Grenada",
+    "slug": "grenada",
+    "count": 2
+   },
+   {
+    "name": "Guadeloupe",
+    "slug": "guadeloupe",
+    "count": 2
+   },
+   {
+    "name": "Honduras",
+    "slug": "honduras",
+    "count": 2
+   },
+   {
+    "name": "North Macedonia",
+    "slug": "north-macedonia",
+    "count": 2
+   },
+   {
+    "name": "Serbia",
+    "slug": "serbia",
+    "count": 2
+   },
+   {
+    "name": "Slovakia",
+    "slug": "slovakia",
+    "count": 2
+   },
+   {
+    "name": "Yemen",
+    "slug": "yemen",
+    "count": 2
+   },
+   {
+    "name": "Armenia",
+    "slug": "armenia",
+    "count": 1
+   },
+   {
+    "name": "Barbados",
+    "slug": "barbados",
+    "count": 1
+   },
+   {
+    "name": "Bonaire",
+    "slug": "bonaire",
+    "count": 1
+   },
+   {
+    "name": "Christmas Island",
+    "slug": "christmas-island",
+    "count": 1
+   },
+   {
+    "name": "Curaçao",
+    "slug": "curacao",
+    "count": 1
+   },
+   {
+    "name": "Faroe Islands",
+    "slug": "faroe-islands",
+    "count": 1
+   },
+   {
+    "name": "Iran",
+    "slug": "iran",
+    "count": 1
+   },
+   {
+    "name": "Jordan",
+    "slug": "jordan",
+    "count": 1
+   },
+   {
+    "name": "Lebanon",
+    "slug": "lebanon",
+    "count": 1
+   },
+   {
+    "name": "Madagascar",
+    "slug": "madagascar",
+    "count": 1
+   },
+   {
+    "name": "Martinique",
+    "slug": "martinique",
+    "count": 1
+   },
+   {
+    "name": "Morocco",
+    "slug": "morocco",
+    "count": 1
+   },
+   {
+    "name": "Oman",
+    "slug": "oman",
+    "count": 1
+   },
+   {
+    "name": "San Marino",
+    "slug": "san-marino",
+    "count": 1
+   },
+   {
+    "name": "Saudi Arabia",
+    "slug": "saudi-arabia",
+    "count": 1
+   },
+   {
+    "name": "Senegal",
+    "slug": "senegal",
+    "count": 1
+   },
+   {
+    "name": "Sri Lanka",
+    "slug": "sri-lanka",
+    "count": 1
+   },
+   {
+    "name": "Uruguay",
+    "slug": "uruguay",
+    "count": 1
+   },
+   {
+    "name": "Vatican City",
+    "slug": "vatican-city",
+    "count": 1
+   },
+   {
+    "name": "Venezuela",
+    "slug": "venezuela",
+    "count": 1
+   }
+  ]
+ },
+ "regions": [
+  {
+   "region": "North America",
+   "records": 46042,
+   "countries": 3,
+   "sharePct": 60.1
+  },
+  {
+   "region": "Asia",
+   "records": 17833,
+   "countries": 29,
+   "sharePct": 23.3
+  },
+  {
+   "region": "Europe",
+   "records": 11812,
+   "countries": 42,
+   "sharePct": 15.4
+  },
+  {
+   "region": "Oceania",
+   "records": 679,
+   "countries": 3,
+   "sharePct": 0.9
+  },
+  {
+   "region": "Latin America & the Caribbean",
+   "records": 178,
+   "countries": 24,
+   "sharePct": 0.2
+  },
+  {
+   "region": "Africa",
+   "records": 31,
+   "countries": 8,
+   "sharePct": 0
+  }
+ ],
+ "topSources": [
+  {
+   "name": "OpenCCTV / rivergojp",
+   "count": 9890,
+   "sharePct": 12.9
+  },
+  {
+   "name": "FDOT",
+   "count": 4908,
+   "sharePct": 6.4
+  },
+  {
+   "name": "TxDOT",
+   "count": 4349,
+   "sharePct": 5.7
+  },
+  {
+   "name": "GDOT",
+   "count": 4282,
+   "sharePct": 5.6
+  },
+  {
+   "name": "FAA WeatherCams",
+   "count": 3528,
+   "sharePct": 4.6
+  },
+  {
+   "name": "OpenCCTV / state511",
+   "count": 3358,
+   "sharePct": 4.4
+  },
+  {
+   "name": "Caltrans",
+   "count": 2936,
+   "sharePct": 3.8
+  },
+  {
+   "name": "THB Highway Bureau",
+   "count": 2200,
+   "sharePct": 2.9
+  },
+  {
+   "name": "UDOT",
+   "count": 2084,
+   "sharePct": 2.7
+  },
+  {
+   "name": "OpenCCTV / castlerock",
+   "count": 2079,
+   "sharePct": 2.7
+  },
+  {
+   "name": "DGT",
+   "count": 1932,
+   "sharePct": 2.5
+  },
+  {
+   "name": "OpenCCTV / arcgis_cams",
+   "count": 1871,
+   "sharePct": 2.4
+  },
+  {
+   "name": "ASFINAG",
+   "count": 1695,
+   "sharePct": 2.2
+  },
+  {
+   "name": "OpenCCTV / virginia",
+   "count": 1480,
+   "sharePct": 1.9
+  },
+  {
+   "name": "OpenCCTV / ny511",
+   "count": 1352,
+   "sharePct": 1.8
+  }
+ ],
+ "openCctvFamily": {
+  "records": 34040,
+  "sharePct": 44.5
+ },
+ "usStates": {
+  "sourceTotal": 41355,
+  "assignedTotal": 41312,
+  "unassigned": 43,
+  "stateCount": 51,
+  "top": [
+   {
+    "name": "Florida",
+    "slug": "florida",
+    "count": 4935,
+    "shareOfUsPct": 11.9
+   },
+   {
+    "name": "Texas",
+    "slug": "texas",
+    "count": 4390,
+    "shareOfUsPct": 10.6
+   },
+   {
+    "name": "Georgia",
+    "slug": "georgia",
+    "count": 4288,
+    "shareOfUsPct": 10.4
+   },
+   {
+    "name": "California",
+    "slug": "california",
+    "count": 3879,
+    "shareOfUsPct": 9.4
+   },
+   {
+    "name": "Utah",
+    "slug": "utah",
+    "count": 2135,
+    "shareOfUsPct": 5.2
+   },
+   {
+    "name": "Virginia",
+    "slug": "virginia",
+    "count": 1451,
+    "shareOfUsPct": 3.5
+   },
+   {
+    "name": "Washington",
+    "slug": "washington",
+    "count": 1447,
+    "shareOfUsPct": 3.5
+   },
+   {
+    "name": "Pennsylvania",
+    "slug": "pennsylvania",
+    "count": 1348,
+    "shareOfUsPct": 3.3
+   },
+   {
+    "name": "New York",
+    "slug": "new-york",
+    "count": 1337,
+    "shareOfUsPct": 3.2
+   },
+   {
+    "name": "Minnesota",
+    "slug": "minnesota",
+    "count": 1282,
+    "shareOfUsPct": 3.1
+   }
+  ]
+ },
+ "topCities": [
+  {
+   "city": "Houston",
+   "country": "United States",
+   "count": 1174
+  },
+  {
+   "city": "London",
+   "country": "United Kingdom",
+   "count": 887
+  },
+  {
+   "city": "Dallas",
+   "country": "United States",
+   "count": 843
+  },
+  {
+   "city": "Orange County",
+   "country": "United States",
+   "count": 585
+  },
+  {
+   "city": "Hillsborough County",
+   "country": "United States",
+   "count": 503
+  },
+  {
+   "city": "Seattle",
+   "country": "United States",
+   "count": 499
+  },
+  {
+   "city": "Fort Worth",
+   "country": "United States",
+   "count": 489
+  },
+  {
+   "city": "Broward County",
+   "country": "United States",
+   "count": 477
+  },
+  {
+   "city": "Ottawa",
+   "country": "Canada",
+   "count": 444
+  },
+  {
+   "city": "Phoenix",
+   "country": "United States",
+   "count": 429
+  },
+  {
+   "city": "Miami-Dade County",
+   "country": "United States",
+   "count": 421
+  },
+  {
+   "city": "Toronto",
+   "country": "Canada",
+   "count": 413
+  },
+  {
+   "city": "Madrid",
+   "country": "Spain",
+   "count": 370
+  },
+  {
+   "city": "Stockholm",
+   "country": "Sweden",
+   "count": 350
+  },
+  {
+   "city": "Busan",
+   "country": "South Korea",
+   "count": 321
+  }
+ ],
+ "cityFiledAboveCityLevel": 13424,
+ "feedKinds": {
+  "feedUrl": 63599,
+  "streamUrl": 13235,
+  "externalUrl": 7431
+ },
+ "streamTypes": {
+  "typedRecords": 21423,
+  "typedSharePct": 28,
+  "byType": [
+   {
+    "type": "hls",
+    "count": 11121,
+    "shareOfTypedPct": 51.9
+   },
+   {
+    "type": "jpg",
+    "count": 8189,
+    "shareOfTypedPct": 38.2
+   },
+   {
+    "type": "mp4",
+    "count": 1658,
+    "shareOfTypedPct": 7.7
+   },
+   {
+    "type": "iframe",
+    "count": 273,
+    "shareOfTypedPct": 1.3
+   },
+   {
+    "type": "mjpeg",
+    "count": 182,
+    "shareOfTypedPct": 0.8
+   }
+  ]
+ },
+ "extremes": {
+  "north": {
+   "lat": 73.00629,
+   "lng": -85.04722,
+   "name": "Arctic Bay — Camera 1 (SouthEast)",
+   "country": "Canada",
+   "city": "Arctic Bay"
+  },
+  "south": {
+   "lat": -54.9394,
+   "lng": -67.6418,
+   "name": "2 meters high tripod on an Eddy Covariance System. Located in a peatland in the Omora Ethnobotanical Park, Puerto Williams, Cape Horn Biosphere Reserve, Chile",
+   "country": "Argentina",
+   "city": "Puerto Williams"
+  },
+  "east": {
+   "lat": 51.04,
+   "lng": 179.764,
+   "name": "NOAA Buoy 46071 - W Central Gulf of Alaska",
+   "country": "United States",
+   "city": "W Central Gulf of Alaska"
+  },
+  "west": {
+   "lat": 57.034,
+   "lng": -177.468,
+   "name": "NOAA Buoy 46035 - Station 46035",
+   "country": "United States",
+   "city": "Station 46035"
+  }
+ },
+ "dataGaps": {
+  "hasPerCameraStatus": false,
+  "hasAddedDate": false,
+  "hasCategoryField": false
+ },
+ "citation": "WorldEye (2026). Camera Network Report — October 2026. WorldEye. https://worldeye.app/reports/camera-network-2026-10"
+}

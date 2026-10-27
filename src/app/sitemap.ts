@@ -4,6 +4,7 @@ import cityPages from "@/data/city-pages.json";
 import usStates from "@/data/us-states.json";
 import skiResorts from "@/data/ski-resorts.json";
 import liveCameraIndex from "@/data/live-camera-index.json";
+import cameraNetworkReport from "@/data/camera-network-2026-10.json";
 import { POSTS } from "./blog/posts";
 import { EVENT_WALLS } from "@/data/event-walls";
 import { AIRPORT_PAGES } from "@/lib/airport-pages";
@@ -134,6 +135,9 @@ const SEO_PAGES_WAVE10 = [
 // publisher, with a downloadable dataset). Data: src/data/live-camera-index.json
 // (tools/build-live-camera-index.mjs). Linked from /blog/live-cameras-by-country.
 const SEO_PAGES_WAVE11 = ["/live-camera-index"];
+// Monthly Camera Network Reports (2026-10-27): dated, citable catalogue
+// statistics editions (three-measures framing, downloadable dataset).
+const SEO_PAGES_REPORTS = ["/reports/camera-network-2026-10"];
 
 // Methodology (2026-10-27): how the catalogue and its published counts
 // are produced. /methodology documents the same instruments the Live
@@ -380,6 +384,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const cameraIndexDate = new Date(
     (liveCameraIndex as { generatedAt: string }).generatedAt,
   );
+  const networkReportDate = new Date(
+    (cameraNetworkReport as { generatedAt: string }).generatedAt,
+  );
   const latestPostDate = new Date(
     POSTS.reduce(
       (max, p) => {
@@ -468,6 +475,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...SEO_PAGES_WAVE11.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: cameraIndexDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_REPORTS.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: networkReportDate,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
