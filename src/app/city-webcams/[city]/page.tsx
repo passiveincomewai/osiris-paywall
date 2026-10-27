@@ -51,6 +51,7 @@ import {
   cityStatusRows,
   loadCityBreakdown,
   stateHubForCity,
+  statusFaqs,
 } from "@/lib/place-breakdown";
 
 type CityCfg = {
@@ -1288,7 +1289,11 @@ export default async function CityWebcamPage({
     <PageShell>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbLd} />
-      <FaqJsonLd faqs={placeMerged.merged} />
+      {/* FAQPage schema carries the page's FAQs plus the Current
+          Status rows rendered visibly below ("{City} right now") —
+          the same render's rows, so schema text is always visible
+          text (lib/place-breakdown statusFaqs). */}
+      <FaqJsonLd faqs={statusFaqs(placeMerged.merged, statusRows)} />
       <Breadcrumb
         schema={false}
         trail={[

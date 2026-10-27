@@ -19,6 +19,7 @@
  */
 import type { CountryCamera } from "@/lib/country-cameras";
 import { recordsForDef, resolveExploreDef } from "@/lib/explore-data";
+import { normalizeQuestion } from "@/lib/place-answers";
 import {
   getUsStatesIndex,
   stateForPoint,
@@ -427,6 +428,49 @@ export function countryStatusRows(input: CountryStatusInput): StatusRow[] {
       : {}),
   });
   return rows;
+}
+
+/* ------------------------------------------------------------------ */
+/* Current Status rows in the FAQPage schema                           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Merge a page's Current Status rows into its FAQ-schema set.
+ *
+ * The status rows render visibly on the page (the CurrentStatus
+ * block) but were the one Q&A set the FAQPage JSON-LD didn't carry —
+ * and they are the highest-value questions on the page for the
+ * "right now" intent ("Is it snowing in {place} right now?", "How bad
+ * is traffic in {place} right now?"), the surface featured snippets
+ * and AI/voice answers read. The place-answers §3 invariant — schema
+ * text is always visible text — holds: the rows are appended only
+ * from the same render's visible set, so the schema can never claim
+ * an answer the page doesn't show, nor a fresher one (the templates
+ * revalidate on the same cycle as the visible block).
+ *
+ * Rules mirror mergePlaceFaqs (§3): the page's own FAQs keep their
+ * order and win collisions; rows append in row order; duplicates by
+ * normalized question (the §3 normalization) are dropped, both
+ * against the FAQ set and within the rows themselves. href /
+ * linkLabel are presentation, not answer text, and never enter the
+ * schema. Inputs are not mutated. No cap beyond the FAQ set's own:
+ * the status block is at most 4 rows, and a cap that dropped one
+ * would put a visible Q&A outside the schema — the asymmetry this
+ * helper exists to remove.
+ */
+export function statusFaqs(
+  faqs: Array<{ q: string; a: string }>,
+  rows: readonly StatusRow[],
+): Array<{ q: string; a: string }> {
+  const seen = new Set(faqs.map((f) => normalizeQuestion(f.q)));
+  const out = [...faqs];
+  for (const r of rows) {
+    const key = normalizeQuestion(r.q);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ q: r.q, a: r.a });
+  }
+  return out;
 }
 
 /* ------------------------------------------------------------------ */

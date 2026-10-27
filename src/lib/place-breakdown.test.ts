@@ -9,6 +9,8 @@ import {
   stateFreewayFaq,
   stateHubForCity,
   stateStatusRows,
+  statusFaqs,
+  type StatusRow,
 } from "@/lib/place-breakdown";
 
 describe("parseCorridor", () => {
@@ -202,5 +204,80 @@ describe("stateHubForCity", () => {
   it("never guesses: non-US or unknown city → null", () => {
     expect(stateHubForCity("united-kingdom", "London", { lat: 51.5, lng: -0.12 })).toBeNull();
     expect(stateHubForCity("united-states", "Nowhereville", null)).toBeNull();
+  });
+});
+
+describe("statusFaqs", () => {
+  const pageFaqs = [
+    { q: "How many live cameras are there in Laredo?", a: "120." },
+    { q: "Is it snowing in Laredo right now?", a: "Template FAQ answer." },
+  ];
+  const rows: StatusRow[] = [
+    {
+      q: "Is it snowing in Laredo right now?",
+      a: "WorldEye has no live weather feed wired for Laredo, so this page won't guess.",
+      href: "/live-traffic-cameras",
+      linkLabel: "Open the live cameras",
+    },
+    {
+      q: "How bad is traffic in Laredo right now?",
+      a: "A camera index can't honestly score congestion.",
+      href: "/live-traffic-cameras",
+      linkLabel: "All US live traffic cameras",
+    },
+  ];
+
+  it("appends the visible status rows after the page's own FAQs", () => {
+    const out = statusFaqs(pageFaqs.slice(0, 1), rows);
+    expect(out.map((f) => f.q)).toEqual([
+      "How many live cameras are there in Laredo?",
+      "Is it snowing in Laredo right now?",
+      "How bad is traffic in Laredo right now?",
+    ]);
+  });
+
+  it("carries the same render's rows end-to-end (cityStatusRows → schema set)", () => {
+    const live = cityStatusRows({
+      name: "Laredo", isUS: true, pageCount: 120, stills: 118, streams: 0,
+      breakdown: computePlaceBreakdown(fixtureRecords()), weather: noWeather,
+    });
+    const out = statusFaqs([], live);
+    expect(out).toEqual(live.map((r) => ({ q: r.q, a: r.a })));
+    // The honest no-feed wording survives into the schema verbatim.
+    expect(out[0].a).toContain("won't guess");
+  });
+
+  it("the page's own FAQ wins a collision (§3 normalized dedupe)", () => {
+    const out = statusFaqs(pageFaqs, rows);
+    const snow = out.filter((f) => f.q.startsWith("Is it snowing"));
+    expect(snow).toHaveLength(1);
+    expect(snow[0].a).toBe("Template FAQ answer.");
+    // Case/punctuation variants of a template question also collide.
+    const variant: StatusRow[] = [
+      { q: "HOW MANY LIVE CAMERAS ARE THERE IN LAREDO", a: "row answer" },
+    ];
+    expect(statusFaqs(pageFaqs, variant)).toHaveLength(pageFaqs.length);
+  });
+
+  it("dedupes within the rows themselves", () => {
+    const dup: StatusRow[] = [rows[1], { ...rows[1] }];
+    expect(statusFaqs([], dup)).toHaveLength(1);
+  });
+
+  it("href/linkLabel never enter the schema entries", () => {
+    const out = statusFaqs([], rows);
+    for (const f of out) {
+      expect(Object.keys(f).sort()).toEqual(["a", "q"]);
+    }
+  });
+
+  it("empty rows return the FAQ set unchanged; inputs are not mutated", () => {
+    const faqs = pageFaqs.map((f) => ({ ...f }));
+    const snapshot = JSON.stringify(faqs);
+    expect(statusFaqs(faqs, [])).toEqual(faqs);
+    expect(JSON.stringify(faqs)).toBe(snapshot);
+    const out = statusFaqs(faqs, rows);
+    expect(out).not.toBe(faqs);
+    expect(JSON.stringify(faqs)).toBe(snapshot);
   });
 });
