@@ -10,6 +10,7 @@ import { AIRPORT_PAGES } from "@/lib/airport-pages";
 import { NATIONAL_PARKS } from "@/lib/national-parks";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
+import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
 
 const BASE = "https://worldeye.app";
 
@@ -543,6 +544,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: skiDate,
       changeFrequency: "weekly" as const,
       priority: 0.6,
+    })),
+    // Ski compare tool + the curated head-to-head pages (lib/ski-compare).
+    {
+      url: `${BASE}/ski-webcams/compare`,
+      lastModified: skiDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+    ...POPULAR_PAIRS.map(([a, b]) => ({
+      url: `${BASE}/ski-webcams/compare/${pairSlug(a, b)}`,
+      lastModified: skiDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
     })),
   ];
 }

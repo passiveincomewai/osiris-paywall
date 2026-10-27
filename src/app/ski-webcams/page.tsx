@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Scale } from "lucide-react";
 import {
   BASE,
   JsonLd,
@@ -20,8 +21,10 @@ import { plural } from "@/lib/country-page-content";
 import {
   loadCountryChunk,
   selectResortCameras,
+  getSkiResort,
   SKI_RESORTS,
 } from "@/lib/ski-resorts";
+import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
 import type { SkiResortLogoMap } from "@/lib/ski-directory";
 import skiLogosData from "@/data/ski-logos.json";
 import type { CountryCamera } from "@/lib/country-cameras";
@@ -213,6 +216,39 @@ export default async function SkiWebcamsPage() {
           official weather alerts where WorldEye has them, and the route tool for your drive.
         </p>
         <SkiResortDirectory resorts={SKI_RESORTS} logos={SKI_LOGOS} />
+      </section>
+
+      {/* Compare tool — side-by-side terrain, cameras and official
+          links for any two resorts, plus the pre-built popular pairs. */}
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-2">Compare ski resorts side by side</h2>
+        <p className="text-sm text-white/50 mb-5 max-w-3xl">
+          Choosing between two mountains? Put them next to each other: elevation, vertical,
+          terrain, lifts, runs, live camera counts and the verified official links for lift
+          tickets, trail maps and lodging.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/ski-webcams/compare"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
+          >
+            <Scale className="w-4 h-4" /> Open the compare tool
+          </Link>
+          {POPULAR_PAIRS.slice(0, 4).map(([a, b]) => {
+            const ra = getSkiResort(a);
+            const rb = getSkiResort(b);
+            if (!ra || !rb) return null;
+            return (
+              <Link
+                key={pairSlug(a, b)}
+                href={`/ski-webcams/compare/${pairSlug(a, b)}`}
+                className="inline-flex items-center px-4 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+              >
+                {ra.name} vs {rb.name}
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
       {/* Live feeds, grouped by resort — the country pages' feed cards,

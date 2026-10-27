@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
+import { ArrowLeft, BedDouble, Camera, ChevronRight, ExternalLink, Globe, Map as MapIcon, MapPin, Scale, Ticket } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import SkiCameraGrid from "@/components/SkiCameraGrid";
@@ -14,6 +14,15 @@ import {
   formatElevation,
   getSkiResortFacts,
 } from "@/lib/ski-resort-facts";
+import {
+  getResortWebsiteUrl,
+  getSkiResortLinks,
+  getVerifiedResortDomain,
+} from "@/lib/ski-resort-links";
+import { popularPairFor } from "@/lib/ski-compare";
+import { passesForResort } from "@/lib/ski-resort-passes";
+import { getPlaceWeather } from "@/lib/place-weather";
+import { stateForPoint } from "@/lib/us-states";
 import {
   getSkiResort,
   isSnowStakeCamera,
@@ -33,13 +42,20 @@ export function generateStaticParams() {
 }
 
 function pageTitle(r: SkiResort): string {
-  return `${r.name} Ski Webcams — Live Resort & Road Cameras`;
+  return `${r.name} Webcams & Snow Report — Live Ski Cameras`;
+}
+
+/** "47.1286° N, 10.2646° E" — display arithmetic on the dataset coords. */
+function formatCoordinates(lat: number, lng: number): string {
+  const la = `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? "N" : "S"}`;
+  const lo = `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? "E" : "W"}`;
+  return `${la}, ${lo}`;
 }
 
 /* Composed from the counts the selection actually returns, so the meta
    text can never promise cameras the grid doesn't have. */
 function metaDescription(r: SkiResort, resortCount: number, nearbyCount: number): string {
-  return `Watch ${plural(resortCount, "live camera")} at ${r.name} (${r.town}, ${r.region}) plus ${plural(nearbyCount, "traffic camera")} on the roads around it. Check snow, lift lines and the drive up — and line up every camera on your route. Free, no signup.`;
+  return `Watch ${plural(resortCount, "live camera")} at ${r.name} (${r.town}, ${r.region}) plus ${plural(nearbyCount, "traffic camera")} on the roads around it. The live snow report: check the snow, lift lines and the drive up — and line up every camera on your route. Free, no signup.`;
 }
 
 export async function generateMetadata({
@@ -105,6 +121,23 @@ export default async function SkiResortPage({
   const total = resortCams.length + nearbyCams.length;
   const areas = cameraAreas([...resortCams, ...nearbyCams]).slice(0, 5);
   const others = SKI_RESORTS.filter(o => o.slug !== r.slug && o.country === r.country).slice(0, 6);
+  /* Verified official links — buttons render only for links that were
+     verified against the resort's own official site (lib/ski-resort-links). */
+  const links = getSkiResortLinks(r.slug);
+  const website = getResortWebsiteUrl(r.slug);
+  const websiteDomain = getVerifiedResortDomain(r.slug);
+  const pair = popularPairFor(r.slug);
+  const passes = passesForResort(r.slug);
+  const statePage = r.country === "United States" ? stateForPoint(r.lat, r.lng) : null;
+  /* Current conditions from the site's weather provider (WeatherAPI via
+     lib/place-weather). The block renders only when the provider returns
+     a reading — there is no placeholder weather, ever. */
+  const place = await getPlaceWeather({
+    query: `${r.lat},${r.lng}`,
+    lat: r.lat,
+    lng: r.lng,
+  }).catch(() => null);
+  const now = place?.weather?.current ?? null;
   const canonical = `${BASE}/ski-webcams/${r.slug}`;
 
   const faqs = [
@@ -128,6 +161,18 @@ export default async function SkiResortPage({
       q: "When should I check — the night before or the morning of?",
       a: "Both. The night before, the slope cameras show the storm total and whether the grooming fleet is out. The morning of, check the base for lift lines and the access-road cameras before you leave the driveway — the drive is half the ski day.",
     },
+    {
+      q: `Where do I find the official ${r.name} snow report?`,
+      a: `WorldEye doesn't publish its own snow report — the cameras and the conditions block on this page show what's actually on the ground. For ${r.name}'s official snow report, grooming report and lift status, use the resort's own channels${websiteDomain ? ` (${websiteDomain})` : ""} — lift and terrain status only ever comes from the resort itself.`,
+    },
+    ...(passes.length > 0
+      ? [
+          {
+            q: `Is ${r.name} on a multi-resort pass?`,
+            a: `${r.name} is included in the ${passes.join(" and ")} programme${passes.length > 1 ? "s" : ""}. Access terms — days included, blackout dates, reservations — are set by the pass programme and change by season, so check the official pass site or ${r.name}'s own pages before you travel.`,
+          },
+        ]
+      : []),
   ];
 
   const jsonLd = {
@@ -165,6 +210,18 @@ export default async function SkiResortPage({
           acceptedAnswer: { "@type": "Answer", text: f.a },
         })),
       },
+      {
+        "@type": "SkiResort",
+        name: r.name,
+        url: website ?? canonical,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: r.town,
+          addressRegion: r.region,
+          addressCountry: r.country,
+        },
+        geo: { "@type": "GeoCoordinates", latitude: r.lat, longitude: r.lng },
+      },
     ],
   };
 
@@ -189,7 +246,7 @@ export default async function SkiResortPage({
           <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
             <Camera className="w-3.5 h-3.5" /> LIVE RESORT CAMERAS
           </p>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{r.name} Ski Webcams</h1>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{r.name} Webcams &amp; Snow Report</h1>
           <p className="mt-4 text-white/55 flex items-center justify-center gap-1.5">
             <MapPin className="w-4 h-4 text-[#00E5FF]" />
             {r.town}, {r.region} · {r.country}
@@ -246,6 +303,33 @@ export default async function SkiResortPage({
         {/* Conditions */}
         <section className="mt-12">
           <h2 className="text-xl md:text-2xl font-bold mb-5">Conditions and road conditions</h2>
+          {now && (
+            <div className="mb-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 max-w-3xl">
+              <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+                {now.tempC != null && (
+                  <span className="text-3xl font-bold">
+                    {Math.round(now.tempC)}°C{now.tempF != null ? ` / ${Math.round(now.tempF)}°F` : ""}
+                  </span>
+                )}
+                {now.condition && <span className="text-white/85 font-medium">{now.condition.text}</span>}
+                {now.feelsLikeC != null && (
+                  <span className="text-sm text-white/50">Feels like {Math.round(now.feelsLikeC)}°C</span>
+                )}
+                {now.windKph != null && (
+                  <span className="text-sm text-white/50">Wind {Math.round(now.windKph)} km/h</span>
+                )}
+                {now.humidity != null && (
+                  <span className="text-sm text-white/50">Humidity {now.humidity}%</span>
+                )}
+              </div>
+              <p className="mt-3 text-xs text-white/40">
+                Current conditions near {r.town} from WeatherAPI.com
+                {now.lastUpdated ? `, updated ${now.lastUpdated}` : ""}. Snowfall totals and lift
+                status are on {r.name}&apos;s official snow report — WorldEye shows the live
+                cameras and weather, never an invented snow report.
+              </p>
+            </div>
+          )}
           <SkiConditions resort={r} />
         </section>
 
@@ -278,6 +362,127 @@ export default async function SkiResortPage({
             )}
           </section>
         )}
+
+        {/* Resort information — base data held for every resort, plus
+            the resort's verified official links. A link button renders
+            only when that link was verified against the resort's own
+            official website; nothing here is a guessed URL. */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-5">Resort information &amp; official links</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-3xl">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-base md:text-lg font-bold text-white/90">{r.town}</div>
+              <div className="text-xs text-white/45 mt-1">Town · {r.region}</div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-base md:text-lg font-bold text-white/90">{r.country}</div>
+              <div className="text-xs text-white/45 mt-1">Country</div>
+            </div>
+            {passes.length > 0 && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-base md:text-lg font-bold text-white/90">
+                  {passes.map(p => (
+                    <span key={p} className="block">{p}</span>
+                  ))}
+                </div>
+                <div className="text-xs text-white/45 mt-1">Season pass programme{passes.length > 1 ? "s" : ""}</div>
+              </div>
+            )}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-base md:text-lg font-bold text-white/90">{formatCoordinates(r.lat, r.lng)}</div>
+              <div className="text-xs text-white/45 mt-1">Base area coordinates</div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-base md:text-lg font-bold text-white/90">{r.resortCameraCount.toLocaleString("en-US")}</div>
+              <div className="text-xs text-white/45 mt-1">Resort cameras · within {RESORT_RADIUS_KM} km</div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-base md:text-lg font-bold text-white/90">{r.nearbyCameraCount.toLocaleString("en-US")}</div>
+              <div className="text-xs text-white/45 mt-1">Road cameras · within {NEARBY_RADIUS_KM} km</div>
+            </div>
+            {websiteDomain && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-base md:text-lg font-bold text-white/90 break-all">{websiteDomain}</div>
+                <div className="text-xs text-white/45 mt-1">Official website</div>
+              </div>
+            )}
+          </div>
+
+          {(website || links) && (
+            <div className="mt-5 flex flex-wrap gap-3">
+              {links?.tickets && (
+                <a
+                  href={links.tickets}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
+                >
+                  <Ticket className="w-4 h-4" /> Buy lift tickets
+                  <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+                </a>
+              )}
+              {links?.trailMap && (
+                <a
+                  href={links.trailMap}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+                >
+                  <MapIcon className="w-4 h-4 text-[#D4AF37]" /> Trail map
+                  <ExternalLink className="w-3.5 h-3.5 text-white/35" />
+                </a>
+              )}
+              {links?.lodging && (
+                <a
+                  href={links.lodging}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+                >
+                  <BedDouble className="w-4 h-4 text-[#D4AF37]" /> Lodging
+                  <ExternalLink className="w-3.5 h-3.5 text-white/35" />
+                </a>
+              )}
+              {website && (
+                <a
+                  href={website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+                >
+                  <Globe className="w-4 h-4 text-[#D4AF37]" /> Official website
+                  <ExternalLink className="w-3.5 h-3.5 text-white/35" />
+                </a>
+              )}
+            </div>
+          )}
+          {(website || links) && (
+            <p className="mt-4 text-sm text-white/45 max-w-3xl">
+              These links go to {r.name}&apos;s official website — WorldEye doesn&apos;t sell lift
+              tickets or lodging. They&apos;re here so checking the cameras and booking the day
+              happen in one trip.
+            </p>
+          )}
+          <p className="mt-4 text-sm flex flex-wrap items-center gap-x-2 gap-y-1">
+            <Link
+              href={`/ski-webcams/compare?a=${r.slug}`}
+              className="inline-flex items-center gap-1.5 font-semibold text-[#00E5FF] hover:underline"
+            >
+              <Scale className="w-4 h-4" /> Compare {r.name} with another resort
+            </Link>
+            {pair && (
+              <>
+                <span className="text-white/30">·</span>
+                <Link
+                  href={`/ski-webcams/compare/${pair.pair}`}
+                  className="font-semibold text-[#00E5FF] hover:underline"
+                >
+                  {r.name} vs {pair.other.name}
+                </Link>
+              </>
+            )}
+          </p>
+        </section>
 
         {/* Resort cameras */}
         <section className="mt-12">
@@ -358,6 +563,17 @@ export default async function SkiResortPage({
                 </Link>
               </li>
             ))}
+            {statePage && (
+              <li>
+                <Link
+                  href={`/us-traffic-cameras/${statePage.slug}`}
+                  className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:bg-white/[0.05] transition"
+                >
+                  <span className="font-semibold text-sm">All {statePage.name} road cameras</span>
+                  <span className="block text-xs text-white/45 mt-1">Statewide traffic &amp; road cameras</span>
+                </Link>
+              </li>
+            )}
             <li>
               <Link
                 href={`/cameras/countries/${r.countrySlug}`}

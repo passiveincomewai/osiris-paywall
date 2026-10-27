@@ -1,0 +1,443 @@
+{
+  "appi-kogen": {
+    "lodging": "https://www.appi.co.jp/stays/",
+    "tickets": "https://www.appi.co.jp/snow-mountain-resort/ticket/",
+    "trailMap": "https://www.appi.co.jp/snow-mountain-resort/course/"
+  },
+  "arapahoe-basin": {
+    "lodging": "https://www.arapahoebasin.com/lodging/",
+    "tickets": "https://www.arapahoebasin.com/tickets-and-passes/",
+    "trailMap": "https://www.arapahoebasin.com/trail-maps/"
+  },
+  "aspen": {
+    "lodging": "https://www.aspensnowmass.com/visit/lodging",
+    "tickets": "https://www.aspensnowmass.com/visit/tickets-and-passes/lift-tickets"
+  },
+  "bogus-basin": {
+    "tickets": "https://store.bogusbasin.org/"
+  },
+  "brian-head": {
+    "lodging": "https://www.brianhead.com/lodging-23-24/",
+    "trailMap": "https://www.brianhead.com/trail-map/",
+    "tickets": "https://shop.brianhead.com/lift-tickets-passes"
+  },
+  "brighton": {
+    "lodging": "https://www.brightonresort.com/lodging",
+    "tickets": "https://www.brightonresort.com/lift-tickets"
+  },
+  "brundage-mountain": {
+    "tickets": "https://brundage.com/daily-lift-tickets/",
+    "trailMap": "https://brundage.com/winter-maps/"
+  },
+  "cannon-mountain": {
+    "tickets": "https://shop.skinh.com/"
+  },
+  "cerler": {
+    "lodging": "https://www.aramon.com/cerler/hoteles-cerler.html",
+    "tickets": "https://www.aramon.com/cerler",
+    "trailMap": "https://www.aramon.com/cerler/conoce-la-estacion-cerler.html"
+  },
+  "diamond-peak": {
+    "lodging": "https://www.diamondpeak.com/visit/lodging/",
+    "tickets": "https://www.diamondpeak.com/tickets-passes-rentals/lift-tickets/",
+    "trailMap": "https://www.diamondpeak.com/the-mountain/trail-map/"
+  },
+  "eldora": {
+    "lodging": "https://www.eldora.com/activities-amenities/lodging-partners/",
+    "tickets": "https://www.eldora.com/tickets-passes/tickets/",
+    "trailMap": "https://www.eldora.com/the-mountain/maps/alpine-trail-map/"
+  },
+  "formigal": {
+    "lodging": "https://www.aramon.com/formigal-panticosa/hoteles-formigal-panticosa.html",
+    "tickets": "https://www.aramon.com/formigal-panticosa"
+  },
+  "furano": {
+    "lodging": "https://www.furano-kankou.com/where-to-stay/where-to-stay-furano/"
+  },
+  "geilo": {
+    "lodging": "https://www.skigeilo.no/overnatting-pa-geilo",
+    "tickets": "https://www.skigeilo.no/skipass"
+  },
+  "granite-peak": {
+    "lodging": "https://www.skigranitepeak.com/plan-purchase/lodging",
+    "tickets": "https://www.skigranitepeak.com/plan-purchase/tickets-passes-0",
+    "trailMap": "https://www.skigranitepeak.com/mountain-info/trail-map-mountain-stats"
+  },
+  "grindelwald-wengen": {
+    "lodging": "https://grindelwald.swiss/de/entdecken/unterkuenfte.html",
+    "tickets": "https://grindelwald.swiss/de/entdecken/bergbahnen-tickets.html",
+    "trailMap": "https://jungfrauregion.swiss/en/service/maps/winter-maps.html"
+  },
+  "grouse-mountain": {
+    "tickets": "https://www.grousemountain.com/general-admission-membership"
+  },
+  "hakuba": {
+    "tickets": "https://www.hakubavalley.com/ticket/"
+  },
+  "hemsedal": {
+    "lodging": "https://hemsedal.com/overnatting",
+    "tickets": "https://www.skistar.com/en/winter/skipass/buy-skipass/lift-pass-hemsedal/"
+  },
+  "hoodoo": {
+    "lodging": "https://hoodoo.com/lodging/",
+    "tickets": "https://hoodoo.com/rates/lift-tickets/",
+    "trailMap": "https://hoodoo.com/explore/trail-map/"
+  },
+  "jackson-hole": {
+    "tickets": "https://www.jacksonhole.com/lift-tickets"
+  },
+  "jay-peak": {
+    "lodging": "https://jaypeakresort.com/trip-planning/lodging",
+    "tickets": "https://jaypeakresort.com/skiing-riding/tickets-passes/202627-lift-tickets",
+    "trailMap": "https://jaypeakresort.com/skiing-riding/snow-report-maps/trail-map"
+  },
+  "june-mountain": {
+    "lodging": "https://www.junemountain.com/plan-your-trip/lodging",
+    "tickets": "https://www.junemountain.com/plan-your-trip/lift-tickets",
+    "trailMap": "https://www.junemountain.com/mountain-information/trail-map"
+  },
+  "kicking-horse": {
+    "tickets": "https://kickinghorseresort.com/tickets/",
+    "lodging": "https://rentals.kickinghorseresort.com/"
+  },
+  "killington": {
+    "lodging": "https://killington.com/ski-and-stay",
+    "tickets": "https://killington.com/lift-tickets",
+    "trailMap": "https://www.killington.com/winter-trail-map"
+  },
+  "kranjska-gora": {
+    "lodging": "https://kranjska-gora.si/nastanitve/kategorija/hoteli",
+    "trailMap": "https://kranjska-gora.si/aktivnosti/smucanje"
+  },
+  "lake-louise": {
+    "tickets": "https://www.skilouise.com/tickets-passes/winter-tickets/single-day-lift-tickets/",
+    "trailMap": "https://www.skilouise.com/explore-winter/winter-ski-ride/lift-runs-parks-status/"
+  },
+  "levi": {
+    "lodging": "https://www.levi.fi/majoitu/",
+    "tickets": "https://levi.skiperformance.com/fi/Talvi/store#/fi/Talvi/buy?skugroup_id=807"
+  },
+  "loon-mountain": {
+    "lodging": "https://www.loonmtn.com/lodging",
+    "tickets": "https://www.loonmtn.com/lift-tickets"
+  },
+  "mammoth-mountain": {
+    "lodging": "https://www.mammothmountain.com/plan-your-trip/mammoth-hotels",
+    "trailMap": "https://www.mammothmountain.com/on-the-mountain/winter-trail-map",
+    "tickets": "https://www.mammothmountain.com/discover-mammoth/buy-tickets-1"
+  },
+  "monarch-mountain": {
+    "tickets": "https://skimonarch.com/tickets/",
+    "trailMap": "https://skimonarch.com/mountain-maps/",
+    "lodging": "https://skimonarch.com/lodging/"
+  },
+  "mt-bachelor": {
+    "tickets": "https://www.mtbachelor.com/tickets-passes/lift-tickets/"
+  },
+  "myoko-kogen": {
+    "lodging": "https://joetsu-myoko.com/joetsu-myoko-accommodation/akakura-onsen-accommodation-hotels/"
+  },
+  "niseko": {
+    "lodging": "https://www.niseko.ne.jp/en/niseko-accommodation/",
+    "tickets": "https://www.niseko.ne.jp/en/lift/",
+    "trailMap": "https://www.niseko.ne.jp/en/map/"
+  },
+  "oberstdorf": {
+    "lodging": "https://www.oberstdorf.de/urlaubszuhause/gastgebersuche/",
+    "tickets": "https://www.ok-bergbahnen.com/preisinformationen/preise-tagesskipass-oberstdorf-kleinwalsertal.html"
+  },
+  "oppdal": {
+    "lodging": "https://oppdal.com/opplevelser_kat/overnatting/",
+    "tickets": "https://www.alpinco.com/no/oppdal/kjop-dagskort-1-8-dager",
+    "trailMap": "https://www.alpinco.com/no/oppdal/loypekart"
+  },
+  "panorama-mountain": {
+    "tickets": "https://shop.panoramaresort.com/s/tickets-passes/lift-tickets"
+  },
+  "powder-mountain": {
+    "lodging": "https://powdermountain.com/lodging",
+    "tickets": "https://powdermountain.com/lift-tickets",
+    "trailMap": "https://powdermountain.com/trail-map"
+  },
+  "queenstown": {
+    "lodging": "https://www.queenstownnz.co.nz/accommodation/"
+  },
+  "red-lodge-mountain": {
+    "lodging": "https://www.redlodgemountain.com/lodging/",
+    "tickets": "https://www.redlodgemountain.com/lift-tickets/"
+  },
+  "rusutsu": {
+    "lodging": "https://rusutsu.com/rusutsu-resort-hotel-and-convention/",
+    "tickets": "https://rusutsu.com/winter-lift-tickets/",
+    "trailMap": "https://rusutsu.com/trail-map/"
+  },
+  "saalbach-hinterglemm": {
+    "tickets": "https://tickets.saalbach.com/de/winter/store#/de/winter/buy",
+    "trailMap": "https://www.saalbach.com/en/winter/ski-resort/piste-map",
+    "lodging": "https://www.saalbach.com/saalbach-booking/MasterReq?AR=1&FL=100&LG=0&RA=2&AM=1&MB=0"
+  },
+  "shiga-kogen": {
+    "tickets": "https://shigakogen.co.jp/winter/lift-price/"
+  },
+  "sierra-nevada": {
+    "lodging": "https://sierranevada.es/es/alojamientos/alojamientos-en-sierra-nevada/",
+    "tickets": "https://sierranevada.es/es/invierno/forfaits/",
+    "trailMap": "https://sierranevada.es/en/invierno/slopes/zones-and-circuits/track-map/"
+  },
+  "ski-santa-fe": {
+    "lodging": "https://www.skisantafe.com/santa-fe/where-to-stay",
+    "tickets": "https://www.skisantafe.com/tickets-passes/day-tickets"
+  },
+  "snowbasin": {
+    "lodging": "https://www.snowbasin.com/lodging/",
+    "tickets": "https://www.snowbasin.com/tickets-passes/lift-tickets/",
+    "trailMap": "https://www.snowbasin.com/the-mountain/trail-maps/"
+  },
+  "snowbird": {
+    "tickets": "https://www.snowbird.com/tickets-passes/tickets/",
+    "lodging": "https://www.snowbird.com/lodging-amenities/lodging/"
+  },
+  "snowmass": {
+    "lodging": "https://www.aspensnowmass.com/visit/lodging",
+    "tickets": "https://www.aspensnowmass.com/visit/tickets-and-passes/lift-tickets"
+  },
+  "st-moritz": {
+    "lodging": "https://www.stmoritz.com/directory/unterkuenfte",
+    "tickets": "https://booking.stmoritz.com/de/skitickets"
+  },
+  "sugar-bowl": {
+    "tickets": "https://shop.sugarbowl.com/l/lift-tickets/c/sugar-bowl-lift-ticket",
+    "lodging": "https://digital-assets.net/sugar-bowl-lodging"
+  },
+  "sundance": {
+    "lodging": "https://www.sundanceresort.com/stay/",
+    "tickets": "https://www.sundanceresort.com/tickets-passes/",
+    "trailMap": "https://www.sundanceresort.com/maps/"
+  },
+  "sunshine-village": {
+    "lodging": "https://www.skibanff.com/plan/lodging/",
+    "tickets": "https://www.skibanff.com/tickets-passes/lift-tickets/lift-tickets",
+    "trailMap": "https://www.skibanff.com/the-mountain/lifts-terrain/trail-maps"
+  },
+  "telluride": {
+    "lodging": "https://tellurideskiresort.com/stay/",
+    "tickets": "https://shop.tellurideskiresort.com/s/winter-lift-tickets",
+    "trailMap": "https://tellurideskiresort.com/mountain/"
+  },
+  "the-remarkables": {
+    "tickets": "https://www.theremarkables.co.nz/all-passes/lift-passes",
+    "trailMap": "https://theremarkables.co.nz/mountain-info"
+  },
+  "vuokatti": {
+    "lodging": "https://vuokatti.fi/majoitus/hotellit/",
+    "tickets": "https://vuokatti.fi/vuokatinrinteet/rinneliput/"
+  },
+  "white-pass": {
+    "lodging": "https://skiwhitepass.com/lodging-and-dining",
+    "tickets": "https://skiwhitepass.com/the-mountain/lift-tickets",
+    "trailMap": "https://skiwhitepass.com/the-mountain/trail-maps"
+  },
+  "whitefish-mountain": {
+    "lodging": "https://skiwhitefish.com/lodging/",
+    "tickets": "https://skiwhitefish.com/tickets/",
+    "trailMap": "https://skiwhitefish.com/trail-maps/"
+  },
+  "wolf-creek": {
+    "lodging": "https://wolfcreekski.com/lodging/",
+    "trailMap": "https://wolfcreekski.com/area-maps/"
+  },
+  "yllas": {
+    "lodging": "https://yllas.fi/majoitus/"
+  },
+  "zermatt": {
+    "lodging": "https://zermatt.swiss/planen-buchen/unterkuenfte",
+    "tickets": "https://zermatt.swiss/planen-buchen/bergbahntickets",
+    "trailMap": "https://zermatt.swiss/karte"
+  },
+  "red-mountain": {
+    "tickets": "https://store.redresort.com/",
+    "trailMap": "https://www.redresort.com/mountain/interactive-trail-map/",
+    "lodging": "https://www.redresort.com/plan-your-trip/lodging/"
+  },
+  "revelstoke": {
+    "tickets": "https://book.revelstokemountainresort.com/s/rentals-lift-tickets",
+    "trailMap": "https://revelstokemountainresort.com/mountain/trail-map/",
+    "lodging": "https://book.revelstokemountainresort.com/v2/lodging"
+  },
+  "silverstar": {
+    "tickets": "https://tickets.skisilverstar.com/",
+    "trailMap": "https://skisilverstar.com/plan-your-visit/winter-maps/",
+    "lodging": "https://bookings.skisilverstar.com/"
+  },
+  "whistler-blackcomb": {
+    "tickets": "https://www.whistlerblackcomb.com/plan-your-trip/lift-access/tickets.aspx?adults=2&dragSearch=true",
+    "trailMap": "https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/terrain-and-lift-status.aspx",
+    "lodging": "https://www.whistlerblackcomb.com/plan-your-trip/stay/wb-lodging-deals.aspx"
+  },
+  "blue-mountain-ontario": {
+    "tickets": "https://shop.bluemountain.ca/",
+    "trailMap": "https://www.bluemountain.ca/-/media/blue-mountain/images/winter/winter-trail-map---2025-26.jpg?rev=ac2a7ae",
+    "lodging": "https://www.bluemountain.ca/plan-your-visit/stay/lodging-overview"
+  },
+  "copper-mountain": {
+    "trailMap": "https://www.coppercolorado.com/content/dam/coppercolorado/maps/copper_trail_map.pdf"
+  },
+  "winter-park": {
+    "tickets": "https://store.winterparkresort.com/winter-lift-tickets",
+    "trailMap": "https://www.winterparkresort.com/the-mountain/trail-maps",
+    "lodging": "https://www.winterparkresort.com/plan-your-visit/book-lodging"
+  },
+  "palisades-tahoe": {
+    "tickets": "https://www.palisadestahoe.com/plan-your-visit/lift-tickets",
+    "trailMap": "https://www.palisadestahoe.com/mountain-information/trail-maps",
+    "lodging": "https://www.palisadestahoe.com/plan-your-visit/lodging"
+  },
+  "schweitzer": {
+    "tickets": "https://store.schweitzer.com/s/lift-tickets/",
+    "trailMap": "https://www.schweitzer.com/site_files/21346/Schweitzer_Winter_Trail_Map.pdf",
+    "lodging": "https://www.schweitzer.com/lodging"
+  },
+  "saddleback": {
+    "tickets": "https://store.saddlebackmaine.com/",
+    "trailMap": "https://www.saddlebackmaine.com/trail-map-winter/",
+    "lodging": "https://www.saddlebackmaine.com/rental-partners-and-service-providers/"
+  },
+  "sugarloaf": {
+    "tickets": "https://www.sugarloaf.com/lift-tickets-passes/lift-tickets",
+    "trailMap": "https://www.sugarloaf.com/the-mountain/trail-map",
+    "lodging": "https://www.sugarloaf.com/lodging"
+  },
+  "sunday-river": {
+    "tickets": "https://www.sundayriver.com/lift-tickets-and-season-passes/lift-tickets",
+    "trailMap": "https://cdn.sundayriver.com/dA/ca0f8ba35f/1/SundayRiver-trailMap-2025-2026_web.pdf?v=1.2",
+    "lodging": "https://www.sundayriver.com/lodging"
+  },
+  "stoneham": {
+    "tickets": "https://www.ski-stoneham.com/en/tickets-and-passes/",
+    "lodging": "https://www.ski-stoneham.com/en/lodging/"
+  },
+  "mont-sainte-anne": {
+    "tickets": "https://mont-sainte-anne.com/en/tickets-and-passes/",
+    "lodging": "https://mont-sainte-anne.com/en/condo-hotel-mont-sainte-anne/"
+  },
+  "cypress-mountain": {
+    "tickets": "https://store.cypressmountain.com/ag1911/18"
+  },
+  "pyha": {
+    "tickets": "https://www.pyha.fi/en/en/skiresort-winter/lift-tickets",
+    "trailMap": "https://www.pyha.fi/en/page/maps-and-brochures",
+    "lodging": "https://www.pyha.fi/en/accommodation/hotels"
+  },
+  "hli-arfjall": {
+    "tickets": "https://www.hlidarfjall.is/is/lyftumidar",
+    "trailMap": "https://www.hlidarfjall.is/is/fjallid/yfirlitskort"
+  },
+  "hafjell": {
+    "tickets": "https://www.alpinco.com/no/hafjell/kjop-dagskort-1-8-dager",
+    "trailMap": "https://www.alpinco.com/no/hafjell/loypekart",
+    "lodging": "https://www.alpinco.com/no/hafjell/overnatting"
+  },
+  "kvitfjell": {
+    "tickets": "https://www.alpinco.com/no/kvitfjell/kjop-dagskort-1-8-dager",
+    "trailMap": "https://www.alpinco.com/no/kvitfjell/loypekart",
+    "lodging": "https://www.alpinco.com/no/kvitfjell/overnatting"
+  },
+  "voss": {
+    "tickets": "https://www.vossresort.no/ditt-besok/prisar/",
+    "trailMap": "https://www.vossresort.no/skisenter/loypekart/",
+    "lodging": "https://www.vossresort.no/overnatting-i-voss/"
+  },
+  "salen": {
+    "tickets": "https://www.skistar.com/en/winter/skipass/buy-skipass/lift-pass-salen/",
+    "trailMap": "https://www.skistar.com/en/ski-destinations/salen/winter-in-salen/piste-maps/",
+    "lodging": "https://www.skistar.com/en/ski-destinations/salen/winter-in-salen/lodging/"
+  },
+  "tomamu": {
+    "tickets": "https://www.snowtomamu.jp/winter/en/ski/ticket/",
+    "trailMap": "https://www.snowtomamu.jp/winter/en/areamap/",
+    "lodging": "https://www.snowtomamu.jp/winter/en/hotel/"
+  },
+  "nozawa-onsen": {
+    "tickets": "https://en.nozawaski.com/the-mountain/lift-ticket/ticket-prices/",
+    "trailMap": "https://en.nozawaski.com/the-mountain/moutain-info/trail-guide/"
+  },
+  "zao-onsen": {
+    "tickets": "https://zaomountainresort.com/chrage/",
+    "trailMap": "https://zaomountainresort.com/gerende/",
+    "lodging": "https://zaomountainresort.com/stay/"
+  },
+  "naeba": {
+    "tickets": "https://www.princehotels.co.jp/ski/naeba/winter/lift/",
+    "lodging": "https://www.princehotels.co.jp/naeba/"
+  },
+  "vail": {
+    "tickets": "https://www.vail.com/plan-your-trip/lift-access/tickets.aspx",
+    "trailMap": "https://www.vail.com/the-mountain/about-the-mountain/trail-map.aspx",
+    "lodging": "https://www.vail.com/plan-your-trip/stay/vail-lodging.aspx"
+  },
+  "beaver-creek": {
+    "trailMap": "https://www.beavercreek.com/the-mountain/about-the-mountain/gps-trail-map.aspx",
+    "lodging": "https://www.beavercreek.com/plan-your-trip/stay/beaver-creek-lodging.aspx"
+  },
+  "crested-butte": {
+    "trailMap": "https://www.skicb.com/the-mountain/about-the-mountain/trail-maps.aspx",
+    "lodging": "https://www.skicb.com/Plan-Your-Trip/Stay/Lodging%20Results.aspx"
+  },
+  "steamboat": {
+    "tickets": "https://www.steamboat.com/plan-your-trip/lift-tickets-ski-pass",
+    "trailMap": "https://www.steamboat.com/the-mountain/trail-map",
+    "lodging": "https://www.steamboat.com/plan-your-trip/lodging"
+  },
+  "mount-snow": {
+    "trailMap": "https://www.mountsnow.com/the-mountain/about-the-mountain/trail-maps.aspx"
+  },
+  "stevens-pass": {
+    "trailMap": "https://www.stevenspass.com/the-mountain/about-the-mountain/trail-maps.aspx"
+  },
+  "stowe": {
+    "trailMap": "https://scene7.vailresorts.com/is/content/vailresorts/sitecore/stowe/maps/20211107_ST_Winter-Trail_Map.001..pdf?fit=constrain,1&resMode=sharp2"
+  },
+  "ischgl": {
+    "tickets": "https://tickets.ischgl.com/de/",
+    "lodging": "https://ischgl.com/de/urlaub-buchen/unterkunft-buchen"
+  },
+  "solden": {
+    "lodging": "https://www.soelden.com/en/search-book/accommodations",
+    "tickets": "https://www.soelden.com/de/suchen-buchen/ski-bergbahntickets",
+    "trailMap": "https://www.soelden.com/de/aktivitaeten/winter/skifahren-snowboarden/skigebietsinformationen/skigebietsplan-lifte-pisten"
+  },
+  "st-anton-am-arlberg": {
+    "tickets": "https://www.skiarlberg.at/en/tickets-season-times/webshop",
+    "lodging": "https://www.stantonamarlberg.com/en/accommodation",
+    "trailMap": "https://www.skiarlberg.at/de/st-anton/live-infos/karte-navigation"
+  },
+  "mayrhofen": {
+    "lodging": "https://www.mayrhofen.at/en/accommodations",
+    "tickets": "https://www.mayrhofen.at/de/mountopolis/winter/skipass-preise-oeffnungszeiten",
+    "trailMap": "https://www.mayrhofen.at/de/mountopolis/winter/pistenplan-geoeffnete-anlagen"
+  },
+  "courmayeur": {
+    "lodging": "https://www.courmayeur-montblanc.com/en/hotel-e-skipass/",
+    "tickets": "https://www.courmayeur-montblanc.com/en/skipass-rates/teleskipass/",
+    "trailMap": "https://www.courmayeur-montblanc.com/en/slopes-lifts/skirama/"
+  },
+  "obertauern": {
+    "trailMap": "https://www.obertauern.com/winter/skigebiet-oesterreich/pistenplan.html",
+    "lodging": "https://www.obertauern.com/winter/hotels-zimmer/hotel-in-obertauern.html",
+    "tickets": "https://www.obertauern.com/winter/skigebiet-oesterreich/skipasspreise.html"
+  },
+  "lech-am-arlberg": {
+    "tickets": "https://www.lechzuers.com/en/winter/winter-sports/skiing/lift-pass",
+    "trailMap": "https://www.skiarlberg.at/de/lech-zuers/live-infos/karte-navigation",
+    "lodging": "https://www.lechzuers.com/de/buchen"
+  },
+  "andermatt-sedrun": {
+    "tickets": "https://www.andermatt-sedrun-disentis.ch/de/stories/tickets",
+    "lodging": "https://www.andermatt-sedrun-disentis.ch/andermatt/de/pages/unterkuenfte"
+  },
+  "poiana-brasov": {
+    "tickets": "https://www.discoverpoiana.ro/ro/cartele",
+    "trailMap": "https://www.discoverpoiana.ro/ro/partii",
+    "lodging": "https://www.discoverpoiana.ro/ro/cazare"
+  }
+}
