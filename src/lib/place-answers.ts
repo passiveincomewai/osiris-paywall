@@ -107,12 +107,89 @@ const COUNTRY_COUNT_REUSE: Record<string, string> = {
   "united-kingdom": "how-many-cameras-in-the-uk",
 };
 
-const CITY_SLUGS = new Set(
-  (cityPages as { cities: Array<{ slug: string }> }).cities.map((c) => c.slug),
-);
+/* The universe of /city-webcams/<slug> pages the [city] route serves:
+   the generated tier (city-pages.json — the same records cityAnswers
+   reads) plus the curated tier, the hand-written CITIES configs in
+   src/app/city-webcams/[city]/page.tsx. CITY_SLUGS used to be built
+   from the generated JSON only (flagged by Top-50 Batch 3), so a
+   country whose cluster is a curated city — London for the UK,
+   Ottawa for Canada — could never be linked from the slot-2 answer
+   below. The curated entries are pinned here with the name and
+   country each config carries; place-answers.test.ts checks this
+   derivation against the route's own generateStaticParams(), and
+   src/data/city-pages.test.ts pins the invariant that generated
+   slugs never shadow a curated one. (The /city-webcams/new-york-city
+   flagship is a separate static route, not part of the [city] route's
+   universe, and no country index names it as an area — excluded.) */
+interface CityPageRef {
+  slug: string;
+  name: string;
+  countrySlug: string;
+}
+
+const CURATED_CITY_PAGES: CityPageRef[] = [
+  { slug: "london", name: "London", countrySlug: "united-kingdom" },
+  { slug: "ottawa", name: "Ottawa", countrySlug: "canada" },
+  { slug: "toronto", name: "Toronto", countrySlug: "canada" },
+  { slug: "madrid", name: "Madrid", countrySlug: "spain" },
+  { slug: "houston", name: "Houston", countrySlug: "united-states" },
+  { slug: "dallas", name: "Dallas", countrySlug: "united-states" },
+  { slug: "tokyo", name: "Tokyo", countrySlug: "japan" },
+  { slug: "sydney", name: "Sydney", countrySlug: "australia" },
+  { slug: "auckland", name: "Auckland", countrySlug: "new-zealand" },
+  { slug: "fort-worth", name: "Fort Worth", countrySlug: "united-states" },
+];
+
+const GENERATED_CITY_PAGES: CityPageRef[] = (
+  cityPages as {
+    cities: Array<{ slug: string; name: string; countrySlug: string }>;
+  }
+).cities.map((c) => ({ slug: c.slug, name: c.name, countrySlug: c.countrySlug }));
+
+export const CITY_PAGE_SLUGS: ReadonlySet<string> = new Set([
+  ...GENERATED_CITY_PAGES.map((c) => c.slug),
+  ...CURATED_CITY_PAGES.map((c) => c.slug),
+]);
+
+const CITY_PAGES_BY_COUNTRY = new Map<string, CityPageRef[]>();
+for (const ref of [...GENERATED_CITY_PAGES, ...CURATED_CITY_PAGES]) {
+  const list = CITY_PAGES_BY_COUNTRY.get(ref.countrySlug) ?? [];
+  list.push(ref);
+  CITY_PAGES_BY_COUNTRY.set(ref.countrySlug, list);
+}
 
 function citySlugFor(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+/**
+ * The slug of the city page serving one of a country's named areas, or
+ * undefined when the area has no city page. Resolution is scoped to
+ * the country — San Antonio, Chile must not land on the Texas page —
+ * and tries the record's own name first (the generated data carries
+ * the true slug for names naive slugification mangles, e.g. Montréal
+ * → montreal, A Coruña → a-coruna), then the slugified name.
+ */
+export function cityPageSlugForArea(
+  countrySlug: string,
+  areaName: string,
+): string | undefined {
+  const refs = CITY_PAGES_BY_COUNTRY.get(countrySlug);
+  if (!refs) return undefined;
+  const wanted = areaName.trim().toLowerCase();
+  const byName = refs.find((r) => r.name.toLowerCase() === wanted);
+  if (byName) return byName.slug;
+  const slug = citySlugFor(areaName);
+  return refs.find((r) => r.slug === slug)?.slug;
+}
+
+/** The /city-webcams href for a country area, or undefined. */
+export function cityPageHrefForArea(
+  countrySlug: string,
+  areaName: string,
+): string | undefined {
+  const slug = cityPageSlugForArea(countrySlug, areaName);
+  return slug ? `/city-webcams/${slug}` : undefined;
 }
 
 export function countryAnswers(c: CountryAnswerInput): VoiceQuestion[] {
@@ -142,9 +219,16 @@ export function countryAnswers(c: CountryAnswerInput): VoiceQuestion[] {
     });
   }
 
-  // Slot 2 — top places.
+  // Slot 2 — top places. The deep link goes to the largest cluster
+  // that actually has a city page: a country's first listed area is
+  // not always a city (Canada's index leads with the province
+  // "British Columbia"), and the largest cluster may be a curated
+  // page (London). Areas are tried in the index's own order; when
+  // none resolves, the entry links back to the country page itself.
   if (top.length >= 2) {
-    const firstCitySlug = citySlugFor(top[0].name);
+    const linkedCitySlug = top
+      .map((t) => cityPageSlugForArea(c.slug, t.name))
+      .find((s) => s !== undefined);
     out.push({
       id: `country-${c.slug}-top-places`,
       category: "watch-cameras-by-place",
@@ -154,7 +238,7 @@ export function countryAnswers(c: CountryAnswerInput): VoiceQuestion[] {
         top.length >= 3
           ? `${top[2].name} (${fmt(top[2].count)}) is next. City pages break down the biggest clusters feed by feed.`
           : `WorldEye lists cameras across ${fmt(c.cityCount)} named areas in ${c.name}.`,
-      href: CITY_SLUGS.has(firstCitySlug) ? `/city-webcams/${firstCitySlug}` : page,
+      href: linkedCitySlug ? `/city-webcams/${linkedCitySlug}` : page,
       relatedSlugs: [c.slug],
     });
   }

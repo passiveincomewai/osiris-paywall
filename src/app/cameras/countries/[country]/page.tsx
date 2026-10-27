@@ -27,7 +27,11 @@ import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
 import { withDerivedCities } from "@/lib/us-places";
 import { US_STATE_META } from "@/lib/us-states";
 import VoiceQA from "@/components/seo/VoiceQA";
-import { countryAnswers, mergePlaceFaqs } from "@/lib/place-answers";
+import {
+  cityPageHrefForArea,
+  countryAnswers,
+  mergePlaceFaqs,
+} from "@/lib/place-answers";
 import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
 import CurrentStatus from "@/components/CurrentStatus";
@@ -559,12 +563,30 @@ export default async function CountryPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {c.topCities.map((a) => (
-                    <tr key={a.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
-                      <td className="px-5 py-3">{a.name}</td>
-                      <td className="px-5 py-3 text-right font-mono text-[#D4AF37]">{a.count.toLocaleString("en-US")}</td>
-                    </tr>
-                  ))}
+                  {c.topCities.map((a) => {
+                    /* An area name links to its city page when one
+                       exists in this country (place-answers derives
+                       the universe from the same generated + curated
+                       data the [city] route serves — this is the link
+                       mechanism Top-50 Batch 3 flagged as missing for
+                       the Canada → Calgary/Ottawa adjunct). Areas
+                       without a city page stay plain text. */
+                    const cityHref = cityPageHrefForArea(slug, a.name);
+                    return (
+                      <tr key={a.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
+                        <td className="px-5 py-3">
+                          {cityHref ? (
+                            <Link href={cityHref} className="text-[#00E5FF] hover:underline">
+                              {a.name}
+                            </Link>
+                          ) : (
+                            a.name
+                          )}
+                        </td>
+                        <td className="px-5 py-3 text-right font-mono text-[#D4AF37]">{a.count.toLocaleString("en-US")}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

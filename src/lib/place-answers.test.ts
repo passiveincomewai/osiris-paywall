@@ -5,6 +5,9 @@ import { getUsStatesIndex } from "./us-states";
 import { countWords, VOICE_QUESTIONS } from "./voice-questions";
 import {
   cityAnswers,
+  CITY_PAGE_SLUGS,
+  cityPageHrefForArea,
+  cityPageSlugForArea,
   countryAnswers,
   mergePlaceFaqs,
   normalizeQuestion,
@@ -13,6 +16,7 @@ import {
   type CountryAnswerInput,
   type StateAnswerInput,
 } from "./place-answers";
+import { generateStaticParams as cityStaticParams } from "@/app/city-webcams/[city]/page";
 
 /**
  * The generated place answers are held to the same invariants as the
@@ -43,7 +47,10 @@ function validHref(href: string): boolean {
     return countries.some((c) => c.slug === href.split("/").pop());
   }
   if (href.startsWith("/city-webcams/")) {
-    return cities.some((c) => c.slug === href.split("/").pop());
+    // A city href resolves when the [city] route serves the slug —
+    // generated tier OR curated tier (this check used to consult the
+    // generated JSON only, replicating the CITY_SLUGS gap it guards).
+    return CITY_PAGE_SLUGS.has(href.split("/").pop()!);
   }
   if (href.startsWith("/us-traffic-cameras/")) {
     return states.some((s) => s.slug === href.split("/").pop());
@@ -138,5 +145,88 @@ describe("place-answers generator", () => {
     const capped = mergePlaceFaqs(big, entries);
     expect(capped.merged.length).toBe(20);
     expect(capped.surviving.length).toBe(1);
+  });
+});
+
+describe("city-page slug universe (Top-50 Batch 3 flag)", () => {
+  it("covers exactly the slugs the [city] route serves", () => {
+    const served = new Set(cityStaticParams().map((p) => p.city));
+    expect(CITY_PAGE_SLUGS).toEqual(served);
+  });
+
+  it("resolves areas country-scoped, by record name before slug form", () => {
+    // Curated tier (absent from city-pages.json — the original gap).
+    expect(cityPageSlugForArea("united-kingdom", "London")).toBe("london");
+    expect(cityPageSlugForArea("canada", "Ottawa")).toBe("ottawa");
+    expect(cityPageSlugForArea("japan", "Tokyo")).toBe("tokyo");
+    expect(cityPageSlugForArea("united-states", "Fort Worth")).toBe("fort-worth");
+    // Same name, two countries: each resolves to its own page.
+    expect(cityPageSlugForArea("canada", "Vancouver")).toBe("vancouver");
+    expect(cityPageSlugForArea("united-states", "Vancouver")).toBe(
+      "vancouver-united-states",
+    );
+    // A name with a page only in another country resolves nowhere.
+    expect(cityPageSlugForArea("chile", "San Antonio")).toBeUndefined();
+    // Names slugification mangles resolve through the record's name.
+    expect(cityPageSlugForArea("canada", "Montréal")).toBe("montreal");
+    expect(cityPageSlugForArea("spain", "A Coruña")).toBe("a-coruna");
+    // Areas that are not cities (provinces, region codes) stay unlinked.
+    expect(cityPageSlugForArea("canada", "British Columbia")).toBeUndefined();
+    expect(cityPageSlugForArea("australia", "SYD_MET")).toBeUndefined();
+    expect(cityPageHrefForArea("canada", "Calgary")).toBe("/city-webcams/calgary");
+    expect(cityPageHrefForArea("canada", "British Columbia")).toBeUndefined();
+  });
+
+  it("slot 2 links the largest cluster that has a city page", () => {
+    const bySlug = new Map(countries.map((c) => [c.slug, c]));
+    const topPlacesHref = (slug: string) =>
+      countryAnswers(bySlug.get(slug)!).find(
+        (e) => e.id === `country-${slug}-top-places`,
+      )!.href;
+    // Blocked before the fix (curated top cluster, or a non-city first
+    // area ahead of the real city): all fell back to the country page.
+    expect(topPlacesHref("united-kingdom")).toBe("/city-webcams/london");
+    expect(topPlacesHref("canada")).toBe("/city-webcams/ottawa");
+    expect(topPlacesHref("united-states")).toBe("/city-webcams/houston");
+    expect(topPlacesHref("spain")).toBe("/city-webcams/madrid");
+    expect(topPlacesHref("taiwan")).toBe("/city-webcams/taichung");
+    expect(topPlacesHref("new-zealand")).toBe("/city-webcams/auckland");
+    // Controls: links that already worked are byte-identical.
+    expect(topPlacesHref("japan")).toBe("/city-webcams/osaka");
+    expect(topPlacesHref("turkey")).toBe("/city-webcams/istanbul");
+    // No resolvable city in the listed areas → country page, as before.
+    expect(topPlacesHref("australia")).toBe("/cameras/countries/australia");
+  });
+
+  it("changes no previously-working slot-2 link, anywhere", () => {
+    // The pre-fix algorithm, reproduced: generated slugs only, first
+    // area only, naive slugification.
+    const generated = new Set<string>(cities.map((c) => c.slug));
+    const naive = (name: string) =>
+      name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const changed: Array<[string, string]> = [];
+    for (const c of countries) {
+      if (c.topCities.length < 2) continue;
+      const entry = countryAnswers(c).find(
+        (e) => e.id === `country-${c.slug}-top-places`,
+      )!;
+      const first = naive(c.topCities[0].name);
+      const oldHref = generated.has(first)
+        ? `/city-webcams/${first}`
+        : `/cameras/countries/${c.slug}`;
+      if (oldHref.startsWith("/city-webcams/")) {
+        expect(entry.href, c.slug).toBe(oldHref);
+      } else if (entry.href !== oldHref) {
+        changed.push([c.slug, entry.href]);
+      }
+    }
+    expect(changed).toEqual([
+      ["united-states", "/city-webcams/houston"],
+      ["canada", "/city-webcams/ottawa"],
+      ["taiwan", "/city-webcams/taichung"],
+      ["spain", "/city-webcams/madrid"],
+      ["united-kingdom", "/city-webcams/london"],
+      ["new-zealand", "/city-webcams/auckland"],
+    ]);
   });
 });
