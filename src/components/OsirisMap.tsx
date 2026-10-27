@@ -2530,6 +2530,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // Click selection above remains immediate and full precision.
     let hoverFrame = 0;
     let lastHoverPick = -Infinity;
+    let satCursorOwned = false;
     map.on('mousemove', e => {
       const layer = satLayerRef.current;
       if (!layer || hoverFrame || map.isMoving() || performance.now() - lastHoverPick < 100) return;
@@ -2541,8 +2542,8 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         if (canvas.style.cursor && canvas.style.cursor !== 'pointer') return;
         lastHoverPick = performance.now();
         const over = layer.pick(e.point.x, e.point.y) != null;
-        if (over) canvas.style.cursor = 'pointer';
-        else if (canvas.style.cursor === 'pointer') canvas.style.cursor = '';
+        if (over) { canvas.style.cursor = 'pointer'; satCursorOwned = true; }
+        else if (satCursorOwned) { canvas.style.cursor = ''; satCursorOwned = false; }
       });
     });
 
