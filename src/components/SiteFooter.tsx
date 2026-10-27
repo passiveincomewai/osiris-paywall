@@ -77,6 +77,7 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
     links: [
       ["About", "/about"],
       ["Contact", "/contact"],
+      ["Partners & Data Sources", "/partners"],
       ["Privacy Policy", "/privacy"],
       ["Terms of Service", "/terms"],
       ["Security", "/security"],

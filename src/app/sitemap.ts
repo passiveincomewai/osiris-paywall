@@ -178,6 +178,11 @@ const SEO_PAGES_EMBED = ["/embed-camera"];
 // registry, the terms framework, and how researchers request access.
 const SEO_PAGES_RESEARCH = ["/research-access"];
 
+// Partners (2026-10-27): the partner & data-source directory — an
+// invitation-only partners tier plus every catalogue source label with
+// its camera count (dated snapshot in src/app/partners/sources-data.ts).
+const SEO_PAGES_PARTNERS = ["/partners"];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -429,6 +434,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     ...SEO_PAGES_RESEARCH.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_PARTNERS.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
