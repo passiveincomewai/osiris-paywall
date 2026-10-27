@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   BASE,
   JsonLd,
@@ -15,21 +16,21 @@ import {
 } from "@/components/directory-page";
 
 export const metadata: Metadata = {
-  title: "Northern Lights Webcams — Live Aurora Cameras",
+  title: "Northern Lights Webcams by Place — Aurora Cameras by Country",
   description:
-    "Watch the northern lights live on public webcams across Iceland, Norway, Finland, Sweden, Alaska and Canada — plus the live Kp index on the WorldEye map. Free, no signup.",
+    "Browse northern lights webcams by place: Iceland, Norway, Finland, Sweden, Alaska and Canada — every aurora-belt camera in the WorldEye directory, organised by country and region. Free, no signup.",
   alternates: { canonical: `${BASE}/northern-lights-webcams` },
   openGraph: {
-    title: "Northern Lights Webcams — Live Aurora Cameras",
+    title: "Northern Lights Webcams by Place — Aurora Cameras by Country",
     description:
-      "Live aurora-belt webcams in Iceland, Norway, Finland, Sweden, Alaska and Canada, with the live Kp index. Free on the WorldEye map.",
+      "The aurora-belt camera directory by place: Iceland, Norway, Finland, Sweden, Alaska and Canada. Free on WorldEye.",
     url: "/northern-lights-webcams",
     type: "website",
   },
 };
 
 const INTRO = [
-  "The northern lights are the most-watched sky on Earth — and the hardest to travel to on a forecast. Aurora webcams solve the geography: public cameras across the aurora belt stream the night sky from Iceland, Norway, Finland, Sweden, Alaska and Canada, so a display happening over a Finnish lake at 2 AM is watchable from a couch on another continent. WorldEye's directory plots those northern feeds on one globe, next to the live geomagnetic (Kp) index the map already tracks.",
+  "This is the directory: every northern feed in WorldEye's catalogue, organised by the places that watch the aurora — Iceland's road-cam circuit, Norway's fjords and Lofoten, Finland and Sweden's Lapland lake country, Alaska and northern Canada. A display happening over a Finnish lake at 2 AM is watchable from a couch on another continent; this page is how you find the camera that's pointing at it, country by country and region by region.",
   "An honest framing before the romance: these are not dedicated aurora cameras. They are road, weather, harbor and scenic feeds run by transport agencies, towns and resorts in aurora latitudes — cameras that happen to face dark landscapes. On an ordinary night they show ordinary darkness. On a clear, dark, active night, the same feed shows the arc standing over the road, curtains moving above the harbor. The skill is knowing which nights to look, and the map's live Kp reading is the first check.",
   "The season runs roughly September to March, when high-latitude nights are long and truly dark; midsummer's near-constant twilight hides all but the strongest displays. Within the season, autumn and spring statistically produce the strongest geomagnetic activity, and the declining phase of Solar Cycle 25 — where we are in late 2026 — historically keeps storm nights frequent. The second check is the sky itself: no aurora camera can see through cloud, so a feed under overcast is a weather report, not a verdict on the oval.",
   "Watching this way follows a rhythm the regulars know: check the Kp index, check the timestamp, judge whether the frame is genuinely dark, then give the sky a minute. Aurora on a webcam rarely matches the saturated photographs — look for a diffuse greenish arc low over the northern horizon, structure that brightens and fades, movement within the band itself. Slow change is the signature. Everything you need is free on the map — no account, no signup.",
@@ -57,7 +58,7 @@ const CATEGORIES = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "Northern Lights Webcams — Live Aurora Cameras",
+  name: "Northern Lights Webcams by Place — Aurora Cameras by Country",
   description:
     "Directory of live public webcams across the aurora belt: Iceland, Norway, Finland, Sweden, Alaska and Canada.",
   url: `${BASE}/northern-lights-webcams`,
@@ -104,10 +105,17 @@ export default function NorthernLightsWebcamsPage() {
         ]}
       />
       <Hero
-        h1="Northern Lights Webcams — Live Aurora Cameras"
-        sub="The aurora belt, live: Iceland, Norway, Finland, Sweden, Alaska and Canada — free, no signup."
+        h1="Northern Lights Webcams by Place"
+        sub="Every aurora-belt camera in the directory, organised by country and region — Iceland, Norway, Finland, Sweden, Alaska and Canada. Free, no signup."
       />
       <Intro paragraphs={INTRO} />
+      <p className="mt-4 text-white/70 leading-relaxed max-w-3xl mx-auto">
+        For tonight's Kp and the cameras most likely to be lit right now, see{" "}
+        <Link href="/aurora-webcams" className="text-[#00E5FF] hover:underline">
+          the live aurora page
+        </Link>
+        .
+      </p>
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-5">Where the aurora cameras are</h2>
@@ -154,7 +162,6 @@ export default function NorthernLightsWebcamsPage() {
       <RelatedLinks
         title="Keep watching the night sky"
         links={[
-          { label: "Aurora webcams: Finland, Iceland & Norway with live Kp", href: "/aurora-webcams" },
           { label: "Watching the northern lights on live webcams (guide)", href: "/blog/northern-lights-live-webcams" },
           { label: "Dark-sky cameras: meteors and the night sky", href: "/dark-sky-cameras" },
           { label: "Live webcams worldwide", href: "/live-webcams" },

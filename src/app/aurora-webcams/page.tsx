@@ -19,14 +19,14 @@ import AuroraKpPanel from "@/components/AuroraKpPanel";
 import { EXPLORE_SCOPES, countForDef, countryEntry } from "@/lib/explore-data";
 
 export const metadata: Metadata = {
-  title: "Aurora Webcams — Northern Lights Live, With the Live Kp Index",
+  title: "Aurora Borealis Live — Kp Index & Tonight's Cameras",
   description:
-    "Watch the northern lights live on public webcams: 825 cameras in Finland, 482 in Iceland, 746 in Norway and the Fairbanks, Alaska wall — next to the live Kp index. Free, no signup.",
+    "Is the aurora out tonight? Start with the live Kp index, then watch the cameras most likely to be lit: 825 in Finland, 482 in Iceland, 746 in Norway and the Fairbanks, Alaska wall. Free, no signup.",
   alternates: { canonical: `${BASE}/aurora-webcams` },
   openGraph: {
-    title: "Aurora Webcams — Northern Lights Live, With the Live Kp Index",
+    title: "Aurora Borealis Live — Kp Index & Tonight's Cameras",
     description:
-      "The aurora belt's public cameras — Finland, Iceland, Norway and Fairbanks — with the live Kp index from NOAA. Free on WorldEye.",
+      "Tonight's aurora check: the live Kp index from NOAA, then the aurora belt's public cameras — Finland, Iceland, Norway and Fairbanks. Free on WorldEye.",
     url: "/aurora-webcams",
     type: "website",
   },
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "Aurora Webcams — Northern Lights Live, With the Live Kp Index",
+  name: "Aurora Borealis Live — Kp Index & Tonight's Cameras",
   description:
-    "Live public webcams across the aurora belt — Finland, Iceland, Norway and Fairbanks, Alaska — presented next to the live Kp geomagnetic index.",
+    "Live aurora watching: the Kp geomagnetic index alongside public webcams across the aurora belt — Finland, Iceland, Norway and Fairbanks, Alaska.",
   url: `${BASE}/aurora-webcams`,
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
@@ -125,9 +125,9 @@ export default async function AuroraWebcamsPage() {
   const sweden = countryEntry("sweden")?.count ?? 0;
 
   const intro = [
-    `The northern lights are the most-watched sky on Earth — and the hardest to travel to on a forecast. Aurora webcams solve the geography. This page gathers the public cameras of the aurora belt into live walls — ${fmt(finland)} cameras in Finland, ${fmt(iceland)} in Iceland, ${fmt(norway)} in Norway and a Fairbanks wall for Alaska — and puts the live Kp geomagnetic index at the top, because the index is the first check every aurora watcher makes. Every feed is free to watch, no signup.`,
+    `This is the tonight page. It puts the live Kp geomagnetic index at the top — the first check every aurora watcher makes — and below it gathers the public cameras of the aurora belt into live walls: ${fmt(finland)} cameras in Finland, ${fmt(iceland)} in Iceland, ${fmt(norway)} in Norway and a Fairbanks wall for Alaska. Read the index, open the wall whose night is darkest, and you are watching the sky most likely to be lit right now. Every feed is free to watch, no signup.`,
     "The honest framing matters, so here it is in the open: these are not dedicated aurora cameras. They are the road, weather, town and harbour feeds that transport agencies, municipalities and resorts run across the north — cameras that happen to face dark landscapes. On an ordinary night they show ordinary darkness. On a clear, dark, active night, the same feed shows the arc standing over the road and curtains moving above the harbour. The skill is knowing which nights to look, and that is what the Kp panel is for.",
-    `Sweden's ${fmt(sweden)} catalogue cameras belong to the same story — Abisko and Kiruna are aurora country — and the northern lights guide linked below covers the Swedish circuit alongside this page's walls. Northern Canada, by contrast, gets no wall here: the catalogue's Canadian feeds concentrate in the south, and a wall that isn't under the oval would be a label, not a tool. What is here is real; what is missing is labelled missing.`,
+    `Sweden's ${fmt(sweden)} catalogue cameras belong to the same story — Abisko and Kiruna are aurora country — and the by-country directory linked below covers the Swedish circuit alongside this page's walls. Northern Canada, by contrast, gets no wall here: the catalogue's Canadian feeds concentrate in the south, and a wall that isn't under the oval would be a label, not a tool. What is here is real; what is missing is labelled missing.`,
     "The season runs roughly September to March. Within it, the routine is simple: read the Kp, open the wall whose local night is darkest, judge whether the frame is genuinely dark and current, then give the sky a minute. Aurora on a webcam rarely matches the saturated photographs — look for a diffuse greenish arc low over the northern horizon, structure that brightens and fades, movement within the band itself. Slow change is the signature.",
   ];
 
@@ -143,8 +143,8 @@ export default async function AuroraWebcamsPage() {
         ]}
       />
       <Hero
-        h1="Aurora Webcams — the Northern Lights, Live"
-        sub="Finland, Iceland, Norway and Fairbanks on live public cameras, with the live Kp index at the top of the page. Free, no signup."
+        h1="Aurora Borealis Live — Kp Index & Tonight's Cameras"
+        sub="Start with the live Kp, then open the wall where tonight's sky is darkest — Finland, Iceland, Norway and Fairbanks on live public cameras. Free, no signup."
       />
       <StatRow
         stats={[
@@ -190,7 +190,7 @@ export default async function AuroraWebcamsPage() {
       <RelatedLinks
         title="Keep watching the night sky"
         links={[
-          { label: "Northern lights webcams — the guide", href: "/northern-lights-webcams" },
+          { label: "Browse every aurora-zone camera by country", href: "/northern-lights-webcams" },
           { label: "Dark-sky cameras: meteors and the night sky", href: "/dark-sky-cameras" },
           { label: "Leonids meteor shower 2026", href: "/leonids-meteor-shower-2026" },
           { label: "Finland cameras", href: "/cameras/countries/finland" },
