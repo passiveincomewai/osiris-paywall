@@ -161,6 +161,11 @@ const SEO_PAGES_GEO_GUIDES = [
   "/verify-photo-location",
 ];
 
+// Free camera embeds (2026-10-27): the picker page for the public
+// embed widget. The player routes (/embed/camera/*) are noindex and
+// deliberately stay out of the sitemap.
+const SEO_PAGES_EMBED = ["/embed-camera"];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -398,6 +403,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...SEO_PAGES_GEO_GUIDES.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_EMBED.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_AMBIENT.map((p) => ({
