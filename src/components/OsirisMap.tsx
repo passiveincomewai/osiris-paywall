@@ -42,6 +42,7 @@ import {
 import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import { selectAgenciesForView, agencyIntersectsView, padView } from '@/lib/transit/relevance';
+import { gbfsLoadCandidates, visibleGbfsItems } from '@/lib/gbfs/viewport';
 import { TransitBlend } from '@/lib/transit/motion';
 import {
   TRANSIT_SUB, transitSubOn, transitLabelsOn, vehicleModeVisible, lineModeVisible, anyLineFamilyOn,
@@ -4070,16 +4071,16 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       }));
       if (map.getZoom() >= 9.5) {
         const b = map.getBounds();
-        for (const s of gbfsSystemsRef.current) {
-          if (s.lng < b.getWest() || s.lng > b.getEast() || s.lat < b.getSouth() || s.lat > b.getNorth()) continue;
-          const cached = gbfsCacheRef.current.get(s.id);
-          if (!cached) continue;
-          for (const it of cached.items) {
-            feats.push({
-              type: 'Feature', geometry: { type: 'Point', coordinates: [it.lng, it.lat] },
-              properties: { kind: it.kind, id: it.id, name: it.name ?? '', sysName: s.name, bikes: it.bikes ?? null, ebikes: it.ebikes ?? null, docks: it.docks ?? null, vt: it.vt ?? '' },
-            });
-          }
+        const view = { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() };
+        // Per-item culling (lib/gbfs/viewport): a station/vehicle is drawn
+        // when its own coordinates are in view — the system centre no
+        // longer gates it, so zooming into one neighbourhood of a large
+        // system keeps that neighbourhood's dots on screen.
+        for (const { system: s, item: it } of visibleGbfsItems(gbfsSystemsRef.current, gbfsCacheRef.current, view)) {
+          feats.push({
+            type: 'Feature', geometry: { type: 'Point', coordinates: [it.lng, it.lat] },
+            properties: { kind: it.kind, id: it.id, name: it.name ?? '', sysName: s.name, bikes: it.bikes ?? null, ebikes: it.ebikes ?? null, docks: it.docks ?? null, vt: it.vt ?? '' },
+          });
         }
       }
       setGeo('gbfs', feats);
@@ -4088,13 +4089,16 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (!live || map.getZoom() < 9.5 || !gbfsSystemsRef.current.length) return;
       const b = map.getBounds();
       const c = map.getCenter();
-      const candidates = gbfsSystemsRef.current
-        .filter((s: any) => s.lng >= b.getWest() && s.lng <= b.getEast() && s.lat >= b.getSouth() && s.lat <= b.getNorth())
-        .map((s: any) => ({ s, d: (s.lat - c.lat) ** 2 + (s.lng - c.lng) ** 2 }))
-        .sort((a: any, b2: any) => a.d - b2.d)
-        .map((x: any) => x.s)
-        .filter((s: any) => { const ch = gbfsCacheRef.current.get(s.id); return !ch || Date.now() - ch.at > 90000; })
-        .slice(0, 6);
+      // Candidacy (lib/gbfs/viewport): centre inside the generously padded
+      // viewport, or cached items already in view — never the raw-bounds
+      // centre test that starved large systems at street zoom.
+      const candidates = gbfsLoadCandidates(
+        gbfsSystemsRef.current,
+        gbfsCacheRef.current,
+        { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() },
+        { lat: c.lat, lng: c.lng },
+        Date.now(),
+      );
       await Promise.all(candidates.map(async (s: any) => {
         try {
           const r = await fetch(`/api/gbfs/stations?url=${encodeURIComponent(s.url)}`);
