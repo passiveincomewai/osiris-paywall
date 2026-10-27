@@ -1,4 +1,4 @@
-import { POSTS } from "@/app/blog/posts";
+import { POSTS } from "@/app/(en)/blog/posts";
 
 /**
  * Image sitemap data + builder (SEO item 6, 2026-10-26).

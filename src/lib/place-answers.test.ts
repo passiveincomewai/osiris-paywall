@@ -16,7 +16,7 @@ import {
   type CountryAnswerInput,
   type StateAnswerInput,
 } from "./place-answers";
-import { generateStaticParams as cityStaticParams } from "@/app/city-webcams/[city]/page";
+import { generateStaticParams as cityStaticParams } from "@/app/(en)/city-webcams/[city]/page";
 
 /**
  * The generated place answers are held to the same invariants as the

@@ -5,7 +5,7 @@
 // lib/affiliate/demo-data. Read-only: the dashboard's actions explain
 // themselves instead of saving, nothing persists, no sign-in is needed.
 // Reused by /affiliates/demo and embeddable on partner surfaces.
-import DashboardClient from "@/app/affiliates/dashboard/DashboardClient";
+import DashboardClient from "@/app/(en)/affiliates/dashboard/DashboardClient";
 import {
   buildDemoMe, buildDemoDash, buildDemoInsights, buildDemoNotifications, buildDemoLinks,
 } from "@/lib/affiliate/demo-data";

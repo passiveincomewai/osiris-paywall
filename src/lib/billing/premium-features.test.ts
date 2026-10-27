@@ -1,61 +1,93 @@
 /**
  * Mirror pins for PREMIUM_FEATURES: the globe panel's premium list must
  * be the pricing page's list, never a second hand-kept copy that can
- * drift. These tests read src/app/pricing/PricingClient.tsx (the same
- * source-reading pattern as src/app/conversion-cta.test.ts) and fail
- * if a card title changes, appears, or disappears on either side.
+ * drift. Since the multilingual conversion (2026-10-26) the pricing
+ * page's copy lives in the English pricing dictionary
+ * (src/i18n/dictionaries/en/pricing.ts), so these tests read that file
+ * (the same source-reading pattern as before) plus the client's
+ * comparison checkmarks, and fail if a card title changes, appears, or
+ * disappears on either side.
  */
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PREMIUM_FEATURES, premiumFeatureNames } from "./premium-features";
 
-const pricingSrc = readFileSync(
-  join(process.cwd(), "src", "app", "pricing", "PricingClient.tsx"),
+const dictSrc = readFileSync(
+  join(process.cwd(), "src", "i18n", "dictionaries", "en", "pricing.ts"),
+  "utf8",
+);
+const clientSrc = readFileSync(
+  join(process.cwd(), "src", "app", "(en)", "pricing", "PricingClient.tsx"),
   "utf8",
 );
 
-/** Card titles out of one `const X_FEATURES = [ ... ];` block. */
+/** Card titles out of one `blockName: [ ... ]` dictionary block. */
 function cardTitles(blockName: string): string[] {
-  const start = pricingSrc.indexOf(`const ${blockName} = [`);
-  expect(start, `${blockName} block exists in PricingClient`).toBeGreaterThan(-1);
-  const end = pricingSrc.indexOf("];", start);
-  const block = pricingSrc.slice(start, end);
+  const start = dictSrc.indexOf(`${blockName}: [`);
+  expect(start, `${blockName} block exists in the pricing dictionary`).toBeGreaterThan(-1);
+  const end = dictSrc.indexOf("\n  ],", start);
+  const block = dictSrc.slice(start, end);
   return [...block.matchAll(/title: "([^"]+)"/g)].map((m) => m[1]);
+}
+
+/** Comparison row labels, in dictionary order. */
+function compareRows(): string[] {
+  const block = dictSrc.slice(dictSrc.indexOf("rows: ["));
+  return [...block.slice(0, block.indexOf("]")).matchAll(/"([^"]+)"/g)].map(
+    (m) => m[1],
+  );
+}
+
+/** Comparison checkmarks from the client, in dictionary row order. */
+function compareBooleans(): { free: boolean; pro: boolean; vip: boolean }[] {
+  const block = clientSrc.slice(clientSrc.indexOf("const COMPARE_BOOLEANS"));
+  return [
+    ...block
+      .slice(0, block.indexOf("];"))
+      .matchAll(/\{ free: (true|false), pro: (true|false), vip: (true|false) \}/g),
+  ].map((m) => ({
+    free: m[1] === "true",
+    pro: m[2] === "true",
+    vip: m[3] === "true",
+  }));
 }
 
 describe("PREMIUM_FEATURES mirrors the pricing page", () => {
   it("carries every Pro card title as a pro feature, word for word", () => {
     const byName = new Map(PREMIUM_FEATURES.map((f) => [f.name, f]));
-    for (const title of cardTitles("PRO_FEATURES")) {
+    for (const title of cardTitles("proFeatures")) {
       expect(byName.get(title)?.tier, title).toBe("pro");
     }
   });
 
   it("carries every VIP Pro card title as a vip feature, word for word", () => {
     const byName = new Map(PREMIUM_FEATURES.map((f) => [f.name, f]));
-    for (const title of cardTitles("VIP_FEATURES")) {
+    for (const title of cardTitles("vipFeatures")) {
       expect(byName.get(title)?.tier, title).toBe("vip");
     }
   });
 
   it("adds only the compare matrix's card-less premium row on top of the cards", () => {
-    const cardCount = cardTitles("PRO_FEATURES").length + cardTitles("VIP_FEATURES").length;
-    // +1 is "Advanced search filters": premium in COMPARE_ROWS
-    // (free: false, pro: true) with no PRO_FEATURES card.
+    const cardCount = cardTitles("proFeatures").length + cardTitles("vipFeatures").length;
+    // +1 is "Advanced search filters": premium in the comparison rows
+    // (free: false, pro: true) with no proFeatures card.
     expect(PREMIUM_FEATURES.length).toBe(cardCount + 1);
     const extra = PREMIUM_FEATURES.filter(
-      (f) => ![...cardTitles("PRO_FEATURES"), ...cardTitles("VIP_FEATURES")].includes(f.name),
+      (f) => ![...cardTitles("proFeatures"), ...cardTitles("vipFeatures")].includes(f.name),
     );
     expect(extra).toEqual([
       expect.objectContaining({ name: "Advanced search filters", tier: "pro" }),
     ]);
-    expect(pricingSrc).toContain('feature: "Advanced search filters", free: false, pro: true');
+    const rows = compareRows();
+    const i = rows.indexOf("Advanced search filters");
+    expect(i).toBeGreaterThan(-1);
+    expect(compareBooleans()[i]).toEqual({ free: false, pro: true, vip: true });
   });
 
   it("names nothing the pricing page doesn't sell", () => {
     for (const f of PREMIUM_FEATURES) {
-      expect(pricingSrc, f.name).toContain(f.name);
+      expect(dictSrc, f.name).toContain(f.name);
     }
   });
 

@@ -1,4 +1,4 @@
-import { POSTS } from "../blog/posts";
+import { POSTS } from "../(en)/blog/posts";
 import { buildNewsSitemap } from "@/lib/blog-feed";
 import { fetchEventNewsEntries } from "@/lib/events/news";
 

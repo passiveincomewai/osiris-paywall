@@ -54,25 +54,53 @@ describe("picker + strip renders", () => {
 });
 
 describe("pricing page source", () => {
+  // Since the multilingual conversion (2026-10-26) the pricing page's
+  // copy lives in the English pricing dictionary (src/i18n); the
+  // client keeps structure + the comparison checkmarks, in dictionary
+  // row order. These pins read both halves.
+  const dictionary = readFileSync(
+    join(process.cwd(), "src/i18n/dictionaries/en/pricing.ts"),
+    "utf8",
+  );
   const pricing = readFileSync(
-    join(process.cwd(), "src/app/pricing/PricingClient.tsx"),
+    join(process.cwd(), "src/app/(en)/pricing/PricingClient.tsx"),
     "utf8",
   );
 
   it("names the annual plan VIP Pro and gives it a VIP-only feature block", () => {
-    expect(pricing).toContain('name: "VIP Pro"');
-    expect(pricing).toContain("VIP_FEATURES");
-    expect(pricing).toContain("VIP PRO ONLY");
-    expect(pricing).not.toContain('name: "Annual"');
+    expect(dictionary).toContain('name: "VIP Pro"');
+    expect(dictionary).toContain("vipFeatures: [");
+    expect(pricing).toContain("vipFeatures");
+    expect(dictionary).toContain('vipOnlyHeading: "VIP PRO ONLY"');
+    expect(dictionary).not.toContain('name: "Annual"');
   });
 
   it("the compare table has a VIP column and gates intel + timelapse to it", () => {
-    expect(pricing).toContain("VIP PRO");
-    expect(pricing).toContain(
-      '{ feature: "Premium intel feeds (cyber, GDELT, maritime, live news)", free: false, pro: false, vip: true }',
+    expect(dictionary).toContain('vipHeader: "VIP PRO"');
+    const rowsBlock = dictionary.slice(dictionary.indexOf("rows: ["));
+    const rows = [
+      ...rowsBlock.slice(0, rowsBlock.indexOf("]")).matchAll(/"([^"]+)"/g),
+    ].map((m) => m[1]);
+    const booleansBlock = pricing.slice(
+      pricing.indexOf("const COMPARE_BOOLEANS"),
     );
-    expect(pricing).toContain(
-      '{ feature: "Camera timelapse", free: false, pro: false, vip: true }',
-    );
+    const booleans = [
+      ...booleansBlock
+        .slice(0, booleansBlock.indexOf("];"))
+        .matchAll(/\{ free: (true|false), pro: (true|false), vip: (true|false) \}/g),
+    ].map((m) => ({
+      free: m[1] === "true",
+      pro: m[2] === "true",
+      vip: m[3] === "true",
+    }));
+    expect(booleans).toHaveLength(rows.length);
+    for (const label of [
+      "Premium intel feeds (cyber, GDELT, maritime, live news)",
+      "Camera timelapse",
+    ]) {
+      const i = rows.indexOf(label);
+      expect(i, label).toBeGreaterThan(-1);
+      expect(booleans[i], label).toEqual({ free: false, pro: false, vip: true });
+    }
   });
 });

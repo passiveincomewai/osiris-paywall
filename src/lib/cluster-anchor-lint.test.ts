@@ -287,7 +287,7 @@ describe("C9 related-searches anchors — discipline over real place data", () =
 
 describe("rendered pages — §5.2 up-links and the C8/C9 blocks", () => {
   it("a generated city page links up to its country and shows related searches", async () => {
-    const Page = (await import("@/app/city-webcams/[city]/page")).default;
+    const Page = (await import("@/app/(en)/city-webcams/[city]/page")).default;
     const el = await Page({ params: Promise.resolve({ city: "seattle" }) });
     const html = renderToString(el as React.ReactElement);
     expect(html).toContain('href="/cameras/countries/united-states"');
@@ -305,7 +305,7 @@ describe("rendered pages — §5.2 up-links and the C8/C9 blocks", () => {
   }, 600_000);
 
   it("the Japan country page carries the C8 traffic hand-off and a related-searches block", async () => {
-    const Page = (await import("@/app/cameras/countries/[country]/page")).default;
+    const Page = (await import("@/app/(en)/cameras/countries/[country]/page")).default;
     const el = await Page({ params: Promise.resolve({ country: "japan" }) });
     const html = renderToString(el as React.ReactElement);
     expect(html).toContain('href="/japan-traffic-cameras"');
@@ -316,7 +316,7 @@ describe("rendered pages — §5.2 up-links and the C8/C9 blocks", () => {
   }, 600_000);
 
   it("a thin country page keeps the block dark (min-3 gate) but keeps its up-links", async () => {
-    const Page = (await import("@/app/cameras/countries/[country]/page")).default;
+    const Page = (await import("@/app/(en)/cameras/countries/[country]/page")).default;
     const el = await Page({ params: Promise.resolve({ country: "bermuda" }) });
     const html = renderToString(el as React.ReactElement);
     expect(html).not.toMatch(
@@ -329,7 +329,7 @@ describe("rendered pages — §5.2 up-links and the C8/C9 blocks", () => {
 
 describe("C5/C6 deferred follow-ups — rendered pins", () => {
   it("Calgary renders place facts, the quadrant split and named viewpoints", async () => {
-    const Page = (await import("@/app/city-webcams/[city]/page")).default;
+    const Page = (await import("@/app/(en)/city-webcams/[city]/page")).default;
     const el = await Page({ params: Promise.resolve({ city: "calgary" }) });
     const html = renderToString(el as React.ReactElement);
     // §4.1.3 facts: the grid's centre + widest span, from its records.
@@ -344,7 +344,7 @@ describe("C5/C6 deferred follow-ups — rendered pins", () => {
   }, 600_000);
 
   it("Utah renders the pass note, and its FAQ schema carries the Current Status rows", async () => {
-    const Page = (await import("@/app/us-traffic-cameras/[state]/page")).default;
+    const Page = (await import("@/app/(en)/us-traffic-cameras/[state]/page")).default;
     const el = await Page({ params: Promise.resolve({ state: "utah" }) });
     const html = renderToString(el as React.ReactElement);
     // §4.2.3: UDOT names its passes; the note quotes them verbatim.
@@ -357,7 +357,7 @@ describe("C5/C6 deferred follow-ups — rendered pins", () => {
   }, 600_000);
 
   it("the Japan country FAQ schema carries the Current Status rows", async () => {
-    const Page = (await import("@/app/cameras/countries/[country]/page")).default;
+    const Page = (await import("@/app/(en)/cameras/countries/[country]/page")).default;
     const el = await Page({ params: Promise.resolve({ country: "japan" }) });
     const html = renderToString(el as React.ReactElement);
     expect(html).toContain("Is it snowing in Japan right now?");
@@ -369,16 +369,16 @@ describe("static wiring pins", () => {
   const read = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
 
   it("both place templates run the C9 builder and feed it the page's existing anchors", () => {
-    const city = read("src/app/city-webcams/[city]/page.tsx");
+    const city = read("src/app/(en)/city-webcams/[city]/page.tsx");
     expect(city).toContain("buildRelatedSearches");
     expect(city).toContain("relatedLinks.map((l) => l.label)");
-    const country = read("src/app/cameras/countries/[country]/page.tsx");
+    const country = read("src/app/(en)/cameras/countries/[country]/page.tsx");
     expect(country).toContain("buildRelatedSearches");
     expect(country).toContain("trafficLink.anchor");
   });
 
   it("the compare template keeps the C7 hand-off for every dual-family slug", () => {
-    const src = read("src/app/compare/[slug]/page.tsx");
+    const src = read("src/app/(en)/compare/[slug]/page.tsx");
     for (const slug of [
       "windy",
       "skylinewebcams",
@@ -403,12 +403,12 @@ describe("static wiring pins", () => {
   });
 
   it("state and country templates merge Current Status rows into the FAQ schema", () => {
-    const state = read("src/app/us-traffic-cameras/[state]/page.tsx");
+    const state = read("src/app/(en)/us-traffic-cameras/[state]/page.tsx");
     expect(state).toContain("statusFaqs(placeMerged.merged, statusRows)");
     expect(state).toContain("loadStatePassBorder");
-    const country = read("src/app/cameras/countries/[country]/page.tsx");
+    const country = read("src/app/(en)/cameras/countries/[country]/page.tsx");
     expect(country).toContain("statusFaqs(placeMerged.merged, statusRows)");
-    const city = read("src/app/city-webcams/[city]/page.tsx");
+    const city = read("src/app/(en)/city-webcams/[city]/page.tsx");
     expect(city).toContain("loadCityPlaceDetails");
   });
 });

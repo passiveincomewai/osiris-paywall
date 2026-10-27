@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BLOG_COMPARE_LINKS, compareLinksForPost } from "./blog-compare-links";
-import { POSTS } from "@/app/blog/posts";
+import { POSTS } from "@/app/(en)/blog/posts";
 import { listBundledCompetitors } from "./competitors-data";
 
 describe("blog compare links (indexation push)", () => {

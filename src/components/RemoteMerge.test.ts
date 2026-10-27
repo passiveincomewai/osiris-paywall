@@ -43,7 +43,7 @@ describe("World Remote lives inside Recon", () => {
 });
 
 describe("the standalone Remote entries are gone from page.tsx", () => {
-  const page = src("app/page.tsx");
+  const page = src("components/Dashboard.tsx");
 
   it("the mobile bottom nav has five tabs and no REMOTE", () => {
     const navStart = page.indexOf("{ id: 'layers' as const");

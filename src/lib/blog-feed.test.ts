@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { BlogPost } from "@/app/blog/posts";
-import { POSTS } from "@/app/blog/posts";
+import type { BlogPost } from "@/app/(en)/blog/posts";
+import { POSTS } from "@/app/(en)/blog/posts";
 import {
   buildNewsSitemap,
   buildRssFeed,

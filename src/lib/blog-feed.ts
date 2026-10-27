@@ -8,7 +8,7 @@
 // News sitemap rule (Google): only articles published in the last 48 hours
 // belong in a news sitemap. Older posts stay in the regular sitemap + RSS.
 
-import type { BlogPost } from "@/app/blog/posts";
+import type { BlogPost } from "@/app/(en)/blog/posts";
 
 export const BASE = "https://worldeye.app";
 export const BLOG_NAME = "WorldEye Blog";

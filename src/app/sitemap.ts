@@ -5,7 +5,7 @@ import usStates from "@/data/us-states.json";
 import skiResorts from "@/data/ski-resorts.json";
 import liveCameraIndex from "@/data/live-camera-index.json";
 import cameraNetworkReport from "@/data/camera-network-2026-10.json";
-import { POSTS } from "./blog/posts";
+import { POSTS } from "./(en)/blog/posts";
 import { EVENT_WALLS } from "@/data/event-walls";
 import { AIRPORT_PAGES } from "@/lib/airport-pages";
 import { NATIONAL_PARKS } from "@/lib/national-parks";
@@ -13,6 +13,8 @@ import { NATIONAL_PARKS } from "@/lib/national-parks";
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
 import { BEACH_SPOT_SLUGS, SURF_SPOT_SLUGS } from "@/lib/surf-spots";
+import { MANIFEST_ENTRIES } from "@/i18n/manifest";
+import { hreflangMapFor, localizedUrl } from "@/lib/i18n-seo";
 import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
@@ -435,6 +437,23 @@ async function transitSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   return out;
 }
 
+// Localized entries (multilingual SEO, 2026-10-26; rebased 2026-10-27):
+// changeFrequency / priority mirror each slug's English entry above; the
+// URLs, lastModified and hreflang maps are derived from the publication
+// manifest (src/i18n/manifest.ts) so a new page × locale ships here by
+// adding a manifest entry, never by editing this table's data.
+const LOCALIZED_FREQ: Record<
+  string,
+  { changeFrequency: "daily" | "weekly" | "monthly"; priority: number }
+> = {
+  "": { changeFrequency: "daily", priority: 1.0 },
+  pricing: { changeFrequency: "weekly", priority: 0.9 },
+  "live-webcams": { changeFrequency: "monthly", priority: 0.6 },
+  faq: { changeFrequency: "monthly", priority: 0.6 },
+  "live-flight-tracker": { changeFrequency: "weekly", priority: 0.8 },
+  "ship-tracker": { changeFrequency: "monthly", priority: 0.6 },
+};
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const transitEntries = await transitSitemapEntries();
   // Honest lastmod (SEO #11, 2026-10-26; completed by the index-recovery
@@ -531,15 +550,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // The homepage is the live globe app — its data is the runtime
     // catalogue, not the committed snapshot — so it carries no lastmod
     // rather than borrowing the catalogue's date.
-    { url: `${BASE}/`, changeFrequency: "daily", priority: 1.0 },
+    { url: `${BASE}/`, changeFrequency: "daily", priority: 1.0, alternates: { languages: hreflangMapFor("") } },
     { url: `${BASE}/features`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/gods-eye-view`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/cameras`, lastModified: catalogueDate, changeFrequency: "daily", priority: 0.9 },
-    { url: `${BASE}/live-flight-tracker`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/live-flight-tracker`, changeFrequency: "weekly", priority: 0.8, alternates: { languages: hreflangMapFor("live-flight-tracker") } },
     { url: `${BASE}/satellite-tracker`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/earthquake-tracker`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/tornado-tracker`, changeFrequency: "daily", priority: 0.8 },
-    { url: `${BASE}/pricing`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/pricing`, changeFrequency: "weekly", priority: 0.9, alternates: { languages: hreflangMapFor("pricing") } },
     { url: `${BASE}/blog`, lastModified: latestPostDate, changeFrequency: "weekly", priority: 0.7 },
     ...POSTS.map((p) => ({
       url: `${BASE}/blog/${p.slug}`,
@@ -552,7 +571,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/affiliates/leaderboard`, changeFrequency: "daily", priority: 0.6 },
     { url: `${BASE}/affiliates/terms`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/contact`, changeFrequency: "yearly", priority: 0.4 },
-    { url: `${BASE}/faq`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/faq`, changeFrequency: "monthly", priority: 0.6, alternates: { languages: hreflangMapFor("faq") } },
     { url: `${BASE}/changelog`, changeFrequency: "weekly", priority: 0.5 },
     { url: `${BASE}/security`, changeFrequency: "yearly", priority: 0.4 },
     { url: `${BASE}/terms`, changeFrequency: "yearly", priority: 0.3 },
@@ -564,6 +583,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...withFamilyLastmod(p),
       changeFrequency: "monthly" as const,
       priority: 0.6,
+      ...(p === "/live-webcams"
+        ? { alternates: { languages: hreflangMapFor("live-webcams") } }
+        : {}),
     })),
     ...SEO_PAGES_WAVE4.map((p) => ({
       url: `${BASE}${p}`,
@@ -576,6 +598,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...withFamilyLastmod(p),
       changeFrequency: "monthly" as const,
       priority: 0.6,
+      ...(p === "/ship-tracker"
+        ? { alternates: { languages: hreflangMapFor("ship-tracker") } }
+        : {}),
     })),
     ...SEO_PAGES_WAVE6.map((p) => ({
       url: `${BASE}${p}`,
@@ -768,5 +793,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     })),
     ...transitEntries,
+    // Localized pages (multilingual SEO foundation, 2026-10-26): one
+    // entry per manifest-published page × locale, derived from the
+    // manifest so this block never drifts from what actually routes.
+    // lastModified is the manifest's translation date — honest, never
+    // request-time "now".
+    ...MANIFEST_ENTRIES.filter((e) => e.status === "published").map((e) => {
+      const freq = LOCALIZED_FREQ[e.slug] ?? {
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      };
+      return {
+        url: localizedUrl(e.slug, e.locale),
+        ...(e.updatedAt ? { lastModified: new Date(e.updatedAt) } : {}),
+        changeFrequency: freq.changeFrequency,
+        priority: freq.priority,
+        alternates: { languages: hreflangMapFor(e.slug) },
+      };
+    }),
   ];
 }

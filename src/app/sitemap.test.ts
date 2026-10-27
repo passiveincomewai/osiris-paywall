@@ -1,13 +1,15 @@
 import { createHash } from "crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import sitemap from "./sitemap";
-import { POSTS } from "./blog/posts";
+import { POSTS } from "./(en)/blog/posts";
 import cameraCountries from "@/data/camera-countries.json";
 import cityPages from "@/data/city-pages.json";
 import usStates from "@/data/us-states.json";
 import skiResorts from "@/data/ski-resorts.json";
 import liveCameraIndex from "@/data/live-camera-index.json";
 import cameraNetworkReport from "@/data/camera-network-2026-10.json";
+import { MANIFEST_ENTRIES } from "@/i18n/manifest";
+import { hreflangMapFor } from "@/lib/i18n-seo";
 
 /**
  * Sitemap lastmod policy pins (index-recovery remainder, 2026-10-27).
@@ -26,7 +28,8 @@ import cameraNetworkReport from "@/data/camera-network-2026-10.json";
  * test. (Baseline: the pre-change generator on 2026-10-27, 815
  * URLs; 816 since chunk C7 added the /alternatives hub the same
  * day; 939 since the city-scale wave added 123 generated city pages
- * at the >=25 owned-camera tier later that day.) Transit URLs
+ * at the >=25 owned-camera tier later that day; 945 since the
+ * i18n rebase added the six manifest-published /es URLs.) Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
@@ -44,9 +47,13 @@ type Row = { url: string; lastModified: string | null };
 
 let rows: Row[] = [];
 let byUrl = new Map<string, string | null>();
+let rawEntries: Awaited<ReturnType<typeof sitemap>> = [];
+let rawByUrl = new Map<string, (typeof rawEntries)[number]>();
 
 beforeAll(async () => {
   const entries = await sitemap();
+  rawEntries = entries;
+  rawByUrl = new Map(entries.map((e) => [e.url, e]));
   rows = entries.map((e) => ({
     url: e.url,
     lastModified: e.lastModified
@@ -68,10 +75,10 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(939);
+    expect(nonTransit.length).toBe(945);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     expect(hash).toBe(
-      "b1c9a5d19986b375a5733fff923733a4d029837c6fcbe7a5f0a28de561af2fa4",
+      "6d75d0de3bd70485d118996485624538f71d436eed25a73b5c209d8a372b64a5",
     );
   });
 
@@ -189,5 +196,71 @@ describe("sitemap lastmod policy", () => {
     }
     // The /transit hub spans every agency's feed — no single vintage.
     expect(lm("/transit")).toBeNull();
+  });
+});
+
+/**
+ * Localized entries (multilingual foundation, 2026-10-26; merged into
+ * this suite by the 2026-10-27 rebase): every manifest-published
+ * page × locale appears exactly once with the reciprocal hreflang
+ * map; the six English source entries carry the same map; no other
+ * entry gained alternates; es entries carry the manifest's
+ * translation date as lastModified (never request-time "now").
+ */
+describe("sitemap — localized entries", () => {
+  const ES_SLUGS: Record<string, string> = {
+    "": "https://worldeye.app/es/",
+    pricing: "https://worldeye.app/es/pricing",
+    "live-webcams": "https://worldeye.app/es/live-webcams",
+    faq: "https://worldeye.app/es/faq",
+    "live-flight-tracker": "https://worldeye.app/es/live-flight-tracker",
+    "ship-tracker": "https://worldeye.app/es/ship-tracker",
+  };
+  const EN_URLS: Record<string, string> = {
+    "": "https://worldeye.app/",
+    pricing: "https://worldeye.app/pricing",
+    "live-webcams": "https://worldeye.app/live-webcams",
+    faq: "https://worldeye.app/faq",
+    "live-flight-tracker": "https://worldeye.app/live-flight-tracker",
+    "ship-tracker": "https://worldeye.app/ship-tracker",
+  };
+
+  it("lists each Spanish URL exactly once", () => {
+    for (const url of Object.values(ES_SLUGS)) {
+      expect(rawEntries.filter((e) => e.url === url)).toHaveLength(1);
+    }
+    const esEntries = rawEntries.filter((e) =>
+      e.url.startsWith("https://worldeye.app/es/"),
+    );
+    expect(esEntries).toHaveLength(6);
+  });
+
+  it("gives every es entry the reciprocal hreflang map and the manifest date", () => {
+    for (const [slug, esUrl] of Object.entries(ES_SLUGS)) {
+      const entry = rawByUrl.get(esUrl);
+      expect(entry, esUrl).toBeDefined();
+      expect(entry?.alternates?.languages).toEqual(hreflangMapFor(slug));
+      const manifestEntry = MANIFEST_ENTRIES.find(
+        (e) => e.slug === slug && e.locale === "es",
+      );
+      expect(entry?.lastModified).toEqual(new Date(manifestEntry!.updatedAt!));
+    }
+  });
+
+  it("gives the six English entries the identical hreflang map", () => {
+    for (const [slug, enUrl] of Object.entries(EN_URLS)) {
+      expect(rawByUrl.get(enUrl)?.alternates?.languages, enUrl).toEqual(
+        hreflangMapFor(slug),
+      );
+    }
+  });
+
+  it("leaves every other entry without alternates", () => {
+    const withAlternates = rawEntries.filter((e) => e.alternates?.languages);
+    // 6 English + 6 Spanish, nothing else.
+    expect(withAlternates).toHaveLength(12);
+    expect(
+      rawByUrl.get("https://worldeye.app/features")?.alternates,
+    ).toBeUndefined();
   });
 });

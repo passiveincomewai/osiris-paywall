@@ -40,9 +40,9 @@ describe("GSC 404 redirects (next.config.ts)", () => {
 describe("React keys never concatenate href + label/title", () => {
   const files: Record<string, string> = {
     footer: "src/components/SiteFooter.tsx",
-    useCases: "src/app/use-cases/page.tsx",
-    vip: "src/app/vip/page.tsx",
-    studioHome: "src/app/affiliates/studio/StudioHomeClient.tsx",
+    useCases: "src/app/(en)/use-cases/page.tsx",
+    vip: "src/app/(en)/vip/page.tsx",
+    studioHome: "src/app/(en)/affiliates/studio/StudioHomeClient.tsx",
   };
 
   it.each(Object.entries(files))("%s has no href-concatenated key", (_name, path) => {
