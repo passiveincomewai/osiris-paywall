@@ -158,12 +158,12 @@
    "name": "Phoenix",
    "country": "United States",
    "countrySlug": "united-states",
-   "count": 435,
+   "count": 432,
    "countryTotal": 54025,
    "sources": [
     {
      "name": "ADOT",
-     "count": 434
+     "count": 431
     },
     {
      "name": "OpenCCTV / phenocam",
@@ -171,7 +171,7 @@
     }
    ],
    "sourceCount": 2,
-   "stills": 435,
+   "stills": 432,
    "streams": 0,
    "samples": [
     {
@@ -229,7 +229,7 @@
    "name": "Stockholm",
    "country": "Sweden",
    "countrySlug": "sweden",
-   "count": 350,
+   "count": 349,
    "countryTotal": 1620,
    "sources": [
     {
@@ -238,7 +238,7 @@
     },
     {
      "name": "OpenCCTV / trafikverket",
-     "count": 15
+     "count": 14
     },
     {
      "name": "CamStreamer",
@@ -246,7 +246,7 @@
     }
    ],
    "sourceCount": 3,
-   "stills": 348,
+   "stills": 347,
    "streams": 2,
    "samples": [
     {
@@ -282,12 +282,12 @@
      "name": "Hornsg.-Långholmsg. mot Slussen"
     },
     {
-     "id": "se-cs-503018648",
-     "name": "MEDview: DN-Skrapan, Stockholm"
-    },
-    {
      "id": "se-tv-122",
      "name": "Betalstation Klarastrandsleden"
+    },
+    {
+     "id": "se-cs-503018648",
+     "name": "MEDview: DN-Skrapan, Stockholm"
     },
     {
      "id": "se-tv-340",
@@ -517,30 +517,18 @@
    "name": "El Paso",
    "country": "United States",
    "countrySlug": "united-states",
-   "count": 263,
+   "count": 243,
    "countryTotal": 54025,
    "sources": [
     {
      "name": "TxDOT",
-     "count": 258
-    },
-    {
-     "name": "FAA WeatherCams",
-     "count": 4
-    },
-    {
-     "name": "OpenCCTV / travelmidwest",
-     "count": 1
+     "count": 243
     }
    ],
-   "sourceCount": 3,
-   "stills": 263,
+   "sourceCount": 1,
+   "stills": 243,
    "streams": 0,
    "samples": [
-    {
-     "id": "txdot-ELP-IH-10 @ Van Horn MM 138 Golf Course Rd",
-     "name": "IH-10 @ Van Horn MM 138 Golf Course Rd"
-    },
     {
      "id": "txdot-ELP-US-62/180-Montana @ Saul Kleinfeld",
      "name": "US-62/180-Montana @ Saul Kleinfeld"
@@ -566,10 +554,6 @@
      "name": "FM-659/Zaragoza @ George Deiter"
     },
     {
-     "id": "occ-tmw-IL-IL-IDOTD4_4_Woodford_SB_I-39_4073631_-8903482_1_N",
-     "name": "I-39 at US 24 (El Paso) (#4192)"
-    },
-    {
      "id": "txdot-ELP-SH-178/Artcraft @ Upper valley",
      "name": "SH-178/Artcraft @ Upper valley"
     },
@@ -578,12 +562,20 @@
      "name": "FM-659/Zaragoza @ Pebble Hills"
     },
     {
-     "id": "faa-12632",
-     "name": "El Paso — Camera 4 (NorthWest)"
+     "id": "txdot-ELP-SH-20/Doniphan @ Sunland Park",
+     "name": "SH-20/Doniphan @ Sunland Park"
     },
     {
-     "id": "faa-12630",
-     "name": "El Paso — Camera 2 (SouthEast)"
+     "id": "txdot-ELP-George Dieter @ Vista del Sol",
+     "name": "George Deiter @ Vista del Sol"
+    },
+    {
+     "id": "txdot-ELP-US-62/180-Montana @ Yarbrough",
+     "name": "US-62/180-Montana @ Yarbrough"
+    },
+    {
+     "id": "txdot-ELP-FM-659/Zaragoza @ Tierra Este",
+     "name": "FM-659/Zaragoza @ Tierra Este"
     }
    ]
   },
@@ -592,24 +584,16 @@
    "name": "Beaumont",
    "country": "United States",
    "countrySlug": "united-states",
-   "count": 250,
+   "count": 241,
    "countryTotal": 54025,
    "sources": [
     {
      "name": "TxDOT",
      "count": 241
-    },
-    {
-     "name": "Caltrans",
-     "count": 5
-    },
-    {
-     "name": "OpenCCTV / caltrans",
-     "count": 4
     }
    ],
-   "sourceCount": 3,
-   "stills": 250,
+   "sourceCount": 1,
+   "stills": 241,
    "streams": 0,
    "samples": [
     {
@@ -645,10 +629,6 @@
      "name": "BMT - US-69 @ Wheeler - Lumberton - SB Traffic"
     },
     {
-     "id": "cal-2072",
-     "name": "I-10: (502) West of Highland Springs Avenue"
-    },
-    {
      "id": "txdot-BMT-BMT FM1442 @ Ferry Dr/LaPointe St - Bridge City",
      "name": "FM1442 @ Ferry Dr/LaPointe St - Bridge City"
     },
@@ -659,6 +639,10 @@
     {
      "id": "txdot-BMT-BMT SH321 @ SH105 Bypass/Grand Oaks - Cleveland",
      "name": "SH321 @ SH105 Bypass/Grand Oaks - Cleveland"
+    },
+    {
+     "id": "txdot-BMT-BMT US96 @ Early Childhood Driveway - Lumberton",
+     "name": "US96 @ Early Childhood Driveway - Lumberton"
     }
    ]
   },
@@ -955,7 +939,7 @@
    "name": "Arlington",
    "country": "United States",
    "countrySlug": "united-states",
-   "count": 229,
+   "count": 224,
    "countryTotal": 54025,
    "sources": [
     {
@@ -963,17 +947,13 @@
      "count": 223
     },
     {
-     "name": "OpenCCTV / arcgis_cams",
-     "count": 3
-    },
-    {
      "name": "OpenCCTV / hivis",
      "count": 1
     }
    ],
-   "sourceCount": 5,
-   "stills": 3,
-   "streams": 226,
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 223,
    "samples": [
     {
      "id": "occ-arlingtonva-cam228",
@@ -984,16 +964,8 @@
      "name": "N George Mason Dr @ Arlington Hospital - 188"
     },
     {
-     "id": "occ-arcgis-TN-cc83a763ed",
-     "name": "I-40 WB East of SR385 NB Mile Marker 24.4"
-    },
-    {
      "id": "occ-arlingtonva-cam244",
      "name": "S Walter Reed Dr @ S Arlington Mill - 175"
-    },
-    {
-     "id": "occ-arcgis-TN-6fb09c2dc9",
-     "name": "I-40W West of SR 385 at Mile Marker 24.4"
     },
     {
      "id": "occ-arlingtonva-cam222",
@@ -1022,81 +994,14 @@
     {
      "id": "occ-arlingtonva-cam231",
      "name": "S George Mason Dr @ S Frederick - 607"
-    }
-   ]
-  },
-  {
-   "slug": "columbus",
-   "name": "Columbus",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 216,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / opentrafficcam",
-     "count": 195
     },
     {
-     "name": "OpenCCTV / ohgo",
-     "count": 11
+     "id": "occ-arlingtonva-cam245",
+     "name": "S Walter Reed Dr @ S 4-Mile Run - 176"
     },
     {
-     "name": "OpenCCTV / ndawn",
-     "count": 8
-    }
-   ],
-   "sourceCount": 4,
-   "stills": 216,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "occ-otcm-6498",
-     "name": "(City of Columbus) North Broadway at SR-315 NB Ramp/Ohio Health"
-    },
-    {
-     "id": "occ-otcm-6552",
-     "name": "(City of Columbus) SR-161/Dublin-Granville Rd at Cleveland Ave"
-    },
-    {
-     "id": "occ-otcm-6870",
-     "name": "(City of Columbus) Hard Rd at Linworth Rd and Sefton Park Dr"
-    },
-    {
-     "id": "occ-otcm-6872",
-     "name": "(City of Columbus) Olentangy River Rd at Mason Pl and SR-315"
-    },
-    {
-     "id": "occ-otcm-6003",
-     "name": "(City of Columbus) Broad St at Reynoldsburg - New Albany Rd"
-    },
-    {
-     "id": "occ-ohgo-00000000001388",
-     "name": "(City of Columbus) Dublin Granville Rd at Maple Canyon Ave"
-    },
-    {
-     "id": "occ-otcm-6078",
-     "name": "(City of Columbus) Stelzer Rd at International Gateway EB"
-    },
-    {
-     "id": "occ-otcm-6853",
-     "name": "(City of Columbus) Hamilton Rd at Old Dublin-Granville Rd"
-    },
-    {
-     "id": "occ-otcm-6871",
-     "name": "(City of Columbus) Olentangy River Rd at Wilson Bridge Rd"
-    },
-    {
-     "id": "occ-otcm-6023",
-     "name": "(City of Columbus) Olentangy River Rd at John Herrick Dr"
-    },
-    {
-     "id": "occ-otcm-6075",
-     "name": "(City of Columbus) SR-161/Dublin-Granville Rd at Karl Rd"
-    },
-    {
-     "id": "occ-otcm-6891",
-     "name": "(City of Columbus) Sancus Blvd at Worthington Woods Blvd"
+     "id": "occ-arlingtonva-cam247",
+     "name": "S George Mason Dr @ S Dinwiddle - 179"
     }
    ]
   },
@@ -1310,6 +1215,77 @@
     {
      "id": "okdot-1759950773683",
      "name": "Turner Tpk & W 69th W"
+    }
+   ]
+  },
+  {
+   "slug": "columbus",
+   "name": "Columbus",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 199,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / opentrafficcam",
+     "count": 195
+    },
+    {
+     "name": "OpenCCTV / ohgo",
+     "count": 4
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 199,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-otcm-6498",
+     "name": "(City of Columbus) North Broadway at SR-315 NB Ramp/Ohio Health"
+    },
+    {
+     "id": "occ-otcm-6552",
+     "name": "(City of Columbus) SR-161/Dublin-Granville Rd at Cleveland Ave"
+    },
+    {
+     "id": "occ-otcm-6870",
+     "name": "(City of Columbus) Hard Rd at Linworth Rd and Sefton Park Dr"
+    },
+    {
+     "id": "occ-otcm-6872",
+     "name": "(City of Columbus) Olentangy River Rd at Mason Pl and SR-315"
+    },
+    {
+     "id": "occ-otcm-6003",
+     "name": "(City of Columbus) Broad St at Reynoldsburg - New Albany Rd"
+    },
+    {
+     "id": "occ-ohgo-00000000001388",
+     "name": "(City of Columbus) Dublin Granville Rd at Maple Canyon Ave"
+    },
+    {
+     "id": "occ-otcm-6078",
+     "name": "(City of Columbus) Stelzer Rd at International Gateway EB"
+    },
+    {
+     "id": "occ-otcm-6853",
+     "name": "(City of Columbus) Hamilton Rd at Old Dublin-Granville Rd"
+    },
+    {
+     "id": "occ-otcm-6871",
+     "name": "(City of Columbus) Olentangy River Rd at Wilson Bridge Rd"
+    },
+    {
+     "id": "occ-otcm-6023",
+     "name": "(City of Columbus) Olentangy River Rd at John Herrick Dr"
+    },
+    {
+     "id": "occ-otcm-6075",
+     "name": "(City of Columbus) SR-161/Dublin-Granville Rd at Karl Rd"
+    },
+    {
+     "id": "occ-otcm-6891",
+     "name": "(City of Columbus) Sancus Blvd at Worthington Woods Blvd"
     }
    ]
   },
@@ -1965,20 +1941,16 @@
    "name": "Rochester",
    "country": "United States",
    "countrySlug": "united-states",
-   "count": 157,
+   "count": 156,
    "countryTotal": 54025,
    "sources": [
     {
      "name": "OpenCCTV / ny511",
      "count": 156
-    },
-    {
-     "name": "OpenCCTV / newengland",
-     "count": 1
     }
    ],
-   "sourceCount": 2,
-   "stills": 1,
+   "sourceCount": 1,
+   "stills": 0,
    "streams": 156,
    "samples": [
     {
@@ -2383,16 +2355,16 @@
    "name": "Valencia",
    "country": "Spain",
    "countrySlug": "spain",
-   "count": 129,
+   "count": 128,
    "countryTotal": 2578,
    "sources": [
     {
      "name": "DGT",
-     "count": 129
+     "count": 128
     }
    ],
    "sourceCount": 1,
-   "stills": 129,
+   "stills": 128,
    "streams": 0,
    "samples": [
     {
@@ -2580,152 +2552,6 @@
     {
      "id": "occ-s511-ID-605",
      "name": "Local Boise at Gowen & Pleasant Valley"
-    }
-   ]
-  },
-  {
-   "slug": "springfield",
-   "name": "Springfield",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 123,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / arcgis_cams",
-     "count": 109
-    },
-    {
-     "name": "OpenCCTV / travelmidwest",
-     "count": 11
-    },
-    {
-     "name": "OpenCCTV / hivis",
-     "count": 2
-    }
-   ],
-   "sourceCount": 4,
-   "stills": 16,
-   "streams": 107,
-   "samples": [
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_NB_IL-29_3983105_-8960482_1_S",
-     "name": "IL 29 (Sangamon Ave.) at Bus 55 (Dirksen Pkwy (#6019)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_EB_Clear-Lake_3980197_-8960600_1_S",
-     "name": "Dirksen Pkwy at IL 97 (Clear Lake Ave) (#6014)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_NB_J-David-Jones_3983394_-8966405_1_N",
-     "name": "IL 4 (Veterans Pkwy) at JD Jones Pkwy (#6024)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_SEB_IL-97_3981583_-8970079_1_S",
-     "name": "IL 4 (Veterans Pkwy) at Jefferson St. (#6016)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_WB_Sangamon_3983102_-8963650_1_E",
-     "name": "IL 29 (Peoria Rd.) at Sangamon Ave. (#6018)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_SB_Dirksen_3975827_-8960914_1_W",
-     "name": "Dirksen Pkwy at Stevenson Dr. (#6015)"
-    },
-    {
-     "id": "occ-arcgis-IL-IL-IDOTD4_6_Sangamon_EB_US-36_3974279_-8964443_1_W",
-     "name": "I-72 at Sixth Street (#6004) (East)"
-    },
-    {
-     "id": "occ-arcgis-IL-IL-IDOTD4_6_Sangamon_NEB_I-55-Business-Loop_3985725_-8961542_1_S",
-     "name": "Peoria Rd at Dirksen Pkwy (#6030)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_SB_IL-4_3974509_-8970605_1_N",
-     "name": "I-72 at IL 4 (Veterans) (#6001)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_NB_I-55_3983149_-8959309_1_N",
-     "name": "I-55 at Sangamon Avenue (#6002)"
-    },
-    {
-     "id": "occ-tmw-IL-IL-IDOTD4_6_Sangamon_EB_US-36_3974103_-8967231_1_W",
-     "name": "I-72 at MacArthur Blvd (#6017)"
-    },
-    {
-     "id": "occ-arcgis-MO-89cead6b7a",
-     "name": "BATTLEFIELD AND INGRAM MILL"
-    }
-   ]
-  },
-  {
-   "slug": "laredo",
-   "name": "Laredo",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 120,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "TxDOT",
-     "count": 118
-    },
-    {
-     "name": "OpenCCTV / hivis",
-     "count": 2
-    }
-   ],
-   "sourceCount": 2,
-   "stills": 120,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "occ-hivis-TX_Zacate_Creek_at_Jacaman_Road_Laredo",
-     "name": "Zacate Creek at Jacaman Road Laredo"
-    },
-    {
-     "id": "txdot-LRD-LRD-US83 @ SL517",
-     "name": "US83 @ SL517 Carrizo Springs"
-    },
-    {
-     "id": "txdot-LRD-LRD-US277 @ BU277",
-     "name": "Eagle Pass - US277 @ BU277"
-    },
-    {
-     "id": "txdot-LRD-LRD-FM1472 @ World Trade Loop",
-     "name": "FM1472 @ World Trade Loop"
-    },
-    {
-     "id": "txdot-LRD-LRD-SH359 @ Camino Nuevo",
-     "name": "LRD-SH359 @ Camino Nuevo"
-    },
-    {
-     "id": "txdot-LRD-LRD-FM3338 @ Rancho Penitas",
-     "name": "FM3338 @ Rancho Penitas"
-    },
-    {
-     "id": "txdot-LRD-LRD-LP20 @ Los Presidentes",
-     "name": "LP20 @ Los Presidentes"
-    },
-    {
-     "id": "txdot-LRD-LRD-LP20 @ Cuatro Vientos",
-     "name": "LP20 @ Cuatro Vientos"
-    },
-    {
-     "id": "txdot-LRD-LRD-SH359 at Dasaw Ln",
-     "name": "LRD-SH359 at Dasaw Ln"
-    },
-    {
-     "id": "txdot-LRD-LRD-SH359 at Chacon Creek",
-     "name": "SH359 at Chacon Creek"
-    },
-    {
-     "id": "txdot-LRD-LRD-FM375 @ Garrison",
-     "name": "LRD-FM375 @ Garrison"
-    },
-    {
-     "id": "txdot-LRD-LRD-FM1472 @ Flecha Lane",
-     "name": "FM1472 @ Flecha Lane"
     }
    ]
   },
@@ -3077,81 +2903,6 @@
     {
      "id": "occ-twipcam-tao-000026",
      "name": "桃園市道路 (CCTV026)桃園區 大興西路-國際路(大興西路)"
-    }
-   ]
-  },
-  {
-   "slug": "lexington",
-   "name": "Lexington",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 115,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "LFUCG Lexington",
-     "count": 108
-    },
-    {
-     "name": "OpenCCTV / state511",
-     "count": 6
-    },
-    {
-     "name": "OpenCCTV / hivis",
-     "count": 1
-    }
-   ],
-   "sourceCount": 3,
-   "stills": 109,
-   "streams": 6,
-   "samples": [
-    {
-     "id": "lexky-89",
-     "name": "Nicholasville/New Circle Inner"
-    },
-    {
-     "id": "lexky-90",
-     "name": "Nicholasville/New Circle Outer"
-    },
-    {
-     "id": "occ-hivis-NY_Schoharie_Creek_near_Lexington",
-     "name": "Schoharie Creek near Lexington"
-    },
-    {
-     "id": "lexky-116",
-     "name": "Tates Creek/New Circle Outer"
-    },
-    {
-     "id": "lexky-113",
-     "name": "Tates Creek/Armstrong Mill"
-    },
-    {
-     "id": "lexky-138",
-     "name": "Richmond/New Circle Outer"
-    },
-    {
-     "id": "lexky-77",
-     "name": "New Circle/Bryan Station"
-    },
-    {
-     "id": "lexky-96",
-     "name": "Nicholasville/Southpoint"
-    },
-    {
-     "id": "lexky-122",
-     "name": "Versailles/Mason Headley"
-    },
-    {
-     "id": "lexky-37",
-     "name": "Limestone/Ave Champions"
-    },
-    {
-     "id": "lexky-80",
-     "name": "New Circle/Russell Cave"
-    },
-    {
-     "id": "lexky-95",
-     "name": "Nicholasville/Southland"
     }
    ]
   },
@@ -3645,6 +3396,73 @@
    ]
   },
   {
+   "slug": "lexington",
+   "name": "Lexington",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 108,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "LFUCG Lexington",
+     "count": 108
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 108,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "lexky-89",
+     "name": "Nicholasville/New Circle Inner"
+    },
+    {
+     "id": "lexky-90",
+     "name": "Nicholasville/New Circle Outer"
+    },
+    {
+     "id": "lexky-116",
+     "name": "Tates Creek/New Circle Outer"
+    },
+    {
+     "id": "lexky-113",
+     "name": "Tates Creek/Armstrong Mill"
+    },
+    {
+     "id": "lexky-138",
+     "name": "Richmond/New Circle Outer"
+    },
+    {
+     "id": "lexky-77",
+     "name": "New Circle/Bryan Station"
+    },
+    {
+     "id": "lexky-96",
+     "name": "Nicholasville/Southpoint"
+    },
+    {
+     "id": "lexky-122",
+     "name": "Versailles/Mason Headley"
+    },
+    {
+     "id": "lexky-37",
+     "name": "Limestone/Ave Champions"
+    },
+    {
+     "id": "lexky-80",
+     "name": "New Circle/Russell Cave"
+    },
+    {
+     "id": "lexky-95",
+     "name": "Nicholasville/Southland"
+    },
+    {
+     "id": "lexky-26",
+     "name": "Harrodsburg/Lane Allen"
+    }
+   ]
+  },
+  {
    "slug": "council-bluffs",
    "name": "Council Bluffs",
    "country": "United States",
@@ -3716,6 +3534,73 @@
     {
      "id": "iadot-59644830",
      "name": "CB - I-29/80 @ MM 2.1 (E of S 24th St - S)"
+    }
+   ]
+  },
+  {
+   "slug": "springfield",
+   "name": "Springfield",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 107,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / arcgis_cams",
+     "count": 107
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 107,
+   "samples": [
+    {
+     "id": "occ-arcgis-MO-89cead6b7a",
+     "name": "BATTLEFIELD AND INGRAM MILL"
+    },
+    {
+     "id": "occ-arcgis-MO-bad5057e5e",
+     "name": "Glenstone and Independence"
+    },
+    {
+     "id": "occ-arcgis-MO-0df14a66ca",
+     "name": "JEFFERSON AND WALNUT LAWN"
+    },
+    {
+     "id": "occ-arcgis-MO-1dc316b8f0",
+     "name": "Battlefield and Lone Pine"
+    },
+    {
+     "id": "occ-arcgis-MO-361a1f2e18",
+     "name": "Glenstone and Battlefield"
+    },
+    {
+     "id": "occ-arcgis-MO-f697ffb3d4",
+     "name": "Battlefield and Jefferson"
+    },
+    {
+     "id": "occ-arcgis-MO-f8b18ad7f8",
+     "name": "Battlefield and Kimbrough"
+    },
+    {
+     "id": "occ-arcgis-MO-1fe28b4e4f",
+     "name": "CAMPBELL AND BATTLEFIELD"
+    },
+    {
+     "id": "occ-arcgis-MO-3a8043a06a",
+     "name": "KIMBROUGH AND TRAFFICWAY"
+    },
+    {
+     "id": "occ-arcgis-MO-99fce4006f",
+     "name": "Campbell and Walnut Lawn"
+    },
+    {
+     "id": "occ-arcgis-MO-ae8a95170e",
+     "name": "West Bypass and Division"
+    },
+    {
+     "id": "occ-arcgis-MO-b681592bb8",
+     "name": "Battlefield and Chambery"
     }
    ]
   },
@@ -4059,77 +3944,73 @@
    ]
   },
   {
-   "slug": "buffalo",
-   "name": "Buffalo",
+   "slug": "laredo",
+   "name": "Laredo",
    "country": "United States",
    "countrySlug": "united-states",
-   "count": 94,
+   "count": 95,
    "countryTotal": 54025,
    "sources": [
     {
-     "name": "OpenCCTV / ny511",
-     "count": 84
+     "name": "TxDOT",
+     "count": 93
     },
     {
-     "name": "OpenCCTV / wyoroad",
-     "count": 9
-    },
-    {
-     "name": "OpenCCTV / phenocam",
-     "count": 1
+     "name": "OpenCCTV / hivis",
+     "count": 2
     }
    ],
-   "sourceCount": 3,
-   "stills": 10,
-   "streams": 84,
+   "sourceCount": 2,
+   "stills": 95,
+   "streams": 0,
    "samples": [
     {
-     "id": "occ-ny511-277ef21abc",
-     "name": "I-190 MP 014.25 NB at Interchange 17 (River Road) South Grand Island Bridge Toll"
+     "id": "occ-hivis-TX_Zacate_Creek_at_Jacaman_Road_Laredo",
+     "name": "Zacate Creek at Jacaman Road Laredo"
     },
     {
-     "id": "occ-ny511-db8809a959",
-     "name": "I-190 MP 020.21 SB at the Niagara Toll Gantry (Base of the North Grand Island Br"
+     "id": "txdot-LRD-LRD-FM1472 @ World Trade Loop",
+     "name": "FM1472 @ World Trade Loop"
     },
     {
-     "id": "occ-ny511-0a56b21b76",
-     "name": "I-190 MP 008.65 NB Just South of Interchange 11 (Scajaquada Expressway Route 198"
+     "id": "txdot-LRD-LRD-SH359 @ Camino Nuevo",
+     "name": "LRD-SH359 @ Camino Nuevo"
     },
     {
-     "id": "occ-ny511-8e24dc4284",
-     "name": "I-290 between Exit 3 (Niagara Falls Boulevard) and Exit 4 (I-990 Interchange)"
+     "id": "txdot-LRD-LRD-FM3338 @ Rancho Penitas",
+     "name": "FM3338 @ Rancho Penitas"
     },
     {
-     "id": "occ-ny511-98edb75a4c",
-     "name": "I-190 MP 010.80 SB Between Interchange 14 (Ontario Street) and 15 (Route 324)"
+     "id": "txdot-LRD-LRD-LP20 @ Los Presidentes",
+     "name": "LP20 @ Los Presidentes"
     },
     {
-     "id": "occ-ny511-5e2e74f591",
-     "name": "I-90 MP 427.47 WB Between Interchange 53 (I-190 Junction) and 54 (Route 400)"
+     "id": "txdot-LRD-LRD-LP20 @ Cuatro Vientos",
+     "name": "LP20 @ Cuatro Vientos"
     },
     {
-     "id": "occ-ny511-f9aa238405",
-     "name": "I-290 between Exit 2 (Colvin Boulevard) and Exit 3 (Niagara Falls Boulevard)"
+     "id": "txdot-LRD-LRD-SH359 at Dasaw Ln",
+     "name": "LRD-SH359 at Dasaw Ln"
     },
     {
-     "id": "occ-ny511-405258993b",
-     "name": "I-290 between Exit 4 (I-990 Interchange) and Exit 5 (Millersport Highway)"
+     "id": "txdot-LRD-LRD-SH359 at Chacon Creek",
+     "name": "SH359 at Chacon Creek"
     },
     {
-     "id": "occ-ny511-65ccc68085",
-     "name": "I-90 MP 422.34 EB Between Interchange 52 (Walden Ave) and 51 (Route 33)"
+     "id": "txdot-LRD-LRD-FM1472 @ Flecha Lane",
+     "name": "FM1472 @ Flecha Lane"
     },
     {
-     "id": "occ-ny511-9070334f4d",
-     "name": "I-190 at Interchange 18A (Route 324) North of South Grand Island Bridge"
+     "id": "txdot-LRD-LRD-FM1472 @ Vidal Cantu",
+     "name": "FM1472 @ Vidal Cantu"
     },
     {
-     "id": "occ-ny511-02b6529230",
-     "name": "I-90 MP 426.60 WB at Interchange 53 (I-190 Junction) 4th Lane Section"
+     "id": "txdot-LRD-LRD-LP20 @ Lomas Del Sur",
+     "name": "LP20 @ Lomas Del Sur"
     },
     {
-     "id": "occ-ny511-dda8d1a391",
-     "name": "I-290 between Exit 1 (Delaware Avenue) and Exit 2 (Colvin Boulevard)"
+     "id": "txdot-LRD-LRD-LP20 @ Bucky Houdman",
+     "name": "LP20 @ Bucky Houdman"
     }
    ]
   },
@@ -4982,6 +4863,77 @@
    ]
   },
   {
+   "slug": "buffalo",
+   "name": "Buffalo",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 85,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / ny511",
+     "count": 84
+    },
+    {
+     "name": "OpenCCTV / phenocam",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 84,
+   "samples": [
+    {
+     "id": "occ-ny511-277ef21abc",
+     "name": "I-190 MP 014.25 NB at Interchange 17 (River Road) South Grand Island Bridge Toll"
+    },
+    {
+     "id": "occ-ny511-db8809a959",
+     "name": "I-190 MP 020.21 SB at the Niagara Toll Gantry (Base of the North Grand Island Br"
+    },
+    {
+     "id": "occ-ny511-0a56b21b76",
+     "name": "I-190 MP 008.65 NB Just South of Interchange 11 (Scajaquada Expressway Route 198"
+    },
+    {
+     "id": "occ-ny511-8e24dc4284",
+     "name": "I-290 between Exit 3 (Niagara Falls Boulevard) and Exit 4 (I-990 Interchange)"
+    },
+    {
+     "id": "occ-ny511-98edb75a4c",
+     "name": "I-190 MP 010.80 SB Between Interchange 14 (Ontario Street) and 15 (Route 324)"
+    },
+    {
+     "id": "occ-ny511-5e2e74f591",
+     "name": "I-90 MP 427.47 WB Between Interchange 53 (I-190 Junction) and 54 (Route 400)"
+    },
+    {
+     "id": "occ-ny511-f9aa238405",
+     "name": "I-290 between Exit 2 (Colvin Boulevard) and Exit 3 (Niagara Falls Boulevard)"
+    },
+    {
+     "id": "occ-ny511-405258993b",
+     "name": "I-290 between Exit 4 (I-990 Interchange) and Exit 5 (Millersport Highway)"
+    },
+    {
+     "id": "occ-ny511-65ccc68085",
+     "name": "I-90 MP 422.34 EB Between Interchange 52 (Walden Ave) and 51 (Route 33)"
+    },
+    {
+     "id": "occ-ny511-9070334f4d",
+     "name": "I-190 at Interchange 18A (Route 324) North of South Grand Island Bridge"
+    },
+    {
+     "id": "occ-ny511-02b6529230",
+     "name": "I-90 MP 426.60 WB at Interchange 53 (I-190 Junction) 4th Lane Section"
+    },
+    {
+     "id": "occ-ny511-dda8d1a391",
+     "name": "I-290 between Exit 1 (Delaware Avenue) and Exit 2 (Colvin Boulevard)"
+    }
+   ]
+  },
+  {
    "slug": "corpus-christi",
    "name": "Corpus Christi",
    "country": "United States",
@@ -5538,152 +5490,6 @@
    ]
   },
   {
-   "slug": "miyoshi-city",
-   "name": "Miyoshi City",
-   "country": "Japan",
-   "countrySlug": "japan",
-   "count": 80,
-   "countryTotal": 10752,
-   "sources": [
-    {
-     "name": "OpenCCTV / rivergojp",
-     "count": 79
-    },
-    {
-     "name": "OpenCCTV / road-info-prvs",
-     "count": 1
-    }
-   ],
-   "sourceCount": 2,
-   "stills": 80,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "occ-rivergojp-122549003",
-     "name": "Yoshii River at Yamakuchidani, Higashi-Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-122324023",
-     "name": "Konnoseigawa River, Shimomihara, Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-122324024",
-     "name": "Konnoseigawa River, Komatsuhara, Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-222549002",
-     "name": "Yoshino River at Ikeda Observation Point"
-    },
-    {
-     "id": "occ-rivergojp-108705134",
-     "name": "Imomo River at Sugiyama Bridge, Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-108705100",
-     "name": "Itaki River at Ochiai Bridge, Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-122324019",
-     "name": "Saishirogawa River, Hinohara, Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-122549001",
-     "name": "Yoshii River at Kamo, Higashi-Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-108705099",
-     "name": "Basen River at Okada Bridge, Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-122324013",
-     "name": "Gojogawa River, Kamishiwaji, Miyoshi"
-    },
-    {
-     "id": "occ-rivergojp-122549004",
-     "name": "Yoshii River at Sadaimitsu, Tsurugui"
-    },
-    {
-     "id": "occ-rivergojp-222539005",
-     "name": "Doki River at Harai Bridge, Manotsun"
-    }
-   ]
-  },
-  {
-   "slug": "montgomery",
-   "name": "Montgomery",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 78,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "ALDOT ALGO Traffic",
-     "count": 70
-    },
-    {
-     "name": "OpenCCTV / opentrafficcam",
-     "count": 5
-    },
-    {
-     "name": "KYTC GoKY",
-     "count": 1
-    }
-   ],
-   "sourceCount": 5,
-   "stills": 7,
-   "streams": 71,
-   "samples": [
-    {
-     "id": "aldot-2451",
-     "name": "I-85 at MP 5.37(S) before Perry Hill Rd"
-    },
-    {
-     "id": "aldot-2450",
-     "name": "I-85 at MP 4.3 N before Perry Hill Rd"
-    },
-    {
-     "id": "aldot-1046",
-     "name": "I-85 at MP 5.21(N) past Perry Hill Rd"
-    },
-    {
-     "id": "aldot-2449",
-     "name": "I-85 at MP 4.2(S) past Perry Hill Rd"
-    },
-    {
-     "id": "aldot-1044",
-     "name": "I-85 at MP 4.53(S) Perry Hill Rd (M)"
-    },
-    {
-     "id": "aldot-2458",
-     "name": "I-85 at EXIT 6 (E Blvd SB entrance)"
-    },
-    {
-     "id": "aldot-2443",
-     "name": "I-85 at EXIT 4 (Perry Hill Rd) (M)"
-    },
-    {
-     "id": "aldot-1059",
-     "name": "I-65 at EXIT 168 (US82-S. Blvd) M"
-    },
-    {
-     "id": "aldot-1065",
-     "name": "I-65 at EXIT 173 (SR152 - N Blvd)"
-    },
-    {
-     "id": "aldot-2399",
-     "name": "I-85 at MP 3(N) before Ann St/DMS"
-    },
-    {
-     "id": "aldot-2445",
-     "name": "I-85 at MP 3.95(S) before Ann St"
-    },
-    {
-     "id": "aldot-1050",
-     "name": "I-85 at EXIT 9 (Taylor Rd AL271)"
-    }
-   ]
-  },
-  {
    "slug": "nara",
    "name": "Nara",
    "country": "Japan",
@@ -5826,21 +5632,17 @@
    "name": "Odessa",
    "country": "United States",
    "countrySlug": "united-states",
-   "count": 76,
+   "count": 74,
    "countryTotal": 54025,
    "sources": [
     {
      "name": "TxDOT",
      "count": 74
-    },
-    {
-     "name": "OpenCCTV / arcgis_cams",
-     "count": 2
     }
    ],
-   "sourceCount": 2,
+   "sourceCount": 1,
    "stills": 74,
-   "streams": 2,
+   "streams": 0,
    "samples": [
     {
      "id": "txdot-ODA-ODA-IH20 @ South Midland Dr MM 133 Midland CTY",
@@ -6583,6 +6385,77 @@
    ]
   },
   {
+   "slug": "montgomery",
+   "name": "Montgomery",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 71,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "ALDOT ALGO Traffic",
+     "count": 70
+    },
+    {
+     "name": "OpenCCTV / algotraffic",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 70,
+   "samples": [
+    {
+     "id": "aldot-2451",
+     "name": "I-85 at MP 5.37(S) before Perry Hill Rd"
+    },
+    {
+     "id": "aldot-2450",
+     "name": "I-85 at MP 4.3 N before Perry Hill Rd"
+    },
+    {
+     "id": "aldot-1046",
+     "name": "I-85 at MP 5.21(N) past Perry Hill Rd"
+    },
+    {
+     "id": "aldot-2449",
+     "name": "I-85 at MP 4.2(S) past Perry Hill Rd"
+    },
+    {
+     "id": "aldot-1044",
+     "name": "I-85 at MP 4.53(S) Perry Hill Rd (M)"
+    },
+    {
+     "id": "aldot-2458",
+     "name": "I-85 at EXIT 6 (E Blvd SB entrance)"
+    },
+    {
+     "id": "aldot-2443",
+     "name": "I-85 at EXIT 4 (Perry Hill Rd) (M)"
+    },
+    {
+     "id": "aldot-1059",
+     "name": "I-65 at EXIT 168 (US82-S. Blvd) M"
+    },
+    {
+     "id": "aldot-1065",
+     "name": "I-65 at EXIT 173 (SR152 - N Blvd)"
+    },
+    {
+     "id": "aldot-2399",
+     "name": "I-85 at MP 3(N) before Ann St/DMS"
+    },
+    {
+     "id": "aldot-2445",
+     "name": "I-85 at MP 3.95(S) before Ann St"
+    },
+    {
+     "id": "aldot-1050",
+     "name": "I-85 at EXIT 9 (Taylor Rd AL271)"
+    }
+   ]
+  },
+  {
    "slug": "edmonton",
    "name": "Edmonton",
    "country": "Canada",
@@ -6930,81 +6803,6 @@
    ]
   },
   {
-   "slug": "oakland",
-   "name": "Oakland",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 69,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "Caltrans",
-     "count": 67
-    },
-    {
-     "name": "OpenCCTV / arcgis_cams",
-     "count": 1
-    },
-    {
-     "name": "OpenCCTV / hivis",
-     "count": 1
-    }
-   ],
-   "sourceCount": 3,
-   "stills": 68,
-   "streams": 1,
-   "samples": [
-    {
-     "id": "cal-536",
-     "name": "TVB25 -- I-80 : Just East Of Toll Plaza Horseshoe"
-    },
-    {
-     "id": "occ-hivis-NJ_Ramapo_River_at_West_Oakland_Avenue_at_Oakland",
-     "name": "Ramapo River at West Oakland Avenue at Oakland"
-    },
-    {
-     "id": "cal-716",
-     "name": "TVA42 -- I-580 : Just East Of Beaumont Avenue"
-    },
-    {
-     "id": "cal-912",
-     "name": "TVA01 -- SR-260 : Webster St Tunnel Entrance"
-    },
-    {
-     "id": "cal-472",
-     "name": "TVA45 -- I-580 : Just East of Grand Avenue"
-    },
-    {
-     "id": "cal-986",
-     "name": "TVD14 -- I-80 : SFOBB METERING DOWNSTREAM"
-    },
-    {
-     "id": "cal-987",
-     "name": "TVD15 -- I-80 : SFOBB METERING UPSTREAM"
-    },
-    {
-     "id": "cal-804",
-     "name": "TVB26 -- I-880 : 16th Avenue Overcross"
-    },
-    {
-     "id": "cal-903",
-     "name": "TVA86 -- I-880 : 23RD AV/KENNEDY ST OR"
-    },
-    {
-     "id": "cal-1122",
-     "name": "TVA85 -- I-580 : AT JWO MACARTHUR BLVD"
-    },
-    {
-     "id": "cal-1096",
-     "name": "TVA94 -- I-580 : AT JWO FOOTHILL BLVD"
-    },
-    {
-     "id": "cal-1110",
-     "name": "TV117 -- I-980 : AT JEO SAN PABLO AVE"
-    }
-   ]
-  },
-  {
    "slug": "birmingham",
    "name": "Birmingham",
    "country": "United States",
@@ -7143,73 +6941,6 @@
     {
      "id": "occ-s511-WI-235",
      "name": "I-794 at S of Hoan Bridge"
-    }
-   ]
-  },
-  {
-   "slug": "cheyenne",
-   "name": "Cheyenne",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 69,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / wyoroad",
-     "count": 69
-    }
-   ],
-   "sourceCount": 1,
-   "stills": 69,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "occ-wyoroad-4298-5",
-     "name": "I 90 / I 25 Interchange - I-25 Northbound Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-3883-5",
-     "name": "I 80 Carpenter Interchange - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-4298-3",
-     "name": "I 90 / I 25 Interchange - I-25 Southbound"
-    },
-    {
-     "id": "occ-wyoroad-5343-3",
-     "name": "I 25 Colorado State Line - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-4298-4",
-     "name": "I 90 / I 25 Interchange - Interchange"
-    },
-    {
-     "id": "occ-wyoroad-477-3",
-     "name": "I 25 College Drive - I 80 Interchange"
-    },
-    {
-     "id": "occ-wyoroad-3882-3",
-     "name": "I 80 Telephone Canyon - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-3884-3",
-     "name": "US 85 Lovercheck Hill - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-2320-3",
-     "name": "I 80 Mile Marker 353 - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-4298-1",
-     "name": "I 90 / I 25 Interchange - I-90 West"
-    },
-    {
-     "id": "occ-wyoroad-4298-2",
-     "name": "I 90 / I 25 Interchange - I-90 East"
-    },
-    {
-     "id": "occ-wyoroad-464-4",
-     "name": "US 287 Pumpkin Vine - Comanche Peak"
     }
    ]
   },
@@ -7494,6 +7225,73 @@
     {
      "id": "occ-rivergojp-104865011",
      "name": "Aikawa River at Aikawa First Bridge"
+    }
+   ]
+  },
+  {
+   "slug": "oakland",
+   "name": "Oakland",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 67,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "Caltrans",
+     "count": 67
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 67,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "cal-536",
+     "name": "TVB25 -- I-80 : Just East Of Toll Plaza Horseshoe"
+    },
+    {
+     "id": "cal-716",
+     "name": "TVA42 -- I-580 : Just East Of Beaumont Avenue"
+    },
+    {
+     "id": "cal-912",
+     "name": "TVA01 -- SR-260 : Webster St Tunnel Entrance"
+    },
+    {
+     "id": "cal-472",
+     "name": "TVA45 -- I-580 : Just East of Grand Avenue"
+    },
+    {
+     "id": "cal-986",
+     "name": "TVD14 -- I-80 : SFOBB METERING DOWNSTREAM"
+    },
+    {
+     "id": "cal-987",
+     "name": "TVD15 -- I-80 : SFOBB METERING UPSTREAM"
+    },
+    {
+     "id": "cal-804",
+     "name": "TVB26 -- I-880 : 16th Avenue Overcross"
+    },
+    {
+     "id": "cal-903",
+     "name": "TVA86 -- I-880 : 23RD AV/KENNEDY ST OR"
+    },
+    {
+     "id": "cal-1122",
+     "name": "TVA85 -- I-580 : AT JWO MACARTHUR BLVD"
+    },
+    {
+     "id": "cal-1096",
+     "name": "TVA94 -- I-580 : AT JWO FOOTHILL BLVD"
+    },
+    {
+     "id": "cal-1110",
+     "name": "TV117 -- I-980 : AT JEO SAN PABLO AVE"
+    },
+    {
+     "id": "cal-1111",
+     "name": "TVA93 -- I-580 : AT JWO 106th Ave OC"
     }
    ]
   },
@@ -8208,81 +8006,6 @@
    ]
   },
   {
-   "slug": "lakewood",
-   "name": "Lakewood",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 63,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / cotrip",
-     "count": 59
-    },
-    {
-     "name": "Caltrans",
-     "count": 1
-    },
-    {
-     "name": "OpenCCTV / arcgis_cams",
-     "count": 1
-    }
-   ],
-   "sourceCount": 5,
-   "stills": 4,
-   "streams": 59,
-   "samples": [
-    {
-     "id": "occ-cr-f8f63fc799",
-     "name": "I-70 MP 263.50 EB : 1.2 miles E of Denver West Colorado Mills Pkwy"
-    },
-    {
-     "id": "occ-cr-8dc3c20119",
-     "name": "C-470 MP 015.00 WB : 0.5 miles W of S Platte Canyon Rd/CO 75"
-    },
-    {
-     "id": "occ-cr-e350f5068a",
-     "name": "C-470 MP 015.55 WB : 0.1 miles E of S Platte Canyon Rd/CO 75"
-    },
-    {
-     "id": "occ-cr-3b04adb04c",
-     "name": "C-470 MP 014.50 EB : 0.7 miles E of S Wadsworth Blvd/CO 121"
-    },
-    {
-     "id": "occ-cr-b831319173",
-     "name": "C-470 MP 013.40 WB : 0.4 miles E of S Wadsworth Blvd/CO 121"
-    },
-    {
-     "id": "occ-cr-abc7ef233d",
-     "name": "US 6 MP 277.85 EB : 0.4 miles W of Union Blvd in Lakewood"
-    },
-    {
-     "id": "occ-cr-918eaa9d01",
-     "name": "CO-121 MP 016.95 NB at WB I-70 Ramp to SB Wadsworth Blvd"
-    },
-    {
-     "id": "occ-cr-04a9c08ef2",
-     "name": "C-470 MP 004.15 EB : 0.1 miles W of CO-8/W Morrison Rd"
-    },
-    {
-     "id": "occ-cr-c13ad073fa",
-     "name": "US 6 MP 280.85 WB at Wadsworth Blvd/CO 121 in Lakewood"
-    },
-    {
-     "id": "occ-cr-40910892d6",
-     "name": "CO 72 MP 000.30 WB at W 48th Ave/W I-70 Frontage Rd N"
-    },
-    {
-     "id": "occ-cr-217239d108",
-     "name": "CO-391 MP 009.45 SB at W 48th Ave/I-70 Frontage Rd S"
-    },
-    {
-     "id": "occ-cr-6577663c91",
-     "name": "C-470 MP 007.90 EB at W Bowles Ave C-470 EB On-ramp"
-    }
-   ]
-  },
-  {
    "slug": "lugo",
    "name": "Lugo",
    "country": "Spain",
@@ -8831,6 +8554,73 @@
    ]
   },
   {
+   "slug": "lakewood",
+   "name": "Lakewood",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 59,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / cotrip",
+     "count": 59
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 1,
+   "streams": 58,
+   "samples": [
+    {
+     "id": "occ-cr-f8f63fc799",
+     "name": "I-70 MP 263.50 EB : 1.2 miles E of Denver West Colorado Mills Pkwy"
+    },
+    {
+     "id": "occ-cr-8dc3c20119",
+     "name": "C-470 MP 015.00 WB : 0.5 miles W of S Platte Canyon Rd/CO 75"
+    },
+    {
+     "id": "occ-cr-e350f5068a",
+     "name": "C-470 MP 015.55 WB : 0.1 miles E of S Platte Canyon Rd/CO 75"
+    },
+    {
+     "id": "occ-cr-3b04adb04c",
+     "name": "C-470 MP 014.50 EB : 0.7 miles E of S Wadsworth Blvd/CO 121"
+    },
+    {
+     "id": "occ-cr-b831319173",
+     "name": "C-470 MP 013.40 WB : 0.4 miles E of S Wadsworth Blvd/CO 121"
+    },
+    {
+     "id": "occ-cr-abc7ef233d",
+     "name": "US 6 MP 277.85 EB : 0.4 miles W of Union Blvd in Lakewood"
+    },
+    {
+     "id": "occ-cr-918eaa9d01",
+     "name": "CO-121 MP 016.95 NB at WB I-70 Ramp to SB Wadsworth Blvd"
+    },
+    {
+     "id": "occ-cr-04a9c08ef2",
+     "name": "C-470 MP 004.15 EB : 0.1 miles W of CO-8/W Morrison Rd"
+    },
+    {
+     "id": "occ-cr-c13ad073fa",
+     "name": "US 6 MP 280.85 WB at Wadsworth Blvd/CO 121 in Lakewood"
+    },
+    {
+     "id": "occ-cr-40910892d6",
+     "name": "CO 72 MP 000.30 WB at W 48th Ave/W I-70 Frontage Rd N"
+    },
+    {
+     "id": "occ-cr-217239d108",
+     "name": "CO-391 MP 009.45 SB at W 48th Ave/I-70 Frontage Rd S"
+    },
+    {
+     "id": "occ-cr-6577663c91",
+     "name": "C-470 MP 007.90 EB at W Bowles Ave C-470 EB On-ramp"
+    }
+   ]
+  },
+  {
    "slug": "lubbock",
    "name": "Lubbock",
    "country": "United States",
@@ -8961,6 +8751,77 @@
     {
      "id": "occ-wsdot-4046",
      "name": "US 395 NSC at MP 163: NSC 395 & Gerlach"
+    }
+   ]
+  },
+  {
+   "slug": "miyoshi-city",
+   "name": "Miyoshi City",
+   "country": "Japan",
+   "countrySlug": "japan",
+   "count": 58,
+   "countryTotal": 10752,
+   "sources": [
+    {
+     "name": "OpenCCTV / rivergojp",
+     "count": 57
+    },
+    {
+     "name": "OpenCCTV / road-info-prvs",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 58,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-rivergojp-122324023",
+     "name": "Konnoseigawa River, Shimomihara, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-122324024",
+     "name": "Konnoseigawa River, Komatsuhara, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-108705134",
+     "name": "Imomo River at Sugiyama Bridge, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-108705100",
+     "name": "Itaki River at Ochiai Bridge, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-122324019",
+     "name": "Saishirogawa River, Hinohara, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-108705099",
+     "name": "Basen River at Okada Bridge, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-122324013",
+     "name": "Gojogawa River, Kamishiwaji, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-108705074",
+     "name": "Shin-Oda Bridge, Mizukoshi, Shobara"
+    },
+    {
+     "id": "occ-rivergojp-122324003",
+     "name": "Gono River at Kadota Lower, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-122324006",
+     "name": "Gono River at Shimootohara, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-122324020",
+     "name": "Konnoseigawa River, Kusaka, Miyoshi"
+    },
+    {
+     "id": "occ-rivergojp-122324025",
+     "name": "Konnoseigawa River, Yamaya, Miyoshi"
     }
    ]
   },
@@ -9379,73 +9240,6 @@
    ]
   },
   {
-   "slug": "laramie",
-   "name": "Laramie",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 57,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / wyoroad",
-     "count": 57
-    }
-   ],
-   "sourceCount": 1,
-   "stills": 57,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "occ-wyoroad-5434-3",
-     "name": "WYO 130 Green Rock Trailhead - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-478-3",
-     "name": "I 80 Warren Interchange - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-3015-4",
-     "name": "WYO 210 Hynds Lodge Rd - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-2671-3",
-     "name": "I 80 Cooper Cove East - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-3005-3",
-     "name": "WYO 210 Wildcat Trail - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-4694-3",
-     "name": "WYO 34 Sybille Canyon - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-4855-3",
-     "name": "US 30 Bosler Junction - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-2649-4",
-     "name": "WYO 230 Skyline - Colorado Mountain"
-    },
-    {
-     "id": "occ-wyoroad-1775-4",
-     "name": "I 80 Laramie West - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-1268-4",
-     "name": "I 80 Arlington East - Wind Farm"
-    },
-    {
-     "id": "occ-wyoroad-1279-3",
-     "name": "I 80 Cooper Cove - Road Surface"
-    },
-    {
-     "id": "occ-wyoroad-1326-3",
-     "name": "I 80 Quealy Dome - Road Surface"
-    }
-   ]
-  },
-  {
    "slug": "ako-city",
    "name": "Ako City",
    "country": "Japan",
@@ -9651,73 +9445,6 @@
    ]
   },
   {
-   "slug": "pharr",
-   "name": "Pharr",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 55,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "TxDOT",
-     "count": 55
-    }
-   ],
-   "sourceCount": 1,
-   "stills": 55,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "txdot-PHR-PHR IH 69C @ FM 2128",
-     "name": "PHR IH 69C PHR IH 69C @ FM 2128@ FM 2128"
-    },
-    {
-     "id": "txdot-PHR-PHR IH 69E @ FM 802 (Ruben Torres Blvd)",
-     "name": "PHR IH 69E @ FM 802 (Ruben Torres Blvd)"
-    },
-    {
-     "id": "txdot-PHR-PHR HM IH2 at Mile 3 - La Feria (East)",
-     "name": "PHR HM IH2 at Mile 3 - La Feria (East)"
-    },
-    {
-     "id": "txdot-PHR-PHR HM IH2 at Mile 3 - La Feria (West)",
-     "name": "PHR HM IH2 at Mile 3 - La Feria (West)"
-    },
-    {
-     "id": "txdot-PHR-PHR IH 69C @ FM 1925 (Monte Cristo)",
-     "name": "PHR IH 69C @ FM 1925 (Monte Cristo Rd)"
-    },
-    {
-     "id": "txdot-PHR-PHR IH 69C @ SH 107 (University Dr.)",
-     "name": "PHR IH 69C @ SH 107 (University Dr.)"
-    },
-    {
-     "id": "txdot-PHR-PHR HM IH2 at Victor - Donna (East)",
-     "name": "PHR HM IH2 at Victor - Donna (East)"
-    },
-    {
-     "id": "txdot-PHR-PHR HM IH2 at Victor - Donna (West)",
-     "name": "PHR HM IH2 at Victor - Donna (West)"
-    },
-    {
-     "id": "txdot-PHR-PHR IH69E @ SS 486 (Oscar Williams)",
-     "name": "PHR IH69E @ SS 486 (Oscar Williams)"
-    },
-    {
-     "id": "txdot-PHR-PHR IH 69E at Wilson Rd - Harlingen",
-     "name": "PHR IH 69E at Wilson Rd - Harlingen"
-    },
-    {
-     "id": "txdot-PHR-PHR IH2 @ FM 3195 (Stuart Place)",
-     "name": "PHR IH2 @ FM 3195 (Stuart Place)"
-    },
-    {
-     "id": "txdot-PHR-PHR IH 69E @ Alice (Stillman Rd)",
-     "name": "PHR IH 69E @ Alice (Stillman Rd)"
-    }
-   ]
-  },
-  {
    "slug": "hiroshima-city",
    "name": "Hiroshima City",
    "country": "Japan",
@@ -9781,6 +9508,73 @@
     {
      "id": "occ-rivergojp-108705079",
      "name": "Yokogawa Bridge, Kabe, Hiroshima"
+    }
+   ]
+  },
+  {
+   "slug": "laramie",
+   "name": "Laramie",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 54,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / wyoroad",
+     "count": 54
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 54,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-wyoroad-5434-3",
+     "name": "WYO 130 Green Rock Trailhead - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-478-3",
+     "name": "I 80 Warren Interchange - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-3015-4",
+     "name": "WYO 210 Hynds Lodge Rd - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-2671-3",
+     "name": "I 80 Cooper Cove East - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-3005-3",
+     "name": "WYO 210 Wildcat Trail - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-4694-3",
+     "name": "WYO 34 Sybille Canyon - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-4855-3",
+     "name": "US 30 Bosler Junction - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-2649-4",
+     "name": "WYO 230 Skyline - Colorado Mountain"
+    },
+    {
+     "id": "occ-wyoroad-1775-4",
+     "name": "I 80 Laramie West - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-1268-4",
+     "name": "I 80 Arlington East - Wind Farm"
+    },
+    {
+     "id": "occ-wyoroad-1279-3",
+     "name": "I 80 Cooper Cove - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-1326-3",
+     "name": "I 80 Quealy Dome - Road Surface"
     }
    ]
   },
@@ -9860,152 +9654,6 @@
    ]
   },
   {
-   "slug": "tucson",
-   "name": "Tucson",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 54,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "ADOT",
-     "count": 53
-    },
-    {
-     "name": "OpenCCTV / phenocam",
-     "count": 1
-    }
-   ],
-   "sourceCount": 2,
-   "stills": 54,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "occ-phenocam-NEON.D14.SRER.DP1.00033",
-     "name": "NEON Site - D14 (Desert Southwest) Santa Rita Experimental Range, Arizona - towe"
-    },
-    {
-     "id": "adot-876",
-     "name": "I-19 @N of San Xavier Rd"
-    },
-    {
-     "id": "adot-734",
-     "name": "I-10 @4 miles W of I-10"
-    },
-    {
-     "id": "adot-879",
-     "name": "I-19 @S of Irvington Rd"
-    },
-    {
-     "id": "adot-813",
-     "name": "I-10 @Orange Grove Rd"
-    },
-    {
-     "id": "adot-831",
-     "name": "I-10 @Country Club Rd"
-    },
-    {
-     "id": "adot-818",
-     "name": "I-10 @W of Prince Rd"
-    },
-    {
-     "id": "adot-820",
-     "name": "I-10 @E of Prince Rd"
-    },
-    {
-     "id": "adot-1273",
-     "name": "I-19 @Continental Rd"
-    },
-    {
-     "id": "adot-1274",
-     "name": "I-19 @Esperanza Blvd"
-    },
-    {
-     "id": "adot-823",
-     "name": "I-10 @Speedway Blvd"
-    },
-    {
-     "id": "adot-832",
-     "name": "I-10 @Palo Verde Rd"
-    }
-   ]
-  },
-  {
-   "slug": "virginia-beach",
-   "name": "Virginia Beach",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 54,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / virginia",
-     "count": 52
-    },
-    {
-     "name": "OpenCCTV / hivis",
-     "count": 1
-    },
-    {
-     "name": "OpenCCTV / ndbc-buoycam",
-     "count": 1
-    }
-   ],
-   "sourceCount": 3,
-   "stills": 2,
-   "streams": 52,
-   "samples": [
-    {
-     "id": "occ-va511-2901",
-     "name": "US-58/ Virginia Beach Boulevard and Independence Blvd"
-    },
-    {
-     "id": "occ-va511-2850",
-     "name": "Princess Anne Rd and S Independence Blvd"
-    },
-    {
-     "id": "occ-va511-2765",
-     "name": "Independence Blvd North of Haygood Rd"
-    },
-    {
-     "id": "occ-va511-2766",
-     "name": "N Great Neck Rd and First Colonial Rd"
-    },
-    {
-     "id": "occ-va511-2310",
-     "name": "Princess Anne Rd and Lynnhaven Pkwy"
-    },
-    {
-     "id": "occ-va511-2781",
-     "name": "US-58 / Laskin Rd and N Birdneck Rd"
-    },
-    {
-     "id": "occ-va511-2849",
-     "name": "General Booth Blvd and Oceana Blvd"
-    },
-    {
-     "id": "occ-va511-2954",
-     "name": "Indian River Rd and Regent Univ Dr"
-    },
-    {
-     "id": "occ-ndbc-44014",
-     "name": "NOAA Buoy 44014 - Virginia Beach"
-    },
-    {
-     "id": "occ-va511-2835",
-     "name": "Independence Blvd and Haygood Rd"
-    },
-    {
-     "id": "occ-va511-2852",
-     "name": "US-60/ Shore Dr and Greenwell Rd"
-    },
-    {
-     "id": "occ-va511-2784",
-     "name": "Independence Blvd and Bonney Rd"
-    }
-   ]
-  },
-  {
    "slug": "gimpo",
    "name": "Gimpo",
    "country": "South Korea",
@@ -10069,6 +9717,282 @@
     {
      "id": "occ-gimpo-93",
      "name": "Daejung Industrial Three-way, Gimpo"
+    }
+   ]
+  },
+  {
+   "slug": "cheyenne",
+   "name": "Cheyenne",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 53,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / wyoroad",
+     "count": 53
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 53,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-wyoroad-3883-5",
+     "name": "I 80 Carpenter Interchange - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-5343-3",
+     "name": "I 25 Colorado State Line - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-477-3",
+     "name": "I 25 College Drive - I 80 Interchange"
+    },
+    {
+     "id": "occ-wyoroad-3882-3",
+     "name": "I 80 Telephone Canyon - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-3884-3",
+     "name": "US 85 Lovercheck Hill - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-2320-3",
+     "name": "I 80 Mile Marker 353 - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-464-4",
+     "name": "US 287 Pumpkin Vine - Comanche Peak"
+    },
+    {
+     "id": "occ-wyoroad-3883-2",
+     "name": "I 80 Carpenter Interchange - North"
+    },
+    {
+     "id": "occ-wyoroad-3883-4",
+     "name": "I 80 Carpenter Interchange - South"
+    },
+    {
+     "id": "occ-wyoroad-3480-3",
+     "name": "I 80 Cheyenne East - Road Surface"
+    },
+    {
+     "id": "occ-wyoroad-3883-1",
+     "name": "I 80 Carpenter Interchange - West"
+    },
+    {
+     "id": "occ-wyoroad-3883-3",
+     "name": "I 80 Carpenter Interchange - East"
+    }
+   ]
+  },
+  {
+   "slug": "pharr",
+   "name": "Pharr",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 53,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "TxDOT",
+     "count": 53
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 53,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "txdot-PHR-PHR IH 69C @ FM 2128",
+     "name": "PHR IH 69C PHR IH 69C @ FM 2128@ FM 2128"
+    },
+    {
+     "id": "txdot-PHR-PHR IH 69E @ FM 802 (Ruben Torres Blvd)",
+     "name": "PHR IH 69E @ FM 802 (Ruben Torres Blvd)"
+    },
+    {
+     "id": "txdot-PHR-PHR HM IH2 at Mile 3 - La Feria (East)",
+     "name": "PHR HM IH2 at Mile 3 - La Feria (East)"
+    },
+    {
+     "id": "txdot-PHR-PHR HM IH2 at Mile 3 - La Feria (West)",
+     "name": "PHR HM IH2 at Mile 3 - La Feria (West)"
+    },
+    {
+     "id": "txdot-PHR-PHR IH 69C @ FM 1925 (Monte Cristo)",
+     "name": "PHR IH 69C @ FM 1925 (Monte Cristo Rd)"
+    },
+    {
+     "id": "txdot-PHR-PHR IH 69C @ SH 107 (University Dr.)",
+     "name": "PHR IH 69C @ SH 107 (University Dr.)"
+    },
+    {
+     "id": "txdot-PHR-PHR HM IH2 at Victor - Donna (East)",
+     "name": "PHR HM IH2 at Victor - Donna (East)"
+    },
+    {
+     "id": "txdot-PHR-PHR HM IH2 at Victor - Donna (West)",
+     "name": "PHR HM IH2 at Victor - Donna (West)"
+    },
+    {
+     "id": "txdot-PHR-PHR IH69E @ SS 486 (Oscar Williams)",
+     "name": "PHR IH69E @ SS 486 (Oscar Williams)"
+    },
+    {
+     "id": "txdot-PHR-PHR IH 69E at Wilson Rd - Harlingen",
+     "name": "PHR IH 69E at Wilson Rd - Harlingen"
+    },
+    {
+     "id": "txdot-PHR-PHR IH2 @ FM 3195 (Stuart Place)",
+     "name": "PHR IH2 @ FM 3195 (Stuart Place)"
+    },
+    {
+     "id": "txdot-PHR-PHR IH 69E @ Alice (Stillman Rd)",
+     "name": "PHR IH 69E @ Alice (Stillman Rd)"
+    }
+   ]
+  },
+  {
+   "slug": "tucson",
+   "name": "Tucson",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 53,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "ADOT",
+     "count": 52
+    },
+    {
+     "name": "OpenCCTV / phenocam",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 53,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-phenocam-NEON.D14.SRER.DP1.00033",
+     "name": "NEON Site - D14 (Desert Southwest) Santa Rita Experimental Range, Arizona - towe"
+    },
+    {
+     "id": "adot-876",
+     "name": "I-19 @N of San Xavier Rd"
+    },
+    {
+     "id": "adot-734",
+     "name": "I-10 @4 miles W of I-10"
+    },
+    {
+     "id": "adot-879",
+     "name": "I-19 @S of Irvington Rd"
+    },
+    {
+     "id": "adot-813",
+     "name": "I-10 @Orange Grove Rd"
+    },
+    {
+     "id": "adot-831",
+     "name": "I-10 @Country Club Rd"
+    },
+    {
+     "id": "adot-818",
+     "name": "I-10 @W of Prince Rd"
+    },
+    {
+     "id": "adot-820",
+     "name": "I-10 @E of Prince Rd"
+    },
+    {
+     "id": "adot-1273",
+     "name": "I-19 @Continental Rd"
+    },
+    {
+     "id": "adot-1274",
+     "name": "I-19 @Esperanza Blvd"
+    },
+    {
+     "id": "adot-823",
+     "name": "I-10 @Speedway Blvd"
+    },
+    {
+     "id": "adot-832",
+     "name": "I-10 @Palo Verde Rd"
+    }
+   ]
+  },
+  {
+   "slug": "virginia-beach",
+   "name": "Virginia Beach",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 53,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / virginia",
+     "count": 52
+    },
+    {
+     "name": "OpenCCTV / hivis",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 1,
+   "streams": 52,
+   "samples": [
+    {
+     "id": "occ-va511-2901",
+     "name": "US-58/ Virginia Beach Boulevard and Independence Blvd"
+    },
+    {
+     "id": "occ-va511-2850",
+     "name": "Princess Anne Rd and S Independence Blvd"
+    },
+    {
+     "id": "occ-va511-2765",
+     "name": "Independence Blvd North of Haygood Rd"
+    },
+    {
+     "id": "occ-va511-2766",
+     "name": "N Great Neck Rd and First Colonial Rd"
+    },
+    {
+     "id": "occ-va511-2310",
+     "name": "Princess Anne Rd and Lynnhaven Pkwy"
+    },
+    {
+     "id": "occ-va511-2781",
+     "name": "US-58 / Laskin Rd and N Birdneck Rd"
+    },
+    {
+     "id": "occ-va511-2849",
+     "name": "General Booth Blvd and Oceana Blvd"
+    },
+    {
+     "id": "occ-va511-2954",
+     "name": "Indian River Rd and Regent Univ Dr"
+    },
+    {
+     "id": "occ-va511-2835",
+     "name": "Independence Blvd and Haygood Rd"
+    },
+    {
+     "id": "occ-va511-2852",
+     "name": "US-60/ Shore Dr and Greenwell Rd"
+    },
+    {
+     "id": "occ-va511-2784",
+     "name": "Independence Blvd and Bonney Rd"
+    },
+    {
+     "id": "occ-va511-2902",
+     "name": "Princess Anne Rd and Concert Dr"
     }
    ]
   },
@@ -10140,81 +10064,6 @@
    ]
   },
   {
-   "slug": "cleveland",
-   "name": "Cleveland",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 53,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / opentrafficcam",
-     "count": 29
-    },
-    {
-     "name": "OpenCCTV / ohgo",
-     "count": 14
-    },
-    {
-     "name": "OpenCCTV / arcgis_cams",
-     "count": 6
-    }
-   ],
-   "sourceCount": 4,
-   "stills": 47,
-   "streams": 6,
-   "samples": [
-    {
-     "id": "occ-hivis-OH_Cuyahoga_River_at_Rivergate_Park_at_Cleveland",
-     "name": "Cuyahoga River at Rivergate Park at Cleveland"
-    },
-    {
-     "id": "occ-hivis-OH_Doan_Brook_at_Mlk_Jr_Dr_at_Cleveland",
-     "name": "Doan Brook at Mlk Jr Dr at Cleveland"
-    },
-    {
-     "id": "occ-otcm-6209",
-     "name": "I-490 at Broadway Ave, West of I-77"
-    },
-    {
-     "id": "occ-otcm-6227",
-     "name": "I-90 at SR-2 / Lakefront Airport"
-    },
-    {
-     "id": "occ-otcm-6297",
-     "name": "I-71 at Clark Ave, N of SR-176"
-    },
-    {
-     "id": "occ-ohgo-00000000000005",
-     "name": "I-90 at SR-252 / Columbia Rd"
-    },
-    {
-     "id": "occ-ohgo-00000000001333",
-     "name": "I-480 at Great Northern Blvd"
-    },
-    {
-     "id": "occ-otcm-6291",
-     "name": "I-90 at US-322 / Chester Ave"
-    },
-    {
-     "id": "occ-arcgis-TN-3d02ee1e96",
-     "name": "I-75 South of HWY 64 BYPASS"
-    },
-    {
-     "id": "occ-hivis-OH_Euclid_Creek_at_Cleveland",
-     "name": "Euclid Creek at Cleveland"
-    },
-    {
-     "id": "occ-ohgo-00000000001337",
-     "name": "I-271 at Boston Mills Rd"
-    },
-    {
-     "id": "occ-otcm-6293",
-     "name": "I-71 at SR-3 / W 25th St"
-    }
-   ]
-  },
-  {
    "slug": "himi-city",
    "name": "Himi City",
    "country": "Japan",
@@ -10282,223 +10131,6 @@
     {
      "id": "occ-rivergojp-104353155",
      "name": "Nagoso River at Nigorigawa Bridge"
-    }
-   ]
-  },
-  {
-   "slug": "marysville",
-   "name": "Marysville",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 52,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / wsdot",
-     "count": 48
-    },
-    {
-     "name": "Caltrans",
-     "count": 2
-    },
-    {
-     "name": "OpenCCTV / arcgis_cams",
-     "count": 1
-    }
-   ],
-   "sourceCount": 4,
-   "stills": 51,
-   "streams": 1,
-   "samples": [
-    {
-     "id": "occ-wsdot-1516",
-     "name": "SR 527 at MP 8.8: 132nd St SE / SR 96"
-    },
-    {
-     "id": "occ-wsdot-8104",
-     "name": "I-5 at MP 225.1: Anderson Rd (South)"
-    },
-    {
-     "id": "occ-wsdot-9240",
-     "name": "I-5 at MP 209.3: Stillaguamish River"
-    },
-    {
-     "id": "occ-wsdot-5020",
-     "name": "I-5 at MP 212.7: SR 532 Interchange"
-    },
-    {
-     "id": "occ-wsdot-9309",
-     "name": "SR 9 at MP 15.7: SR 204 Interchange"
-    },
-    {
-     "id": "occ-wsdot-9468",
-     "name": "SR 531 at MP 6.6: Smokey Point Blvd"
-    },
-    {
-     "id": "occ-wsdot-9312",
-     "name": "SR 9 at MP 17.5: SR 92 Interchange"
-    },
-    {
-     "id": "occ-wsdot-10048",
-     "name": "SR 530 at MP 17.3: Smokey Pt Blvd"
-    },
-    {
-     "id": "occ-wsdot-1433",
-     "name": "I-5 at MP 206: SR 531 Interchange"
-    },
-    {
-     "id": "occ-wsdot-9262",
-     "name": "SR 9 at MP 6.9: Lowell-Larimer Rd"
-    },
-    {
-     "id": "occ-arcgis-WA-b2269f5203",
-     "name": "SR 529 at MP 6.2: I-5/SR 529 RAB"
-    },
-    {
-     "id": "occ-wsdot-10045",
-     "name": "SR 526 at MP 1.4: Airport Rd, WB"
-    }
-   ]
-  },
-  {
-   "slug": "albany",
-   "name": "Albany",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 52,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "OpenCCTV / ny511",
-     "count": 43
-    },
-    {
-     "name": "Caltrans",
-     "count": 7
-    },
-    {
-     "name": "OpenCCTV / hivis",
-     "count": 1
-    }
-   ],
-   "sourceCount": 4,
-   "stills": 9,
-   "streams": 43,
-   "samples": [
-    {
-     "id": "occ-ny511-3a6f0ee779",
-     "name": "I-90 MP 006.50 WB Berkshire Connector at Interchange B1 (Albany/Hudson/Rensselae"
-    },
-    {
-     "id": "occ-phenocam-NEON.D03.FLNT.DP1.20002",
-     "name": "NEON Site - D03 (Southeast) Flint River, Georgia - aquatic/stream-gauge camera"
-    },
-    {
-     "id": "occ-ny511-8e496d9cef",
-     "name": "I-87 MP 147.80 NB Just South of Interchange 24 (Albany/I-90/I-87)"
-    },
-    {
-     "id": "occ-ny511-5a9b278917",
-     "name": "I-90 MP 148.80 EB Just West of Interchange 24 (Albany/I-90/I-87)"
-    },
-    {
-     "id": "occ-ny511-fd6fdcf49d",
-     "name": "I-87 MP 133.60 NB at Interchange 21A (Berkshire Connector)"
-    },
-    {
-     "id": "occ-ny511-34698b334b",
-     "name": "I-90 MP 153.00 EB Guilderland Service Area Truck Park 3"
-    },
-    {
-     "id": "occ-ny511-d5c898b5fb",
-     "name": "I-90 WB Between Exits 2 and 1 (Fuller Road overpass)"
-    },
-    {
-     "id": "occ-ny511-ba2360f356",
-     "name": "I-87 MP 141.90 NB at Interchange 23 (Albany /I-787)"
-    },
-    {
-     "id": "cal-665",
-     "name": "T255N -- SR-123 : Buchanan Street - Looking North"
-    },
-    {
-     "id": "cal-666",
-     "name": "T255S -- SR-123 : Buchanan Street - Looking South"
-    },
-    {
-     "id": "cal-667",
-     "name": "T255W -- SR-123 : Buchanan Street - Looking West"
-    },
-    {
-     "id": "cal-664",
-     "name": "T254S -- SR-123 : Gilman Street - Looking South"
-    }
-   ]
-  },
-  {
-   "slug": "yoakum",
-   "name": "Yoakum",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 52,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "TxDOT",
-     "count": 52
-    }
-   ],
-   "sourceCount": 1,
-   "stills": 52,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "txdot-YKM-YKM - SPCT-120517 / IH-10 WB @ US-90 East of Columbus",
-     "name": "YKM - SPCT-120517 / IH-10 WB @ US-90 East of Columbus"
-    },
-    {
-     "id": "txdot-YKM-YKM - SPCT-120519 / IH-10 WB @ Columbus Loop",
-     "name": "YKM - SPCT-120519 / IH-10 WB @ Columbus Loop"
-    },
-    {
-     "id": "txdot-YKM-YKM - SPCT-120392 / IH-10 WB @ Bernardo Rd.",
-     "name": "YKM - SPCT-120392 / IH-10 WB @ Bernardo Rd."
-    },
-    {
-     "id": "txdot-YKM-YKM-US59 @ Garcitas Creek Rd - Rest Area",
-     "name": "YKM-US59 @ Garcitas Creek Rd - Rest Area"
-    },
-    {
-     "id": "txdot-YKM-YKM - SPCT-120390 / IH-10 West of FM949",
-     "name": "YKM - SPCT-120390 / IH-10 West of FM949"
-    },
-    {
-     "id": "txdot-YKM-YKM - SPCT-120389 / IH-10 @ Fisher Ln.",
-     "name": "YKM - SPCT-120389 / IH-10 @ Fisher Ln."
-    },
-    {
-     "id": "txdot-YKM-IH-10 @ Brazos River WB Weigh Station",
-     "name": "IH-10 @ Brazos River WB Weigh Station"
-    },
-    {
-     "id": "txdot-YKM-YKM - SPCT-120391 / IH-10 @ Evans St.",
-     "name": "YKM - SPCT-120391 / IH-10 @ Evans St."
-    },
-    {
-     "id": "txdot-YKM-YKM-US59 @ Youngdale Rd (N)- El Campo",
-     "name": "YKM-US59 @ Youngdale Rd (N)- El Campo"
-    },
-    {
-     "id": "txdot-YKM-YKM-US59 @ Youngdale Rd (S)- El Campo",
-     "name": "YKM-US59 @ Youngdale Rd (S)- El Campo"
-    },
-    {
-     "id": "txdot-YKM-YKM - SPCT-120518 / IH-10 EB @ SH-71",
-     "name": "YKM - SPCT-120518 / IH-10 EB @ SH-71"
-    },
-    {
-     "id": "txdot-YKM-YKM - SPCT-120516 /IH-10 EB @ CR-105",
-     "name": "YKM - SPCT-120516 /IH-10 EB @ CR-105"
     }
    ]
   },
@@ -10842,148 +10474,6 @@
    ]
   },
   {
-   "slug": "san-bernardino",
-   "name": "San Bernardino",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 50,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "Caltrans",
-     "count": 50
-    }
-   ],
-   "sourceCount": 1,
-   "stills": 50,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "cal-1962",
-     "name": "I-215 : (224) 1 Mi N/O University Parkway"
-    },
-    {
-     "id": "cal-1961",
-     "name": "I-215 : (223) Onramp University Parkway"
-    },
-    {
-     "id": "cal-2071",
-     "name": "I-40 : (383) At Desert Oasis Rest Area"
-    },
-    {
-     "id": "cal-2058",
-     "name": "I-210 : (368) West of Highland Avenue"
-    },
-    {
-     "id": "cal-1844",
-     "name": "I-15 : (99) 0.5 Miles S of Glenhelen"
-    },
-    {
-     "id": "cal-1845",
-     "name": "I-15 : (100) S of Glen Helen Parkway"
-    },
-    {
-     "id": "cal-1847",
-     "name": "I-15 : (102) N of Glen Helen Parkway"
-    },
-    {
-     "id": "cal-1955",
-     "name": "I-215 : (217) 0.5 Mi South of Devore"
-    },
-    {
-     "id": "cal-2166",
-     "name": "I-210: (366) East of Waterman Avenue"
-    },
-    {
-     "id": "cal-1947",
-     "name": "SR-259 : (209) North of 16th Street"
-    },
-    {
-     "id": "cal-1957",
-     "name": "I-15 : (219) 0.6mi South Of Kenwood"
-    },
-    {
-     "id": "cal-2057",
-     "name": "I-210 : (367) Del Rosa Ave Off Ramp"
-    }
-   ]
-  },
-  {
-   "slug": "riverside",
-   "name": "Riverside",
-   "country": "United States",
-   "countrySlug": "united-states",
-   "count": 50,
-   "countryTotal": 54025,
-   "sources": [
-    {
-     "name": "Caltrans",
-     "count": 48
-    },
-    {
-     "name": "OpenCCTV / opentrafficcam",
-     "count": 1
-    },
-    {
-     "name": "OpenCCTV / wsdot",
-     "count": 1
-    }
-   ],
-   "sourceCount": 3,
-   "stills": 50,
-   "streams": 0,
-   "samples": [
-    {
-     "id": "cal-1807",
-     "name": "SR-91 : (59) SR-60 / I-215 South East Quad"
-    },
-    {
-     "id": "cal-1886",
-     "name": "SR-91 : (143) 0.5 Miles North Of Central"
-    },
-    {
-     "id": "cal-1932",
-     "name": "I-215 : (190) S of M.L. King Boulevard"
-    },
-    {
-     "id": "cal-2092",
-     "name": "I-10 : (547) East of Corn Springs Road"
-    },
-    {
-     "id": "cal-1809",
-     "name": "I-215 : (61) 0.2 Miles S of Columbia"
-    },
-    {
-     "id": "cal-1810",
-     "name": "I-215 : (62) 0.4 Miles N of Columbia"
-    },
-    {
-     "id": "cal-1811",
-     "name": "I-215 : (63) 1.4 Miles N of Columbia"
-    },
-    {
-     "id": "cal-1927",
-     "name": "SR-91 : (185) East Of Spruce Street"
-    },
-    {
-     "id": "cal-2155",
-     "name": "SR-60 : (355) Offramp Pedley Street"
-    },
-    {
-     "id": "cal-2157",
-     "name": "SR-60 : (357) West of Pyrite Street"
-    },
-    {
-     "id": "cal-1926",
-     "name": "SR-91 : (184) East of Third Street"
-    },
-    {
-     "id": "cal-1933",
-     "name": "I-215 : (191) s/o Box Springs Road"
-    }
-   ]
-  },
-  {
    "slug": "norfolk",
    "name": "Norfolk",
    "country": "United States",
@@ -11256,6 +10746,420 @@
     {
      "id": "occ-rivergojp-122061035",
      "name": "Ibo River at Kami-sasa, Tatsuno"
+    }
+   ]
+  },
+  {
+   "slug": "san-bernardino",
+   "name": "San Bernardino",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 49,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "Caltrans",
+     "count": 49
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 49,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "cal-1962",
+     "name": "I-215 : (224) 1 Mi N/O University Parkway"
+    },
+    {
+     "id": "cal-1961",
+     "name": "I-215 : (223) Onramp University Parkway"
+    },
+    {
+     "id": "cal-2058",
+     "name": "I-210 : (368) West of Highland Avenue"
+    },
+    {
+     "id": "cal-1844",
+     "name": "I-15 : (99) 0.5 Miles S of Glenhelen"
+    },
+    {
+     "id": "cal-1845",
+     "name": "I-15 : (100) S of Glen Helen Parkway"
+    },
+    {
+     "id": "cal-1847",
+     "name": "I-15 : (102) N of Glen Helen Parkway"
+    },
+    {
+     "id": "cal-1955",
+     "name": "I-215 : (217) 0.5 Mi South of Devore"
+    },
+    {
+     "id": "cal-2166",
+     "name": "I-210: (366) East of Waterman Avenue"
+    },
+    {
+     "id": "cal-1947",
+     "name": "SR-259 : (209) North of 16th Street"
+    },
+    {
+     "id": "cal-1957",
+     "name": "I-15 : (219) 0.6mi South Of Kenwood"
+    },
+    {
+     "id": "cal-2057",
+     "name": "I-210 : (367) Del Rosa Ave Off Ramp"
+    },
+    {
+     "id": "cal-1848",
+     "name": "I-215 : (104) South Of Orange Show"
+    }
+   ]
+  },
+  {
+   "slug": "marysville",
+   "name": "Marysville",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 48,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / wsdot",
+     "count": 47
+    },
+    {
+     "name": "OpenCCTV / arcgis_cams",
+     "count": 1
+    }
+   ],
+   "sourceCount": 2,
+   "stills": 48,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-wsdot-1516",
+     "name": "SR 527 at MP 8.8: 132nd St SE / SR 96"
+    },
+    {
+     "id": "occ-wsdot-8104",
+     "name": "I-5 at MP 225.1: Anderson Rd (South)"
+    },
+    {
+     "id": "occ-wsdot-9240",
+     "name": "I-5 at MP 209.3: Stillaguamish River"
+    },
+    {
+     "id": "occ-wsdot-5020",
+     "name": "I-5 at MP 212.7: SR 532 Interchange"
+    },
+    {
+     "id": "occ-wsdot-9309",
+     "name": "SR 9 at MP 15.7: SR 204 Interchange"
+    },
+    {
+     "id": "occ-wsdot-9468",
+     "name": "SR 531 at MP 6.6: Smokey Point Blvd"
+    },
+    {
+     "id": "occ-wsdot-9312",
+     "name": "SR 9 at MP 17.5: SR 92 Interchange"
+    },
+    {
+     "id": "occ-wsdot-10048",
+     "name": "SR 530 at MP 17.3: Smokey Pt Blvd"
+    },
+    {
+     "id": "occ-wsdot-1433",
+     "name": "I-5 at MP 206: SR 531 Interchange"
+    },
+    {
+     "id": "occ-wsdot-9262",
+     "name": "SR 9 at MP 6.9: Lowell-Larimer Rd"
+    },
+    {
+     "id": "occ-arcgis-WA-b2269f5203",
+     "name": "SR 529 at MP 6.2: I-5/SR 529 RAB"
+    },
+    {
+     "id": "occ-wsdot-10045",
+     "name": "SR 526 at MP 1.4: Airport Rd, WB"
+    }
+   ]
+  },
+  {
+   "slug": "cleveland",
+   "name": "Cleveland",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 47,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / opentrafficcam",
+     "count": 29
+    },
+    {
+     "name": "OpenCCTV / ohgo",
+     "count": 14
+    },
+    {
+     "name": "OpenCCTV / hivis",
+     "count": 4
+    }
+   ],
+   "sourceCount": 3,
+   "stills": 47,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "occ-hivis-OH_Cuyahoga_River_at_Rivergate_Park_at_Cleveland",
+     "name": "Cuyahoga River at Rivergate Park at Cleveland"
+    },
+    {
+     "id": "occ-hivis-OH_Doan_Brook_at_Mlk_Jr_Dr_at_Cleveland",
+     "name": "Doan Brook at Mlk Jr Dr at Cleveland"
+    },
+    {
+     "id": "occ-otcm-6209",
+     "name": "I-490 at Broadway Ave, West of I-77"
+    },
+    {
+     "id": "occ-otcm-6227",
+     "name": "I-90 at SR-2 / Lakefront Airport"
+    },
+    {
+     "id": "occ-otcm-6297",
+     "name": "I-71 at Clark Ave, N of SR-176"
+    },
+    {
+     "id": "occ-ohgo-00000000000005",
+     "name": "I-90 at SR-252 / Columbia Rd"
+    },
+    {
+     "id": "occ-ohgo-00000000001333",
+     "name": "I-480 at Great Northern Blvd"
+    },
+    {
+     "id": "occ-otcm-6291",
+     "name": "I-90 at US-322 / Chester Ave"
+    },
+    {
+     "id": "occ-hivis-OH_Euclid_Creek_at_Cleveland",
+     "name": "Euclid Creek at Cleveland"
+    },
+    {
+     "id": "occ-ohgo-00000000001337",
+     "name": "I-271 at Boston Mills Rd"
+    },
+    {
+     "id": "occ-otcm-6293",
+     "name": "I-71 at SR-3 / W 25th St"
+    },
+    {
+     "id": "occ-hivis-OH_Big_Creek_at_Cleveland",
+     "name": "Big Creek at Cleveland"
+    }
+   ]
+  },
+  {
+   "slug": "riverside",
+   "name": "Riverside",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 45,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "Caltrans",
+     "count": 45
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 45,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "cal-1807",
+     "name": "SR-91 : (59) SR-60 / I-215 South East Quad"
+    },
+    {
+     "id": "cal-1886",
+     "name": "SR-91 : (143) 0.5 Miles North Of Central"
+    },
+    {
+     "id": "cal-1932",
+     "name": "I-215 : (190) S of M.L. King Boulevard"
+    },
+    {
+     "id": "cal-1809",
+     "name": "I-215 : (61) 0.2 Miles S of Columbia"
+    },
+    {
+     "id": "cal-1810",
+     "name": "I-215 : (62) 0.4 Miles N of Columbia"
+    },
+    {
+     "id": "cal-1811",
+     "name": "I-215 : (63) 1.4 Miles N of Columbia"
+    },
+    {
+     "id": "cal-1927",
+     "name": "SR-91 : (185) East Of Spruce Street"
+    },
+    {
+     "id": "cal-2155",
+     "name": "SR-60 : (355) Offramp Pedley Street"
+    },
+    {
+     "id": "cal-2157",
+     "name": "SR-60 : (357) West of Pyrite Street"
+    },
+    {
+     "id": "cal-1926",
+     "name": "SR-91 : (184) East of Third Street"
+    },
+    {
+     "id": "cal-1933",
+     "name": "I-215 : (191) s/o Box Springs Road"
+    },
+    {
+     "id": "cal-1934",
+     "name": "I-215 : (192) n/o Box Springs Road"
+    }
+   ]
+  },
+  {
+   "slug": "albany",
+   "name": "Albany",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 43,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / ny511",
+     "count": 43
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 43,
+   "samples": [
+    {
+     "id": "occ-ny511-3a6f0ee779",
+     "name": "I-90 MP 006.50 WB Berkshire Connector at Interchange B1 (Albany/Hudson/Rensselae"
+    },
+    {
+     "id": "occ-ny511-8e496d9cef",
+     "name": "I-87 MP 147.80 NB Just South of Interchange 24 (Albany/I-90/I-87)"
+    },
+    {
+     "id": "occ-ny511-5a9b278917",
+     "name": "I-90 MP 148.80 EB Just West of Interchange 24 (Albany/I-90/I-87)"
+    },
+    {
+     "id": "occ-ny511-fd6fdcf49d",
+     "name": "I-87 MP 133.60 NB at Interchange 21A (Berkshire Connector)"
+    },
+    {
+     "id": "occ-ny511-34698b334b",
+     "name": "I-90 MP 153.00 EB Guilderland Service Area Truck Park 3"
+    },
+    {
+     "id": "occ-ny511-d5c898b5fb",
+     "name": "I-90 WB Between Exits 2 and 1 (Fuller Road overpass)"
+    },
+    {
+     "id": "occ-ny511-ba2360f356",
+     "name": "I-87 MP 141.90 NB at Interchange 23 (Albany /I-787)"
+    },
+    {
+     "id": "occ-ny511-451cb22186",
+     "name": "I-90 at Exit 5A (Corporate Woods Boulevard)"
+    },
+    {
+     "id": "occ-ny511-5f1f35f2a0",
+     "name": "I-87 MP 142.45 SB North of Interchange 23"
+    },
+    {
+     "id": "occ-ny511-d82b6c361c",
+     "name": "I-87 South of Mohawk River (Twin Bridges)"
+    },
+    {
+     "id": "occ-ny511-56c8606b72",
+     "name": "I-90 WB at Exit 4 (Central Ave Overpass)"
+    },
+    {
+     "id": "occ-ny511-4c930851b3",
+     "name": "NY 151 (3rd Avenue) at Dunn Bridge Ramp"
+    }
+   ]
+  },
+  {
+   "slug": "yoakum",
+   "name": "Yoakum",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 39,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "TxDOT",
+     "count": 39
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 39,
+   "streams": 0,
+   "samples": [
+    {
+     "id": "txdot-YKM-YKM - SPCT-120517 / IH-10 WB @ US-90 East of Columbus",
+     "name": "YKM - SPCT-120517 / IH-10 WB @ US-90 East of Columbus"
+    },
+    {
+     "id": "txdot-YKM-YKM - SPCT-120519 / IH-10 WB @ Columbus Loop",
+     "name": "YKM - SPCT-120519 / IH-10 WB @ Columbus Loop"
+    },
+    {
+     "id": "txdot-YKM-YKM - SPCT-120392 / IH-10 WB @ Bernardo Rd.",
+     "name": "YKM - SPCT-120392 / IH-10 WB @ Bernardo Rd."
+    },
+    {
+     "id": "txdot-YKM-YKM - SPCT-120390 / IH-10 West of FM949",
+     "name": "YKM - SPCT-120390 / IH-10 West of FM949"
+    },
+    {
+     "id": "txdot-YKM-YKM - SPCT-120389 / IH-10 @ Fisher Ln.",
+     "name": "YKM - SPCT-120389 / IH-10 @ Fisher Ln."
+    },
+    {
+     "id": "txdot-YKM-IH-10 @ Brazos River WB Weigh Station",
+     "name": "IH-10 @ Brazos River WB Weigh Station"
+    },
+    {
+     "id": "txdot-YKM-YKM - SPCT-120391 / IH-10 @ Evans St.",
+     "name": "YKM - SPCT-120391 / IH-10 @ Evans St."
+    },
+    {
+     "id": "txdot-YKM-YKM - SPCT-120518 / IH-10 EB @ SH-71",
+     "name": "YKM - SPCT-120518 / IH-10 EB @ SH-71"
+    },
+    {
+     "id": "txdot-YKM-YKM - SPCT-120516 /IH-10 EB @ CR-105",
+     "name": "YKM - SPCT-120516 /IH-10 EB @ CR-105"
+    },
+    {
+     "id": "txdot-YKM-IH-10 @ Knezek Rd - East of Flatonia",
+     "name": "IH-10 @ Knezek Rd - East of Flatonia"
+    },
+    {
+     "id": "txdot-YKM-IH-10 @ Webb Rd - West of Flatonia",
+     "name": "IH-10 @ Webb Rd - West of Flatonia"
+    },
+    {
+     "id": "txdot-YKM-IH-10 @ Hatterman Lane - Columbus",
+     "name": "IH-10 @ Hatterman Lane - Columbus"
     }
    ]
   }

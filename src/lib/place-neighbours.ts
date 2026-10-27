@@ -189,8 +189,10 @@ export function neighbourLinks(
 /* sprawling single place (a metro, a river corridor) is never cut.    */
 /* When no split fires the input comes back whole and in order, so     */
 /* every mean/bbox computed over it is bit-identical to before.        */
-/* Counts are NOT this helper's business: a page's quoted count        */
-/* describes its full record set; points describe its dominant place.  */
+/* Since the ownership change (2026-10-27) the dominant place owns    */
+/* the whole city page: explore-data's dominantCitySet reduces a city  */
+/* def's records with this helper, so quoted counts, grids and         */
+/* breakdowns describe the dominant place too, not just the points.    */
 /* ------------------------------------------------------------------ */
 
 /** A name group only *can* be two places when its cameras span more

@@ -232,6 +232,121 @@ function slugify(name) {
     .replace(/^-+|-+$/g, "");
 }
 
+/* ------------------------------------------------------------------ */
+/* Dominant-place ownership (owner decision, 2026-10-27): a generated  */
+/* city page describes the DOMINANT place filed under its name, so     */
+/* every group is reduced to its dominant cluster before counts,       */
+/* sources and samples are computed — the same rule the runtime        */
+/* applies in src/lib/explore-data.ts (dominantCitySet). The split     */
+/* below is a line-for-line port of splitPlaceClusters /               */
+/* dominantPlaceRecords in src/lib/place-neighbours.ts — keep the two  */
+/* in sync; the TypeScript version is canonical. Records without       */
+/* coordinates cannot be assigned to either place and are kept.        */
+/* ------------------------------------------------------------------ */
+
+const CITY_SPLIT_DIAGONAL_KM = 120;
+const CITY_SPLIT_GAP_KM = 40;
+
+function haversineKm(aLat, aLng, bLat, bLng) {
+  const dLat = ((bLat - aLat) * Math.PI) / 180;
+  const dLng = ((bLng - aLng) * Math.PI) / 180;
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((aLat * Math.PI) / 180) * Math.cos((bLat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(s));
+}
+
+function bboxOfPoints(points) {
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
+  for (const p of points) {
+    if (p.lat < minLat) minLat = p.lat;
+    if (p.lat > maxLat) maxLat = p.lat;
+    if (p.lng < minLng) minLng = p.lng;
+    if (p.lng > maxLng) maxLng = p.lng;
+  }
+  return { minLat, maxLat, minLng, maxLng };
+}
+
+function meanPoint(points) {
+  let lat = 0;
+  let lng = 0;
+  for (const p of points) {
+    lat += p.lat;
+    lng += p.lng;
+  }
+  return { lat: lat / points.length, lng: lng / points.length };
+}
+
+function splitPlaceClusters(points) {
+  if (points.length < 2) return [points.slice()];
+  const bbox = bboxOfPoints(points);
+  const diagonalKm = haversineKm(bbox.minLat, bbox.minLng, bbox.maxLat, bbox.maxLng);
+  if (diagonalKm <= CITY_SPLIT_DIAGONAL_KM) return [points.slice()];
+
+  let best = null;
+  for (const axis of ["lat", "lng"]) {
+    const sorted = [...points].sort((x, y) => x[axis] - y[axis]);
+    for (let i = 0; i + 1 < sorted.length; i++) {
+      const a = sorted[i];
+      const b = sorted[i + 1];
+      const gapKm =
+        axis === "lat"
+          ? haversineKm(a.lat, a.lng, b.lat, a.lng)
+          : haversineKm(a.lat, a.lng, a.lat, b.lng);
+      if (!best || gapKm > best.gapKm) {
+        best = { gapKm, lo: sorted.slice(0, i + 1), hi: sorted.slice(i + 1) };
+      }
+    }
+  }
+
+  if (!best || best.gapKm < CITY_SPLIT_GAP_KM) return [points.slice()];
+  return [...splitPlaceClusters(best.lo), ...splitPlaceClusters(best.hi)];
+}
+
+function dominantPlaceRecords(points) {
+  if (points.length < 2) return points.slice();
+  const clusters = splitPlaceClusters(points);
+  if (clusters.length === 1) return clusters[0];
+  const groupMean = meanPoint(points);
+  let winner = clusters[0];
+  let winnerMean = meanPoint(winner);
+  let winnerDist = haversineKm(winnerMean.lat, winnerMean.lng, groupMean.lat, groupMean.lng);
+  for (const cluster of clusters.slice(1)) {
+    const m = meanPoint(cluster);
+    const d = haversineKm(m.lat, m.lng, groupMean.lat, groupMean.lng);
+    const better =
+      cluster.length > winner.length ||
+      (cluster.length === winner.length &&
+        (d < winnerDist ||
+          (d === winnerDist &&
+            (m.lat < winnerMean.lat ||
+              (m.lat === winnerMean.lat && m.lng < winnerMean.lng)))));
+    if (better) {
+      winner = cluster;
+      winnerMean = m;
+      winnerDist = d;
+    }
+  }
+  const keep = new Set(winner);
+  return points.filter((p) => keep.has(p));
+}
+
+/** A name group's owned set: the dominant place's records plus any
+ *  records without coordinates (unassignable, kept). Returns the
+ *  input array itself when the name describes a single place. */
+function ownedRecords(recs) {
+  const placed = recs.filter((c) => typeof c.lat === "number" && typeof c.lng === "number");
+  if (placed.length < 2) return recs;
+  const owned = new Set(dominantPlaceRecords(placed));
+  if (owned.size === placed.length) return recs;
+  return recs.filter(
+    (c) => typeof c.lat !== "number" || typeof c.lng !== "number" || owned.has(c),
+  );
+}
+
 async function fetchCatalog() {
   let best = [];
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -312,6 +427,14 @@ async function main() {
       dropped.push(`${key} (${recs.length}) — ${reason}`);
       continue;
     }
+    // The page owns the dominant place filed under this name: counts,
+    // sources and samples below all describe the owned set. The
+    // threshold above stays judged on the merged name group — it is
+    // the page-creation bar, and a place that holds fewer cameras
+    // than the name that earned the page keeps its page (owner
+    // decision, 2026-10-27: Marysville's 52 merged cameras are 48 in
+    // Marysville WA, and /city-webcams/marysville stays).
+    const owned = ownedRecords(recs);
     const countrySlug = slugify(country);
     let slug = slugify(city);
     if (!slug) {
@@ -329,7 +452,7 @@ async function main() {
     const srcCounts = new Map();
     let stills = 0;
     let streams = 0;
-    for (const c of recs) {
+    for (const c of owned) {
       const s = cleanName(c.source) || "Public feeds";
       srcCounts.set(s, (srcCounts.get(s) || 0) + 1);
       if (c.stream_type && c.stream_type !== "jpg") streams++;
@@ -343,7 +466,7 @@ async function main() {
 
     const seenNames = new Set();
     const samples = [];
-    const byNameLen = [...recs].sort((a, b) => cleanName(b.name).length - cleanName(a.name).length);
+    const byNameLen = [...owned].sort((a, b) => cleanName(b.name).length - cleanName(a.name).length);
     for (const c of byNameLen) {
       const nm = cleanName(c.name);
       if (nm.length < 8 || /^https?:/i.test(nm) || seenNames.has(nm.toLowerCase())) continue;
@@ -357,7 +480,7 @@ async function main() {
       name: city,
       country,
       countrySlug,
-      count: recs.length,
+      count: owned.length,
       countryTotal: countryTotals.get(country),
       sources,
       sourceCount,

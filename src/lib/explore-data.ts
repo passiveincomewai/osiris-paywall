@@ -501,6 +501,31 @@ function defKey(def: ExploreScopeDef): string {
   return `${slugs}|${def.theme ?? ''}|${def.city ?? ''}|${geo}|${def.groupBy}`;
 }
 
+/**
+ * The dominant place's records within one exact city-name group — the
+ * set a city page owns (owner decision, 2026-10-27). A name can be
+ * filed by publishers for two real places (Marysville WA + Marysville
+ * CA); the page's grid, quoted count, breakdowns and featured lists all
+ * follow the dominant cluster (see dominantPlaceRecords in
+ * place-neighbours.ts for the split rule). Records without coordinates
+ * cannot be assigned to either place and are kept — dropping data we
+ * cannot judge would be worse than keeping it. Returns the input array
+ * itself when the name describes a single place, so unsplit pages are
+ * untouched (same records, same order).
+ */
+export function dominantCitySet(records: CountryCamera[]): CountryCamera[] {
+  const placed = records.filter(
+    (r): r is CountryCamera & { lat: number; lng: number } =>
+      typeof r.lat === 'number' && typeof r.lng === 'number',
+  );
+  if (placed.length < 2) return records;
+  const owned = new Set<CountryCamera>(dominantPlaceRecords(placed));
+  if (owned.size === placed.length) return records;
+  return records.filter(
+    (r) => typeof r.lat !== 'number' || typeof r.lng !== 'number' || owned.has(r),
+  );
+}
+
 /** The scope's records, theme/city-filtered and in page order. */
 export function recordsForDef(def: ExploreScopeDef): Promise<CountryCamera[]> {
   const key = defKey(def);
@@ -510,7 +535,14 @@ export function recordsForDef(def: ExploreScopeDef): Promise<CountryCamera[]> {
       const base =
         def.slugs === 'all' ? await loadAllRecords() : await loadUnion(def.slugs);
       const scope: ExploreScope = { theme: def.theme, city: def.city, geo: def.geo };
-      const scoped = applyScope(base, scope);
+      /* City defs own their dominant place: reduce the exact-name
+         group to its dominant cluster BEFORE the theme filter, so
+         every consumer of a city def (grid, counts, breakdowns) sees
+         the same owned set. City defs never carry a geo scope. */
+      const cityBase = def.city
+        ? dominantCitySet(applyScope(base, { city: def.city }))
+        : base;
+      const scoped = applyScope(cityBase, scope);
       /* Geo scopes keep applyScope's nearest-first order; the grouped
          orders are for browsing a catalogue, not a radius. */
       return def.geo ? scoped : sortForExplore(scoped, def.groupBy);
@@ -545,11 +577,12 @@ export async function cityChunkStats(
   const def = resolveExploreDef({ country: countrySlug, city: cityName });
   if (!def) return null;
   const records = await recordsForDef(def);
-  /* The count describes the page's full record set (the grid shows
-     them all); the centroid is a POINT and must sit on the place —
-     when one name is two real places, the mean of the merged set
-     lands in neither, so the point comes from the dominant place's
-     records (dominantPlaceRecords). Unsplit names are untouched. */
+  /* The records are already the dominant place's set (recordsForDef
+     reduces city defs), so the count and the grid describe the same
+     cameras. The centroid re-applies dominantPlaceRecords to that
+     owned set — a no-op safeguard that keeps the point on the place
+     even if the set reduction above ever changes. Unsplit names are
+     untouched. */
   const placed = dominantPlaceRecords(
     records.filter(
       (r): r is CountryCamera & { lat: number; lng: number } =>
