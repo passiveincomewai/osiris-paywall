@@ -188,6 +188,16 @@ const SEO_PAGES_GEO_GUIDES = [
   "/verify-photo-location",
 ];
 
+// Tutorials (2026-10-27): the step-by-step guide family — hub plus
+// flight tracking, route traffic, recording and pro search.
+const SEO_PAGES_TUTORIALS = [
+  "/tutorials",
+  "/tutorials/track-a-live-flight",
+  "/tutorials/check-traffic-on-your-route",
+  "/tutorials/record-a-live-camera",
+  "/tutorials/search-cameras-like-a-pro",
+];
+
 // Free camera embeds (2026-10-27): the picker page for the public
 // embed widget. The player routes (/embed/camera/*) are noindex and
 // deliberately stay out of the sitemap.
@@ -572,6 +582,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...SEO_PAGES_GEO_GUIDES.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_TUTORIALS.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_EMBED.map((p) => ({
