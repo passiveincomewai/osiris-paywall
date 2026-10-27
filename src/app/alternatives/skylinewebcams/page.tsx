@@ -34,7 +34,7 @@ const data: AltData = {
     </>
   ),
   updatedNote:
-    "Facts checked October 20, 2026 against SkylineWebcams' official FAQ and category pages (Premium features, archive policy) and WorldEye's live site. SkylineWebcams does not publish a total camera count, so this page doesn't invent one.",
+    "Facts checked October 26, 2026 against SkylineWebcams' official Premium page (price and features) and FAQ (archive policy), and WorldEye's live site. SkylineWebcams does not publish a total camera count, so this page doesn't invent one.",
   aboutIcon: Video,
   aboutHeading: "What SkylineWebcams is — and why people keep it bookmarked",
   about: [
@@ -54,7 +54,8 @@ const data: AltData = {
     <>
       The model is simple: free with advertising. A{" "}
       <span className="text-white/85 font-semibold">Premium</span> tier
-      (described in its official FAQ) removes the ads and adds fullscreen
+      ($9.99/year, or $3.99 for 3 months, with no automatic renewal — priced
+      on its official Premium page) removes the ads and adds fullscreen
       viewing, quick access to favourite webcams, the ability to take and
       share pictures from a feed, a user chat, and an interactive map with a
       search engine. Notably — also from its FAQ — SkylineWebcams does not
@@ -149,8 +150,9 @@ const data: AltData = {
     </>,
     <>
       And the cameras can work for you. Pro records up to 20 cameras at once
-      and adds the satellite map view and traffic; VIP Pro records 40, adds
-      timelapse, and adds camera alerts — plain-language conditions like
+      and adds live traffic (the satellite map view is free for everyone);
+      VIP Pro records 40, adds timelapse, and adds camera alerts —
+      plain-language conditions like
       &ldquo;snow on the road,&rdquo; checked against the feed by AI, emailed
       when they change. The honesty note: WorldEye&apos;s catalogue is
       aggregated and playback-verified rather than hand-curated for beauty,
@@ -200,10 +202,12 @@ const data: AltData = {
   pricingHeading: "Pricing: polish the viewing, or power the cameras",
   pricing: [
     <>
-      SkylineWebcams is free with ads. Its Premium tier — priced on its own
-      site — buys a cleaner, fuller viewing experience: no ads, fullscreen,
-      favourites up front, snapshots, chat, the interactive map and search.
-      The catalogue itself stays open, which is a consumer-friendly shape.
+      SkylineWebcams is free with ads. Its Premium tier — $9.99/year or
+      $3.99 for 3 months, with no automatic renewal, per its official
+      Premium page — buys a cleaner, fuller viewing experience: no ads,
+      fullscreen, favourites up front, snapshots, chat, the interactive map
+      and search. The catalogue itself stays open, which is a
+      consumer-friendly shape.
     </>,
     <>
       WorldEye&apos;s cameras are also free — the full 74,229, the globe, the
@@ -212,7 +216,8 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (3-day trial on Weekly, 10 days on Monthly) for recording 20 cameras, satellite view and traffic;{" "}
+      (3-day trial on weekly, 10-day on monthly) for recording 20 cameras
+      and live traffic;{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}
@@ -266,7 +271,7 @@ const data: AltData = {
   faqs: [
     {
       q: "Is SkylineWebcams free?",
-      a: "Yes — free with advertising. A Premium tier removes ads and adds fullscreen viewing, quick access to favourites, picture-taking and sharing, user chat, and an interactive map with search. WorldEye is also free, with no ads and no signup.",
+      a: "Yes — free with advertising. A Premium tier ($9.99/year or $3.99 for 3 months, no automatic renewal) removes ads and adds fullscreen viewing, quick access to favourites, picture-taking and sharing, user chat, and an interactive map with search. WorldEye is also free, with no ads and no signup.",
     },
     {
       q: "How many cameras does SkylineWebcams have?",

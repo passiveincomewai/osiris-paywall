@@ -502,6 +502,30 @@ export default function PricingPage() {
           </div>
         </div>
 
+        {/* Compare with the alternatives */}
+        <div className="mt-12 max-w-3xl mx-auto text-center">
+          <h2 className="text-xl md:text-2xl font-bold">Comparing your options?</h2>
+          <p className="text-sm text-white/50 mt-2 max-w-xl mx-auto leading-relaxed">
+            Most tools in this space do one thing well. These honest, source-checked
+            head-to-heads show where WorldEye wins — and where the specialist is
+            the better pick.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+            <Link href="/compare/windy" className="px-4 py-2 rounded-full border border-white/15 text-xs text-white/65 hover:text-white hover:border-[#D4AF37]/50 transition">
+              WorldEye vs Windy — forecast models vs live ground cameras
+            </Link>
+            <Link href="/compare/skylinewebcams" className="px-4 py-2 rounded-full border border-white/15 text-xs text-white/65 hover:text-white hover:border-[#D4AF37]/50 transition">
+              WorldEye vs SkylineWebcams — webcam directory vs camera globe
+            </Link>
+            <Link href="/compare/flightradar24" className="px-4 py-2 rounded-full border border-white/15 text-xs text-white/65 hover:text-white hover:border-[#D4AF37]/50 transition">
+              WorldEye vs Flightradar24 — flight specialist vs all-in-one globe
+            </Link>
+            <Link href="/compare" className="px-4 py-2 rounded-full border border-[#D4AF37]/40 text-xs text-[#D4AF37] hover:bg-[#D4AF37]/10 transition">
+              All comparisons →
+            </Link>
+          </div>
+        </div>
+
         {/* Bottom trust */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
           <span className="flex items-center gap-1.5"><BadgeCheck className="w-4 h-4 text-[#D4AF37]/70" /> 1-click cancellation</span>

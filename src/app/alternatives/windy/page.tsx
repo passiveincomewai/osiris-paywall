@@ -34,7 +34,7 @@ const data: AltData = {
     </>
   ),
   updatedNote:
-    "Facts checked October 20, 2026 against Windy's official community (staff posts on Premium pricing, features and the absence of a Premium free trial) and WorldEye's live site. Windy's Premium price is quoted from a staff post and varies by region.",
+    "Facts checked October 26, 2026 against Windy's official community (staff posts on Premium pricing, features and the absence of a Premium free trial) and WorldEye's live site. Windy's Premium price is quoted from a staff post and varies by region.",
   aboutIcon: CloudSun,
   aboutHeading: "What Windy is — and why pilots and sailors swear by it",
   about: [
@@ -171,7 +171,7 @@ const data: AltData = {
     },
     {
       title: "Trials before money",
-      body: "Pro and VIP Pro open with free trials — 3 days on Weekly, 10 days on Monthly, 10 days on VIP Pro — and a 7-day money-back guarantee on first charges. Windy Premium has no trial.",
+      body: "Pro and VIP Pro open with free trials — 3 days on the weekly plan, 10 days on monthly and annual — and a 7-day money-back guarantee on first charges. Windy Premium has no trial.",
     },
   ],
   chips: [
@@ -191,7 +191,7 @@ const data: AltData = {
     { feature: "Live flights, ships, satellites", competitor: "No", worldEye: "Yes — all live, all free" },
     { feature: "Quakes, fires, transit", competitor: "Not its product", worldEye: "Yes — on the same globe" },
     { feature: "Price", competitor: "Free; Premium €18.99/yr (staff post; varies by region)", worldEye: "Free; Pro $7.99/wk or $13.99/mo; VIP Pro $74.99/yr" },
-    { feature: "Free trial of paid tier", competitor: "No (per Windy staff)", worldEye: "Yes — Pro: 3-day Weekly, 10-day Monthly; VIP Pro: 10-day" },
+    { feature: "Free trial of paid tier", competitor: "No (per Windy staff)", worldEye: "Yes — 3-day weekly, 10-day monthly/annual" },
     { feature: "Apps", competitor: "Native iOS/Android apps", worldEye: "Browser-based, phone and desktop" },
   ],
   pricingHeading: "Pricing: the forecaster's bargain vs the observer's",
@@ -206,7 +206,7 @@ const data: AltData = {
       after.
     </>,
     <>
-      WorldEye&apos;s weather, radar and cameras are{" "}
+      WorldEye&apos;s weather, radar, cameras and satellite imagery view are{" "}
       <span className="text-white/85 font-semibold">
         free with no signup and no ads
       </span>
@@ -214,8 +214,8 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (3-day trial on Weekly, 10 days on Monthly) for the satellite map view, traffic, the OSINT toolkit
-      and camera recording;{" "}
+      (3-day trial on weekly, 10-day on monthly) for traffic, the OSINT
+      toolkit and camera recording;{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}

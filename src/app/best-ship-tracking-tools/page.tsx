@@ -51,14 +51,14 @@ const TOOLS = [
     icon: Ship,
     name: "MarineTraffic",
     tag: "Best-known AIS platform",
-    href: "/ship-tracker",
+    href: "/compare/marinetraffic",
     body: "The default name in vessel tracking: a large AIS network, vessel photos and details, port calls and fleet tools. The free tier shows the live map with limits; serious features — history, fleets, alerts — are paid plans aimed at enthusiasts and professionals alike.",
   },
   {
     icon: Waves,
     name: "VesselFinder",
     tag: "Best MarineTraffic alternative",
-    href: "/ship-tracker",
+    href: "/compare/vesselfinder",
     body: "A well-established AIS tracker with live vessel positions, ship details, port information and voyage history, offered in free and paid tiers. The closest like-for-like alternative to MarineTraffic, with a similar free-map, paid-depth model.",
   },
   {
@@ -270,7 +270,7 @@ export default function BestShipTrackingToolsPage() {
             wildfires and 74,229 cameras, no signup — does not include ship
             tracking. Maritime intel is part of Pro (weekly $7.99, monthly
             $13.99, annual $74.99), alongside the OSINT toolkit, cyber/GDELT
-            intel, satellite imagery view, advanced search filters and the AI analyst.
+            intel, advanced search filters and the AI analyst.
             If ships are all you want, a dedicated AIS free tier may serve
             you first; if ships plus the whole live planet is the point, Pro
             is the bundle built for it.
@@ -364,6 +364,16 @@ export default function BestShipTrackingToolsPage() {
             label: "Ship tracker",
             desc: "Vessels on a live globe with maritime intel — the page this guide is about.",
             href: "/ship-tracker",
+          },
+          {
+            label: "WorldEye vs MarineTraffic",
+            desc: "The best-known AIS platform, compared head-to-head with the maritime intel globe.",
+            href: "/compare/marinetraffic",
+          },
+          {
+            label: "WorldEye vs VesselFinder",
+            desc: "The closest MarineTraffic alternative, compared feature by feature.",
+            href: "/compare/vesselfinder",
           },
           {
             label: "What is AIS?",

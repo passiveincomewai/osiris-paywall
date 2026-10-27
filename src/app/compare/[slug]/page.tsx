@@ -272,8 +272,8 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
               WorldEye&rsquo;s own figures are counted, not estimated: the camera network is
               the 74,229 public feeds in our live directory across 105 countries, and the
               free/Pro split is the live product — the map, flights, satellites, weather,
-              earthquakes, wildfires and cameras are free with no signup, while the OSINT
-              toolkit, intel feeds, satellite imagery view and traffic layer sit in Pro
+              earthquakes, wildfires, cameras and the satellite imagery view are free with no
+              signup, while the OSINT toolkit, intel feeds and traffic layer sit in Pro
               ($7.99/week, $13.99/month, $74.99/year, with free trials and a 7-day
               money-back guarantee on the first charge).
             </p>

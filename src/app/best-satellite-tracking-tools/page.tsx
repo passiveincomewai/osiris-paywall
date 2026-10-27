@@ -44,13 +44,13 @@ const TOOLS = [
     name: "WorldEye",
     tag: "Best free all-in-one tracker",
     href: "/satellite-tracker",
-    body: "Live satellite tracking on a free 3D globe — no signup — with the planet attached: flights below, weather systems, earthquakes, wildfires and 74,229 ground cameras on the same screen. The pick for watching orbit as part of the living world, not as dots on a chart. The satellite layer is free; Pro adds a satellite imagery view and analyst tools.",
+    body: "Live satellite tracking on a free 3D globe — no signup — with the planet attached: flights below, weather systems, earthquakes, wildfires and 74,229 ground cameras on the same screen. The pick for watching orbit as part of the living world, not as dots on a chart. The satellite layer and the satellite imagery view are free; Pro adds the intelligence layers and analyst tools.",
   },
   {
     icon: Satellite,
     name: "N2YO",
     tag: "Best for satellite-by-satellite detail",
-    href: "/satellite-tracker",
+    href: "/compare/n2yo",
     body: "A long-running satellite tracking site with live positions, maps and pass predictions for individual satellites, organized by category and object. The enthusiast's reference when you follow specific satellites and want their details in one place.",
   },
   {
@@ -253,12 +253,12 @@ export default function BestSatelliteTrackingToolsPage() {
           </p>
           <p>
             On WorldEye specifically: tracking satellites live on the globe
-            is free, full stop. The optional Pro tier (weekly $7.99, monthly
-            $13.99, annual $74.99) adds a satellite imagery view — looking at
-            the Earth from orbit, a different thing from tracking orbits —
-            alongside the OSINT toolkit, maritime and cyber/GDELT intel,
-            advanced search filters and the AI analyst. If all you want is to watch
-            satellites move, you never need it.
+            is free, full stop — and so is the satellite imagery view,
+            looking at the Earth from orbit, a different thing from tracking
+            orbits. The optional Pro tier (weekly $7.99, monthly $13.99,
+            annual $74.99) adds the OSINT toolkit, maritime and cyber/GDELT
+            intel, advanced search filters and the AI analyst. If all you
+            want is to watch satellites move, you never need it.
           </p>
         </div>
       </section>
@@ -350,6 +350,11 @@ export default function BestSatelliteTrackingToolsPage() {
             label: "Satellite tracker",
             desc: "Live satellite positions on a 3D globe — the page this guide is about.",
             href: "/satellite-tracker",
+          },
+          {
+            label: "WorldEye vs N2YO",
+            desc: "The satellite-by-satellite specialist, compared head-to-head with the free globe.",
+            href: "/compare/n2yo",
           },
           {
             label: "Space station tracker",

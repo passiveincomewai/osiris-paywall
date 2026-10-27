@@ -366,6 +366,11 @@ export default function WeatherTrackerPage() {
               href: "/cameras",
             },
             {
+              label: "WorldEye vs Windy",
+              desc: "Coming from a forecast map? The honest head-to-head: model depth vs live weather and ground cameras.",
+              href: "/compare/windy",
+            },
+            {
               label: "Features",
               desc: "Everything the globe can do — free forever layers and Pro intelligence tools.",
               href: "/features",

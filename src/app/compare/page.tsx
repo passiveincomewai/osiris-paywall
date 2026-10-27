@@ -204,6 +204,16 @@ export default async function CompareHubPage() {
               href: "/compare/world-monitor",
             },
             {
+              title: "WorldEye vs Windy",
+              desc: "Forecast-model depth vs the live globe: weather plus flights, ships and 74,229 ground cameras.",
+              href: "/compare/windy",
+            },
+            {
+              title: "WorldEye vs SkylineWebcams",
+              desc: "The scenic webcam directory vs 74,229 cameras on a 3D globe with weather and flights attached.",
+              href: "/compare/skylinewebcams",
+            },
+            {
               title: "God's Eye View alternatives",
               desc: "The viral Cesium globe, hosted vs self-hosted — and the ~4,000 vs 74,229 camera question.",
               href: "/alternatives/gods-eye-view",

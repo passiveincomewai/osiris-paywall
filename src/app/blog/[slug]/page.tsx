@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS, getPost } from "../posts";
+import { compareLinksForPost } from "@/lib/blog-compare-links";
 
 export function generateStaticParams() {
   return POSTS.map((p) => ({ slug: p.slug }));
@@ -72,6 +73,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const idx = POSTS.findIndex((p) => p.slug === slug);
   const prev = idx > 0 ? POSTS[idx - 1] : null;
   const next = idx < POSTS.length - 1 ? POSTS[idx + 1] : null;
+  const compareLinks = compareLinksForPost(slug);
 
   const blogPosting = {
     "@type": "BlogPosting",
@@ -206,6 +208,28 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     {renderBody(f.a, `faq-${i}`)}
                   </p>
                 </details>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Head-to-head comparisons for the tools this guide covers */}
+        {compareLinks.length > 0 && (
+          <section className="mt-14">
+            <h2 className="text-2xl font-bold tracking-tight mb-6">
+              <span className="text-[#D4AF37]">▸</span> The head-to-head comparisons
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {compareLinks.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] hover:border-[#D4AF37]/40 transition p-5 group"
+                >
+                  <p className="font-semibold group-hover:text-[#D4AF37] transition">{l.label}</p>
+                  <p className="text-sm text-white/45 mt-1.5 leading-relaxed">{l.desc}</p>
+                  <span className="inline-block mt-3 text-xs font-semibold text-[#D4AF37]">Read the comparison →</span>
+                </Link>
               ))}
             </div>
           </section>
