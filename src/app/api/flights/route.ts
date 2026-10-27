@@ -87,6 +87,13 @@ const HELI_TYPES = new Set([
   'A109','A119','A139','A169','A189','AW09',
   'MD52','MD60','MDHI','MD90','NOTR',
   'B47G','HUEY','GAMA','CABR','EXE',
+  // Rotorcraft designators measured missing live (2026-10-27): NH90,
+  // the Cabri G2's real designator (GAMA/CABR above are not it), the
+  // Hughes/MD 500 family, the US military H- fleet (a CH-47 files as
+  // H47, a Black Hawk as H60 — both previously rendered as planes),
+  // and the Schweizer 269/300 line.
+  'NH90','G2CA','H500','MD50','MD53',
+  'H47','H53','H60','H64','H269','S269','S300',
 ]);
 
 const PRIVATE_JET_TYPES = new Set([
@@ -184,6 +191,34 @@ async function fetchAdsbFiRegion(lat: number, lon: number): Promise<any[]> {
   return [];
 }
 
+/**
+ * Whether a raw record is a helicopter, from the three pieces of
+ * evidence the feeds carry:
+ *
+ *  1. The type designator (HELI_TYPES) — precise, but incomplete:
+ *     designators the set lacked (NH90, G2CA, H500, the military
+ *     H47/H60/H64 line) rendered as planes.
+ *  2. OpenSky's numeric emitter category (category_os 8 = rotorcraft).
+ *     OpenSky records carry no other category field.
+ *  3. The tar1090/adsb.fi emitter category, a STRING in `category`
+ *     ('A7' = rotorcraft). The classifier never read this field, so
+ *     for the entire regional source — the feed actually serving
+ *     production — emitter-category evidence was dead. But the field
+ *     is set by each aircraft's transponder and is occasionally
+ *     miscoded (measured live 2026-10-27: a B77W and a balloon
+ *     reporting A7), so A7 only counts when the type designator does
+ *     not positively identify a fixed-wing aircraft or a non-aircraft.
+ */
+export function isHelicopterRecord(f: any): boolean {
+  const t = (f?.t || '').toUpperCase();
+  if (HELI_TYPES.has(t)) return true;
+  if (f?.category_os === 8) return true;
+  if (typeof f?.category === 'string' && f.category.toUpperCase() === 'A7') {
+    return !AIRLINER_TYPES.has(t) && !PRIVATE_JET_TYPES.has(t) && t !== 'BALL' && t !== 'GLID';
+  }
+  return false;
+}
+
 function classifyFlight(f: any) {
   const modelUpper = (f.t || '').toUpperCase();
   const flightStr = (f.flight || '').trim().toUpperCase();
@@ -202,7 +237,7 @@ function classifyFlight(f: any) {
   const altMeters = typeof altRaw === 'number' ? altRaw * 0.3048 : 0;
   const speedKnots = typeof f.gs === 'number' ? Math.round(f.gs * 10) / 10 : null;
   const heading = f.track || 0;
-  const isHeli = HELI_TYPES.has(modelUpper) || f.category_os === 8;
+  const isHeli = isHelicopterRecord(f);
   const isGrounded = typeof altRaw === 'number' && altRaw < 100;
 
   const isOsMilitary = f.category_os === 14;
@@ -313,6 +348,27 @@ interface FlightsFingerprint {
 let snapshotRing: FlightsFingerprint[] = [];
 let snapshotSeq = 0;
 
+// Snapshot tokens MUST be unique per process, not just per snapshot.
+// The ring above is in-memory, and production runs many function
+// instances behind one origin: a token minted as a bare sequence
+// ("f4") collides with the identical string another instance minted
+// for a DIFFERENT snapshot, so a ?since= poll landing on that instance
+// is answered with a delta — or an "unchanged" — computed against the
+// wrong base. The client accepts it (it can only check the token
+// string), applies removals for aircraft it actually holds, and its
+// sky silently diverges from the server's until a reload (measured
+// 2026-10-27: Atlanta rendered empty in the browser while the payload
+// itself carried its aircraft). Namespacing every token with a random
+// per-process id makes a foreign token unfindable in this ring, so the
+// delta lookup misses and the caller re-bases on the full payload —
+// the protocol's existing safe path.
+const SNAPSHOT_TOKEN_NS = Math.random().toString(36).slice(2, 8);
+
+/** The token the `seq`-th snapshot built by THIS process carries. */
+export function snapshotToken(seq: number): string {
+  return `f${SNAPSHOT_TOKEN_NS}.${seq}`;
+}
+
 /** Index a payload's records by identity key (see flightRecordKey). */
 export function flightsRecordIndex(data: any): Map<string, { bucket: string; record: any }> {
   const index = new Map<string, { bucket: string; record: any }>();
@@ -351,7 +407,7 @@ export function fingerprintFlightsPayload(data: any): Map<string, string> {
  *  fingerprint. Called exactly once per build, where the payload enters
  *  the response cache — never for a partial. */
 function registerFlightsSnapshot(data: any): void {
-  const token = `f${++snapshotSeq}`;
+  const token = snapshotToken(++snapshotSeq);
   data.token = token;
   snapshotRing.push({
     token,

@@ -247,6 +247,34 @@ export function shareOpenDeadlineMs(kind: ShareEntityKind): number {
   return SHARE_OPEN_DEADLINE_MS;
 }
 
+/** How long a flight share may wait for the FIRST flights payload
+ *  before it settles as stale. A cold /api/flights build takes ~50 s —
+ *  and a build killed at the route's 60 s cap is only retried on the
+ *  next 30 s poll — so the pre-data wait must far outlast the
+ *  post-data open window. It is still bounded: a link whose data
+ *  never comes lands plainly, like every stale link. */
+export const FLIGHT_SHARE_PRE_DATA_CAP_MS = 300_000;
+
+/**
+ * Whether a flight share offer is still inside its window. The 90 s
+ * open window (FLIGHT_SHARE_OPEN_DEADLINE_MS) runs from the first
+ * flights payload arrival, NOT from the first offer: the deadline
+ * used to be measured from page mount, and a cold build plus one
+ * retry could outlast it, so the globe stopped offering the aircraft
+ * before its data existed and the link landed inert (measured
+ * 2026-10-27: a /?flight= landing sat at the home view for three
+ * minutes while the aircraft was live in the feed). Before any
+ * payload has arrived, the pre-data cap governs instead.
+ */
+export function flightShareWindowOpen(
+  now: number,
+  firstOfferAt: number,
+  firstDataAt: number | null,
+): boolean {
+  if (firstDataAt == null) return now - firstOfferAt < FLIGHT_SHARE_PRE_DATA_CAP_MS;
+  return now - firstDataAt < FLIGHT_SHARE_OPEN_DEADLINE_MS;
+}
+
 /** A GeoJSON flight feature is the share target when its icao24
  *  matches the link id — case-insensitively on both sides, since the
  *  link id is lowercased at parse while features carry the feed's

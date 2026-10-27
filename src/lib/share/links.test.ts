@@ -185,3 +185,27 @@ describe('flight share links — layer lighting and deadline', () => {
     expect((linksModule as any).featureMatchesFlightShareId(null, 'a514mt')).toBe(false);
   });
 });
+
+describe('flight share window — measured from the first data, not from mount', () => {
+  const T0 = 1_800_000_000_000;
+
+  it('stays open while no flights payload has arrived, up to the pre-data cap', () => {
+    expect(typeof (linksModule as any).flightShareWindowOpen).toBe('function');
+    const open = (linksModule as any).flightShareWindowOpen;
+    expect(open(T0 + 89_000, T0, null)).toBe(true); // the old mount-based deadline died here
+    expect(open(T0 + 240_000, T0, null)).toBe(true); // cold build + one killed-build retry
+    expect(open(T0 + 299_999, T0, null)).toBe(true);
+    expect(open(T0 + 300_000, T0, null)).toBe(false); // cap: the link settles plainly
+    expect((linksModule as any).FLIGHT_SHARE_PRE_DATA_CAP_MS).toBe(300_000);
+  });
+
+  it('runs the 90 s open window from the first payload arrival', () => {
+    const open = (linksModule as any).flightShareWindowOpen;
+    const dataAt = T0 + 200_000; // a slow cold build
+    expect(open(dataAt + 89_999, T0, dataAt)).toBe(true);
+    expect(open(dataAt + 90_000, T0, dataAt)).toBe(false);
+    // Data that arrived promptly gets the same 90 s as before.
+    expect(open(T0 + 5_000 + 89_999, T0, T0 + 5_000)).toBe(true);
+    expect(open(T0 + 5_000 + 90_000, T0, T0 + 5_000)).toBe(false);
+  });
+});

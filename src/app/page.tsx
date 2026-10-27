@@ -31,7 +31,7 @@ import {
   type LadderPrompt,
 } from '@/lib/camera-ladder';
 import { findCameraById, sharedCameraIdFromSearch } from '@/lib/camera-share';
-import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId, geoTargetFromSearch, shareLayersForKind, shareOpenDeadlineMs, zoomForRadiusM } from '@/lib/share/links';
+import { entityRefFromSearch, findByCoordShareId, findQuakeByShareId, findStormFeatureByShareId, flightShareWindowOpen, geoTargetFromSearch, shareLayersForKind, shareOpenDeadlineMs, zoomForRadiusM } from '@/lib/share/links';
 import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
@@ -1546,10 +1546,17 @@ export default function Dashboard() {
   const sharedEntitySettled = useRef(false);
   const sharedEntityLayerLit = useRef(false);
   const sharedEntityDeadline = useRef(0);
+  /* Flight shares measure their window from the first flights DATA,
+     not from mount (flightShareWindowOpen in lib/share/links): when
+     this share was first offered, and when a flights payload first
+     landed — null until one does. */
+  const sharedEntityFirstOfferAt = useRef(0);
+  const sharedEntityFlightDataAt = useRef<number | null>(null);
   const [stormLinkGone, setStormLinkGone] = useState(false);
   useEffect(() => {
     if (!sharedEntity || sharedEntity.kind === 'camera' || sharedEntitySettled.current) return;
     if (!sharedEntityDeadline.current) sharedEntityDeadline.current = Date.now() + shareOpenDeadlineMs(sharedEntity.kind);
+    if (!sharedEntityFirstOfferAt.current) sharedEntityFirstOfferAt.current = Date.now();
     // Flights light all four flight layers: the aircraft may ride in
     // any bucket, and OsirisMap holds a flight source empty while its
     // layer is off — with none lit a flight link could never resolve.
@@ -1591,12 +1598,24 @@ export default function Dashboard() {
     }
     if (sharedEntity.kind === 'flight') {
       // No page-side dataset exists for flights: offer it to the map
-      // on every data tick until the deadline — the map dedupes once
-      // it has opened the aircraft.
+      // on every data tick until the window closes — the map dedupes
+      // once it has opened the aircraft. The window runs from the
+      // first flights payload, not from mount: a cold /api/flights
+      // build (~50 s, longer if a killed build waits for the next
+      // poll) could outlast a mount-measured deadline, and the link
+      // then landed inert with its data still in flight.
+      const hasFlightsData =
+        Array.isArray(d.commercial_flights) || Array.isArray(d.private_flights) ||
+        Array.isArray(d.private_jets) || Array.isArray(d.military_flights);
+      if (hasFlightsData && sharedEntityFlightDataAt.current == null) {
+        sharedEntityFlightDataAt.current = Date.now();
+      }
       window.dispatchEvent(new CustomEvent('we:open-entity', {
         detail: { kind: 'flight', id: sharedEntity.id },
       }));
-      if (Date.now() > sharedEntityDeadline.current) sharedEntitySettled.current = true;
+      if (!flightShareWindowOpen(Date.now(), sharedEntityFirstOfferAt.current, sharedEntityFlightDataAt.current)) {
+        sharedEntitySettled.current = true;
+      }
       return;
     }
     if (Date.now() > sharedEntityDeadline.current) {

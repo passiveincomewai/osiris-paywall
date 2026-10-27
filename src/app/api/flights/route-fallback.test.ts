@@ -17,11 +17,13 @@ vi.mock('@/lib/stealthFetch', () => ({
 }));
 
 import {
+  isHelicopterRecord,
   REGIONS,
   REGION_LAST_GOOD_MAX_AGE_MS,
   regionalIngestedCount,
   regionLastGoodKey,
   resolveRegionContribution,
+  snapshotToken,
 } from './route';
 
 const NOW = 1_800_000_000_000;
@@ -111,5 +113,67 @@ describe('REGIONS — sweep centres', () => {
     // (SWEEP_DEADLINE_MS in route.ts), itself inside the 60 s route
     // maxDuration.
     expect(REGIONS.length * 1050).toBeLessThan(50_000);
+  });
+});
+
+describe('snapshotToken — delta tokens are namespaced per process', () => {
+  it('is unique per sequence number and carries a process namespace', () => {
+    const a = snapshotToken(1);
+    const b = snapshotToken(2);
+    expect(a).not.toBe(b);
+    // Shape: f<namespace>.<seq> — the namespace segment is what a bare
+    // sequence ("f1", "f2", ...) lacked. Two function instances mint
+    // the same bare strings for different snapshots, and a ?since=
+    // delta answered against the wrong base silently corrupts the
+    // client's sky; a foreign namespaced token simply misses the ring.
+    expect(a).toMatch(/^f[0-9a-z]+\.1$/);
+    expect(b).toMatch(/^f[0-9a-z]+\.2$/);
+    expect(a.split('.')[0]).toBe(b.split('.')[0]);
+    expect(a.split('.')[0].length).toBeGreaterThanOrEqual(5); // 'f' + >=4 ns chars
+  });
+});
+
+describe('isHelicopterRecord — what tags aircraft_category heli', () => {
+  it('tags the designators the set has always carried', () => {
+    expect(isHelicopterRecord({ t: 'B407' })).toBe(true);
+    expect(isHelicopterRecord({ t: 'R44' })).toBe(true);
+    expect(isHelicopterRecord({ t: 'EC35' })).toBe(true);
+  });
+
+  it('tags rotorcraft designators measured missing live (2026-10-27)', () => {
+    expect(isHelicopterRecord({ t: 'NH90' })).toBe(true);
+    expect(isHelicopterRecord({ t: 'G2CA' })).toBe(true); // Cabri G2
+    expect(isHelicopterRecord({ t: 'H500' })).toBe(true); // Hughes/MD 500
+    expect(isHelicopterRecord({ t: 'H47' })).toBe(true); // Chinook
+    expect(isHelicopterRecord({ t: 'H60' })).toBe(true); // Black Hawk
+    expect(isHelicopterRecord({ t: 'H64' })).toBe(true); // Apache
+  });
+
+  it('tags OpenSky records by their numeric emitter category', () => {
+    expect(isHelicopterRecord({ category_os: 8 })).toBe(true);
+    expect(isHelicopterRecord({ category_os: 8, t: '' })).toBe(true);
+  });
+
+  it('tags adsb.fi records by their string emitter category (A7)', () => {
+    // The regional source's ONLY category evidence — previously unread.
+    expect(isHelicopterRecord({ category: 'A7' })).toBe(true);
+    expect(isHelicopterRecord({ category: 'A7', t: 'NH90' })).toBe(true);
+    expect(isHelicopterRecord({ category: 'a7', t: 'C172' })).toBe(true);
+  });
+
+  it('does not let a miscoded A7 turn fixed-wing traffic into a helicopter', () => {
+    // Both measured live in the same sample as the genuine misses.
+    expect(isHelicopterRecord({ category: 'A7', t: 'B77W' })).toBe(false);
+    expect(isHelicopterRecord({ category: 'A7', t: 'A321' })).toBe(false);
+    expect(isHelicopterRecord({ category: 'A7', t: 'GLF6' })).toBe(false); // bizjet set
+    expect(isHelicopterRecord({ category: 'A7', t: 'BALL' })).toBe(false); // balloon
+    expect(isHelicopterRecord({ category: 'A7', t: 'GLID' })).toBe(false); // glider
+  });
+
+  it('leaves ordinary fixed-wing records as planes', () => {
+    expect(isHelicopterRecord({ t: 'B738', category: 'A3' })).toBe(false);
+    expect(isHelicopterRecord({ t: 'C172', category: 'A1' })).toBe(false);
+    expect(isHelicopterRecord({})).toBe(false);
+    expect(isHelicopterRecord({ t: 'A320' })).toBe(false);
   });
 });
