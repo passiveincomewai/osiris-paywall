@@ -4,20 +4,26 @@ import { getPlows, getPlowFeedStatus } from '@/lib/plows';
 /**
  * OSIRIS — Snow Plows: live winter-maintenance vehicle positions.
  *
- * Iowa DOT's public AVL FeatureServer is the one verified keyless plow
- * feed (see lib/plows for the probe record: the IBI 511 sibling
- * endpoints and Finland's Digitraffic were both checked). The pipeline
+ * Three verified keyless plow feeds, merged in lib/plows: Iowa DOT's
+ * AVL FeatureServer, UDOT's `SnowPlow_AVL_Public` (recency-filtered —
+ * it is a last-known-position table), and Vermont AOT's Plow Finder
+ * vehicle JSON (slimmed to latest positions, 90-minute staleness
+ * gate). Each source is cached and fails independently. The pipeline
  * lives in lib/plows — this route keeps the response shape:
  * { plows, total, stale, source, timestamp }.
  *
- * `stale` is the honesty flag: true when the latest upstream refresh
- * failed (and any plows present are the cache's last good set), or
- * when nothing has ever been fetched. A down feed yields an empty
- * set, never invented positions. Source: Iowa DOT —
- * https://data.iowadot.gov/ (Snow Plow Truck Location AVL)
+ * `stale` is the honesty flag: true when any source's latest upstream
+ * refresh failed (and any plows from it are the cache's last good
+ * set), or when nothing has ever been fetched. A down feed yields an
+ * empty set for its state, never invented positions.
+ * Sources: Iowa DOT — https://data.iowadot.gov/ (Snow Plow Truck
+ * Location AVL) · Utah DOT — UDOT SnowPlow_AVL_Public (ArcGIS Online)
+ * · Vermont AOT — VTrans Plow Finder vehicle JSON.
  */
 
 export const dynamic = 'force-dynamic';
+
+const SOURCE_LABEL = 'Iowa DOT · Utah DOT · Vermont AOT';
 
 export async function GET() {
   try {
@@ -29,7 +35,7 @@ export async function GET() {
         plows,
         total: plows.length,
         stale,
-        source: 'Iowa DOT',
+        source: SOURCE_LABEL,
         timestamp: status.fetchedAt ?? new Date().toISOString(),
       },
       {
@@ -40,7 +46,7 @@ export async function GET() {
     );
   } catch {
     return NextResponse.json(
-      { plows: [], total: 0, stale: true, source: 'Iowa DOT', timestamp: new Date().toISOString() },
+      { plows: [], total: 0, stale: true, source: SOURCE_LABEL, timestamp: new Date().toISOString() },
       { status: 200, headers: { 'Cache-Control': 'public, s-maxage=30' } },
     );
   }

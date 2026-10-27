@@ -1464,7 +1464,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'line-color': '#FF6B00', 'line-width': 1.6, 'line-opacity': 0.9,
       }});
 
-      // Snow Plows (Iowa DOT AVL) — the owner's plow-pin artwork on
+      // Snow Plows (IA · UT · VT DOT AVL) — the owner's plow-pin artwork on
       // every live truck; positions republish about every 2 minutes.
       map.addLayer({ id: 'plow-icons', type: 'symbol', source: 'plows', layout: {
         'icon-image': 'snowplow-pin',
@@ -3296,7 +3296,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Weather Events (NASA EONET + NOAA/NWS + GDACS) ──
-    // ── Snow Plows (Iowa DOT AVL) ──
+    // ── Snow Plows (IA · UT · VT DOT AVL) ──
     // Only what the feed reports: agency, blade status when the truck
     // sends a real reading, ground speed, and the ping time.
     const openPlowPopup = (feature: any) => {
@@ -3314,7 +3314,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           <div><span style="color:#5C5A54;">HEADING</span><br/><span style="color:#E8E6E0;">${p.heading != null ? p.heading + '°' : '—'}</span></div>
           <div><span style="color:#5C5A54;">LAST UPDATE</span><br/><span style="color:#E8E6E0;">${updated}</span></div>
         </div>
-        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">IOWA DOT · SNOW PLOW TRUCK LOCATION (AVL)</div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">${htmlEsc(p.agency || 'Iowa DOT').toUpperCase()} · SNOW PLOW AVL</div>
       </div>`);
     };
     map.on('click', 'plow-icons', e => { if (e.features?.length) openPlowPopup(e.features[0]); });

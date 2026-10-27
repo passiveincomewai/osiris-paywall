@@ -658,7 +658,7 @@ export default function Dashboard() {
     fire_perimeters: false,
     weather: false,
     hurricanes: false,
-    /* Snow Plows: Iowa DOT live AVL — off by default; the data loads
+    /* Snow Plows: IA · UT · VT DOT live AVL — off by default; the data loads
        only while the layer is on (see lib/plows). */
     plows: false,
     river_gauges: false,
@@ -1956,7 +1956,7 @@ export default function Dashboard() {
       }));
     }
 
-    // Snow plows — Iowa DOT AVL, the one verified public plow feed
+    // Snow plows — IA · UT · VT DOT AVL, the verified public plow feeds
     if ((activeLayers as any).plows) {
       loadLayerOnce('plows', '/api/plows', d => ({ plows: d.plows ?? [] }));
     }

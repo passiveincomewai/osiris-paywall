@@ -149,7 +149,7 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
     fullLabel: 'WINTER & ROADS',
     icon: Snowflake,
     layers: [
-      { key: 'plows', label: 'Snow Plows', description: 'Iowa DOT · live plow AVL · ~2 min', dataKey: 'plows' },
+      { key: 'plows', label: 'Snow Plows', description: 'Iowa · Utah · Vermont · live plow AVL · ~2 min', dataKey: 'plows' },
     ],
   },
   /* The intel groups (THREATS & INTEL, NETWORK INTEL, NET & EVENT INTEL)
