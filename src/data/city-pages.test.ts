@@ -21,23 +21,26 @@ describe("city-pages.json", () => {
     expect(cityPages.assembledTotal).toBeGreaterThan(50000);
   });
 
-  // The stated threshold is the page-creation bar, judged on the
-  // merged name group (tools/build-city-pages.mjs). Since the
-  // ownership change (2026-10-27) a page's count describes its
-  // DOMINANT place, which can hold fewer cameras than the name that
-  // earned the page (Marysville: 52 merged, 48 in Marysville WA).
-  // The six pages in that position are pinned here — any other city
-  // below the threshold, or one of these falling under the explorer's
-  // own 25-camera substance line, means a regen mis-owned a cluster.
-  const BELOW_THRESHOLD_AFTER_OWNERSHIP = [
+  // The stated threshold is the page-creation bar, judged since the
+  // city-scale wave (2026-10-27) on the group's OWNED set — its
+  // dominant place (tools/build-city-pages.mjs). A page's count
+  // describes that dominant place, which can hold fewer cameras than
+  // the merged name group that first earned the page at the old
+  // 50-camera tier (Marysville: 52 merged, 48 in Marysville WA).
+  // The six pages created under that tier whose owned counts sit
+  // below it are pinned here: they clear the current 25 bar, but a
+  // regen that moved one of them across the 50 line in either
+  // direction, or dropped any city under the stated threshold,
+  // means a regen mis-owned a cluster.
+  const BELOW_50_AFTER_OWNERSHIP = [
     "albany", "cleveland", "marysville", "riverside", "san-bernardino", "yoakum",
   ];
 
   it("every city clears the stated threshold, bar the pinned ownership cases", () => {
     for (const c of cities) {
-      if (BELOW_THRESHOLD_AFTER_OWNERSHIP.includes(c.slug)) {
-        expect(c.count, c.slug).toBeLessThan(cityPages.threshold);
-        expect(c.count, c.slug).toBeGreaterThanOrEqual(25);
+      if (BELOW_50_AFTER_OWNERSHIP.includes(c.slug)) {
+        expect(c.count, c.slug).toBeLessThan(50);
+        expect(c.count, c.slug).toBeGreaterThanOrEqual(cityPages.threshold);
       } else {
         expect(c.count, c.slug).toBeGreaterThanOrEqual(cityPages.threshold);
       }

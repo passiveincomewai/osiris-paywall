@@ -25,7 +25,9 @@ import cameraNetworkReport from "@/data/camera-network-2026-10.json";
  * pinned exactly — any URL added, removed or renamed breaks this
  * test. (Baseline: the pre-change generator on 2026-10-27, 815
  * URLs; 816 since chunk C7 added the /alternatives hub the same
- * day.) Transit URLs depend on live GTFS feeds, so they are pinned
+ * day; 939 since the city-scale wave added 123 generated city pages
+ * at the >=25 owned-camera tier later that day.) Transit URLs
+ * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
  */
@@ -66,10 +68,10 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(816);
+    expect(nonTransit.length).toBe(939);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     expect(hash).toBe(
-      "7b9110e348f625aa6c1a4804f9c4e2447ba219eba5c4a06809099f955f5bb66e",
+      "b1c9a5d19986b375a5733fff923733a4d029837c6fcbe7a5f0a28de561af2fa4",
     );
   });
 
