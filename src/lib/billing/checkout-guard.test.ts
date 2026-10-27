@@ -69,6 +69,53 @@ describe("resolveCheckoutGuard", () => {
     expect(d).toEqual({ kind: "blocked", reason: "db_subscription" });
   });
 
+  it("lets an ambient-only member buy a tier plan on the same customer (Ambient carve-out)", async () => {
+    const p = ports();
+    const d = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "active",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_ambient",
+      }),
+      ports: p,
+      plan: "monthly",
+      ambientPriceId: "price_ambient",
+    });
+    expect(d).toEqual({ kind: "proceed", customerId: "cus_db" });
+    expect(p.listCustomersByEmail).not.toHaveBeenCalled();
+  });
+
+  it("still blocks an ambient-only member re-buying ambient (a duplicate)", async () => {
+    const d = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "trialing",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_ambient",
+      }),
+      ports: ports(),
+      plan: "ambient",
+      ambientPriceId: "price_ambient",
+    });
+    expect(d).toEqual({ kind: "blocked", reason: "db_subscription" });
+  });
+
+  it("still blocks a tier holder buying ambient (they already have access)", async () => {
+    const d = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "active",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_monthly",
+      }),
+      ports: ports(),
+      plan: "ambient",
+      ambientPriceId: "price_ambient",
+    });
+    expect(d).toEqual({ kind: "blocked", reason: "db_subscription" });
+  });
+
   it("reuses the DB customer for a resubscribe, without touching Stripe reads", async () => {
     const p = ports();
     const d = await resolveCheckoutGuard({ ...base, dbSub: dbSub(), ports: p });

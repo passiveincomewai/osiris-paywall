@@ -33,7 +33,11 @@ import { trialDaysForPlan, type BillingPlan } from "./trials";
 import { checkoutErrorFromData } from "./checkout-error";
 import { trackMetaEvent } from "@/lib/meta-track";
 
-export type TrialPlan = Exclude<BillingPlan, "enterprise">;
+/* The Pro trial plans sold from /pricing and the Pro lock surfaces.
+ * Ambient is excluded on purpose: it is a standalone product with its
+ * own landing page and checkout entry (the /ambient paywall and
+ * /ambient-mode), not a row in the Pro trial picker. */
+export type TrialPlan = Exclude<BillingPlan, "enterprise" | "ambient">;
 
 export interface TrialPlanOption {
   plan: TrialPlan;
@@ -143,11 +147,24 @@ export const CHECKOUT_PLAN_SUMMARIES: Record<BillingPlan, CheckoutPlanSummary> =
     trialLabel: null,
     trialDays: trialDaysForPlan("enterprise"),
   },
+  // WorldEye Ambient: a standalone product, not a Pro trial plan — it
+  // never appears in the trial picker, but /checkout?plan=ambient
+  // must still describe it correctly if a buyer lands there.
+  ambient: {
+    plan: "ambient",
+    name: "WorldEye Ambient",
+    price: "$4.99",
+    per: "/month",
+    perDay: "$0.17",
+    note: "10 days free, then billed monthly · cancel anytime",
+    trialLabel: "10 days free",
+    trialDays: trialDaysForPlan("ambient"),
+  },
 };
 
 /** Summary lookup that tolerates raw strings (URL params): unknown → null. */
 export function checkoutPlanSummary(plan: string | null | undefined): CheckoutPlanSummary | null {
-  if (plan === "weekly" || plan === "monthly" || plan === "annual" || plan === "enterprise") {
+  if (plan === "weekly" || plan === "monthly" || plan === "annual" || plan === "enterprise" || plan === "ambient") {
     return CHECKOUT_PLAN_SUMMARIES[plan];
   }
   return null;

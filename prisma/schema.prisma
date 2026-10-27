@@ -53,6 +53,7 @@ model User {
   deviceSessions UserDeviceSession[]
   signInEvents  UserSignInEvent[]
   referralCodeAliases ReferralCodeAlias[]
+  ambientStreamKey AmbientStreamKey?
   deletionRequestedAt DateTime?
   deletionScheduledFor DateTime?
   createdAt     DateTime       @default(now())
@@ -234,6 +235,24 @@ model Subscription {
 
   @@index([status])
   @@index([currentPeriodEnd])
+}
+
+// ── WorldEye Ambient: YouTube restream credentials ───────────────────
+// One row per member who uses Stream to YouTube. The member's own
+// YouTube stream key is stored AES-256-GCM-encrypted
+// (src/lib/ambient/stream-key-crypto) — never plaintext, never
+// returned by an API. The relay host authenticates to
+// /api/ambient/relay/playlist with a per-member relay token; only
+// the token's SHA-256 hash is stored.
+model AmbientStreamKey {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keyCiphertext  String
+  relayTokenHash String
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 // ── Creator free-Pro program ───────────────────────────────────────────

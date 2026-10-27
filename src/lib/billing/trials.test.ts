@@ -20,13 +20,19 @@ describe("TRIAL_DAYS", () => {
     expect(trialDaysForPlan("enterprise")).toBe(0);
   });
 
+  it("grants the ambient plan a 10-day free trial", () => {
+    expect(TRIAL_DAYS.ambient).toBe(10);
+    expect(trialDaysForPlan("ambient")).toBe(10);
+  });
+
   it("gives unknown plans no trial", () => {
     expect(trialDaysForPlan("bogus")).toBe(0);
     expect(trialDaysForPlan("")).toBe(0);
   });
 
-  it("covers exactly the four sellable plans", () => {
+  it("covers exactly the five sellable plans", () => {
     expect(Object.keys(TRIAL_DAYS).sort()).toEqual([
+      "ambient",
       "annual",
       "enterprise",
       "monthly",

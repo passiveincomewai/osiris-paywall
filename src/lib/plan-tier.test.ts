@@ -39,6 +39,15 @@ describe("planTierForPriceId", () => {
     expect(planTierForPriceId(null, ENV)).toBe("free");
     expect(planTierForPriceId(undefined, ENV)).toBe("free");
   });
+
+  it("the Ambient price → free: a standalone product, never a tier", () => {
+    // Via the env var…
+    expect(
+      planTierForPriceId("price_ambient", { ...ENV, STRIPE_AMBIENT_PRICE_ID: "price_ambient" }),
+    ).toBe("free");
+    // …and via the live fallback id when the env var is unset.
+    expect(planTierForPriceId("price_1UUxUnGfHuTnzrlHH0pNYhJU", ENV)).toBe("free");
+  });
 });
 
 describe("planTierForRow", () => {

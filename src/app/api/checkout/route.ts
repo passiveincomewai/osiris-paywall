@@ -5,6 +5,7 @@ import { stripe, appUrl } from "@/lib/stripe";
 import { cookies } from "next/headers";
 import { REF_COOKIE, findAffiliateByCode } from "@/lib/affiliate/attribution";
 import { trialDaysForPlan } from "@/lib/billing/trials";
+import { ambientPriceId } from "@/lib/ambient/access";
 import {
   resolveCheckoutGuard,
   ALREADY_SUBSCRIBED_MESSAGE,
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
     plan?: string;
     ui?: string;
   };
-  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise") {
+  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise" && plan !== "ambient") {
     return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   }
   // Embedded mode renders Stripe's form on /checkout (our domain) instead of
@@ -54,6 +55,7 @@ export async function POST(req: Request) {
     plan === "monthly" ? "STRIPE_MONTHLY_PRICE_ID"
     : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
     : plan === "enterprise" ? "STRIPE_ENTERPRISE_PRICE_ID"
+    : plan === "ambient" ? "STRIPE_AMBIENT_PRICE_ID"
     : "STRIPE_WEEKLY_PRICE_ID";
   // Free trials: weekly → 10 days, monthly → 10 days, annual → 10 days
   // (Conversion Wave 2, F2 — every self-serve trial is 10 days).
@@ -61,7 +63,11 @@ export async function POST(req: Request) {
   // Stripe reports these subscriptions as `trialing`, which the paywall
   // treats as full Pro access.
   const trialDays = trialDaysForPlan(plan);
-  const priceId = process.env[priceEnv];
+  // Ambient's price id resolves through lib/ambient/access: the env
+  // var wins, the owner's live price id is the fallback, so Ambient
+  // checkout works before the env var is provisioned.
+  const priceId =
+    plan === "ambient" ? ambientPriceId(process.env) : process.env[priceEnv];
   if (!priceId) {
     return NextResponse.json({ error: `${priceEnv} is not set` }, { status: 500 });
   }
@@ -85,8 +91,11 @@ export async function POST(req: Request) {
             status: existing.status,
             currentPeriodEnd: existing.currentPeriodEnd,
             stripeCustomerId: existing.stripeCustomerId,
+            stripePriceId: existing.stripePriceId,
           }
         : null,
+      plan,
+      ambientPriceId: ambientPriceId(process.env),
       ports: {
         listCustomersByEmail: async (email) =>
           (await stripe().customers.list({ email, limit: 10 })).data,
@@ -120,7 +129,9 @@ export async function POST(req: Request) {
   // through return_url — Stripe substitutes {CHECKOUT_SESSION_ID} the same
   // way — so the completion/claim flow is shared, not forked.
   const completionUrl = userId
-    ? `${appUrl()}/?checkout=success`
+    ? plan === "ambient"
+      ? `${appUrl()}/ambient?checkout=success`
+      : `${appUrl()}/?checkout=success`
     : `${appUrl()}/welcome?session_id={CHECKOUT_SESSION_ID}`;
 
   const checkoutSession = await stripe().checkout.sessions.create({
@@ -160,7 +171,10 @@ export async function POST(req: Request) {
         }
       : {
           success_url: completionUrl,
-          cancel_url: `${appUrl()}/pricing?checkout=cancelled`,
+          cancel_url:
+            plan === "ambient"
+              ? `${appUrl()}/ambient-mode?checkout=cancelled`
+              : `${appUrl()}/pricing?checkout=cancelled`,
         }),
   });
 

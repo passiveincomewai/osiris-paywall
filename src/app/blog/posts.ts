@@ -30,6 +30,84 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "worldeye-ambient-mode",
+    title: "WorldEye Ambient: Slow TV From 74,229 Live Cameras",
+    seoTitle: "WorldEye Ambient: Slow TV From Live Cameras | WorldEye Blog",
+    date: "2026-10-26",
+    excerpt:
+      "WorldEye Ambient turns the live camera network into Slow TV — rainy cities, snowy mountains, tropical beaches and computed night views, crossfading on your TV or second monitor. $4.99/month with a 10-day free trial, a free 3-minute demo for everyone, and a relay that can run the show on your own YouTube channel.",
+    seoDescription:
+      "WorldEye Ambient is Slow TV from 74,229 live cameras: four moods, a free 3-minute demo, $4.99/mo with a 10-day trial, and streaming to your own YouTube channel.",
+    tags: ["announcement", "product", "ambient", "slow tv"],
+    sections: [
+      {
+        body: [
+          "WorldEye Ambient is a Slow TV player built from live cameras, and it launches today. Open [Ambient Mode](/ambient) and the map disappears: one live camera fills the screen — a harbour, a ski lift, a famous square — and every 90 seconds it crossfades to somewhere else on Earth. There are four collections, called moods: Rainy Cities, Snowy Mountains, Tropical Beaches, and Night Views, plus an Everywhere shuffle across the whole 74,229-camera network. Ambient costs $4.99 a month with a 10-day free trial, every Pro plan already includes it, and anyone can watch a 3-minute demo free with no signup at all.",
+          "It is the least WorldEye-like thing we have shipped, on purpose. The globe is an instrument — dense, layered, demanding. Ambient is a window. Nothing on it asks for a click, a decision or even your attention; it is built for the television in the corner of the room and the second monitor beside the work, and everything about it, down to the self-hiding controls, follows from that.",
+        ],
+      },
+      {
+        heading: "Why Slow TV, and why live cameras",
+        body: [
+          "Slow TV — the format Norway's NRK made famous with a seven-hour train journey and a coastal voyage that ran for days — works because it is television at the speed of life: long takes, no narration, nothing engineered to interrupt you. People study beside it, work beside it, fall asleep beside it. Our [Slow TV guide](/ambient-tv) tells the whole story, but the short version is that a slow real scene fills a screen the way a window does, and windows do not compete with the room.",
+          "Recorded Slow TV, though, is a loop wearing a costume: watch a beach video long enough and the same wave breaks twice. Live cameras fix that at the source. Every Ambient scene is a real public camera from the same network as our guide to the [best live webcams](/blog/best-live-webcams-world) — the feeds are happening now, they never repeat, and they carry the small surprises recordings edit out: the sudden shower, the first snowplough of the season, the square filling up for a festival nobody announced to you.",
+          "If you have browsed the cameras the way we describe in [watching the world in real time](/blog/world-live-cameras), you already know the pleasure of dropping into a place unplanned. Ambient is that pleasure with the browsing removed: the planet chooses, you just leave the window open.",
+        ],
+      },
+      {
+        heading: "The four moods",
+        body: [
+          "Rainy Cities gathers cameras in the world's famously wet cities — Seattle, Bergen, London, Singapore and their grey, shining streets. It is the classic study backdrop: weather doing quiet work, umbrellas, wet pavement reflecting the lights. Snowy Mountains draws on the ski catalogue — resort cameras, alpine passes, lift lines — so winter is available in July. Tropical Beaches holds beach, island and harbour cameras to the tropical and warm-temperate band, which means somewhere on screen it is always summer.",
+          "Night Views is our favourite, because it is the one mood no playlist can fake: it is computed. Every camera in the catalogue has coordinates, and the sun's position is arithmetic — so Night Views only ever shows cameras where it is actually dark right now. Leave it running past your own midnight and the collection drifts west with the night itself, city lights handing over to city lights around the planet. Put the moods side by side on the [Ambient Mode page](/ambient-mode) and each one links straight into the player.",
+          "One honest note about how the other three are built: there is no live weather feed per camera, so Rainy Cities does not mean it is raining on that street this minute — the moods are curated collections, derived from each camera's place and scene in the catalogue. Night Views is the exception, since darkness is a fact we can compute rather than a label we apply.",
+        ],
+      },
+      {
+        heading: "Built for the screens that are already on",
+        body: [
+          "Ambient's interface is designed to disappear. Three seconds after the show starts, the controls, the cursor — everything but the picture and a small caption naming the place — fades away; move the mouse and it returns. The rotation interval is yours to set, from a brisk 30 seconds to a meditative three minutes per camera, and the keyboard works the way you would hope: space pauses, arrows skip, F goes fullscreen.",
+          "For sound, the player carries an optional ambient music toggle — long, quiet instrumental tracks bundled with the player itself. We licensed nothing and owed nothing: the tracks are from Moby's Long Ambients, released by the artist for free use and held by Wikimedia Commons as public domain, which is the only kind of music a feature like this should ever quietly assume it may use.",
+          "And the demo is honest arithmetic. Free viewers get three minutes, but the clock only runs while a camera is actually playing — pause it, or hit a slow feed, and the clock stops with it. Cameras that fail to load are skipped for free, too. When the three minutes are spent, the picture blurs and the offer is simply there: $4.99 a month after a 10-day free trial, or sign in, because Pro already includes all of this.",
+        ],
+      },
+      {
+        heading: "Or run it on your own YouTube channel",
+        body: [
+          "The part we expect to surprise people: Ambient can leave our site entirely. [Stream to YouTube](/stream-to-youtube) lets Ambient and Pro members run the show on their own channels, around the clock. You save your own YouTube stream key in settings — it is stored encrypted and never displayed again — and run a small relay program on an always-on computer. The relay cycles scenes with a “Live on WorldEye” credit overlay and the camera's name and place, skips dead feeds by itself, and runs for as long as you leave it on.",
+          "One rule governs it, and it matters to us: restreaming is not watching. The relay playlist contains only cameras whose sources are cleared for redistribution — public agencies and registry-cleared feeds. The [volcano webcams](/volcano-webcams) you can watch all day on WorldEye, for example, include observatory and network feeds whose terms allow viewing here but not re-broadcast — so sources like Windy never enter the relay, and the restriction is enforced by the playlist our servers hand out, not by politeness. Creators get a permanent live presence; the sources keep their terms; viewers get a window that never closes.",
+        ],
+      },
+      {
+        heading: "Pricing, and who already has it",
+        body: [
+          "Ambient is a standalone product: $4.99 a month, 10-day free trial, one price, no tiers. It does not include Pro's recording, alerts or intel layers — it is a window, not an instrument. But the inclusion runs the other way: every WorldEye Pro and VIP subscription already has unlimited Ambient at no extra cost, and if that is you, the demo timer will simply never apply. If you use WorldEye to [plan travel with live cameras](/blog/using-live-cameras-to-plan-travel) or to check the passes before a drive, Ambient is the same network in its resting state — and it is on now, at [worldeye.app/ambient](/ambient), three free minutes at a time until you tell it otherwise.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What is WorldEye Ambient Mode?",
+        a: "A Slow TV player at worldeye.app/ambient that plays WorldEye's live public cameras one at a time, full-screen, crossfading every 90 seconds by default. It has four mood collections — Rainy Cities, Snowy Mountains, Tropical Beaches, Night Views — plus an Everywhere shuffle, an optional ambient music track, and self-hiding controls for TVs and second monitors.",
+      },
+      {
+        q: "How much does Ambient cost, and is there a free trial?",
+        a: "Ambient is $4.99/month with a 10-day free trial. Everyone can also watch a 3-minute demo free with no signup; the demo clock counts only time a camera is actually playing. Every WorldEye Pro and VIP plan includes unlimited Ambient at no extra cost.",
+      },
+      {
+        q: "How does Night Views work?",
+        a: "It is computed, not curated: each camera's coordinates are checked against the sun's current position, and only cameras where it is dark right now are shown. The other moods are curated collections by place and scene — Rainy Cities, for instance, means cameras in famously wet cities, not a claim that it is raining on that street this minute.",
+      },
+      {
+        q: "Can I really stream this to my own YouTube channel?",
+        a: "Yes, with Ambient or any Pro plan. You save your own YouTube stream key (stored encrypted, never shown again) and run the free relay program on an always-on computer. Only cameras cleared for redistribution are included — public-agency and registry-cleared feeds; sources like Windy are excluded, and the playlist enforces it server-side.",
+      },
+      {
+        q: "Does Ambient use much bandwidth?",
+        a: "Streams load directly from each camera's source to your browser — WorldEye serves only the small playlist, which is how the cameras already play in the map viewer. Video scenes use whatever bitrate the source publishes; snapshot scenes refresh still frames and are very light.",
+      },
+    ],
+  },
+  {
     slug: "worldeye-translation-133-languages",
     title: "WorldEye Now Translates Into 133 Languages",
     seoTitle: "WorldEye Now Translates Into 133 Languages | WorldEye Blog",

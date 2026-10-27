@@ -62,6 +62,30 @@ export function planTierOf(session: SessionLike | null | undefined): PlanTier {
   return user.subscriptionStatus === "active" ? "pro" : "free";
 }
 
+/* ── WorldEye Ambient: a standalone product, NOT a tier ─────────────
+ * Ambient ($4.99/mo) is sold beside the tiers, not inside them: its
+ * price must never resolve to pro/vip, or a $4.99 Ambient subscriber
+ * would silently hold all of Pro. Ambient access itself is computed
+ * in lib/ambient/access (Ambient price OR any pro/vip tier). The
+ * price-id resolution lives here because this module is the price-id
+ * contract; lib/ambient/access re-exports it. */
+export const AMBIENT_PRICE_ENV = "STRIPE_AMBIENT_PRICE_ID";
+/** The Ambient price the owner created in Stripe (live mode). */
+export const AMBIENT_PRICE_ID_FALLBACK = "price_1UUxUnGfHuTnzrlHH0pNYhJU";
+
+export function ambientPriceId(
+  env: Record<string, string | undefined>,
+): string {
+  return env[AMBIENT_PRICE_ENV] ?? AMBIENT_PRICE_ID_FALLBACK;
+}
+
+export function isAmbientPriceId(
+  priceId: string | null | undefined,
+  env: Record<string, string | undefined>,
+): boolean {
+  return !!priceId && priceId === ambientPriceId(env);
+}
+
 /** Tier from a Stripe price id alone (active subscription assumed). */
 export function planTierForPriceId(
   priceId: string | null | undefined,
@@ -70,6 +94,8 @@ export function planTierForPriceId(
   if (!priceId) return "free";
   if (priceId === env.STRIPE_ANNUAL_PRICE_ID) return "vip";
   if (priceId === env.STRIPE_ENTERPRISE_PRICE_ID) return "vip";
+  // Ambient is a standalone product — it confers no tier (see above).
+  if (isAmbientPriceId(priceId, env)) return "free";
   return "pro";
 }
 

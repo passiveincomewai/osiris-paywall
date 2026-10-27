@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { normalizeEmail, isValidEmail, verifyPassword } from "@/lib/password-auth";
 import { subscriptionStatusFromRow } from "@/lib/subscription-status";
 import { planTierForRow, type PlanTier } from "@/lib/plan-tier";
+import { ambientAccessForRow } from "@/lib/ambient/access";
 import { getEffectiveEntitlement, maxTier } from "@/lib/team/entitlement";
 
 /* ------------------------------------------------------------------ */
@@ -20,6 +21,10 @@ declare module "next-auth" {
       subscriptionStatus: string;
       /** Plan tier (lib/plan-tier): "free" | "pro" | "vip" — annual is VIP. */
       planTier: string;
+      /** WorldEye Ambient access (lib/ambient/access): an active
+       * Ambient-price subscription, or any pro/vip tier. Resolved on
+       * the same claims pass/TTL as planTier. */
+      ambientAccess?: boolean;
       /** True when the account has 2FA on and this session hasn't
        * passed the step-up challenge yet (item 2). Middleware bounces
        * app surfaces to /auth/totp while this is true. */
@@ -32,6 +37,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     subscriptionStatus?: string;
     planTier?: string;
+    ambientAccess?: boolean;
     subscriptionCheckedAt?: number;
     totpEnabled?: boolean;
     totpVerified?: boolean;
@@ -70,7 +76,7 @@ const SUBSCRIPTION_TTL_MS = 60_000;
  */
 async function resolveSubscriptionClaims(
   userId: string,
-): Promise<{ status: string; tier: string }> {
+): Promise<{ status: string; tier: string; ambientAccess: boolean }> {
   const sub = await db.subscription.findUnique({ where: { userId } });
   const ownTier: PlanTier = planTierForRow(sub, process.env);
   let tier: PlanTier = ownTier;
@@ -84,6 +90,14 @@ async function resolveSubscriptionClaims(
   return {
     status: subscriptionStatusFromRow(sub),
     tier,
+    // Ambient access rides the same claims: the member's own row
+    // (Ambient price → access; a tier price → access via the tier
+    // rule) OR an effective pro/vip tier granted by a team — a
+    // team-granted Pro member bypasses the Ambient gate like any Pro.
+    ambientAccess:
+      ambientAccessForRow(sub, process.env) ||
+      tier === "pro" ||
+      tier === "vip",
   };
 }
 
@@ -144,10 +158,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Refresh on sign-in, on explicit session update(), when the cache is
       // stale, or when either claim is missing entirely (a token minted
       // before planTier existed must heal on its next session fetch).
-      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier) {
+      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined) {
         const claims = await resolveSubscriptionClaims(userId);
         token.subscriptionStatus = claims.status;
         token.planTier = claims.tier;
+        token.ambientAccess = claims.ambientAccess;
         token.subscriptionCheckedAt = now;
       }
 
@@ -190,6 +205,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.sub;
         session.user.subscriptionStatus = token.subscriptionStatus ?? "none";
         session.user.planTier = token.planTier ?? "free";
+        session.user.ambientAccess = token.ambientAccess ?? false;
         session.user.totpPending = !!(token.totpEnabled && !token.totpVerified);
       }
       return session;

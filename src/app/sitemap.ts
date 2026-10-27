@@ -150,6 +150,15 @@ const SEO_PAGES_EVENTS_2026 = [
   "/starship-flight-15",
 ];
 
+// WorldEye Ambient (2026-10-26): the product landing, the Slow TV
+// guide and the Stream to YouTube page. The /ambient player itself
+// is an app surface (noindex) and stays out of the sitemap.
+const SEO_PAGES_AMBIENT = [
+  "/ambient-mode",
+  "/ambient-tv",
+  "/stream-to-youtube",
+];
+
 // Live event walls (2026-10-24): the /live-events hub plus one page per
 // wall in src/data/event-walls.ts — derived from the same config the
 // pages' generateStaticParams reads, so the two can never drift.
@@ -334,6 +343,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     ...SEO_PAGES_WAVE12.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_AMBIENT.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,

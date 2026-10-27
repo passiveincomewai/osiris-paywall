@@ -8,6 +8,7 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
     links: [
       ["Live Map", "/"],
       ["Features", "/features"],
+      ["Ambient Mode", "/ambient-mode"],
       ["Pricing", "/pricing"],
       ["Live Cameras", "/cameras"],
       ["Cameras by Country", "/cameras/countries"],

@@ -1,0 +1,1 @@
+{"description":"WorldEye Ambient relay: restreams redistribution-cleared live cameras to your own YouTube channel. Runs on your always-on machine.","engines":{"node":">=18"},"main":"relay.mjs","name":"worldeye-ambient-relay","private":true,"scripts":{"start":"node relay.mjs"},"type":"module","version":"1.0.0"}

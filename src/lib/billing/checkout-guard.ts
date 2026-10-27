@@ -40,6 +40,10 @@ export interface GuardDbSubscription {
   status: string;
   currentPeriodEnd: Date;
   stripeCustomerId: string | null;
+  /** The live row's price — lets rule 1 tell a standalone-product
+   *  subscription (Ambient) apart from a tier plan. Optional: rows
+   *  described without it keep the pre-Ambient behaviour exactly. */
+  stripePriceId?: string | null;
 }
 
 export interface GuardStripeCustomer {
@@ -89,12 +93,35 @@ export async function resolveCheckoutGuard(input: {
   dbSub: GuardDbSubscription | null;
   ports: CheckoutGuardPorts;
   now?: Date;
+  /** The plan being bought, when the caller knows it. Only used for
+   *  the Ambient carve-out in rule 1. */
+  plan?: string;
+  /** Resolved Ambient price id (lib/plan-tier), for the same. */
+  ambientPriceId?: string;
 }): Promise<CheckoutGuardDecision> {
   const now = input.now ?? new Date();
   const { dbSub } = input;
 
   // Rule 1 — a live plan in our own DB blocks, full stop.
   if (dbSubscriptionIsLive(dbSub, now)) {
+    /* Carve-out (WorldEye Ambient): Ambient is a standalone product,
+       not a tier, and a member's single Subscription row can hold it
+       while they hold no tier plan. Blocking them from ever buying
+       Pro would strand every Ambient subscriber, so an ambient-only
+       live row does not block a NON-ambient purchase — the checkout
+       proceeds on the same Stripe customer, and the new subscription
+       replaces the row via the webhook (the member should cancel the
+       Ambient sub; the manage surface is where that lives). The
+       reverse needs no carve-out: a tier holder already has Ambient
+       access, and an ambient holder re-buying ambient is a duplicate
+       — both stay blocked. */
+    const existingIsAmbientOnly =
+      !!input.ambientPriceId &&
+      !!dbSub?.stripePriceId &&
+      dbSub.stripePriceId === input.ambientPriceId;
+    if (existingIsAmbientOnly && input.plan && input.plan !== "ambient") {
+      return { kind: "proceed", customerId: dbSub?.stripeCustomerId ?? undefined };
+    }
     return { kind: "blocked", reason: "db_subscription" };
   }
 

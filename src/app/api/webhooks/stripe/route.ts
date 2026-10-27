@@ -17,6 +17,7 @@ import { getTeamPricingConfig } from "@/lib/team/pricing-config";
 import { findBaseItem, reconcileOrgSeatsFromSubscription } from "@/lib/team/seats";
 import { recordTeamEvent } from "@/lib/team/analytics";
 import { sendPaymentFailedRecovery } from "@/lib/billing/dunning";
+import { isAmbientPriceId } from "@/lib/plan-tier";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -160,7 +161,7 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<string | unde
   // (a second real sub for the same user keeps the existing behavior).
   const existingForUser = await db.subscription.findUnique({
     where: { userId },
-    select: { stripeSubscriptionId: true },
+    select: { stripeSubscriptionId: true, stripePriceId: true },
   });
   if (
     existingForUser &&
@@ -168,6 +169,39 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<string | unde
     existingForUser.stripeSubscriptionId !== sub.id
   ) {
     await db.subscription.delete({ where: { userId } });
+  }
+
+  // Ambient upgrade yield (owner-approved 2026-10-26): Ambient is a
+  // standalone $4.99 subscription, NOT a tier — but Subscription.userId
+  // is @unique, so one row per user. When a TIER subscription syncs for
+  // a user whose row is their Ambient subscription, the Ambient sub is
+  // cancelled at Stripe (Ambient is included in every Pro/VIP tier, so
+  // the buyer loses nothing) and its row yields the slot. The reverse
+  // (an Ambient sub syncing over a tier row — possible only if that
+  // cancel failed) is a no-op: the tier row wins and the orphaned
+  // Ambient sub's events must not clobber it.
+  if (existingForUser && existingForUser.stripeSubscriptionId !== sub.id) {
+    const existingIsAmbient = isAmbientPriceId(existingForUser.stripePriceId, process.env);
+    const incomingIsAmbient = isAmbientPriceId(data.stripePriceId, process.env);
+    if (existingIsAmbient && !incomingIsAmbient) {
+      try {
+        await stripe().subscriptions.cancel(existingForUser.stripeSubscriptionId);
+        console.log(
+          `[stripe-webhook] cancelled Ambient sub ${existingForUser.stripeSubscriptionId} for user ${userId} (upgraded to ${sub.id})`,
+        );
+      } catch (e) {
+        console.error(
+          `[stripe-webhook] failed to cancel Ambient sub ${existingForUser.stripeSubscriptionId} on upgrade:`,
+          e,
+        );
+      }
+      await db.subscription.delete({ where: { userId } });
+    } else if (incomingIsAmbient && !existingIsAmbient) {
+      console.log(
+        `[stripe-webhook] ignoring Ambient sub ${sub.id} for user ${userId}: a tier subscription already holds the row`,
+      );
+      return userId;
+    }
   }
 
   await db.subscription.upsert({

@@ -14,13 +14,17 @@
  * users get full Pro access and are never charged during the trial
  * (checkout collects the card up front via payment_method_collection).
  */
-export type BillingPlan = "weekly" | "monthly" | "annual" | "enterprise";
+export type BillingPlan = "weekly" | "monthly" | "annual" | "enterprise" | "ambient";
 
 export const TRIAL_DAYS: Record<BillingPlan, number> = {
   weekly: 10,
   monthly: 10,
   annual: 10,
   enterprise: 0,
+  // WorldEye Ambient (the standalone $4.99/mo Slow-TV product): the
+  // owner's spec gives it the same 10-day trial as the other
+  // self-serve plans. Ambient is NOT a tier — see lib/ambient/access.
+  ambient: 10,
 };
 
 /** Trial days for a plan name; unknown plans get no trial. */

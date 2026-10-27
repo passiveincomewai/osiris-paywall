@@ -77,13 +77,28 @@ describe("checkoutRequestBody", () => {
 });
 
 describe("CHECKOUT_PLAN_SUMMARIES", () => {
-  it("covers all four plans, enterprise included", () => {
+  it("covers all five plans, enterprise and ambient included", () => {
     expect(Object.keys(CHECKOUT_PLAN_SUMMARIES).sort()).toEqual([
+      "ambient",
       "annual",
       "enterprise",
       "monthly",
       "weekly",
     ]);
+  });
+
+  it("describes the ambient plan with its trial", () => {
+    expect(CHECKOUT_PLAN_SUMMARIES.ambient).toEqual({
+      plan: "ambient",
+      name: "WorldEye Ambient",
+      price: "$4.99",
+      per: "/month",
+      perDay: "$0.17",
+      note: "10 days free, then billed monthly · cancel anytime",
+      trialLabel: "10 days free",
+      trialDays: 10,
+    });
+    expect(checkoutPlanSummary("ambient")?.plan).toBe("ambient");
   });
 
   it("reuses the trial plans' pricing copy untouched", () => {
