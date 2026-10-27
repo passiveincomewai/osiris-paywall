@@ -85,7 +85,7 @@ export function Quotes({ s, cites, onSelect }: { s: RunState; cites: Citation[] 
               <span className="w-px h-2.5 bg-[var(--border-secondary)] flex-shrink-0" />
               <TypeIcon k={`c:${c.source}`} subtype={src?.kind} className="w-2.5 h-2.5 flex-shrink-0" />
               <button onClick={e => { e.stopPropagation(); onSelect(`c:${c.source}`); }} className="truncate hover:text-[var(--text-primary)]">{sourceLabel(src, c.source)}</button>
-              <span className="flex-shrink-0 opacity-70">[{c.source}]</span>
+              <span className="flex-shrink-0">[{c.source}]</span>
               <SourceLink url={src?.url} />
               <span className="ml-auto flex-shrink-0"><Verbatim exact={c.exact} /></span>
             </span>

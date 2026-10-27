@@ -263,7 +263,7 @@ export default function EnterpriseClient() {
                   : "border-white/15 text-white/75 hover:border-white/35"
               }`}
             >
-              {c.name} <span className="opacity-60">· {c.itemCount}</span>
+              {c.name} <span>· {c.itemCount}</span>
             </button>
           ))}
           {collections.length === 0 && <p className="text-sm text-white/40">No collections yet — create your first below.</p>}

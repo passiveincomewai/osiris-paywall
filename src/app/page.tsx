@@ -2660,12 +2660,12 @@ export default function Dashboard() {
 
         <span className="hidden lg:inline-flex items-center gap-1" title="Number of active data layers">
           <span className="text-[var(--cyan-primary)] font-bold">{Object.values(activeLayers).filter(Boolean).length}</span>
-          <span className="opacity-60">LAYERS</span>
+          <span>LAYERS</span>
         </span>
 
         <span className="hidden lg:inline-flex items-center gap-1" title="Tracked entities on map">
           <ActiveEntityCount data={data} />
-          <span className="opacity-60">ENTITIES</span>
+          <span>ENTITIES</span>
         </span>
 
         {spaceWeather && <span className="hidden lg:inline" title={spaceWeather.kp_index == null ? 'Geomagnetic Storm Index — no reading from NOAA' : `Geomagnetic Storm Index — Kp${spaceWeather.kp_index}`}>SOLAR: <span style={{ color: spaceWeather.storm_color, fontWeight: 700 }}>{spaceWeather.kp_index == null ? 'N/A' : `Kp${spaceWeather.kp_index}`}</span></span>}
@@ -3126,7 +3126,7 @@ export default function Dashboard() {
       {/* ── BOTTOM CURSOR INFO (desktop) ── */}
       {!isMobile && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.6)} className="desktop-only absolute bottom-8 z-[200] pointer-events-auto" style={{ left: '72px' }}>
-          <div className="flex items-center gap-5 text-[9px] font-mono tracking-widest text-[var(--text-muted)] opacity-60">
+          <div className="flex items-center gap-5 text-[9px] font-mono tracking-widest text-[var(--text-muted)]">
             <div className="flex gap-2 items-center" title="Cursor coordinates (hover over map)">
               <span>CURSOR</span>
               <span ref={coordsDisplayRef} className="text-[var(--gold-primary)] font-bold tabular-nums">—</span>
@@ -3308,8 +3308,8 @@ export default function Dashboard() {
       <div data-hud><GlobalStatusBar revealed={revealed} /></div>
 
       {/* Shortcut hint — more visible */}
-      <div className="desktop-only absolute bottom-[26px] right-5 z-[200] pointer-events-none text-[9px] font-mono text-[var(--text-muted)] opacity-50 tracking-widest" title="Press ? to see all keyboard shortcuts">
-        Press <span className="text-[var(--gold-primary)] opacity-80">?</span> for shortcuts · <span className="text-[var(--gold-primary)] opacity-80">F</span> fullscreen · <span className="text-[var(--gold-primary)] opacity-80">R</span> reset view
+      <div className="desktop-only absolute bottom-[26px] right-5 z-[200] pointer-events-none text-[9px] font-mono text-[var(--text-muted)] tracking-widest" title="Press ? to see all keyboard shortcuts">
+        Press <span className="text-[var(--gold-primary)]">?</span> for shortcuts · <span className="text-[var(--gold-primary)]">F</span> fullscreen · <span className="text-[var(--gold-primary)]">R</span> reset view
       </div>
 
 

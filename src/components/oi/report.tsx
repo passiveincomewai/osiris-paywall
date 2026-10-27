@@ -172,7 +172,7 @@ export function ReportBody({ s, runId, selected, onSelect }: { s: RunState; runI
                             className={`inline-flex items-center gap-1 max-w-[220px] h-[22px] px-1.5 rounded border text-[10.5px] transition-colors ${key === selected ? 'border-[var(--border-active)] text-[var(--gold-light)]' : 'border-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:border-[var(--border-primary)]'}`}>
                             <TypeIcon k={key} subtype={c?.kind} className="w-2.5 h-2.5 flex-shrink-0" />
                             <span className="truncate">{sourceLabel(c, id)}</span>
-                            <span className="font-mono opacity-70">[{id}]</span>
+                            <span className="font-mono">[{id}]</span>
                           </button>
                         );
                       })}
@@ -203,7 +203,7 @@ export function ReportBody({ s, runId, selected, onSelect }: { s: RunState; runI
                     <span className="mt-1 flex items-center gap-2 text-[10px] font-mono tracking-[0.04em] text-[var(--text-muted)]">
                       <TypeIcon k={key} subtype={c?.kind} className="w-2.5 h-2.5 flex-shrink-0" />
                       <span className="truncate">{sourceLabel(c, row.source)}</span>
-                      <span className="opacity-70">[{row.source}]</span>
+                      <span>[{row.source}]</span>
                       <span className="flex-shrink-0">· {row.quoted}× by {row.actors.length}</span>
                     </span>
                   </button>

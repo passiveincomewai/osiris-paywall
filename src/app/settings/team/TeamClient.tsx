@@ -268,7 +268,7 @@ export default function TeamClient() {
                       : "border-white/15 text-white/70 hover:bg-white/5"
                   }`}
                 >
-                  {o.name} <span className="opacity-60 font-normal">· {o.role}</span>
+                  {o.name} <span className="font-normal">· {o.role}</span>
                 </button>
               ))}
             </div>

@@ -293,7 +293,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="text-[11px] md:text-[12px] font-mono font-bold tracking-widest truncate text-white uppercase" style={{ textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>{camera.name}</h3>
-                    <p className="text-[9px] md:text-[9px] font-mono text-[var(--gold-primary)] uppercase tracking-wider opacity-80">{camera.city}, {camera.country} • SOURCE: {camera.source}</p>
+                    <p className="text-[9px] md:text-[9px] font-mono text-[var(--gold-primary)] uppercase tracking-wider">{camera.city}, {camera.country} • SOURCE: {camera.source}</p>
                   </div>
                 </div>
                 

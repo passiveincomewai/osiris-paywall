@@ -941,7 +941,7 @@ export default function LiveAlerts({ data, onLocate, onWatchFeed, onRefresh, pin
             onClick={() => selectTab(t.id)}
             className={`flex-1 rounded px-1.5 py-1 text-[10px] font-mono tracking-wider transition-all ${tab === t.id ? 'bg-[var(--cyan-primary)]/15 text-[var(--cyan-primary)] border border-[var(--cyan-primary)]/45' : 'text-[#8A8880] border border-transparent hover:text-[#E8E6E0] hover:bg-[#2A2A28]'}`}
           >
-            {t.label} <span className="opacity-60 tabular-nums">{t.count}</span>
+            {t.label} <span className="tabular-nums">{t.count}</span>
           </button>
         ))}
       </div>
@@ -1009,7 +1009,7 @@ export default function LiveAlerts({ data, onLocate, onWatchFeed, onRefresh, pin
               >
                 <span className="h-1.5 w-1.5 rounded-full" style={{ background: dot }} />
                 {t.label}
-                <span className="tabular-nums opacity-60">{t.count}</span>
+                <span className="tabular-nums">{t.count}</span>
               </button>
             );
           })}
@@ -1071,7 +1071,7 @@ export default function LiveAlerts({ data, onLocate, onWatchFeed, onRefresh, pin
       {grouped.map(group => (
         <section key={group.label}>
           <h5 className={`sticky top-0 z-10 -mx-1 mb-1.5 px-1 py-1 text-[8.5px] font-mono tracking-widest text-[#5C5A54] backdrop-blur-md ${maximized ? 'bg-[#0a0a09]/90' : 'bg-[#08080c]/80'}`}>
-            {group.label} <span className="opacity-60">· {group.units.reduce((n, u) => n + (u.kind === 'statement' ? u.items.length : 1), 0)}</span>
+            {group.label} <span>· {group.units.reduce((n, u) => n + (u.kind === 'statement' ? u.items.length : 1), 0)}</span>
           </h5>
           <div className={maximized ? 'grid gap-2 grid-cols-1 xl:grid-cols-2 items-start' : 'space-y-2'}>
             {group.units.map(unit => {

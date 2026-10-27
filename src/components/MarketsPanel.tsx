@@ -430,7 +430,7 @@ export default function MarketsPanel({ data, spaceWeather }: MarketsPanelProps) 
           >
             <Icon className="w-3 h-3 shrink-0" />
             <span className="truncate">{f.code}</span>
-            <span className="ml-auto text-[8px] opacity-50">{f.key}</span>
+            <span className="ml-auto text-[8px]">{f.key}</span>
           </button>
         );
       })}

@@ -579,7 +579,7 @@ export default function ArcGISPanel({
 
         {/* Empty state */}
         {!searching && results.length === 0 && !error && (
-          <div className="flex flex-col items-center justify-center py-12 gap-3 opacity-60">
+          <div className="flex flex-col items-center justify-center py-12 gap-3">
             <div className="relative">
               <Database className="w-8 h-8 text-[var(--text-muted)] opacity-50" />
               <Search className="w-4 h-4 text-[#D4AF37] absolute -bottom-1 -right-1" />

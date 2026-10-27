@@ -920,7 +920,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
           aria-expanded={locked ? trialLayerKey === layer.key : undefined}
           aria-label={locked ? `${layer.label} — premium` : layer.label}
           title={locked ? 'Weekly Pass required — start a free trial' : dormant ? 'Turn the layer above on to use this' : undefined}
-          className={`relative w-full flex items-center gap-3 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/40 ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-40' : ''}`}
+          className={`relative w-full flex items-center gap-3 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/40 ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-70' : ''}`}
         >
           {layer.parent && <SubLayerStem />}
           {locked ? (

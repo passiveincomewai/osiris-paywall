@@ -379,11 +379,11 @@ export default function WorldRemote({onClose,onPlaceOnMap}:{onClose?:()=>void,on
             {view==='scan'&&(
               <div className="flex-1 overflow-y-auto styled-scrollbar px-2.5 py-2.5 space-y-2">
                 {devices.length===0&&!scanning&&btOk&&(
-                  <div className="flex flex-col items-center justify-center py-8 opacity-40">
+                  <div className="flex flex-col items-center justify-center py-8">
                     <Crosshair className="w-8 h-8 text-[var(--cyan-primary)] mb-2"/>
                     <p className="text-[10px] font-mono text-[var(--text-muted)] text-center tracking-wider">
                       Hit <span className="text-[var(--cyan-primary)]">SCAN</span> to acquire targets<br/>
-                      <span className="text-[9px] opacity-50">Auto-vacuum · GPS-tagged · Vault</span>
+                      <span className="text-[9px]">Auto-vacuum · GPS-tagged · Vault</span>
                     </p>
                   </div>
                 )}
@@ -441,7 +441,7 @@ export default function WorldRemote({onClose,onPlaceOnMap}:{onClose?:()=>void,on
                           {dev.gattDump.map((g,i)=><div key={i} className="px-2 py-1 flex items-start gap-1.5 hover:bg-white/[0.02]" style={{borderBottom:'1px solid rgba(255,255,255,0.02)'}}><span className="text-[9px] font-mono text-[var(--text-muted)] shrink-0 w-[50px] truncate">{g.svc}</span><span className="text-[9px] font-mono shrink-0 w-[50px] truncate" style={{color:dev.color}}>{g.char}</span><span className="text-[9px] font-mono text-[var(--text-primary)] flex-1 truncate">{g.value}</span></div>)}
                         </div></div>}
 
-                        <div className="text-[9px] font-mono text-[var(--text-muted)] mb-2.5 opacity-20 tracking-wider">{dev.id}</div>
+                        <div className="text-[9px] font-mono text-[var(--text-muted)] mb-2.5 tracking-wider">{dev.id}</div>
 
                         {/* Actions */}
                         <div className="flex gap-1.5 flex-wrap">
@@ -465,7 +465,7 @@ export default function WorldRemote({onClose,onPlaceOnMap}:{onClose?:()=>void,on
                             <AnimatePresence>{exSvc===svc.uuid&&(<motion.div initial={{height:0}} animate={{height:'auto'}} exit={{height:0}} className="overflow-hidden"><div className="pl-3 pr-1 py-1 space-y-1">{svc.chars.map(ch=>{const ck=`${svc.uuid}/${ch.uuid}`;const fl=[ch.p.r&&'R',ch.p.w&&'W',ch.p.wn&&'Wn',ch.p.n&&'N',ch.p.i&&'I'].filter(Boolean).join('·');const wV=wIn[ck]||'';const wOk=!wV||validHex(wV);return(
                               <div key={ch.uuid} className="p-2 rounded-lg" style={{background:'rgba(0,0,0,0.25)',borderLeft:`2px solid ${dev.color}12`}}>
                                 <div className="flex items-center gap-1 mb-1"><span className="text-[9px] font-mono font-bold text-[var(--text-primary)] truncate flex-1">{ch.name}</span><span className="text-[9px] font-mono px-1 py-0.5 rounded" style={{background:`${dev.color}06`,color:`${dev.color}80`}}>{fl}</span></div>
-                                {ch.value&&<div className="flex items-center gap-1 mb-1"><div className="flex-1 rounded px-1.5 py-1 min-w-0" style={{background:'rgba(0,0,0,0.3)'}}><div className={`text-[9px] font-mono truncate ${ch.notifying?'text-[#00FF88]':'text-[var(--alert-green)]'}`}>{ch.value}</div>{ch.hex&&ch.hex!==ch.value&&<div className="text-[9px] font-mono text-[var(--text-muted)] truncate mt-0.5 opacity-40">{ch.hex}</div>}</div><button onClick={()=>{navigator.clipboard?.writeText(ch.value||'');setCopied(ck);setTimeout(()=>setCopied(null),1500);}} className="p-0.5 rounded hover:bg-white/5 shrink-0">{copied===ck?<Check className="w-2 h-2 text-[var(--alert-green)]"/>:<Copy className="w-2 h-2 text-[var(--text-muted)]"/>}</button></div>}
+                                {ch.value&&<div className="flex items-center gap-1 mb-1"><div className="flex-1 rounded px-1.5 py-1 min-w-0" style={{background:'rgba(0,0,0,0.3)'}}><div className={`text-[9px] font-mono truncate ${ch.notifying?'text-[#00FF88]':'text-[var(--alert-green)]'}`}>{ch.value}</div>{ch.hex&&ch.hex!==ch.value&&<div className="text-[9px] font-mono text-[var(--text-muted)] truncate mt-0.5">{ch.hex}</div>}</div><button onClick={()=>{navigator.clipboard?.writeText(ch.value||'');setCopied(ck);setTimeout(()=>setCopied(null),1500);}} className="p-0.5 rounded hover:bg-white/5 shrink-0">{copied===ck?<Check className="w-2 h-2 text-[var(--alert-green)]"/>:<Copy className="w-2 h-2 text-[var(--text-muted)]"/>}</button></div>}
                                 <div className="flex items-center gap-1 flex-wrap">
                                   {ch.p.r&&<button onClick={async()=>{if(!ch.char)return;try{const v=await ch.char.readValue();const d=decode(v);setGattSvcs(sv=>sv.map(s=>s.uuid===svc.uuid?{...s,chars:s.chars.map(c=>c.uuid===ch.uuid?{...c,value:d.text,hex:d.hex}:c)}:s));log('READ',dev.name,`${ch.name}: ${d.text.slice(0,50)}`,d.hex,v.byteLength);}catch{log('ERROR',dev.name,`Read: ${ch.name}`);}}} className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-mono" style={{background:`${dev.color}06`,color:dev.color}}><Eye className="w-2 h-2"/>READ</button>}
                                   {ch.p.n&&<button onClick={()=>toggleN(svc.uuid,ch,dev.name)} className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-mono" style={{background:ch.notifying?'rgba(0,255,136,0.06)':'rgba(255,255,255,0.02)',color:ch.notifying?'#00FF88':'var(--text-muted)'}}>{ch.notifying?<Bell className="w-2 h-2"/>:<BellOff className="w-2 h-2"/>}{ch.notifying?'LIVE':'SUB'}</button>}
@@ -490,7 +490,7 @@ export default function WorldRemote({onClose,onPlaceOnMap}:{onClose?:()=>void,on
                     <div className="flex items-center gap-1.5"><Globe className="w-3 h-3 text-[#80DEEA]"/><span className="text-[9px] font-mono font-bold tracking-[0.12em] text-[var(--text-primary)]">NETWORK RECON</span></div>
                     <motion.button whileTap={{scale:0.95}} onClick={runNetRecon} disabled={netLoading} className="px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider disabled:opacity-30" style={{background:'rgba(128,222,234,0.06)',color:'#80DEEA',border:'1px solid rgba(128,222,234,0.08)'}}>{netLoading?'...':'PROBE'}</motion.button>
                   </div>
-                  {!netIntel&&<div className="px-3 py-4 text-center"><span className="text-[9px] font-mono text-[var(--text-muted)] opacity-30">Tap PROBE to scan local network</span></div>}
+                  {!netIntel&&<div className="px-3 py-4 text-center"><span className="text-[9px] font-mono text-[var(--text-muted)]">Tap PROBE to scan local network</span></div>}
                   {netIntel&&<div className="p-2.5 space-y-2">
                     {netIntel.localIPs.length>0&&<div><div className="text-[9px] font-mono text-[var(--text-muted)] tracking-wider mb-1 font-bold">LOCAL IPs</div>{netIntel.localIPs.map((ip,i)=><div key={i} className="text-[10px] font-mono text-[#80DEEA] pl-2">{ip}</div>)}</div>}
                     {netIntel.type&&<div className="flex gap-3">{[{l:'TYPE',v:netIntel.type},{l:'DOWN',v:netIntel.downlink!=null?`${netIntel.downlink}Mbps`:undefined},{l:'RTT',v:netIntel.rtt!=null?`${netIntel.rtt}ms`:undefined}].filter(x=>x.v).map(x=><div key={x.l}><div className="text-[9px] font-mono text-[var(--text-muted)] tracking-wider">{x.l}</div><div className="text-[10px] font-mono text-[var(--text-primary)] font-bold">{x.v}</div></div>)}</div>}
@@ -523,7 +523,7 @@ export default function WorldRemote({onClose,onPlaceOnMap}:{onClose?:()=>void,on
                   </div>
                 </div>
                 <div ref={logEl} className="flex-1 overflow-y-auto styled-scrollbar font-mono" style={{background:'#020406'}}>
-                  {pkts.length===0?<div className="flex items-center justify-center h-full opacity-15"><span className="text-[9px] font-mono text-[var(--text-muted)] tracking-wider">Scan to see packets...</span></div>
+                  {pkts.length===0?<div className="flex items-center justify-center h-full"><span className="text-[9px] font-mono text-[var(--text-muted)] tracking-wider">Scan to see packets...</span></div>
                   :<div className="py-0.5">{pkts.map(p=>{const oc=OP_CLR[p.op]||'#90A4AE';return(<div key={p.id} className="px-2 py-[2px] flex items-start hover:bg-white/[0.015] border-b border-white/[0.01] group" style={{fontSize:10,lineHeight:'16px'}}><span className="text-white/8 shrink-0 w-[24px] tabular-nums text-right pr-1.5">{p.id}</span><span className="text-[var(--text-muted)]/30 shrink-0 w-[58px] tabular-nums">{fts(p.ts)}</span><span className="shrink-0 font-bold tracking-wider w-[44px]" style={{color:oc}}>{p.op}</span><span className="text-[var(--cyan-primary)]/40 shrink-0 truncate w-[55px]">{p.src}</span><span className="text-[var(--text-secondary)] flex-1 truncate">{p.msg}</span>{p.len!=null&&<span className="text-[var(--text-muted)]/12 ml-1 shrink-0 tabular-nums">{p.len}B</span>}</div>);})}</div>}
                 </div>
               </div>

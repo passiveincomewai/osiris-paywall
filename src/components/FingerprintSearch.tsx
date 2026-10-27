@@ -379,7 +379,7 @@ function Toggle({ on, label, count, color, onClick }: { on: boolean; label: stri
         {on && <span className="w-1.5 h-1.5 rounded-[1px]" style={{ background: color }} />}
       </span>
       {label}
-      <span className="opacity-70">{count}</span>
+      <span>{count}</span>
     </button>
   );
 }
@@ -616,7 +616,7 @@ export default function FingerprintSearch({ fp, isFullScreen }: { fp: Fingerprin
                 className="px-1.5 py-0.5 rounded text-[9px] font-mono transition-colors"
                 style={{ color: on ? color : 'var(--text-muted)', background: on ? `${color}1a` : 'transparent', border: `1px solid ${on ? `${color}55` : 'var(--border-primary)'}` }}
               >
-                {category} <span className="opacity-70">{count}</span>
+                {category} <span>{count}</span>
               </button>
             );
           })}

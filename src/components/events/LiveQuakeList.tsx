@@ -124,7 +124,7 @@ export default function LiveQuakeList() {
               <div
                 className={`flex flex-col items-center justify-center rounded-2xl border px-3 py-2 min-w-[76px] ${magClasses(q.magnitude ?? 0)}`}
               >
-                <span className="text-[10px] font-mono tracking-widest opacity-70">MAG</span>
+                <span className="text-[10px] font-mono tracking-widest">MAG</span>
                 <span className="text-2xl font-bold leading-none">
                   {(q.magnitude ?? 0).toFixed(1)}
                 </span>
