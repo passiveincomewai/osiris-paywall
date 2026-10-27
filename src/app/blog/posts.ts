@@ -3141,7 +3141,7 @@ export const POSTS: BlogPost[] = [
         heading: "The tiers, plainly",
         body: [
           "Free covers the globe, the cameras, flights, satellites and weather with no signup. Pro adds the toolkit, satellite view, traffic, advanced search and recording. VIP Pro adds alerts, timelapse, the intel layers and the doubled recording cap for $74.99 a year — and every first charge on any plan carries the same 7-day money-back guarantee. Compare them side by side on the [pricing page](/pricing), and manage or upgrade an existing plan from [your subscription page](/settings/subscription).",
-          "Every tier can be tried before it is bought. Weekly and monthly plans carry a 10-day free trial; VIP Pro carries a 10-day trial, so the alerts, timelapse and intel layers can run against your own cameras and your own questions before the first charge ever lands.",
+          "Every tier can be tried before it is bought. The weekly plan carries a 3-day free trial; the monthly plan and VIP Pro carry a 10-day trial, so the alerts, timelapse and intel layers can run against your own cameras and your own questions before the first charge ever lands.",
         ],
       },
     ],

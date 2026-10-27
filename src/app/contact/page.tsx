@@ -98,7 +98,7 @@ const TOPICS = [
   },
   {
     title: "Billing, trials & the guarantee",
-    body: "Questions about the weekly ($7.99), monthly ($13.99) or VIP Pro annual ($74.99) plans, free trials (10 days on weekly and monthly, 10 days on annual), receipts, or claiming the 7-day money-back guarantee on your first charge. This inbox is where guarantee claims are made.",
+    body: "Questions about the weekly ($7.99), monthly ($13.99) or VIP Pro annual ($74.99) plans, free trials (3 days on weekly, 10 days on monthly and annual), receipts, or claiming the 7-day money-back guarantee on your first charge. This inbox is where guarantee claims are made.",
   },
   {
     title: "Camera & data reports",

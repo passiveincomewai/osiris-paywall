@@ -92,8 +92,8 @@ export default function TermsPage() {
             applicable taxes. Prices are in USD unless stated otherwise at checkout.
           </p>
           <p>
-            Some plans include a free trial — 10 days on the weekly plan, 10 days on the
-            VIP Pro plan. Your payment method is collected up front but isn&apos;t charged
+            Some plans include a free trial — 3 days on the weekly plan, 10 days on the
+            monthly plan and 10 days on the VIP Pro plan. Your payment method is collected up front but isn&apos;t charged
             until the trial ends. Cancel before the trial ends and you pay nothing.
           </p>
           <p>

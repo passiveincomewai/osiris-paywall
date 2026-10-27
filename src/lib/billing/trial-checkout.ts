@@ -46,11 +46,11 @@ export interface TrialPlanOption {
   price: string;
   per: string;
   perDay: string;
-  /** Verbatim from /pricing's plan card, e.g. "10 days free, then billed weekly · cancel anytime". */
+  /** Verbatim from /pricing's plan card, e.g. "3 days free, then billed weekly · cancel anytime". */
   note: string;
-  /** Verbatim CTA from /pricing's plan card, e.g. "Start 10-Day Free Trial". */
+  /** Verbatim CTA from /pricing's plan card, e.g. "Start 3-Day Free Trial". */
   cta: string;
-  /** Trial badge text from /pricing's plan card, e.g. "10 days free". */
+  /** Trial badge text from /pricing's plan card, e.g. "3 days free". */
   trialLabel: string;
   /** Resolved through trialDaysForPlan — never restated. */
   trialDays: number;

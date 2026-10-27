@@ -424,7 +424,7 @@ export default function FeaturesPage() {
           </div>
           <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/40">
             <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Cancel anytime</li>
-            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Free trials — 10 days weekly &amp; monthly · 10 days annual</li>
+            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Free trials — 3 days weekly · 10 days monthly &amp; annual</li>
             <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Stripe-secured checkout</li>
           </ul>
         </section>

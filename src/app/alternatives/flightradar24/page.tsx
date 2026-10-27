@@ -203,7 +203,7 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (10-day trials) for flight-path follow, satellite view, the OSINT toolkit
+      (3-day trial on Weekly, 10 days on Monthly) for flight-path follow, satellite view, the OSINT toolkit
       and multi-camera recording;{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year

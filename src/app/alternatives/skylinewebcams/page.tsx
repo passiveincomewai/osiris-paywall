@@ -212,7 +212,7 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">
         Pro at $7.99/week or $13.99/month
       </span>{" "}
-      (10-day trials) for recording 20 cameras, satellite view and traffic;{" "}
+      (3-day trial on Weekly, 10 days on Monthly) for recording 20 cameras, satellite view and traffic;{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro at $74.99/year
       </span>{" "}

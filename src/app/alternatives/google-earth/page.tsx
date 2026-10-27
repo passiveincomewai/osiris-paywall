@@ -194,7 +194,7 @@ const data: AltData = {
       . Its paid tiers buy monitoring capability Google Earth doesn&apos;t
       sell at any price:{" "}
       <span className="text-white/85 font-semibold">
-        Pro ($7.99/week or $13.99/month, 10-day trials)
+        Pro ($7.99/week or $13.99/month — 3-day trial on Weekly, 10 days on Monthly)
       </span>{" "}
       for satellite view, flight-path follow, the OSINT toolkit and
       20-camera recording;{" "}

@@ -20,7 +20,7 @@ describe("TrialPicker", () => {
       "$7.99",
       "$13.99",
       "$74.99",
-      "10 days free, then billed weekly · cancel anytime",
+      "3 days free, then billed weekly · cancel anytime",
       "10 days free, then billed monthly · cancel anytime",
       "10 days free, then billed annually · cancel anytime",
       "Secured by Stripe · Cancel anytime · 7-day money-back guarantee on your first charge",
@@ -39,7 +39,7 @@ describe("TrialPicker", () => {
     // The CTA of each plan is a <button> carrying the gold filled
     // treatment and a ≥48px tap height, labelled with its plan.
     for (const label of [
-      "Start 10-Day Free Trial — Weekly $7.99/week",
+      "Start 3-Day Free Trial — Weekly $7.99/week",
       "Start 10-Day Free Trial — Monthly $13.99/month",
       "Start 10-Day Free Trial — VIP Pro $74.99/year",
     ]) {

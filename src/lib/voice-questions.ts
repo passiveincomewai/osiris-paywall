@@ -596,7 +596,7 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     category: "plans-and-pricing",
     question: "Can I try WorldEye Pro free?",
     shortAnswer:
-      "Yes. Weekly and monthly Pro include a one-day free trial and VIP Pro a three-day trial; a seven-day money-back guarantee covers the first charge.",
+      "Yes. Weekly Pro includes a 3-day free trial, monthly Pro a 10-day free trial and VIP Pro a 10-day trial; a seven-day money-back guarantee covers the first charge.",
     longAnswer:
       "Trials start from the pricing page and convert to the paid plan unless cancelled before they end. The free tier itself never expires.",
     href: "/pricing",

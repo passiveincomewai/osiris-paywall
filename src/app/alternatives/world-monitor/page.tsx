@@ -201,7 +201,7 @@ const data: AltData = {
         {" "}
         Pro is $7.99/week or $13.99/month
       </span>{" "}
-      (10-day trials) and{" "}
+      (3-day trial on Weekly, 10 days on Monthly) and{" "}
       <span className="text-white/85 font-semibold">
         VIP Pro is $74.99/year
       </span>{" "}
