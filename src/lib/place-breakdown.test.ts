@@ -5,7 +5,11 @@ import {
   breakdownFaqs,
   cityStatusRows,
   computeCameraKindMix,
+  computeCityAreaSplit,
+  computeNamedViewpoints,
+  computePassBorderCameras,
   computePlaceBreakdown,
+  computePlaceFacts,
   operatorKind,
   operatorRows,
   parseCorridor,
@@ -374,5 +378,176 @@ describe("stateCorridorFaq (C6)", () => {
       { id: "b", name: "Pier view", source: "Port" },
     ]);
     expect(stateCorridorFaq({ stateName: "Maine", breakdown: thin })).toBeNull();
+  });
+});
+
+describe("computePlaceFacts (§4.1.3)", () => {
+  const spread = (n: number, dLat: number, dLng: number): CountryCamera[] =>
+    Array.from({ length: n }, (_, i) => ({
+      id: `r${i}`,
+      name: `Cam ${i}`,
+      lat: 50 + (i % 5) * dLat,
+      lng: -120 + (i % 7) * dLng,
+      source: "X",
+    }));
+
+  it("computes the centroid (4dp mean) and the widest span", () => {
+    const facts = computePlaceFacts(spread(35, 0.1, 0.1));
+    expect(facts).not.toBeNull();
+    expect(facts!.placed).toBe(35);
+    expect(facts!.spanKm).toBeGreaterThanOrEqual(40);
+    expect(facts!.centroid.lat).toBeCloseTo(50.2, 3);
+  });
+
+  it("is null for a thin placed set and for a single cluster", () => {
+    expect(computePlaceFacts(spread(9, 0.5, 0.5))).toBeNull();
+    expect(computePlaceFacts(spread(30, 0.0001, 0.0001))).toBeNull();
+    expect(
+      computePlaceFacts([{ id: "a", name: "No coords", source: "X" }]),
+    ).toBeNull();
+  });
+});
+
+describe("computeNamedViewpoints (§4.1.4)", () => {
+  const recs: CountryCamera[] = [
+    { id: "1", name: "City Airport — Terminal 1", source: "Port Authority" },
+    { id: "2", name: "Harbour Bridge", source: "City" },
+    { id: "3", name: "Old Town Square", source: "City" },
+    { id: "4", name: "Marina Pier", source: "Harbour Board" },
+    { id: "5", name: "I-5 @ Main St", source: "DOT" },
+    { id: "6", name: "Harbour Bridge", source: "City" }, // duplicate name
+    { id: "7", name: "Castle Hill", source: "Webcams" },
+  ];
+
+  it("picks signal-named cameras, deduped, with operators", () => {
+    const out = computeNamedViewpoints(recs, []);
+    expect(out.map((v) => v.name)).toEqual([
+      "City Airport — Terminal 1",
+      "Harbour Bridge",
+      "Marina Pier",
+      "Castle Hill",
+      "Old Town Square",
+    ]);
+    expect(out[0].source).toBe("Port Authority");
+  });
+
+  it("excludes the featured list and needs at least three", () => {
+    expect(computeNamedViewpoints(recs, ["City Airport — Terminal 1", "Harbour Bridge", "Marina Pier", "Castle Hill"])).toEqual([]);
+    const out = computeNamedViewpoints(recs, ["city airport — terminal 1"]);
+    expect(out.map((v) => v.name)).not.toContain("City Airport — Terminal 1");
+    expect(out.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("caps at the limit, signal priority first", () => {
+    const many: CountryCamera[] = Array.from({ length: 9 }, (_, i) => ({
+      id: `b${i}`,
+      name: `Bridge ${String.fromCharCode(65 + i)}`,
+      source: "DOT",
+    }));
+    many.push({ id: "a1", name: "The Airport", source: "Port" });
+    const out = computeNamedViewpoints(many, [], 5);
+    expect(out).toHaveLength(5);
+    expect(out[0].name).toBe("The Airport");
+  });
+});
+
+describe("computeCityAreaSplit (§4.1.5)", () => {
+  const named = (names: string[]): CountryCamera[] =>
+    names.map((name, i) => ({ id: `r${i}`, name, source: "X" }));
+
+  it("splits by ward where the names carry wards", () => {
+    const recs = named([
+      ...Array(6).fill("River cam, Meguro Ward"),
+      ...Array(5).fill("River cam, Ota Ward"),
+      ...Array(7).fill("River cam, Adachi Ward"),
+      ...Array(4).fill("Plain street cam"),
+    ]);
+    const split = computeCityAreaSplit(recs);
+    expect(split?.kind).toBe("ward");
+    expect(split?.rows.map((r) => r.name)).toEqual([
+      "Adachi Ward",
+      "Meguro Ward",
+      "Ota Ward",
+    ]);
+    expect(split?.tail).toBe(4);
+  });
+
+  it("keeps a ward set below the per-area gate dark", () => {
+    const recs = named([
+      ...Array(4).fill("River cam, Meguro Ward"),
+      ...Array(4).fill("River cam, Ota Ward"),
+      ...Array(4).fill("River cam, Adachi Ward"),
+      ...Array(9).fill("Plain street cam"),
+    ]);
+    expect(computeCityAreaSplit(recs)).toBeNull();
+  });
+
+  it("splits by quadrant when the quadrant system is systematic", () => {
+    const recs = named([
+      ...Array(30).fill("10 Avenue and 1 Street SW"),
+      ...Array(25).fill("114 Ave / Stoney Tr SE"),
+      ...Array(20).fill("64 Ave NE"),
+      ...Array(10).fill("Centre St"),
+    ]);
+    const split = computeCityAreaSplit(recs);
+    expect(split?.kind).toBe("quadrant");
+    expect(split?.rows.map((r) => r.name)).toEqual([
+      "South-west (SW)",
+      "South-east (SE)",
+      "North-east (NE)",
+    ]);
+    expect(split?.tail).toBe(10);
+  });
+
+  it("does not mistake street suffixes for a quadrant system", () => {
+    // Seattle-shaped: trailing NE/SE/SW on ~14% of names, as street
+    // suffixes — below the systematic share, so no split renders.
+    const recs = named([
+      ...Array(30).fill("I-405 at MP 25: 243rd St SE"),
+      ...Array(25).fill("35th Ave SW @ Fauntleroy Way SW"),
+      ...Array(15).fill("I-5 at MP 178: 236th St SW"),
+      ...Array(430).fill("12th Ave NE & NE 50th St"),
+    ]);
+    expect(computeCityAreaSplit(recs)).toBeNull();
+  });
+});
+
+describe("computePassBorderCameras (§4.2.3)", () => {
+  const recs: CountryCamera[] = [
+    { id: "1", name: "SR-150 RWIS EB @ Bald Mountain Pass / MP 29.2", source: "UDOT" },
+    { id: "2", name: "US-6 @ Skull Rock Pass / MP 40.72", source: "UDOT" },
+    { id: "3", name: "I-5 at CA Border (Siskiyou)", source: "ODOT" },
+    { id: "4", name: "WSF Fauntleroy Ferry Holding", source: "WSDOT" },
+    { id: "5", name: "Bolivar Ferry at 15th", source: "TxDOT" },
+    { id: "6", name: "Ashford Dunwoody Rd at Johnson Ferry Rd", source: "GDOT" },
+    { id: "7", name: "Atlanta Rd at Paces Ferry Rd", source: "GDOT" },
+    { id: "8", name: "I-15 Overpass at 500 S", source: "UDOT" },
+    { id: "9", name: "Bypass Rd @ Passaic Ave", source: "NJDOT" },
+    { id: "10", name: "Downtown intersection", source: "City" },
+    { id: "11", name: "SR-150 RWIS EB @ Bald Mountain Pass / MP 29.2", source: "UDOT" }, // dup name
+  ];
+
+  it("groups pass, border and ferry cameras by name evidence", () => {
+    const groups = computePassBorderCameras(recs);
+    expect(groups.map((g) => g.key)).toEqual(["passes", "border", "ferries"]);
+    const passes = groups.find((g) => g.key === "passes")!;
+    expect(passes.total).toBe(3); // the duplicate name still counts
+    expect(passes.names).toHaveLength(2); // but is quoted once
+    const ferries = groups.find((g) => g.key === "ferries")!;
+    expect(ferries.total).toBe(2);
+    expect(ferries.names).toContain("Bolivar Ferry at 15th");
+  });
+
+  it("never calls a Ferry Road a ferry, nor an overpass a pass", () => {
+    const ferries = computePassBorderCameras(recs).find((g) => g.key === "ferries")!;
+    expect(ferries.names.join(" ")).not.toMatch(/Johnson|Paces/);
+    const passes = computePassBorderCameras(recs).find((g) => g.key === "passes")!;
+    expect(passes.names.join(" ")).not.toMatch(/Overpass|Passaic/);
+  });
+
+  it("is empty without name evidence", () => {
+    expect(
+      computePassBorderCameras([{ id: "x", name: "Plain cam", source: "X" }]),
+    ).toEqual([]);
   });
 });

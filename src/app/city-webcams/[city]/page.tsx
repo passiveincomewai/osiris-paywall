@@ -62,6 +62,7 @@ import {
   breakdownFaqs,
   cityStatusRows,
   loadCityBreakdown,
+  loadCityPlaceDetails,
   operatorRows,
   stateHubForCity,
   statusFaqs,
@@ -1421,6 +1422,23 @@ export default async function CityWebcamPage({
   const showMix =
     breakdown !== null && breakdown.total >= 25 && breakdown.mix.length >= 3;
 
+  /* C5/C6 deferred (§4.1.3–4.1.5): place facts, named viewpoints and
+     the area split, computed from the same chunk records the explorer
+     serves (lib/place-breakdown loadCityPlaceDetails). Each piece is
+     gated on its own data inside the lib — facts need a real grid,
+     viewpoints need at least 3 landmark-named cameras beyond the
+     featured list, the split needs a district signal that is real
+     (wards by name, or a quadrant system systematic enough not to be
+     street suffixes) — so a city whose records carry none of it
+     renders none of it. */
+  const placeDetails = await loadCityPlaceDetails(
+    c.countrySlug,
+    c.name,
+    (c.samples ?? []).map((s) => s.name),
+  );
+  const coordText = (lat: number, lng: number) =>
+    `${Math.abs(lat).toFixed(2)}° ${lat >= 0 ? "N" : "S"}, ${Math.abs(lng).toFixed(2)}° ${lng >= 0 ? "E" : "W"}`;
+
   /* C9 (§6): related searches — the next questions a visitor to
      this city plausibly runs, built only from facts this page
      already computed: the C6 kind mix (rule 1, the ≥8 gate lives
@@ -1653,6 +1671,71 @@ export default async function CityWebcamPage({
           rows={operatorTableRows}
           note={`Every feed on this page, grouped by the publisher named in the catalogue — the same sources the live index carries for ${c.name}.`}
         />
+      )}
+      {placeDetails?.facts && (
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-3">
+            Where {possessive(c.name)} cameras sit
+          </h2>
+          <p className="text-sm text-white/55 leading-relaxed max-w-3xl">
+            The {fmt(placeDetails.facts.placed)} cameras on this page with
+            published coordinates centre on{" "}
+            {coordText(placeDetails.facts.centroid.lat, placeDetails.facts.centroid.lng)}{" "}
+            and span {fmt(placeDetails.facts.spanKm)} km at their widest —
+            measured from the camera positions themselves, so the shape
+            follows the real network rather than the city limits.
+          </p>
+        </section>
+      )}
+      {placeDetails?.areaSplit && (
+        <AreaTable
+          title={
+            placeDetails.areaSplit.kind === "ward"
+              ? `${c.name} cameras by ward`
+              : `${c.name} cameras by quadrant`
+          }
+          rows={[
+            ...placeDetails.areaSplit.rows,
+            ...(placeDetails.areaSplit.tail > 0
+              ? [
+                  {
+                    name: "All other cameras — names carry no qualifying area",
+                    count: placeDetails.areaSplit.tail,
+                  },
+                ]
+              : []),
+          ]}
+          note={
+            placeDetails.areaSplit.kind === "ward"
+              ? `Areas are read from the cameras' own names — a camera counts under the ward its name carries. Only wards with at least 5 cameras are listed.`
+              : `Areas are read from the cameras' own names — the quadrant is the closing component of the address the feed itself publishes. Only quadrants with at least 5 cameras are listed.`
+          }
+        />
+      )}
+      {placeDetails && placeDetails.viewpoints.length >= 3 && (
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-3">
+            Named viewpoints in {c.name}
+          </h2>
+          <p className="text-sm text-white/50 mb-5 max-w-3xl">
+            Picked by the landmark words in the cameras' own names — the
+            airport, harbour and landmark feeds beyond the featured list
+            above, each with the operator that publishes it.
+          </p>
+          <ul className="grid sm:grid-cols-2 gap-3">
+            {placeDetails.viewpoints.map((v) => (
+              <li
+                key={v.name}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+              >
+                <div className="font-semibold text-sm">{v.name}</div>
+                {v.source && (
+                  <div className="text-xs text-white/45 mt-1">{srcName(v.source)}</div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
       {/* C9 (§6.3): after the grid + breakdown, before the FAQs —
           renders only when the lib's min-3 gate passed. */}

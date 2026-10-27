@@ -707,3 +707,338 @@ export function stateCorridorFaq(s: {
     `own name carries.`;
   return { q: `Which roads in ${s.stateName} have the most cameras?`, a };
 }
+
+/* ------------------------------------------------------------------ */
+/* C5/C6 deferred follow-ups (§4.1.3–4.1.5 city, §4.2.3 state)         */
+/* ------------------------------------------------------------------ */
+
+/* Local haversine (km) — country-page-content keeps its own copy for
+ * the same reason: these leaf computations shouldn't couple the place
+ * modules to the ski/share modules that export theirs. */
+function haversineKmLocal(
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number },
+): number {
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) *
+      Math.cos((b.lat * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(s));
+}
+
+/** §4.1.3 place facts for a city: the centre of its camera grid and
+ *  how far the grid spans, computed from the same records the page's
+ *  explorer serves. The centroid is the mean of the placed records,
+ *  rounded to 4dp exactly as cityChunkStats rounds its centroid, so
+ *  the two never disagree. The span is the wider of the bounding
+ *  box's two diagonals — the same measure countryFacts calls spread.
+ *
+ *  Gates (null below them): fewer than 10 placed records says nothing
+ *  stable about a grid, and a span under 2 km is a single cluster, not
+ *  a spread. The third §4.1.3 element — a live local clock — is NOT
+ *  computed here: the repo carries no static lat/lng→timezone lookup
+ *  (the audit's stated derivation), and the weather snapshot's
+ *  localtime is a fetch-time string for the query place, not a clock
+ *  source. See the C5/C6 deferred REPORT. Pure — unit-tested. */
+export interface CityPlaceFacts {
+  centroid: { lat: number; lng: number };
+  /** Widest span of the placed grid, km (rounded). */
+  spanKm: number;
+  /** Records carrying coordinates — the set the facts describe. */
+  placed: number;
+}
+
+export function computePlaceFacts(
+  records: readonly CountryCamera[],
+): CityPlaceFacts | null {
+  const placed = records.filter(
+    (r): r is CountryCamera & { lat: number; lng: number } =>
+      typeof r.lat === "number" && typeof r.lng === "number",
+  );
+  if (placed.length < 10) return null;
+  let lat = 0;
+  let lng = 0;
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
+  for (const r of placed) {
+    lat += r.lat;
+    lng += r.lng;
+    if (r.lat < minLat) minLat = r.lat;
+    if (r.lat > maxLat) maxLat = r.lat;
+    if (r.lng < minLng) minLng = r.lng;
+    if (r.lng > maxLng) maxLng = r.lng;
+  }
+  const spanKm = Math.round(
+    Math.max(
+      haversineKmLocal({ lat: minLat, lng: minLng }, { lat: maxLat, lng: maxLng }),
+      haversineKmLocal({ lat: minLat, lng: maxLng }, { lat: maxLat, lng: minLng }),
+    ),
+  );
+  if (spanKm < 2) return null;
+  return {
+    centroid: {
+      lat: Math.round((lat / placed.length) * 10000) / 10000,
+      lng: Math.round((lng / placed.length) * 10000) / 10000,
+    },
+    spanKm,
+    placed: placed.length,
+  };
+}
+
+/** §4.1.4 named viewpoints: notable cameras picked by the landmark
+ *  words in their own names (airport / harbour / landmark signals),
+ *  each with the operator the catalogue names for it. Selection is a
+ *  partition by signal priority — a camera is claimed by the first
+ *  signal its name matches — then name order inside a signal, so the
+ *  result is deterministic and follows the record set, never a
+ *  hand list. Cameras already in the page's featured list are
+ *  excluded by name (the callout exists to surface names the featured
+ *  grid didn't). Fewer than 3 matches → empty (the block doesn't
+ *  render). Pure — unit-tested. */
+export interface NamedViewpoint {
+  name: string;
+  source: string;
+}
+
+const VIEWPOINT_SIGNALS: RegExp[] = [
+  /\bairport\b/i,
+  /\bharbou?r\b|\bmarina\b|\bpier\b|\blighthouse\b/i,
+  /\bcastle\b|\bcathedral\b|\bstadium\b|\barena\b/i,
+  /\bbeach\b|\bskyline\b|\bold town\b|\bsquare\b|\bplaza\b/i,
+  /\btower\b|\bbridge\b/i,
+  /\bsummit\b|\bpeak\b|\bfalls\b|\bwaterfall\b|\bglacier\b|\bvolcano\b/i,
+  /\bport\b|\bdowntown\b/i,
+];
+
+export function computeNamedViewpoints(
+  records: readonly CountryCamera[],
+  featuredNames: readonly string[],
+  limit = 5,
+): NamedViewpoint[] {
+  const featured = new Set(featuredNames.map((n) => n.trim().toLowerCase()));
+  const seen = new Set<string>();
+  const picked: Array<{ name: string; source: string; signal: number }> = [];
+  for (const r of records) {
+    const name = (r.name ?? "").trim();
+    if (!name) continue;
+    const key = name.toLowerCase();
+    if (featured.has(key) || seen.has(key)) continue;
+    const signal = VIEWPOINT_SIGNALS.findIndex((re) => re.test(name));
+    if (signal === -1) continue;
+    seen.add(key);
+    picked.push({ name, source: (r.source ?? "").trim(), signal });
+  }
+  picked.sort(
+    (a, b) => a.signal - b.signal || a.name.localeCompare(b.name),
+  );
+  const out = picked.slice(0, Math.max(0, limit));
+  return out.length >= 3 ? out.map(({ name, source }) => ({ name, source })) : [];
+}
+
+/** §4.1.5 neighbourhood/area split for a city, from district signals
+ *  in the camera names themselves. Two signal families, tried in
+ *  order:
+ *
+ *  - Wards: an explicit "X Ward" district name (the MLIT river feeds
+ *    name Tokyo's wards in English). The word "Ward" is itself the
+ *    district marker, so the spec gate alone applies.
+ *  - Quadrants: a trailing NE/NW/SE/SW address component (Calgary's
+ *    quadrant system, where the token closes the address). The same
+ *    two letters also close ordinary street suffixes elsewhere
+ *    (Seattle's "243rd St SE" is a cross street, not an area), so a
+ *    quadrant split must ALSO be systematic: at least 40% of the
+ *    city's records carry a trailing quadrant. Below that the token
+ *    is street furniture, not an area system, and no split renders.
+ *
+ *  Spec gate (both families): at least 3 areas with at least 5
+ *  cameras each. Rows are the qualifying areas in size order; `tail`
+ *  counts every other record, mirroring the roads table's tail row.
+ *  Pure — unit-tested. */
+export interface CityAreaSplit {
+  kind: "ward" | "quadrant";
+  rows: BreakdownRow[];
+  /** Records not in any shown row. */
+  tail: number;
+}
+
+const AREA_MIN_AREAS = 3;
+const AREA_MIN_PER_AREA = 5;
+const QUADRANT_MIN_SHARE = 0.4;
+
+const WARD_RE = /([A-Za-zÀ-Þ][\wÀ-ÿ'’.-]+) Ward\b/;
+const QUADRANT_RE = /(?:^|[\s,(])(NE|NW|SE|SW)\)?\s*$/;
+
+export const QUADRANT_LABELS: Record<string, string> = {
+  NE: "North-east (NE)",
+  NW: "North-west (NW)",
+  SE: "South-east (SE)",
+  SW: "South-west (SW)",
+};
+
+function areaRows(
+  counts: Map<string, number>,
+): { rows: BreakdownRow[]; shown: number } {
+  const rows = [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .filter((r) => r.count >= AREA_MIN_PER_AREA)
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  return { rows, shown: rows.reduce((s, r) => s + r.count, 0) };
+}
+
+export function computeCityAreaSplit(
+  records: readonly CountryCamera[],
+): CityAreaSplit | null {
+  const total = records.length;
+  if (total === 0) return null;
+
+  const wardCounts = new Map<string, number>();
+  for (const r of records) {
+    const m = (r.name ?? "").match(WARD_RE);
+    if (m) {
+      const label = `${m[1]} Ward`;
+      wardCounts.set(label, (wardCounts.get(label) ?? 0) + 1);
+    }
+  }
+  const wards = areaRows(wardCounts);
+  if (wards.rows.length >= AREA_MIN_AREAS) {
+    return { kind: "ward", rows: wards.rows, tail: total - wards.shown };
+  }
+
+  const quadCounts = new Map<string, number>();
+  let tagged = 0;
+  for (const r of records) {
+    const m = (r.name ?? "").match(QUADRANT_RE);
+    if (m) {
+      tagged += 1;
+      quadCounts.set(m[1], (quadCounts.get(m[1]) ?? 0) + 1);
+    }
+  }
+  if (tagged / total >= QUADRANT_MIN_SHARE) {
+    const quads = areaRows(
+      new Map(
+        [...quadCounts.entries()].map(([k, v]) => [QUADRANT_LABELS[k] ?? k, v]),
+      ),
+    );
+    if (quads.rows.length >= AREA_MIN_AREAS) {
+      return { kind: "quadrant", rows: quads.rows, tail: total - quads.shown };
+    }
+  }
+  return null;
+}
+
+/** The §4.1.3–4.1.5 details for one city, from the very records its
+ *  page explorer serves (recordsForDef caches per def, so this costs
+ *  no second chunk read beside the breakdown's). Null when the
+ *  country/city isn't in the served index. */
+export interface CityPlaceDetails {
+  facts: CityPlaceFacts | null;
+  viewpoints: NamedViewpoint[];
+  areaSplit: CityAreaSplit | null;
+}
+
+export async function loadCityPlaceDetails(
+  countrySlug: string,
+  cityName: string,
+  featuredNames: readonly string[],
+): Promise<CityPlaceDetails | null> {
+  try {
+    const def = resolveExploreDef({ country: countrySlug, city: cityName });
+    if (!def) return null;
+    const records = await recordsForDef(def);
+    if (!records || records.length === 0) return null;
+    return {
+      facts: computePlaceFacts(records),
+      viewpoints: computeNamedViewpoints(records, featuredNames),
+      areaSplit: computeCityAreaSplit(records),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** §4.2.3 pass / border / ferry note for a state: cameras whose own
+ *  names name the feature they watch, grouped by kind. A record is
+ *  counted once, under the first group its name matches (the mix
+ *  partition's rule). Name-evidence only:
+ *
+ *  - passes: the word "Pass" (word-bounded, so "overpass"/"bypass"
+ *    and "Passaic" never match);
+ *  - border: "Border" or "Customs" — state-line and international
+ *    crossings alike, exactly as the feeds name them;
+ *  - ferries: a ferry FACILITY in the name — a terminal / landing /
+ *    holding / dock / queue / sign / approach, a WSF (Washington
+ *    State Ferries) prefix, or "Ferry" as the head of a crossing
+ *    ("Bolivar Ferry at 15th", "Canby Ferry North"). Bare "Ferry"
+ *    is not enough: Atlanta's Johnson Ferry Rd and Paces Ferry Rd
+ *    are roads named for long-gone landings, and a rule that listed
+ *    them as ferry cameras would be inventing ferries.
+ *
+ *  Names are quoted verbatim (first 4 per group, record order);
+ *  `total` is the group's full count. Pure — unit-tested. */
+export interface PassBorderGroup {
+  key: "passes" | "border" | "ferries";
+  label: string;
+  total: number;
+  names: string[];
+}
+
+const PASS_BORDER_RULES: Array<{
+  key: PassBorderGroup["key"];
+  label: string;
+  re: RegExp;
+}> = [
+  { key: "passes", label: "Mountain passes", re: /\bpass\b/i },
+  { key: "border", label: "Border crossings", re: /\bborder\b|\bcustoms\b/i },
+  {
+    key: "ferries",
+    label: "Ferries",
+    re: /\bferry (terminal|landing|holding|dock|queue|sign|approach|slip)\b|^WSF\b|\bferry (at|@|north|south|east|west)\b/i,
+  },
+];
+
+export function computePassBorderCameras(
+  records: readonly CountryCamera[],
+): PassBorderGroup[] {
+  const groups = new Map<
+    PassBorderGroup["key"],
+    { label: string; total: number; names: string[]; seen: Set<string> }
+  >();
+  for (const r of records) {
+    const name = (r.name ?? "").trim();
+    if (!name) continue;
+    const rule = PASS_BORDER_RULES.find((g) => g.re.test(name));
+    if (!rule) continue;
+    let g = groups.get(rule.key);
+    if (!g) {
+      g = { label: rule.label, total: 0, names: [], seen: new Set() };
+      groups.set(rule.key, g);
+    }
+    g.total += 1;
+    const key = name.toLowerCase();
+    if (!g.seen.has(key) && g.names.length < 4) {
+      g.seen.add(key);
+      g.names.push(name);
+    }
+  }
+  return PASS_BORDER_RULES.flatMap((rule) => {
+    const g = groups.get(rule.key);
+    return g ? [{ key: rule.key, label: g.label, total: g.total, names: g.names }] : [];
+  });
+}
+
+/** One state's pass/border/ferry groups, over the same
+ *  coordinate-assigned record set the state template's C6 tables use
+ *  (usStateRecords). Empty when the state has no assigned records or
+ *  no name evidence. */
+export async function loadStatePassBorder(
+  stateSlug: string,
+): Promise<PassBorderGroup[]> {
+  const records = (await usStateRecords()).get(stateSlug);
+  if (!records || records.length === 0) return [];
+  return computePassBorderCameras(records);
+}

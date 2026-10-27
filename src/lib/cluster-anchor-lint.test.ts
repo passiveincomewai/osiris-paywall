@@ -327,6 +327,44 @@ describe("rendered pages — §5.2 up-links and the C8/C9 blocks", () => {
   }, 600_000);
 });
 
+describe("C5/C6 deferred follow-ups — rendered pins", () => {
+  it("Calgary renders place facts, the quadrant split and named viewpoints", async () => {
+    const Page = (await import("@/app/city-webcams/[city]/page")).default;
+    const el = await Page({ params: Promise.resolve({ city: "calgary" }) });
+    const html = renderToString(el as React.ReactElement);
+    // §4.1.3 facts: the grid's centre + widest span, from its records.
+    expect(html).toContain("at their widest");
+    // §4.1.5: Calgary's names close with the address quadrant, and the
+    // split is systematic there (192 of 233 records) — the one
+    // generated city whose district signal clears the gate.
+    expect(html).toContain("cameras by quadrant");
+    expect(html).toContain("South-west (SW)");
+    // §4.1.4: landmark-named cameras beyond the featured list.
+    expect(html).toContain("Named viewpoints in");
+  }, 600_000);
+
+  it("Utah renders the pass note, and its FAQ schema carries the Current Status rows", async () => {
+    const Page = (await import("@/app/us-traffic-cameras/[state]/page")).default;
+    const el = await Page({ params: Promise.resolve({ state: "utah" }) });
+    const html = renderToString(el as React.ReactElement);
+    // §4.2.3: UDOT names its passes; the note quotes them verbatim.
+    expect(html).toContain("Mountain passes");
+    expect(html).toContain("Bald Mountain Pass");
+    // Piece 4: the FAQPage schema now includes the visible Current
+    // Status rows (before this chunk it carried the page FAQs only).
+    expect(html).toContain('"name":"Is it snowing in Utah right now?"');
+    expect(html).toContain('"name":"How bad is traffic in Utah right now?"');
+  }, 600_000);
+
+  it("the Japan country FAQ schema carries the Current Status rows", async () => {
+    const Page = (await import("@/app/cameras/countries/[country]/page")).default;
+    const el = await Page({ params: Promise.resolve({ country: "japan" }) });
+    const html = renderToString(el as React.ReactElement);
+    expect(html).toContain("Is it snowing in Japan right now?");
+    expect(html).toContain("Can I check traffic in Japan right now?");
+  }, 600_000);
+});
+
 describe("static wiring pins", () => {
   const read = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
 
@@ -362,5 +400,15 @@ describe("static wiring pins", () => {
     expect(cfg).toContain("source: '/alternatives/earthcam'");
     expect(cfg).toContain("destination: '/earthcam-alternative'");
     expect(cfg).not.toMatch(/source:\s*'\/alternatives',\s*\n\s*destination:\s*'\/compare'/);
+  });
+
+  it("state and country templates merge Current Status rows into the FAQ schema", () => {
+    const state = read("src/app/us-traffic-cameras/[state]/page.tsx");
+    expect(state).toContain("statusFaqs(placeMerged.merged, statusRows)");
+    expect(state).toContain("loadStatePassBorder");
+    const country = read("src/app/cameras/countries/[country]/page.tsx");
+    expect(country).toContain("statusFaqs(placeMerged.merged, statusRows)");
+    const city = read("src/app/city-webcams/[city]/page.tsx");
+    expect(city).toContain("loadCityPlaceDetails");
   });
 });

@@ -35,7 +35,7 @@ import {
 import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
 import CurrentStatus from "@/components/CurrentStatus";
-import { countryStatusRows, operatorRows } from "@/lib/place-breakdown";
+import { countryStatusRows, operatorRows, statusFaqs } from "@/lib/place-breakdown";
 import {
   buildRelatedSearches,
   type KindCandidate,
@@ -521,6 +521,19 @@ export default async function CountryPage({
      FAQPage below; the visible block renders exactly the survivors. */
   const placeMerged = mergePlaceFaqs(faqs, countryAnswers(c));
 
+  /* Current Status rows (rendered visibly below) — computed once here
+     so the FAQPage schema can carry them too, via the same statusFaqs
+     merge the city/state templates apply: schema text is always
+     visible text. */
+  const statusRows = countryStatusRows({
+    countryName: c.name,
+    count: c.count,
+    weatherCity,
+    weatherCityCount: c.topCities[0]?.count ?? null,
+    isUS: slug === "united-states",
+    weather: placeWeather,
+  });
+
   const canonical = `${BASE}/cameras/countries/${slug}`;
   const updated = formatDate((countriesIndex as { generatedAt: string }).generatedAt);
   const steps = howToFor(slug);
@@ -555,7 +568,7 @@ export default async function CountryPage({
       },
       {
         "@type": "FAQPage",
-        mainEntity: placeMerged.merged.map((f) => ({
+        mainEntity: statusFaqs(placeMerged.merged, statusRows).map((f) => ({
           "@type": "Question",
           name: f.q,
           acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -649,17 +662,7 @@ export default async function CountryPage({
             the largest camera city, as the panel is — plus the live
             camera counts. No snapshot, no asserted conditions. */}
         <div className="max-w-3xl mx-auto">
-          <CurrentStatus
-            place={c.name}
-            rows={countryStatusRows({
-              countryName: c.name,
-              count: c.count,
-              weatherCity,
-              weatherCityCount: c.topCities[0]?.count ?? null,
-              isUS: slug === "united-states",
-              weather: placeWeather,
-            })}
-          />
+          <CurrentStatus place={c.name} rows={statusRows} />
         </div>
 
         {/* Playable cameras — every record for this country in the live

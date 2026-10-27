@@ -33,10 +33,12 @@ import { getPlaceWeather } from "@/lib/place-weather";
 import CurrentStatus from "@/components/CurrentStatus";
 import {
   loadStateBreakdown,
+  loadStatePassBorder,
   operatorRows,
   stateCorridorFaq,
   stateFreewayFaq,
   stateStatusRows,
+  statusFaqs,
 } from "@/lib/place-breakdown";
 import SaveLocationButton from "@/components/SaveLocationButton";
 import cityPages from "@/data/city-pages.json";
@@ -746,6 +748,12 @@ export default async function StateTrafficPage({
      these counts describe the same set the headline counts. A failed
      load degrades to the index-only page, exactly as before C6. */
   const stateBreakdown = await loadStateBreakdown(slug);
+  /* C5/C6 deferred (§4.2.3): the pass/border/ferry note, over the same
+     coordinate-assigned record set as the tables above. Name evidence
+     only — a group exists on this page only when the state's own
+     camera names carry it. */
+  const passBorder = await loadStatePassBorder(slug);
+  const passBorderTotal = passBorder.reduce((s, g) => s + g.total, 0);
   const corridorFaq = stateBreakdown
     ? stateCorridorFaq({ stateName: s.name, breakdown: stateBreakdown })
     : null;
@@ -818,7 +826,11 @@ export default async function StateTrafficPage({
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <FaqJsonLd faqs={placeMerged.merged} />
+      {/* The FAQPage schema carries the page's FAQs plus the Current
+          Status rows rendered visibly below — the same merge the city
+          template already applies (lib/place-breakdown statusFaqs), so
+          schema text is always visible text. */}
+      <FaqJsonLd faqs={statusFaqs(placeMerged.merged, statusRows)} />
       <Breadcrumb
         trail={[
           { label: "Home", href: "/" },
@@ -862,6 +874,42 @@ export default async function StateTrafficPage({
           rows={stateOperatorRows}
           note={`The largest publishers named on ${s.name}'s feeds, counted over the cameras whose own coordinates place them in the state.`}
         />
+      )}
+      {passBorderTotal >= 2 && (
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-3">
+            Passes, borders and ferries in {s.name}
+          </h2>
+          <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+            Some of the cameras in {s.name} are named for the pass,
+            border crossing or ferry they watch — the working checks
+            before a mountain drive or a crossing. Every name below is
+            quoted from the feeds themselves.
+          </p>
+          <div className="space-y-3">
+            {passBorder.map((g) => (
+              <div
+                key={g.key}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4"
+              >
+                <p className="font-semibold text-sm">
+                  {g.label} — {fmt(g.total)} {g.total === 1 ? "camera" : "cameras"}
+                </p>
+                <ul className="text-sm text-white/60 leading-relaxed mt-1.5 space-y-1">
+                  {g.names.map((n) => (
+                    <li key={n}>{n}</li>
+                  ))}
+                </ul>
+                {g.total > g.names.length && (
+                  <p className="text-xs text-white/40 mt-2">
+                    …and {fmt(g.total - g.names.length)} more in the grid and
+                    the state index.
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
       )}
       {s.samples && <SampleGrid title={s.sampleTitle ?? "Featured live cameras"} samples={s.samples} />}
       <HowTo title={s.howtoTitle} steps={s.howto} />
