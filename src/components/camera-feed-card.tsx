@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { Camera, MapPin, PlayCircle } from 'lucide-react';
 import ViewOnGlobeButton from '@/components/ViewOnGlobeButton';
 import { cameraViewSeed, freshen, previewMedia, refreshInterval } from '@/lib/camera-preview';
+import { cameraAlt } from '@/lib/camera-alt';
 import {
   cameraMediaKind,
   youtubePosterUrl,
@@ -142,7 +143,7 @@ function LiveImage({ cam, kind, url }: { cam: CountryCamera; kind: 'jpg' | 'mjpe
         // eslint-disable-next-line @next/next/no-img-element -- remote camera frames, no loader
         <img
           src={src}
-          alt={cam.name}
+          alt={cameraAlt(cam)}
           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
           onLoad={() => setReady(true)}
@@ -315,7 +316,7 @@ function CardPreview({ cam }: { cam: CountryCamera }) {
           {/* eslint-disable-next-line @next/next/no-img-element -- the video's own poster */}
           <img
             src={poster}
-            alt={cam.name}
+            alt={cameraAlt(cam)}
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover"
           />

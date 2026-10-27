@@ -4,6 +4,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Maximize2 } from 'lucide-react';
 import { freshen, previewMedia, refreshInterval, VIDEO_KINDS, type PreviewKind } from '@/lib/camera-preview';
 import { layoutTile, tileHeight, tilesOverlap, type TileGeometry } from '@/lib/map-tile-layout';
+import { cameraAlt } from '@/lib/camera-alt';
 import type { Map as MlMap } from 'maplibre-gl';
 
 /**
@@ -96,7 +97,7 @@ function ImageMedia({ cam: camera, onReady, onFail }: MediaProps) {
     /* eslint-disable-next-line @next/next/no-img-element -- remote camera frames, no loader */
     <img
       src={src}
-      alt={camera.name}
+      alt={cameraAlt(camera)}
       width={TILE_W}
       height={IMG_H}
       className={FIT}

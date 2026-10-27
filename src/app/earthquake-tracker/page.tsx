@@ -173,6 +173,31 @@ export default function EarthquakeTrackerPage() {
           </div>
         </div>
 
+        {/* The one-map answer */}
+        <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#ff8c5a]/25 bg-[#ff8c5a]/[0.04] p-8 md:p-10">
+          <h2 className="text-xl md:text-2xl font-bold">
+            One live map for earthquakes — and everything around them
+          </h2>
+          <p className="mt-3 text-white/60 leading-relaxed">
+            WorldEye&apos;s earthquake tracker is free: every earthquake is
+            plotted on a 3D globe with its magnitude, depth and location as
+            seismic networks report it, updated continuously, no signup. The
+            same map carries{" "}
+            <Link href="/live-webcams" className="text-[#ff8c5a] hover:underline">
+              74,229 public cameras
+            </Link>{" "}
+            — often including cameras near a quake&apos;s epicentre — plus{" "}
+            <Link href="/live-flight-tracker" className="text-[#ff8c5a] hover:underline">
+              live flights
+            </Link>{" "}
+            and{" "}
+            <Link href="/weather-tracker" className="text-[#ff8c5a] hover:underline">
+              live weather
+            </Link>
+            , on one live globe.
+          </p>
+        </div>
+
         {/* Live significant quakes */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">

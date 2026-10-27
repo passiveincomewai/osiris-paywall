@@ -6,6 +6,7 @@ import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayC
 import type Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
 import { cameraShareId, cameraShareTitle, rememberLastCamera } from '@/lib/camera-share';
+import { cameraAlt } from '@/lib/camera-alt';
 import { ensureShareCode, shareEntity, shareUrl } from '@/lib/share/client';
 import { buildEntityShareUrl } from '@/lib/share/links';
 import ShareWithQR from './share/ShareWithQR';
@@ -454,7 +455,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
             ) : streamType === 'mjpeg' && camera.stream_url ? (
               <img
                 src={camera.stream_url}
-                alt={camera.name}
+                alt={cameraAlt(camera)}
                 className={`w-full h-full ${fullscreen ? 'object-contain' : 'object-cover'}`}
                 onLoad={() => setLoading(false)}
                 onError={() => { setLoading(false); setError(true); }}
@@ -478,7 +479,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
             ) : imageUrl ? (
               <img
                 src={imageUrl}
-                alt={camera.name}
+                alt={cameraAlt(camera)}
                 className={`w-full h-full ${fullscreen ? 'object-contain' : 'object-cover'}`}
                 onLoad={() => setLoading(false)}
                 onError={() => { setLoading(false); setError(true); }}

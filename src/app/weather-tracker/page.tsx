@@ -220,6 +220,35 @@ export default function WeatherTrackerPage() {
           </div>
         </div>
 
+        {/* The one-map answer */}
+        <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#D4AF37]/25 bg-[#D4AF37]/[0.04] p-8 md:p-10">
+          <h2 className="text-xl md:text-2xl font-bold">
+            One live map for weather — and everything inside it
+          </h2>
+          <p className="mt-3 text-white/60 leading-relaxed">
+            WorldEye&apos;s weather tracker is a free live weather map on a 3D
+            globe: storm systems, wind flow and precipitation rendered as
+            they happen, with no account needed. The same globe carries the
+            cameras inside the weather —{" "}
+            <Link href="/live-webcams" className="text-[#D4AF37] hover:underline">
+              74,229 public cameras
+            </Link>
+            , including{" "}
+            <Link href="/ski-webcams" className="text-[#D4AF37] hover:underline">
+              ski
+            </Link>{" "}
+            and{" "}
+            <Link href="/beach-webcams" className="text-[#D4AF37] hover:underline">
+              beach
+            </Link>{" "}
+            cameras — plus{" "}
+            <Link href="/live-flight-tracker" className="text-[#D4AF37] hover:underline">
+              live flights
+            </Link>
+            , all on one map.
+          </p>
+        </div>
+
         {/* What the layer shows */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">

@@ -1,49 +1,71 @@
 # WorldEye
 
-> WorldEye is a live 3D intelligence globe on the web. It puts 74,229 live public cameras from 109 countries, real-time flight and satellite tracking, ships, weather radar, earthquakes and wildfires on one interactive globe. Browsing is free with no account — the free plan includes 5 camera opens on the globe — and paid plans (Pro and VIP Pro) add an AI analyst, camera recording, camera alerts, satellite map view and premium intelligence layers.
+> WorldEye is a live 3D intelligence globe on the web. It puts 74,229 live public cameras from 109 countries, real-time flight and satellite tracking, weather, earthquakes and wildfires on one interactive globe. The globe and its core layers are free with no account: flights, satellites, weather, earthquakes and the satellite imagery view are free for everyone, and camera opens follow a free ladder — 5 opens anonymously, 10 after dropping an email, 15 with a free account. Paid plans add an AI analyst, live traffic, camera recording, camera alerts and premium intelligence layers. Full version of this file: https://worldeye.app/llms-full.txt
 
 ## Platform
 
-- [Live globe](https://worldeye.app/): The WorldEye app — a live 3D globe with cameras, flights, satellites, weather, earthquakes and wildfires, free with no signup.
-- [Features](https://worldeye.app/features): Everything WorldEye does — the free live layers, the OSINT toolkit, the AI analyst and what Pro and VIP Pro add.
-- [Pricing](https://worldeye.app/pricing): Free globe for everyone. Paid plans: Weekly $7.99, Monthly $13.99, annual $74.99 (VIP Pro), Enterprise $999/year. Weekly starts with a 3-day free trial; Monthly and annual start with a 10-day free trial.
+- [Live globe](https://worldeye.app/): The WorldEye app — a live 3D globe with 74,229 cameras, live flights, satellites, weather, earthquakes and wildfires, free with no signup.
+- [Features](https://worldeye.app/features): What WorldEye does — the free live layers, the satellite imagery view, the OSINT toolkit, the AI analyst, and what Pro and VIP Pro add.
+- [Pricing](https://worldeye.app/pricing): WorldEye costs nothing to use free forever. Paid plans are Weekly $7.99, Monthly $13.99, annual $74.99 (VIP Pro) and Enterprise $999/year. Weekly starts with a 3-day free trial; Monthly, annual and WorldEye Ambient ($4.99/month) start with a 10-day free trial; Enterprise has no trial.
+- [Answers](https://worldeye.app/answers): Short, direct answers to spoken-form questions about live cameras, flight tracking and WorldEye itself, written for voice assistants and AI answer engines.
+- [FAQ](https://worldeye.app/faq): Direct answers about the free map, the free camera ladder, Pro, VIP Pro, camera alerts, trials, billing, cameras and privacy.
+
+## Free on WorldEye
+
+- [Live flight tracker](https://worldeye.app/live-flight-tracker): WorldEye's flight tracker is free — real-time aircraft positions from ADS-B broadcasts on the 3D globe, with altitude, speed and routes, no signup.
+- [Satellite tracker](https://worldeye.app/satellite-tracker): WorldEye's satellite tracker is free — the ISS, Starlink and thousands of satellites computed live from public orbital data (TLEs), with orbit paths.
+- [Weather tracker](https://worldeye.app/weather-tracker): WorldEye's weather tracker is free — live storm systems, wind flow and precipitation on a 3D globe, no account needed.
+- [Earthquake tracker](https://worldeye.app/earthquake-tracker): WorldEye's earthquake tracker is free — every quake plotted with magnitude, depth and location as seismic networks report it.
+- [Live cameras](https://worldeye.app/cameras): The camera hub — browse 74,229 live public cameras worldwide: traffic, cities, landmarks, beaches, airports and nature. Opens follow the free ladder: 5 anonymous, 10 with an email, 15 with a free account.
 
 ## Live Cameras
 
-- [Live cameras](https://worldeye.app/cameras): The camera hub — browse 74,229 live public cameras worldwide: traffic, cities, landmarks, beaches, airports and nature.
 - [Live webcams directory](https://worldeye.app/live-webcams): The directory hub with per-country counts, how feeds are verified, and the busiest camera networks.
 - [Cameras by country](https://worldeye.app/cameras/countries): Live camera pages for 109 countries, each with that country's real camera count, areas and playable feeds. Largest networks: United States (41,355), Japan (10,472), Canada (4,685), Taiwan (3,243), Spain (2,120).
+- [Japan webcams](https://worldeye.app/japan-webcams): Japan's 10,472 live cameras — Tokyo, Osaka, Sapporo, Mount Fuji views and traffic cameras across the country.
+- [New York City webcams](https://worldeye.app/city-webcams/new-york-city): 279 live cameras within 25 km of Midtown Manhattan, across all five boroughs.
 - [City webcams](https://worldeye.app/world-city-webcams): The busiest camera regions and cities in the world, with per-region counts and featured feeds.
 - [Live traffic cameras](https://worldeye.app/live-traffic-cameras): Highway and road cameras, including per-country traffic camera guides.
+- [US traffic cameras](https://worldeye.app/us-traffic-cameras): State-by-state US traffic camera pages, from the state DOT networks in the catalogue.
 - [Ski webcams](https://worldeye.app/ski-webcams): Live mountain and ski resort cameras.
 - [Beach webcams](https://worldeye.app/beach-webcams): Live beach and coastal cameras.
 - [Airport webcams](https://worldeye.app/airport-webcams): Live airport cameras and plane-spotting views.
+- [Port webcams](https://worldeye.app/port-webcams): Live harbour and port camera walls — Hong Kong, Tampa, Busan, Seattle, Miami and more working waterfronts.
+- [Aurora webcams](https://worldeye.app/aurora-webcams): Northern lights cameras in Finland, Iceland and Norway with the live Kp index, plus Fairbanks, Alaska.
+- [Northern lights webcams](https://worldeye.app/northern-lights-webcams): Aurora cameras and how to watch the northern lights live online.
+- [Volcano webcams](https://worldeye.app/volcano-webcams): Live volcano cameras, including Kīlauea in Hawaiʻi.
+- [Live Camera Index](https://worldeye.app/live-camera-index): WorldEye's primary-data research page — indexed camera counts by country, city, state network and publisher, with a downloadable dataset.
+- [Random Camera Roulette](https://worldeye.app/random): A geography game — a random live camera appears, you guess the country, then the reveal scores you.
 
 ## Trackers
 
-- [Live flight tracker](https://worldeye.app/live-flight-tracker): Real-time aircraft positions from ADS-B broadcasts on the free globe.
-- [Live plane spotting](https://worldeye.app/live-plane-spotting): Watch aircraft movements and airport activity live.
-- [Satellite tracker](https://worldeye.app/satellite-tracker): The ISS, Starlink and thousands of satellites tracked live.
-- [Space station tracker](https://worldeye.app/space-station-tracker): Follow the International Space Station in real time.
-- [Ship tracker](https://worldeye.app/ship-tracker): Live vessel positions from AIS broadcasts.
-- [Weather tracker](https://worldeye.app/weather-tracker): Live weather radar and conditions on the globe.
-- [Earthquake tracker](https://worldeye.app/earthquake-tracker): Earthquakes as they happen — magnitude, depth and location from USGS data.
-- [Hurricane tracker](https://worldeye.app/hurricane-tracker): Live tropical storm and hurricane tracking.
+- [Live plane spotting](https://worldeye.app/live-plane-spotting): Watch aircraft movements and airport activity live, free.
+- [Space station tracker](https://worldeye.app/space-station-tracker): Follow the International Space Station in real time, free.
+- [Ship tracker](https://worldeye.app/ship-tracker): Live vessel positions from AIS broadcasts. The globe is free; live maritime tracking is a premium intel feed included with VIP Pro.
+- [Hurricane tracker](https://worldeye.app/hurricane-tracker): Live tropical storm and hurricane tracking on the globe.
 - [Wildfire tracker](https://worldeye.app/wildfire-tracker): Active wildfires from NASA satellite detection feeds.
-- [Cyber threat map](https://worldeye.app/cyber-threat-map): Live cyber threat intelligence on the map (Pro intel layer).
+- [Cyber threat map](https://worldeye.app/cyber-threat-map): Live cyber threat intelligence on the map — a premium intel feed included with VIP Pro.
+- [What is ADS-B?](https://worldeye.app/what-is-ads-b): How aircraft broadcast their positions, and how live flight tracking works.
+- [What is AIS?](https://worldeye.app/what-is-ais): How ships broadcast their positions, and how live vessel tracking works.
+
+## Paid plans
+
+- [Pricing](https://worldeye.app/pricing): Pro (Weekly $7.99 / Monthly $13.99) adds the OI AI Assistant, the live traffic layer, advanced search filters, the OSINT toolkit, the Camera Recording Studio and camera alerts (2). VIP Pro ($74.99/year) adds premium intel feeds (cyber threats, GDELT events, maritime tracking, conflict zones, live news), Camera Timelapse and camera alerts (10).
+- [Enterprise](https://worldeye.app/enterprise): WorldEye Enterprise ($999/year) is VIP Pro plus a key-gated camera-feed API, an embed player and a per-camera rights registry (about 96% of cameras are eligible; Windy cameras are excluded).
+- [Ambient mode](https://worldeye.app/ambient-mode): WorldEye Ambient ($4.99/month, 10-day free trial) is a Slow TV player of live cameras for TVs and second screens. It is an add-on, not a plan tier; Pro and VIP Pro members are not charged for it.
 
 ## Learn
 
-- [FAQ](https://worldeye.app/faq): Direct answers about the free map, the free camera limit, Pro, VIP Pro, camera alerts, trials, billing, cameras and privacy.
-- [What is ADS-B?](https://worldeye.app/what-is-ads-b): How aircraft broadcast their positions, and how live flight tracking works.
-- [What is AIS?](https://worldeye.app/what-is-ais): How ships broadcast their positions, and how live vessel tracking works.
 - [Blog](https://worldeye.app/blog): Guides and explainers on live tracking, cameras and open-source intelligence.
+- [Free OSINT tools](https://worldeye.app/free-osint-tools): Free open-source intelligence tools, including WorldEye's own free globe and Recon toolkit.
+- [Live events](https://worldeye.app/live-events): Live event camera walls — launches, storms, races and seasonal events watched through nearby cameras.
 
 ## Comparisons
 
 - [Compare](https://worldeye.app/compare): Side-by-side comparisons of WorldEye with other live-map, webcam and OSINT tools. This is also the alternatives hub — /alternatives redirects here.
 - [God's Eye View](https://worldeye.app/gods-eye-view): What a god's eye view of Earth is, and how WorldEye delivers it as a hosted website — free, no install, no API key.
 - [God's Eye View alternative](https://worldeye.app/alternatives/gods-eye-view): WorldEye compared with the open-source God's Eye View project — hosted versus install-it-yourself, 74,229 cameras versus roughly 4,000.
+- [EarthCam alternative](https://worldeye.app/earthcam-alternative): WorldEye as an EarthCam alternative — a 3D globe of 74,229 live public cameras, free with no signup.
 
 ## Company
 

@@ -6,3 +6,4 @@ Disallow: /premium
 
 Sitemap: https://worldeye.app/sitemap.xml
 Sitemap: https://worldeye.app/news-sitemap.xml
+Sitemap: https://worldeye.app/image-sitemap.xml

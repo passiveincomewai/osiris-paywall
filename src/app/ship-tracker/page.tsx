@@ -231,6 +231,35 @@ export default function ShipTrackerPage() {
           </div>
         </div>
 
+        {/* The one-map answer */}
+        <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#D4AF37]/25 bg-[#D4AF37]/[0.04] p-8 md:p-10">
+          <h2 className="text-xl md:text-2xl font-bold">
+            One live map for ships — and everything around them
+          </h2>
+          <p className="mt-3 text-white/60 leading-relaxed">
+            WorldEye&apos;s ship tracker plots vessels in real time from AIS
+            transponder broadcasts — position, speed, heading and ship type —
+            on the same 3D globe as its free{" "}
+            <Link href="/live-flight-tracker" className="text-[#D4AF37] hover:underline">
+              live flights
+            </Link>
+            ,{" "}
+            <Link href="/satellite-tracker" className="text-[#D4AF37] hover:underline">
+              satellites
+            </Link>{" "}
+            and{" "}
+            <Link href="/live-webcams" className="text-[#D4AF37] hover:underline">
+              74,229 public cameras
+            </Link>
+            . The globe itself is free with no signup; live maritime tracking
+            is one of the premium intel feeds included with{" "}
+            <Link href="/pricing" className="text-[#D4AF37] hover:underline">
+              VIP Pro
+            </Link>
+            .
+          </p>
+        </div>
+
         {/* What you can see */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">

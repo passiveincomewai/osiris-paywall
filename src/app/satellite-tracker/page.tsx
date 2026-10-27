@@ -214,6 +214,29 @@ export default function SatelliteTrackerPage() {
           </div>
         </div>
 
+        {/* The one-map answer */}
+        <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#00E5FF]/25 bg-[#00E5FF]/[0.04] p-8 md:p-10">
+          <h2 className="text-xl md:text-2xl font-bold">
+            One live map for satellites — and everything around them
+          </h2>
+          <p className="mt-3 text-white/60 leading-relaxed">
+            WorldEye&apos;s satellite tracker is free: it computes live
+            positions for thousands of satellites from public orbital data
+            (TLEs) and draws them on a 3D globe — the ISS, Starlink trains,
+            weather and GPS satellites, with their full orbit paths. The same
+            globe also carries{" "}
+            <Link href="/live-flight-tracker" className="text-[#00E5FF] hover:underline">
+              live flights
+            </Link>{" "}
+            and{" "}
+            <Link href="/live-webcams" className="text-[#00E5FF] hover:underline">
+              74,229 public cameras
+            </Link>{" "}
+            — satellites, flights and cameras on one live map, all free, with
+            no signup and no account.
+          </p>
+        </div>
+
         {/* How it works */}
         <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center">
