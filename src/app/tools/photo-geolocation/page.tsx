@@ -135,6 +135,7 @@ export default function PhotoGeolocationPage() {
         title="Keep exploring"
         links={[
           { label: "Random Camera Roulette — guess the country from a live camera", href: "/random" },
+          { label: "Camera Distance Finder — how far is that camera from you?", href: "/tools/camera-distance" },
           { label: "Live webcams worldwide", href: "/live-webcams" },
           { label: "The WorldEye globe — flights, cameras, satellites and more", href: "/" },
         ]}
