@@ -440,7 +440,7 @@ export default function StudioHomeClient({
       {/* Quick links */}
       <section className="grid md:grid-cols-3 gap-4">
         {quickLinks.map((q) => (
-          <Link key={q.href + q.title} href={q.href} className={card + " hover:border-cyan-400/50 transition-colors block"}>
+          <Link key={q.title} href={q.href} className={card + " hover:border-cyan-400/50 transition-colors block"}>
             <div className="text-white font-bold mb-1 flex items-center gap-1.5">
               {q.href === "/affiliates/studio/ai" && <Sparkles className="w-4 h-4 text-cyan-300 shrink-0" />}
               {q.title} →

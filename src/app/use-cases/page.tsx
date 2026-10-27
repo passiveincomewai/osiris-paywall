@@ -160,7 +160,7 @@ function PersonaCard({ persona }: { persona: Persona }) {
       <div className="mt-auto flex flex-wrap gap-3 pt-2">
         {persona.links.map((l) => (
           <a
-            key={l.href + l.label}
+            key={l.label}
             href={l.href}
             className={`inline-flex items-center gap-1.5 text-sm font-semibold transition group ${
               gold ? "text-[#D4AF37] hover:underline" : "text-[#00E5FF] hover:underline"

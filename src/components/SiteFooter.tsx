@@ -162,7 +162,12 @@ export default function SiteFooter({
             </p>
             <ul className="space-y-3">
               {col.links.map(([label, href]) => (
-                <li key={href + label}>
+                // Key is the label alone, never href + label: React keys are
+                // serialized into the RSC payload, and "/pricing" + "Pricing"
+                // formed a URL-like string Googlebot crawled as a 404
+                // (/pricingPricing, /faqFAQ, /aboutAbout, …). Labels are
+                // unique within each column, so the label alone is a safe key.
+                <li key={label}>
                   <Link
                     href={href}
                     className="text-sm text-white/55 hover:text-[#D4AF37] transition"

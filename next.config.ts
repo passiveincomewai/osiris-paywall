@@ -82,6 +82,16 @@ const nextConfig: NextConfig = {
       { source: '/traffic-cameras', destination: '/live-traffic-cameras', permanent: true },
       { source: '/countries', destination: '/cameras/countries', permanent: true },
       { source: '/cities', destination: '/city-webcams', permanent: true },
+      // GSC 404 bucket (2026-10-26): Google crawled these exact paths and
+      // got 404s. /week, /month, /year are the pricing page's billing
+      // periods as bare paths (no in-repo linker; lingering external or
+      // guessed URLs) — the pricing page owns the intent. /docs has no
+      // page and no in-repo linker either; /faq is the site's help
+      // surface (no help-centre or API-docs route exists), so it owns it.
+      { source: '/week', destination: '/pricing', permanent: true },
+      { source: '/month', destination: '/pricing', permanent: true },
+      { source: '/year', destination: '/pricing', permanent: true },
+      { source: '/docs', destination: '/faq', permanent: true },
     ];
   },
   async headers() {

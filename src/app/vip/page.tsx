@@ -81,7 +81,7 @@ export default async function VipHubPage() {
         <div className="grid gap-3 sm:grid-cols-3">
           {NEW_FEATURES.map((f) => (
             <Link
-              key={f.href + f.title}
+              key={f.title}
               href={f.href}
               className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-cyan-300/40"
             >
