@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Share2, Copy, Check, Link2, X, Globe, MapPin } from 'lucide-react';
 import { appBaseUrl } from '@/lib/app-url';
+import ShareWithQR from './share/ShareWithQR';
 
 interface SharePanelProps {
   mapView: { zoom: number; latitude: number; longitude?: number };
@@ -33,6 +34,10 @@ export default function SharePanel({ mapView, activeLayers, mouseCoords }: Share
     const base = typeof window !== 'undefined' ? window.location.origin : appBaseUrl();
     return `${base}/?${params.toString()}`;
   }, [mapView, activeLayers, mouseCoords]);
+
+  // The one view link this panel shows — the copy button, the social
+  // intents and the QR code below all carry this same string.
+  const shareUrl = generateShareUrl();
 
   const copyToClipboard = useCallback(async () => {
     const url = generateShareUrl();
@@ -118,7 +123,7 @@ export default function SharePanel({ mapView, activeLayers, mouseCoords }: Share
               </div>
               <div className="flex gap-1.5">
                 <div className="flex-1 p-1.5 rounded bg-[var(--bg-void)] border border-[var(--border-primary)] text-[9px] font-mono text-[var(--gold-primary)] truncate">
-                  {generateShareUrl()}
+                  {shareUrl}
                 </div>
                 <button
                   onClick={copyToClipboard}
@@ -129,24 +134,29 @@ export default function SharePanel({ mapView, activeLayers, mouseCoords }: Share
               </div>
             </div>
 
+            {/* QR code — encodes the same view link shown above. */}
+            <div className="mb-3 flex justify-center">
+              <ShareWithQR url={shareUrl} size={118} downloadName="worldeye-view-qr.png" />
+            </div>
+
             {/* Quick Share */}
             <div className="flex gap-2">
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('🏛️ OSIRIS — Global Intelligence Dashboard')}&url=${encodeURIComponent(generateShareUrl())}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('🏛️ OSIRIS — Global Intelligence Dashboard')}&url=${encodeURIComponent(shareUrl)}`}
                 target="_blank"
                 className="flex-1 text-center py-1.5 rounded text-[9px] font-mono tracking-wider text-[var(--text-muted)] border border-[var(--border-primary)] hover:border-[#1DA1F2] hover:text-[#1DA1F2] transition-colors"
               >
                 𝕏 POST
               </a>
               <a
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(generateShareUrl())}`}
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
                 target="_blank"
                 className="flex-1 text-center py-1.5 rounded text-[9px] font-mono tracking-wider text-[var(--text-muted)] border border-[var(--border-primary)] hover:border-[#0A66C2] hover:text-[#0A66C2] transition-colors"
               >
                 IN SHARE
               </a>
               <a
-                href={`https://reddit.com/submit?url=${encodeURIComponent(generateShareUrl())}&title=${encodeURIComponent('OSIRIS — Open Source Global Intelligence Platform')}`}
+                href={`https://reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent('OSIRIS — Open Source Global Intelligence Platform')}`}
                 target="_blank"
                 className="flex-1 text-center py-1.5 rounded text-[9px] font-mono tracking-wider text-[var(--text-muted)] border border-[var(--border-primary)] hover:border-[#FF4500] hover:text-[#FF4500] transition-colors"
               >

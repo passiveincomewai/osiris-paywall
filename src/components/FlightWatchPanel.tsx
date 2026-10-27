@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Plane, Gauge, ArrowUp, Radio, Crosshair, Loader2, Video } from 'lucide-react';
+import { X, Plane, Gauge, ArrowUp, Radio, Crosshair, Loader2, Video, QrCode } from 'lucide-react';
 import ShareButton from './share/ShareButton';
+import ShareWithQR from './share/ShareWithQR';
 import ExportTease from './ExportTease';
-import { flightShareId } from '@/lib/share/links';
+import { buildEntityShareUrl, flightShareId } from '@/lib/share/links';
+import { ensureShareCode } from '@/lib/share/client';
 
 /* ═══════════════════════════════════════════════════════════════
    OSIRIS — Flight Watch
@@ -157,6 +159,24 @@ function Row({ flight, telem, onRemove, onLocate, onDetail }: {
 }) {
   const [detail, setDetail] = useState<AircraftDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  // QR toggle: the code encodes the same /?flight= link the ShareButton
+  // beside it produces — same builder, same share code (lib/share).
+  const [qrOpen, setQrOpen] = useState(false);
+  const [qrUrl, setQrUrl] = useState<string | null>(null);
+
+  async function toggleQr() {
+    if (qrOpen) {
+      setQrOpen(false);
+      return;
+    }
+    setQrOpen(true);
+    if (!qrUrl) {
+      const id = flightShareId(flight);
+      if (!id) return;
+      const code = await ensureShareCode().catch(() => null);
+      setQrUrl(buildEntityShareUrl({ kind: 'flight', id }, code));
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -244,6 +264,17 @@ function Row({ flight, telem, onRemove, onLocate, onDetail }: {
           iconOnly
           className="p-0.5 text-[var(--text-muted)] hover:text-[var(--cyan-primary)] transition-colors"
         />
+        {flightShareId(flight) && (
+          <button
+            onClick={() => void toggleQr()}
+            title={`QR code for ${flight.callsign || flight.icao24}`}
+            aria-label={`Show QR code for ${flight.callsign || flight.icao24}`}
+            aria-expanded={qrOpen}
+            className="p-0.5 text-[var(--text-muted)] hover:text-[var(--cyan-primary)] transition-colors"
+          >
+            <QrCode className="w-3 h-3" />
+          </button>
+        )}
         <button
           onClick={() => onRemove(flight.icao24)}
           title="Stop watching"
@@ -253,6 +284,11 @@ function Row({ flight, telem, onRemove, onLocate, onDetail }: {
           <X className="w-3 h-3" />
         </button>
       </header>
+      {qrOpen && qrUrl && (
+        <div className="flex justify-center border-b border-[var(--border-secondary)] py-2.5">
+          <ShareWithQR url={qrUrl} size={110} downloadName="worldeye-flight-qr.png" />
+        </div>
+      )}
       <div className="border-b border-[var(--border-secondary)]">
         <ExportTease surface="flight" />
       </div>

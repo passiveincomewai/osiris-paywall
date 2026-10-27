@@ -8,6 +8,7 @@ import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, off
 import { cameraShareId, cameraShareTitle, rememberLastCamera } from '@/lib/camera-share';
 import { ensureShareCode, shareEntity, shareUrl } from '@/lib/share/client';
 import { buildEntityShareUrl } from '@/lib/share/links';
+import ShareWithQR from './share/ShareWithQR';
 import { clearLook, registerVideo } from '@/lib/vision/store';
 import CameraVision from './CameraVision';
 import CameraMiniMap from './CameraMiniMap';
@@ -585,6 +586,17 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                     <Share2 className="w-2.5 h-2.5" /> SHARE…
                   </button>
                 </div>
+                {/* QR of the very same link shown above — scanning it
+                    lands on this camera on the globe, share code and
+                    all (lib/share/qr: the payload is the URL itself). */}
+                {shareUrlText && (
+                  <div className="mt-2.5 flex items-start gap-3">
+                    <ShareWithQR url={shareUrlText} size={92} downloadName="worldeye-camera-qr.png" />
+                    <p className="pt-1 text-[9px] font-mono leading-relaxed tracking-wide text-[var(--text-secondary)]">
+                      SCAN WITH A PHONE CAMERA TO OPEN THIS CAMERA ON THE GLOBE — THE CODE CARRIES THE SAME LINK, YOUR SHARE CODE INCLUDED.
+                    </p>
+                  </div>
+                )}
                 {shareIsNew && shareUrlText && (
                   <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-white/5 pt-2">
                     <span className="text-[9px] font-mono tracking-wide text-[var(--text-secondary)]">
