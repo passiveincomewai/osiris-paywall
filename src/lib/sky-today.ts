@@ -146,8 +146,7 @@ function netMs(l: LaunchRecord): number | null {
 /**
  * Shape an /api/launches body. The route's error body carries an `error`
  * field with empty arrays — that must read as "unavailable", never as
- * "no launches", so it is checked before anything else (the drones /
- * launches failure-honesty precedent).
+ * "no launches", so it is checked before anything else (the launches failure-honesty precedent).
  */
 export function shapeLaunches(payload: unknown, nowMs: number): SkyLaunches {
   if (!payload || typeof payload !== 'object') return { kind: 'error' };

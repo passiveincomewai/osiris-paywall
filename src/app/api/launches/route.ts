@@ -13,7 +13,7 @@ import { LAUNCH_SOURCE_LABEL } from '@/lib/launches/types';
  * use with value added; attribution ships in the payload and the UI:
  * "Launch Library 2 · The Space Devs".
  *
- * Failure honesty (the drones/airspace precedent): with no cached copy
+ * Failure honesty: with no cached copy
  * and a dead upstream this is a 502 with an error field and no-store —
  * never a cacheable 200-with-empty that would pose as "no launches".
  */

@@ -62,7 +62,6 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean; vip: boolean
   { feature: "Satellite & space tracking", free: true, pro: true, vip: true },
   { feature: "Basic search — fly to any place", free: true, pro: true, vip: true },
   { feature: "Live transit vehicles (15 agencies)", free: true, pro: true, vip: true },
-  { feature: "Drone tracking & FAA airspace", free: true, pro: true, vip: true },
   { feature: "Space launch tracking & countdowns", free: true, pro: true, vip: true },
   { feature: "Street-level photo layer", free: true, pro: true, vip: true },
   { feature: "Radar, lightning, hurricanes & fire perimeters", free: true, pro: true, vip: true },
@@ -89,7 +88,7 @@ const FAQS = [
   },
   {
     q: "Is the map really free?",
-    a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, the live traffic layer and advanced search filters. VIP Pro (the yearly plan) adds the premium intel feeds and camera timelapse.",
+    a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, the live traffic layer and advanced search filters. VIP Pro (the yearly plan) adds the premium intel feeds and camera timelapse.",
   },
   {
     q: "Do I need my own API key for the AI assistant?",

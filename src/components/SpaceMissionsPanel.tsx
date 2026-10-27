@@ -227,7 +227,7 @@ export default function SpaceMissionsPanel({
     }
   }, [replay, selectedLaunchId, selectedPadKey, stopReplay]);
 
-  // Grabbing the map releases the replay camera (drone/follow contract) —
+  // Grabbing the map releases the replay camera (follow contract) —
   // playback continues, the banner stays, the user can re-follow.
   useEffect(() => {
     if (!replay) return;

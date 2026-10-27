@@ -35,8 +35,6 @@ export const KNOWN_LAYERS: Record<string, string> = {
   traffic: "Traffic",
   traffic_vehicles: "Traffic vehicles",
   traffic_congestion: "Traffic congestion",
-  drones: "Drones",
-  drone_airspace: "Drone airspace",
   radiation: "Radiation",
   infrastructure: "Infrastructure",
   global_incidents: "Global incidents",

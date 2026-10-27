@@ -15,7 +15,7 @@ const FREE_ROWS = [
   "74,229 public cameras",
   "Flight & satellite tracking",
   "Basic search — fly to any place",
-  "Transit, drones, launches & street level",
+  "Transit, launches & street level",
   "Weather, earthquakes & fires",
   "Cameras: 5 free opens per device",
 ];

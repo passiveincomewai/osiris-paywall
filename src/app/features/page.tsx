@@ -14,7 +14,6 @@ import {
   Images,
   Layers,
   Plane,
-  Radar,
   Radio,
   Rocket,
   Satellite,
@@ -147,13 +146,6 @@ const FREE_FEATURES = [
     desc: "Community street-level photography from Panoramax, right on the map.",
     detail:
       "Zoom to street level and open real photos taken at ground level — dated, credited community imagery from Panoramax (CC BY-SA). They are photographs, not live feeds, and the viewer says so plainly, with the capture date on every frame.",
-  },
-  {
-    icon: Radar,
-    title: "Drones & FAA airspace",
-    desc: "Live Remote ID drones where receivers feed WorldEye, plus FAA airspace grids.",
-    detail:
-      "Drones appear live only where a receiver is connected and feeding WorldEye — where none is, the layer says so honestly instead of inventing traffic. The FAA airspace overlay (LAANC grid ceilings and UAS restrictions) covers the US whether or not any drone is airborne.",
   },
   {
     icon: Rocket,

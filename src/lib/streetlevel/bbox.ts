@@ -1,8 +1,8 @@
 /**
  * OSIRIS — Street Level: viewport bbox parsing + guard.
  *
- * Same contract as the drone airspace route's guard (west,south,east,
- * north; finite; ordered; inside the world) with the tighter span cap
+ * Same bbox contract as the other viewport routes' guards (west,south,
+ * east, north; finite; ordered; inside the world) with the tighter span cap
  * street-level queries are designed for. A bbox that fails the guard is
  * a client error (400), never an empty success.
  */

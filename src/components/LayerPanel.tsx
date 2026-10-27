@@ -93,8 +93,6 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'private', label: 'Private', dataKey: 'private_flights' },
       { key: 'jets', label: 'Private Jets', dataKey: 'private_jets' },
       { key: 'military', label: 'Military', dataKey: 'military_flights' },
-      { key: 'drones', label: 'Drone Tracking', description: 'Live Remote ID drones from connected receivers', dataKey: 'drones' },
-      { key: 'drone_airspace', label: 'FAA Airspace', description: 'LAANC grid ceilings + UAS restrictions (FAA)', dataKey: 'drone-airspace', parent: 'drones' },
     ],
   },
   {
@@ -327,10 +325,10 @@ interface PanelCategory {
 const PANEL_CATEGORIES: PanelCategory[] = [
   {
     id: 'aviation', title: 'AVIATION', icon: Plane, accent: '#38BDF8',
-    blurb: 'Commercial · Private · Military\nDrones · Airspace',
+    blurb: 'Commercial · Private · Military',
     thumb: '/images/layers/aviation.webp',
     thumbGradient: 'linear-gradient(120deg, #0B2A4A, #123E6E 55%, #B45309)',
-    keys: ['flights', 'private', 'jets', 'military', 'drones', 'drone_airspace'],
+    keys: ['flights', 'private', 'jets', 'military'],
     kind: 'layers',
   },
   {
@@ -825,7 +823,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
     {
       id: 'AIR', icon: Plane, accent: '#38BDF8',
       count: sumData(['commercial_flights', 'private_flights', 'private_jets', 'military_flights']),
-      active: ['flights', 'private', 'jets', 'military', 'drones'].some((k) => !!activeLayers?.[k]),
+      active: ['flights', 'private', 'jets', 'military'].some((k) => !!activeLayers?.[k]),
       label: 'Toggle aviation layers',
       onClick: () => { if (aviationCat) toggleGroup(aviationCat.layers); },
     },

@@ -235,7 +235,7 @@ export async function shareEntity(
 /* ── Popup bridge ─────────────────────────────────────────────────────
  * The globe's entity popups are HTML strings (maplibre popups in
  * OsirisMap) — they call window.__weShareEntity(kind, id) the same
- * way drone popups call window.__weDroneFollowToggle. Installed once
+ * way map popups have always bridged window globals. Installed once
  * by ShareButton / ShareLinkBlock on the globe. */
 
 declare global {
