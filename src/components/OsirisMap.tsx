@@ -1465,7 +1465,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'line-color': '#FF6B00', 'line-width': 1.6, 'line-opacity': 0.9,
       }});
 
-      // Snow Plows (IA · UT · VT DOT AVL) — the owner's plow-pin artwork on
+      // Snow Plows (IA · UT · VT · ON · MB · SK · AK AVL) — the owner's plow-pin artwork on
       // every live truck; positions republish about every 2 minutes.
       map.addLayer({ id: 'plow-icons', type: 'symbol', source: 'plows', layout: {
         'icon-image': 'snowplow-pin',
@@ -3332,7 +3332,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Weather Events (NASA EONET + NOAA/NWS + GDACS) ──
-    // ── Snow Plows (IA · UT · VT DOT AVL) ──
+    // ── Snow Plows (IA · UT · VT · ON · MB · SK · AK AVL) ──
     // Only what the feed reports: agency, blade status when the truck
     // sends a real reading, ground speed, and the ping time.
     const openPlowPopup = (feature: any) => {

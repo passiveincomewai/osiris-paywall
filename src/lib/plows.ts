@@ -3,11 +3,12 @@ import { cachedSource } from '@/lib/sourceCache';
 /**
  * OSIRIS — Snow plow / winter maintenance vehicles.
  *
- * Three verified public feeds, one per state, merged into a single
- * payload by `getPlows` below. Each source is cached and tracked
+ * Seven verified public feeds, merged into a single payload by
+ * `getPlows` below. Each source is cached and tracked
  * independently, so one state going down never takes the others with
  * it. (Survey + probe record: ~/workspace/plow-expansion/REPORT.md,
- * 2026-10-26/27.)
+ * 2026-10-26/27; expansion audit: ~/workspace/worldeye-plows-expand/
+ * REPORT.md, 2026-10-27.)
  *
  *  • Iowa DOT — "Snow Plow Truck Location (AVL)" ArcGIS Online
  *    FeatureServer, keyless, republished every ~2 minutes, carrying
@@ -30,22 +31,40 @@ import { cachedSource } from '@/lib/sourceCache';
  *    dormant off-season yields an empty layer, not last January's
  *    fleet. The URL is an unofficial `/test/` path — it lives in
  *    VERMONT_PLOW_FEED_URL so it can move without a code hunt.
+ *  • IBI 511 "Track My Plow" — Ontario, Manitoba, Saskatchewan and
+ *    Alaska run the same IBI platform this site already reads
+ *    cameras from, and their public maps expose the winter fleet via
+ *    `/map/mapIcons/ServiceVehicles` (active vehicles) +
+ *    `/map/data/ServiceVehicles/{id}` (each vehicle's 2-hour
+ *    breadcrumb trail with real UTC timestamps). Verified live
+ *    2026-10-27: Ontario and Alaska plowing that night, Saskatchewan
+ *    reporting, Manitoba answering with an empty active set. The
+ *    marker feed has no timestamps, so a vehicle is only kept once
+ *    its trail bounds its recency — see the IBI section below.
  *
- * Held, deliberately NOT integrated (plow-expansion survey): Indiana
- * (live on the Castle Rock 511 GraphQL platform, but no published
- * reuse terms — a permission/courtesy email to INDOT comes first),
- * Michigan (MiDrive JSON verified but empty pre-season and the field
- * contract rests on MDOT's client code, not observed rows —
- * probationary until re-verified against live trucks in a storm),
- * Nebraska / Colorado / Minnesota (Castle Rock data-feed agreement
- * territory).
+ * Held, deliberately NOT integrated (plow-expansion survey +
+ * 2026-10-27 expansion audit): Indiana (live on the Castle Rock 511
+ * GraphQL platform, but no published reuse terms — a
+ * permission/courtesy email to INDOT comes first), Michigan
+ * (MiDrive JSON re-probed 2026-10-27: endpoint alive, `[]`
+ * pre-season, and the contract still carries NO timestamp field, so
+ * staleness cannot be bounded from the data — probationary until
+ * re-verified against live trucks in a storm), Nebraska / Colorado /
+ * Minnesota (Castle Rock data-feed agreement territory), Alberta
+ * (same IBI endpoints as its integrated neighbours, but its detail
+ * records carry zero trail states — no timestamp exists anywhere in
+ * the payload, so recency cannot be bounded).
  *
- * The IBI 511 family we already poll for cameras was probed for a
- * sibling plow resource (2026-10-26): every plausible resource name
- * returns the platform's HTTP 500 for unknown resources, so no IBI
- * plow feed is claimed. Finland's Digitraffic maintenance tracking
- * answers keyless, but its REST shape is driven-route history
- * (LineStrings, ~80k features / 4 MB), not latest vehicle points.
+ * The IBI 511 family's LIST resources were probed for a sibling plow
+ * resource (2026-10-26): every plausible resource name returns the
+ * platform's HTTP 500 for unknown resources. The fleets live on the
+ * MAP endpoints instead (above); the other IBI deployments probed
+ * (WI, New England 511, ID, QC, NB, NS, PE, NL, YT) return 404 or an
+ * HTML shell for the map endpoint, and WV/MA return HTML — no plow
+ * feed is claimed for any of them. Finland's Digitraffic maintenance
+ * tracking answers keyless, but its REST shape is driven-route
+ * history (LineStrings, ~80k features / 4 MB), not latest vehicle
+ * points.
  *
  * Honesty rules, same as the other layers: if a feed is down the layer
  * is empty for that state and the route says `stale` — positions are
@@ -59,7 +78,7 @@ import { cachedSource } from '@/lib/sourceCache';
 
 export interface Plow {
   id: string;
-  /** The truck's public label (Iowa "A-name", Utah vehicle id, Vermont's public plow name), when given. */
+  /** The truck's public label (Iowa "A-name", Utah vehicle id, Vermont's public plow name, IBI 511 vehicle asset id), when given. */
   label?: string;
   lat: number;
   lng: number;
@@ -107,11 +126,15 @@ function dedupe(plows: Plow[]): Plow[] {
 /* Per-source feed health, recorded by each fetcher itself — it only
    runs on a real upstream attempt, which is exactly when the answer
    changes. The route reads the aggregate via getPlowFeedStatus(). */
-type PlowSourceId = 'iowa' | 'utah' | 'vermont';
+type PlowSourceId = 'iowa' | 'utah' | 'vermont' | 'ontario' | 'manitoba' | 'saskatchewan' | 'alaska';
 const sourceHealth: Record<PlowSourceId, { ok: boolean | null; fetchedAt: string | null }> = {
   iowa: { ok: null, fetchedAt: null },
   utah: { ok: null, fetchedAt: null },
   vermont: { ok: null, fetchedAt: null },
+  ontario: { ok: null, fetchedAt: null },
+  manitoba: { ok: null, fetchedAt: null },
+  saskatchewan: { ok: null, fetchedAt: null },
+  alaska: { ok: null, fetchedAt: null },
 };
 
 function recordAttempt(source: PlowSourceId, ok: boolean): void {
@@ -516,6 +539,241 @@ async function fetchVermontPlows(): Promise<Plow[]> {
   }
 }
 
+/* ── IBI 511 "Track My Plow" — Ontario · Manitoba · Saskatchewan · Alaska ──
+ *
+ * Four deployments of the IBI 511 platform (the same vendor stack
+ * this site already reads cameras from) publish their winter fleets
+ * through two public map endpoints, verified live 2026-10-27:
+ *
+ *   GET {base}/map/mapIcons/ServiceVehicles
+ *     → { item2: [{ itemId, location: [lat, lng] }] } — the ACTIVE set.
+ *       The platform drops a vehicle after ~2 h inactive (each site's
+ *       own winter-terminology page says so), but the markers carry
+ *       NO timestamps.
+ *   GET {base}/map/data/ServiceVehicles/{itemId}
+ *     → { id, name, states: [{ latitude, longitude, speed, bearing,
+ *       updated }] } — the vehicle's breadcrumb trail for the same
+ *       ~2 h, oldest first, `updated` in UTC with no suffix
+ *       (Saskatchewan adds fractional seconds).
+ *
+ * So presence in the marker feed is never by itself a live claim: a
+ * vehicle is kept only when its trail's latest state lands inside
+ * IBI_PLOW_RECENCY_MS. A vehicle whose detail record can't be read
+ * (or has no states — Alberta's deployment, which is why Alberta is
+ * NOT integrated) is dropped, never stamped with fetch time.
+ *
+ * Labels are the agencies' published vehicle asset ids — Ontario
+ * "2021-02-191-1625", Saskatchewan "M4308", Alaska "40204" —
+ * equipment ids, not people. These payloads carry no driver field at
+ * all, and the interfaces below still declare only the fields read.
+ * No blade/material field exists in the trail → no status is mapped.
+ * Trail speeds on the Canadian deployments are km/h and are
+ * converted to this layer's mph; Alaska's deployment does not
+ * document its unit, so Alaska speed is omitted rather than guessed.
+ */
+
+/** One marker of the mapIcons response — only the fields we read. */
+export interface IbiPlowMarker {
+  itemId?: string | number | null;
+  /** [lat, lng] — the platform's order. Used only as a fallback if a
+      trail state lacks coordinates. */
+  location?: [number, number] | null;
+}
+
+/** One breadcrumb of a vehicle's trail — only the fields we read. */
+export interface IbiPlowState {
+  latitude?: number | null;
+  longitude?: number | null;
+  speed?: number | null;
+  bearing?: number | null;
+  /** UTC, ISO-shaped but suffix-less: "2026-10-27T04:51:03" (SK: ".36"). */
+  updated?: string | null;
+}
+
+/** One vehicle's detail record — only the fields we read. */
+export interface IbiPlowDetail {
+  id?: number | null;
+  /** The vehicle's public asset id (a fleet number, never a person). */
+  name?: string | null;
+  states?: IbiPlowState[] | null;
+}
+
+/** What separates one province/state deployment from another. */
+export interface IbiPlowConfig {
+  source: PlowSourceId;
+  /** Origin, e.g. `https://511on.ca`. */
+  base: string;
+  agency: string;
+  /** Prefixes every plow id, so two deployments can't collide. */
+  idPrefix: string;
+  /** True when the deployment's trail speeds are km/h (Canada). */
+  speedKmh: boolean;
+  /** Drops mis-geocoded rows — every one of these feeds has a few. */
+  bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number };
+}
+
+/** The platform's own activity window: no pings for ~2 h and the
+    vehicle leaves the public map. Our recency gate matches it. */
+export const IBI_PLOW_RECENCY_MS = 120 * 60 * 1000;
+
+export const IBI_PLOW_CONFIGS: Record<'ontario' | 'manitoba' | 'saskatchewan' | 'alaska', IbiPlowConfig> = {
+  ontario: {
+    source: 'ontario', base: 'https://511on.ca', agency: 'Ontario 511', idPrefix: 'ontario',
+    speedKmh: true, bounds: { minLat: 41.0, maxLat: 57.5, minLng: -96.0, maxLng: -73.0 },
+  },
+  manitoba: {
+    source: 'manitoba', base: 'https://www.manitoba511.ca', agency: 'Manitoba 511', idPrefix: 'manitoba',
+    speedKmh: true, bounds: { minLat: 48.9, maxLat: 60.1, minLng: -102.2, maxLng: -88.4 },
+  },
+  saskatchewan: {
+    source: 'saskatchewan', base: 'https://hotline.gov.sk.ca', agency: 'Saskatchewan Highway Hotline', idPrefix: 'saskatchewan',
+    speedKmh: true, bounds: { minLat: 48.9, maxLat: 60.1, minLng: -110.1, maxLng: -101.2 },
+  },
+  alaska: {
+    source: 'alaska', base: 'https://511.alaska.gov', agency: 'Alaska 511', idPrefix: 'alaska',
+    speedKmh: false, bounds: { minLat: 51.0, maxLat: 72.5, minLng: -180.0, maxLng: -128.0 },
+  },
+};
+
+const IBI_TIMESTAMP_RE = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?)(Z)?$/;
+
+/** Parse one trail timestamp to epoch ms. The stamps are UTC with the
+    suffix omitted (the platform's own map parses them with
+    moment.utc()), so a missing suffix means UTC, not local time. */
+export function parseIbiPlowTimestamp(raw: unknown): number | null {
+  if (typeof raw !== 'string') return null;
+  const m = IBI_TIMESTAMP_RE.exec(raw.trim());
+  if (!m) return null;
+  const ms = Date.parse(`${m[1]}Z`);
+  return Number.isFinite(ms) ? ms : null;
+}
+
+/** Map one IBI vehicle (marker + its trail detail) to a plow, or null. */
+export function normalizeIbiPlowVehicle(
+  marker: IbiPlowMarker | null | undefined,
+  detail: IbiPlowDetail | null | undefined,
+  cfg: IbiPlowConfig,
+  nowMs: number = Date.now(),
+): Plow | null {
+  const itemId = marker?.itemId == null ? '' : String(marker.itemId).trim();
+  if (!itemId) return null;
+
+  /* The latest state by its own timestamp — trail order is the
+     platform's claim, not ours, so it is not trusted. */
+  let latest: { state: IbiPlowState; ms: number } | null = null;
+  for (const s of Array.isArray(detail?.states) ? detail.states : []) {
+    const ms = parseIbiPlowTimestamp(s?.updated);
+    if (ms == null) continue;
+    if (!latest || ms > latest.ms) latest = { state: s, ms };
+  }
+  if (!latest) return null; // no timestamped state — recency cannot be bounded
+  if (nowMs - latest.ms > IBI_PLOW_RECENCY_MS) return null; // inactive past the platform's own window
+  if (latest.ms - nowMs > 5 * 60 * 1000) return null; // ping from the future — source clock is wrong
+
+  const lat = finiteIn(latest.state.latitude, -90, 90) ?? finiteIn(marker?.location?.[0], -90, 90);
+  const lng = finiteIn(latest.state.longitude, -180, 180) ?? finiteIn(marker?.location?.[1], -180, 180);
+  if (lat == null || lng == null) return null;
+  const b = cfg.bounds;
+  if (lat < b.minLat || lat > b.maxLat || lng < b.minLng || lng > b.maxLng) return null;
+
+  const name = typeof detail?.name === 'string' && detail.name.trim() && detail.name.trim().length <= 40
+    ? detail.name.trim()
+    : undefined;
+  const heading = finiteIn(latest.state.bearing, 0, 360);
+  const rawSpeed = finiteIn(latest.state.speed, 0, 200);
+  /* km/h → mph on the Canadian deployments; Alaska's unit is
+     undocumented, so its speed is not mapped at all. */
+  const speed = cfg.speedKmh && rawSpeed != null ? Math.round(rawSpeed * 0.621371) : undefined;
+
+  return {
+    id: `${cfg.idPrefix}-${itemId}`,
+    ...(name ? { label: name } : {}),
+    lat,
+    lng,
+    ...(heading != null ? { heading: Math.round(heading) } : {}),
+    ...(speed != null ? { speed } : {}),
+    agency: cfg.agency,
+    updatedAt: new Date(latest.ms).toISOString(),
+  };
+}
+
+/** Map a whole marker set with its per-vehicle detail records. */
+export function normalizeIbiPlowFeed(
+  markers: IbiPlowMarker[] | null | undefined,
+  details: ReadonlyMap<string, IbiPlowDetail | null>,
+  cfg: IbiPlowConfig,
+  nowMs: number = Date.now(),
+): Plow[] {
+  const out: Plow[] = [];
+  for (const m of markers ?? []) {
+    const key = m?.itemId == null ? '' : String(m.itemId).trim();
+    if (!key) continue;
+    const plow = normalizeIbiPlowVehicle(m, details.get(key) ?? null, cfg, nowMs);
+    if (plow) out.push(plow);
+  }
+  return dedupe(out);
+}
+
+/* Detail records are fetched a page at a time, the way the IBI camera
+   loader batches: ten at once brought every sibling deployment well
+   inside its budget, and these records are a few KB each. */
+const IBI_PLOW_DETAIL_CONCURRENCY = 10;
+/** Safety bound so a pathological marker set can't fan out forever.
+    Province-wide simultaneous actives run to a few hundred in a
+    major storm — comfortably under this. */
+const IBI_PLOW_MAX_VEHICLES = 600;
+
+async function fetchIbiPlowDetail(cfg: IbiPlowConfig, itemId: string): Promise<IbiPlowDetail | null> {
+  try {
+    const res = await fetch(`${cfg.base}/map/data/ServiceVehicles/${encodeURIComponent(itemId)}`, {
+      headers: { 'User-Agent': 'WorldEye plow layer (worldeye.app)', 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    return data && typeof data === 'object' ? (data as IbiPlowDetail) : null;
+  } catch {
+    return null; // an unreadable trail drops the vehicle, never the source
+  }
+}
+
+async function fetchIbiPlows(cfg: IbiPlowConfig): Promise<Plow[]> {
+  try {
+    const res = await fetch(`${cfg.base}/map/mapIcons/ServiceVehicles`, {
+      headers: { 'User-Agent': 'WorldEye plow layer (worldeye.app)', 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`${cfg.agency} ServiceVehicles HTTP ${res.status}`);
+    const data = await res.json().catch(() => null);
+    const markers: IbiPlowMarker[] = Array.isArray(data?.item2) ? data.item2 : [];
+
+    const ids: string[] = [];
+    const seen = new Set<string>();
+    for (const m of markers) {
+      const id = m?.itemId == null ? '' : String(m.itemId).trim();
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        ids.push(id);
+      }
+    }
+    const capped = ids.slice(0, IBI_PLOW_MAX_VEHICLES);
+
+    const details = new Map<string, IbiPlowDetail | null>();
+    for (let i = 0; i < capped.length; i += IBI_PLOW_DETAIL_CONCURRENCY) {
+      const batch = capped.slice(i, i + IBI_PLOW_DETAIL_CONCURRENCY);
+      const results = await Promise.all(batch.map(id => fetchIbiPlowDetail(cfg, id)));
+      batch.forEach((id, j) => details.set(id, results[j]));
+    }
+
+    const plows = normalizeIbiPlowFeed(markers, details, cfg, Date.now());
+    recordAttempt(cfg.source, true);
+    return plows;
+  } catch (e) {
+    recordAttempt(cfg.source, false);
+    throw e;
+  }
+}
+
 /* ── Aggregation ─────────────────────────────────────────────────── */
 
 /**
@@ -529,27 +787,40 @@ async function fetchVermontPlows(): Promise<Plow[]> {
 const getIowaPlows = cachedSource<Plow>('plows-iowa-avl', fetchIowaPlows, 90_000);
 const getUtahPlows = cachedSource<Plow>('plows-utah-avl', fetchUtahPlows, 90_000);
 const getVermontPlows = cachedSource<Plow>('plows-vermont', fetchVermontPlows, 90_000);
+/* The IBI sources cost one marker request plus one small detail
+   request per active vehicle, and their trails advance on a
+   multi-minute cadence — 120 s keeps the fan-out polite. */
+const getOntarioPlows = cachedSource<Plow>('plows-ontario-tmp', () => fetchIbiPlows(IBI_PLOW_CONFIGS.ontario), 120_000);
+const getManitobaPlows = cachedSource<Plow>('plows-manitoba-tmp', () => fetchIbiPlows(IBI_PLOW_CONFIGS.manitoba), 120_000);
+const getSaskatchewanPlows = cachedSource<Plow>('plows-saskatchewan-tmp', () => fetchIbiPlows(IBI_PLOW_CONFIGS.saskatchewan), 120_000);
+const getAlaskaPlows = cachedSource<Plow>('plows-alaska-tmp', () => fetchIbiPlows(IBI_PLOW_CONFIGS.alaska), 120_000);
 
 /* Read-time recency enforcement for the windowed feeds: even when the
-   cache bridges a failed refresh with a last good set, a Utah or
-   Vermont truck whose ping has since aged past its window is not
-   displayed. Iowa needs no window — its feed only ever carries
-   currently-reporting trucks. */
+   cache bridges a failed refresh with a last good set, a truck whose
+   ping has since aged past its window is not displayed. Iowa needs
+   no window — its feed only ever carries currently-reporting trucks. */
 const READ_WINDOWS: Partial<Record<string, number>> = {
   'Utah DOT': UTAH_RECENCY_WINDOW_MS,
   'Vermont AOT': VERMONT_STALE_WINDOW_MS,
+  'Ontario 511': IBI_PLOW_RECENCY_MS + 5 * 60 * 1000,
+  'Manitoba 511': IBI_PLOW_RECENCY_MS + 5 * 60 * 1000,
+  'Saskatchewan Highway Hotline': IBI_PLOW_RECENCY_MS + 5 * 60 * 1000,
+  'Alaska 511': IBI_PLOW_RECENCY_MS + 5 * 60 * 1000,
 };
 
 /**
- * All plows across the three verified state feeds. Sources are
+ * All plows across the seven verified feeds. Sources are
  * isolated: cachedSource never rejects, so a failed feed contributes
  * its last good set or nothing — never an error that would empty the
  * other states.
  */
 export async function getPlows(): Promise<Plow[]> {
-  const [iowa, utah, vermont] = await Promise.all([getIowaPlows(), getUtahPlows(), getVermontPlows()]);
+  const [iowa, utah, vermont, ontario, manitoba, saskatchewan, alaska] = await Promise.all([
+    getIowaPlows(), getUtahPlows(), getVermontPlows(),
+    getOntarioPlows(), getManitobaPlows(), getSaskatchewanPlows(), getAlaskaPlows(),
+  ]);
   const nowMs = Date.now();
-  return dedupe([...iowa, ...utah, ...vermont]).filter(p => {
+  return dedupe([...iowa, ...utah, ...vermont, ...ontario, ...manitoba, ...saskatchewan, ...alaska]).filter(p => {
     const window = READ_WINDOWS[p.agency];
     if (window == null) return true;
     const pingMs = Date.parse(p.updatedAt);

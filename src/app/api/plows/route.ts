@@ -4,12 +4,15 @@ import { getPlows, getPlowFeedStatus } from '@/lib/plows';
 /**
  * OSIRIS — Snow Plows: live winter-maintenance vehicle positions.
  *
- * Three verified keyless plow feeds, merged in lib/plows: Iowa DOT's
+ * Seven verified keyless plow feeds, merged in lib/plows: Iowa DOT's
  * AVL FeatureServer, UDOT's `SnowPlow_AVL_Public` (recency-filtered —
- * it is a last-known-position table), and Vermont AOT's Plow Finder
+ * it is a last-known-position table), Vermont AOT's Plow Finder
  * vehicle JSON (slimmed to latest positions, 90-minute staleness
- * gate). Each source is cached and fails independently. The pipeline
- * lives in lib/plows — this route keeps the response shape:
+ * gate), and the IBI 511 "Track My Plow" deployments of Ontario,
+ * Manitoba, Saskatchewan and Alaska (active-vehicle markers plus
+ * per-vehicle timestamped trails, 2-hour recency gate). Each source
+ * is cached and fails independently. The pipeline lives in lib/plows
+ * — this route keeps the response shape:
  * { plows, total, stale, source, timestamp }.
  *
  * `stale` is the honesty flag: true when any source's latest upstream
@@ -18,12 +21,14 @@ import { getPlows, getPlowFeedStatus } from '@/lib/plows';
  * empty set for its state, never invented positions.
  * Sources: Iowa DOT — https://data.iowadot.gov/ (Snow Plow Truck
  * Location AVL) · Utah DOT — UDOT SnowPlow_AVL_Public (ArcGIS Online)
- * · Vermont AOT — VTrans Plow Finder vehicle JSON.
+ * · Vermont AOT — VTrans Plow Finder vehicle JSON · Ontario 511 /
+ * Manitoba 511 / Saskatchewan Highway Hotline / Alaska 511 — IBI 511
+ * Track My Plow map endpoints.
  */
 
 export const dynamic = 'force-dynamic';
 
-const SOURCE_LABEL = 'Iowa DOT · Utah DOT · Vermont AOT';
+const SOURCE_LABEL = 'Iowa DOT · Utah DOT · Vermont AOT · Ontario 511 · Manitoba 511 · Saskatchewan Highway Hotline · Alaska 511';
 
 export async function GET() {
   try {

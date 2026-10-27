@@ -3,6 +3,8 @@ import {
   normalizeIowaFeature, normalizeIowaFeed, bladeStatus, type IowaAvlFeature,
   normalizeUtahFeature, normalizeUtahFeed, utahRecencyCutoffLiteral, type UtahAvlFeature,
   normalizeVermontVehicle, normalizeVermontFeed, parseVermontTimestamp, type VermontVehicle,
+  normalizeIbiPlowVehicle, normalizeIbiPlowFeed, parseIbiPlowTimestamp, IBI_PLOW_CONFIGS,
+  type IbiPlowMarker, type IbiPlowDetail,
   getPlows, getPlowFeedStatus,
 } from './plows';
 import { clearSourceCache } from './sourceCache';
@@ -358,6 +360,149 @@ describe('normalizeVermontVehicle (probe fixture)', () => {
   });
 });
 
+/* ── IBI 511 Track My Plow — Ontario · Manitoba · Saskatchewan · Alaska ── */
+
+// Live probe, 2026-10-27T04:52Z: Ontario vehicle 3991 was actively
+// plowing near New Liskeard. Marker verbatim from
+// /map/mapIcons/ServiceVehicles; the detail's first and last trail
+// states verbatim from /map/data/ServiceVehicles/3991 (64 states over
+// ~2 h; the middle is elided — the normalizer only reads the latest).
+const ON_LATEST_MS = Date.parse('2026-10-27T04:51:03Z');
+const onMarker: IbiPlowMarker = { itemId: '3991', location: [48.142365, -80.232154] };
+const onDetail: IbiPlowDetail = {
+  id: 3991,
+  name: '2021-02-191-1625',
+  states: [
+    { latitude: 48.09727, longitude: -80.192314, speed: 10.0, bearing: 180.0, updated: '2026-10-27T03:01:48' },
+    { latitude: 48.142365, longitude: -80.232154, speed: 30.0, bearing: 0.0, updated: '2026-10-27T04:51:03' },
+  ],
+};
+// Saskatchewan vehicle M4308, same probe: fractional-second stamp.
+const SK_LATEST_MS = Date.parse('2026-10-27T04:51:05.36Z');
+const skMarker: IbiPlowMarker = { itemId: '76337', location: [50.90471, -106.91818] };
+const skDetail: IbiPlowDetail = {
+  id: 76337,
+  name: 'M4308',
+  states: [
+    { latitude: 50.90473, longitude: -106.91817, speed: 0.0, bearing: 0.0, updated: '2026-10-27T04:51:05.36' },
+  ],
+};
+// Alaska vehicle 40204 near Fairbanks, same probe (120 trail states).
+const AK_LATEST_MS = Date.parse('2026-10-27T04:56:56Z');
+const akMarker: IbiPlowMarker = { itemId: '10077', location: [64.861981, -147.873604] };
+const akDetail: IbiPlowDetail = {
+  id: 10077,
+  name: '40204',
+  states: [
+    { latitude: 64.861981, longitude: -147.873604, speed: 0.0, bearing: 258.0, updated: '2026-10-27T04:56:56' },
+  ],
+};
+
+describe('parseIbiPlowTimestamp', () => {
+  it('reads the suffix-less stamps as UTC, fractional seconds included', () => {
+    expect(parseIbiPlowTimestamp('2026-10-27T04:51:03')).toBe(ON_LATEST_MS);
+    expect(parseIbiPlowTimestamp('2026-10-27T04:51:05.36')).toBe(SK_LATEST_MS);
+    expect(parseIbiPlowTimestamp('2026-10-27T04:51:03Z')).toBe(ON_LATEST_MS);
+  });
+  it('rejects garbage and non-strings', () => {
+    expect(parseIbiPlowTimestamp('10/27/2026 4:51 AM')).toBeNull();
+    expect(parseIbiPlowTimestamp(null)).toBeNull();
+    expect(parseIbiPlowTimestamp(1793062872000)).toBeNull();
+  });
+});
+
+describe('normalizeIbiPlowVehicle (live fixtures)', () => {
+  it('maps Ontario: asset id is the label, km/h trail speed becomes mph', () => {
+    const p = normalizeIbiPlowVehicle(onMarker, onDetail, IBI_PLOW_CONFIGS.ontario, ON_LATEST_MS + 10 * 60 * 1000)!;
+    expect(p).not.toBeNull();
+    expect(p.id).toBe('ontario-3991');
+    expect(p.label).toBe('2021-02-191-1625');
+    expect(p.agency).toBe('Ontario 511');
+    expect(p.lat).toBe(48.142365);
+    expect(p.lng).toBe(-80.232154);
+    expect(p.heading).toBe(0);
+    expect(p.speed).toBe(Math.round(30.0 * 0.621371));
+    expect(p.updatedAt).toBe(new Date(ON_LATEST_MS).toISOString());
+    expect(p.status).toBeUndefined(); // the trail has no blade/material field
+  });
+
+  it('picks the latest state by timestamp, not by trail order', () => {
+    const reversed: IbiPlowDetail = { ...onDetail, states: [...(onDetail.states ?? [])].reverse() };
+    const p = normalizeIbiPlowVehicle(onMarker, reversed, IBI_PLOW_CONFIGS.ontario, ON_LATEST_MS + 10 * 60 * 1000)!;
+    expect(p.updatedAt).toBe(new Date(ON_LATEST_MS).toISOString());
+    expect(p.lat).toBe(48.142365);
+  });
+
+  it('parses Saskatchewan fractional-second stamps', () => {
+    const p = normalizeIbiPlowVehicle(skMarker, skDetail, IBI_PLOW_CONFIGS.saskatchewan, SK_LATEST_MS + 5 * 60 * 1000)!;
+    expect(p).not.toBeNull();
+    expect(p.id).toBe('saskatchewan-76337');
+    expect(p.label).toBe('M4308');
+    expect(p.agency).toBe('Saskatchewan Highway Hotline');
+    expect(p.updatedAt).toBe(new Date(SK_LATEST_MS).toISOString());
+    expect(p.speed).toBe(0);
+  });
+
+  it('omits Alaska speed — the deployment does not document its unit', () => {
+    const p = normalizeIbiPlowVehicle(akMarker, akDetail, IBI_PLOW_CONFIGS.alaska, AK_LATEST_MS + 5 * 60 * 1000)!;
+    expect(p).not.toBeNull();
+    expect(p.id).toBe('alaska-10077');
+    expect(p.label).toBe('40204');
+    expect(p.heading).toBe(258);
+    expect(p.speed).toBeUndefined();
+  });
+
+  it('PRIVACY: an undeclared person field in the payload never survives mapping', () => {
+    // The real payloads carry no driver field; if one ever appears it
+    // is undeclared in IbiPlowDetail and must not reach the client.
+    const withPerson = {
+      ...onDetail,
+      operatorName: 'J DRIVER',
+      driverId: 'X9',
+    } as unknown as IbiPlowDetail;
+    const p = normalizeIbiPlowVehicle(onMarker, withPerson, IBI_PLOW_CONFIGS.ontario, ON_LATEST_MS + 10 * 60 * 1000)!;
+    const json = JSON.stringify(p);
+    expect(json).not.toContain('DRIVER');
+    expect(json).not.toContain('X9');
+    expect(Object.keys(p).sort()).toEqual(
+      ['agency', 'heading', 'id', 'label', 'lat', 'lng', 'speed', 'updatedAt'].sort(),
+    );
+  });
+});
+
+describe('normalizeIbiPlowVehicle (recency + rejections)', () => {
+  const cfg = IBI_PLOW_CONFIGS.ontario;
+  it('keeps a ping 119 minutes old, drops one 121 minutes old (120-min window)', () => {
+    expect(normalizeIbiPlowVehicle(onMarker, onDetail, cfg, ON_LATEST_MS + 119 * 60 * 1000)).not.toBeNull();
+    expect(normalizeIbiPlowVehicle(onMarker, onDetail, cfg, ON_LATEST_MS + 121 * 60 * 1000)).toBeNull();
+  });
+  it('drops a ping from the future beyond the clock-skew tolerance', () => {
+    expect(normalizeIbiPlowVehicle(onMarker, onDetail, cfg, ON_LATEST_MS - 6 * 60 * 1000)).toBeNull();
+  });
+  it('drops a vehicle with no trail states — its recency cannot be bounded', () => {
+    // Exactly Alberta's shape at probe time: markers answer, states are empty.
+    expect(normalizeIbiPlowVehicle(onMarker, { ...onDetail, states: [] }, cfg, ON_LATEST_MS)).toBeNull();
+    expect(normalizeIbiPlowVehicle(onMarker, null, cfg, ON_LATEST_MS)).toBeNull();
+  });
+  it('drops a vehicle geocoded outside its province', () => {
+    const london: IbiPlowDetail = {
+      ...onDetail,
+      states: [{ latitude: 51.5074, longitude: -0.1276, speed: 0, bearing: 0, updated: '2026-10-27T04:51:03' }],
+    };
+    expect(normalizeIbiPlowVehicle(onMarker, london, cfg, ON_LATEST_MS)).toBeNull();
+  });
+  it('normalizeIbiPlowFeed joins markers to details and de-duplicates', () => {
+    const details = new Map<string, IbiPlowDetail | null>([['3991', onDetail], ['76337', skDetail]]);
+    const now = Math.max(ON_LATEST_MS, SK_LATEST_MS) + 10 * 60 * 1000;
+    const on = normalizeIbiPlowFeed([onMarker, onMarker], details, IBI_PLOW_CONFIGS.ontario, now);
+    expect(on.map(p => p.id)).toEqual(['ontario-3991']);
+    const sk = normalizeIbiPlowFeed([skMarker], details, IBI_PLOW_CONFIGS.saskatchewan, now);
+    expect(sk.map(p => p.id)).toEqual(['saskatchewan-76337']);
+    // A dormant deployment (Manitoba at probe time) is an empty set, not an error.
+    expect(normalizeIbiPlowFeed([], new Map(), IBI_PLOW_CONFIGS.manitoba, now)).toEqual([]);
+  });
+});
+
 /* ── Aggregation: per-source failure isolation ───────────────────── */
 
 describe('getPlows (per-source failure isolation)', () => {
@@ -386,6 +531,55 @@ describe('getPlows (per-source failure isolation)', () => {
       expect(plows.map(p => p.id).sort()).toEqual(['iowa-A31332', 'vermont-16188']);
       // Utah's outage is reported honestly: the combined set is incomplete.
       expect(getPlowFeedStatus().ok).toBe(false);
+    } finally {
+      vi.unstubAllGlobals();
+      nowSpy.mockRestore();
+      clearSourceCache();
+    }
+  });
+
+  it('aggregates all seven sources: counts add up, a dormant IBI source is empty-not-down', async () => {
+    const fixedNow = WOODFORD_LATEST_UTC + 30 * 60 * 1000;
+    const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(fixedNow);
+    clearSourceCache();
+    const suffixless = (ms: number) => new Date(ms).toISOString().slice(0, 19);
+    const iowaFc = {
+      features: [{
+        ...liveFeatures[0],
+        properties: { ...liveFeatures[0].properties, MODIFIEDDT: fixedNow - 5 * 60 * 1000 },
+      }],
+    };
+    const fetchStub = vi.fn(async (url: unknown) => {
+      const u = String(url);
+      if (u.includes('AVL_Direct_View')) return { ok: true, status: 200, json: async () => iowaFc };
+      if (u.includes('SnowPlow_AVL_Public')) return { ok: true, status: 200, json: async () => ({ features: [] }) };
+      if (u.includes('vehicleJSON')) return { ok: true, status: 200, json: async () => [woodfordSands] };
+      if (u.includes('511on.ca/map/mapIcons')) {
+        return { ok: true, status: 200, json: async () => ({ item2: [{ itemId: 'T1', location: [44.0, -79.0] }] }) };
+      }
+      if (u.includes('511on.ca/map/data/ServiceVehicles/T1')) {
+        return {
+          ok: true, status: 200,
+          json: async () => ({
+            id: 1, name: 'TEST-1',
+            states: [{ latitude: 44.0, longitude: -79.0, speed: 16.0934, bearing: 90, updated: suffixless(fixedNow - 10 * 60 * 1000) }],
+          }),
+        };
+      }
+      // Manitoba, Saskatchewan and Alaska answer with an empty active set.
+      if (u.includes('mapIcons/ServiceVehicles')) return { ok: true, status: 200, json: async () => ({ item2: [] }) };
+      throw new Error(`unexpected fetch: ${u}`);
+    });
+    vi.stubGlobal('fetch', fetchStub);
+    try {
+      const plows = await getPlows();
+      // 1 Iowa + 0 Utah + 1 Vermont + 1 Ontario + 0 dormant × 3 = 3.
+      expect(plows.map(p => p.id).sort()).toEqual(['iowa-A31332', 'ontario-T1', 'vermont-16188']);
+      const ontario = plows.find(p => p.id === 'ontario-T1')!;
+      expect(ontario.agency).toBe('Ontario 511');
+      expect(ontario.speed).toBe(10); // 16.0934 km/h → 10 mph
+      // Every source answered, so the combined set is complete.
+      expect(getPlowFeedStatus().ok).toBe(true);
     } finally {
       vi.unstubAllGlobals();
       nowSpy.mockRestore();
