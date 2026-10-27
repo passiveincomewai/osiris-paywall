@@ -28,6 +28,29 @@ import {
 } from "@/components/directory-page";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { mergePlaceFaqs, stateAnswers } from "@/lib/place-answers";
+import { getPlaceWeather } from "@/lib/place-weather";
+import CurrentStatus from "@/components/CurrentStatus";
+import { stateFreewayFaq, stateStatusRows } from "@/lib/place-breakdown";
+import cityPages from "@/data/city-pages.json";
+
+/* Area name → city-page slug, for linking the coverage table to the
+   city templates. Only US entries of the generated city index plus
+   the three curated US city pages — an area with no city page stays
+   unlinked rather than guessing a slug. */
+const CITY_PAGE_BY_NAME = new Map<string, string>([
+  ["Houston", "houston"],
+  ["Dallas", "dallas"],
+  ["Fort Worth", "fort-worth"],
+  ...(
+    cityPages.cities as unknown as Array<{
+      slug: string;
+      name: string;
+      countrySlug: string;
+    }>
+  )
+    .filter((g) => g.countrySlug === "united-states")
+    .map((g) => [g.name, g.slug] as [string, string]),
+]);
 
 type StateCfg = {
   name: string;
@@ -632,6 +655,12 @@ const RELATED: { label: string; href: string }[] = [
   { label: "All live traffic cameras", href: "/live-traffic-cameras" },
 ];
 
+/* The Current Status block reads a live weather snapshot (cached 30
+   minutes in lib/weather-api); ISR at the same cadence — the city and
+   country templates' pattern — keeps the baked page from going
+   staler than the feed it quotes. */
+export const revalidate = 1800;
+
 export function generateStaticParams() {
   return getUsStatesIndex().states.map((s) => ({ state: s.slug }));
 }
@@ -667,11 +696,40 @@ export default async function StateTrafficPage({
   const s = resolveState(slug);
   if (!s) notFound();
 
+  /* Current Status + the "freeway cameras" FAQ (SEO template
+     upgrade): the weather fetch follows the city/country pages'
+     pattern — a clean no-op (null) unless the weather keys are
+     configured and the provider answers, and the status lines assert
+     conditions only from that snapshot. The query targets the state's
+     largest camera cluster, the most representative single reading. */
+  const topArea = s.areas?.[0];
+  const placeWeather = await getPlaceWeather({
+    query: topArea ? `${topArea.name}, ${s.name}` : s.name,
+  });
+  const statusRows = stateStatusRows({
+    stateName: s.name,
+    count: s.count,
+    areas: s.areas ?? [],
+    weather: placeWeather,
+  });
+  const displayFaqs: Faq[] = [
+    ...s.faqs,
+    stateFreewayFaq({
+      stateName: s.name,
+      count: s.count,
+      areas: s.areas ?? [],
+    }),
+  ];
+  const areasLinked: AreaRow[] | undefined = s.areas?.map((a) => {
+    const citySlug = CITY_PAGE_BY_NAME.get(a.name);
+    return citySlug ? { ...a, href: `/city-webcams/${citySlug}` } : a;
+  });
+
   /* Data-bound "Questions people ask" entries (src/lib/place-answers.ts,
      ROLLOUT-SPEC §3 merge), computed from the same resolved config this
      page renders — its own count, areas and samples (§2.2). */
   const placeMerged = mergePlaceFaqs(
-    s.faqs,
+    displayFaqs,
     stateAnswers({
       slug,
       name: s.name,
@@ -718,10 +776,11 @@ export default async function StateTrafficPage({
       <StatRow stats={s.stats} />
       <Updated date={updated} />
       <Intro paragraphs={s.intro} />
-      {s.areas && <AreaTable title={s.areaTitle ?? "Coverage areas"} rows={s.areas} note={s.areaNote} />}
+      <CurrentStatus place={s.name} rows={statusRows} />
+      {s.areas && <AreaTable title={s.areaTitle ?? "Coverage areas"} rows={areasLinked ?? s.areas} note={s.areaNote} />}
       {s.samples && <SampleGrid title={s.sampleTitle ?? "Featured live cameras"} samples={s.samples} />}
       <HowTo title={s.howtoTitle} steps={s.howto} />
-      <FaqSection title={s.faqTitle} faqs={s.faqs} />
+      <FaqSection title={s.faqTitle} faqs={displayFaqs} />
       {placeMerged.surviving.length > 0 && (
         <VoiceQA entries={placeMerged.surviving} />
       )}

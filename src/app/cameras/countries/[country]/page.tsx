@@ -30,6 +30,8 @@ import VoiceQA from "@/components/seo/VoiceQA";
 import { countryAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
+import CurrentStatus from "@/components/CurrentStatus";
+import { countryStatusRows } from "@/lib/place-breakdown";
 
 /* Weather data is cached per location for 30 minutes in lib/weather-api;
    ISR at the same cadence keeps the baked page from going staler. */
@@ -363,6 +365,24 @@ export default async function CountryPage({
             <PlaceWeatherPanel data={placeWeather} placeName={weatherCity} />
           </div>
         )}
+
+        {/* Current Status (SEO template upgrade): the snow/traffic
+            questions answered only from the snapshot above — framed on
+            the largest camera city, as the panel is — plus the live
+            camera counts. No snapshot, no asserted conditions. */}
+        <div className="max-w-3xl mx-auto">
+          <CurrentStatus
+            place={c.name}
+            rows={countryStatusRows({
+              countryName: c.name,
+              count: c.count,
+              weatherCity,
+              weatherCityCount: c.topCities[0]?.count ?? null,
+              isUS: slug === "united-states",
+              weather: placeWeather,
+            })}
+          />
+        </div>
 
         {/* Playable cameras — every record for this country in the live
             catalogue, served in batches by /api/cctv/country/<slug> and

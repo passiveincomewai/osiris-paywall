@@ -67,6 +67,10 @@ const FAQS = [
     q: "Can I check cameras along a specific drive?",
     a: "That is what the route finder on this page is for: enter a start and a destination and it lines up the live cameras within 1.5 km of the route, in driving order. What the cameras show is the road condition — congestion, weather, closures — as it is now.",
   },
+  {
+    q: "Are freeway cameras included?",
+    a: "Yes — freeway cameras are the core of the US index: the interstate and freeway feeds state DOTs publish over their busiest corridors, alongside 511 networks, tollways and mountain passes. Pick a state above to open its freeway and highway camera index, or search the explorer by the freeway you drive.",
+  },
 ];
 
 export default async function UsTrafficCamerasPage() {

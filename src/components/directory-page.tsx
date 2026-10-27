@@ -7,7 +7,7 @@ import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
 export const BASE = "https://worldeye.app";
 
 export type Sample = { name: string; city?: string; id?: string };
-export type AreaRow = { name: string; count: number };
+export type AreaRow = { name: string; count: number; href?: string };
 export type Faq = { q: string; a: string };
 export type RelatedLink = { label: string; href: string };
 
@@ -147,7 +147,15 @@ export function AreaTable({ title, rows, note }: { title: string; rows: AreaRow[
           <tbody>
             {rows.map((a) => (
               <tr key={a.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
-                <td className="px-5 py-3">{a.name}</td>
+                <td className="px-5 py-3">
+                  {a.href ? (
+                    <Link href={a.href} className="text-[#00E5FF] hover:underline">
+                      {a.name}
+                    </Link>
+                  ) : (
+                    a.name
+                  )}
+                </td>
                 <td className="px-5 py-3 text-right font-mono text-[#D4AF37]">
                   {a.count.toLocaleString("en-US")}
                 </td>

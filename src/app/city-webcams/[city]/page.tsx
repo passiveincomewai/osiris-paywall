@@ -28,11 +28,19 @@ import {
   RelatedLinks,
   CtaRow,
   PageShell,
+  AreaTable,
   type Sample,
   type Faq,
 } from "@/components/directory-page";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { cityAnswers, mergePlaceFaqs } from "@/lib/place-answers";
+import CurrentStatus from "@/components/CurrentStatus";
+import {
+  breakdownFaqs,
+  cityStatusRows,
+  loadCityBreakdown,
+  stateHubForCity,
+} from "@/lib/place-breakdown";
 
 type CityCfg = {
   name: string;
@@ -1019,7 +1027,6 @@ export default async function CityWebcamPage({
      their bespoke FAQ sets only — their numbers live in hand configs,
      not in the generated record (§2.2 one source per surface). */
   const genCity = CITIES[slug] ? undefined : GEN_BY_SLUG.get(slug);
-  const placeMerged = mergePlaceFaqs(c.faqs, genCity ? cityAnswers(genCity) : []);
   const canonical = `${BASE}/city-webcams/${slug}`;
   const updated = formatDate(resolved.updatedIso);
 
@@ -1046,6 +1053,45 @@ export default async function CityWebcamPage({
     lat: chunk?.centroid?.lat ?? null,
     lng: chunk?.centroid?.lng ?? null,
   });
+
+  /* Per-place breakdown + Current Status (SEO template upgrade): every
+     number is computed from the same chunk records the explorer above
+     serves (src/lib/place-breakdown.ts), so the new sections can never
+     quote a count the page's own grid disagrees with. A chunk the
+     explorer can't back (under 25 cameras) degrades to the status
+     block alone; no chunk at all degrades to the honest smaller block. */
+  const breakdown = await loadCityBreakdown(c.countrySlug, c.name);
+  const isUS = c.countrySlug === "united-states";
+  const extraFaqs =
+    genCity && breakdown && breakdown.total >= 25
+      ? breakdownFaqs({ name: c.name, isUS, breakdown })
+      : [];
+  const displayFaqs: Faq[] = [...c.faqs, ...extraFaqs];
+  const placeMerged = mergePlaceFaqs(
+    displayFaqs,
+    genCity ? cityAnswers(genCity) : [],
+  );
+  const statusRows = cityStatusRows({
+    name: c.name,
+    isUS,
+    pageCount: genCity ? genCity.count : c.count,
+    stills: genCity ? genCity.stills : null,
+    streams: genCity ? genCity.streams : null,
+    breakdown,
+    weather: placeWeather,
+  });
+  const stateHub = stateHubForCity(c.countrySlug, c.name, chunk?.centroid ?? null);
+  const relatedLinks = stateHub
+    ? [
+        { label: `${stateHub.name} traffic cameras`, href: `/us-traffic-cameras/${stateHub.slug}` },
+        ...resolved.related,
+      ]
+    : resolved.related;
+  const showBreakdown =
+    breakdown !== null && breakdown.total >= 25 && breakdown.corridors.length >= 2;
+  const breakdownTail = breakdown
+    ? breakdown.unnamed + breakdown.moreCorridors
+    : 0;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -1093,6 +1139,7 @@ export default async function CityWebcamPage({
       <Updated date={updated} />
       <Intro paragraphs={c.intro} />
       {placeWeather && <PlaceWeatherPanel data={placeWeather} placeName={c.name} />}
+      <CurrentStatus place={c.name} rows={statusRows} />
       {showExplorer && chunk && chunk.centroid && (
         <>
           <section className="mt-12">
@@ -1131,12 +1178,34 @@ export default async function CityWebcamPage({
         </>
       )}
       {c.samples && <SampleGrid title={c.sampleTitle ?? "Featured live cameras"} samples={c.samples} />}
+      {showBreakdown && breakdown && (
+        <AreaTable
+          title={`${c.name} cameras by road`}
+          rows={[
+            ...breakdown.corridors,
+            ...(breakdownTail > 0
+              ? [{ name: "All other cameras — other roads, streets & viewpoints", count: breakdownTail }]
+              : []),
+          ]}
+          note={[
+            `Counts are the ${fmt(breakdown.total)} cameras listed under ${c.name} in the live index — the same set the explorer on this page searches, grouped by the road designation in each camera's own name.`,
+            breakdown.quadrants
+              ? `Split by the centre of that grid: ${fmt(breakdown.quadrants.northEast)} cameras north-east, ${fmt(breakdown.quadrants.northWest)} north-west, ${fmt(breakdown.quadrants.southEast)} south-east and ${fmt(breakdown.quadrants.southWest)} south-west.`
+              : null,
+            breakdown.sources.length > 0
+              ? `Published by ${breakdown.sources.map((s) => `${s.name} (${fmt(s.count)})`).join(", ")}.`
+              : null,
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        />
+      )}
       <HowTo title={c.howtoTitle} steps={c.howto} />
-      <FaqSection title={c.faqTitle} faqs={c.faqs} />
+      <FaqSection title={c.faqTitle} faqs={displayFaqs} />
       {placeMerged.surviving.length > 0 && (
         <VoiceQA entries={placeMerged.surviving} />
       )}
-      <RelatedLinks title="More city webcam indexes" links={resolved.related} />
+      <RelatedLinks title="More city webcam indexes" links={relatedLinks} />
       <RelatedLinks
         title="Guides"
         links={[

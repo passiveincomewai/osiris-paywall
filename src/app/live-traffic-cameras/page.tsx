@@ -6,8 +6,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
-import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 import TrialCtaSection from "@/components/TrialCtaSection";
+import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
@@ -75,6 +75,10 @@ const FAQS = [
   {
     q: "Can I check my commute or a road trip route?",
     a: "Yes. Search for any place or zoom into your route and the nearest live feeds load around you. Many travelers check mountain passes, interstate junctions and border crossings before heading out.",
+  },
+  {
+    q: "What are freeway cameras?",
+    a: `Freeway cameras are the public traffic cameras mounted over interstates, freeways and major highways — the same feeds this page gathers. Most are published by state DOTs so drivers can see congestion, crashes and weather for themselves. WorldEye indexes ${fmt(total)} US traffic cameras in total; the densest freeway networks are ${florida.name} (${fmt(florida.count)} feeds), ${texas.name} (${fmt(texas.count)}) and ${georgia.name} (${fmt(georgia.count)}), and every state has its own page in the table above.`,
   },
   {
     q: "Do the cameras show live video or still images?",
@@ -171,6 +175,8 @@ export default async function LiveTrafficCamerasPage() {
             city intersections. Instead of hunting through a dozen separate agency
             websites, you see the whole road network on one globe: check congestion,
             storms and mountain passes with your own eyes before you drive.
+            Whether you call them freeway cameras, highway cams or DOT cameras,
+            they are the same public feeds — here they are gathered state by state.
           </p>
           <p className="text-white/55 mt-4 text-base md:text-lg leading-relaxed">
             {states[0].name} leads the nation with {fmt(states[0].count)} live feeds,
@@ -386,9 +392,9 @@ export default async function LiveTrafficCamerasPage() {
             Explore the full directory: <Link href="/cameras" className="text-[#D4AF37] hover:underline">live cameras</Link> · <Link href="/" className="text-[#D4AF37] hover:underline">home</Link>
           </p>
         </div>
-
-        <TrackerClusterLinks />
       </div>
+
+      <TrackerClusterLinks />
       <SiteFooter />
     </main>
   );
