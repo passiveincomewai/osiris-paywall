@@ -17,11 +17,17 @@
  *    polls every 30s; drawing each snapshot raw teleports aircraft between
  *    polls. Following the GEV pattern (see motion.ts): keep the last two
  *    snapshots, render one poll interval behind wall-clock, and blend
- *    between the bracketing fixes so markers glide and never extrapolate
- *    past a known fix. Before the second snapshot exists there is nothing
- *    to bracket with, so the lone snapshot is dead-reckoned along each
- *    aircraft's own velocity/track instead (advanceFlights, clamped to
- *    300s by the module).
+ *    between the bracketing fixes so markers glide. Before the second
+ *    snapshot exists there is nothing to bracket with, so the lone snapshot
+ *    is dead-reckoned along each aircraft's own velocity/track instead
+ *    (advanceFlights, clamped to 300s by the module). The same dead
+ *    reckoning resumes once a bracket's window closes without a fresher
+ *    snapshot arriving: the server reuses its regional sweep for minutes
+ *    between real position updates, so consecutive payloads often carry
+ *    identical fixes — freezing at the newest fix for that whole span
+ *    left the sky parked. Past the window the newest fixes are therefore
+ *    advanced by the overshoot (same 300s clamp), so aircraft keep flying
+ *    at their reported velocity until the next real update re-brackets.
  */
 import { advanceFlights, blendSnapshots, type FlightLike } from './motion';
 
@@ -240,6 +246,30 @@ export class FlightBlend {
       // Nothing to bracket with yet: dead-reckon the lone snapshot from
       // its arrival time (advanceFlights clamps extrapolation to 300s).
       const dtS = Math.max(0, (now - this.nextAt) / 1000);
+      for (const k of BUCKET_KEYS) {
+        out[k] = advanceFlights(this.next[k] as FlightLike[], dtS);
+      }
+      return out;
+    }
+    // The blend window has closed and no fresher snapshot has arrived:
+    // dead-reckon the newest snapshot forward by the overshoot instead
+    // of sitting frozen at its fixes. Consecutive server payloads can
+    // carry identical positions for minutes (the route reuses its
+    // regional sweep between real refreshes), and push() dedupes only
+    // exact re-deliveries — a genuinely new payload whose fixes happen
+    // to match the last one's still re-brackets, after which the old
+    // bracket-only rendering parked every aircraft at `next` until the
+    // following real update. At the window's exact end the overshoot is
+    // zero and this branch is not taken, so the render is continuous
+    // with the interpolation below; advanceFlights clamps the
+    // extrapolation to 300 s and holds aircraft with no usable
+    // speed/track at their reported fix. The blend state itself keeps
+    // holding the raw records (advanceFlights never mutates), so a
+    // snapshot arriving mid-extrapolation re-brackets from the reported
+    // fixes, not from extrapolated positions — nothing compounds.
+    const overshootMs = now - (this.nextAt + this.intervalMs);
+    if (overshootMs > 0) {
+      const dtS = overshootMs / 1000;
       for (const k of BUCKET_KEYS) {
         out[k] = advanceFlights(this.next[k] as FlightLike[], dtS);
       }

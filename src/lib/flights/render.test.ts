@@ -7,6 +7,7 @@ import {
   flightsToFeatures,
   type FlightBuckets,
 } from './render';
+import { advanceFlights, blendSnapshots, destinationPoint } from './motion';
 
 function flight(over: Record<string, unknown> = {}) {
   return {
@@ -224,6 +225,112 @@ describe('FlightBlend', () => {
     const cur = blend.current(t0 + 65_000);
     // Still the lone-snapshot path: dead reckoning advanced it a full 60 s.
     expect(cur.commercial_flights[0].lng).toBeGreaterThan(-0.12 + 0.1);
+  });
+});
+
+describe('FlightBlend — dead reckoning past the blend window (2026-10-27 freeze fix)', () => {
+  // Production shape: the route reuses its regional sweep for minutes,
+  // so consecutive payloads carry identical fixes for most aircraft.
+  // Bracket-only rendering then parked every aircraft at the newest fix
+  // until the next real update. Once the window closes with no fresher
+  // snapshot, the newest fixes must dead-reckon by the overshoot.
+  const t0 = 1_000_000;
+  const mkBuckets = (recs: any[]): FlightBuckets => ({
+    commercial_flights: recs,
+    private_flights: [],
+    private_jets: [],
+    military_flights: [],
+  });
+
+  /** Bracket: prev = next records shifted 0.3° west, pushed at t0 and
+   *  t0+30s (30 s interval → the blend window ends at t0+60s). */
+  function bracketWith(nextRecs: any[]) {
+    const blend = new FlightBlend();
+    const prevRecs = nextRecs.map((f) => ({ ...f, lng: f.lng - 0.3 }));
+    blend.push(mkBuckets(prevRecs), t0, t0);
+    blend.push(mkBuckets(nextRecs), t0 + 30_000, t0 + 30_000);
+    return blend;
+  }
+
+  it('inside the window, renders exactly the prev→next interpolation — unchanged', () => {
+    const nextRec = flight();
+    const prevRec = { ...nextRec, lng: nextRec.lng - 0.3 };
+    const blend = bracketWith([nextRec]);
+    for (const at of [t0 + 30_000, t0 + 45_000, t0 + 59_999, t0 + 60_000]) {
+      const alpha = Math.max(0.001, Math.min(1, (at - (t0 + 30_000)) / 30_000));
+      expect(blend.current(at).commercial_flights).toEqual(
+        blendSnapshots([prevRec], [nextRec], alpha),
+      );
+    }
+  });
+
+  it('past the window, advances the newest fixes along their heading at their reported speed', () => {
+    const nextRec = flight(); // 450 kt, heading 90 (east), at 51.5, -0.12
+    const blend = bracketWith([nextRec]);
+    // Boundary continuity: 1 s past the window the step off the newest
+    // fix is tiny (450 kt ≈ 0.0033° of longitude here), not a leap.
+    const just = blend.current(t0 + 61_000).commercial_flights[0];
+    expect(just.lng).toBeGreaterThan(nextRec.lng);
+    expect(just.lng).toBeLessThan(nextRec.lng + 0.01);
+    // 60 s past the window: exactly advanceFlights(next, 60).
+    const later = blend.current(t0 + 120_000).commercial_flights[0];
+    expect(later).toEqual(advanceFlights([nextRec], 60)[0]);
+    const expected = destinationPoint(nextRec.lat, nextRec.lng, 90, 450 * 0.514444 * 60);
+    expect(later.lng).toBeCloseTo(expected.lng, 4);
+    expect(later.lat).toBeCloseTo(expected.lat, 4);
+    expect(later.lng).toBeGreaterThan(nextRec.lng + 0.15);
+  });
+
+  it('clamps the past-window extrapolation at 300 s', () => {
+    const nextRec = flight();
+    const blend = bracketWith([nextRec]);
+    const at300 = blend.current(t0 + 60_000 + 300_000).commercial_flights[0];
+    const wayPast = blend.current(t0 + 60_000 + 1_800_000).commercial_flights[0];
+    expect(at300).toEqual(advanceFlights([nextRec], 300)[0]);
+    expect(wayPast).toEqual(at300);
+  });
+
+  it('holds aircraft without usable velocity at their reported fix past the window', () => {
+    const moving = flight({ icao24: 'aa0001' });
+    const grounded = flight({ icao24: 'aa0002', grounded: true });
+    const noSpeed = flight({ icao24: 'aa0003', speed_knots: null });
+    const noHeading = flight({ icao24: 'aa0004', heading: null });
+    const blend = bracketWith([moving, grounded, noSpeed, noHeading]);
+    const cur = blend.current(t0 + 120_000).commercial_flights;
+    const byHex = new Map(cur.map((f: any) => [f.icao24, f]));
+    expect(byHex.get('aa0001')!.lng).toBeGreaterThan(moving.lng + 0.15);
+    for (const held of [grounded, noSpeed, noHeading]) {
+      expect(byHex.get(held.icao24)!.lat).toBe(held.lat);
+      expect(byHex.get(held.icao24)!.lng).toBe(held.lng);
+    }
+  });
+
+  it('a snapshot arriving mid-extrapolation re-brackets from the reported fixes — no compounding', () => {
+    const nextRec = flight(); // reported fix lng -0.12 in the second snapshot
+    const blend = bracketWith([nextRec]);
+    // 60 s past the window the marker is dead-reckoned well east of the
+    // reported fix (≈ +0.2°).
+    const extrapolated = blend.current(t0 + 120_000).commercial_flights[0];
+    expect(extrapolated.lng).toBeGreaterThan(0.05);
+    // A fresh snapshot lands at that instant; its reported fix continues
+    // east from the last REPORT (0.3° east of it), not from the
+    // extrapolated marker.
+    const thirdRec = { ...nextRec, lng: nextRec.lng + 0.3 };
+    blend.push(mkBuckets([thirdRec]), t0 + 120_000, t0 + 120_000);
+    // At the arrival instant the render restarts from ≈prev — the second
+    // snapshot's RECORDS (-0.12), not the extrapolated position (0.08+).
+    const atArrival = blend.current(t0 + 120_000).commercial_flights[0];
+    expect(atArrival.lng).toBeCloseTo(nextRec.lng, 2);
+    // Mid-window (new interval is 90 s: arrivals at +30s and +120s) the
+    // render is the records' midpoint — had prev been the extrapolated
+    // positions, it would sit ≈0.1° further east.
+    const mid = blend.current(t0 + 165_000).commercial_flights[0];
+    expect(mid.lng).toBeCloseTo((nextRec.lng + thirdRec.lng) / 2, 3);
+    // Timing stays honest: alpha 0.5 mid-window, fix age from the newest
+    // snapshot's own feed timestamp.
+    const timing = blend.timing(t0 + 165_000);
+    expect(timing!.alpha).toBeCloseTo(0.5, 5);
+    expect(timing!.nextFixAt).toBe(t0 + 120_000);
   });
 });
 
