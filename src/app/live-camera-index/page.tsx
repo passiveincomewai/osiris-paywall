@@ -16,6 +16,7 @@ import {
   type Faq,
 } from "@/components/directory-page";
 import indexJson from "@/data/live-camera-index.json";
+import { LIVE_CAMERA_COUNT_LABEL } from "@/lib/site-stats";
 
 /**
  * The Live Camera Index — WorldEye's primary-data research page.
@@ -108,11 +109,11 @@ const snapshotDate = formatDate(D.generatedAt);
 
 export const metadata: Metadata = {
   title: "Live Camera Index — How Many Live Cameras Are Online?",
-  description: `The WorldEye Live Camera Index, ${D.edition}: ${fmt(T.served)} live public cameras served across ${T.servedCountries} countries — counted from the production catalogue, broken down by country, city, US state network and publisher. Dataset free to download and cite.`,
+  description: `The WorldEye Live Camera Index, ${D.edition}: ${fmt(T.served)} unique public cameras served by the production catalogue API across ${T.servedCountries} countries in the ${snapshotDate} snapshot — broken down by country, city, US state network and publisher. Dataset free to download and cite.`,
   alternates: { canonical: `${BASE}/live-camera-index` },
   openGraph: {
     title: "Live Camera Index — October 2026 | WorldEye",
-    description: `${fmt(T.served)} live public cameras across ${T.servedCountries} countries, counted and published by WorldEye — with the full dataset free to download.`,
+    description: `${fmt(T.served)} unique public cameras served across ${T.servedCountries} countries in the ${snapshotDate} catalogue snapshot, counted and published by WorldEye — with the full dataset free to download.`,
     url: `${BASE}/live-camera-index`,
     type: "website",
   },
@@ -121,7 +122,7 @@ export const metadata: Metadata = {
 const FAQS: Faq[] = [
   {
     q: "How many live cameras are online in the world?",
-    a: `No complete census of public cameras exists — nobody operates all of them. The largest single served count WorldEye can stand behind is its own: ${fmt(T.served)} distinct public cameras in the ${D.edition} snapshot, drawn from an indexed catalogue of ${fmt(T.indexedRecords)} unique records. Treat any rounder, bigger number without a published method as marketing, not measurement.`,
+    a: `No complete census of public cameras exists — nobody operates all of them. The largest single served count WorldEye can stand behind is its own: ${fmt(T.served)} distinct public cameras in the ${D.edition} snapshot of its production catalogue API — a wider live assembly than the ${fmt(T.indexedRecords)} unique records in the committed directory behind the country pages. Treat any rounder, bigger number without a published method as marketing, not measurement.`,
   },
   {
     q: "Which country has the most live cameras?",
@@ -129,7 +130,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "Why do different WorldEye pages show different camera totals?",
-    a: `Because they measure two different things at different times. Country pages are built from the indexed catalogue (${fmt(T.indexedRecords)} unique records, ${fmt(T.indexedAttributed)} of them attributed to ${T.indexedCountries} countries). This index additionally reports the served count — the cameras in one live assembly of that catalogue (${fmt(T.served)}). A live assembly never carries everything at once, so the served count is lower and moves between editions.`,
+    a: `Because they measure different things at different times. Most WorldEye pages quote the standing headline — ${LIVE_CAMERA_COUNT_LABEL} live public cameras on the globe. Country and city pages are built from the indexed catalogue (${fmt(T.indexedRecords)} unique records, ${fmt(T.indexedAttributed)} of them attributed to ${T.indexedCountries} countries). This index additionally reports the served count: the unique cameras in one live all-regions assembly of the production catalogue API (${fmt(T.served)} in this snapshot). In this edition the served count runs higher than the indexed one — the live assembly covers ${T.servedCountries} countries to the directory's ${T.indexedCountries} and includes feeds the directory build had not yet folded in. Each figure is labelled with what it counts and when it was taken.`,
   },
   {
     q: "How often is the Live Camera Index updated?",
@@ -262,11 +263,11 @@ export default function LiveCameraIndexPage() {
       />
       <Hero
         h1={`The Live Camera Index — ${D.edition}`}
-        sub={`WorldEye serves ${fmt(T.served)} live public cameras across ${T.servedCountries} countries. This index counts them — by country, city, US state network and publisher — from a snapshot of the production catalogue, and publishes the full dataset for anyone to check or cite.`}
+        sub={`WorldEye's catalogue API served ${fmt(T.served)} unique public cameras across ${T.servedCountries} countries when this snapshot was taken on ${snapshotDate}. This index counts them — by country, city, US state network and publisher — and publishes the full dataset for anyone to check or cite. It is a wider measure than the ${LIVE_CAMERA_COUNT_LABEL} live cameras on the globe quoted across the rest of WorldEye; the section “Three numbers, three measures” below sets the counts side by side.`}
       />
       <StatRow
         stats={[
-          { value: fmt(T.served), label: "live cameras served" },
+          { value: fmt(T.served), label: "unique cameras served — snapshot" },
           { value: fmt(T.servedCountries), label: "countries covered" },
           { value: fmt(T.distinctSources), label: "publishing networks" },
         ]}
@@ -280,6 +281,8 @@ export default function LiveCameraIndexPage() {
             <strong className="text-white">The count is {fmt(T.served)}.</strong> That is the number of
             distinct public cameras in the catalogue WorldEye&apos;s globe served when this snapshot
             was taken — the first edition of this index, and the figure every table below is built from.
+            It is this index&apos;s served measure, not the site&apos;s headline count — see
+            “Three numbers, three measures” below.
           </li>
           <li>
             <strong className="text-white">One country holds the majority.</strong> The United States
@@ -311,6 +314,26 @@ export default function LiveCameraIndexPage() {
       </section>
 
       <section className="mt-12">
+        <SectionTitle>Three numbers, three measures</SectionTitle>
+        <p className="text-white/70 leading-relaxed mb-6">
+          WorldEye publishes three camera counts, and they are often mistaken for one another.
+          They measure different things, on different dates, so they differ — none of them is a
+          rounding of another, and each is the right number for its own question. The headline
+          figure is the conservative public count of the globe&apos;s live camera layer. This
+          index&apos;s served figure counts everything the catalogue API assembled on the
+          snapshot day — including cameras in {T.servedCountries} countries, more than the
+          directory&apos;s {T.indexedCountries}, and feeds the directory build had not yet
+          folded in — so it runs higher. The indexed figure counts the directory build itself.
+        </p>
+        <DataTable head={["Measure", "Cameras", "What it counts"]} align={["left", "right", "left"]}>
+          <Row cells={[{ text: "Live cameras on the globe (the site headline)" }, { text: LIVE_CAMERA_COUNT_LABEL, mono: true, strong: true, align: "right" }, { text: "Live public cameras on the WorldEye globe — the standing public count quoted across the site." }]} />
+          <Row cells={[{ text: "Unique cameras served by the catalogue API (this index)" }, { text: fmt(T.served), mono: true, strong: true, align: "right" }, { text: `Unique cameras in the all-regions production catalogue API response, deduplicated by camera ID — snapshot ${snapshotDate}.` }]} />
+          <Row cells={[{ text: "Indexed catalogue records (country/city pages)" }, { text: fmt(T.indexedRecords), mono: true, align: "right" }, { text: "Unique records in the committed directory dataset behind the country and city pages (generated 20 October 2026)." }]} />
+          <Row cells={[{ text: "— of those, attributed to a country" }, { text: fmt(T.indexedAttributed), mono: true, align: "right" }, { text: `Indexed records attributed to one of ${T.indexedCountries} countries.` }]} />
+        </DataTable>
+      </section>
+
+      <section className="mt-12">
         <SectionTitle>How many live public cameras are online?</SectionTitle>
         <div className="space-y-4 text-white/70 leading-relaxed">
           <p>
@@ -333,6 +356,7 @@ export default function LiveCameraIndexPage() {
         </div>
         <div className="mt-6">
           <DataTable head={["Measure", "Cameras"]} align={["left", "right"]}>
+            <Row cells={[{ text: "Live cameras on the globe (site headline)" }, { text: LIVE_CAMERA_COUNT_LABEL, mono: true, align: "right" }]} />
             <Row cells={[{ text: "Indexed catalogue records (unique IDs)" }, { text: fmt(T.indexedRecords), mono: true, align: "right" }]} />
             <Row cells={[{ text: `Attributed to a country (${T.indexedCountries} countries)` }, { text: fmt(T.indexedAttributed), mono: true, align: "right" }]} />
             <Row cells={[{ text: "Served in the live snapshot" }, { text: fmt(T.served), mono: true, strong: true, align: "right" }]} />
@@ -493,14 +517,21 @@ export default function LiveCameraIndexPage() {
             <strong className="text-white">Indexed vs served.</strong> The indexed catalogue is
             generated by unioning the production catalogue with the server&apos;s local assembly
             snapshot and dropping near-duplicates (same camera at effectively the same spot) —{" "}
-            {fmt(T.droppedNearDuplicates)} were dropped in the current build. A union is always at
-            least as large as any single live assembly, which is why indexed totals run higher.
+            {fmt(T.droppedNearDuplicates)} were dropped in the current build. The served snapshot
+            in this edition was taken from the live API three days after the directory build, and
+            the live assembly had grown past it: it covers more countries ({T.servedCountries}{" "}
+            against {T.indexedCountries}) and includes feeds the directory build had not yet
+            folded in. Neither figure contains the other by construction — they are two dated
+            measurements of a moving catalogue.
           </p>
           <p>
-            <strong className="text-white">Why the number moves.</strong> Figures published earlier in
-            October 2026 put the served count at 74,229. The served total moves in both directions
+            <strong className="text-white">Why the number moves.</strong> The rest of WorldEye
+            quotes a standing headline — {LIVE_CAMERA_COUNT_LABEL} live cameras on the globe —
+            and this index does not replace it. The index publishes a separate, dated measurement
+            of the wider catalogue the API serves. The catalogue total moves in both directions
             between assemblies as regional collections refresh and publishers add, move or retire
-            feeds — this index is the current dated measurement and supersedes earlier figures.
+            feeds, which is why the index appears as dated editions instead of a silently
+            rewritten number.
           </p>
         </div>
         <h3 className="text-lg font-bold mt-8 mb-4">Limitations</h3>

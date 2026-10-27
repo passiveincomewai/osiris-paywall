@@ -13,22 +13,27 @@ import {
   EXPLORE_SCOPES,
   areasForDef,
 } from "@/lib/explore-data";
+import {
+  LIVE_CAMERA_COUNT,
+  LIVE_CAMERA_COUNT_LABEL,
+  DIRECTORY_COUNTRY_COUNT,
+} from "@/lib/site-stats";
 
 /* Data source: the generated camera index (camera-countries.json +
    the per-country records) — the same catalogue the country pages
    and the explorer below serve. The headline total is the owner's
    published served-camera figure; per-country counts are the
    index's own. */
-const HEADLINE = 74229;
+const HEADLINE = LIVE_CAMERA_COUNT;
 const EUROPE_COUNT = (EXPLORE_SCOPES.europe.slugs as string[]).length;
 
 export const metadata: Metadata = {
-  title: "Live Cams Worldwide — 74,229 Live Webcams",
-  description: `Watch 74,229 live cams and webcams in ${COUNTRY_INDEX.length} countries — traffic, cities, nature and landmarks — on WorldEye's live webcam hub. Free forever, no signup.`,
+  title: `Live Cams Worldwide — ${LIVE_CAMERA_COUNT_LABEL} Live Webcams`,
+  description: `Watch ${LIVE_CAMERA_COUNT_LABEL} live cams and webcams in ${COUNTRY_INDEX.length} countries — traffic, cities, nature and landmarks — on WorldEye's live webcam hub. Free forever, no signup.`,
   alternates: { canonical: "https://worldeye.app/live-webcams" },
   openGraph: {
-    title: "Live Cams Worldwide — 74,229 Live Webcams | WorldEye",
-    description: `74,229 live cams and webcams across ${COUNTRY_INDEX.length} countries — traffic, cities, nature, landmarks. Free forever, no signup.`,
+    title: `Live Cams Worldwide — ${LIVE_CAMERA_COUNT_LABEL} Live Webcams | WorldEye`,
+    description: `${LIVE_CAMERA_COUNT_LABEL} live cams and webcams across ${COUNTRY_INDEX.length} countries — traffic, cities, nature, landmarks. Free forever, no signup.`,
     url: "https://worldeye.app/live-webcams",
     type: "website",
   },
@@ -125,7 +130,7 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "CollectionPage",
-      name: "Live Cams Worldwide — 74,229 Live Webcams",
+      name: `Live Cams Worldwide — ${LIVE_CAMERA_COUNT_LABEL} Live Webcams`,
       description: `Directory of ${fmt(HEADLINE)} live public webcams across ${COUNTRY_INDEX.length} countries.`,
       url: "https://worldeye.app/live-webcams",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
@@ -366,11 +371,11 @@ export default async function LiveWebcamsPage() {
             },
             {
               q: "Where can I watch live webcams from around the world?",
-              a: "WorldEye shows 74,229 live public webcams from 109 countries on one free interactive globe you can spin, search and zoom. Browse by country or city in the directory, or open the map and tap any camera marker — traffic, beaches, ski resorts, airports, landmarks and nature.",
+              a: `WorldEye shows ${LIVE_CAMERA_COUNT_LABEL} live public webcams from ${DIRECTORY_COUNTRY_COUNT} countries on one free interactive globe you can spin, search and zoom. Browse by country or city in the directory, or open the map and tap any camera marker — traffic, beaches, ski resorts, airports, landmarks and nature.`,
             },
             {
               q: "How many live cameras are there in the world?",
-              a: "Nobody publishes an exact count of every webcam on Earth, but WorldEye serves 74,229 live cameras. The United States alone accounts for 41,355 of them, largely transportation-department networks. Every feed is checked before it is listed, so the number counts cameras you can actually watch.",
+              a: `Nobody publishes an exact count of every webcam on Earth, but WorldEye serves ${LIVE_CAMERA_COUNT_LABEL} live cameras. The United States alone accounts for 41,355 of them, largely transportation-department networks. Every feed is checked before it is listed, so the number counts cameras you can actually watch.`,
             },
           ]}
         />

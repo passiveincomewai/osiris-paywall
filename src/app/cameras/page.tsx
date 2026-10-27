@@ -10,18 +10,19 @@ import JsonLd from "@/components/JsonLd";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { mergePlaceFaqs } from "@/lib/place-answers";
 import { getVoiceQuestionsByIds } from "@/lib/voice-questions";
+import { LIVE_CAMERA_COUNT_LABEL, DIRECTORY_COUNTRY_COUNT } from "@/lib/site-stats";
 import RelatedLinks from "@/components/RelatedLinks";
 import TrialCtaSection from "@/components/TrialCtaSection";
 
 export const metadata: Metadata = {
   title: "Live Cameras — Watch the World Live",
   description:
-    "Browse 74,229 live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free forever, no signup, no account.",
+    `Browse ${LIVE_CAMERA_COUNT_LABEL} live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free forever, no signup, no account.`,
   alternates: { canonical: "/cameras" },
   openGraph: {
     title: "Live Cameras — Watch the World Live | WorldEye",
     description:
-      "74,229 live street cameras worldwide — traffic, cities, nature, landmarks. Free on the WorldEye globe, no account needed.",
+      `${LIVE_CAMERA_COUNT_LABEL} live street cameras worldwide — traffic, cities, nature, landmarks. Free on the WorldEye globe, no account needed.`,
     url: "/cameras",
     type: "website",
   },
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
 const CAMERA_FAQS: Array<{ q: string; a: string }> = [
   {
     q: "How many live cameras are on WorldEye?",
-    a: "74,229 live public cameras are served on the WorldEye globe, with browsable directory pages for 109 countries. The counts come from the same live catalogue that powers the globe, so the number on these pages is the number the globe serves.",
+    a: `${LIVE_CAMERA_COUNT_LABEL} live public cameras are served on the WorldEye globe, with browsable directory pages for ${DIRECTORY_COUNTRY_COUNT} countries. The counts come from the same live catalogue that powers the globe, so the number on these pages is the number the globe serves.`,
   },
   {
     q: "Are the live cameras free to watch?",
@@ -75,7 +76,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "WorldEye Live Cameras",
       description:
-        "Browse 74,229 live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.",
+        `Browse ${LIVE_CAMERA_COUNT_LABEL} live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.`,
       url: "https://worldeye.app/cameras",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     },
@@ -130,7 +131,7 @@ export default function CamerasPage() {
             <Camera className="w-3.5 h-3.5" /> LIVE CAMERA NETWORK
           </p>
           <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-            74,229 live cameras. <span className="text-[#D4AF37]">One planet.</span>
+            {LIVE_CAMERA_COUNT_LABEL} live cameras. <span className="text-[#D4AF37]">One planet.</span>
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
             WorldEye aggregates tens of thousands of publicly available live street cameras
@@ -230,7 +231,7 @@ export default function CamerasPage() {
 
         {/* Reading the network */}
         <div className="mt-16 max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold">How to actually use 74,229 cameras</h2>
+          <h2 className="text-2xl md:text-3xl font-bold">How to actually use {LIVE_CAMERA_COUNT_LABEL} cameras</h2>
           <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
             <p>
               Nobody browses seventy-four thousand cameras one at a time —
