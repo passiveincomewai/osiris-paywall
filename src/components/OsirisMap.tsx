@@ -1084,6 +1084,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('hurricane-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The snow plow pin (owner's artwork): every live plow marker.
+    void loadAircraftPhoto('/icons/snowplow-pin.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('snowplow-pin')) map.removeImage('snowplow-pin');
+        map.addImage('snowplow-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     // The maritime pin (owner's artwork): ports and naval bases.
     void loadAircraftPhoto('/icons/maritime-pin.png').then((img) => {
       if (!img) return;
@@ -1288,7 +1297,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-cctv', cameraColor, 10);
       createDroneIcon(map, 'drone-icon', '#B2FF59', 30);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay', 'street-level'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'plows', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay', 'street-level'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // US state + territory outlines — a bold double line (dark casing,
@@ -1387,6 +1396,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'fire-perim-line', type: 'line', source: 'fire-perimeters', paint: {
         'line-color': '#FF6B00', 'line-width': 1.6, 'line-opacity': 0.9,
       }});
+
+      // Snow Plows (Iowa DOT AVL) — the owner's plow-pin artwork on
+      // every live truck; positions republish about every 2 minutes.
+      map.addLayer({ id: 'plow-icons', type: 'symbol', source: 'plows', layout: {
+        'icon-image': 'snowplow-pin',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.5, 7, 0.65, 11, 0.8],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
 
       // Hurricanes (NOAA NHC) — cone, past track, forecast track, points
       map.addLayer({ id: 'hurricane-cone', type: 'fill', source: 'hurricanes', filter: ['==', ['get', 'kind'], 'cone'], paint: {
@@ -2395,7 +2412,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // ── Satellites (SatNOGS powered) ──
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
-    const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons',
+    const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','plow-icons',
       'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
@@ -3036,7 +3053,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','plow-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -3163,6 +3180,29 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Weather Events (NASA EONET + NOAA/NWS + GDACS) ──
+    // ── Snow Plows (Iowa DOT AVL) ──
+    // Only what the feed reports: agency, blade status when the truck
+    // sends a real reading, ground speed, and the ping time.
+    const openPlowPopup = (feature: any) => {
+      const p = feature.properties as any;
+      const coords = (feature.geometry as any).coordinates;
+      const pingMs = p.updatedAt ? Date.parse(p.updatedAt) : NaN;
+      const agoMin = Number.isFinite(pingMs) ? Math.max(0, Math.round((Date.now() - pingMs) / 60000)) : null;
+      const updated = agoMin == null ? '—' : agoMin < 1 ? 'just now' : agoMin < 60 ? agoMin + ' min ago' : Math.round(agoMin / 60) + ' h ago';
+      popup(coords, `<div style="${pStyle}border:1px solid rgba(255,167,38,0.35);">
+        <div style="color:#FFA726;font-size:12px;font-weight:700;margin-bottom:4px;">❄️ SNOW PLOW${p.label ? ' · ' + htmlEsc(p.label) : ''}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.agency || 'Iowa DOT')}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
+          <div><span style="color:#5C5A54;">STATUS</span><br/><span style="color:#E8E6E0;">${p.status ? htmlEsc(p.status) : '—'}</span></div>
+          <div><span style="color:#5C5A54;">SPEED</span><br/><span style="color:#E8E6E0;">${p.speed != null ? p.speed + ' mph' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">HEADING</span><br/><span style="color:#E8E6E0;">${p.heading != null ? p.heading + '°' : '—'}</span></div>
+          <div><span style="color:#5C5A54;">LAST UPDATE</span><br/><span style="color:#E8E6E0;">${updated}</span></div>
+        </div>
+        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">IOWA DOT · SNOW PLOW TRUCK LOCATION (AVL)</div>
+      </div>`);
+    };
+    map.on('click', 'plow-icons', e => { if (e.features?.length) openPlowPopup(e.features[0]); });
+
     const onWeatherClick = (e: any) => {
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
@@ -4791,6 +4831,11 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
   useEffect(() => {
     if (!mapReady) return;
+    setGeo('plows', (activeLayers as any).plows && data.plows ? data.plows.map((p: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [p.lng, p.lat] }, properties: { id: p.id, label: p.label ?? null, agency: p.agency, status: p.status ?? null, speed: p.speed ?? null, heading: p.heading ?? null, updatedAt: p.updatedAt } })) : []);
+  }, [mapReady, data.plows, (activeLayers as any).plows, setGeo]);
+
+  useEffect(() => {
+    if (!mapReady) return;
     setGeo('balloons', activeLayers.balloons && data.balloons ? data.balloons.map((b: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [b.lng, b.lat] }, properties: { callsign: b.callsign, type: b.type, status: b.status, altitude: b.altitude, speed: b.speed, verticalRate: b.verticalRate, temperature: b.temperature, color: b.color } })) : []);
   }, [mapReady, data.balloons, activeLayers.balloons, setGeo]);
 
@@ -5010,6 +5055,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['transit-routes-line', 'transit-route-highlight', 'transit-stops-dots'], (activeLayers as any).transit);
     setVis(['drone-glow','drone-icons','drone-label','drone-trails-line','drone-coverage-fill','drone-coverage-line','drone-rx-dots','drone-rx-label'], (activeLayers as any).drones);
     setVis(['drone-airspace-fill','drone-airspace-line','drone-restriction-fill','drone-restriction-line'], (activeLayers as any).drones && (activeLayers as any).drone_airspace !== false);
+    setVis(['plow-icons'], (activeLayers as any).plows);
     setVis(['weather-glow','weather-dots','weather-label','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label','maritime-icons'], activeLayers.maritime);

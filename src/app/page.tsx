@@ -646,6 +646,9 @@ export default function Dashboard() {
     fire_perimeters: false,
     weather: false,
     hurricanes: false,
+    /* Snow Plows: Iowa DOT live AVL — off by default; the data loads
+       only while the layer is on (see lib/plows). */
+    plows: false,
     river_gauges: false,
     transit: false,
     gbfs: false,
@@ -1927,6 +1930,11 @@ export default function Dashboard() {
       }));
     }
 
+    // Snow plows — Iowa DOT AVL, the one verified public plow feed
+    if ((activeLayers as any).plows) {
+      loadLayerOnce('plows', '/api/plows', d => ({ plows: d.plows ?? [] }));
+    }
+
 
   }, [activeLayers, dataBoot]);
 
@@ -1953,6 +1961,9 @@ export default function Dashboard() {
         hurricanes: d.storms ?? [],
         hurricane_features: d.features ?? [],
       })), 600000)); // 10m — advisories land every 3–6h
+    }
+    if ((activeLayers as any).plows) {
+      intervals.push(setInterval(() => fetchEndpoint('/api/plows', d => ({ plows: d.plows ?? [] })), 120000)); // 2m — the AVL feed republishes on the same cadence
     }
     if (activeLayers.maritime) {
       /* Ten seconds is the cadence a moving vessel needs. The other two thirds

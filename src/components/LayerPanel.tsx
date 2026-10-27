@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plane, Satellite, Sun, Camera,
   CloudLightning, Ship, Network, Database, Ghost,
-  Flame, Tv, Radio, Mountain, Anchor, SlidersHorizontal, Lock, Bus, Crown
+  Flame, Tv, Radio, Mountain, Anchor, SlidersHorizontal, Lock, Bus, Crown,
+  Snowflake
 } from 'lucide-react';
 import StyleStudio from './StyleStudio';
 import TrialPicker from './TrialPicker';
@@ -136,6 +137,14 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'weather', label: 'Severe Weather', dataKey: 'weather_events' },
       { key: 'hurricanes', label: 'Hurricanes', description: 'NOAA NHC · tracks & forecast cones', dataKey: 'hurricanes' },
       { key: 'river_gauges', label: 'Rivers & Floods', description: 'USGS · real-time stream gauges', dataKey: '' },
+    ],
+  },
+  {
+    label: 'WINTER',
+    fullLabel: 'WINTER & ROADS',
+    icon: Snowflake,
+    layers: [
+      { key: 'plows', label: 'Snow Plows', description: 'Iowa DOT · live plow AVL · ~2 min', dataKey: 'plows' },
     ],
   },
   /* The intel groups (THREATS & INTEL, NETWORK INTEL, NET & EVENT INTEL)
