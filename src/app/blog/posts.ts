@@ -191,6 +191,137 @@ export const POSTS: BlogPost[] = [
     ],
   },
   {
+    slug: "spot-the-station-replacement",
+    title: "NASA Retired Spot the Station — Here's How to Track the ISS and Catch It Over Your House Tonight",
+    seoTitle: "Spot the Station Replacement: Track the ISS | WorldEye Blog",
+    date: "2026-10-27",
+    excerpt:
+      "For years, NASA's Spot the Station told you when to go outside and look up. NASA retired it — and the question every space fan now asks is what replaces it. Here is the honest answer, function by function.",
+    seoDescription:
+      "NASA retired Spot the Station, the tool that told you when the ISS would fly over your house. What replaced it, and how to catch a pass tonight.",
+    tags: ["iss", "space station", "guide"],
+    sections: [
+      {
+        body: [
+          "Ask a room of space fans how they first saw the International Space Station and a surprising number give the same answer: a NASA tool told them when to look. Spot the Station let you pick your city and get the next sightings — time, duration, direction, how high it would climb. NASA has retired the service, and the question now living in forums is a practical one: what do we use instead?",
+          "There is no single replacement, because Spot the Station quietly did three different jobs. Split them apart, though, and each one has a good answer — two of them free on the [space station tracker](/space-station-tracker), and the third with one honest caveat we will get to.",
+        ],
+      },
+      {
+        heading: "What Spot the Station actually did",
+        body: [
+          "Job one: it showed where the station is. Job two: it predicted sightings for your exact location — not just any pass, but the visible ones, in the dawn and dusk windows when the station is sunlit against a dark sky. Job three: it reminded you, by email or text, so the pass did not sail over while you were making dinner.",
+          "Most would-be replacements only do job one. A dot on a map is satisfying, but it does not tell you whether tonight is your night. The trick is knowing which parts you actually need: if you watch regularly, the live map plus one rule of thumb covers almost everything Spot the Station gave you.",
+        ],
+      },
+      {
+        heading: "Job one and two: the live map, read properly",
+        body: [
+          "The station circles Earth roughly every 90 minutes, and its ground track sweeps in the familiar sine wave across a world map. On WorldEye's [space station tracker](/space-station-tracker) that track is drawn live on the globe, together with the day–night terminator — the two ingredients of a sighting. After a few orbits you can read the pattern by eye: the path shifts west each lap, and when a coming track crosses your region inside the dark band while the station's side is still sunlit, that is your pass.",
+          "The rule of thumb that replaces most predictions: look in the hour or two after sunset or before sunrise. In deep night the station flies through Earth's shadow and goes dark; in daylight it is lost in the blue. Dawn and dusk are when it blazes — brighter than any star, steady, and fast, crossing the sky in about five minutes. Our longer guide to [how to watch the ISS live](/blog/how-to-watch-the-iss-live) walks through the geometry, the station's own live cameras, and what you can and cannot make out from the ground.",
+          "And because the station is one object among thousands, the same map carries the rest of the sky through the [satellite tracker](/satellite-tracker) — Starlink trains included, which are the other bright procession people most often mistake for something stranger.",
+        ],
+      },
+      {
+        heading: "Job three: the honest caveat about alerts",
+        body: [
+          "Spot the Station's emails were its stickiest feature, and no map — ours included — replaces a reminder that arrives before the pass. WorldEye does not send per-location ISS pass alerts, and any site that implies a live map alone does that job is overselling.",
+          "What regulars actually do now: check the tracker in the late afternoon, read the evening's tracks against the terminator, and set a phone alarm for the promising one. It takes a minute, it works for any spot on Earth rather than a preset city list, and it has a side benefit no email ever gave — you learn to read the orbit, and after a few weeks you are predicting passes for your neighbours.",
+        ],
+      },
+      {
+        heading: "Your first pass, tonight",
+        body: [
+          "Open the [live globe](/) in the late afternoon and find the station's track. If a pass crosses your part of the world in the two hours after your sunset, be outside ten minutes early with a clear view of the sky — no telescope, no binoculars needed; the station is unmissable when it comes, a bright white point moving like a silent airliner with no blinking lights. Face the direction the track approaches from, and give your eyes a few minutes to adjust.",
+          "Miss it, and the rhythm forgives you: the pattern of tracks repeats on a cycle of days, and another visible pass over your house is never more than a few evenings away. That was always the real gift of Spot the Station — not the alert, but the discovery that the largest machine humanity has built flies over your street, on schedule, waiting to be noticed.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Did NASA really shut down Spot the Station?",
+        a: "Yes — NASA retired the Spot the Station service, which is why its sighting-lookup pages and sign-ups no longer work. The station itself is, of course, still flying: it orbits roughly every 90 minutes, and its live position is public data that trackers like WorldEye's space station tracker display continuously.",
+      },
+      {
+        q: "What is the best Spot the Station replacement?",
+        a: "For live position and spotting passes yourself, a live tracker with the orbit path and day–night line drawn — WorldEye's space station tracker is free with no signup. For exact emailed pass alerts for one fixed address, that specific feature is the one thing a map does not replace; regulars check the afternoon track and set a phone alarm instead.",
+      },
+      {
+        q: "When is the ISS visible from my house?",
+        a: "When a pass crosses your area in the hour or two after sunset or before sunrise, while the station is still sunlit and your sky is dark. In the middle of the night it passes through Earth's shadow; in daytime it is washed out. Visible passes over one place come in runs separated by gaps of days to weeks, following the orbit's rhythm.",
+      },
+      {
+        q: "How bright is the station, and do I need a telescope?",
+        a: "No telescope — the ISS is typically the brightest object in the twilight sky after the Moon and Venus, a steady white light crossing in about five minutes. Binoculars can hint at its shape on a high pass, but naked eyes are the right tool for a first sighting.",
+      },
+    ],
+  },
+  {
+    slug: "live-video-feed-of-any-place",
+    title: "How to See a Live Video Feed of Almost Any Place on Earth (Like Google Maps, But Video)",
+    seoTitle: "See Any Place Live, Like Google Maps Video | WorldEye Blog",
+    date: "2026-10-27",
+    excerpt:
+      "People keep asking for an app that shows a live video feed of a place, the way Google Maps shows traffic. Google can't do it — but the cameras exist, published on purpose by the thousands. Here's how to find the one pointed at your place.",
+    seoDescription:
+      "Google Maps shows photos, not live video. But thousands of public cameras stream real places right now — here's how to find the feed for anywhere.",
+    tags: ["live cams", "guide", "how-to"],
+    sections: [
+      {
+        body: [
+          "The question appears in forums year after year, phrased almost identically: is there an app that lets you see a live video feed of a place, like watching the traffic layer on Google Maps — but actual video? The answers usually name two or three webcam sites and trail off, as if that were the whole story.",
+          "It is not. The real answer is that the world is already covered in public cameras — tens of thousands of them, streaming on purpose — and the reason you have never seen them in one place is that nobody's map was built to gather them. Here is how those cameras work, why Google Maps will never show them to you, and how to pull up the feed for a place you care about in under a minute.",
+        ],
+      },
+      {
+        heading: "Why Google Maps can't show you live video",
+        body: [
+          "Street View feels alive, but it is photography — a car drove that street months or years ago. The traffic layer feels live, and it is, but it is not video: it is speed data from phones, drawn as coloured lines. Google does not operate cameras on the places you search for, and it does not aggregate the cameras that others operate.",
+          "Those cameras belong to the people who publish them: state highway departments streaming every interchange, ski resorts pointing lenses at their snow stakes, harbours watching their marinas, airports, national parks, beach towns, observatories. Each one is public by decision — published so travellers, skiers, sailors and the merely curious can look. They were never hidden; they were scattered across thousands of separate agency websites, one feed at a time.",
+        ],
+      },
+      {
+        heading: "One map for cameras that were always public",
+        body: [
+          "WorldEye exists to end the scatter. Its globe carries 74,229 live public cameras — [live webcams](/live-webcams) from cities, highways, mountains, beaches and landmarks — pinned where they actually stand, so finding the feed for a place is the same gesture as finding the place: fly there, and the cameras are waiting. The traffic camera outside a town you are driving to, the beach cam at the resort you booked, the square in the city you grew up in — each one is a search away rather than a research project.",
+          "It is worth being precise about what is on the map, because the honest boundary is what makes it useful: these are public, published feeds only. There are no private cameras, no interiors, no feeds that were not deliberately put online by their owners — the difference between a town square webcam and an unsecured camera is the difference between a window the town opened and a door someone forgot to lock, and only the first kind belongs here.",
+        ],
+      },
+      {
+        heading: "A worked example: the drive, the beach, the hometown",
+        body: [
+          "Say you are driving across Utah tomorrow and want to see the passes with your own eyes rather than trust a forecast. The state pages gather the highway network — [Utah's traffic cameras](/us-traffic-cameras/utah) alone draw on the same UDOT feeds the state itself publishes — and on the [globe](/) you can follow your route interchange by interchange, watching the weather arrive in the mountains before it reaches the road.",
+          "Or take the opposite urge: not a journey, just a place you love. Search its name on the globe and the nearest public cameras open where they stand — the harbour your family sails from, the crossing outside your old flat, the volcano your group chat argues about. That immediacy is the thing the forum question was really asking for, and it generalises: any place with a published camera — and published cameras now number in the tens of thousands — is watchable in the same way.",
+        ],
+      },
+      {
+        heading: "What you still can't do (and why that's fine)",
+        body: [
+          "No honest version of this exists for everywhere. A farmhouse with no public camera has no feed; a camera shows its own fixed view, not a window you can aim; and many public feeds are stills that refresh on a cycle rather than continuous video — enough to judge weather, water and roads at a glance, which is what they are for. The map grows as operators publish more, and the dead feeds are pruned as they retire.",
+          "But the shape of the thing has changed. Ten years ago the question 'can I see that place right now?' was rhetorical. Today the cameras are up, the streams are public, and the only missing piece was a single map that treats them as one network. Open it, type the place you have been wondering about, and look.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is there an app to see live video of a place like Google Maps traffic?",
+        a: "Google Maps itself has no live video — Street View is photography and the traffic layer is speed data. The live-video version of the idea is a public-camera map: WorldEye's globe gathers 74,229 published public cameras (highway departments, resorts, harbours, parks, cities) onto one searchable map, free to watch.",
+      },
+      {
+        q: "Where do these live cameras come from?",
+        a: "From the operators who publish them on purpose: state and national highway agencies, ski resorts, airports, marinas, national parks, observatories and towns. Each feed is public by its owner's decision and remains theirs; a directory like WorldEye collects the scattered feeds into one place and prunes the ones that stop working.",
+      },
+      {
+        q: "Can I see my house or street live?",
+        a: "Only if a public camera happens to cover it — a traffic camera on your arterial road, for instance. There are no private cameras, interiors or on-demand views on the map, and no way to request a feed for a specific address. What exists is what operators have chosen to publish.",
+      },
+      {
+        q: "Are the feeds really live?",
+        a: "They are the operators' own streams. Many are continuous video; many highway and remote cameras publish stills that refresh every few seconds to minutes, which is how their agencies run them and is enough to judge conditions. A feed that has gone off air shows as unavailable rather than replaying a recording.",
+      },
+    ],
+  },
+  {
     slug: "planes-flying-over-your-city-right-now",
     title: "Planes Flying Over Your City Right Now: How to See Every One of Them Live",
     seoTitle: "Planes Flying Over Your City Right Now | WorldEye Blog",
