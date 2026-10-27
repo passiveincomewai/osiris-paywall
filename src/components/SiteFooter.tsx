@@ -111,21 +111,16 @@ export default function SiteFooter({
       {/* Brand row */}
       <div className="max-w-6xl mx-auto px-6 pt-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-md">
-          <Link href="/" className="inline-flex items-center gap-2.5">
+          <Link href="/" aria-label="WorldEye — back to the live globe" className="inline-flex items-center">
             <img
-              src="/worldeye-eye.png?v=4"
+              src="/worldeye-header-logo.png"
               alt="WorldEye"
-              width={600}
-              height={432}
+              width={1063}
+              height={290}
               loading="lazy"
               decoding="async"
-              className="h-8 w-auto"
-              style={{ filter: "drop-shadow(0 0 10px rgba(0,150,255,0.5))" }}
+              className="h-10 w-auto"
             />
-            <span className="text-lg font-wordmark tracking-wide">
-              <span className="text-white">World</span>
-              <span className="text-[#0096FF]">Eye</span>
-            </span>
           </Link>
           <p className="text-sm text-white/50 mt-4 leading-relaxed">
             Live planetary intelligence. The map is free for everyone — Pro funds
