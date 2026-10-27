@@ -22,8 +22,8 @@ describe("image sitemap", () => {
     }
   });
 
-  it("every listed page is in the main sitemap", () => {
-    const mainUrls = new Set(sitemap().map((e) => e.url));
+  it("every listed page is in the main sitemap", async () => {
+    const mainUrls = new Set((await sitemap()).map((e) => e.url));
     for (const entry of IMAGE_SITEMAP_ENTRIES) {
       expect(
         mainUrls.has(`https://worldeye.app${entry.page}`),
