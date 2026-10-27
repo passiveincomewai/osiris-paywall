@@ -208,6 +208,9 @@ const SEO_PAGES_PARTNERS = ["/partners"];
 // It is a standing product page, so it joins the sitemap with a
 // commercial priority rather than the 0.6 directory default.
 const SEO_PAGES_ENTERPRISE = ["/enterprise"];
+// Index recovery (2026-10-27): two real pages that were orphans —
+// live routes with no sitemap entry and no crawlable inbound links.
+const SEO_PAGES_ORPHANS = ["/use-cases", "/submit-camera"];
 
 // National park hubs (2026-10-27): the /national-park-webcams hub and
 // one page per park in the src/lib/national-parks registry —
@@ -590,6 +593,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+    })),
+    ...SEO_PAGES_ORPHANS.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     ...SEO_PAGES_PARKS.map((p) => ({
       url: `${BASE}${p}`,
