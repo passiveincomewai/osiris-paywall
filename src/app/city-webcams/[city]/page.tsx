@@ -45,6 +45,7 @@ import {
 import VoiceQA from "@/components/seo/VoiceQA";
 import { cityAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 import CurrentStatus from "@/components/CurrentStatus";
+import SaveLocationButton from "@/components/SaveLocationButton";
 import {
   breakdownFaqs,
   cityStatusRows,
@@ -1294,6 +1295,18 @@ export default async function CityWebcamPage({
         ]}
       />
       <Hero h1={c.h1} sub={c.sub} />
+      <div className="mt-6 flex justify-center">
+        <SaveLocationButton
+          entry={{
+            kind: "place",
+            key: `city:${slug}`,
+            label: c.name,
+            detail: c.country,
+            href: `/city-webcams/${slug}`,
+            ...(chunk?.centroid ? { lat: chunk.centroid.lat, lng: chunk.centroid.lng } : {}),
+          }}
+        />
+      </div>
       <StatRow stats={c.stats} />
       <Updated date={updated} />
       <Intro paragraphs={c.intro} />

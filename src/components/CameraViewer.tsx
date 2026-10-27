@@ -16,6 +16,8 @@ import TimelapseControl from './TimelapseControl';
 import AccountGatePrompt from './AccountGatePrompt';
 import LiveRecordControl from './recording/LiveRecordControl';
 import CameraAlertButton from './CameraAlertButton';
+import SaveLocationButton from './SaveLocationButton';
+import { cameraSavedHref } from '@/lib/saved-locations';
 
 interface CameraViewerProps {
   camera: any | null;
@@ -321,6 +323,24 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                   <button onClick={() => setFullscreen(!fullscreen)} className="hidden md:block p-1.5 rounded-sm bg-white/5 border border-white/10 hover:bg-[var(--text-primary)]/20 hover:border-[var(--text-primary)] transition-all" title="Toggle fullscreen" aria-label="Toggle fullscreen">
                     <Maximize2 className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)]" />
                   </button>
+                  {/* Device-local save (star): the no-account shortlist in
+                      /saved, distinct from the account bookmark beside it.
+                      Only when the camera carries a catalogue id — the
+                      same rule the share affordance follows. */}
+                  {cameraShareId(camera) && (
+                    <SaveLocationButton
+                      variant="icon"
+                      entry={{
+                        kind: 'camera',
+                        key: cameraShareId(camera)!,
+                        label: camera.name || camera.title || 'Camera',
+                        detail: [camera.city, camera.country].filter(Boolean).join(', ') || undefined,
+                        href: cameraSavedHref(cameraShareId(camera)!),
+                        lat: typeof camera.lat === 'number' ? camera.lat : undefined,
+                        lng: typeof camera.lng === 'number' ? camera.lng : undefined,
+                      }}
+                    />
+                  )}
                   <button
                     onClick={async () => {
                       setSaveState("saving");

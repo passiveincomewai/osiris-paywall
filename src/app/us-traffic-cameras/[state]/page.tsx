@@ -31,6 +31,7 @@ import { mergePlaceFaqs, stateAnswers } from "@/lib/place-answers";
 import { getPlaceWeather } from "@/lib/place-weather";
 import CurrentStatus from "@/components/CurrentStatus";
 import { stateFreewayFaq, stateStatusRows } from "@/lib/place-breakdown";
+import SaveLocationButton from "@/components/SaveLocationButton";
 import cityPages from "@/data/city-pages.json";
 
 /* Area name → city-page slug, for linking the coverage table to the
@@ -773,6 +774,18 @@ export default async function StateTrafficPage({
         ]}
       />
       <Hero h1={s.h1} sub={s.sub} />
+      <div className="mt-6 flex justify-center">
+        <SaveLocationButton
+          entry={{
+            kind: "place",
+            key: `state:${slug}`,
+            label: s.name,
+            detail: "United States",
+            href: `/us-traffic-cameras/${slug}`,
+          }}
+          saveLabel="Save this state"
+        />
+      </div>
       <StatRow stats={s.stats} />
       <Updated date={updated} />
       <Intro paragraphs={s.intro} />

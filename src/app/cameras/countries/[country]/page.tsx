@@ -32,6 +32,7 @@ import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
 import CurrentStatus from "@/components/CurrentStatus";
 import { countryStatusRows } from "@/lib/place-breakdown";
+import SaveLocationButton from "@/components/SaveLocationButton";
 
 /* Weather data is cached per location for 30 minutes in lib/weather-api;
    ISR at the same cadence keeps the baked page from going staler. */
@@ -329,6 +330,17 @@ export default async function CountryPage({
           <p className="mt-4 text-white/55">
             Watch {plural(c.count, "live camera")} across {c.name} — free on the WorldEye globe.
           </p>
+          <div className="mt-6 flex justify-center">
+            <SaveLocationButton
+              entry={{
+                kind: "place",
+                key: `country:${slug}`,
+                label: c.name,
+                href: `/cameras/countries/${slug}`,
+              }}
+              saveLabel="Save this country"
+            />
+          </div>
           <CountryCitySearch countryName={c.name} cities={cityList} searchSuffixes={citySearchSuffixes} />
         </div>
 
