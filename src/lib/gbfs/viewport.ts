@@ -97,6 +97,36 @@ export function visibleGbfsItems<S extends { id: string }, I extends { lat: numb
  * candidates whose cache is still fresh are skipped, and the result is
  * capped. `now` is injected so freshness is testable.
  */
+/**
+ * The cache entry to store after a station fetch — or null to leave
+ * the cache EXACTLY as it was. This guards the failure that erased
+ * every dot of a large system at street zoom: /api/gbfs/stations
+ * reports failure AS an empty item list (HTTP 429 {items: []} when the
+ * client IP is rate-limited; HTTP 200 {items: [], count: 0} whenever
+ * the upstream GBFS fetch throws). Storing that body unconditionally
+ * replaced a healthy entry (Citi Bike: ~2,500 items) with [], and the
+ * fresh timestamp then suppressed any retry for GBFS_FRESH_MS — after
+ * which a deep-zoom viewport could lose the system as a load
+ * candidate altogether (candidacy there rests on cached items in
+ * view), making the outage permanent until the user zoomed back out.
+ * So: a transport/HTTP failure, a malformed body, and an empty
+ * "success" over a non-empty cache are all treated as NO result —
+ * prior items and their (stale) timestamp survive, and the next
+ * moveend retries the fetch. An empty result for a system with no
+ * cached items is stored (with stamp) so a genuinely empty system is
+ * not refetched on every move.
+ */
+export function gbfsCacheEntryAfterFetch<I>(
+  prev: GbfsCacheEntry<I> | undefined,
+  ok: boolean,
+  items: readonly I[] | null | undefined,
+  now: number,
+): { at: number; items: I[] } | null {
+  if (!ok || !Array.isArray(items)) return null;
+  if (items.length === 0 && prev && prev.items.length > 0) return null;
+  return { at: now, items: items.slice() };
+}
+
 export function gbfsLoadCandidates<S extends GbfsSystemPoint, I extends { lat: number; lng: number }>(
   systems: readonly S[],
   cache: ReadonlyMap<string, GbfsCacheEntry<I>>,

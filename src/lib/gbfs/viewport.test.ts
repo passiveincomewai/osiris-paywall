@@ -3,6 +3,7 @@ import {
   padGbfsBounds,
   visibleGbfsItems,
   gbfsLoadCandidates,
+  gbfsCacheEntryAfterFetch,
   GBFS_FRESH_MS,
   type GbfsCacheEntry,
   type GbfsViewBounds,
@@ -133,5 +134,122 @@ describe('gbfsLoadCandidates — viewport loading', () => {
 
   it('returns nothing when there are no systems', () => {
     expect(gbfsLoadCandidates([], new Map(), BROOKLYN_STREET, { lat: 40.6779, lng: -73.9700 }, NOW)).toEqual([]);
+  });
+});
+
+/* ── Fetch-result cache policy + the z14 Brooklyn regression ──────────
+ *
+ * REAL SHAPES ONLY. LYFT_NYC below is the verbatim directory entry from
+ * public/data/gbfs-systems.json; the stations are verbatim items from
+ * the production /api/gbfs/stations response for that system (captured
+ * 2026-10-27; the live response holds 2,521 items, 139 of them inside
+ * the z14 viewport used here). The component stores exactly these
+ * objects in gbfsCacheRef and renders them via visibleGbfsItems.
+ */
+const LYFT_NYC = {
+  id: 'lyft_nyc', name: 'Citi Bike', city: 'New York, NY', country: 'US',
+  lat: 40.7414, lng: -73.9467, n: 2519, type: 'station',
+  url: 'https://gbfs.citibikenyc.com/gbfs/2.3/gbfs.json',
+};
+interface RealItem {
+  kind: 'station' | 'vehicle'; id: string; name?: string;
+  lat: number; lng: number; bikes?: number; ebikes?: number; docks?: number; vt?: string;
+}
+const REAL_BROOKLYN_STATIONS: RealItem[] = [
+  { kind: 'station', id: '475c44e1-31e3-4c60-b071-af2ca3f7618c', name: 'Prospect Pl & Nostrand Ave', lat: 40.67428, lng: -73.9503, bikes: 0, ebikes: 0, docks: 0 },
+  { kind: 'station', id: '66dcc37f-0aca-11e7-82f6-3863bb44ef7c', name: 'Greene Ave & Nostrand Ave', lat: 40.6883337, lng: -73.950916, bikes: 8, ebikes: 1, docks: 11 },
+  { kind: 'station', id: '62b97c1e-9d06-4c5e-b9c3-d76099e37fe4', name: 'Prospect Pl & Vanderbilt Ave', lat: 40.67767534, lng: -73.96902144, bikes: 12, ebikes: 7, docks: 9 },
+  { kind: 'station', id: '1859088223746072684', name: 'Verona Pl & Fulton St', lat: 40.6803560840434, lng: -73.9476791024208, bikes: 3, ebikes: 0, docks: 11 },
+  { kind: 'station', id: 'eb07bdfc-3a6f-40eb-96d2-0b92ac371619', name: 'Eastern Pkwy & Brooklyn Ave', lat: 40.66939, lng: -73.94514, bikes: 1, ebikes: 0, docks: 15 },
+  { kind: 'station', id: '66de19ab-0aca-11e7-82f6-3863bb44ef7c', name: '3 St & Prospect Park West', lat: 40.668132, lng: -73.97363831, bikes: 20, ebikes: 19, docks: 8 },
+  { kind: 'station', id: 'c2bb1874-bcb7-47c5-aa7d-05423b9087e8', name: 'Sterling Pl & New York Ave', lat: 40.67234, lng: -73.94763, bikes: 0, ebikes: 0, docks: 19 },
+  { kind: 'station', id: '8aad788d-c7eb-4fca-a426-c39f47741a6f', name: 'President St & Nostrand Ave', lat: 40.66811, lng: -73.9505, bikes: 0, ebikes: 0, docks: 27 },
+];
+const REAL_OUT_OF_VIEW_STATION: RealItem =
+  { kind: 'station', id: '1986707977001495180', name: '21 St & 20 Ave', lat: 40.78393602019729, lng: -73.91273114065842, bikes: 0, ebikes: 0, docks: 0 };
+const REAL_ITEMS: RealItem[] = [...REAL_BROOKLYN_STATIONS, REAL_OUT_OF_VIEW_STATION];
+
+/** z14.2 over Prospect Heights (the live-verification viewport). */
+const Z14_PROSPECT_HEIGHTS = viewAt(40.6779, -73.9650, 0.03);
+const Z14_CENTRE = { lat: 40.6779, lng: -73.9650 };
+type RealCache = Map<string, GbfsCacheEntry<RealItem>>;
+
+describe('gbfsCacheEntryAfterFetch — a failed fetch must not poison the cache', () => {
+  const prev: GbfsCacheEntry<RealItem> = { at: 1_000, items: REAL_ITEMS };
+
+  it('stores a successful non-empty result with a fresh stamp', () => {
+    const next: RealItem[] = [REAL_BROOKLYN_STATIONS[0]];
+    expect(gbfsCacheEntryAfterFetch(prev, true, next, 2_000)).toEqual({ at: 2_000, items: next });
+    expect(gbfsCacheEntryAfterFetch(undefined, true, next, 2_000)).toEqual({ at: 2_000, items: next });
+  });
+
+  it('leaves the cache untouched on an HTTP error (the API returns {items: []} with 429)', () => {
+    expect(gbfsCacheEntryAfterFetch(prev, false, [], 2_000)).toBeNull();
+    expect(gbfsCacheEntryAfterFetch(undefined, false, [], 2_000)).toBeNull();
+  });
+
+  it('leaves the cache untouched when the body has no item array', () => {
+    expect(gbfsCacheEntryAfterFetch(prev, true, undefined, 2_000)).toBeNull();
+    expect(gbfsCacheEntryAfterFetch(prev, true, null, 2_000)).toBeNull();
+  });
+
+  it('never replaces good cached items with an empty "success" (the API returns {items: [], count: 0} on upstream failure)', () => {
+    expect(gbfsCacheEntryAfterFetch(prev, true, [], 2_000)).toBeNull();
+  });
+
+  it('still stamps a genuinely empty system so it is not refetched on every move', () => {
+    expect(gbfsCacheEntryAfterFetch(undefined, true, [], 2_000)).toEqual({ at: 2_000, items: [] });
+    expect(gbfsCacheEntryAfterFetch({ at: 1_000, items: [] }, true, [], 2_000)).toEqual({ at: 2_000, items: [] });
+  });
+});
+
+describe('z14 Brooklyn — the live-verification failure, replayed with real shapes', () => {
+  const T0 = 1_000_000_000;
+  const BROOKLYN_IDS = REAL_BROOKLYN_STATIONS.map((s) => s.id);
+
+  it('geometry: at z14 the centre is outside even the padded bounds — candidacy rests on cached items alone', () => {
+    const padded = padGbfsBounds(Z14_PROSPECT_HEIGHTS, 1);
+    expect(LYFT_NYC.lat).toBeGreaterThan(padded.north);
+    const cache: RealCache = new Map([['lyft_nyc', { at: T0, items: REAL_ITEMS }]]);
+    expect(visibleGbfsItems([LYFT_NYC], cache, Z14_PROSPECT_HEIGHTS).map((x) => x.item.id)).toEqual(BROOKLYN_IDS);
+  });
+
+  it('one transient empty response used to erase every Brooklyn dot for good; now the cache survives and the next move retries', () => {
+    // The state after the successful city-zoom load (z11.9, dots visible).
+    const cache: RealCache = new Map([['lyft_nyc', { at: T0, items: REAL_ITEMS }]]);
+
+    // 120 s later the user reaches z14.2; the entry is stale, and Citi
+    // Bike is a load candidate ONLY because its cached items are in view.
+    const T1 = T0 + 120_000;
+    expect(gbfsLoadCandidates([LYFT_NYC], cache, Z14_PROSPECT_HEIGHTS, Z14_CENTRE, T1)).toEqual([LYFT_NYC]);
+
+    // The refetch hits a transient failure. The API reports upstream
+    // failure as HTTP 200 {items: [], count: 0}. The PRE-FIX component
+    // stored that body unconditionally:
+    const preFixWrite = (items: RealItem[], now: number) => cache.set('lyft_nyc', { at: now, items });
+    preFixWrite([], T1);
+    // …every in-view dot is gone…
+    expect(visibleGbfsItems([LYFT_NYC], cache, Z14_PROSPECT_HEIGHTS)).toEqual([]);
+    // …the fresh stamp blocks an immediate retry…
+    expect(gbfsLoadCandidates([LYFT_NYC], cache, Z14_PROSPECT_HEIGHTS, Z14_CENTRE, T1 + 10_000)).toEqual([]);
+    // …and once the stamp expires the system is not even a candidate any
+    // more (no cached items in view; centre outside the padded bounds),
+    // so the outage at this viewport is permanent — exactly what the
+    // live verification saw, toggle included (the cache lives in a ref).
+    expect(gbfsLoadCandidates([LYFT_NYC], cache, Z14_PROSPECT_HEIGHTS, Z14_CENTRE, T1 + 300_000)).toEqual([]);
+
+    // The FIXED policy: the same response leaves the cache untouched.
+    cache.set('lyft_nyc', { at: T0, items: REAL_ITEMS });
+    const merged = gbfsCacheEntryAfterFetch(cache.get('lyft_nyc'), true, [], T1);
+    expect(merged).toBeNull();
+    if (merged) cache.set('lyft_nyc', merged);
+    // Dots survive the failed refetch…
+    expect(visibleGbfsItems([LYFT_NYC], cache, Z14_PROSPECT_HEIGHTS).map((x) => x.item.id)).toEqual(BROOKLYN_IDS);
+    // …and because the old (stale) timestamp is kept, the very next
+    // moveend retries the fetch instead of waiting out a poisoned stamp.
+    expect(gbfsLoadCandidates([LYFT_NYC], cache, Z14_PROSPECT_HEIGHTS, Z14_CENTRE, T1 + 1_000)).toEqual([LYFT_NYC]);
+
+    // The 429 shape (ok=false, {items: []}) is rejected the same way.
+    expect(gbfsCacheEntryAfterFetch(cache.get('lyft_nyc'), false, [], T1)).toBeNull();
   });
 });

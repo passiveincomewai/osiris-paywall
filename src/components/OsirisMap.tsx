@@ -42,7 +42,7 @@ import {
 import FlightFollowHud from '@/components/FlightFollowHud';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import { selectAgenciesForView, agencyIntersectsView, padView } from '@/lib/transit/relevance';
-import { gbfsLoadCandidates, visibleGbfsItems } from '@/lib/gbfs/viewport';
+import { gbfsCacheEntryAfterFetch, gbfsLoadCandidates, visibleGbfsItems } from '@/lib/gbfs/viewport';
 import { TransitBlend } from '@/lib/transit/motion';
 import {
   TRANSIT_SUB, transitSubOn, transitLabelsOn, vehicleModeVisible, lineModeVisible, anyLineFamilyOn,
@@ -4102,8 +4102,14 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       await Promise.all(candidates.map(async (s: any) => {
         try {
           const r = await fetch(`/api/gbfs/stations?url=${encodeURIComponent(s.url)}`);
-          const j = await r.json();
-          gbfsCacheRef.current.set(s.id, { at: Date.now(), items: j.items ?? [] });
+          const j = await r.json().catch(() => null);
+          // The API reports failure as an empty item list (429, or 200
+          // on an upstream error) — gbfsCacheEntryAfterFetch decides
+          // what may replace the cached entry; a failed fetch leaves
+          // the previous items AND their timestamp untouched, so the
+          // dots stay on screen and a later move retries.
+          const entry = gbfsCacheEntryAfterFetch(gbfsCacheRef.current.get(s.id), r.ok, j?.items, Date.now());
+          if (entry) gbfsCacheRef.current.set(s.id, entry);
         } catch { /* a later move retries */ }
       }));
       render();
