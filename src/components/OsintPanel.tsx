@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LocateFixed,
-  Search, Radar, Globe, Shield, FileText, Radio,
+  Search, Radar, Globe, Shield, FileText, Radio, Bluetooth,
   ChevronDown, ChevronUp, Loader2, AlertTriangle, Server,
   Wifi, Lock, MapPin, Bug, Code, Layers, Network, Fingerprint,
   CheckCircle, XCircle, Clock, ExternalLink, Crosshair,
@@ -17,6 +17,7 @@ import ChainBrief from '@/components/ChainBrief';
 import FingerprintSearch, { useFingerprintSearch } from '@/components/FingerprintSearch';
 import DonBotScan from '@/components/DonBotScan';
 import DigitalDonMark from '@/components/DigitalDonMark';
+import WorldRemote from '@/components/WorldRemote';
 
 /**
  * Tool categories — presentation only (owner's RECON board redesign,
@@ -29,13 +30,19 @@ import DigitalDonMark from '@/components/DigitalDonMark';
  *    actions (lookup targets are also geolocated from here);
  *  · VULN SWEEP files under "Threat Intelligence" — it is a CVE
  *    exposure check, not a network utility.
- * No tool was added or dropped: TABS below is the full inventory, and
- * a category can never invent a tool the panel doesn't have.
+ * WORLD REMOTE moved here from its own mobile bottom-nav tab + desktop
+ * rail popover (owner merge, 2026-10-26): it is a device sweep whose
+ * GPS-tagged captures are placed on the globe, so it files under Geoint
+ * beside IP SWEEP and Self Track — the panel's other two
+ * put-things-on-the-map actions.
+ * No tool was added or dropped by the redesign: TABS below is the full
+ * inventory, and a category can never invent a tool the panel doesn't
+ * have.
  */
 const GROUPS = [
   { id: 'domain', label: 'Domain & Network Intel', hint: 'IPs, ports, DNS, certificates, routing', icon: Database },
   { id: 'identity', label: 'Identity & Profile Recon', hint: 'People, handles, accounts', icon: Users },
-  { id: 'geoint', label: 'Geoint & Location Analysis', hint: 'Subnet mapping and your own IP location', icon: MapPin },
+  { id: 'geoint', label: 'Geoint & Location Analysis', hint: 'Subnet mapping, Bluetooth devices and your own IP location', icon: MapPin },
   { id: 'threat', label: 'Threat Intelligence', hint: 'Reputation, breaches and CVE exposure', icon: ShieldAlert },
   { id: 'chain', label: 'Blockchain Intelligence', hint: 'Wallets, tokens and on-chain incidents', icon: Bitcoin },
 ] as const;
@@ -138,6 +145,7 @@ const TABS: ToolDef[] = [
   { id: 'bgp', label: 'BGP ROUTE', icon: Globe, placeholder: 'IP or ASN', color: '#00E5FF', group: 'domain', tile: 'BGP\nRoute', blurb: 'Autonomous system and prefixes' },
   { id: 'mac', label: 'MAC ADDR', icon: Fingerprint, placeholder: 'MAC address', color: '#FFD700', group: 'domain', tile: 'MAC\nAddress', blurb: 'Hardware vendor lookup' },
   { id: 'sweep', label: 'IP SWEEP', icon: Crosshair, placeholder: 'Enter IP address (e.g. 8.8.8.8)', color: '#FF3D3D', group: 'geoint', tile: 'IP\nSweep', blurb: 'Scan an entire subnet' },
+  { id: 'remote', label: 'WORLD REMOTE', icon: Bluetooth, placeholder: 'Bluetooth devices around you', color: '#00E5FF', group: 'geoint', tile: 'World\nRemote', blurb: 'Bluetooth devices around you, placed on the globe' },
 
   { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF', group: 'domain', tile: 'DNS\nLookup', blurb: 'All record types' },
   { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFD700', group: 'domain', tile: 'WHOIS\nLookup', blurb: 'Registrar and ownership' },
@@ -160,9 +168,9 @@ const TABS: ToolDef[] = [
   { id: 'donbot', label: 'DONBOT', icon: DigitalDonMark, placeholder: 'Ticker, name or contract address', color: '#E8E6E0', group: 'chain', tile: 'DonBot', blurb: 'Token signal and holder clusters' },
 ];
 
-interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; }
+interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; onPlaceDevicesOnMap?: (devs: { id: string; name: string; lat: number; lng: number; type: string; color: string }[]) => void; }
 
-function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintPanelProps) {
+function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceDevicesOnMap }: OsintPanelProps) {
   const [activeTab, setActiveTab] = useState('scanner');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [query, setQuery] = useState('');
@@ -1338,10 +1346,16 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
       {/* So does DONBOT — the same scan as Markets → Crypto, sealed in its own frame. */}
       {activeTab === 'donbot' && <DonBotScan initial={donbotQuery} onScan={setDonbotQuery} />}
 
+      {/* And WORLD REMOTE — the Marauder BLE engine, formerly the REMOTE
+          tab. It brings its own scan flow and device list; captured
+          devices reach the globe through onPlaceDevicesOnMap, the same
+          scan-target path its standalone mounts used. */}
+      {activeTab === 'remote' && <WorldRemote onPlaceOnMap={onPlaceDevicesOnMap} />}
+
       {/* Scan bar — the board's target entry. Same state and handlers as
           before (query / runLookup / scanType / sweepCidr); only the skin
           and the chip presentation of the secondary controls are new. */}
-      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && (
+      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && (
       <div className="flex flex-col gap-1.5">
         {/* CHAIN INTEL view switch — the brief takes no target. */}
         {activeTab === 'crypto' && (
@@ -1652,7 +1666,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
         </div>
       )}
 
-      {history.length > 0 && !results && activeTab !== 'fingerprint' && activeTab !== 'donbot' && (
+      {history.length > 0 && !results && activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && (
         <div className="space-y-1">
           <span className="text-[10px] font-mono tracking-widest text-[var(--text-muted)]">RECENT SCANS</span>
           {history.slice(0, 5).map((h, i) => (
