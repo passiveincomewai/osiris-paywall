@@ -19,7 +19,7 @@ import {
 import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, Check, X, Sparkles, Satellite, BrainCircuit,
+  ArrowLeft, Check, X, Sparkles, BrainCircuit,
   ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus, Car, Video, Bell,
 } from "lucide-react";
 
@@ -37,7 +37,6 @@ const PLANS: Record<Plan, { name: string; price: string; per: string; perDay: st
 
 const PRO_FEATURES = [
   { icon: BrainCircuit, title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
-  { icon: Satellite, title: "Satellite View", desc: "High-resolution satellite imagery alongside the dark intel map." },
   { icon: Car, title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
   { icon: ShieldCheck, title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
   { icon: Video, title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser and save the clips." },
@@ -72,7 +71,7 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean; vip: boolean
   { feature: "Cinematic director (free for affiliates)", free: false, pro: false, vip: false },
   { feature: "Earthquakes, wildfires & weather", free: true, pro: true, vip: true },
   { feature: "OI AI assistant (built-in AI included)", free: false, pro: true, vip: true },
-  { feature: "Satellite imagery view", free: false, pro: true, vip: true },
+  { feature: "Satellite imagery view", free: true, pro: true, vip: true },
   { feature: "Live traffic layer (TomTom congestion)", free: false, pro: true, vip: true },
   { feature: "Advanced search filters", free: false, pro: true, vip: true },
   { feature: "OSINT toolkit (nmap, DNS, WHOIS, SSL)", free: false, pro: true, vip: true },
@@ -86,7 +85,7 @@ const COMPARE_ROWS: { feature: string; free: boolean; pro: boolean; vip: boolean
 const FAQS = [
   {
     q: "Is the map really free?",
-    a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, satellite view, the live traffic layer and advanced search filters. VIP Pro (the yearly plan) adds the premium intel feeds and camera timelapse.",
+    a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, drones, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, the live traffic layer and advanced search filters. VIP Pro (the yearly plan) adds the premium intel feeds and camera timelapse.",
   },
   {
     q: "Do I need my own API key for the AI assistant?",
@@ -106,7 +105,7 @@ const FAQS = [
   },
   {
     q: "How is this different from osirisai.live?",
-    a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, satellite imagery, live traffic, advanced search filters and — on VIP Pro — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
+    a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, live traffic, advanced search filters and — on VIP Pro — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
   },
 ];
 
@@ -258,7 +257,7 @@ export default function PricingPage() {
               See what the <span className="text-[#D4AF37]">free map</span> can&apos;t show you.
             </h1>
             <p className="text-white/55 mt-2 text-sm md:text-base leading-relaxed px-1">
-              An AI analyst that works the globe for you. Satellite imagery. Live traffic.
+              An AI analyst that works the globe for you. Live traffic. Advanced search filters.
               VIP intel feeds on the top tier. Pick your level — upgrade anytime.
             </p>
           </motion.div>

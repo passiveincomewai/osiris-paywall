@@ -82,6 +82,7 @@ const SharePanel = dynamic(() => import('@/components/SharePanel'));
 const ShareLinkBlock = dynamic(() => import('@/components/share/ShareLinkBlock'));
 const ViewPresets = dynamic(() => import('@/components/ViewPresets'));
 const LayerPanel = dynamic(() => import('@/components/LayerPanel'));
+const PremiumSection = dynamic(() => import('@/components/PremiumSection'));
 const SpaceCam = dynamic(() => import('@/components/SpaceCam'), { ssr: false });
 const TodayInTheSky = dynamic(() => import('@/components/TodayInTheSky'), { ssr: false });
 const CameraViewer = dynamic(() => import('@/components/CameraViewer'));
@@ -854,6 +855,16 @@ export default function Dashboard() {
     const action = satelliteSwitchAction(mapStyle === 'satellite');
     setMapStyle(action === 'turn-on' ? 'satellite' : 'dark');
   }, [mapStyle]);
+  /* The viewer's effective tier for the Premium section under the
+     merged Search & Route section: the entitlement boolean proves
+     premium; the session identity's planTier (the lib/plan-tier
+     contract) proves VIP. A premium viewer whose identity hasn't
+     resolved yet reads as Pro — never the reverse. */
+  const viewerTier: 'free' | 'pro' | 'vip' = !isPremiumUser
+    ? 'free'
+    : sessionIdentity?.planTier === 'vip'
+      ? 'vip'
+      : 'pro';
   /* Invite-a-friend camera bonus (lib/camera-bonus): a signed-in user's
      unspent bonus opens, fetched once at load. The server is the source
      of truth — this is only the local hint for whether a beyond-base
@@ -2342,7 +2353,13 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── DIRECTIONS — opens beside the right-hand tool rail, under the top bar ── */}
+      {/* ── SEARCH & ROUTE — one merged panel beside the right-hand tool
+          rail, under the top bar (owner's order, 2026-10-26: the old
+          separate SEARCH spotlight and ROUTE planner are one section
+          now, with the Premium section directly under it). On mobile
+          the planner still opens here on its own — it needs the room
+          above the keyboard — while search lives in the bottom
+          drawer's SEARCH & ROUTE tab, which carries the same merge. ── */}
       <div
         className={`absolute ${isMobile ? 'top-3' : 'top-[64px]'} z-[400] w-[min(92vw,384px)] pointer-events-auto`}
         style={isMobile ? { left: '50%', transform: 'translateX(-50%)' } : { right: '56px' }}
@@ -2380,8 +2397,73 @@ export default function Dashboard() {
 
         {/* The planner stays mounted underneath a running session: unmounting it
             would discard the route you are driving, so ending guidance would
-            drop you into an empty form instead of back onto your route. */}
-        {showDirections && (
+            drop you into an empty form instead of back onto your route. On
+            desktop the motion wrapper now hides the whole merged card —
+            search and the Premium section stand down with the planner
+            while guidance owns the screen. */}
+        {!isMobile && (showDesktopSearch || showDirections) && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: navSession ? 0 : 1, y: 0 }}
+            className={navSession ? 'pointer-events-none h-0 overflow-hidden' : ''}
+            aria-hidden={Boolean(navSession)}
+          >
+            <div className="glass-panel tool-glass relative overflow-hidden flex flex-col max-h-[min(85vh,780px)]">
+              <span aria-hidden className="absolute inset-x-0 top-0 h-px z-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.7) 30%, rgba(var(--gold-rgb),0.7) 70%, transparent)' }} />
+              <header className="flex items-center gap-2.5 h-12 pl-4 pr-2 flex-shrink-0 border-b border-[var(--border-secondary)] bg-black/30">
+                <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(var(--gold-rgb),0.12)' }}>
+                  <Route className="w-4 h-4 text-[var(--gold-primary)]" />
+                </span>
+                <h2 className="flex-1 text-[14px] font-semibold text-[var(--text-heading)]">Search &amp; Route</h2>
+                <button type="button" aria-label="Close search and route" title="Close search and route"
+                  onClick={() => { setShowDesktopSearch(false); setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-[var(--text-secondary)] hover:text-[var(--text-heading)] hover:bg-white/[0.06] transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </header>
+              <div className="min-h-0 overflow-y-auto styled-scrollbar">
+                {showDesktopSearch && (
+                  <div className="px-3 pt-3 pb-1">
+                    <SearchBar embedded center={mapCenter} onClose={() => setShowDesktopSearch(false)} onDirections={openDirectionsTo}
+                      cameras={data.cameras ?? []} isPro={isPremiumUser} onOpenCamera={openCameraFromSearch}
+                      onLocate={(lat, lng, zoom) => setFlyToLocation({ lat, lng, zoom, ts: Date.now() })} />
+                  </div>
+                )}
+                {showDirections && (
+                  <div className={showDesktopSearch ? 'mt-1 border-t border-[var(--border-secondary)]' : ''}>
+                    <DirectionsBar embedded
+                      key={routeTarget?.ts ?? 'plan'}
+                      initialTo={routeTarget}
+                      center={mapCenter ? { lat: mapCenter.lat, lng: mapCenter.lng } : null}
+                      onRoute={(r) => setActiveRoute(r)}
+                      onLiveLocation={setLiveLocation}
+                      onFollowChange={setFollowUser}
+                      onActiveSegment={(seg) => setActiveRoute((r) => (r ? { ...r, activeSegment: seg } : r))}
+                      onStartNavigation={(r, label) => {
+                        setNavSession({ route: r, label, key: Date.now() });
+                        setFollowUser(true);
+                        // No fix yet: preview the route from its own start point
+                        // until the session's watch lands a real one. The view
+                        // labels this a preview — it is never drawn as the driver.
+                        if (!liveLocation) {
+                          const start = r.geometry?.coordinates?.[0];
+                          if (start) setFlyToLocation({ lat: start[1], lng: start[0], zoom: 15, ts: Date.now() });
+                        }
+                      }}
+                      onLocate={(lat, lng, zoom) => setFlyToLocation({ lat, lng, zoom, ts: Date.now() })}
+                      onClose={() => { setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }}
+                    />
+                  </div>
+                )}
+                <PremiumSection tier={viewerTier} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Mobile: the planner on its own at the top of the screen,
+            exactly as before the merge (see the container comment). */}
+        {isMobile && showDirections && (
           <motion.div
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: navSession ? 0 : 1, y: 0 }}
@@ -2428,18 +2510,8 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* ── SEARCH — a spotlight at the top of the map: places, addresses, coordinates ── */}
-      <AnimatePresence>
-        {showDesktopSearch && !isMobile && (
-          <div data-hud className="absolute top-[92px] left-1/2 -translate-x-1/2 z-[450] w-[min(560px,calc(100vw-180px))] pointer-events-auto">
-            <motion.div initial={{ opacity: 0, y: -8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} transition={{ duration: 0.16 }}>
-              <SearchBar center={mapCenter} onClose={() => setShowDesktopSearch(false)} onDirections={openDirectionsTo}
-                cameras={data.cameras ?? []} isPro={isPremiumUser} onOpenCamera={openCameraFromSearch}
-                onLocate={(lat, lng, zoom) => setFlyToLocation({ lat, lng, zoom, ts: Date.now() })} />
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Search used to be a spotlight at the top of the map; it is the
+          top half of the merged Search & Route panel now (above). */}
 
 
       {/* ── FLIGHT WATCH ── */}
@@ -2668,30 +2740,29 @@ export default function Dashboard() {
           </AnimatePresence>
         </div>
 
+        {/* SEARCH & ROUTE — one rail button for the merged panel
+            (owner's order, 2026-10-26; this was two buttons, ROUTE and
+            SEARCH, opening two separate panels). Both sections open
+            together; with both open, the button closes the panel with
+            the old directions close's side effects (route and target
+            cleared). A partial state — search opened alone by the S
+            shortcut or Ctrl+F, the planner handed a destination from a
+            search pick — completes to both-open instead of closing:
+            the sections are one panel now. */}
         <div className="relative group">
-          <button onClick={() => { setShowDirections(!showDirections); setRouteTarget(null); if (showDirections) { setActiveRoute(null); } setShowDesktopSearch(false); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); setShowDrawing(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showDirections ? 'bg-[var(--gold-primary)]/20' : 'hover:bg-white/10'}`} title="Directions — turn-by-turn routing" aria-label="Directions" aria-expanded={showDirections}>
-            <Route className={`w-4 h-4 ${showDirections ? 'text-[var(--gold-primary)]' : 'text-white/60'}`} />
-            {showDirections && (
+          <button data-search-toggle onClick={() => {
+            if (showDirections && showDesktopSearch) { setShowDesktopSearch(false); setShowDirections(false); setActiveRoute(null); setRouteTarget(null); return; }
+            setShowDesktopSearch(true); setShowDirections(true); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); setShowDrawing(false);
+          }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showDirections || showDesktopSearch ? 'bg-[var(--gold-primary)]/20' : 'hover:bg-white/10'}`} title="Search & Route — find places and plan routes" aria-label="Search and Route" aria-expanded={showDirections || showDesktopSearch}>
+            <Search className={`w-4 h-4 ${showDirections || showDesktopSearch ? 'text-[var(--gold-primary)]' : 'text-white/60'}`} />
+            {(showDirections || showDesktopSearch) && (
               <span
                 aria-hidden="true"
                 className="absolute -right-1 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-current text-[var(--gold-primary)]"
               />
             )}
           </button>
-          <span className="absolute right-11 top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none">ROUTE</span>
-        </div>
-
-        <div className="relative group">
-          <button data-search-toggle onClick={() => { setShowDesktopSearch(!showDesktopSearch); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); setShowDrawing(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showDesktopSearch ? 'bg-[var(--gold-primary)]/20' : 'hover:bg-white/10'}`} title="Search — find locations, cities, coordinates" aria-label="Search" aria-expanded={showDesktopSearch}>
-            <Search className={`w-4 h-4 ${showDesktopSearch ? 'text-[var(--gold-primary)]' : 'text-white/60'}`} />
-            {showDesktopSearch && (
-              <span
-                aria-hidden="true"
-                className="absolute -right-1 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-current text-[var(--gold-primary)]"
-              />
-            )}
-          </button>
-          <span className="absolute right-11 top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none">SEARCH</span>
+          <span className="absolute right-11 top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none">SEARCH &amp; ROUTE</span>
         </div>
 
         {/* Separator */}
@@ -2863,46 +2934,32 @@ export default function Dashboard() {
                 { id: 'intel' as const, icon: Newspaper, label: 'INTEL' },
                 { id: 'recon' as const, icon: Radar, label: 'RECON' },
                 { id: 'oi' as const, icon: Orbit, label: 'OI' },
-                { id: 'search' as const, icon: Search, label: 'SEARCH' },
-                // Routing was reachable only from the desktop tool rail, so a
-                // phone could not open it at all. It sits next to SEARCH
-                // because both answer "take me somewhere".
-                { id: 'route' as const, icon: Route, label: 'ROUTE' },
+                // Search & Route are ONE tab now (owner's order,
+                // 2026-10-26 — they were separate SEARCH and ROUTE tabs,
+                // both answering "take me somewhere"). The drawer
+                // carries the search toolset, the route subsection and
+                // the Premium section. The planner itself still opens
+                // at the top of the screen from the drawer's route
+                // subsection — it needs the room above the keyboard,
+                // and guidance has to stay readable while you drive.
+                { id: 'search' as const, icon: Search, label: 'SEARCH & ROUTE' },
                 { id: 'remote' as const, icon: Bluetooth, label: 'REMOTE' },
               ].map(tab => {
-                // Routing opens the planner at the top of the screen rather than
-                // the bottom drawer — it needs the room above the keyboard, and
-                // guidance has to stay readable while you drive.
-                const isRoute = tab.id === 'route';
-                const active = isRoute ? showDirections || Boolean(navSession) : mobilePanel === tab.id;
+                const active = mobilePanel === tab.id;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => {
-                      if (isRoute) {
-                        // Mid-drive this must not touch anything: closing the
-                        // planner clears the active route, which would take the
-                        // line off the map underneath a driver. Guidance is
-                        // ended from the navigation view's own exit.
-                        if (navSession) return;
-                        setMobilePanel(null);
-                        setShowDirections((open) => {
-                          if (open) setActiveRoute(null);
-                          return !open;
-                        });
-                        return;
-                      }
                       // OI is a Weekly Pass feature: offer the trial in
                       // place instead of bouncing to /pricing.
                       if (tab.id === 'oi' && !isPremiumUser) { setShowTrialPicker(true); return; }
                       setMobilePanel(mobilePanel === tab.id ? null : tab.id);
                     }}
                     aria-pressed={active}
-                    disabled={isRoute && Boolean(navSession)}
                     className={`mobile-nav-btn ${active ? 'active' : ''}`}
                   >
                     <tab.icon className={`w-4 h-4 ${tab.id === 'recon' ? 'text-[var(--cyan-primary)]' : ''}`} />
-                    <span className={tab.id === 'recon' ? 'text-[var(--cyan-primary)]' : ''}>{tab.label}</span>
+                    <span className={`whitespace-nowrap ${tab.id === 'recon' ? 'text-[var(--cyan-primary)]' : ''}`}>{tab.label}</span>
                   </button>
                 );
               })}
@@ -2932,7 +2989,7 @@ export default function Dashboard() {
                   {mobilePanel !== 'layers' && (
                   <div className="flex items-center justify-between mb-2">
                     <span className="hud-text text-[10px] text-[var(--text-primary)]">
-                      {mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'OSIRIS RECON' : mobilePanel === 'remote' ? 'WORLD REMOTE' : mobilePanel === 'oi' ? 'OSIRIS OI' : 'SEARCH'}
+                      {mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'OSIRIS RECON' : mobilePanel === 'remote' ? 'WORLD REMOTE' : mobilePanel === 'oi' ? 'OSIRIS OI' : 'SEARCH & ROUTE'}
                     </span>
                     <button onClick={() => setMobilePanel(null)} className="text-[var(--text-muted)] p-1" aria-label="Close panel" title="Close panel"><X className="w-4 h-4" /></button>
                   </div>
@@ -2957,6 +3014,45 @@ export default function Dashboard() {
                       <SearchBar embedded center={mapCenter} onDirections={openDirectionsTo} cameras={data.cameras ?? []} isPro={isPremiumUser} onOpenCamera={(cam) => { openCameraFromSearch(cam); setMobilePanel(null); }} onLocate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       <SharePanel mapView={mapView} activeLayers={activeLayers} mouseCoords={null} />
                       <ShareLinkBlock compact />
+                      {/* ── ROUTE — the merged section's route half. The
+                          planner itself still opens at the top of the
+                          screen (above the keyboard, readable while
+                          driving) and guidance is ended from the
+                          navigation view, never from here — mid-drive
+                          this subsection must not touch the route, the
+                          same rule the old ROUTE tab followed. ── */}
+                      <div className="rounded-xl border border-[var(--border-primary)] bg-black/30 px-3 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <Route className="w-4 h-4 text-[var(--gold-primary)]" />
+                          <span className="hud-text text-[10px] text-[var(--text-primary)]">ROUTE</span>
+                          {activeRoute?.geometry && !navSession && (
+                            <span className="ml-auto text-[9px] font-mono tracking-wider text-[var(--text-muted)]">ROUTE PLOTTED</span>
+                          )}
+                        </div>
+                        {navSession ? (
+                          <p className="mt-1.5 text-[11px] leading-snug text-[var(--text-secondary)]">
+                            Navigation is in progress — guidance stays on the map. End it from the navigation view to plan a new route.
+                          </p>
+                        ) : showDirections ? (
+                          <button type="button"
+                            onClick={() => { setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }}
+                            className="mt-2 w-full rounded-lg border border-[var(--border-primary)] bg-white/[0.03] px-3 py-2 text-[12px] font-medium text-[var(--text-heading)] transition-colors hover:border-[var(--border-active)]">
+                            Hide route planner
+                          </button>
+                        ) : (
+                          <button type="button"
+                            onClick={() => { setMobilePanel(null); setShowDirections(true); }}
+                            className="mt-2 w-full rounded-lg border border-[rgba(var(--gold-rgb),0.4)] bg-[rgba(var(--gold-rgb),0.08)] px-3 py-2 text-[12px] font-semibold text-[var(--gold-light)] transition-colors hover:bg-[rgba(var(--gold-rgb),0.14)]">
+                            Plan a route
+                          </button>
+                        )}
+                        {activeRoute?.geometry && !navSession && (
+                          <p className="mt-1.5 text-[10.5px] leading-snug text-[var(--text-muted)]">
+                            Cameras along your route are listed under the planner at the top of the screen.
+                          </p>
+                        )}
+                      </div>
+                      <PremiumSection tier={viewerTier} />
                     </div>
                   )}
                   {mobilePanel === 'recon' && (

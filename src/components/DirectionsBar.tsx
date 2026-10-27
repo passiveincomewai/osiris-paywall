@@ -90,6 +90,12 @@ interface DirectionsBarProps {
   onStartNavigation?: (route: RouteResult, destinationLabel: string) => void;
   /** A destination to open with, handed over from Search ("Directions to here"). */
   initialTo?: Place | null;
+  /** Inside the merged Search & Route panel: no frame or title header
+   *  of its own (the panel supplies both, plus the close). The header's
+   *  functional controls — live badge, track and follow toggles — stay,
+   *  in a slim row above the form; the result region gets a bounded
+   *  scroll of its own instead of filling a card. */
+  embedded?: boolean;
 }
 
 const MODES = [
@@ -452,7 +458,7 @@ function IconBtn({ children, label, onClick, on, className = '' }: { children: R
   );
 }
 
-export default function DirectionsBar({ onRoute, onLocate, onClose, center = null, onLiveLocation, onActiveSegment, onFollowChange, onStartNavigation, initialTo = null }: DirectionsBarProps) {
+export default function DirectionsBar({ onRoute, onLocate, onClose, center = null, onLiveLocation, onActiveSegment, onFollowChange, onStartNavigation, initialTo = null, embedded = false }: DirectionsBarProps) {
   const [fromText, setFromText] = useState('');
   const [toText, setToText] = useState(initialTo?.label ?? '');
   const [from, setFrom] = useState<Place | null>(null);
@@ -726,10 +732,33 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
   const bias = { biasLat: center?.lat, biasLng: center?.lng };
 
   return (
-    <div className="glass-panel tool-glass relative overflow-hidden flex flex-col max-h-[min(80vh,720px)]">
-      <span aria-hidden className="absolute inset-x-0 top-0 h-px z-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.7) 30%, rgba(var(--gold-rgb),0.7) 70%, transparent)' }} />
+    <div className={embedded ? 'relative flex flex-col' : 'glass-panel tool-glass relative overflow-hidden flex flex-col max-h-[min(80vh,720px)]'}>
+      {!embedded && <span aria-hidden className="absolute inset-x-0 top-0 h-px z-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.7) 30%, rgba(var(--gold-rgb),0.7) 70%, transparent)' }} />}
 
       {/* ── header ── */}
+      {embedded ? (
+        /* Merged-panel slim row: the panel's own header carries the
+           title and the close, so only the functional controls remain
+           here — live badge, track and follow toggles, unchanged. */
+        <div className="flex items-center gap-2.5 pl-4 pr-2 pt-1 flex-shrink-0">
+          <span className="flex-1 text-[10px] font-mono font-bold tracking-[0.2em] text-[var(--text-muted)]">ROUTE</span>
+          {tracking && (
+            <span className="flex items-center gap-1.5 h-6 px-2 rounded-full text-[9.5px] font-mono tracking-[0.12em] uppercase text-[var(--gold-light)]"
+              style={{ background: 'rgba(var(--gold-rgb),0.1)', boxShadow: 'inset 0 0 0 1px rgba(var(--gold-rgb),0.3)' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold-light)] animate-osiris-pulse" /> Live
+            </span>
+          )}
+          <IconBtn label={tracking ? 'Stop live tracking' : 'Track my location live'} onClick={toggleTracking} on={tracking}>
+            <Crosshair className={`w-4 h-4 ${tracking ? 'animate-pulse' : ''}`} />
+          </IconBtn>
+          {tracking && (
+            <IconBtn label={follow ? 'Stop following' : 'Keep the map centred on me'} on={follow}
+              onClick={() => { const n = !follow; setFollow(n); onFollowChange?.(n); }}>
+              <LocateFixed className="w-4 h-4" />
+            </IconBtn>
+          )}
+        </div>
+      ) : (
       <header className="flex items-center gap-2.5 h-12 pl-4 pr-2 flex-shrink-0 border-b border-[var(--border-secondary)] bg-black/30">
         <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(var(--gold-rgb),0.12)' }}>
           <Route className="w-4 h-4 text-[var(--gold-primary)]" />
@@ -752,6 +781,7 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
         )}
         {onClose && <IconBtn label="Close directions" onClick={onClose}><X className="w-4 h-4" /></IconBtn>}
       </header>
+      )}
 
       {/* ── start, stops, destination ── */}
       <div className="px-3 pt-3 pb-2 flex items-center gap-2 flex-shrink-0">
@@ -850,7 +880,7 @@ export default function DirectionsBar({ onRoute, onLocate, onClose, center = nul
       </div>
 
       {/* ── result region ── */}
-      <div className="min-h-0 flex-1 overflow-y-auto styled-scrollbar border-t border-[var(--border-secondary)]">
+      <div className={embedded ? 'min-h-0 overflow-y-auto styled-scrollbar border-t border-[var(--border-secondary)] max-h-[38vh]' : 'min-h-0 flex-1 overflow-y-auto styled-scrollbar border-t border-[var(--border-secondary)]'}>
         {loading && (
           <div className="p-4 space-y-2.5 animate-pulse" aria-live="polite" aria-busy="true">
             <div className="h-7 w-28 rounded bg-white/[0.07]" />
