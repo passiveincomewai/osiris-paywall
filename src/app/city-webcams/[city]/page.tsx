@@ -11,9 +11,18 @@ import {
   hasFullNeighbourSet,
   nearestCityNeighbours,
   neighbourLinks,
+  possessive,
   type CityBBox,
   type CityPoint,
 } from "@/lib/place-neighbours";
+import {
+  buildRelatedSearches,
+  compassDirection,
+  type KindCandidate,
+  type NeighbourCandidate,
+  type RelatedKind,
+} from "@/lib/related-searches";
+import RelatedSearches from "@/components/RelatedSearches";
 import { buildGeoUrl } from "@/lib/share/links";
 import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
@@ -1412,6 +1421,102 @@ export default async function CityWebcamPage({
   const showMix =
     breakdown !== null && breakdown.total >= 25 && breakdown.mix.length >= 3;
 
+  /* C9 (§6): related searches — the next questions a visitor to
+     this city plausibly runs, built only from facts this page
+     already computed: the C6 kind mix (rule 1, the ≥8 gate lives
+     in the lib), C4 distance neighbours (rule 3), the country
+     parent + the US state hub (rule 4) and the dominant kind's
+     evergreen wall (rule 5). Cities carry no area table of their
+     own (§4.1.5 fires only where district data is real), so
+     rule 2 stays empty here — it is the country template's rule.
+     The related block's own anchors are passed in so no anchor
+     repeats across the two blocks (§6.2). */
+  const TRAFFIC_LOCAL: Record<string, string> = {
+    japan: "/japan-traffic-cameras",
+    canada: "/canada-traffic-cameras",
+    germany: "/germany-traffic-cameras",
+    norway: "/norway-traffic-cameras",
+    spain: "/spain-traffic-cameras",
+    "south-korea": "/south-korea-traffic-cameras",
+    sweden: "/sweden-traffic-cameras",
+  };
+  const MIX_TO_KIND: Record<string, RelatedKind> = {
+    "Roads & traffic": "traffic",
+    "Coast & harbour": "coast",
+    "Airports & stations": "transport",
+    "Mountains & ski": "mountains",
+  };
+  const KIND_WALLS: Record<RelatedKind, string> = {
+    traffic: "/live-traffic-cameras",
+    coast: "/beach-webcams",
+    transport: "/airport-webcams",
+    mountains: "/ski-webcams",
+  };
+  const kindCandidates: KindCandidate[] = (breakdown?.mix ?? [])
+    .filter((row) => MIX_TO_KIND[row.name] !== undefined)
+    .map((row) => {
+      const kind = MIX_TO_KIND[row.name];
+      const local =
+        kind === "traffic" ? TRAFFIC_LOCAL[c.countrySlug] : undefined;
+      return {
+        kind,
+        count: row.count,
+        wallHref: KIND_WALLS[kind],
+        ...(local
+          ? {
+              localHref: local,
+              localAnchor:
+                c.countrySlug === "japan"
+                  ? `${possessive(c.name)} road and river cameras`
+                  : `${possessive(c.name)} road cameras`,
+            }
+          : {}),
+      };
+    });
+  const neighbourCandidates: NeighbourCandidate[] = selfPoint
+    ? nearestCityNeighbours(
+        selfPoint,
+        [...(await cityPointIndex()).values()],
+        { limit: 4 },
+      ).map((n) => ({
+        name: n.name,
+        href: `/city-webcams/${n.slug}`,
+        distanceKm: n.distanceKm,
+        direction: compassDirection(selfPoint, n),
+      }))
+    : [];
+  const countryEntry = directory.countries.find(
+    (d) => d.slug === c.countrySlug,
+  );
+  const relatedSearches = buildRelatedSearches({
+    placeName: c.name,
+    kinds: kindCandidates,
+    areas: [],
+    neighbours: neighbourCandidates,
+    parent:
+      resolved.backHref !== "/cameras/countries"
+        ? {
+            anchor: `All ${c.country} cameras`,
+            href: resolved.backHref,
+            subtext: countryEntry
+              ? `${fmt(countryEntry.count)} cameras across ${c.country}`
+              : `The full ${c.country} camera index`,
+          }
+        : null,
+    extraParent: stateHub
+      ? {
+          anchor: `${stateHub.name} traffic cameras statewide`,
+          href: `/us-traffic-cameras/${stateHub.slug}`,
+          subtext: `${possessive(stateHub.name)} full state DOT network`,
+        }
+      : null,
+    usedAnchors: [
+      ...relatedLinks.map((l) => l.label),
+      "Best live webcams in the world to watch right now",
+      "Using live cameras to plan travel",
+    ],
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -1549,6 +1654,9 @@ export default async function CityWebcamPage({
           note={`Every feed on this page, grouped by the publisher named in the catalogue — the same sources the live index carries for ${c.name}.`}
         />
       )}
+      {/* C9 (§6.3): after the grid + breakdown, before the FAQs —
+          renders only when the lib's min-3 gate passed. */}
+      <RelatedSearches placeName={c.name} suggestions={relatedSearches} />
       <HowTo title={c.howtoTitle} steps={c.howto} />
       <FaqSection title={c.faqTitle} faqs={displayFaqs} />
       {placeMerged.surviving.length > 0 && (

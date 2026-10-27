@@ -36,6 +36,12 @@ import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
 import CurrentStatus from "@/components/CurrentStatus";
 import { countryStatusRows, operatorRows } from "@/lib/place-breakdown";
+import {
+  buildRelatedSearches,
+  type KindCandidate,
+  type RelatedKind,
+} from "@/lib/related-searches";
+import RelatedSearches from "@/components/RelatedSearches";
 import { OperatorTable } from "@/components/directory-page";
 import SaveLocationButton from "@/components/SaveLocationButton";
 
@@ -144,6 +150,62 @@ function snippetTitle(c: CountryEntry): string {
 function snippetDescription(c: CountryEntry): string {
   return SNIPPET_OVERRIDES[c.slug]?.description(c) ?? metaDescription(c);
 }
+
+/* Country traffic pages (INTENT-AND-CLUSTERS §2.3, chunk C8): seven
+   countries have a dedicated road-camera page beside this all-kinds
+   index. This page owns "[country] webcams"; the traffic page owns
+   "[country] traffic cameras" — one contextual link each way (the
+   traffic pages link back up from their explorer intros). Anchors
+   are operator-flavoured from each traffic page's own copy; leads
+   and tails are written per country, not stamped. Countries without
+   an entry render byte-identical. */
+const TRAFFIC_PAGE_LINKS: Record<
+  string,
+  { href: string; lead: string; anchor: string; tail: string }
+> = {
+  japan: {
+    href: "/japan-traffic-cameras",
+    lead: "Roads and rivers are the working half of this index, and they have a page of their own:",
+    anchor: "Japan's road and river cameras",
+    tail: "gathers the expressways, mountain passes and the river-monitoring network on one live map.",
+  },
+  canada: {
+    href: "/canada-traffic-cameras",
+    lead: "For the roads specifically, the provincial networks have a page of their own:",
+    anchor: "Canada's 511 and provincial traffic cameras",
+    tail: "gathers every provincial road network the index serves on one live map.",
+  },
+  germany: {
+    href: "/germany-traffic-cameras",
+    lead: "On the Autobahn network, the junctions and corridors have a page of their own:",
+    anchor: "Germany's Autobahn and federal-road cameras",
+    tail: "gathers the motorway feeds on one live map.",
+  },
+  norway: {
+    href: "/norway-traffic-cameras",
+    lead: "For the drive itself, the road network has a page of its own:",
+    anchor: "Norway's Statens vegvesen road cameras",
+    tail: "gathers the fjord roads, mountain passes and ferry approaches on one live map.",
+  },
+  spain: {
+    href: "/spain-traffic-cameras",
+    lead: "For Spain's roads specifically, the motorway network has a page of its own:",
+    anchor: "Spain's DGT road cameras",
+    tail: "gathers the autovías, autopistas and city rings on one live map.",
+  },
+  "south-korea": {
+    href: "/south-korea-traffic-cameras",
+    lead: "On the expressways, the intercity network has a page of its own:",
+    anchor: "South Korea's expressway and road cameras",
+    tail: "gathers Seoul's urban expressways, the Gyeongbu Expressway and the Busan, Incheon and Daegu networks on one live map.",
+  },
+  sweden: {
+    href: "/sweden-traffic-cameras",
+    lead: "For the roads specifically, the national network has a page of its own:",
+    anchor: "Sweden's Trafikverket road cameras",
+    tail: "gathers the state road feeds on one live map.",
+  },
+};
 
 /* Extra per-country FAQs (same Top-50 batch): appended to whichever FAQ
    set the page already uses — hand-written content where it exists, the
@@ -362,6 +424,69 @@ export default async function CountryPage({
   const region = regionLinks(slug, COUNTRIES);
   const guide = watchGuide(c, facts, region);
   const fullRoster = roster(c, records);
+
+  /* C9 (§6): related searches — built from this page's own facts:
+     the theme mix (rule 1; theme counts are per-theme record hits,
+     the same numbers the detail prose quotes), the top areas that
+     have real city pages (rule 2), the region hub (rule 4) and the
+     dominant theme's wall (rule 5). Rule 3 (distance neighbours)
+     stays a city-template rule: this page's neighbour set is the
+     region list rendered as its own section below, and the repo's
+     country centroids are explicitly not distance-grade. Anchors
+     the page already carries — area rows, region siblings, and the
+     C8 traffic hand-off — are passed in for §6.2 dedupe; on the
+     seven traffic countries that dedupe retires the rule-1 traffic
+     suggestion, because the C8 block already owns that link. */
+  const THEME_TO_KIND: Record<string, RelatedKind> = {
+    traffic: "traffic",
+    coast: "coast",
+    transport: "transport",
+    mountains: "mountains",
+  };
+  const KIND_WALLS: Record<RelatedKind, string> = {
+    traffic: "/live-traffic-cameras",
+    coast: "/beach-webcams",
+    transport: "/airport-webcams",
+    mountains: "/ski-webcams",
+  };
+  const trafficLink = TRAFFIC_PAGE_LINKS[slug];
+  const countryKinds: KindCandidate[] = facts.themes
+    .filter((t) => THEME_TO_KIND[t.key] !== undefined)
+    .map((t) => {
+      const kind = THEME_TO_KIND[t.key];
+      return {
+        kind,
+        count: t.count,
+        wallHref: KIND_WALLS[kind],
+        ...(kind === "traffic" && trafficLink
+          ? { localHref: trafficLink.href, localAnchor: trafficLink.anchor }
+          : {}),
+      };
+    });
+  const countryAreas = c.topCities
+    .map((a) => {
+      const href = cityPageHrefForArea(slug, a.name);
+      return href ? { name: a.name, href, count: a.count } : null;
+    })
+    .filter((a): a is NonNullable<typeof a> => a !== null);
+  const relatedSearches = buildRelatedSearches({
+    placeName: c.name,
+    kinds: countryKinds,
+    areas: countryAreas,
+    neighbours: [],
+    parent: region?.hub
+      ? {
+          anchor: `Live cameras across ${region.label}`,
+          href: region.hub.href,
+          subtext: `${plural(region.siblingTotal + c.count, "camera")} in the ${region.label} index`,
+        }
+      : null,
+    usedAnchors: [
+      ...c.topCities.map((a) => a.name),
+      ...(region?.siblings.map((s) => s.name) ?? []),
+      ...(trafficLink ? [trafficLink.anchor] : []),
+    ],
+  });
 
   /* Weather / alerts / AQI for the country's largest camera city — a
      clean no-op (null) unless WEATHERAPI_KEY and/or OPENAQ_API_KEY are
@@ -604,6 +729,25 @@ export default async function CountryPage({
           </div>
         </section>
 
+        {/* On the roads (C8, §2.3): the seven countries with a dedicated
+            traffic page hand road intent over to it — one contextual
+            link, operator-flavoured anchor. All other countries skip. */}
+        {TRAFFIC_PAGE_LINKS[c.slug] && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-3">On the roads in {c.name}</h2>
+            <p className="text-white/70 leading-relaxed max-w-3xl">
+              {TRAFFIC_PAGE_LINKS[c.slug].lead}{" "}
+              <Link
+                href={TRAFFIC_PAGE_LINKS[c.slug].href}
+                className="text-[#00E5FF] hover:underline"
+              >
+                {TRAFFIC_PAGE_LINKS[c.slug].anchor}
+              </Link>{" "}
+              {TRAFFIC_PAGE_LINKS[c.slug].tail}
+            </p>
+          </section>
+        )}
+
         {/* Who publishes (C6, §4.3): the detail prose above names the
             top sources; this makes the five largest a table, each with
             the one factual line its operator family supports. Renders
@@ -691,6 +835,10 @@ export default async function CountryPage({
             ))}
           </div>
         </section>
+
+        {/* C9 (§6.3): after the grid + breakdown, before the FAQs —
+            renders only when the lib's min-3 gate passed. */}
+        <RelatedSearches placeName={c.name} suggestions={relatedSearches} />
 
         {/* FAQ */}
         <section className="mt-12">
