@@ -113,7 +113,7 @@ describe('the intel section is gone from the panel (owner order, 2026-10-20)', (
 
   it('the remaining groups are untouched', () => {
     expect(LAYER_GROUPS.map((g) => g.label)).toEqual([
-      'SDK', 'AVIATION', 'MARITIME', 'SPACE', 'SURVEIL', 'HAZARD', 'TRANSIT', 'DISPLAY',
+      'SDK', 'AVIATION', 'MARITIME', 'SPACE', 'SURVEIL', 'HAZARD', 'WINTER', 'TRANSIT', 'DISPLAY',
     ]);
   });
 });

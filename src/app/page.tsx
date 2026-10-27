@@ -2145,11 +2145,6 @@ export default function Dashboard() {
     dataRef.current = { ...dataRef.current, sdk_entities: sdkEntities };
   }, [dataVersion, activeLayers.sdk_sea, activeLayers.sdk_air, activeLayers.sdk_naval]);
 
-  const totalFlights = useMemo(() => (
-    (data.commercial_flights?.length||0)+(data.private_flights?.length||0)+(data.private_jets?.length||0)+(data.military_flights?.length||0)
-  ), [data.commercial_flights, data.private_flights, data.private_jets, data.military_flights]);
-
-
   return (
     <>
     {!skipHero && <CinematicHero />}
@@ -2931,24 +2926,22 @@ export default function Dashboard() {
               >
                 <div className="mobile-drawer-handle" />
                 <div className="px-3 pb-3">
+                  {/* The layers tab carries its own board header + close
+                      (the redesigned LayerPanel), so the shared drawer
+                      title row stands down for it — and the old AIR/SAT/
+                      CAM/WX/NUC stats strip is gone: the panel's quick
+                      bar shows the same five counts and toggles them. */}
+                  {mobilePanel !== 'layers' && (
                   <div className="flex items-center justify-between mb-2">
                     <span className="hud-text text-[10px] text-[var(--text-primary)]">
-                      {mobilePanel === 'layers' ? 'LAYERS & STATS' : mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'OSIRIS RECON' : mobilePanel === 'remote' ? 'WORLD REMOTE' : mobilePanel === 'oi' ? 'OSIRIS OI' : 'SEARCH'}
+                      {mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'OSIRIS RECON' : mobilePanel === 'remote' ? 'WORLD REMOTE' : mobilePanel === 'oi' ? 'OSIRIS OI' : 'SEARCH'}
                     </span>
                     <button onClick={() => setMobilePanel(null)} className="text-[var(--text-muted)] p-1" aria-label="Close panel" title="Close panel"><X className="w-4 h-4" /></button>
                   </div>
+                  )}
                   {mobilePanel === 'layers' && (
                     <>
-                      <div className="glass-panel-sm p-2 mb-2">
-                        <div className="grid grid-cols-5 gap-1 text-center">
-                          <div><div className="hud-label" style={{fontSize:'9px'}}>AIR</div><div className="hud-value text-[10px]">{totalFlights.toLocaleString()}</div></div>
-                          <div><div className="hud-label" style={{fontSize:'9px'}}>SAT</div><div className="hud-value text-[10px]">{(data.satellites?.length||0)}</div></div>
-                          <div><div className="hud-label" style={{fontSize:'9px'}}>CAM</div><div className="hud-value text-[10px]">{(data.cameras?.length||0)}</div></div>
-                          <div><div className="hud-label" style={{fontSize:'9px'}}>WX</div><div className="hud-value text-[10px]" style={{color:'var(--accent-weather)'}}>{(data.weather_events?.length||0)}</div></div>
-                          <div><div className="hud-label" style={{fontSize:'9px'}}>NUC</div><div className="hud-value text-[10px]" style={{color:'var(--accent-nuclear)'}}>{(data.infrastructure?.length||0)}</div></div>
-                        </div>
-                      </div>
-                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} />
+                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} onClose={() => setMobilePanel(null)} />
                       <div className="mt-8">
                         <ViewPresets onNavigate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       </div>
