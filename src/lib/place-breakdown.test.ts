@@ -4,8 +4,12 @@ import type { PlaceWeather } from "@/lib/place-weather";
 import {
   breakdownFaqs,
   cityStatusRows,
+  computeCameraKindMix,
   computePlaceBreakdown,
+  operatorKind,
+  operatorRows,
   parseCorridor,
+  stateCorridorFaq,
   stateFreewayFaq,
   stateHubForCity,
   stateStatusRows,
@@ -279,5 +283,96 @@ describe("statusFaqs", () => {
     const out = statusFaqs(faqs, rows);
     expect(out).not.toBe(faqs);
     expect(JSON.stringify(faqs)).toBe(snapshot);
+  });
+});
+
+describe("computeCameraKindMix (C6)", () => {
+  const rec = (name: string): CountryCamera => ({ id: name, name, source: "X" });
+  it("partitions records under the first kind their name matches", () => {
+    const mix = computeCameraKindMix([
+      rec("Denver Airport terminal"), rec("Airport approach"), rec("Airport parking"),
+      rec("Harbour pier"), rec("Pier 39 marina"),
+      rec("Ski lift summit"), rec("Gondola station base"),
+      rec("River bridge overlook"),
+      rec("I-35 downtown"), rec("I-35 at the junction"), rec("Motorway interchange"), rec("Freeway toll plaza"),
+      rec("Old town square"),
+      rec("Untitled feed 12"),
+    ]);
+    const byLabel = new Map(mix.map((r) => [r.name, r.count]));
+    // "Gondola station base" names both mountains (gondola) and transport
+    // (station) — transport is the more specific kind and wins the record.
+    expect(byLabel.get("Airports & stations")).toBe(4);
+    expect(byLabel.get("Coast & harbour")).toBe(2);
+    expect(byLabel.get("Mountains & ski")).toBe(1);
+    expect(byLabel.get("Rivers & nature")).toBe(1); // river beats bridge (city)
+    expect(byLabel.get("Roads & traffic")).toBe(4);
+    expect(byLabel.get("City views & landmarks")).toBe(1);
+    // A partition: matched rows sum to the matched records, never beyond.
+    expect(mix.reduce((s, r) => s + r.count, 0)).toBe(13);
+    expect(mix[0].count).toBe(4);
+  });
+
+  it("is part of the place breakdown, from the same records", () => {
+    const b = computePlaceBreakdown(fixtureRecords());
+    const matched = b.mix.reduce((s, r) => s + r.count, 0);
+    expect(matched).toBeLessThanOrEqual(b.total);
+    for (const row of b.mix) expect(row.count).toBeGreaterThan(0);
+  });
+});
+
+describe("operatorKind + operatorRows (C6)", () => {
+  it("classifies the families the catalogue actually carries", () => {
+    expect(operatorKind("TxDOT").kind).toBe("Road agency");
+    expect(operatorKind("OpenCCTV / wsdot").kind).toBe("Road agency");
+    expect(operatorKind("Oklahoma DOT").kind).toBe("Road agency");
+    expect(operatorKind("Caltrans").kind).toBe("Road agency");
+    expect(operatorKind("DGT").kind).toBe("Road agency");
+    expect(operatorKind("THB Highway Bureau").kind).toBe("Road agency");
+    expect(operatorKind("OpenCCTV / ny511").kind).toBe("511 traveller information");
+    expect(operatorKind("Quebec 511").kind).toBe("511 traveller information");
+    expect(operatorKind("OpenCCTV / socrata").kind).toBe("Open data");
+    expect(operatorKind("OpenCCTV / arcgis_cams").kind).toBe("Open data");
+    expect(operatorKind("SkylineWebcams").kind).toBe("Webcam network");
+  });
+
+  it("never guesses an identity for an unrecognised name", () => {
+    const info = operatorKind("OpenCCTV / rivergojp");
+    expect(info.kind).toBe("Public network");
+    expect(info.note).toContain("own name");
+  });
+
+  it("rows keep the caller's order, honour the limit, carry kind + note", () => {
+    const rows = operatorRows(
+      [
+        { name: "TxDOT", count: 100 },
+        { name: "OpenCCTV / socrata", count: 50 },
+        { name: "Some Local Feed", count: 3 },
+      ],
+      2,
+    );
+    expect(rows.map((r) => r.name)).toEqual(["TxDOT", "OpenCCTV / socrata"]);
+    expect(rows[0].kind).toBe("Road agency");
+    expect(rows[1].kind).toBe("Open data");
+    expect(rows.every((r) => r.note.length > 0)).toBe(true);
+  });
+});
+
+describe("stateCorridorFaq (C6)", () => {
+  it("spends the measured corridors with the state's coordinate framing", () => {
+    const faq = stateCorridorFaq({
+      stateName: "Texas",
+      breakdown: computePlaceBreakdown(fixtureRecords()),
+    });
+    expect(faq?.q).toBe("Which roads in Texas have the most cameras?");
+    expect(faq?.a).toContain("I-35 carries the most, with 18");
+    expect(faq?.a).toContain("own coordinates place them in Texas");
+  });
+
+  it("is null when fewer than two corridors parse", () => {
+    const thin = computePlaceBreakdown([
+      { id: "a", name: "Harbour view", source: "Port" },
+      { id: "b", name: "Pier view", source: "Port" },
+    ]);
+    expect(stateCorridorFaq({ stateName: "Maine", breakdown: thin })).toBeNull();
   });
 });

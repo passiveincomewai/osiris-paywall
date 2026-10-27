@@ -331,8 +331,11 @@ export default function EarthquakeTrackerPage() {
               <strong className="text-white/85">what is nearby</strong> — an
               offshore magnitude 7 under empty ocean and a shallow magnitude
               6 under a city are entirely different events. Then zoom in:
-              the same globe carries live cameras near the epicenter, so you
-              can often see conditions on the ground within minutes.
+              the same globe carries{" "}
+              <Link href="/live-webcams" className="text-[#D4AF37] hover:underline">
+                live cameras near the epicenter
+              </Link>
+              , so you can often see conditions on the ground within minutes.
             </p>
             <p>
               Two cautions belong with that power. First, early figures get

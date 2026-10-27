@@ -295,7 +295,12 @@ export default function SatelliteTrackerPage() {
               has been and where it is headed next. For the ISS, that path is
               a wave wrapping the planet about every 90 minutes; check when
               the line passes over your location, then go outside at dusk and
-              watch for the brightest light in the sky.
+              watch for the brightest light in the sky. Prefer to follow just
+              the station?{" "}
+              <Link href="/space-station-tracker" className="text-[#00E5FF] hover:underline">
+                Track the station itself, pass by pass
+              </Link>
+              .
             </p>
           </div>
         </div>

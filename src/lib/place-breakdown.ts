@@ -18,6 +18,7 @@
  * says so and links the cameras.
  */
 import type { CountryCamera } from "@/lib/country-cameras";
+import { THEME_DEFS } from "@/lib/country-page-content";
 import { recordsForDef, resolveExploreDef } from "@/lib/explore-data";
 import { normalizeQuestion } from "@/lib/place-answers";
 import {
@@ -55,6 +56,10 @@ export interface PlaceBreakdown {
   } | null;
   /** Top publishing sources (at most 4). */
   sources: BreakdownRow[];
+  /** Camera-kind mix (C6): every record counted once, under the
+   *  first kind its own name matches — a partition, so the rows are
+   *  the kinds the place actually has, in size order. */
+  mix: BreakdownRow[];
 }
 
 interface CorridorPattern {
@@ -127,6 +132,120 @@ function topRows(counts: Map<string, number>, limit: number): BreakdownRow[] {
     .slice(0, limit);
 }
 
+/* ------------------------------------------------------------------ */
+/* Camera-kind mix (C6, §4.1.2)                                        */
+/* ------------------------------------------------------------------ */
+
+/* The kinds a place's cameras fall into, read from each camera's own
+ * name with the SAME theme patterns the country template derives its
+ * mix from (country-page-content THEME_DEFS) — one method everywhere.
+ * Unlike the country page's prose themes, a strip needs a partition:
+ * each record counts once, under the first kind its name matches, in
+ * the priority order below (specific kinds before the broad traffic
+ * and city buckets, whose patterns would otherwise swallow them).
+ * Short labels are the strip's own; the patterns are shared. */
+const MIX_KIND_ORDER: Array<{ key: string; label: string }> = [
+  { key: "transport", label: "Airports & stations" },
+  { key: "coast", label: "Coast & harbour" },
+  { key: "mountains", label: "Mountains & ski" },
+  { key: "nature", label: "Rivers & nature" },
+  { key: "traffic", label: "Roads & traffic" },
+  { key: "city", label: "City views & landmarks" },
+];
+
+const MIX_DEFS = MIX_KIND_ORDER.map((d) => ({
+  label: d.label,
+  pattern: THEME_DEFS.find((t) => t.key === d.key)?.pattern ?? /$^/,
+}));
+
+/** The kind mix of one record set: rows in size order, only kinds
+ *  at least one camera's name actually matches. Pure — unit-tested. */
+export function computeCameraKindMix(
+  records: readonly CountryCamera[],
+): BreakdownRow[] {
+  const counts = new Map<string, number>();
+  for (const r of records) {
+    const name = r.name ?? "";
+    const hit = MIX_DEFS.find((d) => d.pattern.test(name));
+    if (hit) counts.set(hit.label, (counts.get(hit.label) ?? 0) + 1);
+  }
+  return topRows(counts, MIX_DEFS.length);
+}
+
+/* ------------------------------------------------------------------ */
+/* Operators (C6, §4.1.1 / §4.2.1 / §4.3)                              */
+/* ------------------------------------------------------------------ */
+
+export interface OperatorRow extends BreakdownRow {
+  /** The operator family the source name itself identifies. */
+  kind: string;
+  /** One factual line about that family — what it publishes. */
+  note: string;
+}
+
+const OPERATOR_KINDS: Array<{
+  kind: string;
+  note: string;
+  test: (name: string, tokens: string[]) => boolean;
+}> = [
+  {
+    kind: "511 traveller information",
+    note: "The region's 511 service — road conditions and cameras published for drivers.",
+    test: (name) => /(^|[^0-9])511([^0-9]|$)/.test(name),
+  },
+  {
+    kind: "Road agency",
+    note: "A road agency's traffic cameras, published so drivers can check conditions before travelling.",
+    test: (name, tokens) =>
+      /department of transportation|highway bureau/i.test(name) ||
+      tokens.some(
+        (t) =>
+          t === "caltrans" ||
+          t === "trafikverket" ||
+          t === "dgt" ||
+          t === "mdchart" ||
+          t === "transtar" ||
+          (t.endsWith("dot") && t.length <= 6),
+      ),
+  },
+  {
+    kind: "Open data",
+    note: "Feeds the city or region publishes as open data, for anyone to reuse.",
+    test: (name) => /socrata|arcgis/i.test(name),
+  },
+  {
+    kind: "Webcam network",
+    note: "A webcam publisher — cameras kept for the view itself, not for traffic.",
+    test: (name) => /skylinewebcams|earthcam/i.test(name),
+  },
+];
+
+/** What kind of operator a catalogue source name identifies, and the
+ *  one factual line the operator tables may say about it. Deliberately
+ *  conservative: a name that identifies no known family gets the
+ *  generic line rather than a guessed identity. The display name is
+ *  never altered — only classified. Pure — unit-tested. */
+export function operatorKind(sourceName: string): { kind: string; note: string } {
+  const tokens = sourceName.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  for (const k of OPERATOR_KINDS) {
+    if (k.test(sourceName, tokens)) return { kind: k.kind, note: k.note };
+  }
+  return {
+    kind: "Public network",
+    note: "Public feeds published under this operator's own name.",
+  };
+}
+
+/** Aggregated source counts → operator-table rows (order preserved,
+ *  so callers pass their counts already sorted). Pure. */
+export function operatorRows(
+  counts: readonly BreakdownRow[],
+  limit?: number,
+): OperatorRow[] {
+  const rows = limit ? counts.slice(0, limit) : [...counts];
+  return rows.map((r) => ({ ...r, ...operatorKind(r.name) }));
+}
+
 function median(values: number[]): number {
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
@@ -188,6 +307,7 @@ export function computePlaceBreakdown(
     moreCorridors: designated - shown,
     quadrants,
     sources: topRows(sourceCounts, 4),
+    mix: computeCameraKindMix(records),
   };
 }
 
@@ -207,6 +327,50 @@ export async function loadCityBreakdown(
   } catch {
     return null;
   }
+}
+
+/* Per-state membership of the US records, assigned by the same
+ * point-in-state test the state index itself uses (us-states
+ * stateForPoint, true polygon containment) so every number the state
+ * template derives describes the same set its headline counts.
+ * Grouped once per process; the US chunk is ~54k records. */
+let usStateRecordsPromise: Promise<Map<string, CountryCamera[]>> | null = null;
+
+function usStateRecords(): Promise<Map<string, CountryCamera[]>> {
+  if (usStateRecordsPromise) return usStateRecordsPromise;
+  usStateRecordsPromise = (async () => {
+    const out = new Map<string, CountryCamera[]>();
+    try {
+      const def = resolveExploreDef({ country: "united-states" });
+      if (!def) return out;
+      const records = await recordsForDef(def);
+      for (const r of records) {
+        if (typeof r.lat !== "number" || typeof r.lng !== "number") continue;
+        const meta = stateForPoint(r.lat, r.lng);
+        if (!meta) continue;
+        const rows = out.get(meta.slug);
+        if (rows) rows.push(r);
+        else out.set(meta.slug, [r]);
+      }
+    } catch {
+      /* an empty map degrades every state to a null breakdown */
+    }
+    return out;
+  })();
+  return usStateRecordsPromise;
+}
+
+/** The full §4 measured breakdown for one US state's own camera set
+ *  (corridors, operators, mix) — the state template's numbers all come
+ *  from the records the state polygons assign to that state, so they
+ *  reconcile with the counts the page already prints. Null when the
+ *  state has no assigned records or the chunk fails to load. */
+export async function loadStateBreakdown(
+  stateSlug: string,
+): Promise<PlaceBreakdown | null> {
+  const records = (await usStateRecords()).get(stateSlug);
+  if (!records || records.length === 0) return null;
+  return computePlaceBreakdown(records);
 }
 
 /** The state hub a US city page should link to, derived two honest
@@ -522,4 +686,24 @@ export function stateFreewayFaq(input: {
     q: `Does ${input.stateName} have freeway cameras?`,
     a: `Yes — freeway and interstate feeds make up much of ${input.stateName}'s index of ${fmt(input.count)} live cameras, published by the state DOT and public networks${top ? `; the largest cluster is ${top.name} with ${fmt(top.count)} cameras` : ""}. Watch them on the live traffic cameras page, or browse by area in the table on this page.`,
   };
+}
+
+/** The corridor FAQ for a state page (C6, §4.2.2): the counterpart of
+ *  the roads table, stated over the state's own coordinate-assigned
+ *  set — the same framing the table note uses, so the two never
+ *  disagree about what "in {State}" means. Null when fewer than two
+ *  corridors parse from the state's camera names. Pure. */
+export function stateCorridorFaq(s: {
+  stateName: string;
+  breakdown: PlaceBreakdown;
+}): { q: string; a: string } | null {
+  const [top, next] = s.breakdown.corridors;
+  if (!top || !next) return null;
+  const a =
+    `${top.name} carries the most, with ${fmt(top.count)} cameras whose ` +
+    `own coordinates place them in ${s.stateName}; ${next.name} follows ` +
+    `with ${fmt(next.count)}. Counts are read from the cameras assigned ` +
+    `to ${s.stateName} on this page, each counted once under the road its ` +
+    `own name carries.`;
+  return { q: `Which roads in ${s.stateName} have the most cameras?`, a };
 }

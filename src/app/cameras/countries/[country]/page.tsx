@@ -31,7 +31,8 @@ import { countryAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 import { getPlaceWeather } from "@/lib/place-weather";
 import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
 import CurrentStatus from "@/components/CurrentStatus";
-import { countryStatusRows } from "@/lib/place-breakdown";
+import { countryStatusRows, operatorRows } from "@/lib/place-breakdown";
+import { OperatorTable } from "@/components/directory-page";
 import SaveLocationButton from "@/components/SaveLocationButton";
 
 /* Weather data is cached per location for 30 minutes in lib/weather-api;
@@ -444,6 +445,22 @@ export default async function CountryPage({
             ))}
           </div>
         </section>
+
+        {/* Who publishes (C6, §4.3): the detail prose above names the
+            top sources; this makes the five largest a table, each with
+            the one factual line its operator family supports. Renders
+            only when the country actually has more than one source. */}
+        {facts.sources.length >= 2 && (
+          <OperatorTable
+            title={`Who publishes ${c.name}'s cameras`}
+            rows={operatorRows(facts.sources, 5)}
+            note={
+              facts.sources.length > 5
+                ? `The five largest of the ${facts.sources.length} public sources in the ${c.name} index — every count taken from the same catalogue records the grid above serves.`
+                : `Every public source in the ${c.name} index — every count taken from the same catalogue records the grid above serves.`
+            }
+          />
+        )}
 
         {/* Featured cameras */}
         {c.samples.length > 0 && (

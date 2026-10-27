@@ -39,6 +39,8 @@ import {
   CtaRow,
   PageShell,
   AreaTable,
+  MixStrip,
+  OperatorTable,
   type Sample,
   type Faq,
 } from "@/components/directory-page";
@@ -50,6 +52,7 @@ import {
   breakdownFaqs,
   cityStatusRows,
   loadCityBreakdown,
+  operatorRows,
   stateHubForCity,
   statusFaqs,
 } from "@/lib/place-breakdown";
@@ -1256,6 +1259,18 @@ export default async function CityWebcamPage({
   const breakdownTail = breakdown
     ? breakdown.unnamed + breakdown.moreCorridors
     : 0;
+  /* C6 (§4.1.1–2): the operator table spends the FULL publisher set
+     the city's own page data carries (city-pages.json `sources[]`,
+     reconciled against the live chunk at build time) — the measured
+     breakdown's own source rows cap at 4 and derive from one chunk's
+     records, a different set, so they are not reused here. Curated
+     cities carry no sources[] and skip the table. The mix strip reads
+     the C2 breakdown's kind mix — the same records the roads table
+     spends. Both blocks render only where the numbers carry them. */
+  const operatorTableRows = genCity ? operatorRows(genCity.sources) : [];
+  const showOperatorTable = operatorTableRows.length >= 2;
+  const showMix =
+    breakdown !== null && breakdown.total >= 25 && breakdown.mix.length >= 3;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -1372,12 +1387,26 @@ export default async function CityWebcamPage({
             breakdown.quadrants
               ? `Split by the centre of that grid: ${fmt(breakdown.quadrants.northEast)} cameras north-east, ${fmt(breakdown.quadrants.northWest)} north-west, ${fmt(breakdown.quadrants.southEast)} south-east and ${fmt(breakdown.quadrants.southWest)} south-west.`
               : null,
-            breakdown.sources.length > 0
+            !showOperatorTable && breakdown.sources.length > 0
               ? `Published by ${breakdown.sources.map((s) => `${s.name} (${fmt(s.count)})`).join(", ")}.`
               : null,
           ]
             .filter(Boolean)
             .join(" ")}
+        />
+      )}
+      {showMix && breakdown && (
+        <MixStrip
+          title={`What ${c.name}'s cameras watch`}
+          rows={breakdown.mix}
+          note={`Each of the ${fmt(breakdown.total)} cameras listed under ${c.name} in the live index is counted once, under the first kind its own name matches — the same records the roads table above groups.`}
+        />
+      )}
+      {showOperatorTable && genCity && (
+        <OperatorTable
+          title={`Who publishes ${c.name}'s cameras`}
+          rows={operatorTableRows}
+          note={`Every feed on this page, grouped by the publisher named in the catalogue — the same sources the live index carries for ${c.name}.`}
         />
       )}
       <HowTo title={c.howtoTitle} steps={c.howto} />

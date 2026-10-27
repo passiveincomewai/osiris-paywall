@@ -251,6 +251,10 @@ export default function ShipTrackerPage() {
             <Link href="/live-webcams" className="text-[#D4AF37] hover:underline">
               74,229 public cameras
             </Link>
+            . Follow a vessel to its destination and you can{" "}
+            <Link href="/port-webcams" className="text-[#D4AF37] hover:underline">
+              watch the same ships arrive on port cameras
+            </Link>
             . The globe itself is free with no signup; live maritime tracking
             is one of the premium intel feeds included with{" "}
             <Link href="/pricing" className="text-[#D4AF37] hover:underline">

@@ -234,7 +234,16 @@ export default function LiveFlightTrackerPage() {
               74,229 public cameras
             </Link>{" "}
             — flights, satellites, ships and cameras on one live map, all
-            free, with no signup and no account.
+            free, with no signup and no account. For the ground view of the
+            same traffic,{" "}
+            <Link href="/airport-webcams" className="text-[#00E5FF] hover:underline">
+              airport webcams
+            </Link>{" "}
+            watch the ramps and runways, and{" "}
+            <Link href="/live-plane-spotting" className="text-[#00E5FF] hover:underline">
+              live plane spotting
+            </Link>{" "}
+            pairs those cameras with the flight layer itself.
           </p>
         </div>
 

@@ -169,6 +169,92 @@ export function AreaTable({ title, rows, note }: { title: string; rows: AreaRow[
   );
 }
 
+export type OperatorRowData = {
+  name: string;
+  count: number;
+  kind: string;
+  note: string;
+};
+
+/** "Who publishes this place's cameras" (C6): every row is a real
+ *  publisher from the catalogue, its feed count, and the one factual
+ *  line its operator family supports — no invented identities. */
+export function OperatorTable({
+  title,
+  rows,
+  note,
+}: {
+  title: string;
+  rows: OperatorRowData[];
+  note?: string;
+}) {
+  if (rows.length === 0) return null;
+  return (
+    <section className="mt-12">
+      <h2 className="text-xl md:text-2xl font-bold mb-5">{title}</h2>
+      <div className="rounded-2xl border border-white/10 overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-xs uppercase tracking-wider text-white/40 border-b border-white/10 bg-white/[0.02]">
+              <th className="px-5 py-3 font-semibold">Publisher</th>
+              <th className="px-5 py-3 font-semibold">What they publish</th>
+              <th className="px-5 py-3 font-semibold text-right">Cameras</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
+                <td className="px-5 py-3 font-medium">{r.name}</td>
+                <td className="px-5 py-3 text-white/55">
+                  <span className="text-white/80">{r.kind}.</span> {r.note}
+                </td>
+                <td className="px-5 py-3 text-right font-mono text-[#D4AF37]">
+                  {r.count.toLocaleString("en-US")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {note && <p className="text-xs text-white/35 mt-3">{note}</p>}
+    </section>
+  );
+}
+
+/** The camera-kind mix strip (C6): what a place's cameras actually
+ *  watch, as counted kinds read from the cameras' own names. Callers
+ *  gate on at least three kinds — a one-kind place has no mix to show. */
+export function MixStrip({
+  title,
+  rows,
+  note,
+}: {
+  title: string;
+  rows: { name: string; count: number }[];
+  note?: string;
+}) {
+  if (rows.length === 0) return null;
+  return (
+    <section className="mt-12">
+      <h2 className="text-xl md:text-2xl font-bold mb-5">{title}</h2>
+      <div className="flex flex-wrap gap-3">
+        {rows.map((r) => (
+          <div
+            key={r.name}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3.5"
+          >
+            <span className="text-sm font-semibold">{r.name}</span>{" "}
+            <span className="font-mono text-[#D4AF37] text-sm">
+              {r.count.toLocaleString("en-US")}
+            </span>
+          </div>
+        ))}
+      </div>
+      {note && <p className="text-xs text-white/35 mt-3">{note}</p>}
+    </section>
+  );
+}
+
 export function SampleGrid({ title, samples }: { title: string; samples: Sample[] }) {
   if (samples.length === 0) return null;
   return (

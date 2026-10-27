@@ -15,6 +15,7 @@ import {
   Updated,
   Intro,
   AreaTable,
+  OperatorTable,
   SampleGrid,
   HowTo,
   FaqSection,
@@ -30,7 +31,13 @@ import VoiceQA from "@/components/seo/VoiceQA";
 import { mergePlaceFaqs, stateAnswers } from "@/lib/place-answers";
 import { getPlaceWeather } from "@/lib/place-weather";
 import CurrentStatus from "@/components/CurrentStatus";
-import { stateFreewayFaq, stateStatusRows } from "@/lib/place-breakdown";
+import {
+  loadStateBreakdown,
+  operatorRows,
+  stateCorridorFaq,
+  stateFreewayFaq,
+  stateStatusRows,
+} from "@/lib/place-breakdown";
 import SaveLocationButton from "@/components/SaveLocationButton";
 import cityPages from "@/data/city-pages.json";
 
@@ -707,6 +714,25 @@ export default async function StateTrafficPage({
   const placeWeather = await getPlaceWeather({
     query: topArea ? `${topArea.name}, ${s.name}` : s.name,
   });
+  /* C6 (§4.2): the state's corridor + operator tables, computed from
+     the records the cameras' own coordinates assign to the state —
+     loadStateBreakdown mirrors the us-states build's assignment, so
+     these counts describe the same set the headline counts. A failed
+     load degrades to the index-only page, exactly as before C6. */
+  const stateBreakdown = await loadStateBreakdown(slug);
+  const corridorFaq = stateBreakdown
+    ? stateCorridorFaq({ stateName: s.name, breakdown: stateBreakdown })
+    : null;
+  const stateOperatorRows = stateBreakdown
+    ? operatorRows(stateBreakdown.sources)
+    : [];
+  const showStateRoads =
+    stateBreakdown !== null &&
+    stateBreakdown.total >= 25 &&
+    stateBreakdown.corridors.length >= 2;
+  const stateRoadsTail = stateBreakdown
+    ? stateBreakdown.unnamed + stateBreakdown.moreCorridors
+    : 0;
   const statusRows = stateStatusRows({
     stateName: s.name,
     count: s.count,
@@ -720,6 +746,7 @@ export default async function StateTrafficPage({
       count: s.count,
       areas: s.areas ?? [],
     }),
+    ...(corridorFaq ? [corridorFaq] : []),
   ];
   const areasLinked: AreaRow[] | undefined = s.areas?.map((a) => {
     const citySlug = CITY_PAGE_BY_NAME.get(a.name);
@@ -791,6 +818,25 @@ export default async function StateTrafficPage({
       <Intro paragraphs={s.intro} />
       <CurrentStatus place={s.name} rows={statusRows} />
       {s.areas && <AreaTable title={s.areaTitle ?? "Coverage areas"} rows={areasLinked ?? s.areas} note={s.areaNote} />}
+      {showStateRoads && stateBreakdown && (
+        <AreaTable
+          title={`${s.name} cameras by road`}
+          rows={[
+            ...stateBreakdown.corridors,
+            ...(stateRoadsTail > 0
+              ? [{ name: "All other cameras — other roads, streets & viewpoints", count: stateRoadsTail }]
+              : []),
+          ]}
+          note={`Counts are the ${fmt(stateBreakdown.total)} cameras whose own coordinates place them in ${s.name} in the live index, grouped by the road designation in each camera's own name.`}
+        />
+      )}
+      {stateOperatorRows.length >= 2 && (
+        <OperatorTable
+          title={`Who publishes ${s.name}'s cameras`}
+          rows={stateOperatorRows}
+          note={`The largest publishers named on ${s.name}'s feeds, counted over the cameras whose own coordinates place them in the state.`}
+        />
+      )}
       {s.samples && <SampleGrid title={s.sampleTitle ?? "Featured live cameras"} samples={s.samples} />}
       <HowTo title={s.howtoTitle} steps={s.howto} />
       <FaqSection title={s.faqTitle} faqs={displayFaqs} />

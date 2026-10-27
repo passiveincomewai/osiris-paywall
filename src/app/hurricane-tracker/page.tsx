@@ -240,8 +240,11 @@ export default function HurricaneTrackerPage() {
               <p className="text-white/45 text-sm">
                 Once you&apos;ve got the official picture, the globe is the
                 place to watch it unfold: the storm&apos;s structure, its track
-                across the water, and — near landfall — coastal cameras showing
-                conditions as they arrive.
+                across the water, and — near landfall —{" "}
+                <Link href="/beach-webcams" className="text-[#D4AF37] hover:underline">
+                  coastal cameras
+                </Link>{" "}
+                showing conditions as they arrive.
               </p>
             </div>
           </div>
@@ -356,7 +359,7 @@ export default function HurricaneTrackerPage() {
           ]}
         />
 
-        <TrackerClusterLinks />
+        <TrackerClusterLinks current="/hurricane-tracker" />
       </div>
 
       <SiteFooter />
