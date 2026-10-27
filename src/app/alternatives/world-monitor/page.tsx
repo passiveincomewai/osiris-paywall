@@ -206,8 +206,8 @@ const data: AltData = {
         VIP Pro is $74.99/year
       </span>{" "}
       (10-day trial) — less per year than two months of World Monitor Pro —
-      with a 7-day money-back guarantee on first charges. The dedicated
-      comparison is at{" "}
+      with a 7-day money-back guarantee on first charges. Want the
+      feature-by-feature breakdown? The dedicated comparison is at{" "}
       <Link href="/compare/world-monitor" className="text-[#0096FF] hover:underline">
         WorldEye vs World Monitor
       </Link>

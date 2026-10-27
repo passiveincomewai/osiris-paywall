@@ -206,9 +206,9 @@ const data: AltData = {
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing page
       </Link>{" "}
-      and the{" "}
+      . Want the feature-by-feature breakdown? See{" "}
       <Link href="/compare/google-earth" className="text-[#0096FF] hover:underline">
-        head-to-head
+        WorldEye vs Google Earth
       </Link>
       .
     </>,

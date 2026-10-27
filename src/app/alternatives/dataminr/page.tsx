@@ -208,7 +208,8 @@ const data: AltData = {
       <span className="text-white/85 font-semibold">VIP Pro</span> is
       $74.99/year (10-day trial) adding intel layers, timelapse, camera alerts
       and 40-camera recording. Every first charge has a 7-day money-back
-      guarantee. The head-to-head lives at{" "}
+      guarantee. Want the feature-by-feature breakdown? The head-to-head
+      lives at{" "}
       <Link href="/compare/dataminr" className="text-[#0096FF] hover:underline">
         WorldEye vs Dataminr
       </Link>

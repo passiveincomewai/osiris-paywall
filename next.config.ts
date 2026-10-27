@@ -49,10 +49,15 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        // The alternatives hub lives at /compare (breadcrumbs, sitemap);
-        // /alternatives itself had no page and 404'd.
-        source: '/alternatives',
-        destination: '/compare',
+        // EarthCam's alternatives owner is the standalone
+        // /earthcam-alternative page (the category's highest-volume
+        // alternative query) — /alternatives/earthcam canonicalizes
+        // there instead of becoming a third EarthCam page. The
+        // /alternatives hub itself is a real page since C7
+        // (src/app/alternatives/page.tsx); it is no longer redirected
+        // to /compare.
+        source: '/alternatives/earthcam',
+        destination: '/earthcam-alternative',
         permanent: true,
       },
       // Legacy short paths (SEO batch, 2026-10-26): every source below was

@@ -226,9 +226,10 @@ const data: AltData = {
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing
       </Link>{" "}
-      and the dedicated{" "}
+      . For the feature-by-feature breakdown rather than the switching
+      case, see{" "}
       <Link href="/compare/skylinewebcams" className="text-[#0096FF] hover:underline">
-        SkylineWebcams comparison
+        WorldEye vs SkylineWebcams
       </Link>
       .
     </>,

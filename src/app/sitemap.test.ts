@@ -24,7 +24,8 @@ import cameraNetworkReport from "@/data/camera-network-2026-10.json";
  * committed data, so its count and a hash of the sorted URLs are
  * pinned exactly — any URL added, removed or renamed breaks this
  * test. (Baseline: the pre-change generator on 2026-10-27, 815
- * URLs.) Transit URLs depend on live GTFS feeds, so they are pinned
+ * URLs; 816 since chunk C7 added the /alternatives hub the same
+ * day.) Transit URLs depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
  */
@@ -65,10 +66,10 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(815);
+    expect(nonTransit.length).toBe(816);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     expect(hash).toBe(
-      "05970a7eebe52e5c09bdf5b0fdd69a13026c0ef7c65b8ffe46a0f55eaa6c0c42",
+      "7b9110e348f625aa6c1a4804f9c4e2447ba219eba5c4a06809099f955f5bb66e",
     );
   });
 
@@ -159,6 +160,7 @@ describe("sitemap lastmod policy", () => {
       "/pricing",
       "/faq",
       "/compare/acled",
+      "/alternatives",
       "/alternatives/windy",
       "/best-osint-tools",
       "/live-plane-spotting",

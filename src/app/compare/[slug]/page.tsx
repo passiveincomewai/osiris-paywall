@@ -13,6 +13,32 @@ import {
 
 export const dynamic = "force-dynamic";
 
+/* Intent split (INTENT-AND-CLUSTERS §2.2): this template owns
+   "WorldEye vs X" only. Competitors that also have a hand-built
+   alternatives page get ONE in-content hand-off line in the hero —
+   the alternatives page owns "X alternative(s)" (switching intent).
+   EarthCam's alternatives owner is the standalone
+   /earthcam-alternative page. The sentence frame rotates by slug so
+   it isn't a template stamp; the anchor is composed from the
+   competitor's own name. */
+const ALTERNATIVES_HANDOFF: Record<string, string> = {
+  windy: "/alternatives/windy",
+  skylinewebcams: "/alternatives/skylinewebcams",
+  flightradar24: "/alternatives/flightradar24",
+  "google-earth": "/alternatives/google-earth",
+  dataminr: "/alternatives/dataminr",
+  liveuamap: "/alternatives/liveuamap",
+  "world-monitor": "/alternatives/world-monitor",
+  "zoom-earth": "/alternatives/zoom-earth",
+  earthcam: "/earthcam-alternative",
+};
+
+function handoffFrame(slug: string): number {
+  let sum = 0;
+  for (let i = 0; i < slug.length; i++) sum += slug.charCodeAt(i);
+  return sum % 3;
+}
+
 type Feature = { label: string; worldEye: string; competitor: string; note?: string };
 
 const STATUS_META: Record<string, { icon: "check" | "minus" | "x" | "help"; label: string; cls: string }> = {
@@ -194,6 +220,37 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             <Link href="#features" className="px-6 py-3 rounded-xl border border-white/15 text-white/80 hover:text-white hover:border-white/30 transition">Compare Features</Link>
           </div>
           <p className="text-xs text-white/30 mt-6">Last reviewed: {reviewed} · Sources listed at the bottom of this page</p>
+          {ALTERNATIVES_HANDOFF[slug] && (
+            <p className="text-sm text-white/45 mt-4">
+              {handoffFrame(slug) === 0 && (
+                <>
+                  Looking to switch rather than compare? The{" "}
+                  <Link href={ALTERNATIVES_HANDOFF[slug]} className="text-[#0096FF] hover:underline">
+                    {c.name} alternative{slug === "earthcam" ? "" : "s"}
+                  </Link>{" "}
+                  page covers what to move to — and why people move.
+                </>
+              )}
+              {handoffFrame(slug) === 1 && (
+                <>
+                  Already decided to leave {c.name}? Start with the{" "}
+                  <Link href={ALTERNATIVES_HANDOFF[slug]} className="text-[#0096FF] hover:underline">
+                    {c.name} alternative{slug === "earthcam" ? "" : "s"}
+                  </Link>{" "}
+                  page — the honest shortlist of what to switch to.
+                </>
+              )}
+              {handoffFrame(slug) === 2 && (
+                <>
+                  Here to find a replacement, not a comparison? The{" "}
+                  <Link href={ALTERNATIVES_HANDOFF[slug]} className="text-[#0096FF] hover:underline">
+                    {c.name} alternative{slug === "earthcam" ? "" : "s"}
+                  </Link>{" "}
+                  page walks through the options, WorldEye included.
+                </>
+              )}
+            </p>
+          )}
         </header>
 
         {/* Key differences */}

@@ -337,7 +337,11 @@ const SEO_PAGES_EVENT_WALLS = [
 ];
 
 // Competitor comparisons (2026-10-11): linked from footer "Alternatives & Comparisons".
+// The /alternatives hub itself was added by chunk C7 (2026-10-27) —
+// before that, /alternatives 301'd to /compare and the 12 switching
+// guides had no parent listing.
 const SEO_PAGES_COMPARE = [
+  "/alternatives",
   "/alternatives/gods-eye-view",
   "/alternatives/osiris",
   "/alternatives/godsview-ai",

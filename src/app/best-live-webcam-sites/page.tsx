@@ -129,11 +129,21 @@ export default function BestLiveWebcamSitesPage() {
           The best live webcam sites <span className="text-[#0096FF]">for 2026.</span>
         </h1>
         <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
-          Seven webcam platforms compared on what actually differs between
-          them — discovery, categories, context, and price. WorldEye is our
-          pick for free exploring on a 3D globe; EarthCam remains the
-          landmark specialist; Explore.org wins on wildlife. Here&apos;s how
-          to choose.
+          This page ranks webcam <strong className="text-white/85">sites</strong> —
+          the platforms themselves, not individual cameras. Seven of them,
+          compared on what actually differs between them: discovery,
+          categories, context, and price. WorldEye is our pick for free
+          exploring on a 3D globe; EarthCam remains the landmark specialist;
+          Explore.org wins on wildlife. Here&apos;s how to choose — and if
+          you&apos;d rather browse by place, the{" "}
+          <Link href="/world-city-webcams" className="text-[#0096FF] hover:underline">
+            best live webcam cities
+          </Link>{" "}
+          are ranked separately, while{" "}
+          <Link href="/live-webcams" className="text-[#0096FF] hover:underline">
+            live webcams
+          </Link>{" "}
+          is where to start watching right now.
         </p>
         <ReviewedStamp />
         <HeroCtas />

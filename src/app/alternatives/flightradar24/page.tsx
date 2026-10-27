@@ -213,9 +213,9 @@ const data: AltData = {
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing
       </Link>{" "}
-      and the dedicated{" "}
+      . Or skip the switching case and go straight to the rows:{" "}
       <Link href="/compare/flightradar24" className="text-[#0096FF] hover:underline">
-        Flightradar24 comparison
+        WorldEye vs Flightradar24
       </Link>
       .
     </>,

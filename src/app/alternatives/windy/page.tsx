@@ -224,9 +224,9 @@ const data: AltData = {
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing page
       </Link>
-      , next to the dedicated{" "}
+      . Want the feature-by-feature breakdown instead? See{" "}
       <Link href="/compare/windy" className="text-[#0096FF] hover:underline">
-        Windy comparison
+        WorldEye vs Windy
       </Link>
       .
     </>,

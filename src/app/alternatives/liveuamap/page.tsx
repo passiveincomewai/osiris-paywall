@@ -203,9 +203,9 @@ const data: AltData = {
       <Link href="/pricing" className="text-[#0096FF] hover:underline">
         pricing
       </Link>{" "}
-      and the dedicated{" "}
+      . The feature-by-feature breakdown lives on its own page:{" "}
       <Link href="/compare/liveuamap" className="text-[#0096FF] hover:underline">
-        comparison
+        WorldEye vs LiveUAMap
       </Link>
       .
     </>,
