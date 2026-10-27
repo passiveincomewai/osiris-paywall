@@ -30,6 +30,99 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "photo-geolocation-where-was-this-photo-taken",
+    title: "Photo Geolocation (Beta): Where Was This Photo Taken?",
+    seoTitle: "Photo Geolocation: Where Was This Taken? | WorldEye Blog",
+    date: "2026-10-27",
+    excerpt:
+      "Upload a photo and WorldEye's new Photo Geolocation (Beta) estimates where it was taken — from EXIF GPS when the file still has it, and from the clues in the scene when it doesn't. Ranked candidates, evidence for and against, an uncertainty radius that never pretends to be a pinpoint, and your image is never stored. Free in beta, three analyses a day.",
+    seoDescription:
+      "WorldEye's free Photo Geolocation (Beta) finds where a photo was taken: EXIF GPS or scene clues, ranked candidates, evidence, an honest 250 m radius.",
+    tags: ["announcement", "product", "OSINT", "geolocation", "tools"],
+    sections: [
+      {
+        body: [
+          "Somewhere in your camera roll is a photo you can no longer place. A street, a shoreline, a café window — you remember taking it and nothing about where. The same problem arrives wearing different clothes everywhere else: a viral image captioned with a city it may never have seen, a family print scanned decades after the fact, a travel shot whose metadata died somewhere between the phone and the group chat. The question is always the same: where was this photo taken?",
+          "Today WorldEye gets a tool that answers it in the open. [Photo Geolocation (Beta)](/tools/photo-geolocation) takes an uploaded photo and returns ranked candidate places — each with the evidence for it, the evidence against it, a confidence tier, and an uncertainty radius drawn honestly on the map. It is free while in beta. And when the evidence is too weak, it says so, in so many words: it couldn't determine the location. A tool that admits that is the only kind worth trusting with the question.",
+        ],
+      },
+      {
+        heading: "The problem: photos forget where they were taken",
+        body: [
+          "A digital photo starts life knowing exactly where it was taken. Most phones stamp GPS coordinates into the file's EXIF metadata at the moment of capture, alongside the time and the camera model. If that stamp survived, locating a photo is trivial — the file simply tells you.",
+          "It usually doesn't survive. Messaging apps strip metadata to save bandwidth. Social platforms remove it deliberately, for privacy. Screenshots never had it. Scans of prints never will. By the time a photo reaches the person asking where it was taken, the file has often forgotten everything except the pixels.",
+          "And for most of photography's history, of course, no photo carried coordinates at all. A century of prints and slides sits in boxes and albums, their locations held only in the memory of the people who were there — memory that retires, moves away and eventually goes quiet. The clues in the frame are what survive.",
+          "But the pixels remember a great deal. The language on a shop sign narrows the map to a handful of countries. Vegetation rules out whole climate zones. Architecture, vehicles, road markings and terrain each cut the possibilities further. Human geolocators — the practitioners of [open-source intelligence](/blog/what-is-osint) — work exactly this way, clue by clue. The beta automates that discipline, and shows its working at every step.",
+        ],
+      },
+      {
+        heading: "How it works, step by step",
+        body: [
+          "Step one is the file itself. If your photo still carries EXIF GPS coordinates, the tool reads them and the answer starts from fact rather than inference — the strongest evidence a photo can offer about itself, presented as such.",
+          "Step two, when there is no GPS to read, is a single AI vision pass over the scene. Its job is deliberately narrow: extract clues, nothing more. The language on signage. The vegetation. The architecture. The vehicles. The terrain. The model is never asked where the photo was taken, and it never names a place — it hands back a list of observations, the way a careful analyst would before touching a map.",
+          "Step three is deliberately unglamorous: deterministic lookups. The clues are checked against OpenStreetMap data through Nominatim, and places that match the evidence become candidates. No model intuition, no vibes — the same clues return the same candidates every time, which is what makes the result auditable.",
+          "Step four is the answer, presented as an argument rather than a verdict. Each candidate arrives ranked, with its evidence for and against set out beside it, a confidence tier, and an uncertainty radius — clamped so it is never smaller than 250 meters, however confident the match. And because this is WorldEye, a result doesn't end at the map pin: each candidate offers the [live webcams](/live-webcams) nearest to it, so you can look at the place as it is right now, and an EXPLORE IN 3D handoff that drops the location onto [the globe](/) in context.",
+        ],
+      },
+      {
+        heading: "What makes it honest: evidence, uncertainty, refusals",
+        body: [
+          "Most location tools compete on confidence. This one competes on candor. The uncertainty radius is clamped to at least 250 meters because a photo of a public square can support that claim and a photo of a side street usually cannot support better — pretending otherwise would be a pinpoint built on air. Confidence is a tier, not a percentage with false decimal precision. And the evidence is shown both ways: the clue that argues against the top candidate is printed next to the ones that argue for it, because a result you can't interrogate is just a rumor with a map attached.",
+          "Some requests it refuses by design. The tool works on public places only: if a scene reads as residential, the result is suppressed to area level — a neighborhood, not a house. It does not pinpoint homes, and it does not identify faces; people in a photo are part of the scene, never the subject of the search. These are not settings. They are the shape of the tool.",
+          "And sometimes the honest answer is no answer. A photo of a generic beach, a forest trail, a bowl of food on a wooden table: the clues run out, and the tool reports that it couldn't determine the location rather than dealing you the least-bad guess dressed as fact. In a field full of confident demos, we think the refusal is the feature.",
+        ],
+      },
+      {
+        heading: "Privacy by design",
+        body: [
+          "A tool that examines your photos has to earn the upload. So: your photo is processed in memory and never stored on our servers — there is no archive of analyzed images, nothing to leak, sell or subpoena. The analysis happens, the result is returned, and the file is gone.",
+          "If you share a result, the shared output has its EXIF stripped, so passing the answer along doesn't quietly republish the exact coordinates your photo may have carried. The privacy you started with is the privacy you keep.",
+        ],
+      },
+      {
+        heading: "Three photos to try it on",
+        body: [
+          "The travel photo with stripped metadata. You came home from a trip with four hundred photos; the messaging app you sent them through ate the GPS stamps; now one perfect street scene could be either of two towns. Upload it. The signage language, the plates on the cars, the rooflines will usually separate the candidates — and the nearby cameras can settle it by showing you the same street, live.",
+          "The viral photo with a claim attached. An image is everywhere, captioned as this city, this week. That is a testable claim, and this is the same discipline we use to [verify breaking news footage](/blog/verify-breaking-news-footage): check what the scene itself says. If the vegetation, the architecture and the language argue for a different continent, the tool will show you that argument, candidate by candidate, before you share the caption onward.",
+          "The family photo nobody can place. A scanned print, a grandparent in front of a harbor, a main street, a festival crowd. There is no metadata because there was no metadata — but harbors, main streets and landmarks endure, and area level is exactly the right resolution for the question. You are not looking for an address. You are looking for the town — and sometimes the town is enough to give the photo back its story.",
+        ],
+      },
+      {
+        heading: "Beta limits, and what comes next",
+        body: [
+          "The beta is free, with one practical limit: three analyses per IP address per day. That cap is the cost control that lets a vision-and-geography pipeline stay free while we learn how people use it, and it resets daily. Everything described above — EXIF reading, the clue pass, ranked candidates, nearby cameras, the 3D handoff — is inside those three.",
+          "The method follows the open-source [geo-sleuth](https://github.com/Oldcircle/geo-sleuth) methodology, released under the MIT license by Oldcircle — a disciplined, evidence-first approach to geolocation that we have adapted and extended inside WorldEye's stack, and we are grateful for it. What comes next: deeper investigations are in development — the multi-pass, cross-referencing analysis that squeezes a hard photo for everything it holds. Until then, the beta's promise is narrower and, we think, better kept: fast, honest, and free. [Try it on a photo you've never been able to place](/tools/photo-geolocation).",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is Photo Geolocation free?",
+        a: "Yes, while in beta. Anyone can run three analyses per IP address per day at no cost and with no account — the cap exists to keep the vision-and-geography pipeline sustainable while the tool is free.",
+      },
+      {
+        q: "Does WorldEye store the photos I upload?",
+        a: "No. Uploads are processed in memory and never stored on our servers. The analysis runs, the result is returned, and the image is gone. Shared results have their EXIF metadata stripped.",
+      },
+      {
+        q: "How precise is it?",
+        a: "Deliberately not pinpoint-precise. Every result carries an uncertainty radius clamped to at least 250 meters, and scenes that read as residential are suppressed to area level only. It locates public places, not homes.",
+      },
+      {
+        q: "What if my photo has no GPS metadata?",
+        a: "That is the normal case, and the one the tool is built for. A single AI vision pass extracts scene clues — signage language, vegetation, architecture, vehicles, terrain — and deterministic OpenStreetMap lookups turn those clues into ranked candidates with evidence for and against each.",
+      },
+      {
+        q: "Can it identify people in a photo?",
+        a: "No. The tool analyzes places, not people. It performs no face identification, and it will not pinpoint a residence.",
+      },
+      {
+        q: "What happens when it can't locate my photo?",
+        a: "It tells you. When the evidence is too weak, the result is an honest 'couldn't determine' rather than a guess — some scenes, like a generic beach or a forest trail, genuinely don't contain enough clues.",
+      },
+    ],
+  },
+  {
     slug: "kilauea-episode-56-watch-live",
     title: "Kīlauea Episode 56: How to Watch the Next Eruption Episode Live",
     seoTitle: "Kīlauea Episode 56: How to Watch Live | WorldEye Blog",
