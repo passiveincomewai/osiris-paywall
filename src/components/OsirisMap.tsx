@@ -1084,6 +1084,15 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         map.addImage('hurricane-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
       } catch { /* a later call (boot/theme) retries */ }
     });
+    // The maritime pin (owner's artwork): ports and naval bases.
+    void loadAircraftPhoto('/icons/maritime-pin.png').then((img) => {
+      if (!img) return;
+      try {
+        const data = aircraftPhotoData(img);
+        if (map.hasImage('maritime-pin')) map.removeImage('maritime-pin');
+        map.addImage('maritime-pin', data, { pixelRatio: AIRCRAFT_PHOTO_PX / 34 });
+      } catch { /* a later call (boot/theme) retries */ }
+    });
     for (const [id, url] of Object.entries(AIRCRAFT_PHOTO_BY_ICON)) {
       void loadAircraftPhoto(url).then((img) => {
         if (!img) return;
@@ -1841,6 +1850,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'circle-opacity': 0.8,
         'circle-stroke-width': 1.5, 'circle-stroke-color': ['match', ['get','type'], 'naval','#D32F2F', 'energy','#E65100', '#26C6DA'], 'circle-stroke-opacity': 0.35,
       }});
+      // Maritime pins — the owner's warship artwork on every port /
+      // naval base; the coloured dot stays as the point marker under
+      // the pin tip, labels unchanged.
+      map.addLayer({ id: 'maritime-icons', type: 'symbol', source: 'maritime', layout: {
+        'icon-image': 'maritime-pin',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.5, 5, 0.7, 10, 1.0],
+        'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+      }, paint: { 'icon-opacity': 0.96 }});
       map.addLayer({ id: 'maritime-label', type: 'symbol', source: 'maritime', minzoom: 4, layout: {
         'text-field': ['get','name'], 'text-size': 9, 'text-font': ['Open Sans Regular'],
         'text-offset': [0, 1.8], 'text-max-width': 12, 'text-allow-overlap': false,
@@ -2343,7 +2360,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons',
-      'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots','street-level-dots','street-level-hit']);
@@ -2983,7 +3000,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -3174,7 +3191,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Maritime Ports & Naval Bases ──
-    map.on('click', 'maritime-dots', e => {
+    const onMaritimeClick = (e: any) => {
       const p = e.features?.[0]?.properties;
       if (!p) return;
       const coords = (e.features![0].geometry as any).coordinates;
@@ -3197,7 +3214,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         ${p.rank ? `<div style="font-size:9px;color:#aaa;">Global Rank: <span style="color:${typeColor};font-weight:bold;">#${p.rank}</span></div>` : ''}
         ${congestionHtml}
       </div>`);
-    });
+    };
+    map.on('click', 'maritime-dots', onMaritimeClick);
+    map.on('click', 'maritime-icons', onMaritimeClick);
 
     // ── Maritime Chokepoints ──
     map.on('click', 'choke-dots', e => {
@@ -4953,7 +4972,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['drone-airspace-fill','drone-airspace-line','drone-restriction-fill','drone-restriction-line'], (activeLayers as any).drones && (activeLayers as any).drone_airspace !== false);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
-    setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);
+    setVis(['maritime-glow','maritime-dots','maritime-label','maritime-icons'], activeLayers.maritime);
     setVis(['choke-glow','choke-dots','choke-label'], activeLayers.maritime);
     setVis(['ship-dots','ship-label'], activeLayers.maritime);
     setVis(['news-glow','news-dots','news-label'], activeLayers.live_news);
