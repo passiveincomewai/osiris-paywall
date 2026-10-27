@@ -247,6 +247,17 @@ const SEO_PAGES_WAVE16 = [
   ...BEACH_SPOT_SLUGS.map((slug) => `/beach-webcams/${slug}`),
 ];
 
+// Seasonal annuals (2026-10-27): evergreen pages for the five events
+// that recur every year — dates come from lib/seasonal-events tables,
+// never from prose, so the pages stay correct year to year.
+const SEO_PAGES_SEASONAL = [
+  "/new-years-eve-times-square",
+  "/mardi-gras-new-orleans",
+  "/cherry-blossoms-washington-dc",
+  "/oktoberfest-munich",
+  "/fall-foliage-cameras",
+];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -535,6 +546,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...SEO_PAGES_WAVE16.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_SEASONAL.map((p) => ({
+      url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
