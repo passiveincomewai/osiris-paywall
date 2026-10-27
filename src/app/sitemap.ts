@@ -201,6 +201,22 @@ const SEO_PAGES_PARKS = [
   ...NATIONAL_PARKS.map((p) => `/national-park-webcams/${p.slug}`),
 ];
 
+// Wave 15 (2026-10-27): interstate corridor camera pages — cameras in
+// driving order along the eight interstates with real catalogue density
+// (I-95, I-15, I-5, I-90, I-35, I-80, I-70, I-40), plus their index hub.
+// Catalogue-driven like Wave 13, so they carry the catalogue's date.
+const SEO_PAGES_WAVE15 = [
+  "/interstate-cameras",
+  "/interstate-cameras/i-95",
+  "/interstate-cameras/i-15",
+  "/interstate-cameras/i-5",
+  "/interstate-cameras/i-90",
+  "/interstate-cameras/i-35",
+  "/interstate-cameras/i-80",
+  "/interstate-cameras/i-70",
+  "/interstate-cameras/i-40",
+];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -468,6 +484,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...SEO_PAGES_PARKS.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE15.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
