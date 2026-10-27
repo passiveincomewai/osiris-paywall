@@ -34,7 +34,7 @@ export type { CountrySlice, CountrySliceRequest };
 /* Themes                                                              */
 /* ------------------------------------------------------------------ */
 
-export type ExploreThemeKey = 'traffic' | 'coast' | 'airport';
+export type ExploreThemeKey = 'traffic' | 'coast' | 'airport' | 'rail';
 
 function themeNamePattern(key: string): RegExp {
   const def = THEME_DEFS.find((d) => d.key === key);
@@ -48,6 +48,62 @@ function themeNamePattern(key: string): RegExp {
  *  (THEME_DEFS' broader "transport" pattern also matches stations and
  *  railways, which are not airports; it is not used here.) */
 export const AIRPORT_NAME_PATTERN = /\b(airport|airfield|runway)\b/i;
+
+/** Rail is named in the record itself, the same discipline as
+ *  airports — there is no rail field in the catalogue, so the rail
+ *  scope is exactly the cameras whose name says railway: a line, a
+ *  station, a bridge, a depot, a named operator. Two traps shaped the
+ *  guards, both measured over the raw catalogue (2026-10-27):
+ *  - "Station" alone is not rail. Japan's river networks name their
+ *    gauging sites "…Water Level Station" / "…Pumping Station" /
+ *    "…Disaster Prevention Station" (and Taiwan's are pumping
+ *    stations too); ski areas have lift and gondola stations; plots
+ *    and depots serve buses, ambulances and home-improvement stores.
+ *    A station name carrying one of those utility words is rejected
+ *    unless a hard rail pattern also matches.
+ *  - In rivergojp names "Hanshin" is the expressway company, not the
+ *    railway, so it is absent from the operator list (Hankyu is the
+ *    railway). "Tram Rd" and "Depot Dr" are street names, not scenes.
+ *  The yield over the catalogue generated 2026-10-20 is 393 records —
+ *  pinned, with every page wall's count, in
+ *  lib/railfan-page-scopes.test.ts. */
+export const RAIL_NAME_PATTERN =
+  /shinkansen|railway|railroad|rail\s?cam|train\s?cam|live trains|\b(bnsf|amtrak|csx|fec|cpkc|kcs)\b|norfolk southern|union pacific|train station|hauptbahnhof|\bbahnhof\b|light rail|\bmtr\b|high[- ]speed rail/i;
+
+/** Japanese private railways and JR name their bridges and lines in
+ *  the river-camera networks: "JR Kansai Main Line … Bridge",
+ *  "Yodo River at Hankyu Kyoto Line", "Keio Sagamihara Line …". */
+export const RAIL_OPERATOR_LINE_PATTERN =
+  /\b(JR|Kintetsu|Meitetsu|Hankyu|Keio|Odakyu|Tobu|Seibu|Tokyu|Sotetsu|Keisei)\b[^,]*\b(bridge|line|station|concourse)\b/i;
+
+const RAIL_STATION_PATTERN = /\bstation\b/i;
+const RAIL_STATION_REJECT =
+  /river|water|pump|drainage|air quality|observation|alert|disaster|monitor|gaug|weather|\bgas\b|police|bus|charging|power|sewage|recycl|weigh|inspect|ranger|research|\blift\b|fire|relay|forest|meadow|pasture|gondola/i;
+const RAIL_STATION_STREET =
+  /station\s+(st|ave|rd|blvd|dr|street|avenue|road|ln|ct|hwy)\b/i;
+const RAIL_TRAM_ROAD = /\btram\s+(rd|road)\b/i;
+const RAIL_DEPOT_REJECT =
+  /home depot|bus depot|ambulance|depot\s+(road|rd|dr|drive|street|st)\b/i;
+
+/** Does this record's own name place it in the rail world? The one
+ *  matcher behind the 'rail' theme, the worldwide rail wall and every
+ *  rail-named count the /train-webcams pages quote. */
+export function matchesRailName(name: string): boolean {
+  const n = name ?? '';
+  const hard = RAIL_NAME_PATTERN.test(n) || RAIL_OPERATOR_LINE_PATTERN.test(n);
+  /* A utility "station" (water, pumping, fire, research…) is not a
+     railway station, however the name is dressed — unless a hard
+     rail pattern says otherwise ("Busan Station Railway Pier"). */
+  if (RAIL_STATION_PATTERN.test(n) && RAIL_STATION_REJECT.test(n) && !hard) {
+    return false;
+  }
+  if (hard) return true;
+  if (/station concourse|station area/i.test(n)) return true;
+  if (/\btram\b/i.test(n) && !RAIL_TRAM_ROAD.test(n)) return true;
+  if (/\bdepot\b/i.test(n) && !RAIL_DEPOT_REJECT.test(n)) return true;
+  if (RAIL_STATION_PATTERN.test(n) && !RAIL_STATION_STREET.test(n)) return true;
+  return false;
+}
 
 /**
  * Road and traffic authorities publish under source labels that say
@@ -65,6 +121,7 @@ export const ROAD_SOURCE_PATTERN =
 
 export function matchesTheme(cam: CountryCamera, theme: ExploreThemeKey): boolean {
   if (theme === 'airport') return AIRPORT_NAME_PATTERN.test(cam.name ?? '');
+  if (theme === 'rail') return matchesRailName(cam.name ?? '');
   if (theme === 'coast') return themeNamePattern('coast').test(cam.name ?? '');
   /* traffic: the name says road/traffic, or the source is a road
      authority (see ROAD_SOURCE_PATTERN). */

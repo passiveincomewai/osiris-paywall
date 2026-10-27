@@ -422,6 +422,36 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'beach-myrtle-beach': eventGeoIn('Myrtle Beach', 'united-states', 33.6959, -78.88, 12),
   'beach-palma': eventGeoIn('Palma & Mallorca’s south coast', 'spain', 39.5696, 2.6502, 12),
   'beach-santa-monica': eventGeoIn('Santa Monica', 'united-states', 34.0095, -118.4912, 12),
+
+  /* Railfan walls (keyword wave B, Oct 2026) — the /train-webcams
+     family in lib/railfan-places. Two scope shapes:
+     - 'rail-named': the worldwide wall — every catalogue record whose
+       own name says railway (the 'rail' theme in lib/explore-scopes,
+       guards included). 393 records over the 2026-10-20 catalogue.
+     - 'rail-<slug>': one 15 km radius wall per place in the registry,
+       the stated rule of every place page — every camera in range,
+       with the page counting how many of them name a railway.
+     A place earns a wall only with a genuine cluster behind it
+     (total ≥ 15 within 15 km AND rail-named ≥ 2, or a dedicated rail
+     anchor camera): the famous rail towns the catalogue cannot back
+     (Tehachapi 4, Rochelle 0, Folkston 3 at this radius) have no page
+     and the hub names them as gaps. Yields are reconciled against the
+     raw chunks in lib/railfan-page-scopes.test.ts. */
+  'rail-named': { label: 'cameras that name a railway', slugs: 'all', theme: 'rail', groupBy: 'country' },
+  'rail-tokyo': eventGeoIn('Tokyo Station & the city stations', 'japan', 35.6812, 139.7671, 15),
+  'rail-osaka': eventGeoIn('Shin-Osaka & the Tōkaidō Shinkansen', 'japan', 34.7335, 135.5003, 15),
+  'rail-nagoya': eventGeoIn('Nagoya Station & the Shōnai River bridges', 'japan', 35.1709, 136.8815, 15),
+  'rail-hiroshima': eventGeoIn('Hiroshima Station', 'japan', 34.3976, 132.4756, 15),
+  'rail-sapporo': eventGeoIn('Sapporo Station', 'japan', 43.0686, 141.3508, 15),
+  'rail-ichikawa': eventGeoIn('Ichikawa Station', 'japan', 35.7321, 139.9086, 15),
+  'rail-tsu': eventGeoIn('Tsu & the Nakamura River crossings', 'japan', 34.639, 136.476, 15),
+  'rail-ise': eventGeoIn('Ise & the Miyagawa bridges', 'japan', 34.502, 136.684, 15),
+  'rail-anjo': eventGeoIn('Anjō & the Tōkaidō corridor', 'japan', 34.9197, 137.1079, 15),
+  'rail-busan': eventGeoIn('Busan Station', 'south-korea', 35.1151, 129.0414, 15),
+  'rail-incheon': eventGeoIn('Incheon’s station junctions', 'south-korea', 37.4767, 126.6326, 15),
+  'rail-yuen-long': eventGeoIn('Yuen Long & the Light Rail', 'hong-kong', 22.4456, 114.0349, 15),
+  'rail-ershui': eventGeoIn('Ershui & the Zhuoshui River bridges', 'taiwan', 23.8133, 120.6178, 15),
+  'rail-lincoln': eventGeo('Lincoln, Nebraska — BNSF', 40.8136, -96.7026, 15),
 };
 
 /** A scope definition from request params: either a registry key, or
@@ -441,7 +471,7 @@ export function resolveExploreDef(params: {
     if (!entry) return null;
     let theme: ExploreThemeKey | undefined;
     if (params.theme) {
-      if (params.theme !== 'traffic' && params.theme !== 'coast' && params.theme !== 'airport') {
+      if (params.theme !== 'traffic' && params.theme !== 'coast' && params.theme !== 'airport' && params.theme !== 'rail') {
         return null;
       }
       theme = params.theme;

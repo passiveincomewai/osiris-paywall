@@ -13,6 +13,7 @@ import { NATIONAL_PARKS } from "@/lib/national-parks";
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
 import { BEACH_SPOT_SLUGS, SURF_SPOT_SLUGS } from "@/lib/surf-spots";
+import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
 
 const BASE = "https://worldeye.app";
 
@@ -255,6 +256,15 @@ const SEO_PAGES_WAVE16 = [
   "/surf-webcams",
   ...SURF_SPOT_SLUGS.map((slug) => `/surf-webcams/${slug}`),
   ...BEACH_SPOT_SLUGS.map((slug) => `/beach-webcams/${slug}`),
+];
+
+// Wave 17 (2026-10-27): the train-webcam walls (keyword wave B) —
+// the /train-webcams hub plus one page per place in
+// lib/railfan-places (15 km radius walls; yields pinned in
+// lib/railfan-page-scopes.test.ts).
+const SEO_PAGES_WAVE17 = [
+  "/train-webcams",
+  ...RAIL_PLACE_SLUGS.map((slug) => `/train-webcams/${slug}`),
 ];
 
 // Seasonal annuals (2026-10-27): evergreen pages for the five events
@@ -568,6 +578,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     /* ── END border-crossings delta ── */
     ...SEO_PAGES_WAVE16.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WAVE17.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
