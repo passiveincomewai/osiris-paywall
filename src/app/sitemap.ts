@@ -14,6 +14,8 @@ import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
 import { BEACH_SPOT_SLUGS, SURF_SPOT_SLUGS } from "@/lib/surf-spots";
 import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
+import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
+import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
 
 const BASE = "https://worldeye.app";
 
@@ -381,7 +383,38 @@ const SEO_PAGES_COMPARE = [
   "/compare/worldeye-vs-osiris",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+/**
+ * Transit SEO pages (2026-10-26): the /transit hub family generated
+ * from the agency registry (lib/transit/seo) — national hub, state +
+ * agency hubs, and one URL per route. Deliberately NO stop URLs:
+ * stop pages were an owner-rejected thin-page risk; stops live on
+ * the route pages. lastModified is the GTFS feed's own version date.
+ * A feed that fails to load at sitemap time omits its URLs rather
+ * than failing the whole sitemap.
+ */
+async function transitSitemapEntries(): Promise<MetadataRoute.Sitemap> {
+  const out: MetadataRoute.Sitemap = [
+    { url: `${BASE}/transit`, changeFrequency: "weekly", priority: 0.7 },
+  ];
+  for (const agency of seoAgencies()) {
+    try {
+      const d = await agencySeoData(agency);
+      const feedDate = feedVersionDate(d.net.feedVersion) ?? undefined;
+      for (const e of transitPathsForAgency(agency, d.net, d.slugs)) {
+        out.push({
+          url: `${BASE}${e.path}`,
+          ...(feedDate ? { lastModified: feedDate } : {}),
+          changeFrequency: e.changeFrequency,
+          priority: e.priority,
+        });
+      }
+    } catch { /* agency feed unavailable — its URLs return when it is */ }
+  }
+  return out;
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const transitEntries = await transitSitemapEntries();
   // Honest lastmod (SEO #11, 2026-10-26): every URL used to be stamped
   // "now" on every render, which teaches crawlers to distrust the signal.
   // Each set is now stamped with the real date of the data or content
@@ -634,5 +667,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.5,
     })),
+    ...transitEntries,
   ];
 }
