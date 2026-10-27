@@ -149,6 +149,18 @@ const SEO_PAGES_WAVE13 = [
 // page at /tools/photo-geolocation.
 const SEO_PAGES_TOOLS = ["/tools/photo-geolocation"];
 
+// Photo Geolocation guides (2026-10-27): three intent-split landing
+// pages supporting the tool — the head question ("where was this
+// photo taken"), the tool-name search ("photo location finder") for
+// travellers and creators, and the verification intent ("verify photo
+// location") for journalists and fact-checkers. Each links into the
+// tool page above; the tool itself stays in SEO_PAGES_TOOLS.
+const SEO_PAGES_GEO_GUIDES = [
+  "/where-was-this-photo-taken",
+  "/photo-location-finder",
+  "/verify-photo-location",
+];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -381,6 +393,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...SEO_PAGES_TOOLS.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...SEO_PAGES_GEO_GUIDES.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
     ...SEO_PAGES_AMBIENT.map((p) => ({
