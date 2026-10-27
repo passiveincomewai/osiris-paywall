@@ -138,7 +138,13 @@ const SEO_PAGES_WAVE12 = ["/random"];
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
 // Parade, the Thanksgiving travel rush, and the Starship Flight 15
-// launch hub (which stays up as the standing launch page).
+// launch hub (which stays up as the standing launch page). Batch C
+// adds the season-long atmospheric river watch, the Four Corners
+// flood watch, the Christmas markets hub and the Leonids night-sky
+// page. (/volcano-webcams is strengthened in the same batch; it is
+// already listed in Wave 9. /manatee-season-2026 was audit-gated and
+// NOT built — the catalogue holds no dedicated manatee cameras — so
+// it is deliberately absent here.)
 const SEO_PAGES_EVENTS_2026 = [
   "/world-series-2026",
   "/california-flood-cams",
@@ -148,6 +154,10 @@ const SEO_PAGES_EVENTS_2026 = [
   "/macys-thanksgiving-parade-2026",
   "/thanksgiving-travel-2026",
   "/starship-flight-15",
+  "/atmospheric-river-watch",
+  "/four-corners-flooding",
+  "/christmas-markets-live",
+  "/leonids-meteor-shower-2026",
 ];
 
 // WorldEye Ambient (2026-10-26): the product landing, the Slow TV

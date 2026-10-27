@@ -121,6 +121,18 @@ function eventGeo(
   return { label, slugs: ['united-states'], geo: { lat, lng, radiusKm }, groupBy: 'city' };
 }
 
+/** Same radius scope over an explicit country chunk — the
+ *  non-US event walls (European markets, volcanoes abroad). */
+function eventGeoIn(
+  label: string,
+  slug: string,
+  lat: number,
+  lng: number,
+  radiusKm: number,
+): ExploreScopeDef {
+  return { label, slugs: [slug], geo: { lat, lng, radiusKm }, groupBy: 'city' };
+}
+
 export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   /* Region hubs — the country pages' own continental grouping
      (lib/country-page-content COUNTRY_REGION). */
@@ -165,6 +177,50 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'event-ski-opening-arapahoe-basin': eventGeo('Arapahoe Basin', 39.6425, -105.8717, 30),
   'event-ski-opening-winter-park': eventGeo('Winter Park', 39.8917, -105.7631, 30),
   'event-ski-opening-keystone': eventGeo('Keystone', 39.6069, -105.9437, 30),
+  /* Trending batch C (Oct 2026) — the season-long West Coast storm
+     watch. The three California coastal walls reuse the king-tide
+     scopes above; these are the northern and inland additions. */
+  'event-ar-seattle': eventGeo('Seattle & Puget Sound', 47.6062, -122.3321, 30),
+  'event-ar-portland': eventGeo('Portland & the Columbia', 45.5152, -122.6784, 30),
+  'event-ar-eureka': eventGeo('Eureka & the North Coast', 40.8021, -124.1637, 40),
+  'event-ar-sacramento': eventGeo('Sacramento & the Central Valley', 38.5816, -121.4944, 30),
+  'event-ar-sierra': eventGeo('the Sierra Nevada passes', 39.328, -120.183, 40),
+  /* Four Corners flood watch (Oct 2026) — honestly thin country:
+     wide radii around the corridor towns are the page's stated rule,
+     and Farmington (0 within 40 km) has no wall at all. */
+  'event-fc-shiprock': eventGeo('Shiprock & the San Juan River', 36.7855, -108.6986, 80),
+  'event-fc-durango': eventGeo('Durango', 37.2753, -107.8801, 40),
+  'event-fc-cortez': eventGeo('Cortez', 37.3487, -108.5859, 40),
+  'event-fc-moab': eventGeo('Moab', 38.5733, -109.5498, 50),
+  /* Christmas markets (Nov–Dec 2026) — Austria's catalogue carries
+     the page; the German walls are Bavarian and thin, and Cologne
+     and Dresden have no catalogue cameras at all (see the page). */
+  'event-cm-vienna': eventGeoIn('Vienna', 'austria', 48.2082, 16.3738, 20),
+  'event-cm-salzburg': eventGeoIn('Salzburg', 'austria', 47.8095, 13.055, 20),
+  'event-cm-graz': eventGeoIn('Graz', 'austria', 47.0707, 15.4395, 20),
+  'event-cm-innsbruck': eventGeoIn('Innsbruck', 'austria', 47.2692, 11.4041, 20),
+  'event-cm-munich': eventGeoIn('Munich', 'germany', 48.1374, 11.5755, 20),
+  'event-cm-nuremberg': eventGeoIn('Nuremberg', 'germany', 49.4521, 11.0767, 20),
+  'event-cm-berlin': eventGeoIn('Berlin', 'germany', 52.52, 13.405, 20),
+  /* Leonids / night-sky week (Nov 2026) — dark-country anchors plus
+     the New York skyline wall for the Nov 24 Beaver Supermoon. */
+  'event-le-fairbanks': eventGeo('Fairbanks', 64.8378, -147.7164, 60),
+  'event-le-reykjavik': eventGeoIn('Reykjavík', 'iceland', 64.1466, -21.9426, 30),
+  'event-le-flagstaff': eventGeo('Flagstaff', 35.1983, -111.6513, 40),
+  'event-le-moab': eventGeo('Moab', 38.5733, -109.5498, 50),
+  'event-le-joshua-tree': eventGeo('Joshua Tree', 34.011, -116.011, 40),
+  'event-le-nyc': eventGeo('New York City', 40.758, -73.985, 25),
+  /* Volcano walls — one radius scope per volcano the strengthened
+     /volcano-webcams page sections. Etna's yield is a single
+     dedicated volcano camera; that is the count its section states. */
+  'event-vo-kilauea': eventGeo('Kīlauea', 19.4069, -155.2834, 50),
+  'event-vo-reykjanes': eventGeoIn('the Reykjanes Peninsula', 'iceland', 63.8424, -22.4338, 30),
+  'event-vo-katla': eventGeoIn('Katla & Vík', 'iceland', 63.4044, -19.0459, 40),
+  'event-vo-etna': eventGeoIn('Mount Etna', 'italy', 37.751, 14.9934, 30),
+  'event-vo-vesuvius': eventGeoIn('Vesuvius & Naples', 'italy', 40.8217, 14.4267, 25),
+  'event-vo-sakurajima': eventGeoIn('Sakurajima & Kagoshima', 'japan', 31.5936, 130.6572, 20),
+  'event-vo-merapi': eventGeoIn('Mount Merapi', 'indonesia', -7.5407, 110.4457, 30),
+  'event-vo-ruapehu': eventGeoIn('Mount Ruapehu', 'new-zealand', -39.28, 175.57, 50),
 };
 
 /** A scope definition from request params: either a registry key, or
