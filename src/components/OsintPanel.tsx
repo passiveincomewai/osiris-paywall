@@ -8,7 +8,7 @@ import {
   Search, Radar, Globe, Shield, FileText, Radio, Bluetooth,
   ChevronDown, ChevronUp, Loader2, AlertTriangle, Server,
   Wifi, Lock, MapPin, Bug, Code, Layers, Network, Fingerprint,
-  CheckCircle, XCircle, Clock, ExternalLink, Crosshair,
+  CheckCircle, XCircle, Clock, ExternalLink, Crosshair, Camera,
   Maximize2, Minimize2, Gavel, Bitcoin, Phone, Terminal, ShieldAlert, User,
   Crown, Database, Users, Zap, AtSign
 } from 'lucide-react';
@@ -42,7 +42,7 @@ import WorldRemote from '@/components/WorldRemote';
 const GROUPS = [
   { id: 'domain', label: 'Domain & Network Intel', hint: 'IPs, ports, DNS, certificates, routing', icon: Database },
   { id: 'identity', label: 'Identity & Profile Recon', hint: 'People, handles, accounts', icon: Users },
-  { id: 'geoint', label: 'Geoint & Location Analysis', hint: 'Subnet mapping, Bluetooth devices and your own IP location', icon: MapPin },
+  { id: 'geoint', label: 'Geoint & Location Analysis', hint: 'Subnet mapping, Bluetooth devices, photo locations and your own IP location', icon: MapPin },
   { id: 'threat', label: 'Threat Intelligence', hint: 'Reputation, breaches and CVE exposure', icon: ShieldAlert },
   { id: 'chain', label: 'Blockchain Intelligence', hint: 'Wallets, tokens and on-chain incidents', icon: Bitcoin },
 ] as const;
@@ -146,6 +146,7 @@ const TABS: ToolDef[] = [
   { id: 'mac', label: 'MAC ADDR', icon: Fingerprint, placeholder: 'MAC address', color: '#FFD700', group: 'domain', tile: 'MAC\nAddress', blurb: 'Hardware vendor lookup' },
   { id: 'sweep', label: 'IP SWEEP', icon: Crosshair, placeholder: 'Enter IP address (e.g. 8.8.8.8)', color: '#FF3D3D', group: 'geoint', tile: 'IP\nSweep', blurb: 'Scan an entire subnet' },
   { id: 'remote', label: 'WORLD REMOTE', icon: Bluetooth, placeholder: 'Bluetooth devices around you', color: '#00E5FF', group: 'geoint', tile: 'World\nRemote', blurb: 'Bluetooth devices around you, placed on the globe' },
+  { id: 'photogeo', label: 'PHOTO GEO', icon: Camera, placeholder: 'Upload a photo on the tool page', color: '#34D399', group: 'geoint', tile: 'Photo\nGeo', blurb: 'Where was this photo taken?' },
 
   { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF', group: 'domain', tile: 'DNS\nLookup', blurb: 'All record types' },
   { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFD700', group: 'domain', tile: 'WHOIS\nLookup', blurb: 'Registrar and ownership' },
@@ -1352,10 +1353,38 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceD
           scan-target path its standalone mounts used. */}
       {activeTab === 'remote' && <WorldRemote onPlaceOnMap={onPlaceDevicesOnMap} />}
 
+      {/* PHOTO GEO lives on its own page — the analysis works on an
+          uploaded image, not a typed target — so its board view is the
+          briefing card and the door. */}
+      {activeTab === 'photogeo' && (
+        <div className="we-recon-card" style={{ padding: '14px 14px 12px' }}>
+          <div className="flex items-center gap-2" style={{ color: '#34D399' }}>
+            <Camera className="w-4 h-4" />
+            <span className="text-[11px] font-mono font-bold tracking-[0.14em]">PHOTO GEOLOCATION — BETA</span>
+          </div>
+          <p className="text-[10.5px] leading-relaxed mt-2" style={{ color: 'rgba(190,220,255,0.85)' }}>
+            Upload a photo and WorldEye estimates where it was taken: embedded GPS first,
+            then AI scene clues checked against OpenStreetMap. Every result is an
+            evidence-ranked candidate with a confidence tier and an uncertainty radius —
+            public places only, never a pinpointed home.
+          </p>
+          <ul className="text-[10px] leading-relaxed mt-2 font-mono" style={{ color: 'rgba(125,211,252,0.75)' }}>
+            <li>· Uploads are processed in memory — never stored</li>
+            <li>· Nearby live cameras + explore in 3D on every result</li>
+            <li>· Free beta — 3 analyses a day</li>
+          </ul>
+          <a href="/tools/photo-geolocation" target="_blank" rel="noreferrer"
+            className="we-recon-scanbtn inline-flex items-center justify-center gap-1.5 mt-3"
+            style={{ textDecoration: 'none' }}>
+            <Camera className="w-3.5 h-3.5" /> OPEN THE TOOL
+          </a>
+        </div>
+      )}
+
       {/* Scan bar — the board's target entry. Same state and handlers as
           before (query / runLookup / scanType / sweepCidr); only the skin
           and the chip presentation of the secondary controls are new. */}
-      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && (
+      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && activeTab !== 'photogeo' && (
       <div className="flex flex-col gap-1.5">
         {/* CHAIN INTEL view switch — the brief takes no target. */}
         {activeTab === 'crypto' && (
