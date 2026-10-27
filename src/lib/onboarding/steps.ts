@@ -93,6 +93,58 @@ export function layersTurnedOn(prevSig: string, nextSig: string): string[] {
   return [...next].filter((k) => !prev.has(k));
 }
 
+/* ── Camera-step signal logic ───────────────────────────────────────────── */
+
+/** The tour step that asks the visitor to open a camera. */
+export const CAMERA_STEP_N: number =
+  TOUR_STEPS.find((s) => s.action === "camera-open")?.n ?? 2;
+
+/**
+ * A camera-opened signal: a camera became the open one. Covers the first
+ * open (null → id) AND a direct switch (id → a different id) — switching
+ * cameras is still "a camera opened" for first-use recording and for the
+ * tour's camera step. A close (id → null) and a re-render with the same
+ * camera are not signals.
+ */
+export function isCameraOpenedSignal(prevId: string | null, nextId: string | null): boolean {
+  return nextId !== null && nextId !== prevId;
+}
+
+/**
+ * Whether the camera tour step should complete right now: the tour is on
+ * the camera step and a camera is open. Deliberately state-based rather
+ * than transition-based — a visitor who opened a camera just before the
+ * step was asked (e.g. during the globe step) has still performed the
+ * real action, and a camera-to-camera switch must not leave the step
+ * waiting for a close-and-reopen that may never come.
+ */
+export function shouldCompleteCameraStep(
+  inTour: boolean,
+  step: number,
+  cameraId: string | null,
+): boolean {
+  return inTour && step === CAMERA_STEP_N && cameraId !== null;
+}
+
+export type WatchOfferSurface = "welcome" | "tour";
+
+/**
+ * What clicking the first-camera offer (the welcome panel's and the tour
+ * camera step's featured-camera button) does to the onboarding flow.
+ * From the welcome — the panel that presents itself as the tutorial —
+ * the click must NOT terminate the tutorial: it hands off into the tour
+ * at the camera step, and the camera that is already opening completes
+ * that step through the ordinary camera-opened signal. (The previous
+ * behaviour marked the welcome "done" and closed every onboarding
+ * surface at the click, so the tutorial simply ended.) From inside the
+ * tour there is nothing to hand off — just wait for the signal.
+ */
+export function watchOfferAction(
+  surface: WatchOfferSurface,
+): "enter-tour-at-camera-step" | "await-camera-signal" {
+  return surface === "welcome" ? "enter-tour-at-camera-step" : "await-camera-signal";
+}
+
 /* ── Contextual micro-tutorials (§3) ─────────────────────────────────────── */
 
 export interface MicroStep {

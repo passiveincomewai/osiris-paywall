@@ -4,8 +4,12 @@ import {
   EVENT_LAYERS,
   MICROS,
   HELP_ENTRIES,
+  CAMERA_STEP_N,
+  isCameraOpenedSignal,
   parseLayerSig,
   layersTurnedOn,
+  shouldCompleteCameraStep,
+  watchOfferAction,
 } from "./steps";
 
 describe("TOUR_STEPS", () => {
@@ -75,5 +79,38 @@ describe("MICROS + HELP_ENTRIES", () => {
     const labels = HELP_ENTRIES.map((e) => e.label);
     expect(labels).toContain("Take the Full Tour");
     expect(labels).toContain("Compare Free vs. Pro");
+  });
+});
+
+describe("camera step signal logic (tutorial hand-off fix)", () => {
+  it("derives the camera step from TOUR_STEPS", () => {
+    expect(CAMERA_STEP_N).toBe(2);
+    expect(TOUR_STEPS[CAMERA_STEP_N - 1].action).toBe("camera-open");
+  });
+
+  it("a first open and a camera-to-camera switch are opened signals; a close is not", () => {
+    expect(isCameraOpenedSignal(null, "cam-1")).toBe(true);
+    // Switching directly between open cameras must still count — the old
+    // wiring only recognised null → id, so the step could never complete.
+    expect(isCameraOpenedSignal("cam-1", "cam-2")).toBe(true);
+    expect(isCameraOpenedSignal("cam-1", "cam-1")).toBe(false);
+    expect(isCameraOpenedSignal("cam-1", null)).toBe(false);
+    expect(isCameraOpenedSignal(null, null)).toBe(false);
+  });
+
+  it("the camera step completes only in the tour, on that step, with a camera open", () => {
+    expect(shouldCompleteCameraStep(true, CAMERA_STEP_N, "cam-1")).toBe(true);
+    expect(shouldCompleteCameraStep(false, CAMERA_STEP_N, "cam-1")).toBe(false);
+    expect(shouldCompleteCameraStep(true, CAMERA_STEP_N - 1, "cam-1")).toBe(false);
+    expect(shouldCompleteCameraStep(true, CAMERA_STEP_N + 1, "cam-1")).toBe(false);
+    expect(shouldCompleteCameraStep(true, CAMERA_STEP_N, null)).toBe(false);
+  });
+
+  it("the first-camera offer hands the welcome into the tour instead of ending it", () => {
+    // Regression pin: clicking "Watch a Live Camera — <city>" on the
+    // welcome panel used to persist welcome "done" and close every
+    // onboarding surface — the tutorial ended at the click.
+    expect(watchOfferAction("welcome")).toBe("enter-tour-at-camera-step");
+    expect(watchOfferAction("tour")).toBe("await-camera-signal");
   });
 });

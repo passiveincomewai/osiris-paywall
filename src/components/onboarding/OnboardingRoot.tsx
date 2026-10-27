@@ -40,7 +40,17 @@ import {
   ONB_EVENT,
   type FeatureId,
 } from "@/lib/onboarding/events";
-import { EVENT_LAYERS, MICROS, TOUR_STEPS, layersTurnedOn, CONVERSION_FEATURES } from "@/lib/onboarding/steps";
+import {
+  CAMERA_STEP_N,
+  EVENT_LAYERS,
+  MICROS,
+  TOUR_STEPS,
+  isCameraOpenedSignal,
+  layersTurnedOn,
+  shouldCompleteCameraStep,
+  watchOfferAction,
+  CONVERSION_FEATURES,
+} from "@/lib/onboarding/steps";
 import {
   dispatchOpenCamera,
   fetchFirstCamera,
@@ -197,13 +207,24 @@ function OnboardingRootInner({
     if (!firstCamera) return;
     emitOnboarding(ONB_EVENT.watchCamera);
     dispatchOpenCamera(firstCamera.id);
-    if (uiRef.current === "welcome") {
-      // The welcome's job — get the visitor into the product — is done.
-      update((s) => ({ ...s, welcome: "done" }));
-      setUi("none");
+    if (watchOfferAction(uiRef.current === "welcome" ? "welcome" : "tour") === "enter-tour-at-camera-step") {
+      // The welcome panel presents itself as the tutorial, so watching
+      // the featured camera must not end it (the old behaviour persisted
+      // welcome "done" here and closed every onboarding surface at the
+      // click). Hand off into the tour at the camera step instead: the
+      // camera already opening completes that step through the ordinary
+      // camera-opened signal, and the tour carries on to the layers step.
+      update((s) => ({
+        ...s,
+        welcome: s.welcome === "done" ? "done" : "tour",
+        tourStep: CAMERA_STEP_N,
+      }));
+      setTourStep(CAMERA_STEP_N);
+      setTourPhase("waiting");
+      setUi("tour");
     }
     // In the tour, nothing else to do here: the camera-opened signal
-    // completes step 2 through the ordinary path.
+    // completes the camera step through the ordinary path.
   }, [firstCamera, update]);
 
   /* ── Tour control ── */
@@ -351,12 +372,24 @@ function OnboardingRootInner({
   useEffect(() => {
     const prev = prevCameraRef.current;
     prevCameraRef.current = cameraId;
-    if (cameraId && !prev) {
+    if (isCameraOpenedSignal(prev, cameraId)) {
       recordFeature("camera");
-      if (uiRef.current === "tour" && stepRef.current === 2) succeedStep();
-      else maybeMicro("camera");
+      if (!shouldCompleteCameraStep(uiRef.current === "tour", stepRef.current, cameraId)) {
+        maybeMicro("camera");
+      }
+    }
+    if (shouldCompleteCameraStep(uiRef.current === "tour", stepRef.current, cameraId)) {
+      succeedStep();
     }
   }, [cameraId, recordFeature, succeedStep, maybeMicro]);
+
+  /* Arriving at the camera step with a camera already open completes it
+     too — the real action already happened (a camera opened during the
+     globe step, or the welcome hand-off's camera landing as the step is
+     entered). succeedStep's phase guard keeps repeat calls idempotent. */
+  useEffect(() => {
+    if (shouldCompleteCameraStep(ui === "tour", tourStep, cameraId)) succeedStep();
+  }, [ui, tourStep, cameraId, succeedStep]);
 
   /* ── Signal: layers toggled ── */
   const prevLayersRef = useRef<string | null>(null);
