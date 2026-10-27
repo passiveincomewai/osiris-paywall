@@ -55,6 +55,7 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
       ["What is AIS?", "/what-is-ais"],
       ["Best OSINT Tools", "/best-osint-tools"],
       ["Free OSINT Tools", "/free-osint-tools"],
+      ["Research & Education Access", "/research-access"],
     ],
   },
   {

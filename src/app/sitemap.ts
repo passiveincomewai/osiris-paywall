@@ -166,6 +166,11 @@ const SEO_PAGES_GEO_GUIDES = [
 // deliberately stay out of the sitemap.
 const SEO_PAGES_EMBED = ["/embed-camera"];
 
+// Research & education access (2026-10-27): the documented routes to
+// public-camera metadata — the Enterprise feed/API under the rights
+// registry, the terms framework, and how researchers request access.
+const SEO_PAGES_RESEARCH = ["/research-access"];
+
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
 // snow, ski opening week, the NYC Marathon and the 100th Macy's
@@ -409,6 +414,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}${p}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    })),
+    ...SEO_PAGES_RESEARCH.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     ...SEO_PAGES_AMBIENT.map((p) => ({
       url: `${BASE}${p}`,
