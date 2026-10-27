@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   BASE,
   JsonLd,
@@ -15,6 +16,7 @@ import {
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
 import { EXPLORE_SCOPES, areasForDef, countForDef } from "@/lib/explore-data";
+import { BEACH_SPOTS, spotPath } from "@/lib/surf-spots";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { voiceFaqs } from "@/lib/voice-questions";
 
@@ -137,6 +139,13 @@ export default async function BeachWebcamsPage() {
   const total = await countForDef(EXPLORE_SCOPES.beach);
   const areas = await areasForDef(EXPLORE_SCOPES.beach, 400);
   const fmt = (n: number) => n.toLocaleString("en-US");
+  /* The featured beach towns (keyword wave B): per-town walls on the
+     stated 12 km rule, shared with the surf family (lib/surf-spots).
+     Counts come from each wall's own scope. */
+  const beachSpotCounts = new Map<string, number>();
+  for (const s of BEACH_SPOTS) {
+    beachSpotCounts.set(s.slug, await countForDef(EXPLORE_SCOPES[s.scopeKey]));
+  }
 
   return (
     <PageShell>
@@ -180,6 +189,38 @@ export default async function BeachWebcamsPage() {
       </section>
 
       <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">Featured beach towns — live walls</h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          Nine beach towns carry a genuine cluster of public cameras within
+          12 km of the sand. Each has its own wall page on that stated rule —
+          the town&rsquo;s waterfront and road cameras, nearest first — in the
+          same family as the{" "}
+          <Link href="/surf-webcams" className="text-sky-300 hover:underline">
+            surf webcams
+          </Link>{" "}
+          walls.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {BEACH_SPOTS.map((s) => (
+            <Link
+              key={s.slug}
+              href={spotPath(s)}
+              className="block rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:bg-white/[0.06] transition-colors"
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="font-semibold text-white/90">{s.name}</h3>
+                <span className="text-xs text-white/45 whitespace-nowrap">
+                  {fmt(beachSpotCounts.get(s.slug) ?? 0)} cameras
+                </span>
+              </div>
+              <p className="text-xs text-white/40 mt-0.5">{s.place}</p>
+              <p className="text-sm text-white/55 mt-2 leading-relaxed">{s.knownFor}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-5">What coastal cameras show</h2>
         <div className="grid sm:grid-cols-2 gap-4">
           {CATEGORIES.map((c) => (
@@ -210,6 +251,7 @@ export default async function BeachWebcamsPage() {
       <RelatedLinks
         title="More webcam directories"
         links={[
+          { label: "Surf webcams — see the break live", href: "/surf-webcams" },
           { label: "Live webcams worldwide", href: "/live-webcams" },
           { label: "Top 25 camera regions", href: "/world-city-webcams" },
           { label: "Cameras overview", href: "/cameras" },

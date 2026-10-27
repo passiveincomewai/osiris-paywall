@@ -389,6 +389,39 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'border-champlain': borderGeo('Champlain crossing, New York', 'canada', 45.0, -73.45, 10),
   'border-derby-line': borderGeo('Derby Line crossing, Vermont', 'canada', 45.0055, -72.11, 10),
   'border-houlton': borderGeo('Houlton crossing, Maine', 'canada', 47.12, -67.79, 15),
+
+  /* Surf & beach spot walls (keyword wave B, Oct 2026) — one 12 km
+     radius scope per spot in lib/surf-spots, the stated rule of the
+     /surf-webcams hub, the /surf-webcams/[spot] pages and the
+     /beach-webcams/[spot] pages. A wall is the surf town on camera —
+     beach-named feeds where the catalogue has them, the town's road
+     and corridor feeds where it does not; the pages describe the
+     actual mix and never present a wall as a surf forecast. Yields
+     reconciled against the raw chunks in lib/surf-page-scopes.test
+     (Haeundae 184 is the family's fullest wall; the thinnest,
+     Santa Cruz, states its 15 as it is). */
+  'surf-haeundae': eventGeoIn('Haeundae, Busan', 'south-korea', 35.1631, 129.1636, 12),
+  'surf-waikiki': eventGeoIn('Waikiki & Honolulu', 'united-states', 21.2793, -157.8385, 12),
+  'surf-bondi': eventGeoIn('Bondi Beach, Sydney', 'australia', -33.8915, 151.2767, 12),
+  'surf-encinitas': eventGeoIn('Encinitas & Cardiff', 'united-states', 33.037, -117.292, 12),
+  'surf-kamakura': eventGeoIn('Kamakura & Shonan', 'japan', 35.3192, 139.5469, 12),
+  'surf-manly': eventGeoIn('Manly, Sydney', 'australia', -33.7969, 151.2869, 12),
+  'surf-new-smyrna-beach': eventGeoIn('New Smyrna Beach', 'united-states', 29.0258, -80.9274, 12),
+  'surf-huntington-beach': eventGeoIn('Huntington Beach', 'united-states', 33.6595, -117.9988, 12),
+  'surf-la-jolla': eventGeoIn('La Jolla', 'united-states', 32.8328, -117.2713, 12),
+  'surf-san-clemente': eventGeoIn('San Clemente', 'united-states', 33.4274, -117.612, 12),
+  'surf-ichinomiya': eventGeoIn('Ichinomiya & the Chiba coast', 'japan', 35.373, 140.385, 12),
+  'surf-surfers-paradise': eventGeoIn('Surfers Paradise & the Gold Coast', 'australia', -28.0023, 153.4294, 12),
+  'surf-santa-cruz': eventGeoIn('Santa Cruz', 'united-states', 36.9517, -122.026, 12),
+  'beach-laguna-beach': eventGeoIn('Laguna Beach', 'united-states', 33.5427, -117.7854, 12),
+  'beach-miami-beach': eventGeoIn('Miami Beach', 'united-states', 25.7907, -80.13, 12),
+  'beach-newport-beach': eventGeoIn('Newport Beach', 'united-states', 33.6189, -117.9298, 12),
+  'beach-daytona-beach': eventGeoIn('Daytona Beach', 'united-states', 29.2108, -81.0228, 12),
+  'beach-virginia-beach': eventGeoIn('Virginia Beach', 'united-states', 36.8529, -75.978, 12),
+  'beach-galveston': eventGeoIn('Galveston', 'united-states', 29.3013, -94.7977, 12),
+  'beach-myrtle-beach': eventGeoIn('Myrtle Beach', 'united-states', 33.6959, -78.88, 12),
+  'beach-palma': eventGeoIn('Palma & Mallorca’s south coast', 'spain', 39.5696, 2.6502, 12),
+  'beach-santa-monica': eventGeoIn('Santa Monica', 'united-states', 34.0095, -118.4912, 12),
 };
 
 /** A scope definition from request params: either a registry key, or

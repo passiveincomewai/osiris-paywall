@@ -11,6 +11,7 @@ import { NATIONAL_PARKS } from "@/lib/national-parks";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
+import { BEACH_SPOT_SLUGS, SURF_SPOT_SLUGS } from "@/lib/surf-spots";
 
 const BASE = "https://worldeye.app";
 
@@ -232,6 +233,19 @@ const SEO_PAGES_BORDER = [
   ...BORDER_CROSSINGS.map((c) => `/border-crossings/${c.slug}`),
 ];
 /* ── END border-crossings delta ──────────────────────────────────── */
+
+// Wave 16 (2026-10-27): the surf & beach spot walls (keyword wave B) —
+// the /surf-webcams hub plus one page per spot in lib/surf-spots:
+// /surf-webcams/<slug> for the 13 surf towns and /beach-webcams/<slug>
+// for the 9 beach towns. The slug lists derive from the same module
+// the routes' generateStaticParams read, so the sitemap cannot drift
+// from the pages that exist. Catalogue-driven walls, so they carry
+// the catalogue's date.
+const SEO_PAGES_WAVE16 = [
+  "/surf-webcams",
+  ...SURF_SPOT_SLUGS.map((slug) => `/surf-webcams/${slug}`),
+  ...BEACH_SPOT_SLUGS.map((slug) => `/beach-webcams/${slug}`),
+];
 
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
 // pattern — the World Series, California king-tide flooding, first
@@ -518,6 +532,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     /* ── END border-crossings delta ── */
+    ...SEO_PAGES_WAVE16.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
     ...SEO_PAGES_AMBIENT.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "weekly" as const,
