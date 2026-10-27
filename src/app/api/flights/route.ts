@@ -590,10 +590,21 @@ function assemblePayload(
 /** First-paint payload from the in-flight build, or null when the build
  *  has not gathered enough to be worth painting yet. */
 function buildPartialPayload(): any | null {
-  if (!liveSource || liveRaw.length < MIN_PARTIAL_AIRCRAFT) return null;
+  // Gate on gathered records only — NOT on liveSource. liveSource is
+  // assigned when phase 2 completes, but phase 1 (mil feed + OpenSky)
+  // can stall for the OpenSky fetch's full 30s timeout, and in that
+  // window the military feed's aircraft are already in liveRaw and
+  // worth painting. Gating on liveSource made the first-paint race
+  // fall through to awaiting the whole ~50s build (measured 53s on a
+  // cold cache, 2026-10-26) — the partial existed precisely to
+  // prevent that. The provisional source label is 'regional': the
+  // mil feed is part of every regional build, a partial is labelled
+  // partial:true and never cached, and the completed build in the
+  // same cycle stamps the exact source.
+  if (liveRaw.length < MIN_PARTIAL_AIRCRAFT) return null;
   const regionalIngested = liveSource === 'regional' ? Math.max(0, liveRaw.length - liveMilCount) : 0;
   return assemblePayload(classifyAll(liveRaw), liveRaw.length, {
-    source: liveSource,
+    source: liveSource || 'regional',
     milCount: liveMilCount,
     regionalIngested,
     regionsAnswered: liveRegionsAnswered,
