@@ -7,7 +7,7 @@ import { classifyDropReason } from '@/lib/flights/diagnostics';
 
 export const maxDuration = 60;
 
-// 38 regions covering every major aviation corridor at 250 nm radius.
+// 40 regions covering every major aviation corridor at 250 nm radius.
 // Focused on high-density airspace: US domestic, North Atlantic, Europe,
 // Middle East hub, India, East Asia, SE Asia, Australia, South America.
 //
@@ -18,14 +18,25 @@ export const maxDuration = 60;
 // contain an aircraft over Utah at all (a direct adsb.fi query centred
 // on SLC returns ~50 aircraft inside Utah's bbox). Three centres put
 // every one of those metros inside a queried radius.
-const REGIONS = [
+//
+// The Mid-South (Memphis) and Florida centres (added 2026-10-27) close
+// the same kind of hole in the Southeast: Memphis sat 230 km from the
+// nearest covered point (0 payload aircraft within 200 km of the FedEx
+// superhub) and peninsular Florida was outside EVERY circle (Orlando
+// 554 km, Tampa 576 km, Miami 881 km from the nearest centre; the whole
+// state held 4 aircraft in the payload). Both centres sit inside the
+// existing Southeast/Texas circles' overlap so the SE also gains a
+// second chance when one centre's fetch fails.
+export const REGIONS = [
   // North America
   { lat: 39.8,  lon: -98.5 }, // Central US
   { lat: 41.0,  lon: -74.0 }, // Northeast (NYC/Boston/DC)
   { lat: 33.0,  lon: -84.0 }, // Southeast (Atlanta)
+  { lat: 35.0,  lon: -90.0 }, // Mid-South (Memphis)
   { lat: 42.0,  lon: -88.0 }, // Midwest (Chicago)
   { lat: 39.7,  lon:-105.0 }, // Front Range (Denver)
   { lat: 30.0,  lon: -97.0 }, // Texas (Dallas/Houston)
+  { lat: 28.5,  lon: -81.7 }, // Florida (Orlando/Tampa/Miami)
   { lat: 19.4,  lon: -99.1 }, // Mexico City
   { lat: 47.0,  lon:-122.0 }, // Pacific Northwest (Seattle)
   { lat: 34.0,  lon:-118.0 }, // SoCal (LA)
@@ -145,7 +156,7 @@ const ADSBFI_BASE = 'https://opendata.adsb.fi/api/v2';
 // point endpoint meters far harder than /mil, so the regional sweep is paced
 // rather than fanned out in parallel. Pacing is start-to-start: a region
 // request never STARTS less than ~1.05s after the previous one started,
-// which honours the 1 req/s cap while keeping a 38-region sweep inside
+// which honours the 1 req/s cap while keeping a 40-region sweep inside
 // SWEEP_DEADLINE_MS — the old end-of-request + 1100ms gap stacked the full
 // fetch latency of every region on top of the gap (~45s at 30 regions).
 const ADSBFI_START_GAP_MS = 1050;
@@ -434,6 +445,7 @@ const JAMMING_NACAP_THRESHOLD = 4;
 let liveRaw: any[] = [];
 let liveMilCount = 0;
 let liveRegionsAnswered = 0;
+let liveRegionsFallback = 0;
 let liveSource = '';
 
 // The regional sweep takes ~40s wall (35 paced requests) and the route cache
@@ -446,14 +458,80 @@ let liveSource = '';
 let regionalSnapshot: any[] = [];
 let regionalSnapshotTime = 0;
 let regionalRegionsAnswered = 0;
+let regionalRegionsFallback = 0;
 const REGIONAL_REUSE_MS = 5 * 60 * 1000;
 // Stop starting new region requests this long into a sweep, so a slow tail
-// of timeouts cannot push the route past its 60s maxDuration. 38 regions
-// at the ~1.05s pacing floor need ~40s of starts alone, so the deadline
+// of timeouts cannot push the route past its 60s maxDuration. 40 regions
+// at the ~1.05s pacing floor need ~41s of starts alone, so the deadline
 // sits at 50s; callers no longer wait for it in the common case — GET
 // serves a partial payload from the in-flight sweep once enough regions
 // have answered (see FIRST_PAINT_WAIT_MS below).
 const SWEEP_DEADLINE_MS = 50000;
+
+// ── Per-region last-good fallback ─────────────────────────────────────
+// A region request that fails or answers empty contributes NOTHING to
+// that sweep, and at the 250 nm cap most centres have no neighbour whose
+// circle overlaps them — one failed fetch therefore zeroes a whole
+// region's sky, and the 5-minute snapshot reuse + 90 s response cache
+// above stretch that zero across every reload in the window (measured
+// over Atlanta, 2026-10-27: the Southeast circle's aircraft vanished on
+// repeated reloads while its neighbours stayed healthy, and the payload
+// itself reported 36 of 38 regions answered — failures are routine).
+// Each region's last successful (>0) answer is therefore kept, and a
+// failed/empty fetch reuses it while it is ≤15 min old — the same
+// bounded-staleness bargain as the 5-minute whole-snapshot reuse, one
+// level down. Fallback use is reported per payload
+// (providers.adsbfi_regions_fallback) so a region living on last-good
+// data stays visible instead of silently passing as live.
+export const REGION_LAST_GOOD_MAX_AGE_MS = 15 * 60 * 1000;
+
+export interface RegionLastGood {
+  records: any[];
+  time: number;
+}
+
+const regionLastGood = new Map<string, RegionLastGood>();
+
+export function regionLastGoodKey(region: { lat: number; lon: number }): string {
+  return `${region.lat},${region.lon}`;
+}
+
+/** What one region contributes to a sweep: its fresh answer when the
+ *  fetch returned aircraft; otherwise its last-good records while they
+ *  are young enough; otherwise nothing. Pure. The sweep stores a fresh
+ *  answer into the cache itself, and reused records never refresh
+ *  their own timestamp, so last-good data goes stale on schedule
+ *  instead of becoming immortal. */
+export function resolveRegionContribution(
+  fresh: any[],
+  lastGood: RegionLastGood | undefined,
+  now: number,
+): { records: any[]; usedFallback: boolean } {
+  if (fresh.length > 0) return { records: fresh, usedFallback: false };
+  if (
+    lastGood &&
+    lastGood.records.length > 0 &&
+    now - lastGood.time <= REGION_LAST_GOOD_MAX_AGE_MS
+  ) {
+    return { records: lastGood.records, usedFallback: true };
+  }
+  return { records: [], usedFallback: false };
+}
+
+/** Aircraft actually ingested from the regional sweep: what the
+ *  payload holds once the sweep has run, minus the two feeds that were
+ *  ingested before it started (the military feed and the OpenSky
+ *  snapshot). The fresh-sweep path used to derive this from a final
+ *  re-ingest of the sweep records, but those records already reach
+ *  allRaw per region (for the first-paint path), so the re-ingest added
+ *  zero and adsbfi_regional reported 0 for every fresh sweep. */
+export function regionalIngestedCount(
+  afterTotal: number,
+  milCount: number,
+  openSkyCount: number,
+): number {
+  return Math.max(0, afterTotal - milCount - openSkyCount);
+}
 
 // First paint: a cold sweep takes ~40s+, and the first visitor used to
 // wait for ALL of it before a single aircraft rendered. GET now races
@@ -548,7 +626,7 @@ function classifyAll(allRaw: any[]) {
 function assemblePayload(
   built: ReturnType<typeof classifyAll>,
   total: number,
-  meta: { source: string; milCount: number; regionalIngested: number; regionsAnswered: number; partial: boolean },
+  meta: { source: string; milCount: number; regionalIngested: number; regionsAnswered: number; regionsFallback: number; partial: boolean },
 ) {
   return {
     commercial_flights: built.commercial,
@@ -568,6 +646,7 @@ function assemblePayload(
       adsbfi_mil:      meta.milCount,
       adsbfi_regional: meta.regionalIngested,
       adsbfi_regions:  meta.regionsAnswered,
+      adsbfi_regions_fallback: meta.regionsFallback,
       adsbfi_regional_age_s: regionalSnapshotTime ? Math.round((Date.now() - regionalSnapshotTime) / 1000) : null,
       opensky:         osSnapshot.length,
       opensky_auth:    hasOpenSkyCreds(),
@@ -608,6 +687,7 @@ function buildPartialPayload(): any | null {
     milCount: liveMilCount,
     regionalIngested,
     regionsAnswered: liveRegionsAnswered,
+    regionsFallback: liveRegionsFallback,
     partial: true,
   });
 }
@@ -638,6 +718,7 @@ export async function GET(request?: Request) {
     liveRaw = allRaw;
     liveMilCount = 0;
     liveRegionsAnswered = 0;
+    liveRegionsFallback = 0;
     liveSource = '';
 
     // ── Phase 1 + 2 in parallel: global military feed AND OpenSky simultaneously ──
@@ -717,6 +798,7 @@ export async function GET(request?: Request) {
     }
 
     ingestAc(osSnapshot, allRaw, seenHex);
+    const openSkyIngested = allRaw.length - milCount;
     const openSkyWorked = osSnapshot.length > 0;
 
     // ── Phase 3: Regional sweep — last resort only ────────────────────────────
@@ -735,12 +817,14 @@ export async function GET(request?: Request) {
         ingestAc(regionalSnapshot, allRaw, seenHex);
         regionalIngested = allRaw.length - before;
         liveRegionsAnswered = regionalRegionsAnswered;
+        liveRegionsFallback = regionalRegionsFallback;
       } else {
         console.warn('[OSIRIS] no OpenSky snapshot — falling back to adsb.fi regional sweep');
         const sweepRaw: any[] = [];
         const sweepSeen = new Set<string>();
         const sweepStart = Date.now();
         let answered = 0;
+        let fallbackRegions = 0;
 
         let lastStart = 0;
         for (const r of REGIONS) {
@@ -753,23 +837,40 @@ export async function GET(request?: Request) {
             await new Promise(resolve => setTimeout(resolve, paceWait));
           }
           lastStart = Date.now();
-          const regionAc = await fetchAdsbFiRegion(r.lat, r.lon);
-          if (regionAc.length > 0) answered++;
+          const fetched = await fetchAdsbFiRegion(r.lat, r.lon);
+          // A failed/empty fetch falls back to the region's last-good
+          // records (≤15 min old) instead of contributing zero — see
+          // resolveRegionContribution. Only a fresh answer refreshes
+          // the cache, so fallback data still ages out on schedule.
+          const key = regionLastGoodKey(r);
+          const contribution = resolveRegionContribution(
+            fetched,
+            regionLastGood.get(key),
+            Date.now(),
+          );
+          if (fetched.length > 0) {
+            answered++;
+            regionLastGood.set(key, { records: fetched, time: Date.now() });
+          } else if (contribution.usedFallback) {
+            fallbackRegions++;
+          }
+          const regionAc = contribution.records;
           ingestAc(regionAc, sweepRaw, sweepSeen);
-          // Sweep results reach allRaw only at the end of the sweep, so
-          // publish them per region for the first-paint path.
+          // Publish per region for the first-paint path — the records
+          // land in allRaw HERE, not in a later re-ingest (which is
+          // why regionalIngested is computed by difference below).
           ingestAc(regionAc, allRaw, seenHex);
           liveRegionsAnswered = answered;
+          liveRegionsFallback = fallbackRegions;
         }
 
         if (sweepRaw.length > 0) {
           regionalSnapshot = sweepRaw;
           regionalSnapshotTime = Date.now();
           regionalRegionsAnswered = answered;
+          regionalRegionsFallback = fallbackRegions;
         }
-        const before = allRaw.length;
-        ingestAc(sweepRaw, allRaw, seenHex);
-        regionalIngested = allRaw.length - before;
+        regionalIngested = regionalIngestedCount(allRaw.length, milCount, openSkyIngested);
       }
 
       if (allRaw.length === 0) {
@@ -790,6 +891,7 @@ export async function GET(request?: Request) {
       milCount,
       regionalIngested,
       regionsAnswered: regionalRegionsAnswered,
+      regionsFallback: regionalRegionsFallback,
       partial: false,
     });
     })();

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
  * First-paint behaviour of GET /api/flights, measured against a mocked
  * provider whose regions answer in ~150 ms. With fast fetches the
  * sweep's wall time is set by the route's own ~1.05 s start pacing
- * (38 regions ≈ 40 s) — the same shape as production, where a cold
+ * (40 regions ≈ 42 s) — the same shape as production, where a cold
  * sweep measured ~47 s and the first visitor used to wait for ALL of
  * it. These are REAL timers on purpose: the pacing and the first-paint
  * race are wall-clock behaviour, so faking the clock would fake the
@@ -20,7 +20,7 @@ import { stealthFetch } from '@/lib/stealthFetch';
 import { GET } from './route';
 
 const PER_REGION = 30;
-const REGION_COUNT = 38; // REGIONS in route.ts (35 original + Denver/SLC/Phoenix)
+const REGION_COUNT = 40; // REGIONS in route.ts (38 + Memphis/Florida, 2026-10-27)
 
 function ac(hex: string, over: Record<string, unknown> = {}) {
   return {
@@ -137,6 +137,13 @@ describe('GET /api/flights — first paint', () => {
     expect(full.partial).toBe(false);
     expect(full.source).toBe('regional');
     expect(full.providers.adsbfi_regions).toBe(REGION_COUNT);
+    // adsbfi_regional must be the aircraft actually ingested from the
+    // sweep (total − mil feed − OpenSky), not the 0 the fresh-sweep
+    // path used to report when its end-of-sweep re-ingest found every
+    // record already in allRaw. Every region answered here, so no
+    // region needed its last-good fallback.
+    expect(full.providers.adsbfi_regional).toBe(expectedTotal - 5);
+    expect(full.providers.adsbfi_regions_fallback).toBe(0);
     expect(full.total).toBe(expectedTotal);
     expect(allFlights(full)).toHaveLength(expectedTotal);
     expect(full.diagnostics.dropped_invalid).toBe(0);

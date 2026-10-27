@@ -21,8 +21,9 @@ import {
 } from '@/lib/traffic/sim';
 import { matchFlowToRoads } from '@/lib/traffic/flow';
 import { circlePolygon, viewportCovered, type LngLatBounds } from '@/lib/drones/geo';
-import { FlightBlend, flightIconImage, flightIconSize, flightToFeature, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
+import { FlightBlend, flightIconImage, flightIconSize, flightsToFeatures, type FlightBuckets } from '@/lib/flights/render';
 import { featureMatchesFlightShareId, FLIGHT_SHARE_OPEN_DEADLINE_MS } from '@/lib/share/links';
+import { findFlightFeatureInBuckets, flightShareCameraSettledOn, flightShareFlyToTarget } from '@/lib/share/flight-open';
 import {
   IDLE_FLIGHT_FOLLOW, FOLLOW_MAX_PITCH, aircraftFollowPreset, describeFix, followCameraTarget,
   followLostExpired, headingOf, noteFollowSeen, setFollowMode as setFollowModeState, startFollow,
@@ -3033,6 +3034,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         } catch { feature = undefined; }
         if (feature) break;
       }
+      let fromDataset = false;
       if (!feature) {
         // querySourceFeatures only sees features inside the tiles the
         // map currently renders — a shared aircraft outside the
@@ -3042,17 +3044,36 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         // full dataset regardless of viewport.
         const cur = flightBlendRef.current?.current(Date.now());
         if (cur) {
-          for (const bucket of [cur.commercial_flights, cur.private_flights, cur.private_jets, cur.military_flights]) {
-            const rec = (bucket || []).find((f: any) => featureMatchesFlightShareId({ properties: f }, id));
-            if (rec) { feature = flightToFeature(rec); break; }
-          }
+          feature = findFlightFeatureInBuckets(cur, id) ?? undefined;
+          fromDataset = !!feature;
         }
       }
       if (!feature) return false;
       openedShareKeys.set(`flight:${id}`, Date.now());
-      const c = feature.geometry?.coordinates;
-      if (Array.isArray(c)) map.flyTo({ center: c as any, zoom: Math.max(map.getZoom(), 8), duration: 1200 });
+      const target = flightShareFlyToTarget(feature, map.getZoom());
+      if (target) map.flyTo({ center: target.center, zoom: target.zoom, duration: 1200, essential: true });
       showFlightPopup(feature);
+      if (fromDataset && target) {
+        // A dataset open can resolve the moment the first snapshot
+        // lands — while the load sequence is still moving the camera
+        // (the opening dive settles after the data arrives) — so its
+        // flight can be superseded before the visitor ever sees the
+        // aircraft: the card opens, the map stays behind (measured on
+        // the /?flight= landing, 2026-10-26). Once this flight has had
+        // time to land, check where the camera actually settled and
+        // fly once more if it never arrived — but only while this
+        // aircraft's card is still open, so a visitor who has already
+        // moved on is never yanked back. Source-feature opens cannot
+        // resolve until the aircraft is already inside the rendered
+        // tiles, so they never need the second flight.
+        const { center, zoom } = target;
+        setTimeout(() => {
+          if (openFlightPopupRef.current?.icao24?.toLowerCase() !== id.toLowerCase()) return;
+          if (!flightShareCameraSettledOn(map.getCenter(), center)) {
+            map.flyTo({ center, zoom, duration: 1200, essential: true });
+          }
+        }, 1600);
+      }
       return true;
     };
     map.on('sourcedata', (e: any) => {
