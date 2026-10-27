@@ -39,6 +39,10 @@ import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-camera
 import { selectAgenciesForView, agencyIntersectsView, padView } from '@/lib/transit/relevance';
 import { TransitBlend } from '@/lib/transit/motion';
 import {
+  TRANSIT_SUB, transitSubOn, transitLabelsOn, vehicleModeVisible, lineModeVisible, anyLineFamilyOn,
+} from '@/lib/transit/subdivisions';
+import { nearestOf } from '@/lib/transit/explorer';
+import {
   isLowPowerDevice, sensorEffectLabel, sensorEffectPlan, supportsSvgFilterReference,
   thermalTableValues, THERMAL_FILTER_ID, type SensorEffectState,
 } from '@/lib/sensor-effects';
@@ -55,7 +59,8 @@ import CctvPreviews, { type PreviewCamera } from '@/components/CctvPreviews';
 import MapControls from '@/components/MapControls';
 import CinematicDirector from '@/components/CinematicDirector';
 import SpaceMissionsPanel from '@/components/SpaceMissionsPanel';
-import TransitNetworkPanel from '@/components/TransitNetworkPanel';
+import TransitExplorer, { type TransitExplorerInit } from '@/components/TransitExplorer';
+import TransitSelectionCard, { type TransitSelection, type TransitVehicleSelection } from '@/components/TransitSelectionCard';
 import { launchStatusKind, type LaunchRecord } from '@/lib/launches/types';
 import StreetLevelViewer from '@/components/StreetLevelViewer';
 import { STREET_LEVEL_MAX_SPAN_DEG, STREET_LEVEL_MIN_ZOOM, type StreetPicture } from '@/lib/streetlevel/types';
@@ -385,9 +390,41 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // in a hot loop, and never at the vehicles' expense.
   const transitNetworkRef = useRef(new Map<string, { lines: any; stops: any[]; credit: string }>());
   const transitNetworkFailRef = useRef(new Map<string, number>());
-  // The route the transit panel has selected (internal GTFS route_id);
-  // drives the highlight layer over the network lines.
+  // The route the Transit Explorer has selected (internal GTFS
+  // route_id); drives the highlight layer over the network lines.
   const [transitRouteSel, setTransitRouteSel] = useState<string | null>(null);
+  // Transit redesign (2026-10-26): enabling the layer no longer opens
+  // anything. A tapped vehicle/stop shows the small selection card;
+  // the Explorer is a separate full-screen workspace opened on
+  // purpose (Layers section, card actions); Follow Vehicle follows
+  // the drone pattern (a ref the render loop chases, drag releases).
+  const [transitSel, setTransitSel] = useState<TransitSelection | null>(null);
+  const [transitExplorer, setTransitExplorer] = useState<{ init: TransitExplorerInit; seq: number } | null>(null);
+  const transitFollowRef = useRef<{ agencyId: string; vehId: string; label: string; lastSeenMs: number } | null>(null);
+  const [transitFollowUi, setTransitFollowUi] = useState<{ label: string } | null>(null);
+  const [transitFollowNotice, setTransitFollowNotice] = useState<string | null>(null);
+  const transitFollowNoticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // The last rendered vehicle features — "Show Nearby Transit"
+  // searches exactly what is on the globe, nothing synthetic.
+  const transitRenderedRef = useRef<any[]>([]);
+  const showTransitFollowNotice = useCallback((msg: string) => {
+    setTransitFollowNotice(msg);
+    if (transitFollowNoticeTimer.current) clearTimeout(transitFollowNoticeTimer.current);
+    transitFollowNoticeTimer.current = setTimeout(() => setTransitFollowNotice(null), 7000);
+  }, []);
+  const endTransitFollow = useCallback((notice?: string) => {
+    transitFollowRef.current = null;
+    setTransitFollowUi(null);
+    if (notice) showTransitFollowNotice(notice);
+  }, [showTransitFollowNotice]);
+  const startTransitFollow = useCallback((t: { agencyId: string; vehId: string; route: string; label?: string }) => {
+    const label = (t.label || '').trim() || (t.route ? `ROUTE ${t.route}` : 'VEHICLE');
+    transitFollowRef.current = { agencyId: t.agencyId, vehId: t.vehId, label, lastSeenMs: Date.now() };
+    setTransitFollowUi({ label });
+  }, []);
+  const openTransitExplorer = useCallback((init: TransitExplorerInit) => {
+    setTransitExplorer((prev) => ({ init, seq: (prev?.seq ?? 0) + 1 }));
+  }, []);
   // Traffic layer keeps its simulation in-map like transit/GBFS: the road
   // network rebuilt from the basemap's own tiles, the fleet, the latest
   // TomTom flow sample, and the honest-labeling chip (always visible
@@ -1129,6 +1166,24 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         } catch { /* a later call (boot/theme) retries */ }
       });
     }
+    // The transit mode artwork (the owner's staged bus / train
+    // graphics): real per-mode markers at street zoom. A plain dot is
+    // registered under each id at layer setup so the symbol layers
+    // never point at a missing image; the artwork swaps in over it
+    // the moment it loads (the camera-eye pattern).
+    for (const [id, url] of Object.entries({
+      'transit-bus': '/icons/transit-bus.png',
+      'transit-train': '/icons/transit-train.png',
+    })) {
+      void loadAircraftPhoto(url).then((img) => {
+        if (!img) return;
+        try {
+          const data = aircraftPhotoData(img);
+          if (map.hasImage(id)) map.removeImage(id);
+          map.addImage(id, data, { pixelRatio: AIRCRAFT_PHOTO_PX / 30 });
+        } catch { /* a later call (boot/theme) retries */ }
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -1284,6 +1339,12 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       // Photo artwork swaps in over the commercial / private / jet /
       // helicopter glyph ids once loaded (glyphs stay as fallback).
       installPhotoIcons(map);
+      // Transit artwork placeholders: plain dots under the bus/train
+      // image ids until the real graphics swap in (and forever, if an
+      // image ever failed to load) — the transit symbol layers must
+      // never reference a missing image.
+      createDot(map, 'transit-bus', '#FFA726', 48);
+      createDot(map, 'transit-train', '#AB47BC', 48);
       // Until the camera-eye photo registers (and forever, if it ever
       // failed to load), a plain dot stands in under the same image id —
       // installPhotoIcons replaces it the moment the photo arrives.
@@ -1300,6 +1361,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
       const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'plows', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'drones', 'drone-trails', 'drone-receivers', 'drone-airspace', 'launches', 'launch-replay', 'street-level'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
+      // Clustered twin of the transit vehicle source: at globe /
+      // regional zoom the vehicles collapse into count bubbles instead
+      // of thousands of dots. The vehicles render loop feeds both
+      // sources the same subdivision-filtered features.
+      map.addSource('transit-clusters', { type: 'geojson', data: EMPTY_FC, cluster: true, clusterRadius: 56, clusterMaxZoom: 9 } as any);
 
       // US state + territory outlines — a bold double line (dark casing,
       // bright core) so state borders are unmistakable while searching.
@@ -1482,15 +1548,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       // stops would be noise below street level. The network effect
       // below pushes the data; any failure leaves these sources empty
       // and the vehicles completely unaffected.
-      map.addLayer({ id: 'transit-routes-line', type: 'line', source: 'transit-routes', layout: {
+      // Lines paint from city zoom up: at globe zoom one metro's
+      // network is sub-pixel noise, and the subdivision filters in
+      // lib/transit/subdivisions decide which families show at all.
+      map.addLayer({ id: 'transit-routes-line', type: 'line', source: 'transit-routes', minzoom: 8, layout: {
         'line-cap': 'round', 'line-join': 'round',
       }, paint: {
         'line-color': ['get', 'color'],
         'line-width': ['interpolate', ['linear'], ['zoom'], 6, 0.8, 10, 1.6, 14, 3],
         'line-opacity': 0.55,
       }});
-      // The route picked in the transit panel, drawn over the network.
-      map.addLayer({ id: 'transit-route-highlight', type: 'line', source: 'transit-routes',
+      // The route picked in the Transit Explorer, drawn over the
+      // network (the base lines dim while a selection is active — see
+      // the highlight effect).
+      map.addLayer({ id: 'transit-route-highlight', type: 'line', source: 'transit-routes', minzoom: 8,
         filter: ['==', ['get', 'routeId'], '__none__'], layout: {
           'line-cap': 'round', 'line-join': 'round',
         }, paint: {
@@ -1498,23 +1569,63 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           'line-width': ['interpolate', ['linear'], ['zoom'], 6, 2, 10, 3.4, 14, 5.5],
           'line-opacity': 0.95,
         }});
+      // Route labels ride the lines — an opt-in subdivision
+      // (Layers → Route Labels), street zoom only.
+      map.addLayer({ id: 'transit-route-labels', type: 'symbol', source: 'transit-routes', minzoom: 13, layout: {
+        'symbol-placement': 'line', 'text-field': ['get', 'short'], 'text-size': 9,
+        'text-font': ['Open Sans Regular'], 'text-allow-overlap': false,
+      }, paint: { 'text-color': '#E8F6FF', 'text-halo-color': '#000000', 'text-halo-width': 1.5, 'text-opacity': 0.9 }});
       map.addLayer({ id: 'transit-stops-dots', type: 'circle', source: 'transit-stops', minzoom: 12.5, paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 12.5, 2.5, 15, 4.5, 17, 6],
         'circle-color': '#ECEFF1', 'circle-opacity': 0.95,
         'circle-stroke-color': '#10222E', 'circle-stroke-width': 1.2,
       }});
+      // Stop names only at street zoom, where they stop colliding.
+      map.addLayer({ id: 'transit-stops-label', type: 'symbol', source: 'transit-stops', minzoom: 15, layout: {
+        'text-field': ['get', 'name'], 'text-size': 9, 'text-font': ['Open Sans Regular'],
+        'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-max-width': 14, 'text-allow-overlap': false,
+      }, paint: { 'text-color': '#ECEFF1', 'text-halo-color': '#000000', 'text-halo-width': 1.5, 'text-opacity': 0.85 }});
 
-      // Live Transit — vehicle dots colored by mode. Opacity is per-
-      // feature (the render loop sets `op`): a vehicle whose newest
-      // GPS fix is > 3 min old fades, so a stale dot never reads as
-      // live as a fresh one.
-      map.addLayer({ id: 'transit-dots', type: 'circle', source: 'transit', paint: {
+      // Live Transit vehicles, two zoom bands. Below city zoom the
+      // cluster bubbles carry the picture (a count, honestly — not
+      // fabricated positions). From city zoom up, buses ARE the
+      // owner's bus artwork and rail vehicles the train pin (symbol
+      // layers below) — the old orange bus dot survives only as the
+      // placeholder image registered under the artwork's id, shown
+      // if the artwork itself ever fails to load. Modes without
+      // artwork (ferries, neutral) keep mode-colored dots at every
+      // zoom. Opacity is per-feature (the render
+      // loop sets `op`): a vehicle whose newest GPS fix is > 3 min
+      // old fades, so a stale marker never reads as live.
+      map.addLayer({ id: 'transit-cluster-circles', type: 'circle', source: 'transit-clusters', maxzoom: 10,
+        filter: ['has', 'point_count'], paint: {
+          'circle-radius': ['step', ['get', 'point_count'], 13, 25, 17, 100, 22, 300, 27],
+          'circle-color': 'rgba(56,189,248,0.88)', 'circle-opacity': 0.92,
+          'circle-stroke-color': 'rgba(224,242,254,0.9)', 'circle-stroke-width': 1.2,
+        }});
+      map.addLayer({ id: 'transit-cluster-count', type: 'symbol', source: 'transit-clusters', maxzoom: 10,
+        filter: ['has', 'point_count'], layout: {
+          'text-field': ['get', 'point_count_abbreviated'], 'text-size': 10, 'text-font': ['Open Sans Regular'],
+        }, paint: { 'text-color': '#06283D' }});
+      map.addLayer({ id: 'transit-dots', type: 'circle', source: 'transit', minzoom: 10,
+        filter: ['in', ['get', 'mode'], ['literal', ['ferry', 'transit']]], paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 8, 5, 12, 8],
         'circle-color': ['match', ['get', 'mode'],
           'bus', '#FFA726', 'tram', '#66BB6A', 'metro', '#42A5F5', 'train', '#AB47BC', 'ferry', '#26C6DA', '#B0BEC5'],
         'circle-opacity': ['coalesce', ['get', 'op'], 0.92], 'circle-stroke-color': '#000000', 'circle-stroke-width': 0.7,
       }});
-
+      map.addLayer({ id: 'transit-icons-bus', type: 'symbol', source: 'transit', minzoom: 10,
+        filter: ['==', ['get', 'mode'], 'bus'], layout: {
+          'icon-image': 'transit-bus', 'icon-anchor': 'center',
+          'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.5, 12.5, 0.75, 16, 1.1],
+          'icon-allow-overlap': true, 'icon-ignore-placement': true,
+        }});
+      map.addLayer({ id: 'transit-icons-rail', type: 'symbol', source: 'transit', minzoom: 10,
+        filter: ['in', ['get', 'mode'], ['literal', ['tram', 'metro', 'train']]], layout: {
+          'icon-image': 'transit-train', 'icon-anchor': 'bottom',
+          'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.5, 12.5, 0.75, 16, 1.1],
+          'icon-allow-overlap': true, 'icon-ignore-placement': true,
+        }});
       // Traffic — simulated congestion overlay on real OSM road geometry
       // (roads extracted from the basemap's own tiles; see lib/traffic).
       // Only drawn when TomTom flow isn't supplying the overlay itself.
@@ -2416,7 +2527,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','plow-icons',
-      'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
+      'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','flight-dots','military-dots','jet-dots','private-dots','alert-pin-dots','street-level-dots','street-level-hit']);
@@ -2658,43 +2769,43 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Live Transit (GTFS-Realtime) ──
-    const MODE_LABEL: Record<string, string> = { bus: 'BUS', tram: 'TRAM / LIGHT RAIL', metro: 'METRO', train: 'TRAIN', ferry: 'FERRY', transit: 'TRANSIT VEHICLE' };
-    const STATUS_LABEL: Record<number, string> = { 0: 'Approaching stop', 1: 'At stop', 2: 'In transit' };
-    map.on('click', 'transit-dots', e => {
+    // Transit redesign (2026-10-26): taps no longer open MapLibre
+    // popups. They set the React selection state, and the small
+    // dismissible TransitSelectionCard renders the same feed-provided
+    // fields (a row exists only when the feed — or the agency's
+    // static GTFS join — actually provided it), plus the actions a
+    // popup could never carry: View Route, Follow Vehicle, expand
+    // into the Explorer. Close restores the unobstructed globe.
+    const openTransitVehicle = (e: any) => {
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
       const coords = (e.features[0].geometry as any).coordinates;
-      const delayTxt = p.delay == null ? null : p.delay >= 60 ? Math.round(p.delay / 60) + ' min late' : p.delay <= -60 ? Math.round(-p.delay / 60) + ' min early' : 'On time';
-      // Every row below is a field the feed (or the agency's own static
-      // GTFS) actually provided — absent fields render no row at all.
-      // DIRECTION used to show the raw GTFS direction_id (an opaque
-      // 0/1 whose meaning is per-agency); the headsign destination and
-      // the compass heading carry the same information truthfully.
-      const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-      const heading = p.bearing != null ? COMPASS[Math.round(p.bearing / 45) % 8] : null;
-      const ageS = p.ts ? Math.max(0, Math.round(Date.now() / 1000 - p.ts)) : null;
-      const ageTxt = ageS == null ? null : ageS < 60 ? `${ageS}s ago` : ageS < 3600 ? `${Math.floor(ageS / 60)}m ago` : `${Math.floor(ageS / 3600)}h ago`;
-      const vehicleTxt = p.label || p.vehId || '';
-      popup(coords, `<div style="${pStyle}border:1px solid rgba(255,167,38,0.35);">
-        <div style="color:#FFA726;font-size:12px;font-weight:700;margin-bottom:4px;">🚌 ${MODE_LABEL[p.mode] || 'TRANSIT'}${p.route ? ' · ' + htmlEsc(p.route) : ''}</div>
-        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.agency || '')}${p.headsign ? ' · to ' + htmlEsc(p.headsign) : ''}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
-          <div><span style="color:#5C5A54;">ROUTE</span><br/><span style="color:#E8E6E0;">${p.route ? htmlEsc(p.route) : 'Not in service'}</span>${p.routeName ? `<br/><span style="color:#9B978E;">${htmlEsc(p.routeName)}</span>` : ''}</div>
-          <div><span style="color:#5C5A54;">STATUS</span><br/><span style="color:#E8E6E0;">${p.status != null ? (STATUS_LABEL[p.status] || '—') : '—'}</span></div>
-          ${p.headsign ? `<div><span style="color:#5C5A54;">DESTINATION</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.headsign)}</span></div>` : ''}
-          ${p.stopName ? `<div><span style="color:#5C5A54;">${p.status === 1 ? 'AT STOP' : 'NEXT STOP'}</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.stopName)}</span></div>` : ''}
-          <div><span style="color:#5C5A54;">DELAY</span><br/><span style="color:#E8E6E0;">${delayTxt ?? '—'}</span></div>
-          <div><span style="color:#5C5A54;">SPEED</span><br/><span style="color:#E8E6E0;">${p.speedKmh != null ? p.speedKmh + ' km/h' : '—'}</span></div>
-          ${heading ? `<div><span style="color:#5C5A54;">HEADING</span><br/><span style="color:#E8E6E0;">${heading}</span></div>` : ''}
-          ${vehicleTxt ? `<div><span style="color:#5C5A54;">VEHICLE</span><br/><span style="color:#E8E6E0;">${htmlEsc(vehicleTxt)}</span></div>` : ''}
-          ${ageTxt ? `<div><span style="color:#5C5A54;">UPDATED</span><br/><span style="color:#E8E6E0;">${ageTxt}</span></div>` : ''}
-        </div>
-        <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;">DATA — GTFS-REALTIME · ${htmlEsc((p.attribution || p.agency || '').toUpperCase())}</div>
-      </div>`);
+      popupRef.current?.remove();
+      setTransitSel({
+        kind: 'vehicle',
+        agencyId: p.agencyId || '',
+        coords: [coords[0], coords[1]],
+        p,
+      } satisfies TransitVehicleSelection);
+    };
+    map.on('click', 'transit-dots', openTransitVehicle);
+    map.on('click', 'transit-icons-bus', openTransitVehicle);
+    map.on('click', 'transit-icons-rail', openTransitVehicle);
+
+    // Cluster bubbles zoom into their vehicles — never a selection.
+    map.on('click', 'transit-cluster-circles', e => {
+      const f = e.features?.[0] as any;
+      if (!f) return;
+      const src = map.getSource('transit-clusters') as any;
+      if (src?.getClusterExpansionZoom) {
+        src.getClusterExpansionZoom(f.properties.cluster_id, (err: any, zoom: number) => {
+          if (!err) map.easeTo({ center: f.geometry.coordinates, zoom });
+        });
+      }
     });
 
     // ── Transit stops (network layer) ──
-    // Arrivals come from /api/transit/stop: timetable departures
+    // The card fetches /api/transit/stop itself: timetable departures
     // upgraded by TripUpdates wherever the feed carries a fresh
     // prediction for that trip at this stop; every row is labeled
     // REALTIME or SCHEDULED so a timetable time never reads as live.
@@ -2702,47 +2813,13 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
       const coords = (e.features[0].geometry as any).coordinates;
-      const stopName = p.name || 'Stop';
-      popup(coords, `<div style="${pStyle}border:1px solid rgba(236,239,241,0.3);">
-        <div style="color:#ECEFF1;font-size:12px;font-weight:700;margin-bottom:4px;">🚏 ${htmlEsc(stopName).toUpperCase()}</div>
-        ${p.routes ? `<div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">ROUTES ${htmlEsc(p.routes)}</div>` : ''}
-        <div style="font-size:9px;color:#9B978E;">Loading next arrivals…</div>
-      </div>`);
-      const myPopup = popupRef.current;
-      (async () => {
-        try {
-          const r = await fetch(`/api/transit/stop?agency=${encodeURIComponent(p.agency || 'uta')}&id=${encodeURIComponent(p.stopId)}`);
-          const j = await r.json();
-          if (!r.ok || j.error) throw new Error(j.error || 'unavailable');
-          if (!myPopup || !myPopup.isOpen()) return;
-          const rows = (j.arrivals ?? []).map((a: any) => {
-            const when = a.inMin <= 0 ? 'Due' : a.inMin === 1 ? '1 min' : `${a.inMin} min`;
-            const basis = a.basis === 'realtime'
-              ? '<span style="color:#66BB6A;font-weight:700;">REALTIME</span>'
-              : '<span style="color:#9B978E;">SCHEDULED</span>';
-            const delay = a.delayS != null && Math.abs(a.delayS) >= 60
-              ? ` · ${a.delayS > 0 ? Math.round(a.delayS / 60) + ' min late' : Math.round(-a.delayS / 60) + ' min early'}`
-              : '';
-            return `<div style="display:flex;justify-content:space-between;gap:10px;font-size:10px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <span style="color:#E8E6E0;"><b>${htmlEsc(a.route)}</b> ${htmlEsc(a.headsign || '')}</span>
-              <span style="white-space:nowrap;color:#E8E6E0;">${when} <span style="color:#5C5A54;">${formatTime(a.time)}</span> ${basis}${delay}</span>
-            </div>`;
-          }).join('');
-          myPopup.setHTML(`<div style="${pStyle}border:1px solid rgba(236,239,241,0.3);">
-            <div style="color:#ECEFF1;font-size:12px;font-weight:700;margin-bottom:4px;">🚏 ${htmlEsc(j.stop?.name || stopName).toUpperCase()}</div>
-            <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${(j.stop?.routes ?? []).map((x: any) => htmlEsc(x.short)).join(' · ')}</div>
-            ${rows || '<div style="font-size:9px;color:#9B978E;">No departures in the next 3 hours.</div>'}
-            <div style="font-size:8px;color:#5C5A54;letter-spacing:0.08em;margin-top:8px;">${j.rt?.live ? 'REALTIME PREDICTIONS ACTIVE' : 'SHOWING TIMETABLE TIMES'} · ${htmlEsc((j.credit || 'UTA OPEN DATA').toUpperCase())}</div>
-          </div>`);
-        } catch {
-          if (myPopup && myPopup.isOpen()) {
-            myPopup.setHTML(`<div style="${pStyle}border:1px solid rgba(236,239,241,0.3);">
-              <div style="color:#ECEFF1;font-size:12px;font-weight:700;margin-bottom:4px;">🚏 ${htmlEsc(stopName).toUpperCase()}</div>
-              <div style="font-size:9px;color:#FFAB91;">Arrivals unavailable right now — the timetable service did not answer.</div>
-            </div>`);
-          }
-        }
-      })();
+      popupRef.current?.remove();
+      setTransitSel({
+        kind: 'stop',
+        agencyId: p.agency || '',
+        coords: [coords[0], coords[1]],
+        p,
+      });
     });
 
     // ── Fire Perimeters (NIFC WFIGS) ──
@@ -3092,7 +3169,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','plow-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-stops-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','plow-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -4002,7 +4079,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    if (!(activeLayers as any).transit) { setGeo('transit', []); setTransitNotice(null); transitNoticeDismissedRef.current = false; transitBlendRef.current = null; return; }
+    if (!(activeLayers as any).transit) { setGeo('transit', []); setGeo('transit-clusters', []); transitRenderedRef.current = []; setTransitSel(null); endTransitFollow(); setTransitNotice(null); transitNoticeDismissedRef.current = false; transitBlendRef.current = null; return; }
     let live = true;
     if (!transitBlendRef.current) transitBlendRef.current = new TransitBlend();
     const blend = transitBlendRef.current;
@@ -4010,15 +4087,26 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       if (!live) return;
       const nowMs = Date.now();
       const nowS = nowMs / 1000;
+      // Subdivision gates (lib/transit/subdivisions): Live Vehicles
+      // off renders nothing; the bus/rail toggles filter by mode
+      // family — ferries and neutral "transit" modes follow the
+      // master Live Vehicles switch only.
+      if (!transitSubOn(activeLayers, TRANSIT_SUB.vehicles)) {
+        setGeo('transit', []);
+        setGeo('transit-clusters', []);
+        transitRenderedRef.current = [];
+        return;
+      }
       const feats: any[] = [];
       for (const agencyId of blend.agencies()) {
         const ag = transitAgenciesRef.current.find((a: any) => a.id === agencyId);
         for (const v of blend.current(agencyId, nowMs) as any[]) {
           if (v.ts && nowS - v.ts > 900) continue; // silent > 15 min
+          if (!vehicleModeVisible(v.mode, activeLayers)) continue;
           feats.push({
             type: 'Feature', geometry: { type: 'Point', coordinates: [v.lng, v.lat] },
             properties: {
-              agency: ag?.name ?? agencyId, attribution: ag?.attribution ?? '',
+              agencyId, agency: ag?.name ?? agencyId, attribution: ag?.attribution ?? '',
               vehId: v.id ?? '', ts: v.ts ?? null,
               // Stale fixes fade (layer paint reads `op`): past 3 min
               // the dot is visibly not-live instead of silently old.
@@ -4033,8 +4121,28 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         }
       }
       setGeo('transit', feats);
-    };
-    const load = async () => {
+      setGeo('transit-clusters', feats);
+      transitRenderedRef.current = feats;
+      // Follow Vehicle: chase the followed vehicle's blended (real,
+      // interpolated) position. The camera only moves once the
+      // vehicle has meaningfully outrun the centre (~25 m), so the
+      // 500 ms loop glides instead of fighting the user; a drag
+      // releases the follow (see the dragstart effect), and a
+      // vehicle silent for 30 s ends it with a notice.
+      const fol = transitFollowRef.current;
+      if (fol) {
+        const target = (blend.current(fol.agencyId, nowMs) as any[]).find((v: any) => v.id === fol.vehId);
+        if (target) {
+          fol.lastSeenMs = nowMs;
+          const c = map.getCenter();
+          if (Math.abs(c.lng - target.lng) > 0.00022 || Math.abs(c.lat - target.lat) > 0.00022) {
+            map.easeTo({ center: [target.lng, target.lat], duration: 480 });
+          }
+        } else if (nowMs - fol.lastSeenMs > 30000) {
+          endTransitFollow('Vehicle stopped reporting — follow ended');
+        }
+      }
+    };    const load = async () => {
       if (!live) return;
       const b = map.getBounds();
       // Relevance = service-area bounds ∩ viewport (lib/transit/
@@ -4084,7 +4192,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     const onMove = () => { void load(); };
     map.on('moveend', onMove);
     return () => { live = false; clearInterval(iv); clearInterval(renderIv); map.off('moveend', onMove); };
-  }, [mapReady, (activeLayers as any).transit, setGeo]);
+  }, [mapReady, (activeLayers as any).transit, (activeLayers as any).transit_vehicles, (activeLayers as any).transit_bus_routes, (activeLayers as any).transit_rail_routes, setGeo, endTransitFollow]);
 
   // Transit NETWORK — routes + stops for agencies whose directory entry
   // carries a static GTFS (UTA in v1). Networks load once per session
@@ -4116,8 +4224,10 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         if (!a.network) continue;
         const entry = transitNetworkRef.current.get(a.id);
         if (!entry || !agencyIntersectsView(a, view)) continue;
-        lineFeats.push(...(entry.lines?.features ?? []));
-        if (zoom >= STOP_MIN_ZOOM) {
+        for (const f of entry.lines?.features ?? []) {
+          if (lineModeVisible(f.properties?.mode, activeLayers)) lineFeats.push(f);
+        }
+        if (zoom >= STOP_MIN_ZOOM && transitSubOn(activeLayers, TRANSIT_SUB.stops)) {
           const v = padView(view, 0.1);
           for (const s of entry.stops) {
             if (s.lat < v.south || s.lat > v.north || s.lng < v.west || s.lng > v.east) continue;
@@ -4172,15 +4282,103 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     const onMove = () => { void load(); };
     map.on('moveend', onMove);
     return () => { live = false; map.off('moveend', onMove); };
-  }, [mapReady, (activeLayers as any).transit, setGeo]);
+  }, [mapReady, (activeLayers as any).transit, (activeLayers as any).transit_bus_routes, (activeLayers as any).transit_rail_routes, (activeLayers as any).transit_stops, setGeo]);
 
-  // The transit panel's selected route rides the highlight layer.
+  // The Transit Explorer's selected route rides the highlight layer.
+  // The same effect owns the bus/rail family filters on the line
+  // layers and the selection dimming: while a route is selected the
+  // unselected network drops to a whisper so the pick reads first.
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    if (!map.getLayer('transit-route-highlight')) return;
-    map.setFilter('transit-route-highlight', ['==', ['get', 'routeId'], transitRouteSel ?? '__none__'] as any);
-  }, [mapReady, transitRouteSel]);
+    const fams: string[] = [];
+    if (transitSubOn(activeLayers, TRANSIT_SUB.busRoutes)) fams.push('bus');
+    if (transitSubOn(activeLayers, TRANSIT_SUB.railRoutes)) fams.push('tram', 'metro', 'train');
+    const famFilter = ['in', ['get', 'mode'], ['literal', fams]] as any;
+    if (map.getLayer('transit-route-highlight')) {
+      map.setFilter('transit-route-highlight', ['all', ['==', ['get', 'routeId'], transitRouteSel ?? '__none__'], famFilter] as any);
+    }
+    if (map.getLayer('transit-routes-line')) {
+      map.setFilter('transit-routes-line', famFilter);
+      map.setPaintProperty('transit-routes-line', 'line-opacity', transitRouteSel ? 0.16 : 0.55);
+    }
+    if (map.getLayer('transit-route-labels')) map.setFilter('transit-route-labels', famFilter);
+  }, [mapReady, transitRouteSel, activeLayers]);
+
+  // Transit Explorer open requests arrive from the Layers section
+  // (window CustomEvent — the cross-component pattern this codebase
+  // uses, cf. we:open-entity). Opening the Explorer changes nothing
+  // about the camera, the zoom or the layer state, so Back to Globe
+  // restores the exact view by construction.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      openTransitExplorer(((e as CustomEvent).detail ?? {}) as TransitExplorerInit);
+    };
+    window.addEventListener('we:open-transit-explorer', onOpen);
+    return () => window.removeEventListener('we:open-transit-explorer', onOpen);
+  }, [openTransitExplorer]);
+
+  // "Show Nearby Transit" (Layers) is answered here: this component
+  // owns the camera and the loaded points. The search runs over what
+  // is actually loaded — the rendered live vehicles and the network
+  // stops on hand — nearest to the map centre, then flies there and
+  // opens the point's selection card. Nothing is synthesized.
+  useEffect(() => {
+    const reply = (message: string) =>
+      window.dispatchEvent(new CustomEvent('we:transit-nearby-result', { detail: { message } }));
+    const onNearby = () => {
+      const map = mapRef.current;
+      if (!map) return;
+      if (!(activeLayersRef.current as any)?.transit) {
+        reply('Turn on Live Transit first — then Nearby can search what the layer loads.');
+        return;
+      }
+      const c = map.getCenter();
+      type Pt = { lat: number; lng: number; label: string; open: () => void };
+      const pts: Pt[] = [];
+      for (const f of transitRenderedRef.current) {
+        const [lng, lat] = f.geometry.coordinates;
+        const p = f.properties;
+        pts.push({
+          lat, lng,
+          label: `${p.route ? `Route ${p.route}` : 'A transit vehicle'} (${p.agency ?? 'transit'})`,
+          open: () => setTransitSel({ kind: 'vehicle', agencyId: p.agencyId || '', coords: [lng, lat], p }),
+        });
+      }
+      for (const [agencyId, entry] of transitNetworkRef.current) {
+        for (const s of entry.stops ?? []) {
+          pts.push({
+            lat: s.lat, lng: s.lng,
+            label: `Stop "${s.name}"`,
+            open: () => setTransitSel({
+              kind: 'stop', agencyId, coords: [s.lng, s.lat],
+              p: { agency: agencyId, stopId: s.id, name: s.name, routes: (s.routes ?? []).join(' · ') },
+            }),
+          });
+        }
+      }
+      const hit = nearestOf({ lat: c.lat, lng: c.lng }, pts);
+      if (!hit) {
+        reply('No transit is loaded near the map centre yet — zoom into a covered city (Salt Lake City · Seattle · Denver · Boston…) and try again.');
+        return;
+      }
+      const { point, distKm } = hit;
+      reply(`Nearest: ${point.label} · ${distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(1)} km`} from the map centre — flying there.`);
+      map.flyTo({ center: [point.lng, point.lat], zoom: Math.max(map.getZoom(), 13.5), essential: true });
+      window.setTimeout(() => point.open(), 900);
+    };
+    window.addEventListener('we:transit-nearby', onNearby);
+    return () => window.removeEventListener('we:transit-nearby', onNearby);
+  }, []);
+
+  // Dragging the map releases a vehicle follow (the drone pattern).
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current;
+    const onDragStart = () => { if (transitFollowRef.current) endTransitFollow(); };
+    map.on('dragstart', onDragStart);
+    return () => { map.off('dragstart', onDragStart); };
+  }, [mapReady, endTransitFollow]);
 
   // Live Drone Tracking — Remote ID detections from CONNECTED receivers
   // and opted-in operators only (lib/drones). Polls /api/drones/live
@@ -5090,8 +5288,10 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['gauge-dots'], (activeLayers as any).river_gauges);
     setVis(['alert-glow','alert-dots','alert-label'], (activeLayers as any).alert_cams);
     setVis(['gbfs-systems','gbfs-label','gbfs-stations','gbfs-vehicles'], (activeLayers as any).gbfs);
-    setVis(['transit-dots'], (activeLayers as any).transit);
-    setVis(['transit-routes-line', 'transit-route-highlight', 'transit-stops-dots'], (activeLayers as any).transit);
+    setVis(['transit-dots', 'transit-icons-bus', 'transit-icons-rail', 'transit-cluster-circles', 'transit-cluster-count'], !!(activeLayers as any).transit && transitSubOn(activeLayers, TRANSIT_SUB.vehicles));
+    setVis(['transit-routes-line', 'transit-route-highlight'], !!(activeLayers as any).transit && anyLineFamilyOn(activeLayers));
+    setVis(['transit-route-labels'], !!(activeLayers as any).transit && anyLineFamilyOn(activeLayers) && transitLabelsOn(activeLayers));
+    setVis(['transit-stops-dots', 'transit-stops-label'], !!(activeLayers as any).transit && transitSubOn(activeLayers, TRANSIT_SUB.stops));
     setVis(['drone-glow','drone-icons','drone-label','drone-trails-line','drone-coverage-fill','drone-coverage-line','drone-rx-dots','drone-rx-label'], (activeLayers as any).drones);
     setVis(['drone-airspace-fill','drone-airspace-line','drone-restriction-fill','drone-restriction-line'], (activeLayers as any).drones && (activeLayers as any).drone_airspace !== false);
     setVis(['plow-icons'], (activeLayers as any).plows);
@@ -6208,15 +6408,99 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           chipOffsetCount={[trafficChip, droneChip, transitNotice, streetLevelChip].filter(Boolean).length}
         />
       )}
-      {mapReady && !!(activeLayers as any).transit && (
-        <TransitNetworkPanel
-          selectedRouteId={transitRouteSel}
-          onSelectRoute={setTransitRouteSel}
-          onFocusStop={(lat, lng) => {
+      {mapReady && transitSel && (
+        <TransitSelectionCard
+          sel={transitSel}
+          onClose={() => setTransitSel(null)}
+          onViewRoute={(agencyId, routeShort) => {
+            setTransitSel(null);
+            openTransitExplorer({ agencyId, routeShort, tab: 'routes' });
+          }}
+          onFollowVehicle={(selv) => {
+            setTransitSel(null);
+            startTransitFollow({
+              agencyId: selv.agencyId,
+              vehId: String(selv.p.vehId ?? ''),
+              route: String(selv.p.route ?? ''),
+              label: selv.p.label ? String(selv.p.label) : undefined,
+            });
             const m = mapRef.current;
-            if (m) m.flyTo({ center: [lng, lat], zoom: Math.max(m.getZoom(), 15), essential: true });
+            if (m) m.flyTo({ center: selv.coords, zoom: Math.max(m.getZoom(), 14), essential: true });
+          }}
+          onOpenExplorer={(agencyId) => {
+            setTransitSel(null);
+            openTransitExplorer({ agencyId });
           }}
         />
+      )}
+      {transitExplorer && (
+        <TransitExplorer
+          key={transitExplorer.seq}
+          init={transitExplorer.init}
+          alertsEnabled={transitSubOn(activeLayers, TRANSIT_SUB.alerts)}
+          onSelectRoute={setTransitRouteSel}
+          onClose={() => setTransitExplorer(null)}
+          onViewRouteOnMap={(agencyId, routeInternalId) => {
+            setTransitRouteSel(routeInternalId);
+            setTransitExplorer(null);
+            // Frame the route's real geometry when the network is on
+            // hand; the highlight applies either way once it loads.
+            const m = mapRef.current;
+            const entry = transitNetworkRef.current.get(agencyId);
+            if (m && entry) {
+              const feats = (entry.lines?.features ?? []).filter((f: any) => f.properties?.routeId === routeInternalId);
+              let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity;
+              const walk = (c: any) => {
+                if (typeof c[0] === 'number') {
+                  w = Math.min(w, c[0]); e = Math.max(e, c[0]); s = Math.min(s, c[1]); n = Math.max(n, c[1]);
+                } else c.forEach(walk);
+              };
+              feats.forEach((f: any) => walk(f.geometry?.coordinates ?? []));
+              if (w <= e) m.fitBounds([[w, s], [e, n]], { padding: 48, maxZoom: 13.5, essential: true });
+            }
+          }}
+          onFollowVehicle={(v) => {
+            setTransitExplorer(null);
+            startTransitFollow(v);
+          }}
+          onFocusStop={(agencyId, stop) => {
+            setTransitExplorer(null);
+            const m = mapRef.current;
+            if (m) m.flyTo({ center: [stop.lng, stop.lat], zoom: Math.max(m.getZoom(), 15.5), essential: true });
+            window.setTimeout(() => {
+              setTransitSel({
+                kind: 'stop', agencyId, coords: [stop.lng, stop.lat],
+                p: { agency: agencyId, stopId: stop.id, name: stop.name, routes: stop.routes.join(' · ') },
+              });
+            }, 900);
+          }}
+        />
+      )}
+      {mapReady && transitFollowUi && (
+        <div className="absolute left-1/2 z-[240] -translate-x-1/2 px-3" style={{ bottom: '6rem' }}>
+          <div className="flex items-center gap-2 rounded-full border border-cyan-300/40 bg-black/75 backdrop-blur-md pl-3 pr-1.5 py-1.5 shadow-xl">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="text-[9px] font-mono tracking-[0.14em] text-white/85 whitespace-nowrap">FOLLOWING {transitFollowUi.label}</span>
+            <button
+              type="button"
+              onClick={() => endTransitFollow()}
+              className="shrink-0 px-2 py-1 rounded-full border border-white/15 text-[8.5px] font-mono tracking-wider text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              ✕ RELEASE
+            </button>
+          </div>
+        </div>
+      )}
+      {transitFollowNotice && (
+        <div className="absolute left-1/2 z-[130] -translate-x-1/2 px-3 pointer-events-none" style={{ bottom: '10.5rem' }}>
+          <div className="rounded-lg border border-amber-300/25 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/60 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+              <span className="text-white/90 uppercase tracking-wider">Transit Follow</span>
+              {' — '}
+              <span className="text-amber-200/90">{transitFollowNotice}</span>
+            </p>
+          </div>
+        </div>
       )}
       {mapReady && streetPicture && (
         <StreetLevelViewer

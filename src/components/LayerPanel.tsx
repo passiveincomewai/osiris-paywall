@@ -13,6 +13,7 @@ import StyleStudio from './StyleStudio';
 import TrialPicker from './TrialPicker';
 import ProUpgradeEmbed from './ProUpgradeEmbed';
 
+import { TRANSIT_SUB, transitSubOn, transitLabelsOn, type TransitSubKey } from '@/lib/transit/subdivisions';
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
 import { SENSOR_EFFECT_OPTIONS, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
 import { readSessionIdentity, type SessionIdentityState } from '@/lib/premium-entitlement';
@@ -486,6 +487,160 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
     </div>
   ) : null;
 
+  /* ── LIVE TRANSIT NETWORK (Transit redesign, 2026-10-26) ──────────
+   * The transit master toggle used to auto-open a large floating
+   * panel over the globe. Now the master toggle lights the map layers
+   * only, and this expandable section inside the transit category
+   * carries the subdivisions: six toggles bound to real data splits
+   * (lib/transit/subdivisions), a live summary counted from the real
+   * APIs, and the two actions — Show Nearby Transit (answered by
+   * OsirisMap, which owns the camera and the loaded points) and
+   * Explore Transit Network (opens the full-screen Explorer). */
+  const [transitSummary, setTransitSummary] = useState<
+    | { phase: 'loading' }
+    | { phase: 'error' }
+    | { phase: 'ready'; vehicles: number; routes: number | null; alerts: number | null }
+  >({ phase: 'loading' });
+  const [nearbyMsg, setNearbyMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!activeLayers?.transit) return;
+    let live = true;
+    const load = async () => {
+      try {
+        const dirRes = await fetch('/api/transit/agencies');
+        const dir = await dirRes.json();
+        const agencies: Array<{ id: string; network?: boolean }> = dir.agencies ?? [];
+        let vehicles = 0;
+        await Promise.all(agencies.map(async (a) => {
+          try {
+            const r = await fetch(`/api/transit/vehicles?agency=${a.id}`);
+            const j = await r.json();
+            if (Array.isArray(j.vehicles)) vehicles += j.vehicles.length;
+          } catch { /* one dark agency doesn't sink the summary */ }
+        }));
+        let routes: number | null = null;
+        let alerts: number | null = null;
+        for (const a of agencies.filter((x) => x.network)) {
+          try {
+            const r = await fetch(`/api/transit/network?agency=${a.id}&shapes=0`);
+            const j = await r.json();
+            if (typeof j.routeCount === 'number') routes = (routes ?? 0) + j.routeCount;
+          } catch { /* summary degrades honestly below */ }
+          try {
+            const r = await fetch(`/api/transit/alerts?agency=${a.id}`);
+            const j = await r.json();
+            if (j.supported && Array.isArray(j.alerts)) alerts = (alerts ?? 0) + j.alerts.length;
+          } catch { /* same */ }
+        }
+        if (live) setTransitSummary({ phase: 'ready', vehicles, routes, alerts });
+      } catch {
+        if (live) setTransitSummary((cur) => (cur.phase === 'ready' ? cur : { phase: 'error' }));
+      }
+    };
+    void load();
+    const iv = setInterval(load, 60000);
+    return () => { live = false; clearInterval(iv); };
+  }, [activeLayers?.transit]);
+
+  /* Show Nearby Transit is answered by OsirisMap (it owns the loaded
+   * vehicles/stops and the camera); the result line lands here. */
+  useEffect(() => {
+    const onResult = (e: Event) => {
+      const msg = (e as CustomEvent).detail?.message;
+      if (typeof msg === 'string') setNearbyMsg(msg);
+    };
+    window.addEventListener('we:transit-nearby-result', onResult);
+    return () => window.removeEventListener('we:transit-nearby-result', onResult);
+  }, []);
+
+  const openTransitExplorer = () => {
+    window.dispatchEvent(new CustomEvent('we:open-transit-explorer', { detail: {} }));
+    onClose?.();
+  };
+  const askNearbyTransit = () => {
+    setNearbyMsg('Looking for the nearest transit to the map centre…');
+    window.dispatchEvent(new CustomEvent('we:transit-nearby'));
+  };
+
+  const transitSubRow = (key: TransitSubKey, label: string, hint: string) => {
+    const on = key === TRANSIT_SUB.labels ? transitLabelsOn(activeLayers) : transitSubOn(activeLayers, key);
+    return (
+      <button
+        key={key}
+        type="button"
+        onClick={() => setActiveLayers((prev: any) => ({ ...prev, [key]: !on }))}
+        aria-pressed={on}
+        aria-label={label}
+        className="w-full flex items-center gap-3 py-1.5 px-1 rounded-md text-left hover:bg-white/[0.05] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/40"
+      >
+        <SubLayerStem />
+        <ToggleSwitch active={on} />
+        <span className={`text-[11px] font-mono uppercase tracking-wider flex-1 transition-colors duration-200 ${on ? 'text-white/80' : 'text-white/40'}`}>
+          {label}
+          <span className="block mt-0.5 text-[9px] normal-case tracking-normal text-white/35">{hint}</span>
+        </span>
+      </button>
+    );
+  };
+
+  const transitDetails = activeLayers.transit ? (
+    <div
+      className="mt-2 rounded-lg p-2.5"
+      style={{
+        border: '1px solid rgba(56,189,248,0.38)',
+        background: 'linear-gradient(180deg, rgba(8,32,56,0.55), rgba(3,10,22,0.6))',
+        boxShadow: 'inset 0 0 18px rgba(56,189,248,0.07), 0 0 10px rgba(56,189,248,0.08)',
+      }}
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-[10px] font-mono font-bold tracking-[0.18em] text-cyan-100">LIVE TRANSIT NETWORK</span>
+        <span aria-hidden className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.9)' }} />
+      </div>
+      <p className="text-[10px] font-mono text-white/55 mb-1" role="status">
+        {transitSummary.phase === 'loading' && 'Counting live vehicles…'}
+        {transitSummary.phase === 'error' && 'Live summary unavailable right now.'}
+        {transitSummary.phase === 'ready' && (
+          <>
+            <span className="text-white/85 tabular-nums">{transitSummary.vehicles.toLocaleString()}</span> live vehicles
+            {transitSummary.routes != null && <> · <span className="text-white/85 tabular-nums">{transitSummary.routes}</span> routes</>}
+            {transitSubOn(activeLayers, TRANSIT_SUB.alerts)
+              ? transitSummary.alerts != null && <> · <span className={transitSummary.alerts > 0 ? 'text-amber-300 tabular-nums' : 'text-white/85 tabular-nums'}>{transitSummary.alerts}</span> alerts</>
+              : <> · alerts off</>}
+          </>
+        )}
+      </p>
+      <p className="text-[9px] leading-relaxed text-white/35 mb-1.5">
+        Route lines, stops, timetables &amp; alerts: UTA (keyless GTFS). Other covered agencies publish live vehicles.
+      </p>
+      <div className="flex flex-col gap-0.5">
+        {transitSubRow(TRANSIT_SUB.vehicles, 'Live Vehicles', 'Buses, trains & ferries reporting now')}
+        {transitSubRow(TRANSIT_SUB.busRoutes, 'Bus Routes', 'Bus lines on the map + bus vehicles')}
+        {transitSubRow(TRANSIT_SUB.railRoutes, 'Rail Routes', 'Tram, metro & train lines + rail vehicles')}
+        {transitSubRow(TRANSIT_SUB.stops, 'Transit Stops', 'UTA stops · appear at zoom 13+')}
+        {transitSubRow(TRANSIT_SUB.alerts, 'Service Alerts', 'UTA GTFS-RT alerts · counted above')}
+        {transitSubRow(TRANSIT_SUB.labels, 'Route Labels', 'Route numbers along the lines · zoom 14+')}
+      </div>
+      <div className="flex flex-col gap-1.5 mt-2">
+        <button
+          type="button"
+          onClick={askNearbyTransit}
+          className="w-full py-2 rounded-lg border border-cyan-300/35 bg-cyan-300/[0.06] text-[10px] font-mono tracking-[0.14em] text-cyan-100 hover:bg-cyan-300/[0.12] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
+        >
+          ◎ SHOW NEARBY TRANSIT
+        </button>
+        <button
+          type="button"
+          onClick={openTransitExplorer}
+          className="w-full py-2 rounded-lg border border-cyan-300/50 bg-cyan-300/[0.10] text-[10px] font-mono font-bold tracking-[0.14em] text-white hover:bg-cyan-300/[0.18] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
+        >
+          EXPLORE TRANSIT NETWORK →
+        </button>
+      </div>
+      {nearbyMsg && <p className="mt-1.5 text-[9px] font-mono leading-relaxed text-white/50" role="status">{nearbyMsg}</p>}
+    </div>
+  ) : null;
+
   /* Sensor effects are radio-style presets, not toggles: exactly one look
      at a time (or off). They are SIMULATED visual effects — the copy says
      so here and an on-map tag repeats it while one is active — and they
@@ -904,6 +1059,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                         </button>
                       </div>
                       {cat.id === 'env3d' && terrainDetails}
+                      {cat.id === 'transit' && transitDetails}
                     </>
                   )}
                 </div>
