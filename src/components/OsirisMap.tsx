@@ -31,6 +31,10 @@ import {
 } from '@/lib/flights/follow';
 import { basemapView, syncDayOverlay, terminatorVisible, type BasemapMode } from '@/lib/basemap-mode';
 import {
+  createSatelliteOverlayState, syncSatelliteOverlay, LATEST_SELECTION,
+  type SatelliteImagerySelection,
+} from '@/lib/wayback-imagery';
+import {
   beginRouteFetch, createFlightPath, flightPathAccess, flightPathFeatures, flightPathHudData,
   noteFlightPathFix, parseFlightRouteResponse, resolveFlightPathRoute,
   type FlightPathAccess, type FlightPathHudData, type FlightPathState,
@@ -58,6 +62,7 @@ import { ALERT_KINDS, timeAgo, type AlertKind } from '@/lib/alert-digest';
 import SatelliteCard, { type SatelliteDetail } from '@/components/SatelliteCard';
 import CctvPreviews, { type PreviewCamera } from '@/components/CctvPreviews';
 import MapControls from '@/components/MapControls';
+import SatelliteTimeSlider from '@/components/SatelliteTimeSlider';
 import CinematicDirector from '@/components/CinematicDirector';
 import SpaceMissionsPanel from '@/components/SpaceMissionsPanel';
 import TransitExplorer, { type TransitExplorerInit } from '@/components/TransitExplorer';
@@ -114,6 +119,12 @@ interface OsirisMapProps {
    *  Satellite view is free for everyone — there is no lock. */
   satelliteOn?: boolean;
   onSatelliteToggle?: () => void;
+  /** Satellite imagery time selection for the Wayback slider (page
+   *  owns it; free for everyone, like the satellite view itself).
+   *  `latest` = the live World Imagery service; a `wayback` selection
+   *  swaps the basemap tiles to that dated archive release. */
+  satelliteSelection?: SatelliteImagerySelection;
+  onSatelliteSelectionChange?: (selection: SatelliteImagerySelection) => void;
   sweepData?: any;
   scanTargets?: any[];
   demoMode?: boolean;
@@ -367,7 +378,7 @@ const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
  *  is honestly unavailable until launch data is loaded). */
 const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -5397,36 +5408,27 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     }
   }, [mapReady, activeLayers.terrain_3d]);
 
-  // Satellite / Dark style switching
+  // Satellite / Dark switching + the Wayback time slider's tile
+  // swaps. lib/wayback-imagery owns the overlay: the satellite raster
+  // rides as a source on the CARTO style (never a style swap), the
+  // layer's visibility follows the switch, and a slider step is a
+  // setTiles swap of the same source — `latest` is the live World
+  // Imagery service this view has always used, a `wayback` selection
+  // is that release's archive tiles.
+  const satelliteOverlayStateRef = useRef(createSatelliteOverlayState());
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
-    const map = mapRef.current;
-
     try {
-      if (mapStyle !== 'dark') {
-        // Add satellite raster tiles
-        if (!map.getSource('satellite-tiles')) {
-          map.addSource('satellite-tiles', {
-            type: 'raster',
-            tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-            tileSize: 256,
-            maxzoom: 18,
-          });
-        }
-        if (!map.getLayer('satellite-layer')) {
-          map.addLayer({ id: 'satellite-layer', type: 'raster', source: 'satellite-tiles', paint: { 'raster-opacity': 0.85 } }, 'day-night-fill');
-        } else {
-          map.setLayoutProperty('satellite-layer', 'visibility', 'visible');
-        }
-      } else {
-        if (map.getLayer('satellite-layer')) {
-          map.setLayoutProperty('satellite-layer', 'visibility', 'none');
-        }
-      }
+      syncSatelliteOverlay(
+        mapRef.current as never,
+        satelliteOverlayStateRef.current,
+        mapStyle !== 'dark',
+        satelliteSelection,
+      );
     } catch (e) {
       console.warn('Style switch failed:', e);
     }
-  }, [mapReady, mapStyle]);
+  }, [mapReady, mapStyle, satelliteSelection]);
 
   // Day / Night basemap — the light CARTO raster rides as an overlay on
   // the exact pattern the satellite view above established (this map
@@ -6258,6 +6260,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} onSatelliteToggle={onSatelliteToggle} />}
+      {mapReady && satelliteOn && onSatelliteSelectionChange && (
+        <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} />
+      )}
       {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
         if (!launchData) return null;
         const sel = [...launchData.upcoming, ...launchData.previous].find((l) => l.id === selectedLaunchId);

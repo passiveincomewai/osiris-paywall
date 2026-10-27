@@ -36,6 +36,7 @@ import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
 import { readBasemapMode, writeBasemapMode, satelliteSwitchAction, type BasemapMode } from '@/lib/basemap-mode';
+import { LATEST_SELECTION, satelliteTileUrl, type SatelliteImagerySelection } from '@/lib/wayback-imagery';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import CinematicHero, { heroSkippedForSearch } from '@/components/CinematicHero';
@@ -554,6 +555,11 @@ export default function Dashboard() {
   const [terrainStatus, setTerrainStatus] = useState<TerrainStatus>('idle');
   const [terrainRetry, setTerrainRetry] = useState(0);
   const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>('dark');
+  // Satellite imagery time (Wayback slider; free for everyone, like
+  // the satellite view itself). Default `latest` = the live World
+  // Imagery service; the slider can step back through Esri's dated
+  // archive releases. See lib/wayback-imagery.
+  const [satelliteSelection, setSatelliteSelection] = useState<SatelliteImagerySelection>(LATEST_SELECTION);
   // Day/auto/night basemap (free for everyone, persisted per device;
   // default auto = the long-standing dark look with the live terminator
   // shading). Satellite view overrides it while active — see
@@ -2401,11 +2407,13 @@ export default function Dashboard() {
           terrainFocus={terrainFocus}
           terrainRetry={terrainRetry}
           onTerrainStatusChange={setTerrainStatus}
-          mapStyle={mapStyle === 'satellite' ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' : 'dark'}
+          mapStyle={mapStyle === 'satellite' ? satelliteTileUrl(satelliteSelection) : 'dark'}
           basemapMode={basemapMode}
           onBasemapModeChange={setBasemapMode}
           satelliteOn={mapStyle === 'satellite'}
           onSatelliteToggle={handleSatelliteToggle}
+          satelliteSelection={satelliteSelection}
+          onSatelliteSelectionChange={setSatelliteSelection}
           onEntityClick={handleEntityClick} 
           onMouseCoords={handleMouseCoords} 
           onRightClick={handleRightClick} 
