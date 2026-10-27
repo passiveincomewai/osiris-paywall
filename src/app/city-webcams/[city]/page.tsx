@@ -83,13 +83,13 @@ const CITIES: Record<string, CityCfg> = {
     country: "United Kingdom",
     countrySlug: "united-kingdom",
     count: 890,
-    title: "London Live Webcams — 890 Street Cameras",
+    title: "London Live Traffic Cameras & CCTV — 890 TfL Road Feeds",
     blurb:
-      "Watch 890 live London street cameras — North Circular, Blackwall Tunnel approaches and West End traffic views — free on the WorldEye map. No signup needed.",
+      "Watch 890 live London CCTV and traffic cameras — TfL JamCams on the North Circular, Blackwall Tunnel approaches and West End traffic views — free on the WorldEye map. No signup needed.",
     h1: "London Live Webcams",
-    sub: "Watch 890 live London street cameras — free on the WorldEye globe.",
+    sub: "Watch 890 live London CCTV and traffic cameras — free on the WorldEye globe.",
     intro: [
-      "London accounts for 890 of the 899 cameras indexed in the United Kingdom — effectively the entire national feed is the capital's street and traffic camera grid. The views are working road cameras: the A406 North Circular, the A12 Blackwall Tunnel approaches, the A3 through Clapham, and junctions like Tottenham High Road and Stoke Newington Road.",
+      "London accounts for 890 of the 899 cameras indexed in the United Kingdom — effectively the entire national feed is the capital's street and traffic camera grid. The views are working road cameras: the A406 North Circular, the A12 Blackwall Tunnel approaches, the A3 through Clapham, and junctions like Tottenham High Road and Stoke Newington Road. These are London's public traffic CCTV cameras — the TfL JamCams drivers check before they travel.",
       "Several featured feeds sit around Westfield Stratford and the Olympic Park — Montfichet Road, Westfield Avenue, and the car parks — useful for checking event-day congestion. These are the same class of fixed road feeds Transport for London publishes for its network status.",
       "All 890 open free on the WorldEye map. Tap any marker across the capital to see current street conditions before you travel.",
       "The Blackwall Tunnel approaches are the feeds to watch when the river crossings jam. The A12 cameras on the northern approach show the queue building in real time — if the tunnel is the problem, you will see it here before the traffic reports catch up. The North Circular works the same way: the Telford Road and Bounds Green cameras show exactly where the ring seizes, junction by junction.",
@@ -156,6 +156,10 @@ const CITIES: Record<string, CityCfg> = {
       {
         q: "When should I check the cameras?",
         a: "Weekday rush hours, when the North Circular and tunnel approaches are at their worst — and before any event at Stratford or the Olympic Park. A two-minute check of your route's cameras before leaving beats a long queue you could have avoided.",
+      },
+      {
+        q: "Are these the London CCTV traffic cameras?",
+        a: "Yes. The feeds are the fixed public traffic cameras — the CCTV class of road camera — that Transport for London publishes as JamCams for the capital's street network. 'Traffic cameras' and 'CCTV' are two names for the same feeds here: cameras mounted on roads like the A406 North Circular and the A12 Blackwall Tunnel approaches so drivers can check congestion and closures before travelling.",
       },
     ],
   },
@@ -940,6 +944,35 @@ const GEN_OVERRIDES: Record<string, GenOverride> = {
     title: (g) => `Laredo Live Webcams — ${fmt(g.count)} TxDOT Traffic Cameras`,
     blurb: (g) =>
       `Watch ${fmt(g.count)} live Laredo traffic cameras — TxDOT feeds on Loop 20, SH 359 and FM 1472 toward the World Trade Bridge corridor — free on the WorldEye map. No signup needed.`,
+  },
+  /* #42 (Top-50 Batch 3): Calgary is the largest zero-click Canadian
+     city pool, but its generated copy never names what its own data
+     says — 235 still-image traffic feeds from the record's two
+     sources (alberta 193, calgary 42), on Stoney Trail / Highway 201,
+     Deerfoot Trail and Macleod Trail and at city intersections
+     (the record's own featured samples). */
+  calgary: {
+    title: (g) =>
+      `Calgary Live Webcams — ${fmt(g.count)} Traffic Cameras`,
+    blurb: (g) =>
+      `Watch ${fmt(g.count)} live Calgary traffic cameras — Alberta and Calgary feeds on Stoney Trail, Deerfoot Trail and Macleod Trail and at intersections across the city — free on the WorldEye map. No signup needed.`,
+    sub: (g) =>
+      `Watch ${fmt(g.count)} live Calgary traffic cameras — free on the WorldEye globe.`,
+  },
+  /* #43 (Top-50 Batch 3): the page's whole query cluster is the exact
+     phrase "cctv la coruña", and the record supports the phrasing —
+     170 of its 171 feeds are DGT (Spain's traffic authority) road
+     cameras, stills refreshed at intervals, on the motorways and
+     roads around the city (AP-9F, AG-55 and AC-12 in the record's
+     own featured samples). Wording stays DGT-road-camera honest:
+     these are highway/road feeds, not city-centre street views. */
+  "a-coruna": {
+    title: (g) =>
+      `CCTV La Coruña — ${fmt(g.count)} DGT Traffic Cameras in A Coruña`,
+    blurb: (g) =>
+      `Watch ${fmt(g.count)} CCTV La Coruña traffic cameras — DGT feeds on the AP-9F, AG-55, AC-12 and other motorways and roads around A Coruña, Spain — free on the WorldEye map. No signup needed.`,
+    sub: (g) =>
+      `Watch ${fmt(g.count)} live CCTV and traffic cameras around A Coruña — free on the WorldEye globe.`,
   },
 };
 

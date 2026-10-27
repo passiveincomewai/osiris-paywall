@@ -128,10 +128,53 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
 
   const keyDiffs = features.filter((f) => f.worldEye !== f.competitor).slice(0, 4);
 
+  /* Per-entry FAQ, built entirely from this entry's own researched
+     fields (pricing, competitorWins, verdicts, tagline) — so every
+     comparison page carries a block of genuinely entry-specific text
+     beyond the shared template sections, in the page and in FAQ
+     structured data alike. Fields an entry doesn't have simply drop
+     their question rather than rendering a placeholder. */
+  const faqs: { q: string; a: string }[] = [];
+  if (c.pricing) {
+    faqs.push({
+      q: `Is ${c.name} free?`,
+      a: `${c.pricing} WorldEye's map is free forever with no signup; Pro is $7.99/week, $13.99/month or $74.99/year.`,
+    });
+  }
+  if (c.competitorWins) {
+    faqs.push({
+      q: `What is ${c.name} best for?`,
+      a: c.competitorWins,
+    });
+  }
+  if (c.verdictWorldEye || c.verdictCompetitor) {
+    faqs.push({
+      q: `WorldEye or ${c.name} — which should I choose?`,
+      a: [c.verdictWorldEye, c.verdictCompetitor].filter(Boolean).join(" "),
+    });
+  }
+  if (c.tagline) {
+    faqs.push({
+      q: `What is ${c.name}?`,
+      a: `${c.tagline} The full researched comparison — features checked against official sources, pricing and verdicts — is on this page.`,
+    });
+  }
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    url: pageUrl,
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <div className="docs-root min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <JsonLd data={breadcrumbLd} />
       <JsonLd data={webPageLd} />
+      {faqs.length > 0 && <JsonLd data={faqLd} />}
 
       <article className="max-w-4xl mx-auto px-6 pt-14 md:pt-20 pb-8">
         <nav aria-label="Breadcrumb" className="text-xs text-white/35 mb-6">
@@ -255,6 +298,21 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             specialty, it remains the dedicated choice — many analysts use both.
           </p>
         </section>
+
+        {/* Per-entry FAQ (answers drawn from this entry's researched fields) */}
+        {faqs.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-2xl font-bold text-white mb-6">WorldEye vs {c.name}: quick answers</h2>
+            <div className="space-y-6">
+              {faqs.map((f) => (
+                <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+                  <h3 className="font-semibold text-white/90">{f.q}</h3>
+                  <p className="text-sm text-white/55 leading-relaxed mt-2">{f.a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* How this comparison was researched */}
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">

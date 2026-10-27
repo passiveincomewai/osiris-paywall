@@ -39,12 +39,22 @@ export const metadata: Metadata = {
   },
 };
 
-const TOOLS = [
+type Tool = {
+  icon: typeof Globe;
+  name: string;
+  tag: string;
+  href: string;
+  cta?: string;
+  body: string;
+};
+
+const TOOLS: Tool[] = [
   {
     icon: Globe,
     name: "WorldEye",
     tag: "Best all-in-one with maritime intel",
     href: "/ship-tracker",
+    cta: "Open the ship tracker",
     body: "Ship tracking as one layer of a live world picture: WorldEye's Pro maritime intel feed places vessels alongside the free globe's flights, satellites, weather, earthquakes, wildfires and 74,229 public cameras. Stated plainly — maritime is a Pro feature on WorldEye, not part of the free map. The pick when a ship's context matters as much as its position.",
   },
   {
@@ -66,6 +76,7 @@ const TOOLS = [
     name: "FleetMon",
     tag: "Best for maritime professionals",
     href: "/ship-tracker",
+    cta: "Open the ship tracker",
     body: "A professional-leaning AIS platform with vessel tracking, fleet management and maritime data services. Strongest for business and logistics users who need data and tooling beyond watching ships move on a map.",
   },
   {
@@ -73,6 +84,7 @@ const TOOLS = [
     name: "MyShipTracking",
     tag: "Best free-tier browsing",
     href: "/ship-tracker",
+    cta: "Open the ship tracker",
     body: "A free AIS-based tracker showing live vessel positions, ship details and port activity. A capable no-cost way to follow ships casually, with the coverage and freshness limits typical of free AIS tiers.",
   },
   {
@@ -80,7 +92,31 @@ const TOOLS = [
     name: "ShipFinder",
     tag: "Best mobile-first tracker",
     href: "/ship-tracker",
+    cta: "Open the ship tracker",
     body: "A long-running ship tracking app for following vessels from your phone, with live AIS positions and ship details. Worth a look if your tracking is mostly mobile; its strongest features sit in paid tiers.",
+  },
+];
+
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What's the best free ship tracker?",
+    a: "MyShipTracking and the free tiers of MarineTraffic and VesselFinder all show live coastal AIS positions at no cost, with limits on freshness, history and features. For casual ship-spotting, any of them works — try the map you enjoy using.",
+  },
+  {
+    q: "Is ship tracking free on WorldEye?",
+    a: "No — maritime vessel tracking is a WorldEye Pro feature, and we say so rather than burying it. The free map covers the globe, flights, satellites, weather, earthquakes, wildfires and 74,229 cameras with no signup; Pro adds maritime intel with the rest of the intelligence toolkit.",
+  },
+  {
+    q: "Why do some ships disappear mid-ocean on free trackers?",
+    a: "Because free tiers usually rely on terrestrial AIS receivers, which only hear vessels near coasts. Open-ocean positions come from satellite AIS, which costs providers money — so continuous mid-ocean tracking is normally a paid feature everywhere.",
+  },
+  {
+    q: "Can I track a ship by name?",
+    a: "Yes, on the dedicated AIS platforms: MarineTraffic, VesselFinder and FleetMon all maintain vessel pages you can search by ship name, and their paid tiers add the history and arrival estimates around each vessel. On WorldEye, ships are found on the live map itself — the pick when you want the vessel and the weather, traffic and cameras around it in one view.",
+  },
+  {
+    q: "What is the best ship tracker app?",
+    a: "ShipFinder is the mobile-first pick in this list — a long-running app built for following vessels from your phone. The big platforms (MarineTraffic, VesselFinder) also ship capable apps alongside their web maps; in every case the strongest app features sit in paid tiers.",
   },
 ];
 
@@ -99,6 +135,14 @@ const jsonLd = {
         description: `${t.tag}. ${t.body}`,
       }))
     ),
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
   ],
 };
 
@@ -130,6 +174,33 @@ export default function BestShipTrackingToolsPage() {
         <ReviewedStamp />
         <HeroCtas />
       </div>
+
+      {/* Quick answer */}
+      <section className="mt-14 max-w-3xl mx-auto rounded-3xl border border-[#0096FF]/25 bg-[#0096FF]/[0.05] p-7 md:p-8">
+        <h2 className="text-lg font-bold">The short answer</h2>
+        <p className="text-white/60 leading-relaxed mt-3">
+          The best ship tracking tools in 2026 are{" "}
+          <strong className="text-white/85">MarineTraffic</strong> (the
+          best-known dedicated AIS platform),{" "}
+          <strong className="text-white/85">VesselFinder</strong> (its closest
+          like-for-like alternative),{" "}
+          <strong className="text-white/85">FleetMon</strong> (best for
+          maritime professionals) and{" "}
+          <strong className="text-white/85">WorldEye</strong> (best when you
+          want vessels inside a wider live picture — weather, flights,
+          satellites and port-area cameras on the same globe; its maritime
+          intel is a Pro feature, stated plainly). Every tracker here is
+          built on the same AIS broadcasts, explained in our{" "}
+          <Link href="/what-is-ais" className="text-[#0096FF] hover:underline">
+            guide to AIS
+          </Link>
+          ; the live tool itself is the{" "}
+          <Link href="/ship-tracker" className="text-[#0096FF] hover:underline">
+            ship tracker
+          </Link>
+          . The ranked breakdown below explains each pick.
+        </p>
+      </section>
 
       {/* What differs */}
       <section className="mt-20 max-w-3xl mx-auto">
@@ -182,7 +253,7 @@ export default function BestShipTrackingToolsPage() {
                     href={t.href}
                     className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
                   >
-                    Compare {t.name} vs WorldEye
+                    {t.cta ?? `Compare ${t.name} vs WorldEye`}
                   </Link>
                 </div>
               </div>
@@ -293,38 +364,43 @@ export default function BestShipTrackingToolsPage() {
         </div>
       </section>
 
+      {/* How we ranked */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold">How we ranked these ship trackers</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            No single score decides this list. Each tracker was placed by
+            best fit against the four things that genuinely differ between
+            AIS platforms: the coverage model (terrestrial receivers near
+            coasts versus satellite AIS offshore), the depth around a vessel
+            (history, port calls, fleet tools), what the free tier actually
+            allows before the paywall, and context — what else shares the
+            screen with the ships. A tracker can top one of those and trail
+            on the others, which is why the list names a best pick per job
+            instead of pretending one winner fits every harbour.
+          </p>
+          <p>
+            One disclosure, stated the same way on every WorldEye roundup:
+            this is our list, and WorldEye is in it. Its placement rests on
+            the breadth argument made in its entry — and on the honest limit
+            stated there too, that maritime intel is a Pro feature here
+            while the dedicated platforms below offer free AIS tiers. If a
+            placement ever stops being true, the fix is to re-rank, not to
+            quietly reword.
+          </p>
+        </div>
+      </section>
+
       {/* Q&A */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Ship tracking questions, answered</h2>
         <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best free ship tracker?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              MyShipTracking and the free tiers of MarineTraffic and
-              VesselFinder all show live coastal AIS positions at no cost,
-              with limits on freshness, history and features. For casual
-              ship-spotting, any of them works — try the map you enjoy using.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Is ship tracking free on WorldEye?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              No — maritime vessel tracking is a WorldEye Pro feature, and we
-              say so rather than burying it. The free map covers the globe,
-              flights, satellites, weather, earthquakes, wildfires and
-              74,229 cameras with no signup; Pro adds maritime intel with
-              the rest of the intelligence toolkit.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Why do some ships disappear mid-ocean on free trackers?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Because free tiers usually rely on terrestrial AIS receivers,
-              which only hear vessels near coasts. Open-ocean positions come
-              from satellite AIS, which costs providers money — so continuous
-              mid-ocean tracking is normally a paid feature everywhere.
-            </p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.q}>
+              <h3 className="text-lg font-semibold text-white/90">{f.q}</h3>
+              <p className="text-white/55 leading-relaxed mt-2">{f.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 

@@ -125,6 +125,20 @@ const jsonLd = {
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
   numberOfItems: europe.length,
   dateModified: CATALOGUE_GENERATED_AT,
+  /* The one structural element this hub lacked vs its indexed sibling
+     /asia-webcams: a mainEntity ItemList enumerating the child country
+     pages — built from the same `europe` array the table below renders,
+     in the same order, so schema and page can never disagree. */
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: europe.length,
+    itemListElement: europe.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: `${c.name} — ${fmt(c.count)} cameras`,
+      url: `https://worldeye.app/cameras/countries/${c.slug}`,
+    })),
+  },
 };
 
 export default async function EuropeLiveCamerasPage() {

@@ -86,6 +86,141 @@ function metaDescription(c: CountryEntry): string {
   return `Watch ${plural(c.count, "live camera")} across ${c.name}${where}. Free live street, traffic, weather and city webcams on the WorldEye globe — no signup to browse.`;
 }
 
+/* Per-country snippet overrides (Top-50 Batch 3, #33/#35/#36/#37): the
+   generic title/description above say "live cameras" for every country,
+   while the demand for these four pages is phrased "webcams" ("Malaysia
+   webcams", "Turkey webcams", "UK webcams", "Romania webcams"). Only the
+   <title>/meta/OG snippet changes — H1, hero and body are untouched —
+   and every value is a function of the country's own index record, so a
+   count can never freeze at a stale snapshot. Countries without an entry
+   keep the exact generic snippet. */
+interface CountrySnippet {
+  title: (c: CountryEntry) => string;
+  description: (c: CountryEntry) => string;
+}
+
+const SNIPPET_OVERRIDES: Record<string, CountrySnippet> = {
+  malaysia: {
+    title: (c) => `${c.name} Webcams — ${plural(c.count, "Live Street & River Camera")}`,
+    description: (c) => {
+      const top = c.topCities.slice(0, 3).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across ${c.name} — Selangor river and flood-monitoring cameras around ${top.join(", ")}, plus road, town and coastal views. Free on WorldEye, no signup to browse.`;
+    },
+  },
+  turkey: {
+    title: (c) =>
+      `${c.name} Webcams — ${plural(c.count, "Live Camera")}, ${c.topCities[0]?.name ?? "Istanbul"} & Beyond`,
+    description: (c) => {
+      const top = c.topCities[0];
+      const rest = c.topCities.slice(1, 4).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across ${c.name}${top ? ` — ${top.name} street cameras (${plural(top.count, "feed")}) lead, with ${rest.join(", ")} behind` : ""}. Free live street, traffic and city webcams on the WorldEye globe.`;
+    },
+  },
+  "united-kingdom": {
+    title: (c) => `UK Webcams — ${plural(c.count, "Live Camera")} Across the ${c.name}`,
+    description: (c) => {
+      const top = c.topCities.slice(0, 3).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across the ${c.name}, including ${top.join(", ")} — with further feeds in Cardiff, Newport and Swansea. Free live street and traffic webcams on WorldEye, no signup to browse.`;
+    },
+  },
+  romania: {
+    title: (c) =>
+      `${c.name} Webcams — ${plural(c.count, "Live Camera")}, ${c.topCities[0]?.name ?? "Brasov"} to ${c.topCities[1]?.name ?? "Bucharest"}`,
+    description: (c) => {
+      const top = c.topCities.slice(0, 3).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across ${c.name} — ${top.join(", ")} lead, with mountain views in Predeal and Black Sea coast feeds at Constanta. Free on WorldEye, no signup to browse.`;
+    },
+  },
+};
+
+function snippetTitle(c: CountryEntry): string {
+  return SNIPPET_OVERRIDES[c.slug]?.title(c) ?? pageTitle(c);
+}
+
+function snippetDescription(c: CountryEntry): string {
+  return SNIPPET_OVERRIDES[c.slug]?.description(c) ?? metaDescription(c);
+}
+
+/* Extra per-country FAQs (same Top-50 batch): appended to whichever FAQ
+   set the page already uses — hand-written content where it exists, the
+   derived set where it doesn't — so they render in the visible FAQ list
+   AND the single FAQPage schema built from it below. Every number is
+   read from the country's own record or its computed facts at render
+   time. Countries without an entry are byte-identical to before. */
+type CountryFactsLite = ReturnType<typeof countryFacts>;
+
+function areaCount(c: CountryEntry, name: string): number | null {
+  return c.topCities.find((a) => a.name === name)?.count ?? null;
+}
+
+const EXTRA_FAQS: Record<
+  string,
+  (c: CountryEntry, facts: CountryFactsLite) => Array<{ q: string; a: string }>
+> = {
+  malaysia: (c, facts) => {
+    const flood = facts.sources.find((s) => /flood/i.test(s.name));
+    const top = c.topCities.slice(0, 3).map((a) => a.name);
+    return [
+      {
+        q: "Are Malaysia's webcams mostly river and flood-monitoring cameras?",
+        a: `${flood ? `Many are — the largest single source in the Malaysia index is a Selangor flood-monitoring network (${plural(flood.count, "feed")} of the ${plural(c.count, "camera")}), whose cameras watch rivers such as the Sg. Langat and the Sg. Damansara around ${top.join(", ")}. ` : ""}The rest are road, town and coastal views from public webcam platforms.${facts.streams === 0 && facts.stills > 0 ? " Every Malaysia feed in the index is currently a still-image feed: each camera publishes a fresh frame on its operator's schedule, so the picture steps forward in intervals rather than playing as continuous video." : ""}`,
+      },
+    ];
+  },
+  turkey: (c) => {
+    const istanbul = areaCount(c, "Istanbul");
+    return [
+      {
+        q: "Can I watch Istanbul street cameras live?",
+        a: `Yes — Istanbul is the largest cluster in Turkey${istanbul ? `, with ${plural(istanbul, "feed")} of the country's ${plural(c.count, "live camera")}` : ""}: street-level views published by Istanbul's metropolitan network (İBB), covering neighbourhoods such as Ataköy, Bağcılar and Bahçelievler. Watch them in the grid above, filtered to Istanbul, or open the dedicated Istanbul live webcams page for the city on its own — the "Questions people ask" section below links straight to it.`,
+      },
+      {
+        /* The one non-English signal in this page's query data (Arabic:
+           "Istanbul street cameras live", 4 imp, pos 10.8). One honest
+           Arabic entry, not a translated page: no hreflang/lang claims
+           the system doesn't genuinely support are made anywhere. */
+        q: "هل يمكنني مشاهدة كاميرات شوارع إسطنبول مباشرة؟",
+        a: `نعم. تجمع هذه الصفحة كاميرات تركيا الحية، وإسطنبول هي أكبر تجمع فيها${istanbul ? ` بـ${istanbul} كاميرا` : ""} — كاميرات شوارع من شبكة بلدية إسطنبول تغطي أحياء في أنحاء المدينة، ويمكنك فتح أي منها من الشبكة أعلاه ومشاهدتها مباشرة ومجانًا. وإذا أردت إسطنبول وحدها، فهناك أيضًا صفحة مخصصة لكاميرات إسطنبول الحية على WorldEye، ويربطك بها قسم الأسئلة الشائعة أدناه.`,
+      },
+    ];
+  },
+  "united-kingdom": (c) => {
+    const london = areaCount(c, "London");
+    const named: Array<[string, number | null]> = [
+      ["Newcastle", areaCount(c, "Newcastle")],
+      ["Durham", areaCount(c, "Durham")],
+      ["Gateshead", areaCount(c, "Gateshead")],
+      ["Sunderland", areaCount(c, "Sunderland")],
+      ["Cardiff", areaCount(c, "Cardiff")],
+      ["Newport", areaCount(c, "Newport")],
+      ["Swansea", areaCount(c, "Swansea")],
+    ];
+    const present = named.filter(
+      (n): n is [string, number] => n[1] !== null,
+    );
+    return [
+      {
+        q: "Are there live webcams outside London on WorldEye?",
+        a: `Yes. London is by far the largest cluster${london ? ` (${plural(london, "feed")} of the UK's ${plural(c.count, "live camera")})` : ""}, but the index also covers ${present.map(([n, count]) => `${n} (${count})`).join(", ")} — the North East and Wales are both genuinely covered, not just the capital. Use the areas table above or the city search at the top of this page to jump to any of them. For London itself, the dedicated London city page breaks the capital's feeds down street by street.`,
+      },
+    ];
+  },
+  romania: (c) => {
+    const bucharest = areaCount(c, "Bucharest");
+    const predeal = areaCount(c, "Predeal");
+    return [
+      {
+        q: "Can I check snow and mountain conditions in Romania live?",
+        a: `Yes — Brașov's feeds include the Piața Sfatului old-town square and the Cabana Postăvarul mountain cabin above the city${predeal ? `, and Predeal, the Prahova Valley resort town, has ${plural(predeal, "feed")} of its own` : ""}. In winter these Carpathian cameras are the quickest live read on snow cover and visibility before a trip up — open any of them in the grid above.`,
+      },
+      {
+        q: "What else can I watch in Romania besides the mountains?",
+        a: `Bucharest${bucharest ? ` has ${plural(bucharest, "feed")}` : " is covered"}, including Piața Romană and the Bărăția Church on Bd. I. C. Brătianu. On the Black Sea coast, Constanța and Eforie Nord stream beach views, and Digi Live city feeds cover Botoșani, Piatra Neamț, Galați and Vaslui.`,
+      },
+    ];
+  },
+};
+
 /* For countries without hand-written content: an honest intro composed
    from the same derived numbers (no invented colour, no guessed facts). */
 function derivedIntro(c: CountryEntry): string[] {
@@ -133,12 +268,12 @@ export async function generateMetadata({
   if (!c) return { title: "Not found" };
   const url = `/cameras/countries/${slug}`;
   return {
-    title: pageTitle(c),
-    description: metaDescription(c),
+    title: snippetTitle(c),
+    description: snippetDescription(c),
     alternates: { canonical: `${BASE}${url}` },
     openGraph: {
-      title: pageTitle(c),
-      description: metaDescription(c),
+      title: snippetTitle(c),
+      description: snippetDescription(c),
       url,
       type: "website",
     },
@@ -250,7 +385,8 @@ export default async function CountryPage({
 
   const content = CONTENT[slug];
   const intro = content?.intro ?? derivedIntro(c);
-  const faqs = content?.faqs ?? [...derivedFaqs(c), ...extraFaqs(c, facts)];
+  const baseFaqs = content?.faqs ?? [...derivedFaqs(c), ...extraFaqs(c, facts)];
+  const faqs = [...baseFaqs, ...(EXTRA_FAQS[slug]?.(c, facts) ?? [])];
   /* Data-bound "Questions people ask" entries (src/lib/place-answers.ts,
      ROLLOUT-SPEC §3 merge): appended to the template FAQs for the single
      FAQPage below; the visible block renders exactly the survivors. */
@@ -265,8 +401,8 @@ export default async function CountryPage({
     "@graph": [
       {
         "@type": "CollectionPage",
-        name: pageTitle(c),
-        description: metaDescription(c),
+        name: snippetTitle(c),
+        description: snippetDescription(c),
         url: canonical,
         mainEntity: {
           "@type": "ItemList",

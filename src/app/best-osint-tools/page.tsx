@@ -353,6 +353,11 @@ export default function BestOsintToolsPage() {
       <RelatedLinks
         links={[
           {
+            label: "What is OSINT?",
+            desc: "New to the term? The beginner's guide — what open-source intelligence is, the core techniques, and the ethics.",
+            href: "/blog/what-is-osint",
+          },
+          {
             label: "Free OSINT tools",
             desc: "The zero-budget OSINT workflow — every tool genuinely free.",
             href: "/free-osint-tools",

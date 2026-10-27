@@ -21,12 +21,12 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "Best Flight Tracking Tools in 2026",
+  title: "7 Best Flight Tracking Tools in 2026 — Free & Paid Compared",
   description:
-    "The best flight tracking tools for 2026 compared: WorldEye's free 3D globe, Flightradar24, ADS-B Exchange, airplanes.live and more.",
+    "The 7 best flight tracking tools for 2026, ranked by best fit: WorldEye's free 3D globe, Flightradar24, ADS-B Exchange, airplanes.live, FlightAware and more — free vs paid, filtering and coverage compared.",
   alternates: { canonical: "/best-flight-tracking-tools" },
   openGraph: {
-    title: "Best Flight Tracking Tools in 2026 | WorldEye",
+    title: "7 Best Flight Tracking Tools in 2026 — Free & Paid Compared | WorldEye",
     description:
       "Compare the best flight trackers for 2026 — WorldEye's free 3D globe, Flightradar24, ADS-B Exchange, airplanes.live and more.",
     url: "/best-flight-tracking-tools",
@@ -34,18 +34,28 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Best Flight Tracking Tools in 2026 | WorldEye",
+    title: "7 Best Flight Tracking Tools in 2026 — Free & Paid Compared | WorldEye",
     description:
-      "The best flight tracking tools for 2026 compared — free and paid picks.",
+      "The best flight tracking tools for 2026 compared — free and paid picks, ranked by best fit.",
   },
 };
 
-const TOOLS = [
+type Tool = {
+  icon: typeof Globe;
+  name: string;
+  tag: string;
+  href: string;
+  cta?: string;
+  body: string;
+};
+
+const TOOLS: Tool[] = [
   {
     icon: Globe,
     name: "WorldEye",
     tag: "Best free immersive tracker",
-    href: "/compare/flightradar24",
+    href: "/live-flight-tracker",
+    cta: "Open the live flight tracker",
     body: "Live flight tracking on a free 3D globe — no signup — with the planet attached: satellites overhead, weather systems, 74,229 ground cameras, ships and quakes on the same screen. The pick for watching the sky as part of the world, not as dots on a rectangle. The flight layer is free forever; Pro adds analyst tools, not more planes.",
   },
   {
@@ -73,7 +83,7 @@ const TOOLS = [
     icon: Building2,
     name: "FlightAware",
     tag: "Best for airport operations",
-    href: "/live-flight-tracker",
+    href: "/compare/flightaware",
     body: "Deep airport pages, airline operational data, delay statistics and fleet tracking. Strongest when your question is about the aviation system rather than a single aircraft — the operations analyst's tracker.",
   },
   {
@@ -81,6 +91,7 @@ const TOOLS = [
     name: "OpenSky Network",
     tag: "Best for researchers and developers",
     href: "/live-flight-tracker",
+    cta: "Open the live flight tracker",
     body: "Research-driven ADS-B network with free API access and historical data for academics and developers. Built for building on, not for casual browsing — but invaluable if you work with the data programmatically.",
   },
   {
@@ -88,7 +99,31 @@ const TOOLS = [
     name: "Plane Finder",
     tag: "Best mobile-first experience",
     href: "/live-flight-tracker",
+    cta: "Open the live flight tracker",
     body: "Long-standing tracker with polished mobile apps and augmented-reality views. Worth a look if you track primarily from your phone — note its strongest features are in paid tiers.",
+  },
+];
+
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What's the best free flight tracker?",
+    a: "For a traditional map: airplanes.live or ADS-B Exchange, both free. For something different: WorldEye's free 3D globe — live aircraft with satellites, weather and cameras on the same screen, no signup. Try the globe once; most people don't go back to flat.",
+  },
+  {
+    q: "Why do some trackers hide certain aircraft?",
+    a: "Commercial services filter military, government, and private aircraft whose owners request blocking — a business and liability choice. Community trackers like ADS-B Exchange choose not to filter, displaying everything broadcast. Same sky, different philosophy.",
+  },
+  {
+    q: "Can I see flight history for free?",
+    a: "Limited history is available on several free tiers, but deep historical flight data — months of per-flight records — is generally a paid feature. Free trackers are built for the live picture; archives cost money to maintain.",
+  },
+  {
+    q: "Which flight tracker is best for following a specific flight?",
+    a: "Flightradar24 or FlightAware — searching by flight number, with history and airport context, is their home turf. If you also want the world around that flight — the weather it's flying through and cameras near its destination — watch it on WorldEye's live flight tracker instead.",
+  },
+  {
+    q: "Do flight trackers show planes over the oceans?",
+    a: "Partly. Oceanic coverage comes from satellite ADS-B and position estimates rather than the volunteer ground receivers that cover land, so mid-ocean tracks are thinner and can update less often on every tracker. Over the US and Europe, all the major trackers in this list are strong.",
   },
 ];
 
@@ -96,8 +131,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     webPageLd(
-      "Best Flight Tracking Tools in 2026",
-      "The best flight tracking tools for 2026 compared: WorldEye's free 3D globe, Flightradar24, ADS-B Exchange, airplanes.live and more.",
+      "7 Best Flight Tracking Tools in 2026 — Free & Paid Compared",
+      "The 7 best flight tracking tools for 2026, ranked by best fit: WorldEye's free 3D globe, Flightradar24, ADS-B Exchange, airplanes.live, FlightAware and more.",
       "/best-flight-tracking-tools"
     ),
     itemListLd(
@@ -107,6 +142,14 @@ const jsonLd = {
         description: `${t.tag}. ${t.body}`,
       }))
     ),
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
   ],
 };
 
@@ -138,6 +181,31 @@ export default function BestFlightTrackingToolsPage() {
         <ReviewedStamp />
         <HeroCtas />
       </div>
+
+      {/* Quick answer */}
+      <section className="mt-14 max-w-3xl mx-auto rounded-3xl border border-[#0096FF]/25 bg-[#0096FF]/[0.05] p-7 md:p-8">
+        <h2 className="text-lg font-bold">The short answer</h2>
+        <p className="text-white/60 leading-relaxed mt-3">
+          The best flight tracking tools in 2026 are{" "}
+          <strong className="text-white/85">WorldEye</strong> (best free
+          tracker — live flights on a 3D globe with weather, satellites and
+          cameras attached, no signup),{" "}
+          <strong className="text-white/85">Flightradar24</strong> (the
+          best-known all-rounder),{" "}
+          <strong className="text-white/85">ADS-B Exchange</strong> (best
+          unfiltered data — it shows the military and blocked aircraft
+          commercial trackers hide) and{" "}
+          <strong className="text-white/85">airplanes.live</strong> (best free
+          open-source map). They all draw on the same public ADS-B broadcasts,
+          so the real choice is filtering, presentation and price — the
+          ranked breakdown below explains each pick. To see the top pick in
+          action, open the{" "}
+          <Link href="/live-flight-tracker" className="text-[#0096FF] hover:underline">
+            live flight tracker
+          </Link>
+          .
+        </p>
+      </section>
 
       {/* What differs */}
       <section className="mt-20 max-w-3xl mx-auto">
@@ -191,7 +259,7 @@ export default function BestFlightTrackingToolsPage() {
                     href={t.href}
                     className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
                   >
-                    Compare {t.name} vs WorldEye
+                    {t.cta ?? `Compare ${t.name} vs WorldEye`}
                   </Link>
                 </div>
               </div>
@@ -313,35 +381,12 @@ export default function BestFlightTrackingToolsPage() {
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Flight tracking questions, answered</h2>
         <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best free flight tracker?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              For a traditional map: airplanes.live or ADS-B Exchange, both
-              free. For something different: WorldEye&apos;s free 3D globe —
-              live aircraft with satellites, weather and cameras on the same
-              screen, no signup. Try the globe once; most people don&apos;t go
-              back to flat.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Why do some trackers hide certain aircraft?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Commercial services filter military, government, and private
-              aircraft whose owners request blocking — a business and
-              liability choice. Community trackers like ADS-B Exchange choose
-              not to filter, displaying everything broadcast. Same sky,
-              different philosophy.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can I see flight history for free?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Limited history is available on several free tiers, but deep
-              historical flight data — months of per-flight records — is
-              generally a paid feature. Free trackers are built for the live
-              picture; archives cost money to maintain.
-            </p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.q}>
+              <h3 className="text-lg font-semibold text-white/90">{f.q}</h3>
+              <p className="text-white/55 leading-relaxed mt-2">{f.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 

@@ -15,14 +15,14 @@ import PhotoGeolocationTool from "@/components/PhotoGeolocationTool";
 import { Crosshair, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Photo Geolocation (Beta) — Where Was This Photo Taken?",
+  title: "AI Location Finder — Photo Geolocation Tool (Free Beta)",
   description:
-    "Upload a photo and WorldEye's free beta tool checks its embedded GPS metadata and visible clues — signs, landmarks, plates — then ranks the matching places with the evidence for and against each one. Private by design: your photo is processed in memory and never stored.",
+    "WorldEye's free AI location finder: upload a photo and the tool checks its embedded GPS metadata (EXIF) first, then reads the visible clues — signs, landmarks, plates — matches named places against OpenStreetMap, and ranks each candidate with its evidence and confidence. Processed in memory, never stored, no reverse image search.",
   alternates: { canonical: `${BASE}/tools/photo-geolocation` },
   openGraph: {
-    title: "Photo Geolocation (Beta) — Where Was This Photo Taken?",
+    title: "AI Location Finder — Photo Geolocation Tool (Free Beta)",
     description:
-      "Free beta: find where a photo was taken from its metadata and visible clues, with the evidence shown. Your photo is never stored.",
+      "Free beta AI location finder: upload a photo and get ranked candidate locations from its metadata and visible clues, with the evidence shown. Your photo is never stored.",
     url: "/tools/photo-geolocation",
     type: "website",
   },
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "WorldEye Photo Geolocation (Beta)",
+  name: "WorldEye AI Location Finder — Photo Geolocation Tool (Beta)",
   description:
-    "A free beta tool that estimates where a photo was taken from embedded GPS metadata and visible scene clues, ranking candidate places with evidence and an uncertainty radius.",
+    "A free beta AI location finder that estimates where a photo was taken from embedded GPS metadata and visible scene clues, ranking candidate places with evidence and an uncertainty radius.",
   url: `${BASE}/tools/photo-geolocation`,
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any",
@@ -42,7 +42,7 @@ const jsonLd = {
 };
 
 const INTRO = [
-  "Drop in a photo and this tool works the way a careful human would. First it reads the file itself: many camera and phone photos carry GPS coordinates in their EXIF metadata, and when they do, that is the strongest evidence there is. Then it studies the scene for clues — readable signs and place names, named landmarks, licence-plate styles, the side of the road traffic drives on, vegetation and architecture — and matches the named places against OpenStreetMap.",
+  "Drop in a photo and this AI location finder works the way a careful human would. First it reads the file itself: many camera and phone photos carry GPS coordinates in their EXIF metadata, and when they do, that is the strongest evidence there is. Then it studies the scene for clues — readable signs and place names, named landmarks, licence-plate styles, the side of the road traffic drives on, vegetation and architecture — and matches the named places against OpenStreetMap.",
   "What you get back is not a confident-sounding guess. Every candidate is ranked by the evidence behind it, shown with the reasons for and against, a plain-language confidence level and an uncertainty radius. Sometimes the honest answer is \u201Cwe couldn't determine this one\u201D — when that happens the tool says so, shows the clues it did establish, and tells you what would help. It never invents a location.",
   "This is a beta, and it has real limits. It does not run reverse image searches, it does not compare your photo against street-level imagery, and photos whose metadata was stripped by a messaging or social app — most copies you have been sent — are much harder to place than originals from the camera.",
 ];
@@ -105,12 +105,13 @@ export default function PhotoGeolocationPage() {
           <Crosshair className="w-3.5 h-3.5" /> FREE TOOL · BETA
         </p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-          Where was this photo taken?
+          AI Location Finder
         </h1>
         <p className="mt-4 text-white/55">
-          Upload a photo. The tool reads its metadata, studies the visible clues, and ranks the
-          places it could be — with the evidence for and against each one, and an honest
-          &ldquo;couldn&apos;t determine&rdquo; when the evidence is not there.
+          Upload a photo to the photo geolocation tool. It reads the photo&apos;s metadata,
+          studies the visible clues, and ranks the places it could be — with the evidence for
+          and against each one, and an honest &ldquo;couldn&apos;t determine&rdquo; when the
+          evidence is not there.
         </p>
       </div>
 
@@ -134,6 +135,8 @@ export default function PhotoGeolocationPage() {
       <RelatedLinks
         title="Keep exploring"
         links={[
+          { label: "Where was this photo taken? The full guide", href: "/where-was-this-photo-taken" },
+          { label: "Photo Location Finder — for your own travel photos", href: "/photo-location-finder" },
           { label: "Random Camera Roulette — guess the country from a live camera", href: "/random" },
           { label: "Camera Distance Finder — how far is that camera from you?", href: "/tools/camera-distance" },
           { label: "Live webcams worldwide", href: "/live-webcams" },

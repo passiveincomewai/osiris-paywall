@@ -17,12 +17,12 @@ import { Compass, ShieldCheck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Photo Location Finder — Find Where Your Own Photos Were Taken",
   description:
-    "A free photo location finder for travellers and creators: rediscover where your own photos were taken, rebuild a trip from your camera roll, and caption places correctly. Your photos are processed in memory and never stored.",
+    "A free photo location finder for travellers and creators: rediscover where your own photos were taken, rebuild a trip from your camera roll, and caption places correctly. When the GPS is gone it works as an AI photo finder — scene clues matched against OpenStreetMap, evidence shown. Photos processed in memory, never stored.",
   alternates: { canonical: `${BASE}/photo-location-finder` },
   openGraph: {
     title: "Photo Location Finder — Find Where Your Own Photos Were Taken",
     description:
-      "Forgotten viewpoint, unnamed viewpoint, lost trip stop? Run the original photo and get ranked locations with the evidence shown. Free beta, photos never stored.",
+      "Forgotten viewpoint, unnamed viewpoint, lost trip stop? Run the original photo through the AI photo finder and get ranked locations with the evidence shown. Free beta, photos never stored.",
     url: "/photo-location-finder",
     type: "website",
   },
@@ -33,14 +33,14 @@ const jsonLd = {
   "@type": "WebPage",
   name: "Photo Location Finder — Find Where Your Own Photos Were Taken",
   description:
-    "A guide and free tool for finding the locations of your own photos: embedded GPS in originals, clue-based matching for exported and shared copies, and rebuilding a trip's map from a camera roll — with uploads never stored.",
+    "A guide and free tool for finding the locations of your own photos: embedded GPS in originals, AI photo finder clue-based matching for exported and shared copies, and rebuilding a trip's map from a camera roll — with uploads never stored.",
   url: `${BASE}/photo-location-finder`,
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
 
 const INTRO = [
   "Every traveller has them: the perfect viewpoint whose name you never caught, the village you passed through once and can't find on a map, the waterfall a friend photographed that you now want to visit yourself. The photos remember being there — what they don't always remember, in any form you can read, is where \u201Cthere\u201D was.",
-  "A photo location finder closes that gap. Run the original file and the tool first checks whether the photo still carries its GPS coordinates, as most originals from a phone do. When it doesn't — exports, downloads, photos sent by a friend — it works from the scene itself: readable signs, named landmarks, plate styles, the side of the road, matched against OpenStreetMap and ranked by the evidence behind each candidate.",
+  "A photo location finder closes that gap — in effect, an AI photo finder pointed at your own camera roll rather than at strangers' pictures. Run the original file and the tool first checks whether the photo still carries its GPS coordinates, as most originals from a phone do. When it doesn't — exports, downloads, photos sent by a friend — it works from the scene itself: readable signs, named landmarks, plate styles, the side of the road, matched against OpenStreetMap and ranked by the evidence behind each candidate.",
   "And because these are your photographs, the privacy terms matter as much as the results. Photos you run here are processed in memory and discarded when the analysis finishes — never stored, never used for training, never sent to a reverse-image search. Rediscovering your own trip should not mean handing your camera roll to anyone.",
 ];
 

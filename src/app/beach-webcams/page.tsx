@@ -30,12 +30,12 @@ const VOICE_QA_IDS = [
 export const metadata: Metadata = {
   title: "Beach Webcams — Live Coastal Cameras Worldwide",
   description:
-    "Watch live beach webcams worldwide: surf and swell, sunrises, coastal weather and harbor views — free on the WorldEye map, no signup needed.",
+    "Watch live beach webcams worldwide: surf and swell, sunrises, coastal weather and harbor views — with live walls for Daytona Beach, Miami Beach, Myrtle Beach and more. Free on the WorldEye map, no signup needed.",
   alternates: { canonical: `${BASE}/beach-webcams` },
   openGraph: {
     title: "Beach Webcams — Live Coastal Cameras Worldwide",
     description:
-      "Live beach webcams: surf, sunrises, coastal weather and harbor views. Free on the WorldEye map.",
+      "Live beach webcams: surf, sunrises, coastal weather and harbor views — with live walls for Daytona Beach, Miami Beach, Myrtle Beach and more. Free on the WorldEye map.",
     url: "/beach-webcams",
     type: "website",
   },
@@ -129,6 +129,14 @@ const FAQS = [
     q: "Which coasts have the most beach cameras?",
     a: "Coverage follows public camera infrastructure: US coastlines (Florida, California, Hawaii and the Carolinas), European resorts, and parts of Australia and the Caribbean are the densest in the directory. Search any coastline on the map — the markers cluster where the cameras are.",
   },
+  {
+    q: "Can I watch Daytona Beach live?",
+    a: "Yes — Daytona Beach has its own featured wall on this page: the beach city's FDOT corridor cameras within 12 km of the sand, including the US-92 (International Speedway Boulevard) approach and the Clyde Morris corridor. The wall page states it plainly: no beach-named feed exists in the set, so what you watch is the road network of the beach city — the drive in, the bridges and the weather over the coast, live.",
+  },
+  {
+    q: "Which beach cameras should I watch when a hurricane approaches?",
+    a: "The featured walls on the Atlantic and Gulf coasts — Daytona Beach, Miami Beach, Myrtle Beach, Virginia Beach and Galveston — are the catalogue's real clusters in hurricane country, and the storm-season section above links each one. Expect feeds to get dramatic as the storm arrives, and expect some cameras to go offline if power or connectivity fails locally.",
+  },
 ];
 
 export default async function BeachWebcamsPage() {
@@ -146,6 +154,23 @@ export default async function BeachWebcamsPage() {
   for (const s of BEACH_SPOTS) {
     beachSpotCounts.set(s.slug, await countForDef(EXPLORE_SCOPES[s.scopeKey]));
   }
+  /* Storm-season coasts: the featured walls on the Atlantic and Gulf
+     hurricane coasts — the places whose cameras get searched for by
+     name when a storm approaches. Every place named here is a verified
+     BEACH_SPOTS wall with a real catalogue cluster behind it; coasts
+     the catalogue does not cover are not named, however often they are
+     searched for. */
+  const STORM_SEASON_SLUGS = [
+    "daytona-beach",
+    "miami-beach",
+    "myrtle-beach",
+    "virginia-beach",
+    "galveston",
+  ];
+  const stormSeasonSpots = BEACH_SPOTS.filter((s) =>
+    STORM_SEASON_SLUGS.includes(s.slug),
+  );
+  const daytona = BEACH_SPOTS.find((s) => s.slug === "daytona-beach");
 
   return (
     <PageShell>
@@ -202,6 +227,61 @@ export default async function BeachWebcamsPage() {
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {BEACH_SPOTS.map((s) => (
+            <Link
+              key={s.slug}
+              href={spotPath(s)}
+              className="block rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:bg-white/[0.06] transition-colors"
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="font-semibold text-white/90">{s.name}</h3>
+                <span className="text-xs text-white/45 whitespace-nowrap">
+                  {fmt(beachSpotCounts.get(s.slug) ?? 0)} cameras
+                </span>
+              </div>
+              <p className="text-xs text-white/40 mt-0.5">{s.place}</p>
+              <p className="text-sm text-white/55 mt-2 leading-relaxed">{s.knownFor}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">
+          Storm season: the coasts people search for by name
+        </h2>
+        <div className="text-sm text-white/55 leading-relaxed max-w-3xl space-y-4 mb-5">
+          <p>
+            Beach-webcam searching has two seasons. Summer is the surf,
+            sunrise and holiday season. The second runs with the Atlantic
+            hurricane season, June through November: when a named storm
+            turns toward a coast, searches stop being generic and start
+            naming the place — the beach town in the forecast cone is the
+            one people want to see, live, as the weather arrives.
+          </p>
+          <p>
+            These five featured walls sit on the US Atlantic and Gulf
+            hurricane coasts, and each is a real cluster in the catalogue,
+            counted on the same 12 km rule as the walls above. Daytona
+            Beach is the honest example of what a storm-season wall
+            usually is:{" "}
+            {daytona?.watchNotes[1] ?? "its feeds are the beach city's road network"}{" "}
+            Those corridor cameras are exactly what an approaching storm
+            makes worth watching — the beach approaches, the bridges and
+            the weather arriving over the coast — and the wall page says
+            plainly which feeds are which.
+          </p>
+          <p>
+            Coverage follows the catalogue, not the search trends: a coast
+            only appears here when public cameras genuinely cover it. When
+            a storm approaches somewhere the catalogue is thin, the map
+            search above still shows whatever coastal feeds exist nearby —
+            and during severe weather individual cameras can go dark as
+            power and connectivity fail, which the storm-watching FAQ below
+            covers.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {stormSeasonSpots.map((s) => (
             <Link
               key={s.slug}
               href={spotPath(s)}

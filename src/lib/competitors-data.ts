@@ -110,6 +110,47 @@ function normalize(raw: RawCompetitor): CompetitorData {
   };
 }
 
+/**
+ * Additive depth for the five Discovered-not-indexed compare entries
+ * (Top-50 Batch 3, #48 recovery pattern). Each bullet is appended to the
+ * entry's existing whyWorldEye list — no schema change, no new fields —
+ * and every claim in them restates facts already carried by that entry's
+ * own researched fields (its description, pricing and competitorWins) or
+ * by WorldEye's standing product facts used across all entries. The
+ * matching source of truth for the DB-seeded path is the seed JSON in
+ * src/data/competitors/; apply the same bullets there when seeding, or
+ * the production DB rows will not carry this depth (flagged in the
+ * Batch 3 notes).
+ */
+const WHY_WORLDEYE_ADDITIONS: Record<string, string[]> = {
+  "adsb-exchange": [
+    "Pair them: ADS-B Exchange's raw, unfiltered feed beside WorldEye's globe gives the same sky twice — once as data, once as a place, with cameras, weather and satellites around each aircraft.",
+    "No receiver, no feeder setup, no signup: WorldEye's flight layer is free in the browser, which makes it the zero-hardware way into the live sky ADS-B Exchange serves raw.",
+  ],
+  "airplanes-live": [
+    "Feeders keep airplanes.live honest; everyone else can open WorldEye's free globe for the same live sky with the ground attached — cameras, storms and satellites in the same view.",
+    "WorldEye asks for no receiver, no MLAT setup and no community onboarding, and its Pro tier adds the analyst tools a community map deliberately does not try to be.",
+  ],
+  acled: [
+    "Use them in sequence: read ACLED's structured event history for a region first, then open WorldEye to see that region live — its cameras, flights and weather — as events unfold.",
+    "WorldEye needs no registration at all: the live picture is free in the browser, making it the zero-paperwork first look before requesting research-grade ACLED data.",
+  ],
+  "bellingcat-toolkit": [
+    "The toolkit teaches method; WorldEye supplies a live scene to apply it to — one free globe where a location's cameras, flights, weather and satellites can be checked in minutes.",
+    "WorldEye's Pro toolkit (Nmap, DNS, WHOIS and SSL lookups plus an AI analyst) sits inside the same subscription as the live globe — no hundred-tab tool hunt for the common checks.",
+  ],
+  "conflictzone-io": [
+    "ConflictZone briefs a conflict on a weekly cycle; WorldEye shows its setting live every minute — the cameras, airspace and weather around the severity ratings and timelines.",
+    "No account wall on the map: WorldEye's globe is free with no signup, so a conflict headline can be checked against the live picture immediately, before any account is created anywhere.",
+  ],
+};
+
+function withAdditions(c: CompetitorData): CompetitorData {
+  const extra = WHY_WORLDEYE_ADDITIONS[c.slug];
+  if (!extra) return c;
+  return { ...c, whyWorldEye: [...c.whyWorldEye, ...extra] };
+}
+
 const BUNDLED: CompetitorData[] = [
   acled, adsbExchange, airplanesLive, bellingcatToolkit, conflictzoneIo,
   copernicusBrowser, crisis24, dataminr, deepstatemap, earthcam, exploreOrg,
@@ -117,7 +158,7 @@ const BUNDLED: CompetitorData[] = [
   intelligenceX, liveuamap, maltego, marinetraffic, n2yo, nasaWorldview,
   osintIndustries, recordedFuture, sentinelHub, shadowdragon, skylinewebcams,
   ventusky, vesselfinder, windy, worldMonitor, zoomEarth,
-].map((d) => normalize(d as RawCompetitor));
+].map((d) => withAdditions(normalize(d as RawCompetitor)));
 
 /** One bundled competitor by slug (published only), or null. */
 export function getBundledCompetitor(slug: string): CompetitorData | null {

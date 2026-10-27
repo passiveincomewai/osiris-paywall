@@ -910,7 +910,7 @@ export const POSTS: BlogPost[] = [
   {
     slug: "what-is-osint",
     title: "What Is OSINT? A Beginner's Guide to Open-Source Intelligence",
-    seoTitle: "What Is OSINT? Beginner's Guide | WorldEye Blog",
+    seoTitle: "What Is OSINT? A Beginner's Guide to Open-Source Intelligence | WorldEye Blog",
     date: "2026-10-10",
     excerpt:
       "OSINT is intelligence gathered from public sources — no hacking, no classified access. Here's what it actually is, the techniques beginners start with, and how to practice it legally and ethically.",
@@ -964,7 +964,7 @@ export const POSTS: BlogPost[] = [
         heading: "The toolkit, by category",
         body: [
           "OSINT tools cluster into a few families. Search and archives: advanced operators, the Wayback Machine, and cached pages. Network: DNS/WHOIS lookups, certificate transparency logs, BGP and ASN data. Imagery: satellite views, street-level imagery, and sun-position calculators for shadow analysis. Transport: ADS-B flight tracking and AIS ship tracking. People and companies: public registries, court records, and corporate filings.",
-          "You don't need all of them. Beginners should master one family deeply — network lookups are the highest-leverage starting point — before spreading out. Depth beats breadth: one analyst who truly understands DNS records outperforms ten who skimmed twenty tools.",
+          "You don't need all of them. Beginners should master one family deeply — network lookups are the highest-leverage starting point — before spreading out. Depth beats breadth: one analyst who truly understands DNS records outperforms ten who skimmed twenty tools. Our guide to [free OSINT tools](/free-osint-tools) walks through the zero-budget picks in each of these families, so you can start with whichever one you choose without spending anything.",
         ],
       },
       {
@@ -1110,27 +1110,27 @@ export const POSTS: BlogPost[] = [
   {
     slug: "checking-road-conditions-live-traffic-cameras",
     title: "How to Check Road Conditions with Live Traffic Cameras",
-    seoTitle: "Road Conditions via Live Traffic Cameras | WorldEye Blog",
+    seoTitle: "Checking Road Conditions with Live Traffic Cameras | WorldEye Blog",
     date: "2026-10-11",
     excerpt:
-      "Before you drive, look at the road. This guide shows where to find live DOT traffic cameras, how to read a highway feed, and what to check before every trip.",
+      "Before you drive — above all in winter storm season — look at the road itself. Where to find live traffic cameras near you, how to read a highway feed for snow, ice, and queues, and the pre-trip routine that beats any forecast.",
     seoDescription:
-      "Learn where to find live DOT traffic cameras, how to read a highway feed for ice, water, and queues, and the pre-trip routine that beats any forecast.",
+      "Checking road conditions before you drive? Use live traffic cameras to see the snow, ice, queues and closures on your actual route: where to find DOT cameras near you, how to read a feed, and the five-minute pre-trip routine.",
     tags: ["cameras", "guide"],
     sections: [
       {
         heading: "Why a camera beats a forecast",
         body: [
-          "Weather apps tell you what's supposed to happen. A roadside camera shows you what's actually happening on the asphalt right now: whether the lanes are wet, whether snow is sticking, whether traffic is stacking up behind a crash two miles ahead. For a driver about to leave, that difference matters more than any forecast.",
+          "Weather apps tell you what's supposed to happen. A roadside camera shows you what's actually happening on the asphalt right now: whether the lanes are wet, whether snow is sticking, whether traffic is stacking up behind a crash two miles ahead. For a driver about to leave, that difference matters more than any forecast. It matters most when a winter storm is moving through: the forecast says snow is possible, but the camera on your pass shows whether it is already sticking.",
           "Transport departments figured this out decades ago, which is why highways across the developed world are lined with traffic cameras. They were installed for traffic-management centers, but the feeds are public — and they remain the single best pre-trip tool most drivers never use.",
-          "Once you've checked cameras a few times, forecasts start to feel like rumors: useful, but secondhand. The camera is the road itself, reporting in.",
+          "Once you've checked cameras a few times, forecasts start to feel like rumors: useful, but secondhand. The camera is the road itself, reporting in. Traffic feeds are only one slice of the network, too — the same habit of looking before you decide runs through the whole world of [live cameras around the world](/blog/world-live-cameras), from harbours to ski slopes.",
         ],
       },
       {
         heading: "Where to find DOT cameras",
         body: [
           "In the United States, nearly every state runs a 511 traveler-information portal with a live camera map — search for your state's 511 site and you'll find it. Canada's provinces, the UK's National Highways, and most European road agencies publish similar feeds. Quality varies: some cameras stream near-live video, while others refresh a still image every minute or two.",
-          "The frustrating part is that every agency runs its own site, its own map, and its own interface. [WorldEye's live camera map](/cameras) gathers 74,229 public camera streams — traffic feeds included — onto one globe, so you can trace your whole route and check the cameras along it without hunting through half a dozen DOT websites.",
+          "The frustrating part is that every agency runs its own site, its own map, and its own interface. [WorldEye's live camera map](/cameras) gathers 74,229 public camera streams — traffic feeds included — onto one globe, so you can trace your whole route and check the cameras along it without hunting through half a dozen DOT websites. If you mostly drive one state, the [US traffic cameras by state](/us-traffic-cameras) pages are the faster way in: each state's DOT feeds gathered on a single page.",
         ],
       },
       {
@@ -1184,6 +1184,10 @@ export const POSTS: BlogPost[] = [
       {
         q: "What should I do when the camera I need is offline?",
         a: "Check the DOT's written road-condition report and any posted chain laws or closures for that highway segment - agencies publish those separately from the video feeds. Then look at cameras on either side of the gap to bracket the conditions. Feeds tend to fail during storms and power cuts, exactly when you would most want them, so always keep a non-camera source as backup.",
+      },
+      {
+        q: "Where can I find live streaming traffic cameras near me?",
+        a: "Start with your state's 511 traveler-information portal, which maps that state's DOT cameras, or open WorldEye's US traffic cameras pages, which gather each state's feeds by state so you can jump straight to the cameras on your route. Check the feed nearest your starting point first, then the chokepoints ahead of you — passes, bridges and tunnels — and always confirm the feed's timestamp is current before trusting the picture.",
       },
     ],
   },
@@ -1899,7 +1903,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "1–2. Verify footage and photos before publishing",
         body: [
-          "The first OSINT skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 74,229 public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
+          "The first [OSINT](/blog/what-is-osint) skill in any newsroom is verification. A viral video claims to show a protest in a particular city tonight — is it? Journalists check the metadata, reverse-image-search keyframes to find earlier publication, and match landmarks, signage, and shadows against satellite imagery and street-level cameras. WorldEye's 74,229 public cameras are a direct tool here: pull up a live feed from the claimed location and compare the weather, light, and streetscape.",
           "The same discipline applies to photos from conflict zones. Matching a photo's terrain to satellite imagery, checking the sun angle against the claimed time, and finding the same location on a live camera can confirm or kill a story in minutes. Getting this wrong means publishing misinformation — getting it right is what separates reporting from reposting.",
           "Speed matters, but so does a verification workflow the whole desk follows. The best newsrooms maintain shared checklists and require two independent confirmations before airing user-generated content. Lone-wolf verification is admirable; institutional verification is reliable. Build the checklist once, and every breaking story gets faster without getting sloppier.",
           "One final habit: keep a personal log of your verifications — what you checked, what you found, what you concluded. Over time it becomes both a portfolio of your rigor and a reference when similar claims resurface, as they always do.",
@@ -2047,7 +2051,7 @@ export const POSTS: BlogPost[] = [
         body: [
           "After the checks, sort your conclusions honestly: verified (multiple independent corroborations), plausible but unconfirmed (consistent, single source), or debunked (contradicted). Most viral footage lands in the middle category — and 'unconfirmed' is a complete, respectable answer.",
           "One more principle: preserve what you find. Save the original video, screenshot the metadata, archive the corroborating pages — because viral footage gets deleted, accounts get suspended, and live cameras move on. Your future self, or a fact-checker reviewing your work, will need the evidence trail exactly as it looked when you verified it.",
-          "If you share, share the verification, not just the video: 'filmed at this intersection, shadows match 4pm, live cameras show the same conditions.' That is how open-source verification earns trust — and how you avoid becoming the next cautionary tale in someone else's media-literacy post.",
+          "If you share, share the verification, not just the video: 'filmed at this intersection, shadows match 4pm, live cameras show the same conditions.' That is how [open-source verification](/blog/what-is-osint) earns trust — and how you avoid becoming the next cautionary tale in someone else's media-literacy post.",
           "Over time, this practice changes how you consume news entirely. You'll start noticing the tells automatically — the wrong license plates for the claimed country, vegetation that doesn't match the climate, architecture from the wrong continent. Verification stops being a chore and becomes a lens.",
         ],
       },

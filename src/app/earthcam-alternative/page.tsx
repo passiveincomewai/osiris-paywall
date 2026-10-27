@@ -86,6 +86,14 @@ const FAQS = [
     q: "Are the feeds really live?",
     a: "They are the operators' own live feeds — many are streaming video, and some public networks (Canadian provincial cameras are the classic example) publish still images that refresh every few minutes instead. Either way, what you see is the feed as published, and individual cameras can occasionally go dark for maintenance on the operator's side.",
   },
+  {
+    q: "What is the best free EarthCam alternative?",
+    a: "For breadth, WorldEye: 74,229 public cameras from hundreds of operators in 105 countries on one free 3D globe, no signup. For a single famous view produced by one network, EarthCam itself is still the classic — the two products solve different problems, and the head-to-head comparison linked below lays out exactly where each is stronger.",
+  },
+  {
+    q: "What should I try first on WorldEye?",
+    a: "Open the globe and search a place you know — your city, a beach you're visiting, a pass you're about to drive. Seeing a familiar place live, from a camera that is really there, is the fastest way to understand what an index of 74,229 public feeds makes possible that a curated network doesn't try to.",
+  },
 ];
 
 const jsonLd = {
@@ -273,6 +281,64 @@ export default function EarthcamAlternativePage() {
           </div>
         </div>
 
+        {/* Start with a category */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Start with a <span className="text-[#D4AF37]">category</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Most people arriving from a webcam network have a kind of place
+              in mind rather than a specific camera. The directory&apos;s
+              category walls are the shortcut: each one gathers the feeds of
+              a type from across the whole index, so the comparison with a
+              curated network is one click, not a search session.
+            </p>
+          </div>
+          <div className="mt-6 grid sm:grid-cols-2 gap-4">
+            {[
+              {
+                label: "Beach webcams",
+                desc: "Surf, sunrises and coastal weather from beach, boardwalk, pier and harbour cameras worldwide.",
+                href: "/beach-webcams",
+              },
+              {
+                label: "Airport webcams",
+                desc: "Runway and approach views at airports around the world — watch the weather your flight is landing into.",
+                href: "/airport-webcams",
+              },
+              {
+                label: "Ski webcams",
+                desc: "Resort and mountain-pass cameras for snow conditions, lifts and the drive up.",
+                href: "/ski-webcams",
+              },
+              {
+                label: "All live webcams",
+                desc: "The full hub: traffic, cities, nature and landmarks — every category in the directory.",
+                href: "/live-webcams",
+              },
+            ].map((c) => (
+              <Link
+                key={c.href}
+                href={c.href}
+                className="block rounded-3xl border border-white/10 bg-white/[0.02] p-6 hover:border-[#D4AF37]/40 transition"
+              >
+                <p className="font-semibold text-white/90">{c.label}</p>
+                <p className="text-sm text-white/45 leading-relaxed mt-2">{c.desc}</p>
+              </Link>
+            ))}
+          </div>
+          <p className="text-white/60 leading-relaxed mt-6">
+            Prefer the formal head-to-head? The{" "}
+            <Link href="/compare/earthcam" className="text-[#D4AF37] hover:underline">
+              WorldEye vs EarthCam comparison
+            </Link>{" "}
+            checks the two side by side — features, camera networks and
+            pricing, with sources — and states plainly where EarthCam is
+            stronger.
+          </p>
+        </div>
+
         {/* FAQ */}
         <div className="mt-20 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
@@ -319,6 +385,11 @@ export default function EarthcamAlternativePage() {
 
         <RelatedLinks
           links={[
+            {
+              label: "WorldEye vs EarthCam",
+              desc: "The full head-to-head: features, camera networks and pricing, checked against sources.",
+              href: "/compare/earthcam",
+            },
             {
               label: "Live cameras",
               desc: "The full camera directory — 74,229 live public cameras in 105 countries.",
