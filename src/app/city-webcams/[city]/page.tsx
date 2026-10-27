@@ -7,6 +7,7 @@ import { cityChunkStats, loadCountryChunk } from "@/lib/explore-data";
 import { clean } from "@/lib/country-cameras";
 import {
   bboxRadiusM,
+  dominantPlaceRecords,
   hasFullNeighbourSet,
   nearestCityNeighbours,
   neighbourLinks,
@@ -978,9 +979,11 @@ function generatedRelated(g: GenCity): { label: string; href: string }[] {
  * Every city page's catalogue centroid + camera bounding box, built
  * once per process from the same country-chunk records cityChunkStats
  * reads — the mean of the records filed under the city's own name, so
- * a point here is exactly the centroid the page itself quotes. US
- * cities also carry their state (via the state-hub resolution) as the
- * region the neighbour selection prefers. Pages whose records sit
+ * a point here is exactly the centroid the page itself quotes. Where
+ * one name is two real places, both readers take the dominant place's
+ * records (dominantPlaceRecords), so the agreement survives the split.
+ * US cities also carry their state (via the state-hub resolution) as
+ * the region the neighbour selection prefers. Pages whose records sit
  * under other locality names simply have no point, and their pages
  * degrade to the links they had. */
 interface CityPointEntry extends CityPoint {
@@ -1019,6 +1022,18 @@ function cityPointIndex(): Promise<Map<string, CityPointEntry>> {
           if (!records) return;
           for (const page of countryPages) {
             const wanted = clean(page.name);
+            const matched = records.filter(
+              (r) =>
+                clean(r.city) === wanted &&
+                typeof r.lat === "number" &&
+                typeof r.lng === "number",
+            ) as Array<{ lat: number; lng: number }>;
+            /* One name can be two real places (Marysville WA + CA):
+               the point and bbox describe the DOMINANT place, not the
+               merged mean that lands in neither. Unsplit names return
+               every record in chunk order, so their centroid/bbox are
+               exactly what they were. */
+            const placed = dominantPlaceRecords(matched);
             let n = 0;
             let lat = 0;
             let lng = 0;
@@ -1026,11 +1041,7 @@ function cityPointIndex(): Promise<Map<string, CityPointEntry>> {
             let maxLat = -Infinity;
             let minLng = Infinity;
             let maxLng = -Infinity;
-            for (const r of records) {
-              if (clean(r.city) !== wanted) continue;
-              if (typeof r.lat !== "number" || typeof r.lng !== "number") {
-                continue;
-              }
+            for (const r of placed) {
               n += 1;
               lat += r.lat;
               lng += r.lng;

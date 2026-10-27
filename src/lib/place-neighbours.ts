@@ -170,6 +170,152 @@ export function neighbourLinks(
   }));
 }
 
+/* ------------------------------------------------------------------ */
+/* Same-name place disambiguation                                      */
+/*                                                                     */
+/* The catalogue files records under a city NAME only — no state or    */
+/* region field exists — so one name can be two real places:           */
+/* "Marysville" is 49 cameras in Washington and 3 in California. A     */
+/* mean over the merged set lands in neither place (47.58,-122.17 —    */
+/* Puget Sound lowlands), its bbox spans both states, and every        */
+/* distance or radius computed from them is fiction.                   */
+/*                                                                     */
+/* dominantPlaceRecords() returns the records of the DOMINANT place    */
+/* in a name group: the group is split at empty geographic bands, and  */
+/* the largest resulting cluster wins. Splits are conservative — a     */
+/* group separates only when its bbox diagonal exceeds                   */
+/* CITY_SPLIT_DIAGONAL_KM *and* an empty band of at least              */
+/* CITY_SPLIT_GAP_KM exists along latitude or longitude — so a         */
+/* sprawling single place (a metro, a river corridor) is never cut.    */
+/* When no split fires the input comes back whole and in order, so     */
+/* every mean/bbox computed over it is bit-identical to before.        */
+/* Counts are NOT this helper's business: a page's quoted count        */
+/* describes its full record set; points describe its dominant place.  */
+/* ------------------------------------------------------------------ */
+
+/** A name group only *can* be two places when its cameras span more
+ *  than this bbox diagonal — far beyond any single city's spread. */
+export const CITY_SPLIT_DIAGONAL_KM = 120;
+
+/** Two clusters count as separate places only when an empty band at
+ *  least this wide separates them along latitude or longitude. */
+export const CITY_SPLIT_GAP_KM = 40;
+
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+function bboxOfPoints<T extends LatLng>(points: readonly T[]): CityBBox {
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
+  for (const p of points) {
+    if (p.lat < minLat) minLat = p.lat;
+    if (p.lat > maxLat) maxLat = p.lat;
+    if (p.lng < minLng) minLng = p.lng;
+    if (p.lng > maxLng) maxLng = p.lng;
+  }
+  return { minLat, maxLat, minLng, maxLng };
+}
+
+function meanPoint<T extends LatLng>(points: readonly T[]): LatLng {
+  let lat = 0;
+  let lng = 0;
+  for (const p of points) {
+    lat += p.lat;
+    lng += p.lng;
+  }
+  return { lat: lat / points.length, lng: lng / points.length };
+}
+
+/** Recursive largest-gap split: while a cluster's bbox diagonal says
+ *  it *could* be two places, cut it at the widest empty band along
+ *  either axis — provided the band clears CITY_SPLIT_GAP_KM. */
+function splitPlaceClusters<T extends LatLng>(points: readonly T[]): T[][] {
+  if (points.length < 2) return [points.slice()];
+  const bbox = bboxOfPoints(points);
+  const diagonalKm = haversineKm(
+    bbox.minLat,
+    bbox.minLng,
+    bbox.maxLat,
+    bbox.maxLng,
+  );
+  if (diagonalKm <= CITY_SPLIT_DIAGONAL_KM) return [points.slice()];
+
+  let best: { gapKm: number; lo: T[]; hi: T[] } | null = null;
+  for (const axis of ["lat", "lng"] as const) {
+    const sorted = [...points].sort((x, y) => x[axis] - y[axis]);
+    for (let i = 0; i + 1 < sorted.length; i++) {
+      const a = sorted[i];
+      const b = sorted[i + 1];
+      const gapKm =
+        axis === "lat"
+          ? haversineKm(a.lat, a.lng, b.lat, a.lng)
+          : haversineKm(a.lat, a.lng, a.lat, b.lng);
+      if (!best || gapKm > best.gapKm) {
+        best = {
+          gapKm,
+          lo: sorted.slice(0, i + 1),
+          hi: sorted.slice(i + 1),
+        };
+      }
+    }
+  }
+
+  if (!best || best.gapKm < CITY_SPLIT_GAP_KM) return [points.slice()];
+  return [
+    ...splitPlaceClusters(best.lo),
+    ...splitPlaceClusters(best.hi),
+  ];
+}
+
+/**
+ * The records of the dominant place in a same-name group: the largest
+ * gap-split cluster (ties: the cluster whose mean sits nearest the
+ * whole group's mean, then the southernmost, then the westernmost —
+ * fully deterministic). Input order is preserved within the result,
+ * and an unsplit group returns every record in input order.
+ */
+export function dominantPlaceRecords<T extends LatLng>(
+  points: readonly T[],
+): T[] {
+  if (points.length < 2) return points.slice();
+  const clusters = splitPlaceClusters(points);
+  if (clusters.length === 1) return clusters[0];
+  const groupMean = meanPoint(points);
+  let winner = clusters[0];
+  let winnerMean = meanPoint(winner);
+  let winnerDist = haversineKm(
+    winnerMean.lat,
+    winnerMean.lng,
+    groupMean.lat,
+    groupMean.lng,
+  );
+  for (const cluster of clusters.slice(1)) {
+    const m = meanPoint(cluster);
+    const d = haversineKm(m.lat, m.lng, groupMean.lat, groupMean.lng);
+    const better =
+      cluster.length > winner.length ||
+      (cluster.length === winner.length &&
+        (d < winnerDist ||
+          (d === winnerDist &&
+            (m.lat < winnerMean.lat ||
+              (m.lat === winnerMean.lat && m.lng < winnerMean.lng)))));
+    if (better) {
+      winner = cluster;
+      winnerMean = m;
+      winnerDist = d;
+    }
+  }
+  /* The split worked on axis-sorted copies; hand the winner back in
+     the caller's original order so downstream sums walk the records
+     exactly as they did before. */
+  const keep = new Set(winner);
+  return points.filter((p) => keep.has(p));
+}
+
 /**
  * Globe radius for a city's camera bounding box: half the box's
  * diagonal, so the geo deep link frames the same spread the page's

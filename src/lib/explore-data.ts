@@ -21,6 +21,7 @@
 import index from '@/data/camera-countries.json';
 import { cameraAreas, type CameraArea, type CountryCamera } from './country-cameras';
 import { COUNTRY_REGION, type RegionKey } from './country-page-content';
+import { dominantPlaceRecords } from './place-neighbours';
 import {
   applyScope,
   sortForExplore,
@@ -544,8 +545,16 @@ export async function cityChunkStats(
   const def = resolveExploreDef({ country: countrySlug, city: cityName });
   if (!def) return null;
   const records = await recordsForDef(def);
-  const placed = records.filter(
-    (r) => typeof r.lat === 'number' && typeof r.lng === 'number',
+  /* The count describes the page's full record set (the grid shows
+     them all); the centroid is a POINT and must sit on the place —
+     when one name is two real places, the mean of the merged set
+     lands in neither, so the point comes from the dominant place's
+     records (dominantPlaceRecords). Unsplit names are untouched. */
+  const placed = dominantPlaceRecords(
+    records.filter(
+      (r): r is CountryCamera & { lat: number; lng: number } =>
+        typeof r.lat === 'number' && typeof r.lng === 'number',
+    ),
   );
   if (placed.length === 0) return { count: records.length, centroid: null };
   let lat = 0;
