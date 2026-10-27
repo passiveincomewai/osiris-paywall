@@ -67,9 +67,15 @@
   --border-cyan: rgba(var(--cyan-rgb), 0.2);
 
   /* ── Text ── */
-  --text-primary: #E8E6E0;
-  --text-secondary: #9B978E;
-  --text-muted: #5C5A54;
+  /* Readability pass (owner request, 2026-10-26): grey text reads as white
+     site-wide. --text-secondary / --text-muted were warm greys (#9B978E /
+     #5C5A54); they now resolve to full white wherever they colour TEXT.
+     The same two variables are also used as a fill in a handful of
+     non-text spots (toggle knobs, the map popup close glyph) — those
+     brighten to white too, which is harmless on the dark UI. */
+  --text-primary: #FFFFFF;
+  --text-secondary: #FFFFFF;
+  --text-muted: #FFFFFF;
   --text-heading: #F5F0E0;
   --text-gold: #D4AF37;
   --text-cyan: #00E5FF;
@@ -134,8 +140,10 @@ body.theme-ghost {
   --border-cyan: rgba(124, 77, 255, 0.25);
 
   --text-primary: #E1BEE7;
-  --text-secondary: #9575CD;
-  --text-muted: #4A148C;
+  /* Ghost keeps its lavender primary/headings (theme identity, not grey),
+     but its grey-equivalents follow the site-wide readability pass. */
+  --text-secondary: #FFFFFF;
+  --text-muted: #FFFFFF;
   --text-heading: #B388FF;
   --text-gold: #B388FF;
   --text-cyan: #7C4DFF;
@@ -159,6 +167,75 @@ body.theme-ghost {
   --color-foreground: var(--text-primary);
   --font-sans: var(--font-body);
   --font-mono: var(--font-hud);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   READABILITY OVERRIDE — grey text renders white (owner, 2026-10-26)
+   ───────────────────────────────────────────────────────────────
+   Components mute text three ways: Tailwind grey-palette classes
+   (text-slate-* / text-zinc-*), white-at-partial-opacity classes
+   (text-white/40 …), and the --text-secondary / --text-muted tokens
+   (handled at the tokens above). The palette/opacity classes are
+   re-pointed to full white here.
+
+   Placement is deliberate: these rules are UNLAYERED, and unlayered
+   author CSS beats @layer utilities in the cascade, so they win over
+   the generated Tailwind text utilities without touching hundreds of
+   components. They sit BEFORE the design system's own component
+   classes below, so an intentional later class (risk badges, gold /
+   cyan accents) of equal specificity still wins by source order.
+   Only `color` is overridden — backgrounds, borders, dividers and
+   fills keep their greys.
+
+   Exceptions, by design:
+   • text-*-900 / 950 are NOT overridden — near-black text used on
+     bright accent buttons (e.g. text-slate-950 on a cyan button);
+     whitening it would put white text on a light surface.
+   • Accent-coloured text (gold, cyan, alert and category colours)
+     is not grey and is untouched.
+   • currentColor icons that happen to wear a muted text class
+     brighten with it — accepted; icon fills via fill-* are untouched.
+   ═══════════════════════════════════════════════════════════════ */
+.text-slate-50, .text-slate-100, .text-slate-200, .text-slate-300,
+.text-slate-400, .text-slate-500, .text-slate-600, .text-slate-700,
+.text-slate-800,
+.text-zinc-50, .text-zinc-100, .text-zinc-200, .text-zinc-300,
+.text-zinc-400, .text-zinc-500, .text-zinc-600, .text-zinc-700,
+.text-zinc-800,
+.text-gray-50, .text-gray-100, .text-gray-200, .text-gray-300,
+.text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700,
+.text-gray-800,
+.text-neutral-50, .text-neutral-100, .text-neutral-200, .text-neutral-300,
+.text-neutral-400, .text-neutral-500, .text-neutral-600, .text-neutral-700,
+.text-neutral-800,
+.text-stone-50, .text-stone-100, .text-stone-200, .text-stone-300,
+.text-stone-400, .text-stone-500, .text-stone-600, .text-stone-700,
+.text-stone-800,
+.text-white\/5, .text-white\/8, .text-white\/10, .text-white\/15,
+.text-white\/20, .text-white\/25, .text-white\/30, .text-white\/35,
+.text-white\/40, .text-white\/45, .text-white\/50, .text-white\/55,
+.text-white\/60, .text-white\/65, .text-white\/70, .text-white\/75,
+.text-white\/80, .text-white\/85, .text-white\/90, .text-white\/95,
+.text-\[\#5C5A54\], .text-\[\#8A8880\], .text-\[\#9B978E\],
+.text-\[\#C9C5BC\],
+.text-\[var\(--text-muted\)\]\/12, .text-\[var\(--text-muted\)\]\/15,
+.text-\[var\(--text-muted\)\]\/30, .text-\[var\(--text-muted\)\]\/40,
+.text-\[var\(--text-muted\)\]\/50, .text-\[var\(--text-muted\)\]\/60,
+.text-\[var\(--text-muted\)\]\/70, .text-\[var\(--text-muted\)\]\/80 {
+  color: #FFFFFF;
+}
+
+/* Placeholders: white at 70% — readable, still distinguishable from
+   entered text. The one intentional exception is re-asserted right
+   after: MarketsPanel turns its search placeholder alert-red on a
+   miss, and that signal colour is kept. */
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+}
+.placeholder\:text-\[var\(--alert-red\)\]::placeholder {
+  color: var(--alert-red);
 }
 
 /* Brand wordmark — matches the WorldEye logo lettering (Audiowide) */
@@ -248,14 +325,14 @@ html:has(.recording-root) body {
 html:has(.cinematic-root) .home-seo-shell { margin-top: 0; }
 
 /* ── Docs code tokens ── */
-.docs-code { color: #C9D1D9; }
+.docs-code { color: #FFFFFF; }
 .docs-code .tok-key { color: var(--gold-primary); }
 .docs-code .tok-str { color: #A5D6A7; }
 .docs-code .tok-num { color: #F0D060; }
 .docs-code .tok-lit { color: #B388FF; }
 .docs-code .tok-kw  { color: #FF7B9C; }
 .docs-code .tok-fn  { color: var(--cyan-primary); }
-.docs-code .tok-com { color: #5C5A54; font-style: italic; }
+.docs-code .tok-com { color: #FFFFFF; font-style: italic; }
 
 /* ── Scrollbar ── */
 .styled-scrollbar::-webkit-scrollbar { width: 3px; }
@@ -366,29 +443,6 @@ html:has(.cinematic-root) .home-seo-shell { margin-top: 0; }
 
 .animate-osiris-pulse { animation: osiris-pulse 2s ease-in-out infinite; }
 .animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
-
-/* Header "Upgrade to PRO" pill — Pro gold glow (owner's order, 2026-10-26).
-   Applied in components/AccountHudControl to BOTH header render paths
-   (desktop status bar + mobile cluster). The pill is image artwork with
-   an alpha channel, so the glow is built from drop-shadow filters, which
-   follow the artwork's silhouette instead of a rectangular box. A slow
-   pulse breathes the glow; hover swaps to the hotter keyframes. Filter
-   only — no transform, no layout shift. */
-@keyframes upgrade-pill-glow {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(var(--gold-rgb), 0.45)) drop-shadow(0 0 16px rgba(var(--gold-rgb), 0.28)); }
-  50% { filter: drop-shadow(0 0 10px rgba(var(--gold-rgb), 0.68)) drop-shadow(0 0 26px rgba(var(--gold-rgb), 0.42)); }
-}
-@keyframes upgrade-pill-glow-hot {
-  0%, 100% { filter: drop-shadow(0 0 10px rgba(var(--gold-rgb), 0.75)) drop-shadow(0 0 24px rgba(var(--gold-rgb), 0.45)); }
-  50% { filter: drop-shadow(0 0 14px rgba(var(--gold-rgb), 0.9)) drop-shadow(0 0 34px rgba(var(--gold-rgb), 0.55)); }
-}
-.upgrade-pill-glow { animation: upgrade-pill-glow 2.8s ease-in-out infinite; }
-.upgrade-pill-glow:hover { animation-name: upgrade-pill-glow-hot; animation-duration: 1.6s; }
-@media (prefers-reduced-motion: reduce) {
-  .upgrade-pill-glow, .upgrade-pill-glow:hover { animation: none; }
-  .upgrade-pill-glow { filter: drop-shadow(0 0 8px rgba(var(--gold-rgb), 0.55)) drop-shadow(0 0 20px rgba(var(--gold-rgb), 0.35)); }
-  .upgrade-pill-glow:hover { filter: drop-shadow(0 0 12px rgba(var(--gold-rgb), 0.8)) drop-shadow(0 0 30px rgba(var(--gold-rgb), 0.5)); }
-}
 .animate-data-pulse { animation: data-pulse 2s ease-in-out infinite; }
 .animate-threat-flash { animation: threat-flash 1.5s ease-in-out infinite; }
 
@@ -2724,4 +2778,27 @@ path.oi-graph-in { animation: oi-edge-in 0.9s ease-out both; }
 }
 @media (prefers-reduced-motion: reduce) {
   .trial-btn, .trial-btn-shine::after { animation: none; }
+}
+
+/* Header "Upgrade to PRO" pill — Pro gold glow (owner's order, 2026-10-26).
+   Applied in components/AccountHudControl to BOTH header render paths
+   (desktop status bar + mobile cluster). The pill is image artwork with
+   an alpha channel, so the glow is built from drop-shadow filters, which
+   follow the artwork's silhouette instead of a rectangular box. A slow
+   pulse breathes the glow; hover swaps to the hotter keyframes. Filter
+   only — no transform, no layout shift. */
+@keyframes upgrade-pill-glow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(var(--gold-rgb), 0.45)) drop-shadow(0 0 16px rgba(var(--gold-rgb), 0.28)); }
+  50% { filter: drop-shadow(0 0 10px rgba(var(--gold-rgb), 0.68)) drop-shadow(0 0 26px rgba(var(--gold-rgb), 0.42)); }
+}
+@keyframes upgrade-pill-glow-hot {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(var(--gold-rgb), 0.75)) drop-shadow(0 0 24px rgba(var(--gold-rgb), 0.45)); }
+  50% { filter: drop-shadow(0 0 14px rgba(var(--gold-rgb), 0.9)) drop-shadow(0 0 34px rgba(var(--gold-rgb), 0.55)); }
+}
+.upgrade-pill-glow { animation: upgrade-pill-glow 2.8s ease-in-out infinite; }
+.upgrade-pill-glow:hover { animation-name: upgrade-pill-glow-hot; animation-duration: 1.6s; }
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-pill-glow, .upgrade-pill-glow:hover { animation: none; }
+  .upgrade-pill-glow { filter: drop-shadow(0 0 8px rgba(var(--gold-rgb), 0.55)) drop-shadow(0 0 20px rgba(var(--gold-rgb), 0.35)); }
+  .upgrade-pill-glow:hover { filter: drop-shadow(0 0 12px rgba(var(--gold-rgb), 0.8)) drop-shadow(0 0 30px rgba(var(--gold-rgb), 0.5)); }
 }
