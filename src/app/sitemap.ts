@@ -129,6 +129,13 @@ const SEO_PAGES_WAVE10 = [
 // (tools/build-live-camera-index.mjs). Linked from /blog/live-cameras-by-country.
 const SEO_PAGES_WAVE11 = ["/live-camera-index"];
 
+// Methodology (2026-10-27): how the catalogue and its published counts
+// are produced. /methodology documents the same instruments the Live
+// Camera Index (Wave 11) measures; it carries the page's own revision
+// date (its REVISED stamp, 2026-10-27) as lastmod.
+const SEO_PAGES_METHODOLOGY = ["/methodology"];
+const METHODOLOGY_DATE = new Date("2026-10-27");
+
 // Wave 12 (2026-10-26): Random Camera Roulette — the geography guessing
 // game at /random (a random live camera, guess the country, scored
 // reveal), built for geography-game audiences.
@@ -383,6 +390,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: cameraIndexDate,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    })),
+    ...SEO_PAGES_METHODOLOGY.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: METHODOLOGY_DATE,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     ...SEO_PAGES_EVENTS_2026.map((p) => ({
       url: `${BASE}${p}`,
