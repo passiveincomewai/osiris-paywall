@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { classifyDropReason, deriveFlightCoverage, type FlightsPayload } from './diagnostics';
+import { classifyDropReason, deriveFlightCoverage, REGIONS_TOTAL, type FlightsPayload } from './diagnostics';
+import { REGIONS } from '@/app/api/flights/route';
 
 describe('classifyDropReason', () => {
   it('drops tower pseudo-records', () => {
@@ -82,8 +83,8 @@ describe('deriveFlightCoverage — regional mode (production steady state)', () 
   it('marks the sweep active in regional mode and notes partial regions', () => {
     const reg = vm.providers.find((r) => r.key === 'adsbfi_regional')!;
     expect(reg.state).toBe('ok');
-    expect(reg.detail).toContain('33/38');
-    expect(vm.warnings.some((w) => w.includes('33/38'))).toBe(true);
+    expect(reg.detail).toContain('33/40');
+    expect(vm.warnings.some((w) => w.includes('33/40'))).toBe(true);
   });
 });
 
@@ -150,5 +151,13 @@ describe('deriveFlightCoverage — stale fallback + missing diagnostics', () => 
     expect(vm.lastUpdateAgeSec).toBeNull();
     // received falls back to classified when total is unusable… total=50 here is usable:
     expect(vm.received).toBe(50);
+  });
+});
+
+describe('REGIONS_TOTAL drift pin', () => {
+  it('equals the real REGIONS array length in the flights route', () => {
+    // diagnostics.ts cannot import the route (the route imports it), so
+    // the pin lives here where both modules can be imported.
+    expect(REGIONS_TOTAL).toBe(REGIONS.length);
   });
 });

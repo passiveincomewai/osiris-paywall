@@ -100,7 +100,11 @@ export interface FlightCoverageView {
   warnings: string[];
 }
 
-const REGIONS_TOTAL = 38; // REGIONS in src/app/api/flights/route.ts
+/** Total regions in the sweep — must equal REGIONS.length in
+ * src/app/api/flights/route.ts. Exported so diagnostics.test.ts can pin
+ * it against the real array (this module cannot import the route: the
+ * route imports this module). */
+export const REGIONS_TOTAL = 40;
 
 function len(a: unknown[] | undefined): number {
   return Array.isArray(a) ? a.length : 0;

@@ -172,6 +172,7 @@ export default function PrivacyPage() {
                 { name: 'ipapi.co, then freeipapi.com, then ip-api.com', what: 'your connection’s IP address, asked from our server, to place the map' },
                 { name: 'CARTO (basemaps.cartocdn.com)', what: 'the map tiles for the part of the world in view' },
                 { name: 'Esri (server.arcgisonline.com)', what: 'satellite imagery, only when you switch to the satellite view' },
+                { name: 'Esri Wayback (wayback.maptiles.arcgis.com, config.maptiles.arcgis.com)', what: 'dated historical satellite imagery and its release catalogue, only when you use the satellite view’s time slider' },
                 { name: 'Google Fonts', what: 'the typefaces the site uses' },
               ]} />
 
