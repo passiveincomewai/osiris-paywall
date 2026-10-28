@@ -40,6 +40,7 @@ import {
   type FlightPathAccess, type FlightPathHudData, type FlightPathState,
 } from '@/lib/flights/path';
 import FlightFollowHud from '@/components/FlightFollowHud';
+import FlightCockpitOverlay from '@/components/FlightCockpitOverlay';
 import { collectCameraCandidates, findNearestCameras } from '@/lib/nearby-cameras';
 import { selectAgenciesForView, agencyIntersectsView, padView } from '@/lib/transit/relevance';
 import { gbfsCacheEntryAfterFetch, gbfsLoadCandidates, visibleGbfsItems } from '@/lib/gbfs/viewport';
@@ -719,7 +720,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     if (opts?.notice) showFlightFollowNotice(opts.notice);
   }, [showFlightFollowNotice, syncFlightPathLayer]);
 
-  const engageFlightFollow = useCallback((icao24: string, callsign?: string) => {
+  const engageFlightFollow = useCallback((icao24: string, callsign?: string, mode?: FollowMode) => {
     const map = mapRef.current;
     if (!map || !icao24) return;
     const cs = (callsign || '').trim() || icao24.toUpperCase();
@@ -734,14 +735,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // as the restore point — Exit should take the user back to where
     // they started following, not to the previous aircraft.
     const savedCamera = cur.phase !== 'idle' && cur.savedCamera ? cur.savedCamera : fresh;
-    const mode: FollowMode = cur.phase !== 'idle' ? cur.mode : 'chase';
+    // An explicit mode wins: the popup's COCKPIT VIEW asks for
+    // 'forward' even when a follow is already riding another aircraft
+    // in a different mode. Without one, the historic default holds —
+    // carry the current mode across a target switch, 'chase' fresh.
+    const startMode: FollowMode = mode ?? (cur.phase !== 'idle' ? cur.mode : 'chase');
     if (flightFollowPrevMaxPitchRef.current == null) {
       flightFollowPrevMaxPitchRef.current = map.getMaxPitch();
       map.setMaxPitch(FOLLOW_MAX_PITCH);
     }
-    flightFollowRef.current = startFollow({ icao24, callsign: cs }, savedCamera, Date.now(), mode);
+    flightFollowRef.current = startFollow({ icao24, callsign: cs }, savedCamera, Date.now(), startMode);
     flightFollowHudRef.current = null;
-    setFlightFollowUi({ icao24, callsign: cs, mode });
+    setFlightFollowUi({ icao24, callsign: cs, mode: startMode });
     // A fresh path per followed aircraft: switching targets swaps the
     // path (the route fetch + trail start over for the new aircraft).
     flightPathRef.current = createFlightPath(icao24, cs);
@@ -757,6 +762,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setFlightFollowUi((prev) => (prev ? { ...prev, mode } : prev));
   }, []);
 
+  /** COCKPIT VIEW — ride the aircraft in forward mode. From the popup:
+   *  a fresh engage goes straight to forward; if follow is already
+   *  riding THIS aircraft in another mode, just turn the camera
+   *  forward (no re-engage, no stop). */
+  const engageFlightCockpit = useCallback((icao24: string, callsign?: string) => {
+    const st = flightFollowRef.current;
+    if (st.phase !== 'idle' && st.target?.icao24 === icao24) {
+      setFlightFollowMode('forward');
+      popupRef.current?.remove();
+      return;
+    }
+    engageFlightFollow(icao24, callsign, 'forward');
+  }, [engageFlightFollow, setFlightFollowMode]);
+
   // Popup buttons, Watch-panel rows and the Director preset all reach
   // follow through this one bridge — the osirisWatchFlight pattern.
   useEffect(() => {
@@ -765,10 +784,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       if (st.phase !== 'idle' && st.target?.icao24 === icao24) endFlightFollow();
       else engageFlightFollow(icao24, callsign);
     };
+    (window as any).__weFlightCockpitView = (icao24: string, callsign?: string) => {
+      engageFlightCockpit(icao24, callsign);
+    };
     return () => {
       if ((window as any).__weFlightFollowToggle) delete (window as any).__weFlightFollowToggle;
+      if ((window as any).__weFlightCockpitView) delete (window as any).__weFlightCockpitView;
     };
-  }, [engageFlightFollow, endFlightFollow]);
+  }, [engageFlightFollow, endFlightFollow, engageFlightCockpit]);
 
   // Dragging the map releases the follow (the follow contract): the
   // camera stays where the user put it; only the HUD Exit restores.
@@ -2285,6 +2308,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           </div>
           <button onclick="window.osirisWatchFlight && window.osirisWatchFlight({ icao24: '${idSafe(p.icao24||'')}', callsign: '${idSafe(cs)}' })" style="width:100%;margin-top:8px;padding:5px 10px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.35);color:#7FE9FF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">+ WATCH THIS AIRCRAFT</button>
           ${p.icao24 ? `<button onclick="window.__weFlightFollowToggle && window.__weFlightFollowToggle('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(255,180,0,0.10);border:1px solid rgba(255,180,0,0.40);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">${followingThis ? '\u25a0 STOP FOLLOWING' : '\u2708 FOLLOW AIRCRAFT \u2014 CHASE CAMERA'}</button>` : ''}
+          ${p.icao24 ? `<button onclick="window.__weFlightCockpitView && window.__weFlightCockpitView('${idSafe(p.icao24||'')}','${idSafe(cs)}')" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(0,255,170,0.08);border:1px solid rgba(0,255,170,0.35);color:#7DFFC4;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">\u25B8 COCKPIT VIEW</button>` : ''}
           ${p.icao24 ? `<button onclick="window.__weShareEntity&&window.__weShareEntity('flight','${idSafe(p.icao24||'')}')" style="width:100%;margin-top:6px;padding:5px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.25);color:#E8E6E0;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;cursor:pointer;">\U0001F517 SHARE THIS FLIGHT</button>` : ''}
 ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             ? `<div style="margin-top:6px;padding:5px 10px;border:1px dashed rgba(255,179,0,0.45);color:#FFD54F;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:bold;letter-spacing:0.1em;border-radius:4px;text-align:center;">\u2726 FLIGHT PATH \u2014 PRO \u00b7 ROUTE \u2014 PLANNED + FLOWN \u2014 LIVE TRACK, DRAWN WHILE FOLLOWING</div>`
@@ -6398,6 +6422,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           onClose={() => setStreetPicture(null)}
           onNavigate={navigateStreetPicture}
         />
+      )}
+      {mapReady && flightFollowUi?.mode === 'forward' && (
+        <FlightCockpitOverlay hudRef={flightFollowHudRef} target={flightFollowUi} />
       )}
       {mapReady && flightFollowUi && (
         <div

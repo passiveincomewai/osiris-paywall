@@ -46,6 +46,17 @@ describe('follow state machine', () => {
     expect(s.lastFix).toBeNull();
   });
 
+  it('startFollow can engage directly in forward mode (the cockpit view entry point)', () => {
+    const s = startFollow(TARGET, SAVED, 10_000, 'forward');
+    expect(s.phase).toBe('engaging');
+    expect(s.target).toEqual(TARGET);
+    expect(s.mode).toBe('forward');
+    expect(s.modeSince).toBe(10_000);
+    expect(s.lastSeenAt).toBe(10_000);
+    // And the cockpit camera maths are what the mode drives.
+    expect(followCameraTarget(s.mode, fix(), 0)).toEqual(forwardCameraTarget(fix()));
+  });
+
   it('setFollowMode switches mode and restarts the mode clock; a no-op switch keeps state', () => {
     const s = startFollow(TARGET, SAVED, 0);
     const fwd = setFollowMode(s, 'forward', 5_000);
