@@ -65,6 +65,8 @@ const nextConfig: NextConfig = {
       // now owns the intent. These cover the classic pre-restructure and
       // guessable URLs (auth, trackers, camera hubs) so any lingering
       // external links or bookmarks land somewhere useful instead of 404.
+      // (/ships was in this list until 2026-10-28, when it became a real
+      // page — the cruise-ship tracker hub; do not re-add it.)
       { source: '/login', destination: '/signin', permanent: true },
       { source: '/sign-in', destination: '/signin', permanent: true },
       { source: '/register', destination: '/signup', permanent: true },
@@ -77,7 +79,6 @@ const nextConfig: NextConfig = {
       { source: '/flights', destination: '/live-flight-tracker', permanent: true },
       { source: '/satellites', destination: '/satellite-tracker', permanent: true },
       { source: '/satellite', destination: '/satellite-tracker', permanent: true },
-      { source: '/ships', destination: '/ship-tracker', permanent: true },
       { source: '/earthquakes', destination: '/earthquake-tracker', permanent: true },
       { source: '/weather', destination: '/weather-tracker', permanent: true },
       { source: '/live-cameras', destination: '/live-webcams', permanent: true },
