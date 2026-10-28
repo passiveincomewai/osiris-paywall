@@ -18,6 +18,8 @@ import { ANIMAL_STARS } from "@/lib/animal-cams";
 import { UNIVERSITIES } from "@/lib/universities";
 import { FERRY_SYSTEMS } from "@/lib/ferries";
 import { CRUISE_PORTS } from "@/lib/cruise-ports";
+import { RADAR_METROS } from "@/lib/radar-metros";
+import { getWildfireIncidents } from "@/lib/fire-perimeters";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
@@ -305,6 +307,22 @@ const SEO_PAGES_FERRIES = [
 ];
 const SEO_PAGES_CRUISE_PORTS = CRUISE_PORTS.map((p) => `/port-webcams/${p.slug}`);
 
+// Menu #2 Wave C part 2 (2026-10-28): the weather-radar family —
+// the /weather-radar hub + one page per metro in lib/radar-metros.
+// The walls are catalogue-driven like the volcanoes, so they carry
+// the catalogue's date. Only metros clearing the family's measured
+// line (250 cameras within 30 km of the cluster centre) have rows;
+// the registry's tests pin the rejected candidates (Chicago 220,
+// Austin 223, San Diego 219…) under it. The /wildfires hub is a
+// live page over the federal perimeter feed — no catalogue date;
+// its per-incident URLs are live-derived and join below beside
+// transit, outside the pinned set.
+const SEO_PAGES_RADAR = [
+  "/weather-radar",
+  ...RADAR_METROS.map((m) => `/weather-radar/${m.slug}`),
+];
+const SEO_PAGES_WILDFIRES = ["/wildfires"];
+
 // Wave 15 (2026-10-27): interstate corridor camera pages — cameras in
 // driving order along the eight interstates with real catalogue density
 // (I-95, I-15, I-5, I-90, I-35, I-80, I-70, I-40), plus their index hub.
@@ -528,6 +546,28 @@ async function transitSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   return out;
 }
 
+// Live wildfire incident URLs (Menu #2 Wave C part 2, 2026-10-28):
+// one entry per incident the NIFC WFIGS feed currently names — the
+// same live-derived shape as the transit entries above. An incident
+// URL exists exactly while its page does (the page 404s when the
+// feed drops the incident), so the set is pinned structurally in
+// the tests, never byte-exactly. lastModified is the perimeter's
+// own timestamp — the artefact the page's content derives from.
+// Feed unavailable → the section is empty and returns with it.
+async function wildfireSitemapEntries(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const incidents = await getWildfireIncidents();
+    return incidents.map((i) => ({
+      url: `${BASE}/wildfires/${i.slug}`,
+      ...(i.properties.updated ? { lastModified: new Date(i.properties.updated) } : {}),
+      changeFrequency: "daily" as const,
+      priority: 0.5,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 // Localized entries (multilingual SEO, 2026-10-26; rebased 2026-10-27):
 // changeFrequency / priority mirror each slug's English entry above; the
 // URLs, lastModified and hreflang maps are derived from the publication
@@ -547,6 +587,7 @@ const LOCALIZED_FREQ: Record<
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const transitEntries = await transitSitemapEntries();
+  const wildfireEntries = await wildfireSitemapEntries();
   // Honest lastmod (SEO #11, 2026-10-26; completed by the index-recovery
   // remainder, 2026-10-27): every URL used to be stamped "now" on every
   // render, which teaches crawlers to distrust the signal. The rule now:
@@ -865,6 +906,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
+    ...SEO_PAGES_RADAR.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_WILDFIRES.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "daily" as const,
+      priority: 0.7,
+    })),
     ...SEO_PAGES_WAVE15.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
@@ -941,6 +993,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     })),
     ...transitEntries,
+    ...wildfireEntries,
     // Localized pages (multilingual SEO foundation, 2026-10-26): one
     // entry per manifest-published page × locale, derived from the
     // manifest so this block never drifts from what actually routes.

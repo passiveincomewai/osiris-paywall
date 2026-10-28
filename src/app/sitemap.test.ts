@@ -45,10 +45,15 @@ import { hreflangMapFor } from "@/lib/i18n-seo";
  * Wave C part 1 added the six Wave C seasonal-annual pages (Macy's
  * parade, NYC marathon, July 4 fireworks, Boston marathon, Rose
  * Parade, Balloon Fiesta) and the /iss-over hub + 20 city pages
- * from the committed lib/iss-passes registry). Transit URLs
+ * from the committed lib/iss-passes registry; 1,037 since Menu #2
+ * Wave C part 2 added the /weather-radar hub + 21 metro pages
+ * from a committed registry and the /wildfires hub). Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
- * plausible feed-vintage date.
+ * plausible feed-vintage date. The per-incident /wildfires/<slug>
+ * URLs are live-derived from the NIFC WFIGS feed the same way —
+ * excluded from the pinned set below and pinned structurally in
+ * their own describe.
  */
 
 const BASE = "https://worldeye.app";
@@ -89,9 +94,13 @@ describe("sitemap URL set", () => {
   it("keeps the non-transit URL set byte-identical to the pre-change generator", () => {
     const nonTransit = rows
       .map((r) => r.url)
-      .filter((u) => !u.startsWith(`${BASE}/transit`))
+      .filter(
+        (u) =>
+          !u.startsWith(`${BASE}/transit`) &&
+          !u.startsWith(`${BASE}/wildfires/`),
+      )
       .sort();
-    expect(nonTransit.length).toBe(1014);
+    expect(nonTransit.length).toBe(1037);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -107,15 +116,37 @@ describe("sitemap URL set", () => {
     // (2026-10-28) then added the ferry hub + 3 system pages and 9
     // cruise-port board pages → 987. Menu #2 Wave C part 1
     // (2026-10-28) then added the 6 Wave C seasonal annuals and the
-    // 21 iss-over hub + city URLs → 1,014.
+    // 21 iss-over hub + city URLs → 1,014. Menu #2 Wave C part 2
+    // (2026-10-28) then added the weather-radar hub + 21 metro
+    // pages and the /wildfires hub → 1,037 (per-incident wildfire
+    // URLs are live-derived and filtered out of this set).
     expect(hash).toBe(
-      "800ebed7e008313b322910581dc2470df76df9529f422d95d27796caa3ae0c06",
+      "4c13bb379a8681474fdb8ad2867435e648dc53b75ca3171bc8a48ea41731c324",
     );
   });
 
   it("still lists transit URLs from the live feeds", () => {
     const transit = rows.filter((r) => r.url.startsWith(`${BASE}/transit`));
     expect(transit.length).toBeGreaterThan(500);
+  });
+
+  it("lists live wildfire incident URLs structurally (feed-derived, never pinned)", () => {
+    const incidents = rows.filter((r) => r.url.startsWith(`${BASE}/wildfires/`));
+    const seen = new Set<string>();
+    for (const r of incidents) {
+      const slug = r.url.slice(`${BASE}/wildfires/`.length);
+      expect(slug, r.url).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+      expect(seen.has(r.url), r.url).toBe(false);
+      seen.add(r.url);
+      if (r.lastModified) {
+        // The perimeter's own timestamp — past, plausible, never future.
+        const t = Date.parse(r.lastModified);
+        expect(t, r.url).toBeGreaterThanOrEqual(Date.parse("2020-01-01"));
+        expect(t, r.url).toBeLessThanOrEqual(Date.now());
+      }
+    }
+    // The hub itself is a committed URL and stays in the pinned set.
+    expect(byUrl.has(`${BASE}/wildfires`)).toBe(true);
   });
 });
 
@@ -184,6 +215,21 @@ describe("sitemap lastmod policy", () => {
     ]) {
       expect(lm(`/university-webcams/${slug}`), slug).toBe(CATALOGUE);
     }
+  });
+
+  it("dates the Menu #2 Wave C part 2 radar pages with the catalogue snapshot and leaves the wildfires hub undated", () => {
+    expect(lm("/weather-radar")).toBe(CATALOGUE);
+    for (const slug of [
+      "atlanta", "dallas", "salt-lake-city", "houston", "minneapolis",
+      "orlando", "portland", "seattle", "tampa", "washington-dc",
+      "new-york-city", "denver", "philadelphia", "las-vegas",
+      "los-angeles", "kansas-city", "norfolk-virginia-beach", "phoenix",
+      "san-antonio", "jacksonville", "st-louis",
+    ]) {
+      expect(lm(`/weather-radar/${slug}`), slug).toBe(CATALOGUE);
+    }
+    // The hub is a live view over the federal feed — no honest date.
+    expect(lm("/wildfires")).toBeNull();
   });
 
   it("dates the ten editorial cities like their generated siblings' walls", () => {

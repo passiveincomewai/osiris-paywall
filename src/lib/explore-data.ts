@@ -568,6 +568,34 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
    * 1 junction cam within 25 km) — the rejection pins live in
    * lib/launch-sites.test.ts. */
   'launch-kennedy': eventGeo('Kennedy Space Center & Cape Canaveral', 28.52, -80.5955, 25),
+  /* Menu #2 Wave C part 2 (2026-10-28) — the weather-radar metro
+     walls: every catalogue camera within 30 km of the metro camera
+     cluster's measured centre (lib/radar-metros — the centroid of
+     the records within 30 km of the seed, recomputed once). The
+     centres and the 250-camera admission line are audited in
+     radar-metros.test.ts against the raw chunk; the same centres
+     anchor each page's NOAA nowCOAST radar frame. */
+  'radar-atlanta': eventGeo('Atlanta', 33.7983, -84.3656, 30),
+  'radar-dallas': eventGeo('Dallas–Fort Worth', 32.8116, -96.8578, 30),
+  'radar-salt-lake-city': eventGeo('Salt Lake City', 40.6621, -111.9113, 30),
+  'radar-houston': eventGeo('Houston', 29.7792, -95.419, 30),
+  'radar-minneapolis': eventGeo('Minneapolis–Saint Paul', 44.9621, -93.2426, 30),
+  'radar-orlando': eventGeo('Orlando', 28.5247, -81.4085, 30),
+  'radar-portland': eventGeo('Portland', 45.4995, -122.6681, 30),
+  'radar-seattle': eventGeo('Seattle', 47.62, -122.253, 30),
+  'radar-tampa': eventGeo('Tampa', 27.9738, -82.4826, 30),
+  'radar-washington-dc': eventGeo('Washington, DC', 38.886, -77.1659, 30),
+  'radar-new-york-city': eventGeo('New York City', 40.7591, -73.7688, 30),
+  'radar-denver': eventGeo('Denver', 39.7139, -105.029, 30),
+  'radar-philadelphia': eventGeo('Philadelphia', 40.0522, -75.2195, 30),
+  'radar-las-vegas': eventGeo('Las Vegas', 36.1213, -115.1698, 30),
+  'radar-los-angeles': eventGeo('Los Angeles', 34.0037, -118.2236, 30),
+  'radar-kansas-city': eventGeo('Kansas City', 39.0485, -94.6138, 30),
+  'radar-norfolk-virginia-beach': eventGeo('Norfolk–Virginia Beach', 36.867, -76.2905, 30),
+  'radar-phoenix': eventGeo('Phoenix', 33.4741, -112.0221, 30),
+  'radar-san-antonio': eventGeo('San Antonio', 29.4792, -98.5024, 30),
+  'radar-jacksonville': eventGeo('Jacksonville', 30.2943, -81.6743, 30),
+  'radar-st-louis': eventGeo('St. Louis', 38.6573, -90.3524, 30),
 };
 
 /** A scope definition from request params: either a registry key, or
