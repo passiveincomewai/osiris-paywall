@@ -169,6 +169,9 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   /* Category hubs — theme rules over the whole catalogue. */
   beach: { label: 'beaches & coasts', slugs: 'all', theme: 'coast', groupBy: 'country' },
   airport: { label: 'airports', slugs: 'all', theme: 'airport', groupBy: 'country' },
+  /* Menu #2 Wave B (2026-10-27): the animal-cams hub wall — the
+     'animals' theme rule in lib/explore-scopes (matchesAnimalCam). */
+  animals: { label: 'animal webcams', slugs: 'all', theme: 'animals', groupBy: 'country' },
   /* Traffic family. */
   traffic: { label: 'traffic & roads', slugs: 'all', theme: 'traffic', groupBy: 'country' },
   'traffic-us': {
@@ -561,7 +564,7 @@ export function resolveExploreDef(params: {
     if (!entry) return null;
     let theme: ExploreThemeKey | undefined;
     if (params.theme) {
-      if (params.theme !== 'traffic' && params.theme !== 'coast' && params.theme !== 'airport' && params.theme !== 'rail') {
+      if (params.theme !== 'traffic' && params.theme !== 'coast' && params.theme !== 'airport' && params.theme !== 'rail' && params.theme !== 'animals') {
         return null;
       }
       theme = params.theme;

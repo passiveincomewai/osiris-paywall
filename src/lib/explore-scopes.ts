@@ -34,7 +34,7 @@ export type { CountrySlice, CountrySliceRequest };
 /* Themes                                                              */
 /* ------------------------------------------------------------------ */
 
-export type ExploreThemeKey = 'traffic' | 'coast' | 'airport' | 'rail';
+export type ExploreThemeKey = 'traffic' | 'coast' | 'airport' | 'rail' | 'animals';
 
 function themeNamePattern(key: string): RegExp {
   const def = THEME_DEFS.find((d) => d.key === key);
@@ -119,9 +119,57 @@ export function matchesRailName(name: string): boolean {
 export const ROAD_SOURCE_PATTERN =
   /dot|511|caltrans|dgt|asfinag|fintraffic|trafikverket|vegvesen|vegagerðin|drivebc|tripcheck|midrive|ohgo|cotrip|traffic|highway|autostrade|road-info|bayerninfo|nmroads|netravel|travelmidwest|newengland|qldtraffic|trafficwales|via lietuva|tii-ireland|ontario|alberta|mdchart|nzta|transport dept/i;
 
+/** Animal subjects are named in the record itself, the same discipline
+ *  as airports and rail — there is no animal field in the catalogue, so
+ *  the animal scope is exactly the cameras whose NAME carries an animal
+ *  subject: a zoo, a nest, a safari or wildlife lodge, an underwater
+ *  reef. The terms are multilingual because the catalogue's genuine
+ *  nest-cam clusters are Dutch (ooievaar = white stork, slechtvalk =
+ *  peregrine falcon), Polish (gniazdo = nest) and Swedish (storkar =
+ *  storks). Three traps shaped the guards, all measured over the raw
+ *  catalogue (2026-10-27, 76,575 records):
+ *  - Highway networks name interchanges and bridges FOR zoos ("I-40 @
+ *    Knoxville Zoo", "Zoo Bridge") — a road-authority source
+ *    (ROAD_SOURCE_PATTERN) disqualifies a record outright, and a
+ *    street-scene word in the name (bridge, junction, @…) disqualifies
+ *    it too, unless a hard zoo anchor says the zoo itself is the
+ *    subject.
+ *  - River-monitoring networks name their gauges for the nearest
+ *    landmark: rivergojp's "Marine Pia Niigata Aquarium" is a river
+ *    camera at the aquarium, not an aquarium cam — that source is
+ *    rejected by name.
+ *  - Loose animal words match inside place names: "otter" hides in
+ *    Pottery Rd and Ottertail, "eagle" is a town in a dozen states.
+ *    The loose terms carry word boundaries, and bare "eagle"/"bear"/
+ *    "deer" are not subjects at all — only nest/cam constructions are.
+ *  The famous absences are real: there is NO Brooks Falls / Katmai
+ *  bear cam (the only Katmai record is an FAA weather camera at a
+ *  lodge airstrip), no eagle nest cam, no panda, osprey, puffin or
+ *  penguin cam anywhere in the catalogue. The yield over the catalogue
+ *  generated 2026-10-20 is 43 records — pinned, with the full audited
+ *  ID list, in lib/animal-cams.test.ts. */
+export const ANIMAL_SUBJECT_PATTERN =
+  /giraffe|elephant park|monkey cent|animal shelter|animal paradise|deer farm|bird feeder|barn owl|peregrine|slechtvalk|ooievaar|stork|gniazdo|bird cam|nature reserve|wildlife lodge|coral reef|underwater|vogel informatiecentrum|\bzoo\b|\baquarium\b|masai mara|nkorho|olifants|falcon nest|owl nest|eagle nest|eagle cam|\bosprey\b|\bpuffin\b|\bpenguin\b|panda cam|bear cam|\bflamingo\b|\botter\b|\bkoala\b/i;
+
+const ANIMAL_HARD_ANCHOR = /san diego zoo|gaia zoo|belize zoo|kumamoto|giraffe/i;
+const ANIMAL_STREET_SCENE = /bridge|roundabout|junction|interchange|intersection|exit\b|@/i;
+const ANIMAL_LANDMARK_SOURCE = /rivergojp/i;
+
+/** Does this record's own name make an animal its subject? The one
+ *  matcher behind the 'animals' theme and the /animal-webcams hub. */
+export function matchesAnimalCam(cam: CountryCamera): boolean {
+  const name = cam.name ?? '';
+  if (!ANIMAL_SUBJECT_PATTERN.test(name)) return false;
+  if (ROAD_SOURCE_PATTERN.test(cam.source ?? '')) return false;
+  if (ANIMAL_LANDMARK_SOURCE.test(cam.source ?? '')) return false;
+  if (ANIMAL_STREET_SCENE.test(name) && !ANIMAL_HARD_ANCHOR.test(name)) return false;
+  return true;
+}
+
 export function matchesTheme(cam: CountryCamera, theme: ExploreThemeKey): boolean {
   if (theme === 'airport') return AIRPORT_NAME_PATTERN.test(cam.name ?? '');
   if (theme === 'rail') return matchesRailName(cam.name ?? '');
+  if (theme === 'animals') return matchesAnimalCam(cam);
   if (theme === 'coast') return themeNamePattern('coast').test(cam.name ?? '');
   /* traffic: the name says road/traffic, or the source is a road
      authority (see ROAD_SOURCE_PATTERN). */

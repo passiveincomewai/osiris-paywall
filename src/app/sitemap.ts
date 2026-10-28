@@ -13,6 +13,8 @@ import { VOLCANOES } from "@/lib/volcanoes";
 import { AURORA_PLACES } from "@/lib/aurora-places";
 import { ICONIC_PLACES } from "@/lib/iconic-places";
 import { LAUNCH_SITES } from "@/lib/launch-sites";
+import { ANIMAL_STARS } from "@/lib/animal-cams";
+import { UNIVERSITIES } from "@/lib/universities";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
@@ -270,6 +272,23 @@ const SEO_PAGES_ICONIC_PLACES = [
 const SEO_PAGES_LAUNCH_SITES = [
   "/launch-sites",
   ...LAUNCH_SITES.map((s) => `/launch-sites/${s.slug}`),
+];
+
+// Menu #2 Wave B part 1 (2026-10-27): the animal-webcams hub + its 12
+// star pages (lib/animal-cams — every star is an audited catalogue
+// feed whose own record names the animal) and the university-webcams
+// hub + 25 per-university pages (lib/universities — every institution
+// admitted because a camera's own record names it, campus as subject).
+// Both registries are catalogue-driven, so they carry the catalogue's
+// date like Wave A. The registries' tests pin the rejected candidates
+// (Brooks Falls, eagle nests, field stations, road junctions) at zero.
+const SEO_PAGES_ANIMALS = [
+  "/animal-webcams",
+  ...ANIMAL_STARS.map((s) => `/animal-webcams/${s.slug}`),
+];
+const SEO_PAGES_UNIVERSITIES = [
+  "/university-webcams",
+  ...UNIVERSITIES.map((u) => `/university-webcams/${u.slug}`),
 ];
 
 // Wave 15 (2026-10-27): interstate corridor camera pages — cameras in
@@ -784,6 +803,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })),
     ...SEO_PAGES_LAUNCH_SITES.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_ANIMALS.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_UNIVERSITIES.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,

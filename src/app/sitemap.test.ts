@@ -36,7 +36,10 @@ import { hreflangMapFor } from "@/lib/i18n-seo";
  * regional hubs and folded 5 ski resorts into the /ski-webcams
  * hub; 935 since Menu #2 Wave A part 2 added the /iconic-places
  * hub + 4 place pages and the /launch-sites hub + 1 site page,
- * both from committed registries). Transit URLs
+ * both from committed registries; 974 since Menu #2 Wave B part 1
+ * added the /animal-webcams hub + 12 animal star pages and the
+ * /university-webcams hub + 25 per-university pages, all from
+ * committed registries). Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
@@ -82,7 +85,7 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(935);
+    expect(nonTransit.length).toBe(974);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -92,9 +95,11 @@ describe("sitemap URL set", () => {
     // (2026-10-28) then removed the 35 consolidated country pages
     // and 5 folded ski resort pages → 928 (8584c79e…). Menu #2 Wave A
     // part 2 (2026-10-28) then added the 7 iconic-places and
-    // launch-sites URLs → 935.
+    // launch-sites URLs → 935. Menu #2 Wave B part 1 (2026-10-28)
+    // then added the animal hub + 12 star pages and the university
+    // hub + 25 per-university pages → 974.
     expect(hash).toBe(
-      "584b81b7541555ebe052bc1dd0bbdfe04bced3aa005c00b20f69b5166696f29d",
+      "7d4b058e723ee23c820640a9725ceba8210a7cdba4d48d8ba687d128995417fb",
     );
   });
 
@@ -140,6 +145,34 @@ describe("sitemap lastmod policy", () => {
       "rovaniemi", "levi", "abisko",
     ]) {
       expect(lm(`/northern-lights-webcams/${slug}`), slug).toBe(CATALOGUE);
+    }
+  });
+
+  it("dates the Menu #2 Wave B1 pages (animal hub + stars, university hub + pages) with the catalogue snapshot", () => {
+    expect(lm("/animal-webcams")).toBe(CATALOGUE);
+    for (const slug of [
+      "tembe-elephant-park", "masai-mara", "nkorho-kruger", "olifants-river",
+      "tsavo-east", "san-diego-zoo", "kumamoto-city-zoo", "gaia-zoo",
+      "belize-zoo", "awaji-island-monkey-center", "hula-nature-reserve",
+      "konya-animal-shelter",
+    ]) {
+      expect(lm(`/animal-webcams/${slug}`), slug).toBe(CATALOGUE);
+    }
+    expect(lm("/university-webcams")).toBe(CATALOGUE);
+    for (const slug of [
+      "uc-santa-barbara", "vanderbilt-university", "columbia-university",
+      "boston-university", "furman-university", "michigan-state-university",
+      "west-virginia-university", "warren-wilson-college",
+      "worcester-state-university", "university-of-hawaii-manoa",
+      "navajo-technical-university", "cuny", "university-of-twente",
+      "newcastle-university", "university-of-bristol", "tu-berlin",
+      "bucharest-university-of-economic-studies", "ansan-university",
+      "dongeui-university", "kyungpook-national-university",
+      "jeonnam-university", "silla-university",
+      "incheon-catholic-university", "incheon-global-campus",
+      "yonsei-university",
+    ]) {
+      expect(lm(`/university-webcams/${slug}`), slug).toBe(CATALOGUE);
     }
   });
 
