@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import directory from "@/data/camera-directory.json";
+import ConsolidatedCountries from "@/components/ConsolidatedCountries";
 import {
   BASE,
   formatDate,
@@ -146,6 +147,7 @@ export default function NorthAmericaWebcamsPage() {
         rows={TOP_COUNTRIES}
         note="Plus 8 more Caribbean and Central American entries in the index, totaling 24,644 cameras across 18 countries and territories."
       />
+      <ConsolidatedCountries region="north-america" regionLabel="North America" />
       <HowTo
         title="How to browse North American cameras"
         steps={[

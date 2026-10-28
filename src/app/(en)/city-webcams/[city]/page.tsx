@@ -59,6 +59,12 @@ import { cityAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 import CurrentStatus from "@/components/CurrentStatus";
 import SaveLocationButton from "@/components/SaveLocationButton";
 import {
+  CITY_MIN_ELEMENTS,
+  cityFailsCountGate,
+  cityInElementBand,
+  countCityElements,
+} from "@/lib/indexation-gates";
+import {
   breakdownFaqs,
   cityStatusRows,
   loadCityBreakdown,
@@ -1269,6 +1275,33 @@ export function generateStaticParams() {
   ];
 }
 
+/* C10 (§4.5) indexation gate for the GENERATED tier (curated cities
+   are editorial and exempt): a generated page stays live for users
+   but is noindexed while it sits below the substance line — under
+   the (scoped) count gate, or in the 50–70 band with fewer than 2 of
+   {operator diversity, corridor breakdown, kind mix}. The rule and
+   its scoping live in src/lib/indexation-gates.ts; the element count
+   uses the same breakdown the page body renders. */
+const NOINDEX_ROBOTS: Metadata["robots"] = { index: false, follow: true };
+
+async function generatedCityRobots(
+  slug: string,
+): Promise<Metadata["robots"] | undefined> {
+  const g = GEN_BY_SLUG.get(slug);
+  if (!g || CITIES[slug]) return undefined;
+  if (cityFailsCountGate(slug)) return NOINDEX_ROBOTS;
+  if (cityInElementBand(slug)) {
+    const bd = await loadCityBreakdown(g.countrySlug, g.name);
+    const elements = countCityElements({
+      sources: g.sourceCount,
+      corridors: bd ? bd.corridors.length : -1,
+      mixKinds: bd ? bd.mix.length : -1,
+    });
+    if (elements < CITY_MIN_ELEMENTS) return NOINDEX_ROBOTS;
+  }
+  return undefined;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -1279,9 +1312,11 @@ export async function generateMetadata({
   if (!resolved) return { title: "Not found" };
   const c = resolved.cfg;
   const url = `/city-webcams/${slug}`;
+  const robots = await generatedCityRobots(slug);
   return {
     title: c.title,
     description: c.blurb,
+    ...(robots ? { robots } : {}),
     alternates: { canonical: `${BASE}${url}` },
     openGraph: {
       title: c.title,

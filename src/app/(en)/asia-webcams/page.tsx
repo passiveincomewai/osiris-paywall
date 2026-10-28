@@ -18,6 +18,8 @@ import {
 } from "@/components/directory-page";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
+import ConsolidatedCountries from "@/components/ConsolidatedCountries";
+import { isConsolidatedCountry } from "@/lib/indexation-gates";
 import {
   CATALOGUE_GENERATED_AT,
   COUNTRY_INDEX,
@@ -58,7 +60,11 @@ export const metadata: Metadata = {
 const TOP_COUNTRIES = ASIA.slice(0, 12).map((c) => ({
   name: c.name,
   count: c.count,
-  href: `/cameras/countries/${c.slug}`,
+  /* C10: consolidated countries have no page — their row here links
+     down to their anchored listing in the section below instead. */
+  href: isConsolidatedCountry(c.slug)
+    ? `#${c.slug}`
+    : `/cameras/countries/${c.slug}`,
 }));
 
 /* The region's biggest city indexes, linked from the hub: the
@@ -192,6 +198,7 @@ export default async function AsiaWebcamsPage() {
         rows={TOP_COUNTRIES}
         note={`Plus ${ASIA.length - TOP_COUNTRIES.length} more Asian entries in the index, totaling ${fmt(TOTAL)} cameras across ${ASIA.length} countries.`}
       />
+      <ConsolidatedCountries region="asia" regionLabel="Asia" />
       <HowTo
         title="How to watch Asian cameras live"
         steps={[

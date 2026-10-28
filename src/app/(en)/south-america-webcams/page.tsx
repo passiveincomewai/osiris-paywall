@@ -12,6 +12,7 @@ import {
   CtaRow,
   PageShell,
 } from "@/components/directory-page";
+import ConsolidatedCountries from "@/components/ConsolidatedCountries";
 
 export const metadata: Metadata = {
   title: "South America Webcams — 89 Live Cameras",
@@ -148,6 +149,8 @@ export default function SouthAmericaWebcamsPage() {
           ))}
         </div>
       </section>
+
+      <ConsolidatedCountries region="south-america" regionLabel="South America" />
 
       <HowTo
         title="How to watch South American cameras"

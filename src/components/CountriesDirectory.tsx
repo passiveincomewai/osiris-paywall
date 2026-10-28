@@ -175,17 +175,30 @@ export default function CountriesDirectory({
               {rows.map((c, i) => (
                 <tr
                   key={c.slug}
-                  onClick={() => router.push(`/cameras/countries/${c.slug}`)}
-                  className="cursor-pointer border-t border-white/[0.06] transition hover:bg-white/[0.03]"
+                  id={c.slug}
+                  onClick={
+                    c.hasPage === false
+                      ? undefined
+                      : () => router.push(`/cameras/countries/${c.slug}`)
+                  }
+                  className={
+                    c.hasPage === false
+                      ? "border-t border-white/[0.06]"
+                      : "cursor-pointer border-t border-white/[0.06] transition hover:bg-white/[0.03]"
+                  }
                 >
                   <td className="px-4 md:px-6 py-3.5 text-white/35 tabular-nums">{i + 1}</td>
                   <td className="px-4 md:px-6 py-3.5 font-medium">
-                    <Link
-                      href={`/cameras/countries/${c.slug}`}
-                      className="text-[#D4AF37] hover:underline"
-                    >
-                      {c.name}
-                    </Link>
+                    {c.hasPage === false ? (
+                      <span className="text-white/85">{c.name}</span>
+                    ) : (
+                      <Link
+                        href={`/cameras/countries/${c.slug}`}
+                        className="text-[#D4AF37] hover:underline"
+                      >
+                        {c.name}
+                      </Link>
+                    )}
                   </td>
                   <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
                     {fmt(c.count)}

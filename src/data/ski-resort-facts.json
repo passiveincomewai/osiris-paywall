@@ -1076,5 +1076,63 @@
     "access": "Granite Peak stands on Rib Mountain just south of Wausau, ten miles north-northeast of Central Wisconsin Airport. The cameras on this page cover the Wausau corridor and the state-park mountain that rises over the Wisconsin River valley.",
     "runs": 58,
     "verticalM": 213
+  },
+  "diamond-peak": {
+    "about": [
+      "Diamond Peak is the community-owned ski area above Incline Village on Lake Tahoe's north shore — owned by the Incline Village General Improvement District rather than a resort corporation, and run for the town as much as for visitors. Its 655 acres climb from 6,700 feet to a summit of 8,540 feet, a 1,840-foot vertical that ranks among the largest on the lake, and the upper-mountain runs look straight down the length of Tahoe — the Lakeview Quad is named for exactly that view.",
+      "The terrain mixes groomed cruisers with named glades and tree skiing, and the mountain stays comparatively uncrowded by Tahoe standards. The cameras on this page sit over the base, the lifts and the lake-facing runs; the much larger nearby grid watches the two highways that serve the resort."
+    ],
+    "access": "Diamond Peak is reached by Ski Way, climbing from Country Club Drive in Incline Village. State Route 28 runs the lakeshore below the resort, and the Mt. Rose Highway (SR-431) starts just east of the village and climbs over the Carson Range to Reno. The NDOT cameras in the nearby grid below cover both roads — the drive in from Reno over the pass, and the lake-level run along SR-28.",
+    "baseElevationM": 2042,
+    "summitElevationM": 2603,
+    "verticalM": 561,
+    "skiableHectares": 265,
+    "lifts": 6,
+    "runs": 30
+  },
+  "grouse-mountain": {
+    "about": [
+      "Grouse Mountain is Vancouver's city mountain: a compact North Shore ski area whose runs look straight down over North Vancouver, the harbour and the downtown skyline. Four chairlifts and a magic carpet serve 33 runs on 86 hectares, and the mountain is as much an evening hill as a day one — 14 of its runs are lit for night skiing, so the cameras here keep working long after dark.",
+      "The ski terrain sits high on the mountain, reached from the base by the Skyride aerial tram. The signature run, The Cut, drops through the lights with the whole city spread below it, and the summit cameras double as one of the best live weather windows over Metro Vancouver — fog banks, clearing storms and sunset over the inlet included."
+    ],
+    "access": "Grouse Mountain stands at 6400 Nancy Greene Way in North Vancouver, at the top of Capilano Road — a short drive from downtown Vancouver over the Lions Gate Bridge, or up Highway 1 to the Capilano Road exit. The Skyride gondola climbs from the base parking area to the alpine station beside the runs; city buses serve the base.",
+    "baseElevationM": 274,
+    "summitElevationM": 1231,
+    "verticalM": 365,
+    "skiableHectares": 86,
+    "lifts": 5,
+    "runs": 33
+  },
+  "myoko-kogen": {
+    "about": [
+      "Myoko Kogen is not a single resort but a cluster of ski areas around the foot of Mount Myoko in Niigata: the hot-spring town of Akakura with its twin areas Akakura Onsen and Akakura Kanko, wide-open Ikenotaira, steep little Seki Onsen, and Suginohara, whose 8.5 km top-to-bottom run is among the longest in Japan and falls 1,124 metres from the area's highest lift-served point at 1,855 metres.",
+      "Sea-of-Japan storms bury the area — around 13 metres of snow in a season — and the resorts share one of Japan's classic powder reputations while keeping a traditional onsen-town feel that the big purpose-built resorts never had. The cameras on this page and in the surrounding valley watch the resort streets, the lift bases and the snow piling up on both."
+    ],
+    "access": "Myoko-Kogen Station, on the Kita-Shinano Line 44 minutes from Nagano, is the area's railhead; buses climb from the station to Akakura Onsen town and the resort bases, and a shuttle links the Akakura, Ikenotaira and Suginohara areas along the mountain's foot.",
+    "summitElevationM": 1855,
+    "verticalM": 1124
+  },
+  "tomamu": {
+    "about": [
+      "Tomamu is Hoshino Resorts' mountain in Shimukappu Village, in the middle of Hokkaido's inland powder belt — a place cold enough that temperatures below −30 °C are part of its identity, which is exactly what keeps its snow dry when coastal resorts turn heavy. One gondola and five chairlifts serve 29 courses across two linked peaks, Tomamu Mountain and Tower Mountain, on about 124 hectares.",
+      "The skiing mixes long groomed cruisers — the longest runs pass four kilometres — with tree runs and a registered experts-only powder zone. The twin hotel towers at the base make it a true resort village in a way few Japanese ski areas are. The cameras here watch the towers, the lift bases and the cold, clear mornings the powder belt is famous for."
+    ],
+    "access": "JR Tomamu Station sits below the resort on the Sekisho Line — roughly 70 minutes by limited-express train from New Chitose Airport, with resort buses meeting arrivals. By road, the expressway crosses central Hokkaido into Shimukappu Village.",
+    "baseElevationM": 586,
+    "summitElevationM": 1171,
+    "verticalM": 585,
+    "skiableHectares": 124,
+    "lifts": 6,
+    "runs": 29
+  },
+  "voss": {
+    "about": [
+      "Voss Resort is the ski area above the town of Voss in Vestland, between Bergen and the fjords — 24 slopes and 40 km of groomed runs served by 11 lifts, topped by Hangurstoppen at 964 metres. The Voss Gondol rises straight from beside the town's railway station to the summit station, which makes it one of the few European resorts you can step onto from a train platform.",
+      "The skiing runs from the gondola-served Hanguren face down to the family slopes at Bavallen, with floodlit evening skiing three nights a week. The cameras on this page watch the mountain and the town; the road cameras around Voss watch the Bergen corridor and the fjord-country approaches."
+    ],
+    "access": "Voss is about 99 km east of Bergen, reached by road and by the Bergen Railway to Voss Station — the gondola's lower station stands beside the platforms and climbs to Hangurstoppen in under nine minutes. The resort's second welcome centre is at Bavallen, a short drive from the town centre.",
+    "summitElevationM": 964,
+    "lifts": 11,
+    "runs": 24
   }
 }

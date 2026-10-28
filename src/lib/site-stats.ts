@@ -38,8 +38,16 @@ export const LIVE_CAMERA_COUNT_LABEL = "74,229";
 export const LIVE_CAMERA_COUNT_DEFINITION =
   "Live public cameras on the WorldEye globe — the standing public count quoted across the site.";
 
-/** Countries with browsable directory pages in the indexed catalogue. */
-export const DIRECTORY_COUNTRY_COUNT = 109;
+/**
+ * Countries with browsable directory pages in the indexed catalogue.
+ * Since C10 threshold enforcement (2026-10-28), countries below the
+ * §4.5 substance line are consolidated into their regional hubs and
+ * no longer have standalone pages: 109 catalogue countries − 35
+ * consolidated = 74 with pages. Derived (and pinned) in
+ * src/lib/indexation-gates.ts (COUNTRY_PAGE_COUNT) — update both
+ * together after a catalogue rebuild.
+ */
+export const DIRECTORY_COUNTRY_COUNT = 74;
 
 /**
  * The Live Camera Index snapshot (October 2026 edition). The figures

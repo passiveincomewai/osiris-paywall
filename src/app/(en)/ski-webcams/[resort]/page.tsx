@@ -9,6 +9,7 @@ import SkiConditions from "@/components/SkiConditions";
 import SkiRouteTool from "@/components/SkiRouteTool";
 import { cameraAreas } from "@/lib/country-cameras";
 import { plural } from "@/lib/country-page-content";
+import { isFoldedResort, RESORT_PAGE_COUNT } from "@/lib/indexation-gates";
 import { computePlaceBreakdown } from "@/lib/place-breakdown";
 import { haversineKm } from "@/lib/place-neighbours";
 import { AreaTable } from "@/components/directory-page";
@@ -41,7 +42,12 @@ import type { CountryCamera } from "@/lib/country-cameras";
 const BASE = "https://worldeye.app";
 
 export function generateStaticParams() {
-  return SKI_RESORTS.map(r => ({ resort: r.slug }));
+  /* C10 (§4.5): folded resorts (no facts row, failing camera prong)
+     are listed on the /ski-webcams hub without detail pages — their
+     URLs 301 to the hub from next.config.ts. */
+  return SKI_RESORTS.filter(r => !isFoldedResort(r.slug)).map(r => ({
+    resort: r.slug,
+  }));
 }
 
 function pageTitle(r: SkiResort): string {
@@ -68,7 +74,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { resort: slug } = await params;
   const r = getSkiResort(slug);
-  if (!r) return { title: "Not found" };
+  if (!r || isFoldedResort(slug)) return { title: "Not found" };
   const url = `/ski-webcams/${slug}`;
   const description = metaDescription(r, r.resortCameraCount, r.nearbyCameraCount);
   return {
@@ -95,7 +101,7 @@ export default async function SkiResortPage({
 }) {
   const { resort: slug } = await params;
   const r = getSkiResort(slug);
-  if (!r) notFound();
+  if (!r || isFoldedResort(slug)) notFound();
 
   const { resort: resortCams, nearby: nearbyCams } = await loadSelection(r);
   const facts = getSkiResortFacts(r.slug);
@@ -126,7 +132,7 @@ export default async function SkiResortPage({
   /* The same-country cluster (§4.4), ordered by real distance from
      this resort instead of file order — the nearest mountains are
      the ones a visitor here plausibly skis next. */
-  const others = SKI_RESORTS.filter(o => o.slug !== r.slug && o.country === r.country)
+  const others = SKI_RESORTS.filter(o => o.slug !== r.slug && o.country === r.country && !isFoldedResort(o.slug))
     .sort((a, b) => haversineKm(r.lat, r.lng, a.lat, a.lng) - haversineKm(r.lat, r.lng, b.lat, b.lng))
     .slice(0, 6);
   /* Access corridors (C11, §4.4): the nearby ring's cameras grouped
@@ -580,7 +586,7 @@ export default async function SkiResortPage({
               >
                 <span className="font-semibold text-sm">All ski resorts</span>
                 <span className="block text-xs text-white/45 mt-1">
-                  {SKI_RESORTS.length} resorts with live camera pages
+                  {RESORT_PAGE_COUNT} resorts with live camera pages
                 </span>
               </Link>
             </li>

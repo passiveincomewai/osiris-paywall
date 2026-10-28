@@ -22,17 +22,32 @@ function words(html: string): number {
   return text.split(/\s+/).filter(Boolean).length;
 }
 
+/* C10 (§4.5) note: the original sample's thinnest members (morocco,
+   vatican-city, yemen, denmark, egypt, singapore) are hub-consolidated
+   now and render no page at all — the second test below pins that.
+   This sample is the thin end of the family that still earns pages:
+   below 25 cameras but spread over ≥3 areas, plus Iran, which keeps
+   its page under the C10 traffic gate despite a single camera. */
 const THIN = [
   "iran",
+  "belgium",
+  "india",
+  "seychelles",
+  "ukraine",
+  "slovenia",
+  "costa-rica",
+  "china",
+  "maldives",
+  "luxembourg",
+];
+
+const CONSOLIDATED = [
   "morocco",
   "vatican-city",
   "yemen",
   "denmark",
   "egypt",
   "singapore",
-  "india",
-  "ukraine",
-  "luxembourg",
 ];
 
 describe("country pages render full content for thin countries", () => {
@@ -56,6 +71,21 @@ describe("country pages render full content for thin countries", () => {
     }
     for (const slug of THIN) {
       expect(counts[slug], slug).toBeGreaterThanOrEqual(1050);
+    }
+  }, 120000);
+
+  it("consolidated countries render no page (C10 hub consolidation)", async () => {
+    const Page = (await import("@/app/(en)/cameras/countries/[country]/page")).default;
+    for (const slug of CONSOLIDATED) {
+      let thrown: unknown = null;
+      try {
+        await Page({ params: Promise.resolve({ country: slug }) });
+      } catch (e) {
+        thrown = e;
+      }
+      const digest =
+        (thrown as { digest?: string } | null)?.digest ?? String(thrown);
+      expect(digest, slug).toMatch(/NEXT_(NOT_FOUND|HTTP_ERROR_FALLBACK)/);
     }
   }, 120000);
 

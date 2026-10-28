@@ -24,6 +24,7 @@ import {
   watchGuide,
 } from "@/lib/country-page-content";
 import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
+import { isConsolidatedCountry } from "@/lib/indexation-gates";
 import { withDerivedCities } from "@/lib/us-places";
 import { US_STATE_META } from "@/lib/us-states";
 import VoiceQA from "@/components/seo/VoiceQA";
@@ -78,7 +79,12 @@ function getCountry(slug: string): CountryEntry | undefined {
 }
 
 export function generateStaticParams() {
-  return COUNTRIES.map((c) => ({ country: c.slug }));
+  /* C10 (§4.5): below-line countries are consolidated into their
+     regional hubs and no longer generate pages — their URLs 301 to
+     the hub from next.config.ts. */
+  return COUNTRIES.filter((c) => !isConsolidatedCountry(c.slug)).map((c) => ({
+    country: c.slug,
+  }));
 }
 
 function pageTitle(c: CountryEntry): string {
@@ -330,8 +336,10 @@ export async function generateMetadata({
   const c = getCountry(slug);
   /* Unknown slug → real 404: this route does not inherit the city routes'
      200-with-"Not found" quirk — with no directory entry there is no
-     page, and notFound() below says so. */
-  if (!c) return { title: "Not found" };
+     page, and notFound() below says so. Consolidated (C10) countries
+     take the same path: production traffic never reaches here because
+     next.config.ts 301s them to their regional hub first. */
+  if (!c || isConsolidatedCountry(slug)) return { title: "Not found" };
   const url = `/cameras/countries/${slug}`;
   return {
     title: snippetTitle(c),
@@ -386,7 +394,7 @@ export default async function CountryPage({
 }) {
   const { country: slug } = await params;
   const c = getCountry(slug);
-  if (!c) notFound();
+  if (!c || isConsolidatedCountry(slug)) notFound();
 
   /* The country's full record set (the same chunks the explorer API
      serves) drives the depth sections below: source networks, feed kinds,
@@ -421,7 +429,19 @@ export default async function CountryPage({
     slug === "united-states"
       ? US_STATE_META.flatMap((s) => [s.name, s.usps])
       : undefined;
-  const region = regionLinks(slug, COUNTRIES);
+  const regionAll = regionLinks(slug, COUNTRIES);
+  /* C10: consolidated countries have no page to link to — they leave
+     the sibling cards and the anchor-dedupe set. siblingTotal stays
+     the full regional index total (the subtext that quotes it counts
+     the index, not the linked subset). */
+  const region = regionAll
+    ? {
+        ...regionAll,
+        siblings: regionAll.siblings.filter(
+          (s) => !isConsolidatedCountry(s.slug),
+        ),
+      }
+    : null;
   const guide = watchGuide(c, facts, region);
   const fullRoster = roster(c, records);
 

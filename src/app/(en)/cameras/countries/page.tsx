@@ -15,6 +15,14 @@ import {
   type RegionKey,
 } from "@/lib/country-page-content";
 import data from "@/data/camera-countries.json";
+import {
+  CONSOLIDATED_COUNTRIES,
+  isConsolidatedCountry,
+} from "@/lib/indexation-gates";
+
+const CONSOLIDATED_BY_SLUG = new Map(
+  CONSOLIDATED_COUNTRIES.map((c) => [c.slug, c]),
+);
 
 /* Counts come from the generated index (tools/build-country-pages.mjs,
    derived from the served catalogue) — the numbers on this page cannot
@@ -39,6 +47,10 @@ const DIRECTORY_ENTRIES: CountryDirectoryEntry[] = COUNTRIES.map((c) => ({
   count: c.count,
   topCities: c.topCities,
   aliases: c.aliases ?? [],
+  /* C10 (§4.5): consolidated countries are listed without a page
+     link — the component renders their row plain (and it carries the
+     anchor their old URL 301s to when the region has no hub). */
+  hasPage: !isConsolidatedCountry(c.slug),
 }));
 const largest = COUNTRIES.reduce((a, b) => (b.count > a.count ? b : a), COUNTRIES[0]);
 
@@ -99,7 +111,7 @@ const DIRECTORY_FAQS: Array<{ q: string; a: string }> = [
               },
               {
                 q: "Which countries have dedicated pages?",
-                a: "All of them. Every country in the table has its own page with the complete live grid for that country — every camera, grouped by area with search and filters — linked from the table above.",
+                a: "Countries with a substantial network do — their pages carry the complete live grid for that country, every camera grouped by area with search and filters. The smallest networks (fewer than 25 cameras across fewer than 3 areas) are gathered onto their regional hub page instead, with every feed listed there, so no country page is a near-empty shell.",
               },
               {
                 q: "How often is the directory updated?",
@@ -137,7 +149,12 @@ const jsonLd = {
           "@type": "ListItem",
           position: i + 1,
           name: `${c.name} live cameras — ${fmt(c.count)} cameras`,
-          url: `https://worldeye.app/cameras/countries/${c.slug}`,
+          /* C10: a consolidated country's listing lives at its hub
+             (or directory) anchor — the ItemList points there, not
+             at the retired page URL. */
+          url: isConsolidatedCountry(c.slug)
+            ? `https://worldeye.app${CONSOLIDATED_BY_SLUG.get(c.slug)?.redirectTarget ?? ""}`
+            : `https://worldeye.app/cameras/countries/${c.slug}`,
         })),
       },
   name: `Live Street Cameras by Country — ${COUNTRIES.length} Countries`,

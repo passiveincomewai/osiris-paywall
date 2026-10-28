@@ -21,6 +21,7 @@ import {
   regionLinks,
 } from "@/lib/country-page-content";
 import { cityPageHrefForArea } from "@/lib/place-answers";
+import { isConsolidatedCountry } from "@/lib/indexation-gates";
 import {
   buildRelatedSearches,
   compassDirection,
@@ -316,14 +317,33 @@ describe("rendered pages — §5.2 up-links and the C8/C9 blocks", () => {
   }, 600_000);
 
   it("a thin country page keeps the block dark (min-3 gate) but keeps its up-links", async () => {
+    // Belgium (3 cameras / 3 areas) is the thinnest country that
+    // still earns a page under C10 (§4.5) — Bermuda, this pin's
+    // original subject, is consolidated now (next test).
     const Page = (await import("@/app/(en)/cameras/countries/[country]/page")).default;
-    const el = await Page({ params: Promise.resolve({ country: "bermuda" }) });
+    const el = await Page({ params: Promise.resolve({ country: "belgium" }) });
     const html = renderToString(el as React.ReactElement);
     expect(html).not.toMatch(
-      /(Keep exploring Bermuda|More ways to look at Bermuda|Searches Bermuda visitors run next)/,
+      /(Keep exploring Belgium|More ways to look at Belgium|Searches Belgium visitors run next)/,
     );
     expect(html).toContain('href="/cameras/countries"');
-    expect(html).toContain('href="/north-america-webcams"');
+    expect(html).toContain('href="/europe-live-cameras"');
+  }, 600_000);
+
+  it("a consolidated country (Bermuda) renders no page — C10 moved it to its hub row", async () => {
+    expect(isConsolidatedCountry("bermuda")).toBe(true);
+    const Page = (await import("@/app/(en)/cameras/countries/[country]/page")).default;
+    let thrown: unknown = null;
+    try {
+      await Page({ params: Promise.resolve({ country: "bermuda" }) });
+    } catch (e) {
+      thrown = e;
+    }
+    // notFound() throws Next's fallback error; in production the
+    // next.config.ts 301 to /north-america-webcams#bermuda fires
+    // before this route is ever reached.
+    const digest = (thrown as { digest?: string } | null)?.digest ?? String(thrown);
+    expect(digest).toMatch(/NEXT_(NOT_FOUND|HTTP_ERROR_FALLBACK)/);
   }, 600_000);
 });
 

@@ -97,6 +97,61 @@ const nextConfig: NextConfig = {
       { source: '/month', destination: '/pricing', permanent: true },
       { source: '/year', destination: '/pricing', permanent: true },
       { source: '/docs', destination: '/faq', permanent: true },
+      // C10 threshold enforcement (§4.5, owner-approved 2026-10-27):
+      // countries below the substance line (<25 cameras AND <3 areas)
+      // are consolidated into their regional hub — the standalone page
+      // is retired, the URL 301s to the country's anchored row on the
+      // hub (Africa has no hub yet, so its four land on their anchored
+      // directory rows), and the sitemap drops the URL. The set is
+      // derived in src/lib/indexation-gates.ts; this literal table is
+      // pinned against it by indexation-gates.test.ts — regenerate
+      // both together after a catalogue rebuild. Iran is below the
+      // line but excluded by the traffic gate (59 PV/28d) — see the
+      // gates module.
+      { source: '/cameras/countries/albania', destination: '/europe-live-cameras#albania', permanent: true },
+      { source: '/cameras/countries/armenia', destination: '/europe-live-cameras#armenia', permanent: true },
+      { source: '/cameras/countries/azerbaijan', destination: '/europe-live-cameras#azerbaijan', permanent: true },
+      { source: '/cameras/countries/barbados', destination: '/north-america-webcams#barbados', permanent: true },
+      { source: '/cameras/countries/bermuda', destination: '/north-america-webcams#bermuda', permanent: true },
+      { source: '/cameras/countries/bolivia', destination: '/south-america-webcams#bolivia', permanent: true },
+      { source: '/cameras/countries/bonaire', destination: '/north-america-webcams#bonaire', permanent: true },
+      { source: '/cameras/countries/christmas-island', destination: '/oceania-webcams#christmas-island', permanent: true },
+      { source: '/cameras/countries/curacao', destination: '/north-america-webcams#curacao', permanent: true },
+      { source: '/cameras/countries/czechia', destination: '/europe-live-cameras#czechia', permanent: true },
+      { source: '/cameras/countries/denmark', destination: '/europe-live-cameras#denmark', permanent: true },
+      { source: '/cameras/countries/egypt', destination: '/cameras/countries#egypt', permanent: true },
+      { source: '/cameras/countries/faroe-islands', destination: '/europe-live-cameras#faroe-islands', permanent: true },
+      { source: '/cameras/countries/grenada', destination: '/north-america-webcams#grenada', permanent: true },
+      { source: '/cameras/countries/guadeloupe', destination: '/north-america-webcams#guadeloupe', permanent: true },
+      { source: '/cameras/countries/honduras', destination: '/north-america-webcams#honduras', permanent: true },
+      { source: '/cameras/countries/jordan', destination: '/asia-webcams#jordan', permanent: true },
+      { source: '/cameras/countries/lebanon', destination: '/asia-webcams#lebanon', permanent: true },
+      { source: '/cameras/countries/madagascar', destination: '/cameras/countries#madagascar', permanent: true },
+      { source: '/cameras/countries/martinique', destination: '/north-america-webcams#martinique', permanent: true },
+      { source: '/cameras/countries/morocco', destination: '/cameras/countries#morocco', permanent: true },
+      { source: '/cameras/countries/north-macedonia', destination: '/europe-live-cameras#north-macedonia', permanent: true },
+      { source: '/cameras/countries/oman', destination: '/asia-webcams#oman', permanent: true },
+      { source: '/cameras/countries/san-marino', destination: '/europe-live-cameras#san-marino', permanent: true },
+      { source: '/cameras/countries/saudi-arabia', destination: '/asia-webcams#saudi-arabia', permanent: true },
+      { source: '/cameras/countries/senegal', destination: '/cameras/countries#senegal', permanent: true },
+      { source: '/cameras/countries/serbia', destination: '/europe-live-cameras#serbia', permanent: true },
+      { source: '/cameras/countries/singapore', destination: '/asia-webcams#singapore', permanent: true },
+      { source: '/cameras/countries/sint-maarten', destination: '/north-america-webcams#sint-maarten', permanent: true },
+      { source: '/cameras/countries/slovakia', destination: '/europe-live-cameras#slovakia', permanent: true },
+      { source: '/cameras/countries/sri-lanka', destination: '/asia-webcams#sri-lanka', permanent: true },
+      { source: '/cameras/countries/uruguay', destination: '/south-america-webcams#uruguay', permanent: true },
+      { source: '/cameras/countries/vatican-city', destination: '/europe-live-cameras#vatican-city', permanent: true },
+      { source: '/cameras/countries/venezuela', destination: '/south-america-webcams#venezuela', permanent: true },
+      { source: '/cameras/countries/yemen', destination: '/asia-webcams#yemen', permanent: true },
+      // C10 ski folds (§4.5): resorts with no facts row and a failing
+      // camera prong fold into the /ski-webcams hub as listed resorts
+      // without detail pages. Same derivation + pin as above
+      // (FOLDED_RESORT_SLUGS in the gates module).
+      { source: '/ski-webcams/blue-mountain-ontario', destination: '/ski-webcams', permanent: true },
+      { source: '/ski-webcams/hoodoo', destination: '/ski-webcams', permanent: true },
+      { source: '/ski-webcams/june-mountain', destination: '/ski-webcams', permanent: true },
+      { source: '/ski-webcams/oppdal', destination: '/ski-webcams', permanent: true },
+      { source: '/ski-webcams/pyha', destination: '/ski-webcams', permanent: true },
     ];
   },
   async headers() {

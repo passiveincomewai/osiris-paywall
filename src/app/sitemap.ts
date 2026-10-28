@@ -21,22 +21,29 @@ import { withoutFutureLastmod } from "@/lib/lastmod";
 import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
+import { isConsolidatedCountry, isFoldedResort } from "@/lib/indexation-gates";
 
 const BASE = "https://worldeye.app";
 
-// Every country in the catalogue has a dedicated page (matches
-// generateStaticParams in src/app/cameras/countries/[country]/page.tsx,
-// both reading the generated camera-countries index).
+// Every country above the C10 substance line has a dedicated page
+// (matches generateStaticParams in
+// src/app/cameras/countries/[country]/page.tsx). Below-line countries
+// are consolidated into their regional hubs (src/lib/indexation-gates.ts)
+// — their URLs 301 to the hub and leave the sitemap.
 const COUNTRY_SLUGS: string[] = (
   cameraCountries as { countries: Array<{ slug: string }> }
-).countries.map((c) => c.slug);
+).countries
+  .map((c) => c.slug)
+  .filter((slug) => !isConsolidatedCountry(slug));
 
-// Every resort in the generated ski dataset has a page (matches
-// generateStaticParams in src/app/ski-webcams/[resort]/page.tsx, both
-// reading the generated ski-resorts index).
+// Every resort passing the C10 ski gate has a page (matches
+// generateStaticParams in src/app/ski-webcams/[resort]/page.tsx).
+// Folded resorts are listed on the /ski-webcams hub without pages.
 const SKI_RESORT_SLUGS: string[] = (
   skiResorts as { resorts: Array<{ slug: string }> }
-).resorts.map((r) => r.slug);
+).resorts
+  .map((r) => r.slug)
+  .filter((slug) => !isFoldedResort(slug));
 
 const SEO_PAGES = [
   "/cameras/countries",

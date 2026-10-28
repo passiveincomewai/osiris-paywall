@@ -41,6 +41,10 @@ import {
   statusFaqs,
 } from "@/lib/place-breakdown";
 import SaveLocationButton from "@/components/SaveLocationButton";
+import {
+  stateBelowLine,
+  stateBlocksBuildable,
+} from "@/lib/indexation-gates";
 import cityPages from "@/data/city-pages.json";
 
 /* Area name → city-page slug, for linking the coverage table to the
@@ -701,6 +705,27 @@ export function generateStaticParams() {
   return getUsStatesIndex().states.map((s) => ({ state: s.slug }));
 }
 
+/* C10 (§4.5) indexation gate: a state below the line (<100 cameras
+   AND <5 areas) stays indexable only if at least one of its §4.2
+   blocks can be built from data — the corridor table (breakdown
+   total ≥25, ≥2 corridors) or the operator table (≥2 operator
+   rows), the template's own render gates. Neither building → the
+   page stays live with `noindex` (Mississippi, Rhode Island at the
+   current snapshot; DC builds both and is untouched). Rule in
+   src/lib/indexation-gates.ts. */
+async function stateRobots(
+  slug: string,
+): Promise<Metadata["robots"] | undefined> {
+  if (!stateBelowLine(slug)) return undefined;
+  const bd = await loadStateBreakdown(slug);
+  const blocks = stateBlocksBuildable({
+    breakdownTotal: bd ? bd.total : null,
+    corridors: bd ? bd.corridors.length : 0,
+    operatorRows: bd ? operatorRows(bd.sources).length : 0,
+  });
+  return blocks.any ? undefined : { index: false, follow: true };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -710,9 +735,11 @@ export async function generateMetadata({
   const s = resolveState(slug);
   if (!s) return { title: "Not found" };
   const url = `/us-traffic-cameras/${slug}`;
+  const robots = await stateRobots(slug);
   return {
     title: s.title,
     description: s.blurb,
+    ...(robots ? { robots } : {}),
     alternates: { canonical: `${BASE}${url}` },
     openGraph: {
       title: s.title,

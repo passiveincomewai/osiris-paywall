@@ -25,6 +25,7 @@ import {
   SKI_RESORTS,
 } from "@/lib/ski-resorts";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
+import { FOLDED_RESORT_SLUGS, RESORT_PAGE_COUNT } from "@/lib/indexation-gates";
 import type { SkiResortLogoMap } from "@/lib/ski-directory";
 import skiLogosData from "@/data/ski-logos.json";
 import type { CountryCamera } from "@/lib/country-cameras";
@@ -198,7 +199,7 @@ export default async function SkiWebcamsPage() {
       />
       <StatRow
         stats={[
-          { value: String(SKI_RESORTS.length), label: "resorts with live pages" },
+          { value: String(RESORT_PAGE_COUNT), label: "resorts with live pages" },
           { value: totalCameras.toLocaleString("en-US"), label: "resort & road cameras" },
           { value: String(new Set(SKI_RESORTS.map(r => r.country)).size), label: "countries covered" },
         ]}
@@ -214,8 +215,9 @@ export default async function SkiWebcamsPage() {
         <p className="text-sm text-white/50 mb-5 max-w-3xl">
           Each resort page carries its own live feeds, the traffic cameras on the roads around it,
           official weather alerts where WorldEye has them, and the route tool for your drive.
+          The smallest resorts are listed here without a page of their own until their coverage grows.
         </p>
-        <SkiResortDirectory resorts={SKI_RESORTS} logos={SKI_LOGOS} />
+        <SkiResortDirectory resorts={SKI_RESORTS} logos={SKI_LOGOS} noPageSlugs={[...FOLDED_RESORT_SLUGS]} />
       </section>
 
       {/* Compare tool — side-by-side terrain, cameras and official

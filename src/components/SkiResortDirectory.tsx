@@ -67,22 +67,46 @@ function LogoTile({ resort, logos }: { resort: SkiResort; logos: SkiResortLogoMa
   );
 }
 
-function ResortCard({ resort, logos }: { resort: SkiResort; logos: SkiResortLogoMap }) {
+function ResortCard({
+  resort,
+  logos,
+  hasPage,
+}: {
+  resort: SkiResort;
+  logos: SkiResortLogoMap;
+  hasPage: boolean;
+}) {
+  const body = (
+    <>
+      <LogoTile resort={resort} logos={logos} />
+      <span className="min-w-0">
+        <span className="font-semibold text-sm">{resort.name}</span>
+        <span className="block text-xs text-white/45 mt-1">
+          {resort.town}, {resort.region}
+        </span>
+        <span className="block text-xs text-[#D4AF37] mt-1.5">{cameraLabel(resort)}</span>
+        {!hasPage && (
+          <span className="block text-xs text-white/40 mt-1">
+            Listed on this hub — no separate page
+          </span>
+        )}
+      </span>
+    </>
+  );
   return (
     <li>
-      <Link
-        href={`/ski-webcams/${resort.slug}`}
-        className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-[#D4AF37]/50 hover:bg-white/[0.05] transition"
-      >
-        <LogoTile resort={resort} logos={logos} />
-        <span className="min-w-0">
-          <span className="font-semibold text-sm">{resort.name}</span>
-          <span className="block text-xs text-white/45 mt-1">
-            {resort.town}, {resort.region}
-          </span>
-          <span className="block text-xs text-[#D4AF37] mt-1.5">{cameraLabel(resort)}</span>
-        </span>
-      </Link>
+      {hasPage ? (
+        <Link
+          href={`/ski-webcams/${resort.slug}`}
+          className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-[#D4AF37]/50 hover:bg-white/[0.05] transition"
+        >
+          {body}
+        </Link>
+      ) : (
+        <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          {body}
+        </div>
+      )}
     </li>
   );
 }
@@ -117,10 +141,16 @@ function CountryChip({
 export default function SkiResortDirectory({
   resorts,
   logos,
+  noPageSlugs,
 }: {
   resorts: SkiResort[];
   logos: SkiResortLogoMap;
+  /** C10 (§4.5): folded resorts render as hub listings without a
+   *  page link. Slugs arrive as a prop so this client component
+   *  never imports the gates module's datasets. */
+  noPageSlugs?: string[];
 }) {
+  const noPage = useMemo(() => new Set(noPageSlugs ?? []), [noPageSlugs]);
   const [search, setSearch] = useState("");
   const [country, setCountry] = useState<string | null>(null);
   const [sort, setSort] = useState<SkiSortKey>("name-asc");
@@ -219,7 +249,7 @@ export default function SkiResortDirectory({
         ) : (
           <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {result.flat.map((r) => (
-              <ResortCard key={r.slug} resort={r} logos={logos} />
+              <ResortCard key={r.slug} resort={r} logos={logos} hasPage={!noPage.has(r.slug)} />
             ))}
           </ul>
         )
@@ -231,7 +261,7 @@ export default function SkiResortDirectory({
             </h3>
             <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {list.map((r) => (
-                <ResortCard key={r.slug} resort={r} logos={logos} />
+                <ResortCard key={r.slug} resort={r} logos={logos} hasPage={!noPage.has(r.slug)} />
               ))}
             </ul>
           </div>

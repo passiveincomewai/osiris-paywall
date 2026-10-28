@@ -23,6 +23,10 @@ export interface CountryDirectoryEntry {
   /** Extra names the search matches: ISO codes + alternate names from
    *  the generated index, merged with SEARCH_ALIASES_BY_SLUG below. */
   aliases?: string[];
+  /** C10 (§4.5): false for hub-consolidated countries — the directory
+   *  lists them without a page link. Absent means true (older callers
+   *  and tests construct entries without the flag). */
+  hasPage?: boolean;
 }
 
 /**

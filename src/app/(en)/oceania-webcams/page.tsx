@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import directory from "@/data/camera-directory.json";
+import ConsolidatedCountries from "@/components/ConsolidatedCountries";
 import {
   BASE,
   formatDate,
@@ -135,6 +136,7 @@ export default function OceaniaWebcamsPage() {
         ]}
       />
       <AreaTable title="Oceania by country" rows={COUNTRIES} />
+      <ConsolidatedCountries region="oceania" regionLabel="Oceania" />
       <HowTo
         title="How to watch Oceania cameras live"
         steps={[

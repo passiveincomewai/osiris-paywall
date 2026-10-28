@@ -5,6 +5,8 @@ import { ArrowRight, CheckCircle2, Landmark } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
+import ConsolidatedCountries from "@/components/ConsolidatedCountries";
+import { isConsolidatedCountry } from "@/lib/indexation-gates";
 import {
   CATALOGUE_GENERATED_AT,
   COUNTRY_INDEX,
@@ -219,7 +221,9 @@ export default async function EuropeLiveCamerasPage() {
             {europe.length} European countries
           </h2>
           <p className="text-white/50 mt-2 text-sm md:text-base">
-            Sorted by live camera count. Every country links to its own camera page.
+            Sorted by live camera count. Most countries link to their own
+            camera page; the smallest networks are listed in full in the
+            section below the table instead of carrying thin pages.
           </p>
           <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
             <table className="w-full text-sm md:text-base">
@@ -234,9 +238,15 @@ export default async function EuropeLiveCamerasPage() {
                 {europe.map((c) => (
                   <tr key={c.slug} className="border-t border-white/[0.06] hover:bg-white/[0.03] transition">
                     <td className="px-4 md:px-6 py-3.5 font-medium">
-                      <Link href={`/cameras/countries/${c.slug}`} className="text-[#D4AF37] hover:underline">
-                        {c.name}
-                      </Link>
+                      {isConsolidatedCountry(c.slug) ? (
+                        <Link href={`#${c.slug}`} className="text-[#D4AF37] hover:underline">
+                          {c.name}
+                        </Link>
+                      ) : (
+                        <Link href={`/cameras/countries/${c.slug}`} className="text-[#D4AF37] hover:underline">
+                          {c.name}
+                        </Link>
+                      )}
                     </td>
                     <td className="px-4 md:px-6 py-3.5 text-right tabular-nums text-white/85">
                       {fmt(c.count)}
@@ -250,6 +260,8 @@ export default async function EuropeLiveCamerasPage() {
             </table>
           </div>
         </div>
+
+        <ConsolidatedCountries region="europe" regionLabel="Europe" />
 
         {/* How to watch */}
         <div className="mt-16 rounded-2xl border border-white/10 bg-white/[0.02] p-8">
