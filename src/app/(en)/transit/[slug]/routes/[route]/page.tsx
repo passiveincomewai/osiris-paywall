@@ -83,7 +83,10 @@ export async function generateMetadata({
   const description = routeDescription(data.agency, route, weekday, stopCount, data.tz);
   const url = routePath(data.agency.id, routeSlug);
   return {
-    title,
+    // Absolute: routeTitle is length-budgeted as the complete title
+    // (SEO audit fix #1) — the layout's "| WorldEye" template would
+    // push the median route title back over the truncation line.
+    title: { absolute: title },
     description,
     alternates: { canonical: `${TRANSIT_BASE}${url}` },
     openGraph: { title, description, url, type: "website" },

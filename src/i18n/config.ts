@@ -155,5 +155,9 @@ export function isLocaleCode(value: string): value is LocaleCode {
 export function localizedPath(slug: string, locale: LocaleCode): string {
   const base = slug === "" ? "/" : `/${slug}`;
   if (locale === DEFAULT_LOCALE) return base;
-  return base === "/" ? `/${locale}/` : `/${locale}${base}`;
+  // The locale homepage serves at /es (200); /es/ 308-redirects to it,
+  // so the canonical path form carries no trailing slash (SEO audit
+  // 2026-10-27, fix #3) — sitemap entries, canonicals and hreflang
+  // targets all derive from this one function.
+  return base === "/" ? `/${locale}` : `/${locale}${base}`;
 }

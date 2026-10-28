@@ -229,8 +229,11 @@ const MONTHS: Record<string, number> = {
  * leading "YYYY MMM" gives the first of that month. Metro Transit MN
  * versions its feed with a bare Unix epoch ("1792595470" = the moment
  * that feed build was cut) — a string of exactly ten digits is read
- * as epoch seconds. Unparseable → null (the sitemap then omits
- * lastModified rather than lying).
+ * as epoch seconds. Community Transit stamps a validity RANGE
+ * ("20261002-20261211" = feed_start_date–feed_end_date): there the
+ * FIRST date is the version's own date and the trailing one is the
+ * feed's validity end — never a lastmod. Unparseable → null (the
+ * sitemap then omits lastModified rather than lying).
  *
  * Every candidate is validated before it is trusted: Date.UTC rolls
  * out-of-range components forward instead of failing, so the epoch
@@ -254,6 +257,42 @@ export function feedVersionDate(version: string | undefined): Date | null {
     }
     return null;
   }
+  // Embedded ISO-8601 date (MBTA: "Fall 2026, 2026-10-27T19:47:13+00:00,
+  // version D" — the feed's own generation timestamp, stated outright
+  // in the version string). Day precision out, like the epoch branch.
+  const iso = /(\d{4})-(\d{2})-(\d{2})/.exec(v);
+  if (iso) {
+    const y = Number(iso[1]);
+    const m = Number(iso[2]);
+    const day = Number(iso[3]);
+    const d = new Date(Date.UTC(y, m - 1, day));
+    if (
+      y >= 2000 && y <= 2100 &&
+      d.getUTCFullYear() === y && d.getUTCMonth() === m - 1 && d.getUTCDate() === day
+    ) {
+      return d;
+    }
+  }
+  // Validity-range versions (Community Transit "20261002-20261211"):
+  // two or more full YYYYMMDD dates in one string means the string
+  // spans a service period, and only its first date is the version's
+  // own. The trailing date of such a string is the feed_end_date —
+  // it sits in the future for the feed's whole service life, and
+  // stamping it as lastmod future-dated 40 sitemap entries
+  // (SEO audit 2026-10-27, fix #2).
+  const rangeDates = [...v.matchAll(/(\d{4})(\d{2})(\d{2})/g)]
+    .map((m) => {
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const day = Number(m[3]);
+      const d = new Date(Date.UTC(y, mo - 1, day));
+      return y >= 2000 && y <= 2100 &&
+        d.getUTCFullYear() === y && d.getUTCMonth() === mo - 1 && d.getUTCDate() === day
+        ? d
+        : null;
+    })
+    .filter((d): d is Date => d != null);
+  if (rangeDates.length >= 2) return rangeDates[0];
   const tail = /(\d{4})(\d{2})(\d{2})\s*$/.exec(v);
   if (tail) {
     const y = Number(tail[1]);
@@ -417,7 +456,17 @@ export function routeDisplayName(route: Pick<NetworkRoute, 'short' | 'long'>): s
 }
 
 export function routeTitle(agency: Pick<TransitAgency, 'name'>, route: NetworkRoute): string {
-  return `${agency.name} Route ${routeDisplayName(route)} — Schedule, Stops & Map`;
+  // Title-length budget (SEO audit 2026-10-27, fix #1): the old
+  // "— Schedule, Stops & Map" suffix plus the layout's "| WorldEye"
+  // template put the median route title at 78 chars (max 134) — 1,274
+  // of 1,302 truncated in search results. The suffix is now
+  // "— Schedule & Stops" and the route page renders this string as an
+  // ABSOLUTE title (no brand template), which lands the fleet at
+  // median 58 / max 114 with every title still unique: the
+  // differentiators (agency + route number + route name) are all
+  // kept; only boilerplate went. Verified programmatically over all
+  // 1,302 live routes at build time (see REPORT.md).
+  return `${agency.name} Route ${routeDisplayName(route)} — Schedule & Stops`;
 }
 
 export function routeDescription(

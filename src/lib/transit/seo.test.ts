@@ -11,6 +11,7 @@ import {
   representativeDays,
   routeJsonLd,
   routeSlugBase,
+  routeTitle,
   slugifySegment,
   stateForAgency,
   stopAnchor,
@@ -137,6 +138,39 @@ describe('displayRouteLong', () => {
   });
 });
 
+describe('routeTitle', () => {
+  // routeTitle reads only short/long off the route (via
+  // routeDisplayName); the cast keeps the fixture to those fields.
+  const route = (short: string, long: string) =>
+    ({ short, long }) as unknown as Parameters<typeof routeTitle>[1];
+
+  it('is agency + route number + route name + the short suffix', () => {
+    expect(routeTitle({ name: 'MBTA' }, route('1', 'Harvard Square - Nubian Station'))).toBe(
+      'MBTA Route 1 Harvard Square - Nubian Station — Schedule & Stops',
+    );
+    expect(routeTitle({ name: 'UTA' }, route('701', 'Blue Line'))).toBe(
+      'UTA Route 701 Blue Line — Schedule & Stops',
+    );
+  });
+
+  it('keeps the differentiators that make every title unique', () => {
+    // Same route number + name under two agencies (the Puget Sound
+    // overlap: King County Metro and Community Transit both run
+    // numbered routes out of the same hubs).
+    const a = routeTitle({ name: 'King County Metro' }, route('101', 'Renton - Seattle'));
+    const b = routeTitle({ name: 'Community Transit' }, route('101', 'Mariner P&R - Aurora Village TC'));
+    expect(a).not.toBe(b);
+    // Same agency, same number, different name.
+    const c = routeTitle({ name: 'MBTA' }, route('1', 'Harvard Square - Nubian Station'));
+    const d = routeTitle({ name: 'MBTA' }, route('1', ''));
+    expect(c).not.toBe(d);
+  });
+
+  it('does not repeat the route number when the name restates it', () => {
+    expect(routeTitle({ name: 'RTD' }, route('A', 'A'))).toBe('RTD Route A — Schedule & Stops');
+  });
+});
+
 describe('stateForAgency', () => {
   it('parses US regions', () => {
     expect(stateForAgency({ region: 'Salt Lake City, UT' })).toEqual({
@@ -159,6 +193,21 @@ describe('feedVersionDate', () => {
   it('is null for junk', () => {
     expect(feedVersionDate('v12')).toBeNull();
     expect(feedVersionDate(undefined)).toBeNull();
+  });
+  it('reads an embedded ISO-8601 generation date (MBTA)', () => {
+    // Live feed_info feed_version: the feed's generation timestamp is
+    // stated outright in the string — a real version date that the
+    // pre-fix parser missed, leaving all 400 MBTA routes undated.
+    expect(feedVersionDate('Fall 2026, 2026-10-27T19:47:13+00:00, version D')?.toISOString()).toBe('2026-10-27T00:00:00.000Z');
+    // An invalid ISO-like fragment is not trusted.
+    expect(feedVersionDate('feed 2026-13-40 build')).toBeNull();
+  });
+  it('reads a validity-range version by its start date (Community Transit)', () => {
+    // Live feed_info feed_version: feed_start_date 20261002,
+    // feed_end_date 20261211. The trailing date is the feed's
+    // validity END — the pre-fix parser stamped it as lastmod and
+    // future-dated the agency's whole sitemap family.
+    expect(feedVersionDate('20261002-20261211')?.toISOString()).toBe('2026-10-02T00:00:00.000Z');
   });
   it('reads a bare epoch-seconds version (Metro Transit MN)', () => {
     // Live feed_info feed_version at audit time; the epoch is the

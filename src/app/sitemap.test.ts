@@ -77,8 +77,11 @@ describe("sitemap URL set", () => {
       .sort();
     expect(nonTransit.length).toBe(945);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
+    // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
+    // normalised the es homepage entry from /es/ to its final /es
+    // form — same 945 URLs, one string changed.
     expect(hash).toBe(
-      "6d75d0de3bd70485d118996485624538f71d436eed25a73b5c209d8a372b64a5",
+      "17582f29ca1c7c35e6775336bda5acf76668b7a523c80ae4f7222e2fad54f93c",
     );
   });
 
@@ -197,6 +200,18 @@ describe("sitemap lastmod policy", () => {
     // The /transit hub spans every agency's feed — no single vintage.
     expect(lm("/transit")).toBeNull();
   });
+
+  it("never emits a future lastmod (SEO audit fix #2)", () => {
+    // The 2026-10-27 audit found 55 future-dated entries — a GTFS
+    // validity end date stamped as a version date plus posts dated
+    // tomorrow. The generator now drops any artefact date ahead of
+    // today instead of emitting it.
+    const now = Date.now();
+    for (const r of rows) {
+      if (!r.lastModified) continue;
+      expect(Date.parse(r.lastModified), r.url).toBeLessThanOrEqual(now);
+    }
+  });
 });
 
 /**
@@ -209,7 +224,9 @@ describe("sitemap lastmod policy", () => {
  */
 describe("sitemap — localized entries", () => {
   const ES_SLUGS: Record<string, string> = {
-    "": "https://worldeye.app/es/",
+    // The es homepage is the bare /es — /es/ 308-redirects to it, so
+    // the sitemap lists the final form (SEO audit 2026-10-27, fix #3).
+    "": "https://worldeye.app/es",
     pricing: "https://worldeye.app/es/pricing",
     "live-webcams": "https://worldeye.app/es/live-webcams",
     faq: "https://worldeye.app/es/faq",
@@ -229,8 +246,10 @@ describe("sitemap — localized entries", () => {
     for (const url of Object.values(ES_SLUGS)) {
       expect(rawEntries.filter((e) => e.url === url)).toHaveLength(1);
     }
-    const esEntries = rawEntries.filter((e) =>
-      e.url.startsWith("https://worldeye.app/es/"),
+    const esEntries = rawEntries.filter(
+      (e) =>
+        e.url === "https://worldeye.app/es" ||
+        e.url.startsWith("https://worldeye.app/es/"),
     );
     expect(esEntries).toHaveLength(6);
   });

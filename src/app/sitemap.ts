@@ -15,6 +15,7 @@ import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
 import { BEACH_SPOT_SLUGS, SURF_SPOT_SLUGS } from "@/lib/surf-spots";
 import { MANIFEST_ENTRIES } from "@/i18n/manifest";
 import { hreflangMapFor, localizedUrl } from "@/lib/i18n-seo";
+import { withoutFutureLastmod } from "@/lib/lastmod";
 import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
@@ -466,7 +467,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // repo (static marketing, compare/alternatives — the competitor JSONs
   // carry no date field — trackers and other live surfaces) omit
   // lastModified entirely. The URL set, order, changeFrequency and
-  // priority are unchanged.
+  // priority are unchanged. A future date is never emitted (the
+  // withoutFutureLastmod pass at the return): an artefact date ahead
+  // of today — a post dated tomorrow, a feed validity end date — is
+  // dropped until it is real, because future lastmods teach crawlers
+  // to distrust the whole file (SEO audit 2026-10-27, fix #2).
   //
   // The catalogue date is camera-countries.json's generatedAt: the
   // moment tools/build-country-pages.mjs built the committed catalogue
@@ -546,7 +551,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const d = familyLastmod.get(p);
     return d ? { lastModified: d } : {};
   };
-  return [
+  const entries: MetadataRoute.Sitemap = [
     // The homepage is the live globe app — its data is the runtime
     // catalogue, not the committed snapshot — so it carries no lastmod
     // rather than borrowing the catalogue's date.
@@ -812,4 +817,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     }),
   ];
+  // Fix #2 backstop: no entry leaves with a future lastModified,
+  // whatever artefact it derived from.
+  return entries.map((e) => withoutFutureLastmod(e, new Date()));
 }

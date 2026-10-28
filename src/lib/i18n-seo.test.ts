@@ -21,7 +21,9 @@ describe("localizedUrl", () => {
   });
 
   it("prefixes published locales", () => {
-    expect(localizedUrl("", "es")).toBe("https://worldeye.app/es/");
+    // The locale homepage is the bare /es — /es/ 308-redirects to it,
+    // so canonicals, hreflang and the sitemap use the final form.
+    expect(localizedUrl("", "es")).toBe("https://worldeye.app/es");
     expect(localizedUrl("pricing", "es")).toBe("https://worldeye.app/es/pricing");
     expect(localizedUrl("ship-tracker", "es")).toBe(
       "https://worldeye.app/es/ship-tracker"
@@ -38,7 +40,7 @@ describe("hreflangMapFor", () => {
     });
     expect(hreflangMapFor("")).toEqual({
       en: "https://worldeye.app/",
-      es: "https://worldeye.app/es/",
+      es: "https://worldeye.app/es",
       "x-default": "https://worldeye.app/",
     });
   });
