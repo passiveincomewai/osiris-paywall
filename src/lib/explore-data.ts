@@ -92,6 +92,10 @@ export interface ExploreScopeDef {
   label: string;
   slugs: string[] | 'all';
   theme?: ExploreThemeKey;
+  /** Name rule over the records (see ExploreScope.namePattern) —
+   *  the named-place scopes (a crossing, a street) are defined by
+   *  the names the cameras themselves carry. */
+  namePattern?: RegExp;
   city?: string;
   /** Radius scope (event pages): records within the radius, nearest first. */
   geo?: GeoScope;
@@ -483,6 +487,61 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'rail-yuen-long': eventGeoIn('Yuen Long & the Light Rail', 'hong-kong', 22.4456, 114.0349, 15),
   'rail-ershui': eventGeoIn('Ershui & the Zhuoshui River bridges', 'taiwan', 23.8133, 120.6178, 15),
   'rail-lincoln': eventGeo('Lincoln, Nebraska — BNSF', 40.8136, -96.7026, 15),
+
+  /* Iconic places (Menu #2 Wave A part 2, Oct 2026) — the
+   * /iconic-places family in lib/iconic-places. A famous crossing or
+   * street earns a scope only where a camera's own name or its
+   * position ON the place frames it; a camera merely in the same
+   * city never qualifies. The sets are therefore NAME rules, not
+   * radius walls: exactly the records whose own name is the place,
+   * with a geo bound only where the name is shared (Duval is a
+   * street name in several states; Las Vegas Blvd runs far past the
+   * Strip). Yields reconciled against the raw chunks in
+   * lib/iconic-places.test.ts: Shibuya 2, the Strip 26, Duval 1,
+   * Kalākaua 6. Measured and rejected (zero qualifying cameras):
+   * Times Square, Abbey Road, Bourbon Street, Ocean Drive, Pier 39,
+   * Rodeo Drive, Lombard Street — the hub page names them. */
+  'iconic-shibuya-crossing': {
+    label: 'Shibuya Scramble Crossing, Tokyo',
+    slugs: ['japan'],
+    namePattern: /shibuya scramble crossing/i,
+    groupBy: 'city',
+  },
+  'iconic-las-vegas-strip': {
+    label: 'the Las Vegas Strip',
+    slugs: ['united-states'],
+    namePattern: /las vegas blvd/i,
+    geo: { lat: 36.1123, lng: -115.17, radiusKm: 3.8 },
+    groupBy: 'city',
+  },
+  'iconic-duval-street': {
+    label: 'Duval Street, Key West',
+    slugs: ['united-states'],
+    namePattern: /\bduval\b/i,
+    geo: { lat: 24.5511, lng: -81.7992, radiusKm: 0.35 },
+    groupBy: 'city',
+  },
+  'iconic-kalakaua-avenue': {
+    label: 'Kalākaua Avenue, Waikiki',
+    slugs: ['united-states'],
+    namePattern: /kalakaua/i,
+    groupBy: 'city',
+  },
+
+  /* Launch sites (Menu #2 Wave A part 2, Oct 2026) — the
+   * /launch-sites family in lib/launch-sites. One wall qualifies:
+   * the Space Coast's road network within 25 km of the Banana River
+   * midpoint between Kennedy Space Center and Cape Canaveral SFS
+   * (27 FDOT cameras — SR-528 Beachline, SR-405, SR-520, I-95; the
+   * nearest stands 13.1 km from the centre, because the pads are
+   * closed federal ground and no catalogue camera stands on either
+   * centre). The page pairs the wall with the live Launch Library 2
+   * board filtered to the site's pads. Measured and rejected:
+   * Starbase (no camera names it; one SH 100 highway cam 9.9 km
+   * away), Vandenberg (0 within 10 km), Wallops (0 within 10 km,
+   * 1 junction cam within 25 km) — the rejection pins live in
+   * lib/launch-sites.test.ts. */
+  'launch-kennedy': eventGeo('Kennedy Space Center & Cape Canaveral', 28.52, -80.5955, 25),
 };
 
 /** A scope definition from request params: either a registry key, or
@@ -528,7 +587,7 @@ const defCache = new Map<string, Promise<CountryCamera[]>>();
 function defKey(def: ExploreScopeDef): string {
   const slugs = def.slugs === 'all' ? 'all' : [...def.slugs].sort().join(',');
   const geo = def.geo ? `${def.geo.lat},${def.geo.lng},${def.geo.radiusKm}` : '';
-  return `${slugs}|${def.theme ?? ''}|${def.city ?? ''}|${geo}|${def.groupBy}`;
+  return `${slugs}|${def.theme ?? ''}|${def.namePattern?.source ?? ''}|${def.city ?? ''}|${geo}|${def.groupBy}`;
 }
 
 /**
@@ -564,7 +623,12 @@ export function recordsForDef(def: ExploreScopeDef): Promise<CountryCamera[]> {
     pending = (async () => {
       const base =
         def.slugs === 'all' ? await loadAllRecords() : await loadUnion(def.slugs);
-      const scope: ExploreScope = { theme: def.theme, city: def.city, geo: def.geo };
+      const scope: ExploreScope = {
+        theme: def.theme,
+        namePattern: def.namePattern,
+        city: def.city,
+        geo: def.geo,
+      };
       /* City defs own their dominant place: reduce the exact-name
          group to its dominant cluster BEFORE the theme filter, so
          every consumer of a city def (grid, counts, breakdowns) sees

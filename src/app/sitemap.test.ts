@@ -34,7 +34,9 @@ import { hreflangMapFor } from "@/lib/i18n-seo";
  * pages, both from committed registries; 928 since C10 threshold
  * enforcement consolidated 35 below-line countries into their
  * regional hubs and folded 5 ski resorts into the /ski-webcams
- * hub). Transit URLs
+ * hub; 935 since Menu #2 Wave A part 2 added the /iconic-places
+ * hub + 4 place pages and the /launch-sites hub + 1 site page,
+ * both from committed registries). Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
@@ -80,7 +82,7 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(928);
+    expect(nonTransit.length).toBe(935);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -88,9 +90,11 @@ describe("sitemap URL set", () => {
     // Wave A (2026-10-27) then added the 23 per-volcano and
     // per-place aurora URLs → 968. C10 threshold enforcement
     // (2026-10-28) then removed the 35 consolidated country pages
-    // and 5 folded ski resort pages → 928.
+    // and 5 folded ski resort pages → 928 (8584c79e…). Menu #2 Wave A
+    // part 2 (2026-10-28) then added the 7 iconic-places and
+    // launch-sites URLs → 935.
     expect(hash).toBe(
-      "8584c79e430414654807a47165798d2eb4e32712295b97b10cb28000f4eb16fc",
+      "584b81b7541555ebe052bc1dd0bbdfe04bced3aa005c00b20f69b5166696f29d",
     );
   });
 

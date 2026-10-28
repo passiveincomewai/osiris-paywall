@@ -11,6 +11,8 @@ import { AIRPORT_PAGES } from "@/lib/airport-pages";
 import { NATIONAL_PARKS } from "@/lib/national-parks";
 import { VOLCANOES } from "@/lib/volcanoes";
 import { AURORA_PLACES } from "@/lib/aurora-places";
+import { ICONIC_PLACES } from "@/lib/iconic-places";
+import { LAUNCH_SITES } from "@/lib/launch-sites";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
@@ -254,6 +256,21 @@ const SEO_PAGES_VOLCANOES = VOLCANOES.map((v) => `/volcano-webcams/${v.slug}`);
 const SEO_PAGES_AURORA_PLACES = AURORA_PLACES.map(
   (p) => `/northern-lights-webcams/${p.slug}`,
 );
+
+// Menu #2 Wave A part 2 (2026-10-28): the iconic-places and
+// launch-sites families — catalogue-driven like the volcanoes, so
+// they carry the catalogue's date. Only places and sites with real
+// qualifying cameras have rows; the registries' tests pin the
+// rejected candidates (Times Square, Abbey Road, Bourbon Street,
+// Starbase, Vandenberg, Wallops…) at zero.
+const SEO_PAGES_ICONIC_PLACES = [
+  "/iconic-places",
+  ...ICONIC_PLACES.map((p) => `/iconic-places/${p.slug}`),
+];
+const SEO_PAGES_LAUNCH_SITES = [
+  "/launch-sites",
+  ...LAUNCH_SITES.map((s) => `/launch-sites/${s.slug}`),
+];
 
 // Wave 15 (2026-10-27): interstate corridor camera pages — cameras in
 // driving order along the eight interstates with real catalogue density
@@ -755,6 +772,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })),
     ...SEO_PAGES_AURORA_PLACES.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_ICONIC_PLACES.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_LAUNCH_SITES.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,

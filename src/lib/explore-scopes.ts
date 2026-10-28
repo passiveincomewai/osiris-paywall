@@ -151,6 +151,13 @@ export interface GeoScope {
  *  everything after that is this filter. */
 export interface ExploreScope {
   theme?: ExploreThemeKey;
+  /** A name rule over the record itself — the place-shaped sibling
+   *  of the themes (which are name patterns too): the scope is
+   *  exactly the records whose own name matches, e.g. the cameras
+   *  whose name is a street. Composes with `geo` when the name alone
+   *  is ambiguous (a name shared by several places). Yields are
+   *  pinned against the raw chunks by the owning family's tests. */
+  namePattern?: RegExp;
   /** Exact city (the record's own city value, whitespace-normalised). */
   city?: string;
   /** Radius filter; also switches the scope's order to nearest-first. */
@@ -163,6 +170,10 @@ export function applyScope(
 ): CountryCamera[] {
   let out = records as CountryCamera[];
   if (scope.theme) out = out.filter((cam) => matchesTheme(cam, scope.theme as ExploreThemeKey));
+  if (scope.namePattern) {
+    const pattern = scope.namePattern;
+    out = out.filter((cam) => pattern.test(cam.name ?? ''));
+  }
   if (scope.city) {
     const wanted = clean(scope.city);
     out = out.filter((cam) => clean(cam.city) === wanted);
