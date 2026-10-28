@@ -40,10 +40,12 @@ describe('deriveFlightCoverage — regional mode (production steady state)', () 
     private_jets: flights(96),
     military_flights: flights(125),
     providers: {
-      adsbfi_mil: 105,
-      adsbfi_regional: 3747,
-      adsbfi_regions: 33,
-      adsbfi_regional_age_s: 42,
+      adsblol_mil: 105,
+      adsbfi_mil: 0,
+      adsblol_regional: 3747,
+      adsblol_regions: 33,
+      adsbfi_regions: 0,
+      adsblol_regional_age_s: 42,
       opensky: 0,
       opensky_auth: false,
       opensky_age_s: null,
@@ -81,7 +83,7 @@ describe('deriveFlightCoverage — regional mode (production steady state)', () 
   });
 
   it('marks the sweep active in regional mode and notes partial regions', () => {
-    const reg = vm.providers.find((r) => r.key === 'adsbfi_regional')!;
+    const reg = vm.providers.find((r) => r.key === 'adsblol_regional')!;
     expect(reg.state).toBe('ok');
     expect(reg.detail).toContain('33/40');
     expect(vm.warnings.some((w) => w.includes('33/40'))).toBe(true);
@@ -99,10 +101,12 @@ describe('deriveFlightCoverage — OpenSky snapshot mode', () => {
       private_jets: flights(96),
       military_flights: flights(63),
       providers: {
-        adsbfi_mil: 63,
-        adsbfi_regional: 0,
+        adsblol_mil: 63,
+        adsbfi_mil: 0,
+        adsblol_regional: 0,
+        adsblol_regions: 0,
         adsbfi_regions: 0,
-        adsbfi_regional_age_s: null,
+        adsblol_regional_age_s: null,
         opensky: 6618,
         opensky_auth: false,
         opensky_age_s: 12,
@@ -115,7 +119,7 @@ describe('deriveFlightCoverage — OpenSky snapshot mode', () => {
   it('snapshot kind, sweep idle, no OpenSky warning', () => {
     expect(vm.sourceKind).toBe('snapshot');
     expect(vm.providers.find((r) => r.key === 'opensky')!.state).toBe('ok');
-    expect(vm.providers.find((r) => r.key === 'adsbfi_regional')!.state).toBe('idle');
+    expect(vm.providers.find((r) => r.key === 'adsblol_regional')!.state).toBe('idle');
     expect(vm.warnings).toHaveLength(0);
     expect(vm.received).toBe(6604);
   });
@@ -151,6 +155,51 @@ describe('deriveFlightCoverage — stale fallback + missing diagnostics', () => 
     expect(vm.lastUpdateAgeSec).toBeNull();
     // received falls back to classified when total is unusable… total=50 here is usable:
     expect(vm.received).toBe(50);
+  });
+});
+
+describe('deriveFlightCoverage — adsb.fi fallback share stays visible', () => {
+  // The adsb.lol migration (2026-10-28) keeps adsb.fi as a fallback behind
+  // the primary. The admin view must show how much of the sky the fallback
+  // carried — that split is what decides when adsb.fi can be retired.
+  const vm = deriveFlightCoverage(
+    {
+      total: 900,
+      source: 'regional',
+      timestamp: '2026-10-18T08:59:30.000Z',
+      commercial_flights: flights(800),
+      private_flights: flights(50),
+      private_jets: flights(10),
+      military_flights: flights(40),
+      providers: {
+        adsblol_mil: 0,
+        adsbfi_mil: 40,
+        adsblol_regional: 860,
+        adsblol_regions: 30,
+        adsbfi_regions: 5,
+        adsblol_regional_age_s: null,
+        opensky: 0,
+        opensky_auth: false,
+        opensky_age_s: null,
+      },
+      diagnostics: { dropped_invalid: 0, dropped_stale: null },
+    },
+    NOW,
+  );
+
+  it('sums both providers’ regions in the sweep row and names the split', () => {
+    const reg = vm.providers.find((r) => r.key === 'adsblol_regional')!;
+    expect(reg.detail).toContain('35/40');
+    expect(reg.detail).toContain('adsb.lol 30');
+    expect(reg.detail).toContain('adsb.fi fallback 5');
+    expect(vm.warnings.some((w) => w.includes('35/40'))).toBe(true);
+  });
+
+  it('counts a fallback-carried military feed as ok, not zero', () => {
+    const mil = vm.providers.find((r) => r.key === 'adsblol_mil')!;
+    expect(mil.count).toBe(40);
+    expect(mil.state).toBe('ok');
+    expect(mil.detail).toContain('fallback carried 40');
   });
 });
 

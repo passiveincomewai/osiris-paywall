@@ -32,10 +32,12 @@ export function classifyDropReason(f: any): FlightDropReason | null {
 }
 
 export interface FlightsProviders {
+  adsblol_mil?: number | null;
   adsbfi_mil?: number | null;
-  adsbfi_regional?: number | null;
+  adsblol_regional?: number | null;
+  adsblol_regions?: number | null;
   adsbfi_regions?: number | null;
-  adsbfi_regional_age_s?: number | null;
+  adsblol_regional_age_s?: number | null;
   opensky?: number | null;
   opensky_auth?: boolean | null;
   opensky_age_s?: number | null;
@@ -153,9 +155,17 @@ export function deriveFlightCoverage(p: FlightsPayload, nowMs: number): FlightCo
   const prov = p.providers ?? {};
   const osCount = num(prov.opensky ?? null);
   const osAuth = prov.opensky_auth === true;
-  const milCount = num(prov.adsbfi_mil ?? null);
-  const regCount = num(prov.adsbfi_regional ?? null);
-  const regRegions = num(prov.adsbfi_regions ?? null);
+  const milLolCount = num(prov.adsblol_mil ?? null);
+  const milFallbackCount = num(prov.adsbfi_mil ?? null);
+  const milCount =
+    milLolCount == null && milFallbackCount == null
+      ? null
+      : (milLolCount ?? 0) + (milFallbackCount ?? 0);
+  const regCount = num(prov.adsblol_regional ?? null);
+  const lolRegions = num(prov.adsblol_regions ?? null);
+  const fiRegions = num(prov.adsbfi_regions ?? null);
+  const regRegions =
+    lolRegions == null && fiRegions == null ? null : (lolRegions ?? 0) + (fiRegions ?? 0);
 
   const providers: ProviderRow[] = [
     {
@@ -168,19 +178,27 @@ export function deriveFlightCoverage(p: FlightsPayload, nowMs: number): FlightCo
       state: osCount == null ? 'unknown' : osCount > 0 ? 'ok' : 'warning',
     },
     {
-      key: 'adsbfi_mil',
-      label: 'adsb.fi — military feed',
+      key: 'adsblol_mil',
+      label: 'adsb.lol — military feed (primary)',
       count: milCount,
-      detail: milCount === 0 ? 'returned 0 aircraft this cycle' : 'global type feed, refreshed every cycle',
+      detail:
+        (milCount === 0
+          ? 'returned 0 aircraft this cycle'
+          : 'global type feed, refreshed every cycle') +
+        ((milFallbackCount ?? 0) > 0
+          ? ` · adsb.fi fallback carried ${milFallbackCount} of these this cycle`
+          : ''),
       state: milCount == null ? 'unknown' : milCount > 0 ? 'ok' : 'warning',
     },
     {
-      key: 'adsbfi_regional',
-      label: 'adsb.fi — regional sweep',
+      key: 'adsblol_regional',
+      label: 'adsb.lol — regional sweep (primary)',
       count: regCount,
       detail:
-        (regRegions != null ? `regions answered ${regRegions}/${REGIONS_TOTAL}` : 'region count not reported') +
-        ageDetail(num(prov.adsbfi_regional_age_s ?? null)) +
+        (regRegions != null
+          ? `regions answered ${regRegions}/${REGIONS_TOTAL} (adsb.lol ${lolRegions ?? 0} · adsb.fi fallback ${fiRegions ?? 0})`
+          : 'region count not reported') +
+        ageDetail(num(prov.adsblol_regional_age_s ?? null)) +
         (sourceKind === 'snapshot' ? ' · standby — runs only when no OpenSky snapshot exists' : ''),
       state:
         regCount == null

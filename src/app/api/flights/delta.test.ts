@@ -84,7 +84,10 @@ function installMock() {
     });
     if (u.includes('opensky')) return new Response('unauthorized', { status: 401 });
     if (u.endsWith('/mil')) return respond({ ac: [ac('mil0')] });
-    if (/\/v3\/lat\//.test(u)) return respond({ ac: [ac(`r${Math.abs(u.length)}x`)] });
+    // adsb.lol point URL (the primary since 2026-10-28). Matching only
+    // the old adsb.fi /v3 pattern here would silently run this whole
+    // suite on the FALLBACK path and prove nothing about the primary.
+    if (/api\.adsb\.lol\/v2\/point\//.test(u)) return respond({ ac: [ac(`r${Math.abs(u.length)}x`)] });
     return new Response('unexpected url', { status: 500 });
   });
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { aircraftHex, extractAircraft, ingestAircraft } from './feeds';
 
 describe('extractAircraft', () => {
-  it('reads the current { ac } shape (adsb.fi /v3 point, /v2 type feeds)', () => {
+  it('reads the current { ac } shape (adsb.lol /v2 and adsb.fi /v3 point, /v2 type feeds)', () => {
     const data = { ac: [{ hex: 'abc123' }, { hex: 'def456' }], total: 2 };
     expect(extractAircraft(data)).toHaveLength(2);
   });

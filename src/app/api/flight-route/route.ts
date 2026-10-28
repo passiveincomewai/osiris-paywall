@@ -7,11 +7,13 @@
  * Sources (raced via Promise.any):
  *   1. ADSBDB       (api.adsbdb.com)     — callsign → route
  *   2. HexDB        (hexdb.io)           — callsign → route
- *   3. airplanes.live                     — hex → detailed AC data (may include route)
+ *
+ * airplanes.live was the third source until 2026-10-28; it was removed
+ * entirely because its licence is non-commercial (and it 403s keyless
+ * callers besides). Do not re-add it as a route source.
  *
  * Rate-limit strategy:
  *   - stealthFetch for ADSBDB/HexDB (rotates UA + residential headers)
- *   - plain fetch for airplanes.live (no auth, generous limits)
  *   - 30-min cache for found routes, 2-min cache for misses
  *   - Per-source cooldown after 429s
  */
@@ -173,51 +175,6 @@ async function fromHexdb(callsign: string): Promise<{ origin: Airport; destinati
   return pair;
 }
 
-// ── Source 3: airplanes.live ───────────────────────────────────────
-async function fromAirplanesLive(icao24: string, callsign: string): Promise<{ origin: Airport; destination: Airport }> {
-  if (!icao24 && !callsign) throw new Error('no identifier');
-  const url = icao24
-    ? `https://api.airplanes.live/v2/hex/${encodeURIComponent(icao24)}`
-    : `https://api.airplanes.live/v2/callsign/${encodeURIComponent(callsign)}`;
-  if (isCooledDown('airplaneslive')) throw new Error('airplaneslive cooled down');
-  const res = await stealthFetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT) });
-  if (res.status === 429) { setCooldown('airplaneslive'); throw new Error('airplaneslive 429'); }
-  if (!res.ok) throw new Error(`airplaneslive ${res.status}`);
-  const data = await res.json();
-  const ac = data?.ac?.[0];
-  if (!ac) throw new Error('airplaneslive: no ac');
-
-  let oCode: string | null = null;
-  let dCode: string | null = null;
-  let oData: any = null;
-  let dData: any = null;
-
-  // Pattern 1: explicit origin/destination DB objects with ICAO + coords
-  if (ac.oDB?.icao && ac.dDB?.icao) {
-    oCode = ac.oDB.icao; dCode = ac.dDB.icao;
-    // airplanes.live provides lat/lon directly in oDB/dDB
-    if (ac.oDB.lat && ac.oDB.lon) {
-      oData = { latitude: ac.oDB.lat, longitude: ac.oDB.lon, name: ac.oDB.name, municipality: ac.oDB.city, country_iso_name: ac.oDB.country, iata_code: ac.oDB.iata || '', icao_code: ac.oDB.icao };
-    }
-    if (ac.dDB.lat && ac.dDB.lon) {
-      dData = { latitude: ac.dDB.lat, longitude: ac.dDB.lon, name: ac.dDB.name, municipality: ac.dDB.city, country_iso_name: ac.dDB.country, iata_code: ac.dDB.iata || '', icao_code: ac.dDB.icao };
-    }
-  }
-  // Pattern 2: .from / .to fields
-  else if (ac.from && ac.to) {
-    oCode = ac.from; dCode = ac.to;
-  }
-  // Pattern 3: route string like "KJFK-EGLL"
-  else if (ac.route && typeof ac.route === 'string' && ac.route.includes('-')) {
-    const parts = ac.route.split('-');
-    oCode = parts[0]?.trim(); dCode = parts[parts.length - 1]?.trim();
-  }
-
-  const pair = await resolveAirports(oCode, dCode, oData, dData);
-  if (!pair) throw new Error('airplaneslive: unresolved');
-  return pair;
-}
-
 // ── Handler ────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   const sp = new URL(req.url).searchParams;
@@ -258,7 +215,6 @@ export async function GET(req: NextRequest) {
     const result = await Promise.any([
       fromAdsbdb(callsign).then(r => ({ ...r, _s: 'adsbdb' as const })),
       fromHexdb(callsign).then(r => ({ ...r, _s: 'hexdb' as const })),
-      fromAirplanesLive(icao24, callsign).then(r => ({ ...r, _s: 'airplaneslive' as const })),
     ]);
     route = { origin: result.origin, destination: result.destination };
     source = result._s;

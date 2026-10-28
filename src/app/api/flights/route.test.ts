@@ -79,7 +79,11 @@ function installMock() {
           ac(`mil${i}`, { flight: `RCH${300 + i}`, t: 'C130', lat: 50 + i, lon: 10 + i })),
       });
     }
-    const m = u.match(/\/v3\/lat\/(-?[\d.]+)\/lon\/(-?[\d.]+)\//);
+    // adsb.lol is the primary since the 2026-10-28 migration; its point
+    // URL is /v2/point/{lat}/{lon}/{dist}. The adsb.fi fallback URL
+    // (/v3/lat/…) never matches here — if the route asked it, the mock
+    // would 500 below and the provider-split assertions would fail.
+    const m = u.match(/api\.adsb\.lol\/v2\/point\/(-?[\d.]+)\/(-?[\d.]+)\//);
     if (m) {
       const lat = parseFloat(m[1]);
       const lon = parseFloat(m[2]);
@@ -114,7 +118,7 @@ describe('GET /api/flights — first paint', () => {
     const firstPaintMs = Date.now() - t0;
     expect(first.partial).toBe(true);
     expect(first.total).toBeGreaterThanOrEqual(200);
-    expect(first.providers.adsbfi_regions).toBeLessThan(REGION_COUNT);
+    expect(first.providers.adsblol_regions).toBeLessThan(REGION_COUNT);
 
     // ── Poll until the background build lands (what the old code made
     //    the FIRST response wait for) ──
@@ -136,14 +140,19 @@ describe('GET /api/flights — first paint', () => {
     const expectedTotal = 5 + (REGION_COUNT - 1) * PER_REGION + 12;
     expect(full.partial).toBe(false);
     expect(full.source).toBe('regional');
-    expect(full.providers.adsbfi_regions).toBe(REGION_COUNT);
-    // adsbfi_regional must be the aircraft actually ingested from the
+    // adsb.lol (primary) answered every region; the adsb.fi fallback was
+    // never needed, and the mil feed came from adsb.lol too.
+    expect(full.providers.adsblol_regions).toBe(REGION_COUNT);
+    expect(full.providers.adsbfi_regions).toBe(0);
+    expect(full.providers.adsblol_mil).toBe(5);
+    expect(full.providers.adsbfi_mil).toBe(0);
+    // adsblol_regional must be the aircraft actually ingested from the
     // sweep (total − mil feed − OpenSky), not the 0 the fresh-sweep
     // path used to report when its end-of-sweep re-ingest found every
     // record already in allRaw. Every region answered here, so no
     // region needed its last-good fallback.
-    expect(full.providers.adsbfi_regional).toBe(expectedTotal - 5);
-    expect(full.providers.adsbfi_regions_fallback).toBe(0);
+    expect(full.providers.adsblol_regional).toBe(expectedTotal - 5);
+    expect(full.providers.adsblol_regions_fallback).toBe(0);
     expect(full.total).toBe(expectedTotal);
     expect(allFlights(full)).toHaveLength(expectedTotal);
     expect(full.diagnostics.dropped_invalid).toBe(0);

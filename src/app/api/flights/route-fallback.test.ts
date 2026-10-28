@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 /**
  * Per-region last-good fallback + sweep bookkeeping (2026-10-27).
  *
- * The Atlanta defect: one failed/empty adsb.fi region fetch zeroed a
+ * The Atlanta defect: one failed/empty region fetch zeroed a
  * whole 250 nm circle for the sweep and every cached reload after it.
  * These tests pin the pure pieces the sweep is built from — what a
  * region contributes (fresh vs last-good vs nothing), how long
@@ -16,7 +16,10 @@ vi.mock('@/lib/stealthFetch', () => ({
   stealthHeaders: vi.fn(() => ({})),
 }));
 
+import { stealthFetch } from '@/lib/stealthFetch';
 import {
+  fetchMilFeed,
+  fetchRegion,
   isHelicopterRecord,
   REGIONS,
   REGION_LAST_GOOD_MAX_AGE_MS,
@@ -44,8 +47,9 @@ describe('resolveRegionContribution', () => {
   });
 
   it('treats a failed fetch (empty array) the same as an empty answer', () => {
-    // fetchAdsbFiRegion returns [] for HTTP errors, timeouts and parse
-    // failures alike — the fallback must cover all of them.
+    // fetchRegion returns empty records for HTTP errors, timeouts and
+    // empty answers alike, whichever provider was asked — the fallback
+    // must cover all of them.
     const out = resolveRegionContribution([], { records: lastGoodRecords, time: NOW - 5 * 60_000 }, NOW);
     expect(out.usedFallback).toBe(true);
     expect(out.records).toHaveLength(1);
@@ -80,6 +84,87 @@ describe('resolveRegionContribution', () => {
     const out = resolveRegionContribution([], { records: [], time: NOW }, NOW);
     expect(out.records).toEqual([]);
     expect(out.usedFallback).toBe(false);
+  });
+});
+
+describe('provider order — adsb.lol primary, adsb.fi fallback (2026-10-28 migration)', () => {
+  // The migration's whole contract in fetch order: adsb.lol is asked
+  // first for every region and the military feed; adsb.fi is asked ONLY
+  // where adsb.lol failed or answered empty, and is never asked when
+  // adsb.lol served. These pin the URLs as well as the order — the
+  // post-deploy provider counts are only meaningful if this holds.
+  const LOL_POINT = 'https://api.adsb.lol/v2/point/40.8/-111.9/250';
+  const FI_POINT = 'https://opendata.adsb.fi/api/v3/lat/40.8/lon/-111.9/dist/250';
+  const LOL_MIL = 'https://api.adsb.lol/v2/mil';
+  const FI_MIL = 'https://opendata.adsb.fi/api/v2/mil';
+
+  function install(responses: Record<string, { body?: unknown; status?: number }>) {
+    const asked: string[] = [];
+    vi.mocked(stealthFetch).mockImplementation(async (url: any) => {
+      const u = String(url);
+      asked.push(u);
+      const r = responses[u];
+      if (!r) return new Response('unexpected url', { status: 500 });
+      return Response.json(r.body ?? {}, { status: r.status ?? 200 });
+    });
+    return asked;
+  }
+
+  it('asks adsb.lol for a region first and never touches adsb.fi when it serves', async () => {
+    const asked = install({ [LOL_POINT]: { body: { ac: [{ hex: 'abc123' }], total: 1 } } });
+    const out = await fetchRegion(40.8, -111.9);
+    expect(out.provider).toBe('adsblol');
+    expect(out.records).toHaveLength(1);
+    expect(asked).toEqual([LOL_POINT]);
+  });
+
+  it('falls back to adsb.fi v3 when adsb.lol answers empty for a region', async () => {
+    const asked = install({
+      [LOL_POINT]: { body: { ac: [], total: 0 } },
+      [FI_POINT]: { body: { ac: [{ hex: 'def456' }], total: 1 } },
+    });
+    const out = await fetchRegion(40.8, -111.9);
+    expect(out.provider).toBe('adsbfi');
+    expect(out.records).toHaveLength(1);
+    expect(asked).toEqual([LOL_POINT, FI_POINT]);
+  });
+
+  it('falls back to adsb.fi when adsb.lol fails outright (HTTP 500)', async () => {
+    const asked = install({
+      [LOL_POINT]: { status: 500 },
+      [FI_POINT]: { body: { ac: [{ hex: 'def456' }], total: 1 } },
+    });
+    const out = await fetchRegion(40.8, -111.9);
+    expect(out.provider).toBe('adsbfi');
+    expect(asked).toEqual([LOL_POINT, FI_POINT]);
+  });
+
+  it('reports no provider when both come back empty', async () => {
+    install({
+      [LOL_POINT]: { body: { ac: [], total: 0 } },
+      [FI_POINT]: { body: { ac: [], total: 0 } },
+    });
+    const out = await fetchRegion(40.8, -111.9);
+    expect(out.provider).toBeNull();
+    expect(out.records).toEqual([]);
+  });
+
+  it('takes the military feed from adsb.lol and leaves adsb.fi alone', async () => {
+    const asked = install({ [LOL_MIL]: { body: { ac: [{ hex: 'mil1', dbFlags: 1 }], total: 1 } } });
+    const out = await fetchMilFeed();
+    expect(out.provider).toBe('adsblol');
+    expect(asked).toEqual([LOL_MIL]);
+  });
+
+  it('falls back to the adsb.fi military feed when adsb.lol is empty', async () => {
+    const asked = install({
+      [LOL_MIL]: { body: { ac: [], total: 0 } },
+      [FI_MIL]: { body: { ac: [{ hex: 'mil2', dbFlags: 1 }], total: 1 } },
+    });
+    const out = await fetchMilFeed();
+    expect(out.provider).toBe('adsbfi');
+    expect(out.records).toHaveLength(1);
+    expect(asked).toEqual([LOL_MIL, FI_MIL]);
   });
 });
 
@@ -154,7 +239,7 @@ describe('isHelicopterRecord — what tags aircraft_category heli', () => {
     expect(isHelicopterRecord({ category_os: 8, t: '' })).toBe(true);
   });
 
-  it('tags adsb.fi records by their string emitter category (A7)', () => {
+  it('tags tar1090 records by their string emitter category (A7)', () => {
     // The regional source's ONLY category evidence — previously unread.
     expect(isHelicopterRecord({ category: 'A7' })).toBe(true);
     expect(isHelicopterRecord({ category: 'A7', t: 'NH90' })).toBe(true);

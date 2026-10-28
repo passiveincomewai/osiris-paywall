@@ -146,49 +146,94 @@ const CALLSIGN_RE = /^[A-Z0-9]{3,8}$/;
 const JET_CRUISE_ALT_M = 8500;
 const JET_CRUISE_KTS = 300;
 
-// adsb.fi is the last free tar1090/ADSBexchange-v2 shaped feed still serving
-// data without an API key, so classifyFlight() works on it unchanged. The two
-// providers this route used to fan out to have both stopped returning aircraft:
+// The regional layer runs on tar1090/ADSBexchange-v2 shaped feeds, so
+// classifyFlight() works on them unchanged. Two providers serve that shape
+// without an API key today, and every feed races them in a fixed order:
+//
+//   PRIMARY  api.adsb.lol — ODbL-licensed, so commercial-safe for the paid
+//            tiers. Re-measured 2026-10-28: /v2/point at 250 nm and /v2/mil
+//            both return full tar1090 data (706 aircraft over NYC, 247 on
+//            the military feed). This replaces the note that used to live
+//            here claiming adsb.lol answered 200 with {"ac":[],"total":0} —
+//            true when written, stale by 2026-10-28.
+//   FALLBACK opendata.adsb.fi — the identical shape, but a non-commercial
+//            licence, so it serves ONLY where adsb.lol failed or answered
+//            empty for that region/feed. It is retired in a later payload
+//            once production provider counts (reported per payload below)
+//            show adsb.lol carrying the load from Vercel egress.
+//
+// The providers this route used before both died silently:
 //   api.airplanes.live  → 403 on every endpoint (now key-gated)
-//   api.adsb.lol/v2     → 200 but always {"ac":[],"total":0}
 //   api.adsb.one/v2     → 403 (checked as a replacement, also unusable)
 // Because both failure modes are silent (403 bodies are discarded, an empty
-// ac[] is indistinguishable from quiet airspace), the fallback path degraded to
-// zero aircraft without ever throwing. Provider counts are reported in the
-// response now so the next feed to die is visible instead of silent.
-const ADSB_MAX_DIST = 250; // nm — hard cap the provider enforces
-const ADSBFI_BASE = 'https://opendata.adsb.fi/api/v2';
+// ac[] is indistinguishable from quiet airspace), a single-feed path degrades
+// to zero aircraft without ever throwing. Provider counts are reported in
+// the response now so the next feed to die is visible instead of silent.
+const ADSB_MAX_DIST = 250; // nm — hard cap both providers enforce
+const ADSBLOL_BASE = 'https://api.adsb.lol/v2';
+const ADSBFI_POINT_BASE = 'https://opendata.adsb.fi/api/v3';
+const ADSBFI_MIL_URL = 'https://opendata.adsb.fi/api/v2/mil';
 
-// adsb.fi's terms cap public endpoints at one request per second, and the
-// point endpoint meters far harder than /mil, so the regional sweep is paced
-// rather than fanned out in parallel. Pacing is start-to-start: a region
-// request never STARTS less than ~1.05s after the previous one started,
-// which honours the 1 req/s cap while keeping a 40-region sweep inside
-// SWEEP_DEADLINE_MS — the old end-of-request + 1100ms gap stacked the full
-// fetch latency of every region on top of the gap (~45s at 30 regions).
-const ADSBFI_START_GAP_MS = 1050;
+// The point endpoint is a provider's most-metered surface, so the regional
+// sweep is paced rather than fanned out in parallel. Pacing is
+// start-to-start: a region never STARTS less than ~1.05s after the previous
+// one started, which keeps a 40-region sweep inside SWEEP_DEADLINE_MS — the
+// old end-of-request + 1100ms gap stacked the full fetch latency of every
+// region on top of the gap (~45s at 30 regions). The gap is per REGION, not
+// per request: a region's adsb.fi fallback fires inside the same slot, on a
+// different host's meter.
+const SWEEP_START_GAP_MS = 1050;
 
-// Point queries use adsb.fi's /v3 endpoint. The /v2 point endpoint is
-// deprecated and answers in a different response shape ({aircraft: [...],
-// resultCount}) than every other endpoint ({ac: [...], total}); this route
-// read only `ac` from it for months, so the regional sweep ingested ZERO
-// aircraft while the provider was returning hundreds per region (measured
-// 2026-10-18: London 725, Tokyo 203, NYC 71 → parsed as 0). extractAircraft()
-// accepts both shapes, and the sweep runs on /v3, the documented current API.
-// adsb.fi serves /mil but returns 400 for /ladd, /pia and /squawk/{code},
-// so the global type feeds collapse to the military one.
-async function fetchAdsbFiRegion(lat: number, lon: number): Promise<any[]> {
+/** One tar1090 feed fetch → its aircraft records, or null when the fetch
+ *  itself failed (HTTP error, timeout, unparseable body). An OK response
+ *  with no aircraft is [] — a different thing, though the callers treat
+ *  both as "this provider has nothing for us here" and move to the next. */
+async function fetchTar1090(url: string, timeoutMs: number): Promise<any[] | null> {
   try {
-    const res = await stealthFetch(`https://opendata.adsb.fi/api/v3/lat/${lat}/lon/${lon}/dist/${ADSB_MAX_DIST}`, {
-      signal: AbortSignal.timeout(8000),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return extractAircraft(data);
+    const res = await stealthFetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+    if (!res.ok) {
+      await res.body?.cancel();
+      return null;
     }
-    await res.body?.cancel();
-  } catch {}
-  return [];
+    return extractAircraft(await res.json());
+  } catch {
+    return null;
+  }
+}
+
+/** The global military feed: adsb.lol primary, adsb.fi fallback when
+ *  adsb.lol fails or answers empty. dbFlags semantics are identical on
+ *  both (bit 1 = military) — measured 2026-10-28, all 247 records on
+ *  adsb.lol /v2/mil carry the flag. */
+export async function fetchMilFeed(): Promise<{ records: any[]; provider: 'adsblol' | 'adsbfi' | null }> {
+  const lol = await fetchTar1090(`${ADSBLOL_BASE}/mil`, 15000);
+  if (lol && lol.length > 0) return { records: lol, provider: 'adsblol' };
+  if (lol === null) console.warn('[OSIRIS] adsb.lol mil feed failed — falling back to adsb.fi');
+  const fi = await fetchTar1090(ADSBFI_MIL_URL, 15000);
+  if (fi && fi.length > 0) return { records: fi, provider: 'adsbfi' };
+  return { records: [], provider: null };
+}
+
+/** One region of the sweep: adsb.lol /v2/point primary (path segments,
+ *  dist in nm), adsb.fi /v3 fallback when adsb.lol fails or answers empty
+ *  for the region. Both serve the {ac: [...], total} shape
+ *  extractAircraft() reads, so parsing is unchanged.
+ *
+ *  adsb.fi's /v2 point endpoint is NOT a fallback candidate: it answers
+ *  in a deprecated shape ({aircraft: [...], resultCount}) and this route
+ *  read only `ac` from it for months, ingesting ZERO aircraft while the
+ *  provider returned hundreds per region (measured 2026-10-18: London
+ *  725, Tokyo 203, NYC 71 → parsed as 0). extractAircraft() accepts both
+ *  shapes as a safety net, and the sweep runs on /v3, adsb.fi's
+ *  documented current API. adsb.fi serves /mil but returns 400 for
+ *  /ladd, /pia and /squawk/{code}, so the global type feeds collapse to
+ *  the military one. */
+export async function fetchRegion(lat: number, lon: number): Promise<{ records: any[]; provider: 'adsblol' | 'adsbfi' | null }> {
+  const lol = await fetchTar1090(`${ADSBLOL_BASE}/point/${lat}/${lon}/${ADSB_MAX_DIST}`, 8000);
+  if (lol && lol.length > 0) return { records: lol, provider: 'adsblol' };
+  const fi = await fetchTar1090(`${ADSBFI_POINT_BASE}/lat/${lat}/lon/${lon}/dist/${ADSB_MAX_DIST}`, 8000);
+  if (fi && fi.length > 0) return { records: fi, provider: 'adsbfi' };
+  return { records: [], provider: null };
 }
 
 /**
@@ -200,7 +245,7 @@ async function fetchAdsbFiRegion(lat: number, lon: number): Promise<any[]> {
  *     H47/H60/H64 line) rendered as planes.
  *  2. OpenSky's numeric emitter category (category_os 8 = rotorcraft).
  *     OpenSky records carry no other category field.
- *  3. The tar1090/adsb.fi emitter category, a STRING in `category`
+ *  3. The tar1090 emitter category, a STRING in `category`
  *     ('A7' = rotorcraft). The classifier never read this field, so
  *     for the entire regional source — the feed actually serving
  *     production — emitter-category evidence was dead. But the field
@@ -252,7 +297,7 @@ function classifyFlight(f: any) {
   // OpenSky supplies no aircraft type, and its ADS-B emitter category is
   // "no information" for ~96% of aircraft even with extended=1 (measured live:
   // 597 of 620 over central Europe). Every type-based test below therefore only
-  // fires on the adsb.fi feeds, which is what left all OpenSky traffic in the
+  // fires on the tar1090 feeds, which is what left all OpenSky traffic in the
   // commercial bucket. The callsign is the field OpenSky always fills, so the
   // airline-designator test is what carries the split for the bulk of the map.
   const isGaCallsign = !airlineCode && CALLSIGN_RE.test(flightStr);
@@ -317,7 +362,7 @@ const openSkyInterval = () => (hasOpenSkyCreds() ? 90000 : 900000);
 
 // The last good OpenSky snapshot is kept and reused between those calls. On the
 // anonymous interval a refetch is only due every 15 minutes, and rebuilding the
-// payload from adsb.fi alone in between would swing the map between ~10K
+// payload from the regional sweep alone in between would swing the map
 // aircraft and a few hundred every 90s. Reusing the snapshot keeps the aircraft
 // on screen stable; only their age varies, which providers.opensky_age_s reports.
 let osSnapshot: any[] = [];
@@ -500,7 +545,10 @@ const JAMMING_NACAP_THRESHOLD = 4;
 // extra bookkeeping. Reset at the start of every build.
 let liveRaw: any[] = [];
 let liveMilCount = 0;
-let liveRegionsAnswered = 0;
+let liveAdsblolMil = 0;
+let liveAdsbfiMil = 0;
+let liveAdsblolRegions = 0;
+let liveAdsbfiRegions = 0;
 let liveRegionsFallback = 0;
 let liveSource = '';
 
@@ -513,7 +561,8 @@ let liveSource = '';
 // still refreshes every cycle, so military traffic never rides the reuse.
 let regionalSnapshot: any[] = [];
 let regionalSnapshotTime = 0;
-let regionalRegionsAnswered = 0;
+let regionalAdsblolRegions = 0;
+let regionalAdsbfiRegions = 0;
 let regionalRegionsFallback = 0;
 const REGIONAL_REUSE_MS = 5 * 60 * 1000;
 // Stop starting new region requests this long into a sweep, so a slow tail
@@ -537,7 +586,7 @@ const SWEEP_DEADLINE_MS = 50000;
 // failed/empty fetch reuses it while it is ≤15 min old — the same
 // bounded-staleness bargain as the 5-minute whole-snapshot reuse, one
 // level down. Fallback use is reported per payload
-// (providers.adsbfi_regions_fallback) so a region living on last-good
+// (providers.adsblol_regions_fallback) so a region living on last-good
 // data stays visible instead of silently passing as live.
 export const REGION_LAST_GOOD_MAX_AGE_MS = 15 * 60 * 1000;
 
@@ -580,7 +629,7 @@ export function resolveRegionContribution(
  *  snapshot). The fresh-sweep path used to derive this from a final
  *  re-ingest of the sweep records, but those records already reach
  *  allRaw per region (for the first-paint path), so the re-ingest added
- *  zero and adsbfi_regional reported 0 for every fresh sweep. */
+ *  zero and adsblol_regional reported 0 for every fresh sweep. */
 export function regionalIngestedCount(
   afterTotal: number,
   milCount: number,
@@ -595,7 +644,7 @@ export function regionalIngestedCount(
 // records gathered so far (military feed + the regions already swept —
 // North America is swept first, so the busiest home airspace is in) and
 // lets the build finish in the background for the next poll. A partial
-// payload is labelled (providers.adsbfi_regions < REGIONS.length,
+// payload is labelled (providers.adsblol_regions < REGIONS.length,
 // `partial: true`) and never cached — the completed build replaces it.
 const FIRST_PAINT_WAIT_MS = 10000;
 const MIN_PARTIAL_AIRCRAFT = 200;
@@ -682,7 +731,7 @@ function classifyAll(allRaw: any[]) {
 function assemblePayload(
   built: ReturnType<typeof classifyAll>,
   total: number,
-  meta: { source: string; milCount: number; regionalIngested: number; regionsAnswered: number; regionsFallback: number; partial: boolean },
+  meta: { source: string; adsblolMil: number; adsbfiMil: number; regionalIngested: number; adsblolRegions: number; adsbfiRegions: number; regionsFallback: number; partial: boolean },
 ) {
   return {
     commercial_flights: built.commercial,
@@ -699,11 +748,13 @@ function assemblePayload(
     // Per-feed counts so a provider that starts answering 200 with no aircraft
     // is visible in the payload rather than silently emptying the map.
     providers: {
-      adsbfi_mil:      meta.milCount,
-      adsbfi_regional: meta.regionalIngested,
-      adsbfi_regions:  meta.regionsAnswered,
-      adsbfi_regions_fallback: meta.regionsFallback,
-      adsbfi_regional_age_s: regionalSnapshotTime ? Math.round((Date.now() - regionalSnapshotTime) / 1000) : null,
+      adsblol_mil:      meta.adsblolMil,
+      adsbfi_mil:       meta.adsbfiMil,
+      adsblol_regional: meta.regionalIngested,
+      adsblol_regions:  meta.adsblolRegions,
+      adsbfi_regions:   meta.adsbfiRegions,
+      adsblol_regions_fallback: meta.regionsFallback,
+      adsblol_regional_age_s: regionalSnapshotTime ? Math.round((Date.now() - regionalSnapshotTime) / 1000) : null,
       opensky:         osSnapshot.length,
       opensky_auth:    hasOpenSkyCreds(),
       opensky_age_s:   osSnapshotTime ? Math.round((Date.now() - osSnapshotTime) / 1000) : null,
@@ -740,9 +791,11 @@ function buildPartialPayload(): any | null {
   const regionalIngested = liveSource === 'regional' ? Math.max(0, liveRaw.length - liveMilCount) : 0;
   return assemblePayload(classifyAll(liveRaw), liveRaw.length, {
     source: liveSource || 'regional',
-    milCount: liveMilCount,
+    adsblolMil: liveAdsblolMil,
+    adsbfiMil: liveAdsbfiMil,
     regionalIngested,
-    regionsAnswered: liveRegionsAnswered,
+    adsblolRegions: liveAdsblolRegions,
+    adsbfiRegions: liveAdsbfiRegions,
     regionsFallback: liveRegionsFallback,
     partial: true,
   });
@@ -773,7 +826,10 @@ export async function GET(request?: Request) {
     // Publish progress for GET's first-paint path (see buildPartialPayload).
     liveRaw = allRaw;
     liveMilCount = 0;
-    liveRegionsAnswered = 0;
+    liveAdsblolMil = 0;
+    liveAdsbfiMil = 0;
+    liveAdsblolRegions = 0;
+    liveAdsbfiRegions = 0;
     liveRegionsFallback = 0;
     liveSource = '';
 
@@ -791,7 +847,7 @@ export async function GET(request?: Request) {
       : { signal: AbortSignal.timeout(30000) };
 
     const [milRes, osRes] = await Promise.allSettled([
-      stealthFetch(`${ADSBFI_BASE}/mil`, { signal: AbortSignal.timeout(15000) }),
+      fetchMilFeed(),
       skipOpenSky
         ? Promise.reject(new Error('OpenSky in cooldown'))
         // extended=1 appends the ADS-B emitter category as an 18th field. Without
@@ -801,22 +857,22 @@ export async function GET(request?: Request) {
         : stealthFetch('https://opensky-network.org/api/states/all?extended=1', osInit),
     ]);
 
-    // Drain the military feed — parse on ok, discard the body otherwise to free the connection.
+    // Ingest the military feed, split by the provider that served it so
+    // the payload's provider counts show which one carried the feed.
+    let adsblolMil = 0;
+    let adsbfiMil = 0;
     if (milRes.status === 'fulfilled') {
-      if (milRes.value.ok) {
-        try {
-          const data = await milRes.value.json();
-          ingestAc(extractAircraft(data), allRaw, seenHex);
-        } catch (e) {
-          console.warn('[OSIRIS] adsb.fi mil parse error:', e);
-        }
-      } else {
-        console.warn('[OSIRIS] adsb.fi mil feed returned', milRes.value.status);
-        await milRes.value.body?.cancel();
-      }
+      const before = allRaw.length;
+      ingestAc(milRes.value.records, allRaw, seenHex);
+      const ingested = allRaw.length - before;
+      if (milRes.value.provider === 'adsblol') adsblolMil = ingested;
+      else if (milRes.value.provider === 'adsbfi') adsbfiMil = ingested;
+      else console.warn('[OSIRIS] both military feeds (adsb.lol primary, adsb.fi fallback) returned no aircraft');
     }
     const milCount = allRaw.length;
     liveMilCount = milCount;
+    liveAdsblolMil = adsblolMil;
+    liveAdsbfiMil = adsbfiMil;
 
     // Refresh the OpenSky snapshot when one was due; otherwise the existing one
     // carries over untouched.
@@ -858,11 +914,11 @@ export async function GET(request?: Request) {
     const openSkyWorked = osSnapshot.length > 0;
 
     // ── Phase 3: Regional sweep — last resort only ────────────────────────────
-    // Runs only when there is no OpenSky snapshot at all. adsb.fi's point
-    // endpoint is its most-metered surface (1 req/s by its terms), so instead
-    // of re-sweeping on every cache cycle the last good sweep is reused for
-    // REGIONAL_REUSE_MS — the same snapshot pattern as OpenSky above. Paced at
-    // ~1 req/s with a hard deadline inside the 60s maxDuration.
+    // Runs only when there is no OpenSky snapshot at all. The point
+    // endpoints are the providers' most-metered surface, so instead of
+    // re-sweeping on every cache cycle the last good sweep is reused for
+    // REGIONAL_REUSE_MS — the same snapshot pattern as OpenSky above. Paced
+    // at ~1 region start/s with a hard deadline inside the 60s maxDuration.
     let regionalIngested = 0;
     if (!openSkyWorked) {
       source = 'regional';
@@ -872,14 +928,16 @@ export async function GET(request?: Request) {
         const before = allRaw.length;
         ingestAc(regionalSnapshot, allRaw, seenHex);
         regionalIngested = allRaw.length - before;
-        liveRegionsAnswered = regionalRegionsAnswered;
+        liveAdsblolRegions = regionalAdsblolRegions;
+        liveAdsbfiRegions = regionalAdsbfiRegions;
         liveRegionsFallback = regionalRegionsFallback;
       } else {
-        console.warn('[OSIRIS] no OpenSky snapshot — falling back to adsb.fi regional sweep');
+        console.warn('[OSIRIS] no OpenSky snapshot — running the regional sweep (adsb.lol primary, adsb.fi fallback)');
         const sweepRaw: any[] = [];
         const sweepSeen = new Set<string>();
         const sweepStart = Date.now();
-        let answered = 0;
+        let answeredLol = 0;
+        let answeredFi = 0;
         let fallbackRegions = 0;
 
         let lastStart = 0;
@@ -888,25 +946,26 @@ export async function GET(request?: Request) {
             console.warn('[OSIRIS] regional sweep hit its deadline — keeping the partial result');
             break;
           }
-          const paceWait = ADSBFI_START_GAP_MS - (Date.now() - lastStart);
+          const paceWait = SWEEP_START_GAP_MS - (Date.now() - lastStart);
           if (lastStart && paceWait > 0) {
             await new Promise(resolve => setTimeout(resolve, paceWait));
           }
           lastStart = Date.now();
-          const fetched = await fetchAdsbFiRegion(r.lat, r.lon);
+          const fetched = await fetchRegion(r.lat, r.lon);
           // A failed/empty fetch falls back to the region's last-good
           // records (≤15 min old) instead of contributing zero — see
           // resolveRegionContribution. Only a fresh answer refreshes
           // the cache, so fallback data still ages out on schedule.
           const key = regionLastGoodKey(r);
           const contribution = resolveRegionContribution(
-            fetched,
+            fetched.records,
             regionLastGood.get(key),
             Date.now(),
           );
-          if (fetched.length > 0) {
-            answered++;
-            regionLastGood.set(key, { records: fetched, time: Date.now() });
+          if (fetched.records.length > 0) {
+            if (fetched.provider === 'adsblol') answeredLol++;
+            else answeredFi++;
+            regionLastGood.set(key, { records: fetched.records, time: Date.now() });
           } else if (contribution.usedFallback) {
             fallbackRegions++;
           }
@@ -916,14 +975,16 @@ export async function GET(request?: Request) {
           // land in allRaw HERE, not in a later re-ingest (which is
           // why regionalIngested is computed by difference below).
           ingestAc(regionAc, allRaw, seenHex);
-          liveRegionsAnswered = answered;
+          liveAdsblolRegions = answeredLol;
+          liveAdsbfiRegions = answeredFi;
           liveRegionsFallback = fallbackRegions;
         }
 
         if (sweepRaw.length > 0) {
           regionalSnapshot = sweepRaw;
           regionalSnapshotTime = Date.now();
-          regionalRegionsAnswered = answered;
+          regionalAdsblolRegions = answeredLol;
+          regionalAdsbfiRegions = answeredFi;
           regionalRegionsFallback = fallbackRegions;
         }
         regionalIngested = regionalIngestedCount(allRaw.length, milCount, openSkyIngested);
@@ -944,9 +1005,11 @@ export async function GET(request?: Request) {
     // ── Classify + assemble (shared with the first-paint partial) ─────
     return assemblePayload(classifyAll(allRaw), allRaw.length, {
       source,
-      milCount,
+      adsblolMil,
+      adsbfiMil,
       regionalIngested,
-      regionsAnswered: regionalRegionsAnswered,
+      adsblolRegions: regionalAdsblolRegions,
+      adsbfiRegions: regionalAdsbfiRegions,
       regionsFallback: regionalRegionsFallback,
       partial: false,
     });

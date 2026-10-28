@@ -6,7 +6,9 @@
  * 200 either way, so a parser reading the wrong key sees "quiet airspace"
  * instead of an error.
  *
- *   Current shape (adsb.fi /v3 point endpoint, /v2 type feeds such as /mil):
+ *   Current shape (adsb.lol /v2 point + /v2 type feeds such as /mil — the
+ *   primary since 2026-10-28 — and the adsb.fi fallback's /v3 point + /v2
+ *   /mil, which serve the identical shape):
  *     { ac: [...], total, msg, now, ctime, ptime }
  *
  *   Deprecated shape (adsb.fi /v2 point endpoint, retired in favour of /v3 —
