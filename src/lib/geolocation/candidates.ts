@@ -43,6 +43,13 @@ export interface GeoCandidate {
   evidenceAgainst: string[];
   /** The clue text that produced this candidate (its origin). */
   origin: string;
+  /**
+   * Why this candidate sits where it does in the ranking, in plain
+   * words. Filled by rankCandidates (position + score + corroboration);
+   * creation sites leave it empty and toPublicCandidate substitutes a
+   * kind-level explanation, so a public candidate never lacks one.
+   */
+  rankReason: string;
 }
 
 /** What the UI (and any share surface) is allowed to see. */
@@ -53,6 +60,13 @@ export interface PublicCandidate extends Omit<GeoCandidate, 'lat' | 'lng' | 'bas
   radiusM: number;
   /** 'point' = a displayable point with radius; 'area' = point suppressed. */
   precision: 'point' | 'area';
+  /**
+   * Why the displayed radius is what it is (privacy floor, the matched
+   * place's mapped size, or residential suppression), in plain words.
+   * Built inside toPublicCandidate, the one place that knows both the
+   * engine's radius and the clamp's outcome.
+   */
+  radiusReason: string;
 }
 
 /** The Nominatim row shape this pipeline reads (jsonv2). */
@@ -125,6 +139,7 @@ export function exifCandidate(gps: ExifGps, label: string): GeoCandidate {
       'Photo metadata can be edited or copied from another photo — a strong clue, not proof on its own',
     ],
     origin: 'exif',
+    rankReason: '',
   };
 }
 
@@ -164,6 +179,7 @@ export function candidatesFromRows(
       evidenceFor,
       evidenceAgainst,
       origin: opts.clue,
+      rankReason: '',
     });
   }
   return out;
@@ -171,6 +187,27 @@ export function candidatesFromRows(
 
 const SAME_SPOT_M = 200;
 const CORROBORATION_M = 25_000;
+
+const CORROBORATION_EVIDENCE = 'A second, independent clue points at the same area';
+
+/** Kind-level ranking explanation, used when no ranked position exists. */
+const RANK_REASON_BY_KIND: Record<CandidateKind, string> = {
+  exif: 'GPS embedded in the photo file is the strongest evidence this tool has, so a metadata match outranks every clue-based match.',
+  landmark: 'Named-landmark matches start with the highest clue score: a specifically identified place beats a generic name.',
+  place: 'Place-name matches start below landmark matches: a name read from a sign is real evidence, but names repeat from town to town.',
+};
+
+function buildRankReason(c: GeoCandidate, position: number): string {
+  const place = position === 0 ? 'Ranked first' : `Ranked #${position + 1}`;
+  const corroborated = c.evidenceFor.includes(CORROBORATION_EVIDENCE);
+  const tail = corroborated
+    ? ' A second, independent clue pointing at the same area added to its score.'
+    : '';
+  if (c.kind === 'exif') {
+    return `${place} — evidence score ${c.score}. ${RANK_REASON_BY_KIND.exif}`;
+  }
+  return `${place} — evidence score ${c.score}. ${RANK_REASON_BY_KIND[c.kind]}${tail}`;
+}
 
 /**
  * Rank: merge same-spot duplicates, reward independent corroboration,
@@ -202,23 +239,59 @@ export function rankCandidates(input: GeoCandidate[]): GeoCandidate[] {
     }
     c.confidence = confidenceFor(c.score);
   }
-  return merged.sort((a, b) => b.score - a.score);
+  const sorted = merged.sort((a, b) => b.score - a.score);
+  sorted.forEach((c, i) => {
+    c.rankReason = buildRankReason(c, i);
+  });
+  return sorted;
+}
+
+function buildRadiusReason(c: GeoCandidate, residential: boolean): string {
+  if (residential) {
+    return (
+      `The point is suppressed because this scene looks like a private residence or private property. ` +
+      `What is shown instead is a general area at least ${fmtKm(AREA_DISPLAY_RADIUS_M)} across — the ` +
+      `underlying evidence may be more precise, and it is deliberately not shown.`
+    );
+  }
+  if (c.kind === 'exif') {
+    return (
+      `GPS from a photo file can point within a few metres, but this tool never displays a radius ` +
+      `tighter than its ${PRIVACY_RADIUS_FLOOR_M} m privacy floor — the floor is the radius you see.`
+    );
+  }
+  if (c.baseRadiusM <= PRIVACY_RADIUS_FLOOR_M) {
+    return (
+      `OpenStreetMap's mapped outline for this place is smaller than the tool's ` +
+      `${PRIVACY_RADIUS_FLOOR_M} m privacy floor, so the floor sets the displayed radius.`
+    );
+  }
+  return (
+    `The radius is the size of the place OpenStreetMap matched: its mapped outline spans about ` +
+    `${fmtKm(c.baseRadiusM * 2)} across, and half of that span is the honest "within about" distance ` +
+    `for a point inside it. It is never shown tighter than ${PRIVACY_RADIUS_FLOOR_M} m.`
+  );
 }
 
 /** Apply the owner's privacy clamp — the last step before anything is shown. */
 export function toPublicCandidate(c: GeoCandidate, opts: { residential: boolean }): PublicCandidate {
   const { baseRadiusM, ...rest } = c;
   const radiusM = Math.max(Math.round(baseRadiusM), PRIVACY_RADIUS_FLOOR_M);
+  const shared = {
+    ...rest,
+    rankReason: rest.rankReason || RANK_REASON_BY_KIND[c.kind],
+    radiusReason: buildRadiusReason(c, opts.residential),
+  };
   if (opts.residential) {
     return {
-      ...rest,
+      ...shared,
       lat: null,
       lng: null,
       radiusM: Math.max(radiusM, AREA_DISPLAY_RADIUS_M),
       precision: 'area',
     };
   }
-  return { ...rest, radiusM, precision: 'point' };
+  return { ...shared, radiusM, precision: 'point' };
 }
 
 /** Is this scene one whose point must never be shown? */

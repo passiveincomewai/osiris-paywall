@@ -19,7 +19,13 @@
  * evidence does not support a candidate, the result says so and shows
  * the clues that WERE established. Nothing here invents a location.
  */
-import { MIME_BY_KIND, parseExif, type ImageKind, type PhotoExif } from "./exif";
+import {
+  MIME_BY_KIND,
+  imageDimensions,
+  parseExif,
+  type ImageKind,
+  type PhotoExif,
+} from "./exif";
 import type { ClueExtractor, PhotoClues } from "./clues";
 import {
   candidatesFromRows,
@@ -52,6 +58,37 @@ export interface PublicExif {
   make: string | null;
   model: string | null;
   dateTimeOriginal: string | null;
+  /** GPS altitude in metres, when the file's GPS block carries it. */
+  altitudeM: number | null;
+  /** Camera heading in degrees, when the file's GPS block carries it. */
+  directionDeg: number | null;
+}
+
+/**
+ * Facts about the uploaded file itself, read from its own structure —
+ * shown back to the uploader in the results panel. The file is never
+ * stored; these are values the analysis computed from it in passing.
+ */
+export interface PublicImageInfo {
+  format: Exclude<ImageKind, null>;
+  /** Pixel dimensions from the file's own header; null when unreadable. */
+  width: number | null;
+  height: number | null;
+  /** The upload's size in bytes, exactly as received. */
+  sizeBytes: number;
+}
+
+/**
+ * The outcome of looking one named clue up in OpenStreetMap — the
+ * per-clue half of the evidence trail. Only landmarks and place names
+ * are ever looked up; every other clue is recorded context.
+ */
+export interface ClueLookup {
+  clue: string;
+  kind: 'landmark' | 'place';
+  status: 'matched' | 'no_match' | 'lookup_failed' | 'not_queried' | 'too_broad';
+  /** Labels of the usable candidates this clue produced (matched only). */
+  matches: string[];
 }
 
 export interface AnalysisResult {
@@ -61,7 +98,11 @@ export interface AnalysisResult {
   /** Plain-language degradations that apply to this result. */
   degradedReasons: string[];
   exif: PublicExif | null;
+  /** The uploaded file's own format / dimensions / size. */
+  image: PublicImageInfo;
   clues: PhotoClues | null;
+  /** Per-clue OpenStreetMap lookup outcomes, in the order attempted. */
+  lookups: ClueLookup[];
   candidates: PublicCandidate[];
   /** Why nothing could be determined (undetermined only), or extra honesty notes. */
   notes: string[];
@@ -77,6 +118,8 @@ function publicExif(exif: PhotoExif | null): PublicExif | null {
     make: exif.make,
     model: exif.model,
     dateTimeOriginal: exif.dateTimeOriginal,
+    altitudeM: exif.gps?.altitudeM ?? null,
+    directionDeg: exif.gps?.directionDeg ?? null,
   };
 }
 
@@ -126,19 +169,36 @@ export async function analyzePhoto(
     raw.push(exifCandidate(exif.gps, label));
   }
 
+  const lookups: ClueLookup[] = [];
   if (clues) {
-    const queries: Array<{ q: string; kind: 'landmark' | 'place' }> = [
+    const allQueries: Array<{ q: string; kind: 'landmark' | 'place' }> = [
       ...clues.landmarks.map(q => ({ q, kind: 'landmark' as const })),
       ...clues.placeNames.map(q => ({ q, kind: 'place' as const })),
-    ].slice(0, MAX_CLUE_QUERIES);
+    ];
+    const queries = allQueries.slice(0, MAX_CLUE_QUERIES);
     let lookupsFailed = false;
     for (const { q, kind } of queries) {
       const rows = await deps.searchPlaces(q).catch(() => null);
       if (rows === null) {
         lookupsFailed = true;
+        lookups.push({ clue: q, kind, status: 'lookup_failed', matches: [] });
         continue;
       }
-      raw.push(...candidatesFromRows(rows, { kind, clue: q }));
+      const produced = candidatesFromRows(rows, { kind, clue: q });
+      raw.push(...produced);
+      const usable = produced.filter(c => c.baseRadiusM <= MAX_USEFUL_RADIUS_M);
+      if (!produced.length) {
+        lookups.push({ clue: q, kind, status: 'no_match', matches: [] });
+      } else if (!usable.length) {
+        lookups.push({ clue: q, kind, status: 'too_broad', matches: [] });
+      } else {
+        lookups.push({ clue: q, kind, status: 'matched', matches: usable.map(c => c.label) });
+      }
+    }
+    /* Named clues past the lookup cap are part of the trail too —
+       the visitor should see they were recorded but not queried. */
+    for (const { q, kind } of allQueries.slice(MAX_CLUE_QUERIES)) {
+      lookups.push({ clue: q, kind, status: 'not_queried', matches: [] });
     }
     if (lookupsFailed) {
       degradedReasons.push('Some place lookups could not be completed, so a matching place may be missing from this result.');
@@ -169,12 +229,20 @@ export async function analyzePhoto(
     }
   }
 
+  const dims = imageDimensions(image.buffer);
   return {
     status: candidates.length ? 'located' : 'undetermined',
     mode,
     degradedReasons,
     exif: publicExif(exif),
+    image: {
+      format: image.kind,
+      width: dims?.width ?? null,
+      height: dims?.height ?? null,
+      sizeBytes: image.buffer.length,
+    },
     clues,
+    lookups,
     candidates,
     notes,
   };

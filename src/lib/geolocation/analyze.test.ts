@@ -117,6 +117,109 @@ describe('analyzePhoto — clue path', () => {
   });
 });
 
+describe('analyzePhoto — the detail layer (trail, file facts, EXIF fields)', () => {
+  it('exposes the GPS altitude and camera direction the parser already read', async () => {
+    const result = await analyzePhoto(
+      { buffer: buildExifJpeg({ gps: EIFFEL_GPS }), kind: 'jpeg' },
+      deps(),
+    );
+    expect(result.exif?.altitudeM).toBeCloseTo(35, 1);
+    expect(result.exif?.directionDeg).toBeCloseTo(270, 1);
+  });
+
+  it('reports the uploaded file\u2019s format and size, with dimensions only when the header carries them', async () => {
+    const jpeg = buildExifJpeg({ gps: EIFFEL_GPS });
+    const fromJpeg = await analyzePhoto({ buffer: jpeg, kind: 'jpeg' }, deps());
+    expect(fromJpeg.image.format).toBe('jpeg');
+    expect(fromJpeg.image.sizeBytes).toBe(jpeg.length);
+    // The hand-built fixture has an EXIF block but no frame header.
+    expect(fromJpeg.image.width).toBeNull();
+    expect(fromJpeg.image.height).toBeNull();
+
+    const png = Buffer.alloc(33);
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(png, 0);
+    png.writeUInt32BE(13, 8);
+    png.write('IHDR', 12, 'latin1');
+    png.writeUInt32BE(800, 16);
+    png.writeUInt32BE(600, 20);
+    const fromPng = await analyzePhoto({ buffer: png, kind: 'png' }, deps());
+    expect(fromPng.image).toMatchObject({ format: 'png', width: 800, height: 600 });
+    expect(fromPng.exif).toBeNull(); // the EXIF parser is JPEG-only, by design
+    expect(fromPng.lookups).toEqual([]);
+  });
+
+  it('records a matched lookup in the trail, with the labels it produced', async () => {
+    const result = await analyzePhoto(
+      { buffer: BARE_JPEG, kind: 'jpeg' },
+      deps({
+        extractClues: async () => cluesWithLandmark,
+        searchPlaces: async (q) => (q === 'Eiffel Tower' ? [eiffelRow] : []),
+      }),
+    );
+    expect(result.lookups).toHaveLength(1);
+    expect(result.lookups[0]).toMatchObject({ clue: 'Eiffel Tower', kind: 'landmark', status: 'matched' });
+    expect(result.lookups[0].matches.join(' ')).toContain('Eiffel Tower');
+  });
+
+  it('records no-match and lookup-failed outcomes distinctly', async () => {
+    const noMatch = await analyzePhoto(
+      { buffer: BARE_JPEG, kind: 'jpeg' },
+      deps({
+        extractClues: async () => ({ ...EMPTY_CLUES, placeNames: ['Nowheresville'], sceneType: 'urban' }),
+        searchPlaces: async () => [],
+      }),
+    );
+    expect(noMatch.lookups).toEqual([
+      { clue: 'Nowheresville', kind: 'place', status: 'no_match', matches: [] },
+    ]);
+
+    const failed = await analyzePhoto(
+      { buffer: BARE_JPEG, kind: 'jpeg' },
+      deps({
+        extractClues: async () => ({ ...EMPTY_CLUES, placeNames: ['Somewhere'], sceneType: 'urban' }),
+        searchPlaces: async () => null,
+      }),
+    );
+    expect(failed.lookups[0].status).toBe('lookup_failed');
+    expect(failed.degradedReasons.join(' ')).toContain('place lookups could not be completed');
+  });
+
+  it('records a whole-country match as too_broad, not as a match', async () => {
+    const countryRow: NominatimRowLike = {
+      lat: '46.6',
+      lon: '2.5',
+      display_name: 'France',
+      class: 'boundary',
+      type: 'country',
+      boundingbox: ['41.0', '51.2', '-5.2', '9.7'],
+      address: { country: 'France' },
+    };
+    const result = await analyzePhoto(
+      { buffer: BARE_JPEG, kind: 'jpeg' },
+      deps({
+        extractClues: async () => ({ ...EMPTY_CLUES, placeNames: ['France'], sceneType: 'natural' }),
+        searchPlaces: async () => [countryRow],
+      }),
+    );
+    expect(result.lookups[0].status).toBe('too_broad');
+    expect(result.lookups[0].matches).toEqual([]);
+  });
+
+  it('records named clues past the lookup cap as not_queried', async () => {
+    const many = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    const result = await analyzePhoto(
+      { buffer: BARE_JPEG, kind: 'jpeg' },
+      deps({
+        extractClues: async () => ({ ...EMPTY_CLUES, landmarks: many, sceneType: 'landmark' }),
+        searchPlaces: async () => [],
+      }),
+    );
+    expect(result.lookups).toHaveLength(7);
+    expect(result.lookups.slice(0, 6).every(l => l.status === 'no_match')).toBe(true);
+    expect(result.lookups[6]).toMatchObject({ clue: 'G', status: 'not_queried' });
+  });
+});
+
 describe('analyzePhoto — privacy clamp end to end', () => {
   it('suppresses the point when the scene is a likely private residence', async () => {
     const result = await analyzePhoto(

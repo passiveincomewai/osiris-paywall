@@ -14,23 +14,36 @@
  * the clues that were established either way, nearby live cameras from
  * the real catalogue, and the EXPLORE IN 3D handoff (/?geo= deep link)
  * for point results.
+ *
+ * Detail layer: a step-by-step evidence trail (file check → EXIF →
+ * clue pass → per-clue OpenStreetMap lookup outcomes → ranking →
+ * privacy clamp), a per-candidate ranking rationale and radius
+ * explanation (both computed by the pipeline, not written here), and
+ * a file panel showing the uploader their own photo's format,
+ * dimensions and metadata. On completion the tool fires ONE analytics
+ * event with a coarse outcome token (exif / vision / none) — no photo
+ * data and no coordinates ever enter analytics.
  */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Camera,
   CheckCircle2,
   ChevronDown,
   Crosshair,
+  FileSearch,
   Globe2,
   HelpCircle,
   ImagePlus,
+  ListOrdered,
   Loader2,
   MapPin,
   ShieldCheck,
   XCircle,
 } from "lucide-react";
-import type { AnalysisResult } from "@/lib/geolocation/analyze";
+import type { AnalysisResult, ClueLookup } from "@/lib/geolocation/analyze";
 import type { PublicCandidate } from "@/lib/geolocation/candidates";
+import { geolocationOutcomeDetail } from "@/lib/geolocation/outcome";
+import { trackAnalyticsEvent } from "@/components/AnalyticsTracker";
 import { buildGeoUrl } from "@/lib/share/links";
 import {
   bboxAround,
@@ -62,6 +75,26 @@ const CONFIDENCE_STYLE: Record<PublicCandidate["confidence"], string> = {
   high: "border-emerald-400/40 text-emerald-300",
   medium: "border-amber-400/40 text-amber-300",
   low: "border-white/20 text-white/50",
+};
+
+const CONFIDENCE_EXPLAINER: Record<PublicCandidate["confidence"], string> = {
+  high: "High confidence: the evidence score sits in the top band — GPS from the file itself, or a clue match for a prominent place, reinforced where possible by an independent clue.",
+  medium: "Medium confidence: a real match with moderate support. Read the evidence against it before relying on it.",
+  low: "Low confidence: a possible match with thin support — a lead to check, not an answer.",
+};
+
+function fmtBytes(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / 1024 / 1024).toFixed(2)} MB`;
+}
+
+const LOOKUP_STATUS: Record<ClueLookup["status"], { label: string; style: string }> = {
+  matched: { label: "Matched in OpenStreetMap", style: "border-emerald-400/40 text-emerald-300" },
+  no_match: { label: "No match in OpenStreetMap", style: "border-white/20 text-white/50" },
+  lookup_failed: { label: "Lookup could not be completed", style: "border-amber-400/40 text-amber-300" },
+  not_queried: { label: "Recorded, not looked up", style: "border-white/20 text-white/40" },
+  too_broad: { label: "Matched only a whole region — too broad to use", style: "border-amber-400/40 text-amber-300" },
 };
 
 /* ── Static Esri-tile map preview with the uncertainty circle ────── */
@@ -115,13 +148,171 @@ function GeoMapPreview({ lat, lng, radiusM }: { lat: number; lng: number; radius
   );
 }
 
+/* ── The evidence trail: what the pipeline actually did ─────────── */
+function countClues(clues: NonNullable<AnalysisResult["clues"]>): number {
+  return (
+    clues.visibleText.length +
+    clues.landmarks.length +
+    clues.placeNames.length +
+    clues.languages.length +
+    (clues.plateStyle ? 1 : 0) +
+    (clues.drivingSide ? 1 : 0) +
+    (clues.vegetationClimate ? 1 : 0) +
+    (clues.architecture ? 1 : 0) +
+    (clues.roadMarkings ? 1 : 0)
+  );
+}
+
+function EvidenceTrail({ result }: { result: ApiResult }) {
+  const steps: ReactNode[] = [];
+
+  steps.push(
+    <>
+      <strong className="text-white/85">The file.</strong> Analysed a{" "}
+      {result.image.format.toUpperCase()} photo
+      {result.image.width && result.image.height
+        ? `, ${result.image.width.toLocaleString()} × ${result.image.height.toLocaleString()} px`
+        : ""}{" "}
+      ({fmtBytes(result.image.sizeBytes)}). It was processed in memory and discarded — nothing was
+      stored.
+    </>,
+  );
+
+  if (result.exif?.hasGps) {
+    steps.push(
+      <>
+        <strong className="text-white/85">Metadata (EXIF).</strong> GPS coordinates are embedded in
+        this file. That is the strongest evidence this tool has, so the metadata candidate is ranked
+        by it first — and it is still labelled as metadata, because a file&apos;s GPS can be edited
+        or copied from another photo.
+      </>,
+    );
+  } else if (result.exif) {
+    const bits = [
+      result.exif.make || result.exif.model ? "camera" : null,
+      result.exif.dateTimeOriginal ? "capture time" : null,
+    ].filter(Boolean);
+    steps.push(
+      <>
+        <strong className="text-white/85">Metadata (EXIF).</strong> The file carries metadata
+        {bits.length ? ` (${bits.join(", ")})` : ""} but no GPS coordinates, so the result rests on
+        the scene itself.
+      </>,
+    );
+  } else {
+    steps.push(
+      <>
+        <strong className="text-white/85">Metadata (EXIF).</strong> No usable EXIF metadata could
+        be read from this file — common for screenshots and for copies sent through messaging or
+        social apps, which strip it.
+      </>,
+    );
+  }
+
+  if (result.clues) {
+    const n = countClues(result.clues);
+    steps.push(
+      <>
+        <strong className="text-white/85">Visual clue pass.</strong> The scene pass recorded{" "}
+        {n === 0 ? "no usable clues" : `${n} clue${n === 1 ? "" : "s"}`} (the full set is listed
+        below). The model returns clues only — it is never asked for, and cannot supply, a location.
+      </>,
+    );
+  } else {
+    steps.push(
+      <>
+        <strong className="text-white/85">Visual clue pass.</strong> The visual pass did not run for
+        this analysis, so this result rests on the file&apos;s metadata alone.
+      </>,
+    );
+  }
+
+  steps.push(
+    <>
+      <strong className="text-white/85">Map matching.</strong>{" "}
+      {result.lookups.length === 0 ? (
+        <>No named landmark or place name was available to look up in OpenStreetMap.</>
+      ) : (
+        <>
+          Named clues were looked up in OpenStreetMap, in this order:
+          <ul className="mt-2 space-y-2">
+            {result.lookups.map((l, i) => {
+              const st = LOOKUP_STATUS[l.status];
+              return (
+                <li key={`${l.clue}-${i}`} className="flex flex-wrap items-center gap-2">
+                  <span className="text-white/80">“{l.clue}”</span>
+                  <span className="text-white/40">{l.kind === "landmark" ? "landmark clue" : "place-name clue"}</span>
+                  <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${st.style}`}>
+                    {st.label}
+                  </span>
+                  {l.status === "matched" && l.matches.length > 0 && (
+                    <span className="w-full pl-1 text-white/50">→ {l.matches.join(" · ")}</span>
+                  )}
+                  {l.status === "not_queried" && (
+                    <span className="w-full pl-1 text-white/50">
+                      The trail caps map lookups at 6 named clues per photo, so this one was recorded
+                      but not queried.
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
+    </>,
+  );
+
+  steps.push(
+    <>
+      <strong className="text-white/85">Ranking.</strong> Candidates are ordered by a deterministic
+      evidence score: GPS from the file outranks a named-landmark match, which outranks a place-name
+      match, and a second, independent clue pointing at the same area raises a score. Matches
+      broader than a whole region were discarded as too broad to call a location.{" "}
+      {result.status === "located"
+        ? `${result.candidates.length} candidate${result.candidates.length === 1 ? "" : "s"} made the list below.`
+        : "No candidate had enough evidence to list."}
+    </>,
+  );
+
+  const residential = result.candidates.some((c) => c.precision === "area");
+  steps.push(
+    <>
+      <strong className="text-white/85">Privacy clamp — applied last.</strong> No displayed radius
+      is ever tighter than 250 m, whatever the underlying evidence says.
+      {residential &&
+        " This scene looks like a private residence or private property, so its point was suppressed entirely and only a general area is shown."}
+    </>,
+  );
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+      <h3 className="flex items-center gap-2 font-semibold">
+        <FileSearch className="h-4 w-4 text-[#D4AF37]" /> Evidence trail — how this result was reached
+      </h3>
+      <ol className="mt-3 space-y-3">
+        {steps.map((s, i) => (
+          <li key={i} className="flex gap-3 text-sm leading-relaxed text-white/65">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/15 text-xs font-bold text-[#D4AF37]">
+              {i + 1}
+            </span>
+            <div className="min-w-0 pt-0.5">{s}</div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 /* ── One candidate card ──────────────────────────────────────────── */
 function CandidateCard({
   candidate,
+  rank,
   isTop,
   onExplore,
 }: {
   candidate: PublicCandidate;
+  rank: number;
   isTop: boolean;
   onExplore: (c: PublicCandidate) => void;
 }) {
@@ -131,9 +322,22 @@ function CandidateCard({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="flex items-center gap-2 text-lg font-semibold">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/15 text-xs font-bold text-[#D4AF37]">
+              {rank}
+            </span>
             <MapPin className="h-5 w-5 text-[#D4AF37]" /> {candidate.label}
           </p>
           <p className="mt-1 text-sm text-white/50">{KIND_LABEL[candidate.kind]}</p>
+          <p className="mt-0.5 text-sm text-white/45">
+            {candidate.kind === "exif" ? (
+              <>Source: the GPS coordinates embedded in the photo file itself.</>
+            ) : (
+              <>
+                Source clue: <span className="text-white/75">“{candidate.origin}”</span> — looked up
+                in OpenStreetMap, which holds this matching place.
+              </>
+            )}
+          </p>
         </div>
         <span className={`rounded-full border px-3 py-1 text-xs font-semibold capitalize ${CONFIDENCE_STYLE[candidate.confidence]}`}>
           {candidate.confidence} confidence
@@ -154,6 +358,20 @@ function CandidateCard({
           private residence or private property, so no exact point is displayed.
         </p>
       )}
+      <p className="mt-2 text-xs leading-relaxed text-white/45">
+        <span className="font-semibold text-white/60">Why this radius: </span>
+        {candidate.radiusReason}
+      </p>
+
+      <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3.5 text-sm">
+        <p className="flex items-center gap-1.5 font-semibold text-white/85">
+          <ListOrdered className="h-4 w-4 text-[#D4AF37]" /> Why it ranks here
+        </p>
+        <p className="mt-1 leading-relaxed text-white/65">{candidate.rankReason}</p>
+        <p className="mt-1.5 text-xs leading-relaxed text-white/40">
+          {CONFIDENCE_EXPLAINER[candidate.confidence]}
+        </p>
+      </div>
 
       <button
         type="button"
@@ -161,7 +379,7 @@ function CandidateCard({
         className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#D4AF37] hover:underline"
         aria-expanded={open}
       >
-        Evidence <ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} />
+        Full evidence — for and against <ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
         <div className="mt-2 grid gap-3 text-sm md:grid-cols-2">
@@ -271,6 +489,10 @@ export default function PhotoGeolocationTool() {
         setError(data?.error ?? "The analysis failed. Nothing was stored — please try again.");
       } else {
         setResult(data);
+        /* Usage measurement: one event per completed analysis, with a
+           coarse outcome token only (exif / vision / none) — no photo
+           data and no coordinates are ever attached. */
+        trackAnalyticsEvent("tool_geolocation_completed", geolocationOutcomeDetail(data));
       }
     } catch {
       setError("The analysis could not be reached. Nothing was stored — please try again.");
@@ -385,7 +607,7 @@ export default function PhotoGeolocationTool() {
                 <GeoMapPreview lat={top.lat} lng={top.lng} radiusM={top.radiusM} />
               )}
               {result.candidates.map((c, i) => (
-                <CandidateCard key={c.id} candidate={c} isTop={i === 0} onExplore={explore} />
+                <CandidateCard key={c.id} candidate={c} rank={i + 1} isTop={i === 0} onExplore={explore} />
               ))}
             </>
           ) : (
@@ -415,30 +637,84 @@ export default function PhotoGeolocationTool() {
             </ul>
           )}
 
-          {/* Metadata */}
-          {result.exif && (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-sm">
-              <h3 className="flex items-center gap-2 font-semibold">
-                <Camera className="h-4 w-4 text-[#D4AF37]" /> From the photo file itself
-              </h3>
-              <ul className="mt-2 space-y-1 text-white/65">
-                {result.exif.hasGps && <li>GPS coordinates are embedded in this file.</li>}
-                {!result.exif.hasGps && <li>No GPS coordinates in this file.</li>}
-                {(result.exif.make || result.exif.model) && (
-                  <li>Camera: {[result.exif.make, result.exif.model].filter(Boolean).join(" ")}</li>
-                )}
-                {result.exif.dateTimeOriginal && <li>Capture time in file: {result.exif.dateTimeOriginal}</li>}
-              </ul>
-              <p className="mt-2 text-xs text-white/40">
-                Metadata can be edited or stripped by other apps — treat it as a clue, not proof.
-              </p>
-            </div>
-          )}
+          {/* Evidence trail */}
+          <EvidenceTrail result={result} />
+
+          {/* The file itself: format, dimensions and metadata, shown
+              back to the uploader from their own photo. */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-sm">
+            <h3 className="flex items-center gap-2 font-semibold">
+              <Camera className="h-4 w-4 text-[#D4AF37]" /> Your photo file — what it contained
+            </h3>
+            <dl className="mt-3 grid gap-x-6 gap-y-2 text-white/65 sm:grid-cols-2">
+              <div>
+                <dt className="inline font-semibold text-white/85">Format: </dt>
+                <dd className="inline">
+                  {result.image.format.toUpperCase()} · {fmtBytes(result.image.sizeBytes)}
+                </dd>
+              </div>
+              <div>
+                <dt className="inline font-semibold text-white/85">Dimensions: </dt>
+                <dd className="inline">
+                  {result.image.width && result.image.height
+                    ? `${result.image.width.toLocaleString()} × ${result.image.height.toLocaleString()} px`
+                    : "could not be read from this file's header"}
+                </dd>
+              </div>
+              <div>
+                <dt className="inline font-semibold text-white/85">GPS in file: </dt>
+                <dd className="inline">
+                  {result.exif?.hasGps
+                    ? "yes — embedded coordinates decided the metadata candidate"
+                    : "no coordinates embedded"}
+                </dd>
+              </div>
+              {result.exif?.altitudeM !== null && result.exif?.altitudeM !== undefined && (
+                <div>
+                  <dt className="inline font-semibold text-white/85">GPS altitude: </dt>
+                  <dd className="inline">{Math.round(result.exif.altitudeM)} m above sea level</dd>
+                </div>
+              )}
+              {result.exif?.directionDeg !== null && result.exif?.directionDeg !== undefined && (
+                <div>
+                  <dt className="inline font-semibold text-white/85">Camera direction: </dt>
+                  <dd className="inline">{Math.round(result.exif.directionDeg)}° (clockwise from north)</dd>
+                </div>
+              )}
+              <div>
+                <dt className="inline font-semibold text-white/85">Camera: </dt>
+                <dd className="inline">
+                  {result.exif && (result.exif.make || result.exif.model)
+                    ? [result.exif.make, result.exif.model].filter(Boolean).join(" ")
+                    : "not recorded in the file"}
+                </dd>
+              </div>
+              <div>
+                <dt className="inline font-semibold text-white/85">Capture time in file: </dt>
+                <dd className="inline">{result.exif?.dateTimeOriginal ?? "not recorded in the file"}</dd>
+              </div>
+              {!result.exif && (
+                <div className="sm:col-span-2">
+                  <dt className="inline font-semibold text-white/85">Metadata block: </dt>
+                  <dd className="inline">
+                    no usable EXIF metadata could be read from this file (the metadata reader covers
+                    JPEG files; PNG and WebP photos rarely carry any, and copies passed through other
+                    apps usually have it stripped).
+                  </dd>
+                </div>
+              )}
+            </dl>
+            <p className="mt-3 text-xs text-white/40">
+              This is your own file&apos;s data, read during the analysis and shown back to you — the
+              file itself was processed in memory and discarded, never stored. Metadata can be edited
+              or stripped by other apps, so treat it as a clue, not proof.
+            </p>
+          </div>
 
           {/* Clues */}
           {clues && (
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-sm">
-              <h3 className="font-semibold">Clues found in the scene</h3>
+              <h3 className="font-semibold">Clues found in the scene — the full set</h3>
               <dl className="mt-2 space-y-1.5 text-white/65">
                 {clues.visibleText.length > 0 && (
                   <div><dt className="inline font-semibold text-white/85">Text read: </dt>
@@ -476,10 +752,24 @@ export default function PhotoGeolocationTool() {
                   <div><dt className="inline font-semibold text-white/85">Road markings: </dt>
                     <dd className="inline">{clues.roadMarkings}</dd></div>
                 )}
+                <div><dt className="inline font-semibold text-white/85">Scene type: </dt>
+                  <dd className="inline">
+                    {clues.sceneType}
+                    {clues.privateResidenceLikely &&
+                      " — flagged as likely private property, which is what triggers the area-only display above"}
+                  </dd></div>
               </dl>
               {!clues.visibleText.length && !clues.landmarks.length && !clues.placeNames.length && (
                 <p className="mt-1 text-white/50">No readable text or named landmark could be found in this scene.</p>
               )}
+              <p className="mt-3 border-t border-white/5 pt-3 text-xs leading-relaxed text-white/40">
+                How these clues are used: only named landmarks and place names are looked up in
+                OpenStreetMap — up to 6 per photo, and the evidence trail above shows each one&apos;s
+                outcome. The other clues are recorded context: they never score a match by
+                themselves, but the scene type drives the privacy decision. The clue pass returns
+                this fixed set and nothing else — if the model tried to include a location of its
+                own, it would be discarded before ranking.
+              </p>
             </div>
           )}
 

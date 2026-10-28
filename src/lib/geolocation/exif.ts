@@ -261,3 +261,102 @@ export const MIME_BY_KIND: Record<Exclude<ImageKind, null>, string> = {
   png: 'image/png',
   webp: 'image/webp',
 };
+
+/* ── Image dimensions ────────────────────────────────────────────── */
+
+export interface ImageDimensions {
+  width: number;
+  height: number;
+}
+
+/* JPEG Start-Of-Frame markers (all except DHT C4, JPG C8, DAC CC). */
+const SOF_MARKERS = new Set([
+  0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf,
+]);
+
+function jpegDimensions(buf: Buffer): ImageDimensions | null {
+  let off = 2; // past SOI
+  while (off + 4 <= buf.length) {
+    if (buf[off] !== 0xff) return null;
+    const marker = buf[off + 1];
+    if (marker === 0xda || marker === 0xd9) return null; // SOS / EOI: no frame header found
+    // Standalone markers carry no length field (TEM, RSTn, SOI).
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd8)) {
+      off += 2;
+      continue;
+    }
+    const len = buf.readUInt16BE(off + 2);
+    if (len < 2) return null;
+    if (SOF_MARKERS.has(marker)) {
+      // [FF][marker][len:2][precision:1][height:2][width:2]
+      if (off + 9 > buf.length) return null;
+      const height = buf.readUInt16BE(off + 5);
+      const width = buf.readUInt16BE(off + 7);
+      return width > 0 && height > 0 ? { width, height } : null;
+    }
+    off += 2 + len;
+  }
+  return null;
+}
+
+function pngDimensions(buf: Buffer): ImageDimensions | null {
+  // Signature (8) + IHDR length (4) + "IHDR" (4) + width (4) + height (4).
+  if (buf.length < 24) return null;
+  if (buf.toString('latin1', 12, 16) !== 'IHDR') return null;
+  const width = buf.readUInt32BE(16);
+  const height = buf.readUInt32BE(20);
+  return width > 0 && height > 0 ? { width, height } : null;
+}
+
+function webpDimensions(buf: Buffer): ImageDimensions | null {
+  if (buf.length < 20) return null;
+  const chunk = buf.toString('latin1', 12, 16);
+  if (chunk === 'VP8X') {
+    if (buf.length < 30) return null;
+    // Extended header: 1 flag byte + 3 reserved, then (width-1) and
+    // (height-1) as 24-bit little-endian.
+    const width = 1 + (buf[24] | (buf[25] << 8) | (buf[26] << 16));
+    const height = 1 + (buf[27] | (buf[28] << 8) | (buf[29] << 16));
+    return { width, height };
+  }
+  if (chunk === 'VP8L') {
+    // Lossless: 0x2f signature byte, then two packed 14-bit (size-1) fields.
+    if (buf.length < 25 || buf[20] !== 0x2f) return null;
+    const bits = buf.readUInt32LE(21);
+    return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 };
+  }
+  if (chunk === 'VP8 ') {
+    // Lossy: 3-byte frame tag, the 9d 01 2a start code, then two
+    // 14-bit dimensions (top 2 bits of each pair are scale bits).
+    if (buf.length < 30) return null;
+    if (buf[23] !== 0x9d || buf[24] !== 0x01 || buf[25] !== 0x2a) return null;
+    const width = buf.readUInt16LE(26) & 0x3fff;
+    const height = buf.readUInt16LE(28) & 0x3fff;
+    return width > 0 && height > 0 ? { width, height } : null;
+  }
+  return null;
+}
+
+/**
+ * Read a photo's pixel dimensions from its file structure — JPEG frame
+ * header, PNG IHDR, or WebP chunk header, sniffed from the magic bytes
+ * (never the file name). These are facts about the visitor's own file,
+ * shown back to them in the results panel. Returns null when the
+ * structure is missing or truncated; never throws, never guesses.
+ */
+export function imageDimensions(buf: Buffer): ImageDimensions | null {
+  try {
+    switch (sniffImageKind(buf)) {
+      case 'jpeg':
+        return jpegDimensions(buf);
+      case 'png':
+        return pngDimensions(buf);
+      case 'webp':
+        return webpDimensions(buf);
+      default:
+        return null;
+    }
+  } catch {
+    return null;
+  }
+}
