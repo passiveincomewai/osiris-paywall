@@ -243,6 +243,17 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'event-vo-sakurajima': eventGeoIn('Sakurajima & Kagoshima', 'japan', 31.5936, 130.6572, 20),
   'event-vo-merapi': eventGeoIn('Mount Merapi', 'indonesia', -7.5407, 110.4457, 30),
   'event-vo-ruapehu': eventGeoIn('Mount Ruapehu', 'new-zealand', -39.28, 175.57, 50),
+  /* Per-volcano pages (Menu #2 Wave A, Oct 2026) — the two walls the
+     hub does not carry but the per-volcano registry
+     (src/lib/volcanoes.ts) qualifies: Fuji (80 in range, incl. a feed
+     registered at the summit point) and Bromo (a single dedicated
+     volcano camera). The other candidates were measured and rejected
+     — Stromboli, Popocatépetl, Colima, Taal, Mayon, Villarrica,
+     Arenal, Cotopaxi and Whakaari hold ZERO catalogue cameras, and
+     Hekla's only in-range records are one road junction 38.8 km out;
+     the rejection pins live in src/lib/volcanoes.test.ts. */
+  'event-vo-fuji': eventGeoIn('Mount Fuji', 'japan', 35.3606, 138.7274, 30),
+  'event-vo-bromo': eventGeoIn('Mount Bromo', 'indonesia', -7.9425, 112.953, 30),
   /* SEO page set #37 (Oct 2026) — the aurora hub, the New York City
      flagship, the Japan hub and the port hub. Country walls are the
      country's full chunk (the count a page quotes is the index's own
@@ -254,6 +265,25 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'aurora-finland': { label: 'Finland', slugs: ['finland'], groupBy: 'city' },
   'aurora-iceland': { label: 'Iceland', slugs: ['iceland'], groupBy: 'city' },
   'aurora-norway': { label: 'Norway', slugs: ['norway'], groupBy: 'city' },
+  /* Per-place aurora pages (Menu #2 Wave A, Oct 2026) — radius walls
+     for the registry in src/lib/aurora-places.ts. Fairbanks and
+     Reykjavík reuse the 'event-le-*' scopes above (the aurora hub
+     already serves the Fairbanks wall). Measured and rejected:
+     Yellowknife (0 within 40 km — the aurora hub's FAQ already
+     publishes the absence), Whitehorse (2), Kiruna (2) and
+     Saariselkä (2); the rejection pins live in
+     src/lib/aurora-places.test.ts. */
+  'aurora-anchorage': eventGeo('Anchorage', 61.2181, -149.9003, 50),
+  'aurora-duluth': eventGeo('Duluth', 46.7867, -92.1005, 50),
+  'aurora-marquette': eventGeo('Marquette', 46.5436, -87.3954, 50),
+  'aurora-churchill': eventGeoIn('Churchill', 'canada', 58.7684, -94.165, 50),
+  'aurora-akureyri': eventGeoIn('Akureyri', 'iceland', 65.6835, -18.0878, 30),
+  'aurora-tromso': eventGeoIn('Tromsø', 'norway', 69.6492, 18.956, 40),
+  'aurora-alta': eventGeoIn('Alta', 'norway', 69.9689, 23.2717, 40),
+  'aurora-lofoten': eventGeoIn('Lofoten', 'norway', 68.2343, 14.5682, 40),
+  'aurora-rovaniemi': eventGeoIn('Rovaniemi', 'finland', 66.5039, 25.7294, 40),
+  'aurora-levi': eventGeoIn('Levi & Kittilä', 'finland', 67.8, 24.8, 40),
+  'aurora-abisko': eventGeoIn('the Abisko corridor', 'sweden', 68.35, 18.82, 30),
   'nyc': eventGeo('New York City', 40.758, -73.9855, 25),
   'nyc-manhattan': eventGeo('Manhattan', 40.7831, -73.9712, 6),
   'nyc-brooklyn': eventGeo('Brooklyn', 40.6782, -73.9442, 8),

@@ -14,6 +14,8 @@ import {
   CtaRow,
   PageShell,
 } from "@/components/directory-page";
+import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
+import { AURORA_PLACES } from "@/lib/aurora-places";
 
 export const metadata: Metadata = {
   title: "Northern Lights Webcams by Place — Aurora Cameras by Country",
@@ -92,7 +94,13 @@ const FAQS = [
   },
 ];
 
-export default function NorthernLightsWebcamsPage() {
+export default async function NorthernLightsWebcamsPage() {
+  const placeCounts = new Map<string, number>();
+  for (const p of AURORA_PLACES) {
+    placeCounts.set(p.slug, await countForDef(EXPLORE_SCOPES[p.scopeKey]));
+  }
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
@@ -116,6 +124,35 @@ export default function NorthernLightsWebcamsPage() {
         </Link>
         .
       </p>
+
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-5">Northern lights, place by place</h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          Thirteen places have a tonight page of their own — the live Kp, that
+          place's darkness window, the Kp band its latitude needs, and its cameras.
+          A place earns one only with a real camera wall of its own: Yellowknife
+          has no catalogue cameras at all, and Whitehorse, Kiruna and Saariselkä
+          hold two each, so they get no page — the absence is stated rather than
+          dressed up.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {AURORA_PLACES.map((p) => (
+            <Link
+              key={p.slug}
+              href={`/northern-lights-webcams/${p.slug}`}
+              className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-[#00E5FF]/40 transition-colors"
+            >
+              <span className="font-semibold text-white/90">{p.name}</span>
+              <span className="block text-sm text-white/50 mt-1">
+                {p.country} · {fmt(placeCounts.get(p.slug) ?? 0)} cameras within {p.radiusKm} km
+              </span>
+              <span className="block text-sm text-[#00E5FF] mt-2">
+                {p.name} aurora tonight →
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-5">Where the aurora cameras are</h2>

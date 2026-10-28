@@ -29,7 +29,9 @@ import { hreflangMapFor } from "@/lib/i18n-seo";
  * URLs; 816 since chunk C7 added the /alternatives hub the same
  * day; 939 since the city-scale wave added 123 generated city pages
  * at the >=25 owned-camera tier later that day; 945 since the
- * i18n rebase added the six manifest-published /es URLs.) Transit URLs
+ * i18n rebase added the six manifest-published /es URLs; 968 since
+ * Menu #2 Wave A added 10 per-volcano pages and 13 per-place aurora
+ * pages, both from committed registries.) Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
@@ -75,13 +77,15 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(945);
+    expect(nonTransit.length).toBe(968);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
-    // form — same 945 URLs, one string changed.
+    // form — same 945 URLs, one string changed (17582f29…). Menu #2
+    // Wave A (2026-10-27) then added the 23 per-volcano and
+    // per-place aurora URLs → 968.
     expect(hash).toBe(
-      "17582f29ca1c7c35e6775336bda5acf76668b7a523c80ae4f7222e2fad54f93c",
+      "a829982677072f5f4e98deb012ff91b98ec348077a15b1e6c284c0f8a6c85c97",
     );
   });
 
@@ -111,6 +115,22 @@ describe("sitemap lastmod policy", () => {
       "/germany-traffic-cameras",
     ]) {
       expect(lm(p), p).toBe(CATALOGUE);
+    }
+  });
+
+  it("dates the Menu #2 Wave A pages (per-volcano, per-place aurora) with the catalogue snapshot", () => {
+    for (const slug of [
+      "kilauea", "reykjanes", "katla", "etna", "vesuvius",
+      "sakurajima", "merapi", "bromo", "fuji", "ruapehu",
+    ]) {
+      expect(lm(`/volcano-webcams/${slug}`), slug).toBe(CATALOGUE);
+    }
+    for (const slug of [
+      "fairbanks", "anchorage", "duluth", "marquette", "churchill",
+      "reykjavik", "akureyri", "tromso", "alta", "lofoten",
+      "rovaniemi", "levi", "abisko",
+    ]) {
+      expect(lm(`/northern-lights-webcams/${slug}`), slug).toBe(CATALOGUE);
     }
   });
 

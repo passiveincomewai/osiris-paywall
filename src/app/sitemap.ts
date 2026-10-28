@@ -9,6 +9,8 @@ import { POSTS } from "./(en)/blog/posts";
 import { EVENT_WALLS } from "@/data/event-walls";
 import { AIRPORT_PAGES } from "@/lib/airport-pages";
 import { NATIONAL_PARKS } from "@/lib/national-parks";
+import { VOLCANOES } from "@/lib/volcanoes";
+import { AURORA_PLACES } from "@/lib/aurora-places";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
@@ -233,6 +235,18 @@ const SEO_PAGES_PARKS = [
   "/national-park-webcams",
   ...NATIONAL_PARKS.map((p) => `/national-park-webcams/${p.slug}`),
 ];
+
+// Menu #2 Wave A (2026-10-27): per-volcano pages under the existing
+// /volcano-webcams hub (listed in Wave 9) and per-place aurora pages
+// under the existing /northern-lights-webcams hub. Both registries
+// are catalogue-driven walls, so they carry the catalogue's date
+// like the parks. Only volcanoes/places with real catalogue cameras
+// have rows — the registries' tests pin the rejected candidates
+// (Stromboli, Popocatépetl, Yellowknife, Kiruna…) at zero.
+const SEO_PAGES_VOLCANOES = VOLCANOES.map((v) => `/volcano-webcams/${v.slug}`);
+const SEO_PAGES_AURORA_PLACES = AURORA_PLACES.map(
+  (p) => `/northern-lights-webcams/${p.slug}`,
+);
 
 // Wave 15 (2026-10-27): interstate corridor camera pages — cameras in
 // driving order along the eight interstates with real catalogue density
@@ -722,6 +736,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })),
     ...SEO_PAGES_PARKS.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_VOLCANOES.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_AURORA_PLACES.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,

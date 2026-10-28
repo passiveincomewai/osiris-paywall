@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   BASE,
   JsonLd,
@@ -17,6 +18,7 @@ import {
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
+import { VOLCANOES } from "@/lib/volcanoes";
 
 export const metadata: Metadata = {
   title: "Volcano Webcams — Live Volcano Cameras Worldwide",
@@ -184,6 +186,10 @@ export default async function VolcanoWebcamsPage() {
   for (const w of WALLS) {
     counts.set(w.key, await countForDef(EXPLORE_SCOPES[w.scopeKey]));
   }
+  const volcanoCounts = new Map<string, number>();
+  for (const v of VOLCANOES) {
+    volcanoCounts.set(v.slug, await countForDef(EXPLORE_SCOPES[v.scopeKey]));
+  }
   const fmt = (n: number) => n.toLocaleString("en-US");
   const kilauea = counts.get("kilauea") ?? 0;
   const vesuvius = counts.get("vesuvius") ?? 0;
@@ -211,6 +217,34 @@ export default async function VolcanoWebcamsPage() {
         ]}
       />
       <Intro paragraphs={INTRO} />
+
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">Volcanoes with their own page</h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          Ten volcanoes in the directory have a page of their own — their cameras,
+          their weather, and their observatory, the status source that outranks any
+          frame. Eight are the walls below; Mount Fuji and Mount Bromo join them on
+          the strength of their own feeds. The rule for getting a page is the rule
+          this hub already keeps: real catalogue cameras, anchored to the mountain.
+          Stromboli and Popocatépetl have none, and get no page.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {VOLCANOES.map((v) => (
+            <Link
+              key={v.slug}
+              href={`/volcano-webcams/${v.slug}`}
+              className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-[#00E5FF]/40 transition-colors"
+            >
+              <span className="font-semibold text-white/90">{v.name}</span>
+              <span className="block text-sm text-white/50 mt-1">
+                {v.country} · {fmt(volcanoCounts.get(v.slug) ?? 0)} camera
+                {(volcanoCounts.get(v.slug) ?? 0) === 1 ? "" : "s"} within {v.radiusKm} km
+              </span>
+              <span className="block text-sm text-[#00E5FF] mt-2">Watch {v.short} live →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-12 rounded-2xl border border-[#D4AF37]/40 bg-[#D4AF37]/[0.05] p-6 md:p-7 max-w-3xl mx-auto">
         <h2 className="text-lg md:text-xl font-bold">
