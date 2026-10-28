@@ -557,14 +557,14 @@ export const POSTS: BlogPost[] = [
     seoTitle: "Kīlauea Episode 56: How to Watch Live | WorldEye Blog",
     date: "2026-10-27",
     excerpt:
-      "Kīlauea is paused — but the USGS Hawaiian Volcano Observatory's October 26 update puts the Episode 56 fountaining window at October 31 – November 6. How the episode pattern works, which cameras actually show the crater, and how to be watching when it starts.",
+      "Kīlauea is paused — but the USGS Hawaiian Volcano Observatory's October 27 update puts the Episode 56 fountaining window at November 1–7, already slipped a day from the first forecast. How the episode pattern works, which cameras actually show the crater, and how to be watching when it starts.",
     seoDescription:
-      "Kīlauea Episode 56 is expected Oct 31–Nov 6, 2026 (USGS). How the episode pattern works, which webcams show Halemaʻumaʻu, and how to watch the eruption live.",
+      "Kīlauea Episode 56 is expected Nov 1–7, 2026 (USGS). How the episode pattern works, which webcams show Halemaʻumaʻu, and how to watch the eruption live.",
     tags: ["volcanoes", "hawaii", "live cams", "events"],
     sections: [
       {
         body: [
-          "Kīlauea is quiet right now — and that is exactly why this week matters. The summit eruption inside Halemaʻumaʻu crater has run in episodes since December 23, 2024: a burst of lava fountaining, then a pause while the summit recharges. Episode 55 ended on October 17, 2026, its fountains having reached about 720 feet. The USGS Hawaiian Volcano Observatory's daily update of October 26 reports summit re-inflation plateauing, and puts the forecast window for Episode 56 at October 31 – November 6.",
+          "Kīlauea is quiet right now — and that is exactly why this week matters. The summit eruption inside Halemaʻumaʻu crater has run in episodes since December 23, 2024: a burst of lava fountaining, then a pause while the summit recharges. Episode 55 ended on October 17, 2026, its fountains having reached about 720 feet. The USGS Hawaiian Volcano Observatory's daily update of October 27 reports the summit tilting upward again after a brief plateau, and puts the forecast window for Episode 56 at November 1 – 7 — a day later than the first forecast, because the recharge paused before it resumed.",
           "Read that the way the observatory means it: an expected window, not a scheduled start. The volcano alert level is ADVISORY, the aviation color code YELLOW, and windows move with the mountain. What you can do is be ready — know the pattern, know which cameras matter, and know where the authoritative word comes from. That is this guide.",
         ],
       },
@@ -572,7 +572,7 @@ export const POSTS: BlogPost[] = [
         heading: "An eruption in episodes",
         body: [
           "This eruption does not flow continuously. Pressure rebuilds beneath the summit — measured as ground inflation — until magma reaches the vents in Halemaʻumaʻu and fountaining begins: jets of lava hundreds of feet high that build the crater floor episode by episode. Then discharge outruns supply, the fountains die, and the cycle resets. Episodes have run hours to days, separated by pauses of days to weeks.",
-          "We have been following the pattern through the autumn in our [Kīlauea eruption watch](/blog/kilauea-eruption-watch-live), and Episode 55 fit it precisely: strong fountains, a clean stop on October 17, and a summit that immediately began re-inflating. The plateau the observatory reported on October 26 is part of the same rhythm — it is why the forecast is a window across a week rather than a date on a calendar.",
+          "We have been following the pattern through the autumn in our [Kīlauea eruption watch](/blog/kilauea-eruption-watch-live), and Episode 55 fit it precisely: strong fountains, a clean stop on October 17, and a summit that immediately began re-inflating. The plateau the observatory reported on October 26, the brief deflation that followed it, and the renewed tilt on October 27 are all part of the same rhythm — they are why the forecast is a window across a week rather than a date on a calendar, and why this window has already moved once.",
         ],
       },
       {
@@ -601,11 +601,11 @@ export const POSTS: BlogPost[] = [
     faqs: [
       {
         q: "When is Kīlauea Episode 56 expected?",
-        a: "The USGS Hawaiian Volcano Observatory's daily update of October 26, 2026 puts the forecast window for Episode 56 fountaining at October 31 – November 6, 2026. It is an expected window, not a scheduled time — the eruption is paused after Episode 55 (October 17), summit re-inflation has plateaued, and the alert level is ADVISORY / aviation color code YELLOW.",
+        a: "The USGS Hawaiian Volcano Observatory's daily update of October 27, 2026 puts the forecast window for Episode 56 fountaining at November 1–7, 2026 — pushed a day later than the October 26 forecast after a brief plateau in summit tilt. It is an expected window, not a scheduled time — the eruption is paused after Episode 55 (October 17), and the alert level is ADVISORY / aviation color code YELLOW.",
       },
       {
         q: "Is Kīlauea erupting right now?",
-        a: "As of the October 26, 2026 observatory update, the summit eruption is paused: Episode 55 ended on October 17 and no fountaining is underway. The eruption itself — episodic activity at Halemaʻumaʻu since December 23, 2024 — is ongoing, which is why a next episode is forecast rather than a new eruption announced.",
+        a: "As of the October 27, 2026 observatory update, the summit eruption is paused: Episode 55 ended on October 17 and no fountaining is underway — though moderate-to-strong glow persisted at the west vent overnight, the sign of a crater recharging rather than finished. The eruption itself — episodic activity at Halemaʻumaʻu since December 23, 2024 — is ongoing, which is why a next episode is forecast rather than a new eruption announced.",
       },
       {
         q: "Why do Kīlauea's forecast windows keep moving?",
@@ -2427,11 +2427,11 @@ export const POSTS: BlogPost[] = [
     title: "Watching the Northern Lights on Live Webcams",
     seoTitle: "Northern Lights on Live Webcams | WorldEye Blog",
     date: "2026-10-17",
-    updated: "2026-10-20",
+    updated: "2026-10-27",
     excerpt:
       "You do not have to fly to the Arctic to see the aurora — on the right night, northern webcams catch it for you. What it actually takes: darkness, clear skies, and an active sky, plus an honest look at the limits.",
     seoDescription:
-      "Aurora watching by webcam needs dark, clear skies and geomagnetic activity. How northern road and scenic cameras can catch it, and its limits.",
+      "Aurora watching by webcam needs dark, clear skies and the right Kp index. How northern road and scenic cameras catch the northern lights, and the limits.",
     tags: ["cameras", "guide"],
     sections: [
       {
@@ -2451,7 +2451,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "What the northern camera directory really is",
         body: [
-          "Here is the part most aurora guides skip: the far north's webcams were not built for the aurora. In the WorldEye directory, Iceland indexes 496 cameras, Finland 818, Sweden 886, and Norway 48 — an unusually deep bench for such sparsely populated countries, and most of them are road, weather, harbor, and scenic cameras, published so drivers can check ice and locals can check conditions. WorldEye does not offer dedicated aurora cameras, and no honest guide should pretend these are that.",
+          "Here is the part most aurora guides skip: the far north's webcams were not built for the aurora. In the WorldEye directory, Iceland indexes 482 cameras, Finland 825, Sweden 1,569, and Norway 746 — an unusually deep bench for such sparsely populated countries, and most of them are road, weather, harbor, and scenic cameras, published so drivers can check ice and locals can check conditions. WorldEye does not offer dedicated aurora cameras, and no honest guide should pretend these are that.",
           "What they are is something arguably better for a patient watcher: hundreds of eyes already pointed at dark northern landscapes, running all night, every night, whether or not anyone is watching. A road camera on an empty Icelandic highway or a scenic feed over a Finnish lake cannot summon the aurora, but on a clear, dark, active night it is perfectly placed to catch it — and checking ten of them takes less time than checking one forecast. The roundup in our guide to the [best live webcams in the world](/blog/best-live-webcams-world) makes the same point about sky cameras generally: when conditions align, these ordinary feeds become extraordinary.",
         ],
       },
@@ -2470,6 +2470,14 @@ export const POSTS: BlogPost[] = [
         ],
       },
       {
+        heading: "The Kp index: the one number that runs the hobby",
+        body: [
+          "Every aurora forecast you will ever read reduces to one number: the Kp index, a 0-to-9 scale of how hard the solar wind is shaking Earth's magnetic field, refreshed every three hours from NOAA's Space Weather Prediction Center data. Low numbers mean the auroral oval sits tight around the pole; high numbers mean it bulges south. What a given number buys you depends entirely on the camera's latitude. Under the oval itself — Iceland, Lapland, Tromsø, Fairbanks — Kp 2 or 3 on a dark, clear night can already stand an arc overhead. Kp 5 is the first rung of storm level, a G1 geomagnetic storm, and it pushes displays far enough south to reach Scotland, the northern United States and mainland Europe's northern coasts.",
+          "WorldEye keeps the number and the cameras on one screen: the [aurora webcams](/aurora-webcams) page opens with the live Kp reading — the same NOAA feed the globe's status bar shows — above the Finland, Iceland and Norway walls and a Fairbanks wall for Alaska. Read the index first, then open the wall whose night is darkest; the two checks take a minute between them.",
+          "This week offers a tidy lesson in reading forecasts at the right range. NOAA's 27-day outlook flags a possible G1 storm — Kp 5 — around October 31, but at that distance it is a low-confidence hint built on the Sun's roughly 27-day rotation, not a forecast; NOAA's 3-day forecast, the document that actually governs a given night, stays quiet through October 30. If the index does climb to 5 on a clear night, the oval-latitude cameras will not need the help — but the southern edge of the circuit, Scotland and the northern US states, suddenly comes into play. Believe the live index when the night arrives, not the calendar three weeks out.",
+        ],
+      },
+      {
         heading: "Reading activity without fooling yourself",
         body: [
           "Aurora forecasts speak in geomagnetic activity levels, and they are worth consulting before an evening of checking feeds: a quiet forecast means even perfect northern cameras will show perfect northern darkness, while an active one justifies working through a circuit of feeds across several countries. Activity can also surge with little warning, which is why watchers develop a circuit rather than a single favorite camera — if the oval is lit, different longitudes take turns under its brightest part as the Earth rotates.",
@@ -2480,7 +2488,7 @@ export const POSTS: BlogPost[] = [
         heading: "A realistic way to enjoy it",
         body: [
           "Treat aurora webcam watching as a season, not an event. During the dark months, keep a short circuit of northern feeds — a few in Iceland, a few across Finland and Sweden, one or two in Norway — and check them on clear evenings when activity is forecast, the way other people check the weather. Most checks will take two minutes and end in darkness. That is the honest base rate, and it is fine.",
-          "Then, a handful of times a season, the circuit pays off all at once: an arc already standing over a Finnish lake when you open the feed, curtains moving over an Icelandic road an hour later, the whole northern tier of the map lit in rotation. Those nights justify every quiet check before them — and unlike the flight north, the webcam version asks nothing of you but attention. The camera layer is free with no signup, so the season ticket costs exactly that: a few minutes, on the right nights, at the right end of the map.",
+          "Then, a handful of times a season, the circuit pays off all at once: an arc already standing over a Finnish lake when you open the feed, curtains moving over an Icelandic road an hour later, the whole northern tier of the map lit in rotation. Those nights justify every quiet check before them — and unlike the flight north, the webcam version asks nothing of you but attention. The same patience runs the other great night-sky webcam hobby, [watching the ISS live](/blog/how-to-watch-the-iss-live): a dark sky, a known schedule, and a reward that only shows up for the people watching at the right minute. The camera layer is free with no signup, so the season ticket costs exactly that: a few minutes, on the right nights, at the right end of the map.",
           "The [northern lights webcams](/northern-lights-webcams) page gathers the aurora-belt regions in one place — Iceland, Norway, Finland, Sweden, Alaska, and Canada — with the live Kp index reading from the map, so your circuit is one click instead of a dozen bookmarks.",
         ],
       },
