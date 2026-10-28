@@ -10,6 +10,7 @@ import liveCameraIndex from "@/data/live-camera-index.json";
 import cameraNetworkReport from "@/data/camera-network-2026-10.json";
 import { MANIFEST_ENTRIES } from "@/i18n/manifest";
 import { hreflangMapFor } from "@/lib/i18n-seo";
+import { REGISTRY_VERIFIED_AT, SHIPS } from "@/lib/ships/registry";
 
 /**
  * Sitemap lastmod policy pins (index-recovery remainder, 2026-10-27).
@@ -47,7 +48,9 @@ import { hreflangMapFor } from "@/lib/i18n-seo";
  * Parade, Balloon Fiesta) and the /iss-over hub + 20 city pages
  * from the committed lib/iss-passes registry; 1,037 since Menu #2
  * Wave C part 2 added the /weather-radar hub + 21 metro pages
- * from a committed registry and the /wildfires hub). Transit URLs
+ * from a committed registry and the /wildfires hub; 1,052 since
+ * the per-ship pages shipped, adding the /ships hub + 14 per-ship
+ * pages from the committed lib/ships registry). Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date. The per-incident /wildfires/<slug>
@@ -100,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1037);
+    expect(nonTransit.length).toBe(1052);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -119,9 +122,14 @@ describe("sitemap URL set", () => {
     // 21 iss-over hub + city URLs → 1,014. Menu #2 Wave C part 2
     // (2026-10-28) then added the weather-radar hub + 21 metro
     // pages and the /wildfires hub → 1,037 (per-incident wildfire
-    // URLs are live-derived and filtered out of this set).
+    // URLs are live-derived and filtered out of this set). The
+    // per-ship pages (built 2026-10-26, shipped 2026-10-28) then
+    // added the /ships hub + 14 per-ship pages from the committed
+    // lib/ships registry → 1,052. Delta hand-verified: removing
+    // exactly those 15 URLs reproduces the 1,037 set and the
+    // 4c13bb37… hash byte-for-byte.
     expect(hash).toBe(
-      "4c13bb379a8681474fdb8ad2867435e648dc53b75ca3171bc8a48ea41731c324",
+      "e14944c68b62caaeda15958503a072b0eeb607a5679ea9b0215d99c602ceba22",
     );
   });
 
@@ -230,6 +238,14 @@ describe("sitemap lastmod policy", () => {
     }
     // The hub is a live view over the federal feed — no honest date.
     expect(lm("/wildfires")).toBeNull();
+  });
+
+  it("dates the per-ship pages with the registry verification date", () => {
+    const verified = new Date(REGISTRY_VERIFIED_AT).toISOString();
+    expect(lm("/ships")).toBe(verified);
+    for (const s of SHIPS) {
+      expect(lm(`/ships/${s.slug}`), s.slug).toBe(verified);
+    }
   });
 
   it("dates the ten editorial cities like their generated siblings' walls", () => {

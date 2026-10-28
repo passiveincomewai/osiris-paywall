@@ -138,6 +138,12 @@ export const esShipTracker: ShipTrackerCopy = {
       },
     ],
   },
+  cruiseShips: {
+    heading: [tx("Sigue a un "), ac("crucero específico")],
+    body: "Los cruceros insignia tienen cada uno su propia página: datos verificados, cámaras de su puerto base y una posición AIS en vivo siempre que el barco esté transmitiendo, identificado por su MMSI. Cuando no transmite, la página lo dice en lugar de adivinar.",
+    whereIs: "¿Dónde está",
+    browseAll: "Ver todos los cruceros rastreados →",
+  },
   faqHeading: [tx("Preguntas frecuentes del "), ac("rastreador de barcos")],
   faqs: [
     {

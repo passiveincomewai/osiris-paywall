@@ -94,7 +94,7 @@ const ES_SOURCE_HASHES: Record<string, string> = {
   "live-webcams": "402ea44d9f98a6b00d41baf66dcfcba158c4c75a62310359d3440c383551b4fa",
   faq: "9f3fec6211bd41283dd27bc043b3cda5a141ec27be9e50e00f6335180ff192d9",
   "live-flight-tracker": "7fc5d90efa92b2bb028e8fff7e49c1b9d24f76a2ee8643e7d4325edac47e8a48",
-  "ship-tracker": "9f2d8354a8b2bbabafe9585e413672c92cd6c4b176fb5c570fd8f36135ce1694",
+  "ship-tracker": "2d57af59a5bbdb02a8d83c0c55df1859b2099d3e02fec0a444ac434dc3ff33bb",
 };
 
 // Rebase note (2026-10-27): the foundation was rebased onto production
@@ -106,13 +106,16 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // adjusted the same day, so those entries carry the rebase date. The
 // faq and live-webcams dictionaries verified byte-identical to their
 // publish-time hashes and keep the tranche date.
+// Re-sync (2026-10-28): the ship-tracker dictionary gained the
+// cruise-ships link section with the per-ship pages ship; the Spanish
+// dictionary was translated the same day, so its hash and date moved.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-27",
   pricing: "2026-10-27",
   "live-webcams": ES_TRANCHE_DATE,
   faq: ES_TRANCHE_DATE,
   "live-flight-tracker": "2026-10-27",
-  "ship-tracker": "2026-10-27",
+  "ship-tracker": "2026-10-28",
 };
 
 const ES_PUBLISHED_SLUGS = [

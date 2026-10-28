@@ -19,6 +19,7 @@ import { UNIVERSITIES } from "@/lib/universities";
 import { FERRY_SYSTEMS } from "@/lib/ferries";
 import { CRUISE_PORTS } from "@/lib/cruise-ports";
 import { RADAR_METROS } from "@/lib/radar-metros";
+import { REGISTRY_VERIFIED_AT, SHIPS } from "@/lib/ships/registry";
 import { getWildfireIncidents } from "@/lib/fire-perimeters";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
@@ -322,6 +323,16 @@ const SEO_PAGES_RADAR = [
   ...RADAR_METROS.map((m) => `/weather-radar/${m.slug}`),
 ];
 const SEO_PAGES_WILDFIRES = ["/wildfires"];
+
+// Per-ship pages (built 2026-10-26, shipped 2026-10-28): the
+// cruise-ship tracker hub plus one page per ship in
+// src/lib/ships/registry.ts — derived from the same registry the
+// pages' generateStaticParams reads, so the two can never drift.
+// Only ships with a verified MMSI are in the registry; a ship that
+// leaves the AIS feed keeps its page (and its sitemap entry) in the
+// "not currently reporting" state rather than being delisted. These
+// carry the registry's verification date, not the catalogue date.
+const SEO_PAGES_SHIPS = ["/ships", ...SHIPS.map((s) => `/ships/${s.slug}`)];
 
 // Wave 15 (2026-10-27): interstate corridor camera pages — cameras in
 // driving order along the eight interstates with real catalogue density
@@ -916,6 +927,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE}${p}`,
       changeFrequency: "daily" as const,
       priority: 0.7,
+    })),
+    ...SEO_PAGES_SHIPS.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: new Date(REGISTRY_VERIFIED_AT),
+      changeFrequency: "daily" as const,
+      priority: 0.6,
     })),
     ...SEO_PAGES_WAVE15.map((p) => ({
       url: `${BASE}${p}`,

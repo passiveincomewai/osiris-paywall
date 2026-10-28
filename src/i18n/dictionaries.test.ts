@@ -134,14 +134,15 @@ describe("manifest ↔ dictionary completeness", () => {
           dictionarySourceHash(englishDictionaryFor(entry.slug))
         );
         // Publish date per entry: the 2026-10-26 tranche, except the
-        // four dictionaries re-synced to production copy by the
-        // 2026-10-27 rebase (see manifest.ts).
+        // dictionaries re-synced after it — three by the 2026-10-27
+        // rebase, and ship-tracker again on 2026-10-28 when its
+        // dictionary gained the cruise-ships section (see manifest.ts).
         expect(entry.updatedAt).toBe(
-          ["", "pricing", "live-flight-tracker", "ship-tracker"].includes(
-            entry.slug
-          )
-            ? "2026-10-27"
-            : "2026-10-26"
+          entry.slug === "ship-tracker"
+            ? "2026-10-28"
+            : ["", "pricing", "live-flight-tracker"].includes(entry.slug)
+              ? "2026-10-27"
+              : "2026-10-26"
         );
       });
 

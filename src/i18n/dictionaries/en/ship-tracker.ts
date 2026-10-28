@@ -51,6 +51,12 @@ export interface ShipTrackerCopy {
     heading: RichText;
     cards: { title: string; desc: string }[];
   };
+  cruiseShips: {
+    heading: RichText;
+    body: string;
+    whereIs: string;
+    browseAll: string;
+  };
   faqHeading: RichText;
   faqs: { q: string; a: string }[];
   voiceQuestions: Record<string, TrackerVoiceCopy>;
@@ -195,6 +201,12 @@ export const enShipTracker: ShipTrackerCopy = {
         desc: "Planning a passage? See what the commercial traffic is doing in the waters you'll cross. The big ships follow predictable lanes, and knowing those lanes keeps a small boat safer.",
       },
     ],
+  },
+  cruiseShips: {
+    heading: [tx("Follow a specific "), ac("cruise ship")],
+    body: "The flagship cruise ships each have their own page — verified facts, homeport cameras, and a live AIS position whenever the ship is reporting, matched by her MMSI. When she isn't reporting, the page says so instead of guessing.",
+    whereIs: "Where is",
+    browseAll: "Browse all tracked cruise ships →",
   },
   faqHeading: [tx("Ship tracker "), ac("FAQ")],
   faqs: [

@@ -25,6 +25,7 @@ import { localizedPath, type LocaleCode } from "@/i18n/config";
 import { isPublished } from "@/i18n/manifest";
 import { localizedUrl } from "@/lib/i18n-seo";
 import type { ShipTrackerCopy } from "@/i18n/dictionaries/en/ship-tracker";
+import { SHIPS } from "@/lib/ships/registry";
 import { getChromeCopy } from "@/i18n/dictionaries";
 
 /**
@@ -210,6 +211,31 @@ export default function ShipTrackerPage({
               );
             })}
           </div>
+        </div>
+
+        {/* Follow a specific cruise ship */}
+        <div className="mt-20 max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold">
+            <RichText segments={copy.cruiseShips.heading} locale={locale} />
+          </h2>
+          <p className="text-white/55 mt-4 leading-relaxed">{copy.cruiseShips.body}</p>
+          <div className="flex flex-wrap justify-center gap-2.5 mt-8">
+            {SHIPS.map((s) => (
+              <Link
+                key={s.slug}
+                href={relHref(`ships/${s.slug}`)}
+                className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/75 hover:bg-white/5 hover:text-white transition"
+              >
+                {copy.cruiseShips.whereIs} {s.name}?
+              </Link>
+            ))}
+          </div>
+          <Link
+            href={relHref("ships")}
+            className="inline-block mt-6 text-sm font-semibold text-[#00E5FF] hover:underline"
+          >
+            {copy.cruiseShips.browseAll}
+          </Link>
         </div>
 
         {/* FAQ */}
