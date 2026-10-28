@@ -13,6 +13,7 @@ import { VOLCANOES } from "@/lib/volcanoes";
 import { AURORA_PLACES } from "@/lib/aurora-places";
 import { ICONIC_PLACES } from "@/lib/iconic-places";
 import { LAUNCH_SITES } from "@/lib/launch-sites";
+import { ISS_CITIES } from "@/lib/iss-passes";
 import { ANIMAL_STARS } from "@/lib/animal-cams";
 import { UNIVERSITIES } from "@/lib/universities";
 import { FERRY_SYSTEMS } from "@/lib/ferries";
@@ -357,13 +358,32 @@ const SEO_PAGES_WAVE17 = [
 
 // Seasonal annuals (2026-10-27): evergreen pages for the five events
 // that recur every year — dates come from lib/seasonal-events tables,
-// never from prose, so the pages stay correct year to year.
+// never from prose, so the pages stay correct year to year. Wave C
+// (2026-10-27) added six more from the same tables: the Macy's
+// parade, the NYC and Boston marathons, the Fourth of July, the Rose
+// Parade and the Balloon Fiesta.
 const SEO_PAGES_SEASONAL = [
   "/new-years-eve-times-square",
   "/mardi-gras-new-orleans",
   "/cherry-blossoms-washington-dc",
   "/oktoberfest-munich",
   "/fall-foliage-cameras",
+  "/macys-thanksgiving-parade",
+  "/nyc-marathon",
+  "/fourth-of-july-fireworks",
+  "/boston-marathon",
+  "/rose-parade",
+  "/albuquerque-balloon-fiesta",
+];
+
+// ISS city passes (Menu #2 Wave C, 2026-10-27): the /iss-over hub
+// plus one page per city in lib/iss-passes — derived from the same
+// registry the routes' generateStaticParams reads, so the sitemap
+// cannot drift from the pages that exist. The pages recompute from
+// the live TLE hourly, so they carry no lastmod.
+const SEO_PAGES_ISS = [
+  "/iss-over",
+  ...ISS_CITIES.map((c) => `/iss-over/${c.slug}`),
 ];
 
 // Trending event pages (2026-10-26): dated event hubs on the topic-hub
@@ -873,6 +893,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...SEO_PAGES_SEASONAL.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_ISS.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "weekly" as const,
       priority: 0.6,
     })),
     ...SEO_PAGES_AMBIENT.map((p) => ({

@@ -41,7 +41,11 @@ import { hreflangMapFor } from "@/lib/i18n-seo";
  * /university-webcams hub + 25 per-university pages, all from
  * committed registries; 987 since Menu #2 Wave B part 2 added the
  * /ferry-tracker hub + 3 ferry system pages and 9 cruise-port
- * board pages, all from committed registries). Transit URLs
+ * board pages, all from committed registries; 1,014 since Menu #2
+ * Wave C part 1 added the six Wave C seasonal-annual pages (Macy's
+ * parade, NYC marathon, July 4 fireworks, Boston marathon, Rose
+ * Parade, Balloon Fiesta) and the /iss-over hub + 20 city pages
+ * from the committed lib/iss-passes registry). Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
@@ -87,7 +91,7 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(987);
+    expect(nonTransit.length).toBe(1014);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -101,9 +105,11 @@ describe("sitemap URL set", () => {
     // then added the animal hub + 12 star pages and the university
     // hub + 25 per-university pages → 974. Menu #2 Wave B part 2
     // (2026-10-28) then added the ferry hub + 3 system pages and 9
-    // cruise-port board pages → 987.
+    // cruise-port board pages → 987. Menu #2 Wave C part 1
+    // (2026-10-28) then added the 6 Wave C seasonal annuals and the
+    // 21 iss-over hub + city URLs → 1,014.
     expect(hash).toBe(
-      "22a3b2cb4c8d27562ca05f3a81ad69cac80aa27b6cc074be87c9faac8bec59f0",
+      "800ebed7e008313b322910581dc2470df76df9529f422d95d27796caa3ae0c06",
     );
   });
 

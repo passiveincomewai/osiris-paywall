@@ -2,7 +2,9 @@
  * Seasonal event calendar — the date source for the evergreen annual
  * event pages (/new-years-eve-times-square, /mardi-gras-new-orleans,
  * /cherry-blossoms-washington-dc, /oktoberfest-munich and
- * /fall-foliage-cameras).
+ * /fall-foliage-cameras; Wave C added /macys-thanksgiving-parade,
+ * /nyc-marathon, /fourth-of-july-fireworks, /boston-marathon,
+ * /rose-parade and /albuquerque-balloon-fiesta).
  *
  * The dated event hubs (/macys-thanksgiving-parade-2026, …) hard-code
  * one edition in their copy and retire with it. These five events
@@ -192,6 +194,194 @@ export const OKTOBERFEST: SeasonalEvent = {
     { year: 2026, start: "2026-09-19", end: "2026-10-04" },
     { year: 2027, start: "2027-09-18", end: "2027-10-03" },
     { year: 2028, start: "2028-09-16", end: "2028-10-03" },
+  ],
+};
+
+/* ------------------------------------------------------------------ */
+/* Wave C additions (2026-10-27): the archive grows by six            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The Macy's Thanksgiving Day Parade, New York. Thanksgiving Day is
+ * the fourth Thursday of November by federal rule, and the parade
+ * runs that morning — so every row is fixed by rule: Nov 26, 2026,
+ * Nov 25, 2027, Nov 23, 2028 (each verified as its year's fourth
+ * Thursday). The dated hub /macys-thanksgiving-parade-2026 covers
+ * the centennial edition; this is the permanent page it retires into.
+ */
+export const MACYS_PARADE: SeasonalEvent = {
+  id: "macys-thanksgiving-parade",
+  basis:
+    "Fixed by rule: Thanksgiving Day is the fourth Thursday of November, and the parade runs Thanksgiving morning (Macy's). 2026-11-26, 2027-11-25 and 2028-11-23 are each their year's fourth Thursday.",
+  editions: [
+    { year: 2026, start: "2026-11-26", end: "2026-11-26" },
+    { year: 2027, start: "2027-11-25", end: "2027-11-25" },
+    { year: 2028, start: "2028-11-23", end: "2028-11-23" },
+  ],
+};
+
+/**
+ * The New York City Marathon. NYRR runs it on the first Sunday of
+ * November — Nov 1, 2026 (the date the dated hub
+ * /nyc-marathon-2026 was built on), Nov 7, 2027 and Nov 5, 2028,
+ * each its November's first Sunday.
+ */
+export const NYC_MARATHON: SeasonalEvent = {
+  id: "nyc-marathon",
+  basis:
+    "Fixed by rule: the marathon is held on the first Sunday of November (NYRR). 2026-11-01 matches the published 2026 date; 2027-11-07 and 2028-11-05 are their Novembers' first Sundays.",
+  editions: [
+    { year: 2026, start: "2026-11-01", end: "2026-11-01" },
+    { year: 2027, start: "2027-11-07", end: "2027-11-07" },
+    { year: 2028, start: "2028-11-05", end: "2028-11-05" },
+  ],
+};
+
+/**
+ * The Fourth of July — a fixed date, so the table is the day itself.
+ * The 2026 edition has run (it was the 250th), so the rows start
+ * with 2027. The page is multi-city, on the FOLIAGE_REGIONS shape:
+ * the anchor of each region is the waterfront its fireworks show is
+ * fired over, and the wall is that city's public cameras around it.
+ */
+export const FOURTH_OF_JULY: SeasonalEvent = {
+  id: "fourth-of-july-fireworks",
+  basis:
+    "Fixed by rule: Independence Day is July 4. Rows are 2027–2029; the 2026 edition (the 250th) has already run.",
+  editions: [
+    { year: 2027, start: "2027-07-04", end: "2027-07-04" },
+    { year: 2028, start: "2028-07-04", end: "2028-07-04" },
+    { year: 2029, start: "2029-07-04", end: "2029-07-04" },
+  ],
+};
+
+export interface July4Region {
+  key: string;
+  /** Section heading. */
+  name: string;
+  /** The waterfront the show is fired over. */
+  anchor: { lat: number; lng: number };
+  radiusKm: number;
+  /** The show this region watches, as its city presents it. */
+  show: string;
+  blurb: string;
+}
+
+/**
+ * The six July 4 waterfronts with a real camera wall behind them —
+ * measured over the catalogue, nearest-strongest first. Chicago's
+ * lakefront was measured and left out: 2 catalogue cameras within
+ * 2 km of Navy Pier is not a wall, and the page does not pretend
+ * otherwise.
+ */
+export const JULY4_REGIONS: July4Region[] = [
+  {
+    key: "new-york",
+    name: "New York — the East River",
+    anchor: { lat: 40.7425, lng: -73.9736 },
+    radiusKm: 10,
+    show: "Macy's 4th of July Fireworks over the East River",
+    blurb:
+      "The country's biggest show is fired from barges on the East River, and the cameras of both banks — the FDR corridor, the Brooklyn and Queens waterfronts — watch the riverfront fill from the afternoon on.",
+  },
+  {
+    key: "washington-dc",
+    name: "Washington DC — the National Mall",
+    anchor: { lat: 38.8895, lng: -77.0353 },
+    radiusKm: 10,
+    show: "Fireworks over the National Mall, fired from the Lincoln Memorial Reflecting Pool area",
+    blurb:
+      "The Mall is the capital's front lawn for the night: the cameras around it and across the Potomac in Arlington watch the crowds gather under the monuments from mid-afternoon.",
+  },
+  {
+    key: "seattle",
+    name: "Seattle — Lake Union",
+    anchor: { lat: 47.6205, lng: -122.3493 },
+    radiusKm: 5,
+    show: "The Lake Union fireworks show, fired from a barge on the lake",
+    blurb:
+      "Seattle fires its show over Lake Union, ringed by houseboats and the Gas Works shore — and Seattle runs one of the densest public camera networks in the catalogue, so the whole basin is watched.",
+  },
+  {
+    key: "nashville",
+    name: "Nashville — the Cumberland riverfront",
+    anchor: { lat: 36.1627, lng: -86.7744 },
+    radiusKm: 10,
+    show: "Let Freedom Sing! — the riverfront fireworks over the Cumberland",
+    blurb:
+      "Nashville pairs one of the largest fireworks shows in the country with a full day of downtown concerts; the riverfront and Broadway cameras watch the crowd build from noon.",
+  },
+  {
+    key: "boston",
+    name: "Boston — the Charles River",
+    anchor: { lat: 42.3716, lng: -71.0839 },
+    radiusKm: 5,
+    show: "The Boston Pops Fireworks Spectacular over the Charles River",
+    blurb:
+      "The Pops play the Hatch Shell on the Esplanade and the fireworks go up over the Charles; the cameras of the Esplanade, Back Bay and the Cambridge bank frame the basin the show lights.",
+  },
+  {
+    key: "san-francisco",
+    name: "San Francisco — the northern waterfront",
+    anchor: { lat: 37.7955, lng: -122.3937 },
+    radiusKm: 10,
+    show: "The waterfront fireworks over the Bay, fired near Aquatic Park and Pier 39",
+    blurb:
+      "San Francisco fires from the northern waterfront — with the city's famous caveat, printed here as everywhere: summer fog can swallow the show whole, and the cameras will show that honestly too.",
+  },
+];
+
+/**
+ * The Boston Marathon, run on Patriots' Day — the third Monday of
+ * April, a Massachusetts holiday fixed by rule. Rows: Apr 19, 2027
+ * and Apr 17, 2028 (the 2026 race, Apr 20, has run).
+ */
+export const BOSTON_MARATHON: SeasonalEvent = {
+  id: "boston-marathon",
+  basis:
+    "Fixed by rule: the Boston Marathon is run on Patriots' Day, the third Monday of April (BAA). 2027-04-19 and 2028-04-17 are their Aprils' third Mondays.",
+  editions: [
+    { year: 2027, start: "2027-04-19", end: "2027-04-19" },
+    { year: 2028, start: "2028-04-17", end: "2028-04-17" },
+  ],
+};
+
+/**
+ * The Tournament of Roses Parade, Pasadena. By the Tournament's own
+ * rule the parade is held on January 1 — and never on a Sunday, when
+ * it moves to January 2 (the "Never on Sunday" rule, kept since
+ * 1893). None of 2027–2029 opens on a Sunday (2027-01-01 is a
+ * Friday, 2028-01-01 a Saturday, 2029-01-01 a Monday), so the rows
+ * are the firsts themselves; a future editor adding a Sunday year
+ * must write the 2nd.
+ */
+export const ROSE_PARADE: SeasonalEvent = {
+  id: "rose-parade",
+  basis:
+    "The Tournament of Roses rule: the parade is held on January 1, never on a Sunday (it moves to January 2 in a Sunday year). 2027-01-01 (Fri), 2028-01-01 (Sat) and 2029-01-01 (Mon) need no move.",
+  editions: [
+    { year: 2027, start: "2027-01-01", end: "2027-01-01" },
+    { year: 2028, start: "2028-01-01", end: "2028-01-01" },
+    { year: 2029, start: "2029-01-01", end: "2029-01-01" },
+  ],
+};
+
+/**
+ * The Albuquerque International Balloon Fiesta — nine days from the
+ * first Saturday of October. Unlike the rule-fixed events above,
+ * these rows are the organiser's published dates (balloonfiesta.com
+ * via Visit Albuquerque, checked 2026-10-27): the 55th Fiesta runs
+ * Oct 2–10, 2027, and Oct 7–15, 2028 is published alongside it.
+ * Editions beyond the published ones are deliberately absent — the
+ * page falls back to season framing until a new row is published.
+ */
+export const BALLOON_FIESTA: SeasonalEvent = {
+  id: "albuquerque-balloon-fiesta",
+  basis:
+    "Published dates (Albuquerque International Balloon Fiesta / Visit Albuquerque, checked 2026-10-27): Oct 2–10, 2027 and Oct 7–15, 2028.",
+  editions: [
+    { year: 2027, start: "2027-10-02", end: "2027-10-10" },
+    { year: 2028, start: "2028-10-07", end: "2028-10-15" },
   ],
 };
 

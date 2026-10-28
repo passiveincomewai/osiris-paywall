@@ -246,7 +246,13 @@ export default async function CherryBlossomsWashingtonDcPage() {
           { label: "Mardi Gras in New Orleans — live cameras", href: "/mardi-gras-new-orleans" },
           { label: "Oktoberfest in Munich — live cameras", href: "/oktoberfest-munich" },
           { label: "Fall foliage cameras", href: "/fall-foliage-cameras" },
-        ]}
+                  { label: "Macy's Thanksgiving Day Parade — live cameras", href: "/macys-thanksgiving-parade" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
+          { label: "Fourth of July fireworks — live cameras", href: "/fourth-of-july-fireworks" },
+          { label: "Boston Marathon — live cameras", href: "/boston-marathon" },
+          { label: "Rose Parade in Pasadena — live cameras", href: "/rose-parade" },
+          { label: "Albuquerque Balloon Fiesta — live cameras", href: "/albuquerque-balloon-fiesta" },
+]}
       />
 
       <TrialCtaSection utmSource={SLUG} />

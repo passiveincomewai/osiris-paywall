@@ -259,7 +259,7 @@ export default async function NewYearsEveTimesSquarePage() {
         links={[
           { label: "Live webcams in New York City", href: "/city-webcams/new-york-city" },
           { label: "Times Square & Midtown on the 3D globe", href: globeUrl },
-          { label: "Macy's Thanksgiving Day Parade — live cameras", href: "/macys-thanksgiving-parade-2026" },
+          { label: "Macy's Thanksgiving Day Parade — live cameras", href: "/macys-thanksgiving-parade" },
           { label: "United States cameras", href: "/cameras/countries/united-states" },
           { label: "All live events", href: "/live-events" },
         ]}
@@ -272,7 +272,13 @@ export default async function NewYearsEveTimesSquarePage() {
           { label: "Cherry blossoms in Washington DC", href: "/cherry-blossoms-washington-dc" },
           { label: "Oktoberfest in Munich — live cameras", href: "/oktoberfest-munich" },
           { label: "Fall foliage cameras", href: "/fall-foliage-cameras" },
-        ]}
+                  { label: "Macy's Thanksgiving Day Parade — live cameras", href: "/macys-thanksgiving-parade" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
+          { label: "Fourth of July fireworks — live cameras", href: "/fourth-of-july-fireworks" },
+          { label: "Boston Marathon — live cameras", href: "/boston-marathon" },
+          { label: "Rose Parade in Pasadena — live cameras", href: "/rose-parade" },
+          { label: "Albuquerque Balloon Fiesta — live cameras", href: "/albuquerque-balloon-fiesta" },
+]}
       />
 
       <TrialCtaSection utmSource={SLUG} />
