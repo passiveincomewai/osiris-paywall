@@ -291,6 +291,29 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'aurora-rovaniemi': eventGeoIn('Rovaniemi', 'finland', 66.5039, 25.7294, 40),
   'aurora-levi': eventGeoIn('Levi & Kittilä', 'finland', 67.8, 24.8, 40),
   'aurora-abisko': eventGeoIn('the Abisko corridor', 'sweden', 68.35, 18.82, 30),
+  // Menu #2 Wave B (Oct 2026): ferry-terminal walls for the ferry
+  // tracker, and the cruise-port walls this family adds. Centres
+  // and radii are the audited terminal points — see
+  // src/lib/ferries.ts and src/lib/cruise-ports.ts; yields are
+  // pinned in ferries.test.ts / cruise-ports.test.ts.
+  'ferry-wsf-seattle': eventGeo('Colman Dock, Seattle', 47.6026, -122.3387, 4),
+  'ferry-wsf-edmonds-kingston': eventGeo('the Edmonds–Kingston crossing', 47.8045, -122.4392, 7),
+  'ferry-wsf-bainbridge': eventGeo('Bainbridge Island', 47.6409, -122.5215, 4),
+  'ferry-wsf-bremerton': eventGeo('Bremerton', 47.5613, -122.6251, 4),
+  'ferry-wsf-mukilteo-clinton': eventGeo('the Mukilteo–Clinton crossing', 47.9625, -122.3274, 4),
+  'ferry-wsf-fauntleroy-vashon': eventGeo('the Triangle Route', 47.515, -122.455, 7),
+  'ferry-wsf-point-defiance': eventGeo('Point Defiance & Tahlequah', 47.32, -122.511, 4),
+  'ferry-wsf-anacortes': eventGeo('Anacortes', 48.5069, -122.678, 5),
+  'ferry-wsf-san-juans': eventGeo('the San Juan Island terminals', 48.565, -122.96, 8),
+  'ferry-wsf-port-townsend': eventGeo('Port Townsend', 48.1115, -122.7593, 5),
+  'ferry-wsf-coupeville': eventGeo('Coupeville (Keystone)', 48.1594, -122.6727, 5),
+  'ferry-bcf-departure-bay': eventGeoIn('Departure Bay, Nanaimo', 'canada', 49.194, -123.957, 4),
+  'ferry-bcf-horseshoe-bay': eventGeoIn('Horseshoe Bay', 'canada', 49.375, -123.272, 3),
+  'ferry-si-new-york-harbor': eventGeo('New York Harbor', 40.66, -74.04, 6),
+  'port-galveston': eventGeo('the Port of Galveston', 29.31, -94.775, 8),
+  'port-san-diego': eventGeo('the Port of San Diego', 32.716, -117.174, 8),
+  'port-barcelona': eventGeoIn('the Port of Barcelona', 'spain', 41.352, 2.162, 8),
+  'port-juneau': eventGeo('the Port of Juneau', 58.298, -134.404, 8),
   'nyc': eventGeo('New York City', 40.758, -73.9855, 25),
   'nyc-manhattan': eventGeo('Manhattan', 40.7831, -73.9712, 6),
   'nyc-brooklyn': eventGeo('Brooklyn', 40.6782, -73.9442, 8),

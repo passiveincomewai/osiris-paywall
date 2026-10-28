@@ -15,6 +15,8 @@ import { ICONIC_PLACES } from "@/lib/iconic-places";
 import { LAUNCH_SITES } from "@/lib/launch-sites";
 import { ANIMAL_STARS } from "@/lib/animal-cams";
 import { UNIVERSITIES } from "@/lib/universities";
+import { FERRY_SYSTEMS } from "@/lib/ferries";
+import { CRUISE_PORTS } from "@/lib/cruise-ports";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
@@ -290,6 +292,17 @@ const SEO_PAGES_UNIVERSITIES = [
   "/university-webcams",
   ...UNIVERSITIES.map((u) => `/university-webcams/${u.slug}`),
 ];
+
+// Menu #2 Wave B (2026-10-27): ferry tracker (hub + the three
+// evidenced systems) and cruise-port live boards (the nine evidenced
+// ports under /port-webcams/[port]). Registry-driven like the
+// volcanoes; the registries' tests pin the rejected candidates
+// (Port Canaveral, Southampton, Cozumel…) at zero cameras.
+const SEO_PAGES_FERRIES = [
+  "/ferry-tracker",
+  ...FERRY_SYSTEMS.map((s) => `/ferry-tracker/${s.slug}`),
+];
+const SEO_PAGES_CRUISE_PORTS = CRUISE_PORTS.map((p) => `/port-webcams/${p.slug}`);
 
 // Wave 15 (2026-10-27): interstate corridor camera pages — cameras in
 // driving order along the eight interstates with real catalogue density
@@ -815,6 +828,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })),
     ...SEO_PAGES_UNIVERSITIES.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_FERRIES.map((p) => ({
+      url: `${BASE}${p}`,
+      lastModified: catalogueDate,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_CRUISE_PORTS.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,

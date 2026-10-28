@@ -95,6 +95,22 @@ if (!globalForAis.shipsCache) {
 
 const shipsCache = globalForAis.shipsCache;
 
+/**
+ * Map an AIS ship-type code to an OSIRIS category. AIS type-code
+ * ranges: 60-69 passenger (cruise ships and ferries — these used to
+ * fall through to 'cargo', which hid every passenger vessel in the
+ * feed), 70-79 cargo, 80-89 tanker, 35 military (naval). Exported as
+ * a test seam, like clearMaritimeSnapshot below.
+ */
+export function getOsirisShipType(typeCode: number): string {
+  if (!typeCode) return 'cargo';
+  if (typeCode >= 60 && typeCode <= 69) return 'passenger';
+  if (typeCode >= 80 && typeCode <= 89) return 'tanker';
+  if (typeCode >= 70 && typeCode <= 79) return 'cargo';
+  if (typeCode === 35) return 'military';
+  return 'cargo';
+}
+
 function connectAisStream() {
   if (globalForAis.isAisConnecting) return;
   const apiKey = process.env.AIS_API_KEY;
@@ -141,15 +157,6 @@ function connectAisStream() {
     };
     ws.send(JSON.stringify(subscriptionMessage));
   });
-
-  // Map AIS ship types to OSIRIS categories
-  const getOsirisShipType = (typeCode: number) => {
-    if (!typeCode) return 'cargo';
-    if (typeCode >= 80 && typeCode <= 89) return 'tanker';
-    if (typeCode >= 70 && typeCode <= 79) return 'cargo';
-    if (typeCode === 35) return 'military';
-    return 'cargo';
-  };
 
   ws.on("message", (data) => {
     try {
@@ -314,6 +321,23 @@ function buildSnapshot(now: number): string {
     total_ships: ships.length,
     timestamp: new Date(now).toISOString(),
   });
+}
+
+/**
+ * Read seam for the narrow public tracking endpoints (ferry systems,
+ * cruise-port boards, per-ship pages). Returns the live cache's
+ * current records after pruning anything older than the feed's own
+ * 10-minute freshness window — the same rule buildSnapshot applies.
+ * Callers must filter to their own slice and return only that; the
+ * full feed itself stays behind the VIP gate on GET /api/maritime.
+ */
+export function getLiveShipsForTracking(now: number): Array<Record<string, unknown>> {
+  for (const [mmsi, ship] of shipsCache.entries()) {
+    if (now - ship.timestamp > 10 * 60 * 1000) {
+      shipsCache.delete(mmsi);
+    }
+  }
+  return Array.from(shipsCache.values());
 }
 
 /** Test seam — forces the next GET to rebuild. */

@@ -39,7 +39,9 @@ import { hreflangMapFor } from "@/lib/i18n-seo";
  * both from committed registries; 974 since Menu #2 Wave B part 1
  * added the /animal-webcams hub + 12 animal star pages and the
  * /university-webcams hub + 25 per-university pages, all from
- * committed registries). Transit URLs
+ * committed registries; 987 since Menu #2 Wave B part 2 added the
+ * /ferry-tracker hub + 3 ferry system pages and 9 cruise-port
+ * board pages, all from committed registries). Transit URLs
  * depend on live GTFS feeds, so they are pinned
  * structurally instead: present, unique, and every lastmod a
  * plausible feed-vintage date.
@@ -85,7 +87,7 @@ describe("sitemap URL set", () => {
       .map((r) => r.url)
       .filter((u) => !u.startsWith(`${BASE}/transit`))
       .sort();
-    expect(nonTransit.length).toBe(974);
+    expect(nonTransit.length).toBe(987);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -97,9 +99,11 @@ describe("sitemap URL set", () => {
     // part 2 (2026-10-28) then added the 7 iconic-places and
     // launch-sites URLs → 935. Menu #2 Wave B part 1 (2026-10-28)
     // then added the animal hub + 12 star pages and the university
-    // hub + 25 per-university pages → 974.
+    // hub + 25 per-university pages → 974. Menu #2 Wave B part 2
+    // (2026-10-28) then added the ferry hub + 3 system pages and 9
+    // cruise-port board pages → 987.
     expect(hash).toBe(
-      "7d4b058e723ee23c820640a9725ceba8210a7cdba4d48d8ba687d128995417fb",
+      "22a3b2cb4c8d27562ca05f3a81ad69cac80aa27b6cc074be87c9faac8bec59f0",
     );
   });
 

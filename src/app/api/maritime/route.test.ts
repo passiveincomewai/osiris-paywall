@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GET, clearMaritimeSnapshot } from './route';
+import { GET, clearMaritimeSnapshot, getLiveShipsForTracking, getOsirisShipType } from './route';
 
 /* The route aggregates over the websocket-fed ship map on globalThis, so the
    tests drive it directly rather than standing up an AIS stream. */
@@ -70,5 +70,48 @@ describe('GET /api/maritime', () => {
     expect(cc).toContain('max-age=5');
     expect(cc).not.toContain('no-store');
     expect(res.headers.get('content-type')).toContain('application/json');
+  });
+});
+
+describe('getOsirisShipType', () => {
+  it('maps AIS passenger codes 60-69 to passenger (ferries and cruise ships)', () => {
+    for (const code of [60, 61, 62, 63, 64, 65, 66, 67, 68, 69]) {
+      expect(getOsirisShipType(code)).toBe('passenger');
+    }
+  });
+
+  it('keeps the existing cargo, tanker and military ranges', () => {
+    expect(getOsirisShipType(70)).toBe('cargo');
+    expect(getOsirisShipType(79)).toBe('cargo');
+    expect(getOsirisShipType(80)).toBe('tanker');
+    expect(getOsirisShipType(89)).toBe('tanker');
+    expect(getOsirisShipType(35)).toBe('military');
+    expect(getOsirisShipType(0)).toBe('cargo');
+    expect(getOsirisShipType(37)).toBe('cargo');
+  });
+});
+
+describe('getLiveShipsForTracking', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
+    ships().clear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns fresh records and prunes anything past the 10-minute window', () => {
+    addShip(1, 47.6, -122.34);
+    const stale = {
+      id: 2, mmsi: 2, lat: 47.61, lng: -122.35, speed: 0, type: 'passenger',
+      name: 'STALE', timestamp: Date.now() - 11 * 60 * 1000,
+    };
+    ships().set(2, stale);
+
+    const live = getLiveShipsForTracking(Date.now());
+    expect(live.map((s) => s.mmsi)).toEqual([1]);
+    expect(ships().has(2)).toBe(false);
   });
 });

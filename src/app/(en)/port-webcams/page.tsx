@@ -16,6 +16,8 @@ import {
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
+import { CRUISE_PORTS } from "@/lib/cruise-ports";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Port Webcams — Live Harbour & Cruise Port Cameras",
@@ -247,12 +249,45 @@ export default async function PortWebcamsPage() {
         ]}
       />
 
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">
+          Cruise port boards — which ships are in port right now
+        </h2>
+        <p className="text-sm text-white/55 leading-relaxed max-w-3xl mb-5">
+          Nine of these ports carry a live board alongside their wall:
+          the cruise ships physically in port right now, read off the
+          vessels’ own AIS broadcasts. It is a presence board, not a
+          departure board — this site holds no schedule data, so no
+          page here prints a sailing time. And the discipline cuts
+          the famous way too: Port Canaveral, one of the world’s
+          busiest cruise ports, has no port camera in the catalogue
+          at all, so it has no board rather than a wall of freeway
+          footage wearing a port’s name.
+        </p>
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl">
+          {CRUISE_PORTS.map((p) => (
+            <li key={p.slug}>
+              <Link
+                href={`/port-webcams/${p.slug}`}
+                className="block rounded-xl border border-[rgba(130,170,255,0.18)] bg-[rgba(10,20,40,0.45)] px-4 py-3 hover:border-[rgba(130,170,255,0.45)]"
+              >
+                <span className="font-semibold text-slate-100">{p.name}</span>
+                <span className="block text-sm text-slate-400">
+                  {p.city}, {p.region} — live board & port cameras
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <FaqSection title="Port webcams — FAQ" faqs={FAQS} />
 
       <RelatedLinks
         title="More live WorldEye"
         links={[
           { label: "Live ship tracker (AIS)", href: "/ship-tracker" },
+          { label: "Ferry tracker — live ferries & terminal cameras", href: "/ferry-tracker" },
           { label: "New York City webcams — the harbour's city", href: "/city-webcams/new-york-city" },
           { label: "Beach & coast webcams", href: "/beach-webcams" },
           { label: "Japan webcams — the national hub", href: "/japan-webcams" },
