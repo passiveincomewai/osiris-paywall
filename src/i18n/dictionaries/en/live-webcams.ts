@@ -190,6 +190,10 @@ export const enLiveWebcams: LiveWebcamsCopy = {
       a: "WorldEye shows 74,229 live public webcams from 109 countries on one free interactive globe you can spin, search and zoom. Browse by country or city in the directory, or open the map and tap any camera marker — traffic, beaches, ski resorts, airports, landmarks and nature.",
     },
     {
+      q: "Where can I watch live cams near me?",
+      a: "Search your town or area in the directory search above, or open the live globe and zoom to where you are: WorldEye plots {count} public cameras across {countries} countries, so the cameras near you are the ones already mapped there — traffic and street cameras, city squares, beaches and landmarks. Coverage follows the public feeds each area publishes, so dense networks (the US DOT states, much of Europe) show hundreds nearby, while a rural area may show the nearest covered town instead.",
+    },
+    {
       q: "How many live cameras are there in the world?",
       a: "Nobody publishes an exact count of every webcam on Earth, but WorldEye serves 74,229 live cameras. The United States alone accounts for 41,355 of them, largely transportation-department networks. Every feed is checked before it is listed, so the number counts cameras you can actually watch.",
     },
@@ -207,6 +211,10 @@ export const enLiveWebcams: LiveWebcamsCopy = {
     {
       q: "Where can I find cameras for a specific country?",
       a: "The camera directory lists every country with its camera count and busiest region, and every country now has a dedicated page with its full city breakdown — start with the country table or search any place on the live map.",
+    },
+    {
+      q: "Are there live cameras near me?",
+      a: "Probably, if your area publishes public feeds. The fastest check is the search on this page: type your city or area and the directory lists the cameras there; the country directory and the Top 25 regions also show where the densest networks run. On the live globe you can zoom straight to your neighbourhood and tap any camera marker. Where no public feed exists nearby, the directory shows the closest covered town rather than pretending otherwise.",
     },
     {
       q: "What kinds of cameras are in the directory?",

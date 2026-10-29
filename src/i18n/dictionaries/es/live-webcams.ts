@@ -123,6 +123,10 @@ export const esLiveWebcams: LiveWebcamsCopy = {
       a: "WorldEye muestra 74.229 webcams públicas en vivo de 109 países en un solo globo interactivo gratuito que puedes girar, buscar y ampliar. Explora por país o ciudad en el directorio, o abre el mapa y toca cualquier marcador: tráfico, playas, estaciones de esquí, aeropuertos, lugares emblemáticos y naturaleza.",
     },
     {
+      q: "¿Dónde puedo ver cámaras en vivo cerca de mí?",
+      a: "Busca tu localidad o tu zona en el buscador del directorio de arriba, o abre el globo en vivo y haz zoom hasta donde estás: WorldEye sitúa en el mapa {count} cámaras públicas de {countries} países, así que las cámaras cercanas a ti son las que ya están mapeadas allí: cámaras de tráfico y de calles, plazas, playas y lugares emblemáticos. La cobertura depende de los feeds públicos que publica cada zona, por lo que las redes densas (los estados con DOT en EE. UU., gran parte de Europa) muestran cientos de cámaras cercanas, mientras que en una zona rural puede aparecer la localidad cubierta más próxima.",
+    },
+    {
       q: "¿Cuántas cámaras en vivo hay en el mundo?",
       a: "Nadie publica una cifra exacta de todas las webcams de la Tierra, pero WorldEye sirve 74.229 cámaras en vivo. Solo Estados Unidos suma 41.355, en gran parte redes de los departamentos de transporte. Cada feed se comprueba antes de entrar en la lista, así que la cifra cuenta cámaras que realmente puedes ver.",
     },
@@ -140,6 +144,10 @@ export const esLiveWebcams: LiveWebcamsCopy = {
     {
       q: "¿Dónde encuentro cámaras de un país concreto?",
       a: "El directorio de cámaras lista cada país con su número de cámaras y su región más activa, y cada país tiene ya su propia página con el desglose completo por ciudades: empieza por la tabla de países o busca cualquier lugar en el mapa en vivo.",
+    },
+    {
+      q: "¿Hay cámaras en vivo cerca de mí?",
+      a: "Probablemente, si tu zona publica feeds abiertos. La forma más rápida de comprobarlo es el buscador de esta página: escribe tu ciudad o tu zona y el directorio lista las cámaras que hay allí; el directorio por países y las 25 regiones principales también muestran dónde están las redes más densas. En el globo en vivo puedes hacer zoom directamente hasta tu barrio y tocar cualquier marcador de cámara. Donde no existe ningún feed público cercano, el directorio muestra la localidad cubierta más próxima en lugar de fingir lo contrario.",
     },
     {
       q: "¿Qué tipos de cámaras hay en el directorio?",
