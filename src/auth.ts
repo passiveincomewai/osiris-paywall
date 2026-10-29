@@ -10,6 +10,7 @@ import { planTierForRow, type PlanTier } from "@/lib/plan-tier";
 import { ambientAccessForRow } from "@/lib/ambient/access";
 import { powderPassEnabled, skiAccessForRow } from "@/lib/ski/access";
 import { getEffectiveEntitlement, maxTier } from "@/lib/team/entitlement";
+import { resolveEmailVerified } from "@/lib/auth-verification";
 
 /* ------------------------------------------------------------------ */
 /* Type augmentation: the session JWT carries the paywall state so     */
@@ -35,6 +36,12 @@ declare module "next-auth" {
        * passed the step-up challenge yet (item 2). Middleware bounces
        * app surfaces to /auth/totp while this is true. */
       totpPending?: boolean;
+      /** Email verification state (lib/auth-verification's rule:
+       * User.emailVerified set OR a provider-verified OAuth link —
+       * Google). Sign-in never waits for it (2026-10-29); it drives
+       * the camera ladder's verify rung and the Settings badge.
+       * Resolved on the same claims pass/TTL as planTier. */
+      emailVerified: boolean;
     } & DefaultSession["user"];
   }
 }
@@ -48,6 +55,7 @@ declare module "next-auth/jwt" {
     subscriptionCheckedAt?: number;
     totpEnabled?: boolean;
     totpVerified?: boolean;
+    emailVerified?: boolean;
   }
 }
 
@@ -154,9 +162,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!isValidEmail(email) || !password) return null;
         const user = await db.user.findUnique({ where: { email } });
         if (!user?.passwordHash) return null;
-        // Unverified emails can't sign in with a password — they must click
-        // the verification link first (sent at signup).
-        if (!user.emailVerified) return null;
+        // Unverified emails CAN sign in with a password (Jameson's
+        // order, 2026-10-29): verification is no longer a login gate.
+        // It happens later, in Settings, and unlocks +5 camera checks
+        // on the ladder — the state rides the session as
+        // user.emailVerified (lib/auth-verification).
         if (!(await verifyPassword(password, user.passwordHash))) return null;
         return { id: user.id, name: user.name, email: user.email, image: user.image };
       },
@@ -174,13 +184,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Refresh on sign-in, on explicit session update(), when the cache is
       // stale, or when either claim is missing entirely (a token minted
       // before planTier existed must heal on its next session fetch).
-      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined || token.skiAccess === undefined) {
+      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined || token.skiAccess === undefined || token.emailVerified === undefined) {
         const claims = await resolveSubscriptionClaims(userId);
         token.subscriptionStatus = claims.status;
         token.planTier = claims.tier;
         token.ambientAccess = claims.ambientAccess;
         token.skiAccess = claims.skiAccess;
         token.subscriptionCheckedAt = now;
+        // Verification rides the same pass (fail-soft inside the
+        // resolver; it also stamps provider-verified OAuth rows the
+        // adapter left null — lib/auth-verification).
+        token.emailVerified = await resolveEmailVerified(userId);
       }
 
       // ── 2FA step-up claims (item 2) ──────────────────────────────
@@ -224,6 +238,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.planTier = token.planTier ?? "free";
         session.user.ambientAccess = token.ambientAccess ?? false;
         session.user.skiAccess = token.skiAccess ?? false;
+        session.user.emailVerified = token.emailVerified ?? false;
         session.user.totpPending = !!(token.totpEnabled && !token.totpVerified);
       }
       return session;

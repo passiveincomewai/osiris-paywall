@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { usernameError, phoneError, normalizePhone } from "@/lib/password-auth";
+import { isVerifiedRow } from "@/lib/auth-verification";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,10 @@ export async function GET() {
 
   const user = await db.user.findUnique({
     where: { id: userId },
-    select: { name: true, email: true, phone: true, passwordHash: true, emailVerified: true, image: true },
+    select: {
+      name: true, email: true, phone: true, passwordHash: true, emailVerified: true, image: true,
+      accounts: { select: { provider: true } },
+    },
   });
   if (!user) return NextResponse.json({ error: "Account not found" }, { status: 404 });
 
@@ -23,7 +27,9 @@ export async function GET() {
     phone: user.phone,
     image: user.image,
     hasPassword: user.passwordHash !== null,
-    emailVerified: user.emailVerified !== null,
+    // lib/auth-verification's rule: the column OR a provider-verified
+    // OAuth link (legacy Google rows were never stamped).
+    emailVerified: isVerifiedRow(user),
   });
 }
 

@@ -1,6 +1,8 @@
 "use client";
-// Email+password registration. On success we show the "check your inbox"
-// state — the account can't sign in until the email is verified.
+// Email+password registration. On success we show the "you're in" state:
+// since 2026-10-29 the account signs in immediately — the verification
+// link we also send is a Settings step that unlocks +5 camera checks,
+// not an activation gate.
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
@@ -56,41 +58,68 @@ export default function SignupForm({ callbackUrl, googleEnabled }: { callbackUrl
     }
   }
 
+  // Honest resend (2026-10-29): the endpoint now reports the real send
+  // outcome for a just-created unverified account, so "re-sent" is only
+  // shown when the email actually went out — the old version fired and
+  // forgot, and claimed nothing either way.
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [resendMsg, setResendMsg] = useState<string | null>(null);
+
   async function resend() {
-    await fetch("/api/auth/resend-verification", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    }).catch(() => {});
+    if (resendState === "sending") return;
+    setResendState("sending");
+    setResendMsg(null);
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Couldn't resend the link.");
+      setResendState("sent");
+      setResendMsg("Link re-sent — check your inbox.");
+    } catch (e) {
+      setResendState("error");
+      setResendMsg(e instanceof Error ? e.message : "Couldn't resend the link.");
+    }
   }
 
   if (done) {
     return (
       <div className="text-center py-4">
         <MailCheck className="w-12 h-12 text-[#D4AF37] mx-auto mb-4" />
-        <h2 className="text-xl font-bold mb-2">Check your inbox</h2>
+        <h2 className="text-xl font-bold mb-2">You&apos;re in — sign in right away</h2>
         <p className="text-sm text-white/55 leading-relaxed mb-6">
-          We sent a verification link to <span className="text-white/85 font-medium">{email}</span>.
-          Click it to activate your account, then sign in.
+          Your account is ready; there&apos;s nothing to activate. We also sent a
+          verification link to <span className="text-white/85 font-medium">{email}</span> —
+          verifying unlocks <span className="text-white/85 font-medium">5 extra free camera
+          checks</span> (10 in total), and you can do it now from that email or any time
+          later in Settings.
           {done.emailSent === false && (
             <span className="block mt-2 text-amber-200/80">
-              Email delivery isn't configured on this server yet — contact support to activate your account.
+              Heads up: the verification email couldn&apos;t be sent from this server —
+              you can resend it from Settings after signing in.
             </span>
           )}
         </p>
-        <button
-          onClick={resend}
-          className="text-sm text-[#D4AF37] font-semibold hover:brightness-110 transition underline"
+        <Link
+          href={`/signin${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
+          className="inline-block rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-sm px-6 py-3 tracking-wide hover:brightness-110 active:scale-[0.99] transition"
         >
-          Didn't get it? Resend the link
-        </button>
-        <div className="mt-6 text-sm">
-          <Link
-            href={`/signin${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`}
-            className="text-white/45 hover:text-white transition"
+          Sign in
+        </Link>
+        <div className="mt-5 text-sm">
+          <button
+            onClick={resend}
+            disabled={resendState === "sending"}
+            className="text-sm text-[#D4AF37] font-semibold hover:brightness-110 transition underline disabled:opacity-60"
           >
-            Back to sign in
-          </Link>
+            {resendState === "sending" ? "Re-sending…" : "Didn't get the verification link? Resend it"}
+          </button>
+          {resendMsg && (
+            <p className={`mt-2 text-xs ${resendState === "error" ? "text-red-400" : "text-green-400"}`}>{resendMsg}</p>
+          )}
         </div>
       </div>
     );

@@ -1,14 +1,18 @@
 // POST /api/auth/signup — create an email+password account.
-// Sends a verification email; the account can't sign in until it's verified.
+// The address is validated for realness first (lib/email/validate-email)
+// and a verification email is sent — but sign-in doesn't wait for it
+// (2026-10-29): verification is a Settings step that unlocks +5 camera
+// checks, not a login gate.
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import {
   normalizeEmail, passwordError, hashPassword,
-  generateToken, isRateLimited, clientIp, VERIFY_ID_PREFIX,
+  isRateLimited, clientIp,
 } from "@/lib/password-auth";
 import { validateEmailAddress } from "@/lib/email/validate-email";
+import { sendVerificationEmail } from "@/lib/auth-verification";
 import { usernameValidationError } from "@/lib/account/names";
-import { sendEmail, emailConfigured, verificationEmail, appUrl } from "@/lib/email";
+import { appUrl } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
 import { subscribeToNewsletter } from "@/lib/newsletter/subscribe";
 import { sendMetaEvent, metaUserDataFromRequest } from "@/lib/meta-capi";
@@ -105,23 +109,13 @@ export async function POST(req: Request) {
     userData: metaUserDataFromRequest(req, email),
   });
 
-  // Single-use verification token (24h). Old ones for this email are cleared first.
-  await db.verificationToken.deleteMany({ where: { identifier: `${VERIFY_ID_PREFIX}${email}` } });
-  const token = generateToken();
-  await db.verificationToken.create({
-    data: {
-      identifier: `${VERIFY_ID_PREFIX}${email}`,
-      token,
-      expires: new Date(Date.now() + 24 * 3600 * 1000),
-    },
-  });
-
-  let emailSent = false;
-  if (emailConfigured()) {
-    const url = appUrl(`/api/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`);
-    const { subject, html } = verificationEmail(name, url);
-    emailSent = await sendEmail(email, subject, html);
-  }
+  // Verification email via the one shared send path
+  // (lib/auth-verification — the same implementation the resend
+  // endpoints use). It no longer gates anything: since 2026-10-29 the
+  // account signs in immediately, and the link is the Settings-bound
+  // step that unlocks +5 camera checks whenever it's clicked.
+  const verification = await sendVerificationEmail({ email, name });
+  const emailSent = verification.sent;
 
   // Newsletter opt-in (the signup form's unchecked-by-default checkbox):
   // subscribe through the one existing routine — double opt-in, tagged

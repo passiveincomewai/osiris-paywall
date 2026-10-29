@@ -1,7 +1,10 @@
 // POST /api/auth/login — precise credential pre-check for the sign-in form.
 // Auth.js's authorize() stays strict/generic; this endpoint owns the UX:
-// it distinguishes wrong-password, OAuth-only accounts, and unverified
-// emails so the form can say something useful. On { ok: true } the client
+// it distinguishes wrong-password and OAuth-only accounts so the form
+// can say something useful. (Unverified emails are NOT distinguished
+// any more: since 2026-10-29 sign-in doesn't wait for verification —
+// verifying is a Settings step that unlocks +5 camera checks.) On
+// { ok: true } the client
 // completes the real sign-in via signIn("credentials") — the password is
 // verified again inside authorize(), so this check grants nothing by itself.
 import { NextResponse } from "next/server";
@@ -53,16 +56,6 @@ export async function POST(req: Request) {
       );
     }
     return invalid();
-  }
-
-  if (!user.emailVerified) {
-    return NextResponse.json(
-      {
-        error: "unverified",
-        message: "Please verify your email first — check your inbox for the verification link.",
-      },
-      { status: 403 }
-    );
   }
 
   if (!(await verifyPassword(password, user.passwordHash))) return invalid();

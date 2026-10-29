@@ -1,6 +1,11 @@
 // GET /api/auth/verify-email?token=…&email=… — consume a signup verification
-// token, mark the email verified, and bounce to the sign-in page.
+// token and mark the email verified. Landing: since 2026-10-29 accounts
+// sign in before verifying, the clicker is often already signed in —
+// they land in Settings (where the verified state and the +5 camera
+// unlock show); a signed-out clicker lands on the sign-in page as
+// before.
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { normalizeEmail, tokensEqual, VERIFY_ID_PREFIX } from "@/lib/password-auth";
 import { appUrl } from "@/lib/email";
@@ -32,5 +37,11 @@ export async function GET(req: Request) {
     db.verificationToken.delete({ where: { token } }),
   ]);
 
-  return NextResponse.redirect(appUrl("/signin?verified=1"), { status: 303 });
+  const session = await auth().catch(() => null);
+  const signedInAsThisUser =
+    session?.user?.email && normalizeEmail(session.user.email) === email;
+  return NextResponse.redirect(
+    appUrl(signedInAsThisUser ? "/settings?verified=1" : "/signin?verified=1"),
+    { status: 303 },
+  );
 }

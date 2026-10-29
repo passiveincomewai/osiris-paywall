@@ -20,7 +20,7 @@ const ICONS: Record<string, (p: { className?: string }) => ReactNode> = {
 };
 
 const ERROR_COPY: Record<string, string> = {
-  verify: "That verification link is invalid or has expired. Request a new one below.",
+  verify: "That verification link is invalid or has expired. Sign in and request a fresh one in Settings.",
   // Auth.js's own error code for a failed email sign-in link (expired or
   // already-used token). Without this key those users fell through to the
   // generic "Something went wrong signing in." even though the remedy —
@@ -48,7 +48,6 @@ export default function SignInForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ReactNode | null>(status.error ? ERROR_COPY[status.error] ?? "Something went wrong signing in." : null);
   const [oauthHint, setOauthHint] = useState<string[] | null>(null);
-  const [resent, setResent] = useState(false);
 
   async function handlePassword(e: FormEvent) {
     e.preventDefault();
@@ -66,20 +65,6 @@ export default function SignInForm({
         if (data.error === "no_password") {
           setOauthHint(data.providers ?? []);
           setError(data.message ?? "This account uses a social sign-in.");
-        } else if (data.error === "unverified") {
-          setError(
-            <span>
-              {data.message}{" "}
-              <button
-                type="button"
-                className="underline text-[#D4AF37] hover:brightness-110"
-                onClick={resendVerification}
-              >
-                Resend the link
-              </button>
-              {resent && " — sent!"}
-            </span>
-          );
         } else {
           setError(data.error ?? "Invalid email or password.");
         }
@@ -94,14 +79,10 @@ export default function SignInForm({
     }
   }
 
-  async function resendVerification() {
-    await fetch("/api/auth/resend-verification", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    }).catch(() => {});
-    setResent(true);
-  }
+  // (The unverified-account branch and its resend button are gone:
+  // since 2026-10-29 sign-in doesn't wait for verification, so the
+  // login endpoint never returns "unverified". Verification lives in
+  // Settings now and unlocks +5 camera checks.)
 
   async function handleMagicLink(e: FormEvent) {
     e.preventDefault();
@@ -122,7 +103,7 @@ export default function SignInForm({
     <div>
       {status.verified && (
         <Banner tone="ok" icon={<CheckCircle2 className="w-4 h-4" />}>
-          Email verified — sign in below.
+          Email verified — 5 extra free camera checks unlocked. Sign in below.
         </Banner>
       )}
       {status.checkEmail && (

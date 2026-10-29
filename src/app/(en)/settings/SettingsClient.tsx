@@ -120,6 +120,15 @@ export default function SettingsClient() {
     })();
   }, []);
 
+  // Landing from the verification link while signed in:
+  // /settings?verified=1 — the profile fetch above already shows the
+  // verified badge; this is the words that go with it.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("verified") === "1") {
+      setNotice({ ok: true, text: "Email verified — 5 extra free camera checks unlocked (10 in total)." });
+    }
+  }, []);
+
   // Landing from the change-email confirmation link: /settings?emailChange=…
   useEffect(() => {
     const flag = new URLSearchParams(window.location.search).get("emailChange");
@@ -190,16 +199,23 @@ export default function SettingsClient() {
     setResendState("sending");
     setResendMsg(null);
     try {
-      // Same endpoint the sign-in / sign-up forms use. It answers
-      // { ok: true } on success (429 with its own message when the
-      // per-IP limit trips) — errors are surfaced as returned.
-      const res = await fetch("/api/auth/resend-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: profile.email }),
-      });
+      // The session-authenticated verify endpoint — NOT the public
+      // resend one. It answers with the full truth for this account:
+      // { sent: true } only when the email actually went out (a failed
+      // send is a 502 with its message), and { alreadyVerified: true }
+      // when the address turns out to be verified already (e.g. a
+      // Google account whose stamp was never written). "Sent" is only
+      // ever shown for a real send — the old flow claimed it for
+      // silent no-ops, which is why the button looked broken.
+      const res = await fetch("/api/account/verify-email/send", { method: "POST" });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Couldn't send the verification email.");
+      if (data.alreadyVerified) {
+        setProfile((p) => p && { ...p, emailVerified: true });
+        setResendState("sent");
+        setResendMsg("Good news — your email is already verified.");
+        return;
+      }
       setResendState("sent");
       setResendMsg("Verification email sent — check your inbox for the link.");
       setResendCooldown(60);
@@ -430,6 +446,33 @@ export default function SettingsClient() {
               </button>
             </form>
           </Section>
+
+          {!profile.emailVerified && (
+            <Section icon={MailWarning} title="Verify your email">
+              <p className="text-sm text-white/55 leading-relaxed mb-2">
+                Your account works without it — but verifying{" "}
+                <span className="text-white/85 font-medium">{profile.email}</span> unlocks{" "}
+                <span className="text-white/85 font-medium">5 extra free camera checks</span>{" "}
+                (10 in total instead of 5) and proves the address is really yours for
+                password resets and receipts.
+              </p>
+              <p className="text-xs text-white/35 mb-5">
+                We emailed a verification link when you signed up — links expire 24 hours
+                after they're sent, so if yours has lapsed, send a fresh one.
+              </p>
+              <button
+                type="button"
+                onClick={resendVerificationEmail}
+                disabled={resendState === "sending" || resendCooldown > 0}
+                className={btnGold}
+              >
+                {resendState === "sending" ? "Sending…" : resendCooldown > 0 ? `Send again in ${resendCooldown}s` : "Send verification email"}
+              </button>
+              {resendMsg && (
+                <p className={`text-sm mt-3 ${resendState === "error" ? "text-red-400" : "text-green-400"}`}>{resendMsg}</p>
+              )}
+            </Section>
+          )}
 
           <Section icon={Lock} title={profile.hasPassword ? "Change password" : "Set a password"}>
             <form onSubmit={changePassword} className="space-y-4">
