@@ -523,6 +523,9 @@ const SEO_PAGES_COMPARE = [
   "/compare/worldeye-vs-osiris",
   "/compare/earthcam-vs-skylinewebcams",
   "/compare/flightradar24-vs-flightaware",
+  "/compare/windy-vs-ventusky",
+  "/compare/marinetraffic-vs-vesselfinder",
+  "/compare/google-earth-vs-nasa-worldview",
 ];
 
 /**

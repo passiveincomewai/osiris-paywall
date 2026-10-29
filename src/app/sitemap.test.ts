@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1058);
+    expect(nonTransit.length).toBe(1061);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -140,9 +140,12 @@ describe("sitemap URL set", () => {
     // The competitor head-to-head wave 1 (2026-10-29) then added the
     // two /compare/<a>-vs-<b> pair URLs → 1,058. Delta: removing
     // exactly those 2 URLs reproduces the 1,056 set and the
-    // 2080493c… hash byte-for-byte.
+    // 2080493c… hash byte-for-byte. Wave 2 (2026-10-29) then added
+    // the three remaining pair URLs (windy-vs-ventusky,
+    // marinetraffic-vs-vesselfinder, google-earth-vs-nasa-worldview)
+    // → 1,061.
     expect(hash).toBe(
-      "2003c3064702cf1ecafd097c0f58a51742b110fe19d5cd850727cbeadd8a8013",
+      "b6d93150054828a895d2042b2cac28a0f9f9f8ad3c9eb99ec9ad89b376f9f775",
     );
   });
 

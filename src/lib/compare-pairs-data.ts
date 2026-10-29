@@ -16,6 +16,9 @@
 
 import earthcamVsSkylinewebcams from "@/data/compare-pairs/earthcam-vs-skylinewebcams.json";
 import flightradar24VsFlightaware from "@/data/compare-pairs/flightradar24-vs-flightaware.json";
+import windyVsVentusky from "@/data/compare-pairs/windy-vs-ventusky.json";
+import marinetrafficVsVesselfinder from "@/data/compare-pairs/marinetraffic-vs-vesselfinder.json";
+import googleEarthVsNasaWorldview from "@/data/compare-pairs/google-earth-vs-nasa-worldview.json";
 
 export type PairFeature = { label: string; a: string; b: string; note?: string };
 
@@ -51,6 +54,9 @@ export interface ComparePairData {
 const BUNDLED: ComparePairData[] = [
   earthcamVsSkylinewebcams,
   flightradar24VsFlightaware,
+  windyVsVentusky,
+  marinetrafficVsVesselfinder,
+  googleEarthVsNasaWorldview,
 ] as ComparePairData[];
 
 /** One bundled pair by slug (published only), or null. */
