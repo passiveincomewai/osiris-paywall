@@ -36,6 +36,7 @@ export default function TrialCtaCards() {
             <div className="mt-auto pt-5">
               <TrialButton
                 label={p.cta}
+                days={p.trialDays === 3 ? 3 : 10}
                 onClick={() => setSheetPlan(p.plan)}
                 className="w-full"
               />

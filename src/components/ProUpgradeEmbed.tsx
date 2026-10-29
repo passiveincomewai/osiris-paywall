@@ -36,6 +36,7 @@ import {
 } from "@/lib/billing/trial-checkout";
 import CheckoutSheet from "./CheckoutSheet";
 import HostedCheckoutLink from "./HostedCheckoutLink";
+import TrialButton from "./TrialButton";
 
 export default function ProUpgradeEmbed({
   premiumLabels,
@@ -113,16 +114,15 @@ export default function ProUpgradeEmbed({
         })}
       </div>
 
-      <button
-        type="button"
+      <TrialButton
+        label={selected.cta}
+        days={selected.trialDays === 3 ? 3 : 10}
         onClick={() => {
           setSheetPlan(plan);
           onSheetOpen?.();
         }}
-        className="mt-2.5 flex min-h-[44px] w-full items-center justify-center rounded-xl bg-[#D4AF37] px-4 text-sm font-bold text-black transition hover:brightness-110 active:brightness-95"
-      >
-        {selected.cta}
-      </button>
+        className="mt-2.5 w-full"
+      />
       <p className="mt-1.5 text-center text-[9px] leading-snug text-white/35">
         Apple Pay &amp; Link lead the checkout form.
       </p>

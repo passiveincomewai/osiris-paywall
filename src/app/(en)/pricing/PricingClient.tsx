@@ -8,7 +8,6 @@ import JsonLd from "@/components/JsonLd";
 import CheckoutSheet from "@/components/CheckoutSheet";
 import TrialButton from "@/components/TrialButton";
 import TeamSection from "./TeamSection";
-import ProofCounters from "@/components/ProofCounters";
 import CancelReassurance from "@/components/CancelReassurance";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
 import {
@@ -98,11 +97,17 @@ function CheckoutButton({
   trial?: string;
   onCheckout: (plan: Plan) => void;
 }) {
-  // Trial plans carry the owner's artwork button; Enterprise (no trial)
-  // keeps the gold button.
+  // Trial plans carry the owner's artwork button, variant-matched to
+  // the plan's trial length (Weekly = the 3-day artwork, the rest the
+  // 10-day); Enterprise (no trial) keeps the gold button.
   if (trial) {
     return (
-      <TrialButton label={label} onClick={() => onCheckout(plan)} className="w-full" />
+      <TrialButton
+        label={label}
+        days={plan === "weekly" ? 3 : 10}
+        onClick={() => onCheckout(plan)}
+        className="w-full"
+      />
     );
   }
   return (
@@ -115,7 +120,7 @@ function CheckoutButton({
   );
 }
 
-function StickyMobileCta({ cta }: { cta: string }) {
+function StickyMobileCta({ cta, plan }: { cta: string; plan: Plan }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 700);
@@ -133,12 +138,12 @@ function StickyMobileCta({ cta }: { cta: string }) {
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
           className="fixed bottom-0 inset-x-0 z-50 md:hidden px-4 pb-4 pt-8 bg-gradient-to-t from-black via-black/90 to-transparent pointer-events-none"
         >
-          <button
+          <TrialButton
+            label={cta}
+            days={plan === "weekly" ? 3 : 10}
             onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-            className="pointer-events-auto w-full py-3.5 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-[15px] tracking-wide shadow-[0_8px_32px_rgba(212,175,55,0.45)] active:scale-[0.99] transition"
-          >
-            {cta}
-          </button>
+            className="pointer-events-auto w-full drop-shadow-[0_8px_32px_rgba(0,150,255,0.35)]"
+          />
         </motion.div>
       )}
     </AnimatePresence>
@@ -243,15 +248,10 @@ export default function PricingPage({
             <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
               {copy.hero.h1Before}<span className="text-[#D4AF37]">{copy.hero.h1Accent}</span>{copy.hero.h1After}
             </h1>
-            <p className="text-white/55 mt-2 text-sm md:text-base leading-relaxed px-1">
-              {copy.hero.sub}
-            </p>
           </motion.div>
 
-          <ProofCounters />
-
           {/* Billing toggle */}
-          <div className="mt-6 inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur max-w-full">
+          <div className="mt-6 flex sm:inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur w-full sm:w-auto max-w-full">
             {(["weekly", "monthly", "annual"] as Plan[]).map((key) => (
               <button
                 key={key}
@@ -261,7 +261,7 @@ export default function PricingPage({
                   // at so the post-signup trial prompt can preselect it.
                   recordLastViewedPlan(key);
                 }}
-                className={`relative px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+                className={`relative flex-1 sm:flex-none px-2 sm:px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                   plan === key ? "text-black" : "text-white/55 hover:text-white"
                 }`}
               >
@@ -297,7 +297,7 @@ export default function PricingPage({
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="mt-6 max-w-md mx-auto rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-5 md:p-6 shadow-[0_24px_80px_rgba(212,175,55,0.12)]"
+          className="mt-6 max-w-md mx-auto scroll-mt-6 rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-5 md:p-6 shadow-[0_24px_80px_rgba(212,175,55,0.12)]"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -445,7 +445,7 @@ export default function PricingPage({
             {copy.comparison.rows.map((feature, i) => {
               const r = COMPARE_BOOLEANS[i] ?? { free: false, pro: false, vip: false };
               return (
-                <div key={feature} className="grid grid-cols-[1fr_52px_52px_52px] md:grid-cols-[1fr_90px_90px_90px] border-b border-white/5 last:border-0 text-sm">
+                <div key={feature} className="grid grid-cols-[1fr_52px_52px_52px] md:grid-cols-[1fr_90px_90px_90px] border-b border-white/5 last:border-0 text-[13px] sm:text-sm">
                   <div className="px-5 md:px-7 py-2 text-white/75">{feature}</div>
                   <div className="py-2 flex justify-center items-center">
                     {r.free
@@ -519,7 +519,7 @@ export default function PricingPage({
           })}
         </div>
       </div>
-      <StickyMobileCta cta={p.cta} />
+      <StickyMobileCta cta={p.cta} plan={plan} />
       <CheckoutSheet plan={sheetPlan} onClose={closeSheet} />
       <SiteFooter copy={getChromeCopy(locale)} locale={locale} slug="pricing" />
     </main>

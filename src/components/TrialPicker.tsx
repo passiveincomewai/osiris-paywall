@@ -27,9 +27,11 @@
  *    reopening starts fresh. The failure fallback is unchanged — the
  *    body's flow drops to the hosted redirect on any embedded failure.
  *
- * Each plan card's CTA is a real filled button (gold, full-width,
- * ≥48px) — it used to be a text-styled line inside a card-wide button,
- * which read as a link and nested-button markup was never an option.
+ * Each plan card's CTA is the owner's glowing trial artwork as a
+ * real button (components/TrialButton), variant-matched to the plan's
+ * trial length — it used to be a text-styled line inside a card-wide
+ * button, which read as a link, and later a solid gold button; the
+ * artwork replaced both (owner's order, 2026-10-29).
  */
 import { useEffect, useState } from "react";
 import { ArrowLeft, Lock, X, Zap } from "lucide-react";
@@ -40,6 +42,7 @@ import {
   type TrialPlanOption,
 } from "@/lib/billing/trial-checkout";
 import EmbeddedCheckoutBody from "./EmbeddedCheckoutBody";
+import TrialButton from "./TrialButton";
 
 interface TrialPickerProps {
   /** Tighter paddings/type for the layer flyout and the follow HUD. */
@@ -97,18 +100,26 @@ function PlanRow({
       <span className={`block text-white/45 ${compact ? "mt-0.5 text-[9.5px]" : "mt-1 text-[11px]"}`}>
         {option.note}
       </span>
-      {/* The CTA: a real button, not a text line — solid gold like every
-          primary CTA on the site, full-width in the card, tall enough
-          to land a thumb on. */}
-      <button
-        type="button"
-        onClick={() => onPick(option)}
-        disabled={busy}
-        aria-label={`${option.cta} — ${option.name} ${option.price}${option.per}`}
-        className={`flex w-full min-h-[48px] items-center justify-center rounded-xl bg-[#D4AF37] px-4 font-bold text-black transition hover:brightness-110 active:brightness-95 disabled:opacity-60 ${compact ? "mt-2 text-xs" : "mt-3 text-sm"}`}
-      >
-        {busy ? "Opening secure checkout…" : option.cta}
-      </button>
+      {/* The CTA: the owner's glowing trial artwork as a real button
+          (components/TrialButton), variant-matched to this plan's trial
+          length — the same button /pricing's plan card carries. While
+          a pick is in flight the artwork dims and a status line names
+          what is happening. */}
+      {busy ? (
+        <p
+          role="status"
+          className={`flex w-full min-h-[48px] items-center justify-center px-4 text-center font-semibold text-white/55 ${compact ? "mt-2 text-xs" : "mt-3 text-sm"}`}
+        >
+          Opening secure checkout…
+        </p>
+      ) : (
+        <TrialButton
+          label={`${option.cta} — ${option.name} ${option.price}${option.per}`}
+          days={option.trialDays === 3 ? 3 : 10}
+          onClick={() => onPick(option)}
+          className={`w-full ${compact ? "mt-2" : "mt-3"}`}
+        />
+      )}
     </div>
   );
 }

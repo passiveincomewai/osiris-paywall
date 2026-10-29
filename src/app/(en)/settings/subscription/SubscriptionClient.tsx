@@ -24,7 +24,8 @@ import {
   type ManageOption,
   type ManagePendingSwitch,
 } from "@/lib/billing/manage";
-import { startPlanCheckout } from "@/lib/billing/trial-checkout";
+import { startPlanCheckout, TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
+import TrialButton from "@/components/TrialButton";
 import InvoicePayForm from "@/components/InvoicePayForm";
 
 const btnGold =
@@ -182,9 +183,21 @@ export default function SubscriptionClient() {
                 </p>
                 <p className="text-xs text-[#D4AF37] font-semibold">Just {o.perDay} a day</p>
                 <p className="text-xs text-white/45 mt-1 mb-4">{o.note}</p>
-                <button onClick={() => startPlanCheckout(o.plan)} className={`${btnGold} w-full`}>
-                  Start free trial
-                </button>
+                {(() => {
+                  const t = TRIAL_PLAN_OPTIONS.find((x) => x.plan === o.plan);
+                  return t ? (
+                    <TrialButton
+                      label={t.cta}
+                      days={t.trialDays === 3 ? 3 : 10}
+                      onClick={() => startPlanCheckout(o.plan)}
+                      className="w-full"
+                    />
+                  ) : (
+                    <button onClick={() => startPlanCheckout(o.plan)} className={`${btnGold} w-full`}>
+                      Start free trial
+                    </button>
+                  );
+                })()}
               </div>
             ))}
           </div>

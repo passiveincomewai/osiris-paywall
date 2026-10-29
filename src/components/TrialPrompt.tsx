@@ -22,6 +22,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Crown, X } from "lucide-react";
 import { readSessionIdentity } from "@/lib/premium-entitlement";
+import TrialButton from "@/components/TrialButton";
 import {
   TRIAL_PLAN_OPTIONS,
   startPlanCheckout,
@@ -109,12 +110,12 @@ export default function TrialPrompt() {
             {option.note}. That&apos;s {option.price}
             {option.per} after the trial, just {option.perDay} a day.
           </p>
-          <button
+          <TrialButton
+            label={option.cta}
+            days={option.trialDays === 3 ? 3 : 10}
             onClick={() => startPlanCheckout(option.plan)}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-[15px] tracking-wide hover:brightness-110 active:scale-[0.99] transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
-          >
-            {option.cta}
-          </button>
+            className="w-full"
+          />
           <p className="text-[11px] text-white/35 mt-3">{TRUST_LINE}</p>
           <div className="mt-5 flex items-center justify-center gap-5 text-sm">
             <Link
@@ -146,12 +147,12 @@ export default function TrialPrompt() {
         Try Pro free — {option.trialLabel} of {option.name} ({option.price}
         {option.per}), then just {option.perDay} a day.
       </p>
-      <button
+      <TrialButton
+        label={option.cta}
+        days={option.trialDays === 3 ? 3 : 10}
         onClick={() => startPlanCheckout(option.plan)}
-        className="shrink-0 px-4 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-[13px] hover:brightness-110 active:scale-[0.99] transition"
-      >
-        {option.cta}
-      </button>
+        className="w-36 shrink-0 sm:w-44"
+      />
       <button
         onClick={dismiss}
         aria-label="Dismiss"

@@ -36,8 +36,9 @@ describe("TrialPicker", () => {
 
   it("each plan's CTA is a real filled button, not a text line (C1)", () => {
     const html = normalize(renderToString(createElement(TrialPicker)));
-    // The CTA of each plan is a <button> carrying the gold filled
-    // treatment and a ≥48px tap height, labelled with its plan.
+    // The CTA of each plan is a <button> carrying the owner's glowing
+    // trial artwork, variant-matched to the plan's trial length and
+    // labelled with its plan.
     for (const label of [
       "Start 3-Day Free Trial — Weekly $7.99/week",
       "Start 10-Day Free Trial — Monthly $13.99/month",
@@ -45,8 +46,10 @@ describe("TrialPicker", () => {
     ]) {
       expect(html).toContain(`aria-label="${label}"`);
     }
-    expect(html).toContain("bg-[#D4AF37]");
-    expect(html).toContain("min-h-[48px]");
+    expect(html).toContain("trial-btn");
+    // Weekly carries the 3-day artwork; monthly/annual the 10-day.
+    expect(html).toContain("/start-trial-button-3day.png");
+    expect(html).toContain("/start-trial-button.png");
     // Exactly the three plan CTAs are buttons in the default render
     // (no close affordance was passed).
     expect(html.match(/<button/g)).toHaveLength(3);

@@ -32,6 +32,7 @@ import {
 import { MOODS, isMoodSlug, type MoodSlug } from "@/lib/ambient/moods";
 import { startHostedCheckout } from "@/lib/billing/trial-checkout";
 import { CheckoutError } from "@/lib/billing/checkout-error";
+import TrialButton from "@/components/TrialButton";
 import { trackAnalyticsEvent } from "@/components/AnalyticsTracker";
 
 /**
@@ -971,15 +972,17 @@ export default function AmbientMode() {
               >
                 Manage your subscription
               </Link>
+            ) : checkoutBusy ? (
+              <p role="status" className="mt-6 w-full px-6 py-3 text-center text-sm font-semibold text-white/55">
+                Opening checkout…
+              </p>
             ) : (
-              <button
-                type="button"
+              <TrialButton
+                label="Start 10-day free trial"
+                days={10}
                 onClick={() => void startCheckout()}
-                disabled={checkoutBusy}
-                className="mt-6 w-full rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] px-6 py-3 text-sm font-bold text-black transition hover:brightness-110 disabled:opacity-60"
-              >
-                {checkoutBusy ? "Opening checkout…" : "Start 10-day free trial"}
-              </button>
+                className="mt-6 w-full"
+              />
             )}
             {checkoutError && !alreadySubscribed && (
               <p className="mt-3 text-xs text-red-300">{checkoutError}</p>
