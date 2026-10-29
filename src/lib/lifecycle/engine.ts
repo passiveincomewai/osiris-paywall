@@ -28,6 +28,8 @@ import { formatMoney, formatTrialEnd, planByPriceIdFromEnv } from "../billing/tr
 import {
   currentDiscountOffer,
   MARKETING_CAP_WINDOW_MS,
+  WELCOME_MIN_AGE_MS,
+  WELCOME_MAX_AGE_MS,
   INTEREST_ACTIVITY_WINDOW_MS,
   RETARGET_PRICING_WINDOW_MS,
   AFFILIATE_SIGNUP_WINDOW_MS,
@@ -159,8 +161,15 @@ export async function runLifecycleEmails(
       where: { userId_template_contextKey: { userId: user.id, template, contextKey } },
       select: { id: true, status: true },
     });
+    // The welcome is exempt from the marketing cap: it is the first
+    // touch the cap's spacing exists to protect, and a follow-up
+    // template (retarget/interest) must never be able to consume its
+    // slot first — a minutes-old user who views /pricing would
+    // otherwise lose the welcome for good (the cap lifts at +48h,
+    // exactly when the welcome window closes). Sections run welcome
+    // first, so once it logs, same-batch follow-ups see the cap spent.
     const marketingSendsInWindow =
-      kind === "marketing"
+      kind === "marketing" && template !== "welcome_discount"
         ? await db.lifecycleEmailLog.count({
             where: {
               userId: user.id,
@@ -261,9 +270,14 @@ export async function runLifecycleEmails(
     const users = await db.user.findMany({
       where: {
         email: { not: null },
+        // Window comes from config.ts (owner policy: near-instant
+        // welcome, 48h cap) — never hardcode it here; a hardcoded
+        // 15-minute floor once silently overrode the configured
+        // 2-minute minimum and let retargeting steal the welcome's
+        // marketing-cap slot for brand-new users.
         createdAt: {
-          gte: new Date(now.getTime() - 48 * 3600_000),
-          lte: new Date(now.getTime() - 15 * 60_000),
+          gte: new Date(now.getTime() - WELCOME_MAX_AGE_MS),
+          lte: new Date(now.getTime() - WELCOME_MIN_AGE_MS),
         },
       },
       select: { ...userSelect, createdAt: true },
