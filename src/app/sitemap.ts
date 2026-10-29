@@ -540,6 +540,18 @@ const SEO_PAGES_COMPARE = [
   "/compare/godsview-vs-argos-atlas",
   "/compare/godsview-vs-world-monitor",
   "/compare/godsview-vs-liveuamap",
+  "/compare/argos-atlas-vs-earthcam",
+  "/compare/argos-atlas-vs-skylinewebcams",
+  "/compare/argos-atlas-vs-google-earth",
+  "/compare/argos-atlas-vs-zoom-earth",
+  "/compare/argos-atlas-vs-world-monitor",
+  "/compare/argos-atlas-vs-liveuamap",
+  "/compare/flightradar24-vs-adsb-exchange",
+  "/compare/flightradar24-vs-airplanes-live",
+  "/compare/flightaware-vs-adsb-exchange",
+  "/compare/adsb-exchange-vs-airplanes-live",
+  "/compare/marinetraffic-vs-shipfinder",
+  "/compare/vesselfinder-vs-shipfinder",
 ];
 
 /**

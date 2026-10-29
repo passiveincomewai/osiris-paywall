@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1074);
+    expect(nonTransit.length).toBe(1086);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -148,8 +148,12 @@ describe("sitemap URL set", () => {
     // URLs (gods-eye-view-vs-* ×9, godsview-vs-* ×4) → 1,074.
     // Delta hand-verified: removing exactly those 13 URLs
     // reproduces the 1,061 set and the b6d93150… hash byte-for-byte.
+    // Competitor-vs-competitor wave 2B (2026-10-29) then added the
+    // 12 Argos Atlas / flight-tracker / AIS head-to-head pair URLs
+    // → 1,086. Delta hand-verified: removing exactly those 12 URLs
+    // reproduces the 1,074 set and the 1f29ca5e… hash byte-for-byte.
     expect(hash).toBe(
-      "1f29ca5efd9c6f158f319d77877942eb33d19a6c15987def74b527300ec62f7d",
+      "52a52ab4c2a39e010bea4aa62343d57a02633e71ce0196bf94308320358cbc48",
     );
   });
 

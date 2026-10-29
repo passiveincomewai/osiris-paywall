@@ -1,0 +1,239 @@
+{
+  "aAbout": "Flightradar24 shows real-time aircraft positions built from ADS-B, MLAT, radar and FAA data fed by roughly 45,000 volunteer receivers, with airport departure and arrival boards, aircraft photos and deep flight history. Its consumer plans layer on features — up to 365 days of history, full aircraft details (age, serial, squawk, vertical speed), 15+ weather layers, aeronautical charts and oceanic tracks — and its iOS/Android apps, including 3D and cockpit views, are widely considered the best in flight tracking.",
+  "aName": "Flightradar24",
+  "aSlug": "flightradar24",
+  "aStrengths": "Flightradar24 is the deeper tool for watching the sky itself: a receiver network of roughly 45,000 feeders, up to 365 days of flight history, full aircraft details, 15+ live weather layers, ATC boundaries, aeronautical charts, oceanic tracks, CSV export and airport boards with live ETAs. Its apps are best-in-class for planespotting, and it reports more than 1,000,000 subscribers across its plans.",
+  "aWebsite": "https://www.flightradar24.com",
+  "bAbout": "Airplanes.live is a community-run ADS-B aggregator. Receivers built and hosted by enthusiasts pick up ADS-B and MLAT signals from the aircraft overhead, and the combined feed shows what is flying in your area right now — unfiltered and unobfuscated, including military aircraft, aircraft squawking an emergency and LADD-enrolled aircraft that other trackers suppress. The organisation was founded by four aviation enthusiasts and describes itself as not for profit, with by-laws that it cannot be sold, transferred or taken over by any one individual. The web map is free permanently with no accounts; a freemium iOS app adds a paid Pro tier.",
+  "bName": "Airplanes.live",
+  "bSlug": "airplanes-live",
+  "bStrengths": "Airplanes.live is the principled community choice: every aircraft its receivers hear is shown, unfiltered and unobfuscated — military jets, special-interest traffic and aircraft other trackers scrub. Feeders get the unfiltered MLAT results back, the web map is free permanently with no accounts, no ads and no trackers by its own account, and active feeders get the iOS app's Pro tier free. For planespotters and researchers who want the whole sky from a network run by enthusiasts rather than a company, it is the free, principled option.",
+  "bWebsite": "https://airplanes.live/",
+  "betterAnswer": "They solve different problems. Flightradar24 is the better everyday tracker: richer aircraft detail, up to 365 days of history, airport boards and polished apps for both phone platforms — filtered, and with the depth behind subscriptions. Airplanes.live is the better open window: a community-run, unfiltered ADS-B and MLAT map that is free on the web with no accounts, with a cheap Pro tier in its iOS app. If you want a tracker, open Flightradar24; if you want the unfiltered sky for free, open Airplanes.live.",
+  "category": "Flight tracking",
+  "consA": [
+    "Filtered — some military and blocked traffic is hidden",
+    "Full web access requires registration, even on the free tier",
+    "The depth sits behind Silver, Gold or Business subscriptions",
+    "Pricing varies by region and is listed in-app",
+    "Flight-only — no ships, cameras or other live layers"
+  ],
+  "consB": [
+    "Web map is a single-purpose 2D viewer — no 3D globe",
+    "No official Android app confirmed on its official pages",
+    "Replay exists as a feeder benefit, but no replay length is stated",
+    "Pro alerts and advanced filters live in the iOS app, not a web plan",
+    "No public API documentation or pricing on its official pages"
+  ],
+  "faqs": [
+    {
+      "a": "Yes — that is its founding promise: 'Airplanes.live will never filter or obfuscate aircraft data.' Its FAQ describes a live map that is never filtered or blocked, including military aircraft, aircraft squawking an emergency and LADD-enrolled aircraft that other trackers suppress. Flightradar24, as a filtered mainstream tracker, hides some traffic Airplanes.live shows.",
+      "q": "Does Airplanes.live really show military aircraft?"
+    },
+    {
+      "a": "Yes on the web. Its homepage says Airplanes.live is free to use, and its app site says the unfiltered map is free, permanently — with no accounts. The iOS app is also free, with an optional Pro tier at $2.99/month or $19.99/year; active feeders get Pro free.",
+      "q": "Is Airplanes.live free?"
+    },
+    {
+      "a": "There is a free Basic tier with a limited feature set. Silver, Gold and Business plans unlock 60+ premium features with a 7-day free trial; pricing varies by region. The API is a separate product.",
+      "q": "Is Flightradar24 free?"
+    },
+    {
+      "a": "Flightradar24, on what is confirmed. It offers up to 365 days of history on its top tiers. Airplanes.live lists an ability to replay data as a feeder benefit, but no replay or history length is stated on its official pages — treat its replay length as unverified.",
+      "q": "Which has more flight history, Flightradar24 or Airplanes.live?"
+    },
+    {
+      "a": "No official Airplanes.live Android app was linked or announced on its official pages checked for this comparison — treat Android availability as unverified. There is an official iOS app for iPhone and iPad. Flightradar24 has established apps on both iOS and Android.",
+      "q": "Does Airplanes.live have an Android app?"
+    },
+    {
+      "a": "Both maps here can be opened free, and WorldEye's globe also shows live flights free with no signup, combined with ships, satellites, weather and 74,229 public cameras. For unfiltered data, Airplanes.live is the specialist; for history, alerts and aircraft records, Flightradar24 remains the specialist.",
+      "q": "Is there a free flight tracker with no signup?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "airports"
+    ],
+    "ids": [
+      "occ-airportwebcams-targovishte-airport-1",
+      "occ-openwebcamdb-nagoya-airport-runway-action",
+      "cal-177",
+      "ottawa-muni-229",
+      "cal-634",
+      "ndot-7570"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Live global flight map",
+      "note": "Both track flights in real time; Flightradar24 blends ADS-B, MLAT, radar and FAA data, Airplanes.live aggregates community ADS-B and MLAT"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Unfiltered military and LADD aircraft",
+      "note": "Airplanes.live never filters or obfuscates, including military and LADD-enrolled aircraft; Flightradar24 is a filtered mainstream tracker"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "MLAT positions",
+      "note": "Both use multilateration; Airplanes.live feeders get the unfiltered MLAT results back"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Flight history and replay",
+      "note": "Flightradar24 offers up to 365 days of history on top tiers; Airplanes.live lists replay as a feeder benefit, but no replay length is stated on its official pages"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Aircraft details, photos and routes",
+      "note": "Both show aircraft details and photos; Airplanes.live adds search by callsign, registration or hex"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Weather layers and radar",
+      "note": "Flightradar24's Gold plan has 15+ weather layers; Airplanes.live's live weather radar is a Pro feature in its iOS app, with public weather radar listed among feeder benefits on the web"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Aeronautical charts and ATC-style views",
+      "note": "Flightradar24 offers aeronautical charts and ATC boundaries; Airplanes.live's ATC scope mode is a Pro feature in its iOS app"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Watchlist and emergency alerts",
+      "note": "Flightradar24 offers custom alerts on paid plans; Airplanes.live Pro adds an unlimited watchlist and push alerts — when a followed aircraft takes off, or anything squawks 7700"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Official iOS app",
+      "note": "Both have official iOS apps; Airplanes.live's app is free with an optional Pro tier, and Pro is free for active feeders"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Official Android app",
+      "note": "Flightradar24 has an established Android app; no official Airplanes.live Android app was linked or announced on its official pages checked"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "3D and cockpit views",
+      "note": "Flightradar24's apps offer 3D and cockpit-view modes; Airplanes.live is a 2D map only"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Free access without signup",
+      "note": "Flightradar24 has a free Basic tier, but full web access requires registration; Airplanes.live's web map is free permanently with no accounts"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Commercial data feeds and APIs",
+      "note": "Flightradar24 sells its API separately and offers Business plans; no public API documentation or pricing was found on the Airplanes.live official pages checked"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Community feeder network",
+      "note": "Both rely on volunteers hosting receivers: roughly 45,000 for Flightradar24; Airplanes.live is community-run by enthusiast feeders"
+    }
+  ],
+  "intro": "Flightradar24 and Airplanes.live track the same sky from opposite ends of the market. Flightradar24 (Sweden, founded 2006) is the polished mainstream tracker: real-time positions from a vast volunteer receiver network, rich aircraft detail, airport boards and best-in-class apps, with some traffic filtered and the depth sold by subscription. Airplanes.live is a community-run, not-for-profit ADS-B and MLAT aggregator founded by four aviation enthusiasts, built on the opposite promise — it will never filter or obfuscate aircraft data — with a web map that is free permanently and asks for no account at all.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "Free Basic tier with limited features. Paid consumer plans — Silver, Gold and Business — unlock 60+ premium features, with a 7-day free trial and pricing that varies by region (2026 reviews list Silver at roughly $12.99/year on annual billing). The Flightradar24 API is sold separately from the subscriptions.",
+  "pricingB": "The web map is free — its app site says the unfiltered map is free, permanently — and no paid web plan is published. The iOS app is freemium: Free ($0) includes the full unfiltered live map, aircraft details, photos and routes, search, and no ads; Pro costs $2.99/month or $19.99/year in the app and adds live weather radar, ATC scope mode, advanced filters, an unlimited watchlist and push alerts. Pro is free for active feeders. Those Pro prices are iOS in-app prices, not web subscription prices.",
+  "prosA": [
+    "Polished iOS and Android apps with 3D and cockpit views",
+    "Up to 365 days of flight history and CSV export",
+    "Full aircraft detail, photos and airport boards with live ETAs",
+    "15+ weather layers, aeronautical charts and oceanic tracks",
+    "Roughly 45,000-receiver network behind the live map"
+  ],
+  "prosB": [
+    "Unfiltered — military, emergency and LADD traffic shown as heard",
+    "Web map free permanently, with no accounts and no ads",
+    "Official iOS app: full map free, Pro just $2.99/mo or $19.99/yr",
+    "Pro free for active feeders, who also get unfiltered MLAT back",
+    "Community-run and not for profit, with a no-sale commitment in its by-laws"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Commercial tracker — free Basic tier plus subscriptions",
+      "b": "Community-run, not-for-profit aggregator — free web map",
+      "label": "Model"
+    },
+    {
+      "a": "Filtered mainstream tracker",
+      "b": "Unfiltered and unobfuscated, by its founding promise",
+      "label": "Filtering"
+    },
+    {
+      "a": "Roughly 45,000 volunteer receivers",
+      "b": "No receiver count published on its official pages",
+      "label": "Receiver network"
+    },
+    {
+      "a": "Basic tier with limited features; full web view requires registration",
+      "b": "Full unfiltered map, free permanently, no accounts",
+      "label": "Free tier"
+    },
+    {
+      "a": "Silver, Gold and Business — pricing varies by region",
+      "b": "No web plan; iOS Pro at $2.99/mo or $19.99/yr, free for feeders",
+      "label": "Paid tier"
+    },
+    {
+      "a": "Up to 365 days on top tiers",
+      "b": "Replay listed for feeders; length not stated — unverified",
+      "label": "History"
+    }
+  ],
+  "seoDescription": "Flightradar24 vs Airplanes.live compared: filtered polish, history and apps vs the free, community-run unfiltered ADS-B map — features, pricing and verdicts, plus a free third option.",
+  "seoTitle": "Flightradar24 vs Airplanes.live (2026): Mainstream Tracker or Community Map?",
+  "slug": "flightradar24-vs-airplanes-live",
+  "sources": [
+    {
+      "label": "Flightradar24 — official site",
+      "url": "https://www.flightradar24.com"
+    },
+    {
+      "label": "Flightradar24 — subscription plans (official)",
+      "url": "https://www.flightradar24.com/premium"
+    },
+    {
+      "label": "Airplanes.live — official site",
+      "url": "https://airplanes.live/"
+    },
+    {
+      "label": "Airplanes.live — FAQ (official)",
+      "url": "https://airplanes.live/faq/"
+    },
+    {
+      "label": "Airplanes.live — About (official)",
+      "url": "https://airplanes.live/about/"
+    },
+    {
+      "label": "Airplanes.live — official iOS app site",
+      "url": "https://airplaneslive.app/"
+    }
+  ],
+  "verdictA": "Choose Flightradar24 if you track for the love of it or for travel — planespotting, following aircraft globally, digging into history and aircraft detail, checking airport boards, or wanting polished apps on both iOS and Android with 3D views.",
+  "verdictB": "Choose Airplanes.live if you want the whole sky for free — a community-run, unfiltered map with no accounts and no ads, military and emergency traffic included — and you're happy with a 2D web map and an iOS-only app for alerts and extras.",
+  "verdictLine": "Flightradar24 is the polished product — filtered, app-first and subscription-deep. Airplanes.live is the community commons — unfiltered, free on the web and run by enthusiasts. Casual users and travellers will be happier in Flightradar24; enthusiasts who resent filtering will choose Airplanes.live.",
+  "worldEye": "If you mainly want to glance at the sky rather than study it, WorldEye shows live flights free on a 3D globe — no signup — alongside live ships, satellites, weather, earthquakes, wildfires and 74,229 public cameras across 105 countries in the same view. WorldEye does not claim unfiltered military data like Airplanes.live or Flightradar24-grade flight history; it is the free, everything-at-once picture. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and intel feeds."
+}

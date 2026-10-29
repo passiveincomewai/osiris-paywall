@@ -32,6 +32,18 @@ import godsviewVsGodsEyeView from "@/data/compare-pairs/godsview-vs-gods-eye-vie
 import godsviewVsArgosAtlas from "@/data/compare-pairs/godsview-vs-argos-atlas.json";
 import godsviewVsWorldMonitor from "@/data/compare-pairs/godsview-vs-world-monitor.json";
 import godsviewVsLiveuamap from "@/data/compare-pairs/godsview-vs-liveuamap.json";
+import argosAtlasVsEarthcam from "@/data/compare-pairs/argos-atlas-vs-earthcam.json";
+import argosAtlasVsSkylinewebcams from "@/data/compare-pairs/argos-atlas-vs-skylinewebcams.json";
+import argosAtlasVsGoogleEarth from "@/data/compare-pairs/argos-atlas-vs-google-earth.json";
+import argosAtlasVsZoomEarth from "@/data/compare-pairs/argos-atlas-vs-zoom-earth.json";
+import argosAtlasVsWorldMonitor from "@/data/compare-pairs/argos-atlas-vs-world-monitor.json";
+import argosAtlasVsLiveuamap from "@/data/compare-pairs/argos-atlas-vs-liveuamap.json";
+import flightradar24VsAdsbExchange from "@/data/compare-pairs/flightradar24-vs-adsb-exchange.json";
+import flightradar24VsAirplanesLive from "@/data/compare-pairs/flightradar24-vs-airplanes-live.json";
+import flightawareVsAdsbExchange from "@/data/compare-pairs/flightaware-vs-adsb-exchange.json";
+import adsbExchangeVsAirplanesLive from "@/data/compare-pairs/adsb-exchange-vs-airplanes-live.json";
+import marinetrafficVsShipfinder from "@/data/compare-pairs/marinetraffic-vs-shipfinder.json";
+import vesselfinderVsShipfinder from "@/data/compare-pairs/vesselfinder-vs-shipfinder.json";
 
 export type PairFeature = { label: string; a: string; b: string; note?: string };
 
@@ -112,6 +124,18 @@ const BUNDLED: ComparePairData[] = [
   godsviewVsArgosAtlas,
   godsviewVsWorldMonitor,
   godsviewVsLiveuamap,
+  argosAtlasVsEarthcam,
+  argosAtlasVsSkylinewebcams,
+  argosAtlasVsGoogleEarth,
+  argosAtlasVsZoomEarth,
+  argosAtlasVsWorldMonitor,
+  argosAtlasVsLiveuamap,
+  flightradar24VsAdsbExchange,
+  flightradar24VsAirplanesLive,
+  flightawareVsAdsbExchange,
+  adsbExchangeVsAirplanesLive,
+  marinetrafficVsShipfinder,
+  vesselfinderVsShipfinder,
 ] as ComparePairData[];
 
 /** One bundled pair by slug (published only), or null. */
