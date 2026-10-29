@@ -147,6 +147,7 @@ const TABS: ToolDef[] = [
   { id: 'sweep', label: 'IP SWEEP', icon: Crosshair, placeholder: 'Enter IP address (e.g. 8.8.8.8)', color: '#FF3D3D', group: 'geoint', tile: 'IP\nSweep', blurb: 'Scan an entire subnet' },
   { id: 'remote', label: 'WORLD REMOTE', icon: Bluetooth, placeholder: 'Bluetooth devices around you', color: '#00E5FF', group: 'geoint', tile: 'World\nRemote', blurb: 'Bluetooth devices around you, placed on the globe' },
   { id: 'photogeo', label: 'PHOTO GEO', icon: Camera, placeholder: 'Upload a photo on the tool page', color: '#34D399', group: 'geoint', tile: 'Photo\nGeo', blurb: 'Where was this photo taken?' },
+  { id: 'sensing', label: 'WIFI SENSING', icon: Wifi, placeholder: 'Open the sensing tool page', color: '#38BDF8', group: 'geoint', tile: 'WiFi\nSensing', blurb: 'Sense motion in a room with WiFi' },
 
   { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF', group: 'domain', tile: 'DNS\nLookup', blurb: 'All record types' },
   { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFD700', group: 'domain', tile: 'WHOIS\nLookup', blurb: 'Registrar and ownership' },
@@ -1381,10 +1382,38 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceD
         </div>
       )}
 
+      {/* WIFI SENSING also lives on its own page — the sensors are the
+          visitor's own device (camera, WiFi link, or a RavenScope program
+          on their computer), not a typed target — so its board view is
+          likewise the briefing card and the door. */}
+      {activeTab === 'sensing' && (
+        <div className="we-recon-card" style={{ padding: '14px 14px 12px' }}>
+          <div className="flex items-center gap-2" style={{ color: '#38BDF8' }}>
+            <Wifi className="w-4 h-4" />
+            <span className="text-[11px] font-mono font-bold tracking-[0.14em]">WIFI SENSING — FREE</span>
+          </div>
+          <p className="text-[10.5px] leading-relaxed mt-2" style={{ color: 'rgba(190,220,255,0.85)' }}>
+            Sense presence and motion in a room with the WiFi and camera already there:
+            RavenScope signal-strength sensing from your computer, WiFi link timing on any
+            device, or on-device camera motion sensing. Motion only — no counting, no vitals.
+          </p>
+          <ul className="text-[10px] leading-relaxed mt-2 font-mono" style={{ color: 'rgba(125,211,252,0.75)' }}>
+            <li>· Runs on your device — camera frames are never uploaded</li>
+            <li>· Free — no account, no plan, no limits</li>
+            <li>· Experimental: a perfectly still person reads as a still scene</li>
+          </ul>
+          <a href="/sensing" target="_blank" rel="noreferrer"
+            className="we-recon-scanbtn inline-flex items-center justify-center gap-1.5 mt-3"
+            style={{ textDecoration: 'none' }}>
+            <Wifi className="w-3.5 h-3.5" /> OPEN THE TOOL
+          </a>
+        </div>
+      )}
+
       {/* Scan bar — the board's target entry. Same state and handlers as
           before (query / runLookup / scanType / sweepCidr); only the skin
           and the chip presentation of the secondary controls are new. */}
-      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && activeTab !== 'photogeo' && (
+      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && activeTab !== 'photogeo' && activeTab !== 'sensing' && (
       <div className="flex flex-col gap-1.5">
         {/* CHAIN INTEL view switch — the brief takes no target. */}
         {activeTab === 'crypto' && (

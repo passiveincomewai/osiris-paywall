@@ -186,6 +186,19 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // WiFi Sensing (/sensing): its RavenScope mode connects from the
+        // visitor's own browser to a RavenScope program running on the
+        // visitor's own computer at http://127.0.0.1:8731. The general
+        // policy above refuses loopback http: connections, so this route —
+        // and only this route — adds that single loopback origin to
+        // connect-src. (Placed after the general rule; for a repeated
+        // header key the later matching rule wins in Next.js.)
+        source: '/sensing',
+        headers: [
+          { key: 'Content-Security-Policy', value: "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: wss: data: blob:; connect-src 'self' https: wss: http://127.0.0.1:8731" },
+        ],
+      },
+      {
         // Enterprise camera embed (/embed/<feed-token>): customers paste the
         // iframe into their own sites, so framing is open — and ONLY here.
         // No X-Frame-Options; the CSP names frame-ancestors *. The feed

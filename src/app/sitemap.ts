@@ -195,8 +195,9 @@ const SEO_PAGES_WAVE13 = [
 const SEO_PAGES_WAVE14 = AIRPORT_PAGES.map((a) => `/airport-webcams/${a.slug}`);
 
 // Tools (2026-10-26): Photo Geolocation (Beta) — the free public tool
-// page at /tools/photo-geolocation.
-const SEO_PAGES_TOOLS = ["/tools/photo-geolocation", "/tools/camera-distance"];
+// page at /tools/photo-geolocation. WiFi Sensing (/sensing) joined
+// 2026-10-29 — also a free public tool, listed in the OSINT tools menu.
+const SEO_PAGES_TOOLS = ["/tools/photo-geolocation", "/tools/camera-distance", "/sensing"];
 
 // Photo Geolocation guides (2026-10-27): three intent-split landing
 // pages supporting the tool — the head question ("where was this

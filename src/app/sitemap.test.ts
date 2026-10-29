@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1055);
+    expect(nonTransit.length).toBe(1056);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -133,8 +133,12 @@ describe("sitemap URL set", () => {
     // news stories themselves were already listed at their blog
     // URLs). Delta hand-verified: removing exactly those 3 URLs
     // reproduces the 1,052 set and the e14944c6… hash byte-for-byte.
+    // The WiFi Sensing tool (2026-10-29) then added /sensing → 1,056.
+    // Delta hand-verified: the production sitemap's non-transit set
+    // reproduces the 1,055 set and the 6eb73a81… hash byte-for-byte,
+    // and removing exactly /sensing from the new set does the same.
     expect(hash).toBe(
-      "6eb73a81d88f1d59ce3d56dbb1f0c880bac6f3a6fb0a9a7734de92803ca1807b",
+      "2080493c3d5ec4f1ec91a204635ac35b69763f45983fb0311cbfd1f0e35e7d2f",
     );
   });
 
