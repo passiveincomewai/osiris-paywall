@@ -68,12 +68,12 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(ent.limitations.toLowerCase()).toContain("extract date");
   });
 
-  it("marks exactly the four pipeline-ingested sources as ingested, each with manifest provenance", () => {
+  it("marks exactly the five pipeline-ingested sources as ingested, each with manifest provenance", () => {
     const ingested = FRAUD_RADAR_SOURCES.filter((s) => s.status === "ingested")
       .map((s) => s.slug)
       .sort();
     expect(ingested).toEqual(
-      ["leie", "medicaid-hcpcs", "sam-entities", "sam-exclusions"].sort(),
+      ["leie", "medicaid-hcpcs", "nppes", "sam-entities", "sam-exclusions"].sort(),
     );
     for (const s of FRAUD_RADAR_SOURCES) {
       expect(["not_started", "pending_credentials", "ingested"]).toContain(s.status);

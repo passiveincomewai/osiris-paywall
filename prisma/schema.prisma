@@ -1720,3 +1720,108 @@ model FrMonthlyNationalSummary {
   @@unique([datasetVersion, claimMonth])
   @@index([datasetVersion])
 }
+
+// ── Fraud Radar Phase 3: care programs Neon grain (AUDIT §15a) ─────
+// Medicare Physician & Other Practitioners PUF (fee-for-service
+// Part B): HCPCS × year and yearly national summaries. Every amount
+// is DERIVED from the source's published averages (services ×
+// average) — the column names carry "Derived" so no surface can
+// mistake them for claim-level totals. benesReported is a reported
+// volume summed over published rows, never a unique-beneficiary
+// count. CMS suppression means absent rows are missing data, not 0.
+// Care Compare directories (hospice / home health) keyed by CMS
+// certification number (CCN); the home-health quality star is CMS's
+// own published rating, stored verbatim with its footnote.
+
+model FrMedicareHcpcsSummary {
+  id                 String   @id @default(cuid())
+  datasetVersion     String   // "2022-2024" (PUF calendar-year span)
+  hcpcsCode          String
+  hcpcsDesc          String?
+  dataYear           Int
+  distinctProviders  Int
+  totalServices      Decimal  @db.Decimal(20, 2)
+  benesReported      BigInt
+  pymtDerivedUsd     Decimal  @db.Decimal(18, 2)
+  allowedDerivedUsd  Decimal  @db.Decimal(18, 2)
+  stdzdDerivedUsd    Decimal  @db.Decimal(18, 2)
+  submittedDerivedUsd Decimal @db.Decimal(18, 2)
+  sourceRows         BigInt
+
+  createdAt          DateTime @default(now())
+
+  @@unique([datasetVersion, hcpcsCode, dataYear])
+  @@index([datasetVersion, dataYear])
+}
+
+model FrMedicareYearlySummary {
+  id                 String   @id @default(cuid())
+  datasetVersion     String
+  dataYear           Int
+  distinctProviders  Int
+  distinctHcpcs      Int
+  totalServices      Decimal  @db.Decimal(20, 2)
+  benesReported      BigInt
+  pymtDerivedUsd     Decimal  @db.Decimal(18, 2)
+  allowedDerivedUsd  Decimal  @db.Decimal(18, 2)
+  stdzdDerivedUsd    Decimal  @db.Decimal(18, 2)
+  submittedDerivedUsd Decimal @db.Decimal(18, 2)
+  sourceRows         BigInt
+
+  createdAt          DateTime @default(now())
+
+  @@unique([datasetVersion, dataYear])
+  @@index([datasetVersion])
+}
+
+model FrHospiceProvider {
+  id                String   @id @default(cuid())
+  datasetVersion    String   // "2026-10-refresh" (Care Compare refresh)
+  ccn               String   // CMS certification number
+  facilityName      String
+  addressLine1      String?
+  addressLine2      String?
+  city              String?
+  state             String?
+  zipCode           String?
+  county            String?
+  phone             String?
+  cmsRegion         String?
+  ownershipType     String?
+  certificationDate DateTime? @db.Date
+
+  createdAt         DateTime @default(now())
+
+  @@unique([datasetVersion, ccn])
+  @@index([datasetVersion, state])
+}
+
+model FrHomeHealthAgency {
+  id                        String   @id @default(cuid())
+  datasetVersion            String   // "2026-10-refresh" (Care Compare refresh)
+  ccn                       String
+  providerName              String
+  address                   String?
+  city                      String?
+  state                     String?
+  zipCode                   String?
+  phone                     String?
+  ownershipType             String?
+  certificationDate         DateTime? @db.Date
+  // CMS's own published quality-of-care star rating (1–5), stored
+  // verbatim — never a Fraud Radar score. Null when CMS publishes
+  // none for the agency.
+  qualityStarRating         Decimal? @db.Decimal(3, 1)
+  qualityStarFootnote       String?
+  offersNursing             Boolean?
+  offersPhysicalTherapy     Boolean?
+  offersOccupationalTherapy Boolean?
+  offersSpeechPathology     Boolean?
+  offersMedicalSocial       Boolean?
+  offersHomeHealthAide      Boolean?
+
+  createdAt                 DateTime @default(now())
+
+  @@unique([datasetVersion, ccn])
+  @@index([datasetVersion, state])
+}
