@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1061);
+    expect(nonTransit.length).toBe(1074);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -143,9 +143,13 @@ describe("sitemap URL set", () => {
     // 2080493c… hash byte-for-byte. Wave 2 (2026-10-29) then added
     // the three remaining pair URLs (windy-vs-ventusky,
     // marinetraffic-vs-vesselfinder, google-earth-vs-nasa-worldview)
-    // → 1,061.
+    // → 1,061. Competitor-vs-competitor wave 2 (2026-10-29) then
+    // added the 13 God's Eye View / GodsView AI head-to-head pair
+    // URLs (gods-eye-view-vs-* ×9, godsview-vs-* ×4) → 1,074.
+    // Delta hand-verified: removing exactly those 13 URLs
+    // reproduces the 1,061 set and the b6d93150… hash byte-for-byte.
     expect(hash).toBe(
-      "b6d93150054828a895d2042b2cac28a0f9f9f8ad3c9eb99ec9ad89b376f9f775",
+      "1f29ca5efd9c6f158f319d77877942eb33d19a6c15987def74b527300ec62f7d",
     );
   });
 

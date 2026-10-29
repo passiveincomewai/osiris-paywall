@@ -526,6 +526,19 @@ const SEO_PAGES_COMPARE = [
   "/compare/windy-vs-ventusky",
   "/compare/marinetraffic-vs-vesselfinder",
   "/compare/google-earth-vs-nasa-worldview",
+  "/compare/gods-eye-view-vs-argos-atlas",
+  "/compare/gods-eye-view-vs-google-earth",
+  "/compare/gods-eye-view-vs-zoom-earth",
+  "/compare/gods-eye-view-vs-world-monitor",
+  "/compare/gods-eye-view-vs-earthcam",
+  "/compare/gods-eye-view-vs-skylinewebcams",
+  "/compare/gods-eye-view-vs-liveuamap",
+  "/compare/gods-eye-view-vs-windy",
+  "/compare/gods-eye-view-vs-nasa-worldview",
+  "/compare/godsview-vs-gods-eye-view",
+  "/compare/godsview-vs-argos-atlas",
+  "/compare/godsview-vs-world-monitor",
+  "/compare/godsview-vs-liveuamap",
 ];
 
 /**

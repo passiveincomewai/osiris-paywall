@@ -19,8 +19,23 @@ import flightradar24VsFlightaware from "@/data/compare-pairs/flightradar24-vs-fl
 import windyVsVentusky from "@/data/compare-pairs/windy-vs-ventusky.json";
 import marinetrafficVsVesselfinder from "@/data/compare-pairs/marinetraffic-vs-vesselfinder.json";
 import googleEarthVsNasaWorldview from "@/data/compare-pairs/google-earth-vs-nasa-worldview.json";
+import godsEyeViewVsArgosAtlas from "@/data/compare-pairs/gods-eye-view-vs-argos-atlas.json";
+import godsEyeViewVsGoogleEarth from "@/data/compare-pairs/gods-eye-view-vs-google-earth.json";
+import godsEyeViewVsZoomEarth from "@/data/compare-pairs/gods-eye-view-vs-zoom-earth.json";
+import godsEyeViewVsWorldMonitor from "@/data/compare-pairs/gods-eye-view-vs-world-monitor.json";
+import godsEyeViewVsEarthcam from "@/data/compare-pairs/gods-eye-view-vs-earthcam.json";
+import godsEyeViewVsSkylinewebcams from "@/data/compare-pairs/gods-eye-view-vs-skylinewebcams.json";
+import godsEyeViewVsLiveuamap from "@/data/compare-pairs/gods-eye-view-vs-liveuamap.json";
+import godsEyeViewVsWindy from "@/data/compare-pairs/gods-eye-view-vs-windy.json";
+import godsEyeViewVsNasaWorldview from "@/data/compare-pairs/gods-eye-view-vs-nasa-worldview.json";
+import godsviewVsGodsEyeView from "@/data/compare-pairs/godsview-vs-gods-eye-view.json";
+import godsviewVsArgosAtlas from "@/data/compare-pairs/godsview-vs-argos-atlas.json";
+import godsviewVsWorldMonitor from "@/data/compare-pairs/godsview-vs-world-monitor.json";
+import godsviewVsLiveuamap from "@/data/compare-pairs/godsview-vs-liveuamap.json";
 
 export type PairFeature = { label: string; a: string; b: string; note?: string };
+
+export type PairLink = { href: string; label: string };
 
 export interface ComparePairData {
   slug: string;
@@ -49,6 +64,33 @@ export interface ComparePairData {
   sources: { label: string; url: string }[];
   lastReviewed: string;
   published: boolean;
+  /* Wave-2 optional enrichments — the template renders each only when
+     present, so wave-1 entries keep their original rendering. */
+  /** One-line verdict shown as the hero pull-quote. */
+  verdictLine?: string;
+  /** Compact fact rows (founded / model / platforms / free tier…). */
+  quickFacts?: { label: string; a: string; b: string }[];
+  /** Pros/cons lists; when present they replace the strengths prose. */
+  prosA?: string[];
+  consA?: string[];
+  prosB?: string[];
+  consB?: string[];
+  /**
+   * Cross-link overrides for the "WorldEye vs X" links. Absent → the
+   * default /compare/<slug> page. An object → that href/label. null →
+   * no WorldEye page exists for that side; the link is omitted.
+   */
+  aLink?: PairLink | null;
+  bLink?: PairLink | null;
+  /** Curated live cameras (landing-manifest IDs) for the WorldEye section. */
+  featuredCams?: {
+    categories: string[];
+    ids: string[];
+    title: string;
+    blurb: string;
+  };
+  /** Genuine WorldEye site imagery for the WorldEye section. */
+  worldEyeMedia?: { src: string; alt: string; caption: string }[];
 }
 
 const BUNDLED: ComparePairData[] = [
@@ -57,6 +99,19 @@ const BUNDLED: ComparePairData[] = [
   windyVsVentusky,
   marinetrafficVsVesselfinder,
   googleEarthVsNasaWorldview,
+  godsEyeViewVsArgosAtlas,
+  godsEyeViewVsGoogleEarth,
+  godsEyeViewVsZoomEarth,
+  godsEyeViewVsWorldMonitor,
+  godsEyeViewVsEarthcam,
+  godsEyeViewVsSkylinewebcams,
+  godsEyeViewVsLiveuamap,
+  godsEyeViewVsWindy,
+  godsEyeViewVsNasaWorldview,
+  godsviewVsGodsEyeView,
+  godsviewVsArgosAtlas,
+  godsviewVsWorldMonitor,
+  godsviewVsLiveuamap,
 ] as ComparePairData[];
 
 /** One bundled pair by slug (published only), or null. */
