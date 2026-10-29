@@ -238,7 +238,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.planTier = token.planTier ?? "free";
         session.user.ambientAccess = token.ambientAccess ?? false;
         session.user.skiAccess = token.skiAccess ?? false;
-        session.user.emailVerified = token.emailVerified ?? false;
+        // The session claim is boolean by design (JWT + Session
+        // augmentations above), but this callback's session.user is
+        // also intersected with AdapterUser, whose emailVerified is
+        // Date | null — the intersection makes the property type
+        // Date & boolean and the plain assignment fails the build's
+        // type check (TS2322). Cast through the claim's own shape:
+        // type-only, the runtime assignment is unchanged.
+        (session.user as { emailVerified?: boolean }).emailVerified =
+          token.emailVerified ?? false;
         session.user.totpPending = !!(token.totpEnabled && !token.totpVerified);
       }
       return session;
