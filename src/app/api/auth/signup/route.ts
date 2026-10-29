@@ -3,9 +3,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import {
-  normalizeEmail, isValidEmail, passwordError, hashPassword,
+  normalizeEmail, passwordError, hashPassword,
   generateToken, isRateLimited, clientIp, VERIFY_ID_PREFIX,
 } from "@/lib/password-auth";
+import { validateEmailAddress } from "@/lib/email/validate-email";
 import { usernameValidationError } from "@/lib/account/names";
 import { sendEmail, emailConfigured, verificationEmail, appUrl } from "@/lib/email";
 import { sendGrowthEvent, hashUserRef, utmFromRequest } from "@/lib/growth";
@@ -30,8 +31,27 @@ export async function POST(req: Request) {
   const password = String(body.password ?? "");
   const name = String(body.name ?? "").trim();
 
-  if (!isValidEmail(email)) {
-    return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
+  // Real-email gate (Jameson, 2026-10-29 — he created an account with a
+  // fake address and it let him): the same instant validation the
+  // newsletter runs (lib/email/validate-email) — strict syntax,
+  // placeholder + disposable domains, junk patterns, a typo suggestion,
+  // and a DNS check that the domain can receive mail. It runs BEFORE
+  // the account exists: a failing address never creates a row. A
+  // transient DNS failure answers a retryable 503, never a "fake
+  // email" verdict. Honest limit: a well-formed address at a real
+  // domain whose mailbox doesn't exist still passes — no instant check
+  // can see individual mailboxes, and no confirmation round trip is
+  // added (that's a separate owner decision).
+  const validation = await validateEmailAddress(email);
+  if (!validation.ok) {
+    return NextResponse.json(
+      {
+        error: validation.message,
+        code: validation.code,
+        ...(validation.suggestion ? { suggestion: validation.suggestion } : {}),
+      },
+      { status: validation.retryable ? 503 : 400 },
+    );
   }
   // A username is REQUIRED at signup (owner's rule) and must satisfy the
   // shared validator: no spaces, letters/numbers/_/- only.

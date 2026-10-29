@@ -58,6 +58,18 @@ describe("validateEmailAddress — passes real addresses", () => {
     const res = await validateEmailAddress("someone@small-business-site.com", { dns });
     expect(res.ok).toBe(true);
   });
+
+  it("KNOWN LIMIT: a well-formed address at a real domain passes even when the mailbox doesn't exist", async () => {
+    // Instant checks see DOMAINS, not mailboxes: gmail.com publishes MX
+    // records, so jamesonlythgoe111-style addresses (Jameson's own
+    // 2026-10-29 test accounts — the mailboxes were never created at
+    // Google and the verification mail hard-bounced) pass every check
+    // here. Only a confirmation round trip could catch this case, and
+    // none is performed by design (owner decision pending). This test
+    // pins the limit so nobody mistakes the gate for mailbox proof.
+    const res = await validateEmailAddress("no-such-mailbox-xyz123@gmail.com", { dns: GOOD_DNS });
+    expect(res.ok).toBe(true);
+  });
 });
 
 describe("validateEmailAddress — syntax", () => {

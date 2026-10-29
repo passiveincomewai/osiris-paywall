@@ -42,11 +42,34 @@ vi.mock("@/lib/email", () => ({
   newsletterWelcomeEmail: (url: string) => ({ subject: "You're on the list", html: url }),
   appUrl: (path: string) => `https://worldeye.app${path}`,
 }));
-vi.mock("node:dns/promises", () => ({
-  resolveMx: async () => [{ exchange: "mx.fixture-mail.com", priority: 10 }],
-  resolve4: async () => ["192.0.2.1"],
-  resolve6: async () => [],
-}));
+vi.mock("node:dns/promises", () => {
+  const err = (code: string) => {
+    const e = new Error(code) as NodeJS.ErrnoException;
+    e.code = code;
+    return e;
+  };
+  // Domain-aware stub for the signup real-email gate tests: one domain
+  // provably does not exist (NXDOMAIN on every lookup), one domain's
+  // lookups all fail transiently (the retryable path). Everything else
+  // publishes an MX record as before.
+  return {
+    resolveMx: async (domain: string) => {
+      if (domain === "no-such-domain-xyz.com") throw err("ENOTFOUND");
+      if (domain === "flaky-dns-xyz.com") throw err("ESERVFAIL");
+      return [{ exchange: "mx.fixture-mail.com", priority: 10 }];
+    },
+    resolve4: async (domain: string) => {
+      if (domain === "no-such-domain-xyz.com") throw err("ENOTFOUND");
+      if (domain === "flaky-dns-xyz.com") throw err("ESERVFAIL");
+      return ["192.0.2.1"];
+    },
+    resolve6: async (domain: string) => {
+      if (domain === "no-such-domain-xyz.com") throw err("ENOTFOUND");
+      if (domain === "flaky-dns-xyz.com") throw err("ESERVFAIL");
+      return [];
+    },
+  };
+});
 vi.mock("@/lib/growth", () => ({
   sendGrowthEvent: vi.fn(),
   hashUserRef: () => "ref",
@@ -113,5 +136,55 @@ describe("POST /api/auth/signup — newsletter opt-in", () => {
     const res = await post({ ...FORM, newsletterOptIn: true });
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ ok: true, userId: "user_1" });
+  });
+});
+
+describe("POST /api/auth/signup — real-email gate (2026-10-29)", () => {
+  // The shared validator (lib/email/validate-email) runs BEFORE the
+  // user row exists: every rejection below must leave userCreate
+  // uncalled — no partial accounts, ever.
+  it("malformed address: 400, no account created", async () => {
+    const res = await post({ ...FORM, email: "not-an-email" });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe("syntax");
+    expect(mocks.userCreate).not.toHaveBeenCalled();
+  });
+
+  it("disposable domain: 400, no account created", async () => {
+    const res = await post({ ...FORM, email: "ada@mailinator.com" });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe("disposable_domain");
+    expect(mocks.userCreate).not.toHaveBeenCalled();
+  });
+
+  it("junk pattern (a@a.com shape): 400, no account created", async () => {
+    const res = await post({ ...FORM, email: "a@a.com" });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe("junk_pattern");
+    expect(mocks.userCreate).not.toHaveBeenCalled();
+  });
+
+  it("nonexistent domain (NXDOMAIN): 400 no_mail_server, no account created", async () => {
+    const res = await post({ ...FORM, email: "ada@no-such-domain-xyz.com" });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe("no_mail_server");
+    expect(mocks.userCreate).not.toHaveBeenCalled();
+  });
+
+  it("transient DNS failure: retryable 503, no account created, address NOT declared fake", async () => {
+    const res = await post({ ...FORM, email: "ada@flaky-dns-xyz.com" });
+    expect(res.status).toBe(503);
+    const body = await res.json();
+    expect(body.code).toBe("dns_unavailable");
+    expect(mocks.userCreate).not.toHaveBeenCalled();
+  });
+
+  it("typo domain: 400 with the suggestion, no account created", async () => {
+    const res = await post({ ...FORM, email: "ada@gmial.com" });
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.code).toBe("typo_suggestion");
+    expect(body.suggestion).toBe("ada@gmail.com");
+    expect(mocks.userCreate).not.toHaveBeenCalled();
   });
 });
