@@ -1,1 +1,244 @@
-{"aAbout":"God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.","aLink":{"href":"/alternatives/gods-eye-view","label":"WorldEye: the God's Eye View alternative"},"aName":"God's Eye View","aSlug":"gods-eye-view","aStrengths":"God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.","aWebsite":"https://github.com/bilawalsidhu/gods-eye-view","bAbout":"Zoom Earth is an interactive weather map and real-time hurricane tracker by Neave Interactive. It shows near real-time satellite imagery updated every 10 minutes from NOAA GOES, JMA Himawari and EUMETSAT Meteosat geostationary satellites, HD imagery updated twice a day from NASA's Aqua and Terra satellites, rain radar with nowcasting, and forecast maps for rain, wind, temperature, pressure and more from the GFS and ICON models. It runs free on the web and in iOS and Android apps, with extra features behind Zoom Earth Pro. It is a weather and satellite tool — not a camera network, and it does not track flights or ships.","bLink":null,"bName":"Zoom Earth","bSlug":"zoom-earth","bStrengths":"Zoom Earth is the deeper weather tool by a wide margin: satellite imagery refreshed every 10 minutes, rain radar with nowcasting, a best-in-class hurricane tracker drawing on NHC, JTWC, NRL and IBTrACS data, wildfire heat spots from NASA FIRMS, and a full set of forecast-model maps — all in a clean, focused interface that opens instantly on the web or in its well-rated mobile apps, with no account needed for basic use. If the question is about a storm, Zoom Earth answers it faster and in more depth.","bWebsite":"https://zoom.earth/","betterAnswer":"They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and breadth across flights, ships, satellites and cameras, with weather as one layer among many. Zoom Earth is a hosted weather specialist: near real-time satellite imagery, radar and hurricane tracking that open instantly in a browser or app, with no install. If you want to experience the planet, install God's Eye View; if you want to watch the weather, open Zoom Earth.","category":"Live world maps","consA":["You must install and run it yourself (Pinokio, terminal or Docker)","Ships need a free third-party key; voice spends your OpenAI credit","Weather is one layer among many — no dedicated hurricane tracker","Traffic is simulated, per its own caveat; no news layer"],"consB":["Weather and satellite only — no cameras, flights, ships or satellites to track","No public API; its terms prohibit scraping and bulk downloading","Pro billing period is not labelled on the App Store listing","No 3D globe — a flat interactive map only"],"faqs":[{"a":"No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. Zoom Earth is a hosted weather map and app by Neave Interactive. They share live satellite and weather imagery, and little else.","q":"Is God's Eye View the same as Zoom Earth?"},{"a":"Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.","q":"Is God's Eye View really free?"},{"a":"Yes for basic use — the web map and the iOS and Android apps are free with no account required. Zoom Earth Pro adds more features through auto-renewable subscriptions sold via the app stores; the US App Store listing shows Pro price points of $1.99 and $11.99, but does not label which billing period each corresponds to.","q":"Is Zoom Earth free?"},{"a":"Zoom Earth. Its hurricane tracker follows storms from development to category 5 using the latest data from NHC, JTWC, NRL and IBTrACS, alongside 10-minute satellite imagery and rain radar. God's Eye View shows NHC/CPHC cyclone tracks as one layer on its globe, but it is not a dedicated storm tracker.","q":"Which is better for tracking hurricanes?"},{"a":"God's Eye View, on both counts. It tracks live aircraft via OpenSky and adsb.lol and projects about 4,000 public CCTV cameras into its 3D scene. Zoom Earth has no flight tracking and no camera network — it is a weather and satellite-imagery tool.","q":"Which has live cameras and flights?"},{"a":"Only for God's Eye View — it installs locally via Pinokio, a terminal install or Docker, and runs on your own computer. Zoom Earth needs nothing installed: it opens on the web, with optional iOS and Android apps.","q":"Do I need to install anything?"}],"featuredCams":{"blurb":"Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.","categories":["beaches","mountains"],"ids":["sky-es-las-vistas","sky-fr-frejus","sky-fr-royan","occ-biodic-43","sky-it-vesuvio","sky-fr-bourget"],"title":"Live on WorldEye right now"},"features":[{"a":"no","b":"yes","label":"Open it with no install","note":"God's Eye View installs locally (Pinokio, terminal or Docker); Zoom Earth runs on the web and in mobile apps"},{"a":"yes","b":"no","label":"Photorealistic 3D globe","note":"God's Eye View is built on it (Google Photorealistic 3D Tiles); Zoom Earth is a flat interactive map"},{"a":"yes","b":"no","label":"Live public cameras","note":"God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); Zoom Earth has no camera network"},{"a":"yes","b":"no","label":"Live flights (ADS-B)","note":"God's Eye View tracks live aircraft via OpenSky and adsb.lol; Zoom Earth is a weather platform with no flight tracking"},{"a":"partial","b":"no","label":"Live ships (AIS)","note":"God's Eye View's vessel layer needs a free AISStream key; Zoom Earth has no ship tracking"},{"a":"yes","b":"no","label":"Satellites and ISS tracking","note":"God's Eye View tracks satellites from CelesTrak with pass predictions; Zoom Earth shows satellite imagery, not tracked objects"},{"a":"partial","b":"yes","label":"Near real-time satellite imagery","note":"Zoom Earth's core specialty: GOES, Himawari and Meteosat imagery every 10 minutes, plus twice-daily HD from NASA Aqua/Terra. God's Eye View layers satellite clouds onto its globe"},{"a":"yes","b":"yes","label":"Rain radar and weather layers","note":"Both show radar and weather; God's Eye View adds keyless wind, clouds and lightning on one timeline"},{"a":"partial","b":"yes","label":"Forecast model maps","note":"Zoom Earth maps rain, wind, temperature, pressure, humidity and more from GFS and ICON; God's Eye View animates GFS/ECMWF wind as one layer among many"},{"a":"partial","b":"yes","label":"Hurricane and storm tracking","note":"Zoom Earth's tracker uses NHC, JTWC, NRL and IBTrACS data; God's Eye View shows NHC/CPHC cyclone tracks on the globe"},{"a":"partial","b":"yes","label":"Wildfire and heat spots","note":"Zoom Earth shows active fires and heat spots updated daily from NASA FIRMS; God's Eye View's fire layer needs a free FIRMS key"},{"a":"yes","b":"no","label":"Voice AI agent","note":"God's Eye View has a hands-free voice agent that drives the globe, using your own OpenAI key; Zoom Earth has no AI assistant"},{"a":"no","b":"yes","label":"Mobile apps","note":"Zoom Earth offers iOS and Android apps plus the web; no native God's Eye View mobile app is listed in its README"},{"a":"yes","b":"no","label":"Open source","note":"God's Eye View is MIT-licensed with inspectable source; Zoom Earth is a closed hosted service"},{"a":"partial","b":"no","label":"API access","note":"God's Eye View runs as a local MCP server; no public Zoom Earth API was found, and its terms prohibit scraping and bulk downloading"}],"intro":"God's Eye View and Zoom Earth both put live imagery of the planet on your screen — and that is roughly where the resemblance ends. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice. Zoom Earth is a hosted weather map by Neave Interactive that opens instantly on the web or in an app: near real-time satellite imagery every 10 minutes, rain radar and a best-in-class hurricane tracker — weather depth instead of globe breadth.","lastReviewed":"2026-10-29","pricingA":"There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.","pricingB":"Zoom Earth is free for basic use on the web and in its iOS and Android apps, with no account required. Zoom Earth Pro adds more features through auto-renewable subscriptions sold via the app stores: the US App Store listing shows Pro price points of $1.99 and $11.99, but it does not label which billing period each price corresponds to, so we won't assign one — its terms say subscriptions are billed periodically, as specified at the time of purchase. No free trial of Pro was stated on the official pages checked.","prosA":["Completely free and open source (MIT) — no subscription, ever","Photorealistic 3D globe with cockpit view and 3D aircraft models","Voice-controlled AI agent — talk to the globe","Flights, ships, satellites and ~4,000 cameras in one scene","Runs locally: your data and keys stay on your machine"],"prosB":["Satellite imagery updated every 10 minutes from three geostationary fleets","Best-in-class hurricane tracking from NHC, JTWC, NRL and IBTrACS data","Rain radar with nowcasting, plus full GFS and ICON forecast maps","Free with no account needed; well-rated iOS and Android apps","Wildfire heat spots and smoke visible in near real-time imagery"],"published":true,"quickFacts":[{"a":"Free open-source software — install and run it yourself","b":"Hosted website and apps — free, with an optional Pro subscription","label":"Model"},{"a":"Bilawal Sidhu and Sameh Khamis (Halfpixel)","b":"Neave Interactive","label":"Maker"},{"a":"Your own computer — Windows, macOS, Linux","b":"Web, iOS and Android","label":"Runs on"},{"a":"Everything — the software itself is free","b":"The full weather map, satellite imagery and radar","label":"Free tier"},{"a":"None — optional third-party API keys meter separately","b":"Zoom Earth Pro — $1.99 and $11.99 price points via the app stores (billing period not labelled)","label":"Paid tier"},{"a":"~4,000 public cameras in its CCTV Mesh layer","b":"No camera network — satellite imagery instead of ground cameras","label":"Camera claim"}],"seoDescription":"God's Eye View vs Zoom Earth compared: the free open-source photoreal 3D globe you run yourself vs the focused weather map with 10-minute satellite imagery and hurricane tracking — features, costs and verdicts, plus a free third option.","seoTitle":"God's Eye View vs Zoom Earth (2026): 3D Globe or Weather Map?","slug":"gods-eye-view-vs-zoom-earth","sources":[{"label":"God's Eye View — official GitHub repository and README","url":"https://github.com/bilawalsidhu/gods-eye-view"},{"label":"Zoom Earth — official site","url":"https://zoom.earth/"},{"label":"Zoom Earth — official terms of service","url":"https://zoom.earth/legal/terms/"},{"label":"Zoom Earth — official App Store listing (Neave Interactive)","url":"https://apps.apple.com/us/app/zoom-earth-weather-forecast/id1531561063"},{"label":"Zoom Earth — official Google Play listing (Neave Interactive)","url":"https://play.google.com/store/apps/details?id=com.neave.zoomearth"}],"verdictA":"Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, flights, ships and cameras in one scene — you're comfortable installing software, and you want it free and open forever.","verdictB":"Choose Zoom Earth if you want the weather itself — 10-minute satellite imagery, radar, forecast maps and serious hurricane tracking — open in seconds on any device, with no install.","verdictLine":"God's Eye View is the spectacle — a photoreal 3D globe you own, with weather as one layer among many. Zoom Earth is the specialist — a focused weather map whose satellite imagery and storm tracking go far deeper. The first is free software; the second is a free website and app with an optional Pro tier.","worldEye":"If installing software is the dealbreaker in God's Eye View, and Zoom Earth's weather-only focus is the limit there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. Its weather layer does not match Zoom Earth's satellite cadence or hurricane depth, and it doesn't render photoreal 3D tiles like God's Eye View. Its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds on top of the free globe."}
+{
+  "aAbout": "God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.",
+  "aLink": {
+    "href": "/alternatives/gods-eye-view",
+    "label": "WorldEye: the God's Eye View alternative"
+  },
+  "aName": "God's Eye View",
+  "aSlug": "gods-eye-view",
+  "aStrengths": "God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.",
+  "aWebsite": "https://github.com/bilawalsidhu/gods-eye-view",
+  "bAbout": "Zoom Earth is an interactive weather map and real-time hurricane tracker by Neave Interactive. It shows near real-time satellite imagery updated every 10 minutes from NOAA GOES, JMA Himawari and EUMETSAT Meteosat geostationary satellites, HD imagery updated twice a day from NASA's Aqua and Terra satellites, rain radar with nowcasting, and forecast maps for rain, wind, temperature, pressure and more from the GFS and ICON models. It runs free on the web and in iOS and Android apps, with extra features behind Zoom Earth Pro. It is a weather and satellite tool — not a camera network, and it does not track flights or ships.",
+  "bName": "Zoom Earth",
+  "bSlug": "zoom-earth",
+  "bStrengths": "Zoom Earth is the deeper weather tool by a wide margin: satellite imagery refreshed every 10 minutes, rain radar with nowcasting, a best-in-class hurricane tracker drawing on NHC, JTWC, NRL and IBTrACS data, wildfire heat spots from NASA FIRMS, and a full set of forecast-model maps — all in a clean, focused interface that opens instantly on the web or in its well-rated mobile apps, with no account needed for basic use. If the question is about a storm, Zoom Earth answers it faster and in more depth.",
+  "bWebsite": "https://zoom.earth/",
+  "betterAnswer": "They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and breadth across flights, ships, satellites and cameras, with weather as one layer among many. Zoom Earth is a hosted weather specialist: near real-time satellite imagery, radar and hurricane tracking that open instantly in a browser or app, with no install. If you want to experience the planet, install God's Eye View; if you want to watch the weather, open Zoom Earth.",
+  "category": "Live world maps",
+  "consA": [
+    "You must install and run it yourself (Pinokio, terminal or Docker)",
+    "Ships need a free third-party key; voice spends your OpenAI credit",
+    "Weather is one layer among many — no dedicated hurricane tracker",
+    "Traffic is simulated, per its own caveat; no news layer"
+  ],
+  "consB": [
+    "Weather and satellite only — no cameras, flights, ships or satellites to track",
+    "No public API; its terms prohibit scraping and bulk downloading",
+    "Pro billing period is not labelled on the App Store listing",
+    "No 3D globe — a flat interactive map only"
+  ],
+  "faqs": [
+    {
+      "a": "No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. Zoom Earth is a hosted weather map and app by Neave Interactive. They share live satellite and weather imagery, and little else.",
+      "q": "Is God's Eye View the same as Zoom Earth?"
+    },
+    {
+      "a": "Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.",
+      "q": "Is God's Eye View really free?"
+    },
+    {
+      "a": "Yes for basic use — the web map and the iOS and Android apps are free with no account required. Zoom Earth Pro adds more features through auto-renewable subscriptions sold via the app stores; the US App Store listing shows Pro price points of $1.99 and $11.99, but does not label which billing period each corresponds to.",
+      "q": "Is Zoom Earth free?"
+    },
+    {
+      "a": "Zoom Earth. Its hurricane tracker follows storms from development to category 5 using the latest data from NHC, JTWC, NRL and IBTrACS, alongside 10-minute satellite imagery and rain radar. God's Eye View shows NHC/CPHC cyclone tracks as one layer on its globe, but it is not a dedicated storm tracker.",
+      "q": "Which is better for tracking hurricanes?"
+    },
+    {
+      "a": "God's Eye View, on both counts. It tracks live aircraft via OpenSky and adsb.lol and projects about 4,000 public CCTV cameras into its 3D scene. Zoom Earth has no flight tracking and no camera network — it is a weather and satellite-imagery tool.",
+      "q": "Which has live cameras and flights?"
+    },
+    {
+      "a": "Only for God's Eye View — it installs locally via Pinokio, a terminal install or Docker, and runs on your own computer. Zoom Earth needs nothing installed: it opens on the web, with optional iOS and Android apps.",
+      "q": "Do I need to install anything?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "beaches",
+      "mountains"
+    ],
+    "ids": [
+      "sky-es-las-vistas",
+      "sky-fr-frejus",
+      "sky-fr-royan",
+      "occ-biodic-43",
+      "sky-it-vesuvio",
+      "sky-fr-bourget"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Open it with no install",
+      "note": "God's Eye View installs locally (Pinokio, terminal or Docker); Zoom Earth runs on the web and in mobile apps"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Photorealistic 3D globe",
+      "note": "God's Eye View is built on it (Google Photorealistic 3D Tiles); Zoom Earth is a flat interactive map"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Live public cameras",
+      "note": "God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); Zoom Earth has no camera network"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Live flights (ADS-B)",
+      "note": "God's Eye View tracks live aircraft via OpenSky and adsb.lol; Zoom Earth is a weather platform with no flight tracking"
+    },
+    {
+      "a": "partial",
+      "b": "no",
+      "label": "Live ships (AIS)",
+      "note": "God's Eye View's vessel layer needs a free AISStream key; Zoom Earth has no ship tracking"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Satellites and ISS tracking",
+      "note": "God's Eye View tracks satellites from CelesTrak with pass predictions; Zoom Earth shows satellite imagery, not tracked objects"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Near real-time satellite imagery",
+      "note": "Zoom Earth's core specialty: GOES, Himawari and Meteosat imagery every 10 minutes, plus twice-daily HD from NASA Aqua/Terra. God's Eye View layers satellite clouds onto its globe"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Rain radar and weather layers",
+      "note": "Both show radar and weather; God's Eye View adds keyless wind, clouds and lightning on one timeline"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Forecast model maps",
+      "note": "Zoom Earth maps rain, wind, temperature, pressure, humidity and more from GFS and ICON; God's Eye View animates GFS/ECMWF wind as one layer among many"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Hurricane and storm tracking",
+      "note": "Zoom Earth's tracker uses NHC, JTWC, NRL and IBTrACS data; God's Eye View shows NHC/CPHC cyclone tracks on the globe"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Wildfire and heat spots",
+      "note": "Zoom Earth shows active fires and heat spots updated daily from NASA FIRMS; God's Eye View's fire layer needs a free FIRMS key"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Voice AI agent",
+      "note": "God's Eye View has a hands-free voice agent that drives the globe, using your own OpenAI key; Zoom Earth has no AI assistant"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Mobile apps",
+      "note": "Zoom Earth offers iOS and Android apps plus the web; no native God's Eye View mobile app is listed in its README"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Open source",
+      "note": "God's Eye View is MIT-licensed with inspectable source; Zoom Earth is a closed hosted service"
+    },
+    {
+      "a": "partial",
+      "b": "no",
+      "label": "API access",
+      "note": "God's Eye View runs as a local MCP server; no public Zoom Earth API was found, and its terms prohibit scraping and bulk downloading"
+    }
+  ],
+  "intro": "God's Eye View and Zoom Earth both put live imagery of the planet on your screen — and that is roughly where the resemblance ends. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice. Zoom Earth is a hosted weather map by Neave Interactive that opens instantly on the web or in an app: near real-time satellite imagery every 10 minutes, rain radar and a best-in-class hurricane tracker — weather depth instead of globe breadth.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.",
+  "pricingB": "Zoom Earth is free for basic use on the web and in its iOS and Android apps, with no account required. Zoom Earth Pro adds more features through auto-renewable subscriptions sold via the app stores: the US App Store listing shows Pro price points of $1.99 and $11.99, but it does not label which billing period each price corresponds to, so we won't assign one — its terms say subscriptions are billed periodically, as specified at the time of purchase. No free trial of Pro was stated on the official pages checked.",
+  "prosA": [
+    "Completely free and open source (MIT) — no subscription, ever",
+    "Photorealistic 3D globe with cockpit view and 3D aircraft models",
+    "Voice-controlled AI agent — talk to the globe",
+    "Flights, ships, satellites and ~4,000 cameras in one scene",
+    "Runs locally: your data and keys stay on your machine"
+  ],
+  "prosB": [
+    "Satellite imagery updated every 10 minutes from three geostationary fleets",
+    "Best-in-class hurricane tracking from NHC, JTWC, NRL and IBTrACS data",
+    "Rain radar with nowcasting, plus full GFS and ICON forecast maps",
+    "Free with no account needed; well-rated iOS and Android apps",
+    "Wildfire heat spots and smoke visible in near real-time imagery"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Free open-source software — install and run it yourself",
+      "b": "Hosted website and apps — free, with an optional Pro subscription",
+      "label": "Model"
+    },
+    {
+      "a": "Bilawal Sidhu and Sameh Khamis (Halfpixel)",
+      "b": "Neave Interactive",
+      "label": "Maker"
+    },
+    {
+      "a": "Your own computer — Windows, macOS, Linux",
+      "b": "Web, iOS and Android",
+      "label": "Runs on"
+    },
+    {
+      "a": "Everything — the software itself is free",
+      "b": "The full weather map, satellite imagery and radar",
+      "label": "Free tier"
+    },
+    {
+      "a": "None — optional third-party API keys meter separately",
+      "b": "Zoom Earth Pro — $1.99 and $11.99 price points via the app stores (billing period not labelled)",
+      "label": "Paid tier"
+    },
+    {
+      "a": "~4,000 public cameras in its CCTV Mesh layer",
+      "b": "No camera network — satellite imagery instead of ground cameras",
+      "label": "Camera claim"
+    }
+  ],
+  "seoDescription": "God's Eye View vs Zoom Earth compared: the free open-source photoreal 3D globe you run yourself vs the focused weather map with 10-minute satellite imagery and hurricane tracking — features, costs and verdicts, plus a free third option.",
+  "seoTitle": "God's Eye View vs Zoom Earth (2026): 3D Globe or Weather Map?",
+  "slug": "gods-eye-view-vs-zoom-earth",
+  "sources": [
+    {
+      "label": "God's Eye View — official GitHub repository and README",
+      "url": "https://github.com/bilawalsidhu/gods-eye-view"
+    },
+    {
+      "label": "Zoom Earth — official site",
+      "url": "https://zoom.earth/"
+    },
+    {
+      "label": "Zoom Earth — official terms of service",
+      "url": "https://zoom.earth/legal/terms/"
+    },
+    {
+      "label": "Zoom Earth — official App Store listing (Neave Interactive)",
+      "url": "https://apps.apple.com/us/app/zoom-earth-weather-forecast/id1531561063"
+    },
+    {
+      "label": "Zoom Earth — official Google Play listing (Neave Interactive)",
+      "url": "https://play.google.com/store/apps/details?id=com.neave.zoomearth"
+    }
+  ],
+  "verdictA": "Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, flights, ships and cameras in one scene — you're comfortable installing software, and you want it free and open forever.",
+  "verdictB": "Choose Zoom Earth if you want the weather itself — 10-minute satellite imagery, radar, forecast maps and serious hurricane tracking — open in seconds on any device, with no install.",
+  "verdictLine": "God's Eye View is the spectacle — a photoreal 3D globe you own, with weather as one layer among many. Zoom Earth is the specialist — a focused weather map whose satellite imagery and storm tracking go far deeper. The first is free software; the second is a free website and app with an optional Pro tier.",
+  "worldEye": "If installing software is the dealbreaker in God's Eye View, and Zoom Earth's weather-only focus is the limit there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. Its weather layer does not match Zoom Earth's satellite cadence or hurricane depth, and it doesn't render photoreal 3D tiles like God's Eye View. Its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds on top of the free globe."
+}

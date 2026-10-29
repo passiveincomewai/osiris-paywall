@@ -1,1 +1,244 @@
-{"aAbout":"God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.","aLink":{"href":"/alternatives/gods-eye-view","label":"WorldEye: the God's Eye View alternative"},"aName":"God's Eye View","aSlug":"gods-eye-view","aStrengths":"God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.","aWebsite":"https://github.com/bilawalsidhu/gods-eye-view","bAbout":"Windy is a professional weather visualisation platform: animated wind and weather layers built on forecast models including ECMWF, GFS and ICON, with radar and satellite layers, detailed point forecasts, meteograms and airgrams, a hurricane tracker and a layer of public webcams. A free tier covers the core maps; Windy Premium unlocks higher-resolution data, longer forecast ranges and extra detail. Developer APIs are sold separately from the consumer app. It runs on the web and in iOS and Android apps.","bLink":null,"bName":"Windy","bSlug":"windy","bStrengths":"Windy is the deeper weather platform by a wide margin: a catalogue of 50+ weather layers, multiple global and regional forecast models with ECMWF at the centre, radar and satellite blends, hurricane tracking, airgram and meteogram detail for aviation and sailing, weather alerts for favourite places, and a webcam layer — all in a hosted platform with a large community and mature mobile apps. If weather is something you read closely or plan your life around, Windy's meteorological depth wins.","bWebsite":"https://www.windy.com","betterAnswer":"They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and breadth across flights, ships, satellites and cameras, with weather as one keyless layer among many. Windy is a hosted weather specialist: the deepest forecast-model maps, radar, satellite layers and spot forecasts, open instantly in a browser or app. If you want to experience the planet, install God's Eye View; if you want to read its weather professionally, open Windy.","category":"Live world maps","consA":["You must install and run it yourself (Pinokio, terminal or Docker)","Ships need a free third-party key; voice spends your OpenAI credit","Weather depth is one layer among many — no meteograms or spot forecasts","Traffic is simulated, per its own caveat; no news layer"],"consB":["Weather-first — no live flight, ship or satellite tracking","Primarily a 2D layered map, not a photorealistic 3D globe","Premium is annual-only with no free trial; developer APIs cost extra","Its webcam layer is a side layer, not a camera-first catalogue"],"faqs":[{"a":"No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. Windy is a hosted weather platform at windy.com. They share weather layers and a webcam feature, and little else.","q":"Is God's Eye View the same as Windy?"},{"a":"Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.","q":"Is God's Eye View really free?"},{"a":"Windy Premium costs about $35/year (community-confirmed pricing for 2026; sold as an auto-renewing subscription or a one-time payment for a year). There is no free trial of Premium. It unlocks higher-resolution and longer-range data plus extra layers. Developer APIs are priced separately.","q":"How much is Windy Premium?"},{"a":"Windy, decisively. It offers 50+ weather layers drawn from ECMWF, GFS, ICON and regional models, with meteograms, airgrams and detailed point forecasts. God's Eye View animates GFS/ECMWF wind, radar, clouds and lightning as keyless layers on its globe, but it is not a forecast-model platform.","q":"Which is better for detailed weather forecasts?"},{"a":"Both, differently. God's Eye View projects about 4,000 public CCTV cameras into its 3D scene. Windy aggregates public webcams as a layer on its weather map. For comparison, WorldEye's directory lists 74,229 public cameras alongside its weather layer.","q":"Which has live cameras, God's Eye View or Windy?"},{"a":"Only for God's Eye View — it installs locally via Pinokio, a terminal install or Docker, and runs on your own computer. Windy needs nothing installed: it opens on the web, with optional iOS and Android apps.","q":"Do I need to install anything?"}],"featuredCams":{"blurb":"Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.","categories":["beaches","mountains"],"ids":["sky-es-las-vistas","sky-fr-frejus","sky-fr-royan","occ-biodic-43","sky-it-vesuvio","sky-fr-bourget"],"title":"Live on WorldEye right now"},"features":[{"a":"no","b":"yes","label":"Open it with no install","note":"God's Eye View installs locally (Pinokio, terminal or Docker); Windy runs on the web and in mobile apps"},{"a":"yes","b":"partial","label":"Photorealistic 3D globe","note":"God's Eye View is built on it (Google Photorealistic 3D Tiles); Windy is primarily a 2D layered weather map"},{"a":"yes","b":"yes","label":"Live public cameras and webcams","note":"God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); Windy aggregates public webcams as a map layer"},{"a":"yes","b":"no","label":"Live flights (ADS-B)","note":"God's Eye View tracks live aircraft via OpenSky and adsb.lol; Windy is a weather platform with no live flight tracking"},{"a":"partial","b":"no","label":"Live ships (AIS)","note":"God's Eye View's vessel layer needs a free AISStream key; Windy offers marine weather layers but no AIS vessel tracking"},{"a":"yes","b":"no","label":"Satellites and ISS tracking","note":"God's Eye View tracks satellites from CelesTrak with pass predictions; Windy shows satellite imagery, not tracked objects"},{"a":"partial","b":"yes","label":"Forecast model maps","note":"Windy draws 50+ layers from ECMWF, GFS, ICON and regional models; God's Eye View animates GFS/ECMWF wind as one layer among many"},{"a":"yes","b":"yes","label":"Radar and satellite layers","note":"Both blend radar and satellite imagery into the map; Windy adds radar and satellite archives on Premium"},{"a":"partial","b":"yes","label":"Hurricane and cyclone tracking","note":"Windy has a dedicated hurricane tracker; God's Eye View shows NHC/CPHC cyclone tracks on the globe"},{"a":"no","b":"yes","label":"Weather alerts","note":"Windy offers alerts for favourite locations; no alert system is claimed in God's Eye View's README"},{"a":"yes","b":"no","label":"Voice AI agent","note":"God's Eye View has a hands-free voice agent that drives the globe, using your own OpenAI key; Windy has no equivalent"},{"a":"partial","b":"yes","label":"Detailed spot forecasts","note":"Windy provides point forecasts, meteograms and airgrams for specific spots; God's Eye View gives local weather in its briefing strip, not model-grade spot forecasts"},{"a":"no","b":"yes","label":"Mobile apps","note":"Windy offers iOS and Android apps plus the web; no native God's Eye View mobile app is listed in its README"},{"a":"yes","b":"no","label":"Open source","note":"God's Eye View is MIT-licensed with inspectable source; Windy is a closed hosted service"},{"a":"partial","b":"partial","label":"API access","note":"God's Eye View runs as a local MCP server; Windy's developer APIs are sold separately from the consumer app"}],"intro":"God's Eye View and Windy both animate the planet's weather — and build opposite products around it. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice, with weather as one keyless layer. Windy is a hosted professional weather platform that opens instantly on the web or in an app: 50+ forecast-model layers, radar, satellite imagery, spot forecasts and a webcam layer — weather depth instead of globe breadth.","lastReviewed":"2026-10-29","pricingA":"There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.","pricingB":"Generous free tier. Windy Premium costs about $35/year (community-confirmed pricing for 2026; sold as an auto-renewing subscription or a one-time payment for a year) and unlocks higher-resolution data, longer ranges and extra features. Windy confirms there is no free trial of Premium. Developer APIs are priced separately — the Map Forecast API's Professional tier is €990/year.","prosA":["Completely free and open source (MIT) — no subscription, ever","Photorealistic 3D globe with cockpit view and 3D aircraft models","Voice-controlled AI agent — talk to the globe","Flights, ships, satellites and ~4,000 cameras in one scene","Runs locally: your data and keys stay on your machine"],"prosB":["50+ weather layers from ECMWF, GFS, ICON and regional models","Radar, satellite layers and a dedicated hurricane tracker","Meteograms, airgrams and detailed point forecasts","Weather alerts for favourite places, plus a webcam layer","Nothing to install; mature web, iOS and Android apps"],"published":true,"quickFacts":[{"a":"Free open-source software — install and run it yourself","b":"Hosted website and apps — free tier, with an optional Premium subscription","label":"Model"},{"a":"Bilawal Sidhu and Sameh Khamis (Halfpixel)","b":"Windy.com","label":"Maker"},{"a":"Your own computer — Windows, macOS, Linux","b":"Web, iOS and Android","label":"Runs on"},{"a":"Everything — the software itself is free","b":"The core weather maps, radar and satellite layers","label":"Free tier"},{"a":"None — optional third-party API keys meter separately","b":"Windy Premium — about $35/year; no free trial","label":"Paid tier"},{"a":"~4,000 public cameras in its CCTV Mesh layer","b":"A webcam layer aggregating public webcams on the map","label":"Camera claim"}],"seoDescription":"God's Eye View vs Windy compared: the free open-source photoreal 3D globe you run yourself vs the professional weather platform with 50+ model layers, radar and spot forecasts — features, costs and verdicts, plus a free third option.","seoTitle":"God's Eye View vs Windy (2026): 3D Globe or Weather Platform?","slug":"gods-eye-view-vs-windy","sources":[{"label":"God's Eye View — official GitHub repository and README","url":"https://github.com/bilawalsidhu/gods-eye-view"},{"label":"Windy.com — official site","url":"https://www.windy.com"},{"label":"Windy Community — Premium features, annual-only sale and no free trial (official staff posts)","url":"https://community.windy.com/topic/23730/be-one-step-ahead-with-the-advanced-features-of-windy-premium-en"},{"label":"Windy Community — Premium subscription difference (moderator answer)","url":"https://community.windy.com/topic/42878/subscription-difference"},{"label":"Windy Map Forecast API — official pricing","url":"https://api.windy.com/map-forecast/pricing"}],"verdictA":"Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, flights, ships and cameras in one scene — you're comfortable installing software, and you want it free and open forever.","verdictB":"Choose Windy if you read weather seriously — sailing, flying, storm-watching or trip planning — and want the deepest model layers, radar, alerts and spot forecasts in one hosted place.","verdictLine":"God's Eye View is the spectacle — a photoreal 3D globe you own, with weather as one layer among many. Windy is the specialist — a professional weather platform whose model depth, radar and spot forecasts go far deeper. The first is free software; the second is a free website and app with a paid Premium tier.","worldEye":"If installing software is the dealbreaker in God's Eye View, and Windy's weather-only focus is the limit there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. Its weather layer does not match Windy's forecast-model depth, and it doesn't render photoreal 3D tiles like God's Eye View. Its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds on top of the free globe."}
+{
+  "aAbout": "God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.",
+  "aLink": {
+    "href": "/alternatives/gods-eye-view",
+    "label": "WorldEye: the God's Eye View alternative"
+  },
+  "aName": "God's Eye View",
+  "aSlug": "gods-eye-view",
+  "aStrengths": "God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.",
+  "aWebsite": "https://github.com/bilawalsidhu/gods-eye-view",
+  "bAbout": "Windy is a professional weather visualisation platform: animated wind and weather layers built on forecast models including ECMWF, GFS and ICON, with radar and satellite layers, detailed point forecasts, meteograms and airgrams, a hurricane tracker and a layer of public webcams. A free tier covers the core maps; Windy Premium unlocks higher-resolution data, longer forecast ranges and extra detail. Developer APIs are sold separately from the consumer app. It runs on the web and in iOS and Android apps.",
+  "bName": "Windy",
+  "bSlug": "windy",
+  "bStrengths": "Windy is the deeper weather platform by a wide margin: a catalogue of 50+ weather layers, multiple global and regional forecast models with ECMWF at the centre, radar and satellite blends, hurricane tracking, airgram and meteogram detail for aviation and sailing, weather alerts for favourite places, and a webcam layer — all in a hosted platform with a large community and mature mobile apps. If weather is something you read closely or plan your life around, Windy's meteorological depth wins.",
+  "bWebsite": "https://www.windy.com",
+  "betterAnswer": "They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and breadth across flights, ships, satellites and cameras, with weather as one keyless layer among many. Windy is a hosted weather specialist: the deepest forecast-model maps, radar, satellite layers and spot forecasts, open instantly in a browser or app. If you want to experience the planet, install God's Eye View; if you want to read its weather professionally, open Windy.",
+  "category": "Live world maps",
+  "consA": [
+    "You must install and run it yourself (Pinokio, terminal or Docker)",
+    "Ships need a free third-party key; voice spends your OpenAI credit",
+    "Weather depth is one layer among many — no meteograms or spot forecasts",
+    "Traffic is simulated, per its own caveat; no news layer"
+  ],
+  "consB": [
+    "Weather-first — no live flight, ship or satellite tracking",
+    "Primarily a 2D layered map, not a photorealistic 3D globe",
+    "Premium is annual-only with no free trial; developer APIs cost extra",
+    "Its webcam layer is a side layer, not a camera-first catalogue"
+  ],
+  "faqs": [
+    {
+      "a": "No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. Windy is a hosted weather platform at windy.com. They share weather layers and a webcam feature, and little else.",
+      "q": "Is God's Eye View the same as Windy?"
+    },
+    {
+      "a": "Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.",
+      "q": "Is God's Eye View really free?"
+    },
+    {
+      "a": "Windy Premium costs about $35/year (community-confirmed pricing for 2026; sold as an auto-renewing subscription or a one-time payment for a year). There is no free trial of Premium. It unlocks higher-resolution and longer-range data plus extra layers. Developer APIs are priced separately.",
+      "q": "How much is Windy Premium?"
+    },
+    {
+      "a": "Windy, decisively. It offers 50+ weather layers drawn from ECMWF, GFS, ICON and regional models, with meteograms, airgrams and detailed point forecasts. God's Eye View animates GFS/ECMWF wind, radar, clouds and lightning as keyless layers on its globe, but it is not a forecast-model platform.",
+      "q": "Which is better for detailed weather forecasts?"
+    },
+    {
+      "a": "Both, differently. God's Eye View projects about 4,000 public CCTV cameras into its 3D scene. Windy aggregates public webcams as a layer on its weather map. For comparison, WorldEye's directory lists 74,229 public cameras alongside its weather layer.",
+      "q": "Which has live cameras, God's Eye View or Windy?"
+    },
+    {
+      "a": "Only for God's Eye View — it installs locally via Pinokio, a terminal install or Docker, and runs on your own computer. Windy needs nothing installed: it opens on the web, with optional iOS and Android apps.",
+      "q": "Do I need to install anything?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "beaches",
+      "mountains"
+    ],
+    "ids": [
+      "sky-es-las-vistas",
+      "sky-fr-frejus",
+      "sky-fr-royan",
+      "occ-biodic-43",
+      "sky-it-vesuvio",
+      "sky-fr-bourget"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Open it with no install",
+      "note": "God's Eye View installs locally (Pinokio, terminal or Docker); Windy runs on the web and in mobile apps"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Photorealistic 3D globe",
+      "note": "God's Eye View is built on it (Google Photorealistic 3D Tiles); Windy is primarily a 2D layered weather map"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Live public cameras and webcams",
+      "note": "God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); Windy aggregates public webcams as a map layer"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Live flights (ADS-B)",
+      "note": "God's Eye View tracks live aircraft via OpenSky and adsb.lol; Windy is a weather platform with no live flight tracking"
+    },
+    {
+      "a": "partial",
+      "b": "no",
+      "label": "Live ships (AIS)",
+      "note": "God's Eye View's vessel layer needs a free AISStream key; Windy offers marine weather layers but no AIS vessel tracking"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Satellites and ISS tracking",
+      "note": "God's Eye View tracks satellites from CelesTrak with pass predictions; Windy shows satellite imagery, not tracked objects"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Forecast model maps",
+      "note": "Windy draws 50+ layers from ECMWF, GFS, ICON and regional models; God's Eye View animates GFS/ECMWF wind as one layer among many"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Radar and satellite layers",
+      "note": "Both blend radar and satellite imagery into the map; Windy adds radar and satellite archives on Premium"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Hurricane and cyclone tracking",
+      "note": "Windy has a dedicated hurricane tracker; God's Eye View shows NHC/CPHC cyclone tracks on the globe"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Weather alerts",
+      "note": "Windy offers alerts for favourite locations; no alert system is claimed in God's Eye View's README"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Voice AI agent",
+      "note": "God's Eye View has a hands-free voice agent that drives the globe, using your own OpenAI key; Windy has no equivalent"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Detailed spot forecasts",
+      "note": "Windy provides point forecasts, meteograms and airgrams for specific spots; God's Eye View gives local weather in its briefing strip, not model-grade spot forecasts"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Mobile apps",
+      "note": "Windy offers iOS and Android apps plus the web; no native God's Eye View mobile app is listed in its README"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Open source",
+      "note": "God's Eye View is MIT-licensed with inspectable source; Windy is a closed hosted service"
+    },
+    {
+      "a": "partial",
+      "b": "partial",
+      "label": "API access",
+      "note": "God's Eye View runs as a local MCP server; Windy's developer APIs are sold separately from the consumer app"
+    }
+  ],
+  "intro": "God's Eye View and Windy both animate the planet's weather — and build opposite products around it. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice, with weather as one keyless layer. Windy is a hosted professional weather platform that opens instantly on the web or in an app: 50+ forecast-model layers, radar, satellite imagery, spot forecasts and a webcam layer — weather depth instead of globe breadth.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.",
+  "pricingB": "Generous free tier. Windy Premium costs about $35/year (community-confirmed pricing for 2026; sold as an auto-renewing subscription or a one-time payment for a year) and unlocks higher-resolution data, longer ranges and extra features. Windy confirms there is no free trial of Premium. Developer APIs are priced separately — the Map Forecast API's Professional tier is €990/year.",
+  "prosA": [
+    "Completely free and open source (MIT) — no subscription, ever",
+    "Photorealistic 3D globe with cockpit view and 3D aircraft models",
+    "Voice-controlled AI agent — talk to the globe",
+    "Flights, ships, satellites and ~4,000 cameras in one scene",
+    "Runs locally: your data and keys stay on your machine"
+  ],
+  "prosB": [
+    "50+ weather layers from ECMWF, GFS, ICON and regional models",
+    "Radar, satellite layers and a dedicated hurricane tracker",
+    "Meteograms, airgrams and detailed point forecasts",
+    "Weather alerts for favourite places, plus a webcam layer",
+    "Nothing to install; mature web, iOS and Android apps"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Free open-source software — install and run it yourself",
+      "b": "Hosted website and apps — free tier, with an optional Premium subscription",
+      "label": "Model"
+    },
+    {
+      "a": "Bilawal Sidhu and Sameh Khamis (Halfpixel)",
+      "b": "Windy.com",
+      "label": "Maker"
+    },
+    {
+      "a": "Your own computer — Windows, macOS, Linux",
+      "b": "Web, iOS and Android",
+      "label": "Runs on"
+    },
+    {
+      "a": "Everything — the software itself is free",
+      "b": "The core weather maps, radar and satellite layers",
+      "label": "Free tier"
+    },
+    {
+      "a": "None — optional third-party API keys meter separately",
+      "b": "Windy Premium — about $35/year; no free trial",
+      "label": "Paid tier"
+    },
+    {
+      "a": "~4,000 public cameras in its CCTV Mesh layer",
+      "b": "A webcam layer aggregating public webcams on the map",
+      "label": "Camera claim"
+    }
+  ],
+  "seoDescription": "God's Eye View vs Windy compared: the free open-source photoreal 3D globe you run yourself vs the professional weather platform with 50+ model layers, radar and spot forecasts — features, costs and verdicts, plus a free third option.",
+  "seoTitle": "God's Eye View vs Windy (2026): 3D Globe or Weather Platform?",
+  "slug": "gods-eye-view-vs-windy",
+  "sources": [
+    {
+      "label": "God's Eye View — official GitHub repository and README",
+      "url": "https://github.com/bilawalsidhu/gods-eye-view"
+    },
+    {
+      "label": "Windy.com — official site",
+      "url": "https://www.windy.com"
+    },
+    {
+      "label": "Windy Community — Premium features, annual-only sale and no free trial (official staff posts)",
+      "url": "https://community.windy.com/topic/23730/be-one-step-ahead-with-the-advanced-features-of-windy-premium-en"
+    },
+    {
+      "label": "Windy Community — Premium subscription difference (moderator answer)",
+      "url": "https://community.windy.com/topic/42878/subscription-difference"
+    },
+    {
+      "label": "Windy Map Forecast API — official pricing",
+      "url": "https://api.windy.com/map-forecast/pricing"
+    }
+  ],
+  "verdictA": "Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, flights, ships and cameras in one scene — you're comfortable installing software, and you want it free and open forever.",
+  "verdictB": "Choose Windy if you read weather seriously — sailing, flying, storm-watching or trip planning — and want the deepest model layers, radar, alerts and spot forecasts in one hosted place.",
+  "verdictLine": "God's Eye View is the spectacle — a photoreal 3D globe you own, with weather as one layer among many. Windy is the specialist — a professional weather platform whose model depth, radar and spot forecasts go far deeper. The first is free software; the second is a free website and app with a paid Premium tier.",
+  "worldEye": "If installing software is the dealbreaker in God's Eye View, and Windy's weather-only focus is the limit there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. Its weather layer does not match Windy's forecast-model depth, and it doesn't render photoreal 3D tiles like God's Eye View. Its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds on top of the free globe."
+}

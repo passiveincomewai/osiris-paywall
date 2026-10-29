@@ -1,0 +1,245 @@
+{
+  "aAbout": "Sentinel Hub is a cloud-based service, run by Sinergise Solutions — a Planet Labs company — that makes satellite data from the Sentinels, Landsat and other providers easy to browse or analyse, in its cloud GIS or in your own environment. Its documentation describes 7 APIs for searching, processing, analysing, visualising and downloading satellite data and integrating it into your own application, metered in processing units (PU). Its data spans Sentinel-1, 2, 3 and 5P, the Landsat archive, commercial Planet and Maxar collections, elevation models and bring-your-own-data collections. Its free showcase app is EO Browser; the platform itself is a paid subscription product with a 30-day free trial, and an account is required for API use.",
+  "aName": "Sentinel Hub",
+  "aSlug": "sentinel-hub",
+  "aStrengths": "Sentinel Hub is the buildable platform: 7 APIs — Processing, Batch Processing, Catalog (STAC-based), Statistical, OGC and more — plus a Python package, QGIS and ArcGIS integration via OGC services, custom evalscripts, multi-temporal processing and bring-your-own-data collections, across Sentinel, Landsat and commercial Planet and Maxar data. If satellite imagery needs to end up inside your own application, pipeline or product, Copernicus Browser cannot do that job and Sentinel Hub was built for exactly it.",
+  "aWebsite": "https://www.sentinel-hub.com",
+  "bAbout": "Copernicus Browser is the free visual front end of the Copernicus Data Space Ecosystem, the European programme's open ecosystem for Earth-observation data. Official documentation describes it as a central hub for accessing, exploring and using data from the Copernicus Sentinel constellations and more — and states plainly that it is based on Sentinel Hub's EO Browser technology. It visualises Sentinel-1, 2, 3 and 5P data and two digital elevation models, with ready-made and custom visualisations, spectral indices such as NDVI, a compare tool, pins, 3D visualisation, statistical tools and timelapse export as GIF or MPEG4. It is completely free; a free account is currently required to use it, and it is web only.",
+  "bName": "Copernicus Browser",
+  "bSlug": "copernicus-browser",
+  "bStrengths": "Copernicus Browser is the same viewing technology with the price and the sales process removed: completely free, with no paid plans at all, covering Sentinel-1, 2, 3 and 5P plus elevation models, with true- and false-colour rendering, NDVI and custom indices, compare mode, pins, 3D views, statistics and timelapse export built in. For anyone who wants to look at, compare, analyse in the browser and download Sentinel imagery — students, journalists, researchers, the curious — it does the viewing job in full, for €0.",
+  "bWebsite": "https://browser.dataspace.copernicus.eu/",
+  "betterAnswer": "It depends on whether imagery is something you look at or something you build with. Copernicus Browser is better for looking: the free official viewer, built on Sentinel Hub's own EO Browser technology, with Sentinel data, indices, compare mode and timelapses for €0. Sentinel Hub is better for building: the paid developer platform whose 7 APIs, processing-unit subscriptions and commercial data collections feed your own applications. Viewers should start — and may never need to leave — Copernicus Browser; developers who outgrow a viewer graduate to Sentinel Hub.",
+  "category": "Satellite imagery",
+  "consA": [
+    "No public prices — its pricing page redirects to Planet's contact-sales page",
+    "Paid subscriptions are metered in processing units you must budget",
+    "Account required for API use, and a learning curve throughout",
+    "No official native mobile app was found"
+  ],
+  "consB": [
+    "A free account is currently required — no anonymous use",
+    "Web only — no official native mobile app was found",
+    "Visualisation is centred on Sentinel missions and DEM data",
+    "Not a developer platform itself — APIs live in the wider Data Space ecosystem"
+  ],
+  "faqs": [
+    {
+      "a": "In effect, yes for viewing: the official Copernicus Data Space documentation states that Copernicus Browser is based on Sentinel Hub's EO Browser, which Sentinel Hub itself describes as its free web application showcasing its functionality. Copernicus Browser is the European ecosystem's official, completely free version of that viewing experience.",
+      "q": "Is Copernicus Browser built on Sentinel Hub technology?"
+    },
+    {
+      "a": "Not as a platform. Sentinel Hub offers a 30-day free trial that includes API-level access, and its EO Browser showcase app is free to use — but ongoing API use sits behind paid subscriptions metered in processing units. Copernicus Browser, by contrast, is completely free with no paid plans.",
+      "q": "Is Sentinel Hub free?"
+    },
+    {
+      "a": "No public price can be stated: on 2026-10-29 Sentinel Hub's pricing page redirected to Planet's pricing page, which lists no Sentinel Hub plan prices and routes buyers to contact sales. What is public is the structure — subscriptions metered in processing units, with published allowances such as Exploration at 30,000 PU per month (non-commercial), Basic up to 70,000 PU per month and Enterprise S at 400,000 PU per month.",
+      "q": "How much does Sentinel Hub cost?"
+    },
+    {
+      "a": "Yes. ESA's guide calls it a free and easy tool, the Data Space describes free instant access under Copernicus's free and open data policy, and there are no paid plans, subscriptions or pricing pages for the Browser. The only requirement is a free account, which is currently needed to use it.",
+      "q": "Is Copernicus Browser really completely free?"
+    },
+    {
+      "a": "For Sentinel Hub, yes — its documentation states you need a Sentinel Hub account to work with its APIs, and the 30-day trial also requires sign-up. For Copernicus Browser, the official documentation states that you currently need a free account to use the Browser. Neither account costs money to create.",
+      "q": "Do I need an account for either tool?"
+    },
+    {
+      "a": "Sentinel Hub. It is the developer platform — 7 APIs including Processing, Batch, Catalog (STAC-based), Statistical and OGC, a Python package and GIS integrations — metered in processing units on paid subscriptions. Copernicus Browser is a viewer for people, not a platform for code, although the wider Copernicus Data Space Ecosystem documents APIs of its own.",
+      "q": "Which should a developer choose, Sentinel Hub or Copernicus Browser?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "mountains"
+    ],
+    "ids": [
+      "occ-biodic-43",
+      "sky-it-vesuvio",
+      "occ-jma-volcam-50602",
+      "sky-es-masca",
+      "sky-fr-bourget",
+      "sky-fr-menton"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "API access for building your own applications",
+      "note": "Sentinel Hub's core product is its 7 APIs; Copernicus Browser is a viewer — APIs belong to the wider Copernicus Data Space Ecosystem around it"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Completely free, with no paid plans",
+      "note": "Sentinel Hub is a paid subscription platform with a 30-day free trial; Copernicus Browser costs €0 and has no paid plans at all"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Subscriptions metered in processing units",
+      "note": "Sentinel Hub plans are metered in PU (Exploration 30,000 PU/mo, Basic up to 70,000, Enterprise S 400,000); Copernicus Browser has no subscriptions or metering"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Sentinel-1, 2, 3 and 5P data",
+      "note": "Both centre on the Sentinel missions — Sentinel Hub as processable collections, Copernicus Browser as visualisable data"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Landsat collections",
+      "note": "Sentinel Hub lists Landsat 9-8, 7, 4-5 and 1-5 among its data sources; Landsat is not in Copernicus Browser's documented visualisable collections checked"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Commercial imagery collections (Planet, Maxar)",
+      "note": "Sentinel Hub offers Planet PlanetScope and SkySat Archive and Maxar WorldView/GeoEye collections; Copernicus Browser's documented visualisations are Sentinel missions and DEM data"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Custom indices and visualisations (e.g. NDVI)",
+      "note": "Sentinel Hub uses custom evalscripts and band math; Copernicus Browser offers NDVI, custom composites, custom indices and custom script visualisations"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Compare and split-view tools",
+      "note": "Sentinel Hub's EO Browser supports browse and compare; Copernicus Browser's compare tool offers Split and Opacity modes"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Timelapse creation",
+      "note": "Both offer time-lapse functionality; Copernicus Browser exports timelapses as GIF or MPEG4"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Download imagery and products",
+      "note": "Sentinel Hub APIs return and download processed imagery; Copernicus Browser offers image download (JPG, PNG, KMZ, GeoTIFF) and full product download"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Statistical analysis over an area and time",
+      "note": "Sentinel Hub has a dedicated Statistical API; Copernicus Browser provides histograms, a Spectral Explorer and statistical time series in the browser"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "3D visualisation of terrain",
+      "note": "Copernicus Browser offers 3D visualisation, downloadable as PNG/JPEG; Sentinel Hub's EO Browser is primarily a 2D viewer and a 3D view is unverified"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Account required for core use",
+      "note": "Sentinel Hub requires an account for API use; Copernicus Browser currently requires a free account — the difference is that only Sentinel Hub's account leads to paid subscriptions"
+    },
+    {
+      "a": "no",
+      "b": "no",
+      "label": "Native mobile apps",
+      "note": "No official native app was found for either on the official pages checked — both are web platforms"
+    }
+  ],
+  "intro": "Sentinel Hub and Copernicus Browser share DNA — literally. Copernicus Browser, the completely free official viewer of the Copernicus Data Space Ecosystem, is built on Sentinel Hub's EO Browser technology. What separates them is what surrounds the viewer. Sentinel Hub, run by Sinergise, a Planet Labs company, is the paid developer platform: 7 APIs, subscriptions metered in processing units, Landsat and commercial Planet and Maxar data on top of the Sentinels. Copernicus Browser is the viewer set free: Sentinel-1, 2, 3 and 5P visualisations, indices, compare mode and timelapses for €0, with only a free account asked. It is the classic split — the API, or the free viewer built on the same tech.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "Paid subscriptions metered in processing units — but no public prices exist: on 2026-10-29 Sentinel Hub's pricing page redirected to Planet's pricing page, which lists no Sentinel Hub plan prices and routes buyers to contact sales, so no euro or dollar price is stated here. The published structure is processing-unit allowances — Exploration 30,000 PU per month (which does not support commercial use), Basic up to 70,000 PU per month, and Enterprise S 400,000 PU per month — with monthly and annual packages described in its FAQ. A 30-day free trial includes API-level access, and its EO Browser showcase app is free to use.",
+  "pricingB": "Completely free — €0, with no paid plans, subscriptions or pricing pages. The Copernicus Data Space Ecosystem describes free instant access under Copernicus's free and open data policy. The only requirement is a free account, which the official documentation states is currently needed to use the Browser.",
+  "prosA": [
+    "7 APIs — Processing, Batch, Catalog/STAC, Statistical, OGC and more",
+    "Sentinel, Landsat and commercial Planet and Maxar data in one platform",
+    "Custom evalscripts and multi-temporal processing at cloud scale",
+    "30-day free trial including API-level access",
+    "Python package plus QGIS and ArcGIS integration via OGC services"
+  ],
+  "prosB": [
+    "Completely free — €0, no paid plans, no trial clock",
+    "Built on Sentinel Hub's proven EO Browser technology",
+    "Sentinel-1/2/3/5P plus DEM visualisations, NDVI and custom indices",
+    "Compare mode, pins, 3D view and timelapse export (GIF/MPEG4)",
+    "In-browser statistics, histograms and image/product downloads"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Paid developer platform — APIs metered in processing units",
+      "b": "Free official web viewer in the Copernicus Data Space Ecosystem",
+      "label": "Model"
+    },
+    {
+      "a": "Sinergise Solutions, a Planet Labs company",
+      "b": "Copernicus Data Space Ecosystem (European Copernicus programme)",
+      "label": "Operator"
+    },
+    {
+      "a": "No public prices — pricing page redirects to Planet's contact-sales page",
+      "b": "€0 — no paid plans exist",
+      "label": "Price"
+    },
+    {
+      "a": "30-day free trial including API access; EO Browser showcase is free",
+      "b": "The full Browser, with a free account currently required",
+      "label": "Free entry"
+    },
+    {
+      "a": "Sentinel-1/2/3/5P, Landsat, Planet, Maxar, DEM and bring-your-own data",
+      "b": "Sentinel-1/2/3/5P and two digital elevation models",
+      "label": "Data"
+    },
+    {
+      "a": "Web apps plus 7 APIs, Python package and GIS integrations",
+      "b": "Web only — no native mobile app found",
+      "label": "Platform"
+    }
+  ],
+  "seoDescription": "Sentinel Hub vs Copernicus Browser compared: the paid developer platform with 7 APIs and processing-unit subscriptions vs the completely free official viewer built on the same EO Browser tech — features, costs and verdicts, plus a free third option.",
+  "seoTitle": "Sentinel Hub vs Copernicus Browser (2026): Paid API Platform or Free Viewer?",
+  "slug": "sentinel-hub-vs-copernicus-browser",
+  "sources": [
+    {
+      "label": "Sentinel Hub — official site",
+      "url": "https://www.sentinel-hub.com"
+    },
+    {
+      "label": "Sentinel Hub — official FAQ",
+      "url": "https://www.sentinel-hub.com/faq/"
+    },
+    {
+      "label": "Sentinel Hub — official data collections",
+      "url": "https://www.sentinel-hub.com/explore/data/"
+    },
+    {
+      "label": "Sentinel Hub — official documentation, Beginners Guide",
+      "url": "https://docs.sentinel-hub.com/api/latest/user-guides/beginners-guide/"
+    },
+    {
+      "label": "Sentinel Hub EO Browser — official app",
+      "url": "https://apps.sentinel-hub.com/eo-browser/"
+    },
+    {
+      "label": "Copernicus Browser — official app",
+      "url": "https://browser.dataspace.copernicus.eu/"
+    },
+    {
+      "label": "Copernicus Data Space Ecosystem — official site",
+      "url": "https://dataspace.copernicus.eu"
+    },
+    {
+      "label": "ESA Education — Copernicus Browser guide",
+      "url": "https://education.esa.int/copernicus_browser_guide/"
+    }
+  ],
+  "verdictA": "Choose Sentinel Hub if you build with satellite data — feeding imagery into your own application, pipeline or product through its APIs, running custom processing at scale, or adding Landsat and commercial Planet and Maxar collections beyond the Sentinels.",
+  "verdictB": "Choose Copernicus Browser if you look at satellite data — studying vegetation with NDVI, comparing a place across dates, making timelapses, or downloading Sentinel imagery for a report or classroom, without paying anything or talking to a sales team.",
+  "verdictLine": "Sentinel Hub is the platform you build on; Copernicus Browser is the viewer you open. Same EO Browser roots — one is metered by processing units behind a contact-sales wall, the other is the European programme's gift: the viewing job done in full, for free.",
+  "worldEye": "Both tools show the Earth from orbit, as data. WorldEye shows it from the ground, live: a free 3D globe that opens in any browser with no signup — 74,229 public cameras across 105 countries, alongside live flights, ships, satellites, weather, earthquakes and wildfires in the same view. It offers neither Sentinel Hub's APIs nor Copernicus Browser's Sentinel analysis, and it does not claim to; it is the live-planet view. Its optional Pro tier is $7.99/week, $13.99/month or $74.99/year."
+}

@@ -1,0 +1,239 @@
+{
+  "aAbout": "Ventusky visualises forecast-model data — wind, precipitation, temperature, pressure, clouds, snow and waves — as exceptionally clean animated maps, including wind flows at different altitudes. It draws on the ECMWF, GFS, ICON and GEM models (per its premium page) and adds radar, satellite and air-quality layers. Access is free with an optional premium tier; it is weather-only, deliberately, with no webcams, tracking or extras competing for attention.",
+  "aName": "Ventusky",
+  "aSlug": "ventusky",
+  "aStrengths": "Ventusky is the cleaner forecast reader: uncluttered, legible maps built from four global models — ECMWF, GFS, ICON and GEM — where wind and precipitation patterns over the coming days are easy to follow, with wind flows at different altitudes that aviation-minded users appreciate and an air-quality layer on top. If your job is to read the weather that is coming, especially wind and rain, Ventusky's meteorological focus and restraint beat a live-satellite view.",
+  "aWebsite": "https://www.ventusky.com",
+  "bAbout": "Zoom Earth, by Neave Interactive Limited, is an interactive weather map of the world and a real-time hurricane tracker, free on the web, iOS and Android. It shows near real-time satellite imagery — live images from NOAA GOES, JMA Himawari and EUMETSAT Meteosat geostationary satellites updated every 10 minutes, plus HD images updated twice a day from NASA polar-orbiting satellites Aqua and Terra — alongside rain radar with nowcasting, forecast maps from DWD ICON and NOAA GFS, hurricane tracking using NHC, JTWC, NRL and IBTrACS data, and an active fires overlay from NASA FIRMS. No account is required for basic use; an account is optional and lets you access a subscription across devices.",
+  "bName": "Zoom Earth",
+  "bSlug": "zoom-earth",
+  "bStrengths": "Zoom Earth is the better live watch: satellite imagery refreshed every 10 minutes from three geostationary fleets, HD passes twice a day from NASA Aqua and Terra, rain radar with nowcasting for the next minutes, a hurricane tracker fed by NHC, JTWC, NRL and IBTrACS, and NASA FIRMS fire detections — all free, on web and mobile, with no account needed to start. If a storm is happening now, Zoom Earth shows it as it unfolds rather than as a model predicted it.",
+  "bWebsite": "https://zoom.earth/",
+  "betterAnswer": "For forecast depth, Ventusky is better: four global models, altitude wind and the cleanest presentation of the days ahead. For live conditions, Zoom Earth is better: 10-minute satellite imagery, radar nowcasting and best-in-class hurricane tracking, all free with no account. Start with the question you ask most — 'what is coming?' points to Ventusky, 'what is happening now?' points to Zoom Earth.",
+  "category": "Weather maps",
+  "consA": [
+    "No single public premium price list — prices vary by region and store",
+    "Dedicated hurricane tracking was not verified from official sources",
+    "No live camera network verified — it shows models, not ground truth",
+    "No public developer API verified from official sources"
+  ],
+  "consB": [
+    "Pro prices ($1.99 / $11.99) are listed without labelled billing periods",
+    "Forecast depth is two models (ICON and GFS) — no ECMWF",
+    "No public API — its terms prohibit scraping and automated access",
+    "Weather-only: no cameras, flights, ships or other live layers"
+  ],
+  "faqs": [
+    {
+      "a": "Zoom Earth. It is a dedicated real-time hurricane tracker fed by NHC, JTWC, NRL and IBTrACS data, layered over satellite imagery updated every 10 minutes. A dedicated Ventusky hurricane tracker was not verified from its official sources — Ventusky's strength is general forecast maps.",
+      "q": "Is Ventusky or Zoom Earth better for hurricanes?"
+    },
+    {
+      "a": "They overlap on two: both use NOAA's GFS and DWD's ICON. Ventusky also lists ECMWF and GEM on its premium page, giving it the broader model set; Zoom Earth builds its forecast layers from ICON and GFS and puts its weight on live satellite and radar instead.",
+      "q": "Do Ventusky and Zoom Earth use the same weather models?"
+    },
+    {
+      "a": "Near real-time, by its own description: live satellite images from NOAA GOES, JMA Himawari and EUMETSAT Meteosat are updated every 10 minutes, and its rain radar provides real-time detection with nowcasting. HD imagery from NASA's Aqua and Terra satellites is updated twice a day.",
+      "q": "Is Zoom Earth really live?"
+    },
+    {
+      "a": "The official US App Store listing shows Zoom Earth Pro at $1.99 and $11.99 under In-App Purchases, but it does not label which billing period each price corresponds to, so we do not state a period. Its terms say subscriptions are billed periodically (e.g. monthly or annually), as specified at the time of purchase.",
+      "q": "How much does Zoom Earth Pro cost?"
+    },
+    {
+      "a": "Mostly — Ventusky is free to use, with an optional premium tier sold via the web and the app stores. It does not publish one single public price list, so exact prices vary by region and store.",
+      "q": "Is Ventusky free?"
+    },
+    {
+      "a": "Neither — Ventusky shows forecast models and Zoom Earth shows satellite and radar from above. For ground truth, WorldEye's globe carries 74,229 public cameras alongside its weather layer, so you can look at real conditions in a place while a storm passes.",
+      "q": "Which shows what the weather actually looks like on the ground?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "featured",
+      "beaches",
+      "mountains"
+    ],
+    "ids": [
+      "sky-it-vesuvio",
+      "sky-es-las-vistas",
+      "occ-biodic-43",
+      "sky-fr-calanques",
+      "sky-es-los-cristianos",
+      "occ-jma-volcam-50602"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Animated wind and weather maps",
+      "note": "The core of both products: animated forecast maps of wind, rain, temperature, pressure and more"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Multiple forecast models",
+      "note": "Ventusky: ECMWF, GFS, ICON and GEM (per its premium page). Zoom Earth: forecast data from DWD ICON and NOAA/NCEP/NWS GFS"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Live satellite imagery updated every 10 minutes",
+      "note": "Zoom Earth updates geostationary imagery from GOES, Himawari and Meteosat every 10 minutes; Ventusky offers a satellite layer, but a 10-minute cadence was not verified from its official sources"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Rain radar with nowcasting",
+      "note": "Zoom Earth's radar shows rain and snow from ground-based Doppler radar in real time with radar nowcasting; Ventusky blends a radar layer, but a nowcasting feature was not verified"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Hurricane and tropical storm tracking",
+      "note": "Zoom Earth tracks hurricanes in real time using NHC, JTWC, NRL and IBTrACS data; a dedicated Ventusky hurricane tracker was not verified from official sources"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Wildfire and heat-spot overlay",
+      "note": "Zoom Earth shows active fires and heat spots updated daily with data from NASA FIRMS; an equivalent Ventusky overlay was not verified"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Air-quality layer",
+      "note": "Ventusky adds an air-quality layer alongside its weather maps; an air-quality layer was not listed among Zoom Earth's official forecast layers checked"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Wind at different altitudes",
+      "note": "Ventusky shows wind flows at different altitudes, a view aviation-minded users appreciate; altitude wind views were not verified for Zoom Earth"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Detailed forecast fields (humidity, dew point, wet-bulb)",
+      "note": "Zoom Earth lists precipitation, wind, gusts, temperature, feels-like, humidity, dew point, wet-bulb and pressure forecasts; Ventusky covers the core fields, with the full specialist set not verified"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Free access without an account",
+      "note": "Ventusky is free with an optional premium tier; Zoom Earth needs no account for basic use — an account is optional"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Mobile apps plus web",
+      "note": "Both run on the web and as iOS and Android apps"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Measure distance and area tools",
+      "note": "Zoom Earth offers measure distance and measure area tools on its web map; equivalent Ventusky tools were not verified from official sources"
+    },
+    {
+      "a": "unverified",
+      "b": "no",
+      "label": "Developer API",
+      "note": "No public Zoom Earth API was found on its official pages, and its terms prohibit automated access such as scraping; no public Ventusky API was verified either"
+    },
+    {
+      "a": "unverified",
+      "b": "no",
+      "label": "Live public cameras",
+      "note": "Zoom Earth has no camera network; a dedicated Ventusky camera network was not verified from official sources — neither is a camera product"
+    }
+  ],
+  "intro": "Ventusky and Zoom Earth are both free weather maps you open when something is happening outside — and they start from opposite ends of the same data. Ventusky is the forecast-model tool: clean animated maps of wind, rain and temperature drawn from ECMWF, GFS, ICON and GEM, including wind flows at different altitudes. Zoom Earth is the live-observation tool: satellite imagery updated every 10 minutes, rain radar with nowcasting and a dedicated hurricane tracker, with forecast layers from ICON and GFS underneath. Which one suits you depends on whether you read the forecast or watch the sky as it is now.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "Free access with an optional premium option, billed via the web or the app stores. Ventusky does not publish a single public price list and prices vary by region and store, so we won't quote a figure we can't verify — check the premium page in your region.",
+  "pricingB": "Free on the web, iOS and Android, with no account required for basic use. Zoom Earth Pro is listed under In-App Purchases on the official US App Store listing at $1.99 and $11.99 — that listing does not label which billing period each price corresponds to, so the period for each price is unverified. Its terms say subscriptions are billed on a periodic basis (e.g. monthly or annually), as specified at the time of purchase. No free trial for Pro was stated on the official pages checked.",
+  "prosA": [
+    "Exceptionally clean, legible animated weather maps",
+    "Four global forecast models: ECMWF, GFS, ICON and GEM",
+    "Wind flows at different altitudes for aviation-minded users",
+    "Radar, satellite and air-quality layers alongside the models",
+    "Free to use, with an optional premium tier"
+  ],
+  "prosB": [
+    "Satellite imagery updated every 10 minutes from GOES, Himawari and Meteosat",
+    "Rain radar with nowcasting for short-term rain and snow",
+    "Dedicated hurricane tracker using NHC, JTWC, NRL and IBTrACS data",
+    "Wildfire heat spots from NASA FIRMS, plus twice-daily HD NASA imagery",
+    "Free on web, iOS and Android with no account required for basic use"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Weather visualisation platform — free with optional premium",
+      "b": "Interactive weather map and hurricane tracker — free with optional Pro",
+      "label": "Model"
+    },
+    {
+      "a": "Not stated in the official sources checked",
+      "b": "Neave Interactive Limited",
+      "label": "Maker"
+    },
+    {
+      "a": "Web plus iOS and Android apps",
+      "b": "Web plus iOS and Android apps",
+      "label": "Runs on"
+    },
+    {
+      "a": "Free access to the core weather maps",
+      "b": "Full basic use free, no account required",
+      "label": "Free tier"
+    },
+    {
+      "a": "Optional premium — no single public price list; prices vary by region and store",
+      "b": "Zoom Earth Pro — $1.99 and $11.99 on the US App Store listing; billing period for each price unverified",
+      "label": "Paid tier"
+    },
+    {
+      "a": "Forecast models ECMWF, GFS, ICON and GEM, plus radar, satellite and air-quality layers",
+      "b": "Geostationary satellite every 10 minutes, ICON and GFS forecasts, NASA FIRMS fires",
+      "label": "Imagery and data"
+    }
+  ],
+  "seoDescription": "Ventusky vs Zoom Earth compared: forecast-model depth and altitude wind vs 10-minute live satellite, radar nowcasting and hurricane tracking — features, pricing and verdicts, plus a free third option.",
+  "seoTitle": "Ventusky vs Zoom Earth (2026): Forecast Depth or Live Satellite?",
+  "slug": "ventusky-vs-zoom-earth",
+  "sources": [
+    {
+      "label": "Ventusky — official site",
+      "url": "https://www.ventusky.com"
+    },
+    {
+      "label": "Ventusky Premium — official page (models and layers)",
+      "url": "https://www.ventusky.com/premium"
+    },
+    {
+      "label": "Zoom Earth — official site",
+      "url": "https://zoom.earth/"
+    },
+    {
+      "label": "Zoom Earth — Terms of Service (official)",
+      "url": "https://zoom.earth/legal/terms/"
+    },
+    {
+      "label": "Zoom Earth — official App Store listing (Neave Interactive)",
+      "url": "https://apps.apple.com/us/app/zoom-earth-weather-forecast/id1531561063"
+    },
+    {
+      "label": "Zoom Earth — official Google Play listing (Neave Interactive)",
+      "url": "https://play.google.com/store/apps/details?id=com.neave.zoomearth"
+    }
+  ],
+  "verdictA": "Choose Ventusky if you plan by the forecast — sailing, flying, hiking or trip planning over the next days — and want the clearest possible picture of wind, rain and temperature, including wind aloft, with the least interface between you and the models.",
+  "verdictB": "Choose Zoom Earth if you watch weather as it happens — a hurricane approaching, a storm line crossing, smoke from a wildfire — and want live satellite, radar nowcasting and storm tracking in a simple free app.",
+  "verdictLine": "Ventusky looks forward: the deepest, cleanest read on what the models say is coming. Zoom Earth looks at now: live satellite and radar, refreshed every 10 minutes, built around storms in progress. Forecast readers start with Ventusky; storm-watchers start with Zoom Earth — most weather watchers end up keeping both.",
+  "worldEye": "Neither Ventusky nor Zoom Earth shows you the ground itself — one shows model output, the other shows cloud tops. WorldEye adds the missing layer: a free 3D globe with 74,229 public cameras across 105 countries, so you can check the actual conditions in a place alongside live flights, ships, satellites, weather, earthquakes and wildfires, with a free tier and no signup. It is not a forecast-model platform and does not pretend to match either specialist on meteorological depth. Its optional Pro tier is $7.99/week · $13.99/month · $74.99/year."
+}

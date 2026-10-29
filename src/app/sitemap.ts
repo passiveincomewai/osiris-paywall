@@ -552,6 +552,18 @@ const SEO_PAGES_COMPARE = [
   "/compare/adsb-exchange-vs-airplanes-live",
   "/compare/marinetraffic-vs-shipfinder",
   "/compare/vesselfinder-vs-shipfinder",
+  "/compare/earthcam-vs-explore-org",
+  "/compare/skylinewebcams-vs-explore-org",
+  "/compare/earthcam-vs-zoom-earth",
+  "/compare/zoom-earth-vs-windy",
+  "/compare/ventusky-vs-zoom-earth",
+  "/compare/zoom-earth-vs-nasa-worldview",
+  "/compare/zoom-earth-vs-google-earth",
+  "/compare/sentinel-hub-vs-copernicus-browser",
+  "/compare/sentinel-hub-vs-zoom-earth",
+  "/compare/n2yo-vs-heavens-above",
+  "/compare/world-monitor-vs-liveuamap",
+  "/compare/maltego-vs-intelligence-x",
 ];
 
 /**

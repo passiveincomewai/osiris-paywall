@@ -1,0 +1,221 @@
+{
+  "aAbout": "EarthCam runs a network of live webcams anchored by famous places — Times Square in New York is the signature view — organised into destination pages and EarthCam TV channels that package cameras into themed streams. Alongside the free consumer network it sells professional construction-camera systems to businesses, with managed hardware, archiving and time-lapse. Many public cameras are watchable free in the browser and in its mobile apps, with weather information shown alongside some cameras.",
+  "aName": "EarthCam",
+  "aSlug": "earthcam",
+  "aStrengths": "EarthCam is the deeper platform for famous places: a large, long-running network of scenic and tourist cameras anchored by Times Square, curated viewing through EarthCam TV, and professional construction-camera services with managed hardware, archiving and time-lapse for commercial clients. For watching a specific famous place — or for a business that needs a camera installed and managed — EarthCam's camera-specific depth and history beat a nature network.",
+  "aWebsite": "https://www.earthcam.com",
+  "bAbout": "Explore.org is a live nature and animal camera network — in its own words, 'the largest Live Nature Camera network on the planet,' claiming 200+ live cams running 24/7. Its cameras sit in natural habitats worldwide, from the Brooks Falls brown bears in Katmai, Alaska to African safaris, eagle nests, oceans and underwater scenes. It is the philanthropic multimedia division of the Annenberg Foundation, and alongside the live cams it publishes highlight reels and educational films. Viewing is on the web and through its iOS and Android apps.",
+  "bName": "Explore.org",
+  "bSlug": "explore-org",
+  "bStrengths": "Explore.org is the deeper nature-camera experience by far: carefully placed wildlife cameras with expert curation — the Brooks Falls brown bear cameras are the famous example — plus highlight reels, educational films and a dedicated community of wildlife watchers, all run as a philanthropic project and completely free. For watching animals live or following a season at a specific nest or river, its focused, mission-driven depth beats any generalist network.",
+  "bWebsite": "https://explore.org",
+  "betterAnswer": "They solve different watching jobs. EarthCam is a commercial network built around famous places — landmark and travel cameras, TV-style channels and a professional construction-camera business — free to watch for the public cams. Explore.org is a free, philanthropic nature network claiming 200+ live wildlife cams, with highlights and educational films. Watch EarthCam to see a place; watch Explore.org to see an animal. Many viewers use both — and use a globe-based network when they want every kind of camera in one view.",
+  "category": "Live webcams",
+  "consA": [
+    "Not a wildlife network — nature coverage is not its focus",
+    "No interactive map or 3D globe — browsing is pages and channels",
+    "Business services are quoted per project, not self-serve priced",
+    "No consumer premium tier verified from official sources"
+  ],
+  "consB": [
+    "Nature only — no city, landmark or travel cameras",
+    "Headline counts (200+ cams) are its own claims, not independently audited",
+    "No map or globe view — browsing is by camera pages and collections",
+    "No public API found on the official pages checked",
+    "Some app and community details rest on store listings, not the main site"
+  ],
+  "faqs": [
+    {
+      "a": "It depends entirely on the subject. EarthCam is better for famous places — Times Square and other landmark and travel cameras, plus EarthCam TV channels. Explore.org is better for live wildlife — bears, eagles, oceans and safaris — with curation, highlights and educational films. Neither does the other's job.",
+      "q": "Is EarthCam or Explore.org better?"
+    },
+    {
+      "a": "Yes. Explore.org is the philanthropic multimedia division of the Annenberg Foundation, and no paid tier, subscription or pricing page was found on its official pages. Its iOS and Android apps are also listed as free.",
+      "q": "Is Explore.org really free?"
+    },
+    {
+      "a": "Watching many of EarthCam's public cameras is free in the browser and its apps. EarthCam's paid side is its professional construction-camera business — managed hardware, archiving and time-lapse, quoted per project — rather than a consumer subscription.",
+      "q": "Is EarthCam free?"
+    },
+    {
+      "a": "They count different things. Explore.org claims 200+ live nature cams running 24/7 and calls itself the world's largest live nature cam network — its own claims. EarthCam centres on famous scenic and tourist cameras plus commercial installations and publishes no directly comparable audited total. For a published all-kinds count, WorldEye's directory lists 74,229 public cameras.",
+      "q": "Which has more cameras, EarthCam or Explore.org?"
+    },
+    {
+      "a": "Its own descriptions highlight brown bears at Brooks Falls in Katmai, Alaska, African savannah safaris, bird and eagle cams and underwater ocean cameras — summarised in its app description as wildlife 'from the African savannah to the Arctic tundra.'",
+      "q": "What animals can I watch on Explore.org?"
+    },
+    {
+      "a": "Neither offers a globe view: EarthCam is organised as destination pages and channels, and Explore.org as camera pages and collections. WorldEye shows its 74,229 cameras directly on a 3D globe, free with no signup.",
+      "q": "Can I watch EarthCam or Explore.org cameras on a map?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "featured",
+      "cities"
+    ],
+    "ids": [
+      "sky-it-trevi",
+      "sky-it-amalfi",
+      "sky-it-navona",
+      "sky-it-signoria",
+      "tfl-JamCams_00001.07450",
+      "occ-biodic-43"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Famous landmark and city cameras",
+      "note": "EarthCam is built around signature places such as Times Square; Explore.org's cameras are in wild habitats, not cities"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Live wildlife and nature cameras",
+      "note": "Explore.org's core specialty is live animal cams — bears, eagles, oceans, safaris; a comparable EarthCam wildlife catalogue was not verified from official sources"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Free to watch",
+      "note": "Many EarthCam public cameras are free to watch; Explore.org is completely free with no paid plans found"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Mobile apps (iOS and Android)",
+      "note": "Both offer iOS and Android apps alongside web viewing; Explore.org's app is published by explore Annenberg LLC"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Curated TV-style channels",
+      "note": "EarthCam TV packages cameras into themed channels; Explore.org organises by animal and habitat collections instead"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Highlight reels and educational films",
+      "note": "Explore.org publishes short and long-format highlight clips and curated educational nature films; no equivalent EarthCam film library was verified"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Construction and business camera services",
+      "note": "EarthCam sells managed construction-camera systems with archiving and time-lapse; Explore.org is a public nature network with no business camera service"
+    },
+    {
+      "a": "partial",
+      "b": "no",
+      "label": "Weather shown with cameras",
+      "note": "Weather information appears alongside some EarthCam cameras; Explore.org is not a weather-overlay platform"
+    },
+    {
+      "a": "no",
+      "b": "no",
+      "label": "Interactive map or 3D globe browsing",
+      "note": "EarthCam browsing is directory- and channel-based; Explore.org uses camera pages and collections — neither offers a globe view"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Search and filtering by category",
+      "note": "EarthCam organises cameras by destination and channel; Explore.org's app description highlights search and filtering by wildlife category"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Personal favourites",
+      "note": "Explore.org's app description lists personalised favourites; a comparable EarthCam favourites feature was not verified from official sources"
+    },
+    {
+      "a": "unverified",
+      "b": "unverified",
+      "label": "Live community and comments",
+      "note": "Explore.org app notes reference live-cam commenting, but detail could not be confirmed on a primary official page; no EarthCam equivalent was verified either"
+    },
+    {
+      "a": "unverified",
+      "b": "unverified",
+      "label": "Public developer API",
+      "note": "No public EarthCam developer API was verified from official sources; no public Explore.org API was found on the official pages checked"
+    }
+  ],
+  "intro": "EarthCam and Explore.org both stream the world live, but they point their cameras at opposite subjects. EarthCam is the network famous for places — Times Square and other landmark and travel cameras, packaged into EarthCam TV channels, with a professional construction-camera business alongside. Explore.org is a philanthropic live nature network: wildlife cameras in wild habitats — brown bears, eagles, oceans and safaris — run by the Annenberg Foundation's Explore initiative and completely free. The choice is really cities and landmarks versus animals and wild places.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "Watching EarthCam's public cameras is free. Its professional construction-camera services, hardware and business offerings are paid and typically quoted per project — there is no consumer subscription comparable to a premium tier.",
+  "pricingB": "Completely free. Explore.org is a philanthropic project powered by the Annenberg Foundation, and no paid tier, subscription or pricing page was found on its official pages; its iOS and Android apps are also listed as free. Support runs through the foundation and donations rather than paid plans.",
+  "prosA": [
+    "Signature landmark cameras — Times Square is the best-known view",
+    "EarthCam TV packages cameras into curated, themed channels",
+    "Professional construction cameras with archiving and time-lapse",
+    "Many public cameras free to watch, on web and mobile apps",
+    "Long-running network with deep history at famous locations"
+  ],
+  "prosB": [
+    "Completely free — no subscription or paid plans",
+    "Deep, curated wildlife cameras — Brooks Falls bears are the signature view",
+    "Highlight reels and educational films alongside the live cams",
+    "Web viewing plus iOS and Android apps",
+    "Philanthropic mission — run by the Annenberg Foundation"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Commercial webcam network plus professional camera services",
+      "b": "Philanthropic live nature cam network",
+      "label": "Model"
+    },
+    {
+      "a": "EarthCam (commercial company)",
+      "b": "The Annenberg Foundation's Explore initiative (explore Annenberg LLC)",
+      "label": "Run by"
+    },
+    {
+      "a": "Famous places, cities, landmarks and travel scenes",
+      "b": "Wildlife and nature — bears, eagles, oceans, safaris",
+      "label": "Subject"
+    },
+    {
+      "a": "Many public cameras watchable free",
+      "b": "Everything — completely free, no paid plans found",
+      "label": "Free tier"
+    },
+    {
+      "a": "Construction and business camera services, quoted per project",
+      "b": "None found",
+      "label": "Paid tier"
+    },
+    {
+      "a": "Large network of famous scenic and tourist cameras (no single audited total published)",
+      "b": "Claims 200+ live cams 24/7 and the 'world's largest live nature cam network' (its own claims)",
+      "label": "Camera claim"
+    }
+  ],
+  "seoDescription": "EarthCam vs Explore.org compared: famous-place and city cameras vs a free, philanthropic live nature network — bears, eagles and oceans — features, costs and verdicts, plus a free third option.",
+  "seoTitle": "EarthCam vs Explore.org (2026): Landmark Cams or Live Wildlife?",
+  "slug": "earthcam-vs-explore-org",
+  "sources": [
+    {
+      "label": "EarthCam — official site",
+      "url": "https://www.earthcam.com"
+    },
+    {
+      "label": "Explore.org — official site",
+      "url": "https://explore.org"
+    },
+    {
+      "label": "Explore.org — live cams (official)",
+      "url": "https://explore.org/livecams"
+    }
+  ],
+  "verdictA": "Choose EarthCam if you want the famous views — Times Square and other landmark and travel cameras — TV-style curated channels, or professional construction-camera services for a business site.",
+  "verdictB": "Choose Explore.org if you want live wildlife — bears, birds, oceans and safaris — with expert curation, highlights and education, completely free.",
+  "verdictLine": "EarthCam watches places; Explore.org watches animals. EarthCam is the landmark network with a professional camera business attached; Explore.org is a free, foundation-run nature network. Pick by subject, not by features — their cameras barely overlap.",
+  "worldEye": "If you want places and nature in one place, WorldEye puts 74,229 public cameras across 105 countries on a free interactive 3D globe — cities, beaches, ports, landscapes and wildlife — together with live flights, ships, satellites, weather, earthquakes and wildfires in the same view. There is nothing to install and no signup for the free tier, and an optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds an OSINT toolkit and intel feeds. It will not match EarthCam's construction services or Explore.org's curated bear-cam seasons, but for breadth across every kind of camera it is the larger network."
+}

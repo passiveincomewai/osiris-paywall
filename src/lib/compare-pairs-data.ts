@@ -44,6 +44,18 @@ import flightawareVsAdsbExchange from "@/data/compare-pairs/flightaware-vs-adsb-
 import adsbExchangeVsAirplanesLive from "@/data/compare-pairs/adsb-exchange-vs-airplanes-live.json";
 import marinetrafficVsShipfinder from "@/data/compare-pairs/marinetraffic-vs-shipfinder.json";
 import vesselfinderVsShipfinder from "@/data/compare-pairs/vesselfinder-vs-shipfinder.json";
+import earthcamVsExploreOrg from "@/data/compare-pairs/earthcam-vs-explore-org.json";
+import skylinewebcamsVsExploreOrg from "@/data/compare-pairs/skylinewebcams-vs-explore-org.json";
+import earthcamVsZoomEarth from "@/data/compare-pairs/earthcam-vs-zoom-earth.json";
+import zoomEarthVsWindy from "@/data/compare-pairs/zoom-earth-vs-windy.json";
+import ventuskyVsZoomEarth from "@/data/compare-pairs/ventusky-vs-zoom-earth.json";
+import zoomEarthVsNasaWorldview from "@/data/compare-pairs/zoom-earth-vs-nasa-worldview.json";
+import zoomEarthVsGoogleEarth from "@/data/compare-pairs/zoom-earth-vs-google-earth.json";
+import sentinelHubVsCopernicusBrowser from "@/data/compare-pairs/sentinel-hub-vs-copernicus-browser.json";
+import sentinelHubVsZoomEarth from "@/data/compare-pairs/sentinel-hub-vs-zoom-earth.json";
+import n2yoVsHeavensAbove from "@/data/compare-pairs/n2yo-vs-heavens-above.json";
+import worldMonitorVsLiveuamap from "@/data/compare-pairs/world-monitor-vs-liveuamap.json";
+import maltegoVsIntelligenceX from "@/data/compare-pairs/maltego-vs-intelligence-x.json";
 
 export type PairFeature = { label: string; a: string; b: string; note?: string };
 
@@ -136,6 +148,18 @@ const BUNDLED: ComparePairData[] = [
   adsbExchangeVsAirplanesLive,
   marinetrafficVsShipfinder,
   vesselfinderVsShipfinder,
+  earthcamVsExploreOrg,
+  skylinewebcamsVsExploreOrg,
+  earthcamVsZoomEarth,
+  zoomEarthVsWindy,
+  ventuskyVsZoomEarth,
+  zoomEarthVsNasaWorldview,
+  zoomEarthVsGoogleEarth,
+  sentinelHubVsCopernicusBrowser,
+  sentinelHubVsZoomEarth,
+  n2yoVsHeavensAbove,
+  worldMonitorVsLiveuamap,
+  maltegoVsIntelligenceX,
 ] as ComparePairData[];
 
 /** One bundled pair by slug (published only), or null. */

@@ -1,1 +1,240 @@
-{"aAbout":"God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 (#1 on GitHub Trending, 61,000+ stars) for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.","aLink":{"href":"/alternatives/gods-eye-view","label":"WorldEye: the God's Eye View alternative"},"aName":"God's Eye View","aSlug":"gods-eye-view","aStrengths":"God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.","aWebsite":"https://github.com/bilawalsidhu/gods-eye-view","bAbout":"World Monitor is a free, open-source (AGPL-3.0) intelligence dashboard by Elie Habib, hosted at worldmonitor.app and also self-hostable. Its homepage, dated 26 October 2026, cites 59 map layer types and 468 news and OSINT feeds, correlating conflicts (from ACLED and UCDP), satellite fire detection, earthquakes, aircraft, ships and markets so converging events surface together. It runs six dashboard variants — geopolitics, tech, finance, commodity, positive news and energy — with a dual map engine (a globe.gl 3D globe and a deck.gl flat map). No webcam feature appears on its official homepage or Pro page.","bLink":null,"bName":"World Monitor","bSlug":"world-monitor","bStrengths":"World Monitor is the deeper intelligence desk: hundreds of news and OSINT feeds correlated with ACLED and UCDP conflict data, scored hotspots and an instability index, live chokepoint tracking, fires, earthquakes, aircraft, ships and serious markets and macro coverage — across six specialised dashboards for geopolitics, tech, finance, commodities, energy and positive news. It asks nothing of your computer, is free with no signup, and Pro adds a real developer platform — REST API, MCP tools and SDKs — plus scheduled AI digests.","bWebsite":"https://www.worldmonitor.app/","betterAnswer":"They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and hackability, with live movement layers and a modest camera layer (~4,000), but no news desk. World Monitor is a hosted intelligence dashboard built around news and OSINT depth — 468 feeds, conflict data, chokepoints and markets — free to open, with no cameras. If you want to *experience* the planet, install God's Eye View; if you want to *follow* it like an analyst, open World Monitor.","category":"Live world maps","consA":["You must install and run it yourself (Pinokio, terminal or Docker)","No dedicated news layer — it does not follow stories or conflicts","Camera layer is small (~4,000) beside hosted atlases","Ships need a free third-party key; voice spends your OpenAI credit","No recording, no alerts, no hosted sharing for a team"],"consB":["No webcams found on its official pages — it tracks events and assets, not camera streams","Pro is $39.99/month — a steep step from the free dashboard","The one free-excluded map layer, Resilience, sits behind Pro","Published feed and layer counts differ between its own pages","Dense, panel-led dashboard — built for analysts, not casual exploring"],"faqs":[{"a":"No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. World Monitor is a hosted, AGPL-3.0 open-source dashboard by Elie Habib. They share a genre — live world maps — and little else.","q":"Is God's Eye View the same as World Monitor?"},{"a":"Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.","q":"Is God's Eye View really free?"},{"a":"Yes — the core dashboard is $0 with no signup, and its homepage says every map layer except Resilience is free. Pro ($39.99/month or $359.99/year) adds the AI analyst, the personal intelligence digest, MCP connectors and the widget builder; API plans start at $99.99/month.","q":"Is World Monitor really free?"},{"a":"God's Eye View: its CCTV Mesh layer states a shared cap of about 4,000 cameras, projected into its 3D scene. No webcam feature was found on World Monitor's official homepage or Pro page. For comparison, WorldEye's directory lists 74,229 public cameras.","q":"Which has live cameras, God's Eye View or World Monitor?"},{"a":"World Monitor, by design. It fuses 468 news and OSINT feeds (homepage, 26 October 2026) with ACLED and UCDP conflict data, scored hotspots and an instability index. God's Eye View has no dedicated news layer — its cockpit briefing strip shows regional headlines, but following stories is not what it does.","q":"Which is better for news and conflict tracking?"},{"a":"No. World Monitor runs in the browser with no signup; native desktop apps and self-hosting the AGPL source are options, not requirements. God's Eye View is the opposite: no account at all, but you install it on your own computer first.","q":"Do I need to install anything for World Monitor?"}],"featuredCams":{"blurb":"Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.","categories":["cities","highways"],"ids":["sky-it-trevi","tfl-JamCams_00001.07450","sky-it-signoria","tor-open-8004","gdot-14968","tor-open-8001"],"title":"Live on WorldEye right now"},"features":[{"a":"no","b":"yes","label":"Open it with no install","note":"God's Eye View installs locally (Pinokio, terminal or Docker); World Monitor's hosted dashboard opens in the browser, with self-hosting optional"},{"a":"yes","b":"partial","label":"Photorealistic 3D globe","note":"God's Eye View is built on Google Photorealistic 3D Tiles; World Monitor includes a 3D globe view (globe.gl) alongside its flat map, but not photoreal tiles"},{"a":"partial","b":"unverified","label":"Live public cameras","note":"God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); no webcam feature was found on World Monitor's official pages checked"},{"a":"no","b":"yes","label":"Dedicated news and OSINT feeds","note":"God's Eye View has no dedicated news layer in its 20-layer list; World Monitor's homepage cites 468 news and OSINT feeds from 779 attributed providers"},{"a":"no","b":"yes","label":"Conflict data (ACLED / UCDP)","note":"World Monitor maps live conflict events from ACLED and UCDP with an instability index; God's Eye View has fire and launch layers but no conflict dataset"},{"a":"yes","b":"yes","label":"Live flights (ADS-B)","note":"Both track live aircraft, including military traffic"},{"a":"partial","b":"yes","label":"Live ships (AIS)","note":"God's Eye View's vessel layer needs a free AISStream key; World Monitor includes AIS positions and live vessel counts at 13 maritime chokepoints"},{"a":"yes","b":"unverified","label":"Satellites and ISS","note":"God's Eye View tracks satellites from CelesTrak with pass predictions; World Monitor's Pro page metadata mentions satellite passes, but detailed satellite functionality is unverified on its official pages"},{"a":"yes","b":"yes","label":"Weather and hazards","note":"God's Eye View: keyless wind, radar, clouds, lightning and cyclone tracks, plus USGS earthquakes. World Monitor: NASA FIRMS fires and USGS earthquakes among its hazard layers"},{"a":"no","b":"yes","label":"Markets and macro data","note":"World Monitor covers equities, crypto, FX and energy with data from sources including FRED, IMF and BIS, plus a dedicated Finance Monitor; God's Eye View has no markets layer"},{"a":"yes","b":"yes","label":"AI assistant","note":"God's Eye View: a hands-free voice agent that drives the globe. World Monitor: AI-synthesised country briefs in the free core, with the WM Analyst chat in Pro"},{"a":"yes","b":"yes","label":"Open source","note":"God's Eye View is MIT-licensed; World Monitor is AGPL-3.0 — both have inspectable source, under different licence terms"},{"a":"partial","b":"yes","label":"API access","note":"God's Eye View runs as a local MCP server and offers no hosted product API; World Monitor documents a REST API, MCP server and SDKs, with API access on paid API plans"},{"a":"unverified","b":"unverified","label":"Native mobile apps","note":"Neither lists a native iPhone or Android phone app on the official pages checked; World Monitor lists desktop apps (Windows, macOS, Linux) and an Android TV app"}],"intro":"God's Eye View and World Monitor both promise a live picture of the whole world, but they are built for different jobs. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice, with no dedicated news layer. World Monitor is a hosted website by Elie Habib that opens free with no signup: a news and intelligence dashboard fusing hundreds of OSINT feeds, conflicts, fires, earthquakes, aircraft, ships and markets onto its maps — with no webcams on its official pages.","lastReviewed":"2026-10-29","pricingA":"There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.","pricingB":"The dashboard is free at $0 with no signup — every map layer except Resilience, in World Monitor's own words. Pro is $39.99/month or $359.99/year and adds the AI analyst, the personal intelligence digest, MCP connectors and the widget builder. Above that sit Pro Business at $49.99/month, API Starter at $99.99/month, API Business at $299.99/month, and custom-priced Enterprise.","prosA":["Completely free and open source (MIT) — no subscription, ever","Photorealistic 3D globe with cockpit view and 3D aircraft models","Voice-controlled AI agent — talk to the globe","Runs locally: your data and keys stay on your machine","Endlessly extendable — every layer is a module"],"prosB":["Free hosted dashboard with no signup — open it and it works","468 news and OSINT feeds correlated with map signals (26 Oct 2026)","ACLED and UCDP conflict data with instability scoring","Six specialised dashboards, from geopolitics to finance and energy","Open source (AGPL-3.0) with API, MCP and SDKs on paid plans"],"published":true,"quickFacts":[{"a":"Free open-source software — install and run it yourself","b":"Hosted website — free with no signup, self-hosting optional","label":"Model"},{"a":"Bilawal Sidhu and Sameh Khamis (Halfpixel)","b":"Elie Habib","label":"Maker"},{"a":"Your own computer — Windows, macOS, Linux","b":"Any modern browser, plus desktop apps and Android TV","label":"Runs on"},{"a":"Everything — the software itself is free","b":"The full dashboard — every map layer except Resilience, no signup","label":"Free tier"},{"a":"None — optional third-party API keys meter separately","b":"Pro — $39.99/mo; API plans $99.99–$299.99/mo","label":"Paid tier"},{"a":"~4,000 public cameras across 20 layers","b":"59 map layer types and 468 feeds (homepage, 26 Oct 2026)","label":"Headline counts"}],"seoDescription":"God's Eye View vs World Monitor compared: the free open-source photoreal 3D globe you run yourself vs the hosted news and intelligence dashboard with 468 feeds — features, costs and verdicts, plus a free third option.","seoTitle":"God's Eye View vs World Monitor (2026): Local 3D Globe or Hosted Intel Dashboard?","slug":"gods-eye-view-vs-world-monitor","sources":[{"label":"God's Eye View — official GitHub repository and README","url":"https://github.com/bilawalsidhu/gods-eye-view"},{"label":"World Monitor — official site and FAQ","url":"https://www.worldmonitor.app/"},{"label":"World Monitor — official Pro pricing","url":"https://www.worldmonitor.app/pro"},{"label":"World Monitor — official landing page","url":"https://www.worldmonitor.io/"},{"label":"World Monitor — official GitHub repository","url":"https://github.com/koala73/worldmonitor"}],"verdictA":"Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, cockpit rides and live cameras in the scene — you're comfortable installing software, and you want it free and open forever.","verdictB":"Choose World Monitor if you want a ready-to-open intelligence dashboard — news, conflicts, chokepoints and markets correlated in one place, free with no signup — and you're willing to pay $39.99/month for the AI analyst and digest tier.","verdictLine":"God's Eye View is the spectacle — a photoreal 3D globe you own, with live movement and cameras but no news desk. World Monitor is the briefing room — a hosted news and intelligence dashboard with a globe but no cameras. The first is software you run; the second is a site you open.","worldEye":"If installing software is the dealbreaker in God's Eye View, and World Monitor's lack of cameras is the gap there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. It doesn't fuse hundreds of news feeds and conflict datasets like World Monitor or render photoreal 3D tiles like God's Eye View, and its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds rather than an intelligence digest."}
+{
+  "aAbout": "God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 (#1 on GitHub Trending, 61,000+ stars) for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.",
+  "aLink": {
+    "href": "/alternatives/gods-eye-view",
+    "label": "WorldEye: the God's Eye View alternative"
+  },
+  "aName": "God's Eye View",
+  "aSlug": "gods-eye-view",
+  "aStrengths": "God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.",
+  "aWebsite": "https://github.com/bilawalsidhu/gods-eye-view",
+  "bAbout": "World Monitor is a free, open-source (AGPL-3.0) intelligence dashboard by Elie Habib, hosted at worldmonitor.app and also self-hostable. Its homepage, dated 26 October 2026, cites 59 map layer types and 468 news and OSINT feeds, correlating conflicts (from ACLED and UCDP), satellite fire detection, earthquakes, aircraft, ships and markets so converging events surface together. It runs six dashboard variants — geopolitics, tech, finance, commodity, positive news and energy — with a dual map engine (a globe.gl 3D globe and a deck.gl flat map). No webcam feature appears on its official homepage or Pro page.",
+  "bName": "World Monitor",
+  "bSlug": "world-monitor",
+  "bStrengths": "World Monitor is the deeper intelligence desk: hundreds of news and OSINT feeds correlated with ACLED and UCDP conflict data, scored hotspots and an instability index, live chokepoint tracking, fires, earthquakes, aircraft, ships and serious markets and macro coverage — across six specialised dashboards for geopolitics, tech, finance, commodities, energy and positive news. It asks nothing of your computer, is free with no signup, and Pro adds a real developer platform — REST API, MCP tools and SDKs — plus scheduled AI digests.",
+  "bWebsite": "https://www.worldmonitor.app/",
+  "betterAnswer": "They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and hackability, with live movement layers and a modest camera layer (~4,000), but no news desk. World Monitor is a hosted intelligence dashboard built around news and OSINT depth — 468 feeds, conflict data, chokepoints and markets — free to open, with no cameras. If you want to *experience* the planet, install God's Eye View; if you want to *follow* it like an analyst, open World Monitor.",
+  "category": "Live world maps",
+  "consA": [
+    "You must install and run it yourself (Pinokio, terminal or Docker)",
+    "No dedicated news layer — it does not follow stories or conflicts",
+    "Camera layer is small (~4,000) beside hosted atlases",
+    "Ships need a free third-party key; voice spends your OpenAI credit",
+    "No recording, no alerts, no hosted sharing for a team"
+  ],
+  "consB": [
+    "No webcams found on its official pages — it tracks events and assets, not camera streams",
+    "Pro is $39.99/month — a steep step from the free dashboard",
+    "The one free-excluded map layer, Resilience, sits behind Pro",
+    "Published feed and layer counts differ between its own pages",
+    "Dense, panel-led dashboard — built for analysts, not casual exploring"
+  ],
+  "faqs": [
+    {
+      "a": "No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. World Monitor is a hosted, AGPL-3.0 open-source dashboard by Elie Habib. They share a genre — live world maps — and little else.",
+      "q": "Is God's Eye View the same as World Monitor?"
+    },
+    {
+      "a": "Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.",
+      "q": "Is God's Eye View really free?"
+    },
+    {
+      "a": "Yes — the core dashboard is $0 with no signup, and its homepage says every map layer except Resilience is free. Pro ($39.99/month or $359.99/year) adds the AI analyst, the personal intelligence digest, MCP connectors and the widget builder; API plans start at $99.99/month.",
+      "q": "Is World Monitor really free?"
+    },
+    {
+      "a": "God's Eye View: its CCTV Mesh layer states a shared cap of about 4,000 cameras, projected into its 3D scene. No webcam feature was found on World Monitor's official homepage or Pro page. For comparison, WorldEye's directory lists 74,229 public cameras.",
+      "q": "Which has live cameras, God's Eye View or World Monitor?"
+    },
+    {
+      "a": "World Monitor, by design. It fuses 468 news and OSINT feeds (homepage, 26 October 2026) with ACLED and UCDP conflict data, scored hotspots and an instability index. God's Eye View has no dedicated news layer — its cockpit briefing strip shows regional headlines, but following stories is not what it does.",
+      "q": "Which is better for news and conflict tracking?"
+    },
+    {
+      "a": "No. World Monitor runs in the browser with no signup; native desktop apps and self-hosting the AGPL source are options, not requirements. God's Eye View is the opposite: no account at all, but you install it on your own computer first.",
+      "q": "Do I need to install anything for World Monitor?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "cities",
+      "highways"
+    ],
+    "ids": [
+      "sky-it-trevi",
+      "tfl-JamCams_00001.07450",
+      "sky-it-signoria",
+      "tor-open-8004",
+      "gdot-14968",
+      "tor-open-8001"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Open it with no install",
+      "note": "God's Eye View installs locally (Pinokio, terminal or Docker); World Monitor's hosted dashboard opens in the browser, with self-hosting optional"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Photorealistic 3D globe",
+      "note": "God's Eye View is built on Google Photorealistic 3D Tiles; World Monitor includes a 3D globe view (globe.gl) alongside its flat map, but not photoreal tiles"
+    },
+    {
+      "a": "partial",
+      "b": "unverified",
+      "label": "Live public cameras",
+      "note": "God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); no webcam feature was found on World Monitor's official pages checked"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Dedicated news and OSINT feeds",
+      "note": "God's Eye View has no dedicated news layer in its 20-layer list; World Monitor's homepage cites 468 news and OSINT feeds from 779 attributed providers"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Conflict data (ACLED / UCDP)",
+      "note": "World Monitor maps live conflict events from ACLED and UCDP with an instability index; God's Eye View has fire and launch layers but no conflict dataset"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Live flights (ADS-B)",
+      "note": "Both track live aircraft, including military traffic"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Live ships (AIS)",
+      "note": "God's Eye View's vessel layer needs a free AISStream key; World Monitor includes AIS positions and live vessel counts at 13 maritime chokepoints"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Satellites and ISS",
+      "note": "God's Eye View tracks satellites from CelesTrak with pass predictions; World Monitor's Pro page metadata mentions satellite passes, but detailed satellite functionality is unverified on its official pages"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Weather and hazards",
+      "note": "God's Eye View: keyless wind, radar, clouds, lightning and cyclone tracks, plus USGS earthquakes. World Monitor: NASA FIRMS fires and USGS earthquakes among its hazard layers"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Markets and macro data",
+      "note": "World Monitor covers equities, crypto, FX and energy with data from sources including FRED, IMF and BIS, plus a dedicated Finance Monitor; God's Eye View has no markets layer"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "AI assistant",
+      "note": "God's Eye View: a hands-free voice agent that drives the globe. World Monitor: AI-synthesised country briefs in the free core, with the WM Analyst chat in Pro"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Open source",
+      "note": "God's Eye View is MIT-licensed; World Monitor is AGPL-3.0 — both have inspectable source, under different licence terms"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "API access",
+      "note": "God's Eye View runs as a local MCP server and offers no hosted product API; World Monitor documents a REST API, MCP server and SDKs, with API access on paid API plans"
+    },
+    {
+      "a": "unverified",
+      "b": "unverified",
+      "label": "Native mobile apps",
+      "note": "Neither lists a native iPhone or Android phone app on the official pages checked; World Monitor lists desktop apps (Windows, macOS, Linux) and an Android TV app"
+    }
+  ],
+  "intro": "God's Eye View and World Monitor both promise a live picture of the whole world, but they are built for different jobs. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice, with no dedicated news layer. World Monitor is a hosted website by Elie Habib that opens free with no signup: a news and intelligence dashboard fusing hundreds of OSINT feeds, conflicts, fires, earthquakes, aircraft, ships and markets onto its maps — with no webcams on its official pages.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.",
+  "pricingB": "The dashboard is free at $0 with no signup — every map layer except Resilience, in World Monitor's own words. Pro is $39.99/month or $359.99/year and adds the AI analyst, the personal intelligence digest, MCP connectors and the widget builder. Above that sit Pro Business at $49.99/month, API Starter at $99.99/month, API Business at $299.99/month, and custom-priced Enterprise.",
+  "prosA": [
+    "Completely free and open source (MIT) — no subscription, ever",
+    "Photorealistic 3D globe with cockpit view and 3D aircraft models",
+    "Voice-controlled AI agent — talk to the globe",
+    "Runs locally: your data and keys stay on your machine",
+    "Endlessly extendable — every layer is a module"
+  ],
+  "prosB": [
+    "Free hosted dashboard with no signup — open it and it works",
+    "468 news and OSINT feeds correlated with map signals (26 Oct 2026)",
+    "ACLED and UCDP conflict data with instability scoring",
+    "Six specialised dashboards, from geopolitics to finance and energy",
+    "Open source (AGPL-3.0) with API, MCP and SDKs on paid plans"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Free open-source software — install and run it yourself",
+      "b": "Hosted website — free with no signup, self-hosting optional",
+      "label": "Model"
+    },
+    {
+      "a": "Bilawal Sidhu and Sameh Khamis (Halfpixel)",
+      "b": "Elie Habib",
+      "label": "Maker"
+    },
+    {
+      "a": "Your own computer — Windows, macOS, Linux",
+      "b": "Any modern browser, plus desktop apps and Android TV",
+      "label": "Runs on"
+    },
+    {
+      "a": "Everything — the software itself is free",
+      "b": "The full dashboard — every map layer except Resilience, no signup",
+      "label": "Free tier"
+    },
+    {
+      "a": "None — optional third-party API keys meter separately",
+      "b": "Pro — $39.99/mo; API plans $99.99–$299.99/mo",
+      "label": "Paid tier"
+    },
+    {
+      "a": "~4,000 public cameras across 20 layers",
+      "b": "59 map layer types and 468 feeds (homepage, 26 Oct 2026)",
+      "label": "Headline counts"
+    }
+  ],
+  "seoDescription": "God's Eye View vs World Monitor compared: the free open-source photoreal 3D globe you run yourself vs the hosted news and intelligence dashboard with 468 feeds — features, costs and verdicts, plus a free third option.",
+  "seoTitle": "God's Eye View vs World Monitor (2026): Local 3D Globe or Hosted Intel Dashboard?",
+  "slug": "gods-eye-view-vs-world-monitor",
+  "sources": [
+    {
+      "label": "God's Eye View — official GitHub repository and README",
+      "url": "https://github.com/bilawalsidhu/gods-eye-view"
+    },
+    {
+      "label": "World Monitor — official site and FAQ",
+      "url": "https://www.worldmonitor.app/"
+    },
+    {
+      "label": "World Monitor — official Pro pricing",
+      "url": "https://www.worldmonitor.app/pro"
+    },
+    {
+      "label": "World Monitor — official landing page",
+      "url": "https://www.worldmonitor.io/"
+    },
+    {
+      "label": "World Monitor — official GitHub repository",
+      "url": "https://github.com/koala73/worldmonitor"
+    }
+  ],
+  "verdictA": "Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, cockpit rides and live cameras in the scene — you're comfortable installing software, and you want it free and open forever.",
+  "verdictB": "Choose World Monitor if you want a ready-to-open intelligence dashboard — news, conflicts, chokepoints and markets correlated in one place, free with no signup — and you're willing to pay $39.99/month for the AI analyst and digest tier.",
+  "verdictLine": "God's Eye View is the spectacle — a photoreal 3D globe you own, with live movement and cameras but no news desk. World Monitor is the briefing room — a hosted news and intelligence dashboard with a globe but no cameras. The first is software you run; the second is a site you open.",
+  "worldEye": "If installing software is the dealbreaker in God's Eye View, and World Monitor's lack of cameras is the gap there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. It doesn't fuse hundreds of news feeds and conflict datasets like World Monitor or render photoreal 3D tiles like God's Eye View, and its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds rather than an intelligence digest."
+}

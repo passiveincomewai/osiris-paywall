@@ -1,1 +1,133 @@
-{"aAbout":"Google Earth is the world's most detailed free virtual globe: high-resolution satellite and aerial imagery, 3D cities and terrain, Street View at ground level, a historical-imagery archive reaching back decades, and tools for measuring, drawing and telling stories with places (including guided Voyager tours and Google Earth Studio for animations). Google Earth Pro — once $399/year — has been free since 2015. Everything in it is archival: the imagery shows the world as it was photographed, not as it is now.","aName":"Google Earth","aSlug":"google-earth","aStrengths":"Google Earth is the gold standard for exploring a place: the most detailed 3D cities anywhere, Street View, the deepest historical imagery archive (decades back), powerful measurement and drawing tools, KML/KMZ data import and Earth Studio for cinematic animations — all permanently free. Nobody matches its imagery depth, 3D building coverage and the familiarity billions of users already have.","aWebsite":"https://earth.google.com","bAbout":"NASA Worldview is NASA EOSDIS's free, open-source browser for near-real-time satellite imagery: more than 1,000 global, full-resolution layers — fires, storms, air quality, sea ice, vegetation and more — most updated within about three hours of observation, some spanning nearly 30 years. It adds event pins for cyclones, wildfires and eruptions, time-lapse animation building, layer comparison (swipe and opacity) and downloadable underlying data via NASA's GIBS services. No signup; it runs in the browser.","bName":"NASA Worldview","bSlug":"nasa-worldview","bStrengths":"NASA Worldview is an extraordinary free research tool: 1,000+ full-resolution satellite layers, most refreshed within ~3 hours, geostationary imagery in 10-minute increments, event tracking for cyclones, wildfires and eruptions, custom time-lapse animations and comparison tools — open source, backed by NASA's EOSDIS, with the data itself downloadable. For environmental science and disaster analysis, its scientific layer library is unmatched at any price, let alone free.","bWebsite":"https://worldview.earthdata.nasa.gov","betterAnswer":"They answer different questions. Google Earth is better for places: what does this address, coastline or city look like, in 3D, at street level, and how did it change over the decades? NASA Worldview is better for processes: what is happening across the planet's systems right now — the fire, the storm, the ice edge, the algal bloom. If you only keep one bookmark, keep the one matching your question — researchers keep both, and both are free.","category":"Satellite imagery","faqs":[{"a":"For practical purposes, no. Google Earth's imagery is archival — days to years old depending on the place — assembled for clarity, not freshness. NASA Worldview is the live one: most layers update within about 3 hours of satellite observation.","q":"Is Google Earth live?"},{"a":"More than 1,000 global layers — satellite imagery and science products covering fires, storms, air quality, temperature, sea ice, vegetation and hundreds of other variables, many updated near-real-time.","q":"How many layers does NASA Worldview have?"},{"a":"Yes — Google Earth is completely free, including Google Earth Pro (which cost $399/year until Google made it free in 2015). A Google account is optional, needed only for saving places and projects.","q":"Is Google Earth really free?"},{"a":"Google Earth, by a wide margin: its 3D cities, terrain and Street View are the reference implementation. NASA Worldview is a flat map (with polar projections) — its strength is imagery freshness and science layers, not 3D.","q":"Which is better in 3D, Google Earth or NASA Worldview?"},{"a":"WorldEye combines a satellite imagery view with live data on one free 3D globe — flights, ships, cameras, weather and events — rather than archival imagery alone. For archival depth use Google Earth; for near-live science layers use Worldview.","q":"Is there a globe with satellite imagery and live data together?"}],"features":[{"a":"yes","b":"no","label":"Interactive 3D globe with 3D cities","note":"Google Earth's globe, 3D buildings and terrain are the reference; Worldview is a flat map with polar projections"},{"a":"yes","b":"no","label":"Street-level imagery","note":"Street View is integrated into Google Earth; Worldview has no ground-level imagery"},{"a":"no","b":"yes","label":"Near-real-time imagery (hours old)","note":"Most Worldview layers update within ~3 hours of observation; Google Earth imagery is archival"},{"a":"yes","b":"partial","label":"Historical imagery archive","note":"Google Earth reaches back decades for many places; some Worldview layers span nearly 30 years"},{"a":"no","b":"yes","label":"Natural-event tracking (fires, storms, eruptions)","note":"Worldview pins and tracks active events; Google Earth has no event layer"},{"a":"partial","b":"yes","label":"Science data layers and downloads","note":"Worldview offers 1,000+ layers and downloadable NASA data via GIBS; Google Earth is an imagery viewer with import tools"},{"a":"yes","b":"no","label":"Guided tours and casual exploring","note":"Google Earth's Voyager tours and search are built for wandering; Worldview is a working research tool"},{"a":"yes","b":"yes","label":"Completely free, no paid tier","note":"Both are free — Google Earth Pro has been free since 2015; Worldview is a NASA public service"},{"a":"yes","b":"yes","label":"Works in a web browser","note":"Google Earth runs on the web and in apps; Worldview is browser-based and open source"}],"intro":"Google Earth and NASA Worldview both show you the planet from space, completely free — and they could hardly be more different. Google Earth is the beautiful archive: the deepest collection of satellite and aerial imagery ever assembled, wrapped in a 3D globe with cities and Street View. NASA Worldview is the live instrument: over a thousand scientific satellite layers refreshed within hours, built for watching fires, storms, ice and oceans change. One shows the world as it was; the other, as it nearly is.","lastReviewed":"2026-10-29","pricingA":"Completely free — Google Earth Pro (once $399/year) has been free since 2015. No paid tiers, no subscriptions; a Google account is optional.","pricingB":"Completely free — NASA provides Worldview as a public service through EOSDIS. No paid plans, and no signup is required to browse.","published":true,"seoDescription":"Google Earth vs NASA Worldview compared: archival 3D imagery and Street View vs 1,000+ near-real-time science layers — both free, plus a live third option.","seoTitle":"Google Earth vs NASA Worldview (2026): Archive vs Near-Live Imagery","slug":"google-earth-vs-nasa-worldview","sources":[{"label":"Google Earth — official site","url":"https://earth.google.com"},{"label":"NASA Worldview — official application","url":"https://worldview.earthdata.nasa.gov/"},{"label":"NASA EOSDIS — Worldview booklet (layers, latency, features)","url":"https://earthdata.nasa.gov/s3fs-public/2025-03/worldview-booklet.pdf?VersionId=vkMI8sbfY1WdDGqFKFSUus_orr4xsYnv"}],"verdictA":"Choose Google Earth if you explore places — checking a neighbourhood, a coastline or a construction site, walking streets in 3D, measuring land, or watching a familiar place change across decades of imagery.","verdictB":"Choose NASA Worldview if you watch systems — tracking a wildfire's spread, a hurricane's approach, sea-ice retreat or air-quality plumes with imagery that is hours old, not years.","worldEye":"WorldEye takes a third position: a free 3D globe whose satellite view is combined with live data — flights, ships, 74,229 public cameras, weather, earthquakes and wildfires — so you see imagery and activity together, with no signup. Its imagery is neither Google Earth's archive nor NASA's science library, and it doesn't claim to be; it's the live-planet view. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and intel feeds."}
+{
+  "aAbout": "Google Earth is the world's most detailed free virtual globe: high-resolution satellite and aerial imagery, 3D cities and terrain, Street View at ground level, a historical-imagery archive reaching back decades, and tools for measuring, drawing and telling stories with places (including guided Voyager tours and Google Earth Studio for animations). Google Earth Pro — once $399/year — has been free since 2015. Everything in it is archival: the imagery shows the world as it was photographed, not as it is now.",
+  "aName": "Google Earth",
+  "aSlug": "google-earth",
+  "aStrengths": "Google Earth is the gold standard for exploring a place: the most detailed 3D cities anywhere, Street View, the deepest historical imagery archive (decades back), powerful measurement and drawing tools, KML/KMZ data import and Earth Studio for cinematic animations — all permanently free. Nobody matches its imagery depth, 3D building coverage and the familiarity billions of users already have.",
+  "aWebsite": "https://earth.google.com",
+  "bAbout": "NASA Worldview is NASA EOSDIS's free, open-source browser for near-real-time satellite imagery: more than 1,000 global, full-resolution layers — fires, storms, air quality, sea ice, vegetation and more — most updated within about three hours of observation, some spanning nearly 30 years. It adds event pins for cyclones, wildfires and eruptions, time-lapse animation building, layer comparison (swipe and opacity) and downloadable underlying data via NASA's GIBS services. No signup; it runs in the browser.",
+  "bName": "NASA Worldview",
+  "bSlug": "nasa-worldview",
+  "bStrengths": "NASA Worldview is an extraordinary free research tool: 1,000+ full-resolution satellite layers, most refreshed within ~3 hours, geostationary imagery in 10-minute increments, event tracking for cyclones, wildfires and eruptions, custom time-lapse animations and comparison tools — open source, backed by NASA's EOSDIS, with the data itself downloadable. For environmental science and disaster analysis, its scientific layer library is unmatched at any price, let alone free.",
+  "bWebsite": "https://worldview.earthdata.nasa.gov",
+  "betterAnswer": "They answer different questions. Google Earth is better for places: what does this address, coastline or city look like, in 3D, at street level, and how did it change over the decades? NASA Worldview is better for processes: what is happening across the planet's systems right now — the fire, the storm, the ice edge, the algal bloom. If you only keep one bookmark, keep the one matching your question — researchers keep both, and both are free.",
+  "category": "Satellite imagery",
+  "faqs": [
+    {
+      "a": "For practical purposes, no. Google Earth's imagery is archival — days to years old depending on the place — assembled for clarity, not freshness. NASA Worldview is the live one: most layers update within about 3 hours of satellite observation.",
+      "q": "Is Google Earth live?"
+    },
+    {
+      "a": "More than 1,000 global layers — satellite imagery and science products covering fires, storms, air quality, temperature, sea ice, vegetation and hundreds of other variables, many updated near-real-time.",
+      "q": "How many layers does NASA Worldview have?"
+    },
+    {
+      "a": "Yes — Google Earth is completely free, including Google Earth Pro (which cost $399/year until Google made it free in 2015). A Google account is optional, needed only for saving places and projects.",
+      "q": "Is Google Earth really free?"
+    },
+    {
+      "a": "Google Earth, by a wide margin: its 3D cities, terrain and Street View are the reference implementation. NASA Worldview is a flat map (with polar projections) — its strength is imagery freshness and science layers, not 3D.",
+      "q": "Which is better in 3D, Google Earth or NASA Worldview?"
+    },
+    {
+      "a": "WorldEye combines a satellite imagery view with live data on one free 3D globe — flights, ships, cameras, weather and events — rather than archival imagery alone. For archival depth use Google Earth; for near-live science layers use Worldview.",
+      "q": "Is there a globe with satellite imagery and live data together?"
+    }
+  ],
+  "features": [
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Interactive 3D globe with 3D cities",
+      "note": "Google Earth's globe, 3D buildings and terrain are the reference; Worldview is a flat map with polar projections"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Street-level imagery",
+      "note": "Street View is integrated into Google Earth; Worldview has no ground-level imagery"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Near-real-time imagery (hours old)",
+      "note": "Most Worldview layers update within ~3 hours of observation; Google Earth imagery is archival"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Historical imagery archive",
+      "note": "Google Earth reaches back decades for many places; some Worldview layers span nearly 30 years"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Natural-event tracking (fires, storms, eruptions)",
+      "note": "Worldview pins and tracks active events; Google Earth has no event layer"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Science data layers and downloads",
+      "note": "Worldview offers 1,000+ layers and downloadable NASA data via GIBS; Google Earth is an imagery viewer with import tools"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Guided tours and casual exploring",
+      "note": "Google Earth's Voyager tours and search are built for wandering; Worldview is a working research tool"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Completely free, no paid tier",
+      "note": "Both are free — Google Earth Pro has been free since 2015; Worldview is a NASA public service"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Works in a web browser",
+      "note": "Google Earth runs on the web and in apps; Worldview is browser-based and open source"
+    }
+  ],
+  "intro": "Google Earth and NASA Worldview both show you the planet from space, completely free — and they could hardly be more different. Google Earth is the beautiful archive: the deepest collection of satellite and aerial imagery ever assembled, wrapped in a 3D globe with cities and Street View. NASA Worldview is the live instrument: over a thousand scientific satellite layers refreshed within hours, built for watching fires, storms, ice and oceans change. One shows the world as it was; the other, as it nearly is.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "Completely free — Google Earth Pro (once $399/year) has been free since 2015. No paid tiers, no subscriptions; a Google account is optional.",
+  "pricingB": "Completely free — NASA provides Worldview as a public service through EOSDIS. No paid plans, and no signup is required to browse.",
+  "published": true,
+  "seoDescription": "Google Earth vs NASA Worldview compared: archival 3D imagery and Street View vs 1,000+ near-real-time science layers — both free, plus a live third option.",
+  "seoTitle": "Google Earth vs NASA Worldview (2026): Archive vs Near-Live Imagery",
+  "slug": "google-earth-vs-nasa-worldview",
+  "sources": [
+    {
+      "label": "Google Earth — official site",
+      "url": "https://earth.google.com"
+    },
+    {
+      "label": "NASA Worldview — official application",
+      "url": "https://worldview.earthdata.nasa.gov/"
+    },
+    {
+      "label": "NASA EOSDIS — Worldview booklet (layers, latency, features)",
+      "url": "https://earthdata.nasa.gov/s3fs-public/2025-03/worldview-booklet.pdf?VersionId=vkMI8sbfY1WdDGqFKFSUus_orr4xsYnv"
+    }
+  ],
+  "verdictA": "Choose Google Earth if you explore places — checking a neighbourhood, a coastline or a construction site, walking streets in 3D, measuring land, or watching a familiar place change across decades of imagery.",
+  "verdictB": "Choose NASA Worldview if you watch systems — tracking a wildfire's spread, a hurricane's approach, sea-ice retreat or air-quality plumes with imagery that is hours old, not years.",
+  "worldEye": "WorldEye takes a third position: a free 3D globe whose satellite view is combined with live data — flights, ships, 74,229 public cameras, weather, earthquakes and wildfires — so you see imagery and activity together, with no signup. Its imagery is neither Google Earth's archive nor NASA's science library, and it doesn't claim to be; it's the live-planet view. An optional Pro tier ($7.99/week, $13.99/month or $74.99/year) adds the OSINT toolkit and intel feeds.",
+  "featuredCams": {
+    "categories": [
+      "mountains",
+      "featured"
+    ],
+    "ids": [
+      "occ-jma-volcam-50602",
+      "occ-biodic-43",
+      "sky-it-vesuvio",
+      "sky-fr-calanques",
+      "sky-es-masca",
+      "sky-fr-bourget"
+    ],
+    "title": "Live on WorldEye right now",
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe."
+  }
+}

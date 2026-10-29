@@ -1,1 +1,240 @@
-{"aAbout":"God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 (#1 on GitHub Trending, 61,000+ stars) for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.","aLink":{"href":"/alternatives/gods-eye-view","label":"WorldEye: the God's Eye View alternative"},"aName":"God's Eye View","aSlug":"gods-eye-view","aStrengths":"God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.","aWebsite":"https://github.com/bilawalsidhu/gods-eye-view","bAbout":"LiveUAMap — the Live Universal Awareness Map — is an independent news and information site founded in 2014 to cover the Ukrainian conflict, now covering more than 30 regions and topics. Its team uses proprietary AI web crawlers to find newsworthy stories, which expert analysts then fact-check before editors place them on flat, per-region maps — conflicts, human rights, protests, terrorism, weapons deployment, health, natural disasters and weather-related stories, backed by a complete chronological archive. It is free to read with advertising on the web and in its iOS and Android apps. It has no flights, ships, cameras or globe layers on its official pages.","bLink":null,"bName":"LiveUAMap","bSlug":"liveuamap","bStrengths":"LiveUAMap is the more trustworthy news map: a human editorial desk, not just a data pipeline. Stories gathered from open sources are fact-checked by analysts before they reach the map, organised across 30+ conflict regions with a chronological archive you can research back through — a record built since 2014. It asks nothing of your computer, is free to read, and its iOS and Android apps add breaking-news and security notifications for people who need to follow a region closely.","bWebsite":"https://liveuamap.com","betterAnswer":"They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and live movement data, with a modest camera layer (~4,000), but no news desk checking stories. LiveUAMap is a hosted, flat news map built around human verification — analyst fact-checked conflict and disaster reporting across 30+ regions since 2014 — with no globe, flights, ships or cameras. If you want to *experience* the planet live, install God's Eye View; if you want to *follow* a conflict as verified news, open LiveUAMap.","category":"Live world maps","consA":["You must install and run it yourself (Pinokio, terminal or Docker)","No dedicated news layer and no human fact-checking desk","Camera layer is small (~4,000) beside hosted atlases","Ships need a free third-party key; voice spends your OpenAI credit","No chronological news archive, no alerts, no hosted sharing"],"consB":["Free version carries advertising; ad-free and PRO are paid","Joint regions and historic data for previous years are no longer in the free version","Flat maps only — no 3D globe, flights, ships or live cameras","Satellite maps and custom regions require PRO","Enterprise and API pricing is not published on its official pages"],"faqs":[{"a":"No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. LiveUAMap is an independent news site founded in 2014, operated by Liveuamap LLC. They share a genre — live world maps — and little else.","q":"Is God's Eye View the same as LiveUAMap?"},{"a":"Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.","q":"Is God's Eye View really free?"},{"a":"Yes — the web maps and apps are free to use with advertising, and no account is described as required for free viewing. Paid options are an ad-free account at $9.54 per half-year (advertising removal only) and PRO from $7/month, which also enables satellite maps, custom regions, earlier history and data export.","q":"Is LiveUAMap free?"},{"a":"God's Eye View, on all three: roughly 11,000+ live aircraft, thousands of ships via a free AISStream key, and about 4,000 public cameras in its CCTV Mesh layer. LiveUAMap has no flights, ships or camera layers on its official pages — it maps verified news events, not live vehicle or camera feeds.","q":"Which has flights, ships and live cameras?"},{"a":"LiveUAMap. Its AI crawlers surface stories that human analysts fact-check before editors map them, across 30+ regions, with a chronological archive. God's Eye View has no dedicated news layer — it shows live data and event layers such as fires and launches, but nothing is editorially verified.","q":"Which is better for verified conflict news?"},{"a":"LiveUAMap does — it offers apps from the Apple App Store and Google Play, with notifications among the premium features. No native mobile app is listed on God's Eye View's official README; it documents desktop installs for Windows, macOS and Linux.","q":"Which has mobile apps?"}],"featuredCams":{"blurb":"Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.","categories":["cities","highways"],"ids":["sky-it-navona","sky-it-sanbabila","tfl-JamCams_00002.00865","cal-1142","anzac-bridge-eastbound","asfinag-BRENNERO-Cam-1"],"title":"Live on WorldEye right now"},"features":[{"a":"no","b":"yes","label":"Open it with no install","note":"God's Eye View installs locally (Pinokio, terminal or Docker); LiveUAMap runs in the browser and in its mobile apps"},{"a":"yes","b":"no","label":"Photorealistic 3D globe","note":"God's Eye View is built on Google Photorealistic 3D Tiles; LiveUAMap uses flat, per-region maps"},{"a":"partial","b":"no","label":"Live public cameras","note":"God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); LiveUAMap has no camera layer on its official pages"},{"a":"no","b":"yes","label":"Human fact-checked news map","note":"LiveUAMap routes stories found by AI crawlers to expert analysts for fact checking before editors map them; God's Eye View has no dedicated news layer or verification desk"},{"a":"no","b":"yes","label":"Curated conflict coverage across 30+ regions","note":"LiveUAMap has covered conflicts region by region since 2014, expanding from Ukraine to Syria, Israel-Palestine and beyond; God's Eye View has fire and launch event layers but no conflict reporting"},{"a":"yes","b":"no","label":"Live flights (ADS-B)","note":"God's Eye View tracks live aircraft including military traffic; LiveUAMap has no flights layer on its official pages"},{"a":"partial","b":"no","label":"Live ships (AIS)","note":"God's Eye View's vessel layer needs a free AISStream key; LiveUAMap has no ships layer on its official pages"},{"a":"yes","b":"no","label":"Satellites and ISS tracking","note":"God's Eye View tracks satellites from CelesTrak with pass predictions; LiveUAMap's PRO satellite maps are basemap imagery, not satellite tracking"},{"a":"yes","b":"partial","label":"Live weather layers","note":"God's Eye View: keyless wind, radar, clouds, lightning and cyclone tracks. LiveUAMap covers weather-related stories as mapped news events, not as live weather layers"},{"a":"yes","b":"partial","label":"Earthquakes and natural hazards","note":"God's Eye View shows live USGS seismic data; LiveUAMap maps natural disasters as editorially checked news events"},{"a":"no","b":"yes","label":"Chronological archive and history","note":"LiveUAMap offers a complete chronological archive, with earlier history a premium feature; God's Eye View has only limited, layer-specific time controls and no general archive"},{"a":"unverified","b":"yes","label":"Native mobile apps","note":"LiveUAMap offers iOS and Android apps; no native mobile app is listed on God's Eye View's official README"},{"a":"yes","b":"unverified","label":"Open source","note":"God's Eye View is MIT-licensed with inspectable source; no open-source licence is stated for LiveUAMap on the official pages checked"},{"a":"partial","b":"partial","label":"API access","note":"God's Eye View runs as a local MCP server and offers no hosted product API; LiveUAMap offers an enterprise API, with no price published on the official pages checked"}],"intro":"God's Eye View and LiveUAMap both put the world on a map, but one is a live-data spectacle and the other is a newsroom. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice — and no dedicated news layer. LiveUAMap is a hosted website running since 2014: a flat, human-verified conflict and news map, where analysts fact-check stories from open sources before they appear across more than 30 regions — with no flights, ships, cameras or globe.","lastReviewed":"2026-10-29","pricingA":"There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.","pricingB":"The map is free to use with advertising; its official pages note that joint regions and historic data for previous years are no longer shown in the free version. An ad-free account is $9.54 per half-year and removes advertising only. PRO starts from $7/month: it removes advertising and enables satellite maps, custom regions, location search, earlier history, all regions and events, notifications and data export. Enterprise and API pricing is not published on the official pages checked.","prosA":["Completely free and open source (MIT) — no subscription, ever","Photorealistic 3D globe with cockpit view and 3D aircraft models","Voice-controlled AI agent — talk to the globe","Live flights, ships, satellites, weather and earthquakes in one scene","Runs locally: your data and keys stay on your machine"],"prosB":["Analyst fact-checked reporting — a human desk, not just a feed","Covering conflicts and crises since 2014, across 30+ regions","Complete chronological archive for researching past events","Free to read on the web, with iOS and Android apps","Breaking-news and security notifications on premium plans"],"published":true,"quickFacts":[{"a":"Free open-source software — install and run it yourself","b":"Hosted website and apps — free with advertising","label":"Model"},{"a":"Bilawal Sidhu and Sameh Khamis (Halfpixel)","b":"Liveuamap LLC — founded 2014","label":"Maker"},{"a":"Your own computer — Windows, macOS, Linux","b":"Any browser, plus iOS and Android apps","label":"Runs on"},{"a":"Everything — the software itself is free","b":"The maps and feed, with advertising and some limits","label":"Free tier"},{"a":"None — optional third-party API keys meter separately","b":"Ad-free $9.54/half-year; PRO from $7/mo","label":"Paid tier"},{"a":"~4,000 public cameras; 11,000+ live aircraft claimed","b":"30+ regions and topics covered since 2014","label":"Headline counts"}],"seoDescription":"God's Eye View vs LiveUAMap compared: the free open-source photoreal 3D globe you run yourself vs the flat, analyst fact-checked conflict news map running since 2014 — features, costs and verdicts, plus a free third option.","seoTitle":"God's Eye View vs LiveUAMap (2026): Live 3D Globe or Verified News Map?","slug":"gods-eye-view-vs-liveuamap","sources":[{"label":"God's Eye View — official GitHub repository and README","url":"https://github.com/bilawalsidhu/gods-eye-view"},{"label":"LiveUAMap — official About page","url":"https://liveuamap.com/about"},{"label":"LiveUAMap — official site","url":"https://liveuamap.com"},{"label":"LiveUAMap — official world map page","url":"https://world.liveuamap.com"},{"label":"LiveUAMap — official account and premium page","url":"https://me.liveuamap.com/welcome"}],"verdictA":"Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, cockpit rides, and live flights, ships and cameras in the scene — and you're comfortable installing software.","verdictB":"Choose LiveUAMap if you want to follow a conflict or crisis as verified news — analyst fact-checked stories, mapped by region, with a deep archive and mobile notifications — free with ads, or from $7/month for PRO.","verdictLine":"God's Eye View is the spectacle — a photoreal 3D globe you own, showing live movement but checking no stories. LiveUAMap is the newsroom — a flat map where humans verify the news, with no live movement layers at all. The first is software you run; the second is a desk you read.","worldEye":"If installing software is the dealbreaker in God's Eye View, and LiveUAMap's flat, news-only map is the limit there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. It doesn't fact-check stories with a human desk like LiveUAMap or render photoreal 3D tiles like God's Eye View, and its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds rather than a verified news archive."}
+{
+  "aAbout": "God's Eye View is an open-source 3D world globe simulator — 'a spy-satellite simulator in your browser, except the data is real.' It renders Google Photorealistic 3D Tiles through Cesium and layers live aircraft, ships, satellites, earthquakes, traffic and public cameras from open sources, all processed locally in your browser. It went viral in 2026 (#1 on GitHub Trending, 61,000+ stars) for its voice-controlled AI agent, cockpit view and sensor-style visual modes. It is software you run yourself — via Pinokio one-click, a terminal install, or Docker — not a website you open.",
+  "aLink": {
+    "href": "/alternatives/gods-eye-view",
+    "label": "WorldEye: the God's Eye View alternative"
+  },
+  "aName": "God's Eye View",
+  "aSlug": "gods-eye-view",
+  "aStrengths": "God's Eye View is the more spectacular and the more ownable tool: a photorealistic 3D globe with cockpit view, 3D aircraft models, sensor looks (FLIR, night vision) and a scene director for cinematic tours — all free, all running on your machine with data you can inspect, extend and keep. Its voice agent genuinely has no equivalent here: you talk to the globe and it flies, tracks and annotates. For creators, tinkerers and anyone who wants the globe itself to be the experience, nothing hosted matches it.",
+  "aWebsite": "https://github.com/bilawalsidhu/gods-eye-view",
+  "bAbout": "LiveUAMap — the Live Universal Awareness Map — is an independent news and information site founded in 2014 to cover the Ukrainian conflict, now covering more than 30 regions and topics. Its team uses proprietary AI web crawlers to find newsworthy stories, which expert analysts then fact-check before editors place them on flat, per-region maps — conflicts, human rights, protests, terrorism, weapons deployment, health, natural disasters and weather-related stories, backed by a complete chronological archive. It is free to read with advertising on the web and in its iOS and Android apps. It has no flights, ships, cameras or globe layers on its official pages.",
+  "bName": "LiveUAMap",
+  "bSlug": "liveuamap",
+  "bStrengths": "LiveUAMap is the more trustworthy news map: a human editorial desk, not just a data pipeline. Stories gathered from open sources are fact-checked by analysts before they reach the map, organised across 30+ conflict regions with a chronological archive you can research back through — a record built since 2014. It asks nothing of your computer, is free to read, and its iOS and Android apps add breaking-news and security notifications for people who need to follow a region closely.",
+  "bWebsite": "https://liveuamap.com",
+  "betterAnswer": "They solve different problems. God's Eye View is a free, open-source 3D globe you run on your own computer — unmatched for immersion, voice control and live movement data, with a modest camera layer (~4,000), but no news desk checking stories. LiveUAMap is a hosted, flat news map built around human verification — analyst fact-checked conflict and disaster reporting across 30+ regions since 2014 — with no globe, flights, ships or cameras. If you want to *experience* the planet live, install God's Eye View; if you want to *follow* a conflict as verified news, open LiveUAMap.",
+  "category": "Live world maps",
+  "consA": [
+    "You must install and run it yourself (Pinokio, terminal or Docker)",
+    "No dedicated news layer and no human fact-checking desk",
+    "Camera layer is small (~4,000) beside hosted atlases",
+    "Ships need a free third-party key; voice spends your OpenAI credit",
+    "No chronological news archive, no alerts, no hosted sharing"
+  ],
+  "consB": [
+    "Free version carries advertising; ad-free and PRO are paid",
+    "Joint regions and historic data for previous years are no longer in the free version",
+    "Flat maps only — no 3D globe, flights, ships or live cameras",
+    "Satellite maps and custom regions require PRO",
+    "Enterprise and API pricing is not published on its official pages"
+  ],
+  "faqs": [
+    {
+      "a": "No — they are unrelated products. God's Eye View is free open-source software by Bilawal Sidhu and Sameh Khamis that you install and run locally. LiveUAMap is an independent news site founded in 2014, operated by Liveuamap LLC. They share a genre — live world maps — and little else.",
+      "q": "Is God's Eye View the same as LiveUAMap?"
+    },
+    {
+      "a": "Yes. The software is free and open source under the MIT licence. The only costs are optional third-party ones you control: the voice agent uses your own OpenAI API credit (the app warns at $2 and caps at $5 per session), and photoreal 3D tiles can be metered if you use a direct Google key instead of the free Cesium ion route.",
+      "q": "Is God's Eye View really free?"
+    },
+    {
+      "a": "Yes — the web maps and apps are free to use with advertising, and no account is described as required for free viewing. Paid options are an ad-free account at $9.54 per half-year (advertising removal only) and PRO from $7/month, which also enables satellite maps, custom regions, earlier history and data export.",
+      "q": "Is LiveUAMap free?"
+    },
+    {
+      "a": "God's Eye View, on all three: roughly 11,000+ live aircraft, thousands of ships via a free AISStream key, and about 4,000 public cameras in its CCTV Mesh layer. LiveUAMap has no flights, ships or camera layers on its official pages — it maps verified news events, not live vehicle or camera feeds.",
+      "q": "Which has flights, ships and live cameras?"
+    },
+    {
+      "a": "LiveUAMap. Its AI crawlers surface stories that human analysts fact-check before editors map them, across 30+ regions, with a chronological archive. God's Eye View has no dedicated news layer — it shows live data and event layers such as fires and launches, but nothing is editorially verified.",
+      "q": "Which is better for verified conflict news?"
+    },
+    {
+      "a": "LiveUAMap does — it offers apps from the Apple App Store and Google Play, with notifications among the premium features. No native mobile app is listed on God's Eye View's official README; it documents desktop installs for Windows, macOS and Linux.",
+      "q": "Which has mobile apps?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "cities",
+      "highways"
+    ],
+    "ids": [
+      "sky-it-navona",
+      "sky-it-sanbabila",
+      "tfl-JamCams_00002.00865",
+      "cal-1142",
+      "anzac-bridge-eastbound",
+      "asfinag-BRENNERO-Cam-1"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Open it with no install",
+      "note": "God's Eye View installs locally (Pinokio, terminal or Docker); LiveUAMap runs in the browser and in its mobile apps"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Photorealistic 3D globe",
+      "note": "God's Eye View is built on Google Photorealistic 3D Tiles; LiveUAMap uses flat, per-region maps"
+    },
+    {
+      "a": "partial",
+      "b": "no",
+      "label": "Live public cameras",
+      "note": "God's Eye View projects ~4,000 CCTV cameras into the 3D scene (its stated shared cap); LiveUAMap has no camera layer on its official pages"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Human fact-checked news map",
+      "note": "LiveUAMap routes stories found by AI crawlers to expert analysts for fact checking before editors map them; God's Eye View has no dedicated news layer or verification desk"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Curated conflict coverage across 30+ regions",
+      "note": "LiveUAMap has covered conflicts region by region since 2014, expanding from Ukraine to Syria, Israel-Palestine and beyond; God's Eye View has fire and launch event layers but no conflict reporting"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Live flights (ADS-B)",
+      "note": "God's Eye View tracks live aircraft including military traffic; LiveUAMap has no flights layer on its official pages"
+    },
+    {
+      "a": "partial",
+      "b": "no",
+      "label": "Live ships (AIS)",
+      "note": "God's Eye View's vessel layer needs a free AISStream key; LiveUAMap has no ships layer on its official pages"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Satellites and ISS tracking",
+      "note": "God's Eye View tracks satellites from CelesTrak with pass predictions; LiveUAMap's PRO satellite maps are basemap imagery, not satellite tracking"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Live weather layers",
+      "note": "God's Eye View: keyless wind, radar, clouds, lightning and cyclone tracks. LiveUAMap covers weather-related stories as mapped news events, not as live weather layers"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Earthquakes and natural hazards",
+      "note": "God's Eye View shows live USGS seismic data; LiveUAMap maps natural disasters as editorially checked news events"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Chronological archive and history",
+      "note": "LiveUAMap offers a complete chronological archive, with earlier history a premium feature; God's Eye View has only limited, layer-specific time controls and no general archive"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Native mobile apps",
+      "note": "LiveUAMap offers iOS and Android apps; no native mobile app is listed on God's Eye View's official README"
+    },
+    {
+      "a": "yes",
+      "b": "unverified",
+      "label": "Open source",
+      "note": "God's Eye View is MIT-licensed with inspectable source; no open-source licence is stated for LiveUAMap on the official pages checked"
+    },
+    {
+      "a": "partial",
+      "b": "partial",
+      "label": "API access",
+      "note": "God's Eye View runs as a local MCP server and offers no hosted product API; LiveUAMap offers an enterprise API, with no price published on the official pages checked"
+    }
+  ],
+  "intro": "God's Eye View and LiveUAMap both put the world on a map, but one is a live-data spectacle and the other is a newsroom. God's Eye View is free, open-source software (by Bilawal Sidhu and Sameh Khamis) that you install on your own computer: a photorealistic 3D globe with live flights, ships, satellites and cameras, driven by voice — and no dedicated news layer. LiveUAMap is a hosted website running since 2014: a flat, human-verified conflict and news map, where analysts fact-check stories from open sources before they appear across more than 30 regions — with no flights, ships, cameras or globe.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "There is no God's Eye View price or subscription — the software is free and open source. The README's own cost table is honest about the edges: most layers cost $0 with no signup; a free-key tier (AISStream, NASA FIRMS, Cesium ion within quota) unlocks more; the voice agent spends your own OpenAI credit with a $2 warning and $5 hard cap per session; and photoreal tiles through a direct Google key are metered by Google.",
+  "pricingB": "The map is free to use with advertising; its official pages note that joint regions and historic data for previous years are no longer shown in the free version. An ad-free account is $9.54 per half-year and removes advertising only. PRO starts from $7/month: it removes advertising and enables satellite maps, custom regions, location search, earlier history, all regions and events, notifications and data export. Enterprise and API pricing is not published on the official pages checked.",
+  "prosA": [
+    "Completely free and open source (MIT) — no subscription, ever",
+    "Photorealistic 3D globe with cockpit view and 3D aircraft models",
+    "Voice-controlled AI agent — talk to the globe",
+    "Live flights, ships, satellites, weather and earthquakes in one scene",
+    "Runs locally: your data and keys stay on your machine"
+  ],
+  "prosB": [
+    "Analyst fact-checked reporting — a human desk, not just a feed",
+    "Covering conflicts and crises since 2014, across 30+ regions",
+    "Complete chronological archive for researching past events",
+    "Free to read on the web, with iOS and Android apps",
+    "Breaking-news and security notifications on premium plans"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Free open-source software — install and run it yourself",
+      "b": "Hosted website and apps — free with advertising",
+      "label": "Model"
+    },
+    {
+      "a": "Bilawal Sidhu and Sameh Khamis (Halfpixel)",
+      "b": "Liveuamap LLC — founded 2014",
+      "label": "Maker"
+    },
+    {
+      "a": "Your own computer — Windows, macOS, Linux",
+      "b": "Any browser, plus iOS and Android apps",
+      "label": "Runs on"
+    },
+    {
+      "a": "Everything — the software itself is free",
+      "b": "The maps and feed, with advertising and some limits",
+      "label": "Free tier"
+    },
+    {
+      "a": "None — optional third-party API keys meter separately",
+      "b": "Ad-free $9.54/half-year; PRO from $7/mo",
+      "label": "Paid tier"
+    },
+    {
+      "a": "~4,000 public cameras; 11,000+ live aircraft claimed",
+      "b": "30+ regions and topics covered since 2014",
+      "label": "Headline counts"
+    }
+  ],
+  "seoDescription": "God's Eye View vs LiveUAMap compared: the free open-source photoreal 3D globe you run yourself vs the flat, analyst fact-checked conflict news map running since 2014 — features, costs and verdicts, plus a free third option.",
+  "seoTitle": "God's Eye View vs LiveUAMap (2026): Live 3D Globe or Verified News Map?",
+  "slug": "gods-eye-view-vs-liveuamap",
+  "sources": [
+    {
+      "label": "God's Eye View — official GitHub repository and README",
+      "url": "https://github.com/bilawalsidhu/gods-eye-view"
+    },
+    {
+      "label": "LiveUAMap — official About page",
+      "url": "https://liveuamap.com/about"
+    },
+    {
+      "label": "LiveUAMap — official site",
+      "url": "https://liveuamap.com"
+    },
+    {
+      "label": "LiveUAMap — official world map page",
+      "url": "https://world.liveuamap.com"
+    },
+    {
+      "label": "LiveUAMap — official account and premium page",
+      "url": "https://me.liveuamap.com/welcome"
+    }
+  ],
+  "verdictA": "Choose God's Eye View if you want the globe as an experience — photoreal 3D, voice control, cockpit rides, and live flights, ships and cameras in the scene — and you're comfortable installing software.",
+  "verdictB": "Choose LiveUAMap if you want to follow a conflict or crisis as verified news — analyst fact-checked stories, mapped by region, with a deep archive and mobile notifications — free with ads, or from $7/month for PRO.",
+  "verdictLine": "God's Eye View is the spectacle — a photoreal 3D globe you own, showing live movement but checking no stories. LiveUAMap is the newsroom — a flat map where humans verify the news, with no live movement layers at all. The first is software you run; the second is a desk you read.",
+  "worldEye": "If installing software is the dealbreaker in God's Eye View, and LiveUAMap's flat, news-only map is the limit there, WorldEye is the middle path: a hosted 3D globe that opens free in any browser with no signup at all — 74,229 public cameras across 105 countries, live flights, ships, satellites, weather, earthquakes and wildfires in the same view. It doesn't fact-check stories with a human desk like LiveUAMap or render photoreal 3D tiles like God's Eye View, and its Pro tier ($7.99/week, $13.99/month or $74.99/year) buys an OSINT toolkit and intel feeds rather than a verified news archive."
+}

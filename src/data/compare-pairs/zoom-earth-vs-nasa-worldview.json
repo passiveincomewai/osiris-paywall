@@ -1,0 +1,238 @@
+{
+  "aAbout": "Zoom Earth, by Neave Interactive Limited, is an interactive weather map of the world and a real-time hurricane tracker, free on the web, iOS and Android. It shows near real-time satellite imagery — live images from NOAA GOES, JMA Himawari and EUMETSAT Meteosat geostationary satellites updated every 10 minutes, plus HD images updated twice a day from NASA polar-orbiting satellites Aqua and Terra — alongside rain radar with nowcasting, forecast maps from DWD ICON and NOAA GFS, hurricane tracking using NHC, JTWC, NRL and IBTrACS data, and an active fires overlay updated daily with data from NASA FIRMS. No account is required for basic use.",
+  "aName": "Zoom Earth",
+  "aSlug": "zoom-earth",
+  "aStrengths": "Zoom Earth is the easier live watch: satellite imagery every 10 minutes, rain radar with nowcasting, forecast layers for rain, wind, temperature and pressure, and a dedicated hurricane tracker — presented as a simple consumer weather map on the web and in well-rated mobile apps, free with no account. If your question is 'what is the weather doing right now, and what is this storm about to do?', Zoom Earth answers it in seconds, without a research interface to learn.",
+  "aWebsite": "https://zoom.earth/",
+  "bAbout": "NASA Worldview is NASA EOSDIS's free, open-source browser for near-real-time satellite imagery: more than 1,000 global, full-resolution layers — fires, storms, air quality, sea ice, vegetation and more — most updated within about three hours of observation, some spanning nearly 30 years, with geostationary imagery in 10-minute increments. It adds event pins for cyclones, wildfires and eruptions, time-lapse animation building, layer comparison (swipe and opacity) and downloadable underlying data via NASA's GIBS services. It is a flat map with polar projections, not a 3D globe, and it is not a weather-forecast product. No signup; it runs in the browser.",
+  "bName": "NASA Worldview",
+  "bSlug": "nasa-worldview",
+  "bStrengths": "NASA Worldview is an extraordinary free research tool: 1,000+ full-resolution satellite layers, most refreshed within about three hours of observation, some spanning nearly 30 years, geostationary imagery in 10-minute increments, event tracking for cyclones, wildfires and eruptions, custom time-lapse animations, layer transparency and comparison tools, and the underlying data downloadable via NASA GIBS — open source, backed by NASA's EOSDIS. For environmental science and disaster analysis, its scientific layer library is unmatched at any price, let alone free.",
+  "bWebsite": "https://worldview.earthdata.nasa.gov",
+  "betterAnswer": "They answer different questions. Zoom Earth is better for live weather: what is this storm, rain band or fire doing right now, in a map anyone can read, on web or mobile? NASA Worldview is better for processes and evidence: what is happening across the planet's systems — fires, ice, air quality, vegetation — across 1,000+ science layers, with history and downloadable data. Both are free and need no account; keep Zoom Earth for the daily weather check and Worldview for the deep look.",
+  "category": "Satellite imagery",
+  "consA": [
+    "Only a handful of weather layers beside Worldview's 1,000+ science layers",
+    "No downloadable science data — its terms prohibit bulk downloading",
+    "Pro prices ($1.99 / $11.99) are listed without labelled billing periods",
+    "No public API — its terms prohibit scraping and automated access"
+  ],
+  "consB": [
+    "Flat map with polar projections — no 3D globe at all",
+    "Not a weather-forecast product: no forecast models or radar nowcasting",
+    "A research interface that takes time to learn",
+    "Imagery is near-real-time (most layers within ~3 hours), not a live weather feed"
+  ],
+  "faqs": [
+    {
+      "a": "No. NASA Worldview is not a weather-forecast product — it shows near-real-time satellite imagery and environmental science layers (most updated within about three hours of observation). Zoom Earth is the forecast one here: it layers ICON and GFS forecast maps and rain radar with nowcasting over its live satellite imagery.",
+      "q": "Is NASA Worldview a weather forecast app like Zoom Earth?"
+    },
+    {
+      "a": "More than 1,000 global, full-resolution layers — satellite imagery and science products covering fires, storms, air quality, temperature, sea ice, vegetation and hundreds of other variables, many updated near-real-time and some spanning nearly 30 years.",
+      "q": "How many layers does NASA Worldview have?"
+    },
+    {
+      "a": "Yes — Zoom Earth is completely free for basic use on the web, iOS and Android, with no account required. Extra features sit behind Zoom Earth Pro, listed on the official US App Store listing at $1.99 and $11.99, though that listing does not label which billing period each price corresponds to.",
+      "q": "Is Zoom Earth free?"
+    },
+    {
+      "a": "Yes, completely. NASA provides Worldview as a public service through EOSDIS — no paid plans, no subscriptions, and no signup required to browse. Its code is open source and the underlying imagery data is downloadable via NASA's GIBS services.",
+      "q": "Is NASA Worldview really free?"
+    },
+    {
+      "a": "Neither. Zoom Earth is a flat interactive weather map, and NASA Worldview is a flat map with geographic and polar projections. For a 3D globe that combines a satellite view with live flights, ships, cameras and weather, that is WorldEye's position — see below.",
+      "q": "Which has a 3D globe, Zoom Earth or NASA Worldview?"
+    },
+    {
+      "a": "Zoom Earth, for watching a storm live: satellite imagery every 10 minutes, radar nowcasting and a dedicated hurricane tracker fed by NHC, JTWC, NRL and IBTrACS. Worldview is the better second look — it pins and tracks cyclones as natural events and lets you build time-lapse animations and compare layers over days.",
+      "q": "Which is better for tracking a hurricane?"
+    }
+  ],
+  "featuredCams": {
+    "blurb": "Real cameras from WorldEye's live catalogue — no account, no install. Tap any frame to open that exact camera on the globe.",
+    "categories": [
+      "mountains",
+      "featured"
+    ],
+    "ids": [
+      "occ-jma-volcam-50602",
+      "occ-biodic-43",
+      "sky-it-vesuvio",
+      "sky-fr-bourget",
+      "sky-es-masca",
+      "sky-fr-menton"
+    ],
+    "title": "Live on WorldEye right now"
+  },
+  "features": [
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Near-real-time satellite imagery",
+      "note": "Zoom Earth: geostationary imagery from GOES, Himawari and Meteosat every 10 minutes. Worldview: 1,000+ layers, most updated within about 3 hours of observation, with geostationary imagery in 10-minute increments"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Weather forecast maps (models)",
+      "note": "Zoom Earth layers ICON and GFS forecast maps for rain, wind, temperature and pressure; Worldview is not a weather-forecast product — its layers are observations and science products"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Rain radar with nowcasting",
+      "note": "Zoom Earth's radar shows rain and snow from ground-based Doppler radar in real time with nowcasting; Worldview has precipitation imagery layers, not a radar nowcast"
+    },
+    {
+      "a": "yes",
+      "b": "partial",
+      "label": "Hurricane and cyclone tracking",
+      "note": "Zoom Earth is a dedicated real-time hurricane tracker using NHC, JTWC, NRL and IBTrACS data; Worldview pins and tracks cyclones as natural events, without a dedicated storm tracker"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Wildfire and heat-spot tracking",
+      "note": "Zoom Earth shows active fires and heat spots updated daily from NASA FIRMS, with GeoColor imagery for smoke; Worldview pins wildfire events and carries fire layers among its 1,000+ layers"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "1,000+ science data layers",
+      "note": "Worldview offers over 1,000 full-resolution layers — air quality, sea ice, vegetation and more; Zoom Earth is a focused weather layer set"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Long historical archive",
+      "note": "Some Worldview layers span nearly 30 years; a comparable long-term archive was not verified for Zoom Earth, which is built around current conditions"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "Downloadable underlying data",
+      "note": "Worldview's data is downloadable via NASA's GIBS services; Zoom Earth's terms prohibit bulk downloading and automated access"
+    },
+    {
+      "a": "partial",
+      "b": "yes",
+      "label": "Time-lapse animations",
+      "note": "Worldview builds custom time-lapse animations; Zoom Earth animates its live imagery and offers animation styles, but a custom time-lapse builder was not verified"
+    },
+    {
+      "a": "unverified",
+      "b": "yes",
+      "label": "Layer comparison and transparency tools",
+      "note": "Worldview offers swipe and opacity comparison across layers; equivalent comparison tools were not verified for Zoom Earth"
+    },
+    {
+      "a": "yes",
+      "b": "yes",
+      "label": "Free access without an account",
+      "note": "Zoom Earth needs no account for basic use; Worldview is completely free with no signup to browse"
+    },
+    {
+      "a": "yes",
+      "b": "no",
+      "label": "Native mobile apps",
+      "note": "Zoom Earth offers iOS and Android apps plus the web; Worldview is browser-based and works on desktop and mobile devices, with no native app verified"
+    },
+    {
+      "a": "no",
+      "b": "yes",
+      "label": "API and reusable data services",
+      "note": "Worldview's imagery is reusable via NASA GIBS services and its code is open source; no public Zoom Earth API was found and its terms prohibit scraping"
+    },
+    {
+      "a": "no",
+      "b": "no",
+      "label": "Interactive 3D globe",
+      "note": "Neither offers one: Zoom Earth is a flat weather map; Worldview is a flat map with geographic and polar projections"
+    }
+  ],
+  "intro": "Zoom Earth and NASA Worldview both show you the planet from space, live and free — and they are built for very different readers. Zoom Earth, by Neave Interactive, is the consumer live-weather satellite: imagery every 10 minutes, rain radar with nowcasting, forecast layers and a hurricane tracker, in an app anyone can read in seconds. NASA Worldview is NASA's science instrument: more than 1,000 near-real-time satellite layers, an archive reaching back nearly 30 years in places, event tracking, time-lapse tools and downloadable data — powerful, and unmistakably a research tool. One is for checking the storm today; the other is for studying the Earth system.",
+  "lastReviewed": "2026-10-29",
+  "pricingA": "Free on the web, iOS and Android, with no account required for basic use. Zoom Earth Pro is listed under In-App Purchases on the official US App Store listing at $1.99 and $11.99 — that listing does not label which billing period each price corresponds to, so the period for each price is unverified. Its terms say subscriptions are billed on a periodic basis (e.g. monthly or annually), as specified at the time of purchase. No free trial for Pro was stated on the official pages checked.",
+  "pricingB": "Completely free — NASA provides Worldview as a public service through EOSDIS. No paid plans, and no signup is required to browse.",
+  "prosA": [
+    "Satellite imagery updated every 10 minutes, in a map anyone can read",
+    "Rain radar with nowcasting and ICON/GFS forecast layers",
+    "Dedicated hurricane tracker using NHC, JTWC, NRL and IBTrACS data",
+    "Wildfire heat spots from NASA FIRMS",
+    "Free on web, iOS and Android with no account required for basic use"
+  ],
+  "prosB": [
+    "1,000+ full-resolution science layers, most within ~3 hours of observation",
+    "Nearly 30 years of history in some layers, with time-lapse building",
+    "Event pins for cyclones, wildfires and volcanic eruptions",
+    "Underlying data downloadable via NASA GIBS; code is open source",
+    "Completely free from NASA — no paid tier, no signup"
+  ],
+  "published": true,
+  "quickFacts": [
+    {
+      "a": "Interactive weather map and hurricane tracker — free with optional Pro",
+      "b": "Satellite-imagery browser for science — completely free public service",
+      "label": "Model"
+    },
+    {
+      "a": "Neave Interactive Limited",
+      "b": "NASA (EOSDIS)",
+      "label": "Maker"
+    },
+    {
+      "a": "Web plus iOS and Android apps",
+      "b": "Web browser — desktop and mobile, flat map with polar projections",
+      "label": "Runs on"
+    },
+    {
+      "a": "Full basic use free, no account required",
+      "b": "Everything free, no signup required",
+      "label": "Free tier"
+    },
+    {
+      "a": "Zoom Earth Pro — $1.99 and $11.99 on the US App Store listing; billing period for each price unverified",
+      "b": "None — no paid plans",
+      "label": "Paid tier"
+    },
+    {
+      "a": "Geostationary satellite every 10 minutes; HD NASA passes twice a day",
+      "b": "Most layers within ~3 hours of observation; geostationary in 10-minute increments",
+      "label": "Imagery refresh"
+    }
+  ],
+  "seoDescription": "Zoom Earth vs NASA Worldview compared: the consumer live-weather satellite with 10-minute imagery and hurricane tracking vs NASA's 1,000+ near-real-time science layers — features, pricing and verdicts, plus a free third option.",
+  "seoTitle": "Zoom Earth vs NASA Worldview (2026): Live Weather or Science Archive?",
+  "slug": "zoom-earth-vs-nasa-worldview",
+  "sources": [
+    {
+      "label": "Zoom Earth — official site",
+      "url": "https://zoom.earth/"
+    },
+    {
+      "label": "Zoom Earth — Terms of Service (official)",
+      "url": "https://zoom.earth/legal/terms/"
+    },
+    {
+      "label": "Zoom Earth — official App Store listing (Neave Interactive)",
+      "url": "https://apps.apple.com/us/app/zoom-earth-weather-forecast/id1531561063"
+    },
+    {
+      "label": "Zoom Earth — official Google Play listing (Neave Interactive)",
+      "url": "https://play.google.com/store/apps/details?id=com.neave.zoomearth"
+    },
+    {
+      "label": "NASA Worldview — official application",
+      "url": "https://worldview.earthdata.nasa.gov/"
+    },
+    {
+      "label": "NASA EOSDIS — Worldview booklet (layers, latency, features)",
+      "url": "https://earthdata.nasa.gov/s3fs-public/2025-03/worldview-booklet.pdf?VersionId=vkMI8sbfY1WdDGqFKFSUus_orr4xsYnv"
+    }
+  ],
+  "verdictA": "Choose Zoom Earth if you want the live weather picture — a storm, a rain band or a fire, on a simple map or in the app, refreshed every 10 minutes — without learning a research tool.",
+  "verdictB": "Choose NASA Worldview if you want the evidence — 1,000+ science layers, days-to-decades of history, time-lapse and comparison tools and downloadable NASA data for fires, storms, ice and air quality.",
+  "verdictLine": "Zoom Earth is the daily driver: live weather satellite for everyone, at a glance. NASA Worldview is the laboratory: the deepest free window onto the Earth system ever published. For watching today's storm, open Zoom Earth; for understanding the planet, open Worldview.",
+  "worldEye": "Zoom Earth and NASA Worldview both stop at the view from space — neither shows you the ground, and neither offers a 3D globe. WorldEye takes the third position: a free 3D globe with 74,229 public cameras across 105 countries alongside live flights, ships, satellites, weather, earthquakes and wildfires, so satellite context and ground-level reality sit in the same view, with a free tier and no signup. Its imagery is neither Zoom Earth's live weather feed nor NASA's science library, and it does not claim to be. Its optional Pro tier is $7.99/week · $13.99/month · $74.99/year."
+}
