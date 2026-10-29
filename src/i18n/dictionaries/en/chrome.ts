@@ -108,7 +108,6 @@ export const enChrome: ChromeCopy = {
         { label: "All Comparisons", href: "/compare" },
         { label: "God's Eye View", href: "/gods-eye-view" },
         { label: "God's Eye View Alternative", href: "/alternatives/gods-eye-view" },
-        { label: "OSIRIS Alternative", href: "/alternatives/osiris" },
         { label: "World Monitor Alternative", href: "/alternatives/world-monitor" },
         { label: "GodsView AI Alternative", href: "/alternatives/godsview-ai" },
         { label: "Flightradar24 Alternative", href: "/alternatives/flightradar24" },

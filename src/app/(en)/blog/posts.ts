@@ -2648,34 +2648,34 @@ export const POSTS: BlogPost[] = [
     seoTitle: "Open-Source vs Hosted OSINT Dashboards | WorldEye Blog",
     date: "2026-10-17",
     excerpt:
-      "OSIRIS, World Monitor's code and God's Eye View ask you to run the stack yourself; WorldEye, War Monitor and worldmonitor.app run it for you. What self-hosting really costs, what hosted really gives up, and a checklist for choosing.",
+      "World Monitor's code and God's Eye View ask you to run the stack yourself; WorldEye, War Monitor and worldmonitor.app run it for you. What self-hosting really costs, what hosted really gives up, and a checklist for choosing.",
     seoDescription:
-      "Self-hosted OSINT dashboards (OSIRIS, God's Eye View) vs hosted ones (WorldEye, World Monitor, War Monitor): real costs, real trade-offs, and how to choose.",
+      "Self-hosted OSINT dashboards (God's Eye View) vs hosted ones (WorldEye, World Monitor, War Monitor): real costs, real trade-offs, and how to choose.",
     tags: ["OSINT", "guide"],
     sections: [
       {
         heading: "The two schools of planet-watching",
         body: [
-          "Almost every global intelligence dashboard falls into one of two schools. The open-source school — OSIRIS, God's Eye View, World Monitor's AGPL codebase — publishes the software and lets you run it: your server, your keys, your modifications. The hosted school — WorldEye, worldmonitor.app, War Monitor, GodsView AI — runs the same class of product as a website: open a URL and it's live. The features increasingly overlap; the ownership model doesn't.",
+          "Almost every global intelligence dashboard falls into one of two schools. The open-source school — God's Eye View, World Monitor's AGPL codebase — publishes the software and lets you run it: your server, your keys, your modifications. The hosted school — WorldEye, worldmonitor.app, War Monitor, GodsView AI — runs the same class of product as a website: open a URL and it's live. The features increasingly overlap; the ownership model doesn't.",
         ],
       },
       {
         heading: "What self-hosting really costs",
         body: [
-          "Not money, mostly — time and attention. Installation is the easy part (Docker images and one-click installers like Pinokio have seen to that). The real costs come later: keeping the stack updated as upstream feeds change their formats, replacing API keys when quotas bite, and discovering the scope limits buried in READMEs — OSIRIS's maritime and conflict layers, for example, are static reference datasets rather than live feeds, which matters if you assumed otherwise. And for the flagship visual features, the meter runs on you: God's Eye View's photorealistic tiles bill against your Cesium ion or Google account, and its voice agent against your OpenAI account. Free software, metered planet.",
+          "Not money, mostly — time and attention. Installation is the easy part (Docker images and one-click installers like Pinokio have seen to that). The real costs come later: keeping the stack updated as upstream feeds change their formats, replacing API keys when quotas bite, and discovering the scope limits buried in READMEs — some projects' maritime and conflict layers, for example, are static reference datasets rather than live feeds, which matters if you assumed otherwise. And for the flagship visual features, the meter runs on you: God's Eye View's photorealistic tiles bill against your Cesium ion or Google account, and its voice agent against your OpenAI account. Free software, metered planet.",
           "What you get for that effort is real: the code is yours to audit and extend, your queries never leave your infrastructure, and there's no subscription that can change price or shut down. For analysts with compliance constraints, that last point can end the argument on its own.",
         ],
       },
       {
         heading: "What hosted really gives up",
         body: [
-          "Control, in a word. You can't fork a website, add a private data layer, or inspect how a feed was processed. Your usage sits on someone else's infrastructure, under their pricing — and pricing in this niche varies wildly in transparency, from published consumer tiers (WorldEye: $7.99/week to $74.99/year; World Monitor Pro: $39.99/month) to premium tiers with no public price at all. What you get back is everything operational: the feeds are maintained, the keys are theirs, the uptime is their problem, and the product works on your phone the second you open it. Our [OSIRIS alternatives guide](/alternatives/osiris) and [head-to-head](/compare/worldeye-vs-osiris) work through one pairing in detail.",
+          "Control, in a word. You can't fork a website, add a private data layer, or inspect how a feed was processed. Your usage sits on someone else's infrastructure, under their pricing — and pricing in this niche varies wildly in transparency, from published consumer tiers (WorldEye: $7.99/week to $74.99/year; World Monitor Pro: $39.99/month) to premium tiers with no public price at all. What you get back is everything operational: the feeds are maintained, the keys are theirs, the uptime is their problem, and the product works on your phone the second you open it. Our [alternatives guides](/alternatives) and [head-to-head comparisons](/compare) work through the pairings in detail.",
         ],
       },
       {
         heading: "A checklist for choosing",
         body: [
-          "Choose self-hosted if: you need the data path on your own machines; you want tools that hosted products don't offer (OSIRIS's crypto tracing and sanctions search, vulnerability scanning); you'll genuinely maintain the stack; or you want to build on the code. Choose hosted if: you want to watch rather than operate; your 'infrastructure' is a phone; you'd rather pay a published subscription than feed API meters; or the feature you need is a live one the open-source version only carries as static data.",
+          "Choose self-hosted if: you need the data path on your own machines; you want tools that hosted products don't offer (crypto tracing and sanctions search, vulnerability scanning); you'll genuinely maintain the stack; or you want to build on the code. Choose hosted if: you want to watch rather than operate; your 'infrastructure' is a phone; you'd rather pay a published subscription than feed API meters; or the feature you need is a live one the open-source version only carries as static data.",
           "And a hybrid worth knowing: some products live in both schools — World Monitor's dashboard is hosted free, with its AGPL code available if you later want your own instance. Trying the hosted version of an open-source tool first is the cheapest evaluation there is. The wider field is ranked in our guide to the [best global intelligence dashboards](/best-global-intelligence-dashboards) and the [free OSINT tools](/free-osint-tools) list.",
         ],
       },
@@ -2687,7 +2687,7 @@ export const POSTS: BlogPost[] = [
       },
       {
         q: "Which open-source dashboard is strongest in 2026?",
-        a: "For analyst tooling, OSIRIS (recon, crypto tracing, Telegram OSINT). For geopolitical data, World Monitor's codebase. For cinematic visualization, God's Eye View. They're compared in our alternatives guides.",
+        a: "For analyst tooling, a self-hosted recon suite (crypto tracing, Telegram OSINT). For geopolitical data, World Monitor's codebase. For cinematic visualization, God's Eye View. They're compared in our alternatives guides.",
       },
       {
         q: "Can a hosted dashboard see my queries?",

@@ -109,11 +109,11 @@ const SYSTEM_PROMPT = `You are the WorldEye Intelligence Analyst — a senior, e
 - Flag when events may be connected vs. coincidental
 - You are an analyst, not a policymaker — present options, not directives
 
-You have access to the live intelligence context of the OSIRIS platform. Analyze it with precision.`;
+You have access to the live intelligence context of the WorldEye platform. Analyze it with precision.`;
 
-const BRIEFING_PROMPT = `Generate a comprehensive OSIRIS Daily Intelligence Briefing based on the current operational data. Structure it as follows:
+const BRIEFING_PROMPT = `Generate a comprehensive WorldEye Daily Intelligence Briefing based on the current operational data. Structure it as follows:
 
-## OSIRIS INTELLIGENCE BRIEFING
+## WORLDEYE INTELLIGENCE BRIEFING
 **Classification:** OPEN SOURCE INTELLIGENCE (OSINT)
 **DTG:** [Current timestamp]
 

@@ -84,7 +84,7 @@ interface LayerGroupDef {
 export const LAYER_GROUPS: LayerGroupDef[] = [
   {
     label: 'SDK',
-    fullLabel: 'OSIRIS SDK',
+    fullLabel: 'WorldEye SDK',
     icon: Network,
     layers: [
       { key: 'sdk_sea', label: 'Maritime Lines', dataKey: 'sdk_entities', premium: true },
@@ -306,7 +306,7 @@ function SubLayerStem() {
    adaptations the reference doesn't cover, taken under his "adjust
    accordingly" instruction rather than by dropping features:
    · WINTER & ROADS keeps its own row (it shipped as one, 2026-10-26).
-   · OSIRIS SDK keeps its own row — its layers span maritime + weather
+   · WorldEye SDK keeps its own row — its layers span maritime + weather
      overlays and fit no single board category.
    The old DISPLAY group splits across two board rows: terrain/buildings
    (+ day/night) under 3D ENVIRONMENT, the sensor-effect presets under
@@ -419,7 +419,7 @@ const PANEL_CATEGORIES: PanelCategory[] = [
     kind: 'sensor',
   },
   {
-    id: 'sdk', title: 'OSIRIS SDK', icon: Network, accent: '#22D3EE',
+    id: 'sdk', title: 'WorldEye SDK', icon: Network, accent: '#22D3EE',
     blurb: 'Maritime Lines · Live Clouds\nNOAA Radar · Lightning Density',
     thumbGradient: 'linear-gradient(120deg, #08222E, #0E4A5E 55%, #1E3A5F)',
     keys: ['sdk_sea', 'live_clouds', 'noaa_radar', 'lightning'],

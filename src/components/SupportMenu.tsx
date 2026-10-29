@@ -2,12 +2,11 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Coffee, ShoppingBag } from 'lucide-react';
+import { ChevronDown, Coffee } from 'lucide-react';
 
 /*
- * One SUPPORT button in place of two pills. Ko-fi and the merch store used to
- * sit side by side in the header, and on a phone the store needed a line of
- * its own; both are ways to support the project, so they are one choice now.
+ * One SUPPORT button: the Ko-fi support link on its own. It used to share
+ * this menu with a merch-store entry; that store link was removed.
  */
 const OPTIONS = [
   {
@@ -16,13 +15,6 @@ const OPTIONS = [
     label: 'SUPPORT ON KO-FI',
     detail: 'Tip once or monthly',
     color: 'var(--gold-primary)',
-  },
-  {
-    href: 'https://shop.osirisai.live/',
-    Icon: ShoppingBag,
-    label: 'BUY MERCH',
-    detail: 'shop.osirisai.live',
-    color: 'var(--cyan-primary)',
   },
 ] as const;
 

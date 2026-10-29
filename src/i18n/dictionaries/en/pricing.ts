@@ -264,7 +264,7 @@ export const enPricing: PricingCopy = {
       a: "Upgrades apply immediately with proration handled by Stripe. Downgrades take effect at the end of your current period.",
     },
     {
-      q: "How is this different from osirisai.live?",
+      q: "How is this different from the free self-hosted version?",
       a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, live traffic, advanced search filters and — on VIP Pro — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
     },
   ],

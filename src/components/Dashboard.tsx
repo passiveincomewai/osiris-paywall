@@ -1764,7 +1764,7 @@ export default function Dashboard() {
 
   const handleExportGeoJSON = useCallback(() => {
     downloadFile(
-      `osiris-aoi-${new Date().toISOString().slice(0, 10)}.geojson`,
+      `worldeye-aoi-${new Date().toISOString().slice(0, 10)}.geojson`,
       JSON.stringify(shapesToGeoJSON(drawnPolygons), null, 2),
       'application/geo+json',
     );
@@ -3113,7 +3113,7 @@ export default function Dashboard() {
                   {mobilePanel !== 'layers' && (
                   <div className="flex items-center justify-between mb-2">
                     <span className="hud-text text-[10px] text-[var(--text-primary)]">
-                      {mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'OSIRIS RECON' : mobilePanel === 'oi' ? 'OSIRIS OI' : 'SEARCH & ROUTE'}
+                      {mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'WORLDEYE RECON' : mobilePanel === 'oi' ? 'WORLDEYE OI' : 'SEARCH & ROUTE'}
                     </span>
                     <button onClick={() => setMobilePanel(null)} className="text-[var(--text-muted)] p-1" aria-label="Close panel" title="Close panel"><X className="w-4 h-4" /></button>
                   </div>

@@ -307,11 +307,6 @@ const data: AltData = {
       href: "/gods-eye-view",
     },
     {
-      label: "OSIRIS alternatives",
-      desc: "The open-source OSINT dashboard WorldEye descends from, compared honestly.",
-      href: "/alternatives/osiris",
-    },
-    {
       label: "Pricing",
       desc: "Weekly $7.99, monthly $13.99, VIP Pro $74.99/yr — the core globe stays free.",
       href: "/pricing",

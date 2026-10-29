@@ -177,7 +177,7 @@ export const esPricing: PricingCopy = {
       a: "Las mejoras se aplican de inmediato, con el prorrateo gestionado por Stripe. Las rebajas de plan entran en vigor al final de tu período actual.",
     },
     {
-      q: "¿En qué se diferencia de osirisai.live?",
+      q: "¿En qué se diferencia de la versión gratuita autohospedada?",
       a: "El mismo motor de código abierto, más los niveles de pago: un analista de IA que trabaja el mapa por ti, tráfico en vivo, filtros de búsqueda avanzados y —en VIP Pro— los feeds de inteligencia premium que el sitio gratuito no restringe, porque allí no hay puerta. Aquí, los niveles financian la infraestructura.",
     },
   ],

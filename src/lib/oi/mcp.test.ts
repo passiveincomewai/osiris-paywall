@@ -19,7 +19,7 @@ const call = (name: string, args: Record<string, unknown>, id = 1) => ({ jsonrpc
 describe('the protocol', () => {
   it('initialises, agreeing a version it speaks', async () => {
     const r = await handleMessage({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'hermes', version: '1' } } }, ctx());
-    expect(r?.result).toMatchObject({ protocolVersion: '2025-03-26', capabilities: { tools: {} }, serverInfo: { name: 'osiris-oi' } });
+    expect(r?.result).toMatchObject({ protocolVersion: '2025-03-26', capabilities: { tools: {} }, serverInfo: { name: 'worldeye-oi' } });
     const r2 = await handleMessage({ jsonrpc: '2.0', id: 2, method: 'initialize', params: { protocolVersion: '1999-01-01' } }, ctx());
     expect((r2?.result as { protocolVersion: string }).protocolVersion).toBe(LATEST_PROTOCOL);
   });

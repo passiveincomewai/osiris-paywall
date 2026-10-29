@@ -272,7 +272,7 @@ const data: AltData = {
     },
     {
       q: "Is World Monitor open source?",
-      a: "Yes, under AGPL-3.0 (github.com/koala73/worldmonitor), and self-hosting is supported. WorldEye is a hosted product; if running your own stack is the point, World Monitor (or OSIRIS) is the honest recommendation.",
+      a: "Yes, under AGPL-3.0 (github.com/koala73/worldmonitor), and self-hosting is supported. WorldEye is a hosted product; if running your own stack is the point, World Monitor is the honest recommendation.",
     },
     {
       q: "Which is better for following a breaking crisis?",
@@ -294,11 +294,6 @@ const data: AltData = {
       label: "World Monitor vs WorldEye, head to head",
       desc: "The dedicated comparison page.",
       href: "/compare/world-monitor",
-    },
-    {
-      label: "OSIRIS alternatives",
-      desc: "The other open-source dashboard in this family — and WorldEye's own ancestor.",
-      href: "/alternatives/osiris",
     },
     {
       label: "God's Eye View alternative",

@@ -440,7 +440,7 @@ export default function FeaturesPage() {
           links={[
             {
               label: "How WorldEye compares",
-              desc: "Honest head-to-heads with OSIRIS, World Monitor, God's Eye View and more — features, pricing, verdicts.",
+              desc: "Honest head-to-heads with World Monitor, God's Eye View and more — features, pricing, verdicts.",
               href: "/compare",
             },
             {

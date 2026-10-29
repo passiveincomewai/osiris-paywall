@@ -81,7 +81,6 @@ export const esChrome: ChromeCopy = {
         { label: "Todas las comparaciones", href: "/compare" },
         { label: "God's Eye View", href: "/gods-eye-view" },
         { label: "Alternativa a God's Eye View", href: "/alternatives/gods-eye-view" },
-        { label: "Alternativa a OSIRIS", href: "/alternatives/osiris" },
         { label: "Alternativa a World Monitor", href: "/alternatives/world-monitor" },
         { label: "Alternativa a GodsView AI", href: "/alternatives/godsview-ai" },
         { label: "Alternativa a Flightradar24", href: "/alternatives/flightradar24" },
