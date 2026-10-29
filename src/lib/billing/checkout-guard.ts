@@ -94,32 +94,51 @@ export async function resolveCheckoutGuard(input: {
   ports: CheckoutGuardPorts;
   now?: Date;
   /** The plan being bought, when the caller knows it. Only used for
-   *  the Ambient carve-out in rule 1. */
+   *  the standalone-product carve-out in rule 1. */
   plan?: string;
   /** Resolved Ambient price id (lib/plan-tier), for the same. */
   ambientPriceId?: string;
+  /** Resolved Powder Pass price id (lib/plan-tier), for the same —
+   *  Powder Pass is the second standalone product. Undefined until
+   *  the owner provisions the price. */
+  skiPriceId?: string;
 }): Promise<CheckoutGuardDecision> {
   const now = input.now ?? new Date();
   const { dbSub } = input;
 
   // Rule 1 — a live plan in our own DB blocks, full stop.
   if (dbSubscriptionIsLive(dbSub, now)) {
-    /* Carve-out (WorldEye Ambient): Ambient is a standalone product,
-       not a tier, and a member's single Subscription row can hold it
-       while they hold no tier plan. Blocking them from ever buying
-       Pro would strand every Ambient subscriber, so an ambient-only
-       live row does not block a NON-ambient purchase — the checkout
-       proceeds on the same Stripe customer, and the new subscription
-       replaces the row via the webhook (the member should cancel the
-       Ambient sub; the manage surface is where that lives). The
-       reverse needs no carve-out: a tier holder already has Ambient
-       access, and an ambient holder re-buying ambient is a duplicate
-       — both stay blocked. */
+    /* Carve-out (standalone products — WorldEye Ambient, Powder
+       Pass): a standalone product is not a tier, and a member's
+       single Subscription row can hold one while they hold no tier
+       plan. Blocking them from ever buying anything else would
+       strand every standalone subscriber, so a standalone-only live
+       row does not block a purchase of a DIFFERENT plan — the
+       checkout proceeds on the same Stripe customer, and the new
+       subscription replaces the row via the webhook (the displaced
+       standalone sub is cancelled at Stripe by the webhook sync; the
+       manage surface is where a member cancels by hand). The reverse
+       needs no carve-out: a standalone holder re-buying the SAME
+       standalone is a duplicate, and a tier holder buying a
+       standalone stays blocked by rule 1 itself — for Ambient that
+       is exact (every tier includes it) and for VIP buying Powder
+       Pass likewise; a Pro holder adding Powder Pass is also held
+       by the single-row constraint, the same wall Ambient was built
+       behind (flagged in the Powder Pass foundation report as a
+       launch decision, not silently solved here). */
     const existingIsAmbientOnly =
       !!input.ambientPriceId &&
       !!dbSub?.stripePriceId &&
       dbSub.stripePriceId === input.ambientPriceId;
-    if (existingIsAmbientOnly && input.plan && input.plan !== "ambient") {
+    const existingIsSkiOnly =
+      !!input.skiPriceId &&
+      !!dbSub?.stripePriceId &&
+      dbSub.stripePriceId === input.skiPriceId;
+    if (
+      input.plan &&
+      ((existingIsAmbientOnly && input.plan !== "ambient") ||
+        (existingIsSkiOnly && input.plan !== "ski"))
+    ) {
       return { kind: "proceed", customerId: dbSub?.stripeCustomerId ?? undefined };
     }
     return { kind: "blocked", reason: "db_subscription" };

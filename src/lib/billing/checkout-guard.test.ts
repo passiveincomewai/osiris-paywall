@@ -116,6 +116,101 @@ describe("resolveCheckoutGuard", () => {
     expect(d).toEqual({ kind: "blocked", reason: "db_subscription" });
   });
 
+  it("lets a ski-only member buy a tier plan on the same customer (Powder Pass carve-out)", async () => {
+    const p = ports();
+    const d = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "active",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_ski",
+      }),
+      ports: p,
+      plan: "annual",
+      ambientPriceId: "price_ambient",
+      skiPriceId: "price_ski",
+    });
+    expect(d).toEqual({ kind: "proceed", customerId: "cus_db" });
+    expect(p.listCustomersByEmail).not.toHaveBeenCalled();
+  });
+
+  it("still blocks a ski-only member re-buying ski (a duplicate)", async () => {
+    const d = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "trialing",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_ski",
+      }),
+      ports: ports(),
+      plan: "ski",
+      skiPriceId: "price_ski",
+    });
+    expect(d).toEqual({ kind: "blocked", reason: "db_subscription" });
+  });
+
+  it("still blocks a VIP holder buying ski (VIP already includes Powder Pass)", async () => {
+    const d = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "active",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_annual",
+      }),
+      ports: ports(),
+      plan: "ski",
+      skiPriceId: "price_ski",
+    });
+    expect(d).toEqual({ kind: "blocked", reason: "db_subscription" });
+  });
+
+  it("lets a standalone holder swap products (ambient-only member buying ski, and the reverse)", async () => {
+    const toSki = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "active",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_ambient",
+      }),
+      ports: ports(),
+      plan: "ski",
+      ambientPriceId: "price_ambient",
+      skiPriceId: "price_ski",
+    });
+    expect(toSki).toEqual({ kind: "proceed", customerId: "cus_db" });
+
+    const toAmbient = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "active",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_ski",
+      }),
+      ports: ports(),
+      plan: "ambient",
+      ambientPriceId: "price_ambient",
+      skiPriceId: "price_ski",
+    });
+    expect(toAmbient).toEqual({ kind: "proceed", customerId: "cus_db" });
+  });
+
+  it("treats the ski price as an ordinary row when no ski price is configured (dark)", async () => {
+    // POWDER_PASS_PRICE_ID unset → skiPriceId undefined → no carve-out
+    // can recognise the row, so rule 1 blocks like any other plan.
+    const d = await resolveCheckoutGuard({
+      ...base,
+      dbSub: dbSub({
+        status: "active",
+        currentPeriodEnd: FUTURE,
+        stripePriceId: "price_ski",
+      }),
+      ports: ports(),
+      plan: "monthly",
+      ambientPriceId: "price_ambient",
+    });
+    expect(d).toEqual({ kind: "blocked", reason: "db_subscription" });
+  });
+
   it("reuses the DB customer for a resubscribe, without touching Stripe reads", async () => {
     const p = ports();
     const d = await resolveCheckoutGuard({ ...base, dbSub: dbSub(), ports: p });

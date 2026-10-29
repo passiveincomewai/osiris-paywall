@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { REF_COOKIE, findAffiliateByCode } from "@/lib/affiliate/attribution";
 import { trialDaysForPlan } from "@/lib/billing/trials";
 import { ambientPriceId } from "@/lib/ambient/access";
+import { powderPassEnabled, powderPassPriceId } from "@/lib/ski/access";
 import {
   resolveCheckoutGuard,
   ALREADY_SUBSCRIBED_MESSAGE,
@@ -41,7 +42,10 @@ export async function POST(req: Request) {
     plan?: string;
     ui?: string;
   };
-  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise" && plan !== "ambient") {
+  // Powder Pass ("ski") is dark-launched: until POWDER_PASS_ENABLED is
+  // set it is indistinguishable from a plan that does not exist.
+  const skiEnabled = powderPassEnabled(process.env);
+  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise" && plan !== "ambient" && !(plan === "ski" && skiEnabled)) {
     return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   }
   // Embedded mode renders Stripe's form on /checkout (our domain) instead of
@@ -56,6 +60,7 @@ export async function POST(req: Request) {
     : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
     : plan === "enterprise" ? "STRIPE_ENTERPRISE_PRICE_ID"
     : plan === "ambient" ? "STRIPE_AMBIENT_PRICE_ID"
+    : plan === "ski" ? "POWDER_PASS_PRICE_ID"
     : "STRIPE_WEEKLY_PRICE_ID";
   // Free trials: weekly → 10 days, monthly → 10 days, annual → 10 days
   // (Conversion Wave 2, F2 — every self-serve trial is 10 days).
@@ -65,9 +70,17 @@ export async function POST(req: Request) {
   const trialDays = trialDaysForPlan(plan);
   // Ambient's price id resolves through lib/ambient/access: the env
   // var wins, the owner's live price id is the fallback, so Ambient
-  // checkout works before the env var is provisioned.
+  // checkout works before the env var is provisioned. Powder Pass
+  // resolves through lib/ski/access with NO fallback — the price does
+  // not exist until the owner creates it, so an unset env lands on
+  // the standard not-configured 500 below, exactly like any other
+  // unprovisioned price.
   const priceId =
-    plan === "ambient" ? ambientPriceId(process.env) : process.env[priceEnv];
+    plan === "ambient"
+      ? ambientPriceId(process.env)
+      : plan === "ski"
+        ? powderPassPriceId(process.env)
+        : process.env[priceEnv];
   if (!priceId) {
     return NextResponse.json({ error: `${priceEnv} is not set` }, { status: 500 });
   }
@@ -96,6 +109,7 @@ export async function POST(req: Request) {
         : null,
       plan,
       ambientPriceId: ambientPriceId(process.env),
+      skiPriceId: powderPassPriceId(process.env),
       ports: {
         listCustomersByEmail: async (email) =>
           (await stripe().customers.list({ email, limit: 10 })).data,
@@ -128,6 +142,9 @@ export async function POST(req: Request) {
   // members go to the app. Embedded checkout reaches the identical place
   // through return_url — Stripe substitutes {CHECKOUT_SESSION_ID} the same
   // way — so the completion/claim flow is shared, not forked.
+  // Powder Pass deliberately has NO plan-specific landing here: it
+  // has no public page until launch, so a completed ski checkout
+  // lands on the same generic member/guest targets as the tiers.
   const completionUrl = userId
     ? plan === "ambient"
       ? `${appUrl()}/ambient?checkout=success`

@@ -48,6 +48,13 @@ describe("planTierForPriceId", () => {
     // …and via the live fallback id when the env var is unset.
     expect(planTierForPriceId("price_1UUxUnGfHuTnzrlHH0pNYhJU", ENV)).toBe("free");
   });
+
+  it("the Powder Pass price → free: a standalone product, never a tier", () => {
+    // Env var only — Powder Pass has no fallback id (not yet created).
+    expect(
+      planTierForPriceId("price_ski", { ...ENV, POWDER_PASS_PRICE_ID: "price_ski" }),
+    ).toBe("free");
+  });
 });
 
 describe("planTierForRow", () => {

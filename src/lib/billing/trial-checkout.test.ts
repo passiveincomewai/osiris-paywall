@@ -77,12 +77,13 @@ describe("checkoutRequestBody", () => {
 });
 
 describe("CHECKOUT_PLAN_SUMMARIES", () => {
-  it("covers all five plans, enterprise and ambient included", () => {
+  it("covers all six plans, enterprise, ambient and ski included", () => {
     expect(Object.keys(CHECKOUT_PLAN_SUMMARIES).sort()).toEqual([
       "ambient",
       "annual",
       "enterprise",
       "monthly",
+      "ski",
       "weekly",
     ]);
   });
@@ -99,6 +100,21 @@ describe("CHECKOUT_PLAN_SUMMARIES", () => {
       trialDays: 10,
     });
     expect(checkoutPlanSummary("ambient")?.plan).toBe("ambient");
+  });
+
+  it("describes the ski plan (Powder Pass) with its trial — summary only, never a picker row", () => {
+    expect(CHECKOUT_PLAN_SUMMARIES.ski).toEqual({
+      plan: "ski",
+      name: "Powder Pass",
+      price: "$4.99",
+      per: "/month",
+      perDay: "$0.17",
+      note: "10 days free, then billed monthly · cancel anytime",
+      trialLabel: "10 days free",
+      trialDays: 10,
+    });
+    expect(checkoutPlanSummary("ski")?.plan).toBe("ski");
+    expect(TRIAL_PLAN_OPTIONS.some((o) => (o.plan as string) === "ski")).toBe(false);
   });
 
   it("reuses the trial plans' pricing copy untouched", () => {

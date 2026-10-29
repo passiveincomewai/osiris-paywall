@@ -86,6 +86,42 @@ export function isAmbientPriceId(
   return !!priceId && priceId === ambientPriceId(env);
 }
 
+/* ── Powder Pass: a second standalone product, NOT a tier ──────────
+ * Powder Pass ($4.99/mo ski-only, owner's pick 2026-10-28) is sold
+ * beside the tiers exactly like Ambient: its price must never resolve
+ * to pro/vip, or a $4.99 ski subscriber would silently hold all of
+ * Pro. Ski access itself is computed in lib/ski/access (Powder Pass
+ * price OR vip tier OR comp). Unlike Ambient there is NO fallback
+ * price constant: the owner has not created the Stripe price yet, so
+ * the env var is the only source — unset env means "not configured",
+ * and checkout answers the standard not-configured 500. The whole
+ * product is dark until POWDER_PASS_ENABLED is set (lib/ski/access). */
+export const POWDER_PASS_PRICE_ENV = "POWDER_PASS_PRICE_ID";
+
+export function powderPassPriceId(
+  env: Record<string, string | undefined>,
+): string | undefined {
+  return env[POWDER_PASS_PRICE_ENV] || undefined;
+}
+
+export function isPowderPassPriceId(
+  priceId: string | null | undefined,
+  env: Record<string, string | undefined>,
+): boolean {
+  const configured = powderPassPriceId(env);
+  return !!priceId && !!configured && priceId === configured;
+}
+
+/**
+ * The comp engine's only price id (COMP_PRICE_ID in lib/pro/comp).
+ * Recognised here, in the price-id contract module, so pure
+ * entitlement code can spot a comp row without importing the
+ * DB-backed comp module.
+ */
+export function isCompPriceId(priceId: string | null | undefined): boolean {
+  return priceId === "comp_free_pro";
+}
+
 /** Tier from a Stripe price id alone (active subscription assumed). */
 export function planTierForPriceId(
   priceId: string | null | undefined,
@@ -96,6 +132,8 @@ export function planTierForPriceId(
   if (priceId === env.STRIPE_ENTERPRISE_PRICE_ID) return "vip";
   // Ambient is a standalone product — it confers no tier (see above).
   if (isAmbientPriceId(priceId, env)) return "free";
+  // Powder Pass is a standalone product too — no tier (see above).
+  if (isPowderPassPriceId(priceId, env)) return "free";
   return "pro";
 }
 

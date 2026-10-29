@@ -25,17 +25,23 @@ describe("TRIAL_DAYS", () => {
     expect(trialDaysForPlan("ambient")).toBe(10);
   });
 
+  it("grants the ski plan (Powder Pass) a 10-day free trial, like its $4.99 sibling Ambient", () => {
+    expect(TRIAL_DAYS.ski).toBe(10);
+    expect(trialDaysForPlan("ski")).toBe(10);
+  });
+
   it("gives unknown plans no trial", () => {
     expect(trialDaysForPlan("bogus")).toBe(0);
     expect(trialDaysForPlan("")).toBe(0);
   });
 
-  it("covers exactly the five sellable plans", () => {
+  it("covers exactly the six sellable plans", () => {
     expect(Object.keys(TRIAL_DAYS).sort()).toEqual([
       "ambient",
       "annual",
       "enterprise",
       "monthly",
+      "ski",
       "weekly",
     ]);
   });

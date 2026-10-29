@@ -15,7 +15,7 @@
  * users get full Pro access and are never charged during the trial
  * (checkout collects the card up front via payment_method_collection).
  */
-export type BillingPlan = "weekly" | "monthly" | "annual" | "enterprise" | "ambient";
+export type BillingPlan = "weekly" | "monthly" | "annual" | "enterprise" | "ambient" | "ski";
 
 export const TRIAL_DAYS: Record<BillingPlan, number> = {
   weekly: 3,
@@ -26,6 +26,13 @@ export const TRIAL_DAYS: Record<BillingPlan, number> = {
   // owner's spec gives it the same 10-day trial as the other
   // self-serve plans. Ambient is NOT a tier — see lib/ambient/access.
   ambient: 10,
+  // Powder Pass (the standalone $4.99/mo ski-only product): a sibling
+  // of Ambient at the same price, so it carries the same 10-day trial
+  // (assumption flagged for the owner at the foundation slice —
+  // he set Ambient/Monthly/Annual at 10 days and picked ski's
+  // $4.99/mo price alongside them). Powder Pass is NOT a tier — see
+  // lib/ski/access. Dark until POWDER_PASS_ENABLED is set.
+  ski: 10,
 };
 
 /** Trial days for a plan name; unknown plans get no trial. */

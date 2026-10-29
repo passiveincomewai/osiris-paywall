@@ -197,6 +197,95 @@ describe("POST /api/checkout — shared guards", () => {
   });
 });
 
+describe("POST /api/checkout — Powder Pass plan (dark launch)", () => {
+  beforeEach(() => {
+    delete process.env.POWDER_PASS_ENABLED;
+    delete process.env.POWDER_PASS_PRICE_ID;
+  });
+  afterEach(() => {
+    delete process.env.POWDER_PASS_ENABLED;
+    delete process.env.POWDER_PASS_PRICE_ID;
+  });
+
+  it("treats plan 'ski' as unknown while POWDER_PASS_ENABLED is off — even with a price set", async () => {
+    process.env.POWDER_PASS_PRICE_ID = "price_ski";
+    for (const body of [{ plan: "ski" }, { plan: "ski", ui: "embedded" }]) {
+      const res = await post(body);
+      expect(res.status).toBe(400);
+      expect((await res.json()).error).toBe("Unknown plan");
+    }
+    expect(mocks.createSession).not.toHaveBeenCalled();
+  });
+
+  it("fails closed with the standard not-configured error when the flag is on but the price env is missing", async () => {
+    process.env.POWDER_PASS_ENABLED = "1";
+    const res = await post({ plan: "ski" });
+    expect(res.status).toBe(500);
+    expect((await res.json()).error).toContain("POWDER_PASS_PRICE_ID");
+    expect(mocks.createSession).not.toHaveBeenCalled();
+  });
+
+  it("creates a guest ski session with the trials config when lit: env price, 10-day trial, generic landing", async () => {
+    process.env.POWDER_PASS_ENABLED = "1";
+    process.env.POWDER_PASS_PRICE_ID = "price_ski";
+    const res = await post({ plan: "ski" });
+    expect(res.status).toBe(200);
+    const p = createdParams();
+    expect(p.mode).toBe("subscription");
+    expect(p.line_items).toEqual([{ price: "price_ski", quantity: 1 }]);
+    expect(p.metadata).toEqual({ plan: "ski" });
+    expect(p.subscription_data.trial_period_days).toBe(10);
+    expect(p.payment_method_collection).toBe("always");
+    // No Powder Pass landing page exists until launch — the generic
+    // guest/member targets apply.
+    expect(p.success_url).toBe(
+      "https://worldeye.app/welcome?session_id={CHECKOUT_SESSION_ID}",
+    );
+    expect(p.cancel_url).toBe("https://worldeye.app/pricing?checkout=cancelled");
+  });
+
+  it("sends signed-in ski buyers to the app success target, not a ski page", async () => {
+    process.env.POWDER_PASS_ENABLED = "1";
+    process.env.POWDER_PASS_PRICE_ID = "price_ski";
+    mocks.auth.mockResolvedValue({ user: { id: "user_1", email: "a@b.c" } });
+    const res = await post({ plan: "ski" });
+    expect(res.status).toBe(200);
+    expect(createdParams().success_url).toBe("https://worldeye.app/?checkout=success");
+  });
+
+  it("lets a ski-only member upgrade to a tier on the same customer (guard carve-out wiring)", async () => {
+    process.env.POWDER_PASS_ENABLED = "1";
+    process.env.POWDER_PASS_PRICE_ID = "price_ski";
+    mocks.auth.mockResolvedValue({ user: { id: "user_1", email: "a@b.c" } });
+    mocks.findSubscription.mockResolvedValue({
+      status: "active",
+      currentPeriodEnd: new Date(Date.now() + 86_400_000),
+      stripeCustomerId: "cus_existing",
+      stripePriceId: "price_ski",
+    });
+    const res = await post({ plan: "annual" });
+    expect(res.status).toBe(200);
+    expect(createdParams().customer).toBe("cus_existing");
+    expect(mocks.createCustomer).not.toHaveBeenCalled();
+  });
+
+  it("blocks a ski-only member re-buying ski (409, the duplicate wall)", async () => {
+    process.env.POWDER_PASS_ENABLED = "1";
+    process.env.POWDER_PASS_PRICE_ID = "price_ski";
+    mocks.auth.mockResolvedValue({ user: { id: "user_1", email: "a@b.c" } });
+    mocks.findSubscription.mockResolvedValue({
+      status: "active",
+      currentPeriodEnd: new Date(Date.now() + 86_400_000),
+      stripeCustomerId: "cus_existing",
+      stripePriceId: "price_ski",
+    });
+    const res = await post({ plan: "ski" });
+    expect(res.status).toBe(409);
+    expect((await res.json()).code).toBe("already_subscribed");
+    expect(mocks.createSession).not.toHaveBeenCalled();
+  });
+});
+
 describe("POST /api/checkout — dedupe guard (Wave 2 F6)", () => {
   const member = () =>
     mocks.auth.mockResolvedValue({ user: { id: "user_1", email: "a@b.c" } });

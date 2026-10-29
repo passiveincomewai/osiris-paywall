@@ -36,8 +36,10 @@ import { trackMetaEvent } from "@/lib/meta-track";
 /* The Pro trial plans sold from /pricing and the Pro lock surfaces.
  * Ambient is excluded on purpose: it is a standalone product with its
  * own landing page and checkout entry (the /ambient paywall and
- * /ambient-mode), not a row in the Pro trial picker. */
-export type TrialPlan = Exclude<BillingPlan, "enterprise" | "ambient">;
+ * /ambient-mode), not a row in the Pro trial picker. Powder Pass is
+ * excluded for the same reason: a standalone ski-only product (dark
+ * until POWDER_PASS_ENABLED — lib/ski/access), never a picker row. */
+export type TrialPlan = Exclude<BillingPlan, "enterprise" | "ambient" | "ski">;
 
 export interface TrialPlanOption {
   plan: TrialPlan;
@@ -160,11 +162,26 @@ export const CHECKOUT_PLAN_SUMMARIES: Record<BillingPlan, CheckoutPlanSummary> =
     trialLabel: "10 days free",
     trialDays: trialDaysForPlan("ambient"),
   },
+  // Powder Pass: the ski-only standalone, same treatment as Ambient —
+  // never in the trial picker and unreachable while POWDER_PASS_ENABLED
+  // is off (the checkout route rejects the plan), but the summary
+  // record is exhaustive over BillingPlan so the plan describes
+  // correctly the day the owner lights it up.
+  ski: {
+    plan: "ski",
+    name: "Powder Pass",
+    price: "$4.99",
+    per: "/month",
+    perDay: "$0.17",
+    note: "10 days free, then billed monthly · cancel anytime",
+    trialLabel: "10 days free",
+    trialDays: trialDaysForPlan("ski"),
+  },
 };
 
 /** Summary lookup that tolerates raw strings (URL params): unknown → null. */
 export function checkoutPlanSummary(plan: string | null | undefined): CheckoutPlanSummary | null {
-  if (plan === "weekly" || plan === "monthly" || plan === "annual" || plan === "enterprise" || plan === "ambient") {
+  if (plan === "weekly" || plan === "monthly" || plan === "annual" || plan === "enterprise" || plan === "ambient" || plan === "ski") {
     return CHECKOUT_PLAN_SUMMARIES[plan];
   }
   return null;

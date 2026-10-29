@@ -17,7 +17,7 @@ import { getTeamPricingConfig } from "@/lib/team/pricing-config";
 import { findBaseItem, reconcileOrgSeatsFromSubscription } from "@/lib/team/seats";
 import { recordTeamEvent } from "@/lib/team/analytics";
 import { sendPaymentFailedRecovery } from "@/lib/billing/dunning";
-import { isAmbientPriceId } from "@/lib/plan-tier";
+import { isAmbientPriceId, isPowderPassPriceId } from "@/lib/plan-tier";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -171,34 +171,55 @@ async function syncSubscription(sub: Stripe.Subscription): Promise<string | unde
     await db.subscription.delete({ where: { userId } });
   }
 
-  // Ambient upgrade yield (owner-approved 2026-10-26): Ambient is a
-  // standalone $4.99 subscription, NOT a tier — but Subscription.userId
-  // is @unique, so one row per user. When a TIER subscription syncs for
-  // a user whose row is their Ambient subscription, the Ambient sub is
-  // cancelled at Stripe (Ambient is included in every Pro/VIP tier, so
-  // the buyer loses nothing) and its row yields the slot. The reverse
-  // (an Ambient sub syncing over a tier row — possible only if that
-  // cancel failed) is a no-op: the tier row wins and the orphaned
-  // Ambient sub's events must not clobber it.
+  // Standalone-product yield (owner-approved 2026-10-26 for Ambient;
+  // extended to Powder Pass at its foundation slice): Ambient and
+  // Powder Pass are standalone $4.99 subscriptions, NOT tiers — but
+  // Subscription.userId is @unique, so one row per user. When a TIER
+  // subscription syncs for a user whose row is a standalone
+  // subscription, the standalone sub is cancelled at Stripe and its
+  // row yields the slot. The reverse (a standalone sub syncing over a
+  // tier row — possible only if that cancel failed, or via an
+  // out-of-band purchase) is a no-op: the tier row wins and the
+  // orphaned standalone sub's events must not clobber it. A
+  // standalone sub syncing over the OTHER standalone product (a swap
+  // the checkout guard deliberately allows) takes the slot the same
+  // way, cancelling the displaced sub so it stops billing.
+  //
+  // Inclusion note: Ambient is included in every Pro/VIP tier, so a
+  // tier upgrade loses the buyer nothing. Powder Pass is included in
+  // VIP only — a ski holder who buys a weekly/monthly (Pro) plan
+  // still yields and cancels, per the owner's tier-over-ski rule;
+  // that asymmetry is called out in the Powder Pass foundation
+  // report as a launch decision, and it cannot bite while
+  // POWDER_PASS_ENABLED is off (no ski subs can exist).
   if (existingForUser && existingForUser.stripeSubscriptionId !== sub.id) {
-    const existingIsAmbient = isAmbientPriceId(existingForUser.stripePriceId, process.env);
-    const incomingIsAmbient = isAmbientPriceId(data.stripePriceId, process.env);
-    if (existingIsAmbient && !incomingIsAmbient) {
+    const standaloneOf = (priceId: string): "Ambient" | "Powder Pass" | null =>
+      isAmbientPriceId(priceId, process.env)
+        ? "Ambient"
+        : isPowderPassPriceId(priceId, process.env)
+          ? "Powder Pass"
+          : null;
+    const existingStandalone = standaloneOf(existingForUser.stripePriceId);
+    const incomingStandalone = standaloneOf(data.stripePriceId);
+    if (
+      existingStandalone &&
+      (!incomingStandalone || incomingStandalone !== existingStandalone)
+    ) {
       try {
         await stripe().subscriptions.cancel(existingForUser.stripeSubscriptionId);
         console.log(
-          `[stripe-webhook] cancelled Ambient sub ${existingForUser.stripeSubscriptionId} for user ${userId} (upgraded to ${sub.id})`,
+          `[stripe-webhook] cancelled ${existingStandalone} sub ${existingForUser.stripeSubscriptionId} for user ${userId} (upgraded to ${sub.id})`,
         );
       } catch (e) {
         console.error(
-          `[stripe-webhook] failed to cancel Ambient sub ${existingForUser.stripeSubscriptionId} on upgrade:`,
+          `[stripe-webhook] failed to cancel ${existingStandalone} sub ${existingForUser.stripeSubscriptionId} on upgrade:`,
           e,
         );
       }
       await db.subscription.delete({ where: { userId } });
-    } else if (incomingIsAmbient && !existingIsAmbient) {
+    } else if (incomingStandalone && !existingStandalone) {
       console.log(
-        `[stripe-webhook] ignoring Ambient sub ${sub.id} for user ${userId}: a tier subscription already holds the row`,
+        `[stripe-webhook] ignoring ${incomingStandalone} sub ${sub.id} for user ${userId}: a tier subscription already holds the row`,
       );
       return userId;
     }

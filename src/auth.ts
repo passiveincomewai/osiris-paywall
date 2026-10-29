@@ -8,6 +8,7 @@ import { normalizeEmail, isValidEmail, verifyPassword } from "@/lib/password-aut
 import { subscriptionStatusFromRow } from "@/lib/subscription-status";
 import { planTierForRow, type PlanTier } from "@/lib/plan-tier";
 import { ambientAccessForRow } from "@/lib/ambient/access";
+import { powderPassEnabled, skiAccessForRow } from "@/lib/ski/access";
 import { getEffectiveEntitlement, maxTier } from "@/lib/team/entitlement";
 
 /* ------------------------------------------------------------------ */
@@ -25,6 +26,11 @@ declare module "next-auth" {
        * Ambient-price subscription, or any pro/vip tier. Resolved on
        * the same claims pass/TTL as planTier. */
       ambientAccess?: boolean;
+      /** Powder Pass ski access (lib/ski/access): an active Powder
+       * Pass-price subscription, the vip tier, or a comp. Resolved
+       * on the same claims pass/TTL; always false while
+       * POWDER_PASS_ENABLED is off (dark launch). */
+      skiAccess?: boolean;
       /** True when the account has 2FA on and this session hasn't
        * passed the step-up challenge yet (item 2). Middleware bounces
        * app surfaces to /auth/totp while this is true. */
@@ -38,6 +44,7 @@ declare module "next-auth/jwt" {
     subscriptionStatus?: string;
     planTier?: string;
     ambientAccess?: boolean;
+    skiAccess?: boolean;
     subscriptionCheckedAt?: number;
     totpEnabled?: boolean;
     totpVerified?: boolean;
@@ -76,7 +83,7 @@ const SUBSCRIPTION_TTL_MS = 60_000;
  */
 async function resolveSubscriptionClaims(
   userId: string,
-): Promise<{ status: string; tier: string; ambientAccess: boolean }> {
+): Promise<{ status: string; tier: string; ambientAccess: boolean; skiAccess: boolean }> {
   const sub = await db.subscription.findUnique({ where: { userId } });
   const ownTier: PlanTier = planTierForRow(sub, process.env);
   let tier: PlanTier = ownTier;
@@ -98,6 +105,15 @@ async function resolveSubscriptionClaims(
       ambientAccessForRow(sub, process.env) ||
       tier === "pro" ||
       tier === "vip",
+    // Powder Pass rides the same claims: the member's own row
+    // (Powder Pass price → access; a comp row → access; an own vip
+    // price → access via the row's tier) OR an effective vip tier
+    // granted by a team — team-granted Pro does NOT include ski.
+    // skiAccessForRow already returns false while the launch flag
+    // is off; the effective-tier leg is flag-gated here to match.
+    skiAccess:
+      skiAccessForRow(sub, process.env) ||
+      (powderPassEnabled(process.env) && tier === "vip"),
   };
 }
 
@@ -158,11 +174,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Refresh on sign-in, on explicit session update(), when the cache is
       // stale, or when either claim is missing entirely (a token minted
       // before planTier existed must heal on its next session fetch).
-      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined) {
+      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined || token.skiAccess === undefined) {
         const claims = await resolveSubscriptionClaims(userId);
         token.subscriptionStatus = claims.status;
         token.planTier = claims.tier;
         token.ambientAccess = claims.ambientAccess;
+        token.skiAccess = claims.skiAccess;
         token.subscriptionCheckedAt = now;
       }
 
@@ -206,6 +223,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.subscriptionStatus = token.subscriptionStatus ?? "none";
         session.user.planTier = token.planTier ?? "free";
         session.user.ambientAccess = token.ambientAccess ?? false;
+        session.user.skiAccess = token.skiAccess ?? false;
         session.user.totpPending = !!(token.totpEnabled && !token.totpVerified);
       }
       return session;
