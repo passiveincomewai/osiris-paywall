@@ -645,6 +645,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       POSTS[0].updated ?? POSTS[0].date,
     ),
   );
+  // WorldEye News section front: dated by the newest flagged story
+  // (flagged posts are the news vertical — see src/lib/news.ts). The
+  // stories themselves are already in this sitemap at their blog URLs.
+  const newsPosts = POSTS.filter((p) => p.news);
+  const latestNewsDate =
+    newsPosts.length > 0
+      ? new Date(
+          newsPosts.reduce(
+            (max, p) => {
+              const d = p.updated ?? p.date;
+              return d > max ? d : max;
+            },
+            newsPosts[0].updated ?? newsPosts[0].date,
+          ),
+        )
+      : undefined;
   // Family dates for entries whose wave arrays mix them with undated
   // pages: hubs that enumerate a dated dataset, and the catalogue
   // walls/hubs scattered through the early waves. Keyed by path so wave
@@ -713,6 +729,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.5,
     })),
+    { url: `${BASE}/news`, lastModified: latestNewsDate, changeFrequency: "daily", priority: 0.7 },
+    { url: `${BASE}/news/editorial-standards`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE}/news/authors/jameson-lythgoe`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/about`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/affiliates`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/affiliates/leaderboard`, changeFrequency: "daily", priority: 0.6 },

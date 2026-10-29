@@ -5,6 +5,9 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS } from "./posts";
+import { getNewsPosts } from "@/lib/news";
+
+const newsStories = getNewsPosts(POSTS);
 
 export const metadata = {
   title: "WorldEye Blog",
@@ -84,6 +87,34 @@ export default function BlogIndex() {
             <Rss className="w-4 h-4" /> Subscribe via RSS
           </a>
         </div>
+
+        {/* WorldEye News — the news desk's latest flagged stories */}
+        {newsStories.length > 0 && (
+          <div className="mt-12 rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-7 md:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-xl md:text-2xl font-bold tracking-tight">
+                WorldEye <span className="text-[#D4AF37]">News</span>
+              </h2>
+              <Link href="/news" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37] hover:brightness-125 transition">
+                All news stories <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <p className="text-sm text-white/50 mt-2 leading-relaxed">
+              Original reporting from the camera network — separate from the
+              guides below, each story with a named byline and cited sources.
+            </p>
+            <div className="mt-5 space-y-3">
+              {newsStories.slice(0, 3).map((p) => (
+                <Link key={p.slug} href={`/blog/${p.slug}`} className="block group">
+                  <span className="font-semibold group-hover:text-[#D4AF37] transition">{p.title}</span>
+                  <span className="block text-xs text-white/40 mt-1">
+                    <time dateTime={p.date}>{formatDate(p.date)}</time> · By Jameson Lythgoe
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Post grid */}
         <div className="mt-12 grid md:grid-cols-3 gap-5">

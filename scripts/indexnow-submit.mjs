@@ -14,6 +14,14 @@
  * key file, and update INDEXNOW_KEY below in the same commit.
  *
  * Usage: node scripts/indexnow-submit.mjs [--dry-run]
+ *        node scripts/indexnow-submit.mjs --urls <url>[,<url>...] [--dry-run]
+ *
+ * The --urls mode is the publish-time hook: when a single page is
+ * published, significantly updated or deleted (e.g. a WorldEye News
+ * story on its blog URL), submit just that URL instead of the whole
+ * sitemap. IndexNow treats a submitted URL that now returns 404/410
+ * as a deletion notice, so the same command covers deletes: run it
+ * with the removed URL after the deploy that removes the page.
  */
 const HOST = "worldeye.app";
 const SITE = `https://${HOST}`;
@@ -48,8 +56,25 @@ async function submit(urls) {
   return res.status;
 }
 
-const urls = await sitemapUrls();
-console.log(`Sitemap: ${urls.length} URLs`);
+const urlsArg = process.argv.find((a) => a.startsWith("--urls="));
+const urlsInline = process.argv.includes("--urls")
+  ? process.argv[process.argv.indexOf("--urls") + 1]
+  : undefined;
+const explicit = (urlsArg ? urlsArg.slice("--urls=".length) : urlsInline)
+  ?.split(",")
+  .map((u) => u.trim())
+  .filter(Boolean);
+if (explicit) {
+  for (const u of explicit) {
+    if (!u.startsWith(`${SITE}/`)) {
+      throw new Error(`--urls entries must be ${SITE} URLs, got: ${u}`);
+    }
+  }
+}
+const urls = explicit ?? (await sitemapUrls());
+console.log(
+  explicit ? `Explicit: ${urls.length} URLs` : `Sitemap: ${urls.length} URLs`,
+);
 if (dryRun) {
   console.log("Dry run — nothing submitted.");
   process.exit(0);

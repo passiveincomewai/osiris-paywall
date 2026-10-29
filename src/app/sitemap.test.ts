@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1052);
+    expect(nonTransit.length).toBe(1055);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -127,9 +127,14 @@ describe("sitemap URL set", () => {
     // added the /ships hub + 14 per-ship pages from the committed
     // lib/ships registry → 1,052. Delta hand-verified: removing
     // exactly those 15 URLs reproduces the 1,037 set and the
-    // 4c13bb37… hash byte-for-byte.
+    // 4c13bb37… hash byte-for-byte. The WorldEye News section
+    // (2026-10-28) then added the /news front page, the editorial
+    // standards page and the author profile → 1,055 (the flagged
+    // news stories themselves were already listed at their blog
+    // URLs). Delta hand-verified: removing exactly those 3 URLs
+    // reproduces the 1,052 set and the e14944c6… hash byte-for-byte.
     expect(hash).toBe(
-      "e14944c68b62caaeda15958503a072b0eeb607a5679ea9b0215d99c602ceba22",
+      "6eb73a81d88f1d59ce3d56dbb1f0c880bac6f3a6fb0a9a7734de92803ca1807b",
     );
   });
 

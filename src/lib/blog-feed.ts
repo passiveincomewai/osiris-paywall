@@ -126,7 +126,11 @@ export function buildRssFeed(posts: BlogPost[], now: Date): string {
   ].join("\n");
 }
 
-export function buildNewsSitemap(posts: BlogPost[], now: Date): string {
+export function buildNewsSitemap(
+  posts: BlogPost[],
+  now: Date,
+  publicationName: string = BLOG_NAME,
+): string {
   const fresh = posts.filter((p) => isNewsFresh(p, now)).sort(byDateDesc);
   const urls = fresh.map((post) =>
     [
@@ -134,7 +138,7 @@ export function buildNewsSitemap(posts: BlogPost[], now: Date): string {
       `    <loc>${BASE}/blog/${post.slug}</loc>`,
       "    <news:news>",
       "      <news:publication>",
-      `        <news:name>${BLOG_NAME}</news:name>`,
+      `        <news:name>${publicationName}</news:name>`,
       "        <news:language>en</news:language>",
       "      </news:publication>",
       `      <news:publication_date>${toIsoDateTime(post.date)}</news:publication_date>`,

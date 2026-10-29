@@ -7,6 +7,7 @@ import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS, getPost } from "../posts";
 import { compareLinksForPost } from "@/lib/blog-compare-links";
+import { buildNewsArticleLd, NEWS_AUTHOR } from "@/lib/news";
 
 export function generateStaticParams() {
   return POSTS.map((p) => ({ slug: p.slug }));
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `/blog/${post.slug}`,
       publishedTime: post.date,
       modifiedTime: post.updated ?? post.date,
-      authors: ["WorldEye Team"],
+      authors: [post.news ? NEWS_AUTHOR.name : "WorldEye Team"],
       images: [{ url: post.image ?? "/og-image.png", width: 1200, height: 630 }],
     },
   };
@@ -75,8 +76,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const next = idx < POSTS.length - 1 ? POSTS[idx + 1] : null;
   const compareLinks = compareLinksForPost(slug);
 
-  const blogPosting = {
-    "@type": "BlogPosting",
+  // News-flagged posts are WorldEye News stories: they carry
+  // NewsArticle JSON-LD with the real-person byline (lib/news) on this
+  // same URL. Unflagged posts keep the BlogPosting shape unchanged.
+  const blogPosting = post.news
+    ? buildNewsArticleLd(post)
+    : {
+        "@type": "BlogPosting",
     headline: post.title,
     description: post.seoDescription,
     datePublished: post.date,
@@ -163,7 +169,23 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </>
           )}
           <span className="text-white/20">·</span>
-          <span>WorldEye Team</span>
+          {post.news ? (
+            <span>
+              By{" "}
+              <Link
+                href="/news/authors/jameson-lythgoe"
+                className="text-white/60 hover:text-[#D4AF37] transition underline decoration-white/20 underline-offset-4"
+              >
+                Jameson Lythgoe
+              </Link>
+              {" · "}
+              <Link href="/news" className="text-white/60 hover:text-[#D4AF37] transition">
+                WorldEye News
+              </Link>
+            </span>
+          ) : (
+            <span>WorldEye Team</span>
+          )}
         </div>
 
         {/* Body */}
@@ -210,6 +232,38 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 </details>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* Sources — the cited basis for a story's claims (news posts) */}
+        {post.sources && post.sources.length > 0 && (
+          <section className="mt-14">
+            <h2 className="text-2xl font-bold tracking-tight mb-6">
+              <span className="text-[#D4AF37]">▸</span> Sources
+            </h2>
+            <ul className="space-y-3">
+              {post.sources.map((s) => (
+                <li key={s.url} className="text-white/65 leading-relaxed text-[16px]">
+                  {s.url.startsWith("https://worldeye.app") || s.url.startsWith("/") ? (
+                    <Link
+                      href={s.url.replace("https://worldeye.app", "")}
+                      className="text-[#D4AF37] underline decoration-[#D4AF37]/40 underline-offset-4 hover:decoration-[#D4AF37] transition"
+                    >
+                      {s.name}
+                    </Link>
+                  ) : (
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#D4AF37] underline decoration-[#D4AF37]/40 underline-offset-4 hover:decoration-[#D4AF37] transition"
+                    >
+                      {s.name}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 

@@ -26,6 +26,17 @@ export type BlogPost = {
   sections: PostSection[];
   /** Optional FAQs rendered at the end of the post + FAQPage JSON-LD. */
   faqs?: BlogFaq[];
+  /**
+   * News-eligibility flag. A flagged post is a WorldEye News story: it
+   * renders NewsArticle JSON-LD and a real-person byline on this same
+   * blog URL, lists on /news and in the news RSS feed, and enters the
+   * news sitemap while its real `date` is inside the 48-hour window.
+   * Evergreen guides stay unflagged — the flag is the eligibility line
+   * between the blog and the news vertical.
+   */
+  news?: boolean;
+  /** Cited sources for a story's claims, rendered as a Sources block. */
+  sources?: { name: string; url: string }[];
 };
 
 export const POSTS: BlogPost[] = [
@@ -3348,6 +3359,17 @@ export const POSTS: BlogPost[] = [
     seoDescription:
       "2026-27 ski resort opening dates for North America and the Alps — Ruka, Sölden, Breckenridge, Vail, Park City, Whistler and more — with the live webcams to watch before each opening day.",
     tags: ["cameras", "travel"],
+    news: true,
+    sources: [
+      {
+        name: "OnTheSnow — ski resort opening dates, compiled from resort announcements",
+        url: "https://www.onthesnow.com",
+      },
+      {
+        name: "WorldEye — Ski Opening Week 2026: the projected first openings and the live cameras watching them",
+        url: "https://worldeye.app/ski-opening-week-2026",
+      },
+    ],
     sections: [
       {
         heading: "The season has already started",
