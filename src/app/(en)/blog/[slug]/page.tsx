@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
+import SwgBasic from "@/components/SwgBasic";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS, getPost } from "../posts";
 import { compareLinksForPost } from "@/lib/blog-compare-links";
@@ -132,6 +133,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100">
       <JsonLd data={jsonLd} />
+      {/* News stories also carry Google News' Subscribe-with-Google
+          (SWG Basic) snippet — same `news` gate as the NewsArticle
+          JSON-LD above; unflagged posts never load it. */}
+      {post.news && <SwgBasic />}
       <article className="max-w-3xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">

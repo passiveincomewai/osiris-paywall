@@ -27,6 +27,28 @@ export const NEWS_DESCRIPTION =
 export const NEWS_URL = `${BASE}/news`;
 export const NEWS_FEED_URL = `${BASE}/news/feed.xml`;
 
+/**
+ * Google News "Subscribe with Google" (SWG Basic). The product ID is
+ * the verified Publisher Center publication "WorldEye News"
+ * (CAow877NDA) with open access. The snippet ships on news-flagged
+ * ARTICLE pages only (rendered by components/SwgBasic from the blog
+ * article template, gated on the same `news` flag as the NewsArticle
+ * JSON-LD) — Google's integration is per-article, and unflagged posts
+ * and non-article pages must not load it. The init body below is
+ * Google's snippet verbatim; do not alter the type, product ID or
+ * client options.
+ */
+export const SWG_BASIC_SRC = "https://news.google.com/swg/js/v1/swg-basic.js";
+export const SWG_PRODUCT_ID = "CAow877NDA:openaccess";
+export const SWG_BASIC_INIT = `(self.SWG_BASIC = self.SWG_BASIC || []).push( basicSubscriptions => {
+    basicSubscriptions.init({
+      type: "NewsArticle",
+      isPartOfType: ["Product"],
+      isPartOfProductId: "${SWG_PRODUCT_ID}",
+      clientOptions: { theme: "light", lang: "en" },
+    });
+  });`;
+
 export type NewsAuthor = {
   slug: string;
   name: string;

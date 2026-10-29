@@ -10,6 +10,9 @@ import {
   isNewsPost,
   NEWS_AUTHOR,
   NEWS_NAME,
+  SWG_BASIC_INIT,
+  SWG_BASIC_SRC,
+  SWG_PRODUCT_ID,
 } from "./news";
 
 function makePost(overrides: Partial<BlogPost>): BlogPost {
@@ -163,6 +166,33 @@ describe("the author record", () => {
     expect(NEWS_AUTHOR.slug).toBe("jameson-lythgoe");
     expect(NEWS_AUTHOR.url).toBe(
       "https://worldeye.app/news/authors/jameson-lythgoe",
+    );
+  });
+});
+
+describe("Subscribe with Google (SWG Basic)", () => {
+  // Google's snippet, supplied by the publisher for the verified
+  // Publisher Center publication "WorldEye News" (CAow877NDA). Pin
+  // every load-bearing value so the integration can never drift.
+  it("points at Google's SWG Basic loader", () => {
+    expect(SWG_BASIC_SRC).toBe("https://news.google.com/swg/js/v1/swg-basic.js");
+  });
+
+  it("carries the verified publication's open-access product ID", () => {
+    expect(SWG_PRODUCT_ID).toBe("CAow877NDA:openaccess");
+  });
+
+  it("inits with the exact NewsArticle / Product config from the snippet", () => {
+    expect(SWG_BASIC_INIT).toContain(
+      "(self.SWG_BASIC = self.SWG_BASIC || []).push(",
+    );
+    expect(SWG_BASIC_INIT).toContain('type: "NewsArticle"');
+    expect(SWG_BASIC_INIT).toContain('isPartOfType: ["Product"]');
+    expect(SWG_BASIC_INIT).toContain(
+      'isPartOfProductId: "CAow877NDA:openaccess"',
+    );
+    expect(SWG_BASIC_INIT).toContain(
+      'clientOptions: { theme: "light", lang: "en" }',
     );
   });
 });
