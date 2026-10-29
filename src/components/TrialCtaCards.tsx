@@ -11,13 +11,18 @@ import { useState } from "react";
 import { TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
 import type { BillingPlan } from "@/lib/billing/trials";
 import CheckoutSheet from "./CheckoutSheet";
+import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import TrialButton from "./TrialButton";
 
 export default function TrialCtaCards() {
   const [sheetPlan, setSheetPlan] = useState<BillingPlan | null>(null);
   return (
     <>
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div
+        className="mt-8 grid gap-4 sm:grid-cols-3"
+        onPointerEnter={() => preloadStripeJs()}
+        onFocus={() => preloadStripeJs()}
+      >
         {TRIAL_PLAN_OPTIONS.map((p) => (
           <div
             key={p.plan}

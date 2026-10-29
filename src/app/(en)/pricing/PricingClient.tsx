@@ -16,6 +16,7 @@ import {
   ENTERPRISE_SUPPORT_LINE,
 } from "@/lib/enterprise/offer";
 import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
+import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, BrainCircuit,
@@ -208,6 +209,12 @@ export default function PricingPage({
   // remains one quiet link away under each CTA.
   const [sheetPlan, setSheetPlan] = useState<Plan | null>(null);
   const closeSheet = useCallback(() => setSheetPlan(null), []);
+  // Warm Stripe.js while the visitor reads the plans: the sheet's
+  // embedded flow starts on the CTA click, and with the script
+  // already cached only the session POST gates the form.
+  useEffect(() => {
+    preloadStripeJs();
+  }, []);
 
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">

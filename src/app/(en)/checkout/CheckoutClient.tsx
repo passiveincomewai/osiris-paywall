@@ -21,6 +21,14 @@
  * form wrapper reserves its height while loading, so nothing jumps when
  * Stripe's form (express wallet buttons at its top) mounts.
  *
+ * Scroll: the page renders .docs-root, the codebase's marker that
+ * releases the globe's global viewport lock (html/body height:100% +
+ * overflow:hidden in globals.css). Without it this page could not
+ * scroll AT ALL — on a short laptop viewport the mounted form ran
+ * past the bottom edge with the pay button, the guarantee line and
+ * the hosted option unreachable below it (Jameson's photo,
+ * 2026-10-29). Every other long-form page already opts out this way.
+ *
  * Completion is unchanged: the session's return_url brings the buyer to
  * /welcome (guests) or the app (members), where the existing claim flow
  * and the webhook do their work. Backing out goes to
@@ -107,7 +115,7 @@ export default function CheckoutClient() {
   }, [plan, attempt]);
 
   return (
-    <main className="min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+    <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
       </div>
