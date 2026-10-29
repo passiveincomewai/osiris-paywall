@@ -68,12 +68,12 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(ent.limitations.toLowerCase()).toContain("extract date");
   });
 
-  it("marks exactly the five pipeline-ingested sources as ingested, each with manifest provenance", () => {
+  it("marks exactly the six pipeline-ingested sources as ingested, each with manifest provenance", () => {
     const ingested = FRAUD_RADAR_SOURCES.filter((s) => s.status === "ingested")
       .map((s) => s.slug)
       .sort();
     expect(ingested).toEqual(
-      ["leie", "medicaid-hcpcs", "nppes", "sam-entities", "sam-exclusions"].sort(),
+      ["cms-medicare", "leie", "medicaid-hcpcs", "nppes", "sam-entities", "sam-exclusions"].sort(),
     );
     for (const s of FRAUD_RADAR_SOURCES) {
       expect(["not_started", "pending_credentials", "ingested"]).toContain(s.status);
@@ -102,6 +102,21 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
       "total_paid",
     ]);
     expect(med.completeness).toContain("238,015,729");
+  });
+
+  it("pins the Medicare ingest to its pipeline manifests (Phase 3)", () => {
+    const cms = FRAUD_RADAR_SOURCES.find((s) => s.slug === "cms-medicare")!;
+    expect(cms.sourceVersion).toBe("CY2022-CY2024 + Care Compare 2026-10-refresh");
+    expect(cms.lastPublishedAt).toBe("2026-05-21");
+    expect(cms.lastImportedAt).toBe("2026-10-29T22:04:50Z");
+    expect(cms.lastVerifiedAt).toBe("2026-10-29");
+    expect(cms.coverageStart).toBe("2022-01");
+    expect(cms.coverageEnd).toBe("2024-12");
+    expect(cms.completeness).toContain("29,197,747");
+    expect(cms.completeness).toContain("1,393,382");
+    // The derived-amounts rule is part of the source's public record:
+    expect(cms.limitations).toContain("derived");
+    expect(cms.limitations).toContain("Medicare Advantage");
   });
 
   it("pins the SAM ingests to their manifests, extract dates labelled (§17)", () => {
