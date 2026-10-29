@@ -12,6 +12,10 @@
  * competitors' own public pages (listed in each entry's sources) in
  * October 2026. Claims that could not be confirmed are marked
  * "unverified" in the feature tables rather than guessed.
+ *
+ * Wave 2 (2026-10-29) grew the family from 5 to 42 pairs: the
+ * God's Eye View / GodsView AI / Argos Atlas clusters plus flight,
+ * AIS, weather, satellite and OSINT head-to-heads.
  */
 
 import earthcamVsSkylinewebcams from "@/data/compare-pairs/earthcam-vs-skylinewebcams.json";
