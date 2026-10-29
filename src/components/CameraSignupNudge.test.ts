@@ -33,8 +33,9 @@ describe("CameraSignupNudge", () => {
 });
 
 // Wave 2 (BRIEF F4): the ladder rungs. The wall must offer the NEXT
-// step — email, then account — and only show the Pro picker once the
-// free-account allowance (15) is used up.
+// step — email, then account, then (since 2026-10-29) VERIFY for a
+// signed-in unverified account — and only show the Pro picker once
+// the verified free-account allowance (10) is used up.
 describe("CameraSignupNudge — ladder rungs", () => {
   const render = (props: Record<string, unknown>) =>
     renderToString(createElement(CameraSignupNudge, { onClose: vi.fn(), ...props }))
@@ -43,7 +44,7 @@ describe("CameraSignupNudge — ladder rungs", () => {
 
   it("email rung: the owner's headline, the instant-unlock email form, the account path — no Pro demand", () => {
     const html = render({ rung: "email" });
-    expect(html).toContain("Create a free account to get 10 more free opens");
+    expect(html).toContain("Create a free account to get 5 more free opens");
     expect(html).toContain(`You've opened your ${FREE_CAMERA_CLICKS} free cameras`);
     expect(html).toContain("no password needed");
     // The existing newsletter form (double opt-in subscribe) is the unlock.
@@ -59,19 +60,37 @@ describe("CameraSignupNudge — ladder rungs", () => {
 
   it("account rung: completing the account is the ask, with the true totals", () => {
     const html = render({ rung: "account", opensUsed: 10 });
-    expect(html).toContain("Create your free account to get 5 more free opens");
+    expect(html).toContain("Create your free account");
     expect(html).toContain("You've opened your 10 free cameras");
-    expect(html).toContain("15 in all");
+    // The +5 over the base is the verify grant now: the account rung
+    // promises the verified total (10 on any device), never 15.
+    expect(html).toContain("verified email gets 10 free opens on any device");
+    expect(html).not.toContain("15 in all");
     expect(html).toContain('href="/signup"');
     expect(html).toContain('href="/signin"');
     expect(html).not.toContain("Unlock unlimited cameras");
     expect(html).not.toContain('type="email"');
   });
 
+  it("verify rung: verification is the PRIMARY path (Settings), Pro only a side link", () => {
+    const html = render({ rung: "verify", opensUsed: 5 });
+    expect(html).toContain("Verify your email to get 5 more free opens");
+    expect(html).toContain("You've opened your 5 free cameras");
+    expect(html).toContain("10 in all");
+    expect(html).toContain('href="/settings"');
+    expect(html).toContain("Verify in Settings");
+    expect(html).toContain('href="/pricing"');
+    expect(html).toContain("Maybe later");
+    // NOT the Pro wall: no picker, no unlimited pitch leading.
+    expect(html).not.toContain("Unlock unlimited cameras");
+    expect(html).not.toContain("Start 10-Day Free Trial");
+    expect(html).not.toContain('type="email"');
+  });
+
   it("pro rung: the trial picker leads, with the account allowance in the copy", () => {
-    const html = render({ rung: "pro", opensUsed: 15 });
+    const html = render({ rung: "pro", opensUsed: 10 });
     expect(html).toContain("Unlock unlimited cameras");
-    expect(html).toContain("You've opened your 15 free cameras");
+    expect(html).toContain("You've opened your 10 free cameras");
     expect(html).toContain("Start 10-Day Free Trial");
     expect(html).toContain("Maybe later");
   });

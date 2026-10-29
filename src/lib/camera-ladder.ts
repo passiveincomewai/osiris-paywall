@@ -3,12 +3,22 @@
 // exact model, friendly at every step, never a jump straight to Pro:
 //
 //   1. Anonymous: FREE_CAMERA_CLICKS (5) free opens.
-//   2. On the next open: the middle-tier prompt ("Create a free account
-//      to get 10 more free opens"). Dropping an email unlocks +5
-//      INSTANTLY (10 total, no password step); completing the free
-//      account grants +5 more (15 total).
-//   3. Only after the free-account allowance is used up: the Pro/trial
-//      prompt.
+//   2. On the next open: the middle-tier prompt. Dropping an email
+//      unlocks +5 INSTANTLY (10 total, no password step).
+//   3. A signed-in account: 5 opens while its email is UNVERIFIED —
+//      at the cap the prompt is "verify your email to unlock 5 more"
+//      (the verify rung, owner's order 2026-10-29: first login no
+//      longer waits for verification; verifying in Settings grants
+//      the +5). Verified accounts (incl. Google sign-ins, verified by
+//      Google) get 10 total.
+//   4. Only after the verified-account allowance is used up: the
+//      Pro/trial prompt.
+//
+// (History: the account rung originally granted its +5 for merely
+// creating the account, 15 total. The 2026-10-29 verification-ladder
+// change re-cut it to the owner's stated arithmetic — unverified 5,
+// verified 10 — so the +5 is earned by verifying, which is also what
+// makes the address proven for resets/receipts.)
 //
 // State is device-local (localStorage), the same trust model as the
 // gate count it extends: the email unlock flag and the timed-popup
@@ -29,46 +39,64 @@ import { FREE_CAMERA_CLICKS } from "./cameraGate";
 
 /** Opens the email step adds, the moment the address is dropped. */
 export const EMAIL_UNLOCK_OPENS = 5;
-/** Opens that completing the free account adds, on top of the email step. */
-export const ACCOUNT_UNLOCK_OPENS = 5;
+/** Opens that verifying the account's email adds (the verify rung). */
+export const VERIFY_UNLOCK_OPENS = 5;
+/** The account step's extra opens — since 2026-10-29 they are granted
+ *  by VERIFYING the account email (VERIFY_UNLOCK_OPENS), not by the
+ *  signup itself. Kept as a named constant for the prompt copy. */
+export const ACCOUNT_UNLOCK_OPENS = VERIFY_UNLOCK_OPENS;
 /** Total opens for a visitor who dropped an email but has no account: 10. */
 export const EMAIL_LADDER_TOTAL = FREE_CAMERA_CLICKS + EMAIL_UNLOCK_OPENS;
-/** Total opens for a free account: 15. */
-export const ACCOUNT_LADDER_TOTAL = EMAIL_LADDER_TOTAL + ACCOUNT_UNLOCK_OPENS;
+/** Total opens for a free account with a verified email: 10. */
+export const ACCOUNT_LADDER_TOTAL = FREE_CAMERA_CLICKS + VERIFY_UNLOCK_OPENS;
 
-export type LadderTier = "anonymous" | "email" | "account";
+export type LadderTier = "anonymous" | "email" | "account-unverified" | "account";
 
 /** Where a visitor stands on the ladder. A session (signedIn) outranks
- *  the device-local email flag: the account is the completed step. */
-export function ladderTier(input: { signedIn: boolean; emailUnlocked: boolean }): LadderTier {
-  if (input.signedIn) return "account";
+ *  the device-local email flag: the account is the completed step.
+ *  emailVerified splits the account rung in two — the session carries
+ *  it (src/auth.ts, lib/auth-verification's rule: column set OR a
+ *  provider-verified OAuth link, so Google sign-ins read verified);
+ *  absent/false on a signed-in session means unverified. */
+export function ladderTier(input: {
+  signedIn: boolean;
+  emailUnlocked: boolean;
+  emailVerified?: boolean;
+}): LadderTier {
+  if (input.signedIn) return input.emailVerified ? "account" : "account-unverified";
   if (input.emailUnlocked) return "email";
   return "anonymous";
 }
 
-/** Opens this visitor may make before the next prompt. */
+/** Opens this visitor may make before the next prompt. An unverified
+ *  account gets the same 5 as an anonymous visitor — the +5 waits for
+ *  verification, inside this same counter (no parallel allowance). */
 export function ladderAllowance(tier: LadderTier): number {
   if (tier === "account") return ACCOUNT_LADDER_TOTAL;
   if (tier === "email") return EMAIL_LADDER_TOTAL;
   return FREE_CAMERA_CLICKS;
 }
 
-export type LadderPrompt = "email" | "account" | "pro";
+export type LadderPrompt = "email" | "account" | "verify" | "pro";
 
 /**
  * The prompt an open must show, or null when the open is still free.
  * The prompt is always the NEXT rung, never a skip: anonymous → ask
  * for the email/account (the middle tier), email-only → ask for the
- * account, account → only now the Pro/trial ask.
+ * account, unverified account → ask for verification (the +5 lives
+ * there now — NOT the Pro upsell), verified account → only now the
+ * Pro/trial ask.
  */
 export function ladderPromptFor(input: {
   opens: number;
   signedIn: boolean;
   emailUnlocked: boolean;
+  emailVerified?: boolean;
 }): LadderPrompt | null {
   const tier = ladderTier(input);
   if (input.opens < ladderAllowance(tier)) return null;
   if (tier === "account") return "pro";
+  if (tier === "account-unverified") return "verify";
   if (tier === "email") return "account";
   return "email";
 }

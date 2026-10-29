@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { X, Crown, Mail, UserRound } from "lucide-react";
+import { X, Crown, Mail, MailWarning, UserRound } from "lucide-react";
 import TrialPicker from "./TrialPicker";
 import InviteFriendsSection from "./InviteFriendsSection";
 import NewsletterForm from "./NewsletterForm";
@@ -10,9 +10,9 @@ import { trackAnalyticsEvent } from "./AnalyticsTracker";
 import { FREE_CAMERA_CLICKS } from "@/lib/cameraGate";
 import {
   ACCOUNT_LADDER_TOTAL,
-  ACCOUNT_UNLOCK_OPENS,
   EMAIL_LADDER_TOTAL,
   EMAIL_UNLOCK_OPENS,
+  VERIFY_UNLOCK_OPENS,
   type LadderPrompt,
 } from "@/lib/camera-ladder";
 
@@ -24,16 +24,21 @@ import {
  * any legacy caller). With a rung from lib/camera-ladder it shows the
  * NEXT step of the ladder instead — never a skip:
  *
- *  - "email": the middle tier. The owner's headline ("Create a free
- *    account to get 10 more free opens") over an email field: dropping
- *    an address (the existing newsletter subscribe — instant
- *    validation, no confirmation email since 2026-10-28)
+ *  - "email": the middle tier. An email field over the ladder's
+ *    promise: dropping an address (the existing newsletter subscribe —
+ *    instant validation, no confirmation email since 2026-10-28)
  *    unlocks +5 opens instantly via onEmailUnlocked; the account path
- *    sits right under it for the other +5.
- *  - "account": the email step is done; completing the free account
- *    grants the last +5 (15 total).
- *  - "pro": the free-account allowance is used up — only now the trial
- *    picker leads, exactly as the legacy wall renders it.
+ *    sits right under it.
+ *  - "account": the email step is done; the free account is the ask
+ *    (with a verified email it's worth the full 10-open allowance on
+ *    any device — the +5 over the base is the verify grant now, see
+ *    the next rung).
+ *  - "verify": the signed-in-but-unverified rung (2026-10-29). The
+ *    PRIMARY path is verifying the account email in Settings for +5
+ *    (10 total) — Pro is only a secondary text link here, never the
+ *    lead. This is the rung Jameson ordered for the cap cohort.
+ *  - "pro": the verified free-account allowance is used up — only now
+ *    the trial picker leads, exactly as the legacy wall renders it.
  *
  * The picker runs in embedded mode in the Pro view: picking a plan
  * swaps this popup in place to the embedded Stripe checkout (the popup
@@ -92,12 +97,12 @@ export default function CameraSignupNudge({
           <Mail className="w-6 h-6 text-[#D4AF37]" />
         </div>
         <h2 className="text-lg font-bold tracking-tight">
-          Create a free account to get {EMAIL_UNLOCK_OPENS + ACCOUNT_UNLOCK_OPENS} more free opens
+          Create a free account to get {EMAIL_UNLOCK_OPENS} more free opens
         </h2>
         <p className="text-sm text-white/55 mt-2 mb-5">
           You&apos;ve opened your {FREE_CAMERA_CLICKS} free cameras on this device. Drop your
-          email and {EMAIL_UNLOCK_OPENS} more unlock right away — no password needed. Finish
-          creating your free account and that&apos;s {ACCOUNT_UNLOCK_OPENS} more after that.
+          email and {EMAIL_UNLOCK_OPENS} more unlock right away — no password needed. A free
+          account with a verified email gets {ACCOUNT_LADDER_TOTAL} free opens on any device.
         </p>
         <div className="text-left">
           <NewsletterForm source="ladder-email-unlock" compact onSuccess={onEmailUnlocked} />
@@ -138,12 +143,12 @@ export default function CameraSignupNudge({
           <UserRound className="w-6 h-6 text-[#D4AF37]" />
         </div>
         <h2 className="text-lg font-bold tracking-tight">
-          Create your free account to get {ACCOUNT_UNLOCK_OPENS} more free opens
+          Create your free account
         </h2>
         <p className="text-sm text-white/55 mt-2 mb-6">
           You&apos;ve opened your {opensUsed ?? EMAIL_LADDER_TOTAL} free cameras on this
-          device. A free account unlocks {ACCOUNT_UNLOCK_OPENS} more — {ACCOUNT_LADDER_TOTAL}{" "}
-          in all — and your saved cameras follow you to any device.
+          device. A free account with a verified email gets {ACCOUNT_LADDER_TOTAL} free
+          opens on any device — and your saved cameras follow you everywhere.
         </p>
         <Link
           href="/signup"
@@ -155,6 +160,45 @@ export default function CameraSignupNudge({
           Already have an account?{" "}
           <Link href="/signin" className="underline hover:text-white/60 transition">
             Sign in
+          </Link>
+        </p>
+        <button
+          onClick={onClose}
+          className="mt-3 text-xs text-white/35 hover:text-white/60 transition"
+        >
+          Maybe later
+        </button>
+      </>,
+    );
+  }
+
+  if (rung === "verify") {
+    return shell(
+      "Verify your email for more free opens",
+      <>
+        <div className="mx-auto w-12 h-12 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center mb-4">
+          <MailWarning className="w-6 h-6 text-[#D4AF37]" />
+        </div>
+        <h2 className="text-lg font-bold tracking-tight">
+          Verify your email to get {VERIFY_UNLOCK_OPENS} more free opens
+        </h2>
+        <p className="text-sm text-white/55 mt-2 mb-6">
+          You&apos;ve opened your {opensUsed ?? FREE_CAMERA_CLICKS} free cameras on this
+          device. Signed-in accounts get {FREE_CAMERA_CLICKS} free opens until their email
+          is verified — verify yours and {VERIFY_UNLOCK_OPENS} more unlock,{" "}
+          {ACCOUNT_LADDER_TOTAL} in all. It takes one click from the email we sent when
+          you signed up, or send a fresh link in Settings.
+        </p>
+        <Link
+          href="/settings"
+          className="block w-full rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] px-5 py-2.5 text-sm font-bold text-black transition hover:brightness-110"
+        >
+          Verify in Settings
+        </Link>
+        <p className="mt-3 text-xs text-white/35">
+          Want unlimited instead?{" "}
+          <Link href="/pricing" className="underline hover:text-white/60 transition">
+            See Pro
           </Link>
         </p>
         <button

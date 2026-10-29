@@ -257,6 +257,7 @@ export default function CountryCameraExplorer({
       opens: getCameraClickCount(),
       signedIn: identity?.state === 'free',
       emailUnlocked: emailUnlockedNow(),
+      emailVerified: identity?.user?.emailVerified === true,
     });
     if (prompt === null) {
       recordCameraClick();
@@ -284,6 +285,7 @@ export default function CountryCameraExplorer({
           opens: getCameraClickCount(),
           signedIn: id.state === 'free',
           emailUnlocked: emailUnlockedNow(),
+          emailVerified: id.user?.emailVerified === true,
         }) ?? prompt;
       setGateRung(rung);
       if (rung === 'pro') trackAnalyticsEvent('upgrade_gate_shown');
@@ -304,6 +306,7 @@ export default function CountryCameraExplorer({
       opens: getCameraClickCount(),
       signedIn: identity?.state === 'free',
       emailUnlocked: true,
+      emailVerified: identity?.user?.emailVerified === true,
     });
     if (still === null) {
       recordCameraClick();

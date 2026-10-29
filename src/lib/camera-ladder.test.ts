@@ -5,6 +5,7 @@ import {
   EMAIL_LADDER_TOTAL,
   EMAIL_UNLOCK_OPENS,
   ACCOUNT_UNLOCK_OPENS,
+  VERIFY_UNLOCK_OPENS,
   LADDER_STORAGE_KEY,
   SHARE_PROMPT_SESSION_KEY,
   TIMED_POPUP_COOLDOWN_MS,
@@ -38,26 +39,35 @@ function installStorage(initial: Record<string, string> = {}) {
   return { stub, map };
 }
 
-describe("the ladder shape (BRIEF F4 — owner's exact model)", () => {
-  it("is 5 anonymous / +5 email / +5 account = 15, derived from the base", () => {
+describe("the ladder shape (BRIEF F4 + the 2026-10-29 verification rung)", () => {
+  it("is 5 anonymous / +5 email = 10, and 5 unverified / +5 verified = 10, derived from the base", () => {
     expect(EMAIL_UNLOCK_OPENS).toBe(5);
-    expect(ACCOUNT_UNLOCK_OPENS).toBe(5);
+    expect(VERIFY_UNLOCK_OPENS).toBe(5);
+    expect(ACCOUNT_UNLOCK_OPENS).toBe(VERIFY_UNLOCK_OPENS);
     expect(EMAIL_LADDER_TOTAL).toBe(FREE_CAMERA_CLICKS + 5);
-    expect(ACCOUNT_LADDER_TOTAL).toBe(FREE_CAMERA_CLICKS + 10);
-    expect(ACCOUNT_LADDER_TOTAL).toBe(15);
+    expect(ACCOUNT_LADDER_TOTAL).toBe(FREE_CAMERA_CLICKS + VERIFY_UNLOCK_OPENS);
+    expect(ACCOUNT_LADDER_TOTAL).toBe(10);
   });
 
   it("a session outranks the email flag; the flag outranks bare anonymous", () => {
-    expect(ladderTier({ signedIn: true, emailUnlocked: true })).toBe("account");
-    expect(ladderTier({ signedIn: true, emailUnlocked: false })).toBe("account");
+    expect(ladderTier({ signedIn: true, emailUnlocked: true, emailVerified: true })).toBe("account");
+    expect(ladderTier({ signedIn: true, emailUnlocked: false, emailVerified: true })).toBe("account");
     expect(ladderTier({ signedIn: false, emailUnlocked: true })).toBe("email");
     expect(ladderTier({ signedIn: false, emailUnlocked: false })).toBe("anonymous");
+  });
+
+  it("a signed-in session splits on verification: unverified is its own rung", () => {
+    expect(ladderTier({ signedIn: true, emailUnlocked: false, emailVerified: false })).toBe("account-unverified");
+    expect(ladderTier({ signedIn: true, emailUnlocked: true, emailVerified: false })).toBe("account-unverified");
+    // Absent (legacy session payload) reads unverified, never verified.
+    expect(ladderTier({ signedIn: true, emailUnlocked: false })).toBe("account-unverified");
   });
 
   it("allowances follow the tier", () => {
     expect(ladderAllowance("anonymous")).toBe(5);
     expect(ladderAllowance("email")).toBe(10);
-    expect(ladderAllowance("account")).toBe(15);
+    expect(ladderAllowance("account-unverified")).toBe(5);
+    expect(ladderAllowance("account")).toBe(10);
   });
 });
 
@@ -78,12 +88,20 @@ describe("ladderPromptFor — always the NEXT rung, never a skip to Pro", () => 
     expect(ladderPromptFor({ opens: 14, signedIn: false, emailUnlocked: true })).toBe("account");
   });
 
-  it("a free account opens freely to 15; only then is the prompt Pro", () => {
-    for (let opens = 0; opens < 15; opens++) {
-      expect(ladderPromptFor({ opens, signedIn: true, emailUnlocked: false })).toBeNull();
+  it("an UNVERIFIED free account opens freely to 5; then the prompt is VERIFY, not Pro", () => {
+    for (let opens = 0; opens < 5; opens++) {
+      expect(ladderPromptFor({ opens, signedIn: true, emailUnlocked: false, emailVerified: false })).toBeNull();
     }
-    expect(ladderPromptFor({ opens: 15, signedIn: true, emailUnlocked: false })).toBe("pro");
-    expect(ladderPromptFor({ opens: 40, signedIn: true, emailUnlocked: true })).toBe("pro");
+    expect(ladderPromptFor({ opens: 5, signedIn: true, emailUnlocked: false, emailVerified: false })).toBe("verify");
+    expect(ladderPromptFor({ opens: 9, signedIn: true, emailUnlocked: true, emailVerified: false })).toBe("verify");
+  });
+
+  it("a VERIFIED free account opens freely to 10; only then is the prompt Pro", () => {
+    for (let opens = 0; opens < 10; opens++) {
+      expect(ladderPromptFor({ opens, signedIn: true, emailUnlocked: false, emailVerified: true })).toBeNull();
+    }
+    expect(ladderPromptFor({ opens: 10, signedIn: true, emailUnlocked: false, emailVerified: true })).toBe("pro");
+    expect(ladderPromptFor({ opens: 40, signedIn: true, emailUnlocked: true, emailVerified: true })).toBe("pro");
   });
 });
 

@@ -1334,12 +1334,17 @@ export default function Dashboard() {
         // rung — never a jump straight to Pro.
         let signedIn =
           sessionIdentity?.state === 'free' || sessionIdentity?.state === 'premium';
+        // The verify rung (2026-10-29): the session's verification
+        // state splits the account rung — unverified accounts cap at
+        // the base 5 and meet the verify prompt; verified get 10.
+        let emailVerified = sessionIdentity?.user?.emailVerified === true;
         const emailUnlocked =
           readLadderRecord(browserLadderStorage())?.emailUnlockedAt != null;
         const prompt = ladderPromptFor({
           opens: getCameraClickCount(),
           signedIn,
           emailUnlocked,
+          emailVerified,
         });
         if (prompt !== null) {
           // Blocked at this rung — but heal before walling: the mount
@@ -1354,6 +1359,7 @@ export default function Dashboard() {
             const fresh = await readSessionIdentity();
             setSessionIdentity(fresh);
             signedIn = fresh.state === 'free' || fresh.state === 'premium';
+            emailVerified = fresh.user?.emailVerified === true;
           }
           const action = blockedCameraAction(check, cameraBonus !== null && cameraBonus > 0);
           if (action === 'open') {
@@ -1377,7 +1383,7 @@ export default function Dashboard() {
           // hold. The interrupted camera is remembered: an email
           // unlock re-opens it (see handleLadderEmailUnlocked).
           const rung =
-            ladderPromptFor({ opens: getCameraClickCount(), signedIn, emailUnlocked }) ?? prompt;
+            ladderPromptFor({ opens: getCameraClickCount(), signedIn, emailUnlocked, emailVerified }) ?? prompt;
           pendingGateCameraRef.current = entity;
           setGateRung(rung);
           if (rung === 'pro') trackAnalyticsEvent('upgrade_gate_shown');

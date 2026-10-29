@@ -61,6 +61,12 @@ export interface SessionIdentity {
     image?: string | null;
     subscriptionStatus?: string;
     planTier?: string;
+    /** Email verification state from the session (lib/auth-verification's
+     *  rule, resolved server-side in src/auth.ts). The camera ladder
+     *  reads it for its verify rung: signed-in + false = the +5 verify
+     *  prompt at the cap; true (or a Google session) = the full
+     *  allowance. Absent on legacy sessions → treated as unverified. */
+    emailVerified?: boolean;
   };
 }
 
