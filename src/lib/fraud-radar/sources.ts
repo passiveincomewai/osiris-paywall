@@ -7,7 +7,9 @@
  *
  * Honesty rules baked into the data:
  *  - status starts at "not_started" (or "pending_credentials" for FAC):
- *    a seed row never claims an import that has not happened.
+ *    a seed row never claims an import that has not happened. A source
+ *    is marked "ingested" only with provenance fields that cite the
+ *    pipeline manifest for the actual import.
  *  - limitations carry the analytical warnings (suppression, vintage
  *    labeling, measure incompatibilities) the UI must surface.
  *  - SAM.gov appears ONLY as public file extracts — no API (§17
@@ -22,7 +24,7 @@ export type FrAccessType =
   | "public_extract"
   | "api_key_required";
 
-export type FrSourceStatus = "not_started" | "pending_credentials";
+export type FrSourceStatus = "not_started" | "pending_credentials" | "ingested";
 
 export interface FrDataSourceSeed {
   slug: string;
@@ -43,6 +45,16 @@ export interface FrDataSourceSeed {
   cadence: string;
   status: FrSourceStatus;
   notes: string;
+  /** Ingest provenance — populated only when status is "ingested";
+   *  every value cites the pipeline manifest for that import. */
+  sourceVersion?: string | null;
+  /** "YYYY-MM-DD" the ingested version was published by the publisher. */
+  lastPublishedAt?: string | null;
+  /** ISO timestamp of the pipeline import that produced sourceVersion. */
+  lastImportedAt?: string | null;
+  /** "YYYY-MM-DD" the import was last verified against its manifest. */
+  lastVerifiedAt?: string | null;
+  completeness?: string | null;
 }
 
 export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
@@ -57,21 +69,27 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
     license: "U.S. Government open data (HHS)",
     commercialUse: "Permitted under HHS open-data terms; attribution to HHS/CMS required in product copy.",
     dataFields: [
-      "billing_provider_npi",
-      "servicing_provider_npi",
+      "billing_provider_npi_num",
+      "servicing_provider_npi_num",
       "hcpcs_code",
-      "claim_month",
-      "unique_beneficiaries",
-      "claim_lines",
-      "total_paid_amount",
+      "claim_from_month",
+      "total_patients",
+      "total_claim_lines",
+      "total_paid",
     ],
     coverageStart: "2018-01",
     coverageEnd: "2024-12",
     limitations:
       "Cells with fewer than 12 claim lines/patients are suppressed by the source — a missing row does NOT mean zero spending. Unique beneficiary counts must not be summed across rows. Claim lines are not necessarily unique claims. Billing and servicing NPIs are distinct roles. 2024 data is preliminary; managed-care encounter amounts understate true cost in some states. Aggregated payments cannot by themselves establish that services were not delivered.",
     cadence: "Irregular versioned releases (current version published 2026-02-09)",
-    status: "not_started",
-    notes: "≈238M rows / 10.76 GB CSV per AUDIT §16; Phase 1 pipeline converts in state/year slices to versioned Parquet; aggregates published at state/year/HCPCS grains first.",
+    status: "ingested",
+    notes: "Ingested 2026-10-29 from the official Parquet (dataset version 2026-02-09; SHA-256 matched the checksum HHS itself publishes) and published as 7 claim-year Parquet parts, 2,246,737,360 bytes total; pipeline manifest medicaid-provider-spending-2026-02-09. TOTAL_PAID data-quality flag: 62 source cells exceed $1B each — the naive sum ($21.80T) is a source artifact; excluding those cells the sum is $1.46T. Any downstream aggregate must state which treatment it uses.",
+    sourceVersion: "2026-02-09",
+    lastPublishedAt: "2026-02-09",
+    lastImportedAt: "2026-10-29T06:01:11Z",
+    lastVerifiedAt: "2026-10-29",
+    completeness:
+      "Complete as published by HHS: 238,015,729 rows covering 2018-01 through 2024-12 (84 months) in 7 claim-year Parquet parts; row count and integer sums (claim lines, patients) reconcile exactly with the checksum-verified source file, and the billing × servicing × HCPCS × month grain is unique. Cells HHS suppressed (fewer than 12 claim lines) are absent from the source itself, so completeness is relative to the published file, never to all Medicaid activity.",
   },
   {
     slug: "cms-medicare",
@@ -149,8 +167,13 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
     limitations:
       "No public API exists — downloads only. The downloadable file contains no SSN/EIN, so a name match is a POSSIBLE match until identity is verified through OIG's online searchable database. Never present an unverified match as a confirmed exclusion.",
     cadence: "Monthly full file + monthly exclusion/reinstatement supplements",
-    status: "not_started",
-    notes: "Phase 1 pipeline proven in the batch workspace (see Phase 1 report); first registry import lands with the Phase 2/3 exclusion workflows.",
+    status: "ingested",
+    notes: "Ingested 2026-10-29 from the OIG full file (UPDATED.csv), version 2026-10; pipeline manifest leie-2026-10. Name matches are possible matches only — the file contains no SSN/EIN (AUDIT §16).",
+    sourceVersion: "2026-10",
+    lastImportedAt: "2026-10-29T03:44:09Z",
+    lastVerifiedAt: "2026-10-29",
+    completeness:
+      "Full current file ingested: 84,093 rows, validation-clean (frictionless). The downloadable LEIE is the full database of exclusions currently in effect; reinstated parties are removed by OIG.",
   },
   {
     slug: "usaspending",
@@ -242,7 +265,7 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
     name: "SAM.gov Public Entity Registration Extract (monthly)",
     engine: "contracts",
     officialUrl: "https://sam.gov/data-access",
-    accessUrl: "https://sam.gov/data-access",
+    accessUrl: "https://sam.gov/data-services/Entity%20Registration/Public%20V2?privacy=Public",
     accessType: "public_extract",
     apiKeyRequirement: "none",
     license: "GSA public extract",
@@ -261,15 +284,21 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
     limitations:
       "Monthly vintage: registration status reflects the extract date, and every display of an extract-derived status MUST carry its extract date label. The file contains active registrations plus entities expired within the last 6 months; older expired entities appear only in Fraud Radar's retained historical snapshots.",
     cadence: "Monthly (produced the first Sunday of each month)",
-    status: "not_started",
-    notes: "SAM.gov API is NOT used (locked decision, AUDIT §17). Pipeline lands in Phase 1 so Phase 5 inherits it.",
+    status: "ingested",
+    notes: "SAM.gov API is NOT used (locked decision, AUDIT §17). Ingested 2026-10-29 from SAM_PUBLIC_MONTHLY_V2_20261005.zip via browser download from SAM.gov Data Services (Terms-of-Use accepted; no SAM API key); pipeline manifest sam-entities-2026-10-05. Registration status is a property of the 2026-10-05 extract and must always be labelled with that extract date — never presented as live.",
+    sourceVersion: "2026-10-05",
+    lastPublishedAt: "2026-10-05",
+    lastImportedAt: "2026-10-29T04:49:08Z",
+    lastVerifiedAt: "2026-10-29",
+    completeness:
+      "Complete monthly extract: 905,712 records, matching the record count declared in the file's own header — 820,322 active and 85,389 expired by SAM extract code, plus 1 anomalous dual-value record (UEI VLNHKZKSFEF3) preserved verbatim. The monthly file carries active registrations plus registrations expired in the prior 6 months.",
   },
   {
     slug: "sam-exclusions",
     name: "SAM.gov Public Exclusions Extract (daily)",
     engine: "contracts",
     officialUrl: "https://sam.gov/data-access",
-    accessUrl: "https://sam.gov/data-access",
+    accessUrl: "https://sam.gov/data-services/Exclusions/Public%20V2?privacy=Public",
     accessType: "public_extract",
     apiKeyRequirement: "none",
     license: "GSA public extract",
@@ -287,8 +316,14 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
     limitations:
       "The daily file lists currently active exclusions only; an entity absent from today's file may have been excluded historically — historical claims require retained snapshots. Statuses carry the extract date.",
     cadence: "Daily",
-    status: "not_started",
-    notes: "Phase 1 pipeline proven in the batch workspace (see Phase 1 report). Bulk screening against this file replaces any per-record API checks.",
+    status: "ingested",
+    notes: "Ingested 2026-10-29 from SAM_Exclusions_Public_Extract_V2_26301.zip (the file suffix is a Julian YYDDD date: 2026 day 301) via browser download from SAM.gov Data Services (Terms-of-Use accepted; no SAM API key, §17); pipeline manifest sam-exclusions-2026-301. Bulk screening against this file replaces any per-record API checks. Exclusions recorded in SAM.gov are not a live status check — every display carries the extract date (2026-10-28).",
+    sourceVersion: "2026-301",
+    lastPublishedAt: "2026-10-28",
+    lastImportedAt: "2026-10-29T04:43:47Z",
+    lastVerifiedAt: "2026-10-29",
+    completeness:
+      "Complete daily extract: 169,034 rows, validation-clean (frictionless), stale_snapshot: false; the newest Creation_Date in the data is 2026-10-28. This supersedes the stale 2020-12-21 data.gov fallback snapshot (144,058 rows) used before the live file was reachable.",
   },
   {
     slug: "sam-opportunities",

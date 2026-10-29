@@ -68,9 +68,60 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(ent.limitations.toLowerCase()).toContain("extract date");
   });
 
-  it("never overstates status: nothing is seeded as already imported", () => {
+  it("marks exactly the four pipeline-ingested sources as ingested, each with manifest provenance", () => {
+    const ingested = FRAUD_RADAR_SOURCES.filter((s) => s.status === "ingested")
+      .map((s) => s.slug)
+      .sort();
+    expect(ingested).toEqual(
+      ["leie", "medicaid-hcpcs", "sam-entities", "sam-exclusions"].sort(),
+    );
     for (const s of FRAUD_RADAR_SOURCES) {
-      expect(["not_started", "pending_credentials"]).toContain(s.status);
+      expect(["not_started", "pending_credentials", "ingested"]).toContain(s.status);
+      if (s.status === "ingested") {
+        expect(s.sourceVersion).toBeTruthy();
+        expect(s.lastImportedAt).toBeTruthy();
+        expect(s.lastVerifiedAt).toBeTruthy();
+        expect((s.completeness ?? "").length).toBeGreaterThan(20);
+      }
     }
+  });
+
+  it("pins the Medicaid ingest to its pipeline manifest (version 2026-02-09)", () => {
+    const med = FRAUD_RADAR_SOURCES.find((s) => s.slug === "medicaid-hcpcs")!;
+    expect(med.sourceVersion).toBe("2026-02-09");
+    expect(med.lastPublishedAt).toBe("2026-02-09");
+    expect(med.lastImportedAt).toBe("2026-10-29T06:01:11Z");
+    expect(med.lastVerifiedAt).toBe("2026-10-29");
+    expect(med.dataFields).toEqual([
+      "billing_provider_npi_num",
+      "servicing_provider_npi_num",
+      "hcpcs_code",
+      "claim_from_month",
+      "total_patients",
+      "total_claim_lines",
+      "total_paid",
+    ]);
+    expect(med.completeness).toContain("238,015,729");
+  });
+
+  it("pins the SAM ingests to their manifests, extract dates labelled (§17)", () => {
+    const exc = FRAUD_RADAR_SOURCES.find((s) => s.slug === "sam-exclusions")!;
+    const ent = FRAUD_RADAR_SOURCES.find((s) => s.slug === "sam-entities")!;
+    expect(exc.sourceVersion).toBe("2026-301");
+    expect(exc.lastPublishedAt).toBe("2026-10-28");
+    expect(exc.completeness).toContain("169,034");
+    expect(exc.accessUrl).toContain("sam.gov/data-services/Exclusions");
+    expect(ent.sourceVersion).toBe("2026-10-05");
+    expect(ent.lastPublishedAt).toBe("2026-10-05");
+    expect(ent.completeness).toContain("905,712");
+    expect(ent.completeness).toContain("820,322");
+    expect(ent.accessUrl).toContain("sam.gov/data-services/Entity");
+  });
+
+  it("pins the LEIE ingest to its pipeline manifest (version 2026-10)", () => {
+    const leie = FRAUD_RADAR_SOURCES.find((s) => s.slug === "leie")!;
+    expect(leie.sourceVersion).toBe("2026-10");
+    expect(leie.lastImportedAt).toBe("2026-10-29T03:44:09Z");
+    expect(leie.completeness).toContain("84,093");
   });
 });
