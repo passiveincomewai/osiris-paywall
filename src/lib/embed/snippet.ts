@@ -36,7 +36,13 @@ export const EMBED_SIZE_PRESETS: EmbedSizePreset[] = [
   { id: "compact", label: "Compact — 400 × 225", width: 400, height: 225 },
 ];
 
-export const DEFAULT_EMBED_SIZE = "medium";
+/** The default is the responsive preset: it is the only one that
+ *  renders correctly on every screen, phones included. The fixed
+ *  presets stay available for publishers who want an exact box, and
+ *  they scale proportionally on narrow containers (see
+ *  buildEmbedSnippet), but a fixed 640px default in a 390px phone
+ *  viewport is how embeds end up squeezed and cut off. */
+export const DEFAULT_EMBED_SIZE = "responsive";
 
 export function embedSizePreset(id: string | undefined): EmbedSizePreset {
   return (
@@ -66,7 +72,14 @@ export function buildEmbedSnippet(args: {
   const preset = embedSizePreset(args.sizeId);
   const title = escapeAttr(`${args.name} — live camera via WorldEye`);
   if (preset.width === null || preset.height === null) {
-    return `<iframe src="${args.embedUrl}" width="100%" style="border:0;max-width:100%;aspect-ratio:16/9" loading="lazy" allowfullscreen title="${title}"></iframe>`;
+    return `<iframe src="${args.embedUrl}" width="100%" style="border:0;max-width:100%;height:auto;aspect-ratio:16/9" loading="lazy" allowfullscreen title="${title}"></iframe>`;
   }
-  return `<iframe src="${args.embedUrl}" width="${preset.width}" height="${preset.height}" style="border:0;max-width:100%" loading="lazy" allowfullscreen title="${title}"></iframe>`;
+  /* Fixed presets keep their pixel width/height attributes (the exact
+   * box on wide screens, and the intrinsic size where CSS is ignored),
+   * but the style makes the box SCALE on narrower containers:
+   * max-width clamps the width, height:auto + aspect-ratio derive the
+   * height from the clamped width. Without this, a 640×360 embed in a
+   * 390px phone column kept its 360px height while its width shrank —
+   * a tall, squeezed frame with the camera image cropped at the sides. */
+  return `<iframe src="${args.embedUrl}" width="${preset.width}" height="${preset.height}" style="border:0;max-width:100%;height:auto;aspect-ratio:${preset.width}/${preset.height}" loading="lazy" allowfullscreen title="${title}"></iframe>`;
 }

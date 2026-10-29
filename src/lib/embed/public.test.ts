@@ -4,6 +4,7 @@ import {
   buildEmbedSnippet,
   embedSizePreset,
   embedSourceSummaries,
+  EMBED_SIZE_PRESETS,
   filterEmbedCameras,
   publicEmbedUrl,
   toPublicEmbedCamera,
@@ -126,11 +127,13 @@ describe("embed URLs", () => {
 describe("buildEmbedSnippet", () => {
   const url = "https://worldeye.app/embed/camera/cam-1";
 
-  it("defaults to the medium 640×360 iframe", () => {
+  it("defaults to the responsive iframe — the only preset that fits a phone", () => {
     const s = buildEmbedSnippet({ embedUrl: url, name: "Parleys Summit" });
     expect(s).toContain(`src="${url}"`);
-    expect(s).toContain('width="640"');
-    expect(s).toContain('height="360"');
+    expect(s).toContain('width="100%"');
+    expect(s).toContain("aspect-ratio:16/9");
+    expect(s).toContain("height:auto");
+    expect(s).not.toContain('height="');
     expect(s).toContain("allowfullscreen");
     expect(s).toContain('loading="lazy"');
     expect(s).toContain('title="Parleys Summit — live camera via WorldEye"');
@@ -139,17 +142,33 @@ describe("buildEmbedSnippet", () => {
   it("honours the size presets", () => {
     expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "large" })).toContain('width="800"');
     expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "large" })).toContain('height="450"');
+    expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "medium" })).toContain('width="640"');
+    expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "medium" })).toContain('height="360"');
     expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "small" })).toContain('width="480"');
     expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "compact" })).toContain('height="225"');
     const responsive = buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "responsive" });
     expect(responsive).toContain('width="100%"');
     expect(responsive).toContain("aspect-ratio:16/9");
-    expect(responsive).not.toContain("height=");
+    expect(responsive).not.toContain('height="');
+  });
+
+  it("every fixed preset scales proportionally on narrow containers", () => {
+    // Regression: the fixed presets are all wider than a phone screen
+    // (compact 400px > 390px, default was 640px). The snippet must
+    // clamp width AND derive height from the clamped width — a fixed
+    // height with a clamped width squeezes the player and crops the
+    // camera image at the sides.
+    for (const preset of EMBED_SIZE_PRESETS.filter((p) => p.width !== null)) {
+      const s = buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: preset.id });
+      expect(s).toContain("max-width:100%");
+      expect(s).toContain("height:auto");
+      expect(s).toContain(`aspect-ratio:${preset.width}/${preset.height}`);
+    }
   });
 
   it("an unknown size id falls back to the default preset", () => {
-    expect(embedSizePreset("nope").id).toBe("medium");
-    expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "nope" })).toContain('width="640"');
+    expect(embedSizePreset("nope").id).toBe("responsive");
+    expect(buildEmbedSnippet({ embedUrl: url, name: "X", sizeId: "nope" })).toContain('width="100%"');
   });
 
   it("escapes the camera name in the title attribute", () => {

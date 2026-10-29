@@ -111,12 +111,12 @@ export default async function EmbedCameraPage({
             name="q"
             defaultValue={q}
             placeholder="Search cameras — a city, a beach, a highway…"
-            className="flex-1 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/50"
+            className="flex-1 min-w-0 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#D4AF37]/50"
           />
           <select
             name="source"
             defaultValue={source}
-            className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/80 outline-none focus:border-[#D4AF37]/50 cursor-pointer"
+            className="min-w-0 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/80 outline-none focus:border-[#D4AF37]/50 cursor-pointer sm:max-w-[300px]"
           >
             <option value="">All sources</option>
             {sources.map((s) => (
@@ -160,7 +160,7 @@ export default async function EmbedCameraPage({
                 {pageItems.map((cam) => (
                   <article
                     key={cam.id}
-                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"
+                    className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.02] p-4"
                   >
                     <div className="relative aspect-video overflow-hidden rounded-lg bg-black/60">
                       {cam.snapshotUrl ? (

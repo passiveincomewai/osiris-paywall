@@ -86,7 +86,13 @@ export default function PublicCameraPlayer({ cam }: { cam: PublicEmbedCamera }) 
           Open live stream ↗
         </a>
       ) : null}
-      <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-3 pt-8 pb-2.5 flex items-end justify-between gap-3 pointer-events-none">
+      {/* Narrow frames (a phone-width embed, the standalone player on a
+          phone) stack the caption: name + attribution on top, the
+          Powered by mark on its own line below — in a single row the
+          shrink-0 mark (~150px) squeezed the name to a sliver. From sm
+          up (the iframe's own viewport — embeds ≥640px wide) the
+          original side-by-side row is unchanged. */}
+      <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-3 pt-8 pb-2.5 flex flex-col items-start gap-1 pointer-events-none sm:flex-row sm:items-end sm:justify-between sm:gap-3">
         <span className="min-w-0">
           <a
             href={watchOnWorldEyeUrl(cam.id)}

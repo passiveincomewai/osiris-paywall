@@ -60,6 +60,18 @@ describe("PublicCameraPlayer rendered HTML", () => {
     expect(html).toContain("<img");
   });
 
+  it("stacks the caption on narrow frames so the mark never squeezes the name out", () => {
+    // Regression (mobile): in a phone-width frame the caption was one
+    // row — name block vs the shrink-0 POWERED BY mark — and the name
+    // truncated to a sliver. The caption must stack below sm and only
+    // go side-by-side from sm up, with the mark present either way.
+    const html = renderToStaticMarkup(createElement(PublicCameraPlayer, { cam: cam({}) }));
+    expect(html).toContain("flex-col");
+    expect(html).toContain("sm:flex-row");
+    expect(html).toContain("POWERED BY");
+    expect(html).toContain("I-80 at Parleys Summit");
+  });
+
   it("keeps the attribution chrome on an HLS-only camera too", () => {
     const html = renderToStaticMarkup(
       createElement(PublicCameraPlayer, {
