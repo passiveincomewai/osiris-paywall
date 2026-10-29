@@ -1596,3 +1596,70 @@ model VipBriefPref {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
+
+// ── WorldEye Fraud Radar: Data Source Registry (spec §5) ────────────
+// Additive-only. The registry is the platform's memory of what data it
+// holds, where it came from, and how fresh it is — bulk government data
+// itself lives in versioned Parquet artifacts (AUDIT §15), never in
+// these tables. Seeded from src/lib/fraud-radar/sources.ts.
+
+model FrDataSource {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  name              String
+  engine            String   // healthcare | grants | contracts | cross-cutting
+  officialUrl       String
+  accessUrl         String
+  accessType        String   // public_download | public_api | public_extract | api_key_required
+  apiKeyRequirement String   // "none" or a plain-language statement
+  license           String
+  commercialUse     String
+  dataFields        String[]
+  coverageStart     String?  // "YYYY-MM" when bounded
+  coverageEnd       String?
+  limitations       String
+  cadence           String
+  // not_started | ok | degraded | error | pending_credentials
+  status            String   @default("not_started")
+  notes             String   @default("")
+  lastPublishedAt   DateTime?
+  lastImportedAt    DateTime?
+  lastVerifiedAt    DateTime?
+  sourceVersion     String?
+  completeness      String?
+  lastError         String?
+
+  importRuns        FrImportRun[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([engine])
+  @@index([status])
+}
+
+// One execution of a source's batch pipeline (AUDIT §8/§15). Row and
+// byte counts are BigInt: the Medicaid source alone is ~238M rows.
+model FrImportRun {
+  id               String       @id @default(cuid())
+  sourceId         String
+  source           FrDataSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  datasetVersion   String?      // e.g. the extract file's date/name
+  // running | succeeded | failed | quarantined
+  status           String       @default("running")
+  startedAt        DateTime     @default(now())
+  finishedAt       DateTime?
+  rowsProcessed    BigInt?
+  rowsValid        BigInt?
+  rowsQuarantined  BigInt?
+  artifactPath     String?      // object-storage key / URL of the published artifact
+  artifactSha256   String?
+  manifest         Json?        // the pipeline manifest (§15a) as published
+  error            String?
+
+  createdAt        DateTime     @default(now())
+
+  @@index([sourceId, startedAt])
+  @@index([status])
+}
