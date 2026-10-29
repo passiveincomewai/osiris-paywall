@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
 
 /**
@@ -76,6 +77,37 @@ export default function FraudRadarPage() {
               <p className="mt-2 text-sm text-white/60 leading-relaxed">{e.body}</p>
             </article>
           ))}
+        </section>
+
+        <section className="mt-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.06] p-6">
+          <h2 className="text-xl font-semibold">Now live for research: Medicaid provider spending</h2>
+          <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+            The healthcare engine&apos;s first dataset is published: the HHS Medicaid Provider
+            Spending file (2018–2024) — 1,842,123 billing and servicing providers with payment
+            histories, procedure-level breakdowns, and screening against the LEIE exclusion
+            snapshot. Every figure carries its dataset version and the source&apos;s own
+            limitations.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link
+              href="/fraud-radar/healthcare"
+              className="rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-300"
+            >
+              Open the healthcare engine
+            </Link>
+            <Link
+              href="/fraud-radar/healthcare/providers"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Search providers
+            </Link>
+            <Link
+              href="/fraud-radar/healthcare/hcpcs"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Explore HCPCS codes
+            </Link>
+          </div>
         </section>
 
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.03] p-6">

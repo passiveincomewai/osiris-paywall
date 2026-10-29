@@ -37,5 +37,12 @@ export function fraudRadarPublicPaths(
   env: Record<string, string | undefined> = process.env,
 ): string[] {
   if (!fraudRadarEnabled(env)) return [];
-  return ["/fraud-radar"];
+  return [
+    "/fraud-radar",
+    // Phase 2 healthcare surfaces (indexable landings only; provider
+    // profiles and the search API stay out of the sitemap).
+    "/fraud-radar/healthcare",
+    "/fraud-radar/healthcare/providers",
+    "/fraud-radar/healthcare/hcpcs",
+  ];
 }

@@ -33,6 +33,9 @@ describe("fraudRadarPublicPaths — sitemap/nav isolation", () => {
   it("exposes exactly the public shell path once enabled", () => {
     expect(fraudRadarPublicPaths({ FRAUD_RADAR_ENABLED: "1" })).toEqual([
       "/fraud-radar",
+      "/fraud-radar/healthcare",
+      "/fraud-radar/healthcare/providers",
+      "/fraud-radar/healthcare/hcpcs",
     ]);
   });
 });

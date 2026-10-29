@@ -28,6 +28,7 @@ import { BEACH_SPOT_SLUGS, SURF_SPOT_SLUGS } from "@/lib/surf-spots";
 import { MANIFEST_ENTRIES } from "@/i18n/manifest";
 import { hreflangMapFor, localizedUrl } from "@/lib/i18n-seo";
 import { withoutFutureLastmod } from "@/lib/lastmod";
+import { fraudRadarPublicPaths } from "@/lib/fraud-radar/flag";
 import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
@@ -895,6 +896,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+    })),
+    // Fraud Radar (Phase 1+): fraudRadarPublicPaths() is [] while
+    // FRAUD_RADAR_ENABLED is off, so a dark Fraud Radar contributes
+    // nothing here (AUDIT §13.3 isolation).
+    ...fraudRadarPublicPaths().map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
     ...SEO_PAGES_ORPHANS.map((p) => ({
       url: `${BASE}${p}`,
