@@ -298,6 +298,46 @@ export default function BestGeopoliticalMonitoringToolsPage() {
               of confidence.
             </p>
           </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">What are the best apps for tracking global geopolitical events in real time?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              The honest answer splits by job. For seeing events as they
+              happen, a live visual layer: WorldEye&apos;s free globe puts
+              live cameras, flights, ships and conflict feeds on one map.
+              For report-driven updates, Liveuamap pins conflict news to a
+              map as it breaks. For the numbers underneath, GDELT codes
+              global news events every 15 minutes. Analysts who track
+              events professionally usually run all three kinds at once —
+              visual, report and data.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">What are the top platforms for monitoring global political shifts?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              At the free end: WorldEye for live visual monitoring,
+              Liveuamap for conflict reporting, and GDELT for quantitative
+              event data — the stack this page recommends. At the
+              enterprise end, Crisis24 and Recorded Future add vetted
+              alerting and duty-of-care services for organizations, priced
+              accordingly. Political shifts show up first as signals — a
+              protest on a city camera, a spike in event data — and the
+              platforms differ in which signals they surface.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best mapping tool for geo-journalism?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              Geo-journalism lives or dies on verification, so the mapping
+              tool has to pair the map with evidence. WorldEye&apos;s globe
+              puts live cameras, flight and ship tracks and a satellite
+              view on one map, and its free Photo Geolocation tool works
+              out where a photo was taken from its metadata and scene
+              clues, showing the evidence for and against each candidate.
+              Pair those with GDELT or ACLED for the event record, and a
+              claim can be checked against the ground, the data and the
+              image itself.
+            </p>
+          </div>
         </div>
       </section>
 
