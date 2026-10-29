@@ -50,8 +50,8 @@ export const TOUR_STEPS: TourStep[] = [
   {
     n: 3,
     title: "Turn On a Data Layer",
-    body: "Layers put live data on the globe. Open the layer panel and switch on Weather or Fires to see it appear.",
-    bodyTouch: "Layers put live data on the globe. Open LAYERS and switch on Weather or Fires to see it appear.",
+    body: "Layers put live data on the globe. The layer panel is open on the left — switch on Weather or Fires (try the highlighted toggle) and watch the data appear.",
+    bodyTouch: "Layers put live data on the globe. The layer panel is open — switch on Weather or Fires to see it appear.",
     anchor: "layers",
     action: "event-layer",
     hint: "Switch on Weather or Fires in the layer panel.",

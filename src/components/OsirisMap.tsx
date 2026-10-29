@@ -127,6 +127,9 @@ interface OsirisMapProps {
    *  swaps the basemap tiles to that dated archive release. */
   satelliteSelection?: SatelliteImagerySelection;
   onSatelliteSelectionChange?: (selection: SatelliteImagerySelection) => void;
+  /** Open pulse for the Cinematic Director panel (page forwards the
+   *  RECON panel's Director entry; see CinematicDirector.openSignal). */
+  directorOpenSignal?: number;
   sweepData?: any;
   scanTargets?: any[];
   demoMode?: boolean;
@@ -380,7 +383,7 @@ const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
  *  is honestly unavailable until launch data is loaded). */
 const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -6298,7 +6301,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       {mapReady && satelliteOn && onSatelliteSelectionChange && (
         <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} />
       )}
-      {mapReady && <CinematicDirector mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
+      {mapReady && <CinematicDirector openSignal={directorOpenSignal} mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
         if (!launchData) return null;
         const sel = [...launchData.upcoming, ...launchData.previous].find((l) => l.id === selectedLaunchId);
         const cand = sel ?? nextLaunch(launchData.upcoming, Date.now());

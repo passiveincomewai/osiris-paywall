@@ -204,7 +204,7 @@ export default function LiveRecordControl({
           >
             {!entitled && gate.loaded
               ? <><Lock className="w-2.5 h-2.5" /> PRO</>
-              : <><span className="w-1.5 h-1.5 rounded-full bg-red-500" /> {starting ? 'STARTING…' : 'REC'}</>}
+              : <><span className="w-1.5 h-1.5 rounded-full bg-red-500" /> {starting ? 'STARTING…' : 'RECORD'}</>}
           </button>
         )}
       </div>

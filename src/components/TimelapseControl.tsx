@@ -257,19 +257,54 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5">
         <span className="text-[9px] text-[var(--text-muted)] font-mono tracking-widest">TIMELAPSE</span>
         {support.supported ? (
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className={btnCls}
-            title={recording ? 'Timelapse is capturing — open the panel' : 'Timelapse — a VIP Pro feature for snapshot cameras'}
-            aria-label="Timelapse"
-            aria-expanded={open}
-          >
-            {locked
-              ? <><Lock className="w-2.5 h-2.5" /> VIP</>
-              : recording
-                ? <><span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> {frameCount} FRAMES</>
-                : <><Film className="w-2.5 h-2.5" /> {displayFrameCount > 0 ? `${displayFrameCount} FRAMES` : 'OPEN'}</>}
-          </button>
+          <span className="flex items-center gap-1.5">
+            {/* Item 6 (2026-10-29): the entitled idle button used to read
+                "OPEN" and merely toggled this panel — it read as a dead
+                button. It is now RECORD, wired straight to the existing
+                capture path (startCapture / stopCapture — same session
+                layer, same VIP gate). Panel access for playback/export
+                lives on the FRAMES toggle beside it. */}
+            {!locked && (recording ? (
+              <button
+                onClick={stopCapture}
+                className={btnCls}
+                title="Stop timelapse capture"
+                aria-label="Stop timelapse capture"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> REC · {frameCount} FRAMES
+              </button>
+            ) : (
+              <button
+                onClick={startCapture}
+                className={btnCls}
+                title="Record a timelapse from this camera's snapshots"
+                aria-label="Record timelapse"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> RECORD
+              </button>
+            ))}
+            {locked ? (
+              <button
+                onClick={() => setOpen((o) => !o)}
+                className={btnCls}
+                title="Timelapse — a VIP Pro feature for snapshot cameras"
+                aria-label="Timelapse"
+                aria-expanded={open}
+              >
+                <Lock className="w-2.5 h-2.5" /> VIP
+              </button>
+            ) : displayFrameCount > 0 ? (
+              <button
+                onClick={() => setOpen((o) => !o)}
+                className={btnCls}
+                title="Open the timelapse panel — playback, export, discard"
+                aria-label="Timelapse frames"
+                aria-expanded={open}
+              >
+                <Film className="w-2.5 h-2.5" /> {displayFrameCount} FRAMES
+              </button>
+            ) : null}
+          </span>
         ) : (
           <button
             disabled

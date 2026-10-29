@@ -46,6 +46,13 @@ function resolveAnchors(step: TourStep): { primary: Rect | null; extras: Rect[] 
       case "globe":
         return { primary: rectOf(document.querySelector("[data-globe-section]")), extras: [] };
       case "layers": {
+        // Step 3 (the event-layer step): spotlight the real Weather
+        // toggle inside the open Layers panel once it exists; before
+        // the panel opens, fall back to the panel root as before.
+        if (step.action === "event-layer") {
+          const toggle = document.querySelector('[data-tour-layer="weather"]');
+          if (toggle) return { primary: rectOf(toggle), extras: [] };
+        }
         const el =
           document.querySelector('[data-tour="layers"]') ?? navButtonByLabel("LAYERS");
         return { primary: rectOf(el), extras: [] };
@@ -164,6 +171,17 @@ export default function TourOverlay({
           maxHeight: "46vh",
           overflowY: "auto",
         };
+  } else if (!isMobile && step.action === "event-layer") {
+    // Step 3: the Layers sheet opens on the LEFT at this step, so the
+    // card moves to the opposite side of the screen (clear of the right
+    // tool strip too) — it must never render over the panel it teaches.
+    cardStyle = {
+      position: "fixed",
+      right: 84,
+      top: Math.max(76, vh / 2 - 140),
+      width: 340,
+      zIndex: 970,
+    };
   } else if (r && step.anchor === "layers") {
     cardStyle = {
       position: "fixed",

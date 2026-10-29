@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ExternalLink, Radio, Maximize2, X } from 'lucide-react';
+import { ExternalLink, Radio, Maximize2, X, Minus, ChevronUp } from 'lucide-react';
 
 /**
  * OSIRIS — LIVE FROM SPACE
@@ -80,9 +80,21 @@ function buildEmbedSrc(videoId: string, big: boolean): string {
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
 }
 
-export default function SpaceCam() {
+export default function SpaceCam({ onClose }: { onClose?: () => void } = {}) {
   const [active, setActive] = useState(FEEDS[0]);
   const [expanded, setExpanded] = useState(false);
+  /* Minimized = header bar only (Item 4, 2026-10-29). Remembered for
+     the session so the panel stops sprawling over the globe — and
+     over the RECON rail — until the viewer restores it. */
+  const [minimized, setMinimized] = useState<boolean>(() => {
+    try { return typeof window !== 'undefined' && window.sessionStorage.getItem('we_spacecam_min') === '1'; } catch { return false; }
+  });
+  const toggleMinimized = () => {
+    setMinimized((m) => {
+      try { window.sessionStorage.setItem('we_spacecam_min', m ? '0' : '1'); } catch { /* private mode */ }
+      return !m;
+    });
+  };
 
   // Escape closes the expanded view — it covers the whole map.
   useEffect(() => {
@@ -93,8 +105,12 @@ export default function SpaceCam() {
   }, [expanded]);
 
   return (
-    <div className="rounded-xl border border-[var(--border-primary)] bg-[var(--bg-panel)] backdrop-blur-2xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--border-secondary)]/40">
+    <div className="rounded-xl border border-[var(--border-primary)] bg-[var(--bg-panel)] backdrop-blur-2xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)] max-h-[70vh] overflow-y-auto styled-scrollbar">
+      <div
+        className="flex items-center gap-2 px-3 py-2 border-b border-[var(--border-secondary)]/40 cursor-pointer select-none"
+        onClick={(e) => { if (!(e.target as HTMLElement).closest('button, a')) toggleMinimized(); }}
+        title={minimized ? 'Restore Live from Space' : 'Minimize Live from Space'}
+      >
         <Radio className="w-3.5 h-3.5 text-[#00E5FF]" />
         <span className="text-[11px] font-mono font-bold tracking-widest text-[#00E5FF]">
           LIVE FROM SPACE
@@ -104,14 +120,34 @@ export default function SpaceCam() {
           <span className="text-[9px] font-mono tracking-wider text-[var(--text-muted)]">24/7</span>
         </span>
         <button
+          onClick={toggleMinimized}
+          title={minimized ? 'Restore' : 'Minimize'}
+          aria-label={minimized ? 'Restore Live from Space' : 'Minimize Live from Space'}
+          aria-expanded={!minimized}
+          className="ml-1 p-1 rounded hover:bg-[var(--hover-accent)] text-[var(--text-muted)] hover:text-[#00E5FF] transition-colors"
+        >
+          {minimized ? <ChevronUp className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
+        </button>
+        <button
           onClick={() => setExpanded(true)}
           title="Expand — a bigger player is what makes YouTube serve HD"
-          className="ml-1 p-1 rounded hover:bg-[var(--hover-accent)] text-[var(--text-muted)] hover:text-[#00E5FF] transition-colors"
+          className="p-1 rounded hover:bg-[var(--hover-accent)] text-[var(--text-muted)] hover:text-[#00E5FF] transition-colors"
         >
           <Maximize2 className="w-3 h-3" />
         </button>
+        {onClose && (
+          <button
+            onClick={onClose}
+            title="Close Live from Space"
+            aria-label="Close Live from Space"
+            className="p-1 rounded hover:bg-[var(--hover-accent)] text-[var(--text-muted)] hover:text-[#00E5FF] transition-colors"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        )}
       </div>
 
+      {!minimized && (<>
       <div className="relative w-full group/player" style={{ aspectRatio: '16 / 9', background: '#000' }}>
         <iframe
           key={active.videoId}
@@ -165,6 +201,7 @@ export default function SpaceCam() {
           SOURCE <ExternalLink className="w-2.5 h-2.5" />
         </a>
       </div>
+      </>)}
 
       {expanded && typeof document !== 'undefined' && createPortal(
         <div

@@ -10,7 +10,7 @@ import {
   Wifi, Lock, MapPin, Bug, Code, Layers, Network, Fingerprint,
   CheckCircle, XCircle, Clock, ExternalLink, Crosshair, Camera,
   Maximize2, Minimize2, Gavel, Bitcoin, Phone, Terminal, ShieldAlert, User,
-  Crown, Database, Users, Zap, AtSign
+  Crown, Database, Users, Zap, AtSign, Clapperboard
 } from 'lucide-react';
 import { ipToNumber, numberToIp, calculateSubnetStart, classifyDevice, assessRisk, batchFetch, ShodanInternetDBResponse, SweepDevice } from '@/lib/osint-utils';
 import ChainBrief from '@/components/ChainBrief';
@@ -148,6 +148,7 @@ const TABS: ToolDef[] = [
   { id: 'remote', label: 'WORLD REMOTE', icon: Bluetooth, placeholder: 'Bluetooth devices around you', color: '#00E5FF', group: 'geoint', tile: 'World\nRemote', blurb: 'Bluetooth devices around you, placed on the globe' },
   { id: 'photogeo', label: 'PHOTO GEO', icon: Camera, placeholder: 'Upload a photo on the tool page', color: '#34D399', group: 'geoint', tile: 'Photo\nGeo', blurb: 'Where was this photo taken?' },
   { id: 'sensing', label: 'WIFI SENSING', icon: Wifi, placeholder: 'Open the sensing tool page', color: '#38BDF8', group: 'geoint', tile: 'WiFi\nSensing', blurb: 'Sense motion in a room with WiFi' },
+  { id: 'director', label: 'CINEMATIC DIRECTOR', icon: Clapperboard, placeholder: 'Open the Cinematic Director', color: '#D4AF37', group: 'geoint', tile: 'Cinematic\nDirector', blurb: 'Camera scenes & globe recording' },
 
   { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF', group: 'domain', tile: 'DNS\nLookup', blurb: 'All record types' },
   { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFD700', group: 'domain', tile: 'WHOIS\nLookup', blurb: 'Registrar and ownership' },
@@ -170,9 +171,9 @@ const TABS: ToolDef[] = [
   { id: 'donbot', label: 'DONBOT', icon: DigitalDonMark, placeholder: 'Ticker, name or contract address', color: '#E8E6E0', group: 'chain', tile: 'DonBot', blurb: 'Token signal and holder clusters' },
 ];
 
-interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; onPlaceDevicesOnMap?: (devs: { id: string; name: string; lat: number; lng: number; type: string; color: string }[]) => void; }
+interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; onPlaceDevicesOnMap?: (devs: { id: string; name: string; lat: number; lng: number; type: string; color: string }[]) => void; /** Opens the Cinematic Director panel on the globe (Item 2, 2026-10-29: the Director entry point moved from a floating globe pill into this RECON panel). */ onOpenDirector?: () => void; }
 
-function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceDevicesOnMap }: OsintPanelProps) {
+function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceDevicesOnMap, onOpenDirector }: OsintPanelProps) {
   const [activeTab, setActiveTab] = useState('scanner');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [query, setQuery] = useState('');
@@ -1410,10 +1411,38 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceD
         </div>
       )}
 
+      {/* CINEMATIC DIRECTOR — the panel itself lives on the globe (it
+          drives the map camera); this board view is the briefing card
+          and the door, the same pattern as PHOTO GEO / WIFI SENSING.
+          The Director used to float as a pill on the globe itself; its
+          entry point moved here at the owner's order (2026-10-29). */}
+      {activeTab === 'director' && (
+        <div className="we-recon-card" style={{ padding: '14px 14px 12px' }}>
+          <div className="flex items-center gap-2" style={{ color: '#D4AF37' }}>
+            <Clapperboard className="w-4 h-4" />
+            <span className="text-[11px] font-mono font-bold tracking-[0.14em]">CINEMATIC DIRECTOR</span>
+          </div>
+          <p className="text-[10.5px] leading-relaxed mt-2" style={{ color: 'rgba(190,220,255,0.85)' }}>
+            Direct the globe camera: build keyframe scenes, play preset flights
+            (camera tours, aircraft follow, space missions) and record the globe
+            to a WebM video. Scenes you save live in this browser.
+          </p>
+          <ul className="text-[10px] leading-relaxed mt-2 font-mono" style={{ color: 'rgba(125,211,252,0.75)' }}>
+            <li>· A free perk of the affiliate program — joining is free</li>
+            <li>· Stays off until you switch it on in the affiliate dashboard</li>
+            <li>· Recording captures the globe canvas in your browser</li>
+          </ul>
+          <button type="button" onClick={() => onOpenDirector?.()}
+            className="we-recon-scanbtn inline-flex items-center justify-center gap-1.5 mt-3">
+            <Clapperboard className="w-3.5 h-3.5" /> OPEN THE DIRECTOR
+          </button>
+        </div>
+      )}
+
       {/* Scan bar — the board's target entry. Same state and handlers as
           before (query / runLookup / scanType / sweepCidr); only the skin
           and the chip presentation of the secondary controls are new. */}
-      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && activeTab !== 'photogeo' && activeTab !== 'sensing' && (
+      {activeTab !== 'fingerprint' && activeTab !== 'donbot' && activeTab !== 'remote' && activeTab !== 'photogeo' && activeTab !== 'sensing' && activeTab !== 'director' && (
       <div className="flex flex-col gap-1.5">
         {/* CHAIN INTEL view switch — the brief takes no target. */}
         {activeTab === 'crypto' && (

@@ -45,6 +45,15 @@ interface LayerPanelProps {
   /** Closes the host container (the mobile drawer). Desktop ignores it —
    *  the sheet has its own open state and collapses back to the pill. */
   onClose?: () => void;
+  /** External "open the sheet" pulse (desktop): when this counter
+   *  changes to a new positive value, the sheet opens — the same state
+   *  the Layers & Stats pill toggles manually. Used by onboarding
+   *  tour step 3 (Item 7, 2026-10-29). */
+  openSignal?: number;
+  /** Layer key to spotlight inside the open panel (a pulsing ring on
+   *  that layer's real toggle row). Set by the parent for the duration
+   *  of onboarding tour step 3; null/undefined = no spotlight. */
+  highlightLayerKey?: string | null;
 }
 
 interface LayerDef {
@@ -424,7 +433,7 @@ function resolveCategoryLayers(cat: PanelCategory): LayerDef[] {
     .filter((l): l is LayerDef => !!l);
 }
 
-function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'core', setTheme, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false, sensorEffect, onSensorEffectChange, onClose }: LayerPanelProps) {
+function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'core', setTheme, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false, sensorEffect, onSensorEffectChange, onClose, openSignal, highlightLayerKey }: LayerPanelProps) {
   const [studioOpen, setStudioOpen] = useState(false);
   /** The locked layer whose trial picker is expanded, if any. One at a
    *  time: the picker replaces the old bounce to /premium, so intent is
@@ -458,6 +467,24 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
     const cat = PANEL_CATEGORIES.find((c) => (c.keys ?? []).includes(layerKey));
     if (cat) setOpenCats((prev) => new Set(prev).add(cat.id));
   };
+
+  /* Onboarding tour step 3 support (Item 7, 2026-10-29): an external
+     open pulse opens the desktop sheet, and a spotlight key expands
+     its category and scrolls its real toggle row into view. */
+  useEffect(() => {
+    if (openSignal && openSignal > 0 && !isMobile) setSheetOpen(true);
+  }, [openSignal, isMobile]);
+  useEffect(() => {
+    if (!highlightLayerKey) return;
+    const cat = PANEL_CATEGORIES.find((c) => (c.keys ?? []).includes(highlightLayerKey));
+    if (cat) setOpenCats((prev) => (prev.has(cat.id) ? prev : new Set(prev).add(cat.id)));
+    const t = setTimeout(() => {
+      document
+        .querySelector(`[data-tour-layer="${highlightLayerKey}"]`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 400);
+    return () => clearTimeout(t);
+  }, [highlightLayerKey, sheetOpen]);
 
   /* Escape unwinds one step at a time: trial picker first, then the
      desktop sheet (the old rail's Escape closed its pinned flyout). */
@@ -910,15 +937,18 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
     const count = getCount(layer.dataKey, layer.catKey);
     const dormant = !!layer.parent && !activeLayers[layer.parent];
     const locked = layerLocked(layer, isPremiumUser);
+    const highlighted = highlightLayerKey === layer.key;
     return (
       <Fragment key={layer.key}>
         <button
+          data-tour-layer={layer.key}
           onClick={() => { if (locked) { openTrialFor(layer.key); } else { toggle(layer.key); } }}
           aria-pressed={isLayerActive}
           aria-expanded={locked ? trialLayerKey === layer.key : undefined}
           aria-label={locked ? `${layer.label} — premium` : layer.label}
           title={locked ? 'Weekly Pass required — start a free trial' : dormant ? 'Turn the layer above on to use this' : undefined}
-          className={`relative w-full flex items-center gap-3 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/40 ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-70' : ''}`}
+          className={`relative w-full flex items-center gap-3 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/40 ${layer.parent ? 'pl-[22px] pr-1' : 'px-1'} ${dormant ? 'opacity-70' : ''} ${highlighted ? 'onb-pulse' : ''}`}
+          style={highlighted ? { boxShadow: '0 0 0 2px rgba(0,229,255,0.9), 0 0 18px rgba(0,229,255,0.4)', borderRadius: 8 } : undefined}
         >
           {layer.parent && <SubLayerStem />}
           {locked ? (

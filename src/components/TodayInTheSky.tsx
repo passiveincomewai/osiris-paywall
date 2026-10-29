@@ -62,8 +62,11 @@ import {
 } from '@/lib/onboarding/first-camera';
 
 export interface TodayInTheSkyProps {
-  /** 'rail' — a button in the desktop right tool strip; 'chip' — a floating pill + bottom sheet on mobile. */
-  placement: 'rail' | 'chip';
+  /** 'rail' — a button in the desktop right tool strip; 'rail-left' — the
+   *  same button mirrored onto the desktop LEFT sidebar above Layers &
+   *  Stats (owner's order, 2026-10-29); 'chip' — a floating pill +
+   *  bottom sheet on mobile. */
+  placement: 'rail' | 'rail-left' | 'chip';
   /** Decoded /api/satellites rows the page already holds for the satellites layer. */
   satellites?: SatelliteRow[] | null;
   /** The satellites payload's own timestamp — the stations' as-of label. */
@@ -772,6 +775,8 @@ export default function TodayInTheSky({
     );
   }
 
+  const left = placement === 'rail-left';
+
   return (
     <div className="relative group">
       <button
@@ -783,28 +788,28 @@ export default function TodayInTheSky({
         aria-expanded={open}
       >
         {/* The owner's banner artwork, scaled whole (never cropped). The
-            strip's hit box stays the standard 32px — the banner overflows
-            left over the map, right-aligned with the strip, click-through
-            outside the box so the strip's layout and every other button's
-            placement are untouched. */}
+            hit box stays the standard 32px — on the right rail the banner
+            overflows left over the map; on the left rail it mirrors and
+            overflows right. Click-through outside the box so the host
+            layout and every other button's placement are untouched. */}
         <img
           src="/images/sky/launcher.webp"
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-1/2 block h-8 w-auto max-w-none -translate-y-1/2"
+          className={`pointer-events-none absolute top-1/2 block h-8 w-auto max-w-none -translate-y-1/2 ${left ? 'left-0' : 'right-0'}`}
         />
         {open && (
           <span
             aria-hidden="true"
-            className="absolute -right-1 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-current text-[#38BDF8]"
+            className={`absolute top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-current text-[#38BDF8] ${left ? '-left-1' : '-right-1'}`}
           />
         )}
       </button>
-      <span className="absolute right-11 top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none">
+      <span className={`absolute top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none ${left ? 'left-11' : 'right-11'}`}>
         {SKY_COPY.railTooltip}
       </span>
       {open && (
-        <div className="absolute right-12 top-1/2 -translate-y-1/2 w-[340px] max-w-[86vw]">
+        <div className={`absolute top-1/2 -translate-y-1/2 w-[340px] max-w-[86vw] ${left ? 'left-12' : 'right-12'}`}>
           <div
             className="rounded-xl border border-sky-400/25 bg-[#02091A]/90 backdrop-blur-md shadow-xl max-h-[76vh] overflow-y-auto styled-scrollbar"
             role="dialog"

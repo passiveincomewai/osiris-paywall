@@ -36,6 +36,12 @@ interface CinematicDirectorProps {
   followTarget?: { icao24: string; callsign?: string } | null;
   /** The launch the Space Mission preset flies to (selected or next up). */
   spaceTarget?: { name: string; padName?: string | null; lat: number; lon: number } | null;
+  /** External open pulse: when this counter changes to a new positive
+   *  value, the panel opens (and the gate re-checks if still unknown).
+   *  The Director's entry point lives in the RECON tools panel since
+   *  2026-10-29 (Item 2) — there is no floating launcher on the globe
+   *  anymore; this signal is how the RECON entry opens the panel. */
+  openSignal?: number;
 }
 
 const SPEEDS = [0.5, 1, 1.5, 2];
@@ -48,7 +54,7 @@ const iconBtnCls =
 const inputCls =
   'rounded border border-white/10 bg-white/[0.04] px-1.5 py-1 text-[10px] font-mono text-white focus:outline-none focus:border-cyan-400/50';
 
-export default function CinematicDirector({ mapRef, cameras = [], extraPresets = [], followTarget = null, spaceTarget = null }: CinematicDirectorProps) {
+export default function CinematicDirector({ mapRef, cameras = [], extraPresets = [], followTarget = null, spaceTarget = null, openSignal }: CinematicDirectorProps) {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState<CinematicScene[]>(() => loadSavedScenes());
   const [draft, setDraft] = useState<CameraKeyframe[]>([]);
@@ -82,14 +88,24 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
     return () => { live = false; };
   }, []);
 
-  const toggleOpen = () => {
+  const openPanel = useCallback(() => {
     // A failed first check shouldn't strand an affiliate on the lock:
     // retry whenever the panel is opened while access is still unknown.
-    if (!open && access === 'unknown') {
+    if (access === 'unknown') {
       void fetchDirectorGate().then((g) => { setAccess(g.access); setDirectorOn(g.enabled); });
     }
-    setOpen((o) => !o);
-  };
+    setOpen(true);
+  }, [access]);
+
+  /* The RECON panel's Director entry pulses this signal to open the
+     panel (it replaced the floating globe launcher, 2026-10-29). */
+  const lastOpenSignalRef = useRef(0);
+  useEffect(() => {
+    if (openSignal && openSignal > 0 && openSignal !== lastOpenSignalRef.current) {
+      lastOpenSignalRef.current = openSignal;
+      openPanel();
+    }
+  }, [openSignal, openPanel]);
 
   const playerRef = useRef<ScenePlayer | null>(null);
   if (!playerRef.current) playerRef.current = new ScenePlayer();
@@ -475,20 +491,28 @@ export default function CinematicDirector({ mapRef, cameras = [], extraPresets =
           </div>
         </div>
       )}
-      <button
-        type="button"
-        onClick={toggleOpen}
-        aria-pressed={open}
-        aria-label="Cinematic Director"
-        title={canDirect ? 'Cinematic Director — camera scenes & globe recording' : access === 'affiliate' ? 'Cinematic Director — switched off in your affiliate dashboard' : 'Cinematic Director — affiliates only'}
-        className="pointer-events-auto flex items-center gap-2 px-2.5 py-2 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all opacity-85 hover:opacity-100"
-      >
-        <Clapperboard className="w-4 h-4" style={open || playing || recording ? { color: 'var(--gold-primary)' } : undefined} />
-        {!canDirect && access !== 'unknown' && <Lock className="w-3 h-3" />}
-        <span className="text-[9px] font-mono tracking-[0.18em] hidden md:inline">
-          {recording ? `REC ${recordSecs}s` : playing ? 'PLAYING' : 'DIRECTOR'}
-        </span>
-      </button>
+      {/* No floating launcher anymore (removed 2026-10-29, Item 2):
+          the panel opens from the Cinematic Director entry in the
+          RECON tools panel. While a scene is playing or a recording
+          is running with the panel closed, only this slim status chip
+          shows — it exists so an in-flight capture is never left
+          unstoppable, not as an entry point. */}
+      {!open && (recording || playing) && (
+        <div className="pointer-events-auto flex items-center gap-2 px-2.5 py-2 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg text-[var(--text-secondary)]">
+          <Clapperboard className="w-4 h-4" style={{ color: 'var(--gold-primary)' }} />
+          <span className="text-[9px] font-mono tracking-[0.18em]">
+            {recording ? `REC ${recordSecs}s` : `PLAYING — ${playing?.name ?? ''}`}
+          </span>
+          <button
+            type="button"
+            onClick={() => { if (recording) { void stopRecording(); } else { stopPlayback(); } }}
+            className={`${btnCls} flex items-center gap-1`}
+          >
+            <Square className="w-3 h-3" /> Stop
+          </button>
+          <button type="button" onClick={openPanel} className={btnCls}>Panel</button>
+        </div>
+      )}
     </div>
   );
 }

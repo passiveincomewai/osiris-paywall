@@ -147,10 +147,11 @@ function useYouTubeError(name: string, onFail: () => void) {
   return { ref, handshake };
 }
 
-function Tile({ feed, onOpen, onFail }: {
+function Tile({ feed, onOpen, onFail, onDismiss }: {
   feed: PreviewFeed;
   onOpen: (feed: PreviewFeed) => void;
   onFail: (id: string) => void;
+  onDismiss: (id: string) => void;
 }) {
   const fail = useCallback(() => onFail(feed.id), [onFail, feed.id]);
   const { ref, handshake } = useYouTubeError(feed.id, fail);
@@ -172,6 +173,17 @@ function Tile({ feed, onOpen, onFail }: {
           onLoad={handshake}
           onError={fail}
         />
+        {/* Dismiss this tile for the session (Item 4, 2026-10-29) —
+            the tiles sit over the map and had no way to go away. */}
+        <button
+          onClick={() => onDismiss(feed.id)}
+          title={`Dismiss ${feed.name}`}
+          aria-label={`Dismiss ${feed.name}`}
+          className="absolute left-1 top-1 z-10 px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em]"
+          style={{ background: 'rgba(0,0,0,0.75)', border: `1px solid ${news(50)}`, color: NEWS }}
+        >
+          ✕
+        </button>
         {/* The player owns its own pointer events, so opening the full viewer
             needs its own target rather than a wrapping button. */}
         <button
@@ -231,6 +243,33 @@ function LiveNewsPreviews({ mapRef, active, feeds, onOpen }: {
     setDead(prev => (prev.has(id) ? prev : new Set(prev).add(id)));
   }, []);
 
+  /* Item 4 (2026-10-29): tiles the viewer dismissed, and a global
+     minimize for the whole tile layer — both remembered for the
+     session. The tiles render inside the map at z-39, below the
+     RECON rail (z-250), and the minimize control sits bottom-left,
+     away from the rail, so the tools stay reachable either way. */
+  const [dismissed, setDismissed] = useState<ReadonlySet<string>>(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? window.sessionStorage.getItem('we_news_dismissed') : null;
+      return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    } catch { return new Set(); }
+  });
+  const onDismiss = useCallback((id: string) => {
+    setDismissed(prev => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev).add(id);
+      try { window.sessionStorage.setItem('we_news_dismissed', JSON.stringify([...next])); } catch { /* private mode */ }
+      return next;
+    });
+  }, []);
+  const [newsMinimized, setNewsMinimized] = useState<boolean>(() => {
+    try { return typeof window !== 'undefined' && window.sessionStorage.getItem('we_news_previews_min') === '1'; } catch { return false; }
+  });
+  const setMinimizedPersist = (v: boolean) => {
+    setNewsMinimized(v);
+    try { window.sessionStorage.setItem('we_news_previews_min', v ? '1' : '0'); } catch { /* private mode */ }
+  };
+
   /** Pick which feeds get a tile. Runs only when the map settles. */
   const recompute = useCallback(() => {
     const map = mapRef.current;
@@ -252,7 +291,7 @@ function LiveNewsPreviews({ mapRef, active, feeds, onOpen }: {
       const url = String(f?.url ?? '');
       const lng = Number(f?.lng);
       const lat = Number(f?.lat);
-      if (!name || !url || seen.has(name) || dead.has(name)) continue;
+      if (!name || !url || seen.has(name) || dead.has(name) || dismissed.has(name)) continue;
       if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue;
 
       const embed = embedUrl(url, f?.embed_allowed !== false && f?.embed_allowed !== 'false');
@@ -296,7 +335,7 @@ function LiveNewsPreviews({ mapRef, active, feeds, onOpen }: {
       const same = prev.length === chosen.length && prev.every((p, i) => p.id === chosen[i].feed.id);
       return same ? prev : chosen.map(p => p.feed);
     });
-  }, [mapRef, active, feeds, dead]);
+  }, [mapRef, active, feeds, dead, dismissed]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -342,8 +381,33 @@ function LiveNewsPreviews({ mapRef, active, feeds, onOpen }: {
 
   if (!picked.length) return null;
 
+  if (newsMinimized) {
+    return (
+      <div className="pointer-events-none absolute inset-0 z-[39] overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setMinimizedPersist(false)}
+          className="pointer-events-auto absolute left-3 bottom-[132px] px-2 py-1.5 rounded-md font-mono text-[9px] uppercase tracking-[0.14em]"
+          style={{ background: 'rgba(0,0,0,0.8)', border: `1px solid ${news(50)}`, color: NEWS }}
+          title="Show live news tiles"
+        >
+          Live News ▸ ({picked.length})
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="pointer-events-none absolute inset-0 z-[39] overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setMinimizedPersist(true)}
+        className="pointer-events-auto absolute left-3 bottom-[132px] px-2 py-1.5 rounded-md font-mono text-[9px] uppercase tracking-[0.14em]"
+        style={{ background: 'rgba(0,0,0,0.8)', border: `1px solid ${news(50)}`, color: NEWS }}
+        title="Hide live news tiles"
+      >
+        Live News — Hide
+      </button>
       {picked.map(feed => (
         <div
           key={feed.id}
@@ -352,7 +416,7 @@ function LiveNewsPreviews({ mapRef, active, feeds, onOpen }: {
           className="pointer-events-auto absolute left-0 top-0 will-change-transform"
           style={{ width: GEOM.width }}
         >
-          <Tile feed={feed} onOpen={onOpen} onFail={onFail} />
+          <Tile feed={feed} onOpen={onOpen} onFail={onFail} onDismiss={onDismiss} />
           <Connector />
         </div>
       ))}

@@ -55,12 +55,19 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', 
       transition={{ duration: 0.3, delay: 0.4 }}
       className="absolute right-2 bottom-[112px] md:bottom-12 z-[240] pointer-events-auto" data-map-controls>
       <div className="flex flex-col items-end gap-[6px]">
+      {/* The two sliding switches (Day/Night + Satellite view) render
+          here ONLY below the md breakpoint: on desktop they moved into
+          the globe header (Item 8, 2026-10-29), where no sidebar or
+          right-rail panel can cover them. Mobile keeps them here,
+          unchanged. */}
+      <div className="flex flex-col items-end gap-[6px] md:hidden">
       {onBasemapModeChange && (
         <BasemapSwitch mode={basemapMode} onChange={onBasemapModeChange} />
       )}
       {onSatelliteToggle && (
         <SatelliteSwitch on={satelliteOn} onToggle={onSatelliteToggle} />
       )}
+      </div>
       <div role="group" aria-label="Map camera controls"
         className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
         <ZoomArtwork limits={limits} press={press} release={release} step={step} />
@@ -100,7 +107,7 @@ const BASEMAP_SWITCH_STATES: Array<{
   { mode: 'day', img: '/images/basemap-switch/switch-day.png', label: 'Day mode', title: 'Day mode — light basemap, white background' },
 ];
 
-function BasemapSwitch({ mode, onChange }: { mode: BasemapMode; onChange: (mode: BasemapMode) => void }) {
+export function BasemapSwitch({ mode, onChange }: { mode: BasemapMode; onChange: (mode: BasemapMode) => void }) {
   return (
     <div role="radiogroup" aria-label="Globe day, auto and night modes"
       className="relative h-10 md:h-8 aspect-[398/207] shrink-0 opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] focus-within:outline focus-within:outline-1 focus-within:outline-[var(--gold-primary)] rounded-full">
@@ -139,7 +146,7 @@ const SATELLITE_SWITCH_FRAMES = [
 
 type SatelliteFrame = 'on' | 'mid' | 'off';
 
-function SatelliteSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+export function SatelliteSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   const [frame, setFrame] = useState<SatelliteFrame>(on ? 'on' : 'off');
   const mounted = useRef(false);
   useEffect(() => {

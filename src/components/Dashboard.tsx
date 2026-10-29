@@ -58,6 +58,7 @@ const buildHomeFaqJsonLd = (items: HomeFaq[]) => ({
   })),
 });
 import ScmPanel from '@/components/ScmPanel';
+import { BasemapSwitch, SatelliteSwitch } from '@/components/MapControls';
 import SearchBar from '@/components/SearchBar';
 import type { RouteResult, LiveLocation } from '@/components/DirectionsBar';
 import type { WatchedFlight, FlightTelemetry, AircraftDetail, Airport } from '@/components/FlightWatchPanel';
@@ -178,27 +179,6 @@ const UptimeClock = () => {
   return <span className="hidden lg:inline">UPTIME: <span className="text-[var(--gold-primary)]">{uptime}</span></span>;
 };
 
-const ZuluClock = () => {
-  const [time, setTime] = useState('');
-  useEffect(() => {
-    const iv = setInterval(() => {
-      const now = new Date();
-      setTime(`ZULU ${String(now.getUTCHours()).padStart(2,'0')}:${String(now.getUTCMinutes()).padStart(2,'0')}:${String(now.getUTCSeconds()).padStart(2,'0')}Z`);
-    }, 1000);
-    return () => clearInterval(iv);
-  }, []);
-  return <span className="text-[var(--cyan-primary)] font-bold tabular-nums">{time || 'ZULU --:--:--Z'}</span>;
-};
-
-/** Real entity count — no fake throughput metrics */
-const ActiveEntityCount = ({ data }: { data: Record<string, unknown[]> }) => {
-  const count = useMemo(() => {
-    if (!data) return 0;
-    return Object.values(data).reduce((sum, v) => sum + (Array.isArray(v) ? v.length : 0), 0);
-  }, [data]);
-  return <span className="text-[var(--alert-green)] font-bold tabular-nums">{count.toLocaleString()}</span>;
-};
-
 /** Extracts a watchable YouTube URL from embed/channel URLs */
 function getYouTubeWatchUrl(url: string): string {
   if (url.includes('channel=')) return `https://www.youtube.com/channel/${url.split('channel=')[1].split('&')[0]}/live`;
@@ -250,7 +230,10 @@ export default function Dashboard() {
   const [dataVersion, setDataVersion] = useState(0);
   const data = dataRef.current;
 
-  const [backendStatus, setBackendStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
+  // The status value itself is no longer displayed (the header readout
+  // strip was removed 2026-10-29); the setters still mark feed health
+  // for the data-loading paths that call them.
+  const [, setBackendStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
   const [mapView, setMapView] = useState({ zoom: 2.5, latitude: 20 });
   const [flyToLocation, setFlyToLocation] = useState<{ lat: number; lng: number; zoom?: number; alertId?: string; duration?: number; ts: number } | null>(null);
   /* The Live Alerts the feed's filters leave showing; the map pins those. */
@@ -324,8 +307,29 @@ export default function Dashboard() {
   /** Pro locks that are a lone button (OI dock/tab) open the trial picker
    *  dialog instead of bouncing to /pricing. */
   const [showTrialPicker, setShowTrialPicker] = useState(false);
-  const [spaceWeather, setSpaceWeather] = useState<any>(null);
   const [showLayers, setShowLayers] = useState(true);
+  /* Cinematic Director open pulse (Item 2, 2026-10-29): the Director's
+     entry point is the Cinematic Director tool inside the RECON panel;
+     clicking it closes the panel and pulses the globe's Director open. */
+  const [directorSignal, setDirectorSignal] = useState(0);
+  const handleOpenDirector = useCallback(() => {
+    setShowIntel(false);
+    setMobilePanel(null);
+    setDirectorSignal(s => s + 1);
+  }, []);
+  /* Onboarding tour step 3 (Item 7, 2026-10-29): while the step is
+     active, the Layers panel opens automatically and its Weather
+     toggle is spotlighted inside the open panel. */
+  const [layersOpenSignal, setLayersOpenSignal] = useState(0);
+  const [tourLayersStep, setTourLayersStep] = useState(false);
+  const handleLayersStepActive = useCallback((active: boolean) => {
+    setTourLayersStep(active);
+    if (!active) return;
+    // isMobile is declared further down the component; the codebase's
+    // own pattern for callbacks defined up here is a call-time check.
+    if (window.matchMedia('(max-width: 767px)').matches) setMobilePanel('layers');
+    else { setShowLayers(true); setLayersOpenSignal(s => s + 1); }
+  }, []);
   const [showAlerts, setShowAlerts] = useState(false);
   const [showSpaceCam, setShowSpaceCam] = useState(false);
   const [showScmPanel, setShowScmPanel] = useState(true);
@@ -1864,14 +1868,6 @@ export default function Dashboard() {
     };
     const marketTimer = setTimeout(() => loadMarkets(), 800);
 
-    // Priority 2: Space Weather
-    const spaceTimer = setTimeout(async () => {
-      try {
-        const r = await fetch('/api/space-weather');
-        if (r.ok) setSpaceWeather(await r.json());
-      } catch (e) { console.warn('[OSIRIS] Suppressed error:', e instanceof Error ? e.message : e); }
-    }, 5000);
-
     // Polling — OPTIMIZED intervals to minimize edge requests
     const intervals = [
       setInterval(() => fetchEndpoint(eqUrl, eqTransform, undefined, { skipWhenHidden: true }), 900000),  // 15 min (was 5)
@@ -1884,7 +1880,6 @@ export default function Dashboard() {
     return () => {
       clearTimeout(marketTimer);
       marketRetries.forEach(clearTimeout);
-      clearTimeout(spaceTimer);
       intervals.forEach(clearInterval);
     };
   }, [fetchEndpoint, dataBoot]);
@@ -2427,6 +2422,7 @@ export default function Dashboard() {
           onSatelliteToggle={handleSatelliteToggle}
           satelliteSelection={satelliteSelection}
           onSatelliteSelectionChange={setSatelliteSelection}
+          directorOpenSignal={directorSignal}
           onEntityClick={handleEntityClick} 
           onMouseCoords={handleMouseCoords} 
           onRightClick={handleRightClick} 
@@ -2716,26 +2712,24 @@ export default function Dashboard() {
         </Link>
       </motion.div>
 
-      {/* ── TOP-RIGHT STATUS (desktop) ── */}
+      {/* ── TOP-RIGHT CONTROLS (desktop) ──
+          The readout strip that used to sit here (ZULU clock, backend
+          STATUS, layer count, entity count, SOLAR Kp) was removed at
+          the owner's order (2026-10-29): the header keeps only its
+          actual controls — language + account. */}
       <motion.div data-hud initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={hudIn(0.35)} className="status-bar-desktop absolute top-4 right-6 z-[480] pointer-events-none flex items-center gap-3 text-[10px] font-mono tracking-widest text-[var(--text-muted)]">
 
-        <span className="hidden lg:inline-flex items-center gap-1.5">
-          <ZuluClock />
+        {/* Day/Night + Satellite view switches (Item 8, 2026-10-29):
+            moved up from the map's bottom-right corner, where the
+            right rail and its panels covered them, into the header
+            space the readout strip vacated. Same components, same
+            state (basemapMode / satellite toggle the page already
+            owns) — only the placement changed. Desktop only; mobile
+            keeps them in MapControls. */}
+        <span className="pointer-events-auto hidden md:flex items-center gap-3">
+          <BasemapSwitch mode={basemapMode} onChange={setBasemapMode} />
+          <SatelliteSwitch on={mapStyle === 'satellite'} onToggle={handleSatelliteToggle} />
         </span>
-
-        <span className="flex items-center gap-1" title="Backend connection status">STATUS: <span className={backendStatus === 'connected' ? 'text-[var(--alert-green)]' : 'text-[var(--alert-red)]'}>{backendStatus === 'connected' ? 'LIVE' : backendStatus.toUpperCase()}</span></span>
-
-        <span className="hidden lg:inline-flex items-center gap-1" title="Number of active data layers">
-          <span className="text-[var(--cyan-primary)] font-bold">{Object.values(activeLayers).filter(Boolean).length}</span>
-          <span>LAYERS</span>
-        </span>
-
-        <span className="hidden lg:inline-flex items-center gap-1" title="Tracked entities on map">
-          <ActiveEntityCount data={data} />
-          <span>ENTITIES</span>
-        </span>
-
-        {spaceWeather && <span className="hidden lg:inline" title={spaceWeather.kp_index == null ? 'Geomagnetic Storm Index — no reading from NOAA' : `Geomagnetic Storm Index — Kp${spaceWeather.kp_index}`}>SOLAR: <span style={{ color: spaceWeather.storm_color, fontWeight: 700 }}>{spaceWeather.kp_index == null ? 'N/A' : `Kp${spaceWeather.kp_index}`}</span></span>}
 
         {/* Identity-driven account slot (components/AccountHudControl):
             premium → account menu; signed-in free → Upgrade pill AND the
@@ -2773,8 +2767,20 @@ export default function Dashboard() {
 
 
 
+      {/* ── TODAY IN THE SKY (desktop, left rail) ──
+          Moved from the right tool strip to the opposite sidebar at the
+          owner's order (2026-10-29), directly above the Layers & Stats
+          pill (which sits at top-[92px]; this button occupies 52–84).
+          z-index stays below the LayerPanel sheet (z-50) so the open
+          sheet covers it. */}
+      {!isMobile && (
+        <motion.div data-hud initial={{ opacity: 0, x: -12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }} transition={hudIn(0.3)} className="absolute left-3 z-[45] pointer-events-auto" style={{ top: 52 }}>
+          <TodayInTheSky placement="rail-left" satellites={data.satellites} satellitesAt={data.satellites_at} earthquakes={data.earthquakes} onLocate={locateFromSkyPanel} />
+        </motion.div>
+      )}
+
       {/* ── NEW SIDEBAR (Root Level) ── */}
-      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} /></div>}
+      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} openSignal={layersOpenSignal} highlightLayerKey={tourLayersStep ? 'weather' : null} /></div>}
 
 
 
@@ -2794,7 +2800,7 @@ export default function Dashboard() {
           <AnimatePresence>
             {showIntel && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="absolute right-12 top-1/2 -translate-y-1/2 w-80">
-                <OsintPanel onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} onScanGeolocate={(target, data) => {
+                <OsintPanel onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} onScanGeolocate={(target, data) => {
                   setScanTargets(prev => {
                     const existing = prev.filter(t => t.id !== target);
                     return [{ id: target, timestamp: Date.now(), ...data }, ...existing].slice(0, 10);
@@ -2820,7 +2826,7 @@ export default function Dashboard() {
           <AnimatePresence>
             {showSpaceCam && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="absolute right-12 top-1/2 -translate-y-1/2 w-80">
-                <SpaceCam />
+                <SpaceCam onClose={() => setShowSpaceCam(false)} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -2845,11 +2851,6 @@ export default function Dashboard() {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Today in the Sky — self-contained rail item (its own open state,
-            like the checkout strip): a glanceable launches/stations/storms/
-            quakes panel fed by the site's existing live data. */}
-        <TodayInTheSky placement="rail" satellites={data.satellites} satellitesAt={data.satellites_at} earthquakes={data.earthquakes} onLocate={locateFromSkyPanel} />
 
         <div className="relative group">
           <button onClick={() => { setShowDrawing(!showDrawing); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showDrawing ? 'bg-[#00E5FF]/20' : 'hover:bg-white/10'}`} title="Draw — measure areas of interest on the map" aria-label="Draw" aria-expanded={showDrawing}>
@@ -3119,7 +3120,7 @@ export default function Dashboard() {
                   )}
                   {mobilePanel === 'layers' && (
                     <>
-                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} onClose={() => setMobilePanel(null)} />
+                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} onClose={() => setMobilePanel(null)} highlightLayerKey={tourLayersStep ? 'weather' : null} />
                       <div className="mt-8">
                         <ViewPresets onNavigate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       </div>
@@ -3180,7 +3181,7 @@ export default function Dashboard() {
                   )}
                   {mobilePanel === 'recon' && (
                     <div className="space-y-2">
-                      <OsintPanel isOpen={true} onClose={() => setMobilePanel(null)} isMobile={true} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} />
+                      <OsintPanel isOpen={true} onClose={() => setMobilePanel(null)} isMobile={true} onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} />
                     </div>
                   )}
                 </div>
@@ -3405,6 +3406,7 @@ export default function Dashboard() {
         isMobile={isMobile}
         isPremium={isPremiumUser}
         onUiChange={setOnboardingUiActive}
+        onLayersStepActive={handleLayersStepActive}
         cameraId={activeCamera ? String(activeCamera.id ?? activeCamera.name ?? 'open') : null}
         layersSig={Object.entries(activeLayers).filter(([, v]) => v).map(([k]) => k).join(',')}
         panel={mobilePanel ?? (showOi ? 'oi' : showIntel ? 'recon' : showAlerts ? 'alerts' : showDesktopSearch ? 'search' : null)}

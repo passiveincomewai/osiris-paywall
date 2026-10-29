@@ -94,6 +94,10 @@ export interface OnboardingRootProps {
    *  stacking on top of it — the same visibility-reporting pattern
    *  TimedTrialPopup already uses. */
   onUiChange?: (active: boolean) => void;
+  /** Tour step 3 (the data-layer step) became active or stopped being
+   *  active. The parent opens the Layers panel for the step's duration
+   *  and highlights a real layer toggle inside it (Item 7, 2026-10-29). */
+  onLayersStepActive?: (active: boolean) => void;
 }
 
 function OnboardingRootInner({
@@ -105,6 +109,7 @@ function OnboardingRootInner({
   panel,
   signupOpen,
   onUiChange,
+  onLayersStepActive,
 }: OnboardingRootProps) {
   const [group, setGroup] = useState<OnbGroup>("a");
   const [onb, setOnb] = useState<OnbState>(() => loadState());
@@ -403,6 +408,21 @@ function OnboardingRootInner({
   useEffect(() => {
     if (shouldCompleteCameraStep(ui === "tour", tourStep, cameraId)) succeedStep();
   }, [ui, tourStep, cameraId, succeedStep]);
+
+  /* ── Tour step 3 (data layer): tell the parent while it is the active
+     step, so it can open the Layers panel and spotlight a real toggle.
+     The step still completes only through the layers-toggled signal
+     below — opening the panel is presentation, not completion. ── */
+  const layersStepCbRef = useRef(onLayersStepActive);
+  layersStepCbRef.current = onLayersStepActive;
+  const layersStepWasActiveRef = useRef(false);
+  useEffect(() => {
+    const active = ui === "tour" && tourStep === 3;
+    if (active !== layersStepWasActiveRef.current) {
+      layersStepWasActiveRef.current = active;
+      layersStepCbRef.current?.(active);
+    }
+  }, [ui, tourStep]);
 
   /* ── Signal: layers toggled ── */
   const prevLayersRef = useRef<string | null>(null);

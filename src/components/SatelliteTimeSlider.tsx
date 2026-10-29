@@ -59,7 +59,7 @@ export default function SatelliteTimeSlider({ selection, onSelectionChange }: Sa
 
   return (
     <div
-      className="absolute z-[240] pointer-events-auto left-2 right-[104px] bottom-[112px] md:left-1/2 md:right-auto md:-translate-x-1/2 md:bottom-5 md:w-[600px] md:max-w-[94vw] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg px-3 py-2 text-[var(--text-primary)]"
+      className="absolute z-[240] pointer-events-auto left-2 right-[104px] bottom-[112px] md:left-1/2 md:right-auto md:-translate-x-1/2 md:top-[64px] md:bottom-auto md:w-[600px] md:max-w-[94vw] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg px-3 py-2 text-[var(--text-primary)]"
       role="group"
       aria-label="Satellite imagery time"
     >
