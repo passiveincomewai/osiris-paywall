@@ -308,6 +308,11 @@ const data: AltData = {
       href: "/alternatives/windy",
     },
     {
+      label: "God's Eye View alternative",
+      desc: "The open-source globe you install yourself, compared honestly with the hosted version.",
+      href: "/alternatives/gods-eye-view",
+    },
+    {
       label: "Satellite tracker",
       desc: "Thousands of satellites and the ISS, tracked live and free.",
       href: "/satellite-tracker",

@@ -2611,7 +2611,7 @@ export const POSTS: BlogPost[] = [
       {
         heading: "So which should you pick?",
         body: [
-          "Pick God's Eye View if you're a builder or creator who wants the original project and enjoys running it. Pick World Monitor if you follow geopolitics, markets or conflict professionally and want depth over imagery — see our dedicated [World Monitor comparison](/compare/world-monitor) and [alternatives guide](/alternatives/world-monitor). Pick WorldEye if you want to explore the living planet — cameras first, everything else layered on. Plenty of serious watchers keep two tabs open: the dashboard for the analysis, the globe for the picture.",
+          "Pick God's Eye View if you're a builder or creator who wants the original project and enjoys running it — or skip the install entirely: our [God's Eye View alternative](/alternatives/gods-eye-view) page covers the hosted route to the same live globe. Pick World Monitor if you follow geopolitics, markets or conflict professionally and want depth over imagery — see our dedicated [World Monitor comparison](/compare/world-monitor) and [alternatives guide](/alternatives/world-monitor). Pick WorldEye if you want to explore the living planet — cameras first, everything else layered on. Plenty of serious watchers keep two tabs open: the dashboard for the analysis, the globe for the picture.",
           "Comparing just the two hosted ones? World Monitor is a reading experience; WorldEye is a looking experience. The fastest way to decide is to open both — [WorldEye's globe](/) is free with no signup, and so is World Monitor's dashboard.",
         ],
       },

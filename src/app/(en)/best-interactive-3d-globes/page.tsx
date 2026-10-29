@@ -351,6 +351,11 @@ export default function BestInteractive3DGlobesPage() {
             href: "/alternatives/google-earth",
           },
           {
+            label: "God's Eye View alternative",
+            desc: "The viral open-source globe is install-only — the hosted alternative, compared.",
+            href: "/alternatives/gods-eye-view",
+          },
+          {
             label: "Best global intelligence dashboards",
             desc: "When your globe needs to be a situation room.",
             href: "/best-global-intelligence-dashboards",

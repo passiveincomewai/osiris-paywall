@@ -301,6 +301,11 @@ const data: AltData = {
       href: "/alternatives/osiris",
     },
     {
+      label: "God's Eye View alternative",
+      desc: "The viral install-it-yourself globe — and how the hosted alternative stacks up.",
+      href: "/alternatives/gods-eye-view",
+    },
+    {
       label: "War Monitor alternatives",
       desc: "Conflict-first dashboards compared with the live globe.",
       href: "/alternatives/war-monitor",

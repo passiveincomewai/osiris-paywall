@@ -33,7 +33,7 @@ const data: AltData = {
     </>
   ),
   updatedNote:
-    "Facts checked October 20, 2026 against the God's Eye View README on GitHub and WorldEye's live pricing page. Camera counts are each project's own published figures.",
+    "Facts checked October 28, 2026 against the God's Eye View README on GitHub and WorldEye's live pricing page. Camera counts are each project's own published figures.",
   aboutIcon: GitBranch,
   aboutHeading: "What God's Eye View actually is",
   about: [
@@ -46,7 +46,7 @@ const data: AltData = {
       transit in a growing list of cities, geolocated radio, and a CCTV mesh
       of roughly 4,000 public cameras projected into the 3D scene. On top sits
       its signature feature — a voice-controlled AI agent, built on
-      OpenAI&apos;s Realtime API with 28 tools, that can fly the globe, query
+      OpenAI&apos;s Realtime API with 30 tools, that can fly the globe, query
       layers and annotate the world while you talk to it.
     </>,
     <>
@@ -76,7 +76,7 @@ const data: AltData = {
     },
     {
       title: "The voice agent is unique",
-      body: "Twenty-eight tools driven by natural speech — 'fly to Tokyo', 'how many flights over Texas?', sensor modes on command. Nobody else in this space ships that.",
+      body: "Thirty tools driven by natural speech — 'fly to Tokyo', 'how many flights over Texas?', sensor modes on command. Nobody else in this space ships that.",
     },
     {
       title: "Cinematic sensor aesthetics",
@@ -179,7 +179,7 @@ const data: AltData = {
     { feature: "Flights & satellites", competitor: "Yes — live layers, keyless", worldEye: "Yes — live layers, free" },
     { feature: "Weather, quakes, fires", competitor: "Yes — GFS/ECMWF, radar, cyclone tracks, keyless", worldEye: "Yes — weather, radar, quakes and fires, free" },
     { feature: "Photorealistic 3D tiles", competitor: "Yes, with a Cesium ion token or your Google Maps key", worldEye: "3D globe with satellite view on Pro; no key needed" },
-    { feature: "Voice AI agent", competitor: "Yes — 28 tools, on your OpenAI key", worldEye: "No voice agent; an on-screen AI assistant is part of the Pro toolkit" },
+    { feature: "Voice AI agent", competitor: "Yes — 30 tools, on your OpenAI key", worldEye: "No voice agent; an on-screen AI assistant is part of the Pro toolkit" },
     { feature: "Recording & alerts", competitor: "Scene director for cinematic captures; no camera recording or alerts", worldEye: "Multi-camera recording (20 Pro / 40 VIP), timelapse and camera alerts on VIP Pro" },
     { feature: "Modify the code", competitor: "Yes — that's the point of it", worldEye: "No — hosted product" },
     { feature: "Works on your phone", competitor: "Not practically — it's a desktop install", worldEye: "Yes — the full globe in a mobile browser" },
@@ -245,7 +245,7 @@ const data: AltData = {
     },
     {
       q: "Want the voice agent and sensor looks?",
-      a: "God's Eye View, honestly — its 28-tool voice agent and FLIR-style modes have no hosted equivalent yet.",
+      a: "God's Eye View, honestly — its 30-tool voice agent and FLIR-style modes have no hosted equivalent yet.",
     },
   ],
   faqHeading: "God's Eye View alternative questions, answered",
@@ -268,7 +268,7 @@ const data: AltData = {
     },
     {
       q: "Does WorldEye have the voice agent?",
-      a: "No. God's Eye View's 28-tool voice agent — flying the globe and querying layers by speech, on your OpenAI key — is genuinely unique to it. WorldEye's Pro tier includes an on-screen AI assistant within its OSINT toolkit, but it doesn't pretend to be the same thing.",
+      a: "No. God's Eye View's 30-tool voice agent — flying the globe and querying layers by speech, on your OpenAI key — is genuinely unique to it. WorldEye's Pro tier includes an on-screen AI assistant within its OSINT toolkit, but it doesn't pretend to be the same thing.",
     },
     {
       q: "Is WorldEye affiliated with God's Eye View?",

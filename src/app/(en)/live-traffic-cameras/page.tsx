@@ -37,12 +37,12 @@ const updatedLabel = new Date(stateIndex.generatedAt).toLocaleDateString("en-US"
 });
 
 export const metadata: Metadata = {
-  title: "Live Traffic Cameras — US DOT Highway Cams",
-  description: `Watch ${fmt(total)} live US traffic cameras — DOT highway feeds, interstate junctions and city streets. Free, no signup. Check road conditions in real time.`,
+  title: "Freeway Cameras — Live US Traffic Cameras",
+  description: `Watch ${fmt(total)} live US freeway cameras and traffic cams — DOT highway feeds, interstate junctions and city streets. Free, no signup.`,
   alternates: { canonical: "https://worldeye.app/live-traffic-cameras" },
   openGraph: {
-    title: "Live Traffic Cameras — US DOT Highway Cams | WorldEye",
-    description: `${fmt(total)} live US traffic cameras — DOT highway feeds and interstate junctions, free to watch with no signup.`,
+    title: "Freeway Cameras — Live US Traffic Cameras | WorldEye",
+    description: `${fmt(total)} live US freeway and traffic cameras — DOT highway feeds and interstate junctions, free to watch with no signup.`,
     url: "https://worldeye.app/live-traffic-cameras",
     type: "website",
   },
@@ -121,8 +121,8 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "CollectionPage",
-      name: "Live Traffic Cameras — US DOT Highway Cams",
-  description: `Directory of ${fmt(total)} live US traffic cameras from DOT and public sources, with per-state counts.`,
+      name: "Freeway Cameras — Live US Traffic Cameras",
+  description: `Directory of ${fmt(total)} live US freeway and traffic cameras from DOT and public sources, with per-state counts.`,
   url: "https://worldeye.app/live-traffic-cameras",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
       dateModified: stateIndex.generatedAt,
@@ -167,7 +167,7 @@ export default async function LiveTrafficCamerasPage() {
             <Car className="w-3.5 h-3.5" /> TRAFFIC NETWORK
           </p>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Watch US Traffic Cameras <span className="text-[#D4AF37]">Live, Right Now</span>
+            Watch US Traffic &amp; Freeway Cameras <span className="text-[#D4AF37]">Live, Right Now</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
             WorldEye tracks {fmt(total)} live traffic cameras across the United
