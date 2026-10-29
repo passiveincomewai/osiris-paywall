@@ -11,13 +11,14 @@ import { ac, lk, st, tx } from "../types";
 
 export const esLiveFlightTracker: LiveFlightTrackerCopy = {
   meta: {
-    title: "Mira vuelos en vivo — Rastreador de vuelos gratis con vista satelital",
+    title: "Rastreador de vuelos en vivo — ojo en el cielo en directo",
     description:
-      "Mira vuelos en vivo en un globo 3D gratuito con vista satelital: posición en tiempo real, altitud, velocidad, tipo de avión y rutas con datos ADS-B en vivo, además de satélites, barcos y 74.229 cámaras públicas en el mismo mapa. Gratis: sin registro, sin cuenta, sin costo.",
-    ogTitle: "Mira vuelos en vivo — Rastreador de vuelos gratis con vista satelital | WorldEye",
+      "Mira vuelos en vivo — tu ojo en el cielo en directo: posición, altitud, velocidad y rutas en tiempo real en un globo 3D gratuito con vista satelital. Gratis, sin registro.",
+    ogTitle: "Rastreador de vuelos en vivo — ojo en el cielo en directo | WorldEye",
     ogDescription:
-      "Seguimiento de vuelos en tiempo real en un globo 3D gratuito: posición, altitud, velocidad, tipo de avión y rutas con datos ADS-B en vivo, además de satélites, barcos y 74.229 cámaras públicas en el mismo mapa. Gratis, sin registro.",
+      "Seguimiento de vuelos en tiempo real en un globo 3D gratuito: posición, altitud, velocidad, tipo de avión y rutas con datos ADS-B en vivo — tu ojo sobre todo el cielo, además de satélites, barcos y 74.229 cámaras públicas en el mismo mapa. Gratis, sin registro.",
     keywords: [
+      "ojo en el cielo",
       "rastreador de vuelos en vivo",
       "radar de vuelos",
       "seguir vuelos en vivo",
@@ -29,7 +30,7 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
   schema: {
     webPageName: "Rastreador de vuelos en vivo de WorldEye",
     webPageDescription:
-      "Sigue vuelos en vivo en un mapa 3D gratuito con vista satelital. Este rastreador de aviones muestra la posición en tiempo real, la altitud, la velocidad, el tipo de avión y las rutas, sin registro y sin costo.",
+      "Sigue vuelos en vivo en un mapa 3D gratuito con vista satelital — tu ojo en el cielo en directo. Este rastreador de aviones muestra la posición en tiempo real, la altitud, la velocidad, el tipo de avión y las rutas, sin registro y sin costo.",
   },
   topBar: {
     backToMap: "Volver al mapa",
@@ -39,7 +40,7 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
   hero: {
     badge: "RASTREADOR DE VUELOS EN VIVO GRATIS",
     h1: [tx("Sigue cada vuelo, "), ac("en vivo"), tx(".")],
-    sub: "Este rastreador de aviones sitúa las aeronaves en tiempo real sobre un globo 3D: posición, altitud, velocidad y rutas. Es un radar de vuelos que no cuesta nada y no pide nada: sin registro, sin cuenta, sin muro de pago.",
+    sub: "Este rastreador de aviones es tu ojo en el cielo en directo: sitúa las aeronaves en tiempo real sobre un globo 3D — posición, altitud, velocidad y rutas. Es un radar de vuelos que no cuesta nada y no pide nada: sin registro, sin cuenta, sin muro de pago.",
     ctaPrimary: "Abrir el rastreador en vivo",
     freeNote: "Gratis para siempre · Sin registro",
   },

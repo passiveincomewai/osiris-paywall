@@ -91,13 +91,14 @@ export interface LiveFlightTrackerCopy {
 
 export const enLiveFlightTracker: LiveFlightTrackerCopy = {
   meta: {
-    title: "Watch Flights Live — Free Flight Tracker with Satellite View",
+    title: "Flight Eye — Live Flight Tracker, Satellite View",
     description:
-      "Watch flights live on a free 3D globe with satellite view: real-time position, altitude, speed, aircraft type and routes from live ADS-B data — plus satellites, ships and 74,229 public cameras on the same map. Free — no signup, no account, no cost.",
-    ogTitle: "Watch Flights Live — Free Flight Tracker with Satellite View | WorldEye",
+      "Watch flights live with a flight eye on the sky — real-time position, altitude, speed and routes on a free 3D globe with satellite view. Free, no signup.",
+    ogTitle: "Flight Eye — Live Flight Tracker, Satellite View | WorldEye",
     ogDescription:
-      "Real-time flight tracking on a free 3D globe: position, altitude, speed, aircraft type and routes from live ADS-B data — plus satellites, ships and 74,229 public cameras on the same map. Free — no signup.",
+      "Real-time flight tracking on a free 3D globe: position, altitude, speed, aircraft type and routes from live ADS-B data — a flight eye over the whole sky, plus satellites, ships and 74,229 public cameras on the same map. Free — no signup.",
     keywords: [
+      "flight eye",
       "live flight tracker",
       "flight radar",
       "track flights live",
@@ -109,7 +110,7 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
   schema: {
     webPageName: "WorldEye Live Flight Tracker",
     webPageDescription:
-      "Track flights live on a free 3D map with satellite view. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost.",
+      "Track flights live on a free 3D map with satellite view — a flight eye on the whole sky. This airplane tracker shows real-time position, altitude, speed, aircraft type and routes — no signup, no cost.",
   },
   topBar: {
     backToMap: "Back to the map",
@@ -119,7 +120,7 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
   hero: {
     badge: "FREE LIVE FLIGHT TRACKER",
     h1: [tx("Track every flight, "), ac("live"), tx(".")],
-    sub: "This airplane tracker plots aircraft in real time on a 3D globe — position, altitude, speed and routes. It's a flight radar that costs nothing and asks for nothing: no signup, no account, no paywall.",
+    sub: "This airplane tracker is a flight eye on the live sky: it plots aircraft in real time on a 3D globe — position, altitude, speed and routes. It's a flight radar that costs nothing and asks for nothing: no signup, no account, no paywall.",
     ctaPrimary: "Open live tracker",
     freeNote: "Free forever · No signup",
   },

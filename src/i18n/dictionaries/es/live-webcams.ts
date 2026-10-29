@@ -10,15 +10,15 @@ import type { LiveWebcamsCopy } from "../en/live-webcams";
 
 export const esLiveWebcams: LiveWebcamsCopy = {
   meta: {
-    title: "Cámaras en vivo de todo el mundo — 74.229 webcams en vivo",
+    title: "Cámaras en vivo — mira 74.229 webcams de todo el mundo",
     description:
-      "Mira 74.229 cámaras y webcams en vivo en {countries} países —tráfico, ciudades, naturaleza y lugares emblemáticos— en el centro de webcams en vivo de WorldEye. Gratis para siempre, sin registrarte.",
-    ogTitle: "Cámaras en vivo de todo el mundo — 74.229 webcams en vivo | WorldEye",
+      "Mira cámaras en vivo de todo el mundo: 74.229 webcams en {countries} países — tráfico, ciudades, playas, naturaleza y lugares emblemáticos. Gratis para siempre, sin registrarte.",
+    ogTitle: "Cámaras en vivo — mira 74.229 webcams de todo el mundo | WorldEye",
     ogDescription:
-      "74.229 cámaras y webcams en vivo en {countries} países: tráfico, ciudades, naturaleza, lugares emblemáticos. Gratis para siempre, sin registrarte.",
+      "Mira cámaras en vivo de todo el mundo: 74.229 webcams en {countries} países — tráfico, ciudades, naturaleza, lugares emblemáticos. Gratis para siempre, sin registrarte.",
   },
   schema: {
-    name: "Cámaras en vivo de todo el mundo — 74.229 webcams en vivo",
+    name: "Cámaras en vivo — mira 74.229 webcams de todo el mundo",
     description:
       "Directorio de {count} webcams públicas en vivo en {countries} países.",
   },

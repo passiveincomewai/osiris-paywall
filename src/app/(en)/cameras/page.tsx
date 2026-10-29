@@ -251,7 +251,10 @@ export default function CamerasPage() {
               beaches, ski fields, airports, Oceania&rsquo;s passes — and
               the themed collections where a single purpose gathers feeds
               from forty networks at once. Start from the shape that matches
-              your question, and the globe does the rest.
+              your question, and the globe does the rest. Or skip the
+              structure and just{" "}
+              <Link href="/live-webcams" className="text-[#D4AF37] hover:underline">watch live cams worldwide</Link>{" "}
+              — the hub that gathers the whole directory into one browsable page.
             </p>
           </div>
         </div>
@@ -322,6 +325,11 @@ export default function CamerasPage() {
 
         <RelatedLinks
           links={[
+            {
+              label: "Live cams worldwide",
+              desc: "The watch-first hub — live cams and webcams from around the world, gathered into one browsable directory.",
+              href: "/live-webcams",
+            },
             {
               label: "Live flight tracker",
               desc: "Real-time aircraft positions on the same free globe — the sky above the streets.",

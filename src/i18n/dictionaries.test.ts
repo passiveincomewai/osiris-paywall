@@ -135,12 +135,13 @@ describe("manifest ↔ dictionary completeness", () => {
         );
         // Publish date per entry: the 2026-10-26 tranche, except the
         // dictionaries re-synced after it — three by the 2026-10-27
-        // rebase, and ship-tracker again on 2026-10-28 when its
-        // dictionary gained the cruise-ships section (see manifest.ts).
+        // rebase, ship-tracker on 2026-10-28 (cruise-ships section),
+        // and live-flight-tracker + live-webcams on 2026-10-28 for the
+        // SEO Phase 3 title/meta alignment (see manifest.ts).
         expect(entry.updatedAt).toBe(
-          entry.slug === "ship-tracker"
+          ["ship-tracker", "live-flight-tracker", "live-webcams"].includes(entry.slug)
             ? "2026-10-28"
-            : ["", "pricing", "live-flight-tracker"].includes(entry.slug)
+            : ["", "pricing"].includes(entry.slug)
               ? "2026-10-27"
               : "2026-10-26"
         );

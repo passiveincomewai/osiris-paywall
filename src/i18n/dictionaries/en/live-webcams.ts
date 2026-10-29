@@ -77,15 +77,15 @@ export interface LiveWebcamsCopy {
 
 export const enLiveWebcams: LiveWebcamsCopy = {
   meta: {
-    title: "Live Cams Worldwide — 74,229 Live Webcams",
+    title: "Live Cams — Watch 74,229 Live Webcams Worldwide",
     description:
-      "Watch 74,229 live cams and webcams in {countries} countries — traffic, cities, nature and landmarks — on WorldEye's live webcam hub. Free forever, no signup.",
-    ogTitle: "Live Cams Worldwide — 74,229 Live Webcams | WorldEye",
+      "Watch live cams around the world: 74,229 live webcams in {countries} countries — traffic, cities, beaches, nature and landmarks. Free forever, no signup.",
+    ogTitle: "Live Cams — Watch 74,229 Live Webcams Worldwide | WorldEye",
     ogDescription:
-      "74,229 live cams and webcams across {countries} countries — traffic, cities, nature, landmarks. Free forever, no signup.",
+      "Watch live cams from around the world — 74,229 live webcams across {countries} countries: traffic, cities, nature, landmarks. Free forever, no signup.",
   },
   schema: {
-    name: "Live Cams Worldwide — 74,229 Live Webcams",
+    name: "Live Cams — Watch 74,229 Live Webcams Worldwide",
     description:
       "Directory of {count} live public webcams across {countries} countries.",
   },

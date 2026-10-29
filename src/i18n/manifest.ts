@@ -91,9 +91,9 @@ const ES_TRANCHE_DATE = "2026-10-26";
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "90d61e34ae6c128af73815e4fb85ca9ad13ba4eb31a9a4e57f0ddb550daf707b",
   pricing: "a37e36904a74effe080b184272dfe21e8e8f2a61cbf83ba702ea4db12dad38f7",
-  "live-webcams": "402ea44d9f98a6b00d41baf66dcfcba158c4c75a62310359d3440c383551b4fa",
+  "live-webcams": "930e8aeef70d22c8e6df02ae9b2dd921a865a5596c5ef9bd4b2a215428823825",
   faq: "9f3fec6211bd41283dd27bc043b3cda5a141ec27be9e50e00f6335180ff192d9",
-  "live-flight-tracker": "7fc5d90efa92b2bb028e8fff7e49c1b9d24f76a2ee8643e7d4325edac47e8a48",
+  "live-flight-tracker": "69dd228ff02dc46e16144611a200f873cf318e998f8d6d0044991390a27ca0de",
   "ship-tracker": "2d57af59a5bbdb02a8d83c0c55df1859b2099d3e02fec0a444ac434dc3ff33bb",
 };
 
@@ -109,12 +109,16 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // Re-sync (2026-10-28): the ship-tracker dictionary gained the
 // cruise-ships link section with the per-ship pages ship; the Spanish
 // dictionary was translated the same day, so its hash and date moved.
+// Re-sync (2026-10-28, SEO Phase 3): the live-flight-tracker and
+// live-webcams dictionaries got title/meta/lead alignment (programme
+// TOP10 items #1/#2); the Spanish dictionaries were re-translated the
+// same day, so their hashes and dates moved too.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-27",
   pricing: "2026-10-27",
-  "live-webcams": ES_TRANCHE_DATE,
+  "live-webcams": "2026-10-28",
   faq: ES_TRANCHE_DATE,
-  "live-flight-tracker": "2026-10-27",
+  "live-flight-tracker": "2026-10-28",
   "ship-tracker": "2026-10-28",
 };
 
