@@ -12,6 +12,15 @@
  *    doesn't (or reports garbage), the route derives it from the
  *    User-Agent header so device filters work for every emitter,
  *    including the plain trackAnalyticsEvent() helper.
+ *
+ * A third field serves the return-visit measurement:
+ *  - visitorId: the persistent first-party visitor ID. A random UUID
+ *    minted client-side by src/lib/analytics/visitor-id.ts and persisted
+ *    in localStorage (`we_vid`) — no fingerprinting inputs. Unlike the
+ *    per-visit sessionId it survives across visits, so one visitor's
+ *    rows can be grouped across days. The route accepts only the
+ *    canonical UUID shape and normalizes to lowercase; anything else
+ *    (missing, a sessionId-shaped token, junk) → null.
  */
 
 export const VARIANTS = ["A", "B"] as const;
@@ -28,6 +37,20 @@ export function parseVariant(v: unknown): Variant | null {
 
 export function parseDevice(v: unknown): DeviceClass | null {
   return v === "mobile" || v === "tablet" || v === "desktop" ? v : null;
+}
+
+const VISITOR_ID_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Validate a client-sent visitor ID. Only the canonical UUID shape the
+ * client mints (src/lib/analytics/visitor-id.ts) is stored, lowercased
+ * so one visitor never splits across case variants. Anything else →
+ * null: the row then looks like pre-visitorId history rather than
+ * carrying an untrusted identifier.
+ */
+export function parseVisitorId(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  return VISITOR_ID_SHAPE.test(v) ? v.toLowerCase() : null;
 }
 
 /** Coarse device class from a User-Agent string. Null only for empty UA. */

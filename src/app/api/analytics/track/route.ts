@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import {
   parseVariant,
   parseDevice,
+  parseVisitorId,
   parseEventDetail,
   parseSearchDetail,
   SEARCH_PERFORMED_EVENT,
@@ -28,6 +29,13 @@ export const runtime = "nodejs";
  *           cookie is the primary channel.)
  *  device:  "mobile" | "tablet" | "desktop" (client-reported; validated,
  *           else derived from the User-Agent header)
+ *  visitorId: the persistent first-party visitor ID (random UUID minted
+ *           client-side by src/lib/analytics/visitor-id.ts, localStorage
+ *           `we_vid`; validated to canonical UUID shape, else null).
+ *           Unlike the per-visit sessionId it survives across visits, so
+ *           return-visit reporting can group one visitor's rows across
+ *           days. Rows from clients that send no (or a malformed) ID
+ *           store null, like pre-visitorId history.
  *  detail:  for events only — one machine token stored as `event:detail`
  *           (e.g. onboarding step number, feature_first_use feature key).
  *           Exception: the `search_performed` event carries a structured
@@ -47,6 +55,7 @@ export async function POST(req: NextRequest) {
     const variant =
       parseVariant(body.variant) ?? parseVariant(req.cookies.get("we_onb_group")?.value);
     const device = parseDevice(body.device) ?? deviceClassFromUserAgent(req.headers.get("user-agent"));
+    const visitorId = parseVisitorId(body.visitorId);
 
     if (typeof body.durationSec === "number") {
       const secs = Math.max(0, Math.min(86400, Math.round(body.durationSec)));
@@ -58,7 +67,7 @@ export async function POST(req: NextRequest) {
       if (latest) {
         await db.pageView.update({ where: { id: latest.id }, data: { durationSec: secs } });
       } else {
-        await db.pageView.create({ data: { path, sessionId, userId, durationSec: secs, variant, device } });
+        await db.pageView.create({ data: { path, sessionId, visitorId, userId, durationSec: secs, variant, device } });
       }
     } else if (typeof body.event === "string" && body.event.length > 0) {
       const detail =
@@ -70,6 +79,7 @@ export async function POST(req: NextRequest) {
         data: {
           path,
           sessionId,
+          visitorId,
           userId,
           event,
           variant,
@@ -87,6 +97,7 @@ export async function POST(req: NextRequest) {
         data: {
           path,
           sessionId,
+          visitorId,
           userId,
           variant,
           device,

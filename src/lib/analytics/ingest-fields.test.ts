@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   parseVariant,
   parseDevice,
+  parseVisitorId,
   parseEventDetail,
   parseSearchDetail,
   SEARCH_PERFORMED_EVENT,
@@ -30,6 +31,25 @@ describe("parseDevice", () => {
     expect(parseDevice("desktop")).toBe("desktop");
     expect(parseDevice("phone")).toBeNull();
     expect(parseDevice(null)).toBeNull();
+  });
+});
+
+describe("parseVisitorId", () => {
+  it("accepts canonical UUIDs and normalizes them to lowercase", () => {
+    expect(parseVisitorId("123e4567-e89b-42d3-a456-426614174000")).toBe("123e4567-e89b-42d3-a456-426614174000");
+    expect(parseVisitorId("123E4567-E89B-42D3-A456-426614174000")).toBe("123e4567-e89b-42d3-a456-426614174000");
+  });
+  it("rejects sessionId-shaped tokens, junk, and non-strings", () => {
+    // A per-visit sessionId must never be stored as a visitor ID.
+    expect(parseVisitorId("k3j9x2abc123")).toBeNull();
+    expect(parseVisitorId("nosession")).toBeNull();
+    expect(parseVisitorId("unknown")).toBeNull();
+    expect(parseVisitorId("123e4567e89b42d3a456426614174000")).toBeNull(); // hyphens required
+    expect(parseVisitorId("123e4567-e89b-42d3-a456-42661417400")).toBeNull(); // too short
+    expect(parseVisitorId("")).toBeNull();
+    expect(parseVisitorId(null)).toBeNull();
+    expect(parseVisitorId(undefined)).toBeNull();
+    expect(parseVisitorId(42)).toBeNull();
   });
 });
 

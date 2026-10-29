@@ -113,3 +113,30 @@ describe("POST /api/analytics/track — search_performed detail", () => {
     expect(created[0]).toMatchObject({ event: `feature_first_use:${"x".repeat(24)}` });
   });
 });
+
+describe("POST /api/analytics/track — visitorId stamping", () => {
+  const VID = "123e4567-e89b-42d3-a456-426614174000";
+
+  it("stores a well-formed visitorId on plain page views", async () => {
+    await POST(req({ path: "/", sessionId: "s7", visitorId: VID, referrer: null }));
+    expect(created[0]).toMatchObject({ visitorId: VID, sessionId: "s7" });
+  });
+
+  it("stores it on named events too (return visits are resolved from any row)", async () => {
+    await POST(req({ path: "/", sessionId: "s7", visitorId: VID, event: "camera_open" }));
+    expect(created[0]).toMatchObject({ visitorId: VID, event: "camera_open" });
+  });
+
+  it("normalizes an uppercase UUID to lowercase", async () => {
+    await POST(req({ path: "/", sessionId: "s7", visitorId: VID.toUpperCase() }));
+    expect(created[0].visitorId).toBe(VID);
+  });
+
+  it("stores null for a malformed visitorId and for payloads that omit it", async () => {
+    await POST(req({ path: "/", sessionId: "s7", visitorId: "k3j9x2abc123" }));
+    expect(created[0].visitorId).toBeNull();
+    created.length = 0;
+    await POST(req({ path: "/", sessionId: "s7" }));
+    expect(created[0].visitorId).toBeNull();
+  });
+});

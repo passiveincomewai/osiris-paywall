@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { getVisitorId } from "@/lib/analytics/visitor-id";
 
 function sessionId(): string {
   try {
@@ -14,6 +15,20 @@ function sessionId(): string {
   } catch {
     return "nosession";
   }
+}
+
+let visitorIdCache: string | undefined;
+/**
+ * This browser profile's persistent visitor ID (localStorage `we_vid`),
+ * resolved lazily on first use — never during render — and memoized for
+ * the page's lifetime so every payload from this page carries the same
+ * value even when storage is blocked. Unlike the per-visit sessionId,
+ * it survives across visits, which is what makes the true return rate
+ * measurable. See src/lib/analytics/visitor-id.ts for the privacy rules.
+ */
+function visitorId(): string {
+  if (visitorIdCache === undefined) visitorIdCache = getVisitorId();
+  return visitorIdCache;
 }
 
 /**
@@ -62,6 +77,7 @@ export function trackAnalyticsEvent(event: string, detail?: string) {
       body: JSON.stringify({
         path: window.location.pathname,
         sessionId: sid,
+        visitorId: visitorId(),
         event,
         ...(detail ? { detail } : {}),
       }),
@@ -77,11 +93,13 @@ export default function AnalyticsTracker() {
 
   useEffect(() => {
     const sid = sessionId();
+    const vid = visitorId();
     startRef.current = Date.now();
     const utm = captureUtm();
     const payload = JSON.stringify({
       path,
       sessionId: sid,
+      visitorId: vid,
       referrer: document.referrer || null,
       utmSource: utm.s ?? null,
       utmMedium: utm.m ?? null,
@@ -101,7 +119,7 @@ export default function AnalyticsTracker() {
     const reportDuration = () => {
       const secs = Math.round((Date.now() - startRef.current) / 1000);
       if (secs < 2) return;
-      const body = JSON.stringify({ path, sessionId: sid, durationSec: secs });
+      const body = JSON.stringify({ path, sessionId: sid, visitorId: vid, durationSec: secs });
       try {
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/api/analytics/track", new Blob([body], { type: "application/json" }));
@@ -132,7 +150,7 @@ export default function AnalyticsTracker() {
           fetch("/api/analytics/track", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ path, sessionId: sid, event: "globe_reached" }),
+            body: JSON.stringify({ path, sessionId: sid, visitorId: vid, event: "globe_reached" }),
             keepalive: true,
           }).catch(() => {});
           observer?.disconnect();
