@@ -93,7 +93,7 @@ const ES_SOURCE_HASHES: Record<string, string> = {
   pricing: "a37e36904a74effe080b184272dfe21e8e8f2a61cbf83ba702ea4db12dad38f7",
   "live-webcams": "930e8aeef70d22c8e6df02ae9b2dd921a865a5596c5ef9bd4b2a215428823825",
   faq: "9f3fec6211bd41283dd27bc043b3cda5a141ec27be9e50e00f6335180ff192d9",
-  "live-flight-tracker": "69dd228ff02dc46e16144611a200f873cf318e998f8d6d0044991390a27ca0de",
+  "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
   "ship-tracker": "2d57af59a5bbdb02a8d83c0c55df1859b2099d3e02fec0a444ac434dc3ff33bb",
 };
 
@@ -113,12 +113,16 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // live-webcams dictionaries got title/meta/lead alignment (programme
 // TOP10 items #1/#2); the Spanish dictionaries were re-translated the
 // same day, so their hashes and dates moved too.
+// Re-sync (2026-10-29, SEO Phase 3 build C): the live-flight-tracker
+// dictionary gained the satellite-view answer section + FAQ (TOP10
+// item #3); the Spanish dictionary was translated the same day, so
+// its hash and date moved too.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-27",
   pricing: "2026-10-27",
   "live-webcams": "2026-10-28",
   faq: ES_TRANCHE_DATE,
-  "live-flight-tracker": "2026-10-28",
+  "live-flight-tracker": "2026-10-29",
   "ship-tracker": "2026-10-28",
 };
 

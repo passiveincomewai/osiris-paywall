@@ -62,6 +62,19 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
       tx(" combina esas cámaras con la propia capa de vuelos."),
     ],
   },
+  satelliteView: {
+    heading: "Rastreador de vuelos, vista satelital",
+    paragraphs: [
+      [
+        tx("Es un rastreador de vuelos con vista satelital en el sentido literal: aviones en vivo dibujados sobre un globo 3D cuya capa de suelo cambia a imágenes de satélite. Activa el interruptor Satélite en el mapa y cada vuelo sigue moviéndose en tiempo real —posiciones de emisiones ADS-B en vivo, de hace segundos— pero ahora sobre el suelo real: la disposición de los aeropuertos, las costas, las ciudades y el terreno, de modo que cada vuelo queda en su geografía verdadera en lugar de sobre un mapa esquemático."),
+      ],
+      [
+        tx("Conviene separar las dos mitades, porque envejecen distinto: los vuelos están en vivo; las imágenes, no. La capa de suelo es el mapa base World Imagery de Esri: imágenes publicadas, gratis para todo el mundo, nunca un feed en vivo desde órbita; ningún servicio público transmite fotografías en vivo desde el espacio. El control de tiempo de imágenes del mapa incluso retrocede ese mapa base por versiones fechadas hasta 2014, para ver el mismo aeropuerto en un año anterior. Y los objetos que fotografían la Tierra también están en este globo: el "),
+        lk("satellite-tracker", "rastreador de satélites en vivo"),
+        tx(" va una capa por encima de los vuelos."),
+      ],
+    ],
+  },
   howItWorks: {
     heading: "Cómo funciona el seguimiento de vuelos en vivo",
     paragraphs: [
@@ -170,6 +183,10 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
     {
       q: "¿Qué tan preciso es el seguimiento?",
       a: "Las posiciones vienen de las propias emisiones del avión, así que suelen ser precisas con segundos de diferencia respecto al tiempo real. La cobertura depende de la densidad de receptores: el espacio aéreo concurrido es casi instantáneo y las regiones oceánicas remotas pueden actualizarse con menos frecuencia.",
+    },
+    {
+      q: "¿El rastreador de vuelos tiene vista satelital?",
+      a: "Sí. Cambia la capa de suelo del globo a Satélite y los vuelos en vivo —posiciones ADS-B en tiempo real— se dibujan sobre imágenes de satélite del suelo, gratis para todo el mundo. Los vuelos están en vivo; las imágenes son imágenes publicadas y fechadas (World Imagery de Esri), no un feed en vivo desde órbita, y un control de tiempo de imágenes en el mapa las retrocede por versiones fechadas hasta 2014.",
     },
     {
       q: "¿Puedo seguir jets militares o privados?",

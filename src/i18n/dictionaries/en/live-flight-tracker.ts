@@ -50,6 +50,10 @@ export interface LiveFlightTrackerCopy {
     heading: string;
     body: RichText;
   };
+  satelliteView: {
+    heading: string;
+    paragraphs: RichText[];
+  };
   howItWorks: {
     heading: string;
     paragraphs: RichText[];
@@ -140,6 +144,19 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
       tx(" watch the ramps and runways, and "),
       lk("live-plane-spotting", "live plane spotting"),
       tx(" pairs those cameras with the flight layer itself."),
+    ],
+  },
+  satelliteView: {
+    heading: "Flight tracker, satellite view",
+    paragraphs: [
+      [
+        tx("This is a flight tracker satellite view in the literal sense: live aircraft plotted on a 3D globe whose ground layer switches to satellite imagery. Flip the Satellite switch on the map and every flight keeps moving in real time — positions from live ADS-B broadcasts, seconds old — but now over the real ground: airport layouts, coastlines, cities and terrain, so each flight sits in its actual geography instead of on a schematic map."),
+      ],
+      [
+        tx("Keep the two halves straight, because they age differently: the flights are live; the imagery is not. The ground layer is Esri's World Imagery basemap — published imagery, free for everyone, never a live feed from orbit; no public service streams live photographs from space. The imagery time slider on the map even walks that basemap back through dated releases to 2014, so the same airport can be watched in an earlier year. And the objects that photograph the Earth are on this globe too — the "),
+        lk("satellite-tracker", "live satellite tracker"),
+        tx(" rides one layer above the flights."),
+      ],
     ],
   },
   howItWorks: {
@@ -250,6 +267,10 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
     {
       q: "How accurate is the tracking?",
       a: "Positions come from the aircraft's own broadcasts, so they're typically accurate to within seconds of real time. Coverage depends on receiver density — busy airspace is near-instant, remote oceanic regions may update less frequently.",
+    },
+    {
+      q: "Does the flight tracker have a satellite view?",
+      a: "Yes. Switch the globe's ground layer to Satellite and live flights — real-time ADS-B positions — are drawn over satellite imagery of the ground, free for everyone. The flights are live; the imagery is published, dated imagery (Esri World Imagery), not a live feed from orbit, and an imagery time slider on the map steps it back through dated releases to 2014.",
     },
     {
       q: "Can I track military or private jets?",

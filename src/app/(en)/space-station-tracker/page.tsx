@@ -237,7 +237,12 @@ export default function SpaceStationTrackerPage() {
               track never repeats exactly — Earth turns beneath the orbit, so
               each pass shifts west. Notice the tilted path, the compromise
               orbit reachable from the world&apos;s launch sites. The dot is a
-              physics lesson that never ends.
+              physics lesson that never ends — and the ISS is only the
+              brightest object in it: the{" "}
+              <Link href="/satellite-tracker" className="text-[#aab2ff] hover:underline">
+                full satellite tracker
+              </Link>{" "}
+              draws every tracked satellite in orbit on this same globe.
             </p>
           </div>
         </div>

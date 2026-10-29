@@ -38,10 +38,14 @@ export const metadata: Metadata = {
   },
   keywords: [
     "satellite tracker",
+    "satellite tracking",
+    "live satellite tracking",
     "live satellite map",
     "ISS tracker",
     "orbit tracker",
+    "orbit tracking",
     "track satellites live",
+    "tracking satellites live",
     "starlink tracker",
   ],
 };
@@ -115,6 +119,14 @@ const FAQS = [
   {
     q: "Why do some satellites travel in a line or a train?",
     a: "Freshly launched Starlink satellites are released together and drift apart over weeks, so a recent batch crosses the sky as an evenly spaced train before settling into its working slots in the constellation. It's one of the most striking sights the tracker explains — look for a dotted line of satellites moving in single file.",
+  },
+  {
+    q: "Can I see all the satellites in orbit?",
+    a: "Yes — that's this tracker's home view. It draws the full public catalog: thousands of satellites in orbit right now — space stations, Starlink, weather, navigation and science satellites, rocket bodies and notable debris — each positioned from public orbital data (TLEs), refreshed continuously, with its orbit path drawn. Filter by category when you want one family at a time.",
+  },
+  {
+    q: "Can I track flights and satellites on the same map?",
+    a: "Yes — they share one globe. Live flights cross the sky below on real-time ADS-B data while the satellites pass above them, so a single view holds both: aircraft over the same ground the satellites are orbiting over. The same map also carries ships at sea and 74,229 public cameras.",
   },
 ];
 
@@ -381,8 +393,11 @@ export default function SatelliteTrackerPage() {
           </div>
           <p className="mt-8 text-center text-white/40 text-sm max-w-2xl mx-auto flex items-start justify-center gap-2">
             <Globe2 className="w-4 h-4 mt-0.5 shrink-0 text-[#00E5FF]/70" />
-            Tip: pair the tracker with the live flight layer — aircraft below,
-            satellites above, one globe.
+            Tip: pair the tracker with{" "}
+            <Link href="/live-flight-tracker" className="text-[#00E5FF] hover:underline">
+              the live flight layer
+            </Link>{" "}
+            — aircraft below, satellites above, one globe.
           </p>
         </div>
 

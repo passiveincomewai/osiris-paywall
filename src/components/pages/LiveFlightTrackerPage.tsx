@@ -191,6 +191,16 @@ export default function LiveFlightTrackerPage({
           </p>
         </div>
 
+        {/* Satellite view — the direct answer */}
+        <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            {copy.satelliteView.heading}
+          </h2>
+          <div className="mt-8 space-y-4 text-white/60 leading-relaxed">
+            {copy.satelliteView.paragraphs.map((p, i) => prose(p, i))}
+          </div>
+        </div>
+
         {/* How it works */}
         <div className="mt-20 md:mt-28 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center">
