@@ -6,12 +6,14 @@ import SensingTool from "@/components/sensing/SensingTool";
  * the sitemap, like the other /tools pages; no plan gate, no sign-in).
  *
  * One page, three REAL sensing modes — no simulation anywhere:
- *  1. RavenScope mode: the visitor's own laptop runs the free RavenScope
- *     program (WiFi signal-strength sensing); this page is its display.
- *     Flagship on desktop — auto-connects when the program is running.
- *  2. WiFi Link mode: the page times probes to /api/sensing-ping and runs
- *     the timings through RavenScope's ping-backend pipeline. Senses
- *     disturbance of THIS device's own link only — copy says exactly that.
+ *  1. WiFi Link mode (the default on every device): the page times probes
+ *     to /api/sensing-ping and runs the timings through RavenScope's
+ *     ping-backend pipeline. Senses disturbance of THIS device's own link
+ *     only — copy says exactly that. Nothing to download or install.
+ *  2. RavenScope mode (optional extra): the visitor's own laptop runs the
+ *     free RavenScope program (WiFi signal-strength sensing); this page is
+ *     its display. Never the default tab — auto-connects when the program
+ *     is running and the visitor opens the tab.
  *  3. Camera mode: on-device frame-difference motion sensing. Frames are
  *     never uploaded, recorded or stored.
  *
@@ -79,14 +81,14 @@ export default function SensingPage() {
         </p>
         <ul className="mt-4 max-w-3xl space-y-2 text-base text-white/70 leading-relaxed">
           <li>
-            <span className="font-semibold text-white">RavenScope</span> — on a laptop or desktop,
-            run the free RavenScope program and this page becomes its display: true WiFi
-            signal-strength sensing of the room that computer is in.
-          </li>
-          <li>
             <span className="font-semibold text-white">WiFi Link</span> — on any device, including
             a phone: the page times its own connection and senses disturbance of that link.
-            Starts by itself.
+            Starts by itself — it is the default mode, and needs nothing installed.
+          </li>
+          <li>
+            <span className="font-semibold text-white">RavenScope</span> — an optional extra on a
+            laptop or desktop: run the free RavenScope program and this page becomes its display:
+            true WiFi signal-strength sensing of the room that computer is in.
           </li>
           <li>
             <span className="font-semibold text-white">Camera</span> — motion sensing with this

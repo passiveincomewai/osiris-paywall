@@ -1,11 +1,14 @@
 "use client";
 
 /**
- * RavenScope mode for /sensing — the full RSSI sensing experience for a
- * laptop/desktop visitor who runs the free RavenScope program on their
- * own computer. This page connects from the visitor's browser directly
- * to that local program (http://127.0.0.1:8731, its /api/state probe and
- * /api/stream SSE). Nothing passes through WorldEye's servers.
+ * RavenScope mode for /sensing — an OPTIONAL extra (never the default tab;
+ * WiFi Link is): the full RSSI sensing experience for a laptop/desktop
+ * visitor who runs the free RavenScope program on their own computer.
+ * This page connects from the visitor's browser directly to that local
+ * program (http://127.0.0.1:8731, its /api/state probe and /api/stream
+ * SSE). Nothing passes through WorldEye's servers. The absent state leads
+ * with the no-download modes so nobody reads this tab as "the tool isn't
+ * working"; the setup steps stay below, clearly optional.
  *
  * Setup reality (stated plainly in the UI): stock RavenScope sends no
  * CORS header, so browsers block web pages from reading it. The fix is
@@ -101,14 +104,21 @@ export default function RavenScopeSensing() {
     return (
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <h2 className="text-lg font-semibold text-white">
-          {phase === "probing" ? "Looking for RavenScope on this computer…" : "RavenScope is the sensor — this page is its display"}
+          {phase === "probing" ? "Looking for RavenScope on this computer…" : "Optional extra — RavenScope on a computer"}
         </h2>
         {phase === "absent" && (
           <>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/70">
-              No RavenScope answered on this computer. It is a free program (Python 3, nothing to
-              install) that reads your WiFi signal strength and senses presence and motion in the
-              room the computer is in. Two steps and this page lights up with the real feed:
+              You don&apos;t need this to sense. The WiFi Link and Camera modes work right here in
+              the browser — on phones and laptops alike — with nothing to download or install, and
+              WiFi Link starts on its own. RavenScope is an optional extra for desktop users who
+              want router-level readings: a free program (Python 3, nothing to install) that runs
+              on your own computer, reads your WiFi signal strength, and senses presence and motion
+              in the room that computer is in.
+            </p>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/70">
+              No RavenScope answered on this computer. If you want to try the extra, two steps and
+              this tab lights up with its real feed:
             </p>
             <ol className="mt-4 space-y-3 text-sm leading-relaxed text-white/80">
               <li>

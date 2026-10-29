@@ -3,11 +3,14 @@
 /**
  * Mode shell for the /sensing tool. Three real sensing modes, one display:
  *
- *  - RavenScope (laptop/desktop flagship): connects to a RavenScope
- *    program running on the visitor's own computer. Default on wide
- *    viewports.
- *  - WiFi Link (works everywhere, starts on its own): RTT-jitter sensing
- *    of this device's own WiFi link. Default on phones.
+ *  - WiFi Link (the default on EVERY device — phone, tablet, desktop):
+ *    RTT-jitter sensing of this device's own WiFi link, starts on its own,
+ *    nothing to download or install.
+ *  - RavenScope (optional extra for laptop/desktop): connects to a
+ *    RavenScope program running on the visitor's own computer. Never the
+ *    default tab. A background probe on desktop-class browsers checks for
+ *    a running RavenScope once on load; if one answers, the tab gets a
+ *    small "detected" marker — the view never auto-switches.
  *  - Camera: on-device frame-difference motion sensing.
  *
  * Only the active mode is mounted, so switching tabs stops the previous
@@ -18,12 +21,13 @@ import { useEffect, useState } from "react";
 import CameraSensing from "./CameraSensing";
 import RavenScopeSensing from "./RavenScopeSensing";
 import WifiLinkSensing from "./WifiLinkSensing";
+import { probeRavenScope } from "@/lib/sensing/ravenscope";
 
 type Mode = "ravenscope" | "wifi" | "camera";
 
 const TABS: { id: Mode; label: string; hint: string }[] = [
-  { id: "ravenscope", label: "RavenScope", hint: "Full WiFi sensing from a free program on your computer" },
-  { id: "wifi", label: "WiFi Link", hint: "Disturbance sensing of this device's own WiFi link" },
+  { id: "wifi", label: "WiFi Link", hint: "Disturbance sensing of this device's own WiFi link — works right here, nothing to install" },
+  { id: "ravenscope", label: "RavenScope", hint: "Optional extra: full WiFi sensing from a free program on your computer" },
   { id: "camera", label: "Camera", hint: "Motion sensing with this device's camera, on-device" },
 ];
 
@@ -31,12 +35,20 @@ export default function SensingTool() {
   const [mode, setMode] = useState<Mode>("wifi");
   const [resolved, setResolved] = useState(false);
   const [narrow, setNarrow] = useState(false);
+  const [ravenDetected, setRavenDetected] = useState(false);
 
   useEffect(() => {
     const isNarrow = window.innerWidth < 1024;
     setNarrow(isNarrow);
-    setMode(isNarrow ? "wifi" : "ravenscope");
     setResolved(true);
+    // Background probe (desktop-class browsers only): if a RavenScope is
+    // already running on this computer, mark its tab as detected. This
+    // never changes the selected mode — WiFi Link stays the default.
+    if (!isNarrow) {
+      void probeRavenScope().then((snap) => {
+        if (snap) setRavenDetected(true);
+      });
+    }
   }, []);
 
   return (
@@ -60,6 +72,12 @@ export default function SensingTool() {
               }`}
             >
               {t.label}
+              {t.id === "ravenscope" && ravenDetected && (
+                <span className="ml-2 inline-flex items-center gap-1 text-xs font-semibold text-emerald-300">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+                  detected
+                </span>
+              )}
               {laptopOnly && <span className="ml-1.5 text-xs font-normal">(laptop / desktop)</span>}
             </button>
           );
