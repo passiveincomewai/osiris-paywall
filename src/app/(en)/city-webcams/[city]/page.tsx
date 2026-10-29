@@ -455,22 +455,22 @@ const CITIES: Record<string, CityCfg> = {
     name: "Dallas",
     country: "United States",
     countrySlug: "united-states",
-    count: 845,
-    title: "Dallas Live Traffic Cameras & CCTV — 845 Freeway Feeds",
+    count: 843,
+    title: "Dallas Live Traffic Cameras & CCTV — 843 Freeway Feeds",
     blurb:
-      "Watch 845 live Dallas CCTV and freeway traffic cameras — check DFW metro congestion, weather and road conditions free on the WorldEye map. No signup.",
+      "Watch 843 live Dallas CCTV and freeway traffic cameras — check DFW metro congestion, weather and road conditions free on the WorldEye map. No signup.",
     h1: "Dallas Live Webcams",
-    sub: "Watch 845 live Dallas CCTV and freeway traffic cameras — free on the WorldEye globe.",
+    sub: "Watch 843 live Dallas CCTV and freeway traffic cameras — free on the WorldEye globe.",
     intro: [
-      "Dallas accounts for 845 of the 23,059 cameras indexed in the United States — the fourth-largest of 12 US areas, behind Georgia, Utah and Houston. The grid watches the Dallas–Fort Worth metro's freeway network, the corridors where the region's long commutes concentrate. Fort Worth is indexed separately with another 489 feeds, so the DFW metro's combined coverage is among the deepest in the country. These are the metro's public traffic CCTV cameras — the fixed road feeds drivers across North Texas check before they merge on.",
+      "Dallas accounts for 843 of the 23,059 cameras indexed in the United States — the fourth-largest of 12 US areas, behind Georgia, Utah and Houston. The grid watches the Dallas–Fort Worth metro's freeway network, the corridors where the region's long commutes concentrate. Fort Worth is indexed separately with another 489 feeds, so the DFW metro's combined coverage is among the deepest in the country. These are the metro's public traffic CCTV cameras — the fixed road feeds drivers across North Texas check before they merge on.",
       "DFW's commutes are long, its construction zones are constant, and its weather swings from ice storms to severe thunderstorms. The freeway cameras earn their keep in all three: check for ice on the elevated sections in winter, hail and high water in spring, and the ever-present construction slowdowns before you merge on.",
-      "All 845 feeds open free on the WorldEye map. Zoom to Dallas–Fort Worth, find the markers on your corridor, and check conditions before you drive.",
-      "The Fort Worth split matters for how you use the grid. Dallas's 845 feeds and Fort Worth's 489 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metro's freeway network lights up. If your commute crosses between the two, check cameras on both sides of the metroplex.",
+      "All 843 feeds open free on the WorldEye map. Zoom to Dallas–Fort Worth, find the markers on your corridor, and check conditions before you drive.",
+      "The Fort Worth split matters for how you use the grid. Dallas's 843 feeds and Fort Worth's 489 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metro's freeway network lights up. If your commute crosses between the two, check cameras on both sides of the metroplex.",
       "Ice is the DFW speciality, and it is the cameras' finest hour. North Texas ice storms glaze the elevated freeway sections while surface streets stay merely wet — and the elevated sections are exactly what the camera grid watches. When ice is forecast, the freeway cameras show the truth before your windshield does.",
       "Spring brings the severe thunderstorms: hail, high water and sudden corridor shutdowns. The cameras show standing water on low sections and the slowdowns around storm cells in real time. Combined with the year-round construction, there is never a season when the pre-drive check does not pay off.",
     ],
     stats: [
-      { value: "845", label: "live cameras" },
+      { value: "843", label: "live cameras" },
       { value: "#4", label: "of 12 US areas" },
       { value: "4%", label: "of US cameras" },
     ],
@@ -487,7 +487,7 @@ const CITIES: Record<string, CityCfg> = {
     faqs: [
       {
         q: "Does this cover Fort Worth too?",
-        a: "Fort Worth is indexed as its own area with 489 feeds. This index covers the 845 Dallas-area feeds — together they give the DFW metro some of the deepest freeway coverage in the country. Zoom out on the live map to see both grids.",
+        a: "Fort Worth is indexed as its own area with 489 feeds. This index covers the 843 Dallas-area feeds — together they give the DFW metro some of the deepest freeway coverage in the country. Zoom out on the live map to see both grids.",
       },
       {
         q: "Can I check for ice on the roads in winter?",
@@ -499,7 +499,11 @@ const CITIES: Record<string, CityCfg> = {
       },
       {
         q: "How do I see both Dallas and Fort Worth cameras?",
-        a: "They are indexed separately — 845 Dallas feeds and 489 Fort Worth feeds — but on the live map they sit side by side. Zoom out to see the whole DFW metro grid, and check cameras on both sides if your commute crosses the metroplex.",
+        a: "They are indexed separately — 843 Dallas feeds and 489 Fort Worth feeds — but on the live map they sit side by side. Zoom out to see the whole DFW metro grid, and check cameras on both sides if your commute crosses the metroplex.",
+      },
+      {
+        q: "Where can I watch Dallas traffic cameras live?",
+        a: "Right here. The 843 TxDOT freeway feeds listed under Dallas are live on the WorldEye map — open the globe, zoom to Dallas–Fort Worth and tap any freeway marker to watch that camera live. The Fort Worth side of the metro adds another 489 live feeds on its own page.",
       },
       {
         q: "Can the cameras show icy conditions?",
@@ -527,39 +531,43 @@ const CITIES: Record<string, CityCfg> = {
     name: "Tokyo",
     country: "Japan",
     countrySlug: "japan",
-    count: 73,
-    title: "Tokyo Live Webcam — 73 Live Cameras in Tokyo, Japan",
+    count: 112,
+    title: "Tokyo Live Webcams — 112 Live Cameras in Tokyo, Japan",
     blurb:
-      "Watch Tokyo live: 73 live cameras across Japan's capital — expressway traffic and city views from the largest camera grid in Japan — free on the WorldEye map. No signup needed.",
+      "Watch Tokyo live: 112 live cameras listed under Japan's capital — 68 river and government monitoring feeds plus city and scenic views in Akihabara, Asakusa and Ginza — free on the WorldEye map. No signup needed.",
     h1: "Tokyo Live Webcams",
-    sub: "Watch 73 live Tokyo cameras — the largest grid in Japan — free on the WorldEye globe.",
+    sub: "Watch 112 live Tokyo cameras — river monitoring feeds and city views — free on the WorldEye globe.",
     intro: [
-      "Tokyo's 73 cameras make it the largest of 12 Japanese areas in the index and account for about 8% of Japan's 928 cameras. The grid is a mix of traffic and city feeds across the world's largest metro — expressways and arterial roads, with city views mixed in around the densest districts.",
-      "Tokyo's cameras double as weather watchers. Typhoon season brings sudden downpours and high winds that show up on the road feeds, and the cameras around the bay and rivers give an early read on storm conditions. In a city this dense, a quick camera check before heading out can reroute your whole day.",
-      "All 73 feeds open free on the WorldEye map. Zoom to Tokyo, tap a marker, and you are looking at the metro as it is right now.",
-      "The expressway network is the backbone of the grid. Tokyo's elevated expressways carry enormous traffic through the densest districts, and the cameras follow them — which means the feeds show the city's circulatory system in real time. Morning and evening peaks are intense but predictable; the cameras show you exactly how intense today.",
-      "The bay and river cameras are the weather sentinels. When typhoon season sends a system toward the region, the cameras around the bay and rivers show wind, rain and water levels before the storm's full force arrives. They are the reason to check the grid even when you are not driving.",
-      "With 73 feeds across the world's largest metro, each camera covers a lot of ground — so use the map, not just this page. Zoom to your district on the live globe and the markers will show you which expressway or neighborhood each feed watches.",
+      "112 cameras are listed under Tokyo in the WorldEye index — and the mix matters more than the number. 68 of them are river and water-level monitoring feeds from Japan's river authorities (the MLIT river.go.jp network): fixed cameras watching the Arakawa, Sumida and Meguro rivers, plus the drainage stations and flood gates between them. The other 44 are city and scenic views — feeds of Akihabara, Asakusa's Sensō-ji and the Ginza crossing among them. Tokyo's grid is a flood-watching network first and a sightseeing network second, and this page labels it that way.",
+      "Widen the frame and the count grows: 221 cameras sit within 25 km of Tokyo Station, 166 of them river and government monitoring feeds. Neighbouring wards and cities carry their own listings in the index, so the metro's full coverage is deeper than any single city label suggests.",
+      "That river backbone is why Tokyo's cameras double as weather watchers. Typhoon season brings sudden downpours and high winds, and the cameras around the bay and rivers show rising water and storm conditions before the worst arrives. In a city this dense, a quick camera check before heading out can reroute your whole day.",
+      "All 112 feeds open free on the WorldEye map. Zoom to Tokyo, tap a marker, and you are looking at the metro as it is right now.",
+      "For the famous views, start with the city cameras: Akihabara's electric town, the Sensō-ji temple approach in Asakusa, and the Ginza 4-chome crossing are all in the index. For conditions — rain, river levels, storm surge — the river feeds are the ones to open.",
+      "With 112 feeds across the world's largest metro, each camera covers a lot of ground — so use the map, not just this page. Zoom to your district on the live globe and the markers will show you which river station or neighbourhood each feed watches.",
     ],
     stats: [
-      { value: "73", label: "live cameras" },
-      { value: "#1", label: "of 12 Japanese areas" },
-      { value: "8%", label: "of Japan's cameras" },
+      { value: "112", label: "live cameras" },
+      { value: "68", label: "river & government feeds" },
+      { value: "221", label: "within 25 km of Tokyo Station" },
     ],
     howtoTitle: "How to watch Tokyo live cameras",
     howto: [
       "Open the WorldEye live map — no account or download needed.",
-      "Zoom to Tokyo; camera markers cover the expressways and central districts.",
+      "Zoom to Tokyo; camera markers line the rivers and cover the central districts.",
       "Tap any marker to open that Tokyo camera's live feed.",
-      "Zoom to your district — with 73 feeds across the metro, the map shows which camera watches your area.",
+      "Zoom to your district — with 112 feeds across the metro, the map shows which camera watches your area.",
       "In typhoon season, check the bay and river cameras for storm conditions.",
-      "Before peak-hour trips, check the expressway cameras on your route.",
+      "For a famous view, open the city cameras — Akihabara, Asakusa and Ginza are all in the index.",
     ],
     faqTitle: "Tokyo webcams — FAQ",
     faqs: [
       {
         q: "Are these traffic cameras or city views?",
-        a: "Both. Tokyo's 73-camera index mixes traffic and expressway feeds with city cameras around the densest districts — check the map markers to find the view you need.",
+        a: "Mostly neither, honestly: of the 112 cameras listed under Tokyo, 68 are river and water-level monitoring feeds published by Japan's river authorities — cameras watching the Arakawa, Sumida and Meguro rivers for flood control. The other 44 are city and scenic views, including Akihabara, Asakusa and Ginza. Tokyo's index is a river-monitoring network with city views mixed in, not an expressway traffic grid.",
+      },
+      {
+        q: "How many cameras are there in Tokyo?",
+        a: "112 are listed under Tokyo in the index: 68 river and government monitoring feeds and 44 city and scenic cameras. Widen the frame to 25 km around Tokyo Station and the count rises to 221, because neighbouring wards and cities carry their own listings on top of Tokyo's.",
       },
       {
         q: "Can I check typhoon conditions in Tokyo?",
@@ -567,11 +575,11 @@ const CITIES: Record<string, CityCfg> = {
       },
       {
         q: "Can I see Mount Fuji or the Skytree?",
-        a: "These are mostly road and city feeds, not scenic overlooks. For landmark views, browse the scenic cameras on the main WorldEye map.",
+        a: "These are mostly river-monitoring and city feeds, not scenic overlooks — though the city cameras cover sights like Sensō-ji in Asakusa. For landmark views, browse the scenic cameras on the main WorldEye map.",
       },
       {
-        q: "Which expressways are covered?",
-        a: "The index follows Tokyo's expressway and arterial network through the densest districts. Zoom to your area on the live map to find the cameras on your route.",
+        q: "Which rivers do the Tokyo cameras watch?",
+        a: "The monitoring feeds follow the rivers that drain the capital — the Arakawa, Sumida and Meguro among them — plus drainage pump stations and flood gates across the wards. They exist for flood watching, which is why they are the feeds to check in typhoon season.",
       },
       {
         q: "Can I check rain before heading out?",
@@ -583,15 +591,15 @@ const CITIES: Record<string, CityCfg> = {
       },
       {
         q: "When is Tokyo traffic at its worst?",
-        a: "Weekday morning and evening peaks on the expressways are intense. Check the cameras on your route before heading out — the peaks are predictable, but incidents are not.",
+        a: "Weekday morning and evening peaks are the intense hours across the metro. Tokyo's index is weighted toward river monitoring rather than expressway traffic feeds, so for road conditions use the city cameras near your route — and for weather and river conditions, the monitoring feeds are the ground truth.",
       },
       {
         q: "Can I see seasonal views like cherry blossoms?",
-        a: "These are mainly road and city feeds, not scenic overlooks. For seasonal and landmark views, browse the scenic cameras on the main WorldEye map.",
+        a: "Some river cameras point at exactly the banks where the blossom trees line up — the river-monitoring feeds along the Meguro and Sumida catch the season as a side effect. For dedicated seasonal and landmark views, browse the scenic cameras on the main WorldEye map.",
       },
       {
         q: "Is there a live camera I can watch in Tokyo, Japan?",
-        a: "Yes — 73 of them. This page is Tokyo's live camera index: expressway and arterial traffic feeds plus city cameras across the densest districts, all free on the WorldEye map. For the rest of the country, the Japan webcams hub covers the national network city by city.",
+        a: "Yes — 112 of them. This page is Tokyo's live camera index: river and government monitoring feeds plus city and scenic cameras across the capital, all free on the WorldEye map. For the rest of the country, the Japan webcams hub covers the national network city by city.",
       },
     ],
   },
@@ -752,10 +760,10 @@ const CITIES: Record<string, CityCfg> = {
     h1: "Fort Worth Live Webcams",
     sub: "Watch 489 live Fort Worth CCTV and freeway cameras — free on the WorldEye globe.",
     intro: [
-      "Fort Worth accounts for 489 of the 23,059 cameras indexed in the United States — the tenth-largest of 12 US areas. The grid is a TxDOT district freeway-camera network covering the western half of the Dallas–Fort Worth metroplex: the I-35W, I-20 and I-820 corridors commuters use every day. Dallas is indexed separately with another 845 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
+      "Fort Worth accounts for 489 of the 23,059 cameras indexed in the United States — the tenth-largest of 12 US areas. The grid is a TxDOT district freeway-camera network covering the western half of the Dallas–Fort Worth metroplex: the I-35W, I-20 and I-820 corridors commuters use every day. Dallas is indexed separately with another 843 feeds, so the DFW metro's combined coverage is among the deepest in the country.",
       "The three corridors divide the work. I-35W is the north–south spine through Fort Worth, I-20 runs the southern side of the metro, and I-820 loops the city — and between them they carry the commute, the freight, and the cross-metro trips that make DFW driving what it is. The cameras sit on those corridors, which is exactly where the incidents and slowdowns happen.",
       "All 489 feeds open free on the WorldEye map. Zoom to Fort Worth, tap a freeway marker, and you are watching the same corridors the district's traffic managers watch.",
-      "The Dallas split matters for how you use the grid. Fort Worth's 489 feeds and Dallas's 845 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metroplex lights up. If your commute crosses between the two cities, check cameras on both sides before you leave; a clear I-35W says nothing about what waits on the Dallas side.",
+      "The Dallas split matters for how you use the grid. Fort Worth's 489 feeds and Dallas's 843 are indexed separately, but on the live map they sit side by side — zoom out and the whole DFW metroplex lights up. If your commute crosses between the two cities, check cameras on both sides before you leave; a clear I-35W says nothing about what waits on the Dallas side.",
       "Ice is the Fort Worth speciality, as it is across North Texas. Ice storms glaze the elevated freeway sections and interchanges while surface streets stay merely wet — and the elevated sections are exactly what a freeway camera grid watches. When ice is forecast, the corridor cameras show the truth on I-35W and the I-820 interchanges before your windshield does.",
       "Spring brings the severe thunderstorms — high water on low sections, sudden slowdowns around storm cells — and construction runs year-round on a network this size. The feeds show all three in real time: standing water, storm slowdowns, and the current work zones on your corridor. Check before you merge on, every season.",
     ],
@@ -777,7 +785,11 @@ const CITIES: Record<string, CityCfg> = {
     faqs: [
       {
         q: "Does this page cover Dallas too?",
-        a: "Dallas is indexed as its own area with 845 feeds. This index covers Fort Worth's 489 — together they give the DFW metroplex some of the deepest freeway coverage in the country. Zoom out on the live map to see both grids side by side.",
+        a: "Dallas is indexed as its own area with 843 feeds. This index covers Fort Worth's 489 — together they give the DFW metroplex some of the deepest freeway coverage in the country. Zoom out on the live map to see both grids side by side.",
+      },
+      {
+        q: "Where can I watch Fort Worth traffic cameras live?",
+        a: "Right here. The 489 TxDOT feeds listed under Fort Worth — I-35W, I-20 and the I-820 loop — are live on the WorldEye map: zoom to the western metroplex and tap any freeway marker. Dallas, on the metro's eastern side, has its own page with 843 more live feeds.",
       },
       {
         q: "Are these the TxDOT freeway cameras?",
