@@ -24,8 +24,10 @@ export interface HcpcsSummary {
   outlierCells: number;
   outlierPaidUsd: number;
   paidExclOutliersUsd: number;
-  distinctBillingNpis: number;
-  distinctServicingNpis: number;
+  /** Null when the source reports no distinct count for the role
+   *  (the code's cells never carry that role's NPI) — absent, not 0. */
+  distinctBillingNpis: number | null;
+  distinctServicingNpis: number | null;
   firstClaimMonth: string | null;
   lastClaimMonth: string | null;
   activeMonths: number;

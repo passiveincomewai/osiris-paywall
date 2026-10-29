@@ -1685,8 +1685,11 @@ model FrHcpcsSummary {
   outlierCells              BigInt
   outlierPaidUsd            Decimal  @db.Decimal(18, 2)
   totalPaidExclOutliersUsd  Decimal  @db.Decimal(18, 2)
-  distinctBillingNpis       Int
-  distinctServicingNpis     Int
+  // Nullable: the source leaves the distinct count NULL when a code's
+  // reported cells never carry that role's NPI (1,373 / 1,530 of
+  // 12,263 codes in the 2026-02-09 file) — absent, never a fake 0.
+  distinctBillingNpis       Int?
+  distinctServicingNpis     Int?
   firstClaimMonth           DateTime? @db.Date
   lastClaimMonth            DateTime? @db.Date
   activeMonths              Int
