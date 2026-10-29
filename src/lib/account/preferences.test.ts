@@ -40,4 +40,13 @@ describe("validatePreferencesPatch", () => {
     expect(PREFERENCE_DEFAULTS.publicProfile).toBe(true);
     expect(PREFERENCE_DEFAULTS.shareVisibility).toBe("public");
   });
+
+  it("status ticker is opt-in: default off, boolean only", () => {
+    expect(PREFERENCE_DEFAULTS.showStatusTicker).toBe(false);
+    const on = validatePreferencesPatch({ showStatusTicker: true });
+    expect("data" in on && on.data.showStatusTicker).toBe(true);
+    const off = validatePreferencesPatch({ showStatusTicker: false });
+    expect("data" in off && off.data.showStatusTicker).toBe(false);
+    expect(validatePreferencesPatch({ showStatusTicker: "yes" })).toHaveProperty("error");
+  });
 });

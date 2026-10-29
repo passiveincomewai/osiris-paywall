@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { usePreferences } from '@/components/PreferencesProvider';
 
 interface CryptoPrice { symbol: string; price: number; change24h?: number; }
 interface Earthquake { id: string; magnitude: number; place: string; time: number; depth: number; }
@@ -66,11 +67,17 @@ const formatChange = (change: number | undefined) => {
 
 /** `revealed` is false while the splash is up; the bar rises when it turns true. */
 export default function GlobalStatusBar({ revealed = true }: { revealed?: boolean }) {
+  /* Item 5 (2026-10-29): the whole bottom bar — ticker, community
+     links and ONLINE indicator — is now an opt-in account setting
+     ("Globe status ticker", default OFF). Anonymous visitors get the
+     defaults, so the bar stays off for them too. */
+  const { showStatusTicker } = usePreferences();
   const [crypto, setCrypto] = useState<CryptoPrice[]>([]);
   const [quakes, setQuakes] = useState<Earthquake[]>([]);
   const [hoveredQuake, setHoveredQuake] = useState<Earthquake | null>(null);
 
   useEffect(() => {
+    if (!showStatusTicker) return;
     const fetchData = async () => {
       try {
         const [cryptoRes, quakeRes] = await Promise.allSettled([
@@ -122,7 +129,9 @@ export default function GlobalStatusBar({ revealed = true }: { revealed?: boolea
     fetchData();
     const iv = setInterval(fetchData, 60000);
     return () => clearInterval(iv);
-  }, []);
+  }, [showStatusTicker]);
+
+  if (!showStatusTicker) return null;
 
   // Keep the bar mounted even with no feed data — the left-hand community and
   // docs links must stay reachable when CoinGecko/USGS are rate-limited or down.

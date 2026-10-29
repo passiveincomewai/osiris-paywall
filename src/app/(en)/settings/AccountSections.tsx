@@ -362,6 +362,7 @@ export default function AccountSections() {
         <div className="divide-y divide-white/5 mt-2">
           <Toggle value={prefs.cameraAutoplay} onChange={(v) => set("cameraAutoplay", v)} label="Autoplay camera previews" hint="Live previews start playing on their own in grids." />
           <Toggle value={prefs.performanceMode} onChange={(v) => set("performanceMode", v)} label="Performance mode" hint="Lighter globe: reduces animation and effects on slower devices." />
+          <Toggle value={prefs.showStatusTicker} onChange={(v) => set("showStatusTicker", v)} label="Globe status ticker" hint="The bar along the bottom of the globe with live crypto prices (BTC, ETH, SOL) and major earthquakes. Off by default." />
         </div>
       </Section>
 

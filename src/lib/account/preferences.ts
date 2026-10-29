@@ -24,6 +24,7 @@ export interface Preferences {
   clockFormat: string;
   defaultMapStyle: string;
   performanceMode: boolean;
+  showStatusTicker: boolean;
   cameraGridDensity: string;
   cameraPreviewRefreshSeconds: number;
   cameraAutoplay: boolean;
@@ -55,6 +56,7 @@ export const PREFERENCE_DEFAULTS: Preferences = {
   clockFormat: "12",
   defaultMapStyle: "standard",
   performanceMode: false,
+  showStatusTicker: false,
   cameraGridDensity: "comfortable",
   cameraPreviewRefreshSeconds: 30,
   cameraAutoplay: true,
@@ -171,6 +173,11 @@ export function validatePreferencesPatch(
     const b = bool(input.performanceMode);
     if (b === null) return { error: "Performance mode must be on or off." };
     data.performanceMode = b;
+  }
+  if ("showStatusTicker" in input) {
+    const b = bool(input.showStatusTicker);
+    if (b === null) return { error: "Status ticker must be on or off." };
+    data.showStatusTicker = b;
   }
   if ("cameraGridDensity" in input) {
     const v = oneOf(input.cameraGridDensity, GRID_DENSITIES);

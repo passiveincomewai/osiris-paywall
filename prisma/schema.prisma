@@ -80,6 +80,7 @@ model UserPreference {
   clockFormat String @default("12") // 12 | 24
   defaultMapStyle String @default("standard") // standard | tactical-dark | night-vision
   performanceMode Boolean @default(false)
+  showStatusTicker Boolean @default(false)
 
   cameraGridDensity String @default("comfortable") // comfortable | compact
   cameraPreviewRefreshSeconds Int @default(30)
