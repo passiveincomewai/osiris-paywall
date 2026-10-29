@@ -21,22 +21,22 @@ import {
 import RelatedLinks from "@/components/RelatedLinks";
 
 export const metadata: Metadata = {
-  title: "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared",
+  title: "7 Best Webcam Sites in 2026 — Live Webcam Sites Ranked & Compared",
   description:
-    "The best live webcam sites for 2026, ranked and compared — free live cams from WorldEye's 3D globe with 74,229 cameras, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more — coverage, price and signup compared.",
+    "The best webcam sites for 2026, ranked and compared — free live cams from WorldEye's 3D globe with 74,229 cameras, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more. Coverage, price and signup compared across the top web cam sites.",
   alternates: { canonical: "/best-live-webcam-sites" },
   openGraph: {
-    title: "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared | WorldEye",
+    title: "7 Best Webcam Sites in 2026 — Live Webcam Sites Ranked & Compared | WorldEye",
     description:
-      "Compare the best live webcam sites for 2026 — WorldEye's free 3D globe with 74,229 live cams, EarthCam, SkylineWebcams, Explore.org and more.",
+      "Compare the best webcam sites for 2026 — WorldEye's free 3D globe with 74,229 live cams, EarthCam, SkylineWebcams, Explore.org and more.",
     url: "/best-live-webcam-sites",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared | WorldEye",
+    title: "7 Best Webcam Sites in 2026 — Live Webcam Sites Ranked & Compared | WorldEye",
     description:
-      "The best live webcam sites for 2026 compared — free picks ranked by best-fit, led by WorldEye's 74,229 live cams on a free 3D globe.",
+      "The best webcam sites for 2026 compared — free picks ranked by best-fit, led by WorldEye's 74,229 live cams on a free 3D globe.",
   },
 };
 
@@ -96,8 +96,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     webPageLd(
-      "7 Best Live Webcam Sites in 2026 — Free Live Cams, Ranked & Compared",
-      "The best live webcam sites for 2026 compared: WorldEye's free 3D globe, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more.",
+      "7 Best Webcam Sites in 2026 — Live Webcam Sites Ranked & Compared",
+      "The best webcam sites for 2026 compared: WorldEye's free 3D globe, EarthCam, SkylineWebcams, Explore.org, Windy webcams and more.",
       "/best-live-webcam-sites"
     ),
     itemListLd(
@@ -148,6 +148,34 @@ export default function BestLiveWebcamSitesPage() {
         <ReviewedStamp />
         <HeroCtas />
       </div>
+
+      {/* Direct answer */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold">What are the best webcam sites in 2026?</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            The seven best webcam sites in 2026 are{" "}
+            <strong className="text-white/85">WorldEye</strong> (free 3D globe,
+            best for exploring), <strong className="text-white/85">EarthCam</strong>{" "}
+            (famous landmarks), <strong className="text-white/85">SkylineWebcams</strong>{" "}
+            (scenic directory), <strong className="text-white/85">Explore.org</strong>{" "}
+            (wildlife), <strong className="text-white/85">Windy webcams</strong>{" "}
+            (cameras with weather), <strong className="text-white/85">WebcamTaxi</strong>{" "}
+            (simple directory) and{" "}
+            <strong className="text-white/85">YouTube live webcams</strong>{" "}
+            (long-running streams). Whether you search for them as webcam
+            sites or web cam sites, these are the platforms worth your time —
+            the ranked breakdown below explains which one fits which job.
+          </p>
+          <p>
+            <strong className="text-white/85">October 2026 update:</strong>{" "}
+            this roundup was reviewed and refreshed for the 2026 season —
+            rankings, pricing models and signup friction re-checked, and
+            WorldEye&apos;s free camera count stands at 74,229 public cameras
+            on the globe.
+          </p>
+        </div>
+      </section>
 
       {/* What differs */}
       <section className="mt-20 max-w-3xl mx-auto">
@@ -318,6 +346,17 @@ export default function BestLiveWebcamSitesPage() {
               sanctuary, nest and wilderness cameras — with educational
               context around them — are deeper than any general directory&apos;s
               animal category.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white/90">Are web cam sites free to use?</h3>
+            <p className="text-white/55 leading-relaxed mt-2">
+              Almost all of them, yes — the cameras themselves are published
+              publicly, so watching is free on every site in this roundup.
+              The differences are around the feed: ad-supported directories,
+              optional paid extras like archives or ad-free viewing, and
+              WorldEye&apos;s model, where the cameras and map are free with
+              no signup and Pro pays for analysis tools instead.
             </p>
           </div>
         </div>
