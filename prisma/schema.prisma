@@ -1664,3 +1664,56 @@ model FrImportRun {
   @@index([sourceId, startedAt])
   @@index([status])
 }
+
+// ── Fraud Radar Phase 2: Neon summary grain (AUDIT §15a) ───────────
+// Pre-aggregated, app-readable summaries published by the batch
+// pipeline — NOT bulk data. The provider-grain artifacts (search
+// stubs, profiles, monthly series) live in versioned object storage;
+// Neon holds only these small code/national grains plus the registry.
+// Monetary columns exist in both labelled treatments (all reported
+// cells / excluding the 62 flagged >$1B outlier cells); every row is
+// stamped with its dataset version for provenance.
+
+model FrHcpcsSummary {
+  id                        String   @id @default(cuid())
+  datasetVersion            String   // e.g. "2026-02-09" (Medicaid version)
+  hcpcsCode                 String
+  reportedCells             BigInt
+  totalClaimLines           BigInt
+  totalPatientsReported     BigInt   // reported-patient volume, NOT unique beneficiaries
+  totalPaidAllCellsUsd      Decimal  @db.Decimal(18, 2)
+  outlierCells              BigInt
+  outlierPaidUsd            Decimal  @db.Decimal(18, 2)
+  totalPaidExclOutliersUsd  Decimal  @db.Decimal(18, 2)
+  distinctBillingNpis       Int
+  distinctServicingNpis     Int
+  firstClaimMonth           DateTime? @db.Date
+  lastClaimMonth            DateTime? @db.Date
+  activeMonths              Int
+
+  createdAt                 DateTime @default(now())
+
+  @@unique([datasetVersion, hcpcsCode])
+  @@index([datasetVersion])
+}
+
+model FrMonthlyNationalSummary {
+  id                        String   @id @default(cuid())
+  datasetVersion            String
+  claimMonth                DateTime @db.Date
+  reportedCells             BigInt
+  totalClaimLines           BigInt
+  totalPatientsReported     BigInt
+  totalPaidAllCellsUsd      Decimal  @db.Decimal(18, 2)
+  outlierCells              BigInt
+  outlierPaidUsd            Decimal  @db.Decimal(18, 2)
+  totalPaidExclOutliersUsd  Decimal  @db.Decimal(18, 2)
+  distinctBillingNpis       Int
+  distinctServicingNpis     Int
+  distinctHcpcsCodes        Int
+
+  createdAt                 DateTime @default(now())
+
+  @@unique([datasetVersion, claimMonth])
+  @@index([datasetVersion])
+}
