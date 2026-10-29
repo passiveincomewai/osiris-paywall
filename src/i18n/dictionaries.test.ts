@@ -137,13 +137,15 @@ describe("manifest ↔ dictionary completeness", () => {
         // dictionaries re-synced after it — three by the 2026-10-27
         // rebase, ship-tracker on 2026-10-28 (cruise-ships section),
         // live-flight-tracker + live-webcams on 2026-10-28 for the
-        // SEO Phase 3 title/meta alignment, and live-flight-tracker
+        // SEO Phase 3 title/meta alignment, live-flight-tracker
         // again on 2026-10-29 for the SEO Phase 3 build C
-        // satellite-view section (see manifest.ts).
+        // satellite-view section, and ship-tracker on 2026-10-29 for
+        // the SEO Phase 3 build D "What is AIS?" related link (see
+        // manifest.ts).
         expect(entry.updatedAt).toBe(
-          entry.slug === "live-flight-tracker"
+          ["live-flight-tracker", "ship-tracker"].includes(entry.slug)
             ? "2026-10-29"
-            : ["ship-tracker", "live-webcams"].includes(entry.slug)
+            : entry.slug === "live-webcams"
               ? "2026-10-28"
               : ["", "pricing"].includes(entry.slug)
                 ? "2026-10-27"

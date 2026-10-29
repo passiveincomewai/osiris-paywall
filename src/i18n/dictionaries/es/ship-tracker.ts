@@ -232,5 +232,9 @@ export const esShipTracker: ShipTrackerCopy = {
       label: "Mejores herramientas de seguimiento de barcos",
       desc: "Las mejores herramientas de seguimiento de barcos comparadas: rastreadores AIS, datos de puertos y globos gratuitos.",
     },
+    {
+      label: "¿Qué es el AIS?",
+      desc: "Cómo funciona realmente el seguimiento de barcos: los transpondedores, las redes de receptores y los límites detrás de cada buque en este mapa.",
+    },
   ],
 };

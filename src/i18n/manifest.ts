@@ -94,7 +94,7 @@ const ES_SOURCE_HASHES: Record<string, string> = {
   "live-webcams": "930e8aeef70d22c8e6df02ae9b2dd921a865a5596c5ef9bd4b2a215428823825",
   faq: "9f3fec6211bd41283dd27bc043b3cda5a141ec27be9e50e00f6335180ff192d9",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
-  "ship-tracker": "2d57af59a5bbdb02a8d83c0c55df1859b2099d3e02fec0a444ac434dc3ff33bb",
+  "ship-tracker": "2729cf52bdeee15ba3e6e5ada10a8047b7215a0bc93b8919fbfb212472af8c9f",
 };
 
 // Rebase note (2026-10-27): the foundation was rebased onto production
@@ -117,13 +117,17 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // dictionary gained the satellite-view answer section + FAQ (TOP10
 // item #3); the Spanish dictionary was translated the same day, so
 // its hash and date moved too.
+// Re-sync (2026-10-29, SEO Phase 3 build D): the ship-tracker
+// dictionary gained the "What is AIS?" related link (TOP10 item #6 —
+// the AIS cluster pairing); the Spanish entry was translated the
+// same day, so its hash and date moved too.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-27",
   pricing: "2026-10-27",
   "live-webcams": "2026-10-28",
   faq: ES_TRANCHE_DATE,
   "live-flight-tracker": "2026-10-29",
-  "ship-tracker": "2026-10-28",
+  "ship-tracker": "2026-10-29",
 };
 
 const ES_PUBLISHED_SLUGS = [

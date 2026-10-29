@@ -49,6 +49,7 @@ const RELATED_SLUGS = [
   "",
   "live-flight-tracker",
   "best-ship-tracking-tools",
+  "what-is-ais",
 ];
 
 export default function ShipTrackerPage({

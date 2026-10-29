@@ -89,6 +89,10 @@ const FAQS = [
     a: "Usually not. Small private and recreational boats aren't generally required to carry AIS, though some do voluntarily (a simpler variant called Class B). If a boat isn't broadcasting, it won't appear on any AIS-based tracker.",
   },
   {
+    q: "What is an AIS vessel?",
+    a: "An AIS vessel is simply any vessel broadcasting on the Automatic Identification System — in practice, the commercial fleet: container ships, tankers, bulk carriers, ferries, cruise ships, tugs and larger fishing vessels. When a tracker shows you a ship's live position, speed and destination, you are looking at an AIS vessel's own broadcast, collected by shore receivers and satellites. Vessels that don't carry or use a transponder — most small private boats among them — are not AIS vessels and don't appear on the map.",
+  },
+  {
     q: "Is AIS data delayed or filtered?",
     a: "Public feeds can carry a small delay, and some providers withhold or anonymize certain vessel types at the request of authorities or operators. What reaches a public map is a real but curated view of global traffic.",
   },
@@ -242,6 +246,38 @@ export default function WhatIsAisPage() {
               destination, estimated time of arrival and cargo information —
               entered by the crew, and only as accurate as the last person who
               typed it in.
+            </p>
+          </div>
+        </div>
+
+        {/* What is an AIS vessel */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            What is an <span className="text-[#D4AF37]">AIS vessel?</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Search for vessel AIS data and you are really asking about the
+              ships themselves: an <strong className="text-white/90">AIS
+              vessel</strong> is any vessel broadcasting on the Automatic
+              Identification System — in practice the professional fleet.
+              Container ships, tankers, bulk carriers, ferries, cruise ships,
+              tugs and larger fishing vessels all carry transponders, so each
+              one continuously announces its identity, position, speed and
+              destination to anyone listening.
+            </p>
+            <p>
+              That is what a ship tracker actually displays: not estimates or
+              schedules, but the AIS vessels&apos; own reports, collected by
+              shore receivers and satellites and plotted where the ships say
+              they are. The flip side defines the map&apos;s edges — a vessel
+              without a transponder, or with it switched off, is not an AIS
+              vessel and leaves no trace on the picture.{" "}
+              <Link href="/ship-tracker" className="text-[#D4AF37] hover:underline">
+                See the AIS vessel traffic on the WorldEye ship tracker
+              </Link>
+              , plotted on the same globe as live flights, satellites and
+              cameras.
             </p>
           </div>
         </div>

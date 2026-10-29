@@ -281,5 +281,9 @@ export const enShipTracker: ShipTrackerCopy = {
       label: "Best ship tracking tools",
       desc: "The best ship tracking tools compared — AIS trackers, port data and free globes.",
     },
+    {
+      label: "What is AIS?",
+      desc: "How ship tracking actually works — the transponders, receiver networks and limits behind every vessel on this map.",
+    },
   ],
 };
