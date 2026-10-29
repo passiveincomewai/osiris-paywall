@@ -22,8 +22,16 @@ import {
   WIFI_LINK_LABELS,
   type SensingSnapshot,
 } from "@/lib/sensing/camera-dsp";
+import TraceChart, { type TracePoint } from "./TraceChart";
 
 const PROBE_MS = 333;
+
+/** RavenScope state-machine thresholds, in this mode's label terms. */
+const TRACE_THRESHOLDS = [
+  { value: 0.1, label: "unsettled" },
+  { value: 0.28, label: "disturbance" },
+  { value: 0.62, label: "active" },
+];
 
 type Phase = "running" | "stopped";
 
@@ -53,10 +61,12 @@ export default function WifiLinkSensing() {
   const [snap, setSnap] = useState<SensingSnapshot | null>(null);
   const [rtt, setRtt] = useState<number | null>(null);
   const [failures, setFailures] = useState(0);
+  const [probes, setProbes] = useState(0);
   const [log, setLog] = useState<LogEntry[]>([]);
   const [anomalyAt, setAnomalyAt] = useState(0);
 
   const engineRef = useRef<RttSensingEngine | null>(null);
+  const traceRef = useRef<TracePoint[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stoppedRef = useRef(false);
   const seenEventsRef = useRef(0);
@@ -71,10 +81,12 @@ export default function WifiLinkSensing() {
       if (!res.ok && res.status !== 204) throw new Error(String(res.status));
       const ms = performance.now() - started;
       setFailures(0);
+      setProbes((p) => p + 1);
       setRtt(Math.round(ms * 10) / 10);
       const engine = engineRef.current;
       if (engine) {
         const next = engine.pushRtt(ms, performance.now() / 1000);
+        traceRef.current = [...traceRef.current.slice(-899), { energy: next.energy, z: next.z }];
         setSnap(next);
         const fresh = engine.events.slice(seenEventsRef.current);
         if (fresh.length) {
@@ -95,6 +107,7 @@ export default function WifiLinkSensing() {
         }
       }
     } catch {
+      setProbes((p) => p + 1);
       setFailures((f) => f + 1);
     }
     if (!stoppedRef.current) {
@@ -106,8 +119,10 @@ export default function WifiLinkSensing() {
   const start = useCallback(() => {
     stoppedRef.current = false;
     engineRef.current = new RttSensingEngine(8, performance.now() / 1000);
+    traceRef.current = [];
     seenEventsRef.current = 0;
     setLog([]);
+    setProbes(0);
     setSnap(null);
     setPhase("running");
     void probe();
@@ -177,6 +192,31 @@ export default function WifiLinkSensing() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <p className="text-xs font-semibold tracking-[0.2em] text-white/50 uppercase">
+            Live trace — link jitter energy
+          </p>
+          <p className="font-mono text-xs text-white/50" data-testid="sensing-activity">
+            {snap ? snap.stateLabel : "CALIBRATING"} · energy {snap ? snap.energy.toFixed(2) : "—"} · z{" "}
+            {snap ? snap.z.toFixed(1) : "—"} · {probes} probes · ~3 Hz
+          </p>
+        </div>
+        <div className="mt-3">
+          <TraceChart
+            dataRef={traceRef}
+            thresholds={TRACE_THRESHOLDS}
+            height={150}
+            ariaLabel="Live trace of this device's WiFi link jitter energy, with unsettled, disturbance and active thresholds and anomaly markers"
+          />
+        </div>
+        <p className="mt-2 text-xs text-white/40">
+          Every point is one probe round trip run through the same signal pipeline RavenScope
+          uses; the dashed lines are its state thresholds and the red ticks mark anomaly spikes
+          (z ≥ 4).
+        </p>
       </div>
 
       <p className="mt-5 max-w-3xl text-sm leading-relaxed text-white/60">
