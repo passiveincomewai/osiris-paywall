@@ -134,20 +134,21 @@ describe("manifest ↔ dictionary completeness", () => {
           dictionarySourceHash(englishDictionaryFor(entry.slug))
         );
         // Publish date per entry: the 2026-10-26 tranche, except the
-        // dictionaries re-synced after it — three by the 2026-10-27
+        // dictionaries re-synced after it — home by the 2026-10-27
         // rebase, ship-tracker on 2026-10-28 (cruise-ships section),
         // live-flight-tracker + live-webcams on 2026-10-28 for the
         // SEO Phase 3 title/meta alignment, live-flight-tracker
         // again on 2026-10-29 for the SEO Phase 3 build C
-        // satellite-view section, and ship-tracker on 2026-10-29 for
-        // the SEO Phase 3 build D "What is AIS?" related link (see
-        // manifest.ts).
+        // satellite-view section, ship-tracker on 2026-10-29 for
+        // the SEO Phase 3 build D "What is AIS?" related link, and
+        // pricing on 2026-10-29 for the Osiris brand-removal FAQ
+        // rewording (see manifest.ts).
         expect(entry.updatedAt).toBe(
-          ["live-flight-tracker", "ship-tracker"].includes(entry.slug)
+          ["live-flight-tracker", "ship-tracker", "pricing"].includes(entry.slug)
             ? "2026-10-29"
             : entry.slug === "live-webcams"
               ? "2026-10-28"
-              : ["", "pricing"].includes(entry.slug)
+              : entry.slug === ""
                 ? "2026-10-27"
                 : "2026-10-26"
         );
