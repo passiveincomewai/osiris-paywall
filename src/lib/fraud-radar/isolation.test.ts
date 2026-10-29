@@ -79,6 +79,25 @@ function fraudSourceFiles(): string[] {
   return out;
 }
 
+describe("§14.3 isolation — Phase 3 care routes carry the flag gate", () => {
+  it("every care page and the care search API check fraudRadarEnabled", () => {
+    const careFiles = [
+      "app/(en)/fraud-radar/care/page.tsx",
+      "app/(en)/fraud-radar/care/medicare/page.tsx",
+      "app/(en)/fraud-radar/care/medicare/[npi]/page.tsx",
+      "app/(en)/fraud-radar/care/hcpcs/page.tsx",
+      "app/(en)/fraud-radar/care/hcpcs/[code]/page.tsx",
+      "app/(en)/fraud-radar/care/hospice/page.tsx",
+      "app/(en)/fraud-radar/care/home-health/page.tsx",
+      "app/api/fraud-radar/care/search/route.ts",
+    ];
+    for (const rel of careFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+});
+
 describe("§35 billing non-interference — static dependency guard", () => {
   const files = fraudSourceFiles();
 

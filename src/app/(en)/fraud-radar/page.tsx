@@ -110,6 +110,44 @@ export default function FraudRadarPage() {
           </div>
         </section>
 
+        <section className="mt-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.06] p-6">
+          <h2 className="text-xl font-semibold">Also published: Medicare, hospice &amp; home health</h2>
+          <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+            The care-programs slice of the healthcare engine: CMS Medicare
+            fee-for-service utilization by provider and service (2022–2024,
+            amounts derived from CMS&apos;s published averages and labelled
+            derived), screened against the LEIE, plus the Care Compare
+            directories of Medicare-certified hospices and home health
+            agencies.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link
+              href="/fraud-radar/care"
+              className="rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-300"
+            >
+              Open Care Programs
+            </Link>
+            <Link
+              href="/fraud-radar/care/medicare"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Search Medicare providers
+            </Link>
+            <Link
+              href="/fraud-radar/care/hospice"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Hospice directory
+            </Link>
+            <Link
+              href="/fraud-radar/care/home-health"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Home health directory
+            </Link>
+          </div>
+        </section>
+
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
           <h2 className="text-xl font-semibold">Whistleblower Research Center</h2>
           <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">

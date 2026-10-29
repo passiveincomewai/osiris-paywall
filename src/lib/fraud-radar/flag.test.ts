@@ -36,6 +36,11 @@ describe("fraudRadarPublicPaths — sitemap/nav isolation", () => {
       "/fraud-radar/healthcare",
       "/fraud-radar/healthcare/providers",
       "/fraud-radar/healthcare/hcpcs",
+      "/fraud-radar/care",
+      "/fraud-radar/care/medicare",
+      "/fraud-radar/care/hcpcs",
+      "/fraud-radar/care/hospice",
+      "/fraud-radar/care/home-health",
     ]);
   });
 });

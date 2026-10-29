@@ -44,5 +44,12 @@ export function fraudRadarPublicPaths(
     "/fraud-radar/healthcare",
     "/fraud-radar/healthcare/providers",
     "/fraud-radar/healthcare/hcpcs",
+    // Phase 3 care-program surfaces (landings + directories only;
+    // provider profiles, HCPCS detail and the search API stay out).
+    "/fraud-radar/care",
+    "/fraud-radar/care/medicare",
+    "/fraud-radar/care/hcpcs",
+    "/fraud-radar/care/hospice",
+    "/fraud-radar/care/home-health",
   ];
 }
