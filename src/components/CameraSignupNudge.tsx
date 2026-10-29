@@ -26,7 +26,8 @@ import {
  *
  *  - "email": the middle tier. The owner's headline ("Create a free
  *    account to get 10 more free opens") over an email field: dropping
- *    an address (the existing newsletter subscribe, double opt-in)
+ *    an address (the existing newsletter subscribe — instant
+ *    validation, no confirmation email since 2026-10-28)
  *    unlocks +5 opens instantly via onEmailUnlocked; the account path
  *    sits right under it for the other +5.
  *  - "account": the email step is done; completing the free account
@@ -102,8 +103,8 @@ export default function CameraSignupNudge({
           <NewsletterForm source="ladder-email-unlock" compact onSuccess={onEmailUnlocked} />
         </div>
         <p className="mt-2 text-[11px] leading-relaxed text-white/35">
-          Your opens unlock the moment you submit. We&apos;ll email a confirmation link for
-          the list itself — you&apos;re only subscribed once you click it.
+          Your opens unlock the moment you submit — and you&apos;re on the list right
+          away. No confirmation email; we check the address as you enter it.
         </p>
         <div className="mt-5 border-t border-white/10 pt-4">
           <Link

@@ -10,8 +10,8 @@
  * The ask is once per device, ever: subscribing or dismissing writes a
  * local record that retires every placement. No modal, no pre-ticked
  * anything, and the form is the site's existing NewsletterForm posting
- * to the existing double opt-in endpoint — the confirmation-link step
- * is stated up front, not discovered later.
+ * to the subscribe endpoint, which validates the address instantly —
+ * subscribing takes effect on the spot, no confirmation email.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -78,8 +78,8 @@ export default function EmailCaptureCard({
   const subscribed = () => {
     writeCaptureRecord(browserStorage(), "subscribed");
     trackAnalyticsEvent(CAPTURE_SUBSCRIBE_EVENT, captureDetailFor(placement));
-    // Stay mounted: NewsletterForm swaps itself to its confirmation
-    // message ("Check your inbox…") — that message IS the feedback.
+    // Stay mounted: NewsletterForm swaps itself to its success
+    // message ("You're subscribed…") — that message IS the feedback.
   };
 
   const copy = COPY[placement];
@@ -99,7 +99,7 @@ export default function EmailCaptureCard({
         <NewsletterForm source={captureSourceFor(placement)} compact onSuccess={subscribed} />
       </div>
       <p className="mt-2 text-[11px] leading-relaxed text-white/35">
-        We&rsquo;ll send a confirmation link first — you&rsquo;re only subscribed once you click it.
+        Instant subscribe — no confirmation email. We check the address as you type it in.
       </p>
     </>
   );

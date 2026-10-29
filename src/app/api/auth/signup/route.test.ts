@@ -2,7 +2,8 @@
 //  - the opt-in is opt-in only: nothing touches the newsletter list
 //    unless the form's checkbox sent newsletterOptIn === true;
 //  - opting in subscribes through the one existing routine, tagged
-//    source "signup" (double opt-in row + verification email);
+//    source "signup" (instant validation since 2026-10-28: an
+//    already-verified row + welcome email, no confirmation step);
 //  - an already-subscribed address changes nothing and shows no error;
 //  - a newsletter failure never fails the signup (logged, swallowed).
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -14,9 +15,11 @@ const mocks = vi.hoisted(() => ({
   tokenCreate: vi.fn(async () => ({})),
   subFindUnique: vi.fn(async () => null as unknown),
   subCreate: vi.fn(
-    async (_arg: { data: { email: string; verifyToken: string; source: string | null } }) => ({}),
+    async (_arg: { data: { email: string; source: string | null } }) => ({
+      unsubToken: "unsub-fixture",
+    }),
   ),
-  subUpdate: vi.fn(async () => ({})),
+  subUpdate: vi.fn(async () => ({ unsubToken: "unsub-fixture" })),
   sendEmail: vi.fn(async () => true),
 }));
 
@@ -36,7 +39,13 @@ vi.mock("@/lib/email", () => ({
   emailConfigured: () => true,
   verificationEmail: () => ({ subject: "Verify your email", html: "<p>verify</p>" }),
   newsletterVerifyEmail: (url: string) => ({ subject: "Confirm your subscription", html: url }),
+  newsletterWelcomeEmail: (url: string) => ({ subject: "You're on the list", html: url }),
   appUrl: (path: string) => `https://worldeye.app${path}`,
+}));
+vi.mock("node:dns/promises", () => ({
+  resolveMx: async () => [{ exchange: "mx.fixture-mail.com", priority: 10 }],
+  resolve4: async () => ["192.0.2.1"],
+  resolve6: async () => [],
 }));
 vi.mock("@/lib/growth", () => ({
   sendGrowthEvent: vi.fn(),
@@ -56,7 +65,7 @@ const post = (body: unknown) =>
     }),
   );
 
-const FORM = { name: "Ada", email: "ada@example.com", password: "hunter2-hunter2" };
+const FORM = { name: "Ada", email: "ada@fixture-mail.com", password: "hunter2-hunter2" };
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -73,7 +82,7 @@ describe("POST /api/auth/signup — newsletter opt-in", () => {
     expect(await res.json()).toMatchObject({ ok: true, userId: "user_1" });
     expect(mocks.subCreate).toHaveBeenCalledTimes(1);
     const arg = mocks.subCreate.mock.calls[0]![0];
-    expect(arg.data.email).toBe("ada@example.com");
+    expect(arg.data.email).toBe("ada@fixture-mail.com");
     expect(arg.data.source).toBe("signup");
   });
 

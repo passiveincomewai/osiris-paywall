@@ -13,8 +13,9 @@
 //
 // The record lives in localStorage, same as the camera gate's count:
 // per device, no server state, no cookie. Subscribing itself goes through
-// the existing POST /api/newsletter/subscribe double opt-in — this module
-// never touches the list, it only decides whether the ask may appear.
+// the existing POST /api/newsletter/subscribe (instant validation, no
+// confirmation email) — this module never touches the list, it only
+// decides whether the ask may appear.
 
 export const EMAIL_CAPTURE_STORAGE_KEY = "worldeye.emailCapture";
 
