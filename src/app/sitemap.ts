@@ -521,6 +521,8 @@ const SEO_PAGES_COMPARE = [
   "/compare/explore-org",
   "/compare/n2yo",
   "/compare/worldeye-vs-osiris",
+  "/compare/earthcam-vs-skylinewebcams",
+  "/compare/flightradar24-vs-flightaware",
 ];
 
 /**

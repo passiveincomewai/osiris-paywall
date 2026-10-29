@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1056);
+    expect(nonTransit.length).toBe(1058);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -137,8 +137,12 @@ describe("sitemap URL set", () => {
     // Delta hand-verified: the production sitemap's non-transit set
     // reproduces the 1,055 set and the 6eb73a81… hash byte-for-byte,
     // and removing exactly /sensing from the new set does the same.
+    // The competitor head-to-head wave 1 (2026-10-29) then added the
+    // two /compare/<a>-vs-<b> pair URLs → 1,058. Delta: removing
+    // exactly those 2 URLs reproduces the 1,056 set and the
+    // 2080493c… hash byte-for-byte.
     expect(hash).toBe(
-      "2080493c3d5ec4f1ec91a204635ac35b69763f45983fb0311cbfd1f0e35e7d2f",
+      "2003c3064702cf1ecafd097c0f58a51742b110fe19d5cd850727cbeadd8a8013",
     );
   });
 

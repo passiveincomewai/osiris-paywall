@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import CompareHub from "./CompareHub";
 import { listBundledCompetitors } from "@/lib/competitors-data";
+import { listComparePairs } from "@/lib/compare-pairs-data";
 
 export const dynamic = "force-dynamic";
 
@@ -273,6 +274,29 @@ export default async function CompareHubPage() {
             >
               <h3 className="font-bold text-white group-hover:text-[#7cc4ff] transition">{c.title}</h3>
               <p className="text-sm text-white/45 mt-1.5 leading-relaxed">{c.desc}</p>
+              <span className="inline-block mt-3 text-xs font-semibold text-[#0096FF]">Read the comparison →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Competitor head-to-heads (X vs Y, WorldEye as another option) */}
+      <section className="max-w-5xl mx-auto px-6 pb-16">
+        <h2 className="text-2xl font-bold text-white text-center">Competitor head-to-heads</h2>
+        <p className="text-sm text-white/45 text-center mt-3 max-w-xl mx-auto">
+          The rivalries readers search for even when WorldEye isn’t one of
+          the names — fair, sourced comparisons, with WorldEye presented
+          afterwards as another option.
+        </p>
+        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {listComparePairs().map((pair) => (
+            <Link
+              key={pair.slug}
+              href={`/compare/${pair.slug}`}
+              className="block rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#0096FF]/40 hover:bg-white/[0.04] transition group"
+            >
+              <h3 className="font-bold text-white group-hover:text-[#7cc4ff] transition">{pair.aName} vs {pair.bName}</h3>
+              <p className="text-sm text-white/45 mt-1.5 leading-relaxed">{pair.seoDescription}</p>
               <span className="inline-block mt-3 text-xs font-semibold text-[#0096FF]">Read the comparison →</span>
             </Link>
           ))}
