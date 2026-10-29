@@ -65,7 +65,14 @@ export default function SensingPage() {
         <h1 className="mt-3 text-3xl sm:text-5xl font-bold leading-tight">
           Sense motion in a room — with the WiFi and camera you already have.
         </h1>
-        <p className="mt-5 max-w-3xl text-base sm:text-lg text-white/70 leading-relaxed">
+        <p className="mt-3 max-w-3xl text-base sm:text-lg text-white/70 leading-relaxed">
+          A live room readout from the WiFi and camera you already have — free, on-device,
+          nothing simulated. It starts on its own just below.
+        </p>
+
+        <SensingTool />
+
+        <p className="mt-10 max-w-3xl text-base sm:text-lg text-white/70 leading-relaxed">
           WiFi signals wobble when bodies move through them, and a camera sees the movement
           directly. This free page turns both into a live room readout — presence, stillness,
           movement, strong activity — three real ways, no extra hardware and nothing simulated:
@@ -102,8 +109,6 @@ export default function SensingPage() {
             foreground while sensing — mobile browsers pause sensors in the background.
           </p>
         </div>
-
-        <SensingTool />
 
         <section className="mt-12 max-w-3xl space-y-4 text-sm leading-relaxed text-white/60">
           <h2 className="text-base font-semibold text-white">How each mode works</h2>

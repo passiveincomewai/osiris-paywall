@@ -132,15 +132,7 @@ export default function WifiLinkSensing() {
 
   return (
     <div>
-      <p className="max-w-3xl text-sm leading-relaxed text-white/60">
-        This mode times tiny requests from this device to WorldEye and back, about three per
-        second. The first hop of every trip is your own WiFi link, so its wobble is in the
-        timings. Leave the device sitting still and the link reads quiet; pick it up, walk with
-        it, or move between it and your router and the disturbance shows. It senses{" "}
-        <span className="text-white/85">this device&apos;s link only</span> — not the whole room.
-      </p>
-
-      <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div
           data-testid="sensing-state"
           className={`flex flex-col justify-center rounded-2xl border p-6 ${STATE_STYLES[snap?.state ?? "EMPTY"]}`}
@@ -186,6 +178,14 @@ export default function WifiLinkSensing() {
           </div>
         </div>
       </div>
+
+      <p className="mt-5 max-w-3xl text-sm leading-relaxed text-white/60">
+        This mode times tiny requests from this device to WorldEye and back, about three per
+        second. The first hop of every trip is your own WiFi link, so its wobble is in the
+        timings. Leave the device sitting still and the link reads quiet; pick it up, walk with
+        it, or move between it and your router and the disturbance shows. It senses{" "}
+        <span className="text-white/85">this device&apos;s link only</span> — not the whole room.
+      </p>
 
       {anomalyRecent && (
         <div className="mt-4 rounded-2xl border border-rose-400/40 bg-rose-400/10 p-4 text-sm font-medium text-rose-200">

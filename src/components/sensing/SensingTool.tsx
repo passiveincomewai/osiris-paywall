@@ -69,8 +69,14 @@ export default function SensingTool() {
 
       <div className="mt-5">
         {!resolved ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/60">
-            Preparing the sensor…
+          <div
+            data-testid="sensing-state"
+            className="flex flex-col justify-center rounded-2xl border border-white/10 bg-white/5 p-6"
+            aria-live="polite"
+          >
+            <p className="text-xs font-semibold tracking-[0.2em] text-white/50 uppercase">Sensor state</p>
+            <p className="mt-1 text-4xl font-bold text-white">STARTING…</p>
+            <p className="mt-1 text-sm text-white/50">Starting the sensor on this device — no account, nothing uploaded.</p>
           </div>
         ) : mode === "ravenscope" ? (
           <RavenScopeSensing />
