@@ -310,6 +310,11 @@ export default function Dashboard() {
      popup is currently up (it reports back so prompts never stack). */
   const [showSharePrompt, setShowSharePrompt] = useState(false);
   const [timedPopupVisible, setTimedPopupVisible] = useState(false);
+  /* First-camera prompt coordination: whether any onboarding surface
+     is up (OnboardingRoot reports it, same pattern as the timed popup)
+     and whether the prompt itself is visible — prompts never stack. */
+  const [onboardingUiActive, setOnboardingUiActive] = useState(false);
+  const [firstCameraPromptVisible, setFirstCameraPromptVisible] = useState(false);
   /** Set on this session's first successful camera open (the gated,
    *  counted path in handleEntityClick) — mounts the once-per-device
    *  email capture card (lib/newsletter/capture). Deliberately NOT
@@ -3288,7 +3293,7 @@ export default function Dashboard() {
           the camera viewer is up, so prompts never stack. */}
       <TimedTrialPopup
         surface="globe"
-        suppressed={showCameraSignup || showSharePrompt || activeCamera !== null}
+        suppressed={showCameraSignup || showSharePrompt || activeCamera !== null || firstCameraPromptVisible}
         onVisibilityChange={setTimedPopupVisible}
       />
       {/* Email capture, once per device, mounted by the session's first
@@ -3355,15 +3360,23 @@ export default function Dashboard() {
       {/* Keyboard Shortcuts Overlay */}
       <KeyboardShortcuts />
 
-      {/* ── NEAR YOU STRIP ──
-          Globe-arrival camera suggestions (components/NearYouStrip.tsx).
+      {/* ── FIRST-CAMERA PROMPT (formerly the Near You strip) ──
+          Globe-arrival camera shortlist (components/NearYouStrip.tsx).
           Suppressed while a camera deep link owns the view: the link
-          names its destination, and the strip must not compete with it. */}
+          names its destination, and the prompt must not compete with
+          it. Also suppressed while any other proactive surface owns
+          the stage (onboarding UI, signup nudge, share prompt, timed
+          trial popup) and once this session has opened a camera —
+          prompts never stack, and the first open is the goal. */}
       <NearYouStrip
         active={splashGone && !sharedCameraId}
         location={visitorGeo}
+        centre={mapCenter ? { lat: mapCenter.lat, lng: mapCenter.lng } : null}
         cameras={data.cameras ?? []}
         catalogueSettled={!camerasLoading}
+        cameraOpened={cameraEverOpened}
+        suppressed={onboardingUiActive || showCameraSignup || showSharePrompt || timedPopupVisible}
+        onVisibilityChange={setFirstCameraPromptVisible}
       />
 
       {/* ── GLOBAL STATUS TICKER (bottom) ── */}
@@ -3391,6 +3404,7 @@ export default function Dashboard() {
         globeReady={mapReady && revealed}
         isMobile={isMobile}
         isPremium={isPremiumUser}
+        onUiChange={setOnboardingUiActive}
         cameraId={activeCamera ? String(activeCamera.id ?? activeCamera.name ?? 'open') : null}
         layersSig={Object.entries(activeLayers).filter(([, v]) => v).map(([k]) => k).join(',')}
         panel={mobilePanel ?? (showOi ? 'oi' : showIntel ? 'recon' : showAlerts ? 'alerts' : showDesktopSearch ? 'search' : null)}

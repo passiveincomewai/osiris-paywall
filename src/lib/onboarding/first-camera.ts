@@ -26,15 +26,39 @@
 
 export const OPEN_CAMERA_EVENT = "we:open-camera";
 
+/** Resolved playable media, as served by /api/cctv/showcase (`media`). */
+export interface FirstCameraMedia {
+  kind: "jpg" | "mjpeg" | "mp4" | "hls";
+  url: string;
+}
+
 export interface FirstCamera {
   id: string;
   name: string | null;
   city: string | null;
   country: string | null;
+  /** The showcase's resolved preview media — kept so visual surfaces
+   *  (the first-camera prompt's cards) can show the camera's real still
+   *  instead of a text-only chip. Null when the payload carries none. */
+  media: FirstCameraMedia | null;
 }
 
 function cleanString(v: unknown): string | null {
   return typeof v === "string" && v.trim() ? v.trim() : null;
+}
+
+const MEDIA_KINDS = new Set(["jpg", "mjpeg", "mp4", "hls"]);
+
+/** Keep a showcase media entry only when it is shaped like one the
+ *  preview machinery could have produced; anything else degrades to
+ *  "no still available", never a broken URL handed to an <img>. */
+function cleanMedia(v: unknown): FirstCameraMedia | null {
+  if (!v || typeof v !== "object") return null;
+  const rec = v as Record<string, unknown>;
+  const kind = typeof rec.kind === "string" ? rec.kind.toLowerCase() : "";
+  const url = cleanString(rec.url);
+  if (!MEDIA_KINDS.has(kind) || !url) return null;
+  return { kind: kind as FirstCameraMedia["kind"], url };
 }
 
 /**
@@ -59,6 +83,7 @@ export function parseShowcaseCameras(json: unknown): FirstCamera[] {
       name: cleanString(rec.name),
       city: cleanString(rec.city),
       country: cleanString(rec.country),
+      media: cleanMedia(rec.media),
     });
   }
   return out;

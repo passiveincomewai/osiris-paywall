@@ -22,8 +22,8 @@ describe("parseShowcaseCameras", () => {
       ],
     });
     expect(out).toEqual([
-      { id: "occ-1", name: "Shibuya Crossing", city: "Tokyo", country: "Japan" },
-      { id: "faa-22", name: "Birchwood", city: "Anchorage", country: "United States" },
+      { id: "occ-1", name: "Shibuya Crossing", city: "Tokyo", country: "Japan", media: null },
+      { id: "faa-22", name: "Birchwood", city: "Anchorage", country: "United States", media: null },
     ]);
   });
 
@@ -31,14 +31,33 @@ describe("parseShowcaseCameras", () => {
     const out = parseShowcaseCameras({
       cameras: [{ id: 42, name: "  ", city: "", country: undefined }],
     });
-    expect(out).toEqual([{ id: "42", name: null, city: null, country: null }]);
+    expect(out).toEqual([{ id: "42", name: null, city: null, country: null, media: null }]);
   });
 
   it("drops entries without a usable id and non-object rows", () => {
     const out = parseShowcaseCameras({
       cameras: [{ name: "No id" }, { id: "   " }, null, "nope", { id: "ok-1" }],
     });
-    expect(out).toEqual([{ id: "ok-1", name: null, city: null, country: null }]);
+    expect(out).toEqual([{ id: "ok-1", name: null, city: null, country: null, media: null }]);
+  });
+
+  it("keeps well-formed media and nulls malformed media", () => {
+    const out = parseShowcaseCameras({
+      cameras: [
+        { id: "m-1", media: { kind: "jpg", url: "https://cam.example.com/a.jpg" } },
+        { id: "m-2", media: { kind: "MP4", url: "https://cam.example.com/b.mp4" } },
+        { id: "m-3", media: { kind: "webm", url: "https://cam.example.com/c.webm" } },
+        { id: "m-4", media: { kind: "jpg", url: "  " } },
+        { id: "m-5", media: "https://cam.example.com/e.jpg" },
+      ],
+    });
+    expect(out.map((c) => c.media)).toEqual([
+      { kind: "jpg", url: "https://cam.example.com/a.jpg" },
+      { kind: "mp4", url: "https://cam.example.com/b.mp4" },
+      null,
+      null,
+      null,
+    ]);
   });
 
   it("returns [] for non-showcase payloads", () => {
@@ -62,9 +81,9 @@ describe("pickFirstCamera / firstCameraPlace", () => {
   });
 
   it("labels the place by city, falling back to the camera name", () => {
-    expect(firstCameraPlace({ id: "a", name: "Harbor Cam", city: "Oslo", country: null })).toBe("Oslo");
-    expect(firstCameraPlace({ id: "a", name: "Harbor Cam", city: null, country: null })).toBe("Harbor Cam");
-    expect(firstCameraPlace({ id: "a", name: null, city: null, country: null })).toBeNull();
+    expect(firstCameraPlace({ id: "a", name: "Harbor Cam", city: "Oslo", country: null, media: null })).toBe("Oslo");
+    expect(firstCameraPlace({ id: "a", name: "Harbor Cam", city: null, country: null, media: null })).toBe("Harbor Cam");
+    expect(firstCameraPlace({ id: "a", name: null, city: null, country: null, media: null })).toBeNull();
     expect(firstCameraPlace(null)).toBeNull();
   });
 });
@@ -106,6 +125,7 @@ describe("fetchFirstCamera", () => {
       name: "A",
       city: "Tokyo",
       country: "Japan",
+      media: null,
     });
     expect(fetchImpl).toHaveBeenCalledWith("/api/cctv/showcase");
   });

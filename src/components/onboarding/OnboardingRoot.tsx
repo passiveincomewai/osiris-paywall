@@ -89,6 +89,11 @@ export interface OnboardingRootProps {
   panel: string | null;
   /** Camera signup nudge visible — suppress onboarding surfaces meanwhile. */
   signupOpen: boolean;
+  /** Reports whether any onboarding surface is currently up, so the
+   *  parent can keep sibling prompts (the first-camera prompt) from
+   *  stacking on top of it — the same visibility-reporting pattern
+   *  TimedTrialPopup already uses. */
+  onUiChange?: (active: boolean) => void;
 }
 
 function OnboardingRootInner({
@@ -99,6 +104,7 @@ function OnboardingRootInner({
   layersSig,
   panel,
   signupOpen,
+  onUiChange,
 }: OnboardingRootProps) {
   const [group, setGroup] = useState<OnbGroup>("a");
   const [onb, setOnb] = useState<OnbState>(() => loadState());
@@ -113,6 +119,13 @@ function OnboardingRootInner({
   stateRef.current = onb;
   const uiRef = useRef(ui);
   uiRef.current = ui;
+
+  /* Surface-visibility reporting for the parent's prompt arbitration. */
+  const uiChangeRef = useRef(onUiChange);
+  uiChangeRef.current = onUiChange;
+  useEffect(() => {
+    uiChangeRef.current?.(ui !== "none");
+  }, [ui]);
   const stepRef = useRef(tourStep);
   stepRef.current = tourStep;
   const signupRef = useRef(signupOpen);
