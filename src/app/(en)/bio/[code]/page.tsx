@@ -67,7 +67,7 @@ export default async function BioPage({ params }: { params: Promise<{ code: stri
   const refHref = `/ref/${bio.resolvedCode}`;
 
   return (
-    <main className="min-h-screen bg-[#04121f] text-slate-100 flex items-start justify-center px-4 py-12">
+    <main className="docs-root min-h-screen bg-[#04121f] text-slate-100 flex items-start justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-8">
         <header className="text-center space-y-4">
           <Image

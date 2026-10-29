@@ -103,7 +103,7 @@ export default async function CameraSubmissionsAdminPage({
     }`;
 
   return (
-    <div className="min-h-screen" style={{ background: "#050810" }}>
+    <div className="docs-root min-h-screen" style={{ background: "#050810" }}>
       <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
           <div>

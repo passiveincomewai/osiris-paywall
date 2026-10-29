@@ -58,7 +58,7 @@ const jsonLd = {
 
 export default function SensingPage() {
   return (
-    <main className="min-h-screen" style={{ background: "#050810" }}>
+    <main className="docs-root min-h-screen" style={{ background: "#050810" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 sm:py-16 text-white">
         <p className="text-xs font-semibold tracking-[0.2em] text-cyan-300 uppercase">

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function SavedPage() {
   return (
     <>
-      <main className="min-h-screen bg-[#05070d] text-white">
+      <main className="docs-root min-h-screen bg-[#05070d] text-white">
         <div className="max-w-3xl mx-auto px-6 py-10 md:py-16">
           <div className="text-center max-w-2xl mx-auto">
             <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">

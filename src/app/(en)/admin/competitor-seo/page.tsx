@@ -46,7 +46,7 @@ export default async function CompetitorSeoAdminPage({
   const r = await getCompetitorSeoReport(days);
 
   return (
-    <div className="min-h-screen" style={{ background: "#050810" }}>
+    <div className="docs-root min-h-screen" style={{ background: "#050810" }}>
       <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
