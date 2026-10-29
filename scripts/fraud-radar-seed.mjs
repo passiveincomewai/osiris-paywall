@@ -7,10 +7,20 @@
  *   node --experimental-strip-types scripts/fraud-radar-seed.mjs
  *
  * Safe to re-run: rows are upserted by slug and import-run history is
- * never touched. This script is NOT part of any build or deploy.
+ * never touched. The upsert writes EVERY seed field on both create and
+ * update — including status and the ingest-provenance fields
+ * (sourceVersion, lastPublishedAt, lastImportedAt, lastVerifiedAt,
+ * completeness) — so re-seeding syncs existing rows to the canonical
+ * seed in sources.ts (a source is only "ingested" in the seed once its
+ * pipeline manifest verifies the import; provenance an ingested source
+ * does not carry, e.g. LEIE's publish date, is written as NULL, never
+ * invented). `lastError` is runtime state, not seed data, and is never
+ * written here. This script is NOT part of any build or deploy.
  */
 import { PrismaClient } from "@prisma/client";
 import { FRAUD_RADAR_SOURCES } from "../src/lib/fraud-radar/sources.ts";
+
+const toDate = (v) => (v == null ? null : new Date(v));
 
 const db = new PrismaClient();
 try {
@@ -30,12 +40,16 @@ try {
       limitations: s.limitations,
       cadence: s.cadence,
       notes: s.notes,
+      status: s.status,
+      sourceVersion: s.sourceVersion ?? null,
+      lastPublishedAt: toDate(s.lastPublishedAt),
+      lastImportedAt: toDate(s.lastImportedAt),
+      lastVerifiedAt: toDate(s.lastVerifiedAt),
+      completeness: s.completeness ?? null,
     };
     await db.frDataSource.upsert({
       where: { slug: s.slug },
-      // Status is operator state, not seed data: only set it on create
-      // so re-seeding never resets a source that has since imported.
-      create: { slug: s.slug, status: s.status, ...data },
+      create: { slug: s.slug, ...data },
       update: data,
     });
     console.log(`seeded ${s.slug}`);
