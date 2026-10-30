@@ -2016,3 +2016,18 @@ model SkiTripReminder {
   @@unique([userId, resortSlug, tripStart])
   @@index([status, tripStart])
 }
+
+// Powder #5 (rescoped): one row per resort per captured snow-stake
+// night. frames = [{ t, url, sig }] chronological, stored by
+// /api/cron/ski-stake-capture from the operator's own stake still.
+model SkiStakeNight {
+  id         String   @id @default(cuid())
+  resortSlug String
+  nightKey   String // Denver date the night started, YYYY-MM-DD
+  frames     Json // [{ t, url, sig }] chronological
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([resortSlug, nightKey])
+  @@index([nightKey])
+}

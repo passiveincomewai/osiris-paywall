@@ -5,6 +5,8 @@ import { ArrowLeft, BedDouble, Camera, Car, ChevronRight, ExternalLink, Globe, G
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import SkiCameraGrid from "@/components/SkiCameraGrid";
+import SkiSnowStake from "@/components/SkiSnowStake";
+import { stakeCamForResort } from "@/data/ski-stake-cams";
 import SkiConditions from "@/components/SkiConditions";
 import SkiRouteTool from "@/components/SkiRouteTool";
 import SkiSidebar from "@/components/SkiSidebar";
@@ -145,6 +147,11 @@ export default async function SkiResortPage({
     r.slug === "alta" || r.slug === "snowbird"
       ? resortCams.find(cam => cam.id === "udot-165998")
       : undefined;
+  /* Powder #5 (rescoped 2026-10-30): the snow-stake section renders
+     only for resorts whose OPERATOR publishes a camera it labels a
+     snow stake and whose still feed was verified fetchable — the
+     curated, verified set lives in src/data/ski-stake-cams.ts. */
+  const stakeCam = stakeCamForResort(r.slug);
   const areas = cameraAreas([...resortCams, ...nearbyCams]).slice(0, 5);
   /* The same-country cluster (§4.4), ordered by real distance from
      this resort instead of file order — the nearest mountains are
@@ -608,6 +615,34 @@ export default async function SkiResortPage({
             emptyNote={`No cameras within ${RESORT_RADIUS_KM} km of ${r.name} are in the live index right now — the road cameras below still cover the area.`}
           />
         </section>
+
+        {/* Snow stake (Powder #5, rescoped): the operator's own stake
+            camera, under the operator's own label, with the overnight
+            frame replay once captures exist. Renders only where a
+            verified operator-labelled stake feed exists. */}
+        {stakeCam && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">
+              Snow stake — watch the night&apos;s snow pile up
+            </h2>
+            <p className="text-sm text-white/50 mb-5 max-w-3xl">
+              This is {r.name}&apos;s own snow stake: the camera {stakeCam.operator}{" "}
+              itself labels &ldquo;{stakeCam.label}&rdquo;, pointed at the measuring
+              board the patrol reads. The still below is the operator&apos;s live
+              feed, and through the season WorldEye saves a frame an hour overnight
+              so you can replay the night and watch the stake fill — the
+              first-chair check before the resort even posts its report.
+            </p>
+            <SkiSnowStake
+              resortSlug={stakeCam.resortSlug}
+              resortName={stakeCam.resortName}
+              label={stakeCam.label}
+              operator={stakeCam.operator}
+              feedUrl={stakeCam.feedUrl}
+              sourcePage={stakeCam.sourcePage}
+            />
+          </section>
+        )}
 
         {/* Little Cottonwood access-road watch (Powder #11, rescoped):
             the UDOT SR-210 camera at White Pine, on the one road Alta
