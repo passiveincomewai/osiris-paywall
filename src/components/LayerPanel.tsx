@@ -792,20 +792,6 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
     return found ? total : null;
   };
 
-  /** Sum of live records across data arrays, or null until any has loaded —
-   *  the quick bar never prints a number it doesn't have. */
-  const sumData = (keys: string[]): number | null => {
-    let total = 0;
-    let found = false;
-    for (const k of keys) {
-      if (data?.[k] && Array.isArray(data[k])) {
-        total += data[k].length;
-        found = true;
-      }
-    }
-    return found ? total : null;
-  };
-
   /* ── Shared pieces ── */
 
   const panelHeader = (
@@ -839,44 +825,40 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
 
   /* The reference board's quick bar. Same five stats the mobile drawer
      header used to print (AIR = all four flight buckets, SAT, CAM, WX,
-     NUC = infrastructure) — now each is also a switch: AIR/SAT flip
-     their whole category through the same group patch the category
-     headers use, CAM/WX/NUC flip their single layer. A count renders
-     only when its data has actually loaded. */
+     NUC = infrastructure) — each is a switch: AIR/SAT flip their whole
+     category through the same group patch the category headers use,
+     CAM/WX/NUC flip their single layer. The live counts the chips used
+     to print were removed on the owner's order (2026-10-30) — the chips
+     are pure toggles now; the numbers still show on the category rows. */
   const aviationCat = visibleCategories.find((c) => c.id === 'aviation');
   const spaceCat = visibleCategories.find((c) => c.id === 'space');
   const quickItems = [
     {
       id: 'AIR', icon: Plane, accent: '#38BDF8',
-      count: sumData(['commercial_flights', 'private_flights', 'private_jets', 'military_flights']),
       active: ['flights', 'private', 'jets', 'military'].some((k) => !!activeLayers?.[k]),
       label: 'Toggle aviation layers',
       onClick: () => { if (aviationCat) toggleGroup(aviationCat.layers); },
     },
     {
       id: 'SAT', icon: Satellite, accent: '#38BDF8',
-      count: sumData(['satellites']),
       active: ['satellites', 'sat_comms', 'sat_military', 'sat_navigation', 'sat_earth', 'sat_science', 'space_missions'].some((k) => !!activeLayers?.[k]),
       label: 'Toggle space tracking layers',
       onClick: () => { if (spaceCat) toggleGroup(spaceCat.layers); },
     },
     {
       id: 'CAM', icon: Camera, accent: '#38BDF8',
-      count: sumData(['cameras']),
       active: !!activeLayers?.cctv,
       label: 'Toggle CCTV cameras',
       onClick: () => toggle('cctv'),
     },
     {
       id: 'WX', icon: CloudLightning, accent: '#B388FF',
-      count: sumData(['weather_events']),
       active: !!activeLayers?.weather,
       label: 'Toggle severe weather',
       onClick: () => toggle('weather'),
     },
     {
       id: 'NUC', icon: Radiation, accent: '#FFC400',
-      count: sumData(['infrastructure']),
       active: !!activeLayers?.infrastructure,
       label: 'Toggle nuclear infrastructure',
       onClick: () => toggle('infrastructure'),
@@ -912,11 +894,6 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
           >
             <QIcon className="w-[18px] h-[18px]" style={{ color: q.accent, filter: `drop-shadow(0 0 5px ${q.accent}90)` }} />
             <span className="text-[8.5px] font-mono tracking-[0.18em] text-white/55">{q.id}</span>
-            {q.count !== null && (
-              <span className="absolute top-1 right-1.5 text-[8.5px] font-mono tabular-nums leading-none" style={{ color: q.accent }}>
-                {q.count.toLocaleString()}
-              </span>
-            )}
             <span
               aria-hidden
               className="absolute bottom-1 w-3.5 h-[2px] rounded-full transition-all"
