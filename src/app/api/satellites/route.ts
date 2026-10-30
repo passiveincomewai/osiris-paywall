@@ -370,10 +370,10 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
  * The computed payload, cached as a serialized string.
  *
  * Positions are propagated for the build moment and the body carries that
- * epoch in `timestamp`; the client fetches the catalogue once per session
- * and never re-polls, so a 120 s server cache (the same lifetime the CDN
- * header already grants) changes nothing a viewer can see - it just stops
- * every request paying ~4 s of propagation and a ~1 MB serialization.
+ * epoch in `timestamp`; the client re-fetches on this same 120 s cadence
+ * while a satellite layer is on, so the cache lifetime doubles as the
+ * position freshness a viewer sees - and it stops every request paying
+ * ~4 s of propagation and a ~1 MB serialization.
  * Past the TTL the stale body is served while one background rebuild runs
  * (stale-while-revalidate), matching the Cache-Control contract. A
  * degenerate build (<10 satellites, the broken-catalogue state that gets

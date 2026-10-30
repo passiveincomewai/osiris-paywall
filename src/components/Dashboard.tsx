@@ -2173,6 +2173,15 @@ export default function Dashboard() {
         layerFetchedRef.current.add('cyber_attacks');
       }, 300000)); // 5m — a blocklist turns over in hours, not seconds
     }
+    if (activeLayers.satellites || activeLayers.sat_comms || activeLayers.sat_military || activeLayers.sat_navigation || activeLayers.sat_earth || activeLayers.sat_science) {
+      /* Satellites move: positions are propagated server-side for the
+         response epoch and the route caches that body for 120 s, so
+         re-fetch on the same cadence while any satellite layer is on.
+         Without this the markers froze at their first-fetch positions
+         for the life of the page (the one-shot fetch never repeats);
+         OsirisMap re-points the selection after each refresh. */
+      intervals.push(setInterval(() => fetchEndpoint('/api/satellites', d => ({ ...d, satellites: decodeSatelliteRows(d), satellites_at: d.timestamp })), 120000)); // 2m — matches the route's 120 s payload cache
+    }
     return () => { intervals.forEach(clearInterval); stopFns.forEach(stop => stop()); };
   }, [activeLayers, fetchEndpoint, dataBoot]);
 
