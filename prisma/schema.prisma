@@ -1825,3 +1825,45 @@ model FrHomeHealthAgency {
   @@unique([datasetVersion, ccn])
   @@index([datasetVersion, state])
 }
+
+// ── Transit route email alerts (2026-10-29) ────────────────────────
+// Email-only subscriptions to one route's service alerts (MBTA v3 is
+// the upstream). Deliberately NOT tied to User: a visitor with no
+// account gets the first 5 alert digest emails free, and the runner
+// lifts the cap the moment a User row exists for the address. The
+// cap/dedupe rules live in src/lib/transit/alertSubscriptions.
+model TransitAlertSubscription {
+  id        String @id @default(cuid())
+  email     String // normalized lowercase by the shared email validator
+  agency    String // agency id, e.g. "mbta"
+  routeId   String // upstream route id, e.g. MBTA "Orange"
+  routeSlug String // site route-page slug, e.g. "orange-orange-line"
+  routeName String // display name used in email copy, e.g. "Orange Line"
+  status    String @default("active") // active | unsubscribed
+  // Digest emails sent while the address had no account — the
+  // free-tier counter (cap = FREE_ALERT_EMAIL_LIMIT in the lib).
+  alertsSent            Int       @default(0)
+  conversionEmailSentAt DateTime?
+  unsubToken            String    @unique @default(cuid())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  sends TransitAlertSend[]
+
+  @@unique([email, agency, routeId])
+  @@index([agency, routeId, status])
+}
+
+// One row per alert version emailed — the dedupe ledger. An alert is
+// re-emailed only when the upstream record's updated_at changes.
+model TransitAlertSend {
+  id             String                   @id @default(cuid())
+  subscriptionId String
+  subscription   TransitAlertSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  alertId        String // upstream alert id
+  alertUpdatedAt DateTime // upstream updated_at at send time
+  sentAt         DateTime @default(now())
+
+  @@unique([subscriptionId, alertId, alertUpdatedAt])
+  @@index([subscriptionId])
+}
