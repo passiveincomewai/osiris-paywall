@@ -16,7 +16,7 @@
 // no longer drift from the real plans. Every option's facts render in
 // its row; the CTA always names the selected option's own trial
 // (weekly selections say 3 days — never a hard-coded 10).
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   TIER_PLAN_OPTIONS,
   gridCheckoutPlan,
@@ -24,6 +24,10 @@ import {
   type PlanTier,
   type TrialPlan,
 } from "@/lib/billing/trial-checkout";
+import {
+  trackPickerOpened,
+  trackPlanSelected,
+} from "@/lib/billing/picker-analytics";
 import CheckoutSheet from "./CheckoutSheet";
 import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import TrialButton from "./TrialButton";
@@ -48,6 +52,13 @@ function TierCard({ tier }: { tier: PlanTier }) {
   const selected = options.find((o) => o.period === period) ?? options[0];
   const accent = TIER_ACCENTS[tier];
 
+  function choosePeriod(next: TrialPlan) {
+    // Phase E funnel: the card's selection state is exact, so the
+    // event carries the resulting plan of this tier × period.
+    if (next !== period) trackPlanSelected("cta", gridCheckoutPlan(tier, next));
+    setPeriod(next);
+  }
+
   return (
     <div
       className={`flex flex-col rounded-3xl border bg-white/[0.02] p-6 ${accent.border}`}
@@ -66,7 +77,7 @@ function TierCard({ tier }: { tier: PlanTier }) {
               type="button"
               role="radio"
               aria-checked={active}
-              onClick={() => setPeriod(o.period)}
+              onClick={() => choosePeriod(o.period)}
               className={`rounded-xl border px-3 py-2 text-left transition ${
                 active
                   ? "border-white/35 bg-white/[0.05]"
@@ -108,14 +119,41 @@ function TierCard({ tier }: { tier: PlanTier }) {
         plan={sheetPlan}
         onClose={() => setSheetPlan(null)}
         hideHostedOption
+        analyticsSurface="cta"
       />
     </div>
   );
 }
 
 export default function TrialCtaCards() {
+  // Phase E funnel: one picker_opened when the section is actually
+  // seen (IntersectionObserver, the EmailCaptureCard impression
+  // pattern) — the headline plan is the middle card's default,
+  // Pro annual. Fires immediately where IO doesn't exist.
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      trackPickerOpened("cta", "annual");
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          trackPickerOpened("cta", "annual");
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div
+      ref={sectionRef}
       className="mt-8 grid gap-4 sm:grid-cols-3"
       onPointerEnter={() => preloadStripeJs()}
       onFocus={() => preloadStripeJs()}

@@ -16,6 +16,7 @@ import {
   ENTERPRISE_SUPPORT_LINE,
 } from "@/lib/enterprise/offer";
 import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
+import { trackPlanSelected } from "@/lib/billing/picker-analytics";
 import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
 import { motion, AnimatePresence } from "framer-motion";
@@ -379,7 +380,7 @@ function TierCard({
         <Lock className="w-3.5 h-3.5" /> {copy.card.securedLine}
       </p>
       <p className="mt-3 text-center">
-        <HostedCheckoutLink plan={plan} caption={false} />
+        <HostedCheckoutLink plan={plan} caption={false} surface="pricing" />
       </p>
     </motion.div>
   );
@@ -462,6 +463,10 @@ export default function PricingPage({
               <button
                 key={key}
                 onClick={() => {
+                  // Phase E funnel: a period change re-headlines the
+                  // grid on the Pro plan of that period (the bare
+                  // plan keys ARE the Pro plans).
+                  if (key !== period) trackPlanSelected("pricing", key);
                   setPeriod(key);
                   // Wave 2 F3: remember the period this visitor is
                   // looking at so the post-signup trial prompt can
@@ -529,7 +534,7 @@ export default function PricingPage({
                 <Lock className="w-3.5 h-3.5" /> {copy.enterprise.securedByStripe}
               </p>
               <p className="mt-2 text-center">
-                <HostedCheckoutLink plan="enterprise" caption={false} />
+                <HostedCheckoutLink plan="enterprise" caption={false} surface="pricing" />
               </p>
               <p className="flex items-start gap-2 text-xs text-white/50 mt-4">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#00E5FF]/80 shrink-0 mt-px" />
@@ -641,7 +646,7 @@ export default function PricingPage({
         </div>
       </div>
       <StickyMobileCta cta={proPlan.cta} days={period === "weekly" ? 3 : 10} />
-      <CheckoutSheet plan={sheetPlan} onClose={closeSheet} />
+      <CheckoutSheet plan={sheetPlan} onClose={closeSheet} analyticsSurface="pricing" />
       <SiteFooter copy={getChromeCopy(locale)} locale={locale} slug="pricing" />
     </main>
   );

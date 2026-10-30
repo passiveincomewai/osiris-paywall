@@ -34,7 +34,7 @@
  * Pro users never see this — the panel gates on the same subscription
  * signal as its locks (isPremiumUser) and simply doesn't render it.
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Crown, Lock, Zap } from "lucide-react";
 import {
@@ -45,6 +45,10 @@ import {
 } from "@/lib/billing/trial-checkout";
 import CheckoutSheet from "./CheckoutSheet";
 import HostedCheckoutLink from "./HostedCheckoutLink";
+import {
+  trackPickerOpened,
+  trackPlanSelected,
+} from "@/lib/billing/picker-analytics";
 import TrialButton from "./TrialButton";
 
 /** Tier tab accents — the same per-tier colours as /pricing's grid. */
@@ -76,11 +80,28 @@ export default function ProUpgradeEmbed({
   const options = TIER_PLAN_OPTIONS[tier];
   const selected = options.find((o) => o.plan === plan) ?? options[0];
 
+  // Phase E funnel (lib/billing/picker-analytics): this surface
+  // holds real selection state, so its events carry exact plans —
+  // opened with the initial selection (Pro annual), then every
+  // tier/period change with the resulting plan.
+  const openedRef = useRef(false);
+  useEffect(() => {
+    if (openedRef.current) return;
+    openedRef.current = true;
+    trackPickerOpened("embed", "annual");
+  }, []);
+
   function chooseTier(t: PlanTier) {
     // Switching tiers lands on that tier's annual — the default view
     // everywhere in the redesign (annual carries the VIP branding).
+    if (t !== tier) trackPlanSelected("embed", gridCheckoutPlan(t, "annual"));
     setTier(t);
     setPlan(gridCheckoutPlan(t, "annual"));
+  }
+
+  function choosePlan(next: CheckoutPlanId) {
+    if (next !== plan) trackPlanSelected("embed", next);
+    setPlan(next);
   }
 
   return (
@@ -145,7 +166,7 @@ export default function ProUpgradeEmbed({
               type="button"
               role="radio"
               aria-checked={active}
-              onClick={() => setPlan(o.plan)}
+              onClick={() => choosePlan(o.plan)}
               className={`flex w-full items-center gap-2 rounded-lg border px-2 py-1.5 text-left transition ${
                 active
                   ? "border-[#D4AF37]/60 bg-[#D4AF37]/[0.08]"
@@ -181,12 +202,12 @@ export default function ProUpgradeEmbed({
         Apple Pay &amp; Link lead the checkout form.
       </p>
       <div className="mt-1 text-center">
-        <HostedCheckoutLink plan={selected.plan} caption={false} />
+        <HostedCheckoutLink plan={selected.plan} caption={false} surface="embed" />
       </div>
 
       {sheetPlan &&
         createPortal(
-          <CheckoutSheet plan={sheetPlan} onClose={() => setSheetPlan(null)} />,
+          <CheckoutSheet plan={sheetPlan} onClose={() => setSheetPlan(null)} analyticsSurface="embed" />,
           document.body,
         )}
     </div>
