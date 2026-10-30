@@ -122,6 +122,7 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'sat_earth', label: 'Earth Observation', dataKey: 'satellites', catKey: 'earth_obs' },
       { key: 'sat_science', label: 'Stations / Telescopes', dataKey: 'satellites', catKey: 'science' },
       { key: 'space_missions', label: 'Space Missions', description: 'Rocket launches & pads · Launch Library 2 · The Space Devs', dataKey: '' },
+      { key: 'balloons', label: 'Weather Balloons', dataKey: 'balloons' },
     ],
   },
   {
@@ -147,6 +148,7 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
       { key: 'weather', label: 'Severe Weather', dataKey: 'weather_events' },
       { key: 'hurricanes', label: 'Hurricanes', description: 'NOAA NHC · tracks & forecast cones', dataKey: 'hurricanes' },
       { key: 'river_gauges', label: 'Rivers & Floods', description: 'USGS · real-time stream gauges', dataKey: '' },
+      { key: 'radiation', label: 'Radiation Sensors', dataKey: 'radiation' },
     ],
   },
   {
@@ -351,7 +353,7 @@ const PANEL_CATEGORIES: PanelCategory[] = [
     blurb: 'Satellites · Starlink · Comms\nMissions · Stations',
     thumb: '/images/layers/space.webp',
     thumbGradient: 'linear-gradient(120deg, #060B26, #14315E 60%, #0EA5E9)',
-    keys: ['satellites', 'sat_comms', 'sat_military', 'sat_navigation', 'sat_earth', 'sat_science', 'space_missions'],
+    keys: ['satellites', 'sat_comms', 'sat_military', 'sat_navigation', 'sat_earth', 'sat_science', 'space_missions', 'balloons'],
     kind: 'layers',
   },
   {
@@ -375,7 +377,7 @@ const PANEL_CATEGORIES: PanelCategory[] = [
     blurb: 'Earthquakes · Active Fires · Hurricanes\nSevere Weather · Floods',
     thumb: '/images/layers/hazards.webp',
     thumbGradient: 'linear-gradient(120deg, #2B0B0B, #6E1414 55%, #334155)',
-    keys: ['earthquakes', 'fires', 'fire_perimeters', 'weather', 'hurricanes', 'river_gauges'],
+    keys: ['earthquakes', 'fires', 'fire_perimeters', 'weather', 'hurricanes', 'river_gauges', 'radiation'],
     kind: 'layers',
   },
   {
