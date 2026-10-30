@@ -372,12 +372,33 @@ model AffiliateProfile {
   ambassadorApplications AmbassadorApplication[]
   campaignParticipations StudioCampaignParticipation[]
   dropClaims    StudioDropClaim[]
+  templateUsages AffiliateTemplateUsage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([recruitedByProfileId])
+}
+
+// Resources page: per-affiliate "mark as used / posted" state for the
+// copy templates (captions, email templates, video scripts). Purely
+// additive bookkeeping — no conversion attribution is stored here,
+// because per-template conversions are not tracked anywhere.
+
+model AffiliateTemplateUsage {
+  id                 String           @id @default(cuid())
+  affiliateProfileId String
+  affiliateProfile   AffiliateProfile @relation(fields: [affiliateProfileId], references: [id], onDelete: Cascade)
+  templateKind       String // "caption" | "email" | "script"
+  templateId         String
+  usedAt             DateTime?
+  postedAt           DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([affiliateProfileId, templateKind, templateId])
+  @@index([affiliateProfileId])
 }
 
 // A signed-in user's recorded acceptance of the affiliate program terms
