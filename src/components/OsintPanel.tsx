@@ -18,6 +18,8 @@ import FingerprintSearch, { useFingerprintSearch } from '@/components/Fingerprin
 import DonBotScan from '@/components/DonBotScan';
 import DigitalDonMark from '@/components/DigitalDonMark';
 import WorldRemote from '@/components/WorldRemote';
+import ProUpgradeEmbed from '@/components/ProUpgradeEmbed';
+import { tierSatisfies, type PlanTier } from '@/lib/plan-tier';
 
 /**
  * Tool categories — presentation only (owner's RECON board redesign,
@@ -107,7 +109,10 @@ const RECON_STYLES = `
   .we-recon-title { font-size: 19px; font-weight: 800; letter-spacing: 0.10em; color: #EAF6FF; text-shadow: 0 0 14px rgba(56,189,248,0.65); line-height: 1; }
   .we-recon-premium { display: inline-flex; align-items: center; gap: 4px; padding: 2.5px 8px; border-radius: 999px; border: 1px solid rgba(255,196,0,0.75); background: rgba(255,196,0,0.10); color: #FFC400; font-size: 8.5px; font-weight: 800; letter-spacing: 0.16em; box-shadow: 0 0 10px rgba(255,196,0,0.22); white-space: nowrap; }
   .we-recon-subtitle { font-size: 9.5px; line-height: 1.35; color: rgba(178,214,255,0.78); }
-  .we-recon-tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; padding: 9px 3px 8px; border-radius: 12px; border: 1px solid rgba(56,150,255,0.28); background: linear-gradient(180deg, rgba(21,74,140,0.30), rgba(6,24,48,0.55)); cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease; width: 100%; }
+  .we-recon-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; padding: 9px 3px 8px; border-radius: 12px; border: 1px solid rgba(56,150,255,0.28); background: linear-gradient(180deg, rgba(21,74,140,0.30), rgba(6,24,48,0.55)); cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease; width: 100%; }
+  .we-recon-pro-pill { position: absolute; top: 4px; right: 4px; display: inline-flex; align-items: center; padding: 1px 4px; border-radius: 999px; border: 1px solid rgba(255,196,0,0.65); background: rgba(20,14,0,0.72); color: #FFC400; font-size: 7px; font-weight: 800; letter-spacing: 0.12em; line-height: 1.4; pointer-events: none; }
+  .we-recon-pro-tag { display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 999px; border: 1px solid rgba(255,196,0,0.6); background: rgba(255,196,0,0.08); color: #FFC400; font-size: 7.5px; font-weight: 800; letter-spacing: 0.12em; line-height: 1.4; white-space: nowrap; flex-shrink: 0; }
+  .we-recon-pro-tag[data-owned="true"] { border-color: rgba(52,211,153,0.5); background: rgba(52,211,153,0.08); color: #6EE7B7; }
   .we-recon-tile:hover { border-color: rgba(125,211,252,0.75); box-shadow: 0 0 14px rgba(56,189,248,0.30); }
   .we-recon-tile-icon { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 9px; border: 1px solid; flex-shrink: 0; }
   .we-recon-tile-label { font-size: 9px; font-weight: 600; line-height: 1.3; text-align: center; white-space: pre-line; letter-spacing: 0.02em; }
@@ -171,9 +176,45 @@ const TABS: ToolDef[] = [
   { id: 'donbot', label: 'DONBOT', icon: DigitalDonMark, placeholder: 'Ticker, name or contract address', color: '#E8E6E0', group: 'chain', tile: 'DonBot', blurb: 'Token signal and holder clusters' },
 ];
 
-interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; onPlaceDevicesOnMap?: (devs: { id: string; name: string; lat: number; lng: number; type: string; color: string }[]) => void; /** Opens the Cinematic Director panel on the globe (Item 2, 2026-10-29: the Director entry point moved from a floating globe pill into this RECON panel). */ onOpenDirector?: () => void; }
+/**
+ * Which tools are WorldEye Pro features — the premium badging source
+ * (owner's order, 2026-10-29: show it up front instead of letting a
+ * lookup dead-end on the premium-required notice). This mirrors the
+ * REAL gates exactly and changes none of them: every tool listed here
+ * runs its lookups through /api/osint/* or /api/scanner, both of which
+ * src/middleware.ts lists in PREMIUM_API_PREFIXES — a caller without a
+ * Pro-tier token gets 402 premium_required. (The product's own feature
+ * list, lib/billing/premium-features, likewise files the whole
+ * "OSINT Toolkit" under Pro.)
+ *
+ * Every tool NOT listed is free for everyone and must never wear the
+ * badge: SHODAN IOT and DATA LEAKS call their public APIs
+ * (internetdb.shodan.io, XposedOrNot) directly from the browser;
+ * WORLD REMOTE works locally (Bluetooth + a connector on the visitor's
+ * own machine); DONBOT runs in its provider's own frame; PHOTO GEO's
+ * route (/api/tools/photo-geolocation) is a free beta with a per-IP
+ * daily quota, no plan check; WIFI SENSING is free by the owner's
+ * ruling; CINEMATIC DIRECTOR is an affiliate-programme perk (free to
+ * join, switched on in the affiliate dashboard — gated inside
+ * CinematicDirector, not by plan). Self Track (/api/geo) is likewise
+ * ungated. Keep this set in step with middleware.ts.
+ */
+const PRO_TOOLS: ReadonlySet<string> = new Set([
+  'scanner', 'vuln', 'bgp', 'mac', 'sweep',
+  'dns', 'whois', 'certs', 'ssl', 'subdomains', 'headers', 'tech',
+  'username', 'github', 'phone', 'fingerprint',
+  'threats', 'crypto',
+]);
 
-function OsintPanelInner({ isMobile, onClose, onSweepVisualize, onScanGeolocate, onPlaceDevicesOnMap, onOpenDirector }: OsintPanelProps) {
+/** Chip labels for the upgrade embed — a sample of the gated tools
+ *  above, in the panel's own words; the embed's locks must only ever
+ *  name tools that are actually in PRO_TOOLS. */
+const RECON_PREMIUM_LABELS = ['Port Scan', 'Vuln Sweep', 'IP Sweep', 'Username Search', 'Fingerprint', 'Chain Intel'];
+
+interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; onPlaceDevicesOnMap?: (devs: { id: string; name: string; lat: number; lng: number; type: string; color: string }[]) => void; /** Opens the Cinematic Director panel on the globe (Item 2, 2026-10-29: the Director entry point moved from a floating globe pill into this RECON panel). */ onOpenDirector?: () => void; /** The viewer's effective plan tier (Dashboard's viewerTier). Drives only presentation: the rail's PRO/INCLUDED tags and whether the upgrade embed renders. The tools' real gates are the server-side middleware checks — this prop never unlocks anything. Absent = 'free'. */ viewerTier?: PlanTier; }
+
+function OsintPanelInner({ isMobile, onClose, onSweepVisualize, onScanGeolocate, onPlaceDevicesOnMap, onOpenDirector, viewerTier }: OsintPanelProps) {
+  const viewerIsPro = tierSatisfies(viewerTier ?? 'free', 'pro');
   const [activeTab, setActiveTab] = useState('scanner');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [query, setQuery] = useState('');
@@ -1183,6 +1224,7 @@ function OsintPanelInner({ isMobile, onClose, onSweepVisualize, onScanGeolocate,
      the toolkit becomes a readable list rather than a grid of abbreviations. */
   const renderToolRail = () => (
     <div className="flex flex-col h-full">
+      <style>{RECON_STYLES}</style>
       <div className="relative p-3 pb-2 flex-shrink-0">
         <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#7DD3FC]/60" />
         <input
@@ -1231,6 +1273,11 @@ function OsintPanelInner({ isMobile, onClose, onSweepVisualize, onScanGeolocate,
                           style={{ color: active ? tab.color : 'var(--text-secondary)' }}
                         >
                           {tab.label}
+                          {PRO_TOOLS.has(tab.id) && (
+                            <span className="we-recon-pro-tag" data-owned={viewerIsPro ? true : undefined}>
+                              {viewerIsPro ? 'INCLUDED' : 'PRO'}
+                            </span>
+                          )}
                         </span>
                         <span className="block text-[10px] font-mono text-[var(--text-muted)] leading-snug">
                           {tab.blurb}
@@ -1310,13 +1357,14 @@ function OsintPanelInner({ isMobile, onClose, onSweepVisualize, onScanGeolocate,
                   const active = activeTab === tab.id;
                   return (
                     <button key={tab.id} onClick={() => selectTool(tab.id)}
-                      title={tab.blurb}
+                      title={PRO_TOOLS.has(tab.id) ? `${tab.blurb} — WorldEye Pro feature` : tab.blurb}
                       className="we-recon-tile"
                       style={active ? { borderColor: tab.color, boxShadow: `0 0 14px ${tab.color}40, inset 0 0 14px ${tab.color}14` } : undefined}>
                       <span className="we-recon-tile-icon" style={{ borderColor: `${tab.color}45`, background: `${tab.color}12`, color: tab.color }}>
                         <tab.icon className="w-4 h-4" />
                       </span>
                       <span className="we-recon-tile-label" style={{ color: active ? tab.color : 'rgba(196,224,255,0.82)' }}>{tab.tile ?? tab.label}</span>
+                      {PRO_TOOLS.has(tab.id) && <span className="we-recon-pro-pill" aria-hidden="true">PRO</span>}
                     </button>
                   );
                 })}
@@ -1766,6 +1814,25 @@ function OsintPanelInner({ isMobile, onClose, onSweepVisualize, onScanGeolocate,
               <span className="text-[9px] font-mono text-[var(--text-muted)]">{h.time}</span>
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Premium disclosure + upgrade embed (owner's order, 2026-10-29).
+          The legend explains the PRO pills on the tiles and the rail;
+          the embed is the shared ProUpgradeEmbed — the same component
+          the Layers board and Search & Route render, opening the same
+          CheckoutSheet in place (no new picker is built here, so this
+          surface inherits the central picker when it lands; trial copy
+          stays central in lib/billing). Shown only to viewers without
+          a Pro tier: anonymous visitors and free accounts alike.
+          Pro/VIP viewers never see it. */}
+      {!viewerIsPro && (
+        <div className="mt-1 flex flex-col gap-2">
+          <p className="flex items-center gap-1.5 text-[9px] font-mono text-[var(--text-muted)]">
+            <span className="we-recon-pro-tag">PRO</span>
+            <span>= included with WorldEye Pro</span>
+          </p>
+          <ProUpgradeEmbed premiumLabels={RECON_PREMIUM_LABELS} />
         </div>
       )}
     </div>

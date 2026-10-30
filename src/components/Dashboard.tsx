@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useState, useRef, useCallback, useMemo } fr
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, Newspaper, Search, X, Route, Radar, ExternalLink, AlertTriangle, Activity, Database, Wifi, Play, Network, Crosshair, Pentagon, Radio , PenLine, Orbit } from 'lucide-react';
+import { Layers, Newspaper, Search, X, Route, Radar, ExternalLink, AlertTriangle, Activity, Database, Wifi, Play, Network, Crosshair, Pentagon, Radio , PenLine, Orbit, Lock } from 'lucide-react';
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { fetchCameraById, loadCameraCatalog, mergeCameraCatalog, type CameraCatalogHandle } from '@/lib/camera-catalog';
 import { applyFlightsDelta, type FlightsDelta, type FlightsPayloadLike } from '@/lib/flights/delta';
@@ -102,6 +102,7 @@ const AccountHudControl = dynamic(() => import('@/components/AccountHudControl')
 const LanguageHeaderControl = dynamic(() => import('@/components/translate/LanguageHeaderControl'));
 const OsintPanel = dynamic(() => import('@/components/OsintPanel'));
 const OiPanel = dynamic(() => import('@/components/OiPanel'));
+const OiPreview = dynamic(() => import('@/components/OiPreview'));
 // RESTORE 2026-10-12: the CompanionWidget dynamic import was removed with
 // its mount below — the companion is unmounted from the homepage, not
 // deleted; companion/** stays in the tree for a later, gated re-add.
@@ -479,10 +480,13 @@ export default function Dashboard() {
   // directly rather than through a prop, so the map does not re-render per event.
   const oi = useOi();
   const [showOi, setShowOi] = useState(false);
+  /** The OI preview (OiPreview) — what an unentitled click on the OI
+   *  button opens instead of the old trial-picker dead end. */
+  const [showOiPreview, setShowOiPreview] = useState(false);
   const oiAnchor = useRef<HTMLDivElement>(null);
   const [oiTop, setOiTop] = useState(0);
   useLayoutEffect(() => {
-    if (!showOi) return;
+    if (!showOi && !showOiPreview) return;
     const place = () => {
       const anchor = oiAnchor.current?.getBoundingClientRect();
       if (anchor) setOiTop(Math.round(64 - anchor.top));
@@ -490,7 +494,7 @@ export default function Dashboard() {
     place();
     window.addEventListener('resize', place);
     return () => window.removeEventListener('resize', place);
-  }, [showOi]);
+  }, [showOi, showOiPreview]);
   /** What is selected on the globe or in the panel: a point's key, or "link:<id>" for an arc. */
   const [oiSelected, setOiSelected] = useState<string | null>(null);
   const [oiHover, setOiHover] = useState<OiHover | null>(null);
@@ -760,7 +764,7 @@ export default function Dashboard() {
   /** A panel the assistant asked for, opened the way its own button opens it. */
   const openFromAssist = useCallback((panel: string) => {
     const phone = window.matchMedia('(max-width: 767px)').matches;
-    const right = (show: () => void) => { setShowOi(false); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); show(); };
+    const right = (show: () => void) => { setShowOi(false); setShowOiPreview(false); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); show(); };
     if (panel === 'alerts') right(() => setShowAlerts(true));
     else if (panel === 'intel') { if (phone) setMobilePanel('recon'); else right(() => setShowIntel(true)); }
     else if (panel === 'layers') { if (phone) setMobilePanel('layers'); else setShowLayers(true); }
@@ -909,6 +913,16 @@ export default function Dashboard() {
     : sessionIdentity?.planTier === 'vip'
       ? 'vip'
       : 'pro';
+  /* OI preview → real panel: if entitlement lands while the desktop
+     preview is open (the usual path is the checkout inside the
+     preview's own embed completing), swap straight into the real
+     tool — one continuous flow, no second click. */
+  useEffect(() => {
+    if (isPremiumUser && showOiPreview) {
+      setShowOiPreview(false);
+      setShowOi(true);
+    }
+  }, [isPremiumUser, showOiPreview]);
   /* Invite-a-friend camera bonus (lib/camera-bonus): a signed-in user's
      unspent bonus opens, fetched once at load. The server is the source
      of truth — this is only the local hint for whether a beyond-base
@@ -1288,7 +1302,7 @@ export default function Dashboard() {
   // dropdowns, search inputs clear). Each panel closes with the same
   // side effects as its own X / toggle.
   useEffect(() => {
-    const anyStripPanelOpen = showIntel || showSpaceCam || showAlerts || showDrawing || showOi || showArcGIS || showDesktopSearch || showDirections;
+    const anyStripPanelOpen = showIntel || showSpaceCam || showAlerts || showDrawing || showOi || showOiPreview || showArcGIS || showDesktopSearch || showDirections;
     if (!anyStripPanelOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
@@ -1297,6 +1311,7 @@ export default function Dashboard() {
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
       if (showDesktopSearch || showDirections) { setShowDesktopSearch(false); setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }
       if (showOi) { setShowOi(false); setOiTheater(false); setOiAutoFocus(false); }
+      if (showOiPreview) setShowOiPreview(false);
       setShowIntel(false);
       setShowSpaceCam(false);
       setShowAlerts(false);
@@ -1305,7 +1320,7 @@ export default function Dashboard() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [showIntel, showSpaceCam, showAlerts, showDrawing, showOi, showArcGIS, showDesktopSearch, showDirections, showTrialPicker, liveFeedUrl, navSession]);
+  }, [showIntel, showSpaceCam, showAlerts, showDrawing, showOi, showOiPreview, showArcGIS, showDesktopSearch, showDirections, showTrialPicker, liveFeedUrl, navSession]);
 
   // Mouse coords + reverse geocode (Zero-Render)
   const handleMouseCoords = useCallback((coords: { lat: number; lng: number }) => {
@@ -2829,7 +2844,7 @@ export default function Dashboard() {
       {/* ── RIGHT TOOL STRIP (desktop only — mobile uses bottom nav) ── */}
       {!isMobile && <motion.div data-hud initial={{ opacity: 0, x: 12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }} transition={hudIn(0.3)} className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-[250] pointer-events-auto bg-black/40 backdrop-blur-sm p-1 rounded-full border border-white/5">
         <div className="relative group" style={{ order: stripLayout.orderIndex.recon * 10, display: stripLayout.hiddenIds.has('recon') ? 'none' : undefined }}>
-          <button onClick={() => { setShowIntel(!showIntel); setShowOi(false); setShowAlerts(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showIntel ? 'bg-[var(--cyan-primary)]/20' : 'hover:bg-white/10'}`} title="OSINT Recon — IP lookup, network sweep, geolocation" aria-label="OSINT Recon" aria-expanded={showIntel}>
+          <button onClick={() => { setShowIntel(!showIntel); setShowOi(false); setShowOiPreview(false); setShowAlerts(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showIntel ? 'bg-[var(--cyan-primary)]/20' : 'hover:bg-white/10'}`} title="OSINT Recon — IP lookup, network sweep, geolocation" aria-label="OSINT Recon" aria-expanded={showIntel}>
             <Radar className={`w-4 h-4 ${showIntel ? 'text-[var(--cyan-primary)]' : 'text-white/60'}`} />
             {showIntel && (
               <span
@@ -2842,7 +2857,7 @@ export default function Dashboard() {
           <AnimatePresence>
             {showIntel && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="absolute right-12 top-1/2 -translate-y-1/2 w-80">
-                <OsintPanel onClose={() => setShowIntel(false)} onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} onScanGeolocate={(target, data) => {
+                <OsintPanel viewerTier={viewerTier} onClose={() => setShowIntel(false)} onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} onScanGeolocate={(target, data) => {
                   setScanTargets(prev => {
                     const existing = prev.filter(t => t.id !== target);
                     return [{ id: target, timestamp: Date.now(), ...data }, ...existing].slice(0, 10);
@@ -2855,7 +2870,7 @@ export default function Dashboard() {
         </div>
 
         <div className="relative group" style={{ order: stripLayout.orderIndex.space * 10, display: stripLayout.hiddenIds.has('space') ? 'none' : undefined }}>
-          <button onClick={() => { setShowIntel(false); setShowOi(false); setShowAlerts(false); setShowSpaceCam(v => !v); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showSpaceCam ? 'bg-[#00E5FF]/20' : 'hover:bg-white/10'}`} title="Live from Space — 24/7 video downlink from the ISS" aria-label="Live from Space" aria-expanded={showSpaceCam}>
+          <button onClick={() => { setShowIntel(false); setShowOi(false); setShowOiPreview(false); setShowAlerts(false); setShowSpaceCam(v => !v); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showSpaceCam ? 'bg-[#00E5FF]/20' : 'hover:bg-white/10'}`} title="Live from Space — 24/7 video downlink from the ISS" aria-label="Live from Space" aria-expanded={showSpaceCam}>
             <Radio className={`w-4 h-4 ${showSpaceCam ? 'text-[#00E5FF]' : 'text-white/60'}`} />
             {showSpaceCam && (
               <span
@@ -2875,7 +2890,7 @@ export default function Dashboard() {
         </div>
 
         <div className="relative group" style={{ order: stripLayout.orderIndex.alerts * 10, display: stripLayout.hiddenIds.has('alerts') ? 'none' : undefined }}>
-          <button onClick={() => { setShowAlerts(!showAlerts); setShowOi(false); setShowIntel(false); setShowDrawing(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showAlerts ? 'bg-[#FF3D3D]/20' : 'hover:bg-white/10'}`} title="Live Alerts — earthquakes, conflicts, breaking news" aria-label="Live Alerts" aria-expanded={showAlerts}>
+          <button onClick={() => { setShowAlerts(!showAlerts); setShowOi(false); setShowOiPreview(false); setShowIntel(false); setShowDrawing(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showAlerts ? 'bg-[#FF3D3D]/20' : 'hover:bg-white/10'}`} title="Live Alerts — earthquakes, conflicts, breaking news" aria-label="Live Alerts" aria-expanded={showAlerts}>
             <AlertTriangle className={`w-4 h-4 ${showAlerts ? 'text-[#FF3D3D]' : 'text-white/60'}`} />
             {showAlerts && (
               <span
@@ -2910,19 +2925,29 @@ export default function Dashboard() {
         {/* A named group: the OI panel opens inside this wrapper, and an unnamed group would light every hover style in the panel at once. */}
         <div ref={oiAnchor} className="relative group/oi" style={{ order: stripLayout.orderIndex.oi * 10, display: stripLayout.hiddenIds.has('oi') ? 'none' : undefined }}>
           {/* OI, the strip's main tool: bigger than the rest, in the middle of it, in its own colours. */}
-          <button onClick={() => { if (!isPremiumUser) { setShowTrialPicker(true); return; } setShowOi(!showOi); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }}
-            className={`relative w-11 h-11 rounded-full flex flex-col items-center justify-center gap-[3px] border transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showOi ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/70 shadow-[0_0_18px_rgba(var(--gold-rgb),0.35)]' : 'bg-[var(--gold-primary)]/[0.07] border-[var(--gold-primary)]/35 hover:bg-[var(--gold-primary)]/15 hover:border-[var(--gold-primary)]/60 hover:shadow-[0_0_14px_rgba(var(--gold-rgb),0.25)]'}`}
-            title={isPremiumUser ? "OI — talk to it and it works the map for you, or run a forecast (O)" : "OI — Weekly Pass required"}
-            aria-label="OI" aria-expanded={showOi}>
+          <button onClick={() => { if (!isPremiumUser) { setShowOiPreview(v => !v); setShowOi(false); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); return; } setShowOiPreview(false); setShowOi(!showOi); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }}
+            className={`relative w-11 h-11 rounded-full flex flex-col items-center justify-center gap-[3px] border transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showOi || showOiPreview ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/70 shadow-[0_0_18px_rgba(var(--gold-rgb),0.35)]' : 'bg-[var(--gold-primary)]/[0.07] border-[var(--gold-primary)]/35 hover:bg-[var(--gold-primary)]/15 hover:border-[var(--gold-primary)]/60 hover:shadow-[0_0_14px_rgba(var(--gold-rgb),0.25)]'}`}
+            title={isPremiumUser ? "OI — talk to it and it works the map for you, or run a forecast (O)" : "OI — WorldEye Pro feature · see what it does"}
+            aria-label="OI" aria-expanded={showOi || showOiPreview}>
             <OiMark size={18} live={oi.state?.status === 'running' || assist.busy} />
-            <span className={`text-[7.5px] font-mono font-semibold tracking-[0.2em] leading-none pl-[0.2em] ${showOi ? 'text-[var(--gold-light)]' : 'text-[var(--gold-primary)]'}`}>OI</span>
-            {showOi && (
+            <span className={`text-[7.5px] font-mono font-semibold tracking-[0.2em] leading-none pl-[0.2em] ${showOi || showOiPreview ? 'text-[var(--gold-light)]' : 'text-[var(--gold-primary)]'}`}>OI</span>
+            {(showOi || showOiPreview) && (
               <span
                 aria-hidden="true"
                 className="absolute -right-1 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-current text-[var(--gold-primary)]"
               />
             )}
             {oi.state?.status === 'running' && <span aria-hidden="true" className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[var(--gold-light)] border border-black/60 animate-pulse" />}
+            {/* Advance disclosure (2026-10-29): OI is Pro-gated server-side
+                (/api/oi sits in middleware's PREMIUM_API_PREFIXES), so the
+                button wears the lock up front for viewers without the
+                tier — the same gold PRO language as the recon menu's
+                pills. The click itself now opens the preview. */}
+            {!isPremiumUser && (
+              <span aria-hidden="true" className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#FFC400] border border-black/70 flex items-center justify-center">
+                <Lock className="w-2 h-2 text-black" strokeWidth={3.5} />
+              </span>
+            )}
           </button>
           {!showOi && <span className="absolute right-14 top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover/oi:opacity-100 group-focus-within/oi:opacity-100 transition-opacity pointer-events-none">OI · ASSIST &amp; FORECAST</span>}
           <AnimatePresence>
@@ -2933,6 +2958,17 @@ export default function Dashboard() {
                   theater={oiTheater} onTheater={setOiTheater} following={oiFollowing} onFollow={followOi}
                   assist={assist} mode={oiMode} onMode={setOiMode} speakOn={oiVoice} onSpeak={setOiVoicePersist} autoFocus={oiAutoFocus}
                   stage={oiStage} onStage={setOiStage} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {/* The OI preview takes the real panel's anchor and frame for
+              viewers without the tier (see OiPreview). Rendered only
+              while unentitled — the heal effect above swaps it for the
+              real panel the moment entitlement lands. */}
+          <AnimatePresence>
+            {showOiPreview && !isPremiumUser && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="absolute right-[60px] w-[412px] max-w-[calc(100vw-76px)]" style={{ top: oiTop }}>
+                <OiPreview onClose={() => setShowOiPreview(false)} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -3117,16 +3153,18 @@ export default function Dashboard() {
                   <button
                     key={tab.id}
                     onClick={() => {
-                      // OI is a Weekly Pass feature: offer the trial in
-                      // place instead of bouncing to /pricing.
-                      if (tab.id === 'oi' && !isPremiumUser) { setShowTrialPicker(true); return; }
+                      // OI is a Pro feature, but the tab still opens the
+                      // drawer for everyone: the drawer renders the OI
+                      // preview (with the embedded upgrade) for viewers
+                      // without the tier and the real panel for entitled
+                      // viewers — no dead-end dialog (2026-10-29).
                       setMobilePanel(mobilePanel === tab.id ? null : tab.id);
                     }}
                     aria-pressed={active}
                     className={`mobile-nav-btn ${active ? 'active' : ''}`}
                   >
                     <tab.icon className={`w-4 h-4 ${tab.id === 'recon' ? 'text-[var(--cyan-primary)]' : ''}`} />
-                    <span className={`whitespace-nowrap ${tab.id === 'recon' ? 'text-[var(--cyan-primary)]' : ''}`}>{tab.label}</span>
+                    <span className={`whitespace-nowrap ${tab.id === 'recon' ? 'text-[var(--cyan-primary)]' : ''}`}>{tab.label}{tab.id === 'oi' && !isPremiumUser ? ' · PRO' : ''}</span>
                   </button>
                 );
               })}
@@ -3169,12 +3207,14 @@ export default function Dashboard() {
                       </div>
                     </>
                   )}
-                                    {mobilePanel === 'oi' && (
+                                    {mobilePanel === 'oi' && (isPremiumUser ? (
                     <OiPanel oi={oi} selected={oiSelected} onSelect={setOiSelected} embedded focus={oiFocus} onFocus={toggleOiFocus}
                       onLocate={handleOiLocate} following={oiFollowing} onFollow={followOi}
                       assist={assist} mode={oiMode} onMode={setOiMode} speakOn={oiVoice} onSpeak={setOiVoicePersist}
                       stage={oiStage} onStage={setOiStage} />
-                  )}
+                  ) : (
+                    <OiPreview embedded onClose={() => setMobilePanel(null)} />
+                  ))}
                   {mobilePanel === 'intel' && <IntelFeed data={data} onLocate={(lat, lng) => { setFlyToLocation({ lat, lng, ts: Date.now() }); setMobilePanel(null); }} />}
                   {mobilePanel === 'search' && (
                     <div className="space-y-2">
@@ -3224,7 +3264,7 @@ export default function Dashboard() {
                   )}
                   {mobilePanel === 'recon' && (
                     <div className="space-y-2">
-                      <OsintPanel isOpen={true} onClose={() => setMobilePanel(null)} isMobile={true} onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} />
+                      <OsintPanel isOpen={true} onClose={() => setMobilePanel(null)} isMobile={true} viewerTier={viewerTier} onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} />
                     </div>
                   )}
                 </div>
