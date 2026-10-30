@@ -7,13 +7,18 @@
 import { describe, it, expect, vi } from "vitest";
 import {
   CHECKOUT_PLAN_SUMMARIES,
+  GRID_PLAN_OPTIONS,
   GRID_PLAN_SUMMARIES,
+  TIER_PLAN_OPTIONS,
   TRIAL_PLAN_OPTIONS,
   checkoutPagePath,
   checkoutPlanSummary,
   checkoutRequestBody,
+  gridCheckoutPlan,
+  gridPlanOption,
   startHostedCheckout,
   startPlanCheckout,
+  tierForCheckoutPlan,
   trialEntryDecision,
 } from "./trial-checkout";
 import { CheckoutError } from "./checkout-error";
@@ -325,5 +330,82 @@ describe("startHostedCheckout", () => {
     expect(err.message).toBe("Checkout failed");
     expect(err.serverMessage).toBeNull();
     expect(err.code).toBeNull();
+  });
+});
+
+describe("GRID_PLAN_OPTIONS (Pricing Redesign Phase D — the shared 3×3)", () => {
+  it("offers exactly the nine grid plans, tier-major then period", () => {
+    expect(GRID_PLAN_OPTIONS.map((o) => o.plan)).toEqual([
+      "lite_weekly",
+      "lite_monthly",
+      "lite_annual",
+      "weekly",
+      "monthly",
+      "annual",
+      "ultra_weekly",
+      "ultra_monthly",
+      "ultra_annual",
+    ]);
+  });
+
+  it("never includes the standalone plans (enterprise / ambient / ski)", () => {
+    for (const o of GRID_PLAN_OPTIONS) {
+      expect(["enterprise", "ambient", "ski"]).not.toContain(o.plan);
+    }
+    expect(gridPlanOption("enterprise")).toBeNull();
+    expect(gridPlanOption("ambient")).toBeNull();
+    expect(gridPlanOption("ski")).toBeNull();
+    expect(tierForCheckoutPlan("enterprise")).toBeNull();
+    expect(tierForCheckoutPlan("ambient")).toBeNull();
+    expect(tierForCheckoutPlan("ski")).toBeNull();
+  });
+
+  it("derives every option's facts from its plan summary — nothing restated", () => {
+    for (const o of GRID_PLAN_OPTIONS) {
+      const s = checkoutPlanSummary(o.plan);
+      expect(s).not.toBeNull();
+      expect(o.name).toBe(s!.name);
+      expect(o.price).toBe(s!.price);
+      expect(o.per).toBe(s!.per);
+      expect(o.perDay).toBe(s!.perDay);
+      expect(o.note).toBe(s!.note);
+      expect(o.trialLabel).toBe(s!.trialLabel);
+      expect(o.trialDays).toBe(s!.trialDays);
+    }
+  });
+
+  it("trial length follows the PERIOD for every tier (weekly 3d, monthly/annual 10d)", () => {
+    for (const o of GRID_PLAN_OPTIONS) {
+      expect(o.trialDays).toBe(o.period === "weekly" ? 3 : 10);
+      // The CTA is the period's own /pricing wording.
+      const pro = TRIAL_PLAN_OPTIONS.find((p) => p.plan === o.period)!;
+      expect(o.cta).toBe(pro.cta);
+      expect(o.note).toBe(pro.note);
+      expect(o.trialLabel).toBe(pro.trialLabel);
+    }
+  });
+
+  it("groups by tier for the picker's tabs, periods in pricing order", () => {
+    for (const tier of ["lite", "pro", "ultra"] as const) {
+      expect(TIER_PLAN_OPTIONS[tier].map((o) => o.period)).toEqual([
+        "weekly",
+        "monthly",
+        "annual",
+      ]);
+      expect(TIER_PLAN_OPTIONS[tier].every((o) => o.tier === tier)).toBe(true);
+    }
+  });
+
+  it("maps tier × period to the route's checkout keys", () => {
+    expect(gridCheckoutPlan("pro", "weekly")).toBe("weekly");
+    expect(gridCheckoutPlan("pro", "annual")).toBe("annual");
+    expect(gridCheckoutPlan("lite", "monthly")).toBe("lite_monthly");
+    expect(gridCheckoutPlan("ultra", "annual")).toBe("ultra_annual");
+    expect(tierForCheckoutPlan("weekly")).toBe("pro");
+    expect(tierForCheckoutPlan("annual")).toBe("pro");
+    expect(tierForCheckoutPlan("lite_weekly")).toBe("lite");
+    expect(tierForCheckoutPlan("ultra_monthly")).toBe("ultra");
+    expect(gridPlanOption("lite_annual")?.name).toBe("Lite Annual");
+    expect(gridPlanOption("annual")?.name).toBe("VIP Pro");
   });
 });

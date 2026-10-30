@@ -1,8 +1,15 @@
 // Render smoke test for the lock picker: the repo's harness is node-only
 // (no DOM), so this server-renders the real component and pins what a
-// locked-out user actually sees — all three plans, /pricing's CTAs and
-// notes verbatim, and the dialog's closed/open states. The checkout call
-// itself is pinned in lib/billing/trial-checkout.test.ts.
+// locked-out user actually sees — the Pro tier's plans by default with
+// /pricing's CTAs and notes verbatim, the Lite/Ultra tiers one tab
+// away, and the dialog's closed/open states. The checkout call itself
+// is pinned in lib/billing/trial-checkout.test.ts.
+//
+// Phase D (2026-10-30): the picker became the central 3×3 (tier tabs
+// over GRID_PLAN_OPTIONS). The C1 button-count pin below was updated
+// with it: the tier tabs are real <button>s too, so the pin now counts
+// the trial-artwork CTAs specifically — its purpose (each plan's CTA is
+// a real filled artwork button, not a text line) is unchanged.
 import { describe, it, expect, vi } from "vitest";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
@@ -50,9 +57,48 @@ describe("TrialPicker", () => {
     // Weekly carries the 3-day artwork; monthly/annual the 10-day.
     expect(html).toContain("/start-trial-button-3day.png");
     expect(html).toContain("/start-trial-button.png");
-    // Exactly the three plan CTAs are buttons in the default render
-    // (no close affordance was passed).
-    expect(html.match(/<button/g)).toHaveLength(3);
+    // Exactly the three plan CTAs carry the trial artwork in the
+    // default render (the tier tabs are plain buttons; no close
+    // affordance was passed).
+    expect(html.match(/<button[^>]*class="trial-btn/g)).toHaveLength(3);
+  });
+
+  it("offers all three tiers as tabs, opening on Pro by default (Phase D)", () => {
+    const html = normalize(renderToString(createElement(TrialPicker)));
+    for (const s of ["Lite", "Pro", "Ultra"]) {
+      expect(html).toContain(s);
+    }
+    // Pro is the opening tab: its prices render, Lite/Ultra wait a tap.
+    expect(html).toContain("$13.99");
+    expect(html).not.toContain("$24.99");
+    expect(html).not.toContain("$44.99");
+  });
+
+  it("opens on the requested tier with that tier's own prices and trial wording", () => {
+    const ultra = normalize(
+      renderToString(createElement(TrialPicker, { defaultTier: "ultra" })),
+    );
+    expect(ultra).toContain("Ultra Weekly");
+    expect(ultra).toContain("$12.99");
+    expect(ultra).toContain("$24.99");
+    expect(ultra).toContain("$149.99");
+    // The weekly row says 3 days — trial wording follows the selection.
+    expect(ultra).toContain("Start 3-Day Free Trial — Ultra Weekly $12.99/week");
+    const lite = normalize(
+      renderToString(createElement(TrialPicker, { defaultTier: "lite" })),
+    );
+    expect(lite).toContain("Lite Annual");
+    expect(lite).toContain("$44.99");
+    expect(lite).not.toContain("$149.99");
+  });
+
+  it("an emphasized grid plan opens its tier's tab (Phase D)", () => {
+    const html = normalize(
+      renderToString(createElement(TrialPicker, { emphasizePlan: "ultra_annual" })),
+    );
+    expect(html).toContain("Ultra Annual");
+    expect(html).toContain("$149.99");
+    expect(html).toContain("VIP pick");
   });
 
   it("embedded mode starts on the plan list — the form mounts only after a pick (C2)", () => {

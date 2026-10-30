@@ -1,17 +1,22 @@
 "use client";
 
 /**
- * The mini plan-picker every Pro lock now offers instead of a bare bounce
- * to /pricing: the three trial plans with /pricing's own words, each
- * starting checkout through the shared machinery (lib/billing).
- * A plan button always names its plan — there is no anonymous "start
- * trial" that silently picks one.
+ * The central plan picker every upgrade surface offers instead of a
+ * bare bounce to /pricing (Pricing Redesign Phase D): the full 3×3
+ * grid — Lite / Pro / Ultra × Weekly / Monthly / Annual — rendered
+ * from the one option table (lib/billing's GRID_PLAN_OPTIONS), as tier
+ * tabs over the selected tier's three period rows. Before Phase D this
+ * picker sold only the three Pro plans and every other surface
+ * hard-wired its own single plan; now a surface's only choices are
+ * which tier to open on and which plan to emphasize.
  *
  * Copy rule: plan notes, CTAs and trial badges are /pricing's, verbatim
- * (pinned by trial-checkout.test.ts). This component adds no promises of
- * its own; the only new words are the heading and the trust line, which
- * pairs /pricing's Stripe line with the 7-day first-charge money-back
- * guarantee /pricing states under its plan card (pinned by TrialPicker.test.ts).
+ * (pinned by trial-checkout.test.ts). This component adds no promises
+ * of its own; the only new words are the heading and the trust line,
+ * which pairs /pricing's Stripe line with the 7-day first-charge
+ * money-back guarantee /pricing states under its plan card (pinned by
+ * TrialPicker.test.ts). Trial wording always comes from the SELECTED
+ * option — a weekly selection says 3 days, never a hard-coded 10.
  *
  * Two ways a pick proceeds, by mount:
  *  - mode "navigate" (default — inline expansions: layer flyout, follow
@@ -27,19 +32,19 @@
  *    reopening starts fresh. The failure fallback is unchanged — the
  *    body's flow drops to the hosted redirect on any embedded failure.
  *
- * Each plan card's CTA is the owner's glowing trial artwork as a
+ * Each plan row's CTA is the owner's glowing trial artwork as a
  * real button (components/TrialButton), variant-matched to the plan's
- * trial length — it used to be a text-styled line inside a card-wide
- * button, which read as a link, and later a solid gold button; the
- * artwork replaced both (owner's order, 2026-10-29).
+ * trial length.
  */
 import { useEffect, useState } from "react";
 import { ArrowLeft, Lock, X, Zap } from "lucide-react";
 import {
-  TRIAL_PLAN_OPTIONS,
+  TIER_PLAN_OPTIONS,
   startPlanCheckout,
-  type TrialPlan,
-  type TrialPlanOption,
+  tierForCheckoutPlan,
+  type CheckoutPlanId,
+  type GridPlanOption,
+  type PlanTier,
 } from "@/lib/billing/trial-checkout";
 import EmbeddedCheckoutBody from "./EmbeddedCheckoutBody";
 import TrialButton from "./TrialButton";
@@ -56,10 +61,40 @@ interface TrialPickerProps {
   /** Embedded mode only: fires when the picker swaps between its plan
    *  list and the in-place checkout, so a host can widen its frame. */
   onCheckoutViewChange?: (inCheckout: boolean) => void;
+  /** The tier the picker opens on (default: the emphasized/default
+   *  plan's tier, else Pro — the tier most locks sell). */
+  defaultTier?: PlanTier;
+  /** A plan to open on: selects its tier's tab (the rows still show
+   *  all three of that tier's periods). */
+  defaultPlan?: CheckoutPlanId;
   /** Visually lifts one plan as THE pick — VIP-only locks (timelapse,
-   *  intel) pass "annual" so the VIP Pro option is the obvious path. */
-  emphasizePlan?: TrialPlan;
+   *  intel) pass "ultra_annual" so the Ultra annual option is the
+   *  obvious path; its tier's tab opens selected. */
+  emphasizePlan?: CheckoutPlanId;
 }
+
+/** Tier tab accents — the same per-tier colours as /pricing's grid
+ *  (Lite cyan, Pro gold, Ultra violet). */
+const TIER_TAB_ACCENTS: Record<PlanTier, { text: string; activeClasses: string }> = {
+  lite: {
+    text: "text-[#00E5FF]",
+    activeClasses: "border-[#00E5FF]/60 bg-[#00E5FF]/[0.08] text-white",
+  },
+  pro: {
+    text: "text-[#D4AF37]",
+    activeClasses: "border-[#D4AF37]/60 bg-[#D4AF37]/[0.08] text-white",
+  },
+  ultra: {
+    text: "text-[#a78bfa]",
+    activeClasses: "border-[#a78bfa]/60 bg-[#a78bfa]/[0.08] text-white",
+  },
+};
+
+const TIER_LABELS: Record<PlanTier, string> = {
+  lite: "Lite",
+  pro: "Pro",
+  ultra: "Ultra",
+};
 
 function PlanRow({
   option,
@@ -68,11 +103,11 @@ function PlanRow({
   emphasized,
   onPick,
 }: {
-  option: TrialPlanOption;
+  option: GridPlanOption;
   compact: boolean;
   busy: boolean;
   emphasized?: boolean;
-  onPick: (o: TrialPlanOption) => void;
+  onPick: (o: GridPlanOption) => void;
 }) {
   return (
     <div
@@ -88,7 +123,7 @@ function PlanRow({
         <span className={`font-mono uppercase tracking-wider text-white/50 ${compact ? "text-[9px]" : "text-[10px]"}`}>
           {option.name}
         </span>
-        {emphasized && (
+        {emphasized && option.period === "annual" && (
           <span className="inline-flex items-center font-bold uppercase tracking-wide rounded-full bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/50 text-[8px] px-1.5 py-0.5">
             VIP pick
           </span>
@@ -134,7 +169,7 @@ export function TrialPickerCheckout({
   plan,
   onBack,
 }: {
-  plan: TrialPlan;
+  plan: CheckoutPlanId;
   onBack: () => void;
 }) {
   return (
@@ -156,13 +191,24 @@ export default function TrialPicker({
   onClose,
   mode = "navigate",
   onCheckoutViewChange,
+  defaultTier,
+  defaultPlan,
   emphasizePlan,
 }: TrialPickerProps) {
   const compact = variant === "compact";
   const [busyPlan, setBusyPlan] = useState<string | null>(null);
-  const [checkoutPlan, setCheckoutPlan] = useState<TrialPlan | null>(null);
+  const [checkoutPlan, setCheckoutPlan] = useState<CheckoutPlanId | null>(null);
+  // Open on the emphasized plan's tier, else the caller's tier/plan,
+  // else Pro — the tier most lock surfaces sell.
+  const [tier, setTier] = useState<PlanTier>(
+    () =>
+      (emphasizePlan ? tierForCheckoutPlan(emphasizePlan) : null) ??
+      defaultTier ??
+      (defaultPlan ? tierForCheckoutPlan(defaultPlan) : null) ??
+      "pro",
+  );
 
-  function pick(option: TrialPlanOption) {
+  function pick(option: GridPlanOption) {
     if (mode === "embedded") {
       // Swap the popup to the checkout in place — the session starts
       // when the body mounts, not before.
@@ -206,8 +252,37 @@ export default function TrialPicker({
           </button>
         )}
       </div>
+      {/* The tier tabs: one grid, three tiers — the rows below are the
+          selected tier's periods. */}
+      <div
+        className={`flex gap-1 ${compact ? "mt-2" : "mt-2.5"}`}
+        role="tablist"
+        aria-label="Choose a tier"
+      >
+        {(Object.keys(TIER_PLAN_OPTIONS) as PlanTier[]).map((t) => {
+          const active = t === tier;
+          return (
+            <button
+              key={t}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => setTier(t)}
+              className={`flex-1 rounded-lg border font-bold uppercase tracking-wider transition ${compact ? "px-2 py-1 text-[9px]" : "px-2 py-1.5 text-[10px]"} ${
+                active
+                  ? TIER_TAB_ACCENTS[t].activeClasses
+                  : "border-white/10 bg-white/[0.02] text-white/50 hover:border-white/25 hover:text-white"
+              }`}
+            >
+              <span className={active ? TIER_TAB_ACCENTS[t].text : undefined}>
+                {TIER_LABELS[t]}
+              </span>
+            </button>
+          );
+        })}
+      </div>
       <div className={`flex flex-col ${compact ? "gap-1.5 mt-2" : "gap-2 mt-2.5"}`}>
-        {TRIAL_PLAN_OPTIONS.map((o) => (
+        {TIER_PLAN_OPTIONS[tier].map((o) => (
           <PlanRow
             key={o.plan}
             option={o}
@@ -226,22 +301,29 @@ export default function TrialPicker({
 }
 
 /**
- * Modal host for lock surfaces that are a lone button (the OI dock/tab):
- * the button opens this, the picker lives inside. Backdrop click and the
- * close button dismiss it; choosing a plan swaps the dialog in place to
- * the embedded checkout (the dialog widens for the form — the picker's
- * onCheckoutViewChange drives that), and dismissing from either view
- * destroys any mounted session with the unmount.
+ * Modal host for lock surfaces that are a lone button (the OI dock/tab,
+ * the trial prompt): the button opens this, the picker lives inside.
+ * Backdrop click and the close button dismiss it; choosing a plan
+ * swaps the dialog in place to the embedded checkout (the dialog
+ * widens for the form — the picker's onCheckoutViewChange drives
+ * that), and dismissing from either view destroys any mounted session
+ * with the unmount.
  */
 export function TrialPickerDialog({
   open,
   onClose,
   feature,
+  defaultTier,
+  defaultPlan,
 }: {
   open: boolean;
   onClose: () => void;
   /** What the user was trying to open, e.g. "OI — the AI assistant". */
   feature?: string;
+  /** The tier the picker opens on (see TrialPicker). */
+  defaultTier?: PlanTier;
+  /** A plan whose tier the picker opens on (see TrialPicker). */
+  defaultPlan?: CheckoutPlanId;
 }) {
   const [inCheckout, setInCheckout] = useState(false);
   // A reopened dialog starts on the plan list, never on a stale form.
@@ -270,7 +352,13 @@ export function TrialPickerDialog({
         )}
         {!feature && !inCheckout && <div className="mb-4" />}
         {inCheckout && <div className="mb-4" />}
-        <TrialPicker mode="embedded" onClose={onClose} onCheckoutViewChange={setInCheckout} />
+        <TrialPicker
+          mode="embedded"
+          onClose={onClose}
+          onCheckoutViewChange={setInCheckout}
+          defaultTier={defaultTier}
+          defaultPlan={defaultPlan}
+        />
         <button
           onClick={onClose}
           className="mt-4 w-full text-center text-xs text-white/35 hover:text-white/60 transition"

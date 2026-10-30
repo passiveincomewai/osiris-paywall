@@ -11,6 +11,13 @@
 // booleans). The canonical-copy / picker / strip pins are UNCHANGED:
 // the shared picker still sells the Pro grid under its historical
 // names until the Phase D 9-option rewrite.
+//
+// Phase D addendum (Pricing Redesign, 2026-10-30): the picker is now
+// the central 3×3 — it opens on the Pro tab under the same historical
+// names (the canonical-copy / picker / strip pins below are unchanged
+// and still exercised against that default view), with Lite and Ultra
+// one tab away under their grid names (Lite Weekly, Ultra Annual, …).
+// Annual carries the VIP branding on every tier.
 import { describe, it, expect } from "vitest";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";

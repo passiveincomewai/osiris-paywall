@@ -244,6 +244,74 @@ export function checkoutPlanSummary(plan: string | null | undefined): CheckoutPl
   return null;
 }
 
+/**
+ * The 3×3 grid the upgrade surfaces offer (Pricing Redesign Phase D):
+ * every sellable tier × period as one option list, so the shared
+ * picker (components/TrialPicker), the layers-panel embed and the
+ * content-page cards all render the SAME nine options from this one
+ * table instead of each hard-wiring the three Pro plans. Facts are
+ * composed, never restated: names, prices, notes and trial labels come
+ * from the plan summaries above (themselves pinned to /pricing), the
+ * CTA is the period's own PLAN_COPY wording, and trial lengths resolve
+ * through trialDaysForPlan on the PERIOD — the single source the
+ * checkout route uses. Enterprise, Ambient and Powder Pass stay out:
+ * standalone products, never grid cells.
+ */
+export type PlanTier = "lite" | "pro" | "ultra";
+
+export interface GridPlanOption extends CheckoutPlanSummary {
+  tier: PlanTier;
+  /** The billing period, as a Pro trial-plan key — its PLAN_COPY row
+   *  (note / CTA / trial label) is the period's own, shared by tiers. */
+  period: TrialPlan;
+  /** The period's CTA from /pricing's plan card, e.g. "Start 3-Day Free Trial". */
+  cta: string;
+}
+
+const GRID_TIERS: PlanTier[] = ["lite", "pro", "ultra"];
+const GRID_PERIODS: TrialPlan[] = ["weekly", "monthly", "annual"];
+
+/** The checkout plan key for a tier × period (the route contract:
+ *  Pro keeps its historical bare period names; Lite/Ultra use the
+ *  grid keys). */
+export function gridCheckoutPlan(tier: PlanTier, period: TrialPlan): CheckoutPlanId {
+  return tier === "pro" ? period : (`${tier}_${period}` as GridCheckoutPlan);
+}
+
+function gridOption(tier: PlanTier, period: TrialPlan): GridPlanOption {
+  const plan = gridCheckoutPlan(tier, period);
+  const summary = checkoutPlanSummary(plan);
+  if (!summary) throw new Error(`no checkout summary for grid plan ${plan}`);
+  return { ...summary, tier, period, cta: PLAN_COPY[period].cta };
+}
+
+/** All nine grid options, tier-major then period (Lite W/M/A, Pro
+ *  W/M/A, Ultra W/M/A) — the picker's canonical order. */
+export const GRID_PLAN_OPTIONS: GridPlanOption[] = GRID_TIERS.flatMap((tier) =>
+  GRID_PERIODS.map((period) => gridOption(tier, period)),
+);
+
+/** The grid grouped by tier — the picker's tab content. */
+export const TIER_PLAN_OPTIONS: Record<PlanTier, GridPlanOption[]> = {
+  lite: GRID_PLAN_OPTIONS.filter((o) => o.tier === "lite"),
+  pro: GRID_PLAN_OPTIONS.filter((o) => o.tier === "pro"),
+  ultra: GRID_PLAN_OPTIONS.filter((o) => o.tier === "ultra"),
+};
+
+/** The tier a checkout plan belongs to, or null for the standalone
+ *  plans (enterprise / ambient / ski) that are never grid cells. */
+export function tierForCheckoutPlan(plan: CheckoutPlanId): PlanTier | null {
+  if (plan.startsWith("lite_")) return "lite";
+  if (plan.startsWith("ultra_")) return "ultra";
+  if (plan === "weekly" || plan === "monthly" || plan === "annual") return "pro";
+  return null;
+}
+
+/** One grid option by plan key, or null for standalone plans. */
+export function gridPlanOption(plan: CheckoutPlanId): GridPlanOption | null {
+  return GRID_PLAN_OPTIONS.find((o) => o.plan === plan) ?? null;
+}
+
 /** The request body /api/checkout expects. Trial length, prices and
  *  affiliate attribution are all resolved server-side — the client cannot
  *  (and must not) restate them. `ui: "embedded"` asks the route for a

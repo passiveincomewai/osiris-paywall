@@ -340,7 +340,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </div>
               {trialOpen && (
                 <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
-                  <TrialPicker variant="compact" emphasizePlan="annual" onClose={() => setTrialOpen(false)} />
+                  <TrialPicker variant="compact" emphasizePlan="ultra_annual" onClose={() => setTrialOpen(false)} />
                 </div>
               )}
             </div>
@@ -358,7 +358,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </div>
               {trialOpen && (
                 <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
-                  <TrialPicker variant="compact" emphasizePlan="annual" onClose={() => setTrialOpen(false)} />
+                  <TrialPicker variant="compact" emphasizePlan="ultra_annual" onClose={() => setTrialOpen(false)} />
                 </div>
               )}
             </div>
@@ -376,7 +376,7 @@ export default function TimelapseControl({ camera, streamType }: { camera: any |
               </div>
               {trialOpen && (
                 <div className="mt-1.5 rounded-md border border-white/10 bg-black/40 p-2">
-                  <TrialPicker variant="compact" emphasizePlan="annual" onClose={() => setTrialOpen(false)} />
+                  <TrialPicker variant="compact" emphasizePlan="ultra_annual" onClose={() => setTrialOpen(false)} />
                 </div>
               )}
             </div>
