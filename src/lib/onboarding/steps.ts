@@ -43,7 +43,7 @@ export const TOUR_STEPS: TourStep[] = [
     title: "Open a Live Camera",
     body: "The glowing dots are live cameras — 74,229 of them, all over the world. Tap one to look through it.",
     bodyTouch: "The glowing dots are live cameras — 74,229 of them, all over the world. Tap one to look through it.",
-    anchor: "layers",
+    anchor: "globe",
     action: "camera-open",
     hint: "Tap a glowing dot on the globe to open a camera.",
   },
@@ -59,8 +59,8 @@ export const TOUR_STEPS: TourStep[] = [
   {
     n: 4,
     title: "The Pro Tools",
-    body: "OI, the AI analyst, Recon and the locked intel layers are WorldEye Pro. Cameras, layers and live alerts stay free for everyone.",
-    bodyTouch: "OI, the AI analyst, Recon and the locked intel layers are WorldEye Pro. Cameras, layers and live alerts stay free for everyone.",
+    body: "OI, the AI analyst, Recon and the locked intel layers are WorldEye Pro. Cameras, most layers and live alerts stay free for everyone.",
+    bodyTouch: "OI, the AI analyst, Recon and the locked intel layers are WorldEye Pro. Cameras, most layers and live alerts stay free for everyone.",
     anchor: "tools",
     action: "info",
     hint: "",
@@ -224,6 +224,19 @@ export const MICROS: Record<string, MicroDef> = {
       },
     ],
   },
+  alerts: {
+    id: "alerts",
+    steps: [
+      {
+        title: "A watcher for your cameras",
+        body: "Pick a camera and a condition in Settings → Camera Alerts, and WorldEye checks the camera's latest photo about every 15 minutes. When a check first sees your condition, we email you and post the alert — with a snapshot — on that page.",
+      },
+      {
+        title: "Part of the paid plans",
+        body: "Camera alerts come with Pro and VIP Pro: Pro watches up to 2 cameras, and VIP Pro watches up to 10. Pause or remove an alert anytime from the same settings page.",
+      },
+    ],
+  },
   navigate: {
     id: "navigate",
     steps: [
@@ -311,6 +324,10 @@ export const HELP_ENTRIES: HelpEntry[] = [
   { kind: "micro", label: "Intelligence Layers", microId: "layers-guide" },
   { kind: "micro", label: "OI AI Guide", microId: "oi-guide" },
   { kind: "micro", label: "Keyboard Shortcuts", microId: "shortcuts" },
+  { kind: "micro", label: "Recording Studio", microId: "recording" },
+  { kind: "micro", label: "Camera Alerts", microId: "alerts" },
   { kind: "link", label: "Help & FAQ", href: "/faq" },
   { kind: "link", label: "Compare Free vs. Pro", href: "/pricing" },
+  { kind: "link", label: "WiFi Sensing Tool", href: "/sensing" },
+  { kind: "link", label: "Ski Cameras & Powder Pass", href: "/ski-webcams" },
 ];

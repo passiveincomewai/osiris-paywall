@@ -61,7 +61,7 @@ describe("layer signal helpers", () => {
 
 describe("MICROS + HELP_ENTRIES", () => {
   it("every contextual micro-tutorial has at most 3 steps", () => {
-    for (const id of ["camera", "flight", "satellite", "recon", "oi", "recording"]) {
+    for (const id of ["camera", "flight", "satellite", "recon", "oi", "recording", "alerts"]) {
       expect(MICROS[id], id).toBeDefined();
       expect(MICROS[id].steps.length).toBeLessThanOrEqual(3);
       expect(MICROS[id].steps.length).toBeGreaterThanOrEqual(1);
@@ -73,12 +73,16 @@ describe("MICROS + HELP_ENTRIES", () => {
       if (e.kind === "micro") expect(MICROS[e.microId], e.label).toBeDefined();
       if (e.kind === "link") {
         expect(e.href).not.toContain("/docs");
-        expect(["/faq", "/pricing"]).toContain(e.href);
+        expect(["/faq", "/pricing", "/sensing", "/ski-webcams"]).toContain(e.href);
       }
     }
     const labels = HELP_ENTRIES.map((e) => e.label);
     expect(labels).toContain("Take the Full Tour");
     expect(labels).toContain("Compare Free vs. Pro");
+    expect(labels).toContain("Recording Studio");
+    expect(labels).toContain("Camera Alerts");
+    expect(labels).toContain("WiFi Sensing Tool");
+    expect(labels).toContain("Ski Cameras & Powder Pass");
   });
 });
 
@@ -86,6 +90,9 @@ describe("camera step signal logic (tutorial hand-off fix)", () => {
   it("derives the camera step from TOUR_STEPS", () => {
     expect(CAMERA_STEP_N).toBe(2);
     expect(TOUR_STEPS[CAMERA_STEP_N - 1].action).toBe("camera-open");
+    // The camera step spotlights the globe (where the glowing dots are),
+    // never the layer panel — the copy tells the visitor to tap a dot.
+    expect(TOUR_STEPS[CAMERA_STEP_N - 1].anchor).toBe("globe");
   });
 
   it("a first open and a camera-to-camera switch are opened signals; a close is not", () => {
