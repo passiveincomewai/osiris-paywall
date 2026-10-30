@@ -2,8 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Loader2, MapPin, Navigation, Route as RouteIcon } from 'lucide-react';
+import Link from 'next/link';
+import { Bookmark, Loader2, MapPin, Navigation, Route as RouteIcon } from 'lucide-react';
 import SkiCameraGrid from '@/components/SkiCameraGrid';
+import {
+  downsampleRoute,
+  loadSavedRoutes,
+  savedRouteId,
+  storeSavedRoutes,
+  upsertSavedRoute,
+} from '@/lib/ski/saved-routes';
 import { cameraFeedTier, type CountryCamera } from '@/lib/country-cameras';
 import type { SkiResort } from '@/lib/ski-resorts';
 
@@ -414,6 +422,29 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
   const [destText, setDestText] = useState(resortPlace.label);
   const [dest, setDest] = useState<Place>(resortPlace);
   const [state, setState] = useState<ToolState>({ kind: 'idle' });
+  const [savedBrief, setSavedBrief] = useState(false);
+
+  /* Powder Pass drive-up brief (#3): saving stores the planned route
+     in this browser's shared saved-route store (lib/ski/saved-routes);
+     the brief page reads the same store. Browser-local by design —
+     there is no server-side saved-route store. */
+  const saveForBrief = useCallback(() => {
+    if (state.kind !== 'done' || !start) return;
+    storeSavedRoutes(
+      upsertSavedRoute(loadSavedRoutes(), {
+        id: savedRouteId(resort.slug, start, dest),
+        resortSlug: resort.slug,
+        countrySlug: resort.countrySlug,
+        start: { label: start.label, lat: start.lat, lng: start.lng },
+        dest: { label: dest.label, lat: dest.lat, lng: dest.lng },
+        route: downsampleRoute(state.route),
+        distanceKm: state.distanceKm,
+        durationMin: state.durationMin,
+        savedAt: new Date().toISOString(),
+      }),
+    );
+    setSavedBrief(true);
+  }, [state, start, dest, resort.slug, resort.countrySlug]);
 
   const run = useCallback(async () => {
     if (!start) {
@@ -421,6 +452,7 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
       return;
     }
     try {
+      setSavedBrief(false);
       setState({ kind: 'working', step: 'Planning your drive…' });
       const qs = new URLSearchParams({
         from: `${start.lat},${start.lng}`,
@@ -600,6 +632,25 @@ export default function SkiRouteTool({ resort }: { resort: SkiResort }) {
               ? 'no cameras in the live index sit along this route.'
               : `${state.total} camera${state.total === 1 ? '' : 's'} along this route, in driving order:`}
           </p>
+          <div className="mt-4">
+            {savedBrief ? (
+              <p className="text-sm text-white/65">
+                Saved in this browser —{' '}
+                <Link href="/ski-webcams/my/brief" className="font-semibold text-[#00E5FF] hover:underline">
+                  open your drive-up brief
+                </Link>{' '}
+                for this route&apos;s weather, cameras and stops (Powder Pass).
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={saveForBrief}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#D4AF37]/40 text-sm font-semibold text-[#e8c55a] hover:bg-[#D4AF37]/10 transition"
+              >
+                <Bookmark className="w-4 h-4" /> Save this route for your morning brief
+              </button>
+            )}
+          </div>
           <RouteConditions weather={state.weather} cameras={state.cameras} fetchedAt={state.fetchedAt} />
           <RouteStops pois={state.pois} />
           {state.total > 0 && (
