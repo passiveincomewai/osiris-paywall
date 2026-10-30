@@ -27,6 +27,7 @@ export const esChrome: ChromeCopy = {
         { label: "Modo ambiente", href: "/ambient-mode" },
         { label: "Precios", href: "/pricing" },
         { label: "Enterprise", href: "/enterprise" },
+        { label: "White Label", href: "/white-label" },
         { label: "Cámaras en vivo", href: "/cameras" },
         { label: "Cámaras por país", href: "/cameras/countries" },
         { label: "Afiliados", href: "/affiliates" },

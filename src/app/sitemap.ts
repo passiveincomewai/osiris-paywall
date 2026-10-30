@@ -242,6 +242,9 @@ const SEO_PAGES_PARTNERS = ["/partners"];
 // It is a standing product page, so it joins the sitemap with a
 // commercial priority rather than the 0.6 directory default.
 const SEO_PAGES_ENTERPRISE = ["/enterprise"];
+// White Label (2026-10-29): the pilot-programme page — a standing
+// commercial page like /enterprise, so it takes the same treatment.
+const SEO_PAGES_WHITE_LABEL = ["/white-label"];
 // Index recovery (2026-10-27): two real pages that were orphans —
 // live routes with no sitemap entry and no crawlable inbound links.
 const SEO_PAGES_ORPHANS = ["/use-cases", "/submit-camera"];
@@ -919,6 +922,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })),
     ...SEO_PAGES_ENTERPRISE.map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+    ...SEO_PAGES_WHITE_LABEL.map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.8,

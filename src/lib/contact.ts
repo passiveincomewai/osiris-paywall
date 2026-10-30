@@ -13,6 +13,7 @@ export const CONTACT_TOPICS = [
   { value: "partnerships", label: "Partnerships" },
   { value: "press", label: "Press" },
   { value: "security", label: "Security report" },
+  { value: "white-label-demo", label: "White Label demo request" },
 ] as const;
 
 export type ContactTopic = (typeof CONTACT_TOPICS)[number]["value"];

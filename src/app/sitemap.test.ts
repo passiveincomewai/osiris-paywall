@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1099);
+    expect(nonTransit.length).toBe(1100);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -160,9 +160,13 @@ describe("sitemap URL set", () => {
     // then added /beach-webcams/key-west (29 verified FDOT island
     // cameras, the beach family's tenth spot) → 1,099. Delta
     // hand-verified: removing exactly that URL reproduces the
-    // 1,098 set and the a1fe3060… hash byte-for-byte.
+    // 1,098 set and the a1fe3060… hash byte-for-byte. The White
+    // Label page (2026-10-29) then added /white-label (the
+    // early-access pilot programme page) → 1,100. Delta: removing
+    // exactly that URL reproduces the 1,099 set and the
+    // 24d40d31… hash byte-for-byte.
     expect(hash).toBe(
-      "24d40d311f0fe88b7204ea8037cad2387a9d6cd5fc682fd0dbde0dda2c5e8adb",
+      "45f2c33bf963d82e3d1c26685c79e79b95f43eb3bef755fbba7bba277fe57a74",
     );
   });
 

@@ -54,6 +54,7 @@ export const enChrome: ChromeCopy = {
         { label: "Ambient Mode", href: "/ambient-mode" },
         { label: "Pricing", href: "/pricing" },
         { label: "Enterprise", href: "/enterprise" },
+        { label: "White Label", href: "/white-label" },
         { label: "Live Cameras", href: "/cameras" },
         { label: "Cameras by Country", href: "/cameras/countries" },
         { label: "Affiliates", href: "/affiliates" },
