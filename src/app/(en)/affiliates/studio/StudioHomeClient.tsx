@@ -143,24 +143,35 @@ async function api(path: string, init?: RequestInit) {
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
 
+export interface StudioDemoBundle {
+  me: Me;
+  featured: StudioTemplateLite[];
+  creations: StudioCreationLite[];
+  templateCount: number;
+}
+
 export default function StudioHomeClient({
   initialFeatured,
   initialCreations,
   initialTemplateCount,
+  demo,
 }: {
   initialFeatured: StudioTemplateLite[];
   initialCreations: StudioCreationLite[];
   initialTemplateCount: number;
+  demo?: StudioDemoBundle;
 }) {
+  const isDemo = !!demo;
   const router = useRouter();
-  const [me, setMe] = useState<Me | null>(null);
+  const [me, setMe] = useState<Me | null>(demo?.me ?? null);
   const [notJoined, setNotJoined] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isDemo);
   const [joinMsg, setJoinMsg] = useState("");
-  const [featured, setFeatured] = useState<StudioTemplateLite[]>(initialFeatured);
-  const [creations, setCreations] = useState<StudioCreationLite[]>(initialCreations);
-  const [templateCount, setTemplateCount] = useState<number>(initialTemplateCount);
-  const [creationsCount, setCreationsCount] = useState<number>(initialCreations.length);
+  const [demoNote, setDemoNote] = useState("");
+  const [featured, setFeatured] = useState<StudioTemplateLite[]>(demo?.featured ?? initialFeatured);
+  const [creations, setCreations] = useState<StudioCreationLite[]>(demo?.creations ?? initialCreations);
+  const [templateCount, setTemplateCount] = useState<number>(demo?.templateCount ?? initialTemplateCount);
+  const [creationsCount, setCreationsCount] = useState<number>((demo?.creations ?? initialCreations).length);
 
   const loadStudioData = useCallback(async () => {
     // Featured templates (fall back to / refresh from the API).
@@ -184,6 +195,7 @@ export default function StudioHomeClient({
   }, []);
 
   useEffect(() => {
+    if (isDemo) return;
     (async () => {
       const { ok, status, j } = await api("/api/affiliate/me");
       if (!ok && status === 404 && j.join) {
@@ -214,6 +226,10 @@ export default function StudioHomeClient({
   };
 
   const generateNextAd = () => {
+    if (isDemo) {
+      setDemoNote("Ad generation is available in the live Studio — the demo is read-only.");
+      return;
+    }
     if (featured.length === 0) return;
     const pick = featured[Math.floor(Math.random() * featured.length)];
     router.push(`/affiliates/studio/create/${pick.slug}`);
@@ -264,6 +280,14 @@ export default function StudioHomeClient({
 
   return (
     <div className="space-y-8">
+      {isDemo && (
+        <div className="rounded-2xl border border-pink-400/50 bg-pink-400/[0.08] px-4 py-3 text-sm text-pink-100">
+          <span className="font-mono font-bold tracking-widest">DEMO</span> — the real Marketing Studio home
+          on a sample persona. The template catalog below is the live one; creations and figures are
+          illustrative, and template previews render in the live Studio.
+          {demoNote && <div className="mt-2 text-cyan-200">{demoNote}</div>}
+        </div>
+      )}
       {/* Hero */}
       <section className="text-center pt-2 pb-2">
         <div className="text-[11px] font-mono tracking-[0.3em] text-cyan-400 uppercase mb-3">Affiliate Marketing Studio</div>
@@ -366,13 +390,22 @@ export default function StudioHomeClient({
                 className="w-60 shrink-0 rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-cyan-400/50 transition-colors group"
               >
                 <div className="bg-black/40 aspect-[4/3] flex items-center justify-center overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={renderUrl(t.slug, null, { scale: 0.3, format: "webp", preview: true })}
-                    alt={t.title}
-                    loading="lazy"
-                    className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform"
-                  />
+                  {isDemo ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 px-4 text-center"
+                      style={{ background: "radial-gradient(300px 160px at 50% 0%, #0a2a55 0%, #050b18 75%)" }}>
+                      <span className="font-mono text-[9px] tracking-[0.3em] text-cyan-300">WORLDEYE TEMPLATE</span>
+                      <span className="text-sm font-bold text-white leading-snug">{t.title}</span>
+                      <span className="text-[10px] font-mono text-slate-400">preview renders in the live Studio</span>
+                    </div>
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={renderUrl(t.slug, null, { scale: 0.3, format: "webp", preview: true })}
+                      alt={t.title}
+                      loading="lazy"
+                      className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform"
+                    />
+                  )}
                 </div>
                 <div className="p-3">
                   <div className="text-sm font-bold text-white truncate">{t.title}</div>
@@ -411,7 +444,7 @@ export default function StudioHomeClient({
                   className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-cyan-400/50 transition-colors"
                 >
                   <div className="bg-black/40 aspect-[4/3] flex items-center justify-center overflow-hidden">
-                    {slug && !caption ? (
+                    {slug && !caption && !isDemo ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={renderUrl(slug, creationValues(c), { scale: 0.3, format: "webp", preview: true })}
