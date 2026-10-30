@@ -15,6 +15,7 @@ import {
   ENTERPRISE_SUPPORT_LINE,
 } from "@/lib/enterprise/offer";
 import JsonLd from "@/components/JsonLd";
+import SiteFooter from "@/components/SiteFooter";
 import EnterpriseClient from "./EnterpriseClient";
 
 export const metadata = {
@@ -204,26 +205,6 @@ export default async function EnterprisePage() {
           </span>
         </div>
 
-        {/* White Label — the branded-portal pilot built on this feed */}
-        <div className="mt-16 rounded-3xl border border-[#D4AF37]/25 bg-gradient-to-b from-[#D4AF37]/[0.06] to-transparent p-7 md:p-8 max-w-3xl">
-          <h2 className="text-xl font-bold tracking-tight">
-            Want the whole platform under your brand?
-          </h2>
-          <p className="text-white/55 mt-2.5 text-sm leading-relaxed">
-            WorldEye White Label takes the collections and feeds above and
-            puts them behind your logo, your colours and your domain as a
-            complete audience-facing portal. It is in an early-access pilot
-            for resorts, tourism boards, media companies and enterprises —
-            with indicative pricing and demo requests open now.
-          </p>
-          <Link
-            href="/white-label"
-            className="inline-flex items-center gap-2 mt-5 px-6 py-3 rounded-2xl border border-[#D4AF37]/40 text-[#D4AF37] font-semibold text-sm hover:bg-[#D4AF37]/10 transition"
-          >
-            Explore WorldEye White Label →
-          </Link>
-        </div>
-
         {/* FAQ */}
         <div className="mt-16 max-w-3xl">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
@@ -240,6 +221,7 @@ export default async function EnterprisePage() {
           <p className="text-xs text-white/40 mt-10">{ENTERPRISE_SUPPORT_LINE}</p>
         </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }

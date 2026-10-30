@@ -103,7 +103,7 @@ export default function SiteFooter({
       </div>
 
       {/* Link columns */}
-      <nav aria-label="Footer" className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-x-6 gap-y-10">
+      <nav aria-label="Footer" className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
         {chrome.footerColumns.map((col) => (
           <div key={col.title}>
             <p className="font-mono text-[11px] font-medium tracking-[0.25em] text-white/60 mb-4">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SensingTool from "@/components/sensing/SensingTool";
+import SiteFooter from "@/components/SiteFooter";
 
 /**
  * WorldEye WiFi Sensing — a free public tool (in the OSINT tools menu and
@@ -167,6 +168,7 @@ export default function SensingPage() {
           </p>
         </footer>
       </div>
+      <SiteFooter />
     </main>
   );
 }
