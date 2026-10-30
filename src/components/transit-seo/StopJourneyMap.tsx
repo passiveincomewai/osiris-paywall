@@ -5,12 +5,15 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 /**
  * The stop planner's result map: the walk to the stop drawn in
- * gold over the site's dark basemap, the ride from the stop toward
- * the terminus in the route's own colour underneath it, and a dot
- * for every live camera the corridor search found along the trip.
- * Read-only by design — pan/zoom to inspect, click a camera dot
- * for its name and how far into the trip it sits; the ordered
- * camera list below the map is where feeds open.
+ * gold over the site's dark basemap, the ride from the stop in the
+ * route's own colour underneath it, and a dot for every live
+ * camera the corridor search found along the trip. When the plan
+ * has a destination, the ride ends at the get-off stop (white
+ * marker), the final walk is drawn dashed gold, and the
+ * destination itself is marked red. Read-only by design — pan/zoom
+ * to inspect, click a camera dot for its name and how far into the
+ * trip it sits; the ordered camera list below the map is where
+ * feeds open.
  *
  * Sibling of components/SkiRouteMap (the ski drive-up tool's map):
  * same lazy MapLibre load, same basemap, same marker language, so
@@ -34,6 +37,9 @@ export default function StopJourneyMap({
   cameras,
   start,
   stop,
+  finalWalk,
+  alight,
+  end,
 }: {
   /** Walking path as [lng, lat] pairs — the directions API's shape. */
   walk: readonly (readonly [number, number])[];
@@ -44,6 +50,15 @@ export default function StopJourneyMap({
   cameras: readonly JourneyMapCamera[];
   start: { lat: number; lng: number; label: string };
   stop: { lat: number; lng: number; label: string };
+  /**
+   * The destination side, when the visitor gave one: the final
+   * walking leg from the alighting stop (drawn dashed so the two
+   * walks read apart), the get-off stop marker, and the
+   * destination marker. All absent on a start-only plan.
+   */
+  finalWalk?: readonly (readonly [number, number])[];
+  alight?: { lat: number; lng: number; label: string };
+  end?: { lat: number; lng: number; label: string };
 }) {
   const holderRef = useRef<HTMLDivElement>(null);
 
@@ -109,6 +124,38 @@ export default function StopJourneyMap({
             paint: { 'line-color': '#D4AF37', 'line-width': 3.5 },
           });
 
+          if (finalWalk && finalWalk.length >= 2) {
+            m.addSource('journey-final', {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'LineString',
+                  coordinates: finalWalk.map(p => [p[0], p[1]]),
+                },
+              },
+            });
+            m.addLayer({
+              id: 'journey-final-casing',
+              type: 'line',
+              source: 'journey-final',
+              layout: { 'line-cap': 'round', 'line-join': 'round' },
+              paint: { 'line-color': '#05070d', 'line-width': 7, 'line-opacity': 0.65 },
+            });
+            m.addLayer({
+              id: 'journey-final-line',
+              type: 'line',
+              source: 'journey-final',
+              layout: { 'line-cap': 'round', 'line-join': 'round' },
+              paint: {
+                'line-color': '#D4AF37',
+                'line-width': 3.5,
+                'line-dasharray': [2, 1.6],
+              },
+            });
+          }
+
           m.addSource('journey-cameras', {
             type: 'geojson',
             data: {
@@ -161,10 +208,10 @@ export default function StopJourneyMap({
             m.getCanvas().style.cursor = '';
           });
 
-          const dot = (color: string, title: string) => {
+          const dot = (color: string, title: string, ring = color) => {
             const el = document.createElement('div');
             el.title = title;
-            el.style.cssText = `width:14px;height:14px;border-radius:9999px;background:${color};border:2.5px solid #05070d;box-shadow:0 0 0 1.5px ${color}`;
+            el.style.cssText = `width:14px;height:14px;border-radius:9999px;background:${color};border:2.5px solid #05070d;box-shadow:0 0 0 1.5px ${ring}`;
             return el;
           };
           new maplibregl.Marker({ element: dot('#4ade80', `Start — ${start.label}`) })
@@ -173,12 +220,27 @@ export default function StopJourneyMap({
           new maplibregl.Marker({ element: dot('#D4AF37', `Your stop — ${stop.label}`) })
             .setLngLat([stop.lng, stop.lat])
             .addTo(m);
+          if (alight) {
+            new maplibregl.Marker({
+              element: dot('#ffffff', `Get off here — ${alight.label}`, '#D4AF37'),
+            })
+              .setLngLat([alight.lng, alight.lat])
+              .addTo(m);
+          }
+          if (end) {
+            new maplibregl.Marker({ element: dot('#f87171', `Your destination — ${end.label}`) })
+              .setLngLat([end.lng, end.lat])
+              .addTo(m);
+          }
 
           const bounds = new maplibregl.LngLatBounds();
           for (const p of walk) bounds.extend([p[0], p[1]]);
           for (const p of ride) bounds.extend([p[0], p[1]]);
+          if (finalWalk) for (const p of finalWalk) bounds.extend([p[0], p[1]]);
           bounds.extend([start.lng, start.lat]);
           bounds.extend([stop.lng, stop.lat]);
+          if (alight) bounds.extend([alight.lng, alight.lat]);
+          if (end) bounds.extend([end.lng, end.lat]);
           m.fitBounds(bounds, { padding: 44, maxZoom: 15, duration: 0 });
         });
       })
@@ -191,7 +253,7 @@ export default function StopJourneyMap({
       cancelled = true;
       map?.remove();
     };
-  }, [walk, ride, rideColor, cameras, start, stop]);
+  }, [walk, ride, rideColor, cameras, start, stop, finalWalk, alight, end]);
 
   if (walk.length < 2) return null;
   return (
@@ -199,7 +261,11 @@ export default function StopJourneyMap({
       ref={holderRef}
       className="h-[340px] md:h-[420px] w-full overflow-hidden rounded-xl border border-white/10 bg-[#0b0f1a]"
       role="img"
-      aria-label="Map of your walk to the stop and the route from there, with the live cameras along the way marked"
+      aria-label={
+        end
+          ? 'Map of your walk to the stop, the ride to your get-off stop, and the final walk to your destination, with the live cameras along the way marked'
+          : 'Map of your walk to the stop and the route from there, with the live cameras along the way marked'
+      }
     />
   );
 }

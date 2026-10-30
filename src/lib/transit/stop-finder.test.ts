@@ -4,7 +4,10 @@ import {
   routeStops,
   nearestStop,
   directionsServing,
+  directionsServingJourney,
+  alightingStop,
   rideLineFrom,
+  rideLineBetween,
   journeyGeometry,
   type PlannerDirection,
 } from './stop-finder';
@@ -105,6 +108,62 @@ describe('rideLineFrom', () => {
   it('degrades to the stop point for a shapeless direction', () => {
     expect(rideLineFrom([], state)).toEqual([[-71.0576, 42.35898]]);
     expect(rideLineFrom([[-71.0576, 42.35898]], state)).toEqual([[-71.0576, 42.35898]]);
+  });
+});
+
+describe('directionsServingJourney', () => {
+  it('finds the one direction carrying board → alight in order', () => {
+    expect(directionsServingJourney(directions, '70020', '70001')).toEqual([0]);
+    expect(directionsServingJourney(directions, '70001', '70020')).toEqual([1]);
+  });
+  it('is empty when no direction orders the pair that way', () => {
+    expect(directionsServingJourney(directions, '70020', '70020')).toEqual([]);
+    expect(directionsServingJourney(directions, '70020', 'nope')).toEqual([]);
+  });
+});
+
+describe('alightingStop', () => {
+  it('picks the later stop nearest the destination', () => {
+    // Destination beside Forest Hills; boarding at Downtown
+    // Crossing toward Forest Hills — Forest Hills is the only
+    // later stop and must be named.
+    const hit = alightingStop(directions[0], '70020', { lat: 42.301, lng: -71.112 });
+    expect(hit?.stop.id).toBe('70001');
+    expect(hit?.stopsRidden).toBe(1);
+  });
+  it('never picks a stop at or before the boarding stop', () => {
+    // Destination beside Downtown Crossing; boarding at Oak Grove
+    // toward Forest Hills — Downtown Crossing is ahead and wins
+    // over the nearer-in-space but behind-you alternatives.
+    const hit = alightingStop(directions[0], '70036', { lat: 42.3559, lng: -71.0598 });
+    expect(hit?.stop.id).toBe('70020');
+    expect(hit?.stopsRidden).toBe(2);
+  });
+  it('is null when boarding at the terminus (no later stop)', () => {
+    expect(alightingStop(directions[0], '70001', { lat: 42.3, lng: -71.1 })).toBeNull();
+  });
+  it('is null when the boarding stop is not on the direction', () => {
+    expect(alightingStop(directions[0], 'nope', { lat: 42.3, lng: -71.1 })).toBeNull();
+  });
+});
+
+describe('rideLineBetween', () => {
+  it('slices the shape between the two stops, bracketed by the stops', () => {
+    const ride = rideLineBetween(directions[0].line, state, forestHills);
+    expect(ride[0]).toEqual([-71.0576, 42.35898]);
+    expect(ride[ride.length - 1]).toEqual([-71.11368, 42.30052]);
+    // passes Downtown Crossing's vertex on the way
+    expect(ride).toContainEqual([-71.06022, 42.35554]);
+  });
+  it('degrades to the straight segment when the shape orders backwards', () => {
+    const ride = rideLineBetween(directions[0].line, forestHills, state);
+    expect(ride).toEqual([
+      [-71.11368, 42.30052],
+      [-71.0576, 42.35898],
+    ]);
+  });
+  it('is a single point when board and alight are the same stop', () => {
+    expect(rideLineBetween(directions[0].line, state, state)).toEqual([[-71.0576, 42.35898]]);
   });
 });
 

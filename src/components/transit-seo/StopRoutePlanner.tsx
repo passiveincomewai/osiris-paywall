@@ -1,17 +1,21 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Footprints, Loader2, MapPin, Navigation, Route } from 'lucide-react';
+import { ChevronDown, Flag, Footprints, Loader2, MapPin, Navigation, Route } from 'lucide-react';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
 import { CameraFeedCard, LazyCameraViewer } from '@/components/camera-feed-card';
 import type { CountryCamera } from '@/lib/country-cameras';
 import { directionsApiUrl } from '@/lib/transit/directions';
 import {
+  alightingStop,
   directionsServing,
+  directionsServingJourney,
   journeyGeometry,
   nearestStop,
+  rideLineBetween,
   rideLineFrom,
   routeStops,
+  type AlightingHit,
   type PlannerDirection,
   type PlannerStop,
 } from '@/lib/transit/stop-finder';
@@ -23,6 +27,16 @@ import StopJourneyMap from './StopJourneyMap';
  * starting address goes in; the visitor gets the nearest stop ON
  * THIS ROUTE, the walking directions to it, the ride from there
  * toward the terminus, and every live camera along the way.
+ *
+ * The destination side (owner addition, 2026-10-30): the visitor
+ * can also say where they're going — an address, or a specific
+ * stop on this route picked from the stop list. The planner then
+ * names the stop to GET OFF at (the stop nearest the destination
+ * that the ride passes after the boarding stop), ends the ride
+ * there instead of at the terminus, and walks the final leg from
+ * that stop to the destination. When no single ride on the route
+ * runs from the boarding stop toward the destination, it says so
+ * plainly — it never invents a connection.
  *
  * Every piece is the site's own, reused rather than rebuilt:
  *  - the address field is /api/geosearch (the same geocoder the
@@ -225,6 +239,9 @@ export default function StopRoutePlanner({
   intro: string;
 }) {
   const [from, setFrom] = useState<FinderPlace | null>(null);
+  const [dest, setDest] = useState<FinderPlace | null>(null);
+  /** A specific stop on this route chosen as the destination. */
+  const [destStop, setDestStop] = useState<PlannerStop | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stopHit, setStopHit] = useState<{ stop: PlannerStop; distanceM: number } | null>(null);
@@ -235,24 +252,107 @@ export default function StopRoutePlanner({
   /** The geometry the map + corridor actually used: the routed
    *  walk, or the straight line when routing failed. */
   const [journeyWalk, setJourneyWalk] = useState<[number, number][] | null>(null);
+  /** The get-off stop for the current direction, when a
+   *  destination is in play; null on a start-only plan. */
+  const [alight, setAlight] = useState<AlightingHit | null>(null);
+  const [finalWalk, setFinalWalk] = useState<WalkResult | null>(null);
+  const [finalWalkFailed, setFinalWalkFailed] = useState(false);
+  /** The final leg's geometry as actually used (routed, or the
+   *  straight line when routing failed) — the corridor covers it. */
+  const [journeyFinal, setJourneyFinal] = useState<[number, number][] | null>(null);
   const [cams, setCams] = useState<CamResult | null>(null);
   const [camsBusy, setCamsBusy] = useState(false);
   const [camError, setCamError] = useState(false);
   const [active, setActive] = useState<CountryCamera | null>(null);
 
-  const loadCameras = async (
+  const hasDestination = destStop !== null || dest !== null;
+  const allStops = [...routeStops(directions)].sort((a, b) => a.name.localeCompare(b.name));
+
+  /** One pedestrian routing call, as a WalkResult — null when the
+   *  router is down or has no path (callers fall back honestly). */
+  const fetchWalk = async (
+    a: { lat: number; lng: number },
+    b: { lat: number; lng: number },
+  ): Promise<WalkResult | null> => {
+    try {
+      const res = await fetch(directionsApiUrl(a, b, 'pedestrian'));
+      const dir = await res.json();
+      if (!res.ok || dir.error) return null;
+      const route = (dir.routes?.length ? dir.routes[0] : dir) as {
+        distance: number;
+        duration: number;
+        steps?: WalkStep[];
+        geometry: { coordinates: [number, number][] };
+      };
+      if (!route.geometry?.coordinates?.length) return null;
+      return {
+        distanceM: route.distance,
+        durationS: route.duration,
+        steps: route.steps ?? [],
+        geometry: route.geometry.coordinates,
+      };
+    } catch {
+      return null;
+    }
+  };
+
+  /**
+   * Everything downstream of the boarding walk for one direction:
+   * the get-off stop (when a destination is in play), the ride
+   * slice (to the alighting stop, or to the terminus without a
+   * destination), the final walking leg, and the corridor cameras
+   * over the joined geometry.
+   */
+  const planJourney = async (
     dirIndex: number,
+    board: PlannerStop,
     walkGeo: [number, number][],
-    stop: PlannerStop,
   ) => {
     const direction = directions[dirIndex];
     if (!direction) return;
+    setAlight(null);
+    setFinalWalk(null);
+    setFinalWalkFailed(false);
+    setJourneyFinal(null);
+
+    let ride: [number, number][];
+    let finalGeo: [number, number][] = [];
+    if (hasDestination) {
+      const hit = destStop
+        ? ((): AlightingHit | null => {
+            const b = direction.stops.findIndex(s => s.id === board.id);
+            const a = direction.stops.findIndex(s => s.id === destStop.id);
+            return b >= 0 && a > b
+              ? { stop: destStop, distanceM: 0, stopsRidden: a - b }
+              : null;
+          })()
+        : alightingStop(direction, board.id, dest!);
+      if (!hit) return; // run() only offers directions that serve the journey
+      setAlight(hit);
+      ride = rideLineBetween(direction.line, board, hit.stop);
+      if (dest && !destStop) {
+        const fw = await fetchWalk(hit.stop, dest);
+        if (fw) {
+          setFinalWalk(fw);
+          finalGeo = fw.geometry;
+        } else {
+          setFinalWalkFailed(true);
+          finalGeo = [
+            [hit.stop.lng, hit.stop.lat],
+            [dest.lng, dest.lat],
+          ];
+        }
+        setJourneyFinal(finalGeo);
+      }
+    } else {
+      ride = rideLineFrom(direction.line, board);
+    }
+
     setCamsBusy(true);
     setCamError(false);
     setCams(null);
     try {
-      const ride = rideLineFrom(direction.line, stop);
-      const geometry = journeyGeometry(walkGeo, ride);
+      const geometry = journeyGeometry(journeyGeometry(walkGeo, ride), finalGeo);
       const res = await fetch('/api/cctv/route-cameras', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -285,6 +385,10 @@ export default function StopRoutePlanner({
     setWalk(null);
     setWalkFailed(false);
     setJourneyWalk(null);
+    setAlight(null);
+    setFinalWalk(null);
+    setFinalWalkFailed(false);
+    setJourneyFinal(null);
     setCams(null);
     setCamError(false);
     try {
@@ -295,34 +399,46 @@ export default function StopRoutePlanner({
         );
         return;
       }
-      const servingIdx = directionsServing(directions, hit.stop.id);
-      const firstDir = servingIdx[0] ?? 0;
+      const boardIdx = directionsServing(directions, hit.stop.id);
+      const boardDirs = boardIdx.length ? boardIdx : [0];
+
+      /* Which directions can actually run this trip? With a
+         destination, only the ones that pass a get-off stop after
+         the boarding stop — and when none can, the answer is an
+         honest "this route can't make that trip", never a guess. */
+      let usable = boardDirs;
+      if (destStop) {
+        usable = directionsServingJourney(directions, hit.stop.id, destStop.id);
+        if (!usable.length) {
+          setError(
+            `No single ride on ${routeLabel} runs from ${hit.stop.name} to ${destStop.name} — in the route's stop order, ${destStop.name} comes before ${hit.stop.name}. Try the trip the other way round, or pick a destination address instead of a stop.`,
+          );
+          return;
+        }
+      } else if (dest) {
+        usable = boardDirs.filter(i => alightingStop(directions[i], hit.stop.id, dest));
+        if (!usable.length) {
+          const nearestToDest = nearestStop(routeStops(directions), dest);
+          setError(
+            `From ${hit.stop.name}, no ${routeLabel} stop after yours runs toward ${dest.label} — the stop nearest your destination is ${nearestToDest ? nearestToDest.stop.name : 'not on this route'}, which the route passes before ${hit.stop.name}. This route can't complete that trip in one ride.`,
+          );
+          return;
+        }
+      }
+      const firstDir = usable[0];
       setStopHit(hit);
-      setServing(servingIdx.length ? servingIdx : [firstDir]);
+      setServing(usable);
       setDirSel(firstDir);
 
       let walkGeo: [number, number][] = [
         [from.lng, from.lat],
         [hit.stop.lng, hit.stop.lat],
       ];
-      try {
-        const res = await fetch(directionsApiUrl(from, hit.stop, 'pedestrian'));
-        const dir = await res.json();
-        if (!res.ok || dir.error) throw new Error(dir.error || 'no walking route');
-        const route = (dir.routes?.length ? dir.routes[0] : dir) as {
-          distance: number;
-          duration: number;
-          steps?: WalkStep[];
-          geometry: { coordinates: [number, number][] };
-        };
-        walkGeo = route.geometry.coordinates;
-        setWalk({
-          distanceM: route.distance,
-          durationS: route.duration,
-          steps: route.steps ?? [],
-          geometry: walkGeo,
-        });
-      } catch {
+      const w = await fetchWalk(from, hit.stop);
+      if (w) {
+        walkGeo = w.geometry;
+        setWalk(w);
+      } else {
         /* Routing is down or has no path: the nearest stop is still
            the answer — shown with its straight-line distance, and
            the corridor search runs over the straight line. */
@@ -330,7 +446,8 @@ export default function StopRoutePlanner({
       }
       setJourneyWalk(walkGeo);
       trackAnalyticsEvent('transit_stop_planner_search');
-      await loadCameras(firstDir, walkGeo, hit.stop);
+      if (hasDestination) trackAnalyticsEvent('transit_stop_planner_destination');
+      await planJourney(firstDir, hit.stop, walkGeo);
     } finally {
       setBusy(false);
     }
@@ -345,12 +462,16 @@ export default function StopRoutePlanner({
         [from!.lng, from!.lat],
         [stopHit.stop.lng, stopHit.stop.lat],
       ] as [number, number][]);
-    void loadCameras(dirIndex, walkGeo, stopHit.stop);
+    void planJourney(dirIndex, stopHit.stop, walkGeo);
   };
 
   const direction = directions[dirSel];
   const ride =
-    stopHit && direction ? rideLineFrom(direction.line, stopHit.stop) : [];
+    stopHit && direction
+      ? alight
+        ? rideLineBetween(direction.line, stopHit.stop, alight.stop)
+        : rideLineFrom(direction.line, stopHit.stop)
+      : [];
   const mapCameras = (cams?.cameras ?? [])
     .filter(c => typeof c.lat === 'number' && typeof c.lng === 'number')
     .map(c => ({
@@ -372,6 +493,44 @@ export default function StopRoutePlanner({
           placeholder="Start — a street address, place or landmark"
           onPick={setFrom}
         />
+        <PlaceField
+          label="Destination (optional)"
+          placeholder="Going to — an address or place, and we'll name your get-off stop"
+          onPick={place => {
+            setDest(place);
+            if (place) setDestStop(null);
+          }}
+        />
+      </div>
+      <div className="mt-3 flex flex-wrap items-end gap-3">
+        <div className="relative flex-1 min-w-[220px]">
+          <label
+            htmlFor="planner-dest-stop"
+            className="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-1.5"
+          >
+            Or get off at a specific stop
+          </label>
+          <select
+            id="planner-dest-stop"
+            value={destStop?.id ?? ''}
+            onChange={e => {
+              const s = allStops.find(x => x.id === e.target.value) ?? null;
+              setDestStop(s);
+              if (s) setDest(null);
+            }}
+            className="w-full appearance-none rounded-xl border border-white/10 bg-white/[0.03] pl-4 pr-10 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40"
+          >
+            <option value="" className="bg-[#0a0e18]">
+              Choose a stop on this route…
+            </option>
+            {allStops.map(s => (
+              <option key={s.id} value={s.id} className="bg-[#0a0e18]">
+                {s.name}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="w-4 h-4 absolute right-3.5 top-[38px] text-white/35 pointer-events-none" />
+        </div>
         <button
           type="button"
           onClick={run}
@@ -379,7 +538,7 @@ export default function StopRoutePlanner({
           className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition disabled:opacity-60"
         >
           {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Route className="w-4 h-4" />}
-          {busy ? 'Finding your stop…' : 'Find my stop'}
+          {busy ? 'Planning your trip…' : hasDestination ? 'Plan my trip' : 'Find my stop'}
         </button>
       </div>
 
@@ -427,6 +586,24 @@ export default function StopRoutePlanner({
             </p>
           )}
 
+          {alight && direction && (
+            <div className="mt-4 rounded-xl border border-[#D4AF37]/25 bg-[#D4AF37]/[0.06] px-4 py-3.5 max-w-3xl">
+              <p className="text-sm text-white/85 leading-relaxed" role="status">
+                <Flag className="w-4 h-4 inline-block mr-1.5 -mt-0.5 text-[#D4AF37]" />
+                Get off at <strong className="text-white">{alight.stop.name}</strong>
+                <span className="text-white/55">
+                  {' '}— {alight.stopsRidden} stop{alight.stopsRidden === 1 ? '' : 's'} from{' '}
+                  {stopHit.stop.name}, toward {direction.headsign}.
+                  {destStop
+                    ? ' That\u2019s the stop you picked, so there\u2019s no final walk.'
+                    : dest
+                      ? ` It\u2019s ${fmtDistance(alight.distanceM)} from ${dest.label} in a straight line — the last leg is below.`
+                      : ''}
+                </span>
+              </p>
+            </div>
+          )}
+
           {walk ? (
             <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
               <div>
@@ -457,6 +634,17 @@ export default function StopRoutePlanner({
                 cameras={mapCameras}
                 start={{ lat: from!.lat, lng: from!.lng, label: from!.label }}
                 stop={{ lat: stopHit.stop.lat, lng: stopHit.stop.lng, label: stopHit.stop.name }}
+                finalWalk={journeyFinal ?? undefined}
+                alight={
+                  alight
+                    ? { lat: alight.stop.lat, lng: alight.stop.lng, label: alight.stop.name }
+                    : undefined
+                }
+                end={
+                  dest && !destStop
+                    ? { lat: dest.lat, lng: dest.lng, label: dest.label }
+                    : undefined
+                }
               />
             </div>
           ) : walkFailed ? (
@@ -476,11 +664,58 @@ export default function StopRoutePlanner({
                     cameras={mapCameras}
                     start={{ lat: from!.lat, lng: from!.lng, label: from!.label }}
                     stop={{ lat: stopHit.stop.lat, lng: stopHit.stop.lng, label: stopHit.stop.name }}
+                    finalWalk={journeyFinal ?? undefined}
+                    alight={
+                      alight
+                        ? { lat: alight.stop.lat, lng: alight.stop.lng, label: alight.stop.name }
+                        : undefined
+                    }
+                    end={
+                      dest && !destStop
+                        ? { lat: dest.lat, lng: dest.lng, label: dest.label }
+                        : undefined
+                    }
                   />
                 </div>
               )}
             </div>
           ) : null}
+
+          {alight && dest && !destStop && finalWalk && (
+            <div className="mt-6 max-w-[420px]">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-white/85">
+                <Footprints className="w-4 h-4 text-[#D4AF37]" />
+                Final walk {fmtDistance(finalWalk.distanceM)} · about{' '}
+                {fmtDuration(finalWalk.durationS)}
+              </h3>
+              <p className="mt-1 text-xs text-white/40">
+                From {alight.stop.name} to {dest.label}.
+              </p>
+              <ol className="mt-3 space-y-2.5">
+                {finalWalk.steps.map((s, i) => (
+                  <li key={i} className="flex gap-3 text-sm">
+                    <span className="font-mono text-xs text-white/30 w-6 text-right pt-0.5 shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="text-white/70 leading-relaxed flex-1">{s.instruction}</span>
+                    {s.distance > 0 && (
+                      <span className="text-xs text-white/35 shrink-0 pt-0.5">
+                        {fmtDistance(s.distance)}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+          {alight && dest && !destStop && finalWalkFailed && (
+            <p className="mt-6 rounded-xl border border-amber-300/25 bg-amber-300/[0.07] px-4 py-3 text-sm text-amber-100/85 max-w-3xl">
+              The final walking directions couldn&apos;t be loaded just now, so there&apos;s
+              no step-by-step for the last leg — {alight.stop.name} is still your get-off
+              stop, {fmtDistance(alight.distanceM)} from {dest.label} in a straight line.
+              The map and the cameras below are measured along that straight line.
+            </p>
+          )}
 
           <div className="mt-6">
             {camsBusy && (
@@ -502,14 +737,18 @@ export default function StopRoutePlanner({
                   {cams.total === 0 ? (
                     <>
                       No live cameras sit within {(cams.corridorM / 1000).toFixed(1)} km of
-                      this trip yet — the walk to {stopHit.stop.name} and the ride toward{' '}
-                      {direction.headsign} are camera-free for now.
+                      this trip yet — the walk to {stopHit.stop.name} and the ride{' '}
+                      {alight ? `to ${alight.stop.name}` : `toward ${direction.headsign}`}
+                      {alight && dest && !destStop ? ' and the final walk' : ''} are
+                      camera-free for now.
                     </>
                   ) : (
                     <>
                       <strong className="text-white/85">{cams.total}</strong> live camera
                       {cams.total === 1 ? '' : 's'} within {(cams.corridorM / 1000).toFixed(1)} km
-                      of your walk and the ride toward {direction.headsign}
+                      of your walk and the ride{' '}
+                      {alight ? `to ${alight.stop.name}` : `toward ${direction.headsign}`}
+                      {alight && dest && !destStop ? ' and your final walk' : ''}
                       {cams.shown < cams.total
                         ? ` — showing the first ${cams.shown} in trip order`
                         : ''}
@@ -538,8 +777,8 @@ export default function StopRoutePlanner({
       <p className="mt-4 text-[11px] text-white/30 leading-relaxed">
         Place search © OpenStreetMap contributors; walking directions are the same routing
         service the live map uses. Stops and the route line are {agencyName}&apos;s published
-        GTFS. Your starting address is only used to find your stop and draw the route —
-        WorldEye doesn&apos;t save it. Cameras are the public feeds in the WorldEye index — a
+        GTFS. Your addresses are only used to find your stops and draw the route —
+        WorldEye doesn&apos;t save them. Cameras are the public feeds in the WorldEye index — a
         camera shows here only when it has a feed the preview can actually play.
       </p>
 

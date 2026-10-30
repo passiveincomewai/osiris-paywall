@@ -138,7 +138,7 @@ export default function AgencyStopPlanner({
             routeColor={planner.routeColor}
             directions={planner.directions}
             heading={`Directions to ${planner.routeLabel}`}
-            intro={`Enter a starting address — we'll find the nearest ${planner.routeLabel} stop, walk you to it turn by turn, and show the live cameras along your walk and the ride from there.`}
+            intro={`Enter a starting address — we'll find the nearest ${planner.routeLabel} stop and walk you to it turn by turn. Add a destination, an address or a specific stop on the route, and we'll name the stop to get off at, walk you the last leg, and show the live cameras along the whole trip.`}
           />
         </div>
       )}

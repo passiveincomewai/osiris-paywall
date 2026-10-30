@@ -12,6 +12,12 @@
  * /api/directions for the walking route, /api/cctv/route-cameras
  * for the corridor) and invents nothing of its own. Every stop and
  * every shape vertex comes from the agency's published GTFS.
+ *
+ * The destination side lives here too: given where the visitor is
+ * going, alightingStop names the stop to GET OFF at — the nearest
+ * stop to the destination that the ride actually passes AFTER the
+ * boarding stop — and rideLineBetween slices the ride to end
+ * there instead of at the terminus.
  */
 
 export interface PlannerStop {
@@ -127,6 +133,109 @@ export function rideLineFrom(
   const first = rest[0];
   if (first && first[0] === stopPt[0] && first[1] === stopPt[1]) return [...rest];
   return [stopPt, ...rest];
+}
+
+export interface AlightingHit {
+  stop: PlannerStop;
+  /** Straight-line distance from the destination to the stop. */
+  distanceM: number;
+  /** Stops ridden from the boarding stop to this one (1 = next stop). */
+  stopsRidden: number;
+}
+
+/**
+ * Indexes of the directions that can carry a single ride from the
+ * boarding stop to the alighting stop: both stops on the list, the
+ * alighting stop strictly after the boarding stop in travel order.
+ * Empty when no direction orders the pair that way — the route
+ * cannot make that trip in one ride, and the planner must say so.
+ */
+export function directionsServingJourney(
+  directions: readonly PlannerDirection[],
+  boardStopId: string,
+  alightStopId: string,
+): number[] {
+  const out: number[] = [];
+  directions.forEach((d, i) => {
+    const b = d.stops.findIndex((s) => s.id === boardStopId);
+    const a = d.stops.findIndex((s) => s.id === alightStopId);
+    if (b >= 0 && a > b) out.push(i);
+  });
+  return out;
+}
+
+/**
+ * The stop to get OFF at for a destination: the stop nearest the
+ * destination among the stops that come AFTER the boarding stop in
+ * this direction's travel order — the ride has to actually pass it
+ * after you board. Null when the boarding stop isn't on this
+ * direction, or when no later stop exists (the destination is
+ * reachable only by riding the other way, or the boarding stop is
+ * the terminus).
+ */
+export function alightingStop(
+  direction: PlannerDirection,
+  boardStopId: string,
+  at: LatLng,
+): AlightingHit | null {
+  const boardIdx = direction.stops.findIndex((s) => s.id === boardStopId);
+  if (boardIdx < 0) return null;
+  let best: AlightingHit | null = null;
+  for (let i = boardIdx + 1; i < direction.stops.length; i++) {
+    const s = direction.stops[i];
+    if (!Number.isFinite(s.lat) || !Number.isFinite(s.lng)) continue;
+    const m = haversineM(at, s);
+    if (!best || m < best.distanceM) {
+      best = { stop: s, distanceM: m, stopsRidden: i - boardIdx };
+    }
+  }
+  return best;
+}
+
+/**
+ * The ride line between two stops on one direction's polyline:
+ * the shape vertices from the boarding stop's nearest vertex
+ * through the alighting stop's nearest vertex, bracketed by the
+ * stops themselves so the geometry is continuous stop to stop.
+ * When the shape's vertices don't order the same way the stops do
+ * (sparse or noisy shape data), the honest fallback is the
+ * straight stop-to-stop segment — never a line that runs
+ * backwards along the route.
+ */
+export function rideLineBetween(
+  line: readonly [number, number][],
+  fromStop: LatLng,
+  toStop: LatLng,
+): [number, number][] {
+  const fromPt: [number, number] = [fromStop.lng, fromStop.lat];
+  const toPt: [number, number] = [toStop.lng, toStop.lat];
+  if (fromPt[0] === toPt[0] && fromPt[1] === toPt[1]) return [fromPt];
+  if (line.length < 2) return [fromPt, toPt];
+  const nearestIdx = (stop: LatLng) => {
+    let idx = 0;
+    let bestM = Number.POSITIVE_INFINITY;
+    line.forEach(([lng, lat], i) => {
+      const m = haversineM(stop, { lat, lng });
+      if (m < bestM) {
+        bestM = m;
+        idx = i;
+      }
+    });
+    return idx;
+  };
+  const a = nearestIdx(fromStop);
+  const b = nearestIdx(toStop);
+  if (b < a) return [fromPt, toPt];
+  const out: [number, number][] = [];
+  const push = (p: [number, number]) => {
+    const last = out[out.length - 1];
+    if (last && last[0] === p[0] && last[1] === p[1]) return;
+    out.push(p);
+  };
+  push(fromPt);
+  for (const [lng, lat] of line.slice(a, b + 1)) push([lng, lat]);
+  push(toPt);
+  return out;
 }
 
 /**
