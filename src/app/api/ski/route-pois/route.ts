@@ -38,13 +38,19 @@ const TOURISM_VALUES = ['hotel', 'motel', 'guest_house', 'hostel'];
 
 /**
  * Public Overpass instances, asked in parallel (see
- * fetchOverpassElements). These two are the ones that answered at
- * all in the 2026-10-30 reliability measurements; the other public
- * mirrors never returned inside ~110 s even for a one-line query.
+ * fetchOverpassElements). TEMPORARY (diagnostic build, 2026-10-30):
+ * the full candidate list is attempted so one live probe from the
+ * production network can show which instances answer there at all;
+ * the final build keeps only the instances that answer.
  */
 const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.openstreetmap.fr/api/interpreter',
+  'https://overpass.osm.ch/api/interpreter',
+  'https://overpass.nchc.org.tw/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
 ];
 const OVERPASS_BUDGET_MS = 52_000;
 
@@ -165,45 +171,64 @@ interface OverpassElement {
  * budget is what makes the endpoint reliable; if every instance
  * fails, the caller still gets the honest 502.
  */
-async function fetchOverpassElements(query: string): Promise<OverpassElement[]> {
+async function fetchOverpassElements(
+  query: string,
+  report: string[],
+  waitAll: boolean,
+): Promise<OverpassElement[]> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), OVERPASS_BUDGET_MS);
   const attempt = async (url: string): Promise<OverpassElement[]> => {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'WorldEye ski route tool (worldeye.app)',
-      },
-      body: `data=${encodeURIComponent(query)}`,
-      signal: controller.signal,
-    });
-    if (!res.ok) throw new Error(`Overpass HTTP ${res.status}`);
-    const json = (await res.json()) as { elements?: OverpassElement[] };
-    return json.elements ?? [];
+    const host = new URL(url).host;
+    const t0 = Date.now();
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'WorldEye ski route tool (worldeye.app)',
+        },
+        body: `data=${encodeURIComponent(query)}`,
+        signal: controller.signal,
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = (await res.json()) as { elements?: OverpassElement[] };
+      const els = json.elements ?? [];
+      report.push(`${host}: OK ${els.length} els in ${Date.now() - t0}ms`);
+      return els;
+    } catch (err) {
+      const e = err as Error & { cause?: Error };
+      report.push(
+        `${host}: ${e.message}${e.cause ? ` (${e.cause.message})` : ''} in ${Date.now() - t0}ms`,
+      );
+      throw err;
+    }
   };
   try {
     return await new Promise<OverpassElement[]>((resolve, reject) => {
       let settled = false;
-      let failures = 0;
-      const errors: string[] = [];
+      let done = 0;
+      let winner: OverpassElement[] | null = null;
+      const finish = () => {
+        if (settled) return;
+        if (winner) {
+          settled = true;
+          resolve(winner);
+        } else if (done === OVERPASS_ENDPOINTS.length) {
+          settled = true;
+          reject(new Error('all Overpass instances failed'));
+        }
+      };
       for (const url of OVERPASS_ENDPOINTS) {
         attempt(url).then(
           (els) => {
-            if (!settled) {
-              settled = true;
-              resolve(els);
-            }
+            done += 1;
+            if (!winner) winner = els;
+            if (!waitAll || done === OVERPASS_ENDPOINTS.length) finish();
           },
-          (err) => {
-            failures += 1;
-            errors.push(
-              `${new URL(url).host}: ${err instanceof Error ? err.message : String(err)}`,
-            );
-            if (!settled && failures === OVERPASS_ENDPOINTS.length) {
-              settled = true;
-              reject(new Error(errors.join('; ')));
-            }
+          () => {
+            done += 1;
+            if (!waitAll || done === OVERPASS_ENDPOINTS.length) finish();
           },
         );
       }
@@ -243,19 +268,22 @@ export async function POST(request: Request) {
     `node["tourism"~"^(${TOURISM_VALUES.join('|')})$"](around:${radiusM},${coords});` +
     `);out body 800;`;
 
+  /* TEMPORARY diagnostic (ski-pois reliability work, 2026-10-30):
+     callers sending x-pois-debug: 1 make the fetch wait for every
+     instance to settle and get the per-instance outcomes in the
+     `upstream` field of either response, so one live probe from the
+     production network shows which instances answer there and how
+     the rest fail. Remove once the fix is verified. */
+  const debug = request.headers.get('x-pois-debug') === '1';
+  const report: string[] = [];
   let elements: OverpassElement[];
   try {
-    elements = await fetchOverpassElements(query);
-  } catch (err) {
-    /* TEMPORARY diagnostic (ski-pois reliability work, 2026-10-30):
-       the per-instance upstream outcome is exposed only to callers
-       sending the debug header, so a failed run says WHY instead of
-       failing blind. Remove once the fix is verified. */
-    const debug = request.headers.get('x-pois-debug') === '1';
+    elements = await fetchOverpassElements(query, report, debug);
+  } catch {
     return NextResponse.json(
       {
         error: 'Stops data is unavailable right now',
-        ...(debug ? { upstream: err instanceof Error ? err.message : String(err) } : {}),
+        ...(debug ? { upstream: report } : {}),
       },
       { status: 502 },
     );
@@ -294,7 +322,7 @@ export async function POST(request: Request) {
 
   const pois = [...byId.values()].sort((a, b) => a.alongKm - b.alongKm);
   return NextResponse.json(
-    { corridorKm: POI_CORRIDOR_KM, pois },
+    { corridorKm: POI_CORRIDOR_KM, pois, ...(debug ? { upstream: report } : {}) },
     { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' } },
   );
 }
