@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -30,9 +31,8 @@ import {
   shouldGate,
 } from "@/lib/ambient/gate";
 import { MOODS, isMoodSlug, type MoodSlug } from "@/lib/ambient/moods";
-import { startHostedCheckout } from "@/lib/billing/trial-checkout";
-import { CheckoutError } from "@/lib/billing/checkout-error";
 import TrialButton from "@/components/TrialButton";
+import CheckoutSheet from "@/components/CheckoutSheet";
 import { trackAnalyticsEvent } from "@/components/AnalyticsTracker";
 
 /**
@@ -108,18 +108,22 @@ function SceneMedia({
   frozen,
   onReady,
   onFail,
+  onDead,
   onPlayback,
 }: {
   scene: AmbientSceneData;
   frozen: boolean;
   onReady: () => void;
   onFail: () => void;
+  /** The scene produced frames, then died — fail over like a load
+   *  failure, but allowed after ready (onFail no-ops once ready). */
+  onDead: () => void;
   onPlayback: (playing: boolean) => void;
 }) {
   const { kind, url } = scene.media;
   const readyRef = useRef(false);
-  const callbacksRef = useRef({ onReady, onFail, onPlayback });
-  callbacksRef.current = { onReady, onFail, onPlayback };
+  const callbacksRef = useRef({ onReady, onFail, onDead, onPlayback });
+  callbacksRef.current = { onReady, onFail, onDead, onPlayback };
 
   const markReady = useCallback(() => {
     if (readyRef.current) return;
@@ -131,6 +135,16 @@ function SceneMedia({
     callbacksRef.current.onPlayback(false);
     callbacksRef.current.onFail();
   }, []);
+  const markDead = useCallback(() => {
+    callbacksRef.current.onPlayback(false);
+    callbacksRef.current.onDead();
+  }, []);
+  /* A <video> element error before the first frame is a load
+     failure; after it, the stream died mid-scene. */
+  const handleMediaError = useCallback(() => {
+    if (readyRef.current) markDead();
+    else markFail();
+  }, [markDead, markFail]);
   const reportPlayback = useCallback((playing: boolean) => {
     callbacksRef.current.onPlayback(playing);
   }, []);
@@ -148,6 +162,8 @@ function SceneMedia({
         frozen={frozen}
         markReady={markReady}
         markFail={markFail}
+        markDead={markDead}
+        onMediaError={handleMediaError}
         reportPlayback={reportPlayback}
       />
     );
@@ -159,6 +175,7 @@ function SceneMedia({
       frozen={frozen}
       markReady={markReady}
       markFail={markFail}
+      markDead={markDead}
       reportPlayback={reportPlayback}
     />
   );
@@ -170,6 +187,7 @@ function ImageScene({
   frozen,
   markReady,
   markFail,
+  markDead,
   reportPlayback,
 }: {
   url: string;
@@ -177,10 +195,13 @@ function ImageScene({
   frozen: boolean;
   markReady: () => void;
   markFail: () => void;
+  markDead: () => void;
   reportPlayback: (playing: boolean) => void;
 }) {
   const every = kind === "jpg" ? refreshInterval("jpg") : 0;
   const [src, setSrc] = useState(() => (every ? freshen(url) : url));
+  const readyRef = useRef(false);
+  const errorStreakRef = useRef(0);
 
   useEffect(() => {
     if (!every || frozen) return;
@@ -201,8 +222,23 @@ function ImageScene({
       src={src}
       alt=""
       className="h-full w-full object-cover"
-      onLoad={markReady}
-      onError={markFail}
+      onLoad={() => {
+        readyRef.current = true;
+        errorStreakRef.current = 0;
+        markReady();
+      }}
+      onError={() => {
+        if (!readyRef.current) {
+          markFail();
+          return;
+        }
+        /* Post-ready snapshot errors used to be swallowed while the
+           freshen loop retried a dead camera forever. Three in a row
+           (a successful load resets the streak) means the camera is
+           gone — fail over like any other dead scene. */
+        errorStreakRef.current += 1;
+        if (errorStreakRef.current >= 3) markDead();
+      }}
       draggable={false}
     />
   );
@@ -214,6 +250,8 @@ function VideoScene({
   frozen,
   markReady,
   markFail,
+  markDead,
+  onMediaError,
   reportPlayback,
 }: {
   url: string;
@@ -221,15 +259,70 @@ function VideoScene({
   frozen: boolean;
   markReady: () => void;
   markFail: () => void;
+  markDead: () => void;
+  onMediaError: () => void;
   reportPlayback: (playing: boolean) => void;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const frozenRef = useRef(frozen);
+  frozenRef.current = frozen;
+  const callbacksRef = useRef({ markFail, markDead });
+  callbacksRef.current = { markFail, markDead };
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     let cancelled = false;
-    let hls: { destroy: () => void } | null = null;
+    let hlsControls: { destroy: () => void; startLoad: () => void } | null = null;
+    let recoveryTimer: ReturnType<typeof setTimeout> | null = null;
+    let networkRecoveries = 0;
+    let mediaRecoveries = 0;
+    let stallRecoveries = 0;
+    let lastTime = -1;
+    let lastProgressAt = Date.now();
+
+    const noteProgress = () => {
+      if (el.currentTime !== lastTime) {
+        lastTime = el.currentTime;
+        lastProgressAt = Date.now();
+      }
+    };
+    el.addEventListener("timeupdate", noteProgress);
+
+    /* One bounded recovery attempt for a stalled stream: ask hls.js
+       to resume loading, or reload a native source outright. */
+    const recoverStall = () => {
+      lastProgressAt = Date.now();
+      if (hlsControls) {
+        hlsControls.startLoad();
+      } else {
+        if (kind === "hls") el.src = url;
+        el.load();
+        el.play().catch(() => { /* frame may still show */ });
+      }
+    };
+
+    /* Stall watchdog: a stream that stops delivering frames without
+       erroring (native HLS especially) used to hang the scene until
+       the rotation timer rescued it — up to 3 minutes of frozen
+       picture. Twenty seconds without progress earns one recovery;
+       a second stall declares the scene dead and fails over. Frozen
+       scenes (pause/paywall) never count as stalled. */
+    const watchdog = setInterval(() => {
+      if (cancelled) return;
+      if (frozenRef.current || el.paused) {
+        lastProgressAt = Date.now();
+        return;
+      }
+      noteProgress();
+      if (Date.now() - lastProgressAt < 20_000) return;
+      if (stallRecoveries === 0) {
+        stallRecoveries += 1;
+        recoverStall();
+      } else {
+        callbacksRef.current.markDead();
+      }
+    }, 5_000);
 
     if (kind === "mp4") {
       el.src = url;
@@ -242,10 +335,47 @@ function VideoScene({
         .then(({ default: Hls }) => {
           if (cancelled || !ref.current) return;
           if (Hls.isSupported()) {
-            const instance = new Hls();
+            /* capLevelToPlayerSize: never pull a rendition larger
+               than the element on screen — a 4K variant on a phone
+               is pure wasted data. */
+            const instance = new Hls({ capLevelToPlayerSize: true });
+            /* Fatal-error recovery. Without a listener, a fatal
+               network/media error stalled the scene silently and
+               post-ready deaths were ignored entirely. Bounded:
+               network errors retry startLoad with 1/2/4 s backoff
+               (3 attempts), media errors get 2 recoverMediaError
+               calls; anything beyond that — or any other fatal
+               error — fails over to the next scene. */
+            instance.on(Hls.Events.ERROR, (_event, data) => {
+              if (cancelled || !data.fatal) return;
+              if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                if (networkRecoveries < 3) {
+                  const delay = 1_000 * 2 ** networkRecoveries;
+                  networkRecoveries += 1;
+                  if (recoveryTimer) clearTimeout(recoveryTimer);
+                  recoveryTimer = setTimeout(() => {
+                    if (!cancelled) instance.startLoad();
+                  }, delay);
+                } else {
+                  callbacksRef.current.markDead();
+                }
+              } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                if (mediaRecoveries < 2) {
+                  mediaRecoveries += 1;
+                  instance.recoverMediaError();
+                } else {
+                  callbacksRef.current.markDead();
+                }
+              } else {
+                callbacksRef.current.markDead();
+              }
+            });
             instance.loadSource(url);
             instance.attachMedia(ref.current);
-            hls = instance;
+            hlsControls = {
+              destroy: () => instance.destroy(),
+              startLoad: () => instance.startLoad(),
+            };
           } else if (ref.current.canPlayType("application/vnd.apple.mpegurl")) {
             ref.current.src = url;
           } else {
@@ -262,7 +392,10 @@ function VideoScene({
     }
     return () => {
       cancelled = true;
-      hls?.destroy();
+      if (recoveryTimer) clearTimeout(recoveryTimer);
+      clearInterval(watchdog);
+      el.removeEventListener("timeupdate", noteProgress);
+      hlsControls?.destroy();
       reportPlayback(false);
     };
   }, [url, kind, markFail, reportPlayback]);
@@ -292,7 +425,7 @@ function VideoScene({
       onLoadedData={markReady}
       onPause={() => reportPlayback(false)}
       onWaiting={() => reportPlayback(false)}
-      onError={markFail}
+      onError={onMediaError}
     />
   );
 }
@@ -317,9 +450,7 @@ export default function AmbientMode() {
   const [gateOpen, setGateOpen] = useState(false);
   const [demoLeft, setDemoLeft] = useState(FREE_DEMO_LIMIT_MS / 1000);
   const [deadRotation, setDeadRotation] = useState(false);
-  const [checkoutBusy, setCheckoutBusy] = useState(false);
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -475,6 +606,27 @@ export default function AmbientMode() {
     [clearAdvanceTimer],
   );
 
+  /* A scene that produced frames and THEN died (fatal stream error,
+     stall, dead snapshot camera) — the same skip-ahead as a load
+     failure, but allowed after ready: reset only comes from the next
+     scene's first frame (handleSceneReady), exactly like the load
+     path. A whole dead rotation stops with the honest message. */
+  const handleSceneDead = useCallback(
+    (instance: number) => {
+      if (stateRef.current.current?.instance !== instance) return;
+      failStreakRef.current += 1;
+      const list = stateRef.current.scenes;
+      if (!list || failStreakRef.current >= list.length) {
+        clearAdvanceTimer();
+        setDeadRotation(true);
+        return;
+      }
+      const idx = list.findIndex((s) => s.id === stateRef.current.current?.scene.id);
+      startSceneRef.current(idx + 1);
+    },
+    [clearAdvanceTimer],
+  );
+
   const togglePaused = useCallback(() => {
     if (stateRef.current.gateOpen) return;
     setPaused((p) => {
@@ -577,6 +729,12 @@ export default function AmbientMode() {
     }
   }, [audioOn, trackIndex]);
 
+  /* Leaving Ambient must never leave the music playing behind. */
+  useEffect(() => {
+    const el = audioRef.current;
+    return () => el?.pause();
+  }, []);
+
   /* ── Chrome auto-hide (3 s, cursor included) ────────────────────── */
   const pokeChrome = useCallback(() => {
     setChromeVisible(true);
@@ -622,22 +780,6 @@ export default function AmbientMode() {
     [clearAdvanceTimer],
   );
 
-  const startCheckout = useCallback(async () => {
-    setCheckoutBusy(true);
-    setCheckoutError(null);
-    try {
-      await startHostedCheckout("ambient");
-    } catch (err) {
-      setCheckoutBusy(false);
-      if (err instanceof CheckoutError && err.code === "already_subscribed") {
-        setAlreadySubscribed(true);
-      }
-      setCheckoutError(
-        err instanceof Error ? err.message : "Checkout could not start — please try again.",
-      );
-    }
-  }, []);
-
   const sceneIndex =
     current && scenes ? scenes.findIndex((s) => s.id === current.scene.id) : -1;
   const chromeShown = chromeVisible || gateOpen || sidebarOpen;
@@ -673,24 +815,31 @@ export default function AmbientMode() {
               : undefined
           }
         >
+          {/* Layer keys are stable per scene instance across the
+              incoming -> outgoing transition: the outgoing wrapper
+              used to remount SceneMedia under a new key, opening a
+              SECOND load of the same stream for the 1.15 s fade.
+              Same key = same component, only its props change. */}
           {outgoing && (
-            <div key={`out-${outgoing.instance}`} className="absolute inset-0" aria-hidden>
+            <div key={`layer-${outgoing.instance}`} className="absolute inset-0" aria-hidden>
               <SceneMedia
                 scene={outgoing.scene}
                 frozen
                 onReady={() => {}}
                 onFail={() => {}}
+                onDead={() => {}}
                 onPlayback={() => {}}
               />
             </div>
           )}
           {current && (
-            <div key={`in-${current.instance}`} className="absolute inset-0 animate-[ambientfadein_1s_ease-out]">
+            <div key={`layer-${current.instance}`} className="absolute inset-0 animate-[ambientfadein_1s_ease-out]">
               <SceneMedia
                 scene={current.scene}
                 frozen={frozen}
                 onReady={() => handleSceneReady(current.instance)}
                 onFail={() => handleSceneFail(current.instance)}
+                onDead={() => handleSceneDead(current.instance)}
                 onPlayback={(p) => {
                   mediaPlayingRef.current = p;
                 }}
@@ -965,28 +1114,18 @@ export default function AmbientMode() {
             <p className="mt-5 font-mono text-sm text-white/85">
               $4.99/month · <span className="text-[#7cc4ff]">10-day free trial</span> · cancel anytime
             </p>
-            {alreadySubscribed ? (
-              <Link
-                href="/settings/subscription"
-                className="mt-6 block rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/85"
-              >
-                Manage your subscription
-              </Link>
-            ) : checkoutBusy ? (
-              <p role="status" className="mt-6 w-full px-6 py-3 text-center text-sm font-semibold text-white/55">
-                Opening checkout…
-              </p>
-            ) : (
-              <TrialButton
-                label="Start 10-day free trial"
-                days={10}
-                onClick={() => void startCheckout()}
-                className="mt-6 w-full"
-              />
-            )}
-            {checkoutError && !alreadySubscribed && (
-              <p className="mt-3 text-xs text-red-300">{checkoutError}</p>
-            )}
+            {/* The trial starts IN PLACE: the embedded checkout sheet
+                opens over the paywall (portaled below — the paywall
+                card's backdrop blur would otherwise become the sheet's
+                containing block). The sheet's own body carries the
+                hosted-checkout fallback and the already-subscribed
+                state, so no hosted redirect is started from here. */}
+            <TrialButton
+              label="Start 10-day free trial"
+              days={10}
+              onClick={() => setSheetOpen(true)}
+              className="mt-6 w-full"
+            />
             {!signedIn && (
               <p className="mt-5 text-xs text-white/50">
                 Already an Ambient or Pro member?{" "}
@@ -1003,6 +1142,17 @@ export default function AmbientMode() {
           </div>
         </div>
       )}
+
+      {/* Embedded Ambient checkout, portaled to <body> like
+          ProUpgradeEmbed's sheet: the layers container is transformed
+          while the paywall is up, and the paywall card backdrop-blurs —
+          either would trap a fixed-position sheet. Closing the sheet
+          returns to the (still non-dismissible) paywall. */}
+      {sheetOpen &&
+        createPortal(
+          <CheckoutSheet plan="ambient" onClose={() => setSheetOpen(false)} />,
+          document.body,
+        )}
 
       {/* ── Poster / start ── */}
       {phase === "poster" && (

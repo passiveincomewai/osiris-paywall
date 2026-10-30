@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AmbientPassPromo from "@/components/ambient/AmbientPassPromo";
 import {
   BASE,
   JsonLd,
@@ -235,6 +236,9 @@ export default function AmbientModePage() {
             Stream it to YouTube
           </Link>
         </div>
+        {/* Embedded checkout for the Ambient plan — renders nothing
+            for users whose plan already includes Ambient. */}
+        <AmbientPassPromo />
       </section>
 
       <FaqSection title="Ambient Mode questions" faqs={FAQS} />
