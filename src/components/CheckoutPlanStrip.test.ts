@@ -13,7 +13,11 @@ import {
   CheckoutPlanStrip,
   GUARANTEE_LINE,
 } from "./CheckoutPlanStrip";
-import { CHECKOUT_PLAN_SUMMARIES } from "@/lib/billing/trial-checkout";
+import {
+  CHECKOUT_PLAN_SUMMARIES,
+  checkoutPlanSummary,
+  type CheckoutPlanSummary,
+} from "@/lib/billing/trial-checkout";
 
 // React SSR splits interpolated text with <!-- --> markers; strip them
 // so assertions read the text a visitor sees.
@@ -63,6 +67,24 @@ describe("CheckoutPlanStrip", () => {
     expect(html).toContain("/year");
     expect(html).not.toContain("day free");
     expect(html).not.toContain("Pro —");
+  });
+
+  it("shows the Lite/Ultra grid plans under their own tier names (Phase C)", () => {
+    const renderSummary = (summary: CheckoutPlanSummary) =>
+      renderToString(createElement(CheckoutPlanStrip, { summary })).replace(
+        /<!-- -->/g,
+        "",
+      );
+    const lite = renderSummary(checkoutPlanSummary("lite_weekly")!);
+    expect(lite).toContain("Lite Weekly");
+    expect(lite).toContain("$4.99");
+    expect(lite).toContain("3 days free");
+    expect(lite).not.toContain("Lite Weekly Pro");
+    const ultra = renderSummary(checkoutPlanSummary("ultra_annual")!);
+    expect(ultra).toContain("Ultra Annual");
+    expect(ultra).toContain("$149.99");
+    expect(ultra).toContain("10 days free");
+    expect(ultra).not.toContain("Ultra Annual Pro");
   });
 });
 

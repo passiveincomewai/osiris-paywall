@@ -90,7 +90,7 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "90d61e34ae6c128af73815e4fb85ca9ad13ba4eb31a9a4e57f0ddb550daf707b",
-  pricing: "d795b92cdedcf46d79efd36332fadb6b80f1b63a3a00c5757d090eeb7deb296e",
+  pricing: "4f9bd85356cc051f6d5efcbcd3d2cc348fe2364916997e7507f935cf2b0fbbba",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "22888900ee80b164de125cfde22e4583be4fd50d014184955d8cd38da4d1b4a8",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
@@ -134,9 +134,17 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // rebuilt from the site-wide FAQ harvest (86 questions, 11 groups)
 // and the Spanish dictionary re-translated the same day, so its
 // hash and date moved.
+// Re-sync (2026-10-30, Pricing Redesign Phase C): the pricing
+// dictionary was restructured for the 3-tier grid (Lite / Pro / Ultra
+// × weekly / monthly / annual): plansGrid + tiers + liteFeatures
+// added, the comparison table gained Lite/Ultra columns, the false
+// weekly-equivalent discount claims ("Save 60% / 82%", "-42% / -71%")
+// were retired for the truthful annual-vs-monthly savings (58.3% /
+// 55.3% / 50.0%), and the cost/free/self-hosted FAQs were rewritten
+// for the grid. The Spanish dictionary was re-synced the same day.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-27",
-  pricing: "2026-10-29",
+  pricing: "2026-10-30",
   "live-webcams": "2026-10-29",
   faq: "2026-10-30",
   "live-flight-tracker": "2026-10-29",

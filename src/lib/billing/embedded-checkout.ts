@@ -15,9 +15,8 @@
  * loadStripe in as a dependency, so the whole decision tree is testable
  * with fakes (embedded-checkout.test.ts is the fallback proof).
  */
-import { checkoutRequestBody } from "./trial-checkout";
+import { checkoutRequestBody, type CheckoutPlanId } from "./trial-checkout";
 import { CheckoutError, checkoutErrorFromData } from "./checkout-error";
-import type { BillingPlan } from "./trials";
 import { trackMetaEvent } from "@/lib/meta-track";
 
 type FetchLike = (input: string, init: RequestInit) => Promise<{
@@ -65,16 +64,21 @@ export function isUsablePublishableKey(key: string | undefined): key is string {
   return typeof key === "string" && /^pk_(live|test)_/.test(key.trim());
 }
 
-/** Validate a raw ?plan= value; anything unknown is not a plan. */
-export function checkoutPlanFromParam(raw: string | null | undefined): BillingPlan | null {
-  return raw === "weekly" || raw === "monthly" || raw === "annual" || raw === "enterprise"
+/** Validate a raw ?plan= value; anything unknown is not a plan. The
+ *  Lite/Ultra grid keys (Pricing Redesign Phase C) are valid here too —
+ *  the standalone products (ambient, ski) deliberately stay out: they
+ *  are sold from their own surfaces, never via a bare ?plan= link. */
+export function checkoutPlanFromParam(raw: string | null | undefined): CheckoutPlanId | null {
+  return raw === "weekly" || raw === "monthly" || raw === "annual" || raw === "enterprise" ||
+    raw === "lite_weekly" || raw === "lite_monthly" || raw === "lite_annual" ||
+    raw === "ultra_weekly" || raw === "ultra_monthly" || raw === "ultra_annual"
     ? raw
     : null;
 }
 
 async function postCheckout(
   fetchImpl: FetchLike,
-  plan: BillingPlan,
+  plan: CheckoutPlanId,
   ui?: "embedded",
 ): Promise<{ ok: boolean; data: any }> {
   const res = await fetchImpl("/api/checkout", {
@@ -111,7 +115,7 @@ async function postCheckout(
  * request means "go here instead".
  */
 export async function runCheckoutFlow(
-  plan: BillingPlan,
+  plan: CheckoutPlanId,
   publishableKey: string | undefined,
   deps: CheckoutFlowDeps,
 ): Promise<CheckoutFlowOutcome> {
@@ -189,7 +193,7 @@ export async function runCheckoutFlow(
 export interface CheckoutSessionController {
   /** Run the flow for a plan, tearing down any form mounted before. */
   start: (
-    plan: BillingPlan,
+    plan: CheckoutPlanId,
     publishableKey: string | undefined,
     deps: CheckoutFlowDeps,
   ) => Promise<CheckoutFlowOutcome>;

@@ -7,6 +7,7 @@
 import { describe, it, expect, vi } from "vitest";
 import {
   CHECKOUT_PLAN_SUMMARIES,
+  GRID_PLAN_SUMMARIES,
   TRIAL_PLAN_OPTIONS,
   checkoutPagePath,
   checkoutPlanSummary,
@@ -151,6 +152,54 @@ describe("CHECKOUT_PLAN_SUMMARIES", () => {
     expect(checkoutPlanSummary("daily")).toBeNull();
     expect(checkoutPlanSummary(null)).toBeNull();
     expect(checkoutPlanSummary(undefined)).toBeNull();
+  });
+});
+
+describe("GRID_PLAN_SUMMARIES (Pricing Redesign Phase C)", () => {
+  it("covers exactly the six Lite/Ultra grid keys", () => {
+    expect(Object.keys(GRID_PLAN_SUMMARIES).sort()).toEqual([
+      "lite_annual",
+      "lite_monthly",
+      "lite_weekly",
+      "ultra_annual",
+      "ultra_monthly",
+      "ultra_weekly",
+    ]);
+  });
+
+  it("carries the verified Stripe prices and plan-config names", () => {
+    expect(GRID_PLAN_SUMMARIES.lite_weekly).toMatchObject({ name: "Lite Weekly", price: "$4.99", per: "/week" });
+    expect(GRID_PLAN_SUMMARIES.lite_monthly).toMatchObject({ name: "Lite Monthly", price: "$8.99", per: "/month" });
+    expect(GRID_PLAN_SUMMARIES.lite_annual).toMatchObject({ name: "Lite Annual", price: "$44.99", per: "/year" });
+    expect(GRID_PLAN_SUMMARIES.ultra_weekly).toMatchObject({ name: "Ultra Weekly", price: "$12.99", per: "/week" });
+    expect(GRID_PLAN_SUMMARIES.ultra_monthly).toMatchObject({ name: "Ultra Monthly", price: "$24.99", per: "/month" });
+    expect(GRID_PLAN_SUMMARIES.ultra_annual).toMatchObject({ name: "Ultra Annual", price: "$149.99", per: "/year" });
+  });
+
+  it("derives each grid plan's trial from its PERIOD (weekly 3, monthly/annual 10)", () => {
+    for (const key of ["lite_weekly", "ultra_weekly"] as const) {
+      expect(GRID_PLAN_SUMMARIES[key].trialDays).toBe(3);
+      expect(GRID_PLAN_SUMMARIES[key].trialLabel).toBe("3 days free");
+    }
+    for (const key of ["lite_monthly", "lite_annual", "ultra_monthly", "ultra_annual"] as const) {
+      expect(GRID_PLAN_SUMMARIES[key].trialDays).toBe(10);
+      expect(GRID_PLAN_SUMMARIES[key].trialLabel).toBe("10 days free");
+    }
+  });
+
+  it("resolves through checkoutPlanSummary and the request body", () => {
+    expect(checkoutPlanSummary("lite_monthly")?.price).toBe("$8.99");
+    expect(checkoutPlanSummary("ultra_annual")?.name).toBe("Ultra Annual");
+    expect(checkoutPlanSummary("pro_weekly")).toBeNull();
+    expect(checkoutRequestBody("lite_weekly")).toEqual({ plan: "lite_weekly" });
+    expect(checkoutRequestBody("ultra_monthly", "embedded")).toEqual({ plan: "ultra_monthly", ui: "embedded" });
+    expect(checkoutPagePath("lite_annual")).toBe("/checkout?plan=lite_annual");
+  });
+
+  it("never enters the trial picker (the picker is Phase D's 9-option rewrite)", () => {
+    for (const key of Object.keys(GRID_PLAN_SUMMARIES)) {
+      expect(TRIAL_PLAN_OPTIONS.some((o) => (o.plan as string) === key)).toBe(false);
+    }
   });
 });
 

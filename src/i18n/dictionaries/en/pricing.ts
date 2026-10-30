@@ -9,9 +9,19 @@
  * text is the versioned source the manifest's sourceHash is computed
  * over. Prices, per-day figures and discount percentages are factual
  * tokens (glossary-locked): translations copy the numbers unchanged.
- * Plan facts mirror src/lib/billing: weekly $7.99 with a 3-day free
- * trial, monthly $13.99 with 10 days free, VIP Pro (annual) $74.99
- * with 10 days free, Enterprise $999/year with no trial.
+ *
+ * Restructured 2026-10-30 for the Pricing Redesign Phase C 3-tier
+ * grid: three tiers (Lite / Pro / Ultra), each sold weekly, monthly
+ * and annually. The `plans` block keeps the Pro tier's period plans
+ * (its prices + trial strings are glossary-pinned) plus Enterprise;
+ * `plansGrid` carries the Lite/Ultra period plans in the same shape;
+ * `tiers` carries the per-tier card copy. Plan facts mirror
+ * src/lib/billing: trials are 3 days on every weekly plan and 10 days
+ * on every monthly/annual plan (src/lib/billing/trials.ts); annual
+ * savings are computed truthfully against 12 monthly payments (Lite
+ * 58.3%, Pro 55.3%, Ultra 50.0%). The old weekly-equivalent discount
+ * claims ("Save 60% / 82%", "-42% / -71%" toggle chips) are retired —
+ * they do not appear anywhere in this dictionary.
  *
  * NOT covered (separate components keep their own copy; they render
  * in English on localized pricing pages until their own conversion —
@@ -49,15 +59,34 @@ export interface PricingCopy {
   };
   toggle: {
     mostPopular: string;
-    /** Discount chips rendered inside the billing toggle. */
-    discountMonthly: string;
-    discountAnnual: string;
   };
+  /** The Pro tier's period plans + Enterprise (glossary-pinned). */
   plans: {
     weekly: PricingPlanCopy;
     monthly: PricingPlanCopy;
     annual: PricingPlanCopy;
     enterprise: PricingPlanCopy;
+  };
+  /** The Lite/Ultra period plans, keyed by their checkout plan keys. */
+  plansGrid: {
+    lite_weekly: PricingPlanCopy;
+    lite_monthly: PricingPlanCopy;
+    lite_annual: PricingPlanCopy;
+    ultra_weekly: PricingPlanCopy;
+    ultra_monthly: PricingPlanCopy;
+    ultra_annual: PricingPlanCopy;
+  };
+  /** Per-tier card copy for the 3-tier grid. */
+  tiers: {
+    lite: { name: string; tagline: string };
+    pro: { name: string; tagline: string };
+    ultra: { name: string; tagline: string };
+    /** Badge shown on the Annual toggle + annual cards: every annual
+        plan carries the VIP branding (owner ruling, Phase C). */
+    annualBadge: string;
+    /** Pure period names for the billing toggle (the `plans` block's
+        annual entry is named "VIP Pro" — a plan name, not a period). */
+    periods: { weekly: string; monthly: string; annual: string };
   };
   card: {
     proLabel: string;
@@ -70,6 +99,7 @@ export interface PricingCopy {
     securedLine: string;
     guaranteeLine: string;
   };
+  liteFeatures: { title: string; desc: string }[];
   proFeatures: { title: string; desc: string }[];
   vipFeatures: { title: string; desc: string }[];
   enterprise: {
@@ -86,8 +116,9 @@ export interface PricingCopy {
     h2Accent: string;
     featureHeader: string;
     freeHeader: string;
+    liteHeader: string;
     proHeader: string;
-    vipHeader: string;
+    ultraHeader: string;
     /** Feature names in COMPARE_ROWS order (booleans stay in code). */
     rows: string[];
     noteBefore: string;
@@ -110,12 +141,12 @@ export interface PricingCopy {
 
 export const enPricing: PricingCopy = {
   meta: {
-    title: "Pricing — Free, Pro, VIP Pro & Enterprise Plans",
+    title: "Pricing — Free, Lite, Pro, Ultra & Enterprise Plans",
     description:
-      "WorldEye pricing: the live globe, 74,229 cameras and flight tracking are free forever. Pro is $7.99/week (3-day free trial), $13.99/month (10-day free trial) or VIP Pro $74.99/year (10-day free trial). Enterprise — the camera feed API and embed — is $999/year. Cancel anytime.",
-    ogTitle: "Pricing — Free, Pro, VIP Pro & Enterprise Plans | WorldEye",
+      "WorldEye pricing: the live globe, 74,229 cameras and flight tracking are free forever. Three paid tiers — Lite ($4.99/week, $8.99/month, $44.99/year), Pro ($7.99/week, $13.99/month, $74.99/year) and Ultra ($12.99/week, $24.99/month, $149.99/year) — with a 3-day free trial on weekly plans and 10 days on monthly and annual. Enterprise — the camera feed API and embed — is $999/year. Cancel anytime.",
+    ogTitle: "Pricing — Free, Lite, Pro, Ultra & Enterprise Plans | WorldEye",
     ogDescription:
-      "The live globe, 74,229 cameras and flight tracking are free forever. Pro from $7.99/week with a free trial; VIP Pro $74.99/year; Enterprise camera feed $999/year. Cancel anytime.",
+      "The live globe, 74,229 cameras and flight tracking are free forever. Lite from $4.99/week, Pro from $7.99/week, Ultra from $12.99/week — every plan starts with a free trial. Enterprise camera feed $999/year. Cancel anytime.",
   },
   schemaFreeOfferDescription:
     "Free forever — the live globe, 74,229 cameras, flight and satellite tracking, weather, earthquakes and basic search. No account needed.",
@@ -125,12 +156,10 @@ export const enPricing: PricingCopy = {
     h1Before: "See what the ",
     h1Accent: "free map",
     h1After: " can't show you.",
-    sub: "An AI analyst that works the globe for you. Live traffic. Advanced search filters. VIP intel feeds on the top tier. Pick your level — upgrade anytime.",
+    sub: "An AI analyst that works the globe for you. Live traffic. Advanced search filters. Premium intel feeds on the top tier. Pick your level — upgrade anytime.",
   },
   toggle: {
     mostPopular: "MOST POPULAR",
-    discountMonthly: "-42%",
-    discountAnnual: "-71%",
   },
   plans: {
     weekly: {
@@ -148,7 +177,6 @@ export const enPricing: PricingCopy = {
       per: "/month",
       perDay: "$0.47",
       note: "10 days free, then billed monthly · cancel anytime",
-      save: "Save 60%",
       cta: "Start 10-Day Free Trial",
       trial: "10 days free",
     },
@@ -158,7 +186,7 @@ export const enPricing: PricingCopy = {
       per: "/year",
       perDay: "$0.21",
       note: "10 days free, then billed annually · cancel anytime",
-      save: "Save 82% · Best value",
+      save: "Save 55.3%",
       cta: "Start 10-Day Free Trial",
       trial: "10 days free",
     },
@@ -171,17 +199,99 @@ export const enPricing: PricingCopy = {
       cta: "Get Enterprise",
     },
   },
+  plansGrid: {
+    lite_weekly: {
+      name: "Lite",
+      price: "$4.99",
+      per: "/week",
+      perDay: "$0.71",
+      note: "3 days free, then billed weekly · cancel anytime",
+      cta: "Start 3-Day Free Trial",
+      trial: "3 days free",
+    },
+    lite_monthly: {
+      name: "Lite",
+      price: "$8.99",
+      per: "/month",
+      perDay: "$0.30",
+      note: "10 days free, then billed monthly · cancel anytime",
+      cta: "Start 10-Day Free Trial",
+      trial: "10 days free",
+    },
+    lite_annual: {
+      name: "Lite",
+      price: "$44.99",
+      per: "/year",
+      perDay: "$0.12",
+      note: "10 days free, then billed annually · cancel anytime",
+      save: "Save 58.3%",
+      cta: "Start 10-Day Free Trial",
+      trial: "10 days free",
+    },
+    ultra_weekly: {
+      name: "Ultra",
+      price: "$12.99",
+      per: "/week",
+      perDay: "$1.86",
+      note: "3 days free, then billed weekly · cancel anytime",
+      cta: "Start 3-Day Free Trial",
+      trial: "3 days free",
+    },
+    ultra_monthly: {
+      name: "Ultra",
+      price: "$24.99",
+      per: "/month",
+      perDay: "$0.83",
+      note: "10 days free, then billed monthly · cancel anytime",
+      cta: "Start 10-Day Free Trial",
+      trial: "10 days free",
+    },
+    ultra_annual: {
+      name: "Ultra",
+      price: "$149.99",
+      per: "/year",
+      perDay: "$0.41",
+      note: "10 days free, then billed annually · cancel anytime",
+      save: "Save 50.0%",
+      cta: "Start 10-Day Free Trial",
+      trial: "10 days free",
+    },
+  },
+  tiers: {
+    lite: {
+      name: "Lite",
+      tagline: "The essentials, unlocked — every camera, the premium layers and the AI assistant.",
+    },
+    pro: {
+      name: "Pro",
+      tagline: "The full toolkit — OSINT, camera alerts and room to record.",
+    },
+    ultra: {
+      name: "Ultra",
+      tagline: "Everything in Pro, plus intel feeds, timelapse and the highest limits.",
+    },
+    annualBadge: "VIP",
+    periods: { weekly: "Weekly", monthly: "Monthly", annual: "Annual" },
+  },
   card: {
     proLabel: "PRO",
     vipProLabel: "VIP PRO",
     justPerDayBefore: "Just ",
     justPerDayAfter: " a day",
     trialChipSuffix: " — card not charged yet",
-    vipOnlyHeading: "VIP PRO ONLY",
+    vipOnlyHeading: "ULTRA EXTRAS",
     securedLine: "Secured by Stripe · Cancel anytime · 1-click cancellation",
     guaranteeLine:
       "Covered by a 7-day money-back guarantee on your first charge — email us within 7 days of the charge for a full refund, no questions asked.",
   },
+  liteFeatures: [
+    { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
+    { title: "Premium map layers", desc: "Live traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
+    { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
+    { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
+    { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },
+    { title: "Ambient Mode included", desc: "The Slow-TV ambient player is unlocked too — no separate Ambient plan needed." },
+  ],
   proFeatures: [
     { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
     { title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
@@ -191,8 +301,8 @@ export const enPricing: PricingCopy = {
     { title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
   ],
   vipFeatures: [
-    { title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — VIP only." },
-    { title: "Camera Timelapse", desc: "Capture snapshot cameras frame by frame and export the film — VIP only." },
+    { title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — Ultra only." },
+    { title: "Camera Timelapse", desc: "Capture snapshot cameras frame by frame and export the film — Ultra only." },
     { title: "Camera alerts (10)", desc: "The alert allowance raised to 10 watched cameras — Pro includes 2." },
   ],
   enterprise: {
@@ -202,11 +312,12 @@ export const enPricing: PricingCopy = {
   },
   comparison: {
     h2Before: "Free is generous. ",
-    h2Accent: "VIP Pro is the full picture.",
+    h2Accent: "Ultra is the full picture.",
     featureHeader: "FEATURE",
     freeHeader: "FREE",
+    liteHeader: "LITE",
     proHeader: "PRO",
-    vipHeader: "VIP PRO",
+    ultraHeader: "ULTRA",
     rows: [
       "Interactive 3D globe",
       "Live flight tracking & aircraft follow",
@@ -227,7 +338,7 @@ export const enPricing: PricingCopy = {
       "Advanced search filters",
       "OSINT toolkit (nmap, DNS, WHOIS, SSL)",
       "Camera Recording Studio",
-      "Camera alerts (2 on Pro · 10 on VIP Pro)",
+      "Camera alerts (2 on Pro · 10 on Ultra)",
       "Every future Pro layer",
       "Premium intel feeds (cyber, GDELT, maritime, live news)",
       "Camera timelapse",
@@ -241,11 +352,11 @@ export const enPricing: PricingCopy = {
   faqs: [
     {
       q: "How much does WorldEye cost?",
-      a: "The map itself is free — the globe, 74,229 cameras, flights, satellites and weather, no account needed. Pro is $7.99/week (starts with a 3-day free trial), $13.99/month (10-day free trial) or VIP Pro at $74.99/year (10-day free trial). Enterprise — the camera feed API and embed for your own platform — is $999/year and has no free trial. Every paid plan can be cancelled anytime, and first charges carry a 7-day money-back guarantee.",
+      a: "The map itself is free — the globe, 74,229 cameras, flights, satellites and weather, no account needed. Paid plans come in three tiers, each billed weekly, monthly or annually: Lite is $4.99/week, $8.99/month or $44.99/year; Pro is $7.99/week, $13.99/month or $74.99/year; Ultra is $12.99/week, $24.99/month or $149.99/year. Weekly plans start with a 3-day free trial; monthly and annual plans start with a 10-day free trial. Enterprise — the camera feed API and embed for your own platform — is $999/year and has no free trial. Every paid plan can be cancelled anytime, and first charges carry a 7-day money-back guarantee.",
     },
     {
       q: "Is the map really free?",
-      a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Pro unlocks the intelligence-grade tools: the AI assistant, the live traffic layer and advanced search filters. VIP Pro (the yearly plan) adds the premium intel feeds and camera timelapse.",
+      a: "Yes. The 3D globe, live flights, 74,229 street cameras, satellites, transit, launch tracking, street-level photos, basic search and natural-hazard layers are free forever — no account, no credit card. Lite removes the camera-open limits and unlocks the premium layers, the AI assistant, advanced search and the recording studio. Pro adds the OSINT toolkit and camera alerts. Ultra adds the premium intel feeds and camera timelapse, with the highest alert and recording limits.",
     },
     {
       q: "Do I need my own API key for the AI assistant?",
@@ -265,7 +376,7 @@ export const enPricing: PricingCopy = {
     },
     {
       q: "How is this different from the free self-hosted version?",
-      a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, live traffic, advanced search filters and — on VIP Pro — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
+      a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, live traffic, advanced search filters and — on Ultra — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
     },
   ],
   compareTeasers: {

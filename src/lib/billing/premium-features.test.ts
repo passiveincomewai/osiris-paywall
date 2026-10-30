@@ -39,17 +39,20 @@ function compareRows(): string[] {
   );
 }
 
-/** Comparison checkmarks from the client, in dictionary row order. */
-function compareBooleans(): { free: boolean; pro: boolean; vip: boolean }[] {
+/** Comparison checkmarks from the client, in dictionary row order.
+ *  Columns are free / lite / pro / ultra since the Pricing Redesign
+ *  Phase C grid (the vip column became ultra). */
+function compareBooleans(): { free: boolean; lite: boolean; pro: boolean; ultra: boolean }[] {
   const block = clientSrc.slice(clientSrc.indexOf("const COMPARE_BOOLEANS"));
   return [
     ...block
       .slice(0, block.indexOf("];"))
-      .matchAll(/\{ free: (true|false), pro: (true|false), vip: (true|false) \}/g),
+      .matchAll(/\{ free: (true|false), lite: (true|false), pro: (true|false), ultra: (true|false) \}/g),
   ].map((m) => ({
     free: m[1] === "true",
-    pro: m[2] === "true",
-    vip: m[3] === "true",
+    lite: m[2] === "true",
+    pro: m[3] === "true",
+    ultra: m[4] === "true",
   }));
 }
 
@@ -82,7 +85,9 @@ describe("PREMIUM_FEATURES mirrors the pricing page", () => {
     const rows = compareRows();
     const i = rows.indexOf("Advanced search filters");
     expect(i).toBeGreaterThan(-1);
-    expect(compareBooleans()[i]).toEqual({ free: false, pro: true, vip: true });
+    // Search filters are a binary paid gate: every paid tier incl.
+    // Lite carries them (lib/billing/plans.ts entitlementsFor).
+    expect(compareBooleans()[i]).toEqual({ free: false, lite: true, pro: true, ultra: true });
   });
 
   it("names nothing the pricing page doesn't sell", () => {

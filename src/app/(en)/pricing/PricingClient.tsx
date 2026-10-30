@@ -17,22 +17,36 @@ import {
 } from "@/lib/enterprise/offer";
 import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
 import { preloadStripeJs } from "@/lib/billing/stripe-preload";
+import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Sparkles, BrainCircuit,
   ShieldCheck, Zap, Lock, ChevronDown, BadgeCheck, Minus, Car, Video, Bell,
+  Layers, Search, Camera,
 } from "lucide-react";
 import { localizedPath, type LocaleCode } from "@/i18n/config";
 import { localizedUrl } from "@/lib/i18n-seo";
-import { enPricing, type PricingCopy } from "@/i18n/dictionaries/en/pricing";
+import { enPricing, type PricingCopy, type PricingPlanCopy } from "@/i18n/dictionaries/en/pricing";
 import { getChromeCopy } from "@/i18n/dictionaries";
 
 /**
- * The pricing page client. All copy comes from the pricing dictionary
+ * The pricing page client (Pricing Redesign Phase C: the 3-tier
+ * grid). All copy comes from the pricing dictionary
  * (src/i18n/dictionaries/<locale>/pricing.ts) via props — the English
- * route passes the English dictionary (the render is unchanged), the
- * /es route passes the Spanish one. Checkout behavior is identical in
- * every locale: same plans, same Stripe machinery, USD prices.
+ * route passes the English dictionary, the /es route the Spanish one.
+ * Checkout behavior is identical in every locale: same plans, same
+ * Stripe machinery, USD prices.
+ *
+ * The grid sells three tiers (Lite / Pro / Ultra) × three periods
+ * (weekly / monthly / annual). A card's checkout key follows the
+ * checkout route's contract: the Pro grid keeps its historical bare
+ * period names ("weekly" | "monthly" | "annual" → pro_* in the
+ * central plan config), Lite/Ultra name themselves ("lite_weekly" …
+ * "ultra_annual"). Trials come from the selected PERIOD only (weekly
+ * 3 days, monthly/annual 10 — src/lib/billing/trials.ts), and the
+ * annual column carries the VIP branding on every tier (owner
+ * ruling). There is deliberately NO "no credit card required" badge:
+ * checkout collects a payment method up front for trials.
  *
  * NOT localized in this tranche (they keep their own copy and render
  * in English on the Spanish page too — see the build REPORT):
@@ -40,39 +54,86 @@ import { getChromeCopy } from "@/i18n/dictionaries";
  * CheckoutSheet, TrialButton.
  */
 
-type Plan = "weekly" | "monthly" | "annual" | "enterprise";
+type Period = "weekly" | "monthly" | "annual";
+type TierKey = "lite" | "pro" | "ultra";
 
 // Icons stay in code, in dictionary order (dictionaries hold copy only).
+const LITE_FEATURE_ICONS = [Video, Layers, BrainCircuit, Search, Camera, Sparkles];
 const PRO_FEATURE_ICONS = [BrainCircuit, Car, ShieldCheck, Video, Bell, Sparkles];
 const VIP_FEATURE_ICONS = [Zap, Video, Bell];
 const TRUST_ICONS = [BadgeCheck, ShieldCheck, Lock, X];
 
 // Comparison-table checkmarks stay in code, in dictionary row order.
-const COMPARE_BOOLEANS: { free: boolean; pro: boolean; vip: boolean }[] = [
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: false, pro: false, vip: false },
-  { free: true, pro: true, vip: true },
-  { free: false, pro: true, vip: true },
-  { free: true, pro: true, vip: true },
-  { free: false, pro: true, vip: true },
-  { free: false, pro: true, vip: true },
-  { free: false, pro: true, vip: true },
-  { free: false, pro: true, vip: true },
-  { free: false, pro: true, vip: true },
-  { free: false, pro: true, vip: true },
-  { free: false, pro: false, vip: true },
-  { free: false, pro: false, vip: true },
+// Columns are the FREE tier and the three paid tiers. Lite carries
+// the binary paid gates (premium layers, OI, search, recording
+// studio, satellite view); alerts, OSINT and future Pro layers start
+// at Pro; intel feeds + timelapse are Ultra-only. Mirrors
+// src/lib/billing/plans.ts entitlementsFor — keep the two in step.
+const COMPARE_BOOLEANS: { free: boolean; lite: boolean; pro: boolean; ultra: boolean }[] = [
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: false, lite: false, pro: false, ultra: false },
+  { free: true, lite: true, pro: true, ultra: true },
+  { free: false, lite: true, pro: true, ultra: true },
+  { free: false, lite: true, pro: true, ultra: true },
+  { free: false, lite: true, pro: true, ultra: true },
+  { free: false, lite: true, pro: true, ultra: true },
+  { free: false, lite: false, pro: true, ultra: true },
+  { free: false, lite: true, pro: true, ultra: true },
+  { free: false, lite: false, pro: true, ultra: true },
+  { free: false, lite: false, pro: true, ultra: true },
+  { free: false, lite: false, pro: false, ultra: true },
+  { free: false, lite: false, pro: false, ultra: true },
 ];
+
+/** Per-tier accent treatment (owner ruling: dark + gold base; Lite
+ *  cyan, Pro brightest gold, Ultra violet). Literal classes only. */
+const TIER_ACCENTS: Record<
+  TierKey,
+  { text: string; border: string; chipBg: string; chipBorder: string; glow: string }
+> = {
+  lite: {
+    text: "text-[#00E5FF]",
+    border: "border-[#00E5FF]/30",
+    chipBg: "bg-[#00E5FF]/15",
+    chipBorder: "border-[#00E5FF]/30",
+    glow: "shadow-[0_24px_80px_rgba(0,229,255,0.08)]",
+  },
+  pro: {
+    text: "text-[#D4AF37]",
+    border: "border-[#D4AF37]/40",
+    chipBg: "bg-[#D4AF37]/15",
+    chipBorder: "border-[#D4AF37]/30",
+    glow: "shadow-[0_24px_80px_rgba(212,175,55,0.14)]",
+  },
+  ultra: {
+    text: "text-[#a78bfa]",
+    border: "border-[#a78bfa]/30",
+    chipBg: "bg-[#a78bfa]/15",
+    chipBorder: "border-[#a78bfa]/30",
+    glow: "shadow-[0_24px_80px_rgba(167,139,250,0.10)]",
+  },
+};
+
+/** The checkout plan key for a tier × period (route contract above). */
+function checkoutKeyFor(tier: TierKey, period: Period): CheckoutPlanId {
+  return tier === "pro" ? period : (`${tier}_${period}` as CheckoutPlanId);
+}
+
+/** The dictionary plan copy for a tier × period. */
+function planCopyFor(copy: PricingCopy, tier: TierKey, period: Period): PricingPlanCopy {
+  if (tier === "pro") return copy.plans[period];
+  return copy.plansGrid[`${tier}_${period}` as keyof PricingCopy["plansGrid"]];
+}
 
 function buildFaqJsonLd(copy: PricingCopy, locale: LocaleCode) {
   return {
@@ -91,21 +152,24 @@ function CheckoutButton({
   plan,
   label,
   trial,
+  days,
   onCheckout,
 }: {
-  plan: Plan;
+  plan: CheckoutPlanId;
   label: string;
   trial?: string;
-  onCheckout: (plan: Plan) => void;
+  days: 3 | 10;
+  onCheckout: (plan: CheckoutPlanId) => void;
 }) {
   // Trial plans carry the owner's artwork button, variant-matched to
-  // the plan's trial length (Weekly = the 3-day artwork, the rest the
-  // 10-day); Enterprise (no trial) keeps the gold button.
+  // the SELECTED PERIOD's trial length (weekly = the 3-day artwork,
+  // monthly/annual the 10-day); Enterprise (no trial) keeps the gold
+  // button.
   if (trial) {
     return (
       <TrialButton
         label={label}
-        days={plan === "weekly" ? 3 : 10}
+        days={days}
         onClick={() => onCheckout(plan)}
         className="w-full"
       />
@@ -121,7 +185,7 @@ function CheckoutButton({
   );
 }
 
-function StickyMobileCta({ cta, plan }: { cta: string; plan: Plan }) {
+function StickyMobileCta({ cta, days }: { cta: string; days: 3 | 10 }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 700);
@@ -141,7 +205,7 @@ function StickyMobileCta({ cta, plan }: { cta: string; plan: Plan }) {
         >
           <TrialButton
             label={cta}
-            days={plan === "weekly" ? 3 : 10}
+            days={days}
             onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
             className="pointer-events-auto w-full drop-shadow-[0_8px_32px_rgba(0,150,255,0.35)]"
           />
@@ -177,6 +241,150 @@ function FaqItem({ q, a }: { q: string; a: string }) {  const [open, setOpen] = 
   );
 }
 
+function FeatureList({
+  features,
+  accent,
+  strong = false,
+}: {
+  features: { title: string; desc: string; icon: typeof Sparkles }[];
+  accent: (typeof TIER_ACCENTS)["pro"];
+  strong?: boolean;
+}) {
+  return (
+    <ul className="space-y-2">
+      {features.map((f) => (
+        <li key={f.title} className="flex items-center gap-2.5">
+          <span
+            className={`w-5 h-5 rounded-full ${accent.chipBg} border ${accent.chipBorder} flex items-center justify-center shrink-0`}
+          >
+            <Check className={`w-3 h-3 ${accent.text}`} strokeWidth={strong ? 3 : 2} />
+          </span>
+          <p className="text-sm text-white/85">
+            <span className="font-medium">{f.title}</span>
+            <span className="text-white/40"> — {f.desc}</span>
+          </p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function TierCard({
+  copy,
+  tier,
+  period,
+  onCheckout,
+}: {
+  copy: PricingCopy;
+  tier: TierKey;
+  period: Period;
+  onCheckout: (plan: CheckoutPlanId) => void;
+}) {
+  const accent = TIER_ACCENTS[tier];
+  const tierCopy = copy.tiers[tier];
+  const p = planCopyFor(copy, tier, period);
+  const plan = checkoutKeyFor(tier, period);
+  const days: 3 | 10 = period === "weekly" ? 3 : 10;
+  const baseFeatures = (tier === "lite" ? copy.liteFeatures : copy.proFeatures).map(
+    (f, i) => ({
+      ...f,
+      icon: (tier === "lite" ? LITE_FEATURE_ICONS : PRO_FEATURE_ICONS)[i] ?? Sparkles,
+    }),
+  );
+  const vipFeatures = copy.vipFeatures.map((f, i) => ({
+    ...f,
+    icon: VIP_FEATURE_ICONS[i] ?? Zap,
+  }));
+  return (
+    <motion.div
+      {...(tier === "pro" ? { id: "pro-card" } : {})}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className={`relative flex flex-col rounded-3xl border ${accent.border} bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-5 md:p-6 ${accent.glow} scroll-mt-6`}
+    >
+      {tier === "pro" && (
+        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.15em] bg-[#D4AF37] text-black px-3 py-1 rounded-full whitespace-nowrap">
+          {copy.toggle.mostPopular}
+        </span>
+      )}
+      <div className="flex items-start justify-between gap-2">
+        <p className={`text-sm font-semibold tracking-[0.2em] ${accent.text}`}>
+          {tierCopy.name.toUpperCase()}
+        </p>
+        <span className="flex flex-col items-end gap-1.5">
+          {period === "annual" && (
+            <span className="text-[10px] font-bold tracking-[0.15em] px-2.5 py-1 rounded-full bg-[#D4AF37] text-black whitespace-nowrap">
+              {tier === "pro" ? copy.card.vipProLabel : copy.tiers.annualBadge}
+            </span>
+          )}
+          {p.save && (
+            <span
+              className={`text-xs font-bold px-3 py-1.5 rounded-full ${accent.chipBg} ${accent.text} border ${accent.chipBorder} whitespace-nowrap`}
+            >
+              {p.save}
+            </span>
+          )}
+        </span>
+      </div>
+      <p className="text-sm text-white/45 mt-1.5">{tierCopy.tagline}</p>
+      <div className="mt-3 flex items-baseline gap-1">
+        <AnimatePresence mode="popLayout">
+          <motion.span
+            key={p.price}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="text-5xl font-bold tracking-tight"
+          >
+            {p.price}
+          </motion.span>
+        </AnimatePresence>
+        <span className="text-white/45 text-lg">{p.per}</span>
+      </div>
+      <p className="text-sm text-white/45 mt-2">{p.note}</p>
+      <p className={`text-sm ${accent.text} font-semibold mt-1.5`}>
+        {copy.card.justPerDayBefore}
+        {p.perDay}
+        {copy.card.justPerDayAfter}
+      </p>
+      {p.trial && (
+        <p className="mt-3">
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
+            <Zap className="w-3.5 h-3.5" /> {p.trial}
+            {copy.card.trialChipSuffix}
+          </span>
+        </p>
+      )}
+
+      <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+
+      <div className="flex-1">
+        <FeatureList features={baseFeatures} accent={accent} />
+        {tier === "ultra" && (
+          <>
+            <p className={`mt-4 mb-2 text-xs font-bold tracking-[0.2em] ${accent.text}`}>
+              {copy.card.vipOnlyHeading}
+            </p>
+            <FeatureList features={vipFeatures} accent={accent} strong />
+          </>
+        )}
+      </div>
+
+      <div className="mt-5">
+        <CheckoutButton plan={plan} label={p.cta} trial={p.trial} days={days} onCheckout={onCheckout} />
+      </div>
+      <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-4">
+        <Lock className="w-3.5 h-3.5" /> {copy.card.securedLine}
+      </p>
+      <p className="mt-3 text-center">
+        <HostedCheckoutLink plan={plan} caption={false} />
+      </p>
+    </motion.div>
+  );
+}
+
 export default function PricingPage({
   copy = enPricing,
   locale = "en",
@@ -184,20 +392,9 @@ export default function PricingPage({
   copy?: PricingCopy;
   locale?: LocaleCode;
 } = {}) {
-  const [plan, setPlan] = useState<Plan>("annual");
-  const PLANS = copy.plans;
-  const p = PLANS[plan];
+  const [period, setPeriod] = useState<Period>("annual");
+  const proPlan = copy.plans[period];
   const faqJsonLd = buildFaqJsonLd(copy, locale);
-  // Feature icons ride along in code, exactly as the pre-i18n data
-  // tables carried them (the JSX renders the check bullets, as before).
-  const proFeatures = copy.proFeatures.map((f, i) => ({
-    ...f,
-    icon: PRO_FEATURE_ICONS[i] ?? Sparkles,
-  }));
-  const vipFeatures = copy.vipFeatures.map((f, i) => ({
-    ...f,
-    icon: VIP_FEATURE_ICONS[i] ?? Zap,
-  }));
   const enterpriseFeatures = copy.enterprise.features ?? ENTERPRISE_FEATURES;
   const homeHref = localizedPath("", locale);
   // Checkout opens IN PLACE: the plan CTAs raise the embedded form in a
@@ -207,7 +404,7 @@ export default function PricingPage({
   // startPlanCheckout → /checkout, so the two presentations can't drift;
   // closing the sheet just returns here, and the hosted Stripe page
   // remains one quiet link away under each CTA.
-  const [sheetPlan, setSheetPlan] = useState<Plan | null>(null);
+  const [sheetPlan, setSheetPlan] = useState<CheckoutPlanId | null>(null);
   const closeSheet = useCallback(() => setSheetPlan(null), []);
   // Warm Stripe.js while the visitor reads the plans: the sheet's
   // embedded flow starts on the CTA click, and with the script
@@ -255,29 +452,32 @@ export default function PricingPage({
             <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
               {copy.hero.h1Before}<span className="text-[#D4AF37]">{copy.hero.h1Accent}</span>{copy.hero.h1After}
             </h1>
+            <p className="mt-3 text-sm md:text-base text-white/55 leading-relaxed">{copy.hero.sub}</p>
           </motion.div>
 
-          {/* Billing toggle */}
+          {/* Billing-period toggle (annual is the default view and
+              carries the VIP branding — owner ruling). */}
           <div className="mt-6 flex sm:inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur w-full sm:w-auto max-w-full">
-            {(["weekly", "monthly", "annual"] as Plan[]).map((key) => (
+            {(["weekly", "monthly", "annual"] as Period[]).map((key) => (
               <button
                 key={key}
                 onClick={() => {
-                  setPlan(key);
-                  // Wave 2 F3: remember the plan this visitor is looking
-                  // at so the post-signup trial prompt can preselect it.
+                  setPeriod(key);
+                  // Wave 2 F3: remember the period this visitor is
+                  // looking at so the post-signup trial prompt can
+                  // preselect it.
                   recordLastViewedPlan(key);
                 }}
                 className={`relative flex-1 sm:flex-none px-2 sm:px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
-                  plan === key ? "text-black" : "text-white/55 hover:text-white"
+                  period === key ? "text-black" : "text-white/55 hover:text-white"
                 }`}
               >
                 {key === "annual" && (
                   <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[9px] font-bold tracking-[0.15em] bg-[#D4AF37] text-black px-2 py-0.5 rounded-full whitespace-nowrap">
-                    {copy.toggle.mostPopular}
+                    {copy.tiers.annualBadge}
                   </span>
                 )}
-                {plan === key && (
+                {period === key && (
                   <motion.span
                     layoutId="billing-pill"
                     className="absolute inset-0 rounded-xl bg-[#D4AF37]"
@@ -285,110 +485,22 @@ export default function PricingPage({
                   />
                 )}
                 <span className="relative flex items-center gap-2">
-                  {PLANS[key].name}
-                  {PLANS[key].save && (
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${plan === key ? "bg-black/20 text-black" : "bg-[#D4AF37]/15 text-[#D4AF37]"}`}>
-                      {key === "annual" ? copy.toggle.discountAnnual : copy.toggle.discountMonthly}
-                    </span>
-                  )}
+                  {copy.tiers.periods[key]}
                 </span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Price card */}
-        <motion.div
-          id="pro-card"
-          key={plan}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="mt-6 max-w-md mx-auto scroll-mt-6 rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-5 md:p-6 shadow-[0_24px_80px_rgba(212,175,55,0.12)]"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-semibold tracking-[0.2em] text-[#D4AF37]">{plan === "annual" ? copy.card.vipProLabel : copy.card.proLabel}</p>
-              <div className="mt-2 flex items-baseline gap-1">
-                <AnimatePresence mode="popLayout">
-                  <motion.span
-                    key={p.price}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-5xl font-bold tracking-tight"
-                  >
-                    {p.price}
-                  </motion.span>
-                </AnimatePresence>
-                <span className="text-white/45 text-lg">{p.per}</span>
-              </div>
-              <p className="text-sm text-white/45 mt-2">{p.note}</p>
-              <p className="text-sm text-[#D4AF37] font-semibold mt-1.5">{copy.card.justPerDayBefore}{p.perDay}{copy.card.justPerDayAfter}</p>
-              {p.trial && (
-                <p className="mt-3">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
-                    <Zap className="w-3.5 h-3.5" /> {p.trial}{copy.card.trialChipSuffix}
-                  </span>
-                </p>
-              )}
-            </div>
-            {p.save && (
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 whitespace-nowrap">
-                {p.save}
-              </span>
-            )}
-          </div>
-
-          <div className="my-4 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
-
-          <ul className="space-y-2">
-            {proFeatures.map((f) => (
-              <li key={f.title} className="flex items-center gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center shrink-0">
-                  <Check className="w-3 h-3 text-[#D4AF37]" />
-                </span>
-                <p className="text-sm text-white/85">
-                  <span className="font-medium">{f.title}</span>
-                  <span className="text-white/40"> — {f.desc}</span>
-                </p>
-              </li>
-            ))}
-          </ul>
-
-          {plan === "annual" && (
-            <>
-              <p className="mt-4 mb-2 text-xs font-bold tracking-[0.2em] text-[#D4AF37]">{copy.card.vipOnlyHeading}</p>
-              <ul className="space-y-2">
-                {vipFeatures.map((f) => (
-                  <li key={f.title} className="flex items-center gap-2.5">
-                    <span className="w-5 h-5 rounded-full bg-[#D4AF37]/25 border border-[#D4AF37]/50 flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3 text-[#D4AF37]" />
-                    </span>
-                    <p className="text-sm text-white/85">
-                      <span className="font-medium">{f.title}</span>
-                      <span className="text-white/40"> — {f.desc}</span>
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          <div className="mt-5">
-            <CheckoutButton plan={plan} label={p.cta} trial={p.trial} onCheckout={setSheetPlan} />
-          </div>
-          <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-4">
-            <Lock className="w-3.5 h-3.5" /> {copy.card.securedLine}
-          </p>
-          <p className="flex items-center justify-center gap-2 text-xs text-white/50 mt-2 text-center">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]/80 shrink-0" /> {copy.card.guaranteeLine}
-          </p>
-          <p className="mt-3 text-center">
-            <HostedCheckoutLink plan={plan} caption={false} />
-          </p>
-        </motion.div>
+        {/* The 3-tier grid */}
+        <div id="plans" className="mt-8 grid gap-5 md:grid-cols-3 items-stretch">
+          {(["lite", "pro", "ultra"] as TierKey[]).map((tier) => (
+            <TierCard key={tier} copy={copy} tier={tier} period={period} onCheckout={setSheetPlan} />
+          ))}
+        </div>
+        <p className="flex items-center justify-center gap-2 text-xs text-white/50 mt-5 text-center">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]/80 shrink-0" /> {copy.card.guaranteeLine}
+        </p>
 
         {/* Enterprise */}
         <div className="mt-10 max-w-3xl mx-auto rounded-3xl border border-[#00E5FF]/25 bg-gradient-to-b from-[#00E5FF]/[0.06] to-white/[0.02] backdrop-blur-xl p-6 md:p-8">
@@ -396,10 +508,10 @@ export default function PricingPage({
             <div className="flex-1">
               <p className="text-xs font-bold tracking-[0.25em] text-[#00E5FF] mb-2">{copy.enterprise.eyebrow}</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl md:text-5xl font-bold tracking-tight">{PLANS.enterprise.price}</span>
-                <span className="text-white/45 text-lg">{PLANS.enterprise.per}</span>
+                <span className="text-4xl md:text-5xl font-bold tracking-tight">{copy.plans.enterprise.price}</span>
+                <span className="text-white/45 text-lg">{copy.plans.enterprise.per}</span>
               </div>
-              <p className="text-sm text-white/45 mt-2">{PLANS.enterprise.note}</p>
+              <p className="text-sm text-white/45 mt-2">{copy.plans.enterprise.note}</p>
               <ul className="mt-4 space-y-2">
                 {enterpriseFeatures.map((f) => (
                   <li key={f} className="flex items-center gap-2.5 text-sm text-white/85">
@@ -412,7 +524,7 @@ export default function PricingPage({
               </ul>
             </div>
             <div className="md:w-64 shrink-0">
-              <CheckoutButton plan="enterprise" label={PLANS.enterprise.cta} trial={PLANS.enterprise.trial} onCheckout={setSheetPlan} />
+              <CheckoutButton plan="enterprise" label={copy.plans.enterprise.cta} trial={copy.plans.enterprise.trial} days={10} onCheckout={setSheetPlan} />
               <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-3">
                 <Lock className="w-3.5 h-3.5" /> {copy.enterprise.securedByStripe}
               </p>
@@ -439,36 +551,38 @@ export default function PricingPage({
         </div>
         <TeamSection />
 
-        {/* Free vs Pro comparison */}
+        {/* Free vs the tiers comparison */}
         <div className="mt-10">
           <h2 className="text-xl md:text-2xl font-bold text-center">{copy.comparison.h2Before}<span className="text-[#D4AF37]">{copy.comparison.h2Accent}</span></h2>
           <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden max-w-3xl mx-auto">
-            <div className="grid grid-cols-[1fr_52px_52px_52px] md:grid-cols-[1fr_90px_90px_90px] text-[11px] font-bold tracking-[0.15em] text-white/40 border-b border-white/10 bg-white/[0.02]">
-              <div className="px-5 md:px-7 py-2.5">{copy.comparison.featureHeader}</div>
+            <div className="grid grid-cols-[1fr_40px_40px_40px_44px] md:grid-cols-[1fr_72px_72px_72px_72px] text-[11px] font-bold tracking-[0.15em] text-white/40 border-b border-white/10 bg-white/[0.02]">
+              <div className="px-4 md:px-7 py-2.5">{copy.comparison.featureHeader}</div>
               <div className="py-2.5 text-center">{copy.comparison.freeHeader}</div>
-              <div className="py-2.5 text-center">{copy.comparison.proHeader}</div>
-              <div className="py-2.5 text-center text-[#D4AF37]">{copy.comparison.vipHeader}</div>
+              <div className="py-2.5 text-center text-[#00E5FF]">{copy.comparison.liteHeader}</div>
+              <div className="py-2.5 text-center text-[#D4AF37]">{copy.comparison.proHeader}</div>
+              <div className="py-2.5 text-center text-[#a78bfa]">{copy.comparison.ultraHeader}</div>
             </div>
             {copy.comparison.rows.map((feature, i) => {
-              const r = COMPARE_BOOLEANS[i] ?? { free: false, pro: false, vip: false };
+              const r = COMPARE_BOOLEANS[i] ?? { free: false, lite: false, pro: false, ultra: false };
+              const cells = [
+                { on: r.free, cls: "text-white/35" },
+                { on: r.lite, cls: "text-[#00E5FF]/80" },
+                { on: r.pro, cls: "text-[#D4AF37]" },
+                { on: r.ultra, cls: "text-[#a78bfa]" },
+              ];
               return (
-                <div key={feature} className="grid grid-cols-[1fr_52px_52px_52px] md:grid-cols-[1fr_90px_90px_90px] border-b border-white/5 last:border-0 text-[13px] sm:text-sm">
-                  <div className="px-5 md:px-7 py-2 text-white/75">{feature}</div>
-                  <div className="py-2 flex justify-center items-center">
-                    {r.free
-                      ? <Check className="w-4 h-4 text-white/35" />
-                      : <Minus className="w-4 h-4 text-white/15" />}
-                  </div>
-                  <div className="py-2 flex justify-center items-center">
-                    {r.pro
-                      ? <Check className="w-4 h-4 text-white/60" strokeWidth={3} />
-                      : <Minus className="w-4 h-4 text-white/15" />}
-                  </div>
-                  <div className="py-2 flex justify-center items-center bg-[#D4AF37]/[0.06]">
-                    {r.vip
-                      ? <Check className="w-4 h-4 text-[#D4AF37]" strokeWidth={3} />
-                      : <Minus className="w-4 h-4 text-white/15" />}
-                  </div>
+                <div key={feature} className="grid grid-cols-[1fr_40px_40px_40px_44px] md:grid-cols-[1fr_72px_72px_72px_72px] border-b border-white/5 last:border-0 text-[13px] sm:text-sm">
+                  <div className="px-4 md:px-7 py-2 text-white/75">{feature}</div>
+                  {cells.map((c, j) => (
+                    <div
+                      key={j}
+                      className={`py-2 flex justify-center items-center ${j === 3 ? "bg-[#a78bfa]/[0.05]" : j === 2 ? "bg-[#D4AF37]/[0.05]" : ""}`}
+                    >
+                      {c.on
+                        ? <Check className={`w-4 h-4 ${c.cls}`} strokeWidth={3} />
+                        : <Minus className="w-4 h-4 text-white/15" />}
+                    </div>
+                  ))}
                 </div>
               );
             })}
@@ -526,7 +640,7 @@ export default function PricingPage({
           })}
         </div>
       </div>
-      <StickyMobileCta cta={p.cta} plan={plan} />
+      <StickyMobileCta cta={proPlan.cta} days={period === "weekly" ? 3 : 10} />
       <CheckoutSheet plan={sheetPlan} onClose={closeSheet} />
       <SiteFooter copy={getChromeCopy(locale)} locale={locale} slug="pricing" />
     </main>

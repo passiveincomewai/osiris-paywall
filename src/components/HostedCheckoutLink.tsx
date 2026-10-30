@@ -16,7 +16,7 @@ import {
   toCheckoutError,
   type CheckoutError,
 } from "@/lib/billing/checkout-error";
-import type { BillingPlan } from "@/lib/billing/trials";
+import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
 
 export const HOSTED_CHECKOUT_LABEL = "Continue on Stripe instead →";
 export const HOSTED_CHECKOUT_CAPTION =
@@ -27,7 +27,7 @@ export default function HostedCheckoutLink({
   className = "",
   caption = true,
 }: {
-  plan: BillingPlan;
+  plan: CheckoutPlanId;
   className?: string;
   caption?: boolean;
 }) {

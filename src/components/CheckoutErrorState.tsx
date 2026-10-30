@@ -29,7 +29,7 @@ import {
   toCheckoutError,
   type CheckoutError,
 } from "@/lib/billing/checkout-error";
-import type { BillingPlan } from "@/lib/billing/trials";
+import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
 
 export const CHECKOUT_RETRY_LABEL = "Try again";
 export const HOSTED_FALLBACK_LABEL = "Continue to secure checkout";
@@ -41,7 +41,7 @@ export default function CheckoutErrorState({
   onRetry,
   onError,
 }: {
-  plan: BillingPlan;
+  plan: CheckoutPlanId;
   error: CheckoutError;
   /** Start a brand-new embedded session. */
   onRetry: () => void;

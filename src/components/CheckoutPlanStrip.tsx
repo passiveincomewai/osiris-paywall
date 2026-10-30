@@ -27,8 +27,12 @@ export function CheckoutPlanStrip({ summary }: { summary: CheckoutPlanSummary })
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-semibold text-white/90">
           {summary.name}
-          {/* "VIP Pro" already carries the Pro — never render "VIP Pro Pro". */}
-          {summary.plan !== "enterprise" && !summary.name.endsWith("Pro") && " Pro"}
+          {/* The bare period names are the Pro grid's ("Weekly" →
+              "Weekly Pro"; "VIP Pro" already carries it — never render
+              "VIP Pro Pro"). The Lite/Ultra grid names already carry
+              their tier ("Lite Weekly") and must never gain a " Pro"
+              they didn't buy. */}
+          {(summary.plan === "weekly" || summary.plan === "monthly") && " Pro"}
           {" — "}
           {summary.price}
           <span className="text-white/45 font-normal">{summary.per}</span>

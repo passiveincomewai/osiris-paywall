@@ -22,6 +22,23 @@ describe("checkoutPlanFromParam", () => {
     }
   });
 
+  it("accepts the six Lite/Ultra grid keys (Pricing Redesign Phase C)", () => {
+    for (const p of [
+      "lite_weekly",
+      "lite_monthly",
+      "lite_annual",
+      "ultra_weekly",
+      "ultra_monthly",
+      "ultra_annual",
+    ] as const) {
+      expect(checkoutPlanFromParam(p)).toBe(p);
+    }
+    // The standalone products stay out of ?plan= — their own surfaces
+    // sell them.
+    expect(checkoutPlanFromParam("ambient")).toBeNull();
+    expect(checkoutPlanFromParam("ski")).toBeNull();
+  });
+
   it("rejects anything else, including missing and miscased values", () => {
     for (const raw of [null, undefined, "", "daily", "WEEKLY", "pro"]) {
       expect(checkoutPlanFromParam(raw)).toBeNull();

@@ -41,6 +41,22 @@ import { trackMetaEvent } from "@/lib/meta-track";
  * until POWDER_PASS_ENABLED — lib/ski/access), never a picker row. */
 export type TrialPlan = Exclude<BillingPlan, "enterprise" | "ambient" | "ski">;
 
+/* The Lite/Ultra grid keys (Pricing Redesign Phase C): the checkout
+ * route accepts these strings directly (its PLAN_KEY_BY_CHECKOUT_PLAN
+ * maps them to the central plan config), while the Pro grid keeps its
+ * historical bare period names above. A CheckoutPlanId is therefore
+ * anything /api/checkout will accept from a client: a BillingPlan or
+ * one of the six grid keys. */
+export type GridCheckoutPlan =
+  | "lite_weekly"
+  | "lite_monthly"
+  | "lite_annual"
+  | "ultra_weekly"
+  | "ultra_monthly"
+  | "ultra_annual";
+
+export type CheckoutPlanId = BillingPlan | GridCheckoutPlan;
+
 export interface TrialPlanOption {
   plan: TrialPlan;
   /** Plan name as shown on /pricing's billing toggle. */
@@ -110,7 +126,7 @@ export const TRIAL_PLAN_OPTIONS: TrialPlanOption[] = (
  * pinned against it by trial-checkout.test.ts.
  */
 export interface CheckoutPlanSummary {
-  plan: BillingPlan;
+  plan: CheckoutPlanId;
   name: string;
   price: string;
   per: string;
@@ -179,10 +195,51 @@ export const CHECKOUT_PLAN_SUMMARIES: Record<BillingPlan, CheckoutPlanSummary> =
   },
 };
 
+/**
+ * The Lite/Ultra grid summaries (Pricing Redesign Phase C). Names are
+ * the central plan config's display names (lib/billing/plans), prices
+ * are the verified Stripe prices, and the note / trial wording is the
+ * period's own PLAN_COPY — a grid plan's trial is its PERIOD's trial
+ * (weekly 3 days, monthly/annual 10), derived via trialDaysForPlan on
+ * the period, never on the grid key itself.
+ */
+function gridSummary(
+  plan: GridCheckoutPlan,
+  name: string,
+  price: string,
+  per: string,
+  perDay: string,
+  period: TrialPlan,
+): CheckoutPlanSummary {
+  const c = PLAN_COPY[period];
+  return {
+    plan,
+    name,
+    price,
+    per,
+    perDay,
+    note: c.note,
+    trialLabel: c.trialLabel,
+    trialDays: trialDaysForPlan(period),
+  };
+}
+
+export const GRID_PLAN_SUMMARIES: Record<GridCheckoutPlan, CheckoutPlanSummary> = {
+  lite_weekly: gridSummary("lite_weekly", "Lite Weekly", "$4.99", "/week", "$0.71", "weekly"),
+  lite_monthly: gridSummary("lite_monthly", "Lite Monthly", "$8.99", "/month", "$0.30", "monthly"),
+  lite_annual: gridSummary("lite_annual", "Lite Annual", "$44.99", "/year", "$0.12", "annual"),
+  ultra_weekly: gridSummary("ultra_weekly", "Ultra Weekly", "$12.99", "/week", "$1.86", "weekly"),
+  ultra_monthly: gridSummary("ultra_monthly", "Ultra Monthly", "$24.99", "/month", "$0.83", "monthly"),
+  ultra_annual: gridSummary("ultra_annual", "Ultra Annual", "$149.99", "/year", "$0.41", "annual"),
+};
+
 /** Summary lookup that tolerates raw strings (URL params): unknown → null. */
 export function checkoutPlanSummary(plan: string | null | undefined): CheckoutPlanSummary | null {
   if (plan === "weekly" || plan === "monthly" || plan === "annual" || plan === "enterprise" || plan === "ambient" || plan === "ski") {
     return CHECKOUT_PLAN_SUMMARIES[plan];
+  }
+  if (plan && plan in GRID_PLAN_SUMMARIES) {
+    return GRID_PLAN_SUMMARIES[plan as GridCheckoutPlan];
   }
   return null;
 }
@@ -193,9 +250,9 @@ export function checkoutPlanSummary(plan: string | null | undefined): CheckoutPl
  *  session the /checkout page can mount on this domain (it answers with a
  *  clientSecret); without it the route answers with the hosted url. */
 export function checkoutRequestBody(
-  plan: BillingPlan,
+  plan: CheckoutPlanId,
   ui?: "embedded",
-): { plan: BillingPlan; ui?: "embedded" } {
+): { plan: CheckoutPlanId; ui?: "embedded" } {
   return ui ? { plan, ui } : { plan };
 }
 
@@ -204,7 +261,7 @@ export function checkoutRequestBody(
  * here; the page itself decides between the embedded form and the hosted
  * redirect, so entry points never branch on Stripe configuration.
  */
-export function checkoutPagePath(plan: BillingPlan): string {
+export function checkoutPagePath(plan: CheckoutPlanId): string {
   return `/checkout?plan=${plan}`;
 }
 
@@ -230,7 +287,7 @@ export function trialEntryDecision(signedIn: boolean): TrialEntryDecision {
  * it is a full-page navigation, matching the redirect this replaced.
  */
 export function startPlanCheckout(
-  plan: BillingPlan,
+  plan: CheckoutPlanId,
   navigate: (path: string) => void = (path) => {
     window.location.href = path;
   },
@@ -265,7 +322,7 @@ export interface HostedCheckoutDeps {
  * bare string and a futile retry.
  */
 export async function startHostedCheckout(
-  plan: BillingPlan,
+  plan: CheckoutPlanId,
   deps: HostedCheckoutDeps = {},
 ): Promise<string> {
   const fetchImpl =

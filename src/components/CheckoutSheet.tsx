@@ -23,8 +23,7 @@
  */
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { checkoutPlanSummary } from "@/lib/billing/trial-checkout";
-import type { BillingPlan } from "@/lib/billing/trials";
+import { checkoutPlanSummary, type CheckoutPlanId } from "@/lib/billing/trial-checkout";
 import EmbeddedCheckoutBody from "./EmbeddedCheckoutBody";
 
 export default function CheckoutSheet({
@@ -32,7 +31,7 @@ export default function CheckoutSheet({
   onClose,
   hideHostedOption = false,
 }: {
-  plan: BillingPlan | null;
+  plan: CheckoutPlanId | null;
   onClose: () => void;
   hideHostedOption?: boolean;
 }) {
@@ -54,7 +53,7 @@ function SheetContent({
   onClose,
   hideHostedOption = false,
 }: {
-  plan: BillingPlan;
+  plan: CheckoutPlanId;
   onClose: () => void;
   hideHostedOption?: boolean;
 }) {

@@ -20,7 +20,7 @@ describe("SubscriptionPage", () => {
   });
 
   it("cancel is a small text button on the new page, still using the portal flow", () => {
-    const client = src("app/settings/subscription/SubscriptionClient.tsx");
+    const client = src("app/(en)/settings/subscription/SubscriptionClient.tsx");
     expect(client).toContain("Cancel subscription");
     expect(client).toContain("/api/billing/portal");
   });
@@ -28,7 +28,7 @@ describe("SubscriptionPage", () => {
 
 describe("entry points rewired", () => {
   it("settings Manage subscription links to /settings/subscription, no portal POST", () => {
-    const settings = src("app/settings/SettingsClient.tsx");
+    const settings = src("app/(en)/settings/SettingsClient.tsx");
     expect(settings).toContain('href="/settings/subscription"');
     expect(settings).not.toContain("/api/billing/portal");
     expect(settings).not.toContain("openPortal");

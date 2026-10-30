@@ -2,6 +2,15 @@
 // the plan is NAMED. "Annual" may survive only as cadence ("billed
 // annually") — never as a plan name — in the canonical copy, the picker,
 // the checkout strip, and the pricing page.
+//
+// Phase C addendum (Pricing Redesign, 2026-10-30): the pricing PAGE
+// moved to the 3-tier grid — the tiers are Lite / Pro / Ultra, annual
+// carries the VIP branding on every tier, and the old VIP-only extras
+// are Ultra's. The "pricing page source" pins below were updated to
+// that naming (ultraHeader, ULTRA EXTRAS heading, 4-column compare
+// booleans). The canonical-copy / picker / strip pins are UNCHANGED:
+// the shared picker still sells the Pro grid under its historical
+// names until the Phase D 9-option rewrite.
 import { describe, it, expect } from "vitest";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
@@ -67,16 +76,17 @@ describe("pricing page source", () => {
     "utf8",
   );
 
-  it("names the annual plan VIP Pro and gives it a VIP-only feature block", () => {
+  it("names the annual plan VIP Pro and gives the top tier its extras block", () => {
     expect(dictionary).toContain('name: "VIP Pro"');
     expect(dictionary).toContain("vipFeatures: [");
     expect(pricing).toContain("vipFeatures");
-    expect(dictionary).toContain('vipOnlyHeading: "VIP PRO ONLY"');
+    expect(dictionary).toContain('vipOnlyHeading: "ULTRA EXTRAS"');
     expect(dictionary).not.toContain('name: "Annual"');
   });
 
-  it("the compare table has a VIP column and gates intel + timelapse to it", () => {
-    expect(dictionary).toContain('vipHeader: "VIP PRO"');
+  it("the compare table has Lite + Ultra columns and gates intel + timelapse to Ultra", () => {
+    expect(dictionary).toContain('liteHeader: "LITE"');
+    expect(dictionary).toContain('ultraHeader: "ULTRA"');
     const rowsBlock = dictionary.slice(dictionary.indexOf("rows: ["));
     const rows = [
       ...rowsBlock.slice(0, rowsBlock.indexOf("]")).matchAll(/"([^"]+)"/g),
@@ -87,11 +97,12 @@ describe("pricing page source", () => {
     const booleans = [
       ...booleansBlock
         .slice(0, booleansBlock.indexOf("];"))
-        .matchAll(/\{ free: (true|false), pro: (true|false), vip: (true|false) \}/g),
+        .matchAll(/\{ free: (true|false), lite: (true|false), pro: (true|false), ultra: (true|false) \}/g),
     ].map((m) => ({
       free: m[1] === "true",
-      pro: m[2] === "true",
-      vip: m[3] === "true",
+      lite: m[2] === "true",
+      pro: m[3] === "true",
+      ultra: m[4] === "true",
     }));
     expect(booleans).toHaveLength(rows.length);
     for (const label of [
@@ -100,7 +111,7 @@ describe("pricing page source", () => {
     ]) {
       const i = rows.indexOf(label);
       expect(i, label).toBeGreaterThan(-1);
-      expect(booleans[i], label).toEqual({ free: false, pro: false, vip: true });
+      expect(booleans[i], label).toEqual({ free: false, lite: false, pro: false, ultra: true });
     }
   });
 });

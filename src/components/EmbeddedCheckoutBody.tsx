@@ -24,8 +24,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { checkoutPlanSummary } from "@/lib/billing/trial-checkout";
-import type { BillingPlan } from "@/lib/billing/trials";
+import { checkoutPlanSummary, type CheckoutPlanId } from "@/lib/billing/trial-checkout";
 import {
   createCheckoutSessionController,
   type StripeJsLike,
@@ -49,7 +48,7 @@ export default function EmbeddedCheckoutBody({
   stripClassName,
   hideHostedOption = false,
 }: {
-  plan: BillingPlan;
+  plan: CheckoutPlanId;
   /** Surfaces the owner wants embedded-only (TrialCtaSection cards)
    *  pass this: no hosted payment-link option under the form. */
   hideHostedOption?: boolean;

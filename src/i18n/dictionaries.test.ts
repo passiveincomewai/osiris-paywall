@@ -147,11 +147,14 @@ describe("manifest ↔ dictionary completeness", () => {
         // Spanish line already matched; bookkeeping only — see
         // manifest.ts), and faq on 2026-10-30 for the site-wide
         // FAQ compilation (86 questions, 11 groups; Spanish
-        // re-translated the same day — see manifest.ts).
+        // re-translated the same day — see manifest.ts). Pricing
+        // moved again on 2026-10-30 for the Pricing Redesign
+        // Phase C 3-tier grid restructure (Spanish re-synced the
+        // same day).
         expect(entry.updatedAt).toBe(
-          ["faq"].includes(entry.slug)
+          ["faq", "pricing"].includes(entry.slug)
             ? "2026-10-30"
-            : ["live-flight-tracker", "ship-tracker", "live-webcams", "pricing"].includes(entry.slug)
+            : ["live-flight-tracker", "ship-tracker", "live-webcams"].includes(entry.slug)
                 ? "2026-10-29"
                 : [""].includes(entry.slug)
                     ? "2026-10-27"
