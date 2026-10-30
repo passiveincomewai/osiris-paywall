@@ -62,7 +62,7 @@ import WelcomePanel from "./WelcomePanel";
 import TourOverlay from "./TourOverlay";
 import MicroCard from "./MicroCard";
 import ConversionCard from "./ConversionCard";
-import HelpPanel, { HelpButton } from "./HelpPanel";
+import HelpPanel, { HelpButton, markHelpOpened } from "./HelpPanel";
 
 type UiMode = "none" | "welcome" | "tour" | "micro" | "conversion" | "help";
 
@@ -255,6 +255,7 @@ function OnboardingRootInner({
 
   const startTour = useCallback(() => {
     clearAdvance();
+    markHelpOpened(); // the idle tutorial nudge never fires for a visitor who has taken a tour
     ensureFirstCamera();
     emitOnboarding(ONB_EVENT.start);
     update((s) => ({ ...s, welcome: s.welcome === "done" ? "done" : "tour", tourStep: 1 }));
@@ -551,7 +552,7 @@ function OnboardingRootInner({
     <>
       <OnbStyles />
       {ui !== "tour" && ui !== "welcome" && (
-        <HelpButton isMobile={isMobile} onClick={() => setUi(ui === "help" ? "none" : "help")} />
+        <HelpButton isMobile={isMobile} nudgeEnabled={group === "b"} onClick={() => setUi(ui === "help" ? "none" : "help")} />
       )}
       {ui === "help" && (
         <HelpPanel

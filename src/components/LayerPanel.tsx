@@ -1258,7 +1258,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
             aria-expanded={sheetOpen}
             aria-label="Open Layers & Stats panel"
             title="Layers & Stats"
-            className="layers-pill pointer-events-auto absolute left-3 top-[92px] flex items-center gap-2 pl-3 pr-2.5 py-2 rounded-full cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
+            className="layers-pill pointer-events-auto absolute left-3 top-[112px] flex items-center gap-2 pl-3 pr-2.5 py-2 rounded-full cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
             style={{
               border: '1px solid rgba(56,189,248,0.55)',
               background: 'linear-gradient(180deg, rgba(7,20,40,0.88), rgba(3,9,20,0.92))',

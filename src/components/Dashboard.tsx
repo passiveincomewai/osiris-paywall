@@ -2827,11 +2827,16 @@ export default function Dashboard() {
       {/* ── TODAY IN THE SKY (desktop, left rail) ──
           Moved from the right tool strip to the opposite sidebar at the
           owner's order (2026-10-29), directly above the Layers & Stats
-          pill (which sits at top-[92px]; this button occupies 52–84).
+          pill. Shifted down 20px the same day (owner: the button sat too
+          close to the header logo — the 96px-wide banner at top:52
+          tucked under the logo's bottom-left corner, logo occupying
+          y 16–60): this button now occupies 72–104, a clear 12px below
+          the logo, and the Layers & Stats pill moved with it
+          (top-[112px] in LayerPanel) keeping the 8px gap between them.
           z-index stays below the LayerPanel sheet (z-50) so the open
           sheet covers it. */}
       {!isMobile && (
-        <motion.div data-hud initial={{ opacity: 0, x: -12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }} transition={hudIn(0.3)} className="absolute left-3 z-[45] pointer-events-auto" style={{ top: 52 }}>
+        <motion.div data-hud initial={{ opacity: 0, x: -12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }} transition={hudIn(0.3)} className="absolute left-3 z-[45] pointer-events-auto" style={{ top: 72 }}>
           <TodayInTheSky placement="rail-left" satellites={data.satellites} satellitesAt={data.satellites_at} earthquakes={data.earthquakes} onLocate={locateFromSkyPanel} />
         </motion.div>
       )}

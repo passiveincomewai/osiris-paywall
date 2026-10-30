@@ -16,14 +16,17 @@ export const ONB_STYLE = `
 @keyframes onb-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(0,229,255,0.45), 0 0 18px rgba(0,229,255,0.35); } 70% { box-shadow: 0 0 0 10px rgba(0,229,255,0), 0 0 18px rgba(0,229,255,0.35); } 100% { box-shadow: 0 0 0 0 rgba(0,229,255,0), 0 0 18px rgba(0,229,255,0.35); } }
 @keyframes onb-pop { 0% { transform: scale(0.4); opacity: 0; } 60% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes onb-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes onb-nudge-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245,197,66,0.35), 0 6px 22px rgba(0,0,0,0.55); } 50% { box-shadow: 0 0 0 7px rgba(245,197,66,0), 0 6px 22px rgba(0,0,0,0.55); } }
 .onb-anim-in { animation: onb-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .onb-anim-in-top { animation: onb-in-top 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .onb-anim-fade { animation: onb-fade 0.3s ease both; }
 .onb-pulse { animation: onb-pulse-ring 1.8s ease-out infinite; }
 .onb-pop { animation: onb-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.onb-nudge { animation: onb-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both, onb-nudge-pulse 2.4s ease-in-out 0.4s infinite; }
 @media (prefers-reduced-motion: reduce) {
   .onb-anim-in, .onb-anim-in-top, .onb-anim-fade, .onb-pop { animation: none; }
   .onb-pulse { animation: none; }
+  .onb-nudge { animation: none; }
 }
 `;
 

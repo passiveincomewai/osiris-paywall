@@ -16,7 +16,7 @@
  * scroll and z-index contract is unchanged.
  */
 
-import type { ComponentType } from "react";
+import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
 import {
   BookOpen,
   Cctv,
@@ -35,46 +35,194 @@ import {
 } from "lucide-react";
 import { HELP_ENTRIES, type HelpEntry } from "@/lib/onboarding/steps";
 
-export function HelpButton({ isMobile, onClick }: { isMobile: boolean; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Help and tutorials"
-      title="Help & tutorials"
-      className="flex items-center justify-center rounded-full hover:shadow-[0_0_14px_rgba(0,229,255,0.35)] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-      style={
-        isMobile
-          ? {
-              position: "fixed",
-              right: 12,
-              bottom: "calc(64px + env(safe-area-inset-bottom, 0px))",
-              width: 38,
-              height: 38,
-              zIndex: 940,
-            }
-          : {
-              position: "fixed",
-              right: 16,
-              bottom: 52,
-              width: 38,
-              height: 38,
-              zIndex: 940,
-            }
+/* ── Idle tutorial nudge (owner's order, 2026-10-29) ─────────────────
+ * After ~3 minutes with NO interaction the help button grows a
+ * "Click here for a tutorial" pill. Hard rules:
+ *   - at most once per session (sessionStorage), and never again for a
+ *     visitor who has EVER opened the tutorials (localStorage flag set
+ *     by the button's own click and by OnboardingRoot's startTour);
+ *   - it never stacks over a modal dialog (CheckoutSheet & friends are
+ *     aria-modal): a fire that finds one open defers and re-checks;
+ *   - the pill is a sibling of the fixed button, absolutely anchored to
+ *     the button's known slot, so it shifts no layout anywhere.
+ * Like every proactive onboarding surface it is enabled for group B
+ * only (group A is the no-proactive-UI control — see events.ts);
+ * OnboardingRoot passes nudgeEnabled accordingly. */
+export const HELP_OPENED_KEY = "we_onb_help_opened";
+const NUDGE_SHOWN_KEY = "we_onb_nudge_shown";
+export const HELP_NUDGE_IDLE_MS = 180_000;
+const NUDGE_MODAL_DEFER_MS = 30_000;
+
+export function markHelpOpened(): void {
+  try {
+    localStorage.setItem(HELP_OPENED_KEY, "1");
+  } catch {
+    /* private mode — the nudge simply may re-offer next session */
+  }
+}
+
+function helpEverOpened(): boolean {
+  try {
+    return localStorage.getItem(HELP_OPENED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function nudgeShownThisSession(): boolean {
+  try {
+    return sessionStorage.getItem(NUDGE_SHOWN_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markNudgeShown(): void {
+  try {
+    sessionStorage.setItem(NUDGE_SHOWN_KEY, "1");
+  } catch {
+    /* private mode — the in-memory ref still caps it for this mount */
+  }
+}
+
+export function HelpButton({
+  isMobile,
+  onClick,
+  nudgeEnabled = false,
+}: {
+  isMobile: boolean;
+  onClick: () => void;
+  nudgeEnabled?: boolean;
+}) {
+  const [nudge, setNudge] = useState(false);
+  const nudgeShownRef = useRef(false);
+
+  useEffect(() => {
+    if (!nudgeEnabled) return;
+    if (helpEverOpened() || nudgeShownThisSession()) return;
+    let timer: number | null = null;
+    let lastReset = 0;
+    const arm = (delay: number) => {
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(fire, delay);
+    };
+    const fire = () => {
+      // The visitor found the tutorials by another path meanwhile, or a
+      // modal (checkout) is up: never stack — defer while a modal lasts;
+      // its own clicks/keypresses count as activity and re-arm anyway.
+      if (helpEverOpened() || nudgeShownRef.current) return;
+      if (document.querySelector('[aria-modal="true"]')) {
+        arm(NUDGE_MODAL_DEFER_MS);
+        return;
       }
-    >
-      {/* The owner's medallion artwork (book + play over the globe),
-          keyed to a transparent PNG — replaces the "?" glyph. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/images/help-medallion.png"
-        alt=""
-        width={512}
-        height={512}
-        draggable={false}
-        className="h-full w-full rounded-full select-none pointer-events-none"
-      />
-    </button>
+      nudgeShownRef.current = true;
+      markNudgeShown();
+      setNudge(true);
+    };
+    const onActivity = () => {
+      const now = Date.now();
+      if (now - lastReset < 1000) return; // throttled reset (mousemove fires constantly)
+      lastReset = now;
+      if (!nudgeShownRef.current) arm(HELP_NUDGE_IDLE_MS);
+    };
+    const passive: AddEventListenerOptions = { passive: true };
+    window.addEventListener("pointerdown", onActivity, passive);
+    window.addEventListener("mousemove", onActivity, passive);
+    window.addEventListener("keydown", onActivity);
+    window.addEventListener("touchstart", onActivity, passive);
+    window.addEventListener("wheel", onActivity, passive);
+    window.addEventListener("scroll", onActivity, passive);
+    arm(HELP_NUDGE_IDLE_MS);
+    return () => {
+      if (timer) window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", onActivity);
+      window.removeEventListener("mousemove", onActivity);
+      window.removeEventListener("keydown", onActivity);
+      window.removeEventListener("touchstart", onActivity);
+      window.removeEventListener("wheel", onActivity);
+      window.removeEventListener("scroll", onActivity);
+    };
+  }, [nudgeEnabled]);
+
+  const handleOpen = useCallback(() => {
+    markHelpOpened();
+    setNudge(false);
+    onClick();
+  }, [onClick]);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={handleOpen}
+        aria-label="Help and tutorials"
+        title="Help & tutorials"
+        className="flex items-center justify-center rounded-full hover:shadow-[0_0_14px_rgba(0,229,255,0.35)] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+        style={
+          isMobile
+            ? {
+                position: "fixed",
+                right: 12,
+                bottom: "calc(64px + env(safe-area-inset-bottom, 0px))",
+                width: 38,
+                height: 38,
+                zIndex: 940,
+              }
+            : {
+                position: "fixed",
+                right: 16,
+                bottom: 52,
+                width: 38,
+                height: 38,
+                zIndex: 940,
+              }
+        }
+      >
+        {/* The owner's medallion artwork (book + play over the globe),
+            keyed to a transparent PNG — replaces the "?" glyph. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/help-medallion.png"
+          alt=""
+          width={512}
+          height={512}
+          draggable={false}
+          className="h-full w-full rounded-full select-none pointer-events-none"
+        />
+      </button>
+      {nudge && (
+        <div
+          className="onb-nudge fixed flex items-center gap-0.5 rounded-full border border-amber-300/60 bg-[#0a1424]/95 py-1 pl-3 pr-1 backdrop-blur-sm"
+          style={
+            isMobile
+              ? {
+                  right: 58,
+                  bottom: "calc(70px + env(safe-area-inset-bottom, 0px))",
+                  zIndex: 940,
+                }
+              : { right: 62, bottom: 58, zIndex: 940 }
+          }
+          role="group"
+          aria-label="Tutorial suggestion"
+        >
+          <button
+            type="button"
+            onClick={handleOpen}
+            className="whitespace-nowrap text-[11px] font-semibold tracking-wide text-amber-200 transition-colors hover:text-amber-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded-full"
+          >
+            Click here for a tutorial
+          </button>
+          <button
+            type="button"
+            onClick={() => setNudge(false)}
+            aria-label="Dismiss tutorial suggestion"
+            className="flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full text-amber-200/60 transition-colors hover:bg-white/10 hover:text-amber-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
