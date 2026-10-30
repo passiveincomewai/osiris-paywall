@@ -166,6 +166,7 @@ export default async function BeachWebcamsPage() {
     "myrtle-beach",
     "virginia-beach",
     "galveston",
+    "key-west",
   ];
   const stormSeasonSpots = BEACH_SPOTS.filter((s) =>
     STORM_SEASON_SLUGS.includes(s.slug),

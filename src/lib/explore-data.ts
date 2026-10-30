@@ -483,6 +483,7 @@ export const EXPLORE_SCOPES: Record<string, ExploreScopeDef> = {
   'beach-myrtle-beach': eventGeoIn('Myrtle Beach', 'united-states', 33.6959, -78.88, 12),
   'beach-palma': eventGeoIn('Palma & Mallorca’s south coast', 'spain', 39.5696, 2.6502, 12),
   'beach-santa-monica': eventGeoIn('Santa Monica', 'united-states', 34.0095, -118.4912, 12),
+  'beach-key-west': eventGeoIn('Key West', 'united-states', 24.5551, -81.78, 12),
 
   /* Railfan walls (keyword wave B, Oct 2026) — the /train-webcams
      family in lib/railfan-places. Two scope shapes:

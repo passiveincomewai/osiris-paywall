@@ -13,7 +13,8 @@
  *
  * Selection: the coastal places whose 12 km wall is a genuine
  * cluster (the data phase's final selection, verified 22/22 against
- * the raw chunks). Famous breaks with no real catalogue cluster —
+ * the raw chunks; Key West added 2026-10-29 by the Keyword Gap
+ * Programme — 29 FDOT island cameras verified the same way, 23/23). Famous breaks with no real catalogue cluster —
  * Nazaré, Biarritz, Byron Bay, Jeffrey's Bay and the rest of the
  * candidate list — have no wall and no page; the hub says so.
  *
@@ -561,6 +562,28 @@ export const BEACH_SPOTS: CoastalSpot[] = [
     ],
     cityPage: { slug: "los-angeles", label: "Los Angeles city webcams" },
     stateHub: { slug: "california", label: "California traffic cameras" },
+  }),
+  spot({
+    slug: "key-west",
+    family: "beach",
+    name: "Key West",
+    shortName: "Key West",
+    place: "Florida Keys, Florida, United States",
+    countrySlug: "united-states",
+    countryName: "United States",
+    lat: 24.5551,
+    lng: -81.78,
+    knownFor:
+      "The last island of the Keys — mile marker 0 of the Overseas Highway, Duval Street, and the nightly sunset gathering at Mallory Square.",
+    about: [
+      "Key West is the end of the road: the final island of the Florida Keys, where US-1 — the Overseas Highway, strung over 42 bridges from the mainland — runs out at mile marker 0. Four miles long and two wide, the island packs its life into the Old Town grid at its western end: Duval Street running from the Gulf side to the Atlantic side, the harbour at the Bight, and Mallory Square, where the town gathers every evening to watch the sun drop into the Gulf.",
+      "The catalogue's Key West cameras are Florida DOT's island network — 29 feeds standing over the roads that carry the island: North Roosevelt Boulevard along the north shore, the Truman Avenue corridor through town, and one at the corner of Duval Street itself. They are road cameras, and this page says so: they read the island's weather, its light and its traffic live. The famous private feeds — the Duval Street bar cams, the Southernmost Point camera — are not in the catalogue, and no road feed here is dressed up as one of them.",
+    ],
+    watchNotes: [
+      "The nearest feeds stand on North Roosevelt Boulevard at First Street, 0.6 km from the wall's centre — the island's front door, where the Overseas Highway comes in.",
+      "Six feeds name Truman Avenue and one stands at Duval and Truman — the Old Town grid itself. No beach-named feed exists in the catalogue for Key West; the wall is the island's road grid, labelled as one.",
+    ],
+    stateHub: { slug: "florida", label: "Florida traffic cameras" },
   }),
 ];
 

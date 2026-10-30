@@ -368,7 +368,9 @@ const SEO_PAGES_BORDER = [
 // Wave 16 (2026-10-27): the surf & beach spot walls (keyword wave B) —
 // the /surf-webcams hub plus one page per spot in lib/surf-spots:
 // /surf-webcams/<slug> for the 13 surf towns and /beach-webcams/<slug>
-// for the 9 beach towns. The slug lists derive from the same module
+// for the beach towns (9 at wave 16; Key West added 2026-10-29 by the
+// Keyword Gap Programme → 10). The slug lists derive from the same
+// module
 // the routes' generateStaticParams read, so the sitemap cannot drift
 // from the pages that exist. Catalogue-driven walls, so they carry
 // the catalogue's date.

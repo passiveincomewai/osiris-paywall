@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1098);
+    expect(nonTransit.length).toBe(1099);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -156,9 +156,13 @@ describe("sitemap URL set", () => {
     // final 12 head-to-head pair URLs (webcam/satellite/OSINT
     // clusters) → 1,098. Delta hand-verified: removing exactly
     // those 12 URLs reproduces the 1,086 set and the 52a52ab4…
-    // hash byte-for-byte.
+    // hash byte-for-byte. The Keyword Gap Programme (2026-10-29)
+    // then added /beach-webcams/key-west (29 verified FDOT island
+    // cameras, the beach family's tenth spot) → 1,099. Delta
+    // hand-verified: removing exactly that URL reproduces the
+    // 1,098 set and the a1fe3060… hash byte-for-byte.
     expect(hash).toBe(
-      "a1fe30604070e15858843a0e7cb240ac1584a0ff26523c9bcfb6d28880ba6530",
+      "24d40d311f0fe88b7204ea8037cad2387a9d6cd5fc682fd0dbde0dda2c5e8adb",
     );
   });
 

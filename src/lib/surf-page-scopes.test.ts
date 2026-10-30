@@ -82,6 +82,7 @@ const YIELDS: Record<string, number> = {
   'myrtle-beach': 22,
   palma: 22,
   'santa-monica': 18,
+  'key-west': 29,
 };
 
 describe('surf & beach walls: registry pins + raw-catalogue yields', () => {
@@ -97,10 +98,10 @@ describe('surf & beach walls: registry pins + raw-catalogue yields', () => {
     });
   }
 
-  it('the family is 13 surf spots + 9 beach spots, each with a pinned yield', () => {
-    expect(ALL_SPOTS).toHaveLength(22);
+  it('the family is 13 surf spots + 10 beach spots, each with a pinned yield', () => {
+    expect(ALL_SPOTS).toHaveLength(23);
     expect(ALL_SPOTS.filter((s) => s.family === 'surf')).toHaveLength(13);
-    expect(ALL_SPOTS.filter((s) => s.family === 'beach')).toHaveLength(9);
+    expect(ALL_SPOTS.filter((s) => s.family === 'beach')).toHaveLength(10);
     for (const s of ALL_SPOTS) expect(YIELDS[s.slug]).toBeGreaterThan(0);
   });
 });
