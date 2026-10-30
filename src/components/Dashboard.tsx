@@ -1865,6 +1865,10 @@ export default function Dashboard() {
   const flightsTokenRef = useRef<string | null>(null);
   const flightsSnapshotRef = useRef<FlightsPayloadLike | null>(null);
   const fetchFlights = useCallback(async (): Promise<boolean> => {
+    /* Poll-only caller contract, same as fetchEndpoint's skipWhenHidden: a
+       hidden tab lands nothing this tick and reports so; the 30s poll
+       interval below picks it up on the first visible tick. */
+    if (typeof document !== 'undefined' && document.hidden) return false;
     const held = flightsTokenRef.current;
     try {
       const res = await fetch(held ? `/api/flights?since=${encodeURIComponent(held)}` : '/api/flights', { cache: 'no-store' });
@@ -2129,22 +2133,22 @@ export default function Dashboard() {
     }
 
     if (activeLayers.balloons) {
-      intervals.push(setInterval(() => fetchEndpoint('/api/balloons', d => ({ balloons: d.balloons })), 300000)); // 5m
+      intervals.push(setInterval(() => fetchEndpoint('/api/balloons', d => ({ balloons: d.balloons }), undefined, { skipWhenHidden: true }), 300000)); // 5m
     }
     if (activeLayers.radiation) {
-      intervals.push(setInterval(() => fetchEndpoint('/api/radiation', d => ({ radiation: d.stations })), 300000)); // 5m
+      intervals.push(setInterval(() => fetchEndpoint('/api/radiation', d => ({ radiation: d.stations }), undefined, { skipWhenHidden: true }), 300000)); // 5m
     }
     if ((activeLayers as any).fire_perimeters) {
-      intervals.push(setInterval(() => fetchEndpoint('/api/fire-perimeters', d => ({ fire_perimeters: d.features ?? [] })), 300000)); // 5m
+      intervals.push(setInterval(() => fetchEndpoint('/api/fire-perimeters', d => ({ fire_perimeters: d.features ?? [] }), undefined, { skipWhenHidden: true }), 300000)); // 5m
     }
     if ((activeLayers as any).hurricanes) {
       intervals.push(setInterval(() => fetchEndpoint('/api/hurricanes', d => ({
         hurricanes: d.storms ?? [],
         hurricane_features: d.features ?? [],
-      })), 600000)); // 10m — advisories land every 3–6h
+      }), undefined, { skipWhenHidden: true }), 600000)); // 10m — advisories land every 3–6h
     }
     if ((activeLayers as any).plows) {
-      intervals.push(setInterval(() => fetchEndpoint('/api/plows', d => ({ plows: d.plows ?? [] })), 120000)); // 2m — the AVL feed republishes on the same cadence
+      intervals.push(setInterval(() => fetchEndpoint('/api/plows', d => ({ plows: d.plows ?? [] }), undefined, { skipWhenHidden: true }), 120000)); // 2m — the AVL feed republishes on the same cadence
     }
     if (activeLayers.maritime) {
       /* Ten seconds is the cadence a moving vessel needs. The other two thirds
@@ -2160,7 +2164,7 @@ export default function Dashboard() {
       const vesselGapMs = () => ((dataRef.current.maritime_ships?.length ?? 0) > 0 ? 10_000 : 300_000);
       const pollMaritime = () => {
         if (stopped) return;
-        fetchEndpoint('/api/maritime', d => ({ maritime_ports: d.ports, maritime_chokepoints: d.chokepoints, maritime_ships: d.ships }));
+        fetchEndpoint('/api/maritime', d => ({ maritime_ports: d.ports, maritime_chokepoints: d.chokepoints, maritime_ships: d.ships }), undefined, { skipWhenHidden: true });
         vesselTimer = setTimeout(pollMaritime, vesselGapMs());
       };
       vesselTimer = setTimeout(pollMaritime, vesselGapMs());
@@ -2169,7 +2173,7 @@ export default function Dashboard() {
     if ((activeLayers as any).cyber_attacks) {
       intervals.push(setInterval(() => {
         layerFetchedRef.current.delete('cyber_attacks');
-        fetchEndpoint('/api/cyber-attacks', d => ({ cyber_attacks: d.indicators }));
+        fetchEndpoint('/api/cyber-attacks', d => ({ cyber_attacks: d.indicators }), undefined, { skipWhenHidden: true });
         layerFetchedRef.current.add('cyber_attacks');
       }, 300000)); // 5m — a blocklist turns over in hours, not seconds
     }
@@ -2180,7 +2184,7 @@ export default function Dashboard() {
          Without this the markers froze at their first-fetch positions
          for the life of the page (the one-shot fetch never repeats);
          OsirisMap re-points the selection after each refresh. */
-      intervals.push(setInterval(() => fetchEndpoint('/api/satellites', d => ({ ...d, satellites: decodeSatelliteRows(d), satellites_at: d.timestamp })), 120000)); // 2m — matches the route's 120 s payload cache
+      intervals.push(setInterval(() => fetchEndpoint('/api/satellites', d => ({ ...d, satellites: decodeSatelliteRows(d), satellites_at: d.timestamp }), undefined, { skipWhenHidden: true }), 120000)); // 2m — matches the route's 120 s payload cache
     }
     return () => { intervals.forEach(clearInterval); stopFns.forEach(stop => stop()); };
   }, [activeLayers, fetchEndpoint, dataBoot]);
