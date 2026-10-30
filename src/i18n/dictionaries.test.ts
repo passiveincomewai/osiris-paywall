@@ -145,13 +145,17 @@ describe("manifest ↔ dictionary completeness", () => {
         // Programme "near me" answer + FAQ, and pricing on
         // 2026-10-29 for the Osiris brand-removal FAQ swap (the
         // Spanish line already matched; bookkeeping only — see
-        // manifest.ts).
+        // manifest.ts), and faq on 2026-10-30 for the site-wide
+        // FAQ compilation (86 questions, 11 groups; Spanish
+        // re-translated the same day — see manifest.ts).
         expect(entry.updatedAt).toBe(
-          ["live-flight-tracker", "ship-tracker", "live-webcams", "pricing"].includes(entry.slug)
-            ? "2026-10-29"
-            : [""].includes(entry.slug)
-                ? "2026-10-27"
-                : "2026-10-26"
+          ["faq"].includes(entry.slug)
+            ? "2026-10-30"
+            : ["live-flight-tracker", "ship-tracker", "live-webcams", "pricing"].includes(entry.slug)
+                ? "2026-10-29"
+                : [""].includes(entry.slug)
+                    ? "2026-10-27"
+                    : "2026-10-26"
         );
       });
 

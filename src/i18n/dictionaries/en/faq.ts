@@ -13,6 +13,16 @@
  * pricing page and the owner's honesty pass already present it that
  * way. Trial terms already match trials.ts (weekly 3 days, monthly
  * and VIP Pro 10 days).
+ *
+ * 2026-10-29 compilation: this dictionary is now the compiled union of
+ * the site's product FAQs — the previous /faq set plus the support
+ * FAQs from /contact, and the FAQ sets from the security, enterprise,
+ * affiliates, ambient-mode and photo-geolocation pages and the
+ * pricing/home/live-webcams dictionaries, deduplicated. Every answer
+ * is verbatim from its source page. Place-, event-, competitor- and
+ * article-specific FAQs stay on their own pages. The page also gained
+ * search, a top-recommended list and a view-all affordance (see
+ * FaqSearch), driven by the copy blocks below.
  */
 
 import type { RichText } from "../types";
@@ -42,6 +52,28 @@ export interface FaqCopy {
     sub: string;
   };
   groups: { title: string; faqs: FaqEntryCopy[] }[];
+  search: {
+    placeholder: string;
+    ariaLabel: string;
+    resultsTemplate: string;
+    noResultsHeading: string;
+    noResultsBody: string;
+    helpCenterLink: string;
+  };
+  recommended: {
+    heading: string;
+    questions: string[];
+  };
+  viewAll: {
+    button: string;
+    heading: string;
+  };
+  helpCenter: {
+    heading: string;
+    body: string;
+    button: string;
+    tutorialsLabel: string;
+  };
   contactCta: {
     heading: string;
     sub: string;
@@ -79,6 +111,10 @@ export const enFaq: FaqCopy = {
     {
       title: "General",
       faqs: [
+        plain(
+          "What is WorldEye?",
+          "WorldEye is a free website that puts a live 3D globe of Earth in your browser — 74,229 public cameras, live flights, satellites, weather, earthquakes and wildfires on one map. There is nothing to install and no account needed to look around. Paid plans add an AI analyst, camera recording, alerts and premium intelligence layers."
+        ),
         {
           q: "Is the map really free?",
           a: [
@@ -151,6 +187,10 @@ export const enFaq: FaqCopy = {
           "Does WorldEye work on my phone?",
           "Yes — WorldEye runs in any modern phone browser, with nothing to install, and the full globe, cameras, flights and search all work on mobile. The layout adapts to the smaller screen and camera feeds play inline. There is no separate app to download; the website is the app."
         ),
+        plain(
+          "Where does WorldEye's data come from?",
+          "From public sources: aircraft ADS-B broadcasts, ship AIS transponders, satellite orbital data, public webcam networks, and open earthquake, weather and wildfire feeds. WorldEye collects and visualizes public data — it doesn't hack, intercept, or buy private data."
+        ),
       ],
     },
     {
@@ -177,6 +217,10 @@ export const enFaq: FaqCopy = {
         plain(
           "Can I cancel anytime?",
           "Anytime, in one click. Your Pro access runs until the end of the period you've paid for, then simply stops. No retention calls, no dark patterns."
+        ),
+        plain(
+          "What happens if I switch plans?",
+          "Upgrades apply immediately with proration handled by Stripe. Downgrades take effect at the end of your current period."
         ),
         plain(
           "What payment methods do you accept?",
@@ -274,16 +318,6 @@ export const enFaq: FaqCopy = {
           "I forgot my password — how do I reset it?",
           "Use the 'Forgot password' link on the sign-in page. We'll email you a reset link that expires after 1 hour and is burned once used. For security, sign-in never reveals whether an email is registered."
         ),
-        {
-          q: "How does the affiliate program work?",
-          a: [
-            tx("It's free to join and open to anyone eligible — you don't need to be a subscriber. Share your referral link; when someone subscribes through it, you earn a recurring commission of 15–30% (your rate grows with your rank) on every billing cycle while they stay subscribed. Commissions clear after a 30-day holding period, and payouts start once your balance reaches $25. Details on the "),
-            lk("affiliates", "affiliate program page"),
-            tx("."),
-          ],
-          schemaA:
-            "It's free to join and open to anyone eligible — you don't need to be a subscriber. Share your referral link; when someone subscribes through it, you earn a recurring commission of 15–30% (your rate grows with your rank) on every billing cycle while they stay subscribed. Commissions clear after a 30-day holding period, and payouts start once your balance reaches $25. Details on the affiliate program page.",
-        },
       ],
     },
     {
@@ -309,9 +343,235 @@ export const enFaq: FaqCopy = {
           "Where do the cameras come from?",
           "The cameras are public feeds published openly by their operators — transportation departments, cities, airports, ski resorts, harbors and businesses. The United States contributes the most: 41,355 cameras, largely state DOT networks. WorldEye aggregates and maps the feeds; it doesn't operate the cameras, which is why a feed occasionally goes dark when its operator's stream does."
         ),
+        plain(
+          "How do I find cameras in a specific country or city?",
+          "Open the live map and search any place to fly straight to its nearest cameras, or browse the directory: country pages list every camera in the live index for that country with area filters, and city pages gather a city's feeds in one place."
+        ),
+        plain(
+          "Are there live cameras near me?",
+          "Probably, if your area publishes public feeds. The fastest check is the search on this page: type your city or area and the directory lists the cameras there; the country directory and the Top 25 regions also show where the densest networks run. On the live globe you can zoom straight to your neighbourhood and tap any camera marker. Where no public feed exists nearby, the directory shows the closest covered town rather than pretending otherwise."
+        ),
+        plain(
+          "How is the directory kept honest?",
+          "Every feed is checked to make sure it actually plays before it is listed — a camera that doesn't stream doesn't get counted — and the directory re-checks and deduplicates feeds over time. The headline number is the count of cameras the globe actually serves, which is why it is exact rather than a round marketing figure."
+        ),
+      ],
+    },
+    {
+      title: "Security",
+      faqs: [
+        plain(
+          "Does WorldEye store my credit card?",
+          "No. Stripe processes all payments; card numbers never touch WorldEye's systems."
+        ),
+        plain(
+          "Is my card safe during a free trial?",
+          "Yes — trials use the same Stripe-hosted checkout as paid plans. Your card goes to Stripe, never to WorldEye, and nothing is charged during the trial."
+        ),
+        plain(
+          "How do I report a security vulnerability?",
+          "Through the contact page, with as much detail as you can share. Please give us a chance to fix it before disclosing publicly."
+        ),
+        plain(
+          "What if I think my account was compromised?",
+          "Reset your password right away from the sign-in page (reset links expire after 1 hour and are burned on use), then contact us from your account email so we can check the account with you."
+        ),
+      ],
+    },
+    {
+      title: "Ambient Mode",
+      faqs: [
+        plain(
+          "What is WorldEye Ambient Mode?",
+          "Ambient Mode is a Slow TV player at worldeye.app/ambient. It plays WorldEye's live public cameras one at a time, full-screen, crossfading every 30–180 seconds (90 by default), with collections called moods — Rainy Cities, Snowy Mountains, Tropical Beaches, Night Views, or the whole planet shuffled. It is designed for televisions, second monitors and study desks: the controls hide themselves, and a small caption names each camera's place."
+        ),
+        plain(
+          "How much does Ambient cost?",
+          "Ambient is $4.99/month with a 10-day free trial — start the trial from the player or this page and you will not be charged until it ends. It is a standalone product, separate from WorldEye Pro, but every Pro and VIP plan already includes unlimited Ambient at no extra cost."
+        ),
+        plain(
+          "Can I put Ambient on my TV?",
+          "Yes — open worldeye.app/ambient in your smart TV's browser, or cast/mirror from a phone, tablet or laptop, then press start: Ambient goes full-screen and its controls hide after three seconds. The Stream to YouTube feature can also put Ambient on a TV through the YouTube app, by running the show on your own channel."
+        ),
+        plain(
+          "Can I try Ambient free without signing up?",
+          "Yes. Open worldeye.app/ambient and press start: everyone gets a 3-minute streaming demo with no account and no card. The demo counts time only while a camera is actually playing — pausing or a slow feed does not burn it. When it ends, the picture blurs and you can start the 10-day free trial or sign in if you already have Ambient or Pro."
+        ),
+        plain(
+          "Can I stream Ambient to my own YouTube channel?",
+          "Yes — that is Stream to YouTube, included with Ambient and with Pro. You save your own YouTube stream key in settings and run a small relay program on an always-on computer; it cycles the cameras WorldEye is cleared to redistribute, with a WorldEye credit overlay, for as long as you leave it running. See the Stream to YouTube page for how it works and which cameras are eligible."
+        ),
+      ],
+    },
+    {
+      title: "Photo geolocation",
+      faqs: [
+        plain(
+          "How does photo geolocation work here?",
+          "In layers. GPS coordinates embedded in the photo file (EXIF) come first — they are part of the file itself. Without them, the tool extracts visible clues (signage text, named landmarks, plate styles, driving side, architecture, vegetation), looks the named places up in OpenStreetMap, and ranks the matches by how much independent evidence supports each one. The ranking is deterministic: the same clues always produce the same order, and the evidence is shown so you can judge it yourself."
+        ),
+        plain(
+          "What does it cost?",
+          "Nothing — it is a free beta with no signup. To keep it sustainable there is a limit of 3 analyses per day per visitor, and the visual clue pass has a daily budget; when that budget is used up the tool keeps working in metadata-only mode and tells you so."
+        ),
+        plain(
+          "Is my photo stored or shared?",
+          "No. Your photo is processed in memory on the server and discarded when the analysis finishes. It is not saved to disk or a database, not used for training, and never sent to a reverse-image search or any third-party photo service. The only things that leave the server are text clues (for example a landmark name) sent to OpenStreetMap for place lookup, and — when visual analysis is enabled — the image itself, sent once to the AI provider that powers the clue pass. Nothing about your photo is kept afterwards."
+        ),
+        plain(
+          "Do you keep analytics about my photo or where it was taken?",
+          "No. We count completed analyses so we can tell whether the beta is used, and a completed analysis records exactly one coarse token: whether the answer came from the file's metadata, from visual-clue matching, or could not be determined. No photo, no clue text, and no coordinates — not even the result's — are attached to that count. The photo itself is processed in memory and discarded, as the privacy notes on this page describe."
+        ),
+        plain(
+          "Does it identify people in photos?",
+          "No. The tool does not perform face recognition or identify individuals, and people in a photo are never used as clues."
+        ),
+        plain(
+          "How accurate is it?",
+          "Every result carries its own uncertainty radius, and that radius is the honest answer: “within about 250 m” means exactly that, and a wide radius means the match is broad. GPS found in the file is usually the strongest result; landmark and place-name matches vary with how distinctive the place is. This is a beta and matches can be wrong — which is why the evidence for and against each candidate is always shown. Results for homes and private property are deliberately shown as a general area only."
+        ),
+        plain(
+          "What do the confidence levels and the evidence score mean?",
+          "Every candidate carries a numeric evidence score from the ranking step: file GPS sits at the top, landmark matches start above place-name matches, OpenStreetMap's prominence for the place adds to the score, and an independent second clue pointing at the same area adds more. The confidence band (high, medium, low) is just that score grouped into three bands. It is a measure of how much evidence backs the match — not a guarantee — which is why the score's reasoning and the evidence for and against are always shown beside it."
+        ),
+        plain(
+          "Which clues actually decide the result?",
+          "Only two things can create a candidate: GPS coordinates embedded in the file, and a named landmark or place name that matches a place in OpenStreetMap. The rest of the clue set — plate style, driving side, vegetation, architecture, languages — is recorded and shown for transparency, but it never scores a match by itself. The one partial exception is scene type: it does not move a candidate, but it drives the privacy decision that turns a likely home into an area-only result."
+        ),
+        plain(
+          "Why couldn't it determine my photo?",
+          "Most often because the file has been through an app that strips metadata — WhatsApp, Instagram, Facebook and screenshots all remove GPS — and the scene itself shows no readable sign, landmark or place name. A photo of a beach, a forest or a generic street can be genuinely unplaceable from one frame. The original file straight from the camera or phone gives the tool far more to work with."
+        ),
+        plain(
+          "Why is my result an area instead of a point?",
+          "Two privacy rules. No result is ever displayed tighter than a 250 m radius. And when a photo looks like a private residence or private property, the exact point is suppressed entirely and only the general area is shown. That applies even when the underlying evidence is precise — other people's homes are not a puzzle to publish."
+        ),
+        plain(
+          "Why is the uncertainty radius different for every result?",
+          "Because it is the matched place's own size, not a fixed error bar. A candidate inherits the radius of the place OpenStreetMap matched — roughly half the span of its mapped outline — so a station gets a tight circle and a city-sized match gets a wide one. Two rules then apply: the 250 m privacy floor (a smaller outline still displays as 250 m, and file GPS always displays at the floor), and residential suppression, which replaces the point with a general area. Each result explains which of these produced the radius you see."
+        ),
+      ],
+    },
+    {
+      title: "Enterprise & API",
+      faqs: [
+        plain(
+          "What is the WorldEye Enterprise camera feed?",
+          "It is a licence to build on the WorldEye catalogue itself. Instead of sending your audience to worldeye.app, you build custom camera collections from the catalogue and publish them on your own site or platform: through an embeddable live player, a private JSON data feed of your collections, and — if you want it — API keys onto the same data."
+        ),
+        plain(
+          "How much does Enterprise cost, and is there a free trial?",
+          "Enterprise is $999/year, billed annually. Unlike the Pro plans it has no free trial; your first charge is covered by a 7-day money-back guarantee — email us within 7 days of the charge for a full refund, no questions asked."
+        ),
+        plain(
+          "Which cameras can I publish on my own site?",
+          "Only the cameras each source's terms allow to be redistributed. Every camera in the catalogue carries a per-source rights verdict, and the embed, feed and API enforce it: around 96% of the catalogue is eligible, and some sources — Windy webcams among them — are excluded entirely, so nothing your organisation publishes outruns the rights behind it."
+        ),
+        plain(
+          "What does my team get besides the feed?",
+          "Everything in Pro, for your whole team, plus priority customer support. The self-serve dashboard is the whole product surface: collections, the embed, the data feed and your keys."
+        ),
+        plain(
+          "How do I get started?",
+          "Subscribe to Enterprise on the pricing page, sign in, and open the enterprise dashboard on this page: build your first collection, then take the embed, the feed or an API key from the same place. Integration help is included — we help you wire the embed or feed into your platform."
+        ),
+      ],
+    },
+    {
+      title: "Affiliates & creators",
+      faqs: [
+        {
+          q: "How does the affiliate program work?",
+          a: [
+            tx("It's free to join and open to anyone eligible — you don't need to be a subscriber. Share your referral link; when someone subscribes through it, you earn a recurring commission of 15–30% (your rate grows with your rank) on every billing cycle while they stay subscribed. Commissions clear after a 30-day holding period, and payouts start once your balance reaches $25. Details on the "),
+            lk("affiliates", "affiliate program page"),
+            tx("."),
+          ],
+          schemaA:
+            "It's free to join and open to anyone eligible — you don't need to be a subscriber. Share your referral link; when someone subscribes through it, you earn a recurring commission of 15–30% (your rate grows with your rank) on every billing cycle while they stay subscribed. Commissions clear after a 30-day holding period, and payouts start once your balance reaches $25. Details on the affiliate program page.",
+        },
+        plain(
+          "When do I get paid?",
+          "Commissions sit in a pending state for a 30-day holding period after the underlying subscription payment clears, then become available in your payout balance. Once your available balance reaches the $25 minimum, you can request a payout, which is reviewed and processed by our team."
+        ),
+        plain(
+          "How do the discount codes work?",
+          "Every rank carries a personal discount code — 5% off for your audience at Explorer, rising to 30% off at Visionary. A sale made with your code counts as your referral even if the buyer never clicked your link, so codes work in videos, podcasts and print where links don't."
+        ),
+        plain(
+          "What happens if someone I referred cancels?",
+          "You earn on every qualifying renewal while they stay subscribed — so a cancellation simply means the renewals (and the commissions on them) stop there."
+        ),
+        plain(
+          "Can I promote WorldEye anywhere?",
+          "Share your link and code wherever you have a genuine audience — social posts, videos, streams, newsletters, communities. What you can't do is manufacture activity: fake clicks, self-referrals and duplicate accounts are checked for and earn nothing, and abuse can end a comp or an account."
+        ),
+        plain(
+          "Is income guaranteed?",
+          "No. Commissions are earned only from legitimate, paid WorldEye subscriptions — never from recruitment alone. Your earnings depend entirely on real customers subscribing through your referral link."
+        ),
+      ],
+    },
+    {
+      title: "Support & troubleshooting",
+      faqs: [
+        plain(
+          "How fast will I get a reply?",
+          "We typically reply within 1–2 business days. WorldEye is run by a small independent team, so complex technical issues can take a little longer — but every message gets read."
+        ),
+        plain(
+          "I'm having a billing problem — what should I include?",
+          "Write from the email address on your account and include your plan (weekly, monthly or annual) and the date of the charge. That lets us find your subscription in Stripe immediately."
+        ),
+        plain(
+          "A camera, flight or satellite layer isn't working — what now?",
+          "First try a hard refresh — most layers depend on live third-party feeds that can hiccup. If it's still down, tell us which layer, your browser, and roughly when it started; we'll check whether the feed itself is offline."
+        ),
+        plain(
+          "A camera feed is dead, wrong or mislabeled — can I report it?",
+          "Please do. Send the camera's name or location and what looks wrong (offline, wrong place, duplicated). The directory is playback-verified, and reports like yours are one of the ways dead and mislabeled feeds get found and fixed."
+        ),
+        plain(
+          "Do you offer phone or live-chat support?",
+          "No — email only for now. It keeps support personal and lets the whole team see and answer your message instead of a chatbot."
+        ),
       ],
     },
   ],
+  search: {
+    placeholder: "Search questions…",
+    ariaLabel: "Search frequently asked questions",
+    resultsTemplate: "{n} matching questions",
+    noResultsHeading: "No matches for that search",
+    noResultsBody:
+      "Try different words — or head to the help center, where a real person reads every message.",
+    helpCenterLink: "Visit the help center",
+  },
+  recommended: {
+    heading: "Top recommended questions",
+    questions: [
+      "Is the map really free?",
+      "How do the free trials work?",
+      "What does Pro include?",
+      "Can I cancel anytime?",
+      "Do you offer refunds?",
+      "How many cameras can I open for free?",
+      "Why is a camera offline?",
+      "How do I create an account?",
+      "I forgot my password — how do I reset it?",
+      "Can I record a live camera?",
+    ],
+  },
+  viewAll: {
+    button: "View all questions",
+    heading: "All questions",
+  },
+  helpCenter: {
+    heading: "The WorldEye help center",
+    body: "Step-by-step tutorials for every feature, and a support inbox that replies within 1–2 business days — if it isn't answered here, it's answered there.",
+    button: "Get help & contact us",
+    tutorialsLabel: "Browse the tutorials",
+  },
   contactCta: {
     heading: "Still stuck?",
     sub: "Get in touch — we reply within 1–2 business days.",

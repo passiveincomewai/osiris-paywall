@@ -5,8 +5,10 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import FaqAccordion from "@/app/(en)/faq/FaqClient";
+import FaqSearch from "@/app/(en)/faq/FaqSearch";
 import RichText from "./RichText";
 import { localizedPath, type LocaleCode } from "@/i18n/config";
+import { isPublished } from "@/i18n/manifest";
 import { localizedUrl } from "@/lib/i18n-seo";
 import type { FaqCopy } from "@/i18n/dictionaries/en/faq";
 import { getChromeCopy } from "@/i18n/dictionaries";
@@ -52,6 +54,15 @@ export default function FaqPage({
     })),
   }));
 
+  // Help-center surfaces: localized when published in this locale,
+  // the English page otherwise (the RichText link discipline).
+  const contactHref = isPublished("contact", locale)
+    ? localizedPath("contact", locale)
+    : "/contact";
+  const tutorialsHref = isPublished("tutorials", locale)
+    ? localizedPath("tutorials", locale)
+    : "/tutorials";
+
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       <JsonLd data={jsonLd} />
@@ -86,7 +97,43 @@ export default function FaqPage({
           </p>
         </div>
 
-        <FaqAccordion groups={groups} />
+        <FaqSearch
+          search={copy.search}
+          recommended={copy.recommended}
+          viewAll={copy.viewAll}
+          helpCenter={copy.helpCenter}
+          contactHref={contactHref}
+          tutorialsHref={tutorialsHref}
+        />
+
+        <div id="faq-all" className="scroll-mt-24">
+          <h2 className="text-xl md:text-2xl font-bold mb-8">
+            <span className="text-[#D4AF37]">{copy.viewAll.heading}</span>
+          </h2>
+          <FaqAccordion groups={groups} />
+        </div>
+
+        {/* Help center band */}
+        <div className="mt-16 text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.07] to-transparent p-10">
+          <h2 className="text-xl md:text-2xl font-bold">{copy.helpCenter.heading}</h2>
+          <p className="text-white/55 mt-2 mb-6 text-sm leading-relaxed max-w-xl mx-auto">
+            {copy.helpCenter.body}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href={contactHref}
+              className="px-6 py-3 rounded-2xl bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
+            >
+              {copy.helpCenter.button}
+            </Link>
+            <Link
+              href={tutorialsHref}
+              className="px-6 py-3 rounded-2xl border border-white/15 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition"
+            >
+              {copy.helpCenter.tutorialsLabel}
+            </Link>
+          </div>
+        </div>
 
         {/* Contact CTA */}
         <div className="mt-16 text-center rounded-3xl border border-white/10 bg-white/[0.02] p-10">

@@ -302,6 +302,12 @@ export default function ContactPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
             Before you <span className="text-[#D4AF37]">write</span>
           </h2>
+          <p className="text-center text-sm text-white/50 -mt-4 mb-8">
+            Quick answers live in the{" "}
+            <Link href="/faq" className="text-[#D4AF37] hover:underline">full FAQ</Link>{" "}
+            — every question about plans, cameras, accounts, security and
+            features, in one searchable page.
+          </p>
           <div className="space-y-3">
             {SUPPORT_FAQS.map((f) => (
               <details
