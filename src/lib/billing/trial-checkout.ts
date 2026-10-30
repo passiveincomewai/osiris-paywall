@@ -32,6 +32,7 @@
 import { trialDaysForPlan, type BillingPlan } from "./trials";
 import { checkoutErrorFromData } from "./checkout-error";
 import { trackMetaEvent } from "@/lib/meta-track";
+import { trackCheckoutStarted, type PickerSurface } from "./picker-analytics";
 
 /* The Pro trial plans sold from /pricing and the Pro lock surfaces.
  * Ambient is excluded on purpose: it is a standalone product with its
@@ -372,8 +373,14 @@ export function startPlanCheckout(
   navigate: (path: string) => void = (path) => {
     window.location.href = path;
   },
+  // Phase E funnel attribution: the surface that initiated this
+  // checkout (lib/billing/picker-analytics). Call sites that name no
+  // surface record "direct"; the /checkout page this navigates to is
+  // the continuation of the initiation and does not fire again.
+  surface: PickerSurface = "direct",
 ): string {
   const path = checkoutPagePath(plan);
+  trackCheckoutStarted(surface, plan);
   navigate(path);
   return path;
 }
@@ -386,6 +393,10 @@ export interface HostedCheckoutDeps {
   ) => Promise<{ ok: boolean; json: () => Promise<any> }>;
   /** Injectable for tests; defaults to a full-page navigation. */
   navigate?: (url: string) => void;
+  /** Phase E funnel attribution: the surface that initiated this
+   *  hosted checkout (lib/billing/picker-analytics); "hosted" when
+   *  the call site names no narrower surface. */
+  surface?: PickerSurface;
 }
 
 /**
@@ -426,6 +437,11 @@ export async function startHostedCheckout(
     if (typeof data?.metaEventId === "string") {
       trackMetaEvent("InitiateCheckout", {}, data.metaEventId);
     }
+    // Phase E: the session now exists — record the funnel's
+    // checkout_started for the initiating surface, also before the
+    // navigation. A refused POST never reaches here, so a failure
+    // fires nothing (no session was created).
+    trackCheckoutStarted(deps.surface ?? "hosted", plan);
     navigate(data.url);
     return data.url;
   }

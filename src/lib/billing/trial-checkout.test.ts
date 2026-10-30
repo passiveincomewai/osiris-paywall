@@ -4,7 +4,17 @@
 // decision, and (c) the /pricing copy the picker is allowed to show — a
 // drift in any of them would either break checkout or put words in
 // pricing's mouth.
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+
+// Phase E: the start functions fire the funnel's checkout_started
+// through lib/billing/picker-analytics → trackAnalyticsEvent. Mock
+// the tracker so these tests pin the emitted (event, detail) pairs
+// without a network.
+const trackMock = vi.hoisted(() => vi.fn());
+vi.mock("@/components/AnalyticsTracker", () => ({
+  trackAnalyticsEvent: trackMock,
+}));
+
 import {
   CHECKOUT_PLAN_SUMMARIES,
   GRID_PLAN_OPTIONS,
@@ -244,6 +254,28 @@ describe("startPlanCheckout", () => {
     expect(checkoutPagePath("annual")).toBe("/checkout?plan=annual");
     expect(checkoutPagePath("enterprise")).toBe("/checkout?plan=enterprise");
   });
+
+  describe("Phase E funnel event", () => {
+    beforeEach(() => trackMock.mockClear());
+
+    it("fires checkout_started as 'direct' when no surface is named", () => {
+      startPlanCheckout("monthly", vi.fn());
+      expect(trackMock).toHaveBeenCalledTimes(1);
+      expect(trackMock).toHaveBeenCalledWith("checkout_started", "direct_monthly");
+    });
+
+    it("fires checkout_started with the initiating surface + plan", () => {
+      startPlanCheckout("ultra_annual", vi.fn(), "picker");
+      expect(trackMock).toHaveBeenCalledWith("checkout_started", "picker_ultra_annual");
+    });
+
+    it("fires before navigating (the event must survive the page unload)", () => {
+      const order: string[] = [];
+      trackMock.mockImplementation(() => void order.push("event"));
+      startPlanCheckout("annual", () => void order.push("navigate"));
+      expect(order).toEqual(["event", "navigate"]);
+    });
+  });
 });
 
 describe("startHostedCheckout", () => {
@@ -316,6 +348,38 @@ describe("startHostedCheckout", () => {
     expect(err.code).toBe("already_subscribed");
     expect(err.alreadySubscribed).toBe(true);
     expect(err.managePath).toBe("/settings/subscription");
+  });
+
+  describe("Phase E funnel event", () => {
+    beforeEach(() => trackMock.mockClear());
+
+    it("fires checkout_started as 'hosted' on success when no surface is named", async () => {
+      const { fetchImpl } = fakeFetch({ ok: true, body: { url: HOSTED_URL } });
+      await startHostedCheckout("lite_monthly", { fetchImpl, navigate: vi.fn() });
+      expect(trackMock).toHaveBeenCalledTimes(1);
+      expect(trackMock).toHaveBeenCalledWith("checkout_started", "hosted_lite_monthly");
+    });
+
+    it("fires checkout_started with the initiating surface on success", async () => {
+      const { fetchImpl } = fakeFetch({ ok: true, body: { url: HOSTED_URL } });
+      await startHostedCheckout("annual", {
+        fetchImpl,
+        navigate: vi.fn(),
+        surface: "embed",
+      });
+      expect(trackMock).toHaveBeenCalledWith("checkout_started", "embed_annual");
+    });
+
+    it("fires nothing when the POST is refused — no session was created", async () => {
+      const { fetchImpl } = fakeFetch({
+        ok: false,
+        body: { error: "STRIPE_WEEKLY_PRICE_ID is not set" },
+      });
+      await expect(
+        startHostedCheckout("weekly", { fetchImpl, navigate: vi.fn() }),
+      ).rejects.toThrow("STRIPE_WEEKLY_PRICE_ID is not set");
+      expect(trackMock).not.toHaveBeenCalled();
+    });
   });
 
   it("throws the generic CheckoutError when the failure carries no message", async () => {

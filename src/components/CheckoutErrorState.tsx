@@ -30,6 +30,7 @@ import {
   type CheckoutError,
 } from "@/lib/billing/checkout-error";
 import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
+import type { PickerSurface } from "@/lib/billing/picker-analytics";
 
 export const CHECKOUT_RETRY_LABEL = "Try again";
 export const HOSTED_FALLBACK_LABEL = "Continue to secure checkout";
@@ -40,6 +41,7 @@ export default function CheckoutErrorState({
   error,
   onRetry,
   onError,
+  surface,
 }: {
   plan: CheckoutPlanId;
   error: CheckoutError;
@@ -47,13 +49,17 @@ export default function CheckoutErrorState({
   onRetry: () => void;
   /** Replace the current refusal with a newer one (hosted attempt's). */
   onError: (next: CheckoutError) => void;
+  /** Phase E funnel attribution for the hosted fallback, inherited
+   *  from the hosting checkout body (lib/billing/picker-analytics);
+   *  "hosted" when unnamed. */
+  surface?: PickerSurface;
 }) {
   const [hostedBusy, setHostedBusy] = useState(false);
 
   async function openHosted() {
     setHostedBusy(true);
     try {
-      await startHostedCheckout(plan);
+      await startHostedCheckout(plan, { surface });
       // Navigation to Stripe is under way; stay busy so a second tap
       // can't start a second session.
     } catch (e) {

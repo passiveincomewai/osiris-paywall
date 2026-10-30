@@ -24,16 +24,22 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { checkoutPlanSummary, type CheckoutPlanId } from "@/lib/billing/trial-checkout";
+import type { PickerSurface } from "@/lib/billing/picker-analytics";
 import EmbeddedCheckoutBody from "./EmbeddedCheckoutBody";
 
 export default function CheckoutSheet({
   plan,
   onClose,
   hideHostedOption = false,
+  analyticsSurface,
 }: {
   plan: CheckoutPlanId | null;
   onClose: () => void;
   hideHostedOption?: boolean;
+  /** Phase E funnel attribution, passed through to the checkout
+   *  body (lib/billing/picker-analytics). Hosts that name none
+   *  record "sheet". */
+  analyticsSurface?: PickerSurface;
 }) {
   // A fresh SheetContent per open (keyed by an incrementing sequence),
   // so a reopened sheet never inherits the previous session's state —
@@ -45,17 +51,19 @@ export default function CheckoutSheet({
     if (plan) setSeq((s) => s + 1);
   }
   if (!plan) return null;
-  return <SheetContent key={`${seq}:${plan}`} plan={plan} onClose={onClose} hideHostedOption={hideHostedOption} />;
+  return <SheetContent key={`${seq}:${plan}`} plan={plan} onClose={onClose} hideHostedOption={hideHostedOption} analyticsSurface={analyticsSurface} />;
 }
 
 function SheetContent({
   plan,
   onClose,
   hideHostedOption = false,
+  analyticsSurface,
 }: {
   plan: CheckoutPlanId;
   onClose: () => void;
   hideHostedOption?: boolean;
+  analyticsSurface?: PickerSurface;
 }) {
   const summary = checkoutPlanSummary(plan);
   const [entered, setEntered] = useState(false);
@@ -112,7 +120,7 @@ function SheetContent({
         </button>
 
         {/* pr-9: clearance for the close button overlaying the strip. */}
-        <EmbeddedCheckoutBody plan={plan} stripClassName="pr-9" hideHostedOption={hideHostedOption} />
+        <EmbeddedCheckoutBody plan={plan} stripClassName="pr-9" hideHostedOption={hideHostedOption} analyticsSurface={analyticsSurface} />
       </div>
     </div>
   );

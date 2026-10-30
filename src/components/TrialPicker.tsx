@@ -36,16 +36,22 @@
  * real button (components/TrialButton), variant-matched to the plan's
  * trial length.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Lock, X, Zap } from "lucide-react";
 import {
   TIER_PLAN_OPTIONS,
+  gridCheckoutPlan,
   startPlanCheckout,
   tierForCheckoutPlan,
   type CheckoutPlanId,
   type GridPlanOption,
   type PlanTier,
 } from "@/lib/billing/trial-checkout";
+import {
+  trackPickerOpened,
+  trackPlanSelected,
+  type PickerSurface,
+} from "@/lib/billing/picker-analytics";
 import EmbeddedCheckoutBody from "./EmbeddedCheckoutBody";
 import TrialButton from "./TrialButton";
 
@@ -71,6 +77,10 @@ interface TrialPickerProps {
    *  intel) pass "ultra_annual" so the Ultra annual option is the
    *  obvious path; its tier's tab opens selected. */
   emphasizePlan?: CheckoutPlanId;
+  /** Phase E funnel attribution (lib/billing/picker-analytics): the
+   *  surface this mount reports as. Inline mounts keep the default
+   *  "picker"; TrialPickerDialog passes "dialog". */
+  analyticsSurface?: PickerSurface;
 }
 
 /** Tier tab accents — the same per-tier colours as /pricing's grid
@@ -168,9 +178,12 @@ function PlanRow({
 export function TrialPickerCheckout({
   plan,
   onBack,
+  analyticsSurface = "picker",
 }: {
   plan: CheckoutPlanId;
   onBack: () => void;
+  /** Phase E funnel attribution for the session this body creates. */
+  analyticsSurface?: PickerSurface;
 }) {
   return (
     <div data-trial-picker-checkout>
@@ -181,7 +194,7 @@ export function TrialPickerCheckout({
       >
         <ArrowLeft className="w-3.5 h-3.5" /> Back to plans
       </button>
-      <EmbeddedCheckoutBody plan={plan} />
+      <EmbeddedCheckoutBody plan={plan} analyticsSurface={analyticsSurface} />
     </div>
   );
 }
@@ -194,6 +207,7 @@ export default function TrialPicker({
   defaultTier,
   defaultPlan,
   emphasizePlan,
+  analyticsSurface = "picker",
 }: TrialPickerProps) {
   const compact = variant === "compact";
   const [busyPlan, setBusyPlan] = useState<string | null>(null);
@@ -208,6 +222,29 @@ export default function TrialPicker({
       "pro",
   );
 
+  // Phase E funnel (lib/billing/picker-analytics): this picker holds
+  // no single selected-plan state — its period rows are independent
+  // CTAs — so opened/selected events carry the HEADLINE plan of the
+  // tier in view: the emphasized plan when it belongs to that tier,
+  // else the tier's annual (the redesign's default emphasis).
+  const headlineForTier = (t: PlanTier): CheckoutPlanId =>
+    emphasizePlan && tierForCheckoutPlan(emphasizePlan) === t
+      ? emphasizePlan
+      : gridCheckoutPlan(t, "annual");
+  const openedRef = useRef(false);
+  useEffect(() => {
+    if (openedRef.current) return;
+    openedRef.current = true;
+    trackPickerOpened(analyticsSurface, headlineForTier(tier));
+    // Mount-only: the headline is the opening view's, by definition.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function chooseTier(t: PlanTier) {
+    if (t !== tier) trackPlanSelected(analyticsSurface, headlineForTier(t));
+    setTier(t);
+  }
+
   function pick(option: GridPlanOption) {
     if (mode === "embedded") {
       // Swap the popup to the checkout in place — the session starts
@@ -221,7 +258,7 @@ export default function TrialPicker({
     // the hosted redirect; any failure is surfaced on that page, so there
     // is no error path to render here — the busy state rides out the
     // navigation.
-    startPlanCheckout(option.plan);
+    startPlanCheckout(option.plan, undefined, analyticsSurface);
   }
 
   function back() {
@@ -232,7 +269,13 @@ export default function TrialPicker({
   }
 
   if (mode === "embedded" && checkoutPlan) {
-    return <TrialPickerCheckout plan={checkoutPlan} onBack={back} />;
+    return (
+      <TrialPickerCheckout
+        plan={checkoutPlan}
+        onBack={back}
+        analyticsSurface={analyticsSurface}
+      />
+    );
   }
 
   return (
@@ -267,7 +310,7 @@ export default function TrialPicker({
               type="button"
               role="tab"
               aria-selected={active}
-              onClick={() => setTier(t)}
+              onClick={() => chooseTier(t)}
               className={`flex-1 rounded-lg border font-bold uppercase tracking-wider transition ${compact ? "px-2 py-1 text-[9px]" : "px-2 py-1.5 text-[10px]"} ${
                 active
                   ? TIER_TAB_ACCENTS[t].activeClasses
@@ -358,6 +401,7 @@ export function TrialPickerDialog({
           onCheckoutViewChange={setInCheckout}
           defaultTier={defaultTier}
           defaultPlan={defaultPlan}
+          analyticsSurface="dialog"
         />
         <button
           onClick={onClose}

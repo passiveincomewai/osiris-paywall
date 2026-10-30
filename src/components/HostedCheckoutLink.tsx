@@ -17,6 +17,7 @@ import {
   type CheckoutError,
 } from "@/lib/billing/checkout-error";
 import type { CheckoutPlanId } from "@/lib/billing/trial-checkout";
+import type { PickerSurface } from "@/lib/billing/picker-analytics";
 
 export const HOSTED_CHECKOUT_LABEL = "Continue on Stripe instead →";
 export const HOSTED_CHECKOUT_CAPTION =
@@ -26,10 +27,14 @@ export default function HostedCheckoutLink({
   plan,
   className = "",
   caption = true,
+  surface,
 }: {
   plan: CheckoutPlanId;
   className?: string;
   caption?: boolean;
+  /** Phase E funnel attribution for the hosted initiation
+   *  (lib/billing/picker-analytics); "hosted" when unnamed. */
+  surface?: PickerSurface;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<CheckoutError | null>(null);
@@ -38,7 +43,7 @@ export default function HostedCheckoutLink({
     setBusy(true);
     setError(null);
     try {
-      await startHostedCheckout(plan);
+      await startHostedCheckout(plan, { surface });
       // Navigation to Stripe is under way; stay busy so a second tap
       // can't start a second session.
     } catch (e) {

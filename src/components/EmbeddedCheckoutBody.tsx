@@ -26,6 +26,10 @@ import { useEffect, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { checkoutPlanSummary, type CheckoutPlanId } from "@/lib/billing/trial-checkout";
 import {
+  trackCheckoutStarted,
+  type PickerSurface,
+} from "@/lib/billing/picker-analytics";
+import {
   createCheckoutSessionController,
   type StripeJsLike,
 } from "@/lib/billing/embedded-checkout";
@@ -47,6 +51,7 @@ export default function EmbeddedCheckoutBody({
   plan,
   stripClassName,
   hideHostedOption = false,
+  analyticsSurface,
 }: {
   plan: CheckoutPlanId;
   /** Surfaces the owner wants embedded-only (TrialCtaSection cards)
@@ -55,6 +60,10 @@ export default function EmbeddedCheckoutBody({
   /** Extra classes on the plan-strip wrapper (a host whose close
    *  button overlays the strip's corner passes clearance here). */
   stripClassName?: string;
+  /** Phase E funnel attribution (lib/billing/picker-analytics): the
+   *  surface whose initiation this session creation belongs to.
+   *  Hosts that name none record "sheet". */
+  analyticsSurface?: PickerSurface;
 }) {
   const summary = checkoutPlanSummary(plan);
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -66,6 +75,9 @@ export default function EmbeddedCheckoutBody({
   // per retry; unmounting closes it, destroying the form.
   useEffect(() => {
     if (!summary) return;
+    // Phase E: one checkout_started per session creation (a retry is
+    // a new session and fires again — see picker-analytics).
+    trackCheckoutStarted(analyticsSurface ?? "sheet", plan);
     const controller = createCheckoutSessionController();
     let live = true;
     setPhase("starting");
@@ -127,6 +139,7 @@ export default function EmbeddedCheckoutBody({
               error={error}
               onRetry={() => setAttempt((a) => a + 1)}
               onError={setError}
+              surface={analyticsSurface}
             />
           </div>
         )}
@@ -136,7 +149,7 @@ export default function EmbeddedCheckoutBody({
       <CancelReassurance compact guarantee={Boolean(summary?.trialLabel)} />
       {!hideHostedOption && (
         <div className="mt-3 text-center">
-          <HostedCheckoutLink plan={plan} />
+          <HostedCheckoutLink plan={plan} surface={analyticsSurface} />
         </div>
       )}
     </>
