@@ -23,19 +23,28 @@
  * cloud recording, not 24/7, and nothing here schedules a capture.
  */
 import { timelapseStillFetchable } from "@/lib/timelapse";
+import { entitlementsFor } from "@/lib/billing/plans";
 
-/** The Pro promise, enforced: at most this many cameras at once. */
-export const MAX_MULTI_CAMERAS = 20;
+/**
+ * The Pro promise, enforced: at most this many cameras at once. The
+ * number itself lives in the central plan config (lib/billing/plans —
+ * entitlementsFor); these constants are the recording module's names
+ * for the Pro cap and the top-tier (VIP Pro, now Ultra) cap.
+ */
+export const MAX_MULTI_CAMERAS = entitlementsFor("pro").multiCamCap;
 
 /** The VIP Pro promise: the same wall, twice as wide. */
-export const MAX_MULTI_CAMERAS_VIP = 40;
+export const MAX_MULTI_CAMERAS_VIP = entitlementsFor("ultra").multiCamCap;
 
 /** The recording tiers that carry a multi-camera cap. */
 export type MultiTier = "pro" | "vip";
 
-/** The selection cap for a tier — the one place the numbers live. */
+/** The selection cap for a tier — read from the central plan config
+ *  (the old contract's "vip" carries Ultra's entitlement set). */
 export function multiCapForTier(tier: MultiTier): number {
-  return tier === "vip" ? MAX_MULTI_CAMERAS_VIP : MAX_MULTI_CAMERAS;
+  return tier === "vip"
+    ? entitlementsFor("ultra").multiCamCap
+    : entitlementsFor("pro").multiCamCap;
 }
 
 /**

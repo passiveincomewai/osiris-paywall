@@ -5,6 +5,7 @@ import { stripe, appUrl } from "@/lib/stripe";
 import { cookies } from "next/headers";
 import { REF_COOKIE, findAffiliateByCode } from "@/lib/affiliate/attribution";
 import { trialDaysForPlan } from "@/lib/billing/trials";
+import { resolvePlan, type PlanKey } from "@/lib/billing/plans";
 import { ambientPriceId } from "@/lib/ambient/access";
 import { powderPassEnabled, powderPassPriceId } from "@/lib/ski/access";
 import {
@@ -17,6 +18,17 @@ import { sendMetaEvent, metaUserDataFromRequest } from "@/lib/meta-capi";
 import { randomUUID } from "node:crypto";
 
 export const runtime = "nodejs";
+
+/** Checkout plan key → central plan-config key (lib/billing/plans).
+ *  The allowlist in POST guarantees the plan is one of these. */
+const PLAN_KEY_BY_CHECKOUT_PLAN: Record<string, PlanKey> = {
+  weekly: "pro_weekly",
+  monthly: "pro_monthly",
+  annual: "pro_annual",
+  enterprise: "enterprise",
+  ambient: "ambient",
+  ski: "ski",
+};
 
 /** Resolve the referral cookie to affiliate metadata for Stripe. */
 async function affiliateMetadata(): Promise<Record<string, string>> {
@@ -55,34 +67,28 @@ export async function POST(req: Request) {
   // flow exactly as before (it remains the fallback the /checkout page drops
   // to when embedded can't run, e.g. no publishable key published yet).
   const embedded = ui === "embedded";
-  const priceEnv =
-    plan === "monthly" ? "STRIPE_MONTHLY_PRICE_ID"
-    : plan === "annual" ? "STRIPE_ANNUAL_PRICE_ID"
-    : plan === "enterprise" ? "STRIPE_ENTERPRISE_PRICE_ID"
-    : plan === "ambient" ? "STRIPE_AMBIENT_PRICE_ID"
-    : plan === "ski" ? "POWDER_PASS_PRICE_ID"
-    : "STRIPE_WEEKLY_PRICE_ID";
-  // Free trials: weekly → 10 days, monthly → 10 days, annual → 10 days
-  // (Conversion Wave 2, F2 — every self-serve trial is 10 days).
-  // Enterprise has no trial. Config lives in src/lib/billing/trials.ts.
-  // Stripe reports these subscriptions as `trialing`, which the paywall
-  // treats as full Pro access.
-  const trialDays = trialDaysForPlan(plan);
-  // Ambient's price id resolves through lib/ambient/access: the env
-  // var wins, the owner's live price id is the fallback, so Ambient
-  // checkout works before the env var is provisioned. Powder Pass
-  // resolves through lib/ski/access with NO fallback — the price does
-  // not exist until the owner creates it, so an unset env lands on
+  // Price resolution runs through the central plan config
+  // (lib/billing/plans): each checkout plan key names a PlanKey and
+  // the price id comes from that plan's env var. Ambient keeps its
+  // pre-existing fallback id inside the config (the env var wins when
+  // set, so Ambient checkout works before the env var is
+  // provisioned); Powder Pass has NO fallback — an unset env lands on
   // the standard not-configured 500 below, exactly like any other
   // unprovisioned price.
-  const priceId =
-    plan === "ambient"
-      ? ambientPriceId(process.env)
-      : plan === "ski"
-        ? powderPassPriceId(process.env)
-        : process.env[priceEnv];
+  const planKey = PLAN_KEY_BY_CHECKOUT_PLAN[plan ?? ""];
+  const resolved = planKey ? resolvePlan(planKey, process.env) : null;
+  // Free trials: weekly → 3 days, monthly → 10 days, annual → 10 days
+  // — the owner's locked rule, the same for every tier. Enterprise
+  // has no trial. Config lives in src/lib/billing/trials.ts. Stripe
+  // reports these subscriptions as `trialing`, which the paywall
+  // treats as full access.
+  const trialDays = trialDaysForPlan(plan);
+  const priceId = resolved?.priceId ?? null;
   if (!priceId) {
-    return NextResponse.json({ error: `${priceEnv} is not set` }, { status: 500 });
+    return NextResponse.json(
+      { error: `${resolved?.envKey ?? "STRIPE_WEEKLY_PRICE_ID"} is not set` },
+      { status: 500 },
+    );
   }
 
   // Signed-in members: the dedupe guard (Wave 2 F6 —

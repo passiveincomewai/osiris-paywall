@@ -4,12 +4,18 @@
  * cooldown and the alert-on-change state machine can never drift
  * between "what the UI promises" and "what the checker does".
  */
+import { entitlementsFor } from "@/lib/billing/plans";
 
-/** VIP Pro members watch up to this many cameras at once. */
-export const MAX_ACTIVE_ALERT_RULES = 10;
+/**
+ * VIP Pro members watch up to this many cameras at once. The number
+ * itself lives in the central plan config (lib/billing/plans —
+ * entitlementsFor: the old "vip" entitlement set is Ultra's); this
+ * constant is the alerts module's name for it.
+ */
+export const MAX_ACTIVE_ALERT_RULES = entitlementsFor("ultra").alertCap;
 
 /** Pro members watch up to this many cameras at once. */
-export const MAX_ACTIVE_ALERT_RULES_PRO = 2;
+export const MAX_ACTIVE_ALERT_RULES_PRO = entitlementsFor("pro").alertCap;
 
 /** The tiers the alert caps speak (mirrors PlanTier in ./tier). */
 export type AlertTier = "free" | "pro" | "vip";
@@ -28,9 +34,11 @@ export type AlertTier = "free" | "pro" | "vip";
  * (cap 0) pauses checking, exactly like a lapse always has.
  */
 export function alertCapForTier(tier: AlertTier): number {
-  if (tier === "vip") return MAX_ACTIVE_ALERT_RULES;
-  if (tier === "pro") return MAX_ACTIVE_ALERT_RULES_PRO;
-  return 0;
+  // Caps read from the central plan config (entitlementsFor): the old
+  // contract's "vip" carries Ultra's entitlement set; free is 0.
+  if (tier === "vip") return entitlementsFor("ultra").alertCap;
+  if (tier === "pro") return entitlementsFor("pro").alertCap;
+  return entitlementsFor("free").alertCap;
 }
 
 /** The refusal a member sees when their tier's cap is full — one

@@ -101,6 +101,64 @@ describe("planTierOf (the session contract)", () => {
   });
 });
 
+describe("new-price bridge (Pricing Phase A — central config, old contract kept)", () => {
+  const BRIDGE_ENV = {
+    ...ENV,
+    STRIPE_LITE_WEEKLY_PRICE_ID: "price_lite_weekly",
+    STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_monthly",
+    STRIPE_LITE_ANNUAL_PRICE_ID: "price_lite_annual",
+    STRIPE_ULTRA_WEEKLY_PRICE_ID: "price_ultra_weekly",
+    STRIPE_ULTRA_MONTHLY_PRICE_ID: "price_ultra_monthly",
+    STRIPE_ULTRA_ANNUAL_PRICE_ID: "price_ultra_annual",
+  };
+  const BEFORE_CUTOFF = new Date("2026-10-29T12:00:00.000Z");
+  const AFTER_CUTOFF = new Date("2026-11-15T12:00:00.000Z");
+  // ENV.STRIPE_ANNUAL_PRICE_ID is "price_annual" here, not the real
+  // annual id — use an env whose annual slot holds the real one.
+  const REAL_ANNUAL_ENV = { ...BRIDGE_ENV, STRIPE_ANNUAL_PRICE_ID: "price_1USW5HGfHuTnzrlHveoTpmwd" };
+
+  it("lite prices → free-equivalent in the old contract (no Pro leak)", () => {
+    expect(planTierForPriceId("price_lite_weekly", BRIDGE_ENV)).toBe("free");
+    expect(planTierForPriceId("price_lite_monthly", BRIDGE_ENV)).toBe("free");
+    expect(planTierForPriceId("price_lite_annual", BRIDGE_ENV)).toBe("free");
+  });
+
+  it("ultra prices → vip", () => {
+    expect(planTierForPriceId("price_ultra_weekly", BRIDGE_ENV)).toBe("vip");
+    expect(planTierForPriceId("price_ultra_monthly", BRIDGE_ENV)).toBe("vip");
+    expect(planTierForPriceId("price_ultra_annual", BRIDGE_ENV)).toBe("vip");
+  });
+
+  it("Pro annual: pre-cutoff subscriptions are vip (legacy), post-cutoff are pro", () => {
+    expect(planTierForPriceId("price_1USW5HGfHuTnzrlHveoTpmwd", REAL_ANNUAL_ENV, BEFORE_CUTOFF)).toBe("vip");
+    expect(planTierForPriceId("price_1USW5HGfHuTnzrlHveoTpmwd", REAL_ANNUAL_ENV, AFTER_CUTOFF)).toBe("pro");
+    // No date → the legacy reading (annual ⇒ vip), exactly as pre-Phase A.
+    expect(planTierForPriceId("price_1USW5HGfHuTnzrlHveoTpmwd", REAL_ANNUAL_ENV)).toBe("vip");
+    // The row path carries the subscription's createdAt through.
+    expect(
+      planTierForRow(
+        { status: "active", stripePriceId: "price_1USW5HGfHuTnzrlHveoTpmwd", currentPeriodEnd: future, createdAt: BEFORE_CUTOFF },
+        REAL_ANNUAL_ENV,
+        NOW,
+      ),
+    ).toBe("vip");
+    expect(
+      planTierForRow(
+        { status: "active", stripePriceId: "price_1USW5HGfHuTnzrlHveoTpmwd", currentPeriodEnd: future, createdAt: AFTER_CUTOFF },
+        REAL_ANNUAL_ENV,
+        NOW,
+      ),
+    ).toBe("pro");
+  });
+
+  it("grandfathered + dead legacy prices resolve as they always have", () => {
+    expect(planTierForPriceId("price_1UPH6KGfHuTnzrlHDBzDHobj", BRIDGE_ENV)).toBe("pro"); // GF weekly
+    expect(planTierForPriceId("price_1UPGwjGfHuTnzrlHwwU5k4WO", BRIDGE_ENV)).toBe("pro"); // GF monthly
+    expect(planTierForPriceId("price_1UPH7MGfHuTnzrlHxbGXji4K", BRIDGE_ENV)).toBe("vip"); // GF annual keeps VIP extras
+    expect(planTierForPriceId("price_1UPGxdGfHuTnzrlHpaLBMFv5", BRIDGE_ENV)).toBe("pro"); // dead legacy
+  });
+});
+
 describe("tierSatisfies (vip ⊃ pro)", () => {
   it("vip satisfies both gates; pro satisfies only pro; free neither", () => {
     expect(tierSatisfies("vip", "vip")).toBe(true);

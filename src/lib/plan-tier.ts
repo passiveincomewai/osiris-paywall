@@ -25,6 +25,7 @@
  * via planTierOf / tierSatisfies so the contract has one home.
  */
 import { subscriptionStatusFromRow } from "./subscription-status";
+import { legacyVipFor, resolvePriceId } from "./billing/plans";
 
 export type PlanTier = "free" | "pro" | "vip";
 
@@ -122,31 +123,86 @@ export function isCompPriceId(priceId: string | null | undefined): boolean {
   return priceId === "comp_free_pro";
 }
 
-/** Tier from a Stripe price id alone (active subscription assumed). */
+/**
+ * Tier from a Stripe price id alone (active subscription assumed).
+ *
+ * PRICING REDESIGN PHASE A — the new-price bridge. Resolution now runs
+ * through the central config (lib/billing/plans), but this module's
+ * public contract (free | pro | vip) is UNCHANGED for every existing
+ * price and consumer. The new tiers bridge into the old contract as:
+ *
+ *   lite price        → "free"-equivalent. Lite is not sellable yet
+ *                       (Phase C) so nobody can hold one; the bridge
+ *                       exists so Lite can NEVER leak Pro benefits
+ *                       through old consumers when it does launch —
+ *                       plans.ts carries Lite's true entitlements for
+ *                       Phase B/C consumers.
+ *   ultra price       → "vip" (Ultra is the new top tier; vip was the
+ *                       old name for the same entitlement set).
+ *   Pro annual price  → "vip" while the subscription is a legacy-VIP
+ *                       holder (created before LEGACY_VIP_CUTOFF in
+ *                       plans.ts), "pro" for post-cutoff subscriptions.
+ *                       Callers that know the subscription's creation
+ *                       date pass it (planTierForRow does, from the DB
+ *                       row); price-only callers get the legacy
+ *                       reading — annual ⇒ vip, exactly as before
+ *                       Phase A — because a missing date must never
+ *                       strip an existing holder.
+ *   grandfathered     → GF weekly/monthly "pro"; GF annual "vip"
+ *   prices              (its holders keep the VIP extras).
+ *   enterprise        → "vip" (as before).
+ *   standalone prices → "free" (Ambient / Powder Pass confer no tier).
+ *   unknown live price → "pro" (never strip a payer, as before).
+ */
 export function planTierForPriceId(
   priceId: string | null | undefined,
   env: Record<string, string | undefined>,
+  createdAt?: Date | string | null,
 ): PlanTier {
   if (!priceId) return "free";
-  if (priceId === env.STRIPE_ANNUAL_PRICE_ID) return "vip";
-  if (priceId === env.STRIPE_ENTERPRISE_PRICE_ID) return "vip";
   // Ambient is a standalone product — it confers no tier (see above).
+  // Checked explicitly, ahead of the central resolution, to preserve
+  // this helper's exact env-or-fallback semantics.
   if (isAmbientPriceId(priceId, env)) return "free";
   // Powder Pass is a standalone product too — no tier (see above).
   if (isPowderPassPriceId(priceId, env)) return "free";
+  const resolution = resolvePriceId(priceId, env);
+  if (resolution.known) {
+    if (resolution.standalone) return "free";
+    switch (resolution.tier) {
+      case "lite":
+        return "free";
+      case "ultra":
+        return "vip";
+      case "pro":
+        return legacyVipFor(resolution, createdAt) ? "vip" : "pro";
+      default:
+        return "free";
+    }
+  }
+  // Unknown live price (incl. comp grants, whose only price id is
+  // COMP_PRICE_ID) → pro: a payer is never stripped.
   return "pro";
 }
 
 /**
  * Tier from a Subscription DB row: the status must first fold to
  * "active" (lib/subscription-status — active/trialing with a future
- * period end); the price id then decides pro vs vip.
+ * period end); the price id then decides pro vs vip. The row's
+ * createdAt drives the legacy-VIP cutoff for the Pro annual price
+ * (see planTierForPriceId); rows selected without it keep the legacy
+ * reading.
  */
 export function planTierForRow(
-  sub: { status: string; currentPeriodEnd: Date; stripePriceId: string } | null | undefined,
+  sub: {
+    status: string;
+    currentPeriodEnd: Date;
+    stripePriceId: string;
+    createdAt?: Date | string | null;
+  } | null | undefined,
   env: Record<string, string | undefined>,
   now: Date = new Date(),
 ): PlanTier {
   if (subscriptionStatusFromRow(sub, now) !== "active") return "free";
-  return planTierForPriceId(sub?.stripePriceId, env);
+  return planTierForPriceId(sub?.stripePriceId, env, sub?.createdAt);
 }

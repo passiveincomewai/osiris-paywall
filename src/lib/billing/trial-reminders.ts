@@ -17,6 +17,7 @@
  * the schema has no reminder column and the Subscription table doesn't
  * even store trial end — Stripe is the source of truth for both.
  */
+import { planNameByPriceId } from "./plans";
 
 /** Remind when the trial ends within this window (and hasn't ended). */
 export const TRIAL_REMINDER_WINDOW_MS = 24 * 3600_000;
@@ -47,22 +48,22 @@ export function trialReminderDue(
   return endMs > nowMs && endMs <= nowMs + TRIAL_REMINDER_WINDOW_MS;
 }
 
-/** Map the app's Stripe price-id env config to plan names. */
+/**
+ * Map the app's Stripe price-id env config to plan names.
+ *
+ * Since Pricing Phase A this delegates to the central plan config
+ * (lib/billing/plans — planNameByPriceId): the four historical IDs
+ * resolve exactly as before ("weekly" | "monthly" | "annual" |
+ * "enterprise"), the six new Lite/Ultra price ids resolve to their
+ * PlanKeys ("lite_weekly" … "ultra_annual"), the standalone products
+ * to "ambient" | "ski", and the legacy grandfathered prices to the
+ * Pro plan names they have always carried — so reminder emails name
+ * every plan correctly.
+ */
 export function planByPriceIdFromEnv(
   env: Record<string, string | undefined>,
 ): Record<string, string> {
-  const map: Record<string, string> = {};
-  const entries: Array<[string, string]> = [
-    ["STRIPE_WEEKLY_PRICE_ID", "weekly"],
-    ["STRIPE_MONTHLY_PRICE_ID", "monthly"],
-    ["STRIPE_ANNUAL_PRICE_ID", "annual"],
-    ["STRIPE_ENTERPRISE_PRICE_ID", "enterprise"],
-  ];
-  for (const [key, plan] of entries) {
-    const id = env[key];
-    if (id) map[id] = plan;
-  }
-  return map;
+  return planNameByPriceId(env);
 }
 
 /**
@@ -122,6 +123,14 @@ const PLAN_DISPLAY_LABEL: Record<string, string> = {
   monthly: "Monthly",
   annual: "VIP Pro",
   enterprise: "Enterprise",
+  lite_weekly: "Lite Weekly",
+  lite_monthly: "Lite Monthly",
+  lite_annual: "Lite Annual",
+  ultra_weekly: "Ultra Weekly",
+  ultra_monthly: "Ultra Monthly",
+  ultra_annual: "Ultra Annual",
+  ambient: "Ambient",
+  ski: "Powder Pass",
 };
 
 const INTERVAL_NOUN: Record<string, string> = {

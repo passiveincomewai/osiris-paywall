@@ -84,14 +84,58 @@ describe("formatMoney", () => {
 
 describe("planByPriceIdFromEnv", () => {
   it("maps only the price ids that are set", () => {
-    expect(
-      planByPriceIdFromEnv({
-        STRIPE_WEEKLY_PRICE_ID: "price_w",
-        STRIPE_MONTHLY_PRICE_ID: "price_m",
-        STRIPE_ANNUAL_PRICE_ID: undefined,
-        STRIPE_ENTERPRISE_PRICE_ID: "",
-      }),
-    ).toEqual({ price_w: "weekly", price_m: "monthly" });
+    const map = planByPriceIdFromEnv({
+      STRIPE_WEEKLY_PRICE_ID: "price_w",
+      STRIPE_MONTHLY_PRICE_ID: "price_m",
+      STRIPE_ANNUAL_PRICE_ID: undefined,
+      STRIPE_ENTERPRISE_PRICE_ID: "",
+    });
+    expect(map.price_w).toBe("weekly");
+    expect(map.price_m).toBe("monthly");
+    // The central config it now delegates to also always knows the
+    // Ambient fallback id and the literal legacy prices.
+    expect(map["price_1UUxUnGfHuTnzrlHH0pNYhJU"]).toBe("ambient");
+    expect(Object.keys(map)).toHaveLength(7);
+  });
+
+  it("Phase A: names the Lite/Ultra prices and the grandfathered prices", () => {
+    const map = planByPriceIdFromEnv({
+      STRIPE_LITE_WEEKLY_PRICE_ID: "price_lite_w",
+      STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_m",
+      STRIPE_LITE_ANNUAL_PRICE_ID: "price_lite_a",
+      STRIPE_ULTRA_WEEKLY_PRICE_ID: "price_ultra_w",
+      STRIPE_ULTRA_MONTHLY_PRICE_ID: "price_ultra_m",
+      STRIPE_ULTRA_ANNUAL_PRICE_ID: "price_ultra_a",
+    });
+    expect(map.price_lite_w).toBe("lite_weekly");
+    expect(map.price_lite_m).toBe("lite_monthly");
+    expect(map.price_lite_a).toBe("lite_annual");
+    expect(map.price_ultra_w).toBe("ultra_weekly");
+    expect(map.price_ultra_m).toBe("ultra_monthly");
+    expect(map.price_ultra_a).toBe("ultra_annual");
+    // Grandfathered prices name as the Pro plans they have always been.
+    expect(map["price_1UPH6KGfHuTnzrlHDBzDHobj"]).toBe("weekly");
+    expect(map["price_1UPGwjGfHuTnzrlHwwU5k4WO"]).toBe("monthly");
+    expect(map["price_1UPH7MGfHuTnzrlHxbGXji4K"]).toBe("annual");
+  });
+
+  it("Phase A: reminder labels name Lite/Ultra tiers", () => {
+    const map = planByPriceIdFromEnv({
+      STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_m",
+      STRIPE_ULTRA_ANNUAL_PRICE_ID: "price_ultra_a",
+    });
+    const lite = describeStripePrice(
+      { id: "price_lite_m", unit_amount: 899, currency: "usd", recurring: { interval: "month", interval_count: 1 } },
+      map,
+    );
+    expect(lite.planLabel).toBe("Lite Monthly plan");
+    expect(lite.chargeLabel).toBe("$8.99/month");
+    const ultra = describeStripePrice(
+      { id: "price_ultra_a", unit_amount: 14999, currency: "usd", recurring: { interval: "year", interval_count: 1 } },
+      map,
+    );
+    expect(ultra.planLabel).toBe("Ultra Annual plan");
+    expect(ultra.chargeLabel).toBe("$149.99/year");
   });
 });
 

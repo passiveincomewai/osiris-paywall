@@ -25,6 +25,7 @@ import {
   planTierForRow,
   tierSatisfies,
 } from "@/lib/plan-tier";
+import { entitlementsFor, resolvePriceId } from "@/lib/billing/plans";
 import { subscriptionStatusFromRow } from "@/lib/subscription-status";
 
 /* The Ambient price-id contract lives in lib/plan-tier (the price-id
@@ -53,7 +54,21 @@ export function ambientAccessForRow(
 ): boolean {
   if (subscriptionStatusFromRow(sub, now) !== "active") return false;
   if (isAmbientPriceId(sub?.stripePriceId, env)) return true;
-  return tierSatisfies(planTierForRow(sub, env, now), "pro");
+  if (tierSatisfies(planTierForRow(sub, env, now), "pro")) return true;
+  // Pricing Phase A (owner decision Q4): ANY paid tier bypasses the
+  // Ambient gate — the central plan config's ambientBypass
+  // (lib/billing/plans). The old-contract tier leg above already
+  // covers Pro, Ultra and legacy-VIP holders; this leg adds Lite,
+  // which the old contract deliberately reads as "free" so Lite can
+  // never leak Pro benefits through pre-redesign consumers.
+  // Standalone prices (Powder Pass) resolve with tier null and
+  // unknown prices are already covered by the tier leg's Pro
+  // default, so neither gains or loses anything here.
+  const resolution = resolvePriceId(sub?.stripePriceId, env);
+  if (resolution.known && resolution.tier) {
+    return entitlementsFor(resolution.tier).ambientBypass;
+  }
+  return false;
 }
 
 /**

@@ -5,6 +5,7 @@ import { describe, it, expect } from "vitest";
 import {
   assembleManageView,
   switchTerms,
+  MANAGEABLE_PLANS,
   priceIdForPlan,
   invoicePaymentIntentId,
   type ManageDbSub,
@@ -111,6 +112,25 @@ describe("priceIdForPlan", () => {
     expect(priceIdForPlan("annual", ENV)).toBe("price_annual");
     expect(priceIdForPlan("weekly", {})).toBeNull();
     expect(priceIdForPlan("bogus", ENV)).toBeNull();
+  });
+
+  it("Phase A: lite_*/ultra_* plan keys resolve; MANAGEABLE_PLANS stays the current 3", () => {
+    const env = {
+      STRIPE_LITE_WEEKLY_PRICE_ID: "price_lite_w",
+      STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_m",
+      STRIPE_LITE_ANNUAL_PRICE_ID: "price_lite_a",
+      STRIPE_ULTRA_WEEKLY_PRICE_ID: "price_ultra_w",
+      STRIPE_ULTRA_MONTHLY_PRICE_ID: "price_ultra_m",
+      STRIPE_ULTRA_ANNUAL_PRICE_ID: "price_ultra_a",
+    };
+    expect(priceIdForPlan("lite_weekly", env)).toBe("price_lite_w");
+    expect(priceIdForPlan("lite_monthly", env)).toBe("price_lite_m");
+    expect(priceIdForPlan("lite_annual", env)).toBe("price_lite_a");
+    expect(priceIdForPlan("ultra_weekly", env)).toBe("price_ultra_w");
+    expect(priceIdForPlan("ultra_monthly", env)).toBe("price_ultra_m");
+    expect(priceIdForPlan("ultra_annual", env)).toBe("price_ultra_a");
+    expect(priceIdForPlan("lite_weekly", {})).toBeNull();
+    expect(MANAGEABLE_PLANS).toEqual(["weekly", "monthly", "annual"]);
   });
 });
 

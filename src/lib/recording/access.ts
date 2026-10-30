@@ -22,6 +22,9 @@ export async function recordingAccess(): Promise<
     pro: ownPro,
     stripePriceId: sub?.stripePriceId,
     env: process.env,
+    // The row's creation date drives the legacy-VIP cutoff for the
+    // annual price in the central plan config (Pricing Phase A).
+    createdAt: sub?.createdAt,
   });
   // Team Access (Phase 10): a granted member inherits the org owner's
   // tier via lib/team/entitlement — the single source for the merge.

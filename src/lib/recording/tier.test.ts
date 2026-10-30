@@ -39,6 +39,46 @@ describe("tierForPriceId", () => {
   });
 });
 
+describe("Phase A bridge — central plan config", () => {
+  const BRIDGE_ENV: Record<string, string | undefined> = {
+    ...ENV,
+    STRIPE_ANNUAL_PRICE_ID: "price_1USW5HGfHuTnzrlHveoTpmwd",
+    STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_monthly",
+    STRIPE_ULTRA_MONTHLY_PRICE_ID: "price_ultra_monthly",
+  };
+
+  it("ultra prices are vip; lite prices carry no old-contract tier", () => {
+    expect(tierForPriceId("price_ultra_monthly", BRIDGE_ENV)).toBe("vip");
+    expect(tierForPriceId("price_lite_monthly", BRIDGE_ENV)).toBeNull();
+    expect(
+      resolveRecordingTier({ pro: true, stripePriceId: "price_lite_monthly", env: BRIDGE_ENV }),
+    ).toBe("free");
+    expect(
+      resolveRecordingTier({ pro: true, stripePriceId: "price_ultra_monthly", env: BRIDGE_ENV }),
+    ).toBe("vip");
+  });
+
+  it("grandfathered annual keeps vip; the annual cutoff applies when createdAt is known", () => {
+    expect(tierForPriceId("price_1UPH7MGfHuTnzrlHxbGXji4K", BRIDGE_ENV)).toBe("vip");
+    expect(
+      resolveRecordingTier({
+        pro: true,
+        stripePriceId: "price_1USW5HGfHuTnzrlHveoTpmwd",
+        env: BRIDGE_ENV,
+        createdAt: new Date("2026-10-01T00:00:00Z"),
+      }),
+    ).toBe("vip");
+    expect(
+      resolveRecordingTier({
+        pro: true,
+        stripePriceId: "price_1USW5HGfHuTnzrlHveoTpmwd",
+        env: BRIDGE_ENV,
+        createdAt: new Date("2026-12-01T00:00:00Z"),
+      }),
+    ).toBe("pro");
+  });
+});
+
 describe("resolveRecordingTier", () => {
   it("no active subscription is free, whatever the price says", () => {
     expect(resolveRecordingTier({ pro: false, stripePriceId: "price_annual_current", env: ENV })).toBe("free");

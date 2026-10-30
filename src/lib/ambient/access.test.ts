@@ -55,6 +55,20 @@ describe("ambientAccessForRow", () => {
     expect(ambientAccessForRow(row({ stripePriceId: "price_weekly" }), env)).toBe(true);
   });
 
+  it("grants access for a Lite price (Q4: any paid tier bypasses, Phase A)", () => {
+    const liteEnv = { ...env, STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_monthly" };
+    // The old contract deliberately reads Lite as "free" (no Pro leak
+    // through pre-redesign consumers) — the bypass comes from the
+    // central config leg, not the tier.
+    expect(planTierForPriceId("price_lite_monthly", liteEnv)).toBe("free");
+    expect(ambientAccessForRow(row({ stripePriceId: "price_lite_monthly" }), liteEnv)).toBe(true);
+  });
+
+  it("denies a Powder Pass price (standalone — confers no tier, no bypass)", () => {
+    const skiEnv = { ...env, POWDER_PASS_PRICE_ID: "price_ski" };
+    expect(ambientAccessForRow(row({ stripePriceId: "price_ski" }), skiEnv)).toBe(false);
+  });
+
   it("denies ended trials, cancelled, past-due and absent rows", () => {
     // A trialing row whose period has run out folds away from
     // "active" (lib/subscription-status) — the trial is over.

@@ -28,7 +28,7 @@ describe("tierFromSubscription — annual is VIP", () => {
   const now = new Date("2026-10-20T12:00:00Z");
   const future = new Date("2026-11-20T12:00:00Z");
   const past = new Date("2026-10-01T12:00:00Z");
-  const sub = (over: Partial<{ status: string; currentPeriodEnd: Date; stripePriceId: string }>) => ({
+  const sub = (over: Partial<{ status: string; currentPeriodEnd: Date; stripePriceId: string; createdAt?: Date }>) => ({
     status: "active",
     currentPeriodEnd: future,
     stripePriceId: "price_monthly",
@@ -51,6 +51,32 @@ describe("tierFromSubscription — annual is VIP", () => {
   it("the annual price is vip — paid or trialing", () => {
     expect(tierFromSubscription(sub({ stripePriceId: "price_annual" }), env, now)).toBe("vip");
     expect(tierFromSubscription(sub({ status: "trialing", stripePriceId: "price_annual" }), env, now)).toBe("vip");
+  });
+
+  it("Phase A bridge: ultra is vip, lite is free-equivalent, post-cutoff annual is pro", () => {
+    const bridgeEnv = {
+      ...env,
+      STRIPE_ANNUAL_PRICE_ID: "price_1USW5HGfHuTnzrlHveoTpmwd",
+      STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_monthly",
+      STRIPE_ULTRA_MONTHLY_PRICE_ID: "price_ultra_monthly",
+    };
+    expect(tierFromSubscription(sub({ stripePriceId: "price_ultra_monthly" }), bridgeEnv, now)).toBe("vip");
+    expect(tierFromSubscription(sub({ stripePriceId: "price_lite_monthly" }), bridgeEnv, now)).toBe("free");
+    // Legacy-VIP cutoff on the real annual price: before → vip, after → pro.
+    expect(
+      tierFromSubscription(
+        sub({ stripePriceId: "price_1USW5HGfHuTnzrlHveoTpmwd", createdAt: new Date("2026-10-01T00:00:00Z") }),
+        bridgeEnv,
+        now,
+      ),
+    ).toBe("vip");
+    expect(
+      tierFromSubscription(
+        sub({ stripePriceId: "price_1USW5HGfHuTnzrlHveoTpmwd", createdAt: new Date("2026-12-01T00:00:00Z") }),
+        bridgeEnv,
+        now,
+      ),
+    ).toBe("pro");
   });
 });
 

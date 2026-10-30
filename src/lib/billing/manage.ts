@@ -10,25 +10,40 @@
  */
 import { TRIAL_PLAN_OPTIONS, type TrialPlanOption } from "./trial-checkout";
 import { planByPriceIdFromEnv } from "./trial-reminders";
+import { resolvePlan, type PlanKey } from "./plans";
 
 export const SUPPORT_EMAIL = "passiveincomewai@gmail.com";
 
 export type ManageablePlan = "weekly" | "monthly" | "annual";
 export const MANAGEABLE_PLANS: ManageablePlan[] = ["weekly", "monthly", "annual"];
 
-const PRICE_ENV_KEYS: Record<string, string> = {
-  weekly: "STRIPE_WEEKLY_PRICE_ID",
-  monthly: "STRIPE_MONTHLY_PRICE_ID",
-  annual: "STRIPE_ANNUAL_PRICE_ID",
-  enterprise: "STRIPE_ENTERPRISE_PRICE_ID",
+/**
+ * Manage-side plan name → central plan-config key (lib/billing/plans).
+ * The bare period names are the Pro grid (the only sellable plans
+ * this module has ever named); the Lite/Ultra PlanKeys name
+ * themselves. MANAGEABLE_PLANS above stays the current 3 this phase —
+ * Phase B widens the switch UI; these keys only make priceIdForPlan
+ * total over the new plan keys.
+ */
+const PLAN_KEY_BY_MANAGE_NAME: Record<string, PlanKey> = {
+  weekly: "pro_weekly",
+  monthly: "pro_monthly",
+  annual: "pro_annual",
+  enterprise: "enterprise",
+  lite_weekly: "lite_weekly",
+  lite_monthly: "lite_monthly",
+  lite_annual: "lite_annual",
+  ultra_weekly: "ultra_weekly",
+  ultra_monthly: "ultra_monthly",
+  ultra_annual: "ultra_annual",
 };
 
 export function priceIdForPlan(
   plan: string,
   env: Record<string, string | undefined>,
 ): string | null {
-  const key = PRICE_ENV_KEYS[plan];
-  return key ? (env[key] ?? null) : null;
+  const key = PLAN_KEY_BY_MANAGE_NAME[plan];
+  return key ? resolvePlan(key, env).priceId : null;
 }
 
 export interface ManageDbSub {
