@@ -24,7 +24,7 @@ import {
   type ManageOption,
   type ManagePendingSwitch,
 } from "@/lib/billing/manage";
-import { startPlanCheckout, TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
+import { startPlanCheckout, TRIAL_PLAN_OPTIONS, type TrialPlan } from "@/lib/billing/trial-checkout";
 import TrialButton from "@/components/TrialButton";
 import InvoicePayForm from "@/components/InvoicePayForm";
 
@@ -184,16 +184,22 @@ export default function SubscriptionClient() {
                 <p className="text-xs text-[#D4AF37] font-semibold">Just {o.perDay} a day</p>
                 <p className="text-xs text-white/45 mt-1 mb-4">{o.note}</p>
                 {(() => {
+                  // The no-subscription options are always the three Pro
+                  // trial plans (assembleManageView), so `t` is always
+                  // found — and its plan key is the BillingPlan the
+                  // checkout starter expects. The fallback stays for
+                  // type safety and simply re-renders the same card's
+                  // own plan when it is a trial plan.
                   const t = TRIAL_PLAN_OPTIONS.find((x) => x.plan === o.plan);
                   return t ? (
                     <TrialButton
                       label={t.cta}
                       days={t.trialDays === 3 ? 3 : 10}
-                      onClick={() => startPlanCheckout(o.plan)}
+                      onClick={() => startPlanCheckout(t.plan)}
                       className="w-full"
                     />
                   ) : (
-                    <button onClick={() => startPlanCheckout(o.plan)} className={`${btnGold} w-full`}>
+                    <button onClick={() => startPlanCheckout(o.plan as TrialPlan)} className={`${btnGold} w-full`}>
                       Start free trial
                     </button>
                   );
@@ -210,7 +216,13 @@ export default function SubscriptionClient() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold">
                 {view.current.planName}
-                {!view.current.planName.endsWith("Pro") && (
+                {/* The bare period names are Pro plans whose names don't
+                    say so — they carry the PRO suffix. Every other
+                    plan's sold name is complete as-is (VIP Pro, Lite
+                    Monthly, Ultra Annual, the standalones). */}
+                {(view.current.plan === "weekly" ||
+                  view.current.plan === "monthly" ||
+                  view.current.plan === "enterprise") && (
                   <>
                     {" "}
                     <span className="text-[#D4AF37]">PRO</span>
@@ -347,14 +359,23 @@ export default function SubscriptionClient() {
               )}
 
               {!confirming ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {view.options
-                    .filter((o) => !o.current)
-                    .map((o) => (
+                <div>
+                  {(["lite", "pro", "ultra"] as const).map((tier) => {
+                    const tierOptions = view.options.filter(
+                      (o) => !o.current && o.tier === tier,
+                    );
+                    if (tierOptions.length === 0) return null;
+                    return (
+                      <div key={tier} className="mb-5 last:mb-0">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+                          {tier === "lite" ? "Lite" : tier === "pro" ? "Pro" : "Ultra"}
+                        </h3>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {tierOptions.map((o) => (
                       <div
                         key={o.plan}
                         className={`rounded-2xl border p-4 ${
-                          o.plan === "annual"
+                          o.plan === "annual" || o.plan === "ultra_annual"
                             ? "border-[#D4AF37]/40 bg-[#D4AF37]/[0.04]"
                             : "border-white/10 bg-white/[0.02]"
                         }`}
@@ -369,7 +390,7 @@ export default function SubscriptionClient() {
                             <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-white/[0.04] text-white/40 border border-white/10">
                               Downgrade
                             </span>
-                          ) : o.plan === "annual" ? (
+                          ) : o.plan === "annual" || o.plan === "ultra_annual" ? (
                             <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
                               Best value
                             </span>
@@ -395,7 +416,11 @@ export default function SubscriptionClient() {
                           Switch to {o.name}
                         </button>
                       </div>
-                    ))}
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/[0.04] p-5">

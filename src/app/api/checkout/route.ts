@@ -4,7 +4,6 @@ import { db } from "@/lib/db";
 import { stripe, appUrl } from "@/lib/stripe";
 import { cookies } from "next/headers";
 import { REF_COOKIE, findAffiliateByCode } from "@/lib/affiliate/attribution";
-import { trialDaysForPlan } from "@/lib/billing/trials";
 import { resolvePlan, type PlanKey } from "@/lib/billing/plans";
 import { ambientPriceId } from "@/lib/ambient/access";
 import { powderPassEnabled, powderPassPriceId } from "@/lib/ski/access";
@@ -20,11 +19,19 @@ import { randomUUID } from "node:crypto";
 export const runtime = "nodejs";
 
 /** Checkout plan key → central plan-config key (lib/billing/plans).
- *  The allowlist in POST guarantees the plan is one of these. */
+ *  The allowlist in POST guarantees the plan is one of these. The Pro
+ *  grid keeps its historical bare period names; the Lite/Ultra grid
+ *  keys (Phase B) name themselves, exactly as in the plan config. */
 const PLAN_KEY_BY_CHECKOUT_PLAN: Record<string, PlanKey> = {
   weekly: "pro_weekly",
   monthly: "pro_monthly",
   annual: "pro_annual",
+  lite_weekly: "lite_weekly",
+  lite_monthly: "lite_monthly",
+  lite_annual: "lite_annual",
+  ultra_weekly: "ultra_weekly",
+  ultra_monthly: "ultra_monthly",
+  ultra_annual: "ultra_annual",
   enterprise: "enterprise",
   ambient: "ambient",
   ski: "ski",
@@ -57,7 +64,8 @@ export async function POST(req: Request) {
   // Powder Pass ("ski") is dark-launched: until POWDER_PASS_ENABLED is
   // set it is indistinguishable from a plan that does not exist.
   const skiEnabled = powderPassEnabled(process.env);
-  if (plan !== "weekly" && plan !== "monthly" && plan !== "annual" && plan !== "enterprise" && plan !== "ambient" && !(plan === "ski" && skiEnabled)) {
+  const planKey = plan ? PLAN_KEY_BY_CHECKOUT_PLAN[plan] : undefined;
+  if (!planKey || (plan === "ski" && !skiEnabled)) {
     return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   }
   // Embedded mode renders Stripe's form on /checkout (our domain) instead of
@@ -75,18 +83,19 @@ export async function POST(req: Request) {
   // provisioned); Powder Pass has NO fallback — an unset env lands on
   // the standard not-configured 500 below, exactly like any other
   // unprovisioned price.
-  const planKey = PLAN_KEY_BY_CHECKOUT_PLAN[plan ?? ""];
-  const resolved = planKey ? resolvePlan(planKey, process.env) : null;
+  const resolved = resolvePlan(planKey, process.env);
   // Free trials: weekly → 3 days, monthly → 10 days, annual → 10 days
-  // — the owner's locked rule, the same for every tier. Enterprise
-  // has no trial. Config lives in src/lib/billing/trials.ts. Stripe
-  // reports these subscriptions as `trialing`, which the paywall
-  // treats as full access.
-  const trialDays = trialDaysForPlan(plan);
-  const priceId = resolved?.priceId ?? null;
+  // — the owner's locked rule, the same for EVERY tier (Lite, Pro and
+  // Ultra alike). Enterprise has no trial. The days are derived by the
+  // plan config from src/lib/billing/trials.ts (TRIAL_DAYS, keyed by
+  // period for grid plans), never restated here. Stripe reports these
+  // subscriptions as `trialing`, which the paywall treats as full
+  // access.
+  const trialDays = resolved.trialDays;
+  const priceId = resolved.priceId;
   if (!priceId) {
     return NextResponse.json(
-      { error: `${resolved?.envKey ?? "STRIPE_WEEKLY_PRICE_ID"} is not set` },
+      { error: `${resolved.envKey} is not set` },
       { status: 500 },
     );
   }

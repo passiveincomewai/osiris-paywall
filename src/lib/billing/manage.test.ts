@@ -1,6 +1,7 @@
 // Pins for the in-house subscription management assembly + switch terms
-// (scope G). Prices must come from PLAN_COPY (TRIAL_PLAN_OPTIONS) and
-// plan resolution from the env price ids — never restated figures.
+// (scope G). Prices must come from the central plan config
+// (lib/billing/plans) — with the Pro grid pinned equal to PLAN_COPY —
+// and plan resolution from the env price ids — never restated figures.
 import { describe, it, expect } from "vitest";
 import {
   assembleManageView,
@@ -114,7 +115,7 @@ describe("priceIdForPlan", () => {
     expect(priceIdForPlan("bogus", ENV)).toBeNull();
   });
 
-  it("Phase A: lite_*/ultra_* plan keys resolve; MANAGEABLE_PLANS stays the current 3", () => {
+  it("Phase B: lite_*/ultra_* plan keys resolve; MANAGEABLE_PLANS is the full 9-plan grid", () => {
     const env = {
       STRIPE_LITE_WEEKLY_PRICE_ID: "price_lite_w",
       STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_m",
@@ -130,7 +131,191 @@ describe("priceIdForPlan", () => {
     expect(priceIdForPlan("ultra_monthly", env)).toBe("price_ultra_m");
     expect(priceIdForPlan("ultra_annual", env)).toBe("price_ultra_a");
     expect(priceIdForPlan("lite_weekly", {})).toBeNull();
-    expect(MANAGEABLE_PLANS).toEqual(["weekly", "monthly", "annual"]);
+    expect(MANAGEABLE_PLANS).toEqual([
+      "lite_weekly",
+      "lite_monthly",
+      "lite_annual",
+      "weekly",
+      "monthly",
+      "annual",
+      "ultra_weekly",
+      "ultra_monthly",
+      "ultra_annual",
+    ]);
+  });
+});
+
+describe("assembleManageView — the 9-plan grid (Phase B)", () => {
+  const GRID_ENV = {
+    ...ENV,
+    STRIPE_LITE_WEEKLY_PRICE_ID: "price_lite_w",
+    STRIPE_LITE_MONTHLY_PRICE_ID: "price_lite_m",
+    STRIPE_LITE_ANNUAL_PRICE_ID: "price_lite_a",
+    STRIPE_ULTRA_WEEKLY_PRICE_ID: "price_ultra_w",
+    STRIPE_ULTRA_MONTHLY_PRICE_ID: "price_ultra_m",
+    STRIPE_ULTRA_ANNUAL_PRICE_ID: "price_ultra_a",
+  };
+
+  it("a subscriber's options are the 9 grid plans, tier-grouped in order", () => {
+    const v = assembleManageView({ dbSub: dbSub(), stripeSub: null, env: GRID_ENV });
+    expect(v.options.map((o) => o.plan)).toEqual([
+      "lite_weekly",
+      "lite_monthly",
+      "lite_annual",
+      "weekly",
+      "monthly",
+      "annual",
+      "ultra_weekly",
+      "ultra_monthly",
+      "ultra_annual",
+    ]);
+    expect(v.options.map((o) => o.tier)).toEqual([
+      "lite",
+      "lite",
+      "lite",
+      "pro",
+      "pro",
+      "pro",
+      "ultra",
+      "ultra",
+      "ultra",
+    ]);
+  });
+
+  it("the Pro grid entries reproduce TRIAL_PLAN_OPTIONS copy exactly (no subscriber reads a changed figure)", () => {
+    const v = assembleManageView({ dbSub: dbSub(), stripeSub: null, env: GRID_ENV });
+    for (const t of TRIAL_PLAN_OPTIONS) {
+      const o = v.options.find((x) => x.plan === t.plan)!;
+      expect(o.name).toBe(t.name);
+      expect(o.price).toBe(t.price);
+      expect(o.per).toBe(t.per);
+      expect(o.perDay).toBe(t.perDay);
+      expect(o.note).toBe(t.note);
+    }
+  });
+
+  it("Lite/Ultra entries carry the central config's names, prices and derived figures", () => {
+    const v = assembleManageView({ dbSub: dbSub(), stripeSub: null, env: GRID_ENV });
+    const liteW = v.options.find((o) => o.plan === "lite_weekly")!;
+    expect(liteW.name).toBe("Lite Weekly");
+    expect(liteW.price).toBe("$4.99");
+    expect(liteW.per).toBe("/week");
+    expect(liteW.perDay).toBe("$0.71");
+    expect(liteW.note).toBe("3 days free, then billed weekly · cancel anytime");
+    const ultraA = v.options.find((o) => o.plan === "ultra_annual")!;
+    expect(ultraA.name).toBe("Ultra Annual");
+    expect(ultraA.price).toBe("$149.99");
+    expect(ultraA.per).toBe("/year");
+    expect(ultraA.perDay).toBe("$0.41");
+    expect(ultraA.note).toBe("10 days free, then billed annually · cancel anytime");
+  });
+
+  it("a Lite subscriber sees their correct label and grid relations", () => {
+    const v = assembleManageView({
+      dbSub: dbSub({ stripePriceId: "price_lite_m" }),
+      stripeSub: { status: "active", trial_end: null },
+      env: GRID_ENV,
+    });
+    expect(v.kind).toBe("self-serve");
+    expect(v.current?.plan).toBe("lite_monthly");
+    expect(v.current?.planName).toBe("Lite Monthly");
+    expect(v.current?.priceLabel).toBe("$8.99/month");
+    expect(v.options.find((o) => o.plan === "lite_monthly")?.current).toBe(true);
+    expect(v.options.find((o) => o.plan === "lite_monthly")?.relation).toBe("current");
+    expect(v.options.find((o) => o.plan === "lite_weekly")?.relation).toBe("switch");
+    expect(v.options.find((o) => o.plan === "lite_annual")?.relation).toBe("upgrade");
+    expect(v.options.find((o) => o.plan === "annual")?.relation).toBe("upgrade");
+    expect(v.options.find((o) => o.plan === "ultra_annual")?.relation).toBe("upgrade");
+  });
+
+  it("an Ultra subscriber sees Pro and Lite framed as downgrades", () => {
+    const v = assembleManageView({
+      dbSub: dbSub({ stripePriceId: "price_ultra_m" }),
+      stripeSub: { status: "active", trial_end: null },
+      env: GRID_ENV,
+    });
+    expect(v.current?.plan).toBe("ultra_monthly");
+    expect(v.current?.planName).toBe("Ultra Monthly");
+    expect(v.current?.priceLabel).toBe("$24.99/month");
+    expect(v.options.find((o) => o.plan === "ultra_weekly")?.relation).toBe("switch");
+    expect(v.options.find((o) => o.plan === "ultra_annual")?.relation).toBe("upgrade");
+    expect(v.options.find((o) => o.plan === "annual")?.relation).toBe("downgrade");
+    expect(v.options.find((o) => o.plan === "lite_annual")?.relation).toBe("downgrade");
+  });
+
+  it("from VIP Pro, Ultra is the upgrade and Lite the downgrade", () => {
+    const v = assembleManageView({
+      dbSub: dbSub({ stripePriceId: "price_annual" }),
+      stripeSub: null,
+      env: GRID_ENV,
+    });
+    expect(v.options.find((o) => o.plan === "ultra_weekly")?.relation).toBe("upgrade");
+    expect(v.options.find((o) => o.plan === "ultra_annual")?.relation).toBe("upgrade");
+    expect(v.options.find((o) => o.plan === "lite_monthly")?.relation).toBe("downgrade");
+  });
+
+  it("legacy grandfathered rows resolve exactly as before (price never remapped)", () => {
+    const gfAnnual = assembleManageView({
+      dbSub: dbSub({ stripePriceId: "price_1UPH7MGfHuTnzrlHxbGXji4K" }),
+      stripeSub: null,
+      env: GRID_ENV,
+    });
+    expect(gfAnnual.current?.plan).toBe("annual");
+    expect(gfAnnual.current?.planName).toBe("VIP Pro");
+    const gfWeekly = assembleManageView({
+      dbSub: dbSub({ stripePriceId: "price_1UPH6KGfHuTnzrlHDBzDHobj" }),
+      stripeSub: null,
+      env: GRID_ENV,
+    });
+    expect(gfWeekly.current?.plan).toBe("weekly");
+    expect(gfWeekly.options.find((o) => o.plan === "weekly")?.current).toBe(true);
+  });
+
+  it("due-today quotes land on Lite/Ultra options too", () => {
+    const v = assembleManageView({
+      dbSub: dbSub(),
+      stripeSub: { status: "active", trial_end: null },
+      env: GRID_ENV,
+      dueTodayByPlan: { lite_monthly: 500, ultra_annual: 14000 },
+    });
+    expect(v.options.find((o) => o.plan === "lite_monthly")?.dueTodayCents).toBe(500);
+    expect(v.options.find((o) => o.plan === "ultra_annual")?.dueTodayCents).toBe(14000);
+    expect(v.options.find((o) => o.plan === "lite_weekly")?.dueTodayCents).toBeNull();
+  });
+
+  it("a pending switch to a Lite price names the Lite target", () => {
+    const v = assembleManageView({
+      dbSub: dbSub(),
+      stripeSub: {
+        status: "active",
+        trial_end: null,
+        pendingInvoice: {
+          id: "in_2",
+          amountDue: 500,
+          currency: "usd",
+          clientSecret: "pi_2_secret_x",
+          hostedUrl: "https://invoice.stripe.com/i/y",
+          newPriceId: "price_lite_m",
+        },
+      },
+      env: GRID_ENV,
+    });
+    expect(v.pendingSwitch?.targetPlan).toBe("lite_monthly");
+    expect(v.pendingSwitch?.targetName).toBe("Lite Monthly");
+  });
+
+  it("switchTerms quotes the NEW Lite price plainly in the confirm step", () => {
+    const v = assembleManageView({
+      dbSub: dbSub(),
+      stripeSub: { status: "active", trial_end: null },
+      env: GRID_ENV,
+    });
+    const liteMonthly = v.options.find((o) => o.plan === "lite_monthly")!;
+    const terms = switchTerms(v.current!, liteMonthly, 500);
+    expect(terms.targetName).toBe("Lite Monthly");
+    expect(terms.targetPriceLabel).toBe("$8.99/month");
+    expect(terms.moneyLine).toContain("Due today: $5.00");
+    expect(terms.nextChargeLine).toContain("$8.99/month");
   });
 });
 
