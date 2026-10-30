@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Calculator } from "lucide-react";
+import ValueSlider from "@/components/ui/ValueSlider";
 
 /** Interactive earnings estimator: referrals × plan → recurring commission. */
 export default function EarningsCalculator() {
@@ -29,13 +30,14 @@ export default function EarningsCalculator() {
                 <span className="text-slate-300">Paying referrals</span>
                 <span className="font-mono font-bold text-white text-lg">{refs}</span>
               </div>
-              <input
-                type="range"
+              <ValueSlider
                 min={1}
                 max={100}
                 value={refs}
-                onChange={(e) => setRefs(Number(e.target.value))}
-                className="w-full accent-cyan-400"
+                onChange={setRefs}
+                ariaLabel="Paying referrals"
+                accent="cyan"
+                formatValue={(v) => (v === 1 ? "1 referral" : `${v} referrals`)}
               />
             </div>
             <div>

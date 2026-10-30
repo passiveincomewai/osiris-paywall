@@ -21,6 +21,7 @@ import {
   type TierBand,
 } from "@/lib/team/pricing";
 import { trackAnalyticsEvent } from "@/components/AnalyticsTracker";
+import ValueSlider from "@/components/ui/ValueSlider";
 
 /** Format integer cents as $X.XX. */
 export function fmtCents(cents: number): string {
@@ -118,18 +119,18 @@ export default function SeatCalculator({
       </p>
 
       {/* Slider + numeric readout */}
-      <div className="flex items-center gap-3 sm:gap-4">
-        <input
-          type="range"
+      <div className="flex items-start gap-3 sm:gap-4">
+        <ValueSlider
           min={0}
           max={maxSeats}
           step={1}
           value={seats}
-          onChange={(e) => handleSeats(Number(e.target.value))}
-          aria-label="Additional team seats"
-          className="flex-1 min-w-0 accent-[#D4AF37] h-2 cursor-pointer"
+          onChange={handleSeats}
+          ariaLabel="Additional team seats"
+          formatValue={(v) => (v === 1 ? "1 seat" : `${v} seats`)}
+          className="flex-1 min-w-0"
         />
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 pt-[27px]">
           <input
             type="number"
             min={0}
