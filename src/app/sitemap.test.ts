@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1116);
+    expect(nonTransit.length).toBe(1118);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -183,8 +183,16 @@ describe("sitemap URL set", () => {
     // colorado-ski-season-opens-keystone-arapahoe-basin) → 1,116.
     // Delta hand-verified: removing exactly those 3 URLs
     // reproduces the 1,113 set and the be9f132b… hash byte-for-byte.
+    // The Daily Blog 2026-10-30 batch (shipped 2026-10-30)
+    // then added the two sourced news posts
+    // (iss-spacewalk-100-seventh-solar-array,
+    // super-typhoon-in-fa-northern-mariana-islands) → 1,118.
+    // (A third staged story, Keystone opening day, was dropped
+    // as a duplicate of the Oct 29 Colorado ski-season post.)
+    // Delta hand-verified: removing exactly those 2 URLs
+    // reproduces the 1,116 set and the 6012a76e… hash byte-for-byte.
     expect(hash).toBe(
-      "6012a76ecf5c504284f7bb057ad0e0ec173d4bf8cdd395d03c7a30bb0f3bca69",
+      "71edeb7b0c6f52a212c00dae79ec56c71cac20838dfe640d2f8289d0cccf3056",
     );
   });
 

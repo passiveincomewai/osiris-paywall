@@ -41,6 +41,170 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "iss-spacewalk-100-seventh-solar-array",
+    title: "Astronauts Complete the ISS's 100th U.S. Spacewalk, Installing a Seventh New Solar Array",
+    seoTitle: "ISS Spacewalk 100 Installs 7th Array | WorldEye Blog",
+    date: "2026-10-30",
+    excerpt:
+      "NASA astronaut Anil Menon and Canadian astronaut Joshua Kutryk spent 7 hours and 11 minutes outside the International Space Station on October 29, installing the seventh of eight roll-out solar arrays on the station's 100th U.S. spacewalk. One more walk, on November 5, finishes the power upgrade.",
+    seoDescription:
+      "U.S. spacewalk 100 is complete: Menon and Kutryk installed the ISS's seventh roll-out solar array on Oct 29. The final array follows on November 5.",
+    tags: ["space", "iss", "events", "live tracking"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "The International Space Station's power upgrade is one spacewalk from done. NASA astronaut Anil Menon and Canadian Space Agency astronaut Joshua Kutryk exited the station's Quest airlock at 7:57 a.m. EDT on Thursday, October 29, and spent 7 hours and 11 minutes installing and deploying a new roll-out solar array, returning inside at 3:08 p.m. EDT. It was U.S. spacewalk 100 from the station — and the 285th spacewalk overall in support of station assembly, maintenance and upgrades.",
+          "The array they installed is the seventh of eight International Space Station Roll-Out Solar Arrays, known as IROSAs, mounted on the station's 2A electrical power channel. One installation remains: the eighth and final array, planned for a spacewalk on November 5 on the 3B channel, which Menon and Kutryk also prepared equipment for before coming back inside.",
+        ],
+      },
+      {
+        heading: "Why the station needs new wings",
+        body: [
+          "The station's original solar wings have been in orbit for years beyond their design debut, and their output has faded with age. The roll-out arrays are installed in front of the older wings, supplementing them rather than replacing them outright — each new blanket unrolls across part of an existing wing and feeds the same power channels with fresh capacity.",
+          "The arithmetic is significant. NASA says that with all eight roll-out arrays installed, the station's available power generation could rise by up to 30 percent — from about 160 kilowatts to roughly 215 kilowatts. That power supports the station's critical operations today, and, as NASA puts it, its eventual safe and controlled deorbit at the end of its life: even a retiring station needs electricity to leave orbit on purpose rather than by accident.",
+        ],
+      },
+      {
+        heading: "A first spacewalk, and a fourth",
+        body: [
+          "The pairing mixed experience by design. Menon, wearing the suit with red stripes as crew member 1, was on his fourth spacewalk. Kutryk, in the unmarked suit, was on his first — a milestone for the Canadian Space Agency, whose astronaut was working on a power truss built around the station's Canadian robotic arm heritage while colleagues and ground teams in Canada supported the outing.",
+          "First spacewalks are carefully choreographed, and this one had a full script: secure the new array, deploy it, and then get ahead of the next job by preparing the final array's worksite on the 3B channel. Completing the prep work is what makes the November 5 finale a single-spacewalk finish rather than the start of another pair.",
+        ],
+      },
+      {
+        heading: "The finale: November 5",
+        body: [
+          "The last roll-out array goes in on Thursday, November 5, on the station's 3B power channel. When it is deployed, the multi-year IROSA upgrade is complete: eight new blankets across the station's power channels, and a grid restored to more power than the ageing original wings could still deliver on their own.",
+          "NASA plans live coverage of the November 5 spacewalk, as it provided for this one. If you watched Thursday's installation, the sequel is the rarer event — final spacewalks of a programme are the ones history keeps. Mark the date the way the station crew marks a worksite: prepared in advance.",
+        ],
+      },
+      {
+        heading: "Follow the station between spacewalks",
+        body: [
+          "You do not need a spacewalk to watch the station work. The ISS circles Earth roughly every 90 minutes, and WorldEye's [space station tracker](/space-station-tracker) follows its position live, while [ISS over](/iss-over) tells you when it will next pass over your location — bright, fast and unmistakable on a clear evening. Our guide to [how to watch the ISS live](/blog/how-to-watch-the-iss-live) covers the station's own Earth-viewing cameras and what its crew sees from 250 miles up.",
+          "Put the two together this week: track a pass over your house tonight, then tune in on November 5 as the crew finishes the job Thursday's walk set up. The station that flies over you will be flying on seven new wings — and, after next week, eight.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What happened on U.S. spacewalk 100 at the ISS?",
+        a: "On October 29, 2026, NASA astronaut Anil Menon and Canadian Space Agency astronaut Joshua Kutryk spent 7 hours and 11 minutes (7:57 a.m. to 3:08 p.m. EDT) installing and deploying the seventh International Space Station Roll-Out Solar Array on the 2A power channel. It was the 100th U.S. spacewalk from the station and the 285th spacewalk overall supporting station assembly and maintenance.",
+      },
+      {
+        q: "When is the final ISS solar array installed?",
+        a: "On a spacewalk planned for November 5, 2026, which will install the eighth and final roll-out array on the station's 3B power channel, completing the IROSA power upgrade. Menon and Kutryk prepared equipment for that installation during the October 29 walk.",
+      },
+      {
+        q: "How much power do the new ISS solar arrays add?",
+        a: "NASA says the eight roll-out arrays together could increase the station's available power generation by up to 30 percent, from about 160 kilowatts to roughly 215 kilowatts. The new arrays supplement the station's original, ageing solar wings and support critical operations, including its eventual safe, controlled deorbit.",
+      },
+      {
+        q: "Was this Joshua Kutryk's first spacewalk?",
+        a: "Yes. The October 29 spacewalk was the first for Canadian Space Agency astronaut Joshua Kutryk, and the fourth for NASA astronaut Anil Menon, who served as crew member 1 in the red-striped suit.",
+      },
+      {
+        q: "How can I watch the ISS myself?",
+        a: "Track its live position on WorldEye's space station tracker, check ISS Over for the next pass above your location, and watch for NASA's live coverage of the November 5 spacewalk. On a clear evening the station appears as a bright, steady light crossing the sky in a few minutes — no telescope needed.",
+      },
+    ],
+    sources: [
+      {
+        name: "NASA — Astronauts Suit Up to Prepare for Power Upgrade Spacewalk (Oct 29, 2026)",
+        url: "https://www.nasa.gov/blogs/spacestation/2026/10/29/astronauts-suit-up-to-prepare-for-power-upgrade-spacewalk/",
+      },
+      {
+        name: "Harava News — Menon and Kutryk install the ISS's seventh roll-out solar array (Oct 30, 2026)",
+        url: "https://harava.news/en/articles/2026/10/30/iss-solar-array-installation",
+      },
+    ],
+  },
+  {
+    slug: "super-typhoon-in-fa-northern-mariana-islands",
+    title: "Super Typhoon In-fa Is Passing the Northern Mariana Islands With 145 mph Winds",
+    seoTitle: "Super Typhoon In-fa Nears Marianas | WorldEye Blog",
+    date: "2026-10-30",
+    excerpt:
+      "Typhoon In-fa is passing the northernmost Mariana Islands today with sustained winds of 145 mph. Typhoon warnings are in effect for Agrihan, Pagan and Alamagan, surf up to 18 feet is forecast on exposed reefs, and the track beyond the weekend is unusually uncertain. The October 30 advisories, in plain terms.",
+    seoDescription:
+      "Super Typhoon In-fa passes the Northern Marianas today with 145 mph winds. Warnings for Agrihan, Pagan and Alamagan, 18-foot surf, and a live tracker.",
+    tags: ["storms", "typhoon", "weather", "events"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "A super typhoon is brushing the top of the Mariana chain today. In the National Weather Service Guam advisory issued at 4 p.m. Chamorro Standard Time on Friday, October 30, Typhoon In-fa was centred at 18.7°N, 146.2°E — about 35 miles east of Agrihan, 50 miles northeast of Pagan and 80 miles north-northeast of Alamagan — moving west-northwest at 22 mph with maximum sustained winds of 145 mph. Typhoon warnings remain in effect for Agrihan, Pagan and Alamagan, the three northernmost inhabited islands of the Commonwealth of the Northern Mariana Islands, where typhoon conditions are occurring.",
+          "The Joint Typhoon Warning Center, which designates the storm 30W, put In-fa at 17.8°N, 147.8°E at midnight UTC — roughly 194 nautical miles northeast of Saipan — with sustained winds of 125 knots gusting to 150 knots. By any agency's measure, this is one of the strongest storms on Earth right now, and today is its closest pass to the Marianas.",
+        ],
+      },
+      {
+        heading: "An unusually round, unusually powerful storm",
+        body: [
+          "In-fa has taken on what meteorologists call annular characteristics: a remarkably symmetrical ring of intense thunderstorms wrapped around a large, nearly cloud-free eye, with few of the outer spiral bands a typical typhoon carries. The JTWC measured that eye at roughly 40 nautical miles — about 46 miles — wide on October 29, when the storm was packing sustained winds of 150 mph.",
+          "The ocean underneath matches the satellite picture. The JTWC reported a significant wave height of 60 feet in its October 29 analysis — that is the average height of the highest third of waves in the open ocean beneath the storm, not surf breaking on a beach. Even so, it describes a sea state few ships would choose to be anywhere near.",
+        ],
+      },
+      {
+        heading: "Surf is the wider threat",
+        body: [
+          "The islands in the warning area face the storm's core winds, but In-fa's reach extends well south of its centre. In its October 29 forecast discussion, the National Weather Service in Tiyan, Guam warned that large, long-period northeast swell from In-fa would build seas up to 14 feet in Tinian and Saipan waters and around 10 feet near Rota and Guam, with surf building as high as 18 feet along the north- and east-facing reefs of Tinian and Saipan and up to 14 feet for Rota and Guam. A high surf warning is in effect for Friday for parts of the chain, with a dangerous rip current risk running through Saturday afternoon and minor coastal inundation possible on exposed reefs.",
+          "For Guam, Rota, Tinian and Saipan themselves, the same discussion is reassuring on wind: direct impacts remain highly unlikely, because the storm's tight wind field is passing north of them. The hazard there is the water, not the wind — a distinction worth keeping, because an 18-foot reef break under a calm sky still closes beaches.",
+        ],
+      },
+      {
+        heading: "Where In-fa goes next",
+        body: [
+          "Forecast guidance takes In-fa northwestward, away from the Marianas, over the next day, still at typhoon strength. Japan's Meteorological Agency then brings it toward waters near the Ogasawara Islands over the weekend, and expects it to remain a very strong typhoon through at least November 4.",
+          "Beyond that, forecasters are unusually honest about the uncertainty. The JTWC's track discussion describes confidence in the forecast beyond roughly the first day or two as very low: In-fa's path hinges on a passing trough over Japan, a rebuilding ridge, and possibly a sharp westward turn, a stall, and a second attempt to recurve — a loop more than a line. Anyone with interests south of Japan should treat the five-day track as a sketch, and re-check it against each new advisory rather than planning around today's version.",
+        ],
+      },
+      {
+        heading: "Track the storm live",
+        body: [
+          "WorldEye's [hurricane tracker](/hurricane-tracker) follows active tropical cyclones — hurricanes, typhoons and cyclones are the same phenomenon in different ocean basins — with their forecast tracks, so you can watch In-fa's northwest turn (or its failure to turn) advisory by advisory. Pair it with the [surf webcams](/surf-webcams) page for Pacific-facing coasts as the long-period swell arrives: swell from a storm this size travels for days, and the surf it produces far from the Marianas is part of this story too.",
+          "One caution we apply to every storm: satellite imagery on WorldEye is dated Esri World Imagery, never a live satellite feed, and the authoritative word on warnings always belongs to the agencies — the National Weather Service Guam and the Joint Typhoon Warning Center for this storm. Follow their advisories, and local emergency instructions if you are in the warning area, over anything a map shows you.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Where is Typhoon In-fa now?",
+        a: "In the National Weather Service Guam advisory at 4 p.m. local time on Friday, October 30, 2026, In-fa was at 18.7°N, 146.2°E — about 35 miles east of Agrihan in the Northern Mariana Islands — moving west-northwest at 22 mph with maximum sustained winds of 145 mph. Typhoon warnings are in effect for Agrihan, Pagan and Alamagan.",
+      },
+      {
+        q: "How strong is Super Typhoon In-fa?",
+        a: "A Category 4-equivalent super typhoon. The Joint Typhoon Warning Center estimated sustained winds of 125 knots (about 145 mph) gusting to 150 knots on October 30, after a peak of about 150 mph sustained on October 29. Its eye is unusually large — roughly 40 nautical miles wide — and the JTWC reported 60-foot significant wave heights in the open ocean beneath it.",
+      },
+      {
+        q: "Will In-fa hit Guam or Saipan?",
+        a: "Direct wind impacts are highly unlikely, according to the National Weather Service Guam: the storm's compact core is passing north of both. The real hazard for Guam, Rota, Tinian and Saipan is ocean swell — surf up to 18 feet on north- and east-facing reefs of Tinian and Saipan, a high surf warning on Friday, and a dangerous rip current risk through Saturday.",
+      },
+      {
+        q: "Where is In-fa forecast to go after the Marianas?",
+        a: "Northwest, away from the Marianas, then toward waters near Japan's Ogasawara Islands over the weekend, remaining a very strong typhoon through at least November 4 per the Japan Meteorological Agency. Beyond a day or two the JTWC flags very low track confidence — a stall or sharp westward turn south of Japan is possible — so the track should be re-checked with each advisory.",
+      },
+      {
+        q: "What is the difference between a typhoon and a hurricane?",
+        a: "Only the ocean basin. The same tropical cyclone is called a hurricane in the Atlantic and eastern Pacific, a typhoon in the western North Pacific — In-fa's basin — and a cyclone in the Indian Ocean and South Pacific. WorldEye's hurricane tracker covers all of them in one place.",
+      },
+    ],
+    sources: [
+      {
+        name: "National Weather Service Tiyan, Guam — Area Forecast Discussion, Oct 29, 2026 (via Iowa State IEM)",
+        url: "https://mesonet.agron.iastate.edu/wx/afos/p.php?pil=AFDGUM&e=202610290803",
+      },
+      {
+        name: "Orbis Weather — Western Pacific Tropical Weather, Oct 30, 2026 (NWS Guam / JTWC / JMA advisories)",
+        url: "https://www.orbisweather.com/western-pacific-tropical-weather-oct-30/",
+      },
+      {
+        name: "SURFER — Super Typhoon In-fa's 60-foot waves and annular eye (Oct 29, 2026)",
+        url: "https://www.surfer.com/news/super-typhoon-in-fa-satellite-video",
+      },
+    ],
+  },
+  {
     slug: "worldeye-white-label",
     title: "Announcing WorldEye White Label: Your Own Branded Live-Camera Platform",
     seoTitle: "WorldEye White Label: Branded Live Cameras | WorldEye Blog",

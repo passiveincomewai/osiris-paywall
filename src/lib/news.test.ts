@@ -87,6 +87,8 @@ describe("the launch story (real data, real dates)", () => {
   it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
     expect(flagged.map((p) => p.slug)).toEqual([
+      "iss-spacewalk-100-seventh-solar-array",
+      "super-typhoon-in-fa-northern-mariana-islands",
       "halloween-aurora-g1-storm-watch",
       "spacex-starlink-launch-vandenberg-october-30",
       "colorado-ski-season-opens-keystone-arapahoe-basin",
@@ -95,6 +97,14 @@ describe("the launch story (real data, real dates)", () => {
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }
+  });
+
+  it("the Oct 30 event stories are inside the 48-hour window on their publication day", () => {
+    const pubDay = new Date("2026-10-30T15:00:00Z");
+    const fresh = getFreshNewsPosts(POSTS, pubDay).map((p) => p.slug);
+    expect(fresh).toContain("iss-spacewalk-100-seventh-solar-array");
+    expect(fresh).toContain("super-typhoon-in-fa-northern-mariana-islands");
+    expect(fresh).not.toContain(LAUNCH_SLUG);
   });
 });
 
