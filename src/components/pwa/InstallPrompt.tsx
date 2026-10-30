@@ -9,12 +9,15 @@
  * cooldown, and on account/billing/admin surfaces.
  *
  * Platform behavior:
- * - Chromium/Android (and desktop Chromium): the bar appears only after
- *   the browser fires `beforeinstallprompt`; the button triggers that
- *   native prompt.
+ * - Android/Chromium: the bar appears only after the browser fires
+ *   `beforeinstallprompt`; the button triggers that native prompt.
  * - iOS Safari: no programmatic prompt exists, so the button opens a
  *   small instruction sheet (Share → Add to Home Screen → Add).
- * - Desktop without a native prompt: the bar stays hidden.
+ * - Desktop (owner order 2026-10-29): no install pitch at all — the
+ *   same bar teaches bookmarking instead (Ctrl+D / Cmd+D by OS, plus
+ *   pinning the tab), under the same dismissal cooldown, and reports
+ *   through distinct `bookmark_prompt_*` analytics events so bookmark
+ *   shows are never counted as install shows.
  *
  * Outcomes are reported through the existing analytics path
  * (`trackAnalyticsEvent` → /api/analytics/track).
@@ -25,9 +28,12 @@ import { usePathname } from "next/navigation";
 import { trackAnalyticsEvent } from "@/components/AnalyticsTracker";
 import {
   PWA_DISMISS_STORAGE_KEY,
+  detectDesktopOs,
   detectInstallPlatform,
   parseDismissedAt,
+  shouldShowBookmarkPrompt,
   shouldShowInstallPrompt,
+  type DesktopOs,
   type InstallPlatform,
 } from "@/lib/pwa/install";
 
@@ -47,6 +53,7 @@ export default function InstallPrompt() {
   const [iosSheetOpen, setIosSheetOpen] = useState(false);
   const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
   const platformRef = useRef<InstallPlatform>("other");
+  const desktopOsRef = useRef<DesktopOs>("other");
   const shownTrackedRef = useRef(false);
 
   const evaluate = useCallback(() => {
@@ -60,18 +67,31 @@ export default function InstallPrompt() {
     const dismissedAt = parseDismissedAt(
       window.localStorage.getItem(PWA_DISMISS_STORAGE_KEY),
     );
-    const show = shouldShowInstallPrompt({
-      standalone,
-      installed,
-      platform: platformRef.current,
-      hasNativePrompt: deferredPromptRef.current !== null,
-      dismissedAt,
-      now: Date.now(),
-    });
+    const isDesktop = platformRef.current === "desktop";
+    const show = isDesktop
+      ? shouldShowBookmarkPrompt({
+          standalone,
+          installed,
+          platform: platformRef.current,
+          dismissedAt,
+          now: Date.now(),
+        })
+      : shouldShowInstallPrompt({
+          standalone,
+          installed,
+          platform: platformRef.current,
+          hasNativePrompt: deferredPromptRef.current !== null,
+          dismissedAt,
+          now: Date.now(),
+        });
     setVisible(show);
     if (show && !shownTrackedRef.current) {
       shownTrackedRef.current = true;
-      trackAnalyticsEvent("pwa_install_shown", platformRef.current);
+      if (isDesktop) {
+        trackAnalyticsEvent("bookmark_prompt_shown", desktopOsRef.current);
+      } else {
+        trackAnalyticsEvent("pwa_install_shown", platformRef.current);
+      }
     }
   }, []);
 
@@ -80,6 +100,7 @@ export default function InstallPrompt() {
       window.navigator.userAgent,
       window.navigator.maxTouchPoints ?? 0,
     );
+    desktopOsRef.current = detectDesktopOs(window.navigator.userAgent);
     evaluate();
 
     const onBeforeInstallPrompt = (event: Event) => {
@@ -107,7 +128,11 @@ export default function InstallPrompt() {
     window.localStorage.setItem(PWA_DISMISS_STORAGE_KEY, String(Date.now()));
     setVisible(false);
     setIosSheetOpen(false);
-    trackAnalyticsEvent("pwa_install_dismissed", platformRef.current);
+    if (platformRef.current === "desktop") {
+      trackAnalyticsEvent("bookmark_prompt_dismissed", desktopOsRef.current);
+    } else {
+      trackAnalyticsEvent("pwa_install_dismissed", platformRef.current);
+    }
   }, []);
 
   const onInstallClick = useCallback(async () => {
@@ -145,6 +170,68 @@ export default function InstallPrompt() {
     )
   ) {
     return null;
+  }
+
+  if (platformRef.current === "desktop") {
+    const isMac = desktopOsRef.current === "mac";
+    const kbdClass =
+      "rounded border border-white/15 bg-white/10 px-1 py-px font-sans text-[10px] font-semibold whitespace-nowrap text-white";
+    return (
+      <div className="fixed inset-x-3 bottom-3 z-50 sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-96">
+        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0B0B16]/95 p-3 shadow-2xl shadow-black/60 backdrop-blur">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/icon-192.png"
+            alt=""
+            width={40}
+            height={40}
+            className="h-10 w-10 shrink-0 rounded-[10px]"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-white">
+              Keep WorldEye one click away
+            </p>
+            <p className="text-xs leading-relaxed text-white/60">
+              Press{" "}
+              {isMac ? (
+                <>
+                  <kbd className={kbdClass}>⌘</kbd> +{" "}
+                  <kbd className={kbdClass}>D</kbd>
+                </>
+              ) : (
+                <>
+                  <kbd className={kbdClass}>Ctrl</kbd> +{" "}
+                  <kbd className={kbdClass}>D</kbd>
+                </>
+              )}{" "}
+              to bookmark this page — and pin the tab so the live globe is
+              always open.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={dismiss}
+            aria-label="Dismiss bookmark tip"
+            className="shrink-0 rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M2 2l10 10M12 2L2 12"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

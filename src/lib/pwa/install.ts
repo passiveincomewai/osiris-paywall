@@ -72,3 +72,51 @@ export function shouldShowInstallPrompt(input: InstallPromptInputs): boolean {
   if (input.platform === "ios") return true;
   return input.hasNativePrompt;
 }
+
+export type DesktopOs = "mac" | "windows" | "other";
+
+/**
+ * Which bookmark shortcut a desktop OS uses: macOS browsers bookmark
+ * with Cmd+D, Windows/Linux/ChromeOS with Ctrl+D. Only consulted when
+ * `detectInstallPlatform` already classified the visitor as desktop.
+ */
+export function detectDesktopOs(userAgent: string): DesktopOs {
+  const ua = userAgent.toLowerCase();
+  if (ua.includes("macintosh") || ua.includes("mac os")) return "mac";
+  if (ua.includes("windows")) return "windows";
+  return "other";
+}
+
+export interface BookmarkPromptInputs {
+  /** Already running as an installed app (display-mode: standalone / navigator.standalone). */
+  standalone: boolean;
+  /** The app was installed during a previous visit (best-effort flag). */
+  installed: boolean;
+  platform: InstallPlatform;
+  /** Stored dismissal timestamp (ms), or null if never dismissed. */
+  dismissedAt: number | null;
+  now: number;
+}
+
+/**
+ * Decide whether the desktop bookmark-teaching bar may show.
+ *
+ * Desktop gets no install pitch (owner order 2026-10-29); the same
+ * bottom bar teaches bookmarking instead. The discipline mirrors the
+ * install bar exactly: never when installed/standalone, and the same
+ * 14-day dismissal cooldown (the component shares the storage key, so
+ * a dismissal of either bar silences both). No native prompt is
+ * required — bookmarking needs no browser offer, the same reason iOS
+ * shows its instruction bar without one.
+ */
+export function shouldShowBookmarkPrompt(input: BookmarkPromptInputs): boolean {
+  if (input.platform !== "desktop") return false;
+  if (input.standalone || input.installed) return false;
+  if (
+    input.dismissedAt !== null &&
+    input.now - input.dismissedAt < PWA_DISMISS_COOLDOWN_MS
+  ) {
+    return false;
+  }
+  return true;
+}

@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
   PWA_DISMISS_COOLDOWN_MS,
+  detectDesktopOs,
   detectInstallPlatform,
   parseDismissedAt,
+  shouldShowBookmarkPrompt,
   shouldShowInstallPrompt,
+  type BookmarkPromptInputs,
   type InstallPromptInputs,
 } from "./install";
 
@@ -15,6 +18,10 @@ const ANDROID_UA =
   "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36";
 const DESKTOP_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+const MAC_UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+const LINUX_UA =
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
 describe("detectInstallPlatform", () => {
   it("classifies iPhone Safari as ios", () => {
@@ -121,5 +128,54 @@ describe("shouldShowInstallPrompt", () => {
         dismissedAt,
       }),
     ).toBe(false);
+  });
+});
+
+describe("detectDesktopOs", () => {
+  it("classifies macOS and Windows UAs, everything else is other", () => {
+    expect(detectDesktopOs(MAC_UA)).toBe("mac");
+    expect(detectDesktopOs(DESKTOP_UA)).toBe("windows");
+    expect(detectDesktopOs(LINUX_UA)).toBe("other");
+  });
+});
+
+describe("shouldShowBookmarkPrompt", () => {
+  const base: BookmarkPromptInputs = {
+    standalone: false,
+    installed: false,
+    platform: "desktop",
+    dismissedAt: null,
+    now: 1_800_000_000_000,
+  };
+
+  it("shows on desktop with no native prompt involved", () => {
+    expect(shouldShowBookmarkPrompt(base)).toBe(true);
+  });
+
+  it("never shows on mobile platforms (install bar owns those)", () => {
+    expect(shouldShowBookmarkPrompt({ ...base, platform: "ios" })).toBe(false);
+    expect(shouldShowBookmarkPrompt({ ...base, platform: "android" })).toBe(
+      false,
+    );
+    expect(shouldShowBookmarkPrompt({ ...base, platform: "other" })).toBe(
+      false,
+    );
+  });
+
+  it("hides when running standalone or already installed", () => {
+    expect(shouldShowBookmarkPrompt({ ...base, standalone: true })).toBe(false);
+    expect(shouldShowBookmarkPrompt({ ...base, installed: true })).toBe(false);
+  });
+
+  it("honors the same dismissal cooldown as the install bar, then shows again", () => {
+    const dismissedAt = base.now - 60_000;
+    expect(shouldShowBookmarkPrompt({ ...base, dismissedAt })).toBe(false);
+    expect(
+      shouldShowBookmarkPrompt({
+        ...base,
+        dismissedAt,
+        now: dismissedAt + PWA_DISMISS_COOLDOWN_MS + 1,
+      }),
+    ).toBe(true);
   });
 });
