@@ -5,7 +5,8 @@ import { ChevronRight, ExternalLink, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import RouteAlertsLive from "@/components/transit-seo/RouteAlertsLive";
-import RouteAlertSignup from "@/components/transit-seo/RouteAlertSignup";
+import StopRoutePlanner from "@/components/transit-seo/StopRoutePlanner";
+import type { PlannerDirection } from "@/lib/transit/stop-finder";
 import { agencySeoData, seoAgencies, seoAgencyById } from "@/lib/transit/seo-data";
 import { ymdInZone, routeDaySummary } from "@/lib/transit/network";
 import {
@@ -117,6 +118,18 @@ export default async function TransitRoutePage({
   const displayName = routeDisplayName(route);
   const longName = displayRouteLong(route.long);
 
+  // The stop planner's view of this route: each direction's ordered,
+  // located stops plus its GTFS shape (lib/transit/stop-finder).
+  const plannerDirections: PlannerDirection[] = directions.map((d) => ({
+    dir: d.dir,
+    headsign: d.headsign,
+    stops: d.stopIds
+      .map((id) => net.stopById.get(id))
+      .filter((s): s is NonNullable<typeof s> => !!s)
+      .map((s) => ({ id: s.id, name: s.name, lat: s.lat, lng: s.lng })),
+    line: d.line,
+  }));
+
   const repDays = representativeDays(net, route.id, tz);
   const repByKind = new Map(repDays.map((d) => [d.kind, d]));
   const todayYmdRaw = ymdInZone(tz, new Date());
@@ -166,6 +179,10 @@ export default async function TransitRoutePage({
     {
       q: `Can I watch ${agency.name} Route ${displayName} live on a map?`,
       a: `Yes — the WorldEye globe carries ${agency.name}'s live vehicle positions on its transit layer. Open the live map from this page, and tap any vehicle or stop for its next arrivals. It's free, no signup.`,
+    },
+    {
+      q: `How do I get to ${agency.name} Route ${displayName} from where I am?`,
+      a: `Use the directions tool on this page: enter a starting address and it finds the nearest Route ${displayName} stop from the route's published stop list, gives you walking directions to it step by step, and shows the live cameras along your walk and the ride from that stop. Your address is only used to draw the route — it isn't saved.`,
     },
   ];
 
@@ -253,20 +270,6 @@ export default async function TransitRoutePage({
         <div className="mt-8">
           <RouteAlertsLive agencyId={agency.id} agencyName={agency.name} routeShort={route.short} />
         </div>
-
-        {/* Email alert signup — MBTA is the live alert-email upstream;
-            other agencies render nothing here until their feed joins. */}
-        {agency.id === "mbta" && (
-          <div className="mt-6">
-            <RouteAlertSignup
-              agencyId={agency.id}
-              agencyName={agency.name}
-              routeId={route.id}
-              routeSlug={routeSlug}
-              routeName={longName || displayName}
-            />
-          </div>
-        )}
 
         {/* Schedule summary */}
         <section className="mt-12">
@@ -419,6 +422,19 @@ export default async function TransitRoutePage({
               </div>
             );
           })}
+        </section>
+
+        {/* Directions to this route — nearest stop, the walk, the
+            ride, and the live cameras along the way. */}
+        <section className="mt-12">
+          <StopRoutePlanner
+            agencyName={agency.name}
+            routeLabel={`Route ${displayName}`}
+            routeColor={route.color}
+            directions={plannerDirections}
+            heading={`Directions to Route ${displayName}`}
+            intro={`Enter a starting address — we'll find the nearest Route ${displayName} stop, walk you to it turn by turn, and show the live cameras along your walk and the ride from there.`}
+          />
         </section>
 
         {/* FAQ */}

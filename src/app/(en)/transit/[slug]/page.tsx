@@ -5,7 +5,7 @@ import { AlertTriangle, Bus, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import StopSearch from "@/components/transit-seo/StopSearch";
-import RouteAlertSignup from "@/components/transit-seo/RouteAlertSignup";
+import AgencyStopPlanner from "@/components/transit-seo/AgencyStopPlanner";
 import { alertsForAgency } from "@/lib/transit/alertsServer";
 import {
   agencySeoData,
@@ -16,7 +16,6 @@ import {
 } from "@/lib/transit/seo-data";
 import {
   creditFor,
-  displayRouteLong,
   formatZonedTime,
   groupRoutes,
   popularStops,
@@ -250,23 +249,29 @@ async function AgencyHub({ data }: { data: AgencySeoData }) {
           </div>
         </section>
 
-        {/* Email alert signup with route picker — MBTA is the live
-            alert-email upstream; other hubs render nothing here. */}
-        {agency.id === "mbta" && (
-          <section className="mt-12 max-w-2xl">
-            <RouteAlertSignup
+        {/* Directions to a stop — pick a route, enter a starting
+            address, get the walk to its nearest stop plus the live
+            cameras along the way. */}
+        <section className="mt-12">
+          <h2 className="font-display text-xl font-medium">Get directions to a stop</h2>
+          <p className="text-sm text-white/50 mt-1.5">
+            Pick a route and enter a starting address — we&apos;ll find its nearest{' '}
+            {agency.name} stop, walk you to it turn by turn, and show the live cameras
+            along your walk and the ride from there.
+          </p>
+          <div className="mt-4">
+            <AgencyStopPlanner
               agencyId={agency.id}
               agencyName={agency.name}
-              routeOptions={net.routes
-                .filter((r) => slugs.get(r.id))
-                .map((r) => ({
-                  id: r.id,
-                  slug: slugs.get(r.id)!,
-                  name: displayRouteLong(r.long) || routeDisplayName(r),
-                }))}
+              routes={net.routes.map((r) => ({
+                id: r.id,
+                short: r.short,
+                label: routeDisplayName(r),
+                color: r.color,
+              }))}
             />
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Route groups */}
         {groups.map((g) => (
