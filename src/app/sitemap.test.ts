@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1113);
+    expect(nonTransit.length).toBe(1116);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -174,8 +174,17 @@ describe("sitemap URL set", () => {
     // The White Label announcement post (2026-10-30) then added
     // /blog/worldeye-white-label → 1,113. Delta: removing exactly
     // that URL reproduces the 1,112 set and the a49057a2… hash.
+    // The Daily Blog 2026-10-29 batch (shipped 2026-10-30,
+    // recomposed from the batch's source record after the original
+    // staging was destroyed by an EPERM truncating write) then
+    // added the three sourced news posts
+    // (halloween-aurora-g1-storm-watch,
+    // spacex-starlink-launch-vandenberg-october-30,
+    // colorado-ski-season-opens-keystone-arapahoe-basin) → 1,116.
+    // Delta hand-verified: removing exactly those 3 URLs
+    // reproduces the 1,113 set and the be9f132b… hash byte-for-byte.
     expect(hash).toBe(
-      "be9f132bdcc6b789cc02612ebcc3516982a5075132a448c1b78efcaf97e5af29",
+      "6012a76ecf5c504284f7bb057ad0e0ec173d4bf8cdd395d03c7a30bb0f3bca69",
     );
   });
 

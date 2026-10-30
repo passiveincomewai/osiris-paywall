@@ -55,11 +55,20 @@ describe("the launch story (real data, real dates)", () => {
     expect(getFreshNewsPosts(POSTS, shipNow).map((p) => p.slug)).not.toContain(
       LAUNCH_SLUG,
     );
-    // And the sitemap built from flagged posts is empty of blog
-    // entries at ship time — spec-correct, not a bug.
+    // And the news sitemap built from flagged posts at that instant
+    // carries only the Oct 29 event stories — the launch story has aged
+    // out of the window, which is spec-correct, not a bug.
     const xml = buildNewsSitemap(getNewsPosts(POSTS), shipNow, NEWS_NAME);
     expect(xml).not.toContain(LAUNCH_SLUG);
-    expect(xml).not.toContain("<url>");
+    expect(xml).toContain(
+      "<loc>https://worldeye.app/blog/halloween-aurora-g1-storm-watch</loc>",
+    );
+    expect(xml).toContain(
+      "<loc>https://worldeye.app/blog/spacex-starlink-launch-vandenberg-october-30</loc>",
+    );
+    expect(xml).toContain(
+      "<loc>https://worldeye.app/blog/colorado-ski-season-opens-keystone-arapahoe-basin</loc>",
+    );
   });
 
   it("was inside the window during its real first 48 hours", () => {
@@ -75,9 +84,14 @@ describe("the launch story (real data, real dates)", () => {
     );
   });
 
-  it("is the only flagged post, and every flagged post has sources", () => {
+  it("is one of the flagged posts, and every flagged post has sources", () => {
     const flagged = POSTS.filter(isNewsPost);
-    expect(flagged.map((p) => p.slug)).toEqual([LAUNCH_SLUG]);
+    expect(flagged.map((p) => p.slug)).toEqual([
+      "halloween-aurora-g1-storm-watch",
+      "spacex-starlink-launch-vandenberg-october-30",
+      "colorado-ski-season-opens-keystone-arapahoe-basin",
+      LAUNCH_SLUG,
+    ]);
     for (const p of flagged) {
       expect(p.sources?.length).toBeGreaterThan(0);
     }

@@ -125,6 +125,229 @@ export const POSTS: BlogPost[] = [
     ],
   },
   {
+    slug: "halloween-aurora-g1-storm-watch",
+    title: "Halloween Aurora Watch: NOAA Predicts a G1 Storm for Oct 31 and Nov 1",
+    seoTitle: "Halloween Aurora: G1 Storm Oct 31 & Nov 1 | WorldEye Blog",
+    date: "2026-10-29",
+    excerpt:
+      "NOAA's Space Weather Prediction Center updated its storm watch on Thursday, extending predicted G1 geomagnetic storming across Halloween night and November 1. Where the aurora may reach, and how to watch it live.",
+    seoDescription:
+      "NOAA's updated storm watch puts G1 aurora conditions on Oct 31 and Nov 1. Where the northern lights may show, and the live cameras to watch them on.",
+    tags: ["aurora", "space weather", "events"],
+    news: true,
+    sources: [
+      {
+        name: "NOAA SWPC alerts, watches and warnings — SpaceWeatherLive (official watch text, WATA20)",
+        url: "https://www.spaceweatherlive.com/en/reports/noaa-swpc-alerts-watches-and-warnings.html",
+      },
+      {
+        name: "NOAA SWPC — 3-Day Forecast (issued Oct 30, 2026)",
+        url: "https://services.swpc.noaa.gov/text/3-day-forecast.txt",
+      },
+      {
+        name: "watchers.live — G1 Minor Geomagnetic Storm Watch issued for October 31 and November 1, 2026",
+        url: "https://watchers.live/2026/10/29/g1-minor-geomagnetic-storm-watch-issued-for-october-31-and-november-1-2026/",
+      },
+    ],
+    sections: [
+      {
+        body: [
+          "Halloween weekend comes with a space-weather appointment. On Thursday, October 29, NOAA's Space Weather Prediction Center updated its geomagnetic storm watch (product WATA20, issue #1134, at 19:10 UTC), extending the predicted G1 (minor) storming to cover both Saturday, October 31 and Sunday, November 1. A watch issued the day before had covered October 31 only; Thursday's update added November 1, and it supersedes all prior watches in effect for the period.",
+          "No storm conditions are predicted for Friday, October 30 itself. The driver is a recurrent coronal hole high speed stream — a fast flow of solar wind pouring from a hole in the Sun's corona — expected to arrive late on October 30 and continue into October 31. SWPC's three-day forecast puts the greatest expected Kp index at 5.00, exactly the G1 threshold, with G1 storming likely on both October 31 and November 1.",
+        ],
+      },
+      {
+        heading: "What G1 actually means",
+        body: [
+          "G1 is the lowest rung of NOAA's geomagnetic storm scale — a minor storm, and honest expectations matter. The watch's stated impacts are modest and mostly high-latitude: weak power-grid fluctuations can occur, minor effects on satellite operations are possible, and the area of impact sits primarily poleward of 60 degrees geomagnetic latitude. This is not an infrastructure story. It is a sky story.",
+          "At Kp 5, the aurora brightens across the high latitudes and, on the better periods, reaches into the northern tier of the United States — coverage of the watch names northern Michigan and Maine as the kind of places with a chance to see it, and dark-sky watchers along the northern border states work from the same forecast. How far the display pushes depends on the stream's strength hour by hour, which is why NOAA issues a watch and not a promise.",
+        ],
+      },
+      {
+        heading: "Two nights, not one",
+        body: [
+          "The practical upgrade in Thursday's update is the second night. Storming is expected to build from late October 30 as the stream arrives, with the strongest predicted three-hour period early on October 31 (UTC) and further G1-level periods recurring into November 1. That puts the nights of Friday October 30 into Halloween, and Halloween night itself, both in play — two dark windows instead of one.",
+          "Aurora watching rewards patience over precision: pick a dark spot with a clear northern horizon on both nights, give your eyes a full twenty minutes to adapt, and keep checking after full dark rather than calling it at dusk. Substorms — the sudden brightenings that turn a faint arc into dancing curtains — arrive in bursts that no forecast times to the minute.",
+        ],
+      },
+      {
+        heading: "Watch it on cameras",
+        body: [
+          "You do not need to live under the auroral oval to follow this one. WorldEye's [aurora webcams](/aurora-webcams) page pairs a live Kp index with tonight's northern cameras, so the number and the sky sit in the same place: when Kp climbs toward 5, the high-latitude feeds are where a substorm shows first, in real time, whatever your own horizon is doing.",
+          "For the full circuit — which cameras to favour, what the colours mean, and how to read a forecast before driving anywhere — our guide to [watching the northern lights on live webcams](/blog/northern-lights-live-webcams) is the companion piece. And if this stream underperforms, as streams do, the same pages are the ones to keep: a recurrent coronal hole rotates back around, and the next watch is rarely far behind.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the G1 storm expected?",
+        a: "NOAA SWPC's updated watch, issued Thursday, October 29 at 19:10 UTC, predicts G1 (minor) geomagnetic storming on October 31 and November 1, 2026, driven by a coronal hole high speed stream arriving late October 30. No storm conditions are predicted for October 30 itself.",
+      },
+      {
+        q: "How far south could the aurora be visible?",
+        a: "A G1 storm (Kp 5) is primarily a high-latitude event, with impacts centred poleward of 60 degrees geomagnetic latitude — but on strong periods the aurora can be seen across the northern tier of the United States, with northern Michigan and Maine named in coverage of this watch. Dark skies and a clear northern horizon matter more than a few miles of latitude.",
+      },
+      {
+        q: "What is a coronal hole high speed stream?",
+        a: "A coronal hole is a region of open magnetic field on the Sun that lets solar wind escape at high speed. When that stream sweeps past Earth it buffets the magnetosphere and can drive geomagnetic storming for a day or two. This stream is recurrent, meaning the same coronal hole has rotated back into an Earth-facing position.",
+      },
+      {
+        q: "Where can I watch the aurora live online?",
+        a: "WorldEye's aurora webcams page combines a live Kp index with northern-lights cameras, and our northern lights webcam guide explains how to pick a camera and read the forecast. Check the Kp trend first: a rise toward 5 is the signal to open the cameras.",
+      },
+    ],
+  },
+  {
+    slug: "spacex-starlink-launch-vandenberg-october-30",
+    title: "SpaceX Targets a Friday Night Vandenberg Launch — the First Since California's Record 72nd",
+    seoTitle: "Starlink Launch at Vandenberg Friday Night | WorldEye Blog",
+    date: "2026-10-29",
+    excerpt:
+      "SpaceX is targeting Friday night, October 30, for Starlink 15-18 from Vandenberg — the first launch since California's record-setting 72nd of 2026. The window, the veteran booster, and how to follow the flight and its satellites.",
+    seoDescription:
+      "SpaceX targets Friday night, Oct 30, for Starlink 15-18 from Vandenberg — the first launch since California's record 72nd. Window, booster and viewing notes.",
+    tags: ["space", "launches", "events"],
+    news: true,
+    sources: [
+      {
+        name: "SpaceX — Starlink 15-18 mission page",
+        url: "https://www.spacex.com/launches/sl-15-18",
+      },
+      {
+        name: "Ventura County Star — Record-setting rocket launch among 2 planned at Vandenberg this week (Oct 26, 2026)",
+        url: "https://www.vcstar.com/story/news/local/california/2026/10/26/vandenberg-rocket-launch-schedule-record-setter/92395160007/",
+      },
+      {
+        name: "Arizona Republic — After Vandenberg record set, will Arizona see next SpaceX rocket launch? (Oct 30, 2026)",
+        url: "https://www.azcentral.com/story/news/arizona/2026/10/30/spacex-vandenberg-rocket-launch-today-arizona/92478358007/",
+      },
+    ],
+    sections: [
+      {
+        body: [
+          "Vandenberg is back on the clock. SpaceX is targeting Friday night, October 30, for Starlink 15-18: a Falcon 9 carrying 27 Starlink satellites to low-Earth orbit from Space Launch Complex 4 East (SLC-4E) at Vandenberg Space Force Base in California. The four-hour window opens at 8:48 p.m. PT on Friday and runs to 12:48 a.m. PT on Saturday, October 31.",
+          "The mission was first pencilled in for Thursday night and slipped a day — routine business on a crowded range. What makes it a marker rather than a routine entry: it is the first Vandenberg launch since a record fell. The base's previous liftoff, Starlink 15-16 earlier this week, was California's 72nd launch of 2026, passing the state record set in 2025, as the Ventura County Star tallied. Friday's flight is the first one of the post-record era.",
+        ],
+      },
+      {
+        heading: "The mission in brief",
+        body: [
+          "The booster flying Friday is a veteran of the fleet: this is its 18th flight, after a career that includes the SDA Tranche 1 launches and Transporter-16 alongside 14 earlier Starlink missions, according to SpaceX. After stage separation, the first stage will land on the droneship Of Course I Still Love You, stationed in the Pacific. The 27 satellites deploy a little over an hour after liftoff.",
+          "SpaceX will carry a live webcast beginning about 10 minutes before liftoff. And a West Coast ritual worth flagging for anyone near the coast: residents of Santa Barbara, San Luis Obispo and Ventura counties may hear one or more sonic booms during the flight, depending on weather and other conditions. Because the rocket flies a southeasterly trajectory, the Arizona Republic notes the ascent may also be visible from parts of Arizona.",
+        ],
+      },
+      {
+        heading: "Why the record matters",
+        body: [
+          "Seventy-two orbital launches from one state in a single year is a cadence no state has flown before, and the bulk of it is Vandenberg's west-coast Starlink operation running week after week. Records like this one are really infrastructure stories: a range, a pad and a recovery fleet turning launches into a timetable. Starlink 15-18 — another 27 satellites for the constellation — is what that timetable looks like up close: not a spectacle launch, but the 73rd line of a very long year.",
+          "That framing cuts both ways for watchers. Routine cadence means Friday's window is a target, not a ceremony: weather, range traffic and the rocket itself all get a vote, and regional reporting on the FAA operations plan points to a backup opportunity the following night if Friday scrubs. If it slips, it slips a day, not a season — that is what a record pace buys.",
+        ],
+      },
+      {
+        heading: "Watching the flight — and what it leaves behind",
+        body: [
+          "Watch the webcast for the flight itself; a night launch from SLC-4E is one of the great free shows in American spaceflight. Then watch what the flight added. The 27 new satellites join the Starlink shell that WorldEye's [satellite tracker](/satellite-tracker) follows live — the tracker carries a dedicated Starlink / Comms layer, where a fresh batch appears over the days after deployment as the satellites are catalogued, raise their orbits and spread along the shell.",
+          "It is the satisfying epilogue to a launch story: Friday night's two-minute climb becomes a new train of points on the globe, visible on the tracker long after the webcast ends. If you caught the ascent from a beach in Santa Barbara County or a rooftop in Arizona, the same satellites will pass over you again — the tracker tells you when to look up.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is the Starlink 15-18 launch?",
+        a: "SpaceX targets Friday, October 30, 2026, in a four-hour window opening at 8:48 p.m. PT (03:48 UTC on October 31) from SLC-4E at Vandenberg Space Force Base, California. A Falcon 9 carries 27 Starlink satellites to low-Earth orbit.",
+      },
+      {
+        q: "Why is this launch notable?",
+        a: "It is the first Vandenberg launch since California's record-setting 72nd launch of 2026 — Starlink 15-16, earlier the same week — which passed the state record set in 2025, according to the Ventura County Star. Starlink 15-18 would be the state's 73rd launch of the year.",
+      },
+      {
+        q: "Can I see the launch from outside California?",
+        a: "Possibly. The rocket flies a southeasterly trajectory and the Arizona Republic reports the ascent may be visible from parts of Arizona. Closer in, residents of Santa Barbara, San Luis Obispo and Ventura counties may hear sonic booms. Everyone else gets SpaceX's webcast, which starts about 10 minutes before liftoff.",
+      },
+      {
+        q: "What happens to the satellites after launch?",
+        a: "The 27 Starlink satellites deploy a little over an hour after liftoff, then raise their orbits and spread into their shell over the following days and weeks. You can follow the constellation — including the Starlink / Comms layer — live on WorldEye's satellite tracker.",
+      },
+    ],
+  },
+  {
+    slug: "colorado-ski-season-opens-keystone-arapahoe-basin",
+    title: "Colorado's Ski Season Is Open: A-Basin Took First Chair, Keystone Follows on Friday",
+    seoTitle: "Colorado Ski Season: A-Basin & Keystone | WorldEye Blog",
+    date: "2026-10-29",
+    excerpt:
+      "Arapahoe Basin opened the 2026-27 season on Wednesday — the first major North American ski area to spin a lift — and Keystone follows on Friday with two miles of early-season ribbon. What is actually open at each, and how to watch both.",
+    seoDescription:
+      "Arapahoe Basin opened Colorado's 2026-27 ski season on Oct 28; Keystone follows Friday Oct 30. What is open at each — and the webcams watching both.",
+    tags: ["ski", "colorado", "events"],
+    news: true,
+    sources: [
+      {
+        name: "Colorado Ski Country USA — Cheers to the 2026-27 Ski Season! (Oct 28, 2026)",
+        url: "https://media.coloradoski.com/cheers-to-the-2026-27-ski-season",
+      },
+      {
+        name: "SnowBrains — Arapahoe Basin Opening Day: Lifts Spin for 80th Season (Oct 28, 2026)",
+        url: "https://snowbrains.com/arapahoe-basin-opening-day-80th-season/",
+      },
+      {
+        name: "SnowBrains — Keystone Resort, CO, Announces 2026-27 Season Opening Date (Oct 29, 2026)",
+        url: "https://snowbrains.com/keystone-resort-co-announces-2026-27-season-opening-date/",
+      },
+      {
+        name: "POWDER — Keystone Ski Resort, Colorado, Confirms Opening Day (Oct 29, 2026)",
+        url: "https://www.powder.com/news/keystone-ski-resort-confirms-opening-day",
+      },
+    ],
+    sections: [
+      {
+        body: [
+          "Colorado's 2026-27 ski season is officially underway. Arapahoe Basin sent its first skiers up the Black Mountain Express at 10:30 a.m. on Wednesday, October 28 — the first major ski area in North America to open for the season — starting its 80th winter with laps on High Noon, its classic early-season intermediate run (Colorado Ski Country USA). Costumes, parking-lot breakfasts and a crowd that treats a single white ribbon as a state holiday: opening day at The Legend is a Colorado tradition, and this year it arrived first.",
+          "The season doubles on Friday. Keystone confirmed on Thursday that it opens Friday, October 30, from 9 a.m. to 4 p.m., with more than two miles of skiing and riding on Schoolmarm and Silver Spoon, laps off the Montezuma Express, and uploading and downloading on the River Run Gondola (POWDER; SnowBrains). A year ago Keystone won the first-to-open race by less than a day. This year, A-Basin took the crown back.",
+        ],
+      },
+      {
+        heading: "What is open — and what is not",
+        body: [
+          "Opening week is a ribbon, not a mountain, and both resorts are upfront about it. A-Basin's day-one offering is one lift and one run, and it is a snowmaking product: Colorado crews fired their guns on October 15, rode out a warm stretch that shut the guns down for days, and got a boost from a Sunday-night storm that left 3 inches of natural snow at A-Basin before the final push (SnowBrains). A-Basin is now open seven days a week, with terrain added as conditions allow.",
+          "Keystone's two miles come with a hike-to terrain park at the top of Scout, free donuts and coffee for the opening crowd, specials at Summit House and a live DJ at the base — plus the standard early-season fine print: uphill access remains closed until designated routes open, and skiers download the gondola at the end of the day rather than skiing to the base. Thin cover, short hours, and the genuine pleasure of being early: that is the trade, and regulars make it with open eyes.",
+        ],
+      },
+      {
+        heading: "The race, briefly",
+        body: [
+          "The A-Basin–Keystone race is Colorado's October ritual, and it flips often enough to stay interesting. Last season Keystone announced a same-day opening on October 25, 2025 and beat A-Basin to first turns by a day; earlier this week neither mountain had announced a date at all, and A-Basin's Wednesday move settled the argument for 2026.",
+          "The next fixed dates on the calendar belong to Breckenridge and Copper Mountain on November 6, with the rest of the continent's majors landing through November — the full rundown is in our [2026-27 ski season opening dates guide](/blog/ski-season-opening-dates-2026-27), which also tracks which resorts' webcams to watch as their days approach.",
+        ],
+      },
+      {
+        heading: "Watch both mountains before you drive",
+        body: [
+          "This is the week the camera habit pays for itself. WorldEye's [ski webcams](/ski-webcams) page gathers both resorts' feeds in one place: [Arapahoe Basin](/ski-webcams/arapahoe-basin) for the High Noon ribbon and the base-area scene, [Keystone](/ski-webcams/keystone) for Schoolmarm, the gondola and the Montezuma maze. Summit for visibility and wind, base for the snow surface and the lift lines, and the road cameras for the US-6 and I-70 drive — a two-minute circuit that tells you whether opening week is a ski day or a spectacle day.",
+          "Check twice: the night before, to see whether the guns are running and the ribbon is holding, and again in the morning before you commit to the drive. Early-season conditions change faster than any snow report, and the cameras are the only source that shows you the mountain as it is, not as it was announced.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Which Colorado ski resort opened first in 2026?",
+        a: "Arapahoe Basin, on Wednesday, October 28, 2026 — the first major ski area in North America to open for the 2026-27 season. It loaded first skiers on the Black Mountain Express at 10:30 a.m., serving the High Noon run, in its 80th season.",
+      },
+      {
+        q: "When does Keystone open for the 2026-27 season?",
+        a: "Friday, October 30, 2026, from 9 a.m. to 4 p.m., with more than two miles of terrain on Schoolmarm and Silver Spoon, laps off the Montezuma Express via the River Run Gondola, and a hike-to terrain park. More terrain opens as conditions allow.",
+      },
+      {
+        q: "How much terrain is open at A-Basin and Keystone?",
+        a: "Early-season ribbons only: one lift and one run (High Noon) at Arapahoe Basin, and about two miles across Schoolmarm and Silver Spoon at Keystone. Both lean on snowmaking that started October 15, and both expand terrain as storms and cold allow.",
+      },
+      {
+        q: "How can I check conditions before an opening-week trip?",
+        a: "Use the resorts' feeds on WorldEye's ski webcams page — summit cameras for visibility and wind, base cameras for snow surface and lift lines, road cameras for the drive — the night before and again in the morning, and always confirm the feed's timestamp is current.",
+      },
+    ],
+  },
+  {
     slug: "most-interesting-live-webcams-on-earth",
     title: "The 25 Most Interesting Live Webcams on Earth (Free, Streaming Right Now)",
     seoTitle: "25 Most Interesting Live Webcams on Earth | WorldEye Blog",
