@@ -27,7 +27,7 @@ describe("gods-eye-view page — fenced facts", () => {
     expect(html).toContain("74,229");
     expect(html).toContain("~4,000");
     const all = [
-      src("app/gods-eye-view/page.tsx"),
+      src("app/(en)/gods-eye-view/page.tsx"),
       src("components/GodsEyeLiveStrip.tsx"),
       src("components/GodsEyeStickyCta.tsx"),
     ].join("\n");
@@ -78,8 +78,14 @@ describe("gods-eye-view page — trial section from billing config", () => {
       expect(html).toContain(p.price);
       expect(html).toContain(p.note);
     }
-    // The page must import the options, not restate a second copy.
-    expect(src("app/gods-eye-view/page.tsx")).toContain("TRIAL_PLAN_OPTIONS");
+    // Phase D (2026-10-30): the trial section is now the shared
+// TrialCtaSection. This pin's purpose — trial facts come from the
+// billing config, never restated on the page — holds structurally:
+// the page renders the section, and the section/cards import the
+// options. The pin now checks that shape instead of the page's own
+// TRIAL_PLAN_OPTIONS import.
+expect(src("app/(en)/gods-eye-view/page.tsx")).toContain("TrialCtaSection");
+expect(src("components/TrialCtaCards.tsx")).toContain("TIER_PLAN_OPTIONS");
   });
 });
 

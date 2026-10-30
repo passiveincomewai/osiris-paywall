@@ -1,18 +1,27 @@
 // TrialCtaSection pins:
 //  - plan facts render FROM the billing config (name, price, per-day,
-//    note, trial label for all three plans) — the component never
+//    note, trial label for every grid plan) — the component never
 //    restates a price of its own;
 //  - the guarantee line is the canonical /pricing sentence, verbatim;
-//  - each card's artwork button starts that plan's embedded checkout in
-//    place; secondary opens the free globe with the page's utm_source;
+//  - each tier card's artwork button starts its selected plan's
+//    embedded checkout in place; secondary opens the free globe with
+//    the page's utm_source;
 //  - no hype mechanics: no scarcity, countdown or urgency copy.
+//
+// Phase D (2026-10-30): the cards became the 3×3 grid (three tier
+// cards × three period rows). Two pins were updated with it, purpose
+// preserved: the config-import pin now names TIER_PLAN_OPTIONS (the
+// grid table the cards render), and the per-plan CTA pin now checks
+// the three rendered CTAs — one per tier card, each its selected
+// (annual, by default) option's own artwork button. All nine plans'
+// facts still render (the rows), pinned by the facts test below.
 import { describe, it, expect } from "vitest";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import TrialCtaSection, { TRIAL_CTA_GUARANTEE } from "./TrialCtaSection";
-import { TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
+import { GRID_PLAN_OPTIONS, TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
 
 const html = renderToString(createElement(TrialCtaSection, { utmSource: "cameras" }))
   .replace(/<!-- -->/g, "")
@@ -31,12 +40,25 @@ describe("TrialCtaSection — facts from config", () => {
     }
   });
 
+  it("renders all nine grid plans' facts from GRID_PLAN_OPTIONS (Phase D)", () => {
+    for (const p of GRID_PLAN_OPTIONS) {
+      expect(html).toContain(p.name);
+      expect(html).toContain(p.price);
+      expect(html).toContain(p.note);
+      expect(html).toContain(p.trialLabel.toUpperCase());
+    }
+    // The three tier cards are all present.
+    for (const s of ["Lite", "Pro", "Ultra"]) {
+      expect(html).toContain(s);
+    }
+  });
+
   it("imports the config instead of restating any price", () => {
     const cards = readFileSync(join(process.cwd(), "src/components/TrialCtaCards.tsx"), "utf8");
-    expect(cards).toContain("TRIAL_PLAN_OPTIONS");
-    expect(cards).not.toContain("$7.99");
-    expect(cards).not.toContain("$13.99");
-    expect(cards).not.toContain("$74.99");
+    expect(cards).toContain("TIER_PLAN_OPTIONS");
+    for (const price of ["$4.99", "$7.99", "$8.99", "$12.99", "$13.99", "$24.99", "$44.99", "$74.99", "$149.99"]) {
+      expect(cards).not.toContain(price);
+    }
     expect(source).not.toContain("$7.99");
     expect(source).not.toContain("$13.99");
     expect(source).not.toContain("$74.99");
@@ -52,10 +74,11 @@ describe("TrialCtaSection — facts from config", () => {
 
 describe("TrialCtaSection — conversion structure", () => {
   it("each card starts its plan's embedded checkout; secondary opens the globe tracked per page", () => {
-    // The owner's trial-artwork button, one per plan, labelled from config.
-    for (const p of TRIAL_PLAN_OPTIONS) {
-      expect(html).toContain(`aria-label="${p.cta}"`);
-    }
+    // The owner's trial-artwork button, one per tier card, labelled
+    // with the card's selected option's CTA from config (annual by
+    // default on every tier — the redesign's default view).
+    expect(html.match(/<button[^>]*class="trial-btn/g)).toHaveLength(3);
+    expect(html).toContain('aria-label="Start 10-Day Free Trial"');
     expect(html).toContain("/start-trial-button.png");
     expect(html).not.toContain('href="/pricing"');
     expect(html).toContain("Open the globe — free");

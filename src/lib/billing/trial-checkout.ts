@@ -259,13 +259,17 @@ export function checkoutPlanSummary(plan: string | null | undefined): CheckoutPl
  */
 export type PlanTier = "lite" | "pro" | "ultra";
 
-export interface GridPlanOption extends CheckoutPlanSummary {
+export interface GridPlanOption
+  extends Omit<CheckoutPlanSummary, "trialLabel"> {
   tier: PlanTier;
   /** The billing period, as a Pro trial-plan key — its PLAN_COPY row
    *  (note / CTA / trial label) is the period's own, shared by tiers. */
   period: TrialPlan;
   /** The period's CTA from /pricing's plan card, e.g. "Start 3-Day Free Trial". */
   cta: string;
+  /** Every grid plan carries a real trial, so — unlike the summary —
+   *  the label is never null here. */
+  trialLabel: string;
 }
 
 const GRID_TIERS: PlanTier[] = ["lite", "pro", "ultra"];
@@ -282,7 +286,16 @@ function gridOption(tier: PlanTier, period: TrialPlan): GridPlanOption {
   const plan = gridCheckoutPlan(tier, period);
   const summary = checkoutPlanSummary(plan);
   if (!summary) throw new Error(`no checkout summary for grid plan ${plan}`);
-  return { ...summary, tier, period, cta: PLAN_COPY[period].cta };
+  return {
+    ...summary,
+    tier,
+    period,
+    cta: PLAN_COPY[period].cta,
+    // Grid plans all carry a real trial, so the label is never the
+    // summary's null (free-plan) case; fall back to the same wording
+    // shape rather than ever rendering an empty badge.
+    trialLabel: summary.trialLabel ?? `${summary.trialDays} days free`,
+  };
 }
 
 /** All nine grid options, tier-major then period (Lite W/M/A, Pro

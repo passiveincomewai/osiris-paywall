@@ -14,7 +14,6 @@ import {
   ChevronDown,
   MousePointerClick,
   Layers,
-  ShieldCheck,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
@@ -23,7 +22,7 @@ import DirectAnswers from "@/components/seo/DirectAnswers";
 import RelatedLinks from "@/components/RelatedLinks";
 import GodsEyeLiveStrip from "@/components/GodsEyeLiveStrip";
 import GodsEyeStickyCta from "@/components/GodsEyeStickyCta";
-import { TRIAL_PLAN_OPTIONS } from "@/lib/billing/trial-checkout";
+import TrialCtaSection from "@/components/TrialCtaSection";
 
 export const metadata: Metadata = {
   title: "God's Eye View of Earth — Live 3D Globe, 74,229 Cameras (Free, No Install)",
@@ -453,50 +452,14 @@ export default function GodsEyeViewPage() {
           </div>
         </div>
 
-        {/* Free trials — plan facts from the billing config, guarantee verbatim */}
-        <div className="mt-20 max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center">
-            The globe is free. <span className="text-[#D4AF37]">The locked layers aren&apos;t.</span>
-          </h2>
-          <p className="text-white/50 text-center mt-4 max-w-2xl mx-auto">
-            Everything above is free with no signup. Paid plans unlock the
-            intelligence toolkit, intel layers, timelapse, camera alerts and
-            the recording studio — and every plan starts with a free trial.
-            We email you before your trial&apos;s first charge.
-          </p>
-          <div className="mt-8 grid sm:grid-cols-3 gap-4">
-            {TRIAL_PLAN_OPTIONS.map((p) => (
-              <div
-                key={p.plan}
-                className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 text-center"
-              >
-                <p className="text-xs font-semibold tracking-[0.25em] text-[#00E5FF]">
-                  {p.trialLabel.toUpperCase()}
-                </p>
-                <p className="font-display text-xl font-semibold mt-3">{p.name}</p>
-                <p className="mt-2">
-                  <span className="font-mono text-3xl font-bold">{p.price}</span>
-                  <span className="text-white/50 text-sm">{p.per}</span>
-                </p>
-                <p className="text-xs text-white/40 mt-1">about {p.perDay} a day</p>
-                <p className="text-xs text-white/50 mt-3 leading-relaxed">{p.note}</p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link
-              href="/pricing"
-              className="inline-block px-8 py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
-            >
-              Compare plans &amp; start a free trial
-            </Link>
-            <p className="mt-5 inline-flex items-start sm:items-center gap-2 text-sm text-white/50 max-w-xl">
-              <ShieldCheck className="w-4 h-4 text-[#D4AF37]/80 shrink-0 mt-0.5 sm:mt-0" />
-              Covered by a 7-day money-back guarantee on your first charge — email us
-              within 7 days of the charge for a full refund, no questions asked.
-            </p>
-          </div>
-        </div>
+        {/* Free trials — the shared TrialCtaSection (Phase D): the same
+            3×3 grid cards every content page ends with, facts from the
+            billing config, guarantee verbatim, checkout in place. The
+            headline and blurb are this page's own, word for word. */}
+        <TrialCtaSection
+          utmSource="gods-eye-view"
+          blurb="Everything above is free with no signup. Paid plans unlock the intelligence toolkit, intel layers, timelapse, camera alerts and the recording studio — and every plan starts with a free trial. We email you before your trial's first charge."
+        />
 
         {/* Closing CTA */}
         <div className="mt-20 max-w-2xl mx-auto text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-10">
