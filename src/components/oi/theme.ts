@@ -4,8 +4,7 @@
  * Forecast is gold and black. Gold leads: what is selected, what is live, the
  * prediction. Champagne (`alt`) is its quiet second, and ivory and greys
  * carry the rest. Red is kept for failure. Assist keeps the platform's blue
- * (`blue`), so the two ways of using OI never look alike. In Ghost the same
- * tokens follow that theme's violets.
+ * (`blue`), so the two ways of using OI never look alike.
  *
  * The arcs keep their own three colours, set in the Style Studio; OI shows
  * them only where it draws or explains the arcs (the legend, the graph's

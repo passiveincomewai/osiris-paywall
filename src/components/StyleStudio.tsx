@@ -192,8 +192,7 @@ function StyleStudio({ onClose, isMobile }: { onClose: () => void; isMobile?: bo
   /**
    * Until the user actually changes something there is nothing to override.
    * Without this, Reset would immediately re-apply a snapshot of the current
-   * theme as inline vars — which look identical but pin the palette, so the
-   * Ghost Protocol toggle would silently stop doing anything.
+   * theme as inline vars — which look identical but pin the palette.
    */
   const dirty = useRef(false);
 
@@ -221,8 +220,8 @@ function StyleStudio({ onClose, isMobile }: { onClose: () => void; isMobile?: bo
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  /* While clean, re-seed from the live theme so edits made after a theme
-     switch start from what is actually on screen. */
+  /* While clean, re-seed from the live theme so edits start from what is
+     actually on screen. */
   const edit = useCallback((patch: Partial<StyleSettings> | ((base: StyleSettings) => Partial<StyleSettings>)) => {
     setS(prev => {
       const base = dirty.current && prev ? prev : readTheme();

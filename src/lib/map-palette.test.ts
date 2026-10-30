@@ -91,11 +91,4 @@ describe('globals.css', () => {
     }
   });
 
-  it('leaves the satellite categories at their defaults in the ghost theme', () => {
-    // Overriding them there would permanently suppress the feed's own colours.
-    const ghost = css.slice(css.indexOf('body.theme-ghost'), css.indexOf('@theme inline'));
-    for (const key of MAP_PALETTE_KEYS.filter(k => k.startsWith('sat'))) {
-      expect(ghost, MAP_VARS[key] + ' overridden in ghost').not.toContain(MAP_VARS[key]);
-    }
-  });
 });

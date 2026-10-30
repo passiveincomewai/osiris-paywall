@@ -4,7 +4,7 @@ import { Fragment, memo, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plane, Satellite, Sun, Camera, Cctv,
-  CloudLightning, Ship, Network, Database, Ghost,
+  CloudLightning, Ship, Network, Database,
   Flame, Tv, Radio, Mountain, Anchor, SlidersHorizontal, Lock, Bus, Crown,
   Snowflake, ChevronDown, ChevronRight, X, Layers, Car, TramFront, Building2,
   TriangleAlert, Radiation, Palette
@@ -24,8 +24,6 @@ interface LayerPanelProps {
   activeLayers: any;
   setActiveLayers: React.Dispatch<React.SetStateAction<any>>;
   isMobile?: boolean;
-  theme?: 'core' | 'ghost';
-  setTheme?: (theme: 'core' | 'ghost') => void;
   /** Server-side capabilities, e.g. { cloudflare: true }. Layers declaring a
    *  `requires` key stay hidden until the matching capability is present. */
   capabilities?: Record<string, boolean>;
@@ -433,7 +431,7 @@ function resolveCategoryLayers(cat: PanelCategory): LayerDef[] {
     .filter((l): l is LayerDef => !!l);
 }
 
-function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'core', setTheme, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false, sensorEffect, onSensorEffectChange, onClose, openSignal, highlightLayerKey }: LayerPanelProps) {
+function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false, sensorEffect, onSensorEffectChange, onClose, openSignal, highlightLayerKey }: LayerPanelProps) {
   const [studioOpen, setStudioOpen] = useState(false);
   /** The locked layer whose trial picker is expanded, if any. One at a
    *  time: the picker replaces the old bounce to /premium, so intent is
@@ -1112,8 +1110,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
     </div>
   );
 
-  /* Panel utilities that aren't layers: Style Studio (the map's look)
-     and Ghost Protocol (the UI theme). Same rows in both layouts. */
+  /* Panel utility that isn't a layer: Style Studio (the map's look).
+     Same row in both layouts. */
   const utilities = (
     <div className="flex flex-col gap-2 px-3 mt-3">
       <button
@@ -1131,25 +1129,6 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
         <span className="flex-1 text-[10px] font-mono tracking-[0.2em] uppercase text-white/50">Style Studio</span>
         <ChevronRight className="w-3.5 h-3.5 text-white/30" />
       </button>
-      {setTheme && (
-        <button
-          type="button"
-          onClick={() => setTheme(theme === 'core' ? 'ghost' : 'core')}
-          aria-pressed={theme === 'ghost'}
-          aria-label="Ghost Protocol"
-          title="Ghost Protocol"
-          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-1 focus-visible:ring-purple-200/40"
-          style={{ border: '1px solid rgba(179,136,255,0.25)', background: 'rgba(4,10,22,0.6)' }}
-        >
-          <span className="w-[30px] h-[30px] rounded-lg flex items-center justify-center flex-shrink-0" style={{ border: '1px solid rgba(179,136,255,0.4)', background: 'rgba(2,8,18,0.7)' }}>
-            <Ghost className="w-4 h-4" style={{ color: theme === 'ghost' ? '#B388FF' : 'rgba(255,255,255,0.45)', filter: theme === 'ghost' ? 'drop-shadow(0 0 6px rgba(179,136,255,0.5))' : 'none' }} />
-          </span>
-          <span className="flex-1 text-[10px] font-mono tracking-[0.2em] uppercase text-white/50">Ghost Protocol</span>
-          <span className="text-[9px] font-mono tracking-wider" style={{ color: theme === 'ghost' ? '#B388FF' : 'rgba(255,255,255,0.3)' }}>
-            {theme === 'ghost' ? 'ON' : 'OFF'}
-          </span>
-        </button>
-      )}
     </div>
   );
 

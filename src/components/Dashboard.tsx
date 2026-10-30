@@ -611,11 +611,6 @@ export default function Dashboard() {
   };
   const [drawnPolygons, setDrawnPolygons] = useState<DrawnShape[]>([]);
   const [demoMode, setDemoMode] = useState(false);
-  const [osirisTheme, setOsirisTheme] = useState<'core'|'ghost'>('core');
-
-  useEffect(() => {
-    document.body.className = osirisTheme === 'core' ? '' : `theme-${osirisTheme}`;
-  }, [osirisTheme]);
 
   /* Sensor effects (DISPLAY group): simulated visual modes for the map
      canvas only, owned here so the LayerPanel controls and OsirisMap's
@@ -2463,8 +2458,7 @@ export default function Dashboard() {
           where the load-time resize rescue never lands). */}
       <div data-globe-section className="absolute inset-0">
       <ErrorBoundary name="Map">
-        <OsirisMap 
-          key={osirisTheme}
+        <OsirisMap
           data={data} 
           activeLayers={globeActiveLayers}
           projection={mapProjection === 'mercator' ? 'mercator' : 'globe'}
@@ -2490,7 +2484,6 @@ export default function Dashboard() {
           sweepData={sweepData}
           scanTargets={scanTargets}
           demoMode={demoMode}
-          theme={osirisTheme}
           arcgisLayers={arcgisLayers.filter(l => l.visible).map(l => ({ id: l.id, title: l.title, geojson: l.geojson, color: l.color, opacity: l.opacity }))}
           onMapCenter={setMapCenter}
           route={activeRoute}
@@ -2842,7 +2835,7 @@ export default function Dashboard() {
       )}
 
       {/* ── NEW SIDEBAR (Root Level) ── */}
-      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} openSignal={layersOpenSignal} highlightLayerKey={tourLayersStep ? 'weather' : null} /></div>}
+      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} openSignal={layersOpenSignal} highlightLayerKey={tourLayersStep ? 'weather' : null} /></div>}
 
 
 
@@ -3206,7 +3199,7 @@ export default function Dashboard() {
                   )}
                   {mobilePanel === 'layers' && (
                     <>
-                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} theme={osirisTheme} setTheme={setOsirisTheme} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} onClose={() => setMobilePanel(null)} highlightLayerKey={tourLayersStep ? 'weather' : null} />
+                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} onClose={() => setMobilePanel(null)} highlightLayerKey={tourLayersStep ? 'weather' : null} />
                       <div className="mt-8">
                         <ViewPresets onNavigate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       </div>

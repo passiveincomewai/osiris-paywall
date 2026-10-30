@@ -62,7 +62,7 @@ export function attachHighlights(map: MlMap): Highlighter {
   let pulse = 0;
 
   const ensure = () => {
-    // Assist's colour: cyan in Core, the theme's accent in Ghost.
+    // Assist's colour: the platform's cyan.
     const accent = themeColor('--cyan-primary', '#00E5FF');
     if (!map.getSource(AREA)) map.addSource(AREA, { type: 'geojson', data: EMPTY });
     if (!map.getSource(POINTS)) map.addSource(POINTS, { type: 'geojson', data: EMPTY });

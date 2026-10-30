@@ -72,7 +72,7 @@ export function LanguageSelect({ id }: { id?: string }) {
 
 /**
  * Desktop rail variant: a globe button at the bottom of the rail (with the
- * Style Studio / Ghost Protocol controls), opening a flyout that holds the
+ * Style Studio control), opening a flyout that holds the
  * same select. Mirrors the rail's flyout shell so it feels native.
  */
 export function LanguageRailControl() {

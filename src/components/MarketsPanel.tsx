@@ -39,7 +39,7 @@ const MarketChart = dynamic(() => import('./MarketChart'), { ssr: false });
 
 interface MarketsPanelProps { data: any; spaceWeather?: any; }
 
-/** The theme's own colours, so Ghost and every other theme recolour this too. */
+/** The site's own colours, as CSS variables, so this panel recolours with them. */
 const T = {
   accent: 'var(--gold-primary)',
   text: 'var(--text-primary)',

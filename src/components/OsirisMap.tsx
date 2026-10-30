@@ -133,7 +133,6 @@ interface OsirisMapProps {
   sweepData?: any;
   scanTargets?: any[];
   demoMode?: boolean;
-  theme?: 'core' | 'ghost';
   drawnPolygons?: Array<{ id: string; name: string; geojson: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.LineString>; color: string }>;
   arcgisLayers?: Array<{ id: string; title: string; geojson: any; color?: string; opacity?: number }>;
   /** Active draw mode, or null when not drawing. */
@@ -266,7 +265,7 @@ function escHtml(v: any): string {
 
 /* ── Flight glyphs (v2) ───────────────────────────────────────────────
    Canvas painters for the flight symbol layers, shared by the boot-time
-   image registration and the theme-switch recolour so the two can never
+   image registration and the palette recolour so the two can never
    drift. Both draw a top view pointing "up" (north) at rotation 0; the
    layers rotate them by heading. */
 
@@ -334,7 +333,7 @@ function drawHeliGlyph(ctx: CanvasRenderingContext2D, color: string, size: numbe
  * unknown-class planes keep their glyphs — no photo was supplied for
  * them. The glyphs are still drawn first at boot as an instant fallback;
  * the photos swap in over the same image ids when they load, and are
- * re-applied after theme switches (photos don't recolour). Registered
+ * re-applied after palette changes (photos don't recolour). Registered
  * at 96px with pixelRatio 4 so the logical footprint stays the glyphs'
  * 24px and the layers' icon-size interpolation is unchanged. */
 const AIRCRAFT_PHOTO_BY_ICON: Record<string, string> = {
@@ -383,7 +382,7 @@ const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
  *  is honestly unavailable until launch data is loaded). */
 const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, theme = 'core', drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -927,7 +926,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   const openAlertPinRef = useRef<((id: string) => void) | null>(null);
   const [mapReady, setMapReady] = useState(false);
 
-  // Do not replay an earlier explicit zoom request after theme/retry remounts.
+  // Do not replay an earlier explicit zoom request after retry remounts.
   const lastTerrainFocus = useRef(terrainFocus);
   const wasNavigating = useRef(false);
   /**
@@ -1044,7 +1043,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
   // Create aircraft icons on canvas (for WebGL symbol layers). The glyph
   // shapes live in drawPlaneGlyph / drawHeliGlyph (module scope), shared
-  // with the theme-switch recolour so boot and recolour can't drift.
+  // with the palette recolour so boot and recolour can't drift.
   const createIcon = useCallback((map: maplibregl.Map, id: string, color: string, size: number) => {
     if (map.hasImage(id)) return;
     const canvas = document.createElement('canvas');
@@ -1306,14 +1305,8 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
          400x300 fallback never recovers on its own. */
       map.resize();
 
-      // Theme colors
-      const isGhost = theme === 'ghost';
-      const phantomPurple = '#B388FF';
-      const phantomDark = '#1A0040';
       /* The first paint reads the same `--map-*` properties the recolour
-         effects below push in later. Deriving them from `theme` here as well
-         is what let the two drift: the effect's ghost palette was four
-         distinct violets, this block's was one, and whichever ran last won. */
+         effects below push in later, so boot and recolour can't drift. */
       const bootStyle = getComputedStyle(document.body);
       const boot = readMapPalette(name => bootStyle.getPropertyValue(name));
       const cameraColor = boot.cctv;
@@ -1348,11 +1341,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.on('styleimagemissing', (e) => {
         if (e.id === 'camera-eye') createDot(map, 'camera-eye', '#34d399', 48);
       });
-      createDot(map, 'dot-gold', isGhost ? phantomPurple : '#D4AF37', 8);
-      createDot(map, 'dot-red', isGhost ? phantomPurple : '#D32F2F', 10);
-      createDot(map, 'dot-orange', isGhost ? phantomPurple : '#E65100', 10);
-      createDot(map, 'dot-green', isGhost ? phantomPurple : '#26A69A', 10);
-      createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
+      createDot(map, 'dot-gold', '#D4AF37', 8);
+      createDot(map, 'dot-red', '#D32F2F', 10);
+      createDot(map, 'dot-orange', '#E65100', 10);
+      createDot(map, 'dot-green', '#26A69A', 10);
+      createDot(map, 'dot-fire', '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
       const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'plows', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'launches', 'launch-replay', 'street-level'];
@@ -1418,7 +1411,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
 
       // Day/Night
-      map.addLayer({ id: 'day-night-fill', type: 'fill', source: 'day-night', paint: { 'fill-color': isGhost ? '#0D0030' : '#000022', 'fill-opacity': 0.35 }});
+      map.addLayer({ id: 'day-night-fill', type: 'fill', source: 'day-night', paint: { 'fill-color': '#000022', 'fill-opacity': 0.35 }});
 
       // Earthquakes — amber threat spectrum
       map.addLayer({ id: 'eq-circles', type: 'circle', source: 'earthquakes', paint: {
@@ -3772,12 +3765,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
   /**
    * Pull the palette out of the document whenever it can have changed.
-   *
-   * Two triggers, and they need different timing. The Style Studio writes the
-   * properties and then dispatches, so reading straight away is correct. A
-   * theme switch flips a class on <body> from an effect in the page component
-   * — a parent, so it runs *after* this one — and reading now would return the
-   * outgoing theme. The extra frame covers that case.
+   * The Style Studio writes the properties and then dispatches, so reading
+   * straight away is correct; the extra frame covers a first paint that
+   * lands before the properties do.
    */
   useEffect(() => {
     const read = () => {
@@ -3792,9 +3782,9 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       cancelAnimationFrame(raf);
       window.removeEventListener(STYLE_EVENT, read);
     };
-  }, [theme]);
+  }, []);
 
-    // Update aircraft icon colors dynamically on theme switch
+    // Update aircraft icon colors dynamically when the palette changes
     useEffect(() => {
       if (!mapReady || !mapRef.current) return;
       const map = mapRef.current;

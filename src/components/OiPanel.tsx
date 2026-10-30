@@ -15,9 +15,9 @@
  * lists and object views on the right. Whatever is selected, from the globe,
  * the graph or a list, opens as that object.
  *
- * Forecast is gold and black, Assist the platform's blue (oi/theme); both
- * violet in Ghost. The run itself lives in the page (useOi), so closing this
- * panel leaves the globe drawing.
+ * Forecast is gold and black, Assist the platform's blue (oi/theme). The run
+ * itself lives in the page (useOi), so closing this panel leaves the globe
+ * drawing.
  */
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
