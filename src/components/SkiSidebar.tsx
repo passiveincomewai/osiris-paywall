@@ -51,6 +51,14 @@ export default function SkiSidebar({
               Compare resorts side by side
             </Link>
           </li>
+          <li>
+            <Link
+              href="/ski-webcams/my"
+              className="text-white/75 transition hover:text-white"
+            >
+              My Powder — followed resorts
+            </Link>
+          </li>
           {variant === "resort" && (
             <>
               <li>

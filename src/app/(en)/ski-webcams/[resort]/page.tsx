@@ -8,6 +8,7 @@ import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiConditions from "@/components/SkiConditions";
 import SkiRouteTool from "@/components/SkiRouteTool";
 import SkiSidebar from "@/components/SkiSidebar";
+import SkiFollowButton from "@/components/SkiFollowButton";
 import SkiTripReminderForm from "@/components/SkiTripReminderForm";
 import { powderPassEnabled } from "@/lib/ski/access";
 import { cameraAreas } from "@/lib/country-cameras";
@@ -289,6 +290,15 @@ export default async function SkiResortPage({
           <p className="mt-3 text-white/55">
             Snow on the slopes, lines at the base and the state of the drive up — live, free, no signup.
           </p>
+          {/* Powder Pass follows — one mount, hero only, behind the
+              same launch flag as every other Powder Pass surface. The
+              button resolves its own state from /api/ski/follows
+              (member toggle / sign-in link / pass checkout). */}
+          {powderPassEnabled(process.env) && (
+            <div className="mt-6 flex justify-center">
+              <SkiFollowButton resortSlug={r.slug} resortName={r.name} />
+            </div>
+          )}
         </div>
 
         {/* Stat row */}
