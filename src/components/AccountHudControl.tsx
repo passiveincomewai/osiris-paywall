@@ -8,6 +8,8 @@ import {
   shouldRecheckEntitlement,
   type SessionIdentityState,
 } from "@/lib/premium-entitlement";
+import { useLocale } from "@/i18n/LocaleProvider";
+import { getChromeCopy } from "@/i18n/dictionaries";
 
 /**
  * The header's account slot — one control for every identity state.
@@ -18,7 +20,7 @@ import {
  * concluded (reasonably) that sign-in hadn't worked. Now identity —
  * not entitlement — drives the slot:
  *
- *   anonymous / loading / unknown → the gold Upgrade pill (as before)
+ *   anonymous / loading / unknown → Sign in button AND the gold Upgrade pill
  *   free                          → Upgrade pill AND the account menu
  *   premium                       → the account menu (as before)
  *
@@ -34,6 +36,7 @@ export default function AccountHudControl({
 }) {
   const [state, setState] = useState<SessionIdentityState>("unknown");
   const lastCheckAt = useRef(0);
+  const signInLabel = getChromeCopy(useLocale()).signIn;
 
   useEffect(() => {
     let live = true;
@@ -73,8 +76,26 @@ export default function AccountHudControl({
         width={1072}
         height={262}
         draggable={false}
-        className={variant === "desktop" ? "h-8 w-auto" : "h-7 w-auto"}
+        className={variant === "desktop" ? "h-12 w-auto" : "h-9 w-auto"}
       />
+    </Link>
+  );
+
+  // Logged-out only: rendered solely in the anonymous branch below, so a
+  // signed-in viewer (free or premium) never sees it. Ghost/outline
+  // treatment keeps it clearly secondary to the gold pill; the mobile
+  // variant is compact so Sign in + the enlarged pill still fit the
+  // phone header beside the logo.
+  const signIn = (
+    <Link
+      href="/signin"
+      className={
+        variant === "desktop"
+          ? "pointer-events-auto inline-flex items-center rounded-full border border-white/25 px-4 py-2 font-sans text-sm font-medium normal-case tracking-normal text-white/85 transition hover:border-white/50 hover:bg-white/10 hover:text-white"
+          : "inline-flex items-center rounded-full border border-white/25 px-2.5 py-1 font-sans text-xs font-medium normal-case tracking-normal text-white/85 transition hover:border-white/50 hover:bg-white/10 hover:text-white"
+      }
+    >
+      {signInLabel}
     </Link>
   );
 
@@ -87,6 +108,12 @@ export default function AccountHudControl({
       </>
     );
   }
-  // anonymous, unknown, or still loading: the pill, exactly as before.
-  return pill;
+  // anonymous, unknown, or still loading: Sign in beside the pill — the
+  // same not-signed-in states the pill already showed for.
+  return (
+    <>
+      {signIn}
+      {pill}
+    </>
+  );
 }

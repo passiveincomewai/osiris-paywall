@@ -2790,7 +2790,7 @@ export default function Dashboard() {
 
         {/* Identity-driven account slot (components/AccountHudControl):
             premium → account menu; signed-in free → Upgrade pill AND the
-            account menu; anonymous → the pill alone. This used to key off
+            account menu; anonymous → Sign in + the pill. This used to key off
             isPremiumUser, which made signed-in free users
             indistinguishable from signed-out ones. */}
         {/* Language switch — moved to the header at the owner's order
