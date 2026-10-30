@@ -33,6 +33,7 @@ model User {
   affiliateProfile AffiliateProfile?
   cameraBonusAccount CameraBonusAccount?
   savedCameras  SavedCamera[]
+  skiResortFollows SkiResortFollow[]
   clipMetas     ClipMeta[]
   clipShares    ClipShare[]
   cameraCollections CameraCollection[]
@@ -1113,6 +1114,22 @@ model SavedCamera {
 
   @@index([userId])
   @@index([userId, group])
+}
+
+// ── Powder Pass: favourite resorts (follows) ──────────────────────
+// One row per (user, resort) the member follows from a resort page;
+// the /ski-webcams/my dashboard and the ski email features read this
+// list. resortSlug is validated against SKI_RESORTS in lib/ski/follows
+// before a row is written — the DB stores the slug only.
+model SkiResortFollow {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resortSlug String
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, resortSlug])
+  @@index([userId])
 }
 
 model ClipMeta {
