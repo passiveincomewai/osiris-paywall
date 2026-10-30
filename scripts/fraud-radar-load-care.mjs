@@ -108,6 +108,10 @@ try {
       }
 
       await tx.frHomeHealthAgency.deleteMany({ where: { datasetVersion: ccVersion } });
+      // Care Compare encodes Yes / No / "-" (not reported); the
+      // pipeline normalizes at ingest, and this loader coerces too —
+      // anything unrecognized is null (absent), never a placeholder.
+      const offer = (v) => (v === true || v === "Yes" ? true : v === false || v === "No" ? false : null);
       const hhRows = directories.homeHealth.map((h) => ({
         datasetVersion: ccVersion,
         ccn: h.ccn,
@@ -120,13 +124,14 @@ try {
         ownershipType: h.ownershipType,
         certificationDate: toDate(h.certificationDate),
         qualityStarRating: dec(h.qualityStarRating),
-        qualityStarFootnote: h.qualityStarFootnote,
-        offersNursing: h.offersNursing,
-        offersPhysicalTherapy: h.offersPhysicalTherapy,
-        offersOccupationalTherapy: h.offersOccupationalTherapy,
-        offersSpeechPathology: h.offersSpeechPathology,
-        offersMedicalSocial: h.offersMedicalSocial,
-        offersHomeHealthAide: h.offersHomeHealthAide,
+        qualityStarFootnote:
+          h.qualityStarFootnote === "-" || h.qualityStarFootnote === "" ? null : h.qualityStarFootnote,
+        offersNursing: offer(h.offersNursing),
+        offersPhysicalTherapy: offer(h.offersPhysicalTherapy),
+        offersOccupationalTherapy: offer(h.offersOccupationalTherapy),
+        offersSpeechPathology: offer(h.offersSpeechPathology),
+        offersMedicalSocial: offer(h.offersMedicalSocial),
+        offersHomeHealthAide: offer(h.offersHomeHealthAide),
       }));
       for (let i = 0; i < hhRows.length; i += 1000) {
         await tx.frHomeHealthAgency.createMany({ data: hhRows.slice(i, i + 1000) });
