@@ -36,6 +36,7 @@ model User {
   savedCameras  SavedCamera[]
   skiResortFollows SkiResortFollow[]
   skiTripReminders SkiTripReminder[]
+  skiEmailSendLogs SkiEmailSendLog[]
   skiPassSeason SkiPassSeason?
   skiPassDays SkiPassDay[]
   clipMetas     ClipMeta[]
@@ -1149,6 +1150,24 @@ model SkiResortFollow {
   createdAt  DateTime @default(now())
 
   @@unique([userId, resortSlug])
+  @@index([userId])
+}
+
+// ── Powder Pass: ski email send log ───────────────────────────────
+// One row per (user, kind, dedupe key) for the ski email runners:
+// dawn patrol uses kind 'dawn' with the UTC run date as the key; the
+// Thursday powder digest uses kind 'digest' with the ISO week. The
+// unique triple is the never-send-twice guarantee — runners check
+// before sending and write only after a successful send.
+model SkiEmailSendLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      String
+  dedupeKey String
+  sentAt    DateTime @default(now())
+
+  @@unique([userId, kind, dedupeKey])
   @@index([userId])
 }
 

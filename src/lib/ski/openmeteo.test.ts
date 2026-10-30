@@ -6,6 +6,13 @@ import {
   rankStormRows,
   seasonWindow,
   summariseSnowfall,
+  parseDailySnowfall,
+  parseHourlySnowfall,
+  trailing24hSnowfallCm,
+  upcomingWeekendSnowfall,
+  localDateKey,
+  formatCm,
+  type HourlySnowfall,
 } from "./openmeteo";
 
 const FORECAST_FIXTURE = {
@@ -98,5 +105,103 @@ describe("rankStormRows", () => {
       { resort: "c", summary: { days: [], totalCm: 12, wettest: null } },
     ]);
     expect(rows.map((r) => r.resort)).toEqual(["c", "a", "b"]);
+  });
+});
+/* Fixture-shaped Open-Meteo payloads (trimmed real response shapes). */
+const DAILY_FIXTURE = {
+  utc_offset_seconds: -25200,
+  timezone: "America/Denver",
+  daily: {
+    time: ["2026-10-28", "2026-10-29", "2026-10-30", "2026-10-31", "2026-11-01"],
+    snowfall_sum: [0.0, 4.2, 11.5, 3.0, null],
+  },
+};
+
+function hourlySeries(startIso: string, values: (number | null)[]): HourlySnowfall[] {
+  const start = new Date(`${startIso}:00Z`).getTime();
+  return values.map((v, i) => {
+    const t = new Date(start + i * 3600_000);
+    const iso = t.toISOString().slice(0, 16);
+    return { time: iso, snowfallCm: v };
+  });
+}
+
+describe("parseDailySnowfall", () => {
+  it("parses dates + snowfall_sum, keeping nulls as null", () => {
+    const rows = parseDailySnowfall(DAILY_FIXTURE);
+    expect(rows).toHaveLength(5);
+    expect(rows[2]).toEqual({ date: "2026-10-30", snowfallCm: 11.5 });
+    expect(rows[4]).toEqual({ date: "2026-11-01", snowfallCm: null });
+  });
+  it("returns [] on malformed payloads", () => {
+    expect(parseDailySnowfall(null)).toEqual([]);
+    expect(parseDailySnowfall({ daily: { time: "nope" } })).toEqual([]);
+    expect(parseDailySnowfall({})).toEqual([]);
+  });
+});
+
+describe("parseHourlySnowfall", () => {
+  it("parses hourly snowfall entries", () => {
+    const rows = parseHourlySnowfall({
+      hourly: { time: ["2026-10-30T05:00", "2026-10-30T06:00"], snowfall: [1.5, null] },
+    });
+    expect(rows).toEqual([
+      { time: "2026-10-30T05:00", snowfallCm: 1.5 },
+      { time: "2026-10-30T06:00", snowfallCm: null },
+    ]);
+  });
+});
+
+describe("trailing24hSnowfallCm", () => {
+  // Resort offset UTC-7. Run at 2026-10-30T12:20Z = 05:20 local, so the
+  // 24 complete hours are local 2026-10-29T05:00 .. 2026-10-30T04:00.
+  const now = new Date("2026-10-30T12:20:00Z");
+  it("sums exactly the 24 complete hours before the current local hour", () => {
+    const series = hourlySeries("2026-10-28T00:00", Array(80).fill(0));
+    // Snow only inside the window: local 2026-10-29T10:00 (= index from
+    // 2026-10-28T00:00 -> 34h) and 2026-10-30T04:00 (52h).
+    const vals = Array(80).fill(0);
+    vals[34] = 7.5;
+    vals[52] = 4.0;
+    vals[53] = 99; // current in-progress hour — must NOT count
+    vals[28] = 99; // one hour before the window opens — must NOT count
+    const withSnow = hourlySeries("2026-10-28T00:00", vals);
+    expect(series).toHaveLength(80);
+    expect(trailing24hSnowfallCm(withSnow, now, -25200)).toBeCloseTo(11.5);
+  });
+  it("returns null without an offset or a full 24h of complete hours", () => {
+    const short = hourlySeries("2026-10-30T00:00", Array(10).fill(1));
+    expect(trailing24hSnowfallCm(short, now, -25200)).toBeNull();
+    const long = hourlySeries("2026-10-28T00:00", Array(80).fill(1));
+    expect(trailing24hSnowfallCm(long, now, null)).toBeNull();
+  });
+  it("returns null when the whole window is null (no data, not zero snow)", () => {
+    const nulls = hourlySeries("2026-10-28T00:00", Array(80).fill(null));
+    expect(trailing24hSnowfallCm(nulls, now, -25200)).toBeNull();
+  });
+});
+
+describe("upcomingWeekendSnowfall", () => {
+  it("sums Fri+Sat+Sun after the reference date (Thu run)", () => {
+    // 2026-10-29 is a Thursday; weekend = Oct 30 (Fri), 31 (Sat), Nov 1 (Sun).
+    const daily = parseDailySnowfall(DAILY_FIXTURE);
+    const wk = upcomingWeekendSnowfall(daily, "2026-10-29");
+    expect(wk?.days.map(d => d.date)).toEqual(["2026-10-30", "2026-10-31", "2026-11-01"]);
+    expect(wk?.totalCm).toBeCloseTo(14.5); // 11.5 + 3.0 + null(0)
+  });
+  it("returns null when no full Fri-Sun set exists after the reference date", () => {
+    const daily = parseDailySnowfall(DAILY_FIXTURE);
+    expect(upcomingWeekendSnowfall(daily, "2026-10-31")).toBeNull();
+  });
+});
+
+describe("localDateKey + formatCm", () => {
+  it("derives the resort-local date from the offset", () => {
+    expect(localDateKey(new Date("2026-10-30T02:00:00Z"), -25200)).toBe("2026-10-29");
+    expect(localDateKey(new Date("2026-10-30T12:00:00Z"), -25200)).toBe("2026-10-30");
+  });
+  it("formats cm with one decimal", () => {
+    expect(formatCm(11.54)).toBe("11.5 cm");
+    expect(formatCm(0)).toBe("0.0 cm");
   });
 });

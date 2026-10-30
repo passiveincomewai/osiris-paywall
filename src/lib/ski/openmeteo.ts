@@ -249,3 +249,202 @@ export function rankStormRows<T>(rows: readonly StormRow<T>[]): StormRow<T>[] {
 
 /** Storm-watch group cap: passes can be large; say so when truncated. */
 export const STORM_WATCH_CAP = 40;
+/**
+ * Powder Pass — shared Open-Meteo snow data for the ski email features
+ * (dawn-patrol alerts + Thursday powder digest).
+ *
+ * Open-Meteo is a keyless MODELLED weather source: its snowfall figures
+ * are model output at the resort's coordinates, never a measurement on
+ * the mountain. Every consumer of this module labels the numbers as
+ * modelled and shows the fetch time — that labelling is part of this
+ * module's contract, not a nicety.
+ *
+ * Two shapes are used, on purpose:
+ *   • Dawn patrol needs a true trailing-24h total. Daily buckets
+ *     straddle the overnight window (yesterday's bucket includes
+ *     yesterday daytime), so dawn sums HOURLY snowfall over the 24
+ *     complete hours before the check.
+ *   • The Thursday digest ranks a weekend, which is exactly what DAILY
+ *     snowfall_sum buckets describe, so it uses those.
+ *
+ * Everything here is fail-soft: a failed fetch returns null, the pure
+ * parsers return empty/null on malformed payloads, and one resort's
+ * failure never propagates to the caller.
+ */
+export interface DailySnowfall {
+  /** Resort-local calendar date, "YYYY-MM-DD". */
+  date: string;
+  snowfallCm: number | null;
+}
+
+export interface HourlySnowfall {
+  /** Resort-local hour start, "YYYY-MM-DDTHH:00" (Open-Meteo local ISO). */
+  time: string;
+  snowfallCm: number | null;
+}
+
+export interface ResortSnowData {
+  daily: DailySnowfall[];
+  hourly: HourlySnowfall[];
+  /** Seconds east of UTC for the resort's local timezone (API-reported). */
+  utcOffsetSeconds: number | null;
+  timezone: string | null;
+  fetchedAt: Date;
+}
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null;
+}
+
+function numOrNull(v: unknown): number | null {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+/** Parse the `daily` block of an Open-Meteo forecast response. */
+export function parseDailySnowfall(json: unknown): DailySnowfall[] {
+  if (!isRecord(json) || !isRecord(json.daily)) return [];
+  const times = json.daily.time;
+  const sums = json.daily.snowfall_sum;
+  if (!Array.isArray(times) || !Array.isArray(sums)) return [];
+  const out: DailySnowfall[] = [];
+  for (let i = 0; i < times.length; i++) {
+    const date = times[i];
+    if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    out.push({ date, snowfallCm: numOrNull(sums[i]) });
+  }
+  return out;
+}
+
+/** Parse the `hourly` block of an Open-Meteo forecast response. */
+export function parseHourlySnowfall(json: unknown): HourlySnowfall[] {
+  if (!isRecord(json) || !isRecord(json.hourly)) return [];
+  const times = json.hourly.time;
+  const vals = json.hourly.snowfall;
+  if (!Array.isArray(times) || !Array.isArray(vals)) return [];
+  const out: HourlySnowfall[] = [];
+  for (let i = 0; i < times.length; i++) {
+    const time = times[i];
+    if (typeof time !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time)) continue;
+    out.push({ time, snowfallCm: numOrNull(vals[i]) });
+  }
+  return out;
+}
+
+/** "YYYY-MM-DDTHH:00" wall-clock key for an instant in a fixed offset. */
+function localHourKey(now: Date, utcOffsetSeconds: number): string {
+  const shifted = new Date(now.getTime() + utcOffsetSeconds * 1000);
+  const y = shifted.getUTCFullYear();
+  const m = String(shifted.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(shifted.getUTCDate()).padStart(2, "0");
+  const h = String(shifted.getUTCHours()).padStart(2, "0");
+  return `${y}-${m}-${d}T${h}:00`;
+}
+
+/** "YYYY-MM-DD" wall-clock date for an instant in a fixed offset. */
+export function localDateKey(now: Date, utcOffsetSeconds: number): string {
+  return localHourKey(now, utcOffsetSeconds).slice(0, 10);
+}
+
+/**
+ * Modelled snowfall (cm) over the 24 complete hours ending just before
+ * the current local hour — the dawn-patrol "overnight" window. Returns
+ * null when the series does not cover a full 24 complete hours (never
+ * a partial sum presented as a 24h total). Null hourly values count as
+ * 0 (the model's no-snow encoding in fixture data); a window that is
+ * entirely null is treated as no data.
+ */
+export function trailing24hSnowfallCm(
+  hourly: HourlySnowfall[],
+  now: Date,
+  utcOffsetSeconds: number | null,
+): number | null {
+  if (utcOffsetSeconds === null || hourly.length < 24) return null;
+  const currentHour = localHourKey(now, utcOffsetSeconds);
+  // Complete hours are those whose start is strictly before the current
+  // (in-progress) hour. Take the last 24 of them.
+  const complete = hourly.filter(h => h.time < currentHour);
+  if (complete.length < 24) return null;
+  const window = complete.slice(-24);
+  if (window.every(h => h.snowfallCm === null)) return null;
+  return window.reduce((sum, h) => sum + (h.snowfallCm ?? 0), 0);
+}
+
+/**
+ * The upcoming weekend (Fri + Sat + Sun) after `referenceDate`
+ * ("YYYY-MM-DD", resort-local): the first Friday on/after the day after
+ * the reference date and its Saturday/Sunday. Returns the summed
+ * modelled snowfall and the day rows used, or null when the daily
+ * series does not contain a full Fri–Sun set with at least one numeric
+ * value.
+ */
+export function upcomingWeekendSnowfall(
+  daily: DailySnowfall[],
+  referenceDate: string,
+): { totalCm: number; days: DailySnowfall[] } | null {
+  const after = daily.filter(d => d.date > referenceDate);
+  const friIdx = after.findIndex(
+    d => new Date(`${d.date}T00:00:00Z`).getUTCDay() === 5,
+  );
+  if (friIdx < 0 || friIdx + 2 >= after.length) return null;
+  const days = after.slice(friIdx, friIdx + 3);
+  const weekdays = days.map(d => new Date(`${d.date}T00:00:00Z`).getUTCDay());
+  if (weekdays[0] !== 5 || weekdays[1] !== 6 || weekdays[2] !== 0) return null;
+  if (days.every(d => d.snowfallCm === null)) return null;
+  return {
+    totalCm: days.reduce((sum, d) => sum + (d.snowfallCm ?? 0), 0),
+    days,
+  };
+}
+
+export type SnowFetch = typeof fetch;
+
+/**
+ * Fetch daily + hourly snowfall for one resort's coordinates.
+ * Never throws — any failure (network, HTTP, malformed body) is null,
+ * so a single resort can never fail a whole email run.
+ */
+export async function fetchResortSnow(
+  lat: number,
+  lng: number,
+  opts: {
+    pastDays?: number;
+    forecastDays?: number;
+    fetchImpl?: SnowFetch;
+    timeoutMs?: number;
+    now?: Date;
+  } = {},
+): Promise<ResortSnowData | null> {
+  const fetchImpl = opts.fetchImpl ?? fetch;
+  try {
+    const qs = new URLSearchParams({
+      latitude: String(lat),
+      longitude: String(lng),
+      daily: "snowfall_sum",
+      hourly: "snowfall",
+      past_days: String(opts.pastDays ?? 2),
+      forecast_days: String(opts.forecastDays ?? 4),
+      timezone: "auto",
+    });
+    const res = await fetchImpl(`https://api.open-meteo.com/v1/forecast?${qs.toString()}`, {
+      signal: AbortSignal.timeout(opts.timeoutMs ?? 8000),
+      headers: { "User-Agent": "WorldEye-PowderPass/1.0" },
+    });
+    if (!res.ok) return null;
+    const json: unknown = await res.json();
+    if (!isRecord(json)) return null;
+    return {
+      daily: parseDailySnowfall(json),
+      hourly: parseHourlySnowfall(json),
+      utcOffsetSeconds: numOrNull(json.utc_offset_seconds),
+      timezone: typeof json.timezone === "string" ? json.timezone : null,
+      fetchedAt: opts.now ?? new Date(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** One-decimal cm label, e.g. 12.34 -> "12.3 cm". */
+export function formatCm(cm: number): string {
+  return `${cm.toFixed(1)} cm`;
+}
