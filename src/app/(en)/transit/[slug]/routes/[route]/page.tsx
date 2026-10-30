@@ -5,6 +5,7 @@ import { ChevronRight, ExternalLink, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import RouteAlertsLive from "@/components/transit-seo/RouteAlertsLive";
+import RouteAlertSignup from "@/components/transit-seo/RouteAlertSignup";
 import StopRoutePlanner from "@/components/transit-seo/StopRoutePlanner";
 import type { PlannerDirection } from "@/lib/transit/stop-finder";
 import { agencySeoData, seoAgencies, seoAgencyById } from "@/lib/transit/seo-data";
@@ -182,11 +183,7 @@ export default async function TransitRoutePage({
     },
     {
       q: `How do I get to ${agency.name} Route ${displayName} from where I am?`,
-      a: `Use the directions tool on this page: enter a starting address and it finds the nearest Route ${displayName} stop from the route's published stop list, gives you walking directions to it step by step, and shows the live cameras along your walk and the ride from that stop. Add a destination — an address, or a specific stop on the route — and it also names the stop to get off at, counts the stops in between, and walks you the final leg from that stop to where you're going. Your addresses are only used to draw the route — they aren't saved.`,
-    },
-    {
-      q: `Where do I get off ${agency.name} Route ${displayName} for my destination?`,
-      a: `Enter your destination in the directions tool on this page and it names the Route ${displayName} stop nearest your destination that the route reaches after your boarding stop, counts the stops you'll ride, and gives you walking directions for the last leg. If the route can't carry you from your start toward that destination in one ride, the tool says so instead of guessing.`,
+      a: `Use the directions tool on this page: enter a starting address and it finds the nearest Route ${displayName} stop from the route's published stop list, gives you walking directions to it step by step, and shows the live cameras along your walk and the ride from that stop. Your address is only used to draw the route — it isn't saved.`,
     },
   ];
 
@@ -274,6 +271,20 @@ export default async function TransitRoutePage({
         <div className="mt-8">
           <RouteAlertsLive agencyId={agency.id} agencyName={agency.name} routeShort={route.short} />
         </div>
+
+        {/* Email alert signup — MBTA is the live alert-email upstream;
+            other agencies render nothing here until their feed joins. */}
+        {agency.id === "mbta" && (
+          <div className="mt-6">
+            <RouteAlertSignup
+              agencyId={agency.id}
+              agencyName={agency.name}
+              routeId={route.id}
+              routeSlug={routeSlug}
+              routeName={longName || displayName}
+            />
+          </div>
+        )}
 
         {/* Schedule summary */}
         <section className="mt-12">
@@ -437,7 +448,7 @@ export default async function TransitRoutePage({
             routeColor={route.color}
             directions={plannerDirections}
             heading={`Directions to Route ${displayName}`}
-            intro={`Enter a starting address — we'll find the nearest Route ${displayName} stop and walk you to it turn by turn. Add a destination, an address or a specific stop on the route, and we'll name the stop to get off at, walk you the last leg, and show the live cameras along the whole trip.`}
+            intro={`Enter a starting address — we'll find the nearest Route ${displayName} stop, walk you to it turn by turn, and show the live cameras along your walk and the ride from there.`}
           />
         </section>
 
