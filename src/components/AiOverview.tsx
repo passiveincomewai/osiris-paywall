@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Loader2, RefreshCw, X, Activity, ArrowLeftRight, CircleDot, Lock } from 'lucide-react';
 import { BLOCS, BLOC_ORDER, timeAgo, type AlertBrief, type AlertThread } from '@/lib/alert-digest';
+import TrialPicker from '@/components/TrialPicker';
 
 /**
  * OSIRIS — One-Click AI Overview
@@ -175,6 +176,7 @@ export default function AiOverview({
   const [result, setResult] = useState<OverviewResult | null>(null);
   const [resultSignature, setResultSignature] = useState<string | undefined>(undefined);
   const [failure, setFailure] = useState<OverviewFailure | null>(null);
+  const [plansOpen, setPlansOpen] = useState(false);
 
   const generate = useCallback(async () => {
     setLoading(true);
@@ -283,13 +285,33 @@ export default function AiOverview({
                       AI read-outs of the live picture are a {failure.tier === 'vip' ? 'VIP Pro' : 'Pro'} feature.
                       Your current plan doesn&apos;t include them.
                     </p>
-                    <a
-                      href="/pricing"
+                    <button
+                      type="button"
+                      onClick={() => setPlansOpen((v) => !v)}
+                      aria-expanded={plansOpen}
                       className="mt-2 inline-flex items-center gap-1.5 rounded border px-2 py-1 text-[10px] font-mono tracking-wider transition-all hover:brightness-125"
                       style={{ color: accent, borderColor: `${accent}55`, background: `${accent}12` }}
                     >
-                      <Sparkles className="w-3 h-3" /> SEE PLANS
-                    </a>
+                      <Sparkles className="w-3 h-3" /> {plansOpen ? 'HIDE PLANS' : 'SEE PLANS'}
+                    </button>
+                    {plansOpen && (
+                      <div className="mt-2">
+                        {/* The central picker (Phase D), opened on the
+                            tier this lock demands: a VIP lock pre-selects
+                            Ultra (the tier carrying the VIP extras for
+                            new buyers); a Pro lock pre-selects Pro. */}
+                        <TrialPicker
+                          variant="compact"
+                          defaultTier={failure.tier === 'vip' ? 'ultra' : 'pro'}
+                        />
+                        <a
+                          href="/pricing"
+                          className="mt-1.5 inline-block text-[10px] font-mono tracking-wider text-[var(--text-muted)] underline underline-offset-2 hover:text-white"
+                        >
+                          Compare all plans
+                        </a>
+                      </div>
+                    )}
                   </div>
                 ) : failure.kind === 'busy' ? (
                   <div className="py-1 leading-snug text-[var(--text-secondary)]">

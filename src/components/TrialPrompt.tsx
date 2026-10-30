@@ -4,8 +4,8 @@
  * The Wave 2 F3 trial surfaces, mounted once in the root layout:
  *
  *  - the post-signup WELCOME prompt: a one-time modal greeting a new
- *    account with a one-tap start into the existing trial checkout for
- *    the recommended plan (the plan last viewed on /pricing, else
+ *    account with a one-tap start into the plan picker for the
+ *    recommended plan (the plan last viewed on /pricing, else
  *    Monthly);
  *  - the dismissible BANNER for signed-in free users who have never
  *    trialed and skipped the welcome — quiet for a week after any
@@ -13,9 +13,11 @@
  *
  * All decisions live in lib/billing/trial-prompt (pinned by its tests);
  * this shell only reads the session once per navigation, renders what
- * the decision says, and records dismissals. The CTA starts the
- * ordinary checkout flow — this component never writes subscription
- * state (the Stripe webhook is the sole write path).
+ * the decision says, and records dismissals. The CTA opens the
+ * central plan picker (components/TrialPicker, Phase D) pre-set to
+ * the recommended plan — choosing there starts the ordinary checkout
+ * flow. This component never writes subscription state (the Stripe
+ * webhook is the sole write path).
  */
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -23,9 +25,9 @@ import { usePathname } from "next/navigation";
 import { Crown, X } from "lucide-react";
 import { readSessionIdentity } from "@/lib/premium-entitlement";
 import TrialButton from "@/components/TrialButton";
+import { TrialPickerDialog } from "@/components/TrialPicker";
 import {
   TRIAL_PLAN_OPTIONS,
-  startPlanCheckout,
   type TrialPlanOption,
 } from "@/lib/billing/trial-checkout";
 import {
@@ -47,6 +49,7 @@ export default function TrialPrompt() {
   const pathname = usePathname() ?? "/";
   const [surface, setSurface] = useState<TrialPromptSurface>("none");
   const [option, setOption] = useState<TrialPlanOption | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,15 +81,33 @@ export default function TrialPrompt() {
     };
   }, [pathname]);
 
-  if (surface === "none" || !option) return null;
+  if (!option) return null;
 
   const dismiss = () => {
     dismissTrialSurfaces(Date.now());
     setSurface("none");
   };
 
+  // Engaging with the CTA dismisses the prompt surface (same
+  // cooldown as any dismissal) and opens the central picker,
+  // pre-set to the recommended plan this surface named.
+  const openPicker = () => {
+    setPickerOpen(true);
+    dismiss();
+  };
+
+  const dialog = (
+    <TrialPickerDialog
+      open={pickerOpen}
+      onClose={() => setPickerOpen(false)}
+      defaultPlan={option.plan}
+    />
+  );
+
   if (surface === "welcome") {
     return (
+      <>
+        {dialog}
       <div
         className="fixed inset-0 z-[1200] flex items-center justify-center px-4 bg-black/70 backdrop-blur-sm"
         role="dialog"
@@ -113,7 +134,7 @@ export default function TrialPrompt() {
           <TrialButton
             label={option.cta}
             days={option.trialDays === 3 ? 3 : 10}
-            onClick={() => startPlanCheckout(option.plan)}
+            onClick={openPicker}
             className="w-full"
           />
           <p className="text-[11px] text-white/35 mt-3">{TRUST_LINE}</p>
@@ -133,10 +154,15 @@ export default function TrialPrompt() {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
+  if (surface === "none") return dialog;
+
   return (
+    <>
+      {dialog}
     <div
       className="fixed bottom-4 inset-x-4 z-[900] mx-auto max-w-xl rounded-2xl border border-[#D4AF37]/30 bg-[#0a0e17]/95 backdrop-blur px-4 py-3 shadow-2xl flex items-center gap-3"
       role="region"
@@ -150,7 +176,7 @@ export default function TrialPrompt() {
       <TrialButton
         label={option.cta}
         days={option.trialDays === 3 ? 3 : 10}
-        onClick={() => startPlanCheckout(option.plan)}
+        onClick={openPicker}
         className="w-36 shrink-0 sm:w-44"
       />
       <button
@@ -161,5 +187,6 @@ export default function TrialPrompt() {
         <X className="w-4 h-4" />
       </button>
     </div>
+    </>
   );
 }

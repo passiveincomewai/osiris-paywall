@@ -24,8 +24,7 @@ import {
   type ManageOption,
   type ManagePendingSwitch,
 } from "@/lib/billing/manage";
-import { startPlanCheckout, TRIAL_PLAN_OPTIONS, type TrialPlan } from "@/lib/billing/trial-checkout";
-import TrialButton from "@/components/TrialButton";
+import TrialPicker from "@/components/TrialPicker";
 import InvoicePayForm from "@/components/InvoicePayForm";
 
 const btnGold =
@@ -171,42 +170,11 @@ export default function SubscriptionClient() {
         <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <h2 className="font-bold mb-1">You&rsquo;re on the free plan</h2>
           <p className="text-sm text-white/55 mb-5">
-            Upgrade to Pro for unlimited cameras, the OI assistant, satellite view, live traffic, and the full intel toolkit.
+            Paid plans unlock unlimited cameras, the OI assistant, satellite view, live traffic, and the full intel toolkit — pick the tier and billing period that fit.
           </p>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {view.options.map((o) => (
-              <div key={o.plan} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-                <p className="font-bold">{o.name}</p>
-                <p className="text-lg font-bold mt-1">
-                  {o.price}
-                  <span className="text-sm text-white/45 font-normal">{o.per}</span>
-                </p>
-                <p className="text-xs text-[#D4AF37] font-semibold">Just {o.perDay} a day</p>
-                <p className="text-xs text-white/45 mt-1 mb-4">{o.note}</p>
-                {(() => {
-                  // The no-subscription options are always the three Pro
-                  // trial plans (assembleManageView), so `t` is always
-                  // found — and its plan key is the BillingPlan the
-                  // checkout starter expects. The fallback stays for
-                  // type safety and simply re-renders the same card's
-                  // own plan when it is a trial plan.
-                  const t = TRIAL_PLAN_OPTIONS.find((x) => x.plan === o.plan);
-                  return t ? (
-                    <TrialButton
-                      label={t.cta}
-                      days={t.trialDays === 3 ? 3 : 10}
-                      onClick={() => startPlanCheckout(t.plan)}
-                      className="w-full"
-                    />
-                  ) : (
-                    <button onClick={() => startPlanCheckout(o.plan as TrialPlan)} className={`${btnGold} w-full`}>
-                      Start free trial
-                    </button>
-                  );
-                })()}
-              </div>
-            ))}
-          </div>
+          {/* The central 3×3 picker (Phase D): the same nine plans as
+              /pricing, instead of three hard-wired Pro cards. */}
+          <TrialPicker />
         </section>
       )}
 
