@@ -10,6 +10,8 @@ import {
   SKI_PASS_NAMES,
   type SkiPassName,
 } from "./ski-resort-passes";
+import { getSkiResortLinks } from "./ski-resort-links";
+import { getSkiResortFacts } from "./ski-resort-facts";
 
 /** One verified resort logo, as recorded in src/data/ski-logos.json. */
 export interface SkiResortLogo {
@@ -30,6 +32,93 @@ export type SkiGroupBy = "country" | "region" | "pass";
  *  among the four programmes), or null for every resort. */
 export type SkiPassFilter = SkiPassName | "none" | null;
 
+/**
+ * Family-planner filters. Every flag traces to a data row: lessons /
+ * rentals / parking come from the resort's verified official links
+ * (src/data/ski-resort-links.json — a flag is set only where the
+ * resort's own lessons / rental / parking page was verified), and
+ * beginnerTerrain from the sourced terrain split in
+ * src/data/ski-resort-facts.json. A resort with no data row for a
+ * filter never matches it and never claims it on its card.
+ */
+export type SkiFamilyFilter = "lessons" | "rentals" | "parking" | "beginnerTerrain";
+
+export const SKI_FAMILY_FILTERS: SkiFamilyFilter[] = [
+  "lessons",
+  "rentals",
+  "parking",
+  "beginnerTerrain",
+];
+
+/** Minimum easiest-terrain share for the beginner-terrain filter.
+ *  The threshold is printed in the toggle's label so the rule is
+ *  never hidden: of the resorts with a sourced terrain split, only
+ *  Deer Valley (35%) clears it — Alta (15%) and Brighton (21%) do
+ *  not, though their cards still state their true percentages. */
+export const BEGINNER_TERRAIN_MIN_EASIEST_PCT = 25;
+
+export const SKI_FAMILY_FILTER_LABELS: Record<SkiFamilyFilter, string> = {
+  lessons: "Ski lessons",
+  rentals: "Gear rentals",
+  parking: "Parking info",
+  beginnerTerrain: `Beginner terrain ≥ ${BEGINNER_TERRAIN_MIN_EASIEST_PCT}%`,
+};
+
+/** What the family data rows say about one resort. */
+export interface SkiFamilyInfo {
+  /** Verified official lessons page exists. */
+  lessons: boolean;
+  /** Verified official gear-rental page exists. */
+  rentals: boolean;
+  /** Verified official parking / getting-here page exists. */
+  parking: boolean;
+  /** Share of trails rated easiest (%), or null when the resort has
+   *  no sourced terrain split. */
+  beginnerTerrainPct: number | null;
+}
+
+export function resortFamilyInfo(slug: string): SkiFamilyInfo {
+  const links = getSkiResortLinks(slug);
+  const facts = getSkiResortFacts(slug);
+  return {
+    lessons: Boolean(links?.lessons),
+    rentals: Boolean(links?.rentals),
+    parking: Boolean(links?.parking),
+    beginnerTerrainPct: facts?.terrainMix?.easiestPct ?? null,
+  };
+}
+
+export function resortMatchesFamilyFilter(
+  resort: SkiResort,
+  filter: SkiFamilyFilter,
+): boolean {
+  const info = resortFamilyInfo(resort.slug);
+  switch (filter) {
+    case "lessons":
+      return info.lessons;
+    case "rentals":
+      return info.rentals;
+    case "parking":
+      return info.parking;
+    case "beginnerTerrain":
+      return (
+        info.beginnerTerrainPct !== null &&
+        info.beginnerTerrainPct >= BEGINNER_TERRAIN_MIN_EASIEST_PCT
+      );
+  }
+}
+
+/** Per-filter resort counts for the family-planner chips, in
+ *  canonical filter order. */
+export function skiFamilyCounts(
+  resorts: readonly SkiResort[],
+): Array<{ filter: SkiFamilyFilter; count: number }> {
+  return SKI_FAMILY_FILTERS.map((filter) => ({
+    filter,
+    count: resorts.filter((r) => resortMatchesFamilyFilter(r, filter)).length,
+  }));
+}
+
 export interface SkiDirectoryQuery {
   /** Free text matched against name, town, region and country. */
   search: string;
@@ -37,6 +126,9 @@ export interface SkiDirectoryQuery {
   country: string | null;
   /** Pass programme filter (documented affiliations only). */
   pass: SkiPassFilter;
+  /** Family-planner filters, AND-combined: a resort must satisfy
+   *  every active one. Empty = no family filtering. */
+  family: SkiFamilyFilter[];
   /** Grouping for the unfiltered view. */
   groupBy: SkiGroupBy;
   sort: SkiSortKey;
@@ -46,6 +138,7 @@ export const DEFAULT_SKI_DIRECTORY_QUERY: SkiDirectoryQuery = {
   search: "",
   country: null,
   pass: null,
+  family: [],
   groupBy: "country",
   sort: "name-asc",
 };
@@ -96,7 +189,7 @@ export function resortMatchesSearch(resort: SkiResort, search: string): boolean 
 export function filterSkiResorts(
   resorts: readonly SkiResort[],
   query: Pick<SkiDirectoryQuery, "search" | "country"> &
-    Partial<Pick<SkiDirectoryQuery, "pass">>,
+    Partial<Pick<SkiDirectoryQuery, "pass" | "family">>,
 ): SkiResort[] {
   return resorts.filter(
     (r) =>
@@ -105,6 +198,7 @@ export function filterSkiResorts(
         (query.pass === "none"
           ? passesForResort(r.slug).length === 0
           : passesForResort(r.slug).includes(query.pass))) &&
+      (query.family ?? []).every((f) => resortMatchesFamilyFilter(r, f)) &&
       resortMatchesSearch(r, query.search),
   );
 }
@@ -253,11 +347,14 @@ export function groupSkiResortsByPass(
   return groups;
 }
 
-/** Searching, country-filtering or pass-filtering switches the
- *  directory to a flat grid. */
+/** Searching, country-filtering, pass-filtering or family-filtering
+ *  switches the directory to a flat grid. */
 export function isSkiDirectoryFiltering(query: SkiDirectoryQuery): boolean {
   return (
-    query.search.trim() !== "" || query.country !== null || query.pass !== null
+    query.search.trim() !== "" ||
+    query.country !== null ||
+    query.pass !== null ||
+    query.family.length > 0
   );
 }
 

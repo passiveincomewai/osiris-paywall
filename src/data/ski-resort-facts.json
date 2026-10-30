@@ -46,7 +46,8 @@
     "verticalM": 533,
     "skiableHectares": 425,
     "lifts": 6,
-    "runs": 66
+    "runs": 66,
+    "terrainMix": { "easiestPct": 21, "moreDifficultPct": 40, "mostDifficultPct": 39 }
   },
   "copper-mountain": {
     "about": [
@@ -1264,7 +1265,8 @@
     "verticalM": 774,
     "skiableHectares": 1058,
     "lifts": 12,
-    "runs": 116
+    "runs": 116,
+    "terrainMix": { "easiestPct": 15, "moreDifficultPct": 30, "mostDifficultPct": 55 }
   },
   "deer-valley": {
     "about": [
@@ -1277,7 +1279,8 @@
     "verticalM": 930,
     "skiableHectares": 1700,
     "lifts": 36,
-    "runs": 202
+    "runs": 202,
+    "terrainMix": { "easiestPct": 35, "moreDifficultPct": 44, "mostDifficultPct": 21 }
   },
   "angel-fire": {
     "about": [

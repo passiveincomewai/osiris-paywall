@@ -21,6 +21,15 @@ export interface SkiResortFacts {
   skiableHectares?: number;
   lifts?: number;
   runs?: number;
+  /** Trail-difficulty split in percent (easiest / more difficult /
+   *  most difficult), from the resort's reference entry (Wikipedia,
+   *  checked 2026-10-30). Present only where a sourced split exists;
+   *  the three shares sum to 100. */
+  terrainMix?: {
+    easiestPct: number;
+    moreDifficultPct: number;
+    mostDifficultPct: number;
+  };
   /** The drive in: the real access road(s) and where they climb from. */
   access?: string;
   /** Paragraphs about this specific mountain — its terrain, its

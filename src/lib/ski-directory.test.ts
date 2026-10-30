@@ -5,13 +5,19 @@ import {
   filterSkiResorts,
   groupSkiResortsByCountry,
   isSkiDirectoryFiltering,
+  resortFamilyInfo,
   resortInitials,
   resortMatchesSearch,
   skiCountryCounts,
+  skiFamilyCounts,
   sortSkiResorts,
   totalCameras,
+  BEGINNER_TERRAIN_MIN_EASIEST_PCT,
   DEFAULT_SKI_DIRECTORY_QUERY,
+  SKI_FAMILY_FILTER_LABELS,
+  type SkiFamilyFilter,
 } from "./ski-directory";
+import { getSkiResortFacts } from "./ski-resort-facts";
 
 function resort(partial: Partial<SkiResort> & { slug: string; name: string }): SkiResort {
   return {
@@ -90,6 +96,14 @@ const WHISTLER = resort({
   countrySlug: "canada",
   resortCameraCount: 6,
   nearbyCameraCount: 40,
+});
+const DEER_VALLEY = resort({
+  slug: "deer-valley",
+  name: "Deer Valley",
+  town: "Park City",
+  region: "Utah",
+  resortCameraCount: 4,
+  nearbyCameraCount: 12,
 });
 
 const ALL = [SNOWBIRD, BRIGHTON, ALTA, ARE, HLIDARFJALL, ZERMATT, WHISTLER];
@@ -321,6 +335,119 @@ describe("pass filter and grouping", () => {
     expect(result.filtering).toBe(false);
     expect(result.groups.map((g) => g.label)).toEqual(["Utah", "Jämtland", "Valais"]);
     expect(names(result.groups[0].resorts)).toEqual(["Alta", "Brighton", "Snowbird"]);
+  });
+});
+
+describe("family planner filters", () => {
+  /* Fixtures use real slugs, so these pin the real datasets: links
+     (verified official pages) and the sourced terrain splits. */
+  const WITH_DV = [...ALL, DEER_VALLEY];
+  const fam = (rs: SkiResort[], family: SkiFamilyFilter[]) =>
+    names(filterSkiResorts(rs, { search: "", country: null, family }));
+
+  it("terrain splits are sourced, exact, and sum to 100", () => {
+    expect(getSkiResortFacts("alta")?.terrainMix).toEqual({
+      easiestPct: 15,
+      moreDifficultPct: 30,
+      mostDifficultPct: 55,
+    });
+    expect(getSkiResortFacts("deer-valley")?.terrainMix).toEqual({
+      easiestPct: 35,
+      moreDifficultPct: 44,
+      mostDifficultPct: 21,
+    });
+    expect(getSkiResortFacts("brighton")?.terrainMix).toEqual({
+      easiestPct: 21,
+      moreDifficultPct: 40,
+      mostDifficultPct: 39,
+    });
+    for (const slug of ["alta", "deer-valley", "brighton"]) {
+      const mix = getSkiResortFacts(slug)?.terrainMix;
+      expect(mix && mix.easiestPct + mix.moreDifficultPct + mix.mostDifficultPct).toBe(100);
+    }
+    /* No other resort carries a terrain split yet. */
+    expect(getSkiResortFacts("snowbird")?.terrainMix).toBeUndefined();
+  });
+
+  it("resortFamilyInfo traces every flag to a data row", () => {
+    expect(resortFamilyInfo("brighton")).toEqual({
+      lessons: true,
+      rentals: false,
+      parking: true,
+      beginnerTerrainPct: 21,
+    });
+    expect(resortFamilyInfo("snowbird")).toEqual({
+      lessons: true,
+      rentals: false,
+      parking: true,
+      beginnerTerrainPct: null,
+    });
+    expect(resortFamilyInfo("whistler-blackcomb")).toEqual({
+      lessons: false,
+      rentals: true,
+      parking: false,
+      beginnerTerrainPct: null,
+    });
+    expect(resortFamilyInfo("alta")).toEqual({
+      lessons: false,
+      rentals: false,
+      parking: false,
+      beginnerTerrainPct: 15,
+    });
+    expect(resortFamilyInfo("zermatt")).toEqual({
+      lessons: false,
+      rentals: false,
+      parking: false,
+      beginnerTerrainPct: null,
+    });
+  });
+
+  it("lessons / rentals / parking filters keep only resorts with the verified page", () => {
+    expect(fam(ALL, ["lessons"])).toEqual(["Snowbird", "Brighton"]);
+    expect(fam(ALL, ["rentals"])).toEqual(["Whistler Blackcomb"]);
+    expect(fam(ALL, ["parking"])).toEqual(["Snowbird", "Brighton"]);
+  });
+
+  it("family filters AND-combine", () => {
+    expect(fam(ALL, ["lessons", "parking"])).toEqual(["Snowbird", "Brighton"]);
+    expect(fam(ALL, ["lessons", "rentals"])).toEqual([]);
+    expect(fam(ALL, ["rentals", "parking"])).toEqual([]);
+  });
+
+  it("beginner terrain ≥ 25% passes Deer Valley only — Alta (15%) and Brighton (21%) do not pass", () => {
+    expect(BEGINNER_TERRAIN_MIN_EASIEST_PCT).toBe(25);
+    expect(SKI_FAMILY_FILTER_LABELS.beginnerTerrain).toBe("Beginner terrain ≥ 25%");
+    expect(fam(WITH_DV, ["beginnerTerrain"])).toEqual(["Deer Valley"]);
+    /* Display is not a filter pass: Brighton still reports its true 21%. */
+    expect(resortFamilyInfo("brighton").beginnerTerrainPct).toBe(21);
+  });
+
+  it("counts match the synced datasets (directory-wide: lessons 7, rentals 6, parking 3, beginner 1)", () => {
+    expect(skiFamilyCounts(WITH_DV)).toEqual([
+      { filter: "lessons", count: 2 },
+      { filter: "rentals", count: 1 },
+      { filter: "parking", count: 2 },
+      { filter: "beginnerTerrain", count: 1 },
+    ]);
+  });
+
+  it("a family filter alone switches to flat mode and composes with country", () => {
+    const flat = applySkiDirectoryQuery(WITH_DV, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
+      family: ["beginnerTerrain"],
+    });
+    expect(flat.filtering).toBe(true);
+    expect(names(flat.flat)).toEqual(["Deer Valley"]);
+    const us = applySkiDirectoryQuery(WITH_DV, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
+      country: "Canada",
+      family: ["rentals"],
+    });
+    expect(names(us.flat)).toEqual(["Whistler Blackcomb"]);
+    expect(
+      isSkiDirectoryFiltering({ ...DEFAULT_SKI_DIRECTORY_QUERY, family: ["lessons"] }),
+    ).toBe(true);
+    expect(isSkiDirectoryFiltering(DEFAULT_SKI_DIRECTORY_QUERY)).toBe(false);
   });
 });
 

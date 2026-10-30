@@ -5,10 +5,14 @@ import Link from "next/link";
 import type { SkiResort } from "@/lib/ski-resorts";
 import {
   applySkiDirectoryQuery,
+  resortFamilyInfo,
   resortInitials,
   skiCountryCounts,
+  skiFamilyCounts,
   skiPassCounts,
   totalCameras,
+  SKI_FAMILY_FILTER_LABELS,
+  type SkiFamilyFilter,
   type SkiGroupBy,
   type SkiPassFilter,
   type SkiResortLogoMap,
@@ -41,6 +45,25 @@ const GROUP_OPTIONS: Array<{ value: SkiGroupBy; label: string }> = [
 function cameraLabel(resort: SkiResort): string {
   const n = totalCameras(resort);
   return `${n.toLocaleString("en-US")} live camera${n === 1 ? "" : "s"}`;
+}
+
+/**
+ * The card's family line: only items backed by a data row — a
+ * verified official lessons / rentals / parking page, or the
+ * resort's sourced beginner-terrain share. A resort with none of
+ * those rows renders no family line at all.
+ */
+function familyLine(resort: SkiResort): string | null {
+  const info = resortFamilyInfo(resort.slug);
+  const parts = [
+    info.lessons ? SKI_FAMILY_FILTER_LABELS.lessons : null,
+    info.rentals ? SKI_FAMILY_FILTER_LABELS.rentals : null,
+    info.parking ? SKI_FAMILY_FILTER_LABELS.parking : null,
+    info.beginnerTerrainPct !== null
+      ? `Beginner terrain: ${info.beginnerTerrainPct}%`
+      : null,
+  ].filter((p): p is string => p !== null);
+  return parts.length > 0 ? parts.join(" · ") : null;
 }
 
 /**
@@ -97,6 +120,9 @@ function ResortCard({
           {resort.town}, {resort.region}
         </span>
         <span className="block text-xs text-[#D4AF37] mt-1.5">{cameraLabel(resort)}</span>
+        {familyLine(resort) && (
+          <span className="block text-xs text-white/55 mt-1">{familyLine(resort)}</span>
+        )}
         {!hasPage && (
           <span className="block text-xs text-white/40 mt-1">
             Listed on this hub — no separate page
@@ -173,20 +199,28 @@ export default function SkiResortDirectory({
   const [search, setSearch] = useState(initialSearch);
   const [country, setCountry] = useState<string | null>(null);
   const [pass, setPass] = useState<SkiPassFilter>(initialPass);
+  const [family, setFamily] = useState<SkiFamilyFilter[]>([]);
   const [groupBy, setGroupBy] = useState<SkiGroupBy>(initialGroupBy);
   const [sort, setSort] = useState<SkiSortKey>("name-asc");
 
   const countries = useMemo(() => skiCountryCounts(resorts), [resorts]);
   const passCounts = useMemo(() => skiPassCounts(resorts), [resorts]);
+  const familyCounts = useMemo(() => skiFamilyCounts(resorts), [resorts]);
   const result = useMemo(
-    () => applySkiDirectoryQuery(resorts, { search, country, pass, groupBy, sort }),
-    [resorts, search, country, pass, groupBy, sort],
+    () => applySkiDirectoryQuery(resorts, { search, country, pass, family, groupBy, sort }),
+    [resorts, search, country, pass, family, groupBy, sort],
   );
+
+  const toggleFamily = (filter: SkiFamilyFilter) =>
+    setFamily((prev) =>
+      prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter],
+    );
 
   const reset = () => {
     setSearch("");
     setCountry(null);
     setPass(null);
+    setFamily([]);
     setGroupBy("country");
     setSort("name-asc");
   };
@@ -277,6 +311,26 @@ export default function SkiResortDirectory({
             onClick={() => setPass("none")}
           />
         </div>
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5" role="group" aria-label="Family planner filters">
+          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-white/50">
+            Family planner
+          </span>
+          {familyCounts.map(({ filter, count }) => (
+            <FilterChip
+              key={filter}
+              label={SKI_FAMILY_FILTER_LABELS[filter]}
+              count={count}
+              active={family.includes(filter)}
+              onClick={() => toggleFamily(filter)}
+            />
+          ))}
+        </div>
+        <p className="mt-1.5 max-w-3xl text-[11px] leading-relaxed text-white/40">
+          Family planner items appear only where WorldEye has the data: lessons, rentals and
+          parking link to the resort&apos;s own verified official page, and beginner terrain is
+          the share of trails rated easiest in the resort&apos;s published trail breakdown
+          (Wikipedia, checked Oct 2026). Resorts without a sourced figure don&apos;t show one.
+        </p>
         {result.filtering && (
           <div className="mt-2.5 flex items-center justify-between gap-3">
             <p className="text-xs text-white/50" role="status">
