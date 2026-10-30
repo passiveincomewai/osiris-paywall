@@ -5,6 +5,7 @@ import { ChevronRight, ExternalLink, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import RouteAlertsLive from "@/components/transit-seo/RouteAlertsLive";
+import RouteAlertSignup from "@/components/transit-seo/RouteAlertSignup";
 import { agencySeoData, seoAgencies, seoAgencyById } from "@/lib/transit/seo-data";
 import { ymdInZone, routeDaySummary } from "@/lib/transit/network";
 import {
@@ -252,6 +253,20 @@ export default async function TransitRoutePage({
         <div className="mt-8">
           <RouteAlertsLive agencyId={agency.id} agencyName={agency.name} routeShort={route.short} />
         </div>
+
+        {/* Email alert signup — MBTA is the live alert-email upstream;
+            other agencies render nothing here until their feed joins. */}
+        {agency.id === "mbta" && (
+          <div className="mt-6">
+            <RouteAlertSignup
+              agencyId={agency.id}
+              agencyName={agency.name}
+              routeId={route.id}
+              routeSlug={routeSlug}
+              routeName={longName || displayName}
+            />
+          </div>
+        )}
 
         {/* Schedule summary */}
         <section className="mt-12">

@@ -5,6 +5,7 @@ import { AlertTriangle, Bus, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import StopSearch from "@/components/transit-seo/StopSearch";
+import RouteAlertSignup from "@/components/transit-seo/RouteAlertSignup";
 import { alertsForAgency } from "@/lib/transit/alertsServer";
 import {
   agencySeoData,
@@ -15,6 +16,7 @@ import {
 } from "@/lib/transit/seo-data";
 import {
   creditFor,
+  displayRouteLong,
   formatZonedTime,
   groupRoutes,
   popularStops,
@@ -247,6 +249,24 @@ async function AgencyHub({ data }: { data: AgencySeoData }) {
             <StopSearch agencyId={agency.id} agencyName={agency.name} routePaths={routePaths} />
           </div>
         </section>
+
+        {/* Email alert signup with route picker — MBTA is the live
+            alert-email upstream; other hubs render nothing here. */}
+        {agency.id === "mbta" && (
+          <section className="mt-12 max-w-2xl">
+            <RouteAlertSignup
+              agencyId={agency.id}
+              agencyName={agency.name}
+              routeOptions={net.routes
+                .filter((r) => slugs.get(r.id))
+                .map((r) => ({
+                  id: r.id,
+                  slug: slugs.get(r.id)!,
+                  name: displayRouteLong(r.long) || routeDisplayName(r),
+                }))}
+            />
+          </section>
+        )}
 
         {/* Route groups */}
         {groups.map((g) => (
