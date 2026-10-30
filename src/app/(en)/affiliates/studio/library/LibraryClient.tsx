@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 import { EmptyState, SectionTitle } from "@/components/affiliate/ui";
 import { categoryLabel, renderUrl, type StudioTemplateLite } from "../StudioHomeClient";
+import EmbedSnippet from "../EmbedSnippet";
 
 interface CategoryCount {
   key: string;
@@ -42,6 +43,28 @@ export default function LibraryClient() {
   const [category, setCategory] = useState<string>("all");
   const [format, setFormat] = useState<string>("all");
   const [q, setQ] = useState("");
+  const [me, setMe] = useState<{ code: string; link: string } | null>(null);
+
+  /* The Embed action needs the affiliate's own code + link. If this
+   * load fails, the cards simply render without embed actions. */
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await fetch("/api/affiliate/me", { cache: "no-store" });
+        if (!r.ok) return;
+        const j = await r.json().catch(() => ({}));
+        const code =
+          typeof j.profile?.customCode === "string"
+            ? j.profile.customCode
+            : typeof j.profile?.referralCode === "string"
+              ? j.profile.referralCode
+              : null;
+        if (code && typeof j.referralLink === "string") setMe({ code, link: j.referralLink });
+      } catch {
+        /* embed actions stay hidden */
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -210,11 +233,11 @@ export default function LibraryClient() {
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {cards.map(({ key, template: t, slides }) => (
-                <Link
+                <div
                   key={key}
-                  href={`/affiliates/studio/create/${t.slug}`}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-cyan-400/50 transition-colors group"
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-cyan-400/50 transition-colors group flex flex-col"
                 >
+                  <Link href={`/affiliates/studio/create/${t.slug}`} className="block">
                   <div className="relative bg-black/40 aspect-[4/3] flex items-center justify-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -249,7 +272,21 @@ export default function LibraryClient() {
                       </div>
                     )}
                   </div>
-                </Link>
+                  </Link>
+                  {me && t.kind === "svg" && (
+                    <div className="px-3 pb-3 mt-auto">
+                      <EmbedSnippet
+                        collapsible
+                        code={me.code}
+                        link={me.link}
+                        slug={t.slug}
+                        title={t.title}
+                        width={t.width}
+                        height={t.height}
+                      />
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           )}

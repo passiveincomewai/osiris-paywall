@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { EmptyState, SectionTitle } from "@/components/affiliate/ui";
 import { categoryLabel, renderUrl, type StudioTemplateLite } from "../../StudioHomeClient";
+import EmbedSnippet from "../../EmbedSnippet";
 
 /* ------------------------------------------------------------------ */
 /* Editable-field model                                                */
@@ -112,6 +113,7 @@ export default function QuickEditClient({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [referralLink, setReferralLink] = useState<string | null>(null);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<"png" | "jpeg" | "webp">("png");
   const [saving, setSaving] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -159,6 +161,13 @@ export default function QuickEditClient({ slug }: { slug: string }) {
         if (r.ok) {
           const j = await r.json();
           if (typeof j.referralLink === "string") setReferralLink(j.referralLink);
+          const code =
+            typeof j.profile?.customCode === "string"
+              ? j.profile.customCode
+              : typeof j.profile?.referralCode === "string"
+                ? j.profile.referralCode
+                : null;
+          if (code) setReferralCode(code);
         }
       } catch { /* personalization panel degrades gracefully */ }
     })();
@@ -396,6 +405,29 @@ export default function QuickEditClient({ slug }: { slug: string }) {
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Embed */}
+          <div className={card}>
+            <SectionTitle kicker="Embed" title="Put this design on your site" />
+            {referralLink && referralCode ? (
+              active.kind === "svg" ? (
+                <EmbedSnippet
+                  code={referralCode}
+                  link={referralLink}
+                  slug={active.slug}
+                  title={active.title}
+                  width={active.width}
+                  height={active.height}
+                />
+              ) : (
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  Embeds are available for image templates — this one renders in a different format.
+                </p>
+              )
+            ) : (
+              <div className="h-10 rounded-lg bg-white/[0.05] animate-pulse" />
+            )}
           </div>
         </div>
 
