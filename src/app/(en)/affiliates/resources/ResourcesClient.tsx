@@ -1,7 +1,12 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { Check, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check } from "lucide-react";
 import { CopyButton, SectionTitle } from "@/components/affiliate/ui";
+import { BANNER_DESIGNS } from "@/lib/affiliate/banners";
+import { BannerArt, bannerEmbedHtml, downloadBannerPng, downloadBannerSvg } from "@/components/affiliate/BannerArt";
+import { CAPTION_TEMPLATES, EMAIL_TEMPLATES, SCRIPT_TEMPLATES } from "@/lib/affiliate/templates";
+import TemplateCard, { type UsageState } from "./TemplateCard";
+import VideoStylesLab from "./VideoStylesLab";
 
 /* ------------------------------------------------------------------ */
 /* Data                                                                */
@@ -11,168 +16,26 @@ const DISCLOSURE_NOTE =
   "Disclosure rule: every post, video, or email containing your referral link must clearly say it's an ad " +
   "(#ad) and that you earn a commission if someone subscribes. It's the law in most places — and it builds trust.";
 
-const CAPTIONS: { platform: string; color: string; text: string }[] = [
-  {
-    platform: "Instagram",
-    color: "#e879f9",
-    text:
-`I found a site that lets you watch 74,229 LIVE cameras around the world 🌍
-Traffic cams, beaches, city squares — all streaming free on a 3D globe.
+type Challenge = { id: string; metric: string; completedAt: string | null };
 
-It's called WorldEye. The free map is honestly wild — and Pro unlocks an AI analyst + satellite view.
+interface DashboardTotals {
+  clicks: number;
+  directReferrals: number;
+  convertedReferrals: number;
+  conversionPct: number;
+  lifetimeCents: number;
+  availableCents: number;
+  pendingCents: number;
+  paidOutCents: number;
+}
 
-Link in bio 👆
-
-#ad — I earn a commission if you subscribe through my link. The free globe costs you nothing.`,
-  },
-  {
-    platform: "TikTok",
-    color: "#22d3ee",
-    text:
-`POV: you discover you can watch the entire planet LIVE for free 🌐
-
-74,229 cameras. Flights overhead. Satellites orbiting. All on one 3D globe.
-
-WorldEye's free tier is actually insane. Link in bio if you want the Pro AI analyst.
-
-#ad — I earn a commission on subscriptions through my link.`,
-  },
-  {
-    platform: "X",
-    color: "#94a3b8",
-    text:
-`WorldEye is a free 3D globe with 74,229 live cameras, flight tracking, and satellites.
-
-Pro (weekly, monthly, or annual) adds an AI analyst, satellite basemap, and OSINT toolkit.
-
-Worth a look: {LINK}
-
-#ad — I earn a commission if you subscribe.`,
-  },
-  {
-    platform: "Email",
-    color: "#fbbf24",
-    text:
-`Subject: Watch the planet live (free)
-
-Hey —
-
-Stumbled on WorldEye: a live 3D globe with 74,229 public cameras you can watch free. Traffic, beaches, landmarks — all live.
-
-The free map is genuinely fun. If you want more, Pro unlocks an AI analyst, satellite view, and OSINT tools, on weekly or monthly plans, or VIP Pro (billed yearly).
-
-Here's my link: {LINK}
-
-Quick note: it's my affiliate link — I earn a commission if you subscribe, at no extra cost to you.`,
-  },
-];
-
-const SCRIPTS: { title: string; color: string; lines: string[] }[] = [
-  {
-    title: "Script 1 — “The globe zoom” (TikTok / Reels, ~30s)",
-    color: "#22d3ee",
-    lines: [
-      "HOOK (0–3s): “This website lets you watch the entire planet… legally.” [zoom into globe]",
-      "BEAT 1 (3–10s): “74,229 live cameras. Beaches in Hawaii, streets in Tokyo — all live, right now.”",
-      "BEAT 2 (10–18s): “The map is completely free. No signup, just open it.” [click a camera]",
-      "BEAT 3 (18–25s): “And Pro adds an AI analyst and satellite view if you want the full setup.”",
-      "CTA (25–30s): “Link in bio. #ad — I earn a commission if you subscribe.”",
-    ],
-  },
-  {
-    title: "Script 2 — “3 things” (TikTok / Reels, ~25s)",
-    color: "#a78bfa",
-    lines: [
-      "HOOK (0–3s): “3 things you didn't know you could watch live right now.”",
-      "BEAT 1: “One — live traffic cameras from 100+ countries.”",
-      "BEAT 2: “Two — every flight overhead, tracked in real time.”",
-      "BEAT 3: “Three — satellites orbiting above you, right now.”",
-      "CTA: “All free on WorldEye. Link in bio for the Pro upgrade. #ad — I earn a commission on subscriptions.”",
-    ],
-  },
-];
-
-const EMAILS: { subject: string; text: string }[] = [
-  {
-    subject: "The free tool I keep open all day",
-    text:
-`Quick one —
-
-WorldEye is a live 3D globe (free) with 74,229 public cameras, flights, and satellites. I keep it open like a window to the world.
-
-Pro adds an AI analyst + satellite view if you want the full intel setup. Weekly or monthly plans, or VIP Pro (billed yearly).
-
-My link: {LINK}
-
-Disclosure: affiliate link — I earn a commission if you subscribe.`,
-  },
-  {
-    subject: "For the endlessly curious",
-    text:
-`If you like watching the world happen in real time, try WorldEye.
-
-It's a free 3D globe with 74,229 live public cameras — landmarks, highways, beaches. No signup needed for the map.
-
-There's a Pro tier (AI analyst, satellite view, OSINT toolkit) if you want more.
-
-My affiliate link: {LINK} — I earn a commission if you subscribe, at no extra cost to you.`,
-  },
-];
-
-/* Template-mixer "AI" caption generator — honestly a template mixer, not AI. */
-type Tone = "hype" | "professional" | "funny";
-type Feature = "CCTV" | "flights" | "satellites" | "OSINT";
-
-const HOOKS: Record<Tone, string[]> = {
-  hype: [
-    "STOP SCROLLING — you can watch the entire planet LIVE right now 👁️",
-    "This is the wildest free tool on the internet and nobody talks about it",
-    "POV: you just found a live window into everywhere on Earth",
-  ],
-  professional: [
-    "WorldEye: a real-time 3D intelligence globe, free to explore",
-    "For OSINT researchers and the endlessly curious — the planet, live",
-    "One dashboard for live global awareness",
-  ],
-  funny: [
-    "Google Earth but it's happening RIGHT NOW",
-    "me: I'll just check one camera. also me, 4 hours later:",
-    "new personality trait: watching traffic in Tokyo at 3am",
-  ],
-};
-const BODIES: Record<Feature, string[]> = {
-  CCTV: [
-    "74,229 public cameras stream live on a 3D globe — beaches, city squares, highways. The map is completely free, no signup.",
-    "Traffic cams, landmarks, beaches — 74,229 of them, live, on one free globe. I've lost hours to this.",
-    "One free 3D globe, 74,229 live public cameras. Pick a city, any city, and you're there.",
-  ],
-  flights: [
-    "Every aircraft overhead tracked live on the same globe — plus 74,229 public cameras. Free to explore.",
-    "Watch flights move in real time across a 3D Earth, then drop into a live street camera below them. Free.",
-    "Live flight tracking, live cameras, live satellites — one free globe does all three.",
-  ],
-  satellites: [
-    "Watch satellites orbit overhead in real time on a free 3D globe, alongside 74,229 live cameras.",
-    "There's a free globe where you can watch satellites pass over your house. In real time. Right now.",
-    "Satellite orbits, live flights, and 74,229 street cameras — all on one free 3D map.",
-  ],
-  OSINT: [
-    "Go Pro and unlock the AI analyst, satellite basemap, live traffic, advanced search filters, and the OSINT toolkit. Weekly or monthly plans, or VIP Pro (billed yearly).",
-    "The free globe is the hook — Pro is the full intel station: AI analyst, satellite view, OSINT tools.",
-    "Pro tier = AI analyst + satellite basemap + OSINT toolkit. The free map alone is worth the click.",
-  ],
-};
-const CTAS: Record<Tone, string[]> = {
-  hype: ["Link in bio — go look at the world 👆", "Tap the link and thank me later"],
-  professional: ["Explore the free globe here: {LINK}", "See the free tier and Pro plans: {LINK}"],
-  funny: ["link in bio, don't blame me when it's 4am", "go touch some (virtual) grass: {LINK}"],
-};
+function money(cents: number): string {
+  return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
 
 /* ------------------------------------------------------------------ */
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
-
-type Challenge = { id: string; metric: string; completedAt: string | null };
 
 export default function ResourcesClient({ demo }: { demo?: { link: string; code: string } } = {}) {
   const isDemo = !!demo;
@@ -180,9 +43,8 @@ export default function ResourcesClient({ demo }: { demo?: { link: string; code:
   const [qr, setQr] = useState<string | null>(null);
   const [tutorial, setTutorial] = useState<Challenge | null>(null);
   const [tutorialDone, setTutorialDone] = useState(false);
-  const [tone, setTone] = useState<Tone>("hype");
-  const [feature, setFeature] = useState<Feature>("CCTV");
-  const [variants, setVariants] = useState<string[]>([]);
+  const [usageMap, setUsageMap] = useState<Record<string, UsageState>>({});
+  const [totals, setTotals] = useState<DashboardTotals | null>(null);
 
   useEffect(() => {
     if (isDemo) {
@@ -227,74 +89,51 @@ export default function ResourcesClient({ demo }: { demo?: { link: string; code:
         if (!t && list.some((c) => c.metric === "tutorial" && c.completedAt)) setTutorialDone(true);
       } catch { /* non-fatal */ }
     })();
+    (async () => {
+      try {
+        const r = await fetch("/api/affiliate/resources/usage", { cache: "no-store" });
+        if (!r.ok) return;
+        const j = await r.json();
+        const map: Record<string, UsageState> = {};
+        for (const row of Array.isArray(j.usage) ? j.usage : []) {
+          map[`${row.templateKind}:${row.templateId}`] = { usedAt: row.usedAt, postedAt: row.postedAt };
+        }
+        setUsageMap(map);
+      } catch { /* non-fatal */ }
+    })();
+    (async () => {
+      try {
+        const r = await fetch("/api/affiliate/dashboard", { cache: "no-store" });
+        if (!r.ok) return;
+        const j = await r.json();
+        if (j?.totals) setTotals(j.totals as DashboardTotals);
+      } catch { /* non-fatal */ }
+    })();
   }, []);
 
   const withLink = (s: string) => (link ? s.split("{LINK}").join(link) : s);
 
-  const banners = useMemo(() => {
-    const snippet = (alt: string) =>
-      `<a href="${link ?? "{YOUR_LINK}"}" target="_blank" rel="noopener sponsored"><img src="https://worldeye.app/og-image.png" alt="${alt}" width="600" style="max-width:100%;border-radius:12px" /></a>`;
-    return [
-      {
-        alt: "WorldEye — see the planet live",
-        el: (
-          <div className="rounded-xl overflow-hidden border border-cyan-400/30 p-6 md:p-8 text-center"
-            style={{ background: "radial-gradient(600px 200px at 50% 0%, #0a2a55 0%, #050b18 70%)", boxShadow: "0 0 30px rgba(0,150,255,.25)" }}>
-            <div className="font-mono text-[10px] tracking-[0.3em] text-cyan-300 mb-2">WORLDEYE</div>
-            <div className="text-2xl md:text-3xl font-black text-white tracking-tight">SEE THE PLANET LIVE</div>
-            <div className="text-sm text-slate-300 mt-2">74,229 live cameras · Free 3D globe</div>
-            <div className="mt-4 inline-block px-5 py-2 rounded-lg font-mono text-sm font-bold text-[#04121f]"
-              style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}>Explore free →</div>
-          </div>
-        ),
-      },
-      {
-        alt: "WorldEye — 74,229 live cameras",
-        el: (
-          <div className="rounded-xl overflow-hidden border border-white/15 p-6 md:p-8"
-            style={{ background: "#04070f" }}>
-            <div className="grid grid-cols-6 gap-1.5 mb-4 opacity-70">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="aspect-video rounded bg-gradient-to-br from-[#0a2a55] to-[#04101f] border border-cyan-400/20"
-                  style={{ boxShadow: "inset 0 0 12px rgba(0,150,255,.15)" }} />
-              ))}
-            </div>
-            <div className="text-xl md:text-2xl font-black text-white">74,229 LIVE CAMERAS</div>
-            <div className="text-sm text-slate-400 mt-1">One globe. Every street. Free.</div>
-          </div>
-        ),
-      },
-      {
-        alt: "WorldEye Pro — AI analyst and satellite view",
-        el: (
-          <div className="rounded-xl overflow-hidden border border-violet-400/30 p-6 md:p-8 text-center"
-            style={{ background: "linear-gradient(135deg, #0b1030 0%, #12082b 60%, #05070f 100%)", boxShadow: "0 0 30px rgba(167,139,250,.2)" }}>
-            <div className="font-mono text-[10px] tracking-[0.3em] text-violet-300 mb-2">WORLDEYE PRO</div>
-            <div className="text-2xl md:text-3xl font-black text-white tracking-tight">GO PRO</div>
-            <div className="text-sm text-slate-300 mt-2">AI analyst · Satellite view · OSINT toolkit</div>
-            <div className="text-xs font-mono text-slate-400 mt-1">Weekly · Monthly · VIP Pro plans</div>
-          </div>
-        ),
-      },
-      {
-        alt: "WorldEye — the world, live",
-        el: (
-          <div className="rounded-xl overflow-hidden border border-white/15 p-8 md:p-10 text-center bg-black">
-            <div className="text-3xl md:text-4xl font-black tracking-tight text-white">THE WORLD, <span className="text-[#0096FF]">LIVE.</span></div>
-            <div className="font-mono text-xs text-slate-400 mt-3 tracking-[0.25em]">WORLDEYE</div>
-          </div>
-        ),
-      },
-    ].map((b) => ({ ...b, html: snippet(b.alt) }));
-  }, [link]);
-
-  const generate = () => {
-    const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-    const v = [0, 1, 2].map(
-      () =>
-        `${pick(HOOKS[tone])}\n\n${pick(BODIES[feature])}\n\n${pick(CTAS[tone])}\n\n#ad — I earn a commission if you subscribe through my link.`
-    );
-    setVariants(v);
+  const toggleUsage = async (
+    kind: "caption" | "email" | "script",
+    id: string,
+    patch: { used?: boolean; posted?: boolean },
+  ) => {
+    if (isDemo) return; // demo is read-only: usage marking is an account action
+    try {
+      const r = await fetch("/api/affiliate/resources/usage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ templateKind: kind, templateId: id, ...patch }),
+      });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (j?.usage) {
+        setUsageMap((m) => ({
+          ...m,
+          [`${kind}:${id}`]: { usedAt: j.usage.usedAt, postedAt: j.usage.postedAt },
+        }));
+      }
+    } catch { /* non-fatal */ }
   };
 
   const completeTutorial = async () => {
@@ -312,6 +151,9 @@ export default function ResourcesClient({ demo }: { demo?: { link: string; code:
       }
     } catch { /* non-fatal */ }
   };
+
+  const usedCount = Object.values(usageMap).filter((u) => u.usedAt).length;
+  const postedCount = Object.values(usageMap).filter((u) => u.postedAt).length;
 
   return (
     <div className="space-y-10">
@@ -366,127 +208,115 @@ export default function ResourcesClient({ demo }: { demo?: { link: string; code:
             style={{ filter: "drop-shadow(0 0 14px rgba(56,189,248,.45))" }} />
           <div className="flex-1">
             <SectionTitle kicker="Creatives" title="Banner gallery"
-              right={<span className="text-xs font-mono text-slate-500">screenshot-ready · copy the HTML to embed</span>} />
+              right={<span className="text-xs font-mono text-slate-500">real hosted artwork · copy the HTML to embed</span>} />
           </div>
         </div>
         <div className="grid md:grid-cols-2 gap-4">
-          {banners.map((b, i) => (
-            <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-              {b.el}
-              <div className="mt-3 flex justify-end">
-                <CopyButton text={b.html} label="Copy HTML" />
+          {BANNER_DESIGNS.map((d) => (
+            <div key={d.slug} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <BannerArt slug={d.slug} className="rounded-xl overflow-hidden border border-white/10" />
+              <div className="mt-3">
+                <div className="text-sm font-bold text-white">{d.name}</div>
+                <p className="text-xs text-slate-500 mt-0.5">{d.blurb}</p>
+                <div className="text-[11px] font-mono text-slate-500 mt-1">
+                  {d.width} × {d.height} · hosted at worldeye.app/affiliate-banners/{d.slug}.svg
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap justify-end gap-2">
+                <button onClick={() => downloadBannerSvg(d)}
+                  className="px-4 py-2 rounded-xl font-mono text-sm font-bold border border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/10 transition-colors">
+                  SVG
+                </button>
+                <button onClick={() => downloadBannerPng(d)}
+                  className="px-4 py-2 rounded-xl font-mono text-sm font-bold border border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/10 transition-colors">
+                  PNG
+                </button>
+                <CopyButton text={bannerEmbedHtml(d, link ?? "{YOUR_LINK}")} label="Copy HTML" />
               </div>
             </div>
           ))}
         </div>
+        <p className="text-xs text-slate-500 mt-3">
+          The embed snippet wraps your referral link around the hosted artwork — the image itself is the same
+          design you see here, served from WorldEye&apos;s own domain.
+        </p>
       </section>
 
       {/* 3 — Captions */}
       <section>
-        <SectionTitle kicker="Copy-paste" title="Caption templates" />
+        <SectionTitle kicker="Copy-paste" title="Caption templates"
+          right={<span className="text-xs font-mono text-amber-300/80">revision tools are rules-based — not AI</span>} />
         <div className="grid md:grid-cols-2 gap-4">
-          {CAPTIONS.map((c) => (
-            <div key={c.platform} className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-bold" style={{ color: c.color }}>{c.platform}</span>
-                <CopyButton text={withLink(c.text)} label="Copy caption" />
-              </div>
-              <pre className="whitespace-pre-wrap text-sm text-slate-300 font-sans leading-relaxed">{withLink(c.text)}</pre>
-            </div>
+          {CAPTION_TEMPLATES.map((t) => (
+            <TemplateCard key={t.id} template={t} usage={usageMap[`caption:${t.id}`]}
+              onToggleUsage={toggleUsage} withLink={withLink} />
           ))}
         </div>
       </section>
 
       {/* 4 — Video scripts */}
       <section>
-        <SectionTitle kicker="Reels / TikTok" title="Video scripts" />
+        <SectionTitle kicker="Reels / TikTok" title="Video scripts"
+          right={<span className="text-xs font-mono text-amber-300/80">revision tools are rules-based — not AI</span>} />
         <div className="grid md:grid-cols-2 gap-4">
-          {SCRIPTS.map((s) => (
-            <div key={s.title} className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5">
-              <div className="flex items-center justify-between mb-3 gap-3">
-                <span className="text-sm font-bold text-white">{s.title}</span>
-                <CopyButton text={s.lines.join("\n")} label="Copy script" />
-              </div>
-              <ul className="space-y-2">
-                {s.lines.map((l, i) => (
-                  <li key={i} className="text-sm text-slate-300 leading-relaxed">
-                    <ChevronRight className="inline-block w-3.5 h-3.5 text-cyan-400 mr-1.5 align-[-2px]" strokeWidth={2.5} />{l}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {SCRIPT_TEMPLATES.map((t) => (
+            <TemplateCard key={t.id} template={t} usage={usageMap[`script:${t.id}`]}
+              onToggleUsage={toggleUsage} withLink={withLink} />
           ))}
         </div>
       </section>
 
       {/* 5 — Emails */}
       <section>
-        <SectionTitle kicker="Outreach" title="Email templates" />
+        <SectionTitle kicker="Outreach" title="Email templates"
+          right={<span className="text-xs font-mono text-amber-300/80">revision tools are rules-based — not AI</span>} />
         <div className="grid md:grid-cols-2 gap-4">
-          {EMAILS.map((e, i) => (
-            <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5">
-              <div className="flex items-center justify-between mb-3 gap-3">
-                <span className="text-sm font-bold text-white truncate">Subject: {e.subject}</span>
-                <CopyButton text={`Subject: ${e.subject}\n\n${withLink(e.text)}`} label="Copy email" />
-              </div>
-              <pre className="whitespace-pre-wrap text-sm text-slate-300 font-sans leading-relaxed">{withLink(e.text)}</pre>
-            </div>
+          {EMAIL_TEMPLATES.map((t) => (
+            <TemplateCard key={t.id} template={t} usage={usageMap[`email:${t.id}`]}
+              onToggleUsage={toggleUsage} withLink={withLink} />
           ))}
         </div>
       </section>
 
-      {/* 6 — Template caption mixer */}
+      {/* 6 — Video styles lab */}
+      <VideoStylesLab withLink={withLink} />
+
+      {/* 7 — Your numbers */}
       <section>
-        <SectionTitle kicker="Generator" title="Caption mixer"
-          right={<span className="text-xs font-mono text-amber-300/80">template-based — not AI</span>} />
+        <SectionTitle kicker="Performance" title="Your numbers" />
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5">
-          <div className="flex flex-wrap gap-4 mb-4">
-            <div>
-              <div className="text-[11px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-2">Tone</div>
-              <div className="flex gap-2">
-                {(["hype", "professional", "funny"] as Tone[]).map((t) => (
-                  <button key={t} onClick={() => setTone(t)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-mono capitalize border transition-all ${tone === t ? "border-cyan-400/60 text-cyan-300 bg-cyan-400/10" : "border-white/15 text-slate-400 hover:bg-white/5"}`}>
-                    {t}
-                  </button>
+          {totals ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { label: "Referral clicks", value: totals.clicks.toLocaleString("en-US") },
+                  { label: "Signups", value: totals.directReferrals.toLocaleString("en-US") },
+                  { label: "Converted", value: totals.convertedReferrals.toLocaleString("en-US") },
+                  { label: "Conversion", value: `${totals.conversionPct}%` },
+                  { label: "Lifetime earnings", value: money(totals.lifetimeCents) },
+                  { label: "Available", value: money(totals.availableCents) },
+                  { label: "Pending", value: money(totals.pendingCents) },
+                  { label: "Paid out", value: money(totals.paidOutCents) },
+                ].map((s) => (
+                  <div key={s.label} className="rounded-xl border border-white/10 bg-black/30 p-4">
+                    <div className="text-lg font-bold text-white">{s.value}</div>
+                    <div className="text-[11px] font-mono tracking-[0.15em] text-slate-500 uppercase mt-1">{s.label}</div>
+                  </div>
                 ))}
               </div>
-            </div>
-            <div>
-              <div className="text-[11px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-2">Feature</div>
-              <div className="flex gap-2 flex-wrap">
-                {(["CCTV", "flights", "satellites", "OSINT"] as Feature[]).map((f) => (
-                  <button key={f} onClick={() => setFeature(f)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-mono border transition-all ${feature === f ? "border-cyan-400/60 text-cyan-300 bg-cyan-400/10" : "border-white/15 text-slate-400 hover:bg-white/5"}`}>
-                    {f}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-end">
-              <button onClick={generate}
-                className="px-5 py-2 rounded-xl font-mono text-sm font-bold text-[#04121f]"
-                style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)", boxShadow: "0 0 20px rgba(0,150,255,.45)" }}>
-                Mix 3 variants
-              </button>
-            </div>
-          </div>
-          {variants.length > 0 ? (
-            <div className="grid md:grid-cols-3 gap-3">
-              {variants.map((v, i) => (
-                <div key={i} className="rounded-xl border border-white/10 bg-black/30 p-4">
-                  <pre className="whitespace-pre-wrap text-sm text-slate-300 font-sans leading-relaxed mb-3">{withLink(v)}</pre>
-                  <CopyButton text={withLink(v)} label="Copy" />
-                </div>
-              ))}
-            </div>
+              <p className="text-xs text-slate-500 mt-4">
+                Templates you&apos;ve marked: {usedCount} used · {postedCount} posted. These totals are your
+                account-level numbers from the affiliate dashboard. Per-template conversions aren&apos;t
+                tracked anywhere in the system, so no template here is credited with signups it can&apos;t prove.
+              </p>
+            </>
           ) : (
-            <p className="text-sm text-slate-500">Pick a tone and a feature, then mix three caption variants. Every variant includes the #ad disclosure.</p>
+            <div className="h-24 rounded-lg bg-white/[0.05] animate-pulse" />
           )}
         </div>
       </section>
 
-      {/* 7 — Tutorial checklist */}
+      {/* 8 — Tutorial checklist */}
       <section>
         <div className="flex items-center gap-3 mb-4">
           <img src="/affiliate-icons/ben-support.png" alt="Dedicated support" className="w-11 h-11 object-contain shrink-0"
