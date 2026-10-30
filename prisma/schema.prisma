@@ -35,6 +35,8 @@ model User {
   savedCameras  SavedCamera[]
   skiResortFollows SkiResortFollow[]
   skiTripReminders SkiTripReminder[]
+  skiPassSeason SkiPassSeason?
+  skiPassDays SkiPassDay[]
   clipMetas     ClipMeta[]
   clipShares    ClipShare[]
   cameraCollections CameraCollection[]
@@ -1130,6 +1132,33 @@ model SkiResortFollow {
   createdAt  DateTime @default(now())
 
   @@unique([userId, resortSlug])
+  @@index([userId])
+}
+
+// Powder Pass pass-value tracker (feature #8): the member's own pass
+// season — what THEY paid and, optionally, their own typical day
+// price — plus the days they log against it. User-entered data only;
+// every displayed figure is computed from these rows alone.
+model SkiPassSeason {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label         String
+  costCents     Int
+  dayPriceCents Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model SkiPassDay {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skiedOn    DateTime
+  resortSlug String?
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, skiedOn, resortSlug])
   @@index([userId])
 }
 
