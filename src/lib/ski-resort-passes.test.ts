@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { SKI_RESORTS } from "@/lib/ski-resorts";
 import {
   SKI_PASS_NAMES,
+  parseSkiPassParam,
   passesForResort,
   resortCountForPass,
   resortSlugsWithPasses,
@@ -58,5 +59,41 @@ describe("passesForResort", () => {
     for (const name of SKI_PASS_NAMES) {
       expect(resortCountForPass(name), name).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("parseSkiPassParam", () => {
+  it("accepts the exact canonical names (the sidebar's own links)", () => {
+    for (const name of SKI_PASS_NAMES) {
+      expect(parseSkiPassParam(name), name).toBe(name);
+    }
+  });
+
+  it("is case-insensitive and trims whitespace", () => {
+    expect(parseSkiPassParam("ikon pass")).toBe("Ikon Pass");
+    expect(parseSkiPassParam("IKON PASS")).toBe("Ikon Pass");
+    expect(parseSkiPassParam(" epic pass ")).toBe("Epic Pass");
+    expect(parseSkiPassParam("MOUNTAIN COLLECTIVE")).toBe("Mountain Collective");
+    expect(parseSkiPassParam("indy pass")).toBe("Indy Pass");
+  });
+
+  it("accepts unambiguous short forms", () => {
+    expect(parseSkiPassParam("ikon")).toBe("Ikon Pass");
+    expect(parseSkiPassParam("Ikon")).toBe("Ikon Pass");
+    expect(parseSkiPassParam("epic")).toBe("Epic Pass");
+    expect(parseSkiPassParam("EPIC")).toBe("Epic Pass");
+    expect(parseSkiPassParam("indy")).toBe("Indy Pass");
+    expect(parseSkiPassParam("collective")).toBe("Mountain Collective");
+  });
+
+  it("rejects generic or unknown values so the hub stays unfiltered", () => {
+    expect(parseSkiPassParam("mountain")).toBeNull();
+    expect(parseSkiPassParam("pass")).toBeNull();
+    expect(parseSkiPassParam("none")).toBeNull();
+    expect(parseSkiPassParam("season pass")).toBeNull();
+    expect(parseSkiPassParam("")).toBeNull();
+    expect(parseSkiPassParam("   ")).toBeNull();
+    expect(parseSkiPassParam(undefined)).toBeNull();
+    expect(parseSkiPassParam(null)).toBeNull();
   });
 });

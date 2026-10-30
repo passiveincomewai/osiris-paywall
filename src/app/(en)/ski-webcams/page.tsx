@@ -35,7 +35,7 @@ import type {
   SkiPassFilter,
   SkiResortLogoMap,
 } from "@/lib/ski-directory";
-import { SKI_PASS_NAMES, type SkiPassName } from "@/lib/ski-resort-passes";
+import { parseSkiPassParam } from "@/lib/ski-resort-passes";
 import skiLogosData from "@/data/ski-logos.json";
 import type { CountryCamera } from "@/lib/country-cameras";
 import VoiceQA from "@/components/seo/VoiceQA";
@@ -160,19 +160,30 @@ const FAQS = [
 ];
 
 /* One country's chunks load once for all its resorts; a failed chunk
-   degrades that country's samples to none rather than breaking the hub. */
+   degrades that country's samples to none rather than breaking the hub.
+   The per-country loads run in PARALLEL: awaiting them one by one made
+   the hub's server render wait for the SUM of ~17 sequential chunk
+   loads before any HTML could be sent. Promise.all preserves the
+   first-seen country order, each load still fails soft to [], and the
+   selection loop below is untouched — the rendered output is identical,
+   it just arrives after the SLOWEST single chunk instead of the sum. */
 async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
   const byCountry = new Map<string, CountryCamera[]>();
   const byResort = new Map<string, CountryCamera[]>();
+  const countrySlugs: string[] = [];
   for (const r of SKI_RESORTS) {
-    if (!byCountry.has(r.countrySlug)) {
-      try {
-        byCountry.set(r.countrySlug, await loadCountryChunk(r.countrySlug));
-      } catch {
-        byCountry.set(r.countrySlug, []);
-      }
-    }
+    if (!countrySlugs.includes(r.countrySlug)) countrySlugs.push(r.countrySlug);
   }
+  const chunks = await Promise.all(
+    countrySlugs.map(async (slug) => {
+      try {
+        return await loadCountryChunk(slug);
+      } catch {
+        return [] as CountryCamera[];
+      }
+    }),
+  );
+  countrySlugs.forEach((slug, i) => byCountry.set(slug, chunks[i] ?? []));
   for (const r of SKI_RESORTS) {
     try {
       byResort.set(r.slug, selectResortCameras(byCountry.get(r.countrySlug) ?? [], r).resort.slice(0, 6));
@@ -190,12 +201,15 @@ export default async function SkiWebcamsPage({
 }) {
   const params = await searchParams;
   const initialSearch = typeof params.search === "string" ? params.search : "";
+  // "?pass=none" (any case) selects the independent-resorts filter.
+  // Any other value goes through the tolerant parser: canonical names
+  // in any case plus unambiguous short forms ("ikon", "epic", …) —
+  // the sidebar's exact full-name links resolve exactly as before,
+  // and an unrecognised value stays null → unfiltered, as before.
   const initialPass: SkiPassFilter =
-    params.pass === "none"
+    typeof params.pass === "string" && params.pass.trim().toLowerCase() === "none"
       ? "none"
-      : (SKI_PASS_NAMES as readonly string[]).includes(params.pass ?? "")
-        ? (params.pass as SkiPassName)
-        : null;
+      : parseSkiPassParam(params.pass);
   const initialGroupBy: SkiGroupBy =
     params.group === "region" || params.group === "pass" ? params.group : "country";
   const powder = powderPassEnabled(process.env);
