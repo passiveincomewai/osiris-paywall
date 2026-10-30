@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NEWSLETTER_SUBSCRIBED_EVENT } from "@/lib/newsletter/popup";
 
 // The newsletter form. Subscribing is instant (no confirmation email):
 // the API validates the address the moment it is submitted — real
@@ -38,6 +39,20 @@ export default function NewsletterForm({
         setState("done");
         setMsg(data.already ? "You're already subscribed." : "You're subscribed — welcome aboard.");
         onSuccess?.();
+        // Conversion test (2026-10-29): every successful subscribe —
+        // from any surface that renders this form — offers the free
+        // account popup. The listener is components/
+        // NewsletterAccountPopup (mounted globally in RootShell); the
+        // rules (once per session, never signed-in users) live in
+        // lib/newsletter/popup. Best-effort: a failed dispatch must
+        // never disturb the success state above.
+        try {
+          window.dispatchEvent(
+            new CustomEvent(NEWSLETTER_SUBSCRIBED_EVENT, { detail: { source } }),
+          );
+        } catch {
+          /* the success message stands on its own */
+        }
       } else if (data.suggestion) {
         // Likely typo: offer the correction, never apply it silently.
         setState("error");

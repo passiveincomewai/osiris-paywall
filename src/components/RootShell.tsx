@@ -10,6 +10,7 @@ import CaptureIndicator from '@/components/recording/CaptureIndicator';
 import InstallPrompt from '@/components/pwa/InstallPrompt';
 import ServiceWorkerRegister from '@/components/pwa/ServiceWorkerRegister';
 import TrialPrompt from '@/components/TrialPrompt';
+import NewsletterAccountPopup from '@/components/NewsletterAccountPopup';
 import PreferencesProvider from '@/components/PreferencesProvider';
 import DeviceHeartbeat from '@/components/DeviceHeartbeat';
 import { buildEntityJsonLd } from "@/lib/seo/entity-schema";
@@ -212,6 +213,15 @@ export default function RootShell({
         </SilentBoundary>
         <SilentBoundary name="TrialPrompt">
           <TrialPrompt />
+        </SilentBoundary>
+        {/* Post-newsletter-signup account popup (conversion test,
+            2026-10-29): renders nothing until NewsletterForm reports a
+            subscribe; the Google gate mirrors auth.ts's provider
+            config, the same check the signup page makes. */}
+        <SilentBoundary name="NewsletterAccountPopup">
+          <NewsletterAccountPopup
+            googleEnabled={!!(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET)}
+          />
         </SilentBoundary>
         <SilentBoundary name="DeviceHeartbeat">
           <DeviceHeartbeat />

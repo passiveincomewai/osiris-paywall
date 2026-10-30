@@ -11,6 +11,11 @@ import { ambientAccessForRow } from "@/lib/ambient/access";
 import { powderPassEnabled, skiAccessForRow } from "@/lib/ski/access";
 import { getEffectiveEntitlement, maxTier } from "@/lib/team/entitlement";
 import { resolveEmailVerified } from "@/lib/auth-verification";
+import {
+  ACQUISITION_COOKIE,
+  NEWSLETTER_POPUP_SOURCE,
+  POPUP_SIGNUP_EVENT,
+} from "@/lib/newsletter/popup";
 
 /* ------------------------------------------------------------------ */
 /* Type augmentation: the session JWT carries the paywall state so     */
@@ -250,6 +255,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.totpPending = !!(token.totpEnabled && !token.totpVerified);
       }
       return session;
+    },
+  },
+  events: {
+    // Newsletter → account conversion test (2026-10-29): the
+    // post-signup popup's Google button sets the we_acq_src cookie
+    // before signIn (the we_utm pattern — set client-side, read
+    // server-side; lib/newsletter/popup). createUser fires exactly
+    // once per adapter-created account, so a cookie present here
+    // marks an account CREATED via the popup; stamp one analytics row
+    // so those accounts are countable alongside the popup's client
+    // events. Fail-soft throughout: attribution must never break
+    // account creation, and a stale cookie (≤30 min) is the accepted
+    // fuzz of the pattern.
+    async createUser({ user }) {
+      try {
+        if (!user.id) return;
+        const { cookies } = await import("next/headers");
+        const src = (await cookies()).get(ACQUISITION_COOKIE)?.value;
+        if (src !== NEWSLETTER_POPUP_SOURCE) return;
+        await db.pageView.create({
+          data: {
+            path: "/signup",
+            sessionId: "server",
+            userId: user.id,
+            event: POPUP_SIGNUP_EVENT,
+          },
+        });
+      } catch {
+        /* attribution is best-effort */
+      }
     },
   },
 });
