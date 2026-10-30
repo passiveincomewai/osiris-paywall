@@ -7,6 +7,8 @@ import TrialCtaSection from "@/components/TrialCtaSection";
 import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiConditions from "@/components/SkiConditions";
 import SkiRouteTool from "@/components/SkiRouteTool";
+import PowderPassPromo from "@/components/PowderPassPromo";
+import { powderPassEnabled } from "@/lib/ski/access";
 import { cameraAreas } from "@/lib/country-cameras";
 import { plural } from "@/lib/country-page-content";
 import { isFoldedResort, RESORT_PAGE_COUNT } from "@/lib/indexation-gates";
@@ -555,6 +557,10 @@ export default async function SkiResortPage({
             emptyNote={`No traffic cameras in the ${NEARBY_RADIUS_KM} km ring are in the live index right now.`}
           />
         </section>
+
+        {/* Powder Pass launch promo — only once the product is lit
+            (POWDER_PASS_ENABLED); dark ski pages never mention it. */}
+        {powderPassEnabled(process.env) && <PowderPassPromo />}
 
         {/* FAQ */}
         <section className="mt-12">

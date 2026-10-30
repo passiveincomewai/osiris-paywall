@@ -17,6 +17,8 @@ import {
 } from "@/components/directory-page";
 import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiResortDirectory from "@/components/SkiResortDirectory";
+import PowderPassPromo from "@/components/PowderPassPromo";
+import { powderPassEnabled } from "@/lib/ski/access";
 import { plural } from "@/lib/country-page-content";
 import {
   loadCountryChunk,
@@ -205,6 +207,11 @@ export default async function SkiWebcamsPage() {
         ]}
       />
       <Intro paragraphs={INTRO} />
+
+      {/* Powder Pass launch promo — rendered only once the owner has
+          lit the product (POWDER_PASS_ENABLED); while the flag is off
+          the ski pages carry no Powder Pass mention at all. */}
+      {powderPassEnabled(process.env) && <PowderPassPromo />}
 
       {/* Resort directory — every resort the catalogue covers, grouped
           by country, with its counted cameras. The directory component

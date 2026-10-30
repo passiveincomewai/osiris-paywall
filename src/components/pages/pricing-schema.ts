@@ -7,15 +7,16 @@
  * description localize (via the pricing dictionary); the plan offers
  * stay in the billing module's own words for every locale.
  *
- * DARK PLANS: CHECKOUT_PLAN_SUMMARIES is exhaustive over BillingPlan so
- * /checkout can describe a plan the day it launches — but a plan that
- * is not yet on sale must never be advertised here. Powder Pass sits
- * behind POWDER_PASS_ENABLED (default OFF); while the flag is off its
- * summary is excluded from these offers, and it appears automatically
- * the day the owner lights the product up.
+ * POWDER PASS STAYS OUT — ALWAYS: CHECKOUT_PLAN_SUMMARIES is
+ * exhaustive over BillingPlan so /checkout can describe a plan the
+ * day it launches, but the ski (Powder Pass) summary is excluded
+ * from these offers unconditionally. The owner ruled the pricing
+ * page carries no ski offering at all (2026-10-29: "leave the ski
+ * out of this page entirely") — Powder Pass is sold only from the
+ * ski pages (components/PowderPassPromo), whatever the state of
+ * POWDER_PASS_ENABLED.
  */
 import { CHECKOUT_PLAN_SUMMARIES } from "@/lib/billing/trial-checkout";
-import { powderPassEnabled } from "@/lib/ski/access";
 import type { PricingCopy } from "@/i18n/dictionaries/en/pricing";
 import type { LocaleCode } from "@/i18n/config";
 import { localizedUrl } from "@/lib/i18n-seo";
@@ -25,11 +26,10 @@ const priceValue = (display: string) => display.replace(/[^0-9.]/g, "");
 export function buildPricingSoftwareJsonLd(
   copy: PricingCopy,
   locale: LocaleCode,
-  env: Record<string, string | undefined> = process.env,
 ) {
   const pageUrl = localizedUrl("pricing", locale);
   const planSummaries = Object.values(CHECKOUT_PLAN_SUMMARIES).filter(
-    (s) => s.plan !== "ski" || powderPassEnabled(env),
+    (s) => s.plan !== "ski",
   );
   return {
     "@context": "https://schema.org",
