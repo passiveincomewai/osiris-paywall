@@ -30,7 +30,7 @@ export default function RecordingLayout({ children }: { children: React.ReactNod
               <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full border border-red-400/40 text-red-300 tracking-[0.2em] font-mono">REC</span>
             </span>
           </Link>
-          <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+          <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar">
             {NAV.map((n) => (
               <Link key={n.href} href={n.href}
                 className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">

@@ -35,7 +35,7 @@ export default async function AffiliatesLayout({ children }: { children: React.R
               <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full border border-cyan-400/40 text-cyan-300 tracking-[0.2em]">AFFILIATES</span>
             </span>
           </Link>
-          <nav className="flex items-center gap-1 overflow-x-auto">
+          <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar">
             {NAV.map((n) =>
               n.href === "/affiliates/demo" ? (
                 // Active affiliates never see demo links — they have the
