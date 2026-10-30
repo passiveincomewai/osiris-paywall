@@ -898,6 +898,28 @@ export default function Dashboard() {
     const action = satelliteSwitchAction(mapStyle === 'satellite');
     setMapStyle(action === 'turn-on' ? 'satellite' : 'dark');
   }, [mapStyle]);
+  /* Stable identities for the memo'd OsirisMap. Inline arrows/objects at
+     the JSX gave it new prop identities on every Dashboard render, so
+     React.memo never held and every panel/poll state change re-ran the
+     map's whole component body. These change only when their real
+     inputs do; the expressions themselves are byte-for-byte the ones
+     the JSX used to build inline. */
+  const handleMapReady = useCallback(() => setMapReady(true), []);
+  const handleFollowInterrupt = useCallback(() => setFollowUser(false), []);
+  const handleDrawCancel = useCallback(() => {
+    setDrawMode(null);
+    setDrawProgress(null);
+  }, []);
+  const visibleArcgisLayers = useMemo(
+    () => arcgisLayers.filter(l => l.visible).map(l => ({ id: l.id, title: l.title, geojson: l.geojson, color: l.color, opacity: l.opacity })),
+    [arcgisLayers],
+  );
+  const mapUserLocation = useMemo(
+    () => (navSession && navProgress
+      ? { lat: navProgress.snapped[1], lng: navProgress.snapped[0], accuracy: liveLocation?.accuracy, heading: liveLocation?.heading }
+      : liveLocation),
+    [navSession, navProgress, liveLocation],
+  );
   /* The viewer's effective tier for the Premium section under the
      merged Search & Route section: the entitlement boolean proves
      premium; the session identity's planTier (the lib/plan-tier
@@ -2491,27 +2513,23 @@ export default function Dashboard() {
           onMouseCoords={handleMouseCoords} 
           onRightClick={handleRightClick} 
           onViewStateChange={setMapView}
-          onReady={() => setMapReady(true)}
+          onReady={handleMapReady}
           flyToLocation={flyToLocation}
           alertPinIds={pinnedAlertIds}
           sweepData={sweepData}
           scanTargets={scanTargets}
           demoMode={demoMode}
-          arcgisLayers={arcgisLayers.filter(l => l.visible).map(l => ({ id: l.id, title: l.title, geojson: l.geojson, color: l.color, opacity: l.opacity }))}
+          arcgisLayers={visibleArcgisLayers}
           onMapCenter={setMapCenter}
           route={activeRoute}
-          userLocation={
-            navSession && navProgress
-              ? { lat: navProgress.snapped[1], lng: navProgress.snapped[0], accuracy: liveLocation?.accuracy, heading: liveLocation?.heading }
-              : liveLocation
-          }
+          userLocation={mapUserLocation}
           followUser={followUser}
-          onFollowInterrupt={() => setFollowUser(false)}
+          onFollowInterrupt={handleFollowInterrupt}
           navigating={Boolean(navSession)}
           drawMode={drawMode}
           onDrawProgress={setDrawProgress}
           drawCommand={drawCommand}
-          onDrawCancel={() => { setDrawMode(null); setDrawProgress(null); }}
+          onDrawCancel={handleDrawCancel}
           onDrawComplete={handleDrawComplete}
           drawnPolygons={drawnPolygons}
           aircraftAirports={aircraftAirports}
