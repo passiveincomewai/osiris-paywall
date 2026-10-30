@@ -4,13 +4,18 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import SiteFooter from "@/components/SiteFooter";
 import StreamKeyForm from "@/components/ambient/StreamKeyForm";
-import { resolveAmbientAccess } from "@/lib/ambient/access-server";
 
 /**
- * /ambient/stream — Stream to YouTube settings. Signed-in members
- * with Ambient access (Ambient plan or any Pro/VIP tier) save their
- * own YouTube stream key and get the relay token for the relay
- * program. The key is stored encrypted and never displayed.
+ * /ambient/stream — Stream to YouTube settings. Any signed-in member
+ * lands on the settings form; whether they may actually save a key is
+ * enforced by /api/ambient/stream-key (Ambient plan or any Pro/VIP
+ * tier), and the form renders that answer as its locked state. The
+ * page deliberately does NOT pre-gate on access itself: a page-level
+ * gate that fails closed turned this page into a dead end — signed-in
+ * members without access (or with a hiccuping entitlement lookup) got
+ * an upsell card instead of the settings surface the "Open stream
+ * settings" button promised, with no way forward. The key is stored
+ * encrypted and never displayed.
  */
 export const metadata: Metadata = {
   title: "Stream to YouTube — WorldEye Ambient",
@@ -24,7 +29,6 @@ export default async function AmbientStreamPage() {
   if (!session?.user?.id) {
     redirect("/signin?callbackUrl=%2Fambient%2Fstream");
   }
-  const access = await resolveAmbientAccess(session.user.id).catch(() => false);
 
   return (
     <main className="docs-root min-h-screen bg-[#05070d] text-white">
@@ -47,23 +51,7 @@ export default async function AmbientStreamPage() {
         </p>
 
         <div className="mt-8">
-          {access ? (
-            <StreamKeyForm />
-          ) : (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="text-sm leading-relaxed text-white/75">
-                Stream to YouTube is part of WorldEye Ambient ($4.99/mo with a
-                10-day free trial) — and every WorldEye Pro or VIP plan already
-                includes it. Your account doesn&apos;t have it yet.
-              </p>
-              <Link
-                href="/ambient-mode"
-                className="mt-4 inline-block rounded-full bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] px-5 py-2 text-sm font-bold text-black transition hover:brightness-110"
-              >
-                See Ambient
-              </Link>
-            </div>
-          )}
+          <StreamKeyForm />
         </div>
 
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-white/55">
