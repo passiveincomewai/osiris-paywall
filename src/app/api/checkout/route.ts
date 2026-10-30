@@ -65,7 +65,7 @@ export async function POST(req: Request) {
   // set it is indistinguishable from a plan that does not exist.
   const skiEnabled = powderPassEnabled(process.env);
   const planKey = plan ? PLAN_KEY_BY_CHECKOUT_PLAN[plan] : undefined;
-  if (!planKey || (plan === "ski" && !skiEnabled)) {
+  if (!plan || !planKey || (plan === "ski" && !skiEnabled)) {
     return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   }
   // Embedded mode renders Stripe's form on /checkout (our domain) instead of
