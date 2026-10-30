@@ -47,7 +47,7 @@ export default function TermsPage() {
 
         <p className="text-xs font-semibold tracking-[0.25em] text-[#D4AF37] mb-4">LEGAL</p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight">Terms of Service</h1>
-        <p className="text-sm text-white/40 mt-3">Last updated October 2026.</p>
+        <p className="text-sm text-white/40 mt-3">Last updated 29 October 2026.</p>
         <p className="text-sm text-white/40 mt-2 italic">
           This is a plain-language template, not legal advice. Have it reviewed by a
           qualified attorney before relying on it in your jurisdiction.
@@ -59,8 +59,10 @@ export default function TermsPage() {
             map at this website: an interactive 3D globe with free layers (flights,
             satellites, transit, weather, earthquakes, wildfires, street-level photos
             and public camera feeds, with basic search free for everyone) and
-            optional paid Pro features (AI tooling, satellite basemap, the live
-            traffic layer, advanced search filters and premium intel feeds). The
+            optional paid features (such as AI tooling, the live traffic layer,
+            camera alerts and recording, advanced search filters and premium intel
+            feeds). The satellite basemap is free for everyone; the imagery it shows
+            is dated survey imagery assembled from past passes, not a live feed. The
             free map requires no account and is available to
             everyone.
           </p>
@@ -72,9 +74,10 @@ export default function TermsPage() {
 
         <Section n={2} title="Accounts">
           <p>
-            Browsing the free map needs no account. Paid Pro subscriptions and some
+            Browsing the free map needs no account. Paid subscriptions and some
             features (such as saving settings or affiliate participation) require an
-            account, created via a supported sign-in provider. You&apos;re responsible
+            account, created with an email address and password, by continuing
+            with Google, or — where offered — by an emailed sign-in link. You&apos;re responsible
             for activity under your account and for keeping your sign-in credentials
             secure.
           </p>
@@ -86,15 +89,25 @@ export default function TermsPage() {
 
         <Section n={3} title="Subscriptions, free trials & billing">
           <p>
-            Pro is billed on a recurring subscription: <strong className="text-white/80">weekly
-            at $7.99</strong>, <strong className="text-white/80">monthly at $13.99</strong>,
-            or <strong className="text-white/80">VIP Pro, billed annually at $74.99</strong>, plus any
-            applicable taxes. Prices are in USD unless stated otherwise at checkout.
+            Paid plans are billed on a recurring subscription. The main tiers —
+            <strong className="text-white/80">Lite</strong>, <strong className="text-white/80">Pro</strong> and{" "}
+            <strong className="text-white/80">Ultra</strong> — are each billed weekly, monthly or annually
+            (the annual Pro plan is branded VIP Pro), and two standalone plans,{" "}
+            <strong className="text-white/80">Powder Pass</strong> and <strong className="text-white/80">WorldEye
+            Ambient</strong>, are billed monthly at $4.99. The current price of every plan is shown on the
+            pricing page and again at checkout before you pay; prices are in USD unless stated otherwise at
+            checkout, plus any applicable taxes.
           </p>
           <p>
-            Some plans include a free trial — 3 days on the weekly plan, 10 days on the
-            monthly plan and 10 days on the VIP Pro plan. Your payment method is collected up front but isn&apos;t charged
+            Most plans include a free trial, set by the billing period: 3 days on weekly plans, 10 days on
+            monthly and annual plans (the standalone monthly plans include a 10-day trial). Enterprise plans
+            have no free trial. Your payment method is collected up front but isn&apos;t charged
             until the trial ends. Cancel before the trial ends and you pay nothing.
+          </p>
+          <p>
+            Promotional codes can be entered at checkout and apply exactly as described when the code is
+            issued — for example, our standing welcome code <strong className="text-white/80">WELCOME50</strong>{" "}
+            takes 50% off your first payment, once per customer.
           </p>
           <p>
             When a trial or billing period ends, your subscription renews automatically
@@ -106,7 +119,7 @@ export default function TermsPage() {
         <Section n={4} title="Cancellation & refunds">
           <p>
             You can cancel anytime, in one click, from your account — no retention calls,
-            no dark patterns. Cancellation stops future renewals; your Pro access
+            no dark patterns. Cancellation stops future renewals; your paid access
             continues until the end of the period you&apos;ve already paid for.
           </p>
           <p>
@@ -123,7 +136,7 @@ export default function TermsPage() {
           </p>
           <p>
             Apart from the guarantee above, and charges made in error, payments are
-            generally non-refundable, because Pro is a digital service delivered
+            generally non-refundable, because the paid service is delivered
             immediately (including during free trials). If you believe you were
             charged in error, contact us at{" "}
             <a href="mailto:passiveincomewai@gmail.com" className="text-[#D4AF37] hover:underline">
@@ -158,7 +171,9 @@ export default function TermsPage() {
           <p>
             Availability, accuracy and timeliness of third-party feeds are not
             guaranteed — cameras go offline, feeds move, and data can be delayed or
-            incomplete. Nothing on the map should be relied on for safety-critical,
+            incomplete. Satellite imagery in particular is dated imagery from past
+            passes, shown with its capture era where the source provides one; it is
+            never a live view. Nothing on the map should be relied on for safety-critical,
             medical, legal or financial decisions; always check official sources for
             emergencies, road closures and weather warnings.
           </p>
@@ -195,8 +210,10 @@ export default function TermsPage() {
 
         <Section n={9} title="Termination">
           <p>
-            You can stop using WorldEye at any time and delete your account on request.
-            We may suspend or terminate your access if you materially breach these terms
+            You can stop using WorldEye at any time. You can also schedule your
+            account for deletion from your account settings: deletion takes effect
+            on the date shown when you schedule it, and you can cancel the schedule
+            any time before then. We may suspend or terminate your access if you materially breach these terms
             or if required by law. Sections that by their nature should survive
             (intellectual property, disclaimers, limitation of liability) continue after
             termination.

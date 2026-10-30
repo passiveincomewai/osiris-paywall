@@ -18,12 +18,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "Security — How WorldEye Protects You",
   description:
-    "How WorldEye keeps you safe: no account needed to use the map, your AI API key stays in your browser, payments handled by Stripe, and responsible disclosure.",
+    "How WorldEye keeps you safe: no account needed to use the map, your AI API key stored only in your browser, payments handled by Stripe, and responsible disclosure.",
   alternates: { canonical: "/security" },
   openGraph: {
     title: "WorldEye Security",
     description:
-      "No account needed, your AI key never leaves your browser, payments via Stripe. How WorldEye protects you.",
+      "No account needed, your AI key stored only in your browser and never stored on our servers, payments via Stripe. How WorldEye protects you.",
     type: "website",
     url: "/security",
   },
@@ -48,7 +48,7 @@ const faqJsonLd = {
       name: "Does WorldEye sell my data?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. WorldEye does not sell data, run ads, or use third-party trackers on its pages. Revenue comes from Pro subscriptions, not from user data.",
+        text: "No. WorldEye does not sell or rent user data. We run our own first-party analytics, and Meta's advertising pixel measures our ads — page views and sign-up, checkout, trial and purchase events are reported to Meta. Revenue comes from subscriptions, not from selling data.",
       },
     },
     {
@@ -56,7 +56,7 @@ const faqJsonLd = {
       name: "Does WorldEye see my AI API key?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. Your OI assistant API key is stored in your browser's local storage and sent only to your chosen AI provider. It never touches WorldEye's servers.",
+        text: "Your OI assistant API key is stored only in your browser. When a request runs on your key, the key travels with that request so our server can pass it to your chosen AI provider; it is used for that request and is never stored or logged on our servers. Signed-in users can also run OI on WorldEye's own key instead.",
       },
     },
     {
@@ -64,7 +64,7 @@ const faqJsonLd = {
       name: "Does WorldEye store my credit card?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. All payments are processed by Stripe. Card numbers are entered on Stripe's checkout pages — WorldEye never sees, handles, or stores them.",
+        text: "No. Payments are processed by Stripe through Stripe's embedded checkout form on our pages. Card numbers go to Stripe — WorldEye never sees, handles, or stores them.",
       },
     },
     {
@@ -80,7 +80,7 @@ const faqJsonLd = {
       name: "Is my card safe during a free trial?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes — the trial uses the same Stripe-hosted checkout as a paid plan. Your card details go to Stripe, never to WorldEye, and nothing is charged during the trial period.",
+        text: "Yes — the trial uses the same Stripe embedded checkout as a paid plan. Your card details go to Stripe, never to WorldEye, and nothing is charged during the trial period.",
       },
     },
     {
@@ -97,15 +97,15 @@ const faqJsonLd = {
 const SECURITY_FAQS = [
   {
     q: "Does WorldEye sell my data?",
-    a: "No. No data sales, no ads, no third-party trackers. Revenue comes from Pro subscriptions.",
+    a: "No — no data sales or rentals, ever. We do run our own analytics, and Meta's pixel measures our advertising (page views and sign-up/purchase events go to Meta; see the privacy page). Revenue comes from subscriptions.",
   },
   {
     q: "Does WorldEye see my AI API key?",
-    a: "No. Your OI assistant key lives in your browser's local storage and goes only to your chosen AI provider — never to our servers.",
+    a: "Your OI assistant key is stored only in your browser. It travels with a request when that request runs on your key, so our server can pass it to your provider — it is never stored or logged on our servers. Signed-in users can run OI on our key instead.",
   },
   {
     q: "Does WorldEye store my credit card?",
-    a: "No. Stripe processes all payments; card numbers never touch WorldEye's systems.",
+    a: "No. Stripe processes all payments through its embedded checkout form on our pages; card numbers go to Stripe and never touch WorldEye's systems.",
   },
   {
     q: "How do I report a security vulnerability?",
@@ -113,7 +113,7 @@ const SECURITY_FAQS = [
   },
   {
     q: "Is my card safe during a free trial?",
-    a: "Yes — trials use the same Stripe-hosted checkout as paid plans. Your card goes to Stripe, never to WorldEye, and nothing is charged during the trial.",
+    a: "Yes — trials use the same Stripe embedded checkout as paid plans. Your card goes to Stripe, never to WorldEye, and nothing is charged during the trial.",
   },
   {
     q: "What if I think my account was compromised?",
@@ -123,14 +123,14 @@ const SECURITY_FAQS = [
 
 const PRACTICES = [
   "Passwords are hashed with bcrypt and never stored — or logged — in plain text.",
-  "All traffic runs over HTTPS. Authentication cookies are signed, httpOnly, and scoped to the session.",
-  "Payments go exclusively through Stripe. Card numbers are entered on Stripe's checkout pages; we never see, handle, or store them.",
-  "Your OI AI API key is stored in your browser's local storage and sent only to your chosen AI provider — never to WorldEye's servers.",
+  "All traffic runs over HTTPS. Account sessions use signed, httpOnly cookies carrying a signed session token.",
+  "Payments go exclusively through Stripe's embedded checkout form on our pages. Card numbers go to Stripe; we never see, handle, or store them.",
+  "Your OI AI API key is stored only in your browser. It travels with a request that runs on your key so our server can pass it to your provider, and it is never stored or logged on our servers.",
   "Public auth endpoints (signup, sign-in, password reset, email verification) are rate-limited, and sign-in never reveals whether an email is registered.",
   "Password-reset links expire after 1 hour and are burned on use; email-verification links expire after 24 hours.",
-  "Subscription status travels in a signed session token, and the Stripe webhook is the sole write path for subscription state — checkout links and price changes can't be forged client-side.",
+  "Subscription status on our side is confirmed by Stripe's signature-verified webhook, so a forged 'I paid' request from a browser can't create a paid account — if Stripe didn't confirm it, it didn't happen.",
   "Admin dashboards are gated by an explicit allowlist of admin email addresses.",
-  "We keep the stored data minimum: sign-in email, subscription status, and affiliate referral/payout records. No data sales, no ads, no third-party trackers on the marketing pages.",
+  "We keep stored data narrow — the privacy page lists exactly what an account holds. We don't sell data. Our pages do load Meta's advertising pixel, disclosed on the privacy page; we won't pretend otherwise here.",
 ];
 
 const SECTIONS: {
@@ -140,51 +140,51 @@ const SECTIONS: {
 }[] = [
   {
     icon: Globe,
-    title: "No account, nothing to leak",
+    title: "The map needs no account",
     body: [
-      "The live map — globe, flights, satellites, weather, earthquakes, wildfires, and 74,229 public cameras — works with no account and no signup. There is no profile to breach, no password to steal, and no personal data collected just for looking around.",
+      "The live map — globe, flights, satellites, weather, earthquakes, wildfires, and 74,229 public cameras — works with no account and no signup, so there is no password to steal and no profile to breach just for looking around. Like most sites we still keep analytics of page visits, and Meta's pixel measures our ads; the privacy page lists exactly what that covers.",
     ],
   },
   {
     icon: KeyRound,
-    title: "Your AI API key stays in your browser",
+    title: "Your AI API key stays yours",
     body: [
-      "The OI assistant runs on your own API key (OpenAI, Anthropic, Google, or OpenRouter). Your key is stored locally in your browser — WorldEye never sees it, never stores it, and never sends it to our servers. Your AI usage is billed directly by the provider, at cost.",
+      "The OI assistant can run on your own API key (OpenAI, Anthropic, Google, or OpenRouter). The key is stored locally in your browser and is never stored on WorldEye's servers: when a request runs on your key, it travels with that request so our server can pass it to your provider, and it is used for that request only. Signed-in users can instead run OI on WorldEye's own key, within usage limits, and skip bringing a key at all.",
     ],
   },
   {
     icon: CreditCard,
     title: "Payments handled by Stripe",
     body: [
-      "Pro subscriptions are processed by Stripe, the industry-standard payment processor. Card numbers go directly to Stripe — we never see, handle, or store your payment details.",
+      "Subscriptions are processed by Stripe, the industry-standard payment processor, through Stripe's embedded checkout form on our pages. Card numbers go directly to Stripe — we never see, handle, or store your payment details.",
     ],
   },
   {
     icon: Database,
     title: "What we do store",
     body: [
-      "If you subscribe to Pro or join the affiliate program, we store the minimum needed to run your account: your sign-in email, your subscription status, and (for affiliates) referral and payout records. That's it. We don't sell data, and we don't run ads.",
+      "If you create an account, we store what the account needs to work: your sign-in email, a bcrypt hash of your password (or your Google sign-in), your subscription status, the cameras, collections, alerts and recordings you save, and — for affiliates — referral and payout records. Sign-ins also leave a security record (device, hashed IP, approximate location). The privacy page is the full list. We don't sell data.",
     ],
   },
   {
     icon: ShieldCheck,
     title: "Security headers on every page",
     body: [
-      "Every response from worldeye.app carries a standard set of browser security headers: HTTPS is enforced with HSTS, a content security policy restricts where scripts and connections may come from, X-Frame-Options blocks other sites from embedding our pages in iframes (clickjacking protection), and X-Content-Type-Options stops browsers from guessing at file types. None of this is visible in normal use — it exists so that other sites and network attackers have fewer ways to interfere with yours.",
+      "Every response from worldeye.app carries a standard set of browser security headers: HTTPS is enforced with HSTS, a content security policy restricts where scripts and connections may come from, X-Frame-Options stops other sites from embedding our pages in iframes (clickjacking protection — our own embeddable camera player is the one deliberate exception), and X-Content-Type-Options stops browsers from guessing at file types. None of this is visible in normal use — it exists so that other sites and network attackers have fewer ways to interfere with yours.",
     ],
   },
   {
     icon: Database,
     title: "Recording is yours — and only when you start it",
     body: [
-      "WorldEye does not record or archive camera feeds on its own, and nobody is building a surveillance library from your browsing. The Camera Recording Studio is a tool you operate: a recording exists only because you started it, it lives in your account's recording library, and VIP Pro camera alerts check still images against conditions you wrote, for cameras you chose. Browsing the globe records nothing about what you looked at.",
+      "WorldEye does not record or archive camera feeds on its own, and nobody is building a surveillance library from your browsing. The Camera Recording Studio is a tool you operate: a recording exists only because you started it, it lives in your account's recording library, and VIP Pro camera alerts check still images against conditions you wrote, for cameras you chose. Separately, we keep analytics of which pages are visited — the privacy page lists exactly what that record contains.",
     ],
   },
   {
     icon: CreditCard,
     title: "Trials and guest checkout",
     body: [
-      "Free trials and guest checkout run through the same Stripe-hosted flow as regular subscriptions: your card is entered on Stripe's pages, and the subscription state on WorldEye's side can only be written by Stripe's signed webhook — not by anything your browser claims. That design means a tampered checkout page or a forged 'I paid' request cannot create a Pro account; if Stripe didn't confirm it, it didn't happen.",
+      "Free trials and guest checkout run through the same Stripe embedded checkout as regular subscriptions: your card is entered into Stripe's form on our pages, and the subscription state on WorldEye's side is confirmed by Stripe's signed webhook — not by anything your browser claims. That design means a tampered checkout page or a forged 'I paid' request cannot create a paid account; if Stripe didn't confirm it, it didn't happen.",
     ],
   },
   {
@@ -326,10 +326,10 @@ export default function SecurityPage() {
               WorldEye is a small independent product, not a certified
               enterprise platform: we do not hold SOC 2, ISO 27001 or similar
               certifications, and we won&apos;t pretend otherwise. What we do
-              instead is keep the attack surface small by design — almost
-              nothing personal is collected in the first place, payments live
-              entirely inside Stripe, AI keys never leave your browser, and
-              subscription state can only be written by Stripe&apos;s webhook.
+              instead is keep the attack surface small by design — collection
+              is kept narrow, payments live entirely inside Stripe, AI keys
+              are stored only in your browser and never on our servers, and
+              subscription state is confirmed by Stripe&apos;s webhook.
               There is simply less here to steal than on a typical site.
             </p>
             <p>
@@ -371,6 +371,10 @@ export default function SecurityPage() {
             ))}
           </div>
         </section>
+
+        <p className="mt-12 text-center text-xs text-white/35">
+          Last checked against the code on 29 October 2026.
+        </p>
 
         <RelatedLinks
           links={[

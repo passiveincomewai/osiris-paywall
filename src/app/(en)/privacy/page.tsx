@@ -9,7 +9,7 @@ import {
 export const metadata: Metadata = {
   title: 'Privacy',
   description:
-    'Privacy at WorldEye, in plain words: no accounts, no tracking, your settings on your device, and exactly which services hear from us when you use a feature.',
+    'Privacy at WorldEye, in plain words: the map needs no account, what our own analytics record, the one advertising partner we measure with, and exactly which services hear from us when you use a feature.',
   alternates: { canonical: '/privacy' },
 };
 
@@ -17,17 +17,22 @@ export const metadata: Metadata = {
  * Every statement on this page is drawn from the code in this repository, not
  * from a template; when a data flow changes, this page changes with it.
  *
- * Reviewed 2026-10-04 against: src/app/api/geo, src/app/api/osint/*,
- * src/app/api/ai/*, src/app/api/oi/*, src/lib/oi/* (client, service, web,
- * newsroom, markets), src/lib/sanctions.ts, src/lib/sherlock.ts,
- * src/lib/chainIntel.ts, src/app/page.tsx (IP location, storage),
- * src/components/OsirisMap.tsx (base map, satellite), src/app/globals.css
- * (fonts), src/components/LiveAlerts.tsx, src/lib/live-clouds.ts,
- * src/lib/donbot.ts, src/components/oi/assist/voice.ts, the CCTV sources, and
- * every localStorage and sessionStorage key in src/.
+ * Reviewed 2026-10-29 against: src/components/AnalyticsTracker + the
+ * PageView model (prisma/schema.prisma), src/lib/analytics/visitor-id.ts,
+ * src/components/MetaPixel.tsx + src/lib/meta-capi.ts, src/auth.ts and
+ * src/lib/password-auth.ts (accounts, sessions, sign-in records),
+ * src/app/api/checkout + the Stripe webhook (subscriptions),
+ * src/lib/email.ts (Resend), src/app/api/contact, src/app/api/newsletter/*,
+ * src/app/api/account/delete, src/app/api/geo, src/app/api/osint/*,
+ * src/app/api/ai/*, src/app/api/oi/*, src/lib/oi/* (client, service, runs,
+ * server-key, newsroom, markets), src/lib/sanctions.ts, src/lib/sherlock.ts,
+ * src/lib/chainIntel.ts, src/components/OsirisMap.tsx (base map, satellite),
+ * src/components/LiveAlerts.tsx, src/lib/live-clouds.ts, src/lib/donbot.ts,
+ * src/components/oi/assist/voice.ts, the CCTV sources, and every
+ * localStorage and sessionStorage key in src/.
  */
 
-const REVIEWED = '4 October 2026';
+const REVIEWED = '29 October 2026';
 
 /* ───────────── The pieces ───────────── */
 
@@ -88,6 +93,7 @@ function Flow({ icon, title, summary, services, children }: {
 }
 
 const STORED: { what: string; detail: string }[] = [
+  { what: 'A visitor ID (we_vid)', detail: 'A random ID generated in your browser and kept in local storage, so our analytics can tell a returning visitor from a new one. It is not your name or account, and clearing site data removes it.' },
   { what: 'Your AI key for OI', detail: 'Kept for this browser tab only, and gone when you close it, unless you tick “Remember on this device”.' },
   { what: 'Your OI settings and recent predictions', detail: 'Which provider and model you use, whether replies are read aloud, and a list of your last 25 predictions so you can reopen them.' },
   { what: 'Your OI Assist conversation', detail: 'For this tab only, so a reload does not lose it.' },
@@ -97,10 +103,10 @@ const STORED: { what: string; detail: string }[] = [
 ];
 
 const PROMISES: { icon: ReactNode; title: string; body: string }[] = [
-  { icon: <UserX className="h-4 w-4" />, title: 'No account, ever', body: 'There is nothing to sign up for and nothing to log in to. We do not know who you are, and we have not asked.' },
-  { icon: <EyeOff className="h-4 w-4" />, title: 'No tracking', body: 'No analytics, no advertising networks, no tracking cookies. We do not build a profile of you or of what you do here.' },
-  { icon: <HardDrive className="h-4 w-4" />, title: 'Your things stay with you', body: 'Your settings, history and keys are kept in your own browser, where you can see them and clear them. Not on our servers.' },
-  { icon: <KeyRound className="h-4 w-4" />, title: 'Your AI key is yours', body: 'Used only for the request you make, passed straight to the provider you chose, and never stored on our servers or written to a log.' },
+  { icon: <UserX className="h-4 w-4" />, title: 'No account needed to look', body: 'The map, cameras and live layers work without signing up. An account is optional — it exists so you can save cameras, subscribe, and sync your settings, and creating one is always your choice.' },
+  { icon: <EyeOff className="h-4 w-4" />, title: 'We never sell your data', body: 'Your information is not sold or rented to anyone. We run our own first-party analytics (below) to see which pages and features get used; that record stays ours.' },
+  { icon: <HardDrive className="h-4 w-4" />, title: 'Know what is stored where', body: 'Your preferences live in your browser. If you create an account, what you save — cameras, collections, recordings, alerts, settings — is stored on our servers with your account, and you can delete the account from your settings.' },
+  { icon: <KeyRound className="h-4 w-4" />, title: 'Your AI key is yours', body: 'Your OI key is stored only in your browser. When a request uses it, it travels with that request so our server can pass it to your provider — it is used for that request and never stored or logged on our servers.' },
 ];
 
 /* ───────────── The page ───────────── */
@@ -119,8 +125,9 @@ export default function PrivacyPage() {
           <h1 className="mt-2 text-3xl font-bold tracking-wide sm:text-4xl">Privacy, in plain words</h1>
           <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-muted)]">
             WorldEye is a window onto public information: flights, ships, cameras, news, markets and more, gathered onto
-            one map. We built it so you can use it without telling us who you are. This page says what that means in
-            practice, and, where a feature needs to ask another service for something, exactly which one.
+            one map. You can use it without an account; if you choose to create one, this page says exactly what we then
+            hold, what our analytics record for every visitor, and, where a feature needs to ask another service for
+            something, exactly which one.
           </p>
         </header>
 
@@ -133,10 +140,11 @@ export default function PrivacyPage() {
             {[
               'Most of what you see comes from public sources. To show it, our server asks those sources, much as your browser would.',
               'When you look something up, the question goes to the service that holds the answer, and only for that lookup.',
-              'Your preferences and history live in your browser. Clearing this site’s data in your browser removes all of it.',
-              'Features that use AI run on the key and provider you choose, and we pass your request straight through.',
-              'We do not keep a record of what you search. Your address is held only briefly, in memory, to keep usage fair for everyone.',
-              'The site reaches you through Cloudflare, which carries the connection between your browser and our server, as it does for much of the web.',
+              'Our own analytics record each page visit — the page, the session and visitor IDs described above, the referring site, any campaign (UTM) tags on the link you arrived with, a coarse device type (mobile, tablet, desktop), how long the page was visible, and feature events such as reaching the globe. They do not record passwords, payment details, or the content of your lookups.',
+              'Your preferences and history live in your browser. If you create an account, the things you save are stored with your account on our servers instead — the account section below lists them.',
+              'Features that use AI run either on the key and provider you choose, passed straight through per request, or — when you are signed in — on our own OpenAI key within usage limits.',
+              'One advertising partner measures our ads: Meta’s pixel runs on our pages and reports page views, and sign-ups, checkouts, trials and purchases, to Meta (see “Measuring our advertising” below). We do not sell data to anyone.',
+              'The site is hosted on Vercel, our database is managed Postgres (Neon), and our email is sent through Resend. Those providers process the data described here on our behalf.',
             ].map(t => (
               <li key={t} className="flex gap-3">
                 <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--gold-light)]" />
@@ -165,15 +173,15 @@ export default function PrivacyPage() {
               summary={<>
                 So the map can open over your part of the world, our server asks an IP location service roughly where your
                 connection is. It is a city-level guess, it is not stored, and if it cannot tell, the map opens on a
-                well-covered city instead. The map itself (its tiles, the satellite view when you switch to it, and the
-                typefaces) loads from the services that draw it, as with any website that shows a map.
+                well-covered city instead. The map itself (its tiles, and the satellite view when you switch to it)
+                loads from the services that draw it, as with any website that shows a map. The site’s typefaces are
+                served from our own hosting, not from a font service.
               </>}
               services={[
                 { name: 'ipapi.co, then freeipapi.com, then ip-api.com', what: 'your connection’s IP address, asked from our server, to place the map' },
                 { name: 'CARTO (basemaps.cartocdn.com)', what: 'the map tiles for the part of the world in view' },
                 { name: 'Esri (server.arcgisonline.com)', what: 'satellite imagery, only when you switch to the satellite view' },
                 { name: 'Esri Wayback (wayback.maptiles.arcgis.com, config.maptiles.arcgis.com)', what: 'dated historical satellite imagery and its release catalogue, only when you use the satellite view’s time slider' },
-                { name: 'Google Fonts', what: 'the typefaces the site uses' },
               ]} />
 
             <Flow icon={<Search className="h-4 w-4" />} title="Looking something up"
@@ -204,12 +212,15 @@ export default function PrivacyPage() {
                 browser, as for any picture on the web.
               </>} />
 
-            <Flow icon={<Sparkles className="h-4 w-4" />} title="Using OI, on your own AI key"
+            <Flow icon={<Sparkles className="h-4 w-4" />} title="Using OI — your key, or ours"
               summary={<>
-                OI runs on the AI provider and key you choose. When you start a prediction, talk to OI Assist or check your
-                key, your request goes from our server to that provider: your question and any data you add for a
-                prediction, or the conversation and what is on the map for Assist. The provider sees our server’s address,
-                not yours. Your key is used for that request and nothing else.
+                OI can run two ways. On <span className="text-[var(--text-primary)]">your own key</span>, your browser
+                keeps the key and sends it with each request; our server passes the request to the provider you chose —
+                your question and any data you add for a prediction, or the conversation and what is on the map for
+                Assist — and the provider sees our server’s address, not yours. The key itself is used for that request
+                and never stored. When you are <span className="text-[var(--text-primary)]">signed in</span>, OI can
+                instead run on WorldEye’s own OpenAI key (“WorldEye AI”) within hourly usage limits; then your request
+                goes to OpenAI on our account.
               </>}
               services={[
                 { name: 'The provider you choose', what: 'OpenAI, Anthropic, Google, OpenRouter, Groq, DeepSeek, xAI, Mistral or Alibaba Cloud: your key and your request' },
@@ -219,8 +230,8 @@ export default function PrivacyPage() {
                 { name: 'Photon and Nominatim (OpenStreetMap)', what: 'a place name, when you search for one or OI looks one up' },
               ]}>
               <p className="mt-3 text-[13px] leading-relaxed text-[var(--text-muted)]">
-                A prediction has its own link so it can be shared: anyone you give the link to can open it, and it is kept
-                on our server for three hours after it finishes. The microphone in OI Assist uses your browser’s own
+                A prediction has its own link so it can be shared: anyone you give the link to can open it, and it is held
+                in our server’s memory for up to three hours after it finishes. The microphone in OI Assist uses your browser’s own
                 speech recognition (in Chrome and Edge, a Google or Microsoft service); we only ever receive the words.
               </p>
             </Flow>
@@ -232,6 +243,29 @@ export default function PrivacyPage() {
                 you scan.
               </>} />
           </div>
+        </Section>
+
+        <Section id="accounts" title="Accounts, subscriptions and email"
+          intro="Everything in this section applies only if you choose to create an account, subscribe to a plan or to email alerts, join the newsletter, or write to us. Browsing the map needs none of it.">
+          <ul className="flex flex-col gap-3 text-sm leading-relaxed text-[var(--text-muted)]">
+            <li><span className="text-[var(--text-primary)]">Your account.</span> Your email address and, if you sign up with a password, a bcrypt-hashed version of it (we never store the password itself). If you continue with Google, Google confirms your identity and we receive your email address from Google. Where an emailed sign-in link is offered, the link is sent through Resend and signs you in without a password. Account sessions use signed, httpOnly cookies.</li>
+            <li><span className="text-[var(--text-primary)]">Sign-in security records.</span> Each sign-in records the device, a hashed form of the IP address (never the address itself), and an approximate location, so you can recognise your own sessions and we can spot account misuse.</li>
+            <li><span className="text-[var(--text-primary)]">What you save.</span> Saved cameras and views, collections, camera alerts you set, clips in your recording library, and your account preferences are stored with your account so they are there when you return. Signed-in skiers can also follow resorts, log pass days in the pass-value tracker, and set trip reminders (resort, trip dates and an email address) — we email two planning reminders before the trip, and each carries an unsubscribe link.</li>
+            <li><span className="text-[var(--text-primary)]">Subscriptions.</span> Checkout runs in Stripe’s embedded form on our pages: your card details go to Stripe, never to our servers. We store your subscription status, plan and billing period, and Stripe’s customer reference. A promotional code entered at checkout is applied by Stripe.</li>
+            <li><span className="text-[var(--text-primary)]">Email.</span> Verification, password-reset, billing and (if you subscribe) newsletter and product emails are sent through Resend from WorldEye. Every marketing email carries an unsubscribe link, and unsubscribing takes effect immediately.</li>
+            <li><span className="text-[var(--text-primary)]">Messages you send us.</span> Contact-form messages are stored with your name, email and message so we can reply. If you join the affiliate programme, we also keep your referral, commission and payout records, including the payout details you provide (for example a Venmo handle), as the programme requires. If you arrive through a member’s referral link, or tell us how you found WorldEye, we save that on your account.</li>
+            <li><span className="text-[var(--text-primary)]">Alert subscriptions without an account.</span> You can subscribe an email address to transit service alerts without creating an account. We store the address and the route you picked so we can send those alert digests, and every alert email carries an unsubscribe link that stops them.</li>
+            <li><span className="text-[var(--text-primary)]">Deleting your account.</span> You can schedule deletion from your account settings. It takes effect on the date shown when you schedule it, you can cancel any time before then, and deletion removes your account and the data stored with it.</li>
+          </ul>
+        </Section>
+
+        <Section id="advertising" title="Measuring our advertising"
+          intro="We run ads for WorldEye on Meta’s platforms (Facebook and Instagram), and we measure them with Meta’s tools. This is the one place advertising technology touches this site, so here it is in the open:">
+          <ul className="flex flex-col gap-3 text-sm leading-relaxed text-[var(--text-muted)]">
+            <li><span className="text-[var(--text-primary)]">The Meta pixel</span> loads on our pages and reports page views to Meta, including on repeat visits from the same browser.</li>
+            <li><span className="text-[var(--text-primary)]">Sign-up and purchase events</span> — creating an account, starting checkout, starting a trial and completing a purchase — are also reported to Meta, from the browser and from our server (Meta’s Conversions API), so we can tell which ads led to them. Event reports include the event type, time and value; purchase events are keyed to the Stripe transaction.</li>
+            <li>Meta processes what it receives under its own privacy policy. We do not sell personal data to Meta or anyone else, and no other advertising network runs on this site.</li>
+          </ul>
         </Section>
 
         <Section id="good-to-know" title="Good to know">
@@ -252,7 +286,9 @@ export default function PrivacyPage() {
 
         <Section id="choices" title="Your choices">
           <ul className="flex flex-col gap-2.5 text-sm leading-relaxed text-[var(--text-muted)]">
-            <li><span className="text-[var(--text-primary)]">Clear everything</span> by clearing this site’s data in your browser settings.</li>
+            <li><span className="text-[var(--text-primary)]">Clear everything on this device</span> by clearing this site’s data in your browser settings — this removes the visitor ID, your settings and any locally kept AI key.</li>
+            <li><span className="text-[var(--text-primary)]">Delete your account</span> from your account settings: deletion is scheduled for the date shown, can be cancelled before then, and removes your account and the data stored with it.</li>
+            <li><span className="text-[var(--text-primary)]">Stop marketing email</span> with the unsubscribe link in any email we send; account and billing emails (receipts, resets) still arrive while you have an account, because they are part of the service.</li>
             <li><span className="text-[var(--text-primary)]">Keep your AI key to one session</span> by leaving “Remember on this device” unticked; it is then forgotten when the tab closes.</li>
             <li><span className="text-[var(--text-primary)]">Use only what you need</span>: map layers, cameras and AI features reach out only when you switch them on or use them.</li>
             <li><span className="text-[var(--text-primary)]">Run your own copy</span>: the platform began as an open-source project, so you can host it yourself and decide who operates it.</li>
@@ -262,6 +298,9 @@ export default function PrivacyPage() {
         <Section id="contact" title="Questions?">
           <p className="text-sm leading-relaxed text-[var(--text-muted)]">
             If something here is unclear, or you think we have missed something, tell us and we will put it right.
+            You can email us at{' '}
+            <a href="mailto:passiveincomewai@gmail.com" className="text-[var(--text-primary)] hover:underline">passiveincomewai@gmail.com</a>{' '}
+            or write to WorldEye, 555 E 3200 N, North Ogden, UT 84414, USA.
           </p>
           <div className="mt-4 flex flex-wrap gap-2.5">
             <a href="/contact"
