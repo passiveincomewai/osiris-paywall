@@ -19,6 +19,7 @@ import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiResortDirectory from "@/components/SkiResortDirectory";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
 import SkiSidebar from "@/components/SkiSidebar";
+import SkiTripReminderForm from "@/components/SkiTripReminderForm";
 import { powderPassEnabled } from "@/lib/ski/access";
 import { plural } from "@/lib/country-page-content";
 import {
@@ -254,6 +255,18 @@ export default async function SkiWebcamsPage({
             initialGroupBy={initialGroupBy}
           />
         </div>
+      </section>
+
+      {/* Trip reminders (P9a) — pick a resort + dates, get two
+          book-ahead email nudges. Reminders only, no booking. */}
+      <section className="mt-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-5">Planning a ski trip?</h2>
+        <SkiTripReminderForm
+          resorts={SKI_RESORTS.filter((r) => !FOLDED_RESORT_SLUGS.has(r.slug)).map((r) => ({
+            slug: r.slug,
+            name: r.name,
+          }))}
+        />
       </section>
 
       {/* Compare tool — side-by-side terrain, cameras and official

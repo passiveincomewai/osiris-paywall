@@ -8,6 +8,7 @@ import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiConditions from "@/components/SkiConditions";
 import SkiRouteTool from "@/components/SkiRouteTool";
 import SkiSidebar from "@/components/SkiSidebar";
+import SkiTripReminderForm from "@/components/SkiTripReminderForm";
 import { powderPassEnabled } from "@/lib/ski/access";
 import { cameraAreas } from "@/lib/country-cameras";
 import { plural } from "@/lib/country-page-content";
@@ -342,6 +343,13 @@ export default async function SkiResortPage({
             {r.town}.
           </p>
         </div>
+
+        {/* Trip reminders (P9a) — book-ahead email nudges for a
+            planned trip to this resort; reminders only, no booking. */}
+        <section id="reminders" className="mt-12 scroll-mt-24">
+          <h2 className="text-xl md:text-2xl font-bold mb-5">Trip reminders</h2>
+          <SkiTripReminderForm resort={{ slug: r.slug, name: r.name }} />
+        </section>
 
         {/* Conditions */}
         <section id="conditions" className="mt-12 scroll-mt-24">
