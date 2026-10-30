@@ -20,8 +20,10 @@ import {
   Check,
   Crown,
   Flame,
+  Hourglass,
   MailCheck,
   MailWarning,
+  Megaphone,
   Share2,
   Sparkles,
   UserRound,
@@ -428,6 +430,93 @@ export function ToolCompletionPopup({
       <Link href="/signup" onClick={onAction} className={POPUP_CTA_CLASS}>
         Create free account
       </Link>
+    </PopupModal>
+  );
+}
+// ── P4 faces: append to src/components/popups/popups.tsx ────────────
+// New lucide imports needed in the import block: Hourglass, Megaphone.
+
+// ── trial_ending (#12) ──────────────────────────────────────────────
+
+export function TrialEndingPopup({
+  planName,
+  daysLeft,
+  cameraOpens,
+  savedCameras,
+  onAction,
+  onClose,
+}: {
+  /** Display name from the checkout plan summaries, or null (then the
+   *  copy says "your trial" without naming a plan). */
+  planName: string | null;
+  daysLeft: number;
+  /** The user's own camera_open PageViews since the trial began. */
+  cameraOpens: number;
+  /** The user's own saved-camera count. */
+  savedCameras: number;
+  onAction: () => void;
+  onClose: () => void;
+}) {
+  const plan = planName ?? "Pro";
+  const hasUsage = cameraOpens + savedCameras > 0;
+  return (
+    <PopupModal label="Your free trial is ending" onClose={onClose}>
+      <PopupMedallion>
+        <Hourglass className="w-6 h-6 text-[#D4AF37]" />
+      </PopupMedallion>
+      <h2 className="text-lg font-bold tracking-tight">
+        Your {plan} trial ends in {daysLeft} day{daysLeft === 1 ? "" : "s"}
+      </h2>
+      <p className="text-sm text-white/55 mt-2 mb-5">
+        {hasUsage ? (
+          <>
+            Your trial so far: {cameraOpens} camera open
+            {cameraOpens === 1 ? "" : "s"} · {savedCameras} camera
+            {savedCameras === 1 ? "" : "s"} saved.{" "}
+          </>
+        ) : null}
+        When the trial ends, {plan} continues at its normal price and
+        everything carries over — your saved cameras, layers and limits.
+      </p>
+      <Link href="/pricing" onClick={onAction} className={POPUP_GOLD_CTA_CLASS}>
+        Keep {plan}
+      </Link>
+      <p className="mt-3 text-[11px] leading-relaxed text-white/35">
+        Your plan continues automatically when the trial ends · Cancel anytime in Settings
+      </p>
+    </PopupModal>
+  );
+}
+
+// ── affiliate_invite (#13) ──────────────────────────────────────────
+
+export function AffiliateInvitePopup({
+  onAction,
+  onClose,
+}: {
+  onAction: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <PopupModal label="Affiliate program invite" onClose={onClose}>
+      <PopupMedallion>
+        <Megaphone className="w-6 h-6 text-[#D4AF37]" />
+      </PopupMedallion>
+      <h2 className="text-lg font-bold tracking-tight">
+        Join the free affiliate program
+      </h2>
+      <p className="text-sm text-white/55 mt-2 mb-5">
+        You use WorldEye a lot, so here&apos;s an invite most members never
+        see. The program is free to join: share your link or personal
+        discount code and earn 15–30% recurring commission — by rank — on
+        the subscriptions you refer.
+      </p>
+      <Link href="/affiliates" onClick={onAction} className={POPUP_CTA_CLASS}>
+        See how it works
+      </Link>
+      <p className="mt-3 text-[11px] leading-relaxed text-white/35">
+        Free to join · Your audience gets a discount code too · Full terms on the program page
+      </p>
     </PopupModal>
   );
 }

@@ -30,8 +30,11 @@ import { buildCameraShareUrl, readLastCamera } from "@/lib/camera-share";
 import { browserLadderStorage, readLadderRecord } from "@/lib/camera-ladder";
 import { useLastCompletedCapture } from "@/lib/recording/sessions";
 import {
+  POPUP_AFFILIATE_DISMISSED_KEY,
+  POPUP_AFFILIATE_SHOWN_KEY,
   POPUP_EVENT_DETAIL,
   POPUP_SUBSCRIBED_SESSION_KEY,
+  POPUP_TRIAL_ENDING_SHOWN_KEY,
   POPUP_TRIAL_WAITING_SHOWN_KEY,
   applyCameraVisit,
   applyVisitDay,
@@ -60,11 +63,13 @@ import {
   signalPopupClaimed,
 } from "@/lib/popups/signals";
 import {
+  AffiliateInvitePopup,
   EndOfArticlePopup,
   EngagedWatcherPopup,
   HappeningNowToast,
   ShareViewPopup,
   ToolCompletionPopup,
+  TrialEndingPopup,
   TrialWaitingPopup,
   WelcomeBackPopup,
   YourCameraPopup,
@@ -81,6 +86,12 @@ interface ActivePopup {
   signedIn?: boolean;
   share?: { url: string; name: string | null };
   toolBenefit?: string;
+  trialEnding?: {
+    planName: string | null;
+    daysLeft: number;
+    cameraOpens: number;
+    savedCameras: number;
+  };
 }
 
 const ARTICLE_PATH = /^\/(blog|compare)\/.+/;
@@ -104,6 +115,18 @@ export default function PopupManager() {
   const storyFetchedRef = useRef(false);
   const twRef = useRef<{ eligible: boolean; userKey: string } | null>(null);
   const twFetchedRef = useRef(false);
+  const teRef = useRef<{
+    eligible: boolean;
+    userKey: string;
+    trialEndMs: number;
+    daysLeft: number;
+    planName: string | null;
+    cameraOpens: number;
+    savedCameras: number;
+  } | null>(null);
+  const teFetchedRef = useRef(false);
+  const affRef = useRef<{ eligible: boolean; userKey: string } | null>(null);
+  const affFetchedRef = useRef(false);
   const exitIntentRef = useRef(false);
   const pricingAgedRef = useRef(false);
   const pricingPatternRef = useRef(false);
@@ -277,6 +300,65 @@ export default function PopupManager() {
           });
       }
 
+      // trial_ending + affiliate_invite facts are likewise
+      // server-verified; fetch once the session proves a signed-in
+      // account (the endpoints re-check everything themselves).
+      if (
+        (identity?.state === "free" || identity?.state === "premium") &&
+        !teFetchedRef.current
+      ) {
+        teFetchedRef.current = true;
+        fetch("/api/popups/trial-ending")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((j) => {
+            if (
+              j?.eligible &&
+              typeof j.userKey === "string" &&
+              typeof j.trialEndMs === "number" &&
+              typeof j.daysLeft === "number"
+            ) {
+              teRef.current = {
+                eligible: true,
+                userKey: j.userKey,
+                trialEndMs: j.trialEndMs,
+                daysLeft: j.daysLeft,
+                planName: typeof j.planName === "string" ? j.planName : null,
+                cameraOpens: typeof j.usage?.cameraOpens === "number" ? j.usage.cameraOpens : 0,
+                savedCameras: typeof j.usage?.savedCameras === "number" ? j.usage.savedCameras : 0,
+              };
+            } else {
+              teRef.current = {
+                eligible: false, userKey: "", trialEndMs: 0, daysLeft: 0,
+                planName: null, cameraOpens: 0, savedCameras: 0,
+              };
+            }
+          })
+          .catch(() => {
+            teRef.current = {
+              eligible: false, userKey: "", trialEndMs: 0, daysLeft: 0,
+              planName: null, cameraOpens: 0, savedCameras: 0,
+            };
+          });
+      }
+      if (
+        (identity?.state === "free" || identity?.state === "premium") &&
+        !affFetchedRef.current
+      ) {
+        affFetchedRef.current = true;
+        fetch("/api/popups/affiliate-invite")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((j) => {
+            if (j?.eligible && typeof j.userKey === "string") {
+              affRef.current = { eligible: true, userKey: j.userKey };
+            } else {
+              affRef.current = { eligible: false, userKey: "" };
+            }
+          })
+          .catch(() => {
+            affRef.current = { eligible: false, userKey: "" };
+          });
+      }
+
       const candidates: PopupId[] = [];
       const data: ActivePopup = { id: "welcome_back" };
 
@@ -304,6 +386,44 @@ export default function PopupManager() {
           shownFor = null;
         }
         if (shownFor !== tw.userKey) candidates.push("trial_waiting");
+      }
+
+      // trial_ending — once per trial (keyed user + trial end).
+      const te = teRef.current;
+      if (te?.eligible) {
+        let shownFor: string | null = null;
+        try {
+          shownFor = local?.getItem(POPUP_TRIAL_ENDING_SHOWN_KEY) ?? null;
+        } catch {
+          shownFor = null;
+        }
+        if (shownFor !== `${te.userKey}:${te.trialEndMs}`) {
+          candidates.push("trial_ending");
+          data.trialEnding = {
+            planName: te.planName,
+            daysLeft: te.daysLeft,
+            cameraOpens: te.cameraOpens,
+            savedCameras: te.savedCameras,
+          };
+        }
+      }
+
+      // affiliate_invite — once per user; a past dismissal is
+      // permanent for that user.
+      const aff = affRef.current;
+      if (aff?.eligible) {
+        let shownFor: string | null = null;
+        let dismissedFor: string | null = null;
+        try {
+          shownFor = local?.getItem(POPUP_AFFILIATE_SHOWN_KEY) ?? null;
+          dismissedFor = local?.getItem(POPUP_AFFILIATE_DISMISSED_KEY) ?? null;
+        } catch {
+          shownFor = null;
+          dismissedFor = null;
+        }
+        if (shownFor !== aff.userKey && dismissedFor !== aff.userKey) {
+          candidates.push("affiliate_invite");
+        }
       }
 
       // happening_now
@@ -410,6 +530,20 @@ export default function PopupManager() {
              re-fire; the server facts remain the eligibility gate */
         }
       }
+      if (id === "trial_ending" && te?.userKey) {
+        try {
+          local?.setItem(POPUP_TRIAL_ENDING_SHOWN_KEY, `${te.userKey}:${te.trialEndMs}`);
+        } catch {
+          /* storage blocked — same caveat as trial_waiting */
+        }
+      }
+      if (id === "affiliate_invite" && aff?.userKey) {
+        try {
+          local?.setItem(POPUP_AFFILIATE_SHOWN_KEY, aff.userKey);
+        } catch {
+          /* storage blocked — same caveat as trial_waiting */
+        }
+      }
       trackAnalyticsEvent("popup_shown", POPUP_EVENT_DETAIL[id]);
       data.id = id;
       setActive({ ...data });
@@ -423,6 +557,17 @@ export default function PopupManager() {
 
   const dismiss = () => {
     if (activeRef.current) {
+      // affiliate_invite dismissal is permanent for that user.
+      if (activeRef.current.id === "affiliate_invite" && affRef.current?.userKey) {
+        try {
+          browserLocalStorage()?.setItem(
+            POPUP_AFFILIATE_DISMISSED_KEY,
+            affRef.current.userKey,
+          );
+        } catch {
+          /* storage blocked — the invite could re-fire another day */
+        }
+      }
       trackAnalyticsEvent("popup_dismissed", POPUP_EVENT_DETAIL[activeRef.current.id]);
     }
     setActive(null);
@@ -496,6 +641,19 @@ export default function PopupManager() {
       );
     case "trial_waiting":
       return <TrialWaitingPopup onAction={clicked} onClose={dismiss} />;
+    case "trial_ending":
+      return active.trialEnding ? (
+        <TrialEndingPopup
+          planName={active.trialEnding.planName}
+          daysLeft={active.trialEnding.daysLeft}
+          cameraOpens={active.trialEnding.cameraOpens}
+          savedCameras={active.trialEnding.savedCameras}
+          onAction={clicked}
+          onClose={dismiss}
+        />
+      ) : null;
+    case "affiliate_invite":
+      return <AffiliateInvitePopup onAction={clicked} onClose={dismiss} />;
     case "share_view":
       return active.share ? (
         <ShareViewPopup

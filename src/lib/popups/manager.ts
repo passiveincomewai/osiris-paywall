@@ -10,13 +10,16 @@
 //    install bar's claim) suppresses the rest for the session.
 //  - Cross-visit frequency: no popup more than once per visitor per
 //    7 days (the persistent visitor record lives in localStorage; the
-//    visitorId itself is lib/analytics/visitor-id's `we_vid`). The one
-//    exemption is trial_waiting, an account-state popup that fires
-//    once per user EVER (its own key, lib/popups/trial-waiting).
+//    visitorId itself is lib/analytics/visitor-id's `we_vid`). The
+//    exemptions are the account-state popups — trial_waiting (once
+//    per user EVER), trial_ending (once per trial) and
+//    affiliate_invite (once per user) — each with its own per-user
+//    record (FREQ_EXEMPT_POPUPS below).
 //  - Priority when several become eligible at once:
-//    pricing_save > trial_waiting > powder_pass > happening_now >
-//    welcome_back > engaged_watcher > your_camera > end_of_article >
-//    tool_completion > share_view > install. (Powder Pass stands
+//    pricing_save > trial_ending > trial_waiting > powder_pass >
+//    happening_now > welcome_back > engaged_watcher > your_camera >
+//    end_of_article > tool_completion > share_view > install >
+//    affiliate_invite. (Powder Pass stands
 //    outside the global race in practice — it is page-scoped to ski
 //    pages and server-gated by the POWDER_PASS_ENABLED flag — but it
 //    still claims through here so it can never stack.)
@@ -29,6 +32,7 @@
 
 export type PopupId =
   | "pricing_save"
+  | "trial_ending"
   | "trial_waiting"
   | "powder_pass"
   | "happening_now"
@@ -38,11 +42,13 @@ export type PopupId =
   | "end_of_article"
   | "tool_completion"
   | "share_view"
-  | "install";
+  | "install"
+  | "affiliate_invite";
 
 /** Arbitration priority (higher wins). */
 export const POPUP_PRIORITY: Record<PopupId, number> = {
   pricing_save: 100,
+  trial_ending: 95,
   trial_waiting: 90,
   powder_pass: 85,
   happening_now: 80,
@@ -53,6 +59,7 @@ export const POPUP_PRIORITY: Record<PopupId, number> = {
   tool_completion: 30,
   share_view: 20,
   install: 10,
+  affiliate_invite: 5,
 };
 
 /** The analytics detail token for a popup (PageView events store
@@ -60,6 +67,7 @@ export const POPUP_PRIORITY: Record<PopupId, number> = {
  *  per lib/analytics/ingest-fields). */
 export const POPUP_EVENT_DETAIL: Record<PopupId, string> = {
   pricing_save: "pricing_save",
+  trial_ending: "trial_ending",
   trial_waiting: "trial_waiting",
   powder_pass: "powder_pass",
   happening_now: "happening_now",
@@ -70,6 +78,7 @@ export const POPUP_EVENT_DETAIL: Record<PopupId, string> = {
   tool_completion: "tool_completion",
   share_view: "share_view",
   install: "install",
+  affiliate_invite: "affiliate_invite",
 };
 
 /** Cross-visit frequency cap: one show per popup per visitor per 7 days. */
@@ -92,6 +101,14 @@ export const POPUP_VISITS_KEY = "worldeye.popups.visits";
 export const POPUP_CAMERA_VISITS_KEY = "worldeye.popups.cameraVisits";
 /** localStorage: the user key trial_waiting has fired for (once ever). */
 export const POPUP_TRIAL_WAITING_SHOWN_KEY = "worldeye.popups.trialWaitingShownFor";
+/** localStorage: `${userKey}:${trialEndMs}` trial_ending fired for
+ *  (once per trial — a new trial has a new end and may fire again). */
+export const POPUP_TRIAL_ENDING_SHOWN_KEY = "worldeye.popups.trialEndingShownFor";
+/** localStorage: the user key affiliate_invite has fired for (once per user). */
+export const POPUP_AFFILIATE_SHOWN_KEY = "worldeye.popups.affiliateShownFor";
+/** localStorage: the user key that dismissed affiliate_invite
+ *  (dismissal is permanent for that user). */
+export const POPUP_AFFILIATE_DISMISSED_KEY = "worldeye.popups.affiliateDismissedFor";
 /** sessionStorage: this session completed a newsletter subscribe. */
 export const POPUP_SUBSCRIBED_SESSION_KEY = "worldeye.popups.subscribed";
 
@@ -187,15 +204,23 @@ export function readFreqRecord(storage: StorageLike | null): FreqRecord {
   return parseFreqRecord(safeGet(storage, POPUP_FREQ_KEY));
 }
 
-/** True when the 7-day cap allows `id` to show at `now`. trial_waiting
- *  is exempt: it keys off real account state and its own once-ever
- *  record instead (lib/popups/trial-waiting). */
+/** Account-state popups key off real account state and their own
+ *  per-user records instead of the 7-day visitor cap: trial_waiting
+ *  (once per user ever), trial_ending (once per trial),
+ *  affiliate_invite (once per user; dismissal permanent). */
+export const FREQ_EXEMPT_POPUPS: ReadonlySet<PopupId> = new Set([
+  "trial_waiting",
+  "trial_ending",
+  "affiliate_invite",
+]);
+
+/** True when the 7-day cap allows `id` to show at `now`. */
 export function frequencyAllows(
   freq: FreqRecord,
   id: PopupId,
   now: number,
 ): boolean {
-  if (id === "trial_waiting") return true;
+  if (FREQ_EXEMPT_POPUPS.has(id)) return true;
   const last = freq[id];
   if (last === undefined) return true;
   return now - last >= POPUP_FREQ_WINDOW_MS;
