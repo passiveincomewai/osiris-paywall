@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import index from '@/data/camera-countries.json';
 import {
+  isSnowStakeCamera,
   loadCountryChunk,
   selectRouteCameras,
   ROUTE_CORRIDOR_KM,
@@ -83,6 +84,10 @@ export async function POST(request: Request) {
           ...f.cam,
           alongKm: Math.round(f.alongKm * 10) / 10,
           offKm: Math.round(f.offKm * 100) / 100,
+          /* Classified here, with the canonical name rule, so the
+             route tool can give snow stakes their own section without
+             re-implementing the pattern client-side. */
+          snowStake: isSnowStakeCamera(f.cam),
         })),
       },
       { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' } },

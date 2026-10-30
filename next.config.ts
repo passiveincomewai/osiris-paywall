@@ -148,11 +148,8 @@ const nextConfig: NextConfig = {
       // camera prong fold into the /ski-webcams hub as listed resorts
       // without detail pages. Same derivation + pin as above
       // (FOLDED_RESORT_SLUGS in the gates module).
-      { source: '/ski-webcams/blue-mountain-ontario', destination: '/ski-webcams', permanent: true },
-      { source: '/ski-webcams/hoodoo', destination: '/ski-webcams', permanent: true },
-      { source: '/ski-webcams/june-mountain', destination: '/ski-webcams', permanent: true },
-      { source: '/ski-webcams/oppdal', destination: '/ski-webcams', permanent: true },
-      { source: '/ski-webcams/pyha', destination: '/ski-webcams', permanent: true },
+      { source: '/ski-webcams/gudauri', destination: '/ski-webcams', permanent: true },
+      { source: '/ski-webcams/high1-resort', destination: '/ski-webcams', permanent: true },
     ];
   },
   async headers() {

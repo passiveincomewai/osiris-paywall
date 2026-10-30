@@ -26,11 +26,11 @@ import CheckoutSheet from "@/components/CheckoutSheet";
  * names the ski directory it is the membership for. It does not list
  * ski-tool features that are not live yet.
  */
-export default function PowderPassPromo() {
+export default function PowderPassPromo({ className = "mt-12" }: { className?: string } = {}) {
   const ski = CHECKOUT_PLAN_SUMMARIES.ski;
   const [sheetOpen, setSheetOpen] = useState(false);
   return (
-    <section className="mt-12 rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.07] to-white/[0.02] p-6 md:p-8">
+    <section className={`${className} rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.07] to-white/[0.02] p-6 md:p-8`}>
       <div className="flex flex-col md:flex-row md:items-center gap-6">
         <div className="flex-1">
           <p className="flex items-center gap-2 text-xs font-bold tracking-[0.25em] text-[#D4AF37]">

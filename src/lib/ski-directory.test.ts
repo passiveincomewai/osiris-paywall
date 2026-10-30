@@ -219,7 +219,7 @@ describe("applySkiDirectoryQuery", () => {
     expect(result.filtering).toBe(false);
     expect(result.total).toBe(5);
     expect(result.flat).toEqual([]);
-    expect(result.groups.map((g) => g.country)).toEqual([
+    expect(result.groups.map((g) => g.label)).toEqual([
       "United States",
       "Sweden",
       "Switzerland",
@@ -229,9 +229,8 @@ describe("applySkiDirectoryQuery", () => {
 
   it("a search switches to a flat, sorted list", () => {
     const result = applySkiDirectoryQuery(ALL, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
       search: "utah",
-      country: null,
-      sort: "name-asc",
     });
     expect(result.filtering).toBe(true);
     expect(result.groups).toEqual([]);
@@ -241,7 +240,7 @@ describe("applySkiDirectoryQuery", () => {
 
   it("a country filter switches to flat and honours the sort", () => {
     const result = applySkiDirectoryQuery(ALL, {
-      search: "",
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
       country: "United States",
       sort: "cameras",
     });
@@ -251,9 +250,8 @@ describe("applySkiDirectoryQuery", () => {
 
   it("an unmatched search yields an empty flat result", () => {
     const result = applySkiDirectoryQuery(ALL, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
       search: "zzzz",
-      country: null,
-      sort: "name-asc",
     });
     expect(result.filtering).toBe(true);
     expect(result.total).toBe(0);
@@ -262,15 +260,67 @@ describe("applySkiDirectoryQuery", () => {
 
   it("sort alone does not switch to flat mode", () => {
     expect(
-      isSkiDirectoryFiltering({ search: "", country: null, sort: "cameras" }),
+      isSkiDirectoryFiltering({ ...DEFAULT_SKI_DIRECTORY_QUERY, sort: "cameras" }),
     ).toBe(false);
     const result = applySkiDirectoryQuery(ALL, {
-      search: "",
-      country: null,
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
       sort: "cameras",
     });
     expect(result.filtering).toBe(false);
     expect(names(result.groups[0].resorts)).toEqual(["Snowbird", "Brighton", "Alta"]);
+  });
+});
+
+describe("pass filter and grouping", () => {
+  const FIVE = [SNOWBIRD, BRIGHTON, ALTA, ARE, ZERMATT];
+
+  it("a pass filter switches to flat and keeps only documented affiliates", () => {
+    const result = applySkiDirectoryQuery(FIVE, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
+      pass: "Ikon Pass",
+    });
+    expect(result.filtering).toBe(true);
+    expect(names(result.flat)).toEqual(["Alta", "Brighton", "Snowbird", "Zermatt"]);
+  });
+
+  it('the "none" pass filter keeps only resorts with no documented pass', () => {
+    const result = applySkiDirectoryQuery(FIVE, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
+      pass: "none",
+    });
+    expect(result.filtering).toBe(true);
+    expect(names(result.flat)).toEqual(["Åre"]);
+  });
+
+  it("groupBy pass lists each programme, duplicates shared resorts, and closes with the independent group", () => {
+    const result = applySkiDirectoryQuery(FIVE, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
+      groupBy: "pass",
+    });
+    expect(result.filtering).toBe(false);
+    expect(result.groups.map((g) => g.label)).toEqual([
+      "Ikon Pass",
+      "Mountain Collective",
+      "Independent — no listed pass",
+    ]);
+    expect(names(result.groups[0].resorts)).toEqual([
+      "Alta",
+      "Brighton",
+      "Snowbird",
+      "Zermatt",
+    ]);
+    expect(names(result.groups[1].resorts)).toEqual(["Snowbird"]);
+    expect(names(result.groups[2].resorts)).toEqual(["Åre"]);
+  });
+
+  it("groupBy region groups by state/province in country order", () => {
+    const result = applySkiDirectoryQuery(FIVE, {
+      ...DEFAULT_SKI_DIRECTORY_QUERY,
+      groupBy: "region",
+    });
+    expect(result.filtering).toBe(false);
+    expect(result.groups.map((g) => g.label)).toEqual(["Utah", "Jämtland", "Valais"]);
+    expect(names(result.groups[0].resorts)).toEqual(["Alta", "Brighton", "Snowbird"]);
   });
 });
 

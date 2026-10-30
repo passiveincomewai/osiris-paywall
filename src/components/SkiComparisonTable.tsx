@@ -9,7 +9,7 @@
  */
 import { useState } from "react";
 import Link from "next/link";
-import { BedDouble, ExternalLink, Globe, Map as MapIcon, Ticket } from "lucide-react";
+import { BedDouble, Car, ExternalLink, Globe, GraduationCap, Map as MapIcon, Ticket, Wrench } from "lucide-react";
 import type { SkiResortLogoMap } from "@/lib/ski-directory";
 import { resortInitials } from "@/lib/ski-directory";
 import {
@@ -51,13 +51,16 @@ const LINK_ICONS: Record<SkiLinkKind, typeof Ticket> = {
   tickets: Ticket,
   trailMap: MapIcon,
   lodging: BedDouble,
+  lessons: GraduationCap,
+  rentals: Wrench,
+  parking: Car,
 };
 
 function ResortLinkButtons({ resort }: { resort: CompareResortData }) {
   const links = resort.links;
-  const kinds = (["tickets", "trailMap", "lodging"] as SkiLinkKind[]).filter(
-    k => links?.[k],
-  );
+  const kinds = (
+    ["tickets", "trailMap", "lodging", "lessons", "rentals", "parking"] as SkiLinkKind[]
+  ).filter(k => links?.[k]);
   if (!resort.website && kinds.length === 0) return null;
   return (
     <div className="flex flex-col gap-2">
@@ -137,25 +140,41 @@ export default function SkiComparisonTable({
   logos: SkiResortLogoMap;
 }) {
   const rows = buildComparisonRows(a, b);
+  const hasGaps = rows.some((row) => row.a === null || row.b === null);
+  /* A missing figure is stated, not dashed: the reader should never
+     have to guess whether "—" means zero, closed or unknown. */
+  const cell = (value: string | null) =>
+    value ?? (
+      <span className="font-normal text-white/40">Not available</span>
+    );
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
-      <div className="grid grid-cols-2 gap-4 p-5 border-b border-white/10">
-        <ResortHeader resort={a} logos={logos} />
-        <ResortHeader resort={b} logos={logos} />
+    <div>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
+        <div className="grid grid-cols-2 gap-4 p-5 border-b border-white/10">
+          <ResortHeader resort={a} logos={logos} />
+          <ResortHeader resort={b} logos={logos} />
+        </div>
+        <table className="w-full text-sm">
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={row.key} className={i % 2 ? "bg-white/[0.02]" : ""}>
+                <td className="px-4 py-3 text-white/85 font-medium w-[34%] align-top">{cell(row.a)}</td>
+                <td className="px-2 py-3 text-center text-[11px] uppercase tracking-wider text-white/40 align-top w-[32%]">
+                  {row.label}
+                </td>
+                <td className="px-4 py-3 text-white/85 font-medium text-right align-top w-[34%]">{cell(row.b)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <table className="w-full text-sm">
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={row.key} className={i % 2 ? "bg-white/[0.02]" : ""}>
-              <td className="px-4 py-3 text-white/85 font-medium w-[34%] align-top">{row.a ?? "—"}</td>
-              <td className="px-2 py-3 text-center text-[11px] uppercase tracking-wider text-white/40 align-top w-[32%]">
-                {row.label}
-              </td>
-              <td className="px-4 py-3 text-white/85 font-medium text-right align-top w-[34%]">{row.b ?? "—"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {hasGaps && (
+        <p className="mt-3 text-xs leading-relaxed text-white/40">
+          “Not available” means we have not sourced that figure from the resort’s published
+          statistics yet — it is never a zero. Every figure shown comes from the resort’s own
+          published stats, cross-checked against its reference entry.
+        </p>
+      )}
     </div>
   );
 }

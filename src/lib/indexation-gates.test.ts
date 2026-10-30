@@ -221,15 +221,34 @@ describe("C10 ski — facts sourcing and the fold set", () => {
     expect(tomamu?.summitElevationM).toBe(1171);
   });
 
-  it("folds exactly the five remaining gate failures into the hub", () => {
+  it("folds exactly the two remaining gate failures into the hub", () => {
     expect([...FOLDED_RESORT_SLUGS].sort()).toEqual([
+      "gudauri",
+      "high1-resort",
+    ]);
+    expect(RESORT_PAGE_COUNT).toBe(119);
+  });
+
+  it("the 2026-10-29 sourcing wave carries facts for the new and unfolded resorts", () => {
+    for (const slug of [
+      "alta",
+      "deer-valley",
+      "angel-fire",
+      "red-river",
       "blue-mountain-ontario",
       "hoodoo",
       "june-mountain",
       "oppdal",
       "pyha",
-    ]);
-    expect(RESORT_PAGE_COUNT).toBe(107);
+    ]) {
+      expect(getSkiResortFacts(slug), slug).not.toBeNull();
+      expect(isFoldedResort(slug), slug).toBe(false);
+    }
+    const alta = getSkiResortFacts("alta");
+    expect(alta?.summitElevationM).toBe(3374);
+    expect(alta?.verticalM).toBe(774);
+    const brighton = getSkiResortFacts("brighton");
+    expect(brighton?.verticalM).toBe(533);
   });
 
   it("next.config.ts carries the derived ski fold redirects verbatim", () => {

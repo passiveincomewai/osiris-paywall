@@ -6,12 +6,17 @@
  * The candidate list below is real, named resorts with their base-area
  * coordinates (public geography). A candidate only becomes a page when the
  * served catalogue actually covers it: at least one camera within
- * RESORT_RADIUS_KM of the base and at least MIN_TOTAL cameras within
- * NEARBY_RADIUS_KM. Counts in the output are computed here, never written
- * by hand, so a resort page cannot claim cameras the catalogue lacks.
- * Candidates closer than CLOSE_PAIR_KM to each other (Alta/Snowbird,
- * Park City/Deer Valley) collapse to the better-covered one — two pages
- * over the same camera set would be one page wearing two hats.
+ * RESORT_RADIUS_KM of the base (MIN_TOTAL is 1 — the owner's rule is that
+ * every resort with a camera at the mountain earns a page; the page
+ * renders only the cameras that exist). Counts in the output are computed
+ * here, never written by hand, so a resort page cannot claim cameras the
+ * catalogue lacks.
+ * Candidates closer than CLOSE_PAIR_KM to each other collapse to the
+ * better-covered one — two pages over the same camera set would be one
+ * page wearing two hats — UNLESS the smaller resort carries substantial
+ * coverage of its own (CLOSE_PAIR_MIN_OWN_CAMERAS+ resort cameras):
+ * distinct resorts skiers cross-shop (Alta next to Snowbird, Deer Valley
+ * next to Park City) keep their own pages.
  *
  * Usage: node tools/build-ski-resorts.mjs
  */
@@ -23,8 +28,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 export const RESORT_RADIUS_KM = 10;
 export const NEARBY_RADIUS_KM = 40;
-export const MIN_TOTAL = 4;
+export const MIN_TOTAL = 1;
 export const CLOSE_PAIR_KM = 6;
+/** A close-pair neighbour with at least this many resort cameras of its
+ *  own is a distinct resort, not a twin — it keeps its own page. */
+export const CLOSE_PAIR_MIN_OWN_CAMERAS = 10;
 
 /* name, town, region (state/province/canton), country, country chunk slug,
    base-area latitude, longitude. */
@@ -330,13 +338,15 @@ const covered = scored.filter(
   (r) => r.resortCameras >= 1 && r.resortCameras + r.nearbyCameras >= MIN_TOTAL,
 );
 
-/* Close pairs share one camera set; keep the better-covered page. */
+/* Close pairs share one camera set; keep the better-covered page —
+   unless the smaller neighbour has substantial coverage of its own, in
+   which case both are real resorts and both keep pages. */
 covered.sort((a, b) => b.resortCameras - a.resortCameras);
 const kept = [];
 const dropped = [];
 for (const r of covered) {
   const twin = kept.find((k) => haversineKm(k.lat, k.lng, r.lat, r.lng) < CLOSE_PAIR_KM);
-  if (twin) dropped.push(`${r.name} (within ${CLOSE_PAIR_KM} km of ${twin.name}, fewer resort cameras)`);
+  if (twin && r.resortCameras < CLOSE_PAIR_MIN_OWN_CAMERAS) dropped.push(`${r.name} (within ${CLOSE_PAIR_KM} km of ${twin.name}, fewer resort cameras)`);
   else kept.push(r);
 }
 
@@ -346,6 +356,7 @@ const out = {
   generatedAt: new Date().toISOString(),
   resortRadiusKm: RESORT_RADIUS_KM,
   nearbyRadiusKm: NEARBY_RADIUS_KM,
+  minTotalCameras: MIN_TOTAL,
   resorts: kept.map((r) => ({
     slug: slugify(r.name),
     name: r.name,

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, BedDouble, Camera, ChevronRight, ExternalLink, Globe, Map as MapIcon, MapPin, Scale, Ticket } from "lucide-react";
+import { ArrowLeft, BedDouble, Camera, Car, ChevronRight, ExternalLink, Globe, GraduationCap, Map as MapIcon, MapPin, Scale, Ticket, Wrench } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiConditions from "@/components/SkiConditions";
 import SkiRouteTool from "@/components/SkiRouteTool";
-import PowderPassPromo from "@/components/PowderPassPromo";
+import SkiSidebar from "@/components/SkiSidebar";
 import { powderPassEnabled } from "@/lib/ski/access";
 import { cameraAreas } from "@/lib/country-cameras";
 import { plural } from "@/lib/country-page-content";
@@ -137,6 +137,13 @@ export default async function SkiResortPage({
   const others = SKI_RESORTS.filter(o => o.slug !== r.slug && o.country === r.country && !isFoldedResort(o.slug))
     .sort((a, b) => haversineKm(r.lat, r.lng, a.lat, a.lng) - haversineKm(r.lat, r.lng, b.lat, b.lng))
     .slice(0, 6);
+  /* Previous / next resort pages within the same country, in hub
+     order — the back-links row's wayfinding pair. */
+  const countryOrdered = SKI_RESORTS.filter(o => o.country === r.country && !isFoldedResort(o.slug));
+  const selfIdx = countryOrdered.findIndex(o => o.slug === r.slug);
+  const prevResort = selfIdx > 0 ? countryOrdered[selfIdx - 1] : null;
+  const nextResort =
+    selfIdx >= 0 && selfIdx < countryOrdered.length - 1 ? countryOrdered[selfIdx + 1] : null;
   /* Access corridors (C11, §4.4): the nearby ring's cameras grouped
      by the road designation in each camera's own name — the C2/C6
      corridor parser reused unchanged. This is the drive-up check in
@@ -299,9 +306,18 @@ export default async function SkiResortPage({
           </div>
         </div>
 
+        {/* Content + ski sidebar rail: the sidebar carries the
+            section navigation and (once lit) the Powder Pass promo,
+            so the page renders exactly one promo — here in the rail
+            instead of a standalone block further down. */}
+        <div className="mt-12 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10 lg:items-start">
+          <div className="mb-10 lg:mb-0">
+            <SkiSidebar resorts={SKI_RESORTS} showPowder={powderPassEnabled(process.env)} variant="resort" />
+          </div>
+          <div className="min-w-0">
         {/* Route tool — first on the page: the drive is the first
             decision of a ski day, so the planner leads. */}
-        <section className="mt-12">
+        <section id="drive" className="scroll-mt-24">
           <h2 className="text-xl md:text-2xl font-bold mb-5">Plan the drive to {r.name}</h2>
           <SkiRouteTool resort={r} />
         </section>
@@ -328,7 +344,7 @@ export default async function SkiResortPage({
         </div>
 
         {/* Conditions */}
-        <section className="mt-12">
+        <section id="conditions" className="mt-12 scroll-mt-24">
           <h2 className="text-xl md:text-2xl font-bold mb-5">Conditions and road conditions</h2>
           {now && (
             <div className="mb-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 max-w-3xl">
@@ -470,6 +486,39 @@ export default async function SkiResortPage({
                   <ExternalLink className="w-3.5 h-3.5 text-white/35" />
                 </a>
               )}
+              {links?.lessons && (
+                <a
+                  href={links.lessons}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+                >
+                  <GraduationCap className="w-4 h-4 text-[#D4AF37]" /> Ski lessons
+                  <ExternalLink className="w-3.5 h-3.5 text-white/35" />
+                </a>
+              )}
+              {links?.rentals && (
+                <a
+                  href={links.rentals}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+                >
+                  <Wrench className="w-4 h-4 text-[#D4AF37]" /> Gear rentals
+                  <ExternalLink className="w-3.5 h-3.5 text-white/35" />
+                </a>
+              )}
+              {links?.parking && (
+                <a
+                  href={links.parking}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+                >
+                  <Car className="w-4 h-4 text-[#D4AF37]" /> Parking
+                  <ExternalLink className="w-3.5 h-3.5 text-white/35" />
+                </a>
+              )}
               {website && (
                 <a
                   href={website}
@@ -512,12 +561,13 @@ export default async function SkiResortPage({
         </section>
 
         {/* Resort cameras */}
-        <section className="mt-12">
+        <section id="cameras" className="mt-12 scroll-mt-24">
           <h2 className="text-xl md:text-2xl font-bold mb-2">{r.name} live cameras</h2>
           <p className="text-sm text-white/50 mb-5 max-w-3xl">
             Every camera within {RESORT_RADIUS_KM} km of the {r.name} base area, nearest first — slopes,
             lifts, the village and the top of the access road. Snow-stake cameras sit at the top of the
-            grid, labelled. Open any feed to watch it in full.
+            grid, labelled — open a snow stake feed to set a snowfall alert for it, the same camera
+            alerts as everywhere on WorldEye. Open any feed to watch it in full.
           </p>
           <SkiCameraGrid
             cameras={resortCams}
@@ -558,9 +608,8 @@ export default async function SkiResortPage({
           />
         </section>
 
-        {/* Powder Pass launch promo — only once the product is lit
-            (POWDER_PASS_ENABLED); dark ski pages never mention it. */}
-        {powderPassEnabled(process.env) && <PowderPassPromo />}
+        {/* The Powder Pass promo renders in this page's sidebar rail
+            (see SkiSidebar) — exactly one instance per page. */}
 
         {/* FAQ */}
         <section className="mt-12">
@@ -648,6 +697,24 @@ export default async function SkiResortPage({
           >
             <Camera className="w-4 h-4" /> Open the live map
           </a>
+          {prevResort && (
+            <Link
+              href={`/ski-webcams/${prevResort.slug}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+            >
+              <ArrowLeft className="w-4 h-4" /> {prevResort.name}
+            </Link>
+          )}
+          {nextResort && (
+            <Link
+              href={`/ski-webcams/${nextResort.slug}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+            >
+              {nextResort.name} <ChevronRight className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
+          </div>
         </div>
       </div>
       <SiteFooter />

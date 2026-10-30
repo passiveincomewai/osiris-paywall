@@ -22,7 +22,9 @@
     "tickets": "https://shop.brianhead.com/lift-tickets-passes"
   },
   "brighton": {
+    "lessons": "https://www.brightonresort.com/lessons",
     "lodging": "https://www.brightonresort.com/lodging",
+    "parking": "https://www.brightonresort.com/getting-here-and-parking",
     "tickets": "https://www.brightonresort.com/lift-tickets"
   },
   "brundage-mountain": {
@@ -110,6 +112,8 @@
     "trailMap": "https://kranjska-gora.si/aktivnosti/smucanje"
   },
   "lake-louise": {
+    "lessons": "https://www.skilouise.com/explore-winter/winter-ski-ride/ski-snowboard-lessons/",
+    "rentals": "https://www.skilouise.com/rentals-lessons/rentals/ski-rentals/",
     "tickets": "https://www.skilouise.com/tickets-passes/winter-tickets/single-day-lift-tickets/",
     "trailMap": "https://www.skilouise.com/explore-winter/winter-ski-ride/lift-runs-parks-status/"
   },
@@ -122,7 +126,9 @@
     "tickets": "https://www.loonmtn.com/lift-tickets"
   },
   "mammoth-mountain": {
+    "lessons": "https://www.mammothmountain.com/plan-your-trip/lessons/snowboard-ski-school",
     "lodging": "https://www.mammothmountain.com/plan-your-trip/mammoth-hotels",
+    "rentals": "https://www.mammothmountain.com/plan-your-trip/rentals/snowboard-ski-rentals",
     "trailMap": "https://www.mammothmountain.com/on-the-mountain/winter-trail-map",
     "tickets": "https://www.mammothmountain.com/discover-mammoth/buy-tickets-1"
   },
@@ -132,6 +138,8 @@
     "lodging": "https://skimonarch.com/lodging/"
   },
   "mt-bachelor": {
+    "lessons": "https://www.mtbachelor.com/lessons-rentals/",
+    "rentals": "https://www.mtbachelor.com/lessons-rentals/rentals/",
     "tickets": "https://www.mtbachelor.com/tickets-passes/lift-tickets/"
   },
   "myoko-kogen": {
@@ -189,11 +197,15 @@
     "tickets": "https://www.skisantafe.com/tickets-passes/day-tickets"
   },
   "snowbasin": {
+    "lessons": "https://www.snowbasin.com/lessons/",
     "lodging": "https://www.snowbasin.com/lodging/",
+    "rentals": "https://www.snowbasin.com/rentals/",
     "tickets": "https://www.snowbasin.com/tickets-passes/lift-tickets/",
     "trailMap": "https://www.snowbasin.com/the-mountain/trail-maps/"
   },
   "snowbird": {
+    "lessons": "https://www.snowbird.com/guiding-lessons/programs/",
+    "parking": "https://www.snowbird.com/the-mountain/parking/parking-overview/",
     "tickets": "https://www.snowbird.com/tickets-passes/tickets/",
     "lodging": "https://www.snowbird.com/lodging-amenities/lodging/"
   },
@@ -270,6 +282,7 @@
     "lodging": "https://bookings.skisilverstar.com/"
   },
   "whistler-blackcomb": {
+    "rentals": "https://www.whistlerblackcomb.com/tickets-and-passes/more-options/equipment-rentals.aspx",
     "tickets": "https://www.whistlerblackcomb.com/plan-your-trip/lift-access/tickets.aspx?adults=2&dragSearch=true",
     "trailMap": "https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/terrain-and-lift-status.aspx",
     "lodging": "https://www.whistlerblackcomb.com/plan-your-trip/stay/wb-lodging-deals.aspx"
@@ -288,6 +301,9 @@
     "lodging": "https://www.winterparkresort.com/plan-your-visit/book-lodging"
   },
   "palisades-tahoe": {
+    "lessons": "https://www.palisadestahoe.com/plan-your-visit/snowboard-ski-lessons",
+    "parking": "https://www.palisadestahoe.com/mountain-information/parking-and-road-conditions",
+    "rentals": "https://www.palisadestahoe.com/plan-your-visit/snowboard-ski-rental",
     "tickets": "https://www.palisadestahoe.com/plan-your-visit/lift-tickets",
     "trailMap": "https://www.palisadestahoe.com/mountain-information/trail-maps",
     "lodging": "https://www.palisadestahoe.com/plan-your-visit/lodging"

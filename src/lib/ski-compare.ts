@@ -23,6 +23,11 @@ import {
   getSkiResortLinks,
   type SkiResortLinks,
 } from "./ski-resort-links";
+import {
+  formatTicketPrice,
+  getSkiTicketPrice,
+  type SkiTicketPrice,
+} from "./ski-resort-prices";
 
 /* ------------------------------------------------------------------ */
 /* Popular pairs                                                       */
@@ -104,6 +109,8 @@ export interface CompareResortData {
   nearbyCameraCount: number;
   facts: SkiResortFacts | null;
   links: SkiResortLinks | null;
+  /** Officially-published day-ticket figure, where one was verified. */
+  ticketPrice: SkiTicketPrice | null;
   /** The resort's official website, when its domain is verified. */
   website: string | null;
 }
@@ -120,6 +127,7 @@ export function buildCompareData(resort: SkiResort): CompareResortData {
     nearbyCameraCount: resort.nearbyCameraCount,
     facts: getSkiResortFacts(resort.slug),
     links: getSkiResortLinks(resort.slug),
+    ticketPrice: getSkiTicketPrice(resort.slug),
     website: getResortWebsiteUrl(resort.slug),
   };
 }
@@ -135,7 +143,7 @@ export function allCompareData(): CompareResortData[] {
 export interface ComparisonRow {
   key: string;
   label: string;
-  /** Formatted value for each side; null renders as an em dash. */
+  /** Formatted value for each side; null renders as "Not available". */
   a: string | null;
   b: string | null;
 }
@@ -184,6 +192,12 @@ export function buildComparisonRows(
     { key: "terrain", label: "Skiable terrain", a: area(fa.skiableHectares), b: area(fb.skiableHectares) },
     { key: "lifts", label: "Lifts", a: num(fa.lifts), b: num(fb.lifts) },
     { key: "runs", label: "Runs", a: num(fa.runs), b: num(fb.runs) },
+    {
+      key: "liftTickets",
+      label: "Day lift tickets",
+      a: a.ticketPrice ? formatTicketPrice(a.ticketPrice) : null,
+      b: b.ticketPrice ? formatTicketPrice(b.ticketPrice) : null,
+    },
   ];
 }
 

@@ -28,16 +28,32 @@ export interface SkiResortLinks {
   trailMap?: string;
   /** The resort's official lodging / accommodation page. */
   lodging?: string;
+  /** The resort's official ski / snowboard lessons page. */
+  lessons?: string;
+  /** The resort's official gear rental page. */
+  rentals?: string;
+  /** The resort's official parking / getting-here page. */
+  parking?: string;
 }
 
 export type SkiLinkKind = keyof SkiResortLinks;
 
-export const SKI_LINK_KINDS: SkiLinkKind[] = ["tickets", "trailMap", "lodging"];
+export const SKI_LINK_KINDS: SkiLinkKind[] = [
+  "tickets",
+  "trailMap",
+  "lodging",
+  "lessons",
+  "rentals",
+  "parking",
+];
 
 export const SKI_LINK_LABELS: Record<SkiLinkKind, string> = {
   tickets: "Buy lift tickets",
   trailMap: "Trail map",
   lodging: "Lodging",
+  lessons: "Ski lessons",
+  rentals: "Gear rentals",
+  parking: "Parking",
 };
 
 const LINKS = linksData as Record<string, SkiResortLinks>;

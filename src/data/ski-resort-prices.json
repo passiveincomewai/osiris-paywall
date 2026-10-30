@@ -1,0 +1,14 @@
+{
+  "brighton": {
+    "checked": "2026-10-30",
+    "detail": "Winter lift tickets (all-day / afternoon / night) shown from $72 on the official tickets page.",
+    "label": "From $72",
+    "source": "https://www.brightonresort.com/lift-tickets"
+  },
+  "snowbird": {
+    "checked": "2026-10-30",
+    "detail": "Adult full-day lift tickets; the official tickets page states full-day prices starting at $195 and its own product data gives the range 195 to 239 USD.",
+    "label": "$195–$239",
+    "source": "https://www.snowbird.com/tickets-passes/tickets/"
+  }
+}

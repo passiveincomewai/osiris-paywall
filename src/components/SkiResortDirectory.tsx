@@ -7,23 +7,35 @@ import {
   applySkiDirectoryQuery,
   resortInitials,
   skiCountryCounts,
+  skiPassCounts,
   totalCameras,
+  type SkiGroupBy,
+  type SkiPassFilter,
   type SkiResortLogoMap,
   type SkiSortKey,
 } from "@/lib/ski-directory";
+import type { SkiPassName } from "@/lib/ski-resort-passes";
 
 /**
  * The /ski-webcams resort directory: every resort as a card, with a
- * sticky search / country-filter / sort toolbar. The server page hands
- * over the full resort list (and the verified-logo map), so the initial
- * HTML still carries every card; filtering is a pure client re-render
- * over src/lib/ski-directory, the module the tests pin.
+ * sticky search / country-filter / pass-filter / sort toolbar. The
+ * server page hands over the full resort list (and the verified-logo
+ * map), so the initial HTML still carries every card; filtering is a
+ * pure client re-render over src/lib/ski-directory, the module the
+ * tests pin. The hub's ?search= / ?pass= / ?group= links land here as
+ * initial state (the page remounts this component per param set).
  */
 
 const SORT_OPTIONS: Array<{ value: SkiSortKey; label: string }> = [
   { value: "name-asc", label: "Name A–Z" },
   { value: "name-desc", label: "Name Z–A" },
   { value: "cameras", label: "Most cameras" },
+];
+
+const GROUP_OPTIONS: Array<{ value: SkiGroupBy; label: string }> = [
+  { value: "country", label: "Group by country" },
+  { value: "region", label: "Group by state / region" },
+  { value: "pass", label: "Group by pass" },
 ];
 
 function cameraLabel(resort: SkiResort): string {
@@ -111,7 +123,7 @@ function ResortCard({
   );
 }
 
-function CountryChip({
+function FilterChip({
   label,
   count,
   active,
@@ -142,6 +154,9 @@ export default function SkiResortDirectory({
   resorts,
   logos,
   noPageSlugs,
+  initialSearch = "",
+  initialPass = null,
+  initialGroupBy = "country",
 }: {
   resorts: SkiResort[];
   logos: SkiResortLogoMap;
@@ -149,21 +164,30 @@ export default function SkiResortDirectory({
    *  page link. Slugs arrive as a prop so this client component
    *  never imports the gates module's datasets. */
   noPageSlugs?: string[];
+  /** Landing state from the hub's ?search= / ?pass= / ?group= links. */
+  initialSearch?: string;
+  initialPass?: SkiPassFilter;
+  initialGroupBy?: SkiGroupBy;
 }) {
   const noPage = useMemo(() => new Set(noPageSlugs ?? []), [noPageSlugs]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
   const [country, setCountry] = useState<string | null>(null);
+  const [pass, setPass] = useState<SkiPassFilter>(initialPass);
+  const [groupBy, setGroupBy] = useState<SkiGroupBy>(initialGroupBy);
   const [sort, setSort] = useState<SkiSortKey>("name-asc");
 
   const countries = useMemo(() => skiCountryCounts(resorts), [resorts]);
+  const passCounts = useMemo(() => skiPassCounts(resorts), [resorts]);
   const result = useMemo(
-    () => applySkiDirectoryQuery(resorts, { search, country, sort }),
-    [resorts, search, country, sort],
+    () => applySkiDirectoryQuery(resorts, { search, country, pass, groupBy, sort }),
+    [resorts, search, country, pass, groupBy, sort],
   );
 
   const reset = () => {
     setSearch("");
     setCountry(null);
+    setPass(null);
+    setGroupBy("country");
     setSort("name-asc");
   };
 
@@ -197,16 +221,31 @@ export default function SkiResortDirectory({
               </option>
             ))}
           </select>
+          <label className="sr-only" htmlFor="ski-directory-group">
+            Group resorts
+          </label>
+          <select
+            id="ski-directory-group"
+            value={groupBy}
+            onChange={(e) => setGroupBy(e.target.value as SkiGroupBy)}
+            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white focus:border-[#D4AF37]/60 focus:outline-none [&>option]:bg-[#0b0f1a]"
+          >
+            {GROUP_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="mt-2.5 flex flex-wrap gap-1.5" role="group" aria-label="Filter by country">
-          <CountryChip
-            label="All"
+          <FilterChip
+            label="All countries"
             count={resorts.length}
             active={country === null}
             onClick={() => setCountry(null)}
           />
           {countries.map((c) => (
-            <CountryChip
+            <FilterChip
               key={c.country}
               label={c.country}
               count={c.count}
@@ -214,6 +253,29 @@ export default function SkiResortDirectory({
               onClick={() => setCountry(c.country)}
             />
           ))}
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-1.5" role="group" aria-label="Filter by pass">
+          <FilterChip
+            label="All passes"
+            count={resorts.length}
+            active={pass === null}
+            onClick={() => setPass(null)}
+          />
+          {passCounts.passes.map(({ pass: p, count }) => (
+            <FilterChip
+              key={p}
+              label={p}
+              count={count}
+              active={pass === p}
+              onClick={() => setPass(p as SkiPassName)}
+            />
+          ))}
+          <FilterChip
+            label="Independent / no listed pass"
+            count={passCounts.none}
+            active={pass === "none"}
+            onClick={() => setPass("none")}
+          />
         </div>
         {result.filtering && (
           <div className="mt-2.5 flex items-center justify-between gap-3">
@@ -254,18 +316,27 @@ export default function SkiResortDirectory({
           </ul>
         )
       ) : (
-        result.groups.map(({ country: groupCountry, resorts: list }) => (
-          <div key={groupCountry} className="mb-8">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white/60 mb-3">
-              {groupCountry}
-            </h3>
-            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {list.map((r) => (
-                <ResortCard key={r.slug} resort={r} logos={logos} hasPage={!noPage.has(r.slug)} />
-              ))}
-            </ul>
-          </div>
-        ))
+        <>
+          {groupBy === "pass" && (
+            <p className="mb-5 max-w-3xl text-xs leading-relaxed text-white/45">
+              Grouped by the pass programmes WorldEye has a documented affiliation for. A resort
+              on more than one pass appears under each of its programmes; resorts with no
+              documented affiliation are grouped as independent.
+            </p>
+          )}
+          {result.groups.map(({ key, label, resorts: list }) => (
+            <div key={key} className="mb-8">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white/60 mb-3">
+                {label}
+              </h3>
+              <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {list.map((r) => (
+                  <ResortCard key={r.slug} resort={r} logos={logos} hasPage={!noPage.has(r.slug)} />
+                ))}
+              </ul>
+            </div>
+          ))}
+        </>
       )}
     </div>
   );

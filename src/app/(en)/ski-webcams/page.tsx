@@ -18,7 +18,7 @@ import {
 import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiResortDirectory from "@/components/SkiResortDirectory";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
-import PowderPassPromo from "@/components/PowderPassPromo";
+import SkiSidebar from "@/components/SkiSidebar";
 import { powderPassEnabled } from "@/lib/ski/access";
 import { plural } from "@/lib/country-page-content";
 import {
@@ -29,7 +29,12 @@ import {
 } from "@/lib/ski-resorts";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
 import { FOLDED_RESORT_SLUGS, RESORT_PAGE_COUNT } from "@/lib/indexation-gates";
-import type { SkiResortLogoMap } from "@/lib/ski-directory";
+import type {
+  SkiGroupBy,
+  SkiPassFilter,
+  SkiResortLogoMap,
+} from "@/lib/ski-directory";
+import { SKI_PASS_NAMES, type SkiPassName } from "@/lib/ski-resort-passes";
 import skiLogosData from "@/data/ski-logos.json";
 import type { CountryCamera } from "@/lib/country-cameras";
 import VoiceQA from "@/components/seo/VoiceQA";
@@ -177,7 +182,22 @@ async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
   return byResort;
 }
 
-export default async function SkiWebcamsPage() {
+export default async function SkiWebcamsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; pass?: string; group?: string }>;
+}) {
+  const params = await searchParams;
+  const initialSearch = typeof params.search === "string" ? params.search : "";
+  const initialPass: SkiPassFilter =
+    params.pass === "none"
+      ? "none"
+      : (SKI_PASS_NAMES as readonly string[]).includes(params.pass ?? "")
+        ? (params.pass as SkiPassName)
+        : null;
+  const initialGroupBy: SkiGroupBy =
+    params.group === "region" || params.group === "pass" ? params.group : "country";
+  const powder = powderPassEnabled(process.env);
   const samples = await loadSamples();
   const totalCameras = SKI_RESORTS.reduce((n, r) => n + r.resortCameraCount + r.nearbyCameraCount, 0);
   const featured = [...SKI_RESORTS]
@@ -209,15 +229,10 @@ export default async function SkiWebcamsPage() {
       />
       <Intro paragraphs={INTRO} />
 
-      {/* Powder Pass launch promo — rendered only once the owner has
-          lit the product (POWDER_PASS_ENABLED); while the flag is off
-          the ski pages carry no Powder Pass mention at all. */}
-      {powderPassEnabled(process.env) && <PowderPassPromo />}
-
-      {/* Resort directory — every resort the catalogue covers, grouped
-          by country, with its counted cameras. The directory component
-          renders the full list server-side and adds search, country
-          filters and sorting on the client. */}
+      {/* Directory + ski sidebar. The Powder Pass promo lives in the
+          sidebar rail (rendered only once the owner has lit the
+          product — POWDER_PASS_ENABLED); while the flag is off the ski
+          pages carry no Powder Pass mention at all. */}
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-2">Ski resorts with live cameras</h2>
         <p className="text-sm text-white/50 mb-5 max-w-3xl">
@@ -225,7 +240,20 @@ export default async function SkiWebcamsPage() {
           official weather alerts where WorldEye has them, and the route tool for your drive.
           The smallest resorts are listed here without a page of their own until their coverage grows.
         </p>
-        <SkiResortDirectory resorts={SKI_RESORTS} logos={SKI_LOGOS} noPageSlugs={[...FOLDED_RESORT_SLUGS]} />
+        <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8 lg:items-start">
+          <div className="mb-8 lg:mb-0">
+            <SkiSidebar resorts={SKI_RESORTS} showPowder={powder} />
+          </div>
+          <SkiResortDirectory
+            key={`${initialSearch}|${initialPass ?? ""}|${initialGroupBy}`}
+            resorts={SKI_RESORTS}
+            logos={SKI_LOGOS}
+            noPageSlugs={[...FOLDED_RESORT_SLUGS]}
+            initialSearch={initialSearch}
+            initialPass={initialPass}
+            initialGroupBy={initialGroupBy}
+          />
+        </div>
       </section>
 
       {/* Compare tool — side-by-side terrain, cameras and official

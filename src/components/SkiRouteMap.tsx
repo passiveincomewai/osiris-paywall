@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 /**
@@ -38,26 +38,55 @@ export default function SkiRouteMap({
   destination: { lat: number; lng: number; label: string };
 }) {
   const holderRef = useRef<HTMLDivElement>(null);
+  /* A map that cannot start (WebGL unavailable, library or basemap
+     unreachable) must say so — the previous build swallowed every
+     failure and left a black rectangle where the map belonged. */
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     const holder = holderRef.current;
     if (!holder || route.length < 2) return;
     let cancelled = false;
     let map: { remove: () => void } | null = null;
+    setFailed(false);
 
     import('maplibre-gl')
       .then(maplibregl => {
         if (cancelled || !holderRef.current) return;
-        const m = new maplibregl.Map({
-          container: holderRef.current,
-          style: BASEMAP_STYLE,
-          attributionControl: { compact: true },
-        });
+        /* A sane initial viewport centred on the drive, so the map is
+           never a blank world view waiting on the style load. */
+        const mid = route[Math.floor(route.length / 2)];
+        let m: InstanceType<typeof maplibregl.Map>;
+        try {
+          m = new maplibregl.Map({
+            container: holderRef.current,
+            style: BASEMAP_STYLE,
+            center: [mid[0], mid[1]],
+            zoom: 8,
+            attributionControl: { compact: true },
+          });
+        } catch {
+          if (!cancelled) setFailed(true);
+          return;
+        }
         map = m;
+        let loaded = false;
+        m.on('error', () => {
+          /* Errors before the style loads are fatal to the map (style
+             unreachable, WebGL context lost); tile-level errors after
+             load are transient and the map recovers on its own. */
+          if (!loaded && !cancelled) setFailed(true);
+        });
         m.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        /* The holder may have been laid out after construction (the
+           result block mounts in the same commit) — force a resize so
+           the canvas matches its box instead of rendering dark. */
+        m.resize();
 
         m.on('load', () => {
+          loaded = true;
           if (cancelled) return;
+          m.resize();
           m.addSource('ski-route', {
             type: 'geojson',
             data: {
@@ -155,8 +184,10 @@ export default function SkiRouteMap({
         });
       })
       .catch(() => {
-        /* No map (WebGL unavailable, style unreachable): the ordered
-           camera list below carries the result on its own. */
+        /* Library failed to load at all — surface the fallback rather
+           than a silent black box. The ordered camera list below the
+           map carries the result on its own. */
+        if (!cancelled) setFailed(true);
       });
 
     return () => {
@@ -166,6 +197,20 @@ export default function SkiRouteMap({
   }, [route, cameras, start, destination]);
 
   if (route.length < 2) return null;
+  if (failed) {
+    return (
+      <div
+        className="flex h-[340px] md:h-[420px] w-full flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0b0f1a] px-6 text-center"
+        role="note"
+      >
+        <p className="text-sm font-semibold text-white/85">The route map couldn’t load here</p>
+        <p className="max-w-md text-xs leading-relaxed text-white/50">
+          Your browser couldn’t start the map (graphics acceleration or the basemap may be
+          unavailable). Every camera on your drive is listed below in the order you’ll pass it.
+        </p>
+      </div>
+    );
+  }
   return (
     <div
       ref={holderRef}

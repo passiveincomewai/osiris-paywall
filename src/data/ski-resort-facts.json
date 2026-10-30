@@ -40,7 +40,13 @@
     "about": [
       "One of Utah's original ski areas, Brighton spreads across the head of Big Cottonwood Canyon where the canyon's road ends — a compact, tree-lined mountain that locals treat as the canyon's locals' hill, with a long-standing reputation for night skiing under the lights. Storms that track up Big Cottonwood load its glades first, and the base cameras on this page show the result before the report numbers do."
     ],
-    "access": "Brighton sits at the very top of Big Cottonwood Canyon, about 30 miles from downtown Salt Lake City, reached by State Route 190 as it climbs past Solitude to the canyon head. The SR-190 cameras in the nearby grid below are the drive: they show the canyon road's switchbacks and the parking picture at the top before you are in either."
+    "access": "Brighton sits at the very top of Big Cottonwood Canyon, about 30 miles from downtown Salt Lake City, reached by State Route 190 as it climbs past Solitude to the canyon head. The SR-190 cameras in the nearby grid below are the drive: they show the canyon road's switchbacks and the parking picture at the top before you are in either.",
+    "baseElevationM": 2669,
+    "summitElevationM": 3277,
+    "verticalM": 533,
+    "skiableHectares": 425,
+    "lifts": 6,
+    "runs": 66
   },
   "copper-mountain": {
     "about": [
@@ -432,21 +438,32 @@
       "One of Norway's oldest ski towns, Geilo spreads along the Ustedalen valley floor with lifts on both sides — Geilolia above the town centre and Vestlia across the valley — under the edge of the Hardangervidda plateau. It is a railway town as much as a ski town: the Bergen Line runs straight through it, and half the village arrives by train.",
       "Because the lifts face each other across the valley, the cameras give a genuinely useful choice: the sunny side and the sheltered side are both on this page."
     ],
-    "access": "Geilo sits on Route 7 (the Hallingdal road) roughly halfway between Oslo and Bergen, and on the Bergen Railway — the cameras below watch Rv7 climb toward the Hardangervidda on one side and drop into Hallingdal on the other."
+    "access": "Geilo sits on Route 7 (the Hallingdal road) roughly halfway between Oslo and Bergen, and on the Bergen Railway — the cameras below watch Rv7 climb toward the Hardangervidda on one side and drop into Hallingdal on the other.",
+    "baseElevationM": 779,
+    "summitElevationM": 1178,
+    "verticalM": 399,
+    "lifts": 20
   },
   "hakuba": {
     "about": [
       "The Hakuba Valley is Japan's alpine heartland: a string of resorts — Happo-One, Goryu, Hakuba 47, Iwatake, Tsugaike and more — along the Hime River under the Hakuba Sanzan peaks of the Northern Alps. Happo-One hosted the downhill and super-G of the 1998 Nagano Winter Olympics, and its upper slopes, the Happo Ridge, are a mountaineer's line above the pistes.",
       "With this many resorts in one valley, this page's real job is comparison: on a January storm morning, the base cameras at each area show which village is dug out and which ridge is in the wind."
     ],
-    "access": "Hakuba is reached from Nagano city by the road up the Hime River valley, or on the JR Ōito Line to Hakuba station. The cameras below cover the valley road from the Matsumoto side and the streets of the villages under the peaks."
+    "access": "Hakuba is reached from Nagano city by the road up the Hime River valley, or on the JR Ōito Line to Hakuba station. The cameras below cover the valley road from the Matsumoto side and the streets of the villages under the peaks.",
+    "baseElevationM": 760,
+    "summitElevationM": 1831,
+    "verticalM": 1071
   },
   "hemsedal": {
     "about": [
       "They call it the Scandinavian Alps, and the profile earns it: three peaks around the village, topped by Totten at just under 1,500 m, with some of Norway's steepest lift-served fall lines and a long spring season. Hemsedal is the Oslofjord region's serious mountain — a four-hour drive that the whole capital treats as a commute on winter Fridays.",
       "The summit feeds here read the high Buskerud weather honestly: Totten's top station sits above the last trees, in whatever the fjellet is doing."
     ],
-    "access": "Hemsedal is reached from Oslo by the E16 to Fagernes and Route 51/52 over the Hemsedalsfjellet, or from the west through the Lærdal tunnel side. The cameras below are the Rv52 corridor across the mountain plateau — the drive's exposed stretch."
+    "access": "Hemsedal is reached from Oslo by the E16 to Fagernes and Route 51/52 over the Hemsedalsfjellet, or from the west through the Lærdal tunnel side. The cameras below are the Rv52 corridor across the mountain plateau — the drive's exposed stretch.",
+    "baseElevationM": 620,
+    "summitElevationM": 1450,
+    "verticalM": 830,
+    "lifts": 22
   },
   "kitzbuhel": {
     "about": [
@@ -467,7 +484,13 @@
       "Queenstown has two ski areas in view of each other across Lake Wakatipu: Coronet Peak, New Zealand's oldest commercial ski field and its night-skiing home, a rolling tussock mountain twenty minutes from the town centre; and The Remarkables, whose jagged range is the backdrop of every photograph ever taken of the town, with steep chutes above a high alpine basin.",
       "The pair makes this page a genuine choice tool: the Coronet feeds and the Remarkables feeds face different aspects of the same weather, and the better day is usually visible before you leave town."
     ],
-    "access": "Coronet Peak is reached through Arthur's Point on the Coronet Peak Road; The Remarkables climb their own access road from State Highway 6 south of Frankton. The cameras below watch the SH6 corridor along the lake and the Kingston Road — Queenstown's winter drive in both directions."
+    "access": "Coronet Peak is reached through Arthur's Point on the Coronet Peak Road; The Remarkables climb their own access road from State Highway 6 south of Frankton. The cameras below watch the SH6 corridor along the lake and the Kingston Road — Queenstown's winter drive in both directions.",
+    "baseElevationM": 1187,
+    "summitElevationM": 1649,
+    "verticalM": 462,
+    "skiableHectares": 280,
+    "lifts": 7,
+    "runs": 32
   },
   "sierra-nevada": {
     "about": [
@@ -492,14 +515,21 @@
       "The Arlberg is where alpine skiing was industrialised — Hannes Schneider's ski school turned St. Anton into the sport's first resort town — and the linked Ski Arlberg area is now Austria's largest, reaching over the pass to Lech and Zürs. The Valluga, at 2,811 m, is its summit and its weather vane.",
       "The cameras on this page divide like the skiing does: the Galzig and Valluga feeds for the high Arlberg weather, the town feeds for the famous après-ski street doing its evening shift."
     ],
-    "access": "St. Anton sits directly on the Arlberg road and rail line: the Arlberg tunnel and pass road (S16/B197) from the Inn valley, and the Flexen Pass road down from Lech. Its station is on the main Zurich–Vienna rail line — the cameras below watch both passes."
+    "access": "St. Anton sits directly on the Arlberg road and rail line: the Arlberg tunnel and pass road (S16/B197) from the Inn valley, and the Flexen Pass road down from Lech. Its station is on the main Zurich–Vienna rail line — the cameras below watch both passes.",
+    "baseElevationM": 1304,
+    "summitElevationM": 2811,
+    "verticalM": 1507
   },
   "st-moritz": {
     "about": [
       "The original winter resort — the place that invented alpine winter tourism in 1864 — and twice a Winter Olympics host (1928 and 1948). The skiing spreads over Corviglia above the town, Corvatsch across the Engadin valley, and the Diavolezza glacier group down toward Italy, around a lake that freezes into a racecourse each winter.",
       "The Engadin's light is the local legend — high, dry, and sunny — and the lake-level and summit cameras between them show the famous Maloja wind days when the valley turns."
     ],
-    "access": "St. Moritz is reached over the Julier Pass road from Chur, or on the Rhaetian Railway's Albula line — a UNESCO-listed mountain railway — from Chur through the Albula tunnel. The cameras below are the Engadin valley floor and the passes."
+    "access": "St. Moritz is reached over the Julier Pass road from Chur, or on the Rhaetian Railway's Albula line — a UNESCO-listed mountain railway — from Chur through the Albula tunnel. The cameras below are the Engadin valley floor and the passes.",
+    "baseElevationM": 1772,
+    "summitElevationM": 3057,
+    "verticalM": 1285,
+    "lifts": 23
   },
   "thredbo": {
     "about": [
@@ -585,7 +615,13 @@
       "Monarch Mountain is an independently minded Colorado ski area on Monarch Pass, named for the pass and the 19th-century town of Monarch that once stood nearby. The area has 54 trails, two terrain parks and the Mirkwood extreme-terrain area.",
       "The Monarch Mountain Lodge sits three miles east of the lifts in the town of Garfield. Monarch's cameras double as the pass cameras — what they show is both the skiing and the state of the Continental Divide crossing."
     ],
-    "access": "Monarch sits on Monarch Pass on U.S. Highway 50, twenty miles west of Salida, Colorado, at the Continental Divide. US-50 over the pass is the whole drive — the cameras on this page line the highway corridor so you can watch the divide crossing itself before you leave Salida or Gunnison."
+    "access": "Monarch sits on Monarch Pass on U.S. Highway 50, twenty miles west of Salida, Colorado, at the Continental Divide. US-50 over the pass is the whole drive — the cameras on this page line the highway corridor so you can watch the divide crossing itself before you leave Salida or Gunnison.",
+    "baseElevationM": 3289,
+    "summitElevationM": 3650,
+    "verticalM": 361,
+    "skiableHectares": 324,
+    "lifts": 7,
+    "runs": 63
   },
   "northstar-california": {
     "about": [
@@ -641,7 +677,13 @@
       "Snowmass is the largest of the four ski areas operated together as Aspen/Snowmass, anchored by the town of Snowmass Village. Its terrain sprawls across a whole mountainside above the village — big enough that each sector skis like its own area.",
       "The town is also known for the Snowmastodon site, where a bulldozer working at Ziegler Reservoir in 2010 uncovered a fossilized Ice Age ecosystem. In winter the cameras here trade fossils for snowfall, watching the village and the Roaring Fork approach."
     ],
-    "access": "Snowmass rises above Snowmass Village in Pitkin County, Colorado, in the Roaring Fork Valley near Aspen. The village sits at the mountain's base — the cameras on this page cover the village, the slopes above it and the highway corridor through the valley."
+    "access": "Snowmass rises above Snowmass Village in Pitkin County, Colorado, in the Roaring Fork Valley near Aspen. The village sits at the mountain's base — the cameras on this page cover the village, the slopes above it and the highway corridor through the valley.",
+    "baseElevationM": 2470,
+    "summitElevationM": 3810,
+    "verticalM": 1343,
+    "skiableHectares": 1361,
+    "lifts": 17,
+    "runs": 94
   },
   "sugar-bowl": {
     "about": [
@@ -656,14 +698,26 @@
       "Sundance Resort is Robert Redford's mountain hideaway in the Wasatch, a small, art-and-nature-focused resort tucked into a side canyon below Mount Timpanogos. The skiing is intimate: forested runs, a compact village and a deliberate absence of sprawl.",
       "The cameras here are as much canyon cameras as ski cameras — Sundance is the gateway to the Timpanogos trailheads and the Alpine Loop, and its feeds show the whole approach."
     ],
-    "access": "Sundance Resort climbs the slopes below Mount Timpanogos in Utah County, up Provo Canyon. The drive from the valley floor follows the canyon past Bridal Veil Falls to the resort — the cameras on this page watch the canyon corridor and the resort village at its top."
+    "access": "Sundance Resort climbs the slopes below Mount Timpanogos in Utah County, up Provo Canyon. The drive from the valley floor follows the canyon past Bridal Veil Falls to the resort — the cameras on this page watch the canyon corridor and the resort village at its top.",
+    "baseElevationM": 1860,
+    "summitElevationM": 2515,
+    "verticalM": 655,
+    "skiableHectares": 182,
+    "lifts": 6,
+    "runs": 44
   },
   "wolf-creek": {
     "about": [
       "Wolf Creek Ski Area is best known for receiving more average annual snowfall than any other resort in Colorado — about 430 inches a year. The snow stacks up on Wolf Creek Pass at the Continental Divide, and the area skis like it: a powder mountain first, everything else second.",
       "It is an unpretentious, family-run-feeling area whose parking lot sits practically on the divide. Check the cameras the night before a storm cycle — Wolf Creek is where Colorado's snow totals are made."
     ],
-    "access": "Wolf Creek sits on Wolf Creek Pass between Pagosa Springs and South Fork in southwest Colorado, on U.S. Highway 160. The pass is the ski area's front door — the cameras on this page watch US-160 over the divide, so the same view that shows the snowfall shows the drive."
+    "access": "Wolf Creek sits on Wolf Creek Pass between Pagosa Springs and South Fork in southwest Colorado, on U.S. Highway 160. The pass is the ski area's front door — the cameras on this page watch US-160 over the divide, so the same view that shows the snowfall shows the drive.",
+    "baseElevationM": 3139,
+    "summitElevationM": 3628,
+    "verticalM": 489,
+    "skiableHectares": 647,
+    "lifts": 11,
+    "runs": 77
   },
   "brundage-mountain": {
     "about": [
@@ -866,7 +920,12 @@
       "Åre is one of Scandinavia's leading ski resorts, in Jämtland County, Sweden. Tourism drives a quarter of the local economy, anchored by the downhill resorts at Åre, Duved and Storlien.",
       "The village of 3,200 hosts World Cup racing and one of northern Europe's biggest bike parks in summer. The cameras on this page cover the Åreskutan slopes and the Indalsälven valley corridor through the village."
     ],
-    "access": "Åre stands in the Indalsälven valley in western Jämtland, on the E14 corridor between Östersund and Trondheim. The cameras here watch the valley highway, the village and the fjäll rising straight from its northern edge."
+    "access": "Åre stands in the Indalsälven valley in western Jämtland, on the E14 corridor between Östersund and Trondheim. The cameras here watch the valley highway, the village and the fjäll rising straight from its northern edge.",
+    "baseElevationM": 390,
+    "summitElevationM": 1420,
+    "verticalM": 1030,
+    "lifts": 46,
+    "runs": 112
   },
   "cerler": {
     "about": [
@@ -897,7 +956,12 @@
       "Hafjell is a village and ski resort in Øyer Municipality, in Norway's Gudbrandsdalen. It hosted the alpine skiing technical events — giant slalom and slalom — at the 1994 Winter Olympics, while the speed events ran at neighbouring Kvitfjell.",
       "Hafjell occasionally hosts World Cup slalom and giant slalom races. The cameras on this page cover its slopes above the valley and the Lillehammer-region corridor."
     ],
-    "access": "Hafjell rises above Øyer in the Gudbrandsdalen valley, north of Lillehammer on the E6 corridor. The cameras here watch the valley highway and the resort slopes climbing its eastern side."
+    "access": "Hafjell rises above Øyer in the Gudbrandsdalen valley, north of Lillehammer on the E6 corridor. The cameras here watch the valley highway and the resort slopes climbing its eastern side.",
+    "baseElevationM": 195,
+    "summitElevationM": 1059,
+    "verticalM": 864,
+    "lifts": 19,
+    "runs": 33
   },
   "hli-arfjall": {
     "about": [
@@ -914,14 +978,22 @@
       "Ischgl is a town in Austria's Paznaun valley whose ski resort links across the border with Samnaun, Switzerland, to form the Silvretta Arena — one of the largest linked ski areas in the Alps.",
       "The cameras on this page cover the Paznaun valley, the village and the slopes of the arena above it."
     ],
-    "access": "Ischgl stands in the Paznaun valley in Tyrol, reached up the valley road from Landeck. The drive follows the Trisanna river into the Silvretta group — the cameras here watch the valley corridor and the village at its head."
+    "access": "Ischgl stands in the Paznaun valley in Tyrol, reached up the valley road from Landeck. The drive follows the Trisanna river into the Silvretta group — the cameras here watch the valley corridor and the village at its head.",
+    "baseElevationM": 1377,
+    "summitElevationM": 2872,
+    "verticalM": 1495,
+    "lifts": 45
   },
   "kranjska-gora": {
     "about": [
       "Kranjska Gora is a town in northwestern Slovenia, on the Sava Dolinka River in Upper Carniola, close to the Austrian and Italian borders. The tripoint of the three countries lies on the mountain of Dreiländereck — Peč — above the town.",
       "Its ski slopes host the Vitranc Cup World Cup races. The cameras on this page cover the town, the Sava valley and the Julian Alps wall behind it."
     ],
-    "access": "Kranjska Gora sits in the Sava Dolinka valley between the Karawanks and the Julian Alps, on the road between Jesenice and the Wurzen Pass into Austria. The cameras here watch the valley road and the resort slopes at the town's edge."
+    "access": "Kranjska Gora sits in the Sava Dolinka valley between the Karawanks and the Julian Alps, on the road between Jesenice and the Wurzen Pass into Austria. The cameras here watch the valley road and the resort slopes at the town's edge.",
+    "baseElevationM": 811,
+    "summitElevationM": 1295,
+    "verticalM": 484,
+    "lifts": 19
   },
   "kvitfjell": {
     "about": [
@@ -936,7 +1008,8 @@
       "Lech am Arlberg is a mountain village and exclusive ski resort in Vorarlberg, on the banks of the river Lech. It belongs geographically to the Tannberg district but is part of the Arlberg ski region, administered together with Zürs, Zug, Oberlech and Stubenbach.",
       "Lech is one of the twelve members of the 'Best of the Alps' group, known for deep snow and a clientele of international royalty and skiers who return for decades. The cameras on this page cover the village and the Arlberg corridor it anchors."
     ],
-    "access": "Lech stands at the head of the Lech valley in Austria's westernmost state, reached by the Flexen Pass road from the Arlberg tunnel corridor or from Warth. The cameras here watch the pass road, the village street and the slopes above the river."
+    "access": "Lech stands at the head of the Lech valley in Austria's westernmost state, reached by the Flexen Pass road from the Arlberg tunnel corridor or from Warth. The cameras here watch the pass road, the village street and the slopes above the river.",
+    "baseElevationM": 1444
   },
   "levi": {
     "about": [
@@ -953,28 +1026,42 @@
       "Mayrhofen is the Zillertal's best-known town, in the Ziller river valley in Austrian Tyrol. Its ski areas — the Penken above town and the Ahorn across the valley — anchor one of Austria's most popular ski valleys.",
       "The cameras on this page cover the town and the Penken slopes, and the valley corridor that funnels the Zillertal's skiers."
     ],
-    "access": "Mayrhofen stands in the Zillertal about an hour from Innsbruck, the Tyrolean capital. The valley road and the Zillertalbahn railway climb from Jenbach to the town — the cameras here watch that approach and the gondola stations at its top."
+    "access": "Mayrhofen stands in the Zillertal about an hour from Innsbruck, the Tyrolean capital. The valley road and the Zillertalbahn railway climb from Jenbach to the town — the cameras here watch that approach and the gondola stations at its top.",
+    "baseElevationM": 630,
+    "summitElevationM": 2590,
+    "verticalM": 1960
   },
   "naeba": {
     "about": [
       "Naeba Ski Resort spreads over the eastern slope of Mount Takenoko in Yuzawa, Niigata. The Naeba Prince Hotel at its base holds 1,299 rooms, 20 restaurants and its own small town of facilities.",
       "Naeba links with the Kagura ski areas via the Dragondola to form the combined Mt. Naeba resort, with the small family Asagai area across town. Its long season and snowmaking make it one of Japan's most popular resorts — the cameras here cover the slopes and the Prince Hotel base."
     ],
-    "access": "Naeba is 40 minutes from Echigo-Yuzawa Station on the Joetsu Shinkansen by non-stop express bus — the station is about 190 km from Tokyo. By road the drive climbs from Yuzawa town into the Asagai valley — the cameras on this page watch that approach and the resort front."
+    "access": "Naeba is 40 minutes from Echigo-Yuzawa Station on the Joetsu Shinkansen by non-stop express bus — the station is about 190 km from Tokyo. By road the drive climbs from Yuzawa town into the Asagai valley — the cameras on this page watch that approach and the resort front.",
+    "baseElevationM": 900,
+    "summitElevationM": 1789,
+    "verticalM": 889
   },
   "oberstdorf": {
     "about": [
       "Oberstdorf is a municipality in the Allgäu region of the Bavarian Alps — the southernmost settlement in Germany, and one of its highest towns, known for its skiing and hiking. The church spire at its center is the landmark for navigating town.",
       "The Nebelhorn and Fellhorn summits above town provide dramatic Alpine panoramas, and the Heini-Klopfer ski-flying hill — one of only five in the world — stands at the town's edge. The cameras on this page cover the town and its encircling peaks."
     ],
-    "access": "Oberstdorf sits at the head of the Iller valley in the Allgäu, where the road and railway from Kempten both end. The cameras here watch the valley approach and the Nebelhorn cable-car station in town."
+    "access": "Oberstdorf sits at the head of the Iller valley in the Allgäu, where the road and railway from Kempten both end. The cameras here watch the valley approach and the Nebelhorn cable-car station in town.",
+    "baseElevationM": 828,
+    "summitElevationM": 2224,
+    "verticalM": 1396,
+    "lifts": 6
   },
   "obertauern": {
     "about": [
       "Obertauern is a purpose-built winter sports resort on the Radstädter Tauern pass in Salzburger Land, split between the communities of Tweng and Untertauern. The village sits on the pass itself — the lifts leave from the main street in every direction.",
       "The cameras on this page are pass cameras as much as ski cameras: they show the Tauern road and the slopes in a single frame."
     ],
-    "access": "Obertauern stands on the Radstädter Tauern pass between Untertauern and Tweng, on the B99 over the Tauern range. The pass road is the resort — the cameras here watch the summit stretch and the descents on both sides."
+    "access": "Obertauern stands on the Radstädter Tauern pass between Untertauern and Tweng, on the B99 over the Tauern range. The pass road is the resort — the cameras here watch the summit stretch and the descents on both sides.",
+    "baseElevationM": 1665,
+    "summitElevationM": 2501,
+    "verticalM": 836,
+    "lifts": 26
   },
   "poiana-brasov": {
     "about": [
@@ -1008,21 +1095,34 @@
       "Saalbach-Hinterglemm is a municipality in the Pinzgau district of Salzburg, Austria, well known for its skiing. Its four-piste network — Saalbach, Hinterglemm, Fieberbrunn and Leogang — adds up to 270 kilometres of slopes.",
       "The resort is a short transfer from Salzburg Airport. The cameras on this page cover the Glemmtal valley, the twin villages and the circus of lifts above them."
     ],
-    "access": "Saalbach-Hinterglemm fills the Glemmtal valley in the Pinzgau, reached from Zell am See and Maishofen. The valley road threads both villages — the cameras here watch that road and the slopes closing the valley's head."
+    "access": "Saalbach-Hinterglemm fills the Glemmtal valley in the Pinzgau, reached from Zell am See and Maishofen. The valley road threads both villages — the cameras here watch that road and the slopes closing the valley's head.",
+    "baseElevationM": 1003,
+    "summitElevationM": 2096,
+    "verticalM": 1093,
+    "lifts": 70
   },
   "salen": {
     "about": [
       "Sälen, in Dalarna County, Sweden, is best known as the start of Vasaloppet — the world's oldest (since 1922) and largest cross-country ski race, with over 15,000 participants in the main race. It is also a cluster of seven alpine ski resorts: the oldest, Högfjällshotellet, dates to 1937.",
       "Newer areas like Hundfjället and Stöten bring the vertical to 350 m; SkiStar operates the linked Lindvallen–Högfjällshotellet and Tandådalen–Hundfjället pairs. The cameras on this page cover the Sälen fjälls and the village."
     ],
-    "access": "Sälen is a locality in Malung-Sälen Municipality on the Västerdalälven river in western Dalarna. The drive climbs from Malung into the fjäll country — the cameras here watch the village and the string of ski areas along the valley."
+    "access": "Sälen is a locality in Malung-Sälen Municipality on the Västerdalälven river in western Dalarna. The drive climbs from Malung into the fjäll country — the cameras here watch the village and the string of ski areas along the valley.",
+    "baseElevationM": 579,
+    "summitElevationM": 887,
+    "verticalM": 308,
+    "lifts": 58
   },
   "shiga-kogen": {
     "about": [
       "Shiga Kogen is a ski resort and hiking area in the highlands of Yamanouchi, Nagano, inside Joshin'etsu-kogen National Park. In 1980 an area of 13,000 hectares around it was designated a UNESCO Man and the Biosphere Reserve.",
       "The ski area spreads as a linked plateau of valleys and peaks above the onsen town of Yamanouchi. The cameras on this page sample the plateau and the mountain road that crosses it."
     ],
-    "access": "Shiga Kogen spreads across the highlands above Yamanouchi, reached by the mountain road that climbs from the onsen town past the snow monkeys of Jigokudani toward the Shibutoge pass. The cameras here watch that road and the resort's separate valleys."
+    "access": "Shiga Kogen spreads across the highlands above Yamanouchi, reached by the mountain road that climbs from the onsen town past the snow monkeys of Jigokudani toward the Shibutoge pass. The cameras here watch that road and the resort's separate valleys.",
+    "baseElevationM": 1340,
+    "summitElevationM": 2307,
+    "verticalM": 967,
+    "skiableHectares": 607,
+    "lifts": 47
   },
   "shymbulak": {
     "about": [
@@ -1037,14 +1137,22 @@
       "The Remarkables range rises sharply from the southeastern shore of Lake Wakatipu, forming Queenstown's famous backdrop. The range's highest point, Single Cone, reaches 2,319 metres, and Lake Alta sits in a glacial cirque below the Double Cone peaks.",
       "The Remarkables Skifield climbs the range's northern face — the cameras on this page cover the skifield, its access road switchbacks and the lake shore it towers over."
     ],
-    "access": "The Remarkables Skifield is reached from Queenstown via the winding access road that climbs from the Frankton flats to the base area high on the range. The cameras here watch that climb and the Wakatipu shore below."
+    "access": "The Remarkables Skifield is reached from Queenstown via the winding access road that climbs from the Frankton flats to the base area high on the range. The cameras here watch that climb and the Wakatipu shore below.",
+    "baseElevationM": 1586,
+    "summitElevationM": 1943,
+    "verticalM": 357,
+    "skiableHectares": 220,
+    "lifts": 8
   },
   "vuokatti": {
     "about": [
       "Vuokatti, part of the municipality of Sotkamo in Finland's Kainuu region, is home to more than 6,000 inhabitants and a national Olympic Training Center for cross-country skiing, biathlon and Nordic combined.",
       "Its hills — the highest, Porttivaara, at 345 m — hold a ski resort, a sports academy and a skiing tunnel that makes cross-country skiing possible in all seasons. The cameras on this page cover the resort slopes and the lakes district around Sotkamo."
     ],
-    "access": "Vuokatti stands in Sotkamo in the Kainuu lake district of eastern Finland, with its own railway station on the hill range of the same name. The cameras here watch the village, the resort hill and the Kajaani road corridor."
+    "access": "Vuokatti stands in Sotkamo in the Kainuu lake district of eastern Finland, with its own railway station on the hill range of the same name. The cameras here watch the village, the resort hill and the Kajaani road corridor.",
+    "baseElevationM": 152,
+    "summitElevationM": 312,
+    "verticalM": 160
   },
   "yllas": {
     "about": [
@@ -1059,14 +1167,24 @@
       "Zao Onsen is a famous hot-spring town on Mount Zao in Yamagata, in the northern part of Honshu. The ski area spreads over the mountain above the town, climbing the volcano's flanks from the onsen streets.",
       "The pairing is the point: ski the volcano by day, soak in the sulphur springs by night. The cameras on this page cover the town and the slopes climbing from its roofline."
     ],
-    "access": "Zao Onsen sits on Mount Zao above Yamagata city, reached by the mountain road that climbs from the city into the onsen town. The cameras here watch that climb and the resort streets at its top."
+    "access": "Zao Onsen sits on Mount Zao above Yamagata city, reached by the mountain road that climbs from the city into the onsen town. The cameras here watch that climb and the resort streets at its top.",
+    "baseElevationM": 780,
+    "summitElevationM": 1661,
+    "verticalM": 881,
+    "lifts": 41,
+    "runs": 25
   },
   "courmayeur": {
     "about": [
       "Courmayeur is a town in Italy's autonomous Aosta Valley, serving as one of the two bases on either side of Mont Blanc — Europe's highest mountain — with Chamonix on the French side. Its lifts climb toward the great south face of the massif.",
       "The cameras on this page cover the town, the Val Veny and Val Ferret valleys that flank it, and the Mont Blanc corridor it guards."
     ],
-    "access": "Courmayeur stands at the Italian end of the Mont Blanc Tunnel corridor, at the head of the Aosta Valley. The valley road and the tunnel approach meet at the town — the cameras here watch that junction and the lifts rising from the town's edge."
+    "access": "Courmayeur stands at the Italian end of the Mont Blanc Tunnel corridor, at the head of the Aosta Valley. The valley road and the tunnel approach meet at the town — the cameras here watch that junction and the lifts rising from the town's edge.",
+    "baseElevationM": 1205,
+    "summitElevationM": 2755,
+    "verticalM": 1550,
+    "lifts": 20,
+    "runs": 33
   },
   "granite-peak": {
     "about": [
@@ -1134,5 +1252,119 @@
     "summitElevationM": 964,
     "lifts": 11,
     "runs": 24
+  },
+  "alta": {
+    "about": [
+      "Alta sits at the head of Little Cottonwood Canyon, southeast of Salt Lake City, and is one of the oldest ski areas in the United States — its first lift turned in January 1939. It is also one of only three American resorts that prohibit snowboarding, and its skiing is famously steep and fall-line, spread across two drainages: Collins Gulch and Albion Basin.",
+      "The canyon wrings more than 540 inches of snow out of an average season, and Alta's reputation rests on what that snow covers — the Baldy chutes, the long pitches off the Collins and Wildcat lifts, and tree skiing that stays cold for days after a storm. The cameras on this page watch the base areas and the canyon road below them."
+    ],
+    "access": "State Route 210 climbs Little Cottonwood Canyon from Sandy, in the southeast corner of the Salt Lake Valley, straight to Alta's base areas. The road is crossed by dozens of avalanche paths and carries traction restrictions during storms — the road cameras on this page matter here.",
+    "baseElevationM": 2600,
+    "summitElevationM": 3374,
+    "verticalM": 774,
+    "skiableHectares": 1058,
+    "lifts": 12,
+    "runs": 116
+  },
+  "deer-valley": {
+    "about": [
+      "Deer Valley spreads across six peaks above Park City and is one of only three American resorts that prohibit snowboarding. It hosted the freestyle moguls and aerials at the 2002 Winter Olympics and is in line to host freestyle events again at the 2034 Games.",
+      "The skiing is weighted toward immaculate intermediate cruising on Bald Mountain and Flagstaff Mountain, with the steepest lines in the Daly Chutes and Empire Canyon. The Mayflower expansion on the resort's eastern side has taken the skiable total to 4,300 acres, among the largest in Utah. The cameras on this page cover the Park City approaches and the resort's base areas."
+    ],
+    "access": "Deer Valley is in Park City, about 36 miles east of Salt Lake City via Interstate 80 and State Route 224, with its base lodges along Deer Valley Drive in town.",
+    "baseElevationM": 1990,
+    "summitElevationM": 2920,
+    "verticalM": 930,
+    "skiableHectares": 1700,
+    "lifts": 36,
+    "runs": 202
+  },
+  "angel-fire": {
+    "about": [
+      "Angel Fire sits in the Moreno Valley, the high southern loop of the Enchanted Circle, and opened in 1966 as a family mountain for northern New Mexico. Its 80 trails spread over 560 acres of forested slopes, with the summit above 10,600 feet.",
+      "The base sits at 8,600 feet, high enough to hold snow through the New Mexico spring, and the mountain looks east across the valley toward the Sangre de Cristo range. The cameras on this page watch the base area and the valley road through the resort."
+    ],
+    "access": "U.S. Route 64 crosses the Moreno Valley through Angel Fire, about 28 miles east of Taos on the Enchanted Circle; Eagle Nest and Cimarron Canyon continue east on the same road.",
+    "baseElevationM": 2600,
+    "summitElevationM": 3254,
+    "verticalM": 633,
+    "skiableHectares": 227,
+    "lifts": 7,
+    "runs": 80
+  },
+  "red-river": {
+    "about": [
+      "Red River is a former mining town on the Enchanted Circle whose ski area rises directly from Main Street — the lifts start in town and climb the forested slopes of the canyon wall above it. The mountain is compact: 209 acres and 64 trails between a base at 8,750 feet and a summit over 10,300 feet.",
+      "The town keeps its mining-era main street and a deliberately unhurried pace, and the ski area matches it — a locals' and families' mountain rather than a destination resort. The cameras on this page watch the canyon road through town and the slopes above it."
+    ],
+    "access": "State Road 38 climbs the Red River canyon from Questa to the town and ski area, forming the northern arc of the Enchanted Circle between Taos and Eagle Nest.",
+    "baseElevationM": 2667,
+    "summitElevationM": 3155,
+    "verticalM": 488,
+    "skiableHectares": 85,
+    "lifts": 7,
+    "runs": 64
+  },
+  "june-mountain": {
+    "about": [
+      "June Mountain is the quieter sister of Mammoth Mountain, set in the June Lake Loop in the Eastern Sierra. Its skiing spreads over two peaks — Rainbow Mountain and June Mountain itself — above the loop's chain of lakes, across 1,500 acres weighted toward families and intermediates.",
+      "The mountain averages around 250 inches of snow a season and tops out just over 10,000 feet; it has long been marketed as California's family mountain, a slower-paced alternative to its famous neighbour. The cameras on this page cover the loop road and the U.S. 395 corridor below."
+    ],
+    "access": "State Route 158, the June Lake Loop, leaves U.S. 395 north of Mammoth Lakes, runs past June Lake village to the ski area, and rejoins 395 at the loop's north end.",
+    "baseElevationM": 2300,
+    "summitElevationM": 3080,
+    "verticalM": 776,
+    "skiableHectares": 610,
+    "lifts": 7,
+    "runs": 41
+  },
+  "hoodoo": {
+    "about": [
+      "Hoodoo occupies Hoodoo Butte, a forested volcanic cinder cone at the summit of Santiam Pass, and has been skiing since 1938 — one of Oregon's first ski areas. Its 806 acres face northeast off the cone, served by five lifts, with night skiing under lights on weekends.",
+      "From the top, the central Cascade volcanoes line the horizon: Three Fingered Jack, Mount Washington and the Three Sisters. The cameras on this page double as a Santiam Pass road check — this is the crossing central Oregon watches in a storm."
+    ],
+    "access": "U.S. Route 20 passes the ski area at the summit of Santiam Pass, 20 miles west of Sisters and about 40 miles northwest of Bend; Salem and Eugene lie west down the Santiam River canyon.",
+    "baseElevationM": 1423,
+    "summitElevationM": 1738,
+    "verticalM": 315,
+    "skiableHectares": 326,
+    "lifts": 5,
+    "runs": 32
+  },
+  "blue-mountain-ontario": {
+    "about": [
+      "Blue Mountain is Ontario's largest ski resort, spread along the Niagara Escarpment above the southern shore of Georgian Bay. Founded in 1941, it is the third-busiest ski resort in Canada, with a pedestrian village at its base and 43 trails cut into the escarpment face.",
+      "The vertical is modest at 220 metres, but the escarpment catches lake-effect snow off the bay, and a large share of the terrain is lit for night skiing. The cameras on this page watch the slopes and the Collingwood corridor below the escarpment."
+    ],
+    "access": "The resort sits just west of Collingwood, reached by Highway 26 along the Georgian Bay shore — roughly two hours northwest of Toronto.",
+    "verticalM": 220,
+    "skiableHectares": 147,
+    "lifts": 11,
+    "runs": 43
+  },
+  "pyha": {
+    "about": [
+      "Pyhä — Pyhätunturi — is a fell resort in Finnish Lapland, built on the Kultakero slopes at the edge of Pyhä-Luosto National Park. The first lift opened in 1964, and since 1987 the resort has been run by the same company as Ruka in Kuusamo. Its 15 slopes include Huttu-Ukko, the steepest maintained piste in Finland.",
+      "The fell was a sieidi — a sacred place — for the Sámi long before skiing, and the national park beside the resort protects deep gorges and some of Finland's oldest forest. The cameras on this page watch the resort centre and the fell road, as useful for the aurora season as for snow."
+    ],
+    "access": "Pyhä is reached by road via Kemijärvi, about 57 kilometres away; Rovaniemi and its airport are roughly 130 kilometres southwest, with SkiBus coaches running to the resort in season.",
+    "baseElevationM": 203,
+    "summitElevationM": 500,
+    "verticalM": 297,
+    "lifts": 9,
+    "runs": 15
+  },
+  "oppdal": {
+    "about": [
+      "Oppdal is Norway's largest ski centre by area: four mountains — Vangslia, Hovden, Stølen and Ådalen — linked by 18 lifts and 56 kilometres of pistes above the village. Hovden, the original slope, opened in 1952, and its steep black runs remain the connoisseurs' corner of the mountain.",
+      "The centre spreads wide rather than high — 715 metres of vertical across a broad plateau landscape where the Dovre mountains meet Trollheimen. The cameras on this page cover the slopes and the E6 corridor through the village."
+    ],
+    "access": "Oppdal village stands on the E6 highway and the Dovrebanen railway between Trondheim and Dombås; the main Vangslia base area is a few minutes from the village centre.",
+    "baseElevationM": 585,
+    "summitElevationM": 1300,
+    "verticalM": 715,
+    "skiableHectares": 420,
+    "lifts": 18,
+    "runs": 46
   }
 }
