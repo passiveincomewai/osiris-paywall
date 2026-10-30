@@ -34,6 +34,7 @@ model User {
   cameraBonusAccount CameraBonusAccount?
   savedCameras  SavedCamera[]
   skiResortFollows SkiResortFollow[]
+  skiTripReminders SkiTripReminder[]
   clipMetas     ClipMeta[]
   clipShares    ClipShare[]
   cameraCollections CameraCollection[]
@@ -1901,4 +1902,31 @@ model TransitAlertSend {
 
   @@unique([subscriptionId, alertId, alertUpdatedAt])
   @@index([subscriptionId])
+}
+
+// ── Ski trip booking reminders (2026-10-30) ────────────────────────
+// A signed-in user picks a resort from the live ski directory, trip
+// dates and an email; the cron runner emails two book-ahead nudges
+// (T-45d "book flights + lodging", T-14d final nudge). Reminders
+// only — no booking engine, no affiliate links, no prices. The
+// date/dedupe rules live in src/lib/ski/trip-reminders; dedupe is
+// the sent45At/sent14At stamps (an email goes out at most once).
+model SkiTripReminder {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email      String // normalized lowercase by the shared email validator
+  resortSlug String // ski directory slug, e.g. "park-city"
+  resortName String // display name used in email copy, e.g. "Park City"
+  tripStart  DateTime // arrival date (UTC midnight of the chosen day)
+  tripEnd    DateTime? // optional departure date
+  status     String    @default("active") // active | cancelled
+  sent45At   DateTime?
+  sent14At   DateTime?
+  unsubToken String    @unique @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([userId, resortSlug, tripStart])
+  @@index([status, tripStart])
 }
