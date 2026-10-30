@@ -132,6 +132,19 @@ export default async function SkiResortPage({
       ].filter((s): s is { label: string; value: string } => Boolean(s))
     : [];
   const total = resortCams.length + nearbyCams.length;
+  /* Powder #11 (rescoped 2026-10-30): the Little Cottonwood access-road
+     watch. The catalogue holds no verifiable resort parking-lot camera,
+     so the feature was rescoped to the one honest canyon view: UDOT's
+     SR-210 camera at White Pine, on the access road Alta and Snowbird
+     share. It is presented as exactly that — a canyon road camera,
+     never as a lot cam — and no fullness estimate is made anywhere.
+     Derived from the already-loaded resort set by id, so if the camera
+     ever leaves the catalogue the section disappears with it instead of
+     promising a feed that isn't there. */
+  const lccAccessCam =
+    r.slug === "alta" || r.slug === "snowbird"
+      ? resortCams.find(cam => cam.id === "udot-165998")
+      : undefined;
   const areas = cameraAreas([...resortCams, ...nearbyCams]).slice(0, 5);
   /* The same-country cluster (§4.4), ordered by real distance from
      this resort instead of file order — the nearest mountains are
@@ -595,6 +608,33 @@ export default async function SkiResortPage({
             emptyNote={`No cameras within ${RESORT_RADIUS_KM} km of ${r.name} are in the live index right now — the road cameras below still cover the area.`}
           />
         </section>
+
+        {/* Little Cottonwood access-road watch (Powder #11, rescoped):
+            the UDOT SR-210 camera at White Pine, on the one road Alta
+            and Snowbird share. A road view, honestly labelled — not a
+            parking-lot camera. */}
+        {lccAccessCam && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">
+              The canyon road — Little Cottonwood access
+            </h2>
+            <p className="text-sm text-white/50 mb-5 max-w-3xl">
+              {r.name} is reached by one road: SR-210 up Little Cottonwood Canyon, the
+              access road Alta and Snowbird share. This UDOT camera watches that road
+              at White Pine, partway up the canyon — the view to check for canyon
+              traffic, road surface and storm-day backups before you leave. It is a
+              road camera, not a resort parking-lot camera, and WorldEye doesn&apos;t
+              estimate how full any lot is — open the feed and judge the road for
+              yourself.
+            </p>
+            <SkiCameraGrid
+              cameras={[lccAccessCam]}
+              captions={{
+                [lccAccessCam.id]: "SR-210 at White Pine — UDOT canyon road camera",
+              }}
+            />
+          </section>
+        )}
 
         {/* Access corridors (C11, §4.4) — the drive-up check, grouped
             by the road each camera watches */}
