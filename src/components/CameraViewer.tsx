@@ -138,6 +138,15 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
   const externalOnly = view !== 'inline';
 
   useEffect(() => {
+    // End the previous HLS instance FIRST — before the !camera return.
+    // Closing the viewer sets camera to null, and with the destroy below
+    // that return the orphaned instance kept downloading against a
+    // detached <video> until another camera happened to be opened.
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+
     if (!camera) return;
     setLoading(true);
     setError(false);
@@ -147,12 +156,6 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
     setShareOpen(false);
     setShareUrlText(null);
     setShareIsNew(false);
-
-    // Cleanup previous HLS instance
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
 
     if (externalOnly) {
       setLoading(false);
@@ -215,6 +218,15 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
       setLoading(false);
     }
   }, [camera, streamType, streamUrl, externalOnly, retryCount]);
+
+  // Leaving the page entirely: the stream effect's own cleanup only
+  // covers the HLS branch's late-import race, so end the instance here.
+  useEffect(() => () => {
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+  }, []);
 
   // Auto-refresh for JPGs
   useEffect(() => {
