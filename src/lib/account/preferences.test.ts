@@ -41,6 +41,17 @@ describe("validatePreferencesPatch", () => {
     expect(PREFERENCE_DEFAULTS.shareVisibility).toBe("public");
   });
 
+  it("sidebar tools: defaults empty, lists sanitized not rejected", () => {
+    expect(PREFERENCE_DEFAULTS.sidebarToolOrder).toEqual([]);
+    expect(PREFERENCE_DEFAULTS.sidebarToolHidden).toEqual([]);
+    const r = validatePreferencesPatch({ sidebarToolOrder: ["oi", "bogus", "oi", "draw"], sidebarToolHidden: ["draw"] });
+    expect("data" in r && r.data.sidebarToolOrder).toEqual(["oi", "draw"]);
+    expect("data" in r && r.data.sidebarToolHidden).toEqual(["draw"]);
+    expect(validatePreferencesPatch({ sidebarToolOrder: "oi" })).toHaveProperty("error");
+    expect(validatePreferencesPatch({ sidebarToolHidden: 7 })).toHaveProperty("error");
+    expect(validatePreferencesPatch({ sidebarToolOrder: Array(17).fill("oi") })).toHaveProperty("error");
+  });
+
   it("status ticker is opt-in: default off, boolean only", () => {
     expect(PREFERENCE_DEFAULTS.showStatusTicker).toBe(false);
     const on = validatePreferencesPatch({ showStatusTicker: true });

@@ -36,6 +36,8 @@ interface LiveAlertsProps {
   onWatchFeed?: (url: string, name: string) => void;
   /** Re-pull /api/news. */
   onRefresh?: () => Promise<unknown> | void;
+  /** Close the panel (renders the header X when provided). */
+  onClose?: () => void;
 }
 
 const ACCENT = '#FF4081';
@@ -682,7 +684,7 @@ function WarningCard({ item, now, onLocate }: { item: WarningAlert; now: number;
   );
 }
 
-export default function LiveAlerts({ data, onLocate, onWatchFeed, onRefresh, pinsOn = false, onTogglePins, onPinnedChange }: LiveAlertsProps) {
+export default function LiveAlerts({ data, onLocate, onWatchFeed, onRefresh, pinsOn = false, onTogglePins, onPinnedChange, onClose }: LiveAlertsProps) {
   const [expanded, setExpanded] = useState(true);
   const [maximized, setMaximized] = useState(false);
   const [tab, setTab] = useState<Tab>('all');
@@ -1162,6 +1164,11 @@ export default function LiveAlerts({ data, onLocate, onWatchFeed, onRefresh, pin
             <button onClick={() => setExpanded(!expanded)} className="p-1 rounded hover:bg-white/10 transition-colors" aria-label={expanded ? 'Collapse panel' : 'Expand panel'}>
               {expanded ? <ChevronUp className="w-3.5 h-3.5 text-[var(--text-muted)]" /> : <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />}
             </button>
+            {onClose && (
+              <button onClick={onClose} className="p-1 rounded hover:bg-white/10 transition-colors" title="Close" aria-label="Close Live Alerts">
+                <X className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+              </button>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-1.5 px-3 pb-1.5 text-[9px] font-mono tracking-wider text-[#5C5A54] whitespace-nowrap overflow-hidden">

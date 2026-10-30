@@ -5,6 +5,7 @@
 // never branch on "row missing".
 
 import { db } from "@/lib/db";
+import { sanitizeSidebarToolIds } from "@/lib/sidebar-tools";
 
 export const UNITS = ["imperial", "metric"] as const;
 export const CLOCK_FORMATS = ["12", "24"] as const;
@@ -44,6 +45,8 @@ export interface Preferences {
   publicProfile: boolean;
   shareVisibility: string;
   billingEmail: string | null;
+  sidebarToolOrder: string[];
+  sidebarToolHidden: string[];
 }
 
 export const PREFERENCE_DEFAULTS: Preferences = {
@@ -76,6 +79,8 @@ export const PREFERENCE_DEFAULTS: Preferences = {
   publicProfile: true,
   shareVisibility: "public",
   billingEmail: null,
+  sidebarToolOrder: [],
+  sidebarToolHidden: [],
 };
 
 const FIELDS = Object.keys(PREFERENCE_DEFAULTS) as (keyof Preferences)[];
@@ -244,6 +249,16 @@ export function validatePreferencesPatch(
     const v = oneOf(input.shareVisibility, SHARE_VISIBILITIES);
     if (v === undefined) return { error: "Share visibility must be public or unlisted." };
     data.shareVisibility = v;
+  }
+  for (const f of ["sidebarToolOrder", "sidebarToolHidden"] as const) {
+    if (f in input) {
+      const v = input[f];
+      if (!Array.isArray(v)) return { error: "Sidebar tools must be a list." };
+      if (v.length > 16) return { error: "Sidebar tools list is too long." };
+      // Unknown ids / duplicates are dropped, never fatal: a stale
+      // client (or a tool renamed since) must not fail the whole save.
+      data[f] = sanitizeSidebarToolIds(v);
+    }
   }
   if ("billingEmail" in input) {
     const s = str(input.billingEmail);

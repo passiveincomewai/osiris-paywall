@@ -56,6 +56,8 @@ export interface ArcGISPanelProps {
   onUpdateLayer: (id: string, updates: Partial<{ color: string; visible: boolean; opacity: number }>) => void;
   importedLayers: ImportedLayer[];
   mapBounds?: { west: number; south: number; east: number; north: number } | null;
+  /** Close the panel (renders the header X when provided). */
+  onClose?: () => void;
 }
 
 const CATEGORIES = [
@@ -94,6 +96,7 @@ export default function ArcGISPanel({
   onUpdateLayer,
   importedLayers,
   mapBounds,
+  onClose,
 }: ArcGISPanelProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ArcGISResult[]>([]);
@@ -206,6 +209,11 @@ export default function ArcGISPanel({
             {totalFeatures.toLocaleString()} Features
           </div>
         </div>
+        {onClose && (
+          <button onClick={onClose} className="p-1 rounded hover:bg-white/10 transition-colors flex-shrink-0" title="Close" aria-label="Close ArcGIS">
+            <X className="w-3.5 h-3.5 text-[#D4AF37]" />
+          </button>
+        )}
       </div>
 
       {/* ── Current Map Extent Indicator ─────────────────────────── */}

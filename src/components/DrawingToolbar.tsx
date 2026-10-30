@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Pentagon, Ruler, Trash2, Download, Copy, Check, Clock , Square, Circle, Spline} from 'lucide-react';
+import { Pentagon, Ruler, Trash2, Download, Copy, Check, Clock , Square, Circle, Spline, X } from 'lucide-react';
 import type { DrawMode, DrawProgress, DrawnShape } from '@/lib/draw';
 import { formatArea, formatDistance } from '@/lib/geo';
 import { selectInPolygon, MAX_ITEMS_PER_GROUP } from '@/lib/aoi';
@@ -31,6 +31,8 @@ interface DrawingToolbarProps {
   watched?: Set<string>;
   onToggleWatch?: (id: string) => void;
   watchEvents?: WatchEvent[];
+  /** Close the toolbar (renders the header X when provided). */
+  onClose?: () => void;
 }
 
 /** Calculate area of a GeoJSON polygon in km² using the Shoelace formula on a spheroid */
@@ -109,7 +111,7 @@ export default function DrawingToolbar({
   drawMode, onSetDrawMode, progress, polygons, onDeletePolygon,
   onClearAll, onExportGeoJSON, selectedPolygon, onSelectPolygon,
   data, onLocateEntity, watched, onToggleWatch, watchEvents = [],
-  onRenamePolygon,
+  onRenamePolygon, onClose,
 }: DrawingToolbarProps) {
   const [editingName, setEditingName] = useState<string | null>(null);
   const [nameValue, setNameValue] = useState('');
@@ -171,7 +173,12 @@ export default function DrawingToolbar({
         <div className="px-4 py-3 border-b border-white/[0.06]">
           <div className="flex items-center gap-2 mb-2">
             <Pentagon className="w-3.5 h-3.5 text-[var(--cyan-primary)]" />
-            <span className="text-[12px] font-mono tracking-[0.2em] text-white/90 font-bold">DRAWING TOOLS</span>
+            <span className="text-[12px] font-mono tracking-[0.2em] text-white/90 font-bold flex-1">DRAWING TOOLS</span>
+            {onClose && (
+              <button onClick={onClose} className="p-1 rounded hover:bg-white/10 transition-colors" title="Close" aria-label="Close drawing tools">
+                <X className="w-3.5 h-3.5 text-white/60" />
+              </button>
+            )}
           </div>
           
           <div className="flex items-center justify-between text-[10px] font-mono text-white/50 bg-white/5 rounded px-2 py-1.5 border border-white/[0.04]">

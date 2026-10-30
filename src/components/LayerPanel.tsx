@@ -827,6 +827,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
         <button
           type="button"
           onClick={() => { if (onClose) onClose(); else setSheetOpen(false); }}
+          aria-expanded={true}
           aria-label="Close layers panel"
           title="Close"
           className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all hover:bg-cyan-300/10 focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/50"
@@ -1253,7 +1254,8 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
             exit={{ opacity: 0, x: -12 }}
             transition={{ duration: 0.16, ease: 'easeOut' }}
             onClick={() => setSheetOpen(true)}
-            aria-expanded={false}
+            aria-haspopup="dialog"
+            aria-expanded={sheetOpen}
             aria-label="Open Layers & Stats panel"
             title="Layers & Stats"
             className="layers-pill pointer-events-auto absolute left-3 top-[92px] flex items-center gap-2 pl-3 pr-2.5 py-2 rounded-full cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
@@ -1275,7 +1277,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
                 {totalActive}
               </span>
             )}
-            <ChevronDown className="w-3.5 h-3.5 text-cyan-200/70" />
+            <ChevronDown className="layers-chevron w-3.5 h-3.5 text-cyan-200/70" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -1286,6 +1288,10 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, theme = 'co
           pulse ring rather than the mockup's particle swirl. */}
       <style>{`
         .layers-pill { transition: box-shadow 0.25s ease, border-color 0.25s ease; }
+        /* The chevron's gentle nudge is what marks the pill as a
+           dropdown — it reads as "opens downward" without a word. */
+        .layers-pill .layers-chevron { animation: layers-chevron-nudge 2.2s ease-in-out infinite; }
+        @keyframes layers-chevron-nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(1.5px); } }
         .layers-pill:hover {
           border-color: rgba(125,211,252,0.9) !important;
           box-shadow: 0 0 26px rgba(56,189,248,0.5), 0 0 8px rgba(56,189,248,0.35), inset 0 0 16px rgba(56,189,248,0.12) !important;

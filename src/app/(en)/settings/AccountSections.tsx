@@ -9,8 +9,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, Check, Globe2, SlidersHorizontal, BellRing, Eye, CreditCard, Database, Link2, Trash2 } from "lucide-react";
+import { Loader2, Check, Globe2, SlidersHorizontal, BellRing, Eye, CreditCard, Database, Link2, Trash2, Gift, PanelRight, ChevronUp, ChevronDown, RotateCcw } from "lucide-react";
 import type { Preferences } from "@/lib/account/preferences";
+import { SIDEBAR_TOOLS, resolveSidebarToolOrder, type SidebarToolId } from "@/lib/sidebar-tools";
+import { DISCOVERY_SOURCES, discoverySourceLabel } from "@/lib/discovery-sources";
 import SecuritySections from "./SecuritySections";
 
 function Section({ icon: Icon, title, children }: { icon: any; title: string; children: React.ReactNode }) {
@@ -77,6 +79,20 @@ export default function AccountSections() {
   const [shareMsg, setShareMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [shareBusy, setShareBusy] = useState(false);
 
+  // Referred by a friend? (friend's code + how did you find us)
+  const [referral, setReferral] = useState<{
+    attribution: { code: string; affiliateName: string | null; creditedAt: string } | null;
+    discoverySource: string | null;
+    discoveryDetail: string | null;
+  } | null>(null);
+  const [refCodeInput, setRefCodeInput] = useState("");
+  const [refBusy, setRefBusy] = useState(false);
+  const [refMsg, setRefMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [discChoice, setDiscChoice] = useState("");
+  const [discDetail, setDiscDetail] = useState("");
+  const [discBusy, setDiscBusy] = useState(false);
+  const [discMsg, setDiscMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
   // Billing
   const [methods, setMethods] = useState<PaymentMethod[] | "unavailable" | null>(null);
   const [methodsMsg, setMethodsMsg] = useState<string | null>(null);
@@ -99,6 +115,8 @@ export default function AccountSections() {
         if (code) setShare({ code, isCustom: !!d.profile.customCode });
         else setShare("none");
       } else setShare("none");
+      const rf = await fetch("/api/account/referral", { cache: "no-store" });
+      if (rf.ok) setReferral(await rf.json());
       const pm = await fetch("/api/account/payment-methods", { cache: "no-store" });
       if (pm.ok) setMethods((await pm.json()).methods ?? []);
       else setMethods("unavailable");
@@ -165,6 +183,63 @@ export default function AccountSections() {
     } finally {
       setShareBusy(false);
     }
+  }
+
+  async function postReferral(payload: Record<string, unknown>) {
+    const res = await fetch("/api/account/referral", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Couldn't save.");
+    return data;
+  }
+
+  async function applyFriendCode() {
+    setRefBusy(true);
+    setRefMsg(null);
+    try {
+      const data = await postReferral({ code: refCodeInput.trim() });
+      setReferral(data);
+      setRefCodeInput("");
+      setRefMsg({ ok: true, text: "Credited — your friend now earns commission on your subscription. Thank you!" });
+    } catch (e) {
+      setRefMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't credit that code." });
+    } finally {
+      setRefBusy(false);
+    }
+  }
+
+  async function saveDiscovery() {
+    setDiscBusy(true);
+    setDiscMsg(null);
+    try {
+      const data = await postReferral({ discoverySource: discChoice, discoveryDetail: discDetail });
+      setReferral(data);
+      setDiscMsg({ ok: true, text: "Saved — thanks for telling us!" });
+    } catch (e) {
+      setDiscMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't save your answer." });
+    } finally {
+      setDiscBusy(false);
+    }
+  }
+
+  function moveSidebarTool(id: SidebarToolId, dir: -1 | 1) {
+    if (!prefs) return;
+    const order = resolveSidebarToolOrder(prefs.sidebarToolOrder);
+    const i = order.indexOf(id);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= order.length) return;
+    const next = [...order];
+    [next[i], next[j]] = [next[j], next[i]];
+    set("sidebarToolOrder", next);
+  }
+
+  function toggleSidebarTool(id: SidebarToolId, hidden: boolean) {
+    if (!prefs) return;
+    const cur = prefs.sidebarToolHidden;
+    set("sidebarToolHidden", hidden ? [...cur, id] : cur.filter((x) => x !== id));
   }
 
   async function addBackupCard() {
@@ -252,6 +327,79 @@ export default function AccountSections() {
             </div>
             <p className="text-xs text-white/35">3–32 characters: letters, numbers, _ or - (no spaces). Some words are reserved.</p>
             {shareMsg && <p className={`text-sm ${shareMsg.ok ? "text-green-400" : "text-red-400"}`}>{shareMsg.text}</p>}
+          </div>
+        )}
+      </Section>
+
+      <Section icon={Gift} title="Referred by a friend?">
+        {referral === null ? (
+          <Loader2 className="w-5 h-5 animate-spin text-white/40" />
+        ) : (
+          <div className="space-y-6">
+            <div>
+              <label className={labelCls}>FRIEND'S AFFILIATE CODE</label>
+              {referral.attribution ? (
+                <p className="text-sm text-white/60 leading-relaxed">
+                  You credited <span className="font-mono text-white/90">{referral.attribution.code}</span>
+                  {referral.attribution.affiliateName ? <> ({referral.attribution.affiliateName})</> : null} — they earn
+                  commission on your subscription. A referral can only ever be set once, so this can't be changed.
+                </p>
+              ) : (
+                <>
+                  <div className="flex flex-wrap gap-2">
+                    <input
+                      value={refCodeInput}
+                      onChange={(e) => setRefCodeInput(e.target.value)}
+                      placeholder="e.g. skyfan-42"
+                      className={`${inputCls} flex-1 min-w-[200px]`}
+                      maxLength={32}
+                      autoComplete="off"
+                    />
+                    <button onClick={applyFriendCode} disabled={refBusy || refCodeInput.trim().length < 3} className={btnGold}>
+                      {refBusy ? "Checking…" : "Credit my friend"}
+                    </button>
+                  </div>
+                  <p className="text-xs text-white/35 mt-2">
+                    If a friend sent you to WorldEye, enter their code here. It works once and can't be changed
+                    afterwards — and it can't be your own code.
+                  </p>
+                  {refMsg && <p className={`text-sm mt-2 ${refMsg.ok ? "text-green-400" : "text-red-400"}`}>{refMsg.text}</p>}
+                </>
+              )}
+            </div>
+            <div>
+              <label className={labelCls}>HOW DID YOU FIND OUT ABOUT US?</label>
+              {referral.discoverySource ? (
+                <p className="text-sm text-white/60">
+                  {discoverySourceLabel(referral.discoverySource)}
+                  {referral.discoveryDetail ? <> — &ldquo;{referral.discoveryDetail}&rdquo;</> : null}. Thanks for telling us!
+                </p>
+              ) : (
+                <>
+                  <select value={discChoice} onChange={(e) => setDiscChoice(e.target.value)} className={inputCls}>
+                    <option value="">Choose one…</option>
+                    {DISCOVERY_SOURCES.map((s) => (
+                      <option key={s.key} value={s.key}>{s.label}</option>
+                    ))}
+                  </select>
+                  {discChoice && (
+                    <input
+                      value={discDetail}
+                      onChange={(e) => setDiscDetail(e.target.value)}
+                      placeholder="Anything to add? (optional)"
+                      className={`${inputCls} mt-2`}
+                      maxLength={200}
+                    />
+                  )}
+                  <div className="mt-3">
+                    <button onClick={saveDiscovery} disabled={discBusy || !discChoice} className={btnGold}>
+                      {discBusy ? "Saving…" : "Save answer"}
+                    </button>
+                  </div>
+                  {discMsg && <p className={`text-sm mt-2 ${discMsg.ok ? "text-green-400" : "text-red-400"}`}>{discMsg.text}</p>}
+                </>
+              )}
+            </div>
           </div>
         )}
       </Section>
@@ -363,6 +511,69 @@ export default function AccountSections() {
           <Toggle value={prefs.cameraAutoplay} onChange={(v) => set("cameraAutoplay", v)} label="Autoplay camera previews" hint="Live previews start playing on their own in grids." />
           <Toggle value={prefs.performanceMode} onChange={(v) => set("performanceMode", v)} label="Performance mode" hint="Lighter globe: reduces animation and effects on slower devices." />
           <Toggle value={prefs.showStatusTicker} onChange={(v) => set("showStatusTicker", v)} label="Globe status ticker" hint="The bar along the bottom of the globe with live crypto prices (BTC, ETH, SOL) and major earthquakes. Off by default." />
+        </div>
+      </Section>
+
+      <Section icon={PanelRight} title="Sidebar navigation">
+        <p className="text-sm text-white/55 mb-2">
+          Arrange the globe's right-hand tool strip: move tools up or down, or hide the ones you never use.
+          Changes save to your account and apply on the globe. Hiding a tool never changes what you can access —
+          every tool keeps its usual rules.
+        </p>
+        <div className="divide-y divide-white/5">
+          {resolveSidebarToolOrder(prefs.sidebarToolOrder).map((id, idx, order) => {
+            const tool = SIDEBAR_TOOLS.find((t) => t.id === id)!;
+            const hidden = prefs.sidebarToolHidden.includes(id);
+            return (
+              <div key={id} className="flex items-center gap-2 py-2.5">
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm ${hidden ? "text-white/35" : "text-white/85"}`}>{tool.label}</p>
+                  <p className="text-xs text-white/35 mt-0.5">{tool.description}</p>
+                </div>
+                <button
+                  type="button"
+                  className={btnGhost}
+                  disabled={idx === 0}
+                  onClick={() => moveSidebarTool(id, -1)}
+                  aria-label={`Move ${tool.label} up`}
+                >
+                  <ChevronUp className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  className={btnGhost}
+                  disabled={idx === order.length - 1}
+                  onClick={() => moveSidebarTool(id, 1)}
+                  aria-label={`Move ${tool.label} down`}
+                >
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={!hidden}
+                  aria-label={hidden ? `Show ${tool.label} in the sidebar` : `Hide ${tool.label} from the sidebar`}
+                  onClick={() => toggleSidebarTool(id, !hidden)}
+                  className={`relative w-11 h-6 shrink-0 rounded-full transition ${!hidden ? "bg-[#D4AF37]" : "bg-white/15"}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${!hidden ? "left-[22px]" : "left-0.5"}`} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-4 flex items-center gap-3">
+          <button
+            type="button"
+            className={btnGhost}
+            disabled={prefs.sidebarToolOrder.length === 0 && prefs.sidebarToolHidden.length === 0}
+            onClick={() => { void save({ sidebarToolOrder: [], sidebarToolHidden: [] }); }}
+          >
+            <RotateCcw className="w-3.5 h-3.5 inline mr-1" /> Reset to default
+          </button>
+          {saveState === "saving" && <span className="text-xs text-white/40">Saving…</span>}
+          {saveState === "saved" && <span className="text-xs text-green-400 flex items-center gap-1"><Check className="w-3.5 h-3.5" /> Saved</span>}
+          {saveState === "error" && <span className="text-xs text-red-400">{saveError}</span>}
         </div>
       </Section>
 

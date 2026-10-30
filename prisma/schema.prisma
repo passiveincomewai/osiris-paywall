@@ -56,6 +56,10 @@ model User {
   ambientStreamKey AmbientStreamKey?
   deletionRequestedAt DateTime?
   deletionScheduledFor DateTime?
+  // "How did you find out about us?" — set once from account settings
+  // (or left null). Values are the keys in src/lib/discovery-sources.ts.
+  discoverySource String?
+  discoveryDetail String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -106,6 +110,12 @@ model UserPreference {
   publicProfile Boolean @default(true)
   shareVisibility String @default("public") // public | unlisted
   billingEmail String?
+
+  // Globe right tool strip customization (account settings → Sidebar
+  // navigation): the user's tool order + hidden tools. Ids are the
+  // canonical set in src/lib/sidebar-tools.ts; empty = defaults.
+  sidebarToolOrder String[] @default([])
+  sidebarToolHidden String[] @default([])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

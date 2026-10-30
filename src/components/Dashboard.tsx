@@ -35,6 +35,8 @@ import { findNearestCameras } from '@/lib/nearby-cameras';
 import { decodeSatelliteRows } from '@/lib/satellite-payload';
 import type { SkyLocateTarget } from '@/lib/sky-today';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
+import { usePreferences } from '@/components/PreferencesProvider';
+import { layoutSidebarTools } from '@/lib/sidebar-tools';
 import { readBasemapMode, writeBasemapMode, satelliteSwitchAction, type BasemapMode } from '@/lib/basemap-mode';
 import { LATEST_SELECTION, satelliteTileUrl, type SatelliteImagerySelection } from '@/lib/wayback-imagery';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
@@ -307,6 +309,12 @@ export default function Dashboard() {
   /** Pro locks that are a lone button (OI dock/tab) open the trial picker
    *  dialog instead of bouncing to /pricing. */
   const [showTrialPicker, setShowTrialPicker] = useState(false);
+  // Right tool strip customization (account settings → Sidebar
+  // navigation): order + hidden tools from the account preferences.
+  // Anonymous visitors get PREFERENCE_DEFAULTS (empty = canonical
+  // order, nothing hidden), so their strip is exactly as before.
+  const accountPrefs = usePreferences();
+  const stripLayout = layoutSidebarTools(accountPrefs.sidebarToolOrder, accountPrefs.sidebarToolHidden);
   const [showLayers, setShowLayers] = useState(true);
   /* Cinematic Director open pulse (Item 2, 2026-10-29): the Director's
      entry point is the Cinematic Director tool inside the RECON panel;
@@ -1270,6 +1278,34 @@ export default function Dashboard() {
     document.addEventListener('fullscreenchange', fsHandler);
     return () => { window.removeEventListener('keydown', handler); document.removeEventListener('fullscreenchange', fsHandler); };
   }, []);
+
+  // Escape closes the open right-strip tool panel — the affordance for
+  // users who don't know the strip button toggles. Cooperation rules:
+  // a modal above the panels owns Escape (TrialPicker/checkout sheet —
+  // the sheet has its own Esc handler — and the live-feed viewer), an
+  // active navigation session keeps it, and while typing in a field the
+  // field's own Escape behaviour wins (DirectionsBar closes its
+  // dropdowns, search inputs clear). Each panel closes with the same
+  // side effects as its own X / toggle.
+  useEffect(() => {
+    const anyStripPanelOpen = showIntel || showSpaceCam || showAlerts || showDrawing || showOi || showArcGIS || showDesktopSearch || showDirections;
+    if (!anyStripPanelOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      if (showTrialPicker || liveFeedUrl || navSession) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      if (showDesktopSearch || showDirections) { setShowDesktopSearch(false); setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }
+      if (showOi) { setShowOi(false); setOiTheater(false); setOiAutoFocus(false); }
+      setShowIntel(false);
+      setShowSpaceCam(false);
+      setShowAlerts(false);
+      setShowDrawing(false);
+      setShowArcGIS(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showIntel, showSpaceCam, showAlerts, showDrawing, showOi, showArcGIS, showDesktopSearch, showDirections, showTrialPicker, liveFeedUrl, navSession]);
 
   // Mouse coords + reverse geocode (Zero-Render)
   const handleMouseCoords = useCallback((coords: { lat: number; lng: number }) => {
@@ -2792,7 +2828,7 @@ export default function Dashboard() {
 
       {/* ── RIGHT TOOL STRIP (desktop only — mobile uses bottom nav) ── */}
       {!isMobile && <motion.div data-hud initial={{ opacity: 0, x: 12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }} transition={hudIn(0.3)} className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-[250] pointer-events-auto bg-black/40 backdrop-blur-sm p-1 rounded-full border border-white/5">
-        <div className="relative group">
+        <div className="relative group" style={{ order: stripLayout.orderIndex.recon * 10, display: stripLayout.hiddenIds.has('recon') ? 'none' : undefined }}>
           <button onClick={() => { setShowIntel(!showIntel); setShowOi(false); setShowAlerts(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showIntel ? 'bg-[var(--cyan-primary)]/20' : 'hover:bg-white/10'}`} title="OSINT Recon — IP lookup, network sweep, geolocation" aria-label="OSINT Recon" aria-expanded={showIntel}>
             <Radar className={`w-4 h-4 ${showIntel ? 'text-[var(--cyan-primary)]' : 'text-white/60'}`} />
             {showIntel && (
@@ -2806,7 +2842,7 @@ export default function Dashboard() {
           <AnimatePresence>
             {showIntel && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="absolute right-12 top-1/2 -translate-y-1/2 w-80">
-                <OsintPanel onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} onScanGeolocate={(target, data) => {
+                <OsintPanel onClose={() => setShowIntel(false)} onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} onScanGeolocate={(target, data) => {
                   setScanTargets(prev => {
                     const existing = prev.filter(t => t.id !== target);
                     return [{ id: target, timestamp: Date.now(), ...data }, ...existing].slice(0, 10);
@@ -2818,7 +2854,7 @@ export default function Dashboard() {
           </AnimatePresence>
         </div>
 
-        <div className="relative group">
+        <div className="relative group" style={{ order: stripLayout.orderIndex.space * 10, display: stripLayout.hiddenIds.has('space') ? 'none' : undefined }}>
           <button onClick={() => { setShowIntel(false); setShowOi(false); setShowAlerts(false); setShowSpaceCam(v => !v); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showSpaceCam ? 'bg-[#00E5FF]/20' : 'hover:bg-white/10'}`} title="Live from Space — 24/7 video downlink from the ISS" aria-label="Live from Space" aria-expanded={showSpaceCam}>
             <Radio className={`w-4 h-4 ${showSpaceCam ? 'text-[#00E5FF]' : 'text-white/60'}`} />
             {showSpaceCam && (
@@ -2838,7 +2874,7 @@ export default function Dashboard() {
           </AnimatePresence>
         </div>
 
-        <div className="relative group">
+        <div className="relative group" style={{ order: stripLayout.orderIndex.alerts * 10, display: stripLayout.hiddenIds.has('alerts') ? 'none' : undefined }}>
           <button onClick={() => { setShowAlerts(!showAlerts); setShowOi(false); setShowIntel(false); setShowDrawing(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showAlerts ? 'bg-[#FF3D3D]/20' : 'hover:bg-white/10'}`} title="Live Alerts — earthquakes, conflicts, breaking news" aria-label="Live Alerts" aria-expanded={showAlerts}>
             <AlertTriangle className={`w-4 h-4 ${showAlerts ? 'text-[#FF3D3D]' : 'text-white/60'}`} />
             {showAlerts && (
@@ -2852,13 +2888,13 @@ export default function Dashboard() {
           <AnimatePresence>
             {showAlerts && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="absolute right-12 top-1/2 -translate-y-1/2 w-80">
-                <LiveAlerts data={data} onLocate={(lat, lng, options) => setFlyToLocation({ lat, lng, zoom: options?.zoom, alertId: options?.alertId, ts: Date.now() })} pinsOn={activeLayers.alert_pins} onTogglePins={on => setActiveLayers(prev => ({ ...prev, alert_pins: on }))} onPinnedChange={setPinnedAlertIds} onWatchFeed={(url, name) => { setLiveFeedUrl(url); setLiveFeedName(name); }} onRefresh={() => fetchEndpoint('/api/news', newsTransform)} />
+                <LiveAlerts data={data} onLocate={(lat, lng, options) => setFlyToLocation({ lat, lng, zoom: options?.zoom, alertId: options?.alertId, ts: Date.now() })} pinsOn={activeLayers.alert_pins} onTogglePins={on => setActiveLayers(prev => ({ ...prev, alert_pins: on }))} onPinnedChange={setPinnedAlertIds} onWatchFeed={(url, name) => { setLiveFeedUrl(url); setLiveFeedName(name); }} onRefresh={() => fetchEndpoint('/api/news', newsTransform)} onClose={() => setShowAlerts(false)} />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="relative group">
+        <div className="relative group" style={{ order: stripLayout.orderIndex.draw * 10, display: stripLayout.hiddenIds.has('draw') ? 'none' : undefined }}>
           <button onClick={() => { setShowDrawing(!showDrawing); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showDrawing ? 'bg-[#00E5FF]/20' : 'hover:bg-white/10'}`} title="Draw — measure areas of interest on the map" aria-label="Draw" aria-expanded={showDrawing}>
             <PenLine className={`w-4 h-4 ${showDrawing ? 'text-[#00E5FF]' : 'text-white/60'}`} />
             {showDrawing && (
@@ -2872,7 +2908,7 @@ export default function Dashboard() {
         </div>
 
         {/* A named group: the OI panel opens inside this wrapper, and an unnamed group would light every hover style in the panel at once. */}
-        <div ref={oiAnchor} className="relative group/oi">
+        <div ref={oiAnchor} className="relative group/oi" style={{ order: stripLayout.orderIndex.oi * 10, display: stripLayout.hiddenIds.has('oi') ? 'none' : undefined }}>
           {/* OI, the strip's main tool: bigger than the rest, in the middle of it, in its own colours. */}
           <button onClick={() => { if (!isPremiumUser) { setShowTrialPicker(true); return; } setShowOi(!showOi); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); }}
             className={`relative w-11 h-11 rounded-full flex flex-col items-center justify-center gap-[3px] border transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showOi ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/70 shadow-[0_0_18px_rgba(var(--gold-rgb),0.35)]' : 'bg-[var(--gold-primary)]/[0.07] border-[var(--gold-primary)]/35 hover:bg-[var(--gold-primary)]/15 hover:border-[var(--gold-primary)]/60 hover:shadow-[0_0_14px_rgba(var(--gold-rgb),0.25)]'}`}
@@ -2911,7 +2947,7 @@ export default function Dashboard() {
             shortcut or Ctrl+F, the planner handed a destination from a
             search pick — completes to both-open instead of closing:
             the sections are one panel now. */}
-        <div className="relative group">
+        <div className="relative group" style={{ order: stripLayout.orderIndex.search * 10, display: stripLayout.hiddenIds.has('search') ? 'none' : undefined }}>
           <button data-search-toggle onClick={() => {
             if (showDirections && showDesktopSearch) { setShowDesktopSearch(false); setShowDirections(false); setActiveRoute(null); setRouteTarget(null); return; }
             setShowDesktopSearch(true); setShowDirections(true); setShowIntel(false); setShowAlerts(false); setShowSpaceCam(false); setShowDrawing(false);
@@ -2928,10 +2964,10 @@ export default function Dashboard() {
         </div>
 
         {/* Separator */}
-        <div className="w-4 h-px bg-white/10 mx-auto" />
+        <div className="w-4 h-px bg-white/10 mx-auto" style={{ order: stripLayout.orderIndex.arcgis * 10 - 5, display: stripLayout.hiddenIds.has('arcgis') ? 'none' : undefined }} />
 
         {/* ── ARCGIS INTEL ── */}
-        <div className="relative group">
+        <div className="relative group" style={{ order: stripLayout.orderIndex.arcgis * 10, display: stripLayout.hiddenIds.has('arcgis') ? 'none' : undefined }}>
           <button onClick={() => { setShowArcGIS(!showArcGIS); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showArcGIS ? 'bg-[var(--gold-primary)]/20' : 'hover:bg-white/10'}`} title="ArcGIS — search & import geospatial intel layers" aria-label="ArcGIS" aria-expanded={showArcGIS}>
             <Database className={`w-4 h-4 ${showArcGIS ? 'text-[var(--gold-primary)]' : 'text-white/60'}`} />
             {showArcGIS && (
@@ -2953,6 +2989,7 @@ export default function Dashboard() {
                     onUpdateLayer={(id, updates) => setArcgisLayers(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l))}
                     importedLayers={arcgisLayers}
                     mapBounds={mapCenter?.bounds || null}
+                    onClose={() => setShowArcGIS(false)}
                   />
                 </div>
               </motion.div>
@@ -3344,6 +3381,7 @@ export default function Dashboard() {
             watched={watched}
             onToggleWatch={toggleWatch}
             watchEvents={watchEvents}
+            onClose={() => setShowDrawing(false)}
           />
         </div>
       )}

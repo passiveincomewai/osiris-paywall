@@ -9,7 +9,7 @@ import {
   ChevronDown, ChevronUp, Loader2, AlertTriangle, Server,
   Wifi, Lock, MapPin, Bug, Code, Layers, Network, Fingerprint,
   CheckCircle, XCircle, Clock, ExternalLink, Crosshair, Camera,
-  Maximize2, Minimize2, Gavel, Bitcoin, Phone, Terminal, ShieldAlert, User,
+  Maximize2, Minimize2, X, Gavel, Bitcoin, Phone, Terminal, ShieldAlert, User,
   Crown, Database, Users, Zap, AtSign, Clapperboard
 } from 'lucide-react';
 import { ipToNumber, numberToIp, calculateSubnetStart, classifyDevice, assessRisk, batchFetch, ShodanInternetDBResponse, SweepDevice } from '@/lib/osint-utils';
@@ -173,7 +173,7 @@ const TABS: ToolDef[] = [
 
 interface OsintPanelProps { isOpen?: boolean; onClose?: () => void; isMobile?: boolean; onSweepVisualize?: (data: any) => void; onScanGeolocate?: (target: string, data: any) => void; onPlaceDevicesOnMap?: (devs: { id: string; name: string; lat: number; lng: number; type: string; color: string }[]) => void; /** Opens the Cinematic Director panel on the globe (Item 2, 2026-10-29: the Director entry point moved from a floating globe pill into this RECON panel). */ onOpenDirector?: () => void; }
 
-function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceDevicesOnMap, onOpenDirector }: OsintPanelProps) {
+function OsintPanelInner({ isMobile, onClose, onSweepVisualize, onScanGeolocate, onPlaceDevicesOnMap, onOpenDirector }: OsintPanelProps) {
   const [activeTab, setActiveTab] = useState('scanner');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [query, setQuery] = useState('');
@@ -1808,6 +1808,11 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceD
             <button onClick={() => setIsFullScreen(false)} className="p-2 hover:bg-white/5 rounded transition-colors text-[var(--text-muted)] hover:text-white flex-shrink-0" title="Exit expanded view (Esc)">
               <Minimize2 className="w-5 h-5" />
             </button>
+            {onClose && (
+              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded transition-colors text-[var(--text-muted)] hover:text-white flex-shrink-0" title="Close" aria-label="Close OSINT Recon">
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           {/* Two panes: the toolkit stays visible while results use the width. */}
@@ -1861,6 +1866,11 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate, onPlaceD
           <button onClick={() => setExpanded(!expanded)} className="p-1.5 rounded text-[#7DD3FC]/70 hover:text-white hover:bg-white/10 transition-colors" title={expanded ? 'Collapse' : 'Expand'}>
             {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
+          {onClose && (
+            <button onClick={onClose} className="p-1.5 rounded text-[#7DD3FC]/70 hover:text-white hover:bg-white/10 transition-colors" title="Close" aria-label="Close OSINT Recon">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
       <AnimatePresence>
