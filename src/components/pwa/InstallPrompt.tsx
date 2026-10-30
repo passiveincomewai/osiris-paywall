@@ -36,6 +36,14 @@ import {
   type DesktopOs,
   type InstallPlatform,
 } from "@/lib/pwa/install";
+import {
+  browserLocalStorage,
+  browserSessionStorage,
+  claimSession,
+  readSessionClaim,
+  readVisitsRecord,
+} from "@/lib/popups/manager";
+import { signalPopupClaimed } from "@/lib/popups/signals";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -68,6 +76,7 @@ export default function InstallPrompt() {
       window.localStorage.getItem(PWA_DISMISS_STORAGE_KEY),
     );
     const isDesktop = platformRef.current === "desktop";
+    const popupClaim = readSessionClaim(browserSessionStorage());
     const show = isDesktop
       ? shouldShowBookmarkPrompt({
           standalone,
@@ -83,6 +92,10 @@ export default function InstallPrompt() {
           hasNativePrompt: deferredPromptRef.current !== null,
           dismissedAt,
           now: Date.now(),
+          // Popup system (#7): a 2nd+-visit popup that yields to a
+          // session claim held by any other popup.
+          visitCount: readVisitsRecord(browserLocalStorage()).days.length,
+          sessionClaimed: popupClaim !== null && popupClaim !== "install",
         });
     setVisible(show);
     if (show && !shownTrackedRef.current) {
@@ -90,6 +103,10 @@ export default function InstallPrompt() {
       if (isDesktop) {
         trackAnalyticsEvent("bookmark_prompt_shown", desktopOsRef.current);
       } else {
+        // Claim the session for the popup system and report in the
+        // shared popup pattern alongside the legacy PWA event.
+        claimSession(browserSessionStorage(), "install", signalPopupClaimed);
+        trackAnalyticsEvent("popup_shown", "install");
         trackAnalyticsEvent("pwa_install_shown", platformRef.current);
       }
     }
@@ -102,6 +119,11 @@ export default function InstallPrompt() {
     );
     desktopOsRef.current = detectDesktopOs(window.navigator.userAgent);
     evaluate();
+    // The popup manager mounts after this bar and records today's
+    // visit day + any session claim; re-check shortly after so a
+    // day-2 visitor passes the install popup's visit gate, and a
+    // claim from another popup stands this bar down.
+    const recheck = window.setTimeout(evaluate, 2500);
 
     const onBeforeInstallPrompt = (event: Event) => {
       // Defer the native prompt so OUR button controls when it appears.
@@ -119,6 +141,7 @@ export default function InstallPrompt() {
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
     window.addEventListener("appinstalled", onAppInstalled);
     return () => {
+      window.clearTimeout(recheck);
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       window.removeEventListener("appinstalled", onAppInstalled);
     };
@@ -131,11 +154,13 @@ export default function InstallPrompt() {
     if (platformRef.current === "desktop") {
       trackAnalyticsEvent("bookmark_prompt_dismissed", desktopOsRef.current);
     } else {
+      trackAnalyticsEvent("popup_dismissed", "install");
       trackAnalyticsEvent("pwa_install_dismissed", platformRef.current);
     }
   }, []);
 
   const onInstallClick = useCallback(async () => {
+    trackAnalyticsEvent("popup_clicked", "install");
     const deferred = deferredPromptRef.current;
     if (deferred) {
       await deferred.prompt();

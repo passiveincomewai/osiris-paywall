@@ -48,6 +48,16 @@ export interface InstallPromptInputs {
   /** Stored dismissal timestamp (ms), or null if never dismissed. */
   dismissedAt: number | null;
   now: number;
+  /**
+   * Popup-system gates (optional — enforced only when provided, so
+   * other callers keep the legacy behaviour):
+   * - visitCount: distinct visit days recorded by the popup manager;
+   *   the install popup (#7) is a 2nd+-visit popup, so < 2 hides it.
+   * - sessionClaimed: another popup already owns this session
+   *   (one popup per session) — the bar stays down.
+   */
+  visitCount?: number;
+  sessionClaimed?: boolean;
 }
 
 /**
@@ -60,9 +70,15 @@ export interface InstallPromptInputs {
  *   platform is iOS.
  * - Everywhere else the bar appears only when Chromium has actually
  *   offered a native install prompt — desktop included.
+ * - When the caller passes the popup-system gates, a taken session
+ *   claim or a first-visit record also hides it (see the inputs).
  */
 export function shouldShowInstallPrompt(input: InstallPromptInputs): boolean {
   if (input.standalone || input.installed) return false;
+  if (input.sessionClaimed === true) return false;
+  if (typeof input.visitCount === "number" && input.visitCount < 2) {
+    return false;
+  }
   if (
     input.dismissedAt !== null &&
     input.now - input.dismissedAt < PWA_DISMISS_COOLDOWN_MS

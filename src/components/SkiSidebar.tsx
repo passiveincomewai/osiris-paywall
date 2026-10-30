@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PowderPassPromo from "@/components/PowderPassPromo";
+import PowderPassGate from "@/components/popups/PowderPassGate";
 import type { SkiResort } from "@/lib/ski-resorts";
 import {
   groupSkiResortsByRegion,
@@ -126,6 +127,7 @@ export default function SkiSidebar({
       </nav>
 
       {showPowder && <PowderPassPromo className="mt-6" />}
+      {showPowder && <PowderPassGate />}
     </aside>
   );
 }
