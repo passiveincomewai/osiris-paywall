@@ -12,7 +12,7 @@ import {
 } from "./SuitePanels";
 
 export interface Me {
-  profile: { referralCode: string; customCode: string | null; status: string; xp: number; payoutEmail: string | null; payoutMethod: string | null; payoutThresholdCents?: number | null; directorEnabled?: boolean };
+  profile: { referralCode: string; customCode: string | null; status: string; xp: number; payoutEmail: string | null; payoutMethod: string | null; venmoHandle?: string | null; payoutThresholdCents?: number | null; directorEnabled?: boolean };
   rank: { name: string; badge: string; color: string; glow: string; commissionPct: number; discountPct?: number; tagline: string };
   nextRank: { name: string; minXp: number; commissionPct: number; discountPct?: number } | null;
   discount: { code: string; pct: number; synced: boolean; status: string } | null;
@@ -70,7 +70,10 @@ export default function DashboardClient({ demo }: { demo?: DemoBundle } = {}) {
   const [showQr, setShowQr] = useState(false);
   const [customCode, setCustomCode] = useState("");
   const [payoutEmail, setPayoutEmail] = useState(demo?.me.profile.payoutEmail ?? "");
-  const [payoutMethod, setPayoutMethod] = useState(demo?.me.profile.payoutMethod ?? "manual");
+  const [payoutMethod, setPayoutMethod] = useState(
+    demo?.me.profile.payoutMethod === "paypal" ? "venmo" : (demo?.me.profile.payoutMethod ?? "venmo"),
+  );
+  const [venmoHandle, setVenmoHandle] = useState(demo?.me.profile.venmoHandle ?? "");
   const [threshold, setThreshold] = useState(
     demo?.me.profile.payoutThresholdCents ? String(demo.me.profile.payoutThresholdCents / 100) : "",
   );
@@ -83,7 +86,10 @@ export default function DashboardClient({ demo }: { demo?: DemoBundle } = {}) {
     if (!ok) { setLoading(false); return null; }
     setMe(j as Me);
     setPayoutEmail((j as Me).profile.payoutEmail ?? "");
-    setPayoutMethod((j as Me).profile.payoutMethod ?? "manual");
+    // A stored legacy "paypal" method stays on the record, but the live
+    // flow pays via Venmo — preselect Venmo so they're prompted for a handle.
+    setPayoutMethod((j as Me).profile.payoutMethod === "paypal" ? "venmo" : ((j as Me).profile.payoutMethod ?? "venmo"));
+    setVenmoHandle((j as Me).profile.venmoHandle ?? "");
     const th = (j as Me).profile.payoutThresholdCents;
     setThreshold(th ? String(th / 100) : "");
     return j as Me;
@@ -139,9 +145,9 @@ export default function DashboardClient({ demo }: { demo?: DemoBundle } = {}) {
     if (!confirm(`Request payout of ${fmtCents(dash!.totals.availableCents)}?`)) return;
     const { ok, j } = await api("/api/affiliate/payouts", {
       method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ payoutEmail, payoutMethod }),
+      body: JSON.stringify({ payoutEmail, payoutMethod, venmoHandle: payoutMethod === "venmo" ? venmoHandle : undefined }),
     });
-    if (ok) { setMsg(`Payout requested: ${fmtCents(j.payout.amountCents)}. An admin will review it.`); await loadDash(); }
+    if (ok) { setMsg(`Payout requested: ${fmtCents(j.payout.amountCents)}. We've emailed you a confirmation — an admin reviews requests within 48 hours.`); await loadDash(); }
     else setMsg(j.error ?? "Payout request failed.");
   };
 
@@ -452,16 +458,27 @@ export default function DashboardClient({ demo }: { demo?: DemoBundle } = {}) {
               Earn {fmtCents(effectiveMin - t.availableCents)} more in available commissions to request a payout.
             </div>
           )}
+          {me?.profile.payoutMethod === "paypal" && (
+            <div className="text-xs text-amber-300/90 border border-amber-400/30 bg-amber-400/5 rounded-xl px-3 py-2.5 mb-3">
+              We now pay out via <b>Venmo</b> instead of PayPal. Add your Venmo handle below to request your next payout — you'll be emailed at every step.
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-2 mb-4">
-            <input className={input} placeholder="Payout email (PayPal)" value={payoutEmail} onChange={(e) => setPayoutEmail(e.target.value)} />
+            <input className={input} placeholder="Payout email" value={payoutEmail} onChange={(e) => setPayoutEmail(e.target.value)} />
             <select className={input + " sm:!w-40"} value={payoutMethod} onChange={(e) => setPayoutMethod(e.target.value)}>
+              <option value="venmo">Venmo</option>
               <option value="manual">Manual</option>
-              <option value="paypal">PayPal</option>
               <option value="stripe_connect">Stripe Connect</option>
             </select>
             <button onClick={requestPayout} className={btnPrimary + " whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"} style={btnStyle}
               disabled={t.availableCents < effectiveMin}>Request payout</button>
           </div>
+          {payoutMethod === "venmo" && (
+            <div className="flex flex-col sm:flex-row gap-2 mb-4">
+              <input className={input} placeholder="Venmo handle (e.g. @your-name)" value={venmoHandle} onChange={(e) => setVenmoHandle(e.target.value)} />
+              <span className="text-xs text-slate-500 self-center">Payouts land in this Venmo account. You'll get an email when your request is received, approved, processing and paid.</span>
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mb-4 rounded-xl border border-white/10 bg-black/20 px-3 py-2.5">
             <span className="text-xs text-slate-400 flex-1">
               <span className="text-slate-200 font-bold">Personal payout threshold.</span>{" "}

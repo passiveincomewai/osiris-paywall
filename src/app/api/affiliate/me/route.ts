@@ -6,6 +6,7 @@ import { referralLinkFor } from "@/lib/affiliate/brand";
 import { ensureDiscountCode } from "@/lib/affiliate/discount";
 import { db } from "@/lib/db";
 import { requireAffiliate } from "../_util";
+import { normalizeVenmoHandle } from "@/lib/affiliate/venmo";
 
 export const runtime = "nodejs";
 
@@ -46,6 +47,7 @@ export async function GET() {
       leaderboardOptOut: profile.leaderboardOptOut,
       payoutEmail: profile.payoutEmail,
       payoutMethod: profile.payoutMethod,
+      venmoHandle: profile.venmoHandle,
       payoutThresholdCents: profile.payoutThresholdCents,
       directorEnabled: profile.directorEnabled,
       createdAt: profile.createdAt,
@@ -65,13 +67,28 @@ export async function PATCH(req: Request) {
   const { profile, error, userId } = await requireAffiliate();
   if (error || !profile) return error ?? NextResponse.json({ error: "Not an affiliate" }, { status: 404 });
   const body = (await req.json().catch(() => ({}))) as {
-    leaderboardOptOut?: boolean; payoutEmail?: string; payoutMethod?: string;
+    leaderboardOptOut?: boolean; payoutEmail?: string; payoutMethod?: string; venmoHandle?: string;
     payoutThresholdCents?: number | null; directorEnabled?: boolean;
   };
   const data: Record<string, unknown> = {};
   if (typeof body.leaderboardOptOut === "boolean") data.leaderboardOptOut = body.leaderboardOptOut;
   if (typeof body.payoutEmail === "string") data.payoutEmail = body.payoutEmail.slice(0, 120);
   if (typeof body.payoutMethod === "string") data.payoutMethod = body.payoutMethod.slice(0, 30);
+  if (typeof body.venmoHandle === "string") {
+    // Empty string clears the handle; anything else must be a valid handle.
+    if (body.venmoHandle.trim() === "") {
+      data.venmoHandle = null;
+    } else {
+      const handle = normalizeVenmoHandle(body.venmoHandle);
+      if (!handle) {
+        return NextResponse.json(
+          { error: "That doesn't look like a Venmo handle — use 5–30 letters, numbers, underscores or hyphens (e.g. @your-name)." },
+          { status: 400 },
+        );
+      }
+      data.venmoHandle = handle;
+    }
+  }
   if (typeof body.directorEnabled === "boolean") data.directorEnabled = body.directorEnabled;
   if (body.payoutThresholdCents === null) {
     data.payoutThresholdCents = null;
@@ -93,6 +110,7 @@ export async function PATCH(req: Request) {
     leaderboardOptOut: updated.leaderboardOptOut,
     payoutEmail: updated.payoutEmail,
     payoutMethod: updated.payoutMethod,
+    venmoHandle: updated.venmoHandle,
     payoutThresholdCents: updated.payoutThresholdCents,
     directorEnabled: updated.directorEnabled,
   });

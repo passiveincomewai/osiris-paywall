@@ -27,7 +27,7 @@ export default function AdminClient() {
     try {
       if (t === "overview") setData({ overview: await api("/api/admin/affiliates/manage?view=overview") });
       else if (t === "affiliates") setData({ list: await api(`/api/admin/affiliates?q=${encodeURIComponent(query)}&take=50`) });
-      else if (t === "payouts") setData({ payouts: await api("/api/admin/affiliates/payouts?status=requested") });
+      else if (t === "payouts") setData({ payouts: await api("/api/admin/affiliates/payouts") });
       else if (t === "ledger") setData({ ledger: await api("/api/admin/affiliates/manage?view=commissions") });
       else if (t === "fraud") setData({ fraud: await api("/api/admin/affiliates/manage?view=fraud") });
       else if (t === "settings") setData({ settings: (await api("/api/admin/affiliates/manage?view=overview")).settings });
@@ -140,35 +140,86 @@ function Affiliates({ d, q, setQ, reload }: { d: { total: number; affiliates: Af
 }
 
 /* ── Payouts ── */
-interface PayoutRow { id: string; amountCents: number; method: string; status: string; requestedAt: string; affiliate: { email: string; name: string; payoutEmail: string | null }; }
+interface PayoutRow {
+  id: string; amountCents: number; method: string; status: string; requestedAt: string;
+  deadlineAt: string; lastEmailedStatus: string | null; providerRef: string | null;
+  affiliate: { email: string; name: string; payoutEmail: string | null; venmoHandle: string | null };
+}
+
+function methodText(p: PayoutRow): string {
+  if (p.method === "venmo") return p.affiliate.venmoHandle ? `Venmo @${p.affiliate.venmoHandle}` : "Venmo";
+  if (p.method === "stripe_connect") return "Stripe Connect";
+  if (p.method === "paypal") return "PayPal (historical)";
+  return p.method;
+}
+
+function windowText(p: PayoutRow, now: number): { text: string; overdue: boolean } {
+  const deadline = new Date(p.deadlineAt).getTime();
+  const terminal = p.status === "paid" || p.status === "rejected";
+  if (terminal) return { text: `requested ${new Date(p.requestedAt).toLocaleString()}`, overdue: false };
+  const diff = deadline - now;
+  const abs = Math.abs(diff);
+  const h = Math.floor(abs / 3600_000);
+  const m = Math.floor((abs % 3600_000) / 60_000);
+  const span = h >= 1 ? `${h}h ${m}m` : `${m}m`;
+  return diff >= 0
+    ? { text: `requested ${new Date(p.requestedAt).toLocaleString()} · ${span} left of the 48h window`, overdue: false }
+    : { text: `requested ${new Date(p.requestedAt).toLocaleString()} · OVERDUE by ${span} (48h window)`, overdue: true };
+}
 
 function Payouts({ d, reload }: { d: { payouts: PayoutRow[] }; reload: () => void }) {
   const [ref, setRef] = useState("");
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(t);
+  }, []);
   const act = async (payoutId: string, action: string) => {
     const providerRef = action === "mark_paid" ? (ref || prompt("Provider reference (transaction id):") || "") : undefined;
     if (action === "mark_paid" && !providerRef) return;
     await api("/api/admin/affiliates/payouts", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ payoutId, action, providerRef }) });
     setRef(""); reload();
   };
-  if (!(d.payouts ?? []).length) return <EmptyState title="No pending payouts" body="Payout requests will appear here for approval." />;
+  if (!(d.payouts ?? []).length) return <EmptyState title="No payouts yet" body="Payout requests will appear here as a queue with a 48-hour processing window." />;
+  const statusColor = (s: string) => s === "paid" ? "#34d399" : s === "rejected" ? "#f87171" : s === "processing" ? "#38bdf8" : "#fbbf24";
   return (
     <div className="space-y-2">
-      {(d.payouts ?? []).map((p) => (
+      {(d.payouts ?? []).map((p) => {
+        const w = windowText(p, now);
+        return (
         <div key={p.id} className={card}>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <div className="text-white font-bold font-mono">{fmtCents(p.amountCents)}</div>
-              <div className="text-xs text-slate-400">{p.affiliate.name || p.affiliate.email} · {p.affiliate.payoutEmail ?? p.affiliate.email} · {p.method} · {new Date(p.requestedAt).toLocaleDateString()}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-white font-bold font-mono">{fmtCents(p.amountCents)}</span>
+                <Pill color={statusColor(p.status)}>{p.status}</Pill>
+                {p.lastEmailedStatus !== p.status && <span className="text-[11px] text-amber-300 font-mono">status email not sent</span>}
+              </div>
+              <div className="text-xs text-slate-400">{p.affiliate.name || p.affiliate.email} · {p.affiliate.payoutEmail ?? p.affiliate.email} · {methodText(p)}</div>
+              <div className={`text-xs font-mono ${w.overdue ? "text-red-300" : "text-slate-500"}`}>{w.text}</div>
+              {p.providerRef && <div className="text-xs text-slate-500 font-mono">ref: {p.providerRef}</div>}
             </div>
-            <div className="flex gap-1.5">
-              <button onClick={() => act(p.id, "approve")} className={`${btn} border-emerald-400/50 text-emerald-300`}>Approve</button>
-              <button onClick={() => act(p.id, "reject")} className={`${btn} border-red-400/50 text-red-300`}>Reject</button>
-              <button onClick={() => act(p.id, "mark_paid")} className={`${btn} border-cyan-400/50 text-cyan-300`}>Mark paid</button>
+            <div className="flex gap-1.5 flex-wrap">
+              {p.status === "requested" && <>
+                <button onClick={() => act(p.id, "approve")} className={`${btn} border-emerald-400/50 text-emerald-300`}>Approve</button>
+                <button onClick={() => act(p.id, "reject")} className={`${btn} border-red-400/50 text-red-300`}>Reject</button>
+              </>}
+              {p.status === "approved" && <>
+                <button onClick={() => act(p.id, "start_processing")} className={`${btn} border-sky-400/50 text-sky-300`}>Start processing</button>
+                <button onClick={() => act(p.id, "mark_paid")} className={`${btn} border-cyan-400/50 text-cyan-300`}>Mark paid</button>
+              </>}
+              {p.status === "processing" && <>
+                <button onClick={() => act(p.id, "mark_paid")} className={`${btn} border-cyan-400/50 text-cyan-300`}>Mark paid</button>
+              </>}
+              {p.lastEmailedStatus !== p.status && (
+                <button onClick={() => act(p.id, "resend_email")} className={`${btn} border-white/25 text-slate-200`}>Send status email</button>
+              )}
             </div>
           </div>
         </div>
-      ))}
-      <div className="text-xs text-slate-500 mt-2">Money moves in your payout provider (Stripe Connect / PayPal) or manually — then "Mark paid" with the transaction reference. Rejecting returns the commissions to the affiliate's available balance.</div>
+        );
+      })}
+      <div className="text-xs text-slate-500 mt-2">Money moves via Venmo (or Stripe Connect / a manual arrangement) — then "Mark paid" with the transaction reference. Every status change emails the affiliate automatically. Rejecting returns the commissions to the affiliate's available balance.</div>
     </div>
   );
 }

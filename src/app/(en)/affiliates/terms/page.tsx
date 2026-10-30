@@ -65,7 +65,7 @@ const SECTIONS: { n: string; title: string; body: string[] }[] = [
     n: "8",
     title: "Payouts & tax",
     body: [
-      "Payouts are processed through supported providers (such as Stripe Connect or PayPal Payouts, depending on eligibility) or by manual arrangement, after administrator approval. Affiliates are solely responsible for reporting and paying all taxes on their commission income. WorldEye may require identity verification and tax documentation (e.g., W-9/W-8BEN or local equivalents) before releasing payouts, and may withhold where required by law.",
+      "Payouts are processed through supported providers (such as Venmo or Stripe Connect, depending on eligibility) or by manual arrangement, after administrator approval. Affiliates are solely responsible for reporting and paying all taxes on their commission income. WorldEye may require identity verification and tax documentation (e.g., W-9/W-8BEN or local equivalents) before releasing payouts, and may withhold where required by law.",
     ],
   },
   {

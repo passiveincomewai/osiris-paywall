@@ -330,7 +330,11 @@ model AffiliateProfile {
 
   leaderboardOptOut Boolean @default(false)
   payoutEmail       String?
-  payoutMethod      String? // "stripe_connect" | "paypal" | "manual"
+  payoutMethod      String? // "venmo" | "stripe_connect" | "manual" (legacy: "paypal" — history only)
+  // Venmo payout handle (live-flow payout method since 2026-10-30). Stored
+  // normalized without the leading "@". Legacy PayPal values are never
+  // migrated or deleted; they only live on in historical records.
+  venmoHandle       String?
   // Personal payout threshold (cents). Null = use the program minimum.
   // A payout can only be requested at max(program min, this value).
   payoutThresholdCents Int?
@@ -753,6 +757,10 @@ model Payout {
   providerRef  String?
   decidedBy    String?
   note         String?      @db.Text
+  // The status the affiliate was last emailed about. The status email for a
+  // transition is sent only when this differs from the current status, so
+  // each actual transition emails exactly once (idempotent retries).
+  lastEmailedStatus String?
 
   commissions Commission[]
 
