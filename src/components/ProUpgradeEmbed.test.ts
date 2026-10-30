@@ -45,4 +45,15 @@ describe("ProUpgradeEmbed", () => {
     const html = render([]);
     expect(html).not.toContain("Loading secure checkout…");
   });
+
+  it("offers all three tiers as tabs, opening on Pro (Phase D)", () => {
+    const html = render([]);
+    for (const s of ["Lite", "Pro", "Ultra"]) {
+      expect(html).toContain(s);
+    }
+    // Pro is the opening tab: Lite/Ultra prices wait a tap.
+    expect(html).not.toContain("$4.99");
+    expect(html).not.toContain("$24.99");
+    expect(html).not.toContain("$149.99");
+  });
 });

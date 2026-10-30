@@ -6,8 +6,15 @@
  * promises. One line of pitch, the premium layers as chips (what the
  * panel's locks actually gate — derived from LAYER_GROUPS by the
  * panel and passed in, so the pitch can never drift from the locks),
- * a plan mini-choice in /pricing's own words (TRIAL_PLAN_OPTIONS),
- * and a primary upgrade button whose CTA is the selected plan's own.
+ * a plan mini-choice in /pricing's own words, and a primary upgrade
+ * button whose CTA is the selected plan's own.
+ *
+ * Phase D (Pricing Redesign, 2026-10-30): the mini-choice is the full
+ * 3×3 grid — tier tabs (Lite / Pro / Ultra) over the selected tier's
+ * three period rows, all from lib/billing's TIER_PLAN_OPTIONS — so the
+ * embed sells the same nine plans as /pricing and the shared picker,
+ * opening on Pro annual as it always has. Nothing here restates a
+ * price, a trial length or a plan name.
  *
  * The button opens the SAME embedded checkout sheet /pricing uses
  * (components/CheckoutSheet) — the form whose first controls are the
@@ -31,12 +38,27 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { Crown, Lock, Zap } from "lucide-react";
 import {
-  TRIAL_PLAN_OPTIONS,
-  type TrialPlan,
+  TIER_PLAN_OPTIONS,
+  gridCheckoutPlan,
+  type CheckoutPlanId,
+  type PlanTier,
 } from "@/lib/billing/trial-checkout";
 import CheckoutSheet from "./CheckoutSheet";
 import HostedCheckoutLink from "./HostedCheckoutLink";
 import TrialButton from "./TrialButton";
+
+/** Tier tab accents — the same per-tier colours as /pricing's grid. */
+const TIER_TAB_ACCENTS: Record<PlanTier, string> = {
+  lite: "border-[#00E5FF]/60 bg-[#00E5FF]/[0.08] text-[#00E5FF]",
+  pro: "border-[#D4AF37]/60 bg-[#D4AF37]/[0.08] text-[#D4AF37]",
+  ultra: "border-[#a78bfa]/60 bg-[#a78bfa]/[0.08] text-[#a78bfa]",
+};
+
+const TIER_LABELS: Record<PlanTier, string> = {
+  lite: "Lite",
+  pro: "Pro",
+  ultra: "Ultra",
+};
 
 export default function ProUpgradeEmbed({
   premiumLabels,
@@ -48,10 +70,18 @@ export default function ProUpgradeEmbed({
    *  rail) can hold its flyout open underneath the sheet. */
   onSheetOpen?: () => void;
 }) {
-  const [plan, setPlan] = useState<TrialPlan>("annual");
-  const [sheetPlan, setSheetPlan] = useState<TrialPlan | null>(null);
-  const selected =
-    TRIAL_PLAN_OPTIONS.find((o) => o.plan === plan) ?? TRIAL_PLAN_OPTIONS[0];
+  const [tier, setTier] = useState<PlanTier>("pro");
+  const [plan, setPlan] = useState<CheckoutPlanId>("annual");
+  const [sheetPlan, setSheetPlan] = useState<CheckoutPlanId | null>(null);
+  const options = TIER_PLAN_OPTIONS[tier];
+  const selected = options.find((o) => o.plan === plan) ?? options[0];
+
+  function chooseTier(t: PlanTier) {
+    // Switching tiers lands on that tier's annual — the default view
+    // everywhere in the redesign (annual carries the VIP branding).
+    setTier(t);
+    setPlan(gridCheckoutPlan(t, "annual"));
+  }
 
   return (
     <div
@@ -82,9 +112,33 @@ export default function ProUpgradeEmbed({
         </div>
       )}
 
-      <div className="mt-2.5 flex flex-col gap-1" role="radiogroup" aria-label="Choose a plan">
-        {TRIAL_PLAN_OPTIONS.map((o) => {
-          const active = o.plan === plan;
+      {/* The tier tabs: one grid, three tiers — the radio rows below
+          are the selected tier's periods. */}
+      <div className="mt-2.5 flex gap-1" role="tablist" aria-label="Choose a tier">
+        {(Object.keys(TIER_PLAN_OPTIONS) as PlanTier[]).map((t) => {
+          const active = t === tier;
+          return (
+            <button
+              key={t}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => chooseTier(t)}
+              className={`flex-1 rounded-lg border px-2 py-1 text-[9px] font-bold uppercase tracking-wider transition ${
+                active
+                  ? TIER_TAB_ACCENTS[t]
+                  : "border-white/10 bg-white/[0.02] text-white/50 hover:border-white/25 hover:text-white"
+              }`}
+            >
+              {TIER_LABELS[t]}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-2 flex flex-col gap-1" role="radiogroup" aria-label="Choose a plan">
+        {options.map((o) => {
+          const active = o.plan === selected.plan;
           return (
             <button
               key={o.plan}
@@ -118,7 +172,7 @@ export default function ProUpgradeEmbed({
         label={selected.cta}
         days={selected.trialDays === 3 ? 3 : 10}
         onClick={() => {
-          setSheetPlan(plan);
+          setSheetPlan(selected.plan);
           onSheetOpen?.();
         }}
         className="mt-2.5 w-full"
@@ -127,7 +181,7 @@ export default function ProUpgradeEmbed({
         Apple Pay &amp; Link lead the checkout form.
       </p>
       <div className="mt-1 text-center">
-        <HostedCheckoutLink plan={plan} caption={false} />
+        <HostedCheckoutLink plan={selected.plan} caption={false} />
       </div>
 
       {sheetPlan &&
