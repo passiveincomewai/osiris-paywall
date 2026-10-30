@@ -10,6 +10,7 @@ import {
 } from "@/components/affiliate/ui";
 import { AreaChart } from "@/components/affiliate/charts";
 import { buildTrackedUrl } from "@/lib/affiliate/insights";
+import { RankArt } from "@/components/affiliate/graphics";
 import { PLATFORMS, PLATFORM_BY_SLUG, type PlatformDef } from "@/lib/affiliate/platforms";
 
 export interface InsightsData {
@@ -246,7 +247,13 @@ export function InsightsSection({ demoData }: { demoData?: InsightsData }) {
             <div key={r.key} className={`rounded-xl border p-3 ${r.current ? "bg-white/[0.05]" : "border-white/10 bg-black/20"}`}
               style={r.current ? { borderColor: r.color + "88" } : undefined}>
               <div className="flex items-center justify-between">
-                <span className="font-bold" style={{ color: r.color }}>{r.badge} {r.name}</span>
+                <span className="flex items-center gap-2 min-w-0">
+                  <span className="w-9 h-9 rounded-lg flex items-center justify-center border shrink-0"
+                    style={{ borderColor: r.color + "66", background: `radial-gradient(circle at 35% 30%, ${r.color}33, rgba(5,8,16,.9))` }}>
+                    <RankArt rank={r.key} color={r.color} size={24} />
+                  </span>
+                  <span className="font-bold" style={{ color: r.color }}>{r.name}</span>
+                </span>
                 {r.current ? <Pill color={r.color}>YOU ARE HERE</Pill> : r.reached ? <Pill color="#34d399">REACHED</Pill> : <span className="text-[10px] font-mono text-slate-500">{r.minXp.toLocaleString()} XP</span>}
               </div>
               <ul className="mt-2 space-y-1 text-xs text-slate-400">
