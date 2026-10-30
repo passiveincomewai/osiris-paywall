@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Loader2, RefreshCw, X, Activity, ArrowLeftRight, CircleDot } from 'lucide-react';
+import { Sparkles, Loader2, RefreshCw, X, Activity, ArrowLeftRight, CircleDot, Lock } from 'lucide-react';
 import { BLOCS, BLOC_ORDER, timeAgo, type AlertBrief, type AlertThread } from '@/lib/alert-digest';
 
 /**
@@ -31,6 +31,25 @@ interface OverviewResult {
   generatedBy: 'gemini' | 'analyst';
   generatedAt: string;
   brief?: AlertBrief;
+}
+
+/**
+ * How a failed generate() is presented. A raw HTTP status must never
+ * reach the screen: the middleware answers 402 for plan-gated layers
+ * ({ error: 'premium_required' | 'vip_required' }), and the reader
+ * deserves the lock + upgrade treatment, not an error code. 429 is the
+ * route's own rate limit; anything else is a plain outage message.
+ */
+export type OverviewFailure =
+  | { kind: 'locked'; tier: 'pro' | 'vip' }
+  | { kind: 'busy' }
+  | { kind: 'unavailable' };
+
+export function overviewFailureFor(status: number, body: unknown): OverviewFailure {
+  const code = (body as { error?: unknown } | null | undefined)?.error;
+  if (status === 402) return { kind: 'locked', tier: code === 'vip_required' ? 'vip' : 'pro' };
+  if (status === 429) return { kind: 'busy' };
+  return { kind: 'unavailable' };
 }
 
 const PERSPECTIVE: Record<AlertThread['perspective'], { label: string; color: string; title: string }> = {
@@ -155,11 +174,11 @@ export default function AiOverview({
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<OverviewResult | null>(null);
   const [resultSignature, setResultSignature] = useState<string | undefined>(undefined);
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<OverviewFailure | null>(null);
 
   const generate = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setFailure(null);
     const sig = signature;
     try {
       const res = await fetch('/api/ai/overview', {
@@ -167,11 +186,16 @@ export default function AiOverview({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode, payload }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        let body: unknown = null;
+        try { body = await res.json(); } catch { /* non-JSON error body */ }
+        setFailure(overviewFailureFor(res.status, body));
+        return;
+      }
       setResult(await res.json());
       setResultSignature(sig);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to generate overview');
+    } catch {
+      setFailure({ kind: 'unavailable' });
     } finally {
       setLoading(false);
     }
@@ -248,7 +272,35 @@ export default function AiOverview({
                 </div>
               )}
 
-              {error && <div className="text-[var(--alert-red)] py-1">⚠ {error}</div>}
+              {failure && (
+                failure.kind === 'locked' ? (
+                  <div className="py-1">
+                    <div className="flex items-center gap-1.5 font-semibold text-[var(--text-primary)]">
+                      <Lock className="w-3 h-3 flex-shrink-0" style={{ color: accent }} />
+                      AI Overview is part of {failure.tier === 'vip' ? 'VIP Pro' : 'WorldEye Pro'}
+                    </div>
+                    <p className="mt-1 leading-snug text-[var(--text-secondary)]">
+                      AI read-outs of the live picture are a {failure.tier === 'vip' ? 'VIP Pro' : 'Pro'} feature.
+                      Your current plan doesn&apos;t include them.
+                    </p>
+                    <a
+                      href="/pricing"
+                      className="mt-2 inline-flex items-center gap-1.5 rounded border px-2 py-1 text-[10px] font-mono tracking-wider transition-all hover:brightness-125"
+                      style={{ color: accent, borderColor: `${accent}55`, background: `${accent}12` }}
+                    >
+                      <Sparkles className="w-3 h-3" /> SEE PLANS
+                    </a>
+                  </div>
+                ) : failure.kind === 'busy' ? (
+                  <div className="py-1 leading-snug text-[var(--text-secondary)]">
+                    Lots of read-outs are being generated right now — give it a moment, then hit regenerate.
+                  </div>
+                ) : (
+                  <div className="py-1 leading-snug text-[var(--text-secondary)]">
+                    AI Overview is unavailable right now. Please try again in a moment.
+                  </div>
+                )
+              )}
 
               {result && brief && (
                 <AlertsBrief
