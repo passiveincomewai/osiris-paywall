@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 /**
  * OSIRIS — stops along a driving route, for the ski route tool (P7).
@@ -10,15 +10,16 @@ export const maxDuration = 30;
  *
  * Data is OpenStreetMap via the keyless Overpass API — the same
  * open-data family the site's routing already uses. The route is
- * sampled every few kilometres, each sample asks Overpass for the
- * five stop categories within POI_CORRIDOR_KM of the line, and the
- * results are re-measured against the actual polyline here (the
- * around-radius is a circle per sample; the corridor rule below is
- * the polyline distance, so a stop behind a ridge the road bends
- * away from does not slip in). Names come from the OSM record
- * itself; a stop with no name tag is labelled by its category —
- * never given an invented name. Any Overpass failure surfaces as a
- * 502 so the client can say plainly that stops are unavailable.
+ * sampled every few kilometres; the samples form a polyline that a
+ * single two-statement Overpass query searches for the five stop
+ * categories within POI_CORRIDOR_KM, and the results are
+ * re-measured against the actual polyline here (the corridor rule
+ * below is the true polyline distance, so a stop behind a ridge
+ * the road bends away from does not slip in). Names come from the
+ * OSM record itself; a stop with no name tag is labelled by its
+ * category — never given an invented name. Any Overpass failure
+ * surfaces as a 502 so the client can say plainly that stops are
+ * unavailable.
  */
 
 const POI_CORRIDOR_KM = 1.5;
@@ -29,22 +30,23 @@ const MAX_ROUTE_POINTS = 6000;
 
 type PoiCategory = 'fuel' | 'ev' | 'food' | 'lodging' | 'parking';
 
-const CATEGORY_TAGS: Record<PoiCategory, string[]> = {
-  fuel: ['node["amenity"="fuel"]'],
-  ev: ['node["amenity"="charging_station"]'],
-  food: [
-    'node["amenity"="restaurant"]',
-    'node["amenity"="fast_food"]',
-    'node["amenity"="cafe"]',
-  ],
-  lodging: [
-    'node["tourism"="hotel"]',
-    'node["tourism"="motel"]',
-    'node["tourism"="guest_house"]',
-    'node["tourism"="hostel"]',
-  ],
-  parking: ['node["amenity"="parking"]'],
-};
+/* Tag values per OSM key, unioned into the two query statements.
+   The response classification further down maps the same values
+   back to categories. */
+const AMENITY_VALUES = ['fuel', 'charging_station', 'restaurant', 'fast_food', 'cafe', 'parking'];
+const TOURISM_VALUES = ['hotel', 'motel', 'guest_house', 'hostel'];
+
+/**
+ * Public Overpass instances, asked in parallel (see
+ * fetchOverpassElements). These two are the ones that answered at
+ * all in the 2026-10-30 reliability measurements; the other public
+ * mirrors never returned inside ~110 s even for a one-line query.
+ */
+const OVERPASS_ENDPOINTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+];
+const OVERPASS_BUDGET_MS = 52_000;
 
 const CATEGORY_FALLBACK_NAME: Record<PoiCategory, string> = {
   fuel: 'Fuel station',
@@ -152,6 +154,66 @@ interface OverpassElement {
   tags?: Record<string, string>;
 }
 
+/**
+ * Ask every instance at once and take the first good answer. The
+ * public Overpass servers are chronically queue-bound — measured
+ * 2026-10-30, a single-statement query took 26–93 s end-to-end and
+ * several mirrors never answered at all — so one instance inside
+ * one short budget (the original design: ~200 statements, a 25 s
+ * in-query timeout, a 28 s abort) failed essentially every time.
+ * Hedging two instances with a two-statement query over a ~52 s
+ * budget is what makes the endpoint reliable; if every instance
+ * fails, the caller still gets the honest 502.
+ */
+async function fetchOverpassElements(query: string): Promise<OverpassElement[]> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), OVERPASS_BUDGET_MS);
+  const attempt = async (url: string): Promise<OverpassElement[]> => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'WorldEye ski route tool (worldeye.app)',
+      },
+      body: `data=${encodeURIComponent(query)}`,
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`Overpass HTTP ${res.status}`);
+    const json = (await res.json()) as { elements?: OverpassElement[] };
+    return json.elements ?? [];
+  };
+  try {
+    return await new Promise<OverpassElement[]>((resolve, reject) => {
+      let settled = false;
+      let failures = 0;
+      const errors: string[] = [];
+      for (const url of OVERPASS_ENDPOINTS) {
+        attempt(url).then(
+          (els) => {
+            if (!settled) {
+              settled = true;
+              resolve(els);
+            }
+          },
+          (err) => {
+            failures += 1;
+            errors.push(
+              `${new URL(url).host}: ${err instanceof Error ? err.message : String(err)}`,
+            );
+            if (!settled && failures === OVERPASS_ENDPOINTS.length) {
+              settled = true;
+              reject(new Error(errors.join('; ')));
+            }
+          },
+        );
+      }
+    });
+  } finally {
+    clearTimeout(timer);
+    controller.abort();
+  }
+}
+
 export async function POST(request: Request) {
   let body: { route?: unknown };
   try {
@@ -170,33 +232,31 @@ export async function POST(request: Request) {
   const samples = sampleRoute(route, cum);
   const radiusM = Math.round(POI_CORRIDOR_KM * 1000);
 
-  const statements: string[] = [];
-  for (const cat of Object.keys(CATEGORY_TAGS) as PoiCategory[]) {
-    for (const tag of CATEGORY_TAGS[cat]) {
-      for (const s of samples) {
-        statements.push(`${tag}(around:${radiusM},${s.lat.toFixed(5)},${s.lng.toFixed(5)});`);
-      }
-    }
-  }
-  const query = `[out:json][timeout:25];(${statements.join('')});out body 800;`;
+  /* One around-search per OSM key along the whole sample polyline
+     (2 statements total — the original per-sample form needed ~200
+     and drowned in the public instances' queues). The result set is
+     the same; every element is still re-measured below. */
+  const coords = samples.map((s) => `${s.lat.toFixed(5)},${s.lng.toFixed(5)}`).join(',');
+  const query =
+    `[out:json][timeout:50];(` +
+    `node["amenity"~"^(${AMENITY_VALUES.join('|')})$"](around:${radiusM},${coords});` +
+    `node["tourism"~"^(${TOURISM_VALUES.join('|')})$"](around:${radiusM},${coords});` +
+    `);out body 800;`;
 
   let elements: OverpassElement[];
   try {
-    const res = await fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'WorldEye ski route tool (worldeye.app)',
-      },
-      body: `data=${encodeURIComponent(query)}`,
-      signal: AbortSignal.timeout(28000),
-    });
-    if (!res.ok) throw new Error(`Overpass HTTP ${res.status}`);
-    const json = (await res.json()) as { elements?: OverpassElement[] };
-    elements = json.elements ?? [];
-  } catch {
+    elements = await fetchOverpassElements(query);
+  } catch (err) {
+    /* TEMPORARY diagnostic (ski-pois reliability work, 2026-10-30):
+       the per-instance upstream outcome is exposed only to callers
+       sending the debug header, so a failed run says WHY instead of
+       failing blind. Remove once the fix is verified. */
+    const debug = request.headers.get('x-pois-debug') === '1';
     return NextResponse.json(
-      { error: 'Stops data is unavailable right now' },
+      {
+        error: 'Stops data is unavailable right now',
+        ...(debug ? { upstream: err instanceof Error ? err.message : String(err) } : {}),
+      },
       { status: 502 },
     );
   }
