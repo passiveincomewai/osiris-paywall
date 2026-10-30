@@ -4,6 +4,7 @@ import { Image as ImageIcon, QrCode, PenLine, Mail } from "lucide-react";
 import { RankBadge, SectionTitle, Pill, StatCard, XpBar } from "@/components/affiliate/ui";
 import { RankArt } from "@/components/affiliate/graphics";
 import AffiliatePersonal from "@/components/affiliate/AffiliatePersonal";
+import HideForAffiliates from "@/components/affiliate/HideForAffiliates";
 import ShareLinkBlock from "@/components/share/ShareLinkBlock";
 import EarningsCalculator from "@/components/affiliate/EarningsCalculator";
 import CreatorApply from "@/components/affiliate/CreatorApply";
@@ -101,9 +102,11 @@ export default function AffiliatesLanding() {
           <Link href="#how" className="px-8 py-4 rounded-2xl text-lg font-mono font-bold border border-white/20 text-slate-200 hover:bg-white/5 transition-colors">
             How it works
           </Link>
-          <Link href="/affiliates/demo" className="px-8 py-4 rounded-2xl text-lg font-mono font-bold border border-pink-400/50 text-pink-200 hover:bg-pink-400/10 transition-colors">
-            ▶ Live demo
-          </Link>
+          <HideForAffiliates>
+            <Link href="/affiliates/demo" className="px-8 py-4 rounded-2xl text-lg font-mono font-bold border border-pink-400/50 text-pink-200 hover:bg-pink-400/10 transition-colors">
+              ▶ Live demo
+            </Link>
+          </HideForAffiliates>
         </div>
         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
           <StatCard label="Direct commission" value="15–30%" sub="recurring, by rank" accent="#38bdf8" />

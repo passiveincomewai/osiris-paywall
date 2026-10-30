@@ -83,14 +83,16 @@ interface MineStanding {
   allTime: { position: number; of: number; row: Row } | null;
 }
 
-export default function LeaderboardClient() {
+export default function LeaderboardClient({ demo }: { demo?: { boards: Record<string, Row[]> } } = {}) {
+  const isDemo = !!demo;
   const [tab, setTab] = useState<BoardKey>("month");
-  const [data, setData] = useState<Record<string, Row[]> | null>(null);
+  const [data, setData] = useState<Record<string, Row[]> | null>(demo?.boards ?? null);
   const [mine, setMine] = useState<MineStanding | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [optOut, setOptOut] = useState<boolean | null>(null); // null = not an affiliate / unknown
 
   useEffect(() => {
+    if (isDemo) return;
     (async () => {
       try {
         const r = await fetch("/api/affiliate/leaderboard", { cache: "no-store" });

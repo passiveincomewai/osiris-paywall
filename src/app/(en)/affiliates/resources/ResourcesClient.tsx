@@ -174,8 +174,9 @@ const CTAS: Record<Tone, string[]> = {
 
 type Challenge = { id: string; metric: string; completedAt: string | null };
 
-export default function ResourcesClient() {
-  const [link, setLink] = useState<string | null>(null);
+export default function ResourcesClient({ demo }: { demo?: { link: string; code: string } } = {}) {
+  const isDemo = !!demo;
+  const [link, setLink] = useState<string | null>(demo?.link ?? null);
   const [qr, setQr] = useState<string | null>(null);
   const [tutorial, setTutorial] = useState<Challenge | null>(null);
   const [tutorialDone, setTutorialDone] = useState(false);
@@ -184,6 +185,21 @@ export default function ResourcesClient() {
   const [variants, setVariants] = useState<string[]>([]);
 
   useEffect(() => {
+    if (isDemo) {
+      // Demo: the referral link is the sample DEMO link; the QR comes
+      // from the same public QR endpoint a live account uses. No account
+      // data is fetched and the tutorial mission stays untouched.
+      (async () => {
+        try {
+          const q = await fetch(`/api/affiliate/qr?code=${encodeURIComponent(demo!.code)}`, { cache: "no-store" });
+          if (q.ok) {
+            const qj = await q.json();
+            if (qj?.qr) setQr(qj.qr);
+          }
+        } catch { /* non-fatal */ }
+      })();
+      return;
+    }
     (async () => {
       try {
         const r = await fetch("/api/affiliate/me", { cache: "no-store" });
@@ -282,7 +298,7 @@ export default function ResourcesClient() {
   };
 
   const completeTutorial = async () => {
-    if (!tutorial) return;
+    if (isDemo || !tutorial) return;
     try {
       const r = await fetch("/api/affiliate/challenges", {
         method: "POST",

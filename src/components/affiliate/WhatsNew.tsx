@@ -4,6 +4,7 @@
 // in this dashboard — nothing aspirational.
 import { SectionTitle } from "@/components/affiliate/ui";
 import Link from "next/link";
+import HideForAffiliates from "@/components/affiliate/HideForAffiliates";
 
 const FEATURES: { title: string; body: string }[] = [
   { title: "Marketing Studio", body: "150+ templates personalized with your real link, discount code and QR — image and video creators for Reels, TikTok, Stories and carousels, a caption generator, campaign kits and a daily content drop." },
@@ -40,9 +41,11 @@ export default function WhatsNew() {
           </div>
         ))}
       </div>
-      <p className="mt-4 text-sm text-slate-400">
-        See it all working: <Link href="/affiliates/demo" className="text-cyan-300 hover:underline font-mono">open the live demo →</Link>
-      </p>
+      <HideForAffiliates>
+        <p className="mt-4 text-sm text-slate-400">
+          See it all working: <Link href="/affiliates/demo" className="text-cyan-300 hover:underline font-mono">open the live demo →</Link>
+        </p>
+      </HideForAffiliates>
     </section>
   );
 }

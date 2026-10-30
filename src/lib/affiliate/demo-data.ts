@@ -201,3 +201,199 @@ export function buildDemoLinks() {
     { label: "Blog sidebar", slug: "blog-sidebar", url: "https://worldeye.app/ref/DEMO?t=blog-sidebar", clicks: 154, signups: 5 },
   ];
 }
+
+// ── Demo: Missions ───────────────────────────────────────────────────────
+// The mission definitions mirror the real seeded challenges
+// (lib/affiliate/challenges SEEDED_CHALLENGES — same slugs, titles,
+// targets and XP). Only the progress/completion figures are sample.
+
+export interface DemoChallenge {
+  id: string; slug: string; kind: "daily" | "weekly" | "monthly";
+  title: string; description: string; xpReward: number; metric: string;
+  target: number; endsAt: string; progress: number; completedAt: string | null;
+}
+
+export function buildDemoChallenges(): DemoChallenge[] {
+  const endsIn = (days: number) => new Date(Date.now() + days * DAY).toISOString();
+  const defs: Omit<DemoChallenge, "id" | "endsAt">[] = [
+    { slug: "daily-tutorial", kind: "daily", title: "Study the Playbook", description: "Complete the affiliate marketing tutorial in Resources.", xpReward: 200, metric: "tutorial", target: 1, progress: 1, completedAt: isoDaysAgo(0) },
+    { slug: "daily-visits-3", kind: "daily", title: "First Signals", description: "Generate 3 verified unique referral visits.", xpReward: 250, metric: "visits", target: 3, progress: 2, completedAt: null },
+    { slug: "daily-resource", kind: "daily", title: "Arsenal Check", description: "Open a new promotional resource.", xpReward: 200, metric: "tutorial", target: 1, progress: 0, completedAt: null },
+    { slug: "weekly-signups-3", kind: "weekly", title: "Recruit Squad", description: "Refer 3 verified new users.", xpReward: 400, metric: "signups", target: 3, progress: 1, completedAt: null },
+    { slug: "weekly-paying-2", kind: "weekly", title: "Double Conversion", description: "Generate 2 paying subscriptions.", xpReward: 500, metric: "paying_referrals", target: 2, progress: 1, completedAt: null },
+    { slug: "weekly-visits-100", kind: "weekly", title: "Signal Flood", description: "Reach 100 legitimate affiliate link visits.", xpReward: 350, metric: "visits", target: 100, progress: 64, completedAt: null },
+    { slug: "monthly-paying-10", kind: "monthly", title: "Network Effect", description: "Generate 10 paying subscribers.", xpReward: 1200, metric: "paying_referrals", target: 10, progress: 4, completedAt: null },
+    { slug: "monthly-revenue-500", kind: "monthly", title: "Half Grand", description: "Reach $500 in qualifying referred subscription revenue.", xpReward: 2000, metric: "revenue_cents", target: 50000, progress: 18200, completedAt: null },
+    { slug: "monthly-rank-up", kind: "monthly", title: "Promotion", description: "Unlock a new affiliate rank.", xpReward: 800, metric: "rank_up", target: 1, progress: 0, completedAt: null },
+    { slug: "monthly-studio-creator", kind: "monthly", title: "Studio Creator", description: "Save 10 creations in the Studio this month", xpReward: 600, metric: "studio_creations", target: 10, progress: 3, completedAt: null },
+    { slug: "monthly-studio-days", kind: "monthly", title: "Studio Regular", description: "Create on 7 different days this month", xpReward: 500, metric: "studio_days", target: 7, progress: 2, completedAt: null },
+    { slug: "monthly-studio-video", kind: "monthly", title: "First Reel", description: "Personalize a video in the Studio", xpReward: 300, metric: "studio_videos", target: 1, progress: 0, completedAt: null },
+    { slug: "monthly-studio-campaign", kind: "monthly", title: "Campaign Starter", description: "Join a Studio campaign", xpReward: 400, metric: "campaign_joins", target: 1, progress: 0, completedAt: null },
+  ];
+  const span = { daily: 1, weekly: 5, monthly: 21 } as const;
+  return defs.map((d) => ({ ...d, id: `demo-ch-${d.slug}`, endsAt: endsIn(span[d.kind]) }));
+}
+
+// ── Demo: Network ────────────────────────────────────────────────────────
+// A sample 3-level tree. Every person is fictional and labelled
+// "(sample)" inline; the demo page banner says the same. Figures are
+// illustrative only.
+
+export interface DemoNetworkNode {
+  id: string;
+  name: string;
+  image: string | null;
+  level: number;
+  joinedAt: string;
+  converted: boolean;
+  commissionsCents: number;
+  lastActivityAt?: string | null;
+  children: DemoNetworkNode[];
+}
+
+export function buildDemoNetworkTree(): DemoNetworkNode[] {
+  const node = (
+    id: string, name: string, level: number, joinedDaysAgo: number,
+    converted: boolean, commissionsCents: number, lastSaleDaysAgo: number | null,
+    children: DemoNetworkNode[] = [],
+  ): DemoNetworkNode => ({
+    id, name: `${name} (sample)`, image: null, level,
+    joinedAt: isoDaysAgo(joinedDaysAgo), converted, commissionsCents,
+    lastActivityAt: lastSaleDaysAgo === null ? null : isoDaysAgo(lastSaleDaysAgo),
+    children,
+  });
+  return [
+    node("demo-net-1", "Alex Rivers", 1, 96, true, 18_240, 2, [
+      node("demo-net-1a", "Sam Carter", 2, 61, true, 2_610, 6, [
+        node("demo-net-1a-i", "Jamie Lee", 3, 40, true, 420, 9),
+        node("demo-net-1a-ii", "Robin Fox", 3, 22, false, 0, null),
+      ]),
+      node("demo-net-1b", "Priya Nair", 2, 33, false, 0, null),
+    ]),
+    node("demo-net-2", "Marco Ruiz", 1, 74, true, 9_870, 4, [
+      node("demo-net-2a", "Elena Petrova", 2, 51, true, 1_155, 12),
+    ]),
+    node("customer:demo-net-3", "Casey Kim", 1, 18, true, 3_150, 1),
+    node("demo-net-4", "Jordan Blake", 1, 9, false, 0, null),
+  ];
+}
+
+// ── Demo: Leaderboard ────────────────────────────────────────────────────
+// Sample boards in the /api/affiliate/leaderboard response shape.
+// Handles are fictional and carry "(sample)"; no real affiliate appears.
+
+export interface DemoBoardRow {
+  id: string;
+  name: string;
+  image: string | null;
+  rank: string;
+  rankColor: string;
+  badge: string;
+  xp: number;
+  payingReferrals?: number;
+  revenueCents?: number;
+  clicks?: number;
+}
+
+export function buildDemoLeaderboard(): Record<string, DemoBoardRow[]> {
+  const byKey = (key: string) => RANKS.find((r) => r.key === key) ?? RANKS[0];
+  const row = (
+    id: string, name: string, rankKey: string,
+    metrics: Partial<Pick<DemoBoardRow, "xp" | "payingReferrals" | "revenueCents" | "clicks">>,
+  ): DemoBoardRow => {
+    const r = byKey(rankKey);
+    return {
+      id, name: `${name} (sample)`, image: null,
+      rank: r.name, rankColor: r.color, badge: r.badge,
+      xp: 0, ...metrics,
+    };
+  };
+  const people: [string, string, string][] = [
+    ["demo-lb-1", "SkyWatcher", "visionary"],
+    ["demo-lb-2", "HarborLights", "elite"],
+    ["demo-lb-3", "NightOwlCams", "commander"],
+    ["demo-lb-4", "GlobeTrotter", "commander"],
+    ["demo-lb-5", "StormChaser99", "analyst"],
+    ["demo-lb-6", "CoastalViews", "analyst"],
+  ];
+  const mk = (metrics: Partial<Pick<DemoBoardRow, "xp" | "payingReferrals" | "revenueCents" | "clicks">>[]) =>
+    people.map(([id, name, rankKey], i) => row(id, name, rankKey, metrics[i]));
+  return {
+    payingThisMonth: mk([
+      { payingReferrals: 23, xp: 31_400 }, { payingReferrals: 19, xp: 17_250 },
+      { payingReferrals: 14, xp: 9_800 }, { payingReferrals: 11, xp: 8_150 },
+      { payingReferrals: 8, xp: 4_260 }, { payingReferrals: 6, xp: 3_540 },
+    ]),
+    topRevenue: mk([
+      { revenueCents: 412_300, xp: 31_400 }, { revenueCents: 356_750, xp: 17_250 },
+      { revenueCents: 238_900, xp: 9_800 }, { revenueCents: 201_450, xp: 8_150 },
+      { revenueCents: 132_600, xp: 4_260 }, { revenueCents: 98_200, xp: 3_540 },
+    ]),
+    topXp: mk([
+      { xp: 31_400 }, { xp: 17_250 }, { xp: 9_800 },
+      { xp: 8_150 }, { xp: 4_260 }, { xp: 3_540 },
+    ]),
+    allTime: mk([
+      { revenueCents: 1_284_900, xp: 31_400 }, { revenueCents: 964_300, xp: 17_250 },
+      { revenueCents: 587_150, xp: 9_800 }, { revenueCents: 402_800, xp: 8_150 },
+      { revenueCents: 219_450, xp: 4_260 }, { revenueCents: 141_900, xp: 3_540 },
+    ]),
+    growth: mk([
+      { clicks: 8_412, xp: 4_260 }, { clicks: 6_930, xp: 3_540 },
+      { clicks: 5_208, xp: 31_400 }, { clicks: 3_977, xp: 9_800 },
+      { clicks: 2_845, xp: 17_250 }, { clicks: 1_930, xp: 8_150 },
+    ]),
+  };
+}
+
+// ── Demo: Marketing Studio ───────────────────────────────────────────────
+// The demo studio home runs the real StudioHomeClient on the demo
+// persona. Featured templates are the REAL catalog (loaded server-side
+// by the demo studio page, exactly like the live studio home); only the
+// persona and the creations are sample.
+
+export function buildDemoStudioMe() {
+  const me = buildDemoMe();
+  return {
+    profile: {
+      referralCode: me.profile.referralCode,
+      customCode: me.profile.customCode,
+      status: me.profile.status,
+      xp: me.profile.xp,
+    },
+    rank: me.rank,
+    referralLink: me.referralLink,
+    discount: me.discount,
+  };
+}
+
+export function buildDemoStudioCreations() {
+  return [
+    {
+      id: "demo-sc-1",
+      templateSlug: null,
+      title: "Sample caption — storm season",
+      kind: "caption",
+      captionText:
+        "Storm season is LIVE 🌩️ Watch 74,229 cameras free on WorldEye — my link gets you started, and code DEMO15 takes 15% off your first Pro payment. #ad",
+      createdAt: isoDaysAgo(1),
+    },
+    {
+      id: "demo-sc-2",
+      templateSlug: null,
+      title: "Sample AI caption — harbour sunrise",
+      kind: "ai_caption",
+      captionText:
+        "Golden hour over the harbour, streaming live right now. WorldEye's free globe never sleeps — link in bio. #ad — I earn a commission on subscriptions through my link.",
+      createdAt: isoDaysAgo(3),
+    },
+    {
+      id: "demo-sc-3",
+      templateSlug: null,
+      title: "Sample creation — globe intro card",
+      kind: "image",
+      captionText: null,
+      createdAt: isoDaysAgo(6),
+    },
+  ];
+}

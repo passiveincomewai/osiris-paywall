@@ -2,6 +2,7 @@ import Link from "next/link";
 import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import { auth } from "@/auth";
 import AffiliateSync from "@/components/affiliate/AffiliateSync";
+import HideForAffiliates from "@/components/affiliate/HideForAffiliates";
 
 export const metadata = {
   title: "WorldEye Affiliates — Turn Your Network Into Recurring Income",
@@ -35,12 +36,23 @@ export default async function AffiliatesLayout({ children }: { children: React.R
             </span>
           </Link>
           <nav className="flex items-center gap-1 overflow-x-auto">
-            {NAV.map((n) => (
-              <Link key={n.href} href={n.href}
-                className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">
-                {n.label}
-              </Link>
-            ))}
+            {NAV.map((n) =>
+              n.href === "/affiliates/demo" ? (
+                // Active affiliates never see demo links — they have the
+                // real thing. (Demo routes also redirect them server-side.)
+                <HideForAffiliates key={n.href}>
+                  <Link href={n.href}
+                    className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">
+                    {n.label}
+                  </Link>
+                </HideForAffiliates>
+              ) : (
+                <Link key={n.href} href={n.href}
+                  className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">
+                  {n.label}
+                </Link>
+              ),
+            )}
           </nav>
           <div className="shrink-0 flex items-center gap-3">
             <LanguageHeaderControl variant="mobile" />

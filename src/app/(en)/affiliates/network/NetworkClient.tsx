@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Check, ChevronDown, ChevronRight } from "lucide-react";
 import { EmptyState, Pill, StatCard, fmtCents } from "@/components/affiliate/ui";
 
-type TreeNode = {
+export type TreeNode = {
   id: string;
   name: string;
   image: string | null;
@@ -93,12 +93,14 @@ function NodeRow({ node }: { node: TreeNode }) {
   );
 }
 
-export default function NetworkClient() {
-  const [tree, setTree] = useState<TreeNode[] | null>(null);
+export default function NetworkClient({ demo }: { demo?: { tree: TreeNode[] } } = {}) {
+  const isDemo = !!demo;
+  const [tree, setTree] = useState<TreeNode[] | null>(demo?.tree ?? null);
   const [notAffiliate, setNotAffiliate] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (isDemo) return;
     (async () => {
       try {
         const r = await fetch("/api/affiliate/network", { cache: "no-store" });

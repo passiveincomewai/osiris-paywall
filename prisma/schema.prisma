@@ -31,6 +31,7 @@ model User {
   subscription  Subscription?
   creatorApplications CreatorApplication[]
   affiliateProfile AffiliateProfile?
+  affiliateTermsAcceptances AffiliateTermsAcceptance[]
   cameraBonusAccount CameraBonusAccount?
   savedCameras  SavedCamera[]
   skiResortFollows SkiResortFollow[]
@@ -376,6 +377,22 @@ model AffiliateProfile {
 
   @@index([status])
   @@index([recruitedByProfileId])
+}
+
+// A signed-in user's recorded acceptance of the affiliate program terms
+// (lib/affiliate/terms). Written by POST /api/affiliate/accept-terms —
+// the demo join flow records it immediately before enrolment via
+// /api/affiliate/join. One row per user per terms version.
+model AffiliateTermsAcceptance {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  termsVersion String
+  source       String   @default("demo")
+  acceptedAt   DateTime @default(now())
+
+  @@unique([userId, termsVersion])
+  @@index([userId])
 }
 
 model ReferralClick {

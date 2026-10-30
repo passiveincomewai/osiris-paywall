@@ -21,20 +21,24 @@ function countdown(endsAt: string): string {
   return d > 0 ? `${d}d ${h % 24}h left` : `${h}h ${Math.floor((ms % 3600000) / 60000)}m left`;
 }
 
-export default function MissionsClient() {
-  const [challenges, setChallenges] = useState<Challenge[] | null>(null);
+export default function MissionsClient({ demo }: { demo?: { challenges: Challenge[] } } = {}) {
+  const isDemo = !!demo;
+  const [challenges, setChallenges] = useState<Challenge[] | null>(demo?.challenges ?? null);
   const [joined, setJoined] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
+  const [demoNote, setDemoNote] = useState("");
 
   const load = async () => {
+    if (isDemo) { setDemoNote("You're exploring the demo — mission progress here is sample data. Join free to run missions on your real activity."); return; }
     const me = await fetch("/api/affiliate/me");
     if (me.status === 404) { setJoined(false); return; }
     const r = await fetch("/api/affiliate/challenges");
     if (r.ok) setChallenges((await r.json()).challenges);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (!isDemo) load(); }, []);
 
   const complete = async (id: string) => {
+    if (isDemo) { setDemoNote("Mission completion is available in the live dashboard — the demo is read-only."); return; }
     setBusy(id);
     const r = await fetch("/api/affiliate/challenges", {
       method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ challengeId: id }),
@@ -54,6 +58,13 @@ export default function MissionsClient() {
   const groups: ("daily" | "weekly" | "monthly")[] = ["daily", "weekly", "monthly"];
   return (
     <div className="space-y-10">
+      {isDemo && (
+        <div className="rounded-2xl border border-pink-400/50 bg-pink-400/[0.08] px-4 py-3 text-sm text-pink-100">
+          <span className="font-mono font-bold tracking-widest">DEMO</span> — these are the real missions,
+          shown with sample progress. Completions are verified from real activity in the live program.
+          {demoNote && <div className="mt-2 text-cyan-200">{demoNote}</div>}
+        </div>
+      )}
       <div className="flex items-start gap-4">
         <img src="/affiliate-icons/missions.png" alt="Missions" width={256} height={256} className="w-14 h-14 md:w-16 md:h-16 object-contain shrink-0 mt-1"
           style={{ filter: "drop-shadow(0 0 16px rgba(251,191,36,.45))" }} />
