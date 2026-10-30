@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1100);
+    expect(nonTransit.length).toBe(1113);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -164,9 +164,18 @@ describe("sitemap URL set", () => {
     // Label page (2026-10-29) then added /white-label (the
     // early-access pilot programme page) → 1,100. Delta: removing
     // exactly that URL reproduces the 1,099 set and the
-    // 24d40d31… hash byte-for-byte.
+    // 24d40d31… hash byte-for-byte. The ski expansion
+    // (2026-10-30) then added 12 resort pages (alta, angel-fire,
+    // blue-mountain-ontario, chamonix, deer-valley, hoodoo,
+    // june-mountain, oppdal, perisher, pyha, red-river,
+    // sun-valley) → 1,112. Delta hand-verified against the
+    // production sitemap: exactly those 12 additions, no
+    // removals, reproducing the a49057a2… hash byte-for-byte.
+    // The White Label announcement post (2026-10-30) then added
+    // /blog/worldeye-white-label → 1,113. Delta: removing exactly
+    // that URL reproduces the 1,112 set and the a49057a2… hash.
     expect(hash).toBe(
-      "45f2c33bf963d82e3d1c26685c79e79b95f43eb3bef755fbba7bba277fe57a74",
+      "be9f132bdcc6b789cc02612ebcc3516982a5075132a448c1b78efcaf97e5af29",
     );
   });
 

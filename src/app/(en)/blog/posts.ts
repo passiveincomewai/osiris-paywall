@@ -41,6 +41,90 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "worldeye-white-label",
+    title: "Announcing WorldEye White Label: Your Own Branded Live-Camera Platform",
+    seoTitle: "WorldEye White Label: Branded Live Cameras | WorldEye Blog",
+    date: "2026-10-29",
+    excerpt:
+      "WorldEye White Label is coming: businesses, ski resorts, tourism organisations, media companies and enterprises will be able to launch their own branded live-camera platforms — their logo, their domain, our 3D globe and 74,229 public cameras. Early-access pilot places are open now.",
+    seoDescription:
+      "WorldEye White Label is coming: your logo, your domain, our interactive 3D globe and 74,229 live cameras. Early-access pilots are open — request a demo.",
+    tags: ["announcement", "white label", "enterprise"],
+    sections: [
+      {
+        body: [
+          "WorldEye is opening its platform to other brands. WorldEye White Label — now open for early-access applications — will let a business, ski resort, tourism organisation, media company or enterprise launch its own branded live-camera platform, powered by the same network and interactive 3D globe that run worldeye.app. Your logo, your colours, your domain; our cameras, globe and live tracking layers underneath.",
+          "To be precise about what this is: White Label is not a finished, self-serve product today, and this is not a general-availability launch. We are opening a small number of pilot places to organisations willing to help shape the product, and this post explains what a pilot includes, what it indicatively costs, and how to ask for one.",
+          "Already know it is for you? Skip the reading and [Request a White Label demo](https://worldeye.app/white-label#request-demo) — tell us what you want to build, and we will come back with next steps.",
+        ],
+      },
+      {
+        heading: "Why organisations want a portal of their own",
+        body: [
+          "A single embedded camera is a widget. A branded portal is a destination: the place your audience returns to every morning, badged as yours, on your domain, with exactly the cameras and layers your visitors care about — and none of the ones they don't. Three scenarios come up again and again in conversations with organisations; they are examples of what pilots are for, not customer stories.",
+          "A ski resort wants a conditions portal: its own slope cameras plus the access-road cameras skiers check before driving up, under the resort's brand, next to its lift tickets and lodging. The cameras already exist — our [ski webcams](/ski-webcams) wall proves the coverage — but today the audience checks them on someone else's website.",
+          "A tourism organisation wants its destination to be watchable: the beaches, the harbour, the old town and the viewpoint, live on the destination's own site, so a traveller planning a trip can see the place breathing before they book. A media company wants something different again — a branded live camera dashboard for its newsroom and its audience: traffic, weather and harbour cameras across its patch, curated collections it controls, and the monitoring view that makes it effectively a white label OSINT platform for local events.",
+          "The common thread is curation plus brand. A white label webcam platform turns a feed you borrow into a place you own — white label live cameras under your name, bookmarked, shared and returned to.",
+        ],
+      },
+      {
+        heading: "What a White Label pilot includes",
+        body: [
+          "Every pilot is scoped with the organisation before anything is built or billed, but the scope on the table is this: custom branding throughout the portal — your name, logo and colours, not a WorldEye page with a sticker on it. A custom domain, so the portal lives on your web address. The custom 3D globe platform your visitors can spin, with your curated cameras pinned on it, exactly as the globe works on [live webcams](/live-webcams) today.",
+          "Curated camera collections chosen for your audience from our 74,229 public cameras — one resort's worth of slopes and roads, a whole coastline, a city's worth of crossings — presented as a branded live camera dashboard and camera pages under your name. Viewing analytics for your portal, so you can see what your audience actually watches. And enterprise integrations: White Label builds on the enterprise camera feed we already ship — custom collections, an embeddable live player, private JSON feeds and live camera API access with your own keys, all live today on our [enterprise](/enterprise) plan — and extends it into a complete branded surface during your pilot.",
+          "Want to see how that scope would map to your organisation? [Request a White Label demo](https://worldeye.app/white-label#request-demo) and we will walk through it with your kind of portal in mind.",
+        ],
+      },
+      {
+        heading: "Indicative pricing",
+        body: [
+          "Because White Label is in early access, pilot pricing is indicative — published so you can judge fit before a conversation, and confirmed as a fixed quote in your pilot proposal before anything is billed. The current bands: Pilot from $249 a month for a branded portal on your domain with a curated collection; Growth from $799 a month for larger collections and deeper integrations; Enterprise custom, for multi-property, multi-region or bespoke integration work.",
+          "The bands live on the [White Label page](/white-label) alongside the demo form — if they evolve as we learn from the first pilots, that page is the source of truth. And if a full portal is more than you need, the self-serve route stays open: compare [pricing](/pricing), where the Enterprise plan already includes the embeddable player, collections and API keys today.",
+        ],
+      },
+      {
+        heading: "How early access works",
+        body: [
+          "Four steps. First, request a demo on the White Label page and tell us about your organisation and the portal you imagine. Second, a scoping conversation: the cameras and collections you need, your domain, your branding, and any integrations. Third, a pilot proposal with a fixed quote and a timeline — you see exactly what is included before you commit to anything. Fourth, your configured pilot: branding, domain and collections set up with you, and a direct feedback loop into the product as it matures.",
+          "Pilot places are deliberately limited while each portal is configured by hand and shaped with its organisation. That is the honest trade of early access: you get a platform fitted to you and a say in what gets built next, in exchange for working with a product that is still growing.",
+        ],
+      },
+      {
+        heading: "Request early access",
+        body: [
+          "If you run a resort, a destination, a newsroom, a venue network — or any organisation whose audience would open a live view of your world every day — we would like to hear from you. The first pilots will decide what WorldEye White Label becomes, and their requirements, not our guesses, will choose what we build next.",
+          "[Apply for early access](https://worldeye.app/white-label#request-demo) — the form takes a few minutes, and every serious request gets a reply and a scoping conversation. Your branded live-camera platform starts there.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Is WorldEye White Label available now?",
+        a: "It is in early access. Pilot places are open for applications today, but it is not yet a self-serve, generally available product — each pilot portal is scoped and configured individually. Apply on the White Label page and we will walk you through what a pilot would look like for your organisation.",
+      },
+      {
+        q: "What does a White Label pilot include?",
+        a: "Custom branding (your name, logo and colours), a custom domain, the interactive 3D globe with your curated camera collections pinned on it, a branded live camera dashboard and camera pages, viewing analytics for your portal, and enterprise integrations built on our existing camera feed, embeddable player and API keys. The exact scope is agreed with you before the pilot starts.",
+      },
+      {
+        q: "How much does WorldEye White Label cost?",
+        a: "Indicative pilot pricing starts at $249 a month for Pilot and $799 a month for Growth, with Enterprise pricing custom. Because the programme is in early access, every pilot is individually quoted in a written proposal before anything is billed — the indicative bands on the White Label page are the current guide.",
+      },
+      {
+        q: "Do I need my own cameras?",
+        a: "No. Collections are curated from WorldEye's network of 74,229 public cameras — resorts, cities, harbours, roads, beaches and landmarks worldwide. If your organisation operates its own public cameras, mention them in the demo request and we will scope including them.",
+      },
+      {
+        q: "How is White Label different from WorldEye Enterprise?",
+        a: "Enterprise, which is available today, gives you custom camera collections, an embeddable live player, a private JSON feed and API keys to use inside your existing website and products. White Label goes further: a complete branded destination — your domain, your branding, the full globe experience — rather than components inside your current site.",
+      },
+      {
+        q: "How long does a pilot take to launch?",
+        a: "It depends on scope — the size of your collections, the domain setup, and the integrations you need. Your pilot proposal includes a timeline before you commit, so there are no open-ended waits.",
+      },
+    ],
+  },
+  {
     slug: "most-interesting-live-webcams-on-earth",
     title: "The 25 Most Interesting Live Webcams on Earth (Free, Streaming Right Now)",
     seoTitle: "25 Most Interesting Live Webcams on Earth | WorldEye Blog",
