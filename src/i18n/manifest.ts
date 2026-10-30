@@ -90,7 +90,7 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "90d61e34ae6c128af73815e4fb85ca9ad13ba4eb31a9a4e57f0ddb550daf707b",
-  pricing: "a37e36904a74effe080b184272dfe21e8e8f2a61cbf83ba702ea4db12dad38f7",
+  pricing: "d795b92cdedcf46d79efd36332fadb6b80f1b63a3a00c5757d090eeb7deb296e",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "9f3fec6211bd41283dd27bc043b3cda5a141ec27be9e50e00f6335180ff192d9",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
@@ -125,9 +125,14 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // dictionary gained the "live cams near me" direct answer + FAQ
 // (GSC striking-distance cluster + Trends +170%); the Spanish
 // dictionary was translated the same day, so its hash and date moved.
+// Re-sync (2026-10-29, Osiris brand removal): the pricing dictionary's
+// comparison FAQ swapped its osirisai.live wording for "the free
+// self-hosted version"; the Spanish dictionary carries the matching
+// "versión gratuita autohospedada" line, so only the hash and date
+// move here — no dictionary bytes changed in this re-sync.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-27",
-  pricing: "2026-10-27",
+  pricing: "2026-10-29",
   "live-webcams": "2026-10-29",
   faq: ES_TRANCHE_DATE,
   "live-flight-tracker": "2026-10-29",

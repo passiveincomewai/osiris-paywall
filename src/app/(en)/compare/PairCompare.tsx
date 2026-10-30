@@ -12,6 +12,7 @@ import {
   Scale,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import JsonLd from "@/components/JsonLd";
 import PairLiveCams from "@/components/PairLiveCams";
 import {
@@ -782,6 +783,11 @@ export default function PairComparePage({ slug }: { slug: string }) {
             </Link>
           </div>
         </section>
+
+        {/* Newsletter — end-of-comparison capture (the one list) */}
+        <div className="mt-12">
+          <EmailCaptureCard placement="page" variant="inline" />
+        </div>
       </article>
 
       <SiteFooter />

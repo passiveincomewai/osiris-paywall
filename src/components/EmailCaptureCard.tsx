@@ -1,17 +1,23 @@
 "use client";
 
 /**
- * Email capture at the two highest-intent free moments (rules live in
+ * Email capture at the highest-intent free moments (rules live in
  * lib/newsletter/capture.ts): right after a device's first camera open
  * (placement "camera", a small card docked bottom-left — under the
- * viewer's z-index, never over the feed) and inside the checkout-cancel
- * recovery strip on /pricing (placement "pricing", inline variant).
+ * viewer's z-index, never over the feed), inside the checkout-cancel
+ * recovery strip on /pricing (placement "pricing", inline variant),
+ * and as a static end-of-content section on reading pages (placement
+ * "page": blog posts, comparisons, camera directories, tool pages).
  *
- * The ask is once per device, ever: subscribing or dismissing writes a
- * local record that retires every placement. No modal, no pre-ticked
- * anything, and the form is the site's existing NewsletterForm posting
- * to the subscribe endpoint, which validates the address instantly —
- * subscribing takes effect on the spot, no confirmation email.
+ * The timed asks (camera/pricing) fire once per device, ever:
+ * subscribing or dismissing writes a local record that retires them.
+ * The page placement is page furniture like the footer form — it
+ * always renders and has no dismiss — but a subscribe through it
+ * writes the same record, retiring the timed asks. No modal, no
+ * pre-ticked anything, and the form is the site's existing
+ * NewsletterForm posting to the subscribe endpoint, which validates
+ * the address instantly — subscribing takes effect on the spot,
+ * no confirmation email.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -41,6 +47,10 @@ const COPY: Record<CapturePlacement, { heading: string; body: string }> = {
     heading: "Not ready to decide?",
     body: "Get one email when something big happens — launches, storms, new camera drops. No spam.",
   },
+  page: {
+    heading: "One email when the sky does something big",
+    body: "Rocket launches, storms overhead and new camera drops — plus major WorldEye news. Rare, and no spam, ever.",
+  },
 };
 
 export default function EmailCaptureCard({
@@ -50,12 +60,42 @@ export default function EmailCaptureCard({
   placement: CapturePlacement;
   variant?: "card" | "inline";
 }) {
-  // null = storage not read yet (first paint / SSR): render nothing
-  // rather than flash the ask at devices that already answered it.
-  const [visible, setVisible] = useState<boolean | null>(null);
+  // Timed placements start at null (storage not read yet — render
+  // nothing rather than flash the ask at devices that already answered
+  // it). The page placement is static page furniture: it renders
+  // immediately, server-side included, like the footer form does.
+  const [visible, setVisible] = useState<boolean | null>(() =>
+    placement === "page" ? true : null,
+  );
   const impressionFired = useRef(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    if (placement === "page") {
+      // A static section only earns an "impression" when it actually
+      // reaches the viewport — fire once, when it first scrolls in.
+      const el = sectionRef.current;
+      const fire = () => {
+        if (impressionFired.current) return;
+        impressionFired.current = true;
+        trackAnalyticsEvent(CAPTURE_IMPRESSION_EVENT, captureDetailFor(placement));
+      };
+      if (!el || typeof IntersectionObserver === "undefined") {
+        fire();
+        return;
+      }
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            fire();
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.25 },
+      );
+      observer.observe(el);
+      return () => observer.disconnect();
+    }
     const record = readCaptureRecord(browserStorage());
     const show =
       placement === "camera"
@@ -83,6 +123,28 @@ export default function EmailCaptureCard({
   };
 
   const copy = COPY[placement];
+
+  if (placement === "page") {
+    return (
+      <section
+        ref={sectionRef}
+        aria-label="Email updates"
+        className="relative rounded-3xl border border-white/12 bg-white/[0.03] p-6 md:p-8"
+      >
+        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white">
+          {copy.heading}
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-white/55">{copy.body}</p>
+        <div className="mt-4 max-w-md">
+          <NewsletterForm source={captureSourceFor(placement)} onSuccess={subscribed} />
+        </div>
+        <p className="mt-3 text-[11px] leading-relaxed text-white/35">
+          Instant subscribe — no confirmation email. We check the address as you type it in.
+        </p>
+      </section>
+    );
+  }
+
   const inner = (
     <>
       <button

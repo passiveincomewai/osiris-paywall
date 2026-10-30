@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Check, Minus, X, HelpCircle } from "lucide-react";
 import { db } from "@/lib/db";
 import SiteFooter from "@/components/SiteFooter";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import JsonLd from "@/components/JsonLd";
 import {
   getBundledCompetitor,
@@ -438,6 +439,11 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
             <Link href="/pricing" className="px-6 py-3 rounded-xl border border-white/15 text-white/80 hover:text-white hover:border-white/30 transition">Unlock WorldEye PRO</Link>
           </div>
         </section>
+
+        {/* Newsletter — end-of-comparison capture (the one list) */}
+        <div className="mt-12">
+          <EmailCaptureCard placement="page" variant="inline" />
+        </div>
       </article>
 
       <SiteFooter />

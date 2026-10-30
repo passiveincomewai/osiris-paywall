@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import CountryCameraExplorer from "@/components/CountryCameraExplorer";
 import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
@@ -943,6 +944,11 @@ export default async function CountryPage({
           >
             <Camera className="w-4 h-4" /> Open the live map
           </a>
+        </div>
+
+        {/* Newsletter — end-of-page capture (the one list) */}
+        <div className="mt-12">
+          <EmailCaptureCard placement="page" variant="inline" />
         </div>
       </div>
       <SiteFooter />

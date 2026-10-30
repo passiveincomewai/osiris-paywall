@@ -3,6 +3,7 @@ import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl"
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import JsonLd from "@/components/JsonLd";
 import SwgBasic from "@/components/SwgBasic";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
@@ -315,6 +316,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               Explore Pro
             </Link>
           </div>
+        </div>
+
+        {/* Newsletter — end-of-post capture (the one list; same card
+            as the other reading pages) */}
+        <div className="mt-12">
+          <EmailCaptureCard placement="page" variant="inline" />
         </div>
 
         {/* Prev / next */}

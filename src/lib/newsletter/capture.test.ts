@@ -7,6 +7,7 @@ import {
   readCaptureRecord,
   writeCaptureRecord,
   shouldShowCameraCapture,
+  shouldShowPageCapture,
   shouldShowPricingCapture,
   captureSourceFor,
   captureDetailFor,
@@ -91,20 +92,36 @@ describe("pricing placement visibility", () => {
   });
 });
 
+describe("page placement visibility", () => {
+  it("always renders — it is page furniture, not a timed ask", () => {
+    expect(shouldShowPageCapture(null)).toBe(true);
+  });
+
+  it("still renders after a dismissal or a subscribe (the record retires only the timed asks)", () => {
+    const s = stubStorage();
+    writeCaptureRecord(s, "dismissed");
+    expect(shouldShowPageCapture(readCaptureRecord(s))).toBe(true);
+    writeCaptureRecord(s, "subscribed");
+    expect(shouldShowPageCapture(readCaptureRecord(s))).toBe(true);
+  });
+});
+
 describe("subscribe source + analytics tokens", () => {
   it("tags each placement distinctly for the subscriber row", () => {
     expect(captureSourceFor("camera")).toBe("camera-first-open");
     expect(captureSourceFor("pricing")).toBe("pricing-recovery");
+    expect(captureSourceFor("page")).toBe("page-inline");
     // The subscribe route stores source capped at 40 chars.
     expect(captureSourceFor("camera").length).toBeLessThanOrEqual(40);
     expect(captureSourceFor("pricing").length).toBeLessThanOrEqual(40);
+    expect(captureSourceFor("page").length).toBeLessThanOrEqual(40);
   });
 
   it("uses event names and detail tokens the ingest accepts verbatim", () => {
     for (const name of [CAPTURE_IMPRESSION_EVENT, CAPTURE_SUBSCRIBE_EVENT]) {
       expect(name).toMatch(/^[a-z0-9_]+$/);
     }
-    for (const p of ["camera", "pricing"] as const) {
+    for (const p of ["camera", "pricing", "page"] as const) {
       expect(parseEventDetail(captureDetailFor(p))).toBe(p);
     }
   });

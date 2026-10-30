@@ -2,6 +2,7 @@ import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl"
 import Link from "next/link";
 import { ArrowRight, Camera, CheckCircle2, Compass, Globe, ShieldCheck } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
@@ -284,6 +285,15 @@ export default async function LiveWebcamsPage({
             </Link>
           </div>
         </div>
+
+        {/* Newsletter — end-of-page capture. EN only: the card's copy
+            is not dictionary-driven, and the localized footer form
+            already serves the other locales on this page. */}
+        {locale === "en" && (
+          <div className="mt-16">
+            <EmailCaptureCard placement="page" variant="inline" />
+          </div>
+        )}
       </div>
       <SiteFooter copy={getChromeCopy(locale)} locale={locale} slug="live-webcams" />
     </main>

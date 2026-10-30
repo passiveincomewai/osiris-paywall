@@ -17,6 +17,7 @@ import {
 } from "@/components/directory-page";
 import SkiCameraGrid from "@/components/SkiCameraGrid";
 import SkiResortDirectory from "@/components/SkiResortDirectory";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import PowderPassPromo from "@/components/PowderPassPromo";
 import { powderPassEnabled } from "@/lib/ski/access";
 import { plural } from "@/lib/country-page-content";
@@ -320,6 +321,11 @@ export default async function SkiWebcamsPage() {
           { label: "Cameras overview", href: "/cameras" },
         ]}
       />
+
+      {/* Newsletter — end-of-page capture (the one list) */}
+      <div className="mt-12">
+        <EmailCaptureCard placement="page" variant="inline" />
+      </div>
 
       <CtaRow backHref="/live-webcams" backLabel="All live webcams" />
     </PageShell>

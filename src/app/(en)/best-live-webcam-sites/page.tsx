@@ -19,6 +19,7 @@ import {
   itemListLd,
 } from "@/components/SeoIntentLayout";
 import RelatedLinks from "@/components/RelatedLinks";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 
 export const metadata: Metadata = {
   title: "7 Best Webcam Sites in 2026 — Live Webcam Sites Ranked & Compared",
@@ -421,6 +422,11 @@ export default function BestLiveWebcamSitesPage() {
           },
         ]}
       />
+
+      {/* Newsletter — end-of-page capture (the one list) */}
+      <div className="mt-16 max-w-3xl mx-auto">
+        <EmailCaptureCard placement="page" variant="inline" />
+      </div>
     </IntentShell>
   );
 }

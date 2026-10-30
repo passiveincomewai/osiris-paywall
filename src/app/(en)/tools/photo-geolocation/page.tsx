@@ -12,6 +12,7 @@ import {
   PageShell,
 } from "@/components/directory-page";
 import PhotoGeolocationTool from "@/components/PhotoGeolocationTool";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import { CheckCircle2, Crosshair, ShieldCheck, XCircle } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -224,6 +225,10 @@ export default function PhotoGeolocationPage() {
           { label: "The WorldEye globe — flights, cameras, satellites and more", href: "/" },
         ]}
       />
+      {/* Newsletter — end-of-page capture (the one list) */}
+      <div className="mt-12">
+        <EmailCaptureCard placement="page" variant="inline" />
+      </div>
       <CtaRow backHref="/" backLabel="Back to the globe" />
     </PageShell>
   );

@@ -12,6 +12,7 @@ import {
   PageShell,
 } from "@/components/directory-page";
 import CameraDistanceTool from "@/components/CameraDistanceTool";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import { Ruler, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -132,6 +133,10 @@ export default function CameraDistancePage() {
           { label: "The WorldEye globe — flights, cameras, satellites and more", href: "/" },
         ]}
       />
+      {/* Newsletter — end-of-page capture (the one list) */}
+      <div className="mt-12">
+        <EmailCaptureCard placement="page" variant="inline" />
+      </div>
       <CtaRow backHref="/" backLabel="Back to the globe" />
     </PageShell>
   );

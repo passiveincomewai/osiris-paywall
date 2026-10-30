@@ -7,6 +7,12 @@
 //     (lib/cameraGate's per-device count) — never before.
 //   • The pricing card rides the checkout-cancel recovery strip, so its
 //     only rule is the shared one below.
+//   • The page placement is different in kind: a static end-of-content
+//     section on reading pages (blog posts, comparisons, directories) —
+//     page furniture like the footer form, not a timed ask. It always
+//     renders; there is nothing to retire. A subscribe through it still
+//     writes the shared record, so the timed placements stand down for
+//     a device whose address we already have.
 //   • EITHER outcome retires the ask on that device forever: a dismissal
 //     is a no, and a subscribe (including "already subscribed") is a yes.
 //     There is no snooze, no second placement, no re-ask after rotation.
@@ -23,7 +29,7 @@ export const EMAIL_CAPTURE_STORAGE_KEY = "worldeye.emailCapture";
 export const CAPTURE_IMPRESSION_EVENT = "email_capture_impression";
 export const CAPTURE_SUBSCRIBE_EVENT = "email_capture_subscribe";
 
-export type CapturePlacement = "camera" | "pricing";
+export type CapturePlacement = "camera" | "pricing" | "page";
 export type CaptureOutcome = "subscribed" | "dismissed";
 
 export interface CaptureRecord {
@@ -88,9 +94,22 @@ export function shouldShowPricingCapture(record: CaptureRecord | null): boolean 
   return record === null;
 }
 
+/**
+ * Page placement: a static section in the page body (like the footer
+ * form), so it renders regardless of the device record — a record only
+ * retires the TIMED asks, never page furniture. The record argument is
+ * accepted (and ignored) so call sites can treat placements uniformly.
+ */
+export function shouldShowPageCapture(record: CaptureRecord | null): boolean {
+  void record;
+  return true;
+}
+
 /** `source` tag stored on the subscriber row (subscribe route caps at 40 chars). */
 export function captureSourceFor(placement: CapturePlacement): string {
-  return placement === "camera" ? "camera-first-open" : "pricing-recovery";
+  if (placement === "camera") return "camera-first-open";
+  if (placement === "page") return "page-inline";
+  return "pricing-recovery";
 }
 
 /** Analytics detail token (ingest accepts [a-z0-9_], ≤24 chars). */

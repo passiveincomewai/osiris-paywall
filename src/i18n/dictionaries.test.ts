@@ -142,11 +142,14 @@ describe("manifest ↔ dictionary completeness", () => {
         // satellite-view section, ship-tracker on 2026-10-29 for
         // the SEO Phase 3 build D "What is AIS?" related link, and
         // live-webcams again on 2026-10-29 for the Keyword Gap
-        // Programme "near me" answer + FAQ (see manifest.ts).
+        // Programme "near me" answer + FAQ, and pricing on
+        // 2026-10-29 for the Osiris brand-removal FAQ swap (the
+        // Spanish line already matched; bookkeeping only — see
+        // manifest.ts).
         expect(entry.updatedAt).toBe(
-          ["live-flight-tracker", "ship-tracker", "live-webcams"].includes(entry.slug)
+          ["live-flight-tracker", "ship-tracker", "live-webcams", "pricing"].includes(entry.slug)
             ? "2026-10-29"
-            : ["", "pricing"].includes(entry.slug)
+            : [""].includes(entry.slug)
                 ? "2026-10-27"
                 : "2026-10-26"
         );

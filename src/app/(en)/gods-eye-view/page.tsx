@@ -17,6 +17,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import JsonLd from "@/components/JsonLd";
 import DirectAnswers from "@/components/seo/DirectAnswers";
 import RelatedLinks from "@/components/RelatedLinks";
@@ -544,6 +545,10 @@ export default function GodsEyeViewPage() {
             },
           ]}
         />
+        {/* Newsletter — end-of-page capture (the one list) */}
+        <div className="mt-16 max-w-3xl mx-auto">
+          <EmailCaptureCard placement="page" variant="inline" />
+        </div>
       </div>
 
       <GodsEyeStickyCta />

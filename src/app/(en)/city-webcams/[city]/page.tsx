@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import TrialCtaSection from "@/components/TrialCtaSection";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
 import { cityChunkStats, loadCountryChunk } from "@/lib/explore-data";
@@ -1801,6 +1802,10 @@ export default async function CityWebcamPage({
         ]}
       />
       <TrialCtaSection utmSource="city-webcams" />
+      {/* Newsletter — end-of-page capture (the one list) */}
+      <div className="mt-12">
+        <EmailCaptureCard placement="page" variant="inline" />
+      </div>
       <CtaRow backHref={resolved.backHref} backLabel={`${c.country} cameras`} />
     </PageShell>
   );
