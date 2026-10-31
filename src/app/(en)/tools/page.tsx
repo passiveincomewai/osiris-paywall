@@ -31,11 +31,11 @@ const GROUPS: { title: string; tools: ToolCard[] }[] = [
     title: "Network & Host",
     tools: [
       { name: "Port Scanner", blurb: "Open ports and running services on any IP or hostname.", access: "PRO", href: "/tools/port-scanner", linkNote: "About the tool" },
-      { name: "Vulnerability Sweep", blurb: "Known CVEs matched to what a host is running.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
+      { name: "Vulnerability Sweep", blurb: "Known CVEs matched to what a host is running.", access: "PRO", href: "/tools/vulnerability-scanner", linkNote: "About the tool" },
       { name: "Shodan IoT Lookup", blurb: "What an IP address exposes to the internet, from Shodan's InternetDB.", access: "FREE", href: "/tools/ip-device-lookup", linkNote: "Run it now" },
-      { name: "BGP Lookup", blurb: "Autonomous system and prefixes behind an IP or ASN.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
-      { name: "MAC Address Lookup", blurb: "The hardware vendor behind a MAC address.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
-      { name: "IP Sweep", blurb: "Scan the whole subnet around an address.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
+      { name: "BGP Lookup", blurb: "Autonomous system and prefixes behind an IP or ASN.", access: "PRO", href: "/tools/bgp-lookup", linkNote: "About the tool" },
+      { name: "MAC Address Lookup", blurb: "The hardware vendor behind a MAC address.", access: "PRO", href: "/tools/mac-address-lookup", linkNote: "About the tool" },
+      { name: "IP Sweep", blurb: "Scan the whole subnet around an address.", access: "PRO", href: "/tools/ip-sweep", linkNote: "About the tool" },
     ],
   },
   {
@@ -43,33 +43,33 @@ const GROUPS: { title: string; tools: ToolCard[] }[] = [
     tools: [
       { name: "DNS Lookup", blurb: "Every DNS record type for a domain, read live.", access: "PRO", href: "/tools/dns-lookup", linkNote: "About the tool" },
       { name: "WHOIS Lookup", blurb: "Registrar, dates and ownership record for a domain.", access: "PRO", href: "/tools/whois-lookup", linkNote: "About the tool" },
-      { name: "Certificate Transparency Search", blurb: "Every certificate ever issued for a domain, from the public CT logs.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
+      { name: "Certificate Transparency Search", blurb: "Every certificate ever issued for a domain, from the public CT logs.", access: "PRO", href: "/tools/certificate-transparency-search", linkNote: "About the tool" },
       { name: "SSL Checker", blurb: "Certificate and cipher health for any site.", access: "PRO", href: "/tools/ssl-checker", linkNote: "About the tool" },
       { name: "Subdomain Finder", blurb: "Enumerate a domain's subdomains and attack surface.", access: "PRO", href: "/tools/subdomain-finder", linkNote: "About the tool" },
       { name: "Security Headers Checker", blurb: "Audit a site's HTTP security headers.", access: "PRO", href: "/tools/security-headers-checker", linkNote: "About the tool" },
-      { name: "Website Technology Checker", blurb: "Frameworks, CMS and stack behind a website.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
+      { name: "Website Technology Checker", blurb: "Frameworks, CMS and stack behind a website.", access: "PRO", href: "/tools/website-technology-checker", linkNote: "About the tool" },
     ],
   },
   {
     title: "Identity",
     tools: [
       { name: "Username Search", blurb: "Hunt one handle across the platforms that matter.", access: "PRO", href: "/tools/username-search", linkNote: "About the tool" },
-      { name: "GitHub Profile Lookup", blurb: "Public profile, repositories and contacts for a GitHub user.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
-      { name: "Phone Number Lookup", blurb: "Carrier, region and line type for a phone number.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
+      { name: "GitHub Profile Lookup", blurb: "Public profile, repositories and contacts for a GitHub user.", access: "PRO", href: "/tools/github-profile-lookup", linkNote: "About the tool" },
+      { name: "Phone Number Lookup", blurb: "Carrier, region and line type for a phone number.", access: "PRO", href: "/tools/phone-number-lookup", linkNote: "About the tool" },
       { name: "Fingerprint — People Search", blurb: "Public profile search across username, email or phone.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
     ],
   },
   {
     title: "Threat & Exposure",
     tools: [
-      { name: "IP Reputation Checker", blurb: "Reputation of an IP, domain or hash across threat feeds.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
+      { name: "IP Reputation Checker", blurb: "Reputation of an IP, domain or hash across threat feeds.", access: "PRO", href: "/tools/ip-reputation-checker", linkNote: "About the tool" },
       { name: "Data Leak Checker", blurb: "Has an email address appeared in a known breach? Checked live, free.", access: "FREE", href: "/tools/data-leak-checker", linkNote: "Run it now" },
     ],
   },
   {
     title: "Blockchain",
     tools: [
-      { name: "Crypto Wallet Checker", blurb: "Wallet forensics for BTC, ETH and SOL addresses, plus a daily chain brief.", access: "PRO", href: "/", linkNote: "Open the RECON board" },
+      { name: "Crypto Wallet Checker", blurb: "Wallet forensics for BTC, ETH and SOL addresses, plus a daily chain brief.", access: "PRO", href: "/tools/crypto-wallet-checker", linkNote: "About the tool" },
       { name: "DonBot", blurb: "Token signals and holder clusters — a partner tool by DigitalDon, inside the RECON board.", access: "PARTNER", href: "/", linkNote: "Open the globe" },
     ],
   },
