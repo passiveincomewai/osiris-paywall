@@ -108,6 +108,57 @@ const FAQS: Faq[] = [
   },
 ];
 
+/* Audit R40 (2026-10-31): the catalogue's city fields carry junk
+   values that are not cities — a literal placeholder "CITY" and bare
+   US state / Canadian province names (e.g. "Georgia", "Utah",
+   "Nevada", "Ontario") filed as the "city" of airport cameras. The
+   shared areasForDef keeps its semantics (other directory hubs rely
+   on it), so THIS page filters its own area list: an area survives
+   only if its trimmed, case-folded name is non-empty, is not the
+   placeholder "city", and is not exactly a US state (+ DC) or
+   Canadian province/territory name. Legitimate city names that
+   merely contain a state name (e.g. "Nevada City") stay — only the
+   bare name alone is dropped. One judgement call: "New York" is
+   removed from the blocklist below because it is also a real city
+   and the airport cameras the catalogue files under it are New York
+   City's (JFK / LaGuardia area feeds) — dropping it would hide a
+   genuine top city. */
+const NOT_A_CITY_AREA_NAMES = new Set(
+  [
+    // US states + District of Columbia
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+    "Colorado", "Connecticut", "Delaware", "District of Columbia",
+    "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana",
+    "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland",
+    "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+    "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+    "New Jersey", "New Mexico", "New York", "North Carolina",
+    "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
+    "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+    "Texas", "Utah", "Vermont", "Virginia", "Washington",
+    "West Virginia", "Wisconsin", "Wyoming",
+    // Canadian provinces + territories ("Quebec" also matches the
+    // accented "Québec" — the predicate strips diacritics)
+    "Alberta", "British Columbia", "Manitoba", "New Brunswick",
+    "Newfoundland and Labrador", "Nova Scotia", "Ontario",
+    "Prince Edward Island", "Quebec", "Saskatchewan",
+    "Northwest Territories", "Nunavut", "Yukon",
+  ].map((n) => n.toLowerCase()),
+);
+/* Kept deliberately: a real city whose airport cameras are the
+   city's own — see the R40 note above. */
+NOT_A_CITY_AREA_NAMES.delete("new york");
+
+function isCityArea(area: { name: string }): boolean {
+  const key = area.name
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "");
+  if (!key || key === "city") return false;
+  return !NOT_A_CITY_AREA_NAMES.has(key);
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -140,7 +191,10 @@ export default async function AirportWebcamsPage() {
      is listed under and searches by name, rather than inventing
      per-airport entities the data can't support. */
   const total = await countForDef(EXPLORE_SCOPES.airport);
-  const areas = await areasForDef(EXPLORE_SCOPES.airport, 400);
+  /* R40: both consumers of `areas` on this page — the search options
+     and the "Cities with the most airport cameras" table — get the
+     filtered list, so neither can offer or rank a non-city. */
+  const areas = (await areasForDef(EXPLORE_SCOPES.airport, 400)).filter(isCityArea);
   const fmt = (n: number) => n.toLocaleString("en-US");
 
   return (
