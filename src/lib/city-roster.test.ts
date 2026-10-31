@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CountryCamera } from "@/lib/country-cameras";
-import { buildCityRoster, cityRecords, rosterIsComplete, shortId } from "./city-roster";
+import { buildCityRoster, cityRecords, globeId, rosterIsComplete, shortId } from "./city-roster";
 
 const cam = (partial: Partial<CountryCamera> & { id: string }): CountryCamera => ({
   name: "Unnamed",
@@ -33,7 +33,10 @@ describe("buildCityRoster", () => {
     ]);
     expect(roster).toEqual([
       {
-        id: "occ-ok-1690894724543",
+        // The link id is the globe-served okdot- form (see globeId):
+        // the chunk's occ-ok- copy resolves by id but its snapshot
+        // stream playlist 404s; the okdot- copy plays.
+        id: "okdot-1690894724543",
         name: "US-69 & C Tree NE",
         city: "McAlester",
         qualifier: null,
@@ -77,6 +80,24 @@ describe("buildCityRoster", () => {
       { name: "No Id Camera", city: "McAlester" } as CountryCamera,
     ]);
     expect(roster.map((r) => r.id)).toEqual(["ok"]);
+  });
+});
+
+describe("globeId", () => {
+  it("translates the superseded oktraffic family to the okdot- id", () => {
+    expect(
+      globeId(cam({ id: "occ-ok-1690894724543", source: "OpenCCTV / oktraffic" })),
+    ).toBe("okdot-1690894724543");
+  });
+
+  it("leaves every other record's id untouched", () => {
+    expect(globeId(cam({ id: "occ-wsdot-1195", source: "OpenCCTV / wsdot" }))).toBe(
+      "occ-wsdot-1195",
+    );
+    expect(globeId(cam({ id: "occ-ok-1690894724543", source: "Some other source" }))).toBe(
+      "occ-ok-1690894724543",
+    );
+    expect(globeId(cam({ id: "gdot-13532", source: "GDOT" }))).toBe("gdot-13532");
   });
 });
 

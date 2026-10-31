@@ -24,7 +24,9 @@
 import { clean, type CountryCamera } from "@/lib/country-cameras";
 
 export interface RosterEntry {
-  /** Catalogue id — the /?camera=<id> deep link's target. */
+  /** The deep link's target id — the record's catalogue id, or its
+   *  globe-served translation for the superseded oktraffic family
+   *  (see globeId). */
   id: string;
   /** The catalogue's exact name for this camera (whitespace-cleaned). */
   name: string;
@@ -52,6 +54,31 @@ export function cityRecords(
 export function shortId(id: string): string {
   const at = id.lastIndexOf("-");
   return at > 0 ? id.slice(at + 1) : id;
+}
+
+/**
+ * The id the globe actually serves for a chunk record, when the two
+ * differ. The committed chunks predate the Oklahoma supersede
+ * (2026-10-22, src/app/api/cctv/oklahoma.ts): ODOT's direct feed
+ * replaced the OpenCCTV harvest's `oktraffic` family outright — the
+ * runtime harvest file carries zero occ-ok- records, the region
+ * serves only `okdot-<MapCamera id>` ids, and both layers share the
+ * same numeric MapCamera id (verified live 2026-10-30 for the
+ * McAlester test case and a sample of Oklahoma City records: both
+ * /api/cctv?id= forms return the same camera). The prefixes do NOT
+ * resolve alike, though: the chunk copy's stream playlist is the
+ * Oct 20 snapshot's key and now 404s (ODOT rotates stream keys —
+ * oklahoma.ts warns they are not stable), while the okdot- copy's
+ * playlist is fetched fresh and plays. So a roster entry for an
+ * oktraffic record links by its okdot- id; every other record links
+ * by its own id, untouched.
+ */
+export function globeId(record: CountryCamera): string {
+  if (clean(record.source) === "OpenCCTV / oktraffic") {
+    const m = /^occ-ok-(\d+)$/.exec(record.id);
+    if (m) return `okdot-${m[1]}`;
+  }
+  return record.id;
 }
 
 function qualifierFor(group: CountryCamera[]): Map<string, string> {
@@ -94,7 +121,10 @@ export function buildCityRoster(
   }
   return usable
     .map((r) => ({
-      id: r.id,
+      /* The link id — globeId() translates the one superseded family
+         (oktraffic) to the id the globe serves; everything else is
+         the record's own catalogue id. */
+      id: globeId(r),
       name: clean(r.name),
       city: clean(r.city),
       qualifier: qualifiers.get(r.id) ?? null,
