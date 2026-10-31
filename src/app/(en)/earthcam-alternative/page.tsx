@@ -19,12 +19,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "An EarthCam Alternative — 74,229 Live Cams",
   description:
-    "WorldEye: an EarthCam alternative with 74,229 live public cameras in 105 countries on one 3D globe — free, no signup — plus flights, satellites, weather.",
+    "WorldEye: an EarthCam alternative with 74,229 live public cameras in 109 countries on one 3D globe — free, no signup — plus flights, satellites, weather.",
   alternates: { canonical: "/earthcam-alternative" },
   openGraph: {
     title: "An EarthCam Alternative — 74,229 Live Cams | WorldEye",
     description:
-      "74,229 live public cameras in 105 countries on a 3D globe — free, no signup. An alternative worth trying.",
+      "74,229 live public cameras in 109 countries on a 3D globe — free, no signup. An alternative worth trying.",
     url: "/earthcam-alternative",
     type: "website",
   },
@@ -34,12 +34,12 @@ const DIMENSIONS = [
   {
     icon: Camera,
     title: "Camera count",
-    desc: "WorldEye's directory indexes 74,229 live public cameras across 105 countries — from US DOT highway networks to city plazas, beaches, harbors and mountain resorts. A real, countable index that keeps growing as new public feeds are found and mapped.",
+    desc: "WorldEye's directory indexes 74,229 live public cameras across 109 countries — from US DOT highway networks to city plazas, beaches, harbors and mountain resorts. A real, countable index that keeps growing as new public feeds are found and mapped.",
   },
   {
     icon: Wallet,
     title: "Price",
-    desc: "Every camera on WorldEye is free to watch — no account, no signup, no tiered plans. The directory will never sit behind a paywall; Pro subscriptions fund the infrastructure that keeps it running.",
+    desc: "Browsing the directory — every camera page, name and location — is free and uncapped, and the directory itself will never sit behind a paywall. Watching on the globe uses a free allowance: 5 camera opens per device, 10 with an email drop or a verified free account, and unlimited opens on Pro. Pro subscriptions fund the infrastructure that keeps it running.",
   },
   {
     icon: UserX,
@@ -56,7 +56,7 @@ const DIMENSIONS = [
 const FAQS = [
   {
     q: "Is WorldEye really free for watching cameras?",
-    a: "Yes. All 74,229 cameras in the directory are free to watch with no account and no signup — forever. That's a standing commitment, not a trial.",
+    a: "Yes — with a free allowance. Browsing the directory is free and uncapped forever, and watching on the globe starts with 5 free camera opens per device — 10 with an email drop or a verified free account — with unlimited opens on Pro. The directory itself will never sit behind a paywall; that's a standing commitment, not a trial.",
   },
   {
     q: "Is EarthCam bad?",
@@ -68,7 +68,7 @@ const FAQS = [
   },
   {
     q: "Can I find cameras in my city?",
-    a: "Search any place on the live map, or browse the camera directory by country — 105 countries are indexed, with dedicated pages for the 30 busiest. Coverage follows public infrastructure, so highways, city centers and tourist areas are the densest.",
+    a: "Search any place on the live map, or browse the camera directory by country — 109 countries are indexed, with dedicated pages for the 30 busiest. Coverage follows public infrastructure, so highways, city centers and tourist areas are the densest.",
   },
   {
     q: "Do I need to download an app?",
@@ -88,7 +88,7 @@ const FAQS = [
   },
   {
     q: "What is the best free EarthCam alternative?",
-    a: "For breadth, WorldEye: 74,229 public cameras from hundreds of operators in 105 countries on one free 3D globe, no signup. For a single famous view produced by one network, EarthCam itself is still the classic — the two products solve different problems, and the head-to-head comparison linked below lays out exactly where each is stronger.",
+    a: "For breadth, WorldEye: 74,229 public cameras from hundreds of operators in 109 countries on one free 3D globe, no signup. For a single famous view produced by one network, EarthCam itself is still the classic — the two products solve different problems, and the head-to-head comparison linked below lays out exactly where each is stronger.",
   },
   {
     q: "What should I try first on WorldEye?",
@@ -103,7 +103,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "An EarthCam Alternative — WorldEye Live Cameras",
       description:
-        "WorldEye: an EarthCam alternative with 74,229 live public cameras in 105 countries on one 3D globe — free, no signup.",
+        "WorldEye: an EarthCam alternative with 74,229 live public cameras in 109 countries on one 3D globe — free, no signup.",
       url: "https://worldeye.app/earthcam-alternative",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     },
@@ -151,7 +151,7 @@ export default function EarthcamAlternativePage() {
           </h1>
           <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
             WorldEye is an alternative to webcam sites like EarthCam: tens of
-            thousands of public live cameras from 105 countries, mapped on a
+            thousands of public live cameras from 109 countries, mapped on a
             3D globe you can spin — free, no signup.
           </p>
           <div className="mt-8">
@@ -265,7 +265,7 @@ export default function EarthcamAlternativePage() {
               ports and businesses already publish tens of thousands of live
               feeds for their own reasons; WorldEye finds them, verifies
               them and plots every one on a single globe — 74,229 cameras in
-              105 countries, most of them working infrastructure cameras
+              109 countries, most of them working infrastructure cameras
               rather than scenic productions. The presentation is plainer;
               the map is the product.
             </p>
@@ -392,7 +392,7 @@ export default function EarthcamAlternativePage() {
             },
             {
               label: "Live cameras",
-              desc: "The full camera directory — 74,229 live public cameras in 105 countries.",
+              desc: "The full camera directory — 74,229 live public cameras in 109 countries.",
               href: "/cameras",
             },
             {
