@@ -148,6 +148,39 @@ export default function FraudRadarPage() {
           </div>
         </section>
 
+        <section className="mt-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.06] p-6">
+          <h2 className="text-xl font-semibold">Also published: Federal grants &amp; single audits</h2>
+          <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+            The grants engine&apos;s first datasets are published: USAspending
+            federal assistance awards (2018–2025, amounts award-cumulative
+            under the attributed fiscal year — obligations, outlays and
+            expenditures kept distinct), researched by recipient and
+            assistance listing, and bridged to Federal Audit
+            Clearinghouse single audits, where audit findings and
+            questioned-cost flags are research leads for human review.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link
+              href="/fraud-radar/grants"
+              className="rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-300"
+            >
+              Open Federal Grants
+            </Link>
+            <Link
+              href="/fraud-radar/grants/recipients"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Search grant recipients
+            </Link>
+            <Link
+              href="/fraud-radar/grants/aln"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Explore assistance listings
+            </Link>
+          </div>
+        </section>
+
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
           <h2 className="text-xl font-semibold">Whistleblower Research Center</h2>
           <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">

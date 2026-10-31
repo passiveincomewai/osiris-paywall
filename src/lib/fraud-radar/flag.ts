@@ -51,5 +51,11 @@ export function fraudRadarPublicPaths(
     "/fraud-radar/care/hcpcs",
     "/fraud-radar/care/hospice",
     "/fraud-radar/care/home-health",
+    // Phase 4 grants surfaces (landing, recipient search and the ALN
+    // explorer only; recipient profiles, ALN detail, the FAC overview
+    // and the search API stay out of the sitemap).
+    "/fraud-radar/grants",
+    "/fraud-radar/grants/recipients",
+    "/fraud-radar/grants/aln",
   ];
 }

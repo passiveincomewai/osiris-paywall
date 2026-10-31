@@ -98,6 +98,24 @@ describe("§14.3 isolation — Phase 3 care routes carry the flag gate", () => {
   });
 });
 
+describe("§14.3 isolation — Phase 4 grants routes carry the flag gate", () => {
+  it("every grants page and the grants search API check fraudRadarEnabled", () => {
+    const grantsFiles = [
+      "app/(en)/fraud-radar/grants/page.tsx",
+      "app/(en)/fraud-radar/grants/recipients/page.tsx",
+      "app/(en)/fraud-radar/grants/recipients/[uei]/page.tsx",
+      "app/(en)/fraud-radar/grants/aln/page.tsx",
+      "app/(en)/fraud-radar/grants/aln/[aln]/page.tsx",
+      "app/(en)/fraud-radar/grants/fac/page.tsx",
+      "app/api/fraud-radar/grants/search/route.ts",
+    ];
+    for (const rel of grantsFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+});
+
 describe("§35 billing non-interference — static dependency guard", () => {
   const files = fraudSourceFiles();
 

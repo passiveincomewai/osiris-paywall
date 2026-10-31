@@ -41,6 +41,9 @@ describe("fraudRadarPublicPaths — sitemap/nav isolation", () => {
       "/fraud-radar/care/hcpcs",
       "/fraud-radar/care/hospice",
       "/fraud-radar/care/home-health",
+      "/fraud-radar/grants",
+      "/fraud-radar/grants/recipients",
+      "/fraud-radar/grants/aln",
     ]);
   });
 });
