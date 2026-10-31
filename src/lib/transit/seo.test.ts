@@ -8,7 +8,9 @@ import {
   feedVersionDate,
   formatGtfsClock,
   groupRoutes,
+  isShuttleRoute,
   representativeDays,
+  routeIndexDecision,
   routeJsonLd,
   routeSlugBase,
   routeTitle,
@@ -17,6 +19,8 @@ import {
   stopAnchor,
   terminusDepartures,
   transitPathsForAgency,
+  weekdayDailyTrips,
+  FLAGSHIP_MIN_WEEKDAY_TRIPS,
 } from './seo';
 import { networkFor } from './network';
 
@@ -90,7 +94,7 @@ function fixtureNet(): TransitNetwork {
 
 const UTA_STUB = {
   id: 'uta', name: 'UTA', region: 'Salt Lake City, UT',
-  attribution: 'Utah Transit Authority',
+  attribution: 'Utah Transit Authority', timezone: 'America/Denver',
 } as unknown as TransitAgency;
 
 describe('slugifySegment', () => {
@@ -281,14 +285,79 @@ describe('groupRoutes', () => {
 });
 
 describe('transitPathsForAgency', () => {
-  it('emits state + agency + one path per route — and NO stop URLs', () => {
+  it('emits state + agency + indexable routes only (R17) — and NO stop URLs', () => {
     const net = fixtureNet();
     const paths = transitPathsForAgency(UTA_STUB, net, buildRouteSlugs(net.routes));
-    expect(paths).toHaveLength(net.routes.length + 2);
-    expect(paths[0].path).toBe('/transit/utah');
-    expect(paths[1].path).toBe('/transit/uta');
-    expect(paths.some(p => p.path === '/transit/uta/routes/701-blue-line')).toBe(true);
+    // Fixture fleet under the R17 policy: the tram (701), the train
+    // (750) and the BRT (830X) stay; the 1-trip buses (2, 9) drop.
+    expect(paths.map(p => p.path)).toEqual([
+      '/transit/utah',
+      '/transit/uta',
+      '/transit/uta/routes/701-blue-line',
+      '/transit/uta/routes/750-frontrunner',
+      '/transit/uta/routes/830x-utah-valley-express-uvx',
+    ]);
     expect(paths.every(p => !p.path.includes('/stops/'))).toBe(true);
+  });
+});
+
+describe('route index policy (R17–R19)', () => {
+  it('detects shuttle variants by public name (R18)', () => {
+    expect(isShuttleRoute({ short: 'Blue Line Shuttle', long: 'Blue Line Shuttle' })).toBe(true);
+    expect(isShuttleRoute({ short: '509', long: '900 W SHUTTLE' })).toBe(true);
+    expect(isShuttleRoute({ short: '701', long: 'Blue Line' })).toBe(false);
+    expect(isShuttleRoute({ short: '2', long: '200 SOUTH' })).toBe(false);
+  });
+
+  it('counts weekday trips across both directions', () => {
+    const net = fixtureNet();
+    // R701: T1+T2 (dir 0) + T3 (dir 1) on the WKD service.
+    expect(weekdayDailyTrips(net, 'R701', TZ, TUE_NOON_UTC)).toBe(3);
+    expect(weekdayDailyTrips(net, 'R2', TZ, TUE_NOON_UTC)).toBe(1);
+  });
+
+  it('keeps rail + BRT, drops ordinary bus, and drops shuttles however frequent', () => {
+    const net = fixtureNet();
+    const d = (id: string) => routeIndexDecision(UTA_STUB, net, net.routeById.get(id)!, TZ);
+    expect(d('R701')).toEqual({ indexable: true, reason: 'rail' });
+    expect(d('R750')).toEqual({ indexable: true, reason: 'rail' });
+    expect(d('R830')).toEqual({ indexable: true, reason: 'brt' });
+    expect(d('R2')).toEqual({ indexable: false, reason: 'standard' });
+    const shuttle = { id: 'SHX', short: 'Blue Line Shuttle', long: 'Blue Line Shuttle', mode: 'bus' as const, color: '' };
+    expect(routeIndexDecision(UTA_STUB, net, shuttle, TZ)).toEqual({ indexable: false, reason: 'shuttle' });
+  });
+
+  it('keeps a bus route at or above the flagship weekday-trips bar', () => {
+    // Synthetic feed: one bus route with exactly FLAGSHIP_MIN_WEEKDAY_TRIPS
+    // weekday trips, one with one fewer.
+    const mk = (prefix: string, n: number) => {
+      const trips: string[] = [];
+      const times: string[] = [];
+      for (let i = 0; i < n; i++) {
+        trips.push(`${prefix},WKD,${prefix}T${i},Outbound,0`);
+        times.push(`${prefix}T${i},06:00:00,06:00:00,A,1`, `${prefix}T${i},06:10:00,06:10:00,B,2`);
+      }
+      return { trips, times };
+    };
+    const big = mk('RB', FLAGSHIP_MIN_WEEKDAY_TRIPS);
+    const small = mk('RS', FLAGSHIP_MIN_WEEKDAY_TRIPS - 1);
+    const net = parseNetwork({
+      routes: [
+        'route_id,route_short_name,route_long_name,route_type,route_color,route_url',
+        'RB,B1,BIG BUS,3,,',
+        'RS,B2,SMALL BUS,3,,',
+      ].join('\n'),
+      stops: STOPS,
+      trips: ['route_id,service_id,trip_id,trip_headsign,direction_id', ...big.trips, ...small.trips].join('\n'),
+      stopTimes: ['trip_id,arrival_time,departure_time,stop_id,stop_sequence', ...big.times, ...small.times].join('\n'),
+      calendar: CALENDAR,
+      feedInfo: FEED_INFO,
+    });
+    expect(weekdayDailyTrips(net, 'RB', TZ, TUE_NOON_UTC)).toBe(FLAGSHIP_MIN_WEEKDAY_TRIPS);
+    expect(routeIndexDecision(UTA_STUB, net, net.routeById.get('RB')!, TZ))
+      .toEqual({ indexable: true, reason: 'flagship' });
+    expect(routeIndexDecision(UTA_STUB, net, net.routeById.get('RS')!, TZ))
+      .toEqual({ indexable: false, reason: 'standard' });
   });
 });
 
@@ -315,18 +384,25 @@ describe('routeJsonLd', () => {
 /**
  * Live reconciliation against the real UTA feed — opt in with
  * RUN_LIVE_TESTS=1 (npm run test:live). Pins the counts the SEO
- * report quotes: 86 routes, 5,425 stops, unique slugs, and the
- * sitemap family size (88 agency paths + the /transit hub = 89).
+ * report quotes: 86 routes, 5,425 stops, unique slugs. The sitemap
+ * family size was 88 agency paths before 2026-10-31; the R17 index
+ * policy now keeps only hubs + indexable routes, so the path count
+ * is asserted structurally (2 hubs + the routes routeIndexDecision
+ * keeps) with two stable spot checks: the flagship 603X stays, the
+ * 134-trip route 2 drops.
  */
 const liveIt = process.env.RUN_LIVE_TESTS === '1' ? it : it.skip;
 describe('UTA live feed reconciliation', () => {
-  liveIt('86 routes / 5,425 stops / unique slugs / 88 agency paths', async () => {
+  liveIt('86 routes / 5,425 stops / unique slugs / R17-filtered agency paths', async () => {
     const net = await networkFor('uta', 'https://gtfsfeed.rideuta.com/GTFS.zip');
     expect(net.routes).toHaveLength(86);
     expect(net.stops).toHaveLength(5425);
     const slugs = buildRouteSlugs(net.routes);
     expect(new Set(slugs.values()).size).toBe(86);
     const paths = transitPathsForAgency(UTA_STUB, net, slugs);
-    expect(paths).toHaveLength(88);
+    const kept = net.routes.filter(r => routeIndexDecision(UTA_STUB, net, r, TZ).indexable);
+    expect(paths).toHaveLength(2 + kept.length);
+    expect(paths.some(p => p.path === '/transit/uta/routes/603x-ogden-express-ogx')).toBe(true);
+    expect(paths.some(p => p.path === '/transit/uta/routes/2-200-south')).toBe(false);
   }, 120_000);
 });

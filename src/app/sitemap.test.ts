@@ -203,7 +203,18 @@ describe("sitemap URL set", () => {
 
   it("still lists transit URLs from the live feeds", () => {
     const transit = rows.filter((r) => r.url.startsWith(`${BASE}/transit`));
-    expect(transit.length).toBeGreaterThan(500);
+    // R17 index policy (2026-10-31): the sitemap carries only the
+    // indexable subset — national/state/agency hubs + rail, BRT and
+    // flagship bus routes. With every feed up that is ~170 URLs; a
+    // feed that fails to load at sitemap time omits its agency
+    // (pre-existing behaviour), so the floor only insists the family
+    // is really there (22 hubs max → >40 means route keepers are
+    // in), while the ceiling is the policy invariant: nowhere near
+    // the ~1,300 route URLs the family used to list.
+    expect(transit.length).toBeGreaterThan(40);
+    expect(transit.length).toBeLessThan(400);
+    expect(transit.some((r) => r.url === `${BASE}/transit`)).toBe(true);
+    expect(transit.some((r) => /shuttle/i.test(r.url))).toBe(false);
   });
 
   it("lists live wildfire incident URLs structurally (feed-derived, never pinned)", () => {

@@ -24,6 +24,7 @@ import {
   routeDescription,
   routeDisplayName,
   routeGroupKey,
+  routeIndexDecision,
   routeJsonLd,
   routePath,
   routeTitle,
@@ -85,6 +86,12 @@ export async function generateMetadata({
   const title = routeTitle(data.agency, route);
   const description = routeDescription(data.agency, route, weekday, stopCount, data.tz);
   const url = routePath(data.agency.id, routeSlug);
+  // R17 index policy (lib/transit/seo, routeIndexDecision): rail,
+  // BRT and flagship bus routes stay indexed; every other route —
+  // and every GTFS shuttle variant (R18) — is noindex,follow. The
+  // page stays live and linked from its agency hub, and the sitemap
+  // applies the same decision, so the two never disagree.
+  const indexDecision = routeIndexDecision(data.agency, data.net, route, data.tz);
   return {
     // Absolute: routeTitle is length-budgeted as the complete title
     // (SEO audit fix #1) — the layout's "| WorldEye" template would
@@ -93,6 +100,7 @@ export async function generateMetadata({
     description,
     alternates: { canonical: `${TRANSIT_BASE}${url}` },
     openGraph: { title, description, url, type: "website" },
+    ...(indexDecision.indexable ? {} : { robots: { index: false, follow: true } }),
   };
 }
 

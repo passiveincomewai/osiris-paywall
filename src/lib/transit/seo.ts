@@ -506,10 +506,90 @@ export interface TransitSitemapEntry {
   changeFrequency: 'weekly' | 'monthly';
 }
 
+/* ── Indexation policy (site audit R17–R19; owner-approved 2026-10-31) ── */
+
+/**
+ * Flagship bus bar: scheduled trips (both directions) on a
+ * representative weekday. 150 ≈ the top decile of bus routes by
+ * weekday trips across the current feeds, and roughly a 10-minute
+ * headway sustained over a full service day — the audit's "top bus
+ * routes by daily trips", made mechanical.
+ */
+export const FLAGSHIP_MIN_WEEKDAY_TRIPS = 150;
+
+/**
+ * R18: GTFS shuttle variants. Feeds (MBTA above all) enumerate
+ * temporary rail-replacement shuttle patterns as permanent routes —
+ * 216 of MBTA's 400 routes on the 2026-10-31 feed. A route whose
+ * public name calls it a shuttle is never a flagship line.
+ */
+export function isShuttleRoute(route: Pick<NetworkRoute, 'short' | 'long'>): boolean {
+  return /shuttle/i.test(`${route.short} ${route.long}`);
+}
+
+/**
+ * Scheduled trips (both directions) on the route's next representative
+ * weekday — the first Mon–Fri day within 14 days on which the route
+ * runs. 0 when the route has no weekday service in the window. Same
+ * day the route page's schedule summary quotes.
+ */
+export function weekdayDailyTrips(
+  net: TransitNetwork,
+  routeId: string,
+  tz: string,
+  nowMs: number = Date.now(),
+): number {
+  const today = ymdInZone(tz, new Date(nowMs)).replace(/-/g, '');
+  for (let delta = 0; delta < 14; delta++) {
+    const ymd = addDaysYmd(today, delta);
+    if (weekdayMon0(ymd) > 4) continue;
+    const trips = routeDaySummary(net, routeId, ymd, tz).reduce((a, d) => a + d.trips, 0);
+    if (trips > 0) return trips;
+  }
+  return 0;
+}
+
+export type RouteIndexReason = 'rail' | 'brt' | 'flagship' | 'shuttle' | 'standard';
+
+export interface RouteIndexDecision {
+  indexable: boolean;
+  reason: RouteIndexReason;
+}
+
+/**
+ * R17 (Option B): which route pages stay in the index. Hubs are not
+ * routes and are always indexable; a route page stays indexable iff
+ * it is a rail line (tram / metro / commuter rail), a BRT line, or a
+ * flagship bus route at or above FLAGSHIP_MIN_WEEKDAY_TRIPS weekday
+ * trips. Everything else — and every shuttle variant, however
+ * frequent — is noindex,follow and leaves the sitemap, while the
+ * page itself stays live and linked from its agency hub. This one
+ * function is consumed by BOTH the route page's metadata and the
+ * sitemap path builder below, so the two can never disagree.
+ */
+export function routeIndexDecision(
+  agency: Pick<TransitAgency, 'id'>,
+  net: TransitNetwork,
+  route: NetworkRoute,
+  tz: string,
+): RouteIndexDecision {
+  if (isShuttleRoute(route)) return { indexable: false, reason: 'shuttle' };
+  const group = routeGroupKey(agency.id, route);
+  if (group === 'tram' || group === 'metro' || group === 'train') {
+    return { indexable: true, reason: 'rail' };
+  }
+  if (group === 'brt') return { indexable: true, reason: 'brt' };
+  return weekdayDailyTrips(net, route.id, tz) >= FLAGSHIP_MIN_WEEKDAY_TRIPS
+    ? { indexable: true, reason: 'flagship' }
+    : { indexable: false, reason: 'standard' };
+}
+
 /**
  * Every indexable transit URL for one agency network: state hub (if
- * any) + agency hub + one per route. Deliberately NO stop URLs
- * (owner scope call, 2026-10-26). The sitemap and the tests both
+ * any) + agency hub + one per INDEXABLE route (R17 policy —
+ * routeIndexDecision). Deliberately NO stop URLs (owner scope call,
+ * 2026-10-26) and no noindexed route URLs: a sitemap must not list
+ * pages it asks engines to drop. The sitemap and the tests both
  * consume this, so the sitemap can never drift from the page set.
  */
 export function transitPathsForAgency(
@@ -521,9 +601,12 @@ export function transitPathsForAgency(
   const state = stateForAgency(agency);
   if (state) out.push({ path: `/transit/${state.slug}`, priority: 0.7, changeFrequency: 'weekly' });
   out.push({ path: `/transit/${agency.id}`, priority: 0.7, changeFrequency: 'weekly' });
+  const tz = agency.timezone ?? 'UTC';
   for (const route of net.routes) {
     const slug = slugs.get(route.id);
-    if (slug) out.push({ path: routePath(agency.id, slug), priority: 0.6, changeFrequency: 'weekly' });
+    if (slug && routeIndexDecision(agency, net, route, tz).indexable) {
+      out.push({ path: routePath(agency.id, slug), priority: 0.6, changeFrequency: 'weekly' });
+    }
   }
   return out;
 }
