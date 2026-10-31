@@ -224,12 +224,21 @@ export default function BestLiveWebcamSitesPage() {
                     </span>
                   </div>
                   <p className="text-sm text-white/50 leading-relaxed mt-3">{t.body}</p>
-                  <Link
-                    href={t.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    Compare {t.name} vs WorldEye
-                  </Link>
+                  {t.name === "WorldEye" ? (
+                    <Link
+                      href="/compare"
+                      className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
+                    >
+                      See how WorldEye compares
+                    </Link>
+                  ) : (
+                    <Link
+                      href={t.href}
+                      className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
+                    >
+                      Compare {t.name} vs WorldEye
+                    </Link>
+                  )}
                 </div>
               </div>
             </article>

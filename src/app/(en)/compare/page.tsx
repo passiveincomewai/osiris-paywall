@@ -26,6 +26,8 @@ export const metadata: Metadata = {
 
 const CATEGORIES = [
   { id: "osint", label: "OSINT" },
+  { id: "webcam-network", label: "Webcam network" },
+  { id: "weather", label: "Weather" },
   { id: "satellite-monitoring", label: "Satellite monitoring" },
   { id: "flight-tracking", label: "Flight tracking" },
   { id: "maritime-intel", label: "Maritime intel" },

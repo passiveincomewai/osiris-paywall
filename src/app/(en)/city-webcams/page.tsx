@@ -38,7 +38,8 @@ const EDITORIAL: GenCity[] = [
   { slug: "madrid", name: "Madrid", country: "Spain", countrySlug: "spain", count: 370 },
   { slug: "houston", name: "Houston", country: "United States", countrySlug: "united-states", count: 1158 },
   { slug: "dallas", name: "Dallas", country: "United States", countrySlug: "united-states", count: 845 },
-  { slug: "tokyo", name: "Tokyo", country: "Japan", countrySlug: "japan", count: 73 },
+  // Tokyo count = 112: the records with city "Tokyo" in src/data/countries/japan.json — the count the Tokyo spoke page serves (the previous 73 was stale).
+  { slug: "tokyo", name: "Tokyo", country: "Japan", countrySlug: "japan", count: 112 },
   { slug: "sydney", name: "Sydney", country: "Australia", countrySlug: "australia", count: 186 },
   { slug: "auckland", name: "Auckland", country: "New Zealand", countrySlug: "new-zealand", count: 98 },
   { slug: "fort-worth", name: "Fort Worth", country: "United States", countrySlug: "united-states", count: 489 },

@@ -218,12 +218,21 @@ export default function FreeOsintToolsPage() {
                   <p className="text-xs text-white/40 leading-relaxed mt-3 border-l-2 border-[#0096FF]/40 pl-3">
                     <strong className="text-white/60">Free-tier reality:</strong> {t.limit}
                   </p>
-                  <Link
-                    href={t.href}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
-                  >
-                    Compare {t.name} vs WorldEye
-                  </Link>
+                  {t.name === "WorldEye" ? (
+                    <Link
+                      href="/compare"
+                      className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
+                    >
+                      See how WorldEye compares
+                    </Link>
+                  ) : (
+                    <Link
+                      href={t.href}
+                      className="inline-flex items-center gap-1.5 text-sm text-[#0096FF] hover:underline mt-4 font-medium"
+                    >
+                      Compare {t.name} vs WorldEye
+                    </Link>
+                  )}
                 </div>
               </div>
             </article>

@@ -37,11 +37,11 @@ const updatedLabel = new Date(stateIndex.generatedAt).toLocaleDateString("en-US"
 });
 
 export const metadata: Metadata = {
-  title: "Freeway Cameras — Live US Traffic Cameras",
+  title: "Live Traffic Cameras — Freeway & US Road Cams",
   description: `Watch ${fmt(total)} live US freeway cameras and traffic cams — DOT highway feeds, interstate junctions and city streets. Free, no signup.`,
   alternates: { canonical: "https://worldeye.app/live-traffic-cameras" },
   openGraph: {
-    title: "Freeway Cameras — Live US Traffic Cameras | WorldEye",
+    title: "Live Traffic Cameras — Freeway & US Road Cams | WorldEye",
     description: `${fmt(total)} live US freeway and traffic cameras — DOT highway feeds and interstate junctions, free to watch with no signup.`,
     url: "https://worldeye.app/live-traffic-cameras",
     type: "website",
@@ -121,7 +121,7 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "CollectionPage",
-      name: "Freeway Cameras — Live US Traffic Cameras",
+      name: "Live Traffic Cameras — Freeway & US Road Cams",
   description: `Directory of ${fmt(total)} live US freeway and traffic cameras from DOT and public sources, with per-state counts.`,
   url: "https://worldeye.app/live-traffic-cameras",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },

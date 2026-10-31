@@ -62,7 +62,8 @@
 
 ## Comparisons
 
-- [Compare](https://worldeye.app/compare): Side-by-side comparisons of WorldEye with other live-map, webcam and OSINT tools. This is also the alternatives hub — /alternatives redirects here.
+- [Compare](https://worldeye.app/compare): Side-by-side comparisons of WorldEye with other live-map, webcam and OSINT tools.
+- [Alternatives](https://worldeye.app/alternatives): The alternatives hub — switching guides for the live-map, webcam and OSINT tools people outgrow, each naming the real options, not just WorldEye.
 - [God's Eye View](https://worldeye.app/gods-eye-view): What a god's eye view of Earth is, and how WorldEye delivers it as a hosted website — free, no install, no API key.
 - [God's Eye View alternative](https://worldeye.app/alternatives/gods-eye-view): WorldEye compared with the open-source God's Eye View project — hosted versus install-it-yourself, 74,229 cameras versus roughly 4,000.
 - [EarthCam alternative](https://worldeye.app/earthcam-alternative): WorldEye as an EarthCam alternative — a 3D globe of 74,229 live public cameras, free with no signup.
