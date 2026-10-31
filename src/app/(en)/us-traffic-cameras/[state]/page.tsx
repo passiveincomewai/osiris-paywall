@@ -602,6 +602,31 @@ const STATES: Record<string, EditorialCfg> = {
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
+/* District of Columbia labelling (2026-10-31): every camera the border
+ * assignment places on the DC page is physically a Northern Virginia
+ * camera — Virginia DOT feeds on the Virginia side of the Potomac
+ * (Arlington County + Fairfax County) plus the Woodrow Wilson Bridge's
+ * Virginia-side approach, which its feed files as "Wash. DC". The
+ * vendored boundary polygon places those Virginia-shore points inside
+ * the District's outline (and outside Virginia's), so stateForPoint
+ * groups them with DC. The counts stay exactly as measured — but the
+ * labels on this page say Virginia where Virginia is the truth. */
+const DC_AREA_LABELS: Record<string, string> = {
+  "Arlington County": "Arlington County, Virginia",
+  Fairfax: "Fairfax County, Virginia",
+};
+const DC_AREA_RAW: Record<string, string> = Object.fromEntries(
+  Object.entries(DC_AREA_LABELS).map(([raw, label]) => [label, raw]),
+);
+function dcAreaLabel(slug: string, name: string): string {
+  return slug === "district-of-columbia"
+    ? (DC_AREA_LABELS[name] ?? name)
+    : name;
+}
+function dcRawAreaName(slug: string, name: string): string {
+  return slug === "district-of-columbia" ? (DC_AREA_RAW[name] ?? name) : name;
+}
+
 // Every state's count, coverage areas and featured cameras come from
 // the generated state index (src/data/us-states.json — each camera in
 // the served US catalogue assigned to the state its coordinates fall
@@ -611,16 +636,17 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 // editorial configs below keep their prose, but their numbers, areas
 // and samples are always the measured ones.
 function derivedConfig(d: UsStateData): StateCfg {
+  const isDC = d.slug === "district-of-columbia";
   const top = d.areas.slice(0, 3);
   const topList = top
-    .map((a) => `${a.name} (${fmt(a.count)})`)
+    .map((a) => `${dcAreaLabel(d.slug, a.name)} (${fmt(a.count)})`)
     .join(", ")
     .replace(/, ([^,]*)$/, " and $1");
-  return {
+  const cfg: StateCfg = {
     name: d.name,
     count: d.count,
     title: `${d.name} Traffic Cameras — Live Road Cams`,
-    blurb: `Watch ${fmt(d.count)} live ${d.name} traffic cameras — led by ${top[0].name} with ${fmt(top[0].count)} feeds — free on the WorldEye map. No signup needed.`,
+    blurb: `Watch ${fmt(d.count)} live ${d.name} traffic cameras — led by ${dcAreaLabel(d.slug, top[0].name)} with ${fmt(top[0].count)} feeds — free on the WorldEye map. No signup needed.`,
     h1: `${d.name} Traffic Cameras`,
     sub: `Watch ${fmt(d.count)} live ${d.name} traffic cameras — free on the WorldEye globe.`,
     intro: [
@@ -631,16 +657,23 @@ function derivedConfig(d: UsStateData): StateCfg {
     ],
     stats: [
       { value: fmt(d.count), label: "live cameras" },
-      { value: top[0].name, label: "largest cluster" },
+      { value: dcAreaLabel(d.slug, top[0].name), label: "largest cluster" },
       { value: "Free", label: "no account needed" },
     ],
-    areas: d.areas,
+    areas: isDC
+      ? d.areas.map((a) => ({ ...a, name: dcAreaLabel(d.slug, a.name) }))
+      : d.areas,
     areaTitle: `${d.name} camera coverage by area`,
-    samples: d.samples,
+    samples: isDC
+      ? d.samples.map((smp) => ({
+          ...smp,
+          city: dcAreaLabel(d.slug, smp.city),
+        }))
+      : d.samples,
     howtoTitle: `How to check ${d.name} road conditions`,
     howto: [
       "Open the free WorldEye map in your browser — no account or download needed.",
-      `Zoom to ${d.name} and look for camera markers along your route, starting near ${top[0].name}.`,
+      `Zoom to ${d.name} and look for camera markers along your route, starting near ${dcAreaLabel(d.slug, top[0].name)}.`,
       "Tap any marker to open that camera's live feed.",
       "Compare the feeds on your route with the parallel corridor before committing — the cameras show which one is moving.",
       "Never check cameras while driving. Pull over or have a passenger look, then decide your route before you roll.",
@@ -669,6 +702,22 @@ function derivedConfig(d: UsStateData): StateCfg {
       },
     ],
   };
+  if (isDC) {
+    /* The generic derived copy asserts every feed physically sits
+     * inside the state — false for the District (see DC_AREA_LABELS).
+     * Same count, honest geography. */
+    cfg.intro[0] =
+      `${d.name}'s ${fmt(d.count)} indexed cameras come with a caveat this page won't bury: every one of them is a Northern Virginia camera — Virginia DOT feeds on the Virginia side of the Potomac, in Arlington County and Fairfax County, plus the Virginia-side approach to the Woodrow Wilson Bridge, which its feed files as "Wash. DC". They are grouped with the District because the boundary data the catalogue measures from places the Virginia shore inside the District's outline. The coverage clusters where the driving is — ${topList} lead the index.`;
+    cfg.faqs[0] = {
+      ...cfg.faqs[0],
+      a: `${fmt(d.count)} in the WorldEye index — and every one is a Northern Virginia camera: Virginia DOT feeds in Arlington County and Fairfax County, plus the Woodrow Wilson Bridge's Virginia-side approach, grouped with the District by the catalogue's border assignment. The largest cluster is ${dcAreaLabel(d.slug, top[0].name)} with ${fmt(top[0].count)} feeds.`,
+    };
+    cfg.faqs[1] = {
+      ...cfg.faqs[1],
+      a: `${topList}. Every camera on this page is a Northern Virginia feed — the camera index below lists them all, with a note on why they sit on the District's page.`,
+    };
+  }
+  return cfg;
 }
 
 function resolveState(slug: string): StateCfg | undefined {
@@ -795,7 +844,7 @@ export default async function StateTrafficPage({
   const rosterGroupsLinked = rosterGroups.map((g) => {
     const citySlug = CITY_PAGE_BY_NAME.get(g.label);
     return {
-      label: g.label,
+      label: dcAreaLabel(slug, g.label),
       href: citySlug ? `/city-webcams/${citySlug}` : undefined,
       items: g.entries,
     };
@@ -829,7 +878,7 @@ export default async function StateTrafficPage({
     ...(corridorFaq ? [corridorFaq] : []),
   ];
   const areasLinked: AreaRow[] | undefined = s.areas?.map((a) => {
-    const citySlug = CITY_PAGE_BY_NAME.get(a.name);
+    const citySlug = CITY_PAGE_BY_NAME.get(dcRawAreaName(slug, a.name));
     return citySlug ? { ...a, href: `/city-webcams/${citySlug}` } : a;
   });
 
@@ -979,7 +1028,11 @@ export default async function StateTrafficPage({
       {rosterCount > 0 && (
         <StateRoster
           title={`Every indexed camera in ${s.name} — ${fmt(rosterCount)} ${rosterCount === 1 ? "camera" : "cameras"}`}
-          note={`The featured cards above are a selection — this is the complete index for ${s.name}: all ${fmt(rosterCount)} cameras whose own coordinates place them in the state, grouped by the area name each feed carries in the catalogue (some state DOT feeds are filed under the state or a county rather than a city). Tap a name to open that camera on the live globe.`}
+          note={
+            slug === "district-of-columbia"
+              ? `The featured cards above are a selection — this is the complete index for ${s.name}: all ${fmt(rosterCount)} cameras the catalogue's border assignment places on this page, grouped by the area name each feed carries in the catalogue. The honest geography: none of these cameras stands in the District itself — they are Northern Virginia cameras, Virginia DOT feeds on the Virginia side of the Potomac (the Arlington County and Fairfax County groups), plus the Virginia-side approach to the Woodrow Wilson Bridge, which its feed files as "Wash. DC". They sit with the District because the boundary data behind the assignment runs along the river. Tap a name to open that camera on the live globe.`
+              : `The featured cards above are a selection — this is the complete index for ${s.name}: all ${fmt(rosterCount)} cameras whose own coordinates place them in the state, grouped by the area name each feed carries in the catalogue (some state DOT feeds are filed under the state or a county rather than a city). Tap a name to open that camera on the live globe.`
+          }
           groups={rosterGroupsLinked}
         />
       )}
