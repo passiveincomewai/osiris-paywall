@@ -45,6 +45,7 @@ import {
 } from "@/lib/billing/trial-checkout";
 import CheckoutSheet from "./CheckoutSheet";
 import HostedCheckoutLink from "./HostedCheckoutLink";
+import { preloadStripeJs } from "@/lib/billing/stripe-preload";
 import {
   trackPickerOpened,
   trackPlanSelected,
@@ -89,6 +90,14 @@ export default function ProUpgradeEmbed({
     if (openedRef.current) return;
     openedRef.current = true;
     trackPickerOpened("embed", "annual");
+  }, []);
+
+  // Warm Stripe.js on mount (lib/billing/stripe-preload): the sheet
+  // this embed opens starts its embedded flow on the CTA click, and
+  // with the script already cached only the session POST gates the
+  // form — the click path no longer pays the js.stripe.com fetch.
+  useEffect(() => {
+    preloadStripeJs();
   }, []);
 
   function chooseTier(t: PlanTier) {

@@ -23,6 +23,7 @@
  * (never a futile retry), retry + the hosted route for the rest.
  */
 import { useEffect, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { checkoutPlanSummary, type CheckoutPlanId } from "@/lib/billing/trial-checkout";
 import {
@@ -123,14 +124,20 @@ export default function EmbeddedCheckoutBody({
       <div className="relative mt-3 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden min-h-[480px]">
         <div ref={mountRef} />
         {phase === "starting" && (
-          <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/45">
-            Loading secure checkout…
-          </p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+            <Loader2 className="w-7 h-7 animate-spin text-[#D4AF37]" aria-hidden />
+            <p role="status" className="text-sm text-white/45">
+              Loading secure checkout…
+            </p>
+          </div>
         )}
         {phase === "redirecting" && (
-          <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/45">
-            Taking you to secure checkout…
-          </p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+            <Loader2 className="w-7 h-7 animate-spin text-[#D4AF37]" aria-hidden />
+            <p role="status" className="text-sm text-white/45">
+              Taking you to secure checkout…
+            </p>
+          </div>
         )}
         {phase === "error" && error && (
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">

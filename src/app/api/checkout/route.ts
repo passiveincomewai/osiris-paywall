@@ -51,6 +51,13 @@ async function affiliateMetadata(): Promise<Record<string, string>> {
 }
 
 export async function POST(req: Request) {
+  // Affiliate attribution starts NOW, in parallel with the auth,
+  // plan and guard work below: it needs only the referral cookie,
+  // and awaiting it inline at sessions.create used to put its
+  // cookie+DB round trip on the serial tail of every checkout. It
+  // resolves to {} on any failure (its own catch), so starting it
+  // before the plan validation below can reject is safe.
+  const affiliateMetaPromise = affiliateMetadata();
   // Guest checkout: no sign-in required. The account is created (or linked)
   // from the Stripe customer's email when the webhook fires, and the buyer
   // claims it with a password on /welcome after paying.
@@ -179,7 +186,7 @@ export async function POST(req: Request) {
         ...(userId ? { userId } : { guest: "1" }),
         // Affiliate attribution: resolved server-side from the httpOnly cookie.
         // The webhook reads this to award commissions on paid invoices.
-        ...(await affiliateMetadata()),
+        ...(await affiliateMetaPromise),
       },
       ...(trialDays > 0 ? { trial_period_days: trialDays } : {}),
     },
