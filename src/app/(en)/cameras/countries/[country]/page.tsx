@@ -936,6 +936,18 @@ export default async function CountryPage({
           </section>
         )}
 
+        {/* Dataset citation (SEO Programme Phase 4): the counts on this
+            page are the indexed catalogue's; the Index is where they
+            are published as a dated, downloadable dataset. */}
+        <p className="mt-12 text-sm text-white/50 max-w-3xl">
+          Country counts on this page come from the indexed catalogue. The{" "}
+          <Link href="/live-camera-index" className="text-[#00E5FF] hover:underline">
+            Live Camera Index
+          </Link>{" "}
+          publishes the dated dataset behind them — served vs indexed counts
+          for every country, free to download and cite.
+        </p>
+
         <TrialCtaSection utmSource="cameras-country" />
 
         {/* Back links */}
