@@ -1,8 +1,9 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import SectionHeader from "./SectionHeader";
 import Reveal from "./Reveal";
 import TrackingDemoMount from "./TrackingDemoMount";
+import MicroLabel from "../design/MicroLabel";
+import MediaFrame from "../design/MediaFrame";
+import Button from "../design/Button";
 import { localizedPath, type LocaleCode } from "@/i18n/config";
 import { isPublished } from "@/i18n/manifest";
 import { enHome, type HomeCopy } from "@/i18n/dictionaries/en/home";
@@ -16,21 +17,35 @@ import { enHome, type HomeCopy } from "@/i18n/dictionaries/en/home";
  * Copy comes from the home dictionary (tracking block). The flight
  * tracker link localizes when that page is published in the locale;
  * the satellite tracker keeps its English URL until its own tranche.
+ *
+ * Visual transformation (homepage wave): the header, the fallback
+ * stage frame and the CTAs now use the design system (MicroLabel /
+ * MediaFrame / Button on the --we-* tokens) instead of the retired
+ * #0096FF SEO-blue dialect. Copy, links, section order and the demo
+ * island are unchanged.
  */
 function StaticStage({ alt }: { alt: string }) {
   return (
-    <figure className="relative rounded-2xl border border-white/10 overflow-hidden">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/worldeye-cinematic-poster.jpg"
-        alt={alt}
-        width={1920}
-        height={1080}
-        loading="lazy"
-        className="w-full h-auto"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#06060C]/70 via-transparent to-transparent" />
-    </figure>
+    <MediaFrame state="none">
+      <div className="relative">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/worldeye-cinematic-poster.jpg"
+          alt={alt}
+          width={1920}
+          height={1080}
+          loading="lazy"
+          className="block w-full h-auto"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(5, 7, 11, 0.7), transparent)",
+          }}
+        />
+      </div>
+    </MediaFrame>
   );
 }
 
@@ -47,26 +62,53 @@ export default function TrackingSection({
     : "/live-flight-tracker";
   return (
     <section aria-label={tracking.ariaLabel} data-landing-view="tracking" className="relative">
-      <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-        <SectionHeader
-          eyebrow={tracking.eyebrow}
-          title={tracking.title}
-          sub={tracking.sub}
-        />
+      <div
+        className="mx-auto w-full"
+        style={{
+          maxWidth: "var(--we-wide)",
+          paddingLeft: "var(--we-gutter)",
+          paddingRight: "var(--we-gutter)",
+          paddingTop: "var(--we-section-y)",
+          paddingBottom: "var(--we-section-y)",
+        }}
+      >
+        <Reveal>
+          <MicroLabel>{tracking.eyebrow}</MicroLabel>
+          <h2
+            className="font-[family-name:var(--we-font-display)]"
+            style={{
+              color: "var(--we-text-1)",
+              fontSize: "var(--we-size-display-2)",
+              lineHeight: "var(--we-leading-display)",
+              fontWeight: 560,
+              marginTop: "var(--we-space-4)",
+            }}
+          >
+            {tracking.title}
+          </h2>
+          <p
+            style={{
+              color: "var(--we-text-2)",
+              fontSize: "var(--we-size-lede)",
+              lineHeight: "var(--we-leading-body)",
+              marginTop: "var(--we-space-4)",
+              maxWidth: "var(--we-measure)",
+            }}
+          >
+            {tracking.sub}
+          </p>
+        </Reveal>
         <Reveal delay={0.1} className="mt-8">
           <TrackingDemoMount fallback={<StaticStage alt={tracking.stageAlt} />} />
         </Reveal>
         <Reveal delay={0.15}>
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link
-              href={flightHref}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0096FF] hover:bg-[#0aa5ff] text-white text-sm font-semibold transition"
-            >
+            <Button href={flightHref}>
               {tracking.ctaFlight} <ArrowRight className="w-4 h-4" aria-hidden />
-            </Link>
-            <Link href="/satellite-tracker" className="text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition">
+            </Button>
+            <Button variant="quiet" href="/satellite-tracker">
               {tracking.satelliteLink}
-            </Link>
+            </Button>
           </div>
         </Reveal>
       </div>
