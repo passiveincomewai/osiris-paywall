@@ -13,7 +13,7 @@
 
 export interface ChromeFooterColumn {
   title: string;
-  links: { label: string; href: string }[];
+  links: { label: string; href: string; sublabel?: string }[];
 }
 
 export interface ChromeCopy {
@@ -53,10 +53,15 @@ export const enChrome: ChromeCopy = {
         { label: "Features", href: "/features" },
         { label: "Ambient Mode", href: "/ambient-mode" },
         { label: "Pricing", href: "/pricing" },
+        { label: "VIP Pro", href: "/vip" },
         { label: "Enterprise", href: "/enterprise" },
         { label: "Live Cameras", href: "/cameras" },
         { label: "Cameras by Country", href: "/cameras/countries" },
-        { label: "Affiliates", href: "/affiliates" },
+        {
+          label: "Affiliates",
+          href: "/affiliates",
+          sublabel: "Earn 15–30% recurring",
+        },
       ],
     },
     {

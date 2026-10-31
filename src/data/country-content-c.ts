@@ -108,7 +108,7 @@ export const countryContentC: Record<string, CountryContent> = {
       },
       {
         q: "Are Vietnam's street cameras free to watch?",
-        a: "Yes - every camera on WorldEye's camera layer is free, including all 160 Vietnamese feeds. No account or payment needed.",
+        a: "Yes - every camera on WorldEye's camera layer can be watched, including all 160 Vietnamese feeds. No account or payment is needed to start: your first 5 camera opens on a device are free, add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
     ],
   },
@@ -329,7 +329,7 @@ export const countryContentC: Record<string, CountryContent> = {
       },
       {
         q: "Are Brazil's beach cameras free to watch?",
-        a: "Yes - all 36 Brazilian feeds, from Rio's shoreline to Porto Seguro's beaches, stream free on WorldEye's camera layer.",
+        a: "Yes - all 36 Brazilian feeds, from Rio's shoreline to Porto Seguro's beaches, can be watched on WorldEye's camera layer. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
     ],
   },

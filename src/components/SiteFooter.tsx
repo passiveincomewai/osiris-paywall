@@ -110,7 +110,7 @@ export default function SiteFooter({
               {col.title.toUpperCase()}
             </p>
             <ul className="space-y-3">
-              {col.links.map(({ label, href }) => (
+              {col.links.map(({ label, href, sublabel }) => (
                 // Key is the label alone, never href + label: React keys are
                 // serialized into the RSC payload, and "/pricing" + "Pricing"
                 // formed a URL-like string Googlebot crawled as a 404
@@ -123,6 +123,11 @@ export default function SiteFooter({
                   >
                     {label}
                   </Link>
+                  {sublabel ? (
+                    <span className="block text-xs text-white/40 mt-1">
+                      {sublabel}
+                    </span>
+                  ) : null}
                 </li>
               ))}
             </ul>

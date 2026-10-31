@@ -26,10 +26,15 @@ export const esChrome: ChromeCopy = {
         { label: "Funciones", href: "/features" },
         { label: "Modo ambiente", href: "/ambient-mode" },
         { label: "Precios", href: "/pricing" },
+        { label: "VIP Pro", href: "/vip" },
         { label: "Enterprise", href: "/enterprise" },
         { label: "Cámaras en vivo", href: "/cameras" },
         { label: "Cámaras por país", href: "/cameras/countries" },
-        { label: "Afiliados", href: "/affiliates" },
+        {
+          label: "Afiliados",
+          href: "/affiliates",
+          sublabel: "Gana un 15–30% recurrente",
+        },
       ],
     },
     {

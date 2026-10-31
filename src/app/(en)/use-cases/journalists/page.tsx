@@ -74,11 +74,11 @@ const FAQS = [
   },
   {
     q: "Does WorldEye work for international stories?",
-    a: "Yes — the camera directory spans 100+ countries, and flights, satellites and disaster layers are global by nature. Coverage density varies: US and European road networks are dense, while some regions have only scattered feeds. Check what's actually covered before you promise an editor a visual.",
+    a: "Yes — the camera directory spans 109 countries, and flights, satellites and disaster layers are global by nature. Coverage density varies: US and European road networks are dense, while some regions have only scattered feeds. Check what's actually covered before you promise an editor a visual.",
   },
   {
     q: "Can I get alerts when something happens on a camera?",
-    a: "WorldEye doesn't push camera alerts — it's a map you watch, not a monitoring service that watches for you. For breaking news, pair it with wire services and official alert channels, then use the globe to see what the alerts are describing.",
+    a: "Yes — on a paid plan. WorldEye's paid plans include camera alerts: pick a camera, describe the condition you care about in plain language, and WorldEye checks the feed and notifies you when it changes; VIP Pro, the annual plan, adds event alerts on top. The free globe is watch-it-yourself, with no alerts. For breaking news, pair it with wire services and official alert channels, then use the globe to see what the alerts are describing — or set a camera alert on the feed a developing story depends on.",
   },
 ];
 

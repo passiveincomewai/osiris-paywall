@@ -323,7 +323,7 @@ function derivedFaqs(c: CountryEntry): Array<{ q: string; a: string }> {
     },
     {
       q: `Is it free to watch ${c.name} cameras?`,
-      a: "Yes — browsing the grid needs no account, and your first five camera opens on a device are free. The feeds belong to their operators and public sources; a camera whose stream has gone off air shows as unavailable rather than playing a recording.",
+      a: `Yes — browsing this directory page is always free, with no account. Watching on the globe follows a simple ladder: your first 5 camera opens on any device are free, add your email for 5 more (10 in total), and a verified free account reaches the same 10. Paid plans remove the camera-open limit entirely. The feeds belong to their operators and public sources; a camera whose stream has gone off air shows as unavailable rather than playing a recording.`,
     },
   ];
 }
@@ -935,18 +935,6 @@ export default async function CountryPage({
             )}
           </section>
         )}
-
-        {/* Dataset citation (SEO Programme Phase 4): the counts on this
-            page are the indexed catalogue's; the Index is where they
-            are published as a dated, downloadable dataset. */}
-        <p className="mt-12 text-sm text-white/50 max-w-3xl">
-          Country counts on this page come from the indexed catalogue. The{" "}
-          <Link href="/live-camera-index" className="text-[#00E5FF] hover:underline">
-            Live Camera Index
-          </Link>{" "}
-          publishes the dated dataset behind them — served vs indexed counts
-          for every country, free to download and cite.
-        </p>
 
         <TrialCtaSection utmSource="cameras-country" />
 

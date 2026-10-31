@@ -40,7 +40,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Do I need an account to watch?",
-        a: "No — all 2,779 Taiwan feeds are free on WorldEye with no signup.",
+        a: "No account is needed to start — all 2,779 Taiwan feeds can be watched on WorldEye. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
     ],
   },
@@ -102,7 +102,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Are Austrian cameras free to watch?",
-        a: "Yes - every camera in the Austria listing streams free on WorldEye with no account needed.",
+        a: "Yes - every camera in the Austria listing can be watched on WorldEye. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing this directory page is always free.",
       },
       {
         q: "I can't find these places on an Austrian map — why?",

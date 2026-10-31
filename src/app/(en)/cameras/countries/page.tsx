@@ -131,7 +131,7 @@ const DIRECTORY_FAQS: Array<{ q: string; a: string }> = [
               },
               {
                 q: "Is it free to watch?",
-                a: "Yes. Every camera in the directory opens free on the WorldEye map — no account, no signup, no paywall.",
+                a: "Yes — browsing the directory is always free, with no account. Watching on the globe follows a simple ladder: your first 5 camera opens on any device are free, add your email for 5 more (10 in total), and a verified free account reaches the same 10. Paid plans remove the camera-open limit entirely.",
               },];
 
 const DIRECTORY_MERGED = mergePlaceFaqs(

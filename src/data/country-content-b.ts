@@ -36,7 +36,7 @@ export const countryContentB: Record<string, CountryContent> = {
       },
       {
         q: "Do I need an account to watch US cameras?",
-        a: "No. Every one of the 23,059 feeds is free to watch on WorldEye with no signup — open the map, zoom to your route, and tap a camera marker.",
+        a: "No account is needed to start. Every one of the 23,059 feeds can be watched on WorldEye — open the map, zoom to your route, and tap a camera marker. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
       {
         q: "Are these cameras live video or still images?",
@@ -108,7 +108,7 @@ export const countryContentB: Record<string, CountryContent> = {
       },
       {
         q: "Are Austrian street cameras free to watch?",
-        a: "Yes - every camera in WorldEye's Austria collection, including all motorway and alpine feeds, streams free with no account needed.",
+        a: "Yes - every camera in WorldEye's Austria collection, including all motorway and alpine feeds, can be watched on WorldEye. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing this directory page is always free.",
       },
     ],
   },
@@ -168,7 +168,7 @@ export const countryContentB: Record<string, CountryContent> = {
       },
       {
         q: "Do I need an account to watch?",
-        a: "No — all 1,185 Hong Kong feeds stream free on WorldEye with no signup.",
+        a: "No account is needed to start — all 1,185 Hong Kong feeds can be watched on WorldEye. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
     ],
   },
@@ -251,7 +251,7 @@ export const countryContentB: Record<string, CountryContent> = {
       },
       {
         q: "Do I need an account?",
-        a: "No — every UK feed streams free on WorldEye, no signup required.",
+        a: "No account is needed to start — every UK feed can be watched on WorldEye. Your first 5 camera opens on a device are free; add your email for 5 more (10 in total, the same as a verified free account), and paid plans remove the limit. Browsing the directory is always free.",
       },
     ],
   },
