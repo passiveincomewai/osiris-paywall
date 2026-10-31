@@ -471,7 +471,7 @@ export function TrackingLinksPanel({ referralLink, demoLinks }: { referralLink: 
             don&apos;t use; the form below makes more. If you delete every link, this starter set is
             restored on your next visit.
           </div>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {socialRows.map((l) => {
               const p = PLATFORM_BY_SLUG.get(l.slug)!;
               return (
