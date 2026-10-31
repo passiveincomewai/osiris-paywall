@@ -35,12 +35,12 @@ import RelatedLinks from "@/components/RelatedLinks";
 export const metadata: Metadata = {
   title: "Features: Live 3D Globe, 74,229 Cameras, Flight Tracking & OSINT Tools",
   description:
-    "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, satellite imagery, live traffic and the OSINT toolkit. Feature by feature, free vs Pro.",
+    "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, live traffic and the OSINT toolkit. Feature by feature, free vs Pro.",
   alternates: { canonical: "/features" },
   openGraph: {
     title: "Features: Live 3D Globe, 74,229 Cameras, Flight Tracking & OSINT Tools | WorldEye",
     description:
-      "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, satellite imagery, live traffic and the OSINT toolkit.",
+      "Every WorldEye feature, compared: the free live 3D globe — flights, ships, satellites, transit, hazards and 74,229 public cameras — against what Pro adds: the OI AI assistant, live traffic and the OSINT toolkit.",
     url: "/features",
     type: "website",
   },
@@ -73,7 +73,7 @@ const faqJsonLd = {
       name: "What does WorldEye Pro add?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Pro adds the OI AI assistant (built into WorldEye — no key to bring, or run it on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $7.99, monthly $13.99, annual $74.99.",
+        text: "Pro adds the OI AI assistant (built into WorldEye — no key to bring, or run it on your own API key), the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. The annual VIP Pro plan also unlocks the VIP hub's event alerts, personal brief and saved views (up to 25). Weekly is $7.99, monthly $13.99, annual $74.99.",
       },
     },
     {
@@ -167,6 +167,13 @@ const FREE_FEATURES = [
     detail:
       "Night vision, thermal false-colour, monochrome and more simulated looks applied to the map only, always labeled as simulated visual effects — never sensor data.",
   },
+  {
+    icon: Layers,
+    title: "Satellite imagery view",
+    desc: "High-resolution satellite imagery alongside the dark intel map — free for everyone.",
+    detail:
+      "Swap the dark basemap for true-color satellite imagery and inspect any location from above — coastlines, infrastructure, terrain. Essential context when a camera or news event needs ground truth. The imagery is dated published imagery, not a live feed from orbit — and the satellite basemap is free for everyone, not a Pro feature.",
+  },
 ];
 
 const PRO_FEATURES = [
@@ -176,13 +183,6 @@ const PRO_FEATURES = [
     desc: "Talk to the map. Forecasts, analysis and recon powered by WorldEye's built-in AI — no key to bring. Prefer your own account? OI also runs on your own API key — OpenAI, Anthropic, Google or OpenRouter — and your key stays in your browser.",
     detail:
       "Ask questions in plain language — 'which flights are holding over Chicago?', 'summarize quake activity this week' — and OI works the globe for you. Because it runs on your key, your queries and data never pass through our servers.",
-  },
-  {
-    icon: Layers,
-    title: "Satellite imagery view",
-    desc: "High-resolution satellite imagery alongside the dark intel map.",
-    detail:
-      "Swap the dark basemap for true-color satellite imagery and inspect any location from above — coastlines, infrastructure, terrain. Essential context when a camera or news event needs ground truth.",
   },
   {
     icon: Search,
@@ -246,7 +246,7 @@ const FAQS = [
   },
   {
     q: "What does WorldEye Pro add?",
-    a: "Pro adds the OI AI assistant (built-in AI — no key to bring, or your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. VIP Pro — the yearly plan — adds camera timelapse and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
+    a: "Pro adds the OI AI assistant (built-in AI — no key to bring, or your own API key), the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. VIP Pro — the yearly plan — adds camera timelapse and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, plus the VIP hub's event alerts, personal brief and saved views (up to 25). Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
   },
   {
     q: "Do I need an account to use the map?",
@@ -501,14 +501,14 @@ export default function FeaturesPage() {
 
           <FeatureGroup
             label="The globe itself"
-            features={[FREE_FEATURES[0], FREE_FEATURES[2], FREE_FEATURES[6]]}
+            features={[FREE_FEATURES[0], FREE_FEATURES[2], FREE_FEATURES[6], FREE_FEATURES[9]]}
             media={
               <GroupFrame
-                src="/seo/worldeye-live-map.webp"
-                alt="The WorldEye live map on a phone"
-                width={720}
-                height={1280}
-                caption="The live map, on mobile"
+                src="/landing/osint-satellite.jpg"
+                alt="Satellite imagery on the WorldEye globe"
+                width={800}
+                height={600}
+                caption="The satellite imagery view — free for everyone"
               />
             }
           />
@@ -725,14 +725,15 @@ export default function FeaturesPage() {
             }}
           >
             For researchers, analysts and the deeply curious: an AI analyst that works
-            the globe for you, satellite imagery, the live traffic layer, advanced search
-            filters and premium intel feeds.
+            the globe for you, the live traffic layer, advanced search
+            filters and premium intel feeds. VIP Pro — the annual plan — also unlocks
+            the VIP hub: event alerts, the personal brief and saved views (up to 25).
             Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99 — cancel anytime.
           </p>
 
           <FeatureGroup
             label="Intelligence"
-            features={[PRO_FEATURES[0], PRO_FEATURES[5], PRO_FEATURES[6]]}
+            features={[PRO_FEATURES[0], PRO_FEATURES[4], PRO_FEATURES[5]]}
             media={
               <GroupFrame
                 src="/landing/osint-search.jpg"
@@ -744,16 +745,16 @@ export default function FeaturesPage() {
             }
           />
           <FeatureGroup
-            label="Imagery, roads, search"
+            label="Roads & search"
             flip
-            features={[PRO_FEATURES[1], PRO_FEATURES[2], PRO_FEATURES[3]]}
+            features={[PRO_FEATURES[1], PRO_FEATURES[2]]}
             media={
               <GroupFrame
-                src="/landing/osint-satellite.jpg"
-                alt="Satellite layers on the WorldEye globe"
-                width={800}
-                height={600}
-                caption="Satellite layers on the globe"
+                src="/seo/worldeye-live-map.webp"
+                alt="The WorldEye live map on a phone"
+                width={720}
+                height={1280}
+                caption="The live map, on mobile"
               />
             }
           />
@@ -764,8 +765,8 @@ export default function FeaturesPage() {
               className="grid md:grid-cols-2"
               style={{ gap: "var(--we-space-6)", marginTop: "var(--we-space-2)" }}
             >
-              <SpecRow f={PRO_FEATURES[4]} />
-              <SpecRow f={PRO_FEATURES[7]} />
+              <SpecRow f={PRO_FEATURES[3]} />
+              <SpecRow f={PRO_FEATURES[6]} />
             </div>
           </div>
 

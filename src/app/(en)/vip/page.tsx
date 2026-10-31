@@ -72,6 +72,29 @@ export default async function VipHubPage() {
         />
       )}
 
+      {!vip && (
+        <div className="rounded-2xl border border-amber-300/25 bg-amber-300/5 p-6 text-center">
+          <h2 className="font-bold text-white">The VIP hub is what the annual plans unlock</h2>
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-slate-300">
+            Annual plans start from $44.99/year (Lite annual). VIP Pro — the Pro
+            annual plan — is $74.99/year, and Ultra annual is $149.99/year. Every
+            annual plan carries the VIP branding and starts with a 10-day free
+            trial, with event alerts, the personal brief and saved views (up to
+            25) included.
+          </p>
+          <Link
+            href="/pricing"
+            className="mt-4 inline-block rounded-2xl px-8 py-3 font-mono font-bold text-[#04121f]"
+            style={{ background: "linear-gradient(135deg,#38bdf8,#0096FF)" }}
+          >
+            Start the 10-day free trial
+          </Link>
+          <p className="mt-3 text-xs text-slate-400">
+            Pricing opens on the annual view — pick your tier there.
+          </p>
+        </div>
+      )}
+
       <DashboardPreview signedIn={!!userId} />
 
       <section>

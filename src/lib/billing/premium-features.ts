@@ -77,6 +77,21 @@ export const PREMIUM_FEATURES: PremiumFeature[] = [
     tier: "vip",
     blurb: "The alert allowance raised to 10 watched cameras — Pro includes 2.",
   },
+  {
+    name: "Event alerts",
+    tier: "vip",
+    blurb: "Earthquakes near your places, launch reminders and ISS passes — email + in-app, in the VIP hub.",
+  },
+  {
+    name: "Personal brief",
+    tier: "vip",
+    blurb: "Your alert events, quakes near your watched places, the best ISS pass and the next 48 hours of launches.",
+  },
+  {
+    name: "Saved views",
+    tier: "vip",
+    blurb: "Name and keep up to 25 globe setups and restore any of them in one click, in the VIP hub.",
+  },
 ];
 
 /** Feature names per tier — the chips the upgrade embed pitches. */

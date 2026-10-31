@@ -154,13 +154,16 @@ describe("manifest ↔ dictionary completeness", () => {
         // 2026-10-31 for the site-audit Wave 1 copy-truth pass —
         // R13 homepage Pro-card VIP labels (home), R10 OI key model
         // (pricing + faq), R14 ladder + country count (faq);
+        // Spanish re-synced the same day. Pricing's hash (not its
+        // date pin, already 2026-10-31) moved again the same day
+        // for the site-audit Wave 2 R26 VIP-features addition;
         // Spanish re-synced the same day. Ship-tracker moved again
         // on 2026-10-31 for the site-audit R4/R5 ship-honesty
         // re-sync (Spanish re-translated the same day).
         expect(entry.updatedAt).toBe(
-          ["faq", "pricing", "", "ship-tracker", "live-webcams"].includes(entry.slug)
+          ["faq", "pricing", "", "ship-tracker"].includes(entry.slug)
             ? "2026-10-31"
-            : ["live-flight-tracker"].includes(entry.slug)
+            : ["live-flight-tracker", "live-webcams"].includes(entry.slug)
                 ? "2026-10-29"
                 : "2026-10-26"
         );

@@ -11,6 +11,10 @@
  * as the English source — `plansGrid`, `tiers`, `liteFeatures`, the
  * truthful annual savings (58.3% / 55.3% / 50.0%) and the retired
  * weekly-equivalent discount claims removed here too.
+ *
+ * Re-synced 2026-10-31 (site-audit Wave 2, R26): `vipFeatures` gained
+ * the VIP hub trio — Alertas de eventos, Resumen personal y Vistas
+ * guardadas (hasta 25) — mirroring the English source.
  */
 
 import type { PricingCopy } from "../en/pricing";
@@ -180,6 +184,9 @@ export const esPricing: PricingCopy = {
     { title: "Feeds de inteligencia premium", desc: "Ciberamenazas, eventos GDELT, seguimiento marítimo, zonas de conflicto, noticias en vivo: solo Ultra." },
     { title: "Timelapse de cámaras", desc: "Captura las cámaras de instantáneas fotograma a fotograma y exporta la película: solo Ultra." },
     { title: "Alertas de cámara (10)", desc: "El límite de alertas sube a 10 cámaras vigiladas; Pro incluye 2." },
+    { title: "Alertas de eventos", desc: "Terremotos cerca de tus lugares, recordatorios de lanzamientos y pasos de la ISS: por correo y en la app, comprobados cada ~15 minutos, en el centro VIP." },
+    { title: "Resumen personal", desc: "Un resumen creado desde tu cuenta: tus eventos de alerta, terremotos cerca de tus lugares vigilados, el mejor paso de la ISS y las próximas 48 horas de lanzamientos, en el centro VIP o en tu correo cada mañana." },
+    { title: "Vistas guardadas", desc: "Nombra y guarda hasta 25 configuraciones del globo — un conjunto de capas y una cámara opcional — y restaura cualquiera con un clic, en el centro VIP." },
   ],
   enterprise: {
     eyebrow: "ENTERPRISE",

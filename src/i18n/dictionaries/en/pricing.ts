@@ -23,6 +23,13 @@
  * claims ("Save 60% / 82%", "-42% / -71%" toggle chips) are retired —
  * they do not appear anywhere in this dictionary.
  *
+ * Amended 2026-10-31 (site-audit Wave 2, R26): `vipFeatures` gained
+ * the three VIP hub features the annual plans unlock — Event alerts,
+ * Personal brief and Saved views (up to 25) — previously named only
+ * on /vip itself. Spanish re-synced the same day; the manifest's
+ * pricing sourceHash was recomputed (its updatedAt was already
+ * 2026-10-31 from the Wave 1 pass).
+ *
  * NOT covered (separate components keep their own copy; they render
  * in English on localized pricing pages until their own conversion —
  * see the build REPORT): TeamSection, CancelReassurance,
@@ -304,6 +311,9 @@ export const enPricing: PricingCopy = {
     { title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — Ultra only." },
     { title: "Camera Timelapse", desc: "Capture snapshot cameras frame by frame and export the film — Ultra only." },
     { title: "Camera alerts (10)", desc: "The alert allowance raised to 10 watched cameras — Pro includes 2." },
+    { title: "Event alerts", desc: "Earthquakes near your places, launch reminders and ISS passes — email + in-app, checked every ~15 minutes, in the VIP hub." },
+    { title: "Personal brief", desc: "A brief built from your account — your alert events, quakes near your watched places, the best ISS pass and the next 48 hours of launches, in the VIP hub or your morning inbox." },
+    { title: "Saved views", desc: "Name and keep up to 25 globe setups — a layer stack plus an optional camera — and restore any of them in one click, in the VIP hub." },
   ],
   enterprise: {
     eyebrow: "ENTERPRISE",

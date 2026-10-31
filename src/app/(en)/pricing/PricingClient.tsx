@@ -61,7 +61,7 @@ type TierKey = "lite" | "pro" | "ultra";
 // Icons stay in code, in dictionary order (dictionaries hold copy only).
 const LITE_FEATURE_ICONS = [Video, Layers, BrainCircuit, Search, Camera, Sparkles];
 const PRO_FEATURE_ICONS = [BrainCircuit, Car, ShieldCheck, Video, Bell, Sparkles];
-const VIP_FEATURE_ICONS = [Zap, Video, Bell];
+const VIP_FEATURE_ICONS = [Zap, Video, Bell, Bell, Sparkles, Layers];
 const TRUST_ICONS = [BadgeCheck, ShieldCheck, Lock, X];
 
 // Comparison-table checkmarks stay in code, in dictionary row order.

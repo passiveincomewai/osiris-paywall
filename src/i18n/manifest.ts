@@ -90,8 +90,8 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
-  pricing: "062e27cb3dcd437bf869b939b6c575f017891713f9f111dc81c53c11f5c5e5f3",
-  "live-webcams": "febbf30cf6b782c610e0672e536cd104431782a8450cb3605a0e0752f5f249f6",
+  pricing: "651cbc5ca08bea60cfbc1af4eb3c9ad3daa70f60a5f778b2af3556c197afc707",
+  "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "e7c967dff68f038660c58887cabe671eb2fd8dbcbba1fe4239829c0899f40f88",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
   "ship-tracker": "a2ac2cec641df42357c801e233edab00d77f58fc3bb7bb7071b3b56298709e34",
@@ -134,6 +134,11 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // rebuilt from the site-wide FAQ harvest (86 questions, 11 groups)
 // and the Spanish dictionary re-translated the same day, so its
 // hash and date moved.
+// Re-sync (2026-10-31, site-audit Wave 2 R26): the pricing
+// dictionary's vipFeatures gained the VIP hub trio (Event alerts,
+// Personal brief, Saved views) and the Spanish dictionary was
+// re-synced the same day, so the pricing hash moved; its updatedAt
+// was already 2026-10-31 from the Wave 1 copy-truth pass.
 // Re-sync (2026-10-30, Pricing Redesign Phase C): the pricing
 // dictionary was restructured for the 3-tier grid (Lite / Pro / Ultra
 // × weekly / monthly / annual): plansGrid + tiers + liteFeatures
@@ -142,14 +147,10 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // were retired for the truthful annual-vs-monthly savings (58.3% /
 // 55.3% / 50.0%), and the cost/free/self-hosted FAQs were rewritten
 // for the grid. The Spanish dictionary was re-synced the same day.
-// Re-sync (2026-10-31, SEO Programme Phases 4+6): the live-webcams
-// dictionary gained the live-flight-tracker explore card and the Live
-// Camera Index citation line; the Spanish dictionary was translated
-// the same day, so its hash and date moved.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",
-  "live-webcams": "2026-10-31",
+  "live-webcams": "2026-10-29",
   faq: "2026-10-31",
   "live-flight-tracker": "2026-10-29",
   "ship-tracker": "2026-10-31",
