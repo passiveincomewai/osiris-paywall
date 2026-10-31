@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import NewsletterForm from "../NewsletterForm";
 import { PopupMedallion, PopupModal, PopupToast, POPUP_CTA_CLASS, POPUP_GOLD_CTA_CLASS } from "./PopupShell";
+import { TrialPickerDialog } from "@/components/TrialPicker";
 import { TRIAL_PLAN_OPTIONS, startPlanCheckout } from "@/lib/billing/trial-checkout";
 
 // ── happening_now ───────────────────────────────────────────────────
@@ -284,8 +285,20 @@ export function TrialWaitingPopup({
   onAction: () => void;
   onClose: () => void;
 }) {
+  const [pickerOpen, setPickerOpen] = useState(false);
   const monthly =
     TRIAL_PLAN_OPTIONS.find((o) => o.plan === "monthly") ?? TRIAL_PLAN_OPTIONS[0];
+  // Engaging swaps this face for the ONE central plan picker (the
+  // Phase D contract every other upgrade surface uses), pre-opened on
+  // the plan this face names — monthly Pro. Choosing a plan swaps the
+  // dialog in place to the embedded checkout; closing the dialog ends
+  // the popup (onClose is the manager's dismiss), exactly as engaging
+  // dismisses the TrialPrompt surface into its picker.
+  if (pickerOpen) {
+    return (
+      <TrialPickerDialog open onClose={onClose} defaultPlan="monthly" />
+    );
+  }
   return (
     <PopupModal label="Your free trial is waiting" onClose={onClose}>
       <PopupMedallion>
@@ -303,7 +316,7 @@ export function TrialWaitingPopup({
         className={POPUP_GOLD_CTA_CLASS}
         onClick={() => {
           onAction();
-          startPlanCheckout("monthly");
+          setPickerOpen(true);
         }}
       >
         {monthly.cta}
