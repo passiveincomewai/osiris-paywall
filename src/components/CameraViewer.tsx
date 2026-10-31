@@ -646,7 +646,26 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
             )}
             {/* Where this camera is — on a map here, not off-site. */}
             {mapOpen && Number.isFinite(camera.lat) && Number.isFinite(camera.lng) && (
-              <CameraMiniMap lat={camera.lat} lng={camera.lng} name={camera.name} />
+              <>
+                <CameraMiniMap lat={camera.lat} lng={camera.lng} name={camera.name} />
+                {/* The same pin in the visitor's own map app. Both URLs
+                    drop a pin at the camera's exact coordinates (Google's
+                    search API form and Apple's ll= form — the older
+                    google.com/maps/@… URL only centred the view), and
+                    maps.apple.com hands off to the native Maps app on
+                    iOS. */}
+                <div className="flex flex-wrap items-center gap-2 px-3 py-2">
+                  <span className="text-[9px] font-mono tracking-widest text-[var(--text-muted)]">VIEW IN</span>
+                  <a href={`https://www.google.com/maps/search/?api=1&query=${camera.lat},${camera.lng}`} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--cyan-primary)] tracking-widest">
+                    <MapPin className="w-2.5 h-2.5" /> GOOGLE MAPS
+                  </a>
+                  <a href={`https://maps.apple.com/?ll=${camera.lat},${camera.lng}&q=${encodeURIComponent(camera.name || 'Camera')}`} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-[9px] font-mono text-[var(--cyan-primary)] tracking-widest">
+                    <MapPin className="w-2.5 h-2.5" /> APPLE MAPS
+                  </a>
+                </div>
+              </>
             )}
             {/* Timelapse (Pro): collect this snapshot camera's stills while
                 watching. Inline views only — an external or offline camera
