@@ -1329,6 +1329,15 @@ model EnterpriseApiKey {
   hits       Int       @default(0)
   lastUsedAt DateTime?
   revokedAt  DateTime?
+  // Which door the key belongs to: "enterprise" (the collections API —
+  // every pre-2026-10-30 key) or "public" (the self-serve developer API,
+  // /api/v1 + /api/v1/mcp, created from Account Settings). The doors do
+  // not accept each other's keys.
+  scope      String    @default("enterprise")
+  // Public-door daily quota window: the UTC day the counter belongs to
+  // and how many requests it has counted. Null until first public use.
+  rateWindowStart DateTime?
+  rateWindowCount Int       @default(0)
 
   createdAt  DateTime  @default(now())
 

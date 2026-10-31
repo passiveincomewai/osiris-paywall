@@ -6,7 +6,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
   ArrowLeft, Loader2, Check, User, Lock, CreditCard, LogOut, Crown, BellRing, Users,
-  MailCheck, MailWarning, MailPlus, Camera,
+  MailCheck, MailWarning, MailPlus, Camera, KeyRound,
 } from "lucide-react";
 import AccountSections from "./AccountSections";
 
@@ -41,7 +41,12 @@ const inputCls = "w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.
 const labelCls = "block text-xs font-semibold tracking-wider text-white/40 mb-1.5";
 const btnGold = "px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition disabled:opacity-60";
 
-export default function SettingsClient() {
+export default function SettingsClient({
+  publicApiEnabled = false,
+}: {
+  /** Server-read PUBLIC_API_ENABLED: the Developer section renders only when the public API is live. */
+  publicApiEnabled?: boolean;
+} = {}) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [sub, setSub] = useState<Subscription | undefined>(undefined);
   const [name, setName] = useState("");
@@ -547,6 +552,18 @@ export default function SettingsClient() {
               </div>
             )}
           </Section>
+
+          {publicApiEnabled && (
+            <Section icon={KeyRound} title="Developer API">
+              <p className="text-sm text-white/55 mb-4">
+                Create API keys for the WorldEye developer API — search the live camera
+                catalogue and the earthquake feed from your own code or AI tools.
+              </p>
+              <Link href="/settings/api-keys" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition">
+                Manage API keys <ArrowLeft className="w-4 h-4 rotate-180" />
+              </Link>
+            </Section>
+          )}
 
           <Section icon={LogOut} title="Sign out">
             <p className="text-sm text-white/55 mb-4">Sign out of WorldEye on this device.</p>

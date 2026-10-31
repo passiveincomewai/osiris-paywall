@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import SettingsClient from "./SettingsClient";
+import { publicApiEnabled } from "@/lib/developer/flag";
 import SetNamePrompt from "@/components/SetNamePrompt";
 import PastDueBanner from "@/components/PastDueBanner";
 import SiteFooter from "@/components/SiteFooter";
@@ -17,7 +18,7 @@ export default function SettingsPage() {
       <SetNamePrompt />
       <PastDueBanner containerClassName="mx-auto w-full max-w-2xl px-4 pt-8" />
       <Suspense>
-        <SettingsClient />
+        <SettingsClient publicApiEnabled={publicApiEnabled()} />
       </Suspense>
       <SiteFooter />
     </div>

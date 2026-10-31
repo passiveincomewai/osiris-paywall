@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1118);
+    expect(nonTransit.length).toBe(1142);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -191,8 +191,13 @@ describe("sitemap URL set", () => {
     // as a duplicate of the Oct 29 Colorado ski-season post.)
     // Delta hand-verified: removing exactly those 2 URLs
     // reproduces the 1,116 set and the 6012a76e… hash byte-for-byte.
+    // The recon tool pages (2026-10-30) then added the /tools hub
+    // and 22 per-tool pages → 1,141, and the camera-roster rollout
+    // (2026-10-30) added the /city-webcams/mcalester city page
+    // → 1,142. Delta hand-verified: removing exactly those 24 URLs
+    // reproduces the 1,118 set and the 71edeb7b… hash byte-for-byte.
     expect(hash).toBe(
-      "71edeb7b0c6f52a212c00dae79ec56c71cac20838dfe640d2f8289d0cccf3056",
+      "cc960cf34b0cd38fc2ace85b391aca7ae22e80b7ab7b35f75ba54f08ca958374",
     );
   });
 
