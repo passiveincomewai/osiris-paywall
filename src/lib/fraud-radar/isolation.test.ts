@@ -223,6 +223,33 @@ describe("§14.3 isolation — Phase 6 B2 profile sections + admin candidate que
   });
 });
 
+describe("§14.3 isolation — Phase 7 investigator UI (P7-C)", () => {
+  it("the investigator page carries the flag gate", () => {
+    const src = readFileSync(
+      path.join(SRC, "app/(en)/fraud-radar/investigator/page.tsx"),
+      "utf8",
+    );
+    expect(src).toContain("fraudRadarEnabled()");
+  });
+
+  it("the investigator is never a public path — flag.ts does not list it", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).not.toContain("/fraud-radar/investigator");
+  });
+
+  it("the investigator UI shares no code with OI (PHASE7 §1.2 separation)", () => {
+    const uiFiles = [
+      "app/(en)/fraud-radar/investigator/page.tsx",
+      "app/(en)/fraud-radar/investigator/InvestigatorClient.tsx",
+    ];
+    for (const rel of uiFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toMatch(/from\s+["']@\/lib\/oi\//);
+      expect(src, rel).not.toMatch(/from\s+["']@\/components\/oi\//);
+    }
+  });
+});
+
 describe("§35 billing non-interference — static dependency guard", () => {
   const files = fraudSourceFiles();
 

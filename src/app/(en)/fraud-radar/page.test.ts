@@ -47,6 +47,13 @@ describe("/fraud-radar — flag gate", () => {
     expect(html).toContain("/fraud-radar/signals");
     expect(html).toContain("/fraud-radar/signals/methods");
     expect(html).toContain("not yet computed");
+    // Phase 7 investigator entry (P7-C): a shell section linking the
+    // signed-in surface — the route itself stays out of the public
+    // path list (pinned in flag.test.ts / isolation).
+    expect(html).toContain("Ask the records: the AI Investigator");
+    expect(html).toContain("/fraud-radar/investigator");
+    expect(html).toContain("Sign-in required");
+    expect(html).toContain("does not determine that any person or");
   });
 
   it("never promises the announced 1% commission anywhere on the page", () => {
