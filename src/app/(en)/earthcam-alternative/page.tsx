@@ -374,6 +374,14 @@ export default function EarthcamAlternativePage() {
           >
             Open the camera directory
           </Link>
+          <p className="mt-6 text-sm text-white/55 leading-relaxed">
+            What Pro adds: unlimited camera opens, the OI assistant and
+            camera alerts on paid plans — see{" "}
+            <Link href="/pricing" className="text-[#D4AF37] hover:underline">
+              plans and pricing
+            </Link>
+            .
+          </p>
           <p className="mt-6 text-sm text-white/40">
             Or just{" "}
             <Link href="/" className="text-[#D4AF37] hover:underline">

@@ -11,6 +11,7 @@ import {
   PageShell,
   type Faq,
 } from "@/components/directory-page";
+import AmbientPassPromo from "@/components/ambient/AmbientPassPromo";
 
 export const metadata: Metadata = {
   title: "Stream Live Cameras to YouTube 24/7 — WorldEye Ambient Relay",
@@ -161,6 +162,21 @@ export default function StreamToYoutubePage() {
           </p>
         </div>
       </section>
+
+      {/* Pricing strip — the same embedded-checkout block /ambient-mode
+          renders in its pricing section; Stream to YouTube is included
+          with Ambient, so this is the page's trial path. */}
+      <AmbientPassPromo />
+
+      <p className="mt-8 max-w-3xl mx-auto text-center text-sm leading-relaxed text-white/55">
+        Running a channel on this? Creators earn by referring viewers, too —
+        the{" "}
+        <Link href="/affiliates" className="text-[#7cc4ff] underline underline-offset-2">
+          WorldEye affiliate programme
+        </Link>{" "}
+        pays 15–30% recurring commission, by rank, on subscriptions your
+        link or code brings in.
+      </p>
 
       <FaqSection title="Stream to YouTube questions" faqs={FAQS} />
 

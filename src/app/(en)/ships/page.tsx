@@ -13,6 +13,7 @@ import {
   PageShell,
   RelatedLinks,
 } from "@/components/directory-page";
+import TrialCtaSection from "@/components/TrialCtaSection";
 import { getLiveShipsForTracking } from "@/app/api/maritime/route";
 import {
   REGISTRY_VERIFIED_AT,
@@ -188,6 +189,8 @@ export default function ShipsHubPage() {
           { label: "Best ship tracking tools", href: "/best-ship-tracking-tools" },
         ]}
       />
+
+      <TrialCtaSection utmSource="ships" />
 
       <CtaRow backHref="/ship-tracker" backLabel="Live ship tracker" />
     </PageShell>

@@ -186,6 +186,27 @@ export default function SubmitCameraPage() {
           </div>
         </section>
 
+        {/* Supplier routes — for operators with more than one camera to place */}
+        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Run cameras? <span className="text-[#D4AF37]">Three more routes</span>
+          </h2>
+          <div className="mt-8 grid sm:grid-cols-3 gap-5">
+            <Link href="/enterprise" className="block rounded-3xl border border-white/10 bg-white/[0.02] p-6 hover:border-[#D4AF37]/40 transition">
+              <h3 className="font-semibold text-white/90">Embed on your own site</h3>
+              <p className="text-sm text-white/50 mt-2 leading-relaxed">WorldEye Enterprise covers the embed player and camera-feed API for your own pages.</p>
+            </Link>
+            <Link href="/partners" className="block rounded-3xl border border-white/10 bg-white/[0.02] p-6 hover:border-[#D4AF37]/40 transition">
+              <h3 className="font-semibold text-white/90">Partnerships</h3>
+              <p className="text-sm text-white/50 mt-2 leading-relaxed">Networks and agencies: work with us on how your feeds appear and are attributed on the globe.</p>
+            </Link>
+            <Link href="/affiliates" className="block rounded-3xl border border-white/10 bg-white/[0.02] p-6 hover:border-[#D4AF37]/40 transition">
+              <h3 className="font-semibold text-white/90">Affiliates</h3>
+              <p className="text-sm text-white/50 mt-2 leading-relaxed">Refer viewers to WorldEye and earn recurring commission on the subscriptions you bring in.</p>
+            </Link>
+          </div>
+        </section>
+
         <p className="mt-12 text-center text-sm text-white/40">
           Want to look around first? <Link href="/" className="text-[#D4AF37] hover:underline">Open the live map</Link> or
           browse <Link href="/cameras/countries" className="text-[#D4AF37] hover:underline">cameras by country</Link>.

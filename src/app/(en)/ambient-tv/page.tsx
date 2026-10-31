@@ -11,6 +11,7 @@ import {
   PageShell,
   type Faq,
 } from "@/components/directory-page";
+import AmbientPassPromo from "@/components/ambient/AmbientPassPromo";
 
 export const metadata: Metadata = {
   title: "Slow TV Guide — What It Is, Best Scenes, TV & Second-Monitor Setup | WorldEye",
@@ -177,6 +178,11 @@ export default function AmbientTvPage() {
           "No usable TV browser? Cast or mirror from a phone or laptop — or run the show on your own YouTube channel with Stream to YouTube and open it in the TV's YouTube app.",
         ]}
       />
+
+      {/* Pricing strip — the same embedded-checkout block /ambient-mode
+          renders in its pricing section (price and trial wording come
+          from the billing plan summary inside the component). */}
+      <AmbientPassPromo />
 
       <FaqSection title="Slow TV questions" faqs={FAQS} />
 

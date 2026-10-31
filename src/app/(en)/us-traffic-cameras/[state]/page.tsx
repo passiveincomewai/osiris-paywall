@@ -44,6 +44,7 @@ import {
   statusFaqs,
 } from "@/lib/place-breakdown";
 import SaveLocationButton from "@/components/SaveLocationButton";
+import TrialCtaSection from "@/components/TrialCtaSection";
 import {
   stateBelowLine,
   stateBlocksBuildable,
@@ -1051,6 +1052,7 @@ export default async function StateTrafficPage({
           { label: "How to check road conditions with live traffic cameras", href: "/blog/checking-road-conditions-live-traffic-cameras" },
         ]}
       />
+      <TrialCtaSection utmSource="us-traffic-cameras" />
       <CtaRow backHref="/cameras/countries" backLabel="All countries" />
     </PageShell>
   );

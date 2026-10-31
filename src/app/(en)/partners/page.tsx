@@ -262,6 +262,44 @@ export default function PartnersPage() {
 
       <FaqSection title="Partners & sources — questions" faqs={FAQS} />
 
+      <section className="mt-12">
+        <SectionTitle>Partner with WorldEye — the three routes, again</SectionTitle>
+        <div className="space-y-4 text-white/70 leading-relaxed">
+          <ul className="space-y-3">
+            <li>
+              <strong className="text-white">Camera networks &amp; agencies.</strong> If you
+              publish public cameras — a transport department, a river or flood agency, a city
+              open-data portal — partnering means working with us on how your feeds appear on the
+              globe: correct naming, attribution and a link back to your own service, in front of
+              the globe&apos;s live audience. Start via the{" "}
+              <Link href="/contact" className="text-[#00E5FF] hover:underline">
+                contact page
+              </Link>
+              .
+            </li>
+            <li>
+              <strong className="text-white">Enterprise licensing.</strong> WorldEye Enterprise is
+              a self-serve tier ($999/year) that licenses the catalogue itself: a key-gated
+              camera-feed API and an embed player, restricted to the cameras each source&apos;s
+              terms allow to be redistributed. See{" "}
+              <Link href="/enterprise" className="text-[#00E5FF] hover:underline">
+                WorldEye Enterprise
+              </Link>{" "}
+              for what the tier includes.
+            </li>
+            <li>
+              <strong className="text-white">Research &amp; education.</strong> Universities,
+              educators and researchers can request access to the catalogue&apos;s public metadata
+              for teaching and study, subject to the underlying source terms. The{" "}
+              <Link href="/research-access" className="text-[#00E5FF] hover:underline">
+                research access page
+              </Link>{" "}
+              sets out what is available and how to ask.
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <RelatedLinks
         title="Related pages"
         links={[

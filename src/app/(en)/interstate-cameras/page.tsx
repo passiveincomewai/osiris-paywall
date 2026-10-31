@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import TrialCtaSection from "@/components/TrialCtaSection";
 import { buildCorridor, CORRIDORS } from "@/lib/corridors";
 import { loadCountryChunk } from "@/lib/explore-data";
 import {
@@ -131,6 +132,7 @@ export default async function InterstateCamerasIndex() {
           { label: "Live webcams worldwide", href: "/live-webcams" },
         ]}
       />
+      <TrialCtaSection utmSource="interstate-cameras" />
     </PageShell>
   );
 }
