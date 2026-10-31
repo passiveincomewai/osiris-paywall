@@ -17,6 +17,7 @@ import { getTeamPricingConfig } from "@/lib/team/pricing-config";
 import { findBaseItem, reconcileOrgSeatsFromSubscription } from "@/lib/team/seats";
 import { recordTeamEvent } from "@/lib/team/analytics";
 import { sendPaymentFailedRecovery } from "@/lib/billing/dunning";
+import { fulfillGiftPurchase, isGiftStripeSubscription } from "@/lib/billing/gift";
 import { isAmbientPriceId, isPowderPassPriceId } from "@/lib/plan-tier";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
@@ -72,6 +73,14 @@ function subscriptionIdFromInvoice(invoice: Stripe.Invoice): string | null {
  * subscription.updated/deleted, which carry no client_reference_id).
  */
 async function syncSubscription(sub: Stripe.Subscription): Promise<string | undefined> {
+  // Gift subscriptions (lib/billing/gift) never entitle anyone: the
+  // buyer paid for a RECIPIENT's prepaid term, fulfilled through the
+  // GiftSubscription row on checkout.session.completed. Syncing one
+  // here would hand the buyer (or a guest-resolved account) a plan
+  // they bought for someone else.
+  if (isGiftStripeSubscription(sub)) {
+    return undefined;
+  }
   // NOTE: Stripe's Metadata index signature types `.userId` as `string`
   // (never undefined), so the widening annotation is load-bearing.
   let userId: string | undefined = sub.metadata?.userId;
@@ -324,6 +333,24 @@ export async function POST(req: NextRequest) {
                 `[stripe-webhook] credit pack session ${s.id}: unknown pack "${packId}" or missing profile — not credited`,
               );
             }
+          }
+        }
+        // Gift subscriptions: the buyer paid for a recipient's one
+        // prepaid term. fulfilment (gift pending → paid, renewal
+        // cancelled, recipient emailed a redemption link) lives in
+        // lib/billing/gift and is idempotent on the gift row, so
+        // Stripe replays no-op. The generic subscription branch below
+        // must NOT also run: syncSubscription skips gift subs anyway,
+        // and the gift purchase is not the buyer's own conversion
+        // (no Meta CAPI twin, no discount attribution).
+        if (s.mode === "subscription" && s.metadata?.kind === "gift") {
+          const giftResult = await fulfillGiftPurchase(s);
+          if (giftResult.handled) {
+            await db.checkoutAttempt.updateMany({
+              where: { stripeSessionId: s.id },
+              data: { status: "completed" },
+            }).catch(() => {});
+            break;
           }
         }
         if (s.mode === "subscription" && s.subscription) {

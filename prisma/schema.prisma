@@ -29,6 +29,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   subscription  Subscription?
+  giftsPurchased GiftSubscription[] @relation("GiftBuyer")
+  giftsRedeemed  GiftSubscription[] @relation("GiftRedeemer")
   creatorApplications CreatorApplication[]
   affiliateProfile AffiliateProfile?
   affiliateTermsAcceptances AffiliateTermsAcceptance[]
@@ -48,7 +50,6 @@ model User {
   vipPlaces VipPlace[]
   eventAlertRules EventAlertRule[]
   eventAlertEvents EventAlertEvent[]
-  auroraAlertSubscriptions AuroraAlertSubscription[]
   savedViews SavedView[]
   vipBriefPref VipBriefPref?
   organizationsOwned Organization[] @relation("OrgOwner")
@@ -235,6 +236,13 @@ enum SubscriptionStatus {
   unpaid
 }
 
+enum GiftSubscriptionStatus {
+  pending
+  paid
+  redeemed
+  expired
+}
+
 model Subscription {
   id                   String             @id @default(cuid())
   userId               String             @unique
@@ -253,6 +261,42 @@ model Subscription {
 
   @@index([status])
   @@index([currentPeriodEnd])
+}
+
+// ── Gift subscriptions (2026-10-31) ──────────────────────────────────
+// A buyer purchases ONE prepaid term of a grid plan for a recipient
+// (src/lib/billing/gift.ts). The Stripe subscription itself never
+// entitles anyone (the webhook skips gift subs); this row is the gift
+// of record: purchase state, the paid period, and — once the recipient
+// claims it — the redemption. The recipient's entitlement is a
+// Subscription row with synthetic "gift_<id>" Stripe ids (comp
+// pattern) carrying the real gifted price id and this row's period.
+model GiftSubscription {
+  id                      String                 @id @default(cuid())
+  // Bearer redemption token, delivered to the recipient by email.
+  code                    String                 @unique
+  buyerUserId             String?
+  buyer                   User?                  @relation("GiftBuyer", fields: [buyerUserId], references: [id], onDelete: SetNull)
+  buyerEmail              String
+  recipientEmail          String
+  // One of the nine grid PlanKeys (src/lib/billing/plans.ts).
+  planKey                 String
+  stripePriceId           String
+  status                  GiftSubscriptionStatus @default(pending)
+  stripeCheckoutSessionId String?                @unique
+  stripeSubscriptionId    String?                @unique
+  // The prepaid term, copied from the Stripe subscription at fulfilment.
+  periodStart             DateTime?
+  periodEnd               DateTime?
+  redeemedByUserId        String?
+  redeemedBy              User?                  @relation("GiftRedeemer", fields: [redeemedByUserId], references: [id], onDelete: SetNull)
+  redeemedAt              DateTime?
+
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+
+  @@index([recipientEmail])
+  @@index([status])
 }
 
 // ── WorldEye Ambient: YouTube restream credentials ───────────────────
@@ -2117,34 +2161,4 @@ model FrFacYearlySummary {
 
   @@unique([datasetVersion, auditYear])
   @@index([datasetVersion])
-}
-
-// Aurora alerts (item #21, approved 2026-10-31): preset-place aurora
-// subscriptions for signed-in users (any tier). Derived fields
-// (magLat, requiredKp) are snapshotted at subscribe time; the
-// once-per-night sender claim lives in lastAlertNight. Logic:
-// src/lib/aurora/.
-model AuroraAlertSubscription {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  placeSlug     String
-  placeName     String
-  lat           Float
-  lng           Float
-  timeZone      String
-  magLat        Float
-  requiredKp    Float
-
-  active        Boolean   @default(true)
-  lastAlertNight String?
-  lastAlertedAt DateTime?
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@unique([userId, placeSlug])
-  @@index([active])
-  @@index([userId])
 }
