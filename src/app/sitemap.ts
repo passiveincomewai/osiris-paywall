@@ -406,7 +406,6 @@ const SEO_PAGES_SEASONAL = [
   "/oktoberfest-munich",
   "/fall-foliage-cameras",
   "/macys-thanksgiving-parade",
-  "/nyc-marathon",
   "/fourth-of-july-fireworks",
   "/boston-marathon",
   "/rose-parade",

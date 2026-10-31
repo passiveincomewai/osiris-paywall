@@ -274,7 +274,7 @@ export default async function MacysThanksgivingParadePage() {
           { label: "Cherry blossoms in Washington DC", href: "/cherry-blossoms-washington-dc" },
           { label: "Oktoberfest in Munich — live cameras", href: "/oktoberfest-munich" },
           { label: "Fall foliage cameras", href: "/fall-foliage-cameras" },
-          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon-2026" },
           { label: "Fourth of July fireworks — live cameras", href: "/fourth-of-july-fireworks" },
           { label: "Boston Marathon — live cameras", href: "/boston-marathon" },
           { label: "Rose Parade in Pasadena — live cameras", href: "/rose-parade" },

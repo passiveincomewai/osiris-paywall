@@ -256,7 +256,7 @@ export default async function BostonMarathonPage() {
         title="Keep exploring"
         links={[
           { label: "Boston & the Charles River on the 3D globe", href: globeUrl },
-          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon-2026" },
           { label: "United States cameras", href: "/cameras/countries/united-states" },
           { label: "All live events", href: "/live-events" },
         ]}
@@ -271,7 +271,7 @@ export default async function BostonMarathonPage() {
           { label: "Oktoberfest in Munich — live cameras", href: "/oktoberfest-munich" },
           { label: "Fall foliage cameras", href: "/fall-foliage-cameras" },
           { label: "Macy's Thanksgiving Day Parade — live cameras", href: "/macys-thanksgiving-parade" },
-          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon-2026" },
           { label: "Fourth of July fireworks — live cameras", href: "/fourth-of-july-fireworks" },
           { label: "Rose Parade in Pasadena — live cameras", href: "/rose-parade" },
           { label: "Albuquerque Balloon Fiesta — live cameras", href: "/albuquerque-balloon-fiesta" },

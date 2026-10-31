@@ -44,6 +44,20 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        // Marathon consolidation (site-audit R3, 2026-10-31): the dated
+        // /nyc-marathon-2026 page is the single canonical marathon page —
+        // it carries the richer course-line wall (18-point course polyline,
+        // camerasAlongRoute within 2.5 km, grouped into five borough walls
+        // with per-camera distance captions) with catalogue-computed
+        // counts. The undated evergreen page (5 anchors, 2 km) duplicated
+        // the intent with contradictory counts, so its route is retired
+        // and 301s here. Like the other redirect sources above/below, the
+        // source route has no page directory.
+        source: '/nyc-marathon',
+        destination: '/nyc-marathon-2026',
+        permanent: true,
+      },
+      {
         source: '/flightradar24-alternative',
         destination: '/alternatives/flightradar24',
         permanent: true,
