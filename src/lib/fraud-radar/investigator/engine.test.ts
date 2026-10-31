@@ -66,11 +66,11 @@ const toolDeps: ToolDeps = {
   },
 };
 
-type Step =
+type Step = (
   | { calls: ModelFunctionCall[]; usage?: [number, number] }
   | { text: string; usage?: [number, number] }
-  | { error: ModelProviderError; delayMs?: number }
-  | { calls: ModelFunctionCall[]; delayMs: number };
+  | { error: ModelProviderError }
+) & { delayMs?: number };
 
 function scriptedAdapter(steps: Step[]): ModelAdapter & { requests: ModelCallRequest[] } {
   const requests: ModelCallRequest[] = [];
