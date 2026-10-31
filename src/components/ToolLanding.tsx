@@ -169,17 +169,14 @@ export default function ToolLanding(cfg: ToolLandingConfig) {
           links={[
             {
               label: "Satellite tracker",
-              desc: "The ISS, Starlink and thousands of satellites, with real orbit paths — live on the free globe.",
               href: "/satellite-tracker",
             },
             {
               label: "Space station tracker",
-              desc: "Where the ISS is right now — live position, altitude and speed as it orbits.",
               href: "/space-station-tracker",
             },
             {
               label: "Flight tracker",
-              desc: "Live aircraft on the same globe — position, altitude, speed and routes from live ADS-B data.",
               href: "/live-flight-tracker",
             },
           ]}

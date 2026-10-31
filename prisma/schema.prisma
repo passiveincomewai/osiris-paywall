@@ -50,6 +50,7 @@ model User {
   vipPlaces VipPlace[]
   eventAlertRules EventAlertRule[]
   eventAlertEvents EventAlertEvent[]
+  auroraAlertSubscriptions AuroraAlertSubscription[]
   savedViews SavedView[]
   vipBriefPref VipBriefPref?
   organizationsOwned Organization[] @relation("OrgOwner")
@@ -2161,4 +2162,34 @@ model FrFacYearlySummary {
 
   @@unique([datasetVersion, auditYear])
   @@index([datasetVersion])
+}
+
+// Aurora alerts (item #21, approved 2026-10-31): preset-place aurora
+// subscriptions for signed-in users (any tier). Derived fields
+// (magLat, requiredKp) are snapshotted at subscribe time; the
+// once-per-night sender claim lives in lastAlertNight. Logic:
+// src/lib/aurora/.
+model AuroraAlertSubscription {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  placeSlug     String
+  placeName     String
+  lat           Float
+  lng           Float
+  timeZone      String
+  magLat        Float
+  requiredKp    Float
+
+  active        Boolean   @default(true)
+  lastAlertNight String?
+  lastAlertedAt DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, placeSlug])
+  @@index([active])
+  @@index([userId])
 }

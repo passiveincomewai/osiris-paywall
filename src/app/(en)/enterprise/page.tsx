@@ -207,7 +207,7 @@ export default async function EnterprisePage() {
             below instead): the buy button goes straight to checkout
             with the Enterprise plan preselected; the quiet link is the
             sales conversation, through the contact form. */}
-        {!a.enterprise && (
+        {!(a.ok && a.enterprise) && (
           <div
             className="flex flex-wrap items-center gap-x-5 gap-y-3"
             style={{ marginTop: "var(--we-space-6)" }}
@@ -321,7 +321,7 @@ export default async function EnterprisePage() {
           className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3"
           style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
         >
-          {!a.enterprise && (
+          {!(a.ok && a.enterprise) && (
             <Button href={ENTERPRISE_CHECKOUT_HREF}>Get Enterprise — $999/year</Button>
           )}
           <span>
