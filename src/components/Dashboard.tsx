@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useState, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Layers, Newspaper, Search, X, Route, Radar, ExternalLink, AlertTriangle, Activity, Database, Wifi, Play, Network, Crosshair, Pentagon, Radio , PenLine, Orbit, Lock } from 'lucide-react';
 import { type TerrainStatus } from '@/lib/map-terrain';
 import { fetchCameraById, loadCameraCatalog, mergeCameraCatalog, type CameraCatalogHandle } from '@/lib/camera-catalog';
@@ -200,10 +200,19 @@ const newsTransform = (d: { news?: unknown[]; sources?: unknown[]; timestamp?: s
 });
 
 
-/* The splash reports what has actually happened. The last stage waits for
-   the map's first finished frame instead of a fixed timer. */
-const SPLASH_STAGES = ['ESTABLISHING SECURE CONNECTION...', 'INITIALIZING FEEDS...', 'CALIBRATING SENSORS...', 'SYSTEM READY'];
-const SPLASH_PROGRESS = ['25%', '50%', '78%', '100%'];
+/* The splash reports what has actually happened — every stage is a real
+   boot milestone, never a timer (the stage effects below advance it):
+     0 → the first live feed answers (backendStatus 'connected')
+     1 → the map draws its first finished frame (mapReady, on map 'idle')
+     2 → the camera catalogue's first paint lands (camerasLoading clears)
+     3 → ready: the splash lifts on the dismissal effects below.
+   The loader exposes no honest fraction, so the bar holds at each
+   completed milestone's weight instead of creeping: 15% is the app shell
+   itself having loaded, then 40 / 70 / 100 as the milestones land. With
+   the CCTV layer switched off (a ?layers= boot) there is no catalogue
+   to wait for, and stage 3 follows the map's first frame instead. */
+const SPLASH_STAGES = ['ESTABLISHING SECURE CONNECTION...', 'INITIALIZING GLOBE...', 'CONNECTING LIVE FEEDS', 'SYSTEM READY'];
+const SPLASH_PROGRESS = ['15%', '40%', '70%', '100%'];
 
 /* The HUD enters as one sequence when the splash lifts. Each piece used to
    run its own fixed timer (2.5–3.5 s), which raced a splash that now lasts
@@ -233,10 +242,11 @@ export default function Dashboard() {
   const [dataVersion, setDataVersion] = useState(0);
   const data = dataRef.current;
 
-  // The status value itself is no longer displayed (the header readout
-  // strip was removed 2026-10-29); the setters still mark feed health
-  // for the data-loading paths that call them.
-  const [, setBackendStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
+  // Feed health: the setters mark it for the data-loading paths that call
+  // them, and the splash's first stage reads the value — it advances only
+  // once a feed has actually answered. (The header readout strip that
+  // used to display it was removed 2026-10-29.)
+  const [backendStatus, setBackendStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
   const [mapView, setMapView] = useState({ zoom: 2.5, latitude: 20 });
   const [flyToLocation, setFlyToLocation] = useState<{ lat: number; lng: number; zoom?: number; alertId?: string; duration?: number; ts: number } | null>(null);
   /* The Live Alerts the feed's filters leave showing; the map pins those. */
@@ -249,9 +259,14 @@ export default function Dashboard() {
   const [dossierLoading, setDossierLoading] = useState(false);
   const [dossierCoords, setDossierCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [showSplash, setShowSplash] = useState(true);
-  /* Radar scan: true while the camera catalogue is still loading. The splash
-     shows the radar until every region lands (or retries give up). */
+  /* True while the camera catalogue is still loading; the splash's
+     CONNECTING LIVE FEEDS stage waits on its first paint (the sparse
+     worldwide sample — demand fills continue after the splash lifts). */
   const [camerasLoading, setCamerasLoading] = useState(true);
+  /* Splash artwork: a failed video (or reduced motion) falls back to the
+     poster still — the loading screen never depends on the video. */
+  const reduceMotion = useReducedMotion();
+  const [splashVideoFailed, setSplashVideoFailed] = useState(false);
   const [splashStage, setSplashStage] = useState(0);
   const [mapReady, setMapReady] = useState(false);
   /* Data boot gate: layer feeds (satellites ~2.8 MB, the camera catalogue,
@@ -995,29 +1010,44 @@ export default function Dashboard() {
   const [liveFeedEmbedAllowed, setLiveFeedEmbedAllowed] = useState(true);
 
   /* Splash: it lifts once the map has drawn its first frame AND the camera
-     catalogue lands (the radar scans until then). It never lifts before the
-     intro has played (about 2.2 s), and never later than 25 s, so a slow feed
-     never traps the user on the splash. */
+     catalogue's first paint lands, and never later than 25 s, so a slow
+     feed never traps the user on the splash. The stage — and with it the
+     progress bar — follows those same real signals, so the bar only ever
+     shows work that has genuinely finished; while a stage is still
+     loading it holds at the last completed milestone. */
   useEffect(() => {
-    const timers = [
-      setTimeout(() => setSplashStage(s => Math.max(s, 1)), 1100),
-      setTimeout(() => setSplashStage(s => Math.max(s, 2)), 1700),
-      setTimeout(() => setShowSplash(false), 25000),
-    ];
-    return () => timers.forEach(clearTimeout);
+    const t = setTimeout(() => setShowSplash(false), 25000);
+    return () => clearTimeout(t);
   }, []);
-  /* When the camera catalogue lands, lift the splash (intro already played). */
+  /* Stage 1: a live feed has answered. */
+  useEffect(() => {
+    if (backendStatus === 'connected') setSplashStage(s => Math.max(s, 1));
+  }, [backendStatus]);
+  /* Stage 2: the globe has drawn its first finished frame. */
+  useEffect(() => {
+    if (mapReady) setSplashStage(s => Math.max(s, 2));
+  }, [mapReady]);
+  /* Stage 3: the catalogue's first paint has landed. With the CCTV layer
+     off there is no catalogue to wait for, so the map's first frame is
+     the last milestone instead (keeping the 500 ms beat the old
+     stage-3 timer used). */
+  useEffect(() => {
+    if (!camerasLoading) {
+      setSplashStage(3);
+      return;
+    }
+    if (mapReady && !activeLayers.cctv) {
+      const t = setTimeout(() => setSplashStage(3), 500);
+      return () => clearTimeout(t);
+    }
+  }, [camerasLoading, mapReady, activeLayers.cctv]);
+  /* When the camera catalogue lands, lift the splash. */
   useEffect(() => {
     if (!camerasLoading) {
       const t = setTimeout(() => setShowSplash(false), 600);
       return () => clearTimeout(t);
     }
   }, [camerasLoading]);
-  useEffect(() => {
-    if (!mapReady || splashStage !== 2) return;
-    const t = setTimeout(() => setSplashStage(3), 500);
-    return () => clearTimeout(t);
-  }, [mapReady, splashStage]);
   useEffect(() => {
     if (splashStage !== 3) return;
     // Long enough to read SYSTEM READY before the splash goes.
@@ -2366,7 +2396,18 @@ export default function Dashboard() {
     {!skipHero && <CinematicHero />}
     <main className="fixed inset-0 w-full h-full bg-[var(--bg-void)] overflow-hidden">
 
-      {/* ── SPLASH ── */}
+      {/* ── SPLASH ──
+          The artwork is the loading loop (public/worldeye-loading.*): a
+          4 s seamless 9:16 composite with NO loading UI baked in — the
+          progress bar and status line inside it are the site's own
+          overlay, seated in the artwork's clean band (≈60–75% of its
+          height) and driven by the real boot stages above. The stage box
+          keeps the artwork's own aspect, so the overlay lands on that
+          band on every viewport; outside the box the splash background
+          matches the artwork's edge colour (#01030a, sampled from the
+          poster), so the letterbox is invisible. The poster paints
+          first; a failed video — or reduced motion — falls back to the
+          poster still, so loading never depends on the video. */}
       <AnimatePresence onExitComplete={() => setSplashGone(true)}>
         {showSplash && (
           <motion.div
@@ -2375,108 +2416,68 @@ export default function Dashboard() {
             // behind it instead of just dissolving.
             exit={{ opacity: 0, scale: 1.04 }}
             transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-            className="absolute inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden"
-            style={{ background: 'radial-gradient(ellipse at center, #07182b 0%, var(--bg-void) 72%)' }}
+            className="absolute inset-0 z-[999] overflow-hidden"
+            style={{ background: '#01030a' }}
+            role="status"
+            aria-label="Loading WorldEye"
           >
-            {/* ── Scanline CRT overlay ── */}
-            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(56,189,248,0.02) 2px, rgba(56,189,248,0.02) 4px)',
-              animation: 'splashScanDrift 8s linear infinite',
-            }} />
-
-            {/* ── WorldEye logo ── */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="relative z-[2] mb-8"
-            >
-              {/* soft halo behind the wordmark */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[135%] aspect-[2/1] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(0,150,255,0.22) 0%, transparent 65%)' }} />
-              <img
-                src="/worldeye-header-logo.png"
-                alt="WorldEye"
-                width={1063}
-                height={290}
-                className="relative w-72 md:w-96 h-auto"
-                style={{ filter: 'drop-shadow(0 0 44px rgba(0,150,255,0.45))' }}
-              />
-            </motion.div>
-
-            {/* ── Subtitle — typewriter reveal ── */}
-            <div className="overflow-hidden mb-8 z-[2]">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ delay: 1.2, duration: 0.8, ease: 'easeInOut' }}
-                className="overflow-hidden whitespace-nowrap"
-              >
-                <p className="text-[11px] md:text-[10px] font-mono tracking-[0.32em] md:tracking-[0.5em]" style={{ opacity: 0.85, color: '#7dd3fc' }}>
-                  GLOBAL INTELLIGENCE PLATFORM
-                </p>
-              </motion.div>
-            </div>
-
-            {/* ── Multi-stage progress bar ── */}
-            <div className="w-64 md:w-80 z-[2]">
-              {/* Thin progress track */}
-              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(56,189,248,0.12)' }}>
-                <motion.div
-                  initial={{ width: '0%' }}
-                  animate={{ width: SPLASH_PROGRESS[splashStage] }}
-                  transition={{ duration: 0.55, delay: splashStage === 0 ? 0.5 : 0, ease: 'easeInOut' }}
-                  className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ background: 'linear-gradient(90deg, #0284c7, #38bdf8, #0284c7)', boxShadow: '0 0 14px rgba(56,189,248,0.5)' }}
-                />
-              </div>
-
-              {/* Status message — one line, swapped as each stage is reached */}
-              <div className="mt-3 h-4 flex items-center justify-center">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={splashStage}
-                    initial={{ opacity: 0, y: 3 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -3 }}
-                    transition={{ duration: 0.18, delay: splashStage === 0 ? 0.5 : 0 }}
-                    className="text-[10px] font-mono tracking-[0.25em]"
-                    style={{ color: splashStage === 3 ? 'var(--cyan-primary)' : 'var(--text-muted)' }}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative aspect-[9/16]" style={{ width: 'min(100vw, 56.25vh)' }}>
+                {reduceMotion || splashVideoFailed ? (
+                  <img
+                    src="/worldeye-loading-poster.webp"
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <video
+                    className="absolute inset-0 w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    poster="/worldeye-loading-poster.webp"
+                    onError={() => setSplashVideoFailed(true)}
                   >
-                    {SPLASH_STAGES[splashStage]}
-                  </motion.span>
-                </AnimatePresence>
+                    <source src="/worldeye-loading.webm" type="video/webm" />
+                    <source src="/worldeye-loading.mp4" type="video/mp4" onError={() => setSplashVideoFailed(true)} />
+                  </video>
+                )}
+
+                {/* ── Progress overlay — the artwork's clean zone ── */}
+                <div className="absolute left-1/2 -translate-x-1/2" style={{ top: '62%', width: '62%' }}>
+                  {/* Status message — one line, swapped as each real stage is reached */}
+                  <div className="h-4 flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={splashStage}
+                        initial={{ opacity: 0, y: 3 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -3 }}
+                        transition={{ duration: 0.18, delay: splashStage === 0 ? 0.5 : 0 }}
+                        className="text-[10px] font-mono tracking-[0.25em] whitespace-nowrap"
+                        style={{ color: splashStage === 3 ? 'var(--cyan-primary)' : 'rgba(232,220,190,0.85)' }}
+                      >
+                        {SPLASH_STAGES[splashStage]}
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Thin progress track — the fill is the current stage's milestone weight */}
+                  <div className="relative w-full h-[2px] mt-3 rounded-full overflow-hidden" style={{ background: 'rgba(212,175,55,0.14)' }}>
+                    <motion.div
+                      initial={{ width: '0%' }}
+                      animate={{ width: SPLASH_PROGRESS[splashStage] }}
+                      transition={{ duration: 0.55, delay: splashStage === 0 ? 0.5 : 0, ease: 'easeInOut' }}
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      style={{ background: 'linear-gradient(90deg, #b8912f, #f3d27a, #fff6d8, #f3d27a, #b8912f)', boxShadow: '0 0 12px rgba(212,175,55,0.45)' }}
+                    />
+                  </div>
+
+                </div>
               </div>
             </div>
-
-            {/* ── Decorative grid lines ── */}
-            <div className="absolute inset-0 pointer-events-none z-[0]" style={{ opacity: 0.03 }}>
-              <div className="absolute inset-0" style={{
-                backgroundImage: 'linear-gradient(rgba(56,189,248,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.5) 1px, transparent 1px)',
-                backgroundSize: '60px 60px',
-              }} />
-            </div>
-
-            {/* ── Corner frame accents ── */}
-            {[
-              { t: '10px', l: '10px', bw: '2px 0 0 2px' },
-              { t: '10px', r: '10px', bw: '2px 2px 0 0' },
-              { b: '10px', l: '10px', bw: '0 0 2px 2px' },
-              { b: '10px', r: '10px', bw: '0 2px 2px 0' },
-            ].map((pos, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.3 }}
-                transition={{ delay: 0.8 + i * 0.1, duration: 0.5 }}
-                className="absolute w-8 h-8 z-[2]"
-                style={{ top: pos.t, bottom: pos.b, left: pos.l, right: pos.r, borderWidth: pos.bw, borderStyle: 'solid', borderColor: '#38bdf8' }}
-              />
-            ))}
-
-
-
-            {/* ── Inline keyframe for scanline drift ── */}
-
           </motion.div>
         )}
       </AnimatePresence>
