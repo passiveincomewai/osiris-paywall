@@ -15,6 +15,7 @@ import {
   type RegionKey,
 } from "@/lib/country-page-content";
 import data from "@/data/camera-countries.json";
+import { LIVE_CAMERA_COUNT_LABEL } from "@/lib/site-stats";
 import {
   CONSOLIDATED_COUNTRIES,
   isConsolidatedCountry,
@@ -36,6 +37,13 @@ interface CountryEntry {
 }
 
 const COUNTRIES = (data as { countries: CountryEntry[] }).countries;
+/* TOTAL_CAMERAS is the data file's attributedTotal: indexed catalogue
+   records attributed to a country (76,575 of 77,376 indexed records) —
+   the country-attributed subset of the indexed catalogue, NOT the
+   site total. The total is the standing headline LIVE_CAMERA_COUNT
+   (74,229 live cameras on the globe, lib/site-stats). The two
+   measures are set side by side on /live-camera-index ("Three
+   numbers, three measures"); never label TOTAL_CAMERAS as the total. */
 const TOTAL_CAMERAS = (data as { attributedTotal: number }).attributedTotal;
 const byName = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name));
 /* The directory table's client props: only the fields the table and
@@ -88,11 +96,11 @@ const generatedDate = new Date(
 
 export const metadata: Metadata = {
   title: `Live Street Cameras by Country — ${COUNTRIES.length} Countries`,
-  description: `Browse live street cameras across ${COUNTRIES.length} countries — ${fmt(TOTAL_CAMERAS)} public webcam feeds mapped by nation and region. Find your country and start watching.`,
+  description: `Browse live street cameras by country: ${LIVE_CAMERA_COUNT_LABEL} live cameras on the WorldEye globe across ${COUNTRIES.length} countries. This directory indexes ${fmt(TOTAL_CAMERAS)} catalogue records attributed to a country, mapped by nation and region. Find your country and start watching.`,
   alternates: { canonical: "https://worldeye.app/cameras/countries" },
   openGraph: {
     title: `Live Street Cameras by Country — ${COUNTRIES.length} Countries | WorldEye`,
-    description: `${fmt(TOTAL_CAMERAS)} live street cameras across ${COUNTRIES.length} countries, mapped by nation and region. Find your country and start watching.`,
+    description: `${LIVE_CAMERA_COUNT_LABEL} live street cameras across ${COUNTRIES.length} countries on the WorldEye globe. The directory indexes ${fmt(TOTAL_CAMERAS)} catalogue records attributed to a country, mapped by nation and region. Find your country and start watching.`,
     url: "https://worldeye.app/cameras/countries",
     type: "website",
   },
@@ -158,7 +166,7 @@ const jsonLd = {
         })),
       },
   name: `Live Street Cameras by Country — ${COUNTRIES.length} Countries`,
-  description: `A directory of ${fmt(TOTAL_CAMERAS)} live public street cameras across ${COUNTRIES.length} countries, with per-country camera counts and top regions.`,
+  description: `A directory of ${fmt(TOTAL_CAMERAS)} indexed catalogue records attributed to ${COUNTRIES.length} countries, with per-country camera counts and top regions. WorldEye's standing headline count is ${LIVE_CAMERA_COUNT_LABEL} live public cameras on the globe.`,
   url: "https://worldeye.app/cameras/countries",
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
       numberOfItems: COUNTRIES.length,
@@ -229,20 +237,32 @@ export default function CameraCountriesPage() {
             Live Street Cameras <span className="text-[#D4AF37]">by Country</span>
           </h1>
           <p className="text-white/55 mt-5 text-base md:text-lg leading-relaxed">
-            WorldEye collects {fmt(TOTAL_CAMERAS)} publicly available live street
-            cameras from {COUNTRIES.length} countries into one directory. Every entry
-            below is a camera that its operator — a transport agency, city, resort or
-            business — already publishes openly on the web. Pick a country to watch
-            its cameras live, grouped by area, or jump straight to the globe.
+            WorldEye collects {LIVE_CAMERA_COUNT_LABEL} publicly available live street
+            cameras into one globe. This directory is built from the indexed
+            catalogue: {fmt(TOTAL_CAMERAS)} catalogue records attributed to{" "}
+            {COUNTRIES.length} countries. The two figures measure different
+            things — the{" "}
+            <Link href="/live-camera-index" className="text-[#D4AF37] hover:underline">
+              Live Camera Index explains the site&apos;s three camera measures
+            </Link>
+            . Every entry below is a camera that its operator — a transport
+            agency, city, resort or business — already publishes openly on
+            the web. Pick a country to watch its cameras live, grouped by
+            area, or jump straight to the globe.
           </p>
         </div>
 
         {/* Stat cards */}
-        <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-10 grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+            <Camera className="w-5 h-5 text-[#D4AF37] mb-3" />
+            <p className="text-2xl md:text-3xl font-bold">{LIVE_CAMERA_COUNT_LABEL}</p>
+            <p className="text-sm text-white/45 mt-1">Total live cameras</p>
+          </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
             <Camera className="w-5 h-5 text-[#D4AF37] mb-3" />
             <p className="text-2xl md:text-3xl font-bold">{fmt(TOTAL_CAMERAS)}</p>
-            <p className="text-sm text-white/45 mt-1">Total live cameras</p>
+            <p className="text-sm text-white/45 mt-1">Indexed records attributed to a country</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
             <Globe className="w-5 h-5 text-[#D4AF37] mb-3" />
