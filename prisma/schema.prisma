@@ -2040,3 +2040,80 @@ model SkiStakeNight {
   @@unique([resortSlug, nightKey])
   @@index([nightKey])
 }
+
+// ── Fraud Radar Phase 4: grants Neon grain (AUDIT §15a) ───────────
+// USAspending assistance (generation 2026-10-06, globally deduped
+// to one row per award) at the yearly / ALN / agency grains, plus
+// the FAC single-audit yearly grain (vintage 2026-10-31_ay2026 —
+// the FAC datasetVersion is a column value, not separate tables).
+// USAspending amounts are AWARD-CUMULATIVE snapshot totals with
+// source names kept; ALN/agency fiscal years are ATTRIBUTED (the
+// archive fiscal year of each award's winning snapshot), never a
+// re-dating of the money. FAC expended is auditee-reported;
+// questioned costs exist only as flag counts (the source publishes
+// no amounts); is_public=false records are withheld (count only).
+
+model FrGrantsYearlySummary {
+  id                          String   @id @default(cuid())
+  datasetVersion              String   // "2026-10-06" (USAspending generation)
+  fiscalYear                  Int      // attributed fiscal year
+  awards                      BigInt
+  distinctRecipients          Int
+  obligatedAwardCumulativeUsd Decimal  @db.Decimal(24, 2)
+  outlayAwardCumulativeUsd    Decimal  @db.Decimal(24, 2)
+  subawardsCount              BigInt
+  subawardAmountUsd           Decimal  @db.Decimal(24, 2)
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, fiscalYear])
+  @@index([datasetVersion])
+}
+
+model FrGrantsAlnSummary {
+  id                          String   @id @default(cuid())
+  datasetVersion              String
+  aln                         String   // assistance listing (CFDA) number
+  alnTitle                    String?
+  attributedFiscalYear        Int
+  awards                      BigInt
+  distinctRecipients          Int
+  obligatedAwardCumulativeUsd Decimal  @db.Decimal(24, 2)
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, aln, attributedFiscalYear])
+  @@index([datasetVersion, attributedFiscalYear])
+}
+
+model FrGrantsAgencySummary {
+  id                          String   @id @default(cuid())
+  datasetVersion              String
+  agency                      String   // awarding agency name, as published
+  attributedFiscalYear        Int
+  awards                      BigInt
+  distinctRecipients          Int
+  obligatedAwardCumulativeUsd Decimal  @db.Decimal(24, 2)
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, agency, attributedFiscalYear])
+  @@index([datasetVersion, attributedFiscalYear])
+}
+
+model FrFacYearlySummary {
+  id                      String   @id @default(cuid())
+  datasetVersion          String   // "2026-10-31_ay2026" (FAC vintage)
+  auditYear               Int
+  reports                 BigInt
+  totalExpendedUsd        Decimal  @db.Decimal(24, 2) // auditee-reported
+  findingsCount           BigInt
+  repeatFindingsCount     BigInt
+  questionedCostFlagCount BigInt   // flags only — no amounts exist
+  distinctAuditees        Int
+
+  createdAt               DateTime @default(now())
+
+  @@unique([datasetVersion, auditYear])
+  @@index([datasetVersion])
+}
