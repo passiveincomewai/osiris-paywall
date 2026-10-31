@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1141);
+    expect(nonTransit.length).toBe(1106);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -203,9 +203,75 @@ describe("sitemap URL set", () => {
     // next.config.ts). Delta hand-verified: removing exactly that
     // URL reproduces the 1,142 set and the cc960cf3… hash
     // byte-for-byte.
+    // The site-audit Wave 2 R20 consolidation (2026-10-31) then
+    // removed /photo-location-finder → 1,140: it split one intent
+    // with /where-was-this-photo-taken, which survives (301 in
+    // next.config.ts). Delta hand-verified: removing exactly that
+    // URL reproduces the 1,141 set and the e47811a6… hash
+    // byte-for-byte.
+    // The site-audit Wave 2 R38 thin-wall tiering (2026-10-31)
+    // then removed 34 wall-family spokes → 1,106: the three
+    // sub-5 volcanoes (etna, bromo, ruapehu), the six sub-5
+    // national parks, and all 25 university spokes (richest
+    // registry set is 4 cameras) — lib/indexation-gates holds the
+    // measured table; the tiered pages stay live as noindex.
     expect(hash).toBe(
-      "e47811a6fe1cedfadfbfb8c1d3c06b68e034a119194ff105898f49c146ff5065",
+      "b25b8c700f06312811a3f88f21fa5b1cc8cb07d1a1224c6d74ef35e363b3fc46",
     );
+  });
+
+  it("applies the R38 thin-wall tiering to the wall families", () => {
+    const has = (path: string) => byUrl.has(`${BASE}${path}`);
+    // Tiered out: volcano 3, national-park 6, university 25.
+    for (const p of [
+      "/volcano-webcams/etna",
+      "/volcano-webcams/bromo",
+      "/volcano-webcams/ruapehu",
+      "/national-park-webcams/grand-canyon",
+      "/national-park-webcams/isle-royale",
+      "/national-park-webcams/grand-teton",
+      "/national-park-webcams/kenai-fjords",
+      "/national-park-webcams/black-canyon-of-the-gunnison",
+      "/national-park-webcams/olympic",
+      "/university-webcams/uc-santa-barbara",
+      "/university-webcams/yonsei-university",
+    ]) {
+      expect(has(p), p).toBe(false);
+    }
+    expect(rows.some((r) => r.url.startsWith(`${BASE}/university-webcams/`))).toBe(false);
+    // Hubs always stay, and so do the spokes at/above the line
+    // (crater-lake and bryce-canyon sit exactly on 5).
+    for (const p of [
+      "/surf-webcams",
+      "/beach-webcams",
+      "/train-webcams",
+      "/volcano-webcams",
+      "/national-park-webcams",
+      "/interstate-cameras",
+      "/university-webcams",
+      "/border-crossings",
+      "/volcano-webcams/kilauea",
+      "/national-park-webcams/crater-lake",
+      "/national-park-webcams/bryce-canyon",
+      "/national-park-webcams/yellowstone",
+      "/surf-webcams/santa-cruz",
+      "/beach-webcams/santa-monica",
+      "/train-webcams/lincoln",
+      "/interstate-cameras/i-40",
+    ]) {
+      expect(has(p), p).toBe(true);
+    }
+    // Border exemption: even the camera-thin crossings stay listed —
+    // their substance is the CBP wait-time table (lib/indexation-gates).
+    for (const p of [
+      "/border-crossings/houlton",
+      "/border-crossings/international-falls",
+      "/border-crossings/derby-line",
+      "/border-crossings/brownsville",
+      "/border-crossings/champlain",
+    ]) {
+      expect(has(p), p).toBe(true);
+    }
   });
 
   it("still lists transit URLs from the live feeds", () => {
@@ -268,11 +334,18 @@ describe("sitemap lastmod policy", () => {
   });
 
   it("dates the Menu #2 Wave A pages (per-volcano, per-place aurora) with the catalogue snapshot", () => {
+    // R38 (2026-10-31): etna, bromo and ruapehu are tiered out of
+    // the sitemap (thin walls — lib/indexation-gates), so they have
+    // no entry to date; the seven remaining volcano spokes keep
+    // the catalogue date.
     for (const slug of [
-      "kilauea", "reykjanes", "katla", "etna", "vesuvius",
-      "sakurajima", "merapi", "bromo", "fuji", "ruapehu",
+      "kilauea", "reykjanes", "katla", "vesuvius",
+      "sakurajima", "merapi", "fuji",
     ]) {
       expect(lm(`/volcano-webcams/${slug}`), slug).toBe(CATALOGUE);
+    }
+    for (const slug of ["etna", "bromo", "ruapehu"]) {
+      expect(lm(`/volcano-webcams/${slug}`), slug).toBeUndefined();
     }
     for (const slug of [
       "fairbanks", "anchorage", "duluth", "marquette", "churchill",
@@ -294,6 +367,10 @@ describe("sitemap lastmod policy", () => {
       expect(lm(`/animal-webcams/${slug}`), slug).toBe(CATALOGUE);
     }
     expect(lm("/university-webcams")).toBe(CATALOGUE);
+    // R38 (2026-10-31): every university spoke is a thin wall
+    // (richest registry set is 4 cameras — lib/indexation-gates),
+    // so all 25 are tiered out of the sitemap; the hub above stays
+    // and keeps the catalogue date.
     for (const slug of [
       "uc-santa-barbara", "vanderbilt-university", "columbia-university",
       "boston-university", "furman-university", "michigan-state-university",
@@ -307,7 +384,7 @@ describe("sitemap lastmod policy", () => {
       "incheon-catholic-university", "incheon-global-campus",
       "yonsei-university",
     ]) {
-      expect(lm(`/university-webcams/${slug}`), slug).toBe(CATALOGUE);
+      expect(lm(`/university-webcams/${slug}`), slug).toBeUndefined();
     }
   });
 

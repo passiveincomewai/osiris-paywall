@@ -24,16 +24,28 @@ import { getWildfireIncidents } from "@/lib/fire-perimeters";
 /* Border-crossings delta: registry for SEO_PAGES_BORDER (below). */
 import { BORDER_CROSSINGS } from "@/lib/border/crossings";
 import { POPULAR_PAIRS, pairSlug } from "@/lib/ski-compare";
-import { BEACH_SPOT_SLUGS, SURF_SPOT_SLUGS } from "@/lib/surf-spots";
+import { BEACH_SPOT_SLUGS, BEACH_SPOTS, SURF_SPOT_SLUGS, SURF_SPOTS } from "@/lib/surf-spots";
 import { MANIFEST_ENTRIES } from "@/i18n/manifest";
 import { hreflangMapFor, localizedUrl } from "@/lib/i18n-seo";
 import { withoutFutureLastmod } from "@/lib/lastmod";
 import { fraudRadarPublicPaths } from "@/lib/fraud-radar/flag";
 import { developerPublicPaths } from "@/lib/developer/flag";
-import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
+import { RAIL_PLACE_SLUGS, RAIL_PLACES } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
-import { isConsolidatedCountry, isFoldedResort } from "@/lib/indexation-gates";
+import {
+  isConsolidatedCountry,
+  isFoldedResort,
+  isNoindexUniversity,
+  beachSpokeNoindex,
+  interstateCorridorNoindex,
+  parkSpokeNoindex,
+  surfSpokeNoindex,
+  trainSpokeNoindex,
+  volcanoSpokeNoindex,
+} from "@/lib/indexation-gates";
+import { EXPLORE_SCOPES, countForDef, loadCountryChunk } from "@/lib/explore-data";
+import { CORRIDORS, buildCorridor } from "@/lib/corridors";
 
 const BASE = "https://worldeye.app";
 
@@ -201,15 +213,15 @@ const SEO_PAGES_WAVE14 = AIRPORT_PAGES.map((a) => `/airport-webcams/${a.slug}`);
 // 2026-10-29 — also a free public tool, listed in the OSINT tools menu.
 const SEO_PAGES_TOOLS = ["/tools/photo-geolocation", "/tools/camera-distance", "/sensing", "/tools", "/tools/port-scanner", "/tools/data-leak-checker", "/tools/ip-device-lookup", "/tools/dns-lookup", "/tools/whois-lookup", "/tools/ssl-checker", "/tools/subdomain-finder", "/tools/security-headers-checker", "/tools/username-search", "/tools/ip-sweep", "/tools/vulnerability-scanner", "/tools/ip-reputation-checker", "/tools/certificate-transparency-search", "/tools/website-technology-checker", "/tools/bgp-lookup", "/tools/mac-address-lookup", "/tools/github-profile-lookup", "/tools/phone-number-lookup", "/tools/crypto-wallet-checker", "/tools/people-search", "/tools/world-remote", "/tools/self-track"];
 
-// Photo Geolocation guides (2026-10-27): three intent-split landing
-// pages supporting the tool — the head question ("where was this
-// photo taken"), the tool-name search ("photo location finder") for
-// travellers and creators, and the verification intent ("verify photo
-// location") for journalists and fact-checkers. Each links into the
-// tool page above; the tool itself stays in SEO_PAGES_TOOLS.
+// Photo Geolocation guides (2026-10-27): intent-split landing pages
+// supporting the tool — the head question ("where was this photo
+// taken") and the verification intent ("verify photo location") for
+// journalists and fact-checkers. Each links into the tool page above;
+// the tool itself stays in SEO_PAGES_TOOLS. (Site-audit R20,
+// 2026-10-31: /photo-location-finder was consolidated into
+// /where-was-this-photo-taken and 301s there — do not re-add it.)
 const SEO_PAGES_GEO_GUIDES = [
   "/where-was-this-photo-taken",
-  "/photo-location-finder",
   "/verify-photo-location",
 ];
 
@@ -645,9 +657,49 @@ const LOCALIZED_FREQ: Record<
   "ship-tracker": { changeFrequency: "monthly", priority: 0.6 },
 };
 
+/* R38 thin-wall tiering (2026-10-31): the set of wall-family spoke
+ * paths whose measured camera count falls under the shared gate in
+ * lib/indexation-gates (WALL_MIN_CAMERAS). Counts come from the same
+ * countForDef / buildCorridor measurements the spoke pages quote, and
+ * each family's predicate is the same function its page metadata
+ * calls — the sitemap and the robots metadata cannot disagree. The
+ * border-crossings family is deliberately absent: it is exempt (its
+ * spokes' substance is the live CBP wait-time table, not the camera
+ * wall — see the gates module). Hubs are never in this set. */
+async function thinWallNoindexPaths(): Promise<ReadonlySet<string>> {
+  const out = new Set<string>();
+  const gate = async (
+    path: string,
+    scopeKey: string,
+    predicate: (cameraCount: number) => boolean,
+  ) => {
+    if (predicate(await countForDef(EXPLORE_SCOPES[scopeKey]))) out.add(path);
+  };
+  await Promise.all([
+    ...SURF_SPOTS.map((s) => gate(`/surf-webcams/${s.slug}`, s.scopeKey, surfSpokeNoindex)),
+    ...BEACH_SPOTS.map((s) => gate(`/beach-webcams/${s.slug}`, s.scopeKey, beachSpokeNoindex)),
+    ...RAIL_PLACES.map((p) => gate(`/train-webcams/${p.slug}`, p.scopeKey, trainSpokeNoindex)),
+    ...VOLCANOES.map((v) => gate(`/volcano-webcams/${v.slug}`, v.scopeKey, volcanoSpokeNoindex)),
+    ...NATIONAL_PARKS.map((p) =>
+      gate(`/national-park-webcams/${p.slug}`, p.scopeKey, parkSpokeNoindex),
+    ),
+  ]);
+  for (const u of UNIVERSITIES) {
+    if (isNoindexUniversity(u.slug)) out.add(`/university-webcams/${u.slug}`);
+  }
+  const usRecords = await loadCountryChunk("united-states");
+  for (const c of CORRIDORS) {
+    if (interstateCorridorNoindex(buildCorridor(c, usRecords).total)) {
+      out.add(`/interstate-cameras/${c.slug}`);
+    }
+  }
+  return out;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const transitEntries = await transitSitemapEntries();
   const wildfireEntries = await wildfireSitemapEntries();
+  const thinWallPaths = await thinWallNoindexPaths();
   // Honest lastmod (SEO #11, 2026-10-26; completed by the index-recovery
   // remainder, 2026-10-27): every URL used to be stamped "now" on every
   // render, which teaches crawlers to distrust the signal. The rule now:
@@ -951,13 +1003,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...SEO_PAGES_PARKS.map((p) => ({
+    ...SEO_PAGES_PARKS.filter((p) => !thinWallPaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...SEO_PAGES_VOLCANOES.map((p) => ({
+    ...SEO_PAGES_VOLCANOES.filter((p) => !thinWallPaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
@@ -987,7 +1039,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...SEO_PAGES_UNIVERSITIES.map((p) => ({
+    ...SEO_PAGES_UNIVERSITIES.filter((p) => !thinWallPaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
@@ -1022,7 +1074,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily" as const,
       priority: 0.6,
     })),
-    ...SEO_PAGES_WAVE15.map((p) => ({
+    ...SEO_PAGES_WAVE15.filter((p) => !thinWallPaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
@@ -1035,13 +1087,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     })),
     /* ── END border-crossings delta ── */
-    ...SEO_PAGES_WAVE16.map((p) => ({
+    ...SEO_PAGES_WAVE16.filter((p) => !thinWallPaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...SEO_PAGES_WAVE17.map((p) => ({
+    ...SEO_PAGES_WAVE17.filter((p) => !thinWallPaths.has(p)).map((p) => ({
       url: `${BASE}${p}`,
       lastModified: catalogueDate,
       changeFrequency: "monthly" as const,
