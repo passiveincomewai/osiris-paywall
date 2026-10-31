@@ -112,56 +112,6 @@
               box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   THEME: GHOST PROTOCOL (DEEP VIOLET / PHANTOM OPS)
-   ═══════════════════════════════════════════════════════════════ */
-body.theme-ghost {
-  --gold-rgb: 179, 136, 255;
-  --cyan-rgb: 124, 77, 255;
-  --bg-void: #05000F;
-  --bg-primary: #08001A;
-  --bg-secondary: #0D0025;
-  --bg-tertiary: #140033;
-  --bg-panel: rgba(8, 0, 26, 0.92);
-  --bg-panel-solid: #0D0025;
-
-  --gold-primary: #B388FF;
-  --gold-light: #D1C4E9;
-  --gold-dim: #6A1B9A;
-  --gold-glow: rgba(179, 136, 255, 0.3);
-
-  --cyan-primary: #7C4DFF;
-  --cyan-dim: #4A148C;
-  --cyan-glow: rgba(124, 77, 255, 0.2);
-
-  --border-primary: rgba(179, 136, 255, 0.2);
-  --border-secondary: rgba(179, 136, 255, 0.08);
-  --border-active: rgba(179, 136, 255, 0.45);
-  --border-cyan: rgba(124, 77, 255, 0.25);
-
-  --text-primary: #E1BEE7;
-  /* Ghost keeps its lavender primary/headings (theme identity, not grey),
-     but its grey-equivalents follow the site-wide readability pass. */
-  --text-secondary: #FFFFFF;
-  --text-muted: #FFFFFF;
-  --text-heading: #B388FF;
-  --text-gold: #B388FF;
-  --text-cyan: #7C4DFF;
-
-  --scrollbar-thumb: rgba(179, 136, 255, 0.25);
-  --scrollbar-thumb-hover: rgba(179, 136, 255, 0.5);
-  --hover-accent: rgba(179, 136, 255, 0.1);
-
-  /* Phantom pulls the map's own layers into the violet range too. The
-     satellite entries are deliberately left alone: they are the signal that
-     nobody has overridden that category, so the feed's mission colours show. */
-  --map-cctv: #b388ff;
-  --map-flight-civil: #b388ff;
-  --map-flight-private: #ce93d8;
-  --map-flight-gov: #d500f9;
-  --map-flight-unknown: #b388ff;
-}
-
 @theme inline {
   --color-background: var(--bg-void);
   --color-foreground: var(--text-primary);
@@ -2755,8 +2705,7 @@ html[data-oi-theater] [data-map-controls] {
 /* ── OSIRIS OI: gold and black ──
    The OI panel and workspace keep to two tones: gold leads (what is selected,
    what is live, the prediction), champagne is its quiet second where the
-   platform would use cyan, and the surfaces are black rather than navy. In
-   Ghost they follow that theme's violets. The map and the arcs keep their own
+   platform would use cyan, and the surfaces are black rather than navy. The map and the arcs keep their own
    colours (the arcs' are set in the Style Studio). Search and Directions
    (.tool-*) share the same black surface and gold button. */
 :root {
@@ -2767,15 +2716,6 @@ html[data-oi-theater] [data-map-controls] {
   --oi-raised: #141414;
   --oi-label: #8C877C;
   --tool-surface: rgba(10, 10, 10, 0.96);
-}
-body.theme-ghost {
-  --oi-alt: var(--cyan-primary);
-  --oi-alt-rgb: var(--cyan-rgb);
-  --oi-surface: var(--bg-panel);
-  --oi-solid: var(--bg-panel-solid);
-  --oi-raised: var(--bg-tertiary);
-  --oi-label: var(--text-secondary);
-  --tool-surface: var(--bg-panel-solid);
 }
 .oi-glass, .tool-glass {
   background: var(--oi-surface);
