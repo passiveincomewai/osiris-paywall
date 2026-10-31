@@ -16,6 +16,8 @@ import {
 } from "@/lib/enterprise/offer";
 import JsonLd from "@/components/JsonLd";
 import SiteFooter from "@/components/SiteFooter";
+import MicroLabel from "@/components/design/MicroLabel";
+import Button from "@/components/design/Button";
 import EnterpriseClient from "./EnterpriseClient";
 
 export const metadata = {
@@ -27,13 +29,25 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
+const ACCENT = { color: "var(--we-blue-strong)" } as const;
+
 function OfferList() {
   return (
     <ul className="mt-5 space-y-2">
       {ENTERPRISE_OFFER_FEATURES.map((f) => (
-        <li key={f} className="flex items-center gap-2.5 text-sm text-white/85">
-          <span className="w-5 h-5 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/30 flex items-center justify-center shrink-0">
-            <Check className="w-3 h-3 text-[#00E5FF]" />
+        <li
+          key={f}
+          className="flex items-center gap-2.5"
+          style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
+        >
+          <span
+            className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+            style={{
+              background: "var(--we-ink-3)",
+              border: "1px solid var(--we-line-3)",
+            }}
+          >
+            <Check className="w-3 h-3" style={ACCENT} />
           </span>
           {f}
         </li>
@@ -101,53 +115,115 @@ const faqJsonLd = {
   })),
 };
 
+const panelStyle = {
+  background: "var(--we-ink-2)",
+  border: "1px solid var(--we-line-2)",
+  borderRadius: "var(--we-radius-3)",
+} as const;
+
+const sectionTitleStyle = {
+  color: "var(--we-text-1)",
+  fontSize: "var(--we-size-title)",
+  lineHeight: "var(--we-leading-display)",
+  fontWeight: 560,
+  margin: 0,
+} as const;
+
+const bodyTextStyle = {
+  color: "var(--we-text-2)",
+  fontSize: "var(--we-size-small)",
+  lineHeight: "var(--we-leading-body)",
+} as const;
+
 export default async function EnterprisePage() {
   const a = await enterpriseAccess();
   return (
-    <div className="docs-root min-h-screen bg-[#05070d] text-white">
+    <div
+      className="docs-root min-h-screen"
+      style={{ background: "var(--we-ink-0)", color: "var(--we-text-1)" }}
+    >
       <JsonLd data={faqJsonLd} />
-      <div className="max-w-5xl mx-auto px-5 py-10 md:py-14">
-        <p className="text-xs font-bold tracking-[0.25em] text-[#00E5FF]">ENTERPRISE</p>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight mt-2">
+      <div
+        className="mx-auto w-full"
+        style={{
+          maxWidth: "var(--we-wide)",
+          paddingLeft: "var(--we-gutter)",
+          paddingRight: "var(--we-gutter)",
+          paddingTop: "var(--we-section-y)",
+          paddingBottom: "var(--we-section-y)",
+        }}
+      >
+        <MicroLabel>ENTERPRISE</MicroLabel>
+        <h1
+          className="font-[family-name:var(--we-font-display)]"
+          style={{
+            color: "var(--we-text-1)",
+            fontSize: "var(--we-size-display-2)",
+            lineHeight: "var(--we-leading-display)",
+            fontWeight: 560,
+            marginTop: "var(--we-space-4)",
+          }}
+        >
           Your cameras, on your platform
         </h1>
-        <p className="text-white/55 mt-3 max-w-2xl leading-relaxed">
+        <p
+          style={{
+            color: "var(--we-text-2)",
+            fontSize: "var(--we-size-lede)",
+            lineHeight: "var(--we-leading-body)",
+            marginTop: "var(--we-space-4)",
+            maxWidth: "var(--we-measure)",
+          }}
+        >
           Build collections from the WorldEye catalogue and publish them three ways: an
           embeddable live player for your website, a private data feed your platform can
           import, and — if you want it — API keys onto the same data.
         </p>
 
         {!a.ok ? (
-          <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
-            <p className="flex items-center gap-2 text-white/85 font-medium">
-              <Lock className="w-4 h-4 text-[#00E5FF]" /> Sign in to open your enterprise dashboard.
+          <div className="mt-10 p-6 md:p-8" style={panelStyle}>
+            <p
+              className="flex items-center gap-2 font-medium"
+              style={{ color: "var(--we-text-1)" }}
+            >
+              <Lock className="w-4 h-4" style={ACCENT} /> Sign in to open your enterprise dashboard.
             </p>
             <OfferList />
-            <Link
-              href="/signin"
-              className="inline-block mt-6 px-6 py-3 rounded-2xl bg-[#00E5FF] text-black font-bold text-sm hover:brightness-110 transition"
+            <div style={{ marginTop: "var(--we-space-6)" }}>
+              <Button href="/signin">Sign in</Button>
+            </div>
+            <p
+              className="mt-4"
+              style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
             >
-              Sign in
-            </Link>
-            <p className="text-xs text-white/40 mt-4">{ENTERPRISE_SUPPORT_LINE}</p>
+              {ENTERPRISE_SUPPORT_LINE}
+            </p>
           </div>
         ) : !a.enterprise ? (
-          <div className="mt-10 rounded-3xl border border-[#00E5FF]/25 bg-gradient-to-b from-[#00E5FF]/[0.06] to-white/[0.02] p-6 md:p-8">
-            <p className="text-white/85 font-medium">
+          <div
+            className="mt-10 p-6 md:p-8"
+            style={{ ...panelStyle, border: "1px solid var(--we-line-3)" }}
+          >
+            <p className="font-medium" style={{ color: "var(--we-text-1)" }}>
               The camera feed is part of the Enterprise plan ($999/year).
             </p>
             <OfferList />
-            <Link
-              href="/pricing"
-              className="inline-block mt-6 px-6 py-3 rounded-2xl bg-[#00E5FF] text-black font-bold text-sm hover:brightness-110 transition"
+            <div style={{ marginTop: "var(--we-space-6)" }}>
+              <Button href="/pricing">Get Enterprise</Button>
+            </div>
+            <p
+              className="flex items-start gap-2 mt-5 max-w-xl"
+              style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
             >
-              Get Enterprise
-            </Link>
-            <p className="flex items-start gap-2 text-xs text-white/50 mt-5 max-w-xl">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#00E5FF]/80 shrink-0 mt-px" />
+              <ShieldCheck className="w-3.5 h-3.5 shrink-0 mt-px" style={ACCENT} />
               <span>{ENTERPRISE_GUARANTEE_LINE}</span>
             </p>
-            <p className="text-xs text-white/40 mt-3">{ENTERPRISE_SUPPORT_LINE}</p>
+            <p
+              className="mt-3"
+              style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
+            >
+              {ENTERPRISE_SUPPORT_LINE}
+            </p>
           </div>
         ) : (
           <EnterpriseClient />
@@ -156,35 +232,45 @@ export default async function EnterprisePage() {
         {/* What the feed includes — rendered for every visitor, so the
             product is legible without an account. */}
         <div className="mt-16">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+          <h2 className="font-[family-name:var(--we-font-display)]" style={sectionTitleStyle}>
             What the Enterprise feed includes
           </h2>
           <div className="mt-8 grid sm:grid-cols-2 gap-5">
             {DELIVERY_WAYS.map((d) => (
-              <div
-                key={d.title}
-                className="rounded-3xl border border-white/10 bg-white/[0.02] p-7"
-              >
-                <d.icon className="w-7 h-7 text-[#00E5FF]" />
-                <h3 className="mt-4 font-semibold text-white/90 text-lg">{d.title}</h3>
-                <p className="mt-2 text-sm text-white/55 leading-relaxed">{d.body}</p>
+              <div key={d.title} className="p-7" style={panelStyle}>
+                <d.icon className="w-7 h-7" style={ACCENT} />
+                <h3
+                  className="mt-4 font-semibold text-lg"
+                  style={{ color: "var(--we-text-1)" }}
+                >
+                  {d.title}
+                </h3>
+                <p className="mt-2" style={bodyTextStyle}>
+                  {d.body}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Rights */}
-        <div className="mt-16 rounded-3xl border border-white/10 bg-white/[0.02] p-7 md:p-9">
-          <h2 className="flex items-center gap-2.5 text-xl md:text-2xl font-bold tracking-tight">
-            <ShieldCheck className="w-6 h-6 text-[#00E5FF]" /> Rights-cleared by source
+        <div className="mt-16 p-7 md:p-9" style={panelStyle}>
+          <h2
+            className="flex items-center gap-2.5 font-[family-name:var(--we-font-display)]"
+            style={sectionTitleStyle}
+          >
+            <ShieldCheck className="w-6 h-6" style={ACCENT} /> Rights-cleared by source
           </h2>
-          <p className="mt-3 text-white/60 leading-relaxed max-w-3xl">
+          <p
+            className="mt-3 max-w-3xl"
+            style={{ ...bodyTextStyle, fontSize: "var(--we-size-body)" }}
+          >
             A public camera is not automatically a camera you may republish. WorldEye
             tracks the redistribution terms of every source in the catalogue, and the
             Enterprise embed, feed and API only ever serve the cameras those terms
             clear — around 96% of the catalogue. Cameras from sources that do not
             allow redistribution, Windy webcams included, never reach your site. The{" "}
-            <Link href="/partners" className="text-[#00E5FF] hover:underline">
+            <Link href="/partners" className="hover:underline" style={ACCENT}>
               partners &amp; data sources directory
             </Link>{" "}
             lists where the catalogue comes from.
@@ -192,14 +278,20 @@ export default async function EnterprisePage() {
         </div>
 
         {/* Price facts */}
-        <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/60">
+        <div
+          className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3"
+          style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
+        >
           <span>
-            <span className="text-white font-semibold">$999/year</span> — billed annually
+            <span className="font-semibold" style={{ color: "var(--we-text-1)" }}>
+              $999/year
+            </span>{" "}
+            — billed annually
           </span>
           <span>No free trial on Enterprise</span>
           <span>7-day money-back guarantee on your first charge</span>
           <span>
-            <Link href="/pricing" className="text-[#00E5FF] hover:underline">
+            <Link href="/pricing" className="hover:underline" style={ACCENT}>
               Compare all plans →
             </Link>
           </span>
@@ -207,18 +299,27 @@ export default async function EnterprisePage() {
 
         {/* FAQ */}
         <div className="mt-16 max-w-3xl">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+          <h2 className="font-[family-name:var(--we-font-display)]" style={sectionTitleStyle}>
             Enterprise questions
           </h2>
           <div className="mt-8 space-y-6">
             {FAQS.map((f) => (
               <div key={f.q}>
-                <h3 className="font-semibold text-white/90">{f.q}</h3>
-                <p className="mt-1.5 text-sm text-white/55 leading-relaxed">{f.a}</p>
+                <h3 className="font-semibold" style={{ color: "var(--we-text-1)" }}>
+                  {f.q}
+                </h3>
+                <p className="mt-1.5" style={bodyTextStyle}>
+                  {f.a}
+                </p>
               </div>
             ))}
           </div>
-          <p className="text-xs text-white/40 mt-10">{ENTERPRISE_SUPPORT_LINE}</p>
+          <p
+            className="mt-10"
+            style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
+          >
+            {ENTERPRISE_SUPPORT_LINE}
+          </p>
         </div>
       </div>
       <SiteFooter />
