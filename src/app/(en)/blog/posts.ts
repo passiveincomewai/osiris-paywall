@@ -45,6 +45,7 @@ export const POSTS: BlogPost[] = [
     title: "Astronauts Complete the ISS's 100th U.S. Spacewalk, Installing a Seventh New Solar Array",
     seoTitle: "ISS Spacewalk 100 Installs 7th Array | WorldEye Blog",
     date: "2026-10-30",
+    image: "/blog/iss-spacewalk-100-seventh-solar-array.jpg",
     excerpt:
       "NASA astronaut Anil Menon and Canadian astronaut Joshua Kutryk spent 7 hours and 11 minutes outside the International Space Station on October 29, installing the seventh of eight roll-out solar arrays on the station's 100th U.S. spacewalk. One more walk, on November 5, finishes the power upgrade.",
     seoDescription:
@@ -125,6 +126,7 @@ export const POSTS: BlogPost[] = [
     title: "Super Typhoon In-fa Is Passing the Northern Mariana Islands With 145 mph Winds",
     seoTitle: "Super Typhoon In-fa Nears Marianas | WorldEye Blog",
     date: "2026-10-30",
+    image: "/blog/super-typhoon-in-fa-northern-mariana-islands.jpg",
     excerpt:
       "Typhoon In-fa is passing the northernmost Mariana Islands today with sustained winds of 145 mph. Typhoon warnings are in effect for Agrihan, Pagan and Alamagan, surf up to 18 feet is forecast on exposed reefs, and the track beyond the weekend is unusually uncertain. The October 30 advisories, in plain terms.",
     seoDescription:
@@ -293,6 +295,7 @@ export const POSTS: BlogPost[] = [
     title: "Halloween Aurora Watch: NOAA Predicts a G1 Storm for Oct 31 and Nov 1",
     seoTitle: "Halloween Aurora: G1 Storm Oct 31 & Nov 1 | WorldEye Blog",
     date: "2026-10-29",
+    image: "/blog/halloween-aurora-g1-storm-watch.jpg",
     excerpt:
       "NOAA's Space Weather Prediction Center updated its storm watch on Thursday, extending predicted G1 geomagnetic storming across Halloween night and November 1. Where the aurora may reach, and how to watch it live.",
     seoDescription:
@@ -516,6 +519,7 @@ export const POSTS: BlogPost[] = [
     title: "The 25 Most Interesting Live Webcams on Earth (Free, Streaming Right Now)",
     seoTitle: "25 Most Interesting Live Webcams on Earth | WorldEye Blog",
     date: "2026-10-28",
+    image: "/blog/most-interesting-live-webcams-on-earth.jpg",
     excerpt:
       "Ask the internet for interesting live webcams and you get forum threads full of one-off links. Here is the curated version: 25 live cameras across volcanoes, aurora skies, safari waterholes, famous crossings and one underwater doorbell for fish — every one free to watch right now.",
     seoDescription:
@@ -677,6 +681,7 @@ export const POSTS: BlogPost[] = [
     title: "NASA Retired Spot the Station — Here's How to Track the ISS and Catch It Over Your House Tonight",
     seoTitle: "Spot the Station Replacement: Track the ISS | WorldEye Blog",
     date: "2026-10-27",
+    image: "/landing/track-satellites.jpg",
     excerpt:
       "For years, NASA's Spot the Station told you when to go outside and look up. NASA retired it — and the question every space fan now asks is what replaces it. Here is the honest answer, function by function.",
     seoDescription:
@@ -808,6 +813,7 @@ export const POSTS: BlogPost[] = [
     title: "Planes Flying Over Your City Right Now: How to See Every One of Them Live",
     seoTitle: "Planes Flying Over Your City Right Now | WorldEye Blog",
     date: "2026-10-27",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "Your city's sky is not random traffic — it is a timetable drawn in arrivals, departure waves and cruising corridors. How to open the live map, read the pattern over your own streets, and know what every dot above you is doing there.",
     seoDescription:
@@ -880,6 +886,7 @@ export const POSTS: BlogPost[] = [
     title: "Watch Planes Land Live: Airport Webcams, Spotting Secrets, and the Flight Map Trick",
     seoTitle: "Watch Planes Land Live: Airport Webcams | WorldEye Blog",
     date: "2026-10-27",
+    image: "/blog/watch-planes-land-live-airport-webcams.jpg",
     excerpt:
       "Takeoff is power, but landing is theatre — and the world's airports are covered in public webcams that stream it free. The legendary spotting spots, the airport cams worth your evening, and the two-screen trick that pairs every touchdown with the flight that made it.",
     seoDescription:
@@ -945,6 +952,7 @@ export const POSTS: BlogPost[] = [
     title: "Photo Geolocation (Beta): Where Was This Photo Taken?",
     seoTitle: "Photo Geolocation: Where Was This Taken? | WorldEye Blog",
     date: "2026-10-27",
+    image: "/landing/osint-satellite.jpg",
     excerpt:
       "Upload a photo and WorldEye's new Photo Geolocation (Beta) estimates where it was taken — from EXIF GPS when the file still has it, and from the clues in the scene when it doesn't. Ranked candidates, evidence for and against, an uncertainty radius that never pretends to be a pinpoint, and your image is never stored. Free in beta, three analyses a day.",
     seoDescription:
@@ -1038,6 +1046,7 @@ export const POSTS: BlogPost[] = [
     title: "Kīlauea Episode 56: How to Watch the Next Eruption Episode Live",
     seoTitle: "Kīlauea Episode 56: How to Watch Live | WorldEye Blog",
     date: "2026-10-27",
+    image: "/blog/kilauea-episode-56-watch-live.jpg",
     excerpt:
       "Kīlauea is paused — but the USGS Hawaiian Volcano Observatory's October 27 update puts the Episode 56 fountaining window at November 1–7, already slipped a day from the first forecast. How the episode pattern works, which cameras actually show the crater, and how to be watching when it starts.",
     seoDescription:
@@ -1104,6 +1113,7 @@ export const POSTS: BlogPost[] = [
     title: "Best Free Flight Trackers in 2026 — Including the Ones That Don't Hide Military Jets",
     seoTitle: "Best Free Flight Trackers in 2026 | WorldEye Blog",
     date: "2026-10-26",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "Ask which flight tracker is best and the answers split on a question nobody mentions: what does each tracker hide? An honest comparison of Flightradar24, FlightAware, ADS-B Exchange and WorldEye — including who shows blocked and military traffic, and who cannot.",
     seoDescription:
@@ -1183,6 +1193,7 @@ export const POSTS: BlogPost[] = [
     title: "What Plane Is Flying Overhead? How to Identify It in Under a Minute",
     seoTitle: "What Plane Is Flying Overhead? | WorldEye Blog",
     date: "2026-10-26",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "You hear it before you see it: a jet crossing your neighborhood with no name. Here is the one-minute method for identifying any plane overhead — the live map, the data card, and how to read the sky when your phone is inside.",
     seoDescription:
@@ -1463,6 +1474,7 @@ export const POSTS: BlogPost[] = [
     title: "How to Track Flights Live",
     seoTitle: "How to Track Flights Live | WorldEye Blog",
     date: "2026-10-10",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "Aircraft constantly broadcast their position, altitude, and speed over ADS-B. Here's how flight tracking works, what you can actually see, and how to watch the skies for free.",
     seoDescription:
@@ -1525,6 +1537,7 @@ export const POSTS: BlogPost[] = [
     title: "74,229 Live Cameras: Watching the World in Real Time",
     seoTitle: "74,229 Live Cameras: Watching the World Live",
     date: "2026-10-10",
+    image: "/blog/world-live-cameras.jpg",
     excerpt:
       "Tens of thousands of public webcams — traffic, city squares, beaches, mountain passes — stream openly to anyone. Here's what's out there, what it's good for, and an honest note on availability.",
     seoDescription:
@@ -1594,6 +1607,7 @@ export const POSTS: BlogPost[] = [
     title: "How to Check Road Conditions with Live Traffic Cameras",
     seoTitle: "Checking Road Conditions with Live Traffic Cameras | WorldEye Blog",
     date: "2026-10-11",
+    image: "/blog/checking-road-conditions-live-traffic-cameras.jpg",
     excerpt:
       "Before you drive — above all in winter storm season — look at the road itself. Where to find live traffic cameras near you, how to read a highway feed for snow, ice, and queues, and the pre-trip routine that beats any forecast.",
     seoDescription:
@@ -1770,6 +1784,7 @@ export const POSTS: BlogPost[] = [
     title: "How Live Flight Tracking Works",
     seoTitle: "How Live Flight Tracking Works | WorldEye Blog",
     date: "2026-10-11",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "Airliners broadcast their position twice a second on an open radio frequency. Here's how ADS-B works, what flight data shows, and what live maps can't see.",
     seoDescription:
@@ -1935,6 +1950,7 @@ export const POSTS: BlogPost[] = [
     title: "Earthquake Tracking Explained",
     seoTitle: "Earthquake Tracking Explained | WorldEye Blog",
     date: "2026-10-11",
+    image: "/landing/hazard-weather.jpg",
     excerpt:
       "How seismometers catch quakes in seconds, what magnitude means versus intensity, and how to read a live earthquake map — plus preparedness basics that matter.",
     seoDescription:
@@ -2014,6 +2030,7 @@ export const POSTS: BlogPost[] = [
     title: "AIS Ship Tracking Explained: How to Follow Any Vessel Live",
     seoTitle: "AIS Ship Tracking Explained | WorldEye Blog",
     date: "2026-10-11",
+    image: "/landing/osint-maritime.jpg",
     excerpt:
       "Commercial ships broadcast their identity, position, and destination for anyone to receive. Here's how AIS vessel tracking works, what the data actually tells you, and how to follow ships live for free.",
     seoDescription:
@@ -2103,6 +2120,7 @@ export const POSTS: BlogPost[] = [
     title: "How to Read a Weather Radar Like a Meteorologist",
     seoTitle: "How to Read a Weather Radar | WorldEye Blog",
     date: "2026-10-11",
+    image: "/blog/how-to-read-weather-radar.jpg",
     excerpt:
       "Those green, yellow, and red blobs actually tell a precise story — if you know the language. A practical guide to reading weather radar: reflectivity, velocity, storm structure, and the mistakes beginners make.",
     seoDescription:
@@ -2194,6 +2212,7 @@ export const POSTS: BlogPost[] = [
     title: "Wildfire Tracking 101: Maps, Smoke, and Staying Safe",
     seoTitle: "Wildfire Tracking 101: Maps & Safety | WorldEye Blog",
     date: "2026-10-11",
+    image: "/landing/hazard-weather.jpg",
     excerpt:
       "How wildfire maps work — perimeters, hotspots, smoke plumes — and how to use them wisely during fire season. What the data shows, what it can't, and when to trust official evacuation orders above all.",
     seoDescription:
@@ -2285,6 +2304,7 @@ export const POSTS: BlogPost[] = [
     title: "The Complete Guide to Plane Spotting with Live Flight Data",
     seoTitle: "Plane Spotting with Live Flight Data | WorldEye Blog",
     date: "2026-10-11",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "Plane spotting used to mean a radio scanner and luck. Now live ADS-B data tells you exactly what's overhead. How to identify aircraft, find the best spotting locations, and read the sky like a pro.",
     seoDescription:
@@ -2655,6 +2675,7 @@ export const POSTS: BlogPost[] = [
     title: "Best Beach Webcams to Watch Live",
     seoTitle: "Best Beach Webcams to Watch Live | WorldEye Blog",
     date: "2026-10-17",
+    image: "/blog/best-beach-webcams.jpg",
     excerpt:
       "Surf height, crowd size, cloud cover, the color of the water at dawn — beach webcams show the coast as it really is today. A guide to the feeds worth watching and how to read them.",
     seoDescription:
@@ -2740,6 +2761,7 @@ export const POSTS: BlogPost[] = [
     seoTitle: "Best Ski Webcams Before You Drive Up | WorldEye Blog",
     date: "2026-10-17",
     updated: "2026-10-20",
+    image: "/blog/best-ski-webcams.jpg",
     excerpt:
       "A snow report is a summary; a summit webcam is the mountain itself. How to use summit, base, and access-road cameras to judge real snow, wind, and lift lines before you commit to the drive.",
     seoDescription:
@@ -2825,6 +2847,7 @@ export const POSTS: BlogPost[] = [
     title: "How to Watch the ISS Live: Passes, Cameras and Tracking",
     seoTitle: "How to Watch the ISS Live | WorldEye Blog",
     date: "2026-10-17",
+    image: "/landing/track-satellites.jpg",
     excerpt:
       "The space station is the brightest human-made object in the sky, and you can watch it with your own eyes — no telescope needed. How passes work, why dawn and dusk are magic, and what its cameras show.",
     seoDescription:
@@ -2910,6 +2933,7 @@ export const POSTS: BlogPost[] = [
     seoTitle: "Northern Lights on Live Webcams | WorldEye Blog",
     date: "2026-10-17",
     updated: "2026-10-27",
+    image: "/blog/northern-lights-live-webcams.jpg",
     excerpt:
       "You do not have to fly to the Arctic to see the aurora — on the right night, northern webcams catch it for you. What it actually takes: darkness, clear skies, and an active sky, plus an honest look at the limits.",
     seoDescription:
@@ -3279,6 +3303,7 @@ export const POSTS: BlogPost[] = [
     title: "Follow a Flight Live: Chase Cams, Telemetry and Ground Cameras",
     seoTitle: "Follow a Flight Live on the Map | WorldEye Blog",
     date: "2026-10-18",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "Pick any aircraft on the globe and ride along with it: chase, forward and orbit cameras, a telemetry readout that admits it's interpolated, and real cameras on the ground near the plane. How flight following works on WorldEye.",
     seoDescription:
@@ -3485,6 +3510,7 @@ export const POSTS: BlogPost[] = [
     title: "Peak Fall Color Is Moving South: Check It Live Before You Drive",
     seoTitle: "Fall Foliage 2026: Check Peak Color Live | WorldEye Blog",
     date: "2026-10-21",
+    image: "/blog/fall-foliage-live-cameras.jpg",
     excerpt:
       "The 2026 foliage wave has left New England and is peaking now across the Appalachians and Mid-Atlantic. Forecast maps estimate; live cameras show you the actual trees. Here's how to check peak color before you commit to the drive.",
     seoDescription:
@@ -3554,6 +3580,7 @@ export const POSTS: BlogPost[] = [
     title: "Thanksgiving Flight Tracking: A Guide to the Busiest Travel Week of the Year",
     seoTitle: "Thanksgiving Flight Tracking Guide | WorldEye Blog",
     date: "2026-10-21",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "Thanksgiving week compresses the year's worst travel days into one long weekend — and Sunday, November 29 is set to be the busiest air travel day of 2026. Here's how to track flights, read delays, and stay calm with live data.",
     seoDescription:
@@ -3692,6 +3719,7 @@ export const POSTS: BlogPost[] = [
     title: "Kīlauea Erupts in Episodes: How to Watch for the Next One Live",
     seoTitle: "Kīlauea Eruption Watch 2026 | WorldEye Blog",
     date: "2026-10-20",
+    image: "/blog/kilauea-eruption-watch-live.jpg",
     excerpt:
       "Kīlauea's summit eruption has settled into a rhythm of lava-fountain episodes — the 55th threw lava 700 feet into the air on October 17, and the next is forecast for late October. Here's how the episodes work and how to watch the volcano's signals live.",
     seoDescription:
@@ -4234,6 +4262,7 @@ export const POSTS: BlogPost[] = [
     title: "Thousands of Planes at Once: Flight Tracking, Fixed and Multiplied",
     seoTitle: "Flight Tracking at Full Scale | WorldEye Blog",
     date: "2026-10-20",
+    image: "/landing/track-flights.jpg",
     excerpt:
       "A data-format change upstream and our own thinning had quietly shrunk WorldEye's sky — at one point to zero commercial aircraft. Both are fixed: the globe now renders every aircraft it receives.",
     seoDescription:
