@@ -586,7 +586,10 @@ const SEO_PAGES_COMPARE = [
 /**
  * Transit SEO pages (2026-10-26): the /transit hub family generated
  * from the agency registry (lib/transit/seo) — national hub, state +
- * agency hubs, and one URL per route. Deliberately NO stop URLs:
+ * agency hubs, and one URL per INDEXABLE route only (R17 flagship
+ * policy, 2026-10-31: transitPathsForAgency applies
+ * routeIndexDecision, and non-flagship route pages carry
+ * noindex,follow — a sitemap must not list them). Deliberately NO stop URLs:
  * stop pages were an owner-rejected thin-page risk; stops live on
  * the route pages. lastModified is the GTFS feed's own version date.
  * A feed that fails to load at sitemap time omits its URLs rather
