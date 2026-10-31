@@ -4,7 +4,7 @@
 // the message in the admin inbox (/admin/contact) — nothing is emailed.
 // States are honest: success only shows after the server confirms the
 // message was stored, and errors surface the server's own message.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CONTACT_TOPICS, CONTACT_MESSAGE_MAX } from "@/lib/contact";
 
 type Phase = "idle" | "sending" | "sent" | "error";
@@ -20,6 +20,18 @@ export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
+
+  /* R54 (site-audit Wave 3): honour ?topic=<value> preselects from
+     inbound links (e.g. /research-access → /contact?topic=research).
+     Read from window.location on mount — no useSearchParams, so no
+     extra Suspense boundary — and only values in CONTACT_TOPICS are
+     accepted; anything else leaves the "general" default untouched. */
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get("topic");
+    if (wanted && CONTACT_TOPICS.some((t) => t.value === wanted)) {
+      setTopic(wanted);
+    }
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();

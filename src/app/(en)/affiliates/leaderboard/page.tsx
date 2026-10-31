@@ -3,6 +3,10 @@ import LeaderboardClient from "./LeaderboardClient";
 export const metadata = {
   title: "Affiliate Leaderboard — WorldEye Affiliates",
   description: "Top WorldEye affiliates by paying referrals, revenue, XP, and network growth. Rankings from verified sales only.",
+  // R49 (site-audit Wave 3): the public board stays out of the index
+  // while it has no established ranked entries to show — follow stays
+  // on so the affiliate section's other pages keep their link equity.
+  robots: { index: false, follow: true },
   // Self-canonical: without this, the page inherits the root layout's
   // canonical (the homepage) and Google treats it as a copy of /.
   alternates: { canonical: "https://worldeye.app/affiliates/leaderboard" },

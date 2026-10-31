@@ -21,7 +21,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = getPost(slug);
   if (!post) return {};
   return {
-    title: post.seoTitle,
+    // R64 (site-audit Wave 3): most seoTitle values in posts.ts end in
+    // "| WorldEye Blog" (or "| WorldEye"), and the root layout template
+    // appends "| WorldEye" again — strip the baked-in suffix here so
+    // every post title ends with a single " | WorldEye". posts.ts data
+    // is untouched (other consumers read seoTitle as-is).
+    title: post.seoTitle.replace(/\s*\|\s*WorldEye( Blog)?\s*$/, ""),
     description: post.seoDescription,
     alternates: {
       canonical: `/blog/${post.slug}`,

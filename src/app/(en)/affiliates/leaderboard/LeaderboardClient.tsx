@@ -122,6 +122,20 @@ export default function LeaderboardClient({ demo }: { demo?: { boards: Record<st
     return Array.isArray(list) ? list : [];
   }, [data, tab]);
 
+  /* R49 (site-audit Wave 3): when NO board has any ranked entry, the
+     public page renders one honest "no ranked affiliates yet" state
+     instead of five empty tabs. Demo mode always carries sample
+     boards, so it never hits this state; a signed-in affiliate's own
+     standing/opt-out UI above is unaffected. Entries are never seeded
+     — the board appears only when real rankings exist. */
+  const allBoardsEmpty =
+    !isDemo &&
+    data !== null &&
+    TABS.every((t) => {
+      const list = data[t.field];
+      return !Array.isArray(list) || list.length === 0;
+    });
+
   const toggleOptOut = async () => {
     if (optOut === null) return;
     const next = !optOut;
@@ -167,6 +181,7 @@ export default function LeaderboardClient({ demo }: { demo?: { boards: Record<st
         </div>
       )}
 
+      {!allBoardsEmpty && (
       <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
         {TABS.map((t) => (
           <button
@@ -183,6 +198,7 @@ export default function LeaderboardClient({ demo }: { demo?: { boards: Record<st
           </button>
         ))}
       </div>
+      )}
 
       {mine && (
         <div className="mb-5 rounded-2xl border border-cyan-400/30 bg-cyan-400/[0.05] px-4 py-3 text-sm text-slate-300">
@@ -203,9 +219,16 @@ export default function LeaderboardClient({ demo }: { demo?: { boards: Record<st
         </div>
       )}
 
-      <div className="text-[11px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-3">{activeHint}</div>
+      {!allBoardsEmpty && (
+        <div className="text-[11px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-3">{activeHint}</div>
+      )}
 
-      {error ? (
+      {allBoardsEmpty ? (
+        <EmptyState
+          title="No ranked affiliates yet"
+          body="No affiliate has recorded a verified subscription sale yet, so there is no board to show. Rankings appear here as soon as real, verified sales land — this page is never seeded with placeholder entries."
+        />
+      ) : error ? (
         <EmptyState title="Couldn't load the leaderboard" body={error} />
       ) : !data ? (
         <div className="space-y-2">

@@ -18,6 +18,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import TrackerClusterLinks from "@/components/TrackerClusterLinks";
+import SatellitesNowBoard from "@/components/trackers/SatellitesNowBoard";
 
 export const metadata: Metadata = {
   title: "ISS Live — Track the Space Station on a 3D Globe (Free)",
@@ -187,26 +188,17 @@ export default function SpaceStationTrackerPage() {
           </div>
         </div>
 
-        {/* Direct answer — what this page tracks (AEO, SEO Programme Phase 6).
-            Every figure is this page's own long-standing copy (FAQ below):
-            ~400 km altitude, ~28,000 km/h, ~90-minute orbit, sixteen
-            sunrises a day. The scope statement is the point: this page is
-            ISS-only; the full catalogue lives on /satellite-tracker. */}
-        <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#aab2ff]/25 bg-[#aab2ff]/[0.04] p-8 md:p-10">
-          <h2 className="text-xl md:text-2xl font-bold">What this page tracks</h2>
-          <p className="mt-3 text-white/60 leading-relaxed">
-            One spacecraft: the International Space Station. The ISS orbits
-            roughly 400 km above Earth at about 28,000 km/h, circling the
-            planet roughly every 90 minutes — about sixteen sunrises a day
-            for its crew. This page follows the station itself: its live
-            position, ground track and day/night passes. For the full tracked
-            catalogue — Starlink trains, weather satellites and thousands
-            more objects — see the{" "}
-            <Link href="/satellite-tracker" className="text-[#aab2ff] hover:underline">
-              satellite tracker
-            </Link>
-            .
-          </p>
+        {/* R58 (site-audit Wave 3): the live ISS position, on this page —
+            the same SatellitesNowBoard the satellite tracker runs (the
+            site's own /api/satellites feed, propagated from current TLE
+            data; the board lists the ISS first among its notable
+            objects). Placed like /satellite-tracker's Happening-now
+            section, directly under the hero. */}
+        <div className="mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Where the ISS is <span className="text-[#aab2ff]">right now</span>
+          </h2>
+          <SatellitesNowBoard />
         </div>
 
         {/* What you get */}
@@ -370,6 +362,22 @@ export default function SpaceStationTrackerPage() {
         />
 
         <TrackerClusterLinks current="/space-station-tracker" />
+
+        {/* R60 (site-audit Wave 3): tracker ↔ tools interlinking. Slugs
+            verified against src/app/(en)/tools/ — there is no
+            /tools/satellite-tracker; these are the intent-matched tool
+            pages for a station-tracking reader. */}
+        <section aria-label="WorldEye tools for trackers" className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Tools for <span className="text-[#D4AF37]">trackers</span>
+          </h2>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link href="/tools" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">All WorldEye tools</Link>
+            <Link href="/tools/self-track" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">Self Track — your position on the same globe</Link>
+            <Link href="/tools/camera-distance" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">Camera Distance Finder</Link>
+            <Link href="/tools/photo-geolocation" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">Photo Geolocation</Link>
+          </div>
+        </section>
       </div>
 
       <SiteFooter />

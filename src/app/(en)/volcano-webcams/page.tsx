@@ -20,19 +20,39 @@ import TrialCtaSection from "@/components/TrialCtaSection";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
 import { VOLCANOES } from "@/lib/volcanoes";
 
-export const metadata: Metadata = {
-  title: "Volcano Webcams — Live Volcano Cameras Worldwide",
-  description:
-    "Live public cameras in the world's volcanic regions — Kīlauea (Episode 56 expected Oct 31–Nov 6), Iceland, Etna, Japan and Indonesia — on the WorldEye map, with eruption-status sources. Free, no signup.",
-  alternates: { canonical: `${BASE}/volcano-webcams` },
-  openGraph: {
+/* R48 (site-audit Wave 3): the Episode-56 forecast is date-boxed.
+   The USGS HVO forecast window cited on this page is October 31 –
+   November 6, 2026 (daily update of October 26, 2026). While today
+   is on or before 2026-11-07 the page renders the forecast as a live
+   window; after 2026-11-07 every Episode-56 surface renders the
+   passed-window state instead. The decision is computed server-side
+   at render (no client clock), and the route revalidates hourly so
+   the flip happens without a redeploy. */
+export const revalidate = 3600;
+
+const EP56_PASSED_AFTER = "2026-11-07";
+
+function ep56WindowPassed(now: Date = new Date()): boolean {
+  return now.toISOString().slice(0, 10) > EP56_PASSED_AFTER;
+}
+
+export function generateMetadata(): Metadata {
+  const passed = ep56WindowPassed();
+  return {
     title: "Volcano Webcams — Live Volcano Cameras Worldwide",
-    description:
-      "Public cameras across the world's volcanic regions, plotted on one map. Free on WorldEye.",
-    url: "/volcano-webcams",
-    type: "website",
-  },
-};
+    description: passed
+      ? "Live public cameras in the world's volcanic regions — Kīlauea (the Episode 56 forecast window, Oct 31–Nov 6, has passed; latest status via USGS), Iceland, Etna, Japan and Indonesia — on the WorldEye map, with eruption-status sources. Free, no signup."
+      : "Live public cameras in the world's volcanic regions — Kīlauea (Episode 56 expected Oct 31–Nov 6), Iceland, Etna, Japan and Indonesia — on the WorldEye map, with eruption-status sources. Free, no signup.",
+    alternates: { canonical: `${BASE}/volcano-webcams` },
+    openGraph: {
+      title: "Volcano Webcams — Live Volcano Cameras Worldwide",
+      description:
+        "Public cameras across the world's volcanic regions, plotted on one map. Free on WorldEye.",
+      url: "/volcano-webcams",
+      type: "website",
+    },
+  };
+}
 
 const INTRO = [
   "Volcanoes are the rare spectacle that runs on geological time and erupts on human time. Between the two, the world's observatories and public agencies keep cameras pointed at craters, calderas and lava fields around the clock — and many of those feeds are public. WorldEye's directory maps public cameras across volcanic regions — Hawaii, Iceland, Italy, Japan, Indonesia, New Zealand and more — on the same globe as its earthquake and weather layers, so the mountain, its seismic neighborhood and its weather are one view.",
@@ -194,10 +214,35 @@ export default async function VolcanoWebcamsPage() {
   const kilauea = counts.get("kilauea") ?? 0;
   const vesuvius = counts.get("vesuvius") ?? 0;
 
+  /* R48: server-side date gate for the Episode-56 forecast surfaces. */
+  const ep56Passed = ep56WindowPassed();
+  const intro = ep56Passed
+    ? INTRO.map((p, i) =>
+        i === 1
+          ? "The live context right now is Hawaii. Kīlauea has been erupting episodically at its summit since December 23, 2024 — short, dramatic lava-fountaining episodes inside Halemaʻumaʻu crater, separated by pauses. The 55th episode fired on October 17, 2026, and the USGS Hawaiian Volcano Observatory's forecast window for Episode 56 was October 31 – November 6 — that forecast window has passed, so check the observatory's daily update (linked in the Episode 56 section below) for the latest episode and status. For Kīlauea specifically, the observatory's own webcams and eruption updates are the canonical source; the cameras in this directory are the wider public network around volcanic regions, and eruption status should always be confirmed with the observatory responsible for the volcano."
+          : p,
+      )
+    : INTRO;
+  const faqs = ep56Passed
+    ? FAQS.map((f) => {
+        if (f.q === "Which volcano is erupting right now?")
+          return {
+            ...f,
+            a: "Eruption status changes daily and belongs to the observatories, not to a directory: check the USGS (for US volcanoes), the Icelandic Met Office, Italy's INGV, or Japan's JMA for the volcano you care about. As of late October 2026, the headline event is Kīlauea in Hawaii, erupting episodically at its summit since December 2024 — its 55th fountaining episode occurred on October 17, 2026, and Episode 56 was forecast for the October 31 – November 6 window, which has now passed; the USGS Kīlauea page carries the latest episode count and status.",
+          };
+        if (f.q === "When is Kīlauea's Episode 56 expected?")
+          return {
+            ...f,
+            a: "The USGS Hawaiian Volcano Observatory's daily update of October 26, 2026 put the forecast window for Episode 56 fountaining at October 31 – November 6, 2026 — an expected window, not a scheduled time. That forecast window has passed; the observatory's daily update is the source for what happened in it and what is expected next.",
+          };
+        return f;
+      })
+    : FAQS;
+
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <FaqJsonLd faqs={FAQS} />
+      <FaqJsonLd faqs={faqs} />
       <Breadcrumb
         trail={[
           { label: "Home", href: "/" },
@@ -211,12 +256,14 @@ export default async function VolcanoWebcamsPage() {
       />
       <StatRow
         stats={[
-          { value: "Oct 31–Nov 6", label: "Kīlauea Episode 56 expected window" },
+          ep56Passed
+            ? { value: "Oct 31–Nov 6", label: "Kīlauea Episode 56 forecast window — passed; latest from USGS" }
+            : { value: "Oct 31–Nov 6", label: "Kīlauea Episode 56 expected window" },
           { value: fmt(kilauea), label: "cameras within 50 km of Kīlauea" },
           { value: fmt(vesuvius), label: "cameras around Vesuvius & Naples" },
         ]}
       />
-      <Intro paragraphs={INTRO} />
+      <Intro paragraphs={intro} />
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-3">Volcanoes with their own page</h2>
@@ -248,18 +295,32 @@ export default async function VolcanoWebcamsPage() {
 
       <section className="mt-12 rounded-2xl border border-[#D4AF37]/40 bg-[#D4AF37]/[0.05] p-6 md:p-7 max-w-3xl mx-auto">
         <h2 className="text-lg md:text-xl font-bold">
-          Kīlauea Episode 56 — expected October 31 – November 6
+          {ep56Passed
+            ? "Kīlauea Episode 56 — the forecast window has passed"
+            : "Kīlauea Episode 56 — expected October 31 – November 6"}
         </h2>
         <div className="mt-3 space-y-3 text-sm text-white/65 leading-relaxed">
-          <p>
-            The Halemaʻumaʻu summit eruption is <strong className="text-white/85">paused</strong> —
-            Episode 55&apos;s lava fountains, which reached about 720 feet, ended on
-            October 17, 2026. The USGS Hawaiian Volcano Observatory&apos;s daily update
-            of October 26 reports summit re-inflation plateauing and forecasts the{" "}
-            <strong className="text-white/85">Episode 56 fountaining window as October 31 – November 6</strong> —
-            an expected window that moves with the mountain, not a scheduled start.
-            The volcano alert level is ADVISORY, aviation colour code YELLOW.
-          </p>
+          {ep56Passed ? (
+            <p>
+              The forecast window (Oct 31 – Nov 6) has passed — latest from USGS.
+              The USGS Hawaiian Volcano Observatory&apos;s daily update of October 26
+              had forecast the{" "}
+              <strong className="text-white/85">Episode 56 fountaining window as October 31 – November 6</strong>,
+              after Episode 55&apos;s lava fountains (which reached about 720 feet) ended on
+              October 17, 2026. What the mountain did in and after that window — and what
+              is expected next — is in the observatory&apos;s daily update, linked below.
+            </p>
+          ) : (
+            <p>
+              The Halemaʻumaʻu summit eruption is <strong className="text-white/85">paused</strong> —
+              Episode 55&apos;s lava fountains, which reached about 720 feet, ended on
+              October 17, 2026. The USGS Hawaiian Volcano Observatory&apos;s daily update
+              of October 26 reports summit re-inflation plateauing and forecasts the{" "}
+              <strong className="text-white/85">Episode 56 fountaining window as October 31 – November 6</strong> —
+              an expected window that moves with the mountain, not a scheduled start.
+              The volcano alert level is ADVISORY, aviation colour code YELLOW.
+            </p>
+          )}
           <p>
             When fountaining resumes, the observatory&apos;s own summit webcams are the
             canonical view; the Kīlauea wall directly below is the island around the
@@ -331,7 +392,7 @@ export default async function VolcanoWebcamsPage() {
         ]}
       />
 
-      <FaqSection title="Volcano webcams — FAQ" faqs={FAQS} />
+      <FaqSection title="Volcano webcams — FAQ" faqs={faqs} />
 
       <RelatedLinks
         title="More live Earth"

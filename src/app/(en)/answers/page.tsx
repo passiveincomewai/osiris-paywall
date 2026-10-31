@@ -20,7 +20,11 @@ import {
 } from "@/lib/voice-questions";
 
 export const metadata: Metadata = {
-  title: "Live Camera Questions, Answered | WorldEye",
+  // R64 (site-audit Wave 3): no baked-in brand suffix — the root layout
+  // template ("%s | WorldEye") adds it, so baking it in doubled it.
+  // The OpenGraph title below keeps its single explicit suffix, as
+  // social tags don't pass through the layout template.
+  title: "Live Camera Questions, Answered",
   description:
     "Straight answers to the questions people ask about live cameras: how many there are, where to watch them, traffic and weather checks, flight tracking, and what WorldEye costs.",
   alternates: { canonical: `${BASE}/answers` },

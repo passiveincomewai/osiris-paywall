@@ -270,15 +270,12 @@ export default function ResearchAccessPage() {
           </h2>
           <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-8 max-w-3xl">
             <p className="text-sm text-white/60 leading-relaxed">
-              Email{" "}
-              <a href="mailto:passiveincomewai@gmail.com" className="text-[#00E5FF] hover:underline">
-                passiveincomewai@gmail.com
-              </a>{" "}
-              — or use the{" "}
-              <Link href="/contact" className="text-[#00E5FF] hover:underline">contact page</Link>{" "}
-              — with the subject line{" "}
-              <span className="font-mono text-white/80">“Research access — &lt;your institution&gt;”</span>{" "}
-              and a short outline covering:
+              Send it through the{" "}
+              <Link href="/contact?topic=research" className="text-[#00E5FF] hover:underline font-semibold">
+                contact form
+              </Link>{" "}
+              — choose <span className="text-white/85 font-medium">“Research access”</span> as
+              the topic — and include these in your message:
             </p>
             <ul className="mt-4 space-y-2">
               {REQUEST_OUTLINE.map((t) => (
@@ -290,6 +287,13 @@ export default function ResearchAccessPage() {
                 </li>
               ))}
             </ul>
+            <p className="text-sm text-white/45 mt-5 leading-relaxed">
+              Prefer email? Write to{" "}
+              <a href="mailto:passiveincomewai@gmail.com" className="text-[#00E5FF] hover:underline">
+                passiveincomewai@gmail.com
+              </a>{" "}
+              with the same outline — the contact form above is the faster route.
+            </p>
             <p className="text-sm text-white/45 mt-5 leading-relaxed">
               Requests are reviewed individually. Submitting a request does not guarantee
               access, and no education pricing, quota or response time is published — what we

@@ -28,7 +28,6 @@ import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
 import { isConsolidatedCountry } from "@/lib/indexation-gates";
 import { withDerivedCities } from "@/lib/us-places";
 import { US_STATE_META } from "@/lib/us-states";
-import VoiceQA from "@/components/seo/VoiceQA";
 import {
   cityPageHrefForArea,
   countryAnswers,
@@ -664,6 +663,57 @@ export default async function CountryPage({
         </div>
         <p className="text-center text-xs text-white/30 mt-4">Camera index last updated {updated}.</p>
 
+        {/* R47 (site-audit Wave 3): thin-network routing for India,
+            directly under the hero. Every number/name below is computed
+            from this page's own data (src/data/camera-countries.json via
+            `c` and the region sibling list) — India has 4 cameras in
+            Hyderabad, Mount Abu, Nanded and Suja today. */}
+        {slug === "india" && region && (
+          <section className="mt-10 max-w-3xl mx-auto rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/[0.04] p-5 md:p-6">
+            <h2 className="font-semibold text-white/90">India coverage is small today</h2>
+            <p className="text-sm text-white/60 leading-relaxed mt-2">
+              WorldEye&apos;s index holds just {plural(c.count, "live camera")} in India —
+              across {c.topCities.map((t) => t.name).join(", ")}. Rather than stop here,
+              head to where the cameras in Asia actually are:
+            </p>
+            <ul className="mt-4 grid sm:grid-cols-2 gap-3">
+              {region.siblings.slice(0, 4).map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={`/cameras/countries/${s.slug}`}
+                    className="block rounded-xl border border-white/10 bg-white/[0.03] p-3.5 hover:bg-white/[0.05] transition"
+                  >
+                    <span className="font-semibold text-sm">{s.name}</span>
+                    <span className="block text-xs text-white/45 mt-0.5">
+                      {plural(s.count, "live camera")}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="text-sm text-white/50 mt-4">
+              {region.hub && (
+                <>
+                  Browse the region on the{" "}
+                  <Link href={region.hub.href} className="text-[#00E5FF] hover:underline">
+                    {region.hub.label}
+                  </Link>{" "}
+                  page, or open the{" "}
+                </>
+              )}
+              <Link href="/cameras/countries" className="text-[#00E5FF] hover:underline">
+                full Asia and world country index
+              </Link>{" "}
+              to pick a country by camera count. Know a public Indian camera we should
+              index?{" "}
+              <Link href="/contact?topic=general" className="text-[#00E5FF] hover:underline">
+                Send us feedback
+              </Link>
+              .
+            </p>
+          </section>
+        )}
+
         {/* Intro */}
         <div className="mt-10 space-y-4 text-white/70 leading-relaxed max-w-3xl mx-auto">
           {intro.map((p, i) => (
@@ -872,11 +922,15 @@ export default async function CountryPage({
             renders only when the lib's min-3 gate passed. */}
         <RelatedSearches placeName={c.name} suggestions={relatedSearches} />
 
-        {/* FAQ */}
+        {/* FAQ — R45 (site-audit Wave 3): ONE FAQ surface. This section
+            renders the merged list (template FAQs + surviving
+            "Questions people ask" entries) — the same list the single
+            FAQPage schema above carries — instead of a second VoiceQA
+            block repeating it. */}
         <section className="mt-12">
           <h2 className="text-xl md:text-2xl font-bold mb-5">{c.name} cameras — FAQ</h2>
           <div className="space-y-3">
-            {faqs.map((f, i) => (
+            {placeMerged.merged.map((f, i) => (
               <details
                 key={i}
                 className="group rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden"
@@ -890,12 +944,6 @@ export default async function CountryPage({
             ))}
           </div>
         </section>
-
-        {/* Questions people ask — data-bound entries, merged into the
-            single FAQPage above (survivors only, so visible == schema) */}
-        {placeMerged.surviving.length > 0 && (
-          <VoiceQA entries={placeMerged.surviving} />
-        )}
 
         {/* More cameras in the region — real sibling countries, real counts */}
         {region && region.siblings.length > 0 && (
@@ -935,18 +983,6 @@ export default async function CountryPage({
             )}
           </section>
         )}
-
-        {/* Dataset citation (SEO Programme Phase 4): the counts on this
-            page are the indexed catalogue's; the Index is where they
-            are published as a dated, downloadable dataset. */}
-        <p className="mt-12 text-sm text-white/50 max-w-3xl">
-          Country counts on this page come from the indexed catalogue. The{" "}
-          <Link href="/live-camera-index" className="text-[#00E5FF] hover:underline">
-            Live Camera Index
-          </Link>{" "}
-          publishes the dated dataset behind them — served vs indexed counts
-          for every country, free to download and cite.
-        </p>
 
         <TrialCtaSection utmSource="cameras-country" />
 

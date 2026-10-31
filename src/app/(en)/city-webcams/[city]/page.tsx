@@ -63,7 +63,6 @@ import {
   type Sample,
   type Faq,
 } from "@/components/directory-page";
-import VoiceQA from "@/components/seo/VoiceQA";
 import { cityAnswers, mergePlaceFaqs } from "@/lib/place-answers";
 import CurrentStatus from "@/components/CurrentStatus";
 import SaveLocationButton from "@/components/SaveLocationButton";
@@ -1898,10 +1897,11 @@ export default async function CityWebcamPage({
           renders only when the lib's min-3 gate passed. */}
       <RelatedSearches placeName={c.name} suggestions={relatedSearches} />
       <HowTo title={c.howtoTitle} steps={c.howto} />
-      <FaqSection title={c.faqTitle} faqs={displayFaqs} />
-      {placeMerged.surviving.length > 0 && (
-        <VoiceQA entries={placeMerged.surviving} />
-      )}
+      {/* R45 (site-audit Wave 3): ONE FAQ surface. The merged list
+          (template FAQs + surviving "Questions people ask" entries) is
+          rendered here once — the same list the FAQPage schema above
+          carries — instead of a second VoiceQA block repeating it. */}
+      <FaqSection title={c.faqTitle} faqs={placeMerged.merged} />
       <RelatedLinks title="More city webcam indexes" links={relatedLinks} />
       <RelatedLinks
         title="Guides"

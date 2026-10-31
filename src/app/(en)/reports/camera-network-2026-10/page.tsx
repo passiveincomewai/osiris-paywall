@@ -151,7 +151,11 @@ const FORMAT_LABELS: Record<string, string> = {
 };
 
 export const metadata: Metadata = {
-  title: "Camera Network Report — October 2026 | WorldEye",
+  // R64 (site-audit Wave 3): no baked-in brand suffix — the root layout
+  // template ("%s | WorldEye") adds it, so baking it in doubled it.
+  // The OpenGraph title below keeps its single explicit suffix, as
+  // social tags don't pass through the layout template.
+  title: "Camera Network Report — October 2026",
   description: `The first monthly WorldEye Camera Network Report, October 2026: ${fmt(D.headlineLiveCameras)} live cameras, ${fmt(C.totalRecords)} catalogue records across ${C.countries} countries and ${C.distinctSources} publishing sources — country, region, US state, publisher and feed-format breakdowns, computed from the catalogue and free to cite.`,
   alternates: { canonical: PAGE_URL },
   openGraph: {

@@ -543,6 +543,22 @@ export default function SatelliteTrackerPage() {
 
         <TrackerClusterLinks current="/satellite-tracker" />
 
+        {/* R60 (site-audit Wave 3): tracker ↔ tools interlinking. Slugs
+            verified against src/app/(en)/tools/ — there is no
+            /tools/satellite-tracker; these are the intent-matched tool
+            pages for a satellite-tracking reader. */}
+        <section aria-label="WorldEye tools for trackers" className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-center">
+            Tools for <span className="text-[#D4AF37]">trackers</span>
+          </h2>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link href="/tools" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">All WorldEye tools</Link>
+            <Link href="/tools/self-track" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">Self Track — your position on the same globe</Link>
+            <Link href="/tools/camera-distance" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">Camera Distance Finder</Link>
+            <Link href="/tools/photo-geolocation" className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition">Photo Geolocation</Link>
+          </div>
+        </section>
+
         {/* Trust */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/35">
           <span className="flex items-center gap-1.5">

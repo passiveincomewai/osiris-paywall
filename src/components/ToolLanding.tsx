@@ -24,6 +24,9 @@ import EmailCaptureCard from "@/components/EmailCaptureCard";
  * the structure, honesty furniture and conversion path identical across the
  * family so no page can drift into overclaiming.
  */
+/** Tool slugs whose readers are tracker-adjacent (R60, Wave 3). */
+const TRACKER_ADJACENT_TOOL_SLUGS = new Set(["self-track"]);
+
 export interface ToolLandingConfig {
   slug: string;
   name: string;
@@ -155,6 +158,33 @@ export default function ToolLanding(cfg: ToolLandingConfig) {
 
       <FaqSection title={cfg.faqTitle} faqs={cfg.faqs} />
       <RelatedLinks title="Keep exploring" links={cfg.related} />
+      {/* R60 (site-audit Wave 3): reciprocal tool → tracker links, only
+          for tracker-adjacent tools. Today that is Self Track alone —
+          it puts the reader on the same globe the trackers draw, so
+          the satellite/ISS/flight trackers are its genuine next step.
+          Every other tool keeps exactly its own related list. */}
+      {TRACKER_ADJACENT_TOOL_SLUGS.has(cfg.slug) && (
+        <RelatedLinks
+          title="Live trackers on the globe"
+          links={[
+            {
+              label: "Satellite tracker",
+              desc: "The ISS, Starlink and thousands of satellites, with real orbit paths — live on the free globe.",
+              href: "/satellite-tracker",
+            },
+            {
+              label: "Space station tracker",
+              desc: "Where the ISS is right now — live position, altitude and speed as it orbits.",
+              href: "/space-station-tracker",
+            },
+            {
+              label: "Flight tracker",
+              desc: "Live aircraft on the same globe — position, altitude, speed and routes from live ADS-B data.",
+              href: "/live-flight-tracker",
+            },
+          ]}
+        />
+      )}
       <div className="mt-12">
         <EmailCaptureCard placement="page" variant="inline" />
       </div>
