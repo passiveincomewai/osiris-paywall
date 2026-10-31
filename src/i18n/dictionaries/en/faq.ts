@@ -159,7 +159,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "How does the free camera ladder work?",
-          "You start with 5 free camera opens on any device — no account, no signup. Verify your email and you get 5 more; create a free account and the total rises to 15 opens. Browsing the globe, the country and city directories and every other free layer is never capped, and paid plans remove the camera-open limit entirely."
+          "You start with 5 free camera opens on any device — no account, no signup. Add your email and you get 5 more — 10 opens in total; a free account reaches the same 10 once its email is verified. Browsing the globe, the country and city directories and every other free layer is never capped, and paid plans remove the camera-open limit entirely."
         ),
         plain(
           "Where can I watch live webcams in New York City?",
@@ -199,12 +199,12 @@ export const enFaq: FaqCopy = {
         {
           q: "What does Pro include?",
           a: [
-            tx("The OI AI assistant (runs on your own API key), the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top. Full list on the "),
+            tx("The OI AI assistant (runs on WorldEye's built-in AI — no key to bring; your own key works too), the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top. Full list on the "),
             lk("pricing", "pricing page"),
             tx("."),
           ],
           schemaA:
-            "The OI AI assistant (runs on your own API key), the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top.",
+            "The OI AI assistant (runs on WorldEye's built-in AI — no key to bring; your own key works too), the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top.",
         },
         plain(
           "What's the difference between Pro and VIP Pro?",
@@ -228,7 +228,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "Do I need my own OpenAI key for the AI assistant?",
-          "Yes. OI runs on your own API key (OpenAI, Anthropic, Google or OpenRouter), so usage is billed directly by the provider at cost — never marked up. Your key stays in your browser; we never see it."
+          "No. OI is powered by WorldEye's built-in AI for signed-in members — no API key to bring, no separate provider account, nothing billed to you by a third party. If you'd rather run on your own account, add your own API key (OpenAI, Anthropic, Google or OpenRouter) in OI settings: your key stays in your browser, we never see it, and it takes over whenever it's present."
         ),
         plain(
           "How do I update my payment method or get receipts?",
@@ -325,7 +325,7 @@ export const enFaq: FaqCopy = {
       faqs: [
         plain(
           "Where do the cameras come from, and how many are there?",
-          "WorldEye serves 74,229 live cameras across 105 countries. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves."
+          "WorldEye serves 74,229 live cameras across 109 countries. Every feed is a publicly published stream from its operator — transport departments, cities, airports, ski resorts, harbours and businesses. We aggregate and map them; we don't own or operate the cameras themselves."
         ),
         plain(
           "Why is a camera offline?",

@@ -46,7 +46,7 @@ const PRINCIPLES = [
   {
     icon: ShieldCheck,
     title: "Privacy-respecting",
-    body: "We don't sell data or run ads. The OI AI assistant runs on your own API key, which stays in your browser — we never see it.",
+    body: "We don't sell data or run ads. The OI AI assistant runs on WorldEye's built-in AI — no key to bring. If you add your own API key instead, it stays in your browser — we never see it.",
   },
   {
     icon: Code2,

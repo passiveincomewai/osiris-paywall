@@ -87,7 +87,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Cómo funciona la escalera gratuita de cámaras?",
-          "Empiezas con 5 aperturas de cámara gratis en cualquier dispositivo, sin cuenta y sin registro. Verifica tu correo y sumas 5 más; crea una cuenta gratuita y el total sube a 15 aperturas. Explorar el globo, los directorios de países y ciudades y cualquier otra capa gratuita nunca tiene límite, y los planes de pago eliminan por completo el límite de aperturas."
+          "Empiezas con 5 aperturas de cámara gratis en cualquier dispositivo, sin cuenta y sin registro. Añade tu correo y sumas 5 más — 10 aperturas en total; una cuenta gratuita llega a las mismas 10 al verificar su correo. Explorar el globo, los directorios de países y ciudades y cualquier otra capa gratuita nunca tiene límite, y los planes de pago eliminan por completo el límite de aperturas."
         ),
         plain(
           "¿Dónde puedo ver webcams en vivo de Nueva York?",
@@ -127,12 +127,12 @@ export const esFaq: FaqCopy = {
         {
           q: "¿Qué incluye Pro?",
           a: [
-            tx("El asistente de IA OI (funciona con tu propia clave API), la capa de tráfico en vivo, los filtros de búsqueda avanzados, el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y el estudio de grabación de cámaras. Además, cada futura capa Pro sin costo extra. VIP Pro —el plan anual— añade encima los feeds de inteligencia premium y el timelapse de cámaras. La lista completa está en la "),
+            tx("El asistente de IA OI (funciona con la IA integrada de WorldEye — no necesitas clave; tu propia clave también funciona), la capa de tráfico en vivo, los filtros de búsqueda avanzados, el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y el estudio de grabación de cámaras. Además, cada futura capa Pro sin costo extra. VIP Pro —el plan anual— añade encima los feeds de inteligencia premium y el timelapse de cámaras. La lista completa está en la "),
             lk("pricing", "página de precios"),
             tx("."),
           ],
           schemaA:
-            "El asistente de IA OI (funciona con tu propia clave API), la capa de tráfico en vivo, los filtros de búsqueda avanzados, el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y el estudio de grabación de cámaras. Además, cada futura capa Pro sin costo extra. VIP Pro —el plan anual— añade encima los feeds de inteligencia premium y el timelapse de cámaras.",
+            "El asistente de IA OI (funciona con la IA integrada de WorldEye — no necesitas clave; tu propia clave también funciona), la capa de tráfico en vivo, los filtros de búsqueda avanzados, el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y el estudio de grabación de cámaras. Además, cada futura capa Pro sin costo extra. VIP Pro —el plan anual— añade encima los feeds de inteligencia premium y el timelapse de cámaras.",
         },
         plain(
           "¿Qué diferencia hay entre Pro y VIP Pro?",
@@ -156,7 +156,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Necesito mi propia clave de OpenAI para el asistente de IA?",
-          "Sí. OI funciona con tu propia clave API (OpenAI, Anthropic, Google u OpenRouter), así que el uso lo factura directamente el proveedor, a costo, sin recargos. Tu clave permanece en tu navegador; nosotros nunca la vemos."
+          "No. OI funciona con la IA integrada de WorldEye para los miembros con sesión iniciada: no tienes que traer una clave API, ni una cuenta de otro proveedor, ni nadie más te factura por separado. Si prefieres usar tu propia cuenta, añade tu clave API (OpenAI, Anthropic, Google u OpenRouter) en los ajustes de OI: permanece en tu navegador, nunca la vemos, y pasa a usarse siempre que esté presente."
         ),
         plain(
           "¿Cómo actualizo mi método de pago o consigo recibos?",
@@ -253,7 +253,7 @@ export const esFaq: FaqCopy = {
       faqs: [
         plain(
           "¿De dónde vienen las cámaras y cuántas hay?",
-          "WorldEye sirve 74.229 cámaras en vivo en 105 países. Cada feed es una transmisión publicada públicamente por su operador: departamentos de transporte, ciudades, aeropuertos, estaciones de esquí, puertos y negocios. Nosotros las agregamos y las mapeamos; no somos dueños de las cámaras ni las operamos."
+          "WorldEye sirve 74.229 cámaras en vivo en 109 países. Cada feed es una transmisión publicada públicamente por su operador: departamentos de transporte, ciudades, aeropuertos, estaciones de esquí, puertos y negocios. Nosotros las agregamos y las mapeamos; no somos dueños de las cámaras ni las operamos."
         ),
         plain(
           "¿Por qué una cámara está fuera de línea?",

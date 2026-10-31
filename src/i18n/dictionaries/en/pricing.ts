@@ -360,7 +360,7 @@ export const enPricing: PricingCopy = {
     },
     {
       q: "Do I need my own API key for the AI assistant?",
-      a: "No. OI is powered by WorldEye's built-in AI, with nothing to set up — no API key to bring, no separate provider account, nothing billed to you by a third party.",
+      a: "No. OI is powered by WorldEye's built-in AI, with nothing to set up — no API key to bring, no separate provider account, nothing billed to you by a third party. If you'd rather run on your own model account, you can add your own API key in OI settings — it stays in your browser and takes over whenever it's present.",
     },
     {
       q: "Can I cancel anytime?",

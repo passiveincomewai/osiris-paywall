@@ -89,10 +89,10 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // SHA-256 over each slug's English dictionary (src/i18n/source-hash.ts),
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
-  "": "90d61e34ae6c128af73815e4fb85ca9ad13ba4eb31a9a4e57f0ddb550daf707b",
-  pricing: "4f9bd85356cc051f6d5efcbcd3d2cc348fe2364916997e7507f935cf2b0fbbba",
+  "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
+  pricing: "062e27cb3dcd437bf869b939b6c575f017891713f9f111dc81c53c11f5c5e5f3",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
-  faq: "22888900ee80b164de125cfde22e4583be4fd50d014184955d8cd38da4d1b4a8",
+  faq: "e7c967dff68f038660c58887cabe671eb2fd8dbcbba1fe4239829c0899f40f88",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
   "ship-tracker": "2729cf52bdeee15ba3e6e5ada10a8047b7215a0bc93b8919fbfb212472af8c9f",
 };
@@ -143,10 +143,10 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // 55.3% / 50.0%), and the cost/free/self-hosted FAQs were rewritten
 // for the grid. The Spanish dictionary was re-synced the same day.
 const ES_UPDATED_AT: Record<string, string> = {
-  "": "2026-10-27",
-  pricing: "2026-10-30",
+  "": "2026-10-31",
+  pricing: "2026-10-31",
   "live-webcams": "2026-10-29",
-  faq: "2026-10-30",
+  faq: "2026-10-31",
   "live-flight-tracker": "2026-10-29",
   "ship-tracker": "2026-10-29",
 };

@@ -248,7 +248,7 @@ export const esPricing: PricingCopy = {
     },
     {
       q: "¿Necesito mi propia clave API para el asistente de IA?",
-      a: "No. OI funciona con la IA integrada de WorldEye, sin configurar nada: no tienes que traer una clave API, ni una cuenta de otro proveedor, ni nadie más te factura por separado.",
+      a: "No. OI funciona con la IA integrada de WorldEye, sin configurar nada: no tienes que traer una clave API, ni una cuenta de otro proveedor, ni nadie más te factura por separado. Si prefieres usar tu propia cuenta de modelos, puedes añadir tu clave API en los ajustes de OI: permanece en tu navegador y se usa siempre que esté presente.",
     },
     {
       q: "¿Puedo cancelar cuando quiera?",

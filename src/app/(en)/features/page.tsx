@@ -73,7 +73,7 @@ const faqJsonLd = {
       name: "What does WorldEye Pro add?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Pro adds the OI AI assistant (which runs on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $7.99, monthly $13.99, annual $74.99.",
+        text: "Pro adds the OI AI assistant (built into WorldEye — no key to bring, or run it on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly is $7.99, monthly $13.99, annual $74.99.",
       },
     },
     {
@@ -173,7 +173,7 @@ const PRO_FEATURES = [
   {
     icon: BrainCircuit,
     title: "OI AI assistant",
-    desc: "Talk to the map. Forecasts, analysis and recon powered by your own API key — OpenAI, Anthropic, Google or OpenRouter. Your key stays in your browser.",
+    desc: "Talk to the map. Forecasts, analysis and recon powered by WorldEye's built-in AI — no key to bring. Prefer your own account? OI also runs on your own API key — OpenAI, Anthropic, Google or OpenRouter — and your key stays in your browser.",
     detail:
       "Ask questions in plain language — 'which flights are holding over Chicago?', 'summarize quake activity this week' — and OI works the globe for you. Because it runs on your key, your queries and data never pass through our servers.",
   },
@@ -246,7 +246,7 @@ const FAQS = [
   },
   {
     q: "What does WorldEye Pro add?",
-    a: "Pro adds the OI AI assistant (running on your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. VIP Pro — the yearly plan — adds camera timelapse and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
+    a: "Pro adds the OI AI assistant (built-in AI — no key to bring, or your own API key), high-resolution satellite imagery view, the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. VIP Pro — the yearly plan — adds camera timelapse and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
   },
   {
     q: "Do I need an account to use the map?",
