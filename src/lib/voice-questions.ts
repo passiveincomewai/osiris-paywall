@@ -494,9 +494,9 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     category: "track-anything",
     question: "How can I follow a ship at sea?",
     shortAnswer:
-      "WorldEye's ship tracker plots live vessel positions from AIS data on the globe — ports, shipping lanes and individual ships, free to explore.",
+      "WorldEye's ship tracker plots AIS vessel positions on the globe — ports, shipping lanes and ships. Maritime is a Pro feed; cameras, flights and satellites stay free without an account.",
     longAnswer:
-      "AIS is the transponder system ships use to broadcast position, course and speed. Harbor cameras near a port let you match the plotted ship to the real one.",
+      "AIS is the transponder system ships use to broadcast position, course and speed. WorldEye shows a live position whenever a ship is reporting; when it isn't reporting, the page says so instead of guessing. Harbor cameras near a port let you match the plotted ship to the real one.",
     href: "/ship-tracker",
   },
   {
@@ -769,7 +769,7 @@ export const VOICE_QUESTIONS: VoiceQuestion[] = [
     shortAnswer:
       "Yes. WorldEye's ship tracker plots vessels at their reported AIS positions with speed, heading and vessel type — cruise ships, tankers and cargo ships included.",
     longAnswer:
-      "Watch traffic gather at straits, canals and port approaches in real time. The ship tracker is free and needs no signup.",
+      "Watch traffic gather at straits, canals and port approaches as AIS reports arrive. The maritime feed is included with Pro; the free globe still shows cameras, flights and satellites without an account.",
     href: "/ship-tracker",
   },
   {

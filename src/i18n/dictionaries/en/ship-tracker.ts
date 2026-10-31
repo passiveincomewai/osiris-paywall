@@ -76,15 +76,15 @@ export const enShipTracker: ShipTrackerCopy = {
   meta: {
     title: "Live Ship Tracker — Marine Vessel Tracking",
     description:
-      "Track ships live on a 3D globe: position, speed, heading and vessel type via AIS. A free live ship tracker — no signup, no account, no cost.",
+      "Track ships on a 3D globe: position, speed, heading and vessel type via AIS — a live position whenever a ship is reporting. The maritime feed is included with Pro; the globe itself is free.",
     ogTitle: "Live Ship Tracker | WorldEye",
     ogDescription:
-      "Ships in motion, live on a 3D globe — position, speed, heading and vessel type via AIS. Free, no signup.",
+      "Ships on a 3D globe — position, speed, heading and vessel type via AIS, with a live position whenever a ship is reporting. The maritime feed is included with Pro.",
   },
   schema: {
     webPageName: "WorldEye Live Ship Tracker",
     webPageDescription:
-      "Track ships live on a 3D globe: position, speed, heading and vessel type via AIS. Maritime vessel tracking on WorldEye.",
+      "Track ships on a 3D globe: position, speed, heading and vessel type via AIS, with a live position whenever a ship is reporting. Maritime vessel tracking on WorldEye.",
   },
   topBar: {
     backToMap: "Back to the map",
@@ -92,15 +92,15 @@ export const enShipTracker: ShipTrackerCopy = {
   },
   breadcrumbLabel: "Ship Tracker",
   hero: {
-    badge: "LIVE MARITIME DATA",
+    badge: "MARITIME DATA VIA AIS",
     h1: [tx("The oceans, "), ac("live.")],
-    sub: "A live ship tracker on a 3D globe. Vessels plotted from AIS transponder broadcasts — position, speed, heading and type — with ports and chokepoints for context.",
+    sub: "A ship tracker on a 3D globe. Vessels plotted from AIS transponder broadcasts — position, speed, heading and type — with a live position whenever a ship is reporting; when a ship isn't reporting, the page says so instead of guessing. Ports and chokepoints add context.",
     cta: "Unlock the maritime feed with Pro",
   },
   oneMap: {
     heading: "One live map for ships — and everything around them",
     body: [
-      tx("WorldEye's ship tracker plots vessels in real time from AIS transponder broadcasts — position, speed, heading and ship type — on the same 3D globe as its free "),
+      tx("WorldEye's ship tracker plots vessels from AIS transponder broadcasts — position, speed, heading and ship type — showing a live position whenever a ship is reporting, and saying so when a ship (or the feed) isn't reporting instead of guessing, on the same 3D globe as its free "),
       lk("live-flight-tracker", "live flights"),
       tx(", "),
       lk("satellite-tracker", "satellites"),
@@ -108,8 +108,8 @@ export const enShipTracker: ShipTrackerCopy = {
       lk("live-webcams", "74,229 public cameras"),
       tx(". Follow a vessel to its destination and you can "),
       lk("port-webcams", "watch the same ships arrive on port cameras"),
-      tx(". The globe itself is free with no signup; live maritime tracking is one of the premium intel feeds included with "),
-      lk("pricing", "VIP Pro"),
+      tx(". The globe itself is free with no signup; maritime tracking is one of the premium intel feeds included with "),
+      lk("pricing", "a Pro subscription"),
       tx("."),
     ],
   },
@@ -118,15 +118,15 @@ export const enShipTracker: ShipTrackerCopy = {
     cards: [
       {
         title: "Position",
-        desc: "Every vessel plotted at its reported location — watch traffic bunch up at straits, canals and port approaches in real time.",
+        desc: "Every reporting vessel plotted at its reported location — watch traffic bunch up at straits, canals and port approaches as AIS reports arrive.",
       },
       {
         title: "Speed",
-        desc: "Live speed over ground, so you can tell a full-steam container ship apart from a tanker idling at anchor.",
+        desc: "Reported speed over ground, so you can tell a full-steam container ship apart from a tanker idling at anchor.",
       },
       {
         title: "Heading",
-        desc: "Direction of travel for each vessel, making it easy to read which way a shipping lane is actually flowing right now.",
+        desc: "Direction of travel for each reporting vessel, making it easy to read which way a shipping lane is actually flowing.",
       },
       {
         title: "Vessel type",
@@ -137,8 +137,8 @@ export const enShipTracker: ShipTrackerCopy = {
         desc: "Where vessels report they're headed, alongside ports and maritime chokepoints plotted on the globe.",
       },
       {
-        title: "Fresh updates",
-        desc: "AIS positions refresh on the order of seconds for moving vessels, so the picture you see keeps pace with reality.",
+        title: "Updates as reports arrive",
+        desc: "Positions update as new AIS reports arrive. When a vessel — or the feed itself — isn't reporting, the page says so instead of guessing a position.",
       },
       {
         title: "Vessel identity",
@@ -161,7 +161,7 @@ export const enShipTracker: ShipTrackerCopy = {
         tx("Nearly every large vessel at sea carries an AIS transponder — Automatic Identification System. It continuously broadcasts the ship's identity, position, speed, heading and intended destination over VHF radio, primarily so nearby ships and port authorities know what's around them."),
       ],
       [
-        tx("A global network of shore-based receivers and satellites picks up those broadcasts and publishes them as open data feeds. WorldEye takes that stream and plots each vessel on the same 3D globe as everything else: flights overhead, storms forming, satellites passing by, and the ports themselves marked with chokepoint context."),
+        tx("A global network of shore-based receivers and satellites picks up those broadcasts and publishes them as open data feeds. WorldEye takes that stream and plots each reporting vessel on the same 3D globe as everything else: flights overhead, storms forming, satellites passing by, and the ports themselves marked with chokepoint context. Positions update as new AIS reports arrive; when a ship or the feed isn't reporting, the page says so instead of guessing."),
       ],
       [
         tx("The maritime feed — full vessel traffic with port and chokepoint intelligence — is part of the "),
@@ -190,7 +190,7 @@ export const enShipTracker: ShipTrackerCopy = {
       },
       {
         title: "Maritime journalists",
-        desc: "When a shipping incident makes the news — a grounding, a collision, a blocked canal — watch the traffic around it in real time instead of waiting for the morning's satellite photo.",
+        desc: "When a shipping incident makes the news — a grounding, a collision, a blocked canal — watch the traffic around it as AIS reports arrive instead of waiting for the morning's satellite photo.",
       },
       {
         title: "Supply-chain watchers",
@@ -232,7 +232,7 @@ export const enShipTracker: ShipTrackerCopy = {
     },
     {
       q: "How often do vessel positions update?",
-      a: "Moving vessels typically broadcast every few seconds; anchored or slow vessels report less often. What you see keeps pace with reality closely enough to watch traffic flow — though it's a picture of traffic, not a navigation instrument.",
+      a: "Positions update as new AIS reports arrive — moving vessels report more often, anchored or slow vessels less often, and a vessel that stops reporting stops updating. It's a picture of traffic, not a navigation instrument.",
     },
     {
       q: "Can I see a ship's cargo?",

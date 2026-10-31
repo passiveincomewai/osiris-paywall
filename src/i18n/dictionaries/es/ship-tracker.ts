@@ -12,15 +12,15 @@ export const esShipTracker: ShipTrackerCopy = {
   meta: {
     title: "Rastreador de barcos en vivo — Seguimiento marítimo de buques",
     description:
-      "Sigue barcos en vivo en un globo 3D: posición, velocidad, rumbo y tipo de buque mediante AIS. Un rastreador de barcos en vivo y gratuito: sin registro, sin cuenta, sin costo.",
+      "Sigue barcos en un globo 3D: posición, velocidad, rumbo y tipo de buque mediante AIS, con una posición en vivo siempre que un barco esté transmitiendo. El feed marítimo está incluido con Pro; el globo en sí es gratis.",
     ogTitle: "Rastreador de barcos en vivo | WorldEye",
     ogDescription:
-      "Barcos en movimiento, en vivo en un globo 3D: posición, velocidad, rumbo y tipo de buque mediante AIS. Gratis, sin registro.",
+      "Barcos en un globo 3D: posición, velocidad, rumbo y tipo de buque mediante AIS, con una posición en vivo siempre que un barco esté transmitiendo. El feed marítimo está incluido con Pro.",
   },
   schema: {
     webPageName: "Rastreador de barcos en vivo de WorldEye",
     webPageDescription:
-      "Sigue barcos en vivo en un globo 3D: posición, velocidad, rumbo y tipo de buque mediante AIS. Seguimiento marítimo de buques en WorldEye.",
+      "Sigue barcos en un globo 3D: posición, velocidad, rumbo y tipo de buque mediante AIS, con una posición en vivo siempre que un barco esté transmitiendo. Seguimiento marítimo de buques en WorldEye.",
   },
   topBar: {
     backToMap: "Volver al mapa",
@@ -28,15 +28,15 @@ export const esShipTracker: ShipTrackerCopy = {
   },
   breadcrumbLabel: "Rastreador de barcos",
   hero: {
-    badge: "DATOS MARÍTIMOS EN VIVO",
+    badge: "DATOS MARÍTIMOS VÍA AIS",
     h1: [tx("Los océanos, "), ac("en vivo.")],
-    sub: "Un rastreador de barcos en vivo sobre un globo 3D. Buques situados desde las emisiones de sus transpondedores AIS —posición, velocidad, rumbo y tipo— con puertos y puntos de estrangulamiento como contexto.",
+    sub: "Un rastreador de barcos sobre un globo 3D. Buques situados desde las emisiones de sus transpondedores AIS —posición, velocidad, rumbo y tipo— con una posición en vivo siempre que un barco esté transmitiendo; cuando un barco no transmite, la página lo dice en lugar de adivinar. Los puertos y puntos de estrangulamiento aportan el contexto.",
     cta: "Desbloquea el feed marítimo con Pro",
   },
   oneMap: {
     heading: "Un solo mapa en vivo para los barcos — y todo lo que los rodea",
     body: [
-      tx("El rastreador de barcos de WorldEye sitúa los buques en tiempo real a partir de las emisiones de sus transpondedores AIS —posición, velocidad, rumbo y tipo de buque— en el mismo globo 3D que sus "),
+      tx("El rastreador de barcos de WorldEye sitúa los buques a partir de las emisiones de sus transpondedores AIS —posición, velocidad, rumbo y tipo de buque— mostrando una posición en vivo siempre que un barco esté transmitiendo, y diciéndolo cuando un barco (o el feed) no transmite en lugar de adivinar, en el mismo globo 3D que sus "),
       lk("live-flight-tracker", "vuelos en vivo"),
       tx(", "),
       lk("satellite-tracker", "satélites"),
@@ -44,8 +44,8 @@ export const esShipTracker: ShipTrackerCopy = {
       lk("live-webcams", "74.229 cámaras públicas"),
       tx(" gratuitos. Sigue un buque hasta su destino y podrás "),
       lk("port-webcams", "ver cómo esos mismos barcos llegan en las cámaras de los puertos"),
-      tx(". El globo en sí es gratis y no requiere registro; el seguimiento marítimo en vivo es uno de los feeds de inteligencia premium incluidos con "),
-      lk("pricing", "VIP Pro"),
+      tx(". El globo en sí es gratis y no requiere registro; el seguimiento marítimo es uno de los feeds de inteligencia premium incluidos con "),
+      lk("pricing", "una suscripción Pro"),
       tx("."),
     ],
   },
@@ -54,15 +54,15 @@ export const esShipTracker: ShipTrackerCopy = {
     cards: [
       {
         title: "Posición",
-        desc: "Cada buque situado en su ubicación reportada: mira cómo el tráfico se concentra en estrechos, canales y aproximaciones a puertos en tiempo real.",
+        desc: "Cada buque que transmite situado en su ubicación reportada: mira cómo el tráfico se concentra en estrechos, canales y aproximaciones a puertos a medida que llegan los reportes AIS.",
       },
       {
         title: "Velocidad",
-        desc: "Velocidad en vivo sobre el suelo, para distinguir un portacontenedores a toda máquina de un petrolero esperando al ancla.",
+        desc: "Velocidad reportada sobre el suelo, para distinguir un portacontenedores a toda máquina de un petrolero esperando al ancla.",
       },
       {
         title: "Rumbo",
-        desc: "Dirección de viaje de cada buque, para leer con facilidad en qué sentido fluye realmente una ruta marítima ahora mismo.",
+        desc: "Dirección de viaje de cada buque que transmite, para leer con facilidad en qué sentido fluye realmente una ruta marítima.",
       },
       {
         title: "Tipo de buque",
@@ -73,8 +73,8 @@ export const esShipTracker: ShipTrackerCopy = {
         desc: "Adónde reportan dirigirse los buques, junto con los puertos y puntos de estrangulamiento marítimos situados en el globo.",
       },
       {
-        title: "Actualizaciones frescas",
-        desc: "Las posiciones AIS se actualizan en cuestión de segundos para los buques en movimiento, así que la imagen que ves sigue el ritmo de la realidad.",
+        title: "Actualizaciones a medida que llegan los reportes",
+        desc: "Las posiciones se actualizan a medida que llegan nuevos reportes AIS. Cuando un buque —o el propio feed— no está transmitiendo, la página lo dice en lugar de adivinar una posición.",
       },
       {
         title: "Identidad del buque",
@@ -97,7 +97,7 @@ export const esShipTracker: ShipTrackerCopy = {
         tx("Casi todos los grandes buques en el mar llevan un transpondedor AIS —Automatic Identification System—. Emite continuamente la identidad del barco, su posición, velocidad, rumbo y destino previsto por radio VHF, sobre todo para que los barcos cercanos y las autoridades portuarias sepan qué hay a su alrededor."),
       ],
       [
-        tx("Una red global de receptores en costa y satélites capta esas emisiones y las publica como feeds de datos abiertos. WorldEye toma ese flujo y sitúa cada buque en el mismo globo 3D que todo lo demás: vuelos sobre el cielo, tormentas formándose, satélites pasando y los propios puertos marcados con el contexto de sus puntos de estrangulamiento."),
+        tx("Una red global de receptores en costa y satélites capta esas emisiones y las publica como feeds de datos abiertos. WorldEye toma ese flujo y sitúa cada buque que transmite en el mismo globo 3D que todo lo demás: vuelos sobre el cielo, tormentas formándose, satélites pasando y los propios puertos marcados con el contexto de sus puntos de estrangulamiento. Las posiciones se actualizan a medida que llegan nuevos reportes AIS; cuando un barco o el feed no transmiten, la página lo dice en lugar de adivinar."),
       ],
       [
         tx("El feed marítimo —tráfico completo de buques con inteligencia de puertos y puntos de estrangulamiento— forma parte del "),
@@ -126,7 +126,7 @@ export const esShipTracker: ShipTrackerCopy = {
       },
       {
         title: "Periodistas marítimos",
-        desc: "Cuando un incidente marítimo llega a las noticias —una varada, una colisión, un canal bloqueado— mira el tráfico a su alrededor en tiempo real en lugar de esperar la foto satelital de la mañana.",
+        desc: "Cuando un incidente marítimo llega a las noticias —una varada, una colisión, un canal bloqueado— mira el tráfico a su alrededor a medida que llegan los reportes AIS en lugar de esperar la foto satelital de la mañana.",
       },
       {
         title: "Observadores de la cadena de suministro",
@@ -168,7 +168,7 @@ export const esShipTracker: ShipTrackerCopy = {
     },
     {
       q: "¿Cada cuánto se actualizan las posiciones de los buques?",
-      a: "Los buques en movimiento suelen emitir cada pocos segundos; los fondeados o lentos reportan con menos frecuencia. Lo que ves sigue el ritmo de la realidad lo bastante bien para observar el flujo del tráfico, aunque es una imagen del tráfico, no un instrumento de navegación.",
+      a: "Las posiciones se actualizan a medida que llegan nuevos reportes AIS: los buques en movimiento reportan con más frecuencia, los fondeados o lentos con menos, y un buque que deja de transmitir deja de actualizarse. Es una imagen del tráfico, no un instrumento de navegación.",
     },
     {
       q: "¿Puedo ver la carga de un barco?",
@@ -187,16 +187,16 @@ export const esShipTracker: ShipTrackerCopy = {
     "follow-a-ship-at-sea": {
       question: "¿Cómo puedo seguir un barco en el mar?",
       shortAnswer:
-        "El rastreador de barcos de WorldEye sitúa las posiciones en vivo de los buques desde datos AIS en el globo: puertos, rutas marítimas y barcos individuales, gratis para explorar.",
+        "El rastreador de barcos de WorldEye sitúa las posiciones de los buques desde datos AIS en el globo: puertos, rutas marítimas y barcos individuales. El feed marítimo está incluido con Pro; el globo gratuito sigue mostrando cámaras, vuelos y satélites sin cuenta.",
       longAnswer:
-        "AIS es el sistema de transpondedores con el que los barcos emiten posición, rumbo y velocidad. Las cámaras de los puertos cercanos te permiten relacionar el barco dibujado con el real.",
+        "AIS es el sistema de transpondedores con el que los barcos emiten posición, rumbo y velocidad. WorldEye muestra una posición en vivo siempre que un barco esté transmitiendo; cuando no transmite, la página lo dice en lugar de adivinar. Las cámaras de los puertos cercanos te permiten relacionar el barco dibujado con el real.",
     },
     "track-a-cruise-ship": {
       question: "¿Puedo seguir un crucero en el mar?",
       shortAnswer:
         "Sí. El rastreador de barcos de WorldEye sitúa los buques en sus posiciones AIS reportadas, con velocidad, rumbo y tipo de buque: cruceros, petroleros y cargueros incluidos.",
       longAnswer:
-        "Mira cómo el tráfico se concentra en estrechos, canales y aproximaciones a puertos en tiempo real. El rastreador de barcos es gratis y no necesita registro.",
+        "Mira cómo el tráfico se concentra en estrechos, canales y aproximaciones a puertos a medida que llegan los reportes AIS. El feed marítimo está incluido con Pro; el globo gratuito sigue mostrando cámaras, vuelos y satélites sin cuenta.",
     },
   },
   voiceTitle: "Preguntas que hace la gente",

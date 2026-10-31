@@ -94,7 +94,7 @@ const ES_SOURCE_HASHES: Record<string, string> = {
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "e7c967dff68f038660c58887cabe671eb2fd8dbcbba1fe4239829c0899f40f88",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
-  "ship-tracker": "2729cf52bdeee15ba3e6e5ada10a8047b7215a0bc93b8919fbfb212472af8c9f",
+  "ship-tracker": "a2ac2cec641df42357c801e233edab00d77f58fc3bb7bb7071b3b56298709e34",
 };
 
 // Rebase note (2026-10-27): the foundation was rebased onto production
@@ -148,7 +148,7 @@ const ES_UPDATED_AT: Record<string, string> = {
   "live-webcams": "2026-10-29",
   faq: "2026-10-31",
   "live-flight-tracker": "2026-10-29",
-  "ship-tracker": "2026-10-29",
+  "ship-tracker": "2026-10-31",
 };
 
 const ES_PUBLISHED_SLUGS = [
