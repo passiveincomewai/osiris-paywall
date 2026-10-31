@@ -30,6 +30,7 @@ import { hreflangMapFor, localizedUrl } from "@/lib/i18n-seo";
 import { withoutFutureLastmod } from "@/lib/lastmod";
 import { fraudRadarPublicPaths } from "@/lib/fraud-radar/flag";
 import { developerPublicPaths } from "@/lib/developer/flag";
+import { giftPublicPaths } from "@/lib/billing/gift-flag";
 import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
@@ -942,6 +943,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Developer platform: developerPublicPaths() is [] while
     // PUBLIC_API_ENABLED is off, so a dark platform contributes nothing.
     ...developerPublicPaths().map((p) => ({
+      url: `${BASE}${p}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    // Gift subscriptions: giftPublicPaths() is [] while
+    // GIFT_SUBSCRIPTIONS_ENABLED is off, so a dark feature contributes
+    // nothing (only /gift; the sent/redeem pages are transactional).
+    ...giftPublicPaths().map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.7,
