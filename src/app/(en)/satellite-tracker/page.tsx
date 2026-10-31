@@ -23,6 +23,7 @@ import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import TrackerClusterLinks from "@/components/TrackerClusterLinks";
+import SatellitesNowBoard from "@/components/trackers/SatellitesNowBoard";
 
 export const metadata: Metadata = {
   title: "Live Satellite Tracker — ISS, Starlink & More",
@@ -247,6 +248,16 @@ export default function SatelliteTrackerPage() {
             — satellites, flights and cameras on one live map, all free, with
             no signup and no account.
           </p>
+        </div>
+
+        {/* Happening now — the live feed itself (site-audit R22:
+            the earthquake tracker's live-board pattern, applied to
+            the site's own satellite feed). */}
+        <div className="mt-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Happening now — <span className="text-[#00E5FF]">satellites overhead</span>
+          </h2>
+          <SatellitesNowBoard />
         </div>
 
         {/* How it works */}

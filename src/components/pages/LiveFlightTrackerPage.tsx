@@ -22,6 +22,7 @@ import JsonLd from "@/components/JsonLd";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import TrackerClusterLinks from "@/components/TrackerClusterLinks";
+import FlightsNowBoard from "@/components/trackers/FlightsNowBoard";
 import RichText from "./RichText";
 import { localizedPath, type LocaleCode } from "@/i18n/config";
 import { isPublished } from "@/i18n/manifest";
@@ -189,6 +190,20 @@ export default function LiveFlightTrackerPage({
               linkClassName="text-[#00E5FF] hover:underline"
             />
           </p>
+        </div>
+
+        {/* Happening now — the live feed itself (site-audit R22:
+            the earthquake tracker's live-board pattern, applied to
+            the site's own flight feed). */}
+        <div className="mt-20 md:mt-28">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            {locale === "es" ? (
+              <>Ahora mismo — <span className="text-[#00E5FF]">vuelos en vivo</span></>
+            ) : (
+              <>Happening now — <span className="text-[#00E5FF]">live flights</span></>
+            )}
+          </h2>
+          <FlightsNowBoard />
         </div>
 
         {/* Satellite view — the direct answer */}
