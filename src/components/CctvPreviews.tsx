@@ -379,7 +379,7 @@ function CctvPreviews({ mapRef, active, onOpen }: {
           stream_type: str('stream_type'),
           external_url: str('external_url'),
           heading_deg: typeof p.heading_deg === 'number' ? p.heading_deg : undefined,
-          heading_source: typeof p.heading_source === 'string' ? p.heading_source : undefined,
+          heading_source: p.heading_source === 'faa' || p.heading_source === 'road-derived' ? p.heading_source : undefined,
           media,
         },
         box: layout(pt, canvas.clientWidth, canvas.clientHeight),
