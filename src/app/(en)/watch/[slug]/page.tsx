@@ -60,6 +60,11 @@ export async function generateMetadata({
   return {
     title: `${share.title} — WorldEye`,
     description,
+    // /watch is a viewing surface, not a search entry (owner ruling,
+    // camera findability rollout 2026-10-30): valid shares stay
+    // noindexed like unknown/revoked ones. The share itself — page,
+    // player and social cards — works exactly as before.
+    robots: { index: false },
     alternates: { canonical: `/watch/${slug}` },
     openGraph: {
       title: share.title,

@@ -81,6 +81,13 @@ describe("generateMetadata", () => {
     expect(og.images?.[0].url).toBe(SHARE.posterUrl);
   });
 
+  it("keeps valid shares out of the index too (/watch is a viewing surface)", async () => {
+    const meta = await generateMetadata(params);
+    expect((meta.robots as { index?: boolean })?.index).toBe(false);
+    // …while the share's own metadata still renders in full.
+    expect(meta.title).toContain("Storm over the bay");
+  });
+
   it("keeps gone shares out of the index", async () => {
     mocks.share = { ...SHARE, revokedAt: new Date() };
     const meta = await generateMetadata(params);
