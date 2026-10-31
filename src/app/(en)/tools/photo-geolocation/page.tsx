@@ -218,7 +218,6 @@ export default function PhotoGeolocationPage() {
           { label: "Photo Geolocation (Beta): Where Was This Photo Taken? — how this tool was built", href: "/blog/photo-geolocation-where-was-this-photo-taken" },
           { label: "What is OSINT? — the field this tool borrows its discipline from", href: "/blog/what-is-osint" },
           { label: "Where was this photo taken? The full guide", href: "/where-was-this-photo-taken" },
-          { label: "Photo Location Finder — for your own travel photos", href: "/photo-location-finder" },
           { label: "Random Camera Roulette — guess the country from a live camera", href: "/random" },
           { label: "Camera Distance Finder — how far is that camera from you?", href: "/tools/camera-distance" },
           { label: "Live webcams worldwide", href: "/live-webcams" },

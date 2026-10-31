@@ -27,6 +27,26 @@ import {
 } from "@/lib/indexation-gates";
 import { DIRECTORY_COUNTRY_COUNT } from "@/lib/site-stats";
 import { getSkiResortFacts } from "@/lib/ski-resort-facts";
+import {
+  NOINDEX_UNIVERSITY_SLUGS,
+  UNIVERSITY_CAMERA_COUNTS,
+  WALL_MIN_CAMERAS,
+  beachSpokeNoindex,
+  interstateCorridorNoindex,
+  isNoindexUniversity,
+  parkSpokeNoindex,
+  surfSpokeNoindex,
+  trainSpokeNoindex,
+  volcanoSpokeNoindex,
+  wallSpokeBelowLine,
+} from "@/lib/indexation-gates";
+import { EXPLORE_SCOPES, countForDef, loadCountryChunk } from "@/lib/explore-data";
+import { BEACH_SPOTS, SURF_SPOTS } from "@/lib/surf-spots";
+import { RAIL_PLACES } from "@/lib/railfan-places";
+import { VOLCANOES } from "@/lib/volcanoes";
+import { NATIONAL_PARKS } from "@/lib/national-parks";
+import { UNIVERSITIES } from "@/lib/universities";
+import { CORRIDORS, buildCorridor } from "@/lib/corridors";
 
 const nextConfig = readFileSync(join(process.cwd(), "next.config.ts"), "utf8");
 
@@ -266,4 +286,74 @@ describe("C10 ski — facts sourcing and the fold set", () => {
       [...SKI_FOLD_REDIRECTS].sort((a, b) => (a.source < b.source ? -1 : 1)),
     );
   });
+});
+
+describe("R38 wall families — noindex tiering", () => {
+  it("the line is 5 cameras and every per-family predicate applies it", () => {
+    expect(WALL_MIN_CAMERAS).toBe(5);
+    expect(wallSpokeBelowLine(4)).toBe(true);
+    expect(wallSpokeBelowLine(5)).toBe(false);
+    for (const pred of [
+      surfSpokeNoindex,
+      beachSpokeNoindex,
+      trainSpokeNoindex,
+      volcanoSpokeNoindex,
+      parkSpokeNoindex,
+      interstateCorridorNoindex,
+    ]) {
+      expect(pred(1)).toBe(true);
+      expect(pred(4)).toBe(true);
+      expect(pred(5)).toBe(false);
+      expect(pred(250)).toBe(false);
+    }
+  });
+
+  it("derives the university set from the registry ids — all 25 spokes", () => {
+    expect(UNIVERSITIES).toHaveLength(25);
+    expect(NOINDEX_UNIVERSITY_SLUGS.size).toBe(25);
+    for (const u of UNIVERSITIES) {
+      expect(isNoindexUniversity(u.slug), u.slug).toBe(true);
+      expect(UNIVERSITY_CAMERA_COUNTS.get(u.slug), u.slug).toBe(u.ids.length);
+    }
+    // The richest spokes in the family, pinned.
+    expect(UNIVERSITY_CAMERA_COUNTS.get("uc-santa-barbara")).toBe(4);
+    expect(UNIVERSITY_CAMERA_COUNTS.get("university-of-twente")).toBe(2);
+    expect(UNIVERSITY_CAMERA_COUNTS.get("yonsei-university")).toBe(2);
+    expect(UNIVERSITY_CAMERA_COUNTS.get("vanderbilt-university")).toBe(1);
+    expect(isNoindexUniversity("not-a-university")).toBe(false);
+  });
+
+  it("served counts through the shared predicates give exactly the measured thin sets", async () => {
+    const thin = async <T extends { slug: string; scopeKey: string }>(
+      rows: readonly T[],
+      pred: (n: number) => boolean,
+    ): Promise<string[]> => {
+      const out: string[] = [];
+      for (const r of rows) {
+        if (pred(await countForDef(EXPLORE_SCOPES[r.scopeKey]))) out.push(r.slug);
+      }
+      return out.sort();
+    };
+    await expect(thin(SURF_SPOTS, surfSpokeNoindex)).resolves.toEqual([]);
+    await expect(thin(BEACH_SPOTS, beachSpokeNoindex)).resolves.toEqual([]);
+    await expect(thin(RAIL_PLACES, trainSpokeNoindex)).resolves.toEqual([]);
+    await expect(thin(VOLCANOES, volcanoSpokeNoindex)).resolves.toEqual([
+      "bromo",
+      "etna",
+      "ruapehu",
+    ]);
+    await expect(thin(NATIONAL_PARKS, parkSpokeNoindex)).resolves.toEqual([
+      "black-canyon-of-the-gunnison",
+      "grand-canyon",
+      "grand-teton",
+      "isle-royale",
+      "kenai-fjords",
+      "olympic",
+    ]);
+    const us = await loadCountryChunk("united-states");
+    const thinCorridors = CORRIDORS.filter((c) =>
+      interstateCorridorNoindex(buildCorridor(c, us).total),
+    ).map((c) => c.slug);
+    expect(thinCorridors).toEqual([]);
+  }, 300_000);
 });

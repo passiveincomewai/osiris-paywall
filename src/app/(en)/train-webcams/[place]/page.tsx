@@ -4,6 +4,7 @@ import RailPlacePage from "@/components/RailPlacePage";
 import { BASE } from "@/components/directory-page";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
 import { RAIL_PLACES, getRailPlace } from "@/lib/railfan-places";
+import { trainSpokeNoindex } from "@/lib/indexation-gates";
 
 export function generateStaticParams() {
   return RAIL_PLACES.map((p) => ({ place: p.slug }));
@@ -25,6 +26,10 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // R38 thin-wall tiering: a spoke under the shared gate's camera
+    // line stays live but noindexed (the sitemap applies the same
+    // predicate to the same count — lib/indexation-gates).
+    ...(trainSpokeNoindex(total) ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical: `${BASE}/train-webcams/${place.slug}` },
     openGraph: {
       title,

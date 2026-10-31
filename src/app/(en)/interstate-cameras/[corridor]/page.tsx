@@ -9,6 +9,7 @@ import {
   type CorridorSegment,
 } from "@/lib/corridors";
 import { loadCountryChunk } from "@/lib/explore-data";
+import { interstateCorridorNoindex } from "@/lib/indexation-gates";
 import { getPlaceWeather } from "@/lib/place-weather";
 import { getPlows, getPlowFeedStatus, type Plow } from "@/lib/plows";
 import {
@@ -58,6 +59,14 @@ export async function generateMetadata({
   return {
     title: `${title} | WorldEye`,
     description,
+    // R38 thin-wall tiering, shared predicate with the sitemap
+    // (lib/indexation-gates). Unreachable today — a corridor only
+    // reaches this metadata when buildCorridor qualifies it at
+    // ≥250 cameras — but the gate stays wired so the two surfaces
+    // can never drift if the corridor line ever moves.
+    ...(interstateCorridorNoindex(build.total)
+      ? { robots: { index: false, follow: true } }
+      : {}),
     alternates: { canonical: `${BASE}/interstate-cameras/${def.slug}` },
     openGraph: { title, description, url: `${BASE}/interstate-cameras/${def.slug}` },
   };

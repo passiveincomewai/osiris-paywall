@@ -4,6 +4,7 @@ import CoastalSpotPage from "@/components/CoastalSpotPage";
 import { BASE } from "@/components/directory-page";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
 import { SURF_SPOTS, getSpot } from "@/lib/surf-spots";
+import { surfSpokeNoindex } from "@/lib/indexation-gates";
 
 export function generateStaticParams() {
   return SURF_SPOTS.map((s) => ({ spot: s.slug }));
@@ -25,6 +26,10 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // R38 thin-wall tiering: a spoke under the shared gate's camera
+    // line stays live but noindexed (the sitemap applies the same
+    // predicate to the same count — lib/indexation-gates).
+    ...(surfSpokeNoindex(total) ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical: `${BASE}/surf-webcams/${spot.slug}` },
     openGraph: {
       title,

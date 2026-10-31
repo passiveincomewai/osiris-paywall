@@ -230,15 +230,12 @@ export default function VerifyPhotoLocationPage() {
               verifying breaking-news footage
             </Link>
             . If your need is the everyday version of this question — your own photos, your
-            own trips — the{" "}
-            <Link href="/photo-location-finder" className="text-[#D4AF37] hover:underline">
-              Photo Location Finder
-            </Link>{" "}
-            is the same tool framed for travellers, and{" "}
+            own trips —{" "}
             <Link href="/where-was-this-photo-taken" className="text-[#D4AF37] hover:underline">
               where was this photo taken
             </Link>{" "}
-            explains the metadata side from the beginning.
+            explains the metadata side from the beginning and frames the same tool for
+            travellers.
           </p>
         </div>
       </section>
@@ -252,7 +249,6 @@ export default function VerifyPhotoLocationPage() {
           { label: "How to verify breaking-news footage", href: "/blog/verify-breaking-news-footage" },
           { label: "Live webcams worldwide", href: "/live-webcams" },
           { label: "Where was this photo taken? The full guide", href: "/where-was-this-photo-taken" },
-          { label: "Photo Location Finder — for your own travel photos", href: "/photo-location-finder" },
         ]}
       />
       <CtaRow backHref="/tools/photo-geolocation" backLabel="Open the tool" />

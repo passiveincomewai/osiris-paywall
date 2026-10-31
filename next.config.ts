@@ -55,6 +55,15 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        // Site-audit R20: /photo-location-finder and
+        // /where-was-this-photo-taken split one intent; the guide page
+        // is the survivor (the finder page's unique traveller/creator
+        // content was merged into it) and the route is retired.
+        source: '/photo-location-finder',
+        destination: '/where-was-this-photo-taken',
+        permanent: true,
+      },
+      {
         source: '/flightradar24-alternative',
         destination: '/alternatives/flightradar24',
         permanent: true,

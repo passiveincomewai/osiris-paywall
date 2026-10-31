@@ -25,6 +25,7 @@ import {
   universityBySlug,
   type University,
 } from "@/lib/universities";
+import { isNoindexUniversity } from "@/lib/indexation-gates";
 
 /* Weather is cached per location for 30 minutes in lib/weather-api;
    ISR at the same cadence keeps the page fresh. */
@@ -77,6 +78,10 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // R38 thin-wall tiering: the gate's set is derived from the same
+    // registry `ids` list this page renders from, so the metadata and
+    // the sitemap (same predicate) cannot disagree — lib/indexation-gates.
+    ...(isNoindexUniversity(u.slug) ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical: `${BASE}${url}` },
     openGraph: { title, description, url, type: "website" },
   };

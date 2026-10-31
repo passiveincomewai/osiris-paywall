@@ -51,6 +51,7 @@ import {
   REGION_HUB,
   type RegionKey,
 } from "@/lib/country-page-content";
+import { UNIVERSITIES } from "@/lib/universities";
 
 /* ------------------------------------------------------------------ */
 /* Countries — hub consolidation                                       */
@@ -339,3 +340,117 @@ export const SKI_FOLD_REDIRECTS: Array<{
   source: `/ski-webcams/${slug}`,
   destination: "/ski-webcams",
 }));
+
+/* ------------------------------------------------------------------ */
+/* Wall families — noindex tiering (R38, 2026-10-31)                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The wall families (surf / beach / train / volcano / national-park /
+ * interstate spokes, university spokes) each publish one page per
+ * registry row over a camera wall. A spoke built on fewer than
+ * WALL_MIN_CAMERAS cameras is too thin to offer search engines: the
+ * page stays live for users with `noindex, follow` metadata and its
+ * URL leaves the sitemap. Hubs are never gated.
+ *
+ * Like the city/state rules above, the count half is async (it is
+ * `countForDef` over the family's EXPLORE_SCOPES scope in
+ * lib/explore-data — the exact call each page's metadata already
+ * makes), so the predicates here are pure and shared: each family's
+ * page metadata AND src/app/sitemap.ts call the same per-family
+ * predicate below on the same measured count, and the two can never
+ * disagree about a spoke. The university family is the exception that
+ * proves the rule: its counts live in the registry itself (each row's
+ * `ids` list is the page's whole camera set), so its set is derived
+ * synchronously here, exactly like the country/ski sets above.
+ *
+ * Measured at the 2026-10-20 catalogue snapshot (full per-spoke table
+ * in the R38 build's COUNTS.md; every count reconciles with the
+ * pinned raw-chunk yields in the families' own tests):
+ *   surf 13 spokes, thinnest 15 — none below the line
+ *   beach 10 spokes, thinnest 18 — none below the line
+ *   train 14 spokes, thinnest wall total 18 — none below the line
+ *   volcano 10 spokes — etna 1, bromo 1, ruapehu 4 below the line
+ *   national-park 22 spokes — grand-canyon, isle-royale, grand-teton,
+ *     kenai-fjords, black-canyon-of-the-gunnison, olympic at 4 below
+ *   university 25 spokes, 31 cameras in total, richest spoke 4 — all
+ *     25 below the line
+ *   interstate 8 corridors, thinnest build total 290 — none below
+ *     (and a corridor under CORRIDOR_MIN_TOTAL never gets a page at
+ *     all: buildCorridor's `qualifies` 404s it in the route)
+ *
+ * BORDER-CROSSINGS EXEMPTION: the border family is deliberately NOT
+ * tiered, although five spokes sit under the camera line
+ * (brownsville 4, champlain 4, derby-line 3, international-falls 2,
+ * houlton 1). A border spoke's substance is its live CBP wait-time
+ * table — one table per CBP port in the crossing's registry row
+ * (lib/border/crossings `portNumbers`, rendered by BorderWaitPanel
+ * from lib/border/wait-times), which exists and updates regardless of
+ * the camera wall beside it; the registry was admitted on the rule
+ * that every row exists in CBP's live feed under those port numbers.
+ * Noindexing the thinnest crossings would delist wait-time tables
+ * travellers search for by crossing name, over a camera count that is
+ * not what the page is for. The exemption is the family's, not a
+ * per-spoke exception list: if a crossing ever loses its CBP ports,
+ * this is the paragraph to revisit.
+ */
+export const WALL_MIN_CAMERAS = 5;
+
+/** The shared R38 line: a wall spoke under it is noindexed. */
+export function wallSpokeBelowLine(cameraCount: number): boolean {
+  return cameraCount < WALL_MIN_CAMERAS;
+}
+
+/** surf-webcams spokes: count = countForDef over the spot's scope. */
+export function surfSpokeNoindex(cameraCount: number): boolean {
+  return wallSpokeBelowLine(cameraCount);
+}
+
+/** beach-webcams spokes: count = countForDef over the spot's scope. */
+export function beachSpokeNoindex(cameraCount: number): boolean {
+  return wallSpokeBelowLine(cameraCount);
+}
+
+/** train-webcams spokes: count = the wall total countForDef returns
+ *  (the number the page quotes), not the rail-named subcount. */
+export function trainSpokeNoindex(cameraCount: number): boolean {
+  return wallSpokeBelowLine(cameraCount);
+}
+
+/** volcano-webcams spokes: count = recordsForDef length over the
+ *  volcano's scope. */
+export function volcanoSpokeNoindex(cameraCount: number): boolean {
+  return wallSpokeBelowLine(cameraCount);
+}
+
+/** national-park-webcams spokes: count = recordsForDef length over
+ *  the park's scope. */
+export function parkSpokeNoindex(cameraCount: number): boolean {
+  return wallSpokeBelowLine(cameraCount);
+}
+
+/** interstate-cameras corridors: count = buildCorridor's total over
+ *  the US chunk (the number the corridor page quotes). */
+export function interstateCorridorNoindex(cameraCount: number): boolean {
+  return wallSpokeBelowLine(cameraCount);
+}
+
+/** Each university spoke's camera count, from the registry row's own
+ *  `ids` list — the exact set the page renders (its campusRecords
+ *  filter keeps precisely the chunk records whose id is listed). */
+export const UNIVERSITY_CAMERA_COUNTS: ReadonlyMap<string, number> = new Map(
+  UNIVERSITIES.map((u) => [u.slug, u.ids.length]),
+);
+
+/** University spokes below the R38 line. At the current registry
+ *  every spoke is below it (richest: UC Santa Barbara, 4) — the hub
+ *  stays indexed and lists them all. Derived — never hand-edit. */
+export const NOINDEX_UNIVERSITY_SLUGS: ReadonlySet<string> = new Set(
+  UNIVERSITIES.filter((u) => wallSpokeBelowLine(u.ids.length)).map(
+    (u) => u.slug,
+  ),
+);
+
+export function isNoindexUniversity(slug: string): boolean {
+  return NOINDEX_UNIVERSITY_SLUGS.has(slug);
+}

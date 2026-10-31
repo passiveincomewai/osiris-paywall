@@ -27,6 +27,7 @@ import {
   parkSunTimes,
   type NationalPark,
 } from "@/lib/national-parks";
+import { parkSpokeNoindex } from "@/lib/indexation-gates";
 
 /* Weather is cached per location for 30 minutes in lib/weather-api;
    ISR at the same cadence keeps the page (and today's sun times) fresh. */
@@ -108,6 +109,10 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // R38 thin-wall tiering: a spoke under the shared gate's camera
+    // line stays live but noindexed (the sitemap applies the same
+    // predicate to the same count — lib/indexation-gates).
+    ...(parkSpokeNoindex(n) ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical: `${BASE}${url}` },
     openGraph: { title, description, url, type: "website" },
   };

@@ -86,6 +86,10 @@ const FAQS = [
     q: "Can I tell when a photo was taken, as well as where?",
     a: "Often, yes. The same EXIF block that can carry GPS usually carries the date and time the shutter fired, and it appears in the same details panel on your phone or computer. Two cautions: the timestamp is the device's own clock, so a wrong timezone or an unset clock shifts it; and the apps that strip location usually strip the time too. A screenshot carries only the time the screenshot itself was made.",
   },
+  {
+    q: "Will it work on old photos?",
+    a: "Often, yes. If the original file from an old phone or camera still has its EXIF GPS — and originals usually do, however old they are — the location comes straight from the file. Older digital cameras without GPS, scanned prints and film photos have no metadata to read, so everything depends on the scene: a readable sign or a distinctive landmark can still place them, while a generic landscape usually can't.",
+  },
 ];
 
 export default function WhereWasThisPhotoTakenPage() {
@@ -221,6 +225,38 @@ export default function WhereWasThisPhotoTakenPage() {
         </div>
       </section>
 
+      <section className="mt-12 max-w-3xl mx-auto">
+        <h2 className="text-xl md:text-2xl font-bold mb-5">For your own photos: trips and captions</h2>
+        <div className="space-y-4 text-white/70 leading-relaxed">
+          <p>
+            Photos still on the phone that took them usually know exactly where they were
+            taken — your gallery app can show you a map. The harder half of every camera
+            roll is where a finder earns its keep: photos from a dedicated camera with no
+            GPS, exports and downloads that lost their metadata on the way, a friend&apos;s
+            shot of a place you want to visit yourself, and scanned prints or film, which
+            carry no metadata at all. For all of those, the signs, landmarks and road
+            evidence in the frame are what place the photo — the method above, applied to
+            your own archive.
+          </p>
+          <p>
+            Run the anchor shots of a trip — the ones whose locations escaped you — and the
+            found places rebuild the shape of the route: where you turned inland, which
+            town that lunch stop actually was, the name of the pass you crossed in the
+            rain. Each confirmed result can be opened on the WorldEye globe, and lists live
+            cameras near the spot, so before a return trip you can check the place as it
+            looks today.
+          </p>
+          <p>
+            Creators get a second use from the same check: a wrong location in a caption is
+            a small error that travels far. Running a hero shot through the finder before
+            you post confirms the viewpoint&apos;s actual name and the town it belongs to —
+            and the evidence view shows <em>why</em> a place matched, so you can judge the
+            match before publishing it and fall back to a broader caption when the evidence
+            only supports an area.
+          </p>
+        </div>
+      </section>
+
       <div className="mx-auto mt-12 max-w-3xl rounded-2xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-6 md:p-8 text-center">
         <h2 className="text-xl md:text-2xl font-bold">Try it on a photo now</h2>
         <p className="mt-3 text-white/60 leading-relaxed">
@@ -247,13 +283,15 @@ export default function WhereWasThisPhotoTakenPage() {
         </h2>
         <div className="space-y-4 text-white/70 leading-relaxed">
           <p>
-            Two privacy rules shape every result. No location is ever displayed tighter than
-            a 250 m radius, and when a photo looks like a private home or private property,
-            the exact point is suppressed and only the general area is shown. The tool works
-            on public places; it does not identify people, and it never performs face
-            recognition. Finding where a landscape or landmark photo was taken is a fair
-            puzzle — pinpointing somebody&apos;s house is not, and the tool is built so it
-            cannot be used that way.
+            Two privacy rules shape every result: no location is ever displayed tighter than
+            a 250 m radius, and photos of homes or private property are returned as a general
+            area only. The tool works on public places, never identifies people and never
+            runs face recognition. The full privacy statement — photos processed in memory
+            and never stored, and exactly what is sent where — lives on the{" "}
+            <Link href="/tools/photo-geolocation" className="text-[#D4AF37] hover:underline">
+              Photo Geolocation tool page
+            </Link>
+            .
           </p>
           <p>
             Found the place? WorldEye can take you there: every result links to{" "}
@@ -271,7 +309,6 @@ export default function WhereWasThisPhotoTakenPage() {
         title="Keep exploring"
         links={[
           { label: "Photo Geolocation tool (free beta)", href: "/tools/photo-geolocation" },
-          { label: "Photo Location Finder — for your own travel photos", href: "/photo-location-finder" },
           { label: "Verify a photo's location — for journalists and fact-checkers", href: "/verify-photo-location" },
           { label: "Live webcams worldwide", href: "/live-webcams" },
           { label: "What is OSINT? The beginner's guide", href: "/blog/what-is-osint" },
