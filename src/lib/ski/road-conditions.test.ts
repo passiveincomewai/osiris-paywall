@@ -1,12 +1,26 @@
 import { describe, expect, it } from "vitest";
 import {
+  AZDOT_SOURCE,
+  ITD_MAIN_SOURCE,
+  UDOT_SOURCE,
+  configuredCoveredStates,
+  decodeEncodedPolyline,
   isStaleFeed,
   matchEventsToRoute,
   normaliseCaChainControl,
   normaliseCaLaneClosures,
+  normaliseIbi511Alerts,
+  normaliseIbi511Events,
+  normaliseIbi511RoadConditions,
+  normaliseIdWinterRoads,
   normaliseIdWzdx,
   normaliseMtGeoJson,
+  normaliseOdotIncidents,
+  normaliseOdotRwReports,
+  normaliseWsdotHighwayAlerts,
+  normaliseWsdotPassConditions,
   parsePacificTimestamp,
+  parseWcfDateTime,
   pointToPolylineMiles,
   statesForRoute,
   stripHtml,
@@ -340,5 +354,462 @@ describe("statesForRoute", () => {
     ]);
     expect(states).toContain("UT");
     expect(states).not.toContain("CA");
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Keyed feeds (DOT wiring build). These fixtures are trimmed copies   */
+/* of the sample payloads published in each DOT's OWN developer docs   */
+/* (fetched 2026-10-30: UDOT/ITD/AZ511 endpoint help pages, WSDOT      */
+/* class references, ODOT TripCheck XSDs) — same field names, same     */
+/* types, same quirks (WCF dates, space-containing keys). No live key  */
+/* existed at build time, so NO fixture comes from a live keyed call.  */
+/* ------------------------------------------------------------------ */
+
+const GOOGLE_POLYLINE = "_p~iF~ps|U_ulLnnqC_mqNvxq`@"; // canonical doc example
+
+describe("decodeEncodedPolyline", () => {
+  it("decodes the canonical example polyline", () => {
+    const pts = decodeEncodedPolyline(GOOGLE_POLYLINE);
+    expect(pts).toHaveLength(3);
+    expect(pts[0][0]).toBeCloseTo(38.5, 3);
+    expect(pts[0][1]).toBeCloseTo(-120.2, 3);
+    expect(pts[1][0]).toBeCloseTo(40.7, 3);
+    expect(pts[1][1]).toBeCloseTo(-120.95, 3);
+    expect(pts[2][0]).toBeCloseTo(43.252, 3);
+    expect(pts[2][1]).toBeCloseTo(-126.453, 3);
+  });
+});
+
+const IB511_EVENTS_FIXTURE = [
+  {
+    ID: 123456,
+    SourceId: "123456",
+    Organization: "UDOT",
+    RoadwayName: "I-15",
+    DirectionOfTravel: "Both Directions",
+    Description: "Construction, I-15, Shepard Lane",
+    Reported: 1760000000,
+    LastUpdated: 1760100000,
+    Latitude: 40.9872735,
+    Longitude: -111.9129525,
+    EventType: "roadwork",
+    EventSubType: "Construction",
+    IsFullClosure: false,
+    EventCategory: "Construction",
+  },
+  {
+    ID: 654321,
+    SourceId: "654321",
+    Organization: "UDOT",
+    RoadwayName: "I-215",
+    Description: "Road closed due to a crash",
+    Reported: 1760050000,
+    LastUpdated: 1760200000,
+    Latitude: 40.7,
+    Longitude: -111.9,
+    EventType: "closures",
+    EventSubType: "Road Closure",
+    IsFullClosure: true,
+    EventCategory: "Full Closure",
+  },
+];
+
+describe("normaliseIbi511Events", () => {
+  it("maps roadwork and full-closure events with unix-second clocks", () => {
+    const r = normaliseIbi511Events(
+      IB511_EVENTS_FIXTURE,
+      "UT",
+      UDOT_SOURCE,
+      "utah-event",
+    );
+    expect(r.events).toHaveLength(2);
+    expect(r.events[0].category).toBe("workzone");
+    expect(r.events[0].state).toBe("UT");
+    expect(r.events[0].sourceId).toBe("utah-event:123456");
+    expect(r.events[0].updatedTs).toBe(1760100000 * 1000);
+    expect(r.events[1].category).toBe("closure");
+    expect(r.events[1].statusText).toContain("full closure");
+    expect(r.feedUpdatedTs).toBe(1760200000 * 1000);
+  });
+  it("maps Idaho restrictionClass events to restrictions", () => {
+    const r = normaliseIbi511Events(
+      [
+        {
+          ...IB511_EVENTS_FIXTURE[0],
+          EventType: "restrictionClass",
+          EventSubType: "restrictions",
+          Comment: "Vehicles over 10,000 restricted to 30mph",
+        },
+      ],
+      "ID",
+      ITD_MAIN_SOURCE,
+      "id-restr",
+    );
+    expect(r.events[0].category).toBe("restriction");
+    expect(r.events[0].state).toBe("ID");
+  });
+  it("throws on a non-array payload (schema failure -> unavailable)", () => {
+    expect(() =>
+      normaliseIbi511Events({ nope: true }, "UT", UDOT_SOURCE, "utah-event"),
+    ).toThrow();
+  });
+});
+
+const UDOT_RC_FIXTURE = [
+  {
+    Id: 1,
+    SourceId: "1",
+    RoadCondition: "Dry",
+    WeatherCondition: "Fair",
+    Restriction: "none",
+    RoadwayName: "I-15 Idaho Stateline to Tremonton",
+    EncodedPolyline: ["_p~iF~ps|U"],
+    LastUpdated: 1760100000,
+  },
+  {
+    Id: 2,
+    SourceId: "2",
+    RoadCondition: "Snow Covered",
+    WeatherCondition: "Snowing",
+    Restriction: "Chains Required",
+    RoadwayName: "SR-190 Big Cottonwood Canyon",
+    EncodedPolyline: [GOOGLE_POLYLINE],
+    LastUpdated: 1760200000,
+  },
+];
+
+describe("normaliseIbi511RoadConditions", () => {
+  it("skips benign segments and places restricted ones at the polyline midpoint", () => {
+    const r = normaliseIbi511RoadConditions(
+      UDOT_RC_FIXTURE,
+      "UT",
+      UDOT_SOURCE,
+      "utah-rc",
+    );
+    expect(r.events).toHaveLength(1);
+    const e = r.events[0];
+    expect(e.category).toBe("chain");
+    expect(e.statusText).toBe("Chains Required");
+    expect(e.route).toBe("SR-190 Big Cottonwood Canyon");
+    // midpoint of the canonical 3-point polyline is its middle point
+    expect(e.lat).toBeCloseTo(40.7, 3);
+    expect(e.lon).toBeCloseTo(-120.95, 3);
+    expect(r.feedUpdatedTs).toBe(1760200000 * 1000);
+  });
+  it("throws on a non-array payload", () => {
+    expect(() =>
+      normaliseIbi511RoadConditions("nope", "UT", UDOT_SOURCE, "utah-rc"),
+    ).toThrow();
+  });
+});
+
+const ID_WINTER_FIXTURE = [
+  {
+    Id: 11,
+    LocationDescription:
+      "ID-44, between ID-16 (near Star) and Riverside Drive (Garden City)",
+    "Overall Status": "Dry",
+    "Weather Conditions": "Fair",
+    "Special Conditions": null,
+    AreaName: "Boise",
+    RoadwayName: "ID-44",
+    EncodedPolyline: "_p~iF~ps|U",
+    LastUpdated: 1760100000,
+  },
+  {
+    Id: 12,
+    LocationDescription: "US-20, Targhee Pass",
+    "Overall Status": "Snow Covered",
+    "Weather Conditions": "Snowing",
+    "Special Conditions": "Chains required beyond milepost 402",
+    AreaName: "Island Park",
+    RoadwayName: "US-20",
+    EncodedPolyline: "_p~iF~ps|U",
+    LastUpdated: 1760200000,
+  },
+];
+
+describe("normaliseIdWinterRoads", () => {
+  it("reads the space-containing keys and skips dry segments", () => {
+    const r = normaliseIdWinterRoads(ID_WINTER_FIXTURE);
+    expect(r.events).toHaveLength(1);
+    const e = r.events[0];
+    expect(e.state).toBe("ID");
+    expect(e.source).toBe(ITD_MAIN_SOURCE);
+    expect(e.sourceId).toBe("id-winter:12");
+    expect(e.category).toBe("chain");
+    expect(e.lat).toBeCloseTo(38.5, 3);
+    expect(e.lon).toBeCloseTo(-120.2, 3);
+    expect(r.feedUpdatedTs).toBe(1760200000 * 1000);
+  });
+});
+
+describe("normaliseIbi511Alerts", () => {
+  it("never invents a location: coord-less alerts advance only the feed clock", () => {
+    const r = normaliseIbi511Alerts(
+      [
+        {
+          Id: 42,
+          Message:
+            "I-10 westbound: right lane closed between Baseline and Elliot roads.",
+          Notes: "",
+          StartTime: 1760000000,
+          EndTime: 0,
+          LastUpdated: 1760100000,
+          Regions: ["Maricopa"],
+          HighImportance: true,
+        },
+      ],
+      "AZ",
+      AZDOT_SOURCE,
+      "az-alert",
+    );
+    expect(r.events).toHaveLength(0);
+    expect(r.feedUpdatedTs).toBe(1760100000 * 1000);
+  });
+  it("emits an incident when a payload does carry coordinates", () => {
+    const r = normaliseIbi511Alerts(
+      [
+        {
+          Id: 43,
+          Message: "SR-87 closed at Bush Highway.",
+          LastUpdated: 1760100000,
+          Latitude: 33.62,
+          Longitude: -111.51,
+          HighImportance: true,
+        },
+      ],
+      "AZ",
+      AZDOT_SOURCE,
+      "az-alert",
+    );
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0].category).toBe("incident");
+    expect(r.events[0].statusText).toBe("High-importance alert");
+  });
+});
+
+describe("parseWcfDateTime", () => {
+  it("parses WCF /Date(ms-offset)/ strings", () => {
+    expect(parseWcfDateTime("/Date(1388623238000-0800)/")).toBe(1388623238000);
+  });
+  it("parses ISO strings and rejects garbage", () => {
+    expect(parseWcfDateTime("2014-01-01T16:40:38.317")).toBe(
+      Date.parse("2014-01-01T16:40:38.317"),
+    );
+    expect(parseWcfDateTime("not a date")).toBeNull();
+    expect(parseWcfDateTime(null)).toBeNull();
+  });
+});
+
+const WSDOT_PASS_FIXTURE = [
+  {
+    MountainPassId: 11,
+    MountainPassName: "Snoqualmie Pass",
+    Latitude: 47.3925,
+    Longitude: -121.4008,
+    DateUpdated: "/Date(1760100000000-0700)/",
+    TemperatureInFahrenheit: 30,
+    ElevationInFeet: 3022,
+    WeatherCondition: "Snow",
+    RoadCondition: "Snow and slush on roadway",
+    TravelAdvisoryActive: true,
+    RestrictionOne: {
+      TravelDirection: "All",
+      RestrictionText: "Chains required on all vehicles except all wheel drive",
+    },
+    RestrictionTwo: { TravelDirection: "All", RestrictionText: "No restrictions" },
+  },
+  {
+    MountainPassId: 12,
+    MountainPassName: "Stevens Pass",
+    Latitude: 47.7438,
+    Longitude: -121.0889,
+    DateUpdated: "/Date(1760200000000-0700)/",
+    WeatherCondition: "Overcast",
+    RoadCondition: "Bare and wet",
+    TravelAdvisoryActive: false,
+    RestrictionOne: {
+      TravelDirection: "All",
+      RestrictionText: "Traction Tires Required",
+    },
+    RestrictionTwo: { TravelDirection: "All", RestrictionText: "No restrictions" },
+  },
+  {
+    MountainPassId: 13,
+    MountainPassName: "White Pass",
+    Latitude: 46.6393,
+    Longitude: -121.3882,
+    DateUpdated: "/Date(1760050000000-0700)/",
+    WeatherCondition: "Clear",
+    RoadCondition: "Bare and dry",
+    TravelAdvisoryActive: false,
+    RestrictionOne: { TravelDirection: "All", RestrictionText: "No restrictions" },
+    RestrictionTwo: { TravelDirection: "All", RestrictionText: "No restrictions" },
+  },
+];
+
+describe("normaliseWsdotPassConditions", () => {
+  it("emits chain/restriction events only for passes with real restrictions", () => {
+    const r = normaliseWsdotPassConditions(WSDOT_PASS_FIXTURE);
+    expect(r.events).toHaveLength(2);
+    expect(r.events[0].sourceId).toBe("wa-pass:11");
+    expect(r.events[0].category).toBe("chain");
+    expect(r.events[1].sourceId).toBe("wa-pass:12");
+    expect(r.events[1].category).toBe("restriction");
+    expect(r.feedUpdatedTs).toBe(1760200000000);
+  });
+  it("throws on a non-array payload", () => {
+    expect(() => normaliseWsdotPassConditions({})).toThrow();
+  });
+});
+
+const WSDOT_ALERT_FIXTURE = [
+  {
+    AlertID: 555001,
+    StartRoadwayLocation: {
+      Description: "I-90, milepost 34",
+      Direction: "E",
+      Latitude: 47.4503,
+      Longitude: -121.7069,
+      MilePost: 34,
+      RoadName: "I-90",
+    },
+    Region: "NW",
+    County: "King",
+    StartTime: "/Date(1760100000000-0700)/",
+    EndTime: null,
+    EventCategory: "Road Closure",
+    HeadlineDescription: "I-90 eastbound closed at milepost 34",
+    ExtendedDescription: "<p>Closed due to avalanche control.</p>",
+    EventStatus: "Open",
+    LastUpdatedTime: "/Date(1760150000000-0700)/",
+    Priority: "Highest",
+  },
+  {
+    AlertID: 555002,
+    StartRoadwayLocation: {
+      Latitude: 47.5,
+      Longitude: -121.7,
+      RoadName: "I-90",
+    },
+    EventCategory: "Collision",
+    HeadlineDescription: "Old collision",
+    EventStatus: "Closed",
+    LastUpdatedTime: "/Date(1760140000000-0700)/",
+  },
+];
+
+describe("normaliseWsdotHighwayAlerts", () => {
+  it("maps open closures, strips HTML, and skips closed alerts", () => {
+    const r = normaliseWsdotHighwayAlerts(WSDOT_ALERT_FIXTURE);
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0].category).toBe("closure");
+    expect(r.events[0].route).toBe("I-90");
+    expect(r.events[0].description).toBe("Closed due to avalanche control.");
+    expect(r.feedUpdatedTs).toBe(1760150000000);
+  });
+  it("throws on a non-array payload", () => {
+    expect(() => normaliseWsdotHighwayAlerts("nope")).toThrow();
+  });
+});
+
+const ODOT_RW_FIXTURE = [
+  {
+    "station-id": 101,
+    "entry-time": "2026-10-30T08:00:00",
+    location: {
+      "location-name": "Government Camp",
+      "route-id": "US26",
+      direction: "EB",
+      "start-location": { "start-lat": 45.349, "start-long": -121.774 },
+    },
+    "weather-conditions": { "weather-id": 4 },
+    "road-conditions": { "road-cond-id": 3 },
+    "commercial-vehicle-restriction": [],
+    "driving-restriction": [{ "restriction-id": "B" }],
+    comments: "Carry chains",
+  },
+  {
+    "station-id": 102,
+    "entry-time": "2026-10-30T08:05:00",
+    location: {
+      "location-name": "Sandy",
+      "route-id": "US26",
+      "start-location": { "start-lat": 45.397, "start-long": -122.26 },
+    },
+    "commercial-vehicle-restriction": [],
+    "driving-restriction": [{ "restriction-id": "0" }],
+    comments: "",
+  },
+];
+
+describe("normaliseOdotRwReports", () => {
+  it("treats an active driving restriction as a chain-law event", () => {
+    const r = normaliseOdotRwReports(ODOT_RW_FIXTURE);
+    expect(r.events).toHaveLength(1);
+    const e = r.events[0];
+    expect(e.state).toBe("OR");
+    expect(e.category).toBe("chain");
+    expect(e.statusText).toContain("Chain law class B");
+    expect(e.lat).toBeCloseTo(45.349, 3);
+    expect(e.lon).toBeCloseTo(-121.774, 3);
+    expect(r.feedUpdatedTs).toBe(Date.parse("2026-10-30T08:05:00"));
+  });
+  it("throws on an unrecognised payload root", () => {
+    expect(() => normaliseOdotRwReports({ nope: true })).toThrow();
+  });
+});
+
+describe("normaliseOdotIncidents", () => {
+  it("maps a closure-worded incident to a closure event", () => {
+    const r = normaliseOdotIncidents([
+      {
+        "incident-id": "INC-77",
+        "entry-time": "2026-10-30T07:30:00",
+        "last-update": "2026-10-30T07:45:00",
+        location: {
+          "location-name": "US-26 at Government Camp",
+          "route-id": "US26",
+          "start-location": { "start-lat": 45.35, "start-long": -121.77 },
+        },
+        comments: "Crash blocking — road closed to all traffic",
+      },
+    ]);
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0].category).toBe("closure");
+    expect(r.events[0].updatedTs).toBe(Date.parse("2026-10-30T07:45:00"));
+  });
+  it("throws on an unrecognised payload root", () => {
+    expect(() => normaliseOdotIncidents(42)).toThrow();
+  });
+});
+
+describe("configuredCoveredStates", () => {
+  it("returns exactly the keyless states when no env var is set", () => {
+    expect(configuredCoveredStates({})).toEqual(["CA", "MT", "ID"]);
+  });
+  it("adds a state only when its env var is set to a non-blank value", () => {
+    expect(
+      configuredCoveredStates({
+        UDOT_API_KEY: "k",
+        WSDOT_ACCESS_CODE: "c",
+        AZ511_API_KEY: "   ",
+      }),
+    ).toEqual(["CA", "MT", "ID", "UT", "WA"]);
+    expect(configuredCoveredStates({ ODOT_TRIPCHECK_API_KEY: "k" })).toEqual([
+      "CA",
+      "MT",
+      "ID",
+      "OR",
+    ]);
+  });
+  it("does not duplicate ID when the ITD key is set (ID is already keyless)", () => {
+    expect(configuredCoveredStates({ ITD511_API_KEY: "k" })).toEqual([
+      "CA",
+      "MT",
+      "ID",
+    ]);
   });
 });
