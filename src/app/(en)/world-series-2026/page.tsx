@@ -15,8 +15,10 @@ import {
   PageShell,
 } from "@/components/directory-page";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
+import EventEndedBanner from "@/components/EventEndedBanner";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
+import { eventPhase } from "@/lib/events/lifecycle";
 
 export const metadata: Metadata = {
   title: "World Series 2026 — Live Cameras in St. Petersburg & Milwaukee",
@@ -42,6 +44,18 @@ const jsonLd = {
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
 
+/**
+ * Lifecycle end date, derived from this page's own schedule (see FAQS
+ * and "The series at a glance" below): Game 3 on October 26, Games 4–5
+ * on October 27–28 in St. Petersburg, Games 6–7 if needed on October 30
+ * and 31 in Milwaukee. A best-of-seven cannot extend past its last
+ * scheduled game, so the series cannot run beyond October 31 — and
+ * EVENT_END carries the cutoff to November 1 so the page only flips to
+ * its past state once the event is certainly over (eventPhase compares
+ * UTC calendar dates; the page reads "past" from November 2, 2026).
+ */
+const EVENT_END = "2026-11-01";
+
 const FAQS = [
   {
     q: "When and where is Game 3 of the 2026 World Series?",
@@ -65,10 +79,47 @@ const FAQS = [
   },
 ];
 
+/**
+ * Past-state FAQ variant, rendered (in both the section and the FAQ
+ * JSON-LD) once eventPhase(EVENT_END) is "past". Entries whose
+ * original wording asserts a present-tense falsehood after the Series
+ * — "Game 3 is tonight…", who "is playing", the best time to catch
+ * game nights — are re-tensed here using ONLY facts FAQS itself states
+ * as schedule/history. No entry states who won or any other outcome:
+ * the site has no sourced result data. The "free to watch" entry is
+ * timeless and is shared by reference so it can never drift.
+ */
+const FAQS_PAST = [
+  {
+    q: "When was the 2026 World Series?",
+    a: "It was played in late October 2026, with games in St. Petersburg and Milwaukee. Game 3 was on Monday, October 26, 2026, at Tropicana Field in St. Petersburg, Florida — the Tampa Bay Rays' home park. Games 4 and 5 followed in St. Petersburg on October 27 and 28, and Games 6 and 7, if needed, were scheduled for American Family Field in Milwaukee on October 30 and 31.",
+  },
+  {
+    q: "Can I watch the World Series games themselves on these cameras?",
+    a: "No — and the page doesn't pretend otherwise. Both ballparks are enclosed (Tropicana Field is a permanent dome; American Family Field has a retractable roof), so no public camera shows the field. These cameras show the host cities themselves: the waterfronts, downtown streets, fan traffic and weather around the ballparks. The games themselves were on the broadcast.",
+  },
+  {
+    q: "Who played in the 2026 World Series?",
+    a: "The Milwaukee Brewers and the Tampa Bay Rays. Neither club had ever won a World Series before 2026. Milwaukee swept the defending-champion Los Angeles Dodgers to get here, and it was the Brewers' first World Series appearance since 1982.",
+  },
+  FAQS[3],
+  {
+    q: "When were the cameras busiest during the Series?",
+    a: "On game nights, in the hour before first pitch and again as the games ended — that's when the streets, waterfronts and fan zones around each ballpark were busiest. The same feeds are still live now for everyday St. Petersburg and Milwaukee: check the waterfront and downtown feeds in St. Petersburg, and the downtown and riverwalk cameras in Milwaukee.",
+  },
+];
+
 export default async function WorldSeries2026Page() {
   const stp = await countForDef(EXPLORE_SCOPES["event-world-series-st-petersburg"]);
   const mke = await countForDef(EXPLORE_SCOPES["event-world-series-milwaukee"]);
   const fmt = (n: number) => n.toLocaleString("en-US");
+
+  // Post-event state: once the Series is past, the banner, hero sub
+  // and FAQs switch to FAQS_PAST / past-tense copy. Before the end
+  // date every branch below resolves to the original content, so the
+  // page renders exactly as it always has.
+  const ended = eventPhase(EVENT_END, new Date()) === "past";
+  const faqs = ended ? FAQS_PAST : FAQS;
 
   const intro = [
     `The 2026 World Series is the Milwaukee Brewers against the Tampa Bay Rays, and it guarantees something no Series has had in years: a first-time champion, because neither club has ever won it. Game 3 is tonight, Monday, October 26, at Tropicana Field in St. Petersburg, Florida. Games 4 and 5 follow there on October 27 and 28 — and if the series goes the distance, Games 6 and 7 bring it to Milwaukee on October 30 and 31. This page gathers the live public cameras around both ballpark cities: ${fmt(stp)} within 25 km of Tropicana Field and ${fmt(mke)} within 25 km of downtown Milwaukee, every one free to watch with no signup.`,
@@ -80,7 +131,7 @@ export default async function WorldSeries2026Page() {
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <FaqJsonLd faqs={FAQS} />
+      <FaqJsonLd faqs={faqs} />
       <Breadcrumb
         trail={[
           { label: "Home", href: "/" },
@@ -90,8 +141,15 @@ export default async function WorldSeries2026Page() {
       />
       <Hero
         h1="World Series 2026 — Live From Both Ballpark Cities"
-        sub="Brewers vs Rays for a first-time champion. Game 3 tonight in St. Petersburg; Games 6–7 in Milwaukee if needed — watch both cities live, free, no signup."
+        sub={
+          ended
+            ? "The 2026 World Series is over — the St. Petersburg and Milwaukee cameras stay live."
+            : "Brewers vs Rays for a first-time champion. Game 3 tonight in St. Petersburg; Games 6–7 in Milwaukee if needed — watch both cities live, free, no signup."
+        }
       />
+      {ended && (
+        <EventEndedBanner eventName="World Series 2026" endLabel="in late October 2026" />
+      )}
       <StatRow
         stats={[
           { value: fmt(stp), label: "cameras within 25 km of Tropicana Field" },
@@ -186,7 +244,7 @@ export default async function WorldSeries2026Page() {
         ]}
       />
 
-      <FaqSection title="World Series 2026 cameras — FAQ" faqs={FAQS} />
+      <FaqSection title="World Series 2026 cameras — FAQ" faqs={faqs} />
 
       <RelatedLinks
         title="More live WorldEye"
