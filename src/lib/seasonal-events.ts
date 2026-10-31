@@ -206,8 +206,8 @@ export const OKTOBERFEST: SeasonalEvent = {
  * the fourth Thursday of November by federal rule, and the parade
  * runs that morning — so every row is fixed by rule: Nov 26, 2026,
  * Nov 25, 2027, Nov 23, 2028 (each verified as its year's fourth
- * Thursday). The dated hub /macys-thanksgiving-parade-2026 covers
- * the centennial edition; this is the permanent page it retires into.
+ * Thursday). The centennial edition lives here; the retired dated
+ * hub /macys-thanksgiving-parade-2026 301s to this permanent page.
  */
 export const MACYS_PARADE: SeasonalEvent = {
   id: "macys-thanksgiving-parade",

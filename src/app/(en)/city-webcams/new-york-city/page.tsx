@@ -201,7 +201,7 @@ export default async function NewYorkCityPage() {
           { label: "Port webcams — the New York Harbor wall", href: "/port-webcams" },
           { label: "Airport webcams — JFK, LaGuardia & Newark area", href: "/airport-webcams" },
           { label: "NYC Marathon 2026", href: "/nyc-marathon-2026" },
-          { label: "Macy's Thanksgiving Parade 2026", href: "/macys-thanksgiving-parade-2026" },
+          { label: "Macy's Thanksgiving Parade 2026", href: "/macys-thanksgiving-parade" },
           { label: "US traffic cameras", href: "/us-traffic-cameras" },
           { label: "City webcams index", href: "/city-webcams" },
         ]}

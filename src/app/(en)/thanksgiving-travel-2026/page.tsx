@@ -255,7 +255,7 @@ export default async function ThanksgivingTravel2026Page() {
       <RelatedLinks
         title="More Thanksgiving week, live"
         links={[
-          { label: "Macy's Thanksgiving Day Parade 2026", href: "/macys-thanksgiving-parade-2026" },
+          { label: "Macy's Thanksgiving Day Parade 2026", href: "/macys-thanksgiving-parade" },
           { label: "NYC Marathon 2026 — cameras along the course", href: "/nyc-marathon-2026" },
           { label: "Live flight tracker", href: "/live-flight-tracker" },
           { label: "Airport webcams", href: "/airport-webcams" },

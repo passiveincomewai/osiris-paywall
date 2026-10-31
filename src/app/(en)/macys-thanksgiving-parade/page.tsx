@@ -259,7 +259,6 @@ export default async function MacysThanksgivingParadePage() {
         links={[
           { label: "Live webcams in New York City", href: "/city-webcams/new-york-city" },
           { label: "Herald Square & Midtown on the 3D globe", href: globeUrl },
-          { label: "The 100th parade — the 2026 edition page", href: "/macys-thanksgiving-parade-2026" },
           { label: "Thanksgiving travel — airports & highways live", href: "/thanksgiving-travel-2026" },
           { label: "United States cameras", href: "/cameras/countries/united-states" },
           { label: "All live events", href: "/live-events" },
@@ -274,7 +273,7 @@ export default async function MacysThanksgivingParadePage() {
           { label: "Cherry blossoms in Washington DC", href: "/cherry-blossoms-washington-dc" },
           { label: "Oktoberfest in Munich — live cameras", href: "/oktoberfest-munich" },
           { label: "Fall foliage cameras", href: "/fall-foliage-cameras" },
-          { label: "New York City Marathon — live cameras", href: "/nyc-marathon-2026" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
           { label: "Fourth of July fireworks — live cameras", href: "/fourth-of-july-fireworks" },
           { label: "Boston Marathon — live cameras", href: "/boston-marathon" },
           { label: "Rose Parade in Pasadena — live cameras", href: "/rose-parade" },

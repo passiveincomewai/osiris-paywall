@@ -196,19 +196,32 @@ describe("sitemap URL set", () => {
     // (2026-10-30) added the /city-webcams/mcalester city page
     // → 1,142. Delta hand-verified: removing exactly those 24 URLs
     // reproduces the 1,118 set and the 71edeb7b… hash byte-for-byte.
-    // The marathon consolidation (site-audit R3, 2026-10-31) then
-    // removed /nyc-marathon (the undated evergreen page 301s to the
-    // dated /nyc-marathon-2026, which stays listed) → 1,141. Delta:
-    // removing exactly that URL reproduces the 1,142 set and the
-    // cc960cf3… hash byte-for-byte.
+    // The site-audit Wave 2 R30 consolidation (2026-10-31) then
+    // removed /macys-thanksgiving-parade-2026 → 1,141: INVERTED
+    // versus the marathon pattern, the undated evergreen page is
+    // canonical and the dated shell is retired (301 in
+    // next.config.ts). Delta hand-verified: removing exactly that
+    // URL reproduces the 1,142 set and the cc960cf3… hash
+    // byte-for-byte.
     expect(hash).toBe(
-      "0634bc704f395133f44f3424d6cab0116474e9f89855424bea392ef73188d37b",
+      "e47811a6fe1cedfadfbfb8c1d3c06b68e034a119194ff105898f49c146ff5065",
     );
   });
 
   it("still lists transit URLs from the live feeds", () => {
     const transit = rows.filter((r) => r.url.startsWith(`${BASE}/transit`));
-    expect(transit.length).toBeGreaterThan(500);
+    // R17 index policy (2026-10-31): the sitemap carries only the
+    // indexable subset — national/state/agency hubs + rail, BRT and
+    // flagship bus routes. With every feed up that is ~170 URLs; a
+    // feed that fails to load at sitemap time omits its agency
+    // (pre-existing behaviour), so the floor only insists the family
+    // is really there (22 hubs max → >40 means route keepers are
+    // in), while the ceiling is the policy invariant: nowhere near
+    // the ~1,300 route URLs the family used to list.
+    expect(transit.length).toBeGreaterThan(40);
+    expect(transit.length).toBeLessThan(400);
+    expect(transit.some((r) => r.url === `${BASE}/transit`)).toBe(true);
+    expect(transit.some((r) => /shuttle/i.test(r.url))).toBe(false);
   });
 
   it("lists live wildfire incident URLs structurally (feed-derived, never pinned)", () => {

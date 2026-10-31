@@ -228,7 +228,7 @@ export default async function NycMarathon2026Page() {
         links={[
           { label: "Live webcams in New York City", href: "/city-webcams/new-york-city" },
           { label: "Thanksgiving travel rush — live", href: "/thanksgiving-travel-2026" },
-          { label: "Macy's Thanksgiving Day Parade 2026", href: "/macys-thanksgiving-parade-2026" },
+          { label: "Macy's Thanksgiving Day Parade 2026", href: "/macys-thanksgiving-parade" },
           { label: "New York traffic cameras", href: "/us-traffic-cameras/new-york" },
           { label: "All live events", href: "/live-events" },
         ]}

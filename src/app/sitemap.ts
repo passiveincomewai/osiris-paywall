@@ -30,7 +30,6 @@ import { hreflangMapFor, localizedUrl } from "@/lib/i18n-seo";
 import { withoutFutureLastmod } from "@/lib/lastmod";
 import { fraudRadarPublicPaths } from "@/lib/fraud-radar/flag";
 import { developerPublicPaths } from "@/lib/developer/flag";
-import { giftPublicPaths } from "@/lib/billing/gift-flag";
 import { RAIL_PLACE_SLUGS } from "@/lib/railfan-places";
 import { agencySeoData, seoAgencies } from "@/lib/transit/seo-data";
 import { feedVersionDate, transitPathsForAgency } from "@/lib/transit/seo";
@@ -407,6 +406,7 @@ const SEO_PAGES_SEASONAL = [
   "/oktoberfest-munich",
   "/fall-foliage-cameras",
   "/macys-thanksgiving-parade",
+  "/nyc-marathon",
   "/fourth-of-july-fireworks",
   "/boston-marathon",
   "/rose-parade",
@@ -440,7 +440,6 @@ const SEO_PAGES_EVENTS_2026 = [
   "/first-snow-2026",
   "/ski-opening-week-2026",
   "/nyc-marathon-2026",
-  "/macys-thanksgiving-parade-2026",
   "/thanksgiving-travel-2026",
   "/starship-flight-15",
   "/atmospheric-river-watch",
@@ -943,14 +942,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Developer platform: developerPublicPaths() is [] while
     // PUBLIC_API_ENABLED is off, so a dark platform contributes nothing.
     ...developerPublicPaths().map((p) => ({
-      url: `${BASE}${p}`,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    })),
-    // Gift subscriptions: giftPublicPaths() is [] while
-    // GIFT_SUBSCRIPTIONS_ENABLED is off, so a dark feature contributes
-    // nothing (only /gift; the sent/redeem pages are transactional).
-    ...giftPublicPaths().map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.7,
