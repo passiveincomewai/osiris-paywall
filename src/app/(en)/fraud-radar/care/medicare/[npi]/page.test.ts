@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeAll, afterEach } from "vitest";
-import React from "react";
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from "vitest";
 import { renderToString } from "react-dom/server";
 import { fileURLToPath } from "node:url";
 
@@ -82,5 +81,25 @@ describe("/fraud-radar/care/medicare/[npi] — profile", () => {
       digest === "NEXT_NOT_FOUND" ||
         digest.startsWith("NEXT_HTTP_ERROR_FALLBACK;404"),
     ).toBe(true);
+  });
+});
+
+describe("/fraud-radar/care/medicare/[npi] — research signals (Phase 6 B2)", () => {
+  const SIGNALS = fileURLToPath(
+    new URL("../../../../../../lib/fraud-radar/__fixtures__/signals", import.meta.url),
+  );
+  beforeEach(() => {
+    vi.stubEnv("FRAUD_RADAR_SIGNALS_ARTIFACT_ROOT", SIGNALS);
+  });
+
+  it("renders the section with the honest no-leads state when the entity has no published signals", async () => {
+    vi.stubEnv("FRAUD_RADAR_ENABLED", "1");
+    const html = await render("1234567890");
+    // The signals fixtures carry no care bucket for this NPI — the
+    // section states that plainly instead of rendering nothing or
+    // a zero.
+    expect(html).toContain("Research signals — Care — Medicare");
+    expect(html).toContain("No research signals in the current vintage");
+    expect(html).toContain("absence of a lead is not a clearance");
   });
 });

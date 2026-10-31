@@ -156,6 +156,73 @@ describe("§14.3 isolation — Phase 6 signals routes carry the flag gate", () =
   });
 });
 
+describe("§14.3 isolation — Phase 6 B2 profile sections + admin candidate queue", () => {
+  it("the three existing profile pages wire the shared research-signals section", () => {
+    const profileFiles = [
+      "app/(en)/fraud-radar/healthcare/providers/[npi]/page.tsx",
+      "app/(en)/fraud-radar/care/medicare/[npi]/page.tsx",
+      "app/(en)/fraud-radar/grants/recipients/[uei]/page.tsx",
+    ];
+    for (const rel of profileFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("ResearchSignalsSection");
+    }
+    // The grants profile additionally wires the cross engine,
+    // read by the recipient's UEI as the artifacts key it.
+    const grantsSrc = readFileSync(
+      path.join(SRC, "app/(en)/fraud-radar/grants/recipients/[uei]/page.tsx"),
+      "utf8",
+    );
+    expect(grantsSrc).toContain('engine: "cross"');
+    expect(grantsSrc).toContain('engine: "grants"');
+  });
+
+  it("S-06 candidate data is read only behind the admin surface (extended)", () => {
+    // Across EVERY Fraud Radar source file, the admin queue reader
+    // and its artifact path may be referenced only by the data
+    // layer that defines them and the admin page that renders the
+    // queue. In particular no profile page and no shared component
+    // may touch them — the B2 negative case, enforced statically
+    // alongside the render tests.
+    const offenders: string[] = [];
+    for (const f of fraudSourceFiles()) {
+      const rel = path.relative(SRC, f);
+      if (
+        rel === "lib/fraud-radar/signals-data.ts" ||
+        rel === "app/(en)/admin/fraud-radar/page.tsx"
+      ) {
+        continue;
+      }
+      const src = readFileSync(f, "utf8");
+      if (
+        src.includes("getAdminCandidateQueue") ||
+        src.includes("candidate-queue.json")
+      ) {
+        offenders.push(rel);
+      }
+    }
+    expect(offenders).toEqual([]);
+    // And the admin page is the one place the queue is rendered.
+    const adminSrc = readFileSync(
+      path.join(SRC, "app/(en)/admin/fraud-radar/page.tsx"),
+      "utf8",
+    );
+    expect(adminSrc).toContain("getAdminCandidateQueue");
+    expect(adminSrc).toContain("CANDIDATE_STATUS");
+  });
+
+  it("B2 adds no public paths — the flag list is unchanged by the payload", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    // Profile detail pages were already routed before B2 and stay
+    // out of the sitemap list; the admin queue is not a public
+    // path at all.
+    expect(flagSrc).not.toContain("candidate");
+    expect(flagSrc).not.toContain("/admin");
+    expect(flagSrc).not.toContain("recipients/[");
+    expect(flagSrc).not.toContain("providers/[");
+  });
+});
+
 describe("§35 billing non-interference — static dependency guard", () => {
   const files = fraudSourceFiles();
 

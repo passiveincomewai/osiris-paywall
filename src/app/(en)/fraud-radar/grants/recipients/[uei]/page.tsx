@@ -13,6 +13,7 @@ import {
 } from "@/lib/fraud-radar/grants-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { ResearchLeadNotice, NotPublishedYet } from "@/components/fraud-radar/Provenance";
+import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
 
 /**
  * Fraud Radar — grant recipient profile (Phase 4). Identity and
@@ -57,6 +58,21 @@ export default async function GrantRecipientProfilePage({
     getGrantsDatasetMeta(),
   ]);
   if (!profile) notFound();
+  // Phase 6 (Payload B2): both research-signals sections awaited
+  // here so the page's element tree stays synchronously renderable
+  // (see the healthcare profile). The cross engine is read by UEI,
+  // exactly as the artifacts key it.
+  const grantsSignals = await ResearchSignalsSection({
+    engine: "grants",
+    entityKey: profile.uei,
+    heading: "Research signals — grants rules",
+  });
+  const crossSignals = await ResearchSignalsSection({
+    engine: "cross",
+    entityKey: profile.uei,
+    heading: "Research signals — cross-dataset",
+    note: "Cross-dataset records are keyed exactly as published: screening records by this recipient's UEI, and the FAC ↔ Form 990 discrepancy rule (X-990-01) at the auditee's EIN grain — an auditee whose EIN-grain leads exist does not surface them under a UEI read, and no key is ever inferred to bridge the two.",
+  });
   const id = profile.identity;
   const t = profile.totals;
   const samExtract = id.samEntitiesExtractVersion ?? SAM_ENTITIES_EXTRACT_VERSION;
@@ -297,6 +313,17 @@ export default async function GrantRecipientProfilePage({
             </p>
           )}
         </section>
+
+        {/* Phase 6 (Payload B2): this recipient's published research
+            leads — the grants engine by UEI, then the cross-dataset
+            engine read by the same UEI exactly as the artifacts key
+            it (screening records are UEI-keyed; the FAC ↔ Form 990
+            discrepancy rule X-990-01 is published at the auditee's
+            EIN grain, stated in the section's keying note). Both
+            sections fail soft to absent when no signals artifact is
+            configured. */}
+        <div className="mt-10">{grantsSignals}</div>
+        <div className="mt-6">{crossSignals}</div>
 
         <section className="mt-10">
           <h2 className="text-xl font-semibold">Exclusion screening</h2>

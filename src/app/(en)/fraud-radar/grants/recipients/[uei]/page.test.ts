@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from "vitest";
 import { renderToString } from "react-dom/server";
 import { fileURLToPath } from "node:url";
 
@@ -96,5 +96,34 @@ describe("/fraud-radar/grants/recipients/[uei] — profile", () => {
       digest === "NEXT_NOT_FOUND" ||
         digest.startsWith("NEXT_HTTP_ERROR_FALLBACK;404"),
     ).toBe(true);
+  });
+});
+
+describe("/fraud-radar/grants/recipients/[uei] — research signals (Phase 6 B2)", () => {
+  const SIGNALS = fileURLToPath(
+    new URL("../../../../../../lib/fraud-radar/__fixtures__/signals", import.meta.url),
+  );
+  beforeEach(() => {
+    vi.stubEnv("FRAUD_RADAR_SIGNALS_ARTIFACT_ROOT", SIGNALS);
+  });
+
+  it("renders grants + cross sections; X-990-01 and S-01 surface, S-06 never does", async () => {
+    vi.stubEnv("FRAUD_RADAR_ENABLED", "1");
+    const html = await render("ABC123DEF456");
+    expect(html).toContain("Research signals — grants rules");
+    expect(html).toContain("Research signals — cross-dataset");
+    // The cross fixture keys this UEI's X-990-01 lead + S-01 record
+    // exactly as the data layer exposes them.
+    expect(html).toContain("X-990-01");
+    expect(html).toContain("fac_total_amount_expended");
+    expect(html).toContain("form990_total_expenses_amt");
+    expect(html).toContain("Screening records — exact-identifier listings");
+    expect(html).toContain("S-01");
+    // The keying note states the EIN grain honestly.
+    expect(html).toContain("EIN grain");
+    // S-06 is confined to the admin queue — the fixture bucket
+    // deliberately carries a candidate row and it must not render.
+    expect(html).not.toContain("S-06");
+    expect(html).not.toContain("candidate — human review");
   });
 });

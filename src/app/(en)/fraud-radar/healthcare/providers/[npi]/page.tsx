@@ -12,6 +12,7 @@ import {
   type RoleBlock,
 } from "@/lib/fraud-radar/healthcare-data";
 import MonthlyChart from "@/components/fraud-radar/MonthlyChart";
+import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
 import {
   ResearchLeadNotice,
   DatasetProvenance,
@@ -134,6 +135,14 @@ export default async function ProviderProfilePage({
 
   const [profile, meta] = await Promise.all([getProviderProfile(npi), getDatasetMeta()]);
   if (profile === null) notFound();
+  // Phase 6 (Payload B2): the research-signals section is an async
+  // server component; it is awaited here so the page's element tree
+  // stays synchronously renderable (the established page-test
+  // pattern), exactly as the page's own data reads are awaited.
+  const researchSignals = await ResearchSignalsSection({
+    engine: "healthcare",
+    entityKey: profile.npi,
+  });
   const { summary, identity, hcpcs, leie, monthly } = profile;
   const displayName = identity?.displayName ?? profile.stub?.displayName ?? null;
 
@@ -285,6 +294,11 @@ export default async function ProviderProfilePage({
             </div>
           </section>
         )}
+
+        {/* Phase 6 (Payload B2): this provider's published research
+            leads, read from the signals artifacts — fail-soft to
+            absent when no signals artifact is configured. */}
+        <div className="mt-6">{researchSignals}</div>
 
         <section className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <h2 className="text-lg font-semibold">Screening — exclusion lists</h2>

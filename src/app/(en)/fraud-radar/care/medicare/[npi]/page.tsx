@@ -9,6 +9,7 @@ import {
 } from "@/lib/fraud-radar/care-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { ResearchLeadNotice, NotPublishedYet } from "@/components/fraud-radar/Provenance";
+import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
 
 /**
  * Fraud Radar — Medicare provider profile (Phase 3). Identity comes
@@ -52,6 +53,12 @@ export default async function MedicareProfilePage({
   ]);
   if (!profile) notFound();
   const id = profile.identity;
+  // Phase 6 (Payload B2): awaited here so the page's element tree
+  // stays synchronously renderable (see the healthcare profile).
+  const researchSignals = await ResearchSignalsSection({
+    engine: "care",
+    entityKey: profile.npi,
+  });
 
   return (
     <main className="docs-root min-h-screen" style={{ background: "#050810" }}>
@@ -166,6 +173,11 @@ export default async function MedicareProfilePage({
             )}
           </section>
         )}
+
+        {/* Phase 6 (Payload B2): this provider's published research
+            leads, read from the signals artifacts — fail-soft to
+            absent when no signals artifact is configured. */}
+        <div className="mt-10">{researchSignals}</div>
 
         <section className="mt-10">
           <h2 className="text-xl font-semibold">Exclusion screening</h2>

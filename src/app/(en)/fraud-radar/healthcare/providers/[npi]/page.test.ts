@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeAll, afterEach } from "vitest";
-import React from "react";
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from "vitest";
 import { renderToString } from "react-dom/server";
 import { fileURLToPath } from "node:url";
 
@@ -79,5 +78,31 @@ describe("/fraud-radar/healthcare/providers/[npi] — profile", () => {
       digest = (e as { digest?: string })?.digest ?? "";
     }
     expect(digest === "NEXT_NOT_FOUND" || digest.startsWith("NEXT_HTTP_ERROR_FALLBACK;404")).toBe(true);
+  });
+});
+
+describe("/fraud-radar/healthcare/providers/[npi] — research signals (Phase 6 B2)", () => {
+  const SIGNALS = fileURLToPath(
+    new URL("../../../../../../lib/fraud-radar/__fixtures__/signals", import.meta.url),
+  );
+  beforeEach(() => {
+    vi.stubEnv("FRAUD_RADAR_SIGNALS_ARTIFACT_ROOT", SIGNALS);
+  });
+
+  it("renders the provider's research leads with their provenance block", async () => {
+    const html = await render("1234567890");
+    expect(html).toContain("Research signals — Healthcare — Medicaid");
+    expect(html).toContain(
+      "Research lead — Paid per claim line above specialty-state peer band (billing)",
+    );
+    expect(html).toContain("peer-group median of 120.5");
+    expect(html).toContain("Rung used: L1");
+    expect(html).toContain("Peer group size: 214");
+  });
+
+  it("never renders S-06 candidate pairs on a public profile", async () => {
+    const html = await render("1234567890");
+    expect(html).not.toContain("S-06");
+    expect(html).not.toContain("candidate — human review");
   });
 });

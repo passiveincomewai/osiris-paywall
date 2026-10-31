@@ -5,7 +5,12 @@ import { adminEmails } from "@/lib/affiliate/admin";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
 import { getRegistryHealth } from "@/lib/fraud-radar/registry-admin";
 import { listDataQualityRecords } from "@/lib/fraud-radar/signals-neon";
-import { getSignalsQuality } from "@/lib/fraud-radar/signals-data";
+import {
+  getSignalsQuality,
+  getAdminCandidateQueue,
+  CANDIDATE_STATUS,
+  CANDIDATE_QUEUE_NOTE,
+} from "@/lib/fraud-radar/signals-data";
 
 /**
  * Fraud Radar admin — Data Source Registry health (spec §5/§32).
@@ -93,6 +98,27 @@ export default async function FraudRadarAdminPage() {
     : dqArtifact
       ? `published quality artifact, run ${dqArtifact.runDate ?? "—"} (the Neon grain has not been loaded for this deployment yet)`
       : null;
+
+  // Phase 6 candidate queue (Payload B2): S-06 human-review
+  // candidate pairs, read ONLY here — behind this page's admin
+  // gate — through getAdminCandidateQueue(), the data layer's
+  // single reader of the admin queue artifact. No public route
+  // renders these records, and the public entity loader filters
+  // them from every block. Read-only in v1: the queue is shown,
+  // no review workflow (assignment, disposition) is built here —
+  // that is Phase 8 cases territory. Every row carries the
+  // constant status "candidate — human review"; aggregates below
+  // are counts of pairs by published family / key type, never a
+  // standing for any entity.
+  const candidateQueue = await getAdminCandidateQueue();
+  const queueFamilyCounts = new Map<string, number>();
+  const queueKeyTypeCounts = new Map<string, number>();
+  for (const rec of candidateQueue?.records ?? []) {
+    const family = rec.recordKey?.split(":")[0] ?? "unspecified";
+    queueFamilyCounts.set(family, (queueFamilyCounts.get(family) ?? 0) + 1);
+    const kt = rec.entityKeyType ?? "unspecified";
+    queueKeyTypeCounts.set(kt, (queueKeyTypeCounts.get(kt) ?? 0) + 1);
+  }
 
   return (
     <div className="docs-root min-h-screen" style={{ background: "#050810" }}>
@@ -275,6 +301,128 @@ export default async function FraudRadarAdminPage() {
                       </td>
                       <td className="px-4 py-3 text-white/70">{d.filesChecked}</td>
                       <td className="px-4 py-3 text-white/70">{d.vintageAgeDays}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        <h2 className="mt-12 text-lg font-semibold">
+          Candidate queue — human review (S-06, Phase 6)
+        </h2>
+        <p className="mt-2 text-sm text-white/50 leading-relaxed">
+          {CANDIDATE_QUEUE_NOTE} These pairs exist only in this admin
+          view: there is no public route for them, and they never
+          render on an entity profile. Read-only in this version — the
+          queue is shown for human review; assignment and disposition
+          workflow belongs to a later phase. Every row carries the
+          constant status &quot;{CANDIDATE_STATUS}&quot;.
+        </p>
+        {candidateQueue === null ? (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+            <h3 className="font-semibold">Candidate queue not loaded yet</h3>
+            <p className="mt-2 text-sm text-white/60 leading-relaxed">
+              The admin candidate-queue artifact could not be read for
+              this deployment (no signals artifact is configured, or the
+              queue file is not published yet). That is a loading state —
+              no queue count of zero is implied.
+            </p>
+          </div>
+        ) : (
+          <>
+            <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="text-white/40">Candidate pairs in the published queue</dt>
+                <dd className="text-white/85">
+                  {candidateQueue.count} published · {candidateQueue.records.length} read
+                  {candidateQueue.version ? ` · signals version ${candidateQueue.version}` : ""}
+                  {candidateQueue.surface ? ` · surface: ${candidateQueue.surface}` : ""}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Status on every row</dt>
+                <dd className="text-white/85">{candidateQueue.statusConstant}</dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Pairs by published family</dt>
+                <dd className="text-white/85">
+                  {[...queueFamilyCounts.entries()]
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(" · ") || "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Pairs by entity key type</dt>
+                <dd className="text-white/85">
+                  {[...queueKeyTypeCounts.entries()]
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(" · ") || "—"}
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-4 max-h-[36rem] overflow-y-auto rounded-2xl border border-white/10">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-white/50">
+                    <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3 font-medium">Pair — side A (published entity key)</th>
+                    <th className="px-4 py-3 font-medium">Pair — side B + match basis</th>
+                    <th className="px-4 py-3 font-medium">Source / extract versions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {candidateQueue.records.map((rec) => (
+                    <tr
+                      key={`${rec.recordKey ?? rec.entityKey}-${rec.entityKey}`}
+                      className="border-b border-white/5 align-top"
+                    >
+                      <td className="px-4 py-3 font-medium text-amber-200/90">
+                        {CANDIDATE_STATUS}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-mono text-white/85">{rec.entityKey}</div>
+                        <div className="text-xs text-white/40">
+                          {rec.entityKeyType ?? "key type not stated"}
+                          {rec.recordKey ? ` · pair ${rec.recordKey}` : ""}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-white/70">
+                        {rec.detail ? (
+                          <dl className="space-y-1">
+                            {Object.entries(rec.detail)
+                              .filter(([, v]) => v !== null && v !== undefined)
+                              .map(([k, v]) => (
+                                <div key={k}>
+                                  <dt className="inline font-mono text-xs text-white/40">
+                                    {k}:{" "}
+                                  </dt>
+                                  <dd className="inline">{String(v)}</dd>
+                                </div>
+                              ))}
+                          </dl>
+                        ) : (
+                          "—"
+                        )}
+                        <div className="mt-1 text-xs text-white/40">
+                          Match basis: the published pair record above —
+                          a name/key candidate from the named source
+                          tables, not an identity match.
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-white/70">
+                        <div>{rec.inputVersions}</div>
+                        {rec.sourceTable && (
+                          <div className="mt-1 text-xs text-white/40">
+                            Source tables: {rec.sourceTable}
+                          </div>
+                        )}
+                        <div className="mt-1 text-xs text-white/40">
+                          Computed {rec.computedAt.slice(0, 10)} · rule library{" "}
+                          {rec.ruleLibraryVersion}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
