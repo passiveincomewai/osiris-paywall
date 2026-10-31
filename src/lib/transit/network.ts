@@ -103,6 +103,29 @@ export interface TransitNetwork {
   feedVersion?: string;
 }
 
+/**
+ * Normalize a GTFS trip_headsign into a bare destination for use as
+ * a direction label. Some feeds bake the direction preposition into
+ * the headsign itself — UTA publishes "To Draper" / "To Salt Lake
+ * Central" — while every template that renders a direction label
+ * adds its own "to" / "To" ("to {headsign}", "To {headsign} · N
+ * stops", "(to {headsign})" in the FAQ). Rendering the raw headsign
+ * produced "to To Draper", "To To Draper · 25 stops" and "(to To
+ * Draper)" on every UTA route page (site audit 2026-10-31, R19).
+ * Stripping the leading "To " here — where DirectionInfo labels are
+ * built in parseNetwork — repairs the hero line, the schedule table,
+ * the per-direction headings and the FAQ on all route pages at
+ * once, because routeDaySummary and the planner directions all copy
+ * DirectionInfo.headsign. A destination that merely STARTS with the
+ * letters "To" ("Toowoomba") has no following space, so it is left
+ * alone; repeated prefixes ("To To …") collapse to the destination.
+ */
+export function normalizeDirectionHeadsign(headsign: string): string {
+  let out = (headsign ?? '').trim();
+  while (/^to\s+/i.test(out)) out = out.replace(/^to\s+/i, '').trim();
+  return out;
+}
+
 /** GTFS "H:MM:SS" (hours may exceed 23) → seconds since service-day start. */
 export function parseGtfsTime(s: string | undefined): number | null {
   if (!s) return null;
@@ -369,7 +392,9 @@ export function parseNetwork(files: NetworkFiles): TransitNetwork {
       .map(s => [s.lng, s.lat] as [number, number]);
     const info: DirectionInfo = {
       dir: Number(dirStr),
-      headsign: trip.headsign || routeById.get(routeId)?.long || '',
+      headsign:
+        normalizeDirectionHeadsign(trip.headsign) ||
+        normalizeDirectionHeadsign(routeById.get(routeId)?.long || ''),
       stopIds: trip.stops.map(c => c.stopId),
       line: thinLine(rawLine),
     };

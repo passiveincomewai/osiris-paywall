@@ -9,10 +9,12 @@ import {
   formatGtfsClock,
   groupRoutes,
   isShuttleRoute,
+  isShuttleVariantRoute,
   representativeDays,
   routeIndexDecision,
   routeJsonLd,
   routeSlugBase,
+  routesForSeoPages,
   routeTitle,
   slugifySegment,
   stateForAgency,
@@ -358,6 +360,94 @@ describe('route index policy (R17–R19)', () => {
       .toEqual({ indexable: true, reason: 'flagship' });
     expect(routeIndexDecision(UTA_STUB, net, net.routeById.get('RS')!, TZ))
       .toEqual({ indexable: false, reason: 'standard' });
+  });
+});
+
+describe('shuttle-variant generation exclusion (R18)', () => {
+  // Shapes copied from the live MBTA GTFS (2026-10-31): 400 routes,
+  // 216 shuttle routes, every one id-namespaced "Shuttle-…" AND
+  // shuttle-named; parent lines carry ordinary ids. This is the
+  // GENERATION exclusion (no page at all) — the name-only
+  // isShuttleRoute above is the R17 index policy for generated pages.
+  const route = (id: string, short: string, long: string) =>
+    ({ id, short, long }) as unknown as Parameters<typeof isShuttleVariantRoute>[0];
+
+  it('flags MBTA segment and generic shuttle variants (both signals)', () => {
+    expect(isShuttleVariantRoute(route('Shuttle-AshmontJFKUMass', 'Red Line Shuttle', 'Ashmont - JFK/UMass (Shuttle)'))).toBe(true);
+    expect(isShuttleVariantRoute(route('Shuttle-Generic-Red', 'Red Line Shuttle', ''))).toBe(true);
+    expect(isShuttleVariantRoute(route('Shuttle-Generic', 'Shuttle', ''))).toBe(true);
+    // "Airport" here is Airport Station (Blue Line) — a Blue Line
+    // replacement variant, not a primary airport service.
+    expect(isShuttleVariantRoute(route('Shuttle-AirportWonderland', 'Blue Line Shuttle', 'Airport - Wonderland (Shuttle)'))).toBe(true);
+  });
+
+  it('keeps parent lines and primary shuttle identities (one signal is not enough)', () => {
+    expect(isShuttleVariantRoute(route('Red', '', 'Red Line'))).toBe(false);
+    expect(isShuttleVariantRoute(route('1', '1', 'Harvard Square - Nubian Station'))).toBe(false);
+    // A primary airport/community shuttle: shuttle in the NAME but
+    // an ordinary route id — a primary identity, not a variant.
+    // (It is still generated; R17's isShuttleRoute noindexes it.)
+    expect(isShuttleVariantRoute(route('APT', 'APT', 'Downtown - Airport Shuttle'))).toBe(false);
+    // Namespaced id whose public name never says shuttle: kept —
+    // the rider-facing name is the evidence, not the id alone.
+    expect(isShuttleVariantRoute(route('Shuttle-1', '1', 'Downtown Connector'))).toBe(false);
+  });
+
+  it('routesForSeoPages drops only the variants; MBTA-shaped set 6 → 4', () => {
+    const all = [
+      route('Red', '', 'Red Line'),
+      route('Green-B', 'B', 'Green Line B'),
+      route('Shuttle-Generic-Red', 'Red Line Shuttle', ''),
+      route('Shuttle-AshmontJFKUMass', 'Red Line Shuttle', 'Ashmont - JFK/UMass (Shuttle)'),
+      route('APT', 'APT', 'Downtown - Airport Shuttle'),
+      route('1', '1', 'Harvard Square - Nubian Station'),
+    ] as unknown as Parameters<typeof routesForSeoPages>[0];
+    const kept = routesForSeoPages(all);
+    expect(kept.map(r => r.id)).toEqual(['Red', 'Green-B', 'APT', '1']);
+  });
+
+  it('a shuttle-only network keeps its routes (they are its primary service)', () => {
+    const all = [
+      route('Shuttle-Generic', 'Shuttle', ''),
+      route('Shuttle-AirportWonderland', 'Blue Line Shuttle', 'Airport - Wonderland (Shuttle)'),
+    ] as unknown as Parameters<typeof routesForSeoPages>[0];
+    expect(routesForSeoPages(all)).toEqual(all);
+  });
+
+  it('the generation set flows into slugs + sitemap paths (the seo-data wiring)', () => {
+    const net = parseNetwork({
+      routes: [
+        'route_id,route_short_name,route_long_name,route_type,route_color',
+        'Red,,Red Line,1,DA291C',
+        'Shuttle-Generic-Red,Red Line Shuttle,,3,',
+        'Shuttle-AshmontJFKUMass,Red Line Shuttle,Ashmont - JFK/UMass (Shuttle),3,',
+        '1,1,Harvard Square - Nubian Station,3,',
+      ].join('\n'),
+      stops: STOPS, trips: TRIPS, stopTimes: STOP_TIMES, calendar: CALENDAR,
+    });
+    // Pre-filter the fixture carries both shuttle routes.
+    expect(net.routes.map(r => r.id)).toEqual(
+      expect.arrayContaining(['Shuttle-Generic-Red', 'Shuttle-AshmontJFKUMass']),
+    );
+    const pageNet = { ...net, routes: routesForSeoPages(net.routes) };
+    expect(pageNet.routes.map(r => r.id).sort()).toEqual(['1', 'Red']);
+    const slugs = buildRouteSlugs(pageNet.routes);
+    // No slug is ever minted for a shuttle variant — so no static
+    // param, no agency-hub link and no route page for one.
+    expect([...slugs.keys()].sort()).toEqual(['1', 'Red']);
+    const paths = transitPathsForAgency(
+      { id: 'mbta', name: 'MBTA', region: 'Boston, MA', attribution: 'MBTA', timezone: 'America/New_York' } as unknown as TransitAgency,
+      pageNet, slugs,
+    );
+    // The sitemap additionally applies the R17 index policy: the
+    // Red Line (metro/rail) stays; the 0-trip bus route 1 drops as
+    // 'standard'. The invariant here is that no shuttle path exists.
+    expect(paths.map(p => p.path)).toEqual([
+      '/transit/massachusetts',
+      '/transit/mbta',
+      '/transit/mbta/routes/red-red-line',
+    ]);
+    expect(paths.some(p => /shuttle/i.test(p.path))).toBe(false);
   });
 });
 

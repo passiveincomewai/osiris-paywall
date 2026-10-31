@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   parseNetwork, parseGtfsTime, parseStopTimes, thinLine, activeServiceIds, departuresForStop,
+  normalizeDirectionHeadsign,
   routeDaySummary, ymdInZone, zonedMidnightMs, type TransitNetwork,
 } from './network';
 
@@ -193,6 +194,40 @@ describe('departuresForStop', () => {
   it('returns nothing for a stop with no calls', () => {
     const base = zonedMidnightMs(TUE, TZ);
     expect(departuresForStop(net, 'ZZZ', base, base + 3600000, TZ)).toEqual([]);
+  });
+});
+
+describe('normalizeDirectionHeadsign (R19)', () => {
+  it('strips a feed-baked leading "To " so templates add exactly one', () => {
+    expect(normalizeDirectionHeadsign('To Draper')).toBe('Draper');
+    expect(normalizeDirectionHeadsign('To Salt Lake Central')).toBe('Salt Lake Central');
+    expect(normalizeDirectionHeadsign('to Draper')).toBe('Draper');
+    expect(normalizeDirectionHeadsign('TO Draper')).toBe('Draper');
+    expect(normalizeDirectionHeadsign('  To   Draper  ')).toBe('Draper');
+    expect(normalizeDirectionHeadsign('To To Draper')).toBe('Draper');
+  });
+  it('leaves bare destinations and To-initial names untouched', () => {
+    expect(normalizeDirectionHeadsign('Draper')).toBe('Draper');
+    expect(normalizeDirectionHeadsign('Downtown')).toBe('Downtown');
+    expect(normalizeDirectionHeadsign('Toowoomba')).toBe('Toowoomba');
+    expect(normalizeDirectionHeadsign('')).toBe('');
+  });
+  it('parseNetwork direction labels (and the day summary copying them) carry no "To " prefix', () => {
+    const net = parseNetwork({
+      routes: ROUTES, shapes: SHAPES, stops: STOPS,
+      trips: [
+        'route_id,service_id,trip_id,trip_headsign,direction_id,shape_id',
+        'R1,WKD,T1,To Draper,0,S1',
+        'R1,WKD,T3,To Salt Lake Central,1,S1',
+      ].join('\n'),
+      stopTimes: STOP_TIMES, calendar: CALENDAR, calendarDates: CALENDAR_DATES,
+    });
+    const dirs = net.directions.get('R1')!;
+    expect(dirs.find(d => d.dir === 0)?.headsign).toBe('Draper');
+    expect(dirs.find(d => d.dir === 1)?.headsign).toBe('Salt Lake Central');
+    // routeDaySummary feeds the route page schedule table ("to {headsign}").
+    const summary = routeDaySummary(net, 'R1', TUE, TZ);
+    expect(summary.map(d => d.headsign)).toEqual(['Draper', 'Salt Lake Central']);
   });
 });
 

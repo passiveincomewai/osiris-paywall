@@ -1,6 +1,6 @@
 import { TRANSIT_AGENCIES, agencyById, type TransitAgency } from './agencies';
-import { networkFor, type TransitNetwork } from './network';
-import { buildRouteSlugs, stateForAgency, type StateInfo } from './seo';
+import { networkFor, type NetworkRoute, type TransitNetwork } from './network';
+import { buildRouteSlugs, routesForSeoPages, stateForAgency, type StateInfo } from './seo';
 
 /**
  * OSIRIS — server-side data access for the /transit SEO pages.
@@ -34,7 +34,26 @@ export interface AgencySeoData {
 
 /** Load + index one agency's network for page rendering. */
 export async function agencySeoData(agency: TransitAgency): Promise<AgencySeoData> {
-  const net = await networkFor(agency.id, agency.staticGtfsUrl!);
+  const fullNet = await networkFor(agency.id, agency.staticGtfsUrl!);
+  // Route-page generation set (R18, lib/transit/seo): temporary
+  // shuttle variants get no route page, so the network handed to
+  // every SEO consumer carries only page routes — the agency hub's
+  // listing and counts, generateStaticParams, the route pages
+  // themselves (a shuttle slug resolves to no routeId → 404), the
+  // state/national hub totals and the sitemap all follow from this
+  // one set. The cached live network is NOT mutated: vehicles,
+  // arrivals and the map keep the full feed, shuttles included.
+  const pageRoutes = routesForSeoPages(fullNet.routes);
+  let net = fullNet;
+  if (pageRoutes.length !== fullNet.routes.length) {
+    const routeById = new Map<string, NetworkRoute>();
+    const routeByShort = new Map<string, NetworkRoute>();
+    for (const r of pageRoutes) {
+      routeById.set(r.id, r);
+      if (!routeByShort.has(r.short)) routeByShort.set(r.short, r);
+    }
+    net = { ...fullNet, routes: pageRoutes, routeById, routeByShort };
+  }
   const slugs = buildRouteSlugs(net.routes);
   return {
     agency,

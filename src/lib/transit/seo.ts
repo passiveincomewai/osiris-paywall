@@ -76,6 +76,65 @@ export function stopAnchor(stopId: string): string {
   return `stop-${slugifySegment(stopId)}`;
 }
 
+/* ── Route-page generation set (shuttle variants, R18) ───────────── */
+
+/**
+ * A temporary shuttle VARIANT of a parent line, as opposed to a
+ * shuttle service that is a route's primary identity. Dual-signal,
+ * both required (site audit 2026-10-31, R18 generation exclusion —
+ * distinct from the R17 index policy at the bottom of this file,
+ * whose name-only `isShuttleRoute` decides indexation for pages
+ * that DO get generated):
+ *
+ *  1. the agency namespaces the route id as a shuttle variant —
+ *     id is "Shuttle" or starts "Shuttle-" (MBTA's GTFS does exactly
+ *     this: every one of its 216 shuttle routes carries a
+ *     "Shuttle-…" route_id), AND
+ *  2. the route's public name (short or long) says "Shuttle".
+ *
+ * Verified against the live MBTA feed (2026-10-31): 400 routes in
+ * routes.txt, 216 shuttle-named, and the two sets are EXACTLY the
+ * same 216 — no shuttle-named route lacks the id prefix and no
+ * prefixed route lacks the name. Their short names are the parent
+ * lines ("Red Line Shuttle", "Franklin Line Shuttle", …); their
+ * long names are segment variants of those lines ("Ashmont -
+ * JFK/UMass (Shuttle)") or empty (the "Shuttle-Generic-…" generic
+ * placeholders). Segments containing "Airport" are Airport STATION
+ * on the Blue Line, not airport services — MBTA's real Logan
+ * services (Silver Line, route 171) carry ordinary ids and stay.
+ * A route named "… Shuttle" with an ordinary id — a primary
+ * airport/community shuttle identity — is therefore KEPT as a
+ * generated page (the R17 policy still noindexes it by name), and
+ * so is a "Shuttle-"-namespaced id whose public name never says
+ * shuttle (the name signal is the rider-facing evidence).
+ */
+export function isShuttleVariantRoute(
+  route: Pick<NetworkRoute, 'id' | 'short' | 'long'>,
+): boolean {
+  if (!/^shuttle(-|$)/i.test((route.id ?? '').trim())) return false;
+  return /\bshuttle\b/i.test(`${route.short ?? ''} ${route.long ?? ''}`);
+}
+
+/**
+ * The routes that get SEO route pages for a network: the full set
+ * minus shuttle variants (above). This is the enumeration layer for
+ * route-page GENERATION only — the underlying TransitNetwork keeps
+ * every route, so live vehicles, arrivals and the map layer still
+ * show a shuttle while it is actually running; only the permanent
+ * crawlable page family (agency listing + counts, static params,
+ * route pages, sitemap — all derived in lib/transit/seo-data from
+ * this set) stops enumerating temporary variants as permanent
+ * routes. MBTA: 400 → 184 routes.
+ *
+ * Guard: if EVERY route in a network were a shuttle variant, the
+ * shuttles would be that agency's primary service, not variants of
+ * parent lines elsewhere — the full set is then returned unchanged.
+ */
+export function routesForSeoPages(routes: NetworkRoute[]): NetworkRoute[] {
+  const kept = routes.filter(r => !isShuttleVariantRoute(r));
+  return kept.length > 0 ? kept : routes;
+}
+
 /* ── Display names ───────────────────────────────────────────────── */
 
 /**
