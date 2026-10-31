@@ -5480,20 +5480,26 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
     try {
       if (enabled) {
-        // CARTO's already-loaded vector tiles include the building footprints
-        // and render heights. No second worldwide vector source is needed.
+        // The loaded basemap style is CARTO's Protomaps-based build: its
+        // only vector source is `protomaps` (carto.streets v2 tiles) and
+        // the buildings live in its `buildings` source-layer, carrying
+        // Protomaps-schema `height` / `min_height` properties (verified
+        // against a live z15 tile, 2026-10-31). The old OpenMapTiles
+        // pairing (source `carto`, layer `building`, render_height)
+        // names a source the style no longer contains. No second
+        // worldwide vector source is needed.
 
         // ── 3D BUILDING EXTRUSION LAYER ──
         if (!map.getLayer('osiris-3d-buildings')) {
           map.addLayer({
             id: 'osiris-3d-buildings',
-            source: 'carto',
-            'source-layer': 'building',
+            source: 'protomaps',
+            'source-layer': 'buildings',
             type: 'fill-extrusion',
             minzoom: 14.5,
             paint: {
               'fill-extrusion-color': [
-                'interpolate', ['linear'], ['get', 'render_height'],
+                'interpolate', ['linear'], ['coalesce', ['get', 'height'], 12],
                 0, '#1a1a2e',
                 20, '#16213e',
                 50, '#0f3460',
@@ -5503,12 +5509,12 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
               'fill-extrusion-height': [
                 'interpolate', ['linear'], ['zoom'],
                 14.5, 0,
-                15.5, ['get', 'render_height']
+                15.5, ['coalesce', ['get', 'height'], 12]
               ],
               'fill-extrusion-base': [
                 'interpolate', ['linear'], ['zoom'],
                 14.5, 0,
-                15.5, ['get', 'render_min_height']
+                15.5, ['coalesce', ['get', 'min_height'], 0]
               ],
               'fill-extrusion-opacity': [
                 'interpolate', ['linear'], ['zoom'],
