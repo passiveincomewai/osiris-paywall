@@ -17,6 +17,7 @@ import { buildEntityJsonLd } from "@/lib/seo/entity-schema";
 import { LOCALES, type LocaleCode } from "@/i18n/config";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
 import "@/app/globals.css";
+import "@/app/design-tokens.css";
 
 /* ── Type system (self-hosted via next/font; no runtime font requests) ──
    The variable classes land on <html> and define the CSS custom properties

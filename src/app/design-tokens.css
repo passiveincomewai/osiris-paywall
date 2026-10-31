@@ -1,0 +1,136 @@
+/* ═══════════════════════════════════════════════════════════════
+   WORLDEYE — VISUAL TRANSFORMATION DESIGN TOKENS (Phase 2, STAGED)
+   Mission-control direction: deep charcoal / near-black / midnight
+   navy, off-white type, restrained electric blue, selective cool
+   cyan. Data colours are reserved for REAL data — never decoration.
+
+   STATUS: live — imported by src/components/RootShell.tsx (after
+   globals.css) since the homepage implementation wave, payload 1.
+   Tokens are inert until a component consumes them; pages adopt
+   them section-by-section per the migration rules.
+
+   All tokens are namespaced --we-* so they can coexist with the
+   legacy OSIRIS token set in globals.css during migration.
+   Legacy tokens are retired family-by-family as pages migrate;
+   never rename a legacy token in place.
+
+   OWNER RULINGS baked in here:
+   - Text is never grey: secondary text resolves toward white
+     (2026-10-26 readability pass). Hierarchy comes from size,
+     weight, spacing and placement — steel tones below are for
+     NON-TEXT chrome only (hairlines, tracks, inactive glyphs).
+   - /pricing tier accents are LOCKED and live outside this system
+     (Lite #00E5FF, Pro #D4AF37, Ultra #a78bfa). No --we-* token
+     may be applied to the pricing tier picker.
+   - Gold is a legacy brand accent being retired from chrome in
+     this direction; it survives only where it is a locked fact
+     (pricing Pro accent, affiliate rank art).
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  --we-ink-0: #05070b; /* page void — near-black, blue-cast */
+  --we-ink-1: #090c12; /* base surface — deep charcoal */
+  --we-ink-2: #0d1220; /* panel — midnight navy */
+  --we-ink-3: #141a2c; /* raised panel / hover surface */
+  --we-ink-4: #1b2338; /* highest chrome (menus, popovers) */
+
+  /* ── Hairlines & borders (non-text chrome) ────────────────── */
+  --we-line-1: rgba(214, 228, 248, 0.08); /* faintest divider */
+  --we-line-2: rgba(214, 228, 248, 0.14); /* standard hairline */
+  --we-line-3: rgba(214, 228, 248, 0.28); /* emphasis / focus-adjacent */
+  --we-steel: #5b6b84; /* inactive glyphs, tracks, ticks — NOT text */
+
+  /* ── Text (off-white system; hierarchy by scale, not grey) ── */
+  --we-text-1: #f4f7fb; /* primary — off-white */
+  --we-text-2: #ffffff; /* secondary text stays white (owner ruling) */
+  --we-text-on-accent: #04070d; /* text on blue/cyan fills */
+
+  /* ── Accents ──────────────────────────────────────────────── */
+  --we-blue: #2f7dff; /* primary action — restrained electric blue */
+  --we-blue-strong: #5b97ff; /* hover / emphasis on dark */
+  --we-cyan: #00c8e0; /* selective cool cyan — live/now signals only */
+  --we-cyan-dim: rgba(0, 200, 224, 0.14); /* cyan wash for live chips */
+
+  /* ── Data colours — REAL DATA ONLY ────────────────────────────
+     On-map data keeps using the --map-* palette in globals.css
+     (mirrored in src/lib/map-palette.ts). These tokens are for
+     page-level data presentation: charts, badges, legends.
+     Never use as decoration, gradients, or section colouring. */
+  --we-data-fire: #ff6b35; /* wildfire / thermal detections */
+  --we-data-weather: #ffb020; /* weather warnings, storm */
+  --we-data-air: #7dd3fc; /* aviation */
+  --we-data-sea: #38bdf8; /* maritime (when a feed is live) */
+  --we-data-alert: #ff4d4d; /* genuine alerts only */
+  --we-data-ok: #34d399; /* verified / operational states */
+
+  /* ── Feed-state colours (honesty badge system) ────────────── */
+  --we-state-live: var(--we-cyan); /* LIVE VIDEO */
+  --we-state-snapshot: #9fb4cc; /* SNAPSHOT — steel blue-grey chip */
+  --we-state-dated: #8a94a6; /* DATED IMAGERY — capture date required */
+  --we-state-down: var(--we-data-alert); /* FEED UNAVAILABLE */
+
+  /* ── Typography ───────────────────────────────────────────────
+     Families are the already-loaded next/font stacks — no new
+     webfont requests:
+       display → Fraunces (--font-display) editorial headlines
+       sans    → Public Sans (--font-body) UI + prose
+       mono    → JetBrains Mono (--font-hud) technical / data   */
+  --we-font-display: var(--font-display);
+  --we-font-sans: var(--font-body);
+  --we-font-mono: var(--font-hud);
+
+  --we-size-display-1: clamp(2.9rem, 6.2vw, 5rem); /* hero headline */
+  --we-size-display-2: clamp(2.2rem, 4.2vw, 3.4rem); /* section headline */
+  --we-size-title: clamp(1.35rem, 2vw, 1.7rem); /* block title */
+  --we-size-lede: clamp(1.05rem, 1.4vw, 1.25rem); /* section lede */
+  --we-size-body: 1rem;
+  --we-size-small: 0.875rem;
+  --we-size-micro: 0.6875rem; /* uppercase micro-labels */
+  --we-size-data: 0.8125rem; /* mono data readouts */
+
+  --we-leading-display: 1.04;
+  --we-leading-body: 1.65;
+  --we-tracking-micro: 0.14em; /* uppercase micro-label spacing */
+  --we-tracking-data: 0.04em;
+
+  /* ── Spacing & layout ─────────────────────────────────────── */
+  --we-space-1: 0.25rem;
+  --we-space-2: 0.5rem;
+  --we-space-3: 0.75rem;
+  --we-space-4: 1rem;
+  --we-space-5: 1.5rem;
+  --we-space-6: 2rem;
+  --we-space-7: 3rem;
+  --we-space-8: 4rem;
+  --we-section-y: clamp(4.5rem, 9vw, 7.5rem); /* section rhythm */
+  --we-gutter: clamp(1.25rem, 4vw, 3rem); /* page side padding */
+  --we-measure: 68ch; /* prose reading measure */
+  --we-wide: 80rem; /* standard content width */
+  --we-narrow: 56rem; /* article / prose width */
+
+  /* ── Radii — restrained, technical (not the card-grid look) ─ */
+  --we-radius-1: 4px; /* chips, ticks, small frames */
+  --we-radius-2: 8px; /* panels, inputs */
+  --we-radius-3: 12px; /* media frames */
+  --we-radius-full: 999px; /* pills, live dots */
+
+  /* ── Shadows — depth without glow ─────────────────────────── */
+  --we-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.45), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --we-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 40px rgba(0, 0, 0, 0.45);
+  --we-shadow-media: 0 24px 64px rgba(0, 0, 0, 0.55); /* hero media only */
+
+  /* ── Motion ───────────────────────────────────────────────── */
+  --we-ease: cubic-bezier(0.16, 1, 0.3, 1); /* house ease (globals.css) */
+  --we-dur-1: 160ms; /* hover / chip */
+  --we-dur-2: 240ms; /* panel / tab */
+  --we-dur-3: 520ms; /* section entrance / media reveal */
+  /* All --we-dur-* collapse to 0 under prefers-reduced-motion;
+     components must not encode essential information in motion. */
+}
+
+/* Focus visibility for primitives built on these tokens. */
+.we-focusable:focus-visible {
+  outline: 2px solid var(--we-blue-strong);
+  outline-offset: 2px;
+}
