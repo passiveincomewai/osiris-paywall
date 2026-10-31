@@ -398,6 +398,48 @@ export default function Dashboard() {
   const [navGeoIssue, setNavGeoIssue] = useState<GeoIssue | null>(null);
   /** Bumped by the view's "Try again": restarts the session's watch. */
   const [navWatchNonce, setNavWatchNonce] = useState(0);
+  // ── "Use my location" (Item 22) ──
+  // A one-shot fix, requested ONLY from the map chrome button's tap
+  // (handleLocateMe below) — never on load, never a watch. The fix is
+  // held in page state and handed to the map (marker + fly-to, via
+  // mapUserLocation / flyToLocation) and to the Near You strip's
+  // planner; it is never sent to the server, never stored, and never
+  // attached to an analytics event.
+  const [myLocation, setMyLocation] = useState<LiveLocation | null>(null);
+  const [locating, setLocating] = useState(false);
+  /** One calm line beside the button when a fix can't be had. */
+  const [locateNote, setLocateNote] = useState<string | null>(null);
+  const locateNoteTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showLocateNote = useCallback((text: string) => {
+    setLocateNote(text);
+    if (locateNoteTimer.current) clearTimeout(locateNoteTimer.current);
+    locateNoteTimer.current = setTimeout(() => setLocateNote(null), 9000);
+  }, []);
+  const handleLocateMe = useCallback(() => {
+    if (locating) return;
+    const envIssue = geoEnvironmentIssue(currentGeoEnvironment());
+    if (envIssue) { showLocateNote(envIssue.title); return; }
+    setLocating(true);
+    setLocateNote(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocating(false);
+        const fix: LiveLocation = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+          heading: pos.coords.heading,
+        };
+        setMyLocation(fix);
+        setFlyToLocation({ lat: fix.lat, lng: fix.lng, zoom: 11, duration: 1600, ts: Date.now() });
+      },
+      (err) => {
+        setLocating(false);
+        showLocateNote(classifyGeoError(err, currentGeoEnvironment()).title);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+    );
+  }, [locating, showLocateNote]);
   const [navProgress, setNavProgress] = useState<NavProgress | null>(null);
   const [watchedFlights, setWatchedFlights] = useState<WatchedFlight[]>([]);
   const [aircraftAirports, setAircraftAirports] = useState<Record<string, Airport[]>>({});
@@ -932,8 +974,8 @@ export default function Dashboard() {
   const mapUserLocation = useMemo(
     () => (navSession && navProgress
       ? { lat: navProgress.snapped[1], lng: navProgress.snapped[0], accuracy: liveLocation?.accuracy, heading: liveLocation?.heading }
-      : liveLocation),
-    [navSession, navProgress, liveLocation],
+      : liveLocation ?? myLocation),
+    [navSession, navProgress, liveLocation, myLocation],
   );
   /* The viewer's effective tier for the Premium section under the
      merged Search & Route section: the entitlement boolean proves
@@ -2553,6 +2595,9 @@ export default function Dashboard() {
           userLocation={mapUserLocation}
           followUser={followUser}
           onFollowInterrupt={handleFollowInterrupt}
+          onLocateMe={handleLocateMe}
+          locating={locating}
+          locateNote={locateNote}
           navigating={Boolean(navSession)}
           drawMode={drawMode}
           onDrawProgress={setDrawProgress}
@@ -3512,7 +3557,9 @@ export default function Dashboard() {
           prompts never stack, and the first open is the goal. */}
       <NearYouStrip
         active={splashGone && !sharedCameraId}
-        location={visitorGeo}
+        location={myLocation
+          ? { lat: myLocation.lat, lng: myLocation.lng, city: null, region: null, country: null }
+          : visitorGeo}
         centre={mapCenter ? { lat: mapCenter.lat, lng: mapCenter.lng } : null}
         cameras={data.cameras ?? []}
         catalogueSettled={!camerasLoading}

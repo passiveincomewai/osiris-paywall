@@ -87,6 +87,20 @@ describe('the zoom control artwork', () => {
   });
 });
 
+describe('the "Use my location" button (Item 22)', () => {
+  it('renders only when the page wires a handler — no handler, no button', () => {
+    expect(renderControls()).not.toContain('Use my location');
+    expect(renderControls({ onLocateMe: () => {} })).toContain('aria-label="Use my location"');
+  });
+
+  it('shows a calm inline note beside the button when the page passes one', () => {
+    const html = renderControls({ onLocateMe: () => {}, locateNote: 'Location is off for this site' });
+    expect(html).toContain('role="status"');
+    expect(html).toContain('Location is off for this site');
+    expect(renderControls({ onLocateMe: () => {} })).not.toContain('role="status"');
+  });
+});
+
 describe('the help button', () => {
   it('shows the medallion artwork instead of the "?" glyph, same label', () => {
     const html = renderToString(

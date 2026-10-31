@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Loader2, LocateFixed } from 'lucide-react';
 import type { Map as MlMap } from 'maplibre-gl';
 import { createMapCameraControls, type CameraMove } from '@/lib/map-camera-controls';
 import { type BasemapMode } from '@/lib/basemap-mode';
@@ -17,10 +17,18 @@ interface MapControlsProps {
    *  day/night switch, and free for everyone (owner's order 2026-10-26). */
   satelliteOn?: boolean;
   onSatelliteToggle?: () => void;
+  /** "Use my location" (Item 22) — present only when the page wires a
+   *  handler. The tap is the ONLY thing that can start a geolocation
+   *  prompt: this component never asks for a position on its own, and
+   *  the position itself never reaches it — the page passes back only
+   *  the busy flag and, on failure, one calm line of note text. */
+  onLocateMe?: () => void;
+  locating?: boolean;
+  locateNote?: string | null;
 }
 
 /** Compact zoom on phones; desktop also gets the held-pan pad. */
-export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', onBasemapModeChange, satelliteOn = false, onSatelliteToggle }: MapControlsProps) {
+export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, onLocateMe, locating = false, locateNote = null }: MapControlsProps) {
   const controller = useRef<ReturnType<typeof createMapCameraControls> | null>(null);
   const interact = useRef(onInteract);
   const [limits, setLimits] = useState({ min: false, max: false });
@@ -68,6 +76,24 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', 
         <SatelliteSwitch on={satelliteOn} onToggle={onSatelliteToggle} />
       )}
       </div>
+      {onLocateMe && (
+        <>
+          <button type="button" onClick={onLocateMe} disabled={locating} aria-busy={locating}
+            aria-label="Use my location"
+            title="Use my location — fly the globe to where you are"
+            className="w-11 h-11 md:w-9 md:h-9 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-opacity opacity-85 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] disabled:opacity-60 touch-none select-none">
+            {locating
+              ? <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
+              : <LocateFixed className="w-4 h-4" strokeWidth={1.5} />}
+          </button>
+          {locateNote && (
+            <p role="status"
+              className="max-w-[190px] rounded-lg border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg px-2.5 py-1.5 text-right text-[11px] leading-snug text-[var(--text-secondary)]">
+              {locateNote}
+            </p>
+          )}
+        </>
+      )}
       <div role="group" aria-label="Map camera controls"
         className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
         <ZoomArtwork limits={limits} press={press} release={release} step={step} />

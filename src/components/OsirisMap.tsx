@@ -165,6 +165,13 @@ interface OsirisMapProps {
   followUser?: boolean;
   /** Fired when the operator pans/zooms/rotates while follow mode is on. */
   onFollowInterrupt?: () => void;
+  /** "Use my location" chrome (Item 22): the page owns the geolocation
+   *  flow — the tap handler, the busy flag and the failure note — and
+   *  the map only forwards them to MapControls. The position itself
+   *  arrives via userLocation above; nothing about it is sent anywhere. */
+  onLocateMe?: () => void;
+  locating?: boolean;
+  locateNote?: string | null;
   /** Live navigation: tighter zoom and the map turned to face travel direction. */
   navigating?: boolean;
   /** Corroborated endpoint airports for watched aircraft, keyed by icao24. */
@@ -385,7 +392,7 @@ const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
  *  is honestly unavailable until launch data is loaded). */
 const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, onLocateMe, locating = false, locateNote = null, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -6429,7 +6436,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         />
       )}
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
-      {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} onSatelliteToggle={onSatelliteToggle} />}
+      {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} onSatelliteToggle={onSatelliteToggle} onLocateMe={onLocateMe} locating={locating} locateNote={locateNote} />}
       {mapReady && satelliteOn && onSatelliteSelectionChange && (
         <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} loading={satelliteImageryLoading} />
       )}
