@@ -130,6 +130,12 @@ export default async function CompareHubPage() {
           Honest, research-backed comparisons of WorldEye against the top OSINT tools, flight trackers,
           satellite platforms and conflict monitors. Verified features, real pricing, no hype.
         </p>
+        <p className="text-white/45 mt-3 max-w-2xl mx-auto text-sm leading-relaxed">
+          These are the pair pages: the numbers behind them are published in{" "}
+          <Link href="/research" className="text-[#0096FF] hover:underline">WorldEye Research, the data hub</Link>,
+          and the same platforms are ranked together in{" "}
+          <Link href="/best-live-webcam-sites" className="text-[#0096FF] hover:underline">the ranked guide to the best live webcam sites</Link>.
+        </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link href="/" className="px-6 py-3 rounded-xl bg-[#0096FF] hover:bg-[#0aa5ff] text-white font-semibold transition">
             Explore WorldEye

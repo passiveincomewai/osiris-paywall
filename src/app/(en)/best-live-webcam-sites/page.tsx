@@ -146,6 +146,17 @@ export default function BestLiveWebcamSitesPage() {
           </Link>{" "}
           is where to start watching right now.
         </p>
+        <p className="text-white/45 mt-4 text-sm leading-relaxed px-1">
+          The counts behind this ranking are published in{" "}
+          <Link href="/research" className="text-[#0096FF] hover:underline">
+            WorldEye Research, the data hub
+          </Link>
+          ; for two-at-a-time verdicts, see the{" "}
+          <Link href="/compare" className="text-[#0096FF] hover:underline">
+            head-to-head comparisons
+          </Link>
+          .
+        </p>
         <ReviewedStamp />
         <HeroCtas />
       </div>

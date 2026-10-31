@@ -113,7 +113,7 @@ const FAQS = [
   },
   {
     q: "What weather data is shown?",
-    a: "Live storm systems, wind flow, cloud cover and precipitation, rendered on the 3D globe from public weather data feeds. It's designed for watching weather happen, not as a replacement for your local forecast.",
+    a: "Live storm systems, wind flow, cloud cover and precipitation, rendered on the 3D globe. The data comes from named public sources: precipitation radar and lightning from NOAA nowCOAST, the global cloud mosaic from NOAA/NESDIS (GMGSI), and severe-weather events and alerts from the National Weather Service (NOAA/NWS), NASA EONET and GDACS. It's designed for watching weather happen, not as a replacement for your local forecast.",
   },
   {
     q: "Can I see hurricanes and typhoons?",
@@ -121,7 +121,7 @@ const FAQS = [
   },
   {
     q: "How current is the data?",
-    a: "The layer updates continuously from public feeds while you watch. There can be a small delay between observation and display, so treat it as a live picture, not a certified forecast.",
+    a: "Each source refreshes on its own cadence: the NOAA nowCOAST radar mosaic republishes about every 5 minutes and the map re-requests it on that step, the GMGSI cloud mosaic is hourly, and the severe-weather event feed (NWS, NASA EONET, GDACS) is cached for 3 minutes and re-polled every 5 minutes while the map is open. There can be a small delay between observation and display, so treat it as a live picture, not a certified forecast.",
   },
   {
     q: "Is this a replacement for my weather app?",
@@ -302,6 +302,40 @@ export default function WeatherTrackerPage() {
               front, the low scud racing under a storm, the clear dome of a
               high-pressure system. Meteorology stops being vocabulary and
               becomes pattern recognition.
+            </p>
+          </div>
+        </div>
+
+        {/* Data sources */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Where the weather data <span className="text-[#D4AF37]">comes from</span>
+          </h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Every layer on this page traces to a named public source — no
+              anonymous &ldquo;weather feed&rdquo;. Precipitation radar is the
+              NEXRAD base-reflectivity mosaic and lightning is the Lightning
+              Detection Network strike-density grid, both served by{" "}
+              <strong className="text-white/85">NOAA nowCOAST</strong> and
+              refreshed about every 5 minutes. The cloud layer is the{" "}
+              <strong className="text-white/85">NOAA/NESDIS GMGSI</strong>{" "}
+              global mosaic of geostationary satellite imagery, refreshed
+              hourly.
+            </p>
+            <p>
+              Severe-weather events and alerts come from three providers
+              merged into one feed: active alerts from the{" "}
+              <strong className="text-white/85">
+                National Weather Service (NOAA/NWS)
+              </strong>{" "}
+              for the United States, natural events from{" "}
+              <strong className="text-white/85">NASA EONET</strong>, and
+              global cyclones, floods and droughts from{" "}
+              <strong className="text-white/85">GDACS</strong>. That feed is
+              cached for 3 minutes and re-polled every 5 minutes while the
+              map is open. For official warnings and evacuation orders,
+              always go to your national meteorological agency.
             </p>
           </div>
         </div>

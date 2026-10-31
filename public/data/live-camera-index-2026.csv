@@ -24,7 +24,7 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "Ireland",ireland,211,216,0.2
 "Vietnam",vietnam,167,324,0.2
 "Estonia",estonia,138,133,0.2
-"CO",co,134,,0.1
+"Colombia",colombia,134,,0.1
 "Turkey",turkey,108,235,0.1
 "Poland",poland,103,73,0.1
 "Belgium",belgium,99,3,0.1
@@ -32,7 +32,7 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "Thailand",thailand,77,118,0.1
 "Romania",romania,56,29,0.1
 "Switzerland",switzerland,55,47,0.1
-"AD",ad,54,,0.1
+"Andorra",andorra,54,,0.1
 "Luxembourg",luxembourg,48,48,0.1
 "Malta",malta,42,42,0
 "Bulgaria",bulgaria,39,33,0
@@ -62,7 +62,7 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "Moldova",moldova,11,6,0
 "Ukraine",ukraine,10,7,0
 "Ecuador",ecuador,8,8,0
-"AQ",aq,8,,0
+"Antarctica",antarctica,8,,0
 "India",india,6,4,0
 "Panama",panama,6,3,0
 "Hungary",hungary,6,6,0
@@ -80,7 +80,7 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "El Salvador",el-salvador,3,3,0
 "Albania",albania,3,3,0
 "Bosnia and Herzegovina",bosnia-and-herzegovina,3,3,0
-"KY",ky,3,,0
+"Cayman Islands",cayman-islands,3,,0
 "Lebanon",lebanon,2,1,0
 "Serbia",serbia,2,2,0
 "North Macedonia",north-macedonia,2,2,0
@@ -96,7 +96,7 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "Oman",oman,1,1,0
 "Sri Lanka",sri-lanka,1,1,0
 "Christmas Island",christmas-island,1,1,0
-"IQ",iq,1,,0
+"Iraq",iraq,1,,0
 "Saudi Arabia",saudi-arabia,1,1,0
 "Iran",iran,1,1,0
 "Yemen",yemen,1,2,0
@@ -111,6 +111,6 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "Vatican City",vatican-city,1,1,0
 "Bonaire",bonaire,1,1,0
 "Curaçao",curacao,1,1,0
-"JE",je,1,,0
-"NF",nf,1,,0
+"Jersey",jersey,1,,0
+"Norfolk Island",norfolk-island,1,,0
 "Madagascar",madagascar,1,1,0

@@ -18,12 +18,12 @@ import TrialCtaSection from "@/components/TrialCtaSection";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
 
 export const metadata: Metadata = {
-  title: "New York City Webcams — Live Cameras in All Five Boroughs",
+  title: "New York City Live Webcams — 279 Five-Borough Cameras",
   description:
     "Watch New York City live: 279 public cameras within 25 km of Midtown — Manhattan, Brooklyn, Queens, the Bronx and Staten Island, mostly NYSDOT 511NY feeds. Free, no signup.",
   alternates: { canonical: `${BASE}/city-webcams/new-york-city` },
   openGraph: {
-    title: "New York City Webcams — Live Cameras in All Five Boroughs",
+    title: "New York City Live Webcams — 279 Five-Borough Cameras",
     description:
       "Live public cameras across New York City — the five boroughs, the harbour and the bridges — free on WorldEye.",
     url: "/city-webcams/new-york-city",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "New York City Webcams — Live Cameras in All Five Boroughs",
+  name: "New York City Live Webcams — 279 Five-Borough Cameras",
   description:
     "Live public cameras across New York City: borough walls for Manhattan, Brooklyn, Queens, the Bronx and Staten Island, drawn mostly from NYSDOT's 511NY network.",
   url: `${BASE}/city-webcams/new-york-city`,

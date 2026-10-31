@@ -18,6 +18,71 @@ import {
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
+import { parseFeodoBlocklist, type C2Indicator } from "@/lib/c2-indicators";
+
+/* Site-audit R74: a free, dated preview of the Pro layer's own data.
+   The Botnet C2 layer reads abuse.ch Feodo Tracker through
+   /api/cyber-attacks, which parses the published ipblocklist.json with
+   parseFeodoBlocklist — this preview fetches that same blocklist
+   server-side and aggregates the same parsed indicators (hosting
+   country, malware family, online count). Nothing is hand-typed: if
+   the feed cannot be read, the preview renders an honest unavailable
+   line and no numbers at all. Revalidated on the API route's own
+   5-minute cache cadence. */
+export const revalidate = 300;
+
+type FeodoPreview = {
+  total: number;
+  online: number;
+  snapshotDate: string;
+  countries: Array<{ name: string; count: number }>;
+  families: Array<{ name: string; count: number }>;
+};
+
+function countryName(code: string | null): string {
+  if (!code) return "Unknown";
+  try {
+    return new Intl.DisplayNames(["en"], { type: "region" }).of(code) ?? code;
+  } catch {
+    return code;
+  }
+}
+
+async function loadFeodoPreview(): Promise<FeodoPreview | null> {
+  try {
+    const res = await fetch("https://feodotracker.abuse.ch/downloads/ipblocklist.json", {
+      signal: AbortSignal.timeout(10000),
+      headers: { "User-Agent": "OSIRIS/4.3", Accept: "application/json" },
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    const indicators: C2Indicator[] = parseFeodoBlocklist(await res.json());
+    if (indicators.length === 0) return null;
+    const byCountry = new Map<string, number>();
+    const byFamily = new Map<string, number>();
+    let snapshot = "";
+    for (const i of indicators) {
+      const name = countryName(i.country);
+      byCountry.set(name, (byCountry.get(name) ?? 0) + 1);
+      if (i.malware) byFamily.set(i.malware, (byFamily.get(i.malware) ?? 0) + 1);
+      const seen = (i.last_online ?? i.first_seen ?? "").slice(0, 10);
+      if (seen > snapshot) snapshot = seen;
+    }
+    const sortDesc = (m: Map<string, number>) =>
+      [...m.entries()].map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+    return {
+      total: indicators.length,
+      online: indicators.filter((i) => i.status === "online").length,
+      snapshotDate: snapshot
+        ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${snapshot}T00:00:00Z`))
+        : "date not reported",
+      countries: sortDesc(byCountry),
+      families: sortDesc(byFamily),
+    };
+  } catch {
+    return null;
+  }
+}
 
 export const metadata: Metadata = {
   title: "Cyber Threat Map — Botnet C2 Servers by Hosting Country",
@@ -142,7 +207,8 @@ const jsonLd = {
   ],
 };
 
-export default function CyberThreatMapPage() {
+export default async function CyberThreatMapPage() {
+  const preview = await loadFeodoPreview();
   return (
     <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
       <JsonLd data={jsonLd} />
@@ -186,6 +252,61 @@ export default function CyberThreatMapPage() {
               Unlock the C2 layer with Pro
             </Link>
           </div>
+        </div>
+
+        {/* Free dated preview of the Pro layer's snapshot (R74) */}
+        <div className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <h2 className="text-xl md:text-2xl font-bold mb-2">
+            The current snapshot, <span className="text-[#D4AF37]">in numbers</span>
+          </h2>
+          {preview ? (
+            <>
+              <p className="text-sm text-white/50 mb-5">
+                Feodo Tracker snapshot, {preview.snapshotDate} — aggregated
+                from the same blocklist the Pro layer plots. The live map
+                itself, with one marker per server, is part of WorldEye Pro.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-6 text-sm">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-white/40 mb-3">
+                    Known C2 servers by hosting country
+                  </p>
+                  <ul className="space-y-1.5 text-white/70">
+                    {preview.countries.map((c) => (
+                      <li key={c.name} className="flex justify-between gap-4">
+                        <span>{c.name}</span>
+                        <span className="font-mono text-[#D4AF37]">{c.count}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-white/40 mb-3">
+                    Malware families in the snapshot
+                  </p>
+                  <ul className="space-y-1.5 text-white/70">
+                    {preview.families.map((f) => (
+                      <li key={f.name} className="flex justify-between gap-4">
+                        <span>{f.name}</span>
+                        <span className="font-mono text-[#D4AF37]">{f.count}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 text-white/60 leading-relaxed">
+                    {preview.total} listed servers in total, {preview.online}{" "}
+                    of them reported online in this snapshot.
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-white/55 leading-relaxed">
+              The Feodo Tracker snapshot could not be read just now, so no
+              preview figures are shown — the counts are never estimated.
+              The live map, with one marker per server, is part of WorldEye
+              Pro.
+            </p>
+          )}
         </div>
 
         {/* What the data is */}

@@ -21,6 +21,7 @@ const D = indexData as unknown as {
   generatedAt: string;
   totals: { served: number; servedCountries: number; playable: number };
   playableByKind: Array<{ name: string; count: number }>;
+  countries: Array<{ name: string; slug: string }>;
 };
 
 describe("Live Camera Index — playable derivation", () => {
@@ -56,6 +57,17 @@ describe("Live Camera Index — playable derivation", () => {
       timeZone: "UTC",
     }).format(new Date(D.generatedAt));
     expect(CAMERA_INDEX_SNAPSHOT.snapshotDateLabel).toBe(label);
+  });
+
+  it("no country row is a raw ISO code (site-audit R69)", () => {
+    // The generator's NORMALIZE map previously let CO, AD, AQ, KY, IQ,
+    // JE and NF fall through as two-letter "names" in the top-30 table.
+    for (const c of D.countries) {
+      expect(c.name, `country row ${c.slug}`).not.toMatch(/^[A-Z]{2}$/);
+    }
+    const bySlug = new Map(D.countries.map((c) => [c.slug, c.name]));
+    expect(bySlug.get("colombia")).toBe("Colombia");
+    expect(bySlug.get("andorra")).toBe("Andorra");
   });
 
   it("the generator still derives playable with the mirrored player rule", () => {

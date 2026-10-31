@@ -204,8 +204,8 @@
       "sharePct": 0.2
     },
     {
-      "name": "CO",
-      "slug": "co",
+      "name": "Colombia",
+      "slug": "colombia",
       "served": 134,
       "indexed": null,
       "sharePct": 0.1
@@ -260,8 +260,8 @@
       "sharePct": 0.1
     },
     {
-      "name": "AD",
-      "slug": "ad",
+      "name": "Andorra",
+      "slug": "andorra",
       "served": 54,
       "indexed": null,
       "sharePct": 0.1
@@ -470,8 +470,8 @@
       "sharePct": 0
     },
     {
-      "name": "AQ",
-      "slug": "aq",
+      "name": "Antarctica",
+      "slug": "antarctica",
       "served": 8,
       "indexed": null,
       "sharePct": 0
@@ -596,8 +596,8 @@
       "sharePct": 0
     },
     {
-      "name": "KY",
-      "slug": "ky",
+      "name": "Cayman Islands",
+      "slug": "cayman-islands",
       "served": 3,
       "indexed": null,
       "sharePct": 0
@@ -708,8 +708,8 @@
       "sharePct": 0
     },
     {
-      "name": "IQ",
-      "slug": "iq",
+      "name": "Iraq",
+      "slug": "iraq",
       "served": 1,
       "indexed": null,
       "sharePct": 0
@@ -813,15 +813,15 @@
       "sharePct": 0
     },
     {
-      "name": "JE",
-      "slug": "je",
+      "name": "Jersey",
+      "slug": "jersey",
       "served": 1,
       "indexed": null,
       "sharePct": 0
     },
     {
-      "name": "NF",
-      "slug": "nf",
+      "name": "Norfolk Island",
+      "slug": "norfolk-island",
       "served": 1,
       "indexed": null,
       "sharePct": 0
