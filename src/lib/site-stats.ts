@@ -9,14 +9,20 @@
  *     live public cameras on the WorldEye globe, the figure quoted
  *     across the site's pages, metadata and comparisons. Owner-set;
  *     change it only on the owner's explicit order.
- *  2. The Live Camera Index "served" count (83,795) — a dated
+ *  2. The Live Camera Index "served" count (91,266) — a dated
  *     research measurement: unique cameras in one all-regions
  *     response of the production catalogue API, deduplicated by
  *     camera ID. The live API assembly is wider than the committed
- *     directory (113 countries to the directory's 109, including
+ *     directory (115 countries to the directory's 109, including
  *     cameras not yet attributed into it), so it runs higher than
  *     the headline. It belongs ONLY on /live-camera-index, always
- *     with its snapshot date and definition attached.
+ *     with its snapshot date and definition attached. The Index
+ *     also publishes a PLAYABLE count (90,251 in the same snapshot):
+ *     the served records carrying a feed the WorldEye player can
+ *     open, derived with the player's own rule (lib/camera-preview
+ *     previewMedia, mirrored in the Index generator). Playable is
+ *     a feed-present, format-level count — records are not
+ *     individually stream-tested, and it is never the headline.
  *  3. The indexed catalogue counts (77,376 unique records, 76,575
  *     of them attributed to a country) — the committed directory
  *     dataset behind the country and city pages
@@ -30,7 +36,7 @@
  */
 
 /** Date the figures on this page were last reconciled site-wide. */
-export const SITE_STATS_AS_OF = "2026-10-26";
+export const SITE_STATS_AS_OF = "2026-10-31";
 
 /** The standing public headline: live public cameras on the globe. */
 export const LIVE_CAMERA_COUNT = 74_229;
@@ -59,12 +65,16 @@ export const DIRECTORY_COUNTRY_COUNT = 74;
  */
 export const CAMERA_INDEX_SNAPSHOT = {
   edition: "October 2026",
-  snapshotDateLabel: "23 October 2026",
-  servedUniqueCameras: 83_795,
-  servedLabel: "83,795",
-  servedCountries: 113,
+  snapshotDateLabel: "31 October 2026",
+  servedUniqueCameras: 91_266,
+  servedLabel: "91,266",
+  servedCountries: 115,
   servedDefinition:
-    "Unique cameras served by the production catalogue API in the 23 October 2026 snapshot (84,455 records deduplicated by camera ID) — the Live Camera Index's served measure, wider than the globe headline.",
+    "Unique cameras served by the production catalogue API in the 31 October 2026 snapshot (91,906 records deduplicated by camera ID) — the Live Camera Index's served measure, wider than the globe headline.",
+  playableCameras: 90_251,
+  playableLabel: "90,251",
+  playableDefinition:
+    "Served records in the same snapshot carrying a feed the WorldEye player can open — a JPEG still, HLS, MP4 or MJPEG feed with its URL present, by the player's own rule (lib/camera-preview previewMedia). A feed-present, format-level count: records are not individually stream-tested.",
   indexedRecords: 77_376,
   indexedAttributed: 76_575,
 } as const;

@@ -30,6 +30,14 @@
 //   state only when its source IS that state's DOT/511 network feed.
 //   Multi-state aggregations (e.g. "OpenCCTV / state511") are therefore
 //   excluded from the state table by construction.
+//   PLAYABLE counts served records the WorldEye player itself could
+//   open, using the player's own rule — src/lib/camera-preview.ts
+//   previewMedia, mirrored in playableKind() below (keep the two in
+//   step): a missing stream_type is a JPEG still; jpg needs a feed_url
+//   or stream_url; hls / mp4 / mjpeg need a stream_url; iframe and
+//   anything unrecognised are never playable. It is a feed-present,
+//   format-level count — records are NOT individually stream-tested,
+//   and the page labels it exactly that way.
 //   Reconciliation is a hard fail: served country buckets + unattributed
 //   must equal the unique-id served total.
 import { writeFileSync, readFileSync } from "fs";
@@ -238,6 +246,25 @@ async function fetchCatalog(fromFile) {
 
 const pct = (n, total) => Math.round((n / total) * 1000) / 10;
 
+/**
+ * Mirror of previewMedia() in src/lib/camera-preview.ts — the URL a
+ * WorldEye player surface would render for this record, and its kind,
+ * or null when the record has nothing the player can open. Keep the
+ * two implementations in step.
+ */
+function playableKind(cam) {
+  // Exactly previewMedia's reading: only a missing stream_type
+  // defaults to "jpg" (an empty one is unrecognised, as in the TS).
+  const declared = (cam.stream_type ?? "jpg").toLowerCase();
+  if (declared === "mp4" || declared === "hls" || declared === "mjpeg") {
+    return clean(cam.stream_url) ? declared : null;
+  }
+  if (declared === "jpg") {
+    return clean(cam.feed_url) || clean(cam.stream_url) ? "jpg" : null;
+  }
+  return null;
+}
+
 async function main() {
   const fromFile = process.argv.includes("--from-file")
     ? process.argv[process.argv.indexOf("--from-file") + 1]
@@ -303,6 +330,21 @@ async function main() {
     externalUrl: served.filter((c) => clean(c.external_url)).length,
   };
 
+  // Playable: the subset of served records the WorldEye player could
+  // open (playableKind above — the previewMedia rule). Tallied by the
+  // kind the player would render.
+  const playableByKindMap = new Map();
+  let playable = 0;
+  for (const cam of served) {
+    const kind = playableKind(cam);
+    if (!kind) continue;
+    playable++;
+    playableByKindMap.set(kind, (playableByKindMap.get(kind) ?? 0) + 1);
+  }
+  const playableByKind = [...playableByKindMap.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+
   // US state DOT networks.
   const sourceCounts = new Map(sources.map((s) => [s.name, s.count]));
   const usStateNetworks = Object.entries(STATE_NETWORKS)
@@ -355,6 +397,7 @@ async function main() {
       indexedUnattributed: countryIndex.unattributed,
       droppedNearDuplicates: countryIndex.droppedNearDuplicates,
       distinctSources: sources.length,
+      playable,
     },
     countries,
     indexedOnlyCountries,
@@ -366,6 +409,7 @@ async function main() {
     formats,
     formatsTypedTotal: formats.reduce((n, f) => n + f.count, 0),
     feedKinds,
+    playableByKind,
     citation: `WorldEye (2026). Live Camera Index — October 2026: ${servedTotal.toLocaleString("en-US")} live public cameras served across ${countries.length} countries. WorldEye. https://worldeye.app/live-camera-index`,
   };
 
@@ -383,6 +427,7 @@ async function main() {
   console.log(`Countries served: ${countries.length} (+${unattributed} unattributed); indexed-only: ${indexedOnlyCountries.map((c) => c.name).join(", ") || "none"}`);
   console.log(`Top country: ${countries[0].name} ${countries[0].served}; top source: ${sources[0].name} ${sources[0].count}`);
   console.log(`State networks: ${usStateNetworks.length} states, ${usStateNetworks.reduce((n, s) => n + s.cameras, 0)} cameras`);
+  console.log(`Playable (previewMedia rule): ${playable} of ${servedTotal} served — ${playableByKind.map((k) => `${k.name} ${k.count}`).join(", ")}`);
   console.log("Wrote src/data/live-camera-index.json, public/data/live-camera-index-2026.json, public/data/live-camera-index-2026.csv");
 }
 

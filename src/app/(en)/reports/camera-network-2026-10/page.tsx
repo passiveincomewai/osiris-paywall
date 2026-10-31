@@ -39,7 +39,7 @@ import { CAMERA_INDEX_SNAPSHOT } from "@/lib/site-stats";
  * in the country dataset this report analyses — the larger figure
  * because it retains records whose feeds were between refreshes when
  * the live count was taken; and the Live Camera Index's "served"
- * snapshot (83,795 unique cameras, 23 October 2026) measures the wider
+ * snapshot (91,266 unique cameras, 31 October 2026) measures the wider
  * live API assembly. Only the catalogue figure is the population
  * behind this report's breakdowns; the other two are named so they
  * are never confused for it.

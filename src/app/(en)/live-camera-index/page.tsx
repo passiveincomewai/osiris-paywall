@@ -76,6 +76,7 @@ interface IndexData {
     indexedUnattributed: number;
     droppedNearDuplicates: number;
     distinctSources: number;
+    playable: number;
   };
   countries: CountryRow[];
   indexedOnlyCountries: Array<{ name: string; slug: string; indexed: number }>;
@@ -87,6 +88,7 @@ interface IndexData {
   formats: Array<{ name: string; count: number }>;
   formatsTypedTotal: number;
   feedKinds: { feedUrl: number; streamUrl: number; externalUrl: number };
+  playableByKind: Array<{ name: string; count: number }>;
   citation: string;
 }
 
@@ -105,6 +107,8 @@ const state511 = D.topSources.find((s) => s.name === "OpenCCTV / state511");
 const stateTotal = D.usStateNetworks.reduce((n, s) => n + s.cameras, 0);
 const topCity = D.topCities[0];
 const formatCount = (name: string) => D.formats.find((f) => f.name === name)?.count ?? 0;
+const playableCount = (name: string) => D.playableByKind.find((f) => f.name === name)?.count ?? 0;
+const notPlayable = T.served - T.playable;
 const snapshotDate = formatDate(D.generatedAt);
 
 export const metadata: Metadata = {
@@ -130,7 +134,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "Why do different WorldEye pages show different camera totals?",
-    a: `Because they measure different things at different times. Most WorldEye pages quote the standing headline — ${LIVE_CAMERA_COUNT_LABEL} live public cameras on the globe. Country and city pages are built from the indexed catalogue (${fmt(T.indexedRecords)} unique records, ${fmt(T.indexedAttributed)} of them attributed to ${T.indexedCountries} countries). This index additionally reports the served count: the unique cameras in one live all-regions assembly of the production catalogue API (${fmt(T.served)} in this snapshot). In this edition the served count runs higher than the indexed one — the live assembly covers ${T.servedCountries} countries to the directory's ${T.indexedCountries} and includes feeds the directory build had not yet folded in. Each figure is labelled with what it counts and when it was taken.`,
+    a: `Because they measure different things at different times. Most WorldEye pages quote the standing headline — ${LIVE_CAMERA_COUNT_LABEL} live public cameras on the globe. Country and city pages are built from the indexed catalogue (${fmt(T.indexedRecords)} unique records, ${fmt(T.indexedAttributed)} of them attributed to ${T.indexedCountries} countries). This index additionally reports the served count: the unique cameras in one live all-regions assembly of the production catalogue API (${fmt(T.served)} in this snapshot). In this edition the served count runs higher than the indexed one — the live assembly covers ${T.servedCountries} countries to the directory's ${T.indexedCountries} and includes feeds the directory build had not yet folded in. The index also reports how many of the served cameras are playable — ${fmt(T.playable)} in this snapshot carry a feed the WorldEye player can open; the rest are embed-only or listing-only records. Each figure is labelled with what it counts and when it was taken.`,
   },
   {
     q: "How often is the Live Camera Index updated?",
@@ -224,6 +228,7 @@ export default function LiveCameraIndexPage() {
     variableMeasured: [
       "Live public cameras served, by country",
       "Live public cameras served, by publishing network",
+      "Live public cameras served with a playable feed, by format",
       "Indexed camera catalogue records, by country",
     ],
     distribution: [
@@ -263,7 +268,7 @@ export default function LiveCameraIndexPage() {
       />
       <Hero
         h1={`The Live Camera Index — ${D.edition}`}
-        sub={`WorldEye's catalogue API served ${fmt(T.served)} unique public cameras across ${T.servedCountries} countries when this snapshot was taken on ${snapshotDate}. This index counts them — by country, city, US state network and publisher — and publishes the full dataset for anyone to check or cite. It is a wider measure than the ${LIVE_CAMERA_COUNT_LABEL} live cameras on the globe quoted across the rest of WorldEye; the section “Three numbers, three measures” below sets the counts side by side.`}
+        sub={`WorldEye's catalogue API served ${fmt(T.served)} unique public cameras across ${T.servedCountries} countries when this snapshot was taken on ${snapshotDate}. This index counts them — by country, city, US state network and publisher — and publishes the full dataset for anyone to check or cite. It is a wider measure than the ${LIVE_CAMERA_COUNT_LABEL} live cameras on the globe quoted across the rest of WorldEye; the section “Four numbers, four measures” below sets the counts side by side.`}
       />
       <StatRow
         stats={[
@@ -282,7 +287,7 @@ export default function LiveCameraIndexPage() {
             distinct public cameras in the catalogue WorldEye&apos;s globe served when this snapshot
             was taken — the first edition of this index, and the figure every table below is built from.
             It is this index&apos;s served measure, not the site&apos;s headline count — see
-            “Three numbers, three measures” below.
+            “Four numbers, four measures” below.
           </li>
           <li>
             <strong className="text-white">One country holds the majority.</strong> The United States
@@ -310,24 +315,37 @@ export default function LiveCameraIndexPage() {
             catalogue behind this page holds {fmt(T.indexedRecords)} unique records. The difference is
             feeds that were offline, moved, or still collecting when the snapshot was taken.
           </li>
+          <li>
+            <strong className="text-white">Almost all served cameras are playable.</strong>{" "}
+            {fmt(T.playable)} of the {fmt(T.served)} served cameras ({pctOf(T.playable, T.served)}%)
+            carry a feed the WorldEye player can open — {fmt(playableCount("jpg"))} JPEG stills,{" "}
+            {fmt(playableCount("hls"))} HLS streams, {fmt(playableCount("mp4"))} MP4 and{" "}
+            {fmt(playableCount("mjpeg"))} MJPEG. The remaining {fmt(notPlayable)} are embed-only
+            publisher players or records with no playable feed URL. Playable is judged by the
+            player&apos;s own rule from the record&apos;s format and URLs — feeds are not
+            individually stream-tested for this count.
+          </li>
         </ul>
       </section>
 
       <section className="mt-12">
-        <SectionTitle>Three numbers, three measures</SectionTitle>
+        <SectionTitle>Four numbers, four measures</SectionTitle>
         <p className="text-white/70 leading-relaxed mb-6">
-          WorldEye publishes three camera counts, and they are often mistaken for one another.
+          WorldEye publishes four camera counts, and they are often mistaken for one another.
           They measure different things, on different dates, so they differ — none of them is a
           rounding of another, and each is the right number for its own question. The headline
           figure is the conservative public count of the globe&apos;s live camera layer. This
           index&apos;s served figure counts everything the catalogue API assembled on the
           snapshot day — including cameras in {T.servedCountries} countries, more than the
           directory&apos;s {T.indexedCountries}, and feeds the directory build had not yet
-          folded in — so it runs higher. The indexed figure counts the directory build itself.
+          folded in — so it runs higher. The playable figure narrows the served count to the
+          cameras whose feeds the WorldEye player can actually open. The indexed figure counts
+          the directory build itself.
         </p>
         <DataTable head={["Measure", "Cameras", "What it counts"]} align={["left", "right", "left"]}>
           <Row cells={[{ text: "Live cameras on the globe (the site headline)" }, { text: LIVE_CAMERA_COUNT_LABEL, mono: true, strong: true, align: "right" }, { text: "Live public cameras on the WorldEye globe — the standing public count quoted across the site." }]} />
           <Row cells={[{ text: "Unique cameras served by the catalogue API (this index)" }, { text: fmt(T.served), mono: true, strong: true, align: "right" }, { text: `Unique cameras in the all-regions production catalogue API response, deduplicated by camera ID — snapshot ${snapshotDate}.` }]} />
+          <Row cells={[{ text: "— of those, playable in the WorldEye player" }, { text: fmt(T.playable), mono: true, strong: true, align: "right" }, { text: "Served records carrying a feed the player can open (JPEG still, HLS, MP4 or MJPEG with its URL present), judged by the player's own rule. Embed-only and listing-only records are excluded; feeds are not individually stream-tested." }]} />
           <Row cells={[{ text: "Indexed catalogue records (country/city pages)" }, { text: fmt(T.indexedRecords), mono: true, align: "right" }, { text: "Unique records in the committed directory dataset behind the country and city pages (generated 20 October 2026)." }]} />
           <Row cells={[{ text: "— of those, attributed to a country" }, { text: fmt(T.indexedAttributed), mono: true, align: "right" }, { text: `Indexed records attributed to one of ${T.indexedCountries} countries.` }]} />
         </DataTable>
@@ -360,6 +378,7 @@ export default function LiveCameraIndexPage() {
             <Row cells={[{ text: "Indexed catalogue records (unique IDs)" }, { text: fmt(T.indexedRecords), mono: true, align: "right" }]} />
             <Row cells={[{ text: `Attributed to a country (${T.indexedCountries} countries)` }, { text: fmt(T.indexedAttributed), mono: true, align: "right" }]} />
             <Row cells={[{ text: "Served in the live snapshot" }, { text: fmt(T.served), mono: true, strong: true, align: "right" }]} />
+            <Row cells={[{ text: "— of those, playable in the WorldEye player" }, { text: fmt(T.playable), mono: true, strong: true, align: "right" }]} />
             <Row cells={[{ text: "Countries with at least one served camera" }, { text: fmt(T.servedCountries), mono: true, align: "right" }]} />
             <Row cells={[{ text: "Served records with no attributable country" }, { text: fmt(T.servedUnattributed), mono: true, align: "right" }]} />
           </DataTable>
@@ -514,6 +533,16 @@ export default function LiveCameraIndexPage() {
             explicit list of state DOT and 511 network names.
           </p>
           <p>
+            <strong className="text-white">Playable.</strong> A served record counts as playable
+            when the WorldEye player itself could open it, judged with the player&apos;s own
+            rule over the record&apos;s format and URLs: a JPEG still with a feed URL, or an
+            HLS, MP4 or MJPEG stream with a stream URL. Embed-only records (publisher players)
+            and records with no usable URL are not playable, however they are catalogued. The
+            count is format-level — it certifies that a playable feed is present on the
+            record, not that the feed was streaming at the moment of the snapshot; no
+            per-camera stream test stands behind it.
+          </p>
+          <p>
             <strong className="text-white">Indexed vs served.</strong> The indexed catalogue is
             generated by unioning the production catalogue with the server&apos;s local assembly
             snapshot and dropping near-duplicates (same camera at effectively the same spot) —{" "}
@@ -544,6 +573,12 @@ export default function LiveCameraIndexPage() {
             Feeds go offline without notice. A camera in this snapshot was present when the catalogue
             was assembled; no edition of this index can guarantee it is streaming at the moment you
             read it.
+          </li>
+          <li>
+            The playable count inherits that limit: it is derived from each record&apos;s declared
+            format and URLs by the player&apos;s rule, not from opening every feed. A camera
+            counted playable can still be offline when you open it, and an embed-only camera
+            counted unplayable may still be watchable on its publisher&apos;s own page.
           </li>
           <li>
             Country labels originate with publishers and their data aggregators; normalisation

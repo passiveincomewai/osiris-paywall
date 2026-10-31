@@ -1,81 +1,81 @@
 country,slug,served_cameras,indexed_cameras,share_of_served_pct
-"United States",united-states,47341,41355,56.5
-"Japan",japan,10674,10472,12.7
-"Canada",canada,5068,4685,6
-"Taiwan",taiwan,2709,3243,3.2
-"Spain",spain,2571,2120,3.1
-"United Kingdom",united-kingdom,2062,1403,2.5
-"Austria",austria,1885,1725,2.2
-"South Korea",south-korea,1566,1610,1.9
-"Hong Kong",hong-kong,1202,1350,1.4
-"Sweden",sweden,1066,1569,1.3
-"Italy",italy,1021,1030,1.2
-"Finland",finland,824,825,1
-"Norway",norway,739,746,0.9
-"Iceland",iceland,499,482,0.6
+"United States",united-states,52128,41355,57.1
+"Japan",japan,10682,10472,11.7
+"Canada",canada,5072,4685,5.6
+"Taiwan",taiwan,2787,3243,3.1
+"Spain",spain,2571,2120,2.8
+"Sweden",sweden,2335,1569,2.6
+"Finland",finland,2272,825,2.5
+"United Kingdom",united-kingdom,1965,1403,2.2
+"Austria",austria,1887,1725,2.1
+"South Korea",south-korea,1536,1610,1.7
+"Hong Kong",hong-kong,1205,1350,1.3
+"Italy",italy,1013,1030,1.1
+"Norway",norway,739,746,0.8
+"Iceland",iceland,499,482,0.5
 "Australia",australia,456,421,0.5
-"Indonesia",indonesia,413,256,0.5
+"Indonesia",indonesia,405,256,0.4
 "Germany",germany,359,343,0.4
-"Lithuania",lithuania,324,326,0.4
-"New Zealand",new-zealand,262,257,0.3
+"Lithuania",lithuania,323,326,0.4
+"New Zealand",new-zealand,268,257,0.3
 "Netherlands",netherlands,246,246,0.3
-"Turkey",turkey,239,235,0.3
-"France",france,216,51,0.3
-"Ireland",ireland,211,216,0.3
-"Russia",russia,170,162,0.2
-"Vietnam",vietnam,163,324,0.2
+"Russia",russia,231,162,0.3
+"France",france,217,51,0.2
+"Ireland",ireland,211,216,0.2
+"Vietnam",vietnam,167,324,0.2
 "Estonia",estonia,138,133,0.2
-"CO",co,134,,0.2
+"CO",co,134,,0.1
+"Turkey",turkey,108,235,0.1
 "Poland",poland,103,73,0.1
 "Belgium",belgium,99,3,0.1
 "Brazil",brazil,90,38,0.1
-"Thailand",thailand,65,118,0.1
+"Thailand",thailand,77,118,0.1
+"Romania",romania,56,29,0.1
 "Switzerland",switzerland,55,47,0.1
 "AD",ad,54,,0.1
 "Luxembourg",luxembourg,48,48,0.1
-"Malta",malta,42,42,0.1
-"Malaysia",malaysia,37,41,0
-"Macau",macau,34,36,0
-"Romania",romania,33,29,0
+"Malta",malta,42,42,0
+"Bulgaria",bulgaria,39,33,0
+"Malaysia",malaysia,36,41,0
+"Macau",macau,35,36,0
 "Latvia",latvia,32,33,0
-"Bulgaria",bulgaria,30,33,0
-"Greece",greece,30,27,0
+"Kyrgyzstan",kyrgyzstan,29,22,0
 "Croatia",croatia,29,29,0
 "Slovenia",slovenia,29,7,0
+"Israel",israel,25,17,0
+"Greece",greece,25,27,0
 "Philippines",philippines,25,27,0
 "US Virgin Islands",us-virgin-islands,21,21,0
 "Mexico",mexico,20,21,0
-"Israel",israel,19,17,0
-"Kyrgyzstan",kyrgyzstan,19,22,0
+"Kazakhstan",kazakhstan,19,14,0
 "Peru",peru,18,18,0
-"Maldives",maldives,16,16,0
+"Maldives",maldives,15,16,0
 "Chile",chile,15,15,0
 "Portugal",portugal,14,17,0
 "Czechia",czechia,13,3,0
 "South Africa",south-africa,13,12,0
-"Kazakhstan",kazakhstan,12,14,0
 "Argentina",argentina,12,12,0
 "Costa Rica",costa-rica,12,8,0
+"Singapore",singapore,11,9,0
 "China",china,11,16,0
+"Georgia",georgia,11,7,0
+"Moldova",moldova,11,6,0
 "Ukraine",ukraine,10,7,0
-"Singapore",singapore,9,9,0
-"Moldova",moldova,8,6,0
 "Ecuador",ecuador,8,8,0
 "AQ",aq,8,,0
-"Georgia",georgia,7,7,0
+"India",india,6,4,0
 "Panama",panama,6,3,0
 "Hungary",hungary,6,6,0
 "Cyprus",cyprus,5,5,0
-"India",india,5,4,0
 "Nepal",nepal,5,5,0
+"Azerbaijan",azerbaijan,5,2,0
 "Dominican Republic",dominican-republic,5,5,0
 "Puerto Rico",puerto-rico,5,5,0
 "Kenya",kenya,5,5,0
 "Tanzania",tanzania,5,5,0
-"Belarus",belarus,4,3,0
-"Azerbaijan",azerbaijan,4,2,0
 "Sint Maarten",sint-maarten,4,4,0
 "Seychelles",seychelles,4,4,0
+"Belarus",belarus,3,3,0
 "Belize",belize,3,3,0
 "El Salvador",el-salvador,3,3,0
 "Albania",albania,3,3,0
@@ -85,7 +85,6 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "Serbia",serbia,2,2,0
 "North Macedonia",north-macedonia,2,2,0
 "Slovakia",slovakia,2,2,0
-"Saudi Arabia",saudi-arabia,2,1,0
 "Egypt",egypt,2,2,0
 "Bermuda",bermuda,2,2,0
 "Bolivia",bolivia,2,2,0
@@ -97,6 +96,9 @@ country,slug,served_cameras,indexed_cameras,share_of_served_pct
 "Oman",oman,1,1,0
 "Sri Lanka",sri-lanka,1,1,0
 "Christmas Island",christmas-island,1,1,0
+"IQ",iq,1,,0
+"Saudi Arabia",saudi-arabia,1,1,0
+"Iran",iran,1,1,0
 "Yemen",yemen,1,2,0
 "Barbados",barbados,1,1,0
 "Martinique",martinique,1,1,0
