@@ -6,6 +6,7 @@ import {
   claimThisDeviceShareIdentity,
   ensureShareCode,
   readCachedShareCode,
+  replaceThisDeviceShareIdentity,
   shareUrl,
 } from "@/lib/share/client";
 import { buildPersonalShareUrl } from "@/lib/share/links";
@@ -29,6 +30,8 @@ export default function ShareLinkBlock({ compact = false }: { compact?: boolean 
   const [creating, setCreating] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [claimNote, setClaimNote] = useState<string | null>(null);
+  const [claimBlocked, setClaimBlocked] = useState(false);
+  const [replacing, setReplacing] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -73,18 +76,45 @@ export default function ShareLinkBlock({ compact = false }: { compact?: boolean 
   async function claim() {
     setClaiming(true);
     setClaimNote(null);
+    setClaimBlocked(false);
     try {
       const res = await claimThisDeviceShareIdentity();
       if (res?.status === "claimed" || res?.status === "already-claimed") {
         setClaimNote("Connected — this link is now permanently yours.");
         await refresh();
       } else if (res?.status === "claimed-by-other") {
-        setClaimNote("This device's link was already connected to another account.");
+        // First-claim-wins is permanent: this device's link belongs
+        // to a different account and can never be moved. Say so
+        // plainly and offer the one remedy that exists (a fresh
+        // link for this device) instead of a dead-end retry.
+        setClaimBlocked(true);
+        setClaimNote("This device's link is already connected to another account, so it can't be moved to yours.");
       } else {
         setClaimNote("Couldn't connect the link right now — try again in a moment.");
       }
     } finally {
       setClaiming(false);
+    }
+  }
+
+  async function replaceAndClaim() {
+    setReplacing(true);
+    try {
+      const fresh = await replaceThisDeviceShareIdentity();
+      if (!fresh) {
+        setClaimNote("Couldn't create a new link right now — try again in a moment.");
+        return;
+      }
+      const res = await claimThisDeviceShareIdentity();
+      if (res?.status === "claimed" || res?.status === "already-claimed") {
+        setClaimBlocked(false);
+        setClaimNote("Connected — your new link is now permanently yours.");
+      } else {
+        setClaimNote("Your new link is ready — tap Connect to finish connecting it to your account.");
+      }
+      await refresh();
+    } finally {
+      setReplacing(false);
     }
   }
 
@@ -151,7 +181,9 @@ export default function ShareLinkBlock({ compact = false }: { compact?: boolean 
           <p className="mt-2.5 text-[11px] leading-relaxed text-white/45">
             {accountCode
               ? "Anyone who visits or signs up through this link counts toward your invites."
-              : "This link is tied to this device for now. Create a free account and connect it — signups through it count for you once it's connected."}
+              : signedIn
+                ? "This link is tied to this device for now — connect it below and signups through it count for you once it's connected."
+                : "This link is tied to this device for now. Create a free account and connect it — signups through it count for you once it's connected."}
           </p>
           {canClaim && (
             <div className="mt-3">
@@ -166,6 +198,22 @@ export default function ShareLinkBlock({ compact = false }: { compact?: boolean 
             </div>
           )}
           {claimNote && <p className="mt-2 text-[11px] text-white/55">{claimNote}</p>}
+          {claimBlocked && canClaim && (
+            <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
+              <p className="text-[11px] leading-relaxed text-white/55">
+                You can start fresh instead: get a new link for this device and connect it to
+                this account. The old link keeps counting for the other account.
+              </p>
+              <button
+                type="button"
+                onClick={replaceAndClaim}
+                disabled={replacing || claiming}
+                className="mt-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-white/5 border border-white/15 text-[11px] font-semibold text-white/85 hover:bg-white/10 transition-all disabled:opacity-50"
+              >
+                {replacing ? "CREATING…" : "Get a new link for this device"}
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <>

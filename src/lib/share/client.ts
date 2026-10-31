@@ -126,6 +126,20 @@ export function ensureShareCode(): Promise<string | null> {
   return inflight;
 }
 
+async function postShareClaim(
+  deviceToken: string,
+): Promise<{ status: string; code?: string; profileCode?: string | null } | null> {
+  const r = await fetch("/api/share/claim", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ deviceToken }),
+  });
+  const data = await r.json().catch(() => null);
+  if (data?.profileCode) cacheShareCode(data.profileCode);
+  else if (data?.code) cacheShareCode(data.code);
+  return data;
+}
+
 /** Attach this device's anonymous identity to the signed-in account. */
 export async function claimThisDeviceShareIdentity(): Promise<
   { status: string; code?: string; profileCode?: string | null } | null
@@ -133,15 +147,47 @@ export async function claimThisDeviceShareIdentity(): Promise<
   const deviceToken = getShareDeviceToken();
   if (!deviceToken) return null;
   try {
-    const r = await fetch("/api/share/claim", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deviceToken }),
-    });
-    const data = await r.json().catch(() => null);
-    if (data?.profileCode) cacheShareCode(data.profileCode);
-    else if (data?.code) cacheShareCode(data.code);
-    return data;
+    const first = await postShareClaim(deviceToken);
+    if (first?.status !== "no-identity") return first;
+    // Self-heal: the server has no identity for this device token,
+    // yet the device holds a share code — the two fell out of sync
+    // (the token half of local storage was lost or rotated while the
+    // cached code survived). Without this, the connect action is a
+    // permanent dead end ("try again in a moment" forever). Mint the
+    // identity for the CURRENT token, cache its real code, and retry
+    // the claim once.
+    const minted = await mintAnonCode();
+    if (!minted) return first;
+    cacheShareCode(minted);
+    return await postShareClaim(deviceToken);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Start this device over with a brand-new share identity: a fresh
+ * device token, a newly minted identity, its code cached. The old
+ * identity is untouched server-side — if another account claimed it,
+ * it stays theirs (first-claim-wins is not weakened); this is the
+ * remedy when this device's link already belongs to a different
+ * account and can never be connected to the current one. Returns the
+ * new code, or null when minting failed.
+ */
+export async function replaceThisDeviceShareIdentity(): Promise<string | null> {
+  try {
+    if (typeof localStorage === "undefined") return null;
+    localStorage.setItem(SHARE_DEVICE_KEY, randomToken());
+    const minted = await mintAnonCode();
+    if (minted) {
+      cacheShareCode(minted);
+    } else {
+      // Don't leave a stale code cached against the fresh token.
+      try {
+        localStorage.removeItem(SHARE_CODE_KEY);
+      } catch { /* ignore */ }
+    }
+    return minted;
   } catch {
     return null;
   }

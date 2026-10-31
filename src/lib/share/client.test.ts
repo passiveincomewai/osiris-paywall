@@ -93,3 +93,73 @@ describe("entityShareTitle (links)", () => {
     expect(entityShareTitle("flight")).toBe("Live flight — live on WorldEye");
   });
 });
+
+describe("claimThisDeviceShareIdentity", () => {
+  it("claims the device identity and caches the profile code", async () => {
+    const { claimThisDeviceShareIdentity, SHARE_CODE_KEY } = await import("./client");
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/share/claim") {
+        return { ok: true, json: async () => ({ status: "claimed", code: "wedevicecode1", profileCode: "profilecode1" }) };
+      }
+      throw new Error(`unexpected fetch ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(claimThisDeviceShareIdentity()).resolves.toMatchObject({ status: "claimed" });
+    expect(store.get(SHARE_CODE_KEY)).toBe("profilecode1");
+    expect(fetchMock.mock.calls.some((c) => c[0] === "/api/share/identity")).toBe(false);
+  });
+
+  it("self-heals a no-identity claim: mints for the current token and retries once", async () => {
+    const { claimThisDeviceShareIdentity, SHARE_CODE_KEY } = await import("./client");
+    let claims = 0;
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/share/claim") {
+        claims += 1;
+        return claims === 1
+          ? { ok: false, json: async () => ({ status: "no-identity" }) }
+          : { ok: true, json: async () => ({ status: "claimed", code: "wefreshcode22", profileCode: null }) };
+      }
+      if (url === "/api/share/identity") {
+        return { ok: true, json: async () => ({ code: "wefreshcode22" }) };
+      }
+      throw new Error(`unexpected fetch ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(claimThisDeviceShareIdentity()).resolves.toMatchObject({ status: "claimed" });
+    expect(claims).toBe(2);
+    expect(store.get(SHARE_CODE_KEY)).toBe("wefreshcode22");
+  });
+
+  it("does not mint or retry when the identity belongs to another account", async () => {
+    const { claimThisDeviceShareIdentity } = await import("./client");
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/share/claim") {
+        return { ok: false, json: async () => ({ status: "claimed-by-other" }) };
+      }
+      throw new Error(`unexpected fetch ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(claimThisDeviceShareIdentity()).resolves.toMatchObject({ status: "claimed-by-other" });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("replaceThisDeviceShareIdentity", () => {
+  it("rotates the device token, mints a fresh identity and caches its code", async () => {
+    const { replaceThisDeviceShareIdentity, getShareDeviceToken, SHARE_CODE_KEY } = await import("./client");
+    const before = getShareDeviceToken();
+    const fetchMock = vi.fn(async (url: string, init?: { body?: string }) => {
+      if (url === "/api/share/identity") {
+        const body = JSON.parse(init?.body ?? "{}");
+        expect(body.deviceToken).toBeTruthy();
+        expect(body.deviceToken).not.toBe(before);
+        return { ok: true, json: async () => ({ code: "wenewcode333" }) };
+      }
+      throw new Error(`unexpected fetch ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(replaceThisDeviceShareIdentity()).resolves.toBe("wenewcode333");
+    expect(getShareDeviceToken()).not.toBe(before);
+    expect(store.get(SHARE_CODE_KEY)).toBe("wenewcode333");
+  });
+});
