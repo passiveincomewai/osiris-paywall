@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Dashboard from "@/components/Dashboard";
+import LatestStories from "@/components/home/LatestStories";
 import { hreflangMapFor } from "@/lib/i18n-seo";
 
 /**
@@ -19,5 +20,10 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <Dashboard />;
+  return (
+    <>
+      <Dashboard />
+      <LatestStories />
+    </>
+  );
 }

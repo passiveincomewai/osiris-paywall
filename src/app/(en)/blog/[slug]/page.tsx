@@ -8,6 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import SwgBasic from "@/components/SwgBasic";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import { POSTS, getPost } from "../posts";
+import WatchLiveModule from "@/components/blog/WatchLiveModule";
 import { compareLinksForPost } from "@/lib/blog-compare-links";
 import { buildNewsArticleLd, NEWS_AUTHOR } from "@/lib/news";
 
@@ -213,6 +214,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </section>
           ))}
         </div>
+
+        {/* Watch it live — story → product path (R33); renders only
+            for posts mapped to a real camera family. */}
+        <WatchLiveModule post={post} />
 
         {/* FAQ */}
         {post.faqs && post.faqs.length > 0 && (
