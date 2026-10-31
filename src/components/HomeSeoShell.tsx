@@ -1,3 +1,4 @@
+import StatBand, { type WeStat } from "./design/StatBand";
 import SiteFooter from "./SiteFooter";
 import LandingTrackerMount from "./landing/LandingTrackerMount";
 import CamerasSection from "./landing/CamerasSection";
@@ -80,6 +81,31 @@ const OSINT_VISUALS: Record<string, React.ReactNode> = {
   ),
 };
 
+/**
+ * Headline figures band (visual-transformation homepage wave). Every
+ * figure is a locked/verified fact, stated in the home dictionary's own
+ * Quick Answers: 74,229 public cameras (the locked headline), from 109
+ * countries (src/data/countries holds exactly 109 country files), the
+ * United States largest at 41,355, Japan second at 10,472. Labels are
+ * keyed by locale here — not added to the home dictionary — so the
+ * dictionary manifest's source hash is untouched; number formatting
+ * follows each locale dictionary's own convention (74,229 / 74.229).
+ */
+const STAT_BAND: Record<string, WeStat[]> = {
+  en: [
+    { value: "74,229", label: "Live cameras", sub: "Public cameras on one globe" },
+    { value: "109", label: "Countries", sub: "Countries with cameras on the globe" },
+    { value: "41,355", label: "United States", sub: "Largest camera network" },
+    { value: "10,472", label: "Japan", sub: "Second-largest camera network" },
+  ],
+  es: [
+    { value: "74.229", label: "Cámaras en vivo", sub: "Cámaras públicas en un solo globo" },
+    { value: "109", label: "Países", sub: "Países con cámaras en el globo" },
+    { value: "41.355", label: "Estados Unidos", sub: "La mayor red de cámaras" },
+    { value: "10.472", label: "Japón", sub: "La segunda mayor red" },
+  ],
+};
+
 export default function HomeSeoShell({
   copy = enHome,
   locale = "en",
@@ -92,6 +118,18 @@ export default function HomeSeoShell({
       <LandingTrackerMount />
       <SpotlightCam />
       <CamerasSection copy={copy} locale={locale} />
+      <div
+        className="mx-auto w-full"
+        style={{
+          maxWidth: "var(--we-wide)",
+          paddingLeft: "var(--we-gutter)",
+          paddingRight: "var(--we-gutter)",
+          paddingTop: "var(--we-space-6)",
+          paddingBottom: "var(--we-space-2)",
+        }}
+      >
+        <StatBand stats={STAT_BAND[locale] ?? STAT_BAND.en} />
+      </div>
       <div className="max-w-5xl mx-auto px-6 py-12 md:py-14">
         <DirectAnswers items={copy.directAnswers.items} label={copy.directAnswers.label} />
       </div>
