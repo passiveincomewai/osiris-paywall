@@ -2164,6 +2164,90 @@ model FrFacYearlySummary {
   @@index([datasetVersion])
 }
 
+// ── Fraud Radar Phase 6: statistical intelligence Neon grain ──────
+// Summary grain ONLY (PHASE6 §6.5 Neon decision): one row per
+// (signals version × rule) plus one row per (dataset × quality
+// run). The ~20M evaluated signal rows and the peer-group table
+// deliberately do NOT live in Neon — entity reads are bucket-file
+// reads via signals-data.ts, and peer groups are read from the
+// artifacts where a profile needs them (no FrPeerGroupSummary).
+// Signals are research leads only — never declarations about an
+// entity, never a grade; there is no composite standing anywhere
+// in this grain. A rule whose form has no by-construction
+// expectation (own-history / count forms) carries NULL
+// expectedByConstruction and NULL noiseCaution — not applicable,
+// never a fabricated zero/false. The contracts engine has NO rows
+// while its state is not_computed_input_not_published: the absence
+// of rows is the pending state, never a count of zero.
+
+model FrSignalRuleSummary {
+  id                          String   @id @default(cuid())
+  // Composite signals version, e.g.
+  // "2026-02-09+2022-2024+2026-10-06" (input aggregate versions
+  // joined, PHASE6 §1.3) — a column value, as in prior phases.
+  datasetVersion              String
+  engine                      String   // healthcare | care | grants | cross
+  ruleCode                    String   // e.g. "H-MCD-01", "X-990-01"
+  ruleName                    String
+  ruleLibraryVersion          String   // e.g. "1.1.0"
+  entitiesEvaluated           BigInt
+  leadsPublished              BigInt
+  // Null where the pipeline did not publish the count for the
+  // rule's form (e.g. the date rule X-NPPES-01) — absence, not 0.
+  aboveBandBeforeEffectFloor  BigInt?
+  // Expected-by-construction count (band share × evaluated n),
+  // published beside the lead count per PHASE6 §2.2. Null for
+  // rule forms with no by-construction expectation.
+  expectedByConstruction      Decimal? @db.Decimal(20, 2)
+  // True when leadsPublished > 50% of expectedByConstruction
+  // despite the floors (PHASE6 §2.2 disclosure). Null exactly
+  // when expectedByConstruction is null.
+  noiseCaution                Boolean?
+  peerDefinition              String   @db.Text
+  // The publisher's verbatim input-versions string, stored as a
+  // JSON value so the provenance text travels losslessly.
+  inputVersions               Json
+  // Per-status counts from the closed not-computed vocabulary
+  // (PHASE6 §3.4), as published: { status: count }.
+  notComputed                 Json?
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, ruleCode])
+  @@index([datasetVersion])
+  @@index([datasetVersion, engine])
+}
+
+model FrDataQualityRecord {
+  id                  String   @id @default(cuid())
+  datasetSlug         String   // e.g. "grants-aggregates"
+  datasetVersion      String   // e.g. "2026-10-06"
+  runDate             String   // quality run vintage, e.g. "2026-10-31"
+  // Overall state from the data-quality engine: pass | warn |
+  // fail | error (worst check state for the dataset).
+  verdict             String
+  checksTotal         Int
+  checksPass          Int
+  checksWarn          Int
+  checksFail          Int
+  checksError         Int
+  checksNotApplicable Int
+  // Per-check states as published: { "Q-GRAIN": { "pass": 4 } }.
+  checks              Json
+  // Defect-register IDs in force for this dataset (PHASE6 §5.3).
+  defectsInForce      String[]
+  // Pointer into the quality.json artifact for the full record.
+  detailPointer       String
+  filesChecked        Int
+  vintageAgeDays      Int
+
+  createdAt           DateTime @default(now())
+
+  @@unique([datasetSlug, datasetVersion, runDate])
+  @@index([runDate])
+  @@index([datasetSlug])
+}
+
 // Aurora alerts (item #21, approved 2026-10-31): preset-place aurora
 // subscriptions for signed-in users (any tier). Derived fields
 // (magLat, requiredKp) are snapshotted at subscribe time; the
