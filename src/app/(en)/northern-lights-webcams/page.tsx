@@ -16,6 +16,7 @@ import {
 } from "@/components/directory-page";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
 import { AURORA_PLACES } from "@/lib/aurora-places";
+import AuroraAlertsCard from "./AuroraAlertsCard";
 
 export const metadata: Metadata = {
   title: "Northern Lights Webcams by Place — Aurora Cameras by Country",
@@ -124,6 +125,8 @@ export default async function NorthernLightsWebcamsPage() {
         </Link>
         .
       </p>
+
+      <AuroraAlertsCard />
 
       <section className="mt-12">
         <h2 className="text-xl md:text-2xl font-bold mb-5">Northern lights, place by place</h2>
