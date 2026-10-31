@@ -67,3 +67,44 @@ describe('decodeSatelliteRows', () => {
     expect(decoded.map(r => r.name)).toEqual(['ISS (ZARYA)', 'STARLINK-1008', 'CALSPHERE 1']);
   });
 });
+
+describe('lookahead positions (motion)', () => {
+  const MOVING: SatelliteRow[] = [
+    { ...ROWS[0], lat2: 13.9, lng2: -41.2 },
+    { ...ROWS[1] },                       // no lookahead — keeps its 7-slot shape
+    { ...ROWS[2], lat2: 2.4 },            // half a pair — not a vector, dropped
+  ];
+
+  it('appends the lookahead slots only to rows that carry a full pair', () => {
+    const { rows } = encodeSatelliteRows(MOVING);
+    expect(rows[0]).toEqual(['ISS (ZARYA)', 12.3456, -45.6789, 418, 0, 0, '25544', 13.9, -41.2]);
+    expect(rows[1]).toHaveLength(7);
+    expect(rows[2]).toHaveLength(7);
+  });
+
+  it('round-trips lookahead positions back onto the row objects', () => {
+    const { missions, categories, rows } = encodeSatelliteRows(MOVING);
+    const decoded = decodeSatelliteRows({ v: 2, missions, categories, satellites: rows });
+    expect(decoded[0].lat2).toBe(13.9);
+    expect(decoded[0].lng2).toBe(-41.2);
+    expect(decoded[1].lat2).toBeUndefined();
+    expect(decoded[2].lat2).toBeUndefined();
+  });
+
+  it('drops a wire row whose lookahead is only half present', () => {
+    const body = {
+      missions: [['Space Station', '#FFD700']],
+      categories: ['science'],
+      satellites: [['ISS (ZARYA)', 12.3456, -45.6789, 418, 0, 0, '25544', 13.9]],
+    };
+    const [row] = decodeSatelliteRows(body);
+    expect(row.lat2).toBeUndefined();
+    expect(row.lng2).toBeUndefined();
+  });
+
+  it('passes lookahead positions through on v1 object rows', () => {
+    const [row] = decodeSatelliteRows({ satellites: [{ ...ROWS[0], lat2: 1, lng2: 2 }] });
+    expect(row.lat2).toBe(1);
+    expect(row.lng2).toBe(2);
+  });
+});

@@ -65,8 +65,8 @@ function classifySatellite(name: string): { mission: string; color: string } {
  * it belongs to. src/lib/orbit.ts wraps satellite.js (already a dependency,
  * previously unused) for real SGP4/SDP4 and geodetic coordinates.
  */
-function propagateSGP4Simple(line1: string, line2: string): { lat: number; lng: number; alt: number } | null {
-  const p = propagateTLE(line1, line2);
+function propagateSGP4Simple(line1: string, line2: string, when?: Date): { lat: number; lng: number; alt: number } | null {
+  const p = propagateTLE(line1, line2, when);
   if (!p) return null;
   return {
     lat: Math.round(p.lat * 10000) / 10000,
@@ -74,6 +74,20 @@ function propagateSGP4Simple(line1: string, line2: string): { lat: number; lng: 
     alt: Math.round(p.altKm),
   };
 }
+
+/**
+ * How far ahead of the build epoch each satellite is propagated a second
+ * time. The body carries both positions (the row's lat/lng for `timestamp`,
+ * lat2/lng2 for `timestamp_next`) and the client walks every marker along
+ * that vector by wall clock between polls (src/lib/satellite-motion.ts):
+ * motion stays continuous and true to the clock even when a poll is handed
+ * a cached body — which, between this route's 120 s payload cache and the
+ * CDN's stale-while-revalidate window, is the common case. Ten minutes is
+ * several poll cycles of headroom; past it the client keeps extrapolating
+ * the same vector (capped), so a stalled refresh degrades to a slow drift,
+ * never to a frozen sky.
+ */
+const SATELLITE_LOOKAHEAD_MS = 600_000;
 
 // CelesTrak constellation groups — many smaller groups to avoid 403 rate limits
 const CT = 'https://celestrak.org/NORAD/elements/gp.php?GROUP=';
@@ -206,7 +220,15 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
     let allSats: any[] = globalCachedSats;
     let source = 'memory-cache';
 
-    if (globalCachedSats.length === 0 || globalCachedSats.length < 5000 || nowTime - globalCacheTime > 3600000) { // refresh if empty, too few, or stale
+    // Refresh if empty, incomplete, or stale. "Incomplete" reaches well
+    // past the old 5,000 line: an instance that cold-starts while CelesTrak
+    // is rate-limiting builds a partial catalogue (observed live: 5,034
+    // satellites served where the full build carries 18,716) and, at the
+    // old threshold, kept serving that partial sky until the hourly
+    // refresh. Builds are payload-cache-gated to one per 120 s per
+    // instance, so retrying on each build until the catalogue is whole
+    // costs at most one group sweep per cache window.
+    if (globalCachedSats.length === 0 || globalCachedSats.length < 12000 || nowTime - globalCacheTime > 3600000) {
       
       // Primary: Fetch multiple CelesTrak groups in parallel
       const groupResults = await Promise.allSettled(
@@ -297,10 +319,18 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
     }
 
     // No artificial cap — propagate all satellites, MapLibre handles it fine
+    // Both epochs anchor to this moment and are stated on the envelope
+    // (timestamp / timestamp_next). The client interpolates between them by
+    // wall clock, so they must be the propagation epochs — not the later
+    // serialization time, which a cold build reaches tens of seconds on.
+    const epochMs = Date.now();
+    const epochDate = new Date(epochMs);
+    const nextEpochDate = new Date(epochMs + SATELLITE_LOOKAHEAD_MS);
     const satellites: SatelliteRow[] = [];
     for (const sat of allSats) {
-      const pos = propagateSGP4Simple(sat.line1, sat.line2);
+      const pos = propagateSGP4Simple(sat.line1, sat.line2, epochDate);
       if (!pos) continue;
+      const posNext = propagateSGP4Simple(sat.line1, sat.line2, nextEpochDate);
 
       const classification = classifySatellite(sat.name);
       
@@ -327,6 +357,10 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
         color: classification.color,
         category,
         noradId: sat.line1.substring(2, 7).trim(),
+        // Lookahead position for client-side motion (see
+        // SATELLITE_LOOKAHEAD_MS); omitted when the second propagation
+        // failed, and the client holds that row at its epoch position.
+        ...(posNext ? { lat2: posNext.lat, lng2: posNext.lng } : {}),
       });
     }
 
@@ -355,7 +389,8 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
         category_counts: categoryCounts,
         source,
         raw_count: allSats.length,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(epochMs).toISOString(),
+        timestamp_next: new Date(epochMs + SATELLITE_LOOKAHEAD_MS).toISOString(),
       }),
       cacheControl,
       count: satellites.length,
@@ -370,10 +405,13 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
  * The computed payload, cached as a serialized string.
  *
  * Positions are propagated for the build moment and the body carries that
- * epoch in `timestamp`; the client re-fetches on this same 120 s cadence
- * while a satellite layer is on, so the cache lifetime doubles as the
- * position freshness a viewer sees - and it stops every request paying
- * ~4 s of propagation and a ~1 MB serialization.
+ * epoch in `timestamp`, plus a second propagation ten minutes out in
+ * `timestamp_next`; the client interpolates between the two by wall clock
+ * while a satellite layer is on, so this cache's lifetime no longer
+ * doubles as the position freshness a viewer sees — a poll that lands a
+ * cached body re-anchors the motion instead of freezing it. The cache
+ * still stops every request paying ~4 s of propagation and a ~1 MB
+ * serialization.
  * Past the TTL the stale body is served while one background rebuild runs
  * (stale-while-revalidate), matching the Cache-Control contract. A
  * degenerate build (<10 satellites, the broken-catalogue state that gets

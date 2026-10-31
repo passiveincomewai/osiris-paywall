@@ -22,6 +22,16 @@
  * had. It also accepts v1 object rows: while a deploy rolls out, the CDN can
  * hand a new client the previous body's cache entry (s-maxage=120 +
  * stale-while-revalidate) and the layer must not break on it.
+ *
+ * Motion: each row may carry a second position — lat2/lng2, where the same
+ * propagation puts the satellite at the envelope's `timestamp_next` epoch.
+ * The client walks every marker along that vector by wall clock between
+ * polls (src/lib/satellite-motion.ts), so the sky advances continuously
+ * instead of jumping whenever a fresh body happens to land — or freezing
+ * when a poll is handed a cached body, which the route's 120 s cache and
+ * the CDN's SWR window make the common case. Rows without the pair (older
+ * bodies, a failed lookahead propagation) simply hold still until the next
+ * refresh, exactly as every row did before.
  */
 
 export interface SatelliteRow {
@@ -33,9 +43,17 @@ export interface SatelliteRow {
   color: string;
   category: string;
   noradId: string;
+  /** Latitude at the body's lookahead epoch (`timestamp_next`). Absent on
+   *  bodies built before the motion fix and on rows whose lookahead
+   *  propagation failed — the client holds those at their epoch position. */
+  lat2?: number;
+  /** Longitude at the lookahead epoch. See lat2. */
+  lng2?: number;
 }
 
-/** [name, lat, lng, alt, missionIndex, categoryIndex, noradId] */
+/** [name, lat, lng, alt, missionIndex, categoryIndex, noradId, lat2?, lng2?]
+ *  The two lookahead slots are appended only when the row carries them, so
+ *  a row without them keeps its exact pre-motion shape. */
 export type SatelliteWireRow = [
   name: string,
   lat: number,
@@ -44,6 +62,8 @@ export type SatelliteWireRow = [
   missionIndex: number,
   categoryIndex: number,
   noradId: string,
+  lat2?: number,
+  lng2?: number,
 ];
 
 export interface EncodedSatelliteRows {
@@ -82,7 +102,13 @@ export function encodeSatelliteRows(rows: SatelliteRow[]): EncodedSatelliteRows 
       categoryIndex.set(s.category, ci);
       categories.push(s.category);
     }
-    return [s.name, s.lat, s.lng, s.alt, mi, ci, s.noradId];
+    const row: SatelliteWireRow = [s.name, s.lat, s.lng, s.alt, mi, ci, s.noradId];
+    // Lookahead position rides only when both halves are real numbers; the
+    // row keeps its 7-slot shape otherwise (see the type's comment).
+    if (typeof s.lat2 === 'number' && typeof s.lng2 === 'number') {
+      row.push(s.lat2, s.lng2);
+    }
+    return row;
   });
 
   return { missions, categories, rows: wire };
@@ -108,10 +134,10 @@ export function decodeSatelliteRows(body: unknown): SatelliteRow[] {
   const out: SatelliteRow[] = [];
   for (const row of satellites) {
     if (Array.isArray(row)) {
-      const [name, lat, lng, alt, mi, ci, noradId] = row as unknown[];
+      const [name, lat, lng, alt, mi, ci, noradId, lat2, lng2] = row as unknown[];
       if (typeof lat !== 'number' || typeof lng !== 'number') continue;
       const pair = missionLegend[typeof mi === 'number' ? mi : -1] as [string, string] | undefined;
-      out.push({
+      const decoded: SatelliteRow = {
         name: typeof name === 'string' ? name : '',
         lat,
         lng,
@@ -120,12 +146,18 @@ export function decodeSatelliteRows(body: unknown): SatelliteRow[] {
         color: pair?.[1] ?? FALLBACK_COLOR,
         category: (typeof ci === 'number' ? categoryLegend[ci] : undefined) ?? FALLBACK_CATEGORY,
         noradId: typeof noradId === 'string' ? noradId : String(noradId ?? ''),
-      });
+      };
+      // The lookahead pair is all-or-nothing: half a vector is no vector.
+      if (typeof lat2 === 'number' && typeof lng2 === 'number') {
+        decoded.lat2 = lat2;
+        decoded.lng2 = lng2;
+      }
+      out.push(decoded);
     } else if (row && typeof row === 'object') {
       // v1 object row — pass the contract through untouched.
       const s = row as Partial<SatelliteRow>;
       if (typeof s.lat !== 'number' || typeof s.lng !== 'number') continue;
-      out.push({
+      const decoded: SatelliteRow = {
         name: s.name ?? '',
         lat: s.lat,
         lng: s.lng,
@@ -134,7 +166,12 @@ export function decodeSatelliteRows(body: unknown): SatelliteRow[] {
         color: s.color ?? FALLBACK_COLOR,
         category: s.category ?? FALLBACK_CATEGORY,
         noradId: s.noradId ?? '',
-      });
+      };
+      if (typeof s.lat2 === 'number' && typeof s.lng2 === 'number') {
+        decoded.lat2 = s.lat2;
+        decoded.lng2 = s.lng2;
+      }
+      out.push(decoded);
     }
   }
   return out;
