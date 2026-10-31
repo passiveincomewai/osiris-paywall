@@ -3,7 +3,7 @@
 // (required name, real email, known topic, minimum message length) fixed.
 import { describe, it, expect } from "vitest";
 import {
-  parseContactSubmission, CONTACT_TOPICS, CONTACT_MESSAGE_MIN,
+  parseContactSubmission, CONTACT_TOPICS, CONTACT_MESSAGE_MIN, contactTopicLabel,
 } from "./contact";
 
 const GOOD = {
@@ -51,6 +51,19 @@ describe("parseContactSubmission", () => {
   it("every topic the form can send is accepted", () => {
     for (const t of CONTACT_TOPICS) {
       expect(parseContactSubmission({ ...GOOD, topic: t.value }).ok).toBe(true);
+    }
+  });
+
+  it("offers the enterprise, research and affiliate topics (R28)", () => {
+    expect(CONTACT_TOPICS).toHaveLength(11);
+    for (const [value, label] of [
+      ["enterprise", "Enterprise"],
+      ["research", "Research access"],
+      ["affiliate", "Affiliate programme"],
+    ] as const) {
+      expect(CONTACT_TOPICS).toContainEqual({ value, label });
+      expect(contactTopicLabel(value)).toBe(label);
+      expect(parseContactSubmission({ ...GOOD, topic: value }).ok).toBe(true);
     }
   });
 });

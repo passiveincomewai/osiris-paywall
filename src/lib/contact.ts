@@ -14,6 +14,9 @@ export const CONTACT_TOPICS = [
   { value: "press", label: "Press" },
   { value: "security", label: "Security report" },
   { value: "white-label-demo", label: "White Label demo request" },
+  { value: "enterprise", label: "Enterprise" },
+  { value: "research", label: "Research access" },
+  { value: "affiliate", label: "Affiliate programme" },
 ] as const;
 
 export type ContactTopic = (typeof CONTACT_TOPICS)[number]["value"];
