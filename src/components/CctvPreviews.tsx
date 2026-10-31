@@ -61,8 +61,10 @@ export interface PreviewCamera {
   stream_url?: string;
   stream_type?: string;
   external_url?: string;
-  /** Sourced facing direction in degrees, when the source publishes one. */
+  /** Facing direction in degrees: source-published ('faa') or a
+      road-derived estimate ('road-derived') — see heading_source. */
   heading_deg?: number;
+  heading_source?: 'faa' | 'road-derived';
   /** Resolved once during selection — see lib/camera-preview. */
   media: { kind: PreviewKind; url: string };
 }
@@ -377,6 +379,7 @@ function CctvPreviews({ mapRef, active, onOpen }: {
           stream_type: str('stream_type'),
           external_url: str('external_url'),
           heading_deg: typeof p.heading_deg === 'number' ? p.heading_deg : undefined,
+          heading_source: typeof p.heading_source === 'string' ? p.heading_source : undefined,
           media,
         },
         box: layout(pt, canvas.clientWidth, canvas.clientHeight),

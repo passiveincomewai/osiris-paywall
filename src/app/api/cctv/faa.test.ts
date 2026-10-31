@@ -50,6 +50,7 @@ describe('mapSite', () => {
       lat: 63.41511,
       lng: -145.75809,
       heading_deg: 180,
+      heading_source: 'faa',
       name: 'Isabel Pass — Camera 2 (South)',
       city: 'Isabel Pass',
       country: 'US',
@@ -62,10 +63,12 @@ describe('mapSite', () => {
   it('carries the FAA facing direction as a bearing, only when published', () => {
     const cams = mapSite(sample);
     expect(cams[1].heading_deg).toBe(315); // NorthWest
+    expect(cams[1].heading_source).toBe('faa');
     const noDir = mapSite(withSite({
       cameras: [{ cameraId: 5, cameraName: 'Camera 1', cameraDirection: null, latitude: 1, longitude: 1 }],
     }));
     expect('heading_deg' in noDir[0]).toBe(false);
+    expect('heading_source' in noDir[0]).toBe(false);
     const badDir = mapSite(withSite({
       cameras: [{ cameraId: 6, cameraName: 'Camera 1', cameraDirection: 'Sideways', latitude: 1, longitude: 1 }],
     }));

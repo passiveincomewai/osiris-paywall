@@ -569,14 +569,26 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                 >
                   <MapPin className="w-2.5 h-2.5" /> MAP TARGET
                 </button>
-                {/* Which way this camera looks — shown ONLY when the
-                    camera's source publishes its facing direction
-                    (heading_deg, today the FAA WeatherCams feed). The
-                    arrow is rotated from north-up to the true heading;
-                    sources that publish only a road direction (e.g.
-                    "Northbound") never set heading_deg, so their cameras
-                    show no chip rather than a guessed facing. */}
-                {typeof camera.heading_deg === 'number' && (
+                {/* Which way this camera looks — shown only when a
+                    heading is known, at the certainty it carries. A
+                    direction the camera's SOURCE publishes (heading_deg
+                    with heading_source 'faa', today the FAA WeatherCams
+                    feed) renders as a plain FACING chip. A ROAD-DERIVED
+                    heading (heading_source 'road-derived') is an
+                    estimate — the direction of travel of the one-way
+                    carriageway the camera overlooks, matched from
+                    OpenStreetMap geometry — so it renders dimmer and
+                    labelled EST. Cameras with no heading show no chip
+                    rather than a guessed facing. */}
+                {typeof camera.heading_deg === 'number' && camera.heading_source === 'road-derived' ? (
+                  <span
+                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 text-[9px] font-mono tracking-widest text-gray-400"
+                    title={`Estimated facing ${compassLabel(camera.heading_deg).toLowerCase()} — derived from the direction of travel of the road this camera overlooks (OpenStreetMap geometry); its source does not publish a facing`}
+                  >
+                    <ArrowUp className="w-2.5 h-2.5" style={{ transform: `rotate(${camera.heading_deg}deg)` }} />
+                    EST. FACING {compassLabel(camera.heading_deg).toUpperCase()}
+                  </span>
+                ) : typeof camera.heading_deg === 'number' ? (
                   <span
                     className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border text-[9px] font-mono tracking-widest"
                     style={{ borderColor: 'var(--gold-primary)', color: 'var(--gold-primary)' }}
@@ -585,7 +597,7 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                     <ArrowUp className="w-2.5 h-2.5" style={{ transform: `rotate(${camera.heading_deg}deg)` }} />
                     FACING {compassLabel(camera.heading_deg).toUpperCase()}
                   </span>
-                )}
+                ) : null}
               </div>
             </div>
             {/* Your link for this camera: the visitor's own share link

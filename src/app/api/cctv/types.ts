@@ -15,14 +15,24 @@ export interface CctvCamera {
   external_url?: string;
   source: string;
   /**
-   * Direction the camera faces, in degrees clockwise from north — set
-   * ONLY when the source itself publishes a facing direction (today:
-   * the FAA WeatherCams `cameraDirection`). Never derived from the road
-   * a camera watches: a "Northbound" traffic camera's facing is not
-   * published by its source, so road-direction feeds leave this unset
-   * and the camera shows no direction indicator.
+   * Direction the camera faces, in degrees clockwise from north. Set in
+   * exactly two ways, told apart by heading_source:
+   *  - 'faa' — the source itself publishes the facing direction (the FAA
+   *    WeatherCams `cameraDirection`); a true, sourced facing.
+   *  - 'road-derived' — an ESTIMATE produced offline from OpenStreetMap
+   *    road geometry: the direction of travel of the one-way carriageway
+   *    the camera overlooks, assigned only when the road match was
+   *    unambiguous (see cctv/road-headings.ts for the contract). It is
+   *    the road's direction, offered as the camera's likely facing —
+   *    never presented as source-published.
+   * A feed's own road-direction field ("Northbound" and friends) still
+   * never sets this on its own: it describes the road, not the camera,
+   * and only the geometry derivation turns road direction into an
+   * explicitly-labelled estimate.
    */
   heading_deg?: number;
+  /** Provenance of heading_deg — see its comment. */
+  heading_source?: 'faa' | 'road-derived';
 }
 
 /*

@@ -102,7 +102,7 @@ export function mapSite(site: FaaSite): CctvCamera[] {
       id: `faa-${cam.cameraId}`,
       lat: lat!,
       lng: lng!,
-      ...(heading !== null ? { heading_deg: heading } : {}),
+      ...(heading !== null ? { heading_deg: heading, heading_source: 'faa' as const } : {}),
       name: direction ? `${siteName} — ${camName} (${direction})` : `${siteName} — ${camName}`,
       city,
       country,

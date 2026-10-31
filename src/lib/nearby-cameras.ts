@@ -27,8 +27,10 @@ export interface CameraCandidate {
   stream_url?: string;
   stream_type?: string;
   external_url?: string;
-  /** Sourced facing direction in degrees, when the source publishes one. */
+  /** Facing direction in degrees: source-published ('faa') or a
+      road-derived estimate ('road-derived') — see heading_source. */
   heading_deg?: number;
+  heading_source?: 'faa' | 'road-derived';
   lat: number;
   lng: number;
 }
@@ -49,6 +51,7 @@ export function cameraCandidateFromFeature(properties: any, coordinates: unknown
     feed_url: p.feed_url, stream_url: p.stream_url, stream_type: p.stream_type,
     external_url: p.external_url,
     heading_deg: typeof p.heading_deg === 'number' ? p.heading_deg : undefined,
+    heading_source: typeof p.heading_source === 'string' ? p.heading_source : undefined,
     lat, lng,
   };
 }
