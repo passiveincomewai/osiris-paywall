@@ -36,9 +36,13 @@ import {
 interface SatelliteTimeSliderProps {
   selection: SatelliteImagerySelection;
   onSelectionChange: (selection: SatelliteImagerySelection) => void;
+  /** True while the selected vintage is still loading (it crossfades
+   *  in when ready; the readout says so instead of implying the map
+   *  has already switched). */
+  loading?: boolean;
 }
 
-export default function SatelliteTimeSlider({ selection, onSelectionChange }: SatelliteTimeSliderProps) {
+export default function SatelliteTimeSlider({ selection, onSelectionChange, loading = false }: SatelliteTimeSliderProps) {
   const [releases, setReleases] = useState<readonly WaybackRelease[]>(FALLBACK_WAYBACK_RELEASES);
 
   useEffect(() => {
@@ -69,6 +73,9 @@ export default function SatelliteTimeSlider({ selection, onSelectionChange }: Sa
         </span>
         <span className="text-[11px] font-semibold leading-none">
           {satelliteSelectionLabel(selection)}
+          {loading && (
+            <span className="ml-1.5 font-normal opacity-60 animate-pulse">· loading imagery…</span>
+          )}
         </span>
       </div>
       <div className="mt-1.5 flex items-center gap-1.5">

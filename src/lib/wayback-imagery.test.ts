@@ -1,10 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   CURRENT_IMAGERY_ATTRIBUTION,
   CURRENT_IMAGERY_TILE_URL,
   FALLBACK_WAYBACK_RELEASES,
+  SATELLITE_ALT_SOURCE_ID,
+  SATELLITE_FADE_MS,
+  SATELLITE_OPACITY,
+  SATELLITE_SETTLE_MS,
+  commitSatelliteOverlayFade,
   createSatelliteOverlayState,
   fetchWaybackReleases,
+  handleSatelliteSourceData,
+  isSatelliteOverlayLoadPending,
   formatReleaseDate,
   parseWaybackConfig,
   SATELLITE_SOURCE_ATTRIBUTION,
@@ -161,11 +168,16 @@ describe('fetchWaybackReleases', () => {
 });
 
 // ── syncSatelliteOverlay against a fake map ────────────────────────
+// The switch contract (2026-10-30 fix for the past-imagery delay):
+// the displayed source is NEVER reloaded in place. A selection loads
+// on the standby source after a short settle, and only crossfades in
+// once the standby reports loaded (handleSatelliteSourceData).
 function fakeSatelliteMap(existingLayers: string[] = []) {
   const sources = new Map<string, { spec: unknown; tilesSet: string[][] }>();
   const layers = new Set(existingLayers);
   const added: Array<{ layer: any; beforeId?: string }> = [];
   const visibility: Record<string, unknown> = {};
+  const paint: Record<string, Record<string, unknown>> = {};
   const map: SatelliteOverlayMap = {
     getSource: (id) => {
       const s = sources.get(id);
@@ -175,11 +187,15 @@ function fakeSatelliteMap(existingLayers: string[] = []) {
     getLayer: (id) => (layers.has(id) ? {} : undefined),
     addLayer: (layer: any, beforeId?: string) => { layers.add(layer.id); added.push({ layer, beforeId }); },
     setLayoutProperty: (id, _name, value) => { visibility[id] = value; },
+    setPaintProperty: (id, name, value) => { (paint[id] ??= {})[name] = value; },
   };
-  return { map, sources, layers, added, visibility };
+  return { map, sources, layers, added, visibility, paint };
 }
 
 describe('syncSatelliteOverlay', () => {
+  beforeEach(() => { vi.useFakeTimers(); });
+  afterEach(() => { vi.useRealTimers(); });
+
   it('creates the satellite source + layer once, under day-night-fill, with attribution', () => {
     const f = fakeSatelliteMap(['day-night-fill']);
     const state = createSatelliteOverlayState();
@@ -188,7 +204,10 @@ describe('syncSatelliteOverlay', () => {
     expect(f.added).toHaveLength(1);
     expect(f.added[0].layer.id).toBe('satellite-layer');
     expect(f.added[0].layer.source).toBe('satellite-tiles');
-    expect(f.added[0].layer.paint).toEqual({ 'raster-opacity': 0.85 });
+    expect(f.added[0].layer.paint).toEqual({
+      'raster-opacity': SATELLITE_OPACITY,
+      'raster-opacity-transition': { duration: SATELLITE_FADE_MS, delay: 0 },
+    });
     expect(f.added[0].beforeId).toBe('day-night-fill');
     const spec = f.sources.get('satellite-tiles')!.spec as any;
     expect(spec.type).toBe('raster');
@@ -197,6 +216,7 @@ describe('syncSatelliteOverlay', () => {
     expect(spec.maxzoom).toBe(18);
     expect(spec.attribution).toBe(CURRENT_IMAGERY_ATTRIBUTION);
     expect(f.visibility['satellite-layer']).toBe('visible');
+    expect(isSatelliteOverlayLoadPending(state)).toBe(false);
   });
 
   it('visibility follows satelliteOn without rebuilding the source', () => {
@@ -211,31 +231,106 @@ describe('syncSatelliteOverlay', () => {
     expect(f.visibility['satellite-layer']).toBe('visible');
   });
 
-  it('stepping between archive releases is a setTiles swap, not a rebuild', () => {
+  it('a selection change never reloads the displayed source — the standby takes the load after a settle', () => {
     const f = fakeSatelliteMap(['day-night-fill']);
     const state = createSatelliteOverlayState();
-    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[0] });
-    const sourceCount = f.sources.size;
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
     syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[1] });
-    expect(f.sources.size).toBe(sourceCount);
-    expect(f.added).toHaveLength(1); // layer never re-added
-    expect(f.sources.get('satellite-tiles')!.tilesSet).toEqual([[waybackTileUrl(12576)]]);
+    expect(isSatelliteOverlayLoadPending(state)).toBe(true);
+    // Nothing has been fetched yet (settle), and the active source is untouched.
+    expect(f.sources.size).toBe(1);
+    expect(f.sources.get('satellite-tiles')!.tilesSet).toHaveLength(0);
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    // The standby source now exists, created holding the target tiles,
+    // stacked under day-night-fill at opacity 0; the active source has
+    // STILL never been reloaded.
+    expect(f.sources.size).toBe(2);
+    const altSpec = f.sources.get(SATELLITE_ALT_SOURCE_ID)!.spec as any;
+    expect(altSpec.tiles).toEqual([waybackTileUrl(12576)]);
+    expect(altSpec.attribution).toBe(CURRENT_IMAGERY_ATTRIBUTION);
+    expect(f.sources.get(SATELLITE_ALT_SOURCE_ID)!.tilesSet).toHaveLength(0);
+    expect(f.sources.get('satellite-tiles')!.tilesSet).toHaveLength(0);
+    const altAdded = f.added.find(a => a.layer.id === 'satellite-layer-alt')!;
+    expect(altAdded.beforeId).toBe('day-night-fill');
+    expect(altAdded.layer.paint['raster-opacity']).toBe(0);
+    expect(f.visibility['satellite-layer-alt']).toBe('visible');
+    expect(f.visibility['satellite-layer']).toBe('visible');
   });
 
-  it('crossing latest ↔ archive is also just a tile swap — the source is never rebuilt', () => {
+  it('the fade commits only when the STANDBY source reports loaded — then roles swap and the old layer retires', () => {
     const f = fakeSatelliteMap(['day-night-fill']);
     const state = createSatelliteOverlayState();
     syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
     syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[1] });
-    expect(f.sources.size).toBe(1);
-    expect(f.added).toHaveLength(1); // layer created once, never re-added
-    expect(f.sources.get('satellite-tiles')!.tilesSet).toEqual([[waybackTileUrl(12576)]]);
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    // Events for the wrong source, or a not-yet-loaded standby, do nothing.
+    expect(handleSatelliteSourceData(f.map, state, 'satellite-tiles', true)).toBe(false);
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, false)).toBe(false);
+    expect(isSatelliteOverlayLoadPending(state)).toBe(true);
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(true);
+    expect(isSatelliteOverlayLoadPending(state)).toBe(false);
+    expect(f.paint['satellite-layer-alt']?.['raster-opacity']).toBe(SATELLITE_OPACITY);
+    expect(f.paint['satellite-layer']?.['raster-opacity']).toBe(0);
+    expect(state.tileUrl).toBe(waybackTileUrl(12576));
+    // After the fade lands, the retired layer hides.
+    vi.advanceTimersByTime(SATELLITE_FADE_MS + 60);
+    expect(f.visibility['satellite-layer']).toBe('none');
+    // Switching straight back reuses the retired source (it still holds
+    // the latest tiles) — a fade, not a reload: no setTiles anywhere.
     syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
-    expect(f.sources.get('satellite-tiles')!.tilesSet).toEqual([
-      [waybackTileUrl(12576)],
-      [CURRENT_IMAGERY_TILE_URL],
-    ]);
-    const spec = f.sources.get('satellite-tiles')!.spec as any;
-    expect(spec.attribution).toBe(CURRENT_IMAGERY_ATTRIBUTION);
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    expect(f.sources.get('satellite-tiles')!.tilesSet).toHaveLength(0);
+    expect(f.sources.get(SATELLITE_ALT_SOURCE_ID)!.tilesSet).toHaveLength(0);
+    expect(commitSatelliteOverlayFade(f.map, state)).toBe(true);
+    expect(state.tileUrl).toBe(CURRENT_IMAGERY_TILE_URL);
+  });
+
+  it('a drag across several releases loads only the stop it lands on', () => {
+    const f = fakeSatelliteMap(['day-night-fill']);
+    const state = createSatelliteOverlayState();
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[0] });
+    vi.advanceTimersByTime(50);
+    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[1] });
+    vi.advanceTimersByTime(50);
+    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[2] });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    // Exactly one standby, holding ONLY the final stop's tiles.
+    expect(f.sources.size).toBe(2);
+    const altSpec = f.sources.get(SATELLITE_ALT_SOURCE_ID)!.spec as any;
+    expect(altSpec.tiles).toEqual([waybackTileUrl(63116)]);
+    expect(f.sources.get(SATELLITE_ALT_SOURCE_ID)!.tilesSet).toHaveLength(0);
+  });
+
+  it('dragging back to the committed vintage before the settle abandons the load', () => {
+    const f = fakeSatelliteMap(['day-night-fill']);
+    const state = createSatelliteOverlayState();
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[0] });
+    expect(isSatelliteOverlayLoadPending(state)).toBe(true);
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    expect(isSatelliteOverlayLoadPending(state)).toBe(false);
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS * 3);
+    expect(f.sources.size).toBe(1); // standby never created, nothing fetched
+  });
+
+  it('turning satellite off mid-load cancels the pending switch and resets both layers', () => {
+    const f = fakeSatelliteMap(['day-night-fill']);
+    const state = createSatelliteOverlayState();
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[1] });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    expect(f.sources.size).toBe(2);
+    syncSatelliteOverlay(f.map, state, false, { kind: 'wayback', release: threeReleases[1] });
+    expect(isSatelliteOverlayLoadPending(state)).toBe(false);
+    expect(f.visibility['satellite-layer']).toBe('none');
+    expect(f.visibility['satellite-layer-alt']).toBe('none');
+    expect(f.paint['satellite-layer']?.['raster-opacity']).toBe(SATELLITE_OPACITY);
+    // A late "loaded" event for the cancelled load must not commit.
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(false);
+    // Re-entering satellite still shows the committed vintage.
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    expect(f.visibility['satellite-layer']).toBe('visible');
+    expect(state.tileUrl).toBe(CURRENT_IMAGERY_TILE_URL);
   });
 });

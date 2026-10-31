@@ -32,6 +32,7 @@ import {
 import { basemapView, syncDayOverlay, terminatorVisible, type BasemapMode } from '@/lib/basemap-mode';
 import {
   createSatelliteOverlayState, syncSatelliteOverlay, LATEST_SELECTION,
+  handleSatelliteSourceData, isSatelliteOverlayLoadPending, preconnectWaybackOrigin,
   type SatelliteImagerySelection,
 } from '@/lib/wayback-imagery';
 import {
@@ -5443,27 +5444,66 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     }
   }, [mapReady, activeLayers.terrain_3d]);
 
-  // Satellite / Dark switching + the Wayback time slider's tile
-  // swaps. lib/wayback-imagery owns the overlay: the satellite raster
+  // Satellite / Dark switching + the Wayback time slider.
+  // lib/wayback-imagery owns the overlay: the satellite raster
   // rides as a source on the CARTO style (never a style swap), the
-  // layer's visibility follows the switch, and a slider step is a
-  // setTiles swap of the same source — `latest` is the live World
+  // layer's visibility follows the switch, and a slider step loads
+  // the target vintage on a standby source and crossfades it in
+  // once loaded — the displayed imagery is never reloaded in place
+  // (an in-place reload invalidated every tile and froze the switch
+  // for a full viewport re-download). `latest` is the live World
   // Imagery service this view has always used, a `wayback` selection
   // is that release's archive tiles.
   const satelliteOverlayStateRef = useRef(createSatelliteOverlayState());
+  const [satelliteImageryLoading, setSatelliteImageryLoading] = useState(false);
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     try {
+      const satelliteOnNow = mapStyle !== 'dark';
+      // Warm the archive host (DNS/TLS) as soon as satellite view is
+      // on, so the first step into the past doesn't pay connection
+      // setup inside the switch.
+      if (satelliteOnNow) preconnectWaybackOrigin();
       syncSatelliteOverlay(
         mapRef.current as never,
         satelliteOverlayStateRef.current,
-        mapStyle !== 'dark',
+        satelliteOnNow,
         satelliteSelection,
+      );
+      setSatelliteImageryLoading(
+        isSatelliteOverlayLoadPending(satelliteOverlayStateRef.current),
       );
     } catch (e) {
       console.warn('Style switch failed:', e);
     }
   }, [mapReady, mapStyle, satelliteSelection]);
+
+  // Crossfade commit: when the standby satellite source reports its
+  // tiles loaded, fade the new vintage in (lib/wayback-imagery owns
+  // the state machine; this only forwards the map event).
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current as unknown as {
+      on: (type: string, listener: (e: { sourceId?: string; isSourceLoaded?: boolean }) => void) => void;
+      off: (type: string, listener: (e: { sourceId?: string; isSourceLoaded?: boolean }) => void) => void;
+    };
+    const handler = (e: { sourceId?: string; isSourceLoaded?: boolean }) => {
+      try {
+        if (
+          handleSatelliteSourceData(
+            mapRef.current as never,
+            satelliteOverlayStateRef.current,
+            e.sourceId,
+            e.isSourceLoaded,
+          )
+        ) {
+          setSatelliteImageryLoading(false);
+        }
+      } catch { /* the fade is best-effort chrome */ }
+    };
+    map.on('sourcedata', handler);
+    return () => { map.off('sourcedata', handler); };
+  }, [mapReady]);
 
   // Day / Night basemap — the light CARTO raster rides as an overlay on
   // the exact pattern the satellite view above established (this map
@@ -6296,7 +6336,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} onSatelliteToggle={onSatelliteToggle} />}
       {mapReady && satelliteOn && onSatelliteSelectionChange && (
-        <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} />
+        <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} loading={satelliteImageryLoading} />
       )}
       {mapReady && <CinematicDirector openSignal={directorOpenSignal} mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
         if (!launchData) return null;

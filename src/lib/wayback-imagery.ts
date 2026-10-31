@@ -103,8 +103,8 @@ export function satelliteTileUrl(selection: SatelliteImagerySelection): string {
  *  every selection on purpose: it is the credit line Esri's service
  *  document specifies for this imagery, current or archived (the
  *  Wayback tiles are the same World Imagery product), and keeping it
- *  constant means a slider step is a pure tile swap — the source is
- *  never rebuilt, so its place in the layer stack never moves. The
+ *  constant means a slider step never has to rebuild the displayed
+ *  source, so its place in the layer stack never moves. The
  *  vintage itself is disclosed by the slider's readout (release date
  *  + "archive release"), which is on screen whenever satellite is. */
 export const SATELLITE_SOURCE_ATTRIBUTION = CURRENT_IMAGERY_ATTRIBUTION;
@@ -227,7 +227,7 @@ export function sliderIndexForSelection(
   return i >= 0 ? i : releases.length;
 }
 
-/** The minimal map surface syncSatelliteOverlay drives (MapLibre
+/** The minimal map surface the satellite overlay drives (MapLibre
  *  satisfies it; tests fake it, exactly as lib/basemap-mode does). */
 export interface SatelliteOverlayMap {
   getSource(id: string): { setTiles(tiles: string[]): void } | undefined;
@@ -235,29 +235,224 @@ export interface SatelliteOverlayMap {
   getLayer(id: string): unknown;
   addLayer(layer: unknown, beforeId?: string): void;
   setLayoutProperty(layerId: string, name: string, value: unknown): void;
+  setPaintProperty(layerId: string, name: string, value: unknown): void;
 }
+
+/** The standby source/layer ids. A vintage switch loads the target
+ *  release on the STANDBY source — stacked directly above the active
+ *  satellite layer, both under `day-night-fill`, at opacity 0 — and
+ *  only crossfades once MapLibre reports the standby fully loaded.
+ *  The previously displayed imagery therefore stays on screen for the
+ *  whole load: no blank basemap, no half-swapped tiles. (The old
+ *  behaviour — `setTiles` on the one visible source — is a full
+ *  source reload in MapLibre: every visible tile is invalidated and
+ *  re-fetched from the archive host before the new vintage can
+ *  paint, which read as a long freeze on the switch.) */
+export const SATELLITE_ALT_SOURCE_ID = 'satellite-tiles-alt';
+export const SATELLITE_ALT_LAYER_ID = 'satellite-layer-alt';
+
+/** The satellite layer's long-standing opacity. */
+export const SATELLITE_OPACITY = 0.85;
+/** How long a selection must settle before its tiles start loading.
+ *  A drag across a dozen releases loads only the stop it lands on,
+ *  not every release it passed over. */
+export const SATELLITE_SETTLE_MS = 180;
+/** Crossfade length once the incoming vintage has loaded. */
+export const SATELLITE_FADE_MS = 350;
 
 /** What the overlay last applied, held by the caller (a ref in
  *  OsirisMap) so repeat syncs are no-ops. */
 export interface SatelliteOverlayState {
+  /** The vintage actually on screen (the committed selection's tile
+   *  URL), or null before the first sync. */
   tileUrl: string | null;
+  /** Which source is the committed/displayed one; the other source
+   *  is the standby that loads the next vintage. */
+  activeSourceId: string;
+  /** The tile URL each source was last pointed at. */
+  sourceUrls: Record<string, string | null>;
+  /** The vintage the standby is settling into / loading, or null. */
+  pendingUrl: string | null;
+  settleTimer: ReturnType<typeof setTimeout> | null;
+  fadeTimer: ReturnType<typeof setTimeout> | null;
 }
 
 export function createSatelliteOverlayState(): SatelliteOverlayState {
-  return { tileUrl: null };
+  return {
+    tileUrl: null,
+    activeSourceId: SATELLITE_SOURCE_ID,
+    sourceUrls: { [SATELLITE_SOURCE_ID]: null, [SATELLITE_ALT_SOURCE_ID]: null },
+    pendingUrl: null,
+    settleTimer: null,
+    fadeTimer: null,
+  };
+}
+
+export function satelliteLayerIdForSource(sourceId: string): string {
+  return sourceId === SATELLITE_SOURCE_ID ? SATELLITE_LAYER_ID : SATELLITE_ALT_LAYER_ID;
+}
+
+/** The source that is NOT currently displayed — the one a switch
+ *  loads its target vintage onto. */
+export function satelliteStandbySourceId(state: SatelliteOverlayState): string {
+  return state.activeSourceId === SATELLITE_SOURCE_ID
+    ? SATELLITE_ALT_SOURCE_ID
+    : SATELLITE_SOURCE_ID;
+}
+
+/** True while a chosen vintage is still on its way in (settling or
+ *  loading on the standby) — the slider's loading readout keys off
+ *  this. The committed imagery stays up the whole time. */
+export function isSatelliteOverlayLoadPending(state: SatelliteOverlayState): boolean {
+  return state.pendingUrl !== null;
+}
+
+function ensureSatelliteSourceAndLayer(
+  map: SatelliteOverlayMap,
+  state: SatelliteOverlayState,
+  sourceId: string,
+  tileUrl: string,
+  opacity: number,
+): void {
+  if (!map.getSource(sourceId)) {
+    map.addSource(sourceId, {
+      type: 'raster',
+      tiles: [tileUrl],
+      tileSize: 256,
+      maxzoom: 18,
+      attribution: SATELLITE_SOURCE_ATTRIBUTION,
+    });
+    state.sourceUrls[sourceId] = tileUrl;
+  }
+  const layerId = satelliteLayerIdForSource(sourceId);
+  if (!map.getLayer(layerId)) {
+    map.addLayer(
+      {
+        id: layerId,
+        type: 'raster',
+        source: sourceId,
+        paint: {
+          'raster-opacity': opacity,
+          'raster-opacity-transition': { duration: SATELLITE_FADE_MS, delay: 0 },
+        },
+      },
+      'day-night-fill',
+    );
+  }
+}
+
+/** Point the standby source at `url` and let its tiles load under
+ *  the still-displayed vintage. Runs when a selection has settled
+ *  (see SATELLITE_SETTLE_MS); a selection superseded while settling
+ *  never reaches the network. */
+function startSatelliteLoad(
+  map: SatelliteOverlayMap,
+  state: SatelliteOverlayState,
+  url: string,
+): void {
+  if (state.pendingUrl !== url) return; // superseded while settling
+  // A fade-out timer for this layer must not hide it mid-load.
+  if (state.fadeTimer) {
+    clearTimeout(state.fadeTimer);
+    state.fadeTimer = null;
+  }
+  const standbyId = satelliteStandbySourceId(state);
+  ensureSatelliteSourceAndLayer(map, state, standbyId, url, 0);
+  if (state.sourceUrls[standbyId] !== url) {
+    map.getSource(standbyId)?.setTiles([url]);
+    state.sourceUrls[standbyId] = url;
+  }
+  const layerId = satelliteLayerIdForSource(standbyId);
+  map.setLayoutProperty(layerId, 'visibility', 'visible');
+  map.setPaintProperty(layerId, 'raster-opacity', 0);
+}
+
+/**
+ * Crossfade to the standby's vintage once it has fully loaded:
+ * standby fades up to the satellite opacity, the old layer fades
+ * out and is hidden once the fade lands, and the two sources swap
+ * roles — the retired one becomes the next switch's standby, still
+ * holding the previous vintage (so switching straight back is a
+ * fade, not a reload). Returns false when there is nothing coherent
+ * to commit (no pending load, or the standby was re-targeted since).
+ */
+export function commitSatelliteOverlayFade(
+  map: SatelliteOverlayMap,
+  state: SatelliteOverlayState,
+): boolean {
+  const url = state.pendingUrl;
+  if (!url) return false;
+  const standbyId = satelliteStandbySourceId(state);
+  if (state.sourceUrls[standbyId] !== url) return false;
+  const standbyLayerId = satelliteLayerIdForSource(standbyId);
+  const retiredLayerId = satelliteLayerIdForSource(state.activeSourceId);
+  map.setPaintProperty(standbyLayerId, 'raster-opacity', SATELLITE_OPACITY);
+  map.setPaintProperty(retiredLayerId, 'raster-opacity', 0);
+  state.activeSourceId = standbyId;
+  state.tileUrl = url;
+  state.pendingUrl = null;
+  if (state.fadeTimer) clearTimeout(state.fadeTimer);
+  state.fadeTimer = setTimeout(() => {
+    state.fadeTimer = null;
+    // Hide the retired layer — unless a role swap since made it the
+    // active one again (its fade timer is cleared on commit, so this
+    // is belt-and-braces).
+    if (satelliteLayerIdForSource(state.activeSourceId) !== retiredLayerId) {
+      map.setLayoutProperty(retiredLayerId, 'visibility', 'none');
+    }
+  }, SATELLITE_FADE_MS + 60);
+  return true;
+}
+
+/**
+ * The map-event half of the crossfade: OsirisMap forwards MapLibre
+ * `sourcedata` events here; when the STANDBY source reports itself
+ * loaded, the fade commits. Events for any other source, or a
+ * standby that is still loading, are ignored.
+ */
+export function handleSatelliteSourceData(
+  map: SatelliteOverlayMap,
+  state: SatelliteOverlayState,
+  sourceId: string | undefined,
+  isSourceLoaded: boolean | undefined,
+): boolean {
+  if (!isSourceLoaded || !state.pendingUrl) return false;
+  if (sourceId !== satelliteStandbySourceId(state)) return false;
+  return commitSatelliteOverlayFade(map, state);
+}
+
+/**
+ * Warm the Wayback tile origin (DNS + TLS) so the first switch to a
+ * past release doesn't pay connection setup inside the switch. The
+ * current imagery is served from a different host
+ * (server.arcgisonline.com), so without this the archive host is
+ * cold until first use. Idempotent; a no-op off-browser.
+ */
+export function preconnectWaybackOrigin(): void {
+  if (typeof document === 'undefined') return;
+  const href = 'https://wayback.maptiles.arcgis.com';
+  if (document.querySelector(`link[rel="preconnect"][href="${href}"]`)) return;
+  const link = document.createElement('link');
+  link.rel = 'preconnect';
+  link.href = href;
+  link.crossOrigin = 'anonymous';
+  document.head?.appendChild(link);
 }
 
 /**
  * Bring the satellite overlay in line with (satelliteOn, selection):
  *
- *   - no source yet → create it (under `day-night-fill`, where the
- *     satellite layer has always sat, so the day overlay and every
- *     custom layer keep their stacking) with the selection's tiles
- *     and the imagery attribution;
- *   - source present, new selection → `setTiles` on the existing
- *     source (a pure tile swap; the layer, its opacity and its
- *     place in the stack are untouched);
- *   - then the layer's visibility follows satelliteOn.
+ *   - first sync → create the primary source/layer (under
+ *     `day-night-fill`, where the satellite layer has always sat, so
+ *     the day overlay and every custom layer keep their stacking)
+ *     with the selection's tiles and the imagery attribution;
+ *   - selection change → the new vintage loads on the standby
+ *     source after a short settle (see startSatelliteLoad) and
+ *     crossfades in via commitSatelliteOverlayFade when loaded —
+ *     the displayed imagery is never invalidated mid-switch;
+ *   - the active layer's visibility follows satelliteOn; turning
+ *     satellite off also cancels any pending load and resets both
+ *     layers to their committed steady state.
  *
  * Idempotent; safe to call from an effect on every relevant change.
  */
@@ -268,24 +463,55 @@ export function syncSatelliteOverlay(
   selection: SatelliteImagerySelection,
 ): void {
   const tileUrl = satelliteTileUrl(selection);
-  const source = map.getSource(SATELLITE_SOURCE_ID);
-  if (!source) {
-    map.addSource(SATELLITE_SOURCE_ID, {
-      type: 'raster',
-      tiles: [tileUrl],
-      tileSize: 256,
-      maxzoom: 18,
-      attribution: SATELLITE_SOURCE_ATTRIBUTION,
-    });
-  } else if (state.tileUrl !== tileUrl) {
-    source.setTiles([tileUrl]);
+  ensureSatelliteSourceAndLayer(map, state, SATELLITE_SOURCE_ID, tileUrl, SATELLITE_OPACITY);
+  if (state.tileUrl === null) {
+    // First sync: the primary source was just created holding this
+    // selection — it IS the committed vintage.
+    state.tileUrl = state.sourceUrls[state.activeSourceId] ?? tileUrl;
   }
-  state.tileUrl = tileUrl;
-  if (!map.getLayer(SATELLITE_LAYER_ID)) {
-    map.addLayer(
-      { id: SATELLITE_LAYER_ID, type: 'raster', source: SATELLITE_SOURCE_ID, paint: { 'raster-opacity': 0.85 } },
-      'day-night-fill',
-    );
+  const activeLayerId = satelliteLayerIdForSource(state.activeSourceId);
+  const standbyLayerId = satelliteLayerIdForSource(satelliteStandbySourceId(state));
+
+  if (!satelliteOn) {
+    if (state.settleTimer) {
+      clearTimeout(state.settleTimer);
+      state.settleTimer = null;
+    }
+    if (state.fadeTimer) {
+      clearTimeout(state.fadeTimer);
+      state.fadeTimer = null;
+    }
+    state.pendingUrl = null;
+    if (map.getLayer(activeLayerId)) {
+      map.setPaintProperty(activeLayerId, 'raster-opacity', SATELLITE_OPACITY);
+      map.setLayoutProperty(activeLayerId, 'visibility', 'none');
+    }
+    if (map.getLayer(standbyLayerId)) {
+      map.setPaintProperty(standbyLayerId, 'raster-opacity', 0);
+      map.setLayoutProperty(standbyLayerId, 'visibility', 'none');
+    }
+    return;
   }
-  map.setLayoutProperty(SATELLITE_LAYER_ID, 'visibility', satelliteOn ? 'visible' : 'none');
+
+  map.setLayoutProperty(activeLayerId, 'visibility', 'visible');
+
+  if (tileUrl === state.tileUrl) {
+    // Back at the committed vintage (e.g. dragged away and returned
+    // before the new one landed): abandon the pending load.
+    if (state.pendingUrl !== null) {
+      if (state.settleTimer) {
+        clearTimeout(state.settleTimer);
+        state.settleTimer = null;
+      }
+      state.pendingUrl = null;
+    }
+    return;
+  }
+  if (tileUrl === state.pendingUrl) return; // already settling/loading it
+  state.pendingUrl = tileUrl;
+  if (state.settleTimer) clearTimeout(state.settleTimer);
+  state.settleTimer = setTimeout(() => {
+    state.settleTimer = null;
+    startSatelliteLoad(map, state, tileUrl);
+  }, SATELLITE_SETTLE_MS);
 }
