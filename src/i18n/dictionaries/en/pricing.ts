@@ -30,6 +30,14 @@
  * pricing sourceHash was recomputed (its updatedAt was already
  * 2026-10-31 from the Wave 1 pass).
  *
+ * Amended 2026-10-31 (site-audit Wave 3, R55): `faqs` gained three
+ * entries — promo codes (the standing WELCOME50 code), code stacking
+ * and what happens to recordings/saved data after cancelling — each
+ * sourced from repo copy/code (terms §3–4, the affiliate terms'
+ * Discount codes section, lib/recording/idb, the account export).
+ * Spanish re-synced the same day; the manifest's pricing sourceHash
+ * was recomputed (updatedAt already 2026-10-31).
+ *
  * NOT covered (separate components keep their own copy; they render
  * in English on localized pricing pages until their own conversion —
  * see the build REPORT): TeamSection, CancelReassurance,
@@ -377,8 +385,20 @@ export const enPricing: PricingCopy = {
       a: "Anytime, in one click. Your Pro access runs until the end of the billing period you've paid for — weekly, monthly or yearly — and then simply stops. No retention calls, no dark patterns. On a free trial you're never charged during the trial: cancel before it ends and you pay nothing.",
     },
     {
+      q: "What happens to my recordings and saved data if I cancel?",
+      a: "Cancelling stops future renewals — it doesn't delete your account or your data. Your paid access runs until the end of the period you've already paid for, and then your account simply returns to the free tier. The clips you record are stored in your browser, on your own device, so they stay put whatever your plan does. And you can download everything WorldEye holds for your account — profile, settings, saved cameras, alert rules and your recordings list — as JSON or CSV from the Your data section of Settings, before or after cancelling.",
+    },
+    {
       q: "What if I forget to cancel — can I get a refund?",
       a: "We email you before your trial's first charge, so it shouldn't come as a surprise. And if it still happens: your first charge is covered by a 7-day money-back guarantee — email us at passiveincomewai@gmail.com within 7 days of the charge for a full refund, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it.",
+    },
+    {
+      q: "Do you have a promo code?",
+      a: "Yes — WELCOME50 is our standing welcome code. Enter it at checkout and it takes 50% off your first payment, on any plan. It's one use per customer, on the first payment only — and free trials still start free.",
+    },
+    {
+      q: "Can I combine promo codes or other offers?",
+      a: "No — codes don't stack. A discount code can't be combined with other offers unless WorldEye states otherwise, so WELCOME50 and an affiliate's personal code can't be used together on the same purchase. Use whichever one saves you more; either way, the discount applies to your first payment only.",
     },
     {
       q: "What happens if I switch plans?",

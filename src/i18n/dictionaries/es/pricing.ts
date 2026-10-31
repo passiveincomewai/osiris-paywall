@@ -15,6 +15,10 @@
  * Re-synced 2026-10-31 (site-audit Wave 2, R26): `vipFeatures` gained
  * the VIP hub trio — Alertas de eventos, Resumen personal y Vistas
  * guardadas (hasta 25) — mirroring the English source.
+ *
+ * Re-synced 2026-10-31 (site-audit Wave 3, R55): `faqs` gained the
+ * promo-code, code-stacking and post-cancellation data entries,
+ * mirroring the English source.
  */
 
 import type { PricingCopy } from "../en/pricing";
@@ -262,8 +266,20 @@ export const esPricing: PricingCopy = {
       a: "Cuando quieras, con un clic. Tu acceso Pro continúa hasta el final del período que ya pagaste —semanal, mensual o anual— y después simplemente se detiene. Sin llamadas de retención ni patrones oscuros. Y en una prueba gratis nunca se te cobra durante la prueba: cancela antes de que termine y no pagas nada.",
     },
     {
+      q: "¿Qué pasa con mis grabaciones y mis datos guardados si cancelo?",
+      a: "Cancelar detiene las renovaciones futuras: no elimina tu cuenta ni tus datos. Tu acceso de pago continúa hasta el final del período que ya pagaste, y después tu cuenta simplemente vuelve al nivel gratuito. Los clips que grabas se guardan en tu navegador, en tu propio dispositivo, así que permanecen ahí pase lo que pase con tu plan. Y puedes descargar todo lo que WorldEye guarda de tu cuenta —perfil, ajustes, cámaras guardadas, reglas de alertas y tu lista de grabaciones— en JSON o CSV desde la sección Tus datos de Ajustes, antes o después de cancelar.",
+    },
+    {
       q: "¿Y si olvido cancelar? ¿Puedo pedir un reembolso?",
       a: "Te escribimos antes del primer cargo de tu prueba, así que no debería tomarte por sorpresa. Y si aun así pasa: tu primer cargo está cubierto por una garantía de devolución de 7 días — escríbenos a passiveincomewai@gmail.com dentro de los 7 días del cargo y te reembolsamos todo, sin preguntas. La garantía cubre solo tu primer cargo; los cargos de renovación no son reembolsables bajo ella.",
+    },
+    {
+      q: "¿Tienen un código promocional?",
+      a: "Sí: WELCOME50 es nuestro código de bienvenida permanente. Introdúcelo al pagar y te descuenta el 50% de tu primer pago, en cualquier plan. Es un solo uso por cliente, solo en el primer pago, y las pruebas gratuitas siguen empezando gratis.",
+    },
+    {
+      q: "¿Puedo combinar códigos promocionales u otras ofertas?",
+      a: "No: los códigos no se acumulan. Un código de descuento no se puede combinar con otras ofertas a menos que WorldEye indique lo contrario, así que WELCOME50 y el código personal de un afiliado no se pueden usar juntos en la misma compra. Usa el que más te ahorre; en cualquier caso, el descuento se aplica solo a tu primer pago.",
     },
     {
       q: "¿Qué pasa si cambio de plan?",
