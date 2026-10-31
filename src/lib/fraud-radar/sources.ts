@@ -312,13 +312,21 @@ export const FRAUD_RADAR_SOURCES: FrDataSourceSeed[] = [
       "total_expenses",
       "program_service_accomplishments",
     ],
-    coverageStart: null,
-    coverageEnd: null,
+    coverageStart: "2019-01",
+    coverageEnd: "2026-12",
     limitations:
-      "Accounting periods differ across organizations — comparisons must surface fiscal-period differences and avoid unsupported cross-period claims.",
-    cadence: "Annual filings, posted on a rolling basis",
-    status: "not_started",
-    notes: "Phase 4 nonprofit financial layer (bulk e-file XML + index files).",
+      "Accounting periods differ across organizations — comparisons must surface fiscal-period differences and avoid unsupported cross-period claims; amounts are as reported for the stated period, never annualised or shifted. Posting year is the calendar year the IRS received/posted the return, NOT the tax period, and the corpus is e-filed returns only (paper-filed returns are not in this service). The index carries NO financial fields. Grain is one row per return document (OBJECT_ID): amended and late returns are separate documents, never collapsed. Form 990-EZ has no government-grants line and no Schedule I — those fields are NULL for EZ, never 0. Form 990-PF is extracted at header/summary level only. Form 990-T is EXCLUDED entirely (different disclosure class). BMF amounts are master-file amounts from the organization's most recent filing as recorded on the BMF — they stay labelled BMF and are never mixed with or presented as Form 990 figures. 7 return objects in the IRS's own published XML are malformed (not well-formed, invalid token) and could not be parsed; they are counted per batch, excluded, and proven deterministic — the affected batches stand done_with_failures. The FAC-990 join key is the 9-digit auditee EIN only; FAC auditee UEI placeholders (GSA_MIGRATION, masked values) are never used as join keys.",
+    cadence:
+      "Annual filings, posted on a rolling basis by posting year (e-file XML + index); the Exempt Organizations BMF identity layer is a monthly snapshot (this import: IRS posting 2026-10-13)",
+    status: "ingested",
+    notes:
+      "Phase 4 (2026-10-31): ingested in three EIN-keyed layers. (1) Identity layer: IRS Exempt Organizations Business Master File (BMF), IRS posting 2026-10-13 — 1,975,975 rows, exactly the IRS-published record count; pipeline manifest irs-bmf-2026-10-13. (2) Full e-file index, posting years 2019-2026 — 4,717,279 returns; pipeline manifest irs990-index-2026-10-31; the index carries no financial fields. (3) Streaming XML extraction of posting years 2024-2026 — 1,888,603 returns across 38 batches (990: 967,614; 990-EZ: 578,593; 990-PF: 342,396), every batch reconciling extracted + 990-T skips + parse failures == zip members; pipeline manifest irs990-returns-2024-2026 (valid: true). 61,372 Form 990-T filings were excluded as a different disclosure class. 7 IRS source-defect objects (malformed XML in the IRS's own published files, proven deterministic across repeated extractions) are counted and excluded, and their batches stand done_with_failures. Binding field semantics: Form 990-EZ has no government-grants line and no Schedule I, so those fields are NULL for EZ, never 0; Form 990-PF is header/summary only; BMF amounts stay labelled BMF, never mixed with 990 figures. FAC-990 EIN bridge validated: 32,572 of FAC's 68,637 distinct auditee EINs (47.46%) appear in the 990 corpus (763,158 distinct EINs); 33,587 (48.93%) appear in BMF — companion record irs990-fac-join-validation-2026-10-31.",
+    sourceVersion: "BMF 2026-10-13 + index 2026-10-31 + returns 2024-2026",
+    lastPublishedAt: "2026-10-31",
+    lastImportedAt: "2026-10-31T14:05:36Z",
+    lastVerifiedAt: "2026-10-31",
+    completeness:
+      "Complete as published by the IRS, per the validated manifests: BMF identity layer 1,975,975 rows (IRS posting 2026-10-13; row total exactly the IRS-published count, zero malformed EINs, zero duplicate EINs); full e-file index 4,717,279 returns (posting years 2019-2026); XML extraction 1,888,603 returns across 38 batches (2024: 705,437 in 12 batches; 2025: 724,366 in 16; 2026: 458,800 in 10) — 990: 967,614, 990-EZ: 578,593, 990-PF: 342,396 — with 61,372 Form 990-T filings excluded and exactly 7 IRS source-defect objects (malformed XML in the IRS's own files, proven deterministic) counted and excluded; every batch reconciles extracted + 990-T skips + parse failures == zip members, and zero malformed EINs corpus-wide. 763,158 distinct EINs in the extracted corpus. Completeness is relative to the published e-file corpus — paper-filed returns are not in this service.",
   },
   {
     slug: "sam-entities",

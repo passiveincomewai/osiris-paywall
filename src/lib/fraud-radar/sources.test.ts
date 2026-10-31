@@ -70,7 +70,7 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(ent.limitations.toLowerCase()).toContain("extract date");
   });
 
-  it("marks exactly the eight pipeline-ingested sources as ingested, each with manifest provenance", () => {
+  it("marks exactly the nine pipeline-ingested sources as ingested, each with manifest provenance", () => {
     const ingested = FRAUD_RADAR_SOURCES.filter((s) => s.status === "ingested")
       .map((s) => s.slug)
       .sort();
@@ -78,6 +78,7 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
       [
         "cms-medicare",
         "fac",
+        "irs-990",
         "leie",
         "medicaid-hcpcs",
         "nppes",
@@ -180,6 +181,34 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(fac.notes).toContain("FLAGS only");
     expect(fac.limitations).toContain("is_public=false");
     expect(fac.limitations).toContain("FLAG only");
+  });
+
+  it("pins the IRS 990 ingest to its pipeline manifests (Phase 4, D5)", () => {
+    const irs = FRAUD_RADAR_SOURCES.find((s) => s.slug === "irs-990")!;
+    expect(irs.sourceVersion).toBe("BMF 2026-10-13 + index 2026-10-31 + returns 2024-2026");
+    expect(irs.lastPublishedAt).toBe("2026-10-31");
+    expect(irs.lastImportedAt).toBe("2026-10-31T14:05:36Z");
+    expect(irs.lastVerifiedAt).toBe("2026-10-31");
+    expect(irs.coverageStart).toBe("2019-01");
+    expect(irs.coverageEnd).toBe("2026-12");
+    expect(irs.completeness).toContain("1,888,603");
+    expect(irs.completeness).toContain("1,975,975");
+    expect(irs.completeness).toContain("4,717,279");
+    expect(irs.completeness).toContain("967,614");
+    expect(irs.completeness).toContain("61,372");
+    // The binding field semantics are part of the source's public
+    // record: EZ NULL discipline, PF header/summary only, BMF
+    // amounts never mixed with 990 figures, the 7 deterministic
+    // IRS source defects, and the validated FAC-990 EIN bridge:
+    expect(irs.notes).toContain("NULL for EZ, never 0");
+    expect(irs.notes).toContain("header/summary only");
+    expect(irs.notes).toContain("never mixed with 990 figures");
+    expect(irs.notes).toContain("7 IRS source-defect objects");
+    expect(irs.notes).toContain("done_with_failures");
+    expect(irs.notes).toContain("47.46%");
+    expect(irs.limitations).toContain("NULL for EZ, never 0");
+    expect(irs.limitations).toContain("990-T is EXCLUDED");
+    expect(irs.limitations).toContain("NOT the tax period");
   });
 
   it("pins the LEIE ingest to its pipeline manifest (version 2026-10)", () => {
