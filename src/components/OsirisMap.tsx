@@ -58,6 +58,8 @@ import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
 import { createSatelliteLayer, parseColor, SAT_MAX_ZOOM, type SatPoint } from '@/lib/satellite-layer';
+import { interpolateSatelliteRows } from '@/lib/satellite-motion';
+import type { SatelliteRow as SatellitePayloadRow } from '@/lib/satellite-payload';
 import { MAP_DEFAULTS, MAP_PALETTE_KEYS, readMapPalette, satColorFor, type MapPalette } from '@/lib/map-palette';
 import { STYLE_EVENT } from '@/lib/style-tokens';
 import { arrivalBeacons } from '@/lib/malware-intel';
@@ -3907,22 +3909,39 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setSelectedSat(prev => (prev ? { ...prev, lat: rows[i].lat, lng: rows[i].lng, alt: rows[i].alt } : prev));
   }, [clearSat]);
 
+  /** The catalogue rows behind the enabled satellite categories, with the
+   *  epochs they were propagated for. Replaced wholesale whenever the page
+   *  applies a satellite body; the motion ticker below advances a copy of
+   *  them between polls. */
+  const satBaseRef = useRef<{ rows: SatellitePayloadRow[]; epochMs: number; nextEpochMs: number }>({ rows: [], epochMs: NaN, nextEpochMs: NaN });
+  /** The rows last handed to the source and the 3D layer, so the ticker
+   *  can skip a repaint when interpolation has nothing new to show. */
+  const satAppliedRef = useRef<SatellitePayloadRow[]>([]);
+
+  /** Hands one set of display rows to every satellite representation. */
+  const applySatelliteRows = useCallback((rows: SatellitePayloadRow[]) => {
+    satAppliedRef.current = rows;
+    setGeo('satellites', rows.map((s: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] }, properties: { name: s.name, color: satColorFor(s.category, s.color, palette), mission: s.mission, alt: s.alt, noradId: s.noradId, category: s.category } })));
+    satRowsRef.current = rows;
+    satLayerRef.current?.setPoints(toSatPoints(rows));
+    resyncSatSelection(rows);
+  }, [setGeo, toSatPoints, resyncSatSelection, palette]);
+
   useEffect(() => {
     if (!mapReady) return;
     const sats = data.satellites || [];
     const al = activeLayers as any;
     const at = Date.parse(data.satellites_at ?? '');
     satEpochRef.current = Number.isFinite(at) ? at : null;
-    
+    const nextAt = Date.parse(data.timestamp_next ?? '');
+
     // If 'All Satellites' is on, show everything
     if (al.satellites) {
-      setGeo('satellites', sats.map((s: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] }, properties: { name: s.name, color: satColorFor(s.category, s.color, palette), mission: s.mission, alt: s.alt, noradId: s.noradId, category: s.category } })));
-      satRowsRef.current = sats;
-      satLayerRef.current?.setPoints(toSatPoints(sats));
-      resyncSatSelection(sats);
+      satBaseRef.current = { rows: sats, epochMs: at, nextEpochMs: nextAt };
+      applySatelliteRows(interpolateSatelliteRows(sats, at, nextAt, Date.now()));
       return;
     }
-    
+
     // Otherwise filter by enabled sub-layers
     const enabledCategories: string[] = [];
     if (al.sat_comms) enabledCategories.push('comms');
@@ -3930,21 +3949,48 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     if (al.sat_navigation) enabledCategories.push('navigation');
     if (al.sat_earth) enabledCategories.push('earth_obs');
     if (al.sat_science) enabledCategories.push('science');
-    
+
     if (enabledCategories.length === 0) {
+      satBaseRef.current = { rows: [], epochMs: NaN, nextEpochMs: NaN };
       setGeo('satellites', []);
       satRowsRef.current = [];
+      satAppliedRef.current = [];
       satLayerRef.current?.setPoints([]);
       clearSat();
       return;
     }
-    
+
     const filtered = sats.filter((s: any) => enabledCategories.includes(s.category));
-    setGeo('satellites', filtered.map((s: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] }, properties: { name: s.name, color: satColorFor(s.category, s.color, palette), mission: s.mission, alt: s.alt, noradId: s.noradId, category: s.category } })));
-    satRowsRef.current = filtered;
-    satLayerRef.current?.setPoints(toSatPoints(filtered));
-    resyncSatSelection(filtered);
-  }, [mapReady, data.satellites, activeLayers.satellites, (activeLayers as any).sat_comms, (activeLayers as any).sat_military, (activeLayers as any).sat_navigation, (activeLayers as any).sat_earth, (activeLayers as any).sat_science, data.satellites_at, setGeo, toSatPoints, resyncSatSelection, clearSat]);
+    satBaseRef.current = { rows: filtered, epochMs: at, nextEpochMs: nextAt };
+    applySatelliteRows(interpolateSatelliteRows(filtered, at, nextAt, Date.now()));
+  }, [mapReady, data.satellites, activeLayers.satellites, (activeLayers as any).sat_comms, (activeLayers as any).sat_military, (activeLayers as any).sat_navigation, (activeLayers as any).sat_earth, (activeLayers as any).sat_science, data.satellites_at, setGeo, applySatelliteRows, clearSat]);
+
+  /* Satellites move between polls. Each body carries a second propagated
+     position ten minutes out (timestamp_next, the rows' lat2/lng2); this
+     ticker walks the markers along that vector by wall clock every few
+     seconds, so the sky advances continuously instead of freezing between
+     polls and jumping when one lands — a freeze a poll-only client cannot
+     escape, since the route's cache and the CDN routinely re-serve an
+     epoch the page already holds. It runs only while a satellite layer is
+     on, the tab is visible and the zoom is one where satellites are drawn
+     at all; the Dashboard poll re-anchors the vector when a fresher body
+     is applied. */
+  useEffect(() => {
+    if (!mapReady) return;
+    const al = activeLayers as any;
+    if (!(al.satellites || al.sat_comms || al.sat_military || al.sat_navigation || al.sat_earth || al.sat_science)) return;
+    const id = setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
+      const map = mapRef.current;
+      if (!map || map.getZoom() > SAT_MAX_ZOOM) return;
+      const base = satBaseRef.current;
+      if (!base.rows.length) return;
+      const display = interpolateSatelliteRows(base.rows, base.epochMs, base.nextEpochMs, Date.now());
+      if (display === satAppliedRef.current) return;
+      applySatelliteRows(display);
+    }, 2500);
+    return () => clearInterval(id);
+  }, [mapReady, activeLayers.satellites, (activeLayers as any).sat_comms, (activeLayers as any).sat_military, (activeLayers as any).sat_navigation, (activeLayers as any).sat_earth, (activeLayers as any).sat_science, applySatelliteRows]);
 
   useEffect(() => {
     if (!mapReady) return;

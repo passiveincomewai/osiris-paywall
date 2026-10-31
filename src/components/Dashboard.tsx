@@ -1905,6 +1905,31 @@ export default function Dashboard() {
     }
   }, []);
 
+  /* A satellite body is only worth applying if it moves the sky forward.
+     Positions are snapshots of one propagation epoch, and two caches sit
+     between a poll and a fresh one — the route's 120 s per-instance
+     payload cache and the CDN's stale-while-revalidate window — so
+     consecutive polls can return an epoch the page already has, an older
+     one (the markers would jump backwards) or a partial catalogue from an
+     instance that cold-started during an upstream rate limit (observed
+     live: the total flipping between 18,716 and 5,034 between polls,
+     which would vanish two-thirds of the sky). Anything not newer, or
+     drastically smaller while the held catalogue is still fresh, is
+     dropped: the held rows keep interpolating along their lookahead
+     vector in OsirisMap, so a dropped body costs nothing visible. */
+  const satellitePatch = (d: any) => {
+    const held = dataRef.current;
+    const epoch = Date.parse(d?.timestamp ?? '');
+    const heldEpoch = Date.parse(held?.satellites_at ?? '');
+    if (Number.isFinite(epoch) && Number.isFinite(heldEpoch)) {
+      if (epoch <= heldEpoch) return {};
+      const heldCount = held?.satellites?.length ?? 0;
+      const nextCount = Array.isArray(d?.satellites) ? d.satellites.length : 0;
+      if (heldCount > 0 && nextCount < heldCount * 0.6 && Date.now() - heldEpoch < 900_000) return {};
+    }
+    return { ...d, satellites: decodeSatelliteRows(d), satellites_at: d.timestamp };
+  };
+
   // ── FLIGHTS — delta polls against the last applied snapshot ──
   // The route stamps every completed payload with a token; handing the
   // token back (?since=) earns a delta instead of the next ~2.35 MB.
@@ -2053,15 +2078,14 @@ export default function Dashboard() {
     // Satellites (any satellite sub-layer triggers fetch)
     const anySatLayer = activeLayers.satellites || activeLayers.sat_comms || activeLayers.sat_military || activeLayers.sat_navigation || activeLayers.sat_earth || activeLayers.sat_science;
     if (anySatLayer && !layerFetchedRef.current.has('satellites')) {
-      // Keep the moment the positions were propagated for. The catalogue is
-      // fetched once and never re-polled, so by the time an orbit is requested
-      // these markers can be a long way out of date — the orbit route needs the
-      // marker's epoch to draw a track that still passes through it.
+      // Keep the moment the positions were propagated for: the orbit route
+      // needs the marker's epoch to draw a track that still passes through
+      // it, and OsirisMap interpolates marker positions forward from it.
       // The route sends dictionary-encoded v2 rows (see
-      // src/lib/satellite-payload.ts); decode back to the row objects the
-      // map consumes. The decoder also accepts v1 rows, so a CDN-cached
-      // pre-diet body cannot break the layer during a deploy.
-      fetchEndpoint('/api/satellites', d => ({ ...d, satellites: decodeSatelliteRows(d), satellites_at: d.timestamp }));
+      // src/lib/satellite-payload.ts); decoding happens in satellitePatch.
+      // The decoder also accepts v1 rows, so a CDN-cached pre-diet body
+      // cannot break the layer during a deploy.
+      fetchEndpoint('/api/satellites', satellitePatch);
       layerFetchedRef.current.add('satellites');
     }
     // Fires
@@ -2235,8 +2259,11 @@ export default function Dashboard() {
          re-fetch on the same cadence while any satellite layer is on.
          Without this the markers froze at their first-fetch positions
          for the life of the page (the one-shot fetch never repeats);
-         OsirisMap re-points the selection after each refresh. */
-      intervals.push(setInterval(() => fetchEndpoint('/api/satellites', d => ({ ...d, satellites: decodeSatelliteRows(d), satellites_at: d.timestamp }), undefined, { skipWhenHidden: true }), 120000)); // 2m — matches the route's 120 s payload cache
+         OsirisMap re-points the selection after each refresh. Between
+         polls it walks the markers along the body's lookahead vector
+         (timestamp_next), so the sky advances even when a poll hands back
+         an epoch the page already holds. */
+      intervals.push(setInterval(() => fetchEndpoint('/api/satellites', satellitePatch, undefined, { skipWhenHidden: true }), 120000)); // 2m — matches the route's 120 s payload cache
     }
     return () => { intervals.forEach(clearInterval); stopFns.forEach(stop => stop()); };
   }, [activeLayers, fetchEndpoint, dataBoot]);
