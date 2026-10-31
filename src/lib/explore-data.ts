@@ -20,6 +20,7 @@
 
 import index from '@/data/camera-countries.json';
 import { cameraAreas, type CameraArea, type CountryCamera } from './country-cameras';
+import { unifyOklahomaChunkRecords } from './oklahoma-unify';
 import { COUNTRY_REGION, type RegionKey } from './country-page-content';
 import { dominantPlaceRecords } from './place-neighbours';
 import {
@@ -59,9 +60,16 @@ const chunkCache = new Map<string, Promise<CountryCamera[]>>();
 export function loadCountryChunk(slug: string): Promise<CountryCamera[]> {
   let pending = chunkCache.get(slug);
   if (!pending) {
-    pending = import(`@/data/countries/${slug}.json`).then(
-      (mod) => ((mod as { default?: unknown }).default ?? mod) as CountryCamera[],
-    );
+    pending = (async () => {
+      const mod = await import(`@/data/countries/${slug}.json`);
+      const records = ((mod as { default?: unknown }).default ?? mod) as CountryCamera[];
+      /* The US chunk's Oklahoma records are unified with the live ODOT
+         feed at load (lib/oklahoma-unify): the chunk is a snapshot and
+         ODOT rotates its stream keys, so snapshot Oklahoma streams die
+         while every id-keyed path still resolves live. Fail-open — a
+         feed failure serves the snapshot exactly as before. */
+      return slug === 'united-states' ? unifyOklahomaChunkRecords(records) : records;
+    })();
     chunkCache.set(slug, pending);
   }
   return pending;

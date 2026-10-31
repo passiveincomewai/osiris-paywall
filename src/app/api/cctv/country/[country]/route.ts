@@ -1,5 +1,6 @@
 import index from '@/data/camera-countries.json';
 import { sliceCountryCameras, type CountrySlice } from '@/lib/country-slices';
+import { unifyOklahomaChunkRecords } from '@/lib/oklahoma-unify';
 import { derivedCityForCamera } from '@/lib/us-places';
 import type { CountryCamera } from '@/lib/country-cameras';
 
@@ -35,9 +36,14 @@ const chunkCache = new Map<string, Promise<CountryCamera[]>>();
 function loadCountry(slug: string): Promise<CountryCamera[]> {
   let pending = chunkCache.get(slug);
   if (!pending) {
-    pending = import(`@/data/countries/${slug}.json`).then(
-      mod => ((mod as { default?: unknown }).default ?? mod) as CountryCamera[],
-    );
+    pending = (async () => {
+      const mod = await import(`@/data/countries/${slug}.json`);
+      const records = ((mod as { default?: unknown }).default ?? mod) as CountryCamera[];
+      /* Same Oklahoma unification as lib/explore-data: this route
+         serves the country pages' playable grids, so its US records
+         get the same live ODOT refresh (lib/oklahoma-unify). */
+      return slug === 'united-states' ? unifyOklahomaChunkRecords(records) : records;
+    })();
     chunkCache.set(slug, pending);
   }
   return pending;
