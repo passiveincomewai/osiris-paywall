@@ -834,7 +834,8 @@ describe("normaliseOdotIncidents", () => {
           "impact-desc": "Closure",
           headline:
             "A fire is in the area and has many forest service roads closed. Use caution.",
-          comments: "",
+          comments:
+            "Closure in place for Grasshopper Fire.\n<!--Links Start Here-->\n[Link to Additional Information](https://example.com/alerts/closure)",
           location: {
             "location-name": "MT. HOOD",
             "route-id": "OR35",
@@ -876,26 +877,57 @@ describe("normaliseOdotIncidents", () => {
             },
           },
         },
+        {
+          "incident-id": "828003",
+          "event-id": "EV-3",
+          "event-type-id": "VH",
+          "event-subtype-id": "0",
+          "update-time": "2026-10-30T23:58:12-07:00",
+          "create-time": "2026-10-30T23:50:00-07:00",
+          "is-active": "true",
+          "impact-id": "2",
+          "impact-desc": "Estimated delay under 20 minutes",
+          headline:
+            "A hazardous materials cleanup is causing minimal delay to traffic. Use caution.",
+          comments: "",
+          location: {
+            "location-name": "OLD OREGON TRAIL",
+            "route-id": "I84",
+            "start-location": {
+              "start-lat": 45.7,
+              "start-long": -119.3,
+              "start-milepost": 180,
+            },
+          },
+        },
       ],
     });
-    // Only the active record becomes an event; the inactive record's
-    // update still counts toward the feed clock (here the active one
+    // Only the two active records become events; the inactive one's
+    // update still counts toward the feed clock (here an active one
     // is newer anyway).
-    expect(r.events).toHaveLength(1);
+    expect(r.events).toHaveLength(2);
     const e = r.events[0];
     expect(e.sourceId).toBe("or-inc:828001");
     expect(e.route).toBe("OR35");
     // Closure comes from ODOT's own impact-desc, not keyword guessing.
     expect(e.category).toBe("closure");
     expect(e.statusText).toBe("Closure");
-    // comments is empty in the live payload style — the always-
-    // populated headline carries the description instead.
-    expect(e.description).toContain("forest service roads closed");
+    // Live comments markup (HTML comment + markdown link) is stripped.
+    expect(e.description).toBe(
+      "Closure in place for Grasshopper Fire. Link to Additional Information",
+    );
     // Freshness comes from "update-time", not the XSD-era field names.
     expect(e.updatedTs).toBe(Date.parse("2026-10-31T00:11:02-07:00"));
     expect(r.feedUpdatedTs).toBe(Date.parse("2026-10-31T00:11:02-07:00"));
     expect(e.lat).toBeCloseTo(45.4, 3);
     expect(e.lon).toBeCloseTo(-121.6, 3);
+    // With comments empty (true for ~40% of live records), the
+    // always-populated headline carries the description.
+    const third = r.events[1];
+    expect(third.sourceId).toBe("or-inc:828003");
+    expect(third.category).toBe("incident");
+    expect(third.description).toContain("hazardous materials cleanup");
+    expect(third.statusText).toBe("Estimated delay under 20 minutes");
   });
 });
 

@@ -885,6 +885,19 @@ function odotOrgClock(payload: unknown): number | null {
   return Number.isFinite(ts) ? ts : null;
 }
 
+/**
+ * ODOT free-text cleanup: live "comments" embed HTML comments/tags and
+ * markdown-style links (57 of 129 incident records at verification).
+ * Strip markup like the other DOT normalisers do, and flatten
+ * [label](url) to its label so raw URLs don't eat the description.
+ */
+function odotText(v: unknown): string {
+  return stripHtml(str(v))
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function odotStartPoint(
   rec: Record<string, unknown>,
 ): { lat: number; lon: number } | null {
@@ -949,7 +962,7 @@ export function normaliseOdotRwReports(payload: unknown): RoadFeedResult {
     if (!point) continue;
     const loc = rec.location as Record<string, unknown> | undefined;
     const place = str(loc?.["location-name"]).trim();
-    const comments = str(rec.comments).trim();
+    const comments = odotText(rec.comments);
     const isChain = driving.length > 0;
     events.push({
       state: "OR",
@@ -1017,7 +1030,7 @@ export function normaliseOdotIncidents(payload: unknown): RoadFeedResult {
     if (!point) return;
     const loc = rec.location as Record<string, unknown> | undefined;
     const place = str(loc?.["location-name"]).trim();
-    const comments = str(rec.comments).trim();
+    const comments = odotText(rec.comments);
     const headline = str(rec.headline).trim();
     const impact = str(rec["impact-desc"]).trim();
     const haystack = `${comments} ${headline} ${place}`.toLowerCase();
