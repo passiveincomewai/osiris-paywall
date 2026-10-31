@@ -5,6 +5,7 @@ import { buildPayload, clearPayload, getPayload, readSnapshot, writeSnapshot, ty
 import { sparseSampleRegions } from '@/lib/cctv-sparse';
 import { createPool } from '@/lib/fetch-pool';
 import { findDirectoryCameraById } from '@/lib/camera-directory-lookup';
+import { translateSupersededCameraId } from '@/lib/oklahoma-unify';
 
 export const maxDuration = 60;
 import { fetchAsfinagCameras } from './asfinag';
@@ -1233,8 +1234,15 @@ export async function GET(request: Request) {
        the visitor has not loaded: scan what this instance holds, and if
        it is not there, collect (bounded, exactly as a cold default
        request is) and scan again. A miss is an honest empty list. */
-    const wantId = searchParams.get('id');
-    if (wantId) {
+    const requestedId = searchParams.get('id');
+    if (requestedId) {
+      /* A deep link can still carry a superseded oktraffic id (an old
+         share, a cached page, a search index entry): resolve it as the
+         okdot- twin the live catalogue serves (lib/oklahoma-unify).
+         The requested id itself remains the directory fallback below,
+         so a camera whose twin is gone keeps today's behaviour —
+         exactly the UDOT renumber case the fallback was built for. */
+      const wantId = translateSupersededCameraId(requestedId);
       const findHeld = (): { camera: unknown; region: string } | null => {
         for (const [regionKey, list] of Object.entries(currentRegions())) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1244,6 +1252,20 @@ export async function GET(request: Request) {
         return null;
       };
       let hit = findHeld();
+      /* The time-boxed directory lookup (see the comment in the first
+         branch below): shared by the twin-id resolution and the
+         requested-id fallback. */
+      const directoryLookup = async (id: string) => {
+        let directoryTimer: ReturnType<typeof setTimeout> | undefined;
+        const found = await Promise.race([
+          findDirectoryCameraById(id).catch(() => null),
+          new Promise<null>(resolve => {
+            directoryTimer = setTimeout(() => resolve(null), 2_500);
+          }),
+        ]);
+        if (directoryTimer) clearTimeout(directoryTimer);
+        return found;
+      };
       if (!hit) {
         /* The directory, country, city and ski pages mint their deep
            links from the static per-country chunks, whose ids the live
@@ -1259,14 +1281,15 @@ export async function GET(request: Request) {
            background (later lookups are instant), and on a timeout
            this request falls through to the collect below, exactly
            as it did before the directory resolution existed. */
-        let directoryTimer: ReturnType<typeof setTimeout> | undefined;
-        const directoryHit = await Promise.race([
-          findDirectoryCameraById(wantId).catch(() => null),
-          new Promise<null>(resolve => {
-            directoryTimer = setTimeout(() => resolve(null), 2_500);
-          }),
-        ]);
-        if (directoryTimer) clearTimeout(directoryTimer);
+        const directoryHit = await directoryLookup(wantId);
+        if (directoryHit) hit = { camera: directoryHit, region: 'directory' };
+      }
+      if (!hit && wantId !== requestedId) {
+        /* The twin is nowhere: fall back to the id as requested, whose
+           directory record (post-unification chunk) is the live twin's
+           own — for the two cameras ODOT no longer publishes it is
+           also the only record left, served exactly as before. */
+        const directoryHit = await directoryLookup(requestedId);
         if (directoryHit) hit = { camera: directoryHit, region: 'directory' };
       }
       if (!hit) {
