@@ -38,6 +38,12 @@ import type {
 import { parseSkiPassParam } from "@/lib/ski-resort-passes";
 import skiLogosData from "@/data/ski-logos.json";
 import type { CountryCamera } from "@/lib/country-cameras";
+import { previewMedia } from "@/lib/camera-preview";
+import {
+  parseHourlySnowfall,
+  trailing24hSnowfallCm,
+  formatCm,
+} from "@/lib/ski/openmeteo";
 import VoiceQA from "@/components/seo/VoiceQA";
 import { voiceFaqs } from "@/lib/voice-questions";
 
@@ -67,12 +73,13 @@ export const metadata: Metadata = {
   },
 };
 
+/* Shortened in the W3 design wave: the hub's job is to get a skier to a
+   resort page, so the intro is the two factual paragraphs — what the
+   cameras settle, and that every count is counted from the live index,
+   never estimated. The longer essays live on the resort pages. */
 const INTRO = [
   "A ski day lives or dies on conditions — and conditions change faster than any forecast update. Mountain webcams are the skier's reality check: fresh snow on the slopes, lift lines at the base, fog on the ridgeline, and the drive up the access road.",
   "Every resort below has its own page with its live feeds, the traffic cameras on the roads around it, and a route tool that lines up every camera along your drive. The resorts listed are the ones the live WorldEye catalogue actually covers — each page's counts are counted from the same camera index that powers the globe, never estimated.",
-  "The overnight snowfall number is only the start of the story. A resort can report six inches while the wind scoured the ridgeline bare — or report two while a sheltered bowl skis like a foot. Slope cameras show the actual surface: wind texture, groomed corduroy, tracked-out traverses, and whether the sun has hit the east-facing runs yet.",
-  "Timing matters as much as snow. Base-area cameras at 7 AM show empty parking lots and spinning lifts; at 9:30 on a powder Saturday they show the line you are about to join. The camera habit that pays off: check the night before for the storm total, check the morning of for lines and visibility, and check the access-road cameras before you leave the driveway.",
-  "Choosing between resorts is where the camera habit pays for itself. On a storm morning, three nearby mountains can have three different days: one socked in with lifts on hold, one snowing with the road chained up, one above the clouds in the sun. Ten minutes across the slope, base and road cameras of each tells you which drive is worth it — something no single-resort report or regional forecast will ever say out loud.",
 ];
 
 const CATEGORIES = [
@@ -194,6 +201,81 @@ async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
   return byResort;
 }
 
+/* One still frame per resort for the directory cards (W3): the first
+   sample camera whose preview is an <img>-renderable still (snapshot
+   or MJPEG). Video-kind cameras are skipped — a hundred autoplaying
+   clips in a directory grid is a frame budget the page doesn't have.
+   A resort with no still-able sample simply renders no thumbnail. */
+function buildThumbs(samples: Map<string, CountryCamera[]>): Record<string, string> {
+  const thumbs: Record<string, string> = {};
+  for (const r of SKI_RESORTS) {
+    for (const cam of samples.get(r.slug) ?? []) {
+      const media = previewMedia(cam);
+      if (media && (media.kind === "jpg" || media.kind === "mjpeg")) {
+        thumbs[r.slug] = media.url;
+        break;
+      }
+    }
+  }
+  return thumbs;
+}
+
+interface SnowNowHit {
+  slug: string;
+  name: string;
+  cm: number;
+  hasPage: boolean;
+}
+
+/* "Where it's snowing" (W3) — resorts whose MODELLED snowfall over the
+   trailing 24 complete hours (Open-Meteo hourly, the dawn-patrol
+   measure in lib/ski/openmeteo) reached 1 cm. One multi-location
+   request for the whole directory, cached 30 minutes; any failure
+   resolves to an empty list and the strip simply doesn't render —
+   modelled data is labelled modelled, and absence is never dressed
+   up as "no snow anywhere". */
+async function loadSnowNow(): Promise<SnowNowHit[]> {
+  try {
+    const qs = new URLSearchParams({
+      latitude: SKI_RESORTS.map((r) => r.lat).join(","),
+      longitude: SKI_RESORTS.map((r) => r.lng).join(","),
+      hourly: "snowfall",
+      past_days: "2",
+      forecast_days: "1",
+      timezone: "auto",
+    });
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?${qs.toString()}`, {
+      next: { revalidate: 1800 },
+      signal: AbortSignal.timeout(8000),
+      headers: { "User-Agent": "WorldEye-PowderPass/1.0" },
+    });
+    if (!res.ok) return [];
+    const json: unknown = await res.json();
+    const rows: unknown[] = Array.isArray(json) ? json : [json];
+    const now = new Date();
+    const hits: SnowNowHit[] = [];
+    SKI_RESORTS.forEach((r, i) => {
+      const row = rows[i];
+      if (!row || typeof row !== "object") return;
+      const rec = row as Record<string, unknown>;
+      const offset =
+        typeof rec.utc_offset_seconds === "number" ? rec.utc_offset_seconds : null;
+      const cm = trailing24hSnowfallCm(parseHourlySnowfall(rec), now, offset);
+      if (cm !== null && cm >= 1) {
+        hits.push({
+          slug: r.slug,
+          name: r.name,
+          cm,
+          hasPage: !FOLDED_RESORT_SLUGS.has(r.slug),
+        });
+      }
+    });
+    return hits.sort((a, b) => b.cm - a.cm).slice(0, 10);
+  } catch {
+    return [];
+  }
+}
+
 export default async function SkiWebcamsPage({
   searchParams,
 }: {
@@ -214,6 +296,8 @@ export default async function SkiWebcamsPage({
     params.group === "region" || params.group === "pass" ? params.group : "country";
   const powder = powderPassEnabled(process.env);
   const samples = await loadSamples();
+  const thumbs = buildThumbs(samples);
+  const snowNow = await loadSnowNow();
   const totalCameras = SKI_RESORTS.reduce((n, r) => n + r.resortCameraCount + r.nearbyCameraCount, 0);
   const featured = [...SKI_RESORTS]
     .sort((a, b) => b.resortCameraCount - a.resortCameraCount)
@@ -244,6 +328,49 @@ export default async function SkiWebcamsPage({
       />
       <Intro paragraphs={INTRO} />
 
+      {/* Where it's snowing — modelled trailing-24h snowfall
+          (Open-Meteo), labelled as modelled. Renders only when at
+          least one resort clears 1 cm; the cameras linked from each
+          chip are the ground truth. */}
+      {snowNow.length > 0 && (
+        <section className="mt-10" aria-label="Where it's snowing">
+          <h2 className="text-xl md:text-2xl font-bold mb-2">Where it&apos;s snowing</h2>
+          <p className="text-sm text-white/50 mb-4 max-w-3xl">
+            Modelled snowfall in the last 24 hours (Open-Meteo) — a weather model, not a
+            measurement on the mountain. Open a resort and check its cameras to see the
+            snow on the ground.
+          </p>
+          <ul className="flex flex-wrap gap-2">
+            {snowNow.map((h) => {
+              const chip = (
+                <>
+                  {h.name}{" "}
+                  <span className="text-[#D4AF37] font-semibold">
+                    {formatCm(h.cm)} in 24h
+                  </span>
+                </>
+              );
+              return (
+                <li key={h.slug}>
+                  {h.hasPage ? (
+                    <Link
+                      href={`/ski-webcams/${h.slug}`}
+                      className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition"
+                    >
+                      {chip}
+                    </Link>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80">
+                      {chip}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
       {/* Directory + ski sidebar. The Powder Pass promo lives in the
           sidebar rail (rendered only once the owner has lit the
           product — POWDER_PASS_ENABLED); while the flag is off the ski
@@ -263,6 +390,7 @@ export default async function SkiWebcamsPage({
             key={`${initialSearch}|${initialPass ?? ""}|${initialGroupBy}`}
             resorts={SKI_RESORTS}
             logos={SKI_LOGOS}
+            thumbs={thumbs}
             noPageSlugs={[...FOLDED_RESORT_SLUGS]}
             initialSearch={initialSearch}
             initialPass={initialPass}
