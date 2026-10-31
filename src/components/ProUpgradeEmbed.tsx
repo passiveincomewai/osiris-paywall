@@ -17,14 +17,11 @@
  * price, a trial length or a plan name.
  *
  * The button opens the SAME embedded checkout sheet /pricing uses
- * (components/CheckoutSheet) — the form whose first controls are the
- * Apple Pay / Link wallet buttons. There is deliberately no fake
- * Apple Pay-branded button here: a wallet-only purchase button would
- * bypass the Checkout-Session machinery (trials, account claim,
- * affiliate attribution), so the honest fast path is this button →
- * the sheet → the wallet button at its top. The hosted option
- * ("Continue on Stripe instead") sits under the CTA, as on every
- * other checkout surface.
+ * (components/CheckoutSheet) — Stripe's own card form: live checkout
+ * sessions present card as the only payment method, and Link is
+ * disabled on the Stripe account, so no wallet or Link path is ever
+ * advertised here. The hosted option ("Continue on Stripe instead")
+ * sits under the CTA, as on every other checkout surface.
  *
  * The sheet is portaled to <body>: the desktop panel's flyouts live
  * under transformed/framer-motion ancestors, which would otherwise
@@ -208,7 +205,7 @@ export default function ProUpgradeEmbed({
         className="mt-2.5 w-full"
       />
       <p className="mt-1.5 text-center text-[9px] leading-snug text-white/35">
-        Apple Pay &amp; Link lead the checkout form.
+        Pay by card in the secure Stripe checkout form.
       </p>
       <div className="mt-1 text-center">
         <HostedCheckoutLink plan={selected.plan} caption={false} surface="embed" />

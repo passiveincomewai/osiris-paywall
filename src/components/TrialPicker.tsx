@@ -26,7 +26,7 @@
  *  - mode "embedded" (dialog mounts — TrialPickerDialog, the
  *    camera-limit popup): the popup swaps its plan list IN PLACE for
  *    the embedded Stripe form (components/EmbeddedCheckoutBody — the
- *    same body /pricing's sheet hosts), Apple Pay/Link leading. A back
+ *    same body /pricing's sheet hosts) — Stripe's card form. A back
  *    control returns to the plan list; leaving either view unmounts
  *    the body, which destroys the session (controller semantics), and
  *    reopening starts fresh. The failure fallback is unchanged — the
