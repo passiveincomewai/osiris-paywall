@@ -288,6 +288,30 @@ export default function FreeOsintToolsPage() {
         </div>
       </section>
 
+      {/* WorldEye's own tools */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold">WorldEye&apos;s own free tools</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            WorldEye&apos;s toolkit has its own index now — every tool on
+            its own page, with what it does and what it costs stated
+            upfront. Three of them run entirely free in your browser: the{" "}
+            <Link href="/tools/data-leak-checker" className="text-[#0096FF] hover:underline">data leak checker</Link>{" "}
+            (has an email address appeared in a known breach?), the{" "}
+            <Link href="/tools/ip-device-lookup" className="text-[#0096FF] hover:underline">IP device lookup</Link>{" "}
+            (what an address exposes, from Shodan&apos;s InternetDB), and{" "}
+            <Link href="/tools/photo-geolocation" className="text-[#0096FF] hover:underline">photo geolocation</Link>.
+            The rest of the board — port scans, DNS, WHOIS, username search
+            and more — is Pro, and each tool&apos;s page says so plainly.
+          </p>
+          <p>
+            <Link href="/tools" className="text-[#0096FF] hover:underline">
+              Browse the full WorldEye tools index →
+            </Link>
+          </p>
+        </div>
+      </section>
+
       {/* Ethics */}
       <section className="mt-16 max-w-3xl mx-auto rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
         <h2 className="text-2xl md:text-3xl font-bold">Free tools, full responsibility</h2>

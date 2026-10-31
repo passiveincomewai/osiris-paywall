@@ -285,6 +285,29 @@ export default function BestOsintToolsPage() {
         </div>
       </section>
 
+      {/* WorldEye's own tools */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold">WorldEye&apos;s own toolkit, tool by tool</h2>
+        <div className="mt-6 space-y-4 text-white/60 leading-relaxed">
+          <p>
+            Every WorldEye tool now has its own page in the{" "}
+            <Link href="/tools" className="text-[#0096FF] hover:underline">tools index</Link>{" "}
+            — 26 in all, from port scans, vulnerability sweeps, DNS and
+            WHOIS lookups and username search to threat reputation and
+            wallet checks. Each page describes exactly what the tool
+            returns, where the data comes from, and what it can&apos;t tell
+            you — including the honest limits: a phone lookup returns
+            carrier and region, never a name, and a vulnerability sweep
+            matches known CVEs rather than running a penetration test. The
+            network and identity tools are Pro; the{" "}
+            <Link href="/tools/data-leak-checker" className="text-[#0096FF] hover:underline">data leak checker</Link>{" "}
+            and{" "}
+            <Link href="/tools/ip-device-lookup" className="text-[#0096FF] hover:underline">IP device lookup</Link>{" "}
+            run free in the browser.
+          </p>
+        </div>
+      </section>
+
       {/* Q&A */}
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">OSINT tool questions, answered</h2>
