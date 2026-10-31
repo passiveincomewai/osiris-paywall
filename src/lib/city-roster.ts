@@ -140,6 +140,51 @@ export function buildCityRoster(
     );
 }
 
+/* ------------------------------------------------------------------ */
+/* State rosters (Phase 2, 2026-10-30)                                 */
+/* ------------------------------------------------------------------ */
+
+export interface StateRosterGroup {
+  /** Group heading: the records' own cleaned `city` value, verbatim —
+   *  the area name the feeds carry. Some state DOT feeds file every
+   *  camera under the state name itself (GDOT files "Georgia"), some
+   *  under a county ("Jasper County"); the heading is that value, never
+   *  an invented city. An empty value renders under the unnamed label. */
+  label: string;
+  entries: RosterEntry[];
+}
+
+/** The heading for a record set whose feeds carry no area value. */
+export const UNNAMED_AREA_LABEL = "Feeds with no area named";
+
+/**
+ * A state's full roster, grouped by the records' cleaned `city` value.
+ * The entry set is buildCityRoster over the whole state set, so the
+ * duplicate-name qualifier rule (source → short-id → full id) and the
+ * globeId translation apply exactly as on city pages. Groups are
+ * ordered largest first (then label) so the state's real clusters lead;
+ * entries inside a group keep buildCityRoster's name order. Every
+ * usable record appears exactly once — the roster is never truncated.
+ */
+export function buildStateRoster(
+  records: readonly CountryCamera[],
+): StateRosterGroup[] {
+  const entries = buildCityRoster(records);
+  const byLabel = new Map<string, RosterEntry[]>();
+  for (const e of entries) {
+    const label = e.city.length > 0 ? e.city : UNNAMED_AREA_LABEL;
+    const group = byLabel.get(label) ?? [];
+    group.push(e);
+    byLabel.set(label, group);
+  }
+  return [...byLabel.entries()]
+    .map(([label, group]) => ({ label, entries: group }))
+    .sort(
+      (a, b) =>
+        b.entries.length - a.entries.length || a.label.localeCompare(b.label),
+    );
+}
+
 /**
  * Whether a resolved roster is the city's full story, judged against
  * the count the page itself quotes (the generated JSON count for the

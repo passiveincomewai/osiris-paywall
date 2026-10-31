@@ -821,7 +821,15 @@ export default async function CountryPage({
             <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
               {fullRoster.map((r) => (
                 <li key={r.id} className="flex items-center gap-2 border-b border-white/5 py-2">
-                  <span className="text-white/80 min-w-0 truncate">{r.name}</span>
+                  {/* Phase 2: the camera name itself is the deep link
+                      (the city/state RosterGrid pattern) — crawlable
+                      anchor text, not just the View-on-globe button. */}
+                  <a
+                    href={`/?camera=${encodeURIComponent(r.id)}`}
+                    className="text-white/80 min-w-0 truncate hover:text-[#00E5FF] hover:underline"
+                  >
+                    {r.name}
+                  </a>
                   {r.city && <span className="text-xs text-white/40 shrink-0">{r.city}</span>}
                   <span className="ml-auto shrink-0">
                     <ViewOnGlobeButton cameraId={r.id} cameraName={r.name} />

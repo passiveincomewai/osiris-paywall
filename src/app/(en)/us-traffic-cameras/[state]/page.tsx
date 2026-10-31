@@ -17,6 +17,7 @@ import {
   AreaTable,
   OperatorTable,
   SampleGrid,
+  StateRoster,
   HowTo,
   FaqSection,
   FaqJsonLd,
@@ -31,9 +32,11 @@ import VoiceQA from "@/components/seo/VoiceQA";
 import { mergePlaceFaqs, stateAnswers } from "@/lib/place-answers";
 import { getPlaceWeather } from "@/lib/place-weather";
 import CurrentStatus from "@/components/CurrentStatus";
+import { buildStateRoster } from "@/lib/city-roster";
 import {
   loadStateBreakdown,
   loadStatePassBorder,
+  loadStateRecords,
   operatorRows,
   stateCorridorFaq,
   stateFreewayFaq,
@@ -781,6 +784,22 @@ export default async function StateTrafficPage({
      camera names carry it. */
   const passBorder = await loadStatePassBorder(slug);
   const passBorderTotal = passBorder.reduce((s, g) => s + g.total, 0);
+  /* Phase 2 (camera findability rollout): the state's full roster —
+     every record the cameras' own coordinates assign to this state
+     (loadStateRecords, the same set loadStateBreakdown measures),
+     grouped by the area name each feed carries. The visible roster is
+     always complete; only the ItemList JSON-LD below is capped. */
+  const stateRecords = await loadStateRecords(slug);
+  const rosterGroups = buildStateRoster(stateRecords);
+  const rosterCount = rosterGroups.reduce((n, g) => n + g.entries.length, 0);
+  const rosterGroupsLinked = rosterGroups.map((g) => {
+    const citySlug = CITY_PAGE_BY_NAME.get(g.label);
+    return {
+      label: g.label,
+      href: citySlug ? `/city-webcams/${citySlug}` : undefined,
+      items: g.entries,
+    };
+  });
   const corridorFaq = stateBreakdown
     ? stateCorridorFaq({ stateName: s.name, breakdown: stateBreakdown })
     : null;
@@ -832,6 +851,16 @@ export default async function StateTrafficPage({
   const updated = formatDate(getUsStatesIndex().generatedAt);
   const items = s.samples ?? s.areas?.map((a) => ({ name: `${a.name} — ${a.count.toLocaleString("en-US")} cameras` })) ?? [];
 
+  /* ItemList JSON-LD: with a roster, the list is the roster itself
+     (the city template's Phase 1 pattern) — capped at 500 entries so
+     a large state doesn't embed thousands of ListItems; the visible
+     roster above is always complete, and numberOfItems states the
+     capped list's own size so the schema claims only what it lists.
+     Without a roster the list stays the featured samples, as before. */
+  const ROSTER_JSONLD_CAP = 500;
+  const rosterItems = rosterGroups
+    .flatMap((g) => g.entries)
+    .slice(0, ROSTER_JSONLD_CAP);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -840,13 +869,21 @@ export default async function StateTrafficPage({
     url: canonical,
     mainEntity: {
       "@type": "ItemList",
-      numberOfItems: items.length,
-      itemListElement: items.map((it, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: it.name,
-        url: BASE,
-      })),
+      numberOfItems: rosterCount > 0 ? rosterItems.length : items.length,
+      itemListElement:
+        rosterCount > 0
+          ? rosterItems.map((r, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: r.name,
+              url: `${BASE}/?camera=${encodeURIComponent(r.id)}`,
+            }))
+          : items.map((it, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: it.name,
+              url: BASE,
+            })),
     },
   };
 
@@ -939,6 +976,13 @@ export default async function StateTrafficPage({
         </section>
       )}
       {s.samples && <SampleGrid title={s.sampleTitle ?? "Featured live cameras"} samples={s.samples} />}
+      {rosterCount > 0 && (
+        <StateRoster
+          title={`Every indexed camera in ${s.name} — ${fmt(rosterCount)} ${rosterCount === 1 ? "camera" : "cameras"}`}
+          note={`The featured cards above are a selection — this is the complete index for ${s.name}: all ${fmt(rosterCount)} cameras whose own coordinates place them in the state, grouped by the area name each feed carries in the catalogue (some state DOT feeds are filed under the state or a county rather than a city). Tap a name to open that camera on the live globe.`}
+          groups={rosterGroupsLinked}
+        />
+      )}
       <HowTo title={s.howtoTitle} steps={s.howto} />
       <FaqSection title={s.faqTitle} faqs={displayFaqs} />
       {placeMerged.surviving.length > 0 && (

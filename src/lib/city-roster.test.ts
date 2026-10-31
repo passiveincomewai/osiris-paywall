@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CountryCamera } from "@/lib/country-cameras";
-import { buildCityRoster, cityRecords, globeId, rosterIsComplete, shortId } from "./city-roster";
+import { buildCityRoster, buildStateRoster, cityRecords, globeId, rosterIsComplete, shortId, UNNAMED_AREA_LABEL } from "./city-roster";
 
 const cam = (partial: Partial<CountryCamera> & { id: string }): CountryCamera => ({
   name: "Unnamed",
@@ -106,6 +106,54 @@ describe("shortId", () => {
     expect(shortId("occ-ok-1690894724543")).toBe("1690894724543");
     expect(shortId("gdot-13532")).toBe("13532");
     expect(shortId("plainid")).toBe("plainid");
+  });
+});
+
+describe("buildStateRoster", () => {
+  it("groups by the cleaned city value verbatim — state and county values stay honest group labels", () => {
+    const groups = buildStateRoster([
+      cam({ id: "g1", name: "10th St at Fowler St (Atlanta)", city: "Georgia", source: "GDOT" }),
+      cam({ id: "g2", name: "I-75 at Main St", city: "Georgia", source: "GDOT" }),
+      cam({ id: "m1", name: "US-69 & C Tree NE", city: "McAlester", source: "OpenCCTV / oktraffic" }),
+      cam({ id: "c1", name: "County Rd 1", city: "Jasper County", source: "GDOT" }),
+    ]);
+    expect(groups.map((g) => g.label)).toEqual(["Georgia", "Jasper County", "McAlester"]);
+    expect(groups[0].entries.map((e) => e.id)).toEqual(["g1", "g2"]);
+    // The oktraffic translation applies inside state rosters too.
+    expect(groups[2].entries[0].id).toBe("m1");
+  });
+
+  it("carries the globeId translation and duplicate qualifiers into groups", () => {
+    const groups = buildStateRoster([
+      cam({ id: "occ-ok-1690894724543", name: "US-69 & C Tree NE", city: "McAlester", source: "OpenCCTV / oktraffic" }),
+      cam({ id: "d1", name: "I-35 at 2nd St", city: "Edmond", source: "ODOT" }),
+      cam({ id: "d2", name: "I-35 at 2nd St", city: "Norman", source: "ODOT" }),
+    ]);
+    const mcAlester = groups.find((g) => g.label === "McAlester");
+    expect(mcAlester?.entries[0].id).toBe("okdot-1690894724543");
+    // Same name in different cities still qualifies (source ties → short-id).
+    const flat = groups.flatMap((g) => g.entries);
+    expect(flat.find((e) => e.id === "d1")?.qualifier).toBe("d1".split("-").pop());
+    expect(flat.find((e) => e.id === "d2")?.qualifier).toBe("d2".split("-").pop());
+  });
+
+  it("files records with no city value under the unnamed label and drops unusable records", () => {
+    const groups = buildStateRoster([
+      cam({ id: "u1", name: "Lonely Cam", city: "" }),
+      cam({ id: "u2", name: "", city: "Nowhere" }),
+      cam({ id: "", name: "No Id", city: "Nowhere" }),
+    ]);
+    expect(groups).toEqual([
+      { label: UNNAMED_AREA_LABEL, entries: [{ id: "u1", name: "Lonely Cam", city: "", qualifier: null }] },
+    ]);
+  });
+
+  it("keeps every usable record exactly once across groups", () => {
+    const records = Array.from({ length: 50 }, (_, i) =>
+      cam({ id: `r${i}`, name: `Cam ${i}`, city: i % 2 ? "Tulsa" : "Norman" }),
+    );
+    const groups = buildStateRoster(records);
+    expect(groups.reduce((n, g) => n + g.entries.length, 0)).toBe(50);
   });
 });
 

@@ -360,6 +360,17 @@ function usStateRecords(): Promise<Map<string, CountryCamera[]>> {
   return usStateRecordsPromise;
 }
 
+/** One US state's own camera records — the same coordinate-assigned
+ *  set loadStateBreakdown measures (usStateRecords above), exposed for
+ *  the state template's Phase 2 roster so the roster's count is the
+ *  set's own size, never a figure from another data generation. Empty
+ *  when the state has no assigned records or the chunk fails to load. */
+export async function loadStateRecords(
+  stateSlug: string,
+): Promise<CountryCamera[]> {
+  return (await usStateRecords()).get(stateSlug) ?? [];
+}
+
 /** The full §4 measured breakdown for one US state's own camera set
  *  (corridors, operators, mix) — the state template's numbers all come
  *  from the records the state polygons assign to that state, so they

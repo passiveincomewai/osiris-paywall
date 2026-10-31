@@ -337,6 +337,83 @@ export function RosterGrid({
   );
 }
 
+export type RosterGroup = {
+  label: string;
+  /** City-page href when this group's area has its own city page. */
+  href?: string;
+  items: RosterItem[];
+};
+
+/** The state roster (camera findability rollout, Phase 2): every camera
+ *  in the state as server-rendered text, grouped by the area name each
+ *  feed carries in the catalogue, each group in a collapsible <details>
+ *  section (the FAQ pattern) so a 4,000-camera state stays navigable
+ *  without truncating anything. The heading states the exact rendered
+ *  count; every entry deep-links to /?camera=<id> via RosterItem's id. */
+export function StateRoster({
+  title,
+  note,
+  groups,
+}: {
+  title: string;
+  note: string;
+  groups: RosterGroup[];
+}) {
+  if (groups.length === 0) return null;
+  return (
+    <section className="mt-12">
+      <h2 className="text-xl md:text-2xl font-bold mb-2">{title}</h2>
+      <p className="text-sm text-white/50 mb-5 max-w-3xl">{note}</p>
+      <div className="space-y-3">
+        {groups.map((g) => (
+          <details
+            key={g.label}
+            className="group rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden"
+          >
+            <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between gap-4 font-semibold text-sm hover:bg-white/[0.03]">
+              <span>
+                {g.label}{" "}
+                <span className="text-white/40 font-normal">
+                  — {g.items.length.toLocaleString("en-US")}{" "}
+                  {g.items.length === 1 ? "camera" : "cameras"}
+                </span>
+              </span>
+              <span className="text-[#D4AF37] group-open:rotate-45 transition-transform text-xl leading-none shrink-0">+</span>
+            </summary>
+            <div className="px-5 pb-5">
+              {g.href && (
+                <p className="text-sm mb-3">
+                  <a href={g.href} className="text-[#00E5FF] hover:underline">
+                    Open the {g.label} city page →
+                  </a>
+                </p>
+              )}
+              <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                {g.items.map((r) => (
+                  <li
+                    key={r.id}
+                    className="flex items-baseline gap-2 border-b border-white/5 py-2"
+                  >
+                    <a
+                      href={`${BASE}/?camera=${encodeURIComponent(r.id)}`}
+                      className="text-white/85 hover:text-[#00E5FF] hover:underline"
+                    >
+                      {r.name}
+                    </a>
+                    {r.qualifier && (
+                      <span className="text-xs text-white/40">· {r.qualifier}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function HowTo({ title, steps }: { title: string; steps: string[] }) {
   return (
     <section className="mt-12">
