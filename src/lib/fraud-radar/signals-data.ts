@@ -698,6 +698,114 @@ export async function getSignalsQuality(
 }
 
 // ---------------------------------------------------------------------------
+// Artifact rule summaries — signals-neon.json read directly from the
+// artifact tree. This is the fail-soft fallback for the Neon summary
+// grain (signals-neon.ts): when the summary tables have not been
+// loaded yet, the surfaces render the same summaries from the
+// publisher's own summary file instead of rendering nothing. The
+// wire shape is the publisher's, identical in fields to the Neon
+// row shape.
+// ---------------------------------------------------------------------------
+
+export interface ArtifactRuleSummary {
+  signalsVersion: string;
+  engine: string;
+  ruleCode: string;
+  ruleName: string;
+  ruleLibraryVersion: string;
+  entitiesEvaluated: number;
+  leadsPublished: number;
+  aboveBandBeforeEffectFloor: number | null;
+  expectedByConstruction: number | null;
+  noiseCaution: boolean | null;
+  peerDefinition: string;
+  inputVersions: string;
+  notComputed: Record<string, number> | null;
+}
+
+export async function getArtifactRuleSummaries(
+  loader: SignalsLoader | null = getSignalsLoader(),
+): Promise<ArtifactRuleSummary[] | null> {
+  if (!loader) return null;
+  const raw = (await loader("signals-neon.json")) as {
+    ruleSummaries?: ArtifactRuleSummary[];
+  } | null;
+  if (!raw || !Array.isArray(raw.ruleSummaries) || raw.ruleSummaries.length === 0) {
+    return null;
+  }
+  return raw.ruleSummaries.map((r) => ({
+    signalsVersion: r.signalsVersion,
+    engine: r.engine,
+    ruleCode: r.ruleCode,
+    ruleName: r.ruleName,
+    ruleLibraryVersion: r.ruleLibraryVersion,
+    entitiesEvaluated: r.entitiesEvaluated,
+    leadsPublished: r.leadsPublished,
+    aboveBandBeforeEffectFloor: r.aboveBandBeforeEffectFloor ?? null,
+    expectedByConstruction: r.expectedByConstruction ?? null,
+    noiseCaution: r.noiseCaution ?? null,
+    peerDefinition: r.peerDefinition,
+    inputVersions: r.inputVersions,
+    notComputed: r.notComputed ?? null,
+  }));
+}
+
+/**
+ * The published leads for one rule, from the artifact sig/ buckets —
+ * leads only, each with its full provenance block. Ordered for
+ * triage by the rule's own measure: the ratio to the peer median
+ * where the rule publishes one, otherwise the measure value itself
+ * (PHASE6 §2.2 — reviewers triage within a rule by effect size;
+ * entities are never ordered by any composite across rules). S-06
+ * candidate rows are filtered here exactly as in getEntitySignals.
+ * Bucket files are publisher-cached; a missing bucket is an empty
+ * bucket, never an error.
+ */
+export async function listRuleLeads(
+  engine: SignalsEngine,
+  ruleCode: string,
+  limit = 10,
+  loader: SignalsLoader | null = getSignalsLoader(),
+): Promise<SignalLead[] | null> {
+  if (!loader) return null;
+  if (engine === "contracts") return null;
+  const code = ruleCode.trim();
+  if (!code || code === CANDIDATE_RECORD_CODE) return [];
+  const buckets = await Promise.all(
+    Array.from({ length: 100 }, (_, i) =>
+      loader(`sig/${engine}/${String(i).padStart(2, "0")}.json`),
+    ),
+  );
+  const leads: SignalLead[] = [];
+  for (const raw of buckets) {
+    const file = raw as RawEntityFile | null;
+    if (!file?.entities) continue;
+    for (const ent of Object.values(file.entities)) {
+      for (const row of ent.leads ?? []) {
+        if (isCandidateRow(row)) continue;
+        const lead = decodeSignalRow(row);
+        if (lead.code === code && lead.lead) leads.push(lead);
+      }
+      for (const row of ent.screeningRecords ?? []) {
+        if (isCandidateRow(row)) continue;
+        const rec = decodeSignalRow(row);
+        if (rec.code === code) leads.push(rec);
+      }
+    }
+  }
+  const sortKey = (l: SignalLead) =>
+    l.ratioToPeerMedian ?? l.measureValue ?? Number.NEGATIVE_INFINITY;
+  leads.sort(
+    (a, b) =>
+      sortKey(b) - sortKey(a) ||
+      (b.measureValue ?? Number.NEGATIVE_INFINITY) -
+        (a.measureValue ?? Number.NEGATIVE_INFINITY) ||
+      a.entityKey.localeCompare(b.entityKey),
+  );
+  return leads.slice(0, Math.max(0, limit));
+}
+
+// ---------------------------------------------------------------------------
 // ADMIN ONLY — the S-06 human-review candidate queue.
 //
 // This is the single function in the data layer that can read

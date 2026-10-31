@@ -7,6 +7,8 @@ import {
   getSignalsRules,
   getEntitySignals,
   getSignalsQuality,
+  getArtifactRuleSummaries,
+  listRuleLeads,
   getAdminCandidateQueue,
   decodeSignalRow,
   signalLeadProvenanceComplete,
@@ -264,6 +266,39 @@ describe("signals Neon loader contract fixture (signals-neon.json)", () => {
       }),
     ]);
     expect(neon.dataQualityRecords).toHaveLength(1);
+  });
+});
+
+describe("signals artifact summaries + per-rule lead listing (Payload B1 readers)", () => {
+  it("reads the artifact summary file as the Neon grain's fallback shape", async () => {
+    const rows = await getArtifactRuleSummaries(loader);
+    expect(rows).not.toBeNull();
+    expect(rows!.map((r) => r.ruleCode)).toEqual(["H-MCD-01", "H-MCD-05"]);
+    expect(rows![0].noiseCaution).toBe(true);
+    expect(rows![1].expectedByConstruction).toBeNull();
+    expect(rows![1].noiseCaution).toBeNull();
+    expect(await getArtifactRuleSummaries(null)).toBeNull();
+  });
+
+  it("lists a rule's published leads from the sig buckets, provenance intact", async () => {
+    const leads = await listRuleLeads("healthcare", "H-MCD-01", 10, loader);
+    expect(leads).toHaveLength(1);
+    expect(leads![0].entityKey).toBe("1234567890");
+    expect(leads![0].ratioToPeerMedian).toBe(4.25);
+    expect(signalLeadProvenanceComplete(leads![0])).toBe(true);
+    const own = await listRuleLeads("healthcare", "H-MCD-05", 10, loader);
+    expect(own).toHaveLength(1);
+    expect(own![0].peerMedian).toBeNull();
+  });
+
+  it("lists screening records by code from their own block, and confines S-06", async () => {
+    const s01 = await listRuleLeads("cross", "S-01", 10, loader);
+    expect(s01).toHaveLength(1);
+    expect(s01![0].codeKind).toBe("record");
+    // Candidates are never listed publicly, and contracts has no buckets.
+    expect(await listRuleLeads("cross", "S-06", 10, loader)).toEqual([]);
+    expect(await listRuleLeads("contracts", "C-01", 10, loader)).toBeNull();
+    expect(await listRuleLeads("healthcare", "H-MCD-01", 10, null)).toBeNull();
   });
 });
 

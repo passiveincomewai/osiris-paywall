@@ -116,6 +116,46 @@ describe("§14.3 isolation — Phase 4 grants routes carry the flag gate", () =>
   });
 });
 
+describe("§14.3 isolation — Phase 6 signals routes carry the flag gate", () => {
+  it("every signals page checks fraudRadarEnabled", () => {
+    const signalsFiles = [
+      "app/(en)/fraud-radar/signals/page.tsx",
+      "app/(en)/fraud-radar/signals/methods/page.tsx",
+      "app/(en)/fraud-radar/signals/rules/[ruleCode]/page.tsx",
+    ];
+    for (const rel of signalsFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+
+  it("the public path list adds exactly the two signals landings", () => {
+    // The full list is pinned in flag.test.ts; here the B1 delta is
+    // pinned against the Phase 4 list shape: rule detail pages and
+    // the admin surface stay unlisted.
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).toContain('"/fraud-radar/signals"');
+    expect(flagSrc).toContain('"/fraud-radar/signals/methods"');
+    expect(flagSrc).not.toContain("/fraud-radar/signals/rules");
+  });
+
+  it("S-06 candidate data is read only behind the admin surface", () => {
+    // The candidate queue artifact has exactly one reader
+    // (getAdminCandidateQueue in signals-data.ts, whose callers are
+    // admin payloads). No public signals page may reference it.
+    const publicFiles = [
+      "app/(en)/fraud-radar/signals/page.tsx",
+      "app/(en)/fraud-radar/signals/methods/page.tsx",
+      "app/(en)/fraud-radar/signals/rules/[ruleCode]/page.tsx",
+    ];
+    for (const rel of publicFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toContain("getAdminCandidateQueue");
+      expect(src, rel).not.toContain("candidate-queue");
+    }
+  });
+});
+
 describe("§35 billing non-interference — static dependency guard", () => {
   const files = fraudSourceFiles();
 

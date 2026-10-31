@@ -181,6 +181,34 @@ export default function FraudRadarPage() {
           </div>
         </section>
 
+        <section className="mt-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.06] p-6">
+          <h2 className="text-xl font-semibold">New: Research signals — statistical intelligence</h2>
+          <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+            Deterministic, versioned research rules compare providers,
+            recipients and auditees to defined peer groups, to their own
+            history, and across datasets — each lead published with its
+            peer definition, its counts (including the count expected by
+            construction from the band alone) and its input vintages.
+            Research leads for human review, never findings about an
+            entity; the contracts rules are defined but not yet computed,
+            and are shown in that labelled state.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link
+              href="/fraud-radar/signals"
+              className="rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-300"
+            >
+              Open Research Signals
+            </Link>
+            <Link
+              href="/fraud-radar/signals/methods"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              How signals are computed
+            </Link>
+          </div>
+        </section>
+
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
           <h2 className="text-xl font-semibold">Whistleblower Research Center</h2>
           <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">

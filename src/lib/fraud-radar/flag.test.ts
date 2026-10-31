@@ -44,6 +44,8 @@ describe("fraudRadarPublicPaths — sitemap/nav isolation", () => {
       "/fraud-radar/grants",
       "/fraud-radar/grants/recipients",
       "/fraud-radar/grants/aln",
+      "/fraud-radar/signals",
+      "/fraud-radar/signals/methods",
     ]);
   });
 });

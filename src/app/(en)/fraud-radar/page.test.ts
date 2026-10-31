@@ -42,6 +42,11 @@ describe("/fraud-radar — flag gate", () => {
     // The honesty lines:
     expect(html).toContain("does not determine that any person or organization has");
     expect(html).toContain("never submits allegations on your behalf");
+    // Phase 6 signals entry section (existing sections unchanged).
+    expect(html).toContain("Research signals — statistical intelligence");
+    expect(html).toContain("/fraud-radar/signals");
+    expect(html).toContain("/fraud-radar/signals/methods");
+    expect(html).toContain("not yet computed");
   });
 
   it("never promises the announced 1% commission anywhere on the page", () => {

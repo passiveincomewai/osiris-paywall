@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { adminEmails } from "@/lib/affiliate/admin";
 import { fraudRadarEnabled } from "@/lib/fraud-radar/flag";
 import { getRegistryHealth } from "@/lib/fraud-radar/registry-admin";
+import { listDataQualityRecords } from "@/lib/fraud-radar/signals-neon";
+import { getSignalsQuality } from "@/lib/fraud-radar/signals-data";
 
 /**
  * Fraud Radar admin — Data Source Registry health (spec §5/§32).
@@ -43,6 +45,54 @@ export default async function FraudRadarAdminPage() {
 
   const enabled = fraudRadarEnabled();
   const health = await getRegistryHealth();
+
+  // Phase 6 data quality (Payload B1): per-dataset verdicts from the
+  // FrDataQualityRecord grain, fail-soft to the published quality
+  // artifact when the grain has not been loaded. Aggregates only —
+  // dataset-level states, check counts and defect-register IDs; a
+  // quality record validates datasets, never entities, and can never
+  // create a research lead. A fail verdict renders as a fail with
+  // its counts — visible, never hidden.
+  const dqNeon = await listDataQualityRecords();
+  const dqArtifact = dqNeon === null ? await getSignalsQuality() : null;
+  const dqRows = dqNeon
+    ? dqNeon.map((r) => ({
+        datasetSlug: r.datasetSlug,
+        datasetVersion: r.datasetVersion,
+        verdict: r.verdict,
+        total: r.checksTotal,
+        pass: r.checksPass,
+        warn: r.checksWarn,
+        fail: r.checksFail,
+        error: r.checksError,
+        notApplicable: r.checksNotApplicable,
+        defectsInForce: r.defectsInForce,
+        detailPointer: r.detailPointer,
+        filesChecked: r.filesChecked,
+        vintageAgeDays: r.vintageAgeDays,
+      }))
+    : dqArtifact
+      ? dqArtifact.datasets.map((d) => ({
+          datasetSlug: d.datasetSlug,
+          datasetVersion: d.datasetVersion,
+          verdict: d.verdict,
+          total: d.checkCounts.total,
+          pass: d.checkCounts.pass,
+          warn: d.checkCounts.warn,
+          fail: d.checkCounts.fail,
+          error: d.checkCounts.error,
+          notApplicable: d.checkCounts.notApplicable,
+          defectsInForce: d.defectsInForce,
+          detailPointer: d.detailPointer,
+          filesChecked: d.filesChecked,
+          vintageAgeDays: d.vintageAgeDays,
+        }))
+      : null;
+  const dqSource = dqNeon
+    ? "Neon grain (FrDataQualityRecord)"
+    : dqArtifact
+      ? `published quality artifact, run ${dqArtifact.runDate ?? "—"} (the Neon grain has not been loaded for this deployment yet)`
+      : null;
 
   return (
     <div className="docs-root min-h-screen" style={{ background: "#050810" }}>
@@ -155,6 +205,81 @@ export default async function FraudRadarAdminPage() {
                 </table>
               </div>
             )}
+          </>
+        )}
+
+        <h2 className="mt-12 text-lg font-semibold">Data quality — per-dataset verdicts (Phase 6)</h2>
+        <p className="mt-2 text-sm text-white/50 leading-relaxed">
+          The data-quality engine re-checks every published dataset after
+          any publish: manifest contract, schema, grain uniqueness, null
+          discipline, reconciliation identities, defect-register
+          accounting, freshness and distribution shift. Verdicts are pass /
+          warn / fail check states — never a score. A fail means the
+          dataset is not signallable until it is resolved, and it is shown
+          here as a fail, with its check counts and defects in force.
+        </p>
+        {dqRows === null ? (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+            <h3 className="font-semibold">Data quality not loaded yet</h3>
+            <p className="mt-2 text-sm text-white/60 leading-relaxed">
+              No FrDataQualityRecord rows could be read and no quality
+              artifact is configured for this deployment. That is a loading
+              state — no dataset verdict is implied.
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className="mt-3 text-sm text-white/50">Source: {dqSource}.</p>
+            <div className="mt-3 overflow-x-auto rounded-2xl border border-white/10">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-white/50">
+                    <th className="px-4 py-3 font-medium">Dataset</th>
+                    <th className="px-4 py-3 font-medium">Verdict</th>
+                    <th className="px-4 py-3 font-medium">Checks (pass / warn / fail / error / n-a)</th>
+                    <th className="px-4 py-3 font-medium">Defects in force</th>
+                    <th className="px-4 py-3 font-medium">Files checked</th>
+                    <th className="px-4 py-3 font-medium">Vintage age (days)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dqRows.map((d) => (
+                    <tr key={`${d.datasetSlug}@${d.datasetVersion}`} className="border-b border-white/5">
+                      <td className="px-4 py-3">
+                        <div className="font-medium">{d.datasetSlug}</div>
+                        <div className="text-xs text-white/40 font-mono">
+                          version {d.datasetVersion} · detail: {d.detailPointer}
+                        </div>
+                      </td>
+                      <td
+                        className={`px-4 py-3 font-semibold ${
+                          d.verdict === "fail"
+                            ? "text-red-300"
+                            : d.verdict === "warn"
+                              ? "text-amber-300"
+                              : d.verdict === "pass"
+                                ? "text-emerald-300"
+                                : "text-white/70"
+                        }`}
+                      >
+                        {d.verdict}
+                        {d.verdict === "fail"
+                          ? " — this dataset failed its quality record; its engine's signals pause on it until resolved"
+                          : ""}
+                      </td>
+                      <td className="px-4 py-3 text-white/70">
+                        {d.pass} / {d.warn} / {d.fail} / {d.error} / {d.notApplicable} (of {d.total})
+                      </td>
+                      <td className="px-4 py-3 text-white/70">
+                        {d.defectsInForce.length > 0 ? d.defectsInForce.join(", ") : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-white/70">{d.filesChecked}</td>
+                      <td className="px-4 py-3 text-white/70">{d.vintageAgeDays}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>

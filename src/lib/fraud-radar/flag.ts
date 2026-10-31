@@ -57,5 +57,9 @@ export function fraudRadarPublicPaths(
     "/fraud-radar/grants",
     "/fraud-radar/grants/recipients",
     "/fraud-radar/grants/aln",
+    // Phase 6 signals surfaces (the index and the methods page only;
+    // per-rule detail pages stay out of the sitemap, per precedent).
+    "/fraud-radar/signals",
+    "/fraud-radar/signals/methods",
   ];
 }
