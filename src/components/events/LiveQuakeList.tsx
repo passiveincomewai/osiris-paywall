@@ -6,9 +6,9 @@ import { Globe, Waves, Users } from "lucide-react";
 
 /**
  * The live quakes list on /earthquake-tracker. Polls the very endpoint
- * the globe uses (/api/earthquakes — the USGS summary feed: magnitude
- * 2.5+, last 24 hours) every minute and lists EVERY event in it, newest
- * first, so this page and the map always agree.
+ * the globe uses (/api/earthquakes — the USGS summary feed, "Magnitude
+ * 2.5+ Earthquakes, Past Day") every minute and lists EVERY event in
+ * it, newest first, so this page and the map always agree.
  */
 
 interface ApiQuake {
@@ -90,8 +90,7 @@ export default function LiveQuakeList() {
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-2 mb-5">
         <p className="text-sm text-white/50">
-          Every earthquake in the USGS feed — magnitude 2.5 and above ·
-          worldwide · last 24 hours
+          Every earthquake in the USGS feed · worldwide · last 24 hours
           {quakes ? ` · ${quakes.length} events` : ""}
         </p>
         <p className="text-xs font-mono text-white/40">
