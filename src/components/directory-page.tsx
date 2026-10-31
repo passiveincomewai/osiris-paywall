@@ -287,6 +287,56 @@ export function SampleGrid({ title, samples }: { title: string; samples: Sample[
   );
 }
 
+export type RosterItem = {
+  id: string;
+  name: string;
+  city?: string;
+  qualifier?: string | null;
+};
+
+/** The full camera roster (camera findability rollout, Phase 1): every
+ *  camera a hub page owns, named in real text and linked into the globe
+ *  (/?camera=<id>) — the country pages' "Every indexed camera" pattern,
+ *  with links. The heading carries the true rendered count; a repeated
+ *  name's qualifier (source, then short-id — real fields only) renders
+ *  after the city context. */
+export function RosterGrid({
+  title,
+  note,
+  items,
+}: {
+  title: string;
+  note: string;
+  items: RosterItem[];
+}) {
+  if (items.length === 0) return null;
+  return (
+    <section className="mt-12">
+      <h2 className="text-xl md:text-2xl font-bold mb-2">{title}</h2>
+      <p className="text-sm text-white/50 mb-5 max-w-3xl">{note}</p>
+      <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+        {items.map((r) => (
+          <li
+            key={r.id}
+            className="flex items-baseline gap-2 border-b border-white/5 py-2"
+          >
+            <a
+              href={`${BASE}/?camera=${encodeURIComponent(r.id)}`}
+              className="text-white/85 hover:text-[#00E5FF] hover:underline"
+            >
+              {r.name}
+            </a>
+            {r.city && <span className="text-xs text-white/40">{r.city}</span>}
+            {r.qualifier && (
+              <span className="text-xs text-white/40">· {r.qualifier}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function HowTo({ title, steps }: { title: string; steps: string[] }) {
   return (
     <section className="mt-12">

@@ -1,0 +1,104 @@
+import { describe, expect, it } from "vitest";
+import type { CountryCamera } from "@/lib/country-cameras";
+import { buildCityRoster, cityRecords, rosterIsComplete, shortId } from "./city-roster";
+
+const cam = (partial: Partial<CountryCamera> & { id: string }): CountryCamera => ({
+  name: "Unnamed",
+  city: "McAlester",
+  ...partial,
+});
+
+describe("cityRecords", () => {
+  it("matches the cleaned city value exactly — state values are not cities", () => {
+    const records = [
+      cam({ id: "a", city: "McAlester" }),
+      cam({ id: "b", city: "  McAlester " }),
+      cam({ id: "c", city: "Oklahoma" }),
+      cam({ id: "d", city: "Pittsburg County" }),
+      cam({ id: "e", city: "McAlester City" }),
+    ];
+    expect(cityRecords(records, "McAlester").map((r) => r.id)).toEqual(["a", "b"]);
+  });
+});
+
+describe("buildCityRoster", () => {
+  it("renders the named test case: McAlester's single camera, unqualified", () => {
+    const roster = buildCityRoster([
+      cam({
+        id: "occ-ok-1690894724543",
+        name: "US-69 & C Tree NE",
+        city: "McAlester",
+        source: "OpenCCTV / oktraffic",
+      }),
+    ]);
+    expect(roster).toEqual([
+      {
+        id: "occ-ok-1690894724543",
+        name: "US-69 & C Tree NE",
+        city: "McAlester",
+        qualifier: null,
+      },
+    ]);
+  });
+
+  it("keeps every record, sorted by name then id, names exact", () => {
+    const roster = buildCityRoster([
+      cam({ id: "x2", name: "B Road" }),
+      cam({ id: "x1", name: "A Road" }),
+      cam({ id: "x3", name: "B Road", source: "SDOT" }),
+    ]);
+    expect(roster.map((r) => r.id)).toEqual(["x1", "x2", "x3"]);
+    expect(roster.map((r) => r.name)).toEqual(["A Road", "B Road", "B Road"]);
+  });
+
+  it("qualifies a repeated name by source when sources distinguish it", () => {
+    const roster = buildCityRoster([
+      cam({ id: "g1", name: "I-75 at Main St", source: "GDOT" }),
+      cam({ id: "g2", name: "I-75 at Main St", source: "City of Atlanta" }),
+      cam({ id: "g3", name: "Unique Name", source: "GDOT" }),
+    ]);
+    const dups = roster.filter((r) => r.name === "I-75 at Main St");
+    expect(dups.map((r) => r.qualifier)).toEqual(["GDOT", "City of Atlanta"]);
+    expect(roster.find((r) => r.name === "Unique Name")?.qualifier).toBeNull();
+  });
+
+  it("falls back to the catalogue short-id when one source repeats the name", () => {
+    const roster = buildCityRoster([
+      cam({ id: "gdot-13532", name: "I-285 at Tunnel", source: "GDOT" }),
+      cam({ id: "gdot-13530", name: "I-285 at Tunnel", source: "GDOT" }),
+    ]);
+    expect(roster.map((r) => r.qualifier)).toEqual(["13530", "13532"]);
+  });
+
+  it("drops records that cannot be named or linked", () => {
+    const roster = buildCityRoster([
+      cam({ id: "ok", name: "Real Camera" }),
+      cam({ id: "noname", name: "   " }),
+      { name: "No Id Camera", city: "McAlester" } as CountryCamera,
+    ]);
+    expect(roster.map((r) => r.id)).toEqual(["ok"]);
+  });
+});
+
+describe("shortId", () => {
+  it("takes the final dash segment, or the id itself", () => {
+    expect(shortId("occ-ok-1690894724543")).toBe("1690894724543");
+    expect(shortId("gdot-13532")).toBe("13532");
+    expect(shortId("plainid")).toBe("plainid");
+  });
+});
+
+describe("rosterIsComplete", () => {
+  it("accepts the substance line and exact small-city resolutions", () => {
+    expect(rosterIsComplete(499, 499)).toBe(true);
+    expect(rosterIsComplete(112, 73)).toBe(true); // chunk set above the line
+    expect(rosterIsComplete(1, 1)).toBe(true); // McAlester
+    expect(rosterIsComplete(25, 900)).toBe(true);
+  });
+
+  it("rejects partial resolutions that would pose as complete", () => {
+    expect(rosterIsComplete(0, 100)).toBe(false);
+    expect(rosterIsComplete(1, 890)).toBe(false); // Sydney's system-code chunk
+    expect(rosterIsComplete(24, 100)).toBe(false);
+  });
+});

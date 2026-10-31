@@ -4,7 +4,13 @@ import TrialCtaSection from "@/components/TrialCtaSection";
 import EmailCaptureCard from "@/components/EmailCaptureCard";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
-import { cityChunkStats, loadCountryChunk } from "@/lib/explore-data";
+import {
+  cityChunkStats,
+  loadCountryChunk,
+  recordsForDef,
+  resolveExploreDef,
+} from "@/lib/explore-data";
+import { buildCityRoster, rosterIsComplete } from "@/lib/city-roster";
 import { clean } from "@/lib/country-cameras";
 import {
   bboxRadiusM,
@@ -43,6 +49,7 @@ import {
   Updated,
   Intro,
   SampleGrid,
+  RosterGrid,
   HowTo,
   FaqSection,
   FaqJsonLd,
@@ -1013,15 +1020,28 @@ function generatedCfg(g: GenCity): CityCfg {
   const streamShare = Math.round((g.streams / g.count) * 100);
   const feat = g.samples.slice(0, 3).map((s) => s.name);
 
-  const mixParagraph =
-    g.streams === 0
+  /* A one-camera generated city (the McAlester editorial inclusion)
+     is described in the singular throughout — the template's plural
+     forms would misstate a count of one. */
+  const oneCam = g.count === 1;
+  const camNoun = oneCam ? "camera" : "cameras";
+  const webcamNoun = oneCam ? "webcam" : "webcams";
+
+  const mixParagraph = oneCam
+    ? g.streams === 1
+      ? `The single camera in the ${g.name} index streams live video. That is how its operator runs it — a continuous view of current conditions, which is what these feeds are for.`
+      : `The single camera in the ${g.name} index publishes still images that refresh at short intervals rather than continuous video. That is how its operator runs it — and it is enough to judge congestion, weather and road conditions at a glance, which is what these feeds are for.`
+    : g.streams === 0
       ? `Every camera in the ${g.name} index publishes still images that refresh at short intervals rather than continuous video. That is how the operators run them — and it is enough to judge congestion, weather and road conditions at a glance, which is what these feeds are for.`
       : streamShare >= 50
         ? `The index mixes live video with still-image feeds: ${fmt(g.streams)} of the ${fmt(g.count)} cameras stream video, and the rest publish still images that refresh at short intervals. Both kinds show current conditions — the stills are how most road operators publish, and they are plenty for judging congestion, weather and closures.`
         : `Most of the index — ${fmt(g.stills)} of ${fmt(g.count)} cameras — publishes still images that refresh at short intervals, with ${fmt(g.streams)} live video streams mixed in. That is how most road operators publish, and the stills are plenty for judging congestion, weather and road conditions before you travel.`;
 
-  const mixFaq =
-    g.streams === 0
+  const mixFaq = oneCam
+    ? g.streams === 1
+      ? `The one feed in the ${g.name} index streams live video. It shows current conditions — check the featured list on this page to open it.`
+      : `The one feed in the ${g.name} index publishes still images that refresh at short intervals rather than continuous video. That is the format its operator uses for road monitoring, and it is enough to judge traffic, weather and road conditions.`
+    : g.streams === 0
       ? `All ${fmt(g.count)} feeds in the ${g.name} index publish still images that refresh at short intervals rather than continuous video. That is the format the operators themselves use for road monitoring, and it is enough to judge traffic, weather and road conditions.`
       : `${fmt(g.stills)} of the ${fmt(g.count)} feeds publish still images that refresh at short intervals, and ${fmt(g.streams)} stream live video. Both show current conditions — check the featured list on this page to open either kind.`;
 
@@ -1030,20 +1050,20 @@ function generatedCfg(g: GenCity): CityCfg {
     country: g.country,
     countrySlug: g.countrySlug,
     count: g.count,
-    title: `${g.name} Live Webcams — ${fmt(g.count)} Live Cameras`,
-    blurb: `Watch ${fmt(g.count)} live cameras in ${g.name}, ${g.country} — public feeds from ${joinNames(topSources.slice(0, 2))}, free on the WorldEye map. No signup needed.`,
+    title: `${g.name} Live Webcams — ${fmt(g.count)} Live ${oneCam ? "Camera" : "Cameras"}`,
+    blurb: `Watch ${fmt(g.count)} live ${camNoun} in ${g.name}, ${g.country} — public feeds from ${joinNames(topSources.slice(0, 2))}, free on the WorldEye map. No signup needed.`,
     h1: `${g.name} Live Webcams`,
-    sub: `Watch ${fmt(g.count)} live cameras in ${g.name} — free on the WorldEye globe.`,
+    sub: `Watch ${fmt(g.count)} live ${camNoun} in ${g.name} — free on the WorldEye globe.`,
     intro: [
-      `There are ${fmt(g.count)} live webcams in ${g.name}, ${g.country}, on WorldEye — public feeds published by ${srcList}, all free to watch with no signup. ${g.name} accounts for about ${shareLabel} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)}, and every feed sits on the same searchable live map as WorldEye's 74,229 cameras worldwide.`,
+      `There ${oneCam ? "is" : "are"} ${fmt(g.count)} live ${webcamNoun} in ${g.name}, ${g.country}, on WorldEye — public feeds published by ${srcList}, all free to watch with no signup. ${g.name} accounts for about ${shareLabel} of the ${fmt(g.countryTotal)} cameras WorldEye indexes in ${inCountry(g.country)}, and every feed sits on the same searchable live map as WorldEye's 74,229 cameras worldwide.`,
       `Featured feeds in the index include ${joinNames(feat)} — and every camera in the list below links straight into the live globe with that feed open, so you can go from this page to a live view in one tap.`,
       mixParagraph,
       `Use the grid the way it is meant to be used: a two-minute check of the cameras on your route before you leave. What is happening on the ground — a jam, a closure, a storm moving in — shows up on these feeds as it happens, not as a forecast said it would.`,
     ],
     stats: [
-      { value: fmt(g.count), label: "live cameras" },
+      { value: fmt(g.count), label: `live ${camNoun}` },
       { value: shareLabel, label: `of ${ofCountry(g.country)} cameras` },
-      { value: String(g.sourceCount), label: "publishing sources" },
+      { value: String(g.sourceCount), label: oneCam ? "publishing source" : "publishing sources" },
     ],
     samples: g.samples.map((s) => ({ name: s.name, city: g.name, id: s.id })),
     sampleTitle: `Featured ${g.name} cameras`,
@@ -1061,7 +1081,7 @@ function generatedCfg(g: GenCity): CityCfg {
     faqs: [
       {
         q: `How many live cameras are there in ${g.name}?`,
-        a: `WorldEye indexes ${fmt(g.count)} cameras in ${g.name}, out of ${fmt(g.countryTotal)} across ${inCountry(g.country)}. The count comes from the live camera catalogue and moves as operators add feeds or retire old ones.`,
+        a: `WorldEye indexes ${fmt(g.count)} ${camNoun} in ${g.name}, out of ${fmt(g.countryTotal)} across ${inCountry(g.country)}. The count comes from the live camera catalogue and moves as operators add feeds or retire old ones.`,
       },
       {
         q: `Where do the ${g.name} cameras come from?`,
@@ -1069,7 +1089,7 @@ function generatedCfg(g: GenCity): CityCfg {
       },
       {
         q: `Which ${g.name} cameras can I watch right now?`,
-        a: `The featured list on this page names ${g.samples.length} of them — including ${joinNames(feat)} — and each one links straight into the live globe with that feed open. The full index holds ${fmt(g.count)} ${g.name} cameras; zoom into ${g.name} on the map to browse the rest.`,
+        a: `The featured list on this page names ${g.samples.length} of them — including ${joinNames(feat)} — and each one links straight into the live globe with that feed open. The full index holds ${fmt(g.count)} ${g.name} ${camNoun}; zoom into ${g.name} on the map to browse the rest.`,
       },
       {
         q: "Are the cameras live video or still images?",
@@ -1369,6 +1389,23 @@ export default async function CityWebcamPage({
   const showExplorer =
     chunk !== null && chunk.count >= 25 && chunk.centroid !== null;
 
+  /* Full camera roster (camera findability rollout, Phase 1): every
+     camera this page owns, as real text with a globe deep link — the
+     country pages' roster pattern, extended past their ≤16 cap. The
+     record set is the explorer's own (recordsForDef with this city's
+     def: cleaned-city exact match, dominant place owned), so the
+     roster can never name a camera the page's grid doesn't serve,
+     and its count is the count the explorer quotes. A city whose
+     records can't be resolved cleanly against its quoted count
+     (rosterIsComplete — Sydney's chunk files its feeds under
+     camera-system codes) keeps its featured samples only. */
+  const rosterDef = resolveExploreDef({ country: c.countrySlug, city: c.name });
+  const rosterRecords = rosterDef
+    ? await recordsForDef(rosterDef).catch(() => [] as Awaited<ReturnType<typeof recordsForDef>>)
+    : [];
+  const roster = buildCityRoster(rosterRecords);
+  const rosterEntries = rosterIsComplete(roster.length, c.count) ? roster : null;
+
   /* Weather / alerts / AQI — a clean no-op (null) unless WEATHERAPI_KEY
      and/or OPENAQ_API_KEY are configured and the provider answers, so
      unconfigured builds render this page exactly as before. AQI prefers
@@ -1591,13 +1628,23 @@ export default async function CityWebcamPage({
     url: canonical,
     mainEntity: {
       "@type": "ItemList",
-      numberOfItems: c.samples?.length ?? 0,
-      itemListElement: (c.samples ?? []).map((s, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: s.city ? `${s.name} — ${s.city}` : s.name,
-        url: s.id ? `${BASE}/?camera=${encodeURIComponent(s.id)}` : BASE,
-      })),
+      /* With a roster, the ItemList is the full roster (the samples
+         are a featured subset of it); without one it stays the
+         featured samples, as before. */
+      numberOfItems: rosterEntries ? rosterEntries.length : (c.samples?.length ?? 0),
+      itemListElement: rosterEntries
+        ? rosterEntries.map((r, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: `${r.name} — ${c.name}`,
+            url: `${BASE}/?camera=${encodeURIComponent(r.id)}`,
+          }))
+        : (c.samples ?? []).map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: s.city ? `${s.name} — ${s.city}` : s.name,
+            url: s.id ? `${BASE}/?camera=${encodeURIComponent(s.id)}` : BASE,
+          })),
     },
   };
 
@@ -1684,6 +1731,17 @@ export default async function CityWebcamPage({
         </>
       )}
       {c.samples && <SampleGrid title={c.sampleTitle ?? "Featured live cameras"} samples={c.samples} />}
+      {rosterEntries && (
+        <RosterGrid
+          title={`Every indexed camera in ${c.name} — ${fmt(rosterEntries.length)} ${rosterEntries.length === 1 ? "camera" : "cameras"}`}
+          note={
+            rosterEntries.length === 1
+              ? `The featured card above is the selection — this is the complete index for ${c.name}: the one camera the catalogue currently lists under ${c.name}, exactly as its operator names it. Tap its name to open it on the live globe.`
+              : `The featured cards above are a selection — this is the complete index for ${c.name}, all ${fmt(rosterEntries.length)} cameras, exactly as the catalogue holds them. Tap a name to open that camera on the live globe.`
+          }
+          items={rosterEntries}
+        />
+      )}
       {showBreakdown && breakdown && (
         <AreaTable
           title={`${c.name} cameras by road`}

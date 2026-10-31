@@ -36,9 +36,19 @@ describe("city-pages.json", () => {
     "albany", "cleveland", "marysville", "riverside", "san-bernardino", "yoakum",
   ];
 
+  // Editorial inclusions (tools/build-city-pages.mjs
+  // EDITORIAL_INCLUSIONS): pages admitted below the threshold on
+  // purpose, pinned here so a regen can neither silently drop one
+  // nor quietly admit another. McAlester is the named test case
+  // completing Oklahoma's city tier — one catalogue camera
+  // ("US-69 & C Tree NE"), admitted at a count of 1.
+  const EDITORIAL_INCLUSIONS = ["mcalester"];
+
   it("every city clears the stated threshold, bar the pinned ownership cases", () => {
     for (const c of cities) {
-      if (BELOW_50_AFTER_OWNERSHIP.includes(c.slug)) {
+      if (EDITORIAL_INCLUSIONS.includes(c.slug)) {
+        expect(c.count, c.slug).toBeLessThan(cityPages.threshold);
+      } else if (BELOW_50_AFTER_OWNERSHIP.includes(c.slug)) {
         expect(c.count, c.slug).toBeLessThan(50);
         expect(c.count, c.slug).toBeGreaterThanOrEqual(cityPages.threshold);
       } else {
@@ -75,7 +85,12 @@ describe("city-pages.json", () => {
 
   it("samples carry deep-linkable catalogue ids", () => {
     for (const c of cities) {
-      expect(c.samples.length, c.slug).toBeGreaterThanOrEqual(6);
+      // An editorial inclusion's sample list is its whole owned set
+      // (McAlester: the one camera) — the >= 6 rule is the threshold
+      // tier's promise, not an inclusion's.
+      expect(c.samples.length, c.slug).toBeGreaterThanOrEqual(
+        EDITORIAL_INCLUSIONS.includes(c.slug) ? 1 : 6,
+      );
       const ids = c.samples.map((s) => s.id);
       expect(new Set(ids).size).toBe(ids.length);
       for (const s of c.samples) {

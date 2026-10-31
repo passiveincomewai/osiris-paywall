@@ -19683,6 +19683,29 @@
      "name": "I-79 NB @ EXIT 64 (PA 51 CORAOPOLIS/MCKEES ROCKS)"
     }
    ]
+  },
+  {
+   "slug": "mcalester",
+   "name": "McAlester",
+   "country": "United States",
+   "countrySlug": "united-states",
+   "count": 1,
+   "countryTotal": 54025,
+   "sources": [
+    {
+     "name": "OpenCCTV / oktraffic",
+     "count": 1
+    }
+   ],
+   "sourceCount": 1,
+   "stills": 0,
+   "streams": 1,
+   "samples": [
+    {
+     "id": "occ-ok-1690894724543",
+     "name": "US-69 & C Tree NE"
+    }
+   ]
   }
  ]
 }

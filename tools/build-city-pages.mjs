@@ -33,7 +33,8 @@
 //   3. A (city, country) group becomes a page only if the place it
 //      OWNS — its dominant cluster, see the ownership section below —
 //      holds >= THRESHOLD cameras, and only if the `city` value
-//      actually names a city. Excluded as not-a-city (the field is
+//      actually names a city. The named EDITORIAL_INCLUSIONS below
+//      bypass the threshold only (never the not-a-city exclusions). Excluded as not-a-city (the field is
 //      also used for wider areas): the country itself, US states,
 //      Canadian provinces, anything ending in " County", Spanish
 //      province labels ("Province 9" — DGT files some feeds by
@@ -96,6 +97,24 @@ const THRESHOLD = 25;
 const CURATED_SLUGS = new Set([
   "london", "ottawa", "toronto", "madrid", "houston",
   "dallas", "tokyo", "sydney", "auckland", "fort-worth",
+]);
+
+// Editorial inclusions — "city|country" groups that earn a
+// generated-tier page BELOW the threshold on purpose (camera
+// findability rollout, 2026-10-30). An inclusion bypasses THRESHOLD
+// only: the not-a-city exclusions above still apply, and the entry is
+// derived from the group's owned records exactly like any other new
+// entry. Once published, the PRESERVE rule carries the entry over
+// byte-for-byte like every other, so an inclusion is a one-time
+// admission decision, not a standing exception in the data.
+//   - "McAlester|United States": the named test case completing
+//     Oklahoma's city tier — McAlester's single catalogue camera
+//     ("US-69 & C Tree NE", OpenCCTV / oktraffic) had no hub page at
+//     any level, so a search for its exact name could never land on
+//     WorldEye. Oklahoma City and Tulsa already have pages; this
+//     inclusion gives the state's third catalogue city its page.
+const EDITORIAL_INCLUSIONS = new Set([
+  "McAlester|United States",
 ]);
 
 const JUNK_CITIES = new Set(["CNTY", "City", "Other", "Unknown", ""]);
@@ -384,7 +403,7 @@ async function main() {
     // owned set (owner decision, 2026-10-27 — a name that files two
     // places earns its page from the place the page will describe).
     const owned = ownedRecords(recs);
-    if (owned.length < THRESHOLD) continue;
+    if (owned.length < THRESHOLD && !EDITORIAL_INCLUSIONS.has(key)) continue;
     const reason = excludedReason(city, country);
     if (reason) {
       dropped.push(`${key} (merged ${recs.length}, owned ${owned.length}) — ${reason}`);
