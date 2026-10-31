@@ -187,6 +187,28 @@ export default function SpaceStationTrackerPage() {
           </div>
         </div>
 
+        {/* Direct answer — what this page tracks (AEO, SEO Programme Phase 6).
+            Every figure is this page's own long-standing copy (FAQ below):
+            ~400 km altitude, ~28,000 km/h, ~90-minute orbit, sixteen
+            sunrises a day. The scope statement is the point: this page is
+            ISS-only; the full catalogue lives on /satellite-tracker. */}
+        <div className="mt-16 md:mt-20 max-w-3xl mx-auto rounded-3xl border border-[#aab2ff]/25 bg-[#aab2ff]/[0.04] p-8 md:p-10">
+          <h2 className="text-xl md:text-2xl font-bold">What this page tracks</h2>
+          <p className="mt-3 text-white/60 leading-relaxed">
+            One spacecraft: the International Space Station. The ISS orbits
+            roughly 400 km above Earth at about 28,000 km/h, circling the
+            planet roughly every 90 minutes — about sixteen sunrises a day
+            for its crew. This page follows the station itself: its live
+            position, ground track and day/night passes. For the full tracked
+            catalogue — Starlink trains, weather satellites and thousands
+            more objects — see the{" "}
+            <Link href="/satellite-tracker" className="text-[#aab2ff] hover:underline">
+              satellite tracker
+            </Link>
+            .
+          </p>
+        </div>
+
         {/* What you get */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center">

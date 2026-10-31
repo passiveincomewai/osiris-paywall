@@ -38,6 +38,7 @@ const EXPLORE_HREFS = [
   "/live-traffic-cameras",
   "/europe-live-cameras",
   "/sunrise-around-the-world",
+  "/live-flight-tracker",
 ];
 
 export default async function LiveWebcamsPage({
@@ -231,6 +232,13 @@ export default async function LiveWebcamsPage({
               <p key={i}>{p}</p>
             ))}
           </div>
+          <p className="mt-6 text-sm text-white/50 leading-relaxed max-w-3xl">
+            {copy.indexLink.before}
+            <Link href="/live-camera-index" className="text-[#D4AF37] hover:underline">
+              {copy.indexLink.link}
+            </Link>
+            {copy.indexLink.after}
+          </p>
         </div>
 
         {/* Direct answers (AEO) */}

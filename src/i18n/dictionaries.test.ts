@@ -150,19 +150,19 @@ describe("manifest ↔ dictionary completeness", () => {
         // re-translated the same day — see manifest.ts). Pricing
         // moved again on 2026-10-30 for the Pricing Redesign
         // Phase C 3-tier grid restructure (Spanish re-synced the
-        // same day). Ship-tracker moved again on 2026-10-31 for
-        // the site-audit R4/R5 ship-honesty re-sync (Spanish
-        // re-translated the same day — see manifest.ts).
+        // same day). All three (home, pricing, faq) moved again on
+        // 2026-10-31 for the site-audit Wave 1 copy-truth pass —
+        // R13 homepage Pro-card VIP labels (home), R10 OI key model
+        // (pricing + faq), R14 ladder + country count (faq);
+        // Spanish re-synced the same day. Ship-tracker moved again
+        // on 2026-10-31 for the site-audit R4/R5 ship-honesty
+        // re-sync (Spanish re-translated the same day).
         expect(entry.updatedAt).toBe(
-          ["ship-tracker"].includes(entry.slug)
+          ["faq", "pricing", "", "ship-tracker", "live-webcams"].includes(entry.slug)
             ? "2026-10-31"
-            : ["faq", "pricing"].includes(entry.slug)
-              ? "2026-10-30"
-              : ["live-flight-tracker", "live-webcams"].includes(entry.slug)
-                  ? "2026-10-29"
-                  : [""].includes(entry.slug)
-                      ? "2026-10-27"
-                      : "2026-10-26"
+            : ["live-flight-tracker"].includes(entry.slug)
+                ? "2026-10-29"
+                : "2026-10-26"
         );
       });
 

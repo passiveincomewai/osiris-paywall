@@ -105,6 +105,10 @@ export const esLiveWebcams: LiveWebcamsCopy = {
       title: "El amanecer alrededor del mundo",
       desc: "Una página viva que sigue la línea del alba: cámaras en vivo donde el sol está saliendo ahora mismo, recalculado cada minuto, con un modo de atardecer para la línea del ocaso.",
     },
+    {
+      title: "Rastreador de vuelos en vivo",
+      desc: "El mismo globo, una capa más arriba: los vuelos en el cielo ahora mismo, con satélites y barcos moviéndose junto a las cámaras.",
+    },
   ],
   earn: {
     heading: "Cómo se gana un feed su lugar en el directorio",
@@ -112,6 +116,11 @@ export const esLiveWebcams: LiveWebcamsCopy = {
       "El directorio no se arma raspando sitios para luego abandonarlo. Una cámara entra en la lista cuando se cumplen tres cosas: el feed es genuinamente público —lo publica abiertamente su operador para que cualquiera lo mire—; realmente reproduce, verificado cargando la transmisión en lugar de fiarse de un listado; y no está ya en el directorio con otro nombre u otra red, algo importante cuando un mismo feed de una agencia aparece en cinco portales distintos.",
       "Esa disciplina es la razón de que las cifras de esta página signifiquen algo. El número es el conjunto de cámaras que el globo sirve hoy: no todas las webcams encontradas alguna vez, ni una copia de otra copia. Los feeds mueren, se mudan y se reemplazan, y el trabajo del directorio es mantener la promesa del mapa: si está en el mapa, reproduce.",
     ],
+  },
+  indexLink: {
+    before: "Cada cifra detrás de este directorio está publicada en el ",
+    link: "Índice de Cámaras en Vivo",
+    after: " — el conjunto de datos fechado y descargable (servidas frente a indexadas, por país, ciudad y publicador) del que proceden estos números.",
   },
   directAnswers: [
     {

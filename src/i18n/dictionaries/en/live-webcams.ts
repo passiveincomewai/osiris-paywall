@@ -63,6 +63,11 @@ export interface LiveWebcamsCopy {
     heading: string;
     paragraphs: string[];
   };
+  indexLink: {
+    before: string;
+    link: string;
+    after: string;
+  };
   directAnswers: { q: string; a: string }[];
   faqsHeading: string;
   faqs: { q: string; a: string }[];
@@ -172,6 +177,10 @@ export const enLiveWebcams: LiveWebcamsCopy = {
       title: "Sunrise around the world",
       desc: "A living page that rides the dawn line: live cameras where the sun is rising right now, recomputed every minute — with a sunset mode for the dusk line.",
     },
+    {
+      title: "Live flight tracker",
+      desc: "The same globe, one layer up: flights in the sky right now, with satellites and ships moving alongside the cameras.",
+    },
   ],
   earn: {
     heading: "How a feed earns its place in the directory",
@@ -179,6 +188,11 @@ export const enLiveWebcams: LiveWebcamsCopy = {
       "The directory is not scraped together and left to rot. A camera gets listed when three things check out: the feed is genuinely public — published openly by its operator for anyone to watch; it actually plays, verified by loading the stream rather than trusting a listing; and it isn't already in the directory under another name or network, which matters when one agency feed surfaces through five different portals.",
       "That discipline is why the counts on this page mean something. The number is the set of cameras the globe serves today — not every webcam ever found, not a scrape of a scrape. Feeds die, move and get replaced, and the directory's job is to keep the map's promise: if it is plotted, it plays.",
     ],
+  },
+  indexLink: {
+    before: "Every count behind this directory is published in the ",
+    link: "Live Camera Index",
+    after: " — the dated, downloadable dataset (served vs indexed, by country, city and publisher) that these numbers trace to.",
   },
   directAnswers: [
     {
