@@ -61,6 +61,8 @@ export interface PreviewCamera {
   stream_url?: string;
   stream_type?: string;
   external_url?: string;
+  /** Sourced facing direction in degrees, when the source publishes one. */
+  heading_deg?: number;
   /** Resolved once during selection — see lib/camera-preview. */
   media: { kind: PreviewKind; url: string };
 }
@@ -374,6 +376,7 @@ function CctvPreviews({ mapRef, active, onOpen }: {
           stream_url: str('stream_url'),
           stream_type: str('stream_type'),
           external_url: str('external_url'),
+          heading_deg: typeof p.heading_deg === 'number' ? p.heading_deg : undefined,
           media,
         },
         box: layout(pt, canvas.clientWidth, canvas.clientHeight),

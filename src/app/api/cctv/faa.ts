@@ -1,6 +1,7 @@
 import type { CctvCamera } from './types';
 import { stealthFetch } from '@/lib/stealthFetch';
 import { cachedSource } from '@/lib/sourceCache';
+import { parseCompassDirection } from '@/lib/compass';
 
 /**
  * OSIRIS — FAA WeatherCams (weathercams.faa.gov)
@@ -92,10 +93,16 @@ export function mapSite(site: FaaSite): CctvCamera[] {
 
     const camName = (cam.cameraName || 'Camera').trim();
     const direction = cam.cameraDirection?.trim();
+    // The FAA publishes the direction each camera faces as a compass
+    // point; carry it as a bearing so the map can draw the facing cone.
+    // A value that is not a compass point stays unset — no direction is
+    // ever guessed for a camera whose source did not state one.
+    const heading = parseCompassDirection(cam.cameraDirection);
     cams.push({
       id: `faa-${cam.cameraId}`,
       lat: lat!,
       lng: lng!,
+      ...(heading !== null ? { heading_deg: heading } : {}),
       name: direction ? `${siteName} — ${camName} (${direction})` : `${siteName} — ${camName}`,
       city,
       country,

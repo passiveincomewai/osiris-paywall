@@ -14,6 +14,15 @@ export interface CctvCamera {
   stream_type?: CctvStreamType;
   external_url?: string;
   source: string;
+  /**
+   * Direction the camera faces, in degrees clockwise from north — set
+   * ONLY when the source itself publishes a facing direction (today:
+   * the FAA WeatherCams `cameraDirection`). Never derived from the road
+   * a camera watches: a "Northbound" traffic camera's facing is not
+   * published by its source, so road-direction feeds leave this unset
+   * and the camera shows no direction indicator.
+   */
+  heading_deg?: number;
 }
 
 /*

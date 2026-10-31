@@ -27,6 +27,8 @@ export interface CameraCandidate {
   stream_url?: string;
   stream_type?: string;
   external_url?: string;
+  /** Sourced facing direction in degrees, when the source publishes one. */
+  heading_deg?: number;
   lat: number;
   lng: number;
 }
@@ -45,7 +47,9 @@ export function cameraCandidateFromFeature(properties: any, coordinates: unknown
   return {
     id: p.id, name: p.name, city: p.city, country: p.country, source: p.source,
     feed_url: p.feed_url, stream_url: p.stream_url, stream_type: p.stream_type,
-    external_url: p.external_url, lat, lng,
+    external_url: p.external_url,
+    heading_deg: typeof p.heading_deg === 'number' ? p.heading_deg : undefined,
+    lat, lng,
   };
 }
 

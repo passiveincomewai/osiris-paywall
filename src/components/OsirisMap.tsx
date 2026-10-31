@@ -537,7 +537,9 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       entityClickRef.current?.({
         type: 'cctv', id: cam.id, name: cam.name, city: cam.city, country: cam.country,
         source: cam.source, feed_url: cam.feed_url, stream_url: cam.stream_url,
-        stream_type: cam.stream_type, external_url: cam.external_url, lat: cam.lat, lng: cam.lng,
+        stream_type: cam.stream_type, external_url: cam.external_url,
+        heading_deg: typeof cam.heading_deg === 'number' ? cam.heading_deg : undefined,
+        lat: cam.lat, lng: cam.lng,
       });
       map.flyTo({ center: [cam.lng, cam.lat], zoom: Math.max(map.getZoom(), 13), duration: 1000 });
     };
@@ -1348,8 +1350,31 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-green', '#26A69A', 10);
       createDot(map, 'dot-fire', '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
+      // Facing wedge for the cameras whose SOURCE publishes a direction
+      // (today only the FAA WeatherCams feed): a translucent cone with
+      // its apex at the centre, pointing up = north at rotation 0. Only
+      // cameras carrying a sourced heading_deg get a feature in the
+      // 'cctv-cones' source (see the render loop) — no camera is ever
+      // shown facing a direction its source did not state.
+      (() => {
+        const S = 96, c = document.createElement('canvas');
+        c.width = S; c.height = S;
+        const g = c.getContext('2d'); if (!g) return;
+        const cx = S / 2, cy = S / 2, r = S / 2 - 2, half = (28 * Math.PI) / 180;
+        g.beginPath();
+        g.moveTo(cx, cy);
+        g.arc(cx, cy, r, -Math.PI / 2 - half, -Math.PI / 2 + half);
+        g.closePath();
+        g.fillStyle = 'rgba(0,229,255,0.28)';
+        g.fill();
+        g.strokeStyle = 'rgba(0,229,255,0.75)';
+        g.lineWidth = 2;
+        g.stroke();
+        const img = g.getImageData(0, 0, S, S);
+        map.addImage('cctv-cone', { width: S, height: S, data: new Uint8Array(img.data.buffer) }, { sdf: false });
+      })();
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'plows', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'launches', 'launch-replay', 'street-level'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','cctv-cones','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'alert-pins', 'fire-perimeters', 'hurricanes', 'plows', 'river-gauges', 'alert-cams', 'gbfs', 'transit', 'transit-routes', 'transit-stops', 'traffic-roads', 'traffic-vehicles', 'launches', 'launch-replay', 'street-level'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
       // Clustered twin of the transit vehicle source: at globe /
       // regional zoom the vehicles collapse into count bubbles instead
@@ -1726,6 +1751,20 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'street-level-hit', type: 'circle', source: 'street-level', paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 11, 18, 14, 22, 18],
         'circle-color': '#4DD0E1', 'circle-opacity': 0,
+      }});
+      // CCTV — facing wedge UNDER the eye markers: only cameras whose
+      // source publishes a facing direction have a feature here (the
+      // render loop filters on a numeric heading_deg). icon-rotate turns
+      // the north-up wedge to the camera's true heading; map alignment
+      // keeps it glued to the ground plane instead of the screen. From
+      // zoom 11 up, where an individual camera's outlook is readable.
+      map.addLayer({ id: 'cctv-cones', type: 'symbol', source: 'cctv-cones', minzoom: 11, layout: {
+        'icon-image': 'cctv-cone',
+        'icon-size': ['interpolate',['linear'],['zoom'], 11,0.5, 14,0.85, 18,1.4],
+        'icon-rotate': ['get','heading'],
+        'icon-rotation-alignment': 'map',
+        'icon-pitch-alignment': 'map',
+        'icon-allow-overlap': true, 'icon-ignore-placement': true,
       }});
       // CCTV — outer glow disc: a soft dark ground under the eye photo so
       // the detailed artwork stays readable over bright basemap patches.
@@ -2447,6 +2486,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
         stream_url: p.stream_url,
         stream_type: p.stream_type,
         external_url: p.external_url,
+        heading_deg: typeof p.heading_deg === 'number' ? p.heading_deg : undefined,
         lat: coords[1],
         lng: coords[0],
       });
@@ -4074,7 +4114,10 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
   useEffect(() => {
     if (!mapReady) return;
-    setGeo('cctv', activeLayers.cctv && data.cameras ? data.cameras.map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { id: c.id, name: c.name, city: c.city, country: c.country, source: c.source, feed_url: c.feed_url, stream_url: c.stream_url, stream_type: c.stream_type, external_url: c.external_url } })) : []);
+    setGeo('cctv', activeLayers.cctv && data.cameras ? data.cameras.map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { id: c.id, name: c.name, city: c.city, country: c.country, source: c.source, feed_url: c.feed_url, stream_url: c.stream_url, stream_type: c.stream_type, external_url: c.external_url, heading_deg: c.heading_deg } })) : []);
+    // Facing wedges: ONLY cameras whose source published a direction
+    // (numeric heading_deg) get a cone feature — never a derived one.
+    setGeo('cctv-cones', activeLayers.cctv && data.cameras ? data.cameras.filter((c: any) => typeof c.heading_deg === 'number').map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { heading: c.heading_deg } })) : []);
   }, [mapReady, data.cameras, activeLayers.cctv, setGeo]);
 
   useEffect(() => {
@@ -5203,7 +5246,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['fl-private'], activeLayers.private);
     setVis(['fl-jets'], activeLayers.jets);
     setVis(['fl-military'], activeLayers.military);
-    setVis(['cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
+    setVis(['cctv-cones','cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
     setVis(['fires-heat','fires-icons'], activeLayers.fires);
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
     setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label','hurricane-icons','hurricane-selected-past','hurricane-past-points','hurricane-selected-halo','hurricane-selected-ring'], (activeLayers as any).hurricanes);

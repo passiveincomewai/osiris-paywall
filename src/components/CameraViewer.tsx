@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check, Copy } from 'lucide-react';
+import { X, ExternalLink, RefreshCw, MapPin, Camera, CameraOff, Maximize2, PlayCircle, Bookmark, Share2, Check, Copy, ArrowUp } from 'lucide-react';
 import type Hls from 'hls.js';
 import { isHostedOffPlatform, liveFeedAtSource, localEmbed, needsResolution, offPlatformView } from '@/lib/camera-feed';
 import { cameraShareId, cameraShareTitle, rememberLastCamera } from '@/lib/camera-share';
 import { cameraAlt } from '@/lib/camera-alt';
+import { compassLabel } from '@/lib/compass';
 import { ensureShareCode, shareEntity, shareUrl } from '@/lib/share/client';
 import { buildEntityShareUrl } from '@/lib/share/links';
 import ShareWithQR from './share/ShareWithQR';
@@ -568,6 +569,23 @@ export default function CameraViewer({ camera, onClose, onLocate, besideOi = fal
                 >
                   <MapPin className="w-2.5 h-2.5" /> MAP TARGET
                 </button>
+                {/* Which way this camera looks — shown ONLY when the
+                    camera's source publishes its facing direction
+                    (heading_deg, today the FAA WeatherCams feed). The
+                    arrow is rotated from north-up to the true heading;
+                    sources that publish only a road direction (e.g.
+                    "Northbound") never set heading_deg, so their cameras
+                    show no chip rather than a guessed facing. */}
+                {typeof camera.heading_deg === 'number' && (
+                  <span
+                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border text-[9px] font-mono tracking-widest"
+                    style={{ borderColor: 'var(--gold-primary)', color: 'var(--gold-primary)' }}
+                    title={`This camera faces ${compassLabel(camera.heading_deg).toLowerCase()} — direction published by its source`}
+                  >
+                    <ArrowUp className="w-2.5 h-2.5" style={{ transform: `rotate(${camera.heading_deg}deg)` }} />
+                    FACING {compassLabel(camera.heading_deg).toUpperCase()}
+                  </span>
+                )}
               </div>
             </div>
             {/* Your link for this camera: the visitor's own share link
