@@ -23,6 +23,7 @@ import RelatedLinks from "@/components/RelatedLinks";
 import GodsEyeLiveStrip from "@/components/GodsEyeLiveStrip";
 import GodsEyeStickyCta from "@/components/GodsEyeStickyCta";
 import TrialCtaSection from "@/components/TrialCtaSection";
+import { TIER_PLAN_OPTIONS, type PlanTier } from "@/lib/billing/trial-checkout";
 
 export const metadata: Metadata = {
   title: "God's Eye View of Earth — Live 3D Globe, 74,229 Cameras (Free, No Install)",
@@ -70,6 +71,29 @@ const LAYERS = [
     desc: "Active fire detections from NASA FIRMS satellite data, mapped as they are spotted from orbit — alongside the ground cameras that show the smoke.",
   },
 ];
+
+// Compact trial strip (right after the comparison table): a compact
+// variant of the bottom TrialCtaSection cards, in the same card styling
+// and tier accents as components/TrialCtaCards. Every fact is read from
+// the billing config (TIER_PLAN_OPTIONS) — weekly price/per and trial
+// days per tier, and the monthly row's trial days for the note — never
+// restated here. The full TrialCtaSection still closes the page.
+const TRIAL_STRIP_LABELS: Record<PlanTier, string> = {
+  lite: "Lite",
+  pro: "Pro",
+  ultra: "Ultra",
+};
+const TRIAL_STRIP_ACCENTS: Record<PlanTier, { text: string; border: string }> = {
+  lite: { text: "text-[#00E5FF]", border: "border-[#00E5FF]/40" },
+  pro: { text: "text-[#D4AF37]", border: "border-[#D4AF37]/50" },
+  ultra: { text: "text-[#a78bfa]", border: "border-[#a78bfa]/40" },
+};
+const TRIAL_STRIP_TIERS = (Object.keys(TIER_PLAN_OPTIONS) as PlanTier[]).map((tier) => ({
+  tier,
+  weekly: TIER_PLAN_OPTIONS[tier].find((o) => o.period === "weekly")!,
+}));
+const TRIAL_STRIP_MONTHLY_TRIAL_DAYS =
+  TIER_PLAN_OPTIONS.pro.find((o) => o.period === "monthly")!.trialDays;
 
 const FAQS = [
   {
@@ -245,6 +269,46 @@ export default function GodsEyeViewPage() {
             </Link>{" "}
             page.
           </p>
+        </div>
+
+        {/* Compact trial strip — immediately after the comparison table,
+            so the trial offer lands before the explainer prose instead of
+            ~78% down the page. Compact variant of the bottom trial cards;
+            the full TrialCtaSection below is unchanged. */}
+        <div className="mt-10 max-w-4xl mx-auto rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <h2 className="text-xl md:text-2xl font-bold text-center">
+            Try a paid plan <span className="text-[#D4AF37]">free</span>
+          </h2>
+          <div className="mt-6 grid sm:grid-cols-3 gap-3">
+            {TRIAL_STRIP_TIERS.map(({ tier, weekly }) => (
+              <div
+                key={tier}
+                className={`rounded-2xl border bg-white/[0.02] px-4 py-3 text-center ${TRIAL_STRIP_ACCENTS[tier].border}`}
+              >
+                <p className={`text-xs font-semibold tracking-[0.25em] ${TRIAL_STRIP_ACCENTS[tier].text}`}>
+                  {TRIAL_STRIP_LABELS[tier].toUpperCase()}
+                </p>
+                <p className="mt-1.5 text-sm text-white/70">
+                  <span className="font-mono font-bold text-white/90">
+                    {weekly.price}
+                    {weekly.per === "/week" ? "/wk" : weekly.per}
+                  </span>{" "}
+                  · {weekly.trialDays}-day free trial
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-white/45 text-sm text-center mt-4">
+            Monthly and annual plans start with a {TRIAL_STRIP_MONTHLY_TRIAL_DAYS}-day free trial.
+          </p>
+          <div className="text-center mt-5">
+            <Link
+              href="/pricing"
+              className="inline-block px-6 py-3 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-sm tracking-wide hover:brightness-110 transition"
+            >
+              See all plans &amp; start a free trial
+            </Link>
+          </div>
         </div>
 
         {/* What the term means */}
