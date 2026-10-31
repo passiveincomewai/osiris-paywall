@@ -2457,12 +2457,19 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     const openQuakePopup = (feature: any) => {
       const p = feature.properties as any;
       const coords = (feature.geometry as any).coordinates;
+      // When the quake happened — the USGS `time` (epoch ms) from the feed,
+      // never a fetch/render time. Shown in the viewer's local time with the
+      // timezone named, matching the popup time convention formatTime uses
+      // for flights, plus the date (the feed spans the last 24 hours).
+      const qDate = typeof p.time === 'number' && Number.isFinite(p.time) ? new Date(p.time) : null;
+      const qTime = qDate ? `${qDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${qDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZoneName: 'short' })}` : '—';
       popup(coords, `<div style="${pStyle}border:1px solid rgba(255,149,0,0.3);">
         <div style="color:#FF9500;font-size:14px;font-weight:700;margin-bottom:4px;">M${p.magnitude} EARTHQUAKE</div>
         <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.place||'Unknown location')}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;">
           <div><span style="color:#5C5A54;">DEPTH</span><br/><span style="color:#E8E6E0;">${p.depth||'—'}km</span></div>
           <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}, ${coords[0].toFixed(3)}</span></div>
+          <div style="grid-column:1/-1;"><span style="color:#5C5A54;">TIME</span><br/><span style="color:#E8E6E0;">${qTime}</span></div>
         </div>
         <a href="${p.source === 'NIGGG-BAS' ? 'https://ndc.niggg.bas.bg/' : `https://earthquake.usgs.gov/earthquakes/eventpage/${encodeURIComponent(p.id||'')}`}" target="_blank" style="${linkStyle}color:#FF9500;border:1px solid rgba(255,149,0,0.4);background:rgba(255,149,0,0.1);">📊 ${p.source === 'NIGGG-BAS' ? 'NIGGG-BAS' : 'USGS DETAILS'}</a>
         ${p.id ? `<button onclick="window.__weShareEntity&&window.__weShareEntity('quake','${idSafe(p.id)}')" style="${shareBtnStyle}">\U0001F517 SHARE</button>` : ''}
@@ -3824,7 +3831,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
   useEffect(() => {
     if (!mapReady) return;
-    setGeo('earthquakes', activeLayers.earthquakes && data.earthquakes ? data.earthquakes.map((eq: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [eq.lng, eq.lat] }, properties: { id: eq.id, magnitude: eq.magnitude, place: eq.place, depth: eq.depth, source: eq.source } })) : []);
+    setGeo('earthquakes', activeLayers.earthquakes && data.earthquakes ? data.earthquakes.map((eq: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [eq.lng, eq.lat] }, properties: { id: eq.id, magnitude: eq.magnitude, place: eq.place, depth: eq.depth, time: eq.time, source: eq.source } })) : []);
   }, [mapReady, data.earthquakes, activeLayers.earthquakes, setGeo]);
 
   /** Catalogue rows -> the packed form the 3D layer draws. */

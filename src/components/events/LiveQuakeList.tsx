@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Globe, Waves, Users } from "lucide-react";
-import { SIGNIFICANT_MAGNITUDE } from "@/lib/events/earthquakes";
 
 /**
- * The live significant-quakes list on /earthquake-tracker. Polls the very
- * endpoint the globe uses (/api/earthquakes — USGS summary feed) every
- * minute and filters to M4.5+, so this page and the map always agree.
+ * The live quakes list on /earthquake-tracker. Polls the very endpoint
+ * the globe uses (/api/earthquakes — the USGS summary feed: magnitude
+ * 2.5+, last 24 hours) every minute and lists EVERY event in it, newest
+ * first, so this page and the map always agree.
  */
 
 interface ApiQuake {
@@ -67,10 +67,7 @@ export default function LiveQuakeList() {
         const data = await res.json();
         if (!alive) return;
         const list: ApiQuake[] = (data.earthquakes ?? [])
-          .filter(
-            (q: ApiQuake) =>
-              typeof q.magnitude === "number" && q.magnitude >= SIGNIFICANT_MAGNITUDE,
-          )
+          .slice()
           .sort((a: ApiQuake, b: ApiQuake) => b.time - a.time);
         setQuakes(list);
         setUpdatedAt(Date.now());
@@ -93,7 +90,9 @@ export default function LiveQuakeList() {
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-2 mb-5">
         <p className="text-sm text-white/50">
-          Magnitude {SIGNIFICANT_MAGNITUDE} and above · worldwide · last 24 hours
+          Every earthquake in the USGS feed — magnitude 2.5 and above ·
+          worldwide · last 24 hours
+          {quakes ? ` · ${quakes.length} events` : ""}
         </p>
         <p className="text-xs font-mono text-white/40">
           Source: USGS
@@ -111,8 +110,8 @@ export default function LiveQuakeList() {
         </div>
       ) : quakes.length === 0 ? (
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 text-center text-white/50 text-sm leading-relaxed">
-          No magnitude {SIGNIFICANT_MAGNITUDE}+ earthquakes in the last 24
-          hours. This list updates itself the moment USGS publishes one.
+          No earthquakes in the USGS feed for the last 24 hours right now.
+          This list updates itself the moment USGS publishes one.
         </div>
       ) : (
         <div className="space-y-3">
@@ -126,7 +125,7 @@ export default function LiveQuakeList() {
               >
                 <span className="text-[10px] font-mono tracking-widest">MAG</span>
                 <span className="text-2xl font-bold leading-none">
-                  {(q.magnitude ?? 0).toFixed(1)}
+                  {typeof q.magnitude === "number" ? q.magnitude.toFixed(1) : "—"}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
