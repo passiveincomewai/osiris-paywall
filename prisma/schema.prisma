@@ -63,6 +63,7 @@ model User {
   signInEvents  UserSignInEvent[]
   referralCodeAliases ReferralCodeAlias[]
   ambientStreamKey AmbientStreamKey?
+  frInvestigatorConversations FrInvestigatorConversation[]
   deletionRequestedAt DateTime?
   deletionScheduledFor DateTime?
   // "How did you find out about us?" — set once from account settings
@@ -2276,4 +2277,81 @@ model AuroraAlertSubscription {
   @@unique([userId, placeSlug])
   @@index([active])
   @@index([userId])
+}
+
+// ── Fraud Radar Phase 7 — AI Investigator (PHASE7 §3.5, §4.4) ─────
+// DB-persisted, per-user conversations for the investigator chat
+// surface, plus its usage ledger. Conversations belong to the user
+// who created them, full stop: every route filters by userId and a
+// foreign conversation id reads as 404. The ledger is the quota
+// source of truth (monthly ops = count of `charged` rows in the
+// calendar month, UTC); it is keyed by userId/turnId as plain
+// columns so Phase 11's entitlements adopt the table as-is.
+// Platform admins see aggregate operations data only — never
+// conversation content (PHASE7 §3.5). Dark behind fraudRadarEnabled.
+
+model FrInvestigatorConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  messages  FrInvestigatorMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, updatedAt])
+}
+
+model FrInvestigatorMessage {
+  id             String                 @id @default(cuid())
+  conversationId String
+  conversation   FrInvestigatorConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  // user | assistant
+  role           String
+  content        String                 @db.Text
+  // The turn's §2.3 citation record: the full tool-result
+  // envelopes as returned, in call order (assistant rows only).
+  toolCalls      Json?
+  model          String?
+  promptVersion  String?
+  inputTokens    Int?
+  outputTokens   Int?
+  // pass | regenerated | fallback (assistant rows; null while running)
+  validatorVerdict String?
+  // complete | running | error (a turn is the assistant row in flight)
+  status         String                 @default("complete")
+  errorCode      String?
+  // The persisted SSE event log for the turn (§4.2 replay contract):
+  // [{ seq, t, ... }] in emission order; [] for user rows.
+  events         Json
+
+  createdAt      DateTime               @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model FrInvestigatorUsageLedger {
+  id               String   @id @default(cuid())
+  userId           String
+  conversationId   String
+  // The assistant message id of the turn (1:1 with the turn).
+  turnId           String   @unique
+  // Tier at time of turn: free | plus | pro | teams.
+  tier             String
+  model            String
+  inputTokens      Int      @default(0)
+  outputTokens     Int      @default(0)
+  toolCallCount    Int      @default(0)
+  // Estimate from the model's published per-token rates recorded
+  // in config — an estimate, labelled as such wherever shown.
+  estimatedCostUsd Decimal  @default(0) @db.Decimal(12, 6)
+  // charged | refunded | failed_free
+  status           String   @default("charged")
+  validatorVerdict String?
+
+  createdAt        DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([conversationId])
 }
