@@ -760,6 +760,33 @@ describe("normaliseOdotRwReports", () => {
   it("throws on an unrecognised payload root", () => {
     expect(() => normaliseOdotRwReports({ nope: true })).toThrow();
   });
+  it("reads the live envelope key and parses records inside it", () => {
+    const r = normaliseOdotRwReports({
+      "organization-information": {
+        "organization-id": "us.or..dot",
+        "organization-name": "ODOT",
+        "last-update-time": "2026-10-31T07:12:22.921Z",
+      },
+      "road-weather-reports": ODOT_RW_FIXTURE,
+    });
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0].category).toBe("chain");
+    expect(r.feedUpdatedTs).toBe(Date.parse("2026-10-30T08:05:00"));
+  });
+  it("takes the feed clock from the envelope when the live set is empty", () => {
+    // Verbatim shape of the live RW response on 2026-10-31: the feed
+    // was up and current but had no reports to publish.
+    const r = normaliseOdotRwReports({
+      "organization-information": {
+        "organization-id": "us.or..dot",
+        "organization-name": "ODOT",
+        "last-update-time": "2026-10-31T07:12:22.921Z",
+      },
+      "road-weather-reports": [],
+    });
+    expect(r.events).toEqual([]);
+    expect(r.feedUpdatedTs).toBe(Date.parse("2026-10-31T07:12:22.921Z"));
+  });
 });
 
 describe("normaliseOdotIncidents", () => {
@@ -783,6 +810,92 @@ describe("normaliseOdotIncidents", () => {
   });
   it("throws on an unrecognised payload root", () => {
     expect(() => normaliseOdotIncidents(42)).toThrow();
+  });
+  it("maps the live-verified 2026-10-31 payload shape", () => {
+    // Sanitized fixture built from the real gateway response: field
+    // names, nesting and value formats match the live payload exactly
+    // (values are representative, not copied records).
+    const r = normaliseOdotIncidents({
+      "organization-information": {
+        "organization-id": "us.or..dot",
+        "organization-name": "ODOT",
+        "last-update-time": "2026-10-31T07:13:55.805Z",
+      },
+      incidents: [
+        {
+          "incident-id": "828001",
+          "event-id": "EV-1",
+          "event-type-id": "OB",
+          "event-subtype-id": "0",
+          "update-time": "2026-10-31T00:11:02-07:00",
+          "create-time": "2026-10-14T16:36:03.13-07:00",
+          "is-active": "true",
+          "impact-id": "5",
+          "impact-desc": "Closure",
+          headline:
+            "A fire is in the area and has many forest service roads closed. Use caution.",
+          comments: "",
+          location: {
+            "location-name": "MT. HOOD",
+            "route-id": "OR35",
+            "hwy-id": "0",
+            direction: "Both",
+            "start-location": {
+              "location-desc": "",
+              "start-lat": 45.4,
+              "start-long": -121.6,
+              "start-milepost": 64,
+            },
+            "end-location": {},
+          },
+          "travel-lanes": {},
+          "off-hwy-lanes": {},
+          schedule: {},
+          "info-url": "",
+          files: [],
+        },
+        {
+          "incident-id": "828002",
+          "event-id": "EV-2",
+          "event-type-id": "OB",
+          "event-subtype-id": "0",
+          "update-time": "2026-10-30T14:21:12-07:00",
+          "create-time": "2026-10-30T14:09:00-07:00",
+          "is-active": "false",
+          "impact-id": "1",
+          "impact-desc": "No to Minimum Delay",
+          headline: "A crash has been cleared.",
+          comments: "",
+          location: {
+            "location-name": "CLACKAMAS",
+            "route-id": "OR224",
+            "start-location": {
+              "start-lat": 45.35,
+              "start-long": -122.4,
+              "start-milepost": 12,
+            },
+          },
+        },
+      ],
+    });
+    // Only the active record becomes an event; the inactive record's
+    // update still counts toward the feed clock (here the active one
+    // is newer anyway).
+    expect(r.events).toHaveLength(1);
+    const e = r.events[0];
+    expect(e.sourceId).toBe("or-inc:828001");
+    expect(e.route).toBe("OR35");
+    // Closure comes from ODOT's own impact-desc, not keyword guessing.
+    expect(e.category).toBe("closure");
+    expect(e.statusText).toBe("Closure");
+    // comments is empty in the live payload style — the always-
+    // populated headline carries the description instead.
+    expect(e.description).toContain("forest service roads closed");
+    // Freshness comes from "update-time", not the XSD-era field names.
+    expect(e.updatedTs).toBe(Date.parse("2026-10-31T00:11:02-07:00"));
+    expect(r.feedUpdatedTs).toBe(Date.parse("2026-10-31T00:11:02-07:00"));
+    expect(e.lat).toBeCloseTo(45.4, 3);
+    expect(e.lon).toBeCloseTo(-121.6, 3);
   });
 });
 

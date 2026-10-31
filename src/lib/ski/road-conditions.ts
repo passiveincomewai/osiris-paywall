@@ -844,10 +844,14 @@ export function normaliseWsdotHighwayAlerts(payload: unknown): RoadFeedResult {
 
 /* ------------------------------------------------------------------ */
 /* Oregon — ODOT TripCheck Data API (Azure APIM, subscription-key      */
-/* header). Normalisers follow the published XSDs (RWReports.xsd /     */
-/* Incidents.xsd): kebab-case fields, a location block with start-     */
-/* lat/start-long, ISO entry timestamps. The JSON form mirrors the     */
-/* XML element names (the API serves both via the Accept header).      */
+/* header). Payload shape VERIFIED LIVE 2026-10-31 against the real    */
+/* gateway (see WIRING-NOTES.md): both feeds wrap their array in an    */
+/* envelope with an "organization-information" block carrying a        */
+/* "last-update-time" clock; incidents carry "update-time" ISO         */
+/* timestamps, an "is-active" flag, "impact-desc" and "headline".      */
+/* RW report RECORD fields remain XSD-derived (RWReports.xsd) — the    */
+/* live RW set was empty at verification time; the JSON form mirrors   */
+/* the XML element names, as the verified incidents payload confirms.  */
 /* ------------------------------------------------------------------ */
 
 export const ODOT_SOURCE = "Oregon DOT (TripCheck)";
@@ -861,6 +865,24 @@ function odotList(payload: unknown, keys: string[]): unknown[] | null {
     }
   }
   return null;
+}
+
+/**
+ * Envelope clock: both ODOT feeds wrap their payload in an object
+ * whose "organization-information" block carries "last-update-time".
+ * Used as the feed clock ONLY when the record set itself yields no
+ * timestamp (e.g. a live-but-empty RW report set), so a quiet feed
+ * still proves itself fresh instead of reading as stale.
+ */
+function odotOrgClock(payload: unknown): number | null {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return null;
+  }
+  const org = (payload as Record<string, unknown>)[
+    "organization-information"
+  ] as Record<string, unknown> | undefined;
+  const ts = Date.parse(str(org?.["last-update-time"]));
+  return Number.isFinite(ts) ? ts : null;
 }
 
 function odotStartPoint(
@@ -884,7 +906,14 @@ function odotStartPoint(
  * guessed here.
  */
 export function normaliseOdotRwReports(payload: unknown): RoadFeedResult {
-  const list = odotList(payload, ["rw-report", "rwReports", "reports"]);
+  // Live envelope key is "road-weather-reports" (verified 2026-10-31);
+  // the older spellings stay as fallbacks.
+  const list = odotList(payload, [
+    "road-weather-reports",
+    "rw-report",
+    "rwReports",
+    "reports",
+  ]);
   if (!list) {
     throw new Error("ODOT road & weather payload failed schema check");
   }
@@ -943,10 +972,20 @@ export function normaliseOdotRwReports(payload: unknown): RoadFeedResult {
       updatedTs,
     });
   }
+  if (feedUpdatedTs === null) feedUpdatedTs = odotOrgClock(payload);
   return { events, feedUpdatedTs };
 }
 
-/** Incidents: crashes, planned closures, construction zones. */
+/**
+ * Incidents: crashes, planned closures, construction zones.
+ * Live-verified shape (2026-10-31): each record's freshness field is
+ * "update-time" (ISO 8601 with offset); "is-active" is the string
+ * "true"/"false" and inactive records are retained history, not
+ * current events (their updates still advance the feed clock);
+ * "impact-desc" carries ODOT's own impact wording ("Closure",
+ * "Seasonal Closure", "Estimated delay under 20 minutes", …) and
+ * "headline" is always populated while "comments" is often empty.
+ */
 export function normaliseOdotIncidents(payload: unknown): RoadFeedResult {
   const list = odotList(payload, ["incident", "incidents"]);
   if (!list) {
@@ -957,38 +996,52 @@ export function normaliseOdotIncidents(payload: unknown): RoadFeedResult {
   list.forEach((raw, i) => {
     const rec = raw as Record<string, unknown>;
     if (!rec || typeof rec !== "object") return;
+    // Live field is "update-time"; the XSD-era names stay as fallbacks.
     const updTs = Date.parse(
-      str(rec["last-update"] ?? rec["entry-time"]),
+      str(
+        rec["update-time"] ??
+          rec["last-update"] ??
+          rec["entry-time"] ??
+          rec["create-time"],
+      ),
     );
     const updatedTs = Number.isFinite(updTs) ? updTs : 0;
     if (updatedTs) {
       feedUpdatedTs =
         feedUpdatedTs === null ? updatedTs : Math.max(feedUpdatedTs, updatedTs);
     }
+    // Inactive records are retained history: they still prove the
+    // feed clock above, but they are not current events.
+    if (str(rec["is-active"]).trim().toLowerCase() === "false") return;
     const point = odotStartPoint(rec);
     if (!point) return;
     const loc = rec.location as Record<string, unknown> | undefined;
     const place = str(loc?.["location-name"]).trim();
     const comments = str(rec.comments).trim();
-    const haystack = `${comments} ${place}`.toLowerCase();
-    const category: RoadEventCategory = /clos/.test(haystack)
+    const headline = str(rec.headline).trim();
+    const impact = str(rec["impact-desc"]).trim();
+    const haystack = `${comments} ${headline} ${place}`.toLowerCase();
+    const category: RoadEventCategory = /clos/.test(impact.toLowerCase())
       ? "closure"
-      : /construction|work zone/.test(haystack)
-        ? "workzone"
-        : "incident";
+      : /clos/.test(haystack)
+        ? "closure"
+        : /construction|work zone/.test(haystack)
+          ? "workzone"
+          : "incident";
     events.push({
       state: "OR",
       source: ODOT_SOURCE,
       sourceId: `or-inc:${str(rec["incident-id"]) || i}`,
       category,
       route: str(loc?.["route-id"]),
-      description: truncate(comments || place, 400),
-      statusText: truncate(place || category, 300),
+      description: truncate(comments || headline || place, 400),
+      statusText: truncate(impact || place || category, 300),
       lat: point.lat,
       lon: point.lon,
       updatedTs,
     });
   });
+  if (feedUpdatedTs === null) feedUpdatedTs = odotOrgClock(payload);
   return { events, feedUpdatedTs };
 }
 
@@ -1245,19 +1298,17 @@ async function loadMergedFeeds(
 }
 
 /**
- * ODOT TripCheck Data API operation URLs.
- * UNVERIFIED PATHS: each feed's exact gateway URL is shown only inside
- * a signed-in developer-portal session (per the Getting Started Guide
- * V5), which the wiring build did not have; these follow the portal's
- * published API name (tripcheck-api-v1-0). If a path is wrong the OR
- * feed degrades to "unavailable" — never fabricated data — until the
- * path is confirmed with a live subscription key. See
- * powder-features/f10/WIRING-NOTES.md (owed probes).
+ * ODOT TripCheck Data API operation URLs — VERIFIED 2026-10-31.
+ * Read verbatim from the signed-in portal's Try-it console and then
+ * probed live with the production subscription key (both HTTP 200
+ * JSON; see powder-features/f10/WIRING-NOTES.md, "ODOT gateway fix").
+ * The gateway host is api.odot.state.or.us — apiportal.… serves only
+ * the developer-portal website and answers API paths with its HTML
+ * 404 page, which is why the original build's OR feed never loaded.
  */
-const ODOT_API_BASE = "https://apiportal.odot.state.or.us/tripcheck-api-v1-0";
 const ODOT_ENDPOINTS = {
-  rwReports: `${ODOT_API_BASE}/RoadAndWeatherReports`,
-  incidents: `${ODOT_API_BASE}/Incidents`,
+  rwReports: "https://api.odot.state.or.us/tripcheck/RW/Reports",
+  incidents: "https://api.odot.state.or.us/tripcheck/Incidents",
 } as const;
 
 /**
