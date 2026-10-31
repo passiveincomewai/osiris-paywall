@@ -196,22 +196,59 @@ export function perimeterBbox(
   return { minLat, maxLat, minLng, maxLng };
 }
 
+/** Page-materiality thresholds (site-audit Wave 2, R39): the WFIGS
+ *  perimeter feed carries every reported ignition, including
+ *  sub-acre spot fires whose perimeters stopped moving weeks ago.
+ *  Each one used to mint a full indexable incident page. A fire
+ *  earns a PAGE only when it is material (>= 10 acres) and its
+ *  perimeter is current (updated within 21 days, when the feed
+ *  gives a perimeter date at all). The globe's perimeter layer is
+ *  NOT filtered — it reads getFirePerimeters directly and keeps
+ *  showing every reported fire. */
+export const PAGE_MIN_ACRES = 10;
+export const PAGE_MAX_PERIMETER_AGE_DAYS = 21;
+
+/** Pure page-worthiness check for one perimeter feature. A record
+ *  with unknown acreage cannot be shown to be material, so it gets
+ *  no page; a record with no perimeter date is judged on acreage
+ *  alone (the feed omits the date for some live incidents). */
+export function isPageWorthyIncident(
+  f: FirePerimeterFeature,
+  now: Date = new Date(),
+): boolean {
+  const { acres, updated } = f.properties;
+  if (acres === null || acres < PAGE_MIN_ACRES) return false;
+  if (updated !== null) {
+    const ageMs = now.getTime() - new Date(updated).getTime();
+    if (Number.isFinite(ageMs) && ageMs > PAGE_MAX_PERIMETER_AGE_DAYS * 86_400_000) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /** Resolve one fetch's features into page-ready incidents:
- *  slugs assigned (collisions suffixed -2, -3… in feed order),
- *  centroid + bbox computed. Pure — the feed's order is preserved. */
-export function toIncidents(features: FirePerimeterFeature[]): WildfireIncident[] {
+ *  page-worthy incidents only (see isPageWorthyIncident), slugs
+ *  assigned (collisions suffixed -2, -3… in feed order), centroid
+ *  + bbox computed. Pure — the feed's order is preserved. */
+export function toIncidents(
+  features: FirePerimeterFeature[],
+  now: Date = new Date(),
+): WildfireIncident[] {
   const seen = new Map<string, number>();
-  return features.map((f) => {
-    const base = incidentSlug(f.properties.name, f.properties.state);
-    const count = (seen.get(base) ?? 0) + 1;
-    seen.set(base, count);
-    return {
-      ...f,
-      slug: count === 1 ? base : `${base}-${count}`,
-      centroid: perimeterCentroid(f.geometry),
-      bbox: perimeterBbox(f.geometry),
-    };
-  });
+  return features
+    .filter((f) => isPageWorthyIncident(f, now))
+    .map((f) => {
+      const base = incidentSlug(f.properties.name, f.properties.state);
+      const count = (seen.get(base) ?? 0) + 1;
+      seen.set(base, count);
+      return {
+        ...f,
+        slug: count === 1 ? base : `${base}-${count}`,
+        centroid: perimeterCentroid(f.geometry),
+        bbox: perimeterBbox(f.geometry),
+      };
+    });
 }
 
 /** The current incidents, page-ready. Empty when the feed is

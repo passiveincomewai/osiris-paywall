@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   incidentSlug,
+  isPageWorthyIncident,
   perimeterBbox,
   perimeterCentroid,
   toIncidents,
@@ -125,5 +126,58 @@ describe('toIncidents', () => {
     const [one] = toIncidents([feature('Ghost', 'XX', null)]);
     expect(one.centroid).toBeNull();
     expect(one.slug).toBe('ghost-xx');
+  });
+
+  describe('page-worthiness thresholds (R39)', () => {
+    const NOW = new Date('2026-10-31T00:00:00Z');
+    const iso = (daysAgo: number) =>
+      new Date(NOW.getTime() - daysAgo * 86_400_000).toISOString();
+
+    it('keeps a material, current fire', () => {
+      const f = feature('Big', 'CO', SQUARE, { acres: 500, updated: iso(2) });
+      expect(isPageWorthyIncident(f, NOW)).toBe(true);
+      expect(toIncidents([f], NOW)).toHaveLength(1);
+    });
+
+    it('drops sub-threshold and unknown-acreage fires', () => {
+      expect(
+        isPageWorthyIncident(feature('Spot', 'WI', SQUARE, { acres: 0 }), NOW),
+      ).toBe(false);
+      expect(
+        isPageWorthyIncident(feature('Tiny', 'WI', SQUARE, { acres: 9 }), NOW),
+      ).toBe(false);
+      expect(
+        isPageWorthyIncident(
+          feature('Mystery', 'WI', SQUARE, { acres: null }),
+          NOW,
+        ),
+      ).toBe(false);
+      expect(
+        isPageWorthyIncident(feature('Edge', 'WI', SQUARE, { acres: 10 }), NOW),
+      ).toBe(true);
+    });
+
+    it('drops a fire whose perimeter stopped moving over 21 days ago', () => {
+      const stale = feature('Old', 'CA', SQUARE, { acres: 800, updated: iso(95) });
+      expect(isPageWorthyIncident(stale, NOW)).toBe(false);
+      const fresh = feature('Old', 'CA', SQUARE, { acres: 800, updated: iso(21) });
+      expect(isPageWorthyIncident(fresh, NOW)).toBe(true);
+    });
+
+    it('judges a fire with no perimeter date on acreage alone', () => {
+      const f = feature('NoDate', 'TX', SQUARE, { acres: 42, updated: null });
+      expect(isPageWorthyIncident(f, NOW)).toBe(true);
+    });
+
+    it('toIncidents filters before slug assignment', () => {
+      const out = toIncidents(
+        [
+          feature('Spot', 'WI', SQUARE, { acres: 0 }),
+          feature('Real', 'WI', SQUARE, { acres: 120 }),
+        ],
+        NOW,
+      );
+      expect(out.map((i) => i.slug)).toEqual(['real-wi']);
+    });
   });
 });
