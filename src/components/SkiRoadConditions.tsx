@@ -18,8 +18,9 @@ import {
  * never modelled or forecast data) and are matched to the route's
  * stored polyline in the browser (within 2 miles). Coverage honesty
  * is the point of this section:
- *   - covered states are CA (chain controls + closures) and MT (road
- *     events); ID is WORK ZONES ONLY and says so;
+ *   - covered states come from the payload's coveredStates (the keyless
+ *     CA/MT/ID set plus any keyed state the server has configured); ID is
+ *     WORK ZONES ONLY and says so;
  *   - a route through any other state gets an explicit "no feed yet"
  *     line — silence there is NOT an all-clear;
  *   - a feed that failed or went stale is named as unavailable, and
@@ -62,6 +63,24 @@ const STATE_NAMES: Record<string, string> = {
   WY: 'Wyoming',
 };
 
+/** Footer blurbs for fully covered states (ID is partial — work zones
+ *  only — and is appended as its own clause, never listed here). A keyed
+ *  state joins the footer only when the payload says it is covered. */
+const COVERAGE_BLURBS: Record<string, string> = {
+  CA: 'California (Caltrans chain controls & closures)',
+  MT: 'Montana (MDT events)',
+  UT: 'Utah (UDOT events & road conditions)',
+  AZ: 'Arizona (AZ511 alerts & events)',
+  WA: 'Washington (WSDOT pass conditions & alerts)',
+  OR: 'Oregon (ODOT TripCheck reports & incidents)',
+};
+
+function joinEnglish(items: string[]): string {
+  if (items.length <= 1) return items.join('');
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+}
+
 function updatedLabel(ts: number): string {
   if (!ts) return '';
   return ` · updated ${new Date(ts).toLocaleString([], {
@@ -90,12 +109,31 @@ export default function SkiRoadConditions({ route }: { route: SavedSkiRoute }) {
   }, []);
 
   const routeStates = statesForRoute(route.route);
-  const uncovered = routeStates.filter(
-    (s) => !(COVERED_STATES as readonly string[]).includes(s),
-  );
-  const coveredHere = routeStates.filter((s) =>
-    (COVERED_STATES as readonly string[]).includes(s),
-  );
+  // Coverage truth travels with the payload: the server adds a state to
+  // coveredStates only when its DOT key is actually configured. Until a
+  // payload with that field loads (or if it is ever absent), fall back
+  // to the static keyless set — CA/MT/ID.
+  const effectiveCovered: readonly string[] =
+    payload && payload.coveredStates && payload.coveredStates.length > 0
+      ? payload.coveredStates
+      : COVERED_STATES;
+  const uncovered = routeStates.filter((s) => !effectiveCovered.includes(s));
+  const coveredHere = routeStates.filter((s) => effectiveCovered.includes(s));
+
+  // Coverage labelling derived from the effective covered set, so a
+  // newly keyed state is named correctly the moment it lights up. With
+  // no keys set these strings are identical to the previous literals.
+  const coveredFull = effectiveCovered.filter((s) => s !== 'ID');
+  const idClause = effectiveCovered.includes('ID')
+    ? ', plus Idaho work zones only'
+    : '';
+  const coverageLine =
+    `Road-condition coverage: ${joinEnglish(coveredFull.map((s) => STATE_NAMES[s] ?? s))}` +
+    ` road events${idClause}. Other states have no feed yet.`;
+  const footerText =
+    `Road conditions cover ${joinEnglish(coveredFull.map((s) => COVERAGE_BLURBS[s] ?? STATE_NAMES[s] ?? s))}` +
+    `${idClause}. Other states have no feed yet — an uncovered state's ` +
+    `silence never means the road is clear.`;
 
   return (
     <div>
@@ -179,10 +217,7 @@ export default function SkiRoadConditions({ route }: { route: SavedSkiRoute }) {
             </p>
           ))}
           {routeStates.length === 0 && (
-            <p className="mt-2.5 text-sm text-white/55">
-              Road-condition coverage: California and Montana road events, plus Idaho
-              work zones only. Other states have no feed yet.
-            </p>
+            <p className="mt-2.5 text-sm text-white/55">{coverageLine}</p>
           )}
           {coveredHere.includes('ID') && (
             <p className="mt-2 text-[11px] leading-relaxed text-white/30">
@@ -193,11 +228,7 @@ export default function SkiRoadConditions({ route }: { route: SavedSkiRoute }) {
         </>
       )}
 
-      <p className="mt-2 text-[11px] leading-relaxed text-white/30">
-        Road conditions cover California (Caltrans chain controls &amp; closures) and
-        Montana (MDT events), plus Idaho work zones only. Other states have no feed
-        yet — an uncovered state&apos;s silence never means the road is clear.
-      </p>
+      <p className="mt-2 text-[11px] leading-relaxed text-white/30">{footerText}</p>
     </div>
   );
 }
