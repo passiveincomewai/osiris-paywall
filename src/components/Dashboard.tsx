@@ -1409,6 +1409,39 @@ export default function Dashboard() {
     return () => window.removeEventListener('keydown', onKey);
   }, [showIntel, showSpaceCam, showAlerts, showDrawing, showOi, showOiPreview, showArcGIS, showDesktopSearch, showDirections, showTrialPicker, liveFeedUrl, navSession]);
 
+  // Click-outside closes the open right-strip tool panel — the pointer
+  // twin of the Escape affordance above (owner's follow-up order,
+  // 2026-10-31; b1f91ed8 shipped X + Escape only). Same open set, same
+  // cooperation rules, same close side effects. "Outside" is any
+  // pointerdown that lands outside a [data-strip-panel] container:
+  // the strip itself (its buttons toggle, its flyouts host the panels),
+  // the Search & Route card and the Draw toolbar carry the attribute,
+  // so interacting with a panel or its button never reads as outside.
+  // Two pointer-specific guards on top of Escape's: a modal or live
+  // session above the panels owns the screen (same as Escape), and an
+  // in-progress drawing keeps map clicks as drawing input — closing
+  // the Draw panel mid-sketch would strand the session.
+  useEffect(() => {
+    const anyStripPanelOpen = showIntel || showSpaceCam || showAlerts || showDrawing || showOi || showOiPreview || showArcGIS || showDesktopSearch || showDirections;
+    if (!anyStripPanelOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (showTrialPicker || liveFeedUrl || navSession) return;
+      if (drawMode) return;
+      const t = e.target as HTMLElement | null;
+      if (t && typeof t.closest === 'function' && t.closest('[data-strip-panel]')) return;
+      if (showDesktopSearch || showDirections) { setShowDesktopSearch(false); setShowDirections(false); setActiveRoute(null); setRouteTarget(null); }
+      if (showOi) { setShowOi(false); setOiTheater(false); setOiAutoFocus(false); }
+      if (showOiPreview) setShowOiPreview(false);
+      setShowIntel(false);
+      setShowSpaceCam(false);
+      setShowAlerts(false);
+      setShowDrawing(false);
+      setShowArcGIS(false);
+    };
+    document.addEventListener('pointerdown', onDown);
+    return () => document.removeEventListener('pointerdown', onDown);
+  }, [showIntel, showSpaceCam, showAlerts, showDrawing, showOi, showOiPreview, showArcGIS, showDesktopSearch, showDirections, showTrialPicker, liveFeedUrl, navSession, drawMode]);
+
   // Mouse coords + reverse geocode (Zero-Render)
   const handleMouseCoords = useCallback((coords: { lat: number; lng: number }) => {
     mouseCoordsRef.current = coords;
@@ -2639,6 +2672,7 @@ export default function Dashboard() {
             while guidance owns the screen. */}
         {!isMobile && (showDesktopSearch || showDirections) && (
           <motion.div
+            data-strip-panel
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: navSession ? 0 : 1, y: 0 }}
             className={navSession ? 'pointer-events-none h-0 overflow-hidden' : ''}
@@ -2904,7 +2938,7 @@ export default function Dashboard() {
 
 
       {/* ── RIGHT TOOL STRIP (desktop only — mobile uses bottom nav) ── */}
-      {!isMobile && <motion.div data-hud initial={{ opacity: 0, x: 12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }} transition={hudIn(0.3)} className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-[250] pointer-events-auto bg-black/40 backdrop-blur-sm p-1 rounded-full border border-white/5">
+      {!isMobile && <motion.div data-hud data-strip-panel initial={{ opacity: 0, x: 12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }} transition={hudIn(0.3)} className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-[250] pointer-events-auto bg-black/40 backdrop-blur-sm p-1 rounded-full border border-white/5">
         <div className="relative group" style={{ order: stripLayout.orderIndex.recon * 10, display: stripLayout.hiddenIds.has('recon') ? 'none' : undefined }}>
           <button onClick={() => { setShowIntel(!showIntel); setShowOi(false); setShowOiPreview(false); setShowAlerts(false); }} className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50 ${showIntel ? 'bg-[var(--cyan-primary)]/20' : 'hover:bg-white/10'}`} title="OSINT Recon — IP lookup, network sweep, geolocation" aria-label="OSINT Recon" aria-expanded={showIntel}>
             <Radar className={`w-4 h-4 ${showIntel ? 'text-[var(--cyan-primary)]' : 'text-white/60'}`} />
@@ -3466,7 +3500,7 @@ export default function Dashboard() {
       )}
 
       {showDrawing && (
-        <div className="absolute right-12 top-1/2 -translate-y-1/2 z-[400] w-80 pointer-events-auto">
+        <div data-strip-panel className="absolute right-12 top-1/2 -translate-y-1/2 z-[400] w-80 pointer-events-auto">
           <DrawingToolbar
             drawMode={drawMode}
             onSetDrawMode={setDrawMode}
