@@ -22,6 +22,7 @@ import {
   distanceKm,
   type GeoAnchor,
 } from "@/lib/event-page-cameras";
+import { buildEventSchema } from "@/lib/event-schema";
 export const metadata: Metadata = {
   title: "NYC Marathon 2026 — Live Cameras Along the Course",
   description:
@@ -150,15 +151,20 @@ export default async function NycMarathon2026Page() {
     isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
   };
 
-  const eventLd = {
-    "@context": "https://schema.org",
-    "@type": "SportsEvent",
+  // R67: already SportsEvent, but it carried no endDate. The marathon
+  // is a single day — Sunday, November 1, 2026, per this page's own
+  // metadata and FAQ — so endDate is the same date, via the shared
+  // builder (its location Place name is the page's existing one).
+  const eventLd = buildEventSchema({
+    sport: true,
     name: "New York City Marathon 2026",
     startDate: "2026-11-01",
-    location: { "@type": "City", name: "New York City" },
+    endDate: "2026-11-01",
+    locationName: "New York City",
+    url: `${BASE}/nyc-marathon-2026`,
     description:
       "The 2026 New York City Marathon runs Sunday, November 1, 2026, from Staten Island through all five boroughs to the finish in Central Park.",
-  };
+  });
 
   return (
     <PageShell>

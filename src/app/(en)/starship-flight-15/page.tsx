@@ -22,6 +22,7 @@ import {
   distanceKm,
   type GeoAnchor,
 } from "@/lib/event-page-cameras";
+import { buildEventSchema } from "@/lib/event-schema";
 
 export const metadata: Metadata = {
   title: "Starship Flight 15 — Live Launch Watch & Launch-Site Cameras",
@@ -87,15 +88,20 @@ export default async function StarshipFlight15Page() {
     isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
   };
 
-  const eventLd = {
-    "@context": "https://schema.org",
-    "@type": "Event",
+  // R67 sweep: this Event carried no endDate. A launch is a
+  // single-day event, so endDate is the start date — the page's own
+  // stated NET target, November 8, 2026; the description keeps the
+  // page's "no earlier than … subject to change" caveat verbatim.
+  const eventLd = buildEventSchema({
+    sport: false,
     name: "SpaceX Starship Flight 15",
     startDate: "2026-11-08",
-    location: { "@type": "Place", name: "Starbase, Texas" },
+    endDate: "2026-11-08",
+    locationName: "Starbase, Texas",
+    url: `${BASE}/starship-flight-15`,
     description:
       "Starship Flight 15 from Starbase, Texas — the first planned double-catch attempt (booster and ship). Currently targeted for no earlier than November 8, 2026 per FAA planning; subject to change.",
-  };
+  });
 
   return (
     <PageShell>

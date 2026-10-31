@@ -31,6 +31,7 @@ import {
   nextEdition,
 } from "@/lib/seasonal-events";
 import { buildGeoUrl } from "@/lib/share/links";
+import { buildEventSchema } from "@/lib/event-schema";
 
 export const revalidate = 86400;
 
@@ -127,21 +128,21 @@ export default async function BostonMarathonPage() {
     isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
   };
 
+  // R67: a marathon is a sporting event — SportsEvent via the shared
+  // builder (was hand-written as plain Event). Dates and location are
+  // the page's existing ones (the next seasonal edition; Copley Square).
   const eventLd = edition
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Event",
+    ? buildEventSchema({
+        sport: true,
         name: `Boston Marathon ${edition.year}`,
         startDate: edition.start,
         endDate: edition.end,
-        location: {
-          "@type": "Place",
-          name: "Copley Square, Boston",
-          geo: { "@type": "GeoCoordinates", latitude: 42.35, longitude: -71.0756 },
-        },
+        locationName: "Copley Square, Boston",
+        locationGeo: { latitude: 42.35, longitude: -71.0756 },
+        url: `${BASE}/${SLUG}`,
         description:
           "The annual Boston Marathon on Patriots' Day — 26.2 miles from Hopkinton to Copley Square, watched here through the public cameras along the course.",
-      }
+      })
     : null;
 
   return (
@@ -256,7 +257,7 @@ export default async function BostonMarathonPage() {
         title="Keep exploring"
         links={[
           { label: "Boston & the Charles River on the 3D globe", href: globeUrl },
-          { label: "New York City Marathon — live cameras", href: "/nyc-marathon-2026" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
           { label: "United States cameras", href: "/cameras/countries/united-states" },
           { label: "All live events", href: "/live-events" },
         ]}
@@ -271,7 +272,7 @@ export default async function BostonMarathonPage() {
           { label: "Oktoberfest in Munich — live cameras", href: "/oktoberfest-munich" },
           { label: "Fall foliage cameras", href: "/fall-foliage-cameras" },
           { label: "Macy's Thanksgiving Day Parade — live cameras", href: "/macys-thanksgiving-parade" },
-          { label: "New York City Marathon — live cameras", href: "/nyc-marathon-2026" },
+          { label: "New York City Marathon — live cameras", href: "/nyc-marathon" },
           { label: "Fourth of July fireworks — live cameras", href: "/fourth-of-july-fireworks" },
           { label: "Rose Parade in Pasadena — live cameras", href: "/rose-parade" },
           { label: "Albuquerque Balloon Fiesta — live cameras", href: "/albuquerque-balloon-fiesta" },

@@ -215,8 +215,16 @@ describe("sitemap URL set", () => {
     // national parks, and all 25 university spokes (richest
     // registry set is 4 cameras) — lib/indexation-gates holds the
     // measured table; the tiered pages stay live as noindex.
+    // The site-audit Wave 3 R65 merge (2026-10-31) then removed
+    // /blog/orionid-meteor-shower-2026 → 1,105: the duplicate
+    // Orionid post was folded into /blog/watch-the-orionid-meteor-
+    // shower-live and deleted from blog/posts.ts (301 in
+    // next.config.ts), and blog URLs derive from POSTS. The R77
+    // research hub (/research) then added one back in the same
+    // wave — net 1,106 with a different set, so the hash moved
+    // twice in one day.
     expect(hash).toBe(
-      "b25b8c700f06312811a3f88f21fa5b1cc8cb07d1a1224c6d74ef35e363b3fc46",
+      "78c9b2ad3be9c1a07449774125412095819f6ff5b7c3dd030f9b816284a02eba",
     );
   });
 

@@ -64,6 +64,17 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        // Site-audit R65 (Wave 3, 2026-10-31): the two Orionid posts
+        // published 2026-10-20 split one intent. The "Watch … Live"
+        // post is the survivor (its dark-sky-camera angle fits the
+        // product; the other post's unique sections were folded into
+        // it) and the dated slug's post object was deleted from
+        // blog/posts.ts, so its URL consolidates onto the survivor.
+        source: '/blog/orionid-meteor-shower-2026',
+        destination: '/blog/watch-the-orionid-meteor-shower-live',
+        permanent: true,
+      },
+      {
         source: '/flightradar24-alternative',
         destination: '/alternatives/flightradar24',
         permanent: true,

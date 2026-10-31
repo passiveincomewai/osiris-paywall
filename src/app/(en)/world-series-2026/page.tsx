@@ -19,6 +19,7 @@ import EventEndedBanner from "@/components/EventEndedBanner";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
 import { eventPhase } from "@/lib/events/lifecycle";
+import { buildEventSchema } from "@/lib/event-schema";
 
 export const metadata: Metadata = {
   title: "World Series 2026 — Live Cameras in St. Petersburg & Milwaukee",
@@ -55,6 +56,29 @@ const jsonLd = {
  * UTC calendar dates; the page reads "past" from November 2, 2026).
  */
 const EVENT_END = "2026-11-01";
+
+/**
+ * R67: this page carried no event schema at all. SportsEvent via the
+ * shared builder, dated from this page's own schedule (see "The
+ * series at a glance" and FAQS): the page never states Games 1–2
+ * dates, so startDate is the first game date the page does state —
+ * Game 3, October 26, 2026, at Tropicana Field — and endDate is the
+ * last scheduled game date it states, Game 7 on October 31, 2026.
+ * Both venues the page names are carried in the location name.
+ * (EVENT_END above stays November 1: it is the lifecycle cutoff,
+ * not the event's end date.)
+ */
+const eventLd = buildEventSchema({
+  sport: true,
+  name: "World Series 2026",
+  startDate: "2026-10-26",
+  endDate: "2026-10-31",
+  locationName:
+    "Tropicana Field, St. Petersburg, Florida & American Family Field, Milwaukee, Wisconsin",
+  url: `${BASE}/world-series-2026`,
+  description:
+    "The 2026 World Series — Milwaukee Brewers vs Tampa Bay Rays. Games 3–5 at Tropicana Field, St. Petersburg (October 26–28); Games 6–7, if needed, at American Family Field, Milwaukee (October 30–31).",
+});
 
 const FAQS = [
   {
@@ -131,6 +155,7 @@ export default async function WorldSeries2026Page() {
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
+      <JsonLd data={eventLd} />
       <FaqJsonLd faqs={faqs} />
       <Breadcrumb
         trail={[

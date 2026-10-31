@@ -185,6 +185,13 @@ const SEO_PAGES_REPORTS = ["/reports/camera-network-2026-10"];
 const SEO_PAGES_METHODOLOGY = ["/methodology"];
 const METHODOLOGY_DATE = new Date("2026-10-27");
 
+// Research hub (site-audit R77, 2026-10-31): /research is designated
+// the data hub over the ranked guides (/best-live-webcam-sites) and
+// the pair pages (/compare) — it publishes the datasets and method
+// both stand on (the index and report entries above are its
+// children, linked from the hub).
+const SEO_PAGES_RESEARCH_HUB = ["/research"];
+
 // Wave 12 (2026-10-26): Random Camera Roulette — the geography guessing
 // game at /random (a random live camera, guess the country, scored
 // reveal), built for geography-game audiences.
@@ -921,6 +928,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...SEO_PAGES_METHODOLOGY.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: METHODOLOGY_DATE,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...SEO_PAGES_RESEARCH_HUB.map((p) => ({
+      url: `${BASE}${p}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
