@@ -49,11 +49,13 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     }
   });
 
-  it("records FAC honestly: dev via DEMO_KEY, production key pending owner", () => {
+  it("records FAC honestly: bulk CSV production pull, no key required", () => {
     const fac = FRAUD_RADAR_SOURCES.find((s) => s.slug === "fac")!;
-    expect(fac.accessType).toBe("api_key_required");
+    expect(fac.accessType).toBe("public_download");
+    expect(fac.accessUrl).toContain("app.fac.gov/dissemination");
+    expect(fac.apiKeyRequirement).toContain("none for the production pull");
     expect(fac.apiKeyRequirement).toContain("DEMO_KEY");
-    expect(fac.status).toBe("pending_credentials");
+    expect(fac.status).toBe("ingested");
   });
 
   it("carries the Medicaid suppression warning in its limitations", () => {
@@ -68,12 +70,21 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(ent.limitations.toLowerCase()).toContain("extract date");
   });
 
-  it("marks exactly the six pipeline-ingested sources as ingested, each with manifest provenance", () => {
+  it("marks exactly the eight pipeline-ingested sources as ingested, each with manifest provenance", () => {
     const ingested = FRAUD_RADAR_SOURCES.filter((s) => s.status === "ingested")
       .map((s) => s.slug)
       .sort();
     expect(ingested).toEqual(
-      ["cms-medicare", "leie", "medicaid-hcpcs", "nppes", "sam-entities", "sam-exclusions"].sort(),
+      [
+        "cms-medicare",
+        "fac",
+        "leie",
+        "medicaid-hcpcs",
+        "nppes",
+        "sam-entities",
+        "sam-exclusions",
+        "usaspending",
+      ].sort(),
     );
     for (const s of FRAUD_RADAR_SOURCES) {
       expect(["not_started", "pending_credentials", "ingested"]).toContain(s.status);
@@ -131,6 +142,44 @@ describe("FRAUD_RADAR_SOURCES — §5 registry seed", () => {
     expect(ent.completeness).toContain("905,712");
     expect(ent.completeness).toContain("820,322");
     expect(ent.accessUrl).toContain("sam.gov/data-services/Entity");
+  });
+
+  it("pins the USAspending ingest to its pipeline manifest (Phase 4, generation 2026-10-06)", () => {
+    const usa = FRAUD_RADAR_SOURCES.find((s) => s.slug === "usaspending")!;
+    expect(usa.sourceVersion).toBe("2026-10-06");
+    expect(usa.lastPublishedAt).toBe("2026-10-06");
+    expect(usa.lastImportedAt).toBe("2026-10-31T05:51:44Z");
+    expect(usa.lastVerifiedAt).toBe("2026-10-31");
+    expect(usa.coverageStart).toBe("2018-01");
+    expect(usa.coverageEnd).toBe("2025-12");
+    expect(usa.completeness).toContain("30,375,146");
+    expect(usa.completeness).toContain("3,585,472");
+    // The derived award grain + cumulative semantics are part of the
+    // source's public record, as is the no-SAM-API rule:
+    expect(usa.notes).toContain("DERIVED");
+    expect(usa.notes).toContain("never FY obligations");
+    expect(usa.notes).toContain("No SAM.gov API");
+    expect(usa.limitations).toContain("award-cumulative");
+  });
+
+  it("pins the FAC ingest to its pipeline manifest (Phase 4, vintage 2026-10-31_ay2026)", () => {
+    const fac = FRAUD_RADAR_SOURCES.find((s) => s.slug === "fac")!;
+    expect(fac.sourceVersion).toBe("2026-10-31_ay2026");
+    expect(fac.lastPublishedAt).toBe("2026-10-31");
+    expect(fac.lastImportedAt).toBe("2026-10-31T02:27:00Z");
+    expect(fac.lastVerifiedAt).toBe("2026-10-31");
+    expect(fac.coverageStart).toBe("2016-01");
+    expect(fac.coverageEnd).toBe("2026-12");
+    expect(fac.completeness).toContain("417,188");
+    expect(fac.completeness).toContain("412,280");
+    // The bulk-CSV route, the public-subset rule and the
+    // questioned-cost flag-only rule are part of the public record:
+    expect(fac.notes).toContain("app.fac.gov");
+    expect(fac.notes).toContain("NOT needed");
+    expect(fac.notes).toContain("4,908");
+    expect(fac.notes).toContain("FLAGS only");
+    expect(fac.limitations).toContain("is_public=false");
+    expect(fac.limitations).toContain("FLAG only");
   });
 
   it("pins the LEIE ingest to its pipeline manifest (version 2026-10)", () => {
