@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import SectionHeader from "./SectionHeader";
 import Reveal from "./Reveal";
+import MicroLabel from "../design/MicroLabel";
+import Button from "../design/Button";
 import { enHome, type HomeCopy } from "@/i18n/dictionaries/en/home";
 
 /**
@@ -17,6 +17,14 @@ import { enHome, type HomeCopy } from "@/i18n/dictionaries/en/home";
  * OSINT_VISUALS stay English in this tranche (alt copy for the
  * satellite/maritime/search captures was not part of the dictionary
  * extraction; flagged in the build REPORT).
+ *
+ * Visual transformation (W1, deferred from the homepage wave): the
+ * section now sits on the design system — token container, MicroLabel
+ * header, ink-panel cards with hairline borders, the PRO badge as a
+ * token chip — replacing the gold/#0096FF dialect. Copy, links, card
+ * order, analytics attributes and the visuals are unchanged. Gold
+ * survives only as a locked fact (pricing Pro accent, affiliate rank
+ * art); a "this is a Pro feature" badge is neither, so it tokenized.
  */
 export const OSINT_CARDS = [
   {
@@ -61,13 +69,44 @@ export default function OsintSection({
   const osint = copy.osint;
   return (
     <section aria-label={osint.ariaLabel} data-landing-view="osint" className="relative">
-      <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-        <SectionHeader
-          eyebrow={osint.eyebrow}
-          eyebrowClass="text-[#D4AF37]"
-          title={osint.title}
-          sub={osint.sub}
-        />
+      <div
+        className="mx-auto w-full"
+        style={{
+          maxWidth: "var(--we-wide)",
+          paddingLeft: "var(--we-gutter)",
+          paddingRight: "var(--we-gutter)",
+          paddingTop: "var(--we-section-y)",
+          paddingBottom: "var(--we-section-y)",
+        }}
+      >
+        <Reveal>
+          <MicroLabel>{osint.eyebrow}</MicroLabel>
+          <h2
+            className="font-[family-name:var(--we-font-display)]"
+            style={{
+              color: "var(--we-text-1)",
+              fontSize: "var(--we-size-display-2)",
+              lineHeight: "var(--we-leading-display)",
+              fontWeight: 560,
+              marginTop: "var(--we-space-4)",
+            }}
+          >
+            {osint.title}
+          </h2>
+          {osint.sub ? (
+            <p
+              style={{
+                color: "var(--we-text-2)",
+                fontSize: "var(--we-size-lede)",
+                lineHeight: "var(--we-leading-body)",
+                marginTop: "var(--we-space-4)",
+                maxWidth: "var(--we-measure)",
+              }}
+            >
+              {osint.sub}
+            </p>
+          ) : null}
+        </Reveal>
         <div className="mt-10 flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 lg:grid-cols-5 md:overflow-visible md:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {OSINT_CARDS.map((card, i) => {
             const localized = osint.cards[i] ?? card;
@@ -76,24 +115,58 @@ export default function OsintSection({
                 <Link
                   href={card.href}
                   data-landing-event={`osint_card:${card.slug}`}
-                  className="group block h-full rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#D4AF37]/50 hover:bg-white/[0.05] transition overflow-hidden"
+                  className="block h-full overflow-hidden transition hover:border-[var(--we-line-3)]"
+                  style={{
+                    background: "var(--we-ink-2)",
+                    border: "1px solid var(--we-line-2)",
+                    borderRadius: "var(--we-radius-2)",
+                  }}
                 >
-                  <div className="relative aspect-[4/3] bg-gradient-to-br from-[#0096FF]/15 via-transparent to-[#D4AF37]/10 flex items-center justify-center overflow-hidden">
+                  <div
+                    className="relative aspect-[4/3] flex items-center justify-center overflow-hidden"
+                    style={{ background: "var(--we-ink-3)" }}
+                  >
                     {visuals?.[card.slug] ?? (
                       <span
                         aria-hidden
-                        className="w-14 h-14 rounded-full border border-[#0096FF]/40 flex items-center justify-center font-mono text-lg font-bold text-[#0096FF]/90"
+                        className="w-14 h-14 rounded-full flex items-center justify-center font-[family-name:var(--we-font-mono)] text-lg font-bold"
+                        style={{
+                          border: "1px solid var(--we-line-3)",
+                          color: "var(--we-blue-strong)",
+                        }}
                       >
                         {localized.title.split(" ").map((w) => w[0]).join("")}
                       </span>
                     )}
-                    <span className="absolute top-3 left-3 text-[10px] font-bold tracking-widest text-[#D4AF37] border border-[#D4AF37]/40 rounded px-1.5 py-0.5 bg-black/40">
+                    <span
+                      className="absolute top-3 left-3 font-[family-name:var(--we-font-mono)] uppercase"
+                      style={{
+                        fontSize: "var(--we-size-micro)",
+                        letterSpacing: "var(--we-tracking-micro)",
+                        color: "var(--we-text-1)",
+                        border: "1px solid var(--we-line-3)",
+                        borderRadius: "var(--we-radius-1)",
+                        padding: "0.25rem 0.5rem",
+                        background: "var(--we-ink-0)",
+                      }}
+                    >
                       {osint.proBadge}
                     </span>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-white">{localized.title}</h3>
-                    <p className="text-sm text-white/55 leading-relaxed mt-1">{localized.desc}</p>
+                    <h3 style={{ color: "var(--we-text-1)", fontWeight: 600, margin: 0 }}>
+                      {localized.title}
+                    </h3>
+                    <p
+                      style={{
+                        color: "var(--we-text-2)",
+                        fontSize: "var(--we-size-small)",
+                        lineHeight: "var(--we-leading-body)",
+                        marginTop: "var(--we-space-1)",
+                      }}
+                    >
+                      {localized.desc}
+                    </p>
                   </div>
                 </Link>
               </Reveal>
@@ -101,12 +174,11 @@ export default function OsintSection({
           })}
         </div>
         <Reveal delay={0.15}>
-          <Link
-            href="/features"
-            className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-[#D4AF37] hover:text-[#e8c55a] transition"
-          >
-            {osint.exploreLink} <ArrowRight className="w-4 h-4" aria-hidden />
-          </Link>
+          <div style={{ marginTop: "var(--we-space-6)" }}>
+            <Button variant="quiet" href="/features">
+              {osint.exploreLink}
+            </Button>
+          </div>
         </Reveal>
       </div>
     </section>
