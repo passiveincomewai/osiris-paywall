@@ -1,0 +1,480 @@
+{
+ "source": "Google Search Console UI export (Search Analytics API not connected)",
+ "property": "sc-domain:worldeye.app",
+ "windowStart": "2026-10-10",
+ "windowEnd": "2026-10-26",
+ "headline": {
+  "clicks": 343,
+  "impressions": 3971,
+  "avgCtrPct": 8.6,
+  "avgPosition": 36.4
+ },
+ "reconciliation": "Chart, Devices and Countries sheet sums match the GSC headline exactly (343 / 3,971). Queries sheet sums sit below the headline (1,000-row UI export cap + anonymised-row withholding); Pages sums sit above it (multi-page crediting) \u2014 both are known UI-export behaviours, recorded in OPPORTUNITIES.md.",
+ "branded": {
+  "queries": 7,
+  "variants": 2,
+  "clicks": 190,
+  "note": "Brand family takes 190 of 343 clicks (55%); \"worldeye\" alone: 155 clicks. All opportunity rows are non-branded."
+ },
+ "buckets": [
+  {
+   "label": "Striking distance (pos 4-10)",
+   "queries": 99,
+   "impressions": 175,
+   "clicks": 4
+  },
+  {
+   "label": "Page-2 push (pos 11-20)",
+   "queries": 38,
+   "impressions": 104,
+   "clicks": 0
+  },
+  {
+   "label": "Emerging (pos 21-40)",
+   "queries": 102,
+   "impressions": 234,
+   "clicks": 3
+  },
+  {
+   "label": "Outside bands (pos 1-3 or >40)",
+   "queries": 752,
+   "impressions": 1511,
+   "clicks": 0
+  }
+ ],
+ "deviceNote": "Per-query device splits cannot be determined from the UI export (Devices sheet is property-level): Mobile 187 clicks / 1,285 impressions @ 16.1; Desktop 147 / 2,652 @ 46.7; Tablet 9 / 34 @ 7.6.",
+ "joinNote": "The UI export has no query x page join; targetPage values are intent-map assignments, not measured landing pages. A true join requires the Search Analytics API (owner action pending).",
+ "topOpportunities": [
+  {
+   "query": "live cams",
+   "clicks": 0,
+   "impressions": 39,
+   "position": 14.8,
+   "bucket": "page2_push_11_20",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 30.7,
+   "zeroClickImpressions": true,
+   "cannibalization": false
+  },
+  {
+   "query": "flight eye",
+   "clicks": 0,
+   "impressions": 16,
+   "position": 5.7,
+   "bucket": "striking_distance_4_10",
+   "cluster": "flights",
+   "targetPage": "/live-flight-tracker",
+   "score": 14.1,
+   "zeroClickImpressions": true,
+   "cannibalization": false
+  },
+  {
+   "query": "freeway cameras",
+   "clicks": 0,
+   "impressions": 12,
+   "position": 12.6,
+   "bucket": "page2_push_11_20",
+   "cluster": "traffic-cameras",
+   "targetPage": "/live-traffic-cameras",
+   "score": 10.2,
+   "zeroClickImpressions": true,
+   "cannibalization": false
+  },
+  {
+   "query": "flight tracker satellite view",
+   "clicks": 0,
+   "impressions": 40,
+   "position": 31.7,
+   "bucket": "emerging_21_40",
+   "cluster": "satellites",
+   "targetPage": "/live-flight-tracker",
+   "score": 9.3,
+   "zeroClickImpressions": true,
+   "cannibalization": false
+  },
+  {
+   "query": "webcam sites",
+   "clicks": 0,
+   "impressions": 16,
+   "position": 25.9,
+   "bucket": "emerging_21_40",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 7.2,
+   "zeroClickImpressions": true,
+   "cannibalization": false
+  },
+  {
+   "query": "webcam for travelers 2025",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 8.9,
+   "bucket": "striking_distance_4_10",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 6.8,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "birmingham cameras",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 5.0,
+   "bucket": "striking_distance_4_10",
+   "cluster": "city-webcams",
+   "targetPage": "/city-webcams/[city] (family)",
+   "score": 6.3,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "gods eye view alternative",
+   "clicks": 2,
+   "impressions": 5,
+   "position": 10.0,
+   "bucket": "striking_distance_4_10",
+   "cluster": "compare-alternatives",
+   "targetPage": "/best-live-webcam-sites + /alternatives/* (family)",
+   "score": 5.8,
+   "zeroClickImpressions": false,
+   "cannibalization": true
+  },
+  {
+   "query": "flightlive",
+   "clicks": 0,
+   "impressions": 7,
+   "position": 8.0,
+   "bucket": "striking_distance_4_10",
+   "cluster": "flights",
+   "targetPage": "/live-flight-tracker",
+   "score": 5.8,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "best apps for tracking global geopolitical events in real-time?",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 8.5,
+   "bucket": "striking_distance_4_10",
+   "cluster": "compare-alternatives",
+   "targetPage": "/best-live-webcam-sites + /alternatives/* (family)",
+   "score": 4.9,
+   "zeroClickImpressions": false,
+   "cannibalization": true
+  },
+  {
+   "query": "live cams near me",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 5.5,
+   "bucket": "striking_distance_4_10",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 4.3,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "live webcams",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 7.8,
+   "bucket": "striking_distance_4_10",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 4.0,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "web cam sites",
+   "clicks": 0,
+   "impressions": 12,
+   "position": 28.1,
+   "bucket": "emerging_21_40",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 3.9,
+   "zeroClickImpressions": true,
+   "cannibalization": false
+  },
+  {
+   "query": "white pass live camera",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 8.8,
+   "bucket": "striking_distance_4_10",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 3.9,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "traffic cameras",
+   "clicks": 1,
+   "impressions": 8,
+   "position": 26.1,
+   "bucket": "emerging_21_40",
+   "cluster": "traffic-cameras",
+   "targetPage": "/live-traffic-cameras",
+   "score": 3.6,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "public cameras",
+   "clicks": 0,
+   "impressions": 5,
+   "position": 13.0,
+   "bucket": "page2_push_11_20",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 3.5,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "fly live",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 6.5,
+   "bucket": "striking_distance_4_10",
+   "cluster": "other",
+   "targetPage": "UNMAPPED \u2014 no intent-map owner identified",
+   "score": 3.5,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "live streets",
+   "clicks": 1,
+   "impressions": 4,
+   "position": 9.0,
+   "bucket": "striking_distance_4_10",
+   "cluster": "other",
+   "targetPage": "UNMAPPED \u2014 no intent-map owner identified",
+   "score": 3.2,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "godsviewai.com",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 13.0,
+   "bucket": "page2_push_11_20",
+   "cluster": "other",
+   "targetPage": "UNMAPPED \u2014 no intent-map owner identified",
+   "score": 3.1,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "city cameras live",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 6.7,
+   "bucket": "striking_distance_4_10",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 3.1,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "street cameras live",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 18.5,
+   "bucket": "page2_push_11_20",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 2.7,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "best free live cam",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 8.5,
+   "bucket": "striking_distance_4_10",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 2.4,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "live fly",
+   "clicks": 0,
+   "impressions": 3,
+   "position": 8.7,
+   "bucket": "striking_distance_4_10",
+   "cluster": "other",
+   "targetPage": "UNMAPPED \u2014 no intent-map owner identified",
+   "score": 2.4,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "satellite flight tracking",
+   "clicks": 0,
+   "impressions": 4,
+   "position": 19.0,
+   "bucket": "page2_push_11_20",
+   "cluster": "satellites",
+   "targetPage": "/satellite-tracker",
+   "score": 2.2,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  },
+  {
+   "query": "camera street live",
+   "clicks": 0,
+   "impressions": 2,
+   "position": 6.5,
+   "bucket": "striking_distance_4_10",
+   "cluster": "live-webcams-generic",
+   "targetPage": "/live-webcams",
+   "score": 2.1,
+   "zeroClickImpressions": false,
+   "cannibalization": false
+  }
+ ],
+ "pageLeaders": [
+  {
+   "page": "/",
+   "clicks": 258,
+   "impressions": 633,
+   "position": 2.7
+  },
+  {
+   "page": "/satellite-tracker",
+   "clicks": 3,
+   "impressions": 256,
+   "position": 56.6
+  },
+  {
+   "page": "/live-traffic-cameras",
+   "clicks": 1,
+   "impressions": 156,
+   "position": 65.0
+  },
+  {
+   "page": "/cameras",
+   "clicks": 24,
+   "impressions": 144,
+   "position": 8.2
+  },
+  {
+   "page": "/live-flight-tracker",
+   "clicks": 0,
+   "impressions": 131,
+   "position": 21.4
+  },
+  {
+   "page": "/what-is-ais",
+   "clicks": 0,
+   "impressions": 125,
+   "position": 68.7
+  },
+  {
+   "page": "/best-live-webcam-sites",
+   "clicks": 4,
+   "impressions": 123,
+   "position": 24.3
+  },
+  {
+   "page": "/blog/best-live-webcams-world",
+   "clicks": 2,
+   "impressions": 93,
+   "position": 49.4
+  },
+  {
+   "page": "/features",
+   "clicks": 3,
+   "impressions": 80,
+   "position": 5.5
+  },
+  {
+   "page": "/city-webcams/dallas",
+   "clicks": 0,
+   "impressions": 68,
+   "position": 49.4
+  },
+  {
+   "page": "/ski-webcams/hafjell",
+   "clicks": 0,
+   "impressions": 65,
+   "position": 44.0
+  },
+  {
+   "page": "/city-webcams/tokyo",
+   "clicks": 2,
+   "impressions": 60,
+   "position": 38.5
+  },
+  {
+   "page": "/gods-eye-view",
+   "clicks": 3,
+   "impressions": 55,
+   "position": 6.1
+  },
+  {
+   "page": "/affiliates",
+   "clicks": 1,
+   "impressions": 54,
+   "position": 11.5
+  },
+  {
+   "page": "/city-webcams/vancouver",
+   "clicks": 0,
+   "impressions": 54,
+   "position": 71.7
+  }
+ ],
+ "phase3Log": [
+  {
+   "item": 1,
+   "title": "\"flight eye\" snippet rescue \u2014 /live-flight-tracker",
+   "change": "Title/meta aligned to the searcher phrasing (en+es)",
+   "baseline": "Query 16 impressions @ 5.69, 0 clicks; page 131 impressions @ 21.4, 0 clicks",
+   "shipped": "Payload 151 (commit 1ef8a81a), live-verified 2026-10-29",
+   "judgement": "Pending the +28-day GSC re-import"
+  },
+  {
+   "item": 2,
+   "title": "\"live cams\" page-2 push \u2014 /live-webcams",
+   "change": "Title/meta alignment + internal links from /cameras",
+   "baseline": "Query 39 impressions @ 14.77, 0 clicks (top scored row, 30.7)",
+   "shipped": "Payload 151 (commit 1ef8a81a), live-verified 2026-10-29",
+   "judgement": "Pending the +28-day GSC re-import"
+  },
+  {
+   "item": 5,
+   "title": "\"freeway cameras\" \u2014 /live-traffic-cameras",
+   "change": "Title/H1/OG/JSON-LD aligned to freeway phrasing",
+   "baseline": "Query 12 impressions @ 12.58, 0 clicks; page 156 impressions @ 65.0, 1 click",
+   "shipped": "Payload 153 (commit 6d1aaeac), live-verified 2026-10-29",
+   "judgement": "Pending the +28-day GSC re-import"
+  },
+  {
+   "item": 10,
+   "title": "Extend the proven converter \u2014 /alternatives/gods-eye-view",
+   "change": "Freshness block (facts checked Oct 28, 2026; 30-tool corrections) + internal links from 4 cluster pages",
+   "baseline": "Query \"gods eye view alternative\" 5 impressions @ 10.0 with 2 clicks (40% CTR); page 41 impressions @ 8.2, 7 clicks",
+   "shipped": "Payload 153 (commit 6d1aaeac), live-verified 2026-10-29",
+   "judgement": "Pending the +28-day GSC re-import"
+  }
+ ],
+ "notConnected": [
+  "GSC Generative-AI performance report \u2014 not connected (needs the Search Analytics API / owner service account)",
+  "Bing AI Performance \u2014 not connected"
+ ],
+ "phase3Note": "Payloads 168-171 completed the Phase 3 set per programme records; the four items above are the ones with full ship reports on file (seo-phase3-a / seo-phase3-b). All Phase 3 changes are judged against their TOP10.md baselines at the next GSC import."
+}

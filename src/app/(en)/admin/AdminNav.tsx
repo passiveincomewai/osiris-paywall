@@ -6,13 +6,14 @@ import Link from "next/link";
 // Every admin page renders this so all sections stay reachable from any
 // admin screen — previously each sub-page hand-rolled its own links and
 // some sections (Conversion, Contact) were unreachable from the others.
-export type AdminSection = "dashboard" | "conversion" | "affiliates" | "competitor-seo" | "contact" | "camera-submissions";
+export type AdminSection = "dashboard" | "conversion" | "affiliates" | "competitor-seo" | "seo" | "contact" | "camera-submissions";
 
 const SECTIONS: { key: AdminSection; href: string; label: string }[] = [
   { key: "dashboard", href: "/admin", label: "Dashboard" },
   { key: "conversion", href: "/admin/conversion", label: "Conversion" },
   { key: "affiliates", href: "/admin/affiliates", label: "Affiliates" },
   { key: "competitor-seo", href: "/admin/competitor-seo", label: "Competitor SEO" },
+  { key: "seo", href: "/admin/seo", label: "SEO" },
   { key: "contact", href: "/admin/contact", label: "Contact inbox" },
   { key: "camera-submissions", href: "/admin/camera-submissions", label: "Camera submissions" },
 ];
