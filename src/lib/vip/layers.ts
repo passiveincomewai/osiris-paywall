@@ -43,8 +43,6 @@ export const KNOWN_LAYERS: Record<string, string> = {
   day_night: "Day / night",
   cables: "Subsea cables",
   sdk_sea: "Sea (SDK)",
-  sdk_air: "Air (SDK)",
-  sdk_naval: "Naval (SDK)",
   live_clouds: "Live clouds",
   noaa_radar: "NOAA radar",
   lightning: "Lightning",

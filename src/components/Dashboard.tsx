@@ -776,8 +776,6 @@ export default function Dashboard() {
     day_night: true,
     cables: true,
     sdk_sea: true,
-    sdk_air: true,
-    sdk_naval: true,
     /* NOAA's infrared cloud mosaic — see lib/live-clouds. Off until asked for:
        it veils everything under it. */
     live_clouds: false,
@@ -2381,36 +2379,20 @@ export default function Dashboard() {
 
   // Reactive layer fetch: handled by layerFetchedRef above (no duplicate)
 
-  // ── OSIRIS SDK — Intelligence Fusion Layer ──
-  // Produces node coordinates for the SDK network mesh visualization.
-  // Does NOT duplicate existing layer visuals — SDK layer is LINES ONLY.
-  // Cameras are excluded — they have their own dedicated layer.
+  // ── OSIRIS SDK — Maritime Lines support data ──
+  // Produces node coordinates counted by the SDK (Maritime Lines)
+  // layer row. The AIR and INTEL SDK surfaces were removed (map
+  // bundle item 7, 2026-10-31): their link layers filtered for
+  // domains no producer ever fed, so they rendered nothing; only
+  // sdk-sea (submarine-cable lines) remains. Cameras are excluded —
+  // they have their own dedicated layer.
   useEffect(() => {
-    const anyActive = activeLayers.sdk_sea || activeLayers.sdk_air || activeLayers.sdk_naval;
-    if (!anyActive) {
+    if (!activeLayers.sdk_sea) {
       dataRef.current = { ...dataRef.current, sdk_entities: [] };
       return;
     }
 
     const sdkEntities: any[] = [];
-
-    // Air domain (nodes only — no visual duplication)
-    const allFlights = [
-      ...(data.commercial_flights || []),
-      ...(data.private_flights || []),
-      ...(data.private_jets || []),
-      ...(data.military_flights || []),
-    ];
-    // Sample flights to keep it clean (every Nth)
-    const flightStep = Math.max(1, Math.floor(allFlights.length / 60));
-    for (let i = 0; i < allFlights.length; i += flightStep) {
-      const f = allFlights[i];
-      if (!f.lat || !f.lng) continue;
-      sdkEntities.push({
-        type: 'Feature', geometry: { type: 'Point', coordinates: [f.lng, f.lat] },
-        properties: { domain: 'AIR', name: f.callsign?.trim() || 'TRACK', source: 'ADS-B / OpenSky' },
-      });
-    }
 
     // Sea domain
     const ships = data.maritime_ships || [];
@@ -2435,30 +2417,8 @@ export default function Dashboard() {
       }
     }
 
-    // GDELT events
-    if (data.gdelt?.length) {
-      for (const g of data.gdelt) {
-        if (!g.lat || !g.lng) continue;
-        sdkEntities.push({
-          type: 'Feature', geometry: { type: 'Point', coordinates: [g.lng, g.lat] },
-          properties: { domain: 'INTEL', name: g.name || 'GDELT Event', source: 'GDELT Project' },
-        });
-      }
-    }
-
-    // News intel
-    if (data.news?.length) {
-      for (const n of data.news) {
-        if (!n.coords || n.coords.length < 2) continue;
-        sdkEntities.push({
-          type: 'Feature', geometry: { type: 'Point', coordinates: [n.coords[1], n.coords[0]] },
-          properties: { domain: 'INTEL', name: n.title || 'SIGINT', source: n.source || 'RSS Feed' },
-        });
-      }
-    }
-
     dataRef.current = { ...dataRef.current, sdk_entities: sdkEntities };
-  }, [dataVersion, activeLayers.sdk_sea, activeLayers.sdk_air, activeLayers.sdk_naval]);
+  }, [dataVersion, activeLayers.sdk_sea]);
 
   return (
     <>

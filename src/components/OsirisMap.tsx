@@ -2188,43 +2188,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         'line-opacity': ['interpolate',['linear'],['zoom'], 1, 0.3, 5, 0.5, 10, 0.7],
       }});
 
-      // ── AIR domain (Steel Gray / Cyan) ──
-      map.addLayer({ id: 'sdk-air-atmo', type: 'line', source: 'sdk-links', filter: ['==',['get','domain'],'AIR'], paint: {
-        'line-color': '#4DD0E1',
-        'line-width': ['interpolate',['linear'],['zoom'], 1, 1.5, 5, 5, 10, 8],
-        'line-opacity': 0.04,
-        'line-blur': 3,
-      }});
-      map.addLayer({ id: 'sdk-air-glow', type: 'line', source: 'sdk-links', filter: ['==',['get','domain'],'AIR'], paint: {
-        'line-color': '#80DEEA',
-        'line-width': ['interpolate',['linear'],['zoom'], 1, 0.8, 5, 2, 10, 4],
-        'line-opacity': ['interpolate',['linear'],['zoom'], 1, 0.08, 5, 0.12, 10, 0.18],
-        'line-blur': 1,
-      }});
-      map.addLayer({ id: 'sdk-air', type: 'line', source: 'sdk-links', filter: ['==',['get','domain'],'AIR'], paint: {
-        'line-color': '#B2EBF2',
-        'line-width': ['interpolate',['linear'],['zoom'], 1, 0.15, 5, 0.6, 10, 1.2],
-        'line-opacity': ['interpolate',['linear'],['zoom'], 1, 0.2, 5, 0.35, 10, 0.5],
-      }});
-
-      // ── INTEL domain (Deep Steel / Violet) ──
-      map.addLayer({ id: 'sdk-intel-atmo', type: 'line', source: 'sdk-links', filter: ['==',['get','domain'],'INTEL'], paint: {
-        'line-color': '#7986CB',
-        'line-width': ['interpolate',['linear'],['zoom'], 1, 2.5, 5, 7, 10, 12],
-        'line-opacity': 0.06,
-        'line-blur': 5,
-      }});
-      map.addLayer({ id: 'sdk-intel-glow', type: 'line', source: 'sdk-links', filter: ['==',['get','domain'],'INTEL'], paint: {
-        'line-color': '#9FA8DA',
-        'line-width': ['interpolate',['linear'],['zoom'], 1, 1.2, 5, 3, 10, 6],
-        'line-opacity': ['interpolate',['linear'],['zoom'], 1, 0.12, 5, 0.18, 10, 0.25],
-        'line-blur': 2,
-      }});
-      map.addLayer({ id: 'sdk-intel', type: 'line', source: 'sdk-links', filter: ['==',['get','domain'],'INTEL'], paint: {
-        'line-color': '#C5CAE9',
-        'line-width': ['interpolate',['linear'],['zoom'], 1, 0.3, 5, 1, 10, 2],
-        'line-opacity': ['interpolate',['linear'],['zoom'], 1, 0.3, 5, 0.45, 10, 0.7],
-      }});
+      // The AIR and INTEL SDK link layers were removed (map bundle
+      // item 7, 2026-10-31): the sdk-links source only ever carries
+      // SEA features (submarine cables), so their domain filters
+      // could never match — dead surfaces. sdk-sea above is the
+      // whole SDK layer now.
 
       // Maritime Ships (moving entities) — ocean teal family
       map.addLayer({ id: 'ship-dots', type: 'circle', source: 'maritime-ships', paint: {
@@ -2534,7 +2502,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','plow-icons',
       'fire-perim-fill','hurricane-current','hurricane-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','traffic-flow','tomtom-flow-lines','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
-      'sdk-sea','sdk-air','sdk-intel','sdk-air-glow','sdk-intel-glow','malware-dots','cyber-heads','gdelt-events-dots',
+      'sdk-sea','malware-dots','cyber-heads','gdelt-events-dots',
       'cf-outage-dots','cf-attack-dots','fl-commercial','fl-private','fl-jets','fl-military','launch-pads','alert-pin-dots','street-level-dots','street-level-hit']);
 
     // Satellites are picked on the GPU: the pick pass runs the same vertex
@@ -3238,18 +3206,17 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       'AIS Maritime': 'https://www.marinetraffic.com',
       'AIS Stream': 'https://aisstream.io',
       'AIS → Lattice': 'https://aisstream.io',
-      'ADS-B / OpenSky': 'https://opensky-network.org',
-      'ADS-B → Lattice': 'https://opensky-network.org',
-      'Naval Intelligence': 'https://www.odni.gov',
     };
-    ['sdk-sea','sdk-sea-glow','sdk-air','sdk-air-glow','sdk-intel','sdk-intel-glow'].forEach(layer => {
+    ['sdk-sea','sdk-sea-glow'].forEach(layer => {
       map.on('click', layer, e => {
         if (!e.features?.length) return;
         const p = e.features[0].properties as any;
         const coords = e.lngLat;
         const srcUrl = p.url || SDK_SOURCE_URLS[p.source] || 'https://worldeye.app';
-        const domainLabel = p.domain === 'SEA' ? '⚓ MARITIME' : p.domain === 'AIR' ? '✈ AIR CORRIDOR' : '🛡 NAVAL INTEL';
-        const domainColor = p.domain === 'SEA' ? '#4FC3F7' : p.domain === 'AIR' ? '#B3E5FC' : '#81D4FA';
+        // sdk-links features are always SEA (submarine cables) — the
+        // AIR/INTEL domains were removed with their layers (item 7).
+        const domainLabel = '⚓ MARITIME';
+        const domainColor = '#4FC3F7';
         const linkStyle = 'text-decoration:none;padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:0.05em;';
         popup([coords.lng, coords.lat], `<div style="${pStyle}border:1px solid ${domainColor}40;">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
@@ -3301,7 +3268,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','plow-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','eq-icons','fires-heat','fires-icons','gdelt-dots','weather-dots','weather-tsunami-icons','weather-storm-icons','weather-tornado-icons','infra-dots','maritime-dots','maritime-icons','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','fire-perim-fill','hurricane-current','hurricane-icons','plow-icons','hurricane-points','hurricane-cone','gauge-dots','alert-dots','gbfs-systems','gbfs-stations','gbfs-vehicles','transit-dots','transit-icons-bus','transit-icons-rail','transit-stops-dots','transit-cluster-circles','sdk-sea','sdk-sea-glow','sdk-sea-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','alert-pin-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -5100,13 +5067,12 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   }, [mapReady, data.radiation, activeLayers.radiation, setGeo]);
 
   // ══ OSIRIS SDK — Lattice Sensor Mesh ══
-  // Uses real submarine cable data for SEA domain, curated routes for AIR/INTEL
+  // Uses real submarine cable data for the SEA domain (the only SDK domain left)
   useEffect(() => {
     if (!mapReady) return;
     setGeo('sdk-entities', []);
 
-    const anySDK = activeLayers.sdk_sea || activeLayers.sdk_air || activeLayers.sdk_naval;
-    if (!anySDK) {
+    if (!activeLayers.sdk_sea) {
       setGeo('sdk-links', []);
       return;
     }
@@ -5139,7 +5105,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     }
 
     setGeo('sdk-links', links);
-  }, [mapReady, activeLayers.sdk_sea, activeLayers.sdk_air, activeLayers.sdk_naval, data.submarine_cables, setGeo]);
+  }, [mapReady, activeLayers.sdk_sea, data.submarine_cables, setGeo]);
 
   useEffect(() => {
     if (!mapReady) return;
@@ -5323,8 +5289,6 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['balloon-dots','balloon-label'], activeLayers.balloons);
     setVis(['rad-glow','rad-dots','rad-label'], activeLayers.radiation);
     setVis(['sdk-sea','sdk-sea-glow','sdk-sea-atmo'], activeLayers.sdk_sea !== false);
-    setVis(['sdk-air','sdk-air-glow','sdk-air-atmo'], activeLayers.sdk_air !== false);
-    setVis(['sdk-intel','sdk-intel-glow','sdk-intel-atmo'], activeLayers.sdk_naval !== false);
     // Sweep layers always visible when data is present (controlled by useEffect)
     setVis(['sweep-connections','sweep-pulse-ring','sweep-device-glow','sweep-device-dots','sweep-device-labels'], true);
   }, [mapReady, activeLayers, setVis, basemapMode]);

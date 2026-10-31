@@ -16,10 +16,10 @@ const layers: Layer[] = [
   { id: 'satellites', type: 'custom' },
   { id: 'sweep-connections', type: 'line' },
   { id: 'news-dots', type: 'circle' },
-  { id: 'sdk-air', type: 'line' },
+  { id: 'sdk-sea', type: 'line' },
   { id: 'buildings', type: 'fill-extrusion' },
 ];
-const groundIds = ['background', 'roads', 'day-night-fill', 'cyber-arcs', 'sweep-connections', 'sdk-air'];
+const groundIds = ['background', 'roads', 'day-night-fill', 'cyber-arcs', 'sweep-connections', 'sdk-sea'];
 const overlayIds = ['places', 'eq-circles', 'satellites', 'news-dots', 'buildings'];
 
 function createMap(initialLayers = layers) {
