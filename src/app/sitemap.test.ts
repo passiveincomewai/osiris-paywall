@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1106);
+    expect(nonTransit.length).toBe(1109);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -223,8 +223,16 @@ describe("sitemap URL set", () => {
     // research hub (/research) then added one back in the same
     // wave — net 1,106 with a different set, so the hash moved
     // twice in one day.
+    // The Daily Blog 2026-10-31 batch (2026-10-31) then added
+    // the three sourced news posts
+    // (wolf-creek-opening-day-halloween-2026,
+    // kilauea-episode-56-window-november-2-9,
+    // falcon-9-700th-launch-starlink-15-18) → 1,109.
+    // Delta hand-verified: removing exactly those 3 URLs
+    // reproduces the 1,106 set and the 78c9b2ad… hash
+    // byte-for-byte (derived by executing sitemap() directly).
     expect(hash).toBe(
-      "78c9b2ad3be9c1a07449774125412095819f6ff5b7c3dd030f9b816284a02eba",
+      "93b4ed509f905f9bb0523bddad6ef9ef71a4bd00fd4a201e83ba1c2cd7bdbf32",
     );
   });
 

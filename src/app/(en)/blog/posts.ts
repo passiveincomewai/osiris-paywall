@@ -41,6 +41,250 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "wolf-creek-opening-day-halloween-2026",
+    title: "Wolf Creek Opens on Halloween: Colorado's Third Resort Drops the Rope With 30% of the Mountain",
+    seoTitle: "Wolf Creek Opens on Halloween | WorldEye Blog",
+    date: "2026-10-31",
+    excerpt:
+      "Wolf Creek Ski Area opened its 2026-27 season on Saturday, October 31, with three lifts, 480 skiable acres and roughly 30% of the mountain in play. The resort's opening-day snow report shows a 16-inch midway depth after 4 fresh inches overnight — and Local Appreciation tickets at $73.",
+    seoDescription:
+      "Wolf Creek opened for 2026-27 on Oct 31: 3 lifts, 480 acres, a 16-inch midway after 4 fresh inches, and $73 Local Appreciation tickets in Colorado.",
+    tags: ["ski", "colorado", "events", "opening day"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Colorado's early-season race has its third finisher. Wolf Creek Ski Area, in the San Juan Mountains of southwestern Colorado, opened for the 2026-27 season on Saturday, October 31 — a Halloween opening built on natural snow, not snowmaking. The resort's opening-day snow report, updated at 7:10 a.m. on October 31 by ski patroller Dan, puts the midway snow depth at 16 inches, with 4 inches falling in the previous 24 hours and 26 inches for the season to date, under overcast skies at 28 degrees.",
+          "Three lifts are turning, giving access to 480 skiable acres — roughly 30 percent of the mountain, an unusually large opening footprint for the last day of October. Wolf Creek follows [Arapahoe Basin and Keystone](/blog/colorado-ski-season-opens-keystone-arapahoe-basin), which opened on October 28 and October 30 respectively, but it is doing so on a storm-fed base rather than a manufactured one.",
+        ],
+      },
+      {
+        heading: "What is open on day one",
+        body: [
+          "The opening plan, announced on October 29 and confirmed in the Halloween snow report, runs the Treasure Stoke, Bonanza and Nova lifts from 9:00 a.m. to 4:00 p.m. Saturday through Tuesday, November 3. The groomed list for opening day runs to eleven named runs — Nova, Upper and Lower Navajo, Tranquility, Summer Day, Upper Treasure, Upper and Lower Powder Puff Valley, Turnpike, Divide, Bunny Hop to Easy Out and Kelly Boyce — with Tranquility named the pick of the hill.",
+          "Off-piste terrain is open too, which is rare this early: Prospector Ridge, Exhibition Ridge (except Bonanza Cliffs), Boundary Bowl and Step Bowl are all in play. The Waterfall Area, Alberta Peak Area, Knife Ridge and Horseshoe Bowl remain closed. The Ski and Snowboard School, rentals and Treasure Sports are open, as are the Main Day Lodge, the Upper Lodge and the Pathfinder Bar.",
+        ],
+      },
+      {
+        heading: "The storm that made it possible",
+        body: [
+          "This opening was earned by one storm. Winter weather on October 23 and 24 dropped 20 inches of natural snowfall on Wolf Creek, leaving a settled midway base that the resort described as high in water content — dense, supportive snow that covers ground far better than the same depth of dry powder. The October 29 report put snowfall year-to-date at 22 inches; the 4 inches that arrived in the 24 hours before opening lifted that to 26 inches and freshened the surface for day one.",
+          "The resort is candid about what that base does and does not cover. Surface conditions are listed as powder and packed powder with springlike, highly variable early-season conditions: skiers and riders should expect rocks, unmarked obstacles and possible open water on any trail, and ski or ride around them. That warning is standard Wolf Creek practice — the emphasis, in its own words, is on skiing with caution and in control because it is very early season.",
+        ],
+      },
+      {
+        heading: "Tickets, and the schedule from here",
+        body: [
+          "Opening runs at Local Appreciation rates: $73 for adults, $55 for seniors and $36 for children. After the opening stretch ends on Tuesday, November 3, the rhythm tightens until more snow arrives — Wolf Creek will be closed Wednesday, November 4 and Thursday, November 5, reopen Friday, November 6 through Sunday, November 8, and then spin lifts Fridays through Sundays until significant snowfall is received.",
+          "Roads to the pass were reported mostly wet, plowed and sanded near the summit on opening morning. Anyone heading up from Pagosa Springs or South Fork, the two nearest towns for lodging, should check the resort's snow report before leaving — at this point in the season, the report changes faster than the forecast.",
+        ],
+      },
+      {
+        heading: "Watch the San Juans fill in",
+        body: [
+          "Wolf Creek's bet is that the San Juans keep delivering: a Halloween opening at 30 percent of terrain is a statement about the storms already banked, not a promise about November. You can follow whether it pays off on WorldEye's [ski webcams](/ski-webcams), which gather live views from resorts across Colorado and beyond, and compare opening setups in our guide to the [best ski webcams](/blog/best-ski-webcams).",
+          "Three Colorado resorts are now open, and the season's first month is a land grab measured in lifts and acres. Wolf Creek just claimed the biggest opening footprint of the three — on natural snow, on Halloween.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When did Wolf Creek open for the 2026-27 season?",
+        a: "On Saturday, October 31, 2026 — Halloween. The Treasure Stoke, Bonanza and Nova lifts operated from 9:00 a.m. to 4:00 p.m., and the opening schedule runs through Tuesday, November 3, before the resort shifts to a Friday-through-Sunday rhythm.",
+      },
+      {
+        q: "How much terrain is open at Wolf Creek on opening day?",
+        a: "About 30 percent of the mountain — 480 skiable acres served by 3 lifts, per the resort's October 31 snow report. Eleven groomed runs are open, plus off-piste terrain on Prospector Ridge, Exhibition Ridge, Boundary Bowl and Step Bowl.",
+      },
+      {
+        q: "What are Wolf Creek's opening-day snow conditions?",
+        a: "The resort's October 31 report (7:10 a.m., patroller Dan) lists a 16-inch midway snow depth, 4 inches in the previous 24 hours and 26 inches year-to-date, with powder/packed powder and springlike, highly variable early-season conditions — expect rocks, unmarked obstacles and possible open water.",
+      },
+      {
+        q: "How much are Wolf Creek lift tickets for opening?",
+        a: "Local Appreciation rates apply at the start of the season: $73 for adults, $55 for seniors and $36 for children, according to the resort's opening announcement and snow report.",
+      },
+      {
+        q: "Is Wolf Creek open every day after Halloween?",
+        a: "Not yet. After opening Saturday, October 31 through Tuesday, November 3, Wolf Creek closes Wednesday, November 4 and Thursday, November 5, reopens Friday, November 6 through Sunday, November 8, and then operates Fridays through Sundays until significant snowfall arrives.",
+      },
+    ],
+    sources: [
+      {
+        name: "Wolf Creek Ski Area — Snow Report, updated Oct 31, 2026 (official)",
+        url: "https://wolfcreekski.com/wcs-snow-report/",
+      },
+      {
+        name: "POWDER — Wolf Creek Ski Area Opens for the 2026/27 Season on Halloween (Oct 30, 2026)",
+        url: "https://www.powder.com/news/colorado-ski-resort-halloween-opening-day",
+      },
+      {
+        name: "SnowBrains — Happy Halloween from Wolf Creek: Colorado Resort Opens October 31 (Oct 30, 2026)",
+        url: "https://snowbrains.com/happy-halloween-from-wolf-creek-2026/",
+      },
+    ],
+  },
+  {
+    slug: "kilauea-episode-56-window-november-2-9",
+    title: "Kilauea's Next Lava Fountains Slip Again: USGS Pushes Episode 56 to November 2–9",
+    seoTitle: "Kilauea Episode 56 Window Moves | WorldEye Blog",
+    date: "2026-10-31",
+    excerpt:
+      "The wait for Kilauea's next lava fountains just got longer. In its October 30 daily update, the USGS Hawaiian Volcano Observatory pushed the forecast window for episode 56 to November 2–9, as slow, steady summit inflation continues and the Halema'uma'u eruption stays paused after episode 55.",
+    seoDescription:
+      "USGS pushed Kilauea episode 56 to Nov 2-9 on Oct 30: the eruption stays paused after episode 55, with slow summit inflation and glow at the vents.",
+    tags: ["volcano", "kilauea", "hawaii", "events"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Episode 56 will not make Halloween. The U.S. Geological Survey's Hawaiian Volcano Observatory (HVO), in its daily update issued at 8:42 a.m. HST on Friday, October 30, states plainly that the Halema'uma'u eruption of Kilauea remains paused following episode 55 on October 17 — and that the forecast for episode 56 fountaining has been pushed to November 2–9, 2026.",
+          "That is the latest in a series of slips. The window stood at October 30 to November 5 in the October 25 update, moved to October 31 to November 6 a day later as summit swelling plateaued, and has now shifted again. Each move tracks the same instrument: the tiltmeters that measure how fast the summit is reinflating as magma refills the reservoir beneath Halema'uma'u crater. The observatory's October 30 analysis says slow, steady inflation continues at the summit, and bases the November 2–9 window on current deformation trends, assuming the chamber follows patterns established during previous episodes.",
+        ],
+      },
+      {
+        heading: "What the summit is doing right now",
+        body: [
+          "Paused does not mean dark. Overnight into the October 30 update, intermittent moderate-to-strong glow was seen from the west vent, with weaker, intermittent glow from the north vent — the signature of hot material sitting close to the surface in a crater that is recharging rather than erupting. Four earthquakes smaller than magnitude 1.5 were recorded in and around Kaluapele, the summit caldera, in the 24 hours covered by the update.",
+          "Kilauea's volcano alert level and aviation color code remain at ADVISORY and YELLOW. HVO continues to monitor the volcano closely and stays in contact with Hawai'i Volcanoes National Park and Hawai'i County Civil Defense about eruptive hazards. This update follows the watch we set out in [Kilauea episode 56: what to watch for](/blog/kilauea-episode-56-watch-live) — the event is the same, but the date has now moved twice, which is itself the news.",
+        ],
+      },
+      {
+        heading: "Why this forecast keeps moving",
+        body: [
+          "The honest caveat is built into the observatory's own analysis. The buildup to episode 55 differed substantially from previous episodes: summit tilt rose beyond levels typically seen before fountaining, punctuated by long stretches of flat or negative tilt, and the episode was preceded by 39 days of intermittent lava overflows — the longest precursory period of the current eruption — during which several short-lived vents opened in Halema'uma'u and a shallow dike was emplaced beneath Kaluapele.",
+          "Because of that unusual run-up, HVO warns that uncertainty remains over whether summit deformation will follow a consistent enough pattern to forecast the next episode precisely. In other words, November 2–9 is the observatory's best model-based window, not a schedule. If inflation stalls again, the window will move again; if it accelerates, HVO will say so in a morning update.",
+        ],
+      },
+      {
+        heading: "The eruption this pause belongs to",
+        body: [
+          "Kilauea has been erupting episodically from vents in Halema'uma'u since December 23, 2024. Fountaining episodes generally last less than 12 hours and are separated by pauses of two weeks or more, and episode 55 fit the shape if not the buildup: it began at 3:19 a.m. HST on October 17 and ended abruptly at 9:03 a.m. the same day, with a maximum fountain height of about 720 feet (220 meters) from the north vent and a plume reaching roughly 25,000 feet above sea level.",
+          "The pause since then reached 13 days on October 30 and will pass two weeks this weekend. When episode 56 does begin, recent history says to expect hours, not days, of fountaining — which is why the forecast window matters to anyone hoping to see it, and why a two-day slip is worth reporting rather than quietly editing.",
+        ],
+      },
+      {
+        heading: "Watch the crater while it recharges",
+        body: [
+          "The glow HVO describes is exactly what the summit cameras show on a clear night. WorldEye's [volcano webcams](/volcano-webcams) collect live views of active craters worldwide, and the dedicated [Kilauea volcano webcam page](/volcano-webcams/kilauea) is the one to keep open from November 2: if fountaining starts, it will be visible there as it happens, day or night.",
+          "Until then, the story is a tiltmeter creeping upward at a pace the observatory calls slow and steady — and a window, November 2–9, that the mountain will either keep or move again.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "When is Kilauea episode 56 now expected?",
+        a: "Between November 2 and November 9, 2026, according to the USGS Hawaiian Volcano Observatory's daily update of October 30, 2026 (8:42 a.m. HST). The forecast is based on current summit deformation trends and assumes magma chamber inflation follows patterns from previous episodes, so it can move again.",
+      },
+      {
+        q: "Has episode 56 started yet?",
+        a: "No. As of the October 30 update, the Halema'uma'u eruption remains paused following episode 55 on October 17, 2026. Overnight glow was visible from the west vent (moderate to strong, intermittent) and the north vent (weaker, intermittent), but no fountaining was underway.",
+      },
+      {
+        q: "Why did the episode 56 forecast change?",
+        a: "The forecast is modelled from summit tilt — the rate at which the ground reinflates as magma refills the chamber. Inflation plateaued earlier in the week, pushing the window from Oct 30–Nov 5 to Oct 31–Nov 6, and the October 30 update, citing slow and steady inflation, moved it to Nov 2–9. HVO also notes the unusual buildup to episode 55 makes this forecast less certain than usual.",
+      },
+      {
+        q: "What is Kilauea's current alert level?",
+        a: "ADVISORY, with aviation color code YELLOW, per the October 30 HVO update. Four earthquakes below magnitude 1.5 were recorded in and around the summit caldera in the 24 hours covered by that update.",
+      },
+      {
+        q: "How can I watch episode 56 when it starts?",
+        a: "Episodes in this eruption typically last less than 12 hours, so timing matters. Keep the Kilauea page among WorldEye's volcano webcams open during the November 2–9 window and check HVO's daily updates each morning — fountaining, when it begins, is visible on the summit cameras as it happens.",
+      },
+    ],
+    sources: [
+      {
+        name: "USGS — Kilauea Volcano Updates: HVO Daily Update, Oct 30, 2026, 8:42 a.m. HST (official)",
+        url: "https://www.usgs.gov/volcanoes/kilauea/volcano-updates",
+      },
+      {
+        name: "Hawaii Watch — Kilauea Episode 56 Forecast November 2–9: Eruption Paused (USGS update tracker, Oct 30, 2026)",
+        url: "https://hawaii-watch.com/volcano",
+      },
+    ],
+  },
+  {
+    slug: "falcon-9-700th-launch-starlink-15-18",
+    title: "Falcon 9 Flies for the 700th Time: Halloween-Eve Starlink Launch Caps October for SpaceX",
+    seoTitle: "Falcon 9 Flies Its 700th Launch | WorldEye Blog",
+    date: "2026-10-31",
+    excerpt:
+      "SpaceX's Starlink 15-18 mission lifted off from Vandenberg at 9:04 p.m. PDT on October 30 — the 700th Falcon 9 launch in the rocket's history. Booster B1093 flew its 18th mission and landed at sea, and 27 Starlink satellites deployed about 62 minutes after liftoff.",
+    seoDescription:
+      "Falcon 9's 700th launch: Starlink 15-18 lifted off Oct 30 at 9:04 p.m. PDT, B1093 landed on its 18th flight, and 27 satellites deployed into low Earth orbit.",
+    tags: ["space", "spacex", "launch", "events"],
+    news: true,
+    sections: [
+      {
+        body: [
+          "Seven hundred. SpaceX capped October with a Halloween-eve launch from California that doubled as a milestone for the most-flown rocket family in history: Starlink 15-18 lifted off from Space Launch Complex 4 East at Vandenberg Space Force Base at 9:04 p.m. PDT on Friday, October 30 — 12:04 a.m. EDT and 0404 UTC on October 31 — and Spaceflight Now confirms it was the 700th launch of a Falcon 9 rocket to date.",
+          "The mission is the completed flight we previewed in [SpaceX targets a Friday night Vandenberg launch](/blog/spacex-starlink-launch-vandenberg-october-30). It carried 27 Starlink V2 Mini Optimized satellites toward low Earth orbit on a southeasterly trajectory, and the upper stage deployed them about 62 minutes after liftoff, according to Space.com's launch report.",
+        ],
+      },
+      {
+        heading: "An 18th flight for B1093, and landing number 675",
+        body: [
+          "The rocket's first stage, booster B1093, was flying for the 18th time, following a career that includes the Transporter-16 rideshare, two missions for the Space Development Agency and 14 batches of Starlink satellites. About 8.5 minutes after liftoff it landed on the droneship Of Course I Still Love You, stationed in the Pacific Ocean.",
+          "That touchdown was the 231st landing on that vessel and the 675th Falcon booster landing overall — numbers that explain why a 700th launch can sound routine. The fleet's flight record still belongs to another booster, B1067, which set the mark at 37 flights this past August.",
+        ],
+      },
+      {
+        heading: "October's final flight, in a year of records",
+        body: [
+          "Spaceflight Now counts the Halloween-eve mission as SpaceX's 11th and final orbital flight of October, and Space.com puts it as the 118th Falcon 9 flight of 2026 so far. The launch also extended the record year for Vandenberg and for California launches that the mission's preview coverage documented — a West Coast cadence that has made SLC-4E one of the busiest pads on Earth.",
+          "Yet the milestone arrives with the programme's centre of gravity shifting. Spaceflight Now reports that SpaceX is starting to wind down the Falcon programme as it turns its focus to Starship: the Starlink 15-16 launch on October 27 was the first time since July 2025 that the company's rolling 365-day launch total dropped below 150, down from a peak of 171 in December 2025, and SpaceX ceased flying Falcon 9 Starlink missions from Florida in August.",
+        ],
+      },
+      {
+        heading: "What flies next",
+        body: [
+          "The next headline is already on the calendar. SpaceX's next Starship flight, Flight 15 from Starbase, Texas, is anticipated in mid-November, and Spaceflight Now reports the company plans to attempt a catch of the Starship upper stage during it — a first, if it comes off, for the vehicle SpaceX intends to succeed Falcon.",
+          "Falcon 9 is not done — government and commercial missions remain on its manifest — but flight 700 lands differently knowing the successor is being readied in Texas. Milestones in this programme now measure two things at once: how far the workhorse has come, and how long it has left at the top of the manifest.",
+        ],
+      },
+      {
+        heading: "Track what the launch just added to orbit",
+        body: [
+          "The 27 satellites deployed on this flight join the largest constellation ever assembled, and every Starlink batch changes what crosses your sky in the weeks that follow. WorldEye's [satellite tracker](/satellite-tracker) follows objects in orbit live, and the [space station tracker](/space-station-tracker) keeps the ISS — still the brightest regular passer — separate from the trains of new arrivals.",
+          "Watch for the freshest Starlink train on a clear evening this week: a line of evenly spaced lights, rising together, is very likely flight 700's payload, settling into its working orbit.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What was the 700th Falcon 9 launch?",
+        a: "Starlink 15-18, which lifted off from Space Launch Complex 4 East at Vandenberg Space Force Base at 9:04 p.m. PDT on October 30, 2026 (12:04 a.m. EDT / 0404 UTC on October 31), carrying 27 Starlink V2 Mini Optimized satellites to low Earth orbit. Spaceflight Now identifies it as the 700th Falcon 9 launch to date.",
+      },
+      {
+        q: "Did the booster land successfully?",
+        a: "Yes. Booster B1093, flying its 18th mission, landed on the droneship Of Course I Still Love You in the Pacific about 8.5 minutes after liftoff. It was the 231st landing on that vessel and the 675th Falcon booster landing overall.",
+      },
+      {
+        q: "When did the Starlink satellites deploy?",
+        a: "About 62 minutes after liftoff, according to Space.com's report of the launch. The 27 satellites are V2 Mini Optimized spacecraft joining the Starlink constellation in low Earth orbit.",
+      },
+      {
+        q: "How many Falcon 9 launches have there been in 2026?",
+        a: "This was the 118th Falcon 9 flight of 2026, according to Space.com, and SpaceX's 11th and final orbital flight of October, according to Spaceflight Now.",
+      },
+      {
+        q: "What is SpaceX launching next?",
+        a: "The next major milestone on SpaceX's calendar is Starship Flight 15 from Starbase, Texas, anticipated in mid-November, during which Spaceflight Now reports the company plans to attempt a catch of the Starship upper stage. Falcon 9 missions continue in the meantime.",
+      },
+    ],
+    sources: [
+      {
+        name: "Spaceflight Now — SpaceX closes out October with Halloween eve Falcon 9 launch, 700th Falcon 9 launch to date (Oct 30–31, 2026)",
+        url: "https://spaceflightnow.com/2026/10/30/live-coverage-spacex-to-close-out-october-with-halloween-eve-falcon-9-launch/",
+      },
+      {
+        name: "Space.com via Europe Says — Happy Halloween! SpaceX launches 27 Starlink satellites to orbit from California (Oct 31, 2026)",
+        url: "https://www.europesays.com/3343317/",
+      },
+    ],
+  },
+  {
     slug: "iss-spacewalk-100-seventh-solar-array",
     title: "Astronauts Complete the ISS's 100th U.S. Spacewalk, Installing a Seventh New Solar Array",
     seoTitle: "ISS Spacewalk 100 Installs 7th Array | WorldEye Blog",
