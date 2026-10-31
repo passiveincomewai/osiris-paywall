@@ -45,20 +45,20 @@ export const countryContentC: Record<string, CountryContent> = {
   },
   turkey: {
     intro: [
-      "With 247 live cameras, Turkey is one of the best-covered countries on WorldEye - and more than half of them, 143, sit in Istanbul, watching over the Bosphorus bridges, the boulevards, and the old city's rooftops.",
-      "Beyond Istanbul the network stretches across a dozen areas: Bursa and Balıkesir in the west, Kahramanmaraş in the southeast, and Aegean and Mediterranean coastal feeds at Kaş and Ayvalık.",
+      "With 235 live cameras, Turkey is one of the best-covered countries on WorldEye - and more than half of them, 143, sit in Istanbul, watching over the Bosphorus bridges, the boulevards, and the old city's rooftops.",
+      "Beyond Istanbul the network stretches across 51 areas: Balıkesir in the west, Kahramanmaraş in the southeast, and Aegean and Mediterranean coastal feeds at Kaş and Ayvalık.",
       "City traffic and street life dominate the views, while the coastal cameras double as weather windows - useful before a holiday along the Turkish coast.",
     ],
     blurb:
-      "Watch 247 live cameras across Turkey on WorldEye - Istanbul's streets and Bosphorus bridges, plus Aegean and Mediterranean coastal towns, free.",
+      "Watch 235 live cameras across Turkey on WorldEye - Istanbul's streets and Bosphorus bridges, plus Aegean and Mediterranean coastal towns, free.",
     faqs: [
       {
         q: "How many live cameras are there in Turkey?",
-        a: "WorldEye carries 247 live cameras across Turkey, covering 12 areas - the second-largest country collection in this set after New Zealand.",
+        a: "WorldEye carries 235 live cameras across Turkey, covering 51 areas.",
       },
       {
         q: "Which Turkish cities have the most cameras?",
-        a: "Istanbul dominates with 143 cameras. Arnavutköy (16) and Selçuklu (7) are next, with smaller clusters in Bursa, Kahramanmaraş, and Balıkesir.",
+        a: "Istanbul dominates with 143 cameras. Arnavutköy (12) and Selçuklu (10) are next, with smaller clusters in Kahramanmaraş (5) and Balıkesir (4).",
       },
       {
         q: "Can I watch Istanbul traffic and the Bosphorus live?",

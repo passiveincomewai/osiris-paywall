@@ -194,22 +194,22 @@ export const countryContentD: Record<string, CountryContent> = {
   },
   japan: {
     intro: [
-      "Japan's 928 cameras reach from city streets to mountain rivers. Tokyo has 73, Osaka 28, Sapporo 15, Kyoto 13, and Yokohama 9 - but the network keeps going past the metros.",
+      "Japan's 10,472 cameras reach from city streets to mountain rivers. Osaka has 194, Sapporo 184, and Tokyo 112 - but the network keeps going past the metros.",
       "National highway feeds, labeled with the characters for national route, watch roads like Route 20 and Route 6, while others sit on rivers and bridges - the Ogouchi River, the Mukunashi River, mountain passes in between.",
       "Part traffic tool, part quiet scenery: check a highway or just watch the water move. Free on WorldEye, day and night.",
-      "Beyond the metros, the network follows the national routes — feeds labeled for Route 20, Route 6, and others watch the highways between cities. They are the practical half of the collection: check your highway before a drive, especially around Tokyo's 73 feeds where congestion builds fast.",
-      "The other half is quieter: river cameras on the Ogouchi and Mukunashi, bridge views, and mountain passes. They double as weather checks — rain upstream, snow on the passes — and as simply pleasant things to watch. All 928 stream free, day and night.",
+      "Beyond the metros, the network follows the national routes — feeds labeled for Route 20, Route 6, and others watch the highways between cities. They are the practical half of the collection: check your highway before a drive, especially around Tokyo's 112 feeds where congestion builds fast.",
+      "The other half is quieter: river cameras on the Ogouchi and Mukunashi, bridge views, and mountain passes. They double as weather checks — rain upstream, snow on the passes — and as simply pleasant things to watch. All 10,472 stream free, day and night.",
     ],
     blurb:
-      "Explore 928 live cameras across Japan on WorldEye - Tokyo and Osaka streets, national highways, rivers and mountain views, streaming free day and night.",
+      "Explore 10,472 live cameras across Japan on WorldEye - Tokyo and Osaka streets, national highways, rivers and mountain views, streaming free day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Japan?",
-        a: "WorldEye lists 928 live cameras across 6 areas in Japan, from Tokyo and Osaka to Sapporo and Fukushima City.",
+        a: "WorldEye lists 10,472 live cameras across 958 areas in Japan, from Tokyo and Osaka to Sapporo and Fukushima City.",
       },
       {
         q: "Which Japanese cities have the most cameras?",
-        a: "Tokyo has the most with 73 feeds, followed by Osaka (28), Sapporo (15), Kyoto (13), and Yokohama (9).",
+        a: "Osaka has the most with 194 feeds, followed by Sapporo (184) and Tokyo (112).",
       },
       {
         q: "Are Japanese cameras only in the big cities?",
@@ -217,7 +217,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Can I check Tokyo traffic live?",
-        a: "Yes — Tokyo's 73 feeds cover city streets and highways, the densest urban cluster in Japan's network.",
+        a: "Yes — Tokyo's 112 feeds cover city streets and highways across the capital.",
       },
       {
         q: "What are the river cameras for?",
@@ -225,7 +225,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Is there coverage in northern Japan?",
-        a: "Yes — Sapporo has 15 feeds and Fukushima City is covered too, alongside the southern metros of Osaka, Kyoto, and Yokohama.",
+        a: "Yes — Sapporo has 184 feeds and Fukushima City is covered too, alongside the metros of Osaka, Kyoto, and Yokohama.",
       },
     ],
   },
@@ -453,22 +453,22 @@ export const countryContentD: Record<string, CountryContent> = {
   },
   turkey: {
     intro: [
-      "Turkey's 247 cameras lean heavily on Istanbul, which holds 143 feeds. Arnavutkoy adds 16, and the Konya area - Selcuklu, Meram, and surrounding districts - contributes a second cluster.",
+      "Turkey's 235 cameras lean heavily on Istanbul, which holds 143 feeds. Arnavutkoy adds 12, and the Konya area - Selcuklu, Meram, and surrounding districts - contributes a second cluster.",
       "The Konya feeds are neighborhood-level: Zafer Meydani square, the Konya Science Center, Fevzipasa street, the Buyuksehir Arena - a street-by-street look at the city.",
       "From Istanbul's avenues to Konya's districts, it is a live cross-section of Turkish city life, free on WorldEye.",
-      "Istanbul's 143 feeds are the main event — avenues and busy streets across the megacity. Arnavutkoy's 16 add the northwestern districts, and the area list runs through Kahramanmaras and Balikesir too, so coverage is not only the two big clusters.",
+      "Istanbul's 143 feeds are the main event — avenues and busy streets across the megacity. Arnavutkoy's 12 add the northwestern districts, and the area list runs through Kahramanmaras and Balikesir too, so coverage is not only the two big clusters.",
       "The Konya feeds reward zooming in: Zafer Meydani square, the Konya Science Center, Fevzipasa street, the Buyuksehir Arena — neighborhood by neighborhood, Selcuklu and Meram district by district. It is street-level Turkey, live and free.",
     ],
     blurb:
-      "Watch 247 live cameras across Turkey on WorldEye - Istanbul streets and Konya district feeds, from city squares to busy avenues, streaming free.",
+      "Watch 235 live cameras across Turkey on WorldEye - Istanbul streets and Konya district feeds, from city squares to busy avenues, streaming free.",
     faqs: [
       {
         q: "How many live cameras are there in Turkey?",
-        a: "WorldEye streams 247 live cameras in Turkey, with the heaviest coverage in Istanbul and a second cluster around Konya.",
+        a: "WorldEye streams 235 live cameras in Turkey, with the heaviest coverage in Istanbul and a second cluster around Konya.",
       },
       {
         q: "Which Turkish areas have the most cameras?",
-        a: "Istanbul leads with 143 cameras, followed by Arnavutkoy (16), Selcuklu (7), Kahramanmaras (6), Balikesir (5), and Meram (5).",
+        a: "Istanbul leads with 143 cameras, followed by Arnavutkoy (12), Selcuklu (10), Kahramanmaras (5), Balikesir (4), and Meram (3).",
       },
       {
         q: "What do Turkey's cameras show?",
@@ -484,7 +484,7 @@ export const countryContentD: Record<string, CountryContent> = {
       },
       {
         q: "Is there coverage outside Istanbul and Konya?",
-        a: "Yes — Arnavutkoy (16), Kahramanmaras (6), and Balikesir (5) add further areas to the 247-feed network.",
+        a: "Yes — Arnavutkoy (12), Kahramanmaras (5), and Balikesir (4) add further areas to the 235-feed network.",
       },
     ],
   },

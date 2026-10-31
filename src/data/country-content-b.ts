@@ -197,20 +197,20 @@ export const countryContentB: Record<string, CountryContent> = {
   },
   japan: {
     intro: [
-      "Japan's 928 cameras span 12 areas, led by Tokyo with 73 feeds, Osaka with 28, and Sapporo with 15. Kyoto, Yokohama, and Hiroshima add to the mix.",
+      "Japan's 10,472 cameras span 958 areas, led by Osaka with 194 feeds and Sapporo with 184. Tokyo adds 112, and Kyoto, Yokohama, and Hiroshima add to the mix.",
       "Beyond the cities, the network reaches rivers, national highways, and mountain roads - Route 20 through the hills, the Shimanto River mouth, bridges over the Mukunashi River.",
       "It's part traffic tool, part travel preview: check conditions on a highway or simply watch a quiet river scene. All free to stream on WorldEye.",
     ],
     blurb:
-      "Explore 928 live cameras across Japan on WorldEye - Tokyo and Osaka streets plus rivers, highways, and mountain views, all streaming free, day and night.",
+      "Explore 10,472 live cameras across Japan on WorldEye - Tokyo and Osaka streets plus rivers, highways, and mountain views, all streaming free, day and night.",
     faqs: [
       {
         q: "How many live cameras are there in Japan?",
-        a: "WorldEye lists 928 live cameras across 12 areas in Japan, from Tokyo and Osaka to Sapporo and Hiroshima.",
+        a: "WorldEye lists 10,472 live cameras across 958 areas in Japan, from Tokyo and Osaka to Sapporo and Hiroshima.",
       },
       {
         q: "Which Japanese cities have the most cameras?",
-        a: "Tokyo has the most with 73 feeds, followed by Osaka (28), Sapporo (15), and Kyoto (13).",
+        a: "Osaka has the most with 194 feeds, followed by Sapporo (184) and Tokyo (112).",
       },
       {
         q: "Are Japanese cameras only in Tokyo?",

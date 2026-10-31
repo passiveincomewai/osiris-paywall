@@ -10,7 +10,8 @@ import {
   recordsForDef,
   resolveExploreDef,
 } from "@/lib/explore-data";
-import { buildCityRoster, rosterIsComplete } from "@/lib/city-roster";
+import { buildCityRoster, cityRecords, rosterIsComplete } from "@/lib/city-roster";
+import { loadCountryRecords } from "@/lib/country-page-content";
 import { clean } from "@/lib/country-cameras";
 import {
   bboxRadiusM,
@@ -1274,12 +1275,60 @@ async function neighbourRelatedLinks(
 
 type ResolvedCity = {
   cfg: CityCfg;
+  /* The generated record the cfg was built from (generated tier only),
+     so the page's data-bound sections quote the same record as the
+     copy — see servedGenCity below. */
+  genCity?: GenCity;
   updatedIso: string;
   related: { label: string; href: string }[];
   backHref: string;
 };
 
-function resolveCity(slug: string): ResolvedCity | null {
+/* Site-audit R8: Istanbul's generated record in city-pages.json was
+   built from an older assembled-catalogue snapshot — it quotes 236
+   Istanbul cameras and a 382-camera Turkey, while the per-country
+   chunk this page's explorer and roster actually serve holds 143
+   Istanbul cameras in a 235-camera Turkey (the same figures the
+   Turkey country page's own data sections render). For this one city
+   the generated record is rebuilt from the served chunk records, so
+   the copy, stats, FAQs and schema quote the roster's own numbers.
+   Every other generated city keeps its city-pages.json record
+   untouched. */
+const SERVED_RECORD_CITIES = new Set(["istanbul"]);
+
+async function servedGenCity(g: GenCity): Promise<GenCity> {
+  const records = await loadCountryRecords(g.countrySlug).catch(
+    () => [] as Awaited<ReturnType<typeof loadCountryRecords>>,
+  );
+  const city = cityRecords(records, g.name);
+  if (city.length === 0) return g;
+  const sourceCounts = new Map<string, number>();
+  let streams = 0;
+  for (const r of city) {
+    const s = (r.source ?? "").trim();
+    if (s) sourceCounts.set(s, (sourceCounts.get(s) ?? 0) + 1);
+    if (r.stream_url || r.stream_type) streams += 1;
+  }
+  const sources = [...sourceCounts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+  return {
+    ...g,
+    count: city.length,
+    countryTotal: records.length,
+    sources,
+    sourceCount: sources.length,
+    streams,
+    /* The city-pages builder's own convention counted every
+       non-stream record in the stills column (here the one
+       SkylineWebcams record, an external live-webcam page); keep it
+       so the template's stream/still split adds up to the count. */
+    stills: city.length - streams,
+    samples: city.slice(0, 12).map((r) => ({ id: r.id, name: r.name })),
+  };
+}
+
+async function resolveCity(slug: string): Promise<ResolvedCity | null> {
   const curated = CITIES[slug];
   if (curated) {
     return {
@@ -1289,10 +1338,12 @@ function resolveCity(slug: string): ResolvedCity | null {
       backHref: `/cameras/countries/${curated.countrySlug}`,
     };
   }
-  const g = GEN_BY_SLUG.get(slug);
-  if (!g) return null;
+  const raw = GEN_BY_SLUG.get(slug);
+  if (!raw) return null;
+  const g = SERVED_RECORD_CITIES.has(slug) ? await servedGenCity(raw) : raw;
   return {
     cfg: generatedCfg(g),
+    genCity: g,
     updatedIso: cityPages.generatedAt,
     related: generatedRelated(g),
     backHref: COUNTRY_PAGE_SLUGS.has(g.countrySlug)
@@ -1341,7 +1392,7 @@ export async function generateMetadata({
   params: Promise<{ city: string }>;
 }): Promise<Metadata> {
   const { city: slug } = await params;
-  const resolved = resolveCity(slug);
+  const resolved = await resolveCity(slug);
   if (!resolved) return { title: "Not found" };
   const c = resolved.cfg;
   const url = `/city-webcams/${slug}`;
@@ -1366,7 +1417,7 @@ export default async function CityWebcamPage({
   params: Promise<{ city: string }>;
 }) {
   const { city: slug } = await params;
-  const resolved = resolveCity(slug);
+  const resolved = await resolveCity(slug);
   if (!resolved) notFound();
 
   const c = resolved.cfg;
@@ -1374,7 +1425,7 @@ export default async function CityWebcamPage({
      (src/lib/place-answers.ts, ROLLOUT-SPEC §3 merge). Curated cities keep
      their bespoke FAQ sets only — their numbers live in hand configs,
      not in the generated record (§2.2 one source per surface). */
-  const genCity = CITIES[slug] ? undefined : GEN_BY_SLUG.get(slug);
+  const genCity = resolved.genCity;
   const canonical = `${BASE}/city-webcams/${slug}`;
   const updated = formatDate(resolved.updatedIso);
 
