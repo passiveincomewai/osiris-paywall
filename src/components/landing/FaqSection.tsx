@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import SectionHeader from "./SectionHeader";
 import Reveal from "./Reveal";
+import MicroLabel from "../design/MicroLabel";
 import { enHome, type HomeCopy } from "@/i18n/dictionaries/en/home";
 
 /**
@@ -13,6 +13,13 @@ import { enHome, type HomeCopy } from "@/i18n/dictionaries/en/home";
  * keyboard accessible), visible only when expanded. The contact line
  * preserves the old contact card's three paths (mailto, /contact,
  * /about).
+ *
+ * Visual transformation (W4, FAQ consolidation): the section now sits
+ * on the design system — token container, MicroLabel header, token
+ * hairlines and text — replacing the SectionHeader gold eyebrow and
+ * the #0096FF SEO-blue dialect. Copy, links and the accordion are
+ * unchanged. (SectionHeader itself is untouched: PlansSection still
+ * uses it, and the pricing surface is locked.)
  */
 export default function FaqSection({
   copy = enHome,
@@ -20,22 +27,69 @@ export default function FaqSection({
   copy?: HomeCopy;
 } = {}) {
   const faq = copy.faq;
+  const linkStyle = {
+    color: "var(--we-blue-strong)",
+    textDecorationColor: "var(--we-line-3)",
+  } as const;
   return (
     <section aria-label={faq.ariaLabel} data-landing-view="faq" className="relative">
-      <div className="max-w-5xl mx-auto px-6 py-16 md:py-20">
-        <SectionHeader eyebrow={faq.eyebrow} title={faq.title} />
+      <div
+        className="mx-auto w-full"
+        style={{
+          maxWidth: "var(--we-wide)",
+          paddingLeft: "var(--we-gutter)",
+          paddingRight: "var(--we-gutter)",
+          paddingTop: "var(--we-section-y)",
+          paddingBottom: "var(--we-section-y)",
+        }}
+      >
+        <Reveal>
+          <MicroLabel>{faq.eyebrow}</MicroLabel>
+          <h2
+            className="font-[family-name:var(--we-font-display)]"
+            style={{
+              color: "var(--we-text-1)",
+              fontSize: "var(--we-size-display-2)",
+              lineHeight: "var(--we-leading-display)",
+              fontWeight: 560,
+              marginTop: "var(--we-space-4)",
+            }}
+          >
+            {faq.title}
+          </h2>
+        </Reveal>
         <Reveal delay={0.1}>
-          <div className="mt-8 max-w-3xl border-t border-white/10">
+          <div
+            className="mt-8 max-w-3xl"
+            style={{ borderTop: "1px solid var(--we-line-2)" }}
+          >
             {faq.items.map((f, i) => (
-              <details key={f.q} className="group border-b border-white/10" open={i === 0}>
+              <details
+                key={f.q}
+                className="group"
+                style={{ borderBottom: "1px solid var(--we-line-2)" }}
+                open={i === 0}
+              >
                 <summary className="flex cursor-pointer items-center justify-between gap-4 py-4 list-none [&::-webkit-details-marker]:hidden">
-                  <h3 className="font-display text-lg font-medium text-white">{f.q}</h3>
+                  <h3
+                    className="font-[family-name:var(--we-font-display)] text-lg font-medium"
+                    style={{ color: "var(--we-text-1)" }}
+                  >
+                    {f.q}
+                  </h3>
                   <Plus
-                    className="w-5 h-5 shrink-0 text-[#0096FF] transition-transform duration-300 group-open:rotate-45"
+                    className="w-5 h-5 shrink-0 transition-transform duration-300 group-open:rotate-45"
+                    style={{ color: "var(--we-blue-strong)" }}
                     aria-hidden
                   />
                 </summary>
-                <p className="pb-5 text-sm md:text-base text-white/55 leading-relaxed">
+                <p
+                  className="pb-5 text-sm md:text-base"
+                  style={{
+                    color: "var(--we-text-2)",
+                    lineHeight: "var(--we-leading-body)",
+                  }}
+                >
                   {f.a}
                 </p>
               </details>
@@ -43,20 +97,24 @@ export default function FaqSection({
           </div>
         </Reveal>
         <Reveal delay={0.15}>
-          <p className="mt-12 text-sm md:text-base text-white/55">
+          <p
+            className="mt-12 text-sm md:text-base"
+            style={{ color: "var(--we-text-2)" }}
+          >
             {faq.contactBefore}{" "}
             <a
               href="mailto:passiveincomewai@gmail.com"
-              className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]"
+              className="underline underline-offset-2"
+              style={linkStyle}
             >
               {faq.contactEmailLink}
             </a>
             {faq.contactMiddle1}{" "}
-            <Link href="/contact" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
+            <Link href="/contact" className="underline underline-offset-2" style={linkStyle}>
               {faq.contactPageLink}
             </Link>
             {faq.contactMiddle2}{" "}
-            <Link href="/about" className="text-[#0096FF] underline decoration-[#0096FF]/40 underline-offset-2 hover:decoration-[#0096FF]">
+            <Link href="/about" className="underline underline-offset-2" style={linkStyle}>
               {faq.contactAboutLink}
             </Link>
             {faq.contactAfter}

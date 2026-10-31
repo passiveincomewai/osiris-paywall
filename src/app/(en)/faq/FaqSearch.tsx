@@ -106,18 +106,19 @@ export default function FaqSearch({
       {/* Search */}
       <div className="max-w-xl mx-auto">
         <label className="relative block">
-          <Search className="w-5 h-5 text-[#D4AF37] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--we-blue-strong)" }} />
           <input
             type="search"
             value={query}
             onChange={(e) => onSearch(e.target.value)}
             placeholder={search.placeholder}
             aria-label={search.ariaLabel}
-            className="w-full rounded-2xl border border-white/15 bg-white/[0.03] pl-12 pr-4 py-3.5 text-base text-white placeholder:text-white/35 focus:outline-none focus:border-[#D4AF37]/60"
+            className="w-full border pl-12 pr-4 py-3.5 text-base placeholder:text-white/35 focus:outline-none border-[var(--we-line-3)] bg-[var(--we-ink-2)] text-[var(--we-text-1)] focus:border-[var(--we-blue-strong)]"
+            style={{ borderRadius: "var(--we-radius-2)" }}
           />
         </label>
         {matchCount !== null && !noResults && (
-          <p className="text-center text-sm text-white/45 mt-3" role="status">
+          <p className="text-center text-sm mt-3 text-[var(--we-text-2)]" role="status">
             {search.resultsTemplate.replace("{n}", String(matchCount))}
           </p>
         )}
@@ -125,21 +126,23 @@ export default function FaqSearch({
 
       {/* Empty state — routes to the help center / a human */}
       {noResults && (
-        <div className="max-w-xl mx-auto mt-8 text-center rounded-3xl border border-white/10 bg-white/[0.02] p-8">
+        <div className="max-w-xl mx-auto mt-8 text-center border p-8 border-[var(--we-line-2)] bg-[var(--we-ink-2)]" style={{ borderRadius: "var(--we-radius-3)" }}>
           <h2 className="text-lg font-bold">{search.noResultsHeading}</h2>
-          <p className="text-white/55 mt-2 text-sm leading-relaxed">
+          <p className="mt-2 text-sm leading-relaxed text-[var(--we-text-2)]">
             {search.noResultsBody}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
             <Link
               href={contactHref}
-              className="px-5 py-2.5 rounded-2xl bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
+              className="px-5 py-2.5 text-sm font-bold hover:brightness-110 transition bg-[var(--we-blue)] text-[var(--we-text-on-accent)]"
+              style={{ borderRadius: "var(--we-radius-2)" }}
             >
               {search.helpCenterLink}
             </Link>
             <Link
               href={tutorialsHref}
-              className="px-5 py-2.5 rounded-2xl border border-white/15 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition"
+              className="px-5 py-2.5 border text-sm font-semibold transition border-[var(--we-line-3)] text-[var(--we-text-1)] hover:border-[var(--we-blue-strong)]"
+              style={{ borderRadius: "var(--we-radius-2)" }}
             >
               {helpCenter.tutorialsLabel}
             </Link>
@@ -149,8 +152,11 @@ export default function FaqSearch({
 
       {/* Top recommended questions */}
       <div className="mt-12">
-        <h2 className="text-xl md:text-2xl font-bold text-center mb-6">
-          <span className="text-[#D4AF37]">{recommended.heading}</span>
+        <h2
+          className="font-[family-name:var(--we-font-display)] text-center mb-6"
+          style={{ color: "var(--we-text-1)", fontSize: "var(--we-size-title)", lineHeight: "var(--we-leading-display)", fontWeight: 560 }}
+        >
+          {recommended.heading}
         </h2>
         <div className="grid sm:grid-cols-2 gap-3 max-w-3xl mx-auto">
           {recommended.questions.map((q) => (
@@ -158,10 +164,11 @@ export default function FaqSearch({
               key={q}
               type="button"
               onClick={() => openQuestion(q)}
-              className="flex items-center justify-between gap-3 text-left border border-white/10 rounded-2xl bg-white/[0.02] px-5 py-4 hover:border-[#D4AF37]/40 hover:bg-white/[0.04] transition"
+              className="flex items-center justify-between gap-3 text-left border px-5 py-4 transition border-[var(--we-line-2)] bg-[var(--we-ink-2)] hover:border-[var(--we-line-3)]"
+              style={{ borderRadius: "var(--we-radius-2)" }}
             >
-              <span className="font-medium text-white/90 text-sm">{q}</span>
-              <ArrowRight className="w-4 h-4 text-[#D4AF37] shrink-0" />
+              <span className="font-medium text-sm text-[var(--we-text-1)]">{q}</span>
+              <ArrowRight className="w-4 h-4 shrink-0" style={{ color: "var(--we-blue-strong)" }} />
             </button>
           ))}
         </div>
@@ -169,7 +176,8 @@ export default function FaqSearch({
           <button
             type="button"
             onClick={viewAllQuestions}
-            className="px-6 py-3 rounded-2xl bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
+            className="px-6 py-3 text-sm font-bold hover:brightness-110 transition bg-[var(--we-blue)] text-[var(--we-text-on-accent)]"
+            style={{ borderRadius: "var(--we-radius-2)" }}
           >
             {viewAll.button}
           </button>

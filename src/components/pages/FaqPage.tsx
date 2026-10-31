@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import FaqAccordion from "@/app/(en)/faq/FaqClient";
+import Button from "@/components/design/Button";
 import FaqSearch from "@/app/(en)/faq/FaqSearch";
 import RichText from "./RichText";
 import { localizedPath, type LocaleCode } from "@/i18n/config";
@@ -50,7 +51,14 @@ export default function FaqPage({
     title: g.title,
     faqs: g.faqs.map((f) => ({
       q: f.q,
-      a: <RichText segments={f.a} locale={locale} />,
+      a: (
+        <RichText
+          segments={f.a}
+          locale={locale}
+          linkClassName="text-[var(--we-blue-strong)] hover:underline"
+          accentClassName="text-[var(--we-blue-strong)]"
+        />
+      ),
     })),
   }));
 
@@ -64,18 +72,15 @@ export default function FaqPage({
     : "/tutorials";
 
   return (
-    <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+    <main
+      className="docs-root min-h-screen relative overflow-x-clip"
+      style={{ background: "var(--we-ink-0)", color: "var(--we-text-1)" }}
+    >
       <JsonLd data={jsonLd} />
-      {/* Ambient glow */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-15 blur-[120px] bg-[#D4AF37]" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[300px] rounded-full opacity-10 blur-[100px] bg-[#00E5FF]" />
-      </div>
-
       <div className="relative max-w-3xl mx-auto px-6 py-10 md:py-16">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-12">
-          <Link href={localizedPath("", locale)} className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
+          <Link href={localizedPath("", locale)} className="flex items-center gap-2 text-sm transition text-[var(--we-text-2)] hover:text-[var(--we-text-1)]">
             <ArrowLeft className="w-4 h-4" /> {copy.topBar.backToMap}
           </Link>
           <div className="flex items-center gap-3">
@@ -86,13 +91,32 @@ export default function FaqPage({
 
         {/* Hero */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
+          <p
+            className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 font-[family-name:var(--we-font-mono)] uppercase"
+            style={{
+              fontSize: "var(--we-size-micro)",
+              letterSpacing: "var(--we-tracking-micro)",
+              color: "var(--we-text-1)",
+              border: "1px solid var(--we-line-3)",
+              borderRadius: "var(--we-radius-full)",
+              background: "var(--we-ink-2)",
+            }}
+          >
             <MessageCircleQuestion className="w-3.5 h-3.5" /> {copy.hero.badge}
           </p>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-            {copy.hero.h1Before}<span className="text-[#D4AF37]">{copy.hero.h1Accent}</span>
+          <h1
+            className="font-[family-name:var(--we-font-display)]"
+            style={{
+              color: "var(--we-text-1)",
+              fontSize: "var(--we-size-display-1)",
+              lineHeight: "var(--we-leading-display)",
+              fontWeight: 560,
+            }}
+          >
+            {copy.hero.h1Before}
+            <span style={{ color: "var(--we-blue-strong)" }}>{copy.hero.h1Accent}</span>
           </h1>
-          <p className="text-white/55 mt-4 text-base md:text-lg leading-relaxed">
+          <p className="mt-4 text-base md:text-lg leading-relaxed text-[var(--we-text-2)]">
             {copy.hero.sub}
           </p>
         </div>
@@ -107,47 +131,37 @@ export default function FaqPage({
         />
 
         <div id="faq-all" className="scroll-mt-24">
-          <h2 className="text-xl md:text-2xl font-bold mb-8">
-            <span className="text-[#D4AF37]">{copy.viewAll.heading}</span>
+          <h2
+            className="font-[family-name:var(--we-font-display)] mb-8"
+            style={{ color: "var(--we-text-1)", fontSize: "var(--we-size-title)", lineHeight: "var(--we-leading-display)", fontWeight: 560 }}
+          >
+            {copy.viewAll.heading}
           </h2>
           <FaqAccordion groups={groups} />
         </div>
 
         {/* Help center band */}
-        <div className="mt-16 text-center rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.07] to-transparent p-10">
-          <h2 className="text-xl md:text-2xl font-bold">{copy.helpCenter.heading}</h2>
-          <p className="text-white/55 mt-2 mb-6 text-sm leading-relaxed max-w-xl mx-auto">
+        <div className="mt-16 text-center p-10" style={{ background: "var(--we-ink-2)", border: "1px solid var(--we-line-2)", borderRadius: "var(--we-radius-3)" }}>
+          <h2 className="font-[family-name:var(--we-font-display)]" style={{ color: "var(--we-text-1)", fontSize: "var(--we-size-title)", lineHeight: "var(--we-leading-display)", fontWeight: 560 }}>{copy.helpCenter.heading}</h2>
+          <p className="mt-2 mb-6 text-sm leading-relaxed max-w-xl mx-auto text-[var(--we-text-2)]">
             {copy.helpCenter.body}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href={contactHref}
-              className="px-6 py-3 rounded-2xl bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
-            >
-              {copy.helpCenter.button}
-            </Link>
-            <Link
-              href={tutorialsHref}
-              className="px-6 py-3 rounded-2xl border border-white/15 text-sm font-semibold text-white/80 hover:border-[#D4AF37]/50 hover:text-white transition"
-            >
+            <Button href={contactHref}>{copy.helpCenter.button}</Button>
+            <Button variant="ghost" href={tutorialsHref}>
               {copy.helpCenter.tutorialsLabel}
-            </Link>
+            </Button>
           </div>
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-16 text-center rounded-3xl border border-white/10 bg-white/[0.02] p-10">
-          <h2 className="text-xl md:text-2xl font-bold">{copy.contactCta.heading}</h2>
-          <p className="text-white/55 mt-2 mb-6 text-sm">
+        <div className="mt-16 text-center p-10" style={{ background: "var(--we-ink-2)", border: "1px solid var(--we-line-2)", borderRadius: "var(--we-radius-3)" }}>
+          <h2 className="font-[family-name:var(--we-font-display)]" style={{ color: "var(--we-text-1)", fontSize: "var(--we-size-title)", lineHeight: "var(--we-leading-display)", fontWeight: 560 }}>{copy.contactCta.heading}</h2>
+          <p className="mt-2 mb-6 text-sm text-[var(--we-text-2)]">
             {copy.contactCta.sub}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/contact"
-              className="px-6 py-3 rounded-2xl bg-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
-            >
-              {copy.contactCta.button}
-            </Link>
+            <Button href="/contact">{copy.contactCta.button}</Button>
           </div>
         </div>
 

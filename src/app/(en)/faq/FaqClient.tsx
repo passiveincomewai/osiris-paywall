@@ -33,13 +33,14 @@ function FaqItem({ q, a }: Faq) {
       id={faqId(q)}
       data-faq-item=""
       data-faq-q={q}
-      className="group border border-white/10 rounded-2xl bg-white/[0.02] overflow-hidden scroll-mt-24"
+      className="group overflow-hidden scroll-mt-24"
+      style={{ border: "1px solid var(--we-line-2)", borderRadius: "var(--we-radius-3)", background: "var(--we-ink-2)" }}
     >
       <summary className="flex w-full cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left [&::-webkit-details-marker]:hidden">
-        <span className="font-medium text-white/90">{q}</span>
-        <ChevronDown className="w-5 h-5 text-[#D4AF37] shrink-0 transition-transform group-open:rotate-180" />
+        <span className="font-medium" style={{ color: "var(--we-text-1)" }}>{q}</span>
+        <ChevronDown className="w-5 h-5 shrink-0 transition-transform group-open:rotate-180" style={{ color: "var(--we-blue-strong)" }} />
       </summary>
-      <div className="faq-answer px-6 pb-5 text-sm text-white/60 leading-relaxed space-y-2">
+      <div className="faq-answer px-6 pb-5 text-sm leading-relaxed space-y-2" style={{ color: "var(--we-text-2)" }}>
         {a}
       </div>
     </details>
@@ -60,8 +61,11 @@ export default function FaqAccordion({ groups }: { groups: { title: string; faqs
       `}</style>
       {groups.map((g) => (
         <section key={g.title} data-faq-group="">
-          <h2 className="text-xl md:text-2xl font-bold mb-5">
-            <span className="text-[#D4AF37]">{g.title}</span>
+          <h2
+            className="font-[family-name:var(--we-font-display)] mb-5"
+            style={{ color: "var(--we-text-1)", fontSize: "var(--we-size-title)", lineHeight: "var(--we-leading-display)", fontWeight: 560 }}
+          >
+            {g.title}
           </h2>
           <div className="space-y-3">
             {g.faqs.map((f) => (
