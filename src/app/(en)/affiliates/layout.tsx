@@ -27,7 +27,7 @@ export default async function AffiliatesLayout({ children }: { children: React.R
     <div className="docs-root min-h-screen" style={{ background: "radial-gradient(1200px 600px at 50% -10%, #0a1a33 0%, #050810 55%, #03040a 100%)" }}>
       <AffiliateSync />
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#050810]/85 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2.5 sm:h-16 sm:flex-nowrap sm:py-0">
           <Link href="/affiliates" className="flex items-center gap-2.5 shrink-0">
             <img src="/worldeye-eye.png" alt="WorldEye" width={600} height={432} className="h-8 w-auto" />
             <span className="font-wordmark text-white tracking-wide hidden sm:inline">
@@ -35,7 +35,7 @@ export default async function AffiliatesLayout({ children }: { children: React.R
               <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full border border-cyan-400/40 text-cyan-300 tracking-[0.2em]">AFFILIATES</span>
             </span>
           </Link>
-          <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar">
+          <nav className="order-3 flex w-full min-w-0 items-center gap-1 overflow-x-auto no-scrollbar sm:order-none sm:w-auto sm:flex-1">
             {NAV.map((n) =>
               n.href === "/affiliates/demo" ? (
                 // Active affiliates never see demo links — they have the
