@@ -21,7 +21,7 @@ import { EXPLORE_SCOPES, countForDef } from "@/lib/explore-data";
 export const metadata: Metadata = {
   title: "Ski Opening Week 2026 — First Resorts Open, Live Cameras",
   description:
-    "Arapahoe Basin and Winter Park are projected to open October 30, Keystone October 31. Watch the snow, the snow stakes and the drive up on live cameras around each resort. Free on WorldEye.",
+    "Arapahoe Basin opened October 28 and Keystone October 30 — Colorado's first lifts of the 2026–27 season. Watch the snow, the snow stakes and the drive up on live cameras around each resort. Free on WorldEye.",
   alternates: { canonical: `${BASE}/ski-opening-week-2026` },
   openGraph: {
     title: "Ski Opening Week 2026 — First Resorts Open, Live Cameras",
@@ -37,7 +37,7 @@ const jsonLd = {
   "@type": "CollectionPage",
   name: "Ski Opening Week 2026 — First Resorts Open, Live Cameras",
   description:
-    "Live public cameras around the Colorado resorts projected to open first in the 2026–27 ski season — Arapahoe Basin and Winter Park (October 30) and Keystone (October 31) — with the early-season projected opening table.",
+    "Live public cameras around the Colorado resorts that opened first in the 2026–27 ski season — Arapahoe Basin (October 28) and Keystone (October 30) — with the early-season opening table.",
   url: `${BASE}/ski-opening-week-2026`,
   isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
 };
@@ -45,15 +45,15 @@ const jsonLd = {
 const FAQS = [
   {
     q: "When does the 2026–27 ski season start?",
-    a: "In Colorado, this week. Arapahoe Basin and Winter Park are projected to open Friday, October 30, 2026, and Keystone is expected Saturday, October 31 — the first lifts of the North American season. Breckenridge and Copper Mountain are projected for November 6 and Vail for November 13. All of these dates are projections compiled from resort announcements (tracked by OnTheSnow as of October 26); resorts confirm their opening days, and dates move with the weather.",
+    a: "In Colorado, this week. Arapahoe Basin opened Wednesday, October 28, 2026 — the first major North American ski area to spin a lift — and Keystone followed on Friday, October 30. Winter Park shared the projected October 30 date; its opening is unconfirmed. Breckenridge and Copper Mountain are projected for November 6 and Vail for November 13. The remaining dates are projections compiled from resort announcements (tracked by OnTheSnow as of October 26); resorts confirm their opening days, and dates move with the weather.",
   },
   {
     q: "Which resort opens first in 2026?",
-    a: "On current projections it is a tie: Arapahoe Basin and Winter Park both target Friday, October 30. Arapahoe Basin — one of the highest ski areas in North America, sitting on Loveland Pass — is famous for winning this race and for staying open latest into the summer, but in 2026 the projected date is shared. Watch both resorts' cameras this week: snowmaking plumes and lift testing usually show before any announcement.",
+    a: "Arapahoe Basin did — it opened Wednesday, October 28, 2026, ahead of Keystone (October 30) and ahead of its own projected date. Arapahoe Basin — one of the highest ski areas in North America, sitting on Loveland Pass — is famous for winning this race and for staying open latest into the summer. The cameras are the ground truth between announcements: if the base area is white and the lifts are spinning, opening is real.",
   },
   {
     q: "Are the opening dates confirmed?",
-    a: "No — they are projected, and this page says so every time it prints one. Early-season openings depend on snowmaking temperatures and natural snow (Colorado ski country expects 4–12 inches this week, under a winter weather advisory). Resorts make the final call, sometimes with a day's notice. The cameras are the ground truth between announcements: if the base area is white and the lifts are spinning for patrol, opening is real.",
+    a: "Two of them are now: Arapahoe Basin (October 28) and Keystone (October 30) opened on the days shown, as the resorts themselves confirmed. The rest are projected, and this page says so every time it prints one. Early-season openings depend on snowmaking temperatures and natural snow (Colorado ski country expects 4–12 inches this week, under a winter weather advisory). Resorts make the final call, sometimes with a day's notice. The cameras are the ground truth between announcements: if the base area is white and the lifts are spinning for patrol, opening is real.",
   },
   {
     q: "Can I see the snow stakes and the drive up?",
@@ -65,12 +65,14 @@ const FAQS = [
   },
 ];
 
-/* Projected opening dates as compiled by OnTheSnow and reported
-   October 26, 2026 — projections, not resort confirmations. */
+/* Opening dates as compiled by OnTheSnow and reported
+   October 26, 2026; the Arapahoe Basin and Keystone rows carry their
+   confirmed opening days (October 28 / October 30) per the resorts'
+   own announcements. The rest remain projections. */
 const OPENINGS: Array<{ resort: string; slug: string; date: string; note: string }> = [
-  { resort: "Arapahoe Basin", slug: "arapahoe-basin", date: "Fri, Oct 30", note: "Projected" },
+  { resort: "Arapahoe Basin", slug: "arapahoe-basin", date: "Wed, Oct 28", note: "Opened" },
   { resort: "Winter Park", slug: "winter-park", date: "Fri, Oct 30", note: "Projected" },
-  { resort: "Keystone", slug: "keystone", date: "Sat, Oct 31", note: "Projected" },
+  { resort: "Keystone", slug: "keystone", date: "Fri, Oct 30", note: "Opened" },
   { resort: "Breckenridge", slug: "breckenridge", date: "Fri, Nov 6", note: "Projected" },
   { resort: "Copper Mountain", slug: "copper-mountain", date: "Fri, Nov 6", note: "Projected" },
   { resort: "Vail", slug: "vail", date: "Fri, Nov 13", note: "Projected" },
@@ -90,9 +92,9 @@ const WALLS: ResortWall[] = [
     key: "arapahoe-basin",
     scopeKey: "event-ski-opening-arapahoe-basin",
     slug: "arapahoe-basin",
-    heading: "Arapahoe Basin — projected Fri, Oct 30",
+    heading: "Arapahoe Basin — opened Wed, Oct 28",
     blurb: (n) =>
-      `${n} cameras within 30 km of the resort — Loveland Pass, the base area and the I-70 corridor below. A-Basin races to be first almost every year, and its high base means this week's natural snow lands on top of cold, ready snowmaking.`,
+      `${n} cameras within 30 km of the resort — Loveland Pass, the base area and the I-70 corridor below. A-Basin won the race to open first again this year, and its high base means this week's natural snow lands on top of cold, ready snowmaking.`,
     placeholder: "Search Arapahoe Basin area cameras…",
   },
   {
@@ -101,16 +103,16 @@ const WALLS: ResortWall[] = [
     slug: "winter-park",
     heading: "Winter Park — projected Fri, Oct 30",
     blurb: (n) =>
-      `${n} cameras within 30 km of the resort — Berthoud Pass, the Fraser Valley and the US-40 drive. Winter Park shares the projected first day; its cameras show both the mountain and the pass road every Front Range skier has to cross to reach it.`,
+      `${n} cameras within 30 km of the resort — Berthoud Pass, the Fraser Valley and the US-40 drive. Winter Park shared the projected first day; its cameras show both the mountain and the pass road every Front Range skier has to cross to reach it.`,
     placeholder: "Search Winter Park area cameras…",
   },
   {
     key: "keystone",
     scopeKey: "event-ski-opening-keystone",
     slug: "keystone",
-    heading: "Keystone — projected Sat, Oct 31",
+    heading: "Keystone — opened Fri, Oct 30",
     blurb: (n) =>
-      `${n} cameras within 30 km of the resort — the Snake River valley, Dillon and the Loveland Pass approach it shares with A-Basin. A Halloween opening would make it three Colorado resorts spinning lifts inside the season's first weekend.`,
+      `${n} cameras within 30 km of the resort — the Snake River valley, Dillon and the Loveland Pass approach it shares with A-Basin. Keystone's Friday opening made it two Colorado resorts spinning lifts inside the season's first weekend.`,
     placeholder: "Search Keystone area cameras…",
   },
 ];
@@ -126,7 +128,7 @@ export default async function SkiOpeningWeek2026Page() {
   const key = counts.get("keystone") ?? 0;
 
   const intro = [
-    `Ski season starts this week in Colorado. Arapahoe Basin and Winter Park are projected to open on Friday, October 30, 2026, with Keystone expected to follow on Saturday, October 31 — the first lifts of the 2026–27 season, powered by this week's natural snow (4–12 inches expected across Colorado ski country, under a winter weather advisory) laid over round-the-clock snowmaking. Projected is the honest word: opening dates are forecasts until a resort confirms them, and they move with the weather. What doesn't move is the view. This page gathers the live public cameras around each opening resort — ${fmt(abasin)} within 30 km of Arapahoe Basin, ${fmt(wp)} around Winter Park, ${fmt(key)} around Keystone — free to watch, no signup, so you can see the snow arrive and judge the call yourself.`,
+    `Ski season is under way in Colorado. Arapahoe Basin opened on Wednesday, October 28, 2026 — the first lifts of the 2026–27 season — and Keystone followed on Friday, October 30, both powered by this week's natural snow (4–12 inches across Colorado ski country, under a winter weather advisory) laid over round-the-clock snowmaking. Winter Park shared the projected October 30 date; its opening is unconfirmed. Projected is the honest word for the rest of the table: opening dates are forecasts until a resort confirms them, and they move with the weather. What doesn't move is the view. This page gathers the live public cameras around each opening resort — ${fmt(abasin)} within 30 km of Arapahoe Basin, ${fmt(wp)} around Winter Park, ${fmt(key)} around Keystone — free to watch, no signup, so you can see the snow arrive and judge the call yourself.`,
     "The race to open first is a real contest with real tells. Snowmaking plumes show on base cameras on cold nights days before an announcement. Lift chairs start turning for patrol and lift-crew training. Snow stakes — the marked boards resorts read their totals from, pinned first on every WorldEye resort page — begin the season at zero and become the week's scoreboard. All of it is visible here before it is official anywhere.",
     "Opening week is also a driving problem. The same storm that makes the skiing buries I-70 and the passes, and the first-weekend crowd all leaves Denver at the same hour. Every wall below mixes the resort's cameras with the corridor and pass cameras around it — Loveland Pass for A-Basin and Keystone, Berthoud Pass for Winter Park — because on opening weekend the drive is half the event.",
   ];
@@ -144,25 +146,25 @@ export default async function SkiOpeningWeek2026Page() {
       />
       <Hero
         h1="Ski Opening Week 2026 — First Lifts, Live"
-        sub="Arapahoe Basin and Winter Park are projected to open Friday, Keystone Saturday. Watch the snow, the stakes and the drive up — free, no signup."
+        sub="Arapahoe Basin opened Wednesday and Keystone Friday — Colorado's first lifts of the season. Watch the snow, the stakes and the drive up — free, no signup."
       />
       <StatRow
         stats={[
           { value: fmt(abasin + wp + key), label: "cameras around the three opening resorts" },
-          { value: "Oct 30", label: "first projected opening day" },
-          { value: "3", label: "resorts projected open by Oct 31" },
+          { value: "Oct 28", label: "first opening day — Arapahoe Basin" },
+          { value: "2", label: "resorts open by Oct 31" },
         ]}
       />
       <Intro paragraphs={intro} />
 
       <section className="mt-12">
-        <h2 className="text-xl md:text-2xl font-bold mb-5">Projected opening dates — Colorado&apos;s first wave</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-5">Opening dates — Colorado&apos;s first wave</h2>
         <div className="rounded-2xl border border-white/10 overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs uppercase tracking-wider text-white/40 border-b border-white/10 bg-white/[0.02]">
                 <th className="px-5 py-3 font-semibold">Resort</th>
-                <th className="px-5 py-3 font-semibold">Projected opening</th>
+                <th className="px-5 py-3 font-semibold">Opening day</th>
                 <th className="px-5 py-3 font-semibold text-right">Status</th>
               </tr>
             </thead>
