@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
 import {
@@ -21,8 +22,13 @@ import {
   ShieldCheck,
   Sparkles,
   Video,
+  type LucideIcon,
 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
+import MediaFrame from "@/components/design/MediaFrame";
+import EditorialSplit from "@/components/design/EditorialSplit";
+import MicroLabel from "@/components/design/MicroLabel";
+import Button from "@/components/design/Button";
 import JsonLd from "@/components/JsonLd";
 import RelatedLinks from "@/components/RelatedLinks";
 
@@ -256,21 +262,157 @@ const FAQS = [
   },
 ];
 
+type FeatureItem = { icon: LucideIcon; title: string; desc: string; detail: string };
+
+/**
+ * Visual transformation W1 (/features): the 17 identical card blocks become
+ * grouped editorial sections — one real product frame per group, the full
+ * feature detail preserved verbatim as a hairline spec list. Copy, order of
+ * facts, links, metadata and JSON-LD are unchanged from the previous page.
+ */
+function SpecRow({ f }: { f: FeatureItem }) {
+  const Icon = f.icon;
+  return (
+    <div
+      style={{
+        paddingTop: "var(--we-space-5)",
+        paddingBottom: "var(--we-space-5)",
+        borderTop: "1px solid var(--we-line-1)",
+      }}
+    >
+      <div className="flex items-start" style={{ gap: "var(--we-space-4)" }}>
+        <span
+          className="shrink-0 inline-flex items-center justify-center"
+          style={{
+            width: 40,
+            height: 40,
+            background: "var(--we-ink-3)",
+            border: "1px solid var(--we-line-2)",
+            borderRadius: "var(--we-radius-2)",
+          }}
+        >
+          <Icon size={18} color="var(--we-blue-strong)" />
+        </span>
+        <div>
+          <h3
+            style={{
+              color: "var(--we-text-1)",
+              fontSize: "var(--we-size-body)",
+              fontWeight: 600,
+              margin: 0,
+            }}
+          >
+            {f.title}
+          </h3>
+          <p
+            style={{
+              color: "var(--we-text-1)",
+              fontSize: "var(--we-size-small)",
+              lineHeight: "var(--we-leading-body)",
+              marginTop: "var(--we-space-1)",
+            }}
+          >
+            {f.desc}
+          </p>
+          <p
+            style={{
+              color: "var(--we-text-2)",
+              fontSize: "var(--we-size-small)",
+              lineHeight: "var(--we-leading-body)",
+              marginTop: "var(--we-space-2)",
+            }}
+          >
+            {f.detail}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GroupFrame({
+  src,
+  alt,
+  width,
+  height,
+  caption,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption: string;
+}) {
+  return (
+    <MediaFrame state="none" caption={caption} source="WorldEye">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading="lazy"
+        className="block w-full h-auto"
+      />
+    </MediaFrame>
+  );
+}
+
+function FeatureGroup({
+  label,
+  features,
+  media,
+  flip = false,
+}: {
+  label: string;
+  features: FeatureItem[];
+  media: ReactNode;
+  flip?: boolean;
+}) {
+  return (
+    <div style={{ marginTop: "var(--we-space-8)" }}>
+      <EditorialSplit media={media} flip={flip} ratio="7-5">
+        <div>
+          <MicroLabel>{label}</MicroLabel>
+          <div style={{ marginTop: "var(--we-space-2)" }}>
+            {features.map((f) => (
+              <SpecRow key={f.title} f={f} />
+            ))}
+          </div>
+        </div>
+      </EditorialSplit>
+    </div>
+  );
+}
+
 export default function FeaturesPage() {
   return (
-    <main className="docs-root min-h-screen bg-[#050508] text-zinc-100 relative overflow-x-clip">
+    <main
+      className="docs-root min-h-screen relative overflow-x-clip"
+      style={{ background: "var(--we-ink-0)", color: "var(--we-text-1)" }}
+    >
       <JsonLd data={jsonLd} />
       <JsonLd data={faqJsonLd} />
-      {/* Ambient glow */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 blur-[120px] bg-[#D4AF37]" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[300px] rounded-full opacity-10 blur-[100px] bg-[#00E5FF]" />
-      </div>
-
-      <div className="relative max-w-5xl mx-auto px-6 py-10 md:py-16">
+      <div
+        className="relative mx-auto w-full"
+        style={{
+          maxWidth: "var(--we-wide)",
+          paddingLeft: "var(--we-gutter)",
+          paddingRight: "var(--we-gutter)",
+          paddingTop: "var(--we-space-6)",
+          paddingBottom: "var(--we-space-8)",
+        }}
+      >
         {/* Top bar */}
-        <div className="flex items-center justify-between mb-12">
-          <Link href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition">
+        <div
+          className="flex items-center justify-between"
+          style={{ marginBottom: "var(--we-space-8)" }}
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-sm"
+            style={{ color: "var(--we-text-2)" }}
+          >
             <ArrowLeft className="w-4 h-4" /> Back to the map
           </Link>
           <div className="flex items-center gap-3">
@@ -280,157 +422,427 @@ export default function FeaturesPage() {
         </div>
 
         {/* Hero */}
-        <div className="text-center max-w-2xl mx-auto">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#00E5FF] border border-[#00E5FF]/30 rounded-full px-4 py-1.5 mb-6">
-            <Sparkles className="w-3.5 h-3.5" /> FEATURES
-          </p>
-          <h1 className="text-3xl md:text-6xl font-bold tracking-tight">
-            Everything the planet is doing, <span className="text-[#D4AF37]">live</span>.
+        <div className="mx-auto text-center" style={{ maxWidth: "var(--we-measure)" }}>
+          <MicroLabel>Features</MicroLabel>
+          <h1
+            className="font-[family-name:var(--we-font-display)]"
+            style={{
+              fontSize: "var(--we-size-display-1)",
+              lineHeight: "var(--we-leading-display)",
+              fontWeight: 560,
+              marginTop: "var(--we-space-4)",
+            }}
+          >
+            Everything the planet is doing, <span style={{ color: "var(--we-cyan)" }}>live</span>.
           </h1>
-          <p className="text-white/55 mt-4 md:mt-5 text-base md:text-lg leading-relaxed px-1">
+          <p
+            style={{
+              color: "var(--we-text-2)",
+              fontSize: "var(--we-size-lede)",
+              lineHeight: "var(--we-leading-body)",
+              marginTop: "var(--we-space-5)",
+            }}
+          >
             A free forever live globe with flights, cameras, satellites, transit and hazards —
             and Pro tools for anyone who needs intelligence-grade depth. Every feature, free
             and Pro, is listed below — so you can check exactly what WorldEye can do before
             you ever open the map.
           </p>
         </div>
+        <div style={{ marginTop: "var(--we-space-7)" }}>
+          <MediaFrame
+            state="none"
+            caption="The live globe — a still frame from the WorldEye film"
+            source="WorldEye"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/worldeye-cinematic-poster.jpg"
+              alt="The WorldEye live globe"
+              width={1920}
+              height={1080}
+              className="block w-full h-auto"
+            />
+          </MediaFrame>
+        </div>
 
         {/* FREE FOREVER */}
-        <section className="mt-16 md:mt-20">
-          <div className="flex items-center gap-4 mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold">Free, <span className="text-[#00E5FF]">forever</span></h2>
-            <span className="text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30">
-              NO SIGNUP
-            </span>
+        <section style={{ marginTop: "var(--we-section-y)" }}>
+          <div
+            className="flex flex-wrap items-center"
+            style={{ gap: "var(--we-space-4)", marginBottom: "var(--we-space-5)" }}
+          >
+            <h2
+              className="font-[family-name:var(--we-font-display)]"
+              style={{
+                fontSize: "var(--we-size-display-2)",
+                lineHeight: "var(--we-leading-display)",
+                fontWeight: 560,
+                margin: 0,
+              }}
+            >
+              Free, <span style={{ color: "var(--we-cyan)" }}>forever</span>
+            </h2>
+            <MicroLabel>No signup</MicroLabel>
           </div>
-          <p className="text-white/55 max-w-2xl mb-8">
+          <p
+            style={{
+              color: "var(--we-text-2)",
+              fontSize: "var(--we-size-lede)",
+              lineHeight: "var(--we-leading-body)",
+              maxWidth: "var(--we-measure)",
+            }}
+          >
             The core of WorldEye is open to everyone. No account, no credit card —
             just open the map and explore. Every layer below works the moment the page
             loads — and basic search is free too: fly to any place, address or
             coordinates without signing up.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FREE_FEATURES.map((f) => (
-              <div key={f.title} className="rounded-3xl border border-white/10 bg-white/[0.02] p-7 hover:border-[#00E5FF]/40 transition">
-                <span className="w-11 h-11 rounded-2xl bg-[#00E5FF]/10 border border-[#00E5FF]/25 flex items-center justify-center mb-5">
-                  <f.icon className="w-5 h-5 text-[#00E5FF]" />
-                </span>
-                <h3 className="font-semibold text-white/90 mb-2">{f.title}</h3>
-                <p className="text-sm text-white/50 leading-relaxed">{f.desc}</p>
-                <p className="text-sm text-white/40 leading-relaxed mt-3">{f.detail}</p>
-              </div>
-            ))}
-            <a
-              href="/"
-              className="rounded-3xl border border-[#00E5FF]/30 bg-gradient-to-b from-[#00E5FF]/[0.08] to-transparent p-7 flex flex-col justify-center hover:border-[#00E5FF]/60 transition group"
-            >
-              <h3 className="font-semibold text-white/90 mb-2">Try it right now</h3>
-              <p className="text-sm text-white/50 leading-relaxed mb-4">
+
+          <FeatureGroup
+            label="The globe itself"
+            features={[FREE_FEATURES[0], FREE_FEATURES[2], FREE_FEATURES[6]]}
+            media={
+              <GroupFrame
+                src="/seo/worldeye-live-map.webp"
+                alt="The WorldEye live map on a phone"
+                width={720}
+                height={1280}
+                caption="The live map, on mobile"
+              />
+            }
+          />
+          <FeatureGroup
+            label="Everything that moves"
+            flip
+            features={[FREE_FEATURES[1], FREE_FEATURES[3], FREE_FEATURES[5]]}
+            media={
+              <GroupFrame
+                src="/landing/track-flights.jpg"
+                alt="Live flight tracking on the WorldEye globe"
+                width={1280}
+                height={640}
+                caption="Live flight tracking on the globe"
+              />
+            }
+          />
+          <FeatureGroup
+            label="Hazards, launches, effects"
+            features={[FREE_FEATURES[4], FREE_FEATURES[7], FREE_FEATURES[8]]}
+            media={
+              <GroupFrame
+                src="/landing/hazard-weather.jpg"
+                alt="Weather and hazard layers on the WorldEye globe"
+                width={1280}
+                height={640}
+                caption="Weather and hazard layers on the globe"
+              />
+            }
+          />
+
+          <div
+            className="flex flex-col md:flex-row md:items-center"
+            style={{
+              gap: "var(--we-space-5)",
+              marginTop: "var(--we-space-8)",
+              background: "var(--we-ink-2)",
+              border: "1px solid var(--we-line-2)",
+              borderRadius: "var(--we-radius-3)",
+              padding: "var(--we-space-6)",
+            }}
+          >
+            <div className="flex-1">
+              <h3
+                style={{
+                  color: "var(--we-text-1)",
+                  fontSize: "var(--we-size-title)",
+                  fontWeight: 600,
+                  margin: 0,
+                }}
+              >
+                Try it right now
+              </h3>
+              <p
+                style={{
+                  color: "var(--we-text-2)",
+                  fontSize: "var(--we-size-small)",
+                  lineHeight: "var(--we-leading-body)",
+                  marginTop: "var(--we-space-2)",
+                }}
+              >
                 Every free feature is live on the map today.
               </p>
-              <span className="text-sm font-semibold text-[#00E5FF] group-hover:underline">
-                Open the live map →
-              </span>
-            </a>
+            </div>
+            <Button variant="ghost" href="/">
+              Open the live map →
+            </Button>
           </div>
         </section>
 
         {/* AFFILIATE PERK */}
-        <section className="mt-10">
-          <div className="rounded-3xl border border-[#D4AF37]/25 bg-[#D4AF37]/[0.04] p-7 flex flex-col md:flex-row md:items-center gap-5">
-            <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center">
-              <Clapperboard className="w-5 h-5 text-[#D4AF37]" />
+        <section style={{ marginTop: "var(--we-space-7)" }}>
+          <div
+            className="flex flex-col md:flex-row md:items-center"
+            style={{
+              gap: "var(--we-space-5)",
+              background: "var(--we-ink-2)",
+              border: "1px solid var(--we-line-2)",
+              borderRadius: "var(--we-radius-3)",
+              padding: "var(--we-space-6)",
+            }}
+          >
+            <span
+              className="shrink-0 inline-flex items-center justify-center"
+              style={{
+                width: 40,
+                height: 40,
+                background: "var(--we-ink-3)",
+                border: "1px solid var(--we-line-2)",
+                borderRadius: "var(--we-radius-2)",
+              }}
+            >
+              <Clapperboard size={18} color="var(--we-blue-strong)" />
             </span>
             <div className="flex-1">
-              <h3 className="font-semibold text-white/90 mb-1">Cinematic director — free for affiliates</h3>
-              <p className="text-sm text-white/50 leading-relaxed">
+              <h3
+                style={{
+                  color: "var(--we-text-1)",
+                  fontSize: "var(--we-size-body)",
+                  fontWeight: 600,
+                  margin: 0,
+                }}
+              >
+                Cinematic director — free for affiliates
+              </h3>
+              <p
+                style={{
+                  color: "var(--we-text-2)",
+                  fontSize: "var(--we-size-small)",
+                  lineHeight: "var(--we-leading-body)",
+                  marginTop: "var(--we-space-2)",
+                }}
+              >
                 Compose keyframed camera scenes of the live globe, save them, play them back
                 and record the flight as video. The director isn&apos;t part of Free or Pro —
                 it&apos;s a perk of the affiliate program, and joining is free.
               </p>
             </div>
-            <Link href="/affiliates" className="text-sm font-semibold text-[#D4AF37] hover:underline whitespace-nowrap">
-              Join the affiliate program →
-            </Link>
+            <Button variant="quiet" href="/affiliates">
+              Join the affiliate program
+            </Button>
           </div>
         </section>
 
         {/* TRACKERS */}
-        <section className="mt-16 md:mt-20">
-          <h2 className="text-2xl md:text-3xl font-bold">Live <span className="text-[#00E5FF]">trackers</span></h2>
-          <p className="text-white/55 max-w-2xl mt-4 mb-8">
+        <section style={{ marginTop: "var(--we-section-y)" }}>
+          <h2
+            className="font-[family-name:var(--we-font-display)]"
+            style={{
+              fontSize: "var(--we-size-display-2)",
+              lineHeight: "var(--we-leading-display)",
+              fontWeight: 560,
+              margin: 0,
+            }}
+          >
+            Live <span style={{ color: "var(--we-cyan)" }}>trackers</span>
+          </h2>
+          <p
+            style={{
+              color: "var(--we-text-2)",
+              fontSize: "var(--we-size-lede)",
+              lineHeight: "var(--we-leading-body)",
+              maxWidth: "var(--we-measure)",
+              marginTop: "var(--we-space-4)",
+              marginBottom: "var(--we-space-6)",
+            }}
+          >
             Each data layer has its own deep-dive page — how the tracking works, what you can
             see, and how to read it like a professional.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4" style={{ gap: "var(--we-space-4)" }}>
             {TRACKERS.map((t) => (
               <a
                 key={t.href}
                 href={t.href}
-                className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#00E5FF]/40 hover:bg-white/[0.04] transition group"
+                className="block transition hover:border-[var(--we-line-3)]"
+                style={{
+                  background: "var(--we-ink-2)",
+                  border: "1px solid var(--we-line-2)",
+                  borderRadius: "var(--we-radius-2)",
+                  padding: "var(--we-space-5)",
+                }}
               >
-                <p className="font-semibold text-white/90 text-sm group-hover:text-[#00E5FF] transition">{t.label}</p>
-                <p className="text-xs text-white/45 mt-1.5 leading-relaxed">{t.desc}</p>
+                <p
+                  style={{
+                    color: "var(--we-text-1)",
+                    fontSize: "var(--we-size-small)",
+                    fontWeight: 600,
+                    margin: 0,
+                  }}
+                >
+                  {t.label}
+                </p>
+                <p
+                  style={{
+                    color: "var(--we-text-2)",
+                    fontSize: "var(--we-size-small)",
+                    lineHeight: "var(--we-leading-body)",
+                    marginTop: "var(--we-space-2)",
+                  }}
+                >
+                  {t.desc}
+                </p>
               </a>
             ))}
           </div>
         </section>
 
         {/* PRO */}
-        <section className="mt-16 md:mt-20">
-          <div className="flex items-center gap-4 mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold">Pro <span className="text-[#D4AF37]">intelligence tools</span></h2>
-            <span className="text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30">
-              FROM $7.99/WK
-            </span>
+        <section style={{ marginTop: "var(--we-section-y)" }}>
+          <div
+            className="flex flex-wrap items-center"
+            style={{ gap: "var(--we-space-4)", marginBottom: "var(--we-space-5)" }}
+          >
+            <h2
+              className="font-[family-name:var(--we-font-display)]"
+              style={{
+                fontSize: "var(--we-size-display-2)",
+                lineHeight: "var(--we-leading-display)",
+                fontWeight: 560,
+                margin: 0,
+              }}
+            >
+              Pro <span style={{ color: "var(--we-blue-strong)" }}>intelligence tools</span>
+            </h2>
+            <MicroLabel>From $7.99/wk</MicroLabel>
           </div>
-          <p className="text-white/55 max-w-2xl mb-8">
+          <p
+            style={{
+              color: "var(--we-text-2)",
+              fontSize: "var(--we-size-lede)",
+              lineHeight: "var(--we-leading-body)",
+              maxWidth: "var(--we-measure)",
+            }}
+          >
             For researchers, analysts and the deeply curious: an AI analyst that works
             the globe for you, satellite imagery, the live traffic layer, advanced search
             filters and premium intel feeds.
             Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99 — cancel anytime.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {PRO_FEATURES.map((f) => (
-              <div key={f.title} className="rounded-3xl border border-[#D4AF37]/25 bg-gradient-to-b from-[#D4AF37]/[0.06] to-transparent p-7 hover:border-[#D4AF37]/60 transition">
-                <span className="w-11 h-11 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center mb-5">
-                  <f.icon className="w-5 h-5 text-[#D4AF37]" />
-                </span>
-                <h3 className="font-semibold text-white/90 mb-2">{f.title}</h3>
-                <p className="text-sm text-white/50 leading-relaxed">{f.desc}</p>
-                <p className="text-sm text-white/40 leading-relaxed mt-3">{f.detail}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="/pricing"
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 transition shadow-[0_8px_32px_rgba(212,175,55,0.35)] text-center"
+
+          <FeatureGroup
+            label="Intelligence"
+            features={[PRO_FEATURES[0], PRO_FEATURES[5], PRO_FEATURES[6]]}
+            media={
+              <GroupFrame
+                src="/landing/osint-search.jpg"
+                alt="Search and analysis tools inside the WorldEye globe"
+                width={740}
+                height={555}
+                caption="Search and analysis, inside the globe"
+              />
+            }
+          />
+          <FeatureGroup
+            label="Imagery, roads, search"
+            flip
+            features={[PRO_FEATURES[1], PRO_FEATURES[2], PRO_FEATURES[3]]}
+            media={
+              <GroupFrame
+                src="/landing/osint-satellite.jpg"
+                alt="Satellite layers on the WorldEye globe"
+                width={800}
+                height={600}
+                caption="Satellite layers on the globe"
+              />
+            }
+          />
+
+          <div style={{ marginTop: "var(--we-space-8)" }}>
+            <MicroLabel>Capture</MicroLabel>
+            <div
+              className="grid md:grid-cols-2"
+              style={{ gap: "var(--we-space-6)", marginTop: "var(--we-space-2)" }}
             >
+              <SpecRow f={PRO_FEATURES[4]} />
+              <SpecRow f={PRO_FEATURES[7]} />
+            </div>
+          </div>
+
+          <div
+            className="flex flex-col sm:flex-row items-center justify-center"
+            style={{ gap: "var(--we-space-4)", marginTop: "var(--we-space-8)" }}
+          >
+            <Button variant="primary" href="/pricing">
               See Pro pricing
-            </a>
-            <a
-              href="/"
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl border border-white/15 text-white/70 font-semibold hover:bg-white/5 transition text-center"
-            >
+            </Button>
+            <Button variant="ghost" href="/">
               Explore free first
-            </a>
+            </Button>
           </div>
-          <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/40">
-            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Cancel anytime</li>
-            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Free trials — 3 days weekly · 10 days monthly &amp; annual</li>
-            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-[#D4AF37]" /> Stripe-secured checkout</li>
+          <ul
+            className="flex flex-wrap items-center justify-center"
+            style={{
+              gap: "var(--we-space-5)",
+              marginTop: "var(--we-space-6)",
+              color: "var(--we-text-2)",
+              fontSize: "var(--we-size-small)",
+              listStyle: "none",
+              padding: 0,
+            }}
+          >
+            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5" color="var(--we-blue-strong)" /> Cancel anytime</li>
+            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5" color="var(--we-blue-strong)" /> Free trials — 3 days weekly · 10 days monthly &amp; annual</li>
+            <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5" color="var(--we-blue-strong)" /> Stripe-secured checkout</li>
           </ul>
         </section>
 
         {/* FAQ */}
-        <section className="mt-16 md:mt-20 max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center">Questions, <span className="text-[#D4AF37]">answered</span></h2>
-          <div className="mt-8 space-y-4">
+        <section
+          className="mx-auto"
+          style={{ marginTop: "var(--we-section-y)", maxWidth: "var(--we-narrow)" }}
+        >
+          <h2
+            className="font-[family-name:var(--we-font-display)] text-center"
+            style={{
+              fontSize: "var(--we-size-display-2)",
+              lineHeight: "var(--we-leading-display)",
+              fontWeight: 560,
+              margin: 0,
+            }}
+          >
+            Questions, <span style={{ color: "var(--we-blue-strong)" }}>answered</span>
+          </h2>
+          <div style={{ marginTop: "var(--we-space-6)" }}>
             {FAQS.map((f) => (
-              <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-                <h3 className="font-semibold text-white/90">{f.q}</h3>
-                <p className="text-sm text-white/50 mt-2 leading-relaxed">{f.a}</p>
+              <div
+                key={f.q}
+                style={{
+                  borderTop: "1px solid var(--we-line-1)",
+                  paddingTop: "var(--we-space-5)",
+                  paddingBottom: "var(--we-space-5)",
+                }}
+              >
+                <h3
+                  style={{
+                    color: "var(--we-text-1)",
+                    fontSize: "var(--we-size-body)",
+                    fontWeight: 600,
+                    margin: 0,
+                  }}
+                >
+                  {f.q}
+                </h3>
+                <p
+                  style={{
+                    color: "var(--we-text-2)",
+                    fontSize: "var(--we-size-small)",
+                    lineHeight: "var(--we-leading-body)",
+                    marginTop: "var(--we-space-2)",
+                  }}
+                >
+                  {f.a}
+                </p>
               </div>
             ))}
           </div>
