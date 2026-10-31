@@ -12,7 +12,6 @@ import { enterpriseAccess } from "@/lib/enterprise/access";
 import {
   ENTERPRISE_OFFER_FEATURES,
   ENTERPRISE_GUARANTEE_LINE,
-  ENTERPRISE_SUPPORT_LINE,
 } from "@/lib/enterprise/offer";
 import JsonLd from "@/components/JsonLd";
 import SiteFooter from "@/components/SiteFooter";
@@ -30,6 +29,29 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 const ACCENT = { color: "var(--we-blue-strong)" } as const;
+
+/* The direct purchase route: the same on-site checkout every other buy
+   surface uses (lib/billing/trial-checkout's checkoutPagePath) with the
+   Enterprise plan preselected — $999/year, billed annually, no trial.
+   /pricing sells Enterprise only through its in-page checkout sheet,
+   which takes no preselected plan from the URL, so this is the shortest
+   honest path from this page to paying. */
+const ENTERPRISE_CHECKOUT_HREF = "/checkout?plan=enterprise";
+
+/* The lead path: the contact form is the channel — no raw email address
+   is printed on this page. /contact does not preselect a topic from the
+   query string (ContactForm defaults to "general"), so link the plain
+   form and name the topic in the link text. */
+function EnterpriseContactLine() {
+  return (
+    <>
+      Questions or integration help?{" "}
+      <Link href="/contact" className="hover:underline" style={ACCENT}>
+        Talk to us about Enterprise
+      </Link>
+    </>
+  );
+}
 
 function OfferList() {
   return (
@@ -96,7 +118,7 @@ const FAQS = [
   },
   {
     q: "How do I get started?",
-    a: "Subscribe to Enterprise on the pricing page, sign in, and open the enterprise dashboard on this page: build your first collection, then take the embed, the feed or an API key from the same place. Integration help is included — we help you wire the embed or feed into your platform.",
+    a: "Use the Get Enterprise button on this page — it takes you straight to checkout for the $999/year plan — then sign in and open the enterprise dashboard on this page: build your first collection, then take the embed, the feed or an API key from the same place. Integration help is included — we help you wire the embed or feed into your platform.",
   },
   {
     q: "What does my team get besides the feed?",
@@ -180,6 +202,23 @@ export default async function EnterprisePage() {
           import, and — if you want it — API keys onto the same data.
         </p>
 
+        {/* Buy + lead paths, in the hero for every visitor who does not
+            already hold Enterprise (subscribers get their dashboard
+            below instead): the buy button goes straight to checkout
+            with the Enterprise plan preselected; the quiet link is the
+            sales conversation, through the contact form. */}
+        {!a.enterprise && (
+          <div
+            className="flex flex-wrap items-center gap-x-5 gap-y-3"
+            style={{ marginTop: "var(--we-space-6)" }}
+          >
+            <Button href={ENTERPRISE_CHECKOUT_HREF}>Get Enterprise — $999/year</Button>
+            <Button variant="quiet" href="/contact">
+              Talk to us about Enterprise
+            </Button>
+          </div>
+        )}
+
         {!a.ok ? (
           <div className="mt-10 p-6 md:p-8" style={panelStyle}>
             <p
@@ -196,7 +235,7 @@ export default async function EnterprisePage() {
               className="mt-4"
               style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
             >
-              {ENTERPRISE_SUPPORT_LINE}
+              <EnterpriseContactLine />
             </p>
           </div>
         ) : !a.enterprise ? (
@@ -209,7 +248,7 @@ export default async function EnterprisePage() {
             </p>
             <OfferList />
             <div style={{ marginTop: "var(--we-space-6)" }}>
-              <Button href="/pricing">Get Enterprise</Button>
+              <Button href={ENTERPRISE_CHECKOUT_HREF}>Get Enterprise — $999/year</Button>
             </div>
             <p
               className="flex items-start gap-2 mt-5 max-w-xl"
@@ -222,36 +261,12 @@ export default async function EnterprisePage() {
               className="mt-3"
               style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
             >
-              {ENTERPRISE_SUPPORT_LINE}
+              <EnterpriseContactLine />
             </p>
           </div>
         ) : (
           <EnterpriseClient />
         )}
-
-        {/* What the feed includes — rendered for every visitor, so the
-            product is legible without an account. */}
-        <div className="mt-16">
-          <h2 className="font-[family-name:var(--we-font-display)]" style={sectionTitleStyle}>
-            What the Enterprise feed includes
-          </h2>
-          <div className="mt-8 grid sm:grid-cols-2 gap-5">
-            {DELIVERY_WAYS.map((d) => (
-              <div key={d.title} className="p-7" style={panelStyle}>
-                <d.icon className="w-7 h-7" style={ACCENT} />
-                <h3
-                  className="mt-4 font-semibold text-lg"
-                  style={{ color: "var(--we-text-1)" }}
-                >
-                  {d.title}
-                </h3>
-                <p className="mt-2" style={bodyTextStyle}>
-                  {d.body}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Rights */}
         <div className="mt-16 p-7 md:p-9" style={panelStyle}>
@@ -277,11 +292,38 @@ export default async function EnterprisePage() {
           </p>
         </div>
 
+        {/* What the feed includes — rendered for every visitor, so the
+            product is legible without an account. */}
+        <div className="mt-16">
+          <h2 className="font-[family-name:var(--we-font-display)]" style={sectionTitleStyle}>
+            What the Enterprise feed includes
+          </h2>
+          <div className="mt-8 grid sm:grid-cols-2 gap-5">
+            {DELIVERY_WAYS.map((d) => (
+              <div key={d.title} className="p-7" style={panelStyle}>
+                <d.icon className="w-7 h-7" style={ACCENT} />
+                <h3
+                  className="mt-4 font-semibold text-lg"
+                  style={{ color: "var(--we-text-1)" }}
+                >
+                  {d.title}
+                </h3>
+                <p className="mt-2" style={bodyTextStyle}>
+                  {d.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Price facts */}
         <div
           className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3"
           style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
         >
+          {!a.enterprise && (
+            <Button href={ENTERPRISE_CHECKOUT_HREF}>Get Enterprise — $999/year</Button>
+          )}
           <span>
             <span className="font-semibold" style={{ color: "var(--we-text-1)" }}>
               $999/year
@@ -318,7 +360,7 @@ export default async function EnterprisePage() {
             className="mt-10"
             style={{ color: "var(--we-text-2)", fontSize: "var(--we-size-small)" }}
           >
-            {ENTERPRISE_SUPPORT_LINE}
+            <EnterpriseContactLine />
           </p>
         </div>
       </div>
