@@ -269,6 +269,30 @@ export default function WhiteLabelPage() {
           </p>
         </div>
 
+        {/* Demo generator — an illustrative preview, built by the visitor */}
+        <div className="mt-12 rounded-3xl border border-[#D4AF37]/25 bg-gradient-to-b from-[#D4AF37]/[0.07] to-transparent p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5">
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#D4AF37]">
+              NEW — DEMO GENERATOR
+            </p>
+            <h2 className="mt-2 text-xl font-bold text-white/90">
+              See it with your name on it first
+            </h2>
+            <p className="mt-1.5 text-sm text-white/55 leading-relaxed max-w-2xl">
+              Build an illustrative preview of your portal in about a minute:
+              your organisation&apos;s name and logo over real, current cameras
+              near your location, on a shareable link. A concept preview of
+              the pilot — not a live product.
+            </p>
+          </div>
+          <Link
+            href="/white-label/demo"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-sm hover:brightness-110 active:scale-[0.99] transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+          >
+            Build my preview <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
         {/* What a pilot includes */}
         <div className="mt-20">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight">

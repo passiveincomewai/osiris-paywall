@@ -21,14 +21,19 @@
 import { randomBytes } from "node:crypto";
 import type { PublicEmbedCamera } from "@/lib/embed/public";
 import { SKI_RESORTS } from "@/lib/ski-resorts";
+import {
+  WHITE_LABEL_PREVIEW_ORG_MIN,
+  WHITE_LABEL_PREVIEW_ORG_MAX,
+} from "@/lib/white-label";
 
 /** How far from the picked location a camera may sit and still appear. */
 export const PREVIEW_RADIUS_KM = 50;
 /** Wall size: enough to feel like a portal, few enough to stay fast. */
 export const PREVIEW_CAMERA_LIMIT = 12;
-/** Organisation name bounds for a preview (form + API share them). */
-export const PREVIEW_ORG_NAME_MIN = 2;
-export const PREVIEW_ORG_NAME_MAX = 80;
+/** Organisation name bounds for a preview — the values live in
+ *  client-safe src/lib/white-label; aliased here for server use. */
+export const PREVIEW_ORG_NAME_MIN = WHITE_LABEL_PREVIEW_ORG_MIN;
+export const PREVIEW_ORG_NAME_MAX = WHITE_LABEL_PREVIEW_ORG_MAX;
 
 export interface DemoLocation {
   /** Stable id the create call posts back: "city:…" or "resort:<slug>". */

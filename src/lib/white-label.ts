@@ -44,6 +44,11 @@ export const WHITE_LABEL_WEBSITE_MAX = 300;
  *  (the plain /white-label form leaves them blank). */
 export const WHITE_LABEL_LOCATIONS_MAX = 300;
 export const WHITE_LABEL_CAMERA_INTERESTS_MAX = 300;
+/** Organisation name bounds for a generated preview — defined here
+ *  (this module is client-safe) so the generator form and the server
+ *  parser in src/lib/white-label-demo share one source. */
+export const WHITE_LABEL_PREVIEW_ORG_MIN = 2;
+export const WHITE_LABEL_PREVIEW_ORG_MAX = 80;
 /** The visitor's own words — capped so the composed ContactMessage
  *  (field lines + this text) always fits CONTACT_MESSAGE_MAX. */
 export const WHITE_LABEL_MESSAGE_MIN = 10;
