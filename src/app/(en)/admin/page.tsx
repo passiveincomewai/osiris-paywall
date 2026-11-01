@@ -23,6 +23,7 @@ import LiveRefresh from "./LiveRefresh";
 import AdminNav from "./AdminNav";
 import { growthDashboardUrl } from "@/lib/growth";
 import { PAYMENT_RECOVERY_TEMPLATE } from "@/lib/billing/dunning";
+import { denverDayStartUtc } from "@/lib/proof-stats";
 
 export const metadata = { title: "Admin Dashboard" };
 export const dynamic = "force-dynamic";
@@ -288,12 +289,13 @@ export default async function AdminDashboardPage() {
 
   const now = Date.now();
   const d1 = new Date(now - 1 * DAY), d7 = new Date(now - 7 * DAY), d30 = new Date(now - 30 * DAY);
+  const dayStartDenver = denverDayStartUtc(new Date(now));
   const d60 = new Date(now - 60 * DAY);
   const d3future = new Date(now + 3 * DAY);
 
   type SignupSource = { ref: string; c: bigint };
   const [
-    totalUsers, users7d, users30d, unverifiedPwUsers, passwordUsers, oauthProviders,
+    totalUsers, users7d, users30d, usersToday, unverifiedPwUsers, passwordUsers, oauthProviders,
     subs, subStatus, newSubs7d, newSubs30d, canceled30d, trialsEndingSoon, recentSubs,
     trialCohortTotal, trialCohortPaying, pastDueSubs, recoverySends,
     pv24h, pv7d, pv30d, pvTotal,
@@ -308,6 +310,7 @@ export default async function AdminDashboardPage() {
     db.user.count(),
     db.user.count({ where: { createdAt: { gte: d7 } } }),
     db.user.count({ where: { createdAt: { gte: d30 } } }),
+    db.user.count({ where: { createdAt: { gte: dayStartDenver } } }),
     // Email+password accounts that never verified — actionable: resend or prune.
     db.user.count({ where: { emailVerified: null, passwordHash: { not: null } } }),
     db.user.count({ where: { passwordHash: { not: null } } }),
@@ -598,7 +601,7 @@ export default async function AdminDashboardPage() {
 
         {/* Key metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card label="Total users" value={fmt(totalUsers)} sub={`+${fmt(users7d)} / 7d · +${fmt(users30d)} / 30d${unverifiedPwUsers ? ` · ${fmt(unverifiedPwUsers)} unverified` : ""}`} />
+          <Card label="Total users" value={fmt(totalUsers)} sub={`+${fmt(usersToday)} today · +${fmt(users7d)} / 7d · +${fmt(users30d)} / 30d${unverifiedPwUsers ? ` · ${fmt(unverifiedPwUsers)} unverified` : ""}`} />
           <Card label="Paying subscribers" value={fmt(payingSubs.length)} sub={Object.entries(planCounts).map(([p, c]) => `${p}: ${c}`).join(" · ") || "No paying subs yet"} accent="#f7b80c" />
           <Card label="MRR (est.)" value={money(mrr)} sub={`Paying subs only · ${trialingSubs.length ? money(trialMrrPotential) + " in trials" : "no trials"}`} accent="#f7b80c" />
           <Card label="Trials active" value={fmt(trialingSubs.length)} sub={`${fmt(trialsEndingSoon)} end within 3 days · ${fmt(statusMap.get("past_due") ?? 0)} past due`} />
