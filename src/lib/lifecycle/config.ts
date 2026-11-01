@@ -101,6 +101,12 @@ export const INACTIVE_STAGE2_MAX_MS = 45 * DAY_MS;
 export const EXIT_SURVEY_MIN_AGE_MS = 3 * DAY_MS;
 export const EXIT_SURVEY_MAX_AGE_MS = 5 * DAY_MS;
 
+/** Verification reminder (round 2, R1): unverified accounts, 1–30 days
+ * old. The benefit is the ladder's verify rung — verifying grants
+ * VERIFY_UNLOCK_OPENS (+5) more camera opens (lib/camera-ladder). */
+export const VERIFICATION_REMINDER_MIN_AGE_MS = 1 * DAY_MS;
+export const VERIFICATION_REMINDER_MAX_AGE_MS = 30 * DAY_MS;
+
 /** Affiliate notifications: evaluated promptly, never archaeology. */
 export const AFFILIATE_SIGNUP_WINDOW_MS = 24 * HOUR_MS;
 export const AFFILIATE_COMMISSION_WINDOW_MS = 7 * DAY_MS;

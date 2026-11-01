@@ -37,6 +37,8 @@ import {
   INACTIVE_STAGE2_MAX_MS,
   EXIT_SURVEY_MIN_AGE_MS,
   EXIT_SURVEY_MAX_AGE_MS,
+  VERIFICATION_REMINDER_MIN_AGE_MS,
+  VERIFICATION_REMINDER_MAX_AGE_MS,
   DAY_MS,
   AFFILIATE_SIGNUP_WINDOW_MS,
   AFFILIATE_COMMISSION_WINDOW_MS,
@@ -369,5 +371,20 @@ export function trialExitSurveyDue(
   const sinceEnd = now.getTime() - input.trialEndSec * 1000;
   if (sinceEnd < EXIT_SURVEY_MIN_AGE_MS) return no("too_early");
   if (sinceEnd > EXIT_SURVEY_MAX_AGE_MS) return no("too_old");
+  return DUE;
+}
+
+// ── (m) Verification reminder (round 2, R1) ──────────────────────────
+// `verified` arrives precomputed by the engine via lib/auth-verification's
+// isVerifiedRow (column set OR a provider-verified OAuth link) — a
+// Google user whose column hasn't healed yet must never be reminded.
+export function verificationReminderDue(
+  input: { verified: boolean; createdAt: Date },
+  now: Date,
+): TriggerVerdict {
+  if (input.verified) return no("already_verified");
+  const age = now.getTime() - input.createdAt.getTime();
+  if (age < VERIFICATION_REMINDER_MIN_AGE_MS) return no("too_early");
+  if (age > VERIFICATION_REMINDER_MAX_AGE_MS) return no("too_old");
   return DUE;
 }

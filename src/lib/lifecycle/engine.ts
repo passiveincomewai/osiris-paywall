@@ -38,6 +38,8 @@ import {
   RENEWAL_NOTICE_WINDOW_MS,
   ONBOARDING_DAY5_MAX_AGE_MS,
   INACTIVE_STAGE1_MIN_MS,
+  VERIFICATION_REMINDER_MIN_AGE_MS,
+  VERIFICATION_REMINDER_MAX_AGE_MS,
   REGION_WINDOW_MS,
   DAY_MS,
 } from "./config";
@@ -57,6 +59,7 @@ import {
   onboardingDripDue,
   inactiveDue,
   trialExitSurveyDue,
+  verificationReminderDue,
   affiliateSignupDue,
   affiliateFirstCommissionDue,
   regionInterestDue,
@@ -89,12 +92,14 @@ import {
   onboardingDay5Email,
   inactiveReengagementEmail,
   trialExitSurveyEmail,
+  verificationReminderEmail,
   affiliateSignupEmail,
   affiliateFirstCommissionEmail,
   regionInterestEmail,
   type RenderedEmail,
 } from "./templates";
 import { buildUnsubscribeUrl, unsubscribeSecret } from "./unsubscribe";
+import { isVerifiedRow } from "../auth-verification";
 
 export type LifecycleTemplate =
   | "welcome_discount"
@@ -112,6 +117,7 @@ export type LifecycleTemplate =
   | "onboarding_day5"
   | "inactive_reengagement"
   | "trial_exit_survey"
+  | "verification_reminder"
   | "affiliate_signup"
   | "affiliate_first_commission"
   | "region_interest"
@@ -917,6 +923,48 @@ export async function runLifecycleEmails(
             }),
         });
       }
+    }
+  });
+
+  // ── (m) Verification reminder (marketing, R1) ──────────────────────
+  // Column-null users only at the query; the verdict re-checks with
+  // isVerifiedRow so a provider-verified (Google) account whose stamp
+  // hasn't healed is never reminded.
+  await section("verification_reminder", async () => {
+    const candidates = await db.user.findMany({
+      where: {
+        emailVerified: null,
+        createdAt: {
+          gte: new Date(now.getTime() - VERIFICATION_REMINDER_MAX_AGE_MS),
+          lte: new Date(now.getTime() - VERIFICATION_REMINDER_MIN_AGE_MS),
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        emailOptOut: true,
+        createdAt: true,
+        emailVerified: true,
+        accounts: { select: { provider: true } },
+      },
+      orderBy: { createdAt: "asc" },
+      take: 200,
+    });
+    for (const u of candidates) {
+      const verdict = verificationReminderDue(
+        { verified: isVerifiedRow(u), createdAt: u.createdAt },
+        now,
+      );
+      if (!verdict.due) continue;
+      await deliver({
+        user: u,
+        template: "verification_reminder",
+        contextKey: "account",
+        kind: "marketing",
+        render: () =>
+          verificationReminderEmail({ name: u.name, unsubscribeUrl: unsubFor(u.id) }),
+      });
     }
   });
 

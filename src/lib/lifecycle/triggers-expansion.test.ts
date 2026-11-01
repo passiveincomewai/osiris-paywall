@@ -12,6 +12,7 @@ import {
   onboardingDripDue,
   inactiveDue,
   trialExitSurveyDue,
+  verificationReminderDue,
 } from "./triggers";
 
 const NOW = new Date(Date.UTC(2026, 10, 1, 18, 0, 0)); // Nov 1 2026, 18:00 UTC
@@ -167,5 +168,24 @@ describe("trialExitSurveyDue", () => {
   it("keeps the lost-trial gates", () => {
     expect(trialExitSurveyDue({ ...base, trialEndSec: null }, NOW).reason).toBe("never_trialed");
     expect(trialExitSurveyDue({ ...base, hasLiveSubscription: true }, NOW).reason).toBe("already_subscribed");
+  });
+});
+
+describe("verificationReminderDue", () => {
+  const mk = (ageDays: number, verified = false) => ({
+    verified,
+    createdAt: new Date(NOW.getTime() - ageDays * 86400_000),
+  });
+  it("is due for unverified accounts 1–30 days old", () => {
+    expect(verificationReminderDue(mk(1), NOW).due).toBe(true);
+    expect(verificationReminderDue(mk(14), NOW).due).toBe(true);
+    expect(verificationReminderDue(mk(30), NOW).due).toBe(true);
+  });
+  it("waits a day (the signup verification email just went out) and stops at 30", () => {
+    expect(verificationReminderDue(mk(0), NOW).reason).toBe("too_early");
+    expect(verificationReminderDue(mk(31), NOW).reason).toBe("too_old");
+  });
+  it("never reminds a verified account (incl. provider-verified)", () => {
+    expect(verificationReminderDue(mk(5, true), NOW).reason).toBe("already_verified");
   });
 });

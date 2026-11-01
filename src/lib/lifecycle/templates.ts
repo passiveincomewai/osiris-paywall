@@ -712,3 +712,29 @@ export function paymentFailedRecoveryEmail(input: {
     ),
   };
 }
+
+// ── (m) Verification reminder (marketing, round 2 R1) ────────────────
+// The benefit is the ladder's verify rung, stated with the ladder's own
+// arithmetic (lib/camera-ladder: unverified account = 5 opens; verified
+// = 10). The CTA goes to Settings, where the site's own verify step
+// lives (lib/auth-verification's send path) — the reminder never mints
+// tokens of its own.
+export function verificationReminderEmail(input: {
+  name: string | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: "Verify your email — unlock 5 more camera opens",
+    html: shell(
+      "One click, 5 more opens",
+      "Your free account is on 5 camera opens; verifying your email makes it 10.",
+      `${P(`Hi ${first},`)}
+       ${P(`Your WorldEye account's email isn't verified yet. On the free ladder that leaves you at <strong style="color:#fff;">5 camera opens</strong> — verifying your email unlocks <strong style="color:#fff;">5 more (10 total)</strong>, free, and it's the same step that proves this address for password resets and receipts.`)}
+       ${P(`It takes one click: open Settings and choose verify — we'll email you the confirmation link.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Verify in Settings", href: appUrl("/settings") },
+      { why: "You're receiving this because your WorldEye account's email isn't verified yet." },
+    ),
+  };
+}
