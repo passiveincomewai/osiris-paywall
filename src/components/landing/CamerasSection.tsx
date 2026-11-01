@@ -18,6 +18,18 @@ import { enHome, type HomeCopy } from "@/i18n/dictionaries/en/home";
  * stay in code (routes are never translated). Links to pages published
  * in the current locale (pricing, live-webcams) localize; the rest keep
  * their English URLs.
+ *
+ * Visual transformation (design overhaul D-1, 2026-11-01): the section
+ * now sits on the design system — token container and rhythm, a flat
+ * ink surface with a hairline instead of the gold-bordered #0096FF
+ * gradient band, Button-equivalent primary/ghost CTAs (the design
+ * Button's exact fill, radius and padding, expressed as token classes
+ * because GlobeHomeLink takes className only), and token category
+ * cards (ink panels, hairlines, cyan live dots, steel inactive
+ * arrows). The gold / #0096FF dialect is retired here; gold survives
+ * only as locked facts (the /pricing Pro tier accent is not this
+ * link). Copy, links, section order, the sr-only H1 and the logo
+ * block are unchanged.
  */
 export const CAMERA_CATEGORIES = [
   { label: "Cities", href: "/world-city-webcams" },
@@ -27,6 +39,11 @@ export const CAMERA_CATEGORIES = [
   { label: "Mountains", href: "/ski-webcams" },
   { label: "Airports", href: "/airport-webcams" },
 ] as const;
+
+const CTA_PRIMARY =
+  "inline-flex items-center px-[1.35rem] py-[0.8rem] rounded-[var(--we-radius-2)] bg-[var(--we-blue)] hover:bg-[var(--we-blue-strong)] text-[var(--we-text-on-accent)] border border-transparent text-sm font-semibold leading-none transition-colors";
+const CTA_GHOST =
+  "inline-flex items-center px-[1.35rem] py-[0.8rem] rounded-[var(--we-radius-2)] bg-transparent border border-[var(--we-line-3)] hover:border-[var(--we-text-1)] text-[var(--we-text-1)] text-sm font-semibold leading-none transition-colors";
 
 function StaticCategoryCards({
   copy,
@@ -47,24 +64,27 @@ function StaticCategoryCards({
             <Link
               key={label}
               href={href}
-              className="group rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#0096FF]/50 hover:bg-white/[0.05] transition p-5 flex items-center gap-3"
+              className="group flex items-center gap-3 bg-[var(--we-ink-2)] hover:bg-[var(--we-ink-3)] border border-[var(--we-line-2)] hover:border-[var(--we-line-3)] rounded-[var(--we-radius-2)] p-[var(--we-space-5)] transition-colors"
             >
-              <span className="w-2 h-2 rounded-full bg-[#0096FF] shrink-0" aria-hidden />
-              <span className="font-semibold text-white">{label}</span>
-              <ArrowRight className="w-4 h-4 ml-auto text-white/30 group-hover:text-[#0096FF] transition" aria-hidden />
+              <span className="w-2 h-2 rounded-full shrink-0 bg-[var(--we-cyan)]" aria-hidden />
+              <span className="font-semibold text-[var(--we-text-1)]">{label}</span>
+              <ArrowRight
+                className="w-4 h-4 ml-auto text-[var(--we-steel)] group-hover:text-[var(--we-blue-strong)] transition-colors"
+                aria-hidden
+              />
             </Link>
           );
         })}
       </div>
       <Link
         href="/cameras"
-        className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition"
+        className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-[var(--we-blue-strong)] hover:underline underline-offset-[3px]"
       >
         {copy.cameras.exploreLink} <ArrowRight className="w-4 h-4" aria-hidden />
       </Link>
       <Link
         href={webcamsHref}
-        className="inline-flex items-center gap-2 mt-6 ml-6 text-sm font-semibold text-[#0096FF] hover:text-[#0aa5ff] transition"
+        className="inline-flex items-center gap-2 mt-6 ml-6 text-sm font-semibold text-[var(--we-blue-strong)] hover:underline underline-offset-[3px]"
       >
         {copy.cameras.webcamsLink} <ArrowRight className="w-4 h-4" aria-hidden />
       </Link>
@@ -82,8 +102,22 @@ export default function CamerasSection({
   const cameras = copy.cameras;
   return (
     <section aria-label={cameras.ariaLabel} data-landing-view="cameras" className="relative">
-      <div className="border-t border-[#D4AF37]/25 bg-gradient-to-b from-[#0096FF]/[0.07] to-transparent">
-        <div className="max-w-7xl mx-auto px-6 pt-14 pb-10">
+      <div
+        style={{
+          borderTop: "1px solid var(--we-line-2)",
+          background: "var(--we-ink-1)",
+        }}
+      >
+        <div
+          className="mx-auto w-full"
+          style={{
+            maxWidth: "var(--we-wide)",
+            paddingLeft: "var(--we-gutter)",
+            paddingRight: "var(--we-gutter)",
+            paddingTop: "var(--we-space-7)",
+            paddingBottom: "var(--we-space-6)",
+          }}
+        >
           <Reveal>
             {/* Owner order 2026-10-27 (production payload 93, folded into
                 this rebase): the brand logo replaces the text heading
@@ -100,26 +134,40 @@ export default function CamerasSection({
               height={570}
               className="h-28 md:h-36 w-auto"
             />
-            <h2 className="font-display text-3xl md:text-4xl font-medium leading-[1.12] text-white/90 mt-7">
+            <h2
+              className="font-[family-name:var(--we-font-display)]"
+              style={{
+                color: "var(--we-text-1)",
+                fontSize: "clamp(1.875rem, 3.2vw, 2.375rem)",
+                lineHeight: 1.12,
+                fontWeight: 560,
+                marginTop: "var(--we-space-6)",
+              }}
+            >
               {cameras.h2}
             </h2>
-            <p className="text-base md:text-lg text-white/60 leading-relaxed mt-3 max-w-2xl">
+            <p
+              style={{
+                color: "var(--we-text-2)",
+                fontSize: "var(--we-size-lede)",
+                lineHeight: "var(--we-leading-body)",
+                marginTop: "var(--we-space-3)",
+                maxWidth: "var(--we-measure)",
+              }}
+            >
               {cameras.sub}
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <GlobeHomeLink className="inline-flex items-center px-5 py-3 rounded-xl bg-[#0096FF] hover:bg-[#0aa5ff] text-white text-sm font-semibold transition">
+            <div
+              className="flex flex-wrap"
+              style={{ marginTop: "var(--we-space-6)", gap: "var(--we-space-3)" }}
+            >
+              <GlobeHomeLink className={CTA_PRIMARY}>
                 {cameras.ctaGlobe}
               </GlobeHomeLink>
-              <Link
-                href="/signup"
-                className="inline-flex items-center px-5 py-3 rounded-xl border border-white/15 text-white/80 hover:text-white hover:border-white/30 text-sm font-semibold transition"
-              >
+              <Link href="/signup" className={CTA_GHOST}>
                 {cameras.ctaSignup}
               </Link>
-              <Link
-                href={localizedPath("pricing", locale)}
-                className="inline-flex items-center px-5 py-3 rounded-xl border border-[#D4AF37]/40 text-[#D4AF37] hover:bg-[#D4AF37]/10 text-sm font-semibold transition"
-              >
+              <Link href={localizedPath("pricing", locale)} className={CTA_GHOST}>
                 {cameras.ctaPricing}
               </Link>
             </div>
