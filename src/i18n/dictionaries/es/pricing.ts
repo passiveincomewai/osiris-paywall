@@ -303,6 +303,18 @@ export const esPricing: PricingCopy = {
       q: "¿En qué se diferencia de la versión gratuita autohospedada?",
       a: "El mismo motor de código abierto, más los niveles de pago: un analista de IA que trabaja el mapa por ti, tráfico en vivo, filtros de búsqueda avanzados y —en Ultra— los feeds de inteligencia premium que el sitio gratuito no restringe, porque allí no hay puerta. Aquí, los niveles financian la infraestructura.",
     },
+    {
+      q: "¿Cuánto dura la prueba gratuita?",
+      a: "Los planes semanales empiezan con una prueba gratuita de 3 días; los mensuales y anuales, con una de 10 días. Nunca se te cobra durante la prueba: cancela antes de que termine y no pagas nada.",
+    },
+    {
+      q: "¿Cuál es la diferencia entre Lite, Pro y Ultra?",
+      a: "Lite cuesta $4.99/semana, $8.99/mes o $44.99/año: graba hasta 5 cámaras a la vez, sin reglas de alertas de cámara. Pro cuesta $7.99/semana, $13.99/mes o $74.99/año: grabación de 20 cámaras y 2 reglas de alertas, además del kit OSINT. Ultra cuesta $12.99/semana, $24.99/mes o $149.99/año: grabación de 40 cámaras, 10 reglas de alertas, timelapse de cámaras y los feeds de inteligencia premium. Los tres eliminan los límites de apertura de cámaras del nivel gratuito.",
+    },
+    {
+      q: "¿Cuántas cámaras puedo ver?",
+      a: "El directorio reúne 74.229 cámaras públicas, y ninguna está bloqueada por nivel: cualquier cámara del directorio se puede abrir con cualquier plan. El nivel gratuito incluye una asignación de aperturas de cámaras; Lite, Pro y Ultra eliminan los límites de apertura, así que puedes ver sin límite. Lo que cambian los planes es la grabación y las alertas: graba 5 cámaras a la vez en Lite, 20 en Pro y 40 en Ultra, con reglas de alertas de cámara: ninguna en Lite, 2 en Pro y 10 en Ultra.",
+    },
   ],
   compareTeasers: {
     heading: "¿Comparando tus opciones?",

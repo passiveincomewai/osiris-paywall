@@ -484,6 +484,18 @@ export const enPricing: PricingCopy = {
       q: "How is this different from the free self-hosted version?",
       a: "Same open-source engine, plus the paid tiers: an AI analyst that works the map for you, live traffic, advanced search filters and — on Ultra — the premium intel feeds the free site doesn't gate, because there is no gate there. Here, the tiers fund the infrastructure.",
     },
+    {
+      q: "How long is the free trial?",
+      a: "Weekly plans start with a 3-day free trial; monthly and annual plans start with a 10-day free trial. You're never charged during a trial — cancel before it ends and you pay nothing.",
+    },
+    {
+      q: "What is the difference between Lite, Pro and Ultra?",
+      a: "Lite is $4.99/week, $8.99/month or $44.99/year — record up to 5 cameras at once, with no camera alert rules. Pro is $7.99/week, $13.99/month or $74.99/year — 20-camera recording and 2 alert rules, plus the OSINT toolkit. Ultra is $12.99/week, $24.99/month or $149.99/year — 40-camera recording, 10 alert rules, camera timelapse and the premium intel feeds. All three remove the free tier's camera-open limits.",
+    },
+    {
+      q: "How many cameras can I watch?",
+      a: "The directory holds 74,229 public cameras, and none of them is locked behind a tier — every camera in the directory can be opened on any plan. The free tier includes an allowance of camera opens; Lite, Pro and Ultra remove the camera-open limits, so watching is unlimited there. What the plans change is recording and alerts: record 5 cameras at once on Lite, 20 on Pro and 40 on Ultra, with camera alert rules — none on Lite, 2 on Pro, 10 on Ultra.",
+    },
   ],
   compareTeasers: {
     heading: "Comparing your options?",
