@@ -19,6 +19,19 @@ export function watchOnWorldEyeUrl(id: string): string {
   return `${PRODUCTION_APP_URL}/?camera=${encodeURIComponent(id)}`;
 }
 
+/** The public page URL for a shareable camera collection. */
+export function publicCollectionUrl(slug: string): string {
+  return `${PRODUCTION_APP_URL}/collections/${encodeURIComponent(slug)}`;
+}
+
+/** The embed player URL for a shareable camera collection — carries
+ *  only the collection's rights-cleared cameras (lib/embed/public's
+ *  rule, applied per camera at render). buildEmbedSnippet above
+ *  builds its iframe snippet unchanged. */
+export function collectionEmbedUrl(slug: string): string {
+  return `${PRODUCTION_APP_URL}/embed/collection/${encodeURIComponent(slug)}`;
+}
+
 export interface EmbedSizePreset {
   id: string;
   label: string;
