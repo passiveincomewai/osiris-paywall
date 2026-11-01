@@ -57,9 +57,9 @@ export const PREMIUM_FEATURES: PremiumFeature[] = [
     blurb: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe shows up.",
   },
   {
-    name: "Every Future Layer",
+    name: "Unlimited camera opens",
     tier: "pro",
-    blurb: "New premium feeds land in Pro first, at no extra cost.",
+    blurb: "The free tier's camera-open allowance is gone — open as many cameras as you like.",
   },
   // ── VIP Pro (annual) — PricingClient VIP_FEATURES, in order.
   {

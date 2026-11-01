@@ -105,7 +105,6 @@ const COMPARE_BOOLEANS: { free: boolean; lite: boolean; pro: boolean; ultra: boo
   { free: false, lite: false, pro: true, ultra: true },
   { free: false, lite: true, pro: true, ultra: true },
   { free: false, lite: false, pro: true, ultra: true },
-  { free: false, lite: false, pro: true, ultra: true },
   { free: false, lite: false, pro: false, ultra: true },
   { free: false, lite: false, pro: false, ultra: true },
 ];

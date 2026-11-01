@@ -389,7 +389,7 @@ export const enPricing: PricingCopy = {
     { title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
     { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser and save the clips." },
     { title: "Camera alerts (2)", desc: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe, like snow or flooding, shows up." },
-    { title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
+    { title: "Unlimited camera opens", desc: "The free tier's camera-open allowance is gone — open as many cameras as you like." },
   ],
   vipFeatures: [
     { title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — Ultra only." },
@@ -433,7 +433,6 @@ export const enPricing: PricingCopy = {
       "OSINT toolkit (nmap, DNS, WHOIS, SSL)",
       "Camera Recording Studio",
       "Camera alerts (2 on Pro · 10 on Ultra)",
-      "Every future Pro layer",
       "Premium intel feeds (cyber, GDELT, maritime, live news)",
       "Camera timelapse",
     ],
@@ -691,7 +690,7 @@ export const enPricing: PricingCopy = {
         { title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
         { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 20 cameras at once — and save the clips." },
         { title: "Camera alerts (2)", desc: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe, like snow or flooding, shows up." },
-        { title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
+        { title: "Unlimited camera opens", desc: "The free tier's camera-open allowance is gone — open as many cameras as you like." },
       ],
       excludes: [
         { title: "Premium intel feeds", desc: "Cyber, GDELT, maritime and live-news feeds are Ultra only." },
@@ -755,7 +754,7 @@ export const enPricing: PricingCopy = {
         "You want the hub: event alerts, a personal brief and saved views.",
       ],
       includes: [
-        { title: "Everything in Pro", desc: "The OSINT toolkit, camera alerts, advanced search and every future Pro layer — all included." },
+        { title: "Everything in Pro", desc: "The OSINT toolkit, camera alerts, advanced search and the recording studio — all included." },
         { title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — Ultra only." },
         { title: "Camera Timelapse", desc: "Capture snapshot cameras frame by frame and export the film — Ultra only." },
         { title: "Camera alerts (10)", desc: "The alert allowance raised to 10 watched cameras — Pro includes 2." },

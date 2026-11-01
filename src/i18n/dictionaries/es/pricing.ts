@@ -196,7 +196,7 @@ export const esPricing: PricingCopy = {
     { title: "Kit de herramientas OSINT", desc: "Escaneos Nmap, DNS/WHOIS, análisis SSL e inteligencia de amenazas, en el navegador." },
     { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador y guarda los clips." },
     { title: "Alertas de cámara (2)", desc: "Vigila hasta 2 cámaras y recibe un correo — con la foto — cuando aparezca una condición que describas, como nieve o inundaciones." },
-    { title: "Cada capa futura", desc: "Los nuevos feeds premium llegan primero a Pro, sin costo extra." },
+    { title: "Aperturas de cámara ilimitadas", desc: "El límite de aperturas de cámara del nivel gratuito desaparece: abre tantas cámaras como quieras." },
   ],
   vipFeatures: [
     { title: "Feeds de inteligencia premium", desc: "Ciberamenazas, eventos GDELT, seguimiento marítimo, zonas de conflicto, noticias en vivo: solo Ultra." },
@@ -252,7 +252,6 @@ export const esPricing: PricingCopy = {
       "Kit de herramientas OSINT (nmap, DNS, WHOIS, SSL)",
       "Estudio de grabación de cámaras",
       "Alertas de cámara (2 en Pro · 10 en Ultra)",
-      "Cada futura capa Pro",
       "Feeds de inteligencia premium (ciber, GDELT, marítimo, noticias en vivo)",
       "Timelapse de cámaras",
     ],
@@ -510,7 +509,7 @@ export const esPricing: PricingCopy = {
         { title: "Kit de herramientas OSINT", desc: "Escaneos Nmap, DNS/WHOIS, análisis SSL e inteligencia de amenazas, en el navegador." },
         { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 20 cámaras a la vez — y guarda los clips." },
         { title: "Alertas de cámara (2)", desc: "Vigila hasta 2 cámaras y recibe un correo — con la foto — cuando aparezca una condición que describas, como nieve o inundaciones." },
-        { title: "Cada capa futura", desc: "Los nuevos feeds premium llegan primero a Pro, sin costo extra." },
+        { title: "Aperturas de cámara ilimitadas", desc: "El límite de aperturas de cámara del nivel gratuito desaparece: abre tantas cámaras como quieras." },
       ],
       excludes: [
         { title: "Feeds de inteligencia premium", desc: "Los feeds de ciber, GDELT, marítimo y noticias en vivo son solo de Ultra." },
@@ -574,7 +573,7 @@ export const esPricing: PricingCopy = {
         "Quieres el centro: alertas de eventos, un resumen personal y vistas guardadas.",
       ],
       includes: [
-        { title: "Todo lo de Pro", desc: "El kit OSINT, las alertas de cámara, la búsqueda avanzada y cada capa futura de Pro — todo incluido." },
+        { title: "Todo lo de Pro", desc: "El kit OSINT, las alertas de cámara, la búsqueda avanzada y el estudio de grabación — todo incluido." },
         { title: "Feeds de inteligencia premium", desc: "Ciberamenazas, eventos GDELT, seguimiento marítimo, zonas de conflicto, noticias en vivo: solo Ultra." },
         { title: "Timelapse de cámaras", desc: "Captura las cámaras de instantáneas fotograma a fotograma y exporta la película: solo Ultra." },
         { title: "Alertas de cámara (10)", desc: "El límite de alertas sube a 10 cámaras vigiladas; Pro incluye 2." },
