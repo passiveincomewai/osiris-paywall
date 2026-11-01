@@ -72,9 +72,10 @@ export function htmlToText(html: string): string {
 
 /** The shared branded layout (2026-11 design pass): table-based for
  * Outlook, 600px, dark-mode safe with explicit colours throughout,
- * one button style, and ONE standard footer — tagline, the CAN-SPAM
- * postal line, and an optional per-type "why you got this" line that
- * templates pass via opts.why. Signature kept from the original
+ * one button style, and ONE standard footer — tagline and an
+ * optional per-type "why you got this" line that templates pass via
+ * opts.why. (No postal line: removed from every automated email
+ * 2026-11-01 on the owner's order.) Signature kept from the original
  * shell so every existing caller inherits the layout unchanged;
  * visible copy is otherwise byte-equivalent to the pre-pass shell.
  * Exported for src/lib/lifecycle templates, which render in this shell. */
@@ -106,7 +107,6 @@ ${cta ? `<div style="text-align:center;margin:26px 0 8px;"><a href="${cta.href}"
 </td></tr>
 <tr><td align="center" style="font-size:12px;color:#52525b;padding:24px 24px 0;">WorldEye — see the world live.<br>If you didn't request this, you can safely ignore it.</td></tr>
 ${why}
-<tr><td align="center" style="font-size:12px;color:#52525b;padding:0 24px 40px;">WorldEye · 555 E 3200 N, North Ogden, UT 84414</td></tr>
 </table>
 </td></tr></table>
 </body></html>`;

@@ -1,7 +1,8 @@
 // Design-pass pins for the shared email shell (2026-11): table-based
-// layout, standard footer with the CAN-SPAM postal line, the optional
-// why-line, and the derived plain-text alternative. If any of these
-// regress, every automated email regresses with them.
+// layout, standard footer (no postal line — removed 2026-11-01 on the
+// owner's order), the optional why-line, and the derived plain-text
+// alternative. If any of these regress, every automated email regresses
+// with them.
 import { describe, it, expect } from "vitest";
 import {
   shell,
@@ -33,9 +34,10 @@ describe("shell (shared branded layout)", () => {
     expect(html).toContain("#D4AF37");
     expect(html).toContain("Click me");
   });
-  it("always carries the standard footer with the CAN-SPAM postal line", () => {
+  it("always carries the standard footer — and no postal address", () => {
     expect(html).toContain("WorldEye — see the world live.");
-    expect(html).toContain("WorldEye · 555 E 3200 N, North Ogden, UT 84414");
+    expect(html).not.toContain("555 E 3200 N");
+    expect(html).not.toContain("North Ogden, UT 84414");
   });
   it("renders the why-line only when the template provides one", () => {
     expect(html).not.toContain("because you have a paid");
@@ -59,7 +61,7 @@ describe("htmlToText", () => {
     expect(text).toContain("Confirm your email");
     expect(text).toContain("Verify my email");
     expect(text).toContain("https://worldeye.app/verify?token=abc");
-    expect(text).toContain("555 E 3200 N, North Ogden, UT 84414");
+    expect(text).not.toContain("555 E 3200 N");
   });
 });
 

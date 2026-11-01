@@ -16,7 +16,6 @@ import { formatVenmoHandle } from "./venmo";
 
 export const PAYOUT_OWNER_EMAIL = "passiveincomewai@gmail.com";
 export const PAYOUT_SLA_MS = 48 * 3600_000;
-const CAN_SPAM_LINE = "WorldEye · 555 E 3200 N, North Ogden, UT 84414";
 
 const fmtUsd = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
@@ -65,8 +64,7 @@ function affiliateEmail(p: PayoutWithAffiliate): string {
 function bodyWrap(lines: string[]): string {
   return lines
     .map((l) => `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;margin:0 0 10px;">${l}</p>`)
-    .join("\n") +
-    `<p style="color:#52525b;font-size:12px;margin-top:22px;">${CAN_SPAM_LINE}</p>`;
+    .join("\n");
 }
 
 // ── Status emails ────────────────────────────────────────────────────────

@@ -6,8 +6,7 @@
  * ski access via resolveSkiAccess — never a new gate), the opt-out rule
  * (User.emailOptOut), the send log (SkiEmailSendLog — one row per
  * (user, kind, dedupeKey); the unique constraint is the never-send-twice
- * guarantee), and the mail furniture (brand shell, unsubscribe link,
- * CAN-SPAM postal line).
+ * guarantee), and the mail furniture (brand shell, unsubscribe link).
  *
  * The runner dependencies are a single injectable interface so unit
  * tests can drive the full run logic with fakes — no DB, no network,
@@ -29,9 +28,6 @@ export const SKI_EMAIL_KINDS = {
   season: "season",
 } as const;
 export type SkiEmailKind = (typeof SKI_EMAIL_KINDS)[keyof typeof SKI_EMAIL_KINDS];
-
-/** CAN-SPAM postal line (same line the affiliate payout mail carries). */
-export const SKI_EMAIL_CAN_SPAM_LINE = "WorldEye · 555 E 3200 N, North Ogden, UT 84414";
 
 export interface SkiEmailUser {
   id: string;
@@ -104,11 +100,10 @@ export function makeSnowCache(fetchSnow: SkiEmailDeps["fetchSnow"]) {
   };
 }
 
-/** Footer block every ski email carries: unsubscribe + postal line. */
+/** Footer block every ski email carries: the ski unsubscribe line. */
 export function skiEmailFooter(unsubscribeUrl: string | null): string {
-  // The CAN-SPAM postal line is NOT repeated here: the shared shell()
-  // footer (design pass D1/D2) prints it on every email. This block
-  // carries only the ski-specific unsubscribe line.
+  // Only the ski-specific unsubscribe line lives here; the shared
+  // shell() provides the standard footer.
   return unsubscribeUrl
     ? `<p style="font-size:12px;color:#52525b;margin-top:18px;">Don't want these ski emails? <a href="${escapeHtml(unsubscribeUrl)}" style="color:#71717a;">Unsubscribe</a> — you'll still get essential account emails.</p>`
     : "";

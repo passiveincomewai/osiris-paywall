@@ -75,7 +75,7 @@ describe("runDawnPatrol", () => {
     expect(world.sentMail[0].html).toContain("Alta");
     expect(world.sentMail[0].html).toContain("14.0 cm");
     expect(world.sentMail[0].html).toContain("modelled");
-    expect(world.sentMail[0].html).toContain("555 E 3200 N, North Ogden, UT 84414");
+    expect(world.sentMail[0].html).not.toContain("555 E 3200 N");
 
     const second = await runDawnPatrol({ deps });
     expect(second.sent).toBe(0);

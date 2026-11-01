@@ -221,8 +221,7 @@ export function trialEndedWinbackEmail(input: {
 // amount, the exact renewal moment, the real cancel path. Figures
 // arrive pre-derived from the live Stripe price (describeStripePrice
 // via the engine) — nothing is restated here. Transactional account
-// mail: no unsubscribe footer, but the CAN-SPAM postal line rides
-// along like every email added in the 2026-11 expansion.
+// mail: no unsubscribe footer.
 export function annualRenewalNoticeEmail(input: {
   name: string | null;
   /** e.g. "VIP Pro plan" — describeStripePrice's planLabel via the engine. */

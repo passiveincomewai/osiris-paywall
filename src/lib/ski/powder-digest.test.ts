@@ -128,7 +128,7 @@ describe("powderDigestEmail", () => {
     });
     expect(html).toContain("modelled forecasts from Open-Meteo");
     expect(html).toContain("/ski-webcams/alta");
-    expect(html).toContain("555 E 3200 N, North Ogden, UT 84414");
+    expect(html).not.toContain("555 E 3200 N");
     expect(html).not.toMatch(/avalanche/i);
   });
 });

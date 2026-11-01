@@ -136,10 +136,10 @@ describe("notifyPayoutRequested", () => {
 });
 
 describe("payoutStatusEmail", () => {
-  it("carries the CAN-SPAM postal line and honest method labels", () => {
+  it("carries no postal line and honest method labels", () => {
     for (const status of ["requested", "approved", "processing", "paid", "rejected"]) {
       const mail = payoutStatusEmail(fixture(status) as any)!;
-      expect(mail.html).toContain("555 E 3200 N, North Ogden, UT 84414");
+      expect(mail.html).not.toContain("555 E 3200 N");
       expect(mail.html).toContain("Venmo (@jane_doe)");
     }
     const legacy = payoutStatusEmail({ ...fixture("paid"), method: "paypal" } as any)!;
