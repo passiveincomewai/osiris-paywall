@@ -2310,6 +2310,95 @@ model FrFacYearlySummary {
   @@index([datasetVersion])
 }
 
+// ── Fraud Radar Phase 5: contracts Neon grain (AUDIT §15a) ───────
+// USAspending contracts (generation 2026-10-06, globally deduped
+// to one row per contract award) at the yearly / NAICS / PSC /
+// agency grains — the FrGrants* shapes mirrored 1:1 with
+// grants→contracts renames. Amounts are AWARD-CUMULATIVE snapshot
+// totals (winning snapshot row only); NAICS/PSC/agency fiscal
+// years are ATTRIBUTED (the archive fiscal year of each award's
+// winning snapshot). Ceiling / potential-value fields are never
+// modelled here — ceilings are not obligations. Outlay columns
+// are nullable: an award whose winning snapshot reports no
+// outlay contributes absence (null), never a fabricated zero.
+// FAC does NOT cover contracts: there is no FAC grain in Phase 5.
+
+model FrContractsYearlySummary {
+  id                          String   @id @default(cuid())
+  datasetVersion              String   // "2026-10-06" (USAspending generation)
+  fiscalYear                  Int      // attributed fiscal year
+  awards                      BigInt
+  distinctVendors             Int
+  obligatedAwardCumulativeUsd Decimal  @db.Decimal(24, 2)
+  outlayAwardCumulativeUsd    Decimal? @db.Decimal(24, 2)
+  transactions                BigInt   // transactions in window (attributed awards)
+  modifications               BigInt   // modification transactions in window
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, fiscalYear])
+  @@index([datasetVersion])
+}
+
+model FrContractsNaicsSummary {
+  id                          String   @id @default(cuid())
+  datasetVersion              String
+  naics                       String
+  naicsDescription            String?
+  attributedFiscalYear        Int
+  awards                      BigInt
+  distinctVendors             Int
+  distinctPscCodes            Int
+  obligatedAwardCumulativeUsd Decimal  @db.Decimal(24, 2)
+  outlayAwardCumulativeUsd    Decimal? @db.Decimal(24, 2)
+  transactionsInWindow        BigInt
+  modificationsInWindow       BigInt
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, naics, attributedFiscalYear])
+  @@index([datasetVersion, attributedFiscalYear])
+}
+
+model FrContractsPscSummary {
+  id                          String   @id @default(cuid())
+  datasetVersion              String
+  psc                         String
+  pscDescription              String?
+  attributedFiscalYear        Int
+  awards                      BigInt
+  distinctVendors             Int
+  distinctNaicsCodes          Int
+  obligatedAwardCumulativeUsd Decimal  @db.Decimal(24, 2)
+  outlayAwardCumulativeUsd    Decimal? @db.Decimal(24, 2)
+  transactionsInWindow        BigInt
+  modificationsInWindow       BigInt
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, psc, attributedFiscalYear])
+  @@index([datasetVersion, attributedFiscalYear])
+}
+
+model FrContractsAgencySummary {
+  id                          String   @id @default(cuid())
+  datasetVersion              String
+  agency                      String   // awarding agency name, as published
+  agencyCode                  String?  // toptier agency code, as published
+  attributedFiscalYear        Int
+  awards                      BigInt
+  distinctVendors             Int
+  obligatedAwardCumulativeUsd Decimal  @db.Decimal(24, 2)
+  outlayAwardCumulativeUsd    Decimal? @db.Decimal(24, 2)
+  transactionsInWindow        BigInt
+  modificationsInWindow       BigInt
+
+  createdAt                   DateTime @default(now())
+
+  @@unique([datasetVersion, agency, attributedFiscalYear])
+  @@index([datasetVersion, attributedFiscalYear])
+}
+
 // ── Fraud Radar Phase 6: statistical intelligence Neon grain ──────
 // Summary grain ONLY (PHASE6 §6.5 Neon decision): one row per
 // (signals version × rule) plus one row per (dataset × quality
