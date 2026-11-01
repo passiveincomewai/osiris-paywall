@@ -93,3 +93,55 @@ describe('OsirisMap cockpit wiring — overlay mount', () => {
     expect(osirisMap).toContain("import FlightCockpitOverlay from '@/components/FlightCockpitOverlay';");
   });
 });
+
+// ── Cockpit View: imagery basemap + real 3D (2026-11-01) ────────────
+//
+// Cockpit rendered flat because it rode on whatever basemap the
+// visitor last chose — usually the dark vector style — with the 3D
+// buildings layer off. Entry now borrows the satellite imagery
+// through the shared hold machinery (OsirisMap) and forces the real
+// building extrusions, the two things this style honestly has; exit
+// restores the visitor's own view. These pins keep that wiring from
+// silently unwiring.
+
+describe('cockpit view — satellite imagery + real 3D buildings', () => {
+  const followSrc = readFileSync(join(process.cwd(), 'src', 'lib', 'flights', 'follow.ts'), 'utf8');
+  const hud = readFileSync(join(process.cwd(), 'src', 'components', 'FlightFollowHud.tsx'), 'utf8');
+  const engageBody = block('const engageFlightFollow = useCallback(', 'const setFlightFollowMode = useCallback(');
+  const endBody = block('const endFlightFollow = useCallback(', 'const engageFlightFollow = useCallback(');
+  const modeBody = block('const setFlightFollowMode = useCallback(', 'const engageFlightCockpit = useCallback(');
+  const bIdx = osirisMap.indexOf('const enabled = activeLayers.terrain_3d');
+  const buildingsBody = osirisMap.slice(bIdx, bIdx + 800);
+
+  it('the hold machinery is defined before the follow callbacks that use it', () => {
+    // useCallback deps arrays evaluate at definition time: if the
+    // holds ever move back below the follow block, the component
+    // TDZ-crashes on mount.
+    expect(osirisMap.indexOf('const acquireSatelliteView')).toBeGreaterThan(-1);
+    expect(osirisMap.indexOf('const acquireSatelliteView')).toBeLessThan(
+      osirisMap.indexOf('const engageFlightFollow = useCallback('),
+    );
+  });
+
+  it('entering cockpit borrows the imagery basemap through the shared hold', () => {
+    expect(engageBody).toContain("acquireSatelliteView('cockpit')");
+    expect(modeBody).toContain("acquireSatelliteView('cockpit')");
+    expect(modeBody).toContain("releaseSatelliteView('cockpit')");
+  });
+
+  it('exiting follow releases the hold so the previous view is restored', () => {
+    expect(endBody).toContain("releaseSatelliteView('cockpit')");
+  });
+
+  it('cockpit forces the real 3D building extrusions; chase and orbit do not', () => {
+    expect(buildingsBody).toContain("activeLayers.terrain_3d || flightFollowUi?.mode === 'forward'");
+    expect(osirisMap).toContain('activeLayers.terrain_3d, flightFollowUi?.mode]);');
+  });
+
+  it('the HUD labels the ground imagery honestly while in cockpit', () => {
+    expect(followSrc).toContain('COCKPIT_IMAGERY_TAG');
+    expect(followSrc).toContain('REFERENCE SATELLITE IMAGERY (DATED)');
+    expect(hud).toContain('COCKPIT_IMAGERY_TAG');
+    expect(hud).toContain("mode === 'forward'");
+  });
+});

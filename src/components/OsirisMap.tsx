@@ -587,6 +587,42 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   // pipeline: the camera consumes the same FlightBlend output the
   // markers draw. Interaction contract mirrors the follow contract: drag
   // releases (camera stays), the HUD's Exit restores the pre-follow view.
+  // ── Satellite-view holds ──────────────────────────────────────────
+  // Camera modes that need the imagery basemap (Bird's-Eye View here,
+  // Cockpit View in the flight block) borrow it through the page's
+  // programmatic setter — onSatelliteViewChange flips the view
+  // WITHOUT persisting it; only the visitor's own switch writes the
+  // stored choice. A hold is acquired on entry, and when the LAST
+  // hold releases, the visitor's previous view is restored. If the
+  // visitor flips the satellite switch off by hand while a hold is
+  // active, the claim is dropped instead: their choice stands, and
+  // nothing is restored over it (the auto-on is an entry action,
+  // never a lock).
+  const satForceHoldsRef = useRef(new Set<string>());
+  const satForcedRef = useRef(false);
+  const satelliteOnRef = useRef(satelliteOn);
+  const onSatelliteViewChangeRef = useRef(onSatelliteViewChange);
+  useEffect(() => { onSatelliteViewChangeRef.current = onSatelliteViewChange; }, [onSatelliteViewChange]);
+  useEffect(() => {
+    satelliteOnRef.current = satelliteOn;
+    if (!satelliteOn) satForcedRef.current = false;
+  }, [satelliteOn]);
+  const acquireSatelliteView = useCallback((key: string) => {
+    if (satForceHoldsRef.current.has(key)) return;
+    satForceHoldsRef.current.add(key);
+    if (satForceHoldsRef.current.size === 1 && !satelliteOnRef.current) {
+      satForcedRef.current = true;
+      onSatelliteViewChangeRef.current?.(true);
+    }
+  }, []);
+  const releaseSatelliteView = useCallback((key: string) => {
+    if (!satForceHoldsRef.current.delete(key)) return;
+    if (satForceHoldsRef.current.size === 0 && satForcedRef.current) {
+      satForcedRef.current = false;
+      onSatelliteViewChangeRef.current?.(false);
+    }
+  }, []);
+
   const flightFollowRef = useRef<FlightFollowState>(IDLE_FLIGHT_FOLLOW);
   const flightFollowHudRef = useRef<FollowHudData | null>(null);
   const flightFollowPrevMaxPitchRef = useRef<number | null>(null);
@@ -727,6 +763,10 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setFlightPathUi(null);
     syncFlightPathLayer();
     if (st.phase === 'idle') return;
+    // Cockpit's basemap borrow ends with the follow: the shared hold
+    // restores the visitor's previous view (unless they already
+    // flipped the switch by hand — the claim is gone by then).
+    releaseSatelliteView('cockpit');
     if (map) {
       // Restore the pitch limit follow raised — but only if it is still
       // the value follow set (the terrain manager may have re-claimed it).
@@ -740,7 +780,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       }
     }
     if (opts?.notice) showFlightFollowNotice(opts.notice);
-  }, [showFlightFollowNotice, syncFlightPathLayer]);
+  }, [showFlightFollowNotice, syncFlightPathLayer, releaseSatelliteView]);
 
   const engageFlightFollow = useCallback((icao24: string, callsign?: string, mode?: FollowMode) => {
     const map = mapRef.current;
@@ -769,20 +809,34 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     flightFollowRef.current = startFollow({ icao24, callsign: cs }, savedCamera, Date.now(), startMode);
     flightFollowHudRef.current = null;
     setFlightFollowUi({ icao24, callsign: cs, mode: startMode });
+    // Cockpit View borrows the imagery basemap (and the 3D building
+    // extrusions — see the buildings effect): the flat dark vector
+    // style is what made cockpit look flat. The shared hold restores
+    // the visitor's own view on exit, and a manual satellite toggle
+    // mid-cockpit drops the claim like any other hold. Acquiring is
+    // idempotent, so a target switch that carries cockpit mode across
+    // (or re-asks for it) never flickers the basemap.
+    if (startMode === 'forward') acquireSatelliteView('cockpit');
     // A fresh path per followed aircraft: switching targets swaps the
     // path (the route fetch + trail start over for the new aircraft).
     flightPathRef.current = createFlightPath(icao24, cs);
     syncFlightPathLayer();
     syncFlightPathUi();
     popupRef.current?.remove();
-  }, [syncFlightPathLayer, syncFlightPathUi]);
+  }, [syncFlightPathLayer, syncFlightPathUi, acquireSatelliteView]);
 
   const setFlightFollowMode = useCallback((mode: FollowMode) => {
     const st = flightFollowRef.current;
     if (st.phase === 'idle') return;
     flightFollowRef.current = setFollowModeState(st, mode, Date.now());
     setFlightFollowUi((prev) => (prev ? { ...prev, mode } : prev));
-  }, []);
+    // Switching into cockpit mid-follow borrows the imagery basemap
+    // (+ 3D buildings, via the effect below); switching back to chase
+    // or orbit hands the view back — the normal flight view keeps the
+    // visitor's own basemap.
+    if (mode === 'forward') acquireSatelliteView('cockpit');
+    else releaseSatelliteView('cockpit');
+  }, [acquireSatelliteView, releaseSatelliteView]);
 
   /** COCKPIT VIEW — ride the aircraft in forward mode. From the popup:
    *  a fresh engage goes straight to forward; if follow is already
@@ -1058,42 +1112,6 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     satLayerRef.current?.setSelected(null);
     satLayerRef.current?.setOrbit(null);
     setSelectedSat(null);
-  }, []);
-
-  // ── Satellite-view holds ──────────────────────────────────────────
-  // Camera modes that need the imagery basemap (Bird's-Eye View here,
-  // Cockpit View in the flight block) borrow it through the page's
-  // programmatic setter — onSatelliteViewChange flips the view
-  // WITHOUT persisting it; only the visitor's own switch writes the
-  // stored choice. A hold is acquired on entry, and when the LAST
-  // hold releases, the visitor's previous view is restored. If the
-  // visitor flips the satellite switch off by hand while a hold is
-  // active, the claim is dropped instead: their choice stands, and
-  // nothing is restored over it (the auto-on is an entry action,
-  // never a lock).
-  const satForceHoldsRef = useRef(new Set<string>());
-  const satForcedRef = useRef(false);
-  const satelliteOnRef = useRef(satelliteOn);
-  const onSatelliteViewChangeRef = useRef(onSatelliteViewChange);
-  useEffect(() => { onSatelliteViewChangeRef.current = onSatelliteViewChange; }, [onSatelliteViewChange]);
-  useEffect(() => {
-    satelliteOnRef.current = satelliteOn;
-    if (!satelliteOn) satForcedRef.current = false;
-  }, [satelliteOn]);
-  const acquireSatelliteView = useCallback((key: string) => {
-    if (satForceHoldsRef.current.has(key)) return;
-    satForceHoldsRef.current.add(key);
-    if (satForceHoldsRef.current.size === 1 && !satelliteOnRef.current) {
-      satForcedRef.current = true;
-      onSatelliteViewChangeRef.current?.(true);
-    }
-  }, []);
-  const releaseSatelliteView = useCallback((key: string) => {
-    if (!satForceHoldsRef.current.delete(key)) return;
-    if (satForceHoldsRef.current.size === 0 && satForcedRef.current) {
-      satForcedRef.current = false;
-      onSatelliteViewChangeRef.current?.(false);
-    }
   }, []);
 
   // ── Satellite Bird's-Eye View ─────────────────────────────────────
@@ -5631,7 +5649,13 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    const enabled = activeLayers.terrain_3d;
+    // Cockpit View rides with the real 3D building extrusions on —
+    // with the pitched camera and the imagery basemap, that is what
+    // "3D and realistic" concretely consists of on this style. Chase,
+    // orbit and the plain map keep the visitor's own 3D Buildings
+    // choice. (The pitch nudge below is a no-op in cockpit: the
+    // follow camera already rides at 85°.)
+    const enabled = activeLayers.terrain_3d || flightFollowUi?.mode === 'forward';
 
     try {
       if (enabled) {
@@ -5692,7 +5716,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     } catch (e) {
       console.warn('[OSIRIS] 3D terrain toggle error:', e);
     }
-  }, [mapReady, activeLayers.terrain_3d]);
+  }, [mapReady, activeLayers.terrain_3d, flightFollowUi?.mode]);
 
   // Satellite / Dark switching + the Wayback time slider.
   // lib/wayback-imagery owns the overlay: the satellite raster

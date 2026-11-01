@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { Lock, Plane, X } from 'lucide-react';
 import TrialPicker from './TrialPicker';
 import {
+  COCKPIT_IMAGERY_TAG,
   FOLLOW_HONESTY_TAG,
   FOLLOW_MODES,
   FOLLOW_MODE_LABELS,
@@ -88,6 +89,12 @@ export default function FlightFollowHud({ hudRef, target, mode, onModeChange, on
         {FOLLOW_HONESTY_TAG}
         {snap?.fix ? ` · ${snap.fix.label}` : ''}
       </p>
+
+      {mode === 'forward' && (
+        <p className="mt-1 text-[8.5px] font-mono leading-relaxed tracking-[0.08em] text-cyan-200/70">
+          {COCKPIT_IMAGERY_TAG}
+        </p>
+      )}
 
       {snap?.missing ? (
         <p className="mt-1.5 text-[9px] font-mono tracking-[0.08em] text-amber-300">

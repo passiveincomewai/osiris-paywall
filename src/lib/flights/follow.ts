@@ -43,6 +43,12 @@ export const FOLLOW_LOST_GRACE_MS = 12_000;
 /** The permanent honesty tag shown for the whole follow. */
 export const FOLLOW_HONESTY_TAG = 'TELEMETRY VIEW — NOT AN ONBOARD CAMERA';
 
+/** Cockpit View's imagery note, shown in the HUD while the cockpit
+ *  camera is active: the ground under the aircraft is Esri's dated
+ *  reference mosaic (the satellite view the cockpit entry turns on),
+ *  never a live feed. */
+export const COCKPIT_IMAGERY_TAG = 'GROUND: REFERENCE SATELLITE IMAGERY (DATED) — NOT A LIVE FEED';
+
 export interface FollowTargetRef {
   icao24: string;
   callsign: string;
