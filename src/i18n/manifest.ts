@@ -93,7 +93,7 @@ const ES_SOURCE_HASHES: Record<string, string> = {
   pricing: "d47b7eb5197130551c96095519ef0da0c0e6b090410c6a8634067e1cb9b83d03",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "dff2534296fb945648065e81aede56c2e1ca758d493c91bf29440e6701324747",
-  "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
+  "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
   "ship-tracker": "a2ac2cec641df42357c801e233edab00d77f58fc3bb7bb7071b3b56298709e34",
 };
 
@@ -183,6 +183,13 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // FAQ-expansion audit; the Spanish dictionary was re-synced the
 // same day, so the pricing hash moved; its updatedAt stays
 // 2026-10-31.
+// Re-sync (2026-11-01, FAQ expansion B5): the live-flight-tracker
+// dictionary's faqs gained two entries (why positions jump or lag;
+// the 3D cockpit follow view) from the approved FAQ-expansion
+// audit; the Spanish dictionary was re-synced the same day, so the
+// live-flight-tracker hash moved (this also clears the hash drift
+// the dictionary had accumulated before this re-sync); its
+// updatedAt stays 2026-10-29.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",

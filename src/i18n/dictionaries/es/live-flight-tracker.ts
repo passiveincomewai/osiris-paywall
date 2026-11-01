@@ -200,6 +200,14 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
       q: "¿Por qué desapareció un avión en pleno vuelo?",
       a: "Normalmente porque salió de la cobertura de los receptores: sobre un océano, un desierto o una región polar, los huecos entre receptores terrestres son reales, y un avión puede salir de la imagen pública hasta volver a entrar en cobertura. También puede significar que el avión aterrizó, que su transpondedor dejó de emitir o que el feed lo filtró. Un hueco en el mapa es un hueco en los datos públicos, no un evento en el cielo.",
     },
+    {
+      q: "¿Por qué la posición de un vuelo a veces salta o se retrasa?",
+      a: "Las posiciones vienen de las emisiones ADS-B del avión. Entre emisiones, el mapa mueve el avión por extrapolación desde su último rumbo y velocidad conocidos, y cuando llega una emisión más reciente tras un hueco, la posición se pone al día de golpe, en un salto visible. El espacio aéreo concurrido se actualiza casi sin pausa; los tramos remotos y oceánicos pueden pasar minutos entre emisiones, así que ahí es donde primero se notan los saltos.",
+    },
+    {
+      q: "¿Puedo seguir un vuelo en una vista de cabina 3D?",
+      a: "Sí. Selecciona un vuelo y usa el modo de seguimiento: junto a la vista de persecución hay una cámara frontal —de cabina— que vuela con el rumbo real del avión. Es una vista de telemetría construida con los datos emitidos por el vuelo, no una cámara a bordo. El modo de seguimiento es una función Pro; el rastreador en vivo en sí sigue siendo gratis.",
+    },
   ],
   voiceQuestions: {
     "best-way-to-track-flights": {

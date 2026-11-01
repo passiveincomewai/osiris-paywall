@@ -288,6 +288,14 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
       q: "Why did a plane disappear mid-flight?",
       a: "Usually it left receiver coverage — over an ocean, a desert or a polar region, gaps between ground receivers are real, and an aircraft can drop off the public picture until it flies back into range. It can also mean the aircraft landed, its transponder stopped reporting, or the feed filtered it. A gap on the map is a gap in public data, not an event in the sky.",
     },
+    {
+      q: "Why does a flight's position sometimes jump or lag?",
+      a: "Positions come from the ADS-B fixes the aircraft broadcasts. Between fixes, the map moves the aircraft by extrapolation from its last known course and speed — and when a newer fix arrives after a gap, the position catches up in a visible step. Busy airspace updates near-continuously; remote and oceanic legs can go minutes between fixes, so the jumps show up there first.",
+    },
+    {
+      q: "Can I follow a flight in a 3D cockpit view?",
+      a: "Yes. Select a flight and use follow mode: alongside the chase view there is a forward — cockpit — camera that flies the aircraft's real heading. It is a telemetry view built from the flight's broadcast data, not an onboard camera. Follow mode is a Pro feature; the live tracker itself stays free.",
+    },
   ],
   voiceQuestions: {},
   voiceTitle: "Questions people ask",
