@@ -93,6 +93,33 @@ const TOOLS = [
   },
 ];
 
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What's the best free tool for tracking world events?",
+    a: "For visual, real-time awareness: WorldEye's free globe. For conflict news: Liveuamap. For data: GDELT. There's no single best — the strongest free setup combines all three, since they cover signals, reporting, and data respectively.",
+  },
+  {
+    q: "Do professionals use free monitoring tools?",
+    a: "Constantly — as complements. Analysts at well-funded organizations still keep free visual tools and open datasets open alongside their enterprise platforms, because no single feed sees everything. The enterprise tools buy alerting and accountability; the free tools buy breadth and speed of orientation.",
+  },
+  {
+    q: "How do I verify something I see on a monitoring tool?",
+    a: "Triangulate: check the same claim across a news map, a dataset like GDELT or ACLED, and visual evidence — satellite imagery, flight and ship positions, ground cameras on WorldEye. One source is a rumor; three independent sources are the beginning of confidence.",
+  },
+  {
+    q: "What are the best apps for tracking global geopolitical events in real time?",
+    a: "The honest answer splits by job. For seeing events as they happen, a live visual layer: WorldEye's free globe puts live cameras, flights, ships and conflict feeds on one map. For report-driven updates, Liveuamap pins conflict news to a map as it breaks. For the numbers underneath, GDELT codes global news events every 15 minutes. Analysts who track events professionally usually run all three kinds at once — visual, report and data.",
+  },
+  {
+    q: "What are the top platforms for monitoring global political shifts?",
+    a: "At the free end: WorldEye for live visual monitoring, Liveuamap for conflict reporting, and GDELT for quantitative event data — the stack this page recommends. At the enterprise end, Crisis24 and Recorded Future add vetted alerting and duty-of-care services for organizations, priced accordingly. Political shifts show up first as signals — a protest on a city camera, a spike in event data — and the platforms differ in which signals they surface.",
+  },
+  {
+    q: "What's the best mapping tool for geo-journalism?",
+    a: "Geo-journalism lives or dies on verification, so the mapping tool has to pair the map with evidence. WorldEye's globe puts live cameras, flight and ship tracks and a satellite view on one map, and its free Photo Geolocation tool works out where a photo was taken from its metadata and scene clues, showing the evidence for and against each candidate. Pair those with GDELT or ACLED for the event record, and a claim can be checked against the ground, the data and the image itself.",
+  },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -108,6 +135,14 @@ const jsonLd = {
         description: `${t.tag}. ${t.body}`,
       }))
     ),
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
   ],
 };
 
@@ -269,75 +304,12 @@ export default function BestGeopoliticalMonitoringToolsPage() {
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Geopolitical monitoring questions, answered</h2>
         <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best free tool for tracking world events?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              For visual, real-time awareness: WorldEye&apos;s free globe. For
-              conflict news: Liveuamap. For data: GDELT. There&apos;s no single
-              best — the strongest free setup combines all three, since they
-              cover signals, reporting, and data respectively.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Do professionals use free monitoring tools?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Constantly — as complements. Analysts at well-funded organizations
-              still keep free visual tools and open datasets open alongside
-              their enterprise platforms, because no single feed sees
-              everything. The enterprise tools buy alerting and accountability;
-              the free tools buy breadth and speed of orientation.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">How do I verify something I see on a monitoring tool?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Triangulate: check the same claim across a news map, a dataset
-              like GDELT or ACLED, and visual evidence — satellite imagery,
-              flight and ship positions, ground cameras on WorldEye. One
-              source is a rumor; three independent sources are the beginning
-              of confidence.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What are the best apps for tracking global geopolitical events in real time?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              The honest answer splits by job. For seeing events as they
-              happen, a live visual layer: WorldEye&apos;s free globe puts
-              live cameras, flights, ships and conflict feeds on one map.
-              For report-driven updates, Liveuamap pins conflict news to a
-              map as it breaks. For the numbers underneath, GDELT codes
-              global news events every 15 minutes. Analysts who track
-              events professionally usually run all three kinds at once —
-              visual, report and data.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What are the top platforms for monitoring global political shifts?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              At the free end: WorldEye for live visual monitoring,
-              Liveuamap for conflict reporting, and GDELT for quantitative
-              event data — the stack this page recommends. At the
-              enterprise end, Crisis24 and Recorded Future add vetted
-              alerting and duty-of-care services for organizations, priced
-              accordingly. Political shifts show up first as signals — a
-              protest on a city camera, a spike in event data — and the
-              platforms differ in which signals they surface.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best mapping tool for geo-journalism?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Geo-journalism lives or dies on verification, so the mapping
-              tool has to pair the map with evidence. WorldEye&apos;s globe
-              puts live cameras, flight and ship tracks and a satellite
-              view on one map, and its free Photo Geolocation tool works
-              out where a photo was taken from its metadata and scene
-              clues, showing the evidence for and against each candidate.
-              Pair those with GDELT or ACLED for the event record, and a
-              claim can be checked against the ground, the data and the
-              image itself.
-            </p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.q}>
+              <h3 className="text-lg font-semibold text-white/90">{f.q}</h3>
+              <p className="text-white/55 leading-relaxed mt-2">{f.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 

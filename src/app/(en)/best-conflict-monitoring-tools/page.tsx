@@ -93,6 +93,29 @@ const TOOLS = [
   },
 ];
 
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What's the best free tool for tracking the Ukraine war?",
+    a: "DeepStateMap for frontline positions, Liveuamap for broader reporting, and WorldEye's globe for the visual context around both — flights, satellites, weather, cameras. No single tool covers a war; the combination does.",
+  },
+  {
+    q: "How do I know if a conflict report is real?",
+    a: "Triangulate: a second independent report, visual evidence (satellite, flights, ships, cameras), and consistency with the area's recent event pattern in ACLED or GDELT. Be especially careful with dramatic single-source claims — they're the most shared and the least verified.",
+  },
+  {
+    q: "Is it legal to monitor conflicts with these tools?",
+    a: "Yes — every tool here works with public information: news, open datasets, broadcast flight and ship positions, public cameras. Watching public data is lawful; the line is unauthorized access and harassment, which none of these tools do or enable.",
+  },
+  {
+    q: "What tools do journalists use to monitor conflict zones?",
+    a: "The working set is layered: live camera networks for ground truth, flight and satellite tracking for movement above it, geolocation tools to place photos and video, and event datasets like ACLED and GDELT for the record. Newsrooms combine them — a report is checked against what cameras show, what trackers record and where the imagery was actually taken before it is published.",
+  },
+  {
+    q: "Can I watch live cameras in a conflict zone for free?",
+    a: "Where public cameras exist and are safe to publish, yes — they are free to watch on WorldEye's globe, no account needed. Coverage varies a lot by place: some cities have many public feeds, others none, and feeds can go dark when infrastructure fails or operators take them offline.",
+  },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -108,6 +131,14 @@ const jsonLd = {
         description: `${t.tag}. ${t.body}`,
       }))
     ),
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
   ],
 };
 
@@ -320,35 +351,12 @@ export default function BestConflictMonitoringToolsPage() {
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Conflict monitoring questions, answered</h2>
         <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best free tool for tracking the Ukraine war?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              DeepStateMap for frontline positions, Liveuamap for broader
-              reporting, and WorldEye&apos;s globe for the visual context
-              around both — flights, satellites, weather, cameras. No single
-              tool covers a war; the combination does.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">How do I know if a conflict report is real?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Triangulate: a second independent report, visual evidence
-              (satellite, flights, ships, cameras), and consistency with the
-              area&apos;s recent event pattern in ACLED or GDELT. Be
-              especially careful with dramatic single-source claims —
-              they&apos;re the most shared and the least verified.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Is it legal to monitor conflicts with these tools?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Yes — every tool here works with public information: news,
-              open datasets, broadcast flight and ship positions, public
-              cameras. Watching public data is lawful; the line is
-              unauthorized access and harassment, which none of these tools
-              do or enable.
-            </p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.q}>
+              <h3 className="text-lg font-semibold text-white/90">{f.q}</h3>
+              <p className="text-white/55 leading-relaxed mt-2">{f.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 
