@@ -7,6 +7,7 @@ import VipLock from "@/components/vip/VipLock";
 import DashboardPreview from "@/components/vip/DashboardPreview";
 import ProUpgradeEmbed from "@/components/ProUpgradeEmbed";
 import { premiumFeatureNames } from "@/lib/billing/premium-features";
+import MediaFrame from "@/components/design/MediaFrame";
 
 export const metadata: Metadata = {
   title: "VIP Pro hub — WorldEye",
@@ -137,6 +138,26 @@ export default async function VipHubPage() {
             </Link>
           ))}
         </div>
+      </section>
+
+      {/* The top-tier globe, as it renders — a real capture of the
+          satellite layer members get with the intel layers above. */}
+      <section>
+        <MediaFrame
+          state="none"
+          caption="Every tracked satellite, drawn on the globe"
+          source="WorldEye"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/landing/globe-carpet.jpg"
+            alt="The WorldEye globe covered in tracked satellites"
+            width={1200}
+            height={742}
+            loading="lazy"
+            className="block w-full h-auto"
+          />
+        </MediaFrame>
       </section>
 
       {/* Closing signup embed for signed-out readers only (2026-10-31):
