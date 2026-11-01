@@ -198,9 +198,9 @@ const PRO_FEATURES = [
   {
     icon: Car,
     title: "Live traffic layer",
-    desc: "Real road congestion from TomTom, drawn onto the globe's roads.",
+    desc: "Modeled road congestion, drawn onto the globe's roads.",
     detail:
-      "Live traffic-flow data from TomTom colors the roads — green flowing, red stopped — so the jam you can see from the traffic cameras is visible on the map itself. The vehicle dots that illustrate the flow are simulated and labeled as such in the app; the congestion data underneath them is real.",
+      "Congestion on the roads is modeled from road data, and the app labels it as modeled — live traffic flow is not currently available. The vehicle dots that illustrate the flow are simulated and labeled as such in the app.",
   },
   {
     icon: Video,
