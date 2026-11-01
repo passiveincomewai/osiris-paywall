@@ -621,9 +621,37 @@ export function weeklyDigestEmail(input: {
   content: DigestContent;
   /** The newsletter list's own unsubscribe URL (per-subscriber token). */
   unsubscribeUrl: string | null;
+  /** Account digest (pick 9): the reader's own WorldEye — rendered as
+   * a lead section when present. Absent for the newsletter edition,
+   * whose rendering is unchanged. */
+  personal?: {
+    savedCameraNames: string[];
+    savedCameraCount: number;
+    resortNames: string[];
+  };
 }): RenderedEmail {
   const c = input.content;
   const sections: string[] = [];
+  if (input.personal) {
+    const p = input.personal;
+    const bits: string[] = [];
+    if (p.savedCameraCount > 0) {
+      const names = p.savedCameraNames.map((n) => escapeHtml(n)).join(", ");
+      bits.push(
+        `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;margin:0 0 8px;">You have <strong style="color:#fff;">${p.savedCameraCount} saved camera${p.savedCameraCount === 1 ? "" : "s"}</strong>${names ? ` — including ${names}` : ""}. They're one tap away in <a href="${appUrl("/cameras")}" style="color:#D4AF37;">your camera list</a>.</p>`,
+      );
+    }
+    if (p.resortNames.length > 0) {
+      bits.push(
+        `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;margin:0 0 8px;">Your followed resorts: <strong style="color:#fff;">${p.resortNames.map((n) => escapeHtml(n)).join(", ")}</strong> — when snow or a storm lines up for them, it lands in your inbox.</p>`,
+      );
+    }
+    if (bits.length > 0) {
+      sections.push(
+        `<h3 style="color:#fff;font-size:16px;margin:22px 0 6px;">Your WorldEye</h3>${bits.join("\n")}`,
+      );
+    }
+  }
   if (c.topCountries.length > 0) {
     const items = c.topCountries
       .map(
@@ -735,6 +763,71 @@ export function verificationReminderEmail(input: {
        ${unsubscribeLine(input.unsubscribeUrl)}`,
       { label: "Verify in Settings", href: appUrl("/settings") },
       { why: "You're receiving this because your WorldEye account's email isn't verified yet." },
+    ),
+  };
+}
+
+// ── (n) Event-driven news alert (marketing, pick 14) ─────────────────
+// Rare by construction: only a magnitude-7.0+ earthquake or a newly
+// opened volcanic event (the digest's own USGS/EONET sources) fires
+// one. Source is named in the copy; the CTA goes to the live tracker,
+// not a written-up story — this is an alert, not an article.
+export function newsAlertEmail(input: {
+  headline: string;
+  detail: string;
+  sourceLabel: string;
+  ctaLabel: string;
+  ctaUrl: string;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  return {
+    subject: input.headline,
+    html: shell(
+      input.headline,
+      input.detail,
+      `${P(escapeHtml(input.detail))}
+       ${P(`Source: ${escapeHtml(input.sourceLabel)} — the same live feed the tracker reads. Open it to follow developments as they post.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: input.ctaLabel, href: input.ctaUrl },
+      { why: "You're receiving this because you subscribe to WorldEye email updates." },
+    ),
+  };
+}
+
+// ── (o) Severe-weather alert for a saved place (marketing, R2/R8) ────
+// Official warnings only: every line is a National Weather Service
+// alert object (event, headline, area, expiry) tied to a place the
+// user themselves saved a camera at. The NWS is named as the source;
+// no warning is paraphrased into existence.
+export function weatherAlertEmail(input: {
+  name: string | null;
+  alerts: {
+    event: string;
+    headline: string;
+    areaDesc: string;
+    expiresLabel: string | null;
+    placeNames: string[];
+  }[];
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const blocks = input.alerts
+    .map(
+      (a) => `${P(`<strong style="color:#fff;">${escapeHtml(a.event)}</strong> — ${escapeHtml(a.headline)}`)}
+       ${P(`Area: ${escapeHtml(a.areaDesc)}${a.expiresLabel ? ` · In effect until ${escapeHtml(a.expiresLabel)}` : ""} · Near your saved camera${a.placeNames.length === 1 ? "" : "s"}: ${a.placeNames.map((n) => escapeHtml(n)).join(", ")}`)}`,
+    )
+    .join("");
+  return {
+    subject: `Weather alert for your saved places: ${input.alerts[0].event}`,
+    html: shell(
+      "Severe weather at a place you follow",
+      "An official National Weather Service warning covers an area with your saved cameras.",
+      `${P(`Hi ${first},`)}
+       ${blocks}
+       ${P(`These warnings come straight from the <strong style="color:#fff;">National Weather Service</strong> — follow their guidance for the area, and check your saved cameras to see conditions for yourself.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open my saved cameras", href: appUrl("/cameras") },
+      { why: "You're receiving this because you saved cameras in an area under an official weather warning." },
     ),
   };
 }
