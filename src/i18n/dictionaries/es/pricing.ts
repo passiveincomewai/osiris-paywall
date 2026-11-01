@@ -372,6 +372,18 @@ export const esPricing: PricingCopy = {
         title: "Una búsqueda que vuela",
         desc: "Escribe un lugar y el globo va hasta él — los planes de pago añaden filtros por país, tipo de cámara y feeds en vivo.",
       },
+      {
+        src: "/landing/northern-lights.jpg",
+        alt: "La página del directorio de cámaras de auroras boreales en WorldEye",
+        title: "Auroras boreales, por lugar",
+        desc: "El directorio de cámaras de la zona auroral: todos los feeds del norte del índice, organizados por país y región — Islandia, Noruega, Finlandia, Suecia, Alaska y Canadá.",
+      },
+      {
+        src: "/landing/tools-hub.jpg",
+        alt: "El centro de herramientas de WorldEye, con sus tarjetas de herramientas de red, hosts y dominios",
+        title: "El centro de herramientas",
+        desc: "Todo el panel RECON en una página: escáner de puertos, DNS, WHOIS, certificados y búsquedas de hosts, cada tarjeta etiquetada como gratuita o Pro.",
+      },
     ],
   },
   planDetails: {
@@ -459,9 +471,9 @@ export const esPricing: PricingCopy = {
       },
       featureImages: [
         {
-          src: "/landing/osint-search.jpg",
-          alt: "La búsqueda de WorldEye volando a un lugar en el globo en vivo",
-          caption: "El kit OSINT funciona en tu navegador — escaneos, DNS, WHOIS y comprobaciones SSL.",
+          src: "/landing/tools-hub.jpg",
+          alt: "El centro de herramientas de WorldEye, con sus tarjetas de herramientas de red, hosts y dominios",
+          caption: "La página principal del kit: todas las herramientas de reconocimiento en un solo panel, cada una etiquetada como gratuita o Pro.",
         },
         {
           src: "/landing/features-globe.jpg",
@@ -537,6 +549,11 @@ export const esPricing: PricingCopy = {
           src: "/landing/hazard-weather.jpg",
           alt: "Alertas de peligros y desastres en el globo de WorldEye",
           caption: "Alertas de peligros y desastres (GDACS) junto a las capas de clima.",
+        },
+        {
+          src: "/landing/globe-trackers.jpg",
+          alt: "El globo de WorldEye sobre Norteamérica con las capas de satélites y vuelos activadas",
+          caption: "Todos los rastreadores en un solo globo: miles de satélites en órbita y rutas de vuelos en vivo sobre Norteamérica.",
         },
       ],
       bestFor: [

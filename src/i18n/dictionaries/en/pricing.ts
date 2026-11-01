@@ -553,6 +553,18 @@ export const enPricing: PricingCopy = {
         title: "Search that flies",
         desc: "Type a place and the globe goes there — paid plans add filters for country, camera type and live feeds.",
       },
+      {
+        src: "/landing/northern-lights.jpg",
+        alt: "The Northern Lights webcams directory page on WorldEye",
+        title: "Northern lights, by place",
+        desc: "The aurora-belt camera directory: every northern feed in the index, organised by country and region — Iceland, Norway, Finland, Sweden, Alaska and Canada.",
+      },
+      {
+        src: "/landing/tools-hub.jpg",
+        alt: "The WorldEye tools hub, with its network, host and domain tool cards",
+        title: "The tools hub",
+        desc: "The whole RECON board on one page — port scanner, DNS, WHOIS, certificate and host lookups, each card labelled free or Pro.",
+      },
     ],
   },
   planDetails: {
@@ -640,9 +652,9 @@ export const enPricing: PricingCopy = {
       },
       featureImages: [
         {
-          src: "/landing/osint-search.jpg",
-          alt: "WorldEye search flying to a place on the live globe",
-          caption: "The OSINT toolkit runs in your browser — scans, DNS, WHOIS and SSL checks.",
+          src: "/landing/tools-hub.jpg",
+          alt: "The WorldEye tools hub, with its network, host and domain tool cards",
+          caption: "The toolkit's home page — every recon tool on one board, each card labelled free or Pro.",
         },
         {
           src: "/landing/features-globe.jpg",
@@ -718,6 +730,11 @@ export const enPricing: PricingCopy = {
           src: "/landing/hazard-weather.jpg",
           alt: "Hazard and disaster alerts on the WorldEye globe",
           caption: "Hazard and disaster alerts (GDACS) alongside the weather layers.",
+        },
+        {
+          src: "/landing/globe-trackers.jpg",
+          alt: "The WorldEye globe over North America with the satellite and flight layers switched on",
+          caption: "Every tracker on one globe — thousands of satellites in orbit and live flight routes over North America.",
         },
       ],
       bestFor: [
