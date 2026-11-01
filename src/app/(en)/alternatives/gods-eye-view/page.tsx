@@ -8,10 +8,10 @@ import AlternativePage, {
 const data: AltData = {
   name: "God's Eye View",
   path: "/alternatives/gods-eye-view",
-  title: "God's Eye View Alternative — The Same Live Globe, Already Running",
+  title: "Best God's Eye View Alternative — Free Online, No Install",
   description:
-    "Looking for a God's Eye View alternative you don't have to install? WorldEye runs the same live-globe idea — 74,229 cameras, flights, satellites, weather — hosted in your browser, free with no signup.",
-  ogTitle: "God's Eye View Alternative — Hosted Live Globe, No Install | WorldEye",
+    "The God's Eye View alternative that runs in your browser: WorldEye's live 3D globe with 74,229 cameras, flights and satellites — free online, no install, no signup.",
+  ogTitle: "Best God's Eye View Alternative — Free Online, No Install | WorldEye",
   ogDescription:
     "God's Eye View is open-source software you install yourself. WorldEye is the hosted alternative: a live 3D globe with 74,229 cameras, flights and satellites — free, no setup, no API keys.",
   kicker: "GOD'S EYE VIEW ALTERNATIVES",
@@ -259,6 +259,10 @@ const data: AltData = {
       a: "The code is free and open source (MIT), and the base globe starts with no keys at all. The full experience isn't entirely free in practice: photorealistic 3D tiles use a Cesium ion token or your own Google Maps API key (metered by Google), and the voice agent uses your OpenAI key. WorldEye's core globe is free with no keys at all.",
     },
     {
+      q: "What is the best free God's Eye View alternative online?",
+      a: "For watching in a browser, WorldEye: the same live-globe idea hosted for you — 74,229 cameras, flights, satellites and weather on one 3D globe, free online with no install, no API keys and no signup. For building or self-hosting, the best alternative is the original project itself, which is free and open source. Our God's Eye View online page walks through the two routes side by side.",
+    },
+    {
       q: "Can I use God's Eye View online without downloading it?",
       a: "Not the original — it's a desktop install (Pinokio one-click, Docker, or a manual clone). If you want the same kind of live globe in a browser tab, including on your phone, a hosted alternative like WorldEye is the route.",
     },
@@ -291,9 +295,29 @@ const data: AltData = {
   ctaBody: "One click, no signup, no API keys. The globe is already spinning.",
   related: [
     {
+      label: "God's Eye View online",
+      desc: "The no-install route explained: install the project locally, or open the hosted globe in a tab.",
+      href: "/gods-eye-view-online",
+    },
+    {
       label: "God's eye view of Earth, live",
       desc: "The concept explained — and the live globe that delivers it, free in your browser.",
       href: "/gods-eye-view",
+    },
+    {
+      label: "God's Eye View vs Google Earth",
+      desc: "The head-to-head: live data and cameras against the recorded globe.",
+      href: "/compare/gods-eye-view-vs-google-earth",
+    },
+    {
+      label: "God's Eye View vs Zoom Earth",
+      desc: "Live cameras and layers against the weather-first map, compared.",
+      href: "/compare/gods-eye-view-vs-zoom-earth",
+    },
+    {
+      label: "God's Eye View vs World Monitor",
+      desc: "Two live-globe takes on the same public data, side by side.",
+      href: "/compare/gods-eye-view-vs-world-monitor",
     },
     {
       label: "GodsView AI alternatives",
