@@ -19,6 +19,7 @@ import {
   itemListLd,
 } from "@/components/SeoIntentLayout";
 import RelatedLinks from "@/components/RelatedLinks";
+import MediaFrame from "@/components/design/MediaFrame";
 
 export const metadata: Metadata = {
   title: "7 Best Flight Tracking Tools in 2026 — Free & Paid Compared",
@@ -180,6 +181,24 @@ export default function BestFlightTrackingToolsPage() {
         </p>
         <ReviewedStamp />
         <HeroCtas />
+      </div>
+
+      {/* The top pick, as it runs — a real capture of WorldEye's
+          flight layer on the live globe. */}
+      <div className="mt-12 max-w-3xl mx-auto">
+        <MediaFrame
+          caption="WorldEye's flight layer on the live globe"
+          source="WorldEye"
+        >
+          <img
+            src="/landing/track-flights.jpg"
+            alt="Live flights tracked on the WorldEye globe"
+            width={1280}
+            height={640}
+            loading="lazy"
+            className="block w-full h-auto"
+          />
+        </MediaFrame>
       </div>
 
       {/* Quick answer */}

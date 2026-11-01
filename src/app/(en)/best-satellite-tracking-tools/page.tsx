@@ -17,6 +17,7 @@ import {
   itemListLd,
 } from "@/components/SeoIntentLayout";
 import RelatedLinks from "@/components/RelatedLinks";
+import MediaFrame from "@/components/design/MediaFrame";
 
 export const metadata: Metadata = {
   title: "5 Best Satellite Tracking Tools for 2026 (Ranked)",
@@ -121,6 +122,25 @@ export default function BestSatelliteTrackingToolsPage() {
         </p>
         <ReviewedStamp />
         <HeroCtas />
+      </div>
+
+      {/* The top pick, as it runs — a real capture of WorldEye's
+          satellite layer on the live globe. */}
+      <div className="mt-12 max-w-3xl mx-auto">
+        <MediaFrame
+          state="computed"
+          caption="WorldEye's satellite layer on the live globe"
+          source="WorldEye"
+        >
+          <img
+            src="/landing/track-satellites.jpg"
+            alt="Satellites tracked on the WorldEye live globe"
+            width={1280}
+            height={640}
+            loading="lazy"
+            className="block w-full h-auto"
+          />
+        </MediaFrame>
       </div>
 
       {/* What differs */}
