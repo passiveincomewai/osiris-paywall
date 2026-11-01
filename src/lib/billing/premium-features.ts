@@ -34,7 +34,7 @@ export const PREMIUM_FEATURES: PremiumFeature[] = [
   {
     name: "Live Traffic Layer",
     tier: "pro",
-    blurb: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated.",
+    blurb: "Modeled traffic on the road network — vehicles modeled from road data, clearly labeled as modeled; live traffic flow is not currently available.",
   },
   {
     name: "Advanced search filters",
