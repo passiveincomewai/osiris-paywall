@@ -49,11 +49,25 @@ export interface SatelliteRow {
   lat2?: number;
   /** Longitude at the lookahead epoch. See lat2. */
   lng2?: number;
+  /** Latitude at the span's MIDPOINT (epoch + half the lookahead). The
+   *  three propagated points let the client walk the real orbital arc
+   *  instead of the epoch→lookahead chord (see satellite-motion.ts).
+   *  Present only as a complete set with lngM and alt2: half an arc is
+   *  no arc, so the encoder appends either all three or none. */
+  latM?: number;
+  /** Longitude at the span's midpoint. See latM. */
+  lngM?: number;
+  /** Altitude (km) at the lookahead epoch. The original motion fix
+   *  dropped it, so markers flew the whole span at their epoch altitude;
+   *  with it, altitude interpolates across the span like position does. */
+  alt2?: number;
 }
 
-/** [name, lat, lng, alt, missionIndex, categoryIndex, noradId, lat2?, lng2?]
- *  The two lookahead slots are appended only when the row carries them, so
- *  a row without them keeps its exact pre-motion shape. */
+/** [name, lat, lng, alt, missionIndex, categoryIndex, noradId, lat2?, lng2?,
+ *  latM?, lngM?, alt2?]
+ *  The lookahead slots are appended only when the row carries them, so a
+ *  row without them keeps its exact pre-motion shape; the arc set is
+ *  appended only as a complete triple after them. */
 export type SatelliteWireRow = [
   name: string,
   lat: number,
@@ -64,6 +78,9 @@ export type SatelliteWireRow = [
   noradId: string,
   lat2?: number,
   lng2?: number,
+  latM?: number,
+  lngM?: number,
+  alt2?: number,
 ];
 
 export interface EncodedSatelliteRows {
@@ -107,6 +124,11 @@ export function encodeSatelliteRows(rows: SatelliteRow[]): EncodedSatelliteRows 
     // row keeps its 7-slot shape otherwise (see the type's comment).
     if (typeof s.lat2 === 'number' && typeof s.lng2 === 'number') {
       row.push(s.lat2, s.lng2);
+      // The arc set rides only as a complete triple after the lookahead
+      // pair — the client reads the slots positionally.
+      if (typeof s.latM === 'number' && typeof s.lngM === 'number' && typeof s.alt2 === 'number') {
+        row.push(s.latM, s.lngM, s.alt2);
+      }
     }
     return row;
   });
@@ -134,7 +156,7 @@ export function decodeSatelliteRows(body: unknown): SatelliteRow[] {
   const out: SatelliteRow[] = [];
   for (const row of satellites) {
     if (Array.isArray(row)) {
-      const [name, lat, lng, alt, mi, ci, noradId, lat2, lng2] = row as unknown[];
+      const [name, lat, lng, alt, mi, ci, noradId, lat2, lng2, latM, lngM, alt2] = row as unknown[];
       if (typeof lat !== 'number' || typeof lng !== 'number') continue;
       const pair = missionLegend[typeof mi === 'number' ? mi : -1] as [string, string] | undefined;
       const decoded: SatelliteRow = {
@@ -151,6 +173,12 @@ export function decodeSatelliteRows(body: unknown): SatelliteRow[] {
       if (typeof lat2 === 'number' && typeof lng2 === 'number') {
         decoded.lat2 = lat2;
         decoded.lng2 = lng2;
+        // And the arc set is all-or-nothing on top of it.
+        if (typeof latM === 'number' && typeof lngM === 'number' && typeof alt2 === 'number') {
+          decoded.latM = latM;
+          decoded.lngM = lngM;
+          decoded.alt2 = alt2;
+        }
       }
       out.push(decoded);
     } else if (row && typeof row === 'object') {
@@ -170,6 +198,11 @@ export function decodeSatelliteRows(body: unknown): SatelliteRow[] {
       if (typeof s.lat2 === 'number' && typeof s.lng2 === 'number') {
         decoded.lat2 = s.lat2;
         decoded.lng2 = s.lng2;
+        if (typeof s.latM === 'number' && typeof s.lngM === 'number' && typeof s.alt2 === 'number') {
+          decoded.latM = s.latM;
+          decoded.lngM = s.lngM;
+          decoded.alt2 = s.alt2;
+        }
       }
       out.push(decoded);
     }

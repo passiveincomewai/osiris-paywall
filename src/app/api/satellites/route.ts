@@ -89,6 +89,18 @@ function propagateSGP4Simple(line1: string, line2: string, when?: Date): { lat: 
  */
 const SATELLITE_LOOKAHEAD_MS = 600_000;
 
+/**
+ * The span's midpoint. A third propagation halfway to the lookahead lets
+ * the client walk the satellite's actual orbital arc (a quadratic
+ * Bézier through the three points, src/lib/satellite-motion.ts) instead
+ * of the straight epoch→lookahead chord, which cuts the corner by up to
+ * ~3° of latitude mid-span on inclined LEO orbits — the "moving but not
+ * realistic" the owner flagged (2026-10-31). Costs one extra SGP4 pass
+ * per satellite per build; the build is payload-cached, so it is paid
+ * once per cache window, not per request.
+ */
+const SATELLITE_MIDPOINT_MS = SATELLITE_LOOKAHEAD_MS / 2;
+
 // CelesTrak constellation groups — many smaller groups to avoid 403 rate limits
 const CT = 'https://celestrak.org/NORAD/elements/gp.php?GROUP=';
 const FMT = '&FORMAT=tle';
@@ -326,11 +338,13 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
     const epochMs = Date.now();
     const epochDate = new Date(epochMs);
     const nextEpochDate = new Date(epochMs + SATELLITE_LOOKAHEAD_MS);
+    const midEpochDate = new Date(epochMs + SATELLITE_MIDPOINT_MS);
     const satellites: SatelliteRow[] = [];
     for (const sat of allSats) {
       const pos = propagateSGP4Simple(sat.line1, sat.line2, epochDate);
       if (!pos) continue;
       const posNext = propagateSGP4Simple(sat.line1, sat.line2, nextEpochDate);
+      const posMid = propagateSGP4Simple(sat.line1, sat.line2, midEpochDate);
 
       const classification = classifySatellite(sat.name);
       
@@ -361,6 +375,11 @@ async function buildPayload(): Promise<{ body: string; cacheControl: string; cou
         // SATELLITE_LOOKAHEAD_MS); omitted when the second propagation
         // failed, and the client holds that row at its epoch position.
         ...(posNext ? { lat2: posNext.lat, lng2: posNext.lng } : {}),
+        // Midpoint + lookahead altitude for the client's arc walk (see
+        // SATELLITE_MIDPOINT_MS); rides only as a complete set on a
+        // successful lookahead — the payload encoder enforces the same
+        // all-or-nothing rule on the wire.
+        ...(posNext && posMid ? { latM: posMid.lat, lngM: posMid.lng, alt2: posNext.alt } : {}),
       });
     }
 

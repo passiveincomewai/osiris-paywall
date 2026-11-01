@@ -108,3 +108,47 @@ describe('lookahead positions (motion)', () => {
     expect(row.lng2).toBe(2);
   });
 });
+
+describe('arc set (midpoint + lookahead altitude)', () => {
+  const ARC: SatelliteRow[] = [
+    { ...ROWS[0], lat2: 13.9, lng2: -41.2, latM: 13.1, lngM: -43.4, alt2: 421 },
+    { ...ROWS[1], lat2: -2.9, lng2: 174.1, latM: -3.3 }, // incomplete set — dropped whole
+    { ...ROWS[2], latM: 1.4, lngM: 69.5, alt2: 553 },     // arc without lookahead — never rides
+  ];
+
+  it('appends slots 9-11 only when the full set rides on a full lookahead pair', () => {
+    const { rows } = encodeSatelliteRows(ARC);
+    expect(rows[0]).toEqual(['ISS (ZARYA)', 12.3456, -45.6789, 418, 0, 0, '25544', 13.9, -41.2, 13.1, -43.4, 421]);
+    expect(rows[1]).toHaveLength(9);  // lookahead pair only; the partial arc set stays home
+    expect(rows[2]).toHaveLength(7);  // no lookahead pair, no slots at all
+  });
+
+  it('round-trips the arc set back onto the row objects', () => {
+    const { missions, categories, rows } = encodeSatelliteRows(ARC);
+    const decoded = decodeSatelliteRows({ v: 2, missions, categories, satellites: rows });
+    expect(decoded[0]).toMatchObject({ latM: 13.1, lngM: -43.4, alt2: 421 });
+    expect(decoded[1].latM).toBeUndefined();
+    expect(decoded[1].alt2).toBeUndefined();
+    expect(decoded[2].latM).toBeUndefined();
+  });
+
+  it('drops a wire arc set that arrives incomplete', () => {
+    const body = {
+      missions: [['Space Station', '#FFD700']],
+      categories: ['science'],
+      satellites: [['ISS (ZARYA)', 12.3456, -45.6789, 418, 0, 0, '25544', 13.9, -41.2, 13.1]],
+    };
+    const [row] = decodeSatelliteRows(body);
+    expect(row.lat2).toBe(13.9);
+    expect(row.latM).toBeUndefined();
+    expect(row.alt2).toBeUndefined();
+  });
+
+  it('passes a complete arc set through on v1 object rows, and only a complete one', () => {
+    const [full] = decodeSatelliteRows({ satellites: [{ ...ROWS[0], lat2: 1, lng2: 2, latM: 0.5, lngM: 1.5, alt2: 420 }] });
+    expect(full).toMatchObject({ latM: 0.5, lngM: 1.5, alt2: 420 });
+    const [partial] = decodeSatelliteRows({ satellites: [{ ...ROWS[0], lat2: 1, lng2: 2, latM: 0.5 }] });
+    expect(partial.latM).toBeUndefined();
+    expect(partial.alt2).toBeUndefined();
+  });
+});

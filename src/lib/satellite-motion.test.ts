@@ -83,3 +83,53 @@ describe('interpolateSatelliteRows', () => {
     expect(rows[0].lng).toBe(2);
   });
 });
+
+describe('arc motion (midpoint rows)', () => {
+  // A curved span: the midpoint sits well off the epoch→lookahead chord.
+  const ARC = row({ lat: 0, lng: 0, lat2: 12, lng2: 20, latM: 10, lngM: 8, alt: 500, alt2: 700 });
+
+  it('passes exactly through the propagated midpoint at half span', () => {
+    const [mid] = interpolateSatelliteRows([ARC], EPOCH, NEXT, EPOCH + 300_000);
+    expect(mid.lat).toBeCloseTo(10);
+    expect(mid.lng).toBeCloseTo(8);
+  });
+
+  it('curves off the chord between samples (quarter span)', () => {
+    const [q] = interpolateSatelliteRows([ARC], EPOCH, NEXT, EPOCH + 150_000);
+    // Control lat = 2*10 - (0+12)/2 = 14 → B(0.25) = 0.375*14 + 0.0625*12 = 6.
+    // The straight chord would read 3 — the arc must NOT read 3.
+    expect(q.lat).toBeCloseTo(6);
+  });
+
+  it('interpolates altitude across the span on the same fraction', () => {
+    const [mid] = interpolateSatelliteRows([ARC], EPOCH, NEXT, EPOCH + 300_000);
+    expect(mid.alt).toBeCloseTo(600);
+    const [full] = interpolateSatelliteRows([ARC], EPOCH, NEXT, NEXT);
+    expect(full.alt).toBeCloseTo(700);
+    expect(full.lat).toBeCloseTo(12);
+    expect(full.lng).toBeCloseTo(20);
+  });
+
+  it('extrapolates along the arc end tangent, not the stale chord', () => {
+    // Tangent at t=1 (per span) = p0 + 3*p1 - 4*pm = 0 + 36 - 40 = -4 for lat:
+    // one span past the lookahead the arc reads 12 - 4 = 8; the chord's 12
+    // would read 24. Altitude holds at alt2 (no tangent for a linear ramp
+    // past its last propagated sample).
+    const [ext] = interpolateSatelliteRows([ARC], EPOCH, NEXT, NEXT + 600_000);
+    expect(ext.lat).toBeCloseTo(8);
+    expect(ext.alt).toBeCloseTo(700);
+  });
+
+  it('keeps the arc on the short way across the antimeridian', () => {
+    const rows = [row({ lat: 0, lng: 179, lat2: 2, lng2: -179, latM: 1, lngM: -179.5, alt2: 600 })];
+    const [mid] = interpolateSatelliteRows(rows, EPOCH, NEXT, EPOCH + 300_000);
+    expect(mid.lng).toBeCloseTo(-179.5);
+  });
+
+  it('falls back to the exact chord walk when the arc set is incomplete', () => {
+    const rows = [row({ lat: 0, lng: 0, lat2: 12, lng2: 20, latM: 10 })]; // no lngM/alt2
+    const [mid] = interpolateSatelliteRows(rows, EPOCH, NEXT, EPOCH + 300_000);
+    expect(mid.lat).toBeCloseTo(6);   // chord midpoint, not the arc's 10
+    expect(mid.alt).toBe(500);        // altitude untouched on the chord path
+  });
+});
