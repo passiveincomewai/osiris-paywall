@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 const FAQS = [
   {
     q: "Is there a God's Eye View website?",
-    a: "Not an official one. God's Eye View is open-source software you install on your own computer — with the Pinokio one-click installer, Docker, or a manual clone — and it then runs locally, in a browser on your own machine. The project does not operate a hosted version. WorldEye is an independent hosted alternative: a website anyone can open, built on the same live-globe idea, with no affiliation with the project.",
+    a: "Not an official one. God's Eye View is open-source software you install on your own computer — with the Pinokio one-click installer, Docker, or a manual clone — and it then runs locally, in a browser on your own machine. The project does not operate a public hosted version — its team has only waitlisted a future one. WorldEye is an independent hosted alternative: a website anyone can open, built on the same live-globe idea, with no affiliation with the project.",
   },
   {
     q: "Can I use God's Eye View online for free?",
@@ -197,7 +197,9 @@ export default function GodsEyeViewOnlinePage() {
                 you supply yourself.
               </p>
               <p>
-                There is no official hosted version, and that gap is exactly
+                There is no official hosted version the public can open —
+                the project&apos;s team has only waitlisted a future one — and
+                that gap is exactly
                 what this page is for. WorldEye runs the same concept as a
                 website someone else hosts for you: open the page and the
                 globe is already live. It is a separate, independent product —
