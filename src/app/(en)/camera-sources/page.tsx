@@ -24,11 +24,11 @@ import {
   PageShell,
   type Faq,
 } from "@/components/directory-page";
-import {
-  SOURCE_COUNTS,
-  SOURCES_SNAPSHOT_DATE,
-  TOTAL_UNIQUE_CAMERAS as TOTAL,
-} from "./sources-data";
+import { SOURCE_COUNTS, SOURCES_SNAPSHOT_DATE } from "./sources-data";
+
+// The snapshot's unique-camera total is the sum of the per-source counts
+// (90,041) — computed here exactly as the original /partners page did.
+const TOTAL = SOURCE_COUNTS.reduce((n, [, c]) => n + c, 0);
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 const SOURCE_TOTAL = SOURCE_COUNTS.length;
