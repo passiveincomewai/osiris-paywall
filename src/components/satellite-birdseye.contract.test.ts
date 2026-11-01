@@ -76,6 +76,34 @@ describe("satellite bird's-eye wiring — engage, drive, exit", () => {
   });
 });
 
+describe("satellite bird's-eye wiring — round 2 (banner fit, eye stack)", () => {
+  it('fits the banner inside the phone viewport with the honesty wording intact', () => {
+    // Mobile renders the compact label (the desktop paragraph keeps
+    // the full birdsEyeLabel), and the banner box is capped to the
+    // viewport so neither end clips off-screen.
+    expect(osirisMap).toContain('birdsEyeLabelCompact(birdsEyeUi.name)');
+    expect(osirisMap).toContain('max-w-[calc(100vw-1.5rem)]');
+    expect(osirisMap).toContain('sm:max-w-none');
+  });
+
+  it('gives the banner EXIT a full-size tap target on mobile only', () => {
+    expect(osirisMap).toContain('min-h-[44px]');
+    expect(osirisMap).toContain('min-w-[44px]');
+    expect(osirisMap).toContain('sm:min-h-0');
+  });
+
+  it('stands the camera eye stack down for the ride and restores it on exit', () => {
+    // The markers and their glow discs hide while the view is active;
+    // the toggle expression is untouched, so exit restores exactly
+    // the state the toggle dictates — on returns, off stays off.
+    expect(osirisMap).toContain("setVis(['cctv-glow','cctv-dots'], activeLayers.cctv && !birdsEyeUi);");
+    // Cones and labels stay purely toggle-owned — they are not the carpet.
+    expect(osirisMap).toContain("setVis(['cctv-cones','cctv-label'], activeLayers.cctv);");
+    // The visibility pass must re-run when the view engages and exits.
+    expect(osirisMap).toContain('[mapReady, activeLayers, setVis, basemapMode, birdsEyeUi]');
+  });
+});
+
 describe("satellite bird's-eye wiring — the basemap borrow", () => {
   it('OsirisMap takes a programmatic setter beside the persisting switch', () => {
     expect(osirisMap).toContain('onSatelliteViewChange?: (on: boolean) => void;');

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SAT_MAX_ZOOM } from './satellite-layer';
-import { BIRDSEYE_COMPACT_HONESTY, BIRDSEYE_PITCH, BIRDSEYE_ZOOM, birdsEyeLabel, unwrapLngNear } from './satellite-birdseye';
+import { BIRDSEYE_COMPACT_HONESTY, BIRDSEYE_PITCH, BIRDSEYE_ZOOM, birdsEyeLabel, birdsEyeLabelCompact, unwrapLngNear } from './satellite-birdseye';
 
 describe("satellite bird's-eye view", () => {
   it('rides at the satellite layer ceiling — any higher and the satellite stops drawing', () => {
@@ -26,6 +26,16 @@ describe("satellite bird's-eye view", () => {
     expect(BIRDSEYE_COMPACT_HONESTY).not.toContain('LIVE FEED FROM');
     // Bar width: the compact form must actually be shorter than the banner.
     expect(BIRDSEYE_COMPACT_HONESTY.length).toBeLessThan(birdsEyeLabel('ISS (ZARYA)').length);
+  });
+
+  it('trims the banner for phones without losing the name or the honesty tail', () => {
+    const compact = birdsEyeLabelCompact('STARLINK-36510');
+    expect(compact).toContain('STARLINK-36510');
+    expect(compact).toContain('REFERENCE IMAGERY (DATED)');
+    expect(compact).toContain('NOT A LIVE FEED');
+    expect(compact).not.toContain('LIVE FEED FROM');
+    // Phone width: the compact form must actually be shorter than the banner.
+    expect(compact.length).toBeLessThan(birdsEyeLabel('STARLINK-36510').length);
   });
 
   it('unwraps longitude the short way across the antimeridian', () => {

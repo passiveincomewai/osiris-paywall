@@ -39,6 +39,18 @@ export function birdsEyeLabel(name: string): string {
  *  satellite's name beside it): dated reference imagery, not live. */
 export const BIRDSEYE_COMPACT_HONESTY = 'DATED REFERENCE IMAGERY — NOT A LIVE FEED';
 
+/** The banner's mobile form. The full label is wider than a phone
+ *  screen once the EXIT control sits beside it, and the old banner
+ *  clipped at both ends — losing the start of the name on the left
+ *  and the honesty tail on the right. This trimmed wording keeps the
+ *  whole statement in frame beside EXIT: whose ground it is, and
+ *  that the imagery is reference photography, dated, NOT a live
+ *  feed — both halves of the honesty clause survive in full. The
+ *  desktop banner keeps the full wording (birdsEyeLabel). */
+export function birdsEyeLabelCompact(name: string): string {
+  return `BIRD'S-EYE BENEATH ${name} — REFERENCE IMAGERY (DATED), NOT A LIVE FEED`;
+}
+
 /** Longitude continuity for a following camera: pick the representative
  *  of `lng` nearest `prev`, so crossing the antimeridian eases the
  *  short way instead of spinning the globe the long way round. */

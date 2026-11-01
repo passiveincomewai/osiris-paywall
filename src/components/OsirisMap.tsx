@@ -59,7 +59,7 @@ import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
 import { createSatelliteLayer, parseColor, SAT_MAX_ZOOM, type SatPoint } from '@/lib/satellite-layer';
-import { BIRDSEYE_PITCH, BIRDSEYE_ZOOM, birdsEyeLabel, unwrapLngNear } from '@/lib/satellite-birdseye';
+import { BIRDSEYE_PITCH, BIRDSEYE_ZOOM, birdsEyeLabel, birdsEyeLabelCompact, unwrapLngNear } from '@/lib/satellite-birdseye';
 import { interpolateSatelliteRows, MAX_EXTRAPOLATION_SPANS } from '@/lib/satellite-motion';
 import type { SatelliteRow as SatellitePayloadRow } from '@/lib/satellite-payload';
 import { MAP_DEFAULTS, MAP_PALETTE_KEYS, readMapPalette, satColorFor, type MapPalette } from '@/lib/map-palette';
@@ -5468,7 +5468,17 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['fl-private'], activeLayers.private);
     setVis(['fl-jets'], activeLayers.jets);
     setVis(['fl-military'], activeLayers.military);
-    setVis(['cctv-cones','cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
+    // Bird's-Eye rides the ground beneath one satellite, and the camera
+    // eye markers carpet that ground — the view's whole subject is the
+    // one thing they hide. The eye stack (markers + their glow discs)
+    // therefore stands down for the ride. The visitor's toggle still
+    // owns the layers: this only gates their visibility while the view
+    // is active, so every exit restores exactly what the toggle says —
+    // on comes back, off stays off. The cones and labels never render
+    // at the ride's zoom (minzoom 11 / 10 against its z7 ceiling) and
+    // are not the carpet, so they stay purely toggle-owned.
+    setVis(['cctv-glow','cctv-dots'], activeLayers.cctv && !birdsEyeUi);
+    setVis(['cctv-cones','cctv-label'], activeLayers.cctv);
     setVis(['fires-heat','fires-icons'], activeLayers.fires);
     setVis(['fire-perim-fill','fire-perim-line'], (activeLayers as any).fire_perimeters);
     setVis(['hurricane-cone','hurricane-cone-line','hurricane-past','hurricane-track','hurricane-points','hurricane-current','hurricane-label','hurricane-icons','hurricane-selected-past','hurricane-past-points','hurricane-selected-halo','hurricane-selected-ring'], (activeLayers as any).hurricanes);
@@ -5494,7 +5504,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     setVis(['sdk-sea','sdk-sea-glow','sdk-sea-atmo'], activeLayers.sdk_sea !== false);
     // Sweep layers always visible when data is present (controlled by useEffect)
     setVis(['sweep-connections','sweep-pulse-ring','sweep-device-glow','sweep-device-dots','sweep-device-labels'], true);
-  }, [mapReady, activeLayers, setVis, basemapMode]);
+  }, [mapReady, activeLayers, setVis, basemapMode, birdsEyeUi]);
 
   // IP Sweep visualization
   useEffect(() => {
@@ -6783,18 +6793,21 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       )}
       {mapReady && birdsEyeUi && (
         <div
-          className="absolute left-1/2 z-[240] -translate-x-1/2 px-3"
+          className="absolute left-1/2 z-[240] -translate-x-1/2 px-3 max-w-[100vw]"
           style={{ bottom: `${(flightFollowUi ? 17 : 6) + [trafficChip, transitNotice, streetLevelChip, flightFollowNotice].filter(Boolean).length * 4.5}rem` }}
         >
-          <div className="flex items-center gap-3 rounded-lg border border-cyan-300/25 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
-            <p className="text-[11px] font-mono leading-relaxed text-white/70 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+          <div className="flex items-center gap-3 rounded-lg border border-cyan-300/25 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl max-w-[calc(100vw-1.5rem)] sm:max-w-none">
+            <p className="hidden text-[11px] font-mono leading-relaxed text-white/70 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis sm:block">
               {birdsEyeLabel(birdsEyeUi.name)}
+            </p>
+            <p className="min-w-0 flex-1 text-[11px] font-mono leading-snug text-white/70 sm:hidden">
+              {birdsEyeLabelCompact(birdsEyeUi.name)}
             </p>
             <button
               type="button"
               onClick={() => exitBirdsEye()}
               aria-label="Exit bird's-eye view"
-              className="flex-shrink-0 rounded-md border border-cyan-300/40 px-2 py-1 text-[10px] font-mono tracking-[0.15em] text-cyan-200 transition-colors hover:bg-cyan-300/10 focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
+              className="flex-shrink-0 inline-flex items-center justify-center min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-md border border-cyan-300/40 px-2 py-1 text-[10px] font-mono tracking-[0.15em] text-cyan-200 transition-colors hover:bg-cyan-300/10 focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
             >
               EXIT
             </button>
