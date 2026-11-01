@@ -294,6 +294,28 @@ export default function PowderPassClient() {
                 </motion.div>
               ))}
             </div>
+            <figure className="mt-6 group">
+              <div className="overflow-hidden rounded-3xl border border-white/10">
+                {/* A real stake camera: Alta's snow stake at night,
+                    the site's own published frame (the best-ski-
+                    webcams guide's header). No stock snow anywhere
+                    on this page — where a graphic was needed and no
+                    real frame existed, the design stayed typographic. */}
+                <img
+                  src="/blog/best-ski-webcams.jpg"
+                  alt="Alta's snow-stake camera at night, the stake dusted with snow"
+                  width={1200}
+                  height={630}
+                  loading="lazy"
+                  className="w-full h-56 md:h-72 object-cover transition duration-500 group-hover:scale-[1.03]"
+                />
+              </div>
+              <figcaption className="mt-2 text-xs text-white/35 text-center">
+                Alta&apos;s snow-stake camera at night — a real frame from the
+                site&apos;s ski-webcam guide. Snow-stake nights replay frames
+                like this so you can watch the snow pile up.
+              </figcaption>
+            </figure>
             <p className="mt-5 text-xs text-white/40 leading-relaxed text-center max-w-2xl mx-auto">
               Snowfall throughout Powder Pass is modelled from forecast and
               report data and labelled modelled wherever it appears — the
