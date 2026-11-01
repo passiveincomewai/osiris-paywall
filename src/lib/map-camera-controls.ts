@@ -1,6 +1,17 @@
 import type { Map as MapLibreMap, MapMovementEvent } from 'maplibre-gl';
 
-export type CameraMove = { kind: 'zoom'; dir: 1 | -1 } | { kind: 'pan'; dx: number; dy: number };
+export type CameraMove = { kind: 'zoom'; dir: 1 | -1 } | { kind: 'pan'; dx: number; dy: number } | { kind: 'tilt'; dir: 1 | -1 | 0 };
+
+/** Tilt (pitch) bounds for the camera-control buttons. The ceiling is 60°:
+ *  the terrain manager caps maxPitch there while elevation terrain is
+ *  attached, so a control that stops at the same place behaves identically
+ *  with terrain on or off. The live clamp also honours the map's own
+ *  maxPitch, whichever is lower. */
+export const TILT_MAX_PITCH = 60;
+/** One button step of tilt, in degrees. */
+export const TILT_STEP_DEG = 10;
+/** Hold-to-tilt speed, degrees per second. */
+export const TILT_RATE_DEG_PER_SEC = 30;
 const CONTROL_EVENT = { osirisCameraControl: true };
 const STEP_MS = 240;
 const HOLD_DELAY_MS = 280;
@@ -14,19 +25,21 @@ export function createMapCameraControls(
   reducedMotion: () => boolean = () => false,
 ) {
   let targetZoom: number | null = null;
+  let targetPitch: number | null = null;
   let issuing = false;
   let ownsAnimation = false;
   let disposed = false;
   let delay: ReturnType<typeof setTimeout> | undefined;
   let repeat: ReturnType<typeof setInterval> | undefined;
   const clampZoom = (zoom: number) => Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), zoom));
+  const clampPitch = (pitch: number) => Math.max(0, Math.min(TILT_MAX_PITCH, map.getMaxPitch(), pitch));
 
   const run = (action: () => void) => {
     issuing = true;
     ownsAnimation = true;
     try { action(); }
     finally { issuing = false; }
-    if (!map.isMoving()) { targetZoom = null; ownsAnimation = false; }
+    if (!map.isMoving()) { targetZoom = null; targetPitch = null; ownsAnimation = false; }
   };
 
   const release = (stop = true) => {
@@ -36,7 +49,7 @@ export function createMapCameraControls(
     clearInterval(repeat);
     repeat = undefined;
     if (wasHolding && stop && ownsAnimation && !disposed) map.stop();
-    if (wasHolding) targetZoom = null;
+    if (wasHolding) { targetZoom = null; targetPitch = null; }
   };
 
   const step = (move: CameraMove) => {
@@ -48,6 +61,18 @@ export function createMapCameraControls(
       if (next === targetZoom || (targetZoom === null && next === map.getZoom())) return;
       targetZoom = next;
       run(() => map.easeTo({ zoom: next, duration }, CONTROL_EVENT));
+    } else if (move.kind === 'tilt') {
+      // dir 0 is the level reset: pitch straight back to top-down.
+      if (move.dir === 0) {
+        if (targetPitch === 0 || (targetPitch === null && map.getPitch() === 0)) return;
+        targetPitch = 0;
+        run(() => map.easeTo({ pitch: 0, duration }, CONTROL_EVENT));
+        return;
+      }
+      const next = clampPitch((targetPitch ?? map.getPitch()) + move.dir * TILT_STEP_DEG);
+      if (next === targetPitch || (targetPitch === null && next === map.getPitch())) return;
+      targetPitch = next;
+      run(() => map.easeTo({ pitch: next, duration }, CONTROL_EVENT));
     } else {
       targetZoom = null;
       run(() => map.panBy([move.dx * 220, move.dy * 220], { duration }, CONTROL_EVENT));
@@ -68,6 +93,11 @@ export function createMapCameraControls(
         const zoom = clampZoom(map.getZoom() + move.dir * 1.6 * seconds);
         if (zoom === map.getZoom()) { release(); return; }
         run(() => map.easeTo({ zoom, duration, easing: t => t }, CONTROL_EVENT));
+      } else if (move.kind === 'tilt') {
+        if (move.dir === 0) { release(); return; }
+        const pitch = clampPitch(map.getPitch() + move.dir * TILT_RATE_DEG_PER_SEC * seconds);
+        if (pitch === map.getPitch()) { release(); return; }
+        run(() => map.easeTo({ pitch, duration, easing: t => t }, CONTROL_EVENT));
       } else {
         run(() => map.panBy([move.dx * 640 * seconds, move.dy * 640 * seconds], { duration, easing: t => t }, CONTROL_EVENT));
       }
@@ -84,11 +114,12 @@ export function createMapCameraControls(
     // A wheel/pinch/search/view change takes ownership. Do not stop its motion.
     release(false);
     targetZoom = null;
+    targetPitch = null;
     ownsAnimation = false;
   };
   const onEnd = () => {
     // easeTo synchronously ends the animation it replaces before starting anew.
-    if (!issuing) { targetZoom = null; ownsAnimation = false; }
+    if (!issuing) { targetZoom = null; targetPitch = null; ownsAnimation = false; }
   };
   const dispose = () => {
     if (disposed) return;

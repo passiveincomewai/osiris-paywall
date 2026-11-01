@@ -106,3 +106,84 @@ describe('map camera input', () => {
     expect([...f.listeners.values()].every(set => !set.size)).toBe(true);
   });
 });
+
+const tiltUp = { kind: 'tilt', dir: 1 } as const;
+const tiltDown = { kind: 'tilt', dir: -1 } as const;
+const tiltLevel = { kind: 'tilt', dir: 0 } as const;
+
+function tiltFixture(maxPitch = 85, startPitch = 20) {
+  const listeners = new Map<string, Set<(event: Record<string, unknown>) => void>>();
+  let pitch = startPitch;
+  let moving = false;
+  const emit = (type: string, event = {}) => listeners.get(type)?.forEach(fn => fn(event));
+  const map = {
+    getZoom: () => 6, getMinZoom: () => 1.5, getMaxZoom: () => 18,
+    getPitch: () => pitch, getMaxPitch: () => maxPitch, isMoving: () => moving,
+    on: (type: string, fn: (event: Record<string, unknown>) => void) => {
+      if (!listeners.has(type)) listeners.set(type, new Set());
+      listeners.get(type)!.add(fn);
+    },
+    off: (type: string, fn: (event: Record<string, unknown>) => void) => listeners.get(type)?.delete(fn),
+    easeTo: vi.fn((options, data) => {
+      if (moving) emit('moveend');
+      moving = options.duration !== 0;
+      if (!moving && typeof options.pitch === 'number') pitch = options.pitch;
+      emit('movestart', data);
+    }),
+    panBy: vi.fn(),
+    stop: vi.fn(() => { moving = false; emit('moveend'); }),
+  };
+  const interact = vi.fn();
+  const controller = createMapCameraControls(map as unknown as MapLibreMap, interact, () => false);
+  const settle = (value: number) => { pitch = value; moving = false; emit('moveend'); };
+  return { controller, map, interact, emit, settle, setPitch: (value: number) => { pitch = value; } };
+}
+
+describe('map camera tilt', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('steps pitch by ten degrees and accumulates rapid taps', () => {
+    const f = tiltFixture();
+    f.controller.step(tiltUp);
+    f.controller.step(tiltUp);
+    expect(f.map.easeTo.mock.calls.map(([options]) => options.pitch)).toEqual([30, 40]);
+    f.controller.dispose();
+  });
+
+  it('clamps at sixty degrees and at the map’s own lower maxPitch', () => {
+    const f = tiltFixture(85, 55);
+    f.controller.step(tiltUp);
+    f.controller.step(tiltUp);
+    expect(f.map.easeTo).toHaveBeenCalledTimes(1);
+    expect(f.map.easeTo.mock.calls[0][0].pitch).toBe(60);
+    f.controller.dispose();
+    const g = tiltFixture(45, 40);
+    g.controller.step(tiltUp);
+    expect(g.map.easeTo.mock.calls[0][0].pitch).toBe(45);
+    g.controller.dispose();
+  });
+
+  it('floors at zero and levels on the reset move', () => {
+    const f = tiltFixture(85, 0);
+    f.controller.step(tiltDown);
+    expect(f.map.easeTo).not.toHaveBeenCalled();
+    f.setPitch(35);
+    f.controller.step(tiltLevel);
+    expect(f.map.easeTo).toHaveBeenLastCalledWith(expect.objectContaining({ pitch: 0 }), expect.anything());
+    f.controller.dispose();
+  });
+
+  it('holds to tilt continuously and stops on release', () => {
+    const f = tiltFixture();
+    f.controller.press(tiltUp);
+    vi.advanceTimersByTime(300);
+    const calls = f.map.easeTo.mock.calls.length;
+    expect(calls).toBeGreaterThan(1);
+    f.controller.release();
+    expect(f.map.stop).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(2000);
+    expect(f.map.easeTo).toHaveBeenCalledTimes(calls);
+    f.controller.dispose();
+  });
+});

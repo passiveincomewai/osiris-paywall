@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Loader2, LocateFixed } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsDown, ChevronsUp, Loader2, LocateFixed, Minus } from 'lucide-react';
 import type { Map as MlMap } from 'maplibre-gl';
-import { createMapCameraControls, type CameraMove } from '@/lib/map-camera-controls';
+import { createMapCameraControls, TILT_MAX_PITCH, type CameraMove } from '@/lib/map-camera-controls';
 import { type BasemapMode } from '@/lib/basemap-mode';
 
 interface MapControlsProps {
@@ -36,6 +36,9 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', 
   const controller = useRef<ReturnType<typeof createMapCameraControls> | null>(null);
   const interact = useRef(onInteract);
   const [limits, setLimits] = useState({ min: false, max: false });
+  /** Live pitch for the tilt group: the current angle and the ceiling it
+   *  clamps to (the map's own maxPitch, itself capped by TILT_MAX_PITCH). */
+  const [pitchView, setPitchView] = useState({ pitch: 0, ceiling: TILT_MAX_PITCH });
   useEffect(() => { interact.current = onInteract; }, [onInteract]);
 
   useEffect(() => {
@@ -45,15 +48,22 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', 
       () => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     controller.current = controls;
     const updateLimits = () => setLimits({ min: map.getZoom() <= map.getMinZoom() + 0.001, max: map.getZoom() >= map.getMaxZoom() - 0.001 });
+    const updatePitch = () => setPitchView(prev => {
+      const next = { pitch: Math.round(map.getPitch()), ceiling: Math.min(TILT_MAX_PITCH, map.getMaxPitch()) };
+      return prev.pitch === next.pitch && prev.ceiling === next.ceiling ? prev : next;
+    });
     const onHidden = () => { if (document.hidden) controls.release(); };
     updateLimits();
+    updatePitch();
     map.on('zoomend', updateLimits);
+    map.on('pitch', updatePitch);
     window.addEventListener('blur', controls.release);
     document.addEventListener('visibilitychange', onHidden);
     return () => {
       controls.dispose();
       controller.current = null;
       map.off('zoomend', updateLimits);
+      map.off('pitch', updatePitch);
       window.removeEventListener('blur', controls.release);
       document.removeEventListener('visibilitychange', onHidden);
     };
@@ -105,6 +115,21 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', 
       <div role="group" aria-label="Map zoom controls"
         className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
         <ZoomArtwork limits={limits} press={press} release={release} step={step} />
+      </div>
+      {/* Tilt — desktop only, like the pan pad. Pitch used to have NO
+          button at all: on a computer the only paths were right-drag /
+          Ctrl-drag, where mobile has the two-finger gesture, so the
+          angle of the view was effectively undiscoverable. Steps and
+          hold run through the same camera controller as zoom and pan,
+          clamped in lib/map-camera-controls. */}
+      <div className="desktop-only">
+        <div role="group" aria-label="Map tilt controls"
+          className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
+          <Btn label="Tilt view up" move={{ kind: 'tilt', dir: 1 }} icon={ChevronsUp} disabled={pitchView.pitch >= pitchView.ceiling} press={press} release={release} step={step} />
+          <span aria-hidden="true" className="w-8 text-center font-mono text-[10px] tabular-nums text-[var(--text-secondary)]">{pitchView.pitch}°</span>
+          <Btn label="Tilt view down" move={{ kind: 'tilt', dir: -1 }} icon={ChevronsDown} disabled={pitchView.pitch <= 0} press={press} release={release} step={step} />
+          <Btn label="Level view — reset tilt" move={{ kind: 'tilt', dir: 0 }} icon={Minus} disabled={pitchView.pitch <= 0} press={press} release={release} step={step} />
+        </div>
       </div>
       </div>
       {/* The pan pad, in its own box on the right — the side the

@@ -122,3 +122,15 @@ describe('the header Upgrade pill', () => {
     expect(html).not.toContain('56,150,255');
   });
 });
+
+describe('the tilt controls (desktop)', () => {
+  it('renders a labelled tilt group with up, down and level buttons', () => {
+    const html = renderControls();
+    expect(html).toContain('aria-label="Map tilt controls"');
+    expect(html).toContain('aria-label="Tilt view up"');
+    expect(html).toContain('aria-label="Tilt view down"');
+    expect(html).toContain('aria-label="Level view — reset tilt"');
+    // The readout starts level: no pitch applied yet.
+    expect(html).toContain('0°');
+  });
+});
