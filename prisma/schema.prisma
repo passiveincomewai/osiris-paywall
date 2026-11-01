@@ -2695,3 +2695,80 @@ model WhiteLabelPreview {
 
   @@index([createdAt])
 }
+
+// ── AI Demo Studio (admin Content Studio, 2026-11-01) ─────────────────
+// Prompt-driven demonstrations of the real site. Admins create DemoJobs
+// from the admin dashboard; recording + rendering happen OUTSIDE the web
+// server in an isolated worker (Cosmo's VM) that claims jobs through the
+// bearer-guarded /api/internal/demo-studio/* endpoints — the same shape
+// as the Studio AI fulfillment queue (GenerationJob). Finished videos
+// live in Vercel Blob; rows here are metadata + placement state only.
+// A video reaches a public page only through a DemoPlacement an admin
+// created (never auto-published), and reaches affiliates only when
+// affiliateShared is set on an approved video.
+
+model DemoJob {
+  id          String     @id @default(cuid())
+  prompt      String     @db.Text
+  // Scene plan the worker executes: { template, steps: [...] } — written
+  // by the planner at creation; the queue response is self-describing.
+  plan        Json
+  style       String     @default("cinematic")
+  orientation String     @default("landscape")
+  // queued | claimed | recording | rendering | complete | failed
+  status      String     @default("queued")
+  progress    String?
+  error       String?    @db.Text
+  videoId     String?
+  video       DemoVideo? @relation(fields: [videoId], references: [id], onDelete: SetNull)
+  createdBy   String?
+  createdAt   DateTime   @default(now())
+  claimedAt   DateTime?
+  completedAt DateTime?
+
+  @@index([status, createdAt])
+}
+
+model DemoVideo {
+  id              String          @id @default(cuid())
+  title           String
+  description     String?         @db.Text
+  // Demonstrated feature tags, e.g. ["globe","search","cameras","flights"].
+  features        Json
+  prompt          String          @db.Text
+  style           String          @default("cinematic")
+  orientation     String          @default("landscape")
+  durationSec     Float?
+  // Vercel Blob URLs: edited master + original recording + poster frame.
+  videoUrl        String
+  rawUrl          String?
+  posterUrl       String?
+  // draft | approved — only approved videos can be placed or shared.
+  status          String          @default("draft")
+  affiliateShared Boolean         @default(false)
+  // Set by an admin when the site UI has changed enough that this demo
+  // may misrepresent it; drives the Regenerate flow. Never auto-set on
+  // a schedule — detection is advisory (Phase 5).
+  outdated        Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  jobs            DemoJob[]
+  placements      DemoPlacement[]
+
+  @@index([status, createdAt])
+  @@index([affiliateShared, status])
+}
+
+model DemoPlacement {
+  id        String    @id @default(cuid())
+  videoId   String
+  video     DemoVideo @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  // Registry keys from lib/demo-studio/pages.ts (page + slot).
+  page      String
+  slot      String
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  @@unique([page, slot, videoId])
+  @@index([page, slot, active])
+}

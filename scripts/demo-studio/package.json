@@ -1,0 +1,10 @@
+{
+  "name": "demo-studio-worker",
+  "private": true,
+  "type": "module",
+  "description": "AI Demo Studio worker — runs on the operator's machine, never in the web server. Claims DemoJobs, records the real site (Playwright), renders (ffmpeg), uploads to Blob. Requires a Playwright Chromium under ~/.cache/ms-playwright and ffmpeg/ffprobe on PATH.",
+  "dependencies": {
+    "@vercel/blob": "^1.0.0",
+    "playwright-core": "1.49.1"
+  }
+}
