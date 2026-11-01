@@ -1606,6 +1606,39 @@ model ContactMessage {
   @@index([createdAt])
 }
 
+// ── Partnership applications (public /partners) ────────────────────────
+// Strategic-partnership proposals from the /partners application form,
+// managed by admins in /admin/partnerships (status flow, notes and a
+// follow-up date — the CRM tracks; it never sends). Type values live in
+// PARTNERSHIP_TYPES and statuses in PARTNERSHIP_STATUSES
+// (src/lib/partners.ts). Deliberately standalone like ContactMessage:
+// applicants are usually signed out, so there is no user relation.
+model PartnershipApplication {
+  id             String    @id @default(cuid())
+  name           String
+  email          String
+  company        String
+  website        String
+  // One of the values in PARTNERSHIP_TYPES (src/lib/partners.ts).
+  type           String
+  audienceSize   String?
+  resources      String
+  seeking        String
+  proposal       String
+  // Title of the opportunities-directory entry the applicant clicked, if any.
+  opportunity    String?
+  // One of PARTNERSHIP_STATUSES (src/lib/partners.ts).
+  status         String    @default("new")
+  adminNotes     String?
+  nextFollowUpAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([type, createdAt])
+  @@index([createdAt])
+}
+
 // ── Submit-a-camera intake (public /submit-camera) ─────────────────────
 // Anyone can send us a camera: operators list their own feed, everyone
 // else suggests a public one. Submissions land here for human review in
