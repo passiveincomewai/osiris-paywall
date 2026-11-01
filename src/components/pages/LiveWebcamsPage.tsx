@@ -6,6 +6,10 @@ import EmailCaptureCard from "@/components/EmailCaptureCard";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
+import CountriesDirectory from "@/components/CountriesDirectory";
+import type { CountryDirectoryEntry } from "@/lib/country-directory";
+import { isConsolidatedCountry } from "@/lib/indexation-gates";
+import countriesIndex from "@/data/camera-countries.json";
 import DirectAnswers from "@/components/seo/DirectAnswers";
 import {
   CATALOGUE_GENERATED_AT,
@@ -51,6 +55,28 @@ export default async function LiveWebcamsPage({
   const fmt = (n: number) => n.toLocaleString(locale === "en" ? "en-US" : "es-ES");
   const areas = await areasForDef(EXPLORE_SCOPES.all, 400);
   const top10 = [...COUNTRY_INDEX].sort((a, b) => b.count - a.count).slice(0, 10);
+  /* The full country directory below the Top-10: the same entries
+     /cameras/countries renders (the generated index's rows + aliases,
+     consolidated countries unlinked), fed to the same CountriesDirectory
+     island — search by country or top city, region filter, sort by
+     count. Its UI strings stay English like this page's other directory
+     islands (see the header comment); the section heading follows the
+     same tranche rule. */
+  const aliasesBySlug = new Map(
+    (
+      countriesIndex as unknown as {
+        countries: Array<{ slug: string; aliases?: string[] }>;
+      }
+    ).countries.map((c) => [c.slug, c.aliases ?? []]),
+  );
+  const directoryEntries: CountryDirectoryEntry[] = COUNTRY_INDEX.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    count: c.count,
+    topCities: c.topCities,
+    aliases: aliasesBySlug.get(c.slug) ?? [],
+    hasPage: !isConsolidatedCountry(c.slug),
+  }));
   const tokens = {
     count: fmt(HEADLINE),
     countries: String(COUNTRY_INDEX.length),
@@ -184,6 +210,22 @@ export default async function LiveWebcamsPage({
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Every country, searchable — the full directory with the
+            same search / region-filter / sort the country index page
+            offers, so a visitor can jump from here to any country's
+            own page without leaving to hunt for it. */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">
+            Browse all {COUNTRY_INDEX.length} countries
+          </h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base">
+            Search by country or by its biggest camera city, filter by
+            region, or sort by camera count — every row opens that
+            country&apos;s own live camera page.
+          </p>
+          <CountriesDirectory countries={directoryEntries} />
         </div>
 
         {/* Full directory, live */}
