@@ -1,6 +1,6 @@
 'use client';
 
-import { ExternalLink, Orbit, Satellite, X } from 'lucide-react';
+import { ExternalLink, Eye, Orbit, Satellite, X } from 'lucide-react';
 
 /**
  * OSIRIS — selected satellite readout
@@ -82,7 +82,7 @@ function Field({ label, value, color }: { label: string; value: string; color?: 
   );
 }
 
-export default function SatelliteCard({ sat, onClose }: { sat: SatelliteDetail; onClose: () => void }) {
+export default function SatelliteCard({ sat, onClose, onBirdsEye, birdsEyeActive = false }: { sat: SatelliteDetail; onClose: () => void; onBirdsEye?: () => void; birdsEyeActive?: boolean }) {
   const accent = colorSafe(sat.color);
   const shell = regime(sat.alt);
 
@@ -141,6 +141,19 @@ export default function SatelliteCard({ sat, onClose }: { sat: SatelliteDetail; 
         {sat.track === 'ready' && <span style={{ color: accent }}>ORBIT TRACK ON GLOBE</span>}
         {sat.track === 'unavailable' && <span>NO TRACK — TLE UNAVAILABLE</span>}
       </div>
+
+      {sat.noradId && onBirdsEye && (
+        <button
+          type="button"
+          onClick={onBirdsEye}
+          aria-pressed={birdsEyeActive}
+          className="flex w-full items-center justify-center gap-1.5 border-t px-2.5 py-2 text-[9px] font-mono tracking-[0.15em] transition-colors hover:bg-white/5"
+          style={{ borderColor: 'var(--border-secondary)', color: accent, background: `${accent}0a` }}
+        >
+          <Eye className="h-2.5 w-2.5" />
+          {birdsEyeActive ? "EXIT BIRD'S-EYE VIEW" : "BIRD'S-EYE VIEW"}
+        </button>
+      )}
 
       {sat.noradId && (
         <a

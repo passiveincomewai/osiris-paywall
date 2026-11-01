@@ -58,6 +58,7 @@ import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
 import { createSatelliteLayer, parseColor, SAT_MAX_ZOOM, type SatPoint } from '@/lib/satellite-layer';
+import { BIRDSEYE_PITCH, BIRDSEYE_ZOOM, birdsEyeLabel, unwrapLngNear } from '@/lib/satellite-birdseye';
 import { interpolateSatelliteRows, MAX_EXTRAPOLATION_SPANS } from '@/lib/satellite-motion';
 import type { SatelliteRow as SatellitePayloadRow } from '@/lib/satellite-payload';
 import { MAP_DEFAULTS, MAP_PALETTE_KEYS, readMapPalette, satColorFor, type MapPalette } from '@/lib/map-palette';
@@ -124,6 +125,12 @@ interface OsirisMapProps {
    *  Satellite view is free for everyone — there is no lock. */
   satelliteOn?: boolean;
   onSatelliteToggle?: () => void;
+  /** Programmatic satellite-view setter for camera modes that need the
+   *  imagery basemap (Bird's-Eye View, Cockpit View): flips the view
+   *  WITHOUT persisting it — only the visitor's own switch writes the
+   *  stored choice (lib/basemap-mode's standing rule). The page
+   *  implements it as a bare state set. */
+  onSatelliteViewChange?: (on: boolean) => void;
   /** Satellite imagery time selection for the Wayback slider (page
    *  owns it; free for everyone, like the satellite view itself).
    *  `latest` = the live World Imagery service; a `wayback` selection
@@ -392,7 +399,7 @@ const FLIGHT_FOLLOW_PRESETS = [aircraftFollowPreset()];
  *  is honestly unavailable until launch data is loaded). */
 const DIRECTOR_PRESETS = [...FLIGHT_FOLLOW_PRESETS, spaceMissionPreset()];
 
-function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, onLocateMe, locating = false, locateNote = null, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
+function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightClick, onViewStateChange, onReady, flyToLocation, alertPinIds = null, projection = 'globe', terrainEnabled = false, terrainRetry = 0, terrainFocus = 0, onTerrainStatusChange, mapStyle = 'dark', basemapMode = 'night', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, onSatelliteViewChange, satelliteSelection = LATEST_SELECTION, onSatelliteSelectionChange, directorOpenSignal, sweepData, scanTargets = [], demoMode = false, drawnPolygons = [], arcgisLayers = [], drawMode = null, onDrawComplete, onDrawProgress, onDrawCancel, drawCommand = null, onMapCenter, route = null, userLocation = null, followUser = false, onFollowInterrupt, onLocateMe, locating = false, locateNote = null, navigating = false, aircraftAirports = {}, onOiGlobe, onOiSelect, onOiHover, onOiFollow, oiHighlight = null, sensorEffect, onSensorEffectChange }: OsirisMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -1052,6 +1059,97 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     satLayerRef.current?.setOrbit(null);
     setSelectedSat(null);
   }, []);
+
+  // ── Satellite-view holds ──────────────────────────────────────────
+  // Camera modes that need the imagery basemap (Bird's-Eye View here,
+  // Cockpit View in the flight block) borrow it through the page's
+  // programmatic setter — onSatelliteViewChange flips the view
+  // WITHOUT persisting it; only the visitor's own switch writes the
+  // stored choice. A hold is acquired on entry, and when the LAST
+  // hold releases, the visitor's previous view is restored. If the
+  // visitor flips the satellite switch off by hand while a hold is
+  // active, the claim is dropped instead: their choice stands, and
+  // nothing is restored over it (the auto-on is an entry action,
+  // never a lock).
+  const satForceHoldsRef = useRef(new Set<string>());
+  const satForcedRef = useRef(false);
+  const satelliteOnRef = useRef(satelliteOn);
+  const onSatelliteViewChangeRef = useRef(onSatelliteViewChange);
+  useEffect(() => { onSatelliteViewChangeRef.current = onSatelliteViewChange; }, [onSatelliteViewChange]);
+  useEffect(() => {
+    satelliteOnRef.current = satelliteOn;
+    if (!satelliteOn) satForcedRef.current = false;
+  }, [satelliteOn]);
+  const acquireSatelliteView = useCallback((key: string) => {
+    if (satForceHoldsRef.current.has(key)) return;
+    satForceHoldsRef.current.add(key);
+    if (satForceHoldsRef.current.size === 1 && !satelliteOnRef.current) {
+      satForcedRef.current = true;
+      onSatelliteViewChangeRef.current?.(true);
+    }
+  }, []);
+  const releaseSatelliteView = useCallback((key: string) => {
+    if (!satForceHoldsRef.current.delete(key)) return;
+    if (satForceHoldsRef.current.size === 0 && satForcedRef.current) {
+      satForcedRef.current = false;
+      onSatelliteViewChangeRef.current?.(false);
+    }
+  }, []);
+
+  // ── Satellite Bird's-Eye View ─────────────────────────────────────
+  // The satellite counterpart of flight follow: the camera drops to
+  // the selected satellite's ground position on the imagery basemap
+  // and rides its ground track. Entry saves the camera; every exit
+  // restores it, together with the visitor's basemap if the view
+  // borrowed it. The imagery is dated reference photography, never a
+  // live feed — the banner (lib/satellite-birdseye) says so for as
+  // long as the view is active.
+  const birdsEyeRef = useRef<{ noradId: string; name: string; savedCamera: SavedCameraState; lastLng: number | null } | null>(null);
+  const [birdsEyeUi, setBirdsEyeUi] = useState<{ name: string } | null>(null);
+
+  const exitBirdsEye = useCallback((opts?: { restore?: boolean }) => {
+    const be = birdsEyeRef.current;
+    if (!be) return;
+    birdsEyeRef.current = null;
+    setBirdsEyeUi(null);
+    releaseSatelliteView('birdseye');
+    const map = mapRef.current;
+    if (map && opts?.restore !== false) {
+      const s = be.savedCamera;
+      map.easeTo({ center: s.center, zoom: s.zoom, pitch: s.pitch, bearing: s.bearing, duration: 1400 });
+    }
+  }, [releaseSatelliteView]);
+
+  const engageBirdsEye = useCallback(() => {
+    const map = mapRef.current;
+    const sat = selectedSat;
+    if (!map || !sat?.noradId) return;
+    if (birdsEyeRef.current?.noradId === sat.noradId) return; // already riding this one
+    const c = map.getCenter();
+    // Retargeting mid-view keeps the ORIGINAL pre-view camera as the
+    // restore point, like follow's target switch.
+    const savedCamera: SavedCameraState = birdsEyeRef.current?.savedCamera ?? {
+      center: [c.lng, c.lat], zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing(),
+    };
+    birdsEyeRef.current = { noradId: sat.noradId, name: sat.name, savedCamera, lastLng: null };
+    setBirdsEyeUi({ name: sat.name });
+    acquireSatelliteView('birdseye');
+    map.easeTo({ center: [sat.lng, sat.lat], zoom: BIRDSEYE_ZOOM, pitch: BIRDSEYE_PITCH, duration: 1600, essential: true });
+  }, [selectedSat, acquireSatelliteView]);
+
+  // Selection changes while riding: a different satellite retargets
+  // the view; a cleared selection — empty click, satellite layers
+  // off, zoomed past the layer's ceiling, gone from the catalogue —
+  // ends it and restores the camera.
+  useEffect(() => {
+    const be = birdsEyeRef.current;
+    if (!be) return;
+    if (!selectedSat) { exitBirdsEye(); return; }
+    if (selectedSat.noradId && selectedSat.noradId !== be.noradId) {
+      birdsEyeRef.current = { ...be, noradId: selectedSat.noradId, name: selectedSat.name };
+      setBirdsEyeUi({ name: selectedSat.name });
+    }
+  }, [selectedSat, exitBirdsEye]);
   const drawingCoordsRef = useRef<number[][]>([]);
 
   // Create aircraft icons on canvas (for WebGL symbol layers). The glyph
@@ -4029,6 +4127,27 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     return () => clearInterval(id);
   }, [mapReady, activeLayers.satellites, (activeLayers as any).sat_comms, (activeLayers as any).sat_military, (activeLayers as any).sat_navigation, (activeLayers as any).sat_earth, (activeLayers as any).sat_science, toSatPoints]);
 
+  // Bird's-Eye drive: on the satellite ticker's own 200 ms cadence,
+  // ease the centre onto the satellite's current interpolated ground
+  // position, read from the same display rows the markers draw
+  // (satAppliedRef) — the camera can never show a position the map
+  // doesn't. Centre-only eases: zoom and pitch stay where engage put
+  // them, and a pitch the visitor adjusts by hand is left alone.
+  useEffect(() => {
+    if (!birdsEyeUi) return;
+    const id = setInterval(() => {
+      const map = mapRef.current;
+      const be = birdsEyeRef.current;
+      if (!map || !be) return;
+      const row = satAppliedRef.current.find(r => r.noradId === be.noradId);
+      if (!row) return;
+      const lng = be.lastLng == null ? row.lng : unwrapLngNear(row.lng, be.lastLng);
+      be.lastLng = lng;
+      map.easeTo({ center: [lng, row.lat], duration: 250, easing: (t: number) => t });
+    }, 200);
+    return () => clearInterval(id);
+  }, [birdsEyeUi]);
+
   useEffect(() => {
     if (!mapReady) return;
     // url has to travel with the feature: /api/gdelt gives every event its own
@@ -6464,7 +6583,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
           })}
         />
       )}
-      {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} />}
+      {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} onBirdsEye={() => { if (birdsEyeUi) exitBirdsEye(); else engageBirdsEye(); }} birdsEyeActive={!!birdsEyeUi} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} onSatelliteToggle={onSatelliteToggle} onLocateMe={onLocateMe} locating={locating} locateNote={locateNote} />}
       {mapReady && satelliteOn && onSatelliteSelectionChange && (
         <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} loading={satelliteImageryLoading} />
@@ -6610,6 +6729,26 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
             onExit={() => endFlightFollow({ restore: true })}
             path={flightPathUi}
           />
+        </div>
+      )}
+      {mapReady && birdsEyeUi && (
+        <div
+          className="absolute left-1/2 z-[240] -translate-x-1/2 px-3"
+          style={{ bottom: `${(flightFollowUi ? 17 : 6) + [trafficChip, transitNotice, streetLevelChip, flightFollowNotice].filter(Boolean).length * 4.5}rem` }}
+        >
+          <div className="flex items-center gap-3 rounded-lg border border-cyan-300/25 bg-black/70 backdrop-blur-md px-3 py-2 shadow-xl">
+            <p className="text-[11px] font-mono leading-relaxed text-white/70 whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis">
+              {birdsEyeLabel(birdsEyeUi.name)}
+            </p>
+            <button
+              type="button"
+              onClick={() => exitBirdsEye()}
+              aria-label="Exit bird's-eye view"
+              className="flex-shrink-0 rounded-md border border-cyan-300/40 px-2 py-1 text-[10px] font-mono tracking-[0.15em] text-cyan-200 transition-colors hover:bg-cyan-300/10 focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
+            >
+              EXIT
+            </button>
+          </div>
         </div>
       )}
       {flightFollowNotice && (

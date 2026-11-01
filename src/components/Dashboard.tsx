@@ -2608,6 +2608,7 @@ export default function Dashboard() {
           onBasemapModeChange={setBasemapMode}
           satelliteOn={mapStyle === 'satellite'}
           onSatelliteToggle={handleSatelliteToggle}
+          onSatelliteViewChange={(on: boolean) => setMapStyle(on ? 'satellite' : 'dark')}
           satelliteSelection={satelliteSelection}
           onSatelliteSelectionChange={setSatelliteSelection}
           directorOpenSignal={directorSignal}
