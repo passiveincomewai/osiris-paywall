@@ -38,7 +38,7 @@ import type {
 } from "@/lib/ski-directory";
 import { parseSkiPassParam } from "@/lib/ski-resort-passes";
 import skiLogosData from "@/data/ski-logos.json";
-import type { CountryCamera } from "@/lib/country-cameras";
+import { dedupeCountryCameras, type CountryCamera } from "@/lib/country-cameras";
 import { previewMedia } from "@/lib/camera-preview";
 import {
   parseHourlySnowfall,
@@ -174,9 +174,17 @@ const FAQS = [
    loads before any HTML could be sent. Promise.all preserves the
    first-seen country order, each load still fails soft to [], and the
    selection loop below is untouched — the rendered output is identical,
-   it just arrives after the SLOWEST single chunk instead of the sum. */
+   it just arrives after the SLOWEST single chunk instead of the sum.
+   The selection is also careful not to repeat work: each country's
+   chunk is deduped ONCE, not once per resort (selectResortCameras
+   dedupes its input, so feeding it the whole chunk per resort re-ran
+   that dedupe — and a haversine over every record — for each of
+   the chunk's resorts: ~57 full passes over the 41k-record US
+   chunk). Resorts now select from a bounding-box subset of the
+   once-deduped records; the box strictly contains the 40 km nearby
+   radius and selectResortCameras' own dedupe is idempotent over a
+   subset, so the cameras chosen are exactly the naive loop's. */
 async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
-  const byCountry = new Map<string, CountryCamera[]>();
   const byResort = new Map<string, CountryCamera[]>();
   const countrySlugs: string[] = [];
   for (const r of SKI_RESORTS) {
@@ -191,15 +199,47 @@ async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
       }
     }),
   );
-  countrySlugs.forEach((slug, i) => byCountry.set(slug, chunks[i] ?? []));
+  const placedByCountry = new Map<string, CountryCamera[]>();
+  countrySlugs.forEach((slug, i) => {
+    const chunk = chunks[i] ?? [];
+    placedByCountry.set(
+      slug,
+      dedupeCountryCameras(
+        chunk.filter((c) => typeof c.lat === "number" && typeof c.lng === "number"),
+      ),
+    );
+  });
   for (const r of SKI_RESORTS) {
     try {
-      byResort.set(r.slug, selectResortCameras(byCountry.get(r.countrySlug) ?? [], r).resort.slice(0, 6));
+      byResort.set(
+        r.slug,
+        selectResortCameras(boxCandidates(placedByCountry.get(r.countrySlug) ?? [], r), r).resort.slice(0, 6),
+      );
     } catch {
       byResort.set(r.slug, []);
     }
   }
   return byResort;
+}
+
+/* The records that can possibly fall within NEARBY_RADIUS_KM (40 km)
+   of a resort, as a bounding box: haversine distance is never less
+   than R x |dLat|, so |dLat| <= 40/6371 rad = 0.3597 deg is necessary;
+   the longitude bound is the same inequality through the cos(latitude)
+   term (with the 2/pi slack in sin x >= 2x/pi), both with margin. The
+   box is therefore a strict superset of the radius — haversine still
+   decides membership — it just runs over hundreds of records per
+   resort instead of the whole country chunk. Longitude differences
+   wrap at the antimeridian. */
+function boxCandidates(placed: CountryCamera[], resort: (typeof SKI_RESORTS)[number]): CountryCamera[] {
+  const latBound = 0.37;
+  const phiBound = Math.min(89.9, Math.abs(resort.lat) + latBound);
+  const lngBound = 0.58 / Math.cos((phiBound * Math.PI) / 180);
+  return placed.filter((c) => {
+    if (Math.abs((c.lat as number) - resort.lat) > latBound) return false;
+    const dl = Math.abs((c.lng as number) - resort.lng);
+    return Math.min(dl, 360 - dl) <= lngBound;
+  });
 }
 
 /* One still frame per resort for the directory cards (W3): the first
@@ -286,11 +326,26 @@ async function loadSnowNow(): Promise<SnowNowHit[]> {
    from static directory data immediately; each data-backed section
    streams in behind its own Suspense boundary. getSamples is React
    cache()d so the directory and the featured grids share ONE chunk
-   load per request. Data semantics are unchanged: the snow strip is
+   load per request, and the promise is memoised across requests
+   (loadSamplesShared below) — its inputs are the deployed catalogue
+   chunks, themselves module-cached by loadCountryChunk, plus the
+   static resort list, so the derived map cannot go stale within a
+   deployment. Data semantics are unchanged: the snow strip is
    still the same modelled trailing-24h measure (labelled modelled,
    absent on failure), thumbnails still come from the live catalogue
-   chunks, and nothing here is cached across requests. */
-const getSamples = cache(loadSamples);
+   chunks. */
+let samplesPromise: Promise<Map<string, CountryCamera[]>> | null = null;
+function loadSamplesShared(): Promise<Map<string, CountryCamera[]>> {
+  if (!samplesPromise) {
+    const p = loadSamples();
+    samplesPromise = p;
+    p.catch(() => {
+      if (samplesPromise === p) samplesPromise = null;
+    });
+  }
+  return samplesPromise;
+}
+const getSamples = cache(loadSamplesShared);
 
 async function SnowNowStrip() {
   const hits = await loadSnowNow();
