@@ -50,11 +50,11 @@ export const TOUR_STEPS: TourStep[] = [
   {
     n: 3,
     title: "Turn On a Data Layer",
-    body: "Layers put live data on the globe. The layer panel is open on the left — switch on Weather or Fires (try the highlighted toggle) and watch the data appear.",
-    bodyTouch: "Layers put live data on the globe. The layer panel is open — switch on Weather or Fires to see it appear.",
+    body: "Layers put live data on the globe. The layer panel is open on the left — switch on Severe Weather or Active Fires (try the highlighted toggle) and watch the data appear.",
+    bodyTouch: "Layers put live data on the globe. The layer panel is open — switch on Severe Weather or Active Fires to see it appear.",
     anchor: "layers",
     action: "event-layer",
-    hint: "Switch on Weather or Fires in the layer panel.",
+    hint: "Switch on Severe Weather or Active Fires in the layer panel.",
   },
   {
     n: 4,
@@ -124,6 +124,36 @@ export function shouldCompleteCameraStep(
   cameraId: string | null,
 ): boolean {
   return inTour && step === CAMERA_STEP_N && cameraId !== null;
+}
+
+/* ── Layer-step signal logic ────────────────────────────────────────────── */
+
+/** The tour step that asks the visitor to turn on a data layer. */
+export const LAYER_STEP_N: number =
+  TOUR_STEPS.find((s) => s.action === "event-layer")?.n ?? 3;
+
+/**
+ * Whether the data-layer tour step should complete right now: the tour
+ * is on the layer step and at least one event layer is on. Deliberately
+ * state-based, mirroring shouldCompleteCameraStep — a visitor who
+ * switched an event layer on just before the step was asked, or whose
+ * layer choices were remembered from an earlier visit so a qualifying
+ * layer is already on when the step is entered, has still performed
+ * the real action. A transition-only check could never fire for them:
+ * the off→on edge already happened (and was consumed by the signal
+ * effect at an earlier step), or cannot happen at all without first
+ * switching a live layer off. A fresh toggle still completes the step
+ * through this same state on the next render, and the transition
+ * signal in OnboardingRoot remains the first-use recorder.
+ */
+export function shouldCompleteLayerStep(
+  inTour: boolean,
+  step: number,
+  sig: string,
+): boolean {
+  if (!inTour || step !== LAYER_STEP_N) return false;
+  const on = parseLayerSig(sig);
+  return (EVENT_LAYERS as readonly string[]).some((k) => on.has(k));
 }
 
 export type WatchOfferSurface = "welcome" | "tour";

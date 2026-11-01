@@ -5,10 +5,12 @@ import {
   MICROS,
   HELP_ENTRIES,
   CAMERA_STEP_N,
+  LAYER_STEP_N,
   isCameraOpenedSignal,
   parseLayerSig,
   layersTurnedOn,
   shouldCompleteCameraStep,
+  shouldCompleteLayerStep,
   watchOfferAction,
 } from "./steps";
 
@@ -119,5 +121,61 @@ describe("camera step signal logic (tutorial hand-off fix)", () => {
     // onboarding surface — the tutorial ended at the click.
     expect(watchOfferAction("welcome")).toBe("enter-tour-at-camera-step");
     expect(watchOfferAction("tour")).toBe("await-camera-signal");
+  });
+});
+
+describe("layer step signal logic (step-3 mobile fix)", () => {
+  it("derives the layer step from TOUR_STEPS", () => {
+    expect(LAYER_STEP_N).toBe(3);
+    expect(TOUR_STEPS[LAYER_STEP_N - 1].action).toBe("event-layer");
+    expect(TOUR_STEPS[LAYER_STEP_N - 1].anchor).toBe("layers");
+  });
+
+  it("step copy names the panel's real rows (Severe Weather / Active Fires)", () => {
+    // The panel rows are labelled "Severe Weather" and "Active Fires";
+    // the old copy sent visitors hunting for rows called "Weather" and
+    // "Fires", which do not exist.
+    const s = TOUR_STEPS[LAYER_STEP_N - 1];
+    for (const text of [s.body, s.bodyTouch, s.hint]) {
+      expect(text).toContain("Severe Weather");
+      expect(text).toContain("Active Fires");
+      expect(text).not.toContain("Weather or Fires");
+    }
+  });
+
+  it("every event-layer key completes the step while it is on (toggle key → step advance)", () => {
+    // The mapping the step actually accepts: the LayerPanel rows set
+    // these exact activeLayers keys, and the Dashboard joins the on
+    // keys into the signature OnboardingRoot checks.
+    for (const key of EVENT_LAYERS) {
+      expect(shouldCompleteLayerStep(true, LAYER_STEP_N, `cctv,earthquakes,${key}`)).toBe(true);
+    }
+    // The two rows the step's copy names, in a realistic mobile sig
+    // (earthquakes + cctv are on by default / in use).
+    expect(shouldCompleteLayerStep(true, LAYER_STEP_N, "cctv,earthquakes,weather")).toBe(true);
+    expect(shouldCompleteLayerStep(true, LAYER_STEP_N, "cctv,earthquakes,fires")).toBe(true);
+  });
+
+  it("a fresh toggle still registers as a turned-on transition for either named row", () => {
+    expect(layersTurnedOn("cctv,earthquakes", "cctv,earthquakes,weather")).toEqual(["weather"]);
+    expect(layersTurnedOn("cctv,earthquakes", "cctv,earthquakes,fires")).toEqual(["fires"]);
+  });
+
+  it("non-event layers, other steps and non-tour states do not complete it", () => {
+    // Earthquakes is on by default and is NOT a qualifying layer.
+    expect(shouldCompleteLayerStep(true, LAYER_STEP_N, "cctv,earthquakes")).toBe(false);
+    expect(shouldCompleteLayerStep(true, LAYER_STEP_N, "")).toBe(false);
+    expect(shouldCompleteLayerStep(true, LAYER_STEP_N - 1, "weather")).toBe(false);
+    expect(shouldCompleteLayerStep(true, LAYER_STEP_N + 1, "weather")).toBe(false);
+    expect(shouldCompleteLayerStep(false, LAYER_STEP_N, "weather")).toBe(false);
+  });
+
+  it("state-based completion covers the already-on case the transition check cannot see", () => {
+    // A qualifying layer switched on BEFORE the step was entered (or
+    // remembered from an earlier visit) produces no off→on transition
+    // at the step — layersTurnedOn is empty — yet the step must still
+    // complete, exactly like the camera step's already-open case.
+    expect(layersTurnedOn("weather", "weather")).toEqual([]);
+    expect(shouldCompleteLayerStep(true, LAYER_STEP_N, "weather")).toBe(true);
   });
 });

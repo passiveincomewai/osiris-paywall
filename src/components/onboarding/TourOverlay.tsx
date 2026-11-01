@@ -46,11 +46,15 @@ function resolveAnchors(step: TourStep): { primary: Rect | null; extras: Rect[] 
       case "globe":
         return { primary: rectOf(document.querySelector("[data-globe-section]")), extras: [] };
       case "layers": {
-        // Step 3 (the event-layer step): spotlight the real Weather
-        // toggle inside the open Layers panel once it exists; before
-        // the panel opens, fall back to the panel root as before.
+        // Step 3 (the event-layer step): spotlight the real Severe
+        // Weather row inside the open Layers panel once it exists
+        // (falling back to the Active Fires row, the step's other
+        // qualifying toggle); before the panel opens, fall back to
+        // the panel root as before.
         if (step.action === "event-layer") {
-          const toggle = document.querySelector('[data-tour-layer="weather"]');
+          const toggle =
+            document.querySelector('[data-tour-layer="weather"]') ??
+            document.querySelector('[data-tour-layer="fires"]');
           if (toggle) return { primary: rectOf(toggle), extras: [] };
         }
         const el =

@@ -352,7 +352,18 @@ export default function Dashboard() {
     if (!active) return;
     // isMobile is declared further down the component; the codebase's
     // own pattern for callbacks defined up here is a call-time check.
-    if (window.matchMedia('(max-width: 767px)').matches) setMobilePanel('layers');
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      // Mobile: the camera viewer (fixed, z-[500]) left open by the
+      // tour's camera step renders ABOVE the layers drawer (z-[400]),
+      // so the panel this step promises ("the layer panel is open")
+      // opened buried under the camera card and its toggles could not
+      // be reached. Close the camera as the step is entered so the
+      // drawer comes to the front. Desktop keeps its 2026-10-29
+      // behaviour (corner camera card and left panel coexist), so the
+      // camera is left alone there.
+      setActiveCamera(null);
+      setMobilePanel('layers');
+    }
     else { setShowLayers(true); setLayersOpenSignal(s => s + 1); }
   }, []);
   const [showAlerts, setShowAlerts] = useState(false);

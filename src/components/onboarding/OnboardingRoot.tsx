@@ -48,6 +48,7 @@ import {
   isCameraOpenedSignal,
   layersTurnedOn,
   shouldCompleteCameraStep,
+  shouldCompleteLayerStep,
   watchOfferAction,
   CONVERSION_FEATURES,
 } from "@/lib/onboarding/steps";
@@ -442,6 +443,17 @@ function OnboardingRootInner({
       succeedStep();
     }
   }, [layersSig, recordFeature, succeedStep]);
+
+  /* Arriving at the layer step with an event layer already on completes
+     it too — the real action already happened (an event layer switched
+     on during an earlier step, or remembered from a previous visit:
+     layer choices persist). The transition effect above can never see
+     those: their off→on edge fired before the step was entered.
+     succeedStep's phase guard keeps repeat calls idempotent. Mirrors
+     the camera step's arrival effect. */
+  useEffect(() => {
+    if (shouldCompleteLayerStep(ui === "tour", tourStep, layersSig)) succeedStep();
+  }, [ui, tourStep, layersSig, succeedStep]);
 
   /* ── Signals: flight / satellite selected (fenced OsirisMap dispatches) ──
      No longer a tour step (the 4-step tour dropped entity selection);
