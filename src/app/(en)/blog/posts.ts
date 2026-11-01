@@ -41,6 +41,76 @@ export type BlogPost = {
 
 export const POSTS: BlogPost[] = [
   {
+    slug: "worldeye-strategic-partners",
+    title: "WorldEye Is Looking for Strategic Partners: Let's Build and Grow Together",
+    seoTitle: "WorldEye Is Looking for Strategic Partners | WorldEye Blog",
+    date: "2026-11-01",
+    excerpt:
+      "WorldEye is opening a strategic partnerships programme: sixteen kinds of partners, a public directory of the collaborations we're actively seeking, and an application form that a person actually reads.",
+    seoDescription:
+      "WorldEye is looking for strategic partners — platforms, camera networks, data providers, creators, media and builders. See the open opportunities and apply.",
+    tags: ["partnerships", "worldeye", "business"],
+    sections: [
+      {
+        body: [
+          "WorldEye is a live window on the planet: a globe of 74,229 live cameras, flight, ship and satellite tracking, weather layers and a public API, used by people who want to see what the world looks like right now. It was built by connecting things that already existed — public cameras, open data, tracking feeds — into one view. Today we're opening the door to building the next layer the same way: with partners.",
+          "Our new [partnerships page](/partners) is a standing, open invitation. It names the sixteen kinds of partners we build with best, lists the specific collaborations we're actively looking for in a searchable [opportunities directory](/partners#opportunities), and takes proposals through an application form that is read by the team — not scored by a bot, not dropped into a void.",
+        ],
+      },
+      {
+        heading: "Why partnerships, and why now",
+        body: [
+          "Everything WorldEye does gets more useful when it connects to something else. A ski resort's cameras matter more next to real conditions data. A publisher's storm coverage hits harder with a live view embedded in it. A developer with a good idea and our [public API](/developers) can build in a weekend what neither of us would have shipped alone. The pieces are live — the globe, the embed system, the developer API, the [Enterprise](/enterprise) feed platform — so partnerships can start from working software instead of a roadmap.",
+          "We're also being deliberate about what this page is not. It carries no logos, no testimonials and no 'trusted by' wall, because partnerships get announced when they exist. What it lists is what we're seeking — which felt like the more honest way to start.",
+        ],
+      },
+      {
+        heading: "Who we're looking for",
+        body: [
+          "The invitation is broad on purpose: website and app owners who want live visual content; SaaS founders whose products need a live view; OSINT platforms; camera networks and the agencies, harbours, venues and resorts that operate public cameras; API and data providers in weather, snow, marine, flight and events; developers and open-source projects; AI companies that need real visual context; media and news publishers; travel, tourism and ski destinations; creators and communities; SEO and content publishers; marketing agencies; enterprise and public-sector technology teams; educators and researchers; investors and advisors; and startups or independent builders whose idea doesn't fit any of those boxes — there's a category for that too, and an open call in the directory.",
+          "Each category on the [partnerships page](/partners) spells out what a collaboration could look like, so you can recognise the fit before you write a word.",
+        ],
+      },
+      {
+        heading: "What we can build together",
+        body: [
+          "Six shapes cover most of it. API partnerships build on the live public API — read-only, self-serve keys, rights-cleared cameras only. Cross-platform integrations put WorldEye and your product side by side: cross-linked layers, embedded views, shared workflows. Co-branded experiences — destination showcases, event camera walls — carry both brands into something neither audience has seen. Joint marketing launches and campaigns run to both audiences. White-label projects are possible through our early-access pilot: your brand over a WorldEye-powered live-view experience, scoped per prospect and labelled honestly as a pilot — we announced the idea in [WorldEye White Label: your own branded live-camera platform](/blog/worldeye-white-label), and the [white-label page](/white-label) has a demo generator that shows it. And where roadmaps genuinely intersect, shared product development beats building in parallel.",
+          "Two neighbouring routes are worth knowing. If what you actually want is to earn by referring subscribers, that's the [affiliate program](/affiliates) — self-serve, published terms, no application needed. And if you operate cameras, the [camera sources directory](/camera-sources) is where the catalogue's attribution and counting methodology live; being listed there isn't a partnership, but it's where governed listing conversations start.",
+        ],
+      },
+      {
+        heading: "How proposing a partnership works",
+        body: [
+          "The form asks who you are, what you can contribute, what you're looking for, and the collaboration you have in mind. Concrete beats polished. Every application is stored in our partnership CRM and read by a person; if there's a potential fit, we reply and start a conversation about structure — licensing, exchange, a pilot, a joint offer. Where a partnership would create shared revenue, revenue sharing is one of the structures on the table, designed and agreed per partnership before anything launches. There are no standard rates to quote because there is no standard partnership — and we'd rather say that plainly than dress it up.",
+          "If your idea is already in the [opportunities directory](/partners#opportunities), the button on the listing starts the form with the details pre-filled. If it isn't listed anywhere — apply anyway. The directory is what we're looking for today, not a fence.",
+        ],
+      },
+      {
+        body: [
+          "WorldEye grew by connecting what existed. The next version of it gets built with whoever shows up to build it. [Propose a partnership](/partners#apply) — we read everything.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Who can apply to partner with WorldEye?",
+        a: "Companies, platforms, camera operators, creators, publishers, researchers and independent builders of any size. The partnerships page lists sixteen categories, plus a catch-all for proposals that don't fit a category.",
+      },
+      {
+        q: "Does WorldEye offer revenue sharing?",
+        a: "Revenue sharing is a possibility where a partnership creates shared revenue. It is designed and agreed per partnership, in writing, before launch — there are no standard rates. The affiliate program is the published, self-serve revenue route.",
+      },
+      {
+        q: "Our cameras are listed in WorldEye's directory. Are we partners?",
+        a: "No. The camera sources directory records where the catalogue's cameras come from; a listing is not a partnership or an endorsement. Partnerships are explicit agreements that start with an application on the partnerships page.",
+      },
+      {
+        q: "What happens after I apply?",
+        a: "Your application is stored in WorldEye's partnership CRM and the team is notified. Every application is read by a person; if there's a potential fit, we reply to start a conversation about structure and next steps.",
+      },
+    ],
+  },
+  {
     slug: "lake-louise-opening-day-november-1-2026",
     title: "Lake Louise Opens Early: Canada's Ski Season Starts November 1, Five Days Ahead of Schedule",
     seoTitle: "Lake Louise Opens Early Nov 1 | WorldEye Blog",
