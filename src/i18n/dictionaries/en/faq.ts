@@ -23,6 +23,18 @@
  * article-specific FAQs stay on their own pages. The page also gained
  * search, a top-recommended list and a view-all affordance (see
  * FaqSearch), driven by the copy blocks below.
+ *
+ * 2026-11-01 alignment (master repair, brief item 1): the Pro &
+ * billing and feature answers were re-aligned to the 3-tier grid
+ * (Lite / Pro / Ultra). "VIP Pro" is the annual Pro plan's name,
+ * not the top tier — the premium intel feeds, timelapse, the VIP
+ * hub and the 40/10 caps belong to Ultra, and annual subscribers
+ * from before 30 Oct 2026 keep the VIP extras they started with.
+ * The blanket "every future Pro layer" promise and the stale
+ * "accounts only exist for subscribers" claim were removed, and
+ * the recording answers now state the browser-local storage
+ * truth. Spanish re-synced the same day; the manifest's faq
+ * sourceHash was recomputed (updatedAt stays 2026-10-31).
  */
 
 import type { RichText } from "../types";
@@ -127,11 +139,11 @@ export const enFaq: FaqCopy = {
         },
         plain(
           "Do I need an account?",
-          "No. Just open the site and you're looking at the planet. Accounts only exist for Pro subscribers (billing) and affiliates — never as a gate in front of the map."
+          "No. Just open the site and you're looking at the planet — the map never asks you to sign in. Accounts are free: create one to subscribe, join the affiliate program, or save cameras and views. A free account with a verified email also raises your free camera opens from 5 to 10."
         ),
         plain(
           "How many cameras can I open for free?",
-          "Every device gets 5 free camera opens — enough to look around and check the places you care about. Pro removes the limit entirely, with unlimited camera opens on top of the Pro tools. The globe, flights, satellites and every other free layer never count against your opens."
+          "Every device gets 5 free camera opens — enough to look around and check the places you care about. Add your email, or verify a free account, and you get 5 more — 10 in total. Paid plans remove the limit entirely, with unlimited camera opens. The globe, flights, satellites and every other free layer never count against your opens."
         ),
         plain(
           "Which browsers are supported?",
@@ -199,20 +211,20 @@ export const enFaq: FaqCopy = {
         {
           q: "What does Pro include?",
           a: [
-            tx("The OI AI assistant (runs on WorldEye's built-in AI — no key to bring; your own key works too), the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top. Full list on the "),
+            tx("Every paid tier removes the camera-open limits and unlocks the premium layers, the OI AI assistant (runs on WorldEye's built-in AI — no key to bring; your own key works too), advanced search filters and the recording studio. Lite records up to 5 cameras at once. Pro adds the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and camera alerts, and records 20 at once. Ultra adds the premium intel feeds, camera timelapse and the VIP hub, recording 40 at once with 10 alerts. Full list on the "),
             lk("pricing", "pricing page"),
             tx("."),
           ],
           schemaA:
-            "The OI AI assistant (runs on WorldEye's built-in AI — no key to bring; your own key works too), the live traffic layer, advanced search filters, the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and the camera recording studio. Plus every future Pro layer at no extra cost. VIP Pro — the annual plan — adds the premium intel feeds and camera timelapse on top.",
+            "Every paid tier removes the camera-open limits and unlocks the premium layers, the OI AI assistant (runs on WorldEye's built-in AI — no key to bring; your own key works too), advanced search filters and the recording studio. Lite records up to 5 cameras at once. Pro adds the OSINT toolkit (nmap, DNS, WHOIS, SSL analysis) and camera alerts, and records 20 at once. Ultra adds the premium intel feeds, camera timelapse and the VIP hub, recording 40 at once with 10 alerts.",
         },
         plain(
           "What's the difference between Pro and VIP Pro?",
-          "VIP Pro is the annual plan: everything in Pro, plus the two top-tier exclusives — the premium intel feeds (cyber threats, GDELT events, maritime tracking, conflict zones and live news) and camera timelapse. The weekly and monthly plans are Pro; only the yearly plan is VIP Pro. The recording studio, OSINT toolkit and every other Pro tool come with both."
+          "VIP Pro is not a separate tier — it is the name on the annual Pro plan, and annual billing does not change what Pro includes: 20-camera recording and 2 camera alerts. The tier above Pro is Ultra: the premium intel feeds (cyber threats, GDELT events, maritime tracking, conflict zones and live news), camera timelapse, the VIP hub, 40-camera recording and 10 alerts. One exception: annual subscribers who joined before 30 October 2026 keep the VIP extras they started with for as long as their subscription runs."
         ),
         plain(
           "How do the free trials work?",
-          "Weekly starts with 3 free days; monthly and VIP Pro plans start with 10 free days. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing."
+          "Weekly plans start with 3 free days; monthly and annual plans start with 10 free days — the same on Lite, Pro and Ultra. Your card is collected at signup but never charged during the trial — cancel before it ends and you pay nothing. Enterprise has no free trial."
         ),
         plain(
           "Can I cancel anytime?",
@@ -224,7 +236,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "What payment methods do you accept?",
-          "Major credit and debit cards through Stripe's secure checkout. Weekly is $7.99, monthly $13.99, VIP Pro $74.99."
+          "Major credit and debit cards through Stripe's secure checkout. Lite is $4.99/week, $8.99/month or $44.99/year; Pro is $7.99/week, $13.99/month or $74.99/year; Ultra is $12.99/week, $24.99/month or $149.99/year."
         ),
         plain(
           "Do I need my own OpenAI key for the AI assistant?",
@@ -240,7 +252,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "What is VIP Pro?",
-          "VIP Pro is WorldEye's top plan — $74.99 a year — adding 40-camera recording, the recording dashboard and roomier camera alerts on top of everything in Pro. Pro records up to 20 cameras at once; VIP Pro records 40. Camera alerts watch up to 2 cameras on Pro and up to 10 on VIP Pro, and email you when a condition you describe shows up. VIP Pro starts with a 10-day free trial."
+          "VIP Pro is the name of the annual Pro plan — $74.99 a year, starting with a 10-day free trial. It carries Pro's limits: recording up to 20 cameras at once and 2 camera alerts. The VIP extras — the premium intel feeds, camera timelapse, the VIP hub, 40-camera recording and 10 alerts — belong to Ultra, the top tier. Annual subscribers who joined before 30 October 2026 keep the extras they started with for the life of their subscription."
         ),
       ],
     },
@@ -267,7 +279,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "Is the traffic layer real?",
-          "Congestion on the roads is modeled from road data, and the app labels it as modeled — live traffic flow is not currently available. The vehicle dots that illustrate the flow are simulated and labeled as such in the app. The traffic layer is a Pro feature."
+          "Congestion on the roads is modeled from road data, and the app labels it as modeled — live traffic flow is not currently available. The vehicle dots that illustrate the flow are simulated and labeled as such in the app. The traffic layer comes with the paid plans."
         ),
         plain(
           "Can I share a camera with someone?",
@@ -275,23 +287,23 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "Can I record a camera or make a timelapse?",
-          "Yes. Pro's Camera Recording Studio records live camera feeds right in your browser and saves the clips. Timelapse — capturing snapshot cameras frame by frame and exporting the film — is a VIP Pro extra."
+          "Yes. The Camera Recording Studio on the paid plans records live camera feeds right in your browser and saves the clips to your device. Timelapse — capturing snapshot cameras frame by frame and exporting the film — is an Ultra extra."
         ),
         plain(
           "What are the intel feeds?",
-          "VIP Pro-only data layers: cyber threat activity, GDELT global event data, maritime vessel tracking, conflict zones and a live news feed — all plotted on the globe."
+          "Ultra-only data layers: cyber threat activity, GDELT global event data, maritime vessel tracking, conflict zones and a live news feed — all plotted on the globe."
         ),
         plain(
           "What can I track besides cameras?",
-          "Besides cameras, WorldEye tracks live flights, satellites including the ISS, ships, weather radar, earthquakes and wildfires — all on the same globe. Flights come from ADS-B broadcasts, ships from AIS, earthquakes from the USGS and wildfires from NASA satellite detections. Pro adds live traffic, transit and intelligence layers such as cyber threats and global events."
+          "Besides cameras, WorldEye tracks live flights, satellites including the ISS, ships, weather radar, earthquakes and wildfires — all on the same globe. Flights come from ADS-B broadcasts, ships from AIS, earthquakes from the USGS and wildfires from NASA satellite detections. Live transit is free too. The paid plans add the modeled traffic layer and the rest of the premium layers, and Ultra adds the intelligence feeds — cyber threats, GDELT global events, maritime tracking and live news."
         ),
         plain(
           "How do camera alerts work?",
-          "Pick a camera — up to 2 on Pro, up to 10 on VIP Pro — describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts come with the paid plans: 2 cameras on Pro, 10 on VIP Pro."
+          "Pick a camera — up to 2 on Pro, up to 10 on Ultra — describe a condition in plain words, and WorldEye checks a still image about every 15 minutes and emails you when it changes. For example, 'snow on the road' or 'the parking lot is empty.' An AI judges each image; if it can't tell, no alert is sent rather than a guess. Alerts arrive by email and in the app, with the photo attached. Camera alerts start at Pro: 2 cameras on Pro, 10 on Ultra — Lite does not include alert rules."
         ),
         plain(
           "Can I record a live camera?",
-          "Yes — paid plans record live cameras right in your browser: Pro records up to 20 cameras at once, and VIP Pro up to 40. Clips are saved to your recording library for playback, and VIP Pro adds the recording dashboard. A few feed types, such as embedded YouTube streams, can't be captured and are labeled as such in the viewer."
+          "Yes — paid plans record live cameras right in your browser: up to 5 cameras at once on Lite, 20 on Pro and 40 on Ultra. Clips are stored in your browser, on your own device, in your recording library — they are not uploaded to WorldEye. A few feed types, such as embedded YouTube streams, can't be captured and are labeled as such in the viewer."
         ),
       ],
     },
@@ -387,7 +399,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "How much does Ambient cost?",
-          "Ambient is $4.99/month with a 10-day free trial — start the trial from the player or this page and you will not be charged until it ends. It is a standalone product, separate from WorldEye Pro, but every Pro and VIP plan already includes unlimited Ambient at no extra cost."
+          "Ambient is $4.99/month with a 10-day free trial — start the trial from the player or this page and you will not be charged until it ends. It is a standalone product, separate from the tiers, but every paid plan (Lite, Pro and Ultra) already includes unlimited Ambient at no extra cost."
         ),
         plain(
           "Can I put Ambient on my TV?",

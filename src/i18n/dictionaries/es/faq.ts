@@ -55,11 +55,11 @@ export const esFaq: FaqCopy = {
         },
         plain(
           "¿Necesito una cuenta?",
-          "No. Solo abre el sitio y ya estás mirando el planeta. Las cuentas existen solo para suscriptores Pro (facturación) y afiliados, nunca como una puerta delante del mapa."
+          "No. Solo abre el sitio y ya estás mirando el planeta: el mapa nunca te pide iniciar sesión. Las cuentas son gratuitas: crea una para suscribirte, unirte al programa de afiliados o guardar cámaras y vistas. Una cuenta gratuita con el correo verificado también eleva tus aperturas de cámara gratuitas de 5 a 10."
         ),
         plain(
           "¿Cuántas cámaras puedo abrir gratis?",
-          "Cada dispositivo tiene 5 aperturas de cámara gratis: suficiente para explorar y revisar los lugares que te importan. Pro elimina el límite por completo, con aperturas ilimitadas además de las herramientas Pro. El globo, los vuelos, los satélites y cualquier otra capa gratuita nunca cuentan contra tus aperturas."
+          "Cada dispositivo tiene 5 aperturas de cámara gratis: suficiente para explorar y revisar los lugares que te importan. Añade tu correo, o verifica una cuenta gratuita, y obtienes 5 más: 10 en total. Los planes de pago eliminan el límite por completo, con aperturas ilimitadas. El globo, los vuelos, los satélites y cualquier otra capa gratuita nunca cuentan contra tus aperturas."
         ),
         plain(
           "¿Qué navegadores son compatibles?",
@@ -127,20 +127,20 @@ export const esFaq: FaqCopy = {
         {
           q: "¿Qué incluye Pro?",
           a: [
-            tx("El asistente de IA OI (funciona con la IA integrada de WorldEye — no necesitas clave; tu propia clave también funciona), la capa de tráfico en vivo, los filtros de búsqueda avanzados, el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y el estudio de grabación de cámaras. Además, cada futura capa Pro sin costo extra. VIP Pro —el plan anual— añade encima los feeds de inteligencia premium y el timelapse de cámaras. La lista completa está en la "),
+            tx("Todos los planes de pago eliminan los límites de apertura de cámaras y desbloquean las capas premium, el asistente de IA OI (funciona con la IA integrada de WorldEye — no necesitas clave; tu propia clave también funciona), los filtros de búsqueda avanzados y el estudio de grabación. Lite graba hasta 5 cámaras a la vez. Pro añade el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y las alertas de cámara, y graba 20 a la vez. Ultra añade los feeds de inteligencia premium, el timelapse de cámaras y el centro VIP, grabando 40 a la vez con 10 alertas. La lista completa está en la "),
             lk("pricing", "página de precios"),
             tx("."),
           ],
           schemaA:
-            "El asistente de IA OI (funciona con la IA integrada de WorldEye — no necesitas clave; tu propia clave también funciona), la capa de tráfico en vivo, los filtros de búsqueda avanzados, el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y el estudio de grabación de cámaras. Además, cada futura capa Pro sin costo extra. VIP Pro —el plan anual— añade encima los feeds de inteligencia premium y el timelapse de cámaras.",
+            "Todos los planes de pago eliminan los límites de apertura de cámaras y desbloquean las capas premium, el asistente de IA OI (funciona con la IA integrada de WorldEye — no necesitas clave; tu propia clave también funciona), los filtros de búsqueda avanzados y el estudio de grabación. Lite graba hasta 5 cámaras a la vez. Pro añade el kit de herramientas OSINT (nmap, DNS, WHOIS, análisis SSL) y las alertas de cámara, y graba 20 a la vez. Ultra añade los feeds de inteligencia premium, el timelapse de cámaras y el centro VIP, grabando 40 a la vez con 10 alertas.",
         },
         plain(
           "¿Qué diferencia hay entre Pro y VIP Pro?",
-          "VIP Pro es el plan anual: todo lo de Pro, más las dos exclusivas del nivel superior —los feeds de inteligencia premium (ciberamenazas, eventos GDELT, seguimiento marítimo, zonas de conflicto y noticias en vivo) y el timelapse de cámaras—. Los planes semanal y mensual son Pro; solo el plan anual es VIP Pro. El estudio de grabación, el kit OSINT y todas las demás herramientas Pro vienen con ambos."
+          "VIP Pro no es un nivel aparte: es el nombre del plan anual de Pro, y la facturación anual no cambia lo que Pro incluye: grabación de 20 cámaras y 2 alertas de cámara. El nivel por encima de Pro es Ultra: los feeds de inteligencia premium (ciberamenazas, eventos GDELT, seguimiento marítimo, zonas de conflicto y noticias en vivo), el timelapse de cámaras, el centro VIP, grabación de 40 cámaras y 10 alertas. Una excepción: los suscriptores anuales que se unieron antes del 30 de octubre de 2026 conservan los extras VIP con los que empezaron mientras su suscripción siga activa."
         ),
         plain(
           "¿Cómo funcionan las pruebas gratis?",
-          "El semanal empieza con 3 días gratis; los planes mensual y VIP Pro empiezan con 10 días gratis. Tu tarjeta se recoge al registrarte, pero nunca se cobra durante la prueba: cancela antes de que termine y no pagas nada."
+          "Los planes semanales empiezan con 3 días gratis; los planes mensuales y anuales empiezan con 10 días gratis — igual en Lite, Pro y Ultra. Tu tarjeta se recoge al registrarte, pero nunca se cobra durante la prueba: cancela antes de que termine y no pagas nada. Enterprise no tiene prueba gratis."
         ),
         plain(
           "¿Puedo cancelar cuando quiera?",
@@ -152,7 +152,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Qué métodos de pago aceptan?",
-          "Las principales tarjetas de crédito y débito mediante el pago seguro de Stripe. El semanal cuesta $7.99, el mensual $13.99 y VIP Pro $74.99."
+          "Las principales tarjetas de crédito y débito mediante el pago seguro de Stripe. Lite cuesta $4.99/semana, $8.99/mes o $44.99/año; Pro cuesta $7.99/semana, $13.99/mes o $74.99/año; Ultra cuesta $12.99/semana, $24.99/mes o $149.99/año."
         ),
         plain(
           "¿Necesito mi propia clave de OpenAI para el asistente de IA?",
@@ -168,7 +168,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Qué es VIP Pro?",
-          "VIP Pro es el plan superior de WorldEye —$74.99 al año— y añade la grabación de 40 cámaras, el panel de grabación y alertas de cámara más holgadas sobre todo lo de Pro. Pro graba hasta 20 cámaras a la vez; VIP Pro graba 40. Las alertas de cámara vigilan hasta 2 cámaras en Pro y hasta 10 en VIP Pro, y te avisan por correo cuando aparece una condición que describes. VIP Pro empieza con una prueba gratis de 10 días."
+          "VIP Pro es el nombre del plan anual de Pro: $74.99 al año, con una prueba gratis de 10 días al empezar. Lleva los límites de Pro: grabar hasta 20 cámaras a la vez y 2 alertas de cámara. Los extras VIP —los feeds de inteligencia premium, el timelapse de cámaras, el centro VIP, la grabación de 40 cámaras y 10 alertas— pertenecen a Ultra, el nivel superior. Los suscriptores anuales que se unieron antes del 30 de octubre de 2026 conservan los extras con los que empezaron durante la vida de su suscripción."
         ),
       ],
     },
@@ -195,7 +195,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿La capa de tráfico es real?",
-          "La congestión en las carreteras se modela a partir de datos de carreteras, y la app la etiqueta como modelada: el flujo de tráfico en vivo no está disponible actualmente. Los puntos de vehículos que ilustran el flujo son simulados y la app los etiqueta como tales. La capa de tráfico es una función Pro."
+          "La congestión en las carreteras se modela a partir de datos de carreteras, y la app la etiqueta como modelada: el flujo de tráfico en vivo no está disponible actualmente. Los puntos de vehículos que ilustran el flujo son simulados y la app los etiqueta como tales. La capa de tráfico viene con los planes de pago."
         ),
         plain(
           "¿Puedo compartir una cámara con alguien?",
@@ -203,23 +203,23 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Puedo grabar una cámara o hacer un timelapse?",
-          "Sí. El Estudio de grabación de cámaras de Pro graba feeds en vivo directamente en tu navegador y guarda los clips. El timelapse —capturar las cámaras de instantáneas fotograma a fotograma y exportar la película— es un extra de VIP Pro."
+          "Sí. El Estudio de grabación de cámaras de los planes de pago graba feeds en vivo directamente en tu navegador y guarda los clips en tu dispositivo. El timelapse —capturar las cámaras de instantáneas fotograma a fotograma y exportar la película— es un extra de Ultra."
         ),
         plain(
           "¿Qué son los feeds de inteligencia?",
-          "Capas de datos solo para VIP Pro: actividad de ciberamenazas, datos de eventos globales de GDELT, seguimiento marítimo de buques, zonas de conflicto y un feed de noticias en vivo, todo situado en el globo."
+          "Capas de datos solo para Ultra: actividad de ciberamenazas, datos de eventos globales de GDELT, seguimiento marítimo de buques, zonas de conflicto y un feed de noticias en vivo, todo situado en el globo."
         ),
         plain(
           "¿Qué puedo seguir además de cámaras?",
-          "Además de cámaras, WorldEye sigue vuelos en vivo, satélites —incluida la ISS—, barcos, radar meteorológico, terremotos e incendios, todo en el mismo globo. Los vuelos vienen de emisiones ADS-B, los barcos de AIS, los terremotos del USGS y los incendios de las detecciones satelitales de la NASA. Pro añade tráfico en vivo, transporte y capas de inteligencia como ciberamenazas y eventos globales."
+          "Además de cámaras, WorldEye sigue vuelos en vivo, satélites —incluida la ISS—, barcos, radar meteorológico, terremotos e incendios, todo en el mismo globo. Los vuelos vienen de emisiones ADS-B, los barcos de AIS, los terremotos del USGS y los incendios de las detecciones satelitales de la NASA. El transporte en vivo también es gratis. Los planes de pago añaden la capa de tráfico modelado y el resto de capas premium, y Ultra añade los feeds de inteligencia: ciberamenazas, eventos globales de GDELT, seguimiento marítimo y noticias en vivo."
         ),
         plain(
           "¿Cómo funcionan las alertas de cámara?",
-          "Elige una cámara —hasta 2 en Pro, hasta 10 en VIP Pro—, describe una condición con palabras normales, y WorldEye revisa una imagen fija cada 15 minutos aproximadamente y te escribe cuando cambia. Por ejemplo, «nieve en la carretera» o «el aparcamiento está vacío». Una IA juzga cada imagen; si no puede saberlo, no se envía ninguna alerta en lugar de adivinar. Las alertas llegan por correo y en la app, con la foto adjunta. Las alertas de cámara vienen con los planes de pago: 2 cámaras en Pro, 10 en VIP Pro."
+          "Elige una cámara —hasta 2 en Pro, hasta 10 en Ultra—, describe una condición con palabras normales, y WorldEye revisa una imagen fija cada 15 minutos aproximadamente y te escribe cuando cambia. Por ejemplo, «nieve en la carretera» o «el aparcamiento está vacío». Una IA juzga cada imagen; si no puede saberlo, no se envía ninguna alerta en lugar de adivinar. Las alertas llegan por correo y en la app, con la foto adjunta. Las alertas de cámara empiezan en Pro: 2 cámaras en Pro, 10 en Ultra — Lite no incluye reglas de alertas."
         ),
         plain(
           "¿Puedo grabar una cámara en vivo?",
-          "Sí: los planes de pago graban cámaras en vivo directamente en tu navegador. Pro graba hasta 20 cámaras a la vez y VIP Pro hasta 40. Los clips se guardan en tu biblioteca de grabaciones para reproducirlos, y VIP Pro añade el panel de grabación. Algunos tipos de feed, como las transmisiones incrustadas de YouTube, no se pueden capturar y aparecen etiquetados como tales en el visor."
+          "Sí: los planes de pago graban cámaras en vivo directamente en tu navegador — hasta 5 cámaras a la vez en Lite, 20 en Pro y 40 en Ultra. Los clips se guardan en tu navegador, en tu propio dispositivo, en tu biblioteca de grabaciones: no se suben a WorldEye. Algunos tipos de feed, como las transmisiones incrustadas de YouTube, no se pueden capturar y aparecen etiquetados como tales en el visor."
         ),
       ],
     },
@@ -315,7 +315,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Cuánto cuesta Ambiente?",
-          "Ambiente cuesta $4.99/mes con una prueba gratis de 10 días: inicia la prueba desde el reproductor o desde esta página y no se te cobrará hasta que termine. Es un producto independiente, separado de WorldEye Pro, pero todos los planes Pro y VIP ya incluyen Ambiente ilimitado sin costo extra."
+          "Ambiente cuesta $4.99/mes con una prueba gratis de 10 días: inicia la prueba desde el reproductor o desde esta página y no se te cobrará hasta que termine. Es un producto independiente, separado de los niveles, pero todos los planes de pago (Lite, Pro y Ultra) ya incluyen Ambiente ilimitado sin costo extra."
         ),
         plain(
           "¿Puedo poner Ambiente en mi TV?",

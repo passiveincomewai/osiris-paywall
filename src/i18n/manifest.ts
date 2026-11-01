@@ -92,7 +92,7 @@ const ES_SOURCE_HASHES: Record<string, string> = {
   "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
   pricing: "baa2c2545a18d6cab0e2561cd8d13c89b09d4775492816a286680bdd3e2e07ac",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
-  faq: "dff2534296fb945648065e81aede56c2e1ca758d493c91bf29440e6701324747",
+  faq: "a4987ca3fc605db453387773d970b004deefa3ea520b0caa3528ec8f377ad557",
   "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
   "ship-tracker": "a2ac2cec641df42357c801e233edab00d77f58fc3bb7bb7071b3b56298709e34",
 };
@@ -194,6 +194,12 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // Lite premium-layers card stopped enumerating the Ultra intel
 // feeds; the Spanish dictionary was re-synced the same day, so
 // the pricing hash moved; its updatedAt stays 2026-10-31.
+// Re-sync (2026-11-01, master repair, FAQ pass): the faq
+// dictionary's billing/feature answers were re-aligned to the
+// 3-tier grid (VIP Pro = the annual Pro plan's name; Ultra is
+// the top tier; legacy annual holders keep their VIP extras);
+// the Spanish dictionary was re-synced the same day, so the faq
+// hash moved; its updatedAt stays 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",
