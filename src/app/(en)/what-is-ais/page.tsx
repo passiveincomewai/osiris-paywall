@@ -100,6 +100,14 @@ const FAQS = [
     q: "Why did a ship disappear from the map?",
     a: "A few ordinary reasons cover most cases: it sailed beyond shore-receiver range and hasn't been picked up by a satellite pass yet, it docked and its reporting rate dropped, or its transponder was switched off or failed. Deliberate switch-offs happen too — which is why a gap is worth noticing, but is not by itself proof of anything.",
   },
+  {
+    q: "What is AIS vessel tracking?",
+    a: "AIS vessel tracking is following ships through the Automatic Identification System: vessels broadcast their identity, position, course and speed by radio, shore stations and satellites pick those broadcasts up, and tracking services assemble them into a map of maritime traffic. It is how the public can watch the commercial fleet move — built on the same broadcasts ships use to see each other.",
+  },
+  {
+    q: "What is the difference between AIS and ADS-B?",
+    a: "They are the same idea in different domains. AIS is ships at sea: vessels broadcast identity, position, course and speed by radio for collision avoidance, and receivers build the traffic picture. ADS-B is aircraft in the air: planes broadcast the same kind of data — who they are, where they are, how fast and which way — and receiver networks build the sky picture every flight tracker draws. Both are open broadcasts, which is why public tracking exists for each.",
+  },
 ];
 
 const jsonLd = {

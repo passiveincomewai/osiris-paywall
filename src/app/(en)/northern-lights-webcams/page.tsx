@@ -93,6 +93,10 @@ const FAQS = [
     q: "Are northern lights webcams free to watch?",
     a: "Yes. Every feed in the directory is a public stream, and the WorldEye map layer is free with no account or signup. Open the map, zoom to the aurora belt, and tap a camera marker.",
   },
+  {
+    q: "Can I get an alert when the aurora is likely to be visible?",
+    a: "Yes. Aurora alerts watch the Kp index for the cameras you follow and let you know when activity climbs toward what is visible at their latitude — a Pro feature. Free, the map shows the live Kp reading in its status bar, and this page's cameras sit under the auroral oval so you can check the sky yourself.",
+  },
 ];
 
 export default async function NorthernLightsWebcamsPage() {
