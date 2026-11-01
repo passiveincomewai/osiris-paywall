@@ -28,6 +28,29 @@ describe("satellite bird's-eye wiring — the card", () => {
   });
 });
 
+describe("satellite bird's-eye wiring — the card on mobile", () => {
+  it('collapses the readout to a bar while the view rides (mobile only)', () => {
+    // The full body hides on small screens until expanded; the desktop
+    // card (md:block) is untouched, and the bar itself is md:hidden.
+    expect(card).toContain('bodyHiddenOnMobile');
+    expect(card).toContain("'hidden md:block'");
+    expect(card).toContain('md:hidden');
+  });
+
+  it('keeps name, honesty line, expand and exit on the collapsed bar', () => {
+    expect(card).toContain('BIRDSEYE_COMPACT_HONESTY');
+    expect(card).toContain('aria-expanded={detailsOpen}');
+    expect(card).toContain('Show satellite details');
+    expect(card).toContain('Hide satellite details');
+    expect(card).toContain("Exit bird's-eye view");
+  });
+
+  it('starts each ride collapsed and resets when the ride ends', () => {
+    expect(card).toContain('useState(false)');
+    expect(card).toContain('setDetailsOpen(false)');
+  });
+});
+
 describe("satellite bird's-eye wiring — engage, drive, exit", () => {
   it('engages from the selected satellite at the layer ceiling, pitched', () => {
     expect(osirisMap).toContain('const engageBirdsEye = useCallback(');

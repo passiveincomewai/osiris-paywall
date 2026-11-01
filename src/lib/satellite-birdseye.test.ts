@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SAT_MAX_ZOOM } from './satellite-layer';
-import { BIRDSEYE_PITCH, BIRDSEYE_ZOOM, birdsEyeLabel, unwrapLngNear } from './satellite-birdseye';
+import { BIRDSEYE_COMPACT_HONESTY, BIRDSEYE_PITCH, BIRDSEYE_ZOOM, birdsEyeLabel, unwrapLngNear } from './satellite-birdseye';
 
 describe("satellite bird's-eye view", () => {
   it('rides at the satellite layer ceiling — any higher and the satellite stops drawing', () => {
@@ -18,6 +18,14 @@ describe("satellite bird's-eye view", () => {
     expect(label).toContain('REFERENCE SATELLITE IMAGERY (DATED)');
     expect(label).toContain('NOT A LIVE FEED');
     expect(label).not.toContain('LIVE FEED FROM');
+  });
+
+  it('keeps the honesty statement in the compact bar wording', () => {
+    expect(BIRDSEYE_COMPACT_HONESTY).toContain('DATED');
+    expect(BIRDSEYE_COMPACT_HONESTY).toContain('NOT A LIVE FEED');
+    expect(BIRDSEYE_COMPACT_HONESTY).not.toContain('LIVE FEED FROM');
+    // Bar width: the compact form must actually be shorter than the banner.
+    expect(BIRDSEYE_COMPACT_HONESTY.length).toBeLessThan(birdsEyeLabel('ISS (ZARYA)').length);
   });
 
   it('unwraps longitude the short way across the antimeridian', () => {

@@ -34,6 +34,11 @@ export function birdsEyeLabel(name: string): string {
   return `BIRD'S-EYE VIEW BENEATH ${name} — REFERENCE SATELLITE IMAGERY (DATED), NOT A LIVE FEED`;
 }
 
+/** The same honesty statement at bar width, for the collapsed mobile
+ *  card while bird's-eye rides (the card's name line carries the
+ *  satellite's name beside it): dated reference imagery, not live. */
+export const BIRDSEYE_COMPACT_HONESTY = 'DATED REFERENCE IMAGERY — NOT A LIVE FEED';
+
 /** Longitude continuity for a following camera: pick the representative
  *  of `lng` nearest `prev`, so crossing the antimeridian eases the
  *  short way instead of spinning the globe the long way round. */

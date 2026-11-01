@@ -1,6 +1,8 @@
 'use client';
 
-import { ExternalLink, Eye, Orbit, Satellite, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp, ExternalLink, Eye, Orbit, Satellite, X } from 'lucide-react';
+import { BIRDSEYE_COMPACT_HONESTY } from '@/lib/satellite-birdseye';
 
 /**
  * OSIRIS — selected satellite readout
@@ -86,6 +88,17 @@ export default function SatelliteCard({ sat, onClose, onBirdsEye, birdsEyeActive
   const accent = colorSafe(sat.color);
   const shell = regime(sat.alt);
 
+  // While bird's-eye rides, this card on a phone is a full-width slab
+  // (left-2 right-2) across the top of a 55°-pitched view — the satellite
+  // and the ground it passes over sit right behind it. So on mobile the
+  // readout collapses to a slim bar (name, the dated-imagery honesty
+  // line, expand, exit) until the reader taps for the numbers; the full
+  // card is one tap away and returns untouched when the ride ends.
+  // Desktop never collapses: the bar is md:hidden and the body md:block.
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  useEffect(() => { setDetailsOpen(false); }, [birdsEyeActive, sat.noradId]);
+  const bodyHiddenOnMobile = birdsEyeActive && !detailsOpen;
+
   return (
     <div
       className="pointer-events-auto absolute left-2 right-2 top-16 z-[350] overflow-hidden rounded-lg border bg-[var(--bg-panel)] shadow-[0_6px_20px_rgba(0,0,0,0.45)] backdrop-blur-2xl md:left-[72px] md:right-auto md:top-[88px] md:w-[248px]"
@@ -96,6 +109,43 @@ export default function SatelliteCard({ sat, onClose, onBirdsEye, birdsEyeActive
       {/* A rule in the satellite's own colour, matching its marker and its track. */}
       <div className="h-px w-full" style={{ background: `${accent}99` }} />
 
+      {/* The collapsed mobile bar, shown only while bird's-eye rides. It
+          keeps the honesty label on screen in compact form — the imagery
+          is dated reference photography, not a live feed — and keeps the
+          exit one tap away, like the banner at the bottom of the map. */}
+      {birdsEyeActive && onBirdsEye && (
+        <div className="flex items-center gap-2 px-2.5 py-2 md:hidden">
+          <Satellite className="h-3.5 w-3.5 flex-shrink-0" style={{ color: accent }} />
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[12px] font-bold leading-tight tracking-wide text-[var(--text-heading)]" title={sat.name}>
+              {sat.name}
+            </div>
+            <div className="truncate text-[8px] font-mono tracking-[0.12em] text-[var(--text-muted)]">
+              {BIRDSEYE_COMPACT_HONESTY}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setDetailsOpen((open) => !open)}
+            aria-expanded={detailsOpen}
+            aria-label={detailsOpen ? 'Hide satellite details' : 'Show satellite details'}
+            className="flex-shrink-0 rounded-md p-1.5 text-[var(--text-secondary)] transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50"
+          >
+            {detailsOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          </button>
+          <button
+            type="button"
+            onClick={onBirdsEye}
+            aria-label="Exit bird's-eye view"
+            className="flex-shrink-0 rounded-md border px-2 py-1 text-[9px] font-mono tracking-[0.15em] transition-colors hover:bg-white/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50"
+            style={{ borderColor: `${accent}66`, color: accent }}
+          >
+            EXIT
+          </button>
+        </div>
+      )}
+
+      <div className={bodyHiddenOnMobile ? 'hidden md:block' : undefined}>
       <div className="flex items-start gap-2 px-2.5 pt-2.5">
         <Satellite className="mt-[2px] h-3.5 w-3.5 flex-shrink-0" style={{ color: accent }} />
         <div className="min-w-0 flex-1">
@@ -166,6 +216,7 @@ export default function SatelliteCard({ sat, onClose, onBirdsEye, birdsEyeActive
           TRACK ON N2YO <ExternalLink className="h-2.5 w-2.5" />
         </a>
       )}
+      </div>
     </div>
   );
 }
