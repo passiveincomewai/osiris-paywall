@@ -92,7 +92,7 @@ export const VOLCANOES: Volcano[] = [
       url: 'https://www.usgs.gov/volcanoes/kilauea',
     },
     statusNote:
-      "The summit eruption inside Halemaʻumaʻu crater has run in lava-fountaining episodes since December 23, 2024. Episode 55 ended on October 17, 2026 (fountains to about 720 feet), and the USGS Hawaiian Volcano Observatory's daily update of October 27, 2026 forecasts the Episode 56 window at November 1–7 — a window that has already slipped a day once, because the summit's recharge paused before resuming. Treat it as an expectation, not a schedule, and confirm the day's status with the observatory.",
+      "The summit eruption inside Halemaʻumaʻu crater has run in lava-fountaining episodes since December 23, 2024. Episode 55 ended on October 17, 2026 (fountains to about 720 feet), and the USGS Hawaiian Volcano Observatory's daily update of October 31, 2026 forecasts the Episode 56 window at November 3–10 — a window that has slipped several times, as summit tilt rates have fluctuated. Treat it as an expectation, not a schedule, and confirm the day's status with the observatory.",
     highlights: [
       'Holei Pali — Cameras 1–4 (FAA WeatherCams)',
       'Pāhala — Cameras 1–4 (FAA WeatherCams)',
@@ -111,7 +111,7 @@ export const VOLCANOES: Volcano[] = [
       },
       {
         q: 'When is the next Kīlauea episode?',
-        a: "The eruption proceeds in episodes separated by recharge pauses, and the observatory forecasts each window from summit tilt and seismicity. Its October 27, 2026 update puts Episode 56 at November 1–7 — a forecast that has already moved once. The observatory's daily update is the only schedule worth trusting.",
+        a: "The eruption proceeds in episodes separated by recharge pauses, and the observatory forecasts each window from summit tilt and seismicity. Its October 31, 2026 update puts Episode 56 at November 3–10 — a forecast that has already moved several times. The observatory's daily update is the only schedule worth trusting.",
       },
     ],
   },
