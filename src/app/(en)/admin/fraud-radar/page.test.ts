@@ -11,6 +11,7 @@ const authMock = vi.fn();
 const healthMock = vi.fn();
 const dqMock = vi.fn();
 const queueMock = vi.fn();
+const usageMock = vi.fn();
 
 vi.mock("@/auth", () => ({ auth: () => authMock() }));
 vi.mock("@/lib/affiliate/admin", () => ({
@@ -21,6 +22,9 @@ vi.mock("@/lib/fraud-radar/registry-admin", () => ({
 }));
 vi.mock("@/lib/fraud-radar/signals-neon", () => ({
   listDataQualityRecords: () => dqMock(),
+}));
+vi.mock("@/lib/fraud-radar/investigator/admin-usage", () => ({
+  getInvestigatorAdminUsage: () => usageMock(),
 }));
 vi.mock("@/lib/fraud-radar/signals-data", () => ({
   getSignalsQuality: async () => null,
@@ -45,6 +49,25 @@ beforeEach(() => {
   dqMock.mockResolvedValue(null);
   queueMock.mockReset();
   queueMock.mockResolvedValue(null);
+  usageMock.mockReset();
+  usageMock.mockResolvedValue({
+    available: false,
+    totals: {
+      turns: 0,
+      chargedOps: 0,
+      refundedOps: 0,
+      failedFreeOps: 0,
+      inputTokens: 0,
+      outputTokens: 0,
+      toolCalls: 0,
+      estimatedCostUsd: 0,
+    },
+    byTier: [],
+    turnsByDay: [],
+    validator: { pass: 0, regenerated: 0, fallback: 0, fallbackRate: null },
+    errorsByCode: [],
+    modelDownEvents: 0,
+  });
   vi.stubEnv("FRAUD_RADAR_ENABLED", "");
 });
 
@@ -292,5 +315,69 @@ describe("/admin/fraud-radar — S-06 candidate queue (Phase 6 B2)", () => {
     expect(html).toContain("Admin access only");
     expect(html).not.toContain("ABC123DEF456");
     expect(html).not.toContain("Candidate queue");
+  });
+});
+
+describe("/admin/fraud-radar — investigator usage aggregates (Phase 7 P7-D)", () => {
+  const USAGE_FIXTURE = {
+    available: true,
+    totals: {
+      turns: 10,
+      chargedOps: 7,
+      refundedOps: 2,
+      failedFreeOps: 1,
+      inputTokens: 1000,
+      outputTokens: 400,
+      toolCalls: 17,
+      estimatedCostUsd: 0.26,
+    },
+    byTier: [
+      { tier: "free", turns: 6, chargedOps: 4, estimatedCostUsd: 0.05 },
+      { tier: "pro", turns: 4, chargedOps: 3, estimatedCostUsd: 0.21 },
+    ],
+    turnsByDay: [
+      { day: "2026-10-30", turns: 1 },
+      { day: "2026-10-31", turns: 2 },
+    ],
+    validator: { pass: 5, regenerated: 1, fallback: 1, fallbackRate: 1 / 7 },
+    errorsByCode: [{ code: "PROVIDER_UNAVAILABLE", count: 2 }],
+    modelDownEvents: 2,
+  };
+
+  it("shows the honest not-available state when the ledger cannot be read", async () => {
+    authMock.mockResolvedValue(adminSession);
+    healthMock.mockResolvedValue({ available: false, sources: [], recentRuns: [] });
+    const html = renderToString(await FraudRadarAdminPage()).replace(/<!-- -->/g, "");
+    expect(html).toContain("Investigator usage — aggregates only (Phase 7)");
+    expect(html).toContain("Investigator usage not available yet");
+    expect(html).toContain("no usage count of zero is implied");
+  });
+
+  it("renders ledger totals, ops by tier, validator outcomes and model-down events — aggregates only", async () => {
+    authMock.mockResolvedValue(adminSession);
+    healthMock.mockResolvedValue({ available: false, sources: [], recentRuns: [] });
+    usageMock.mockResolvedValue(USAGE_FIXTURE);
+    const html = renderToString(await FraudRadarAdminPage()).replace(/<!-- -->/g, "");
+    expect(html).toContain("Turns recorded (all statuses)");
+    expect(html).toContain(">10<");
+    expect(html).toContain("7 / 2 / 1");
+    expect(html).toContain("$0.2600");
+    expect(html).toContain("free");
+    expect(html).toContain("pro");
+    expect(html).toContain("5 / 1 / 1");
+    expect(html).toContain("14.3% of settled turns");
+    expect(html).toContain("PROVIDER_UNAVAILABLE: 2");
+    expect(html).toContain("2026-10-31: 2");
+    // The aggregates-only rule is stated on the surface itself.
+    expect(html).toContain("never shows conversation content, questions, or answers");
+  });
+
+  it("never renders usage aggregates to a signed-in non-admin", async () => {
+    authMock.mockResolvedValue({ user: { email: "user@example.com" } });
+    usageMock.mockResolvedValue(USAGE_FIXTURE);
+    const html = renderToString(await FraudRadarAdminPage()).replace(/<!-- -->/g, "");
+    expect(html).toContain("Admin access only");
+    expect(html).not.toContain("Investigator usage");
+    expect(html).not.toContain("PROVIDER_UNAVAILABLE: 2");
   });
 });

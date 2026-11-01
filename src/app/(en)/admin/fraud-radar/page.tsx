@@ -11,6 +11,7 @@ import {
   CANDIDATE_STATUS,
   CANDIDATE_QUEUE_NOTE,
 } from "@/lib/fraud-radar/signals-data";
+import { getInvestigatorAdminUsage } from "@/lib/fraud-radar/investigator/admin-usage";
 
 /**
  * Fraud Radar admin — Data Source Registry health (spec §5/§32).
@@ -110,6 +111,15 @@ export default async function FraudRadarAdminPage() {
   // constant status "candidate — human review"; aggregates below
   // are counts of pairs by published family / key type, never a
   // standing for any entity.
+  // Phase 7 investigator usage (Payload P7-D): aggregate
+  // operations data ONLY from the investigator usage ledger —
+  // turn counts, per-tier ops, ledger totals, model-error events
+  // and validator outcomes. Admins never see conversation
+  // content, questions, or answers here (PHASE7 §3.5): a user's
+  // research is their work product, and the read model behind
+  // this section selects no text column.
+  const investigatorUsage = await getInvestigatorAdminUsage();
+
   const candidateQueue = await getAdminCandidateQueue();
   const queueFamilyCounts = new Map<string, number>();
   const queueKeyTypeCounts = new Map<string, number>();
@@ -428,6 +438,138 @@ export default async function FraudRadarAdminPage() {
                 </tbody>
               </table>
             </div>
+          </>
+        )}
+
+        <h2 className="mt-12 text-lg font-semibold">
+          Investigator usage — aggregates only (Phase 7)
+        </h2>
+        <p className="mt-2 text-sm text-white/50 leading-relaxed">
+          Operations aggregates from the AI Investigator usage ledger:
+          turns, ops by tier, ledger totals, model-error events and
+          validator outcomes. Aggregates only, by design — this view
+          never shows conversation content, questions, or answers, and
+          the read model behind it selects no text column. A
+          user&apos;s research is their work product. Cost figures are
+          the ledger&apos;s per-token estimates, labelled as estimates.
+        </p>
+        {!investigatorUsage.available ? (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+            <h3 className="font-semibold">Investigator usage not available yet</h3>
+            <p className="mt-2 text-sm text-white/60 leading-relaxed">
+              The investigator ledger tables could not be read. The likely
+              cause is that the{" "}
+              <span className="font-mono text-white/80">fraud_radar_investigator</span>{" "}
+              migration has not been applied to this database yet. That is a
+              loading state — no usage count of zero is implied.
+            </p>
+          </div>
+        ) : (
+          <>
+            <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="text-white/40">Turns recorded (all statuses)</dt>
+                <dd className="text-white/85">{investigatorUsage.totals.turns}</dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Charged ops / refunded / failed-free</dt>
+                <dd className="text-white/85">
+                  {investigatorUsage.totals.chargedOps} /{" "}
+                  {investigatorUsage.totals.refundedOps} /{" "}
+                  {investigatorUsage.totals.failedFreeOps}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Tool calls recorded</dt>
+                <dd className="text-white/85">{investigatorUsage.totals.toolCalls}</dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Tokens (input / output)</dt>
+                <dd className="text-white/85">
+                  {investigatorUsage.totals.inputTokens} /{" "}
+                  {investigatorUsage.totals.outputTokens}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Estimated ledger cost total (estimate)</dt>
+                <dd className="text-white/85">
+                  ${investigatorUsage.totals.estimatedCostUsd.toFixed(4)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Model-down events (not configured / provider / key)</dt>
+                <dd className="text-white/85">{investigatorUsage.modelDownEvents}</dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Validator outcomes (pass / regenerated / fallback)</dt>
+                <dd className="text-white/85">
+                  {investigatorUsage.validator.pass} /{" "}
+                  {investigatorUsage.validator.regenerated} /{" "}
+                  {investigatorUsage.validator.fallback}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-white/40">Validator fallback rate</dt>
+                <dd className="text-white/85">
+                  {investigatorUsage.validator.fallbackRate === null
+                    ? "— (no settled turns yet)"
+                    : `${(investigatorUsage.validator.fallbackRate * 100).toFixed(1)}% of settled turns`}
+                </dd>
+              </div>
+            </dl>
+
+            <h3 className="mt-6 font-semibold">Ops by tier</h3>
+            {investigatorUsage.byTier.length === 0 ? (
+              <p className="mt-2 text-sm text-white/50">
+                No investigator turns have been recorded yet.
+              </p>
+            ) : (
+              <div className="mt-3 overflow-x-auto rounded-2xl border border-white/10">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-white/50">
+                      <th className="px-4 py-3 font-medium">Tier</th>
+                      <th className="px-4 py-3 font-medium">Turns</th>
+                      <th className="px-4 py-3 font-medium">Charged ops</th>
+                      <th className="px-4 py-3 font-medium">Estimated cost (estimate)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {investigatorUsage.byTier.map((row) => (
+                      <tr key={row.tier} className="border-b border-white/5">
+                        <td className="px-4 py-3 font-medium">{row.tier}</td>
+                        <td className="px-4 py-3 text-white/70">{row.turns}</td>
+                        <td className="px-4 py-3 text-white/70">{row.chargedOps}</td>
+                        <td className="px-4 py-3 text-white/70">
+                          ${row.estimatedCostUsd.toFixed(4)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <h3 className="mt-6 font-semibold">Error events by code</h3>
+            {investigatorUsage.errorsByCode.length === 0 ? (
+              <p className="mt-2 text-sm text-white/50">
+                No investigator error events have been recorded.
+              </p>
+            ) : (
+              <p className="mt-2 text-sm text-white/70">
+                {investigatorUsage.errorsByCode
+                  .map((e) => `${e.code}: ${e.count}`)
+                  .join(" · ")}
+              </p>
+            )}
+
+            <h3 className="mt-6 font-semibold">Turns per day (last 30 days, UTC)</h3>
+            <p className="mt-2 text-sm text-white/70">
+              {investigatorUsage.turnsByDay
+                .filter((d) => d.turns > 0)
+                .map((d) => `${d.day}: ${d.turns}`)
+                .join(" · ") || "No turns in the last 30 days."}
+            </p>
           </>
         )}
       </div>

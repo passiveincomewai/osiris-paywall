@@ -189,7 +189,14 @@ describe("§14.3 isolation — Phase 6 B2 profile sections + admin candidate que
       const rel = path.relative(SRC, f);
       if (
         rel === "lib/fraud-radar/signals-data.ts" ||
-        rel === "app/(en)/admin/fraud-radar/page.tsx"
+        rel === "app/(en)/admin/fraud-radar/page.tsx" ||
+        // Phase 8 §1.3 rule 4 (added by P7-D, 2026-10-31): the
+        // case lead-capture module is the second sanctioned
+        // reader — its candidate path (pinCandidateLeadAsAdmin)
+        // refuses non-admins in code, and the public capture
+        // path rejects candidate pairs outright. No public
+        // surface reads the queue through it.
+        rel === "lib/fraud-radar/cases/leads.ts"
       ) {
         continue;
       }
@@ -250,6 +257,98 @@ describe("§14.3 isolation — Phase 7 investigator UI (P7-C)", () => {
   });
 });
 
+describe("§14.3 isolation — Phase 7 investigator completion (P7-D)", () => {
+  const INVESTIGATOR_API_ROUTES = [
+    "app/api/fraud-radar/investigator/conversations/route.ts",
+    "app/api/fraud-radar/investigator/conversations/[id]/route.ts",
+    "app/api/fraud-radar/investigator/conversations/[id]/messages/route.ts",
+    "app/api/fraud-radar/investigator/conversations/[id]/turns/[turnId]/events/route.ts",
+    "app/api/fraud-radar/investigator/usage/route.ts",
+  ];
+
+  it("every investigator API route carries the flag gate (flag-off 404 list)", () => {
+    for (const rel of INVESTIGATOR_API_ROUTES) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+
+  it("investigator ↔ OI disjointness holds in BOTH directions (PHASE7 §1.2)", () => {
+    // No Fraud Radar source imports OI code…
+    const frOffenders = fraudSourceFiles().filter((f) =>
+      /from\s+["']@\/lib\/oi\/|from\s+["']@\/components\/oi\//.test(
+        readFileSync(f, "utf8"),
+      ),
+    );
+    expect(frOffenders).toEqual([]);
+    // …and no OI source imports Fraud Radar code.
+    const oiDir = path.join(SRC, "lib/oi");
+    const oiOffenders: string[] = [];
+    const walk = (dir: string) => {
+      for (const name of readdirSync(dir)) {
+        const p = path.join(dir, name);
+        if (statSync(p).isDirectory()) walk(p);
+        else if (
+          /\.(ts|tsx)$/.test(name) &&
+          !/\.test\.(ts|tsx)$/.test(name) &&
+          /fraud-radar/.test(readFileSync(p, "utf8"))
+        ) {
+          oiOffenders.push(path.relative(SRC, p));
+        }
+      }
+    };
+    walk(oiDir);
+    expect(oiOffenders).toEqual([]);
+  });
+
+  it("the investigator layer imports no billing or Stripe code (explicit pin)", () => {
+    const invDir = path.join(SRC, "lib/fraud-radar/investigator");
+    const offenders: string[] = [];
+    for (const name of readdirSync(invDir)) {
+      if (!/\.ts$/.test(name) || /\.test\.ts$/.test(name)) continue;
+      const src = readFileSync(path.join(invDir, name), "utf8");
+      if (/from\s+["']@\/lib\/billing|from\s+["']stripe["']|from\s+["']@\/lib\/stripe/.test(src)) {
+        offenders.push(name);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("the Phase 8 candidate-queue reader stays admin-gated in code", () => {
+    // Companion to the B2 exception above: leads.ts may reference
+    // the queue only because its candidate path refuses
+    // non-admins. If that refusal ever disappears, this pin —
+    // not just the B2 list — goes red.
+    const leadsSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/leads.ts"),
+      "utf8",
+    );
+    expect(leadsSrc).toContain("pinCandidateLeadAsAdmin");
+    expect(leadsSrc).toContain("candidate_admin_only");
+    expect(leadsSrc).toContain("if (!args.isAdmin)");
+  });
+
+  it("admin investigator usage is aggregates-only: no conversation text is read", () => {
+    // The read model selects no text column and exposes no
+    // message-reading helper…
+    const usageSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/investigator/admin-usage.ts"),
+      "utf8",
+    );
+    expect(usageSrc).not.toMatch(/content\s*:\s*true/);
+    expect(usageSrc).not.toContain("listMessages");
+    expect(usageSrc).not.toContain("getMessage");
+    // …and the admin page renders that section from the aggregate
+    // read model alone, under its aggregates-only framing.
+    const adminSrc = readFileSync(
+      path.join(SRC, "app/(en)/admin/fraud-radar/page.tsx"),
+      "utf8",
+    );
+    expect(adminSrc).toContain("getInvestigatorAdminUsage");
+    expect(adminSrc).toContain("never shows conversation content");
+  });
+});
+
 describe("§35 billing non-interference — static dependency guard", () => {
   const files = fraudSourceFiles();
 
@@ -268,5 +367,80 @@ describe("§35 billing non-interference — static dependency guard", () => {
     const forbidden = /db\.subscription\b|\.frSubscription\b|model Subscription/;
     const offenders = files.filter((f) => forbidden.test(readFileSync(f, "utf8")));
     expect(offenders).toEqual([]);
+  });
+});
+
+describe("§14.3 isolation — Phase 8 cases (P8-A)", () => {
+  const caseRouteFiles = [
+    "app/api/fraud-radar/cases/route.ts",
+    "app/api/fraud-radar/cases/usage/route.ts",
+    "app/api/fraud-radar/cases/[id]/route.ts",
+    "app/api/fraud-radar/cases/[id]/leads/route.ts",
+    "app/api/fraud-radar/cases/[id]/leads/from-investigator/route.ts",
+    "app/api/fraud-radar/cases/[id]/leads/[leadId]/route.ts",
+    "app/api/fraud-radar/cases/[id]/notes/route.ts",
+    "app/api/fraud-radar/cases/[id]/notes/[noteId]/route.ts",
+  ];
+
+  it("every cases API route carries the flag gate", () => {
+    for (const rel of caseRouteFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+
+  it("cases are never public paths — flag.ts does not list them (§5.1)", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).not.toContain("/fraud-radar/cases");
+  });
+
+  it("child routes resolve children through their case, never by own id alone", () => {
+    for (const rel of [
+      "app/api/fraud-radar/cases/[id]/leads/[leadId]/route.ts",
+      "app/api/fraud-radar/cases/[id]/notes/[noteId]/route.ts",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("loadCaseForRoute");
+    }
+    // The store's child reads/writes all take the parent caseId.
+    const storeSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/store.ts"),
+      "utf8",
+    );
+    expect(storeSrc).toContain("getLead(caseId");
+    expect(storeSrc).toContain("getNote(caseId");
+    expect(storeSrc).toContain("where: { id: leadId, caseId }");
+    expect(storeSrc).toContain("where: { id: noteId, caseId }");
+  });
+
+  it("snapshot immutability is structural: the store has no snapshot update path (§1.3 rule 1)", () => {
+    const storeSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/store.ts"),
+      "utf8",
+    );
+    // The only lead mutation named in the store is the annotation
+    // write; no update writes a snapshot field after creation.
+    expect(storeSrc).toContain("updateLeadAnnotation");
+    expect(storeSrc).not.toMatch(/updateMany\(\{\s*where: \{ id: leadId, caseId \},\s*data: \{[^}]*snapshot/);
+    const leadsSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/leads.ts"),
+      "utf8",
+    );
+    expect(leadsSrc).toContain("captureLead");
+    expect(leadsSrc).not.toContain("updateLead");
+  });
+
+  it("no Phase 8 module imports the pipeline, a publication path, or OI code (corpus firewall §2.7)", () => {
+    const casesDir = path.join(SRC, "lib/fraud-radar/cases");
+    for (const name of readdirSync(casesDir)) {
+      if (!/\.ts$/.test(name) || /\.test\.ts$/.test(name)) continue;
+      const src = readFileSync(path.join(casesDir, name), "utf8");
+      expect(src, name).not.toMatch(/fr_pipeline|pipeline\//);
+      expect(src, name).not.toMatch(/from\s+["']@\/lib\/oi\//);
+    }
+    for (const rel of caseRouteFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toMatch(/from\s+["']@\/lib\/oi\//);
+    }
   });
 });
