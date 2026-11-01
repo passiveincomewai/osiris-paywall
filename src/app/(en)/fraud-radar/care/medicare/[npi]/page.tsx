@@ -10,6 +10,7 @@ import {
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { ResearchLeadNotice, NotPublishedYet } from "@/components/fraud-radar/Provenance";
 import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
+import PinToCase from "@/components/fraud-radar/PinToCase";
 
 /**
  * Fraud Radar — Medicare provider profile (Phase 3). Identity comes
@@ -83,6 +84,9 @@ export default async function MedicareProfilePage({
         </p>
         <div className="mt-5">
           <ResearchLeadNotice />
+        </div>
+        <div className="mt-4">
+          <PinToCase engine="care" entityKey={profile.npi} kind="entity" />
         </div>
 
         <section className="mt-10">

@@ -621,3 +621,75 @@ describe("§14.3 isolation — Phase 8 claim verification (P8-C)", () => {
     expect(checkerSrc).not.toMatch(/fr_pipeline|pipeline\//);
   });
 });
+
+describe("§14.3 isolation — Phase 8 case surfaces + pinning (P8-D)", () => {
+  const casePageFiles = [
+    "app/(en)/fraud-radar/cases/page.tsx",
+    "app/(en)/fraud-radar/cases/[id]/page.tsx",
+  ];
+
+  it("every case page carries the flag gate, and cases stay out of publicPaths + sitemap (§5.1)", () => {
+    for (const rel of casePageFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+      expect(src, rel).toContain("notFound()");
+      expect(src, rel).toContain("index: false");
+    }
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).not.toContain("/fraud-radar/cases");
+    const sitemapSrc = readFileSync(path.join(SRC, "app/sitemap.ts"), "utf8");
+    expect(sitemapSrc).not.toContain("fraud-radar/cases");
+  });
+
+  it("case surfaces render only through the case APIs — no data-layer or store imports", () => {
+    for (const rel of [
+      "app/(en)/fraud-radar/cases/CasesClient.tsx",
+      "app/(en)/fraud-radar/cases/[id]/CaseDetailClient.tsx",
+      "components/fraud-radar/PinToCase.tsx",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("/api/fraud-radar/cases");
+      expect(src, rel).not.toMatch(/signals-data|healthcare-data|grants-data|care-data|cases\/store|cases\/leads/);
+      expect(src, rel).not.toMatch(/@vercel\/blob|BLOB_READ_WRITE_TOKEN/);
+    }
+  });
+
+  it("PinToCase submits identifiers only and gates the candidate kind to an admin context (§1.3 rules 3–4)", () => {
+    const src = readFileSync(
+      path.join(SRC, "components/fraud-radar/PinToCase.tsx"),
+      "utf8",
+    );
+    expect(src).toContain("pinKindAllowed");
+    expect(src).toContain('kind === "candidate"');
+    // The pin body builder never assembles a snapshot.
+    const bodyFn = src.slice(src.indexOf("buildPinBody"), src.indexOf("pinKindAllowed"));
+    expect(bodyFn).not.toContain("snapshot");
+  });
+
+  it("no non-admin surface passes an admin context or offers a candidate pin", () => {
+    for (const rel of [
+      "components/fraud-radar/ResearchSignals.tsx",
+      "app/(en)/fraud-radar/grants/recipients/[uei]/page.tsx",
+      "app/(en)/fraud-radar/healthcare/providers/[npi]/page.tsx",
+      "app/(en)/fraud-radar/care/medicare/[npi]/page.tsx",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toContain("adminContext");
+      expect(src, rel).not.toContain('kind="candidate"');
+    }
+  });
+
+  it("case-surface copy carries no verdict outside the closed set and no guaranteed amounts", () => {
+    for (const rel of [
+      "app/(en)/fraud-radar/cases/page.tsx",
+      "app/(en)/fraud-radar/cases/CasesClient.tsx",
+      "app/(en)/fraud-radar/cases/[id]/page.tsx",
+      "app/(en)/fraud-radar/cases/[id]/CaseDetailClient.tsx",
+      "components/fraud-radar/PinToCase.tsx",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toMatch(/"fraudulent"|"confirmed fraud"|"guilty"|"cleared"/);
+      expect(src, rel).not.toContain("1%");
+    }
+  });
+});

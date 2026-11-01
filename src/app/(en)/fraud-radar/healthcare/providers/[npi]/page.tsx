@@ -13,6 +13,7 @@ import {
 } from "@/lib/fraud-radar/healthcare-data";
 import MonthlyChart from "@/components/fraud-radar/MonthlyChart";
 import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
+import PinToCase from "@/components/fraud-radar/PinToCase";
 import {
   ResearchLeadNotice,
   DatasetProvenance,
@@ -170,6 +171,9 @@ export default async function ProviderProfilePage({
         )}
         <div className="mt-5">
           <ResearchLeadNotice />
+        </div>
+        <div className="mt-4">
+          <PinToCase engine="healthcare" entityKey={profile.npi} kind="entity" />
         </div>
 
         <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5">

@@ -14,6 +14,7 @@ import {
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
 import { ResearchLeadNotice, NotPublishedYet } from "@/components/fraud-radar/Provenance";
 import { ResearchSignalsSection } from "@/components/fraud-radar/ResearchSignals";
+import PinToCase from "@/components/fraud-radar/PinToCase";
 
 /**
  * Fraud Radar — grant recipient profile (Phase 4). Identity and
@@ -98,6 +99,9 @@ export default async function GrantRecipientProfilePage({
         </p>
         <div className="mt-5">
           <ResearchLeadNotice />
+        </div>
+        <div className="mt-4">
+          <PinToCase engine="grants" entityKey={profile.uei} kind="entity" />
         </div>
 
         <section className="mt-10">

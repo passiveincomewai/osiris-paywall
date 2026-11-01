@@ -46,6 +46,7 @@ import {
   type SignalsEngine,
 } from "@/lib/fraud-radar/signals-data";
 import { formatCount, formatUsd } from "@/lib/fraud-radar/healthcare-data";
+import PinToCase from "./PinToCase";
 
 /** Reason sentences for the closed not-computed vocabulary —
  *  the same text the methods page publishes (PHASE6 §3.4). */
@@ -110,9 +111,15 @@ function DetailBlock({ detail }: { detail: Record<string, unknown> }) {
 function LeadArticle({
   lead,
   def,
+  engine,
+  entityKey,
 }: {
   lead: SignalLead;
   def: SignalRuleDef | null;
+  /** Pin context (Phase 8, P8-D): identifiers only — the pin
+   *  component renders nothing for signed-out visitors. */
+  engine: SignalsEngine;
+  entityKey: string;
 }) {
   const caveatTexts = (def?.caveats ?? []).filter((c) =>
     lead.caveatCodes.includes(c.code),
@@ -175,6 +182,9 @@ function LeadArticle({
           Caveats: {unresolvedCodes.join(", ")}
         </p>
       )}
+      <div className="mt-3">
+        <PinToCase engine={engine} entityKey={entityKey} ruleCode={lead.code} kind="signal" />
+      </div>
     </article>
   );
 }
@@ -182,9 +192,13 @@ function LeadArticle({
 function ScreeningArticle({
   record,
   def,
+  engine,
+  entityKey,
 }: {
   record: SignalLead;
   def: SignalRuleDef | null;
+  engine: SignalsEngine;
+  entityKey: string;
 }) {
   return (
     <article className="rounded-xl border border-amber-300/20 bg-amber-300/[0.04] p-4">
@@ -208,6 +222,9 @@ function ScreeningArticle({
           Caveats: {record.caveatCodes.join(", ")}
         </p>
       )}
+      <div className="mt-3">
+        <PinToCase engine={engine} entityKey={entityKey} ruleCode={record.code} kind="screening" />
+      </div>
     </article>
   );
 }
@@ -278,6 +295,8 @@ export async function ResearchSignalsSection({
                   key={`${lead.code}-${lead.recordKey ?? ""}`}
                   lead={lead}
                   def={defs.get(lead.code) ?? null}
+                  engine={engine}
+                  entityKey={entityKey}
                 />
               ))}
             </div>
@@ -332,6 +351,8 @@ export async function ResearchSignalsSection({
                 key={`${record.code}-${record.recordKey ?? ""}`}
                 record={record}
                 def={defs.get(record.code) ?? null}
+                engine={engine}
+                entityKey={entityKey}
               />
             ))}
           </div>

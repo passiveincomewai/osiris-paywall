@@ -234,6 +234,31 @@ export default function FraudRadarPage() {
           </p>
         </section>
 
+        <section className="mt-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.06] p-6">
+          <h2 className="text-xl font-semibold">Your cases: private research workspaces</h2>
+          <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+            Pin research leads from the provider, recipient and signals
+            pages into a private case — each pin freezes the record with
+            its method and data vintages exactly as published — keep your
+            own evidence and notes alongside, and check statements
+            against the published corpus. A case is visible only to you,
+            and its status describes your work, never a determination
+            about its subjects.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link
+              href="/fraud-radar/cases"
+              className="rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-300"
+            >
+              Open your cases
+            </Link>
+          </div>
+          <p className="mt-3 text-xs text-white/40 leading-relaxed">
+            Sign-in required. Cases are an account surface, so they are
+            not listed among the public pages.
+          </p>
+        </section>
+
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
           <h2 className="text-xl font-semibold">Whistleblower Research Center</h2>
           <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
