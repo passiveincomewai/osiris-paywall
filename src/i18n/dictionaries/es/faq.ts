@@ -46,12 +46,12 @@ export const esFaq: FaqCopy = {
         {
           q: "¿El mapa es realmente gratis?",
           a: [
-            tx("Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, 74.229 cámaras públicas, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para siempre, y también la búsqueda básica. Sin cuenta, sin tarjeta. Pro desbloquea las herramientas de nivel inteligencia sobre todo eso. Mira "),
+            tx("Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para siempre, y también la búsqueda básica. Las 74.229 cámaras públicas se pueden explorar gratis: verlas incluye una cantidad gratuita de aperturas de cámara, y los planes de pago hacen las aperturas ilimitadas. Sin cuenta, sin tarjeta. Pro desbloquea las herramientas de nivel inteligencia sobre todo eso. Mira "),
             lk("pricing", "los precios"),
             tx(" para el desglose completo."),
           ],
           schemaA:
-            "Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, 74.229 cámaras públicas, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para siempre, y también la búsqueda básica. Sin cuenta, sin tarjeta. Pro desbloquea las herramientas de nivel inteligencia sobre todo eso.",
+            "Sí. El globo 3D, el seguimiento de vuelos en vivo, el transporte en vivo, los satélites, los terremotos, los incendios, el clima y las fotos a nivel de calle son gratis para siempre, y también la búsqueda básica. Las 74.229 cámaras públicas se pueden explorar gratis: verlas incluye una cantidad gratuita de aperturas de cámara, y los planes de pago hacen las aperturas ilimitadas. Sin cuenta, sin tarjeta. Pro desbloquea las herramientas de nivel inteligencia sobre todo eso.",
         },
         plain(
           "¿Necesito una cuenta?",
@@ -91,11 +91,11 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Dónde puedo ver webcams en vivo de Nueva York?",
-          "La página de webcams de Nueva York reúne las cámaras públicas de la ciudad —279 feeds en un radio de 25 km de Midtown, la mayoría de la red 511NY del NYSDOT— en un muro para toda la ciudad y otro para cada distrito: Manhattan, Brooklyn, Queens, el Bronx y Staten Island. Todas son gratis."
+          "La página de webcams de Nueva York reúne las cámaras públicas de la ciudad —279 feeds en un radio de 25 km de Midtown, la mayoría de la red 511NY del NYSDOT— en un muro para toda la ciudad y otro para cada distrito: Manhattan, Brooklyn, Queens, el Bronx y Staten Island. Todas se pueden explorar gratis: las aperturas de cámara incluyen una cantidad gratuita, y los planes de pago las hacen ilimitadas."
         ),
         plain(
           "¿Puedo ver las auroras boreales en una webcam gratis?",
-          "Sí. La página de webcams de auroras reúne las cámaras públicas del cinturón auroral —825 en Finlandia, 482 en Islandia, 746 en Noruega, más Fairbanks, Alaska— junto al índice Kp en vivo, para que veas tanto la actividad del cielo como las cámaras bajo él. Son feeds de carreteras, clima y poblaciones en latitudes aurorales, no cámaras dedicadas a las auroras, y todas son gratis."
+          "Sí. La página de webcams de auroras reúne las cámaras públicas del cinturón auroral —825 en Finlandia, 482 en Islandia, 746 en Noruega, más Fairbanks, Alaska— junto al índice Kp en vivo, para que veas tanto la actividad del cielo como las cámaras bajo él. Son feeds de carreteras, clima y poblaciones en latitudes aurorales, no cámaras dedicadas a las auroras, y todas se pueden explorar gratis."
         ),
         plain(
           "¿Dónde puedo ver cruceros y puertos en vivo?",

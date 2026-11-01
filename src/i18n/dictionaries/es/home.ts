@@ -15,11 +15,11 @@ import type { HomeCopy } from "../en/home";
 export const esHome: HomeCopy = {
   metaTitle: "WorldEye — Cámaras en vivo, vuelos y satélites en un globo 3D",
   metaDescription:
-    "Mira 74.229 cámaras en vivo, sigue vuelos en directo y satélites en el globo 3D gratuito de WorldEye, sin registrarte. Pásate a Pro para el analista de IA, el tráfico en vivo y los feeds de inteligencia premium.",
+    "Mira 74.229 cámaras en vivo, sigue vuelos en directo y satélites en el globo 3D gratuito de WorldEye, sin registrarte. Pásate a Pro por el analista de IA y el tráfico en vivo; Ultra añade los feeds de inteligencia premium.",
   ogTitle:
     "WorldEye — Globo 3D en vivo | Cámaras en vivo, vuelos, satélites y herramientas OSINT",
   ogDescription:
-    "Mira 74.229 cámaras en vivo y sigue aviones y satélites en directo en un globo 3D gratuito. Pásate a Pro para el analista de IA, el tráfico en vivo y los feeds de inteligencia premium.",
+    "Mira 74.229 cámaras en vivo y sigue aviones y satélites en directo en un globo 3D gratuito. Pásate a Pro por el analista de IA y el tráfico en vivo; Ultra añade los feeds de inteligencia premium.",
   shellLabel: "Acerca de WorldEye",
   cameras: {
     ariaLabel: "Cámaras en vivo",
@@ -46,7 +46,7 @@ export const esHome: HomeCopy = {
     items: [
       {
         q: "¿Qué es WorldEye?",
-        a: "WorldEye es un sitio web gratuito que pone un globo terráqueo 3D en vivo en tu navegador: 74.229 cámaras públicas, vuelos en vivo, satélites, clima, terremotos e incendios en un solo mapa. No hay nada que instalar ni necesitas una cuenta para explorar. Los planes de pago añaden un analista de IA, grabación de cámaras, alertas y capas de inteligencia premium.",
+        a: "WorldEye es un sitio web gratuito que pone un globo terráqueo 3D en vivo en tu navegador: 74.229 cámaras públicas, vuelos en vivo, satélites, clima, terremotos e incendios en un solo mapa. No hay nada que instalar ni necesitas una cuenta para explorar. Los planes de pago añaden un analista de IA, grabación de cámaras y alertas; Ultra añade las capas de inteligencia premium.",
       },
       {
         q: "¿Cuántas cámaras en vivo puedo ver en WorldEye?",
@@ -54,7 +54,7 @@ export const esHome: HomeCopy = {
       },
       {
         q: "¿WorldEye es gratis?",
-        a: "Sí: el globo, todas las cámaras, el seguimiento de vuelos y satélites, el clima, los terremotos y la búsqueda básica son gratis, y nunca necesitas una cuenta para navegar. El plan gratuito incluye 5 aperturas de cámara en el globo. Los planes de pago opcionales (semanal por $7.99, mensual por $13.99 y VIP Pro por $74.99 al año) eliminan ese límite y añaden el analista de IA, la grabación de cámaras y las capas de inteligencia premium.",
+        a: "Sí: el globo, todas las cámaras, el seguimiento de vuelos y satélites, el clima, los terremotos y la búsqueda básica son gratis, y nunca necesitas una cuenta para navegar. El plan gratuito incluye 5 aperturas de cámara en el globo. Los planes de pago opcionales (semanal por $7.99, mensual por $13.99 y VIP Pro por $74.99 al año) eliminan ese límite y añaden el analista de IA y la grabación de cámaras; Ultra añade las capas de inteligencia premium.",
       },
     ],
   },
@@ -135,9 +135,9 @@ export const esHome: HomeCopy = {
       "Capa de tráfico en vivo",
       "Filtros de búsqueda avanzados",
       "Kit de herramientas OSINT",
-      "Capas de inteligencia premium y feeds en vivo (VIP Pro anual)",
+      "Capas de inteligencia premium y feeds en vivo (Ultra)",
       "Estudio de grabación de cámaras",
-      "Timelapse de cámaras (VIP Pro anual)",
+      "Timelapse de cámaras (Ultra)",
     ],
     proCta: "Ver los planes Pro",
   },
@@ -148,11 +148,11 @@ export const esHome: HomeCopy = {
     items: [
       {
         q: "¿WorldEye es realmente gratis?",
-        a: "Sí. El globo en vivo (el mapa, 74.229 cámaras públicas, seguimiento de vuelos y satélites, transporte en vivo, radar meteorológico, terremotos, incendios y búsqueda básica) es gratis y no requiere cuenta. WorldEye Pro es una suscripción opcional que añade el analista de IA, la capa de tráfico en vivo, los filtros de búsqueda avanzados y los feeds de inteligencia premium.",
+        a: "Sí. El globo en vivo (el mapa, 74.229 cámaras públicas, seguimiento de vuelos y satélites, transporte en vivo, radar meteorológico, terremotos, incendios y búsqueda básica) es gratis y no requiere cuenta. WorldEye Pro es una suscripción opcional que añade el analista de IA, la capa de tráfico en vivo y los filtros de búsqueda avanzados; Ultra añade los feeds de inteligencia premium.",
       },
       {
         q: "¿Necesito una cuenta para usar WorldEye?",
-        a: "No. Solo abre el sitio y ya estás mirando el planeta. Las cuentas existen solo para suscriptores Pro (facturación) y afiliados, nunca como una barrera delante del mapa.",
+        a: "No. Solo abre el sitio y ya estás mirando el planeta. Las cuentas son gratis: los suscriptores las usan para la facturación, los afiliados para sus enlaces y los miembros obtienen aperturas de cámara extra; nunca como una barrera delante del mapa.",
       },
       {
         q: "¿En qué se diferencia WorldEye de Google Earth?",
@@ -160,7 +160,7 @@ export const esHome: HomeCopy = {
       },
       {
         q: "¿Qué incluye WorldEye Pro y cuánto cuesta?",
-        a: "Pro añade el analista de IA OI, la capa de tráfico en vivo, los filtros de búsqueda avanzados, el estudio de grabación de cámaras con timelapse y feeds de inteligencia premium como ciberamenazas, seguimiento marítimo y un feed de noticias en vivo. Los planes son semanal por $7.99, mensual por $13.99 y anual por $74.99. El plan semanal empieza con una prueba gratis de 3 días y los planes mensual y anual con una de 10 días, y puedes cancelar en cualquier momento con un clic.",
+        a: "Pro añade el analista de IA OI, la capa de tráfico en vivo, los filtros de búsqueda avanzados y el estudio de grabación de cámaras. Ultra añade feeds de inteligencia premium como ciberamenazas, seguimiento marítimo y un feed de noticias en vivo, además del timelapse de cámaras. Los planes son semanal por $7.99, mensual por $13.99 y anual por $74.99. El plan semanal empieza con una prueba gratis de 3 días y los planes mensual y anual con una de 10 días, y puedes cancelar en cualquier momento con un clic.",
       },
       {
         q: "¿De dónde vienen las cámaras en vivo?",

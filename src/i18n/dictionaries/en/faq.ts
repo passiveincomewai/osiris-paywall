@@ -130,12 +130,12 @@ export const enFaq: FaqCopy = {
         {
           q: "Is the map really free?",
           a: [
-            tx("Yes. The 3D globe, live flight tracking, live transit, 74,229 public cameras, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it. See "),
+            tx("Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it. See "),
             lk("pricing", "pricing"),
             tx(" for the full breakdown."),
           ],
           schemaA:
-            "Yes. The 3D globe, live flight tracking, live transit, 74,229 public cameras, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
+            "Yes. The 3D globe, live flight tracking, live transit, satellites, earthquakes, wildfires, weather and street-level photos are free forever — and so is basic search. The 74,229 public cameras are free to browse: watching comes with a free allowance of camera opens, and paid plans make opens unlimited. No account, no credit card. Pro unlocks the intelligence-grade tools on top of it.",
         },
         plain(
           "Do I need an account?",
@@ -175,11 +175,11 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "Where can I watch live webcams in New York City?",
-          "The New York City webcams page gathers the city's public cameras — 279 feeds within 25 km of Midtown, most of them NYSDOT's 511NY network — into a wall for the whole city plus one for each borough: Manhattan, Brooklyn, Queens, the Bronx and Staten Island. All of them are free to watch."
+          "The New York City webcams page gathers the city's public cameras — 279 feeds within 25 km of Midtown, most of them NYSDOT's 511NY network — into a wall for the whole city plus one for each borough: Manhattan, Brooklyn, Queens, the Bronx and Staten Island. All of them are free to browse — camera opens come with a free allowance, and paid plans make them unlimited."
         ),
         plain(
           "Can I watch the northern lights on a webcam for free?",
-          "Yes. The aurora webcams page collects the public cameras of the aurora belt — 825 in Finland, 482 in Iceland, 746 in Norway, plus Fairbanks, Alaska — next to the live Kp index, so you can see both the sky's activity and the cameras under it. They are road, weather and town feeds at aurora latitudes, not dedicated aurora cameras, and every one is free."
+          "Yes. The aurora webcams page collects the public cameras of the aurora belt — 825 in Finland, 482 in Iceland, 746 in Norway, plus Fairbanks, Alaska — next to the live Kp index, so you can see both the sky's activity and the cameras under it. They are road, weather and town feeds at aurora latitudes, not dedicated aurora cameras, and every one is free to browse."
         ),
         plain(
           "Where can I watch cruise ships and ports live?",
