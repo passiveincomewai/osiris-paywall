@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { getChromeCopy } from "@/i18n/chrome";
+import { getChromeCopy } from "@/i18n/dictionaries";
 import CheckoutSheet from "@/components/CheckoutSheet";
 import { CHECKOUT_PLAN_SUMMARIES } from "@/lib/billing/trial-checkout";
 import { POWDER_FAQS } from "./powder-faqs";
