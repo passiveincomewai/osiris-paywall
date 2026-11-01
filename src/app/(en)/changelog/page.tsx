@@ -35,6 +35,14 @@ const ENTRIES: {
   items: string[];
 }[] = [
   {
+    month: "November 2026",
+    icon: "sparkles",
+    items: [
+      "Pricing rebuilt as three tiers — Lite, Pro and Ultra — with one shared plan picker everywhere. VIP Pro is now the name of the annual Pro plan rather than a separate tier; Ultra is the top tier, carrying the premium intel feeds, camera timelapse, 40-camera recording and 10 camera alerts. Trials settled at 3 free days on weekly plans and 10 free days on monthly and annual plans, and annual subscribers who joined before the change keep the extras they started with.",
+      "Developer API launched: self-serve keys for a read-only public API over the rights-cleared camera catalogue — metadata and snapshots, never restreamed video — plus an MCP server so AI tools can query WorldEye directly.",
+    ],
+  },
+  {
     month: "Late October 2026",
     icon: "sparkles",
     items: [
@@ -131,7 +139,8 @@ export default function ChangelogPage() {
             dead ones are dropped, which is why the served count you see on
             the site (74,229 today) is the number the globe actually delivers.{" "}
             <strong className="text-white/85">Accounts and Pro</strong> — sign-in, subscriptions,
-            trials, teams and the affiliate program. And <strong className="text-white/85">the site
+            trials, teams and the affiliate program — the current tiers live on the{" "}
+            <Link href="/pricing" className="text-[#D4AF37] hover:underline">pricing page</Link>. And <strong className="text-white/85">the site
             around the map</strong> — guides, comparisons and explainers like this page.
           </p>
           <p>
@@ -221,7 +230,7 @@ export default function ChangelogPage() {
                 and added; feeds that stop playing are dropped rather than
                 left in the count. The number shown on the site is always the
                 count the globe actually serves at that moment — today that is
-                74,229 cameras across 105 countries — not a marketing figure
+                74,229 cameras across 109 countries — not a marketing figure
                 frozen at launch.
               </p>
             </div>

@@ -69,7 +69,7 @@ const CARDS = [
   {
     icon: CreditCard,
     title: "Billing questions",
-    body: "Plans, trials, cancellations and receipts — everything about Pro billing.",
+    body: "Plans, trials, cancellations and receipts — everything about your plan's billing.",
     href: "/pricing",
     cta: "See pricing",
   },
@@ -96,7 +96,7 @@ const TOPICS = [
   },
   {
     title: "Billing, trials & the guarantee",
-    body: "Questions about the weekly ($7.99), monthly ($13.99) or VIP Pro annual ($74.99) plans, free trials (3 days on weekly, 10 days on monthly and annual), receipts, or claiming the 7-day money-back guarantee on your first charge. This inbox is where guarantee claims are made.",
+    body: "Questions about the Lite ($4.99 weekly, $8.99 monthly, $44.99 yearly), Pro ($7.99 weekly, $13.99 monthly, $74.99 yearly) or Ultra ($12.99 weekly, $24.99 monthly, $149.99 yearly) plans, free trials (3 days on weekly, 10 days on monthly and annual), receipts, or claiming the 7-day money-back guarantee on your first charge. This inbox is where guarantee claims are made.",
   },
   {
     title: "Camera & data reports",
@@ -108,7 +108,7 @@ const TOPICS = [
   },
   {
     title: "Press",
-    body: "Writing about live data, open intelligence or WorldEye itself? The About page has the background and the numbers (74,229 cameras, 105 countries, a free globe with no signup). For anything else, email us.",
+    body: "Writing about live data, open intelligence or WorldEye itself? The About page has the background and the numbers (74,229 cameras, 109 countries, a free globe with no signup). For anything else, email us.",
   },
   {
     title: "Security reports",
@@ -262,7 +262,7 @@ export default function ContactPage() {
             </p>
             <p>
               For press: WorldEye is a free live 3D globe — 74,229 public
-              cameras across 105 countries, plus live flights, satellites,
+              cameras across 109 countries, plus live flights, satellites,
               weather, earthquakes and transit, with no signup to look around.
               The <Link href="/about" className="text-[#D4AF37] hover:underline">About page</Link>{" "}
               covers the story and the principles; email us for anything
