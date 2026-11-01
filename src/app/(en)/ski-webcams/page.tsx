@@ -382,7 +382,11 @@ interface SnowNowHit {
    request for the whole directory, cached 30 minutes; any failure
    resolves to an empty list and the strip simply doesn't render —
    modelled data is labelled modelled, and absence is never dressed
-   up as "no snow anywhere". */
+   up as "no snow anywhere". The fetch is capped at 5 s (was 8 s):
+   the strip is decorative, its Suspense boundary resolves last in
+   the stream, and on each 30-minute data-cache expiry one request
+   waits for this call — an unresponsive API must not hold the
+   page's stream open longer than that. */
 async function loadSnowNow(): Promise<SnowNowHit[]> {
   try {
     const qs = new URLSearchParams({
@@ -395,7 +399,7 @@ async function loadSnowNow(): Promise<SnowNowHit[]> {
     });
     const res = await fetch(`https://api.open-meteo.com/v1/forecast?${qs.toString()}`, {
       next: { revalidate: 1800 },
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(5000),
       headers: { "User-Agent": "WorldEye-PowderPass/1.0" },
     });
     if (!res.ok) return [];
