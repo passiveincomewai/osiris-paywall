@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { CopyButton, EmptyState, SectionTitle, StatCard, fmtCents } from "@/components/affiliate/ui";
+import RepurposePerformance from "./RepurposePerformance";
 
 interface CampaignHistoryRow {
   campaignId?: string;
@@ -221,6 +222,8 @@ export default function AnalyticsClient() {
           <p className="text-sm text-slate-400">Your bio link appears once your affiliate profile loads.</p>
         )}
       </section>
+
+      <RepurposePerformance />
 
       <div className="rounded-2xl border border-amber-400/30 bg-amber-400/[0.06] p-4 md:p-5 text-sm text-amber-100/90 leading-relaxed">
         <span className="font-mono font-bold text-amber-300">Honest measurement: </span>

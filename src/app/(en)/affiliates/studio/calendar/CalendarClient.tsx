@@ -91,6 +91,13 @@ export default function CalendarClient() {
           }
         }
         setOptions(opts);
+        // Deep link from a variation's Publish & Share panel.
+        const wanted = new URLSearchParams(window.location.search).get("v");
+        if (wanted && opts.some((o) => o.id === wanted)) {
+          setVariationId(wanted);
+          const opt = opts.find((o) => o.id === wanted);
+          if (opt?.caption) setCaption(opt.caption);
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Couldn't load the calendar.");
       }

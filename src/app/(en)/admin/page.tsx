@@ -19,6 +19,7 @@ import StudioCampaigns from "./StudioCampaigns";
 import StudioAmbassadors from "./StudioAmbassadors";
 import StudioDrops from "./StudioDrops";
 import StudioReport from "./StudioReport";
+import StudioRepurposing from "./StudioRepurposing";
 import LiveRefresh from "./LiveRefresh";
 import AdminNav from "./AdminNav";
 import { growthDashboardUrl } from "@/lib/growth";
@@ -1041,6 +1042,10 @@ export default async function AdminDashboardPage() {
         <Section title="Studio credits & cost controls">
           <StudioCredits />
         </Section>
+
+        <div className="mt-4">
+          <StudioRepurposing />
+        </div>
 
         <div className="mt-4">
           <StudioReport />

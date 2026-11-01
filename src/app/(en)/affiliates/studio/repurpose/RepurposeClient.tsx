@@ -20,6 +20,7 @@ import {
   canvasSizeForAspect,
   codeIsOutdated,
   compositionDuration,
+  creativeUrl,
   filterCss,
   generateHooks,
   VERIFIED_FACTS,
@@ -28,6 +29,7 @@ import {
   type SourceAnalysis,
 } from "@/lib/studio/repurpose";
 import { coverFit, displayLink, endCardLayout, pickMimeType, wrapText } from "@/lib/studio/video-render";
+import { PUBLISH_PLATFORMS, preparePostText, publishSpec } from "@/lib/studio/publish";
 
 /* ---------------- types mirroring the API serializers ---------------- */
 
@@ -45,6 +47,7 @@ interface ProjectLite {
   height: number | null;
   analysisSummary: string | null;
   analysisMeasured: { metadata: boolean; scenes: boolean; audio: boolean } | null;
+  campaignTag: string | null;
   trackingLinkId: string | null;
   variationCount: number;
   createdAt: string;
@@ -556,6 +559,11 @@ export default function RepurposeClient() {
   const [folderFilter, setFolderFilter] = useState<string>("all");
   const [plannerGoal, setPlannerGoal] = useState("");
   const [plannerPlatform, setPlannerPlatform] = useState("TikTok");
+  const [publishFor, setPublishFor] = useState<string | null>(null);
+  const [publishPlatform, setPublishPlatform] = useState("tiktok");
+  const [apiPublishing, setApiPublishing] = useState<boolean | null>(null);
+  const [ideaIdx, setIdeaIdx] = useState(0);
+  const [translateLang, setTranslateLang] = useState("Spanish");
   const [renderState, setRenderState] = useState<Record<string, { frac: number; url?: string; name?: string }>>({});
 
   const localUrls = useRef(new Map<string, string>());
@@ -571,8 +579,18 @@ export default function RepurposeClient() {
     void (async () => {
       try {
         await refreshProjects();
+        // Deep link (e.g. "Repurpose the top performer" from Analytics).
+        const wanted = new URLSearchParams(window.location.search).get("project");
+        if (wanted) {
+          await openProject(wanted);
+          setNotice("Your top performer — generate fresh variations from this source, or edit the winners in the Editor.");
+        }
         const lib = await api<{ library: LibraryItem[] }>("/api/affiliate/studio/repurpose/library");
         setLibrary(lib.library);
+        const status = await api<{ platforms: { configured: boolean }[] }>(
+          "/api/affiliate/studio/repurpose/publish-status",
+        ).catch(() => null);
+        if (status) setApiPublishing(status.platforms.some((p) => p.configured));
         const credits = await api<{
           account?: { balance: number };
           config?: { kinds?: Record<string, { credits?: number }> };
@@ -894,6 +912,36 @@ export default function RepurposeClient() {
       {error && <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
       {notice && <div className="rounded-xl border border-sky-400/30 bg-sky-500/10 px-4 py-3 text-sm text-sky-200">{notice}</div>}
 
+      {/* ---------- idea generator ---------- */}
+      {(() => {
+        const ideas = generateHooks();
+        const idea = ideas[ideaIdx % ideas.length];
+        const dir = DIRECTIONS[ideaIdx % DIRECTIONS.length];
+        return (
+          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 flex flex-wrap items-center gap-3">
+            <div className="min-w-[240px] flex-1">
+              <div className="font-mono text-[11px] uppercase tracking-wider text-sky-300">
+                Idea generator — {idea.category.replace(/_/g, " ")} × {dir.label}
+              </div>
+              <p className="text-[15px] text-white font-semibold mt-0.5">“{idea.text}”</p>
+              <p className="text-[12px] text-slate-500">
+                Proven formulas built only on verified claims ({VERIFIED_FACTS.cameraClaim}) — no AI, no invented stats.
+              </p>
+            </div>
+            <button onClick={() => setIdeaIdx((i) => i + 1)} className={GHOST}>Next idea ↻</button>
+            <button
+              onClick={() => {
+                setHookInput(idea.text);
+                setNotice("Hook loaded into the Generate panel — open a project below to use it.");
+              }}
+              className={GHOST}
+            >
+              Use this hook
+            </button>
+          </section>
+        );
+      })()}
+
       {/* ---------- start a project ---------- */}
       <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-4">
         <h2 className="font-bold text-white">Start a project</h2>
@@ -1051,6 +1099,22 @@ export default function RepurposeClient() {
                 ))}
               </select>
               <a href={`/affiliates/studio/editor/${p.id}`} className={GHOST}>Open in Editor →</a>
+              <input
+                defaultValue={open.project.campaignTag ?? ""}
+                key={open.project.id + (open.project.campaignTag ?? "")}
+                placeholder="Campaign tag (A/B)"
+                title="Campaign tag — group projects to compare A/B results in Analytics"
+                onBlur={async (e) => {
+                  const campaignTag = e.target.value.trim();
+                  if (campaignTag === (open.project.campaignTag ?? "")) return;
+                  await api(`/api/affiliate/studio/repurpose/projects/${p.id}`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ campaignTag }),
+                  }).catch(() => undefined);
+                  setNotice(campaignTag ? `Campaign tag set: ${campaignTag}` : "Campaign tag cleared.");
+                }}
+                className="rounded-lg bg-black/30 border border-white/10 px-2 py-1.5 text-[12px] font-mono text-slate-300 w-[150px]"
+              />
               <span className="font-mono text-[11px] text-slate-500">
                 {p.sourceKind} · {p.ownershipConfirmed ? "ownership confirmed" : "ownership NOT confirmed"}
               </span>
@@ -1354,6 +1418,12 @@ export default function RepurposeClient() {
                         <span className={`font-mono text-[11px] ${v.status === "rendered" ? "text-emerald-300" : "text-slate-500"}`}>
                           {v.status}
                         </span>
+                        <button
+                          onClick={() => setPublishFor(publishFor === v.id ? null : v.id)}
+                          className="font-mono text-[11px] text-sky-300 hover:text-sky-200"
+                        >
+                          Publish &amp; Share {publishFor === v.id ? "▴" : "▾"}
+                        </button>
                         <button onClick={() => deleteVariation(v)} className="ml-auto font-mono text-[11px] text-slate-500 hover:text-red-300">
                           delete
                         </button>
@@ -1363,6 +1433,133 @@ export default function RepurposeClient() {
                           <div className="h-full bg-sky-400" style={{ width: `${Math.round(rs.frac * 100)}%` }} />
                         </div>
                       )}
+                      {publishFor === v.id && (() => {
+                        const spec = publishSpec(publishPlatform);
+                        const tracked = creativeUrl(trackingUrl ?? v.composition.branding.link, v.creativeId);
+                        const prepared = preparePostText({
+                          hookText: v.hookText ?? v.title,
+                          storedText: v.captionText,
+                          trackedUrl: tracked,
+                          aspect: v.aspect as Aspect,
+                          spec,
+                        });
+                        const copy = async (text: string, label: string) => {
+                          try {
+                            await navigator.clipboard.writeText(text);
+                            setNotice(`${label} copied — paste it into ${spec.label}.`);
+                          } catch {
+                            setError("Copy failed — your browser blocked clipboard access.");
+                          }
+                        };
+                        return (
+                          <div className="rounded-xl border border-sky-400/20 bg-sky-500/5 p-3 space-y-2.5">
+                            <div className="flex flex-wrap gap-1.5">
+                              {PUBLISH_PLATFORMS.map((pf) => (
+                                <button
+                                  key={pf.id}
+                                  onClick={() => setPublishPlatform(pf.id)}
+                                  className={`px-2.5 py-1 rounded-lg font-mono text-[11px] ${publishPlatform === pf.id ? "bg-sky-500/25 text-sky-100 border border-sky-400/50" : "border border-white/10 text-slate-400"}`}
+                                >
+                                  {pf.label}
+                                </button>
+                              ))}
+                            </div>
+                            <p className="text-[12px] text-slate-400">{spec.lengthNote}</p>
+                            <p className="text-[12px] text-slate-400">{spec.linkNote}</p>
+                            {prepared.aspectNote && (
+                              <p className="text-[12px] rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-200 px-2.5 py-1.5">
+                                {prepared.aspectNote}
+                              </p>
+                            )}
+                            <div>
+                              <div className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-1">Post preview — {spec.label}</div>
+                              <pre className="whitespace-pre-wrap text-[12.5px] text-slate-200 rounded-lg bg-black/30 border border-white/10 p-2.5 font-sans">{prepared.caption}</pre>
+                              {prepared.firstComment && (
+                                <>
+                                  <div className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mt-2 mb-1">First comment</div>
+                                  <pre className="whitespace-pre-wrap text-[12.5px] text-slate-200 rounded-lg bg-black/30 border border-white/10 p-2.5 font-sans">{prepared.firstComment}</pre>
+                                </>
+                              )}
+                            </div>
+                            <p className="text-[12px] text-slate-400">📋 {spec.disclosureLabel}</p>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="font-mono text-[11px] text-slate-500">Localize:</span>
+                              <select
+                                value={translateLang}
+                                onChange={(e) => setTranslateLang(e.target.value)}
+                                className="rounded-lg bg-black/30 border border-white/10 px-2 py-1.5 text-[12px] font-mono text-slate-200"
+                              >
+                                {["Spanish", "Portuguese", "French", "German", "Japanese", "Hindi", "Indonesian", "Tagalog"].map((l) => (
+                                  <option key={l} value={l}>{l}</option>
+                                ))}
+                              </select>
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const j = await api<{ job?: { creditCost: number } }>("/api/affiliate/studio/ai", {
+                                      method: "POST",
+                                      body: JSON.stringify({
+                                        kind: "ai_caption",
+                                        subject:
+                                          `Translate this social-media post into ${translateLang}. Keep the URL, the hashtags and #ad exactly as they are, and do not change any number or claim:\n\n${prepared.caption}`.slice(0, 950),
+                                        platform: spec.label,
+                                      }),
+                                    });
+                                    setNotice(
+                                      `Translation queued (${j.job?.creditCost ?? 2} credits) — Cosmo translates to order; the result lands in My Creations. Location names and facts are never altered by translation.`,
+                                    );
+                                  } catch (e) {
+                                    setError(e instanceof Error ? e.message : "Translation couldn't be queued.");
+                                  }
+                                }}
+                                className={GHOST}
+                              >
+                                Translate post text (AI)
+                              </button>
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              <button onClick={() => copy(prepared.caption, "Caption")} className={GHOST}>Copy caption</button>
+                              {prepared.firstComment && (
+                                <button onClick={() => copy(prepared.firstComment!, "First comment")} className={GHOST}>Copy first comment</button>
+                              )}
+                              <a href={spec.openUrl} target="_blank" rel="noreferrer" className={GHOST}>{spec.openLabel} ↗</a>
+                              <a href={`/affiliates/studio/calendar?v=${v.id}`} className={GHOST}>Schedule + reminder</a>
+                              {typeof navigator !== "undefined" && "share" in navigator && (
+                                <button
+                                  onClick={() => {
+                                    void navigator.share({ text: prepared.caption }).catch(() => undefined);
+                                  }}
+                                  className={GHOST}
+                                >
+                                  Share…
+                                </button>
+                              )}
+                              <button
+                                onClick={async () => {
+                                  await api(`/api/affiliate/studio/repurpose/variations/${v.id}`, {
+                                    method: "PATCH",
+                                    body: JSON.stringify({ status: "published", postedPlatform: spec.id }),
+                                  }).catch(() => undefined);
+                                  setOpen({
+                                    ...open,
+                                    variations: open.variations.map((x) => (x.id === v.id ? { ...x, status: "published" } : x)),
+                                  });
+                                  setNotice(`Marked as posted to ${spec.label}. Add the live URL in the Calendar so the record stays exact.`);
+                                }}
+                                className={GHOST}
+                              >
+                                I posted it ✓
+                              </button>
+                            </div>
+                            <p className="text-[11.5px] text-slate-500">
+                              {apiPublishing
+                                ? "Direct posting is connected for at least one platform — follow the in-panel steps for API posts."
+                                : "Direct posting isn't connected for any platform yet (each needs the owner's platform app approval), so posting is manual — download the render, use the prepared text above, and let the Calendar remind you."}{" "}
+                              Your tracked link for this creative: <span className="font-mono text-sky-300 break-all">{tracked}</span>
+                            </p>
+                          </div>
+                        );
+                      })()}
                     </div>
                   );
                 })}
