@@ -420,6 +420,8 @@ model AffiliateProfile {
   ambassadorApplications AmbassadorApplication[]
   campaignParticipations StudioCampaignParticipation[]
   dropClaims    StudioDropClaim[]
+  studioProjects StudioProject[]
+  studioPosts   StudioPost[]
   templateUsages AffiliateTemplateUsage[]
 
   createdAt DateTime @default(now())
@@ -1180,6 +1182,113 @@ model StudioDropClaim {
 // ── Tiered affiliate discount codes: one shared Stripe coupon per percent ─
 // Coupons are minted once per discount percent and reused by every
 // affiliate's personal promotion code (see src/lib/affiliate/discount.ts).
+// ── Marketing Studio 2.0: AI Video Repurposing Machine ──────────────────
+// A project is one source video the affiliate owns (or an approved
+// library asset) plus its measured analysis. A variation is one creative
+// treatment of that source: a persisted composition (segments, captions,
+// overlays, filter, branding snapshot) rendered in the browser and
+// tracked by its own creative id. Rendering reuses GenerationJob +
+// the credits ledger (kind "repurpose_render"); nothing here changes
+// attribution or commission rules.
+model StudioProject {
+  id             String   @id @default(cuid())
+  profileId      String
+  profile        AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title          String
+  // upload (Vercel Blob) | library (approved studio footage) |
+  // creation (the affiliate's own StudioCreation) | url (direct media URL)
+  sourceKind     String
+  sourceRef      String?
+  sourceName     String?
+  durationSec    Float?
+  width          Int?
+  height         Int?
+  // The affiliate confirmed they own or have permission to edit and
+  // distribute the source. Must be true before any variation renders.
+  ownershipConfirmed Boolean @default(false)
+  // Measured client-side analysis (metadata, scene cuts, audio energy).
+  // Only signals actually measured are stored; the UI shows nothing else.
+  analysis       Json?
+  transcript     String?  @db.Text
+  // One AffiliateTrackingLink per project (the 25-link cap is shared);
+  // per-variation attribution rides utm_content=<creativeId>.
+  trackingLinkId String?
+  status         String   @default("draft") // draft | ready | archived
+  folder         String   @default("drafts") // drafts | published | scheduled | high_performing | templates | uploads | graphics | archived
+  brandVoice     String?  // professional | casual | exciting | educational | cinematic | technical | minimalist
+  campaignTag    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  variations     StudioVariation[]
+  posts          StudioPost[]
+
+  @@index([profileId, createdAt])
+  @@index([profileId, folder])
+}
+
+model StudioVariation {
+  id            String   @id @default(cuid())
+  projectId     String
+  project       StudioProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creativeId    String   @unique
+  direction     String   // viral_curiosity | educational | cinematic | fast_paced | product_demo | news_context | storytelling | problem_solution | testimonial | minimalist
+  title         String
+  aspect        String   @default("9:16") // 9:16 | 1:1 | 4:5 | 16:9
+  // { segments, captions, overlays, filter, speed, branding } — the full
+  // editable composition; the editor and renderer both read this shape
+  // (src/lib/studio/repurpose.ts).
+  composition   Json
+  hookText      String?
+  captionText   String?  @db.Text
+  // Branding snapshot at generation time. If the profile's current code
+  // differs, the editor warns the draft carries an outdated code.
+  codeSnapshot  String?
+  status        String   @default("draft") // draft | rendered | published | archived
+  renderJobId   String?
+  favorite      Boolean  @default(false)
+  postedPlatform String?
+  postedUrl     String?
+  postedAt      DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  posts         StudioPost[]
+
+  @@index([projectId, createdAt])
+}
+
+// ── Marketing Studio 2.0: content calendar / publishing records ────────
+// One planned or completed post for a variation (or a whole project).
+// method "reminder" = the affiliate publishes manually (the only method
+// until a platform API is genuinely approved); "api" is reserved for
+// approved direct integrations. Reminder delivery reuses
+// AffiliateNotification + the lifecycle email log.
+model StudioPost {
+  id            String   @id @default(cuid())
+  profileId     String
+  profile       AffiliateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  projectId     String?
+  project       StudioProject? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  variationId   String?
+  variation     StudioVariation? @relation(fields: [variationId], references: [id], onDelete: SetNull)
+  platform      String   // instagram | facebook | tiktok | youtube | snapchat | x | threads | linkedin | pinterest
+  caption       String?  @db.Text
+  affiliateLink String?
+  scheduledAt   DateTime
+  timezone      String   @default("UTC") // IANA tz the affiliate picked
+  method        String   @default("reminder") // reminder | api
+  status        String   @default("scheduled") // draft | ready | scheduled | reminder_due | publishing | published | failed | cancelled
+  reminderOffsetsMin Int[] @default([]) // minutes before scheduledAt
+  remindedFor   Int[]    @default([]) // offsets already delivered (idempotency)
+  publishedUrl  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([profileId, scheduledAt])
+  @@index([status, scheduledAt])
+}
+
 model AffiliateDiscountCoupon {
   pct            Int    @id
   stripeCouponId String @unique
@@ -1603,39 +1712,6 @@ model ContactMessage {
   readAt    DateTime?
 
   @@index([status, createdAt])
-  @@index([createdAt])
-}
-
-// ── Partnership applications (public /partners) ────────────────────────
-// Strategic-partnership proposals from the /partners application form,
-// managed by admins in /admin/partnerships (status flow, notes and a
-// follow-up date — the CRM tracks; it never sends). Type values live in
-// PARTNERSHIP_TYPES and statuses in PARTNERSHIP_STATUSES
-// (src/lib/partners.ts). Deliberately standalone like ContactMessage:
-// applicants are usually signed out, so there is no user relation.
-model PartnershipApplication {
-  id             String    @id @default(cuid())
-  name           String
-  email          String
-  company        String
-  website        String
-  // One of the values in PARTNERSHIP_TYPES (src/lib/partners.ts).
-  type           String
-  audienceSize   String?
-  resources      String
-  seeking        String
-  proposal       String
-  // Title of the opportunities-directory entry the applicant clicked, if any.
-  opportunity    String?
-  // One of PARTNERSHIP_STATUSES (src/lib/partners.ts).
-  status         String    @default("new")
-  adminNotes     String?
-  nextFollowUpAt DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  @@index([status, createdAt])
-  @@index([type, createdAt])
   @@index([createdAt])
 }
 

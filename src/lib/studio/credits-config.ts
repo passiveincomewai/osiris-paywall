@@ -8,7 +8,7 @@
 // guarantees the retail price always covers at least 2× that cost unless
 // an admin explicitly flips safetyOverride (which is audit-logged on save).
 
-export type RenderKind = "image_render" | "video_personalize" | "video_template";
+export type RenderKind = "image_render" | "video_personalize" | "video_template" | "repurpose_render";
 
 // Phase 3: AI kinds are fulfilled asynchronously by Cosmo (WorldEye's AI
 // agent) from a job queue — there is no synchronous AI API behind them.
@@ -32,6 +32,7 @@ export const CREDIT_KINDS: readonly CreditKind[] = [
   "image_render",
   "video_personalize",
   "video_template",
+  "repurpose_render",
   ...AI_KINDS,
 ] as const;
 
@@ -160,6 +161,7 @@ export const DEFAULT_CREDIT_CONFIG: StudioCreditConfig = {
     image_render: PRICE_IMAGE_RENDER,
     video_personalize: PRICE_VIDEO_PERSONALIZE,
     video_template: PRICE_VIDEO_TEMPLATE,
+    repurpose_render: PRICE_VIDEO_PERSONALIZE,
     ai_caption: 2,
     ai_hooks: 3,
     ai_script: 5,
@@ -172,6 +174,7 @@ export const DEFAULT_CREDIT_CONFIG: StudioCreditConfig = {
     image_render: 0,
     video_personalize: 0,
     video_template: 0,
+    repurpose_render: 0,
     ai_caption: 0,
     ai_hooks: 0,
     ai_script: 0,
@@ -183,6 +186,7 @@ export const DEFAULT_CREDIT_CONFIG: StudioCreditConfig = {
     image_render: true,
     video_personalize: true,
     video_template: true,
+    repurpose_render: true,
     ai_caption: true,
     ai_hooks: true,
     ai_script: true,
