@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -690,6 +690,40 @@ describe("§14.3 isolation — Phase 8 case surfaces + pinning (P8-D)", () => {
       const src = readFileSync(path.join(SRC, rel), "utf8");
       expect(src, rel).not.toMatch(/"fraudulent"|"confirmed fraud"|"guilty"|"cleared"/);
       expect(src, rel).not.toContain("1%");
+    }
+  });
+});
+
+describe("§14.3 isolation — Phase 11 billing (SHV-11)", () => {
+  it("no lib/fraud-radar module imports lib/billing (dependency guard, §0.2)", () => {
+    const root = path.join(SRC, "lib/fraud-radar");
+    const walk = (d: string): string[] =>
+      readdirSync(d, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith(".ts") ? [path.join(d, e.name)] : []);
+    for (const f of walk(root)) {
+      const src = readFileSync(f, "utf8");
+      expect(src, path.relative(SRC, f)).not.toMatch(/from\s+["']@\/lib\/billing\//);
+      expect(src, path.relative(SRC, f)).not.toMatch(/from\s+["'].*lib\/pro\/comp/);
+    }
+  });
+
+  it("the billing state route is flag-gated and no FR checkout/portal route exists (P11-D deferred)", () => {
+    const route = readFileSync(path.join(SRC, "app/api/fraud-radar/billing/route.ts"), "utf8");
+    expect(route).toContain("fraudRadarEnabled()");
+    expect(route).toContain("checkoutAvailable: false");
+    expect(existsSync(path.join(SRC, "app/api/fraud-radar/billing/checkout"))).toBe(false);
+    expect(existsSync(path.join(SRC, "app/api/fraud-radar/billing/portal"))).toBe(false);
+  });
+
+  it("billing copy carries no fraud verdicts and no guaranteed amounts", () => {
+    for (const rel of [
+      "lib/fraud-radar/billing/plans.ts",
+      "lib/fraud-radar/billing/entitlements.ts",
+      "app/api/fraud-radar/billing/route.ts",
+    ]) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toMatch(/"fraudulent"|"confirmed fraud"|"guilty"/);
+      expect(src, rel).not.toContain("guaranteed 1%");
     }
   });
 });

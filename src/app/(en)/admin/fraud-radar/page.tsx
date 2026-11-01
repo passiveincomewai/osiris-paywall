@@ -12,6 +12,7 @@ import {
   CANDIDATE_QUEUE_NOTE,
 } from "@/lib/fraud-radar/signals-data";
 import { getInvestigatorAdminUsage } from "@/lib/fraud-radar/investigator/admin-usage";
+import { listFrSubscriptions, listFrUsageAggregates } from "@/lib/fraud-radar/billing/admin-read";
 
 /**
  * Fraud Radar admin — Data Source Registry health (spec §5/§32).
@@ -119,6 +120,10 @@ export default async function FraudRadarAdminPage() {
   // research is their work product, and the read model behind
   // this section selects no text column.
   const investigatorUsage = await getInvestigatorAdminUsage();
+  // Phase 11 (SHV-11 P11-G read-only half): FR billing read views —
+  // metadata only (plan/status/usage counts), never user content.
+  const frSubs = await listFrSubscriptions();
+  const frUsageAgg = await listFrUsageAggregates();
 
   const candidateQueue = await getAdminCandidateQueue();
   const queueFamilyCounts = new Map<string, number>();
@@ -560,6 +565,56 @@ export default async function FraudRadarAdminPage() {
                 {investigatorUsage.errorsByCode
                   .map((e) => `${e.code}: ${e.count}`)
                   .join(" · ")}
+              </p>
+            )}
+
+            <h3 className="mt-8 font-semibold">Fraud Radar subscriptions (Phase 11)</h3>
+            <p className="text-sm text-white/50 mt-1 leading-relaxed">
+              Fraud Radar billing rows only — no WorldEye subscriptions appear here.
+              Read-only in this phase; checkout does not exist yet.
+            </p>
+            {!frSubs.available ? (
+              <p className="mt-2 text-sm text-white/50">Subscription data not available yet.</p>
+            ) : frSubs.rows.length === 0 ? (
+              <p className="mt-2 text-sm text-white/50">No Fraud Radar subscriptions yet.</p>
+            ) : (
+              <div className="mt-3 overflow-x-auto rounded-2xl border border-white/10">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-white/50">
+                      <th className="px-4 py-3 font-medium">User</th>
+                      <th className="px-4 py-3 font-medium">Plan</th>
+                      <th className="px-4 py-3 font-medium">Status</th>
+                      <th className="px-4 py-3 font-medium">Comp</th>
+                      <th className="px-4 py-3 font-medium">Period end</th>
+                      <th className="px-4 py-3 font-medium">Stripe sub</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {frSubs.rows.map((r) => (
+                      <tr key={r.userId} className="border-b border-white/5">
+                        <td className="px-4 py-3 font-mono text-white/70">{r.userId.slice(0, 12)}…</td>
+                        <td className="px-4 py-3">{r.plan} / {r.interval}</td>
+                        <td className="px-4 py-3 text-white/70">{r.status}</td>
+                        <td className="px-4 py-3 text-white/70">{r.isComp ? (r.compSource ?? "comp") : "—"}</td>
+                        <td className="px-4 py-3 text-white/70">{r.periodEnd.slice(0, 10)}</td>
+                        <td className="px-4 py-3 font-mono text-white/70">{r.stripeSubscriptionId.slice(0, 16)}…</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <h3 className="mt-8 font-semibold">Fraud Radar usage ledger (Phase 11)</h3>
+            {!frUsageAgg.available ? (
+              <p className="mt-2 text-sm text-white/50">Usage ledger not available yet.</p>
+            ) : frUsageAgg.rows.length === 0 ? (
+              <p className="mt-2 text-sm text-white/50">No usage has been recorded yet.</p>
+            ) : (
+              <p className="mt-2 text-sm text-white/70">
+                {frUsageAgg.rows.map((r) => `${r.kind} / ${r.tierAtCharge}: ${r.rows}`).join(" · ")}
+                {" "}· reversals: {frUsageAgg.totalReversals} · total rows: {frUsageAgg.totalRows}
               </p>
             )}
 

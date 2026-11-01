@@ -19,9 +19,10 @@
  * before entitlement is ever consulted.
  */
 
-export type FraudRadarTier = "free" | "plus" | "pro" | "teams" | "none";
+import { FR_ENTITLEMENTS } from "../billing/entitlements";
+import { fraudRadarTierOf as billingTierOf } from "../billing/tier";
 
-const TIERS: readonly FraudRadarTier[] = ["free", "plus", "pro", "teams"];
+export type FraudRadarTier = "free" | "plus" | "pro" | "teams" | "none";
 
 export interface SessionLike {
   user?: {
@@ -31,23 +32,15 @@ export interface SessionLike {
   } | null;
 }
 
-/** The Phase-11 entitlement interface (PHASE7 §1.3). */
+/** The Phase-11 entitlement interface (PHASE7 §1.3). Phase 11
+ *  (SHV-11): the implementation now lives in billing/tier.ts —
+ *  the single resolver every phase calls; this re-export keeps
+ *  Phase 7/8/9 call sites unchanged. */
 export function fraudRadarTierOf(
   session: SessionLike | null | undefined,
   env: Record<string, string | undefined> = process.env,
 ): FraudRadarTier {
-  const user = session?.user;
-  if (!user?.id) return "none";
-  const claim = user.fraudRadarTier;
-  if (typeof claim === "string" && (TIERS as readonly string[]).includes(claim)) {
-    return claim as FraudRadarTier;
-  }
-  const admins = (env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
-  if (user.email && admins.includes(user.email.toLowerCase())) return "pro";
-  return "free";
+  return billingTierOf(session, env) as FraudRadarTier;
 }
 
 export interface InvestigatorQuota {
@@ -69,15 +62,23 @@ export interface InvestigatorQuota {
  * ("≈50 AI research operations monthly", AUDIT §7 / README §27);
  * the rest are design defaults for Phase 11 to ratify here.
  */
+/** Phase 11 (SHV-11): values now derive from the central
+ *  billing/entitlements.ts matrix (§3.1 consolidation); the
+ *  exported shape is unchanged. maxCalls* stay Phase 7 §4.3
+ *  burst-shape constants (not tier quotas). */
+function invQuota(tier: Exclude<FraudRadarTier, "none">): InvestigatorQuota {
+  const e = FR_ENTITLEMENTS[tier];
+  return {
+    monthlyOps: e.investigatorOpsPerMonth,
+    maxRounds: e.investigatorMaxRounds,
+    maxCallsPerTurn: 12, maxCallsPerRound: 4,
+    perTurnCostCeilingUsd: e.perTurnCostCeilingUsd,
+  };
+}
 export const INVESTIGATOR_QUOTAS: Record<
   Exclude<FraudRadarTier, "none">,
   InvestigatorQuota
-> = {
-  free: { monthlyOps: 5, maxRounds: 6, maxCallsPerTurn: 12, maxCallsPerRound: 4, perTurnCostCeilingUsd: 0.25 },
-  plus: { monthlyOps: 50, maxRounds: 6, maxCallsPerTurn: 12, maxCallsPerRound: 4, perTurnCostCeilingUsd: 0.25 },
-  pro: { monthlyOps: 300, maxRounds: 8, maxCallsPerTurn: 12, maxCallsPerRound: 4, perTurnCostCeilingUsd: 0.5 },
-  teams: { monthlyOps: 300, maxRounds: 8, maxCallsPerTurn: 12, maxCallsPerRound: 4, perTurnCostCeilingUsd: 0.5 },
-};
+> = { free: invQuota("free"), plus: invQuota("plus"), pro: invQuota("pro"), teams: invQuota("teams") };
 
 export function quotaForTier(tier: FraudRadarTier): InvestigatorQuota | null {
   return tier === "none" ? null : INVESTIGATOR_QUOTAS[tier];

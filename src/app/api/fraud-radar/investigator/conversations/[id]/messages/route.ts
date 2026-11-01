@@ -11,6 +11,8 @@ import { investigatorSession } from "@/lib/fraud-radar/investigator/route-helper
 import { getInvestigatorStore } from "@/lib/fraud-radar/investigator/store";
 import { getUsageSummary } from "@/lib/fraud-radar/investigator/usage";
 import { getClientIp, isRateLimited } from "@/lib/ssrf-guard";
+import { chargeUsage, checkQuota, tryUsageStore } from "@/lib/fraud-radar/billing/usage";
+import { freeEntitlement } from "@/lib/fraud-radar/billing/tier";
 
 /**
  * Fraud Radar Phase 7 — start an investigator turn (PHASE7 §4.2).
@@ -99,6 +101,28 @@ export async function POST(
     );
   }
 
+  // Phase 11 billing ledger (SHV-11 P11-B): when the ledger
+  // table is reachable, the append-only FrUsageLedger is also
+  // checked BEFORE any work starts (refusal-before-work), and
+  // charged once the turn exists. The Phase 7 ledger remains
+  // the detail record; reconciliation is pinned by tests.
+  const billingStore = await tryUsageStore();
+  const billingEnt = { ...freeEntitlement(), tier };
+  if (billingStore) {
+    const bq = await checkQuota(billingStore, billingEnt, "investigator_turn", { userId: session.userId });
+    if (!bq.ok) {
+      return NextResponse.json(
+        {
+          error: "Your monthly investigator quota is used up.",
+          code: "FR_QUOTA_EXCEEDED",
+          kind: "investigator_turn", limit: bq.limit, used: bq.used,
+          resetAt: bq.resetsAt.toISOString(),
+        },
+        { status: 429 },
+      );
+    }
+  }
+
   const adapter = createGeminiAdapter();
   if (!adapter) {
     return NextResponse.json(
@@ -117,6 +141,12 @@ export async function POST(
       tier,
     },
   );
+  if (billingStore) {
+    await chargeUsage(billingStore, {
+      userId: session.userId, tier, kind: "investigator_turn",
+      refType: "investigator_message", refId: turnId,
+    });
+  }
   return NextResponse.json(
     { turnId, conversationId: conversation.id },
     { status: 202 },

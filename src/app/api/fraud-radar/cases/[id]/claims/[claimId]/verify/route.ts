@@ -13,6 +13,8 @@ import {
   VerificationQuotaError,
 } from "@/lib/fraud-radar/cases/claims";
 import { caseEntitlementsForSession } from "@/lib/fraud-radar/cases/entitlements";
+import { tryUsageStore } from "@/lib/fraud-radar/billing/usage";
+import { freeEntitlement } from "@/lib/fraud-radar/billing/tier";
 
 /**
  * Fraud Radar Phase 8 — run claim verification (PHASE8 §5.2,
@@ -41,13 +43,21 @@ export async function POST(
   const store = getCaseStore();
   const claim = await store.getClaim(id, claimId);
   if (!claim) return notFound();
-  const { entitlements } = caseEntitlementsForSession(session.session);
+  const { tier, entitlements } = caseEntitlementsForSession(session.session);
+  // Phase 11 billing ledger (SHV-11): wired when the ledger
+  // table is reachable; the domain count above remains the
+  // detail record either way.
+  const usageStore = await tryUsageStore();
+  const billing = usageStore
+    ? { usageStore, entitlement: { ...freeEntitlement(), tier } }
+    : undefined;
   try {
     const verification = await runClaimVerification(store, {
       caseRow: found.caseRow,
       claim,
       actorId: session.userId,
       entitlements,
+      billing,
     });
     return NextResponse.json(
       { verification: serializeVerification(verification) },

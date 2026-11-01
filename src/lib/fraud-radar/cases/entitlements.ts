@@ -47,8 +47,11 @@ export interface CaseEntitlements {
   processingJobsPerMonth: number;
 }
 
+import { FR_ENTITLEMENTS } from "../billing/entitlements";
+
 const MB = BigInt(1_000_000);
 const GB = BigInt(1_000_000_000);
+void MB; void GB;
 
 /**
  * The one quota config object — the §5.3 proposed defaults,
@@ -60,48 +63,21 @@ const GB = BigInt(1_000_000_000);
 export const CASE_ENTITLEMENTS: Record<
   Exclude<FraudRadarTier, "none">,
   CaseEntitlements
-> = {
-  free: {
-    maxOpenCases: 3,
-    storage: {
-      vaultEnabled: false,
-      maxVaultBytes: BigInt(0),
-      maxEvidenceFileBytes: MAX_EVIDENCE_FILE_BYTES,
-    },
-    verificationsPerMonth: 5,
-    processingJobsPerMonth: 0,
-  },
-  plus: {
-    maxOpenCases: 25,
-    storage: {
-      vaultEnabled: true,
-      maxVaultBytes: BigInt(500) * MB,
-      maxEvidenceFileBytes: MAX_EVIDENCE_FILE_BYTES,
-    },
-    verificationsPerMonth: 50,
-    processingJobsPerMonth: 50,
-  },
-  pro: {
-    maxOpenCases: 200,
-    storage: {
-      vaultEnabled: true,
-      maxVaultBytes: BigInt(5) * GB,
-      maxEvidenceFileBytes: MAX_EVIDENCE_FILE_BYTES,
-    },
-    verificationsPerMonth: 300,
-    processingJobsPerMonth: 300,
-  },
-  teams: {
-    maxOpenCases: 200,
-    storage: {
-      vaultEnabled: true,
-      maxVaultBytes: BigInt(5) * GB,
-      maxEvidenceFileBytes: MAX_EVIDENCE_FILE_BYTES,
-    },
-    verificationsPerMonth: 300,
-    processingJobsPerMonth: 300,
-  },
-};
+> = (Object.fromEntries(
+  (["free", "plus", "pro", "teams"] as const).map((tier) => {
+    const e = FR_ENTITLEMENTS[tier];
+    return [tier, {
+      maxOpenCases: e.maxOpenCases,
+      storage: {
+        vaultEnabled: e.vaultEnabled,
+        maxVaultBytes: e.maxVaultBytes,
+        maxEvidenceFileBytes: e.maxEvidenceFileBytes,
+      },
+      verificationsPerMonth: e.claimVerificationsPerMonth,
+      processingJobsPerMonth: e.processingJobsPerMonth,
+    } satisfies CaseEntitlements];
+  }),
+) as unknown) as Record<Exclude<FraudRadarTier, "none">, CaseEntitlements>;
 
 /** Entitlements for a tier; null for "none" (signed out — routes 401 first). */
 export function caseEntitlementsFor(

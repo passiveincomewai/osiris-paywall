@@ -13,6 +13,8 @@
  */
 
 import type { CaseEntitlements } from "./entitlements";
+import { chargeUsage, checkQuota, type UsageStore } from "../billing/usage";
+import type { FrEntitlement } from "../billing/tier";
 import { runClaimCheck, type ClaimCheckDeps } from "./claim-check";
 import type { CaseStore, ClaimRecord, VerificationRecord } from "./store";
 
@@ -70,9 +72,21 @@ export async function runClaimVerification(
     claim: ClaimRecord;
     actorId: string;
     entitlements: CaseEntitlements | null;
+    /** Phase 11 (SHV-11 P11-B): when present, the append-only
+     *  billing ledger is checked BEFORE any work and charged
+     *  after the verification row exists (refId-linked), so
+     *  ledger counts reconcile with FrClaimVerification rows. */
+    billing?: { usageStore: UsageStore; entitlement: FrEntitlement };
   },
   checkDeps: ClaimCheckDeps = {},
 ): Promise<VerificationRecord> {
+  if (args.billing) {
+    const ent = args.billing.entitlement;
+    const quota = await checkQuota(args.billing.usageStore, ent, "claim_verification", { userId: args.caseRow.ownerId });
+    if (!quota.ok) {
+      throw new VerificationQuotaError(quota.limit, quota.resetsAt);
+    }
+  }
   if (args.entitlements) {
     const { start, end } = monthRange(new Date());
     const used = await store.countVerificationsInRange(
@@ -107,6 +121,15 @@ export async function runClaimVerification(
     promptVersion: result.promptVersion,
     createdById: args.actorId,
   });
+  if (args.billing) {
+    await chargeUsage(args.billing.usageStore, {
+      userId: args.caseRow.ownerId,
+      tier: args.billing.entitlement.tier,
+      kind: "claim_verification",
+      refType: "claim_verification",
+      refId: verification.id,
+    });
+  }
   await store.createEvent({
     caseId: args.caseRow.id,
     kind: "claim_verified",

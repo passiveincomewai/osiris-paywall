@@ -10,6 +10,7 @@ import { planTierForRow, type PlanTier } from "@/lib/plan-tier";
 import { ambientAccessForRow } from "@/lib/ambient/access";
 import { powderPassEnabled, skiAccessForRow } from "@/lib/ski/access";
 import { getEffectiveEntitlement, maxTier } from "@/lib/team/entitlement";
+import { resolveFraudRadarEntitlement } from "@/lib/fraud-radar/billing/tier";
 import { resolveEmailVerified } from "@/lib/auth-verification";
 import {
   ACQUISITION_COOKIE,
@@ -37,6 +38,12 @@ declare module "next-auth" {
        * on the same claims pass/TTL; always false while
        * POWDER_PASS_ENABLED is off (dark launch). */
       skiAccess?: boolean;
+      /** Fraud Radar tier (Phase 11 §1.3): "free" | "plus" | "pro" |
+       * "teams" | "none" — resolved on the same claims pass/TTL as
+       * planTier by billing/tier's resolver; "none" while
+       * FRAUD_RADAR_ENABLED is off (the resolver short-circuits
+       * without a DB read). Additive claim only. */
+      fraudRadarTier?: string;
       /** True when the account has 2FA on and this session hasn't
        * passed the step-up challenge yet (item 2). Middleware bounces
        * app surfaces to /auth/totp while this is true. */
@@ -57,6 +64,7 @@ declare module "next-auth/jwt" {
     planTier?: string;
     ambientAccess?: boolean;
     skiAccess?: boolean;
+    fraudRadarTier?: string;
     subscriptionCheckedAt?: number;
     totpEnabled?: boolean;
     totpVerified?: boolean;
@@ -96,7 +104,7 @@ const SUBSCRIPTION_TTL_MS = 60_000;
  */
 async function resolveSubscriptionClaims(
   userId: string,
-): Promise<{ status: string; tier: string; ambientAccess: boolean; skiAccess: boolean }> {
+): Promise<{ status: string; tier: string; ambientAccess: boolean; skiAccess: boolean; fraudRadarTier: string }> {
   const sub = await db.subscription.findUnique({ where: { userId } });
   const ownTier: PlanTier = planTierForRow(sub, process.env);
   let tier: PlanTier = ownTier;
@@ -127,6 +135,14 @@ async function resolveSubscriptionClaims(
     skiAccess:
       skiAccessForRow(sub, process.env) ||
       (powderPassEnabled(process.env) && tier === "vip"),
+    // Fraud Radar rides the same claims pass (Phase 11 §1.3):
+    // fail-soft — any resolver error resolves to "none" and never
+    // breaks sign-in; with the flag off the resolver returns
+    // "none" without touching the DB.
+    fraudRadarTier: await resolveFraudRadarEntitlement(userId).then(
+      (e) => e.tier,
+      () => "none" as const,
+    ),
   };
 }
 
@@ -189,12 +205,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Refresh on sign-in, on explicit session update(), when the cache is
       // stale, or when either claim is missing entirely (a token minted
       // before planTier existed must heal on its next session fetch).
-      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined || token.skiAccess === undefined || token.emailVerified === undefined) {
+      if (user?.id || trigger === "update" || stale || !token.subscriptionStatus || !token.planTier || token.ambientAccess === undefined || token.skiAccess === undefined || token.fraudRadarTier === undefined || token.emailVerified === undefined) {
         const claims = await resolveSubscriptionClaims(userId);
         token.subscriptionStatus = claims.status;
         token.planTier = claims.tier;
         token.ambientAccess = claims.ambientAccess;
         token.skiAccess = claims.skiAccess;
+        token.fraudRadarTier = claims.fraudRadarTier;
         token.subscriptionCheckedAt = now;
         // Verification rides the same pass (fail-soft inside the
         // resolver; it also stamps provider-verified OAuth rows the
@@ -243,6 +260,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.planTier = token.planTier ?? "free";
         session.user.ambientAccess = token.ambientAccess ?? false;
         session.user.skiAccess = token.skiAccess ?? false;
+        session.user.fraudRadarTier = token.fraudRadarTier ?? "none";
         // The session claim is boolean by design (JWT + Session
         // augmentations above), but this callback's session.user is
         // also intersected with AdapterUser, whose emailVerified is
