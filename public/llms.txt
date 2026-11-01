@@ -1,6 +1,6 @@
 # WorldEye
 
-> WorldEye is a live 3D intelligence globe on the web. It puts 74,229 live public cameras from 109 countries, real-time flight and satellite tracking, weather, earthquakes and wildfires on one interactive globe. The globe and its core layers are free with no account: flights, satellites, weather, earthquakes and the satellite imagery view are free for everyone, and camera opens follow a free ladder — 5 opens anonymously, 10 after dropping an email, 15 with a free account. Paid plans add an AI analyst, live traffic, camera recording, camera alerts and premium intelligence layers. Full version of this file: https://worldeye.app/llms-full.txt
+> WorldEye is a live 3D intelligence globe on the web. It puts 74,229 live public cameras from 109 countries, real-time flight and satellite tracking, weather, earthquakes and wildfires on one interactive globe. The globe and its core layers are free with no account: flights, satellites, weather, earthquakes and the satellite imagery view are free for everyone, and camera opens follow a free ladder — 5 opens anonymously, 10 after dropping an email, 15 with a free account. Paid plans add an AI analyst, live traffic, camera recording and camera alerts; Ultra adds the premium intelligence layers. Full version of this file: https://worldeye.app/llms-full.txt
 
 ## Platform
 

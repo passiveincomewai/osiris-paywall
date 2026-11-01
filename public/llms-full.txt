@@ -24,7 +24,7 @@ Key pages: [Live webcams directory](https://worldeye.app/live-webcams), [Cameras
 
 ## Trackers
 
-Each tracker is a page that opens the same free globe with its layer on. Flights: real-time ADS-B positions with altitude, speed and routes. Satellites: live positions computed from public TLE orbital data, including the ISS and Starlink. Ships: vessel positions from AIS transponder broadcasts — the globe is free, but the live maritime feed itself is a premium intel feed included with VIP Pro. Weather: storm systems, wind and precipitation as they happen. Earthquakes: magnitude, depth and location, updated continuously. Hurricanes and wildfires have their own trackers (wildfire detections come from NASA satellite feeds). The cyber threat map is a premium intel feed (VIP Pro). Explainer pages cover how ADS-B flight tracking and AIS ship tracking work, and the space station tracker follows the ISS specifically.
+Each tracker is a page that opens the same free globe with its layer on. Flights: real-time ADS-B positions with altitude, speed and routes. Satellites: live positions computed from public TLE orbital data, including the ISS and Starlink. Ships: vessel positions from AIS transponder broadcasts — the globe is free, but the live maritime feed itself is a premium intel feed included with Ultra. Weather: storm systems, wind and precipitation as they happen. Earthquakes: magnitude, depth and location, updated continuously. Hurricanes and wildfires have their own trackers (wildfire detections come from NASA satellite feeds). The cyber threat map is a premium intel feed (Ultra). Explainer pages cover how ADS-B flight tracking and AIS ship tracking work, and the space station tracker follows the ISS specifically.
 
 Key pages: [Live plane spotting](https://worldeye.app/live-plane-spotting), [Space station tracker](https://worldeye.app/space-station-tracker), [Ship tracker](https://worldeye.app/ship-tracker), [Hurricane tracker](https://worldeye.app/hurricane-tracker), [Wildfire tracker](https://worldeye.app/wildfire-tracker), [Cyber threat map](https://worldeye.app/cyber-threat-map), [What is ADS-B?](https://worldeye.app/what-is-ads-b), [What is AIS?](https://worldeye.app/what-is-ais)
 
@@ -32,19 +32,19 @@ Key pages: [Live plane spotting](https://worldeye.app/live-plane-spotting), [Spa
 
 WorldEye is free forever with the layers and camera ladder described above. Paid plans:
 
-- Weekly — $7.99/week, starts with a 3-day free trial. Pro tier.
-- Monthly — $13.99/month, starts with a 10-day free trial. Pro tier.
-- VIP Pro (annual) — $74.99/year, starts with a 10-day free trial.
+- Lite — $4.99/week, $8.99/month or $44.99/year.
+- Pro — $7.99/week, $13.99/month or $74.99/year (the annual Pro plan carries the VIP Pro name).
+- Ultra — $12.99/week, $24.99/month or $149.99/year.
 - Enterprise — $999/year, no free trial.
-- WorldEye Ambient — $4.99/month, starts with a 10-day free trial. An add-on product, not a tier (below).
+- WorldEye Ambient — $4.99/month. An add-on product, not a tier (below).
 
-Pro (Weekly and Monthly) adds: the OI AI Assistant (an AI analyst that talks to the map — forecasts, analysis and recon), the live traffic layer (live congestion flow with simulated vehicles clearly labelled as simulated), advanced search filters, the OSINT toolkit (in-browser network and domain recon), the Camera Recording Studio (record live feeds in the browser and save the clips), camera alerts for up to 2 cameras (an email with the photo when a condition the user describes shows up), and every future premium layer at no extra cost.
+Weekly plans start with a 3-day free trial; monthly and annual plans (and WorldEye Ambient) start with a 10-day free trial.
 
-VIP Pro (annual) includes everything in Pro, plus premium intel feeds — cyber threats, GDELT events, maritime tracking, conflict zones and live news — plus Camera Timelapse (capture snapshot cameras frame by frame and export the film) and camera alerts raised to 10 cameras.
+Lite adds unlimited camera opens, the premium map layers, the OI AI Assistant (an AI analyst that talks to the map — forecasts, analysis and recon), advanced search filters, the Camera Recording Studio (up to 5 cameras at once) and Ambient Mode. Pro adds the OSINT toolkit (in-browser network and domain recon), camera alerts for up to 2 cameras (an email with the photo when a condition the user describes shows up) and multi-camera recording up to 20. Ultra adds the premium intel feeds — cyber threats, GDELT events, maritime tracking, conflict zones and live news — Camera Timelapse (capture snapshot cameras frame by frame and export the film), camera alerts raised to 10 cameras and multi-camera recording up to 40.
 
-Enterprise ($999/year) is VIP Pro plus a key-gated camera-feed API, an embed player, and a per-camera rights registry: about 96% of the catalogue is eligible for API/embed use, and Windy cameras are excluded. WorldEye does not offer white-label embed, uptime SLAs, write APIs or RTSP redistribution.
+Enterprise ($999/year) adds a key-gated camera-feed API, an embed player, and a per-camera rights registry: about 96% of the catalogue is eligible for API/embed use, and Windy cameras are excluded. WorldEye does not offer white-label embed, uptime SLAs, write APIs or RTSP redistribution.
 
-WorldEye Ambient ($4.99/month) is a Slow TV player that cycles live cameras on a TV or second screen. It is a standalone add-on, not a plan tier — and every Pro and VIP Pro plan already includes unlimited Ambient at no extra cost. Anyone can try it: the player at worldeye.app/ambient gives a 3-minute streaming demo with no account and no card.
+WorldEye Ambient ($4.99/month) is a Slow TV player that cycles live cameras on a TV or second screen. It is a standalone add-on, not a plan tier — Lite, Pro and Ultra members are not charged for it. Anyone can try it: the player at worldeye.app/ambient gives a 3-minute streaming demo with no account and no card.
 
 Key pages: [Pricing](https://worldeye.app/pricing), [Enterprise](https://worldeye.app/enterprise), [Ambient mode](https://worldeye.app/ambient-mode)
 
