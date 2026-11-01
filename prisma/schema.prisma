@@ -2557,3 +2557,32 @@ model FrCaseEvent {
 
   @@index([caseId, createdAt])
 }
+
+// ── White Label demo generator (pick #9, 2026-11-01) ───────────────────
+// A public, shareable ILLUSTRATIVE preview a prospect generates for
+// themselves on /white-label/demo: their organisation name + uploaded
+// logo over a wall of redistribution-cleared cameras near a location
+// they pick. The preview is a sales concept mock, not a product: the
+// [slug] page is labelled "Illustrative preview" persistently and is
+// noindex. `slug` is an unguessable random token (the share link);
+// `cameraIds` snapshots the eligible camera ids chosen at generation
+// time — the page re-validates eligibility at render, so a camera that
+// later loses clearance drops out instead of leaking. Demo REQUESTS do
+// not live here: they extend the ContactMessage lead store (topic
+// "white-label-demo", src/lib/white-label) like the /white-label form.
+model WhiteLabelPreview {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  orgName        String
+  // Vercel Blob URL of the visitor-uploaded logo; null = the preview
+  // renders the organisation name as a text wordmark instead.
+  logoUrl        String?
+  locationLabel  String
+  locationDetail String?
+  lat            Float
+  lng            Float
+  cameraIds      String[] @default([])
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
+}

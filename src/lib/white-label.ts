@@ -40,6 +40,10 @@ export type WhiteLabelScale = (typeof WHITE_LABEL_SCALES)[number]["value"];
 
 export const WHITE_LABEL_COMPANY_MAX = 150;
 export const WHITE_LABEL_WEBSITE_MAX = 300;
+/** Optional qualification fields the demo-generator preview form adds
+ *  (the plain /white-label form leaves them blank). */
+export const WHITE_LABEL_LOCATIONS_MAX = 300;
+export const WHITE_LABEL_CAMERA_INTERESTS_MAX = 300;
 /** The visitor's own words — capped so the composed ContactMessage
  *  (field lines + this text) always fits CONTACT_MESSAGE_MAX. */
 export const WHITE_LABEL_MESSAGE_MIN = 10;
@@ -55,6 +59,13 @@ export interface WhiteLabelDemoSubmission {
   orgType: WhiteLabelOrgType;
   scale: WhiteLabelScale;
   message: string;
+  /** Optional, from the demo-generator preview form: where they want
+   *  cameras, and roughly what they want to show. Blank from /white-label. */
+  locations: string;
+  cameraInterests: string;
+  /** Optional path of the illustrative preview the request came from
+   *  ("/white-label/demo/<slug>"), so the lead links back to it. */
+  previewPath: string;
 }
 
 export type WhiteLabelDemoParse =
@@ -80,6 +91,16 @@ export function parseWhiteLabelDemoSubmission(body: unknown): WhiteLabelDemoPars
   const orgType = String(b.orgType ?? "");
   const scale = String(b.scale ?? "");
   const message = String(b.message ?? "").trim().slice(0, WHITE_LABEL_MESSAGE_MAX);
+  const locations = String(b.locations ?? "").trim().slice(0, WHITE_LABEL_LOCATIONS_MAX);
+  const cameraInterests = String(b.cameraInterests ?? "")
+    .trim()
+    .slice(0, WHITE_LABEL_CAMERA_INTERESTS_MAX);
+  // Only a same-site preview path is ever carried into the lead — never
+  // an arbitrary URL a caller supplies.
+  const previewPathRaw = String(b.previewPath ?? "").trim();
+  const previewPath = /^\/white-label\/demo\/[a-z0-9-]{8,40}$/.test(previewPathRaw)
+    ? previewPathRaw
+    : "";
 
   if (name.length < 1) return { ok: false, error: "Enter your name." };
   if (email.length < 3 || !email.includes("@")) {
@@ -111,6 +132,9 @@ export function parseWhiteLabelDemoSubmission(body: unknown): WhiteLabelDemoPars
       orgType: orgType as WhiteLabelOrgType,
       scale: scale as WhiteLabelScale,
       message,
+      locations,
+      cameraInterests,
+      previewPath,
     },
   };
 }
@@ -120,13 +144,20 @@ export function parseWhiteLabelDemoSubmission(body: unknown): WhiteLabelDemoPars
  *  alert email, which both render the message text as-is. */
 export function composeWhiteLabelDemoMessage(d: WhiteLabelDemoSubmission): string {
   const lines = [
-    "White Label demo request (via worldeye.app/white-label)",
+    d.previewPath
+      ? "White Label demo request (via the demo generator, worldeye.app/white-label/demo)"
+      : "White Label demo request (via worldeye.app/white-label)",
     "",
     `Company: ${d.company}`,
     `Organisation type: ${orgTypeLabel(d.orgType)}`,
     `Expected scale: ${scaleLabel(d.scale)}`,
   ];
   if (d.website) lines.push(`Website: ${d.website}`);
+  if (d.locations) lines.push(`Locations of interest: ${d.locations}`);
+  if (d.cameraInterests) lines.push(`Camera interests: ${d.cameraInterests}`);
+  if (d.previewPath) {
+    lines.push(`Their illustrative preview: https://worldeye.app${d.previewPath}`);
+  }
   lines.push("", "What they want to show:", d.message);
   return lines.join("\n").slice(0, CONTACT_MESSAGE_MAX);
 }

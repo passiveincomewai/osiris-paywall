@@ -74,6 +74,34 @@ describe("composeWhiteLabelDemoMessage", () => {
     if (!r.ok) throw new Error("fixture should parse");
     expect(composeWhiteLabelDemoMessage(r.data)).not.toContain("Website:");
   });
+
+  it("carries the generator's qualification fields and preview link", () => {
+    const r = parseWhiteLabelDemoSubmission({
+      ...GOOD,
+      locations: "Park City and Deer Valley",
+      cameraInterests: "Slopes and village streets, about a dozen cameras",
+      previewPath: "/white-label/demo/abc234def567ghjk",
+    });
+    if (!r.ok) throw new Error("fixture should parse");
+    const msg = composeWhiteLabelDemoMessage(r.data);
+    expect(msg).toContain("via the demo generator");
+    expect(msg).toContain("Locations of interest: Park City and Deer Valley");
+    expect(msg).toContain("Camera interests: Slopes and village streets");
+    expect(msg).toContain(
+      "Their illustrative preview: https://worldeye.app/white-label/demo/abc234def567ghjk",
+    );
+    expect(msg.length).toBeLessThanOrEqual(CONTACT_MESSAGE_MAX);
+  });
+
+  it("drops a preview path that is not a same-site demo path", () => {
+    const r = parseWhiteLabelDemoSubmission({
+      ...GOOD,
+      previewPath: "https://evil.example.com/phish",
+    });
+    if (!r.ok) throw new Error("fixture should parse");
+    expect(r.data.previewPath).toBe("");
+    expect(composeWhiteLabelDemoMessage(r.data)).not.toContain("evil.example");
+  });
 });
 
 describe("topic registration", () => {
