@@ -216,9 +216,12 @@ export default function FlightCockpitOverlay({ hudRef, target }: FlightCockpitOv
         </svg>
       </div>
 
-      {/* Top stack: placard, heading tape, honesty. */}
-      <div className="absolute left-1/2 top-0 flex w-full -translate-x-1/2 flex-col items-center px-3 pt-2">
-        <div className="rounded-full border border-white/12 bg-black/50 px-2.5 py-0.5 font-mono text-[9px] tracking-[0.22em] text-emerald-100/85 backdrop-blur-sm">
+      {/* Top stack: placard, heading tape, honesty. On mobile the stack
+          starts below the app header (top-16), which overlays the map's
+          top strip — at top-0 the placard rendered clipped behind the
+          Sign in / Upgrade buttons. Desktop keeps the top-0 stack. */}
+      <div className="absolute left-1/2 top-16 flex w-full -translate-x-1/2 flex-col items-center px-3 pt-2 md:top-0">
+        <div className="max-w-[calc(100vw-1.5rem)] truncate rounded-full border border-white/12 bg-black/50 px-2.5 py-0.5 font-mono text-[9px] tracking-[0.22em] text-emerald-100/85 backdrop-blur-sm">
           COCKPIT VIEW · {callsign}
         </div>
 
@@ -250,7 +253,12 @@ export default function FlightCockpitOverlay({ hudRef, target }: FlightCockpitOv
           HDG {heading != null ? `${String(Math.round(heading)).padStart(3, '0')}°` : '—'}
         </div>
 
-        <p className="mt-1.5 max-w-[92vw] rounded bg-black/40 px-2 py-0.5 text-center font-mono text-[8.5px] leading-relaxed tracking-[0.08em] text-amber-200/80">
+        {/* Desktop keeps the tag here as well as in the HUD. On mobile
+            this copy is hidden: the follow HUD carries the tag itself
+            (its compact bar while collapsed, its body while expanded),
+            so the line appears exactly once on a phone instead of
+            twice. */}
+        <p className="mt-1.5 hidden max-w-[92vw] rounded bg-black/40 px-2 py-0.5 text-center font-mono text-[8.5px] leading-relaxed tracking-[0.08em] text-amber-200/80 md:block">
           {FOLLOW_HONESTY_TAG}
           {snap?.fix ? ` · ${snap.fix.label} · FIX ${fixAge}` : ''}
         </p>

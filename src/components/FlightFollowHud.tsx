@@ -13,7 +13,7 @@
 // imply a live video feed from the aircraft — there isn't one.
 
 import { useEffect, useState } from 'react';
-import { Lock, Plane, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Plane, X } from 'lucide-react';
 import TrialPicker from './TrialPicker';
 import {
   COCKPIT_IMAGERY_TAG,
@@ -53,6 +53,18 @@ export default function FlightFollowHud({ hudRef, target, mode, onModeChange, on
    *  than navigating away from the follow to /pricing. */
   const [pickerOpen, setPickerOpen] = useState(false);
 
+  // On a phone this card is a 320 px slab across the pitched follow
+  // view — the SatelliteCard bird's-eye problem in a second panel. So
+  // on mobile it collapses to a compact bar (callsign, the headline
+  // telemetry, the honesty lines, expand, exit) until the reader taps
+  // for the full panel; the bar below is md:hidden and the body
+  // md:block, so desktop never collapses. Exit unmounts the HUD, and
+  // a target switch resets here, so every fresh follow starts
+  // collapsed.
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  useEffect(() => { setDetailsOpen(false); }, [target.icao24]);
+  const bodyHiddenOnMobile = !detailsOpen;
+
   useEffect(() => {
     const read = () => setSnap(hudRef.current);
     read();
@@ -68,6 +80,58 @@ export default function FlightFollowHud({ hudRef, target, mode, onModeChange, on
       className="pointer-events-auto w-[320px] max-w-[88vw] rounded-xl border border-cyan-300/25 bg-black/70 backdrop-blur-md shadow-xl p-3"
       data-flight-follow-hud
     >
+      {/* The collapsed mobile bar. It keeps the follow's identity, its
+          headline telemetry and — while collapsed — the honesty lines
+          on screen (the telemetry tag, and in cockpit the dated-
+          imagery ground line; the overlay's own copy of the tag is
+          mobile-hidden, so each appears exactly once), and it keeps
+          EXIT one tap away without expanding. The full panel below is
+          one chevron tap away. */}
+      <div className="md:hidden">
+        <div className="flex items-center gap-2">
+          <Plane className="w-3.5 h-3.5 text-cyan-300 flex-shrink-0" />
+          <span className="flex-1 min-w-0 text-[11px] font-mono font-bold tracking-[0.14em] text-white truncate">
+            FOLLOWING {callsign}
+          </span>
+          <button
+            type="button"
+            onClick={() => setDetailsOpen((open) => !open)}
+            aria-expanded={detailsOpen}
+            aria-label={detailsOpen ? 'Hide follow details' : 'Show follow details'}
+            className="flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded-md text-white/60 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
+          >
+            {detailsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          <button
+            type="button"
+            onClick={onExit}
+            aria-label="Exit follow and restore view"
+            className="flex min-h-[44px] flex-shrink-0 items-center justify-center rounded-md border border-cyan-300/40 px-3 text-[10px] font-mono tracking-[0.15em] text-cyan-200 transition-colors hover:bg-cyan-300/10 focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200/60"
+          >
+            EXIT
+          </button>
+        </div>
+        <div className="mt-0.5 flex items-center gap-2.5 font-mono text-[9px] tabular-nums text-white/50">
+          <span>ALT <span className="text-white/90">{snap?.alt != null ? `${Math.round(snap.alt).toLocaleString()} m` : '—'}</span></span>
+          <span>SPD <span className="text-white/90">{snap?.speedKnots != null ? `${Math.round(snap.speedKnots)} kt` : '—'}</span></span>
+          <span>HDG <span className="text-white/90">{snap ? `${Math.round(snap.headingDeg)}°` : '—'}</span></span>
+        </div>
+        {!detailsOpen && (
+          <>
+            <p className="mt-1.5 text-[8.5px] font-mono leading-relaxed tracking-[0.08em] text-amber-200/75">
+              {FOLLOW_HONESTY_TAG}
+              {snap?.fix ? ` · ${snap.fix.label}` : ''}
+            </p>
+            {mode === 'forward' && (
+              <p className="mt-1 text-[8.5px] font-mono leading-relaxed tracking-[0.08em] text-cyan-200/70">
+                {COCKPIT_IMAGERY_TAG}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className={bodyHiddenOnMobile ? 'hidden md:block' : undefined}>
       <div className="flex items-center gap-2">
         <Plane className="w-3.5 h-3.5 text-cyan-300 flex-shrink-0" />
         <span className="flex-1 min-w-0 text-[11px] font-mono font-bold tracking-[0.14em] text-white truncate">
@@ -224,6 +288,7 @@ export default function FlightFollowHud({ hudRef, target, mode, onModeChange, on
       <p className="mt-1.5 text-[8.5px] font-mono text-white/30">
         Drag the map to release the follow and keep the camera where it is.
       </p>
+      </div>
     </div>
   );
 }

@@ -145,3 +145,62 @@ describe('cockpit view — satellite imagery + real 3D buildings', () => {
     expect(hud).toContain("mode === 'forward'");
   });
 });
+
+// ── Follow HUD: mobile compact bar (2026-11-01) ─────────────────────
+//
+// On a phone the follow HUD was a 320 px slab over the pitched view —
+// the satellite card's bird's-eye defect in a second panel. These
+// pins hold the SatelliteCard-pattern collapse: a mobile-only compact
+// bar (identity, headline telemetry, honesty lines, expand, exit) and
+// a body that is hidden on mobile until expanded, with desktop
+// rendering untouched.
+
+describe('follow HUD — mobile compact bar', () => {
+  const hud = readFileSync(join(process.cwd(), 'src', 'components', 'FlightFollowHud.tsx'), 'utf8');
+  const overlay = readFileSync(
+    join(process.cwd(), 'src', 'components', 'FlightCockpitOverlay.tsx'),
+    'utf8',
+  );
+  const bar = hud.slice(hud.indexOf('The collapsed mobile bar'), hud.indexOf('bodyHiddenOnMobile ?'));
+
+  it('renders a mobile-only compact bar with identity, telemetry and 44px controls', () => {
+    expect(bar).toContain('md:hidden');
+    expect(bar).toContain('FOLLOWING {callsign}');
+    expect(bar).toMatch(/ALT <span className="text-white\/90">/);
+    expect(bar).toMatch(/SPD <span className="text-white\/90">/);
+    expect(bar).toMatch(/HDG <span className="text-white\/90">/);
+    expect(bar).toContain('aria-expanded={detailsOpen}');
+    expect(bar).toContain('Show follow details');
+    expect(bar).toContain('Hide follow details');
+    // Expand and EXIT are both full-height tap targets.
+    expect(bar.match(/min-h-\[44px\]/g)?.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('keeps EXIT — RESTORE VIEW reachable from the bar without expanding', () => {
+    expect(bar).toContain('onClick={onExit}');
+    expect(bar).toContain('aria-label="Exit follow and restore view"');
+    expect(bar).toContain('EXIT');
+  });
+
+  it('carries both honesty lines in the bar while collapsed, verbatim', () => {
+    expect(bar).toContain('{!detailsOpen && (');
+    expect(bar).toContain('FOLLOW_HONESTY_TAG');
+    expect(bar).toContain('COCKPIT_IMAGERY_TAG');
+    expect(bar).toContain("mode === 'forward'");
+  });
+
+  it('hides the full body on mobile until expanded; desktop always shows it', () => {
+    expect(hud).toContain('const bodyHiddenOnMobile = !detailsOpen;');
+    expect(hud).toContain("bodyHiddenOnMobile ? 'hidden md:block' : undefined");
+  });
+
+  it('resets the collapse on target change (exit unmounts, so re-engage starts collapsed)', () => {
+    expect(hud).toMatch(/useEffect\(\(\) => \{ setDetailsOpen\(false\); \}, \[target\.icao24\]\)/);
+  });
+
+  it('the cockpit overlay yields the honesty tag to the HUD on mobile', () => {
+    expect(overlay).toContain('hidden max-w-[92vw]');
+    expect(overlay).toContain('md:top-0');
+    expect(overlay).toContain('max-w-[calc(100vw-1.5rem)]');
+  });
+});

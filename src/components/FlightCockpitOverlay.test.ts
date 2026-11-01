@@ -76,6 +76,26 @@ describe('FlightCockpitOverlay', () => {
     expect(html).toContain(FOLLOW_HONESTY_TAG);
   });
 
+  it('drops the top stack below the app header on mobile only', () => {
+    const html = render(snap());
+    // The stack clears the header strip that overlays the map on a
+    // phone (the placard used to render clipped behind Sign in);
+    // desktop keeps the original top-0 stack.
+    expect(html).toContain('top-16');
+    expect(html).toContain('md:top-0');
+    // The placard is capped to the viewport like the bird's-eye banner.
+    expect(html).toContain('max-w-[calc(100vw-1.5rem)]');
+  });
+
+  it('keeps its honesty line desktop-only so a phone shows the tag exactly once', () => {
+    const html = render(snap());
+    // The follow HUD carries the tag on mobile (compact bar / body);
+    // the overlay's copy is hidden below md and restored at md.
+    expect(html).toContain('hidden max-w-[92vw]');
+    expect(html).toContain('md:block');
+    expect(html).toContain(FOLLOW_HONESTY_TAG);
+  });
+
   it('never fakes aircraft attitude — no horizon or attitude instrument anywhere', () => {
     const html = render(snap());
     expect(html.toUpperCase()).not.toContain('HORIZON');
