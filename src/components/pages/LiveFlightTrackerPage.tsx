@@ -23,6 +23,7 @@ import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 import FlightsNowBoard from "@/components/trackers/FlightsNowBoard";
+import MediaFrame from "@/components/design/MediaFrame";
 import RichText from "./RichText";
 import { localizedPath, type LocaleCode } from "@/i18n/config";
 import { isPublished } from "@/i18n/manifest";
@@ -176,6 +177,21 @@ export default function LiveFlightTrackerPage({
             </Link>
             <span className="text-sm text-white/40">{copy.hero.freeNote}</span>
           </div>
+        </div>
+
+        {/* The feature, as it runs — a real capture of the flight
+            layer on the live globe. */}
+        <div className="mt-12 md:mt-16">
+          <MediaFrame caption={copy.heroImage.caption} source="WorldEye">
+            <img
+              src="/landing/track-flights.jpg"
+              alt={copy.heroImage.alt}
+              width={1280}
+              height={640}
+              loading="lazy"
+              className="block w-full h-auto"
+            />
+          </MediaFrame>
         </div>
 
         {/* The one-map answer */}

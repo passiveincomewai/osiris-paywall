@@ -46,6 +46,10 @@ export interface LiveFlightTrackerCopy {
     ctaPrimary: string;
     freeNote: string;
   };
+  heroImage: {
+    caption: string;
+    alt: string;
+  };
   oneMap: {
     heading: string;
     body: RichText;
@@ -127,6 +131,10 @@ export const enLiveFlightTracker: LiveFlightTrackerCopy = {
     sub: "This airplane tracker is a flight eye on the live sky: it plots aircraft in real time on a 3D globe — position, altitude, speed and routes. It's a flight radar that costs nothing and asks for nothing: no signup, no account, no paywall.",
     ctaPrimary: "Open live tracker",
     freeNote: "Free forever · No signup",
+  },
+  heroImage: {
+    caption: "Live flight tracking on the globe",
+    alt: "Live flights tracked on the WorldEye globe",
   },
   oneMap: {
     heading: "One live map for flights — and everything around them",

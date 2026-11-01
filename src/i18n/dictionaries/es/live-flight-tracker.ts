@@ -44,6 +44,10 @@ export const esLiveFlightTracker: LiveFlightTrackerCopy = {
     ctaPrimary: "Abrir el rastreador en vivo",
     freeNote: "Gratis para siempre · Sin registro",
   },
+  heroImage: {
+    caption: "Seguimiento de vuelos en vivo en el globo",
+    alt: "Vuelos en vivo rastreados en el globo de WorldEye",
+  },
   oneMap: {
     heading: "Un solo mapa en vivo para los vuelos — y todo lo que los rodea",
     body: [
