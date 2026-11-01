@@ -118,6 +118,29 @@ const TOOLS = [
   },
 ];
 
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "Can I really do OSINT without paying anything?",
+    a: "Yes — the nine tools on this page cover orientation, research, footprinting, analysis and verification for $0. Professionals pay for speed and depth at volume, not for access to the craft itself.",
+  },
+  {
+    q: "What's the best first free OSINT tool to learn?",
+    a: "WorldEye's free globe — because visual orientation is the fastest skill to build and it improves every investigation after it. Then Bellingcat's toolkit for methodology, then theHarvester for your first real reconnaissance runs.",
+  },
+  {
+    q: "Are free OSINT tools legal to use?",
+    a: "Using public data and open tools is legal in most jurisdictions — it's what journalists and researchers do daily. Unauthorized access, harassment, and publishing private personal data are not OSINT regardless of the tool. When in doubt, don't.",
+  },
+  {
+    q: "Do I need an account to use the free tools?",
+    a: "No. The free tools run without one — WorldEye's globe needs no signup, and the tools labelled FREE on the /tools hub run right on their page, no account and no install. Some of the external tools here ask you to register a free account first, but none of the nine asks for a credit card.",
+  },
+  {
+    q: "What is the difference between the free tools and the Pro tools?",
+    a: "The free tools cover single public lookups and everyday investigation — a search, a lookup, a footprinting run. Pro buys the heavier work: scans, sweeps and automation at volume. On WorldEye's own toolkit the split is labelled plainly on /tools — FREE tools run with no WorldEye plan, while PRO tools are included with WorldEye Pro inside the RECON board on the globe.",
+  },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -133,6 +156,14 @@ const jsonLd = {
         description: `${t.tag}. ${t.body}`,
       }))
     ),
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
   ],
 };
 
@@ -341,34 +372,12 @@ export default function FreeOsintToolsPage() {
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Free OSINT questions, answered</h2>
         <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Can I really do OSINT without paying anything?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Yes — the nine tools on this page cover orientation, research,
-              footprinting, analysis and verification for $0. Professionals
-              pay for speed and depth at volume, not for access to the craft
-              itself.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best first free OSINT tool to learn?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              WorldEye&apos;s free globe — because visual orientation is the
-              fastest skill to build and it improves every investigation
-              after it. Then Bellingcat&apos;s toolkit for methodology, then
-              theHarvester for your first real reconnaissance runs.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Are free OSINT tools legal to use?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Using public data and open tools is legal in most jurisdictions
-              — it&apos;s what journalists and researchers do daily.
-              Unauthorized access, harassment, and publishing private personal
-              data are not OSINT regardless of the tool. When in doubt,
-              don&apos;t.
-            </p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.q}>
+              <h3 className="text-lg font-semibold text-white/90">{f.q}</h3>
+              <p className="text-white/55 leading-relaxed mt-2">{f.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 
