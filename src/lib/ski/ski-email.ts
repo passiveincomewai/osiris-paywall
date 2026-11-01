@@ -21,7 +21,13 @@ import { resolveSkiAccess } from "./access-server";
 import { fetchResortSnow, type ResortSnowData } from "./openmeteo";
 import type { SkiResort } from "@/lib/ski-resorts";
 
-export const SKI_EMAIL_KINDS = { dawn: "dawn", digest: "digest" } as const;
+export const SKI_EMAIL_KINDS = {
+  dawn: "dawn",
+  digest: "digest",
+  teaser: "teaser",
+  storm: "storm",
+  season: "season",
+} as const;
 export type SkiEmailKind = (typeof SKI_EMAIL_KINDS)[keyof typeof SKI_EMAIL_KINDS];
 
 /** CAN-SPAM postal line (same line the affiliate payout mail carries). */

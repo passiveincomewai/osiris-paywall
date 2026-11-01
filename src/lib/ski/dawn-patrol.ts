@@ -17,6 +17,10 @@
  * Never-send-twice: one SkiEmailSendLog row per (user, 'dawn', UTC run
  * date), checked before sending and written only after a successful
  * send — a re-run the same day sends nothing twice.
+ *
+ * 2026-11 expansion (pick 5): followers WITHOUT ski access receive a
+ * once-daily TEASER instead (kind 'teaser') — the top qualifying
+ * resort's figure only; the full brief stays members-only.
  */
 import { shell, escapeHtml, appUrl } from "@/lib/email";
 import { getSkiResort, type SkiResort } from "@/lib/ski-resorts";
@@ -71,6 +75,38 @@ export function dawnPatrolEmail(input: {
   };
 }
 
+/** Dawn-patrol TEASER for followers WITHOUT ski access (pick 5): the
+ * top qualifying resort's real figure and nothing else — the full
+ * ranked brief is the member email. Same modelled-data labelling,
+ * same fetch timestamp; the pitch is one honest paragraph (locked
+ * price + trial from the Powder Pass facts). */
+export function dawnPatrolTeaserEmail(input: {
+  name: string | null;
+  topHit: DawnResortHit;
+  otherCount: number;
+  fetchedAt: Date;
+  unsubscribeUrl: string | null;
+}): { subject: string; html: string } {
+  const first = input.name?.trim().split(/\s+/)[0] || "there";
+  const others =
+    input.otherCount > 0
+      ? ` — and ${input.otherCount} more resort${input.otherCount === 1 ? "" : "s"} you follow crossed the ${DAWN_PATROL_THRESHOLD_CM} cm line too`
+      : "";
+  return {
+    subject: `Fresh snow at ${input.topHit.resort.name} — members got the full dawn brief`,
+    html: shell(
+      "Fresh snow where you follow",
+      `${input.topHit.resort.name} picked up ${formatCm(input.topHit.snowCm)} of modelled snow in the last 24 hours.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${escapeHtml(first)},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">A taste of this morning's dawn patrol: <strong style="color:#fff;">${escapeHtml(input.topHit.resort.name)}</strong> picked up <strong style="color:#fff;">${formatCm(input.topHit.snowCm)}</strong> of modelled snowfall in the last 24 hours${others}.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Powder Pass members got the full brief at dawn — every resort they follow past the ${DAWN_PATROL_THRESHOLD_CM} cm line, with the live camera links. Your follows are saved on your free account either way; the brief itself is the members-only part. Powder Pass is $4.99/month after a 10-day free trial.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">The figure is modelled by Open-Meteo at the resort's coordinates (fetched ${escapeHtml(fetchedAtLabel(input.fetchedAt))}), not measured on the mountain — the live cameras show the real thing.</p>
+       ${skiEmailFooter(input.unsubscribeUrl)}`,
+      { label: "See Powder Pass", href: appUrl("/powder-pass") },
+    ),
+  };
+}
+
 export interface DawnPatrolSummary {
   dryRun: boolean;
   dateKey: string;
@@ -79,6 +115,8 @@ export interface DawnPatrolSummary {
   /** Users who passed email + opt-out + ski-access + dedupe gates. */
   eligible: number;
   sent: number;
+  /** Dawn-patrol TEASERS sent to followers without ski access (pick 5). */
+  teasersSent: number;
   skipped: Record<string, number>;
 }
 
@@ -94,6 +132,7 @@ export async function runDawnPatrol(
     followers: 0,
     eligible: 0,
     sent: 0,
+    teasersSent: 0,
     skipped: {},
   };
   const skip = (reason: string) => {
@@ -114,15 +153,9 @@ export async function runDawnPatrol(
       skip("opted_out");
       continue;
     }
-    if (!(await deps.hasSkiAccess(userId))) {
-      skip("no_ski_access");
-      continue;
-    }
-    if (await deps.alreadySent(userId, SKI_EMAIL_KINDS.dawn, dateKey)) {
-      skip("already_sent");
-      continue;
-    }
 
+    // Hits are computed for EVERY follower: members get the brief,
+    // followers without ski access get the one-resort teaser (pick 5).
     const hits: DawnResortHit[] = [];
     let fetchedAt: Date | null = null;
     for (const slug of slugs) {
@@ -145,25 +178,57 @@ export async function runDawnPatrol(
       skip("no_qualifying_resort");
       continue;
     }
-    summary.eligible++;
 
-    const rendered = dawnPatrolEmail({
-      name: user.name,
-      hits,
-      fetchedAt: fetchedAt ?? now,
-      unsubscribeUrl: unsubscribeUrlFor(userId),
-    });
-    if (summary.dryRun) {
+    if (await deps.hasSkiAccess(userId)) {
+      if (await deps.alreadySent(userId, SKI_EMAIL_KINDS.dawn, dateKey)) {
+        skip("already_sent");
+        continue;
+      }
+      summary.eligible++;
+
+      const rendered = dawnPatrolEmail({
+        name: user.name,
+        hits,
+        fetchedAt: fetchedAt ?? now,
+        unsubscribeUrl: unsubscribeUrlFor(userId),
+      });
+      if (summary.dryRun) {
+        summary.sent++;
+        continue;
+      }
+      const ok = await deps.send(user.email, rendered.subject, rendered.html);
+      if (!ok) {
+        skip("send_failed");
+        continue;
+      }
+      await deps.recordSent(userId, SKI_EMAIL_KINDS.dawn, dateKey);
       summary.sent++;
-      continue;
+    } else {
+      // Teaser: top hit only, once per UTC day, same never-twice log.
+      if (await deps.alreadySent(userId, SKI_EMAIL_KINDS.teaser, dateKey)) {
+        skip("already_sent");
+        continue;
+      }
+      const topHit = [...hits].sort((a, b) => b.snowCm - a.snowCm)[0];
+      const rendered = dawnPatrolTeaserEmail({
+        name: user.name,
+        topHit,
+        otherCount: hits.length - 1,
+        fetchedAt: fetchedAt ?? now,
+        unsubscribeUrl: unsubscribeUrlFor(userId),
+      });
+      if (summary.dryRun) {
+        summary.teasersSent++;
+        continue;
+      }
+      const ok = await deps.send(user.email, rendered.subject, rendered.html);
+      if (!ok) {
+        skip("send_failed");
+        continue;
+      }
+      await deps.recordSent(userId, SKI_EMAIL_KINDS.teaser, dateKey);
+      summary.teasersSent++;
     }
-    const ok = await deps.send(user.email, rendered.subject, rendered.html);
-    if (!ok) {
-      skip("send_failed");
-      continue;
-    }
-    await deps.recordSent(userId, SKI_EMAIL_KINDS.dawn, dateKey);
-    summary.sent++;
   }
   return summary;
 }

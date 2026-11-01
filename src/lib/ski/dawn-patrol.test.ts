@@ -83,7 +83,7 @@ describe("runDawnPatrol", () => {
     expect(world.sentMail).toHaveLength(1);
   });
 
-  it("sends nothing below the threshold, without ski access, or when opted out", async () => {
+  it("below threshold sends nothing; opted out sends nothing; a follower WITHOUT ski access gets the teaser, not the brief (pick 5)", async () => {
     const world: FakeWorld = {
       users: {
         u1: USER,
@@ -97,14 +97,23 @@ describe("runDawnPatrol", () => {
     };
     const deps = makeDeps(world, [
       { userId: "u1", resortSlug: "snowbird" }, // below threshold
-      { userId: "u2", resortSlug: "alta" },     // no ski access
+      { userId: "u2", resortSlug: "alta" },     // no ski access → teaser
       { userId: "u3", resortSlug: "alta" },     // opted out
     ]);
     const s = await runDawnPatrol({ deps });
-    expect(s.sent).toBe(0);
+    expect(s.sent).toBe(0); // no member briefs
+    expect(s.teasersSent).toBe(1);
     expect(s.skipped.no_qualifying_resort).toBe(1);
-    expect(s.skipped.no_ski_access).toBe(1);
     expect(s.skipped.opted_out).toBe(1);
+    expect(world.sentMail).toHaveLength(1);
+    expect(world.sentMail[0].to).toBe("pro@example.com");
+    expect(world.sentMail[0].html).toContain("taste of this morning's dawn patrol");
+    expect(world.sentMail[0].html).toContain("$4.99/month after a 10-day free trial");
+    // The teaser names the top resort and its figure, and dedupes.
+    expect(world.sentMail[0].html).toContain("Alta");
+    const second = await runDawnPatrol({ deps });
+    expect(second.teasersSent).toBe(0);
+    expect(world.sentMail).toHaveLength(1);
   });
 
   it("a failed resort fetch never fails the run or blocks other resorts", async () => {
