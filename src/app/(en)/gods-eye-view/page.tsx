@@ -271,6 +271,39 @@ export default function GodsEyeViewPage() {
           </p>
         </div>
 
+        {/* Head-to-head comparisons — the pair pages, linked from here so
+            they are not orphaned from the family's hub page. */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h2 className="text-xl md:text-2xl font-bold text-center">
+            God&apos;s Eye View vs the rest, <span className="text-[#D4AF37]">head to head</span>
+          </h2>
+          <p className="text-white/50 text-center mt-3 max-w-2xl mx-auto text-sm md:text-base">
+            Each pairing gets its own sourced comparison — what the other
+            tool does best, where it stops, and how WorldEye answers it.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            {[
+              { label: "vs Google Earth", href: "/compare/gods-eye-view-vs-google-earth" },
+              { label: "vs Zoom Earth", href: "/compare/gods-eye-view-vs-zoom-earth" },
+              { label: "vs World Monitor", href: "/compare/gods-eye-view-vs-world-monitor" },
+              { label: "vs EarthCam", href: "/compare/gods-eye-view-vs-earthcam" },
+              { label: "vs Argos Atlas", href: "/compare/gods-eye-view-vs-argos-atlas" },
+              { label: "vs LiveUAMap", href: "/compare/gods-eye-view-vs-liveuamap" },
+              { label: "vs NASA Worldview", href: "/compare/gods-eye-view-vs-nasa-worldview" },
+              { label: "vs SkylineWebcams", href: "/compare/gods-eye-view-vs-skylinewebcams" },
+              { label: "vs Windy", href: "/compare/gods-eye-view-vs-windy" },
+            ].map((c) => (
+              <Link
+                key={c.href}
+                href={c.href}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 hover:border-[#D4AF37]/40 transition"
+              >
+                God&apos;s Eye View {c.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Compact trial strip — immediately after the comparison table,
             so the trial offer lands before the explainer prose instead of
             ~78% down the page. Compact variant of the bottom trial cards;
@@ -373,6 +406,15 @@ export default function GodsEyeViewPage() {
               spin it, zoom into a continent, toggle the layers you care
               about, and click anything — a plane, a satellite, a camera — to
               see it up close.
+            </p>
+            <p>
+              Searching for God&apos;s Eye View <em>online</em> specifically —
+              the version you open in a tab rather than install? That is a
+              real fork in the road, and we walk through both routes on the{" "}
+              <Link href="/gods-eye-view-online" className="text-[#D4AF37] hover:underline">
+                God&apos;s Eye View online
+              </Link>{" "}
+              page.
             </p>
             <p>
               The context is the point. A camera is more interesting when you
@@ -550,6 +592,11 @@ export default function GodsEyeViewPage() {
 
         <RelatedLinks
           links={[
+            {
+              label: "God's Eye View online",
+              desc: "The hosted route: open the live globe in your browser — no install, no API keys, no signup.",
+              href: "/gods-eye-view-online",
+            },
             {
               label: "God's Eye View alternatives",
               desc: "Want the self-hosted open-source project instead? The honest comparison of every way to get this view.",
