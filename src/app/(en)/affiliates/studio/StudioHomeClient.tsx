@@ -238,6 +238,7 @@ export default function StudioHomeClient({
   const quickLinks = useMemo(
     () => [
       { href: "/affiliates/studio/library", title: "Template Library", body: "Browse every template by category and format." },
+      { href: "/affiliates/studio/repurpose", title: "Repurposing Machine", body: "Turn one video you own into many platform-ready variations — new hooks, pacing, captions and formats, each with your link and its own creative ID." },
       { href: "/affiliates/studio/ai", title: "AI by Cosmo", body: "Captions, hooks, scripts, and images — crafted to order by WorldEye's AI around your link." },
       { href: "/affiliates/studio/captions", title: "Caption Generator", body: "Platform-ready captions with your link + #ad disclosure." },
       { href: "/affiliates/studio/promote", title: "Promote & Share", body: "Your QR code, a UTM link builder, embeddable banners, and a ready-to-post share kit." },

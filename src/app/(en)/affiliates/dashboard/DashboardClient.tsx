@@ -297,16 +297,23 @@ export default function DashboardClient({ demo }: { demo?: DemoBundle } = {}) {
           <div>
             <div className="text-[10px] font-mono tracking-[0.2em] text-slate-400 uppercase mb-1">Marketing Studio</div>
             <div className="text-sm text-slate-300">
-              150+ templates personalized with your real link, discount code and QR — image &amp; video creators for
-              Reels, TikTok, Stories and carousels, a caption generator, campaign kits and a daily content drop.
+              73 ready-made templates personalized with your real link, discount code and QR — image &amp; video creators for
+              Reels, TikTok, Stories and carousels, a caption generator, campaign kits and a daily content drop — plus the
+              Repurposing Machine, which turns one video you own into many platform-ready variations.
               Studio use needs an active WorldEye membership (any plan, trials included).
             </div>
           </div>
-          <a href="/affiliates/studio"
-            className="shrink-0 px-4 py-2 rounded-xl text-xs font-mono font-bold text-[#04121f]"
-            style={{ background: "linear-gradient(135deg,#22d3ee,#818cf8)" }}>
-            Open the Studio →
-          </a>
+          <div className="flex shrink-0 flex-col gap-2">
+            <a href="/affiliates/studio"
+              className="px-4 py-2 rounded-xl text-xs font-mono font-bold text-[#04121f] text-center"
+              style={{ background: "linear-gradient(135deg,#22d3ee,#818cf8)" }}>
+              Open the Studio →
+            </a>
+            <a href="/affiliates/studio/repurpose"
+              className="px-4 py-2 rounded-xl text-xs font-mono font-bold border border-cyan-300/40 text-cyan-200 text-center hover:bg-cyan-400/10">
+              Repurposing Machine →
+            </a>
+          </div>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ import Link from "next/link";
 import HideForAffiliates from "@/components/affiliate/HideForAffiliates";
 
 const FEATURES: { title: string; body: string }[] = [
-  { title: "Marketing Studio", body: "150+ templates personalized with your real link, discount code and QR — image and video creators for Reels, TikTok, Stories and carousels, a caption generator, campaign kits and a daily content drop." },
+  { title: "Marketing Studio", body: "73 templates personalized with your real link, discount code and QR — image and video creators for Reels, TikTok, Stories and carousels, a caption generator, campaign kits, a daily content drop, and the Repurposing Machine for turning your own videos into platform-ready variations." },
   { title: "Live demo", body: "This page's new Live demo button opens the real dashboard on a sample dataset — explore everything before you join." },
   { title: "Live overview", body: "A stats header with 7/30/90-day and all-time ranges that refreshes itself — clicks, signups, new paying subscribers and earnings, always current." },
   { title: "Earnings chart, your way", body: "Earnings and clicks charted daily, weekly or monthly, so trends read the way you think about them." },
