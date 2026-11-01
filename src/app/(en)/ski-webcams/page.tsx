@@ -184,6 +184,111 @@ const FAQS = [
    once-deduped records; the box strictly contains the 40 km nearby
    radius and selectResortCameras' own dedupe is idempotent over a
    subset, so the cameras chosen are exactly the naive loop's. */
+
+/* Which of a country's placed records can change a hub sample?
+   selectResortCameras only ever reads records inside a resort's
+   selection box (boxCandidates), and inside dedupeCountryCameras a
+   record's fate is decided by exactly two kinds of earlier records:
+   one carrying the same id, and a kept record with the same
+   normalised name within NEAR_DUPLICATE_DEG (0.001°) of it. So the
+   dedupe only has to run over the fate-closure of the selection
+   boxes: the boxes widened by a margin far beyond 0.001°, every
+   record sharing an id with a boxed record, and — iterated to a
+   fixed point — every record within 0.002° of a record already in
+   the set (a potential name-twin of one, or of a record whose fate
+   a name-twin decides). Records outside the closure cannot kill,
+   block or displace any record a resort can select, so the samples
+   stay exactly the whole-chunk loop's — verified by running both
+   paths over every resort and diffing the outputs. The win is
+   size: the US chunk holds 41k placed records, but the 57 US
+   resorts' boxes and their closures hold ~3k, and a cold function
+   instance pays the full-chunk dedupe on its first hub request. */
+const SCOPE_LAT_BOUND = 0.38; // selection box 0.37 + margin
+const SCOPE_LNG_BASE = 0.59; // selection box 0.58 + margin
+const SCOPE_HALO_DEG = 0.002; // > NEAR_DUPLICATE_DEG (0.001)
+
+function dedupeScope(
+  placed: CountryCamera[],
+  resorts: (typeof SKI_RESORTS)[number][],
+): CountryCamera[] {
+  if (resorts.length === 0) return placed;
+  /* Per-resort scope boxes, bounds precomputed once — the scan below
+     tests every placed record against every box, so the cos() in the
+     longitude bound must not run per record. */
+  const boxes = resorts.map((r) => {
+    const phiBound = Math.min(89.9, Math.abs(r.lat) + SCOPE_LAT_BOUND);
+    return {
+      lat: r.lat,
+      lng: r.lng,
+      lngBound: SCOPE_LNG_BASE / Math.cos((phiBound * Math.PI) / 180),
+    };
+  });
+  const inScopeBox = (c: CountryCamera): boolean => {
+    const lat = c.lat as number;
+    const lng = c.lng as number;
+    for (const b of boxes) {
+      if (Math.abs(lat - b.lat) > SCOPE_LAT_BOUND) continue;
+      const dl = Math.abs(lng - b.lng);
+      if (Math.min(dl, 360 - dl) <= b.lngBound) return true;
+    }
+    return false;
+  };
+  const scope = new Set<CountryCamera>();
+  for (const c of placed) if (inScopeBox(c)) scope.add(c);
+  /* Halo cells are 0.01° buckets keyed by a packed integer — string
+     keys in this hot loop cost more than the dedupe saves. */
+  const cellKey = (cx: number, cy: number): number => cx * 40000 + cy;
+  for (;;) {
+    const ids = new Set<string>();
+    const cells = new Map<number, CountryCamera[]>();
+    for (const c of scope) {
+      ids.add(c.id);
+      const key = cellKey(
+        Math.floor((c.lat as number) / 0.01) + 9000,
+        Math.floor((c.lng as number) / 0.01) + 18000,
+      );
+      const cell = cells.get(key);
+      if (cell) cell.push(c);
+      else cells.set(key, [c]);
+    }
+    let grew = false;
+    for (const c of placed) {
+      if (scope.has(c)) continue;
+      if (ids.has(c.id)) {
+        scope.add(c);
+        grew = true;
+        continue;
+      }
+      const cx = Math.floor((c.lat as number) / 0.01) + 9000;
+      const cy = Math.floor((c.lng as number) / 0.01) + 18000;
+      let near = false;
+      for (let dx = -1; dx <= 1 && !near; dx++) {
+        for (let dy = -1; dy <= 1 && !near; dy++) {
+          const cell = cells.get(cellKey(cx + dx, cy + dy));
+          if (!cell) continue;
+          for (const k of cell) {
+            if (
+              Math.hypot(
+                (k.lat as number) - (c.lat as number),
+                (k.lng as number) - (c.lng as number),
+              ) <= SCOPE_HALO_DEG
+            ) {
+              near = true;
+              break;
+            }
+          }
+        }
+      }
+      if (near) {
+        scope.add(c);
+        grew = true;
+      }
+    }
+    if (!grew) break;
+  }
+  return placed.filter((c) => scope.has(c));
+}
+
 async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
   const byResort = new Map<string, CountryCamera[]>();
   const countrySlugs: string[] = [];
@@ -202,10 +307,13 @@ async function loadSamples(): Promise<Map<string, CountryCamera[]>> {
   const placedByCountry = new Map<string, CountryCamera[]>();
   countrySlugs.forEach((slug, i) => {
     const chunk = chunks[i] ?? [];
+    const placed = chunk.filter(
+      (c) => typeof c.lat === "number" && typeof c.lng === "number",
+    );
     placedByCountry.set(
       slug,
       dedupeCountryCameras(
-        chunk.filter((c) => typeof c.lat === "number" && typeof c.lng === "number"),
+        dedupeScope(placed, SKI_RESORTS.filter((r) => r.countrySlug === slug)),
       ),
     );
   });
