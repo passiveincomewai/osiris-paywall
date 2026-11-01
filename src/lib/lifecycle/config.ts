@@ -78,6 +78,29 @@ export const RENEWAL_NOTICE_WINDOW_MS = 7 * DAY_MS;
  * trial win-back owns) → win-back inside the first week after the end. */
 export const SUBSCRIPTION_ENDED_WINBACK_WINDOW_MS = 7 * DAY_MS;
 
+/** Onboarding drip (verified, never-paid free accounts): a day-2
+ * "get more from your account" email in the 2–5 day age band, then a
+ * day-5 trial invitation in the 5–9 day band. Bands are disjoint and
+ * each template is once-only per user. */
+export const ONBOARDING_DAY2_MIN_AGE_MS = 2 * DAY_MS;
+export const ONBOARDING_DAY2_MAX_AGE_MS = 5 * DAY_MS;
+export const ONBOARDING_DAY5_MIN_AGE_MS = 5 * DAY_MS;
+export const ONBOARDING_DAY5_MAX_AGE_MS = 9 * DAY_MS;
+
+/** Inactive re-engagement (free accounts): quiet = no signed-in page
+ * view since max(account creation, last view). Stage 1 in the 14–21
+ * day quiet band, stage 2 in the 30–45 day band. Two touches, ever. */
+export const INACTIVE_STAGE1_MIN_MS = 14 * DAY_MS;
+export const INACTIVE_STAGE1_MAX_MS = 21 * DAY_MS;
+export const INACTIVE_STAGE2_MIN_MS = 30 * DAY_MS;
+export const INACTIVE_STAGE2_MAX_MS = 45 * DAY_MS;
+
+/** Exit survey: trial died unconverted 3–5 days ago. Lands after the
+ * first win-back touch (which fires at day 0–1) and asks ONE question;
+ * answers come back through the site's contact form (owner-alerted). */
+export const EXIT_SURVEY_MIN_AGE_MS = 3 * DAY_MS;
+export const EXIT_SURVEY_MAX_AGE_MS = 5 * DAY_MS;
+
 /** Affiliate notifications: evaluated promptly, never archaeology. */
 export const AFFILIATE_SIGNUP_WINDOW_MS = 24 * HOUR_MS;
 export const AFFILIATE_COMMISSION_WINDOW_MS = 7 * DAY_MS;

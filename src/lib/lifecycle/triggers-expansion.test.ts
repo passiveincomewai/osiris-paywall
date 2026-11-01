@@ -9,6 +9,9 @@ import {
   trialWinbackSecondDue,
   cancellationSaveDue,
   subscriptionEndedWinbackDue,
+  onboardingDripDue,
+  inactiveDue,
+  trialExitSurveyDue,
 } from "./triggers";
 
 const NOW = new Date(Date.UTC(2026, 10, 1, 18, 0, 0)); // Nov 1 2026, 18:00 UTC
@@ -102,5 +105,67 @@ describe("subscriptionEndedWinbackDue", () => {
     expect(subscriptionEndedWinbackDue({ ...paidBase, stripeStatus: "incomplete_expired" }, NOW).reason).toBe("not_ended");
     expect(subscriptionEndedWinbackDue({ ...paidBase, canceledAtSec: null }, NOW).reason).toBe("no_cancel_time");
     expect(subscriptionEndedWinbackDue({ ...paidBase, hasLiveSubscription: true }, NOW).reason).toBe("already_subscribed");
+  });
+});
+
+describe("onboardingDripDue", () => {
+  const mk = (ageDays: number, sub = false) => ({
+    createdAt: new Date(NOW.getTime() - ageDays * 86400_000),
+    hasLiveSubscription: sub,
+  });
+  it("day 2 fires in the 2–5 day band only", () => {
+    expect(onboardingDripDue(mk(1), NOW).day2.reason).toBe("too_early");
+    expect(onboardingDripDue(mk(2), NOW).day2.due).toBe(true);
+    expect(onboardingDripDue(mk(4), NOW).day2.due).toBe(true);
+    expect(onboardingDripDue(mk(5), NOW).day2.reason).toBe("too_old");
+  });
+  it("day 5 fires in the 5–9 day band only, disjoint from day 2", () => {
+    expect(onboardingDripDue(mk(4), NOW).day5.reason).toBe("too_early");
+    expect(onboardingDripDue(mk(5), NOW).day5.due).toBe(true);
+    expect(onboardingDripDue(mk(8), NOW).day5.due).toBe(true);
+    expect(onboardingDripDue(mk(9), NOW).day5.reason).toBe("too_old");
+  });
+  it("never drips at subscribers", () => {
+    expect(onboardingDripDue(mk(3, true), NOW).day2.reason).toBe("already_subscribed");
+    expect(onboardingDripDue(mk(6, true), NOW).day5.reason).toBe("already_subscribed");
+  });
+});
+
+describe("inactiveDue", () => {
+  const mk = (quietDays: number, sub = false) => ({
+    quietSince: new Date(NOW.getTime() - quietDays * 86400_000),
+    hasLiveSubscription: sub,
+  });
+  it("stage 14 fires in the 14–21 day quiet band", () => {
+    expect(inactiveDue(mk(13), NOW).stage14.reason).toBe("too_early");
+    expect(inactiveDue(mk(14), NOW).stage14.due).toBe(true);
+    expect(inactiveDue(mk(20), NOW).stage14.due).toBe(true);
+    expect(inactiveDue(mk(21), NOW).stage14.reason).toBe("too_old");
+  });
+  it("stage 30 fires in the 30–45 day quiet band", () => {
+    expect(inactiveDue(mk(29), NOW).stage30.reason).toBe("too_early");
+    expect(inactiveDue(mk(30), NOW).stage30.due).toBe(true);
+    expect(inactiveDue(mk(44), NOW).stage30.due).toBe(true);
+    expect(inactiveDue(mk(45), NOW).stage30.reason).toBe("too_old");
+  });
+  it("never nudges subscribers", () => {
+    expect(inactiveDue(mk(16, true), NOW).stage14.reason).toBe("already_subscribed");
+  });
+});
+
+describe("trialExitSurveyDue", () => {
+  const base = { stripeStatus: "canceled", trialEndSec: daysAgoSec(4), hasLiveSubscription: false };
+  it("is due 3–5 days after the trial died", () => {
+    expect(trialExitSurveyDue(base, NOW).due).toBe(true);
+    expect(trialExitSurveyDue({ ...base, trialEndSec: daysAgoSec(3) }, NOW).due).toBe(true);
+    expect(trialExitSurveyDue({ ...base, trialEndSec: daysAgoSec(5) }, NOW).due).toBe(true);
+  });
+  it("waits until after the first win-back touch, and does no archaeology", () => {
+    expect(trialExitSurveyDue({ ...base, trialEndSec: daysAgoSec(2) }, NOW).reason).toBe("too_early");
+    expect(trialExitSurveyDue({ ...base, trialEndSec: daysAgoSec(6) }, NOW).reason).toBe("too_old");
+  });
+  it("keeps the lost-trial gates", () => {
+    expect(trialExitSurveyDue({ ...base, trialEndSec: null }, NOW).reason).toBe("never_trialed");
+    expect(trialExitSurveyDue({ ...base, hasLiveSubscription: true }, NOW).reason).toBe("already_subscribed");
   });
 });

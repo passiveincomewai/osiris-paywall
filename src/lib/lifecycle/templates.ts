@@ -337,6 +337,110 @@ export function subscriptionEndedWinbackEmail(input: {
   };
 }
 
+// ── (j) Onboarding drip, day 2 (marketing) ───────────────────────────
+// Only verified-free-account features: saved cameras and settings are
+// account features that follow the user across devices; camera ALERTS
+// are paid and are deliberately not promised here.
+export function onboardingDay2Email(input: {
+  name: string | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: "Two things your WorldEye account already does",
+    html: shell(
+      "Make the globe yours",
+      "Save cameras and pick up where you left off, on any device.",
+      `${P(`Hi ${first},`)}
+       ${P(`A couple of things your free account does that are easy to miss:`)}
+       ${P(`<strong style="color:#fff;">Save cameras.</strong> Found a view you love? Save it to your account and it's one tap away next time — no hunting through the globe again.`)}
+       ${P(`<strong style="color:#fff;">Your account travels with you.</strong> Sign in on your phone, a tablet or a computer and your saved cameras and settings are just there — nothing to set up twice.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open the globe", href: appUrl("/") },
+      { why: "You're receiving this because you created a WorldEye account a couple of days ago." },
+    ),
+  };
+}
+
+// ── (j2) Onboarding drip, day 5 — the trial invitation (marketing) ───
+// Prices/trials arrive pre-derived from checkoutPlanSummary via the
+// engine (same lines the welcome email prints) — never restated here.
+export function onboardingDay5Email(input: {
+  name: string | null;
+  planLines: string[];
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const lines = input.planLines
+    .map((l) => `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;margin:0 0 6px;">${escapeHtml(l)}</p>`)
+    .join("");
+  return {
+    subject: "What Pro adds — try it free first",
+    html: shell(
+      "The free globe, plus a working toolkit",
+      "Every plan starts with a free trial — the exact terms show before you commit.",
+      `${P(`Hi ${first},`)}
+       ${P(`The free globe stays free. What a paid plan adds is the toolkit around it: camera alerts for the views you follow, recording, saved intel layers and the analyst tools. Every plan starts with a free trial, and checkout shows the exact trial length and price before you commit:`)}
+       ${lines}
+       ${P(`If it's not for you, cancel in two clicks during the trial and you're never charged.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "See plans & trials", href: appUrl("/pricing") },
+      { why: "You're receiving this because you created a WorldEye account a few days ago." },
+    ),
+  };
+}
+
+// ── (k) Inactive re-engagement (marketing) ───────────────────────────
+export function inactiveReengagementEmail(input: {
+  name: string | null;
+  stage: 14 | 30;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject:
+      input.stage === 14
+        ? "The world kept moving — your globe is still free"
+        : "Still your account, still free — come see what's live",
+    html: shell(
+      "It's all still live",
+      "74,229 cameras, flights, satellites and weather — free, as always.",
+      `${P(`Hi ${first},`)}
+       ${P(`It's been a little while since you opened WorldEye. Nothing about your account has changed: the globe, the 74,229 live cameras, the flights, satellites and weather layers are all still there, and still free — no card was ever asked for and nothing has been charged.`)}
+       ${P(`Worth a fresh look: the planet at night, a volcano mid-eruption, a harbour at rush hour. Wherever you left off, it's one tap away.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Open the globe", href: appUrl("/") },
+      { why: "You're receiving this because you have a free WorldEye account you haven't visited in a while." },
+    ),
+  };
+}
+
+// ── (l) Exit survey (marketing) ──────────────────────────────────────
+// ONE question. Answers land via the site's contact form, which the
+// owner is alerted on — stated plainly in the copy so nobody writes
+// into a void.
+export function trialExitSurveyEmail(input: {
+  name: string | null;
+  planName: string;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  return {
+    subject: "One question about your WorldEye trial",
+    html: shell(
+      "What stopped you?",
+      "One line is plenty — a person reads every reply.",
+      `${P(`Hi ${first},`)}
+       ${P(`Your trial of <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong> ended a few days ago without a paid plan — no charge, no hard feelings. One question, because it genuinely shapes what we fix next:`)}
+       ${P(`<strong style="color:#fff;">What was missing, or what put you off?</strong>`)}
+       ${P(`Tap below and tell us in one line on the contact form — it goes straight to the person who builds WorldEye, and every message is read. If you'd rather not, ignore this; we won't ask again.`)}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Answer in one line", href: appUrl("/contact") },
+      { why: "You're receiving this because your WorldEye trial recently ended." },
+    ),
+  };
+}
+
 // ── (e1) Affiliate: a signup via your link (transactional) ──────────
 export function affiliateSignupEmail(input: {
   name: string | null;

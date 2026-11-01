@@ -36,6 +36,8 @@ import {
   AFFILIATE_COMMISSION_WINDOW_MS,
   TRIAL_WINBACK2_MAX_AGE_MS,
   RENEWAL_NOTICE_WINDOW_MS,
+  ONBOARDING_DAY5_MAX_AGE_MS,
+  INACTIVE_STAGE1_MIN_MS,
   REGION_WINDOW_MS,
   DAY_MS,
 } from "./config";
@@ -52,6 +54,9 @@ import {
   renewalNoticeDue,
   cancellationSaveDue,
   subscriptionEndedWinbackDue,
+  onboardingDripDue,
+  inactiveDue,
+  trialExitSurveyDue,
   affiliateSignupDue,
   affiliateFirstCommissionDue,
   regionInterestDue,
@@ -79,6 +84,10 @@ import {
   annualRenewalNoticeEmail,
   cancellationSaveEmail,
   subscriptionEndedWinbackEmail,
+  onboardingDay2Email,
+  onboardingDay5Email,
+  inactiveReengagementEmail,
+  trialExitSurveyEmail,
   affiliateSignupEmail,
   affiliateFirstCommissionEmail,
   regionInterestEmail,
@@ -97,6 +106,10 @@ export type LifecycleTemplate =
   | "annual_renewal_notice"
   | "cancellation_save"
   | "subscription_ended_winback"
+  | "onboarding_day2"
+  | "onboarding_day5"
+  | "inactive_reengagement"
+  | "trial_exit_survey"
   | "affiliate_signup"
   | "affiliate_first_commission"
   | "region_interest"
@@ -722,6 +735,151 @@ export async function runLifecycleEmails(
             unsubscribeUrl: unsubFor(user.id),
           }),
       });
+    }
+  });
+
+  // ── (j) Onboarding drip (marketing) ────────────────────────────────
+  // Verified free accounts only (unverified accounts get the R1
+  // verification reminder instead; subscribers have a live sub row).
+  await section("onboarding_drip", async () => {
+    const candidates = await db.user.findMany({
+      where: {
+        emailVerified: { not: null },
+        createdAt: { gte: new Date(now.getTime() - ONBOARDING_DAY5_MAX_AGE_MS) },
+      },
+      select: { id: true, email: true, name: true, emailOptOut: true, createdAt: true },
+      orderBy: { createdAt: "asc" },
+      take: 200,
+    });
+    const planLines = (["weekly", "monthly", "annual"] as const).map((k) => {
+      const s = checkoutPlanSummary(k);
+      return `${s.planName} — ${s.priceLine} · ${s.trialLine}`;
+    });
+    for (const u of candidates) {
+      const dbSub = await db.subscription.findUnique({
+        where: { userId: u.id },
+        select: { status: true },
+      });
+      const v = onboardingDripDue(
+        { createdAt: u.createdAt, hasLiveSubscription: !!dbSub && LIVE_STATUSES.has(dbSub.status) },
+        now,
+      );
+      if (v.day2.due) {
+        await deliver({
+          user: u,
+          template: "onboarding_day2",
+          contextKey: "account",
+          kind: "marketing",
+          render: () => onboardingDay2Email({ name: u.name, unsubscribeUrl: unsubFor(u.id) }),
+        });
+      } else if (v.day5.due) {
+        await deliver({
+          user: u,
+          template: "onboarding_day5",
+          contextKey: "account",
+          kind: "marketing",
+          render: () =>
+            onboardingDay5Email({ name: u.name, planLines, unsubscribeUrl: unsubFor(u.id) }),
+        });
+      }
+    }
+  });
+
+  // ── (k) Inactive re-engagement (marketing) ─────────────────────────
+  await section("inactive_reengagement", async () => {
+    const candidates = await db.user.findMany({
+      where: {
+        emailVerified: { not: null },
+        createdAt: {
+          lte: new Date(now.getTime() - INACTIVE_STAGE1_MIN_MS),
+          gte: new Date(now.getTime() - 120 * DAY_MS),
+        },
+      },
+      select: { id: true, email: true, name: true, emailOptOut: true, createdAt: true },
+      orderBy: { createdAt: "asc" },
+      take: 200,
+    });
+    for (const u of candidates) {
+      const dbSub = await db.subscription.findUnique({
+        where: { userId: u.id },
+        select: { status: true },
+      });
+      const lastView = await db.pageView.findFirst({
+        where: { userId: u.id },
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true },
+      });
+      const quietSince =
+        lastView && lastView.createdAt > u.createdAt ? lastView.createdAt : u.createdAt;
+      const v = inactiveDue(
+        { quietSince, hasLiveSubscription: !!dbSub && LIVE_STATUSES.has(dbSub.status) },
+        now,
+      );
+      if (v.stage14.due) {
+        await deliver({
+          user: u,
+          template: "inactive_reengagement",
+          contextKey: "stage14",
+          kind: "marketing",
+          render: () =>
+            inactiveReengagementEmail({ name: u.name, stage: 14, unsubscribeUrl: unsubFor(u.id) }),
+        });
+      } else if (v.stage30.due) {
+        await deliver({
+          user: u,
+          template: "inactive_reengagement",
+          contextKey: "stage30",
+          kind: "marketing",
+          render: () =>
+            inactiveReengagementEmail({ name: u.name, stage: 30, unsubscribeUrl: unsubFor(u.id) }),
+        });
+      }
+    }
+  });
+
+  // ── (l) Exit survey (marketing) ────────────────────────────────────
+  await section("trial_exit_survey", async () => {
+    const s = stripe();
+    for (const status of ["canceled", "incomplete_expired"] as const) {
+      const list = await s.subscriptions.list({
+        status,
+        created: { gte: Math.floor((now.getTime() - 20 * DAY_MS) / 1000) },
+        limit: 100,
+      });
+      for (const sub of list.data) {
+        if (!sub.trial_end) continue;
+        const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
+        const dbSub = await db.subscription.findFirst({
+          where: { stripeCustomerId: customerId },
+          select: { userId: true, status: true, stripeSubscriptionId: true, stripePriceId: true },
+        });
+        if (!dbSub) continue;
+        const verdict = trialExitSurveyDue(
+          {
+            stripeStatus: sub.status,
+            trialEndSec: sub.trial_end,
+            hasLiveSubscription:
+              LIVE_STATUSES.has(dbSub.status) && dbSub.stripeSubscriptionId !== sub.id,
+          },
+          now,
+        );
+        if (!verdict.due) continue;
+        const user = await db.user.findUnique({ where: { id: dbSub.userId }, select: userSelect });
+        if (!user) continue;
+        const labels = planLabelsFor(sub.items.data[0]?.price?.id ?? dbSub.stripePriceId);
+        await deliver({
+          user,
+          template: "trial_exit_survey",
+          contextKey: sub.id,
+          kind: "marketing",
+          render: () =>
+            trialExitSurveyEmail({
+              name: user.name,
+              planName: labels.planName,
+              unsubscribeUrl: unsubFor(user.id),
+            }),
+        });
+      }
     }
   });
 

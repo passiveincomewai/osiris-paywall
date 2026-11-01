@@ -27,6 +27,16 @@ import {
   TRIAL_WINBACK2_MAX_AGE_MS,
   RENEWAL_NOTICE_WINDOW_MS,
   SUBSCRIPTION_ENDED_WINBACK_WINDOW_MS,
+  ONBOARDING_DAY2_MIN_AGE_MS,
+  ONBOARDING_DAY2_MAX_AGE_MS,
+  ONBOARDING_DAY5_MIN_AGE_MS,
+  ONBOARDING_DAY5_MAX_AGE_MS,
+  INACTIVE_STAGE1_MIN_MS,
+  INACTIVE_STAGE1_MAX_MS,
+  INACTIVE_STAGE2_MIN_MS,
+  INACTIVE_STAGE2_MAX_MS,
+  EXIT_SURVEY_MIN_AGE_MS,
+  EXIT_SURVEY_MAX_AGE_MS,
   DAY_MS,
   AFFILIATE_SIGNUP_WINDOW_MS,
   AFFILIATE_COMMISSION_WINDOW_MS,
@@ -292,5 +302,72 @@ export function subscriptionEndedWinbackDue(
   const sinceEnd = now.getTime() - input.canceledAtSec * 1000;
   if (sinceEnd < 0) return no("ends_in_future");
   if (sinceEnd > SUBSCRIPTION_ENDED_WINBACK_WINDOW_MS) return no("too_old");
+  return DUE;
+}
+
+// ── (j) Onboarding drip ──────────────────────────────────────────────
+// Verified free accounts (the engine filters to emailVerified users
+// with no live subscription). Two disjoint age bands: day 2 then day 5.
+export function onboardingDripDue(
+  input: { createdAt: Date; hasLiveSubscription: boolean },
+  now: Date,
+): { day2: TriggerVerdict; day5: TriggerVerdict } {
+  if (input.hasLiveSubscription) {
+    return { day2: no("already_subscribed"), day5: no("already_subscribed") };
+  }
+  const age = now.getTime() - input.createdAt.getTime();
+  const day2: TriggerVerdict =
+    age < ONBOARDING_DAY2_MIN_AGE_MS ? no("too_early")
+    : age >= ONBOARDING_DAY2_MAX_AGE_MS ? no("too_old")
+    : DUE;
+  const day5: TriggerVerdict =
+    age < ONBOARDING_DAY5_MIN_AGE_MS ? no("too_early")
+    : age >= ONBOARDING_DAY5_MAX_AGE_MS ? no("too_old")
+    : DUE;
+  return { day2, day5 };
+}
+
+// ── (k) Inactive re-engagement ───────────────────────────────────────
+// Quiet is measured from the later of account creation and the last
+// signed-in page view, so an active user can never look inactive and
+// a brand-new account can't be "inactive" before it had a chance.
+export function inactiveDue(
+  input: { quietSince: Date; hasLiveSubscription: boolean },
+  now: Date,
+): { stage14: TriggerVerdict; stage30: TriggerVerdict } {
+  if (input.hasLiveSubscription) {
+    return { stage14: no("already_subscribed"), stage30: no("already_subscribed") };
+  }
+  const quiet = now.getTime() - input.quietSince.getTime();
+  const stage14: TriggerVerdict =
+    quiet < INACTIVE_STAGE1_MIN_MS ? no("too_early")
+    : quiet >= INACTIVE_STAGE1_MAX_MS ? no("too_old")
+    : DUE;
+  const stage30: TriggerVerdict =
+    quiet < INACTIVE_STAGE2_MIN_MS ? no("too_early")
+    : quiet >= INACTIVE_STAGE2_MAX_MS ? no("too_old")
+    : DUE;
+  return { stage14, stage30 };
+}
+
+// ── (l) Exit survey ──────────────────────────────────────────────────
+// Same lost-trial gates as the win-backs; the 3–5 day band puts it
+// after the first win-back touch and before the ~30d second touch.
+export function trialExitSurveyDue(
+  input: {
+    stripeStatus: string;
+    trialEndSec: number | null;
+    hasLiveSubscription: boolean;
+  },
+  now: Date,
+): TriggerVerdict {
+  if (input.hasLiveSubscription) return no("already_subscribed");
+  if (!input.trialEndSec) return no("never_trialed");
+  if (input.stripeStatus !== "canceled" && input.stripeStatus !== "incomplete_expired") {
+    return no("not_ended_unconverted");
+  }
+  const sinceEnd = now.getTime() - input.trialEndSec * 1000;
+  if (sinceEnd < EXIT_SURVEY_MIN_AGE_MS) return no("too_early");
+  if (sinceEnd > EXIT_SURVEY_MAX_AGE_MS) return no("too_old");
   return DUE;
 }
