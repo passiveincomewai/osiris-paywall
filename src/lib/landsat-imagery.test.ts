@@ -5,9 +5,12 @@ import {
   LANDSAT_LAST_YEAR,
   LANDSAT_STOP_COUNT,
   LANDSAT_YEARS,
+  MOSAIC_ID_TTL_MS,
   childTilesFor,
   clampLandsatYear,
   createLandsatTileLoader,
+  forgetLandsatMosaicId,
+  freshStoredMosaicId,
   isLandsatYear,
   landsatMosaicId,
   landsatMosaicSearchBody,
@@ -102,6 +105,33 @@ describe('mosaic registration', () => {
     await expect(landsatMosaicId(1996, fetcher)).rejects.toThrow(/503/);
     fail = false;
     await expect(landsatMosaicId(1996, fetcher)).resolves.toBe('pc1.retry.ok');
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it('registrations expire: stored ids are trusted only inside the TTL', () => {
+    const now = 1_800_000_000_000;
+    expect(freshStoredMosaicId({ id: 'pc1.fresh', t: now - 1000 }, now)).toBe('pc1.fresh');
+    expect(freshStoredMosaicId({ id: 'pc1.edge', t: now - MOSAIC_ID_TTL_MS }, now)).toBe('pc1.edge');
+    expect(freshStoredMosaicId({ id: 'pc1.stale', t: now - MOSAIC_ID_TTL_MS - 1 }, now)).toBeNull();
+    // The plain-string entries the first shipped version wrote
+    // carry no timestamp, so they count as expired.
+    expect(freshStoredMosaicId('pc1.legacy', now)).toBeNull();
+    expect(freshStoredMosaicId(null, now)).toBeNull();
+    expect(freshStoredMosaicId({ id: 42, t: now }, now)).toBeNull();
+    expect(freshStoredMosaicId({ id: 'pc1.x' }, now)).toBeNull();
+  });
+
+  it('forgetLandsatMosaicId evicts the cached id so the next call re-registers', async () => {
+    const fetcher = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ id: 'pc1.forget.me' }),
+    }));
+    await landsatMosaicId(1997, fetcher);
+    await landsatMosaicId(1997, fetcher);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    forgetLandsatMosaicId(1997);
+    await landsatMosaicId(1997, fetcher);
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 });
@@ -200,5 +230,37 @@ describe('the tile loader', () => {
   it('an invalid protocol URL throws', async () => {
     const load = createLandsatTileLoader({ mosaicId: async () => 'MID' });
     await expect(load('osiris-landsat://1990/{z}/{x}/{y}', signal())).rejects.toThrow(/Invalid/);
+  });
+
+  it('a 410 (expired registration) re-registers once and retries with the fresh id', async () => {
+    const fetchTile = vi.fn(async (url: string) => {
+      if (url.includes('/mosaic/OLDID/')) return { status: 410, data: new ArrayBuffer(0) };
+      return { status: 200, data: okJpeg };
+    });
+    const refreshMosaicId = vi.fn(async () => 'NEWID');
+    const load = createLandsatTileLoader({
+      fetchTile,
+      mosaicId: async () => 'OLDID',
+      refreshMosaicId,
+    });
+    const out = await load('osiris-landsat://1990/10/184/401', signal());
+    expect(out).toBe(okJpeg);
+    expect(refreshMosaicId).toHaveBeenCalledTimes(1);
+    expect(refreshMosaicId).toHaveBeenCalledWith(1990);
+    expect(fetchTile).toHaveBeenCalledTimes(2);
+    expect(fetchTile.mock.calls[1][0]).toBe(planetaryTileUrl('NEWID', 10, 184, 401));
+  });
+
+  it('a tile that still fails after the refresh throws — no retry loop', async () => {
+    const fetchTile = vi.fn(async () => ({ status: 410, data: new ArrayBuffer(0) }));
+    const refreshMosaicId = vi.fn(async () => 'NEWID');
+    const load = createLandsatTileLoader({
+      fetchTile,
+      mosaicId: async () => 'OLDID',
+      refreshMosaicId,
+    });
+    await expect(load('osiris-landsat://1990/10/184/401', signal())).rejects.toThrow(/410/);
+    expect(refreshMosaicId).toHaveBeenCalledTimes(1);
+    expect(fetchTile).toHaveBeenCalledTimes(2);
   });
 });

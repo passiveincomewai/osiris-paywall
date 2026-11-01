@@ -174,14 +174,36 @@ const defaultRegisterFetcher: RegisterFetcher = (url, init) =>
 
 const MOSAIC_STORAGE_KEY = 'osiris-landsat-mosaic-ids-v1';
 
+/**
+ * How long a stored mosaic id is trusted. Registrations EXPIRE on
+ * Planetary Computer: an id registered 2026-10-31 was answering
+ * its tiles with HTTP 410 (Gone) less than six hours later —
+ * verified live. One hour sits well inside the observed lifetime,
+ * and the tile loader additionally re-registers and retries once
+ * if a tile ever answers 404/410 (see createLandsatTileLoader),
+ * so even an id that dies early self-heals.
+ */
+export const MOSAIC_ID_TTL_MS = 60 * 60 * 1000;
+
+/** The freshness decision for one stored entry, kept pure for
+ *  tests: an entry is `{ id, t }` (registration time); anything
+ *  else — including the plain-string entries the first shipped
+ *  version wrote — counts as expired. */
+export function freshStoredMosaicId(entry: unknown, now: number): string | null {
+  if (!entry || typeof entry !== 'object') return null;
+  const { id, t } = entry as { id?: unknown; t?: unknown };
+  if (typeof id !== 'string' || !id) return null;
+  if (typeof t !== 'number' || now - t > MOSAIC_ID_TTL_MS) return null;
+  return id;
+}
+
 function readStoredMosaicId(year: number): string | null {
   try {
     if (typeof localStorage === 'undefined') return null;
     const raw = localStorage.getItem(MOSAIC_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Record<string, unknown>;
-    const id = parsed?.[String(year)];
-    return typeof id === 'string' && id.length > 0 ? id : null;
+    return freshStoredMosaicId(parsed?.[String(year)], Date.now());
   } catch {
     return null;
   }
@@ -192,22 +214,43 @@ function storeMosaicId(year: number, id: string): void {
     if (typeof localStorage === 'undefined') return;
     const raw = localStorage.getItem(MOSAIC_STORAGE_KEY);
     const parsed = (raw ? (JSON.parse(raw) as Record<string, unknown>) : {}) ?? {};
-    parsed[String(year)] = id;
+    parsed[String(year)] = { id, t: Date.now() };
     localStorage.setItem(MOSAIC_STORAGE_KEY, JSON.stringify(parsed));
   } catch {
     /* storage is an optimisation; the in-memory cache still holds it */
   }
 }
 
+function unstoreMosaicId(year: number): void {
+  try {
+    if (typeof localStorage === 'undefined') return;
+    const raw = localStorage.getItem(MOSAIC_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    delete parsed[String(year)];
+    localStorage.setItem(MOSAIC_STORAGE_KEY, JSON.stringify(parsed));
+  } catch {
+    /* in-memory eviction below is the load-bearing half */
+  }
+}
+
 const mosaicIdPromises = new Map<number, Promise<string>>();
 
+/** Evict a year's cached mosaic id (memory + storage) — the
+ *  loader calls this when a tile answers 404/410, i.e. the
+ *  registration has expired, before re-registering. */
+export function forgetLandsatMosaicId(year: number): void {
+  const y = clampLandsatYear(year);
+  mosaicIdPromises.delete(y);
+  unstoreMosaicId(y);
+}
+
 /**
- * The pgstac mosaic id for a year: from localStorage if a previous
- * visit registered it, else one POST to the Planetary Computer
- * registration endpoint. Mosaic ids are content hashes of the
- * search — the same search always yields the same id, so a stored
- * id never goes stale. Concurrent calls share one request; a
- * failed registration is evicted so the next pick retries.
+ * The pgstac mosaic id for a year: from a fresh localStorage entry
+ * if a recent visit registered it, else one POST to the Planetary
+ * Computer registration endpoint. Concurrent calls share one
+ * request; a failed registration is evicted so the next pick
+ * retries.
  */
 export function landsatMosaicId(
   year: number,
@@ -367,6 +410,10 @@ const canvasComposite: LandsatCompositeFn = async parts => {
 export interface LandsatLoaderDeps {
   fetchTile?: LandsatTileFetcher;
   mosaicId?: (year: number) => Promise<string>;
+  /** Re-register a year whose mosaic id the tiler no longer
+   *  honours (404/410 — registrations expire). Defaults to
+   *  forgetting the cached id and registering afresh. */
+  refreshMosaicId?: (year: number) => Promise<string>;
   composite?: LandsatCompositeFn;
 }
 
@@ -378,11 +425,19 @@ export interface LandsatLoaderDeps {
  *   - z < 6 → transparent, no network at all.
  * A failed child fetch degrades that quadrant to transparent
  * rather than failing the whole tile; an aborted request always
- * propagates the abort.
+ * propagates the abort. A 404/410 from the tiler means the year's
+ * mosaic registration expired: the loader re-registers once and
+ * retries before giving up on the tile.
  */
 export function createLandsatTileLoader(deps: LandsatLoaderDeps = {}) {
   const fetchTile = deps.fetchTile ?? defaultTileFetcher;
   const getMosaicId = deps.mosaicId ?? ((year: number) => landsatMosaicId(year));
+  const refreshMosaicId =
+    deps.refreshMosaicId ??
+    ((year: number) => {
+      forgetLandsatMosaicId(year);
+      return landsatMosaicId(year);
+    });
   const composite = deps.composite ?? canvasComposite;
 
   return async (url: string, signal: AbortSignal): Promise<ArrayBuffer> => {
@@ -392,10 +447,25 @@ export function createLandsatTileLoader(deps: LandsatLoaderDeps = {}) {
     if (signal?.aborted) throw new Error('Landsat tile request aborted');
     if (z < LANDSAT_COMPOSE_MIN_ZOOM) return transparentPngBytes();
 
-    const mosaicId = await getMosaicId(year);
+    // One fetch path for every real tile request: if the tiler
+    // answers 404/410 the year's registration has expired, so
+    // re-register once and retry with the fresh id. `refreshed`
+    // flips synchronously, so parallel composite children share
+    // the single refresh instead of stampeding the endpoint.
+    let currentMosaicId = await getMosaicId(year);
+    let refreshed = false;
+    const fetchServed = async (tz: number, tx: number, ty: number) => {
+      let res = await fetchTile(planetaryTileUrl(currentMosaicId, tz, tx, ty), signal);
+      if ((res.status === 404 || res.status === 410) && !refreshed) {
+        refreshed = true;
+        currentMosaicId = await refreshMosaicId(year);
+        res = await fetchTile(planetaryTileUrl(currentMosaicId, tz, tx, ty), signal);
+      }
+      return res;
+    };
 
     if (z >= LANDSAT_CHILD_ZOOM) {
-      const res = await fetchTile(planetaryTileUrl(mosaicId, z, x, y), signal);
+      const res = await fetchServed(z, x, y);
       if (res.status === 204) return transparentPngBytes();
       if (res.status !== 200) throw new Error(`Landsat tile HTTP ${res.status}`);
       return res.data;
@@ -405,10 +475,7 @@ export function createLandsatTileLoader(deps: LandsatLoaderDeps = {}) {
     const parts = await Promise.all(
       children.map(async (child): Promise<CompositePart> => {
         try {
-          const res = await fetchTile(
-            planetaryTileUrl(mosaicId, LANDSAT_CHILD_ZOOM, child.x, child.y),
-            signal,
-          );
+          const res = await fetchServed(LANDSAT_CHILD_ZOOM, child.x, child.y);
           return {
             data: res.status === 200 ? res.data : null,
             dx: child.dx,
