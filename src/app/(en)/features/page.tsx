@@ -461,15 +461,15 @@ export default async function FeaturesPage() {
         <div style={{ marginTop: "var(--we-space-7)" }}>
           <MediaFrame
             state="none"
-            caption="The live globe — a still frame from the WorldEye film"
+            caption="The live globe — a real capture of WorldEye"
             source="WorldEye"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/worldeye-cinematic-poster.jpg"
+              src="/landing/features-globe.jpg"
               alt="The WorldEye live globe"
-              width={1920}
-              height={1080}
+              width={1919}
+              height={998}
               className="block w-full h-auto"
             />
           </MediaFrame>
