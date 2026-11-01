@@ -61,6 +61,23 @@ export const TRIAL_STARTED_WINDOW_MS = 24 * HOUR_MS;
 /** Trial win-back: within a week of the trial dying unconverted. */
 export const TRIAL_WINBACK_WINDOW_MS = 7 * DAY_MS;
 
+/** Second trial win-back: ONE later touch in the 28–38 day band after
+ * the trial died. The first win-back owns days 0–7, so the two bands
+ * can never overlap; the once-only log is the second lock. */
+export const TRIAL_WINBACK2_MIN_AGE_MS = 28 * DAY_MS;
+export const TRIAL_WINBACK2_MAX_AGE_MS = 38 * DAY_MS;
+
+/** Annual renewal advance notice: inside the final week before an
+ * annual period ends and the card is charged for another year. The
+ * trial-ending email covers only a trial's FIRST charge; this covers
+ * every annual renewal after it. */
+export const RENEWAL_NOTICE_WINDOW_MS = 7 * DAY_MS;
+
+/** Paid subscription ended (a real paid period lapsed or a
+ * cancel-at-period-end reached its end — NOT a trial death, which the
+ * trial win-back owns) → win-back inside the first week after the end. */
+export const SUBSCRIPTION_ENDED_WINBACK_WINDOW_MS = 7 * DAY_MS;
+
 /** Affiliate notifications: evaluated promptly, never archaeology. */
 export const AFFILIATE_SIGNUP_WINDOW_MS = 24 * HOUR_MS;
 export const AFFILIATE_COMMISSION_WINDOW_MS = 7 * DAY_MS;

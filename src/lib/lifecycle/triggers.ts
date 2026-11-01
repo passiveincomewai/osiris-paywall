@@ -23,6 +23,11 @@ import {
   RETARGET_CHECKOUT_MIN_REMIND_GAP_MS,
   TRIAL_STARTED_WINDOW_MS,
   TRIAL_WINBACK_WINDOW_MS,
+  TRIAL_WINBACK2_MIN_AGE_MS,
+  TRIAL_WINBACK2_MAX_AGE_MS,
+  RENEWAL_NOTICE_WINDOW_MS,
+  SUBSCRIPTION_ENDED_WINBACK_WINDOW_MS,
+  DAY_MS,
   AFFILIATE_SIGNUP_WINDOW_MS,
   AFFILIATE_COMMISSION_WINDOW_MS,
 } from "./config";
@@ -186,5 +191,106 @@ export function regionInterestDue(
 ): TriggerVerdict {
   if (input.hasLiveSubscription) return no("already_subscribed");
   if (!input.interest) return no("below_threshold");
+  return DUE;
+}
+
+// ── (g) Annual renewal advance notice ────────────────────────────────
+// The trial-ending email owns a trial's first charge; this owns every
+// ANNUAL renewal after it. Only a live, non-cancelling annual sub is
+// ever charged again, so anything else is a false warning.
+export function renewalNoticeDue(
+  input: {
+    stripeStatus: string;
+    cancelAtPeriodEnd: boolean;
+    periodEnd: Date;
+    /** From the live Stripe price's recurring interval — never assumed. */
+    isAnnual: boolean;
+  },
+  now: Date,
+): TriggerVerdict {
+  if (input.stripeStatus !== "active") return no("not_active");
+  if (input.cancelAtPeriodEnd) return no("already_cancelling");
+  if (!input.isAnnual) return no("not_annual");
+  const untilEnd = input.periodEnd.getTime() - now.getTime();
+  if (untilEnd <= 0) return no("period_ended");
+  if (untilEnd > RENEWAL_NOTICE_WINDOW_MS) return no("too_early");
+  return DUE;
+}
+
+// ── (d3) Second trial win-back (~30 days) ────────────────────────────
+// Same lost-trial gates as trialWinbackDue, a disjoint later band:
+// days 28–38 after the trial died. One extra touch, never a sequence.
+export function trialWinbackSecondDue(
+  input: {
+    stripeStatus: string;
+    trialEndSec: number | null;
+    hasLiveSubscription: boolean;
+  },
+  now: Date,
+): TriggerVerdict {
+  if (input.hasLiveSubscription) return no("already_subscribed");
+  if (!input.trialEndSec) return no("never_trialed");
+  if (input.stripeStatus !== "canceled" && input.stripeStatus !== "incomplete_expired") {
+    return no("not_ended_unconverted");
+  }
+  const sinceEnd = now.getTime() - input.trialEndSec * 1000;
+  if (sinceEnd < TRIAL_WINBACK2_MIN_AGE_MS) return no("too_early");
+  if (sinceEnd > TRIAL_WINBACK2_MAX_AGE_MS) return no("too_old");
+  return DUE;
+}
+
+// ── (h) Cancellation save ────────────────────────────────────────────
+// State-based, not transition-based: a live subscription sitting in
+// cancel_at_period_end with paid time left gets ONE save email per
+// period (the once-only log keys on the period end). Catching the
+// state — rather than diffing webhook events — means portal, API and
+// support cancellations are all covered identically.
+export function cancellationSaveDue(
+  input: {
+    stripeStatus: string;
+    cancelAtPeriodEnd: boolean;
+    periodEnd: Date;
+  },
+  now: Date,
+): TriggerVerdict {
+  if (input.stripeStatus !== "active" && input.stripeStatus !== "trialing") {
+    return no("not_live");
+  }
+  if (!input.cancelAtPeriodEnd) return no("not_cancelling");
+  if (input.periodEnd.getTime() <= now.getTime()) return no("period_ended");
+  return DUE;
+}
+
+// ── (i) Paid subscription ended → win-back ───────────────────────────
+// A subscription whose PAID period actually ended (status canceled at
+// or after its paid period end) — explicitly NOT a trial death: when
+// the cancellation lands within a week of trial_end, the trial
+// win-back owns this user and this trigger stays silent. A converted
+// subscriber's canceled_at is their period end, weeks past trial_end,
+// so the guard separates the two populations cleanly.
+export function subscriptionEndedWinbackDue(
+  input: {
+    stripeStatus: string;
+    /** Unix seconds, Stripe `trial_end`; null when the sub never trialed. */
+    trialEndSec: number | null;
+    /** Unix seconds, Stripe `canceled_at`; for cancel-at-period-end
+     * subs this is the moment access ended. */
+    canceledAtSec: number | null;
+    hasLiveSubscription: boolean;
+  },
+  now: Date,
+): TriggerVerdict {
+  if (input.hasLiveSubscription) return no("already_subscribed");
+  if (input.stripeStatus !== "canceled") return no("not_ended");
+  if (!input.canceledAtSec) return no("no_cancel_time");
+  if (
+    input.trialEndSec &&
+    input.canceledAtSec - input.trialEndSec <= 7 * (DAY_MS / 1000)
+  ) {
+    return no("trial_death");
+  }
+  const sinceEnd = now.getTime() - input.canceledAtSec * 1000;
+  if (sinceEnd < 0) return no("ends_in_future");
+  if (sinceEnd > SUBSCRIPTION_ENDED_WINBACK_WINDOW_MS) return no("too_old");
   return DUE;
 }

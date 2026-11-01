@@ -216,6 +216,127 @@ export function trialEndedWinbackEmail(input: {
   };
 }
 
+// ── (e0) Annual renewal advance notice (transactional) ──────────────
+// The renewal counterpart of the trial-ending email: plan, the exact
+// amount, the exact renewal moment, the real cancel path. Figures
+// arrive pre-derived from the live Stripe price (describeStripePrice
+// via the engine) — nothing is restated here. Transactional account
+// mail: no unsubscribe footer, but the CAN-SPAM postal line rides
+// along like every email added in the 2026-11 expansion.
+export function annualRenewalNoticeEmail(input: {
+  name: string | null;
+  /** e.g. "VIP Pro plan" — describeStripePrice's planLabel via the engine. */
+  planLabel: string;
+  /** e.g. "$74.99/year" — describeStripePrice's chargeLabel. */
+  chargeLabel: string;
+  /** e.g. "$6.25/month" for annual prices; null otherwise. */
+  perMonthLabel: string | null;
+  /** Pre-rendered renewal moment (formatTrialEnd), UTC-labelled. */
+  renewsOnLabel: string;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const perMonth = input.perMonthLabel
+    ? ` (that's ${escapeHtml(input.perMonthLabel)}, billed once a year)`
+    : "";
+  return {
+    subject: `Your WorldEye ${input.planLabel} renews soon`,
+    html: shell(
+      "Your annual plan renews soon",
+      `Your WorldEye ${input.planLabel} renews on ${input.renewsOnLabel}.`,
+      `${P(`Hi ${first},`)}
+       ${P(`This is your advance notice: your <strong style="color:#fff;">WorldEye ${escapeHtml(input.planLabel)}</strong> renews on <strong style="color:#fff;">${escapeHtml(input.renewsOnLabel)}</strong>, when your card will be charged <strong style="color:#fff;">${escapeHtml(input.chargeLabel)}</strong>${perMonth}. No surprises — that's the same price as your current term.`)}
+       ${P(`Want to keep it? Do nothing — it renews on its own. Want to stop it? Sign in, open <strong style="color:#fff;">Settings → Manage billing</strong>, and cancel in the Stripe portal before the renewal date; you keep your plan until the current term ends either way.`)}`,
+      { label: "Manage my subscription", href: appUrl("/settings") },
+      { why: "You're receiving this because you have a paid WorldEye subscription." },
+    ),
+  };
+}
+
+// ── (d3) Second trial win-back, ~30 days on (marketing) ──────────────
+export function trialEndedWinbackLateEmail(input: {
+  name: string | null;
+  planName: string;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If you'd like to pick it back up, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong>:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: "A month since your WorldEye trial — the globe kept moving",
+    html: shell(
+      "Still here when you're ready",
+      "Your free account is untouched — and so is this offer, while it lasts.",
+      `${P(`Hi ${first},`)}
+       ${P(`It's been about a month since your trial of <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong> ended. Your free account — the globe, cameras, flights and weather — has kept working the whole time, and nothing was ever charged.`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "See plans", href: appUrl("/pricing") },
+      { why: "You're receiving this because your WorldEye trial ended recently." },
+    ),
+  };
+}
+
+// ── (h) Cancellation save (marketing) ────────────────────────────────
+// Sent while the cancelled subscription still has paid time left:
+// acknowledges the cancellation plainly (no guilt, no dark patterns),
+// states the exact access end, and makes restarting one click — the
+// honest version of a save attempt.
+export function cancellationSaveEmail(input: {
+  name: string | null;
+  planName: string;
+  /** Pre-rendered access-end moment (formatTrialEnd), UTC-labelled. */
+  accessUntilLabel: string;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If price played a part, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong> toward coming back:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: `Your WorldEye ${input.planName} is set to end — here's what happens next`,
+    html: shell(
+      "Your cancellation is confirmed",
+      `Your WorldEye ${input.planName} access runs until ${input.accessUntilLabel}.`,
+      `${P(`Hi ${first},`)}
+       ${P(`You've cancelled <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong>, and that's confirmed — you won't be charged again. Your paid features stay on until <strong style="color:#fff;">${escapeHtml(input.accessUntilLabel)}</strong>, and your free account (the globe, cameras, flights and weather) keeps working after that.`)}
+       ${P(`Changed your mind? You can restart any time from <strong style="color:#fff;">Settings → Manage billing</strong> — before the date above to keep everything uninterrupted, or after it whenever you're ready.`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Manage my subscription", href: appUrl("/settings") },
+      { why: "You're receiving this because you cancelled a WorldEye subscription." },
+    ),
+  };
+}
+
+// ── (i) Paid subscription ended → win-back (marketing) ───────────────
+export function subscriptionEndedWinbackEmail(input: {
+  name: string | null;
+  planName: string;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If you'd like to come back, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong>:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: `Your WorldEye ${input.planName} has ended — your free account hasn't`,
+    html: shell(
+      "Your plan has ended",
+      "Paid features are off, but the free globe is still yours.",
+      `${P(`Hi ${first},`)}
+       ${P(`Your <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong> subscription has now ended, so the paid features are switched off. Nothing further will be charged. Your free account — the globe, cameras, flights and weather — keeps working exactly as before.`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "See plans", href: appUrl("/pricing") },
+      { why: "You're receiving this because your WorldEye subscription recently ended." },
+    ),
+  };
+}
+
 // ── (e1) Affiliate: a signup via your link (transactional) ──────────
 export function affiliateSignupEmail(input: {
   name: string | null;

@@ -24,7 +24,7 @@ import { stripe } from "../stripe";
 import { sendEmail } from "../email";
 import { appBaseUrl } from "../app-url";
 import { checkoutPlanSummary } from "../billing/trial-checkout";
-import { formatMoney, formatTrialEnd, planByPriceIdFromEnv } from "../billing/trial-reminders";
+import { formatMoney, formatTrialEnd, planByPriceIdFromEnv, describeStripePrice } from "../billing/trial-reminders";
 import {
   currentDiscountOffer,
   MARKETING_CAP_WINDOW_MS,
@@ -34,7 +34,8 @@ import {
   RETARGET_PRICING_WINDOW_MS,
   AFFILIATE_SIGNUP_WINDOW_MS,
   AFFILIATE_COMMISSION_WINDOW_MS,
-  TRIAL_WINBACK_WINDOW_MS,
+  TRIAL_WINBACK2_MAX_AGE_MS,
+  RENEWAL_NOTICE_WINDOW_MS,
   REGION_WINDOW_MS,
   DAY_MS,
 } from "./config";
@@ -47,6 +48,10 @@ import {
   retargetCheckoutDue,
   trialStartedDue,
   trialWinbackDue,
+  trialWinbackSecondDue,
+  renewalNoticeDue,
+  cancellationSaveDue,
+  subscriptionEndedWinbackDue,
   affiliateSignupDue,
   affiliateFirstCommissionDue,
   regionInterestDue,
@@ -70,6 +75,10 @@ import {
   retargetCheckoutEmail,
   trialStartedEmail,
   trialEndedWinbackEmail,
+  trialEndedWinbackLateEmail,
+  annualRenewalNoticeEmail,
+  cancellationSaveEmail,
+  subscriptionEndedWinbackEmail,
   affiliateSignupEmail,
   affiliateFirstCommissionEmail,
   regionInterestEmail,
@@ -84,6 +93,10 @@ export type LifecycleTemplate =
   | "retarget_checkout"
   | "trial_started"
   | "trial_ended_winback"
+  | "trial_ended_winback_30d"
+  | "annual_renewal_notice"
+  | "cancellation_save"
+  | "subscription_ended_winback"
   | "affiliate_signup"
   | "affiliate_first_commission"
   | "region_interest"
@@ -489,7 +502,9 @@ export async function runLifecycleEmails(
     for (const status of ["canceled", "incomplete_expired"] as const) {
       const list = await s.subscriptions.list({
         status,
-        created: { gte: Math.floor((now.getTime() - (TRIAL_WINBACK_WINDOW_MS + 30 * DAY_MS)) / 1000) },
+        // Wide enough for the SECOND win-back band too: a sub created
+        // up to (38d band + a long trial) ago can still be in it.
+        created: { gte: Math.floor((now.getTime() - (TRIAL_WINBACK2_MAX_AGE_MS + 14 * DAY_MS)) / 1000) },
         limit: 100,
       });
       for (const sub of list.data) {
@@ -500,33 +515,213 @@ export async function runLifecycleEmails(
           select: { userId: true, status: true, stripeSubscriptionId: true, stripePriceId: true },
         });
         if (!dbSub) continue;
-        const verdict = trialWinbackDue(
+        const triggerInput = {
+          stripeStatus: sub.status,
+          trialEndSec: sub.trial_end,
+          hasLiveSubscription:
+            LIVE_STATUSES.has(dbSub.status) && dbSub.stripeSubscriptionId !== sub.id,
+        };
+        const verdict = trialWinbackDue(triggerInput, now);
+        const secondVerdict = verdict.due ? null : trialWinbackSecondDue(triggerInput, now);
+        if (!verdict.due && !secondVerdict?.due) continue;
+        const user = await db.user.findUnique({ where: { id: dbSub.userId }, select: userSelect });
+        if (!user) continue;
+        const labels = planLabelsFor(sub.items.data[0]?.price?.id ?? dbSub.stripePriceId);
+        if (verdict.due) {
+          await deliver({
+            user,
+            template: "trial_ended_winback",
+            contextKey: sub.id,
+            kind: "marketing",
+            render: () =>
+              trialEndedWinbackEmail({
+                name: user.name,
+                planName: labels.planName,
+                offer,
+                unsubscribeUrl: unsubFor(user.id),
+              }),
+          });
+        } else {
+          await deliver({
+            user,
+            template: "trial_ended_winback_30d",
+            contextKey: sub.id,
+            kind: "marketing",
+            render: () =>
+              trialEndedWinbackLateEmail({
+                name: user.name,
+                planName: labels.planName,
+                offer,
+                unsubscribeUrl: unsubFor(user.id),
+              }),
+          });
+        }
+      }
+    }
+  });
+
+  // ── (g) Annual renewal advance notice (transactional) ────────────
+  // DB rows nominate candidates (live, non-cancelling, period ending
+  // inside the window); the live Stripe price is the only honest
+  // source for "is this annual" and the exact amount, so both come
+  // from describeStripePrice at send time — never from restated
+  // constants. Once per (subscription, period end) via the log.
+  await section("annual_renewal_notice", async () => {
+    const s = stripe();
+    const rows = await db.subscription.findMany({
+      where: {
+        status: "active",
+        cancelAtPeriodEnd: false,
+        currentPeriodEnd: {
+          gt: now,
+          lte: new Date(now.getTime() + RENEWAL_NOTICE_WINDOW_MS),
+        },
+      },
+      select: {
+        userId: true,
+        stripeSubscriptionId: true,
+        stripePriceId: true,
+        status: true,
+        cancelAtPeriodEnd: true,
+        currentPeriodEnd: true,
+      },
+      take: 200,
+    });
+    for (const row of rows) {
+      let price: Awaited<ReturnType<typeof s.prices.retrieve>> | null = null;
+      try {
+        price = await s.prices.retrieve(row.stripePriceId);
+      } catch {
+        continue; // an unreadable price means no honest amount — skip
+      }
+      const verdict = renewalNoticeDue(
+        {
+          stripeStatus: row.status,
+          cancelAtPeriodEnd: row.cancelAtPeriodEnd,
+          periodEnd: row.currentPeriodEnd,
+          isAnnual: price.recurring?.interval === "year",
+        },
+        now,
+      );
+      if (!verdict.due) continue;
+      const user = await db.user.findUnique({ where: { id: row.userId }, select: userSelect });
+      if (!user) continue;
+      const desc = describeStripePrice(
+        {
+          id: price.id,
+          unit_amount: price.unit_amount,
+          currency: price.currency,
+          recurring: price.recurring
+            ? { interval: price.recurring.interval, interval_count: price.recurring.interval_count }
+            : null,
+        },
+        planByPriceId,
+      );
+      await deliver({
+        user,
+        template: "annual_renewal_notice",
+        contextKey: `${row.stripeSubscriptionId}:${row.currentPeriodEnd.toISOString().slice(0, 10)}`,
+        kind: "transactional",
+        render: () =>
+          annualRenewalNoticeEmail({
+            name: user.name,
+            planLabel: desc.planLabel,
+            chargeLabel: desc.chargeLabel,
+            perMonthLabel: desc.perMonthLabel,
+            renewsOnLabel: formatTrialEnd(Math.floor(row.currentPeriodEnd.getTime() / 1000)),
+          }),
+      });
+    }
+  });
+
+  // ── (h) Cancellation save (marketing) ──────────────────────────────
+  // State-based: any live Stripe subscription sitting in
+  // cancel_at_period_end gets one save email per period. Stripe is
+  // the source of truth for the state; the DB row resolves the user.
+  await section("cancellation_save", async () => {
+    const s = stripe();
+    for (const status of ["active", "trialing"] as const) {
+      const list = await s.subscriptions.list({ status, limit: 100 });
+      for (const sub of list.data) {
+        const periodEndSec = sub.items.data[0]?.current_period_end;
+        if (!periodEndSec) continue;
+        const verdict = cancellationSaveDue(
           {
             stripeStatus: sub.status,
-            trialEndSec: sub.trial_end,
-            hasLiveSubscription:
-              LIVE_STATUSES.has(dbSub.status) && dbSub.stripeSubscriptionId !== sub.id,
+            cancelAtPeriodEnd: sub.cancel_at_period_end ?? false,
+            periodEnd: new Date(periodEndSec * 1000),
           },
           now,
         );
         if (!verdict.due) continue;
+        const dbSub = await db.subscription.findUnique({
+          where: { stripeSubscriptionId: sub.id },
+          select: { userId: true, stripePriceId: true },
+        });
+        if (!dbSub) continue;
         const user = await db.user.findUnique({ where: { id: dbSub.userId }, select: userSelect });
         if (!user) continue;
         const labels = planLabelsFor(sub.items.data[0]?.price?.id ?? dbSub.stripePriceId);
         await deliver({
           user,
-          template: "trial_ended_winback",
-          contextKey: sub.id,
+          template: "cancellation_save",
+          contextKey: `${sub.id}:${new Date(periodEndSec * 1000).toISOString().slice(0, 10)}`,
           kind: "marketing",
           render: () =>
-            trialEndedWinbackEmail({
+            cancellationSaveEmail({
               name: user.name,
               planName: labels.planName,
+              accessUntilLabel: formatTrialEnd(periodEndSec),
               offer,
               unsubscribeUrl: unsubFor(user.id),
             }),
         });
       }
+    }
+  });
+
+  // ── (i) Paid subscription ended → win-back (marketing) ─────────────
+  await section("subscription_ended_winback", async () => {
+    const s = stripe();
+    const list = await s.subscriptions.list({
+      status: "canceled",
+      created: { gte: Math.floor((now.getTime() - 75 * DAY_MS) / 1000) },
+      limit: 100,
+    });
+    for (const sub of list.data) {
+      const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
+      const dbSub = await db.subscription.findFirst({
+        where: { stripeCustomerId: customerId },
+        select: { userId: true, status: true, stripeSubscriptionId: true, stripePriceId: true },
+      });
+      if (!dbSub) continue;
+      const verdict = subscriptionEndedWinbackDue(
+        {
+          stripeStatus: sub.status,
+          trialEndSec: sub.trial_end,
+          canceledAtSec: sub.canceled_at,
+          hasLiveSubscription:
+            LIVE_STATUSES.has(dbSub.status) && dbSub.stripeSubscriptionId !== sub.id,
+        },
+        now,
+      );
+      if (!verdict.due) continue;
+      const user = await db.user.findUnique({ where: { id: dbSub.userId }, select: userSelect });
+      if (!user) continue;
+      const labels = planLabelsFor(sub.items.data[0]?.price?.id ?? dbSub.stripePriceId);
+      await deliver({
+        user,
+        template: "subscription_ended_winback",
+        contextKey: sub.id,
+        kind: "marketing",
+        render: () =>
+          subscriptionEndedWinbackEmail({
+            name: user.name,
+            planName: labels.planName,
+            offer,
+            unsubscribeUrl: unsubFor(user.id),
+          }),
+      });
     }
   });
 
