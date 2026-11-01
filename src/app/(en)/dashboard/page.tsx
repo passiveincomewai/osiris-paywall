@@ -9,6 +9,7 @@ import { getUserTier, type PlanTier } from "@/lib/camera-alerts/tier";
 import { formatClock } from "@/lib/recording/dashboard";
 import SiteFooter from "@/components/SiteFooter";
 import DashboardCameras from "@/components/dashboard/DashboardCameras";
+import DashboardCollections from "@/components/dashboard/DashboardCollections";
 import SetNamePrompt from "@/components/SetNamePrompt";
 import PastDueBanner from "@/components/PastDueBanner";
 import DashboardAlerts from "@/components/dashboard/DashboardAlerts";
@@ -125,6 +126,9 @@ export default async function DashboardPage() {
             <a href="#cameras" className="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">
               My cameras
             </a>
+            <a href="#collections" className="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">
+              Collections
+            </a>
             <a href="#alerts" className="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 whitespace-nowrap transition-colors">
               Alerts
             </a>
@@ -175,6 +179,10 @@ export default async function DashboardPage() {
 
         <section id="cameras" className="scroll-mt-24">
           <DashboardCameras />
+        </section>
+
+        <section id="collections" className="scroll-mt-24">
+          <DashboardCollections />
         </section>
 
         <section id="alerts" className="scroll-mt-24">

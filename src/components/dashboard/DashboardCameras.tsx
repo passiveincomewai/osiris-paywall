@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExternalLink, LayoutGrid, Loader2, Trash2 } from "lucide-react";
 import RecordableTile, { type SavedCam } from "@/components/recording/RecordableTile";
+import AddToCollection from "@/components/dashboard/AddToCollection";
 import {
   MULTI_SELECTION_KEY,
   globeHref,
@@ -116,6 +117,7 @@ function CameraCard({
           >
             <LayoutGrid className="w-3.5 h-3.5" /> Record wall
           </button>
+          <AddToCollection cameraId={typeof d.id === "string" ? d.id : null} cameraName={cam.name} />
           <button
             onClick={() => onRemove(cam)}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border border-white/15 text-slate-400 hover:border-red-400/60 hover:text-red-300 transition"
