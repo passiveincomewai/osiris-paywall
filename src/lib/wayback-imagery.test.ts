@@ -4,6 +4,7 @@ import {
   CURRENT_IMAGERY_TILE_URL,
   ESRI_SOURCE_MAXZOOM,
   FALLBACK_WAYBACK_RELEASES,
+  LANDSAT_OVERZOOM_HINT,
   SATELLITE_ALT_SOURCE_ID,
   SATELLITE_FADE_MS,
   SATELLITE_OPACITY,
@@ -13,9 +14,11 @@ import {
   fetchWaybackReleases,
   handleSatelliteSourceData,
   isSatelliteOverlayLoadPending,
+  landsatZoomHintVisible,
   formatReleaseDate,
   parseWaybackConfig,
   SATELLITE_SOURCE_ATTRIBUTION,
+  satelliteResamplingForTileUrl,
   satelliteSelectionLabel,
   satelliteTileUrl,
   selectionAtSliderIndex,
@@ -405,6 +408,51 @@ describe('syncSatelliteOverlay with Landsat vintages', () => {
     expect(state.tileUrl).toBe(landsatProtocolTileUrl(1990));
   });
 
+  it('satelliteResamplingForTileUrl separates the families: Landsat nearest, Esri leaves the default', () => {
+    expect(satelliteResamplingForTileUrl(landsatProtocolTileUrl(1990))).toBe('nearest');
+    expect(satelliteResamplingForTileUrl(CURRENT_IMAGERY_TILE_URL)).toBeNull();
+    expect(satelliteResamplingForTileUrl(waybackTileUrl(10))).toBeNull();
+  });
+
+  it('a Landsat layer paints raster-resampling: nearest — crisp 30 m blocks, not linear smear', () => {
+    const f = fakeSatelliteMap(['day-night-fill']);
+    const state = createSatelliteOverlayState();
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    syncSatelliteOverlay(f.map, state, true, { kind: 'landsat', year: 1990 });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    const altAdded = f.added.find(a => a.layer.id === 'satellite-layer-alt')!;
+    expect(altAdded.layer.paint['raster-resampling']).toBe('nearest');
+    // The Esri layer created for `latest` carries no resampling key
+    // at all — its paint is byte-for-byte the long-standing object
+    // (the first syncSatelliteOverlay test pins it exactly).
+    const primaryAdded = f.added.find(a => a.layer.id === 'satellite-layer')!;
+    expect('raster-resampling' in primaryAdded.layer.paint).toBe(false);
+  });
+
+  it('a standby rebuilt for the other family takes that family\u2019s resampling with it', () => {
+    const f = fakeSatelliteMap(['day-night-fill']);
+    const state = createSatelliteOverlayState();
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    syncSatelliteOverlay(f.map, state, true, { kind: 'landsat', year: 1990 });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(true);
+    // Another Landsat year: the primary (created for Esri, no
+    // resampling key) is the standby and is rebuilt — its new layer
+    // must paint nearest.
+    syncSatelliteOverlay(f.map, state, true, { kind: 'landsat', year: 2000 });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    const rebuiltPrimary = f.added.filter(a => a.layer.id === 'satellite-layer').at(-1)!;
+    expect(rebuiltPrimary.layer.paint['raster-resampling']).toBe('nearest');
+    expect(handleSatelliteSourceData(f.map, state, 'satellite-tiles', true)).toBe(true);
+    // Back to Esri: the alt (created for Landsat, nearest) is
+    // rebuilt — its new layer must NOT carry the key.
+    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[1] });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    const rebuiltAlt = f.added.filter(a => a.layer.id === 'satellite-layer-alt').at(-1)!;
+    expect('raster-resampling' in rebuiltAlt.layer.paint).toBe(false);
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(true);
+  });
+
   it('switching back to an Esri vintage REBUILDS the standby at maxzoom 18 (it was created for Landsat)', () => {
     const f = fakeSatelliteMap(['day-night-fill']);
     const state = createSatelliteOverlayState();
@@ -438,5 +486,26 @@ describe('syncSatelliteOverlay with Landsat vintages', () => {
     expect(rebuilt.tiles).toEqual([waybackTileUrl(12576)]);
     expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(true);
     expect(state.tileUrl).toBe(waybackTileUrl(12576));
+  });
+});
+
+describe('landsatZoomHintVisible', () => {
+  const landsatSel = { kind: 'landsat', year: 1990 } as const;
+
+  it('shows only for a Landsat vintage zoomed past Landsat\u2019s native zoom', () => {
+    expect(landsatZoomHintVisible(landsatSel, LANDSAT_MAXZOOM + 0.01)).toBe(true);
+    expect(landsatZoomHintVisible(landsatSel, 16)).toBe(true);
+    expect(landsatZoomHintVisible(landsatSel, LANDSAT_MAXZOOM)).toBe(false);
+    expect(landsatZoomHintVisible(landsatSel, 12)).toBe(false);
+    expect(landsatZoomHintVisible(landsatSel, null)).toBe(false);
+    expect(landsatZoomHintVisible(landsatSel, undefined)).toBe(false);
+    expect(landsatZoomHintVisible({ kind: 'latest' }, 16)).toBe(false);
+    expect(landsatZoomHintVisible({ kind: 'wayback', release: threeReleases[1] }, 16)).toBe(false);
+  });
+
+  it('the hint copy names the resolution and the remedy, and never a fake precision', () => {
+    expect(LANDSAT_OVERZOOM_HINT).toContain('30 m');
+    expect(LANDSAT_OVERZOOM_HINT).toContain('1984\u20132013');
+    expect(LANDSAT_OVERZOOM_HINT).toContain('Zoom out');
   });
 });

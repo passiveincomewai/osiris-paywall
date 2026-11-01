@@ -5731,6 +5731,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
   // is that release's archive tiles.
   const satelliteOverlayStateRef = useRef(createSatelliteOverlayState());
   const [satelliteImageryLoading, setSatelliteImageryLoading] = useState(false);
+  const [satelliteMapZoom, setSatelliteMapZoom] = useState<number | null>(null);
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     try {
@@ -5758,6 +5759,24 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       console.warn('Style switch failed:', e);
     }
   }, [mapReady, mapStyle, satelliteSelection]);
+
+  // The slider's Landsat overzoom hint keys off the live map zoom
+  // (past Landsat's native zoom the coarse 30 m pixels get their
+  // one-line explanation instead of reading as a blur bug).
+  // moveend is enough — the hint matters at rest, not mid-gesture —
+  // and keeps zoom gestures off this state.
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    const map = mapRef.current as unknown as {
+      getZoom: () => number;
+      on: (type: string, listener: () => void) => void;
+      off: (type: string, listener: () => void) => void;
+    };
+    const report = () => setSatelliteMapZoom(map.getZoom());
+    report();
+    map.on('moveend', report);
+    return () => { map.off('moveend', report); };
+  }, [mapReady]);
 
   // Crossfade commit: when the standby satellite source reports its
   // tiles loaded, fade the new vintage in (lib/wayback-imagery owns
@@ -6617,7 +6636,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       {selectedSat && <SatelliteCard sat={selectedSat} onClose={clearSat} onBirdsEye={() => { if (birdsEyeUi) exitBirdsEye(); else engageBirdsEye(); }} birdsEyeActive={!!birdsEyeUi} />}
       {mapReady && <MapControls mapRef={mapRef} onInteract={onFollowInterrupt} basemapMode={basemapMode} onBasemapModeChange={onBasemapModeChange} satelliteOn={satelliteOn} onSatelliteToggle={onSatelliteToggle} onLocateMe={onLocateMe} locating={locating} locateNote={locateNote} />}
       {mapReady && satelliteOn && onSatelliteSelectionChange && (
-        <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} loading={satelliteImageryLoading} />
+        <SatelliteTimeSlider selection={satelliteSelection} onSelectionChange={onSatelliteSelectionChange} loading={satelliteImageryLoading} mapZoom={satelliteMapZoom} />
       )}
       {mapReady && <CinematicDirector openSignal={directorOpenSignal} mapRef={mapRef} cameras={(data as any)?.cameras ?? []} followTarget={selectedFlight} extraPresets={DIRECTOR_PRESETS} spaceTarget={(() => {
         if (!launchData) return null;

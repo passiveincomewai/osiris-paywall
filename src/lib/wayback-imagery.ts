@@ -161,6 +161,27 @@ export function satelliteSelectionLabel(selection: SatelliteImagerySelection): s
   return `Imagery release · ${formatReleaseDate(selection.release.date)}`;
 }
 
+/** The slider's one-line hint while a Landsat vintage is on screen
+ *  AND the view is zoomed past Landsat's native zoom: there the map
+ *  is stretching z13 tiles, so the coarse blocks are as sharp as
+ *  that era's imagery ever gets — the hint says so before they read
+ *  as a rendering bug, and points at the remedy. At or below the
+ *  native zoom the imagery speaks for itself; no hint. */
+export const LANDSAT_OVERZOOM_HINT =
+  'Landsat 30 m \u2014 this is the sharpest 1984\u20132013 gets. Zoom out for the clearest view.';
+
+export function landsatZoomHintVisible(
+  selection: SatelliteImagerySelection,
+  mapZoom: number | null | undefined,
+): boolean {
+  return (
+    selection.kind === 'landsat' &&
+    typeof mapZoom === 'number' &&
+    Number.isFinite(mapZoom) &&
+    mapZoom > LANDSAT_MAXZOOM
+  );
+}
+
 /**
  * Parse Esri's Wayback config into the release list, oldest first.
  * The config is an object keyed by release number whose values carry
@@ -304,6 +325,31 @@ export function sourceMaxzoomForTileUrl(tileUrl: string): number {
     : ESRI_SOURCE_MAXZOOM;
 }
 
+/** The raster resampling a satellite layer must paint with, by
+ *  family — or null for "leave MapLibre's default". MapLibre's
+ *  default is 'linear': right for Esri's near-native tiles, wrong
+ *  for Landsat. A 30 m pixel's edge is real data, and linear
+ *  interpolation blends ACROSS it; past LANDSAT_MAXZOOM, where the
+ *  map stretches z13 tiles to fill deeper zooms, that blending
+ *  smears the blocks into structureless mush — on a phone at city
+ *  zoom the pre-2014 imagery read as "totally blurred" even though
+ *  the tiles themselves carry clear block structure (verified
+ *  against direct Planetary Computer z12/z13 Las Vegas tile
+ *  fetches, 2026-11-01: street grid, blocks and the freeway
+ *  corridor are all legible at native zoom). 'nearest' keeps each
+ *  30 m pixel a crisp block at every zoom: pixelated but legible,
+ *  the honest look of the data. Esri returns null so its layers'
+ *  paint stays exactly what it has always been — no key at all
+ *  (a test pins that).
+ *
+ *  The family bookkeeping is the same argument as the standby
+ *  maxzoom rebuild: a layer is only ever (re)created alongside its
+ *  source, and a family switch rebuilds both — so a layer's
+ *  resampling always matches the vintage its source holds. */
+export function satelliteResamplingForTileUrl(tileUrl: string): 'nearest' | null {
+  return tileUrl.startsWith(`${LANDSAT_PROTOCOL_NAME}://`) ? 'nearest' : null;
+}
+
 /** The standby source/layer ids. A vintage switch loads the target
  *  release on the STANDBY source — stacked directly above the active
  *  satellite layer, both under `day-night-fill`, at opacity 0 — and
@@ -398,6 +444,7 @@ function ensureSatelliteSourceAndLayer(
   }
   const layerId = satelliteLayerIdForSource(sourceId);
   if (!map.getLayer(layerId)) {
+    const resampling = satelliteResamplingForTileUrl(tileUrl);
     map.addLayer(
       {
         id: layerId,
@@ -406,6 +453,10 @@ function ensureSatelliteSourceAndLayer(
         paint: {
           'raster-opacity': opacity,
           'raster-opacity-transition': { duration: SATELLITE_FADE_MS, delay: 0 },
+          // Landsat layers only: crisp nearest-neighbour pixels
+          // (see satelliteResamplingForTileUrl). Esri's paint
+          // object stays exactly what it has always been.
+          ...(resampling ? { 'raster-resampling': resampling } : {}),
         },
       },
       'day-night-fill',

@@ -24,13 +24,17 @@
  * over a given place can be older. A Landsat position is labelled
  * with its year and source and its 30 m resolution — never a fake
  * precise date, and never allowed to pass for the sharp modern
- * imagery.
+ * imagery. Past Landsat's native zoom (where the map stretches its
+ * z13 tiles) one extra line says the coarse pixels are the sharpest
+ * that era gets — see landsatZoomHintVisible in lib/wayback-imagery.
  */
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   FALLBACK_WAYBACK_RELEASES,
+  LANDSAT_OVERZOOM_HINT,
   fetchWaybackReleases,
+  landsatZoomHintVisible,
   satelliteSelectionLabel,
   selectionAtSliderIndex,
   sliderIndexForSelection,
@@ -47,9 +51,14 @@ interface SatelliteTimeSliderProps {
    *  in when ready; the readout says so instead of implying the map
    *  has already switched). */
   loading?: boolean;
+  /** The map's current zoom (OsirisMap reports it at rest), or null
+   *  before the first report. Only used for the Landsat overzoom
+   *  hint: past Landsat's native zoom the slider says the coarse
+   *  30 m pixels are as sharp as 1984–2013 gets. */
+  mapZoom?: number | null;
 }
 
-export default function SatelliteTimeSlider({ selection, onSelectionChange, loading = false }: SatelliteTimeSliderProps) {
+export default function SatelliteTimeSlider({ selection, onSelectionChange, loading = false, mapZoom = null }: SatelliteTimeSliderProps) {
   const [releases, setReleases] = useState<readonly WaybackRelease[]>(FALLBACK_WAYBACK_RELEASES);
 
   useEffect(() => {
@@ -126,6 +135,11 @@ export default function SatelliteTimeSlider({ selection, onSelectionChange, load
         </span>
         <span>Latest</span>
       </div>
+      {landsatZoomHintVisible(selection, mapZoom) && (
+        <div className="mt-1 text-center text-[9px] leading-tight opacity-80">
+          {LANDSAT_OVERZOOM_HINT}
+        </div>
+      )}
     </div>
   );
 }
