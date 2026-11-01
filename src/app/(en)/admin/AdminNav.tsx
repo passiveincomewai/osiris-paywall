@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 // Shared admin section nav. On phones it is a horizontally scrollable row
-// pinned under the page header (each link is a >=40px tap target and never
+// pinned under the page header (each link is a >=44px tap target and never
 // squashes); on large screens it sits inline at the right of the header.
 // Every admin page renders this so all sections stay reachable from any
 // admin screen — previously each sub-page hand-rolled its own links and
 // some sections (Conversion, Contact) were unreachable from the others.
-export type AdminSection = "dashboard" | "conversion" | "affiliates" | "competitor-seo" | "seo" | "contact" | "camera-submissions";
+export type AdminSection = "dashboard" | "conversion" | "affiliates" | "competitor-seo" | "seo" | "discovery" | "contact" | "camera-submissions";
 
 const SECTIONS: { key: AdminSection; href: string; label: string }[] = [
   { key: "dashboard", href: "/admin", label: "Dashboard" },
@@ -14,6 +14,7 @@ const SECTIONS: { key: AdminSection; href: string; label: string }[] = [
   { key: "affiliates", href: "/admin/affiliates", label: "Affiliates" },
   { key: "competitor-seo", href: "/admin/competitor-seo", label: "Competitor SEO" },
   { key: "seo", href: "/admin/seo", label: "SEO" },
+  { key: "discovery", href: "/admin/discovery", label: "Discovery" },
   { key: "contact", href: "/admin/contact", label: "Contact inbox" },
   { key: "camera-submissions", href: "/admin/camera-submissions", label: "Camera submissions" },
 ];
@@ -27,7 +28,7 @@ export default function AdminNav({
   growthUrl?: string | null;
 }) {
   const linkCls = (isActive: boolean) =>
-    `shrink-0 inline-flex items-center px-4 py-2.5 rounded-lg border transition ${
+    `shrink-0 inline-flex items-center px-4 py-3 rounded-lg border transition ${
       isActive
         ? "border-cyan-400/50 text-cyan-200 bg-cyan-400/10"
         : "border-white/15 text-white/70 hover:text-white"
@@ -42,7 +43,7 @@ export default function AdminNav({
           href={growthUrl}
           target="_blank"
           rel="noreferrer"
-          className="shrink-0 inline-flex items-center px-4 py-2.5 rounded-lg border border-cyan-400/30 text-cyan-300 hover:text-cyan-100"
+          className="shrink-0 inline-flex items-center px-4 py-3 rounded-lg border border-cyan-400/30 text-cyan-300 hover:text-cyan-100"
         >
           Growth Engine ↗
         </a>

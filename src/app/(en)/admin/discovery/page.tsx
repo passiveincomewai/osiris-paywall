@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { adminEmails } from "@/lib/affiliate/admin";
 import { DISCOVERY_SOURCES, discoverySourceLabel } from "@/lib/discovery-sources";
+import AdminNav from "../AdminNav";
 
 /**
  * Admin — "How did you find out about us?" (discovery) answers.
@@ -96,8 +97,8 @@ export default async function DiscoveryAdminPage() {
   return (
     <div className="docs-root min-h-screen" style={{ background: "#050810" }}>
       <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6 sm:py-10 text-white">
-        <Link href="/admin" className="text-sm text-cyan-300 hover:underline">← Admin dashboard</Link>
-        <h1 className="mt-4 text-2xl font-bold">Discovery — how members found WorldEye</h1>
+        <AdminNav active="discovery" />
+        <h1 className="mt-6 text-2xl font-bold">Discovery — how members found WorldEye</h1>
         <p className="mt-2 text-sm text-white/50 leading-relaxed">
           Self-reported answers to “How did you find out about us?”, asked once in account
           settings and stored on the member&rsquo;s record. This is what members said —
@@ -128,7 +129,7 @@ export default async function DiscoveryAdminPage() {
                 key={r.key}
                 className={`flex items-center gap-4 px-4 py-3 bg-white/[0.02] ${i > 0 ? "border-t border-white/[0.06]" : ""}`}
               >
-                <div className="w-44 shrink-0 text-sm text-white/80">{r.label}</div>
+                <div className="w-28 sm:w-44 shrink-0 text-sm text-white/80">{r.label}</div>
                 <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
                   <div
                     className="h-full rounded-full bg-cyan-400/70"
