@@ -11,6 +11,7 @@
 
 import type { CaseRecord, CaseStore } from "./store";
 import type { CaseEntitlements } from "./entitlements";
+import { deleteVaultObjects } from "./vault";
 
 export class CaseQuotaError extends Error {
   code = "CASE_LIMIT" as const;
@@ -95,29 +96,33 @@ export async function updateCaseForUser(
 }
 
 /**
- * Delete a case (§2.6 rule 2): enumerate the case's vault Blob
- * pathnames first (the account/case vault sweep — the Blob
- * deletion itself completes in P8-B, which owns the vault), then
- * hard-delete the row; children cascade. There is no trash and
- * no soft-delete for cases in v1.
+ * Delete a case (§2.6 rule 2): enumerate THIS case's vault Blob
+ * pathnames, delete the objects, then hard-delete the row;
+ * children cascade. There is no trash and no soft-delete for
+ * cases in v1. Blob deletion is best-effort per object: any
+ * pathname that could not be deleted is returned (never
+ * silently dropped) so the caller can surface it; the row
+ * delete proceeds because the case's access is revoked with
+ * it either way.
  */
 export async function deleteCaseForUser(
   store: CaseStore,
   args: { caseRow: CaseRecord; actorId: string },
-): Promise<{ evidencePathnames: string[] }> {
-  const all = await store.listEvidencePathnamesForUser(args.caseRow.ownerId);
-  // The enumeration is owner-wide (the account-deletion hook
-  // shape); the case sweep in P8-B narrows by case prefix.
+): Promise<{ evidencePathnames: string[]; failedPathnames: string[] }> {
+  const pathnames = await store.listEvidencePathnamesForCase(args.caseRow.id);
+  const { failed } = await deleteVaultObjects(pathnames);
   await store.deleteCase(args.caseRow.id);
   void args.actorId;
-  return { evidencePathnames: all };
+  return { evidencePathnames: pathnames, failedPathnames: failed };
 }
 
 /**
- * Account-deletion vault hook (§2.6 rule 3, P8-A stub): the
- * enumeration the account-deletion flow calls BEFORE its DB
- * cascade, so no vault bytes are left ownerless. The Blob sweep
- * over the returned pathnames completes in P8-B.
+ * Account-deletion vault hook (§2.6 rule 3): the enumeration
+ * the account-deletion flow calls BEFORE its DB cascade, so no
+ * vault bytes are left ownerless. P8-B completes the sweep
+ * behind it: `sweepUserVaultObjects` (vault.ts) deletes the
+ * enumerated objects, and the account-deletion executor calls
+ * it before deleting the user row.
  */
 export async function listUserEvidencePathnames(
   store: CaseStore,

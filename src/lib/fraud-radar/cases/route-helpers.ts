@@ -9,7 +9,14 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import type { SessionLike } from "./entitlements";
-import { getCaseStore, type CaseRecord, type LeadRecord, type NoteRecord } from "./store";
+import {
+  getCaseStore,
+  type CaseRecord,
+  type EvidenceRecord,
+  type LeadRecord,
+  type NoteRecord,
+  type ProcessingJobRecord,
+} from "./store";
 import { loadAccessibleCase, type CaseAccess } from "./access";
 
 export interface CaseSession {
@@ -42,6 +49,35 @@ export function isPlatformAdmin(
 
 export function notFound() {
   return NextResponse.json({ error: "not_found" }, { status: 404 });
+}
+
+/** Map a vault validation failure to its honest HTTP state
+ *  (§5.2 error shape: { error: CODE }-family bodies). */
+export function vaultErrorResponse(err: unknown): NextResponse | null {
+  if (!err || typeof err !== "object" || !("code" in err)) return null;
+  const code = (err as { code: string }).code;
+  const message = err instanceof Error ? err.message : "vault error";
+  switch (code) {
+    case "storage_unavailable":
+      return NextResponse.json(
+        { error: "storage_unavailable", code: "STORAGE_UNAVAILABLE" },
+        { status: 503 },
+      );
+    case "file_too_large":
+      return NextResponse.json(
+        { error: message, code: "FILE_TOO_LARGE" },
+        { status: 413 },
+      );
+    case "unsupported_type":
+    case "type_mismatch":
+    case "invalid_input":
+      return NextResponse.json(
+        { error: message, code: code.toUpperCase() },
+        { status: 400 },
+      );
+    default:
+      return null;
+  }
 }
 
 export function signInRequired() {
@@ -100,6 +136,52 @@ export function serializeLead(l: LeadRecord) {
     pinnedById: l.pinnedById,
     pinnedAt: l.pinnedAt.toISOString(),
     annotation: l.annotation,
+  };
+}
+
+/**
+ * Evidence serialisation (§2.1, §2.5): the wire shape carries
+ * metadata + hashes only. It NEVER carries a Blob URL and
+ * never carries a Blob pathname — clients hold only the
+ * evidence id, and bytes move exclusively through the gated
+ * download/extracted routes.
+ */
+export function serializeEvidence(e: EvidenceRecord) {
+  return {
+    id: e.id,
+    caseId: e.caseId,
+    kind: e.kind,
+    title: e.title,
+    description: e.description,
+    originalFilename: e.originalFilename,
+    contentType: e.contentType,
+    sizeBytes: e.sizeBytes !== null ? e.sizeBytes.toString() : null,
+    sha256: e.sha256,
+    storageState: e.storageState,
+    artifactEnvelope: e.artifactEnvelope,
+    artifactSha256: e.artifactSha256,
+    processingStatus: e.processingStatus,
+    processingPath: e.processingPath,
+    processorVersion: e.processorVersion,
+    pageCount: e.pageCount,
+    uploadedById: e.uploadedById,
+    createdAt: e.createdAt.toISOString(),
+    updatedAt: e.updatedAt.toISOString(),
+  };
+}
+
+export function serializeJob(j: ProcessingJobRecord) {
+  return {
+    id: j.id,
+    evidenceId: j.evidenceId,
+    caseId: j.caseId,
+    status: j.status,
+    requestedPath: j.requestedPath,
+    attempts: j.attempts,
+    error: j.error,
+    startedAt: j.startedAt ? j.startedAt.toISOString() : null,
+    finishedAt: j.finishedAt ? j.finishedAt.toISOString() : null,
+    createdAt: j.createdAt.toISOString(),
   };
 }
 

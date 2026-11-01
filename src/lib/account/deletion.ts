@@ -6,6 +6,7 @@
 // end in Stripe, and the executor cancels anything still live before
 // deleting. The executor runs from /api/cron/account-deletions.
 
+import { del } from "@vercel/blob";
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 
@@ -62,6 +63,28 @@ export async function processDueDeletions(now: Date = new Date()): Promise<{ del
         // Belt-and-braces: nothing billable survives the account.
         await stripe().subscriptions.cancel(sub.stripeSubscriptionId).catch(() => {});
         await stripe().customers.del(sub.stripeCustomerId).catch(() => {});
+      }
+      // Fraud Radar vault sweep (PHASE8 §2.6 rule 3, completed
+      // by P8-B): the DB cascade removes the FrCaseEvidence
+      // ROWS but cannot delete Blob objects — enumerate the
+      // user's vault pathnames and delete the bytes FIRST, so
+      // no evidence file is left ownerless. Best-effort per
+      // object; a failure is logged, never silent.
+      if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+        const evidenceRows = await db.frCaseEvidence
+          .findMany({
+            where: { case: { ownerId: id } },
+            select: { blobPathname: true, extractedTextPathname: true },
+          })
+          .catch(() => []);
+        const pathnames = evidenceRows
+          .flatMap((r) => [r.blobPathname, r.extractedTextPathname])
+          .filter((p): p is string => typeof p === "string" && p.length > 0);
+        for (const pathname of pathnames) {
+          await del(pathname).catch((err) => {
+            console.error("[account-deletion] vault delete failed", pathname, err);
+          });
+        }
       }
       // Cascades remove preferences, devices, sign-in events, TOTP,
       // saved cameras, alert rules, shares and the affiliate profile.

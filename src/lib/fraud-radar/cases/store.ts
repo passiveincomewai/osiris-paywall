@@ -105,6 +105,86 @@ export interface NewNote {
   authorId: string;
 }
 
+export interface EvidenceRecord {
+  id: string;
+  caseId: string;
+  /** upload | artifact */
+  kind: string;
+  title: string;
+  description: string | null;
+  originalFilename: string | null;
+  /** Server-verified content type (§2.3), never client-claimed alone. */
+  contentType: string | null;
+  sizeBytes: bigint | null;
+  sha256: string | null;
+  /** Vercel Blob pathname (§2.1). NEVER serialised to clients. */
+  blobPathname: string | null;
+  /** pending | present | missing_storage | deletion_pending */
+  storageState: string;
+  artifactEnvelope: unknown;
+  artifactSha256: string | null;
+  /** not_requested | queued | processing | processed | failed */
+  processingStatus: string;
+  /** docling | text_extract | none */
+  processingPath: string | null;
+  processorVersion: string | null;
+  extractedTextPathname: string | null;
+  pageCount: number | null;
+  uploadedById: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface NewEvidence {
+  /** Server-minted before upload so the Blob pathname can bind
+   *  to the row at token/put time (§2.4). Optional: the DB
+   *  default mints one when a caller does not need the id early
+   *  (artifact capture). */
+  id?: string;
+  caseId: string;
+  kind: string;
+  title: string;
+  description?: string | null;
+  originalFilename?: string | null;
+  contentType?: string | null;
+  sizeBytes?: bigint | null;
+  sha256?: string | null;
+  blobPathname?: string | null;
+  storageState?: string;
+  artifactEnvelope?: unknown;
+  artifactSha256?: string | null;
+  uploadedById: string;
+}
+
+export interface EvidencePatch {
+  title?: string;
+  description?: string | null;
+  contentType?: string | null;
+  sizeBytes?: bigint | null;
+  sha256?: string | null;
+  blobPathname?: string | null;
+  storageState?: string;
+  processingStatus?: string;
+  processingPath?: string | null;
+  processorVersion?: string | null;
+  extractedTextPathname?: string | null;
+  pageCount?: number | null;
+}
+
+export interface ProcessingJobRecord {
+  id: string;
+  evidenceId: string;
+  caseId: string;
+  /** queued | processing | succeeded | failed */
+  status: string;
+  requestedPath: string;
+  attempts: number;
+  error: string | null;
+  startedAt: Date | null;
+  finishedAt: Date | null;
+  createdAt: Date;
+}
+
 export interface EventRecord {
   id: string;
   caseId: string;
@@ -156,6 +236,30 @@ export interface CaseStore {
   getNote(caseId: string, noteId: string): Promise<NoteRecord | null>;
   updateNote(caseId: string, noteId: string, body: string): Promise<NoteRecord | null>;
   deleteNote(caseId: string, noteId: string): Promise<boolean>;
+
+  // Evidence (the vault, §2) — always through the parent case.
+  createEvidence(data: NewEvidence): Promise<EvidenceRecord>;
+  listEvidence(caseId: string): Promise<EvidenceRecord[]>;
+  getEvidence(caseId: string, evidenceId: string): Promise<EvidenceRecord | null>;
+  updateEvidence(
+    caseId: string,
+    evidenceId: string,
+    patch: EvidencePatch,
+  ): Promise<EvidenceRecord | null>;
+  deleteEvidence(caseId: string, evidenceId: string): Promise<boolean>;
+  /** Every evidence row in a state (the deletion-retry sweep). */
+  listEvidenceByStorageState(storageState: string): Promise<EvidenceRecord[]>;
+  /** Blob pathnames (original + extraction) owned by one case. */
+  listEvidencePathnamesForCase(caseId: string): Promise<string[]>;
+
+  // Processing jobs (§3.3) — rows the P8-E worker claims.
+  createProcessingJob(data: {
+    evidenceId: string;
+    caseId: string;
+    requestedPath?: string;
+  }): Promise<ProcessingJobRecord>;
+  listProcessingJobs(caseId: string, evidenceId: string): Promise<ProcessingJobRecord[]>;
+  countProcessingJobsInRange(ownerId: string, start: Date, end: Date): Promise<number>;
 
   // Child existence checks for note anchors (never by id alone)
   evidenceExists(caseId: string, evidenceId: string): Promise<boolean>;
@@ -353,6 +457,113 @@ export function createPrismaCaseStore(): CaseStore {
       return res.count > 0;
     },
 
+    async createEvidence(data) {
+      const row = await db.frCaseEvidence.create({
+        data: {
+          ...(data.id ? { id: data.id } : {}),
+          caseId: data.caseId,
+          kind: data.kind,
+          title: data.title,
+          description: data.description ?? null,
+          originalFilename: data.originalFilename ?? null,
+          contentType: data.contentType ?? null,
+          sizeBytes: data.sizeBytes ?? null,
+          sha256: data.sha256 ?? null,
+          blobPathname: data.blobPathname ?? null,
+          storageState: data.storageState ?? "present",
+          artifactEnvelope: (data.artifactEnvelope ?? undefined) as never,
+          artifactSha256: data.artifactSha256 ?? null,
+          uploadedById: data.uploadedById,
+        },
+      });
+      return row as EvidenceRecord;
+    },
+    async listEvidence(caseId) {
+      const rows = await db.frCaseEvidence.findMany({
+        where: { caseId },
+        orderBy: { createdAt: "asc" },
+      });
+      return rows as EvidenceRecord[];
+    },
+    async getEvidence(caseId, evidenceId) {
+      const row = await db.frCaseEvidence.findFirst({
+        where: { id: evidenceId, caseId },
+      });
+      return (row as EvidenceRecord | null) ?? null;
+    },
+    async updateEvidence(caseId, evidenceId, patch) {
+      const res = await db.frCaseEvidence.updateMany({
+        where: { id: evidenceId, caseId },
+        data: {
+          ...(patch.title !== undefined ? { title: patch.title } : {}),
+          ...(patch.description !== undefined ? { description: patch.description } : {}),
+          ...(patch.contentType !== undefined ? { contentType: patch.contentType } : {}),
+          ...(patch.sizeBytes !== undefined ? { sizeBytes: patch.sizeBytes } : {}),
+          ...(patch.sha256 !== undefined ? { sha256: patch.sha256 } : {}),
+          ...(patch.blobPathname !== undefined ? { blobPathname: patch.blobPathname } : {}),
+          ...(patch.storageState !== undefined ? { storageState: patch.storageState } : {}),
+          ...(patch.processingStatus !== undefined
+            ? { processingStatus: patch.processingStatus }
+            : {}),
+          ...(patch.processingPath !== undefined ? { processingPath: patch.processingPath } : {}),
+          ...(patch.processorVersion !== undefined
+            ? { processorVersion: patch.processorVersion }
+            : {}),
+          ...(patch.extractedTextPathname !== undefined
+            ? { extractedTextPathname: patch.extractedTextPathname }
+            : {}),
+          ...(patch.pageCount !== undefined ? { pageCount: patch.pageCount } : {}),
+        },
+      });
+      if (res.count === 0) return null;
+      return this.getEvidence(caseId, evidenceId);
+    },
+    async deleteEvidence(caseId, evidenceId) {
+      const res = await db.frCaseEvidence.deleteMany({
+        where: { id: evidenceId, caseId },
+      });
+      return res.count > 0;
+    },
+    async listEvidenceByStorageState(storageState) {
+      const rows = await db.frCaseEvidence.findMany({ where: { storageState } });
+      return rows as EvidenceRecord[];
+    },
+    async listEvidencePathnamesForCase(caseId) {
+      const rows = await db.frCaseEvidence.findMany({
+        where: { caseId },
+        select: { blobPathname: true, extractedTextPathname: true },
+      });
+      return rows
+        .flatMap((r) => [r.blobPathname, r.extractedTextPathname])
+        .filter((p): p is string => typeof p === "string" && p.length > 0);
+    },
+
+    async createProcessingJob(data) {
+      const row = await db.frEvidenceProcessingJob.create({
+        data: {
+          evidenceId: data.evidenceId,
+          caseId: data.caseId,
+          requestedPath: data.requestedPath ?? "auto",
+        },
+      });
+      return row as ProcessingJobRecord;
+    },
+    async listProcessingJobs(caseId, evidenceId) {
+      const rows = await db.frEvidenceProcessingJob.findMany({
+        where: { caseId, evidenceId },
+        orderBy: { createdAt: "asc" },
+      });
+      return rows as ProcessingJobRecord[];
+    },
+    async countProcessingJobsInRange(ownerId, start, end) {
+      return db.frEvidenceProcessingJob.count({
+        where: {
+          evidence: { case: { ownerId } },
+          createdAt: { gte: start, lt: end },
+        },
+      });
+    },
+
     async evidenceExists(caseId, evidenceId) {
       const row = await db.frCaseEvidence.findFirst({
         where: { id: evidenceId, caseId },
@@ -405,11 +616,11 @@ export function createPrismaCaseStore(): CaseStore {
 
     async listEvidencePathnamesForUser(ownerId) {
       const rows = await db.frCaseEvidence.findMany({
-        where: { case: { ownerId }, blobPathname: { not: null } },
-        select: { blobPathname: true },
+        where: { case: { ownerId } },
+        select: { blobPathname: true, extractedTextPathname: true },
       });
       return rows
-        .map((r) => r.blobPathname)
+        .flatMap((r) => [r.blobPathname, r.extractedTextPathname])
         .filter((p): p is string => typeof p === "string" && p.length > 0);
     },
   };
@@ -434,6 +645,8 @@ export function createInMemoryCaseStore(): CaseStore {
   const leads = new Map<string, LeadRecord>();
   const notes = new Map<string, NoteRecord>();
   const events = new Map<string, EventRecord>();
+  const evidence = new Map<string, EvidenceRecord>();
+  const jobs = new Map<string, ProcessingJobRecord>();
   const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
   const withDates = <T extends { createdAt: Date; updatedAt?: Date }>(row: T): T => ({
     ...clone(row),
@@ -443,7 +656,7 @@ export function createInMemoryCaseStore(): CaseStore {
 
   const countsFor = (caseId: string): CaseCounts => ({
     leads: [...leads.values()].filter((l) => l.caseId === caseId).length,
-    evidence: 0,
+    evidence: [...evidence.values()].filter((e) => e.caseId === caseId).length,
     notes: [...notes.values()].filter((n) => n.caseId === caseId).length,
     claims: 0,
   });
@@ -497,6 +710,8 @@ export function createInMemoryCaseStore(): CaseStore {
       for (const [k, v] of leads) if (v.caseId === id) leads.delete(k);
       for (const [k, v] of notes) if (v.caseId === id) notes.delete(k);
       for (const [k, v] of events) if (v.caseId === id) events.delete(k);
+      for (const [k, v] of evidence) if (v.caseId === id) evidence.delete(k);
+      for (const [k, v] of jobs) if (v.caseId === id) jobs.delete(k);
       return true;
     },
     async countOpenCases(ownerId) {
@@ -600,8 +815,101 @@ export function createInMemoryCaseStore(): CaseStore {
       return true;
     },
 
-    async evidenceExists() {
-      return false;
+    async createEvidence(data) {
+      const now = new Date();
+      const row: EvidenceRecord = {
+        id: data.id ?? nextId("evidence"),
+        caseId: data.caseId,
+        kind: data.kind,
+        title: data.title,
+        description: data.description ?? null,
+        originalFilename: data.originalFilename ?? null,
+        contentType: data.contentType ?? null,
+        sizeBytes: data.sizeBytes ?? null,
+        sha256: data.sha256 ?? null,
+        blobPathname: data.blobPathname ?? null,
+        storageState: data.storageState ?? "present",
+        artifactEnvelope: data.artifactEnvelope ? clone(data.artifactEnvelope) : null,
+        artifactSha256: data.artifactSha256 ?? null,
+        processingStatus: "not_requested",
+        processingPath: null,
+        processorVersion: null,
+        extractedTextPathname: null,
+        pageCount: null,
+        uploadedById: data.uploadedById,
+        createdAt: now,
+        updatedAt: now,
+      };
+      evidence.set(row.id, row);
+      return { ...row, artifactEnvelope: clone(row.artifactEnvelope) };
+    },
+    async listEvidence(caseId) {
+      return [...evidence.values()]
+        .filter((e) => e.caseId === caseId)
+        .map((e) => ({ ...e, artifactEnvelope: clone(e.artifactEnvelope) }));
+    },
+    async getEvidence(caseId, evidenceId) {
+      const row = evidence.get(evidenceId);
+      if (!row || row.caseId !== caseId) return null;
+      return { ...row, artifactEnvelope: clone(row.artifactEnvelope) };
+    },
+    async updateEvidence(caseId, evidenceId, patch) {
+      const row = evidence.get(evidenceId);
+      if (!row || row.caseId !== caseId) return null;
+      Object.assign(row, patch);
+      row.updatedAt = new Date();
+      return { ...row, artifactEnvelope: clone(row.artifactEnvelope) };
+    },
+    async deleteEvidence(caseId, evidenceId) {
+      const row = evidence.get(evidenceId);
+      if (!row || row.caseId !== caseId) return false;
+      evidence.delete(evidenceId);
+      for (const [k, v] of jobs) if (v.evidenceId === evidenceId) jobs.delete(k);
+      return true;
+    },
+    async listEvidenceByStorageState(storageState) {
+      return [...evidence.values()]
+        .filter((e) => e.storageState === storageState)
+        .map((e) => ({ ...e, artifactEnvelope: clone(e.artifactEnvelope) }));
+    },
+    async listEvidencePathnamesForCase(caseId) {
+      return [...evidence.values()]
+        .filter((e) => e.caseId === caseId)
+        .flatMap((e) => [e.blobPathname, e.extractedTextPathname])
+        .filter((p): p is string => typeof p === "string" && p.length > 0);
+    },
+
+    async createProcessingJob(data) {
+      const row: ProcessingJobRecord = {
+        id: nextId("job"),
+        evidenceId: data.evidenceId,
+        caseId: data.caseId,
+        status: "queued",
+        requestedPath: data.requestedPath ?? "auto",
+        attempts: 0,
+        error: null,
+        startedAt: null,
+        finishedAt: null,
+        createdAt: new Date(),
+      };
+      jobs.set(row.id, row);
+      return { ...row };
+    },
+    async listProcessingJobs(caseId, evidenceId) {
+      return [...jobs.values()]
+        .filter((j) => j.caseId === caseId && j.evidenceId === evidenceId)
+        .map((j) => ({ ...j }));
+    },
+    async countProcessingJobsInRange(ownerId, start, end) {
+      return [...jobs.values()].filter((j) => {
+        const owner = cases.get(j.caseId)?.ownerId;
+        return owner === ownerId && j.createdAt >= start && j.createdAt < end;
+      }).length;
+    },
+
+    async evidenceExists(caseId, evidenceId) {
+      const row = evidence.get(evidenceId);
+      return !!row && row.caseId === caseId;
     },
     async claimExists() {
       return false;
@@ -625,14 +933,23 @@ export function createInMemoryCaseStore(): CaseStore {
         .map((e) => ({ ...e, createdAt: new Date(e.createdAt) }));
     },
 
-    async sumEvidenceBytes() {
-      return BigInt(0);
+    async sumEvidenceBytes(ownerId) {
+      let total = BigInt(0);
+      for (const e of evidence.values()) {
+        if (cases.get(e.caseId)?.ownerId === ownerId && e.sizeBytes) {
+          total += e.sizeBytes;
+        }
+      }
+      return total;
     },
     async countVerificationsInRange() {
       return 0;
     },
-    async listEvidencePathnamesForUser() {
-      return [];
+    async listEvidencePathnamesForUser(ownerId) {
+      return [...evidence.values()]
+        .filter((e) => cases.get(e.caseId)?.ownerId === ownerId)
+        .flatMap((e) => [e.blobPathname, e.extractedTextPathname])
+        .filter((p): p is string => typeof p === "string" && p.length > 0);
     },
   };
 }

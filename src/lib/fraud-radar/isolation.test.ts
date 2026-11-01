@@ -349,6 +349,102 @@ describe("§14.3 isolation — Phase 7 investigator completion (P7-D)", () => {
   });
 });
 
+describe("§14.3 isolation — Phase 8 evidence vault (P8-B)", () => {
+  const vaultRouteFiles = [
+    "app/api/fraud-radar/cases/[id]/evidence/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/initiate/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/artifact/route.ts",
+    "app/api/fraud-radar/cases/evidence-upload-token/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/[evidenceId]/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/[evidenceId]/complete/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/[evidenceId]/download/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/[evidenceId]/extracted/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/[evidenceId]/verify/route.ts",
+    "app/api/fraud-radar/cases/[id]/evidence/[evidenceId]/process/route.ts",
+  ];
+
+  it("every vault API route carries the flag gate", () => {
+    for (const rel of vaultRouteFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+
+  it("no vault route or module ever emits a Blob URL (no redirect, no downloadUrl, no blob.url)", () => {
+    for (const rel of vaultRouteFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toContain("downloadUrl");
+      expect(src, rel).not.toContain("blob.vercel-storage.com");
+      expect(src, rel).not.toMatch(/NextResponse\.redirect/);
+    }
+    const helpersSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/route-helpers.ts"),
+      "utf8",
+    );
+    // The serialiser names no pathname/URL field for evidence.
+    expect(helpersSrc).not.toContain("blobPathname: e.");
+    expect(helpersSrc).not.toContain("extractedTextPathname: e.");
+  });
+
+  it("the download route carries the §2.3.4 hardening headers", () => {
+    const src = readFileSync(
+      path.join(SRC, "app/api/fraud-radar/cases/[id]/evidence/[evidenceId]/download/route.ts"),
+      "utf8",
+    );
+    expect(src).toContain("Content-Disposition");
+    expect(src).toContain("attachment");
+    expect(src).toContain("nosniff");
+    expect(src).toContain("private, no-store");
+    expect(src).toContain("loadCaseForRoute");
+  });
+
+  it("evidence children resolve through their case in the store (§1.5)", () => {
+    const storeSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/store.ts"),
+      "utf8",
+    );
+    expect(storeSrc).toContain("getEvidence(caseId");
+    expect(storeSrc).toContain("where: { id: evidenceId, caseId }");
+  });
+
+  it("the corpus firewall holds in the vault module (§2.7): firewall assertion + no publication path", () => {
+    const vaultSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/vault.ts"),
+      "utf8",
+    );
+    expect(vaultSrc).toContain("assertCorpusFirewall");
+    expect(vaultSrc).toContain("VAULT_PATH_PREFIX");
+    // The vault never writes a data-source registry entry and
+    // no Phase 8 module imports a publication/artifact path.
+    const casesDir = path.join(SRC, "lib/fraud-radar/cases");
+    for (const name of readdirSync(casesDir)) {
+      if (!/\.ts$/.test(name) || /\.test\.ts$/.test(name)) continue;
+      const src = readFileSync(path.join(casesDir, name), "utf8");
+      expect(src, name).not.toContain("frDataSource");
+      expect(src, name).not.toMatch(/from\s+["']@\/lib\/fraud-radar\/(healthcare|care|grants|signals)-data["']/);
+    }
+  });
+
+  it("the investigator tool registry contains no evidence tool (§2.7)", () => {
+    const toolsSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/investigator/tools.ts"),
+      "utf8",
+    );
+    expect(toolsSrc).not.toContain("FrCaseEvidence");
+    expect(toolsSrc).not.toContain("evidence_download");
+    expect(toolsSrc).not.toContain("fraud-radar-evidence");
+  });
+
+  it("the vault claims no malware scanner (§2.3): no scan vocabulary in the vault module", () => {
+    const vaultSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/vault.ts"),
+      "utf8",
+    );
+    expect(vaultSrc).not.toMatch(/clamav|virustotal/i);
+    expect(vaultSrc).not.toContain("scanState");
+  });
+});
+
 describe("§35 billing non-interference — static dependency guard", () => {
   const files = fraudSourceFiles();
 
