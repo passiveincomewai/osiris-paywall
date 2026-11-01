@@ -372,7 +372,7 @@ export default async function FraudRadarAdminPage() {
                 </dd>
               </div>
             </dl>
-            <div className="mt-4 max-h-[36rem] overflow-y-auto rounded-2xl border border-white/10">
+            <div className="mt-4 max-h-[36rem] overflow-y-auto overflow-x-auto rounded-2xl border border-white/10">
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-white/50">
