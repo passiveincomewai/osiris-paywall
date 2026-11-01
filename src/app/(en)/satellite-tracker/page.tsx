@@ -24,6 +24,7 @@ import BreadcrumbLd from "@/components/BreadcrumbLd";
 import RelatedLinks from "@/components/RelatedLinks";
 import TrackerClusterLinks from "@/components/TrackerClusterLinks";
 import SatellitesNowBoard from "@/components/trackers/SatellitesNowBoard";
+import MediaFrame from "@/components/design/MediaFrame";
 
 export const metadata: Metadata = {
   title: "Live Satellite Tracker — ISS, Starlink & More",
@@ -225,6 +226,25 @@ export default function SatelliteTrackerPage() {
             </Link>
             <span className="text-sm text-white/40">Free forever · No signup</span>
           </div>
+        </div>
+
+        {/* The feature, as it runs — a real capture of the satellite
+            layer on the live globe (positions computed from TLE data). */}
+        <div className="mt-12 md:mt-16">
+          <MediaFrame
+            state="computed"
+            caption="Every tracked satellite, drawn on the live globe"
+            source="WorldEye"
+          >
+            <img
+              src="/landing/track-satellites.jpg"
+              alt="The WorldEye live globe covered in tracked satellites"
+              width={1280}
+              height={640}
+              loading="lazy"
+              className="block w-full h-auto"
+            />
+          </MediaFrame>
         </div>
 
         {/* The one-map answer */}
