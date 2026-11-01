@@ -94,6 +94,10 @@ async function affiliateLanding(
       utmSource: clean(sp.get("utm_source"), 120),
       utmMedium: clean(sp.get("utm_medium"), 120),
       utmCampaign: clean(sp.get("utm_campaign"), 120),
+      // Per-creative tag (Studio Repurposing Machine creativeIds ride
+      // utm_content) — recorded for reporting only; attribution rules
+      // are unchanged.
+      utmContent: clean(sp.get("utm_content"), 120),
     },
     select: { id: true },
   });
