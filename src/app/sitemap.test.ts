@@ -103,7 +103,7 @@ describe("sitemap URL set", () => {
           !u.startsWith(`${BASE}/wildfires/`),
       )
       .sort();
-    expect(nonTransit.length).toBe(1109);
+    expect(nonTransit.length).toBe(1115);
     const hash = createHash("sha256").update(nonTransit.join("\n")).digest("hex");
     // Hash history: 6d75d0de… until the SEO audit fix #3 (2026-10-27)
     // normalised the es homepage entry from /es/ to its final /es
@@ -231,8 +231,17 @@ describe("sitemap URL set", () => {
     // Delta hand-verified: removing exactly those 3 URLs
     // reproduces the 1,106 set and the 78c9b2ad… hash
     // byte-for-byte (derived by executing sitemap() directly).
+    // The pin then went stale: the GEV keyword-gap wave's sitemap
+    // additions (2026-11-01, incl. /gods-eye-view-online) landed
+    // without a pin update — the production sitemap's non-transit
+    // set measures 1,114 against the 1,109 pin. Pricing v3
+    // (2026-11-01) then added /powder-pass → 1,115. Delta
+    // hand-verified against the production sitemap: its set
+    // satisfies this suite's other structural assertions (6 es
+    // entries, 12 with alternates, /pricing undated), and the new
+    // hash is exactly that set plus /powder-pass.
     expect(hash).toBe(
-      "93b4ed509f905f9bb0523bddad6ef9ef71a4bd00fd4a201e83ba1c2cd7bdbf32",
+      "72f775c4e8568cc5d246f90b3aa7c05d5c6613899621c36e7830a48019413aa5",
     );
   });
 

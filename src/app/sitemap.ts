@@ -837,6 +837,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/pricing/lite`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/pricing/pro`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/pricing/ultra`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE}/powder-pass`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/blog`, lastModified: latestPostDate, changeFrequency: "weekly", priority: 0.7 },
     ...POSTS.map((p) => ({
       url: `${BASE}/blog/${p.slug}`,

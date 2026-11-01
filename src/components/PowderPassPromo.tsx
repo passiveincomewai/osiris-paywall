@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Check, Snowflake } from "lucide-react";
 import { CHECKOUT_PLAN_SUMMARIES } from "@/lib/billing/trial-checkout";
 import CheckoutSheet from "@/components/CheckoutSheet";
@@ -20,6 +21,8 @@ import CheckoutSheet from "@/components/CheckoutSheet";
  * (the same CheckoutSheet machinery as the /pricing CTAs). It never
  * links to /pricing: the owner ruled Powder Pass off the pricing page
  * entirely (2026-10-29), so the ski pages sell the pass themselves.
+ * (Pricing v3, 2026-11-01: the card now also links to /powder-pass,
+ * the pass's own page — still never to /pricing.)
  *
  * Copy discipline: the card states the membership's price, trial and
  * tier facts (VIP includes it, Pro does not — lib/ski/access) and
@@ -144,6 +147,14 @@ export default function PowderPassPromo({ className = "mt-12" }: { className?: s
       <p className="text-xs text-white/40 mt-5 leading-relaxed">
         The resort pages, cameras, route tool and compare stay free for everyone —
         Powder Pass is the member layer on top of them.
+      </p>
+      <p className="mt-3">
+        <Link
+          href="/powder-pass"
+          className="text-sm font-semibold text-[#D4AF37] hover:underline"
+        >
+          See everything in Powder Pass →
+        </Link>
       </p>
 
       <CheckoutSheet
