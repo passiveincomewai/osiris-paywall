@@ -3,7 +3,7 @@
 //    note, trial label for every grid plan) — the component never
 //    restates a price of its own;
 //  - the guarantee line is the canonical /pricing sentence, verbatim;
-//  - each tier card's artwork button starts its selected plan's
+//  - each tier card's trial button starts its selected plan's
 //    embedded checkout in place; secondary opens the free globe with
 //    the page's utm_source;
 //  - no hype mechanics: no scarcity, countdown or urgency copy.
@@ -13,8 +13,14 @@
 // preserved: the config-import pin now names TIER_PLAN_OPTIONS (the
 // grid table the cards render), and the per-plan CTA pin now checks
 // the three rendered CTAs — one per tier card, each its selected
-// (annual, by default) option's own artwork button. All nine plans'
-// facts still render (the rows), pinned by the facts test below.
+// (annual, by default) option's own button. All nine plans' facts
+// still render (the rows), pinned by the facts test below.
+//
+// 2026-10-31 (owner order): the section's CTA is a real HTML button
+// again — the trial artwork rendered as a tiny pill on these cards —
+// so the CTA pin checks the three visible HTML buttons carrying the
+// selected option's CTA copy and pins the artwork's absence here
+// (/pricing still uses the artwork; this section must not).
 import { describe, it, expect } from "vitest";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
@@ -74,12 +80,14 @@ describe("TrialCtaSection — facts from config", () => {
 
 describe("TrialCtaSection — conversion structure", () => {
   it("each card starts its plan's embedded checkout; secondary opens the globe tracked per page", () => {
-    // The owner's trial-artwork button, one per tier card, labelled
-    // with the card's selected option's CTA from config (annual by
-    // default on every tier — the redesign's default view).
-    expect(html.match(/<button[^>]*class="trial-btn/g)).toHaveLength(3);
-    expect(html).toContain('aria-label="Start 10-Day Free Trial"');
-    expect(html).toContain("/start-trial-button.png");
+    // One real HTML trial button per tier card, labelled — visibly
+    // and by aria — with the card's selected option's CTA from
+    // config (annual by default on every tier — the redesign's
+    // default view). The trial artwork must NOT render here any
+    // more (owner order, 2026-10-31: it rendered as a tiny pill).
+    expect(html.match(/aria-label="Start 10-Day Free Trial"/g)).toHaveLength(3);
+    expect(html.match(/>Start 10-Day Free Trial</g)).toHaveLength(3);
+    expect(html).not.toContain("start-trial-button");
     expect(html).not.toContain('href="/pricing"');
     expect(html).toContain("Open the globe — free");
     expect(html).toContain('href="/?utm_source=cameras&utm_medium=trial-cta"');
