@@ -185,6 +185,54 @@ export interface ProcessingJobRecord {
   createdAt: Date;
 }
 
+export interface ClaimRecord {
+  id: string;
+  caseId: string;
+  /** The statement exactly as the user worded it (§1.6). */
+  statement: string;
+  subjectEngine: string | null;
+  subjectEntityKey: string | null;
+  createdById: string;
+  createdAt: Date;
+}
+
+export interface NewClaim {
+  caseId: string;
+  statement: string;
+  subjectEngine?: string | null;
+  subjectEntityKey?: string | null;
+  createdById: string;
+}
+
+export interface VerificationRecord {
+  id: string;
+  claimId: string;
+  /** The closed §4.2 vocabulary — the store re-checks it. */
+  verdict: string;
+  evidence: unknown;
+  summary: string;
+  validatorVerdict: string;
+  corpusVersions: unknown;
+  checkerVersion: string;
+  model: string | null;
+  promptVersion: string | null;
+  createdById: string;
+  createdAt: Date;
+}
+
+export interface NewVerification {
+  claimId: string;
+  verdict: string;
+  evidence: unknown;
+  summary: string;
+  validatorVerdict: string;
+  corpusVersions: unknown;
+  checkerVersion: string;
+  model?: string | null;
+  promptVersion?: string | null;
+  createdById: string;
+}
+
 export interface EventRecord {
   id: string;
   caseId: string;
@@ -260,6 +308,17 @@ export interface CaseStore {
   }): Promise<ProcessingJobRecord>;
   listProcessingJobs(caseId: string, evidenceId: string): Promise<ProcessingJobRecord[]>;
   countProcessingJobsInRange(ownerId: string, start: Date, end: Date): Promise<number>;
+
+  // Claims + verifications (§4) — always through the parent
+  // case. Verifications are APPEND-ONLY: this interface exposes
+  // create + list for them and no update or delete, so a re-run
+  // can never rewrite a prior verdict (§1.6).
+  createClaim(data: NewClaim): Promise<ClaimRecord>;
+  listClaims(caseId: string): Promise<ClaimRecord[]>;
+  getClaim(caseId: string, claimId: string): Promise<ClaimRecord | null>;
+  deleteClaim(caseId: string, claimId: string): Promise<boolean>;
+  createVerification(data: NewVerification): Promise<VerificationRecord>;
+  listVerifications(caseId: string, claimId: string): Promise<VerificationRecord[]>;
 
   // Child existence checks for note anchors (never by id alone)
   evidenceExists(caseId: string, evidenceId: string): Promise<boolean>;
@@ -564,6 +623,73 @@ export function createPrismaCaseStore(): CaseStore {
       });
     },
 
+    async createClaim(data) {
+      const row = await db.frCaseClaim.create({
+        data: {
+          caseId: data.caseId,
+          statement: data.statement,
+          subjectEngine: data.subjectEngine ?? null,
+          subjectEntityKey: data.subjectEntityKey ?? null,
+          createdById: data.createdById,
+        },
+      });
+      return row as ClaimRecord;
+    },
+    async listClaims(caseId) {
+      const rows = await db.frCaseClaim.findMany({
+        where: { caseId },
+        orderBy: { createdAt: "asc" },
+      });
+      return rows as ClaimRecord[];
+    },
+    async getClaim(caseId, claimId) {
+      const row = await db.frCaseClaim.findFirst({
+        where: { id: claimId, caseId },
+      });
+      return (row as ClaimRecord | null) ?? null;
+    },
+    async deleteClaim(caseId, claimId) {
+      const res = await db.frCaseClaim.deleteMany({
+        where: { id: claimId, caseId },
+      });
+      return res.count > 0;
+    },
+    async createVerification(data) {
+      // Append-only (§1.6): this is the ONLY verification write
+      // in the store — a create. The verdict is re-checked
+      // against the closed §4.2 vocabulary at this single write
+      // site so no other value can ever be stored.
+      if (
+        !["supported", "contradicted", "not-in-corpus", "insufficient-data"].includes(
+          data.verdict,
+        )
+      ) {
+        throw new Error(`verdict outside the closed vocabulary: ${data.verdict}`);
+      }
+      const row = await db.frClaimVerification.create({
+        data: {
+          claimId: data.claimId,
+          verdict: data.verdict,
+          evidence: data.evidence as never,
+          summary: data.summary,
+          validatorVerdict: data.validatorVerdict,
+          corpusVersions: data.corpusVersions as never,
+          checkerVersion: data.checkerVersion,
+          model: data.model ?? null,
+          promptVersion: data.promptVersion ?? null,
+          createdById: data.createdById,
+        },
+      });
+      return row as VerificationRecord;
+    },
+    async listVerifications(caseId, claimId) {
+      const rows = await db.frClaimVerification.findMany({
+        where: { claimId, claim: { caseId } },
+        orderBy: { createdAt: "asc" },
+      });
+      return rows as VerificationRecord[];
+    },
+
     async evidenceExists(caseId, evidenceId) {
       const row = await db.frCaseEvidence.findFirst({
         where: { id: evidenceId, caseId },
@@ -647,6 +773,8 @@ export function createInMemoryCaseStore(): CaseStore {
   const events = new Map<string, EventRecord>();
   const evidence = new Map<string, EvidenceRecord>();
   const jobs = new Map<string, ProcessingJobRecord>();
+  const claims = new Map<string, ClaimRecord>();
+  const verifications = new Map<string, VerificationRecord>();
   const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
   const withDates = <T extends { createdAt: Date; updatedAt?: Date }>(row: T): T => ({
     ...clone(row),
@@ -658,7 +786,7 @@ export function createInMemoryCaseStore(): CaseStore {
     leads: [...leads.values()].filter((l) => l.caseId === caseId).length,
     evidence: [...evidence.values()].filter((e) => e.caseId === caseId).length,
     notes: [...notes.values()].filter((n) => n.caseId === caseId).length,
-    claims: 0,
+    claims: [...claims.values()].filter((c) => c.caseId === caseId).length,
   });
   const present = (row: CaseRecord): CaseRecord => ({
     ...clone(row),
@@ -712,6 +840,14 @@ export function createInMemoryCaseStore(): CaseStore {
       for (const [k, v] of events) if (v.caseId === id) events.delete(k);
       for (const [k, v] of evidence) if (v.caseId === id) evidence.delete(k);
       for (const [k, v] of jobs) if (v.caseId === id) jobs.delete(k);
+      for (const [k, v] of claims) {
+        if (v.caseId === id) {
+          claims.delete(k);
+          for (const [vk, vv] of verifications) {
+            if (vv.claimId === k) verifications.delete(vk);
+          }
+        }
+      }
       return true;
     },
     async countOpenCases(ownerId) {
@@ -907,12 +1043,81 @@ export function createInMemoryCaseStore(): CaseStore {
       }).length;
     },
 
+    async createClaim(data) {
+      const row: ClaimRecord = {
+        id: nextId("claim"),
+        caseId: data.caseId,
+        statement: data.statement,
+        subjectEngine: data.subjectEngine ?? null,
+        subjectEntityKey: data.subjectEntityKey ?? null,
+        createdById: data.createdById,
+        createdAt: new Date(),
+      };
+      claims.set(row.id, row);
+      return { ...row, createdAt: new Date(row.createdAt) };
+    },
+    async listClaims(caseId) {
+      return [...claims.values()]
+        .filter((c) => c.caseId === caseId)
+        .map((c) => ({ ...c, createdAt: new Date(c.createdAt) }));
+    },
+    async getClaim(caseId, claimId) {
+      const row = claims.get(claimId);
+      if (!row || row.caseId !== caseId) return null;
+      return { ...row, createdAt: new Date(row.createdAt) };
+    },
+    async deleteClaim(caseId, claimId) {
+      const row = claims.get(claimId);
+      if (!row || row.caseId !== caseId) return false;
+      claims.delete(claimId);
+      for (const [k, v] of verifications) {
+        if (v.claimId === claimId) verifications.delete(k);
+      }
+      for (const [k, v] of notes) {
+        if (v.claimId === claimId) notes.delete(k);
+      }
+      return true;
+    },
+    async createVerification(data) {
+      if (
+        !["supported", "contradicted", "not-in-corpus", "insufficient-data"].includes(
+          data.verdict,
+        )
+      ) {
+        throw new Error(`verdict outside the closed vocabulary: ${data.verdict}`);
+      }
+      const row: VerificationRecord = {
+        id: nextId("verification"),
+        claimId: data.claimId,
+        verdict: data.verdict,
+        evidence: data.evidence ? clone(data.evidence) : null,
+        summary: data.summary,
+        validatorVerdict: data.validatorVerdict,
+        corpusVersions: data.corpusVersions ? clone(data.corpusVersions) : null,
+        checkerVersion: data.checkerVersion,
+        model: data.model ?? null,
+        promptVersion: data.promptVersion ?? null,
+        createdById: data.createdById,
+        createdAt: new Date(),
+      };
+      verifications.set(row.id, row);
+      return { ...row, createdAt: new Date(row.createdAt) };
+    },
+    async listVerifications(caseId, claimId) {
+      const claim = claims.get(claimId);
+      if (!claim || claim.caseId !== caseId) return [];
+      return [...verifications.values()]
+        .filter((v) => v.claimId === claimId)
+        .map((v) => ({ ...v, createdAt: new Date(v.createdAt) }));
+    },
+
     async evidenceExists(caseId, evidenceId) {
       const row = evidence.get(evidenceId);
       return !!row && row.caseId === caseId;
     },
-    async claimExists() {
-      return false;
+    async claimExists(caseId, claimId) {
+      const row = claims.get(claimId);
+      return !!row && row.caseId === caseId;
     },
 
     async createEvent(data) {
@@ -942,8 +1147,13 @@ export function createInMemoryCaseStore(): CaseStore {
       }
       return total;
     },
-    async countVerificationsInRange() {
-      return 0;
+    async countVerificationsInRange(ownerId, start, end) {
+      return [...verifications.values()].filter((v) => {
+        const claim = claims.get(v.claimId);
+        if (!claim) return false;
+        const owner = cases.get(claim.caseId)?.ownerId;
+        return owner === ownerId && v.createdAt >= start && v.createdAt < end;
+      }).length;
     },
     async listEvidencePathnamesForUser(ownerId) {
       return [...evidence.values()]

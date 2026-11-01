@@ -540,3 +540,84 @@ describe("§14.3 isolation — Phase 8 cases (P8-A)", () => {
     }
   });
 });
+
+describe("§14.3 isolation — Phase 8 claim verification (P8-C)", () => {
+  const claimRouteFiles = [
+    "app/api/fraud-radar/cases/[id]/claims/route.ts",
+    "app/api/fraud-radar/cases/[id]/claims/[claimId]/route.ts",
+    "app/api/fraud-radar/cases/[id]/claims/[claimId]/verify/route.ts",
+    "app/api/fraud-radar/cases/[id]/claims/[claimId]/verifications/route.ts",
+  ];
+
+  it("every claim API route carries the flag gate", () => {
+    for (const rel of claimRouteFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+
+  it("claims resolve through their case, never by own id alone (§1.5)", () => {
+    for (const rel of claimRouteFiles.slice(1)) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("loadCaseForRoute");
+      expect(src, rel).toContain("getClaim(id, claimId)");
+    }
+    const storeSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/store.ts"),
+      "utf8",
+    );
+    expect(storeSrc).toContain("getClaim(caseId");
+    expect(storeSrc).toContain("where: { id: claimId, caseId }");
+  });
+
+  it("verifications are append-only: the store and routes expose no update or delete for them (§1.6)", () => {
+    const storeSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/store.ts"),
+      "utf8",
+    );
+    expect(storeSrc).toContain("createVerification");
+    expect(storeSrc).toContain("listVerifications");
+    expect(storeSrc).not.toContain("updateVerification");
+    expect(storeSrc).not.toContain("deleteVerification");
+    const historySrc = readFileSync(
+      path.join(SRC, claimRouteFiles[3]),
+      "utf8",
+    );
+    expect(historySrc).toContain("export async function GET");
+    expect(historySrc).not.toMatch(/export async function (POST|PATCH|PUT|DELETE)/);
+  });
+
+  it("the verdict vocabulary is closed and single-sourced (§4.2)", () => {
+    const verdictsSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/claim-verdicts.ts"),
+      "utf8",
+    );
+    for (const verdict of [
+      "supported",
+      "contradicted",
+      "not-in-corpus",
+      "insufficient-data",
+    ]) {
+      expect(verdictsSrc, verdict).toContain(`"${verdict}"`);
+    }
+    // The checker's write path goes through the store's single
+    // verification create, which re-checks the closed set.
+    const storeSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/store.ts"),
+      "utf8",
+    );
+    expect(storeSrc).toContain("verdict outside the closed vocabulary");
+  });
+
+  it("the checker reads the corpus only through the Phase 7 tool registry interface (§4.3)", () => {
+    const checkerSrc = readFileSync(
+      path.join(SRC, "lib/fraud-radar/cases/claim-check.ts"),
+      "utf8",
+    );
+    expect(checkerSrc).toContain("executeTool");
+    expect(checkerSrc).toContain("CLAIM_CHECKER_VERSION");
+    // No direct artifact or pipeline reads in the checker.
+    expect(checkerSrc).not.toMatch(/createArtifactLoader|createGrantsLoader|createCareLoader/);
+    expect(checkerSrc).not.toMatch(/fr_pipeline|pipeline\//);
+  });
+});

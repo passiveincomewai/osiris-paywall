@@ -12,11 +12,14 @@ import type { SessionLike } from "./entitlements";
 import {
   getCaseStore,
   type CaseRecord,
+  type ClaimRecord,
   type EvidenceRecord,
   type LeadRecord,
   type NoteRecord,
   type ProcessingJobRecord,
+  type VerificationRecord,
 } from "./store";
+import { VERDICT_DEFINITIONS, isClaimVerdict } from "./claim-verdicts";
 import { loadAccessibleCase, type CaseAccess } from "./access";
 
 export interface CaseSession {
@@ -182,6 +185,40 @@ export function serializeJob(j: ProcessingJobRecord) {
     startedAt: j.startedAt ? j.startedAt.toISOString() : null,
     finishedAt: j.finishedAt ? j.finishedAt.toISOString() : null,
     createdAt: j.createdAt.toISOString(),
+  };
+}
+
+export function serializeClaim(c: ClaimRecord) {
+  return {
+    id: c.id,
+    caseId: c.caseId,
+    // The user's statement, verbatim — never rewritten (§1.6).
+    statement: c.statement,
+    subjectEngine: c.subjectEngine,
+    subjectEntityKey: c.subjectEntityKey,
+    createdById: c.createdById,
+    createdAt: c.createdAt.toISOString(),
+  };
+}
+
+export function serializeVerification(v: VerificationRecord) {
+  return {
+    id: v.id,
+    claimId: v.claimId,
+    verdict: v.verdict,
+    // The §4.2 definition travels with the verdict word.
+    verdictDefinition: isClaimVerdict(v.verdict)
+      ? VERDICT_DEFINITIONS[v.verdict]
+      : null,
+    evidence: v.evidence,
+    summary: v.summary,
+    validatorVerdict: v.validatorVerdict,
+    corpusVersions: v.corpusVersions,
+    checkerVersion: v.checkerVersion,
+    model: v.model,
+    promptVersion: v.promptVersion,
+    createdById: v.createdById,
+    createdAt: v.createdAt.toISOString(),
   };
 }
 
