@@ -19,6 +19,11 @@
  * Re-synced 2026-10-31 (site-audit Wave 3, R55): `faqs` gained the
  * promo-code, code-stacking and post-cancellation data entries,
  * mirroring the English source.
+ *
+ * Re-synced 2026-11-01 (Pricing Redesign v2): hero eyebrow + feature
+ * strip, card trust row + detail links, why-upgrade row, `planDetails`
+ * copy for /pricing/lite|pro|ultra, and the single money-back mention,
+ * mirroring the English source.
  */
 
 import type { PricingCopy } from "../en/pricing";
@@ -37,11 +42,18 @@ export const esPricing: PricingCopy = {
   backToMap: "Volver al mapa",
   proBadge: "PRO",
   hero: {
-    h1Before: "Descubre lo que el ",
-    h1Accent: "mapa gratuito",
-    h1After: " no puede mostrarte.",
-    sub: "Un analista de IA que trabaja el globo por ti. Tráfico en vivo. Filtros de búsqueda avanzados. Feeds de inteligencia premium en el nivel superior. Elige tu nivel y mejóralo cuando quieras.",
+    eyebrow: "INTELIGENCIA GLOBAL. IMPACTO REAL.",
+    h1Before: "Descubre la ",
+    h1Accent: "imagen completa.",
+    h1After: "",
+    sub: "El mapa es gratis. Un plan de pago elimina los límites: un analista de IA que trabaja el globo por ti, tráfico en vivo, búsqueda avanzada, el estudio de grabación — y, en el nivel superior, los feeds de inteligencia premium.",
   },
+  heroFeatures: [
+    { title: "74.229 cámaras en vivo", desc: "Todas las cámaras públicas en un solo globo" },
+    { title: "Datos en tiempo real", desc: "Vuelos, satélites, barcos y clima, en vivo" },
+    { title: "Análisis de IA OI", desc: "Un analista que trabaja el mapa por ti" },
+    { title: "Alertas e inteligencia", desc: "Alertas de cámara y feeds de inteligencia premium" },
+  ],
   toggle: {
     mostPopular: "EL MÁS POPULAR",
   },
@@ -164,7 +176,9 @@ export const esPricing: PricingCopy = {
     justPerDayAfter: " al día",
     trialChipSuffix: " — aún no se cobra tu tarjeta",
     vipOnlyHeading: "EXTRAS DE ULTRA",
-    securedLine: "Pago seguro con Stripe · Cancela cuando quieras · Cancelación en 1 clic",
+    trustRow: ["Sin cargo hoy", "Pago seguro con Stripe", "Cancelación en 1 clic"],
+    detailsBefore: "Ver todo lo de ",
+    detailsAfter: " →",
     guaranteeLine:
       "Cubierto por una garantía de devolución de 7 días en tu primer cargo: escríbenos dentro de los 7 días del cargo y te reembolsamos todo, sin preguntas.",
   },
@@ -251,7 +265,7 @@ export const esPricing: PricingCopy = {
   faqs: [
     {
       q: "¿Cuánto cuesta WorldEye?",
-      a: "El mapa en sí es gratis: el globo, 74.229 cámaras, vuelos, satélites y el clima, sin necesidad de cuenta. Los planes de pago tienen tres niveles, cada uno con facturación semanal, mensual o anual: Lite cuesta $4.99/semana, $8.99/mes o $44.99/año; Pro cuesta $7.99/semana, $13.99/mes o $74.99/año; Ultra cuesta $12.99/semana, $24.99/mes o $149.99/año. Los planes semanales empiezan con una prueba gratuita de 3 días; los mensuales y anuales, con una de 10 días. Enterprise — la API de cámaras y la inserción para tu propia plataforma — cuesta $999/año y no tiene prueba gratuita. Todos los planes de pago se pueden cancelar en cualquier momento, y los primeros cargos tienen una garantía de devolución de 7 días.",
+      a: "El mapa en sí es gratis: el globo, 74.229 cámaras, vuelos, satélites y el clima, sin necesidad de cuenta. Los planes de pago tienen tres niveles, cada uno con facturación semanal, mensual o anual: Lite cuesta $4.99/semana, $8.99/mes o $44.99/año; Pro cuesta $7.99/semana, $13.99/mes o $74.99/año; Ultra cuesta $12.99/semana, $24.99/mes o $149.99/año. Los planes semanales empiezan con una prueba gratuita de 3 días; los mensuales y anuales, con una de 10 días. Enterprise — la API de cámaras y la inserción para tu propia plataforma — cuesta $999/año y no tiene prueba gratuita. Todos los planes de pago se pueden cancelar en cualquier momento.",
     },
     {
       q: "¿El mapa es realmente gratis?",
@@ -271,7 +285,7 @@ export const esPricing: PricingCopy = {
     },
     {
       q: "¿Y si olvido cancelar? ¿Puedo pedir un reembolso?",
-      a: "Te escribimos antes del primer cargo de tu prueba, así que no debería tomarte por sorpresa. Y si aun así pasa: tu primer cargo está cubierto por una garantía de devolución de 7 días — escríbenos a passiveincomewai@gmail.com dentro de los 7 días del cargo y te reembolsamos todo, sin preguntas. La garantía cubre solo tu primer cargo; los cargos de renovación no son reembolsables bajo ella.",
+      a: "Te escribimos antes del primer cargo de tu prueba, así que no debería tomarte por sorpresa. Y si aun así pasa: escríbenos a passiveincomewai@gmail.com dentro de los 7 días de tu primer cargo y te lo reembolsamos todo, sin preguntas. El reembolso cubre solo tu primer cargo; los cargos de renovación no son reembolsables bajo él.",
     },
     {
       q: "¿Tienen un código promocional?",
@@ -303,8 +317,207 @@ export const esPricing: PricingCopy = {
   },
   trust: [
     "Cancelación en 1 clic",
-    "Garantía de devolución de 7 días en tu primer cargo",
+    "Correo recordatorio antes de tu primer cargo",
     "Pago seguro con Stripe",
     "Sin anuncios, sin venta de datos",
   ],
+  whyUpgrade: {
+    h2Before: "¿Por qué mejorar a ",
+    h2Accent: "Pro?",
+    items: [
+      { title: "Analista de IA OI", desc: "Una IA que vuela el globo, lee las capas y responde — integrada, sin configurar nada." },
+      { title: "Alertas de cámara", desc: "Vigila hasta 2 cámaras en Pro, 10 en Ultra — y recibe la foto por correo cuando aparezca tu condición." },
+      { title: "Estudio de grabación", desc: "Graba feeds de cámaras en vivo en tu navegador — 5 cámaras a la vez en Lite, 20 en Pro, 40 en Ultra." },
+      { title: "Feeds de inteligencia premium", desc: "Ciberamenazas, eventos GDELT, marítimo y noticias en vivo — solo Ultra." },
+    ],
+  },
+  planDetails: {
+    backToPricing: "← Todos los planes",
+    pricingHeading: "Elige tu período de facturación",
+    includesBefore: "Todo en ",
+    excludesHeading: "No está en este plan",
+    bestForHeading: "Ideal para",
+    allPlansLink: "Comparar todos los planes lado a lado →",
+    lite: {
+      metaTitle: "Plan Lite — $4.99/semana | Precios de WorldEye",
+      metaDescription:
+        "WorldEye Lite: $4.99/semana, $8.99/mes o $44.99/año. Aperturas de cámara ilimitadas, capas premium, el asistente de IA OI, búsqueda avanzada y el estudio de grabación (5 cámaras a la vez). Prueba gratuita: 3 días semanal, 10 días mensual y anual.",
+      eyebrow: "WORLDEYE LITE",
+      h1: "Todas las cámaras. Sin límites de apertura.",
+      intro:
+        "Lite es el nivel esencial: el mapa gratuito sin sus límites. Abre tantas de las 74.229 cámaras como quieras, activa las capas premium, pregunta al asistente OI, filtra la búsqueda como debe ser y graba hasta cinco cámaras a la vez.",
+      heroImage: {
+        src: "/landing/osint-search.jpg",
+        alt: "La búsqueda de WorldEye volando a un lugar en el globo en vivo",
+        caption: "Una búsqueda que te lleva a cualquier lugar — con filtros avanzados en todos los planes de pago.",
+      },
+      featureImages: [
+        {
+          src: "/landing/features-globe.jpg",
+          alt: "El globo en vivo de WorldEye cubierto de puntos de cámara",
+          caption: "El globo en vivo — una captura real de WorldEye, cámaras y capas en un solo lugar.",
+        },
+        {
+          src: "/landing/track-flights.jpg",
+          alt: "Seguimiento de vuelos en vivo en el globo de WorldEye",
+          caption: "Vuelos en vivo sobre la red de cámaras — gratis para mirar, ilimitado en Lite.",
+        },
+      ],
+      bestFor: [
+        "Miras cámaras a diario y siempre llegas al límite gratuito de aperturas.",
+        "Quieres el asistente de IA y las capas premium sin el kit OSINT.",
+        "Grabas unas pocas cámaras, no escenas enteras.",
+      ],
+      includes: [
+        { title: "Todas las cámaras, sin límite", desc: "Mira tantas de las 74.229 cámaras en vivo como quieras: los planes de pago no tienen límite de aperturas." },
+        { title: "Capas premium del mapa", desc: "Flujo de tráfico en vivo, líneas marítimas, tráfico naval y feeds de noticias en vivo sobre el globo." },
+        { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
+        { title: "Filtros de búsqueda avanzados", desc: "Reduce los resultados de cámaras por país, tipo y feeds en vivo; los lugares nunca se filtran." },
+        { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 5 cámaras a la vez — y guarda los clips." },
+        { title: "Modo Ambiente incluido", desc: "El reproductor ambiental de TV lenta también queda desbloqueado: no necesitas un plan Ambient aparte." },
+      ],
+      excludes: [
+        { title: "Alertas de cámara", desc: "Las alertas empiezan en Pro — vigila 2 cámaras allí, 10 en Ultra, y recibe la foto por correo cuando aparezca tu condición." },
+        { title: "Timelapse de cámaras", desc: "La exportación de timelapse fotograma a fotograma es solo de Ultra." },
+        { title: "Feeds de inteligencia premium", desc: "Los feeds de inteligencia de ciber, GDELT, marítimo y noticias en vivo son solo de Ultra." },
+      ],
+      faqs: [
+        {
+          q: "¿Lite basta si sobre todo miro cámaras?",
+          a: "Sí — para eso es Lite exactamente. Aperturas ilimitadas, las capas premium y el asistente, con grabación de hasta 5 cámaras a la vez. Si luego quieres alertas o el kit OSINT, mejorar a Pro se aplica de inmediato.",
+        },
+        {
+          q: "¿Lite incluye alertas de cámara?",
+          a: "No. Las alertas de cámara empiezan en Pro (2 cámaras vigiladas) y suben a 10 en Ultra. Todo lo demás de la base de pago — aperturas ilimitadas, capas premium, OI, búsqueda avanzada, el estudio de grabación y Ambiente — está en Lite.",
+        },
+        {
+          q: "¿Cómo es la prueba gratuita en Lite?",
+          a: "Lite semanal empieza con 3 días gratis; Lite mensual y anual, con 10 días gratis. Te escribimos antes del primer cargo, y cancelar durante la prueba no cuesta nada.",
+        },
+      ],
+    },
+    pro: {
+      metaTitle: "Plan Pro — $7.99/semana | Precios de WorldEye",
+      metaDescription:
+        "WorldEye Pro: $7.99/semana, $13.99/mes o $74.99/año (VIP Pro anual). Todo lo de Lite, más el kit OSINT, tráfico en vivo, alertas de cámara (2) y el estudio de grabación con 20 cámaras a la vez. Prueba gratuita: 3 días semanal, 10 días mensual y anual.",
+      eyebrow: "WORLDEYE PRO",
+      h1: "El kit completo de WorldEye.",
+      intro:
+        "Pro es el nivel de trabajo: todo lo de Lite, más el kit de herramientas OSINT, la capa de tráfico en vivo, alertas de cámara y espacio para grabar veinte cámaras a la vez.",
+      heroImage: {
+        src: "/landing/track-flights.jpg",
+        alt: "Un vuelo rastreado con su ruta y datos en vivo en WorldEye",
+        caption: "Seguimiento de aeronaves con datos de ruta en vivo — parte del mapa gratuito, ilimitado en Pro.",
+      },
+      featureImages: [
+        {
+          src: "/landing/osint-search.jpg",
+          alt: "La búsqueda de WorldEye volando a un lugar en el globo en vivo",
+          caption: "El kit OSINT funciona en tu navegador — escaneos, DNS, WHOIS y comprobaciones SSL.",
+        },
+        {
+          src: "/landing/features-globe.jpg",
+          alt: "El globo en vivo de WorldEye cubierto de puntos de cámara",
+          caption: "El globo en vivo — una captura real de WorldEye, cámaras y capas en un solo lugar.",
+        },
+      ],
+      bestFor: [
+        "Investigas — escaneos, DNS, WHOIS y comprobaciones SSL en el navegador.",
+        "Necesitas un par de cámaras vigiladas por ti las 24 horas.",
+        "Grabas sesiones de varias cámaras y 5 a la vez no te basta.",
+      ],
+      includes: [
+        { title: "Todo lo de Lite", desc: "Aperturas de cámara ilimitadas, capas premium, filtros de búsqueda avanzados y Modo Ambiente — todo se mantiene." },
+        { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
+        { title: "Capa de tráfico en vivo", desc: "Flujo de congestión en vivo de TomTom sobre la red de carreteras, con los vehículos simulados claramente etiquetados como simulados." },
+        { title: "Kit de herramientas OSINT", desc: "Escaneos Nmap, DNS/WHOIS, análisis SSL e inteligencia de amenazas, en el navegador." },
+        { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 20 cámaras a la vez — y guarda los clips." },
+        { title: "Alertas de cámara (2)", desc: "Vigila hasta 2 cámaras y recibe un correo — con la foto — cuando aparezca una condición que describas, como nieve o inundaciones." },
+        { title: "Cada capa futura", desc: "Los nuevos feeds premium llegan primero a Pro, sin costo extra." },
+      ],
+      excludes: [
+        { title: "Feeds de inteligencia premium", desc: "Los feeds de ciber, GDELT, marítimo y noticias en vivo son solo de Ultra." },
+        { title: "Timelapse de cámaras", desc: "La exportación de timelapse fotograma a fotograma es solo de Ultra." },
+        { title: "El centro VIP", desc: "Las alertas de eventos, el resumen personal y las vistas guardadas vienen con Ultra. El Pro anual lleva el nombre VIP Pro y los límites de Pro — el centro en sí no forma parte de Pro." },
+        { title: "Los límites más altos de Ultra", desc: "Grabar 40 cámaras a la vez y 10 alertas de cámara son cifras de Ultra; Pro graba 20 a la vez con 2 alertas." },
+      ],
+      faqs: [
+        {
+          q: "¿El Pro anual desbloquea el centro VIP?",
+          a: "No — y preferimos decirlo aquí que después de que pagues. El centro (alertas de eventos, resumen personal, vistas guardadas) viene con Ultra. El Pro anual lleva el nombre VIP Pro y los límites de Pro: grabación de 20 cámaras y 2 alertas de cámara. Los suscriptores anuales que se unieron antes del 30 de octubre de 2026 conservan los extras VIP con los que empezaron.",
+        },
+        {
+          q: "¿Cómo funcionan las alertas de cámara?",
+          a: "Elige hasta 2 cámaras y describe la condición — nieve, inundaciones, una multitud formándose. WorldEye las vigila y te envía la foto por correo cuando la condición aparece.",
+        },
+        {
+          q: "¿Puedo cambiar el período de facturación después?",
+          a: "Sí. Las mejoras se aplican de inmediato, con el prorrateo gestionado por Stripe. Las rebajas de plan entran en vigor al final de tu período actual. Cambiar entre semanal, mensual y anual funciona igual.",
+        },
+      ],
+    },
+    ultra: {
+      metaTitle: "Plan Ultra — $12.99/semana | Precios de WorldEye",
+      metaDescription:
+        "WorldEye Ultra: $12.99/semana, $24.99/mes o $149.99/año. Todo lo de Pro, más feeds de inteligencia premium, timelapse de cámaras, el centro VIP, grabación de 40 cámaras y 10 alertas de cámara. Prueba gratuita: 3 días semanal, 10 días mensual y anual.",
+      eyebrow: "WORLDEYE ULTRA",
+      h1: "Todo. Más la capa de inteligencia.",
+      intro:
+        "Ultra es el nivel superior: todo lo de Pro, los feeds de inteligencia premium, el timelapse de cámaras, el centro VIP y los límites más altos que vende WorldEye — 40 cámaras grabando a la vez, 10 vigiladas con alertas.",
+      heroImage: {
+        src: "/landing/track-satellites.jpg",
+        alt: "Satélites rastreados en vivo sobre la Tierra en WorldEye",
+        caption: "Seguimiento de satélites en vivo — Ultra añade los feeds de inteligencia sobre el mismo globo.",
+      },
+      featureImages: [
+        {
+          src: "/landing/osint-satellite.jpg",
+          alt: "Detalle de un satélite en las herramientas OSINT de WorldEye",
+          caption: "Detalle de satélites y ángulos de observación desde el kit OSINT.",
+        },
+        {
+          src: "/landing/osint-maritime.jpg",
+          alt: "La capa marítima y de conflictos en el globo de WorldEye",
+          caption: "Tráfico marítimo y etiquetas de zonas de conflicto — la capa de inteligencia, en vivo en el globo.",
+        },
+        {
+          src: "/landing/hazard-weather.jpg",
+          alt: "Alertas de peligros y desastres en el globo de WorldEye",
+          caption: "Alertas de peligros y desastres (GDACS) junto a las capas de clima.",
+        },
+      ],
+      bestFor: [
+        "Sigues los eventos mundiales y quieres los feeds de inteligencia en el globo.",
+        "Haces sesiones de grabación grandes — hasta 40 cámaras a la vez.",
+        "Quieres el centro: alertas de eventos, un resumen personal y vistas guardadas.",
+      ],
+      includes: [
+        { title: "Todo lo de Pro", desc: "El kit OSINT, las alertas de cámara, la búsqueda avanzada y cada capa futura de Pro — todo incluido." },
+        { title: "Feeds de inteligencia premium", desc: "Ciberamenazas, eventos GDELT, seguimiento marítimo, zonas de conflicto, noticias en vivo: solo Ultra." },
+        { title: "Timelapse de cámaras", desc: "Captura las cámaras de instantáneas fotograma a fotograma y exporta la película: solo Ultra." },
+        { title: "Alertas de cámara (10)", desc: "El límite de alertas sube a 10 cámaras vigiladas; Pro incluye 2." },
+        { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 40 cámaras a la vez — y guarda los clips." },
+        { title: "Alertas de eventos", desc: "Terremotos cerca de tus lugares, recordatorios de lanzamientos y pasos de la ISS: por correo y en la app, comprobados cada ~15 minutos, en el centro VIP." },
+        { title: "Resumen personal", desc: "Un resumen creado desde tu cuenta: tus eventos de alerta, terremotos cerca de tus lugares vigilados, el mejor paso de la ISS y las próximas 48 horas de lanzamientos, en el centro VIP o en tu correo cada mañana." },
+        { title: "Vistas guardadas", desc: "Nombra y guarda hasta 25 configuraciones del globo — un conjunto de capas y una cámara opcional — y restaura cualquiera con un clic, en el centro VIP." },
+      ],
+      excludes: [
+        { title: "Funciones de equipo Enterprise", desc: "La API de feeds de cámaras, el reproductor integrable para tu propio sitio y los asientos de equipo son Enterprise — $999/año." },
+      ],
+      faqs: [
+        {
+          q: "¿Qué son los feeds de inteligencia premium?",
+          a: "Datos de ciberamenazas en vivo, eventos globales GDELT, seguimiento marítimo, zonas de conflicto y feeds de noticias en vivo, en capas sobre el globo. Son solo de Ultra — el sitio gratuito y los niveles inferiores no los tienen.",
+        },
+        {
+          q: "¿Ultra incluye el centro VIP?",
+          a: "Sí. Las alertas de eventos, tu resumen personal y hasta 25 vistas guardadas viven en el centro VIP, y Ultra lo incluye todo — junto a la grabación de 40 cámaras y 10 alertas de cámara.",
+        },
+        {
+          q: "¿Ultra es demasiado para mirar por casualidad?",
+          a: "Sinceramente, puede serlo. Si no necesitas los feeds de inteligencia, el timelapse ni el centro, Lite o Pro te cubrirán — cada nivel empieza con una prueba gratuita, así que puedes notar la diferencia antes de pagar.",
+        },
+      ],
+    },
+  },
 };

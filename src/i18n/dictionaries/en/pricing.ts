@@ -38,6 +38,17 @@
  * Spanish re-synced the same day; the manifest's pricing sourceHash
  * was recomputed (updatedAt already 2026-10-31).
  *
+ * Amended 2026-11-01 (Pricing Redesign v2): the hero gained the
+ * reference design's eyebrow + a 4-item feature strip; the card trust
+ * line became a 3-item trust row (no charge today / secured by Stripe
+ * / 1-click cancellation) plus per-card plan-detail links; a
+ * why-upgrade row and full per-plan detail copy (`planDetails`) were
+ * added for the /pricing/lite|pro|ultra pages; and the money-back
+ * guarantee sentence now appears exactly once on /pricing (the
+ * under-grid line) — the bottom trust row and the cost FAQ no longer
+ * repeat it. Spanish re-synced the same day; the manifest's pricing
+ * sourceHash was recomputed (updatedAt stays 2026-10-31).
+ *
  * NOT covered (separate components keep their own copy; they render
  * in English on localized pricing pages until their own conversion —
  * see the build REPORT): TeamSection, CancelReassurance,
@@ -67,11 +78,14 @@ export interface PricingCopy {
   backToMap: string;
   proBadge: string;
   hero: {
+    eyebrow: string;
     h1Before: string;
     h1Accent: string;
     h1After: string;
     sub: string;
   };
+  /** 4-item feature strip under the hero (reference design). */
+  heroFeatures: { title: string; desc: string }[];
   toggle: {
     mostPopular: string;
   };
@@ -111,7 +125,13 @@ export interface PricingCopy {
     /** Suffix after the trial chip text (" — card not charged yet"). */
     trialChipSuffix: string;
     vipOnlyHeading: string;
-    securedLine: string;
+    /** 3-item trust row under each card CTA (reference design):
+        no charge today / secured by Stripe / 1-click cancellation. */
+    trustRow: string[];
+    /** "See everything in {name} →" detail-page link, split around
+        the tier name. */
+    detailsBefore: string;
+    detailsAfter: string;
     guaranteeLine: string;
   };
   liteFeatures: { title: string; desc: string }[];
@@ -152,6 +172,38 @@ export interface PricingCopy {
     allLabel: string;
   };
   trust: string[];
+  /** "Why upgrade" icon row under the plan grid (reference design). */
+  whyUpgrade: {
+    h2Before: string;
+    h2Accent: string;
+    items: { title: string; desc: string }[];
+  };
+  /** Per-plan detail pages (/pricing/lite|pro|ultra). */
+  planDetails: {
+    backToPricing: string;
+    pricingHeading: string;
+    includesBefore: string;
+    excludesHeading: string;
+    bestForHeading: string;
+    allPlansLink: string;
+    lite: PricingPlanDetailCopy;
+    pro: PricingPlanDetailCopy;
+    ultra: PricingPlanDetailCopy;
+  };
+}
+
+export interface PricingPlanDetailCopy {
+  metaTitle: string;
+  metaDescription: string;
+  eyebrow: string;
+  h1: string;
+  intro: string;
+  heroImage: { src: string; alt: string; caption: string };
+  featureImages: { src: string; alt: string; caption: string }[];
+  bestFor: string[];
+  includes: { title: string; desc: string }[];
+  excludes: { title: string; desc: string }[];
+  faqs: { q: string; a: string }[];
 }
 
 export const enPricing: PricingCopy = {
@@ -168,11 +220,18 @@ export const enPricing: PricingCopy = {
   backToMap: "Back to the map",
   proBadge: "PRO",
   hero: {
-    h1Before: "See what the ",
-    h1Accent: "free map",
-    h1After: " can't show you.",
-    sub: "An AI analyst that works the globe for you. Live traffic. Advanced search filters. Premium intel feeds on the top tier. Pick your level — upgrade anytime.",
+    eyebrow: "GLOBAL INTELLIGENCE. REAL IMPACT.",
+    h1Before: "Unlock the ",
+    h1Accent: "full picture.",
+    h1After: "",
+    sub: "The map is free. A paid plan removes the limits: an AI analyst that works the globe for you, live traffic, advanced search, the recording studio — and, on the top tier, the premium intel feeds.",
   },
+  heroFeatures: [
+    { title: "74,229 live cameras", desc: "Every public camera on one globe" },
+    { title: "Real-time data", desc: "Flights, satellites, ships and weather, live" },
+    { title: "OI AI analysis", desc: "An analyst that works the map for you" },
+    { title: "Alerts & intel", desc: "Camera alerts and premium intel feeds" },
+  ],
   toggle: {
     mostPopular: "MOST POPULAR",
   },
@@ -295,7 +354,9 @@ export const enPricing: PricingCopy = {
     justPerDayAfter: " a day",
     trialChipSuffix: " — card not charged yet",
     vipOnlyHeading: "ULTRA EXTRAS",
-    securedLine: "Secured by Stripe · Cancel anytime · 1-click cancellation",
+    trustRow: ["No charge today", "Secured by Stripe", "1-click cancellation"],
+    detailsBefore: "See everything in ",
+    detailsAfter: " →",
     guaranteeLine:
       "Covered by a 7-day money-back guarantee on your first charge — email us within 7 days of the charge for a full refund, no questions asked.",
   },
@@ -370,7 +431,7 @@ export const enPricing: PricingCopy = {
   faqs: [
     {
       q: "How much does WorldEye cost?",
-      a: "The map itself is free — the globe, 74,229 cameras, flights, satellites and weather, no account needed. Paid plans come in three tiers, each billed weekly, monthly or annually: Lite is $4.99/week, $8.99/month or $44.99/year; Pro is $7.99/week, $13.99/month or $74.99/year; Ultra is $12.99/week, $24.99/month or $149.99/year. Weekly plans start with a 3-day free trial; monthly and annual plans start with a 10-day free trial. Enterprise — the camera feed API and embed for your own platform — is $999/year and has no free trial. Every paid plan can be cancelled anytime, and first charges carry a 7-day money-back guarantee.",
+      a: "The map itself is free — the globe, 74,229 cameras, flights, satellites and weather, no account needed. Paid plans come in three tiers, each billed weekly, monthly or annually: Lite is $4.99/week, $8.99/month or $44.99/year; Pro is $7.99/week, $13.99/month or $74.99/year; Ultra is $12.99/week, $24.99/month or $149.99/year. Weekly plans start with a 3-day free trial; monthly and annual plans start with a 10-day free trial. Enterprise — the camera feed API and embed for your own platform — is $999/year and has no free trial. Every paid plan can be cancelled anytime.",
     },
     {
       q: "Is the map really free?",
@@ -390,7 +451,7 @@ export const enPricing: PricingCopy = {
     },
     {
       q: "What if I forget to cancel — can I get a refund?",
-      a: "We email you before your trial's first charge, so it shouldn't come as a surprise. And if it still happens: your first charge is covered by a 7-day money-back guarantee — email us at passiveincomewai@gmail.com within 7 days of the charge for a full refund, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it.",
+      a: "We email you before your trial's first charge, so it shouldn't come as a surprise. And if it still happens: email us at passiveincomewai@gmail.com within 7 days of your first charge and we'll refund it in full, no questions asked. The refund covers your first charge only; renewal charges aren't refundable under it.",
     },
     {
       q: "Do you have a promo code?",
@@ -422,8 +483,207 @@ export const enPricing: PricingCopy = {
   },
   trust: [
     "1-click cancellation",
-    "7-day money-back guarantee on your first charge",
+    "Reminder email before your first charge",
     "Stripe-secured checkout",
     "No ads, no data selling",
   ],
+  whyUpgrade: {
+    h2Before: "Why upgrade to ",
+    h2Accent: "Pro?",
+    items: [
+      { title: "OI AI analyst", desc: "An AI that flies the globe, reads the layers and answers — built in, nothing to set up." },
+      { title: "Camera alerts", desc: "Watch up to 2 cameras on Pro, 10 on Ultra — emailed a photo when your condition appears." },
+      { title: "Recording Studio", desc: "Record live camera feeds in your browser — 5 cameras at once on Lite, 20 on Pro, 40 on Ultra." },
+      { title: "Premium intel feeds", desc: "Cyber threats, GDELT events, maritime and live news feeds — Ultra only." },
+    ],
+  },
+  planDetails: {
+    backToPricing: "← All plans",
+    pricingHeading: "Pick your billing period",
+    includesBefore: "Everything in ",
+    excludesHeading: "Not in this plan",
+    bestForHeading: "Best for",
+    allPlansLink: "Compare all plans side by side →",
+    lite: {
+      metaTitle: "Lite Plan — $4.99/week | WorldEye Pricing",
+      metaDescription:
+        "WorldEye Lite: $4.99/week, $8.99/month or $44.99/year. Unlimited camera opens, premium layers, the OI AI assistant, advanced search and the recording studio (5 cameras at once). Free trial: 3 days weekly, 10 days monthly and annual.",
+      eyebrow: "WORLDEYE LITE",
+      h1: "Every camera. No open limits.",
+      intro:
+        "Lite is the essentials tier — the free map with its limits removed. Open as many of the 74,229 cameras as you like, turn on the premium layers, ask the OI assistant, filter search properly and record up to five cameras at once.",
+      heroImage: {
+        src: "/landing/osint-search.jpg",
+        alt: "WorldEye search flying to a place on the live globe",
+        caption: "Search that flies you anywhere — with advanced filters on every paid plan.",
+      },
+      featureImages: [
+        {
+          src: "/landing/features-globe.jpg",
+          alt: "The live WorldEye globe covered in camera points",
+          caption: "The live globe — a real capture of WorldEye, cameras and layers in one place.",
+        },
+        {
+          src: "/landing/track-flights.jpg",
+          alt: "Live flight tracking on the WorldEye globe",
+          caption: "Live flights over the camera network — free to watch, unlimited on Lite.",
+        },
+      ],
+      bestFor: [
+        "You watch cameras daily and keep hitting the free open limit.",
+        "You want the AI assistant and premium layers without the OSINT toolkit.",
+        "You record a handful of cameras, not whole scenes.",
+      ],
+      includes: [
+        { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
+        { title: "Premium map layers", desc: "Live traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
+        { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
+        { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
+        { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },
+        { title: "Ambient Mode included", desc: "The Slow-TV ambient player is unlocked too — no separate Ambient plan needed." },
+      ],
+      excludes: [
+        { title: "Camera alerts", desc: "Alerts start at Pro — watch 2 cameras there, 10 on Ultra, and get emailed a photo when your condition appears." },
+        { title: "Camera timelapse", desc: "Frame-by-frame timelapse export is Ultra only." },
+        { title: "Premium intel feeds", desc: "Cyber, GDELT, maritime and live-news intel feeds are Ultra only." },
+      ],
+      faqs: [
+        {
+          q: "Is Lite enough if I mostly watch cameras?",
+          a: "Yes — that's exactly what Lite is for. Unlimited opens, the premium layers and the assistant, with recording for up to 5 cameras at once. If you later want alerts or the OSINT toolkit, upgrading to Pro applies immediately.",
+        },
+        {
+          q: "Does Lite include camera alerts?",
+          a: "No. Camera alerts start at Pro (2 watched cameras) and rise to 10 on Ultra. Everything else in the paid base — unlimited opens, premium layers, OI, advanced search, the recording studio and Ambient — is in Lite.",
+        },
+        {
+          q: "What does the free trial look like on Lite?",
+          a: "Weekly Lite starts with 3 free days; monthly and annual Lite start with 10 free days. We email you before the first charge, and cancelling during the trial costs nothing.",
+        },
+      ],
+    },
+    pro: {
+      metaTitle: "Pro Plan — $7.99/week | WorldEye Pricing",
+      metaDescription:
+        "WorldEye Pro: $7.99/week, $13.99/month or $74.99/year (VIP Pro annual). Everything in Lite, plus the OSINT toolkit, live traffic, camera alerts (2) and the recording studio at 20 cameras at once. Free trial: 3 days weekly, 10 days monthly and annual.",
+      eyebrow: "WORLDEYE PRO",
+      h1: "The complete WorldEye toolkit.",
+      intro:
+        "Pro is the working tier: everything in Lite, plus the OSINT toolkit, the live traffic layer, camera alerts and room to record twenty cameras at once.",
+      heroImage: {
+        src: "/landing/track-flights.jpg",
+        alt: "A tracked flight with its route and live data on WorldEye",
+        caption: "Aircraft follow with live route data — part of the free map, unlimited on Pro.",
+      },
+      featureImages: [
+        {
+          src: "/landing/osint-search.jpg",
+          alt: "WorldEye search flying to a place on the live globe",
+          caption: "The OSINT toolkit runs in your browser — scans, DNS, WHOIS and SSL checks.",
+        },
+        {
+          src: "/landing/features-globe.jpg",
+          alt: "The live WorldEye globe covered in camera points",
+          caption: "The live globe — a real capture of WorldEye, cameras and layers in one place.",
+        },
+      ],
+      bestFor: [
+        "You investigate — scans, DNS, WHOIS and SSL checks in the browser.",
+        "You need a couple of cameras watched for you around the clock.",
+        "You record multi-camera sessions and 5 at once isn't enough.",
+      ],
+      includes: [
+        { title: "Everything in Lite", desc: "Unlimited camera opens, premium layers, advanced search filters and Ambient Mode — all of it carries over." },
+        { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
+        { title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
+        { title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
+        { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 20 cameras at once — and save the clips." },
+        { title: "Camera alerts (2)", desc: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe, like snow or flooding, shows up." },
+        { title: "Every Future Layer", desc: "New premium feeds land in Pro first, at no extra cost." },
+      ],
+      excludes: [
+        { title: "Premium intel feeds", desc: "Cyber, GDELT, maritime and live-news feeds are Ultra only." },
+        { title: "Camera timelapse", desc: "Frame-by-frame timelapse export is Ultra only." },
+        { title: "The VIP hub", desc: "Event alerts, the personal brief and saved views come with Ultra. Annual Pro carries the VIP Pro name and Pro's limits — the hub itself isn't part of Pro." },
+        { title: "Ultra's higher caps", desc: "Recording 40 cameras at once and 10 camera alerts are Ultra's numbers; Pro records 20 at once with 2 alerts." },
+      ],
+      faqs: [
+        {
+          q: "Does annual Pro unlock the VIP hub?",
+          a: "No — and we'd rather say so here than after you've paid. The hub (event alerts, personal brief, saved views) comes with Ultra. Annual Pro carries the VIP Pro name and Pro's limits: 20-camera recording and 2 camera alerts. Annual subscribers who joined before 30 October 2026 keep the VIP extras they started with.",
+        },
+        {
+          q: "How do camera alerts work?",
+          a: "Pick up to 2 cameras and describe the condition — snow, flooding, a crowd forming. WorldEye watches them and emails you a photo when the condition appears.",
+        },
+        {
+          q: "Can I change billing period later?",
+          a: "Yes. Upgrades apply immediately with proration handled by Stripe; downgrades take effect at the end of your current period. Switching between weekly, monthly and annual works the same way.",
+        },
+      ],
+    },
+    ultra: {
+      metaTitle: "Ultra Plan — $12.99/week | WorldEye Pricing",
+      metaDescription:
+        "WorldEye Ultra: $12.99/week, $24.99/month or $149.99/year. Everything in Pro, plus premium intel feeds, camera timelapse, the VIP hub, 40-camera recording and 10 camera alerts. Free trial: 3 days weekly, 10 days monthly and annual.",
+      eyebrow: "WORLDEYE ULTRA",
+      h1: "Everything. Plus the intel layer.",
+      intro:
+        "Ultra is the top tier: everything in Pro, the premium intel feeds, camera timelapse, the VIP hub and the highest limits WorldEye sells — 40 cameras recording at once, 10 watched for alerts.",
+      heroImage: {
+        src: "/landing/track-satellites.jpg",
+        alt: "Satellites tracked live over the Earth on WorldEye",
+        caption: "Live satellite tracking — Ultra adds the intel feeds layered over the same globe.",
+      },
+      featureImages: [
+        {
+          src: "/landing/osint-satellite.jpg",
+          alt: "Satellite detail in WorldEye's OSINT tools",
+          caption: "Satellite detail and look angles from the OSINT toolkit.",
+        },
+        {
+          src: "/landing/osint-maritime.jpg",
+          alt: "The maritime and conflict layer on the WorldEye globe",
+          caption: "Maritime traffic and conflict-zone labels — the intel layer, live on the globe.",
+        },
+        {
+          src: "/landing/hazard-weather.jpg",
+          alt: "Hazard and disaster alerts on the WorldEye globe",
+          caption: "Hazard and disaster alerts (GDACS) alongside the weather layers.",
+        },
+      ],
+      bestFor: [
+        "You follow world events and want the intel feeds on the globe.",
+        "You run big recording sessions — up to 40 cameras at once.",
+        "You want the hub: event alerts, a personal brief and saved views.",
+      ],
+      includes: [
+        { title: "Everything in Pro", desc: "The OSINT toolkit, camera alerts, advanced search and every future Pro layer — all included." },
+        { title: "Premium Intel Feeds", desc: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — Ultra only." },
+        { title: "Camera Timelapse", desc: "Capture snapshot cameras frame by frame and export the film — Ultra only." },
+        { title: "Camera alerts (10)", desc: "The alert allowance raised to 10 watched cameras — Pro includes 2." },
+        { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 40 cameras at once — and save the clips." },
+        { title: "Event alerts", desc: "Earthquakes near your places, launch reminders and ISS passes — email + in-app, checked every ~15 minutes, in the VIP hub." },
+        { title: "Personal brief", desc: "A brief built from your account — your alert events, quakes near your watched places, the best ISS pass and the next 48 hours of launches, in the VIP hub or your morning inbox." },
+        { title: "Saved views", desc: "Name and keep up to 25 globe setups — a layer stack plus an optional camera — and restore any of them in one click, in the VIP hub." },
+      ],
+      excludes: [
+        { title: "Enterprise team features", desc: "The camera-feed API, the embeddable player for your own site and team seats are Enterprise — $999/year." },
+      ],
+      faqs: [
+        {
+          q: "What are the premium intel feeds?",
+          a: "Live cyber-threat data, GDELT global events, maritime tracking, conflict zones and live news feeds, layered on the globe. They're Ultra-only — the free site and the lower tiers don't carry them.",
+        },
+        {
+          q: "Does Ultra include the VIP hub?",
+          a: "Yes. Event alerts, your personal brief and up to 25 saved views live in the VIP hub, and Ultra includes all of it — alongside 40-camera recording and 10 camera alerts.",
+        },
+        {
+          q: "Is Ultra overkill for casual watching?",
+          a: "Honestly, it can be. If you don't need the intel feeds, timelapse or the hub, Lite or Pro will cover you — every tier starts with a free trial, so you can feel the difference before paying.",
+        },
+      ],
+    },
+  },
 };

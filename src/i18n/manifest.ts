@@ -90,7 +90,7 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
-  pricing: "52d89edee0bfe9fb5e6682d018b446d290718e34d507840006a58e155bbd8a6d",
+  pricing: "f4347d4180f2a6dfe6e34d0ca2afde589c8028ee0ad586580e8054549c7c74fb",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "e7c967dff68f038660c58887cabe671eb2fd8dbcbba1fe4239829c0899f40f88",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
@@ -152,6 +152,13 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // were retired for the truthful annual-vs-monthly savings (58.3% /
 // 55.3% / 50.0%), and the cost/free/self-hosted FAQs were rewritten
 // for the grid. The Spanish dictionary was re-synced the same day.
+// Re-sync (2026-11-01, Pricing Redesign v2): the pricing dictionary
+// gained the reference-design hero (eyebrow + feature strip), the
+// card trust row + detail links, the why-upgrade row and the
+// planDetails copy for /pricing/lite|pro|ultra; the money-back
+// sentence now appears once on /pricing. The Spanish dictionary was
+// re-synced the same day, so the pricing hash moved; its updatedAt
+// stays 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",
