@@ -512,13 +512,22 @@ export default async function FeaturesPage() {
             label="The globe itself"
             features={[FREE_FEATURES[0], FREE_FEATURES[2], FREE_FEATURES[6], FREE_FEATURES[9]]}
             media={
-              <GroupFrame
-                src="/landing/osint-satellite.jpg"
-                alt="Satellite imagery on the WorldEye globe"
-                width={800}
-                height={600}
-                caption="The satellite imagery view — free for everyone"
-              />
+              <div className="flex flex-col" style={{ gap: "var(--we-space-4)" }}>
+                <GroupFrame
+                  src="/landing/osint-satellite.jpg"
+                  alt="Satellite imagery on the WorldEye globe"
+                  width={800}
+                  height={600}
+                  caption="The satellite imagery view — free for everyone"
+                />
+                <GroupFrame
+                  src="/landing/satellite-card.jpg"
+                  alt="A satellite detail card open on the WorldEye globe"
+                  width={1200}
+                  height={776}
+                  caption="Tap any satellite for its card — altitude, orbit class, position, NORAD ID"
+                />
+              </div>
             }
           />
           <FeatureGroup
@@ -744,13 +753,22 @@ export default async function FeaturesPage() {
             label="Intelligence"
             features={[PRO_FEATURES[0], PRO_FEATURES[4], PRO_FEATURES[5]]}
             media={
-              <GroupFrame
-                src="/landing/osint-search.jpg"
-                alt="Search and analysis tools inside the WorldEye globe"
-                width={740}
-                height={555}
-                caption="Search and analysis, inside the globe"
-              />
+              <div className="flex flex-col" style={{ gap: "var(--we-space-4)" }}>
+                <GroupFrame
+                  src="/landing/osint-search.jpg"
+                  alt="Search and analysis tools inside the WorldEye globe"
+                  width={740}
+                  height={555}
+                  caption="Search and analysis, inside the globe"
+                />
+                <GroupFrame
+                  src="/landing/oi-panel.jpg"
+                  alt="The OI assistant panel inside the WorldEye globe"
+                  width={800}
+                  height={605}
+                  caption="OI, the AI assistant built into the globe — it works the map for you"
+                />
+              </div>
             }
           />
           <FeatureGroup
