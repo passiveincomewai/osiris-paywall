@@ -1,0 +1,1038 @@
+import type { Metadata } from "next";
+import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft, Camera, ChevronRight, MapPin } from "lucide-react";
+import SiteFooter from "@/components/SiteFooter";
+import EmailCaptureCard from "@/components/EmailCaptureCard";
+import TrialCtaSection from "@/components/TrialCtaSection";
+import CountryCameraExplorer from "@/components/CountryCameraExplorer";
+import ViewOnGlobeButton from "@/components/ViewOnGlobeButton";
+import CountryCitySearch from "@/components/CountryCitySearch";
+import countriesIndex from "@/data/camera-countries.json";
+import { countryContentB, type CountryContent } from "@/data/country-content-b";
+import { countryContentC } from "@/data/country-content-c";
+import { countryContentD } from "@/data/country-content-d";
+import { countryContentE } from "@/data/country-content-e";
+import {
+  countryFacts,
+  detailParagraphs,
+  extraFaqs,
+  loadCountryRecords,
+  plural,
+  regionLinks,
+  roster,
+  watchGuide,
+} from "@/lib/country-page-content";
+import { cameraAreas, type CountryCamera } from "@/lib/country-cameras";
+import { isConsolidatedCountry } from "@/lib/indexation-gates";
+import { withDerivedCities } from "@/lib/us-places";
+import { getUsStatesIndex, US_STATE_META } from "@/lib/us-states";
+import UsStateMap from "@/components/UsStateMap";
+import UsStateBrowser from "@/components/UsStateBrowser";
+import {
+  cityPageHrefForArea,
+  countryAnswers,
+  mergePlaceFaqs,
+} from "@/lib/place-answers";
+import { getPlaceWeather } from "@/lib/place-weather";
+import PlaceWeatherPanel from "@/components/PlaceWeatherPanel";
+import CurrentStatus from "@/components/CurrentStatus";
+import { countryStatusRows, operatorRows, statusFaqs } from "@/lib/place-breakdown";
+import {
+  buildRelatedSearches,
+  type KindCandidate,
+  type RelatedKind,
+} from "@/lib/related-searches";
+import RelatedSearches from "@/components/RelatedSearches";
+import { OperatorTable } from "@/components/directory-page";
+import SaveLocationButton from "@/components/SaveLocationButton";
+
+/* Weather data is cached per location for 30 minutes in lib/weather-api;
+   ISR at the same cadence keeps the baked page from going staler. */
+export const revalidate = 1800;
+
+const BASE = "https://worldeye.app";
+
+const CONTENT: Record<string, CountryContent> = {
+  ...countryContentB,
+  ...countryContentC,
+  ...countryContentD,
+  ...countryContentE,
+};
+
+/* Every country's counts, areas and samples come from the generated index
+   (tools/build-country-pages.mjs, derived from the served catalogue) —
+   never hand-written numbers, so a page cannot drift from the catalogue. */
+interface CountryEntry {
+  slug: string;
+  name: string;
+  count: number;
+  aliases: string[];
+  topCities: Array<{ name: string; count: number }>;
+  cityCount: number;
+  samples: Array<{ id: string; name: string; city: string }>;
+}
+
+const COUNTRIES = (countriesIndex as { countries: CountryEntry[] }).countries;
+
+function getCountry(slug: string): CountryEntry | undefined {
+  return COUNTRIES.find((c) => c.slug === slug);
+}
+
+export function generateStaticParams() {
+  /* C10 (§4.5): below-line countries are consolidated into their
+     regional hubs and no longer generate pages — their URLs 301 to
+     the hub from next.config.ts. */
+  return COUNTRIES.filter((c) => !isConsolidatedCountry(c.slug)).map((c) => ({
+    country: c.slug,
+  }));
+}
+
+function pageTitle(c: CountryEntry): string {
+  const t = `${c.name} Live Cameras — ${c.count.toLocaleString("en-US")} Street Cams`;
+  if (t.length <= 60) return t;
+  return `${c.name} Live Cameras`;
+}
+
+/* Meta descriptions are composed from the live-derived numbers for every
+   country — the hand-written blurbs in the content files were written
+   against older snapshots and several cite counts that no longer hold. */
+function metaDescription(c: CountryEntry): string {
+  const top = c.topCities.slice(0, 3).map((a) => a.name);
+  const where = top.length > 0 ? `, including ${top.join(", ")}` : "";
+  return `Watch ${plural(c.count, "live camera")} across ${c.name}${where}. Free live street, traffic, weather and city webcams on the WorldEye globe — no signup to browse.`;
+}
+
+/* Per-country snippet overrides (Top-50 Batch 3, #33/#35/#36/#37): the
+   generic title/description above say "live cameras" for every country,
+   while the demand for these four pages is phrased "webcams" ("Malaysia
+   webcams", "Turkey webcams", "UK webcams", "Romania webcams"). Only the
+   <title>/meta/OG snippet changes — H1, hero and body are untouched —
+   and every value is a function of the country's own index record, so a
+   count can never freeze at a stale snapshot. Countries without an entry
+   keep the exact generic snippet. */
+interface CountrySnippet {
+  title: (c: CountryEntry) => string;
+  description: (c: CountryEntry) => string;
+}
+
+const SNIPPET_OVERRIDES: Record<string, CountrySnippet> = {
+  malaysia: {
+    title: (c) => `${c.name} Webcams — ${plural(c.count, "Live Street & River Camera")}`,
+    description: (c) => {
+      const top = c.topCities.slice(0, 3).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across ${c.name} — Selangor river and flood-monitoring cameras around ${top.join(", ")}, plus road, town and coastal views. Free on WorldEye, no signup to browse.`;
+    },
+  },
+  turkey: {
+    title: (c) =>
+      `${c.name} Webcams — ${plural(c.count, "Live Camera")}, ${c.topCities[0]?.name ?? "Istanbul"} & Beyond`,
+    description: (c) => {
+      const top = c.topCities[0];
+      const rest = c.topCities.slice(1, 4).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across ${c.name}${top ? ` — ${top.name} street cameras (${plural(top.count, "feed")}) lead, with ${rest.join(", ")} behind` : ""}. Free live street, traffic and city webcams on the WorldEye globe.`;
+    },
+  },
+  "united-kingdom": {
+    title: (c) => `UK Webcams — ${plural(c.count, "Live Camera")} Across the ${c.name}`,
+    description: (c) => {
+      const top = c.topCities.slice(0, 3).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across the ${c.name}, including ${top.join(", ")} — with further feeds in Cardiff, Newport and Swansea. Free live street and traffic webcams on WorldEye, no signup to browse.`;
+    },
+  },
+  romania: {
+    title: (c) =>
+      `${c.name} Webcams — ${plural(c.count, "Live Camera")}, ${c.topCities[0]?.name ?? "Brasov"} to ${c.topCities[1]?.name ?? "Bucharest"}`,
+    description: (c) => {
+      const top = c.topCities.slice(0, 3).map((a) => a.name);
+      return `Watch ${plural(c.count, "live webcam")} across ${c.name} — ${top.join(", ")} lead, with mountain views in Predeal and Black Sea coast feeds at Constanta. Free on WorldEye, no signup to browse.`;
+    },
+  },
+};
+
+function snippetTitle(c: CountryEntry): string {
+  return SNIPPET_OVERRIDES[c.slug]?.title(c) ?? pageTitle(c);
+}
+
+function snippetDescription(c: CountryEntry): string {
+  return SNIPPET_OVERRIDES[c.slug]?.description(c) ?? metaDescription(c);
+}
+
+/* Country traffic pages (INTENT-AND-CLUSTERS §2.3, chunk C8): seven
+   countries have a dedicated road-camera page beside this all-kinds
+   index. This page owns "[country] webcams"; the traffic page owns
+   "[country] traffic cameras" — one contextual link each way (the
+   traffic pages link back up from their explorer intros). Anchors
+   are operator-flavoured from each traffic page's own copy; leads
+   and tails are written per country, not stamped. Countries without
+   an entry render byte-identical. */
+const TRAFFIC_PAGE_LINKS: Record<
+  string,
+  { href: string; lead: string; anchor: string; tail: string }
+> = {
+  japan: {
+    href: "/japan-traffic-cameras",
+    lead: "Roads and rivers are the working half of this index, and they have a page of their own:",
+    anchor: "Japan's road and river cameras",
+    tail: "gathers the expressways, mountain passes and the river-monitoring network on one live map.",
+  },
+  canada: {
+    href: "/canada-traffic-cameras",
+    lead: "For the roads specifically, the provincial networks have a page of their own:",
+    anchor: "Canada's 511 and provincial traffic cameras",
+    tail: "gathers every provincial road network the index serves on one live map.",
+  },
+  germany: {
+    href: "/germany-traffic-cameras",
+    lead: "On the Autobahn network, the junctions and corridors have a page of their own:",
+    anchor: "Germany's Autobahn and federal-road cameras",
+    tail: "gathers the motorway feeds on one live map.",
+  },
+  norway: {
+    href: "/norway-traffic-cameras",
+    lead: "For the drive itself, the road network has a page of its own:",
+    anchor: "Norway's Statens vegvesen road cameras",
+    tail: "gathers the fjord roads, mountain passes and ferry approaches on one live map.",
+  },
+  spain: {
+    href: "/spain-traffic-cameras",
+    lead: "For Spain's roads specifically, the motorway network has a page of its own:",
+    anchor: "Spain's DGT road cameras",
+    tail: "gathers the autovías, autopistas and city rings on one live map.",
+  },
+  "south-korea": {
+    href: "/south-korea-traffic-cameras",
+    lead: "On the expressways, the intercity network has a page of its own:",
+    anchor: "South Korea's expressway and road cameras",
+    tail: "gathers Seoul's urban expressways, the Gyeongbu Expressway and the Busan, Incheon and Daegu networks on one live map.",
+  },
+  sweden: {
+    href: "/sweden-traffic-cameras",
+    lead: "For the roads specifically, the national network has a page of its own:",
+    anchor: "Sweden's Trafikverket road cameras",
+    tail: "gathers the state road feeds on one live map.",
+  },
+};
+
+/* Extra per-country FAQs (same Top-50 batch): appended to whichever FAQ
+   set the page already uses — hand-written content where it exists, the
+   derived set where it doesn't — so they render in the visible FAQ list
+   AND the single FAQPage schema built from it below. Every number is
+   read from the country's own record or its computed facts at render
+   time. Countries without an entry are byte-identical to before. */
+type CountryFactsLite = ReturnType<typeof countryFacts>;
+
+function areaCount(c: CountryEntry, name: string): number | null {
+  return c.topCities.find((a) => a.name === name)?.count ?? null;
+}
+
+const EXTRA_FAQS: Record<
+  string,
+  (c: CountryEntry, facts: CountryFactsLite) => Array<{ q: string; a: string }>
+> = {
+  malaysia: (c, facts) => {
+    const flood = facts.sources.find((s) => /flood/i.test(s.name));
+    const top = c.topCities.slice(0, 3).map((a) => a.name);
+    return [
+      {
+        q: "Are Malaysia's webcams mostly river and flood-monitoring cameras?",
+        a: `${flood ? `Many are — the largest single source in the Malaysia index is a Selangor flood-monitoring network (${plural(flood.count, "feed")} of the ${plural(c.count, "camera")}), whose cameras watch rivers such as the Sg. Langat and the Sg. Damansara around ${top.join(", ")}. ` : ""}The rest are road, town and coastal views from public webcam platforms.${facts.streams === 0 && facts.stills > 0 ? " Every Malaysia feed in the index is currently a still-image feed: each camera publishes a fresh frame on its operator's schedule, so the picture steps forward in intervals rather than playing as continuous video." : ""}`,
+      },
+    ];
+  },
+  turkey: (c) => {
+    const istanbul = areaCount(c, "Istanbul");
+    return [
+      {
+        q: "Can I watch Istanbul street cameras live?",
+        a: `Yes — Istanbul is the largest cluster in Turkey${istanbul ? `, with ${plural(istanbul, "feed")} of the country's ${plural(c.count, "live camera")}` : ""}: street-level views published by Istanbul's metropolitan network (İBB), covering neighbourhoods such as Ataköy, Bağcılar and Bahçelievler. Watch them in the grid above, filtered to Istanbul, or open the dedicated Istanbul live webcams page for the city on its own — the "Questions people ask" section below links straight to it.`,
+      },
+      {
+        /* The one non-English signal in this page's query data (Arabic:
+           "Istanbul street cameras live", 4 imp, pos 10.8). One honest
+           Arabic entry, not a translated page: no hreflang/lang claims
+           the system doesn't genuinely support are made anywhere. */
+        q: "هل يمكنني مشاهدة كاميرات شوارع إسطنبول مباشرة؟",
+        a: `نعم. تجمع هذه الصفحة كاميرات تركيا الحية، وإسطنبول هي أكبر تجمع فيها${istanbul ? ` بـ${istanbul} كاميرا` : ""} — كاميرات شوارع من شبكة بلدية إسطنبول تغطي أحياء في أنحاء المدينة، ويمكنك فتح أي منها من الشبكة أعلاه ومشاهدتها مباشرة ومجانًا. وإذا أردت إسطنبول وحدها، فهناك أيضًا صفحة مخصصة لكاميرات إسطنبول الحية على WorldEye، ويربطك بها قسم الأسئلة الشائعة أدناه.`,
+      },
+    ];
+  },
+  "united-kingdom": (c) => {
+    const london = areaCount(c, "London");
+    const named: Array<[string, number | null]> = [
+      ["Newcastle", areaCount(c, "Newcastle")],
+      ["Durham", areaCount(c, "Durham")],
+      ["Gateshead", areaCount(c, "Gateshead")],
+      ["Sunderland", areaCount(c, "Sunderland")],
+      ["Cardiff", areaCount(c, "Cardiff")],
+      ["Newport", areaCount(c, "Newport")],
+      ["Swansea", areaCount(c, "Swansea")],
+    ];
+    const present = named.filter(
+      (n): n is [string, number] => n[1] !== null,
+    );
+    return [
+      {
+        q: "Are there live webcams outside London on WorldEye?",
+        a: `Yes. London is by far the largest cluster${london ? ` (${plural(london, "feed")} of the UK's ${plural(c.count, "live camera")})` : ""}, but the index also covers ${present.map(([n, count]) => `${n} (${count})`).join(", ")} — the North East and Wales are both genuinely covered, not just the capital. Use the areas table above or the city search at the top of this page to jump to any of them. For London itself, the dedicated London city page breaks the capital's feeds down street by street.`,
+      },
+    ];
+  },
+  romania: (c) => {
+    const bucharest = areaCount(c, "Bucharest");
+    const predeal = areaCount(c, "Predeal");
+    return [
+      {
+        q: "Can I check snow and mountain conditions in Romania live?",
+        a: `Yes — Brașov's feeds include the Piața Sfatului old-town square and the Cabana Postăvarul mountain cabin above the city${predeal ? `, and Predeal, the Prahova Valley resort town, has ${plural(predeal, "feed")} of its own` : ""}. In winter these Carpathian cameras are the quickest live read on snow cover and visibility before a trip up — open any of them in the grid above.`,
+      },
+      {
+        q: "What else can I watch in Romania besides the mountains?",
+        a: `Bucharest${bucharest ? ` has ${plural(bucharest, "feed")}` : " is covered"}, including Piața Romană and the Bărăția Church on Bd. I. C. Brătianu. On the Black Sea coast, Constanța and Eforie Nord stream beach views, and Digi Live city feeds cover Botoșani, Piatra Neamț, Galați and Vaslui.`,
+      },
+    ];
+  },
+};
+
+/* For countries without hand-written content: an honest intro composed
+   from the same derived numbers (no invented colour, no guessed facts). */
+function derivedIntro(c: CountryEntry): string[] {
+  const top = c.topCities.slice(0, 4).map((a) => a.name);
+  const areasLine =
+    c.topCities.length > 0
+      ? `The largest clusters are in ${top.join(", ")}${c.cityCount > c.topCities.length ? `, with cameras spread across ${c.cityCount.toLocaleString("en-US")} named areas in total` : ""}.`
+      : "The cameras are spread across the country rather than clustered in one place.";
+  return [
+    `WorldEye's live index holds ${plural(c.count, "camera")} in ${c.name} — public feeds from transport agencies, weather networks, resorts, harbours and city operators, all watchable free in the grid below and on the globe. ${areasLine}`,
+    "Every card below is the camera's actual live feed, grouped by area with the largest first. Search the whole country, filter by area, and open any camera to watch it in full. The index is rebuilt from the same catalogue that powers the WorldEye globe, so the count on this page is the count the globe serves.",
+  ];
+}
+
+function derivedFaqs(c: CountryEntry): Array<{ q: string; a: string }> {
+  const top = c.topCities[0];
+  return [
+    {
+      q: `How many live cameras are there in ${c.name} on WorldEye?`,
+      a: `${c.count.toLocaleString("en-US")} — every camera for ${c.name} in the same live catalogue that powers the WorldEye globe, listed in the grid on this page. The count is derived from the catalogue when the index is built, never estimated.`,
+    },
+    {
+      q: `Which areas of ${c.name} have the most cameras?`,
+      a: top
+        ? `${top.name} has the most, with ${plural(top.count, "camera")}${c.topCities[1] ? `, followed by ${c.topCities[1].name} (${plural(c.topCities[1].count, "camera")})` : ""}. Use the area filters above the grid to browse one area at a time.`
+        : `The cameras are spread across ${c.name} rather than concentrated in one area; the grid groups them by area where the catalogue names one.`,
+    },
+    {
+      q: `Is it free to watch ${c.name} cameras?`,
+      a: `Yes — browsing this directory page is always free, with no account. Watching on the globe follows a simple ladder: your first 5 camera opens on any device are free, add your email for 5 more (10 in total), and a verified free account reaches the same 10. Paid plans remove the camera-open limit entirely. The feeds belong to their operators and public sources; a camera whose stream has gone off air shows as unavailable rather than playing a recording.`,
+    },
+  ];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ country: string }>;
+}): Promise<Metadata> {
+  const { country: slug } = await params;
+  const c = getCountry(slug);
+  /* Unknown slug → real 404: this route does not inherit the city routes'
+     200-with-"Not found" quirk — with no directory entry there is no
+     page, and notFound() below says so. Consolidated (C10) countries
+     take the same path: production traffic never reaches here because
+     next.config.ts 301s them to their regional hub first. */
+  if (!c || isConsolidatedCountry(slug)) return { title: "Not found" };
+  const url = `/cameras/countries/${slug}`;
+  return {
+    title: snippetTitle(c),
+    description: snippetDescription(c),
+    alternates: { canonical: `${BASE}${url}` },
+    openGraph: {
+      title: snippetTitle(c),
+      description: snippetDescription(c),
+      url,
+      type: "website",
+    },
+  };
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+// Rotated "how to watch" variants so pages don't read as stamped copies.
+const HOW_TO: string[][] = [
+  [
+    "Open the WorldEye live map — no account or download needed.",
+    "Zoom to the country and tap any green camera dot to start its live feed.",
+    "Use the search to jump straight to a city, road, or landmark.",
+  ],
+  [
+    "Head to the free WorldEye globe in your browser.",
+    "Find the country on the map — camera markers appear as green dots.",
+    "Click a dot to watch that camera's live stream instantly.",
+  ],
+  [
+    "Launch the WorldEye map — it works on phone and desktop, free.",
+    "Pan and zoom until green camera markers come into view.",
+    "Select any marker to open its live camera feed.",
+  ],
+];
+
+function howToFor(slug: string): string[] {
+  let h = 0;
+  for (const ch of slug) h = (h * 31 + ch.charCodeAt(0)) % 997;
+  return HOW_TO[h % HOW_TO.length];
+}
+
+export default async function CountryPage({
+  params,
+}: {
+  params: Promise<{ country: string }>;
+}) {
+  const { country: slug } = await params;
+  const c = getCountry(slug);
+  if (!c || isConsolidatedCountry(slug)) notFound();
+
+  /* The country's full record set (the same chunks the explorer API
+     serves) drives the depth sections below: source networks, feed kinds,
+     camera mix, spread and rank are computed from the records, so even a
+     one-camera country gets a true page about its one camera. A load
+     failure degrades to the index-only page rather than breaking it. */
+  let records: CountryCamera[] = [];
+  try {
+    records = await loadCountryRecords(slug);
+  } catch {
+    records = [];
+  }
+  const facts = countryFacts(c, records, COUNTRIES);
+  const detail = detailParagraphs(c, facts);
+  /* The search-by-city box's list: EVERY area the catalogue holds for
+     this country (from the same records the depth sections compute
+     from), biggest first — not just the explorer's top-24 chips. If the
+     records failed to load, the index's top areas are the fallback.
+     For the United States the derived places are substituted first:
+     DOT feeds file thousands of cameras under the state name ("Utah"),
+     and the search must offer the real cities those cameras sit in
+     (lib/us-places). The explorer API applies the same substitution
+     server-side, so a pick here filters to the same cameras. */
+  const cityList =
+    records.length > 0
+      ? cameraAreas(slug === "united-states" ? withDerivedCities(records) : records)
+      : c.topCities;
+  /* US visitors type the state with the city ("ogden utah", "Ogden,
+     UT") — the search box accepts and strips state-name/USPS suffixes
+     only on this page. */
+  const citySearchSuffixes =
+    slug === "united-states"
+      ? US_STATE_META.flatMap((s) => [s.name, s.usps])
+      : undefined;
+  const regionAll = regionLinks(slug, COUNTRIES);
+  /* C10: consolidated countries have no page to link to — they leave
+     the sibling cards and the anchor-dedupe set. siblingTotal stays
+     the full regional index total (the subtext that quotes it counts
+     the index, not the linked subset). */
+  const region = regionAll
+    ? {
+        ...regionAll,
+        siblings: regionAll.siblings.filter(
+          (s) => !isConsolidatedCountry(s.slug),
+        ),
+      }
+    : null;
+  const guide = watchGuide(c, facts, region);
+  const fullRoster = roster(c, records);
+
+  /* C9 (§6): related searches — built from this page's own facts:
+     the theme mix (rule 1; theme counts are per-theme record hits,
+     the same numbers the detail prose quotes), the top areas that
+     have real city pages (rule 2), the region hub (rule 4) and the
+     dominant theme's wall (rule 5). Rule 3 (distance neighbours)
+     stays a city-template rule: this page's neighbour set is the
+     region list rendered as its own section below, and the repo's
+     country centroids are explicitly not distance-grade. Anchors
+     the page already carries — area rows, region siblings, and the
+     C8 traffic hand-off — are passed in for §6.2 dedupe; on the
+     seven traffic countries that dedupe retires the rule-1 traffic
+     suggestion, because the C8 block already owns that link. */
+  const THEME_TO_KIND: Record<string, RelatedKind> = {
+    traffic: "traffic",
+    coast: "coast",
+    transport: "transport",
+    mountains: "mountains",
+  };
+  const KIND_WALLS: Record<RelatedKind, string> = {
+    traffic: "/live-traffic-cameras",
+    coast: "/beach-webcams",
+    transport: "/airport-webcams",
+    mountains: "/ski-webcams",
+  };
+  const trafficLink = TRAFFIC_PAGE_LINKS[slug];
+  const countryKinds: KindCandidate[] = facts.themes
+    .filter((t) => THEME_TO_KIND[t.key] !== undefined)
+    .map((t) => {
+      const kind = THEME_TO_KIND[t.key];
+      return {
+        kind,
+        count: t.count,
+        wallHref: KIND_WALLS[kind],
+        ...(kind === "traffic" && trafficLink
+          ? { localHref: trafficLink.href, localAnchor: trafficLink.anchor }
+          : {}),
+      };
+    });
+  const countryAreas = c.topCities
+    .map((a) => {
+      const href = cityPageHrefForArea(slug, a.name);
+      return href ? { name: a.name, href, count: a.count } : null;
+    })
+    .filter((a): a is NonNullable<typeof a> => a !== null);
+  const relatedSearches = buildRelatedSearches({
+    placeName: c.name,
+    kinds: countryKinds,
+    areas: countryAreas,
+    neighbours: [],
+    parent: region?.hub
+      ? {
+          anchor: `Live cameras across ${region.label}`,
+          href: region.hub.href,
+          subtext: `${plural(region.siblingTotal + c.count, "camera")} in the ${region.label} index`,
+        }
+      : null,
+    usedAnchors: [
+      ...c.topCities.map((a) => a.name),
+      ...(region?.siblings.map((s) => s.name) ?? []),
+      ...(trafficLink ? [trafficLink.anchor] : []),
+    ],
+  });
+
+  /* Weather / alerts / AQI for the country's largest camera city — a
+     clean no-op (null) unless WEATHERAPI_KEY and/or OPENAQ_API_KEY are
+     configured and the provider answers. A country has no single
+     weather, so the reading is explicitly for that city: the query, the
+     panel heading and the provider's own location name all say so. The
+     city's centroid (from its camera records) drives the OpenAQ
+     station lookup when available. */
+  const weatherCity = c.topCities[0]?.name ?? c.name;
+  const cityRecords = records.filter(
+    (r) => r.city === weatherCity && typeof r.lat === "number" && typeof r.lng === "number",
+  );
+  const weatherCentroid =
+    cityRecords.length > 0
+      ? {
+          lat: cityRecords.reduce((s, r) => s + (r.lat as number), 0) / cityRecords.length,
+          lng: cityRecords.reduce((s, r) => s + (r.lng as number), 0) / cityRecords.length,
+        }
+      : null;
+  const placeWeather = await getPlaceWeather({
+    query: `${weatherCity}, ${c.name}`,
+    lat: weatherCentroid?.lat ?? null,
+    lng: weatherCentroid?.lng ?? null,
+  });
+
+  const content = CONTENT[slug];
+  const intro = content?.intro ?? derivedIntro(c);
+  const baseFaqs = content?.faqs ?? [...derivedFaqs(c), ...extraFaqs(c, facts)];
+  const faqs = [...baseFaqs, ...(EXTRA_FAQS[slug]?.(c, facts) ?? [])];
+  /* Data-bound "Questions people ask" entries (src/lib/place-answers.ts,
+     ROLLOUT-SPEC §3 merge): appended to the template FAQs for the single
+     FAQPage below; the visible block renders exactly the survivors. */
+  const placeMerged = mergePlaceFaqs(faqs, countryAnswers(c));
+
+  /* Current Status rows (rendered visibly below) — computed once here
+     so the FAQPage schema can carry them too, via the same statusFaqs
+     merge the city/state templates apply: schema text is always
+     visible text. */
+  const statusRows = countryStatusRows({
+    countryName: c.name,
+    count: c.count,
+    weatherCity,
+    weatherCityCount: c.topCities[0]?.count ?? null,
+    isUS: slug === "united-states",
+    weather: placeWeather,
+  });
+
+  const canonical = `${BASE}/cameras/countries/${slug}`;
+  const updated = formatDate((countriesIndex as { generatedAt: string }).generatedAt);
+  const steps = howToFor(slug);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: snippetTitle(c),
+        description: snippetDescription(c),
+        url: canonical,
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: c.samples.length,
+          itemListElement: c.samples.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: s.city ? `${s.name} — ${s.city}` : s.name,
+            url: `${BASE}/?camera=${s.id}`,
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+          { "@type": "ListItem", position: 2, name: "Cameras", item: `${BASE}/cameras` },
+          { "@type": "ListItem", position: 3, name: "Countries", item: `${BASE}/cameras/countries` },
+          { "@type": "ListItem", position: 4, name: c.name, item: canonical },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: statusFaqs(placeMerged.merged, statusRows).map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      },
+    ],
+  };
+
+  return (
+    <main className="docs-root min-h-screen bg-[#05070d] text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="max-w-4xl mx-auto px-6 py-10 md:py-16">
+        {/* Breadcrumb */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-white/45 mb-10">
+          <Link href="/" className="hover:text-white transition">Home</Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <Link href="/cameras" className="hover:text-white transition">Cameras</Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <Link href="/cameras/countries" className="hover:text-white transition">Countries</Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <span className="text-white/80">{c.name}</span>
+          <span className="ml-auto -my-1">
+            <LanguageHeaderControl variant="mobile" />
+          </span>
+        </nav>
+
+        {/* Hero */}
+        <div className="text-center max-w-3xl mx-auto">
+          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-6">
+            <Camera className="w-3.5 h-3.5" /> LIVE CAMERA NETWORK
+          </p>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
+            {c.name} Live Street Cameras
+          </h1>
+          <p className="mt-4 text-white/55">
+            Watch {plural(c.count, "live camera")} across {c.name} — free on the WorldEye globe.
+          </p>
+          <div className="mt-6 flex justify-center">
+            <SaveLocationButton
+              entry={{
+                kind: "place",
+                key: `country:${slug}`,
+                label: c.name,
+                href: `/cameras/countries/${slug}`,
+              }}
+              saveLabel="Save this country"
+            />
+          </div>
+          <CountryCitySearch countryName={c.name} cities={cityList} searchSuffixes={citySearchSuffixes} />
+        </div>
+
+        {/* Stat row */}
+        <div className="mt-10 grid grid-cols-3 gap-3 max-w-2xl mx-auto text-center">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            {/* data-country-live-cameras: the explorer re-syncs this tile
+                from its first unfiltered batch total (the same generated
+                derivation) once loaded — see CountryCameraExplorer. */}
+            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]" data-country-live-cameras>{c.count.toLocaleString("en-US")}</div>
+            <div className="text-xs text-white/45 mt-1">live cameras</div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]">{c.cityCount.toLocaleString("en-US")}</div>
+            <div className="text-xs text-white/45 mt-1">areas covered</div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37]">{c.samples.length}</div>
+            <div className="text-xs text-white/45 mt-1">featured feeds</div>
+          </div>
+        </div>
+        <p className="text-center text-xs text-white/30 mt-4">Camera index last updated {updated}.</p>
+
+        {/* R47 (site-audit Wave 3): thin-network routing for India,
+            directly under the hero. Every number/name below is computed
+            from this page's own data (src/data/camera-countries.json via
+            `c` and the region sibling list) — India has 4 cameras in
+            Hyderabad, Mount Abu, Nanded and Suja today. */}
+        {slug === "india" && region && (
+          <section className="mt-10 max-w-3xl mx-auto rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/[0.04] p-5 md:p-6">
+            <h2 className="font-semibold text-white/90">India coverage is small today</h2>
+            <p className="text-sm text-white/60 leading-relaxed mt-2">
+              WorldEye&apos;s index holds just {plural(c.count, "live camera")} in India —
+              across {c.topCities.map((t) => t.name).join(", ")}. Rather than stop here,
+              head to where the cameras in Asia actually are:
+            </p>
+            <ul className="mt-4 grid sm:grid-cols-2 gap-3">
+              {region.siblings.slice(0, 4).map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={`/cameras/countries/${s.slug}`}
+                    className="block rounded-xl border border-white/10 bg-white/[0.03] p-3.5 hover:bg-white/[0.05] transition"
+                  >
+                    <span className="font-semibold text-sm">{s.name}</span>
+                    <span className="block text-xs text-white/45 mt-0.5">
+                      {plural(s.count, "live camera")}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="text-sm text-white/50 mt-4">
+              {region.hub && (
+                <>
+                  Browse the region on the{" "}
+                  <Link href={region.hub.href} className="text-[#00E5FF] hover:underline">
+                    {region.hub.label}
+                  </Link>{" "}
+                  page, or open the{" "}
+                </>
+              )}
+              <Link href="/cameras/countries" className="text-[#00E5FF] hover:underline">
+                full Asia and world country index
+              </Link>{" "}
+              to pick a country by camera count. Know a public Indian camera we should
+              index?{" "}
+              <Link href="/contact?topic=general" className="text-[#00E5FF] hover:underline">
+                Send us feedback
+              </Link>
+              .
+            </p>
+          </section>
+        )}
+
+        {/* Intro */}
+        <div className="mt-10 space-y-4 text-white/70 leading-relaxed max-w-3xl mx-auto">
+          {intro.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+
+        {/* Weather for the largest camera city (see placeWeather above) */}
+        {placeWeather && (
+          <div className="max-w-3xl mx-auto">
+            <PlaceWeatherPanel data={placeWeather} placeName={weatherCity} />
+          </div>
+        )}
+
+        {/* Current Status (SEO template upgrade): the snow/traffic
+            questions answered only from the snapshot above — framed on
+            the largest camera city, as the panel is — plus the live
+            camera counts. No snapshot, no asserted conditions. */}
+        <div className="max-w-3xl mx-auto">
+          <CurrentStatus place={c.name} rows={statusRows} />
+        </div>
+
+        {/* Playable cameras — every record for this country in the live
+            catalogue, served in batches by /api/cctv/country/<slug> and
+            playable in the globe's own viewer without leaving the page.
+            Every country in the catalogue gets this grid. */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-2">Watch {c.name} cameras live</h2>
+          <p className="text-sm text-white/50 mb-5 max-w-3xl">
+            Every camera in the live WorldEye index for {c.name}. Search or filter by area,
+            then open any feed to watch it here — no trip to the map required.
+          </p>
+          <CountryCameraExplorer country={c.slug} countryName={c.name} />
+        </section>
+
+        {/* United States only: browse by state — the clickable map and
+            the searchable state list. The rows are the generated
+            per-state records (lib/us-states), exactly the counts the
+            state pages themselves render, and every entry links to
+            that state's own page. No other country renders this. */}
+        {slug === "united-states" && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">Browse United States cameras by state</h2>
+            <p className="text-sm text-white/50 mb-5 max-w-3xl">
+              Every state has its own camera page. Pick a state on the map,
+              or search the list by name or state code — the count on each
+              card is the count on the state&apos;s page.
+            </p>
+            <UsStateMap counts={getUsStatesIndex().states} />
+            <div className="mt-6">
+              <UsStateBrowser
+                states={getUsStatesIndex().states}
+                idPrefix="us-country"
+              />
+            </div>
+          </section>
+        )}
+
+        {/* Top areas */}
+        {c.topCities.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-5">Top areas in {c.name}</h2>
+            <div className="rounded-2xl border border-white/10 overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wider text-white/40 border-b border-white/10 bg-white/[0.02]">
+                    <th className="px-5 py-3 font-semibold">Area</th>
+                    <th className="px-5 py-3 font-semibold text-right">Cameras</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {c.topCities.map((a) => {
+                    /* An area name links to its city page when one
+                       exists in this country (place-answers derives
+                       the universe from the same generated + curated
+                       data the [city] route serves — this is the link
+                       mechanism Top-50 Batch 3 flagged as missing for
+                       the Canada → Calgary/Ottawa adjunct). Areas
+                       without a city page stay plain text. */
+                    const cityHref = cityPageHrefForArea(slug, a.name);
+                    return (
+                      <tr key={a.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
+                        <td className="px-5 py-3">
+                          {cityHref ? (
+                            <Link href={cityHref} className="text-[#00E5FF] hover:underline">
+                              {a.name}
+                            </Link>
+                          ) : (
+                            a.name
+                          )}
+                        </td>
+                        <td className="px-5 py-3 text-right font-mono text-[#D4AF37]">{a.count.toLocaleString("en-US")}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* The network in detail — computed from this country's records:
+            source networks, feed kinds, camera mix, spread and rank. */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-5">The {c.name} camera network in detail</h2>
+          <div className="space-y-4 text-white/70 leading-relaxed max-w-3xl">
+            {detail.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        </section>
+
+        {/* On the roads (C8, §2.3): the seven countries with a dedicated
+            traffic page hand road intent over to it — one contextual
+            link, operator-flavoured anchor. All other countries skip. */}
+        {TRAFFIC_PAGE_LINKS[c.slug] && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-3">On the roads in {c.name}</h2>
+            <p className="text-white/70 leading-relaxed max-w-3xl">
+              {TRAFFIC_PAGE_LINKS[c.slug].lead}{" "}
+              <Link
+                href={TRAFFIC_PAGE_LINKS[c.slug].href}
+                className="text-[#00E5FF] hover:underline"
+              >
+                {TRAFFIC_PAGE_LINKS[c.slug].anchor}
+              </Link>{" "}
+              {TRAFFIC_PAGE_LINKS[c.slug].tail}
+            </p>
+          </section>
+        )}
+
+        {/* Who publishes (C6, §4.3): the detail prose above names the
+            top sources; this makes the five largest a table, each with
+            the one factual line its operator family supports. Renders
+            only when the country actually has more than one source. */}
+        {facts.sources.length >= 2 && (
+          <OperatorTable
+            title={`Who publishes ${c.name}'s cameras`}
+            rows={operatorRows(facts.sources, 5)}
+            note={
+              facts.sources.length > 5
+                ? `The five largest of the ${facts.sources.length} public sources in the ${c.name} index — every count taken from the same catalogue records the grid above serves.`
+                : `Every public source in the ${c.name} index — every count taken from the same catalogue records the grid above serves.`
+            }
+          />
+        )}
+
+        {/* Featured cameras */}
+        {c.samples.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-5">Featured live cameras</h2>
+            <ul className="grid sm:grid-cols-2 gap-3">
+              {c.samples.map((s) => (
+                <li key={s.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 flex items-start gap-3">
+                  <MapPin className="w-4 h-4 text-[#00E5FF] shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <div className="font-semibold text-sm truncate">{s.name}</div>
+                    {s.city && <div className="text-xs text-white/45">{s.city}</div>}
+                    <div className="mt-2">
+                      <ViewOnGlobeButton cameraId={s.id} cameraName={s.name} />
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Full roster — small countries the featured samples don't
+            exhaust get every camera named on the page. */}
+        {fullRoster && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">Every indexed camera in {c.name}</h2>
+            <p className="text-sm text-white/50 mb-5 max-w-3xl">
+              The featured cards above are a selection — this is the complete index for {c.name},
+              all {fullRoster.length} cameras, exactly as the catalogue holds them.
+            </p>
+            <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              {fullRoster.map((r) => (
+                <li key={r.id} className="flex items-center gap-2 border-b border-white/5 py-2">
+                  {/* Phase 2: the camera name itself is the deep link
+                      (the city/state RosterGrid pattern) — crawlable
+                      anchor text, not just the View-on-globe button. */}
+                  <a
+                    href={`/?camera=${encodeURIComponent(r.id)}`}
+                    className="text-white/80 min-w-0 truncate hover:text-[#00E5FF] hover:underline"
+                  >
+                    {r.name}
+                  </a>
+                  {r.city && <span className="text-xs text-white/40 shrink-0">{r.city}</span>}
+                  <span className="ml-auto shrink-0">
+                    <ViewOnGlobeButton cameraId={r.id} cameraName={r.name} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* How to watch */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-5">How to watch {c.name} cameras live</h2>
+          <ol className="space-y-3">
+            {steps.map((s, i) => (
+              <li key={i} className="flex gap-4 items-start rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-sm flex items-center justify-center shrink-0">
+                  {i + 1}
+                </span>
+                <span className="text-white/70 text-sm pt-1">{s}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* What people watch — grounded in the camera mix the data shows */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-5">What people watch in {c.name}</h2>
+          <div className="grid md:grid-cols-2 gap-3">
+            {guide.map((g, i) => (
+              <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <h3 className="font-semibold text-sm mb-2">{g.title}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{g.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* C9 (§6.3): after the grid + breakdown, before the FAQs —
+            renders only when the lib's min-3 gate passed. */}
+        <RelatedSearches placeName={c.name} suggestions={relatedSearches} />
+
+        {/* FAQ — R45 (site-audit Wave 3): ONE FAQ surface. This section
+            renders the merged list (template FAQs + surviving
+            "Questions people ask" entries) — the same list the single
+            FAQPage schema above carries — instead of a second VoiceQA
+            block repeating it. */}
+        <section className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-5">{c.name} cameras — FAQ</h2>
+          <div className="space-y-3">
+            {placeMerged.merged.map((f, i) => (
+              <details
+                key={i}
+                className="group rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden"
+              >
+                <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between gap-4 font-semibold text-sm hover:bg-white/[0.03]">
+                  {f.q}
+                  <span className="text-[#D4AF37] group-open:rotate-45 transition-transform text-xl leading-none shrink-0">+</span>
+                </summary>
+                <div className="px-5 pb-5 text-sm text-white/60 leading-relaxed">{f.a}</div>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* More cameras in the region — real sibling countries, real counts */}
+        {region && region.siblings.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">More live cameras in {region.label}</h2>
+            <p className="text-sm text-white/50 mb-5 max-w-3xl">
+              {c.name} is part of the {region.label} network in the WorldEye index. These are the
+              largest neighbouring country networks — or open the{" "}
+              <Link href="/cameras/countries" className="text-[#00E5FF] hover:underline">
+                full country index
+              </Link>{" "}
+              to browse all {COUNTRIES.length} countries.
+            </p>
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {region.siblings.map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={`/cameras/countries/${s.slug}`}
+                    className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:bg-white/[0.05] transition"
+                  >
+                    <span className="font-semibold text-sm">{s.name}</span>
+                    <span className="block text-xs text-white/45 mt-1">
+                      {plural(s.count, "live camera")}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            {region.hub && (
+              <p className="text-sm text-white/50 mt-5">
+                Prefer the map view? The{" "}
+                <Link href={region.hub.href} className="text-[#00E5FF] hover:underline">
+                  {region.hub.label}
+                </Link>{" "}
+                page gathers the region's cameras the same way this page gathers {c.name}'s.
+              </p>
+            )}
+          </section>
+        )}
+
+        <TrialCtaSection utmSource="cameras-country" />
+
+        {/* Back links */}
+        <div className="mt-12 flex flex-wrap gap-3">
+          <Link
+            href="/cameras/countries"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/15 text-sm font-semibold text-white/80 hover:bg-white/5 transition"
+          >
+            <ArrowLeft className="w-4 h-4" /> All countries
+          </Link>
+          <a
+            href={BASE}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black text-sm font-bold hover:brightness-110 transition"
+          >
+            <Camera className="w-4 h-4" /> Open the live map
+          </a>
+        </div>
+
+        {/* Newsletter — end-of-page capture (the one list) */}
+        <div className="mt-12">
+          <EmailCaptureCard placement="page" variant="inline" />
+        </div>
+      </div>
+      <SiteFooter />
+    </main>
+  );
+}
