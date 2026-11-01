@@ -252,10 +252,11 @@ const SEO_PAGES_EMBED = ["/embed-camera"];
 // registry, the terms framework, and how researchers request access.
 const SEO_PAGES_RESEARCH = ["/research-access", "/research/live-camera-platforms-compared"];
 
-// Partners (2026-10-27): the partner & data-source directory — an
-// invitation-only partners tier plus every catalogue source label with
-// its camera count (dated snapshot in src/app/partners/sources-data.ts).
-const SEO_PAGES_PARTNERS = ["/partners"];
+// Partners (2026-10-27; split 2026-11-01): /partners is now the
+// strategic partnerships page; the data-source directory it used to
+// host moved intact to /camera-sources (dated snapshot in
+// src/app/(en)/camera-sources/sources-data.ts).
+const SEO_PAGES_PARTNERS = ["/partners", "/camera-sources"];
 
 // Enterprise (2026-10-27, Top-50 #1): the $999/yr camera-feed product
 // page was an orphan — live and indexable but absent from the sitemap.

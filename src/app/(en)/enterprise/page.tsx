@@ -285,7 +285,7 @@ export default async function EnterprisePage() {
             Enterprise embed, feed and API only ever serve the cameras those terms
             clear — around 96% of the catalogue. Cameras from sources that do not
             allow redistribution, Windy webcams included, never reach your site. The{" "}
-            <Link href="/partners" className="hover:underline" style={ACCENT}>
+            <Link href="/camera-sources" className="hover:underline" style={ACCENT}>
               partners &amp; data sources directory
             </Link>{" "}
             lists where the catalogue comes from.

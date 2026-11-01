@@ -73,7 +73,8 @@ export const esChrome: ChromeCopy = {
       links: [
         { label: "Acerca de", href: "/about" },
         { label: "Contacto", href: "/contact" },
-        { label: "Socios y fuentes de datos", href: "/partners" },
+        { label: "Socios", href: "/partners" },
+        { label: "Fuentes de cámaras", href: "/camera-sources" },
         { label: "Política de privacidad", href: "/privacy" },
         { label: "Términos del servicio", href: "/terms" },
         { label: "Seguridad", href: "/security" },
