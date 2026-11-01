@@ -5,6 +5,8 @@ import { ArrowRight, Car, CheckCircle2 } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import DirectoryExplorer from "@/components/DirectoryExplorer";
 import DirectorySearch from "@/components/DirectorySearch";
+import UsStateMap from "@/components/UsStateMap";
+import UsStateBrowser from "@/components/UsStateBrowser";
 import RouteCameraFinder from "@/components/RouteCameraFinder";
 import BreadcrumbLd from "@/components/BreadcrumbLd";
 import UpdatedStamp from "@/components/UpdatedStamp";
@@ -59,6 +61,16 @@ const STATE_PAGES = [
 const ALL_STATES = [...getUsStatesIndex().states].sort((a, b) =>
   a.name.localeCompare(b.name),
 );
+
+/* The rows the clickable map and the searchable state browser render:
+   the same generated per-state records as the grid below has always
+   used — name, USPS code and the count the state page itself shows. */
+const STATE_ENTRIES = ALL_STATES.map((s) => ({
+  slug: s.slug,
+  name: s.name,
+  usps: s.usps,
+  count: s.count,
+}));
 
 const FAQS = [
   {
@@ -225,30 +237,33 @@ export default async function UsTrafficCamerasPage() {
           </div>
         </div>
 
-        {/* All state pages — the full A–Z grid. Counts are the
+        {/* The clickable map — every state a button to its page,
+            drawn from the same Census boundaries the state
+            derivation uses (lib/us-state-map). */}
+        <div className="mt-16">
+          <h2 className="text-2xl md:text-3xl font-bold">Pick your state on the map</h2>
+          <p className="text-white/50 mt-2 text-sm md:text-base">
+            Every state on the map is a button to its own traffic camera
+            page — the same {ALL_STATES.length} pages the list below
+            links, for anyone who thinks in geography first.
+          </p>
+          <div className="mt-6">
+            <UsStateMap counts={STATE_ENTRIES} />
+          </div>
+        </div>
+
+        {/* All state pages — the full searchable grid. Counts are the
             catalogue's per-state totals from the generated index. */}
         <div className="mt-16">
           <h2 className="text-2xl md:text-3xl font-bold">Every state traffic camera page</h2>
           <p className="text-white/50 mt-2 text-sm md:text-base">
-            All {ALL_STATES.length} state pages in the index, A–Z — the seven
+            All {ALL_STATES.length} state pages in the index, A–Z — search
+            by name or state code, or sort by camera count. The seven
             editorial guides above are the biggest networks; every other
             state&apos;s page leads with its live camera index.
           </p>
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-            {ALL_STATES.map((s) => (
-              <Link
-                key={s.slug}
-                href={`/us-traffic-cameras/${s.slug}`}
-                className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 hover:border-[#D4AF37]/40 transition group"
-              >
-                <span className="text-sm font-medium group-hover:text-[#D4AF37] transition">
-                  {s.name} traffic cameras
-                </span>
-                <span className="block text-xs text-white/40 mt-0.5">
-                  {fmt(s.count)} cameras
-                </span>
-              </Link>
-            ))}
+          <div className="mt-6">
+            <UsStateBrowser states={STATE_ENTRIES} idPrefix="us-traffic" />
           </div>
         </div>
 
