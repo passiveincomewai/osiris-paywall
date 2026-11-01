@@ -73,6 +73,7 @@ model User {
   discoveryDetail String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  sharedCollections SharedCollection[]
 }
 
 // ── Account settings expansion (2026-10-22) ─────────────────────────
@@ -2772,3 +2773,83 @@ model DemoPlacement {
   @@unique([page, slot, videoId])
   @@index([page, slot, active])
 }
+// ── Partnership applications (public /partners) ────────────────────────
+// Strategic-partnership proposals from the /partners application form,
+// managed by admins in /admin/partnerships (status flow, notes and a
+// follow-up date — the CRM tracks; it never sends). Type values live in
+// PARTNERSHIP_TYPES and statuses in PARTNERSHIP_STATUSES
+// (src/lib/partners.ts). Deliberately standalone like ContactMessage:
+// applicants are usually signed out, so there is no user relation.
+model PartnershipApplication {
+  id             String    @id @default(cuid())
+  name           String
+  email          String
+  company        String
+  website        String
+  // One of the values in PARTNERSHIP_TYPES (src/lib/partners.ts).
+  type           String
+  audienceSize   String?
+  resources      String
+  seeking        String
+  proposal       String
+  // Title of the opportunities-directory entry the applicant clicked, if any.
+  opportunity    String?
+  // One of PARTNERSHIP_STATUSES (src/lib/partners.ts).
+  status         String    @default("new")
+  adminNotes     String?
+  nextFollowUpAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([type, createdAt])
+  @@index([createdAt])
+}
+
+// ── Shareable camera collections (visitor feature, 2026-11-01) ─────
+// A signed-in visitor's themed, PUBLIC collection of catalogue
+// cameras ("Best Ski Cameras", "Tokyo Live Views"…). Distinct from
+// the enterprise CameraCollection above: that is the API/team feed
+// product; this one exists to be shared — a public page at
+// /collections/<slug> and an embed at /embed/collection/<slug> that
+// carries only rights-cleared cameras (lib/enterprise/rights).
+// Membership stores catalogue ids only; names, frames and rights
+// verdicts resolve at read time against the live catalogue, so a
+// camera that leaves the catalogue or loses clearance drops out of
+// the embed without any row changing.
+model SharedCollection {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  // Public, URL-safe, unique. Minted at create from the title plus a
+  // random suffix; never changes afterwards, so renames keep every
+  // shared link and embed alive.
+  slug        String   @unique
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items       SharedCollectionItem[]
+
+  @@index([userId])
+}
+
+model SharedCollectionItem {
+  id           String   @id @default(cuid())
+  collectionId String
+  collection   SharedCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  // Catalogue camera id (src/app/api/cctv records), validated against
+  // the catalogue before the row is written.
+  cameraId     String
+  // Owner-chosen order on the public page and in the embed.
+  position     Int
+  createdAt    DateTime @default(now())
+
+  @@unique([collectionId, cameraId])
+  @@index([collectionId, position])
+}
+
