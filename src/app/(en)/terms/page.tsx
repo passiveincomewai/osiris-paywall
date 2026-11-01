@@ -47,11 +47,7 @@ export default function TermsPage() {
 
         <p className="text-xs font-semibold tracking-[0.25em] text-[#D4AF37] mb-4">LEGAL</p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight">Terms of Service</h1>
-        <p className="text-sm text-white/40 mt-3">Last updated 29 October 2026.</p>
-        <p className="text-sm text-white/40 mt-2 italic">
-          This is a plain-language template, not legal advice. Have it reviewed by a
-          qualified attorney before relying on it in your jurisdiction.
-        </p>
+        <p className="text-sm text-white/40 mt-3">Last updated 1 November 2026.</p>
 
         <Section n={1} title="The service">
           <p>
@@ -191,6 +187,13 @@ export default function TermsPage() {
             use with attribution. Anything beyond that — commercial redistribution,
             white-labeling, API reselling — needs our prior written permission.
           </p>
+          <p>
+            Some cameras are marked as embeddable. You may embed those cameras on
+            your own site using our official embed player, with its WorldEye
+            attribution intact. Only cameras our rights system marks as eligible can
+            be embedded; you may not restream or redistribute third-party feeds, or
+            embed cameras that are not marked embeddable.
+          </p>
         </Section>
 
         <Section n={8} title="Disclaimers & limitation of liability">
@@ -236,6 +239,9 @@ export default function TermsPage() {
               contact@worldeye.app
             </a>
             . Related policies: <Link href="/privacy" className="text-[#D4AF37] hover:underline">Privacy Policy</Link>.
+          </p>
+          <p>
+            WorldEye is operated from 555 E 3200 N, North Ogden, UT 84414, USA.
           </p>
         </Section>
       </div>
