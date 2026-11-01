@@ -369,7 +369,7 @@ export default function PartnersPage() {
         stats={[
           { value: "74,229", label: "Live cameras on the globe" },
           { value: "109", label: "Countries with cameras" },
-          { value: "190", label: "Sources in the public directory" },
+          { value: "269", label: "Publishing sources in the directory" },
         ]}
       />
 
