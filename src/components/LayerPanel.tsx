@@ -17,6 +17,7 @@ import { TRANSIT_SUB, transitSubOn, transitLabelsOn, type TransitSubKey } from '
 import { TERRAIN_MIN_ZOOM, type TerrainStatus } from '@/lib/map-terrain';
 import { SENSOR_EFFECT_OPTIONS, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
 import { readSessionIdentity, type SessionIdentityState } from '@/lib/premium-entitlement';
+import { isTrafficLayerKey, TRAFFIC_LAYER_KEYS } from '@/lib/traffic/public-access';
 import AccountGatePrompt from './AccountGatePrompt';
 
 interface LayerPanelProps {
@@ -36,6 +37,11 @@ interface LayerPanelProps {
   /** True when the viewer holds an active Weekly Pass. Premium layers render
    *  with a lock instead of toggling; clicking one opens the trial picker. */
   isPremiumUser?: boolean;
+  /** TEMPORARY (lib/traffic/public-access): while true, the three traffic
+   *  layers render unlocked for every viewer — rows toggle, the group
+   *  switch works, and the Pro embed stops pitching Traffic as locked.
+   *  Every other premium layer still follows isPremiumUser exactly. */
+  trafficPublicAccess?: boolean;
   /** Simulated sensor-effect state (DISPLAY group) — owned by the page,
    *  applied by OsirisMap to the map canvas only. */
   sensorEffect?: SensorEffectState;
@@ -197,9 +203,11 @@ export const LAYER_GROUPS: LayerGroupDef[] = [
  * LAYER_GROUPS so the Pro upgrade embed pitches exactly what the panel
  * locks, never a second list that could drift from it.
  */
-export function premiumLayerLabels(): string[] {
+export function premiumLayerLabels(opts?: { excludeKeys?: ReadonlySet<string> }): string[] {
   return LAYER_GROUPS.flatMap((g) =>
-    g.layers.filter((l) => l.premium && !l.parent).map((l) => l.label),
+    g.layers
+      .filter((l) => l.premium && !l.parent && !(opts?.excludeKeys?.has(l.key)))
+      .map((l) => l.label),
   );
 }
 
@@ -433,7 +441,7 @@ function resolveCategoryLayers(cat: PanelCategory): LayerDef[] {
     .filter((l): l is LayerDef => !!l);
 }
 
-function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false, sensorEffect, onSensorEffectChange, onClose, openSignal, highlightLayerKey }: LayerPanelProps) {
+function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilities = {}, terrainStatus = 'idle', onTerrainRetry, onTerrainFocus, on3DModeSelected, revealed = true, isPremiumUser = false, trafficPublicAccess = false, sensorEffect, onSensorEffectChange, onClose, openSignal, highlightLayerKey }: LayerPanelProps) {
   const [studioOpen, setStudioOpen] = useState(false);
   /** The locked layer whose trial picker is expanded, if any. One at a
    *  time: the picker replaces the old bounce to /premium, so intent is
@@ -762,7 +770,12 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
 
   /** Switch a whole category at once — off if any are on, otherwise all on. */
   const toggleGroup = (layers: LayerDef[]) => {
-    const patch = groupTogglePatch(layers, activeLayers, isPremiumUser);
+    /* While traffic public access is on, the TRAFFIC group (only traffic
+       keys) toggles as if the viewer were premium; every other group
+       follows isPremiumUser exactly. */
+    const groupPremium =
+      isPremiumUser || (trafficPublicAccess && layers.length > 0 && layers.every((l) => isTrafficLayerKey(l.key)));
+    const patch = groupTogglePatch(layers, activeLayers, groupPremium);
     if (patch.terrain_elevation === true || patch.terrain_3d === true) on3DModeSelected?.();
     setActiveLayers((prev: any) => ({ ...prev, ...patch }));
   };
@@ -914,7 +927,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
     const isLayerActive = layerShownActive(layer, activeLayers);
     const count = getCount(layer.dataKey, layer.catKey);
     const dormant = !!layer.parent && !activeLayers[layer.parent];
-    const locked = layerLocked(layer, isPremiumUser);
+    const locked = layerLocked(layer, isPremiumUser) && !(trafficPublicAccess && isTrafficLayerKey(layer.key));
     const highlighted = highlightLayerKey === layer.key;
     return (
       <Fragment key={layer.key}>
@@ -1077,7 +1090,7 @@ function LayerPanel({ data, activeLayers, setActiveLayers, isMobile, capabilitie
             right after Natural Hazards. Free viewers only; Pro users
             have nothing to unlock here. */}
         {cat.id === 'hazards' && !isPremiumUser && (
-          <ProUpgradeEmbed premiumLabels={premiumLayerLabels()} />
+          <ProUpgradeEmbed premiumLabels={premiumLayerLabels(trafficPublicAccess ? { excludeKeys: TRAFFIC_LAYER_KEYS } : undefined)} />
         )}
       </Fragment>
     );

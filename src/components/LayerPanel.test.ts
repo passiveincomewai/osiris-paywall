@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { layerShownActive, layerLocked, groupTogglePatch, premiumLayerLabels, LAYER_GROUPS } from './LayerPanel';
 import LayerPanel from './LayerPanel';
+import { TRAFFIC_LAYER_KEYS } from '@/lib/traffic/public-access';
 
 const traffic = { key: 'traffic' };
 const vehicles = { key: 'traffic_vehicles', parent: 'traffic' };
@@ -125,6 +126,17 @@ describe('premiumLayerLabels — what the upgrade embed pitches', () => {
       'Maritime / Naval',
       'Live News Feeds',
       'Traffic',
+    ]);
+  });
+
+  it('drops Traffic (only Traffic) while traffic public access is on', () => {
+    // lib/traffic/public-access: while the temporary switch is on, the
+    // embed must not pitch as locked a layer every viewer can open —
+    // and must keep pitching everything else.
+    expect(premiumLayerLabels({ excludeKeys: TRAFFIC_LAYER_KEYS })).toEqual([
+      'Maritime Lines',
+      'Maritime / Naval',
+      'Live News Feeds',
     ]);
   });
 });

@@ -17,6 +17,7 @@ import {
   readSessionIdentity,
   type SessionIdentity,
 } from '@/lib/premium-entitlement';
+import { trafficPublicAccess } from '@/lib/traffic/public-access';
 import {
   browserLadderStorage,
   browserSessionStorage,
@@ -1049,9 +1050,13 @@ export default function Dashboard() {
      free, or a lapsed subscription) never reaches the map for a
      non-subscriber. The stored state itself is untouched, so the layer
      comes back exactly as it was on subscribing. The panel keeps the raw
-     state; only the map sees this gated copy. */
+     state; only the map sees this gated copy.
+     TEMPORARY (lib/traffic/public-access): while the public-access switch
+     is on, the map copy is NOT stripped for anyone — traffic viewing is
+     open to every viewer, matching the panel. Flipping the switch off
+     restores the strip exactly as below. */
   const globeActiveLayers = useMemo(
-    () => (isPremiumUser ? activeLayers : { ...activeLayers, traffic: false, traffic_vehicles: false, traffic_congestion: false }),
+    () => (isPremiumUser || trafficPublicAccess() ? activeLayers : { ...activeLayers, traffic: false, traffic_vehicles: false, traffic_congestion: false }),
     [activeLayers, isPremiumUser],
   );
   const [liveFeedUrl, setLiveFeedUrl] = useState<string | null>(null);
@@ -2960,7 +2965,7 @@ export default function Dashboard() {
       )}
 
       {/* ── NEW SIDEBAR (Root Level) ── */}
-      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} openSignal={layersOpenSignal} highlightLayerKey={tourLayersStep ? 'weather' : null} /></div>}
+      {showLayers && !isMobile && <div data-hud><LayerPanel {...terrainPanelProps} revealed={revealed} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} capabilities={capabilities} isPremiumUser={isPremiumUser} trafficPublicAccess={trafficPublicAccess()} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} openSignal={layersOpenSignal} highlightLayerKey={tourLayersStep ? 'weather' : null} /></div>}
 
 
 
@@ -3324,7 +3329,7 @@ export default function Dashboard() {
                   )}
                   {mobilePanel === 'layers' && (
                     <>
-                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} capabilities={capabilities} isPremiumUser={isPremiumUser} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} onClose={() => setMobilePanel(null)} highlightLayerKey={tourLayersStep ? 'weather' : null} />
+                      <LayerPanel {...terrainPanelProps} data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} isMobile={true} capabilities={capabilities} isPremiumUser={isPremiumUser} trafficPublicAccess={trafficPublicAccess()} sensorEffect={sensorEffect} onSensorEffectChange={setSensorEffect} onClose={() => setMobilePanel(null)} highlightLayerKey={tourLayersStep ? 'weather' : null} />
                       <div className="mt-8">
                         <ViewPresets onNavigate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, zoom, ts: Date.now() }); setMobilePanel(null); }} />
                       </div>
