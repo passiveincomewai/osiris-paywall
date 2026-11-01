@@ -31,7 +31,10 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from: fromAddress(), to, subject, html }),
+      // Every send carries a plain-text alternative derived from the
+      // HTML (2026-11 design pass): multipart mail renders in clients
+      // that block HTML and scores better with spam filters.
+      body: JSON.stringify({ from: fromAddress(), to, subject, html, text: htmlToText(html) }),
     });
     if (!res.ok) {
       const body = await res.text().catch(() => "");
@@ -45,23 +48,68 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
   }
 }
 
-/** Exported for src/lib/lifecycle templates, which render in this same shell. */
-export function shell(title: string, preheader: string, bodyHtml: string, cta: { label: string; href: string } | null): string {
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+/** Plain-text rendering of a shell() document: block tags become line
+ * breaks, the hidden preheader is dropped, entities decoded. Good
+ * enough to be faithful — it is generated FROM the HTML, never
+ * maintained separately, so the two can never drift. */
+export function htmlToText(html: string): string {
+  return html
+    .replace(/<div style="display:none[^"]*"[^>]*>[\s\S]*?<\/div>/g, "")
+    .replace(/<style[\s\S]*?<\/style>/g, "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|h1|h2|tr|table)>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n\s*\n\s*\n+/g, "\n\n")
+    .trim();
+}
+
+/** The shared branded layout (2026-11 design pass): table-based for
+ * Outlook, 600px, dark-mode safe with explicit colours throughout,
+ * one button style, and ONE standard footer — tagline, the CAN-SPAM
+ * postal line, and an optional per-type "why you got this" line that
+ * templates pass via opts.why. Signature kept from the original
+ * shell so every existing caller inherits the layout unchanged;
+ * visible copy is otherwise byte-equivalent to the pre-pass shell.
+ * Exported for src/lib/lifecycle templates, which render in this shell. */
+export function shell(
+  title: string,
+  preheader: string,
+  bodyHtml: string,
+  cta: { label: string; href: string } | null,
+  opts?: { why?: string },
+): string {
+  const why = opts?.why
+    ? `<tr><td align="center" style="font-size:12px;color:#71717a;padding:0 24px 6px;">${opts.why}</td></tr>`
+    : "";
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><style>@media only screen and (max-width:620px){.we-pad{padding:24px 16px !important}.we-card{padding:24px 18px !important}}</style></head>
 <body style="margin:0;padding:0;background:#050508;color:#e4e4e7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
-<div style="max-width:520px;margin:0 auto;padding:40px 24px;">
-<div style="text-align:center;margin-bottom:28px;">
-<div style="font-size:22px;font-weight:800;letter-spacing:0.08em;"><span style="color:#fff;">World</span><span style="color:#D4AF37;">Eye</span></div>
-</div>
-<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:32px 28px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#050508;"><tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" class="we-pad" style="width:600px;max-width:600px;">
+<tr><td align="center" style="padding:40px 24px 0;">
+<div style="font-size:22px;font-weight:800;letter-spacing:0.08em;margin-bottom:28px;"><span style="color:#fff;">World</span><span style="color:#D4AF37;">Eye</span></div>
+</td></tr>
+<tr><td style="padding:0 24px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td class="we-card" style="background:#101013;border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:32px 28px;">
 <h1 style="margin:0 0 12px;font-size:20px;color:#fff;">${title}</h1>
 ${bodyHtml}
 ${cta ? `<div style="text-align:center;margin:26px 0 8px;"><a href="${cta.href}" style="display:inline-block;background:#D4AF37;color:#000;font-weight:700;font-size:15px;padding:13px 34px;border-radius:12px;text-decoration:none;">${cta.label}</a></div>
 <p style="font-size:12px;color:#71717a;word-break:break-all;">Or paste this link:<br><span style="color:#a1a1aa;">${cta.href}</span></p>` : ""}
-</div>
-<p style="text-align:center;font-size:12px;color:#52525b;margin-top:24px;">WorldEye — see the world live.<br>If you didn't request this, you can safely ignore it.</p>
-</div></body></html>`;
+</td></tr></table>
+</td></tr>
+<tr><td align="center" style="font-size:12px;color:#52525b;padding:24px 24px 0;">WorldEye — see the world live.<br>If you didn't request this, you can safely ignore it.</td></tr>
+${why}
+<tr><td align="center" style="font-size:12px;color:#52525b;padding:0 24px 40px;">WorldEye · 555 E 3200 N, North Ogden, UT 84414</td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
 }
 
 export function appUrl(path: string): string {
