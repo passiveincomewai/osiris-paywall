@@ -93,6 +93,41 @@ const TOOLS = [
   },
 ];
 
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What are the best live webcam platforms?",
+    a: "The platforms ranked in this guide: WorldEye, EarthCam, SkylineWebcams, Explore.org, Windy webcams, WebcamTaxi and YouTube live webcams. Which one is best depends on the job — scenic directories for browsing, Explore.org for wildlife, Windy for cameras with weather. WorldEye is our pick for exploring: 74,229 public cameras on a free 3D globe, free to watch with no account.",
+  },
+  {
+    q: "What's the best free live webcam site?",
+    a: "For a traditional directory: SkylineWebcams or EarthCam, both free. For something different: WorldEye's free 3D globe — roughly 74,229 public cameras in their real places, with live flights, satellites and weather on the same screen, no signup.",
+  },
+  {
+    q: "Are live webcam sites free to watch?",
+    a: "Yes — watching is free on every platform in this guide, because the cameras themselves are published publicly. On WorldEye, watching is free with no account; the optional paid plans add recording and camera alerts, not access to feeds. Elsewhere the differences sit around the feed: ad-supported directories, or paid extras like archives and ad-free viewing.",
+  },
+  {
+    q: "How do live webcam sites get their cameras?",
+    a: "They mostly don't own them. The cameras belong to transport agencies, towns, resorts, venues and individual operators who publish their feeds publicly — to share a view, promote a place or document conditions. Platforms like the ones in this guide collect and organize those public feeds so you can find them in one place instead of hunting venue by venue.",
+  },
+  {
+    q: "What is the difference between a webcam directory and a single webcam page?",
+    a: "A directory indexes many cameras and helps you discover them — by map, category or search — so you can move between places. A single webcam page is just one feed: you watch that one view, with nothing around it. Directories are for finding; single pages are for watching once you've found the view.",
+  },
+  {
+    q: "Are these webcams really live?",
+    a: "The platforms on this page aggregate publicly published live streams. Individual feeds can pause, go offline or switch to recorded loops at the source — that is the nature of public cameras, and it affects every aggregator equally.",
+  },
+  {
+    q: "Which site is best for animal webcams?",
+    a: "Explore.org. Wildlife and nature are its entire mission, and its sanctuary, nest and wilderness cameras — with educational context around them — are deeper than any general directory's animal category.",
+  },
+  {
+    q: "Can I watch live webcams on my phone without installing an app?",
+    a: "Yes. Every site in this guide runs in a mobile browser — open the page and watch. WorldEye has no app and needs none: the globe, the cameras and the live layers all work in the browser on your phone.",
+  },
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -108,6 +143,14 @@ const jsonLd = {
         description: `${t.tag}. ${t.body}`,
       }))
     ),
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
   ],
 };
 
@@ -342,44 +385,12 @@ export default function BestLiveWebcamSitesPage() {
       <section className="mt-16 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold">Live webcam questions, answered</h2>
         <div className="mt-8 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">What&apos;s the best free live webcam site?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              For a traditional directory: SkylineWebcams or EarthCam, both
-              free. For something different: WorldEye&apos;s free 3D globe —
-              roughly 74,229 public cameras in their real places, with live
-              flights, satellites and weather on the same screen, no signup.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Are these webcams really live?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              The platforms on this page aggregate publicly published live
-              streams. Individual feeds can pause, go offline or switch to
-              recorded loops at the source — that is the nature of public
-              cameras, and it affects every aggregator equally.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Which site is best for animal webcams?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Explore.org. Wildlife and nature are its entire mission, and its
-              sanctuary, nest and wilderness cameras — with educational
-              context around them — are deeper than any general directory&apos;s
-              animal category.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white/90">Are web cam sites free to use?</h3>
-            <p className="text-white/55 leading-relaxed mt-2">
-              Almost all of them, yes — the cameras themselves are published
-              publicly, so watching is free on every site in this roundup.
-              The differences are around the feed: ad-supported directories,
-              optional paid extras like archives or ad-free viewing, and
-              WorldEye&apos;s model, where the cameras and map are free with
-              no signup and Pro pays for analysis tools instead.
-            </p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.q}>
+              <h3 className="text-lg font-semibold text-white/90">{f.q}</h3>
+              <p className="text-white/55 leading-relaxed mt-2">{f.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 
