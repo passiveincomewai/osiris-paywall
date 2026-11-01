@@ -58,7 +58,7 @@ import { attachOi, type OiGlobe, type OiHover } from '@/lib/oi/globe';
 import { attachHighlights, type Highlighter } from '@/lib/oi/highlights';
 import type { Highlight } from '@/lib/oi/assist/tools';
 import { createSatelliteLayer, parseColor, SAT_MAX_ZOOM, type SatPoint } from '@/lib/satellite-layer';
-import { interpolateSatelliteRows } from '@/lib/satellite-motion';
+import { interpolateSatelliteRows, MAX_EXTRAPOLATION_SPANS } from '@/lib/satellite-motion';
 import type { SatelliteRow as SatellitePayloadRow } from '@/lib/satellite-payload';
 import { MAP_DEFAULTS, MAP_PALETTE_KEYS, readMapPalette, satColorFor, type MapPalette } from '@/lib/map-palette';
 import { STYLE_EVENT } from '@/lib/style-tokens';
@@ -3761,11 +3761,15 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
 
   // Flight data → GeoJSON (GPU rendered). FULL sets — no decimation: every
   // record the route classified becomes a feature (received == rendered;
-  // lib/flights/render pins that in tests). A 500ms loop interpolates
+  // lib/flights/render pins that in tests). A 200ms loop interpolates
   // between the last two 30s snapshots — render one interval behind and
   // blend the bracketing fixes (GEV pattern, lib/flights/motion) — so
-  // aircraft glide instead of teleporting between polls. The interval is
-  // cleared when every flight layer is off and on unmount.
+  // aircraft glide instead of teleporting between polls. The loop was
+  // 500ms: at city/follow zooms a jet covers ~11px per tick at that
+  // cadence, a visible step in marker and icon heading alike; 200ms
+  // takes the step sub-perceptual at the same bounded cost (the loop
+  // only runs while a flight layer is on). The interval is cleared when
+  // every flight layer is off and on unmount.
   useEffect(() => {
     if (!mapReady) return;
     const anyOn = activeLayers.flights || activeLayers.private || activeLayers.jets || activeLayers.military;
@@ -3791,7 +3795,7 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       driveFlightFollow(cur, now);
     };
     render();
-    const iv = setInterval(render, 500);
+    const iv = setInterval(render, 200);
     return () => clearInterval(iv);
   }, [mapReady, activeLayers.flights, activeLayers.private, activeLayers.jets, activeLayers.military, setGeo, driveFlightFollow, endFlightFollow]);
 
@@ -3947,32 +3951,83 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
     applySatelliteRows(interpolateSatelliteRows(filtered, at, nextAt, Date.now()));
   }, [mapReady, data.satellites, activeLayers.satellites, (activeLayers as any).sat_comms, (activeLayers as any).sat_military, (activeLayers as any).sat_navigation, (activeLayers as any).sat_earth, (activeLayers as any).sat_science, data.satellites_at, setGeo, applySatelliteRows, clearSat]);
 
-  /* Satellites move between polls. Each body carries a second propagated
-     position ten minutes out (timestamp_next, the rows' lat2/lng2); this
-     ticker walks the markers along that vector by wall clock every few
-     seconds, so the sky advances continuously instead of freezing between
-     polls and jumping when one lands — a freeze a poll-only client cannot
-     escape, since the route's cache and the CDN routinely re-serve an
-     epoch the page already holds. It runs only while a satellite layer is
-     on, the tab is visible and the zoom is one where satellites are drawn
-     at all; the Dashboard poll re-anchors the vector when a fresher body
-     is applied. */
+  /* Satellites move between polls. Each body carries propagated positions
+     ten minutes out (timestamp_next; the rows' lat2/lng2, with the arc's
+     midpoint in latM/lngM); this ticker walks the markers along that arc
+     by wall clock, so the sky advances continuously instead of freezing
+     between polls and jumping when one lands — a freeze a poll-only
+     client cannot escape, since the route's cache and the CDN routinely
+     re-serve an epoch the page already holds.
+     *
+     * Two changes made the walk read as real motion (owner, 2026-10-31:
+     * "moving but not in real time, doesn't look realistic"). The ticker
+     * now fires every 200 ms instead of 2.5 s — at regional zooms a LEO
+     * satellite's 2.5 s step was several pixels, a visible lurch twelve
+     * times a minute; at 200 ms the step is sub-pixel. And a tick applies
+     * the CHEAP path only: repacking the 3D layer's vertex buffer. The
+     * full apply (rebuilding a ~19k-feature GeoJSON for the 'satellites'
+     * source, whose only layers are permanently hidden, plus selection
+     * React state) still runs when a new body or layer set lands — doing
+     * it five times a second bought nothing and cost the main thread.
+     * The selected satellite's readout follows on the same tick, but its
+     * React state is only touched when the rounded position it displays
+     * actually changes.
+     *
+     * It runs only while a satellite layer is on, the tab is visible and
+     * the zoom is one where satellites are drawn at all; the Dashboard
+     * poll re-anchors the arc when a fresher body is applied. */
   useEffect(() => {
     if (!mapReady) return;
     const al = activeLayers as any;
     if (!(al.satellites || al.sat_comms || al.sat_military || al.sat_navigation || al.sat_earth || al.sat_science)) return;
+    let lastFrac = Number.NaN;
     const id = setInterval(() => {
       if (typeof document !== 'undefined' && document.hidden) return;
       const map = mapRef.current;
       if (!map || map.getZoom() > SAT_MAX_ZOOM) return;
       const base = satBaseRef.current;
       if (!base.rows.length) return;
+      /* At the extrapolation cap the fraction stops changing, so the
+         display would be identical to the last tick's — skip the repack
+         instead of redoing it five times a second forever. (NaN never
+         equals itself, so the first tick always runs.) */
+      const span = base.nextEpochMs - base.epochMs;
+      if (Number.isFinite(span) && span > 0) {
+        const frac = Math.min(Math.max((Date.now() - base.epochMs) / span, 0), MAX_EXTRAPOLATION_SPANS);
+        if (frac === lastFrac) return;
+        lastFrac = frac;
+      }
       const display = interpolateSatelliteRows(base.rows, base.epochMs, base.nextEpochMs, Date.now());
       if (display === satAppliedRef.current) return;
-      applySatelliteRows(display);
-    }, 2500);
+      satAppliedRef.current = display;
+      satRowsRef.current = display;
+      satLayerRef.current?.setPoints(toSatPoints(display));
+      // Selection: the ring's index is stable across ticks (the display
+      // array preserves the base order); the readout's setState fires
+      // only when the 2dp position it prints has actually moved.
+      const selId = satSelectedIdRef.current;
+      if (selId) {
+        const i = display.findIndex(r => r.noradId === selId);
+        if (i >= 0) {
+          if (satPickedRef.current !== i) {
+            satPickedRef.current = i;
+            satLayerRef.current?.setSelected(i);
+          }
+          const row = display[i];
+          setSelectedSat(prev => {
+            if (!prev) return prev;
+            if (
+              Math.round(prev.lat * 100) === Math.round(row.lat * 100) &&
+              Math.round(prev.lng * 100) === Math.round(row.lng * 100) &&
+              Math.round(prev.alt) === Math.round(row.alt)
+            ) return prev;
+            return { ...prev, lat: row.lat, lng: row.lng, alt: row.alt };
+          });
+        }
+      }
+    }, 200);
     return () => clearInterval(id);
-  }, [mapReady, activeLayers.satellites, (activeLayers as any).sat_comms, (activeLayers as any).sat_military, (activeLayers as any).sat_navigation, (activeLayers as any).sat_earth, (activeLayers as any).sat_science, applySatelliteRows]);
+  }, [mapReady, activeLayers.satellites, (activeLayers as any).sat_comms, (activeLayers as any).sat_military, (activeLayers as any).sat_navigation, (activeLayers as any).sat_earth, (activeLayers as any).sat_science, toSatPoints]);
 
   useEffect(() => {
     if (!mapReady) return;
