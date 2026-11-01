@@ -90,9 +90,9 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
-  pricing: "f4347d4180f2a6dfe6e34d0ca2afde589c8028ee0ad586580e8054549c7c74fb",
+  pricing: "f0bd7896629b09165640bd75a02ec00b9ad8608951985246cf911263c76ca038",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
-  faq: "e7c967dff68f038660c58887cabe671eb2fd8dbcbba1fe4239829c0899f40f88",
+  faq: "dff2534296fb945648065e81aede56c2e1ca758d493c91bf29440e6701324747",
   "live-flight-tracker": "3784894f1c4fce3a82800cf0d721bdd136b7590d0394e00e184056dcd179703c",
   "ship-tracker": "a2ac2cec641df42357c801e233edab00d77f58fc3bb7bb7071b3b56298709e34",
 };
@@ -159,6 +159,12 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // sentence now appears once on /pricing. The Spanish dictionary was
 // re-synced the same day, so the pricing hash moved; its updatedAt
 // stays 2026-10-31.
+// Re-sync (2026-11-01, site error audit E-06): the pricing and faq
+// dictionaries' traffic copy was corrected to the E-05 standard —
+// congestion is modeled from road data and labeled as modeled;
+// live TomTom flow is not currently served. The Spanish dictionaries
+// were re-synced the same day, so the pricing and faq hashes moved;
+// their updatedAt stays 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",

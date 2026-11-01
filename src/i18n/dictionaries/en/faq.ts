@@ -267,7 +267,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "Is the traffic layer real?",
-          "The congestion is real: live traffic-flow data from TomTom, drawn onto the map's roads. The vehicle dots that illustrate the flow are simulated, and the app labels them as simulated. The traffic layer is a Pro feature."
+          "Congestion on the roads is modeled from road data, and the app labels it as modeled — live traffic flow is not currently available. The vehicle dots that illustrate the flow are simulated and labeled as such in the app. The traffic layer is a Pro feature."
         ),
         plain(
           "Can I share a camera with someone?",

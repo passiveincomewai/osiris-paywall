@@ -184,7 +184,7 @@ export const esPricing: PricingCopy = {
   },
   liteFeatures: [
     { title: "Todas las cámaras, sin límite", desc: "Mira tantas de las 74.229 cámaras en vivo como quieras: los planes de pago no tienen límite de aperturas." },
-    { title: "Capas premium del mapa", desc: "Flujo de tráfico en vivo, líneas marítimas, tráfico naval y feeds de noticias en vivo sobre el globo." },
+    { title: "Capas premium del mapa", desc: "Flujo de tráfico modelado, líneas marítimas, tráfico naval y feeds de noticias en vivo sobre el globo." },
     { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
     { title: "Filtros de búsqueda avanzados", desc: "Reduce los resultados de cámaras por país, tipo y feeds en vivo; los lugares nunca se filtran." },
     { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 5 cámaras a la vez — y guarda los clips." },
@@ -192,7 +192,7 @@ export const esPricing: PricingCopy = {
   ],
   proFeatures: [
     { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
-    { title: "Capa de tráfico en vivo", desc: "Flujo de congestión en vivo de TomTom sobre la red de carreteras, con los vehículos simulados claramente etiquetados como simulados." },
+    { title: "Capa de tráfico en vivo", desc: "Tráfico modelado sobre la red de carreteras: vehículos modelados a partir de datos de carreteras, claramente etiquetados como modelados; el flujo de tráfico en vivo no está disponible actualmente." },
     { title: "Kit de herramientas OSINT", desc: "Escaneos Nmap, DNS/WHOIS, análisis SSL e inteligencia de amenazas, en el navegador." },
     { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador y guarda los clips." },
     { title: "Alertas de cámara (2)", desc: "Vigila hasta 2 cámaras y recibe un correo — con la foto — cuando aparezca una condición que describas, como nieve o inundaciones." },
@@ -247,7 +247,7 @@ export const esPricing: PricingCopy = {
       "Terremotos, incendios y clima",
       "Asistente de IA OI (IA integrada incluida)",
       "Vista de imágenes satelitales",
-      "Capa de tráfico en vivo (congestión de TomTom)",
+      "Capa de tráfico en vivo (congestión modelada)",
       "Filtros de búsqueda avanzados",
       "Kit de herramientas OSINT (nmap, DNS, WHOIS, SSL)",
       "Estudio de grabación de cámaras",
@@ -370,7 +370,7 @@ export const esPricing: PricingCopy = {
       ],
       includes: [
         { title: "Todas las cámaras, sin límite", desc: "Mira tantas de las 74.229 cámaras en vivo como quieras: los planes de pago no tienen límite de aperturas." },
-        { title: "Capas premium del mapa", desc: "Flujo de tráfico en vivo, líneas marítimas, tráfico naval y feeds de noticias en vivo sobre el globo." },
+        { title: "Capas premium del mapa", desc: "Flujo de tráfico modelado, líneas marítimas, tráfico naval y feeds de noticias en vivo sobre el globo." },
         { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
         { title: "Filtros de búsqueda avanzados", desc: "Reduce los resultados de cámaras por país, tipo y feeds en vivo; los lugares nunca se filtran." },
         { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 5 cámaras a la vez — y guarda los clips." },
@@ -429,7 +429,7 @@ export const esPricing: PricingCopy = {
       includes: [
         { title: "Todo lo de Lite", desc: "Aperturas de cámara ilimitadas, capas premium, filtros de búsqueda avanzados y Modo Ambiente — todo se mantiene." },
         { title: "Asistente de IA OI", desc: "Habla con el mapa. Pronósticos, análisis y reconocimiento, con la IA integrada de WorldEye y sin configurar nada." },
-        { title: "Capa de tráfico en vivo", desc: "Flujo de congestión en vivo de TomTom sobre la red de carreteras, con los vehículos simulados claramente etiquetados como simulados." },
+        { title: "Capa de tráfico en vivo", desc: "Tráfico modelado sobre la red de carreteras: vehículos modelados a partir de datos de carreteras, claramente etiquetados como modelados; el flujo de tráfico en vivo no está disponible actualmente." },
         { title: "Kit de herramientas OSINT", desc: "Escaneos Nmap, DNS/WHOIS, análisis SSL e inteligencia de amenazas, en el navegador." },
         { title: "Estudio de grabación de cámaras", desc: "Graba feeds de cámaras en vivo directamente en tu navegador — hasta 20 cámaras a la vez — y guarda los clips." },
         { title: "Alertas de cámara (2)", desc: "Vigila hasta 2 cámaras y recibe un correo — con la foto — cuando aparezca una condición que describas, como nieve o inundaciones." },

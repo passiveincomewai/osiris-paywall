@@ -195,7 +195,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿La capa de tráfico es real?",
-          "La congestión es real: datos de flujo de tráfico en vivo de TomTom, dibujados sobre las carreteras del mapa. Los puntos de vehículos que ilustran el flujo son simulados, y la app los etiqueta como simulados. La capa de tráfico es una función Pro."
+          "La congestión en las carreteras se modela a partir de datos de carreteras, y la app la etiqueta como modelada: el flujo de tráfico en vivo no está disponible actualmente. Los puntos de vehículos que ilustran el flujo son simulados y la app los etiqueta como tales. La capa de tráfico es una función Pro."
         ),
         plain(
           "¿Puedo compartir una cámara con alguien?",

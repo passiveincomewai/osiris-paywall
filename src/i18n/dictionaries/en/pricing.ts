@@ -362,7 +362,7 @@ export const enPricing: PricingCopy = {
   },
   liteFeatures: [
     { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
-    { title: "Premium map layers", desc: "Live traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
+    { title: "Premium map layers", desc: "Modeled traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
     { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
     { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
     { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },
@@ -370,7 +370,7 @@ export const enPricing: PricingCopy = {
   ],
   proFeatures: [
     { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
-    { title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
+    { title: "Live Traffic Layer", desc: "Modeled traffic on the road network — vehicles modeled from road data, clearly labeled as modeled; live traffic flow is not currently available." },
     { title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
     { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser and save the clips." },
     { title: "Camera alerts (2)", desc: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe, like snow or flooding, shows up." },
@@ -413,7 +413,7 @@ export const enPricing: PricingCopy = {
       "Earthquakes, wildfires & weather",
       "OI AI assistant (built-in AI included)",
       "Satellite imagery view",
-      "Live traffic layer (TomTom congestion)",
+      "Live traffic layer (modeled congestion)",
       "Advanced search filters",
       "OSINT toolkit (nmap, DNS, WHOIS, SSL)",
       "Camera Recording Studio",
@@ -536,7 +536,7 @@ export const enPricing: PricingCopy = {
       ],
       includes: [
         { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
-        { title: "Premium map layers", desc: "Live traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
+        { title: "Premium map layers", desc: "Modeled traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
         { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
         { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
         { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },
@@ -595,7 +595,7 @@ export const enPricing: PricingCopy = {
       includes: [
         { title: "Everything in Lite", desc: "Unlimited camera opens, premium layers, advanced search filters and Ambient Mode — all of it carries over." },
         { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
-        { title: "Live Traffic Layer", desc: "Live TomTom congestion flow on the road network, with simulated vehicles clearly labeled as simulated." },
+        { title: "Live Traffic Layer", desc: "Modeled traffic on the road network — vehicles modeled from road data, clearly labeled as modeled; live traffic flow is not currently available." },
         { title: "OSINT Toolkit", desc: "Nmap scans, DNS/WHOIS, SSL analysis and threat intel — in-browser." },
         { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 20 cameras at once — and save the clips." },
         { title: "Camera alerts (2)", desc: "Watch up to 2 cameras and get emailed — with the photo — when a condition you describe, like snow or flooding, shows up." },
