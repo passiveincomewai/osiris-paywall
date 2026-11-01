@@ -349,6 +349,11 @@ export default function AboutPage() {
               desc: "Questions, feedback, press or partnership ideas — the inbox is open.",
               href: "/contact",
             },
+            {
+              label: "Partnerships",
+              desc: "Build with WorldEye — integrations, data partnerships, co-branded experiences and pilots.",
+              href: "/partners",
+            },
           ]}
         />
 

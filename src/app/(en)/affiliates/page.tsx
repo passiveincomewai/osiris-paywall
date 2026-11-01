@@ -473,6 +473,17 @@ export default function AffiliatesLanding() {
           </div>
         </Card>
       </section>
+
+      <section className="px-4 pb-16">
+        <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-slate-400">
+          Referring isn&apos;t the only way to work with WorldEye. If you&apos;d rather build
+          something together — an integration, a co-branded experience, a joint product — see{" "}
+          <Link href="/partners" className="font-mono text-cyan-300 underline underline-offset-4 hover:text-cyan-200">
+            strategic partnerships
+          </Link>
+          .
+        </p>
+      </section>
     </div>
   );
 }

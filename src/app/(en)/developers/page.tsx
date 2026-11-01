@@ -245,6 +245,17 @@ export default function DevelopersPage() {
           operator&apos;s schedule, not yours. Keys are per-user; a revoked key stops
           working immediately.
         </p>
+
+        <h2 className="mt-12 text-xl font-black">Building something bigger?</h2>
+        <p className="mt-2 text-sm text-white/60 leading-relaxed">
+          The API is the self-serve route. If what you&apos;re building could be a
+          partnership — a deeper integration, a co-branded experience, a data
+          exchange — WorldEye is{" "}
+          <Link href="/partners" className="text-[#D4AF37] hover:underline">
+            actively looking for strategic partners
+          </Link>
+          , and the application takes five minutes.
+        </p>
       </main>
       <SiteFooter />
     </div>

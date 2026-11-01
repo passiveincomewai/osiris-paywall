@@ -497,6 +497,7 @@ export default function PartnersPage() {
           { label: "Research Access", href: "/research-access" },
           { label: "Camera Sources", href: "/camera-sources" },
           { label: "About WorldEye", href: "/about" },
+          { label: "The announcement post", href: "/blog/worldeye-strategic-partners" },
         ]}
       />
 

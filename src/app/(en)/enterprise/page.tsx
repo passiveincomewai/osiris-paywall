@@ -363,6 +363,23 @@ export default async function EnterprisePage() {
             <EnterpriseContactLine />
           </p>
         </div>
+
+        {/* Partnerships — the broader-collaboration route, for fits the
+            self-serve tier doesn't cover. */}
+        <div className="mt-16 max-w-3xl">
+          <h2 className="font-[family-name:var(--we-font-display)]" style={sectionTitleStyle}>
+            Looking for a broader collaboration?
+          </h2>
+          <p className="mt-3" style={bodyTextStyle}>
+            Enterprise is the self-serve tier. If what you have in mind is bigger — a data
+            partnership, a co-branded experience, a scoped pilot or shared product
+            development — WorldEye is{" "}
+            <Link href="/partners" className="hover:underline" style={ACCENT}>
+              actively looking for strategic partners
+            </Link>
+            , and proposals are read by the team.
+          </p>
+        </div>
       </div>
       <SiteFooter />
     </div>

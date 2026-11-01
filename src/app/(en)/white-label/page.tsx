@@ -458,6 +458,14 @@ export default function WhiteLabelPage() {
             </Link>{" "}
             first.
           </p>
+          <p className="text-sm text-white/40 mt-4">
+            Looking for a different kind of collaboration — a data partnership, a
+            co-branded experience, an integration? See{" "}
+            <Link href="/partners" className="text-[#D4AF37] hover:underline">
+              strategic partnerships
+            </Link>
+            .
+          </p>
         </div>
       </div>
       <SiteFooter />
