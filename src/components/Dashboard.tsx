@@ -2876,7 +2876,7 @@ export default function Dashboard() {
             alt="WorldEye"
             width={1063}
             height={290}
-            className="h-10 md:h-11 w-auto"
+            className="h-10 md:h-[58px] w-auto"
             style={{ filter: 'drop-shadow(0 0 10px rgba(0,150,255,0.5))' }}
           />
         </Link>
@@ -2946,10 +2946,15 @@ export default function Dashboard() {
           y 16–60): this button now occupies 72–104, a clear 12px below
           the logo, and the Layers & Stats pill moved with it
           (top-[112px] in LayerPanel) keeping the 8px gap between them.
+          Grown again 2026-11-01 at the owner's order (desktop logo
+          44→58px, this button 32→44px): the logo now occupies y 16–74,
+          so the stack shifted down in step — this button occupies
+          86–130 (the same 12px below the logo) and the pill moved to
+          top-[138px] in LayerPanel, keeping the same 8px gap.
           z-index stays below the LayerPanel sheet (z-50) so the open
           sheet covers it. */}
       {!isMobile && (
-        <motion.div data-hud initial={{ opacity: 0, x: -12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }} transition={hudIn(0.3)} className="absolute left-3 z-[45] pointer-events-auto" style={{ top: 72 }}>
+        <motion.div data-hud initial={{ opacity: 0, x: -12 }} animate={revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }} transition={hudIn(0.3)} className="absolute left-3 z-[45] pointer-events-auto" style={{ top: 86 }}>
           <TodayInTheSky placement="rail-left" satellites={data.satellites} satellitesAt={data.satellites_at} earthquakes={data.earthquakes} onLocate={locateFromSkyPanel} />
         </motion.div>
       )}

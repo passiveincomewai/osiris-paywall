@@ -782,21 +782,22 @@ export default function TodayInTheSky({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50"
+        className="relative w-11 h-11 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/50"
         title="Today in the Sky — launches, stations, storms and quakes at a glance"
         aria-label={SKY_COPY.title}
         aria-expanded={open}
       >
         {/* The owner's banner artwork, scaled whole (never cropped). The
-            hit box stays the standard 32px — on the right rail the banner
-            overflows left over the map; on the left rail it mirrors and
-            overflows right. Click-through outside the box so the host
-            layout and every other button's placement are untouched. */}
+            hit box is 44px (grown from the standard 32px at the owner's
+            order, 2026-11-01) — on the right rail the banner overflows
+            left over the map; on the left rail it mirrors and overflows
+            right. Click-through outside the box so the host layout and
+            every other button's placement are untouched. */}
         <img
           src="/images/sky/launcher.webp"
           alt=""
           aria-hidden="true"
-          className={`pointer-events-none absolute top-1/2 block h-8 w-auto max-w-none -translate-y-1/2 ${left ? 'left-0' : 'right-0'}`}
+          className={`pointer-events-none absolute top-1/2 block h-11 w-auto max-w-none -translate-y-1/2 ${left ? 'left-0' : 'right-0'}`}
         />
         {open && (
           <span
@@ -805,11 +806,11 @@ export default function TodayInTheSky({
           />
         )}
       </button>
-      <span className={`absolute top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none ${left ? 'left-11' : 'right-11'}`}>
+      <span className={`absolute top-1/2 -translate-y-1/2 px-2 py-1 text-[9px] font-mono tracking-wider text-white/80 bg-black/80 backdrop-blur-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none ${left ? 'left-[56px]' : 'right-[56px]'}`}>
         {SKY_COPY.railTooltip}
       </span>
       {open && (
-        <div className={`absolute top-1/2 -translate-y-1/2 w-[340px] max-w-[86vw] ${left ? 'left-12' : 'right-12'}`}>
+        <div className={`absolute top-1/2 -translate-y-1/2 w-[340px] max-w-[86vw] ${left ? 'left-[60px]' : 'right-[60px]'}`}>
           <div
             className="rounded-xl border border-sky-400/25 bg-[#02091A]/90 backdrop-blur-md shadow-xl max-h-[76vh] overflow-y-auto styled-scrollbar"
             role="dialog"
