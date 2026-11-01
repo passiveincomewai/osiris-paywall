@@ -269,6 +269,11 @@ export default async function CompareHubPage() {
               href: "/alternatives/gods-eye-view",
             },
             {
+              title: "God's Eye View online",
+              desc: "The install-vs-browser question, answered: what the open-source project needs to run — and the hosted route that needs nothing.",
+              href: "/gods-eye-view-online",
+            },
+            {
               title: "OSIRIS alternatives",
               desc: "Run your own intel stack, or open one that's already running? Every route compared.",
               href: "/alternatives/osiris",
