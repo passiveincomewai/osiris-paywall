@@ -9,6 +9,7 @@
 import { del } from "@vercel/blob";
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import { sendEmail, deletionScheduledEmail, deletionCompletedEmail } from "@/lib/email";
 
 export const GRACE_DAYS = 14;
 
@@ -35,9 +36,24 @@ export async function requestDeletion(userId: string) {
   const user = await db.user.update({
     where: { id: userId },
     data: { deletionRequestedAt: now, deletionScheduledFor: scheduledFor },
-    select: { deletionRequestedAt: true, deletionScheduledFor: true },
+    select: { deletionRequestedAt: true, deletionScheduledFor: true, email: true, name: true },
   });
-  return { ...user, subscriptionNote };
+  // Confirmation (pick 16): the exact deletion date + the cancel path
+  // + the subscription note, best-effort — a mail failure never blocks
+  // a deletion request the user has made.
+  try {
+    const scheduledForLabel = scheduledFor.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC",
+    });
+    const mail = deletionScheduledEmail({ name: user.name, scheduledForLabel, subscriptionNote });
+    await sendEmail(user.email, mail.subject, mail.html);
+  } catch {
+    /* best-effort */
+  }
+  return { deletionRequestedAt: user.deletionRequestedAt, deletionScheduledFor: user.deletionScheduledFor, subscriptionNote };
 }
 
 export async function cancelDeletion(userId: string) {
@@ -52,11 +68,11 @@ export async function cancelDeletion(userId: string) {
 export async function processDueDeletions(now: Date = new Date()): Promise<{ deleted: number }> {
   const due = await db.user.findMany({
     where: { deletionScheduledFor: { lte: now }, deletionRequestedAt: { not: null } },
-    select: { id: true },
+    select: { id: true, email: true, name: true },
     take: 25,
   });
   let deleted = 0;
-  for (const { id } of due) {
+  for (const { id, email, name } of due) {
     try {
       const sub = await db.subscription.findUnique({ where: { userId: id } });
       if (sub) {
@@ -90,6 +106,14 @@ export async function processDueDeletions(now: Date = new Date()): Promise<{ del
       // saved cameras, alert rules, shares and the affiliate profile.
       await db.user.delete({ where: { id } });
       deleted++;
+      // Completion confirmation (pick 16): sent only AFTER the delete
+      // has actually happened, to the address captured before it.
+      try {
+        const mail = deletionCompletedEmail({ name });
+        await sendEmail(email, mail.subject, mail.html);
+      } catch {
+        /* best-effort */
+      }
     } catch (err) {
       console.error("[account-deletion] failed for user", id, err);
     }

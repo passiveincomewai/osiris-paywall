@@ -298,3 +298,98 @@ export function cameraAlertEmail(input: {
     ),
   };
 }
+
+// ── Security pack (2026-11 expansion, pick 15) ──────────────────────
+// Account-security notices in the newDeviceEmail mould: what happened,
+// when, and the recovery path if it wasn't you. Transactional — they
+// are part of the account's security record, so no opt-out applies and
+// none is offered. The postal line rides in the shell footer.
+
+export function passwordChangedEmail(input: {
+  name: string | null;
+  /** Pre-rendered moment, UTC-labelled. */
+  whenLabel: string;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  return {
+    subject: "Your WorldEye password was changed",
+    html: shell(
+      "Password changed",
+      "Your WorldEye password was just changed. If that wasn't you, act now.",
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">The password on your WorldEye account was changed on <strong style="color:#fff;">${escapeHtml(input.whenLabel)}</strong>. If that was you, no action is needed.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If it wasn't you, reset your password right away from the sign-in page (choose “Forgot password”), then review your signed-in devices under <strong style="color:#fff;">Settings → Security</strong>.</p>`,
+      { label: "Review my account", href: appUrl("/settings") },
+      { why: "You're receiving this because the password on your WorldEye account changed." },
+    ),
+  };
+}
+
+export function apiKeyCreatedEmail(input: {
+  name: string | null;
+  keyName: string;
+  /** The non-secret display prefix (e.g. "we_live_…"); the full key is
+   * shown to the creator once and is NEVER emailed. */
+  keyPrefix: string;
+  whenLabel: string;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  return {
+    subject: "A new WorldEye API key was created on your account",
+    html: shell(
+      "New API key created",
+      `API key “${input.keyName}” (${input.keyPrefix}) was created on your account.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">A new public API key named <strong style="color:#fff;">${escapeHtml(input.keyName)}</strong> (starting <strong style="color:#fff;">${escapeHtml(input.keyPrefix)}</strong>) was created on your WorldEye account on <strong style="color:#fff;">${escapeHtml(input.whenLabel)}</strong>. The full key was shown once, to whoever created it — it is never included in email.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If that wasn't you, revoke the key immediately under <strong style="color:#fff;">Settings → Developer</strong> and change your password.</p>`,
+      { label: "Manage my API keys", href: appUrl("/settings") },
+      { why: "You're receiving this because a new API key was created on your WorldEye account." },
+    ),
+  };
+}
+
+// ── Account deletion pair (2026-11 expansion, pick 16) ─────────────
+
+export function deletionScheduledEmail(input: {
+  name: string | null;
+  /** e.g. "November 15, 2026" — the hard-delete date. */
+  scheduledForLabel: string;
+  /** The honest subscription note requestDeletion already computes. */
+  subscriptionNote: string | null;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  const subLine = input.subscriptionNote
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">${escapeHtml(input.subscriptionNote)}</p>`
+    : "";
+  return {
+    subject: "Your WorldEye account is scheduled for deletion",
+    html: shell(
+      "Deletion scheduled",
+      `Your account will be permanently deleted on ${input.scheduledForLabel} unless you cancel.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">You've asked us to delete your WorldEye account. It is scheduled for permanent deletion on <strong style="color:#fff;">${escapeHtml(input.scheduledForLabel)}</strong>. Until then your account works normally.</p>
+       ${subLine}
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Changed your mind? Sign in and cancel the deletion from <strong style="color:#fff;">Settings</strong> any time before that date — nothing is lost if you do.</p>`,
+      { label: "Review or cancel deletion", href: appUrl("/settings") },
+      { why: "You're receiving this because you requested deletion of your WorldEye account." },
+    ),
+  };
+}
+
+export function deletionCompletedEmail(input: {
+  name: string | null;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  return {
+    subject: "Your WorldEye account has been deleted",
+    html: shell(
+      "Account deleted",
+      "Your WorldEye account and its data have been permanently deleted.",
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">As requested, your WorldEye account has now been permanently deleted, along with your saved cameras, settings and account data. Any subscription was cancelled first — you will not be charged again.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">The free globe is still there if you ever want to look — no account needed. If you didn't request this deletion, reach us through the contact page and we'll help.</p>`,
+      { label: "Contact us", href: appUrl("/contact") },
+      { why: "You're receiving this to confirm a deletion you requested." },
+    ),
+  };
+}

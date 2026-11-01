@@ -3,7 +3,15 @@
 // why-line, and the derived plain-text alternative. If any of these
 // regress, every automated email regresses with them.
 import { describe, it, expect } from "vitest";
-import { shell, htmlToText, verificationEmail } from "./email";
+import {
+  shell,
+  htmlToText,
+  verificationEmail,
+  passwordChangedEmail,
+  apiKeyCreatedEmail,
+  deletionScheduledEmail,
+  deletionCompletedEmail,
+} from "./email";
 
 describe("shell (shared branded layout)", () => {
   const html = shell("Hello", "preheader text", "<p>Body copy.</p>", {
@@ -48,5 +56,40 @@ describe("htmlToText", () => {
     expect(text).toContain("Verify my email");
     expect(text).toContain("https://worldeye.app/verify?token=abc");
     expect(text).toContain("555 E 3200 N, North Ogden, UT 84414");
+  });
+});
+
+describe("security pack + deletion pair (picks 15/16)", () => {
+  it("password-changed notice states the moment and the recovery path", () => {
+    const m = passwordChangedEmail({ name: "Ada", whenLabel: "November 1, 2026 at 5:42 PM UTC" });
+    expect(m.subject).toContain("password was changed");
+    expect(m.html).toContain("November 1, 2026 at 5:42 PM UTC");
+    expect(m.html).toContain("Forgot password");
+  });
+  it("API-key notice carries name + prefix only, never a full key", () => {
+    const m = apiKeyCreatedEmail({
+      name: "Ada",
+      keyName: "My script",
+      keyPrefix: "we_pub_1234",
+      whenLabel: "November 1, 2026 at 5:42 PM UTC",
+    });
+    expect(m.html).toContain("My script");
+    expect(m.html).toContain("we_pub_1234");
+    expect(m.html).toContain("never included in email");
+  });
+  it("deletion-scheduled states the exact date and the cancel path", () => {
+    const m = deletionScheduledEmail({
+      name: "Ada",
+      scheduledForLabel: "November 15, 2026",
+      subscriptionNote: "Your subscription is set to end at its current period end and will not renew.",
+    });
+    expect(m.html).toContain("November 15, 2026");
+    expect(m.html).toContain("cancel the deletion");
+    expect(m.html).toContain("will not renew");
+  });
+  it("deletion-completed confirms and points at the contact page for mistakes", () => {
+    const m = deletionCompletedEmail({ name: "Ada" });
+    expect(m.html).toContain("permanently deleted");
+    expect(m.html).toContain("/contact");
   });
 });

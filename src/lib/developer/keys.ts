@@ -7,6 +7,7 @@
  */
 import { db } from "@/lib/db";
 import { generateApiKey, hashSecret } from "@/lib/enterprise/tokens";
+import { sendEmail, apiKeyCreatedEmail } from "@/lib/email";
 
 export const PUBLIC_KEY_SCOPE = "public";
 export const MAX_PUBLIC_KEYS_PER_USER = 5;
@@ -58,6 +59,26 @@ export async function createPublicKey(
     },
     select: { id: true, name: true, keyPrefix: true, createdAt: true },
   });
+  // Security-pack notice (pick 15): name + non-secret prefix only —
+  // the full key is never emailed. Best-effort; never fails creation.
+  try {
+    const owner = await db.user.findUnique({
+      where: { id: userId },
+      select: { email: true, name: true },
+    });
+    if (owner) {
+      const whenLabel = `${row.createdAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })} at ${row.createdAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" })} UTC`;
+      const mail = apiKeyCreatedEmail({
+        name: owner.name,
+        keyName: row.name,
+        keyPrefix: row.keyPrefix,
+        whenLabel,
+      });
+      await sendEmail(owner.email, mail.subject, mail.html);
+    }
+  } catch {
+    /* best-effort */
+  }
   return { ok: true, key, apiKey: row };
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { sendEmail, passwordChangedEmail } from "@/lib/email";
 import {
   passwordError,
   hashPassword,
@@ -28,7 +29,10 @@ export async function POST(req: Request) {
   const pwErr = passwordError(newPassword ?? "");
   if (pwErr) return NextResponse.json({ error: pwErr }, { status: 400 });
 
-  const user = await db.user.findUnique({ where: { id: userId }, select: { passwordHash: true } });
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { passwordHash: true, email: true, name: true },
+  });
   if (!user) return NextResponse.json({ error: "Account not found" }, { status: 404 });
 
   if (user.passwordHash) {
@@ -41,5 +45,14 @@ export async function POST(req: Request) {
     where: { id: userId },
     data: { passwordHash: await hashPassword(newPassword!) },
   });
+  // Security-pack notice (pick 15): best-effort — a mail failure must
+  // never fail a completed password change.
+  try {
+    const whenLabel = `${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })} at ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" })} UTC`;
+    const mail = passwordChangedEmail({ name: user.name, whenLabel });
+    await sendEmail(user.email, mail.subject, mail.html);
+  } catch {
+    /* best-effort */
+  }
   return NextResponse.json({ ok: true });
 }
