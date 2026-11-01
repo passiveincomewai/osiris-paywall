@@ -11,6 +11,7 @@ import { randomUUID } from "crypto";
 import { db } from "@/lib/db";
 import { referralLinkFor } from "@/lib/affiliate/brand";
 import { trackingSlugFromLabel } from "@/lib/affiliate/insights";
+import { summarizeAnalysis, type SourceAnalysis } from "./repurpose";
 import type { StudioProject, StudioVariation } from "@prisma/client";
 
 export const MAX_TRACKING_LINKS = 25;
@@ -23,6 +24,11 @@ export function newCreativeId(): string {
 }
 
 export function serializeProject(p: StudioProject, variationCount?: number) {
+  const analysis = (p.analysis ?? null) as SourceAnalysis | null;
+  const summary =
+    analysis && typeof analysis.durationSec === "number" && analysis.measured
+      ? summarizeAnalysis(analysis)
+      : null;
   return {
     id: p.id,
     title: p.title,
@@ -34,6 +40,8 @@ export function serializeProject(p: StudioProject, variationCount?: number) {
     height: p.height,
     ownershipConfirmed: p.ownershipConfirmed,
     analysis: p.analysis,
+    analysisSummary: summary ? summary.lines.join(" ") : null,
+    analysisMeasured: analysis?.measured ?? null,
     hasTranscript: !!p.transcript,
     trackingLinkId: p.trackingLinkId,
     status: p.status,
