@@ -84,6 +84,7 @@ import {
   annualRenewalNoticeEmail,
   cancellationSaveEmail,
   subscriptionEndedWinbackEmail,
+  involuntaryChurnWinbackEmail,
   onboardingDay2Email,
   onboardingDay5Email,
   inactiveReengagementEmail,
@@ -106,6 +107,7 @@ export type LifecycleTemplate =
   | "annual_renewal_notice"
   | "cancellation_save"
   | "subscription_ended_winback"
+  | "subscription_ended_winback_involuntary"
   | "onboarding_day2"
   | "onboarding_day5"
   | "inactive_reengagement"
@@ -700,6 +702,7 @@ export async function runLifecycleEmails(
       status: "canceled",
       created: { gte: Math.floor((now.getTime() - 75 * DAY_MS) / 1000) },
       limit: 100,
+      expand: ["data.latest_invoice"],
     });
     for (const sub of list.data) {
       const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
@@ -721,20 +724,54 @@ export async function runLifecycleEmails(
       if (!verdict.due) continue;
       const user = await db.user.findUnique({ where: { id: dbSub.userId }, select: userSelect });
       if (!user) continue;
-      const labels = planLabelsFor(sub.items.data[0]?.price?.id ?? dbSub.stripePriceId);
-      await deliver({
-        user,
-        template: "subscription_ended_winback",
-        contextKey: sub.id,
-        kind: "marketing",
-        render: () =>
-          subscriptionEndedWinbackEmail({
-            name: user.name,
-            planName: labels.planName,
-            offer,
-            unsubscribeUrl: unsubFor(user.id),
-          }),
+      // R4 split: if the subscription's final invoice is still unpaid
+      // (open) or written off (uncollectible), the sub died of a failed
+      // payment, not a decision — that population gets the involuntary
+      // variant. The two templates share the once-only discipline via
+      // an either-template log check, so nobody gets both.
+      const latestInvoice =
+        typeof sub.latest_invoice === "object" ? sub.latest_invoice : null;
+      const involuntary =
+        latestInvoice?.status === "uncollectible" || latestInvoice?.status === "open";
+      const priorTouch = await db.lifecycleEmailLog.findFirst({
+        where: {
+          userId: user.id,
+          contextKey: sub.id,
+          template: { in: ["subscription_ended_winback", "subscription_ended_winback_involuntary"] },
+        },
+        select: { id: true },
       });
+      if (priorTouch) continue;
+      const labels = planLabelsFor(sub.items.data[0]?.price?.id ?? dbSub.stripePriceId);
+      if (involuntary) {
+        await deliver({
+          user,
+          template: "subscription_ended_winback_involuntary",
+          contextKey: sub.id,
+          kind: "marketing",
+          render: () =>
+            involuntaryChurnWinbackEmail({
+              name: user.name,
+              planName: labels.planName,
+              offer,
+              unsubscribeUrl: unsubFor(user.id),
+            }),
+        });
+      } else {
+        await deliver({
+          user,
+          template: "subscription_ended_winback",
+          contextKey: sub.id,
+          kind: "marketing",
+          render: () =>
+            subscriptionEndedWinbackEmail({
+              name: user.name,
+              planName: labels.planName,
+              offer,
+              unsubscribeUrl: unsubFor(user.id),
+            }),
+        });
+      }
     }
   });
 

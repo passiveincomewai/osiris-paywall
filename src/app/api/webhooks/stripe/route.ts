@@ -19,6 +19,14 @@ import { recordTeamEvent } from "@/lib/team/analytics";
 import { sendPaymentFailedRecovery } from "@/lib/billing/dunning";
 import { fulfillGiftPurchase, isGiftStripeSubscription } from "@/lib/billing/gift";
 import { isAmbientPriceId, isPowderPassPriceId } from "@/lib/plan-tier";
+import {
+  trialConvertedWelcomeEmail,
+  planChangedEmail,
+  cardUpdatedEmail,
+  refundProcessedEmail,
+} from "@/lib/email";
+import { describeStripePrice, formatMoney, planByPriceIdFromEnv } from "@/lib/billing/trial-reminders";
+import { isExcludedEmail } from "@/lib/lifecycle/config";
 
 export const runtime = "nodejs"; // signature verification needs the raw body
 
@@ -64,6 +72,41 @@ function subscriptionIdFromInvoice(invoice: Stripe.Invoice): string | null {
     return typeof s === "string" ? s : s.id;
   }
   return null;
+}
+
+/**
+ * Once-only customer notice, deduped through LifecycleEmailLog (the
+ * dunning pattern): the log row is written ONLY after a successful
+ * send, so a failed send is retried by Stripe's replay and a
+ * successful one can never repeat. Used by the 2026-11 round-2
+ * webhook emails (trial-converted welcome, plan change, card added,
+ * refund processed).
+ */
+async function sendOncePerKey(input: {
+  userId: string;
+  template: string;
+  contextKey: string;
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<void> {
+  const already = await db.lifecycleEmailLog.findUnique({
+    where: {
+      userId_template_contextKey: {
+        userId: input.userId,
+        template: input.template,
+        contextKey: input.contextKey,
+      },
+    },
+    select: { id: true },
+  });
+  if (already) return;
+  const ok = await sendEmail(input.to, input.subject, input.html);
+  if (ok) {
+    await db.lifecycleEmailLog.create({
+      data: { userId: input.userId, template: input.template, contextKey: input.contextKey },
+    });
+  }
 }
 
 /**
@@ -515,6 +558,58 @@ export async function POST(req: NextRequest) {
                 } catch (e) {
                   console.error("[stripe-webhook] meta CAPI (trial conversion) failed:", e);
                 }
+                // Trial-converted welcome (round 2, R2): the customer
+                // hears it from us too — what converted, what was
+                // charged, when the paid period ends. Figures come
+                // from the invoice + the live Stripe price; once per
+                // subscription via LifecycleEmailLog.
+                try {
+                  if (emailConfigured()) {
+                    const buyer = await db.user.findUnique({
+                      where: { id: userId },
+                      select: { email: true, name: true },
+                    });
+                    const subRow = await db.subscription.findUnique({
+                      where: { stripeSubscriptionId: subId },
+                      select: { currentPeriodEnd: true },
+                    });
+                    const price = stripeSub.items.data[0]?.price;
+                    if (buyer && subRow && price && !isExcludedEmail(buyer.email)) {
+                      const desc = describeStripePrice(
+                        {
+                          id: price.id,
+                          unit_amount: price.unit_amount,
+                          currency: price.currency,
+                          recurring: price.recurring
+                            ? { interval: price.recurring.interval, interval_count: price.recurring.interval_count }
+                            : null,
+                        },
+                        planByPriceIdFromEnv(process.env),
+                      );
+                      const mail = trialConvertedWelcomeEmail({
+                        name: buyer.name,
+                        planName: desc.planLabel,
+                        amountLabel: formatMoney(invoice.amount_paid, invoice.currency ?? "usd"),
+                        periodEndLabel: subRow.currentPeriodEnd.toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                          timeZone: "UTC",
+                        }),
+                      });
+                      await sendOncePerKey({
+                        userId,
+                        template: "trial_converted_welcome",
+                        contextKey: subId,
+                        to: buyer.email,
+                        subject: mail.subject,
+                        html: mail.html,
+                      });
+                    }
+                  }
+                } catch (e) {
+                  console.error("[stripe-webhook] trial-converted welcome failed:", e);
+                }
               }
             }
           }
@@ -547,7 +642,107 @@ export async function POST(req: NextRequest) {
       }
       case "customer.subscription.updated": {
         // Event object IS the subscription — no extra API call needed.
-        await syncSubscription(event.data.object as Stripe.Subscription);
+        const updatedSub = event.data.object as Stripe.Subscription;
+        const updatedUserId = await syncSubscription(updatedSub);
+        // Plan-change confirmation (round 2, R5): previous_attributes
+        // carries the pre-change items; a different base price id IS
+        // the plan/interval switch. Status flips (trial conversion,
+        // cancellation flags) are not plan changes and stay silent
+        // here — they have their own emails.
+        try {
+          const prevAttrs = (
+            event.data as {
+              previous_attributes?: {
+                items?: { data?: Array<{ price?: { id?: string } }> };
+              };
+            }
+          ).previous_attributes;
+          const prevPriceId = prevAttrs?.items?.data?.[0]?.price?.id;
+          const newPriceId = updatedSub.items.data[0]?.price?.id;
+          if (
+            updatedUserId &&
+            prevPriceId &&
+            newPriceId &&
+            prevPriceId !== newPriceId &&
+            emailConfigured()
+          ) {
+            const user = await db.user.findUnique({
+              where: { id: updatedUserId },
+              select: { email: true, name: true },
+            });
+            if (user && !isExcludedEmail(user.email)) {
+              const s = stripe();
+              const planByPriceId = planByPriceIdFromEnv(process.env);
+              const labelFor = async (priceId: string) => {
+                const p = await s.prices.retrieve(priceId);
+                const d = describeStripePrice(
+                  {
+                    id: p.id,
+                    unit_amount: p.unit_amount,
+                    currency: p.currency,
+                    recurring: p.recurring
+                      ? { interval: p.recurring.interval, interval_count: p.recurring.interval_count }
+                      : null,
+                  },
+                  planByPriceId,
+                );
+                return `${d.planLabel} — ${d.chargeLabel}`;
+              };
+              const mail = planChangedEmail({
+                name: user.name,
+                oldLabel: await labelFor(prevPriceId),
+                newLabel: await labelFor(newPriceId),
+              });
+              await sendOncePerKey({
+                userId: updatedUserId,
+                template: "plan_changed",
+                contextKey: `${updatedSub.id}:${event.id}`,
+                to: user.email,
+                subject: mail.subject,
+                html: mail.html,
+              });
+            }
+          }
+        } catch (e) {
+          console.error("[stripe-webhook] plan-change email failed:", e);
+        }
+        break;
+      }
+      case "payment_method.attached": {
+        // Card added/replaced (round 2, R5): a security-relevant
+        // billing change the account holder should hear about from us.
+        try {
+          const pm = event.data.object as Stripe.PaymentMethod;
+          const customerId = typeof pm.customer === "string" ? pm.customer : pm.customer?.id;
+          if (customerId && emailConfigured()) {
+            const subRow = await db.subscription.findFirst({
+              where: { stripeCustomerId: customerId },
+              select: { userId: true },
+            });
+            const user = subRow
+              ? await db.user.findUnique({
+                  where: { id: subRow.userId },
+                  select: { email: true, name: true },
+                })
+              : null;
+            if (subRow && user && !isExcludedEmail(user.email)) {
+              const cardLabel = pm.card
+                ? `${pm.card.brand ? pm.card.brand[0].toUpperCase() + pm.card.brand.slice(1) : "Card"} ending ${pm.card.last4}`
+                : null;
+              const mail = cardUpdatedEmail({ name: user.name, cardLabel });
+              await sendOncePerKey({
+                userId: subRow.userId,
+                template: "card_updated",
+                contextKey: pm.id,
+                to: user.email,
+                subject: mail.subject,
+                html: mail.html,
+              });
+            }
+          }
+        } catch (e) {
+          console.error("[stripe-webhook] card-updated email failed:", e);
+        }
         break;
       }
       case "customer.subscription.deleted": {
@@ -591,6 +786,44 @@ export async function POST(req: NextRequest) {
         const chargeInvoice = (charge as unknown as { invoice?: string | { id?: string } | null }).invoice;
         const invoiceId = typeof chargeInvoice === "string" ? chargeInvoice : chargeInvoice?.id;
         if (invoiceId) await reverseCommissionsForInvoice(invoiceId, "charge.refunded");
+        // Refund-processed notice (round 2, R6): the amount Stripe
+        // shows as refunded on this charge, nothing more. One email
+        // per (charge, refunded-total) step, so a later second partial
+        // refund produces its own notice and replays never repeat.
+        try {
+          if (charge.amount_refunded > 0 && emailConfigured()) {
+            const customerId = typeof charge.customer === "string" ? charge.customer : charge.customer?.id;
+            const subRow = customerId
+              ? await db.subscription.findFirst({
+                  where: { stripeCustomerId: customerId },
+                  select: { userId: true },
+                })
+              : null;
+            const user = subRow
+              ? await db.user.findUnique({
+                  where: { id: subRow.userId },
+                  select: { email: true, name: true },
+                })
+              : null;
+            const to = user?.email ?? charge.receipt_email ?? charge.billing_details?.email ?? null;
+            if (subRow && user && to && !isExcludedEmail(to)) {
+              const mail = refundProcessedEmail({
+                name: user.name,
+                amountLabel: formatMoney(charge.amount_refunded, charge.currency ?? "usd"),
+              });
+              await sendOncePerKey({
+                userId: subRow.userId,
+                template: "refund_processed",
+                contextKey: `${charge.id}:${charge.amount_refunded}`,
+                to,
+                subject: mail.subject,
+                html: mail.html,
+              });
+            }
+          }
+        } catch (e) {
+          console.error("[stripe-webhook] refund email failed:", e);
+        }
         break;
       }
       case "charge.dispute.created": {

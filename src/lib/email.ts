@@ -393,3 +393,96 @@ export function deletionCompletedEmail(input: {
     ),
   };
 }
+
+// ── Billing lifecycle pack (2026-11 expansion, round 2) ─────────────
+// Sent from the Stripe webhook at the moment the underlying event is
+// fact: conversion, plan change, card change, refund. Every figure in
+// them arrives from the Stripe object itself — nothing is restated.
+
+export function trialConvertedWelcomeEmail(input: {
+  name: string | null;
+  /** e.g. "VIP Pro plan" / "Powder Pass" via checkout summaries. */
+  planName: string;
+  /** e.g. "$13.99" — the amount actually just paid (Stripe invoice). */
+  amountLabel: string;
+  /** e.g. "December 1, 2026" — the end of the now-paid period. */
+  periodEndLabel: string;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  return {
+    subject: `You're in — your WorldEye ${input.planName} is now paid and active`,
+    html: shell(
+      "Welcome aboard, properly",
+      `Your trial converted — ${input.planName} is paid through ${input.periodEndLabel}.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Your free trial just converted: <strong style="color:#fff;">${escapeHtml(input.amountLabel)}</strong> was charged and your <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong> is now paid and active through <strong style="color:#fff;">${escapeHtml(input.periodEndLabel)}</strong>. Everything the plan includes is live on your account right now — same sign-in, same saved cameras and settings.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Where to start: open the globe and set a camera alert for a view you care about — that's the feature most members end up using daily. Your plan, invoices and cancel-anytime controls live under <strong style="color:#fff;">Settings → Manage billing</strong>.</p>`,
+      { label: "Open the globe", href: appUrl("/") },
+      { why: "You're receiving this because your WorldEye trial converted to a paid plan." },
+    ),
+  };
+}
+
+export function planChangedEmail(input: {
+  name: string | null;
+  /** e.g. "Monthly — $13.99/month" (describeStripePrice label pair). */
+  oldLabel: string;
+  newLabel: string;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  return {
+    subject: "Your WorldEye plan has changed",
+    html: shell(
+      "Plan change confirmed",
+      `Your plan changed from ${input.oldLabel} to ${input.newLabel}.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Your WorldEye plan has changed from <strong style="color:#fff;">${escapeHtml(input.oldLabel)}</strong> to <strong style="color:#fff;">${escapeHtml(input.newLabel)}</strong>. The new plan is in effect now; how the price difference settles is itemised on your next invoice, under <strong style="color:#fff;">Settings → Manage billing</strong>.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Nothing else about your account changes: your saved cameras, follows and settings carry over.</p>`,
+      { label: "Manage my subscription", href: appUrl("/settings") },
+      { why: "You're receiving this because the plan on your WorldEye subscription changed." },
+    ),
+  };
+}
+
+export function cardUpdatedEmail(input: {
+  name: string | null;
+  /** e.g. "Visa ending 4242" when Stripe gives brand + last4. */
+  cardLabel: string | null;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  const card = input.cardLabel
+    ? ` — <strong style="color:#fff;">${escapeHtml(input.cardLabel)}</strong> —`
+    : "";
+  return {
+    subject: "A new payment method was added to your WorldEye account",
+    html: shell(
+      "Payment method added",
+      "A new card was added to your WorldEye billing account.",
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">A new payment method${card} was just added to your WorldEye billing account. If that was you, no action is needed.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If it wasn't you, remove it under <strong style="color:#fff;">Settings → Manage billing</strong> and change your password right away.</p>`,
+      { label: "Manage billing", href: appUrl("/settings") },
+      { why: "You're receiving this because a payment method was added to your WorldEye account." },
+    ),
+  };
+}
+
+export function refundProcessedEmail(input: {
+  name: string | null;
+  /** e.g. "$74.99" — the amount Stripe shows as refunded on the charge. */
+  amountLabel: string;
+}): { subject: string; html: string } {
+  const first = escapeHtml(input.name?.split(" ")[0] ?? "there");
+  return {
+    subject: `Your WorldEye refund of ${input.amountLabel} has been processed`,
+    html: shell(
+      "Refund processed",
+      `A refund of ${input.amountLabel} is on its way back to your payment method.`,
+      `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${first},</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">We've processed a refund of <strong style="color:#fff;">${escapeHtml(input.amountLabel)}</strong> to your original payment method. From here the timing is your bank's: refunds typically take 5–10 business days to appear on your statement.</p>
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If it hasn't appeared after 10 business days, check with your bank first — and if they can't see it, reach us through the contact page with this email handy and we'll trace it.</p>`,
+      { label: "Contact us", href: appUrl("/contact") },
+      { why: "You're receiving this because a refund was processed on your WorldEye account." },
+    ),
+  };
+}

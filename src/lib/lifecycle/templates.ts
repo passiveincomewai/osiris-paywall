@@ -441,6 +441,38 @@ export function trialExitSurveyEmail(input: {
   };
 }
 
+// ── (i2) Involuntary churn win-back (marketing) ──────────────────────
+// The ended-winback variant for subscriptions that ended because the
+// final invoice went unpaid (Stripe left it open/uncollectible) —
+// the cause is stated plainly, and the reassurance is only what is
+// actually true: the account's saved data is untouched by a lapsed
+// subscription, and restarting is a fresh checkout from /pricing.
+export function involuntaryChurnWinbackEmail(input: {
+  name: string | null;
+  planName: string;
+  offer: DiscountOffer | null;
+  unsubscribeUrl: string | null;
+}): RenderedEmail {
+  const first = escapeHtml(firstNameOf(input.name));
+  const offerPart = input.offer
+    ? `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If you'd like to come back, here's <strong style="color:#fff;">${escapeHtml(input.offer.label)}</strong>:</p>${offerBlock(input.offer)}`
+    : "";
+  return {
+    subject: `Your WorldEye ${input.planName} ended after a failed payment — your stuff is saved`,
+    html: shell(
+      "It ended over a card, not a choice",
+      "Your saved cameras and settings are exactly where you left them.",
+      `${P(`Hi ${first},`)}
+       ${P(`Your <strong style="color:#fff;">WorldEye ${escapeHtml(input.planName)}</strong> subscription has ended because the last payment didn't go through — after the automatic retries, the invoice stayed unpaid and Stripe closed the subscription. Nothing further will be charged.`)}
+       ${P(`The part worth knowing: a lapsed subscription doesn't touch your account. Your saved cameras, resort follows and settings are all still there, and your free account keeps working. If the card was the only problem, restarting takes a minute from the pricing page with a working card.`)}
+       ${offerPart}
+       ${unsubscribeLine(input.unsubscribeUrl)}`,
+      { label: "Restart my plan", href: appUrl("/pricing") },
+      { why: "You're receiving this because your WorldEye subscription ended after an unpaid invoice." },
+    ),
+  };
+}
+
 // ── (e1) Affiliate: a signup via your link (transactional) ──────────
 export function affiliateSignupEmail(input: {
   name: string | null;
