@@ -125,7 +125,8 @@ export function verificationEmail(name: string | null, verifyUrl: string): { sub
       "One click to activate your WorldEye account.",
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${escapeHtml(first)},</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Thanks for creating a WorldEye account. Click below to verify your email address — the link expires in 24 hours.</p>`,
-      { label: "Verify my email", href: verifyUrl }
+      { label: "Verify my email", href: verifyUrl },
+      { why: "You're receiving this because someone created a WorldEye account with this email address." }
     ),
   };
 }
@@ -140,7 +141,8 @@ export function resetPasswordEmail(name: string | null, resetUrl: string): { sub
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${escapeHtml(first)},</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">We got a request to reset your WorldEye password. Click below to choose a new one — the link expires in 1 hour.</p>
        <p style="color:#71717a;font-size:13px;">Didn't ask for this? Your password stays as-is; just ignore this email.</p>`,
-      { label: "Reset my password", href: resetUrl }
+      { label: "Reset my password", href: resetUrl },
+      { why: "You're receiving this because a password reset was requested for your WorldEye account." }
     ),
   };
 }
@@ -156,7 +158,8 @@ export function newsletterVerifyEmail(verifyUrl: string): { subject: string; htm
       "One more click",
       "Confirm your subscription to the WorldEye newsletter.",
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Thanks for your interest in WorldEye. Click below to confirm your newsletter subscription — we'll send product updates, new intel layers, and launch news. No spam, unsubscribe anytime.</p>`,
-      { label: "Confirm subscription", href: verifyUrl }
+      { label: "Confirm subscription", href: verifyUrl },
+      { why: "You're receiving this because this email address was entered for the WorldEye newsletter." }
     ),
   };
 }
@@ -169,7 +172,8 @@ export function newsletterWelcomeEmail(unsubUrl: string): { subject: string; htm
       "Your WorldEye newsletter subscription is confirmed.",
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">You're subscribed. We'll keep you posted on new layers, features, and major launches.</p>
        <p style="font-size:12px;color:#71717a;"><a href="${unsubUrl}" style="color:#71717a;">Unsubscribe anytime</a></p>`,
-      { label: "Explore the live map", href: appUrl("/") }
+      { label: "Explore the live map", href: appUrl("/") },
+      { why: "You're receiving this because you confirmed a WorldEye newsletter subscription." }
     ),
   };
 }
@@ -201,7 +205,8 @@ export function trialEndingEmail(input: {
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to keep Pro? Do nothing — it continues on its own.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to cancel? Sign in, open <strong style="color:#fff;">Settings → Manage billing</strong>, and cancel in the Stripe portal. You keep Pro until the trial ends, and you won't be charged.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">And if the charge does go through, it's covered by a 7-day money-back guarantee on your first charge — email us at <a href="mailto:contact@worldeye.app" style="color:#fff;">contact@worldeye.app</a> within 7 days of the charge for a full refund, no questions asked.</p>`,
-      { label: "Manage my subscription", href: input.manageUrl }
+      { label: "Manage my subscription", href: input.manageUrl },
+      { why: "You're receiving this because your WorldEye trial is ending soon." }
     ),
   };
 }
@@ -214,7 +219,8 @@ export function abandonedCartEmail(plan: string, checkoutUrl: string): { subject
       "Still thinking it over?",
       "Your WorldEye Pro checkout is still open.",
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">You started checking out for <strong style="color:#fff;">${escapeHtml(planLabel)}</strong> but didn't finish. Your spot is still reserved — it only takes a minute to complete.</p>`,
-      { label: "Complete my checkout", href: checkoutUrl }
+      { label: "Complete my checkout", href: checkoutUrl },
+      { why: "You're receiving this because you started a WorldEye checkout with this email address." }
     ),
   };
 }
@@ -240,7 +246,8 @@ export function teamInviteEmail(input: {
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;"><strong style="color:#fff;">${escapeHtml(input.inviterName)}</strong> invited you to join the <strong style="color:#fff;">${escapeHtml(input.orgName)}</strong> team on WorldEye as a <strong style="color:#fff;">${escapeHtml(input.role)}</strong>.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Joining gives you access to the team's shared cameras, collections and the team's plan features. This invitation expires on <strong style="color:#fff;">${escapeHtml(expiresLabel)}</strong>.</p>
        <p style="color:#71717a;font-size:13px;">You'll need to sign in with the email address this invitation was sent to in order to accept it.</p>`,
-      { label: "Accept invitation", href: input.acceptUrl }
+      { label: "Accept invitation", href: input.acceptUrl },
+      { why: "You're receiving this because a WorldEye team invited this email address." }
     ),
   };
 }
@@ -264,7 +271,8 @@ export function newDeviceEmail(input: {
       `<p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Hi ${escapeHtml(first)},</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">A device we haven't seen on your account before — <strong style="color:#fff;">${escapeHtml(input.deviceLabel)}</strong>${where} — signed in on <strong style="color:#fff;">${escapeHtml(input.whenLabel)}</strong>.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">If that was you, no action is needed. If it wasn't, change your password and revoke the device under <strong style="color:#fff;">Settings → Security</strong> right away.</p>`,
-      { label: "Review my devices", href: appUrl("/settings") }
+      { label: "Review my devices", href: appUrl("/settings") },
+      { why: "You're receiving this security notice because of a sign-in to your WorldEye account." }
     ),
   };
 }
@@ -294,7 +302,8 @@ export function cameraAlertEmail(input: {
        ${image}
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">This is an automated look at a single photo, not a guarantee — open the camera to see the live view and confirm for yourself.</p>
        <p style="font-size:13px;color:#71717a;">Too many alerts? Pause or change this one under <a href="${escapeHtml(input.alertsUrl)}" style="color:#a1a1aa;">Settings → Camera alerts</a>.</p>`,
-      { label: "Open the camera", href: input.cameraUrl }
+      { label: "Open the camera", href: input.cameraUrl },
+      { why: "You're receiving this because camera alerts are on for your WorldEye account." }
     ),
   };
 }

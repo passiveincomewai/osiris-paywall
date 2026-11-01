@@ -106,10 +106,12 @@ export function makeSnowCache(fetchSnow: SkiEmailDeps["fetchSnow"]) {
 
 /** Footer block every ski email carries: unsubscribe + postal line. */
 export function skiEmailFooter(unsubscribeUrl: string | null): string {
-  const unsub = unsubscribeUrl
+  // The CAN-SPAM postal line is NOT repeated here: the shared shell()
+  // footer (design pass D1/D2) prints it on every email. This block
+  // carries only the ski-specific unsubscribe line.
+  return unsubscribeUrl
     ? `<p style="font-size:12px;color:#52525b;margin-top:18px;">Don't want these ski emails? <a href="${escapeHtml(unsubscribeUrl)}" style="color:#71717a;">Unsubscribe</a> — you'll still get essential account emails.</p>`
     : "";
-  return `${unsub}<p style="color:#52525b;font-size:12px;margin-top:14px;">${SKI_EMAIL_CAN_SPAM_LINE}</p>`;
 }
 
 export function unsubscribeUrlFor(userId: string): string | null {

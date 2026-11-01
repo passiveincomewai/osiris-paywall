@@ -27,6 +27,6 @@ export function auroraAlertEmail(input: {
     html: shell(escapeHtml(subject), `Kp ${formatKp(input.tonightKp)} forecast over ${escapeHtml(input.placeName)} tonight`, body, {
       label: "Watch the aurora cameras",
       href: appUrl("/northern-lights-webcams"),
-    }),
+    }, { why: "You're receiving this because aurora alerts are on for a place you follow on WorldEye." }),
   };
 }
