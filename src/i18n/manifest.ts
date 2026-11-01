@@ -90,7 +90,7 @@ const ES_TRANCHE_DATE = "2026-10-26";
 // computed at publish time; dictionaries.test.ts recomputes and pins them.
 const ES_SOURCE_HASHES: Record<string, string> = {
   "": "3987311a1f1f7b5fc3e983833746da740e871cd7f755a5cb46016d4ff6b6c801",
-  pricing: "4a5444a98040d4cfe5eb6cb271c796ca2a6fe95caa0a4c8f00ab00e31400257d",
+  pricing: "baa2c2545a18d6cab0e2561cd8d13c89b09d4775492816a286680bdd3e2e07ac",
   "live-webcams": "54a9ce1419a86b32947d625722b245bda2a93155af8c60f8fd5a8c6f2a51bd04",
   faq: "dff2534296fb945648065e81aede56c2e1ca758d493c91bf29440e6701324747",
   "live-flight-tracker": "f6098a009698c4a81bbdf8d413acc89dbf3d5bce2b506ab3e4627f2c168c1cf8",
@@ -190,6 +190,10 @@ const ES_SOURCE_HASHES: Record<string, string> = {
 // live-flight-tracker hash moved (this also clears the hash drift
 // the dictionary had accumulated before this re-sync); its
 // updatedAt stays 2026-10-29.
+// Re-sync (2026-11-01, master repair): the pricing dictionary's
+// Lite premium-layers card stopped enumerating the Ultra intel
+// feeds; the Spanish dictionary was re-synced the same day, so
+// the pricing hash moved; its updatedAt stays 2026-10-31.
 const ES_UPDATED_AT: Record<string, string> = {
   "": "2026-10-31",
   pricing: "2026-10-31",

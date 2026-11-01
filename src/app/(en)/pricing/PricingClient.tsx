@@ -81,7 +81,7 @@ const CARD_TRUST_ICONS = [BadgeCheck, Lock, Check];
 // Comparison-table checkmarks stay in code, in dictionary row order.
 // Columns are the FREE tier and the three paid tiers. Lite carries
 // the binary paid gates (premium layers, OI, search, recording
-// studio, satellite view); alerts, OSINT and future Pro layers start
+// studio, satellite view); alerts and OSINT start
 // at Pro; intel feeds + timelapse are Ultra-only. Mirrors
 // src/lib/billing/plans.ts entitlementsFor — keep the two in step.
 const COMPARE_BOOLEANS: { free: boolean; lite: boolean; pro: boolean; ultra: boolean }[] = [

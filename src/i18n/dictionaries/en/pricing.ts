@@ -57,6 +57,14 @@
  * facts changed. Spanish re-synced the same day; the manifest's
  * pricing sourceHash was recomputed (updatedAt stays 2026-10-31).
  *
+ * Amended 2026-11-01 (master repair, brief items 3+9): Lite's
+ * "Premium map layers" card no longer enumerates the Ultra intel
+ * feeds (maritime, naval, live news) as Lite features — the same
+ * page sells those feeds as Ultra-only, and the middleware gates
+ * their data APIs to the top tier. Spanish re-synced the same day;
+ * the manifest's pricing sourceHash was recomputed (updatedAt
+ * stays 2026-10-31).
+ *
  * NOT covered (separate components keep their own copy; they render
  * in English on localized pricing pages until their own conversion —
  * see the build REPORT): TeamSection, CancelReassurance,
@@ -377,7 +385,7 @@ export const enPricing: PricingCopy = {
   },
   liteFeatures: [
     { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
-    { title: "Premium map layers", desc: "Modeled traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
+    { title: "Premium map layers", desc: "Modeled traffic flow, satellite views and the rest of the premium layer set on the globe." },
     { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
     { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
     { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },
@@ -622,7 +630,7 @@ export const enPricing: PricingCopy = {
       ],
       includes: [
         { title: "Every camera, unlimited", desc: "Watch as many of the 74,229 live cameras as you like — paid plans have no open limits." },
-        { title: "Premium map layers", desc: "Modeled traffic flow, maritime lines, naval traffic and live news feeds on the globe." },
+        { title: "Premium map layers", desc: "Modeled traffic flow, satellite views and the rest of the premium layer set on the globe." },
         { title: "OI AI Assistant", desc: "Talk to the map. Forecasts, analysis and recon — powered by WorldEye's built-in AI, with nothing to set up." },
         { title: "Advanced search filters", desc: "Narrow camera results by country, type and live feeds — places are never filtered." },
         { title: "Camera Recording Studio", desc: "Record live camera feeds right in your browser — up to 5 cameras at once — and save the clips." },

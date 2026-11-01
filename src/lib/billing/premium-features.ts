@@ -3,13 +3,15 @@
  * (components/PremiumSection) renders under the merged Search & Route
  * section.
  *
- * Sourced from the pricing page's own plan data (src/app/pricing/
- * PricingClient.tsx): every entry is a PRO_FEATURES or VIP_FEATURES
- * card title verbatim, with the tier that card sells it under, plus
- * "Advanced search filters" — a premium row in the pricing page's
- * COMPARE_ROWS matrix that has no card. Nothing here is invented:
- * premium-features.test.ts reads PricingClient.tsx and fails if a
- * title drifts, appears, or disappears on either side.
+ * Sourced from the pricing page's own plan data (the English pricing
+ * dictionary, src/i18n/dictionaries/en/pricing.ts): every entry is a
+ * proFeatures or vipFeatures card title verbatim, with the tier that
+ * card sells it under, plus "Advanced search filters" — a premium
+ * row in the pricing comparison matrix that has no card. Nothing
+ * here is invented: premium-features.test.ts reads the dictionary
+ * and fails if a title drifts, appears, or disappears on either
+ * side. (Blurbs re-synced 2026-11-01, master repair: the intel and
+ * timelapse blurbs end "Ultra only", like the current cards.)
  *
  * Blurbs are the pricing cards' descriptions, lightly shortened for
  * a panel-width row.
@@ -65,12 +67,12 @@ export const PREMIUM_FEATURES: PremiumFeature[] = [
   {
     name: "Premium Intel Feeds",
     tier: "vip",
-    blurb: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — VIP only.",
+    blurb: "Cyber threats, GDELT events, maritime tracking, conflict zones, live news — Ultra only.",
   },
   {
     name: "Camera Timelapse",
     tier: "vip",
-    blurb: "Capture snapshot cameras frame by frame and export the film — VIP only.",
+    blurb: "Capture snapshot cameras frame by frame and export the film — Ultra only.",
   },
   {
     name: "Camera alerts (10)",
