@@ -553,6 +553,9 @@ export default function RepurposeClient() {
   const [brandQr, setBrandQr] = useState(true);
   const [brandCode, setBrandCode] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [folderFilter, setFolderFilter] = useState<string>("all");
+  const [plannerGoal, setPlannerGoal] = useState("");
+  const [plannerPlatform, setPlannerPlatform] = useState("TikTok");
   const [renderState, setRenderState] = useState<Record<string, { frac: number; url?: string; name?: string }>>({});
 
   const localUrls = useRef(new Map<string, string>());
@@ -986,10 +989,25 @@ export default function RepurposeClient() {
 
       {/* ---------- project list ---------- */}
       <section className="space-y-2">
-        <h2 className="font-bold text-white">Your projects</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="font-bold text-white">Your projects</h2>
+          <span className="ml-auto flex flex-wrap gap-1.5">
+            {["all", "drafts", "published", "scheduled", "high_performing", "templates", "uploads", "graphics", "archived"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFolderFilter(f)}
+                className={`px-2 py-1 rounded-lg font-mono text-[11px] ${folderFilter === f ? "bg-sky-500/20 text-sky-200 border border-sky-400/40" : "border border-white/10 text-slate-500"}`}
+              >
+                {f.replace(/_/g, " ")}
+              </button>
+            ))}
+          </span>
+        </div>
         {projects.length === 0 && <p className="text-sm text-slate-500">No projects yet — start one above.</p>}
         <div className="grid md:grid-cols-2 gap-2">
-          {projects.map((pr) => (
+          {projects
+            .filter((pr) => folderFilter === "all" || pr.folder === folderFilter)
+            .map((pr) => (
             <button
               key={pr.id}
               onClick={() => openProject(pr.id)}
@@ -1013,9 +1031,104 @@ export default function RepurposeClient() {
         <section className="rounded-2xl border border-sky-400/20 bg-white/[0.02] p-5 space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-lg font-bold text-white">{p.title}</h2>
-            <span className="font-mono text-[11px] text-slate-500">
-              {p.sourceKind} · {p.ownershipConfirmed ? "ownership confirmed" : "ownership NOT confirmed"}
+            <span className="flex items-center gap-2">
+              <select
+                value={p.folder}
+                onChange={async (e) => {
+                  const folder = e.target.value;
+                  await api(`/api/affiliate/studio/repurpose/projects/${p.id}`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ folder }),
+                  }).catch(() => undefined);
+                  setOpen({ ...open, project: { ...p, folder } });
+                  await refreshProjects();
+                }}
+                className="rounded-lg bg-black/30 border border-white/10 px-2 py-1.5 text-[12px] font-mono text-slate-300"
+                title="Campaign Library folder"
+              >
+                {["drafts", "published", "scheduled", "high_performing", "templates", "uploads", "graphics", "archived"].map((f) => (
+                  <option key={f} value={f}>{f.replace(/_/g, " ")}</option>
+                ))}
+              </select>
+              <a href={`/affiliates/studio/editor/${p.id}`} className={GHOST}>Open in Editor →</a>
+              <span className="font-mono text-[11px] text-slate-500">
+                {p.sourceKind} · {p.ownershipConfirmed ? "ownership confirmed" : "ownership NOT confirmed"}
+              </span>
             </span>
+          </div>
+
+          {/* AI planner + campaign kit */}
+          <div className="flex flex-wrap items-end gap-2 rounded-xl border border-white/10 bg-black/20 p-3">
+            <label className="block text-[12px] text-slate-400 flex-1 min-w-[220px]">
+              AI Content Planner — what should this project achieve?
+              <input
+                value={plannerGoal}
+                onChange={(e) => setPlannerGoal(e.target.value)}
+                placeholder="e.g. Grow my ski-season audience with 5 posts this month"
+                className="w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-slate-500 mt-1"
+              />
+            </label>
+            <select
+              value={plannerPlatform}
+              onChange={(e) => setPlannerPlatform(e.target.value)}
+              className="rounded-lg bg-black/30 border border-white/10 px-2 py-2 text-[12px] font-mono text-slate-200"
+            >
+              {["TikTok", "Instagram", "YouTube", "Facebook", "X"].map((pf) => (
+                <option key={pf} value={pf}>{pf}</option>
+              ))}
+            </select>
+            <button
+              disabled={busy === "planner"}
+              onClick={async () => {
+                if (!plannerGoal.trim()) return setError("Tell the planner your goal first.");
+                setBusy("planner");
+                setError(null);
+                try {
+                  const j = await api<{ job?: { creditCost: number } }>("/api/affiliate/studio/ai", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      kind: "ai_video_ideas",
+                      subject: `Content plan for my repurposed video project "${p.title}": ${plannerGoal.trim()}`.slice(0, 900),
+                      platform: plannerPlatform,
+                    }),
+                  });
+                  setNotice(
+                    `Planner queued (${j.job?.creditCost ?? 3} credits) — Cosmo builds the plan to order; it lands in AI by Cosmo / My Creations, dated and tied to this project title.`,
+                  );
+                  setPlannerGoal("");
+                } catch (e) {
+                  setError(e instanceof Error ? e.message : "Planner couldn't be queued.");
+                } finally {
+                  setBusy(null);
+                }
+              }}
+              className={BTN}
+              style={BTN_STYLE}
+            >
+              {busy === "planner" ? "Queuing…" : "Plan with AI"}
+            </button>
+            <button
+              onClick={() => {
+                const lines = [
+                  `CAMPAIGN KIT — ${p.title}`,
+                  `Project tracking link: ${trackingUrl ?? "(generate variations to mint it)"}`,
+                  "",
+                ];
+                for (const v of open.variations) {
+                  lines.push(`— ${v.title} [${v.creativeId}]`);
+                  lines.push(v.captionText ?? v.hookText ?? "");
+                  lines.push("");
+                }
+                lines.push("Post with #ad or your platform's paid-partnership label.");
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/plain" }));
+                a.download = `${p.title.replace(/[^a-z0-9-_]+/gi, "-")}-campaign-kit.txt`;
+                a.click();
+              }}
+              className={GHOST}
+            >
+              Export campaign kit (.txt)
+            </button>
           </div>
 
           {srcUrl ? (
@@ -1212,6 +1325,9 @@ export default function RepurposeClient() {
                             {rs ? `Rendering… ${Math.round(rs.frac * 100)}%` : `Render · ${renderPrice} credits`}
                           </button>
                         )}
+                        <a href={`/affiliates/studio/editor/${p.id}`} className={GHOST}>
+                          Edit
+                        </a>
                         <button
                           onClick={async () => {
                             const text =
