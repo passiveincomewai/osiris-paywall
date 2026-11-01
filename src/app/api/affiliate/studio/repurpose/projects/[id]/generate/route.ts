@@ -8,10 +8,13 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { buildStudioContext } from "@/lib/studio/context";
 import {
+  applyBrandingOverrides,
+  buildPostDescription,
   buildVariation,
   pickDirections,
   DIRECTIONS,
   type Aspect,
+  type BrandingOverrides,
   type BrandingSnapshot,
   type DirectionId,
   type SourceAnalysis,
@@ -53,6 +56,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     aspect?: unknown;
     hookText?: unknown;
     hooks?: unknown;
+    branding?: unknown;
   };
 
   let directionIds: DirectionId[];
@@ -81,18 +85,28 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     : "Did you know you can explore public cameras around the world?";
 
   const ctx = await buildStudioContext(profile);
-  const branding: BrandingSnapshot = {
-    includeLink: true,
-    includeQr: true,
-    includeCode: !!ctx.couponCode,
-    link: ctx.link,
-    code: ctx.couponCode,
-    discountPct: ctx.discountPct,
-    displayName: ctx.displayName,
-    referralCode: ctx.code,
+  const rawOverrides = (body.branding && typeof body.branding === "object" ? body.branding : {}) as Record<string, unknown>;
+  const overrides: BrandingOverrides = {
+    includeLink: typeof rawOverrides.includeLink === "boolean" ? rawOverrides.includeLink : undefined,
+    includeQr: typeof rawOverrides.includeQr === "boolean" ? rawOverrides.includeQr : undefined,
+    includeCode: typeof rawOverrides.includeCode === "boolean" ? rawOverrides.includeCode : undefined,
   };
+  const branding: BrandingSnapshot = applyBrandingOverrides(
+    {
+      includeLink: true,
+      includeQr: true,
+      includeCode: !!ctx.couponCode,
+      link: ctx.link,
+      code: ctx.couponCode,
+      discountPct: ctx.discountPct,
+      displayName: ctx.displayName,
+      referralCode: ctx.code,
+    },
+    overrides,
+  );
 
   const link = await ensureProjectTrackingLink(profile, project).catch(() => null);
+  const baseLink = link?.url ?? ctx.link;
 
   const created = [];
   for (const direction of directionIds) {
@@ -105,16 +119,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       transcript: project.transcript,
       aspect,
     });
+    const creativeId = newCreativeId();
+    const captionText = buildPostDescription({
+      hookText,
+      link: baseLink,
+      creativeId,
+      code: branding.includeCode ? ctx.couponCode : null,
+      discountPct: ctx.discountPct,
+    });
     const variation = await db.studioVariation.create({
       data: {
         projectId: project.id,
-        creativeId: newCreativeId(),
+        creativeId,
         direction,
         title: built.title,
         aspect,
         composition: built.composition as unknown as object,
         hookText,
-        captionText: null,
+        captionText,
         codeSnapshot: ctx.couponCode,
         status: "draft",
       },

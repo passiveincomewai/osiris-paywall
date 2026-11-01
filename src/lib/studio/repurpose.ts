@@ -673,3 +673,70 @@ export function validateComposition(c: RepurposeComposition, durationSec: number
   if (!FILTERS.some((f) => f.id === c.filter)) errors.push("unknown filter");
   return errors;
 }
+
+/* ------------------------------------------------------------------ */
+/* Personalization (spec §7)                                           */
+/* ------------------------------------------------------------------ */
+
+export interface BrandingOverrides {
+  includeLink?: boolean;
+  includeQr?: boolean;
+  includeCode?: boolean;
+}
+
+/**
+ * Apply the affiliate's personalization toggles to a branding snapshot.
+ * Toggles can only ever REMOVE elements — a code that isn't
+ * Stripe-confirmed (snapshot.code null) can never be switched on here.
+ */
+export function applyBrandingOverrides(
+  branding: BrandingSnapshot,
+  overrides: BrandingOverrides,
+): BrandingSnapshot {
+  return {
+    ...branding,
+    includeLink: overrides.includeLink ?? branding.includeLink,
+    includeQr: overrides.includeQr ?? branding.includeQr,
+    includeCode: (overrides.includeCode ?? branding.includeCode) && !!branding.code,
+  };
+}
+
+/** The tracked URL for one creative: project link + per-variation utm tag. */
+export function creativeUrl(baseLink: string, creativeId: string): string {
+  const sep = baseLink.includes("?") ? "&" : "?";
+  return `${baseLink}${sep}utm_content=${encodeURIComponent(creativeId)}`;
+}
+
+/**
+ * The ready-to-post description for a variation (spec §7): hook first,
+ * then the tracked link, the discount line only when a real code
+ * exists, and the #ad disclosure always (FTC + spec §16).
+ */
+export function buildPostDescription(opts: {
+  hookText: string;
+  link: string;
+  creativeId: string;
+  code?: string | null;
+  discountPct?: number | null;
+}): string {
+  const lines = [opts.hookText.trim(), "", creativeUrl(opts.link, opts.creativeId)];
+  if (opts.code) {
+    lines.push(
+      opts.discountPct
+        ? `Use code ${opts.code} for ${opts.discountPct}% off your first payment.`
+        : `Use code ${opts.code}.`,
+    );
+  }
+  lines.push("", "#ad");
+  return lines.join("\n");
+}
+
+/**
+ * Outdated-personalization check (spec §7): a variation was generated
+ * when the profile's code was `snapshot`; if the current code differs,
+ * the affiliate should regenerate before posting.
+ */
+export function codeIsOutdated(snapshot: string | null, current: string | null): boolean {
+  if (!snapshot) return false; // generated without a code — nothing to go stale
+  return snapshot !== current;
+}

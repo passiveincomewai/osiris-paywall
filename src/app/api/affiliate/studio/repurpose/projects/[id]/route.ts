@@ -27,9 +27,23 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     where: { projectId: project.id },
     orderBy: { createdAt: "asc" },
   });
+  // Personalization freshness (spec §7): the profile's CURRENT code and
+  // the project's tracking URL, so the client can warn when a variation
+  // was generated under an older code.
+  const { buildStudioContext } = await import("@/lib/studio/context");
+  const ctx = await buildStudioContext(profile).catch(() => null);
+  let trackingUrl: string | null = null;
+  if (project.trackingLinkId) {
+    const link = await db.affiliateTrackingLink
+      .findUnique({ where: { id: project.trackingLinkId }, select: { slug: true } })
+      .catch(() => null);
+    if (link && ctx) trackingUrl = `${ctx.link}?t=${link.slug}`;
+  }
   return NextResponse.json({
     project: { ...serializeProject(project, variations.length), transcript: project.transcript },
     variations: variations.map(serializeVariation),
+    currentCode: ctx?.couponCode ?? null,
+    trackingUrl,
   });
 }
 

@@ -4,9 +4,13 @@ import { describe, it, expect } from "vitest";
 import {
   ASPECTS,
   DIRECTIONS,
+  applyBrandingOverrides,
+  buildPostDescription,
   buildVariation,
   canvasSizeForAspect,
+  codeIsOutdated,
   compositionDuration,
+  creativeUrl,
   generateHooks,
   pickDirections,
   summarizeAnalysis,
@@ -160,5 +164,39 @@ describe("transcriptCues + aspects + validation", () => {
     expect(validateComposition(bad, 60).length).toBeGreaterThan(0);
     const badPreset = { ...v, captionPreset: "nope" as never };
     expect(validateComposition(badPreset, 60).join(" ")).toContain("caption preset");
+  });
+
+  it("branding overrides can only remove, never invent a code", () => {
+    const noCode: BrandingSnapshot = { ...branding, code: null, includeCode: false };
+    const forced = applyBrandingOverrides(noCode, { includeCode: true });
+    expect(forced.includeCode).toBe(false);
+    const withCode = applyBrandingOverrides(branding, { includeQr: false });
+    expect(withCode.includeQr).toBe(false);
+    expect(withCode.includeCode).toBe(true);
+  });
+
+  it("post description carries hook, tracked creative URL, real code line and #ad", () => {
+    const d = buildPostDescription({
+      hookText: "Watch this.",
+      link: "https://worldeye.app/ref/ABC?t=tokyo",
+      creativeId: "v_123",
+      code: "SAVE15",
+      discountPct: 15,
+    });
+    expect(d).toContain("Watch this.");
+    expect(d).toContain("https://worldeye.app/ref/ABC?t=tokyo&utm_content=v_123");
+    expect(d).toContain("Use code SAVE15 for 15% off your first payment.");
+    expect(d.trim().endsWith("#ad")).toBe(true);
+    const bare = buildPostDescription({ hookText: "H", link: "https://worldeye.app/ref/ABC", creativeId: "v_9" });
+    expect(bare).not.toContain("code");
+    expect(bare).toContain("?utm_content=v_9");
+  });
+
+  it("creativeUrl picks the right separator and outdated-code logic is snapshot-based", () => {
+    expect(creativeUrl("https://x.test/ref/A", "v_1")).toBe("https://x.test/ref/A?utm_content=v_1");
+    expect(codeIsOutdated(null, "NEW")).toBe(false);
+    expect(codeIsOutdated("OLD", "OLD")).toBe(false);
+    expect(codeIsOutdated("OLD", "NEW")).toBe(true);
+    expect(codeIsOutdated("OLD", null)).toBe(true);
   });
 });

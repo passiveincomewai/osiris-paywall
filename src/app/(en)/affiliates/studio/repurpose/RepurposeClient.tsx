@@ -15,8 +15,10 @@ import {
   ASPECTS,
   DIRECTIONS,
   HOOK_CATEGORIES,
+  buildPostDescription,
   captionPreset,
   canvasSizeForAspect,
+  codeIsOutdated,
   compositionDuration,
   filterCss,
   generateHooks,
@@ -58,6 +60,7 @@ interface VariationLite {
   composition: RepurposeComposition;
   hookText: string | null;
   captionText: string | null;
+  codeSnapshot: string | null;
   status: string;
   favorite: boolean;
   renderJobId: string | null;
@@ -545,6 +548,11 @@ export default function RepurposeClient() {
   const [aspect, setAspect] = useState<Aspect>("9:16");
   const [customDirs, setCustomDirs] = useState<string[] | null>(null);
   const [trackingUrl, setTrackingUrl] = useState<string | null>(null);
+  const [currentCode, setCurrentCode] = useState<string | null>(null);
+  const [brandLink, setBrandLink] = useState(true);
+  const [brandQr, setBrandQr] = useState(true);
+  const [brandCode, setBrandCode] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [renderState, setRenderState] = useState<Record<string, { frac: number; url?: string; name?: string }>>({});
 
   const localUrls = useRef(new Map<string, string>());
@@ -614,12 +622,16 @@ export default function RepurposeClient() {
     setBusy("open");
     setError(null);
     try {
-      const j = await api<{ project: ProjectLite & { transcript: string | null }; variations: VariationLite[] }>(
-        `/api/affiliate/studio/repurpose/projects/${id}`,
-      );
+      const j = await api<{
+        project: ProjectLite & { transcript: string | null };
+        variations: VariationLite[];
+        currentCode: string | null;
+        trackingUrl: string | null;
+      }>(`/api/affiliate/studio/repurpose/projects/${id}`);
       setOpen({ project: j.project, variations: j.variations });
       setTranscript(j.project.transcript ?? "");
-      setTrackingUrl(null);
+      setCurrentCode(j.currentCode);
+      setTrackingUrl(j.trackingUrl);
       setRenderState({});
     } catch (e) {
       setError(e instanceof Error ? e.message : "Couldn't open that project.");
@@ -780,6 +792,7 @@ export default function RepurposeClient() {
             ...(customDirs ? { directions: customDirs } : { count }),
             aspect,
             ...(hookInput.trim() ? { hookText: hookInput.trim() } : {}),
+            branding: { includeLink: brandLink, includeQr: brandQr, includeCode: brandCode },
           }),
         },
       );
@@ -1089,6 +1102,24 @@ export default function RepurposeClient() {
               placeholder="Opening hook (or pick one from the Hook Lab)"
               className="w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-slate-500"
             />
+            <div className="flex flex-wrap gap-4 text-[13px] text-slate-300">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-slate-500 self-center">End card:</span>
+              <label className="flex items-center gap-1.5">
+                <input type="checkbox" checked={brandLink} onChange={(e) => setBrandLink(e.target.checked)} />
+                My referral link
+              </label>
+              <label className="flex items-center gap-1.5">
+                <input type="checkbox" checked={brandQr} onChange={(e) => setBrandQr(e.target.checked)} />
+                QR code
+              </label>
+              <label className="flex items-center gap-1.5">
+                <input type="checkbox" checked={brandCode} onChange={(e) => setBrandCode(e.target.checked)} />
+                Discount code
+              </label>
+              <span className="text-[12px] text-slate-500 self-center">
+                Your code is embedded only while it&apos;s active in Stripe — that&apos;s checked at generation time.
+              </span>
+            </div>
             <div className="flex flex-wrap items-center gap-2">
               {[3, 5, 10].map((n) => (
                 <button
@@ -1165,6 +1196,12 @@ export default function RepurposeClient() {
                         {v.composition.segments.length === 1 ? "" : "s"} · {v.creativeId}
                       </div>
                       {v.hookText && <p className="text-[13px] text-slate-300">“{v.hookText}”</p>}
+                      {codeIsOutdated(v.codeSnapshot, currentCode) && (
+                        <p className="text-[12px] rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-200 px-2.5 py-1.5">
+                          ⚠ Generated with code {v.codeSnapshot ?? "—"}, but your current code is{" "}
+                          {currentCode ?? "no longer active"} — regenerate before posting so the code in the video works.
+                        </p>
+                      )}
                       <div className="flex flex-wrap items-center gap-2 pt-1">
                         {rs?.url ? (
                           <a href={rs.url} download={rs.name} className={BTN} style={BTN_STYLE}>
@@ -1175,6 +1212,29 @@ export default function RepurposeClient() {
                             {rs ? `Rendering… ${Math.round(rs.frac * 100)}%` : `Render · ${renderPrice} credits`}
                           </button>
                         )}
+                        <button
+                          onClick={async () => {
+                            const text =
+                              v.captionText ??
+                              buildPostDescription({
+                                hookText: v.hookText ?? v.title,
+                                link: trackingUrl ?? v.composition.branding.link,
+                                creativeId: v.creativeId,
+                                code: v.composition.branding.includeCode ? v.codeSnapshot : null,
+                                discountPct: v.composition.branding.discountPct,
+                              });
+                            try {
+                              await navigator.clipboard.writeText(text);
+                              setCopiedId(v.id);
+                              setTimeout(() => setCopiedId(null), 2000);
+                            } catch {
+                              setError("Copy failed — your browser blocked clipboard access.");
+                            }
+                          }}
+                          className={GHOST}
+                        >
+                          {copiedId === v.id ? "Copied ✓" : "Copy post text"}
+                        </button>
                         <span className={`font-mono text-[11px] ${v.status === "rendered" ? "text-emerald-300" : "text-slate-500"}`}>
                           {v.status}
                         </span>
