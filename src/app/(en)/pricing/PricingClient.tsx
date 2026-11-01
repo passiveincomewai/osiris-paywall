@@ -6,13 +6,11 @@ import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import CheckoutSheet from "@/components/CheckoutSheet";
-import TrialButton from "@/components/TrialButton";
 import TeamSection from "./TeamSection";
 import CancelReassurance from "@/components/CancelReassurance";
 import HostedCheckoutLink from "@/components/HostedCheckoutLink";
 import {
   ENTERPRISE_OFFER_FEATURES as ENTERPRISE_FEATURES,
-  ENTERPRISE_GUARANTEE_LINE,
   ENTERPRISE_SUPPORT_LINE,
 } from "@/lib/enterprise/offer";
 import { recordLastViewedPlan } from "@/lib/billing/trial-prompt";
@@ -49,10 +47,23 @@ import { getChromeCopy } from "@/i18n/dictionaries";
  * ruling). There is deliberately NO "no credit card required" badge:
  * checkout collects a payment method up front for trials.
  *
+ * Pricing Redesign v2 (2026-11-01): the page rebuilt in the owner's
+ * reference design language — Earth-at-night hero with eyebrow +
+ * 4-item feature strip, image-backed tier cards that link through to
+ * the per-plan detail pages (/pricing/lite|pro|ultra), HTML gradient
+ * CTAs in each tier's accent, a 3-item trust row per card, the
+ * why-upgrade icon row, an image-backed Enterprise card, and the
+ * money-back sentence exactly once on the page (under the grid).
+ * CTAs are HTML buttons now, not the owner's artwork TrialButton:
+ * its text is baked into the artwork in English and cannot localise
+ * (the Spanish page showed English buttons). TrialButton still
+ * serves the other surfaces; checkout behaviour here is unchanged —
+ * same plan keys, same CheckoutSheet, same trials.
+ *
  * NOT localized in this tranche (they keep their own copy and render
  * in English on the Spanish page too — see the build REPORT):
  * TeamSection, CancelReassurance, ProofCounters, HostedCheckoutLink,
- * CheckoutSheet, TrialButton.
+ * CheckoutSheet.
  */
 
 type Period = "weekly" | "monthly" | "annual";
@@ -63,6 +74,9 @@ const LITE_FEATURE_ICONS = [Video, Layers, BrainCircuit, Search, Camera, Sparkle
 const PRO_FEATURE_ICONS = [BrainCircuit, Car, ShieldCheck, Video, Bell, Sparkles];
 const VIP_FEATURE_ICONS = [Zap, Video, Bell, Bell, Sparkles, Layers];
 const TRUST_ICONS = [BadgeCheck, ShieldCheck, Lock, X];
+const HERO_FEATURE_ICONS = [Camera, Zap, BrainCircuit, Bell];
+const WHY_UPGRADE_ICONS = [BrainCircuit, Bell, Video, Zap];
+const CARD_TRUST_ICONS = [BadgeCheck, Lock, Check];
 
 // Comparison-table checkmarks stay in code, in dictionary row order.
 // Columns are the FREE tier and the three paid tiers. Lite carries
@@ -100,7 +114,7 @@ const COMPARE_BOOLEANS: { free: boolean; lite: boolean; pro: boolean; ultra: boo
  *  cyan, Pro brightest gold, Ultra violet). Literal classes only. */
 const TIER_ACCENTS: Record<
   TierKey,
-  { text: string; border: string; chipBg: string; chipBorder: string; glow: string }
+  { text: string; border: string; chipBg: string; chipBorder: string; glow: string; btn: string }
 > = {
   lite: {
     text: "text-[#00E5FF]",
@@ -108,13 +122,15 @@ const TIER_ACCENTS: Record<
     chipBg: "bg-[#00E5FF]/15",
     chipBorder: "border-[#00E5FF]/30",
     glow: "shadow-[0_24px_80px_rgba(0,229,255,0.08)]",
+    btn: "bg-gradient-to-b from-[#4fe3ff] to-[#00a8cc] text-black shadow-[0_8px_32px_rgba(0,229,255,0.30)]",
   },
   pro: {
     text: "text-[#D4AF37]",
-    border: "border-[#D4AF37]/40",
+    border: "border-[#D4AF37]/50",
     chipBg: "bg-[#D4AF37]/15",
     chipBorder: "border-[#D4AF37]/30",
-    glow: "shadow-[0_24px_80px_rgba(212,175,55,0.14)]",
+    glow: "shadow-[0_24px_90px_rgba(212,175,55,0.22)]",
+    btn: "bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black shadow-[0_8px_32px_rgba(212,175,55,0.35)]",
   },
   ultra: {
     text: "text-[#a78bfa]",
@@ -122,6 +138,7 @@ const TIER_ACCENTS: Record<
     chipBg: "bg-[#a78bfa]/15",
     chipBorder: "border-[#a78bfa]/30",
     glow: "shadow-[0_24px_80px_rgba(167,139,250,0.10)]",
+    btn: "bg-gradient-to-b from-[#c0a8ff] to-[#7c5cd6] text-white shadow-[0_8px_32px_rgba(167,139,250,0.30)]",
   },
 };
 
@@ -152,41 +169,33 @@ function buildFaqJsonLd(copy: PricingCopy, locale: LocaleCode) {
 function CheckoutButton({
   plan,
   label,
-  trial,
-  days,
+  tier,
   onCheckout,
 }: {
   plan: CheckoutPlanId;
   label: string;
-  trial?: string;
-  days: 3 | 10;
+  tier: TierKey | "enterprise";
   onCheckout: (plan: CheckoutPlanId) => void;
 }) {
-  // Trial plans carry the owner's artwork button, variant-matched to
-  // the SELECTED PERIOD's trial length (weekly = the 3-day artwork,
-  // monthly/annual the 10-day); Enterprise (no trial) keeps the gold
-  // button.
-  if (trial) {
-    return (
-      <TrialButton
-        label={label}
-        days={days}
-        onClick={() => onCheckout(plan)}
-        className="w-full"
-      />
-    );
-  }
+  // HTML gradient buttons in the reference design's language (v2):
+  // full-width, tier-accent gradient (gold for the featured Pro);
+  // Enterprise gets the reference's blue outline treatment. Same
+  // onCheckout → CheckoutSheet contract as every other surface.
+  const cls =
+    tier === "enterprise"
+      ? "border border-[#38bdf8]/70 text-[#7dd3fc] bg-black/30 backdrop-blur hover:bg-[#38bdf8]/10 shadow-[0_8px_32px_rgba(56,189,248,0.20)]"
+      : TIER_ACCENTS[tier].btn;
   return (
     <button
       onClick={() => onCheckout(plan)}
-      className="w-full py-4 rounded-2xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-lg tracking-wide hover:brightness-110 active:scale-[0.99] transition shadow-[0_8px_32px_rgba(212,175,55,0.35)]"
+      className={`w-full py-4 rounded-2xl font-bold text-lg tracking-wide hover:brightness-110 active:scale-[0.99] transition ${cls}`}
     >
       {label}
     </button>
   );
 }
 
-function StickyMobileCta({ cta, days }: { cta: string; days: 3 | 10 }) {
+function StickyMobileCta({ copy, period }: { copy: PricingCopy; period: Period }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 700);
@@ -194,6 +203,7 @@ function StickyMobileCta({ cta, days }: { cta: string; days: 3 | 10 }) {
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  const proPlan = copy.plans[period];
   return (
     <AnimatePresence>
       {show && (
@@ -204,12 +214,28 @@ function StickyMobileCta({ cta, days }: { cta: string; days: 3 | 10 }) {
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
           className="fixed bottom-0 inset-x-0 z-50 md:hidden px-4 pb-4 pt-8 bg-gradient-to-t from-black via-black/90 to-transparent pointer-events-none"
         >
-          <TrialButton
-            label={cta}
-            days={days}
-            onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-            className="pointer-events-auto w-full drop-shadow-[0_8px_32px_rgba(0,150,255,0.35)]"
-          />
+          <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-[#D4AF37]/30 bg-[#0a0a12]/95 backdrop-blur px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+            <div className="min-w-0 shrink-0">
+              <p className="text-[10px] font-bold tracking-[0.2em] text-[#D4AF37]">
+                {copy.tiers.pro.name.toUpperCase()}
+              </p>
+              <p className="text-base font-bold leading-tight">
+                {proPlan.price}
+                <span className="text-white/45 text-xs font-normal">{proPlan.per}</span>
+              </p>
+              <p className="text-[11px] text-white/40 leading-tight">
+                {copy.card.justPerDayBefore}
+                {proPlan.perDay}
+                {copy.card.justPerDayAfter}
+              </p>
+            </div>
+            <button
+              onClick={() => document.getElementById("pro-card")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+              className="flex-1 py-3 rounded-xl bg-gradient-to-b from-[#e8c55a] to-[#D4AF37] text-black font-bold text-sm hover:brightness-110 active:scale-[0.99] transition"
+            >
+              {proPlan.cta}
+            </button>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -283,9 +309,9 @@ function TierCard({
 }) {
   const accent = TIER_ACCENTS[tier];
   const tierCopy = copy.tiers[tier];
+  const detail = copy.planDetails[tier];
   const p = planCopyFor(copy, tier, period);
   const plan = checkoutKeyFor(tier, period);
-  const days: 3 | 10 = period === "weekly" ? 3 : 10;
   const baseFeatures = (tier === "lite" ? copy.liteFeatures : copy.proFeatures).map(
     (f, i) => ({
       ...f,
@@ -302,86 +328,119 @@ function TierCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className={`relative flex flex-col rounded-3xl border ${accent.border} bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl p-5 md:p-6 ${accent.glow} scroll-mt-6`}
+      className={`relative flex flex-col rounded-3xl border ${accent.border} bg-gradient-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl ${accent.glow} scroll-mt-6`}
     >
       {tier === "pro" && (
-        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.15em] bg-[#D4AF37] text-black px-3 py-1 rounded-full whitespace-nowrap">
+        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 text-[10px] font-bold tracking-[0.15em] bg-[#D4AF37] text-black px-3 py-1 rounded-full whitespace-nowrap">
           {copy.toggle.mostPopular}
         </span>
       )}
-      <div className="flex items-start justify-between gap-2">
-        <p className={`text-sm font-semibold tracking-[0.2em] ${accent.text}`}>
-          {tierCopy.name.toUpperCase()}
-        </p>
-        <span className="flex flex-col items-end gap-1.5">
-          {period === "annual" && (
-            <span className="text-[10px] font-bold tracking-[0.15em] px-2.5 py-1 rounded-full bg-[#D4AF37] text-black whitespace-nowrap">
-              {tier === "pro" ? copy.card.vipProLabel : copy.tiers.annualBadge}
-            </span>
-          )}
-          {p.save && (
-            <span
-              className={`text-xs font-bold px-3 py-1.5 rounded-full ${accent.chipBg} ${accent.text} border ${accent.chipBorder} whitespace-nowrap`}
-            >
-              {p.save}
-            </span>
-          )}
-        </span>
-      </div>
-      <p className="text-sm text-white/45 mt-1.5">{tierCopy.tagline}</p>
-      <div className="mt-3 flex items-baseline gap-1">
-        <AnimatePresence mode="popLayout">
-          <motion.span
-            key={p.price}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="text-5xl font-bold tracking-tight"
-          >
-            {p.price}
-          </motion.span>
-        </AnimatePresence>
-        <span className="text-white/45 text-lg">{p.per}</span>
-      </div>
-      <p className="text-sm text-white/45 mt-2">{p.note}</p>
-      <p className={`text-sm ${accent.text} font-semibold mt-1.5`}>
-        {copy.card.justPerDayBefore}
-        {p.perDay}
-        {copy.card.justPerDayAfter}
-      </p>
-      {p.trial && (
-        <p className="mt-3">
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
-            <Zap className="w-3.5 h-3.5" /> {p.trial}
-            {copy.card.trialChipSuffix}
+      {/* Image header — a real capture of the tier's headline surface;
+          the whole header links through to the plan's detail page. */}
+      <Link
+        href={`/pricing/${tier}`}
+        aria-label={`${copy.card.detailsBefore}${tierCopy.name}`}
+        className="relative block group"
+      >
+        <img
+          src={detail.heroImage.src}
+          alt={detail.heroImage.alt}
+          width={1200}
+          height={675}
+          loading="lazy"
+          className="w-full h-36 md:h-40 object-cover rounded-t-[calc(1.5rem-1px)]"
+        />
+        <span className="absolute inset-0 bg-gradient-to-t from-[#0a0a12]/90 via-transparent to-transparent rounded-t-[calc(1.5rem-1px)]" />
+      </Link>
+      <div className="flex flex-col flex-1 p-5 md:p-6">
+        <div className="flex items-start justify-between gap-2">
+          <p className={`text-sm font-semibold tracking-[0.2em] ${accent.text}`}>
+            {tierCopy.name.toUpperCase()}
+          </p>
+          <span className="flex flex-col items-end gap-1.5">
+            {period === "annual" && (
+              <span className="text-[10px] font-bold tracking-[0.15em] px-2.5 py-1 rounded-full bg-[#D4AF37] text-black whitespace-nowrap">
+                {tier === "pro" ? copy.card.vipProLabel : copy.tiers.annualBadge}
+              </span>
+            )}
+            {p.save && (
+              <span
+                className={`text-xs font-bold px-3 py-1.5 rounded-full ${accent.chipBg} ${accent.text} border ${accent.chipBorder} whitespace-nowrap`}
+              >
+                {p.save}
+              </span>
+            )}
           </span>
+        </div>
+        <p className="text-sm text-white/45 mt-1.5">{tierCopy.tagline}</p>
+        <div className="mt-3 flex items-baseline gap-1">
+          <AnimatePresence mode="popLayout">
+            <motion.span
+              key={p.price}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="text-5xl font-bold tracking-tight"
+            >
+              {p.price}
+            </motion.span>
+          </AnimatePresence>
+          <span className="text-white/45 text-lg">{p.per}</span>
+        </div>
+        <p className="text-sm text-white/45 mt-2">{p.note}</p>
+        <p className={`text-sm ${accent.text} font-semibold mt-1.5`}>
+          {copy.card.justPerDayBefore}
+          {p.perDay}
+          {copy.card.justPerDayAfter}
         </p>
-      )}
-
-      <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-
-      <div className="flex-1">
-        <FeatureList features={baseFeatures} accent={accent} />
-        {tier === "ultra" && (
-          <>
-            <p className={`mt-4 mb-2 text-xs font-bold tracking-[0.2em] ${accent.text}`}>
-              {copy.card.vipOnlyHeading}
-            </p>
-            <FeatureList features={vipFeatures} accent={accent} strong />
-          </>
+        {p.trial && (
+          <p className="mt-3">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
+              <Zap className="w-3.5 h-3.5" /> {p.trial}
+              {copy.card.trialChipSuffix}
+            </span>
+          </p>
         )}
-      </div>
 
-      <div className="mt-5">
-        <CheckoutButton plan={plan} label={p.cta} trial={p.trial} days={days} onCheckout={onCheckout} />
+        <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+
+        <div className="flex-1">
+          <FeatureList features={baseFeatures} accent={accent} />
+          {tier === "ultra" && (
+            <>
+              <p className={`mt-4 mb-2 text-xs font-bold tracking-[0.2em] ${accent.text}`}>
+                {copy.card.vipOnlyHeading}
+              </p>
+              <FeatureList features={vipFeatures} accent={accent} strong />
+            </>
+          )}
+        </div>
+
+        <div className="mt-5">
+          <CheckoutButton plan={plan} label={p.cta} tier={tier} onCheckout={onCheckout} />
+        </div>
+        <div className="mt-4 flex items-center justify-center gap-4 text-[11px] text-white/40">
+          {copy.card.trustRow.map((label, i) => {
+            const Icon = CARD_TRUST_ICONS[i] ?? BadgeCheck;
+            return (
+              <span key={label} className="flex items-center gap-1.5">
+                <Icon className={`w-3.5 h-3.5 ${accent.text}`} /> {label}
+              </span>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-center">
+          <Link href={`/pricing/${tier}`} className={`text-sm font-semibold ${accent.text} hover:underline`}>
+            {copy.card.detailsBefore}
+            {tierCopy.name}
+            {copy.card.detailsAfter}
+          </Link>
+        </p>
+        <p className="mt-3 text-center">
+          <HostedCheckoutLink plan={plan} caption={false} surface="pricing" />
+        </p>
       </div>
-      <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-4">
-        <Lock className="w-3.5 h-3.5" /> {copy.card.securedLine}
-      </p>
-      <p className="mt-3 text-center">
-        <HostedCheckoutLink plan={plan} caption={false} surface="pricing" />
-      </p>
     </motion.div>
   );
 }
@@ -394,7 +453,6 @@ export default function PricingPage({
   locale?: LocaleCode;
 } = {}) {
   const [period, setPeriod] = useState<Period>("annual");
-  const proPlan = copy.plans[period];
   const faqJsonLd = buildFaqJsonLd(copy, locale);
   const enterpriseFeatures = copy.enterprise.features ?? ENTERPRISE_FEATURES;
   const homeHref = localizedPath("", locale);
@@ -435,65 +493,87 @@ export default function PricingPage({
           </div>
         </div>
 
-        {/* Hero */}
-        <div className="text-center max-w-2xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img
-              src="/worldeye-eye.png"
-              alt="WorldEye"
-              width={600}
-              height={432}
-              className="h-10 md:h-12 w-auto mx-auto mb-4"
-              style={{ filter: "drop-shadow(0 0 18px rgba(0,150,255,0.45))" }}
-            />
-            <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
-              {copy.hero.h1Before}<span className="text-[#D4AF37]">{copy.hero.h1Accent}</span>{copy.hero.h1After}
-            </h1>
-            <p className="mt-3 text-sm md:text-base text-white/55 leading-relaxed">{copy.hero.sub}</p>
-          </motion.div>
+        {/* Hero — the reference design: a real capture of the live
+            globe at night, eyebrow, two-line headline with the second
+            line in gold, the 4-item feature strip, and the gold
+            billing-period toggle. */}
+        <div className="relative left-1/2 -translate-x-1/2 w-screen overflow-hidden">
+          <img
+            src="/landing/features-globe.jpg"
+            alt=""
+            aria-hidden
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050508]/70 via-transparent to-[#050508]" />
+          <div className="relative max-w-3xl mx-auto px-6 pt-12 pb-10 md:pt-16 md:pb-12 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <p className="text-[11px] md:text-xs font-bold tracking-[0.3em] text-[#D4AF37]">
+                {copy.hero.eyebrow}
+              </p>
+              <h1 className="mt-3 text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+                {copy.hero.h1Before}<span className="text-[#D4AF37]">{copy.hero.h1Accent}</span>{copy.hero.h1After}
+              </h1>
+              <p className="mt-4 text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mx-auto">{copy.hero.sub}</p>
+            </motion.div>
 
-          {/* Billing-period toggle (annual is the default view and
-              carries the VIP branding — owner ruling). */}
-          <div className="mt-6 flex sm:inline-flex p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur w-full sm:w-auto max-w-full">
-            {(["weekly", "monthly", "annual"] as Period[]).map((key) => (
-              <button
-                key={key}
-                onClick={() => {
-                  // Phase E funnel: a period change re-headlines the
-                  // grid on the Pro plan of that period (the bare
-                  // plan keys ARE the Pro plans).
-                  if (key !== period) trackPlanSelected("pricing", key);
-                  setPeriod(key);
-                  // Wave 2 F3: remember the period this visitor is
-                  // looking at so the post-signup trial prompt can
-                  // preselect it.
-                  recordLastViewedPlan(key);
-                }}
-                className={`relative flex-1 sm:flex-none px-2 sm:px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
-                  period === key ? "text-black" : "text-white/55 hover:text-white"
-                }`}
-              >
-                {key === "annual" && (
-                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[9px] font-bold tracking-[0.15em] bg-[#D4AF37] text-black px-2 py-0.5 rounded-full whitespace-nowrap">
-                    {copy.tiers.annualBadge}
+            {/* Feature strip */}
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
+              {copy.heroFeatures.map((f, i) => {
+                const Icon = HERO_FEATURE_ICONS[i] ?? Sparkles;
+                return (
+                  <div key={f.title} className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur px-4 py-3">
+                    <Icon className="w-5 h-5 text-[#D4AF37]" />
+                    <p className="mt-2 text-sm font-semibold text-white">{f.title}</p>
+                    <p className="text-xs text-white/50 leading-relaxed">{f.desc}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Billing-period toggle (annual is the default view and
+                carries the VIP branding — owner ruling). */}
+            <div className="mt-8 flex sm:inline-flex p-1.5 rounded-2xl bg-black/50 border border-[#D4AF37]/25 backdrop-blur w-full sm:w-auto max-w-full">
+              {(["weekly", "monthly", "annual"] as Period[]).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    // Phase E funnel: a period change re-headlines the
+                    // grid on the Pro plan of that period (the bare
+                    // plan keys ARE the Pro plans).
+                    if (key !== period) trackPlanSelected("pricing", key);
+                    setPeriod(key);
+                    // Wave 2 F3: remember the period this visitor is
+                    // looking at so the post-signup trial prompt can
+                    // preselect it.
+                    recordLastViewedPlan(key);
+                  }}
+                  className={`relative flex-1 sm:flex-none px-2 sm:px-4 md:px-7 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+                    period === key ? "text-black" : "text-white/55 hover:text-white"
+                  }`}
+                >
+                  {key === "annual" && (
+                    <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[9px] font-bold tracking-[0.15em] bg-[#D4AF37] text-black px-2 py-0.5 rounded-full whitespace-nowrap">
+                      {copy.tiers.annualBadge}
+                    </span>
+                  )}
+                  {period === key && (
+                    <motion.span
+                      layoutId="billing-pill"
+                      className="absolute inset-0 rounded-xl bg-[#D4AF37]"
+                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative flex items-center gap-2">
+                    {copy.tiers.periods[key]}
                   </span>
-                )}
-                {period === key && (
-                  <motion.span
-                    layoutId="billing-pill"
-                    className="absolute inset-0 rounded-xl bg-[#D4AF37]"
-                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                  />
-                )}
-                <span className="relative flex items-center gap-2">
-                  {copy.tiers.periods[key]}
-                </span>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -507,11 +587,39 @@ export default function PricingPage({
           <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]/80 shrink-0" /> {copy.card.guaranteeLine}
         </p>
 
-        {/* Enterprise */}
-        <div className="mt-10 max-w-3xl mx-auto rounded-3xl border border-[#00E5FF]/25 bg-gradient-to-b from-[#00E5FF]/[0.06] to-white/[0.02] backdrop-blur-xl p-6 md:p-8">
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
+        {/* Why upgrade — the reference design's icon row. */}
+        <div className="mt-12">
+          <h2 className="text-xl md:text-2xl font-bold text-center">{copy.whyUpgrade.h2Before}<span className="text-[#D4AF37]">{copy.whyUpgrade.h2Accent}</span></h2>
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
+            {copy.whyUpgrade.items.map((item, i) => {
+              const Icon = WHY_UPGRADE_ICONS[i] ?? Sparkles;
+              return (
+                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                  <Icon className="w-5 h-5 text-[#D4AF37]" />
+                  <p className="mt-2 text-sm font-semibold text-white/90">{item.title}</p>
+                  <p className="mt-1 text-xs text-white/50 leading-relaxed">{item.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Enterprise — image-backed, in the reference's blue. The
+            backdrop is the dictionary's maritime-layer capture (the
+            Ultra detail copy's second feature image in both locales). */}
+        <div className="relative mt-10 max-w-3xl mx-auto rounded-3xl border border-[#38bdf8]/30 overflow-hidden">
+          <img
+            src={copy.planDetails.ultra.featureImages[1].src}
+            alt={copy.planDetails.ultra.featureImages[1].alt}
+            width={1200}
+            height={675}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#04121f]/85 via-[#030b16]/90 to-[#02060d]/95" />
+          <div className="relative flex flex-col md:flex-row md:items-center gap-6 p-6 md:p-8">
             <div className="flex-1">
-              <p className="text-xs font-bold tracking-[0.25em] text-[#00E5FF] mb-2">{copy.enterprise.eyebrow}</p>
+              <p className="text-xs font-bold tracking-[0.25em] text-[#38bdf8] mb-2">{copy.enterprise.eyebrow}</p>
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl md:text-5xl font-bold tracking-tight">{copy.plans.enterprise.price}</span>
                 <span className="text-white/45 text-lg">{copy.plans.enterprise.per}</span>
@@ -520,8 +628,8 @@ export default function PricingPage({
               <ul className="mt-4 space-y-2">
                 {enterpriseFeatures.map((f) => (
                   <li key={f} className="flex items-center gap-2.5 text-sm text-white/85">
-                    <span className="w-5 h-5 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/30 flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3 text-[#00E5FF]" />
+                    <span className="w-5 h-5 rounded-full bg-[#38bdf8]/15 border border-[#38bdf8]/30 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-[#38bdf8]" />
                     </span>
                     {f}
                   </li>
@@ -529,20 +637,16 @@ export default function PricingPage({
               </ul>
             </div>
             <div className="md:w-64 shrink-0">
-              <CheckoutButton plan="enterprise" label={copy.plans.enterprise.cta} trial={copy.plans.enterprise.trial} days={10} onCheckout={setSheetPlan} />
+              <CheckoutButton plan="enterprise" label={copy.plans.enterprise.cta} tier="enterprise" onCheckout={setSheetPlan} />
               <p className="flex items-center justify-center gap-2 text-xs text-white/35 mt-3">
                 <Lock className="w-3.5 h-3.5" /> {copy.enterprise.securedByStripe}
               </p>
               <p className="mt-2 text-center">
                 <HostedCheckoutLink plan="enterprise" caption={false} surface="pricing" />
               </p>
-              <p className="flex items-start gap-2 text-xs text-white/50 mt-4">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#00E5FF]/80 shrink-0 mt-px" />
-                <span>{copy.enterprise.guaranteeLine ?? ENTERPRISE_GUARANTEE_LINE}</span>
-              </p>
               <p className="text-xs text-white/40 mt-3">{copy.enterprise.supportLine ?? ENTERPRISE_SUPPORT_LINE}</p>
               <p className="text-xs mt-3">
-                <Link href="/enterprise" className="text-[#00E5FF] hover:underline">
+                <Link href="/enterprise" className="text-[#38bdf8] hover:underline">
                   {copy.enterprise.dashboardLink}
                 </Link>
               </p>
@@ -552,7 +656,7 @@ export default function PricingPage({
 
         {/* Team Access */}
         <div className="mt-10">
-          <CancelReassurance />
+          <CancelReassurance guarantee={false} />
         </div>
         <TeamSection />
 
@@ -564,7 +668,7 @@ export default function PricingPage({
               <div className="px-4 md:px-7 py-2.5">{copy.comparison.featureHeader}</div>
               <div className="py-2.5 text-center">{copy.comparison.freeHeader}</div>
               <div className="py-2.5 text-center text-[#00E5FF]">{copy.comparison.liteHeader}</div>
-              <div className="py-2.5 text-center text-[#D4AF37]">{copy.comparison.proHeader}</div>
+              <div className="py-2.5 text-center text-[#D4AF37] bg-[#D4AF37]/[0.08]">{copy.comparison.proHeader}</div>
               <div className="py-2.5 text-center text-[#a78bfa]">{copy.comparison.ultraHeader}</div>
             </div>
             {copy.comparison.rows.map((feature, i) => {
@@ -581,7 +685,7 @@ export default function PricingPage({
                   {cells.map((c, j) => (
                     <div
                       key={j}
-                      className={`py-2 flex justify-center items-center ${j === 3 ? "bg-[#a78bfa]/[0.05]" : j === 2 ? "bg-[#D4AF37]/[0.05]" : ""}`}
+                      className={`py-2 flex justify-center items-center ${j === 3 ? "bg-[#a78bfa]/[0.05]" : j === 2 ? "bg-[#D4AF37]/[0.07]" : ""}`}
                     >
                       {c.on
                         ? <Check className={`w-4 h-4 ${c.cls}`} strokeWidth={3} />
@@ -645,7 +749,7 @@ export default function PricingPage({
           })}
         </div>
       </div>
-      <StickyMobileCta cta={proPlan.cta} days={period === "weekly" ? 3 : 10} />
+      <StickyMobileCta copy={copy} period={period} />
       <CheckoutSheet plan={sheetPlan} onClose={closeSheet} analyticsSurface="pricing" />
       <SiteFooter copy={getChromeCopy(locale)} locale={locale} slug="pricing" />
     </main>

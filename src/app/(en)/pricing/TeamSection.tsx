@@ -4,6 +4,11 @@
  * Team Access section on /pricing — additive block after the individual
  * plans. Feeds the shared SeatCalculator from GET /api/team/pricing
  * (public config) with a weekly/monthly/annual toggle.
+ *
+ * Header re-voiced 2026-11-01 (Pricing Redesign v2) into the site's
+ * own voice — the original read like a generic B2B template dropped
+ * into the page (anti-slop audit). Features, calculator and
+ * behaviour unchanged.
  */
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -68,10 +73,10 @@ export default function TeamSection() {
           <Users className="w-4 h-4" /> TEAM ACCESS
         </p>
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-          WORLDWIDE MONITORING. BETTER TOGETHER.
+          One globe. Your whole team on it.
         </h2>
         <p className="text-white/55 mt-3 text-sm md:text-base leading-relaxed">
-          Give your entire team access to WorldEye&apos;s global monitoring platform. Share cameras, organize dashboards, and collaborate from anywhere.
+          Put your team on the same live globe: shared monitoring workspaces, separate secure logins and one consolidated subscription — priced per seat below, with volume discounts built in.
         </p>
       </div>
 

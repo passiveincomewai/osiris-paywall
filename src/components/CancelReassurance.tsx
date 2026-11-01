@@ -16,7 +16,10 @@
  *  - When a plan ends the account returns to the free tier; the free
  *    globe/cameras/tracking stay open (the product's standing rule).
  *  - The money-back line is the canonical guarantee sentence, imported
- *    from TrialCtaSection so the wording can never drift.
+ *    from TrialCtaSection so the wording can never drift. The full
+ *    variant honours guarantee={false} like the compact one since
+ *    2026-11-01 (Pricing Redesign v2): /pricing carries the sentence
+ *    once under its plan grid and passes guarantee={false} here.
  */
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
@@ -58,7 +61,9 @@ export default function CancelReassurance({
         and you are never charged. When a plan ends, your account simply returns to the free tier:
         the globe, cameras and tracking stay open.
       </p>
-      <p className="mt-2 text-xs leading-relaxed text-white/40">{TRIAL_CTA_GUARANTEE}</p>
+      {guarantee ? (
+        <p className="mt-2 text-xs leading-relaxed text-white/40">{TRIAL_CTA_GUARANTEE}</p>
+      ) : null}
     </div>
   );
 }
