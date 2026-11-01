@@ -114,7 +114,7 @@ export default function VipViewsClient() {
       {!data.vip && (
         <VipLock
           title="Saved views are a VIP Pro feature"
-          freshCopy="Saved views come with the VIP Pro plan (the annual plan). Pick it below and you can keep up to 25 named globe setups, restored in one click."
+          freshCopy="Saved views come with Ultra — and they're included for members whose VIP Pro annual plan started before October 30, 2026. Pick Ultra below and you can keep up to 25 named globe setups, restored in one click."
           lapsedCopy="Your VIP Pro isn't active right now, so new views are paused — the ones you saved are kept and still open. Saving resumes when VIP Pro is back."
           lapsed={data.views.length > 0}
         />

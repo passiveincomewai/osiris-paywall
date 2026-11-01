@@ -162,7 +162,7 @@ export default async function VipBriefPage() {
       ) : (await getUserTier(userId)) !== "vip" ? (
         <VipLock
           title="The personal brief is a VIP Pro feature"
-          freshCopy="The brief is built from VIP data — your event alerts, camera alerts and watched places — and comes with the VIP Pro plan (the annual plan)."
+          freshCopy="The brief is built from VIP data — your event alerts, camera alerts and watched places — and comes with Ultra, and with VIP Pro memberships whose annual plan started before October 30, 2026."
           lapsedCopy="Your VIP Pro isn't active right now, so the brief is paused. Your places and rules are kept, and the brief resumes when VIP Pro is back."
         />
       ) : (

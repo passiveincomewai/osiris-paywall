@@ -107,7 +107,7 @@ export default function VipAlertsClient() {
       {!data.vip && (
         <VipLock
           title="Event alerts are a VIP Pro feature"
-          freshCopy="Event alerts come with the VIP Pro plan (the annual plan). Pick it below and WorldEye starts watching for your earthquakes, launches and ISS passes."
+          freshCopy="Event alerts come with Ultra — and they're included for members whose VIP Pro annual plan started before October 30, 2026. Pick Ultra below and WorldEye starts watching for your earthquakes, launches and ISS passes."
           lapsedCopy="Your VIP Pro isn't active right now, so your event alerts are paused — nothing was deleted. They resume on their own when VIP Pro is back."
           lapsed={hadVipBefore}
         />

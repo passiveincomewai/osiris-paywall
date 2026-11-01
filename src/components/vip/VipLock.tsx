@@ -4,6 +4,13 @@
  * camera-alerts settings page: what the feature is, why it's locked,
  * and the TrialPicker to fix it. `hasPaidHistory` distinguishes a
  * lapsed VIP (features paused, data kept) from a never-VIP visitor.
+ *
+ * The picker emphasizes Ultra annual: since the 2026-10-30 pricing
+ * cutoff, a NEW Pro annual subscription resolves to Pro limits (the
+ * VIP branding only) and does NOT unlock these surfaces — Ultra (or a
+ * pre-cutoff VIP Pro membership) is what includes them, so Ultra
+ * annual is the obvious path here, exactly like the timelapse and
+ * intel locks.
  */
 import { Crown } from "lucide-react";
 import TrialPicker from "@/components/TrialPicker";
@@ -37,7 +44,7 @@ export default function VipLock({
         {lapsed ? lapsedCopy : freshCopy}
       </p>
       <div className="mt-5">
-        <TrialPicker />
+        <TrialPicker emphasizePlan="ultra_annual" />
       </div>
     </div>
   );
