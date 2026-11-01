@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { planTierOf, tierSatisfies } from '@/lib/plan-tier';
+import { arcgisPublicTestAccess } from '@/lib/arcgis/public-access';
 
 /* ------------------------------------------------------------------ */
 /* Freemium config                                                     */
@@ -58,6 +59,10 @@ function isPremiumApi(pathname: string): boolean {
   );
 }
 
+function isArcgisApi(pathname: string): boolean {
+  return pathname === '/api/arcgis' || pathname.startsWith('/api/arcgis/');
+}
+
 function isVipApi(pathname: string): boolean {
   return VIP_API_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(p + '/')
@@ -98,7 +103,15 @@ function isTotpGated(pathname: string): boolean {
 export function apiGate(pathname: string, token: PaywallToken): 'open' | 'pro' | 'vip' {
   const tier = token?.sub ? planTierOf({ user: token }) : 'free';
   if (isVipApi(pathname)) return tierSatisfies(tier, 'vip') ? 'open' : 'vip';
-  if (isPremiumApi(pathname)) return tierSatisfies(tier, 'pro') ? 'open' : 'pro';
+  if (isPremiumApi(pathname)) {
+    /* TEMPORARY (Jameson, 2026-10-31): the ArcGIS tools are open to
+       everyone while the test-access switch in lib/arcgis/public-access
+       is on, so he can test them without a subscription. /api/arcgis
+       stays in PREMIUM_API_PREFIXES — flipping that one switch back to
+       false restores the Pro gate here with no other change. */
+    if (isArcgisApi(pathname) && arcgisPublicTestAccess()) return 'open';
+    return tierSatisfies(tier, 'pro') ? 'open' : 'pro';
+  }
   return 'open';
 }
 

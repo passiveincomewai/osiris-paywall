@@ -108,3 +108,30 @@ describe('apiGate — everything else premium stays Pro', () => {
     expect(apiGate('/api/checkout', null)).toBe('open');
   });
 });
+
+/* TEMPORARY (Jameson, 2026-10-31): the ArcGIS tools are open without a
+   subscription while ARCGIS_PUBLIC_TEST_ACCESS (lib/arcgis/public-access)
+   is on, so the owner can test them. /api/arcgis stays in
+   PREMIUM_API_PREFIXES; when the switch is flipped back to false, these
+   expectations invert to 'pro' for free / signed-out callers — update
+   this block in the same push as the flip. */
+describe('apiGate — ArcGIS tools under temporary public test access', () => {
+  it('opens /api/arcgis to free and signed-out callers while the switch is on', () => {
+    expect(apiGate('/api/arcgis', free)).toBe('open');
+    expect(apiGate('/api/arcgis', null)).toBe('open');
+    expect(apiGate('/api/arcgis', {})).toBe('open');
+  });
+
+  it('opens ArcGIS sub-paths too, and Pro/VIP as before', () => {
+    expect(apiGate('/api/arcgis/search', free)).toBe('open');
+    expect(apiGate('/api/arcgis', pro)).toBe('open');
+    expect(apiGate('/api/arcgis', vip)).toBe('open');
+  });
+
+  it('leaves every other gate exactly as it was', () => {
+    expect(apiGate('/api/osint', free)).toBe('pro');
+    expect(apiGate('/api/osint', null)).toBe('pro');
+    expect(apiGate('/api/maritime', pro)).toBe('vip');
+    expect(apiGate('/api/flights', null)).toBe('open');
+  });
+});
