@@ -21,6 +21,7 @@ import JsonLd from "@/components/JsonLd";
 import DirectAnswers from "@/components/seo/DirectAnswers";
 import RelatedLinks from "@/components/RelatedLinks";
 import GodsEyeLiveStrip from "@/components/GodsEyeLiveStrip";
+import MediaFrame from "@/components/design/MediaFrame";
 import GodsEyeStickyCta from "@/components/GodsEyeStickyCta";
 import TrialCtaSection from "@/components/TrialCtaSection";
 import { TIER_PLAN_OPTIONS, type PlanTier } from "@/lib/billing/trial-checkout";
@@ -194,6 +195,26 @@ export default function GodsEyeViewPage() {
           <p className="mt-4 text-xs tracking-wide text-white/40">
             Free in your browser · No signup · Nothing to install
           </p>
+        </div>
+
+        {/* The view itself — a real capture: Esri reference imagery
+            under the live camera network, US West. */}
+        <div className="mt-12 md:mt-16">
+          <MediaFrame
+            state="none"
+            caption="The satellite-imagery view: Esri reference imagery under the live camera network, US West"
+            source="WorldEye"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/landing/gev-imagery.jpg"
+              alt="Satellite imagery basemap with the live camera network over the US West"
+              width={1200}
+              height={575}
+              loading="lazy"
+              className="block w-full h-auto"
+            />
+          </MediaFrame>
         </div>
 
         {/* Live proof — real cameras from the catalogue, tap to open */}

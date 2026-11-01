@@ -18,6 +18,7 @@ import JsonLd from "@/components/JsonLd";
 import DirectAnswers from "@/components/seo/DirectAnswers";
 import RelatedLinks from "@/components/RelatedLinks";
 import GodsEyeLiveStrip from "@/components/GodsEyeLiveStrip";
+import MediaFrame from "@/components/design/MediaFrame";
 import TrialCtaSection from "@/components/TrialCtaSection";
 
 export const metadata: Metadata = {
@@ -173,6 +174,26 @@ export default function GodsEyeViewOnlinePage() {
           <p className="mt-4 text-xs tracking-wide text-white/40">
             Free in your browser · No signup · Nothing to install · No API keys
           </p>
+        </div>
+
+        {/* The network itself — a real capture of the camera index
+            over one region (layers panel cropped out). */}
+        <div className="mt-12 md:mt-16">
+          <MediaFrame
+            state="none"
+            caption="Camera markers web the road network — one region of the live index"
+            source="WorldEye"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/landing/camera-web.jpg"
+              alt="Camera markers webbing the road network across Utah and Colorado"
+              width={1200}
+              height={763}
+              loading="lazy"
+              className="block w-full h-auto"
+            />
+          </MediaFrame>
         </div>
 
         {/* Live proof — real cameras from the catalogue, tap to open */}
