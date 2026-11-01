@@ -64,6 +64,7 @@ model User {
   referralCodeAliases ReferralCodeAlias[]
   ambientStreamKey AmbientStreamKey?
   frInvestigatorConversations FrInvestigatorConversation[]
+  frCases FrCase[]
   deletionRequestedAt DateTime?
   deletionScheduledFor DateTime?
   // "How did you find out about us?" — set once from account settings
@@ -2354,4 +2355,205 @@ model FrInvestigatorUsageLedger {
 
   @@index([userId, createdAt])
   @@index([conversationId])
+}
+
+// ── Fraud Radar Phase 8 — Cases & Evidence (PHASE8 §1) ────────────
+// A user's private work product: cases (workspaces), pinned leads
+// frozen as verbatim snapshots with their provenance blocks,
+// vault evidence, notes, claims + verification runs, and an
+// append-only activity log. Owner-isolated with 404-not-403
+// semantics (resolveCaseAccess in src/lib/fraud-radar/cases/ is
+// the only place access is decided); teamRef is OPAQUE — Phase 8
+// creates no team table and no FK to the camera product's
+// Organization model. Evidence is never part of the public corpus.
+// Dark behind fraudRadarEnabled.
+
+model FrCase {
+  id          String @id @default(cuid())
+  ownerId     String
+  owner       User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  title       String
+  summary     String? @db.Text
+  // open | paused | closed — a user state, not a finding.
+  status      String @default("open")
+
+  // Team visibility (PHASE8 §1.5): private | team. teamRef is the
+  // opaque identifier the Phase 11 entitlement interface resolves.
+  visibility  String @default("private")
+  teamRef     String?
+
+  leads       FrCaseLead[]
+  evidence    FrCaseEvidence[]
+  notes       FrCaseNote[]
+  claims      FrCaseClaim[]
+  events      FrCaseEvent[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  closedAt    DateTime?
+
+  @@index([ownerId, status, updatedAt])
+  @@index([teamRef])
+}
+
+model FrCaseLead {
+  id        String @id @default(cuid())
+  caseId    String
+  case      FrCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  // signal | screening | candidate | entity | investigator
+  kind      String
+  // healthcare | care | grants | contracts | cross
+  engine    String
+  entityKey String
+  entityLabel String
+
+  // The complete record AS RETURNED by the data layer at pin
+  // time, stored verbatim and rendered verbatim forever
+  // (PHASE8 §1.3). NEVER updated after creation — the data-access
+  // layer exposes no update path for the snapshot fields.
+  snapshot  Json
+  snapshotSha256 String
+  sourceDataset       String
+  sourceDatasetVersion String
+  ruleCode  String?
+
+  pinnedById String
+  pinnedAt   DateTime @default(now())
+  annotation String? @db.Text
+
+  notes     FrCaseNote[]
+
+  @@index([caseId, pinnedAt])
+  @@index([entityKey])
+  @@unique([caseId, entityKey, ruleCode, snapshotSha256])
+}
+
+model FrCaseEvidence {
+  id        String @id @default(cuid())
+  caseId    String
+  case      FrCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  // upload | artifact
+  kind      String
+
+  title     String
+  description String? @db.Text
+
+  originalFilename String?
+  contentType      String?
+  sizeBytes        BigInt?
+  sha256           String?
+  blobPathname     String?
+  storageState     String @default("present")
+
+  artifactEnvelope Json?
+  artifactSha256   String?
+
+  // not_requested | queued | processing | processed | failed
+  processingStatus String @default("not_requested")
+  // docling | text_extract | none
+  processingPath   String?
+  processorVersion String?
+  extractedTextPathname String?
+  pageCount        Int?
+
+  uploadedById String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  jobs      FrEvidenceProcessingJob[]
+  notes     FrCaseNote[]
+
+  @@index([caseId, createdAt])
+  @@index([sha256])
+}
+
+model FrEvidenceProcessingJob {
+  id         String @id @default(cuid())
+  evidenceId String
+  evidence   FrCaseEvidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  caseId     String
+  // queued | processing | succeeded | failed
+  status     String @default("queued")
+  requestedPath String @default("auto")
+  attempts   Int @default(0)
+  error      String?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([evidenceId])
+  @@index([caseId])
+}
+
+model FrCaseNote {
+  id        String @id @default(cuid())
+  caseId    String
+  case      FrCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  leadId     String?
+  lead       FrCaseLead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  evidenceId String?
+  evidence   FrCaseEvidence? @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  claimId    String?
+  claim      FrCaseClaim? @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  body      String @db.Text
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([caseId, createdAt])
+}
+
+model FrCaseClaim {
+  id        String @id @default(cuid())
+  caseId    String
+  case      FrCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  statement String @db.Text
+  subjectEngine    String?
+  subjectEntityKey String?
+
+  createdById String
+  createdAt   DateTime @default(now())
+  verifications FrClaimVerification[]
+  notes         FrCaseNote[]
+
+  @@index([caseId, createdAt])
+}
+
+model FrClaimVerification {
+  id        String @id @default(cuid())
+  claimId   String
+  claim     FrCaseClaim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  // supported | contradicted | not-in-corpus | insufficient-data
+  verdict   String
+  evidence  Json
+  summary   String @db.Text
+  validatorVerdict String
+  corpusVersions Json
+  checkerVersion String
+  model        String?
+  promptVersion String?
+
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@index([claimId, createdAt])
+}
+
+model FrCaseEvent {
+  id        String @id @default(cuid())
+  caseId    String
+  case      FrCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  kind      String
+  actorId   String
+  detail    Json?
+  createdAt DateTime @default(now())
+
+  @@index([caseId, createdAt])
 }
