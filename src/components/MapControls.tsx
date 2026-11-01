@@ -27,7 +27,11 @@ interface MapControlsProps {
   locateNote?: string | null;
 }
 
-/** Compact zoom on phones; desktop also gets the held-pan pad. */
+/** Compact zoom on phones; desktop also gets the held-pan pad.
+ *  Desktop layout (owner's order, 2026-10-31): the locate + zoom
+ *  cluster moves to the BOTTOM LEFT, enlarged; the pan pad stays on
+ *  the right in its own box. Mobile keeps the single bottom-right
+ *  column, unchanged. */
 export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', onBasemapModeChange, satelliteOn = false, onSatelliteToggle, onLocateMe, locating = false, locateNote = null }: MapControlsProps) {
   const controller = useRef<ReturnType<typeof createMapCameraControls> | null>(null);
   const interact = useRef(onInteract);
@@ -61,8 +65,8 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', 
   return (
     <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: 0.4 }}
-      className="absolute right-2 bottom-[112px] md:bottom-12 z-[240] pointer-events-auto" data-map-controls>
-      <div className="flex flex-col items-end gap-[6px]">
+      className="absolute right-2 bottom-[112px] md:left-2 md:bottom-12 z-[240] pointer-events-auto md:pointer-events-none" data-map-controls>
+      <div className="flex flex-col items-end gap-[6px] md:flex-row md:items-end md:justify-between">
       {/* The two sliding switches (Day/Night + Satellite view) render
           here ONLY below the md breakpoint: on desktop they moved into
           the globe header (Item 8, 2026-10-29), where no sidebar or
@@ -76,29 +80,39 @@ export default function MapControls({ mapRef, onInteract, basemapMode = 'auto', 
         <SatelliteSwitch on={satelliteOn} onToggle={onSatelliteToggle} />
       )}
       </div>
+      {/* Locate + zoom cluster. Mobile: the rest of the right-hand
+          column, exactly as before. Desktop: the row's first item, so
+          it lands at the bottom left, left-aligned. */}
+      <div className="flex flex-col items-end gap-[6px] md:items-start md:pointer-events-auto">
       {onLocateMe && (
         <>
           <button type="button" onClick={onLocateMe} disabled={locating} aria-busy={locating}
             aria-label="Use my location"
             title="Use my location — fly the globe to where you are"
-            className="w-11 h-11 md:w-9 md:h-9 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-opacity opacity-85 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] disabled:opacity-60 touch-none select-none">
+            className="w-11 h-11 rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-opacity opacity-85 hover:opacity-100 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[var(--gold-primary)] disabled:opacity-60 touch-none select-none">
             {locating
-              ? <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
-              : <LocateFixed className="w-4 h-4" strokeWidth={1.5} />}
+              ? <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" strokeWidth={1.5} />
+              : <LocateFixed className="w-4 h-4 md:w-5 md:h-5" strokeWidth={1.5} />}
           </button>
           {locateNote && (
             <p role="status"
-              className="max-w-[190px] rounded-lg border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg px-2.5 py-1.5 text-right text-[11px] leading-snug text-[var(--text-secondary)]">
+              className="max-w-[190px] rounded-lg border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg px-2.5 py-1.5 text-right md:text-left text-[11px] leading-snug text-[var(--text-secondary)]">
               {locateNote}
             </p>
           )}
         </>
       )}
-      <div role="group" aria-label="Map camera controls"
+      <div role="group" aria-label="Map zoom controls"
         className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
         <ZoomArtwork limits={limits} press={press} release={release} step={step} />
-        <div className="desktop-only flex items-center gap-1">
-          <div aria-hidden="true" className="h-12 w-px mx-1 bg-[var(--border-secondary)]" />
+      </div>
+      </div>
+      {/* The pan pad, in its own box on the right — the side the
+          combined camera-controls box used to occupy. Desktop only,
+          as before. */}
+      <div className="desktop-only md:pointer-events-auto">
+        <div role="group" aria-label="Map pan controls"
+          className="flex items-center gap-[3px] p-[3px] rounded-xl border border-[var(--border-secondary)] bg-black/60 backdrop-blur-md shadow-lg transition-opacity opacity-85 hover:opacity-100 focus-within:opacity-100">
           <div className="grid grid-cols-3 grid-rows-3 gap-[3px]">
             <Btn cell="col-start-2 row-start-1" label="Pan north" move={{ kind: 'pan', dx: 0, dy: -1 }} icon={ChevronUp} press={press} release={release} step={step} />
             <Btn cell="col-start-1 row-start-2" label="Pan west" move={{ kind: 'pan', dx: -1, dy: 0 }} icon={ChevronLeft} press={press} release={release} step={step} />
@@ -211,7 +225,7 @@ function ZoomArtwork({ limits, press, release, step }: {
   press: (m: CameraMove) => void; release: () => void; step: (m: CameraMove) => void;
 }) {
   return (
-    <div className="relative h-[76px] md:h-[62px] aspect-[256/599] shrink-0">
+    <div className="relative h-[76px] md:h-[84px] aspect-[256/599] shrink-0">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/images/map-zoom.png" alt="" draggable={false} aria-hidden="true"
         className="absolute inset-0 h-full w-full pointer-events-none select-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]" />

@@ -96,6 +96,19 @@ export function HelpButton({
 }) {
   const [nudge, setNudge] = useState(false);
   const nudgeShownRef = useRef(false);
+  // Wide desktop (>=1025px) is where the map's pan pad renders (it is
+  // .desktop-only). The enlarged medallion (48px, owner's order
+  // 2026-10-31) would cover the pad's south/east buttons at the old
+  // bottom:52 slot, so on wide screens the button rides above the pad
+  // instead; narrower desktop windows keep the original slot.
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1025px)");
+    const update = () => setWide(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (!nudgeEnabled) return;
@@ -171,9 +184,9 @@ export function HelpButton({
             : {
                 position: "fixed",
                 right: 16,
-                bottom: 52,
-                width: 38,
-                height: 38,
+                bottom: wide ? 168 : 52,
+                width: 48,
+                height: 48,
                 zIndex: 940,
               }
         }
@@ -200,7 +213,7 @@ export function HelpButton({
                   bottom: "calc(70px + env(safe-area-inset-bottom, 0px))",
                   zIndex: 940,
                 }
-              : { right: 62, bottom: 58, zIndex: 940 }
+              : { right: 72, bottom: wide ? 176 : 58, zIndex: 940 }
           }
           role="group"
           aria-label="Tutorial suggestion"
