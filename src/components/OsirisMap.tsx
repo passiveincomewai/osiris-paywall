@@ -35,6 +35,7 @@ import {
   handleSatelliteSourceData, isSatelliteOverlayLoadPending, preconnectWaybackOrigin,
   type SatelliteImagerySelection,
 } from '@/lib/wayback-imagery';
+import { installLandsatTileProtocol } from '@/lib/landsat-imagery';
 import {
   beginRouteFetch, createFlightPath, flightPathAccess, flightPathFeatures, flightPathHudData,
   noteFlightPathFix, parseFlightRouteResponse, resolveFlightPathRoute,
@@ -5736,8 +5737,14 @@ ${p.icao24 ? (flightPathAccessRef.current === 'pro'
       const satelliteOnNow = mapStyle !== 'dark';
       // Warm the archive host (DNS/TLS) as soon as satellite view is
       // on, so the first step into the past doesn't pay connection
-      // setup inside the switch.
-      if (satelliteOnNow) preconnectWaybackOrigin();
+      // setup inside the switch. The Landsat tile protocol (the
+      // slider's pre-2014 segment) is registered at the same moment
+      // — idempotently, and before any Landsat tile can be asked
+      // for, since requests only exist while satellite view is on.
+      if (satelliteOnNow) {
+        preconnectWaybackOrigin();
+        installLandsatTileProtocol(maplibregl.addProtocol);
+      }
       syncSatelliteOverlay(
         mapRef.current as never,
         satelliteOverlayStateRef.current,

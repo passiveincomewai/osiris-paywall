@@ -3,10 +3,13 @@
  * SatelliteTimeSlider — the satellite basemap's time control.
  *
  * Rendered (by OsirisMap) only while the satellite basemap is on.
- * The slider walks Esri's World Imagery Wayback archive: one stop
- * per published release, oldest (Feb 2014) at the left, and a final
- * stop at the right for the live World Imagery service — the
- * imagery the globe has always shown, and the default position.
+ * The slider walks one continuous timeline: at the left, the
+ * Landsat years 1984–2013 (lib/landsat-imagery — USGS/NASA
+ * imagery, one stop per year); then Esri's World Imagery Wayback
+ * archive, one stop per published release from Feb 2014; and a
+ * final stop at the right for the live World Imagery service —
+ * the imagery the globe has always shown, and the default
+ * position.
  *
  * The release list is enumerated at runtime from Esri's config
  * (lib/wayback-imagery), starting from a bundled sampled fallback so
@@ -18,20 +21,24 @@
  * shows its release date and is labelled an archive release — never
  * "live" — and the note under the slider says plainly that a release
  * date is when Esri published that basemap version, so the imagery
- * over a given place can be older.
+ * over a given place can be older. A Landsat position is labelled
+ * with its year and source and its 30 m resolution — never a fake
+ * precise date, and never allowed to pass for the sharp modern
+ * imagery.
  */
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   FALLBACK_WAYBACK_RELEASES,
   fetchWaybackReleases,
-  formatReleaseDate,
   satelliteSelectionLabel,
   selectionAtSliderIndex,
   sliderIndexForSelection,
+  sliderPositionCount,
   type SatelliteImagerySelection,
   type WaybackRelease,
 } from '@/lib/wayback-imagery';
+import { LANDSAT_FIRST_YEAR } from '@/lib/landsat-imagery';
 
 interface SatelliteTimeSliderProps {
   selection: SatelliteImagerySelection;
@@ -54,8 +61,7 @@ export default function SatelliteTimeSlider({ selection, onSelectionChange, load
   }, []);
 
   const index = sliderIndexForSelection(releases, selection);
-  const max = releases.length;
-  const oldest = releases[0];
+  const max = sliderPositionCount(releases) - 1;
   const step = (delta: number) => {
     const next = Math.max(0, Math.min(max, index + delta));
     if (next !== index) onSelectionChange(selectionAtSliderIndex(releases, next));
@@ -94,7 +100,7 @@ export default function SatelliteTimeSlider({ selection, onSelectionChange, load
           max={max}
           step={1}
           value={index}
-          aria-label="Imagery release"
+          aria-label="Imagery vintage"
           aria-valuetext={satelliteSelectionLabel(selection)}
           onChange={e => onSelectionChange(selectionAtSliderIndex(releases, Number(e.target.value)))}
           className="flex-1 min-w-0 accent-cyan-300 cursor-pointer"
@@ -110,11 +116,13 @@ export default function SatelliteTimeSlider({ selection, onSelectionChange, load
         </button>
       </div>
       <div className="mt-1 flex items-baseline justify-between gap-2 text-[9px] opacity-60 leading-tight">
-        <span>{oldest ? formatReleaseDate(oldest.date) : ''}</span>
+        <span>{LANDSAT_FIRST_YEAR}</span>
         <span className="text-center">
           {selection.kind === 'latest'
             ? 'Esri World Imagery — the current basemap'
-            : 'Archive release — Esri World Imagery Wayback. Imagery in a release can be older than its date.'}
+            : selection.kind === 'landsat'
+              ? 'Historical imagery — Landsat (USGS/NASA), 30 m resolution. Each year shows that year\u2019s clearest scenes; it loads at zoom 6+ and detail is limited next to the modern imagery.'
+              : 'Archive release — Esri World Imagery Wayback. Imagery in a release can be older than its date.'}
         </span>
         <span>Latest</span>
       </div>

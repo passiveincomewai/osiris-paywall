@@ -26,6 +26,17 @@
  *     satellite raster is an overlay on the CARTO style, never a
  *     style swap, so the ~55 custom sources survive.
  *
+ * The slider's pre-2014 segment is NOT Esri's — Wayback's archive
+ * starts 2014-02-20. Stops left of the oldest release are Landsat
+ * years 1984–2013 (lib/landsat-imagery: USGS/NASA scenes served by
+ * the Planetary Computer mosaic tiler through a custom protocol).
+ * The selection type, the slider geometry and the overlay below
+ * treat the two families as one continuous timeline; each family
+ * keeps its own honest label (release date for Wayback, year +
+ * source + 30 m for Landsat), and a Landsat vintage's raster
+ * source is capped at Landsat's native zoom (see
+ * `sourceMaxzoomForTileUrl`).
+ *
  * Access stays what the 2026-10-26 chrome ship made it: the satellite
  * basemap — now including its whole archive — is FREE FOR EVERYONE.
  * Nothing here gates, and nothing here touches the satellite
@@ -41,6 +52,16 @@
  *   - attribution (the live service's own copyrightText):
  *     "Source: Esri, Vantor, Earthstar Geographics, and the GIS User Community".
  */
+
+import {
+  LANDSAT_ATTRIBUTION,
+  LANDSAT_FIRST_YEAR,
+  LANDSAT_MAXZOOM,
+  LANDSAT_PROTOCOL_NAME,
+  LANDSAT_STOP_COUNT,
+  clampLandsatYear,
+  landsatProtocolTileUrl,
+} from './landsat-imagery';
 
 /** The live Esri World Imagery tiles — the satellite view's original
  *  source, and the slider's "latest" position. */
@@ -76,11 +97,13 @@ export interface WaybackRelease {
   date: string;
 }
 
-/** What the satellite basemap is showing: the live service, or one
- *  dated archive release. */
+/** What the satellite basemap is showing: the live service, one
+ *  dated Esri archive release, or one Landsat year (1984–2013 —
+ *  the pre-Wayback segment, served by lib/landsat-imagery). */
 export type SatelliteImagerySelection =
   | { kind: 'latest' }
-  | { kind: 'wayback'; release: WaybackRelease };
+  | { kind: 'wayback'; release: WaybackRelease }
+  | { kind: 'landsat'; year: number };
 
 export const LATEST_SELECTION: SatelliteImagerySelection = { kind: 'latest' };
 
@@ -92,22 +115,26 @@ export function waybackTileUrl(releaseNum: number): string {
 
 /** The tile template for a selection: `latest` is the live service —
  *  byte-identical to the newest archive snapshot, and the thing the
- *  satellite view has always shown. */
+ *  satellite view has always shown; a Landsat year is the custom
+ *  protocol template lib/landsat-imagery serves. */
 export function satelliteTileUrl(selection: SatelliteImagerySelection): string {
-  return selection.kind === 'latest'
-    ? CURRENT_IMAGERY_TILE_URL
-    : waybackTileUrl(selection.release.releaseNum);
+  if (selection.kind === 'latest') return CURRENT_IMAGERY_TILE_URL;
+  if (selection.kind === 'landsat') return landsatProtocolTileUrl(selection.year);
+  return waybackTileUrl(selection.release.releaseNum);
 }
 
 /** The attribution the satellite source carries. One constant for
- *  every selection on purpose: it is the credit line Esri's service
- *  document specifies for this imagery, current or archived (the
- *  Wayback tiles are the same World Imagery product), and keeping it
- *  constant means a slider step never has to rebuild the displayed
- *  source, so its place in the layer stack never moves. The
- *  vintage itself is disclosed by the slider's readout (release date
- *  + "archive release"), which is on screen whenever satellite is. */
-export const SATELLITE_SOURCE_ATTRIBUTION = CURRENT_IMAGERY_ATTRIBUTION;
+ *  every selection on purpose: keeping it constant means a slider
+ *  step never has to rebuild the displayed source, so its place in
+ *  the layer stack never moves. It therefore carries BOTH credit
+ *  lines: Esri's own (verbatim above — the Wayback tiles are the
+ *  same World Imagery product, current or archived) and, appended,
+ *  the Landsat credit for the pre-2014 vintages. The vintage itself
+ *  is disclosed by the slider's readout (release date + "archive
+ *  release", or year + "Landsat"), which is on screen whenever
+ *  satellite is. */
+export const SATELLITE_SOURCE_ATTRIBUTION =
+  `${CURRENT_IMAGERY_ATTRIBUTION} · Historical (1984–2013): ${LANDSAT_ATTRIBUTION}`;
 
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -124,11 +151,14 @@ export function formatReleaseDate(isoDate: string): string {
 
 /** The short label for a selection — the slider's readout and its
  *  aria value text. `latest` is "Latest imagery", never "live
- *  imagery": the basemap is a published mosaic, not a live feed. */
+ *  imagery": the basemap is a published mosaic, not a live feed.
+ *  A Landsat year is labelled by YEAR only: the year's mosaic is
+ *  assembled from that year's clearest scenes, so a month or a
+ *  date would be a false precision. */
 export function satelliteSelectionLabel(selection: SatelliteImagerySelection): string {
-  return selection.kind === 'latest'
-    ? 'Latest imagery'
-    : `Imagery release · ${formatReleaseDate(selection.release.date)}`;
+  if (selection.kind === 'latest') return 'Latest imagery';
+  if (selection.kind === 'landsat') return `Landsat · ${clampLandsatYear(selection.year)}`;
+  return `Imagery release · ${formatReleaseDate(selection.release.date)}`;
 }
 
 /**
@@ -202,29 +232,43 @@ export async function fetchWaybackReleases(fetcher?: Fetcher): Promise<WaybackRe
   }
 }
 
-/** Slider geometry: positions `0 … releases.length` — one per
- *  archive release, oldest first, plus the final position, which is
- *  `latest`. The slider's default (and max) is `latest`. */
+/** Slider geometry, oldest → newest: the Landsat years 1984–2013
+ *  (one stop per year, lib/landsat-imagery), then one stop per
+ *  Wayback archive release, then the final position, which is
+ *  `latest`. The slider's default (and max) is `latest`. The
+ *  2013 → 2014 boundary is just a step: the stops are adjacent, so
+ *  scrubbing across it walks from the last Landsat year onto the
+ *  first Esri release in the same drag. */
 export function sliderPositionCount(releases: readonly WaybackRelease[]): number {
-  return releases.length + 1;
+  return LANDSAT_STOP_COUNT + releases.length + 1;
 }
 
 export function selectionAtSliderIndex(
   releases: readonly WaybackRelease[],
   index: number,
 ): SatelliteImagerySelection {
-  const clamped = Math.max(0, Math.min(Math.floor(index) || 0, releases.length));
-  if (clamped >= releases.length) return { kind: 'latest' };
-  return { kind: 'wayback', release: releases[clamped] };
+  const clamped = Math.max(
+    0,
+    Math.min(Math.floor(index) || 0, LANDSAT_STOP_COUNT + releases.length),
+  );
+  if (clamped < LANDSAT_STOP_COUNT) {
+    return { kind: 'landsat', year: LANDSAT_FIRST_YEAR + clamped };
+  }
+  const releaseIndex = clamped - LANDSAT_STOP_COUNT;
+  if (releaseIndex >= releases.length) return { kind: 'latest' };
+  return { kind: 'wayback', release: releases[releaseIndex] };
 }
 
 export function sliderIndexForSelection(
   releases: readonly WaybackRelease[],
   selection: SatelliteImagerySelection,
 ): number {
-  if (selection.kind === 'latest') return releases.length;
+  if (selection.kind === 'latest') return LANDSAT_STOP_COUNT + releases.length;
+  if (selection.kind === 'landsat') {
+    return clampLandsatYear(selection.year) - LANDSAT_FIRST_YEAR;
+  }
   const i = releases.findIndex(r => r.releaseNum === selection.release.releaseNum);
-  return i >= 0 ? i : releases.length;
+  return i >= 0 ? LANDSAT_STOP_COUNT + i : LANDSAT_STOP_COUNT + releases.length;
 }
 
 /** The minimal map surface the satellite overlay drives (MapLibre
@@ -232,10 +276,32 @@ export function sliderIndexForSelection(
 export interface SatelliteOverlayMap {
   getSource(id: string): { setTiles(tiles: string[]): void } | undefined;
   addSource(id: string, source: unknown): void;
+  removeSource(id: string): void;
   getLayer(id: string): unknown;
   addLayer(layer: unknown, beforeId?: string): void;
+  removeLayer(id: string): void;
   setLayoutProperty(layerId: string, name: string, value: unknown): void;
   setPaintProperty(layerId: string, name: string, value: unknown): void;
+}
+
+/** The Esri sources' maxzoom — the satellite view's long-standing
+ *  cap for the live service and its Wayback snapshots. */
+export const ESRI_SOURCE_MAXZOOM = 18;
+
+/** The maxzoom a raster source must be created with for a vintage:
+ *  Landsat tiles (the `osiris-landsat://` protocol) cap at
+ *  Landsat's native-resolution zoom; everything else is Esri's.
+ *  A source's maxzoom is fixed at creation in MapLibre, and the
+ *  two overlay sources swap roles between vintages of BOTH
+ *  families — so when the standby is asked to load a vintage of
+ *  the other family, it is rebuilt (see startSatelliteLoad). The
+ *  rebuild only ever touches the standby, which is invisible
+ *  (opacity 0) while it loads: the crossfade contract — the
+ *  displayed source is never reloaded in place — is untouched. */
+export function sourceMaxzoomForTileUrl(tileUrl: string): number {
+  return tileUrl.startsWith(`${LANDSAT_PROTOCOL_NAME}://`)
+    ? LANDSAT_MAXZOOM
+    : ESRI_SOURCE_MAXZOOM;
 }
 
 /** The standby source/layer ids. A vintage switch loads the target
@@ -271,6 +337,10 @@ export interface SatelliteOverlayState {
   activeSourceId: string;
   /** The tile URL each source was last pointed at. */
   sourceUrls: Record<string, string | null>;
+  /** The maxzoom each source was CREATED with (MapLibre fixes it
+   *  at creation). Drives the standby rebuild when a vintage of
+   *  the other imagery family targets the source. */
+  sourceMaxzooms: Record<string, number | null>;
   /** The vintage the standby is settling into / loading, or null. */
   pendingUrl: string | null;
   settleTimer: ReturnType<typeof setTimeout> | null;
@@ -282,6 +352,7 @@ export function createSatelliteOverlayState(): SatelliteOverlayState {
     tileUrl: null,
     activeSourceId: SATELLITE_SOURCE_ID,
     sourceUrls: { [SATELLITE_SOURCE_ID]: null, [SATELLITE_ALT_SOURCE_ID]: null },
+    sourceMaxzooms: { [SATELLITE_SOURCE_ID]: null, [SATELLITE_ALT_SOURCE_ID]: null },
     pendingUrl: null,
     settleTimer: null,
     fadeTimer: null,
@@ -319,10 +390,11 @@ function ensureSatelliteSourceAndLayer(
       type: 'raster',
       tiles: [tileUrl],
       tileSize: 256,
-      maxzoom: 18,
+      maxzoom: sourceMaxzoomForTileUrl(tileUrl),
       attribution: SATELLITE_SOURCE_ATTRIBUTION,
     });
     state.sourceUrls[sourceId] = tileUrl;
+    state.sourceMaxzooms[sourceId] = sourceMaxzoomForTileUrl(tileUrl);
   }
   const layerId = satelliteLayerIdForSource(sourceId);
   if (!map.getLayer(layerId)) {
@@ -357,6 +429,22 @@ function startSatelliteLoad(
     state.fadeTimer = null;
   }
   const standbyId = satelliteStandbySourceId(state);
+  // A source's maxzoom is fixed at creation. If the standby was
+  // created for the other imagery family (Esri 18 vs Landsat 13),
+  // rebuild it before pointing it at this vintage — the standby is
+  // invisible (opacity 0, mid-load), so removing and re-adding it
+  // disturbs nothing on screen.
+  if (
+    map.getSource(standbyId) &&
+    state.sourceMaxzooms[standbyId] !== null &&
+    state.sourceMaxzooms[standbyId] !== sourceMaxzoomForTileUrl(url)
+  ) {
+    const standbyLayerId = satelliteLayerIdForSource(standbyId);
+    if (map.getLayer(standbyLayerId)) map.removeLayer(standbyLayerId);
+    map.removeSource(standbyId);
+    state.sourceUrls[standbyId] = null;
+    state.sourceMaxzooms[standbyId] = null;
+  }
   ensureSatelliteSourceAndLayer(map, state, standbyId, url, 0);
   if (state.sourceUrls[standbyId] !== url) {
     map.getSource(standbyId)?.setTiles([url]);

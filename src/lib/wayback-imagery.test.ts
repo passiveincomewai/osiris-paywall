@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   CURRENT_IMAGERY_ATTRIBUTION,
   CURRENT_IMAGERY_TILE_URL,
+  ESRI_SOURCE_MAXZOOM,
   FALLBACK_WAYBACK_RELEASES,
   SATELLITE_ALT_SOURCE_ID,
   SATELLITE_FADE_MS,
@@ -20,11 +21,17 @@ import {
   selectionAtSliderIndex,
   sliderIndexForSelection,
   sliderPositionCount,
+  sourceMaxzoomForTileUrl,
   syncSatelliteOverlay,
   waybackTileUrl,
   type SatelliteOverlayMap,
   type WaybackRelease,
 } from './wayback-imagery';
+import {
+  LANDSAT_ATTRIBUTION,
+  LANDSAT_MAXZOOM,
+  landsatProtocolTileUrl,
+} from './landsat-imagery';
 
 // A trimmed slice of Esri's real config shape (entries as served by
 // config.maptiles.arcgis.com/waybackconfig.json, 2026-10-27).
@@ -94,11 +101,22 @@ describe('tile URLs and attribution', () => {
     expect(satelliteTileUrl({ kind: 'wayback', release: rel(10, '2014-02-20') })).toBe(waybackTileUrl(10));
   });
 
-  it('the source attribution is Esri\u2019s own credit line, for every selection', () => {
+  it('a Landsat selection points at the Landsat protocol template', () => {
+    expect(satelliteTileUrl({ kind: 'landsat', year: 1990 })).toBe(landsatProtocolTileUrl(1990));
+    expect(satelliteTileUrl({ kind: 'landsat', year: 1990 })).toBe(
+      'osiris-landsat://1990/{z}/{x}/{y}',
+    );
+  });
+
+  it('the source attribution carries Esri\u2019s credit line plus the Landsat credit, for every selection', () => {
     expect(CURRENT_IMAGERY_ATTRIBUTION).toBe(
       'Source: Esri, Vantor, Earthstar Geographics, and the GIS User Community',
     );
-    expect(SATELLITE_SOURCE_ATTRIBUTION).toBe(CURRENT_IMAGERY_ATTRIBUTION);
+    // One constant for every selection (the displayed source is never
+    // rebuilt on a slider step), so it credits both imagery families.
+    expect(SATELLITE_SOURCE_ATTRIBUTION).toBe(
+      `${CURRENT_IMAGERY_ATTRIBUTION} \u00b7 Historical (1984\u20132013): ${LANDSAT_ATTRIBUTION}`,
+    );
   });
 });
 
@@ -117,26 +135,48 @@ describe('labels', () => {
       'Imagery release · 5 Jun 2019',
     );
   });
+
+  it('a Landsat selection is labelled by source and YEAR only — no fake precise date', () => {
+    expect(satelliteSelectionLabel({ kind: 'landsat', year: 1990 })).toBe('Landsat · 1990');
+    expect(satelliteSelectionLabel({ kind: 'landsat', year: 1984 })).toBe('Landsat · 1984');
+  });
 });
 
 describe('slider geometry', () => {
-  it('positions are one per release plus the latest position at the end', () => {
-    expect(sliderPositionCount(threeReleases)).toBe(4);
-    expect(selectionAtSliderIndex(threeReleases, 0)).toEqual({ kind: 'wayback', release: threeReleases[0] });
-    expect(selectionAtSliderIndex(threeReleases, 2)).toEqual({ kind: 'wayback', release: threeReleases[2] });
-    expect(selectionAtSliderIndex(threeReleases, 3)).toEqual({ kind: 'latest' });
+  // The timeline is Landsat years 1984–2013 (30 stops), then the
+  // Wayback releases, then latest. With threeReleases the positions
+  // are 0..33: 0–29 Landsat, 30–32 releases, 33 latest.
+  it('positions are the Landsat years, then one per release, then latest at the end', () => {
+    expect(sliderPositionCount(threeReleases)).toBe(34);
+    expect(selectionAtSliderIndex(threeReleases, 0)).toEqual({ kind: 'landsat', year: 1984 });
+    expect(selectionAtSliderIndex(threeReleases, 29)).toEqual({ kind: 'landsat', year: 2013 });
+    expect(selectionAtSliderIndex(threeReleases, 30)).toEqual({ kind: 'wayback', release: threeReleases[0] });
+    expect(selectionAtSliderIndex(threeReleases, 32)).toEqual({ kind: 'wayback', release: threeReleases[2] });
+    expect(selectionAtSliderIndex(threeReleases, 33)).toEqual({ kind: 'latest' });
+  });
+
+  it('the 2013/2014 boundary is a single step inside the same slider', () => {
+    expect(selectionAtSliderIndex(threeReleases, 29)).toEqual({ kind: 'landsat', year: 2013 });
+    expect(selectionAtSliderIndex(threeReleases, 30)).toEqual({
+      kind: 'wayback',
+      release: rel(10, '2014-02-20'),
+    });
   });
 
   it('clamps out-of-range positions to the ends', () => {
-    expect(selectionAtSliderIndex(threeReleases, -5)).toEqual({ kind: 'wayback', release: threeReleases[0] });
+    expect(selectionAtSliderIndex(threeReleases, -5)).toEqual({ kind: 'landsat', year: 1984 });
     expect(selectionAtSliderIndex(threeReleases, 99)).toEqual({ kind: 'latest' });
-    expect(selectionAtSliderIndex([], 0)).toEqual({ kind: 'latest' });
+    expect(selectionAtSliderIndex([], 0)).toEqual({ kind: 'landsat', year: 1984 });
+    expect(selectionAtSliderIndex([], 30)).toEqual({ kind: 'latest' });
   });
 
   it('index lookup round-trips, and an unknown release resolves to latest', () => {
-    expect(sliderIndexForSelection(threeReleases, { kind: 'latest' })).toBe(3);
-    expect(sliderIndexForSelection(threeReleases, { kind: 'wayback', release: threeReleases[1] })).toBe(1);
-    expect(sliderIndexForSelection(threeReleases, { kind: 'wayback', release: rel(424242, '2000-01-01') })).toBe(3);
+    expect(sliderIndexForSelection(threeReleases, { kind: 'latest' })).toBe(33);
+    expect(sliderIndexForSelection(threeReleases, { kind: 'landsat', year: 1984 })).toBe(0);
+    expect(sliderIndexForSelection(threeReleases, { kind: 'landsat', year: 2013 })).toBe(29);
+    expect(sliderIndexForSelection(threeReleases, { kind: 'landsat', year: 1990 })).toBe(6);
+    expect(sliderIndexForSelection(threeReleases, { kind: 'wayback', release: threeReleases[1] })).toBe(31);
+    expect(sliderIndexForSelection(threeReleases, { kind: 'wayback', release: rel(424242, '2000-01-01') })).toBe(33);
   });
 });
 
@@ -176,6 +216,8 @@ function fakeSatelliteMap(existingLayers: string[] = []) {
   const sources = new Map<string, { spec: unknown; tilesSet: string[][] }>();
   const layers = new Set(existingLayers);
   const added: Array<{ layer: any; beforeId?: string }> = [];
+  const removedSources: string[] = [];
+  const removedLayers: string[] = [];
   const visibility: Record<string, unknown> = {};
   const paint: Record<string, Record<string, unknown>> = {};
   const map: SatelliteOverlayMap = {
@@ -184,12 +226,14 @@ function fakeSatelliteMap(existingLayers: string[] = []) {
       return s ? { setTiles: (tiles: string[]) => { s.tilesSet.push(tiles); } } : undefined;
     },
     addSource: (id, spec) => { sources.set(id, { spec, tilesSet: [] }); },
+    removeSource: (id) => { sources.delete(id); removedSources.push(id); },
     getLayer: (id) => (layers.has(id) ? {} : undefined),
     addLayer: (layer: any, beforeId?: string) => { layers.add(layer.id); added.push({ layer, beforeId }); },
+    removeLayer: (id) => { layers.delete(id); removedLayers.push(id); },
     setLayoutProperty: (id, _name, value) => { visibility[id] = value; },
     setPaintProperty: (id, name, value) => { (paint[id] ??= {})[name] = value; },
   };
-  return { map, sources, layers, added, visibility, paint };
+  return { map, sources, layers, added, removedSources, removedLayers, visibility, paint };
 }
 
 describe('syncSatelliteOverlay', () => {
@@ -214,7 +258,7 @@ describe('syncSatelliteOverlay', () => {
     expect(spec.tiles).toEqual([CURRENT_IMAGERY_TILE_URL]);
     expect(spec.tileSize).toBe(256);
     expect(spec.maxzoom).toBe(18);
-    expect(spec.attribution).toBe(CURRENT_IMAGERY_ATTRIBUTION);
+    expect(spec.attribution).toBe(SATELLITE_SOURCE_ATTRIBUTION);
     expect(f.visibility['satellite-layer']).toBe('visible');
     expect(isSatelliteOverlayLoadPending(state)).toBe(false);
   });
@@ -247,7 +291,7 @@ describe('syncSatelliteOverlay', () => {
     expect(f.sources.size).toBe(2);
     const altSpec = f.sources.get(SATELLITE_ALT_SOURCE_ID)!.spec as any;
     expect(altSpec.tiles).toEqual([waybackTileUrl(12576)]);
-    expect(altSpec.attribution).toBe(CURRENT_IMAGERY_ATTRIBUTION);
+    expect(altSpec.attribution).toBe(SATELLITE_SOURCE_ATTRIBUTION);
     expect(f.sources.get(SATELLITE_ALT_SOURCE_ID)!.tilesSet).toHaveLength(0);
     expect(f.sources.get('satellite-tiles')!.tilesSet).toHaveLength(0);
     const altAdded = f.added.find(a => a.layer.id === 'satellite-layer-alt')!;
@@ -332,5 +376,67 @@ describe('syncSatelliteOverlay', () => {
     syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
     expect(f.visibility['satellite-layer']).toBe('visible');
     expect(state.tileUrl).toBe(CURRENT_IMAGERY_TILE_URL);
+  });
+});
+
+describe('syncSatelliteOverlay with Landsat vintages', () => {
+  beforeEach(() => { vi.useFakeTimers(); });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('sourceMaxzoomForTileUrl separates the two imagery families', () => {
+    expect(sourceMaxzoomForTileUrl(CURRENT_IMAGERY_TILE_URL)).toBe(ESRI_SOURCE_MAXZOOM);
+    expect(sourceMaxzoomForTileUrl(waybackTileUrl(10))).toBe(ESRI_SOURCE_MAXZOOM);
+    expect(sourceMaxzoomForTileUrl(landsatProtocolTileUrl(1990))).toBe(LANDSAT_MAXZOOM);
+  });
+
+  it('a Landsat vintage loads on the standby with maxzoom capped at Landsat\u2019s native zoom', () => {
+    const f = fakeSatelliteMap(['day-night-fill']);
+    const state = createSatelliteOverlayState();
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    syncSatelliteOverlay(f.map, state, true, { kind: 'landsat', year: 1990 });
+    expect(isSatelliteOverlayLoadPending(state)).toBe(true);
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    const altSpec = f.sources.get(SATELLITE_ALT_SOURCE_ID)!.spec as any;
+    expect(altSpec.tiles).toEqual([landsatProtocolTileUrl(1990)]);
+    expect(altSpec.maxzoom).toBe(LANDSAT_MAXZOOM);
+    // The displayed Esri source is untouched, as always.
+    expect(f.sources.get('satellite-tiles')!.tilesSet).toHaveLength(0);
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(true);
+    expect(state.tileUrl).toBe(landsatProtocolTileUrl(1990));
+  });
+
+  it('switching back to an Esri vintage REBUILDS the standby at maxzoom 18 (it was created for Landsat)', () => {
+    const f = fakeSatelliteMap(['day-night-fill']);
+    const state = createSatelliteOverlayState();
+    syncSatelliteOverlay(f.map, state, true, { kind: 'latest' });
+    syncSatelliteOverlay(f.map, state, true, { kind: 'landsat', year: 1990 });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(true);
+    // Now the primary source (holding latest, created at maxzoom
+    // 18) is the standby, and the alt (Landsat, 13) is displayed.
+    // Pick another Landsat year: the standby was created for the
+    // OTHER family, so it is rebuilt at Landsat's maxzoom — while
+    // invisible, holding nothing on screen.
+    syncSatelliteOverlay(f.map, state, true, { kind: 'landsat', year: 2000 });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    expect(f.removedSources).toEqual(['satellite-tiles']);
+    expect(f.removedLayers).toEqual(['satellite-layer']);
+    const primarySpec = f.sources.get('satellite-tiles')!.spec as any;
+    expect(primarySpec.maxzoom).toBe(LANDSAT_MAXZOOM);
+    expect(primarySpec.tiles).toEqual([landsatProtocolTileUrl(2000)]);
+    expect(f.sources.get('satellite-tiles')!.tilesSet).toHaveLength(0);
+    expect(handleSatelliteSourceData(f.map, state, 'satellite-tiles', true)).toBe(true);
+    expect(state.tileUrl).toBe(landsatProtocolTileUrl(2000));
+    // Back to Esri: the standby is now the alt, created at Landsat's
+    // maxzoom 13 — it must be rebuilt at 18 before loading.
+    syncSatelliteOverlay(f.map, state, true, { kind: 'wayback', release: threeReleases[1] });
+    vi.advanceTimersByTime(SATELLITE_SETTLE_MS);
+    expect(f.removedSources).toEqual(['satellite-tiles', SATELLITE_ALT_SOURCE_ID]);
+    expect(f.removedLayers).toEqual(['satellite-layer', 'satellite-layer-alt']);
+    const rebuilt = f.sources.get(SATELLITE_ALT_SOURCE_ID)!.spec as any;
+    expect(rebuilt.maxzoom).toBe(ESRI_SOURCE_MAXZOOM);
+    expect(rebuilt.tiles).toEqual([waybackTileUrl(12576)]);
+    expect(handleSatelliteSourceData(f.map, state, SATELLITE_ALT_SOURCE_ID, true)).toBe(true);
+    expect(state.tileUrl).toBe(waybackTileUrl(12576));
   });
 });
