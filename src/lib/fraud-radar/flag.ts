@@ -61,5 +61,11 @@ export function fraudRadarPublicPaths(
     // per-rule detail pages stay out of the sitemap, per precedent).
     "/fraud-radar/signals",
     "/fraud-radar/signals/methods",
+    // Phase 5 contracts surfaces (the landing and the NAICS/PSC
+    // explorers only; vendor profiles, award detail and the search
+    // API stay out of the sitemap, per grants precedent).
+    "/fraud-radar/contracts",
+    "/fraud-radar/contracts/naics",
+    "/fraud-radar/contracts/psc",
   ];
 }

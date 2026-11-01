@@ -727,3 +727,57 @@ describe("§14.3 isolation — Phase 11 billing (SHV-11)", () => {
     }
   });
 });
+
+describe("§14.3 isolation — Phase 5 contracts routes carry the flag gate", () => {
+  it("every contracts page and the contracts search API check fraudRadarEnabled", () => {
+    const contractsFiles = [
+      "app/(en)/fraud-radar/contracts/page.tsx",
+      "app/(en)/fraud-radar/contracts/vendors/page.tsx",
+      "app/(en)/fraud-radar/contracts/vendors/[uei]/page.tsx",
+      "app/(en)/fraud-radar/contracts/awards/[awardKey]/page.tsx",
+      "app/(en)/fraud-radar/contracts/naics/page.tsx",
+      "app/(en)/fraud-radar/contracts/naics/[code]/page.tsx",
+      "app/(en)/fraud-radar/contracts/psc/page.tsx",
+      "app/(en)/fraud-radar/contracts/psc/[code]/page.tsx",
+      "app/api/fraud-radar/contracts/search/route.ts",
+    ];
+    for (const rel of contractsFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).toContain("fraudRadarEnabled()");
+    }
+  });
+
+  it("the public path list adds exactly the contracts landing + NAICS/PSC explorers", () => {
+    const flagSrc = readFileSync(path.join(SRC, "lib/fraud-radar/flag.ts"), "utf8");
+    expect(flagSrc).toContain('"/fraud-radar/contracts"');
+    expect(flagSrc).toContain('"/fraud-radar/contracts/naics"');
+    expect(flagSrc).toContain('"/fraud-radar/contracts/psc"');
+    // Vendor search, vendor/award detail and the search API stay
+    // out of the sitemap (grants precedent, Phase 5 spec).
+    expect(flagSrc).not.toContain("/fraud-radar/contracts/vendors");
+    expect(flagSrc).not.toContain("/fraud-radar/contracts/awards");
+  });
+
+  it("no contracts surface carries FAC data (FAC does not cover contracts)", () => {
+    const contractsFiles = [
+      "app/(en)/fraud-radar/contracts/page.tsx",
+      "app/(en)/fraud-radar/contracts/vendors/[uei]/page.tsx",
+      "app/(en)/fraud-radar/contracts/awards/[awardKey]/page.tsx",
+      "lib/fraud-radar/contracts-data.ts",
+      "lib/fraud-radar/contracts-neon.ts",
+    ];
+    for (const rel of contractsFiles) {
+      const src = readFileSync(path.join(SRC, rel), "utf8");
+      expect(src, rel).not.toMatch(/FrFac|facYearly|getFac|listFac/);
+    }
+  });
+
+  it("S-06 confinement holds for the contracts profile", () => {
+    const src = readFileSync(
+      path.join(SRC, "app/(en)/fraud-radar/contracts/vendors/[uei]/page.tsx"),
+      "utf8",
+    );
+    expect(src).not.toContain("getAdminCandidateQueue");
+    expect(src).not.toContain("candidate-queue");
+  });
+});

@@ -182,6 +182,41 @@ export default function FraudRadarPage() {
         </section>
 
         <section className="mt-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.06] p-6">
+          <h2 className="text-xl font-semibold">Also published: Federal contracts &amp; modification histories</h2>
+          <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+            The contracts engine&apos;s first dataset is published: USAspending
+            federal contract awards (2018–2025, amounts award-cumulative
+            under the attributed fiscal year — obligations, outlays and
+            contract ceilings kept distinct), researched by vendor, NAICS
+            and PSC, with every award&apos;s full modification history as
+            reported. SAM registration and exclusion facts come from the
+            dated SAM public extracts — never a live status check, and no
+            SAM.gov API is used. The Federal Audit Clearinghouse does not
+            cover contracts, so no contracts surface carries FAC data.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link
+              href="/fraud-radar/contracts"
+              className="rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-300"
+            >
+              Open Federal Contracts
+            </Link>
+            <Link
+              href="/fraud-radar/contracts/vendors"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Search contract vendors
+            </Link>
+            <Link
+              href="/fraud-radar/contracts/naics"
+              className="rounded-lg border border-white/15 px-4 py-2 text-white/85 hover:bg-white/5"
+            >
+              Explore NAICS codes
+            </Link>
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.06] p-6">
           <h2 className="text-xl font-semibold">New: Research signals — statistical intelligence</h2>
           <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
             Deterministic, versioned research rules compare providers,
