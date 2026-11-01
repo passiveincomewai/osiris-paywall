@@ -130,6 +130,14 @@ const FAQS = [
     q: "Can I track flights and satellites on the same map?",
     a: "Yes — they share one globe. Live flights cross the sky below on real-time ADS-B data while the satellites pass above them, so a single view holds both: aircraft over the same ground the satellites are orbiting over. The same map also carries ships at sea and 74,229 public cameras.",
   },
+  {
+    q: "Can I see which satellites are passing over my location?",
+    a: "Yes. Fly the globe to your location and look up: the satellites drawn around that point are the ones above you right now, each one propagated live from its published orbital elements. Zoom in and tap one to identify it and see its orbit path. The tracker shows where satellites are — it doesn't send pass predictions or alerts.",
+  },
+  {
+    q: "How often are satellite positions updated?",
+    a: "Continuously, in your browser. Each satellite's position is propagated from its published orbital elements (TLE data) as time passes, so the globe keeps them in motion rather than refreshing on a fixed schedule. The orbital data itself is refreshed regularly from the public catalogs; between updates a satellite can drift slightly from its predicted path, most noticeably right after a maneuver.",
+  },
 ];
 
 /* Canonical-dataset answers merged into this page's single FAQPage
