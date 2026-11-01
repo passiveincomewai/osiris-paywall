@@ -2469,16 +2469,23 @@ export default function Dashboard() {
 
       {/* ── SPLASH ──
           The artwork is the loading loop (public/worldeye-loading.*): a
-          4 s seamless 9:16 composite with NO loading UI baked in — the
+          4 s seamless composite with NO loading UI baked in — the
           progress bar and status line inside it are the site's own
-          overlay, seated in the artwork's clean band (≈60–75% of its
-          height) and driven by the real boot stages above. The stage box
-          keeps the artwork's own aspect, so the overlay lands on that
-          band on every viewport; outside the box the splash background
-          matches the artwork's edge colour (#01030a, sampled from the
-          poster), so the letterbox is invisible. The poster paints
-          first; a failed video — or reduced motion — falls back to the
-          poster still, so loading never depends on the video. */}
+          overlay, seated in the artwork's clean band and driven by the
+          real boot stages above. Two variants of the artwork exist,
+          both composited from the same source plate: the original 9:16
+          (narrow viewports; overlay band ≈60–75% of its height) and a
+          16:9 landscape (public/worldeye-loading-wide.*, for
+          square-or-wider viewports; clean band ≈69–84% of its height,
+          overlay label at 71%). The stage box, the poster <picture>
+          and the <video> sources all switch on the same
+          (min-aspect-ratio: 1/1) media query, so the overlay lands on
+          the band on every viewport; outside the box the splash
+          background matches the artwork's edge colour (#01030a, sampled
+          from the posters), so the letterbox is invisible. The poster
+          still is the base layer and paints first; a failed video — or
+          reduced motion — falls back to it, so loading never depends
+          on the video. */}
       <AnimatePresence onExitComplete={() => setSplashGone(true)}>
         {showSplash && (
           <motion.div
@@ -2493,14 +2500,19 @@ export default function Dashboard() {
             aria-label="Loading WorldEye"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative aspect-[9/16]" style={{ width: 'min(100vw, 56.25vh)' }}>
-                {reduceMotion || splashVideoFailed ? (
+              <div className="relative aspect-[9/16] w-[min(100vw,56.25vh)] [@media(min-aspect-ratio:1/1)]:aspect-video [@media(min-aspect-ratio:1/1)]:w-[min(100vw,177.78vh)]">
+                {/* Poster still — always the base layer: it paints first,
+                    is what reduced motion keeps, and is what a failed
+                    video falls back to when it unmounts. */}
+                <picture className="absolute inset-0 block w-full h-full">
+                  <source media="(min-aspect-ratio: 1/1)" srcSet="/worldeye-loading-wide-poster.webp" />
                   <img
                     src="/worldeye-loading-poster.webp"
                     alt=""
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="w-full h-full object-cover"
                   />
-                ) : (
+                </picture>
+                {!(reduceMotion || splashVideoFailed) && (
                   <video
                     className="absolute inset-0 w-full h-full object-cover"
                     autoPlay
@@ -2508,16 +2520,17 @@ export default function Dashboard() {
                     loop
                     playsInline
                     preload="auto"
-                    poster="/worldeye-loading-poster.webp"
                     onError={() => setSplashVideoFailed(true)}
                   >
+                    <source src="/worldeye-loading-wide.webm" type="video/webm" media="(min-aspect-ratio: 1/1)" />
+                    <source src="/worldeye-loading-wide.mp4" type="video/mp4" media="(min-aspect-ratio: 1/1)" />
                     <source src="/worldeye-loading.webm" type="video/webm" />
                     <source src="/worldeye-loading.mp4" type="video/mp4" onError={() => setSplashVideoFailed(true)} />
                   </video>
                 )}
 
                 {/* ── Progress overlay — the artwork's clean zone ── */}
-                <div className="absolute left-1/2 -translate-x-1/2" style={{ top: '62%', width: '62%' }}>
+                <div className="absolute left-1/2 -translate-x-1/2 w-[62%] top-[62%] [@media(min-aspect-ratio:1/1)]:top-[71%]">
                   {/* Status message — one line, swapped as each real stage is reached */}
                   <div className="h-4 flex items-center justify-center">
                     <AnimatePresence mode="wait">
