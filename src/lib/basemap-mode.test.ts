@@ -2,7 +2,9 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   readBasemapMode, writeBasemapMode, dayOverlayVisible,
   basemapView, resolvedBasemapMode, terminatorVisible, satelliteSwitchAction,
+  readSatelliteView, writeSatelliteView,
   syncDayOverlay, BASEMAP_MODE_STORAGE_KEY, BASEMAP_MODE_ORDER, DAY_TILE_URL,
+  SATELLITE_VIEW_STORAGE_KEY,
   type DayOverlayMap,
 } from './basemap-mode';
 
@@ -48,6 +50,38 @@ describe('basemap mode persistence', () => {
 
   it('the switch positions run moon — auto — sun, left to right', () => {
     expect(BASEMAP_MODE_ORDER).toEqual(['night', 'auto', 'day']);
+  });
+});
+
+describe('satellite view persistence — satellite is the default (owner order 2026-10-31)', () => {
+  it('defaults to ON when nothing is stored — the fresh-load default view', () => {
+    expect(readSatelliteView(fakeStorage())).toBe(true);
+    expect(readSatelliteView(null)).toBe(true);
+  });
+
+  it('only an exact stored "off" opens the standard basemap', () => {
+    expect(readSatelliteView(fakeStorage({ [SATELLITE_VIEW_STORAGE_KEY]: 'off' }))).toBe(false);
+    expect(readSatelliteView(fakeStorage({ [SATELLITE_VIEW_STORAGE_KEY]: 'on' }))).toBe(true);
+    expect(readSatelliteView(fakeStorage({ [SATELLITE_VIEW_STORAGE_KEY]: 'sepia' }))).toBe(true);
+  });
+
+  it('round-trips through storage under the we_ key', () => {
+    const s = fakeStorage();
+    writeSatelliteView(false, s);
+    expect(s.box[SATELLITE_VIEW_STORAGE_KEY]).toBe('off');
+    expect(readSatelliteView(s)).toBe(false);
+    writeSatelliteView(true, s);
+    expect(s.box[SATELLITE_VIEW_STORAGE_KEY]).toBe('on');
+    expect(readSatelliteView(s)).toBe(true);
+  });
+
+  it('a throwing storage never breaks the read or the write — and reads as the default (on)', () => {
+    const hostile = {
+      getItem: () => { throw new Error('denied'); },
+      setItem: () => { throw new Error('denied'); },
+    };
+    expect(readSatelliteView(hostile)).toBe(true);
+    expect(() => writeSatelliteView(false, hostile)).not.toThrow();
   });
 });
 

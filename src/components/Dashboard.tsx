@@ -37,7 +37,7 @@ import type { SkyLocateTarget } from '@/lib/sky-today';
 import { DEFAULT_SENSOR_EFFECT, normalizeSensorEffect, sensorModeNeedsAccount, type SensorEffectState } from '@/lib/sensor-effects';
 import { usePreferences } from '@/components/PreferencesProvider';
 import { layoutSidebarTools } from '@/lib/sidebar-tools';
-import { readBasemapMode, writeBasemapMode, satelliteSwitchAction, type BasemapMode } from '@/lib/basemap-mode';
+import { readBasemapMode, writeBasemapMode, readSatelliteView, writeSatelliteView, satelliteSwitchAction, type BasemapMode } from '@/lib/basemap-mode';
 import { LATEST_SELECTION, satelliteTileUrl, type SatelliteImagerySelection } from '@/lib/wayback-imagery';
 import { CAMERA_SEARCH_RADIUS_M } from '@/lib/traffic/config';
 import { trackAnalyticsEvent } from '@/components/AnalyticsTracker';
@@ -640,7 +640,12 @@ export default function Dashboard() {
   const [terrainFocus, setTerrainFocus] = useState(0);
   const [terrainStatus, setTerrainStatus] = useState<TerrainStatus>('idle');
   const [terrainRetry, setTerrainRetry] = useState(0);
-  const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>('dark');
+  // Satellite view is the default (owner's order, 2026-10-31): a
+  // session with no stored choice opens on the imagery; a stored
+  // deliberate switch-off opens the standard basemap. The switch
+  // persists the choice (handleSatelliteToggle); programmatic view
+  // changes never do. See lib/basemap-mode.
+  const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>(() => (readSatelliteView() ? 'satellite' : 'dark'));
   // Satellite imagery time (Wayback slider; free for everyone, like
   // the satellite view itself). Default `latest` = the live World
   // Imagery service; the slider can step back through Esri's dated
@@ -952,6 +957,10 @@ export default function Dashboard() {
   const handleSatelliteToggle = useCallback(() => {
     const action = satelliteSwitchAction(mapStyle === 'satellite');
     setMapStyle(action === 'turn-on' ? 'satellite' : 'dark');
+    // The deliberate switch is the visitor's default from now on —
+    // this is the only writer of the stored choice, so an assistant's
+    // programmatic view change never rewrites it.
+    writeSatelliteView(action === 'turn-on');
   }, [mapStyle]);
   /* Stable identities for the memo'd OsirisMap. Inline arrows/objects at
      the JSX gave it new prop identities on every Dashboard render, so

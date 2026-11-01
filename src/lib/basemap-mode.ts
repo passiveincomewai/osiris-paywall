@@ -55,6 +55,14 @@
  * *tracking* layers (LayerPanel's SAT category) and every other Pro
  * feature keep their own gates, untouched.
  *
+ * Satellite view is also the DEFAULT view (owner's explicit order,
+ * 2026-10-31: "The satellite mode isn't on my default, fix that"). A
+ * session with no stored satellite choice opens on the imagery. The
+ * deliberate switch persists per device under we_satellite_view —
+ * turning satellite off is a stored choice and later loads honour it;
+ * only the switch writes the key, so a programmatic view change (the
+ * assistant's map_view tool) never rewrites the visitor's default.
+ *
  * Day/auto/night is free for everyone and persists per device.
  */
 
@@ -156,6 +164,29 @@ export type SatelliteSwitchAction = 'turn-on' | 'turn-off';
  */
 export function satelliteSwitchAction(satelliteOn: boolean): SatelliteSwitchAction {
   return satelliteOn ? 'turn-off' : 'turn-on';
+}
+
+export const SATELLITE_VIEW_STORAGE_KEY = 'we_satellite_view';
+
+/** The persisted satellite-view choice. Satellite is the default view
+ *  (owner's order, 2026-10-31): only an exact stored "off" — written
+ *  when the visitor deliberately flips the satellite switch off —
+ *  opens the standard basemap. A stored "on", nothing stored, an
+ *  unknown value, or unreadable storage all mean satellite on. */
+export function readSatelliteView(storage: StorageLike | null = defaultStorage()): boolean {
+  try {
+    return storage?.getItem(SATELLITE_VIEW_STORAGE_KEY) !== 'off';
+  } catch {
+    return true;
+  }
+}
+
+export function writeSatelliteView(on: boolean, storage: StorageLike | null = defaultStorage()): void {
+  try {
+    storage?.setItem(SATELLITE_VIEW_STORAGE_KEY, on ? 'on' : 'off');
+  } catch {
+    /* private mode / storage off — the switch still works for the session */
+  }
 }
 
 /** The minimal map surface syncDayOverlay drives (MapLibre satisfies it). */
