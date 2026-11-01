@@ -17,11 +17,13 @@ export const metadata: Metadata = {
  * Every statement on this page is drawn from the code in this repository, not
  * from a template; when a data flow changes, this page changes with it.
  *
- * Reviewed 2026-10-29 against: src/components/AnalyticsTracker + the
+ * Reviewed 2026-11-01 against: src/components/AnalyticsTracker + the
  * PageView model (prisma/schema.prisma), src/lib/analytics/visitor-id.ts,
  * src/components/MetaPixel.tsx + src/lib/meta-capi.ts, src/auth.ts and
  * src/lib/password-auth.ts (accounts, sessions, sign-in records),
  * src/app/api/checkout + the Stripe webhook (subscriptions),
+ * src/lib/billing/plans.ts + src/lib/billing/trials.ts (plan matrix and
+ * trial lengths, cross-checked against the live Stripe price catalogue),
  * src/lib/email.ts (Resend), src/app/api/contact, src/app/api/newsletter/*,
  * src/app/api/account/delete, src/app/api/geo, src/app/api/osint/*,
  * src/app/api/ai/*, src/app/api/oi/*, src/lib/oi/* (client, service, runs,
@@ -32,7 +34,7 @@ export const metadata: Metadata = {
  * localStorage and sessionStorage key in src/.
  */
 
-const REVIEWED = '29 October 2026';
+const REVIEWED = '1 November 2026';
 
 /* ───────────── The pieces ───────────── */
 
@@ -106,7 +108,7 @@ const PROMISES: { icon: ReactNode; title: string; body: string }[] = [
   { icon: <UserX className="h-4 w-4" />, title: 'No account needed to look', body: 'The map, cameras and live layers work without signing up. An account is optional — it exists so you can save cameras, subscribe, and sync your settings, and creating one is always your choice.' },
   { icon: <EyeOff className="h-4 w-4" />, title: 'We never sell your data', body: 'Your information is not sold or rented to anyone. We run our own first-party analytics (below) to see which pages and features get used; that record stays ours.' },
   { icon: <HardDrive className="h-4 w-4" />, title: 'Know what is stored where', body: 'Your preferences live in your browser. If you create an account, what you save — cameras, collections, recordings, alerts, settings — is stored on our servers with your account, and you can delete the account from your settings.' },
-  { icon: <KeyRound className="h-4 w-4" />, title: 'Your AI key is yours', body: 'Your OI key is stored only in your browser. When a request uses it, it travels with that request so our server can pass it to your provider — it is used for that request and never stored or logged on our servers.' },
+  { icon: <KeyRound className="h-4 w-4" />, title: 'AI, built in — keys stay yours', body: 'OI is built in: signed in, it runs on WorldEye’s own OpenAI key within usage limits. If you choose to use your own provider key instead, it is stored only in your browser. When a request uses it, it travels with that request so our server can pass it to your provider — it is used for that request and never stored or logged on our servers.' },
 ];
 
 /* ───────────── The page ───────────── */
@@ -142,7 +144,7 @@ export default function PrivacyPage() {
               'When you look something up, the question goes to the service that holds the answer, and only for that lookup.',
               'Our own analytics record each page visit — the page, the session and visitor IDs described above, the referring site, any campaign (UTM) tags on the link you arrived with, a coarse device type (mobile, tablet, desktop), how long the page was visible, and feature events such as reaching the globe. They do not record passwords, payment details, or the content of your lookups.',
               'Your preferences and history live in your browser. If you create an account, the things you save are stored with your account on our servers instead — the account section below lists them.',
-              'Features that use AI run either on the key and provider you choose, passed straight through per request, or — when you are signed in — on our own OpenAI key within usage limits.',
+              'Features that use AI run on our own OpenAI key when you are signed in (the built-in WorldEye AI, within usage limits), or — if you choose to bring your own — on the key and provider you select, passed straight through per request.',
               'One advertising partner measures our ads: Meta’s pixel runs on our pages and reports page views, and sign-ups, checkouts, trials and purchases, to Meta (see “Measuring our advertising” below). We do not sell data to anyone.',
               'The site is hosted on Vercel, our database is managed Postgres (Neon), and our email is sent through Resend. Those providers process the data described here on our behalf.',
             ].map(t => (
@@ -212,18 +214,18 @@ export default function PrivacyPage() {
                 browser, as for any picture on the web.
               </>} />
 
-            <Flow icon={<Sparkles className="h-4 w-4" />} title="Using OI — your key, or ours"
+            <Flow icon={<Sparkles className="h-4 w-4" />} title="Using OI — built in, or your own key"
               summary={<>
-                OI can run two ways. On <span className="text-[var(--text-primary)]">your own key</span>, your browser
-                keeps the key and sends it with each request; our server passes the request to the provider you chose —
-                your question and any data you add for a prediction, or the conversation and what is on the map for
-                Assist — and the provider sees our server’s address, not yours. The key itself is used for that request
-                and never stored. When you are <span className="text-[var(--text-primary)]">signed in</span>, OI can
-                instead run on WorldEye’s own OpenAI key (“WorldEye AI”) within hourly usage limits; then your request
-                goes to OpenAI on our account.
+                OI is built in. When you are <span className="text-[var(--text-primary)]">signed in</span>, OI runs on
+                WorldEye’s own OpenAI key (“WorldEye AI”) within hourly usage limits: your request — your question and
+                any data you add for a prediction, or the conversation and what is on the map for Assist — goes to
+                OpenAI on our account. You can instead run OI on <span className="text-[var(--text-primary)]">your
+                own key</span>: your browser keeps the key and sends it with each request; our server passes the
+                request to the provider you chose, and the provider sees our server’s address, not yours. The key
+                itself is used for that request and never stored.
               </>}
               services={[
-                { name: 'The provider you choose', what: 'OpenAI, Anthropic, Google, OpenRouter, Groq, DeepSeek, xAI, Mistral or Alibaba Cloud: your key and your request' },
+                { name: 'OpenAI, or the provider you choose', what: 'WorldEye AI runs on OpenAI, on our account. On your own key, the provider you choose — OpenAI, Anthropic, Google, OpenRouter, Groq, DeepSeek, xAI, Mistral or Alibaba Cloud — receives your key and your request' },
                 { name: 'News publishers’ feeds, GDELT, Wikipedia', what: 'a few keywords from your question, to find the reporting and background a prediction reads; the articles found are then read from their publishers' },
                 { name: 'Yahoo Finance', what: 'the ticker of a price your question is about, for its price history and its news' },
                 { name: 'Polymarket and Manifold', what: 'a few keywords from your question, to find what prediction markets price it at; and, for the suggestions on the ask form, nothing about you at all' },
