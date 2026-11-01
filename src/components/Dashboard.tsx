@@ -531,7 +531,7 @@ export default function Dashboard() {
   const [arcgisLayers, setArcgisLayers] = useState<Array<{ id: string; title: string; url: string; geojson: any; color: string; visible: boolean; opacity: number }>>([]);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number; bounds?: { west: number; south: number; east: number; north: number } } | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [mobilePanel, setMobilePanel] = useState<'layers'|'intel'|'search'|'recon'|'oi'|null>(null);
+  const [mobilePanel, setMobilePanel] = useState<'layers'|'intel'|'search'|'recon'|'oi'|'arcgis'|null>(null);
 
   // ── OSIRIS OI ── the run lives here, not in the panel, so the globe keeps
   // drawing it while the panel is closed. State goes to the map's OI layer
@@ -3278,6 +3278,13 @@ export default function Dashboard() {
                 { id: 'layers' as const, icon: Layers, label: 'LAYERS' },
                 { id: 'intel' as const, icon: Newspaper, label: 'INTEL' },
                 { id: 'recon' as const, icon: Radar, label: 'RECON' },
+                // ArcGIS joins the mobile nav (2026-11-01): its only other
+                // entry point is the desktop icon strip, which mobile never
+                // renders — phone users had no button for the ArcGIS search
+                // & import tools at all. Same Database icon and ARCGIS name
+                // as the desktop strip button; the drawer below renders the
+                // same ArcGISPanel, sharing the imported-layers state.
+                { id: 'arcgis' as const, icon: Database, label: 'ARCGIS' },
                 { id: 'oi' as const, icon: Orbit, label: 'OI' },
                 // Search & Route are ONE tab now (owner's order,
                 // 2026-10-26 — they were separate SEARCH and ROUTE tabs,
@@ -3322,7 +3329,7 @@ export default function Dashboard() {
               <motion.div
                 initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className={`fixed bottom-[52px] left-0 right-0 z-[400] glass-panel ${mobilePanel === 'oi' ? 'oi-glass' : ''} rounded-b-none overflow-y-auto styled-scrollbar`}
+                className={`fixed bottom-[61px] left-0 right-0 z-[400] glass-panel ${mobilePanel === 'oi' ? 'oi-glass' : ''} rounded-b-none overflow-y-auto styled-scrollbar`}
                 style={{ maxHeight: 'min(55vh, calc(100dvh - 100px))', paddingBottom: 'env(safe-area-inset-bottom, 4px)' }}
               >
                 <div className="mobile-drawer-handle" />
@@ -3331,8 +3338,12 @@ export default function Dashboard() {
                       (the redesigned LayerPanel), so the shared drawer
                       title row stands down for it — and the old AIR/SAT/
                       CAM/WX/NUC stats strip is gone: the panel's quick
-                      bar shows the same five counts and toggles them. */}
-                  {mobilePanel !== 'layers' && (
+                      bar shows the same five counts and toggles them.
+                      The arcgis tab stands down too: ArcGISPanel carries
+                      its own "ArcGIS Intel" header and close button. The
+                      drawer also rides 9px higher than before (bottom
+                      61px) to clear the mobile nav's 44px tap targets. */}
+                  {mobilePanel !== 'layers' && mobilePanel !== 'arcgis' && (
                   <div className="flex items-center justify-between mb-2">
                     <span className="hud-text text-[10px] text-[var(--text-primary)]">
                       {mobilePanel === 'intel' ? 'INTEL FEED' : mobilePanel === 'recon' ? 'WORLDEYE RECON' : mobilePanel === 'oi' ? 'WORLDEYE OI' : 'SEARCH & ROUTE'}
@@ -3407,6 +3418,16 @@ export default function Dashboard() {
                     <div className="space-y-2">
                       <OsintPanel isOpen={true} onClose={() => setMobilePanel(null)} isMobile={true} viewerTier={viewerTier} onOpenDirector={handleOpenDirector} onSweepVisualize={setSweepData} onPlaceDevicesOnMap={handlePlaceDevicesOnMap} />
                     </div>
+                  )}
+                  {mobilePanel === 'arcgis' && (
+                    <ArcGISPanel
+                      onImportLayer={(layer) => setArcgisLayers(prev => [...prev.filter(l => l.id !== layer.id), { ...layer, color: layer.color || '#D4AF37', visible: true, opacity: layer.opacity ?? 0.8 }])}
+                      onRemoveLayer={(id) => setArcgisLayers(prev => prev.filter(l => l.id !== id))}
+                      onUpdateLayer={(id, updates) => setArcgisLayers(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l))}
+                      importedLayers={arcgisLayers}
+                      mapBounds={mapCenter?.bounds || null}
+                      onClose={() => setMobilePanel(null)}
+                    />
                   )}
                 </div>
               </motion.div>
