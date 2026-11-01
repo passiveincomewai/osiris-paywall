@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import LanguageHeaderControl from "@/components/translate/LanguageHeaderControl";
 import Link from "next/link";
-import { ArrowLeft, Mail, CreditCard, Users, ArrowRight, Megaphone } from "lucide-react";
+import { ArrowLeft, CreditCard, Users, ArrowRight, Megaphone } from "lucide-react";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import ContactForm from "@/components/contact/ContactForm";
@@ -64,8 +64,6 @@ const SUPPORT_FAQS = [
     a: "You can cancel a subscription yourself from the Manage Subscription page in your account settings — it stays active until the end of the paid period and simply doesn't renew. Remember that a guarantee refund and a cancellation are separate steps. If you want the account itself removed, email us from the account address and we'll handle it.",
   },
 ];
-
-const EMAIL = "passiveincomewai@gmail.com";
 
 const CARDS = [
   {
@@ -157,30 +155,6 @@ export default function ContactPage() {
             Questions, feedback, press or partnership ideas — the inbox is open.
             We typically reply within 1–2 business days.
           </p>
-        </div>
-
-        {/* Email CTA */}
-        <div className="mt-10 md:mt-12 max-w-xl mx-auto rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#D4AF37]/[0.08] to-transparent p-8 md:p-10 text-center">
-          <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 mb-5">
-            <Mail className="w-6 h-6 text-[#D4AF37]" />
-          </span>
-          <h2 className="text-xl font-bold">Email the team</h2>
-          <a
-            href={`mailto:${EMAIL}`}
-            className="mt-3 inline-block text-lg md:text-xl font-semibold text-[#00E5FF] hover:underline break-all"
-          >
-            {EMAIL}
-          </a>
-          <p className="text-sm text-white/45 mt-4">
-            For billing issues, include the email address on your account so we
-            can find your subscription quickly.
-          </p>
-          <a
-            href={`mailto:${EMAIL}?subject=${encodeURIComponent("WorldEye — question")}`}
-            className="mt-6 inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#D4AF37] text-black font-bold hover:brightness-110 transition"
-          >
-            Write to us <ArrowRight className="w-4 h-4" />
-          </a>
         </div>
 
         {/* Contact form */}
