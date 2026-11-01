@@ -69,7 +69,7 @@ const faqJsonLd = {
       name: "Is WorldEye really free?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. The live 3D globe — flights, satellites, weather, earthquakes, wildfires and tens of thousands of public cameras — is free forever with no signup and no credit card. Pro is an optional upgrade that funds the infrastructure.",
+        text: "Yes. The live 3D globe — flights, satellites, weather, earthquakes, wildfires and tens of thousands of public cameras — is free to browse forever with no signup and no credit card. Watching cameras comes with a free allowance of opens; paid plans make opens unlimited. Pro is an optional upgrade that funds the infrastructure.",
       },
     },
     {
@@ -77,7 +77,7 @@ const faqJsonLd = {
       name: "What does WorldEye Pro add?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Pro adds the OI AI assistant (built into WorldEye — no key to bring, or run it on your own API key), the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis), the camera recording studio with timelapse, and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news. The annual VIP Pro plan also unlocks the VIP hub's event alerts, personal brief and saved views (up to 25). Weekly is $7.99, monthly $13.99, annual $74.99.",
+        text: "Pro adds the OI AI assistant (built into WorldEye — no key to bring), the live traffic layer, advanced search filters, an in-browser OSINT toolkit (Nmap-style scans, DNS/WHOIS, SSL analysis) and the camera recording studio. Weekly is $7.99, monthly $13.99, annual $74.99. Ultra — the top tier — adds the premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, camera timelapse, and the VIP hub's event alerts, personal brief and saved views (up to 25).",
       },
     },
     {
@@ -85,7 +85,7 @@ const faqJsonLd = {
       name: "Do I need an account to use the map?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. The map works with no account at all. Accounts exist only for Pro subscribers (to manage billing) and affiliates — never as a gate in front of the free globe.",
+        text: "No. The map works with no account at all. Accounts are free — subscribers use them to manage billing, affiliates for their links, and members get extra camera opens once their email is verified — never as a gate in front of the free globe.",
       },
     },
     {
@@ -125,9 +125,9 @@ const FREE_FEATURES = [
   {
     icon: Camera,
     title: "74,229 public cameras",
-    desc: "Worldwide public street cameras, free for everyone. See streets as they are right now.",
+    desc: "Worldwide public street cameras — browsing is free for everyone. See streets as they are right now.",
     detail:
-      "The directory indexes 74,229 public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Open any feed free, and share it with a direct link that lands the next person on the exact same camera. Pro members get unlimited camera access for deep research sessions.",
+      "WorldEye serves 74,229 public cameras across 105 countries — highway DOT feeds, city intersections, beaches, ski resorts and landmarks. Browsing is free and every device gets a free allowance of camera opens; share any feed with a direct link that lands the next person on the exact same camera. Paid members get unlimited camera access for deep research sessions.",
   },
   {
     icon: Satellite,
@@ -184,9 +184,9 @@ const PRO_FEATURES = [
   {
     icon: BrainCircuit,
     title: "OI AI assistant",
-    desc: "Talk to the map. Forecasts, analysis and recon powered by WorldEye's built-in AI — no key to bring. Prefer your own account? OI also runs on your own API key — OpenAI, Anthropic, Google or OpenRouter — and your key stays in your browser.",
+    desc: "Talk to the map. Forecasts, analysis and recon powered by WorldEye's built-in AI — no key to bring, nothing to set up: it runs on your plan the moment you sign in.",
     detail:
-      "Ask questions in plain language — 'which flights are holding over Chicago?', 'summarize quake activity this week' — and OI works the globe for you. Because it runs on your key, your queries and data never pass through our servers.",
+      "Ask questions in plain language — 'which flights are holding over Chicago?', 'summarize quake activity this week' — and OI works the globe for you. OI is built into WorldEye on every paid plan: no separate AI account, and nothing billed to you by a third party.",
   },
   {
     icon: Search,
@@ -204,10 +204,10 @@ const PRO_FEATURES = [
   },
   {
     icon: Video,
-    title: "Camera Recording Studio & timelapse",
-    desc: "Record real clips and build timelapses from live cameras, in your browser.",
+    title: "Camera Recording Studio",
+    desc: "Record real clips from live cameras, in your browser — Ultra adds frame-by-frame timelapse.",
     detail:
-      "Save your cameras, record real clips while you watch, and capture a timelapse one frame at a time from snapshot cameras — every new still, in order, playable and exportable as a video file. Captures happen while you watch and are saved on your device; nothing is recorded in the cloud.",
+      "Save your cameras and record real clips while you watch. On Ultra, capture a timelapse one frame at a time from snapshot cameras — every new still, in order, playable and exportable as a video file. Captures happen while you watch and are saved on your device; nothing is recorded in the cloud.",
   },
   {
     icon: ShieldCheck,
@@ -219,16 +219,16 @@ const PRO_FEATURES = [
   {
     icon: Radio,
     title: "Premium intel feeds",
-    desc: "Cyber threats, GDELT events, maritime tracking, conflict zones and live news.",
+    desc: "Cyber threats, GDELT events, maritime tracking, conflict zones and live news — Ultra only.",
     detail:
-      "Beyond the free layers: curated feeds for cyber threat activity, the GDELT global event database, enhanced maritime intelligence, conflict monitoring and live news wires — fused onto the same globe.",
+      "Ultra's curated feeds, beyond the free layers: cyber threat activity, the GDELT global event database, enhanced maritime intelligence, conflict monitoring and live news wires — fused onto the same globe.",
   },
   {
     icon: Sparkles,
-    title: "Every future layer",
-    desc: "New premium feeds land in Pro first, at no extra cost.",
+    title: "Unlimited camera opens",
+    desc: "Paid plans remove the free camera-open allowance — open as many cameras as you like.",
     detail:
-      "The platform keeps growing — new data layers, new tools, new feeds. Pro members get all of it the moment it ships, locked into the price they signed up at.",
+      "Browsing the globe is free for everyone, and every device gets a free allowance of camera opens. On any paid plan the allowance disappears: sit in one feed for hours or hop across a hundred cameras in a session — no counters, no cut-offs.",
   },
 ];
 
@@ -246,15 +246,15 @@ const TRACKERS = [
 const FAQS = [
   {
     q: "Is WorldEye really free?",
-    a: "Yes. The live 3D globe — flights, satellites, weather, earthquakes, wildfires and tens of thousands of public cameras — is free forever with no signup and no credit card. Pro is an optional upgrade that funds the infrastructure.",
+    a: "Yes. The live 3D globe — flights, satellites, weather, earthquakes, wildfires and tens of thousands of public cameras — is free to browse forever with no signup and no credit card. Watching cameras comes with a free allowance of opens; paid plans make opens unlimited. Pro is an optional upgrade that funds the infrastructure.",
   },
   {
     q: "What does WorldEye Pro add?",
-    a: "Pro adds the OI AI assistant (built-in AI — no key to bring, or your own API key), the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. VIP Pro — the yearly plan — adds camera timelapse and premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, plus the VIP hub's event alerts, personal brief and saved views (up to 25). Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
+    a: "Pro adds the OI AI assistant (built-in AI — no key to bring), the live traffic layer, advanced search filters, an in-browser OSINT toolkit, and the camera recording studio. Ultra — the top tier — adds camera timelapse and the premium intel feeds covering cyber threats, GDELT events, maritime tracking, conflict zones and live news, plus the VIP hub's event alerts, personal brief and saved views (up to 25). Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99.",
   },
   {
     q: "Do I need an account to use the map?",
-    a: "No. The map works with no account at all. Accounts exist only for Pro subscribers and affiliates — never as a toll gate in front of the free globe.",
+    a: "No. The map works with no account at all. Accounts are free — subscribers use them for billing, affiliates for their links, and members get extra camera opens once their email is verified — never as a toll gate in front of the free globe.",
   },
   {
     q: "Where does WorldEye's data come from?",
@@ -743,8 +743,8 @@ export default async function FeaturesPage() {
             }}
           >
             For researchers, analysts and the deeply curious: an AI analyst that works
-            the globe for you, the live traffic layer, advanced search
-            filters and premium intel feeds. VIP Pro — the annual plan — also unlocks
+            the globe for you, the live traffic layer and advanced search
+            filters. Ultra — the top tier — adds the premium intel feeds and unlocks
             the VIP hub: event alerts, the personal brief and saved views (up to 25).
             Weekly $7.99 · Monthly $13.99 · VIP Pro $74.99 — cancel anytime.
           </p>
