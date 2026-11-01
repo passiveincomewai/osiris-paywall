@@ -125,8 +125,8 @@ export default function TermsPage() {
           <p>
             Your first charge is covered by a <strong className="text-white/80">7-day
             money-back guarantee</strong>: email us at{" "}
-            <a href="mailto:passiveincomewai@gmail.com" className="text-[#D4AF37] hover:underline">
-              passiveincomewai@gmail.com
+            <a href="mailto:contact@worldeye.app" className="text-[#D4AF37] hover:underline">
+              contact@worldeye.app
             </a>{" "}
             within 7 days of your first paid charge — the charge that ends a free
             trial, or your first charge if your plan had no trial — and we&apos;ll
@@ -139,8 +139,8 @@ export default function TermsPage() {
             generally non-refundable, because the paid service is delivered
             immediately (including during free trials). If you believe you were
             charged in error, contact us at{" "}
-            <a href="mailto:passiveincomewai@gmail.com" className="text-[#D4AF37] hover:underline">
-              passiveincomewai@gmail.com
+            <a href="mailto:contact@worldeye.app" className="text-[#D4AF37] hover:underline">
+              contact@worldeye.app
             </a>{" "}
             and we&apos;ll review it case by case.
           </p>
@@ -232,8 +232,8 @@ export default function TermsPage() {
         <Section n={11} title="Contact">
           <p>
             Questions about these terms? Reach us at{" "}
-            <a href="mailto:passiveincomewai@gmail.com" className="text-[#D4AF37] hover:underline">
-              passiveincomewai@gmail.com
+            <a href="mailto:contact@worldeye.app" className="text-[#D4AF37] hover:underline">
+              contact@worldeye.app
             </a>
             . Related policies: <Link href="/privacy" className="text-[#D4AF37] hover:underline">Privacy Policy</Link>.
           </p>

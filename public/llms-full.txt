@@ -56,4 +56,4 @@ Key pages: [Blog](https://worldeye.app/blog), [Free OSINT tools](https://worldey
 
 ## Company
 
-WorldEye is built and run by Jameson Lythgoe's team. Contact: passiveincomewai@gmail.com, via the [contact page](https://worldeye.app/contact). More: [About](https://worldeye.app/about)
+WorldEye is built and run by Jameson Lythgoe's team. Contact: contact@worldeye.app, via the [contact page](https://worldeye.app/contact). More: [About](https://worldeye.app/about)

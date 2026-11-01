@@ -93,7 +93,7 @@ describe("assembleManageView", () => {
     });
     expect(v.kind).toBe("enterprise");
     expect(v.options).toEqual([]);
-    expect(v.supportEmail).toBe("passiveincomewai@gmail.com");
+    expect(v.supportEmail).toBe("contact@worldeye.app");
     expect(v.current?.priceLabel).toBe("$999/year");
   });
 

@@ -289,8 +289,8 @@ export default function ResearchAccessPage() {
             </ul>
             <p className="text-sm text-white/45 mt-5 leading-relaxed">
               Prefer email? Write to{" "}
-              <a href="mailto:passiveincomewai@gmail.com" className="text-[#00E5FF] hover:underline">
-                passiveincomewai@gmail.com
+              <a href="mailto:contact@worldeye.app" className="text-[#00E5FF] hover:underline">
+                contact@worldeye.app
               </a>{" "}
               with the same outline — the contact form above is the faster route.
             </p>

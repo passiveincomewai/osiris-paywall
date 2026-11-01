@@ -164,7 +164,7 @@ export const esFaq: FaqCopy = {
         ),
         plain(
           "¿Ofrecen reembolsos?",
-          "Sí: tu primer cargo está cubierto por una garantía de devolución de 7 días. Escríbenos a passiveincomewai@gmail.com dentro de los 7 días de tu primer cargo —el cargo que termina tu prueba gratis, o tu primer cargo si tu plan no tuvo prueba— y te reembolsaremos todo a tu método de pago original, sin preguntas. La garantía cubre solo tu primer cargo; los cargos de renovación no son reembolsables bajo ella. También te escribimos antes del primer cargo de una prueba, así que no debería tomarte por sorpresa."
+          "Sí: tu primer cargo está cubierto por una garantía de devolución de 7 días. Escríbenos a contact@worldeye.app dentro de los 7 días de tu primer cargo —el cargo que termina tu prueba gratis, o tu primer cargo si tu plan no tuvo prueba— y te reembolsaremos todo a tu método de pago original, sin preguntas. La garantía cubre solo tu primer cargo; los cargos de renovación no son reembolsables bajo ella. También te escribimos antes del primer cargo de una prueba, así que no debería tomarte por sorpresa."
         ),
         plain(
           "¿Qué es VIP Pro?",

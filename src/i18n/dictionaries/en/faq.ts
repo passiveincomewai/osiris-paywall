@@ -236,7 +236,7 @@ export const enFaq: FaqCopy = {
         ),
         plain(
           "Do you offer refunds?",
-          "Yes — your first charge is covered by a 7-day money-back guarantee. Email us at passiveincomewai@gmail.com within 7 days of your first charge — the charge that ends your free trial, or your first charge if your plan had no trial — for a full refund to your original payment method, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it. We also email you before a trial's first charge, so it shouldn't come as a surprise."
+          "Yes — your first charge is covered by a 7-day money-back guarantee. Email us at contact@worldeye.app within 7 days of your first charge — the charge that ends your free trial, or your first charge if your plan had no trial — for a full refund to your original payment method, no questions asked. The guarantee covers your first charge only; renewal charges aren't refundable under it. We also email you before a trial's first charge, so it shouldn't come as a surprise."
         ),
         plain(
           "What is VIP Pro?",

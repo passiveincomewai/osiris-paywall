@@ -71,4 +71,4 @@
 ## Company
 
 - [About](https://worldeye.app/about): What WorldEye is and why it exists.
-- [Contact](https://worldeye.app/contact): How to reach the WorldEye team (email: passiveincomewai@gmail.com).
+- [Contact](https://worldeye.app/contact): How to reach the WorldEye team (email: contact@worldeye.app).

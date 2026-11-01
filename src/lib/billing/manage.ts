@@ -22,7 +22,7 @@ import {
   type PlanTierKey,
 } from "./plans";
 
-export const SUPPORT_EMAIL = "passiveincomewai@gmail.com";
+export const SUPPORT_EMAIL = "contact@worldeye.app";
 
 /**
  * The switchable plans (Phase B): the full 3×3 tier×period grid. The

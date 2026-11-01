@@ -219,7 +219,7 @@ export const esPricing: PricingCopy = {
     ],
     guaranteeLine:
       "Cubierto por una garantía de devolución de 7 días en tu primer cargo: escríbenos dentro de los 7 días del cargo y te reembolsamos todo, sin preguntas.",
-    supportLine: "Preguntas o ayuda de integración: passiveincomewai@gmail.com",
+    supportLine: "Preguntas o ayuda de integración: contact@worldeye.app",
     dashboardLink: "¿Ya eres Enterprise? Abre tu panel de feeds de cámaras →",
     securedByStripe: "Pago seguro con Stripe",
   },
@@ -285,7 +285,7 @@ export const esPricing: PricingCopy = {
     },
     {
       q: "¿Y si olvido cancelar? ¿Puedo pedir un reembolso?",
-      a: "Te escribimos antes del primer cargo de tu prueba, así que no debería tomarte por sorpresa. Y si aun así pasa: escríbenos a passiveincomewai@gmail.com dentro de los 7 días de tu primer cargo y te lo reembolsamos todo, sin preguntas. El reembolso cubre solo tu primer cargo; los cargos de renovación no son reembolsables bajo él.",
+      a: "Te escribimos antes del primer cargo de tu prueba, así que no debería tomarte por sorpresa. Y si aun así pasa: escríbenos a contact@worldeye.app dentro de los 7 días de tu primer cargo y te lo reembolsamos todo, sin preguntas. El reembolso cubre solo tu primer cargo; los cargos de renovación no son reembolsables bajo él.",
     },
     {
       q: "¿Tienen un código promocional?",

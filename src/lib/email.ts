@@ -152,7 +152,7 @@ export function trialEndingEmail(input: {
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Unless you cancel before then, your card will be charged <strong style="color:#fff;">${escapeHtml(input.chargeLabel)}</strong>${perMonth}, and your plan renews automatically until you cancel.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to keep Pro? Do nothing — it continues on its own.</p>
        <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">Want to cancel? Sign in, open <strong style="color:#fff;">Settings → Manage billing</strong>, and cancel in the Stripe portal. You keep Pro until the trial ends, and you won't be charged.</p>
-       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">And if the charge does go through, it's covered by a 7-day money-back guarantee on your first charge — email us at <a href="mailto:passiveincomewai@gmail.com" style="color:#fff;">passiveincomewai@gmail.com</a> within 7 days of the charge for a full refund, no questions asked.</p>`,
+       <p style="color:#a1a1aa;font-size:15px;line-height:1.6;">And if the charge does go through, it's covered by a 7-day money-back guarantee on your first charge — email us at <a href="mailto:contact@worldeye.app" style="color:#fff;">contact@worldeye.app</a> within 7 days of the charge for a full refund, no questions asked.</p>`,
       { label: "Manage my subscription", href: input.manageUrl }
     ),
   };

@@ -451,7 +451,7 @@ export const enPricing: PricingCopy = {
     },
     {
       q: "What if I forget to cancel — can I get a refund?",
-      a: "We email you before your trial's first charge, so it shouldn't come as a surprise. And if it still happens: email us at passiveincomewai@gmail.com within 7 days of your first charge and we'll refund it in full, no questions asked. The refund covers your first charge only; renewal charges aren't refundable under it.",
+      a: "We email you before your trial's first charge, so it shouldn't come as a surprise. And if it still happens: email us at contact@worldeye.app within 7 days of your first charge and we'll refund it in full, no questions asked. The refund covers your first charge only; renewal charges aren't refundable under it.",
     },
     {
       q: "Do you have a promo code?",

@@ -54,7 +54,7 @@ export function buildEntityJsonLd(siteUrl: string, siteDescription: string) {
         sameAs: ["https://www.instagram.com/worldeye.app"],
         contactPoint: {
           "@type": "ContactPoint",
-          email: "passiveincomewai@gmail.com",
+          email: "contact@worldeye.app",
           contactType: "customer support",
         },
       },

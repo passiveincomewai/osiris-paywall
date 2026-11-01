@@ -221,7 +221,7 @@ describe("trialEndingEmail", () => {
     const { html } = trialEndingEmail(base);
     expect(html).toContain("7-day money-back guarantee on your first charge");
     expect(html).toContain("within 7 days of the charge for a full refund, no questions asked");
-    expect(html).toContain("passiveincomewai@gmail.com");
+    expect(html).toContain("contact@worldeye.app");
   });
 
   it("adds the per-month equivalent only when one is supplied", () => {

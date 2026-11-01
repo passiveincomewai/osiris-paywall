@@ -103,7 +103,7 @@ export default function FaqSection({
           >
             {faq.contactBefore}{" "}
             <a
-              href="mailto:passiveincomewai@gmail.com"
+              href="mailto:contact@worldeye.app"
               className="underline underline-offset-2"
               style={linkStyle}
             >

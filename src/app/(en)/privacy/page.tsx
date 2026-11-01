@@ -299,7 +299,7 @@ export default function PrivacyPage() {
           <p className="text-sm leading-relaxed text-[var(--text-muted)]">
             If something here is unclear, or you think we have missed something, tell us and we will put it right.
             You can email us at{' '}
-            <a href="mailto:passiveincomewai@gmail.com" className="text-[var(--text-primary)] hover:underline">passiveincomewai@gmail.com</a>{' '}
+            <a href="mailto:contact@worldeye.app" className="text-[var(--text-primary)] hover:underline">contact@worldeye.app</a>{' '}
             or write to WorldEye, 555 E 3200 N, North Ogden, UT 84414, USA.
           </p>
           <div className="mt-4 flex flex-wrap gap-2.5">

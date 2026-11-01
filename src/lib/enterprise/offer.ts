@@ -20,6 +20,6 @@ export const ENTERPRISE_GUARANTEE_LINE =
   "Covered by a 7-day money-back guarantee on your first charge — email us within 7 days of the charge for a full refund, no questions asked.";
 
 /** The published support address (same one /contact and /terms publish). */
-export const SUPPORT_EMAIL = "passiveincomewai@gmail.com";
+export const SUPPORT_EMAIL = "contact@worldeye.app";
 
 export const ENTERPRISE_SUPPORT_LINE = `Questions or integration help: ${SUPPORT_EMAIL}`;
