@@ -17,7 +17,7 @@ import TrialCtaSection from "@/components/TrialCtaSection";
 export const metadata: Metadata = {
   title: "Live Cameras — Watch the World Live",
   description:
-    `Browse ${LIVE_CAMERA_COUNT_LABEL} live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free forever, no signup, no account.`,
+    `Browse ${LIVE_CAMERA_COUNT_LABEL} live public cameras on the WorldEye 3D globe — traffic, city streets, nature and landmarks worldwide. Free to browse, no signup, no account.`,
   alternates: { canonical: "/cameras" },
   openGraph: {
     title: "Live Cameras — Watch the World Live | WorldEye",
@@ -31,11 +31,11 @@ export const metadata: Metadata = {
 const CAMERA_FAQS: Array<{ q: string; a: string }> = [
   {
     q: "How many live cameras are on WorldEye?",
-    a: `${LIVE_CAMERA_COUNT_LABEL} live public cameras are served on the WorldEye globe, with browsable directory pages for ${DIRECTORY_COUNTRY_COUNT} countries. The counts come from the same live catalogue that powers the globe, so the number on these pages is the number the globe serves.`,
+    a: `${LIVE_CAMERA_COUNT_LABEL} live public cameras are served on the WorldEye globe, with browsable directory pages for ${DIRECTORY_COUNTRY_COUNT} countries. That is the standing public count quoted across WorldEye.`,
   },
   {
     q: "Are the live cameras free to watch?",
-    a: "Yes. Every live camera on the map is free to watch — no account, no trial, no credit card. WorldEye Pro is an optional subscription for the intelligence tools (the AI analyst, satellite view, traffic layer and intel feeds); it funds the infrastructure that keeps the cameras streaming.",
+    a: "Browsing the globe and the directory is free — no account, no trial, no credit card. Watching comes with a free allowance of 5 camera opens per device; paid plans remove the limit, so opens are unlimited there. WorldEye Pro is an optional subscription for the intelligence tools (the AI analyst, satellite view, traffic layer and intel feeds); it funds the infrastructure that keeps the cameras streaming.",
   },
   {
     q: "Where do the live cameras come from?",
@@ -76,7 +76,7 @@ const jsonLd = {
       "@type": "WebPage",
       name: "WorldEye Live Cameras",
       description:
-        `Browse ${LIVE_CAMERA_COUNT_LABEL} live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free forever, no signup.`,
+        `Browse ${LIVE_CAMERA_COUNT_LABEL} live street cameras from around the world on the WorldEye map — traffic cams, city webcams, nature feeds and landmarks. Free to browse, no signup.`,
       url: "https://worldeye.app/cameras",
       isPartOf: { "@type": "WebSite", name: "WorldEye", url: "https://worldeye.app" },
     },
@@ -146,7 +146,7 @@ export default function CamerasPage() {
             >
               Open the live map <ArrowRight className="w-5 h-5" />
             </Link>
-            <p className="text-xs text-white/35 mt-3">Free forever · No account · No signup</p>
+            <p className="text-xs text-white/35 mt-3">Free to browse · No account · No signup</p>
           </div>
         </div>
 
@@ -169,9 +169,10 @@ export default function CamerasPage() {
             </span>
             <h2 className="text-lg font-bold mt-5">Free for everyone</h2>
             <p className="text-sm text-white/55 leading-relaxed mt-2">
-              Unlike the Pro intelligence tools, cameras will never sit behind a paywall.
-              Every live camera on the map is free to watch — no account, no trial, no
-              credit card. <Link href="/pricing" className="text-[#D4AF37] hover:underline">Pro</Link> funds
+              Unlike the Pro intelligence tools, the camera directory will never sit
+              behind a paywall: browsing is free for everyone — no account, no trial, no
+              credit card. Watching comes with a free allowance of 5 camera opens per
+              device, and paid plans remove the limit. <Link href="/pricing" className="text-[#D4AF37] hover:underline">Pro</Link> funds
               the infrastructure that keeps them streaming.
             </p>
           </div>
@@ -312,8 +313,8 @@ export default function CamerasPage() {
             The world is <span className="text-[#D4AF37]">live right now.</span>
           </h2>
           <p className="text-white/55 mt-4 max-w-xl mx-auto">
-            Spin the globe, pick a continent, and start watching. No signup — the cameras
-            are free for everyone, forever.
+            Spin the globe, pick a continent, and start watching. No signup — browsing
+            is free for everyone, and every device gets free camera opens.
           </p>
           <Link
             href="/"
